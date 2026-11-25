@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-25T11:51:25.743Z",
+  "last_updated": "2026-11-25T11:59:56.668Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3981,14 +3981,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nats-io-nats-go",
-      "content_hash": "d37c954f809d082b8e2f6c03169612bd25448c5631909c0cb147887574f339c0",
-      "verified_at": "2026-11-18T14:24:17.110Z",
+      "content_hash": "e2041a3c7a36e43da191ced2e386c01decd71a5cb1c6752502d5385b1307a6e2",
+      "verified_at": "2026-11-25T11:59:54.065Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T14:24:17.110Z"
+      "last_updated": "2026-11-25T11:59:54.065Z"
     },
     "ChrispyBacon-dev/DockFlare": {
       "repository": "ChrispyBacon-dev/DockFlare",
@@ -4416,14 +4416,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-freenet-freenet-core",
-      "content_hash": "e628f53fb6a3efc37ce3605e9886673abc3d9ed06e5bc1f3afc177d7fe2db5ea",
-      "verified_at": "2026-11-25T06:47:53.591Z",
+      "content_hash": "55eaa0460ea19abd70782a839534fe1e4b97d59856af53ac1d7d59848a1d5985",
+      "verified_at": "2026-11-25T11:59:56.668Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T06:47:53.591Z"
+      "last_updated": "2026-11-25T11:59:56.668Z"
     },
     "vearch/vearch": {
       "repository": "vearch/vearch",
@@ -12531,14 +12531,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-jellyfin-swiftfin",
-      "content_hash": "d1fd612d90054f60cd18ab2597e6574e7e81e5e6a82ad4af923aac2fd6b14005",
-      "verified_at": "2026-11-23T03:27:47.712Z",
+      "content_hash": "ec8be559662d1a264e67b067acb054890de1635aac3f189bae1c0cd019420cf4",
+      "verified_at": "2026-11-25T11:59:51.470Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T03:27:47.712Z"
+      "last_updated": "2026-11-25T11:59:51.470Z"
     },
     "sergdort/ModernCleanArchitectureSwiftUI": {
       "repository": "sergdort/ModernCleanArchitectureSwiftUI",
@@ -17226,14 +17226,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-liquidai-lfm3-vl-2b",
-      "content_hash": "e8fc1e21abeb4164939253907e7864fa1c47fa52da50b34157901366294ab468",
-      "verified_at": "2026-11-21T20:36:27.546Z",
+      "content_hash": "e74378776e8b4db3a07115390c287c2011213003dc1e00ebd7333cd32c783101",
+      "verified_at": "2026-11-25T11:59:44.042Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T20:36:27.546Z"
+      "last_updated": "2026-11-25T11:59:44.042Z"
     },
     "unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF": {
       "repository": "unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF",
@@ -20294,6 +20294,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-25T08:56:01.704Z"
+    },
+    "thinkingmachines/TML-d24-varloop-research": {
+      "repository": "thinkingmachines/TML-d24-varloop-research",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-thinkingmachines-tml-d24-varloop-research",
+      "content_hash": "1fab3abe4b34b941259aaef95459d2b171630206a0cc55207138341131725106",
+      "verified_at": "2026-11-25T11:59:41.494Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-25T11:59:41.494Z"
     }
   },
   "repos": {

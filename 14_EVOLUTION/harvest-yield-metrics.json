@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T11:51:25.732Z",
-  "total_cycles_completed": 12397,
-  "total_learnings_persisted": 12397,
-  "total_rules_promoted": 11397,
+  "last_updated": "2026-11-25T11:59:56.657Z",
+  "total_cycles_completed": 12402,
+  "total_learnings_persisted": 12402,
+  "total_rules_promoted": 11400,
   "history": [
-    {
-      "timestamp": "2026-11-24T23:24:39.852Z",
-      "repository": "prism-ml/Ternary-Bonsai-2.5-27B-GGUF",
-      "learningId": "learn-huggingface-prism-ml-ternary-bonsai-2-5-27b-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T23:24:49.212Z",
-      "repository": "webpack/webpack",
-      "learningId": "learn-github-webpack-webpack",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T23:24:50.030Z",
-      "repository": "mikepenz/AboutLibraries",
-      "learningId": "learn-github-mikepenz-aboutlibraries",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T23:24:55.387Z",
-      "repository": "zama-ai/tfhe-rs",
-      "learningId": "learn-github-zama-ai-tfhe-rs",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T23:33:20.267Z",
-      "repository": "zvec-ai/zvec-grep",
-      "learningId": "learn-github-zvec-ai-zvec-grep",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-24T23:33:22.394Z",
       "repository": "rollup/rollup",
@@ -1402,6 +1367,41 @@
       "timestamp": "2026-11-25T11:51:25.732Z",
       "repository": "vespa-engine/vespa",
       "learningId": "learn-github-vespa-engine-vespa",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T11:59:41.484Z",
+      "repository": "thinkingmachines/TML-d24-varloop-research",
+      "learningId": "learn-huggingface-thinkingmachines-tml-d24-varloop-research",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T11:59:44.033Z",
+      "repository": "LiquidAI/LFM3-VL-2B",
+      "learningId": "learn-huggingface-liquidai-lfm3-vl-2b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T11:59:51.459Z",
+      "repository": "jellyfin/Swiftfin",
+      "learningId": "learn-github-jellyfin-swiftfin",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T11:59:54.054Z",
+      "repository": "nats-io/nats.go",
+      "learningId": "learn-github-nats-io-nats-go",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T11:59:56.657Z",
+      "repository": "freenet/freenet-core",
+      "learningId": "learn-github-freenet-freenet-core",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

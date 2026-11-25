@@ -4,23 +4,23 @@
 {
   "source_repository": "nats-io/nats.go",
   "source_url": "https://github.com/nats-io/nats.go",
-  "source_version": "792e440f",
+  "source_version": "c0846a17",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-18T14:24:17.350Z",
+  "timestamp": "2026-11-25T11:59:54.303Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-nats-io-nats-go",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [nats-io/nats.go](https://github.com/nats-io/nats.go) (Revision: `792e440f`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-18T14:24:17.350Z`  
+> **Provenance**: Harvested from [nats-io/nats.go](https://github.com/nats-io/nats.go) (Revision: `c0846a17`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-25T11:59:54.303Z`  
 > **Learning ID**: `learn-github-nats-io-nats-go`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence)
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence)
 - **Confidence Rating**: 58%
 
 ## 2. Core Domain Invariants & Discovered Laws
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nats-io-nats.go-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nats-io/nats.go](https://github.com/nats-io/nats.go))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T14:24:15.883Z  
+> **Harvest Timestamp**: 2026-11-25T11:59:52.857Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Golang client for NATS, the cloud native messaging system.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 6813 stars
+- **Stars / Engagement**: 6819 stars
 
 ---
 
@@ -1575,213 +1575,126 @@ func endlessPublish(ctx context.Context, nc *nats.Conn, js jetstream.JetStream) 
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `792e440f` (2026-11-17)
-**Commit Message**: [ADDED] Option to sign the server nonce as a trusted proxy
+### Incident Patch 1: `c0846a17` (2026-11-24)
+**Commit Message**: [FIXED] Reject MSG and HMSG sizes longer than 9 digits
 
-nats-server 2.12 trusts a proxy that adds proxy_sig, its signature of
-the server nonce, to CONNECT, and accepts a user with proxy_required
-only then. A proxy that relays a NATS client can add the field to the
-client's CONNECT. An application that authenticates clients of another
-protocol and opens their NATS connections itself cannot: the client
-writes CONNECT, inside the TLS session when there is one.
+Signed-off-by: Piotr Piotrowski <[REDACTED_EMAIL]>
 
-ProxySignature sets a callback that signs the nonce, as Nkey does for
-the connection's own credential, and the signature goes out beside
-whatever credential the connection uses.
-
-Signed-off-by: Byron Ruth <[REDACTED_EMAIL]>
-
-**File**: `nats.go` (modified, +34/-1)
+**File**: `nats_test.go` (modified, +37/-0)
 ```diff
-@@ -146,6 +146,7 @@ var (
- 	ErrNoUserCB                      = errors.New("nats: user callback not defined")
- 	ErrNkeyAndUser                   = errors.New("nats: user callback and nkey defined")
- 	ErrNkeysNotSupported             = errors.New("nats: nkeys not supported by the server")
-+	ErrProxySignatureNotSupported    = errors.New("nats: proxy signature not supported by the server")
- 	ErrStaleConnection               = errors.New("nats: " + STALE_CONNECTION)
- 	ErrTokenAlreadySet               = errors.New("nats: token and token handler both set")
- 	ErrUserInfoAlreadySet            = errors.New("nats: cannot set user info callback and user/pass")
-@@ -525,6 +526,12 @@ type Options struct {
- 	// presented from the server.
- 	SignatureCB SignatureHandler
- 
-+	// ProxySignatureCB designates the function used to sign the nonce
-+	// presented from the server as one of its trusted proxies. The
-+	// signature is sent beside the connection's own credentials, and lets
-+	// the server accept a user that requires a proxy.
-+	ProxySignatureCB SignatureHandler
-+
- 	// User sets the username to be used when connecting to the server.
- 	User string
- 
-@@ -1138,6 +1145,7 @@ type connectInfo struct {
- 	Echo         bool   `json:"echo"`
- 	Headers      bool   `json:"headers"`
- 	NoResponders bool   `json:"no_responders"`
-+	ProxySig     string `json:"proxy_sig,omitempty"`
- }
- 
- // MsgHandler is a callback function that processes messages delivered to
-@@ -1657,6 +1665,18 @@ func Nkey(pubKey string, sigCB SignatureHandler) Option {
+@@ -724,6 +724,43 @@ func TestParserShouldFail(t *testing.T) {
  	}
  }
  
-+// ProxySignature will set the callback that signs the server nonce as a
-+// trusted proxy of the server (see the proxies block of the server
-+// configuration, in nats-server v2.12.0 and later). It is for applications
-+// that connect on behalf of clients they have authenticated themselves, and
-+// is independent of the credentials the connection authenticates with.
-+func ProxySignature(sigCB SignatureHandler) Option {
-+	return func(o *Options) error {
-+		o.ProxySignatureCB = sigCB
-+		return nil
++func TestParserMsgSizeLimit(t *testing.T) {
++	for _, proto := range []string{
++		"MSG foo 1 9223372036854775807\r\n",
++		"MSG foo 1 _INBOX.bar 9223372036854775807\r\n",
++		"MSG foo 1 4611686018427387904\r\n",
++		"HMSG foo 1 0 9223372036854775807\r\n",
++		"HMSG foo 1 _INBOX.bar 0 9223372036854775807\r\n",
++		"HMSG foo 1 4611686018427387904 4611686018427387904\r\n",
++	} {
++		nc := &Conn{ps: &parseState{}}
++		if err := nc.parse([]byte(proto)); err == nil {
++			t.Errorf("Expected a parse error for %q", proto)
++		}
++	}
++
++	// The server never sends sizes longer than 9 digits.
++	for _, tc := range []struct {
++		hdr  int
++		args string
++		ok   bool
++	}{
++		{-1, "foo 1 999999999", true},
++		{-1, "foo 1 1000000000", false},
++		{0, "foo 1 999999999 999999999", true},
++		{0, "foo 1 1000000000 1000000000", false},
++	} {
++		nc := &Conn{ps: &parseState{hdr: tc.hdr}}
++		err := nc.processMsgArgs([]byte(tc.args))
++		if tc.ok && (err != nil || nc.ps.ma.size != 999999999) {
++			t.Errorf("Expected %q to be accepted, got size %d, err %v", tc.args, nc.ps.ma.size, err)
++		}
++		if !tc.ok && err == nil {
++			t.Errorf("Expected %q to be rejected", tc.args)
++		}
 +	}
 +}
 +
- // SyncQueueLen will set the maximum queue len for the internal
- // channel used for SubscribeSync().
- // Defaults to 65536.
-@@ -3222,7 +3242,7 @@ func (nc *Conn) sendProto(proto string) {
- // applicable. The lock is assumed to be held upon entering.
- func (nc *Conn) connectProto() (string, error) {
- 	o := nc.Opts
--	var nkey, sig, user, pass, token, ujwt string
-+	var nkey, sig, user, pass, token, ujwt, proxySig string
- 	u := nc.current.URL.User
- 	if u != nil {
- 		// if no password, assume username is authToken
-@@ -3273,6 +3293,18 @@ func (nc *Conn) connectProto() (string, error) {
- 		sig = base64.RawURLEncoding.EncodeToString(sigraw)
- 	}
- 
-+	if o.ProxySignatureCB != nil {
-+		// The server sends a nonce when it has trusted proxies configured.
-+		if nc.info.Nonce == _EMPTY_ {
-+			return _EMPTY_, ErrProxySignatureNotSupported
-+		}
-+		sigraw, err := o.ProxySignatureCB([]byte(nc.info.Nonce))
-+		if err != nil {
-+			return _EMPTY_, fmt.Errorf("error signing nonce as proxy: %w", err)
-+		}
-+		proxySig = base64.RawURLEncoding.EncodeToString(sigraw)
-+	}
-+
- 	if nc.Opts.TokenHandler != nil {
- 		if token != _EMPTY_ {
- 			return _EMPTY_, ErrTokenAlreadySet
-@@ -3285,6 +3317,7 @@ func (nc *Conn) connectProto() (string, error) {
- 	cinfo := connectInfo{
- 		o.Verbose, o.Pedantic, ujwt, nkey, sig, user, pass, token,
- 		o.Secure, o.Name, LangString, Version, clientProtoInfo, !o.NoEcho, hdrs, hdrs,
-+		proxySig,
- 	}
- 
- 	b, err := json.Marshal(cinfo)
+ func TestParserSplitMsg(t *testing.T) {
+ 	nc := &Conn{}
+ 	nc.ps = &parseState{}
 ```
 
-**File**: `test/nats_test.go` (modified, +78/-0)
+**File**: `parser.go` (modified, +24/-6)
 ```diff
-@@ -15,6 +15,7 @@ package test
- 
- import (
- 	"bytes"
-+	"errors"
- 	"fmt"
- 	"net"
- 	"os"
-@@ -419,6 +420,83 @@ func TestNkeyAuth(t *testing.T) {
+@@ -464,12 +464,12 @@ func (nc *Conn) processMsgArgs(arg []byte) error {
+ 		nc.ps.ma.subject = args[0]
+ 		nc.ps.ma.sid = parseInt64(args[1])
+ 		nc.ps.ma.reply = nil
+-		nc.ps.ma.size = int(parseInt64(args[2]))
++		nc.ps.ma.size = parseSize(args[2])
+ 	case 4:
+ 		nc.ps.ma.subject = args[0]
+ 		nc.ps.ma.sid = parseInt64(args[1])
+ 		nc.ps.ma.reply = args[2]
+-		nc.ps.ma.size = int(parseInt64(args[3]))
++		nc.ps.ma.size = parseSize(args[3])
+ 	default:
+ 		return fmt.Errorf("nats: processMsgArgs Parse Error: '%s'", arg)
  	}
+@@ -510,14 +510,14 @@ func (nc *Conn) processHeaderMsgArgs(arg []byte) error {
+ 		nc.ps.ma.subject = args[0]
+ 		nc.ps.ma.sid = parseInt64(args[1])
+ 		nc.ps.ma.reply = nil
+-		nc.ps.ma.hdr = int(parseInt64(args[2]))
+-		nc.ps.ma.size = int(parseInt64(args[3]))
++		nc.ps.ma.hdr = parseSize(args[2])
++		nc.ps.ma.size = parseSize(args[3])
+ 	case 5:
+ 		nc.ps.ma.subject = args[0]
+ 		nc.ps.ma.sid = parseInt64(args[1])
+ 		nc.ps.ma.reply = args[2]
+-		nc.ps.ma.hdr = int(parseInt64(args[3]))
+-		nc.ps.ma.size = int(parseInt64(args[4]))
++		nc.ps.ma.hdr = parseSize(args[3])
++		nc.ps.ma.size = parseSize(args[4])
+ 	default:
+ 		return fmt.Errorf("nats: processHeaderMsgArgs Parse Error: '%s'", arg)
+ 	}
+@@ -553,3 +553,21 @@ func parseInt64(d []byte) (n int64) {
+ 	}
+ 	return n
  }
- 
-+func TestProxySignature(t *testing.T) {
-+	kp, _ := nkeys.CreateUser()
-+	pub, _ := kp.PublicKey()
-+	untrusted, _ := nkeys.CreateUser()
 +
-+	authBody := `authorization {
-+  users: [
-+    { user: "proxied", password: "pwd", proxy_required: true }
-+  ]
-+}`
-+	proxies := fmt.Sprintf(`proxies {
-+  trusted: [
-+    { key: %q }
-+  ]
-+}`, pub)
++// maxSizeLen is the server's own limit on the digits of a size, which
++// keeps any size well clear of overflowing an int, even on 32-bit.
++const maxSizeLen = 9
 +
-+	c := newTester(t)
-+	inst := c.CreateServer(t, false, append(singleUserPassOpts(authBody), testservice.WithTopLevel(proxies))...)
-+	t.Cleanup(func() { inst.Destroy(t) })
-+	clientURL := inst.Servers[0].URL
-+
-+	connect := func(opts ...nats.Option) (*nats.Conn, error) {
-+		opts = append([]nats.Option{
-+			nats.UserInfo("proxied", "pwd"),
-+			nats.MaxReconnects(10),
-+			nats.ReconnectWait(100 * time.Millisecond),
-+		}, opts...)
-+		return nats.Connect(clientURL, opts...)
++// parseSize parses a payload or header size. It returns -1 on error.
++func parseSize(d []byte) (n int) {
++	if len(d) == 0 || len(d) > maxSizeLen {
++		return -1
 +	}
-+
-+	if _, err := connect(); !errors.Is(err, nats.ErrAuthorization) {
-+		t.Fatalf("Expected an authorization error with no proxy signature, got %v", err)
++	for _, dec := range d {
++		if dec < ascii_0 || dec > ascii_9 {
++			return -1
++		}
++		n = n*10 + int(dec-ascii_0)
 +	}
-+	if _, err := connect(nats.ProxySignature(untrusted.Sign)); !errors.Is(err, nats.ErrAuthorization) {
-+		t.Fatalf("Expected an authorization error with an untrusted proxy signature, got %v", err)
-+	}
-+	failSign := func(nonce []byte) ([]byte, error) {
-+		return nil, errors.New("no key")
-+	}
-+	if _, err := connect(nats.ProxySignature(failSign)); err == nil || !strings.Contains(err.Error(), "no key") {
-+		t.Fatalf("Expected the signature callback's error, got %v", err)
-+	}
-+
-+	nc, err := connect(nats.ProxySignature(kp.Sign))
-+	if err != nil {
-+		t.Fatalf("Expected to succeed but got %v", err)
-+	}
-+	defer nc.Close()
-+
-+	// A reconnect gets a new nonce, which must be signed again.
-+	inst.StopServer(t, inst.Servers[0])
-+	inst.StartServer(t, inst.Servers[0])
-+
-+	if err := nc.FlushTimeout(5 * time.Second); err != nil {
-+		t.Fatalf("Error on Flush: %v", err)
-+	}
++	return n
 +}
-+
-+func TestProxySignatureNotSupported(t *testing.T) {
-+	kp, _ := nkeys.CreateUser()
-+
-+	// Without trusted proxies or nkeys, the server sends no nonce.
-+	authBody := `authorization {
-+  users: [
-+    { user: "user", password: "pwd" }
-+  ]
-+}`
-+	c := newTester(t)
-+	inst := c.CreateServer(t, false, singleUserPassOpts(authBody)...)
-+	t.Cleanup(func() { inst.Destroy(t) })
-+
-+	_, err := nats.Connect(inst.Servers[0].URL, nats.UserInfo("user", "pwd"), nats.ProxySignature(kp.Sign))
-+	if !errors.Is(err, nats.ErrProxySignatureNotSupported) {
-+		t.Fatalf("Expected %v, got %v", nats.ErrProxySignatureNotSupported, err)
-+	}
-+}
-+
- // These drive the server-pool shuffle with a comma-joined two-URL pool. The
- // DNS multi-IP path (net.LookupHost returning several addresses for one host)
- // reaches the same srvPool shuffle but is not covered directly: the tester
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2262** (2026-11-25): [FIXED] Reject MSG and HMSG sizes longer than 9 digits (@piotrpio)
 - **PR #2249** (2026-11-18): [ADDED] Option to sign the server nonce as a trusted proxy (@bruth)
 - **PR #2246** (2026-11-17): Release v1.56.0 (@piotrpio)
 - **PR #2245** (2026-11-17): [CHANGED] Fixes for TLS and server discovery (@piotrpio)
 - **PR #2243** (2026-11-16): [IMPROVED] Bump ntf-client to v0.0.5 to fix nightly tester failures (@piotrpio)
 - **PR #2242** (2026-11-15): docs: remove duplicated word in MemoryMaxStreamBytes comment (@ninglinLiu)
-- **PR #2237** (2026-11-12): [FIXED] Require a separator before inline header status (@ViktorBystrov72)
 
 ---
 
@@ -1801,57 +1714,67 @@ Signed-off-by: Byron Ruth <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [ADDED] Option to sign the server nonce as a trusted proxy
+## X. [FIXED] Reject MSG and HMSG sizes longer than 9 digits
 
 **RULE**:
-When implementing operations in `nats.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nats-io/nats.go. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `nats_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nats-io/nats.go. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `792e440f`: [ADDED] Option to sign the server nonce as a trusted proxy. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c0846a17`: [FIXED] Reject MSG and HMSG sizes longer than 9 digits. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `nats.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `nats_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	ErrProxySignatureNotSupported    = errors.New("nats: proxy signature not supported by the server")
-	// ProxySignatureCB designates the function used to sign the nonce
-	// presented from the server as one of its trusted proxies. The
-	// signature is sent beside the connection's own credentials, and lets
-	// the server accept a user that requires a proxy.
-	ProxySignatureCB SignatureHandler
+func TestParserMsgSizeLimit(t *testing.T) {
+	for _, proto := range []string{
+		"MSG foo 1 9223372036854775807\r\n",
+		"MSG foo 1 _INBOX.bar 9223372036854775807\r\n",
+		"MSG foo 1 4611686018427387904\r\n",
+		"HMSG foo 1 0 9223372036854775807\r\n",
+		"HMSG foo 1 _INBOX.bar 0 9223372036854775807\r\n",
+		"HMSG foo 1 4611686018427387904 4611686018427387904\r\n",
+	} {
+		nc := &Conn{ps: &parseState{}}
+		if err := nc.parse([]byte(proto)); err == nil {
+			t.Errorf("Expected a parse error for %q", proto)
+		}
+	}
 
-	ProxySig     string `json:"proxy_sig,omitempty"`
-// ProxySignature will set the callback that signs the server nonce as a
-// trusted proxy of the server (see the proxies block of the server
-// configuration, in nats-server v2.12.0 and later). It is for applications
-// that connect on behalf of clients they have authenticated themselves, and
-// is independent of the credentials the connection authenticates with.
-func ProxySignature(sigCB SignatureHandler) Option {
-	return func(o *Options) error {
-		o.ProxySignatureCB = sigCB
-		return nil
+	// The server never sends sizes longer than 9 digits.
+	for _, tc := range []struct {
+		hdr  int
+		args string
+		ok   bool
+	}{
+		{-1, "foo 1 999999999", true},
+		{-1, "foo 1 1000000000", false},
+		{0, "foo 1 999999999 999999999", true},
+		{0, "foo 1 1000000000 1000000000", false},
+	} {
+		nc := &Conn{ps: &parseState{hdr: tc.hdr}}
+		err := nc.processMsgArgs([]byte(tc.args))
+		if tc.ok && (err != nil || nc.ps.ma.size != 999999999) {
+			t.Errorf("Expected %q to be accepted, got size %d, err %v", tc.args, nc.ps.ma.size, err)
+		}
+		if !tc.ok && err == nil {
+			t.Errorf("Expected %q to be rejected", tc.args)
+		}
 	}
 }
 
-	var nkey, sig, user, pass, token, ujwt, proxySig string
-	if o.ProxySignatureCB != nil {
-		// The server sends a nonce when it has trusted proxies configured.
-		if nc.info.Nonce == _EMPTY_ {
-			return _EMPTY_, ErrProxySignatureNotSupported
-		}
-		sigraw, err
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	var nkey, sig, user, pass, token, ujwt string
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `792e440f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c0846a17` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-25T11:51:29.975Z",
+  "updated_at": "2026-11-25T12:00:29.650Z",
   "stats": {
-    "total_discovered": 9408,
-    "approved_pending_harvest": 8916,
+    "total_discovered": 9412,
+    "approved_pending_harvest": 8920,
     "harvested_count": 0,
     "rejected_count": 492,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 8907,
+      "COMMUNITY_AND_EXPERT": 8911,
       "OFFICIAL_DOCUMENTATION": 280,
       "STANDARDS_AND_SPECIFICATIONS": 150,
       "ENGINEERING_BLOGS": 7,
@@ -203559,6 +203559,94 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/authzed-spicedb-learnings.md",
         "fileName": "authzed-spicedb-learnings.md"
+      }
+    },
+    "SRC-0428098A1AB0": {
+      "id": "SRC-0428098A1AB0",
+      "url": "https://huggingface.co/thinkingmachines/TML-d24-varloop-research",
+      "title": "https://huggingface.co/thinkingmachines/TML-d24-varloop-research",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T12:00:28.249Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-thinkingmachines-tml-d24-varloop-research-learnings.md",
+        "fileName": "hf-thinkingmachines-tml-d24-varloop-research-learnings.md"
+      }
+    },
+    "SRC-8323C58EEE81": {
+      "id": "SRC-8323C58EEE81",
+      "url": "https://github.com/jellyfin/jellyfin-web/blob/d90bba74d2dc03e3cab92789b38b956da6dfd1f2/src/components/listview/List/listHelper.ts",
+      "title": "https://github.com/jellyfin/jellyfin-web/blob/d90bba74d2dc03e3cab92789b38b956da6dfd1f2/src/components/listview/List/listHelper.ts",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T12:00:29.514Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/jellyfin-swiftfin-learnings.md",
+        "fileName": "jellyfin-swiftfin-learnings.md"
+      }
+    },
+    "SRC-CD40E5753924": {
+      "id": "SRC-CD40E5753924",
+      "url": "https://github.com/LePips/MediaAccessibilityKit",
+      "title": "https://github.com/LePips/MediaAccessibilityKit",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T12:00:29.574Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/jellyfin-swiftfin-learnings.md",
+        "fileName": "jellyfin-swiftfin-learnings.md"
+      }
+    },
+    "SRC-F23DF4934CAC": {
+      "id": "SRC-F23DF4934CAC",
+      "url": "https://github.com/LePips/MPVUI",
+      "title": "https://github.com/LePips/MPVUI",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T12:00:29.650Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/jellyfin-swiftfin-learnings.md",
+        "fileName": "jellyfin-swiftfin-learnings.md"
       }
     }
   }

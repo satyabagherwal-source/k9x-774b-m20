@@ -4,24 +4,24 @@
 {
   "source_repository": "freenet/freenet-core",
   "source_url": "https://github.com/freenet/freenet-core",
-  "source_version": "d71c022a",
+  "source_version": "ef8c0626",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-25T06:47:53.813Z",
+  "timestamp": "2026-11-25T11:59:56.904Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-freenet-freenet-core",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [freenet/freenet-core](https://github.com/freenet/freenet-core) (Revision: `d71c022a`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-25T06:47:53.813Z`  
+> **Provenance**: Harvested from [freenet/freenet-core](https://github.com/freenet/freenet-core) (Revision: `ef8c0626`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-25T11:59:56.904Z`  
 > **Learning ID**: `learn-github-freenet-freenet-core`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
 - **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), G (Architecture Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 76%
+- **Confidence Rating**: 86%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from freenet/freenet-core:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T06:47:52.487Z  
+> **Harvest Timestamp**: 2026-11-25T11:59:55.471Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1752,15 +1752,11 @@ pub mod streaming_buffer;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #6387** (2026-11-25): **build: sync main to 0.2.166 after release**
-  *Symptoms*: Syncs main's version files to the published release **v0.2.166** (freenet 0.2.166, fdev 0.3.328).  release.yml ships the soaked commit plus a version bump on `release/v0.2.166`, which never reaches main by itself. This PR is that bump regenerated on main by `.github/workflows/release-sync.yml`. It touches only version files and lockfiles. See docs/RELEASING.md, 'Merge-back'.
-  **Post-Mortem & Fix Analysis**:
-  > <!-- claude-rule-review --> ### Rule Review: No issues found  **Rules checked:** git-workflow.md, testing.md **Files reviewed:** 4 (`Cargo.lock`, `apps/freenet-ping/Cargo.lock`, `crates/core/Cargo.toml`, `crates/fdev/Cargo.toml`)  This is the automated post-release version sync.  - `freenet` goes from 0.2.165 to 0.2.166, and `fdev` from 0.3.327 to 0.3.328. - The `fdev` binstall `pkg-url` entries and the `freenet` dependency pin are updated to match. - The `apps/freenet-ping/Cargo.lock` wasmtime 47→48 and cranelift changes come from the already-merged wasmtime bump (#6385).  The diff has no source or test changes, so none of the testing rules apply. The title is a valid `build:` conventional commit. I couldn't see the PR description, so I did not check it for the Problem/Solution/Testing sections.  <!-- warning-count: 0 -->  --- *Rule review against `.claude/rules/`. WARNING findings turn the `rule-review/warnings` status red.*
+- **Issue #6390** (2026-11-25): **fix: keep a public own_addr when a gateway behind our NAT observes a private one**
+  *Symptoms*: ## Problem A joiner behind the same NAT as a gateway is told a private address (e.g. 192.168.1.1:60454) by that gateway and its public address by the others. Each CONNECT driver applied its own first ObservedAddress, so own_addr and the ring location flipped with whichever gateway answered last. A node could then advertise an unreachable private address to acceptors.  ## Approach Observed addresses are applied through `ConnectionManager::apply_observed_address`. A private or loopback observation never replaces a public own_addr. A public observation replaces a private one and moves a location that an observation set (a configured location is left alone). On an all-LAN or loopback network, with nothing public known, a private observation is adopted as before. The gateway side and the wire format are unchanged: the gateway really does see the joiner's packets from the private address.  Known limits: - A node that moves from a public network to a LAN-only one keeps its public own_addr until restart. A time-window escape was tried and removed in review: observations arrive only on a direct join's first hop, so a stable node had none for 10 minutes and the flip came back. - CGNAT (100.64/10) and IPv4-vs-global-IPv6 observations count as public (`is_private_ip` is shared and not widened), so they can still replace each other. - A public-to-different-public change updates the address but keeps the location.  This does not fix the slow first join (the 15-18% of starts over 5 minutes)
 
-- **Issue #6386** (2026-11-25): **chore: log the first hops of a client GET that ends NotFound**
-  *Symptoms*: ## Problem Which peers a client GET asked is only logged at DEBUG, which release builds compile out. A node reporting repeated fast NotFounds for a contract other peers hold gives no way to see who it asked or how far they were from the key.  ## Approach When the client GET retry loop is exhausted, emit one INFO line listing each attempted hop: address, ring location, distance to the key, and outcome (not_found or no_reply). Lines pass through a process-global token bucket (burst 5, one per 20s) and report a suppressed count. Sub-operation GETs are skipped. No behavior change.  ## Testing Unit tests cover the line contents and order, the limiter and suppressed count, the refill cap and the hop cap. A source-scrape test pins the driver hooks and the emit call. Reviewed independently (Light tier); fmt, clippy -D warnings and the module tests pass locally.  [AI-assisted - Claude] 
-  **Post-Mortem & Fix Analysis**:
-  > <!-- claude-rule-review --> ### Rule Review: No blocking issues found  **Rules checked:** git-workflow.md, code-style.md, testing.md, operations.md **Files reviewed:** 3 (`operations/get.rs`, `operations/get/first_hops_log.rs`, `operations/get/op_ctx_task.rs`)  #### Warnings None.  #### Info - `crates/core/src/operations/get/first_hops_log.rs:219` — `report_notfound_first_hops` reads `tokio::time::Instant::now()` directly instead of going through `TimeSource`. The testing rules say crates/core code should take time from `TimeSource`. The only documented `tokio::time::Instant` exception is the client-API HTTP layer. Other files in `operations/` already use `tokio::time::Instant`, and the limiter takes `now` as a parameter, so tests are deterministic. This is a rate-limiter for log output, not behavior the simulation depends on. A one-line comment saying so would head off the question. (rule: testing.md, code-style.md) - `crates/core/src/operations/get/first_hops_log.rs:58` — `FIRST_HOPS
+- **Issue #6388** (2026-11-25): **fix: exclude blocking host-call time from the WASM guest budget**
+  *Symptoms*: ## Problem  freenet/river#1017: a chat delegate hit the node's 5 s WASM budget ("WASM execution timed out (guest running past its budget; epoch backstop)") at room creation, intermittently on 2-core CI runners.  The budget was wall-clock. The epoch deadline and the wall-clock backstop both counted time the guest spent inside host functions, so a slow secret-store or contract-state read on a loaded machine used up the guest's 5 s. The timeout log did not say which delegate, how long was host time, or which limit fired.  ## Approach  - Host functions that can block on I/O or a lock (secrets, contract-state reads, `create_delegate`) are timed by a per-store `HostCallMeter`. Their time is excluded from the guest budget: the epoch deadline is now a callback that traps only when guest time (wall minus host-call time) reaches the budget, and otherwise extends by what is left. - Host-call time is capped separately at 1.5x the budget per guest entry (7.5 s at the default). Past the cap, further blocking host calls are refused with the namespace's store-error code and no side effect, and the execution is reported as `Timeout` even if the guest returns normally (the stdlib reads refusals as "absent"). - The wall-clock backstop measures wall time net of host time (including a call in flight) and has its own host-cap verdict, so a dead epoch ticker still bounds guest CPU. - CPU-only host functions (log, rand, time, context copies, `fill_buffer`) are not metered, so their time stays charge
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1777,414 +1773,371 @@ pub mod streaming_buffer;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d71c022a` (2026-11-25)
-**Commit Message**: build: sync main to 0.2.166 after release (#6387)
+### Incident Patch 1: `6081c027` (2026-11-25)
+**Commit Message**: fix: exclude blocking host-call time from the WASM guest budget (#6388)
 
-Co-authored-by: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
-
-**File**: `Cargo.lock` (modified, +2/-2)
+**File**: `crates/core/src/wasm_runtime/engine/wasmtime_engine.rs` (modified, +1031/-31)
 ```diff
-@@ -1899,7 +1899,7 @@ dependencies = [
+@@ -156,8 +156,8 @@ use std::time::{Duration, Instant};
  
- [[package]]
- name = "fdev"
--version = "0.3.327"
-+version = "0.3.328"
- dependencies = [
-  "anyhow",
-  "axum",
-@@ -2078,7 +2078,7 @@ dependencies = [
+ use dashmap::DashMap;
+ use wasmtime::{
+-    Cache, CacheConfig, Caller, Config, Engine, EngineWeak, Error as WasmtimeError, Instance,
+-    Linker, Module, OptLevel, ResourceLimiter, Store,
++    AsContextMut, Cache, CacheConfig, Caller, Config, Engine, EngineWeak, Error as WasmtimeError,
++    Instance, Linker, Module, OptLevel, ResourceLimiter, Store,
+ };
  
- [[package]]
- name = "freenet"
--version = "0.2.165"
-+version = "0.2.166"
- dependencies = [
-  "aes-gcm",
-  "ahash",
+ use super::{InstanceHandle, WasmEngine, WasmError};
+@@ -742,8 +742,16 @@ fn arm_epoch_deadline(
+     calling_instance: Option<native_api::InstanceId>,
+ ) {
+     store.data_mut().calling_instance = calling_instance;
++    let meter = Arc::clone(&store.data().meter);
++    // `ticks` is `ceil(budget / tick) + 1`; the guest budget is the part
++    // before the phase-safety `+ 1`.
++    meter.arm(
++        EPOCH_TICK_PERIOD.saturating_mul(ticks.saturating_sub(1).try_into().unwrap_or(u32::MAX)),
++    );
+     store.set_epoch_deadline(ticks);
+-    store.epoch_deadline_trap();
++    // At the deadline, trap only if the guest has used its budget EXCLUDING
++    // time spent in host functions; otherwise extend (river#1017).
++    store.epoch_deadline_callback(move |_| Ok(meter.on_deadline()));
+     // Piggyback a cheap dead-ticker health check on this already-per-call site.
+     detect_stale_epoch_ticker();
+ }
+@@ -832,14 +840,295 @@ pub(crate) struct HostState {
+     /// abandoned thread keeps its own store, so its value stays its own.
+     /// `None` until the first entry.
+     calling_instance: Option<native_api::InstanceId>,
++    /// Time this store's guest spends inside host functions, kept out of its
++    /// guest budget and bounded by its own cap. See [`HostCallMeter`].
++    meter: Arc<HostCallMeter>,
+ }
+ 
+ impl HostState {
++    /// A state with the default 5 s budget's host-call cap (tests that build
++    /// a store directly; the engine uses [`Self::with_meter`]).
++    #[cfg(test)]
+     fn new(memory_limit_pages: u32) -> Self {
++        Self::with_meter(
++            memory_limit_pages,
++            HostCallMeter::new(host_call_cap_for(5.0)),
++        )
++    }
++
++    fn with_meter(memory_limit_pages: u32, meter: Arc<HostCallMeter>) -> Self {
+         Self {
+             memory_limit_bytes: memory_limit_pages as usize * WASM_PAGE_SIZE,
+             calling_instance: None,
++            meter,
++        }
++    }
++}
++
++/// Host-call cap, as a multiple of the guest budget (`max_execution_seconds`).
++///
++/// The guest budget measures guest time only: wall time the guest spends INSIDE
++/// a blocking host function (a secret read, a contract-state read) is not
++/// charged to it (river#1017). So that a delegate cannot stall forever inside
++/// host calls, the time it spends in them is capped SEPARATELY, at this
++/// multiple of the budget (7.5 s for the default 5 s budget). Total wall time
++/// for one execution is therefore bounded by `budget + cap` plus trap/backstop
++/// slack, about 12.7 s at the default (about 5.15 s before river#1017).
++///
++/// RESIDUAL, stated honestly: the discount is of WALL time, and a "blocking"
++/// host function also does CPU with no I/O (`get_contract_state` copies the
++/// state, `get_secret` on a memo hit is a memcpy, `set_secret` encrypts). A
++/// guest that loops on those can spend up to the cap in node CPU without
++/// timing out, so the worst case is `budget + cap` of CPU per execution, not
++/// `budget`. Discounting only off-CPU time needs a per-thread CPU clock on
++/// Linux, macOS and Windows, which this crate does not have; the factor is
++/// kept small instead, so the exposure is 1.5x the budget in extra CPU.
++const HOST_CALL_CAP_FACTOR: f64 = 1.5;
++
++/// The host-call cap for a guest budget of `max_execution_seconds`.
++fn host_call_cap_for(max_execution_seconds: f64) -> Duration {
++    Duration::from_secs_f64(max_execution_seconds.max(0.0) * HOST_CALL_CAP_FACTOR)
++}
++
++/// Which of the two separate limits ended a guest execution.
++#[derive(Debug, Clone, Copy, PartialEq, Eq)]
++enum TimeoutCause {
++    /// The guest ran past its CPU budget (wall time minus host-call time).
++    GuestBudget,
++    /// The guest spent more than the host-call cap inside host functions.
++    HostCallCap,
++}
++
++impl TimeoutCause {
++    fn as_str(self) -> &'static str {
++        match self {
++            TimeoutCause::GuestBudget => "guest_budget",
++            TimeoutCause::HostCallCap => "host_call_cap",
++        }
++    }
++}
++
++#[derive(Debug)]
++struct MeterInner {
++    /// Cap on host-call time per guest entry; set per job by
++    /// [`HostCallMeter::reset`] from the engine's current budget.
++    cap: Duration,
++    /// Host-call time since [`HostCallMeter::reset`], completed calls only.
++    host_total: Duration,
++    host_calls: u64,
++    /// Start of the host call in flight, if any.
++    in_flight: Option<Instant>,
++    /// Wall time, host-call time and guest budget at the most recent
++    /// [`arm_epoch_deadline`].
++    armed_at: Instant,
++    armed_host: Duration,
++    armed_budget
 ```
 
-**File**: `apps/freenet-ping/Cargo.lock` (modified, +116/-89)
+**File**: `crates/core/src/wasm_runtime/native_api.rs` (modified, +11/-0)
 ```diff
-@@ -839,37 +839,37 @@ dependencies = [
+@@ -1261,6 +1261,17 @@ impl std::ops::Deref for DelegateEnvSlot {
+     }
+ }
  
- [[package]]
- name = "cranelift-assembler-x64"
--version = "0.134.4"
-+version = "0.135.10"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "16c273ba1bfc3a1cb27cb4f83df27134f3cb638a61f5ed79ab22cf86eb13da0d"
-+checksum = "da23f7367f4f5d003249eb1067760b3e6f5df82ad61829d40db22fdf8d41fd22"
- dependencies = [
-  "cranelift-assembler-x64-meta",
- ]
- 
- [[package]]
- name = "cranelift-assembler-x64-meta"
--version = "0.134.4"
-+version = "0.135.10"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "cbf8909326a466739e83ffe11e74c0c8c6b4bfa911b612aece915daa746cff58"
-+checksum = "a8dbd10a21204ce6ae3786f8369860ec4e10a24913e987d5abe4c3cc0c7195d6"
- dependencies = [
-  "cranelift-srcgen",
- ]
- 
- [[package]]
- name = "cranelift-bforest"
--version = "0.134.4"
-+version = "0.135.10"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "3cb26b06b54d8b2f8cdf4d440a32fc3b3b91c71c162333a69a70a66fa265fc45"
-+checksum = "4439be9aa2867bcef9effa83a265f550763a37b2cf4ad560c7bc41cbda947a48"
- dependencies = [
-  "cranelift-entity",
-  "wasmtime-internal-core",
- ]
- 
- [[package]]
- name = "cranelift-bitset"
--version = "0.134.4"
-+version = "0.135.10"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "7ce4e57dbb7f73d08011808a19787c3a03c3e7854b2a479ed0b788915fb671be"
-+checksum = "9913a7776903ccf6a3172633f59a0d6da2b428ec631c4b999a4b7401efdca1a7"
- dependencies = [
-  "serde",
-  "serde_derive",
-@@ -878,9 +878,9 @@ dependencies = [
- 
- [[package]]
- name = "cranelift-codegen"
--version = "0.134.4"
-+version = "0.135.10"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "74b0a8968f33d0bc13bc86fe70dd3947e93acc9f358ed9848e9988448972a9be"
-+checksum = "ffc88c2b684ca7df2ed79fa42b38a983e4d3632ee9d57bc2a389f69fc7ff9348"
- dependencies = [
-  "bumpalo",
-  "cranelift-assembler-x64",
-@@ -909,9 +909,9 @@ dependencies = [
- 
- [[package]]
- name = "cranelift-codegen-meta"
--version = "0.134.4"
-+version = "0.135.10"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "f69e8e2fe9deb48ef7b8d0c61612f8c1e2277d0421c201e30a4c844a4ebac698"
-+checksum = "df667a6e48506af68c087cebee157bfe69e04d78df83e243025ce6473a538fcd"
- dependencies = [
-  "cranelift-assembler-x64-meta",
-  "cranelift-codegen-shared",
-@@ -922,24 +922,24 @@ dependencies = [
- 
- [[package]]
- name = "cranelift-codegen-shared"
--version = "0.134.4"
-+version = "0.135.10"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "ad4db1e87a65e9c5a832e3ede160830d4e34df938ac38b5604819f8825687e73"
-+checksum = "ed3fdd2cd7bcd83a9263a978ea1d66477742a1a92095fa08f8752cb9a79ece11"
- 
- [[package]]
- name = "cranelift-control"
--version = "0.134.4"
-+version = "0.135.10"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "9248cd37bb6ec460981f57ead368e32b1eca7a207ad50e3e9c7adc3b161f20e9"
-+checksum = "8e1ecc088bd88f5a271f55b1544a8ec60b9d7373f61efe267d54bd2481adf5a3"
- dependencies = [
-  "arbitrary",
- ]
- 
- [[package]]
- name = "cranelift-entity"
--version = "0.134.4"
-+version = "0.135.10"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "26b8bc91c0a3530d132acbf118965dabe9a084029eb0fa74b64760360dec3316"
-+checksum = "2e9e591820d13f0671f879602ff29b241ea8b1dd54a386acbcbf4c3787f41af0"
- dependencies = [
-  "cranelift-bitset",
-  "serde",
-@@ -949,9 +949,9 @@ dependencies = [
- 
- [[package]]
- name = "cranelift-frontend"
--version = "0.134.4"
-+version = "0.135.10"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "5086f2ebc084a98b387e522680f62ef65a512444d8382151e03088716d3a1714"
-+checksum = "b00cf9b20096b09b3499d19f82cca658c13c6988ecbc54881caf12a2f01b2f8c"
- dependencies = [
-  "cranelift-codegen",
-  "hashbrown 0.17.0",
-@@ -962,15 +962,15 @@ dependencies = [
- 
- [[package]]
- name = "cranelift-isle"
--version = "0.134.4"
-+version = "0.135.10"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "b6a658670f779afc2df083be201ebe54805f69b7b9ffa8dab04142b72ed751c9"
-+checksum = "4c9fc3f2d35b0b5879107b4c83246e3dfb93bf678e0c68f74f7bd9b7001f7a06"
- 
- [[package]]
- name = "cranelift-native"
--version = "0.134.4"
-+version = "0.135.10"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "16a41083b1fd953debd6f32d21fcda765b258f323ce907fdd6b4715f2769c478"
-+checksum = "3c41c07ce15db19296c5ee3bed3019ec95bf2d773fbb28e73bdcb7fbc6ef9196"
- dependencies = [
-  "cranelift-codegen",
-  "libc",
-@@ -979,9 +979,9 @@ dependencies = [
- 
- [[package]]
- name = "cranelift-srcgen"
--version = "0.134.4"
-+version = "0.135.10"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "244d9cd0759b0a3ccdd587cafb13434f9ea43b5c9d07701d277daf5cd0f7b7c1"
-+checksum = "7ed086d4ea76eb20e03b689abcc9a34bacaec54b1fc3e04269004acbed4587f0"
- 
- [[package]]
- name = "crc32fast"
-@@ -1715,7 +1715,7 @@ dependencies = [
- 
- [[package]]
- name = "freenet"
--version = "0.2.
-```
-
-**File**: `crates/core/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- [package]
- name = "freenet"
--version = "0.2.165"
-+version = "0.2.166"
- edition = "2024"
- rust-version = "1.85"
- publish = true
-```
-
-**File**: `crates/fdev/Cargo.toml` (modified, +4/-4)
-```diff
-@@ -1,6 +1,6 @@
- [package]
- name = "fdev"
--version = "0.3.327"
-+version = "0.3.328"
- edition = "2024"
- rust-version = "1.85"
- publish = true
-@@ -14,12 +14,12 @@ readme = "README.md"
- # (v0.2.x), so we embed the matching freenet version literally — `v{ version }`
- # would expand to the fdev crate version and 404. release.yml rewrites the
- # `vX.Y.Z` segment whenever the freenet version is bumped (issue #3995).
--pkg-url = "{ repo }/releases/download/v0.2.165/fdev-{ target }.tar.gz"
-+pkg-url = "{ repo }/releases/download/v0.2.166/fdev-{ target }.tar.gz"
- pkg-fmt = "tgz"
- bin-dir = "fdev"
- 
- [package.metadata.binstall.overrides.x86_64-pc-windows-msvc]
--pkg-url = "{ repo }/releases/download/v0.2.165/fdev-{ target }.zip"
-+pkg-url = "{ repo }/releases/download/v0.2.166/fdev-{ target }.zip"
- pkg-fmt = "zip"
- bin-dir = "fdev.exe"
- 
-@@ -56,7 +56,7 @@ ed25519-dalek = { version = "2", features = ["rand_core", "serde"] }
- hex = { workspace = true }
- 
- # internal
--freenet = { path = "../core", version = "0.2.165", features = ["testing"] }
-+freenet = { path = "../core", version = "0.2.166", features = ["testing"] }
- freenet-stdlib = { workspace = true }
- 
- [dev-dependencies]
++/// The delegate key of the call running as `instance`, for timeout diagnostics
++/// only (river#1017). `None` if the call's env is not registered. Takes a
++/// shared `DELEGATE_ENV` reference for the duration of one `to_string`. Call it
++/// on the calling thread BEFORE the guest starts, never from a host function or
++/// after a timeout, where it could queue behind a stuck host call's `Ref`.
++pub(super) fn delegate_key_for_log(instance: InstanceId) -> Option<String> {
++    DELEGATE_ENV
++        .get(&instance)
++        .map(|env| env.delegate_key.to_string())
++}
++
+ /// Typed errors from `DelegateCallEnv` contract operations.
+ ///
+ /// Replaces string-based error matching so `_impl` host functions can map
 ```
 
 ---
 
-### Incident Patch 2: `89da3a5f` (2026-11-25)
-**Commit Message**: build: bump wasmtime to 48.0.9 (#6385)
+### Incident Patch 2: `ef8c0626` (2026-11-25)
+**Commit Message**: fix: keep a public own_addr when a gateway behind our NAT observes a private one (#6390)
 
-**File**: `Cargo.lock` (modified, +121/-94)
+**File**: `crates/core/src/node/network_bridge/p2p_protoc.rs` (modified, +1/-1)
 ```diff
-@@ -149,7 +149,7 @@ version = "1.1.5"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "40c48f72fd53cd289104fc64099abca73db4166ad86ea0b4341abe65af83dadc"
- dependencies = [
-- "windows-sys 0.61.2",
-+ "windows-sys 0.60.2",
- ]
- 
- [[package]]
-@@ -160,7 +160,7 @@ checksum = "291e6a250ff86cd4a820112fb8898808a366d8f9f58ce16d1f538353ad55747d"
- dependencies = [
-  "anstyle",
-  "once_cell_polyfill",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.60.2",
- ]
- 
- [[package]]
-@@ -978,37 +978,37 @@ dependencies = [
- 
- [[package]]
- name = "cranelift-assembler-x64"
--version = "0.134.3"
-+version = "0.135.10"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "d552bd33b7a56dc70aeb1e1c960e51a218fa0db50f23873b500a310379450b2d"
-+checksum = "da23f7367f4f5d003249eb1067760b3e6f5df82ad61829d40db22fdf8d41fd22"
- dependencies = [
-  "cranelift-assembler-x64-meta",
- ]
- 
- [[package]]
- name = "cranelift-assembler-x64-meta"
--version = "0.134.3"
-+version = "0.135.10"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "078e80e4c222279e3330f6aa1a256ca77ddf156d4453166a9f09defedc4594dd"
-+checksum = "a8dbd10a21204ce6ae3786f8369860ec4e10a24913e987d5abe4c3cc0c7195d6"
- dependencies = [
-  "cranelift-srcgen",
- ]
- 
- [[package]]
- name = "cranelift-bforest"
--version = "0.134.3"
-+version = "0.135.9"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "820ce15d4ad3562d613c31a67b6d0434d403e7091a68d1349903842f7d31737e"
-+checksum = "4955ac604c69b279138b2bd1b46c5f21748910d96e96eca5df23c79ee2a5edcc"
- dependencies = [
-  "cranelift-entity",
-  "wasmtime-internal-core",
- ]
- 
- [[package]]
- name = "cranelift-bitset"
--version = "0.134.3"
-+version = "0.135.9"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "61bca563d4b86d285928d9e27f97f27039bb33a0fc524fa130d7d0c106bf8ab3"
-+checksum = "d4be0efebaf985207ba2330083d86c5dd50a03357435e5bdffc97598393b5a19"
- dependencies = [
-  "serde",
-  "serde_derive",
-@@ -1017,9 +1017,9 @@ dependencies = [
- 
- [[package]]
- name = "cranelift-codegen"
--version = "0.134.3"
-+version = "0.135.9"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "709f4b7c0fb57d952658d5b5c07fbdc4149acd7b7f0de9678ae754b9c981949a"
-+checksum = "4f463af533c6fad6aa1d54c454569baebd38a11374deee0c4d104a1e4e4da207"
- dependencies = [
-  "bumpalo",
-  "cranelift-assembler-x64",
-@@ -1048,9 +1048,9 @@ dependencies = [
- 
- [[package]]
- name = "cranelift-codegen-meta"
--version = "0.134.3"
-+version = "0.135.9"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "903dc8915af62aad1d9d0f39a5968d33fa80b9aa899ed6f56e47f40ca4512e1e"
-+checksum = "b5614f7c37ee06c404c1556b2d54859fb74149774f08594625dbe764963b2f7f"
- dependencies = [
-  "cranelift-assembler-x64-meta",
-  "cranelift-codegen-shared",
-@@ -1061,24 +1061,24 @@ dependencies = [
- 
- [[package]]
- name = "cranelift-codegen-shared"
--version = "0.134.3"
-+version = "0.135.10"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "0522d74c227e49f3fd49ab055311486ae4f09083262b66705bed676952491469"
-+checksum = "ed3fdd2cd7bcd83a9263a978ea1d66477742a1a92095fa08f8752cb9a79ece11"
- 
- [[package]]
- name = "cranelift-control"
--version = "0.134.3"
-+version = "0.135.10"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "66560ea1c5cef72e170b18e46d263dba2d3169c9d39e8cafdab2173c6362cc1a"
-+checksum = "8e1ecc088bd88f5a271f55b1544a8ec60b9d7373f61efe267d54bd2481adf5a3"
- dependencies = [
-  "arbitrary",
- ]
- 
- [[package]]
- name = "cranelift-entity"
--version = "0.134.3"
-+version = "0.135.9"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "b62ef5b17cc814d27e96b66a5b46da0e4ce2b8ac55a6d478048bb99d04b05526"
-+checksum = "3613e5a2b21dde0f6591fb54139cf4dbac8b851ea1e79b08bca6631b98ff4299"
- dependencies = [
-  "cranelift-bitset",
-  "serde",
-@@ -1088,9 +1088,9 @@ dependencies = [
- 
- [[package]]
- name = "cranelift-frontend"
--version = "0.134.3"
-+version = "0.135.9"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "a87e0aaa39dbf70693b348a221e45904111704ee8f9fef140498471005f9842d"
-+checksum = "7d3a784683a03e1e2099f8761d473527cfd8d510ecb83b871eb8ac4e2ef662a9"
- dependencies = [
-  "cranelift-codegen",
-  "hashbrown 0.17.1",
-@@ -1101,15 +1101,15 @@ dependencies = [
- 
- [[package]]
- name = "cranelift-isle"
--version = "0.134.3"
-+version = "0.135.9"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "cf79003ebfa1eed5e87f3b84446ad5236f540268289960e14f387dc9b28e40b7"
-+checksum = "1ad758dbc31c9df814ffda594200a24e78a707baa9a78f292dff2483976b2d8e"
- 
- [[package]]
- name = "cranelift-native"
--version = "0.134.3"
-+version = "0.135.9"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "05bf4f235743c81e67ee4db617c5a4a0b65d58d3f0cfc575ee0f1a4e0cd58273"
-+checksum = "c5174bd94292d2e5507b1ffcdeb9ab8b8c98c5951b8b9077e968ec94a240932c"
- dependencies = [
-  "cranelift-c
+@@ -1382,7 +1382,7 @@ impl P2pConnManager {
+         // Initialize our peer identity before any connection attempts so join requests can
+         // reference the correct address.
+         // Note: For peers behind NAT, this initial address is a fallback - the correct
+-        // external address is learned via ObservedAddress and updated via set_own_addr().
++        // external address is learned via ObservedAddress and updated via ConnectionManager::apply_observed_address().
+         // The ring location should be computed from the observed external address,
+         // not from this initial fallback.
+         let advertised_addr = {
 ```
 
-**File**: `Cargo.toml` (modified, +1/-1)
+**File**: `crates/core/src/operations/connect/op_ctx_task.rs` (modified, +34/-17)
 ```diff
-@@ -123,7 +123,7 @@ console-subscriber = "0.5.0"
- # stack-switching feature (undefined symbol wasmtime_continuation_start).
- # Disable default features and re-enable all defaults except stack-switching.
- # TODO: Re-enable default features once upstream fixes the linker regression.
--wasmtime = { version = "47", default-features = false, features = [
-+wasmtime = { version = "48", default-features = false, features = [
-     "anyhow", "async", "backtrace", "cache", "cranelift",
-     "compile-time-builtins", "component-model", "component-model-async",
-     "coredump", "debug", "debug-builtins", "demangle", "addr2line",
+@@ -36,7 +36,7 @@ use tokio::time::Instant;
+ use crate::message::{NetMessage, NetMessageV1, NodeEvent, Transaction};
+ use crate::node::{OpManager, WaiterReply};
+ use crate::operations::OpError;
+-use crate::ring::{ConnectionFailureReason, Location, PeerKeyLocation};
++use crate::ring::{ConnectionFailureReason, Location, ObservedAddrOutcome, PeerKeyLocation};
+ use crate::tracing::NetEventLog;
+ 
+ use super::{
+@@ -1193,21 +1193,27 @@ async fn drive_client_connect(
+                 // diagnostics) and `own_location` (for routing).
+                 // Only the first ObservedAddress per transaction is applied
+                 // (see the guard arm above); repeats are ignored.
+-                let location = Location::from_address(&address);
++                let connection_manager = &op_manager.ring.connection_manager;
+                 // GLOBAL-ADDR-WRITE-OK: production. A real node learning its
+                 // peer-observed address is exactly what the external_address
+-                // mirror is for (#4918).
+-                op_manager.ring.connection_manager.set_own_addr(address);
+-                op_manager
+-                    .ring
+-                    .connection_manager
+-                    .update_location(Some(location));
+-                tracing::info!(
+-                    tx = %tx,
+-                    observed_address = %address,
+-                    location = %location,
+-                    "connect driver: updated own_addr and location from ObservedAddress"
+-                );
++                // mirror is for (#4918). A private observation (a gateway
++                // behind our own NAT) never displaces a fresh public own_addr
++                // (#6378).
++                let outcome = connection_manager.apply_observed_address(address);
++                match outcome {
++                    ObservedAddrOutcome::Applied { location_changed } => tracing::info!(
++                        tx = %tx,
++                        observed_address = %address,
++                        location_changed,
++                        location = ?connection_manager.get_stored_location(),
++                        "connect driver: updated own_addr from ObservedAddress"
++                    ),
++                    ObservedAddrOutcome::Ignored => tracing::info!(
++                        tx = %tx,
++                        observed_address = %address,
++                        "connect driver: ignoring private ObservedAddress, a public own_addr is known"
++                    ),
++                }
+             }
+             other @ ConnectMsg::Request { .. } | other @ ConnectMsg::ConnectFailed { .. } => {
+                 // Bypass at node.rs forwards Response/Rejected/
+@@ -2392,11 +2398,22 @@ mod tests {
+             "the ignoring arm must precede the applying arm"
+         );
+         let body_end = SOURCE[apply..]
+-            .find("set_own_addr(address)")
+-            .expect("set_own_addr call");
++            .find("apply_observed_address(address)")
++            .expect("apply_observed_address call");
+         assert!(
+             body_end < 2000,
+-            "set_own_addr must stay in the applying arm"
++            "apply_observed_address must stay in the applying arm"
++        );
++        // The outcome must be consumed, not dropped: the log says whether the
++        // address and location were really applied.
++        let after_call = &SOURCE[apply + body_end..];
++        let arm_end = after_call
++            .find("other @ ConnectMsg::Request")
++            .expect("arm after the ObservedAddress arm");
++        assert!(
++            after_call[..arm_end].contains("match outcome")
++                && after_call[..arm_end].contains("ObservedAddrOutcome::Ignored"),
++            "the apply outcome must be matched in the applying arm"
+         );
+     }
+ 
+```
+
+**File**: `crates/core/src/ring.rs` (modified, +3/-1)
+```diff
+@@ -91,7 +91,9 @@ pub(crate) mod contract_exec_metrics;
+ pub(crate) mod delta_incompat;
+ /// Shadow-mode detector for repairs that never converge (see the module docs).
+ pub(crate) mod futile_repair;
+-pub(crate) use connection_manager::{ConnectionManager, TransientRefusal, TransientTtlOutcome};
++pub(crate) use connection_manager::{
++    ConnectionManager, ObservedAddrOutcome, TransientRefusal, TransientTtlOutcome,
++};
+ // Nearest-neighbor ring lattice (successor+predecessor base edges).
+ // `nn_lattice_active_for` is the full activation gate — the flag AND the
+ // minimum-degree floor (`NN_LATTICE_MIN_MAX_CONNECTIONS`) — used by the
+```
+
+**File**: `crates/core/src/ring/connection_manager.rs` (modified, +262/-5)
+```diff
+@@ -490,6 +490,16 @@ impl PeerHealthTracker {
+     }
+ }
+ 
++/// Result of [`ConnectionManager::apply_observed_address`].
++#[derive(Debug, Clone, Copy, PartialEq, Eq)]
++pub(crate) enum ObservedAddrOutcome {
++    /// A private observation was refused because a public address is held.
++    Ignored,
++    /// `own_addr` was replaced. `location_changed` is false when the ring
++    /// location was left as it was (configured, or already set).
++    Applied { location_changed: bool },
++}
++
+ #[derive(Clone)]
+ pub(crate) struct ConnectionManager {
+     /// Pending connection reservations, keyed by socket address.
+@@ -508,6 +518,9 @@ pub(crate) struct ConnectionManager {
+     own_location: Arc<AtomicU64>,
+     /// Our own socket address, set once we know it (e.g., from gateway observation).
+     own_addr: Arc<Mutex<Option<SocketAddr>>>,
++    /// Whether `own_location` was set from an observed address, as opposed to
++    /// configuration (#6378).
++    location_from_observation: Arc<std::sync::atomic::AtomicBool>,
+     is_gateway: bool,
+     /// Test-only override for the placement-migration version floor. `None` in
+     /// production (the real `SUBSCRIBE_HINT_MIN_VERSION` applies); `Some(floor)`
+@@ -823,6 +836,7 @@ impl ConnectionManager {
+             topology_manager,
+             own_location: own_location.into(),
+             own_addr: Arc::new(Mutex::new(own_addr)),
++            location_from_observation: Arc::new(std::sync::atomic::AtomicBool::new(false)),
+             is_gateway,
+             // Default off; `new(config)` overrides from config after init.
+             subscribe_hint_floor_override: None,
+@@ -2428,8 +2442,9 @@ impl ConnectionManager {
+         }
+     }
+ 
+-    /// Sets the own address unconditionally.
+-    /// Used when a peer behind NAT learns their external address from ObservedAddress.
++    /// Sets the own address unconditionally. Production code goes through
++    /// `apply_observed_address`, which guards against private overwrites (#6378).
++    #[cfg(test)]
+     pub fn set_own_addr(&self, addr: SocketAddr) {
+         // Hold the `own_addr` mutex across the `network_status::set_external_address`
+         // call so the two state writes are atomic with respect to each other.
+@@ -2465,6 +2480,70 @@ impl ConnectionManager {
+         );
+     }
+ 
++    /// Applies an address a gateway observed for us (`ObservedAddress`) to
++    /// `own_addr` and the ring location, unless that would replace a public
++    /// address with a private one.
++    ///
++    /// A joiner behind the same NAT as a gateway is told its LAN-side address
++    /// (e.g. `192.168.1.1:60454`) by that gateway, and its public address by
++    /// every other gateway. A private or loopback observation is therefore
++    /// accepted only while no public address is known; otherwise `own_addr`
++    /// and the location would flip with whichever gateway answered last
++    /// (#6378). All-LAN and loopback networks never see a public address, so
++    /// they still adopt the private one.
++    ///
++    /// Known limit: a node that moves from a public network to a LAN-only one
++    /// keeps its public `own_addr` until restart. A time-based switch was
++    /// rejected because public observations only arrive with a direct join
++    /// through a gateway's first hop, so a stable public node would see none
++    /// for long stretches and then flip on its next same-NAT join.
++    ///
++    /// When the address changes between private and public (either way), a
++    /// location that an observation set follows it. A configured location, or
++    /// one set by an earlier observation of the same kind, is left alone (as
++    /// `update_location` always did).
++    ///
++    /// "Public" means "not [`crate::server::is_private_ip`]". That treats
++    /// CGNAT (100.64/10) as public, and does not compare an IPv4 with an IPv6
++    /// public address, so two differing public observations (CGNAT vs the
++    /// real public address, v4 vs v6) still replace each other in arrival
++    /// order, as before #6378. `is_private_ip` is shared with other callers
++    /// and is not widened here.
++    pub fn apply_observed_address(&self, addr: SocketAddr) -> ObservedAddrOutcome {
++        let is_public = |a: &SocketAddr| !crate::server::is_private_ip(&a.ip());
++        let mut own_addr = self.own_addr.lock();
++        let previous = *own_addr;
++        if !is_public(&addr) && previous.as_ref().is_some_and(is_public) {
++            return ObservedAddrOutcome::Ignored;
++        }
++        // Same atomicity discipline as `set_own_addr`: hold the lock across
++        // the mirror write.
++        *own_addr = Some(addr);
++        crate::node::network_status::set_external_address(addr);
++        let before = self.get_stored_location();
++        let new_location = Location::from_address(&addr);
++        // Only a location that an observation set may follow a change between
++        // public and private; a configured location never moves, and a second
++        // observation
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6390** (2026-11-25): fix: keep a public own_addr when a gateway behind our NAT observes a private one (@sanity)
+- **PR #6388** (2026-11-25): fix: exclude blocking host-call time from the WASM guest budget (@sanity)
 - **PR #6387** (2026-11-25): build: sync main to 0.2.166 after release (@sanity)
 - **PR #6386** (2026-11-25): chore: log the first hops of a client GET that ends NotFound (@sanity)
 - **PR #6385** (2026-11-25): build: bump wasmtime to 48.0.9 (@sanity)
 - **PR #6384** (2026-11-25): chore: remove fixed advisories from the RustSec baseline (@sanity)
-- **PR #6383** (2026-11-25): test: property-test pre-authentication parsing of QUIC peer keys (@sanity)
-- **PR #6382** (2026-11-24): build(deps): bump rustls and quinn-udp for RustSec advisories (@sanity)
 
 ---
 
@@ -2204,33 +2157,56 @@ Co-authored-by: github-actions[bot] <github-actions[bot]@users.noreply.github.co
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build: sync main to 0.2.166 after release
+## X. exclude blocking host-call time from the WASM guest budget
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/core/src/wasm_runtime/engine/wasmtime_engine.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d71c022a`: build: sync main to 0.2.166 after release. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6081c027`: exclude blocking host-call time from the WASM guest budget. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/core/src/wasm_runtime/engine/wasmtime_engine.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "0.3.328"
-version = "0.2.166"
+    AsContextMut, Cache, CacheConfig, Caller, Config, Engine, EngineWeak, Error as WasmtimeError,
+    Instance, Linker, Module, OptLevel, ResourceLimiter, Store,
+    let meter = Arc::clone(&store.data().meter);
+    // `ticks` is `ceil(budget / tick) + 1`; the guest budget is the part
+    // before the phase-safety `+ 1`.
+    meter.arm(
+        EPOCH_TICK_PERIOD.saturating_mul(ticks.saturating_sub(1).try_into().unwrap_or(u32::MAX)),
+    );
+    // At the deadline, trap only if the guest has used its budget EXCLUDING
+    // time spent in host functions; otherwise extend (river#1017).
+    store.epoch_deadline_callback(move |_| Ok(meter.on_deadline()));
+    /// Time this store's guest spends inside host functions, kept out of its
+    /// guest budget and bounded by its own cap. See [`HostCallMeter`].
+    meter: Arc<HostCallMeter>,
+    /// A state with the default 5 s budget's host-call cap (tests that build
+    /// a store directly; the engine uses [`Self::with_meter`]).
+    #[cfg(test)]
+        Self::with_meter(
+            memory_limit_pages,
+            HostCallMeter::new(host_call_cap_for(5.0)),
+        )
+    }
+
+    fn with_meter(memory_limit_pages: u32, meter: Arc<HostCallMeter>) -
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-version = "0.3.327"
-version = "0.2.165"
+    Cache, CacheConfig, Caller, Config, Engine, EngineWeak, Error as WasmtimeError, Instance,
+    Linker, Module, OptLevel, ResourceLimiter, Store,
+    store.epoch_deadline_trap();
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d71c022a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6081c027` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

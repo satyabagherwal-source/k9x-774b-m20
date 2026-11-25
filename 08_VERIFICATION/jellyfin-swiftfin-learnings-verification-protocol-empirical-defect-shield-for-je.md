@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-23T03:27:58.477Z",
+  "timestamp": "2026-11-25T12:00:29.819Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-jellyfin-swiftfin-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [jellyfin-swiftfin-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-23T03:27:58.477Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T12:00:29.819Z`  
 > **Learning ID**: `LEARN-EVO-jellyfin-swiftfin-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/jellyfin-swiftfin-learnings.md`  
 > **Source**: github ([https://github.com/jellyfin/Swiftfin](https://github.com/jellyfin/Swiftfin))  
-> **Source Version**: `db3ae5c9`  
+> **Source Version**: `28488d4b`  
 > **License**: MPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-23T03:27:46.579Z  
+> **Timestamp**: 2026-11-25T11:59:50.559Z  
 > **Learning ID**: `learn-github-jellyfin-swiftfin`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/jellyfin-swiftfin-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/jellyfin/Swiftfin](https://github.com/jellyfin/Swiftfin))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T03:27:46.574Z  
+> **Harvest Timestamp**: 2026-11-25T11:59:50.554Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Native Jellyfin Client for iOS and tvOS 
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 4299 stars
+- **Stars / Engagement**: 4302 stars
 
 ---
 
@@ -661,11 +661,14 @@ extension MediaPlayerQueue {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #2455** (2026-11-19): **Update collections**
-  *Symptoms*: Update collections packages with RTL fixes and proxies updates.  Closes #2453
+- **Issue #2463** (2026-11-24): **Mixed libraries not shown in latest**
+  *Symptoms*: ### This issue respects the following points:  - [x] This is a **bug**, not a question or a configuration issue; Please visit our [forum or chat rooms](https://jellyfin.org/contact/) first to troubleshoot with volunteers, before creating a report. - [x] This issue is **not** already reported on [GitHub](https://github.com/jellyfin/Swiftfin/issues?q=is%3Aopen+is%3Aissue). - [x] I have read the [Common Issues](https://github.com/jellyfin/Swiftfin/blob/main/Documentation/common_issues.md) documentation and this issue was not mentioned there. - [x] I'm using an up to date version of Swiftfin; We generally do not support previous older versions. If possible, please update to the latest version before opening an issue. - [x] I agree to follow Jellyfin's [Code of Conduct](https://jellyfin.org/docs/general/community-standards.html#code-of-conduct).  ### Description of the bug  Mixed libraries are not included in “Latest Movies” or “Latest TV Shows” they show up fine in libraries under media but items are not included in latest on home page   ### Reproduction steps  1. Have a mixed library like Anime movies and shows  2. Open Swiftfin and look at home view  3. Latest does not contain movies or shows from the mixed library   ### Platform  tvOS  ### Application version  1.7.1  ### Where did you install the app from?  App Store  ### Device information  Apple TV 4K Gen3  ### OS version  27.2.1  ### Jellyfin server version  12.4  ### Screenshots or videos  _No response_  ### Relevant log o
 
-- **Issue #2450** (2026-11-20): **Playback timestamps are not centered in their pills when not scrubbing**
-  *Symptoms*: Fixes #2449  In the player overlay, the elapsed and remaining time labels are not centered in their pills when not scrubbing: the elapsed time sticks to the left edge of its pill, and the remaining time sticks to the right edge.  Root cause: in `SplitTimeStamp`, the "/ total" part of each timestamp is hidden with `.isVisible(isScrubbing)`, which only sets opacity to 0 — the hidden text still takes up layout space, so each pill is sized for the full scrubbing string while showing only part of it.  This PR renders the scrub-only "/ total" part conditionally (`if isScrubbing`), so it takes no space when not scrubbing. Note the pill width now changes when scrubbing starts/ends.  **Before** <img width="600" alt="Before" src="https://github.com/user-attachments/assets/af37f7e9-9178-4f1c-a721-0913b485cc4e" />  **After** <img width="600" alt="After" src="https://github.com/user-attachments/assets/c8f03813-953d-491d-89c2-8215413a1620" />
+- **Issue #2456** (2026-11-24): **Rewatching on Home**
+  *Symptoms*: ### Summary  Jellyfin-Web handles rewatching in the `Continue Watching` section as just [`PlaybackPositionTicks && PlaybackPositionTicks > 0`](https://github.com/jellyfin/jellyfin-web/blob/d90bba74d2dc03e3cab92789b38b956da6dfd1f2/src/components/listview/List/listHelper.ts#L172-L177) while we check `isResumable` which only shows items that aren't marked as watched.
+  **Post-Mortem & Fix Analysis**:
+  > > This looks a lot more than necessary to just match web, and I'm not convinced with rewatching settings per library. At the same time, I implement layout settings in #2416.  That's fair. I would lean towards just the continue watching change then to mirror web then I can drop everything else.  Where this got away from me, I did the setting for just continue watching and then it was kind of weird having a setting for half of the home view but nothing else. IMO, if it makes sense to you, I can reduce this to just mirror web and no setting for it.
+  > In hindsight, should this just be an issue on server to make isResumable correct?
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -682,152 +685,56 @@ extension MediaPlayerQueue {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d8df9924` (2026-11-20)
-**Commit Message**: Fix various minor Swift 6 issues (#2439)
+### Incident Patch 1: `28488d4b` (2026-11-25)
+**Commit Message**: Update MPVUI (#2469)
 
-**File**: `Shared/Components/BulletedList.swift` (modified, +1/-0)
+**File**: `Swiftfin.xcodeproj/project.pbxproj` (modified, +4/-4)
 ```diff
-@@ -9,6 +9,7 @@
- import SwiftUI
- 
- @ContentBuilder
-+@MainActor
- func BulletedList(
-     spacing: CGFloat = 8,
-     @ContentBuilder content: @escaping () -> some View
+@@ -1635,16 +1635,16 @@
+ 			isa = XCRemoteSwiftPackageReference;
+ 			repositoryURL = "https://github.com/LePips/MediaAccessibilityKit";
+ 			requirement = {
+-				kind = exactVersion;
+-				version = 0.4.0;
++				kind = upToNextMajorVersion;
++				minimumVersion = 0.4.0;
+ 			};
+ 		};
+ 		E19005010000000000000005 /* XCRemoteSwiftPackageReference "MPVUI" */ = {
+ 			isa = XCRemoteSwiftPackageReference;
+ 			repositoryURL = "https://github.com/LePips/MPVUI";
+ 			requirement = {
+-				kind = exactVersion;
+-				version = 0.10.0;
++				kind = upToNextMajorVersion;
++				minimumVersion = 0.11.0;
+ 			};
+ 		};
+ 		E19010180000000000000003 /* XCRemoteSwiftPackageReference "google-cast-ios-sdk" */ = {
 ```
 
-**File**: `Shared/Components/EasedGradient.swift` (modified, +1/-1)
+**File**: `Swiftfin.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved` (modified, +2/-2)
 ```diff
-@@ -8,7 +8,7 @@
- 
- import SwiftUI
- 
--struct EasedGradient: View, ShapeStyle {
-+nonisolated struct EasedGradient: View, ShapeStyle {
- 
-     enum Curve {
- 
-```
-
-**File**: `Shared/Components/FadeContentTransitionView.swift` (modified, +1/-0)
-```diff
-@@ -60,6 +60,7 @@ struct FadeContentTransitionView<Item: Hashable, Content: View>: PlatformViewRep
-         Coordinator()
-     }
- 
-+    @MainActor
-     final class Coordinator {
- 
-         private var currentContentID: AnyHashable?
-```
-
-**File**: `Shared/Components/Layouts/AdaptiveLayout.swift` (modified, +1/-0)
-```diff
-@@ -172,6 +172,7 @@ struct ViewLayout: Equatable {
- }
- 
- @propertyWrapper
-+@MainActor
- struct AdaptiveLayout: DynamicProperty {
- 
-     @Environment(\.horizontalSizeClass)
-```
-
-**File**: `Shared/Components/LetterPickerBar/Components/LetterPickerCallout.swift` (modified, +1/-1)
-```diff
-@@ -10,7 +10,7 @@ import SwiftUI
- 
- struct LetterPickerActiveLetterKey: PreferenceKey {
- 
--    static var defaultValue: ItemLetter?
-+    static let defaultValue: ItemLetter? = nil
- 
-     static func reduce(value: inout ItemLetter?, nextValue: () -> ItemLetter?) {
-         value = nextValue() ?? value
-```
-
-**File**: `Shared/Components/PreferencesView/KeyCommandAction.swift` (modified, +2/-2)
-```diff
-@@ -14,14 +14,14 @@ struct KeyCommandAction {
-     let subtitle: String?
-     let input: String
-     let modifierFlags: UIKeyModifierFlags
--    let action: () -> Void
-+    let action: @MainActor () -> Void
- 
-     init(
-         title: String,
-         subtitle: String? = nil,
-         input: String,
-         modifierFlags: UIKeyModifierFlags = [],
--        action: @escaping () -> Void
-+        action: @escaping @MainActor () -> Void
-     ) {
-         self.title = title
-         self.subtitle = subtitle
-```
-
-**File**: `Shared/Components/PreferencesView/PreferenceKeys.swift` (modified, +4/-4)
-```diff
-@@ -11,7 +11,7 @@ import SwiftUI
- #if os(iOS)
- struct KeyCommandsPreferenceKey: PreferenceKey {
- 
--    static var defaultValue: [KeyCommandAction] = []
-+    static let defaultValue: [KeyCommandAction] = []
- 
-     static func reduce(value: inout [KeyCommandAction], nextValue: () -> [KeyCommandAction]) {
-         value.append(contentsOf: nextValue())
-@@ -20,7 +20,7 @@ struct KeyCommandsPreferenceKey: PreferenceKey {
- 
- struct PreferredScreenEdgesDeferringSystemGesturesPreferenceKey: PreferenceKey {
- 
--    static var defaultValue: UIRectEdge = [.left, .right]
-+    static let defaultValue: UIRectEdge = [.left, .right]
- 
-     static func reduce(value: inout UIRectEdge, nextValue: () -> UIRectEdge) {
-         value = nextValue()
-@@ -29,7 +29,7 @@ struct PreferredScreenEdgesDeferringSystemGesturesPreferenceKey: PreferenceKey {
- 
- struct PrefersHomeIndicatorAutoHiddenPreferenceKey: PreferenceKey {
- 
--    static var defaultValue: Bool = false
-+    static let defaultValue: Bool = false
- 
-     static func reduce(value: inout Bool, nextValue: () -> Bool) {
-         value = nextValue()
-@@ -38,7 +38,7 @@ struct PrefersHomeIndicatorAutoHiddenPreferenceKey: PreferenceKey {
- 
- struct SupportedOrientationsPreferenceKey: PreferenceKey {
- 
--    static var defaultValue: UIInterfaceOrientationMask = .allButUpsideDown
-+    static let defaultValue: UIInterfaceOrientationMask = .allButUpsideDown
- 
-     static func reduce(value: inout UIInterfaceOrientationMask, nextValue: () -> UIInterfaceOrientationMask) {
-         value = nextValue()
-```
-
-**File**: `Shared/Components/PreferencesView/PressCommandAction.swift` (modified, +1/-1)
-```diff
-@@ -12,7 +12,7 @@ struct PressCommandAction {
- 
-     let title: String
-     let press: UIPress.PressType
--    let action: () -> Void
-+    let action: @MainActor () -> Void
- }
- 
- extension PressCommandAction: Equatable {
+@@ -177,8 +177,8 @@
+       "kind" : "remoteSourceControl",
+       "location" : "https://github.com/LePips/MPVUI",
+       "state" : {
+-        "revision" : "9f15a49dfa04170729047587df81aa0f5ae39ce3",
+-        "version" : "0.10.0"
++        "revision" : "07a68c789fc33c33f1a1d8e8d090467594b7e859",
++        "version" : "0.11.0"
+       }
+     },
+     {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2469** (2026-11-25): Update MPVUI (@LePips)
+- **PR #2465** (closed): Match tvOS display criteria from stream metadata before loading AVPlayerItem (@awkimball)
+- **PR #2464** (closed): Add Anime4K and ArtCNN upscaling to the MPV player (@fcannizzaro)
 - **PR #2460** (closed): PosterGroup Follows User Preference (@chickdan)
+- **PR #2456** (2026-11-24): Rewatching on Home (@JPKribs)
 - **PR #2455** (2026-11-19): Update collections (@LePips)
-- **PR #2454** (2026-11-18): Fix iOS Video Screenshot (@JPKribs)
-- **PR #2452** (2026-11-18): Some `Observable` migration (@LePips)
-- **PR #2450** (2026-11-20): Playback timestamps are not centered in their pills when not scrubbing (@lzgh0102)
-- **PR #2444** (2026-11-17): Fix search and layout (@LePips)
 
 ---
 
@@ -847,31 +754,37 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. various minor Swift 6 issues
+## X. Update MPVUI
 
 **RULE**:
-When implementing operations in `Shared/Components/BulletedList.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in jellyfin/Swiftfin. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Swiftfin.xcodeproj/project.pbxproj`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in jellyfin/Swiftfin. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d8df9924`: various minor Swift 6 issues. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `28488d4b`: Update MPVUI. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Shared/Components/BulletedList.swift`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Swiftfin.xcodeproj/project.pbxproj`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-@MainActor
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.4.0;
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.11.0;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+				kind = exactVersion;
+				version = 0.4.0;
+				kind = exactVersion;
+				version = 0.10.0;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d8df9924` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `28488d4b` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

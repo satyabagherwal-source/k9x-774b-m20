@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T11:51:31.419Z",
-  "total_records": 2668,
+  "last_updated": "2026-11-25T12:00:30.155Z",
+  "total_records": 2671,
   "domains": {
     "A": {
       "total": 22,
@@ -71,7 +71,7 @@
       ]
     },
     "D": {
-      "total": 1000,
+      "total": 1003,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -1072,7 +1072,10 @@
         "domain_intelligence-research-knowledge-intelligence-hf-inclusionai-lingsante-3-1-air-vl-learnings-co",
         "domain_intelligence-research-knowledge-intelligence-openbmb-minicpm-ocr-1-0-core-invariants",
         "DOM-D-776ABDA3",
-        "domain_intelligence-research-knowledge-intelligence-hf-openbmb-minicpm-ocr-1-0-learnings-core-invari"
+        "domain_intelligence-research-knowledge-intelligence-hf-openbmb-minicpm-ocr-1-0-learnings-core-invari",
+        "domain_intelligence-research-knowledge-intelligence-thinkingmachines-tml-d24-varloop-research-core-i",
+        "DOM-D-18CF46EE",
+        "domain_intelligence-research-knowledge-intelligence-hf-thinkingmachines-tml-d24-varloop-research-lea"
       ]
     },
     "E": {
@@ -10034,8 +10037,8 @@
       "title": "Technical Construction Intelligence: freenet/freenet-core Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-technical-construction-intelligence-freenet-freenet-core-co.md",
       "repository": "freenet/freenet-core",
-      "content_hash": "c00a9d6b75522b510fa2fb1224b9d141ee817c88dd59e81be68fc73987fa94d4",
-      "created_at": "2026-11-25T06:47:53.989Z"
+      "content_hash": "11f0e31377a392ab4ea642146b7a12a25d8d79adbfac40b421f0313abc9dfc8c",
+      "created_at": "2026-11-25T11:59:57.087Z"
     },
     "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-core-invariants",
@@ -21778,8 +21781,8 @@
       "title": "Research & Knowledge Intelligence: LiquidAI/LFM3-VL-2B Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-liquidai-lfm3-vl-2b-research-knowledge-intelligence-liquidai-lfm3-vl-2b-core-.md",
       "repository": "LiquidAI/LFM3-VL-2B",
-      "content_hash": "15c7977b72f3bfb9a0521b7ff8c92654d55180231e0bc1cc6632a75976bcc7d1",
-      "created_at": "2026-11-21T20:36:27.802Z"
+      "content_hash": "4fe137cb6a762a49ef2be233a3bb0e88950f1e24f43739a250a3f504b9f58e43",
+      "created_at": "2026-11-25T11:59:44.258Z"
     },
     "DOM-D-98B9F9F9": {
       "record_id": "DOM-D-98B9F9F9",
@@ -21829,8 +21832,8 @@
       "title": "Research & Knowledge Intelligence: hf-liquidai-lfm3-vl-2b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-liquidai-lfm3-vl-2b-learnings-research-knowledge-intelligence-hf-liquidai-lfm.md",
       "repository": "hf-liquidai-lfm3-vl-2b-learnings",
-      "content_hash": "dac6ef95671ca14d51219628823186c6888506ee674c43095c4608ae9ce5c07e",
-      "created_at": "2026-11-21T20:36:47.764Z"
+      "content_hash": "034b9b2a033fa1c5d82667bf98f63953889f341903c3c585127bfd5f2fd8de54",
+      "created_at": "2026-11-25T12:00:29.018Z"
     },
     "domain_intelligence-research-knowledge-intelligence-ccore-qwen3-5-4b-glb-3d-coder-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-ccore-qwen3-5-4b-glb-3d-coder-core-invariants",
@@ -22316,8 +22319,8 @@
       "title": "Technical Construction Intelligence: nats-io/nats.go Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nats-io-nats-go-technical-construction-intelligence-nats-io-nats-go-core-invaria.md",
       "repository": "nats-io/nats.go",
-      "content_hash": "9d355a3263ddd889eb487d95fe0816d63c5c6bfe4e16480dc3d73fba7c579e9e",
-      "created_at": "2026-11-18T14:24:17.539Z"
+      "content_hash": "ec37e19b49a0e99f13f485ccf970498da5df3c078be6ff27eff2578ae4b11600",
+      "created_at": "2026-11-25T11:59:54.490Z"
     },
     "domain_intelligence-technical-construction-intelligence-nats-io-nats-go-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-nats-io-nats-go-learnings-core-invariants",
@@ -23144,8 +23147,8 @@
       "title": "Technical Construction Intelligence: jellyfin/Swiftfin Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-jellyfin-swiftfin-technical-construction-intelligence-jellyfin-swiftfin-core-inv.md",
       "repository": "jellyfin/Swiftfin",
-      "content_hash": "b6d5c4537c692f1b74bd388aee217d2f53c89b1824dc38cb1c808d170a4e0831",
-      "created_at": "2026-11-23T03:27:48.094Z"
+      "content_hash": "077daa2b598016c0efa1207eabbf5c4a5133c134893923600ff048a6e5ed157e",
+      "created_at": "2026-11-25T11:59:51.887Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-microsoft-florence-2-base-learnings-core-inva": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-microsoft-florence-2-base-learnings-core-inva",
@@ -23162,8 +23165,8 @@
       "title": "Technical Construction Intelligence: jellyfin-swiftfin-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-jellyfin-swiftfin-learnings-technical-construction-intelligence-jellyfin-swiftfi.md",
       "repository": "jellyfin-swiftfin-learnings",
-      "content_hash": "3966735e8b853da25eedf10d986585382149ae33e38776baf5ed3ab363ef799f",
-      "created_at": "2026-11-23T03:27:58.765Z"
+      "content_hash": "7ef0f73db249463d7f999ec9aee8151b87150793a16149be8d89cdfee0296204",
+      "created_at": "2026-11-25T12:00:30.155Z"
     },
     "domain_intelligence-research-knowledge-intelligence-ataraxy-labs-sem-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-ataraxy-labs-sem-core-invariants",
@@ -44835,6 +44838,66 @@
       "repository": "authzed-spicedb-learnings",
       "content_hash": "8aff09aa2869cfd36577a025786a10edd6d915112ea652745075d8fc0e6ed736",
       "created_at": "2026-11-25T11:51:30.546Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-thinkingmachines-tml-d24-varloop-research-core-i": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-thinkingmachines-tml-d24-varloop-research-core-i",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: thinkingmachines/TML-d24-varloop-research Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-thinkingmachines-tml-d24-varloop-research-research-knowledge-intelligence-thi.md",
+      "repository": "thinkingmachines/TML-d24-varloop-research",
+      "content_hash": "17bc84ec3f538f1d123041bd9d7b074d26bb727f02e7499c5f5befaefc9d3131",
+      "created_at": "2026-11-25T11:59:41.715Z"
+    },
+    "DOM-D-18CF46EE": {
+      "record_id": "DOM-D-18CF46EE",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): thinkingmachines/TML-d24-varloop-research",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-thinkingmachines-tml-d24-varloop-research-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/thinkingmachines/TML-d24-varloop-research](https://huggingface.co/thinkingmachines/TML-d24-varloop-research))  \n> **Source Version**",
+      "content_hash": "6973b5790ca2f30ddb5b061e8fe1c776caa99396b271aeeb9690dd3a334d8438",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-thinkingmachines-tml-d24-varloop-research-learnings.md`  \n> **Source**: huggingfa -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-thinkingmachines-tml-d24-varloop-research-learnings.md`  \n> **Source**: huggingfa",
+      "provenance": {
+        "source_uri": "project://hf-thinkingmachines-tml-d24-varloop-research/hf-thinkingmachines-tml-d24-varloop-research-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-25T12:00:00.080Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-thinkingmachines-tml-d24-varloop-research)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-thinkingmachines-tml-d24-varloop-research"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-25T12:00:28.176Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-thinkingmachines-tml-d24-varloop-research-lea": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-thinkingmachines-tml-d24-varloop-research-lea",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-thinkingmachines-tml-d24-varloop-research-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-thinkingmachines-tml-d24-varloop-research-learnings-research-knowledge-intell.md",
+      "repository": "hf-thinkingmachines-tml-d24-varloop-research-learnings",
+      "content_hash": "09b3bc043bd2968f3aaaa19752d9f8dfb57c4dd54c672a0c77b315ceedc44b59",
+      "created_at": "2026-11-25T12:00:28.525Z"
     }
   }
 }

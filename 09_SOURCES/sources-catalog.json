@@ -2563,10 +2563,10 @@
     "repository": "nats-io/nats.go",
     "platform": "github",
     "sourceUrl": "https://github.com/nats-io/nats.go",
-    "sourceVersion": "792e440f",
+    "sourceVersion": "c0846a17",
     "license": "Apache-2.0",
-    "contentHash": "d37c954f809d082b8e2f6c03169612bd25448c5631909c0cb147887574f339c0",
-    "lastHarvestedAt": "2026-11-18T14:24:17.100Z",
+    "contentHash": "e2041a3c7a36e43da191ced2e386c01decd71a5cb1c6752502d5385b1307a6e2",
+    "lastHarvestedAt": "2026-11-25T11:59:54.049Z",
     "learningId": "learn-github-nats-io-nats-go"
   },
   "chrispybacon-dev-dockflare": {
@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "d71c022a",
+    "sourceVersion": "ef8c0626",
     "license": "NOASSERTION",
-    "contentHash": "e628f53fb6a3efc37ce3605e9886673abc3d9ed06e5bc1f3afc177d7fe2db5ea",
-    "lastHarvestedAt": "2026-11-25T06:47:53.576Z",
+    "contentHash": "55eaa0460ea19abd70782a839534fe1e4b97d59856af53ac1d7d59848a1d5985",
+    "lastHarvestedAt": "2026-11-25T11:59:56.651Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {
@@ -8333,10 +8333,10 @@
     "repository": "jellyfin/Swiftfin",
     "platform": "github",
     "sourceUrl": "https://github.com/jellyfin/Swiftfin",
-    "sourceVersion": "db3ae5c9",
+    "sourceVersion": "28488d4b",
     "license": "MPL-2.0",
-    "contentHash": "d1fd612d90054f60cd18ab2597e6574e7e81e5e6a82ad4af923aac2fd6b14005",
-    "lastHarvestedAt": "2026-11-23T03:27:47.704Z",
+    "contentHash": "ec8be559662d1a264e67b067acb054890de1635aac3f189bae1c0cd019420cf4",
+    "lastHarvestedAt": "2026-11-25T11:59:51.453Z",
     "learningId": "learn-github-jellyfin-swiftfin"
   },
   "sergdort-moderncleanarchitectureswiftui": {
@@ -11455,8 +11455,8 @@
     "sourceUrl": "https://huggingface.co/LiquidAI/LFM3-VL-2B",
     "sourceVersion": "hf-liquidai-lfm3-vl-2b",
     "license": "Open-Source",
-    "contentHash": "e8fc1e21abeb4164939253907e7864fa1c47fa52da50b34157901366294ab468",
-    "lastHarvestedAt": "2026-11-21T20:36:27.532Z",
+    "contentHash": "e74378776e8b4db3a07115390c287c2011213003dc1e00ebd7333cd32c783101",
+    "lastHarvestedAt": "2026-11-25T11:59:44.028Z",
     "learningId": "learn-huggingface-liquidai-lfm3-vl-2b"
   },
   "hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf": {
@@ -13448,5 +13448,15 @@
     "contentHash": "060d8c64aef561505f6c9356459677681ac0abc289b39283b751f3df1495900f",
     "lastHarvestedAt": "2026-11-25T08:56:01.688Z",
     "learningId": "learn-huggingface-inclusionai-lingsante-3-1-air-vl"
+  },
+  "hf-thinkingmachines-tml-d24-varloop-research": {
+    "repository": "thinkingmachines/TML-d24-varloop-research",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/thinkingmachines/TML-d24-varloop-research",
+    "sourceVersion": "hf-thinkingmachines-tml-d24-varloop-research",
+    "license": "Open-Source",
+    "contentHash": "1fab3abe4b34b941259aaef95459d2b171630206a0cc55207138341131725106",
+    "lastHarvestedAt": "2026-11-25T11:59:41.477Z",
+    "learningId": "learn-huggingface-thinkingmachines-tml-d24-varloop-research"
   }
 }

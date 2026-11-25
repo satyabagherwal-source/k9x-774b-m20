@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-25T11:30:53.588Z",
+  "updated_at": "2026-11-25T12:00:28.205Z",
   "statistics": {
-    "total_nodes": 537,
-    "total_edges": 221,
+    "total_nodes": 538,
+    "total_edges": 222,
     "domain_distribution": {
-      "D": 325,
+      "D": 326,
       "M": 1,
       "H": 97,
       "J": 22,
@@ -21,7 +21,7 @@
       "C": 1
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 217,
+      "CONSTRAINED_BY_ARCHITECTURE": 218,
       "VERIFIED_BY_TEST": 2,
       "STYLED_BY_DESIGN": 2
     }
@@ -11989,6 +11989,29 @@
       ],
       "created_at": "2026-11-25T11:30:53.588Z",
       "updated_at": "2026-11-25T11:30:53.588Z"
+    },
+    "DOM-D-18CF46EE": {
+      "id": "DOM-D-18CF46EE",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): thinkingmachines/TML-d24-varloop-research",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-thinkingmachines-tml-d24-varloop-research-learnings.md`  \n> **Source**: huggingfa -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-thinkingmachines-tml-d24-varloop-research-learnings.md`  \n> **Source**: huggingfa",
+      "confidence": 1,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-thinkingmachines-tml-d24-varloop-research/hf-thinkingmachines-tml-d24-varloop-research-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-25T12:00:00.080Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-thinkingmachines-tml-d24-varloop-research)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence",
+        "M"
+      ],
+      "created_at": "2026-11-25T12:00:28.204Z",
+      "updated_at": "2026-11-25T12:00:28.204Z"
     }
   },
   "edges": [
@@ -14201,6 +14224,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-D-776ABDA3 [D] with Domain M",
       "created_at": "2026-11-25T11:30:53.588Z"
+    },
+    {
+      "id": "EDGE-B80428DF7EC6",
+      "sourceId": "DOM-D-18CF46EE",
+      "targetId": "NODE-M-domain-bridge-m",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-D-18CF46EE [D] with Domain M",
+      "created_at": "2026-11-25T12:00:28.205Z"
     }
   ]
 }

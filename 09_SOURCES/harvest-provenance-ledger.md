@@ -13090,3 +13090,9 @@ Every entry in this ledger must capture:
 | `learn-huggingface-liquidai-lfm3-omni-2b` | `https://huggingface.co/LiquidAI/LFM3-Omni-2B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-25T11:51:09.382Z |
 | `learn-github-authzed-spicedb` | `https://github.com/authzed/spicedb` | `9596a364` | Multi-dimensional audit evidence | 2026-11-25T11:51:19.347Z |
 | `learn-github-vespa-engine-vespa` | `https://github.com/vespa-engine/vespa` | `699e6770` | Multi-dimensional audit evidence | 2026-11-25T11:51:25.726Z |
+| `learn-huggingface-thinkingmachines-tml-d24-varloop-research` | `https://huggingface.co/thinkingmachines/TML-d24-varloop-research` | `hf-thinkin` | Multi-dimensional audit evidence | 2026-11-25T11:59:41.477Z |
+| `learn-huggingface-liquidai-lfm3-vl-2b` | `https://huggingface.co/LiquidAI/LFM3-VL-2B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-25T11:59:44.028Z |
+| `learn-github-jellyfin-swiftfin` | `https://github.com/jellyfin/Swiftfin` | `28488d4b` | Multi-dimensional audit evidence | 2026-11-25T11:59:51.453Z |
+| `learn-github-nats-io-nats-go` | `https://github.com/nats-io/nats.go` | `c0846a17` | Multi-dimensional audit evidence | 2026-11-25T11:59:54.049Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `ef8c0626` | Multi-dimensional audit evidence | 2026-11-25T11:59:56.651Z |
+| `learn-dom-d-18cf46ee` | `project://hf-thinkingmachines-tml-d24-varloop-research` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-thinkingmachines-tml-d24-varloop-research-learnings.md` | 2026-11-25T12:00:28.208Z |

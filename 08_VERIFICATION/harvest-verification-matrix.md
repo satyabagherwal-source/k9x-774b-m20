@@ -13057,3 +13057,9 @@
 | `CYCLE-20261125-BQKI` | `2026-11-25T11:51:09.378Z` | `LiquidAI/LFM3-Omni-2B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liquidai-lfm3-omni-2b-learnings.md` | Yes (`5e7f5908...`) |
 | `CYCLE-20261125-BY9A` | `2026-11-25T11:51:19.342Z` | `authzed/spicedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10516` | Yes (`e0722288...`) |
 | `CYCLE-20261125-C36I` | `2026-11-25T11:51:25.722Z` | `vespa-engine/vespa` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10517` | Yes (`540807b7...`) |
+| `CYCLE-20261125-MPPC` | `2026-11-25T11:59:41.472Z` | `thinkingmachines/TML-d24-varloop-research` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-thinkingmachines-tml-d24-varloop-research-learnings.md` | Yes (`1fab3abe...`) |
+| `CYCLE-20261125-MRO6` | `2026-11-25T11:59:44.022Z` | `LiquidAI/LFM3-VL-2B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liquidai-lfm3-vl-2b-learnings.md` | Yes (`e7437877...`) |
+| `CYCLE-20261125-MXEF` | `2026-11-25T11:59:51.447Z` | `jellyfin/Swiftfin` | Commit diff / Patch analysis | `VERIFIED` | `Rule EXISTING` | Yes (`ec8be559...`) |
+| `CYCLE-20261125-MZEL` | `2026-11-25T11:59:54.045Z` | `nats-io/nats.go` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10518` | Yes (`e2041a3c...`) |
+| `CYCLE-20261125-N1EU` | `2026-11-25T11:59:56.646Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10519` | Yes (`55eaa046...`) |
+| `CYCLE-2026-11-25-PROJ-EVOLVE` | `2026-11-25T12:00:28.208Z` | `hf-thinkingmachines-tml-d24-varloop-research` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-18CF46EE` [Domain D] | Yes (`6973b579...`) |

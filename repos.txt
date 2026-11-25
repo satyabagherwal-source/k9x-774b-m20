@@ -5408,3 +5408,7 @@ https://github.com/alejandrobujan/tendedero
 # --- Automatically Discovered by AI Scout Engine [2026-11-25T08:55:55.104Z] ---
 # [HUGGINGFACE-AI-MODELS] inclusionAI/LingSante-3.1-air-VL (1889 score) - Verified Hugging Face Model: inclusionAI/LingSante-3.1-air-VL (117 likes, 719 do
 https://huggingface.co/inclusionAI/LingSante-3.1-air-VL
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-25T11:59:34.922Z] ---
+# [HUGGINGFACE-AI-MODELS] thinkingmachines/TML-d24-varloop-research (3170 score) - Verified Hugging Face Model: thinkingmachines/TML-d24-varloop-research (117 like
+https://huggingface.co/thinkingmachines/TML-d24-varloop-research

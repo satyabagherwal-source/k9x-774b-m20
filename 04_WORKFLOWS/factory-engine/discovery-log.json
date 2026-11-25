@@ -22279,5 +22279,17 @@
     "downloads": 719,
     "qualityScore": 1889,
     "discoveredAt": "2026-11-25T08:53:47.058Z"
+  },
+  {
+    "name": "thinkingmachines/TML-d24-varloop-research",
+    "fullName": "thinkingmachines/TML-d24-varloop-research",
+    "url": "https://huggingface.co/thinkingmachines/TML-d24-varloop-research",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: thinkingmachines/TML-d24-varloop-research (117 likes, 3398 downloads)",
+    "likes": 117,
+    "downloads": 3398,
+    "qualityScore": 3170,
+    "discoveredAt": "2026-11-25T11:57:26.826Z"
   }
 ]
