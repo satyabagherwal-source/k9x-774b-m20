@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-25T23:03:05.044Z",
+  "last_updated": "2026-11-25T23:12:03.457Z",
   "total_verified_learnings": 9121,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25530,
+  "total_items": 25535,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112125,10 +112125,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-dathere-qsv-content-information-intelligence-dathere-qsv-core-invariants.md",
       "title": "Content & Information Intelligence: dathere/qsv Core Invariants",
       "repository": "dathere/qsv",
-      "source_version": "778227f6",
-      "content_hash": "9e680615dc94f03c409441a9a834d6243aa74d5417183729471d78de1f27c355",
+      "source_version": "5108f34d",
+      "content_hash": "d83e294ec6fb0f0f409a8ccece6d0afb04c1acc91a0dd543e4934400241fafe6",
       "domain_letter": "I",
-      "persisted_at": "2026-11-21T22:48:38.701Z"
+      "persisted_at": "2026-11-25T23:11:57.987Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-dathere-qsv": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-dathere-qsv",
@@ -112137,10 +112137,10 @@
       "relative_path": "08_VERIFICATION/dathere-qsv-verification-protocol-empirical-defect-shield-for-dathere-qsv.md",
       "title": "Verification Protocol: Empirical Defect Shield for dathere/qsv",
       "repository": "dathere/qsv",
-      "source_version": "c9b35465",
-      "content_hash": "d5008f6baa2fe1e8fb46f91bee9dfe2a1d075ebae4a6057eb9a4f768f554a9cc",
+      "source_version": "5108f34d",
+      "content_hash": "b3b5a1f9d1f754501113ad863d021cdf0ffe061502c9dfc19657ddee4ffde4a1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T14:05:10.516Z"
+      "persisted_at": "2026-11-25T23:11:58.169Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i",
@@ -113010,25 +113010,25 @@
       "item_id": "domain_intelligence-technical-construction-intelligence-tursodatabase-turso-core-invariants",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-limbo-technical-construction-intelligence-tursodatabase-turso-core.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-turso-technical-construction-intelligence-tursodatabase-turso-core.md",
       "title": "Technical Construction Intelligence: tursodatabase/turso Core Invariants",
       "repository": "tursodatabase/turso",
-      "source_version": "13b96ffe",
-      "content_hash": "18f01bada5d0227f08ef73b8b61e00805bb87a264981dbce33680a03e4f5299e",
+      "source_version": "9e928387",
+      "content_hash": "175e41fa632094ce6f62a74f3819afe4b3afd4b1a7b8856f8596ea0fa8e58c13",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T13:06:06.203Z"
+      "persisted_at": "2026-11-25T23:11:55.909Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tursodatabase-turso": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tursodatabase-turso",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/tursodatabase-limbo-verification-protocol-empirical-defect-shield-for-tursodatab.md",
+      "relative_path": "08_VERIFICATION/tursodatabase-turso-verification-protocol-empirical-defect-shield-for-tursodatab.md",
       "title": "Verification Protocol: Empirical Defect Shield for tursodatabase/turso",
       "repository": "tursodatabase/turso",
-      "source_version": "13b96ffe",
-      "content_hash": "cf2526b79a941e9974d773e69166dbb0f5b0deaa3dd0bdca23c4b5604bd2894d",
+      "source_version": "9e928387",
+      "content_hash": "de06b53f4963c984647a9b3e89eac09b79aa45df98f2a40a75462aa5b8a7a14f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T13:06:06.438Z"
+      "persisted_at": "2026-11-25T23:11:56.084Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-altworld-hemmingway-1-learnings-core-invarian": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-altworld-hemmingway-1-learnings-core-invarian",
@@ -212599,8 +212599,8 @@
       "slug": "grpc-grpc-rust",
       "platform": "github",
       "source_url": "https://github.com/grpc/grpc-rust",
-      "source_version": "c16dbace",
-      "content_hash": "24a4a8d584ef84a668283e088090328d013b9491344a0b3ead85efecbdb9ebc8",
+      "source_version": "39b3ea7c",
+      "content_hash": "3c67d06edbab827a18824373dc8d0d74421cdc216d9feac02e118dc0472a873d",
       "dossier_path": "07_PROJECT_LEARNING/grpc-grpc-rust-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/grpc-grpc-rust-learnings.md",
       "promoted_rules": [
@@ -212628,6 +212628,11 @@
           "number": 10295,
           "title": "add RLS adaptive throttler",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10556,
+          "title": "Drop Eq bound for ResolverUpdateAttributes values",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -212635,7 +212640,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T15:36:00.985Z",
+      "verified_at": "2026-11-25T23:11:42.608Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -212677,10 +212682,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-grpc-grpc-rust-architecture-intelligence-grpc-grpc-rust-core-invariants.md",
       "title": "Architecture Intelligence: grpc/grpc-rust Core Invariants",
       "repository": "grpc/grpc-rust",
-      "source_version": "c16dbace",
-      "content_hash": "a0b4e124847bec5594ddb3bc9b1be41bca88a7eca5604a3bbc336ec3c8b9a32d",
+      "source_version": "39b3ea7c",
+      "content_hash": "bf98406ccfc9a9c5235fd4d618348e17aa39dba0820a2c675b284f18a6d99678",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T15:36:01.607Z"
+      "persisted_at": "2026-11-25T23:11:43.245Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-grpc-grpc-rust": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-grpc-grpc-rust",
@@ -212689,10 +212694,10 @@
       "relative_path": "08_VERIFICATION/grpc-grpc-rust-verification-protocol-empirical-defect-shield-for-grpc-grpc-rust.md",
       "title": "Verification Protocol: Empirical Defect Shield for grpc/grpc-rust",
       "repository": "grpc/grpc-rust",
-      "source_version": "c16dbace",
-      "content_hash": "334766a4218ae95472a462eda854855c4855cbe827db5a365cfd881d4f9e044d",
+      "source_version": "39b3ea7c",
+      "content_hash": "26b43ad2fac7a530794dd118f68e6b6cd85f9eaa05f4321bb1e54cb7b7e4b0f4",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T15:36:01.766Z"
+      "persisted_at": "2026-11-25T23:11:43.436Z"
     },
     "learn-github-mattermost-mattermost": {
       "learning_id": "learn-github-mattermost-mattermost",
@@ -213063,9 +213068,9 @@
       "title": "Architecture Intelligence: grpc-grpc-rust-learnings Core Invariants",
       "repository": "grpc-grpc-rust-learnings",
       "source_version": "HEAD",
-      "content_hash": "c43459f13ed9ce4ce0190d353c648fbe1146fe7a36a15ee56eb3b5e407b6aba5",
+      "content_hash": "d184d6197f2b0303d8407c34beaf89e30a485c1ad820cc2d4e4f1dadb7107b0b",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T15:36:14.171Z"
+      "persisted_at": "2026-11-25T23:12:01.621Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-grpc-grpc-rust-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-grpc-grpc-rust-learnings",
@@ -213075,9 +213080,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for grpc-grpc-rust-learnings",
       "repository": "grpc-grpc-rust-learnings",
       "source_version": "HEAD",
-      "content_hash": "db6b678cef310b698cea7a3300eee983db24aeebf481999b25aefd0cb1b00cf8",
+      "content_hash": "c3cde0d51c465671391fbd9825c4f182ec1176ded1f4a41269587b13f97ca698",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T15:36:14.316Z"
+      "persisted_at": "2026-11-25T23:12:01.792Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-",
@@ -213701,13 +213706,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "tursodatabase/turso",
       "repository": "tursodatabase/turso",
-      "slug": "tursodatabase-limbo",
+      "slug": "tursodatabase-turso",
       "platform": "github",
-      "source_url": "https://github.com/tursodatabase/limbo",
-      "source_version": "13b96ffe",
-      "content_hash": "4160571aa48fb1daed1bdc42a0286c2e427add6e49cc4dbd21da35b8533a22df",
-      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
+      "source_url": "https://github.com/tursodatabase/turso",
+      "source_version": "9e928387",
+      "content_hash": "c771ab7a789d144aff6a3e5cb712e375f5eeeacd8b800191eacc6de562fe1581",
+      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
       "promoted_rules": [
         {
           "number": 8367,
@@ -213782,7 +213787,7 @@
         {
           "number": 10532,
           "title": "Merge 'build(deps): bump fast-xml-parser from 5.11.1 to 5.12.1 in /examples/reac",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -213790,7 +213795,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T13:06:05.307Z",
+      "verified_at": "2026-11-25T23:11:55.272Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -220419,8 +220424,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "dbec78ae",
-      "content_hash": "181237dc56e61313e8da477a35aa5595644ecec7333090e245550e3c789d12aa",
+      "source_version": "5108f34d",
+      "content_hash": "d02f523e0044f7b17f6f8769f75821f263916ce20521c0b9476389da2e193514",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -220633,6 +220638,11 @@
           "number": 10299,
           "title": "bump Polars to upstream rev 08b2814",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10557,
+          "title": "make --nulls match empty join keys, as documented",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -220640,7 +220650,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T15:53:47.801Z",
+      "verified_at": "2026-11-25T23:11:57.355Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -262414,9 +262424,9 @@
       "title": "Technical Construction Intelligence: tursodatabase-turso-learnings Core Invariants",
       "repository": "tursodatabase-turso-learnings",
       "source_version": "HEAD",
-      "content_hash": "f74006668b199c552244ed01df4743389d37d9022cd0cfaf0f0561f9320ccddc",
+      "content_hash": "e3c3c29d329a6e358aa94b804dab8674effb49730e2d13bc570af2974a24391f",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T21:24:26.508Z"
+      "persisted_at": "2026-11-25T23:12:03.285Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tursodatabase-turso-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tursodatabase-turso-learnings",
@@ -262426,9 +262436,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for tursodatabase-turso-learnings",
       "repository": "tursodatabase-turso-learnings",
       "source_version": "HEAD",
-      "content_hash": "b8faed28b038bf7be7df88d9e7d5c8ef97b56f4bb300ac4bf7132bb3636877b2",
+      "content_hash": "fb4429f4f19e2e69a232644da4770658ef536332cb61b83f3e47b73361d52f9f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T21:24:26.690Z"
+      "persisted_at": "2026-11-25T23:12:03.457Z"
     },
     "learn-huggingface-n4ze3m-tiny-voca": {
       "learning_id": "learn-huggingface-n4ze3m-tiny-voca",
@@ -269215,7 +269225,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/microsoft/Mage-VL-Cowork",
       "source_version": "hf-microsoft-mage-vl-cowork",
-      "content_hash": "3529f62cfbc060b8aaec6ac1b7302ec7cb04a5f1d3e08e576a33a65ac3172091",
+      "content_hash": "0b6a39ad24f0b8ddf51ead0f02607a3eb21459c4249d77fc1847148969374b9e",
       "dossier_path": "07_PROJECT_LEARNING/hf-microsoft-mage-vl-cowork-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-microsoft-mage-vl-cowork-learnings.md",
       "promoted_rules": [],
@@ -269224,7 +269234,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T01:43:56.668Z",
+      "verified_at": "2026-11-25T23:11:40.703Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -269241,9 +269251,9 @@
       "title": "Research & Knowledge Intelligence: microsoft/Mage-VL-Cowork Core Invariants",
       "repository": "microsoft/Mage-VL-Cowork",
       "source_version": "hf-microsoft-mage-vl-cowork",
-      "content_hash": "a437c4f11a431a242b4a85459dad9b0fdf6119ff91a924059b172011f42a25c2",
+      "content_hash": "612e6fb7a32feb025276497a987730a1a8e22a8d739c29c87fd6fe4b9e3392cf",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T01:43:57.084Z"
+      "persisted_at": "2026-11-25T23:11:41.161Z"
     },
     "learn-github-sweetpad-dev-sweetpad": {
       "learning_id": "learn-github-sweetpad-dev-sweetpad",
@@ -269367,9 +269377,9 @@
       "title": "Research & Knowledge Intelligence: hf-microsoft-mage-vl-cowork-learnings Core Invariants",
       "repository": "hf-microsoft-mage-vl-cowork-learnings",
       "source_version": "HEAD",
-      "content_hash": "17b60e5d1267cc64c0d0541c4235779a3d3ad624232dda90fd3b645faee5a28d",
+      "content_hash": "466ff37cff33708fc0f46b1cb113531549030c93b878a9a459f6dcb725ff029e",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T01:44:12.493Z"
+      "persisted_at": "2026-11-25T23:12:02.171Z"
     },
     "domain_intelligence-architecture-intelligence-sweetpad-dev-sweetpad-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-sweetpad-dev-sweetpad-learnings-core-invariants",
@@ -348451,26 +348461,26 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 10532,
       "title": "Merge 'build(deps): bump fast-xml-parser from 5.11.1 to 5.12.1 in /examples/reac",
-      "source_url": "https://github.com/tursodatabase/limbo",
-      "source_version": "13b96ffe",
+      "source_url": "https://github.com/tursodatabase/turso",
+      "source_version": "9e928387",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-25T13:06:05.307Z"
+      "verified_at": "2026-11-25T23:11:55.272Z"
     },
     "candidate_directive-merge-build-deps-bump-fast-xml-parser-from-5-11-1-to-5-12-1-in-examples-reac": {
       "item_id": "candidate_directive-merge-build-deps-bump-fast-xml-parser-from-5-11-1-to-5-12-1-in-examples-reac",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-12VR-merge-build-deps-bump-fast-xml-parser-from-5-11-1-to-5-12-1-in-examples-reac.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-NDI6-merge-build-deps-bump-fast-xml-parser-from-5-11-1-to-5-12-1-in-examples-reac.md",
       "title": "Merge 'build(deps): bump fast-xml-parser from 5.11.1 to 5.12.1 in /examples/reac",
-      "repository": "tursodatabase-limbo-learnings",
+      "repository": "tursodatabase-turso-learnings",
       "source_version": "HEAD",
-      "content_hash": "85983ee8c86cc65fefdd49b662980a17fcf210a00e847eca16291dff0b3f5950",
+      "content_hash": "ff6d2ec613b3bb71d63de59c4e50527a62ea79e64dcb5344b16aac1d4096ea87",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T13:06:50.982Z"
+      "persisted_at": "2026-11-25T23:12:03.105Z"
     },
     "rule-10533": {
       "learning_id": "rule-10533",
@@ -349465,6 +349475,70 @@
       "content_hash": "cb9b3c103167bf2b8ab2ee7d801a4b8281b6439e37f1003751dbbfc70ed0a66d",
       "domain_letter": "D",
       "persisted_at": "2026-11-25T23:03:04.092Z"
+    },
+    "rule-10556": {
+      "learning_id": "rule-10556",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10556,
+      "title": "Drop Eq bound for ResolverUpdateAttributes values",
+      "source_url": "https://github.com/grpc/grpc-rust",
+      "source_version": "39b3ea7c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T23:11:42.608Z"
+    },
+    "candidate_directive-drop-eq-bound-for-resolverupdateattributes-values": {
+      "item_id": "candidate_directive-drop-eq-bound-for-resolverupdateattributes-values",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-MY1L-drop-eq-bound-for-resolverupdateattributes-values.md",
+      "title": "Drop Eq bound for ResolverUpdateAttributes values",
+      "repository": "grpc/grpc-rust",
+      "source_version": "39b3ea7c",
+      "content_hash": "d798723450bb3159f448d4a4c9a89add04db9a25d9330c5639280c3adf96fec8",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-25T23:11:43.069Z"
+    },
+    "rule-10557": {
+      "learning_id": "rule-10557",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10557,
+      "title": "make --nulls match empty join keys, as documented",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "5108f34d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T23:11:57.355Z"
+    },
+    "candidate_directive-make-nulls-match-empty-join-keys-as-documented": {
+      "item_id": "candidate_directive-make-nulls-match-empty-join-keys-as-documented",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-N9F5-make-nulls-match-empty-join-keys-as-documented.md",
+      "title": "make --nulls match empty join keys, as documented",
+      "repository": "dathere/qsv",
+      "source_version": "5108f34d",
+      "content_hash": "c082c71c18a93f537786503b2b4783ba2147044d247fc3932157bcd8fdc68c1d",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-25T23:11:57.813Z"
+    },
+    "candidate_directive-grpc-drop-eq-bound-for-resolverupdateattributes-values": {
+      "item_id": "candidate_directive-grpc-drop-eq-bound-for-resolverupdateattributes-values",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-NC7Y-grpc-drop-eq-bound-for-resolverupdateattributes-values.md",
+      "title": "grpc: Drop Eq bound for ResolverUpdateAttributes values",
+      "repository": "grpc-grpc-rust-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3a7f703dfd057a9e42bd024d8447a380e2e91588eecf3461ec8268f660b5f85f",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-25T23:12:01.442Z"
     }
   },
   "ai-builder-brain": {

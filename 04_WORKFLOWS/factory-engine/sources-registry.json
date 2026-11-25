@@ -91,8 +91,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-25T23:02:07.030Z",
-    "lastVerified": "2026-11-25T23:02:07.030Z",
+    "lastChecked": "2026-11-25T23:12:00.846Z",
+    "lastVerified": "2026-11-25T23:12:00.846Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -192,22 +192,21 @@
     "revisionIdentifier": "9dbecfa0"
   },
   "dathere-qsv": {
-    "name": "qsv",
+    "name": "dathere/qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-25T15:47:40.907Z",
-    "lastVerified": "2026-11-25T15:47:40.907Z",
+    "lastChecked": "2026-11-25T23:11:56.458Z",
+    "lastVerified": "2026-11-25T23:11:56.458Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
-    "contentHash": "6157c9de8dda25dfa57f23488d164bfcd9d29be2433e99e045314f65abf402a4",
-    "promotedRulesCount": 0,
-    "recentFixesCount": 0,
+    "contentHash": "d02f523e0044f7b17f6f8769f75821f263916ce20521c0b9476389da2e193514",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "c9b35465"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "sxyazi-yazi": {
     "name": "yazi",
@@ -1272,12 +1271,12 @@
     "officialUrl": "https://github.com/tursodatabase/turso",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-24T21:24:21.607Z",
-    "lastVerified": "2026-11-24T21:24:21.607Z",
+    "lastChecked": "2026-11-25T23:11:54.732Z",
+    "lastVerified": "2026-11-25T23:11:54.732Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tursodatabase-turso",
-    "contentHash": "22a97ca174db3922f34aa10a43ff67db0d7cb9dbb572c50681752b762f43816b",
+    "contentHash": "c771ab7a789d144aff6a3e5cb712e375f5eeeacd8b800191eacc6de562fe1581",
     "promotedRulesCount": 1,
     "recentFixesCount": 5,
     "closedIssuesCount": 2,
@@ -1356,9 +1355,9 @@
   "cryfs-cryfs": {
     "name": "cryfs",
     "officialUrl": "https://github.com/cryfs/cryfs",
-    "lastChecked": "2026-11-25T12:09:07.534Z",
+    "lastChecked": "2026-11-25T23:11:47.580Z",
     "revisionIdentifier": "e2da97b1",
-    "lastVerified": "2026-11-25T12:09:07.534Z"
+    "lastVerified": "2026-11-25T23:11:47.580Z"
   },
   "neondatabase-neon": {
     "name": "neon",
@@ -4389,9 +4388,9 @@
   "go-eagle-eagle": {
     "name": "eagle",
     "officialUrl": "https://github.com/go-eagle/eagle",
-    "lastChecked": "2026-11-24T22:50:57.771Z",
+    "lastChecked": "2026-11-25T23:11:45.190Z",
     "revisionIdentifier": "b1301b09",
-    "lastVerified": "2026-11-24T22:50:57.771Z"
+    "lastVerified": "2026-11-25T23:11:45.190Z"
   },
   "materializeinc-materialize": {
     "name": "MaterializeInc/materialize",
@@ -5052,14 +5051,14 @@
     "officialUrl": "https://github.com/grpc/grpc-rust",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-24T15:36:00.016Z",
-    "lastVerified": "2026-11-24T15:36:00.016Z",
+    "lastChecked": "2026-11-25T23:11:41.718Z",
+    "lastVerified": "2026-11-25T23:11:41.718Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-grpc-grpc-rust",
-    "contentHash": "24a4a8d584ef84a668283e088090328d013b9491344a0b3ead85efecbdb9ebc8",
+    "contentHash": "3c67d06edbab827a18824373dc8d0d74421cdc216d9feac02e118dc0472a873d",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -10428,9 +10427,9 @@
   "mikepenz-multiplatform-markdown-renderer": {
     "name": "multiplatform-markdown-renderer",
     "officialUrl": "https://github.com/mikepenz/multiplatform-markdown-renderer",
-    "lastChecked": "2026-11-23T13:23:19.907Z",
+    "lastChecked": "2026-11-25T23:11:42.704Z",
     "revisionIdentifier": "8077f612",
-    "lastVerified": "2026-11-23T13:23:19.907Z"
+    "lastVerified": "2026-11-25T23:11:42.704Z"
   },
   "melihandic-deep-in-gsc": {
     "name": "deep-in-gsc",
@@ -13857,12 +13856,12 @@
     "officialUrl": "https://huggingface.co/microsoft/Mage-VL-Cowork",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-22T01:43:51.963Z",
-    "lastVerified": "2026-11-22T01:43:51.963Z",
+    "lastChecked": "2026-11-25T23:11:40.300Z",
+    "lastVerified": "2026-11-25T23:11:40.300Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-microsoft-mage-vl-cowork",
-    "contentHash": "3529f62cfbc060b8aaec6ac1b7302ec7cb04a5f1d3e08e576a33a65ac3172091",
+    "contentHash": "0b6a39ad24f0b8ddf51ead0f02607a3eb21459c4249d77fc1847148969374b9e",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

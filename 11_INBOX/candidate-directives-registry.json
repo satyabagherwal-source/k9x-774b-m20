@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T23:03:04.664Z",
+  "last_updated": "2026-11-25T23:12:03.105Z",
   "directives": [
     {
       "id": "CD-001",
@@ -61309,11 +61309,11 @@
       "domain_letter": "I"
     },
     {
-      "id": "CD-12VR",
+      "id": "CD-NDI6",
       "directive_title": "Merge 'build(deps): bump fast-xml-parser from 5.11.1 to 5.12.1 in /examples/reac",
-      "source_repo": "tursodatabase-limbo-learnings",
+      "source_repo": "tursodatabase-turso-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-12VR-merge-build-deps-bump-fast-xml-parser-from-5-11-1-to-5-12-1-in-examples-reac.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-NDI6-merge-build-deps-bump-fast-xml-parser-from-5-11-1-to-5-12-1-in-examples-reac.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-25",
@@ -61976,6 +61976,39 @@
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-43C08F-keep-the-node-running-when-a-helper-proc.md",
       "staged_date": "2026-11-25"
+    },
+    {
+      "id": "CD-MY1L",
+      "directive_title": "Drop Eq bound for ResolverUpdateAttributes values",
+      "source_repo": "grpc/grpc-rust",
+      "source_commit": "39b3ea7c",
+      "staged_file": "11_INBOX/candidate-directives/CD-MY1L-drop-eq-bound-for-resolverupdateattributes-values.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-25",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-N9F5",
+      "directive_title": "make --nulls match empty join keys, as documented",
+      "source_repo": "dathere/qsv",
+      "source_commit": "5108f34d",
+      "staged_file": "11_INBOX/candidate-directives/CD-N9F5-make-nulls-match-empty-join-keys-as-documented.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-25",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-NC7Y",
+      "directive_title": "grpc: Drop Eq bound for ResolverUpdateAttributes values",
+      "source_repo": "grpc-grpc-rust-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-NC7Y-grpc-drop-eq-bound-for-resolverupdateattributes-values.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-25",
+      "domain_letter": "G"
     }
   ]
 }

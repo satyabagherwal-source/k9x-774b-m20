@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "c9b35465",
+    "sourceVersion": "5108f34d",
     "license": "NOASSERTION",
-    "contentHash": "6157c9de8dda25dfa57f23488d164bfcd9d29be2433e99e045314f65abf402a4",
-    "lastHarvestedAt": "2026-11-25T14:05:09.607Z",
+    "contentHash": "d02f523e0044f7b17f6f8769f75821f263916ce20521c0b9476389da2e193514",
+    "lastHarvestedAt": "2026-11-25T23:11:57.572Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -5393,10 +5393,10 @@
     "repository": "grpc/grpc-rust",
     "platform": "github",
     "sourceUrl": "https://github.com/grpc/grpc-rust",
-    "sourceVersion": "c16dbace",
+    "sourceVersion": "39b3ea7c",
     "license": "MIT",
-    "contentHash": "24a4a8d584ef84a668283e088090328d013b9491344a0b3ead85efecbdb9ebc8",
-    "lastHarvestedAt": "2026-11-24T15:36:01.212Z",
+    "contentHash": "3c67d06edbab827a18824373dc8d0d74421cdc216d9feac02e118dc0472a873d",
+    "lastHarvestedAt": "2026-11-25T23:11:42.838Z",
     "learningId": "learn-github-grpc-grpc-rust"
   },
   "crazycodeboy-react-native-splash-screen": {
@@ -7033,10 +7033,10 @@
     "repository": "tursodatabase/turso",
     "platform": "github",
     "sourceUrl": "https://github.com/tursodatabase/turso",
-    "sourceVersion": "352c5882",
+    "sourceVersion": "9e928387",
     "license": "MIT",
-    "contentHash": "22a97ca174db3922f34aa10a43ff67db0d7cb9dbb572c50681752b762f43816b",
-    "lastHarvestedAt": "2026-11-24T21:24:22.512Z",
+    "contentHash": "c771ab7a789d144aff6a3e5cb712e375f5eeeacd8b800191eacc6de562fe1581",
+    "lastHarvestedAt": "2026-11-25T23:11:55.486Z",
     "learningId": "learn-github-tursodatabase-turso"
   },
   "flux-iac-tofu-controller": {
@@ -11855,8 +11855,8 @@
     "sourceUrl": "https://huggingface.co/microsoft/Mage-VL-Cowork",
     "sourceVersion": "hf-microsoft-mage-vl-cowork",
     "license": "Open-Source",
-    "contentHash": "3529f62cfbc060b8aaec6ac1b7302ec7cb04a5f1d3e08e576a33a65ac3172091",
-    "lastHarvestedAt": "2026-11-22T01:43:56.873Z",
+    "contentHash": "0b6a39ad24f0b8ddf51ead0f02607a3eb21459c4249d77fc1847148969374b9e",
+    "lastHarvestedAt": "2026-11-25T23:11:40.943Z",
     "learningId": "learn-huggingface-microsoft-mage-vl-cowork"
   },
   "hf-qwen-qwen3-embedding-0.6b": {

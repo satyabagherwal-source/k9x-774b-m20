@@ -4,22 +4,22 @@
 {
   "source_repository": "dathere/qsv",
   "source_url": "https://github.com/dathere/qsv",
-  "source_version": "c9b35465",
+  "source_version": "5108f34d",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-25T14:05:10.028Z",
+  "timestamp": "2026-11-25T23:11:57.812Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-dathere-qsv",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [dathere/qsv](https://github.com/dathere/qsv) (Revision: `c9b35465`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-25T14:05:10.028Z`  
+> **Provenance**: Harvested from [dathere/qsv](https://github.com/dathere/qsv) (Revision: `5108f34d`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-25T23:11:57.812Z`  
 > **Learning ID**: `learn-github-dathere-qsv`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `dathere/qsv` (Commit: `c9b35465`)
+- **Target Repository**: `dathere/qsv` (Commit: `5108f34d`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T14:05:08.881Z  
+> **Harvest Timestamp**: 2026-11-25T23:11:56.458Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Blazing-fast, Neuro-symbolic Data-Wrangling toolkit
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3856 stars
+- **Stars / Engagement**: 3858 stars
 
 ---
 
@@ -2290,19 +2290,344 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c9b35465` (2026-11-25)
-**Commit Message**: test(mcp): classify stats/validate --quote as not a path (#5115)
+### Incident Patch 1: `5108f34d` (2026-11-25)
+**Commit Message**: fix(joinp): make --nulls match empty join keys, as documented (#5116)
 
-* test(mcp): classify stats/validate --quote as not a path
+* fix(joinp): make --nulls match empty join keys, as documented
 
-#5104 added --quote to stats and validate. It takes a quote character,
-but its description mentions the file being read, so the
-path-classification test flagged it and has failed on every PR since.
-List it with the other options that aren't paths.
+--nulls was wired only to with_missing_is_null, so it read empty fields as
+null, and Polars joins never match nulls. Empty text keys therefore matched
+without --nulls and stopped matching with it; empty numeric keys never matched.
+
+Now --nulls sets join_nulls, and without it, empty text join keys are read as
+null so they never match.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-* docs: cite #5115 in MCP CHANGELOG
+* docs: cite #5116 in CHANGELOG
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* fix(joinp): keep empty key values; match quoted "" under --nulls
+
+The first fix overwrote empty text keys with null, so outer joins wrote them
+as --null-value and --sql-filter no longer saw ''. Now, without --nulls, rows
+with an empty text key are dropped only from the side whose unmatched rows
+aren't output, and a full join appends the right side's empty-key rows
+unmatched. Key values are unchanged.
+
+With --nulls, a quoted "" text key is made null before the key
+transformations, so it matches an unquoted empty key.
+
+The --nulls help is scoped to the standard joins, and --ignore-er
+
+**File**: `.claude/skills/qsv/qsv-joinp.json` (modified, +2/-2)
+```diff
+@@ -106,7 +106,7 @@
+       {
+         "flag": "--ignore-errors",
+         "type": "flag",
+-        "description": "Read CSV values that can't be parsed as their column's type as empty (null) instead of failing. Their rows are kept (a null join key matches nothing). If not set, the join will fail. To get more detailed error messages, set the environment variable POLARS_BACKTRACE_IN_ERR=1 before running the join."
++        "description": "Read CSV values that can't be parsed as their column's type as empty (null) instead of failing. Their rows are kept, and in the standard joins, a null join key, like an empty one, matches only with --nulls. If not set, the join will fail. To get more detailed error messages, set the environment variable POLARS_BACKTRACE_IN_ERR=1 before running the join."
+       },
+       {
+         "flag": "--ignore-leading-zeros",
+@@ -174,7 +174,7 @@
+       {
+         "flag": "--nulls",
+         "type": "flag",
+-        "description": "When set, joins will work on empty fields. Otherwise, empty fields are completely ignored."
++        "description": "When set, unquoted empty fields are read as null (so they are written as the --null-value string), and in the standard joins, empty join keys match each other. Otherwise, rows with an empty key never match there (outer joins keep them, unmatched). The key matching doesn't apply to cross, non-equi or asof joins."
+       },
+       {
+         "flag": "--output",
+```
+
+**File**: `CHANGELOG.md` (modified, +1/-0)
+```diff
+@@ -26,6 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - `sqlp`, `joinp --sql-filter`, `profile`, `scoresql`: new `QSV_SQL_DISABLE_FILE_WRITES` environment variable. When set, Polars SQL's `COPY ... TO` fails with "writing files is disabled by QSV_SQL_DISABLE_FILE_WRITES" and writes nothing; reading files and `--output` are unaffected. Without it, `COPY ... TO` can write any path the query names. The qsv MCP server sets it in plugin mode (Cowork and the Claude Code plugin). ([#5081](https://github.com/dathere/qsv/pull/5081))
+ 
+ ### Fixed
++- `joinp`: `--nulls` did the opposite of its help for text keys. Empty text join keys matched without `--nulls` and stopped matching with it, and empty numeric keys never matched. In the standard joins (not cross, non-equi or asof), `--nulls` now makes empty keys match each other, including a quoted `""` and an unquoted empty. Without it they never match, whatever the key's type. Outer joins still output such rows, unmatched, with their key values unchanged. `--ignore-leading-zeros` (`-z`) now keeps a key's last zero, so `000` becomes `0` and still matches `0`, but no longer becomes empty and matches an empty key. The `--ignore-errors` help now says that in the standard joins, a key that can't be parsed, like an empty one, matches only with `--nulls`. **Behavior change:** an inner join on a text key no longer pairs rows whose keys are both empty unless `--nulls` is given. ([#5116](https://github.com/dathere/qsv/pull/5116))
+ - `sqlp`, `joinp`, `pivotp`: the `--ignore-errors` help said rows that can't be parsed are skipped (in `sqlp` and `joinp`, the whole batch around them). Polars instead reads such a value as empty (null) and keeps its row, so `COUNT(*)` and `len` still count it. The help now says so. ([#5114](https://github.com/dathere/qsv/pull/5114))
+ - `moarstats`, `pragmastat`, `scoresql`: a stats cache computed under other CSV parsing options than the command reads the input with (another `--delimiter`, `--no-headers`, `--flexible`, sniffed preamble, or `stats --quote`/`--escape`/`--no-quoting`) was reused anyway, since these commands read the cache files directly and checked only their age. `moarstats`, and `pragmastat` when it appends to the stats CSV, extended such a baseline with statistics of another reading, e.g. a column's `max` of 4 where the input as read holds a 9. `pragmastat --standalone` skipped numeric columns the cache had typed as text. All three now apply the parsing-options check the other cache readers use: they recompute the baseline, or `pragmastat --standalone` ignores the cache. Fixes [#5105](https://github.com/dathere/qsv/issues/5105) ([#5106](https://github.com/dathere/qsv/pull/5106)).
+ - `writestat`: numbers very close to 0 were lost without a warning. A SAS transport (`.xpt`) file wrote a non-zero number closer to 0 than ±5.4e-79 (16^-65, the smallest IBM float) as missing, or as 0 below ±2.2e-308, and `writestat` checked only the ±7.2e75 end of the range. Such numbers are now refused like the large ones, and with `--lossy` the warning names them. An SPSS portable (`.por`) file can hold them, but its writer lost precision from about 1e-56 and wrote numbers below about 4e-73 as 0 (or -0). It now writes them as a mantissa and a negative power of 30, and its reader rebuilds values below about 1e-292 without losing digits. The `.por` writer and reader fixes are in our `polars-readstat-rs` fork, [dathere/polars_readstat@18551f9](https://github.com/dathere/polars_readstat/commit/18551f90697b23e677c5e17a0fe8f03ad710d90b), also offered upstream in [jrothbaum/polars_readstat#72](https://github.com/jrothbaum/polars_readstat/pull/72). Fixes [#5094](https://github.com/dathere/qsv/issues/5094). ([#5103](https://github.com/dathere/qsv/pull/5103))
+```
+
+**File**: `docs/help/joinp.md` (modified, +2/-2)
+```diff
+@@ -64,7 +64,7 @@ qsv joinp --help
+ | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Option&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Type | Description | Default |
+ |--------|------|-------------|--------|
+ | &nbsp;`‑‑maintain‑order`&nbsp; | string | Which row order to preserve, if any. Valid values are: none, left, right, left_right, right_left Defaults to "none", which lets the engine emit rows in whatever order it finishes them - faster on large joins, but the output is NOT reproducible: the same invocation can return the same rows in a different order each run. "left" orders by the left row only, so when one left row matches several right rows those matches are tied and their relative order is still unspecified. Use "left_right" (or "right_left") for a fully deterministic, byte-repeatable order. Only inner, left, right and full joins can maintain order; cross, non-equi and asof joins ignore this option. | `none` |
+-| &nbsp;`‑‑nulls`&nbsp; | flag | When set, joins will work on empty fields. Otherwise, empty fields are completely ignored. |  |
++| &nbsp;`‑‑nulls`&nbsp; | flag | When set, unquoted empty fields are read as null (so they are written as the --null-value string), and in the standard joins, empty join keys match each other. Otherwise, rows with an empty key never match there (outer joins keep them, unmatched). The key matching doesn't apply to cross, non-equi or asof joins. |  |
+ | &nbsp;`‑‑streaming`&nbsp; | flag | Write the join result as it is computed, batch by batch, instead of collecting the whole result in memory first. Use this when the result is too big for memory: it uses less memory but is slower. An --output file is written beside its target and only moved into place if the join succeeds; overwriting an existing file copies the result into it, so it keeps its owner, group, mode and links, and briefly needs disk space for two copies. On stdout, rows are sent as they are computed, so a join that fails part-way leaves its output cut short; check the exit code. |  |
+ 
+ <a name="polars-csv-parsing-options"></a>
+@@ -77,7 +77,7 @@ qsv joinp --help
+ | &nbsp;`‑‑infer‑len`&nbsp; | integer | The number of rows to scan when inferring the schema of the CSV. Set to 0 to do a full table scan (warning: very slow). Only used when --cache-schema is 0 or 1 and no cached schema exists or when --infer-len is 0. | `10000` |
+ | &nbsp;`‑‑cache‑schema`&nbsp; | integer | Create and cache Polars schema JSON files. Ignored when --infer-len is 0.<br>-2: treat all columns as String. A Polars schema file is created & cached.<br>-1: treat all columns as String. No Polars schema file is created.<br>0: do not cache Polars schema. Uses --infer-len to infer schema.<br>1: cache Polars schema with the following behavior:<ul><li>If schema file exists and is newer than input: use cached schema</li><li>If schema file missing/outdated and stats cache exists: derive schema from stats and cache it</li><li>If no schema or stats cache: infer schema using --infer-len and cache the result</li></ul> Schema files use the same name as input with .pschema.json extension (e.g., data.csv -> data.csv.pschema.json).<br>NOTE: If the input files have pschema.json files that are newer or created at the same time as the input files, they will be used to inform the join operation regardless of the value of --cache-schema unless --infer-len is 0. | `0` |
+ | &nbsp;`‑‑no‑optimizations`&nbsp; | flag | Disable non-default join optimizations. This will make joins slower. Only use this when you get join errors. |  |
+-| &nbsp;`‑‑ignore‑errors`&nbsp; | flag | Read CSV values that can't be parsed as their column's type as empty (null) instead of failing. Their rows are kept (a null join key matches nothing). If not set, the join will fail. To get more detailed error messages, set the environment variable POLARS_BACKTRACE_IN_ERR=1 before running the join. |  |
++| &nbsp;`‑‑ignore‑errors`&nbsp; | flag | Read CSV values that can't be parsed as their column's type as empty (null) instead of failing. Their rows are kept, and in the standard joins, a null join key, like an empty one, matches only with --nulls. If not set, the join will fail. To get more detailed error messages, set the environment variable POLARS_BACKTRACE_IN_ERR=1 before running the join. |  |
+ | &nbsp;`‑‑decimal‑comma`&nbsp; | flag | Use comma as the decimal separator when parsing & writing CSVs. Otherwise, use period as the decimal separator. Note that you'll need to set --delimiter to an alternate delimiter other than the default comma if you are using this option. |  |
+ 
+ <a name="asof-join-options"></a>
+```
+
+**File**: `src/cmd/joinp.rs` (modified, +104/-17)
+```diff
+@@ -109,8 +109,12 @@ joinp options:
+                             Only inner, left, right and full joins can maintain order;
+                             cross, non-equi and asof joins ignore this option.
+                             [default: none]
+-    --nulls                When set, joins will work on empty fields.
+-                           Otherwise, empty fields are completely ignored.
++    --nulls                When set, unquoted empty fields are read as null (so
++                           they are written as the --null-value string), and in
++                           the standard joins, empty join keys match each other.
++                           Otherwise, rows with an empty key never match there
++                           (outer joins keep them, unmatched). The key matching
++                           doesn't apply to cross, non-equi or asof joins.
+     --streaming            Write the join result as it is computed, batch by batch, instead
+                            of collecting the whole result in memory first. Use this when the
+                            result is too big for memory: it uses less memory but is slower.
+@@ -153,8 +157,9 @@ joinp options:
+     --no-optimizations     Disable non-default join optimizations. This will make joins slower.
+                            Only use this when you get join errors.                           
+     --ignore-errors        Read CSV values that can't be parsed as their column's type
+-                           as empty (null) instead of failing. Their rows are kept (a
+-                           null join key matches nothing). If not set, the join will fail.
++                           as empty (null) instead of failing. Their rows are kept, and
++                           in the standard joins, a null join key, like an empty one,
++                           matches only with --nulls. If not set, the join will fail.
+                            To get more detailed error messages, set the environment variable
+                            POLARS_BACKTRACE_IN_ERR=1 before running the join.
+     --decimal-comma        Use comma as the decimal separator when parsing & writing CSVs.
+@@ -604,6 +609,7 @@ struct JoinStruct {
+     decimal_comma:        bool,
+     ignore_case:          bool,
+     ignore_leading_zeros: bool,
++    nulls:                bool,
+ }
+ 
+ impl JoinStruct {
+@@ -633,13 +639,58 @@ impl JoinStruct {
+             .map(polars::lazy::dsl::col)
+             .collect();
+ 
++        let equi_join = special_join == SpecialJoin::None && jointype != JoinType::Cross;
++        let mut left_text_keys: Vec<&str> = Vec::new();
++        let mut right_text_keys: Vec<&str> = Vec::new();
++        if equi_join {
++            let schema = self.left_lf.collect_schema()?;
++            left_text_keys = left_col_names
++                .iter()
++                .copied()
++                .filter(|n| schema.get(n) == Some(&DataType::String))
++                .collect();
++            let schema = self.right_lf.collect_schema()?;
++            right_text_keys = right_col_names
++                .iter()
++                .copied()
++                .filter(|n| schema.get(n) == Some(&DataType::String))
++                .collect();
++        }
++
++        // --nulls reads unquoted empty fields as null, but a quoted "" stays "". Make text keys
++        // "" null too, so both spellings match. This runs before the key transformations, so
++        // --ignore-leading-zeros still lets "0" and "000" match.
++        if self.nulls {
++            for (lf, keys) in [
++                (&mut self.left_lf, &left_text_keys),
++                (&mut self.right_lf, &right_text_keys),
++            ] {
++                if !keys.is_empty() {
++                    let nulled: Vec<Expr> = keys
++                        .iter()
++                        .map(|k| {
++                            when(col(*k).eq(lit("")))
++                                .then(lit(NULL).cast(DataType::String))
++                                .otherwise(col(*k))
++                                .alias(*k)
++                        })
++                        .collect();
++                    *lf = lf.clone().with_columns(nulled);
++                }
++            }
++        }
++
+         // Handle ignore_case, ignore_leading_zeros, and unicode normalization transformations
+         let keys_transformed =
+             if self.ignore_case || self.ignore_leading_zeros || normalization_form.is_some() {
+                 let transform_col = |col: Expr| {
+                     let mut transformed = col.cast(DataType::String);
+                     if self.ignore_leading_zeros {
+-                        transformed = transformed.str().replace_all(lit(r"^0+"), lit(""), false);
++                        // keep the last zero, so "000" becomes "0", not an empty key
++                        transformed =
++                            transformed
++                                .str()
++                                .replace_all(lit(r"(?
+```
+
+**File**: `tests/test_joinp.rs` (modified, +131/-0)
+```diff
+@@ -3648,3 +3648,134 @@ fn joinp_sql_filter_copy_to_disabled_by_envvar() {
+     );
+     assert!(!out.exists(), "COPY wrote {}", out.display());
+ }
++
++// --nulls makes empty join keys match each other; without it they never match,
++// whether the key column is read as text or as a number. Either way the key values
++// themselves are not changed.
++#[test]
++fn joinp_nulls_controls_empty_key_matches() {
++    let wrk = Workdir::new("joinp_nulls_controls_empty_key_matches");
++    wrk.create_from_string("text1.csv", "k,a\nx,1\n,2\n");
++    wrk.create_from_string("text2.csv", "k,b\nx,p\n,q\n");
++    wrk.create_from_string("quoted2.csv", "k,b\nx,p\n\"\",q\n");
++    wrk.create_from_string("int1.csv", "k,a\n1,x\n,w\n");
++    wrk.create_from_string("int2.csv", "k,b\n1,p\n,q\n");
++    wrk.create_from_string("zeros1.csv", "k,a\n0,x\n,y\nab,z\n");
++    wrk.create_from_string("zeros2.csv", "k,b\n000,p\n,q\ncd,r\n");
++
++    let join = |name: &str, left: &str, right: &str, extra: &[&str]| -> Vec<Vec<String>> {
++        let mut cmd = wrk.command("joinp");
++        cmd.args(["k", left, "k", right, "--maintain-order", "left_right"])
++            .args(extra);
++        let got: Vec<Vec<String>> = wrk.read_stdout(&mut cmd);
++        eprintln!("{name}: {got:?}");
++        got
++    };
++
++    let text = |extra: &[&str]| join(&extra.join(" "), "text1.csv", "text2.csv", extra);
++    assert_eq!(text(&[]), vec![svec!["k", "a", "b"], svec!["x", "1", "p"]]);
++    assert_eq!(
++        text(&["--nulls"]),
++        vec![
++            svec!["k", "a", "b"],
++            svec!["x", "1", "p"],
++            svec!["", "2", "q"]
++        ]
++    );
++    // outer joins keep the empty-key rows, unmatched, with their keys as read
++    assert_eq!(
++        text(&["--left", "--null-value", "NA"]),
++        vec![
++            svec!["k", "a", "b"],
++            svec!["x", "1", "p"],
++            svec!["", "2", "NA"]
++        ]
++    );
++    assert_eq!(
++        text(&[
++            "--left",
++            "--sql-filter",
++            "SELECT * FROM join_result WHERE k = ''"
++        ]),
++        vec![svec!["k", "a", "b"], svec!["", "2", ""]]
++    );
++    assert_eq!(
++        text(&["--right"]),
++        vec![
++            svec!["a", "k", "b"],
++            svec!["1", "x", "p"],
++            svec!["", "", "q"]
++        ]
++    );
++    assert_eq!(
++        text(&["--full", "--null-value", "NA"]),
++        vec![
++            svec!["k", "a", "k_right", "b"],
++            svec!["x", "1", "x", "p"],
++            svec!["", "2", "NA", "NA"],
++            svec!["NA", "NA", "", "q"]
++        ]
++    );
++    assert_eq!(
++        text(&["--full", "--coalesce"]),
++        vec![
++            svec!["k", "a", "b"],
++            svec!["x", "1", "p"],
++            svec!["", "2", ""],
++            svec!["", "", "q"]
++        ]
++    );
++    assert_eq!(
++        text(&["--left-anti"]),
++        vec![svec!["k", "a"], svec!["", "2"]]
++    );
++    assert_eq!(
++        text(&["--left-semi"]),
++        vec![svec!["k", "a"], svec!["x", "1"]]
++    );
++    // key transformations don't make empty text keys match either
++    assert_eq!(
++        text(&["-i"]),
++        vec![svec!["k", "a", "k_right", "b"], svec!["x", "1", "x", "p"]]
++    );
++
++    // an unquoted empty key and a quoted "" match each other with --nulls
++    assert_eq!(
++        join("quoted", "text1.csv", "quoted2.csv", &["--nulls"]),
++        vec![
++            svec!["k", "a", "b"],
++            svec!["x", "1", "p"],
++            svec!["", "2", "q"]
++        ]
++    );
++
++    assert_eq!(
++        join("int", "int1.csv", "int2.csv", &[]),
++        vec![svec!["k", "a", "b"], svec!["1", "x", "p"]]
++    );
++    assert_eq!(
++        join("int --nulls", "int1.csv", "int2.csv", &["--nulls"]),
++        vec![
++            svec!["k", "a", "b"],
++            svec!["1", "x", "p"],
++            svec!["", "w", "q"]
++        ]
++    );
++
++    // text keys with -z: "0" and "000" still match, but "000" isn't made empty, so it
++    // doesn't match an empty key
++    assert_eq!(
++        join("zeros", "zeros1.csv", "zeros2.csv", &["-z"]),
++        vec![svec!["k", "a", "k_right", "b"], svec!["0", "x", "000", "p"]]
++    );
++    // -z strips leading zeros before a line break inside a quoted key too
++    wrk.create_from_string("nl1.csv", "k,a\n\"00\nA\",x\n");
++    wrk.create_from_string("nl2.csv", "k,b\n\"\nA\",p\n");
++    assert_eq!(
++        join("newline", "nl1.csv", "nl2.csv", &["-z"]),
++        vec![
++            svec!["k", "a", "k_right", "b"],
++            svec!["00\nA", "x", "\nA", "p"]
++        ]
++    );
++}
+```
+
+---
+
+### Incident Patch 2: `8df40458` (2026-11-25)
+**Commit Message**: docs(sqlp,joinp,pivotp): --ignore-errors keeps rows, reading bad values as null (#5114)
+
+* docs(sqlp,joinp,pivotp): --ignore-errors keeps rows, reading bad values as null
+
+The help said rows that can't be parsed are skipped (in sqlp and joinp,
+the whole batch around them). Polars' ignore_errors reads such a value
+as null and keeps the row: with a bad value after the --infer-len
+sample, sqlp's COUNT(*) is 2011 against COUNT(v) 2010, joinp outputs
+all 2011 rows with v empty in one, and pivotp's len counts the row.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* docs: cite #5114 in CHANGELOG
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
@@ -2310,40 +2635,121 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `.claude/skills/CHANGELOG.md` (modified, +3/-0)
+**File**: `.claude/skills/qsv/qsv-joinp.json` (modified, +1/-1)
 ```diff
-@@ -23,6 +23,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - **`qsv-synthesize --seed` is the same at any `--jobs`**: rows are now generated in parallel, in fixed 8,192-row blocks, so a seed gives the same rows whatever `--jobs` is (unless `stats` uses approximate estimators, whether requested via `--stats-options` or switched on automatically when the input won't fit in memory), though different rows than qsv 29.0.0. Skill regenerated from the USAGE text. ([#5069](https://github.com/dathere/qsv/pull/5069))
- - **`qsv-synthesize` warns that its output is not anonymized** ([#5064](https://github.com/dathere/qsv/pull/5064)): synthetic output can contain real source values. The skill description was regenerated from the README command table.
+@@ -106,7 +106,7 @@
+       {
+         "flag": "--ignore-errors",
+         "type": "flag",
+-        "description": "Ignore errors when parsing CSVs. If set, rows with errors will be skipped. If not set, the query will fail. Only use this when debugging queries, as polars does batched parsing and will skip the entire batch where the error occurred. To get more detailed error messages, set the environment variable POLARS_BACKTRACE_IN_ERR=1 before running the join."
++        "description": "Read CSV values that can't be parsed as their column's type as empty (null) instead of failing. Their rows are kept (a null join key matches nothing). If not set, the join will fail. To get more detailed error messages, set the environment variable POLARS_BACKTRACE_IN_ERR=1 before running the join."
+       },
+       {
+         "flag": "--ignore-leading-zeros",
+```
+
+**File**: `.claude/skills/qsv/qsv-pivotp.json` (modified, +1/-1)
+```diff
+@@ -50,7 +50,7 @@
+       {
+         "flag": "--ignore-errors",
+         "type": "flag",
+-        "description": "Skip rows that can't be parsed."
++        "description": "Read values that can't be parsed as empty (null) instead of failing. Their rows are kept."
+       },
+       {
+         "flag": "--index",
+```
+
+**File**: `.claude/skills/qsv/qsv-sqlp.json` (modified, +1/-1)
+```diff
+@@ -70,7 +70,7 @@
+       {
+         "flag": "--ignore-errors",
+         "type": "flag",
+-        "description": "Ignore errors when parsing CSVs. If set, rows with errors will be skipped. If not set, the query will fail. Only use this when debugging queries, as Polars does batched parsing and will skip the entire batch where the error occurred. To get more detailed error messages, set the environment variable POLARS_BACKTRACE_IN_ERR=1 before running the query."
++        "description": "Read CSV values that can't be parsed as their column's type as empty (null) instead of failing. Their rows are kept, so COUNT(*) still counts them. If not set, the query will fail. To get more detailed error messages, set the environment variable POLARS_BACKTRACE_IN_ERR=1 before running the query."
+       },
+       {
+         "flag": "--infer-len",
+```
+
+**File**: `CHANGELOG.md` (modified, +1/-0)
+```diff
+@@ -26,6 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - `sqlp`, `joinp --sql-filter`, `profile`, `scoresql`: new `QSV_SQL_DISABLE_FILE_WRITES` environment variable. When set, Polars SQL's `COPY ... TO` fails with "writing files is disabled by QSV_SQL_DISABLE_FILE_WRITES" and writes nothing; reading files and `--output` are unaffected. Without it, `COPY ... TO` can write any path the query names. The qsv MCP server sets it in plugin mode (Cowork and the Claude Code plugin). ([#5081](https://github.com/dathere/qsv/pull/5081))
  
-+### Fixed
-+- **Path-classification test: `stats --quote` and `validate --quote` are not paths.** Since #5104 the test that every skill option whose description mentions files is classified failed on every PR: these options take a quote character, and their descriptions mention the file being read. They are now listed with the other options that aren't paths. Test-only change. ([#5115](https://github.com/dathere/qsv/pull/5115))
-+
- ## [29.0.2] - 2026-11-23
- Patch release of the MCP server and the Claude Cowork / Claude Code plugin, for use with qsv 29.0.0 (`minimum_qsv_version` stays 29.0.0). It carries the security fixes below, published as advisory [GHSA-5763-32xg-7rh3](https://github.com/dathere/qsv/security/advisories/GHSA-5763-32xg-7rh3); update now. As in 29.0.1, the bundled skill files also describe `qsv-synthesize` options from the next qsv release (listed under [Unreleased]); with qsv 29.0.0 those options are rejected as unknown flags.
+ ### Fixed
++- `sqlp`, `joinp`, `pivotp`: the `--ignore-errors` help said rows that can't be parsed are skipped (in `sqlp` and `joinp`, the whole batch around them). Polars instead reads such a value as empty (null) and keeps its row, so `COUNT(*)` and `len` still count it. The help now says so. ([#5114](https://github.com/dathere/qsv/pull/5114))
+ - `moarstats`, `pragmastat`, `scoresql`: a stats cache computed under other CSV parsing options than the command reads the input with (another `--delimiter`, `--no-headers`, `--flexible`, sniffed preamble, or `stats --quote`/`--escape`/`--no-quoting`) was reused anyway, since these commands read the cache files directly and checked only their age. `moarstats`, and `pragmastat` when it appends to the stats CSV, extended such a baseline with statistics of another reading, e.g. a column's `max` of 4 where the input as read holds a 9. `pragmastat --standalone` skipped numeric columns the cache had typed as text. All three now apply the parsing-options check the other cache readers use: they recompute the baseline, or `pragmastat --standalone` ignores the cache. Fixes [#5105](https://github.com/dathere/qsv/issues/5105) ([#5106](https://github.com/dathere/qsv/pull/5106)).
+ - `writestat`: numbers very close to 0 were lost without a warning. A SAS transport (`.xpt`) file wrote a non-zero number closer to 0 than ±5.4e-79 (16^-65, the smallest IBM float) as missing, or as 0 below ±2.2e-308, and `writestat` checked only the ±7.2e75 end of the range. Such numbers are now refused like the large ones, and with `--lossy` the warning names them. An SPSS portable (`.por`) file can hold them, but its writer lost precision from about 1e-56 and wrote numbers below about 4e-73 as 0 (or -0). It now writes them as a mantissa and a negative power of 30, and its reader rebuilds values below about 1e-292 without losing digits. The `.por` writer and reader fixes are in our `polars-readstat-rs` fork, [dathere/polars_readstat@18551f9](https://github.com/dathere/polars_readstat/commit/18551f90697b23e677c5e17a0fe8f03ad710d90b), also offered upstream in [jrothbaum/polars_readstat#72](https://github.com/jrothbaum/polars_readstat/pull/72). Fixes [#5094](https://github.com/dathere/qsv/issues/5094). ([#5103](https://github.com/dathere/qsv/pull/5103))
+ - `synthesize`: an `ordered` relationship read its source dates only as RFC 3339 or `YYYY-MM-DD`, so on columns `stats` types as dates in other forms (`04/18/2019 09:55:45 PM`, `2022-01-21 13:47:00`) it found no rows with both dates and was dropped with only a log warning, leaving the columns independent and out of order. Source dates are now read with the parser `stats` uses, honoring `--prefer-dmy`/`QSV_PREFER_DMY`, by `ordered` groups and by `--discover-relationships`. **Behavior change:** such groups now apply, so their output changes. ([#5085](https://github.com/dathere/qsv/pull/5085))
+```
+
+**File**: `docs/help/joinp.md` (modified, +1/-1)
+```diff
+@@ -77,7 +77,7 @@ qsv joinp --help
+ | &nbsp;`‑‑infer‑len`&nbsp; | integer | The number of rows to scan when inferring the schema of the CSV. Set to 0 to do a full table scan (warning: very slow). Only used when --cache-schema is 0 or 1 and no cached schema exists or when --infer-len is 0. | `10000` |
+ | &nbsp;`‑‑cache‑schema`&nbsp; | integer | Create and cache Polars schema JSON files. Ignored when --infer-len is 0.<br>-2: treat all columns as String. A Polars schema file is created & cached.<br>-1: treat all columns as String. No Polars schema file is created.<br>0: do not cache Polars schema. Uses --infer-len to infer schema.<br>1: cache Polars schema with the following behavior:<ul><li>If schema file exists and is newer than input: use cached schema</li><li>If schema file missing/outdated and stats cache exists: derive schema from stats and cache it</li><li>If no schema or stats cache: infer schema using --infer-len and cache the result</li></ul> Schema files use the same name as input with .pschema.json extension (e.g., data.csv -> data.csv.pschema.json).<br>NOTE: If the input files have pschema.json files that are newer or created at the same time as the input files, they will be used to inform the join operation regardless of the value of --cache-schema unless --infer-len is 0. | `0` |
+ | &nbsp;`‑‑no‑optimizations`&nbsp; | flag | Disable non-default join optimizations. This will make joins slower. Only use this when you get join errors. |  |
+-| &nbsp;`‑‑ignore‑errors`&nbsp; | flag | Ignore errors when parsing CSVs. If set, rows with errors will be skipped. If not set, the query will fail. Only use this when debugging queries, as polars does batched parsing and will skip the entire batch where the error occurred. To get more detailed error messages, set the environment variable POLARS_BACKTRACE_IN_ERR=1 before running the join. |  |
++| &nbsp;`‑‑ignore‑errors`&nbsp; | flag | Read CSV values that can't be parsed as their column's type as empty (null) instead of failing. Their rows are kept (a null join key matches nothing). If not set, the join will fail. To get more detailed error messages, set the environment variable POLARS_BACKTRACE_IN_ERR=1 before running the join. |  |
+ | &nbsp;`‑‑decimal‑comma`&nbsp; | flag | Use comma as the decimal separator when parsing & writing CSVs. Otherwise, use period as the decimal separator. Note that you'll need to set --delimiter to an alternate delimiter other than the default comma if you are using this option. |  |
+ 
+ <a name="asof-join-options"></a>
+```
+
+**File**: `docs/help/pivotp.md` (modified, +1/-1)
+```diff
+@@ -67,7 +67,7 @@ qsv pivotp --help
+ | &nbsp;`‑‑try‑parsedates`&nbsp; | flag | When set, will attempt to parse columns as dates. |  |
+ | &nbsp;`‑‑infer‑len`&nbsp; | integer | Number of rows to scan when inferring schema. Set to 0 to scan entire file. | `10000` |
+ | &nbsp;`‑‑decimal‑comma`&nbsp; | flag | Use comma as decimal separator when READING the input. Note that you will need to specify an alternate --delimiter. |  |
+-| &nbsp;`‑‑ignore‑errors`&nbsp; | flag | Skip rows that can't be parsed. |  |
++| &nbsp;`‑‑ignore‑errors`&nbsp; | flag | Read values that can't be parsed as empty (null) instead of failing. Their rows are kept. |  |
+ | &nbsp;`‑‑grand‑total`&nbsp; | flag | Append a grand total row summing all numeric non-index columns. The first index column will contain "Grand <total-label>". |  |
+ | &nbsp;`‑‑subtotal`&nbsp; | flag | Insert subtotal rows after each group in the first index column. The second index column will contain the total label. Requires 2+ index columns. (pivot mode only) |  |
+ | &nbsp;`‑‑total‑label`&nbsp; | string | Custom label for total rows. | `Total` |
+```
+
+**File**: `docs/help/sqlp.md` (modified, +1/-1)
+```diff
+@@ -371,7 +371,7 @@ qsv sqlp --help
+ | &nbsp;`‑‑streaming`&nbsp; | flag | Write the query result as it is computed, batch by batch, instead of collecting the whole result in memory first. Use this when the result is too big for memory. Works with the csv, jsonl, parquet and arrow formats; json and avro output still collect the whole result. Queries already run on Polars' streaming engine either way. An --output file is written beside its target and only moved into place if the query succeeds. Overwriting an existing file copies the result into it, so it keeps its owner, group, mode and links; that briefly needs disk space for two copies. On stdout, rows are sent as they are computed, so a query that fails part-way leaves its output cut short; check sqlp's exit code before using it. |  |
+ | &nbsp;`‑‑no‑optimizations`&nbsp; | flag | Disable non-default query optimizations. This will make queries slower. Use this when you get query errors or to force CSV parsing when there is only one input file, no CSV parsing options are used and its not a SQL script. |  |
+ | &nbsp;`‑‑truncate‑ragged‑lines`&nbsp; | flag | Truncate ragged lines when parsing CSVs. If set, rows with more columns than the header will be truncated. If not set, the query will fail. Use this only when you get an error about ragged lines. |  |
+-| &nbsp;`‑‑ignore‑errors`&nbsp; | flag | Ignore errors when parsing CSVs. If set, rows with errors will be skipped. If not set, the query will fail. Only use this when debugging queries, as Polars does batched parsing and will skip the entire batch where the error occurred. To get more detailed error messages, set the environment variable POLARS_BACKTRACE_IN_ERR=1 before running the query. |  |
++| &nbsp;`‑‑ignore‑errors`&nbsp; | flag | Read CSV values that can't be parsed as their column's type as empty (null) instead of failing. Their rows are kept, so COUNT(*) still counts them. If not set, the query will fail. To get more detailed error messages, set the environment variable POLARS_BACKTRACE_IN_ERR=1 before running the query. |  |
+ | &nbsp;`‑‑rnull‑values`&nbsp; | string | The comma-delimited list of case-sensitive strings to consider as null values when READING CSV files (e.g. NULL, NONE, <empty string>). Use "<empty string>" to consider an empty string a null value. | `<empty string>` |
+ | &nbsp;`‑‑decimal‑comma`&nbsp; | flag | Use comma as the decimal separator when parsing & writing CSVs. Otherwise, use period as the decimal separator. Note that you'll need to set --delimiter to an alternate delimiter other than the default comma if you are using this option. |  |
  
 ```
 
-**File**: `.claude/skills/tests/file-operations.test.ts` (modified, +1/-1)
+**File**: `src/cmd/joinp.rs` (modified, +3/-4)
 ```diff
-@@ -730,7 +730,7 @@ describe("path confinement", () => {
-     const NOT_A_PATH = new Set([
-       "--agg", "--align", "--cities-url", "--compression", "--delimiter", "--denominator-key",
-       "--denominator-unit", "--feature-id-key", "--feature-name-key", "--filter",
--      "--group", "--languages", "--rnull-values", "--select", "--sentinels-as", "--shard",
-+      "--group", "--languages", "--quote", "--rnull-values", "--select", "--sentinels-as", "--shard",
-       "--table-name", "--template",
-       // handled elsewhere: the output_file alias, and luau's inline-or-path scripts
-       "--output", "--begin", "--end",
+@@ -152,10 +152,9 @@ joinp options:
+                            [default: 0]
+     --no-optimizations     Disable non-default join optimizations. This will make joins slower.
+                            Only use this when you get join errors.                           
+-    --ignore-errors        Ignore errors when parsing CSVs. If set, rows with errors
+-                           will be skipped. If not set, the query will fail.
+-                           Only use this when debugging queries, as polars does batched
+-                           parsing and will skip the entire batch where the error occurred.
++    --ignore-errors        Read CSV values that can't be parsed as their column's type
++                           as empty (null) instead of failing. Their rows are kept (a
++                           null join key matches nothing). If not set, the join will fail.
+                            To get more detailed error messages, set the environment variable
+                            POLARS_BACKTRACE_IN_ERR=1 before running the join.
+     --decimal-comma        Use comma as the decimal separator when parsing & writing CSVs.
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5116** (2026-11-25): fix(joinp): make --nulls match empty join keys, as documented (@jqnatividad)
 - **PR #5115** (2026-11-25): test(mcp): classify stats/validate --quote as not a path (@jqnatividad)
+- **PR #5114** (2026-11-25): docs(sqlp,joinp,pivotp): --ignore-errors keeps rows, reading bad values as null (@jqnatividad)
+- **PR #5112** (2026-11-25): feat: add timebucketp, Polars-powered time-window aggregation (@jqnatividad)
 - **PR #5111** (2026-11-24): deps: bump Polars to upstream rev 08b2814 (@jqnatividad)
 - **PR #5110** (2026-11-24): deps: drop unused direct deps bytemuck and spreadsheet-ods (@jqnatividad)
-- **PR #5108** (2026-11-24): build(deps): bump github/codeql-action from 4.39.3 to 4.39.4 (@dependabot[bot])
-- **PR #5107** (2026-11-24): build(deps): bump anthropics/claude-code-action from 1.0.284 to 1.0.286 (@dependabot[bot])
-- **PR #5106** (2026-11-24): fix(moarstats,pragmastat,scoresql): check a stats cache's parsing options before reusing it (#5105) (@jqnatividad)
 
 ---
 
@@ -2363,33 +2769,33 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. test(mcp): classify stats/validate --quote as not a path
+## X. joinp): make --nulls match empty join keys, as documented
 
 **RULE**:
-When implementing operations in `.claude/skills/CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.claude/skills/qsv/qsv-joinp.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c9b35465`: test(mcp): classify stats/validate --quote as not a path. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5108f34d`: joinp): make --nulls match empty join keys, as documented. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/skills/CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/skills/qsv/qsv-joinp.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-### Fixed
-- **Path-classification test: `stats --quote` and `validate --quote` are not paths.** Since #5104 the test that every skill option whose description mentions files is classified failed on every PR: these options take a quote character, and their descriptions mention the file being read. They are now listed with the other options that aren't paths. Test-only change. ([#5115](https://github.com/dathere/qsv/pull/5115))
-
+        "description": "Read CSV values that can't be parsed as their column's type as empty (null) instead of failing. Their rows are kept, and in the standard joins, a null join key, like an empty one, matches only with --nulls. If not set, the join will fail. To get more detailed error messages, set the environment variable POLARS_BACKTRACE_IN_ERR=1 before running the join."
+        "description": "When set, unquoted empty fields are read as null (so they are written as the --null-value string), and in the standard joins, empty join keys match each other. Otherwise, rows with an empty key never match there (outer joins keep them, unmatched). The key matching doesn't apply to cross, non-equi or asof joins."
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+        "description": "Read CSV values that can't be parsed as their column's type as empty (null) instead of failing. Their rows are kept (a null join key matches nothing). If not set, the join will fail. To get more detailed error messages, set the environment variable POLARS_BACKTRACE_IN_ERR=1 before running the join."
+        "description": "When set, joins will work on empty fields. Otherwise, empty fields are completely ignored."
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c9b35465` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5108f34d` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

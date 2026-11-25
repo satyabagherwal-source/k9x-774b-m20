@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-25T23:03:03.833Z",
+  "updated_at": "2026-11-25T23:12:01.180Z",
   "stats": {
-    "total_discovered": 9513,
-    "approved_pending_harvest": 9016,
+    "total_discovered": 9515,
+    "approved_pending_harvest": 9018,
     "harvested_count": 0,
     "rejected_count": 497,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9009,
+      "COMMUNITY_AND_EXPERT": 9011,
       "OFFICIAL_DOCUMENTATION": 281,
       "STANDARDS_AND_SPECIFICATIONS": 151,
       "ENGINEERING_BLOGS": 7,
@@ -205834,6 +205834,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-krafton-raon-1-mini-learnings.md",
         "fileName": "hf-krafton-raon-1-mini-learnings.md"
+      }
+    },
+    "SRC-B0E4EF309D6E": {
+      "id": "SRC-B0E4EF309D6E",
+      "url": "https://github.com/googleapis/googleapis/blob/master/google/api/http.proto",
+      "title": "https://github.com/googleapis/googleapis/blob/master/google/api/http.proto",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T23:12:01.119Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/grpc-grpc-rust-learnings.md",
+        "fileName": "grpc-grpc-rust-learnings.md"
+      }
+    },
+    "SRC-DAC2F2065CE4": {
+      "id": "SRC-DAC2F2065CE4",
+      "url": "https://github.com/grpc/grpc-proto/archive/master.tar.gz",
+      "title": "https://github.com/grpc/grpc-proto/archive/master.tar.gz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T23:12:01.180Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/grpc-grpc-rust-learnings.md",
+        "fileName": "grpc-grpc-rust-learnings.md"
       }
     }
   }

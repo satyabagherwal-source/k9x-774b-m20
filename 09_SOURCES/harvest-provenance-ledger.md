@@ -13178,3 +13178,7 @@ Every entry in this ledger must capture:
 | `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `f28f8940` | Multi-dimensional audit evidence | 2026-11-25T23:02:03.774Z |
 | `learn-dom-d-67959b26` | `project://hf-nvidia-nemotron-labs-image-30b-a3b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-nvidia-nemotron-labs-image-30b-a3b-learnings.md` | 2026-11-25T23:02:31.527Z |
 | `learn-dom-d-0a1336c6` | `project://hf-krafton-raon-1-mini` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-krafton-raon-1-mini-learnings.md` | 2026-11-25T23:03:03.807Z |
+| `learn-huggingface-microsoft-mage-vl-cowork` | `https://huggingface.co/microsoft/Mage-VL-Cowork` | `hf-microso` | Multi-dimensional audit evidence | 2026-11-25T23:11:40.943Z |
+| `learn-github-grpc-grpc-rust` | `https://github.com/grpc/grpc-rust` | `39b3ea7c` | Multi-dimensional audit evidence | 2026-11-25T23:11:42.838Z |
+| `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/turso` | `9e928387` | Multi-dimensional audit evidence | 2026-11-25T23:11:55.486Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `5108f34d` | Multi-dimensional audit evidence | 2026-11-25T23:11:57.572Z |

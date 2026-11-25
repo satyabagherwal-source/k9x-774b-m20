@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-25T23:02:03.789Z",
+  "last_updated": "2026-11-25T23:11:57.586Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "6157c9de8dda25dfa57f23488d164bfcd9d29be2433e99e045314f65abf402a4",
-      "verified_at": "2026-11-25T14:05:09.681Z",
+      "content_hash": "d02f523e0044f7b17f6f8769f75821f263916ce20521c0b9476389da2e193514",
+      "verified_at": "2026-11-25T23:11:57.586Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T14:05:09.681Z"
+      "last_updated": "2026-11-25T23:11:57.586Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -8211,14 +8211,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-grpc-grpc-rust",
-      "content_hash": "24a4a8d584ef84a668283e088090328d013b9491344a0b3ead85efecbdb9ebc8",
-      "verified_at": "2026-11-24T15:36:01.227Z",
+      "content_hash": "3c67d06edbab827a18824373dc8d0d74421cdc216d9feac02e118dc0472a873d",
+      "verified_at": "2026-11-25T23:11:42.852Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T15:36:01.227Z"
+      "last_updated": "2026-11-25T23:11:42.852Z"
     },
     "crazycodeboy/react-native-splash-screen": {
       "repository": "crazycodeboy/react-native-splash-screen",
@@ -9516,14 +9516,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tursodatabase-turso",
-      "content_hash": "4160571aa48fb1daed1bdc42a0286c2e427add6e49cc4dbd21da35b8533a22df",
-      "verified_at": "2026-11-25T13:06:05.619Z",
+      "content_hash": "c771ab7a789d144aff6a3e5cb712e375f5eeeacd8b800191eacc6de562fe1581",
+      "verified_at": "2026-11-25T23:11:55.500Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T13:06:05.619Z"
+      "last_updated": "2026-11-25T23:11:55.500Z"
     },
     "carbon-design-system/carbon": {
       "repository": "carbon-design-system/carbon",
@@ -17841,14 +17841,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-microsoft-mage-vl-cowork",
-      "content_hash": "3529f62cfbc060b8aaec6ac1b7302ec7cb04a5f1d3e08e576a33a65ac3172091",
-      "verified_at": "2026-11-22T01:43:56.881Z",
+      "content_hash": "0b6a39ad24f0b8ddf51ead0f02607a3eb21459c4249d77fc1847148969374b9e",
+      "verified_at": "2026-11-25T23:11:40.958Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T01:43:56.881Z"
+      "last_updated": "2026-11-25T23:11:40.958Z"
     },
     "Qwen/Qwen3-Embedding-0.6B": {
       "repository": "Qwen/Qwen3-Embedding-0.6B",

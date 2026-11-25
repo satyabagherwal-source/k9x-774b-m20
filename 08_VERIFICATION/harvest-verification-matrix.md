@@ -13145,3 +13145,7 @@
 | `CYCLE-20261125-AJ22` | `2026-11-25T23:02:03.770Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10555` | Yes (`84124866...`) |
 | `CYCLE-2026-11-25-PROJ-EVOLVE` | `2026-11-25T23:02:31.527Z` | `hf-nvidia-nemotron-labs-image-30b-a3b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-67959B26` [Domain D] | Yes (`3488f34d...`) |
 | `CYCLE-2026-11-25-PROJ-EVOLVE` | `2026-11-25T23:03:03.807Z` | `hf-krafton-raon-1-mini` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-0A1336C6` [Domain D] | Yes (`7fb1df6a...`) |
+| `CYCLE-20261125-MWEI` | `2026-11-25T23:11:40.938Z` | `microsoft/Mage-VL-Cowork` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-microsoft-mage-vl-cowork-learnings.md` | Yes (`0b6a39ad...`) |
+| `CYCLE-20261125-MXV5` | `2026-11-25T23:11:42.833Z` | `grpc/grpc-rust` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10556` | Yes (`3c67d06e...`) |
+| `CYCLE-20261125-N7MI` | `2026-11-25T23:11:55.482Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10532` | Yes (`c771ab7a...`) |
+| `CYCLE-20261125-N98G` | `2026-11-25T23:11:57.568Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10557` | Yes (`d02f523e...`) |
