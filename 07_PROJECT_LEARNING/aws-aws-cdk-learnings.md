@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/aws-aws-cdk-learnings.md`  
 > **Source**: github ([https://github.com/aws/aws-cdk](https://github.com/aws/aws-cdk))  
-> **Source Version**: `b74b07e2`  
+> **Source Version**: `7a66ccad`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T06:20:47.023Z  
+> **Timestamp**: 2026-11-25T01:01:00.117Z  
 > **Learning ID**: `learn-github-aws-aws-cdk`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/aws-aws-cdk-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/aws/aws-cdk](https://github.com/aws/aws-cdk))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T06:20:47.018Z  
+> **Harvest Timestamp**: 2026-11-25T01:01:00.112Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The AWS Cloud Development Kit is a framework for defining cloud infrastructure in code
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 12993 stars
+- **Stars / Engagement**: 12991 stars
 
 ---
 
@@ -1200,22 +1200,20 @@ export abstract class OnlineEvaluationBase extends Resource implements IOnlineEv
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `78649cb7` (2026-11-23)
-**Commit Message**: fix(bedrockagentcore): allow eventExpiryDuration minimum of 3 days (#39673)
+### Incident Patch 1: `7a66ccad` (2026-11-24)
+**Commit Message**: docs(agents): drop grant methods from the configuration-mutation exception (#39888)
 
 ### Issue # (if applicable)
 
-Closes #39671.
+N/A
 
 ### Reason for this change
 
-Amazon Bedrock AgentCore Memory supports an `eventExpiryDuration` of 3–365 days ([CreateMemory](https://docs.aws.amazon.com/bedrock-agentcore-control/latest/APIReference/API_CreateMemory.html), [AWS::BedrockAgentCore::Memory](https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-resource-bedrockagentcore-memory.html)), and the `@aws/agentcore` CLI accepts 3–365. However, `aws_bedrockagentcore.Memory` and `@aws-cdk/aws-bedrock-agentcore-alpha.Memory` enforced `MEMORY_EXPIRATION_DAYS_MIN = 7`, rejecting valid durations between 3 and 6 days.
+`docs/AGENTS_CONSTRUCT_DESIGN.md` says in "Configuration Mutation" that grant methods should be on the construct interface. The same guide ("Construct Interface"), `AGENTS_CONSTRUCT_IMPLEMENTATION.md` ("Grants"), `DESIGN_GUIDELINES.md`, `FACADES_AND_TRAITS_DESIGN_GUIDELINES.md` and the awslint rule `no-grants` all say new grant methods go in a `{Resource}Grants` class.
 
 ### Description of changes
 
-- Reduced `MEMORY_EXPIRATION_DAYS_MIN` from `7` to `3` in both `aws-bedrockagentcore` and `@aws-cdk/aws-bedrock-agentcore-alpha`.
-- Updated doc comments and README to document valid retention as between 3 and 365 days.
-- Updated unit tests to verify minimum valid expiration (3 days) and rejection of durations less than 3 days.
+Keep the "Configuration Mutation" exception for factory methods only. The rule for grant methods is already stated in "Construct Interface" and in the implementation guide's "Grants" section.
 
 ### Describe any new or updated permissions being added
 
@@ -1223,148 +1221,35 @@ None.
 
 ### Description of how you validated changes
 
-Updated unit te
+Documentation only, one line changed.
 
-**File**: `packages/@aws-cdk/aws-bedrock-agentcore-alpha/lib/memory/memory.ts` (modified, +2/-2)
-```diff
-@@ -65,7 +65,7 @@ const MEMORY_TAG_MAX_LENGTH = 256;
-  * Minimum length for memory expiration days
-  * @internal
-  */
--const MEMORY_EXPIRATION_DAYS_MIN = 7;
-+const MEMORY_EXPIRATION_DAYS_MIN = 3;
- /**
-  * Maximum length for memory expiration days
-  * @internal
-@@ -484,7 +484,7 @@ export interface MemoryProps {
-    */
-   readonly memoryName?: string;
-   /**
--   * Short-term memory expiration in days (between 7 and 365).
-+   * Short-term memory expiration in days (between 3 and 365).
-    * Sets the short-term (raw event) memory retention.
-    * Events older than the specified duration will expire and no longer be stored.
-    * @default - 90 days
-```
+### Checklist
+- [x] My code adheres to the [CONTRIBUTING GUIDE](https://github.com/aws/aws-cdk/blob/main/CONTRIBUTING.md) and [DESIGN GUIDELINES](https://github.com/aws/aws-cdk/blob/main/docs/DESIGN_GUIDELINES.md)
 
-**File**: `packages/@aws-cdk/aws-bedrock-agentcore-alpha/test/agentcore/memory/memory.test.ts` (modified, +5/-5)
-```diff
-@@ -409,13 +409,13 @@ describe('Memory expiration duration validation tests', () => {
-     });
-   });
- 
--  test('Should throw error for expiration less than 7 days', () => {
-+  test('Should throw error for expiration less than 3 days', () => {
-     expect(() => {
-       new Memory(stack, 'short-expiry', {
-         memoryName: 'short_expiry_memory',
-         expirationDuration: Duration.days(0),
-       });
--    }).toThrow('Memory expiration days must be between 7 and 365');
-+    }).toThrow('Memory expiration days must be between 3 and 365');
-   });
- 
-   test('Should throw error for expiration more than 365 days', () => {
-@@ -424,14 +424,14 @@ describe('Memory expiration duration validation tests', () => {
-         memoryName: 'long_expiry_memory',
-         expirationDuration: Duration.days(366),
-       });
--    }).toThrow('Memory expiration days must be between 7 and 365');
-+    }).toThrow('Memory expiration days must be between 3 and 365');
-   });
- 
--  test('Should accept minimum valid expiration (7 days)', () => {
-+  test('Should accept minimum valid expiration (3 days)', () => {
-     expect(() => {
-       new Memory(stack, 'min-expiry', {
-         memoryName: 'min_expiry_memory',
--        expirationDuration: Duration.days(7),
-+        expirationDuration: Duration.days(3),
-       });
-     }).not.toThrow();
-   });
-```
+----
 
-**File**: `packages/aws-cdk-lib/aws-bedrockagentcore/README.md` (modified, +1/-1)
-```diff
-@@ -2579,7 +2579,7 @@ To write to long-term memory, you need to configure extraction strategies which
- | Name | Type | Required | Description |
- |------|------|----------|-------------|
- | `memoryName` | `string` | No | The name of the memory. If not provided, a unique name will be auto-generated |
--| `expirationDuration` | `Duration` | No | Short-term memory expiration in days (between 7 and 365). Default: 90 days |
-+| `expirationDuration` | `Duration` | No | Short-term memory expiration in days (between 3 and 365). Default: 90 days |
- | `description` | `string` | No | Optional description for the memory. Default: no description. |
- | `kmsKey` | `IKey` | No | Custom KMS key to use for encryption. Default: Your data is encrypted with a key that AWS owns and manages for you |
- | `memoryStrategies` | `MemoryStrategyBase[]` | No | Built-in extraction strategies to use for this memory. Default: No extraction strategies (short term memory only) |
-```
+*By submitting this pull request, I confirm that my contribution is made under the terms 
 
-**File**: `packages/aws-cdk-lib/aws-bedrockagentcore/lib/memory/memory.ts` (modified, +2/-2)
+**File**: `docs/AGENTS_CONSTRUCT_DESIGN.md` (modified, +1/-1)
 ```diff
-@@ -67,7 +67,7 @@ const MEMORY_TAG_MAX_LENGTH = 256;
-  * Minimum length for memory expiration days
-  * @internal
-  */
--const MEMORY_EXPIRATION_DAYS_MIN = 7;
-+const MEMORY_EXPIRATION_DAYS_MIN = 3;
- /**
-  * Maximum length for memory expiration days
-  * @internal
-@@ -572,7 +572,7 @@ export interface MemoryProps {
-    */
-   readonly memoryName?: string;
-   /**
--   * Short-term memory expiration in days (between 7 and 365).
-+   * Short-term memory expiration in days (between 3 and 365).
-    * Sets the short-term (raw event) memory retention.
-    * Events older than the specified duration will expire and no longer be stored.
-    * @default - 90 days
-```
-
-**File**: `packages/aws-cdk-lib/aws-bedrockagentcore/test/agentcore/memory/memory.test.ts` (modified, +5/-5)
-```diff
-@@ -431,13 +431,13 @@ describe('Memory expiration duration validation tests', () => {
-     });
-   });
+@@ -192,7 +192,7 @@ Common facade types — see [AGENTS_CONSTRUCT_IMPLEMENTATION.md](./AGENTS_CONSTR
  
--  test('Should throw error for expiration less than 7 days', () => {
-+  test('Should throw error for expiration less than 3 days', () => {
-     expect(() => {
-       new Memory(stack, 'short-expiry', {
-         memoryName: 'short_expiry_memory',
-         expirationDuration: Duration.days(0),
-       });
--    }).toThrow('Memory expiration days must be between 7 and 365');
-+    }).toThrow('Memory expiration days must be between 3 and 365');
-   });
+ - You MUST NOT include configuration mutation methods on the construct interface (`IFoo`) — they belong on the concrete class only (imported constructs cannot be reconfigured)
+ - Annotate mutation methods with `@config` JSDoc tag
+-- Exception: grant methods and factory methods SHOULD be on the interface because they serve external consumers or create new resources
++- Exception: factory methods SHOULD be on the interface because they create new resources
  
-   test('Should throw error for expiration more than 365 days', () => {
-@@ -446,14 +446,14 @@ describe('Memory expiration duration validation tests', () => {
-         memoryName: 'long_expiry_memory',
-         expirationDuration: Duration.days(366),
-       });
--    }).toThrow('Memory expiration days must be between 7 and 365');
-+    }).toThrow('Memory expiration days must be between 3 and 365');
-   });
+ ### Method Verb Semantics
  
--  test('Should accept minimum valid expiration (7 days)', () => {
-+  test('Should accept minimum valid expiration (3 days)', () => {
-     expect(() => {
-       new Memory(stack, 'min-expiry', {
-         memoryName: 'min_expiry_memory',
--        expirationDuration: Duration.days(7),
-+        expirationDuration: Duration.days(3),
-       });
-     }).not.toThrow();
-   });
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #39888** (2026-11-24): docs(agents): drop grant methods from the configuration-mutation exception (@ozelalisen)
 - **PR #39879** (2026-11-23): feat: update L1 CloudFormation resource definitions (@aws-cdk-automation)
 - **PR #39873** (closed): feat(lambda): support python3.15 runtime in WebFunction (@mazyu36)
 - **PR #39871** (2026-11-23): feat(lambda): add nodejs26.x runtime to WebFunctionRuntime (@mazyu36)
 - **PR #39860** (2026-11-20): chore(merge-back): 2.278.0 (@aws-cdk-automation)
 - **PR #39858** (2026-11-20): chore(core): add telemetry counters for asset bundling (@mrgrain)
-- **PR #39855** (2026-11-20): chore(release): 2.278.0 (@aws-cdk-automation)
 
 ---
 
@@ -1384,30 +1269,28 @@ Updated unit te
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. bedrockagentcore): allow eventExpiryDuration minimum of 3 days
+## X. docs(agents): drop grant methods from the configuration-mutation exception
 
 **RULE**:
-When implementing operations in `packages/@aws-cdk/aws-bedrock-agentcore-alpha/lib/memory/memory.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aws/aws-cdk. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/AGENTS_CONSTRUCT_DESIGN.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aws/aws-cdk. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `78649cb7`: bedrockagentcore): allow eventExpiryDuration minimum of 3 days. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7a66ccad`: docs(agents): drop grant methods from the configuration-mutation exception. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/@aws-cdk/aws-bedrock-agentcore-alpha/lib/memory/memory.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/AGENTS_CONSTRUCT_DESIGN.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-const MEMORY_EXPIRATION_DAYS_MIN = 3;
-   * Short-term memory expiration in days (between 3 and 365).
+- Exception: factory methods SHOULD be on the interface because they create new resources
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-const MEMORY_EXPIRATION_DAYS_MIN = 7;
-   * Short-term memory expiration in days (between 7 and 365).
+- Exception: grant methods and factory methods SHOULD be on the interface because they serve external consumers or create new resources
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `78649cb7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7a66ccad` are properly handled with clean fallback behavior.

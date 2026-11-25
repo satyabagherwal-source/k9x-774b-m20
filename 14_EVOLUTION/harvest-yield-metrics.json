@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T00:51:59.055Z",
-  "total_cycles_completed": 12233,
-  "total_learnings_persisted": 12233,
-  "total_rules_promoted": 11282,
+  "last_updated": "2026-11-25T01:01:01.265Z",
+  "total_cycles_completed": 12235,
+  "total_learnings_persisted": 12235,
+  "total_rules_promoted": 11284,
   "history": [
-    {
-      "timestamp": "2026-11-24T12:18:19.568Z",
-      "repository": "nari-labs/Qwen3.8-27B-NariQ-GGUF",
-      "learningId": "learn-huggingface-nari-labs-qwen3-8-27b-nariq-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T12:18:29.987Z",
-      "repository": "invertase/react-native-firebase",
-      "learningId": "learn-github-invertase-react-native-firebase",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-24T12:27:21.963Z",
       "repository": "Nasiko-Labs/nasiko",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-25T00:51:59.055Z",
       "repository": "webdriverio/webdriverio",
       "learningId": "learn-github-webdriverio-webdriverio",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T01:00:58.513Z",
+      "repository": "arkivanov/Decompose",
+      "learningId": "learn-github-arkivanov-decompose",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T01:01:01.265Z",
+      "repository": "aws/aws-cdk",
+      "learningId": "learn-github-aws-aws-cdk",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

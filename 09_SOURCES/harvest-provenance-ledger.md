@@ -12912,3 +12912,5 @@ Every entry in this ledger must capture:
 | `learn-github-agent-of-empires-agent-of-empires` | `https://github.com/agent-of-empires/agent-of-empires` | `a6717a44` | Multi-dimensional audit evidence | 2026-11-25T00:51:56.995Z |
 | `learn-github-webdriverio-webdriverio` | `https://github.com/webdriverio/webdriverio` | `cfd6c6b2` | Multi-dimensional audit evidence | 2026-11-25T00:51:59.048Z |
 | `learn-dom-k-23b0ec10` | `project://webdriverio-webdriverio` | `cfd6c6b2` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/webdriverio-webdriverio-learnings.md` | 2026-11-25T00:52:38.906Z |
+| `learn-github-arkivanov-decompose` | `https://github.com/arkivanov/Decompose` | `481080e3` | Multi-dimensional audit evidence | 2026-11-25T01:00:58.507Z |
+| `learn-github-aws-aws-cdk` | `https://github.com/aws/aws-cdk` | `7a66ccad` | Multi-dimensional audit evidence | 2026-11-25T01:01:01.260Z |

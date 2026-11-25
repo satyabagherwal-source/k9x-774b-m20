@@ -4803,10 +4803,10 @@
     "repository": "aws/aws-cdk",
     "platform": "github",
     "sourceUrl": "https://github.com/aws/aws-cdk",
-    "sourceVersion": "b74b07e2",
+    "sourceVersion": "7a66ccad",
     "license": "Apache-2.0",
-    "contentHash": "15f14b38fe61c2ad485b7a6f8e8475ba0491b9897abf58036227f0030c1c2be1",
-    "lastHarvestedAt": "2026-11-24T06:20:48.075Z",
+    "contentHash": "5084389c966afca81705e836d642f98718336342ebf4e4d7152837674466fee2",
+    "lastHarvestedAt": "2026-11-25T01:01:01.260Z",
     "learningId": "learn-github-aws-aws-cdk"
   },
   "cockroachdb-cockroach": {
@@ -7343,10 +7343,10 @@
     "repository": "arkivanov/Decompose",
     "platform": "github",
     "sourceUrl": "https://github.com/arkivanov/Decompose",
-    "sourceVersion": "361377cb",
+    "sourceVersion": "481080e3",
     "license": "Apache-2.0",
-    "contentHash": "ca5c1fee2164b84c239e248740eac4df1b12e3cd890e4cad6bc676007ca41a29",
-    "lastHarvestedAt": "2026-11-19T09:43:47.415Z",
+    "contentHash": "79899c365fda4ecfdfabb94cedca039feca62fda62152917eb65f9b1e580699e",
+    "lastHarvestedAt": "2026-11-25T01:00:58.507Z",
     "learningId": "learn-github-arkivanov-decompose"
   },
   "langchain4j-langchain4j": {

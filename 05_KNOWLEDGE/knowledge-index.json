@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-25T00:52:41.380Z",
+  "last_updated": "2026-11-25T01:01:07.541Z",
   "total_verified_learnings": 9107,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25085,
+  "total_items": 25091,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "f657b587201ba21baf1a4590ec2ed946d8ab25852374f7e4efdf97e51666e327",
+      "content_hash": "4c3a59fc4d25baa6ea29563735bfc8ab10e9ae419fe28f98e757f4695f235044",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T21:24:27.397Z"
+      "persisted_at": "2026-11-25T01:01:07.354Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "e1e5767be251e576d608253148a9e5af7409754c8be7424778c1e405ff5f0e9b",
+      "content_hash": "f7af48dd0a5439f9b375b7aaad8240aff279a518b25ba2672fe073066e45a518",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T21:24:27.584Z"
+      "persisted_at": "2026-11-25T01:01:07.541Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -238314,8 +238314,8 @@
       "slug": "aws-aws-cdk",
       "platform": "github",
       "source_url": "https://github.com/aws/aws-cdk",
-      "source_version": "b74b07e2",
-      "content_hash": "15f14b38fe61c2ad485b7a6f8e8475ba0491b9897abf58036227f0030c1c2be1",
+      "source_version": "7a66ccad",
+      "content_hash": "5084389c966afca81705e836d642f98718336342ebf4e4d7152837674466fee2",
       "dossier_path": "07_PROJECT_LEARNING/aws-aws-cdk-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/aws-aws-cdk-learnings.md",
       "promoted_rules": [
@@ -238353,6 +238353,11 @@
           "number": 10217,
           "title": "allow eventExpiryDuration minimum of 3 days",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10411,
+          "title": "docs(agents): drop grant methods from the configuration-mutation exception",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -238360,7 +238365,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T06:20:47.873Z",
+      "verified_at": "2026-11-25T01:01:01.034Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -238402,10 +238407,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-aws-aws-cdk-technical-construction-intelligence-aws-aws-cdk-core-invariants.md",
       "title": "Technical Construction Intelligence: aws/aws-cdk Core Invariants",
       "repository": "aws/aws-cdk",
-      "source_version": "b74b07e2",
-      "content_hash": "56d3d2fe23edbd6b9fe84388c5aa001d92c8a000ecc92027bfe583e38f3a412a",
+      "source_version": "7a66ccad",
+      "content_hash": "7697cf0bea830770e6e8b80d6fee72c80ff4c18b4f4cbf1d4ed93359b78c9ac4",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T06:20:48.472Z"
+      "persisted_at": "2026-11-25T01:01:01.687Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-aws-aws-cdk": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-aws-aws-cdk",
@@ -238414,10 +238419,10 @@
       "relative_path": "08_VERIFICATION/aws-aws-cdk-verification-protocol-empirical-defect-shield-for-aws-aws-cdk.md",
       "title": "Verification Protocol: Empirical Defect Shield for aws/aws-cdk",
       "repository": "aws/aws-cdk",
-      "source_version": "b74b07e2",
-      "content_hash": "6671a81018aa001f3eaf39af34a73f17b0a57f11f8dfead9c630470d97917f24",
+      "source_version": "7a66ccad",
+      "content_hash": "b0cc52afd2917e8fd544524cde1d2ae646d87474aaed9321f239ab8ec87318c7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T06:20:48.642Z"
+      "persisted_at": "2026-11-25T01:01:02.037Z"
     },
     "learn-huggingface-qwen-qwen3-4b": {
       "learning_id": "learn-huggingface-qwen-qwen3-4b",
@@ -238490,9 +238495,9 @@
       "title": "Technical Construction Intelligence: aws-aws-cdk-learnings Core Invariants",
       "repository": "aws-aws-cdk-learnings",
       "source_version": "HEAD",
-      "content_hash": "ac7c58f809854399fd6674e0700309f72e805b3dbe96b618e031deb85c4b875f",
+      "content_hash": "907d54156d978d151af796845ef13c2abfd840edf32940b0f3f91506df87db8d",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T06:21:18.466Z"
+      "persisted_at": "2026-11-25T01:01:06.301Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-aws-aws-cdk-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-aws-aws-cdk-learnings",
@@ -238502,9 +238507,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for aws-aws-cdk-learnings",
       "repository": "aws-aws-cdk-learnings",
       "source_version": "HEAD",
-      "content_hash": "607113883ecf1a31af38395f5a2bb0db4a3d47f645166fa8d0bd66b41bd4aa4e",
+      "content_hash": "9205d9df08bc632fdca316f0ebc1701cb82cb82b7cbc606506a72c89782db0ba",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T06:21:18.654Z"
+      "persisted_at": "2026-11-25T01:01:06.646Z"
     },
     "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0": {
       "learning_id": "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0",
@@ -288699,14 +288704,19 @@
       "slug": "arkivanov-decompose",
       "platform": "github",
       "source_url": "https://github.com/arkivanov/Decompose",
-      "source_version": "361377cb",
-      "content_hash": "ca5c1fee2164b84c239e248740eac4df1b12e3cd890e4cad6bc676007ca41a29",
+      "source_version": "481080e3",
+      "content_hash": "79899c365fda4ecfdfabb94cedca039feca62fda62152917eb65f9b1e580699e",
       "dossier_path": "07_PROJECT_LEARNING/arkivanov-decompose-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/arkivanov-decompose-learnings.md",
       "promoted_rules": [
         {
           "number": 9365,
           "title": "Empirical Invariant Guard in decompose.api",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10410,
+          "title": "Empirical Invariant Guard in build.yml",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -288715,7 +288725,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T09:43:47.234Z",
+      "verified_at": "2026-11-25T01:00:58.281Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -288731,10 +288741,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-arkivanov-decompose-architecture-intelligence-arkivanov-decompose-core-invariant.md",
       "title": "Architecture Intelligence: arkivanov/Decompose Core Invariants",
       "repository": "arkivanov/Decompose",
-      "source_version": "361377cb",
-      "content_hash": "2b27656881b275999ff8dcc3d0d6fdbe82da9945ef7a60e1f49f6f69c58e5bb3",
+      "source_version": "481080e3",
+      "content_hash": "03aac23817f1a56bd415bc35be8bf99047f72b8de30c8e21ba4d8ad41c4a0ec3",
       "domain_letter": "G",
-      "persisted_at": "2026-11-19T09:43:47.748Z"
+      "persisted_at": "2026-11-25T01:00:58.947Z"
     },
     "rule-9149": {
       "learning_id": "rule-9149",
@@ -288794,9 +288804,9 @@
       "title": "Architecture Intelligence: arkivanov-decompose-learnings Core Invariants",
       "repository": "arkivanov-decompose-learnings",
       "source_version": "HEAD",
-      "content_hash": "50dee88021b3cb1cba66a48a48f3a7d2669941673430a5d91fa941ce790cd4c0",
+      "content_hash": "491f12fdcbd9f72e96d753c4f892f002f2a92f6a5fb14f96e893504e25532439",
       "domain_letter": "G",
-      "persisted_at": "2026-11-19T09:44:01.666Z"
+      "persisted_at": "2026-11-25T01:01:05.391Z"
     },
     "rule-9150": {
       "learning_id": "rule-9150",
@@ -298513,10 +298523,10 @@
       "relative_path": "08_VERIFICATION/arkivanov-decompose-verification-protocol-empirical-defect-shield-for-arkivanov-.md",
       "title": "Verification Protocol: Empirical Defect Shield for arkivanov/Decompose",
       "repository": "arkivanov/Decompose",
-      "source_version": "361377cb",
-      "content_hash": "118a8323155f0ec4b9cbd12186a2e949a4c9ba411465a6b341519aafef0c4448",
+      "source_version": "481080e3",
+      "content_hash": "a165327cdf7b2201a45eb97c7aa46ad36a173f8c1bebd9afb1cf3a32da339235",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T09:43:47.897Z"
+      "persisted_at": "2026-11-25T01:00:59.148Z"
     },
     "rule-9366": {
       "learning_id": "rule-9366",
@@ -298602,9 +298612,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for arkivanov-decompose-learnings",
       "repository": "arkivanov-decompose-learnings",
       "source_version": "HEAD",
-      "content_hash": "713cd43207f001e93151d631bc11ac276fc23b0364f50ddd02e3646fdae33f69",
+      "content_hash": "9759cc9e542f13beb72ac41aab68979bdac9e2a5f835df8b1e54a253c171fcd1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T09:44:01.830Z"
+      "persisted_at": "2026-11-25T01:01:05.578Z"
     },
     "rule-9368": {
       "learning_id": "rule-9368",
@@ -338947,13 +338957,13 @@
       "item_id": "candidate_directive-deps-bump-url-to-2-5-9-and-heapless-to-0-9-4",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-D5FZ-deps-bump-url-to-2-5-9-and-heapless-to-0-9-4.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-3S9R-deps-bump-url-to-2-5-9-and-heapless-to-0-9-4.md",
       "title": "deps): bump url to 2.5.9 and heapless to 0.9.4",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "5f629ec17af8504bb16ee9f6f2517d995ab1483e605dcf63beab5f07d02daeee",
+      "content_hash": "bca4b8a9fa96ac1478f4b035f23f67e997cc7e8a13c2a8d518a56533d0599c37",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T21:24:27.218Z"
+      "persisted_at": "2026-11-25T01:01:07.170Z"
     },
     "rule-10315": {
       "learning_id": "rule-10315",
@@ -342857,6 +342867,82 @@
       "content_hash": "ba8c489bf726aa0e8d5b47e54e01d6092fbea53aa5bf6fdc7dd473b81d6b54cc",
       "domain_letter": "H",
       "persisted_at": "2026-11-25T00:52:07.574Z"
+    },
+    "rule-10410": {
+      "learning_id": "rule-10410",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10410,
+      "title": "Empirical Invariant Guard in build.yml",
+      "source_url": "https://github.com/arkivanov/Decompose",
+      "source_version": "481080e3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T01:00:58.281Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-build-yml": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-build-yml",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-3QR6-empirical-invariant-guard-in-build-yml.md",
+      "title": "Empirical Invariant Guard in build.yml",
+      "repository": "arkivanov-decompose-learnings",
+      "source_version": "HEAD",
+      "content_hash": "377259cf886194cf306d0d88517ed8c0fed3c47fcdcf77ba8f0452f5c9b8144f",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-25T01:01:05.203Z"
+    },
+    "rule-10411": {
+      "learning_id": "rule-10411",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10411,
+      "title": "docs(agents): drop grant methods from the configuration-mutation exception",
+      "source_url": "https://github.com/aws/aws-cdk",
+      "source_version": "7a66ccad",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T01:01:01.034Z"
+    },
+    "candidate_directive-docs-agents-drop-grant-methods-from-the-configuration-mutation-exception": {
+      "item_id": "candidate_directive-docs-agents-drop-grant-methods-from-the-configuration-mutation-exception",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-3RGD-docs-agents-drop-grant-methods-from-the-configuration-mutation-exception.md",
+      "title": "docs(agents): drop grant methods from the configuration-mutation exception",
+      "repository": "aws-aws-cdk-learnings",
+      "source_version": "HEAD",
+      "content_hash": "97b9c073947fc3791a1add9502b88dca3a4f4caf74d04fab554afddf3658e2cf",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-25T01:01:06.110Z"
+    },
+    "skill_playbook-skill-operational-integration-playbook-for-aws-aws-cdk": {
+      "item_id": "skill_playbook-skill-operational-integration-playbook-for-aws-aws-cdk",
+      "artifact_type": "skill_playbook",
+      "target_folder": "03_SKILLS",
+      "relative_path": "03_SKILLS/aws-aws-cdk-skill-operational-integration-playbook-for-aws-aws-cdk.md",
+      "title": "Skill: Operational & Integration Playbook for aws/aws-cdk",
+      "repository": "aws/aws-cdk",
+      "source_version": "7a66ccad",
+      "content_hash": "63282aeb5bae1b3b6688ef3b08e1d1355bb9f8e4cf0dc8cc9efd4724ddcf69af",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-25T01:01:01.888Z"
+    },
+    "skill_playbook-skill-operational-integration-playbook-for-aws-aws-cdk-learnings": {
+      "item_id": "skill_playbook-skill-operational-integration-playbook-for-aws-aws-cdk-learnings",
+      "artifact_type": "skill_playbook",
+      "target_folder": "03_SKILLS",
+      "relative_path": "03_SKILLS/aws-aws-cdk-learnings-skill-operational-integration-playbook-for-aws-aws-cdk-lea.md",
+      "title": "Skill: Operational & Integration Playbook for aws-aws-cdk-learnings",
+      "repository": "aws-aws-cdk-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b4a3563840b0101d5e505d306bfa3e6fc0f8bc68042d6b406b5422eedd662e01",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-25T01:01:06.489Z"
     }
   },
   "ai-builder-brain": {

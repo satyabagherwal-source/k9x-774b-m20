@@ -12879,3 +12879,5 @@
 | `CYCLE-20261125-RZR2` | `2026-11-25T00:51:56.990Z` | `agent-of-empires/agent-of-empires` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10408` | Yes (`e6d287db...`) |
 | `CYCLE-20261125-S1C4` | `2026-11-25T00:51:59.044Z` | `webdriverio/webdriverio` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10409` | Yes (`5a6ec9c6...`) |
 | `CYCLE-2026-11-25-PROJ-EVOLVE` | `2026-11-25T00:52:38.906Z` | `webdriverio-webdriverio` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-K-23B0EC10` [Domain K] | Yes (`7d2077f8...`) |
+| `CYCLE-20261125-3LL3` | `2026-11-25T01:00:58.503Z` | `arkivanov/Decompose` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10410` | Yes (`79899c36...`) |
+| `CYCLE-20261125-3NPJ` | `2026-11-25T01:01:01.255Z` | `aws/aws-cdk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10411` | Yes (`5084389c...`) |

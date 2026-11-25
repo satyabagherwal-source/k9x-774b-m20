@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T00:52:40.988Z",
+  "last_updated": "2026-11-25T01:01:07.354Z",
   "total_records": 2610,
   "domains": {
     "A": {
@@ -9343,8 +9343,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "f657b587201ba21baf1a4590ec2ed946d8ab25852374f7e4efdf97e51666e327",
-      "created_at": "2026-11-24T21:24:27.397Z"
+      "content_hash": "4c3a59fc4d25baa6ea29563735bfc8ab10e9ae419fe28f98e757f4695f235044",
+      "created_at": "2026-11-25T01:01:07.354Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -18122,8 +18122,8 @@
       "title": "Technical Construction Intelligence: aws/aws-cdk Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-aws-aws-cdk-technical-construction-intelligence-aws-aws-cdk-core-invariants.md",
       "repository": "aws/aws-cdk",
-      "content_hash": "56d3d2fe23edbd6b9fe84388c5aa001d92c8a000ecc92027bfe583e38f3a412a",
-      "created_at": "2026-11-24T06:20:48.472Z"
+      "content_hash": "7697cf0bea830770e6e8b80d6fee72c80ff4c18b4f4cbf1d4ed93359b78c9ac4",
+      "created_at": "2026-11-25T01:01:01.687Z"
     },
     "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-4b-core-invariants",
@@ -18191,8 +18191,8 @@
       "title": "Technical Construction Intelligence: aws-aws-cdk-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-aws-aws-cdk-learnings-technical-construction-intelligence-aws-aws-cdk-learnings-.md",
       "repository": "aws-aws-cdk-learnings",
-      "content_hash": "ac7c58f809854399fd6674e0700309f72e805b3dbe96b618e031deb85c4b875f",
-      "created_at": "2026-11-24T06:21:18.466Z"
+      "content_hash": "907d54156d978d151af796845ef13c2abfd840edf32940b0f3f91506df87db8d",
+      "created_at": "2026-11-25T01:01:06.301Z"
     },
     "domain_intelligence-research-knowledge-intelligence-conwayresearch-underdog-saluki-27b-1-0-core-inva": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-conwayresearch-underdog-saluki-27b-1-0-core-inva",
@@ -30614,8 +30614,8 @@
       "title": "Architecture Intelligence: arkivanov/Decompose Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-arkivanov-decompose-architecture-intelligence-arkivanov-decompose-core-invariant.md",
       "repository": "arkivanov/Decompose",
-      "content_hash": "2b27656881b275999ff8dcc3d0d6fdbe82da9945ef7a60e1f49f6f69c58e5bb3",
-      "created_at": "2026-11-19T09:43:47.748Z"
+      "content_hash": "03aac23817f1a56bd415bc35be8bf99047f72b8de30c8e21ba4d8ad41c4a0ec3",
+      "created_at": "2026-11-25T01:00:58.947Z"
     },
     "domain_intelligence-technical-construction-intelligence-asciinema-asciinema-learnings-core-invariant": {
       "record_id": "domain_intelligence-technical-construction-intelligence-asciinema-asciinema-learnings-core-invariant",
@@ -30674,8 +30674,8 @@
       "title": "Architecture Intelligence: arkivanov-decompose-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-arkivanov-decompose-learnings-architecture-intelligence-arkivanov-decompose-lear.md",
       "repository": "arkivanov-decompose-learnings",
-      "content_hash": "50dee88021b3cb1cba66a48a48f3a7d2669941673430a5d91fa941ce790cd4c0",
-      "created_at": "2026-11-19T09:44:01.666Z"
+      "content_hash": "491f12fdcbd9f72e96d753c4f892f002f2a92f6a5fb14f96e893504e25532439",
+      "created_at": "2026-11-25T01:01:05.391Z"
     },
     "DOM-H-75FCE7B9": {
       "record_id": "DOM-H-75FCE7B9",

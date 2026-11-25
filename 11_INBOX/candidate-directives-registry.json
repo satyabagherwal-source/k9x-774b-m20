@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T00:52:40.778Z",
+  "last_updated": "2026-11-25T01:01:07.170Z",
   "directives": [
     {
       "id": "CD-001",
@@ -56032,14 +56032,14 @@
       "domain_letter": "G"
     },
     {
-      "id": "CD-D5FZ",
+      "id": "CD-3S9R",
       "directive_title": "deps): bump url to 2.5.9 and heapless to 0.9.4",
       "source_repo": "zseven-w-openpencil-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-D5FZ-deps-bump-url-to-2-5-9-and-heapless-to-0-9-4.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-3S9R-deps-bump-url-to-2-5-9-and-heapless-to-0-9-4.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
-      "date_staged": "2026-11-24",
+      "date_staged": "2026-11-25",
       "domain_letter": "H"
     },
     {
@@ -58363,6 +58363,55 @@
       "source_repo": "zvec-ai-zvec-grep",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-22FEC1-rust-bind-bare-calls-to-the-enclosing-mo.md",
+      "staged_date": "2026-11-25"
+    },
+    {
+      "id": "CD-3QR6",
+      "directive_title": "Empirical Invariant Guard in build.yml",
+      "source_repo": "arkivanov-decompose-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-3QR6-empirical-invariant-guard-in-build-yml.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-25",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-3RGD",
+      "directive_title": "docs(agents): drop grant methods from the configuration-mutation exception",
+      "source_repo": "aws-aws-cdk-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-3RGD-docs-agents-drop-grant-methods-from-the-configuration-mutation-exception.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-25",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-D86CD5",
+      "directive_title": "Empirical Invariant Guard in build.yml",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "arkivanov-decompose",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-D86CD5-empirical-invariant-guard-in-build-yml.md",
+      "staged_date": "2026-11-25"
+    },
+    {
+      "id": "CD-REV-E6037B",
+      "directive_title": "docs(agents): drop grant methods from the configuration-mutation exception",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "aws-aws-cdk",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-E6037B-docs-agents-drop-grant-methods-from-the-.md",
+      "staged_date": "2026-11-25"
+    },
+    {
+      "id": "CD-REV-293160",
+      "directive_title": "deps): bump url to 2.5.9 and heapless to 0.9.4",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-293160-deps-bump-url-to-2-5-9-and-heapless-to-0.md",
       "staged_date": "2026-11-25"
     }
   ]

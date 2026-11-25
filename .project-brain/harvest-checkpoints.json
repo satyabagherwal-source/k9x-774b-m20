@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-25T00:51:59.069Z",
+  "last_updated": "2026-11-25T01:01:01.277Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7326,14 +7326,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aws-aws-cdk",
-      "content_hash": "15f14b38fe61c2ad485b7a6f8e8475ba0491b9897abf58036227f0030c1c2be1",
-      "verified_at": "2026-11-24T06:20:48.089Z",
+      "content_hash": "5084389c966afca81705e836d642f98718336342ebf4e4d7152837674466fee2",
+      "verified_at": "2026-11-25T01:01:01.276Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T06:20:48.089Z"
+      "last_updated": "2026-11-25T01:01:01.276Z"
     },
     "cockroachdb/cockroach": {
       "repository": "cockroachdb/cockroach",
@@ -11061,14 +11061,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-arkivanov-decompose",
-      "content_hash": "ca5c1fee2164b84c239e248740eac4df1b12e3cd890e4cad6bc676007ca41a29",
-      "verified_at": "2026-11-19T09:43:47.422Z",
+      "content_hash": "79899c365fda4ecfdfabb94cedca039feca62fda62152917eb65f9b1e580699e",
+      "verified_at": "2026-11-25T01:00:58.524Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T09:43:47.422Z"
+      "last_updated": "2026-11-25T01:00:58.524Z"
     },
     "langchain4j/langchain4j": {
       "repository": "langchain4j/langchain4j",

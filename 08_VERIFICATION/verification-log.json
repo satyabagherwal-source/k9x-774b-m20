@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261123-PR44",
-    "timestamp": "2026-11-23T14:46:40.516Z",
-    "repository": "HelixDB/helix-db",
-    "learningId": "learn-github-helixdb-helix-db",
-    "contentHash": "d097f1a1e57cfcc5b7e510d0d4eeb0aa0240075bcbe59a1ae1060eee256663d5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-PSFC",
-    "timestamp": "2026-11-23T14:46:42.216Z",
-    "repository": "dathere/qsv",
-    "learningId": "learn-github-dathere-qsv",
-    "contentHash": "793b3f5ca7b7b9c4779a88b61da3c18588de8d8e3eae098cbe3e0223fc81b3ef",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261123-0VH7",
     "timestamp": "2026-11-23T14:55:19.387Z",
     "repository": "FacebookAI/xlm-roberta-base",
@@ -7490,6 +7460,36 @@
     "repository": "webdriverio/webdriverio",
     "learningId": "learn-github-webdriverio-webdriverio",
     "contentHash": "5a6ec9c63b1c4a90cee8474e1fd07b499c08bf9d7766dc63c500f15d80731702",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-3LL3",
+    "timestamp": "2026-11-25T01:00:58.503Z",
+    "repository": "arkivanov/Decompose",
+    "learningId": "learn-github-arkivanov-decompose",
+    "contentHash": "79899c365fda4ecfdfabb94cedca039feca62fda62152917eb65f9b1e580699e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-3NPJ",
+    "timestamp": "2026-11-25T01:01:01.255Z",
+    "repository": "aws/aws-cdk",
+    "learningId": "learn-github-aws-aws-cdk",
+    "contentHash": "5084389c966afca81705e836d642f98718336342ebf4e4d7152837674466fee2",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
