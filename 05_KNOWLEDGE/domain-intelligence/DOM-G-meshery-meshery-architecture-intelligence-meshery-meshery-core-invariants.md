@@ -4,24 +4,24 @@
 {
   "source_repository": "meshery/meshery",
   "source_url": "https://github.com/meshery/meshery",
-  "source_version": "5f96e08e",
+  "source_version": "9bed2e12",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-21T04:39:09.023Z",
+  "timestamp": "2026-11-25T01:36:06.890Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-meshery-meshery",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [meshery/meshery](https://github.com/meshery/meshery) (Revision: `5f96e08e`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-21T04:39:09.023Z`  
+> **Provenance**: Harvested from [meshery/meshery](https://github.com/meshery/meshery) (Revision: `9bed2e12`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-25T01:36:06.890Z`  
 > **Learning ID**: `learn-github-meshery-meshery`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), D (Research & Knowledge Intelligence), F (Design Intelligence), I (Content & Information Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence), B (Product Intelligence)
-- **Confidence Rating**: 74%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 68%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from meshery/meshery:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/meshery-meshery-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/meshery/meshery](https://github.com/meshery/meshery))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T04:39:08.086Z  
+> **Harvest Timestamp**: 2026-11-25T01:36:05.475Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Meshery, the cloud native manager
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 12270 stars
+- **Stars / Engagement**: 12315 stars
 
 ---
 
@@ -818,14 +818,11 @@ if __name__ == "__main__":
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #24070** (2026-11-21): **[Server] Check selector model in Rego mutator-based relationship identification.**
-  *Symptoms*: This PR fixes #24006  The identify rule in eval_rules.rego paired components to selectors by kind only, so two components of the same kind from different models could be wrongly identified as related through edge non-binding relationships. This adds a model check mirroring the feasibility check in feasibility_evaluation.rego: a selector with no model or a wildcard model still matches any model, otherwise the model names must match.  Changes - models/meshery-core/0.7.2/v1.0.0/policies/eval_rules.rego: new selector_model_matches helper and two model checks in identify_relationships_based_on_matching_mutator_and_mutated_fields - models/meshery-core/0.7.2/v1.0.0/policies/tests/eval_rules_test.rego: four regression tests (cross-model no match, same-model match, wildcard selector model match, selector without model match)  Tests - go test ./server/policies/ -run TestRegoPolicy: 115 passed, 0 failed - The cross-model test fails on the unfixed code and passes with the fix.  Note: the Go twin of this gap is issue 23865, still open and unassigned. This PR covers the Rego engine only.  Yes, I signed my commits.  <!-- This is an auto-generated comment: release notes by coderabbit.ai -->  <!-- coderabbit-ai-generated:v1 -->  ## Summary by CodeRabbit  * **Bug Fixes**   * Relationship matching now checks component model names as well as kinds, so components from different models are no longer treated as matches solely because they share a kind.   * Selectors with a specific model name match
+- **Issue #24286** (2026-11-24): **[Docs] Fix DCO sign-off links to removed CONTRIBUTING.md sections**
+  *Symptoms*: **Notes for Reviewers**  - This PR fixes #24285  `CONTRIBUTING.md` was shortened in June 2025, and five links in four files still point to sections it no longer has. #22745 fixed the same problem in `welcome-first-time-contributors.yml`. This finishes the rest.  | File | Link | Before | After | |---|---|---|---| | `.github/PULL_REQUEST_TEMPLATE.md` | "Signed commits" | `CONTRIBUTING.md#signing-off-on-commits-developer-certificate-of-origin` | `docs.meshery.io/project/contributing#general-contribution-flow` | | `.github/config.yml` | first PR welcome comment | same dead anchor | same new target | | `.github/label-commenter-config.yml` | `issue/dco` comment (issue and PR) | same dead anchor | same new target | | `docs/.../contributing-docs/docs.md` | "Documentation Contribution Flow" | `CONTRIBUTING.md#documentation-contribution-flow` | `ref` to the contributing index, `#general-contribution-flow` |  How I checked it:  - The `general-contribution-flow` anchor exists on the live page, and the sign-off instructions sit directly under it. - Both YAML files still parse. - The docs link uses the same `ref "project/contributing/_index.md"` form as `contributing-adapters.md`. I did not run the Hugo build locally, so the docs preview on this PR is the check for that line. - No other `CONTRIBUTING.md#` links are left under `.github/` or `docs/content/`. The archived `docs/static/v0.8` and `v0.9` snapshots still have them and I left those alone.  **Also changed: the s
 
-- **Issue #24064** (2026-11-20): **[Docs] Add newcomer introduction for T.S. Phala**
-  *Symptoms*: **Notes for Reviewers** - Added my introduction file (`TS-Phala.md`) under `docs/meetings/2026/week-of-11-19-2026/` for the Meshery Newcomers' Meeting.  **[Signed commits](https://github.com/meshery/meshery/blob/master/CONTRIBUTING.md#signing-off-on-commits-developer-certificate-of-origin)** - [x] Yes, I signed my commits.  <!-- Thank you for contributing to Meshery!   Contributing Conventions:  1. Include descriptive PR titles with [<component-name>] prepended. 2. Build and test your changes before submitting a PR.  3. Sign your commits. 4. Include before and after screenshots/terminal output.  By following the community's contribution conventions upfront, the review process will  be accelerated and your PR merged more quickly. -->   <!-- This is an auto-generated comment: release notes by coderabbit.ai --> <!-- coderabbit-ai-generated:v1 -->  ## Summary by CodeRabbit  * **Documentation**   * Updated the meeting document with a heading for T.S. Phala, a brief introduction, and a link to their LinkedIn profile. The document now includes these details alongside the meeting information. <!-- end of auto-generated comment: release notes by coderabbit.ai -->
-  **Post-Mortem & Fix Analysis**:
-  > 👋 **Welcome to Meshery, @unchained-angel!**  Thank you for opening your first pull request — this is a big moment and we're excited to review your contribution! 🚀  Here are a few things that will help your PR get merged smoothly:  - ✅ **DCO sign-off** — make sure every commit is signed off (`git commit -s`) as required by our [Developer Certificate of Origin](https://docs.meshery.io/project/contributing). - 🧪 **Tests** — if your change affects functionality, please include or update tests. - 📝 **Description** — a clear PR description helps reviewers understand your intent quickly.  ---  📅 **Join our Weekly Community Meeting** We hold a public development meeting every week. It's a great place to walk through your PR with a maintainer or ask any questions you have. 👉 **[Add to calendar & join at meet.meshery.io](https://meet.meshery.io)**  💬 **Join the Meshery Community Slack** Connect with other contributors and get real-time help from the community. 👉 **[Join Slack at slack.me
-  > <!-- coderabbit-ai-generated:v1 -->  <!-- This is an auto-generated comment: summarize by coderabbit.ai --> <!-- review_stack_entry_start -->  <a href="https://app.coderabbit.ai/change-stack/meshery/meshery/pull/24064?scope=ghh_OusAJGA4HG8ljoOV0wJvVx8NmnZIjc2DdjmxOu0xZWA&amp;cs_source=review_comment"><picture><source media="(prefers-color-scheme: dark)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-buttons-v1/explain-change-dark.svg"><source media="(prefers-color-scheme: light)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-buttons-v1/explain-change.svg"><img src="https://storage.googleapis.com/coderabbit_public_assets/review-stack-buttons-v1/explain-change.svg" alt="Explain Change →" height="32"></picture></a>  <!-- review_stack_entry_end --> <!-- recent_review_status_start -->  No actionable comments were generated in the recent review.  <!-- recent_review_status_end --> <!-- walkthrough_start -->  <details> <summary><stro
+- **Issue #24285** (2026-11-24): **[Docs] DCO sign-off links still point to removed CONTRIBUTING.md sections**
+  *Symptoms*: ### Current State  `CONTRIBUTING.md` was shortened in June 2025 and no longer has the "Signing-off on commits" or "Documentation Contribution Flow" sections. #22745 fixed the link in `welcome-first-time-contributors.yml`, but four other files still link to those anchors, so the link opens the top of a four-line file:  - `.github/PULL_REQUEST_TEMPLATE.md` ("Signed commits") - `.github/config.yml` (the first pull request welcome comment) - `.github/label-commenter-config.yml` (the `issue/dco` comment, for both issues and pull requests) - `docs/content/en/project/contributing/contributing-docs/docs.md` ("Documentation Contribution Flow")  The `issue/dco` one matters most. It is the comment a contributor gets when a commit is missing its sign-off, and its "see these instructions" link has no instructions behind it.  ### Desired State  All five links go to the General Contribution Flow section of the contributing guide (https://docs.meshery.io/project/contributing#general-contribution-flow), which is where the sign-off instructions live now.  I have a fix ready and will open a pull request.  ---  ### Contributor [Guides](https://docs.meshery.io/project/contributing) and [Handbook](https://meshery.io/community#handbook) - 📚 [Instructions for contributing to documentation](https://docs.meshery.io/project/contributing/contributing-docs)    - Meshery documentation [site](https://docs.meshery.io/) and [source](https://github.com/meshery/meshery/tree/master/docs) - 🙋🏾🙋🏼 Questions: 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -842,960 +839,727 @@ if __name__ == "__main__":
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c2b54aba` (2026-11-20)
-**Commit Message**: Merge pull request #24031 from nishant-devv/fix/planner-panic-starvation-deadlock
+### Incident Patch 1: `319818a6` (2026-11-24)
+**Commit Message**: fix(server): handle context refresh errors and harden DiscoverAction field sync
 
-[Server] Recover from planner parallel process panics to prevent channel starvation deadlocks
+- Capture refreshErr from inst.UpdateContext in k8sconfig_handler, mark context
+  with ctx.ImportError, record error in metadata, and skip transition event on failure.
+- In DiscoverAction, sync only KubernetesServerID and Version to machinectx.K8sContext
+  under setupLock rather than replacing the whole struct.
+- Assign provider on test state machines and protect mock persistedEvents with mutex.
+- Add TestRefreshK8sContext_ReturnsErrorOnInvalidCredentials test.
 
-**File**: `docs/data/errorindex/meshery-server_errors_index.json` (modified, +17/-0)
+Signed-off-by: Nishant JS <[REDACTED_EMAIL]>
+
+**File**: `server/handlers/k8sconfig_handler.go` (modified, +16/-1)
 ```diff
-@@ -7673,6 +7673,23 @@
-       "suggestedRemediation": [
-         "Set the design file's version to a semver string such as 0.0.1 and save again"
-       ]
-+    },
-+    {
-+      "code": "meshery-server-1497",
-+      "moniker": "ErrProvisionPanicCode",
-+      "component": {
-+        "name": "meshery-server",
-+        "type": "component"
-+      },
-+      "numericCode": "1497",
-+      "severity": "alert",
-+      "shortDescription": "Component panicked during provisioning",
-+      "probableCause": [
-+        "Runtime fault occurred in component visitor execution"
-+      ],
-+      "suggestedRemediation": [
-+        "Inspect component configuration and provider logs for runtime failures"
-+      ]
-     }
-   ],
-   "schemaVersion": 2
-```
-
-**File**: `docs/data/errorref/meshery-server_errors_export.json` (modified, +9/-0)
-```diff
-@@ -4372,6 +4372,15 @@
-         "short_description": "Invalid design version",
-         "probable_cause": "The design file's version is not semver, so a next version cannot be computed from it\nOlder tooling wrote arbitrary version strings into design files",
-         "suggested_remediation": "Set the design file's version to a semver string such as 0.0.1 and save again"
-+      },
-+      "1497": {
-+        "name": "ErrProvisionPanicCode",
-+        "code": "1497",
-+        "severity": "Alert",
-+        "long_description": "",
-+        "short_description": "Component panicked during provisioning",
-+        "probable_cause": "Runtime fault occurred in component visitor execution",
-+        "suggested_remediation": "Inspect component configuration and provider logs for runtime failures"
-       }
-     }
-   }
-```
-
-**File**: `server/helpers/component_info.json` (modified, +1/-1)
-```diff
-@@ -1,5 +1,5 @@
- {
-   "name": "meshery-server",
-   "type": "component",
--  "next_error_code": 1497
-+  "next_error_code": 1498
- }
-\ No newline at end of file
-```
-
-**File**: `server/models/pattern/planner/parallel_process.go` (modified, +26/-11)
-```diff
-@@ -96,7 +96,30 @@ func (g *ParallelProcessGraph) Traverse(fn VisitFn, withheld WithheldFn, log log
- // Process starts an internal loop which listens for the signals on the channels
- // and operate accordingly
- func (v *ParallelProcessGraphNode) Process(deps []*ParallelProcessGraphNode, wg *sync.WaitGroup, fn VisitFn, withheld WithheldFn, log logger.Handler) {
--	defer wg.Done()
-+	signaled := make(map[*ParallelProcessGraphNode]bool, len(deps))
-+	sendSignals := func(ok bool) {
-+		for _, dep := range deps {
-+			if !signaled[dep] {
-+				signaled[dep] = true
-+				func() {
-+					defer func() {
-+						if r := recover(); r != nil {
-+							log.Errorf("panic sending signal to dependent %s: %v", dep.Name, r)
-+						}
-+					}()
-+					sendSignalToDep(dep, ok, v.Name, log)
-+				}()
-+			}
-+		}
-+	}
-+
-+	defer func() {
-+		if r := recover(); r != nil {
-+			log.Errorf("panic in parallel process node %s: %v", v.Name, r)
-+			sendSignals(false)
-+		}
-+		wg.Done()
-+	}()
- 
- 	log.Debug("started with:", v.Name, v.DepCount)
- 
-@@ -129,8 +152,7 @@ func (v *ParallelProcessGraphNode) Process(deps []*ParallelProcessGraphNode, wg
- 			withheld(v.Name, v.Data.Data, failedDep)
- 		}
- 
--		sendSignalToDeps(deps, false, v.Name, log)
--
-+		sendSignals(false)
- 		return
- 	}
- 
-@@ -140,14 +162,7 @@ func (v *ParallelProcessGraphNode) Process(deps []*ParallelProcessGraphNode, wg
- 	log.Debug("RESPONSE GOT FOR", v.Name, ":", ok)
- 
- 	// Send the appropriate signal
--	sendSignalToDeps(deps, ok, v.Name, log)
--}
--
--// sendSignalToDeps sends signal on the channel
--func sendSignalToDeps(deps []*ParallelProcessGraphNode, ok bool, from string, log logger.Handler) {
--	for _, dep := range deps {
--		sendSignalToDep(dep, ok, from, log)
--	}
-+	sendSignals(ok)
- }
- 
- // sendSignalToDep sends signal either on the DepUpdateChannel or DepCancelChannel
-```
-
-**File**: `server/models/pattern/planner/parallel_process_test.go` (modified, +446/-0)
-```diff
-@@ -312,3 +312,449 @@ func TestParallelProcess_MixedOutcomesWithManyPrereqs(t *testing.T) {
- 	}
- }
- 
-+// TestParallelProcess_PanicInPrerequisiteDoesNotDeadlockDependents verifies that when
-+// a prerequisite node panics during visitor execution, downstream dependents are
-+// not permanently starved on channel reads, and the plan execution does not deadlock.
-+func TestParallelProcess_PanicInPrerequisiteDoesNotDeadlockDependents(t *testing.T) {
-+	prereq := newComponent("prereq")
-+	dependent := newComponent("dependent", "prereq")
-+
-+	design := newDesign("panic-recovery", prereq, dependent)
-+	plan, err := CreatePlan(design, nil, false)
-+	if err != nil {
-+		t.Fatalf("CreatePlan() returned unexpected error: %v", err)
-+	}
-+
-+	var (
-+		mu                sync.Mutex
-+		dependentVisited  bool
-+		dependentWithheld bool
-+		reportedDep       string
-+	)
-+
-+	done := make(chan struct{})
-+	go func() {
-+		defer close(done)
-+		defer func() {
-+			_ = recover()
-+		}()
-+		_ = plan.Execute(
-+			func(id string, comp component.ComponentDefinition) bool {
-+				if comp.DisplayName == "prereq" {
-+					panic("simulated fatal panic in component visitor")
+@@ -381,18 +381,21 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
+ 			// Refresh its stored context so credential updates are applied and,
+ 			// if the machine previously failed initial startup with a nil Context,
+ 			// its Context is properly initialized.
++			var refreshErr error
+ 			if inst != nil {
+ 				inst.UpdateContext(func(oldCtx interface{}) interface{} {
+ 					if oldCtx == nil {
+ 						assigned, _, aerr := kubernetes.AssignInitialCtx(req.Context(), machineCtx, log)
+ 						if aerr != nil {
++							refreshErr = aerr
+ 							log.Error(aerr)
+ 							return oldCtx
+ 						}
+ 						return assigned
+ 					}
+ 					if stored, ok := oldCtx.(*kubernetes.MachineCtx); ok && stored != nil {
+ 						if _, rerr := stored.RefreshK8sContext(*ctx, models.NewServerEvent(req.Context()), log); rerr != nil {
++							refreshErr = rerr
+ 							log.Error(rerr)
+ 						}
+ 						return stored
+@@ -406,7 +409,19 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
+ 			// on a cache hit, one whose Context was never assigned. The connection
+ 			// has still been persisted in the discovered state; just skip the
+ 			// event. See mhelpers.HasMachineContext.
+-			if mhelpers.HasMachineContext(inst) {
++			//
++			// If refreshing the stored context failed (e.g. invalid rotation credentials),
++			// capture the error on the context metadata and skip the event so we do not
++			// probe or report success against the stale credentials.
++			if refreshErr != nil {
++				ctx.ImportError = fmt.Sprintf("Failed to refresh Kubernetes context \"%s\": %v", ctx.Name, refreshErr)
++				metadata["error"] = refreshErr
++				if status == connections.DISCOVERED && len(saveK8sContextResponse.RegisteredContexts) > 0 {
++					saveK8sContextResponse.RegisteredContexts[len(saveK8sContextResponse.RegisteredContexts)-1].ImportError = ctx.ImportError
++				} else if status == connections.CONNECTED && len(saveK8sContextResponse.ConnectedContexts) > 0 {
++					saveK8sContextResponse.ConnectedContexts[len(saveK8sContextResponse.ConnectedContexts)-1].ImportError = ctx.ImportError
 +				}
-+				mu.Lock()
-+				if comp.DisplayName == "dependent" {
-+					dependentVisited = true
-+				}
-+				mu.Unlock()
-+				return true
-+			},
-+			func(id string, comp component.ComponentDefinition, failedDep string) {
-+				mu.Lock()
-+				if comp.DisplayName == "dependent" {
-+					dependentWithheld = true
-+					reportedDep = failedDep
-+				}
-+				mu.Unlock()
-+			},
-+			testLogger(t),
-+		)
-+	}()
-+
-+	select {
-+	case <-done:
-+		// Plan execution completed without deadlocking
-+	case <-time.After(2 * time.Second):
-+		t.Fatal("Plan.Execute() deadlocked; prerequisite panic bypassed signal propagation, permanently wedging dependent channel reads")
-+	}
-+
-+	mu.Lock()
-+	defer mu.Unlock()
-+
-+	if dependentVisited {
-+		t.Error("dependent node was visited despite prerequisite panic")
-+	}
-+	if !dependentWithheld {
-+		t.Error("dependent node was not marked as withheld following prerequisite panic")
-+	}
-+	if reportedDep != prereq.ID.String() {
-+		t.Errorf("dependent reported failed dependency %q, want %q", reportedDep, prereq.ID.String())
-+	}
-+}
-+
-+// TestParallelProcess_PanicInMiddleOfDeepChainPropagatesWithholding verifies that when
-+// a middle node in a multi-hop dependency chain panics (A -> B -> C -> D, B panics),
-+// subsequent nodes C and D are sequentially withheld without deadlock or starvation.
-+func TestParallelProcess_PanicInMiddleOfDeepChainPropagatesWithholding(t *testing.T) {
-+	nodeA := newComponent("nodeA")
-+	nodeB := newComponent("nodeB", "nodeA")
-+	nodeC := newComponent("nodeC", "nodeB")
-+	nodeD := newComponent("nodeD", "nodeC")
-+
-+	design := newDesign("deep-chain-panic", nodeA, nodeB, nodeC, nodeD)
-+	plan, err := CreatePlan(design, nil, false)
-+	if err != nil {
-+		t.Fatalf("CreatePlan() returned unexpected error: %v", err)
-+	}
-+
-+	var (
-+		mu         sync.Mutex
-+		aVisited   bool
-+		cVisited   bool
-+		dVisited   bool
-+		cWithheld  bool
-+		dWithheld  bool
-+		cFailedDep string
-+		dFailedDep string
-+	)
-+
-+	done := make(chan struct{})
-+	go func() {
-+		defer close(done)
-+		defer func() {
-+			_ = recover()
-+		}()
-+		_ = plan.Execute(
-+			func(id string, comp component.ComponentDefinition) bool {
-+				mu.Lock()
-+				defer mu.Unlock()
-+				switch comp.DisplayName {
-+				case "nodeA":
-+					aVisited = true
-+					return true
-+				case "nodeB":
-+					panic("simulated fatal panic in nodeB")
-+				case "nodeC":
-+					cVisited = true
-+					return true
-+				case "nodeD":
-+					dVisited = true
-+					return true
-+				}
-+				return true
-+			},
-+			func(id string, comp component.ComponentDefinition, failedDep string) {
-+				mu.Lock()
-+				defer mu.Unlock()
-+				switch comp.DisplayName {
-+				case "nodeC":
-+					cWithheld = true
-+					cFailedDep = failedDep
-+				case "nodeD":
-+					dWithheld = true
-+					dFailedDep = failedDep
-+				}
-+			},
-+			testLogger(t),
-+		)
-+	}()
-+
-+	select {
-+	case <-done:
-+	case <-time.After(3 * time.Second):
-+		t.Fatal("Plan.Execute() deadlocked; panic in middle of deep chain hung downstream nodes")
-+	}
-+
-+	mu.Lock()
-+	defer mu.Unlock()
-+
-+	if !aVisited {
-+		t.Error("nodeA was not visited, want it visited before nodeB")
-+	}
-+	if cVisited {
-+		t.Error("nodeC was visited, want it withheld because nodeB panicked")
-+	}
-+	if dVisited {
-+		t.Error("nodeD was visited, want it withheld because nodeC was withheld")
-+	}
-+	if !cWithheld || cFailedDep != nodeB.ID.String() {
-+		t.Errorf("nodeC withheld=%v, failedDep=%q, want true and %q", cWithheld, cFailedDep, nodeB.ID.String())
-+	}
-+	if !dWithheld || dFailedDep != nodeC.ID.String() {
-+		t.Errorf("nodeD withheld=%v, failedDep=%q, want true and %q", dWithheld, dFailedDep, nodeC.ID.String())
-+	}
-+}
-+
-+// TestParallelProcess_DiamondTopologyPanicOneBranchWithholdsSink verifies that in a diamond
-+// DAG (Root -> BranchA, BranchB -> Sink), when BranchA panics while BranchB succeeds,
-+// the Sink receives both signals, correctly determines it cannot
++			} else if mhelpers.HasMachineContext(inst) {
+ 				// Import returns before the transition finishes, so keep its values
+ 				// without tying discovery to the request's cancellation.
+ 				transitionCtx, cancel := backgroundDiscoveryContext(req.Context())
 ```
 
-**File**: `server/models/pattern/stages/error.go` (modified, +13/-0)
+**File**: `server/handlers/k8sconfig_handler_test.go` (modified, +27/-9)
 ```diff
-@@ -11,8 +11,21 @@ const (
- 	ErrResolveReferenceCode       = "meshery-server-1361"
- 	ErrYAMLUnmarshalCode          = "meshery-server-1436"
- 	ErrDependencyNotSatisfiedCode = "meshery-server-1480"
-+	ErrProvisionPanicCode         = "meshery-server-1497"
- )
- 
-+// ErrProvisionPanic reports a component that panicked during provisioning execution.
-+func ErrProvisionPanic(component string, r interface{}) error {
-+	return errors.New(
-+		ErrProvisionPanicCode,
-+		errors.Alert,
-+		[]string{"Component panicked during provisioning"},
-+		[]string{fmt.Sprintf("A panic occurred while provisioning component %q: %v", component, r)},
-+		[]string{"Runtime fault occurred in component visitor execution"},
-+		[]string{"Inspect component configuration and provider logs for runtime failures"},
-+	)
-+}
-+
- // ErrDependencyNotSatisfied reports a component that was not acted on because a
- // component it declared a dependency on did not succeed.
- //
-```
-
-**File**: `server/models/pattern/stages/provision.go` (modified, +12/-1)
-```diff
-@@ -67,7 +67,18 @@ func Provision(prov ServiceInfoProvider, act ServiceActionProvider, log logger.H
- 		}
- 
- 		// Execute the plan
--		err = plan.Execute(func(name string, component component.ComponentDefinition) bool {
-+		err = plan.Execute(func(name string, component component.ComponentDefinition) (ok bool) {
-+			defer func() {
-+				if r := recover(); r != nil {
-+					log.Errorf("panic during component provisioning for %s (%s): %v", component.DisplayName, name, r)
-+					panicErr := ErrProvisionPanic(component.DisplayName, r)
-+					data.Lock.Lock()
-+					data.Other[fmt.Sprintf("%s%s", name, ProvisionSuffixKey)] = dispatchFailureMessage(component, panicErr, data.Pattern.Name, prov.IsDelete())
-+					data.Lock.Unlock()
-+					ok = false
-+				}
-+			}()
-+
- 			ccp := CompConfigPair{}
- 
- 			// meshkit's orchestration.EnrichComponentWithMesheryMetadata operates
-```
-
-**File**: `server/models/pattern/stages/provision_test.go` (modified, +114/-0)
-```diff
-@@ -49,6 +49,7 @@ type stubActionProvider struct {
- 	dispatchFailures     map[string]bool
- 	noOutcomes           map[string]bool
- 	prerequisiteFailures map[string]bool
-+	panics               map[string]bool
- 
- 	mx         sync.Mutex
- 	dispatched []string
-@@ -77,8 +78,13 @@ func (s *stubActionProvider) Provision(ccp CompConfigPair) ([]patterns.Deploymen
- 
- 	s.mx.Lock()
- 	s.dispatched = append(s.dispatched, name)
-+	shouldPanic := s.panics[name]
- 	s.mx.Unlock()
- 
-+	if shouldPanic {
-+		panic(fmt.Sprintf("simulated failure in act.Provision for %s", name))
-+	}
-+
- 	if s.dispatchFailures[name] {
- 		return nil, errors.New("meshery-server-test", errors.Alert, []string{"dispatch failed"}, []string{"dispatch failed"}, []string{}, []string{})
- 	}
-@@ -299,6 +305,114 @@ func TestProvisionWithholdsDependentsOfAComponentThatFailedToApply(t *testing.T)
- 	}
- }
- 
-+func TestProvisionHandlesPanicInActProvision(t *testing.T) {
-+	act := newStubActionProvider(t)
-+	act.panics = map[string]bool{"a": true}
-+
-+	compA := newDesignComponent("a")
-+	compB := newDesignComponent("b", "a")
-+	compC := newDesignComponent("c")
-+	components := []*component.ComponentDefinition{compA, compB, compC}
-+
-+	design := pattern.PatternFile{
-+		ID:         uuid.Must(uuid.NewV4()),
-+		Name:       "provision-test",
-+		Version:    "1.0.0",
-+		Components: components,
-+	}
-+
-+	names := map[string]string{}
-+	mapping := map[core.Uuid]component.ComponentDefinition{}
-+	for _, comp := range components {
-+		names[comp.ID.String()] = comp.DisplayName
-+		mapping[comp.ID] = *comp
-+	}
-+
-+	data := &Data{
-+		Pattern:                       &design,
-+		Other:                         map[string]interface{}{},
-+		DeclartionToDefinitionMapping: mapping,
-+	}
-+
-+	var nextErr error
-+	nextCalled := false
-+	next := func(d *Data, err error) {
-+		nextCalled = true
-+		nextErr = err
-+	}
-+
-+	testLog, err := logger.New("provision-test", logger.Options{})
-+	if err != nil {
-+		t.Fatalf("failed to build a logger: %v", err)
-+	}
-+
-+	Provision(&stubInfoProvider{}, act, testLog)(data, nil, next)
-+
-+	if !nextCalled {
-+		t.Fatal("next was not called")
-+	}
-+
-+	if nextErr != nil {
-+		t.Errorf("next called with error %v, want nil so deployment summary is preserved in HTTP response", nextErr)
-+	}
-+
-+	reported := map[string][]patterns.DeploymentMessagePerContext{}
-+	data.Lock.Lock()
-+	for key, value := range data.Other {
-+		id := key[:len(key)-len(ProvisionSuffixKey)]
-+		msgs, ok := value.([]patterns.DeploymentMessagePerContext)
-+		if !ok {
-+			t.Fatalf("data.Other[%q] holds %T, want []patterns.DeploymentMessagePerContext", key, value)
-+		}
-+		reported[names[id]] = msgs
-+	}
-+	data.Lock.Unlock()
-+
-+	order := act.order()
-+
-+	if !dispatched(order, "a") {
-+		t.Errorf("dispatched %v, want \"a\" dispatched", order)
-+	}
-+
-+	if dispatched(order, "b") {
-+		t.Errorf("dispatched %v, want \"b\" withheld because \"a\" panicked", order)
-+	}
-+
-+	if !dispatched(order, "c") {
-+		t.Errorf("dispatched %v, want \"c\" dispatched", order)
-+	}
-+
-+	msgA, reportedA := reported["a"]
-+	if !reportedA {
-+		t.Fatal("\"a\" produced no deployment message in data.Other, want failure recorded")
-+	}
-+
-+	if succeeded(msgA) {
-+		t.Error("\"a\" was reported as successful, want it reported as failed")
-+	}
-+
-+	if got := errors.GetCode(msgA[0].Summary[0].Error); got != ErrProvisionPanicCode {
-+		t.Errorf("\"a\" was reported with error code %s, want %s", got, ErrProvisionPanicCode)
-+	}
-+
-+	withheldB, reportedB := reported["b"]
-+	if !reportedB {
-+		t.Fatal("\"b\" produced no deployment message, want it reported as withheld")
-+	}
-+
-+	if succeeded(withheldB) {
-+		t.Error("\"b\" was reported as successful, want it reported as withheld")
-+	}
-+
-+	if got := errors.GetCode(withheldB[0].Summary[0].Error); got != ErrDependencyNotSatisfiedCode {
-+		t.Errorf("\"b\" was reported with error code %s, want %s", got, ErrDependencyNotSatisfiedCode)
-+	}
-+
-+	if !succeeded(reported["c"]) {
-+		t.Error("\"c\" was not reported as successful")
-+	}
-+}
-+
- // A component deployed to several clusters at once that fails on one of them is
- // treated as failed outright, so its dependents are withheld everywhere rather
- // than only on the cluster where it failed.
-```
-
----
-
-### Incident Patch 2: `5f96e08e` (2026-11-21)
-**Commit Message**: Merge pull request #23947 from madhavzanwar/fix/environment-list-nil-description-guards
-
-[mesheryctl] Guard nil environment page and fallback empty description in environment list
-
-**File**: `mesheryctl/internal/cli/root/environments/list.go` (modified, +10/-1)
-```diff
-@@ -16,6 +16,7 @@ package environments
- 
- import (
- 	"fmt"
-+	"strings"
- 
- 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
- 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-@@ -89,9 +90,17 @@ mesheryctl environment list --orgId [orgId] --pagesize [pagesize]
- }
- 
- func processEnvironmentData(environmentResponse *environment.EnvironmentPage) ([][]string, int64) {
-+	if environmentResponse == nil {
-+		return [][]string{}, 0
-+	}
-+
- 	rows := [][]string{}
- 	for _, environment := range environmentResponse.Environments {
--		row := []string{environment.ID.String(), environment.Name, environment.OrganizationID.String(), environment.Description, environment.CreatedAt.String(), environment.UpdatedAt.String()}
-+		description := "N/A"
-+		if strings.TrimSpace(environment.Description) != "" {
-+			description = environment.Description
-+		}
-+		row := []string{environment.ID.String(), environment.Name, environment.OrganizationID.String(), description, environment.CreatedAt.String(), environment.UpdatedAt.String()}
- 		rows = append(rows, row)
- 	}
- 	return rows, int64(environmentResponse.TotalCount)
-```
-
-**File**: `mesheryctl/internal/cli/root/environments/list_test.go` (modified, +47/-0)
-```diff
-@@ -7,6 +7,7 @@ import (
+@@ -13,6 +13,7 @@ import (
+ 	"os/exec"
+ 	"path/filepath"
+ 	"strings"
++	"sync"
  	"testing"
  
- 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-+	"github.com/meshery/schemas/models/v1beta1/environment"
- 	"github.com/pkg/errors"
- )
+ 	"github.com/gofrs/uuid"
+@@ -736,7 +737,8 @@ func TestRetainSelectedContextMetadata(t *testing.T) {
+ }
  
-@@ -59,3 +60,49 @@ func TestListEnvironment(t *testing.T) {
+ type mockReimportProvider struct {
+-	*models.DefaultLocalProvider
++	models.Provider
++	sync.Mutex
+ 	persistedEvents []events.Event
+ 	connectionID    core.Uuid
+ }
+@@ -745,7 +747,21 @@ func (m *mockReimportProvider) SaveK8sContext(token string, k8sContext models.K8
+ 	return connections.Connection{ID: m.connectionID, Status: connections.DISCOVERED}, nil
+ }
  
- 	utils.InvokeMesheryctlTestListCommand(t, update, EnvironmentCmd, tests, currDir, "environments")
++func (m *mockReimportProvider) GetConnectionByID(token string, connectionID core.Uuid) (*connections.Connection, int, error) {
++	return &connections.Connection{ID: m.connectionID, Status: connections.DISCOVERED}, 0, nil
++}
++
++func (m *mockReimportProvider) UpdateConnectionStatusByID(token string, connectionID core.Uuid, connectionStatus connections.ConnectionStatus) (*connections.Connection, int, error) {
++	return &connections.Connection{ID: m.connectionID, Status: connectionStatus}, 0, nil
++}
++
++func (m *mockReimportProvider) UpdateConnectionStatusIf(token string, connectionID core.Uuid, fromStatuses []connections.ConnectionStatus, newStatus connections.ConnectionStatus) (bool, *connections.Connection, error) {
++	return true, &connections.Connection{ID: m.connectionID, Status: newStatus}, nil
++}
++
+ func (m *mockReimportProvider) PersistEvent(event events.Event, _ string) (models.PersistedEvent, error) {
++	m.Lock()
++	defer m.Unlock()
+ 	m.persistedEvents = append(m.persistedEvents, event)
+ 	return models.PersistedEvent{Event: &event, Disposition: models.EventCreated}, nil
+ }
+@@ -781,10 +797,15 @@ users:
+ 		}
+ 		h.ConnectionToStateMachineInstanceTracker = tracker
+ 
++		provider := &mockReimportProvider{
++			connectionID: connID,
++		}
++
+ 		inst, err := kubernetes.New(connID.String(), core.Uuid(uuid.Nil), h.log)
+ 		if err != nil {
+ 			t.Fatalf("failed to create state machine: %v", err)
+ 		}
++		inst.Provider = provider
+ 		storedCtx := &kubernetes.MachineCtx{
+ 			K8sContext: models.K8sContext{
+ 				Name:   "old-name",
+@@ -794,10 +815,6 @@ users:
+ 		inst.Context = storedCtx
+ 		tracker.Add(connID, inst)
+ 
+-		provider := &mockReimportProvider{
+-			connectionID: connID,
+-		}
+-
+ 		req := uploadKubeconfigRequest(t, "/api/system/kubernetes", kubeconfig)
+ 		req = req.WithContext(context.WithValue(req.Context(), models.TokenCtxKey, "test-token"))
+ 		rec := httptest.NewRecorder()
+@@ -825,17 +842,18 @@ users:
+ 		}
+ 		h.ConnectionToStateMachineInstanceTracker = tracker
+ 
++		provider := &mockReimportProvider{
++			connectionID: connID,
++		}
++
+ 		inst, err := kubernetes.New(connID.String(), core.Uuid(uuid.Nil), h.log)
+ 		if err != nil {
+ 			t.Fatalf("failed to create state machine: %v", err)
+ 		}
++		inst.Provider = provider
+ 		inst.Context = nil
+ 		tracker.Add(connID, inst)
+ 
+-		provider := &mockReimportProvider{
+-			connectionID: connID,
+-		}
+-
+ 		req := uploadKubeconfigRequest(t, "/api/system/kubernetes", kubeconfig)
+ 		req = req.WithContext(context.WithValue(req.Context(), models.TokenCtxKey, "test-token"))
+ 		rec := httptest.NewRecorder()
+```
+
+**File**: `server/machines/kubernetes/discover.go` (modified, +4/-4)
+```diff
+@@ -94,11 +94,11 @@ func (da *DiscoverAction) Execute(ctx context.Context, machineCtx interface{}, d
+ 		return machines.NoOp, eventBuilder.WithDescription(fmt.Sprintf("Unable to establish connection with context \"%s\" at %s", k8sContext.Name, k8sContext.Server)).WithMetadata(map[string]interface{}{"error": err}).Build(), err
+ 	}
+ 
+-	// Update the machine context with the resolved server ID and version under
+-	// setupLock so downstream states and external readers (e.g. K8sContextSnapshot)
+-	// observe the populated fields rather than the unpopulated stack copy.
++	// Update only the enriched server ID and version under setupLock, preserving
++	// any concurrent updates to other fields on the stored context.
+ 	machinectx.setupLock.Lock()
+-	machinectx.K8sContext = k8sContext
++	machinectx.K8sContext.KubernetesServerID = k8sContext.KubernetesServerID
++	machinectx.K8sContext.Version = k8sContext.Version
+ 	machinectx.setupLock.Unlock()
+ 
+ 	// machinectx.log.Debug("exiting execute func from discovered state", connection)
+```
+
+**File**: `server/machines/kubernetes/discover_test.go` (modified, +29/-0)
+```diff
+@@ -12,6 +12,7 @@ import (
+ 	"github.com/meshery/meshery/server/models"
+ 	"github.com/meshery/meshery/server/models/connections"
+ 	"github.com/meshery/meshkit/logger"
++	"github.com/meshery/meshkit/models/events"
+ 	mkkube "github.com/meshery/meshkit/utils/kubernetes"
+ 	"github.com/meshery/schemas/models/core"
+ 	k8sclient "k8s.io/client-go/kubernetes"
+@@ -132,3 +133,31 @@ func TestRefreshK8sContext_SynchronizesMissingServerID(t *testing.T) {
+ 		t.Fatalf("expected KubernetesServerID to be %s, got %v", existingID, m.K8sContext.KubernetesServerID)
+ 	}
  }
 +
-+func TestProcessEnvironmentData_NilResponse(t *testing.T) {
-+	rows, total := processEnvironmentData(nil)
-+	if len(rows) != 0 {
-+		t.Fatalf("expected 0 rows on nil response, got %d", len(rows))
++func TestRefreshK8sContext_ReturnsErrorOnInvalidCredentials(t *testing.T) {
++	log, err := logger.New("test", logger.Options{})
++	if err != nil {
++		t.Fatal(err)
 +	}
-+	if total != 0 {
-+		t.Fatalf("expected 0 total on nil response, got %d", total)
-+	}
-+}
 +
-+func TestProcessEnvironmentData_EmptyDescriptionFallback(t *testing.T) {
-+	envPage := &environment.EnvironmentPage{
-+		TotalCount: 3,
-+		Environments: []environment.Environment{
-+			{
-+				Name:        "empty-desc-env",
-+				Description: "",
-+			},
-+			{
-+				Name:        "whitespace-desc-env",
-+				Description: "   \t\n  ",
-+			},
-+			{
-+				Name:        "valid-desc-env",
-+				Description: "Production Environment",
-+			},
++	m := &MachineCtx{
++		K8sContext: models.K8sContext{
++			Name:   "cluster-1",
++			Server: "https://k8s.example.com:6443",
 +		},
++		log: log,
 +	}
-+	rows, total := processEnvironmentData(envPage)
-+	if total != 3 {
-+		t.Fatalf("expected total 3, got %d", total)
++
++	badCtx := models.K8sContext{
++		Name:   "cluster-1",
++		Server: "https://k8s-new.example.com:6443",
 +	}
-+	if len(rows) != 3 {
-+		t.Fatalf("expected 3 rows, got %d", len(rows))
++
++	changed, err := m.RefreshK8sContext(badCtx, events.NewEvent(), log)
++	if err == nil {
++		t.Fatalf("expected error on invalid credentials, got nil")
 +	}
-+	if rows[0][3] != "N/A" {
-+		t.Fatalf("expected empty description 'N/A', got %q", rows[0][3])
-+	}
-+	if rows[1][3] != "N/A" {
-+		t.Fatalf("expected whitespace-only description 'N/A', got %q", rows[1][3])
-+	}
-+	if rows[2][3] != "Production Environment" {
-+		t.Fatalf("expected preserved description 'Production Environment', got %q", rows[2][3])
++	if changed {
++		t.Fatalf("expected changed=false on error, got true")
 +	}
 +}
+```
+
+**File**: `server/machines/kubernetes/helpers.go` (modified, +1/-1)
+```diff
+@@ -94,7 +94,7 @@ func AssignClientSetToContext(machinectx *MachineCtx, eventBuilder *events.Event
+ // logger: the stored machine context's own log may be nil on machines built
+ // outside the normal init path, and a failed build logs through it.
+ func (m *MachineCtx) RefreshK8sContext(newCtx models.K8sContext, eventBuilder *events.EventBuilder, log logger.Handler) (bool, error) {
+-	if m.clientset != nil && k8sContextCredentialsEqual(m.K8sContext, newCtx) {
++	if k8sContextCredentialsEqual(m.K8sContext, newCtx) {
+ 		if m.K8sContext.KubernetesServerID == nil && newCtx.KubernetesServerID != nil {
+ 			m.setupLock.Lock()
+ 			m.K8sContext.KubernetesServerID = newCtx.KubernetesServerID
 ```
 
 ---
 
-### Incident Patch 3: `f94f3d99` (2026-11-21)
-**Commit Message**: Merge branch 'master' into fix/environment-list-nil-description-guards
+### Incident Patch 2: `1d289655` (2026-11-24)
+**Commit Message**: Merge pull request #24253 from Sarthak-Pandey/fix-24249-order-by-sanitization
 
-**File**: `docs/data/openapi.yml` (modified, +140/-9)
+[Server] Add security edge cases and remove redundant tests for SanitizeOrderInput
+
+**File**: `server/models/sql-utils_test.go` (modified, +44/-29)
 ```diff
-@@ -67207,6 +67207,7 @@ paths:
-         expose: true
-         title: Get the current user profile
-         scope: account:read
-+        description: Read-only. Returns the profile of the signed-in user. An `X-Current-Orgid` that is not a UUID answers 400.
-       summary: Get current user profile
-       description: |
-         Returns the profile of the signed-in user. An `X-Current-Orgid` that is not a UUID answers 400.
-@@ -67218,7 +67219,12 @@ paths:
-             Organization the call acts in, by ID (a UUID). When present, the server resolves the session organization
-             from it instead of the caller's selected organization, and runs its membership and permission checks there.
-             A caller who is not a live member of the named organization receives the same 404 as an unknown resource.
--            Omitted, the caller's selected organization applies.
-+            Omitted, a path or query `orgId` the operation takes names the organization when sent; otherwise the
-+            caller's selected organization applies when it is not nil; otherwise the server defaults among the caller's
-+            live organizations, using the only one when exactly one qualifies. When the call needs an acting
-+            organization and several qualify, an operation that declares the OrganizationSelectionRequired response
-+            answers 409 `organization_selection_required`. The resolution order is in docs/mcp-operation-contract.md,
-+            the organization selector.
-           schema:
-             type: string
-             minLength: 36
-@@ -67860,6 +67866,61 @@ paths:
-             text/plain:
-               schema:
-                 type: string
-+        '409':
-+          description: >-
-+            Conflict - the call needs an organization, none was named, and more than one of the caller's organizations
-+            qualifies. Pass one of `choices[].id` as `X-Current-Orgid` (the `organizationId` tool argument). The body's
-+            `code` is `organization_selection_required`.
-+          content:
-+            application/json:
-+              schema:
-+                type: object
-+                description: >-
-+                  The call needs an acting organization, the caller named none, and more than one of the caller's live
-+                  organizations qualifies. Nothing was done by this request. Repeat it naming one of `choices` as
-+                  `X-Current-Orgid` (the `organizationId` tool argument).
-+                required:
-+                  - code
-+                  - message
-+                  - choices
-+                additionalProperties: false
-+                properties:
-+                  code:
-+                    type: string
-+                    description: Machine-readable reason. Always `organization_selection_required` for this body.
-+                    enum:
-+                      - organization_selection_required
-+                  message:
-+                    type: string
-+                    minLength: 1
-+                    description: The sentence the caller is shown.
-+                  choices:
-+                    type: array
-+                    minItems: 2
-+                    description: The caller's own live organizations the call could act in. Pass one `id` as `X-Current-Orgid`.
-+                    items:
-+                      type: object
-+                      description: An organization the call could act in. Same fields as AvailableOrganization.
-+                      required:
-+                        - id
-+                        - name
-+                        - description
-+                      additionalProperties: false
-+                      properties:
-+                        id:
-+                          type: string
-+                          format: uuid
-+                          x-go-type: uuid.UUID
-+                          x-go-type-import:
-+                            path: github.com/gofrs/uuid
-+                          description: Organization ID.
-+                          x-go-name: ID
-+                        name:
-+                          type: string
-+                          description: Name of the organization.
-+                        description:
-+                          type: string
-+                          description: Description of the organization.
-         '500':
-           description: Internal server error
-           content:
-@@ -68038,13 +68099,19 @@ paths:
-         expose: true
-         title: Get connections
-         scope: connections:read
-+        description: >-
-+          Read-only. Returns a paginated list of connections for the authenticated user with filtering, sorting and
-+          pagination support. When `X-Current-Orgid` is also sent, it must name the same organization as the `orgId`
-+          query; a mismatch is refused with a 400 (the organization selector in docs/mcp-operation-contract.md). When
-+          `X-Current-Orgid` is omitted, a sent `orgId` query names the ac
+@@ -22,12 +22,6 @@ func TestSanitizeOrderInput(t *testing.T) {
+ 			columns:  validColumns,
+ 			expected: "created_at desc",
+ 		},
+-		{
+-			name:     "camelCase ascending",
+-			order:    "updatedAt asc",
+-			columns:  validColumns,
+-			expected: "updated_at asc",
+-		},
+ 		{
+ 			name:     "legacy snake_case input still accepted",
+ 			order:    "created_at desc",
+@@ -52,30 +46,12 @@ func TestSanitizeOrderInput(t *testing.T) {
+ 			columns:  validColumns,
+ 			expected: "created_at asc",
+ 		},
+-		{
+-			name:     "acronym run stays intact when folding",
+-			order:    "userID desc",
+-			columns:  []string{"user_id"},
+-			expected: "user_id desc",
+-		},
+-		{
+-			name:     "performance profile lastRun folds to its aliased column",
+-			order:    "lastRun desc",
+-			columns:  []string{"updated_at", "created_at", "name", "last_run"},
+-			expected: "last_run desc",
+-		},
+ 		{
+ 			name:     "column outside the whitelist is ignored",
+ 			order:    "password desc",
+ 			columns:  validColumns,
+ 			expected: "",
+ 		},
+-		{
+-			name:     "camelCase column outside the whitelist is ignored",
+-			order:    "secretToken desc",
+-			columns:  validColumns,
+-			expected: "",
+-		},
+ 		{
+ 			name:     "more than two words is rejected",
+ 			order:    "created_at desc; DROP TABLE users",
+@@ -100,6 +76,48 @@ func TestSanitizeOrderInput(t *testing.T) {
+ 			columns:  validColumns,
+ 			expected: "",
+ 		},
++		{
++			name:     "extra spaces",
++			order:    "createdAt   desc",
++			columns:  validColumns,
++			expected: "",
++		},
++		{
++			name:     "tab separator",
++			order:    "createdAt\tdesc",
++			columns:  validColumns,
++			expected: "",
++		},
++		{
++			name:     "uppercase column",
++			order:    "CREATED_AT desc",
++			columns:  validColumns,
++			expected: "",
++		},
++		{
++			name:     "SQL comment in column",
++			order:    "created_at-- desc",
++			columns:  validColumns,
++			expected: "",
++		},
++		{
++			name:     "quoted column",
++			order:    "'name' desc",
++			columns:  validColumns,
++			expected: "",
++		},
++		{
++			name:     "empty columns slice",
++			order:    "createdAt desc",
++			columns:  []string{},
++			expected: "",
++		},
++		{
++			name:     "nil columns slice",
++			order:    "createdAt desc",
++			columns:  nil,
++			expected: "",
++		},
+ 	}
+ 
+ 	for _, tt := range tests {
+@@ -117,12 +135,9 @@ func TestToSnakeCase(t *testing.T) {
+ 		expected string
+ 	}{
+ 		{"createdAt", "created_at"},
+-		{"updatedAt", "updated_at"},
+-		{"subType", "sub_type"},
+-		{"lastRun", "last_run"},
+-		{"name", "name"},
+-		{"created_at", "created_at"},
+ 		{"userID", "user_id"},
++		{"created_at", "created_at"},
++		{"name", "name"},
+ 		{"", ""},
+ 	}
+ 
 ```
 
-**File**: `docs/meetings/2026/week-of-11-19-2026/JayitaLakhmani.md` (added, +12/-0)
+---
+
+### Incident Patch 3: `94233af3` (2026-11-24)
+**Commit Message**: [server] Fix stack-copy value drop of KubernetesServerID in DiscoverAction and stale FSM context on kubeconfig re-import
+
+In DiscoverAction.Execute, k8sContext := machinectx.K8sContext creates a stack value copy of the machine context. AssignServerID and AssignVersion mutate this local copy and persist it to the database, but the resolved fields were never assigned back to machinectx.K8sContext. Consequently, subsequent state machine actions (such as RegisterAction and ConnectAction) as well as snapshot readers (K8sContextSnapshot) continued observing a nil KubernetesServerID.
+
+Additionally, in K8SConfigHandler, when a kubeconfig is re-imported for an existing cluster connection, InitializeMachineWithContext returned the cached state machine instance from smInstanceTracker and dropped the incoming machineCtx. If the cluster had credentials rotated or was previously unreachable at initial startup (leaving inst.Context nil), the state machine retained stale credentials or remained permanently frozen with a nil Context.
+
+This commit:
+1. Syncs the resolved k8sContext back to machinectx.K8sContext under setupLock upon successful discovery.
+2. Enhances RefreshK8sContext to back-fill miss
+
+**File**: `server/handlers/k8sconfig_handler.go` (modified, +25/-0)
 ```diff
-@@ -0,0 +1,12 @@
-+# Hi, I'm Jayita Lakhmani!!! 👋
+@@ -376,6 +376,31 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
+ 				log.Error(err)
+ 			}
+ 
++			// When the instance was already present in the tracker (cache hit),
++			// InitializeMachineWithContext returns it as-is and drops machineCtx.
++			// Refresh its stored context so credential updates are applied and,
++			// if the machine previously failed initial startup with a nil Context,
++			// its Context is properly initialized.
++			if inst != nil {
++				inst.UpdateContext(func(oldCtx interface{}) interface{} {
++					if oldCtx == nil {
++						assigned, _, aerr := kubernetes.AssignInitialCtx(req.Context(), machineCtx, log)
++						if aerr != nil {
++							log.Error(aerr)
++							return oldCtx
++						}
++						return assigned
++					}
++					if stored, ok := oldCtx.(*kubernetes.MachineCtx); ok && stored != nil {
++						if _, rerr := stored.RefreshK8sContext(*ctx, models.NewServerEvent(req.Context()), log); rerr != nil {
++							log.Error(rerr)
++						}
++						return stored
++					}
++					return oldCtx
++				})
++			}
 +
-+I am an Electronics and Communication Engineering graduate with an interest in Software Development and Cloud-Native Technologies.
-+
-+I have a background in Full-Stack Development and am currently exploring areas like Cloud Computing, DevOps, Kubernetes, Docker, Distributed Systems, and Open Source Development.
-+
-+I'm excited to begin my open-source journey with **Meshery**, learn from the community, and contribute to building and improving cloud-native infrastructure. Looking forward to collaborating, learning, and growing along the way!
-+
-+## Here are my profiles
-+
-+- **LinkedIn:** [Jayita Lakhmani](https://www.linkedin.com/in/jayita-lakhmani/)
-+- **GitHub:** [JayitaL](https://github.com/JayitaL)
+ 			// An unreachable context cannot build a client set, so the state
+ 			// machine fails to initialize - either returning a nil instance, or,
+ 			// on a cache hit, one whose Context was never assigned. The connection
 ```
 
-**File**: `docs/meetings/2026/week-of-11-19-2026/TS-Phala.md` (added, +5/-0)
+**File**: `server/handlers/k8sconfig_handler_test.go` (modified, +124/-0)
 ```diff
-@@ -0,0 +1,5 @@
-+# T.S. Phala
+@@ -17,7 +17,10 @@ import (
+ 
+ 	"github.com/gofrs/uuid"
+ 	"github.com/meshery/meshery/server/helpers"
++	"github.com/meshery/meshery/server/machines"
++	"github.com/meshery/meshery/server/machines/kubernetes"
+ 	"github.com/meshery/meshery/server/models"
++	"github.com/meshery/meshery/server/models/connections"
+ 	meshkiterrors "github.com/meshery/meshkit/errors"
+ 	"github.com/meshery/meshkit/models/events"
+ 	"github.com/meshery/schemas/models/core"
+@@ -731,3 +734,124 @@ func TestRetainSelectedContextMetadata(t *testing.T) {
+ 		}
+ 	})
+ }
 +
-+Hey everyone! I'm T.S. Phala, I'm looking forward to working beside you all!
++type mockReimportProvider struct {
++	*models.DefaultLocalProvider
++	persistedEvents []events.Event
++	connectionID    core.Uuid
++}
 +
-+We can connect through LinkedIn: https://www.linkedin.com/in/thulaganyo-phala-sehuhula-68a61a373/
++func (m *mockReimportProvider) SaveK8sContext(token string, k8sContext models.K8sContext, metadata map[string]any) (connections.Connection, error) {
++	return connections.Connection{ID: m.connectionID, Status: connections.DISCOVERED}, nil
++}
++
++func (m *mockReimportProvider) PersistEvent(event events.Event, _ string) (models.PersistedEvent, error) {
++	m.persistedEvents = append(m.persistedEvents, event)
++	return models.PersistedEvent{Event: &event, Disposition: models.EventCreated}, nil
++}
++
++func TestK8SConfigHandler_ReimportRefreshesCachedStateMachineContext(t *testing.T) {
++	authUser := &models.User{ID: uuid.Must(uuid.NewV4())}
++	connUUID := uuid.Must(uuid.NewV4())
++	connID := core.Uuid(connUUID)
++
++	kubeconfig := []byte(`apiVersion: v1
++kind: Config
++current-context: reimported
++clusters:
++- cluster:
++    server: https://127.0.0.1:6443
++  name: reimported
++contexts:
++- context:
++    cluster: reimported
++    user: reimported-user
++  name: reimported
++users:
++- name: reimported-user
++  user:
++    token: token-reimported
++`)
++
++	t.Run("refreshes credentials on cache hit with existing context", func(t *testing.T) {
++		h := newTestHandler(t, map[string]models.Provider{}, "")
++		h.config.K8scontextChannel = &models.K8scontextChan{}
++		tracker := &machines.ConnectionToStateMachineInstanceTracker{
++			ConnectToInstanceMap: make(map[core.Uuid]*machines.StateMachine),
++		}
++		h.ConnectionToStateMachineInstanceTracker = tracker
++
++		inst, err := kubernetes.New(connID.String(), core.Uuid(uuid.Nil), h.log)
++		if err != nil {
++			t.Fatalf("failed to create state machine: %v", err)
++		}
++		storedCtx := &kubernetes.MachineCtx{
++			K8sContext: models.K8sContext{
++				Name:   "old-name",
++				Server: "https://old-server:6443",
++			},
++		}
++		inst.Context = storedCtx
++		tracker.Add(connID, inst)
++
++		provider := &mockReimportProvider{
++			connectionID: connID,
++		}
++
++		req := uploadKubeconfigRequest(t, "/api/system/kubernetes", kubeconfig)
++		req = req.WithContext(context.WithValue(req.Context(), models.TokenCtxKey, "test-token"))
++		rec := httptest.NewRecorder()
++
++		h.K8SConfigHandler(rec, req, nil, authUser, provider)
++		if rec.Code != http.StatusOK {
++			t.Fatalf("expected 200 OK, got %d: %s", rec.Code, rec.Body.String())
++		}
++
++		ctxObj := inst.GetContext()
++		updatedCtx, ok := ctxObj.(*kubernetes.MachineCtx)
++		if !ok || updatedCtx == nil {
++			t.Fatalf("expected *kubernetes.MachineCtx, got %#v", ctxObj)
++		}
++		if updatedCtx.K8sContext.Server != "https://127.0.0.1:6443" {
++			t.Fatalf("expected server https://127.0.0.1:6443, got %s", updatedCtx.K8sContext.Server)
++		}
++	})
++
++	t.Run("initializes context on cache hit when initial startup left Context nil", func(t *testing.T) {
++		h := newTestHandler(t, map[string]models.Provider{}, "")
++		h.config.K8scontextChannel = &models.K8scontextChan{}
++		tracker := &machines.ConnectionToStateMachineInstanceTracker{
++			ConnectToInstanceMap: make(map[core.Uuid]*machines.StateMachine),
++		}
++		h.ConnectionToStateMachineInstanceTracker = tracker
++
++		inst, err := kubernetes.New(connID.String(), core.Uuid(uuid.Nil), h.log)
++		if err != nil {
++			t.Fatalf("failed to create state machine: %v", err)
++		}
++		inst.Context = nil
++		tracker.Add(connID, inst)
++
++		provider := &mockReimportProvider{
++			connectionID: connID,
++		}
++
++		req := uploadKubeconfigRequest(t, "/api/system/kubernetes", kubeconfig)
++		req = req.WithContext(context.WithValue(req.Context(), models.TokenCtxKey, "test-token"))
++		rec := httptest.NewRecorder()
++
++		h.K8SConfigHandler(rec, req, nil, authUser, provider)
++		if rec.Code != http.StatusOK {
++			t.Fatalf("expected 200 OK, got %d: %s", rec.Code, rec.Body.String())
++		}
++
++		ctxObj := inst.GetContext()
++		initializedCtx, ok := ctxObj.(*kubernetes.MachineCtx)
++		if !ok || initializedCtx == nil {
++			t.Fatalf("expected initialized *kubernetes.MachineCtx, got %#v", ctxObj)
++		}
++		if initializedCtx.K8sContext.Server != "https://127.0.0.1:6443" {
++			t.Fatalf("expected server https://127.0.0.1:6443, got %s", initializedCtx.K8sContext.Server)
++		}
++	})
++}
 ```
 
-**File**: `models/chaos/21.3.390/v1.0.0/components/AWSChaos.json` (added, +209/-0)
+**File**: `server/machines/kubernetes/discover.go` (modified, +7/-0)
 ```diff
-@@ -0,0 +1,209 @@
-+{
-+  "id": "00000000-0000-0000-0000-000000000000",
-+  "schemaVersion": "components.meshery.io/v1beta2",
-+  "version": "v1.0.0",
-+  "displayName": "AWS Chaos",
-+  "description": "",
-+  "format": "JSON",
-+  "model": {
-+    "id": "00000000-0000-0000-0000-000000000000",
-+    "schemaVersion": "models.meshery.io/v1beta2",
-+    "version": "v1.0.0",
-+    "name": "chaos",
-+    "displayName": "Chaos",
-+    "status": "enabled",
-+    "registrant": {
-+      "id": "00000000-0000-0000-0000-000000000000",
-+      "name": "Artifact Hub",
-+      "type": "registry",
-+      "subType": "",
-+      "kind": "artifacthub",
-+      "status": "discovered",
-+      "created_at": "0001-01-01T00:00:00Z",
-+      "updated_at": "0001-01-01T00:00:00Z",
-+      "deleted_at": null,
-+      "schemaVersion": ""
-+    },
-+    "connection_id": "00000000-0000-0000-0000-000000000000",
-+    "category": {
-+      "id": "00000000-0000-0000-0000-000000000000",
-+      "name": "App Definition and Development"
-+    },
-+    "subCategory": "Continuous Integration \u0026 Delivery",
-+    "metadata": {
-+      "isAnnotation": false,
-+      "primaryColor": "#00B39F",
-+      "secondaryColor": "#00D3A9",
-+      "shape": "circle",
-+      "source_uri": "https://sx-helm-repository-prod.s3.eu-west-3.amazonaws.com/stable/chaos-21.3.390.tgz",
-+      "styleOverrides": "",
-+      "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 60 40\" fill=\"none\"\u003e\n\u003cg xmlns=\"http://www.w3.org/2000/svg\" clip-path=\"url(#clip0_27224_10242)\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M59.7518 0.292419L50.4322 7.60754L43.5508 1.86349L48.854 9.04349L44.1195 15.4913L50.4323 10.8989L59.3186 18.7899L52.2949 9.47025L59.7518 0.292419Z\" fill=\"#000E44\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M16.6266 32.37C25.318 32.37 32.3636 25.3243 32.3636 16.633C32.3636 7.94169 25.318 0.895996 16.6266 0.895996C7.93534 0.895996 0.889648 7.94169 0.889648 16.633C0.889648 25.3243 7.93534 32.37 16.6266 32.37Z\" stroke=\"#6D4013\" stroke-width=\"1.5\" stroke-miterlimit=\"2.5\"\u003e\u003c/path\u003e\n\u003cmask xmlns=\"http://www.w3.org/2000/svg\" id=\"mask0_27224_10242\" style=\"mask-type:luminance\" maskUnits=\"userSpaceOnUse\" x=\"-5\" y=\"25\" width=\"45\" height=\"23\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M-4.80078 47.5563H39.0409V25.1863H-4.80078V47.5563Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003c/mask\u003e\n\u003cg xmlns=\"http://www.w3.org/2000/svg\" mask=\"url(#mask0_27224_10242)\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M25.9877 28.2204C26.739 27.6944 28.4711 28.8719 29.8565 30.8506C31.242 32.8292 31.7561 34.8596 31.0048 35.3857C30.2536 35.9117 28.5214 34.7342 27.136 32.7555C25.7505 30.7769 25.2364 28.7465 25.9877 28.2204Z\" fill=\"#6D4013\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M8.08853 28.2205C7.33726 27.6944 5.60513 28.8719 4.21967 30.8506C2.83421 32.8292 2.32012 34.8596 3.07137 35.3857C3.82264 35.9117 5.55477 34.7342 6.94022 32.7555C8.32568 30.7769 8.83978 28.7465 8.08853 28.2205Z\" fill=\"#6D4013\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M17.0298 31.3186C16.1127 31.3186 15.3692 33.2767 15.3692 35.6921C15.3692 38.1076 16.1127 40.0657 17.0298 40.0657C17.947 40.0657 18.6904 38.1076 18.6904 35.6921C18.6904 33.2767 17.9469 31.3186 17.0298 31.3186Z\" fill=\"#6D4013\"\u003e\u003c/path\u003e\n\u003c/g\u003e\n\u003cmask xmlns=\"http://www.w3.org/2000/svg\" id=\"mask1_27224_10242\" style=\"mask-type:luminance\" maskUnits=\"userSpaceOnUse\" x=\"-5\" y=\"25\" width=\"45\" height=\"23\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M-4.80078 47.5563H39.0409V25.1863H-4.80078V47.5563Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003c/mask\u003e\n\u003cg xmlns=\"http://www.w3.org/2000/svg\" mask=\"url(#mask1_27224_10242)\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M29.6667 24.2904C26.9918 28.7344 22.1445 31.7039 16.6089 31.7039C11.2246 31.7039 6.49166 28.8947 3.77539 24.6518\" stroke=\"#6D4013\" stroke-width=\"2.64447\"\u003e\u003c/path\u003e\n\u003c/g\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M28.983 18.905C29.9651 17.2039 29.9144 17.2969 30.7265 15.8903C31.0051 15.3919 31.2542 14.9522 31.5182 14.4978C30.6385 12.9733 29.7445 11.4342 28.8502 9.89509H25.4056C24.8193 8.89832 24.2182 7.90159 23.6173 6.87549H20.1873C19.601 5.89339 19.0293 4.89659 18.3842 3.82659C18.3696 3.82659 18.355 3.82659 18.3404 3.81193C18.0325 4.31031 17.7687 4.7354 17.4756 5.20443C17.1824 4.72071 16.9185 4.29562 16.6253 3
+@@ -94,6 +94,13 @@ func (da *DiscoverAction) Execute(ctx context.Context, machineCtx interface{}, d
+ 		return machines.NoOp, eventBuilder.WithDescription(fmt.Sprintf("Unable to establish connection with context \"%s\" at %s", k8sContext.Name, k8sContext.Server)).WithMetadata(map[string]interface{}{"error": err}).Build(), err
+ 	}
+ 
++	// Update the machine context with the resolved server ID and version under
++	// setupLock so downstream states and external readers (e.g. K8sContextSnapshot)
++	// observe the populated fields rather than the unpopulated stack copy.
++	machinectx.setupLock.Lock()
++	machinectx.K8sContext = k8sContext
++	machinectx.setupLock.Unlock()
++
+ 	// machinectx.log.Debug("exiting execute func from discovered state", connection)
+ 
+ 	return machines.Register, nil, nil
 ```
 
-**File**: `models/chaos/21.3.390/v1.0.0/components/AzureChaos.json` (added, +209/-0)
+**File**: `server/machines/kubernetes/discover_test.go` (added, +134/-0)
 ```diff
-@@ -0,0 +1,209 @@
-+{
-+  "id": "00000000-0000-0000-0000-000000000000",
-+  "schemaVersion": "components.meshery.io/v1beta2",
-+  "version": "v1.0.0",
-+  "displayName": "Azure Chaos",
-+  "description": "",
-+  "format": "JSON",
-+  "model": {
-+    "id": "00000000-0000-0000-0000-000000000000",
-+    "schemaVersion": "models.meshery.io/v1beta2",
-+    "version": "v1.0.0",
-+    "name": "chaos",
-+    "displayName": "Chaos",
-+    "status": "enabled",
-+    "registrant": {
-+      "id": "00000000-0000-0000-0000-000000000000",
-+      "name": "Artifact Hub",
-+      "type": "registry",
-+      "subType": "",
-+      "kind": "artifacthub",
-+      "status": "discovered",
-+      "created_at": "0001-01-01T00:00:00Z",
-+      "updated_at": "0001-01-01T00:00:00Z",
-+      "deleted_at": null,
-+      "schemaVersion": ""
-+    },
-+    "connection_id": "00000000-0000-0000-0000-000000000000",
-+    "category": {
-+      "id": "00000000-0000-0000-0000-000000000000",
-+      "name": "App Definition and Development"
-+    },
-+    "subCategory": "Continuous Integration \u0026 Delivery",
-+    "metadata": {
-+      "isAnnotation": false,
-+      "primaryColor": "#00B39F",
-+      "secondaryColor": "#00D3A9",
-+      "shape": "circle",
-+      "source_uri": "https://sx-helm-repository-prod.s3.eu-west-3.amazonaws.com/stable/chaos-21.3.390.tgz",
-+      "styleOverrides": "",
-+      "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 60 40\" fill=\"none\"\u003e\n\u003cg xmlns=\"http://www.w3.org/2000/svg\" clip-path=\"url(#clip0_27224_10242)\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M59.7518 0.292419L50.4322 7.60754L43.5508 1.86349L48.854 9.04349L44.1195 15.4913L50.4323 10.8989L59.3186 18.7899L52.2949 9.47025L59.7518 0.292419Z\" fill=\"#000E44\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M16.6266 32.37C25.318 32.37 32.3636 25.3243 32.3636 16.633C32.3636 7.94169 25.318 0.895996 16.6266 0.895996C7.93534 0.895996 0.889648 7.94169 0.889648 16.633C0.889648 25.3243 7.93534 32.37 16.6266 32.37Z\" stroke=\"#6D4013\" stroke-width=\"1.5\" stroke-miterlimit=\"2.5\"\u003e\u003c/path\u003e\n\u003cmask xmlns=\"http://www.w3.org/2000/svg\" id=\"mask0_27224_10242\" style=\"mask-type:luminance\" maskUnits=\"userSpaceOnUse\" x=\"-5\" y=\"25\" width=\"45\" height=\"23\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M-4.80078 47.5563H39.0409V25.1863H-4.80078V47.5563Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003c/mask\u003e\n\u003cg xmlns=\"http://www.w3.org/2000/svg\" mask=\"url(#mask0_27224_10242)\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M25.9877 28.2204C26.739 27.6944 28.4711 28.8719 29.8565 30.8506C31.242 32.8292 31.7561 34.8596 31.0048 35.3857C30.2536 35.9117 28.5214 34.7342 27.136 32.7555C25.7505 30.7769 25.2364 28.7465 25.9877 28.2204Z\" fill=\"#6D4013\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M8.08853 28.2205C7.33726 27.6944 5.60513 28.8719 4.21967 30.8506C2.83421 32.8292 2.32012 34.8596 3.07137 35.3857C3.82264 35.9117 5.55477 34.7342 6.94022 32.7555C8.32568 30.7769 8.83978 28.7465 8.08853 28.2205Z\" fill=\"#6D4013\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M17.0298 31.3186C16.1127 31.3186 15.3692 33.2767 15.3692 35.6921C15.3692 38.1076 16.1127 40.0657 17.0298 40.0657C17.947 40.0657 18.6904 38.1076 18.6904 35.6921C18.6904 33.2767 17.9469 31.3186 17.0298 31.3186Z\" fill=\"#6D4013\"\u003e\u003c/path\u003e\n\u003c/g\u003e\n\u003cmask xmlns=\"http://www.w3.org/2000/svg\" id=\"mask1_27224_10242\" style=\"mask-type:luminance\" maskUnits=\"userSpaceOnUse\" x=\"-5\" y=\"25\" width=\"45\" height=\"23\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M-4.80078 47.5563H39.0409V25.1863H-4.80078V47.5563Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003c/mask\u003e\n\u003cg xmlns=\"http://www.w3.org/2000/svg\" mask=\"url(#mask1_27224_10242)\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M29.6667 24.2904C26.9918 28.7344 22.1445 31.7039 16.6089 31.7039C11.2246 31.7039 6.49166 28.8947 3.77539 24.6518\" stroke=\"#6D4013\" stroke-width=\"2.64447\"\u003e\u003c/path\u003e\n\u003c/g\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M28.983 18.905C29.9651 17.2039 29.9144 17.2969 30.7265 15.8903C31.0051 15.3919 31.2542 14.9522 31.5182 14.4978C30.6385 12.9733 29.7445 11.4342 28.8502 9.89509H25.4056C24.8193 8.89832 24.2182 7.90159 23.6173 6.87549H20.1873C19.601 5.89339 19.0293 4.89659 18.3842 3.82659C18.3696 3.82659 18.355 3.82659 18.3404 3.81193C18.0325 4.31031 17.7687 4.7354 17.4756 5.20443C17.1824 4.72071 16.9185 4.29562 16.6253
+@@ -0,0 +1,134 @@
++package kubernetes
++
++import (
++	"context"
++	"encoding/json"
++	"net/http"
++	"net/http/httptest"
++	"testing"
++
++	"github.com/gofrs/uuid"
++	"github.com/meshery/meshery/server/machines"
++	"github.com/meshery/meshery/server/models"
++	"github.com/meshery/meshery/server/models/connections"
++	"github.com/meshery/meshkit/logger"
++	mkkube "github.com/meshery/meshkit/utils/kubernetes"
++	"github.com/meshery/schemas/models/core"
++	k8sclient "k8s.io/client-go/kubernetes"
++	"k8s.io/client-go/rest"
++)
++
++type mockProviderForDiscoverTest struct {
++	models.Provider
++	savedContext models.K8sContext
++}
++
++func (m *mockProviderForDiscoverTest) SaveK8sContext(token string, k8sContext models.K8sContext, metadata map[string]any) (connections.Connection, error) {
++	m.savedContext = k8sContext
++	return connections.Connection{ID: core.Uuid(uuid.Must(uuid.NewV4()))}, nil
++}
++
++func TestDiscoverAction_PropagatesServerIDAndVersionToMachineCtx(t *testing.T) {
++	clusterUID := "30e099e0-ef31-477a-9f2d-754ee9b1d41a"
++	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++		w.Header().Set("Content-Type", "application/json")
++		if r.URL.Path == "/api/v1/namespaces/kube-system" {
++			_ = json.NewEncoder(w).Encode(map[string]interface{}{
++				"metadata": map[string]string{"uid": clusterUID},
++			})
++			return
++		}
++		if r.URL.Path == "/version" {
++			_ = json.NewEncoder(w).Encode(map[string]string{
++				"major": "1",
++				"minor": "30",
++				"gitVersion": "v1.30.0",
++			})
++			return
++		}
++		http.NotFound(w, r)
++	}))
++	defer server.Close()
++
++	clientset, err := k8sclient.NewForConfig(&rest.Config{Host: server.URL})
++	if err != nil {
++		t.Fatal(err)
++	}
++	log, err := logger.New("test", logger.Options{})
++	if err != nil {
++		t.Fatal(err)
++	}
++
++	mockProv := &mockProviderForDiscoverTest{}
++	machineCtx := &MachineCtx{
++		K8sContext: models.K8sContext{
++			Name:   "test-ctx",
++			Server: server.URL,
++		},
++		clientset: &mkkube.Client{KubeClient: clientset},
++		log:       log,
++	}
++
++	ctx := context.WithValue(context.Background(), models.ProviderCtxKey, mockProv)
++	ctx = context.WithValue(ctx, models.TokenCtxKey, "test-token")
++
++	da := &DiscoverAction{}
++	nextEvent, _, err := da.Execute(ctx, machineCtx, nil)
++	if err != nil {
++		t.Fatalf("unexpected DiscoverAction error: %v", err)
++	}
++	if nextEvent != machines.Register {
++		t.Fatalf("expected next event %v, got %v", machines.Register, nextEvent)
++	}
++
++	// Verify that machineCtx.K8sContext has been updated in memory
++	if machineCtx.K8sContext.KubernetesServerID == nil {
++		t.Fatalf("expected machineCtx.K8sContext.KubernetesServerID to be populated, but it was nil")
++	}
++	if machineCtx.K8sContext.KubernetesServerID.String() != clusterUID {
++		t.Fatalf("expected KubernetesServerID %s, got %s", clusterUID, machineCtx.K8sContext.KubernetesServerID.String())
++	}
++	if machineCtx.K8sContext.Version != "v1.30.0" {
++		t.Fatalf("expected Version v1.30.0, got %s", machineCtx.K8sContext.Version)
++	}
++
++	// Verify K8sContextSnapshot also reflects the updated server ID
++	snap := machineCtx.K8sContextSnapshot()
++	if snap.KubernetesServerID == nil || snap.KubernetesServerID.String() != clusterUID {
++		t.Fatalf("expected K8sContextSnapshot().KubernetesServerID to be %s, got %v", clusterUID, snap.KubernetesServerID)
++	}
++}
++
++func TestRefreshK8sContext_SynchronizesMissingServerID(t *testing.T) {
++	log, err := logger.New("test", logger.Options{})
++	if err != nil {
++		t.Fatal(err)
++	}
++
++	existingID := core.Uuid(uuid.Must(uuid.NewV4()))
++	m := &MachineCtx{
++		K8sContext: models.K8sContext{
++			Name:   "cluster-1",
++			Server: "https://k8s.example.com:6443",
++		},
++		clientset: &mkkube.Client{},
++		log:       log,
++	}
++
++	newCtx := models.K8sContext{
++		Name:               "cluster-1",
++		Server:             "https://k8s.example.com:6443",
++		KubernetesServerID: &existingID,
++	}
++
++	changed, err := m.RefreshK8sContext(newCtx, nil, log)
++	if err != nil {
++		t.Fatalf("unexpected RefreshK8sContext error: %v", err)
++	}
++	if !changed {
++		t.Fatalf("expected changed to be true when populating missing server ID")
++	}
++	if m.K8sContext.KubernetesServerID == nil || *m.K8sContext.KubernetesServerID != existingID {
++		t.Fatalf("expected KubernetesServerID to be %s, got %v", existingID, m.K8sContext.KubernetesServerID)
++	}
++}
 ```
 
-**File**: `models/chaos/21.3.390/v1.0.0/components/BlockChaos.json` (added, +209/-0)
+**File**: `server/machines/kubernetes/helpers.go` (modified, +7/-1)
 ```diff
-@@ -0,0 +1,209 @@
-+{
-+  "id": "00000000-0000-0000-0000-000000000000",
-+  "schemaVersion": "components.meshery.io/v1beta2",
-+  "version": "v1.0.0",
-+  "displayName": "Block Chaos",
-+  "description": "",
-+  "format": "JSON",
-+  "model": {
-+    "id": "00000000-0000-0000-0000-000000000000",
-+    "schemaVersion": "models.meshery.io/v1beta2",
-+    "version": "v1.0.0",
-+    "name": "chaos",
-+    "displayName": "Chaos",
-+    "status": "enabled",
-+    "registrant": {
-+      "id": "00000000-0000-0000-0000-000000000000",
-+      "name": "Artifact Hub",
-+      "type": "registry",
-+      "subType": "",
-+      "kind": "artifacthub",
-+      "status": "discovered",
-+      "created_at": "0001-01-01T00:00:00Z",
-+      "updated_at": "0001-01-01T00:00:00Z",
-+      "deleted_at": null,
-+      "schemaVersion": ""
-+    },
-+    "connection_id": "00000000-0000-0000-0000-000000000000",
-+    "category": {
-+      "id": "00000000-0000-0000-0000-000000000000",
-+      "name": "App Definition and Development"
-+    },
-+    "subCategory": "Continuous Integration \u0026 Delivery",
-+    "metadata": {
-+      "isAnnotation": false,
-+      "primaryColor": "#00B39F",
-+      "secondaryColor": "#00D3A9",
-+      "shape": "circle",
-+      "source_uri": "https://sx-helm-repository-prod.s3.eu-west-3.amazonaws.com/stable/chaos-21.3.390.tgz",
-+      "styleOverrides": "",
-+      "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 60 40\" fill=\"none\"\u003e\n\u003cg xmlns=\"http://www.w3.org/2000/svg\" clip-path=\"url(#clip0_27224_10242)\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M59.7518 0.292419L50.4322 7.60754L43.5508 1.86349L48.854 9.04349L44.1195 15.4913L50.4323 10.8989L59.3186 18.7899L52.2949 9.47025L59.7518 0.292419Z\" fill=\"#000E44\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M16.6266 32.37C25.318 32.37 32.3636 25.3243 32.3636 16.633C32.3636 7.94169 25.318 0.895996 16.6266 0.895996C7.93534 0.895996 0.889648 7.94169 0.889648 16.633C0.889648 25.3243 7.93534 32.37 16.6266 32.37Z\" stroke=\"#6D4013\" stroke-width=\"1.5\" stroke-miterlimit=\"2.5\"\u003e\u003c/path\u003e\n\u003cmask xmlns=\"http://www.w3.org/2000/svg\" id=\"mask0_27224_10242\" style=\"mask-type:luminance\" maskUnits=\"userSpaceOnUse\" x=\"-5\" y=\"25\" width=\"45\" height=\"23\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M-4.80078 47.5563H39.0409V25.1863H-4.80078V47.5563Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003c/mask\u003e\n\u003cg xmlns=\"http://www.w3.org/2000/svg\" mask=\"url(#mask0_27224_10242)\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M25.9877 28.2204C26.739 27.6944 28.4711 28.8719 29.8565 30.8506C31.242 32.8292 31.7561 34.8596 31.0048 35.3857C30.2536 35.9117 28.5214 34.7342 27.136 32.7555C25.7505 30.7769 25.2364 28.7465 25.9877 28.2204Z\" fill=\"#6D4013\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M8.08853 28.2205C7.33726 27.6944 5.60513 28.8719 4.21967 30.8506C2.83421 32.8292 2.32012 34.8596 3.07137 35.3857C3.82264 35.9117 5.55477 34.7342 6.94022 32.7555C8.32568 30.7769 8.83978 28.7465 8.08853 28.2205Z\" fill=\"#6D4013\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M17.0298 31.3186C16.1127 31.3186 15.3692 33.2767 15.3692 35.6921C15.3692 38.1076 16.1127 40.0657 17.0298 40.0657C17.947 40.0657 18.6904 38.1076 18.6904 35.6921C18.6904 33.2767 17.9469 31.3186 17.0298 31.3186Z\" fill=\"#6D4013\"\u003e\u003c/path\u003e\n\u003c/g\u003e\n\u003cmask xmlns=\"http://www.w3.org/2000/svg\" id=\"mask1_27224_10242\" style=\"mask-type:luminance\" maskUnits=\"userSpaceOnUse\" x=\"-5\" y=\"25\" width=\"45\" height=\"23\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M-4.80078 47.5563H39.0409V25.1863H-4.80078V47.5563Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003c/mask\u003e\n\u003cg xmlns=\"http://www.w3.org/2000/svg\" mask=\"url(#mask1_27224_10242)\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M29.6667 24.2904C26.9918 28.7344 22.1445 31.7039 16.6089 31.7039C11.2246 31.7039 6.49166 28.8947 3.77539 24.6518\" stroke=\"#6D4013\" stroke-width=\"2.64447\"\u003e\u003c/path\u003e\n\u003c/g\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M28.983 18.905C29.9651 17.2039 29.9144 17.2969 30.7265 15.8903C31.0051 15.3919 31.2542 14.9522 31.5182 14.4978C30.6385 12.9733 29.7445 11.4342 28.8502 9.89509H25.4056C24.8193 8.89832 24.2182 7.90159 23.6173 6.87549H20.1873C19.601 5.89339 19.0293 4.89659 18.3842 3.82659C18.3696 3.82659 18.355 3.82659 18.3404 3.81193C18.0325 4.31031 17.7687 4.7354 17.4756 5.20443C17.1824 4.72071 16.9185 4.29562 16.6253
-```
-
-**File**: `models/chaos/21.3.390/v1.0.0/components/DNSChaos.json` (added, +209/-0)
-```diff
-@@ -0,0 +1,209 @@
-+{
-+  "id": "00000000-0000-0000-0000-000000000000",
-+  "schemaVersion": "components.meshery.io/v1beta2",
-+  "version": "v1.0.0",
-+  "displayName": "DNS Chaos",
-+  "description": "",
-+  "format": "JSON",
-+  "model": {
-+    "id": "00000000-0000-0000-0000-000000000000",
-+    "schemaVersion": "models.meshery.io/v1beta2",
-+    "version": "v1.0.0",
-+    "name": "chaos",
-+    "displayName": "Chaos",
-+    "status": "enabled",
-+    "registrant": {
-+      "id": "00000000-0000-0000-0000-000000000000",
-+      "name": "Artifact Hub",
-+      "type": "registry",
-+      "subType": "",
-+      "kind": "artifacthub",
-+      "status": "discovered",
-+      "created_at": "0001-01-01T00:00:00Z",
-+      "updated_at": "0001-01-01T00:00:00Z",
-+      "deleted_at": null,
-+      "schemaVersion": ""
-+    },
-+    "connection_id": "00000000-0000-0000-0000-000000000000",
-+    "category": {
-+      "id": "00000000-0000-0000-0000-000000000000",
-+      "name": "App Definition and Development"
-+    },
-+    "subCategory": "Continuous Integration \u0026 Delivery",
-+    "metadata": {
-+      "isAnnotation": false,
-+      "primaryColor": "#00B39F",
-+      "secondaryColor": "#00D3A9",
-+      "shape": "circle",
-+      "source_uri": "https://sx-helm-repository-prod.s3.eu-west-3.amazonaws.com/stable/chaos-21.3.390.tgz",
-+      "styleOverrides": "",
-+      "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 60 40\" fill=\"none\"\u003e\n\u003cg xmlns=\"http://www.w3.org/2000/svg\" clip-path=\"url(#clip0_27224_10242)\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M59.7518 0.292419L50.4322 7.60754L43.5508 1.86349L48.854 9.04349L44.1195 15.4913L50.4323 10.8989L59.3186 18.7899L52.2949 9.47025L59.7518 0.292419Z\" fill=\"#000E44\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M16.6266 32.37C25.318 32.37 32.3636 25.3243 32.3636 16.633C32.3636 7.94169 25.318 0.895996 16.6266 0.895996C7.93534 0.895996 0.889648 7.94169 0.889648 16.633C0.889648 25.3243 7.93534 32.37 16.6266 32.37Z\" stroke=\"#6D4013\" stroke-width=\"1.5\" stroke-miterlimit=\"2.5\"\u003e\u003c/path\u003e\n\u003cmask xmlns=\"http://www.w3.org/2000/svg\" id=\"mask0_27224_10242\" style=\"mask-type:luminance\" maskUnits=\"userSpaceOnUse\" x=\"-5\" y=\"25\" width=\"45\" height=\"23\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M-4.80078 47.5563H39.0409V25.1863H-4.80078V47.5563Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003c/mask\u003e\n\u003cg xmlns=\"http://www.w3.org/2000/svg\" mask=\"url(#mask0_27224_10242)\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M25.9877 28.2204C26.739 27.6944 28.4711 28.8719 29.8565 30.8506C31.242 32.8292 31.7561 34.8596 31.0048 35.3857C30.2536 35.9117 28.5214 34.7342 27.136 32.7555C25.7505 30.7769 25.2364 28.7465 25.9877 28.2204Z\" fill=\"#6D4013\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M8.08853 28.2205C7.33726 27.6944 5.60513 28.8719 4.21967 30.8506C2.83421 32.8292 2.32012 34.8596 3.07137 35.3857C3.82264 35.9117 5.55477 34.7342 6.94022 32.7555C8.32568 30.7769 8.83978 28.7465 8.08853 28.2205Z\" fill=\"#6D4013\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M17.0298 31.3186C16.1127 31.3186 15.3692 33.2767 15.3692 35.6921C15.3692 38.1076 16.1127 40.0657 17.0298 40.0657C17.947 40.0657 18.6904 38.1076 18.6904 35.6921C18.6904 33.2767 17.9469 31.3186 17.0298 31.3186Z\" fill=\"#6D4013\"\u003e\u003c/path\u003e\n\u003c/g\u003e\n\u003cmask xmlns=\"http://www.w3.org/2000/svg\" id=\"mask1_27224_10242\" style=\"mask-type:luminance\" maskUnits=\"userSpaceOnUse\" x=\"-5\" y=\"25\" width=\"45\" height=\"23\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M-4.80078 47.5563H39.0409V25.1863H-4.80078V47.5563Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003c/mask\u003e\n\u003cg xmlns=\"http://www.w3.org/2000/svg\" mask=\"url(#mask1_27224_10242)\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M29.6667 24.2904C26.9918 28.7344 22.1445 31.7039 16.6089 31.7039C11.2246 31.7039 6.49166 28.8947 3.77539 24.6518\" stroke=\"#6D4013\" stroke-width=\"2.64447\"\u003e\u003c/path\u003e\n\u003c/g\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M28.983 18.905C29.9651 17.2039 29.9144 17.2969 30.7265 15.8903C31.0051 15.3919 31.2542 14.9522 31.5182 14.4978C30.6385 12.9733 29.7445 11.4342 28.8502 9.89509H25.4056C24.8193 8.89832 24.2182 7.90159 23.6173 6.87549H20.1873C19.601 5.89339 19.0293 4.89659 18.3842 3.82659C18.3696 3.82659 18.355 3.82659 18.3404 3.81193C18.0325 4.31031 17.7687 4.7354 17.4756 5.20443C17.1824 4.72071 16.9185 4.29562 16.6253 3
-```
-
-**File**: `models/chaos/21.3.390/v1.0.0/components/GCPChaos.json` (added, +209/-0)
-```diff
-@@ -0,0 +1,209 @@
-+{
-+  "id": "00000000-0000-0000-0000-000000000000",
-+  "schemaVersion": "components.meshery.io/v1beta2",
-+  "version": "v1.0.0",
-+  "displayName": "GCP Chaos",
-+  "description": "",
-+  "format": "JSON",
-+  "model": {
-+    "id": "00000000-0000-0000-0000-000000000000",
-+    "schemaVersion": "models.meshery.io/v1beta2",
-+    "version": "v1.0.0",
-+    "name": "chaos",
-+    "displayName": "Chaos",
-+    "status": "enabled",
-+    "registrant": {
-+      "id": "00000000-0000-0000-0000-000000000000",
-+      "name": "Artifact Hub",
-+      "type": "registry",
-+      "subType": "",
-+      "kind": "artifacthub",
-+      "status": "discovered",
-+      "created_at": "0001-01-01T00:00:00Z",
-+      "updated_at": "0001-01-01T00:00:00Z",
-+      "deleted_at": null,
-+      "schemaVersion": ""
-+    },
-+    "connection_id": "00000000-0000-0000-0000-000000000000",
-+    "category": {
-+      "id": "00000000-0000-0000-0000-000000000000",
-+      "name": "App Definition and Development"
-+    },
-+    "subCategory": "Continuous Integration \u0026 Delivery",
-+    "metadata": {
-+      "isAnnotation": false,
-+      "primaryColor": "#00B39F",
-+      "secondaryColor": "#00D3A9",
-+      "shape": "circle",
-+      "source_uri": "https://sx-helm-repository-prod.s3.eu-west-3.amazonaws.com/stable/chaos-21.3.390.tgz",
-+      "styleOverrides": "",
-+      "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 60 40\" fill=\"none\"\u003e\n\u003cg xmlns=\"http://www.w3.org/2000/svg\" clip-path=\"url(#clip0_27224_10242)\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M59.7518 0.292419L50.4322 7.60754L43.5508 1.86349L48.854 9.04349L44.1195 15.4913L50.4323 10.8989L59.3186 18.7899L52.2949 9.47025L59.7518 0.292419Z\" fill=\"#000E44\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M16.6266 32.37C25.318 32.37 32.3636 25.3243 32.3636 16.633C32.3636 7.94169 25.318 0.895996 16.6266 0.895996C7.93534 0.895996 0.889648 7.94169 0.889648 16.633C0.889648 25.3243 7.93534 32.37 16.6266 32.37Z\" stroke=\"#6D4013\" stroke-width=\"1.5\" stroke-miterlimit=\"2.5\"\u003e\u003c/path\u003e\n\u003cmask xmlns=\"http://www.w3.org/2000/svg\" id=\"mask0_27224_10242\" style=\"mask-type:luminance\" maskUnits=\"userSpaceOnUse\" x=\"-5\" y=\"25\" width=\"45\" height=\"23\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M-4.80078 47.5563H39.0409V25.1863H-4.80078V47.5563Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003c/mask\u003e\n\u003cg xmlns=\"http://www.w3.org/2000/svg\" mask=\"url(#mask0_27224_10242)\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M25.9877 28.2204C26.739 27.6944 28.4711 28.8719 29.8565 30.8506C31.242 32.8292 31.7561 34.8596 31.0048 35.3857C30.2536 35.9117 28.5214 34.7342 27.136 32.7555C25.7505 30.7769 25.2364 28.7465 25.9877 28.2204Z\" fill=\"#6D4013\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M8.08853 28.2205C7.33726 27.6944 5.60513 28.8719 4.21967 30.8506C2.83421 32.8292 2.32012 34.8596 3.07137 35.3857C3.82264 35.9117 5.55477 34.7342 6.94022 32.7555C8.32568 30.7769 8.83978 28.7465 8.08853 28.2205Z\" fill=\"#6D4013\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M17.0298 31.3186C16.1127 31.3186 15.3692 33.2767 15.3692 35.6921C15.3692 38.1076 16.1127 40.0657 17.0298 40.0657C17.947 40.0657 18.6904 38.1076 18.6904 35.6921C18.6904 33.2767 17.9469 31.3186 17.0298 31.3186Z\" fill=\"#6D4013\"\u003e\u003c/path\u003e\n\u003c/g\u003e\n\u003cmask xmlns=\"http://www.w3.org/2000/svg\" id=\"mask1_27224_10242\" style=\"mask-type:luminance\" maskUnits=\"userSpaceOnUse\" x=\"-5\" y=\"25\" width=\"45\" height=\"23\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M-4.80078 47.5563H39.0409V25.1863H-4.80078V47.5563Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003c/mask\u003e\n\u003cg xmlns=\"http://www.w3.org/2000/svg\" mask=\"url(#mask1_27224_10242)\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M29.6667 24.2904C26.9918 28.7344 22.1445 31.7039 16.6089 31.7039C11.2246 31.7039 6.49166 28.8947 3.77539 24.6518\" stroke=\"#6D4013\" stroke-width=\"2.64447\"\u003e\u003c/path\u003e\n\u003c/g\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M28.983 18.905C29.9651 17.2039 29.9144 17.2969 30.7265 15.8903C31.0051 15.3919 31.2542 14.9522 31.5182 14.4978C30.6385 12.9733 29.7445 11.4342 28.8502 9.89509H25.4056C24.8193 8.89832 24.2182 7.90159 23.6173 6.87549H20.1873C19.601 5.89339 19.0293 4.89659 18.3842 3.82659C18.3696 3.82659 18.355 3.82659 18.3404 3.81193C18.0325 4.31031 17.7687 4.7354 17.4756 5.20443C17.1824 4.72071 16.9185 4.29562 16.6253 3
+@@ -94,7 +94,13 @@ func AssignClientSetToContext(machinectx *MachineCtx, eventBuilder *events.Event
+ // logger: the stored machine context's own log may be nil on machines built
+ // outside the normal init path, and a failed build logs through it.
+ func (m *MachineCtx) RefreshK8sContext(newCtx models.K8sContext, eventBuilder *events.EventBuilder, log logger.Handler) (bool, error) {
+-	if k8sContextCredentialsEqual(m.K8sContext, newCtx) {
++	if m.clientset != nil && k8sContextCredentialsEqual(m.K8sContext, newCtx) {
++		if m.K8sContext.KubernetesServerID == nil && newCtx.KubernetesServerID != nil {
++			m.setupLock.Lock()
++			m.K8sContext.KubernetesServerID = newCtx.KubernetesServerID
++			m.setupLock.Unlock()
++			return true, nil
++		}
+ 		return false, nil
+ 	}
+ 	handler, err := GenerateClientSetAction(&newCtx, eventBuilder, log)
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #24070** (closed): [Server] Check selector model in Rego mutator-based relationship identification. (@dropps07)
-- **PR #24064** (2026-11-20): [Docs] Add newcomer introduction for T.S. Phala (@unchained-angel)
-- **PR #24062** (2026-11-20): [Docs] fix: remove trailing dot from meeting notes filename (@rrehhamm)
-- **PR #24060** (2026-11-20): Add JayitaLakhmani.md with introduction (@JayitaL)
-- **PR #24058** (2026-11-20): [Docs] Rename meeting minutes file to remove trailing dot (@abhinavkdeval08-design)
-- **PR #24049** (2026-11-20): [UI] Guard ProviderUiAccessControl against non-iterable walker arguments and undefined extension navigators (@madhavzanwar)
+- **PR #24286** (2026-11-24): [Docs] Fix DCO sign-off links to removed CONTRIBUTING.md sections (@jashwanth176)
+- **PR #24280** (2026-11-24): [mesheryctl] Guard Kubernetes version parsing against slice bounds panic and nil dereference (@mystic-fae)
+- **PR #24278** (2026-11-24): [server] Fix stack-copy value drop of KubernetesServerID in DiscoverAction and stale FSM context on kubeconfig re-import (@nishant-devv)
+- **PR #24275** (2026-11-24): docs: add OCI registry push and pull examples (@shreyaagrawal788-dotcom)
+- **PR #24272** (2026-11-24): [Server] Bound concurrent visitor execution in parallel process planner (@Sarthak-Pandey)
+- **PR #24271** (2026-11-24): [mesheryctl] Enforce exact argument validation in system start (@err0rgod)
 
 ---
 
@@ -1815,47 +1579,46 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in meshery-server_errors_index.json
+## X. server): handle context refresh errors and harden DiscoverAction field sync
 
 **RULE**:
-When implementing operations in `docs/data/errorindex/meshery-server_errors_index.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meshery/meshery. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `server/handlers/k8sconfig_handler.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meshery/meshery. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c2b54aba`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `319818a6`: server): handle context refresh errors and harden DiscoverAction field sync. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/data/errorindex/meshery-server_errors_index.json`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/handlers/k8sconfig_handler.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-    },
-    {
-      "code": "meshery-server-1497",
-      "moniker": "ErrProvisionPanicCode",
-      "component": {
-        "name": "meshery-server",
-        "type": "component"
-      },
-      "numericCode": "1497",
-      "severity": "alert",
-      "shortDescription": "Component panicked during provisioning",
-      "probableCause": [
-        "Runtime fault occurred in component visitor execution"
-      ],
-      "suggestedRemediation": [
-        "Inspect component configuration and provider logs for runtime failures"
-      ]
+			var refreshErr error
+							refreshErr = aerr
+							refreshErr = rerr
+			//
+			// If refreshing the stored context failed (e.g. invalid rotation credentials),
+			// capture the error on the context metadata and skip the event so we do not
+			// probe or report success against the stale credentials.
+			if refreshErr != nil {
+				ctx.ImportError = fmt.Sprintf("Failed to refresh Kubernetes context \"%s\": %v", ctx.Name, refreshErr)
+				metadata["error"] = refreshErr
+				if status == connections.DISCOVERED && len(saveK8sContextResponse.RegisteredContexts) > 0 {
+					saveK8sContextResponse.RegisteredContexts[len(saveK8sContextResponse.RegisteredContexts)-1].ImportError = ctx.ImportError
+				} else if status == connections.CONNECTED && len(saveK8sContextResponse.ConnectedContexts) > 0 {
+					saveK8sContextResponse.ConnectedContexts[len(saveK8sContextResponse.ConnectedContexts)-1].ImportError = ctx.ImportError
+				}
+			} else if mhelpers.HasMachineContext(inst) {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+			if mhelpers.HasMachineContext(inst) {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c2b54aba` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `319818a6` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

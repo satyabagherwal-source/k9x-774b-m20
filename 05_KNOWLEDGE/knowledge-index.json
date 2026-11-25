@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-25T01:27:37.429Z",
+  "last_updated": "2026-11-25T01:36:14.208Z",
   "total_verified_learnings": 9107,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25106,
+  "total_items": 25110,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112066,9 +112066,9 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "35037beaf31c93482a11bdb1f0ffdec73d154c4941a8537af7cec9d013651ae6",
+      "content_hash": "d4819eb13159f0ec3f379f63f5cba7bab46213f909f7507679a9bdd3b6f01ed5",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T01:18:35.205Z"
+      "persisted_at": "2026-11-25T01:36:13.865Z"
     },
     "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona",
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "1e7089c767d9f19f8660da6b610527524a416ea4ade8811475bf506b3ab36ef4",
+      "content_hash": "20cd9db075bfba84d5eed2179053a210c1f164f61254360427a105a5457f6a3c",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T01:18:35.459Z"
+      "persisted_at": "2026-11-25T01:36:14.059Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "07cdd6db5d67ce4ad377e0b95c0674a8801d1376af12993f07e103bf930caab3",
+      "content_hash": "fe26df6cc885d2e8723e458ca291c276d8ff31b10ce88181d8b6e8f297ba5fdb",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T01:18:35.648Z"
+      "persisted_at": "2026-11-25T01:36:14.208Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -112894,9 +112894,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for meshery-meshery-learnings",
       "repository": "meshery-meshery-learnings",
       "source_version": "HEAD",
-      "content_hash": "5295f79c58dbf0a3e511889178be00f6f505eae0d598d76a94d26fd6b4ed6836",
+      "content_hash": "36bbbcc7c6dd342dc3bbe5e35eaa22388d32dcd46ae6b992e1c7d82a1c73c8fa",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T06:55:23.247Z"
+      "persisted_at": "2026-11-25T01:36:13.055Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hemmingwayai-hemmingway-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hemmingwayai-hemmingway-1-core-invariants",
@@ -232617,13 +232617,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "codewhale-hq/Codewhale",
       "repository": "codewhale-hq/Codewhale",
-      "slug": "hmbown-codewhale",
+      "slug": "codewhale-hq-codewhale",
       "platform": "github",
-      "source_url": "https://github.com/Hmbown/Codewhale",
-      "source_version": "f7634e86",
-      "content_hash": "4a356a2d400a771e3ef29690a44a06fffb4ac6762d13ad61ae38e25bf93d3c26",
-      "dossier_path": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
+      "source_url": "https://github.com/codewhale-hq/Codewhale",
+      "source_version": "b4f71726",
+      "content_hash": "6557dbe6d31decd6ad8b1c24133b9b5c9fd0104401cadf824fc0741ac4decb35",
+      "dossier_path": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
       "promoted_rules": [
         {
           "number": 8492,
@@ -232706,7 +232706,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T04:45:10.305Z",
+      "verified_at": "2026-11-25T01:35:57.817Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -232745,37 +232745,37 @@
       "item_id": "domain_intelligence-architecture-intelligence-codewhale-hq-codewhale-core-invariants",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-hmbown-codewhale-architecture-intelligence-codewhale-hq-codewhale-core-invariant.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-codewhale-hq-codewhale-architecture-intelligence-codewhale-hq-codewhale-core-inv.md",
       "title": "Architecture Intelligence: codewhale-hq/Codewhale Core Invariants",
       "repository": "codewhale-hq/Codewhale",
-      "source_version": "f7634e86",
-      "content_hash": "b534d49e96dab207ad6bbf2b990e9bf1c0d871b839e208ce16a7c9dc7d999cff",
+      "source_version": "b4f71726",
+      "content_hash": "c24b0e89b502e219dfbc305848692235a80b9694c27c4cfb8988ae1dc124c508",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T04:45:10.925Z"
+      "persisted_at": "2026-11-25T01:35:58.536Z"
     },
     "agent_contract-agent-contract-codewhale-hq-codewhale-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-codewhale-hq-codewhale-autonomous-specialist-persona",
       "artifact_type": "agent_contract",
       "target_folder": "02_AGENT_INTELLIGENCE",
-      "relative_path": "02_AGENT_INTELLIGENCE/hmbown-codewhale-agent-contract-codewhale-hq-codewhale-autonomous-specialist-per.md",
+      "relative_path": "02_AGENT_INTELLIGENCE/codewhale-hq-codewhale-agent-contract-codewhale-hq-codewhale-autonomous-speciali.md",
       "title": "Agent Contract: codewhale-hq/Codewhale Autonomous Specialist Persona",
       "repository": "codewhale-hq/Codewhale",
-      "source_version": "f7634e86",
-      "content_hash": "132a49285cf6abb741dfce3e638a225d753cb43277287cbba2dbbe5075fea42a",
+      "source_version": "b4f71726",
+      "content_hash": "fcb34b98162b2fa2bd27076a7d522077d4b4f3c6f6784cd4191bdcc1009fc193",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T04:45:11.096Z"
+      "persisted_at": "2026-11-25T01:35:58.729Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-codewhale-hq-codewhale": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-codewhale-hq-codewhale",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/hmbown-codewhale-verification-protocol-empirical-defect-shield-for-codewhale-hq-.md",
+      "relative_path": "08_VERIFICATION/codewhale-hq-codewhale-verification-protocol-empirical-defect-shield-for-codewha.md",
       "title": "Verification Protocol: Empirical Defect Shield for codewhale-hq/Codewhale",
       "repository": "codewhale-hq/Codewhale",
-      "source_version": "f7634e86",
-      "content_hash": "499ba0445d226fd3b004d12d74b6c9eae9af8e573919b7c310b7f687018ae3ae",
+      "source_version": "b4f71726",
+      "content_hash": "977f0056925eaf41b50ccccef0c2cf144b09286d647069ce18e871853e23ae79",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T04:45:11.249Z"
+      "persisted_at": "2026-11-25T01:35:58.876Z"
     },
     "candidate_directive-extension-host-fill-the-dsh-broker-llm-arm-on-the-engine-s-own-auxiliary-model": {
       "item_id": "candidate_directive-extension-host-fill-the-dsh-broker-llm-arm-on-the-engine-s-own-auxiliary-model",
@@ -232797,9 +232797,9 @@
       "title": "Architecture Intelligence: codewhale-hq-codewhale-learnings Core Invariants",
       "repository": "codewhale-hq-codewhale-learnings",
       "source_version": "HEAD",
-      "content_hash": "60a37229f2eacc4502d89859b04153d08470c610d8a949d568567e0a5e4647cf",
+      "content_hash": "f3387328c1394cb1cb5a2c209e9a66c5e991cbcc71c11c0308b7bb876c7669f2",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T22:43:05.893Z"
+      "persisted_at": "2026-11-25T01:36:11.462Z"
     },
     "agent_contract-agent-contract-codewhale-hq-codewhale-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-codewhale-hq-codewhale-learnings-autonomous-specialist-persona",
@@ -232809,9 +232809,9 @@
       "title": "Agent Contract: codewhale-hq-codewhale-learnings Autonomous Specialist Persona",
       "repository": "codewhale-hq-codewhale-learnings",
       "source_version": "HEAD",
-      "content_hash": "0bf30635cd6ebd39699049a3d8775cf89676b2e6d24bf52700666498c60aa06f",
+      "content_hash": "fb6acbf5546e21bec34bce8b8dd1fd69922a85b0428b4aabe5741c165a3329dd",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T22:43:06.123Z"
+      "persisted_at": "2026-11-25T01:36:11.646Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-codewhale-hq-codewhale-learnin": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-codewhale-hq-codewhale-learnin",
@@ -232821,9 +232821,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for codewhale-hq-codewhale-learnings",
       "repository": "codewhale-hq-codewhale-learnings",
       "source_version": "HEAD",
-      "content_hash": "6d3cd02948f4dd61a4d3823bcee758569d914275b29ff98dca42009527e77ff6",
+      "content_hash": "9d01cba6e35e63373267a389943d6c350389ea77cfff387273a19d664e36cb2e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T22:43:06.308Z"
+      "persisted_at": "2026-11-25T01:36:11.801Z"
     },
     "learn-huggingface-bingsu-adetailer": {
       "learning_id": "learn-huggingface-bingsu-adetailer",
@@ -239244,8 +239244,8 @@
       "slug": "meshery-meshery",
       "platform": "github",
       "source_url": "https://github.com/meshery/meshery",
-      "source_version": "2d7c3d0b",
-      "content_hash": "4af012fe61212d8cc23b1438b92aad0514beaa8a4cd4910ebd305f8cef940111",
+      "source_version": "9bed2e12",
+      "content_hash": "ab3671ed76678412d743aceeb06a459c93d56812b948a4e5913e9711b35d302f",
       "dossier_path": "07_PROJECT_LEARNING/meshery-meshery-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/meshery-meshery-learnings.md",
       "promoted_rules": [
@@ -239298,6 +239298,11 @@
           "number": 10224,
           "title": "record import receipt errors only for the selected contexts",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10416,
+          "title": "handle context refresh errors and harden DiscoverAction field sync",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -239305,7 +239310,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T06:55:13.175Z",
+      "verified_at": "2026-11-25T01:36:06.413Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -239359,10 +239364,10 @@
       "relative_path": "08_VERIFICATION/meshery-meshery-verification-protocol-empirical-defect-shield-for-meshery-mesher.md",
       "title": "Verification Protocol: Empirical Defect Shield for meshery/meshery",
       "repository": "meshery/meshery",
-      "source_version": "2d7c3d0b",
-      "content_hash": "80e599789844aeec345f1a674be4fd2617e8c400c6245c9a4cfa00486151ee01",
+      "source_version": "9bed2e12",
+      "content_hash": "7023e1faceb81d48e7c5247c3f9863371f3a91f9da573dd654f4363cc714d247",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T06:55:14.141Z"
+      "persisted_at": "2026-11-25T01:36:07.273Z"
     },
     "candidate_directive-compose-supervise-vm-workers-from-their-log-stream-instead-of-polling-worker": {
       "item_id": "candidate_directive-compose-supervise-vm-workers-from-their-log-stream-instead-of-polling-worker",
@@ -275393,10 +275398,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-meshery-meshery-architecture-intelligence-meshery-meshery-core-invariants.md",
       "title": "Architecture Intelligence: meshery/meshery Core Invariants",
       "repository": "meshery/meshery",
-      "source_version": "5f96e08e",
-      "content_hash": "ab9fbf9b13ab6365552cc60f14fb9f91692343613019393e706e45d137bda3f3",
+      "source_version": "9bed2e12",
+      "content_hash": "b95af3458e83c621d232cfbe1e3d5ec2f9f1c2bffee4887e345cd6e938c195eb",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T04:39:09.193Z"
+      "persisted_at": "2026-11-25T01:36:07.074Z"
     },
     "rule-8954": {
       "learning_id": "rule-8954",
@@ -275468,9 +275473,9 @@
       "title": "Architecture Intelligence: meshery-meshery-learnings Core Invariants",
       "repository": "meshery-meshery-learnings",
       "source_version": "HEAD",
-      "content_hash": "82b287d0135696c68ec93907073c16a1d1008fa67d176d296e38149af7432b23",
+      "content_hash": "635bb679dd740697f0a9fb94b57e8d78f4abda73403321632928e67c73bb0765",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T04:39:21.325Z"
+      "persisted_at": "2026-11-25T01:36:12.870Z"
     },
     "rule-8955": {
       "learning_id": "rule-8955",
@@ -341922,13 +341927,13 @@
       "item_id": "candidate_directive-rust-bind-bare-calls-to-the-enclosing-module-s-items",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-Q8RD-rust-bind-bare-calls-to-the-enclosing-module-s-items.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-CXO3-rust-bind-bare-calls-to-the-enclosing-module-s-items.md",
       "title": "rust): bind bare calls to the enclosing module's items",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "083a228af4eec310af60d24d5d757e8ac252be90d827ae0c5ff585aac975d546",
+      "content_hash": "4179d36965b77168531390967bcd81a8f3eab2c0dcf19220961ec296c0969ff8",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T01:18:34.976Z"
+      "persisted_at": "2026-11-25T01:36:13.686Z"
     },
     "domain_intelligence-content-information-intelligence-rollup-rollup-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-rollup-rollup-learnings-core-invariants",
@@ -343151,6 +343156,56 @@
       "content_hash": "e2ba5e21e347c7dc24e417e99e103eca85115446fa77a448d63f3d3e8985c737",
       "domain_letter": "G",
       "persisted_at": "2026-11-25T01:27:04.178Z"
+    },
+    "candidate_directive-docs-dsh-release-record-0-10-5-dsh-qualification-restore-credits-and-fix-web": {
+      "item_id": "candidate_directive-docs-dsh-release-record-0-10-5-dsh-qualification-restore-credits-and-fix-web",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-CVT0-docs-dsh-release-record-0-10-5-dsh-qualification-restore-credits-and-fix-web.md",
+      "title": "docs(dsh,release): record 0.10.5 DSH qualification, restore credits, and fix web",
+      "repository": "codewhale-hq-codewhale-learnings",
+      "source_version": "HEAD",
+      "content_hash": "973d8290a9d0807f099f30e85b3c61469a997700774d421c9f4983949d5cfe7c",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-25T01:36:11.273Z"
+    },
+    "rule-10416": {
+      "learning_id": "rule-10416",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10416,
+      "title": "handle context refresh errors and harden DiscoverAction field sync",
+      "source_url": "https://github.com/meshery/meshery",
+      "source_version": "9bed2e12",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T01:36:06.413Z"
+    },
+    "candidate_directive-handle-context-refresh-errors-and-harden-discoveraction-field-sync": {
+      "item_id": "candidate_directive-handle-context-refresh-errors-and-harden-discoveraction-field-sync",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-CSFD-handle-context-refresh-errors-and-harden-discoveraction-field-sync.md",
+      "title": "handle context refresh errors and harden DiscoverAction field sync",
+      "repository": "meshery/meshery",
+      "source_version": "9bed2e12",
+      "content_hash": "b8b5c42f41982f125c7050cfae8acf5bc7cfe99c918de92b9a097ed2410e0e8a",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-25T01:36:06.891Z"
+    },
+    "candidate_directive-server-handle-context-refresh-errors-and-harden-discoveraction-field-sync": {
+      "item_id": "candidate_directive-server-handle-context-refresh-errors-and-harden-discoveraction-field-sync",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-CWWF-server-handle-context-refresh-errors-and-harden-discoveraction-field-sync.md",
+      "title": "server): handle context refresh errors and harden DiscoverAction field sync",
+      "repository": "meshery-meshery-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d8db2e4cab025bfbe8c48c2eaceb918f236ef3b2828ff2ddcc6538764bdefbc2",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-25T01:36:12.688Z"
     }
   },
   "ai-builder-brain": {

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/meshery-meshery-learnings.md`  
 > **Source**: github ([https://github.com/meshery/meshery](https://github.com/meshery/meshery))  
-> **Source Version**: `2d7c3d0b`  
+> **Source Version**: `9bed2e12`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T06:55:12.307Z  
+> **Timestamp**: 2026-11-25T01:36:05.480Z  
 > **Learning ID**: `learn-github-meshery-meshery`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/meshery-meshery-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/meshery/meshery](https://github.com/meshery/meshery))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T06:55:12.152Z  
+> **Harvest Timestamp**: 2026-11-25T01:36:05.475Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Meshery, the cloud native manager
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 12307 stars
+- **Stars / Engagement**: 12315 stars
 
 ---
 
@@ -804,11 +804,11 @@ if __name__ == "__main__":
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #24235** (2026-11-24): **fix(server): record kubeconfig discovery errors only for selected contexts**
-  *Symptoms*: ## Intent  Fix meshery issue #24220 (found during review of #23852): kubeconfig discovery records metadata["error"] for every context that fails, including contexts the user deselected in the import wizard, so the import receipt event is raised to Error severity while the wizard shows success. Lee's decision: record discovery errors only for the contexts the user selected. Implementation: in the kubeconfig import handler (addK8SConfig), when an explicit selection is sent, drop the discovery metadata entries of every context outside it before the import loop (retainSelectedContextMetadata); with no selection (legacy clients such as mesheryctl) nothing is removed, so failed or skipped contexts still show; a renamed context's stale entry under its old name is dropped. Test that fails before the fix: a failing deselected context produces no error metadata and an Informational receipt (TestImportReceiptIgnoresFailingDeselectedContext), plus unit tests of the helper. Known, deliberately out of scope: the loop already overwrote discovery's error for selected reachable contexts whose version lookup fails (pre-existing). An Opus review of the diff found a regression for the no-selection path, which is fixed. PR must link and close #24220. Merge master first (done); commits are signed off as Yi nuo.  ## What Changed - Added `retainSelectedContextMetadata` in `server/handlers/k8sconfig_handler.go` and call it in `addK8SConfig` before the import loop. When the wizard sends an explicit co
+- **Issue #24286** (2026-11-24): **[Docs] Fix DCO sign-off links to removed CONTRIBUTING.md sections**
+  *Symptoms*: **Notes for Reviewers**  - This PR fixes #24285  `CONTRIBUTING.md` was shortened in June 2025, and five links in four files still point to sections it no longer has. #22745 fixed the same problem in `welcome-first-time-contributors.yml`. This finishes the rest.  | File | Link | Before | After | |---|---|---|---| | `.github/PULL_REQUEST_TEMPLATE.md` | "Signed commits" | `CONTRIBUTING.md#signing-off-on-commits-developer-certificate-of-origin` | `docs.meshery.io/project/contributing#general-contribution-flow` | | `.github/config.yml` | first PR welcome comment | same dead anchor | same new target | | `.github/label-commenter-config.yml` | `issue/dco` comment (issue and PR) | same dead anchor | same new target | | `docs/.../contributing-docs/docs.md` | "Documentation Contribution Flow" | `CONTRIBUTING.md#documentation-contribution-flow` | `ref` to the contributing index, `#general-contribution-flow` |  How I checked it:  - The `general-contribution-flow` anchor exists on the live page, and the sign-off instructions sit directly under it. - Both YAML files still parse. - The docs link uses the same `ref "project/contributing/_index.md"` form as `contributing-adapters.md`. I did not run the Hugo build locally, so the docs preview on this PR is the check for that line. - No other `CONTRIBUTING.md#` links are left under `.github/` or `docs/content/`. The archived `docs/static/v0.8` and `v0.9` snapshots still have them and I left those alone.  **Also changed: the s
 
-- **Issue #24233** (2026-11-24): **fix(server): reject exec, auth-provider and file-path Kubernetes credentials**
-  *Symptoms*: ## Intent  Rebind the PR attestation to the final head for meshery issue #24218. The only new commit since the last run is a signed merge of master (resolved the next_error_code conflict in component_info.json after #24230 merged). No code change.  ## What Changed - Added `server/models/k8s_credential_guard.go`, a guard that rejects Kubernetes credential secrets and kubeconfigs carrying an exec plugin, an auth-provider, or file-path references. It has a new MeshKit error in `server/models/error.go`, with `next_error_code` bumped in `server/helpers/component_info.json`. - Applied the guard on the saved-credential paths: `credentials_handlers.go` (credential create/update), `k8s_context.go`, `remote_provider.go` and `machines/actions.go`. This closes the bypass of the kubeconfig upload guard described in #24218. - Added unit tests for the guard (`k8s_credential_guard_test.go`) and handler tests (`credentials_handlers_test.go`). Updated the "Registering a connection" guide to document the restriction. - The latest commit is a signed merge of `master` that resolves the `next_error_code` conflict in `component_info.json` after #24230 merged. It contains no code change.  ## Risk Assessment  ✅ Low: The guard is applied at credential save, update, the connect action and K8sContextFromConnection, and I found no reachable bypass or wrong-result path; the only new commit is a signed merge that bumps next_error_code to 1501 past the new 1500 code.  ## Testing  The only change since the l
+- **Issue #24285** (2026-11-24): **[Docs] DCO sign-off links still point to removed CONTRIBUTING.md sections**
+  *Symptoms*: ### Current State  `CONTRIBUTING.md` was shortened in June 2025 and no longer has the "Signing-off on commits" or "Documentation Contribution Flow" sections. #22745 fixed the link in `welcome-first-time-contributors.yml`, but four other files still link to those anchors, so the link opens the top of a four-line file:  - `.github/PULL_REQUEST_TEMPLATE.md` ("Signed commits") - `.github/config.yml` (the first pull request welcome comment) - `.github/label-commenter-config.yml` (the `issue/dco` comment, for both issues and pull requests) - `docs/content/en/project/contributing/contributing-docs/docs.md` ("Documentation Contribution Flow")  The `issue/dco` one matters most. It is the comment a contributor gets when a commit is missing its sign-off, and its "see these instructions" link has no instructions behind it.  ### Desired State  All five links go to the General Contribution Flow section of the contributing guide (https://docs.meshery.io/project/contributing#general-contribution-flow), which is where the sign-off instructions live now.  I have a fix ready and will open a pull request.  ---  ### Contributor [Guides](https://docs.meshery.io/project/contributing) and [Handbook](https://meshery.io/community#handbook) - 📚 [Instructions for contributing to documentation](https://docs.meshery.io/project/contributing/contributing-docs)    - Meshery documentation [site](https://docs.meshery.io/) and [source](https://github.com/meshery/meshery/tree/master/docs) - 🙋🏾🙋🏼 Questions: 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -825,833 +825,727 @@ if __name__ == "__main__":
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `323f07f0` (2026-11-24)
-**Commit Message**: fix(server): record import receipt errors only for the selected contexts
+### Incident Patch 1: `319818a6` (2026-11-24)
+**Commit Message**: fix(server): handle context refresh errors and harden DiscoverAction field sync
 
-Kubeconfig discovery recorded metadata["error"] for every failing
-context, including contexts the user deselected in the wizard, so the
-import receipt was raised to Error while the wizard showed success.
-With an explicit selection, drop the discovery entries of every context
-outside it before the import loop, and drop the entry keyed by a
-context's old name when it is renamed.
+- Capture refreshErr from inst.UpdateContext in k8sconfig_handler, mark context
+  with ctx.ImportError, record error in metadata, and skip transition event on failure.
+- In DiscoverAction, sync only KubernetesServerID and Version to machinectx.K8sContext
+  under setupLock rather than replacing the whole struct.
+- Assign provider on test state machines and protect mock persistedEvents with mutex.
+- Add TestRefreshK8sContext_ReturnsErrorOnInvalidCredentials test.
 
-Fixes #24220
+Signed-off-by: Nishant JS <[REDACTED_EMAIL]>
 
-Signed-off-by: Yī nuò <[REDACTED_EMAIL]>
-
-**File**: `server/handlers/k8sconfig_handler.go` (modified, +37/-0)
+**File**: `server/handlers/k8sconfig_handler.go` (modified, +16/-1)
 ```diff
-@@ -184,6 +184,14 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
- 		}
- 	}
- 
-+	// Discovery recorded a per-context entry (with an "error" for any context
-+	// that failed) for every context in the file, including the ones the user
-+	// deselected and the ones Meshery skipped. The receipt below describes only
-+	// what this import acted on, so drop the entries of contexts outside an
-+	// explicit selection; otherwise a broken context the user chose not to import would
-+	// raise the receipt to Error while the wizard reports success (issue #24220).
-+	retainSelectedContextMetadata(eventMetadata, contexts, selectedContexts)
-+
- 	// Helper function to get meshsync deployment mode for a context
- 	// Uses closure pattern to call req.FormValue only once while keeping globalMeshsyncMode scoped
- 	getMeshsyncModeForContext := func() func(*models.K8sContext) string {
-@@ -279,6 +287,9 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
- 		// so regenerate the context ID to keep the struct's ID in sync with the
- 		// connection ID SaveK8sContext will mint.
- 		if opts, ok := contextsConfig[ctx.ID]; ok && opts.Name != "" && opts.Name != ctx.Name {
-+			// The receipt is keyed by the name the connection is saved under;
-+			// drop the discovery entry that is keyed by the old name.
-+			delete(eventMetadata, ctx.Name)
- 			ctx.Name = opts.Name
- 			if regeneratedID, idErr := models.K8sContextGenerateID(*ctx); idErr == nil {
- 				ctx.ID = regeneratedID
-@@ -421,6 +432,32 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
- 	}
- }
- 
-+// retainSelectedContextMetadata removes from eventMetadata, the per-context
-+// discovery metadata keyed by context name, the entries of contexts the user
-+// left out of an explicit selection: discovered contexts outside it, and
-+// contexts discovery skipped (never importable, so never selected). With no
-+// selection every context is imported, so nothing is removed and a context that
-+// failed or was skipped during discovery still shows in the receipt.
-+func retainSelectedContextMetadata(eventMetadata map[string]interface{}, contexts []*models.K8sContext, selected map[string]struct{}) {
-+	if selected == nil {
-+		return
-+	}
-+	keep := make(map[string]struct{}, len(selected))
-+	for _, ctx := range contexts {
-+		if ctx == nil {
-+			continue
-+		}
-+		if _, ok := selected[ctx.ID]; ok {
-+			keep[ctx.Name] = struct{}{}
-+		}
-+	}
-+	for name := range eventMetadata {
-+		if _, ok := keep[name]; !ok {
-+			delete(eventMetadata, name)
-+		}
-+	}
-+}
-+
- // k8sEventMetadataHasError reports whether any per-context entry in a Kubernetes
- // connection receipt's metadata recorded a failure. Each context's outcome is
- // keyed by its name and carries an "error" entry only when that context failed
+@@ -381,18 +381,21 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
+ 			// Refresh its stored context so credential updates are applied and,
+ 			// if the machine previously failed initial startup with a nil Context,
+ 			// its Context is properly initialized.
++			var refreshErr error
+ 			if inst != nil {
+ 				inst.UpdateContext(func(oldCtx interface{}) interface{} {
+ 					if oldCtx == nil {
+ 						assigned, _, aerr := kubernetes.AssignInitialCtx(req.Context(), machineCtx, log)
+ 						if aerr != nil {
++							refreshErr = aerr
+ 							log.Error(aerr)
+ 							return oldCtx
+ 						}
+ 						return assigned
+ 					}
+ 					if stored, ok := oldCtx.(*kubernetes.MachineCtx); ok && stored != nil {
+ 						if _, rerr := stored.RefreshK8sContext(*ctx, models.NewServerEvent(req.Context()), log); rerr != nil {
++							refreshErr = rerr
+ 							log.Error(rerr)
+ 						}
+ 						return stored
+@@ -406,7 +409,19 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
+ 			// on a cache hit, one whose Context was never assigned. The connection
+ 			// has still been persisted in the discovered state; just skip the
+ 			// event. See mhelpers.HasMachineContext.
+-			if mhelpers.HasMachineContext(inst) {
++			//
++			// If refreshing the stored context failed (e.g. invalid rotation credentials),
++			// capture the error on the context metadata and skip the event so we do not
++			// probe or report success against the stale credentials.
++			if refreshErr != nil {
++				ctx.ImportError = fmt.Sprintf("Failed to refresh Kubernetes context \"%s\": %v", ctx.Name, refreshErr)
++				metadata["error"] = refreshErr
++				if status == connections.DISCOVERED && len(saveK8sContextResponse.RegisteredContexts) > 0 {
++					saveK8sContextResponse.RegisteredContexts[len(saveK8sContextResponse.RegisteredContexts)-1].ImportError = ctx.ImportError
++				} else if status == connections.CONNECTED && len(saveK8sContextResponse.ConnectedContexts) > 0 {
++					saveK8sContextResponse.ConnectedContexts[len(saveK8sContextResponse.ConnectedContexts)-1].ImportError = ctx.ImportError
++				}
++			} else if mhelpers.HasMachineContext(inst) {
+ 				// Import returns before the transition finishes, so keep its values
+ 				// without tying discovery to the request's cancellation.
+ 				transitionCtx, cancel := backgroundDiscoveryContext(req.Context())
 ```
 
-**File**: `server/handlers/k8sconfig_handler_test.go` (modified, +98/-0)
+**File**: `server/handlers/k8sconfig_handler_test.go` (modified, +27/-9)
 ```diff
-@@ -633,3 +633,101 @@ users:
+@@ -13,6 +13,7 @@ import (
+ 	"os/exec"
+ 	"path/filepath"
+ 	"strings"
++	"sync"
+ 	"testing"
+ 
+ 	"github.com/gofrs/uuid"
+@@ -736,7 +737,8 @@ func TestRetainSelectedContextMetadata(t *testing.T) {
+ }
+ 
+ type mockReimportProvider struct {
+-	*models.DefaultLocalProvider
++	models.Provider
++	sync.Mutex
+ 	persistedEvents []events.Event
+ 	connectionID    core.Uuid
+ }
+@@ -745,7 +747,21 @@ func (m *mockReimportProvider) SaveK8sContext(token string, k8sContext models.K8
+ 	return connections.Connection{ID: m.connectionID, Status: connections.DISCOVERED}, nil
+ }
+ 
++func (m *mockReimportProvider) GetConnectionByID(token string, connectionID core.Uuid) (*connections.Connection, int, error) {
++	return &connections.Connection{ID: m.connectionID, Status: connections.DISCOVERED}, 0, nil
++}
++
++func (m *mockReimportProvider) UpdateConnectionStatusByID(token string, connectionID core.Uuid, connectionStatus connections.ConnectionStatus) (*connections.Connection, int, error) {
++	return &connections.Connection{ID: m.connectionID, Status: connectionStatus}, 0, nil
++}
++
++func (m *mockReimportProvider) UpdateConnectionStatusIf(token string, connectionID core.Uuid, fromStatuses []connections.ConnectionStatus, newStatus connections.ConnectionStatus) (bool, *connections.Connection, error) {
++	return true, &connections.Connection{ID: m.connectionID, Status: newStatus}, nil
++}
++
+ func (m *mockReimportProvider) PersistEvent(event events.Event, _ string) (models.PersistedEvent, error) {
++	m.Lock()
++	defer m.Unlock()
+ 	m.persistedEvents = append(m.persistedEvents, event)
+ 	return models.PersistedEvent{Event: &event, Disposition: models.EventCreated}, nil
+ }
+@@ -781,10 +797,15 @@ users:
  		}
+ 		h.ConnectionToStateMachineInstanceTracker = tracker
+ 
++		provider := &mockReimportProvider{
++			connectionID: connID,
++		}
++
+ 		inst, err := kubernetes.New(connID.String(), core.Uuid(uuid.Nil), h.log)
+ 		if err != nil {
+ 			t.Fatalf("failed to create state machine: %v", err)
+ 		}
++		inst.Provider = provider
+ 		storedCtx := &kubernetes.MachineCtx{
+ 			K8sContext: models.K8sContext{
+ 				Name:   "old-name",
+@@ -794,10 +815,6 @@ users:
+ 		inst.Context = storedCtx
+ 		tracker.Add(connID, inst)
+ 
+-		provider := &mockReimportProvider{
+-			connectionID: connID,
+-		}
+-
+ 		req := uploadKubeconfigRequest(t, "/api/system/kubernetes", kubeconfig)
+ 		req = req.WithContext(context.WithValue(req.Context(), models.TokenCtxKey, "test-token"))
+ 		rec := httptest.NewRecorder()
+@@ -825,17 +842,18 @@ users:
+ 		}
+ 		h.ConnectionToStateMachineInstanceTracker = tracker
+ 
++		provider := &mockReimportProvider{
++			connectionID: connID,
++		}
++
+ 		inst, err := kubernetes.New(connID.String(), core.Uuid(uuid.Nil), h.log)
+ 		if err != nil {
+ 			t.Fatalf("failed to create state machine: %v", err)
+ 		}
++		inst.Provider = provider
+ 		inst.Context = nil
+ 		tracker.Add(connID, inst)
+ 
+-		provider := &mockReimportProvider{
+-			connectionID: connID,
+-		}
+-
+ 		req := uploadKubeconfigRequest(t, "/api/system/kubernetes", kubeconfig)
+ 		req = req.WithContext(context.WithValue(req.Context(), models.TokenCtxKey, "test-token"))
+ 		rec := httptest.NewRecorder()
+```
+
+**File**: `server/machines/kubernetes/discover.go` (modified, +4/-4)
+```diff
+@@ -94,11 +94,11 @@ func (da *DiscoverAction) Execute(ctx context.Context, machineCtx interface{}, d
+ 		return machines.NoOp, eventBuilder.WithDescription(fmt.Sprintf("Unable to establish connection with context \"%s\" at %s", k8sContext.Name, k8sContext.Server)).WithMetadata(map[string]interface{}{"error": err}).Build(), err
+ 	}
+ 
+-	// Update the machine context with the resolved server ID and version under
+-	// setupLock so downstream states and external readers (e.g. K8sContextSnapshot)
+-	// observe the populated fields rather than the unpopulated stack copy.
++	// Update only the enriched server ID and version under setupLock, preserving
++	// any concurrent updates to other fields on the stored context.
+ 	machinectx.setupLock.Lock()
+-	machinectx.K8sContext = k8sContext
++	machinectx.K8sContext.KubernetesServerID = k8sContext.KubernetesServerID
++	machinectx.K8sContext.Version = k8sContext.Version
+ 	machinectx.setupLock.Unlock()
+ 
+ 	// machinectx.log.Debug("exiting execute func from discovered state", connection)
+```
+
+**File**: `server/machines/kubernetes/discover_test.go` (modified, +29/-0)
+```diff
+@@ -12,6 +12,7 @@ import (
+ 	"github.com/meshery/meshery/server/models"
+ 	"github.com/meshery/meshery/server/models/connections"
+ 	"github.com/meshery/meshkit/logger"
++	"github.com/meshery/meshkit/models/events"
+ 	mkkube "github.com/meshery/meshkit/utils/kubernetes"
+ 	"github.com/meshery/schemas/models/core"
+ 	k8sclient "k8s.io/client-go/kubernetes"
+@@ -132,3 +133,31 @@ func TestRefreshK8sContext_SynchronizesMissingServerID(t *testing.T) {
+ 		t.Fatalf("expected KubernetesServerID to be %s, got %v", existingID, m.K8sContext.KubernetesServerID)
  	}
  }
 +
-+// TestImportReceiptIgnoresFailingDeselectedContext pins issue #24220: a context
-+// that fails discovery but that the user deselected must leave no error in the
-+// import receipt, which then stays Informational like the wizard's success.
-+func TestImportReceiptIgnoresFailingDeselectedContext(t *testing.T) {
-+	authUser := &models.User{ID: uuid.Must(uuid.NewV4())}
-+	// Nothing listens on port 1, so discovery cannot reach the API server and
-+	// records an error for the context.
-+	kubeconfig := []byte(`apiVersion: v1
-+kind: Config
-+current-context: broken
-+clusters:
-+- cluster:
-+    server: https://127.0.0.1:1
-+  name: broken
-+contexts:
-+- context:
-+    cluster: broken
-+    user: broken-user
-+  name: broken
-+users:
-+- name: broken-user
-+  user:
-+    token: token-0
-+`)
-+	receiptOf := func(t *testing.T, form map[string]string) events.Event {
-+		t.Helper()
-+		h := newTestHandler(t, map[string]models.Provider{}, "")
-+		provider := &mockK8sConfigProvider{}
-+		var b bytes.Buffer
-+		w := multipart.NewWriter(&b)
-+		part, err := w.CreateFormFile("k8sfile", "kubeconfig")
-+		if err != nil {
-+			t.Fatalf("create form file: %v", err)
-+		}
-+		if _, err := part.Write(kubeconfig); err != nil {
-+			t.Fatalf("write form file: %v", err)
-+		}
-+		for k, v := range form {
-+			if err := w.WriteField(k, v); err != nil {
-+				t.Fatalf("write field %s: %v", k, err)
-+			}
-+		}
-+		if err := w.Close(); err != nil {
-+			t.Fatalf("close writer: %v", err)
-+		}
-+		req := httptest.NewRequest(http.MethodPost, "/api/system/kubernetes", &b)
-+		req.Header.Set("Content-Type", w.FormDataContentType())
-+		req = req.WithContext(context.WithValue(req.Context(), models.TokenCtxKey, "test-token"))
-+		rec := httptest.NewRecorder()
-+		h.K8SConfigHandler(rec, req, nil, authUser, provider)
-+		if rec.Code != http.StatusOK {
-+			t.Fatalf("expected 200 OK, got %d: %s", rec.Code, rec.Body.String())
-+		}
-+		if len(provider.persistedEvents) != 1 {
-+			t.Fatalf("persisted %d events, want the single import receipt", len(provider.persistedEvents))
-+		}
-+		return provider.persistedEvents[0]
++func TestRefreshK8sContext_ReturnsErrorOnInvalidCredentials(t *testing.T) {
++	log, err := logger.New("test", logger.Options{})
++	if err != nil {
++		t.Fatal(err)
 +	}
 +
-+	t.Run("deselected failing context leaves an informational receipt", func(t *testing.T) {
-+		receipt := receiptOf(t, map[string]string{SelectedContextsFormKey: "[]"})
-+		if receipt.Severity != events.Informational {
-+			t.Fatalf("receipt severity = %v, want Informational (description %q)", receipt.Severity, receipt.Description)
-+		}
-+		if k8sEventMetadataHasError(receipt.Metadata) {
-+			t.Fatalf("receipt metadata carries an error for a context the user deselected: %#v", receipt.Metadata)
-+		}
-+		if _, ok := receipt.Metadata["broken"]; ok {
-+			t.Fatalf("receipt metadata describes the deselected context: %#v", receipt.Metadata)
-+		}
-+	})
-+}
-+
-+func TestRetainSelectedContextMetadata(t *testing.T) {
-+	picked := &models.K8sContext{ID: "id-picked", Name: "picked"}
-+	dropped := &models.K8sContext{ID: "id-dropped", Name: "dropped"}
-+	failing := map[string]interface{}{"error": errors.New("unreachable")}
-+	newMetadata := func() map[string]interface{} {
-+		return map[string]interface{}{"picked": failing, "dropped": failing, "skipped": failing}
++	m := &MachineCtx{
++		K8sContext: models.K8sContext{
++			Name:   "cluster-1",
++			Server: "https://k8s.example.com:6443",
++		},
++		log: log,
 +	}
 +
-+	t.Run("a selection keeps only the selected contexts", func(t *testing.T) {
-+		metadata := newMetadata()
-+		retainSelectedContextMetadata(metadata, []*models.K8sContext{picked, dropped}, map[string]struct{}{"id-picked": {}})
-+		if len(metadata) != 1 || metadata["picked"] == nil {
-+			t.Fatalf("metadata = %#v, want only the selected context's entry", metadata)
-+		}
-+	})
++	badCtx := models.K8sContext{
++		Name:   "cluster-1",
++		Server: "https://k8s-new.example.com:6443",
++	}
 +
-+	t.Run("no selection removes nothing, so skipped and failed contexts still show", func(t *testing.T) {
-+		metadata := newMetadata()
-+		retainSelectedContextMetadata(metadata, []*models.K8sContext{picked, dropped}, nil)
-+		if len(metadata) != 3 || !k8sEventMetadataHasError(metadata) {
-+			t.Fatalf("metadata = %#v, want all three entries kept", metadata)
-+		}
-+	})
++	changed, err := m.RefreshK8sContext(badCtx, events.NewEvent(), log)
++	if err == nil {
++		t.Fatalf("expected error on invalid credentials, got nil")
++	}
++	if changed {
++		t.Fatalf("expected changed=false on error, got true")
++	}
 +}
+```
+
+**File**: `server/machines/kubernetes/helpers.go` (modified, +1/-1)
+```diff
+@@ -94,7 +94,7 @@ func AssignClientSetToContext(machinectx *MachineCtx, eventBuilder *events.Event
+ // logger: the stored machine context's own log may be nil on machines built
+ // outside the normal init path, and a failed build logs through it.
+ func (m *MachineCtx) RefreshK8sContext(newCtx models.K8sContext, eventBuilder *events.EventBuilder, log logger.Handler) (bool, error) {
+-	if m.clientset != nil && k8sContextCredentialsEqual(m.K8sContext, newCtx) {
++	if k8sContextCredentialsEqual(m.K8sContext, newCtx) {
+ 		if m.K8sContext.KubernetesServerID == nil && newCtx.KubernetesServerID != nil {
+ 			m.setupLock.Lock()
+ 			m.K8sContext.KubernetesServerID = newCtx.KubernetesServerID
 ```
 
 ---
 
-### Incident Patch 2: `350d231c` (2026-11-24)
-**Commit Message**: fix(server): refuse exec and file-path Kubernetes credentials
+### Incident Patch 2: `1d289655` (2026-11-24)
+**Commit Message**: Merge pull request #24253 from Sarthak-Pandey/fix-24249-order-by-sanitization
 
-A saved connection's credential secret can be edited (PUT
-/api/integrations/credentials) to carry an exec plugin, an auth-provider or a
-certificate, key or token file path. Ping, the connection state machine and
-graphql then build a client from it through K8sContextFromConnection, which
-runs the command or reads the file on the Meshery Server host.
+[Server] Add security edge cases and remove redundant tests for SanitizeOrderInput
 
-Reject such a secret on credential save and update (400, field names only), and
-re-check in K8sContextFromConnection against what client-go will actually see
-(the rendered kubeconfig, parsed by clientcmd). A field identical to the one in
-the server's own kubeconfig stays allowed so contexts imported from it (EKS,
-GKE exec plugins) keep working. The remote provider's context listing skips a
-poisoned connection instead of failing the whole page.
-
-Fixes #24218
-
-Signed-off-by: Yī nuò <[REDACTED_EMAIL]>
-
-**File**: `docs/content/en/guides/infrastructure-management/registering-a-connection.md` (modified, +1/-1)
+**File**: `server/models/sql-utils_test.go` (modified, +44/-29)
 ```diff
-@@ -54,7 +54,7 @@ Creating a Connection performs two transitions in sequence: it **registers** the
+@@ -22,12 +22,6 @@ func TestSanitizeOrderInput(t *testing.T) {
+ 			columns:  validColumns,
+ 			expected: "created_at desc",
+ 		},
+-		{
+-			name:     "camelCase ascending",
+-			order:    "updatedAt asc",
+-			columns:  validColumns,
+-			expected: "updated_at asc",
+-		},
+ 		{
+ 			name:     "legacy snake_case input still accepted",
+ 			order:    "created_at desc",
+@@ -52,30 +46,12 @@ func TestSanitizeOrderInput(t *testing.T) {
+ 			columns:  validColumns,
+ 			expected: "created_at asc",
+ 		},
+-		{
+-			name:     "acronym run stays intact when folding",
+-			order:    "userID desc",
+-			columns:  []string{"user_id"},
+-			expected: "user_id desc",
+-		},
+-		{
+-			name:     "performance profile lastRun folds to its aliased column",
+-			order:    "lastRun desc",
+-			columns:  []string{"updated_at", "created_at", "name", "last_run"},
+-			expected: "last_run desc",
+-		},
+ 		{
+ 			name:     "column outside the whitelist is ignored",
+ 			order:    "password desc",
+ 			columns:  validColumns,
+ 			expected: "",
+ 		},
+-		{
+-			name:     "camelCase column outside the whitelist is ignored",
+-			order:    "secretToken desc",
+-			columns:  validColumns,
+-			expected: "",
+-		},
+ 		{
+ 			name:     "more than two words is rejected",
+ 			order:    "created_at desc; DROP TABLE users",
+@@ -100,6 +76,48 @@ func TestSanitizeOrderInput(t *testing.T) {
+ 			columns:  validColumns,
+ 			expected: "",
+ 		},
++		{
++			name:     "extra spaces",
++			order:    "createdAt   desc",
++			columns:  validColumns,
++			expected: "",
++		},
++		{
++			name:     "tab separator",
++			order:    "createdAt\tdesc",
++			columns:  validColumns,
++			expected: "",
++		},
++		{
++			name:     "uppercase column",
++			order:    "CREATED_AT desc",
++			columns:  validColumns,
++			expected: "",
++		},
++		{
++			name:     "SQL comment in column",
++			order:    "created_at-- desc",
++			columns:  validColumns,
++			expected: "",
++		},
++		{
++			name:     "quoted column",
++			order:    "'name' desc",
++			columns:  validColumns,
++			expected: "",
++		},
++		{
++			name:     "empty columns slice",
++			order:    "createdAt desc",
++			columns:  []string{},
++			expected: "",
++		},
++		{
++			name:     "nil columns slice",
++			order:    "createdAt desc",
++			columns:  nil,
++			expected: "",
++		},
+ 	}
  
- ### Credentials
- 
--Credentials entered in the wizard are persisted as first-class, named [Credentials]({{< ref "concepts/logical/credentials.md" >}}), encrypted at rest, and reusable across other Connections. Meshery never exposes them in logs or API responses. To learn how Meshery interprets a credential's secret (Basic auth vs. bearer token vs. anonymous), see [Credentials]({{< ref "concepts/logical/credentials.md" >}}) and the [Telemetry authentication note]({{< ref "guides/telemetry/_index.md" >}}).
-+Credentials entered in the wizard are persisted as first-class, named [Credentials]({{< ref "concepts/logical/credentials.md" >}}), encrypted at rest, and reusable across other Connections. Meshery never exposes them in logs or API responses. A Kubernetes credential must carry plain data: Meshery rejects (HTTP 400) one that sets an `exec` plugin, an `auth-provider`, or a `certificate-authority`, `client-certificate`, `client-key` or `tokenFile` path, because building a client from it would run a command or read a file on the machine running Meshery Server. Credentials of Kubernetes contexts that Meshery Server imported from its own kubeconfig are the exception, and keep working. Embed the data instead (`*-data` fields or a `token`). To learn how Meshery interprets a credential's secret (Basic auth vs. bearer token vs. anonymous), see [Credentials]({{< ref "concepts/logical/credentials.md" >}}) and the [Telemetry authentication note]({{< ref "guides/telemetry/_index.md" >}}).
- 
- ## Importing a Kubernetes cluster
+ 	for _, tt := range tests {
+@@ -117,12 +135,9 @@ func TestToSnakeCase(t *testing.T) {
+ 		expected string
+ 	}{
+ 		{"createdAt", "created_at"},
+-		{"updatedAt", "updated_at"},
+-		{"subType", "sub_type"},
+-		{"lastRun", "last_run"},
+-		{"name", "name"},
+-		{"created_at", "created_at"},
+ 		{"userID", "user_id"},
++		{"created_at", "created_at"},
++		{"name", "name"},
+ 		{"", ""},
+ 	}
  
 ```
 
-**File**: `server/handlers/credentials_handlers.go` (modified, +26/-0)
+---
+
+### Incident Patch 3: `94233af3` (2026-11-24)
+**Commit Message**: [server] Fix stack-copy value drop of KubernetesServerID in DiscoverAction and stale FSM context on kubeconfig re-import
+
+In DiscoverAction.Execute, k8sContext := machinectx.K8sContext creates a stack value copy of the machine context. AssignServerID and AssignVersion mutate this local copy and persist it to the database, but the resolved fields were never assigned back to machinectx.K8sContext. Consequently, subsequent state machine actions (such as RegisterAction and ConnectAction) as well as snapshot readers (K8sContextSnapshot) continued observing a nil KubernetesServerID.
+
+Additionally, in K8SConfigHandler, when a kubeconfig is re-imported for an existing cluster connection, InitializeMachineWithContext returned the cached state machine instance from smInstanceTracker and dropped the incoming machineCtx. If the cluster had credentials rotated or was previously unreachable at initial startup (leaving inst.Context nil), the state machine retained stale credentials or remained permanently frozen with a nil Context.
+
+This commit:
+1. Syncs the resolved k8sContext back to machinectx.K8sContext under setupLock upon successful discovery.
+2. Enhances RefreshK8sContext to back-fill miss
+
+**File**: `server/handlers/k8sconfig_handler.go` (modified, +25/-0)
 ```diff
-@@ -56,6 +56,11 @@ func (h *Handler) SaveUserCredential(w http.ResponseWriter, req *http.Request, _
- 	// onto another user's account.
- 	credential.UserId = userUUID
+@@ -376,6 +376,31 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
+ 				log.Error(err)
+ 			}
  
-+	if err := rejectUnsafeKubeCredential(credential.Secret); err != nil {
-+		writeMeshkitError(w, err, http.StatusBadRequest)
-+		return
-+	}
++			// When the instance was already present in the tracker (cache hit),
++			// InitializeMachineWithContext returns it as-is and drops machineCtx.
++			// Refresh its stored context so credential updates are applied and,
++			// if the machine previously failed initial startup with a nil Context,
++			// its Context is properly initialized.
++			if inst != nil {
++				inst.UpdateContext(func(oldCtx interface{}) interface{} {
++					if oldCtx == nil {
++						assigned, _, aerr := kubernetes.AssignInitialCtx(req.Context(), machineCtx, log)
++						if aerr != nil {
++							log.Error(aerr)
++							return oldCtx
++						}
++						return assigned
++					}
++					if stored, ok := oldCtx.(*kubernetes.MachineCtx); ok && stored != nil {
++						if _, rerr := stored.RefreshK8sContext(*ctx, models.NewServerEvent(req.Context()), log); rerr != nil {
++							log.Error(rerr)
++						}
++						return stored
++					}
++					return oldCtx
++				})
++			}
 +
- 	createdCredential, err := provider.SaveUserCredential(token, &credential)
- 	if err != nil {
- 		if h.log != nil {
-@@ -216,6 +221,11 @@ func (h *Handler) UpdateUserCredential(w http.ResponseWriter, req *http.Request,
- 	// field to confirm the caller owns the credential being updated).
- 	credential.UserId = userUUID
+ 			// An unreachable context cannot build a client set, so the state
+ 			// machine fails to initialize - either returning a nil instance, or,
+ 			// on a cache hit, one whose Context was never assigned. The connection
+```
+
+**File**: `server/handlers/k8sconfig_handler_test.go` (modified, +124/-0)
+```diff
+@@ -17,7 +17,10 @@ import (
  
-+	if err := rejectUnsafeKubeCredential(credential.Secret); err != nil {
-+		writeMeshkitError(w, err, http.StatusBadRequest)
-+		return
-+	}
-+
- 	_, err = provider.UpdateUserCredential(req, credential)
- 	if err != nil {
- 		// The local provider reports a missing or deleted credential with
-@@ -295,3 +305,19 @@ func (h *Handler) DeleteUserCredential(w http.ResponseWriter, req *http.Request,
- 	}
- 	w.WriteHeader(http.StatusOK)
+ 	"github.com/gofrs/uuid"
+ 	"github.com/meshery/meshery/server/helpers"
++	"github.com/meshery/meshery/server/machines"
++	"github.com/meshery/meshery/server/machines/kubernetes"
+ 	"github.com/meshery/meshery/server/models"
++	"github.com/meshery/meshery/server/models/connections"
+ 	meshkiterrors "github.com/meshery/meshkit/errors"
+ 	"github.com/meshery/meshkit/models/events"
+ 	"github.com/meshery/schemas/models/core"
+@@ -731,3 +734,124 @@ func TestRetainSelectedContextMetadata(t *testing.T) {
+ 		}
+ 	})
  }
 +
-+// rejectUnsafeKubeCredential refuses a Kubernetes credential secret whose
-+// kubeconfig user or cluster would make Meshery Server run a command (exec,
-+// auth-provider) or read a file (certificate, key and token paths) on its own
-+// host to build a client (issue #24218), unless it is a context of the server's own
-+// kubeconfig (see models.UntrustedKubeCredentialFields). Credentials that carry no Kubernetes
-+// auth or cluster block are not affected. It reports field names only.
-+func rejectUnsafeKubeCredential(secret map[string]interface{}) error {
-+	payload := models.CredentialPayload(secret)
-+	auth, _ := payload["auth"].(map[string]interface{})
-+	cluster, _ := payload["cluster"].(map[string]interface{})
-+	if fields := models.UntrustedKubeCredentialFields(auth, cluster); len(fields) > 0 {
-+		return models.ErrUnsafeKubeCredential(fields)
-+	}
-+	return nil
++type mockReimportProvider struct {
++	*models.DefaultLocalProvider
++	persistedEvents []events.Event
++	connectionID    core.Uuid
 +}
-```
-
-**File**: `server/handlers/credentials_handlers_test.go` (modified, +63/-0)
-```diff
-@@ -649,3 +649,66 @@ func TestDeleteUserCredential_NilProvider_ReturnsInternalServerError(t *testing.
- 		t.Fatalf("expected %s, got %s", ErrNilProviderCode, decoded.Code)
- 	}
- }
 +
-+// TestSaveAndUpdateUserCredential_RejectUnsafeKubeCredential pins issue #24218:
-+// a Kubernetes credential secret must not carry an exec plugin, an
-+// auth-provider or a certificate, key or token file path, in either the
-+// canonical {auth, cluster} shape or the legacy {credentialName, secret} wrapper.
-+// The provider must never see it, and the response must not echo the command or
-+// the path.
-+func TestSaveAndUpdateUserCredential_RejectUnsafeKubeCredential(t *testing.T) {
-+	cluster := `"cluster":{"name":"c","cluster":{"server":"https://127.0.0.1:1"}}`
-+	secrets := map[string]string{
-+		"exec":                `{"auth":{"name":"u","user":{"exec":{"apiVersion":"client.authentication.k8s.io/v1","command":"leak-cmd","args":["/leak/path"]}}},` + cluster + `}`,
-+		"auth-provider":       `{"auth":{"name":"u","user":{"auth-provider":{"name":"oidc"}}},` + cluster + `}`,
-+		"tokenFile":           `{"auth":{"name":"u","user":{"tokenFile":"/leak/path"}},` + cluster + `}`,
-+		"client-key":          `{"auth":{"name":"u","user":{"client-key":"/leak/path"}},` + cluster + `}`,
-+		"ca path":             `{"auth":{"name":"u","user":{"token":"t"}},"cluster":{"name":"c","cluster":{"server":"https://k","certificate-authority":"/leak/path"}}}`,
-+		"legacy wrapper exec": `{"credentialName":"x","secret":{"auth":{"name":"u","user":{"exec":{"apiVersion":"client.authentication.k8s.io/v1","command":"leak-cmd"}}},` + cluster + `}}`,
-+	}
-+	for name, secret := range secrets {
-+		for _, method := range []string{http.MethodPost, http.MethodPut} {
-+			t.Run(name+" "+method, func(t *testing.T) {
-+				body := `{"id":"abcdefab-abcd-abcd-abcd-abcdefabcdef","name":"k","type":"kubernetes","secret":` + secret + `}`
-+				h := newTestHandler(t, map[string]models.Provider{}, "")
-+				p := newCredentialSpyProvider()
-+				req := httptest.NewRequest(method, "/api/integrations/credentials", bytes.NewBufferString(body))
-+				req = req.WithContext(context.WithValue(req.Context(), models.TokenCtxKey, "test-token"))
-+				rec := httptest.NewRecorder()
-+				user := &models.User{ID: uuid.Must(uuid.NewV4())}
++func (m *mockReimportProvider) SaveK8sContext(token string, k8sContext models.K8sContext, metadata map[string]any) (connections.Connection, error) {
++	return connections.Connection{ID: m.connectionID, Status: connections.DISCOVERED}, nil
++}
 +
-+				if method == http.MethodPost {
-+					h.SaveUserCredential(rec, req, nil, user, p)
-+				} else {
-+					h.UpdateUserCredential(rec, req, nil, user, p)
-+				}
++func (m *mockReimportProvider) PersistEvent(event events.Event, _ string) (models.PersistedEvent, error) {
++	m.persistedEvents = append(m.persistedEvents, event)
++	return models.PersistedEvent{Event: &event, Disposition: models.EventCreated}, nil
++}
 +
-+				if rec.Code != http.StatusBadRequest {
-+					t.Fatalf("status = %d, want 400 (body=%q)", rec.Code, rec.Body.String())
-+				}
-+				if p.observedSave.Load() != nil || p.observedUpdate.Load() != nil {
-+					t.Fatalf("the provider was asked to store an unsafe credential")
-+				}
-+				if strings.Contains(rec.Body.String(), "leak-cmd") || strings.Contains(rec.Body.String(), "/leak/path") {
-+					t.Fatalf("response echoes the credential: %s", rec.Body.String())
-+				}
-+				if got := decodeErrorBody(t, rec.Body.Bytes()).Code; got != models.ErrUnsafeKubeCredentialCode {
-+					t.Fatalf("error code = %q, want %q", got, models.ErrUnsafeKubeCredentialCode)
-+				}
-+			})
-+		}
-+	}
++func TestK8SConfigHandler_ReimportRefreshesCachedStateMachineContext(t *testing.T) {
++	authUser := &models.User{ID: uuid.Must(uuid.NewV4())}
++	connUUID := uuid.Must(uuid.NewV4())
++	connID := core.Uuid(connUUID)
 +
-+	t.Run("embedded data is stored", func(t *testing.T) {
-+		body := `{"name":"k","type":"kubernetes","secret":{"auth":{"name":"u","user":{"token":"t","client-key-data":"Yg=="}},` + cluster + `}}`
++	kubeconfig := []byte(`apiVersion: v1
++kind: Config
++current-context: reimported
++clusters:
++- cluster:
++    server: https://127.0.0.1:6443
++  name: reimported
++contexts:
++- context:
++    cluster: reimported
++    user: reimported-user
++  name: reimported
++users:
++- name: reimported-user
++  user:
++    token: token-reimported
++`)
++
++	t.Run("refreshes credentials on cache hit with existing context", func(t *testing.T) {
 +		h := newTestHandler(t, map[string]models.Provider{}, "")
-+		p := newCredentialSpyProvider()
-+		req := httptest.NewRequest(http.MethodPost, "/api/integrations/credentials", bytes.NewBufferString(body))
++		h.config.K8scontextChannel = &models.K8scontextChan{}
++		tracker := &machines.ConnectionToStateMachineInstanceTracker{
++			ConnectToInstanceMap: make(map[core.Uuid]*machines.StateMachine),
++		}
++		h.ConnectionToStateMachineInstanceTracker = tracker
++
++		inst, err := kubernetes.New(connID.String(), core.Uuid(uuid.Nil), h.log)
++		if err != nil {
++			t.Fatalf("failed to create state machine: %v", err)
++		}
++		storedCtx := &kubernetes.MachineCtx{
++			K8sContext: models.K8sContext{
++				Name:   "old-name",
++				Server: "https://old-server:6443",
++			},
++		}
++		inst.Context = storedCtx
++		tracker.Add(connID, inst)
++
++		provider := &mockReimportProvider{
++			connectionID: connID,
++		}
++
++		req := uploadKubeconfigRequest(t, "/api/system/kubernetes", kubeconfig)
 +		req = req.WithContext(context.WithValue(req.Context(), models.TokenCtxKey, "test-token"))
 +		rec := httptest.NewRecorder()
-+		h.SaveUserCredential(rec, req, nil, &models.User{ID: uuid.Must(uuid.NewV4())}, p)
-+		if rec.Code != http.StatusCreated || p.observedSave.Load() == nil {
-+			t.Fatalf("status = %d, saved = %v (body=%q)", rec.Code, p.observedSave.Load() != nil, rec.Body.String())
++
++		h.K8SConfigHandler(rec, req, nil, authUser, provider)
++		if rec.Code != http.StatusOK {
++			t.Fatalf("expected 200 OK, got %d: %s", rec.Code, rec.Body.String())
++		}
++
++		ctxObj := inst.GetContext()
++		updatedCtx, ok := ctxObj.(*kubernetes.MachineCtx)
++		if !ok || updatedCtx == nil {
++			t.Fatalf("expected *kubernetes.MachineCtx, got %#v", ctxObj)
++		}
++		if updatedCtx.K8sContext.Server != "https://127.0.0.1:6443" {
++			t.Fatalf("expected server https://127.0.0.1:6443, got %s", updatedCtx.K8sContext.Server)
++		}
++	})
++
++	t.Run("initializes context on cache hit when initial startup left Context nil", func(t *testing.T) {
++		h := newTestHandler(t, map[string]models.Provider{}, "")
++		h.config.K8scontextChannel = &models.K8scontextChan{}
++		tracker := &machines.ConnectionToStateMachineInstanceTracker{
++			ConnectToInstanceMap: make(map[core.Uuid]*machines.StateMachine),
++		}
++		h.ConnectionToStateMachineInstanceTracker = tracker
++
++		inst, err := kubernetes.New(connID.String(), core.Uuid(uuid.Nil), h.log)
++		if err != nil {
++			t.Fatalf("failed to create state machine: %v", err)
++		}
++		inst.Context = nil
++		tracker.Add(connID, inst)
++
++		provider := &mockReimportProvider{
++			connectionID: connID,
++		}
++
++		req := uploadKubeconfigRequest(t, "/api/system/kubernetes", kubeconfig)
++		req = req.WithContext(context.WithValue(req.Context(), models.TokenCtxKey, "test-token"))
++		rec := httptest.NewRecorder()
++
++		h.K8SConfigHandler(rec, req, nil, authUser, provider)
++		if rec.Code != http.StatusOK {
++			t.Fatalf("expected 200 OK, got %d: %s", rec.Code, rec.Body.String())
++		}
++
++		ctxObj := inst.GetContext()
++		initializedCtx, ok := ctxObj.(*kubernetes.MachineCtx)
++		if !ok || initializedCtx == nil {
++			t.Fatalf("expected initialized *kubernetes.MachineCtx, got %#v", ctxObj)
++		}
++		if initializedCtx.K8sContext.Server != "https://127.0.0.1:6443" {
++			t.Fatalf("expected server https://127.0.0.1:6443, got %s", initializedCtx.K8sContext.Server)
 +		}
 +	})
 +}
 ```
 
-**File**: `server/helpers/component_info.json` (modified, +1/-1)
+**File**: `server/machines/kubernetes/discover.go` (modified, +7/-0)
 ```diff
-@@ -1,5 +1,5 @@
- {
-   "name": "meshery-server",
-   "type": "component",
--  "next_error_code": 1498
-+  "next_error_code": 1501
- }
-\ No newline at end of file
-```
-
-**File**: `server/models/error.go` (modified, +18/-0)
-```diff
-@@ -5,6 +5,7 @@ import (
- 	stderrors "errors"
- 	"fmt"
- 	"net/http"
-+	"strings"
- 	"time"
+@@ -94,6 +94,13 @@ func (da *DiscoverAction) Execute(ctx context.Context, machineCtx interface{}, d
+ 		return machines.NoOp, eventBuilder.WithDescription(fmt.Sprintf("Unable to establish connection with context \"%s\" at %s", k8sContext.Name, k8sContext.Server)).WithMetadata(map[string]interface{}{"error": err}).Build(), err
+ 	}
  
- 	"github.com/meshery/meshery/server/models/httputil"
-@@ -178,6 +179,7 @@ const (
- 	ErrMigrateEventIndexesCode            = "meshery-server-1491"
- 	ErrHandlerPanicCode                   = "meshery-server-1495"
- 	ErrInvalidDesignVersionCode           = "meshery-server-1496"
-+	ErrUnsafeKubeCredentialCode           = "meshery-server-1500"
- )
- 
- var (
-@@ -1052,3 +1054,19 @@ func ErrInvalidDesignVersion(version string, err error) error {
- 		[]string{"Set the design file's version to a semver string such as 0.0.1 and save again"},
- 	)
- }
++	// Update the machine context with the resolved server ID and version under
++	// setupLock so downstream states and external readers (e.g. K8sContextSnapshot)
++	// observe the populated fields rather than the unpopulated stack copy.
++	machinectx.setupLock.Lock()
++	machinectx.K8sContext = k8sContext
++	machinectx.setupLock.Unlock()
 +
-+// ErrUnsafeKubeCredential reports a Kubernetes credential that would make
-+// Meshery Server run a command or read a file on its own host to build a client
-+// (an exec plugin, an auth-provider, or a certificate, key or token file path).
-+// fields holds only field names, never their values, so the message cannot echo
-+// a path or a command.
-+func ErrUnsafeKubeCredential(fields []string) error {
-+	return errors.New(
-+		ErrUnsafeKubeCredentialCode,
-+		errors.Alert,
-+		[]string{"The Kubernetes credential is not allowed to run commands or read files on the Meshery Server host"},
-+		[]string{fmt.Sprintf("The credential sets: %s", strings.Join(fields, ", "))},
-+		[]string{"exec plugins, auth-providers and certificate, key or token file paths are executed or read on the machine running Meshery Server, so only the server's own kubeconfig may use them"},
-+		[]string{"Replace the credential with embedded data (client-certificate-data, client-key-data, certificate-authority-data, token) and save it again"},
-+	)
-+}
-```
-
-**File**: `server/models/k8s_context.go` (modified, +7/-0)
-```diff
-@@ -92,6 +92,13 @@ func K8sContextFromConnection(provider Provider, token string, connection *conne
- 	credentialPayload := CredentialPayload(credential.Secret)
- 	ctx.Auth, _ = credentialPayload["auth"].(map[string]interface{})
- 	ctx.Cluster, _ = credentialPayload["cluster"].(map[string]interface{})
-+	// The credential is user-editable, and building a client runs an exec
-+	// plugin or reads files on this host. Refuse one that carries either unless
-+	// it is the server's own (issue #24218). Callers that build a client from the
-+	// returned context (ping, the state machine, graphql) get this error instead.
-+	if fields := UntrustedKubeCredentialFields(ctx.Auth, ctx.Cluster); len(fields) > 0 {
-+		return K8sContext{}, ErrUnsafeKubeCredential(fields)
-+	}
- 	ctx.CreatedAt = &connection.CreatedAt
- 	ctx.UpdatedAt = &connection.UpdatedAt
+ 	// machinectx.log.Debug("exiting execute func from discovered state", connection)
  
+ 	return machines.Register, nil, nil
 ```
 
-**File**: `server/models/k8s_credential_guard.go` (added, +172/-0)
+**File**: `server/machines/kubernetes/discover_test.go` (added, +134/-0)
 ```diff
-@@ -0,0 +1,172 @@
-+package models
+@@ -0,0 +1,134 @@
++package kubernetes
 +
 +import (
-+	"os"
-+	"path/filepath"
-+	"reflect"
-+	"sort"
-+
-+	"github.com/spf13/viper"
-+	"k8s.io/client-go/tools/clientcmd"
-+	clientcmdapi "k8s.io/client-go/tools/clientcmd/api"
-+)
-+
-+// A Kubernetes credential is a kubeconfig user plus cluster ({auth, cluster}),
-+// and building a client from it is not passive: an `exec` plugin is run as a
-+// command on the Meshery Server host, and certificate, key and token file
-+// references are read from its disk. Meshery therefore only builds a client
-+// from fields that are plain data, unless the credential is the server's own
-+// kubeconfig, which the operator controls (see issue #24218).
-+
-+// Names of the unsafe kubeconfig fields, as reported by UnsafeKubeCredentialFields.
-+const (
-+	kubeFieldExec                 = "exec"
-+	kubeFieldAuthProvider         = "auth-provider"
-+	kubeFieldClientCertificate    = "client-certificate"
-+	kubeFieldClientKey            = "client-key"
-+	kubeFieldTokenFile            = "tokenFile"
-+	kubeFieldCertificateAuthority = "certificate-authority"
-+)
-+
-+// UnsafeKubeCredentialFields returns the names of the kubeconfig fields in a
-+// credential's auth and cluster that make building a client run a command or
-+// read a file on the Meshery Server host. It inspects what client-go will
-+// actually see (the kubeconfig GenerateKubeConfig renders, parsed by clientcmd)
-+// rather than the raw map, so no spelling of the YAML hides a field from it.
-+// The result is sorted and carries no values, so it is safe to return to a
-+// caller. It returns nil for a credential that has neither auth nor cluster.
-+func UnsafeKubeCredentialFields(auth, cluster map[string]interface{}) []string {
-+	if len(auth) == 0 && len(cluster) == 0 {
-+		return nil
-+	}
-+	cfg, err := loadCredentialKubeconfig(auth, cluster)
-+	if err != nil {
-+		// A credential that does not render to a kubeconfig cannot be used to
-+		// build a client either.
-+		return nil
-+	}
-+	return unsafeFields(cfg, nil)
-+}
-+
-+func loadCredentialKubeconfig(auth, cluster map[string]interface{}) (*clientcmdapi.Config, error) {
-+	data, err := K8sContext{Name: "credential", Auth: auth, Cluster: cluster}.GenerateKubeConfig()
-+	if err != nil {
-+		return nil, err
-+	}
-+	return clientcmd.Load(data)
-+}
-+
-+// unsafeFields lists the unsafe fields set in cfg. When trusted is non-nil, a
-+// field whose value is identical to the one the trusted kubeconfig holds for the
-+// same user (or cluster) name is not reported.
-+func unsafeFields(cfg, trusted *clientcmdapi.Config) []string {
-+	found := map[string]struct{}{}
-+	for name, u := range cfg.AuthInfos {
-+		var t *clientcmdapi.AuthInfo
-+		if trusted != nil {
-+			t = trusted.AuthInfos[name]
-+		}
-+		if u.Exec != nil && (t == nil || !reflect.DeepEqual(u.Exec, t.Exec)) {
-+			found[kubeFieldExec] = struct{}{}
-+		}
-+		if u.AuthProvider != nil && (t == nil || !reflect.DeepEqual(u.AuthProvider, t.AuthProvider)) {
-+			found[kubeFieldAuthProvider] = struct{}{}
-+		}
-+		if u.ClientCertificate != "" && (t == nil || u.ClientCertificate != t.ClientCertificate) {
-+			found[kubeFieldClientCertificate] = struct{}{}
-+		}
-+		if u.ClientKey != "" && (t == nil || u.ClientKey != t.ClientKey) {
-+			found[kubeFieldClientKey] = struct{}{}
-+		}
-+		if u.TokenFile != "" && (t == nil || u.TokenFile != t.TokenFile) {
-+			found[kubeFieldTokenFile] = struct{}{}
-+		}
-+	}
-+	for name, c := range cfg.Clusters {
-+		var t *clientcmdapi.Cluster
-+		if trusted != nil {
-+			t = trusted.Clusters[name]
-+		}
-+		if c.CertificateAuthority != "" && (t == nil || c.CertificateAuthority != t.CertificateAuthority) {
-+			found[kubeFieldCertificateAuthority] = struct{}{}
-+		}
-+	}
-+	var out []string
-+	for f := range found {
-+		out = append(out, f)
-+	}
-+	sort.Strings(out)
-+	return out
-+}
-+
-+// serverKubeconfig loads the kubeconfig the Meshery Server itself runs with
-+// (KUBECONFIG_FOLDER/config), or nil when there is none (for example in-cluster).
-+func serverKubeconfig() *clientcmdapi.Config {
-+	folder := viper.GetString("KUBECONFIG_FOLDER")
-+	if folder == "" {
-+		return nil
-+	}
-+	path := filepath.Join(folder, "config")
-+	if _, err := os.Stat(path); err != nil {
-+		return nil
-+	}
-+	cfg, err := clientcmd.LoadFromFile(path)
-+	if err != nil {
-+		return nil
-+	}
-+	return cfg
-+}
-+
-+// UntrustedKubeCredentialFields returns the unsafe fields of a credential's auth
-+// and cluster that the server's own kubeconfig does not vouch for. A user and
-+// cluster pair is the server's own only when a context of the server's
-+// kubeconfig names both, the cluster points at the same endpoint (server, proxy,
-+// TLS server name, skip-verify), and every unsafe field is identical to the
-+// server's. That keeps contexts imported from the server's kubeconfig (an EKS or
-+// GKE exec plugin, say) working, while a credential a user created or edited
-+// cannot introduce a command or a path of their choosing, nor reuse the
-+// operator's exec plugin to send a token to another host.
-+func UntrustedKubeCredentialFields(au
-```
-
-**File**: `server/models/k8s_credential_guard_test.go` (added, +181/-0)
-```diff
-@@ -0,0 +1,181 @@
-+package models
-+
-+import (
-+	"os"
-+	"path/filepath"
-+	"reflect"
-+	"strings"
++	"context"
++	"encoding/json"
++	"net/http"
++	"net/http/httptest"
 +	"testing"
 +
 +	"github.com/gofrs/uuid"
++	"github.com/meshery/meshery/server/machines"
++	"github.com/meshery/meshery/server/models"
 +	"github.com/meshery/meshery/server/models/connections"
-+	"github.com/meshery/meshkit/database"
-+	meshkiterrors "github.com/meshery/meshkit/errors"
++	"github.com/meshery/meshkit/logger"
++	mkkube "github.com/meshery/meshkit/utils/kubernetes"
 +	"github.com/meshery/schemas/models/core"
-+	"github.com/spf13/viper"
++	k8sclient "k8s.io/client-go/kubernetes"
++	"k8s.io/client-go/rest"
 +)
 +
-+// setKubeconfigFolder points the server's own kubeconfig lookup at folder for
-+// the test and restores whatever was set before.
-+func setKubeconfigFolder(t *testing.T, folder string) {
-+	t.Helper()
-+	prev := viper.Get("KUBECONFIG_FOLDER")
-+	viper.Set("KUBECONFIG_FOLDER", folder)
-+	t.Cleanup(func() { viper.Set("KUBECONFIG_FOLDER", prev) })
++type mockProviderForDiscoverTest struct {
++	models.Provider
++	savedContext models.K8sContext
 +}
 +
-+func kubeCredential(user map[string]interface{}, cluster map[string]interface{}) (auth, clusterBlock map[string]interface{}) {
-+	return map[string]interface{}{"name": "u", "user": user},
-+		map[string]interface{}{"name": "c", "cluster": cluster}
++func (m *mockProviderForDiscoverTest) SaveK8sContext(token string, k8sContext models.K8sContext, metadata map[string]any) (connections.Connection, error) {
++	m.savedContext = k8sContext
++	return connections.Connection{ID: core.Uuid(uuid.Must(uuid.NewV4()))}, nil
 +}
 +
-+func TestUnsafeKubeCredentialFields(t *testing.T) {
-+	execPlugin := map[string]interface{}{"apiVersion": "client.authentication.k8s.io/v1", "command": "sh", "args": []interface{}{"-c", "id"}}
-+	tests := []struct {
-+		name    string
-+		user    map[string]interface{}
-+		cluster map[string]interface{}
-+		want    []string
-+	}{
-+		{"embedded data only", map[string]interface{}{"client-certificate-data": "YQ==", "client-key-data": "Yg==", "token": "t"}, map[string]interface{}{"server": "https://k8s", "certificate-authority-data": "Yw=="}, nil},
-+		{"exec plugin", map[string]interface{}{"exec": execPlugin}, map[string]interface{}{"server": "https://k8s"}, []string{"exec"}},
-+		{"auth-provider", map[string]interface{}{"auth-provider": map[string]interface{}{"name": "oidc"}}, map[string]interface{}{"server": "https://k8s"}, []string{"auth-provider"}},
-+		{"token file", map[string]interface{}{"tokenFile": "/var/run/secrets/kubernetes.io/serviceaccount/token"}, map[string]interface{}{"server": "https://attacker"}, []string{"tokenFile"}},
-+		{"key and cert paths", map[string]interface{}{"client-key": "/k", "client-certificate": "/c"}, map[string]interface{}{"server": "https://k8s"}, []string{"client-certificate", "client-key"}},
-+		{"ca path", map[string]interface{}{"token": "t"}, map[string]interface{}{"server": "https://k8s", "certificate-authority": "/ca"}, []string{"certificate-authority"}},
-+	}
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			auth, cluster := kubeCredential(tt.user, tt.cluster)
-+			got := UnsafeKubeCredentialFields(auth, cluster)
-+			if !reflect.DeepEqual(got, tt.want) {
-+				t.Fatalf("UnsafeKubeCredentialFields = %v, want %v", got, tt.want)
-+			}
-+		})
-+	}
-+	if got := UnsafeKubeCredentialFields(nil, nil); got != nil {
-+		t.Fatalf("empty credential = %v, want nil", got)
-+	}
-+}
++func TestDiscoverAction_PropagatesServerIDAndVersionToMachineCtx(t *testing.T) {
++	clusterUID := "30e099e0-ef31-477a-9f2d-754ee9b1d41a"
++	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++		w.Header().Set("Content-Type", "application/json")
++		if r.URL.Path == "/api/v1/namespaces/kube-system" {
++			_ = json.NewEncoder(w).Encode(map[string]interface{}{
++				"metadata": map[string]string{"uid": clusterUID},
++			})
++			return
++		}
++		if r.URL.Path == "/version" {
++			_ = json.NewEncoder(w).Encode(map[string]string{
++				"major": "1",
++				"minor": "30",
++				"gitVersion": "v1.30.0",
++			})
++			return
++		}
++		http.NotFound(w, r)
++	}))
++	defer server.Close()
 +
-+func saveKubeCredentialAndConnection(t *testing.T, secret map[string]interface{}) (*DefaultLocalProvider, *connections.Connection) {
-+	t.Helper()
-+	db, err := database.New(database.Options{Engine: database.SQLITE, Filename: ":memory:"})
++	clientset, err := k8sclient.NewForConfig(&rest.Config{Host: server.URL})
 +	if err != nil {
-+		t.Fatalf("open database: %v", err)
++		t.Fatal(err)
 +	}
-+	if err := db.AutoMigrate(Credential{}); err != nil {
-+		t.Fatalf("migrate tables: %v", err)
-+	}
-+	provider := &DefaultLocalProvider{GenericPersister: &db}
-+	credential, err := provider.SaveUserCredential("", &Credential{Name: "kube-cred", Type: "kubernetes", Secret: secret})
++	log, err := logger.New("test", logger.Options{})
 +	if err != nil {
-+		t.Fatalf("save credential: %v", err)
++		t.Fatal(err)
 +	}
-+	id := credential.ID
-+	return provider, &connections.Connection{ID: uuid.Must(uuid.NewV4()), Name: "cluster-a", Kind: "kubernetes", CredentialID: &id, Metadata: core.Map{"name": "cluster-a"}}
++
++	mockProv := &mockProviderForDiscoverTest{}
++	machineCtx := &MachineCtx{
++		K8sContext: models.K8sContext{
++			Name:   "test-ctx",
++			Server: server.URL,
++		},
++		clientset: &mkkube.Client{KubeClient: clientset},
++		log:       log,
++	}
++
++	ctx := context.WithValue(context.Background(), models.ProviderCtxKey, mockProv)
++	ctx = context.WithValue(ctx, models.TokenCtxKey, "test-token")
++
++	da := &DiscoverAction{}
++	nextEvent, _, err := da.Execute(ctx, machineCtx, nil)
++	if err != nil {
++		t.Fatalf("unexpected DiscoverAction error: %v", err)
++	}
++	if nextEvent != machines.Register {
++		t.Fatalf("expected next event %v, got %v", machines.Register, nextEvent)
++	}
++
++	// Verify that machineCtx.K8sContext has been updated in memory
++	if machineCtx.K8sContext.KubernetesServerID == nil {
++		t.Fatalf("expected machineCtx.K8sContext.KubernetesServerID to be populated, but it was nil")
++	}
++	if machineCtx.K8sContext.KubernetesServerID.String() != clusterUID {
++		t.Fatalf("expected KubernetesServerID %s, got %s", clusterUID, machineCtx.K8sContext.KubernetesServerID.String())
++	}
++	if machineCtx.K8sContext.Version != "v1.30.0" {
++		t.Fatalf("expected Version v1.30.0, got %s", machineCtx.K8sContext.Version)
++	}
++
++	// Verify K8sContextSnapshot also reflects the updated server ID
++	snap := machineCtx.K8sContextSnapshot()
++	if snap.KubernetesServerID == nil || snap.KubernetesServerID.String() != clusterUID {
++		t.Fatalf("expected K8sContextSnapshot().KubernetesServerID to be %s, got %v", clusterUID, snap.KubernetesServerID)
++	}
 +}
 +
-+// TestK8sContextFromConnectionRefusesUnsafeCredential pins issue #24218: a saved
-+// connection's credential secret can be edited to carry an exec plugin or a file
-+// path, and ping, the state machine and graphql then build a client from it.
-+// Every one of them goes through K8sContextFromConnection first, so it must
-+// refuse, and it must do so without echoing the command or the path.
-+func TestK8sContextFromConnectionRefusesUnsafeCredential(t *testing.T) {
-+	setKubeconfigFolder(t, t.TempDir()) // no kubeconfig of its own inside
++func TestRefreshK8sContext_SynchronizesMissingServerID(t *testing.T) {
++	log, err := logger.New("test", logger.Options{})
++	if err != nil {
++		t.Fatal(err)
++	}
 +
-+	for name, user := range map[string]map[string]interface{}{
-+		"exec":       {"exec": map[string]interface{}{"apiVersion": "client.authentication.k8s.io/v1", "command": "touch-marker-cmd", "args": []interface{}{"/tmp/marker-path"}}},
-+		"tokenFile":  {"tokenFile": "/tmp/marker-path"},
-+		"client-key": {"client-key": "/tmp/marker-path"},
-+	} {
-+		t.Run(name, func(t *testing.T) {
-+			auth, cluster := kubeCredential(user, map[string]interface{}{"server": "https://127.0.0.1:1"})
-+			provider, conn := saveKubeCredentialAndConnection(t, map[string]interface{}{"auth": auth, "cluster": cluster})
++	existingID := core.Uuid(uuid.Must(uuid.NewV4()))
++	m := &MachineCtx{
++		K8sContext: models.K8sContext{
++			Name:   "cluster-1",
++			Server: "https://k8s.example.com:6443",
++		},
++		clientset: &mkkube.Client{},
++		log:       log,
++	}
 +
-+			_, err := K8sContextFromConnection(provider, "", conn)
-+			if meshkiterrors.GetCode(err) != ErrUnsafeKubeCredentialCode {
-+				t.Fatalf("err = %v, want ErrUnsafeKubeCredential", err)
-+			}
-+			for _, leak := range []
++	newCtx := models.K8sContext{
++		Name:               "cluster-1",
++		Server:             "https://k8s.example.com:6443",
++		KubernetesServerID: &existingID,
++	}
++
++	changed, err := m.RefreshK8sContext(newCtx, nil, log)
++	if err != nil {
++		t.Fatalf("unexpected RefreshK8sContext error: %v", err)
++	}
++	if !changed {
++		t.Fatalf("expected changed to be true when populating missing server ID")
++	}
++	if m.K8sContext.KubernetesServerID == nil || *m.K8sContext.KubernetesServerID != existingID {
++		t.Fatalf("expected KubernetesServerID to be %s, got %v", existingID, m.K8sContext.KubernetesServerID)
++	}
++}
 ```
 
----
-
-### Incident Patch 3: `2d7c3d0b` (2026-11-24)
-**Commit Message**: Merge pull request #24235 from meshery/fix/discovery-errors-selected-contexts-only
-
-fix(server): record kubeconfig discovery errors only for selected contexts
-
-**File**: `server/handlers/k8sconfig_handler.go` (modified, +37/-0)
+**File**: `server/machines/kubernetes/helpers.go` (modified, +7/-1)
 ```diff
-@@ -184,6 +184,14 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
- 		}
+@@ -94,7 +94,13 @@ func AssignClientSetToContext(machinectx *MachineCtx, eventBuilder *events.Event
+ // logger: the stored machine context's own log may be nil on machines built
+ // outside the normal init path, and a failed build logs through it.
+ func (m *MachineCtx) RefreshK8sContext(newCtx models.K8sContext, eventBuilder *events.EventBuilder, log logger.Handler) (bool, error) {
+-	if k8sContextCredentialsEqual(m.K8sContext, newCtx) {
++	if m.clientset != nil && k8sContextCredentialsEqual(m.K8sContext, newCtx) {
++		if m.K8sContext.KubernetesServerID == nil && newCtx.KubernetesServerID != nil {
++			m.setupLock.Lock()
++			m.K8sContext.KubernetesServerID = newCtx.KubernetesServerID
++			m.setupLock.Unlock()
++			return true, nil
++		}
+ 		return false, nil
  	}
- 
-+	// Discovery recorded a per-context entry (with an "error" for any context
-+	// that failed) for every context in the file, including the ones the user
-+	// deselected and the ones Meshery skipped. The receipt below describes only
-+	// what this import acted on, so drop the entries of contexts outside an
-+	// explicit selection; otherwise a broken context the user chose not to import would
-+	// raise the receipt to Error while the wizard reports success (issue #24220).
-+	retainSelectedContextMetadata(eventMetadata, contexts, selectedContexts)
-+
- 	// Helper function to get meshsync deployment mode for a context
- 	// Uses closure pattern to call req.FormValue only once while keeping globalMeshsyncMode scoped
- 	getMeshsyncModeForContext := func() func(*models.K8sContext) string {
-@@ -279,6 +287,9 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
- 		// so regenerate the context ID to keep the struct's ID in sync with the
- 		// connection ID SaveK8sContext will mint.
- 		if opts, ok := contextsConfig[ctx.ID]; ok && opts.Name != "" && opts.Name != ctx.Name {
-+			// The receipt is keyed by the name the connection is saved under;
-+			// drop the discovery entry that is keyed by the old name.
-+			delete(eventMetadata, ctx.Name)
- 			ctx.Name = opts.Name
- 			if regeneratedID, idErr := models.K8sContextGenerateID(*ctx); idErr == nil {
- 				ctx.ID = regeneratedID
-@@ -421,6 +432,32 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
- 	}
- }
- 
-+// retainSelectedContextMetadata removes from eventMetadata, the per-context
-+// discovery metadata keyed by context name, the entries of contexts the user
-+// left out of an explicit selection: discovered contexts outside it, and
-+// contexts discovery skipped (never importable, so never selected). With no
-+// selection every context is imported, so nothing is removed and a context that
-+// failed or was skipped during discovery still shows in the receipt.
-+func retainSelectedContextMetadata(eventMetadata map[string]interface{}, contexts []*models.K8sContext, selected map[string]struct{}) {
-+	if selected == nil {
-+		return
-+	}
-+	keep := make(map[string]struct{}, len(selected))
-+	for _, ctx := range contexts {
-+		if ctx == nil {
-+			continue
-+		}
-+		if _, ok := selected[ctx.ID]; ok {
-+			keep[ctx.Name] = struct{}{}
-+		}
-+	}
-+	for name := range eventMetadata {
-+		if _, ok := keep[name]; !ok {
-+			delete(eventMetadata, name)
-+		}
-+	}
-+}
-+
- // k8sEventMetadataHasError reports whether any per-context entry in a Kubernetes
- // connection receipt's metadata recorded a failure. Each context's outcome is
- // keyed by its name and carries an "error" entry only when that context failed
-```
-
-**File**: `server/handlers/k8sconfig_handler_test.go` (modified, +98/-0)
-```diff
-@@ -633,3 +633,101 @@ users:
- 		}
- 	}
- }
-+
-+// TestImportReceiptIgnoresFailingDeselectedContext pins issue #24220: a context
-+// that fails discovery but that the user deselected must leave no error in the
-+// import receipt, which then stays Informational like the wizard's success.
-+func TestImportReceiptIgnoresFailingDeselectedContext(t *testing.T) {
-+	authUser := &models.User{ID: uuid.Must(uuid.NewV4())}
-+	// Nothing listens on port 1, so discovery cannot reach the API server and
-+	// records an error for the context.
-+	kubeconfig := []byte(`apiVersion: v1
-+kind: Config
-+current-context: broken
-+clusters:
-+- cluster:
-+    server: https://127.0.0.1:1
-+  name: broken
-+contexts:
-+- context:
-+    cluster: broken
-+    user: broken-user
-+  name: broken
-+users:
-+- name: broken-user
-+  user:
-+    token: token-0
-+`)
-+	receiptOf := func(t *testing.T, form map[string]string) events.Event {
-+		t.Helper()
-+		h := newTestHandler(t, map[string]models.Provider{}, "")
-+		provider := &mockK8sConfigProvider{}
-+		var b bytes.Buffer
-+		w := multipart.NewWriter(&b)
-+		part, err := w.CreateFormFile("k8sfile", "kubeconfig")
-+		if err != nil {
-+			t.Fatalf("create form file: %v", err)
-+		}
-+		if _, err := part.Write(kubeconfig); err != nil {
-+			t.Fatalf("write form file: %v", err)
-+		}
-+		for k, v := range form {
-+			if err := w.WriteField(k, v); err != nil {
-+				t.Fatalf("write field %s: %v", k, err)
-+			}
-+		}
-+		if err := w.Close(); err != nil {
-+			t.Fatalf("close writer: %v", err)
-+		}
-+		req := httptest.NewRequest(http.MethodPost, "/api/system/kubernetes", &b)
-+		req.Header.Set("Content-Type", w.FormDataContentType())
-+		req = req.WithContext(context.WithValue(req.Context(), models.TokenCtxKey, "test-token"))
-+		rec := httptest.NewRecorder()
-+		h.K8SConfigHandler(rec, req, nil, authUser, provider)
-+		if rec.Code != http.StatusOK {
-+			t.Fatalf("expected 200 OK, got %d: %s", rec.Code, rec.Body.String())
-+		}
-+		if len(provider.persistedEvents) != 1 {
-+			t.Fatalf("persisted %d events, want the single import receipt", len(provider.persistedEvents))
-+		}
-+		return provider.persistedEvents[0]
-+	}
-+
-+	t.Run("deselected failing context leaves an informational receipt", func(t *testing.T) {
-+		receipt := receiptOf(t, map[string]string{SelectedContextsFormKey: "[]"})
-+		if receipt.Severity != events.Informational {
-+			t.Fatalf("receipt severity = %v, want Informational (description %q)", receipt.Severity, receipt.Description)
-+		}
-+		if k8sEventMetadataHasError(receipt.Metadata) {
-+			t.Fatalf("receipt metadata carries an error for a context the user deselected: %#v", receipt.Metadata)
-+		}
-+		if _, ok := receipt.Metadata["broken"]; ok {
-+			t.Fatalf("receipt metadata describes the deselected context: %#v", receipt.Metadata)
-+		}
-+	})
-+}
-+
-+func TestRetainSelectedContextMetadata(t *testing.T) {
-+	picked := &models.K8sContext{ID: "id-picked", Name: "picked"}
-+	dropped := &models.K8sContext{ID: "id-dropped", Name: "dropped"}
-+	failing := map[string]interface{}{"error": errors.New("unreachable")}
-+	newMetadata := func() map[string]interface{} {
-+		return map[string]interface{}{"picked": failing, "dropped": failing, "skipped": failing}
-+	}
-+
-+	t.Run("a selection keeps only the selected contexts", func(t *testing.T) {
-+		metadata := newMetadata()
-+		retainSelectedContextMetadata(metadata, []*models.K8sContext{picked, dropped}, map[string]struct{}{"id-picked": {}})
-+		if len(metadata) != 1 || metadata["picked"] == nil {
-+			t.Fatalf("metadata = %#v, want only the selected context's entry", metadata)
-+		}
-+	})
-+
-+	t.Run("no selection removes nothing, so skipped and failed contexts still show", func(t *testing.T) {
-+		metadata := newMetadata()
-+		retainSelectedContextMetadata(metadata, []*models.K8sContext{picked, dropped}, nil)
-+		if len(metadata) != 3 || !k8sEventMetadataHasError(metadata) {
-+			t.Fatalf("metadata = %#v, want all three entries kept", metadata)
-+		}
-+	})
-+}
+ 	handler, err := GenerateClientSetAction(&newCtx, eventBuilder, log)
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #24235** (2026-11-24): fix(server): record kubeconfig discovery errors only for selected contexts (@leecalcote)
-- **PR #24233** (2026-11-24): fix(server): reject exec, auth-provider and file-path Kubernetes credentials (@leecalcote)
-- **PR #24231** (closed): fix(ui): guard SearchBar against missing setModelsFilters and undefined window (@madhavzanwar)
-- **PR #24230** (2026-11-24): fix(server): reject file-path credentials in uploaded kubeconfigs (@leecalcote)
-- **PR #24222** (2026-11-24): [CI] Honor docs, website, and CI exemptions in the no-mistakes gate (@yi-nuo426)
-- **PR #24215** (2026-11-24): test(mesheryctl): add unit tests for adapter validate (@dhruvdumra)
+- **PR #24286** (2026-11-24): [Docs] Fix DCO sign-off links to removed CONTRIBUTING.md sections (@jashwanth176)
+- **PR #24280** (2026-11-24): [mesheryctl] Guard Kubernetes version parsing against slice bounds panic and nil dereference (@mystic-fae)
+- **PR #24278** (2026-11-24): [server] Fix stack-copy value drop of KubernetesServerID in DiscoverAction and stale FSM context on kubeconfig re-import (@nishant-devv)
+- **PR #24275** (2026-11-24): docs: add OCI registry push and pull examples (@shreyaagrawal788-dotcom)
+- **PR #24272** (2026-11-24): [Server] Bound concurrent visitor execution in parallel process planner (@Sarthak-Pandey)
+- **PR #24271** (2026-11-24): [mesheryctl] Enforce exact argument validation in system start (@err0rgod)
 
 ---
 
@@ -1671,13 +1565,13 @@ fix(server): record kubeconfig discovery errors only for selected contexts
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. server): record import receipt errors only for the selected contexts
+## X. server): handle context refresh errors and harden DiscoverAction field sync
 
 **RULE**:
 When implementing operations in `server/handlers/k8sconfig_handler.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meshery/meshery. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `323f07f0`: server): record import receipt errors only for the selected contexts. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `319818a6`: server): handle context refresh errors and harden DiscoverAction field sync. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/handlers/k8sconfig_handler.go`.
@@ -1685,31 +1579,29 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	// Discovery recorded a per-context entry (with an "error" for any context
-	// that failed) for every context in the file, including the ones the user
-	// deselected and the ones Meshery skipped. The receipt below describes only
-	// what this import acted on, so drop the entries of contexts outside an
-	// explicit selection; otherwise a broken context the user chose not to import would
-	// raise the receipt to Error while the wizard reports success (issue #24220).
-	retainSelectedContextMetadata(eventMetadata, contexts, selectedContexts)
-
-			// The receipt is keyed by the name the connection is saved under;
-			// drop the discovery entry that is keyed by the old name.
-			delete(eventMetadata, ctx.Name)
-// retainSelectedContextMetadata removes from eventMetadata, the per-context
-// discovery metadata keyed by context name, the entries of contexts the user
-// left out of an explicit selection: discovered contexts outside it, and
-// contexts discovery skipped (never importable, so never selected). With no
-// selection every context is imported, so nothing is removed and a context that
-// failed or was skipped during discovery still shows in the receipt.
-func retainSelectedContextMetad
+			var refreshErr error
+							refreshErr = aerr
+							refreshErr = rerr
+			//
+			// If refreshing the stored context failed (e.g. invalid rotation credentials),
+			// capture the error on the context metadata and skip the event so we do not
+			// probe or report success against the stale credentials.
+			if refreshErr != nil {
+				ctx.ImportError = fmt.Sprintf("Failed to refresh Kubernetes context \"%s\": %v", ctx.Name, refreshErr)
+				metadata["error"] = refreshErr
+				if status == connections.DISCOVERED && len(saveK8sContextResponse.RegisteredContexts) > 0 {
+					saveK8sContextResponse.RegisteredContexts[len(saveK8sContextResponse.RegisteredContexts)-1].ImportError = ctx.ImportError
+				} else if status == connections.CONNECTED && len(saveK8sContextResponse.ConnectedContexts) > 0 {
+					saveK8sContextResponse.ConnectedContexts[len(saveK8sContextResponse.ConnectedContexts)-1].ImportError = ctx.ImportError
+				}
+			} else if mhelpers.HasMachineContext(inst) {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+			if mhelpers.HasMachineContext(inst) {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `323f07f0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `319818a6` are properly handled with clean fallback behavior.

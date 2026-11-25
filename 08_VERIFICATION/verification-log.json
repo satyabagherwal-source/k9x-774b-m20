@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261123-NBCJ",
-    "timestamp": "2026-11-23T15:12:46.387Z",
-    "repository": "projectdiscovery/nuclei",
-    "learningId": "learn-github-projectdiscovery-nuclei",
-    "contentHash": "dc9e179106d6cf9656b53d06ea7ab87f7d6c76050bbbc225050a3e53af4c2fc9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-XL6X",
-    "timestamp": "2026-11-23T15:20:45.705Z",
-    "repository": "nomic-ai/nomic-embed-text-v1.5",
-    "learningId": "learn-huggingface-nomic-ai-nomic-embed-text-v1-5",
-    "contentHash": "ac9cd589f5000be6a131ad49c90cbb0dd119c47310853ab7b5a0a11f3061edf5",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261123-80RH",
     "timestamp": "2026-11-23T15:28:52.445Z",
     "repository": "akhaliq/MiniMax-H3-Image-Character-Swap",
@@ -7492,6 +7462,36 @@
     "contentHash": "dd5fc6ff2143012d2f63bd10a341bce19512e7e9f1847c12838c0a16b2beddaf",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-CLL8",
+    "timestamp": "2026-11-25T01:35:58.028Z",
+    "repository": "codewhale-hq/Codewhale",
+    "learningId": "learn-github-codewhale-hq-codewhale",
+    "contentHash": "6557dbe6d31decd6ad8b1c24133b9b5c9fd0104401cadf824fc0741ac4decb35",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-CS8A",
+    "timestamp": "2026-11-25T01:36:06.634Z",
+    "repository": "meshery/meshery",
+    "learningId": "learn-github-meshery-meshery",
+    "contentHash": "ab3671ed76678412d743aceeb06a459c93d56812b948a4e5913e9711b35d302f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

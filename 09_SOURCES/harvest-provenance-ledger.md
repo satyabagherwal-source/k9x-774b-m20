@@ -12920,3 +12920,5 @@ Every entry in this ledger must capture:
 | `learn-github-nativescript-nativescript` | `https://github.com/NativeScript/NativeScript` | `e4c26444` | Multi-dimensional audit evidence | 2026-11-25T01:26:59.619Z |
 | `learn-github-crossplane-crossplane` | `https://github.com/crossplane/crossplane` | `facf2896` | Multi-dimensional audit evidence | 2026-11-25T01:27:00.529Z |
 | `learn-dom-d-58839c8d` | `project://crossplane-crossplane` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crossplane-crossplane-learnings.md` | 2026-11-25T01:27:35.503Z |
+| `learn-github-codewhale-hq-codewhale` | `https://github.com/codewhale-hq/Codewhale` | `b4f71726` | Multi-dimensional audit evidence | 2026-11-25T01:35:58.033Z |
+| `learn-github-meshery-meshery` | `https://github.com/meshery/meshery` | `9bed2e12` | Multi-dimensional audit evidence | 2026-11-25T01:36:06.639Z |

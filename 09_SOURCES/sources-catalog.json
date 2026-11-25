@@ -5003,10 +5003,10 @@
     "repository": "meshery/meshery",
     "platform": "github",
     "sourceUrl": "https://github.com/meshery/meshery",
-    "sourceVersion": "2d7c3d0b",
+    "sourceVersion": "9bed2e12",
     "license": "Apache-2.0",
-    "contentHash": "4af012fe61212d8cc23b1438b92aad0514beaa8a4cd4910ebd305f8cef940111",
-    "lastHarvestedAt": "2026-11-24T06:55:13.391Z",
+    "contentHash": "ab3671ed76678412d743aceeb06a459c93d56812b948a4e5913e9711b35d302f",
+    "lastHarvestedAt": "2026-11-25T01:36:06.639Z",
     "learningId": "learn-github-meshery-meshery"
   },
   "arangodb-arangodb": {
@@ -7803,10 +7803,10 @@
     "repository": "codewhale-hq/Codewhale",
     "platform": "github",
     "sourceUrl": "https://github.com/codewhale-hq/Codewhale",
-    "sourceVersion": "48669ad1",
+    "sourceVersion": "b4f71726",
     "license": "MIT",
-    "contentHash": "ae502dd99e944324ef5a5a68c391b9828e510e31a138918a481ed4133d04a163",
-    "lastHarvestedAt": "2026-11-23T22:42:49.893Z",
+    "contentHash": "6557dbe6d31decd6ad8b1c24133b9b5c9fd0104401cadf824fc0741ac4decb35",
+    "lastHarvestedAt": "2026-11-25T01:35:58.033Z",
     "learningId": "learn-github-codewhale-hq-codewhale"
   },
   "meshtastic-meshtastic-android": {

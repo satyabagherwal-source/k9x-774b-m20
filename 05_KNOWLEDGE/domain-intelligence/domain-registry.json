@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T01:27:37.207Z",
+  "last_updated": "2026-11-25T01:36:13.865Z",
   "total_records": 2615,
   "domains": {
     "A": {
@@ -8385,8 +8385,8 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-learnings-technical-construction-intelligence-zvec-ai-zvec-gre.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "35037beaf31c93482a11bdb1f0ffdec73d154c4941a8537af7cec9d013651ae6",
-      "created_at": "2026-11-25T01:18:35.205Z"
+      "content_hash": "d4819eb13159f0ec3f379f63f5cba7bab46213f909f7507679a9bdd3b6f01ed5",
+      "created_at": "2026-11-25T01:36:13.865Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -16454,10 +16454,10 @@
       "record_id": "domain_intelligence-architecture-intelligence-codewhale-hq-codewhale-core-invariants",
       "domain_letter": "G",
       "title": "Architecture Intelligence: codewhale-hq/Codewhale Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-hmbown-codewhale-architecture-intelligence-codewhale-hq-codewhale-core-invariant.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-codewhale-hq-codewhale-architecture-intelligence-codewhale-hq-codewhale-core-inv.md",
       "repository": "codewhale-hq/Codewhale",
-      "content_hash": "b534d49e96dab207ad6bbf2b990e9bf1c0d871b839e208ce16a7c9dc7d999cff",
-      "created_at": "2026-11-24T04:45:10.925Z"
+      "content_hash": "c24b0e89b502e219dfbc305848692235a80b9694c27c4cfb8988ae1dc124c508",
+      "created_at": "2026-11-25T01:35:58.536Z"
     },
     "domain_intelligence-architecture-intelligence-codewhale-hq-codewhale-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-codewhale-hq-codewhale-learnings-core-invariants",
@@ -16465,8 +16465,8 @@
       "title": "Architecture Intelligence: codewhale-hq-codewhale-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-codewhale-hq-codewhale-learnings-architecture-intelligence-codewhale-hq-codewhal.md",
       "repository": "codewhale-hq-codewhale-learnings",
-      "content_hash": "60a37229f2eacc4502d89859b04153d08470c610d8a949d568567e0a5e4647cf",
-      "created_at": "2026-11-23T22:43:05.893Z"
+      "content_hash": "f3387328c1394cb1cb5a2c209e9a66c5e991cbcc71c11c0308b7bb876c7669f2",
+      "created_at": "2026-11-25T01:36:11.462Z"
     },
     "domain_intelligence-research-knowledge-intelligence-bingsu-adetailer-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-bingsu-adetailer-core-invariants",
@@ -27557,8 +27557,8 @@
       "title": "Architecture Intelligence: meshery/meshery Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-meshery-meshery-architecture-intelligence-meshery-meshery-core-invariants.md",
       "repository": "meshery/meshery",
-      "content_hash": "ab9fbf9b13ab6365552cc60f14fb9f91692343613019393e706e45d137bda3f3",
-      "created_at": "2026-11-21T04:39:09.193Z"
+      "content_hash": "b95af3458e83c621d232cfbe1e3d5ec2f9f1c2bffee4887e345cd6e938c195eb",
+      "created_at": "2026-11-25T01:36:07.074Z"
     },
     "domain_intelligence-quality-verification-intelligence-yugabyte-yugabyte-db-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-yugabyte-yugabyte-db-core-invariants",
@@ -27584,8 +27584,8 @@
       "title": "Architecture Intelligence: meshery-meshery-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-meshery-meshery-learnings-architecture-intelligence-meshery-meshery-learnings-co.md",
       "repository": "meshery-meshery-learnings",
-      "content_hash": "82b287d0135696c68ec93907073c16a1d1008fa67d176d296e38149af7432b23",
-      "created_at": "2026-11-21T04:39:21.325Z"
+      "content_hash": "635bb679dd740697f0a9fb94b57e8d78f4abda73403321632928e67c73bb0765",
+      "created_at": "2026-11-25T01:36:12.870Z"
     },
     "domain_intelligence-human-need-intelligence-zulip-zulip-core-invariants": {
       "record_id": "domain_intelligence-human-need-intelligence-zulip-zulip-core-invariants",

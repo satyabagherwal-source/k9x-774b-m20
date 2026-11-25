@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-25T01:27:03.567Z",
-    "lastVerified": "2026-11-25T01:27:03.567Z",
+    "lastChecked": "2026-11-25T01:36:09.942Z",
+    "lastVerified": "2026-11-25T01:36:09.942Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -186,8 +186,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-25T01:01:02.106Z",
-    "lastVerified": "2026-11-25T01:01:02.106Z",
+    "lastChecked": "2026-11-25T01:36:08.558Z",
+    "lastVerified": "2026-11-25T01:36:08.558Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -726,8 +726,8 @@
     "officialUrl": "https://github.com/DefGuard/defguard",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-24T21:01:25.508Z",
-    "lastVerified": "2026-11-24T21:01:25.508Z",
+    "lastChecked": "2026-11-25T01:36:03.457Z",
+    "lastVerified": "2026-11-25T01:36:03.457Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-defguard-defguard",
@@ -3176,9 +3176,9 @@
   "milvus-io-bootcamp": {
     "name": "bootcamp",
     "officialUrl": "https://github.com/milvus-io/bootcamp",
-    "lastChecked": "2026-11-24T05:42:35.837Z",
+    "lastChecked": "2026-11-25T01:36:05.968Z",
     "revisionIdentifier": "b2be8cc8",
-    "lastVerified": "2026-11-24T05:42:35.837Z"
+    "lastVerified": "2026-11-25T01:36:05.968Z"
   },
   "clementtsang-bottom": {
     "name": "ClementTsang/bottom",
@@ -5460,14 +5460,14 @@
     "officialUrl": "https://github.com/meshery/meshery",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-24T06:55:12.152Z",
-    "lastVerified": "2026-11-24T06:55:12.152Z",
+    "lastChecked": "2026-11-25T01:36:05.475Z",
+    "lastVerified": "2026-11-25T01:36:05.475Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-meshery-meshery",
-    "contentHash": "4af012fe61212d8cc23b1438b92aad0514beaa8a4cd4910ebd305f8cef940111",
+    "contentHash": "ab3671ed76678412d743aceeb06a459c93d56812b948a4e5913e9711b35d302f",
     "promotedRulesCount": 1,
-    "recentFixesCount": 16,
+    "recentFixesCount": 22,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -7987,9 +7987,9 @@
   "linkwarden-linkwarden": {
     "name": "linkwarden",
     "officialUrl": "https://github.com/linkwarden/linkwarden",
-    "lastChecked": "2026-11-22T12:56:49.815Z",
+    "lastChecked": "2026-11-25T01:35:58.584Z",
     "revisionIdentifier": "24adcc14",
-    "lastVerified": "2026-11-22T12:56:49.815Z"
+    "lastVerified": "2026-11-25T01:35:58.584Z"
   },
   "str4d-rage": {
     "name": "str4d/rage",
@@ -8420,14 +8420,14 @@
     "officialUrl": "https://github.com/codewhale-hq/Codewhale",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-23T22:42:48.464Z",
-    "lastVerified": "2026-11-23T22:42:48.464Z",
+    "lastChecked": "2026-11-25T01:35:57.359Z",
+    "lastVerified": "2026-11-25T01:35:57.359Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-codewhale-hq-codewhale",
-    "contentHash": "ae502dd99e944324ef5a5a68c391b9828e510e31a138918a481ed4133d04a163",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 17,
+    "contentHash": "6557dbe6d31decd6ad8b1c24133b9b5c9fd0104401cadf824fc0741ac4decb35",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 21,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -12080,9 +12080,9 @@
   "jestjs-jest": {
     "name": "jest",
     "officialUrl": "https://github.com/jestjs/jest",
-    "lastChecked": "2026-11-21T02:00:28.587Z",
+    "lastChecked": "2026-11-25T01:35:55.979Z",
     "revisionIdentifier": "aa88f7cf",
-    "lastVerified": "2026-11-21T02:00:28.587Z"
+    "lastVerified": "2026-11-25T01:35:55.979Z"
   },
   "tauri-apps-tauri": {
     "name": "tauri-apps/tauri",

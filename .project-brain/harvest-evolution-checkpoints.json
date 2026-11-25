@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T01:27:37.614Z",
+  "last_updated": "2026-11-25T01:36:14.355Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-25T01:27:36.381Z",
@@ -8,7 +8,7 @@
       "staged_for_review": 1
     },
     "zvec-ai-zvec-grep-learnings.md": {
-      "processed_at": "2026-11-25T01:18:34.325Z",
+      "processed_at": "2026-11-25T01:36:13.229Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -48,7 +48,7 @@
       "staged_for_review": 1
     },
     "codewhale-hq-codewhale-learnings.md": {
-      "processed_at": "2026-11-23T22:43:05.072Z",
+      "processed_at": "2026-11-25T01:36:10.092Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1058,7 +1058,7 @@
       "staged_for_review": 0
     },
     "meshery-meshery-learnings.md": {
-      "processed_at": "2026-11-24T06:55:22.286Z",
+      "processed_at": "2026-11-25T01:36:11.995Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3883,7 +3883,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 4005,
+  "total_dossiers_evaluated": 4008,
   "total_canonical_promoted": 525,
-  "total_staged_for_review": 3060
+  "total_staged_for_review": 3063
 }

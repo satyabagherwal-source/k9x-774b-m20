@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-25T01:18:33.079Z",
+  "updated_at": "2026-11-25T01:36:12.439Z",
   "stats": {
-    "total_discovered": 9084,
-    "approved_pending_harvest": 8605,
+    "total_discovered": 9103,
+    "approved_pending_harvest": 8624,
     "harvested_count": 0,
     "rejected_count": 479,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 8594,
-      "OFFICIAL_DOCUMENTATION": 273,
+      "COMMUNITY_AND_EXPERT": 8612,
+      "OFFICIAL_DOCUMENTATION": 274,
       "STANDARDS_AND_SPECIFICATIONS": 149,
       "ENGINEERING_BLOGS": 7,
       "SECURITY_ADVISORIES": 50,
@@ -196522,6 +196522,424 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/encoredev-encore-learnings.md",
         "fileName": "encoredev-encore-learnings.md"
+      }
+    },
+    "SRC-4538B5E2E0BD": {
+      "id": "SRC-4538B5E2E0BD",
+      "url": "https://app.devin.ai/review/codewhale-hq/codewhale/pull/7557",
+      "title": "https://app.devin.ai/review/codewhale-hq/codewhale/pull/7557",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T01:36:10.156Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
+        "fileName": "codewhale-hq-codewhale-learnings.md"
+      }
+    },
+    "SRC-C14CF8ACB4AB": {
+      "id": "SRC-C14CF8ACB4AB",
+      "url": "https://chatgpt.com/codex/cloud/settings/usage",
+      "title": "https://chatgpt.com/codex/cloud/settings/usage",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T01:36:10.307Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
+        "fileName": "codewhale-hq-codewhale-learnings.md"
+      }
+    },
+    "SRC-E175A9169657": {
+      "id": "SRC-E175A9169657",
+      "url": "https://chatgpt.com/settings/code-review",
+      "title": "https://chatgpt.com/settings/code-review",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T01:36:10.366Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
+        "fileName": "codewhale-hq-codewhale-learnings.md"
+      }
+    },
+    "SRC-1EEE683EB2D9": {
+      "id": "SRC-1EEE683EB2D9",
+      "url": "https://app.devin.ai/review/codewhale-hq/codewhale/pull/7555",
+      "title": "https://app.devin.ai/review/codewhale-hq/codewhale/pull/7555",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T01:36:10.424Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
+        "fileName": "codewhale-hq-codewhale-learnings.md"
+      }
+    },
+    "SRC-5C50FB3BE7AA": {
+      "id": "SRC-5C50FB3BE7AA",
+      "url": "https://github.com/axobase001",
+      "title": "https://github.com/axobase001",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T01:36:10.512Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
+        "fileName": "codewhale-hq-codewhale-learnings.md"
+      }
+    },
+    "SRC-91C863711FDC": {
+      "id": "SRC-91C863711FDC",
+      "url": "https://github.com/jperla",
+      "title": "https://github.com/jperla",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T01:36:10.574Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
+        "fileName": "codewhale-hq-codewhale-learnings.md"
+      }
+    },
+    "SRC-D2EDE18AA3DC": {
+      "id": "SRC-D2EDE18AA3DC",
+      "url": "https://github.com/Goldloli",
+      "title": "https://github.com/Goldloli",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T01:36:10.636Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
+        "fileName": "codewhale-hq-codewhale-learnings.md"
+      }
+    },
+    "SRC-17D5B526E784": {
+      "id": "SRC-17D5B526E784",
+      "url": "https://github.com/Serendo",
+      "title": "https://github.com/Serendo",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T01:36:10.729Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
+        "fileName": "codewhale-hq-codewhale-learnings.md"
+      }
+    },
+    "SRC-D4C5F30B1FB9": {
+      "id": "SRC-D4C5F30B1FB9",
+      "url": "https://github.com/WTFitsmemyself",
+      "title": "https://github.com/WTFitsmemyself",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T01:36:10.785Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
+        "fileName": "codewhale-hq-codewhale-learnings.md"
+      }
+    },
+    "SRC-44637EF8ECF7": {
+      "id": "SRC-44637EF8ECF7",
+      "url": "https://telemetry.codewhale.net/v1/telemetry",
+      "title": "https://telemetry.codewhale.net/v1/telemetry",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T01:36:10.840Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
+        "fileName": "codewhale-hq-codewhale-learnings.md"
+      }
+    },
+    "SRC-43744BB735D4": {
+      "id": "SRC-43744BB735D4",
+      "url": "https://github.com/gaord",
+      "title": "https://github.com/gaord",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T01:36:10.896Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
+        "fileName": "codewhale-hq-codewhale-learnings.md"
+      }
+    },
+    "SRC-6A477DFEDE2B": {
+      "id": "SRC-6A477DFEDE2B",
+      "url": "https://github.com/Owaid0723666",
+      "title": "https://github.com/Owaid0723666",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T01:36:10.952Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
+        "fileName": "codewhale-hq-codewhale-learnings.md"
+      }
+    },
+    "SRC-A89E8FAF22A3": {
+      "id": "SRC-A89E8FAF22A3",
+      "url": "https://github.com/BeckleyTenriajeng",
+      "title": "https://github.com/BeckleyTenriajeng",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T01:36:11.010Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
+        "fileName": "codewhale-hq-codewhale-learnings.md"
+      }
+    },
+    "SRC-73AB4EFCEA01": {
+      "id": "SRC-73AB4EFCEA01",
+      "url": "https://docs.meshery.io/project/contributing/contributing-docs",
+      "title": "https://docs.meshery.io/project/contributing/contributing-docs",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T01:36:12.112Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/meshery-meshery-learnings.md",
+        "fileName": "meshery-meshery-learnings.md"
+      }
+    },
+    "SRC-BEBCFCCEE7E5": {
+      "id": "SRC-BEBCFCCEE7E5",
+      "url": "https://github.com/meshery/meshery/tree/master/docs",
+      "title": "https://github.com/meshery/meshery/tree/master/docs",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T01:36:12.200Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/meshery-meshery-learnings.md",
+        "fileName": "meshery-meshery-learnings.md"
+      }
+    },
+    "SRC-E63CE083E5E5": {
+      "id": "SRC-E63CE083E5E5",
+      "url": "https://k8s.example.com:6443/",
+      "title": "https://k8s.example.com:6443/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T01:36:12.257Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/meshery-meshery-learnings.md",
+        "fileName": "meshery-meshery-learnings.md"
+      }
+    },
+    "SRC-4DEC629D516A": {
+      "id": "SRC-4DEC629D516A",
+      "url": "https://k8s-new.example.com:6443/",
+      "title": "https://k8s-new.example.com:6443/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T01:36:12.319Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/meshery-meshery-learnings.md",
+        "fileName": "meshery-meshery-learnings.md"
+      }
+    },
+    "SRC-A637A180FD25": {
+      "id": "SRC-A637A180FD25",
+      "url": "https://127.0.0.1:6443/",
+      "title": "https://127.0.0.1:6443/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T01:36:12.380Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/meshery-meshery-learnings.md",
+        "fileName": "meshery-meshery-learnings.md"
+      }
+    },
+    "SRC-A24BBE41AAC1": {
+      "id": "SRC-A24BBE41AAC1",
+      "url": "https://old-server:6443/",
+      "title": "https://old-server:6443/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T01:36:12.439Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/meshery-meshery-learnings.md",
+        "fileName": "meshery-meshery-learnings.md"
       }
     }
   }
