@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261124-QMS3",
-    "timestamp": "2026-11-24T00:07:13.875Z",
-    "repository": "OpenMOSS-Team/MOSS-Image-Base",
-    "learningId": "learn-huggingface-openmoss-team-moss-image-base",
-    "contentHash": "bb56b63e660fb722ed65f25f71cca2f1b099f086b4d2c8f4d6176bbb5ef5e1c0",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-QNUS",
-    "timestamp": "2026-11-24T00:07:15.268Z",
-    "repository": "astral-sh/uv",
-    "learningId": "learn-github-astral-sh-uv",
-    "contentHash": "402548bff7636dfccbcbcaef3cf6cc80a7adb2cb43966656f9e5e343dce668a1",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-QVHD",
-    "timestamp": "2026-11-24T00:07:25.153Z",
-    "repository": "aleo-labs-protocol/snarkOS",
-    "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "c9da2ae1faa0e3e43438af0c4438143027d9cc533b418f5a14e331dd33d9506e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-ABZ7",
-    "timestamp": "2026-11-24T00:22:32.995Z",
-    "repository": "microfeed/microfeed",
-    "learningId": "learn-github-microfeed-microfeed",
-    "contentHash": "e391259da168f4e2b54c5ba2eed331a7f39d5a2732831495992c967ebd65fd1b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261124-ACB2",
     "timestamp": "2026-11-24T00:22:33.422Z",
     "repository": "OpenMOSS-Team/MOSS-Image-SFT",
@@ -7490,6 +7430,66 @@
     "repository": "genkit-ai/genkit",
     "learningId": "learn-github-genkit-ai-genkit",
     "contentHash": "38cac47798884e565d370340d2105bd180c3cf694eabdac7123e881a3cd1e2cd",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-C0TN",
+    "timestamp": "2026-11-25T12:19:22.283Z",
+    "repository": "mistralai/Mistral-Large-4-1T-A52B",
+    "learningId": "learn-huggingface-mistralai-mistral-large-4-1t-a52b",
+    "contentHash": "9be4363fe8344f81f45fc4efd794c262d7ab340c522cf51c21e1df61c108a93c",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-C9VJ",
+    "timestamp": "2026-11-25T12:19:34.015Z",
+    "repository": "RustCrypto/hashes",
+    "learningId": "learn-github-rustcrypto-hashes",
+    "contentHash": "9ff33201123f3856be87432c3c0deb60c34449d89a28118b3f338474464b7216",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-CDMU",
+    "timestamp": "2026-11-25T12:19:38.886Z",
+    "repository": "NucleoidAI/Nucleoid",
+    "learningId": "learn-github-nucleoidai-nucleoid",
+    "contentHash": "71c42d3a6e49625346697a76dbdab91bb66541ac7b0acc1767e2a31cb2b2f92a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-CE9E",
+    "timestamp": "2026-11-25T12:19:39.698Z",
+    "repository": "RediSearch/RediSearch",
+    "learningId": "learn-github-redisearch-redisearch",
+    "contentHash": "3c06bdd8dfb893713e667d5f3e01caab50a7f6be6f37cef92af541a6f6a55884",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

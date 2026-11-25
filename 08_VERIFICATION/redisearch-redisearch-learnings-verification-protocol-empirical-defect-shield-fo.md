@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-23T20:48:02.047Z",
+  "timestamp": "2026-11-25T12:20:24.710Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-redisearch-redisearch-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [redisearch-redisearch-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-23T20:48:02.047Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T12:20:24.710Z`  
 > **Learning ID**: `LEARN-EVO-redisearch-redisearch-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/redisearch-redisearch-learnings.md`  
 > **Source**: github ([https://github.com/RediSearch/RediSearch](https://github.com/RediSearch/RediSearch))  
-> **Source Version**: `bcd7b33c`  
+> **Source Version**: `7a24743f`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-23T20:47:54.936Z  
+> **Timestamp**: 2026-11-25T12:19:38.120Z  
 > **Learning ID**: `learn-github-redisearch-redisearch`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/redisearch-redisearch-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/RediSearch/RediSearch](https://github.com/RediSearch/RediSearch))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T20:47:54.928Z  
+> **Harvest Timestamp**: 2026-11-25T12:19:38.112Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: A query and indexing engine for Redis, providing secondary indexing, full-text search, vector similarity search and aggregations.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md, Dockerfile
-- **Stars / Engagement**: 6244 stars
+- **Stars / Engagement**: 6245 stars
 
 ---
 
@@ -964,12 +964,26 @@ async function missingFixes(vcs: Vcs, state: State, stage: Stage, candidate: str
  */
 
 /** The {@link Vcs} on a git checkout. */
+import { existsSync } from 'node:fs';
+import { join } from 'node:path';
 import { execa } from 'execa';
 import { ENV } from './checks.ts';
 import type { Vcs } from './ports.ts';
 
 export async function git(cwd: string, args: string[], input = ''): Promise<string> {
   return (await execa('git', args, { cwd, env: ENV, input })).stdout;
+}
+
+/**
+ * Tracks `branch@remote` when `root` is also a jj checkout. jj imports a branch pushed by git as
+ * an untracked remote bookmark, and jj's default `immutable_heads()` makes those and all their
+ * ancestors immutable, so the worker could no longer amend or rebase its own stages.
+ */
+export async function trackInJj(root: string, remote: string, branch: string): Promise<void> {
+  if (!existsSync(join(root, '.jj'))) return;
+  const jj = (args: string[]) => execa('jj', args, { cwd: root, env: ENV });
+  await jj(['git', 'import']);
+  await jj(['bookmark', 'track', `${branch}@${remote}`]);
 }
 
 export function gitVcs(root: string): Vcs {
@@ -1024,9 +1038,10 @@ export function gitVcs(root: string): Vcs {
 
 /** The {@link Forge} on GitHub: stage PRs pushed from the checkout, their review threads and CI. */
 import { Octokit } from '@octokit/rest';
+import { execa } from 'execa';
 import { hash, type NewFinding, type FindingSource } from './job.ts';
 import type { Forge, Stage } from './ports.ts';
-import { git } from './git.ts';
+import { git, trackInJj } from './git.ts';
 
 // STALE is a check GitHub gave up on: it never passed.
 const FAILED = [
@@ -1079,14 +1094,39 @@ function trimComment(body: string, max = 1500): string {
   return text.length > max ? `${text.slice(0, max)}… (full text at the link)` : text;
 }
 
-/** Amp configures git's credential helper in Orbs, so this needs nothing beyond git itself. */
-async function githubToken(cwd: string): Promise<string> {
+/** Selects credentials with repository access before any write can be attempted. */
+async function githubClient(cwd: string, owner: string, repo: string): Promise<Octokit> {
   const env = process.env.GH_TOKEN ?? process.env.GITHUB_TOKEN;
-  if (env) return env;
-  const fill = await git(cwd, ['credential', 'fill'], 'protocol=https\nhost=github.com\n\n');
-  const password = fill.match(/^password=(.*)$/m)?.[1];
-  if (!password) throw new Error('git has no credentials for github.com');
-  return password;
+  const fill = env
+    ? ''
+    : await git(cwd, ['credential', 'fill'], 'protocol=https\nhost=github.com\n\n').catch(() => '');
+  const token = env || fill.match(/^password=(.*)$/m)?.[1];
+  let denied: unknown;
+  if (token) {
+    const client = new Octokit({ auth: token });
+    try {
+      await client.rest.repos.get({ owner, repo });
+      return client;
+    } catch (error) {
+      if (![401, 403, 404].includes((error as { status?: number }).status ?? 0)) throw error;
+      denied = error;
+    }
+  }
+  const auth = await execa('gh', ['auth', 'token', '--hostname', 'github.com'], {
+    cwd,
+    // Environment tokens override gh's stored login, which may have broader repository access.
+    env: { GH_TOKEN: undefined, GITHUB_TOKEN: undefined, GH_PROMPT_DISABLED: '1' },
+  })
+    .then(({ stdout }) => stdout.trim())
+    .catch(() => '');
+  if (!auth)
+    throw (
+      denied ??
+      new Error('No GitHub credentials available; run gh auth login or connect the GitHub App.')
+    );
+  const client = new Octokit({ auth });
+  await client.rest.repos.get({ owner, repo });
+  return client;
 }
 
 /**
@@ -1211,7 +1251,7 @@ export function github(o: { root: string; repository: string; ci: CI }): Forge {
   const [owner, repo] = repository.split('/');
   // Made on first use, so inspecting a plan needs no credentials.
   let client: Promise<Octokit> | undefined;
-  const api = () => (client ??= githubToken(root).then((auth) => new Octokit({ auth })));
+  const api = () => (client ??= githubClient(root, owner, repo));
   const sh = (args: string[]) => git(root, args);
 
   return {
@@ -1238,23 +1278,7 @@ export function github(o: { root: string; repository: string; ci: CI }): Forge {
       const data = await query();
       // Only review threads are paged in full: they are where unresolved feedback lives.
       const threads = data.repository.pullRequest.reviewThreads;
-      for (let page = threads; page.pageInfo.hasNextPage; ) {
-        page = (await query(page.pageInfo.endCursor)).repository.pullRequest.reviewThreads;
-        threads.nodes.push(...page.nodes);
-      }
-      return readFeedback(ci, data, stage, number, posted, head);
-    },
-
-    /** An existing PR keeps its base: GitHub refuses to change it within a stack. */
-    async publish(o) {
-      const octokit = await api();
-      const fetched = o.existing
-        ? (await octokit.rest.pulls.get({ owner, repo, pull_number: o.existing.number })).data
-        : undefined;
-      // A merged or closed PR cannot carry a new candidate: a new one replaces it. A merged one
-      // still takes a new description for the candidate it merged, such as the retrospective.
-      const current =
-        fetched?.state === 'open' || (fetched?.merged && o.existing!.head === o.candidat
+      f
 ```
 
 ### Core Architecture Module: `.amp/plugins/rust-port/core/job.ts`
@@ -1872,164 +1896,634 @@ export interface Profile<X = {}> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bcd7b33c` (2026-11-23)
-**Commit Message**: [MOD-21404] CI: install LLVM 21 from EL8 AppStream and EL9 EPEL to keep LTO on Rocky/Alma (#12482)
+### Incident Patch 1: `7a24743f` (2026-11-25)
+**Commit Message**: [MOD-20693] Stop the query pipeline on memory pressure (#12378)
 
-Port of #12433.
+* Check query memory at build, before execution
 
-Co-authored-by: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+Carried from https://github.com/RediSearch/RediSearch/pull/12122
 
-**File**: `.github/workflows/task-get-config.yml` (modified, +4/-2)
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+
+* Stop the sorter and score normalizer on memory pressure
+
+Carried from https://github.com/RediSearch/RediSearch/pull/12123
+
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+
+* Stop the grouper on memory pressure
+
+Carried from https://github.com/RediSearch/RediSearch/pull/12124
+
+Conflicts with master resolved: master rewrote the GROUPBY key expansion
+(extractGroups recursion became invokeGroupReducers with a combination
+loop), so the per-row expansion checkpoint moved into that loop. A test
+addition conflicted with a neighbouring master test; both are kept.
+
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+
+* Stop the safe loader on memory pressure
+
+Carried from https://github.com/RediSearch/RediSearch/pull/12125
+
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+
+* Stop the WITHCOUNT depleter and APPLY/FILTER on memory pressure
+
+Carried from https://github.com/RediSearch/RediSearch/pull/12126
+
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EM
+
+**File**: `src/aggregate/aggregate_exec.c` (modified, +34/-3)
 ```diff
-@@ -202,16 +202,18 @@ jobs:
-                       'container': 'rockylinux:8',
-                       'setup_script': 'dnf update -y && dnf install -y git',
-                       'name': 'Rocky Linux 8 x86_64',
--                      'enable_lto': '0' # Shipped glibc (2.28) is too old for clang 21 tarball (requires 2.34).
-+                      'enable_lto': '1' # LLVM 21 comes from the EL8 AppStream (install_llvm.sh).
-                   },
-                   "aarch64": {
-                       'container': 'rockylinux:8',
-                       'setup_script': 'dnf update -y && dnf install -y git',
-                       'name': 'Rocky Linux 8 ARM64',
--                      'enable_lto': '0' # Shipped glibc (2.28) is too old for clang 21 tarball (requires 2.34).
-+                      'enable_lto': '1' # LLVM 21 comes from the EL8 AppStream (install_llvm.sh).
-                   }
-               },
-               "rockylinux:9": {
-+                  # LLVM 21 comes from EPEL (install_llvm.sh); the official tarball
-+                  # cannot run on EL9's libstdc++.
-                   "x86_64": {
-                       'container': 'rockylinux:9',
-                       'setup_script': 'dnf update -y && dnf install -y git',
-```
-
-**File**: `.install/install_llvm.sh` (modified, +99/-4)
-```diff
-@@ -178,6 +178,25 @@ llvm_major() {
-         -e 's/^LLD[[:space:]]+([0-9]+).*/\1/p'
+@@ -24,6 +24,7 @@
+ #include "search_ctx.h"
+ #include "aggregate.h"
+ #include "aggregate_exec_common.h"
++#include "query_memory.h"
+ #include "cursor.h"
+ #include "concurrent_ctx.h"
+ #include "rmutil/util.h"
+@@ -435,8 +436,19 @@ static inline void debugPauseStoreResults(AREQ *req, bool before) {
+ }
+ #endif
+ static int applyOomStop(AREQ *req, int rc) {
+-  return ApplyOomStop(&req->base.limits, req->base.reqConfig.oomPolicy,
+-                      AREQ_QueryProcessingCtx(req)->err, rc);
++  QueryError *err = AREQ_QueryProcessingCtx(req)->err;
++  // A buffering stage that kept its rows past an OOM stop may hold enough of them to fill the
++  // reply's limit or a pager's, so the reply ends without reading the stop's RS_RESULT_STOPPED.
++  // When no later cursor read reports the stop, the reply is cut.
++  const bool lastReply =
++      rc == RS_RESULT_EOF || (rc == RS_RESULT_OK && !(AREQ_RequestFlags(req) & QEXEC_F_IS_CURSOR));
++  // A blocked-client timeout that fired in the meantime owns the reply, as in ApplyOomStop.
++  if (lastReply && req->base.reqConfig.oomPolicy != OomPolicy_Fail &&
++      AREQ_QueryProcessingCtx(req)->oomCut &&
++      !QueryRequestLimits_IsBlockedClientTimedOut(&req->base.limits)) {
++    QueryError_SetQueryOOMWarning(err);
++  }
++  return ApplyOomStop(&req->base.limits, req->base.reqConfig.oomPolicy, err, rc);
  }
  
-+# The official LLVM tarballs are built on Ubuntu 22.04 and need GLIBCXX_3.4.30
-+# from libstdc++. EL9 (GCC 11) stops at 3.4.29, so a tarball clang cannot even
-+# start there: "version `GLIBCXX_3.4.30' not found (required by clang-21)".
-+TARBALL_MIN_GLIBCXX="3.4.30"
-+tarball_runtime_ok() {
-+    local lib
-+    lib=$(ls /usr/lib64/libstdc++.so.6 /usr/lib/*-linux-gnu/libstdc++.so.6 2>/dev/null | head -1)
-+    [[ -n "$lib" ]] || return 0  # nothing to check against; let the tarball try
-+    grep -aq "GLIBCXX_${TARBALL_MIN_GLIBCXX}" "$lib"
-+}
-+
-+# Keep whatever clang the distro ships, for bindgen's libclang only: LTO needs
-+# clang-${LLVM_VER} and stays off (task-get-config sets enable_lto accordingly).
-+accept_native_libclang() {
-+    command -v clang &>/dev/null || return 1
-+    [[ -n "${GITHUB_ENV:-}" ]] && echo "LIBCLANG_PATH=/usr/lib64" >> "$GITHUB_ENV"
-+    export LIBCLANG_PATH=/usr/lib64
-+}
-+
- accept_native_llvm() {
-     local clang_cmd="$1"
-     local lld_cmd="$2"
-@@ -189,9 +208,41 @@ accept_native_llvm() {
-     actual=$(llvm_major "$clang_cmd")
-     [[ "$actual" == "$LLVM_VER" ]] || return 1
- 
--    # RHEL-family puts shared libs in /usr/lib64; expose for bindgen/clang-sys.
--    [[ -n "${GITHUB_ENV:-}" ]] && echo "LIBCLANG_PATH=/usr/lib64" >> "$GITHUB_ENV"
--    export LIBCLANG_PATH=/usr/lib64
-+    # RHEL-family puts shared libs in /usr/lib64, except for side-by-side LLVM
-+    # packages (EPEL's clang21) that use their own libdir; expose it for
-+    # bindgen/clang-sys.
-+    local libdir=/usr/lib64 cfg_libdir=""
-+    if command -v "llvm-config-${LLVM_VER}" &>/dev/null; then
-+        cfg_libdir=$("llvm-config-${LLVM_VER}" --libdir 2>/dev/null || true)
-+        if [[ -n "$cfg_libdir" ]] && compgen -G "${cfg_libdir}/libclang*.so*" >/dev/null; then
-+            libdir="$cfg_libdir"
-+        fi
-+    fi
-+    [[ -n "${GITHUB_ENV:-}" ]] && echo "LIBCLANG_PATH=${libdir}" >> "$GITHUB_ENV"
-+    export LIBCLANG_PATH="$libdir"
-+}
-+
-+# On EL8 LLVM ${LLVM_VER} and the newer default are versions of the same
-+# packages, so any later `dnf update` or `dnf install clang` (other modules'
-+# bootstrap scripts do both) silently moves them to the newer LLVM and breaks
-+# LTO. Lock the installed LLVM packages at their current versions.
-+lock_llvm_packages() {
-+    $MODE dnf install -y python3-dnf-plugin-versionlock >/dev/null 2>&1 || return 1
-+    local pkgs
-+    pkgs=$(rpm -qa --qf '%{NAME}-%{VERSION}-%{RELEASE}\n' 'clang*' 'llvm*' 'lld*' 'libomp*' 'compiler-rt*' 2>/dev/null)
-+    [[ -n "$pkgs" ]] || return 1
-+    # shellcheck disable=SC2086
-+    $MODE dnf versionlock add $pkgs >/dev/null 2>&1
-+}
-+
-+# EPEL carries LLVM ${LLVM_VER} side by side with the distro's newer default
-+# (EL9 only ships the newer one), under versioned package names.
-+install_epel_llvm() {
-+    $MODE dnf install -y epel-release dnf-plugins-core >/dev/null 2>&1 || return 1
-+    $MODE dnf config-manager --set-enabled crb >/dev/null 2>&1 \
-+        || $MODE dnf config-manager --set-enabled powertools >/dev/null 2>&1 || true
-+    $MODE dnf install -y --nobest "clang${LLVM_VER}" "clang${LLVM_VER}-devel" \
-+        "lld${LLVM_VER}" "llvm${LLVM_VER}" 2>/dev/null
+ static void startPipeline(AREQ *req, ResultProcessor *rp, SearchResult ***results, SearchResult *r, int *rc) {
+@@ -722,7 +734,8 @@ static bool shouldSetCursorDone(AREQ *req, int rc) {
+   if (rc == RS_RESULT_STOPPED) {
+     switch (req->base.limits.timeout.config.timeoutPolicy) {
+       case TimeoutPolicy_Return:
+-        return false;
++        // A memory stop ends the request even when its outcome is reported as a timeout.
++        return QueryRequestLimits_IsMemoryStopped(&req->base.limits);
+       case TimeoutPolicy_ReturnStrict:
+       case TimeoutPolicy_Fail:
+         return true;
+@@ -1406,6 +1419,15 @@ void AREQ_Execute_Callback(blockedClientReqCtx *BCRctx) {
+   blockedClientReqCtx_destroy(BCRctx);
  }
  
- # ---------------------------------------------------------------------------
-@@ -344,12 +395,34 @@ install_llvm() {
-                 "clang-${LLVM_VER}" "lld-${LLVM_VER}" "clang-devel-${LLVM_VER}" 2>/dev/null \
-                 && accept_native_llvm "clang-${LLVM_VER}" "lld-${LLVM_VER}"; then
-             echo ">>> Installed clang-${LLVM_VER} from native dnf repos"
-+        # EL8 keeps LLVM ${LLVM_VER} in AppStream as version ${LLVM_VER}.x of the
-+        # unversioned packages, not as clang-${LLVM_VER}.
-+        elif $MODE dnf install -y --nobest --skip-broken \
-+                "clang-${LLVM_VER}.*" "lld-${LLVM_VER}.*" "clang-devel-${LLVM_VER}.*" "llvm-${LLVM_VER}.*" 2>/dev/null \
-+                && accept_native_llvm "clang-${LLVM_VER}" "lld-${LLVM_VER}"; then
-+            lock_llvm_packages \
-+                && echo ">>> Locked LLVM ${LLVM_VER}.x packages against later dnf updates" \
-+                || echo ">>> WARNING: could not lock LLVM ${LLVM_VER}.x packages; a later dnf update may replace them" >&2
-+            echo ">>> Installed clang ${LLVM_VER}.x from native dnf repos (versioned package spec)"
-+        elif install_epel_llvm && accept_native_llvm "clang-${LLVM_VER}" "lld-${LLVM_VER}"; then
-+            echo ">>> Installed clang ${LLVM_VER} from EPEL"
-         elif $MODE dnf install -y --nobest --skip-broken clang lld clang-devel 2>/dev/null \
-                 && accept_native_llvm clang lld; then
-             echo ">>> Installed default clang from native dnf repos (may not be ${LLVM_VER})"
-         elif $MODE yum install -y clang lld clang-devel 2>/dev/null \
-                 && accept_native_llvm clang lld; then
-             echo ">>> Installed clang from native yum repos"
-+        elif ! tar
++// Memory checkpoint once the query is built, which also covers the wait for a worker. FT.EXPLAIN
++// builds a plan it never runs, so it is exempt.
++static int checkBuildMemory(AREQ *req, QueryError *status) {
++  if (!IsSearch(req) && !IsAggregate(req)) {
++    return REDISMODULE_OK;
++  }
++  return QueryMemory_CheckBeforeExecution(&req->base.limits, req->base.reqConfig.oomPolicy, status);
++}
++
+ // Assumes the spec is guarded by its own lock (for read), such that races with
+ // main-thread/GC updates are avoided.
+ static int prepareExecutionPlan(AREQ *req, QueryError *status) {
+@@ -1471,6 +1493,15 @@ static int prepareExecutionPlan(AREQ *req, QueryError *status) {
+     req->profileClocks.profilePipelineBuildTime = rs_wall_clock_elapsed_ns(&parseClock);
+   }
+ 
++  if (rc == REDISMODULE_OK && checkBuildMemory(req, status) != REDISMODULE_OK) {
++    return REDISMODULE_ERR;
++  }
++  // A build checkpoint that stopped the query under ON_OOM RETURN leaves the pipeline to run:
++  // its row source, built only now, must end at its first read.
++  if (rc == REDISMODULE_OK && QueryRequestLimits_IsMemoryStopped(&req->base.limits)) {
++    RP_EndRowSourceOnStop(AREQ_QueryProcessingCtx(req));
++  }
++
+   if (IsDebug(req)) {
+     rc = parseAndCompileDebug((AREQ_Debug *)req, status);
+     if (rc != REDISMODULE_OK) {
 ```
 
-**File**: `.install/rocky_linux_8.sh` (modified, +6/-1)
+**File**: `src/aggregate/aggregate_exec_common.c` (modified, +34/-6)
 ```diff
-@@ -24,7 +24,7 @@ dnf_install epel-release
- dnf_install gcc-toolset-13-gcc gcc-toolset-13-gcc-c++ \
-     gcc-toolset-13-libatomic-devel make wget git openssl openssl-devel \
-     bzip2-devel libffi-devel zlib-devel tar xz which rsync \
--    clang curl clang-devel lld gdb
-+    curl gdb
+@@ -49,15 +49,23 @@
  
- # We need Python headers to build psutil@5.x.y from
- # source, since it only started providing wheels for aarch64
-@@ -60,3 +60,8 @@ else
-     _toolset13_shim_ok as as || _run ln -sf "$_toolset13_bindir/as" /usr/local/bin/as
-     _toolset13_shim_ok make make || _run ln -sf "$_toolset13_bindir/make" /usr/local/bin/make
- fi
+ int ApplyOomStop(const QueryRequestLimits *limits, RSOomPolicy oomPolicy, QueryError *err,
+                  int rc) {
+-  if (rc != RS_RESULT_STOPPED || !QueryRequestLimits_IsMemoryStopped(limits)) {
++  // A blocked-client timeout's callback owns the reply, so it wins over an earlier OOM stop.
++  if (rc != RS_RESULT_STOPPED || !QueryRequestLimits_IsMemoryStopped(limits) ||
++      QueryRequestLimits_IsBlockedClientTimedOut(limits)) {
+     return rc;
+   }
+   if (oomPolicy == OomPolicy_Fail) {
+     QueryError_SetCode(err, QUERY_ERROR_CODE_OUT_OF_MEMORY);
+     return RS_RESULT_ERROR;
+   }
+   QueryError_SetQueryOOMWarning(err);
+-  // Not STOPPED: that replies as a timeout, and a cursor would read again into the same stop.
++  // A timeout that also fired outranks the stop: ON_TIMEOUT FAIL replies its error (the OOM
++  // warning is then unused) and RETURN replies both warnings, the timeout one derived from rc.
++  if (QueryRequestLimits_IsTimedOutExact(limits)) {
++    return RS_RESULT_STOPPED;
++  }
++  // Without a timeout, EOF rather than STOPPED: STOPPED replies as a timeout, and a cursor would
++  // read again into the same stop.
+   return RS_RESULT_EOF;
+ }
+ 
+@@ -102,6 +110,13 @@ static inline void debugCheckAndPauseAfterAggregateResult(AREQ *areq) {
+ static inline void debugCheckAndPauseAfterAggregateResult(AREQ *areq) {}
+ #endif
+ 
++static bool oomStopKeepsBufferedRows(const AREQ *areq) {
++  const QueryRequestLimits *timeout = &areq->base.limits;
++  return QueryRequestLimits_IsMemoryStopped(timeout) &&
++         areq->base.reqConfig.oomPolicy != OomPolicy_Fail &&
++         !QueryRequestLimits_IsBlockedClientTimedOut(timeout);
++}
 +
-+# Install the pinned LLVM (see LLVM_VERSION.sh) for LTO. Unversioned
-+# `clang`/`lld` packages track the distro's current LLVM, which can move past
-+# the version Rust uses and break cross-language LTO.
-+source "$(dirname "${BASH_SOURCE[0]}")/install_llvm.sh" $MODE
+  SearchResult **AggregateResults(ResultProcessor *rp, AREQ *areq, int *rc) {
+    SearchResult **results = array_new(SearchResult *, 8);
+    SearchResult r = SearchResult_New();
+@@ -119,8 +134,19 @@ static inline void debugCheckAndPauseAfterAggregateResult(AREQ *areq) {}
+      // Honour a memory stop or a main-thread timeout flag at the row
+      // boundary: buffering stages (safe loader, sorter yield) can keep emitting
+      // from internal buffers without re-touching upstream's per-row timeout check.
+-     if (areq && (QueryRequestLimits_IsMemoryStopped(&areq->base.limits) ||
+-                  QueryRequestLimits_IsBlockedClientTimedOut(&areq->base.limits))) {
++     // An OOM stop under ON_OOM RETURN is the exception: those stages then hand
++     // over the rows they already hold (see RP_StopPolicy), and read nothing new.
++     if (areq &&
++         (QueryRequestLimits_IsMemoryStopped(&areq->base.limits) ||
++          QueryRequestLimits_IsBlockedClientTimedOut(&areq->base.limits)) &&
++         !oomStopKeepsBufferedRows(areq)) {
++       *rc = RS_RESULT_STOPPED;
++       break;
++     }
++     // Rows handed over after an OOM stop read nothing upstream, so no per-row check there sees
++     // a clock deadline: this one ends the drain on it.
++     if (areq && oomStopKeepsBufferedRows(areq) &&
++         QueryRequestLimits_IsTimedOut(&areq->base.limits)) {
+        *rc = RS_RESULT_STOPPED;
+        break;
+      }
+@@ -138,8 +164,10 @@ static inline void debugCheckAndPauseAfterAggregateResult(AREQ *areq) {}
+      // Aggregate all results before populating the response
+      *results = AggregateResults(rp, ctx->areq, rc);
+      // Check timeout after aggregation; a memory stop raised while filling the limit ends it the
+-     // same way.
+-     if (QueryRequestLimits_ShouldStopExact(ctx->limits)) {
++     // same way, except under ON_OOM RETURN, where the held rows keep coming over the next reads.
++     if (QueryRequestLimits_IsTimedOutExact(ctx->limits) ||
++         (QueryRequestLimits_IsMemoryStopped(ctx->limits) &&
++          !(ctx->areq && oomStopKeepsBufferedRows(ctx->areq)))) {
+        *rc = RS_RESULT_STOPPED;
+      }
+    } else {
+```
+
+**File**: `src/aggregate/aggregate_exec_common.h` (modified, +3/-0)
+```diff
+@@ -35,6 +35,9 @@ void ReplyWithTimeoutError(RedisModule_Reply *reply);
+  *   startPipelineCommon buffers under FAIL.
+  * - Otherwise: the query OOM warning in `err` and RS_RESULT_EOF, so the rows
+  *   produced so far are the final, partial result instead of a timeout.
++ *   If the request's timeout also fired (QueryRequestLimits_IsTimedOutExact),
++ *   RS_RESULT_STOPPED is returned instead, so the timeout outcome is kept: an
++ *   error under ON_TIMEOUT FAIL, a warning beside the OOM one otherwise.
+  */
+ int ApplyOomStop(const struct QueryRequestLimits *limits, RSOomPolicy oomPolicy,
+                  QueryError *err, int rc);
+```
+
+**File**: `src/aggregate/aggregate_request.c` (modified, +6/-1)
+```diff
+@@ -1945,7 +1945,12 @@ int AREQ_BuildPipelineWithAggregationParams(AREQ *req,
+                                             QueryError *status) {
+   // Build errors go to the caller's `status`; the running pipeline reports into the request's own
+   // error slot, which the reply phase reads whenever (and on whichever thread) it runs.
+-  Pipeline_Initialize(&req->pipeline, req->base.limits.timeout.config.timeoutPolicy, &req->base.reply.err);
++  Pipeline_Initialize(&req->pipeline, &req->base);
++  if (IsHybrid(req)) {
++    // The hybrid reply does not map an OOM stop yet, so hybrid pipelines run without memory
++    // checkpoints: a stop there would reply as a timeout.
++    req->pipeline.qctx.limits = NULL;
++  }
+   if (!IsCoordinator(req)) {
+     QueryPipelineParams params = {
+       .common = {
+```
+
+**File**: `src/aggregate/expr/expression.c` (modified, +4/-0)
+```diff
+@@ -481,6 +481,10 @@ typedef struct RPEvaluator {
+ #define RESULT_EVAL_ERR RS_RESULT_MAX + 1
+ 
+ static int rpevalCommon(RPEvaluator *pc, SearchResult *r) {
++  // Checked before the next row, so the arena growth of the previous evaluation is counted.
++  if (RP_FillShouldCut(&pc->base)) {
++    return RS_RESULT_STOPPED;
++  }
+   /** Get the upstream result */
+   int rc = pc->base.upstream->Next(pc->base.upstream, r);
+   if (rc != RS_RESULT_OK) {
+```
+
+**File**: `src/aggregate/group_by.c` (modified, +21/-2)
+```diff
+@@ -16,6 +16,7 @@
+ #include "value_ffi.h"
+ #include "search_result_ffi.h"
+ #include "pipeline/pipeline.h"
++#include "query_memory.h"
+ #include "reducer.h"
+ #include "query_error.h"
+ #include "query_error_ffi.h"
+@@ -281,6 +282,13 @@ static int invokeGroupReducers(Grouper *g, RLookupRow *srcrow, t_docId docId) {
+ 
+   // Rows without multi-valued keys belong to one group, so skip the scan for more.
+   do {
++    // The array values of one row can reach up to maxGroups groups, new or existing, before the
++    // per-row check.
++    if (combinations > 1 && g->base.parent->limits &&
++        QueryMemory_Checkpoint(g->base.parent->limits)) {
++      RP_EndRowSourceOnStop(g->base.parent);
++      return RS_RESULT_STOPPED;
++    }
+     int rc = addToGroup(g, nkeys ? g->cursors[nkeys - 1].hash : 0, srcrow, docId);
+     if (rc != RS_RESULT_OK) {
+       return rc;
+@@ -298,6 +306,12 @@ static int Grouper_rpAccum(ResultProcessor *base, SearchResult *res) {
+   while ((rc = base->upstream->Next(base->upstream, res)) == RS_RESULT_OK) {
+     rc = invokeGroupReducers(g, SearchResult_GetRowDataMut(res), SearchResult_GetDocId(res));
+     SearchResult_Clear(res);
++    if (rc == RS_RESULT_OK && base->parent->limits &&
++        QueryMemory_Checkpoint(base->parent->limits)) {
++      // No partial groups: like a timeout, the stop yields none, and Grouper_rpFree frees them.
++      RP_EndRowSourceOnStop(base->parent);
++      rc = RS_RESULT_STOPPED;
++    }
+     if (rc != RS_RESULT_OK) {
+       break;
+     }
+@@ -311,9 +325,14 @@ static int Grouper_rpAccum(ResultProcessor *base, SearchResult *res) {
+     base->parent->skippedResults = 0;
+     g->iter = kh_begin(khid);
+     return Grouper_rpYield(base, res);
+-  } else {
+-    return rc;
+   }
++  if (rc == RS_RESULT_STOPPED && base->parent->limits &&
++      QueryRequestLimits_IsMemoryStopped(base->parent->limits)) {
++    // No group is replied, so none is counted either.
++    base->parent->totalResults = 0;
++    base->parent->skippedResults = 0;
++  }
++  return rc;
+ }
+ 
+ static void Grouper_rpFree(ResultProcessor *grrp) {
+```
+
+**File**: `src/coord/dist_aggregate.c` (modified, +5/-0)
+```diff
+@@ -724,6 +724,11 @@ void printAggProfile(RedisModule_Reply *reply, void *ctx) {
+     do {
+       MRReply_Free(rpnet->current.root);
+       RPNet_resetCurrent(rpnet);
++      // A memory stop, possibly requested mid-drain, aborts the pop on an empty channel with
++      // RS_RESULT_STOPPED forever. Take only what is queued, so the next call ends with EOF.
++      if (QueryRequestLimits_IsMemoryStopped(&req->base.limits)) {
++        rpnet->drainOnly = true;
++      }
+     } while (getNextReply(rpnet) != RS_RESULT_EOF);
+     rpnet->breakdown.waitTime = waitTime;
+     rpnet->breakdown.convertTime = convertTime;
+```
+
+**File**: `src/hybrid/hybrid_request.c` (modified, +11/-2)
+```diff
+@@ -9,6 +9,7 @@
+ 
+ #include "hybrid/hybrid_request.h"
+ #include "config.h"
++#include "query_memory.h"
+ #include <stdatomic.h>
+ #include <stdint.h>
+ #include <string.h>
+@@ -127,6 +128,12 @@ int HybridRequest_BuildDepletionPipeline(HybridRequest *req, bool depleteInBackg
+         if (isProfile) {
+           areq->profileClocks.profilePipelineBuildTime = rs_wall_clock_elapsed_ns(&parseClock);
+         }
++        // Only FAIL is decided here: the hybrid reply does not map an OOM stop yet, so under
++        // RETURN a stop requested now would reply as a timeout.
++        if (rc == REDISMODULE_OK && areq->base.reqConfig.oomPolicy == OomPolicy_Fail) {
++          rc = QueryMemory_CheckBeforeExecution(&areq->base.limits, areq->base.reqConfig.oomPolicy,
++                                                &areq->base.reply.err);
++        }
+         if (rc != REDISMODULE_OK) {
+             break;
+         }
+@@ -351,7 +358,9 @@ void HybridRequest_Init(HybridRequest *hybridReq, RedisSearchCtx *sctx, AREQ **r
+     // Initialize the tail pipeline that will merge results from all requests
+     hybridReq->tailPipeline = rm_calloc(1, sizeof(Pipeline));
+     AGPLN_Init(&hybridReq->tailPipeline->ap);
+-    Pipeline_Initialize(hybridReq->tailPipeline, hybridReq->base.limits.timeout.config.timeoutPolicy, &hybridReq->base.reply.err);
++    Pipeline_Initialize(hybridReq->tailPipeline, &hybridReq->base);
++    // No memory checkpoints in hybrid pipelines (see AREQ_BuildPipelineWithAggregationParams).
++    hybridReq->tailPipeline->qctx.limits = NULL;
+     QueryRequest_SetEndProcRef(&hybridReq->base, &hybridReq->tailPipeline->qctx.endProc);
+     // Capture the background-scan-OOM warning flag while the spec is guaranteed
+     // alive (main-thread command handling). The reply path reads only this
+@@ -364,7 +373,7 @@ void HybridRequest_Init(HybridRequest *hybridReq, RedisSearchCtx *sctx, AREQ **r
+     // Initialize pipelines for each individual request
+     for (size_t i = 0; i < nrequests; i++) {
+         initializeAREQ(requests[i]);
+-        Pipeline_Initialize(&requests[i]->pipeline, requests[i]->base.limits.timeout.config.timeoutPolicy, &requests[i]->base.reply.err);
++        Pipeline_Initialize(&requests[i]->pipeline, &requests[i]->base);
+     }
+     hybridReq->profileClocks.initClock = now;
+ 
+```
+
+---
+
+### Incident Patch 2: `4fefcf22` (2026-11-25)
+**Commit Message**: [MOD-21401] Fix a crash on DIALECT 1 queries on fields of the wrong type (#12455)
+
+* Fix a crash on DIALECT 1 tag queries on non-TAG fields
+
+DIALECT 1 builds a tag node on any field, and the tag evaluator only
+debug-asserted the field type before reading tagOpts. A debug build
+aborted the server on a query such as `@vec:{x}` on a VECTOR field; a
+release build read that field's own options (vector parameters, a
+geometry index) as a tag index pointer. The evaluator now checks the
+type, and such a query matches nothing.
+
+The flow test runs the query on VECTOR and GEOSHAPE fields, whose
+options put a non-null pointer where a TAG field keeps its tag index.
+On master it crashes the server; with the fix it returns no results.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* Check field types in the DIALECT 1 parser for tag, numeric and geo queries
+
+DIALECT 1 built a tag, numeric range or geo filter node on a field of any
+type. DIALECT 2 and the legacy FILTER/GEOFILTER arguments reject or nullify
+such queries when they are built. Do the same in the DIALECT 1 grammar: a
+query on a field of the wrong type becomes a null node, which matches nothing,
+also inside an intersection.
+
+The eva
+
+**File**: `src/query_parser/v1/parser.c` (modified, +15/-1)
+```diff
+@@ -1562,6 +1562,11 @@ static YYACTIONTYPE yy_reduce(
+             if (!fs) {
+                 QueryNode_Free(yylhsminor.yy17);
+                 yylhsminor.yy17 = NULL;
++            } else if (!FIELD_IS(fs, INDEXFLD_T_TAG)) {
++                // DIALECT 2 rejects this; DIALECT 1 keeps it valid but matching nothing. It becomes
++                // a null node rather than a dropped clause, so an intersection with it stays empty.
++                QueryNode_Free(yylhsminor.yy17);
++                yylhsminor.yy17 = NewQueryNode(QN_NULL);
+             } else {
+                 yylhsminor.yy17->tag.fieldIndex = fs->index;
+             }
+@@ -1605,8 +1610,13 @@ static YYACTIONTYPE yy_reduce(
+     // we keep the capitalization as is
+     yylhsminor.yy17 = NULL;
+     const FieldSpec *fs = ctx->sctx->spec ? IndexSpec_GetFieldWithLength(ctx->sctx->spec, yymsp[-2].minor.yy0.s, yymsp[-2].minor.yy0.len) : NULL;
+-    if (fs) {
++    if (fs && FIELD_IS(fs, INDEXFLD_T_NUMERIC)) {
+         yylhsminor.yy17 = NewNumericNode(yymsp[0].minor.yy86, fs);
++    } else if (fs) {
++        // As for a tag query on a non-TAG field: valid on DIALECT 1, matching nothing.
++        QueryParam_Free(yymsp[0].minor.yy86);
++        yymsp[0].minor.yy86 = NULL;
++        yylhsminor.yy17 = NewQueryNode(QN_NULL);
+     } else if (yymsp[0].minor.yy86) {
+         QueryParam_Free(yymsp[0].minor.yy86);
+         yymsp[0].minor.yy86 = NULL;
+@@ -1630,6 +1640,10 @@ static YYACTIONTYPE yy_reduce(
+         if (!fs) {
+             QueryNode_Free(yylhsminor.yy17);
+             yylhsminor.yy17 = NULL;
++        } else if (!FIELD_IS(fs, INDEXFLD_T_GEO)) {
++            // As for a tag query on a non-TAG field: valid on DIALECT 1, matching nothing.
++            QueryNode_Free(yylhsminor.yy17);
++            yylhsminor.yy17 = NewQueryNode(QN_NULL);
+         }
+     }
+ }
+```
+
+**File**: `src/query_parser/v1/parser.y` (modified, +15/-1)
+```diff
+@@ -513,6 +513,11 @@ expr(A) ::= modifier(B) COLON tag_list(C) . {
+             if (!fs) {
+                 QueryNode_Free(A);
+                 A = NULL;
++            } else if (!FIELD_IS(fs, INDEXFLD_T_TAG)) {
++                // DIALECT 2 rejects this; DIALECT 1 keeps it valid but matching nothing. It becomes
++                // a null node rather than a dropped clause, so an intersection with it stays empty.
++                QueryNode_Free(A);
++                A = NewQueryNode(QN_NULL);
+             } else {
+                 A->tag.fieldIndex = fs->index;
+             }
+@@ -574,8 +579,13 @@ expr(A) ::= modifier(B) COLON numeric_range(C). {
+     // we keep the capitalization as is
+     A = NULL;
+     const FieldSpec *fs = ctx->sctx->spec ? IndexSpec_GetFieldWithLength(ctx->sctx->spec, B.s, B.len) : NULL;
+-    if (fs) {
++    if (fs && FIELD_IS(fs, INDEXFLD_T_NUMERIC)) {
+         A = NewNumericNode(C, fs);
++    } else if (fs) {
++        // As for a tag query on a non-TAG field: valid on DIALECT 1, matching nothing.
++        QueryParam_Free(C);
++        C = NULL;
++        A = NewQueryNode(QN_NULL);
+     } else if (C) {
+         QueryParam_Free(C);
+         C = NULL;
+@@ -602,6 +612,10 @@ expr(A) ::= modifier(B) COLON geo_filter(C). {
+         if (!fs) {
+             QueryNode_Free(A);
+             A = NULL;
++        } else if (!FIELD_IS(fs, INDEXFLD_T_GEO)) {
++            // As for a tag query on a non-TAG field: valid on DIALECT 1, matching nothing.
++            QueryNode_Free(A);
++            A = NewQueryNode(QN_NULL);
+         }
+     }
+ }
+```
+
+**File**: `src/redisearch_rs/query_eval/src/nodes/geo.rs` (modified, +15/-0)
+```diff
+@@ -48,6 +48,21 @@ pub(crate) fn eval<'index>(
+         field_index < ctx.spec().numFields,
+         "fieldIndex must be within the spec's current field count"
+     );
++    if cfg!(debug_assertions) {
++        let spec = ctx.spec();
++        // SAFETY: `field_index` is within `spec.numFields` (asserted above), so this
++        // stays within the bounds of the `numFields`-sized array `spec.fields` points to.
++        let field_ptr = unsafe { spec.fields.add(field_index as usize) };
++        // SAFETY: `field_ptr` points into the live spec's field array, which the
++        // query's spec read lock keeps alive and unmodified throughout evaluation.
++        let field = unsafe { &*field_ptr };
++        // Both query parsers and the legacy `GEOFILTER` argument build a geo node only on a
++        // GEO field.
++        assert!(
++            field.types() & ffi::FieldType_INDEXFLD_T_GEO != 0,
++            "a geo node must reference a geo field"
++        );
++    }
+ 
+     // Disk-index path: when the spec is backed by an on-disk index, delegate to
+     // the enterprise geo iterator instead of opening the in-memory range tree.
+```
+
+**File**: `src/redisearch_rs/query_eval/src/nodes/numeric.rs` (modified, +19/-0)
+```diff
+@@ -40,6 +40,25 @@ pub(crate) fn eval<'index>(
+         "numeric node must have a resolved field index"
+     );
+     let field_index = nf.field_index;
++    if cfg!(debug_assertions) {
++        let spec = ctx.spec();
++        assert!(
++            field_index < spec.numFields,
++            "field_index must be within the spec's current field count"
++        );
++        // SAFETY: `field_index` is within `spec.numFields` (checked above), so this
++        // stays within the bounds of the `numFields`-sized array `spec.fields` points to.
++        let field_ptr = unsafe { spec.fields.add(field_index as usize) };
++        // SAFETY: `field_ptr` points into the live spec's field array, which the
++        // query's spec read lock keeps alive and unmodified throughout evaluation.
++        let field = unsafe { &*field_ptr };
++        // Both query parsers and the legacy `FILTER` argument build a numeric node only on a
++        // NUMERIC field.
++        assert!(
++            field.types() & ffi::FieldType_INDEXFLD_T_NUMERIC != 0,
++            "a numeric node must reference a numeric field"
++        );
++    }
+ 
+     // Disk-index path: when the spec is backed by an on-disk index, delegate to
+     // the enterprise numeric iterator instead of opening the in-memory range
+```
+
+**File**: `src/redisearch_rs/query_eval/src/nodes/tag.rs` (modified, +2/-1)
+```diff
+@@ -99,11 +99,12 @@ pub(crate) fn eval<'index>(
+     // Going through the raw pointer detaches the borrow from `ctx`, which the
+     // children's evaluation needs exclusively.
+     let field = unsafe { &*field_ptr };
++    // Both query parsers build a tag node only on a TAG field.
+     debug_assert!(
+         field.types() & ffi::FieldType_INDEXFLD_T_TAG != 0,
+         "a tag node must reference a tag field"
+     );
+-    // SAFETY: the field is a tag field, so `tagOpts` is the active union member.
++    // SAFETY: the field is a tag field (asserted above), so `tagOpts` is the active union member.
+     let index = NonNull::new(unsafe { field.__bindgen_anon_1.tagOpts.tagIndex })?;
+     // SAFETY: the tag index belongs to the field; the query's spec read lock keeps
+     // it alive and excludes writers, so it is not restructured during evaluation.
+```
+
+**File**: `tests/pytests/test_geo.py` (modified, +20/-0)
+```diff
+@@ -241,3 +241,23 @@ def testGeoParseTrailingWhitespace(env):
+   conn.execute_command('HSET', 'ws2', 'g', '1.23, 4.56 ')
+ 
+   assertInfoField(env, 'idx', 'hash_indexing_failures', 0)
++
++
++@skip(cluster=True)
++def testDialect1GeoQueryOnANonGeoFieldMatchesNothing(env):
++    # DIALECT 2 rejects a geo filter on a non-GEO field. DIALECT 1 accepts it and it matches
++    # nothing, also inside an intersection. A NUMERIC field's range tree holds plain numbers, which
++    # the filter's geohash ranges used to be matched against.
++    conn = getConnectionByEnv(env)
++    env.expect('FT.CREATE', 'idx', 'SCHEMA', 'n', 'NUMERIC', 't', 'TAG', 'loc', 'GEO').ok()
++    # `n` holds the geohash score of the query center, so matching the filter's geohash ranges
++    # against the numeric tree would find the document.
++    conn.execute_command('GEOADD', 'geohash_probe', 1, 1, 'p')
++    center_score = conn.execute_command('ZSCORE', 'geohash_probe', 'p')
++    conn.execute_command('DEL', 'geohash_probe')
++    conn.execute_command('HSET', 'doc:1', 'n', center_score, 't', 'red', 'loc', '1,1')
++    for field in ['n', 't']:
++        env.expect('FT.SEARCH', 'idx', f'@{field}:[1 1 10 km]', 'DIALECT', 1).equal([0])
++        env.expect('FT.SEARCH', 'idx', f'@{field}:[1 1 10 km] @loc:[1 1 10 km]',
++                   'DIALECT', 1).equal([0])
++    env.expect('FT.SEARCH', 'idx', '@loc:[1 1 10 km]', 'NOCONTENT', 'DIALECT', 1).equal([1, 'doc:1'])
+```
+
+**File**: `tests/pytests/test_numbers.py` (modified, +14/-0)
+```diff
+@@ -893,3 +893,17 @@ def validate_subtree(subtree):
+     cause_split(1) # to the left (of 2, right of 0)
+ 
+     validate_tree(env.cmd(debug_cmd(), 'DUMP_NUMIDXTREE', idx, field, 'MINIMAL'))
++
++
++@skip(cluster=True)
++def testDialect1NumericQueryOnANonNumericFieldMatchesNothing(env):
++    # DIALECT 2 rejects a numeric range on a non-NUMERIC field. DIALECT 1 accepts it and it matches
++    # nothing, also inside an intersection. A GEO field keeps its points in a numeric range tree,
++    # which an unbounded range used to match.
++    conn = getConnectionByEnv(env)
++    env.expect('FT.CREATE', 'idx', 'SCHEMA', 'loc', 'GEO', 't', 'TAG', 'n', 'NUMERIC').ok()
++    conn.execute_command('HSET', 'doc:1', 'loc', '1,1', 't', 'red', 'n', 5)
++    for field in ['loc', 't']:
++        env.expect('FT.SEARCH', 'idx', f'@{field}:[-inf +inf]', 'DIALECT', 1).equal([0])
++        env.expect('FT.SEARCH', 'idx', f'@{field}:[-inf +inf] @n:[5 5]', 'DIALECT', 1).equal([0])
++    env.expect('FT.SEARCH', 'idx', '@n:[5 5]', 'NOCONTENT', 'DIALECT', 1).equal([1, 'doc:1'])
+```
+
+**File**: `tests/pytests/test_tags.py` (modified, +18/-0)
+```diff
+@@ -1352,3 +1352,21 @@ def testSortableTagIndexingInvalidUtf8LoweringOverflow(env):
+     env.assertEqual(errors['last indexing error key'], 'doc2')
+ 
+     env.expect('FT.SEARCH', 'idx_sortable', '*', 'NOCONTENT').equal([1, 'doc1'])
++
++
++@skip(cluster=True)
++def testDialect1TagQueryOnANonTagFieldMatchesNothing(env):
++    # DIALECT 2 rejects a tag query on a non-TAG field. DIALECT 1 accepts it and it matches
++    # nothing, also inside an intersection, which a dropped clause would not. VECTOR and GEOSHAPE
++    # keep their own options where a TAG field keeps its tag index.
++    conn = getConnectionByEnv(env)
++    env.expect('FT.CREATE', 'idx', 'SCHEMA',
++               'v', 'VECTOR', 'FLAT', 6, 'TYPE', 'FLOAT32', 'DIM', 2, 'DISTANCE_METRIC', 'L2',
++               'g', 'GEOSHAPE', 'FLAT',
++               't', 'TAG').ok()
++    conn.execute_command('HSET', 'doc:1', 'v', np.array([1.0, 2.0], dtype=np.float32).tobytes(),
++                         'g', 'POINT (1 1)', 't', 'red')
++    for field in ['v', 'g']:
++        env.expect('FT.SEARCH', 'idx', f'@{field}:{{red}}', 'DIALECT', 1).equal([0])
++        env.expect('FT.SEARCH', 'idx', f'@{field}:{{red}} @t:{{red}}', 'DIALECT', 1).equal([0])
++    env.expect('FT.SEARCH', 'idx', '@t:{red}', 'NOCONTENT', 'DIALECT', 1).equal([1, 'doc:1'])
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #12507** (closed): Switch token separators to Rust and remove the C implementation (@gdesmott)
-- **PR #12505** (closed): Add Rust token separator scanning and C comparison benchmarks (@gdesmott)
-- **PR #12503** (closed): Extract token separator implementation into toksep.c (@gdesmott)
-- **PR #12497** (closed): [MOD-14129] Preserve restore compatibility for disk TAG snapshots (@dor-forer)
-- **PR #12484** (2026-11-23): [8.8] [MOD-21404] CI: install LLVM 21 from the EL8 AppStream to keep LTO on Rocky 8 (@oshadmi)
-- **PR #12483** (2026-11-22): [8.10] [MOD-21404] CI: install LLVM 21 from EL8 AppStream and EL9 EPEL to keep LTO on Rocky/Alma (@oshadmi)
+- **PR #12545** (closed): [MOD-20990] Stop TAG dictionary walks when a query reaches its limits (@nonirosenfeldredis)
+- **PR #12543** (closed): [2.6] [MOD-21401] Fix a crash on DIALECT 1 queries on fields of the wrong type (@redisearch-backport-pull-request[bot])
+- **PR #12542** (closed): [2.8] [MOD-21401] Fix a crash on DIALECT 1 queries on fields of the wrong type (@redisearch-backport-pull-request[bot])
+- **PR #12541** (closed): [8.2] [MOD-21401] Fix a crash on DIALECT 1 queries on fields of the wrong type (@redisearch-backport-pull-request[bot])
+- **PR #12540** (closed): [8.4] [MOD-21401] Fix a crash on DIALECT 1 queries on fields of the wrong type (@redisearch-backport-pull-request[bot])
+- **PR #12539** (closed): [8.6] [MOD-21401] Fix a crash on DIALECT 1 queries on fields of the wrong type (@redisearch-backport-pull-request[bot])
 
 ---
 
@@ -2049,35 +2543,51 @@ Co-authored-by: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [MOD-21404] CI: install LLVM 21 from EL8 AppStream and EL9 EPEL to keep LTO on R
+## X. [MOD-20693] Stop the query pipeline on memory pressure
 
 **RULE**:
-When implementing operations in `.github/workflows/task-get-config.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in RediSearch/RediSearch. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/aggregate/aggregate_exec.c`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in RediSearch/RediSearch. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `bcd7b33c`: [MOD-21404] CI: install LLVM 21 from EL8 AppStream and EL9 EPEL to keep LTO on Rocky/Alma. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7a24743f`: [MOD-20693] Stop the query pipeline on memory pressure. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/task-get-config.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/aggregate/aggregate_exec.c`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-                      'enable_lto': '1' # LLVM 21 comes from the EL8 AppStream (install_llvm.sh).
-                      'enable_lto': '1' # LLVM 21 comes from the EL8 AppStream (install_llvm.sh).
-                  # LLVM 21 comes from EPEL (install_llvm.sh); the official tarball
-                  # cannot run on EL9's libstdc++.
+#include "query_memory.h"
+  QueryError *err = AREQ_QueryProcessingCtx(req)->err;
+  // A buffering stage that kept its rows past an OOM stop may hold enough of them to fill the
+  // reply's limit or a pager's, so the reply ends without reading the stop's RS_RESULT_STOPPED.
+  // When no later cursor read reports the stop, the reply is cut.
+  const bool lastReply =
+      rc == RS_RESULT_EOF || (rc == RS_RESULT_OK && !(AREQ_RequestFlags(req) & QEXEC_F_IS_CURSOR));
+  // A blocked-client timeout that fired in the meantime owns the reply, as in ApplyOomStop.
+  if (lastReply && req->base.reqConfig.oomPolicy != OomPolicy_Fail &&
+      AREQ_QueryProcessingCtx(req)->oomCut &&
+      !QueryRequestLimits_IsBlockedClientTimedOut(&req->base.limits)) {
+    QueryError_SetQueryOOMWarning(err);
+  }
+  return ApplyOomStop(&req->base.limits, req->base.reqConfig.oomPolicy, err, rc);
+        // A memory stop ends the request even when its outcome is reported as a timeout.
+        return QueryRequestLimits_IsMemoryStopped(&req->base.limits);
+// Memory checkpoint once the query is built, which also covers the wait for a worker. FT.EXPLAIN
+// builds a plan it never runs, so it is exempt.
+static int checkBuild
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-                      'enable_lto': '0' # Shipped glibc (2.28) is too old for clang 21 tarball (requires 2.34).
-                      'enable_lto': '0' # Shipped glibc (2.28) is too old for clang 21 tarball (requires 2.34).
+  return ApplyOomStop(&req->base.limits, req->base.reqConfig.oomPolicy,
+                      AREQ_QueryProcessingCtx(req)->err, rc);
+        return false;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bcd7b33c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7a24743f` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

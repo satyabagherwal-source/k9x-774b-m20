@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "16a373a7",
+    "sourceVersion": "2942f5eb",
     "license": "Apache-2.0",
-    "contentHash": "9e0ba9dccd64be85b5821d0ed51731c6baea7aa20bc3e0e25b51cc3fe6312b94",
-    "lastHarvestedAt": "2026-11-25T11:42:39.799Z",
+    "contentHash": "71c42d3a6e49625346697a76dbdab91bb66541ac7b0acc1767e2a31cb2b2f92a",
+    "lastHarvestedAt": "2026-11-25T12:19:38.892Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -3053,10 +3053,10 @@
     "repository": "RustCrypto/hashes",
     "platform": "github",
     "sourceUrl": "https://github.com/RustCrypto/hashes",
-    "sourceVersion": "50a7ea68",
+    "sourceVersion": "ed176fb7",
     "license": "PERMISSIVE_OPEN_SOURCE",
-    "contentHash": "bf7f1dde2e83ec32c5f0719d666a3fee95dca07c3b00af5da19c2dea74461e24",
-    "lastHarvestedAt": "2026-11-18T16:22:28.084Z",
+    "contentHash": "9ff33201123f3856be87432c3c0deb60c34449d89a28118b3f338474464b7216",
+    "lastHarvestedAt": "2026-11-25T12:19:34.021Z",
     "learningId": "learn-github-rustcrypto-hashes"
   },
   "onlook-dev-onlook": {
@@ -6023,10 +6023,10 @@
     "repository": "RediSearch/RediSearch",
     "platform": "github",
     "sourceUrl": "https://github.com/RediSearch/RediSearch",
-    "sourceVersion": "3bfa11a6",
+    "sourceVersion": "7a24743f",
     "license": "NOASSERTION",
-    "contentHash": "03ffe91e33cc6ceabdc9a1f7a8f4455158881c7d333ed936cf50780f8f241f99",
-    "lastHarvestedAt": "2026-11-24T17:13:49.236Z",
+    "contentHash": "3c06bdd8dfb893713e667d5f3e01caab50a7f6be6f37cef92af541a6f6a55884",
+    "lastHarvestedAt": "2026-11-25T12:19:39.707Z",
     "learningId": "learn-github-redisearch-redisearch"
   },
   "taiga-family-taiga-ui": {
@@ -11485,8 +11485,8 @@
     "sourceUrl": "https://huggingface.co/mistralai/Mistral-Large-4-1T-A52B",
     "sourceVersion": "hf-mistralai-mistral-large-4-1t-a52b",
     "license": "Open-Source",
-    "contentHash": "6879173e1f9e3a6ca1d27c336994cc7f7e947075b0850c46695a917f2dc84b98",
-    "lastHarvestedAt": "2026-11-21T21:04:29.994Z",
+    "contentHash": "9be4363fe8344f81f45fc4efd794c262d7ab340c522cf51c21e1df61c108a93c",
+    "lastHarvestedAt": "2026-11-25T12:19:22.288Z",
     "learningId": "learn-huggingface-mistralai-mistral-large-4-1t-a52b"
   },
   "jakeschincariol-arena-skill": {

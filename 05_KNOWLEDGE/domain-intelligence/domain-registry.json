@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T12:09:20.891Z",
-  "total_records": 2671,
+  "last_updated": "2026-11-25T12:20:25.158Z",
+  "total_records": 2672,
   "domains": {
     "A": {
       "total": 22,
@@ -1675,7 +1675,7 @@
       ]
     },
     "H": {
-      "total": 635,
+      "total": 636,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -2311,7 +2311,8 @@
         "domain_intelligence-technical-construction-intelligence-hf-atomicchat-inkling-2-mini-uncensored-gguf",
         "domain_intelligence-technical-construction-intelligence-yugabyte-yugabyte-db-learnings-core-invarian",
         "domain_intelligence-technical-construction-intelligence-ratatui-ratatui-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-ratatui-ratatui-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-ratatui-ratatui-learnings-core-invariants",
+        "DOM-H-64682323"
       ]
     },
     "I": {
@@ -15750,8 +15751,8 @@
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "repository": "NucleoidAI/Nucleoid",
-      "content_hash": "6c9fbc21784b63a104cc0bc8a6227448c232e4f33ec0d3e6d9208fcc290e1b5a",
-      "created_at": "2026-11-25T11:42:40.228Z"
+      "content_hash": "ad9e3f6c9c70fa73486dd68cb44e39b604babed34b98da4622e4cf09f5477fba",
+      "created_at": "2026-11-25T12:19:39.463Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -22259,8 +22260,8 @@
       "title": "Research & Knowledge Intelligence: mistralai/Mistral-Large-4-1T-A52B Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-mistralai-mistral-large-4-1t-a52b-research-knowledge-intelligence-mistralai-m.md",
       "repository": "mistralai/Mistral-Large-4-1T-A52B",
-      "content_hash": "8e12f87f7bb560a009c6146be278951dba2f056fd9e6f377fabb4563765ab3ef",
-      "created_at": "2026-11-21T21:04:30.205Z"
+      "content_hash": "0cf6c9613c0ca3671ce7c9bf048711ccd65e65232b77292e7f99bf9938f495a5",
+      "created_at": "2026-11-25T12:19:22.590Z"
     },
     "DOM-D-BBC8733A": {
       "record_id": "DOM-D-BBC8733A",
@@ -22310,8 +22311,8 @@
       "title": "Research & Knowledge Intelligence: hf-mistralai-mistral-large-4-1t-a52b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-mistralai-mistral-large-4-1t-a52b-learnings-research-knowledge-intelligence-h.md",
       "repository": "hf-mistralai-mistral-large-4-1t-a52b-learnings",
-      "content_hash": "22b2d101c2531e106ffa31fe13fbb507c9cbb36032c7b2174733b227df870897",
-      "created_at": "2026-11-21T21:04:49.298Z"
+      "content_hash": "2202444889c1650083bbe4351083b593cc85771c09abdce8cbf221ceb0bca74d",
+      "created_at": "2026-11-25T12:19:43.788Z"
     },
     "domain_intelligence-technical-construction-intelligence-nats-io-nats-go-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-nats-io-nats-go-core-invariants",
@@ -28222,8 +28223,8 @@
       "title": "Architecture Intelligence: RediSearch/RediSearch Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-redisearch-redisearch-architecture-intelligence-redisearch-redisearch-core-invar.md",
       "repository": "RediSearch/RediSearch",
-      "content_hash": "35c265777648a3cd76d3501cc7537e789ac983d81d78f2ff98a20c224e30a013",
-      "created_at": "2026-11-24T17:13:49.796Z"
+      "content_hash": "19ed04e5dde6156eb78210dd2f6eddc518300cc3cf1aac2d6c03439f640a74fa",
+      "created_at": "2026-11-25T12:19:40.284Z"
     },
     "domain_intelligence-research-knowledge-intelligence-autogluon-chronos-2-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-autogluon-chronos-2-core-invariants",
@@ -32235,8 +32236,8 @@
       "title": "Architecture Intelligence: RustCrypto/hashes Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-rustcrypto-hashes-architecture-intelligence-rustcrypto-hashes-core-invariants.md",
       "repository": "RustCrypto/hashes",
-      "content_hash": "a6dc494171cf464e3a71242936c0b49b5bb79587788f4c43438547f23ec2d21d",
-      "created_at": "2026-11-18T16:22:28.400Z"
+      "content_hash": "da0d09e02c45317c37b5b2287a1cc60f3b7f212fd2643d4783e6abc378bd716b",
+      "created_at": "2026-11-25T12:19:34.567Z"
     },
     "domain_intelligence-architecture-intelligence-rustcrypto-hashes-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-rustcrypto-hashes-learnings-core-invariants",
@@ -32244,8 +32245,8 @@
       "title": "Architecture Intelligence: rustcrypto-hashes-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-rustcrypto-hashes-learnings-architecture-intelligence-rustcrypto-hashes-learning.md",
       "repository": "rustcrypto-hashes-learnings",
-      "content_hash": "ffda71d7e8e5f2681dcd951f93a224376947df23cc4547cd5b7dc894808a67af",
-      "created_at": "2026-11-18T16:22:33.452Z"
+      "content_hash": "2108fed3f0a7ee8edc9c0b0010a7f1edf6800a6c88a72a83801d9bd0a9d73922",
+      "created_at": "2026-11-25T12:19:45.319Z"
     },
     "domain_intelligence-research-knowledge-intelligence-huggingfacetb-smolvlm2-256m-video-instruct-core-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-huggingfacetb-smolvlm2-256m-video-instruct-core-",
@@ -36347,8 +36348,8 @@
       "title": "Architecture Intelligence: redisearch-redisearch-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-redisearch-redisearch-learnings-architecture-intelligence-redisearch-redisearch-.md",
       "repository": "redisearch-redisearch-learnings",
-      "content_hash": "a81adbfed48a1c009e7e3c4df1407fe30af14a0c80fc05bdf75539657d073b98",
-      "created_at": "2026-11-23T20:48:02.395Z"
+      "content_hash": "0ad6e7a31587b03cbae92fd79227f3c6aea7cbcd8aa36ae5b200f70bf1015314",
+      "created_at": "2026-11-25T12:20:25.158Z"
     },
     "DOM-J-FBEC7580": {
       "record_id": "DOM-J-FBEC7580",
@@ -44898,6 +44899,48 @@
       "repository": "hf-thinkingmachines-tml-d24-varloop-research-learnings",
       "content_hash": "09b3bc043bd2968f3aaaa19752d9f8dfb57c4dd54c672a0c77b315ceedc44b59",
       "created_at": "2026-11-25T12:00:28.525Z"
+    },
+    "DOM-H-64682323": {
+      "record_id": "DOM-H-64682323",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "G",
+          "id": "architecture",
+          "name": "Architecture Intelligence"
+        }
+      ],
+      "title": "[MOD-20693] Stop the query pipeline on memory pressure",
+      "content": "When implementing operations in `src/aggregate/aggregate_exec.c`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in RediSearch/RediSearch. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "7db3dde09c9c8ea0beb45fad9750ee6529a098b7482acf0ef7d8b0965be1f0e7",
+      "summary": "Prevents defects observed in production commit `7a24743f`: [MOD-20693] Stop the query pipeline on memory pressure. Unvalidated execution pat -> When implementing operations in `src/aggregate/aggregate_exec.c`, engineers MUST enforce rigorous boundary validation, safe state transition",
+      "provenance": {
+        "source_uri": "project://redisearch-redisearch/redisearch-redisearch-learnings.md",
+        "source_version": "7a24743f",
+        "observed_at": "2026-11-25T12:19:38.120Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (redisearch-redisearch)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of redisearch-redisearch"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "G"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.86,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-25T12:20:23.891Z"
     }
   }
 }

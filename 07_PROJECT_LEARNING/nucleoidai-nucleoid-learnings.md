@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `16a373a7`  
+> **Source Version**: `2942f5eb`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-25T11:42:38.581Z  
+> **Timestamp**: 2026-11-25T12:19:37.326Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T11:42:38.572Z  
+> **Harvest Timestamp**: 2026-11-25T12:19:37.319Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1578,465 +1578,148 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `16a373a7` (2026-11-25)
-**Commit Message**: Draft NUC 146 Reactive Cubing
+### Incident Patch 1: `2942f5eb` (2026-11-25)
+**Commit Message**: NUC 140 Match Statements
 
-Category: Utility enhancement.
+Rejected under the automatic acceptance rule in a continuous
+/nuc-proposal cycle: hard criterion 3, backward compatibility, fails.
+A statement that starts with the name match, followed by every, any or
+all and then repeat: or suppose: before an indented block, is accepted
+at the accepted revision as the name match beside the quantifier and a
+repeat-until loop or suppose block, and can run cleanly there: with
+match = 0, every = 0 and n = 0, match every repeat: over n = n + 1,
+until n >= 3, then n gives 3. The frozen candidate reads it as a match
+statement and raises SyntaxError("Expected 'case' but found identifier
+'n'"). The evaluator's fuzz found 72 such programs, 7 of which run
+cleanly at the pin and 65 fail there only at run time; the caller
+reproduced the break on the pin binary, the proposer's final binary and
+its own release build of the frozen tree.
 
-Request only native static Math.cube(value), intrinsic first-value conversion followed by two ordered ordinary multiplications. Preserve the accepted Math argument/Undefined/observation/shadowing contracts. The live-registry continuous draw selected Utility enhancement once; no stale allocated Draft was eligible. Baselines, independent preparation and evaluation follow this number-only allocation.
-
-Co-authored-by: Copilot <[REDACTED_EMAIL]>
-
-**File**: `docs/nuc-0000.md` (modified, +2/-0)
-```diff
-@@ -145,6 +145,7 @@ Created: 31-Jul-2026
- | [141](nuc-0141.md) | Reactive Cosecant | Accepted |
- | [142](nuc-0142.md) | Reactive Sign Copying | Automatic-Accepted: independent strict rollback graph-dependent ordering check failed, also reproduced on the accepted arithmetic runtime |
- | [143](nuc-0143.md) | Reactive Squaring | Accepted |
-+| [146](nuc-0146.md) | Reactive Cubing | Draft |
- 
- ### Reasoning enhancement
- 
-@@ -345,6 +346,7 @@ Created: 31-Jul-2026
- | [143](nuc-0143.md) | Reactive Squaring | Standards Track | Utility enhancement | Accepted |
- | [144](nuc-0144.md) | Nullish Value Assignment | Standards Track | Runtime features | Accepted |
- | [145](nuc-0145.md) | Input Counts of Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
-+| [146](nuc-0146.md) | Reactive Cubing | Standards Track | Utility enhancement | Draft |
- 
- ## Copyright
- 
-```
-
-**File**: `docs/nuc-0146.md` (added, +83/-0)
-```diff
-@@ -0,0 +1,83 @@
-+# NUC 146 -- Reactive Cubing
-+
-+```
-+NUC: 146
-+Title: Reactive Cubing
-+Author: Copilot <223556219+Copilot@users.noreply.github.com>
-+Status: Draft
-+Type: Standards Track
-+Category: Utility enhancement
-+Created: 25-Nov-2026
-+Requires: 143
-+```
-+
-+## Abstract
-+
-+- Add only native static `Math.cube(value)`: intrinsically convert the
-+  first value, multiply it by itself, then multiply that result by the
-+  same converted value, using separate ordinary `f64` multiplications.
-+- Preserve eager once-only argument evaluation, the any-supplied-Undefined
-+  gate, ignored extras, numeric coercion, dependencies, deferral,
-+  shadowing and transaction behavior. Do not lower to `powf`, `**`,
-+  shadowable `Number` or another Math call.
-+- The caller's one uniform live-registry draw selected Utility
-+  enhancement. This allocation requests a bounded numeric utility, not
-+  an alias or grammar change. Continuous evaluation requires original
-+  accepted-source replay, paired per-case lexer-token comparison and
-+  every hard criterion.
-+
-+## Motivation
-+
-+- Cubic quantities repeat a computed argument in an accepted
-+  `Math.square(expression) * expression`. A native helper evaluates that
-+  argument once and gives the ordered two-multiplication operation a name.
-+- The accepted runtime raises
-+  `TypeError("Math.cube is not a function")` for `Math.cube(3 + 2)`;
-+  the accepted `Math.square(3 + 2) * (3 + 2)` returns `125`.
-+- Keep every accepted program and assertion. Add no global or receiver
-+  alias, parser syntax, public Rust API, dependency, option, version
-+  change or ARC change. Preserve unsupported sibling names and existing
-+  error pins, including `Math.toDegrees`.
-+
-+## Rationale
-+
-+- Preparation pending in the caller's isolated candidate after this
-+  allocation is pushed and immutable accepted baselines are recorded.
-+
-+## Specification
-+
-+- Preparation pending. Freeze behavior-equivalent accepted controls
-+  before changing runtime or executable documents; preserve their case
-+  identities, canonical assertions, explicit returns and coverage.
-+
-+## Errors
-+
-+- Preparation pending. Reuse existing native Math dispatch and call
-+  errors; introduce no arity, conversion or numeric range error.
-+
-+## Reference Implementation
-+
-+- Preparation pending. Restrict the implementation to the accepted
-+  intrinsic Math path and focused preservation cases.
-+
-+## Evaluation
-+
-+- Mode: `continuous`; Category: `Utility enhancement`.
-+- Runtime applicability: `not_applicable`.
-+- The caller made one unbiased draw, index `2` among five live eligible
-+  categories, probability `20%`, without redraw. No stale allocated
-+  Draft was eligible.
-+- No hint, rubric or strategy-learning configuration was supplied.
-+  Learning is `not_configured` and unattributed; usefulness is unscored,
-+  not zero. Do not invent a selector, reward or learner checkpoint.
-+- Independent preparation, the required caller-owned Rust pass,
-+  independent evaluation, integration and outcome remain pending.
-+- This pushed Draft allocates the number only and changes no accepted
-+  runtime behavior, executable document, test, dataset or grammar.
-+
-+## Copyright
-+
-+Copyright 2020 Nucleoid
-+
-+This document is licensed under the Apache License, Version 2.0. See
-+[LICENSE](../LICENSE) for the full text.
-```
-
----
-
-### Incident Patch 2: `de3ee014` (2026-11-25)
-**Commit Message**: NUC 145 Input Counts of Reasoning Selections
-
-Accepted under the continuous automatic-acceptance rule: all three hard
-criteria and every independently evaluated policy check passed.
-
-Add the final reasoning projection SELECTION |> indegrees, preserving
-selection order and counting every recorded direct input of each step.
-Reuse existing projection, shadowing, observation and numeric machinery.
-
-Fresh independent and isolated integrated validation each passed the
-all-target build, warning-denied Clippy, formatting and full test suite:
-4,116 passed, 0 failed, 25 retained ignored tests. Preserve every one of
-4,121 accepted scoped test identities, outcomes, displays, ignore reasons
-and 11 expected-panic labels. Replay all 1,318 original accepted programs.
-
-The actual required continuous Reasoning enhancement token check ran once:
-1,318 pairs, 2 reduced, 1,316 unchanged, none increased or missing.
-The new controls measured 164 -> 153 and 139 -> 128 lexer tokens.
-Integrate the frozen candidate unchanged; retain the empty NUC 140 claim
-in primary ancestry. No strategy learning or usefulness rubric configured.
-
-Appending a public Stage enum variant requires human downstream API/SemVer
-revi
-
-**File**: `README.md` (modified, +14/-0)
-```diff
-@@ -2938,6 +2938,20 @@ assert(wiring, ["heat -> alarm", "damp -> alarm", "wind -> alarm", "temp -> heat
-   wind's edge joins the wiring. See the
-   [root contract](nucleoid.spec.md#edge-lists-of-reasoning-selections).
- 
-+## Input counts of reasoning selections
-+
-+- [NUC 145](docs/nuc-0145.md) adds the final stage `selection |> indegrees`,
-+  exactly `(selection).map(step -> step.from.length)` for that graph
-+  selection. `alarm |> why |> indegrees` reports how many recorded inputs
-+  each explanation step has, in its order; an alarm with two direct inputs
-+  starts with `2`, and one that also reads wind starts with `3`.
-+- Counts include inputs outside the selection, stay reactive through
-+  equal-valued rewiring, give `0` for zero-input steps and `[]` for an empty
-+  selection. The stage keeps the same source coercion, observer exclusion,
-+  shadowing and final-projection boundaries as `nodes`, `holds` and `edges`.
-+  See the [root contract](nucleoid.spec.md#input-counts-of-reasoning-selections)
-+  and its two executed, behavior-equivalent specification/reference cases.
-+
- ## Reactive list flattening
- 
- **Flat turns nested lists into one live list**
-```
-
-**File**: `dataset/nucleoid.spec.jsonl` (modified, +1/-0)
-```diff
-@@ -879,3 +879,4 @@
- {"id":"spec-0879","description":"Nucleoid keeps sign copying reactive","code":"magnitude = 3\ndirection = -1\ncopied = Math.copySign(magnitude, direction)\nassert(copied, -3)\ndirection = 1\nassert(copied, 3)\nmagnitude = -7\nassert(copied, 7)\ndirection = -0\nassert(copied, -7)\nmagnitude = 0\nassert(1 / copied, Number.NEGATIVE_INFINITY)\ndirection = 0\nassert(1 / copied, Number.POSITIVE_INFINITY)\n1","return":"1"}
- {"id":"spec-0880","description":"Nucleoid keeps squares reactive","code":"sample = {amplitude: 3}\noffset = 2\nsquared = Math.square(sample.amplitude + offset)\nassert(squared, 25)\nsample.amplitude = -4\nassert(squared, 4)\noffset = 1\nassert(squared, 9)\nsample.amplitude = 0\nassert(squared, 1)\noffset = -1\nassert(squared, 1)\nsample.amplitude = 3\nassert(squared, 4)\n1","return":"1"}
- {"id":"spec-0881","description":"Nucleoid fills nullish values with one-shot assignments","code":"source = 5\nchosen = null\nchosen ??:= source\nassert(chosen, 5)\nsource = 9\nassert(chosen, 5)\nchosen = 0\nchosen ??:= missing\nassert(chosen, 0)\nchosen = false\nchosen ??:= missing\nassert(chosen, false)\nchosen = \"\"\nchosen ??:= missing\nassert(chosen, \"\")\nchosen = null\nchosen ??:= 99\nassert(chosen, 99)\n1","return":"1"}
-+{"id":"spec-0882","description":"Nucleoid counts direct inputs in reasoning selections","code":"price = 3\nquantity = 4\nsubtotal = price * quantity\ntax = subtotal / 10\ntotal = subtotal + tax\ncounts = total |> why |> indegrees\nassert(counts, [2, 2, 1, 0, 0])\nprice = 5\nassert(counts, [2, 2, 1, 0, 0])\ntax = price * quantity\nassert(counts, [2, 2, 2, 0, 0])\ntax = 0\nassert(counts, [2, 2, 0, 0, 0])\ntotal = subtotal\nassert(counts, [1, 2, 0, 0])\nsubtotal = price\nassert(counts, [1, 1, 0])\n1","return":"1"}
-```
-
-**File**: `dataset/nucleoid.synth.145.jsonl` (added, +3/-0)
-```diff
-@@ -0,0 +1,3 @@
-+{"id":"synth-145-0001","description":"Reasoning input counts follow each explanation step's recorded direct inputs through value changes, fan-in changes and stated replacements","code":"price = 3\nquantity = 4\nsubtotal = price * quantity\ntax = subtotal / 10\ntotal = subtotal + tax\ncounts = total |> why |> indegrees\nassert(counts, [2, 2, 1, 0, 0])\nprice = 5\nassert(counts, [2, 2, 1, 0, 0])\ntax = price * quantity\nassert(counts, [2, 2, 2, 0, 0])\ntax = 0\nassert(counts, [2, 2, 0, 0, 0])\ntotal = subtotal\nassert(counts, [1, 2, 0, 0])\nsubtotal = price\nassert(counts, [1, 1, 0])\n1","return":"1"}
-+{"id":"synth-145-0002","description":"Impact input counts include inputs outside the selection, narrow to an empty reactive result and recover on reattachment","code":"source = 2\noffset = 3\nfirst = source + offset\nsecond = first * 2\ntotal = first + second\nimpact = source |> affects |> indegrees\nassert(impact, [2, 1, 2])\nsource = 5\nassert(impact, [2, 1, 2])\nsecond = source + offset + first\nassert(impact, [2, 3, 2])\nfirst = 10\nassert(impact, [3, 2])\nsecond = 20\nassert(impact, [])\nfirst = source\nassert(impact, [1, 2])\n1","return":"1"}
-+{"id":"synth-145-0003","description":"Input counts keep all recorded inputs after selecting only derived steps and zero-input facts contribute zero rather than disappearing","code":"left = 2\nright = 3\nsum = left + right\nscaled = sum * 2\nassert(scaled |> why |> derived |> indegrees, [1, 2])\nassert(scaled |> why |> stated |> indegrees, [0, 0])\nassert(left |> affects |> indegrees, [2, 1])\nassert(right |> indegrees, [0])\nassert(right |> affects |> except(left |> affects) |> indegrees, [])\n1","return":"1"}
-```
-
-**File**: `docs/README.md` (modified, +56/-0)
-```diff
-@@ -4987,6 +4987,9 @@ route.shift()
- - `selection |> edges` lists the steps' dependency edges, one
-   `[input, node]` pair for each name in each step's `from` list
-   ([NUC 133](nuc-0133.md)).
-+- `selection |> indegrees` lists each selected step's recorded input
-+  count in its existing order, including inputs not selected themselves
-+  ([NUC 145](nuc-0145.md)).
- 
- ```
- a = 1
-@@ -5546,6 +5549,55 @@ shipping = price / 2
-   [edge lists of reasoning selections](../nucleoid.spec.md#edge-lists-of-reasoning-selections)
-   section.
- 
-+### Input counts of reasoning selections
-+
-+```
-+source = 2
-+offset = 3
-+first = source + offset
-+second = first * 2
-+total = first + second
-+impact = source |> affects |> indegrees
-+assert(impact, [2, 1, 2])
-+source = 5
-+assert(impact, [2, 1, 2])
-+second = source + offset + first
-+assert(impact, [2, 3, 2])
-+first = 10
-+assert(impact, [3, 2])
-+second = 20
-+assert(impact, [])
-+first = source
-+assert(impact, [1, 2])
-+1
-+```
-+
-+- This is the complete `Nucleoid keeps reasoning input counts reactive`
-+  program in `tests/reference.md`, without its title and return metadata;
-+  all six assertions run and its explicit return is `1`.
-+- [NUC 145](nuc-0145.md) adds only `selection |> indegrees`, exactly
-+  `(selection).map(step -> step.from.length)` for the graph selection
-+  its source denotes. Each result is a Number, in selection order. The
-+  offset's own step is not in `source |> affects`, but it still counts
-+  among `first`'s two inputs. The total counts both inputs even if another
-+  filter removes their steps.
-+- Empty selections give `[]`; zero-input steps give `0`. Counts follow
-+  recorded direct inputs, not selection cardinality, transitive paths or
-+  induced-subgraph degree. Rewiring refreshes counts even when held values
-+  stay equal, and an empty impact remains subscribed for reattachment.
-+- Reference coercion, selected metadata, observer exclusion, null/missing
-+  behavior, class/function contexts, `.value` snapshots and hypotheses
-+  remain those of `nodes`, `holds` and `edges`. A variable holding a
-+  selection denotes its own graph node, not its stored list.
-+- This is a final projection: a later reasoning stage or a selection
-+  argument ending with it raises `TypeError("Cannot explain <source>")`.
-+  A binding named `indegrees` shadows it with
-+  `TypeError("indegrees is not an operation")`. Elsewhere it remains an
-+  ordinary name; no prefix or call alias, keyword, token kind, record
-+  field, graph mutation or new traversal is added.
-+- The authoritative contract is
-+  [input counts of reasoning selections](../nucleoid.spec.md#input-counts-of-reasoning-selections).
-+
- ### Live structure
- 
- - A reasoning assignment follows both values and graph structure.
-@@ -6158,6 +6210,10 @@ reference |> why |> edges             the [input, node] edges of an explanation'
- reference |> affects |> edges         the edges that a change of the reference travels (NUC 133)
- model |> edges                        the edges of the current model's nodes (NUC 133)
- selection |> edges                    one [input, step.node] pair per name of each step's from; ends the pipeline (NUC 133)
-+reference |> why |> indegrees         each explanation step's recorded input count, in its order (NUC 145)
-+reference |> affects |> indegrees     counts every input of each reached step, selected or not (NUC 145)
-+model |> indegrees                    the recorded input counts of the current model's steps (NUC 145)
-+selection |> indegrees                the list (selection).map(step -> step.from.length); ends the pipeline (NUC 145)
- all name in collection: condition     true when the condition holds for every member (NUC 62)
- every name in collection: condition   the same quantifier as all (NUC 98)
- any name in collection: condition     true when the condition holds for some member (NUC 62)
-```
-
-**File**: `docs/examples.md` (modified, +15/-0)
-```diff
-@@ -4416,6 +4416,21 @@ moved
-   [NUC 133](nuc-0133.md) and the
-   [root contract](../nucleoid.spec.md#edge-lists-of-reasoning-selections).
- 
-+## Input counts of reasoning selections
-+
-+- [NUC 145](nuc-0145.md) adds `selection |> indegrees`, the ordered Number
-+  projection `(selection).map(step -> step.from.length)`. For the schedule
-+  above, `delay |> affects |> indegrees` reports each reached step's fan-in,
-+  including the testing input even though delay does not reach testing.
-+- Replacing shipping's two inputs by three changes its count even if its
-+  value stays the same. Stated/zero-input steps contribute `0`, and an empty
-+  selection gives `[]` while retaining its structural subscriptions.
-+- The complete paired reference program and its six reactive assertions are
-+  in [the language reference](README.md#input-counts-of-reasoning-selections);
-+  the [root contract](../nucleoid.spec.md#input-counts-of-reasoning-selections)
-+  specifies unchanged source coercion, observers, shadowing and final-list
-+  boundaries. No additional executable-document case is introduced here.
-+
- ## Reactive list flattening
- 
- **Flattening keeps the dirty tiles of every room counted**
-```
+The cycle found no stale Draft, drew Runtime features uniformly from the
+five eligible categories, with runtime applicability
+existing_comparable, allocated the NUC in efe74ce8 and renewed its claim
+in 88b0d49b. A fresh proposer prepared it in three phases with Baseline
+B, the caller's Rust improvement 
 
 **File**: `docs/nuc-0000.md` (modified, +2/-2)
 ```diff
-@@ -166,7 +166,7 @@ Created: 31-Jul-2026
- | [128](nuc-0128.md) | Origins and Outcomes of Reasoning Selections | Accepted |
- | [133](nuc-0133.md) | Edge Lists of Reasoning Selections | Accepted |
- | [139](nuc-0139.md) | Symmetric Difference Reasoning Selections | Accepted |
--| [145](nuc-0145.md) | Input Counts of Reasoning Selections | Draft |
-+| [145](nuc-0145.md) | Input Counts of Reasoning Selections | Accepted |
+@@ -102,7 +102,7 @@ Created: 31-Jul-2026
+ | [126](nuc-0126.md) | Exit-Controlled Repeat-Until Loops | Accepted |
+ | [130](nuc-0130.md) | Loop-Local Iterator Exits | Rejected: existing corpus-count test fails (1,246 expected; 1,252 actual) |
+ | [136](nuc-0136.md) | Unknown Constructor Arguments as Properties | Accepted |
+-| [140](nuc-0140.md) | Match Statements | Draft |
++| [140](nuc-0140.md) | Match Statements | Rejected: not backward compatible, as an accepted statement that starts with `match` followed by `every`, `any` or `all` and `repeat:` or `suppose:` before an indented block, read as `match` beside a quantifier and a repeat-until loop or `suppose` block, now raises a `SyntaxError` |
+ | [144](nuc-0144.md) | Nullish Value Assignment | Accepted |
  
- ### Language compatibility
- 
-@@ -344,7 +344,7 @@ Created: 31-Jul-2026
+ ### Utility enhancement
+@@ -340,7 +340,7 @@ Created: 31-Jul-2026
+ | [137](nuc-0137.md) | Floating-Point Absolute Value Alias | Standards Track | Language compatibility | Accepted |
+ | [138](nuc-0138.md) | Reactive Secant | Standards Track | Utility enhancement | Accepted |
+ | [139](nuc-0139.md) | Symmetric Difference Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
+-| [140](nuc-0140.md) | Match Statements | Standards Track | Runtime features | Draft |
++| [140](nuc-0140.md) | Match Statements | Standards Track | Runtime features | Rejected: not backward compatible, as an accepted statement that starts with `match` followed by `every`, `any` or `all` and `repeat:` or `suppose:` before an indented block, read as `match` beside a quantifier and a repeat-until loop or `suppose` block, now raises a `SyntaxError` |
+ | [141](nuc-0141.md) | Reactive Cosecant | Standards Track | Utility enhancement | Accepted |
  | [142](nuc-0142.md) | Reactive Sign Copying | Standards Track | Utility enhancement | Automatic-Accepted: independent strict rollback graph-dependent ordering check failed, also reproduced on the accepted arithmetic runtime |
  | [143](nuc-0143.md) | Reactive Squaring | Standards Track | Utility enhancement | Accepted |
- | [144](nuc-0144.md) | Nullish Value Assignment | Standards Track | Runtime features | Accepted |
--| [145](nuc-0145.md) | Input Counts of Reasoning Selections | Standards Track | Reasoning enhancement | Draft |
-+| [145](nuc-0145.md) | Input Counts of Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
- 
- ## Copyright
- 
 ```
 
-**File**: `docs/nuc-0145.md` (modified, +223/-12)
+**File**: `docs/nuc-0140.md` (modified, +1281/-19)
 ```diff
-@@ -4,7 +4,7 @@
- NUC: 145
- Title: Input Counts of Reasoning Selections
- Author: Copilot <223556219+Copilot@users.noreply.github.com>
+@@ -4,11 +4,11 @@
+ NUC: 140
+ Title: Match Statements
+ Author: Can Mingir <canmingir@gmail.com>
 -Status: Draft
-+Status: Accepted
++Status: Rejected
  Type: Standards Track
- Category: Reasoning enhancement
- Created: 25-Nov-2026
-@@ -23,8 +23,11 @@ Requires: 48, 112, 133
-   Add no prefix form, keyword, token kind, record field or graph mutation.
- - The caller's one uniform live-registry draw selected Reasoning
-   enhancement. This allocation requests a graph-structure projection for
--  explanations, not a general collection helper. Preparation, the required
--  Rust-improvement pass and fresh independent evaluation remain pending.
-+  explanations, not a general collection helper.
-+- **Accepted:** fresh independent evaluation and the caller's integrated
-+  recheck pass every hard criterion and required policy check. The
-+  required token comparison reduces the two new controls from 164 to
-+  153 and 139 to 128 tokens; all 1,316 historical cases are unchanged.
+ Category: Runtime features
+ Created: 24-Nov-2026
+-Requires: 7
++Requires: 7, 8, 9
+ ```
+ 
+ ## Abstract
+@@ -28,19 +28,47 @@ Requires: 7
+           light.next = "yellow"
+   ```
+ 
+-- The statement is the `if`/`elif` chain that tests `SUBJECT == VALUE` for
+-  each value, with `||` between the values of one case and `else:` as its
+-  last branch, except that the subject is written and evaluated once. Like
+-  an `if` statement it is a standing rule, so it runs again when what it
+-  read changes, and with a `$Class` subject it is a class-level conditional
+-  for every instance.
++- The statement is the `if`/`elif` chain that tests `(SUBJECT) == (VALUE)`
++  for each value, with `||` between the values of one case and `else:` as
++  its last branch, except that the subject is written and evaluated once.
++  Like an `if` statement it is a standing rule, so it runs again when what
++  it read changes, and with a `$Class` subject it is a class-level
++  conditional for every instance. It yields what that chain yields: the
++  value of the last statement of the suite that ran, and `null` when no
++  suite runs.
+ - At the accepted revision a program that writes `match SUBJECT:` before an
+   indented block fails to parse, with `SyntaxError("Unexpected ':'")` at
+   the header's colon for subjects such as `v`, `light.state` and
+   `$Order.status`, and only such programs change. `match` and `case` stay
+   ordinary names: variables, functions, parameters, properties and keys
+   named `match` or `case`, and typed declarations such as `match: int`,
+   keep their readings.
++- One public syntax-tree variant, `Stmt::Match`, with the public case struct
++  `MatchCase`, one statement node, `Nuc::Match` with its module
++  `nuc::r#match`, and one graph node kind, `NodeKind::Match`, are added; no
++  keyword, lexer token or error type is.
++- Each of the seven new executable cases uses 7 to 12 fewer lexer tokens
++  than its recorded counterpart, the most compact fair accepted spelling
++  found, and fewer than every other fair spelling measured. Hand-evaluated
++  substitutions, which read the cases' inputs and are excluded, come within
++  2 to 6 tokens of the cases, and one of them, which stacks a hard-coded
++  stop value with two coincidence tests, uses one token fewer than the
++  method case, as [Counterparts](#counterparts) records.
++- The authoritative contract is
++  [Match statements](../nucleoid.spec.md#match-statements).
++- Independent evaluation rejected this revision because it is not backward
++  compatible, so the prototype is not part of the accepted language and the
++  specification section, cases, grammar, records and exports it proposed
++  were not integrated. A statement that starts with the name `match`,
++  followed by `every`, `any` or `all` and then the word `repeat` or
++  `suppose` before a colon and an indented block, such as
++  `match every repeat:` over an indented body and `until n >= 3`, parses at
++  the accepted revision as the name `match` beside the quantifier and a
++  repeat-until loop or `suppose` block, and can run cleanly there; the
++  candidate reads it as a match statement and raises a `SyntaxError`. The
++  claim above that only programs that failed to parse change is therefore
++  false; the outcome's Evaluation section at the end of this document
++  records the evidence.
  
  ## Motivation
  
-@@ -42,30 +45,238 @@ Requires: 48, 112, 133
+@@ -59,14 +87,27 @@ Requires: 7
+       $Order.stage = "closed"
+   ```
  
- ## Rationale
- 
--- To be completed by the fresh proposal agent in its isolated candidate.
-+- Count each selected step's recorded inputs, not selected steps or paths.
-+  A downstream selection can omit an input's step without removing that
-+  input from the result's recorded fan-in.
-+- Use the existing final-projection boundary of `nodes`, `holds` and
-+  `edges`. The existing private `StepField` projection supplies one Number
-+  per step while the existing `projected` path retains record
-+  materialization and observations.
-+- Keep `indegrees` an ordinary Identifier and recognize it only after
-+  `|>`. Preserve existing local/state/function/class shadowing rather than
-+  reserving a word or adding a prefix, bare or call alias.
-+- Reuse accepted selection, filtering, ranking, structural-subscription
-+  and number-conversion machinery. Add no traversal, graph mutation,
-+  record field, dependency or configuration.
-+- NUC 11's planned `describe` and other operations, NUC 133's edge
-+  projection and NUC 139's rejected selection-cardinality idea do not
-+  supply this per-step recorded-input projection. None is revised here.
-+- Append `Stage::Indegrees` after every existing public Stage variant;
-+  existing implicit discriminants stay in order. Expanding this public
-+  exhaustive enum requires human SemVer/API review for downstream
-+  matches. No project version, Cargo manifest or lockfile changes.
- 
- ## Specification
- 
--- To be completed without extending the allocated feature's scope.
-+- `selection |> indegrees` returns a list of Numbers, one per selected
-+  Step in its existing order, each equal to `step.from.length`.
-+  Include every recorded input, whether its step is selected or not.
-+  The accepted equivalent is
-+  `(selection).map(step -> step.from.length)`.
-+- An empty selection gives `[]`. A stated or other zero-input step
-+  contributes `0`, including a derived class-governed step whose recorded
-+  input list is empty. No selected record or metadata is changed.
-+- Sources are those of existing final projections: a reference denotes
-+  its own one-step selection, `model` the current selectable graph, and
-+  prefix/pipeline selection stages their existing ordered selections.
-+  A variable holding records still denotes its graph node, not its value.
-+- Standing declarations follow every value and shape observation of that
-+  selection. Equal-valued rewiring can change input counts; an empty
-+  selection remains subscribed for later attachment. Observers remain
-+  excluded from selection and traversal.
-+- Function, method, class-level and hypothetical contexts, snapshots,
-+  deletion/recovery, missing properties, nullish deferral and transaction
-+  behavior remain those of `nodes`, `holds` and `edges`. The feature does
-+  not repair inherited rollback-ordering or runtime-value-depth gaps.
-+- A referenced null-valued step still supplies its recorded input count.
-+  An absent selected property or deleted formerly defined node supplies
-+  no step. An Undefined selection, including `depth(null)`, stays
-+  Undefined rather than becoming `[]` or `[0]`. A standing declaration
-+  retains the existing deferred-null result and subsequent recovery.
-+- This stage ends a reasoning pipeline. A later reasoning stage, or a
-+  `path`, `intersect`, `except`, `union` or `xor` argument ending in this
-+  projection, cannot treat its list as a selection. Parenthesized list
-+  operations on the result remain ordinary.
-+- Stage bindings and final-boundary error precedence stay identical to
-+  the existing projections. Bare `indegrees`, ordinary calls and members
-+  retain lookup; there is no new prefix or call alias, lexer token kind
-+  or reserved word.
-+- The authoritative contract is
-+  [Input counts of reasoning selections](../nucleoid.spec.md#input-counts-of-reasoning-selections).
-+  It is exercised by `Nucleoid counts direct inputs in reasoning selections`
-+  and the reference's `Nucleoid keep
-```
-
-**File**: `docs/nucleoid.ebnf` (modified, +13/-1)
-```diff
-@@ -584,6 +584,7 @@ stage
-       | NODES
-       | HOLDS
-       | EDGES
-+      | INDEGREES
-       | ORIGINS
-       | OUTCOMES                                            /* Expr::Reason */
-       | DEPTH LPAREN expression RPAREN                       /* Expr::Depth */
-@@ -1010,6 +1011,7 @@ enumName
-       | NODES
-       | HOLDS
-       | EDGES
-+      | INDEGREES
-       | ORIGINS
-       | OUTCOMES
-       | MODEL
-@@ -1105,6 +1107,7 @@ XOR              ::= 'xor'
- NODES            ::= 'nodes'
- HOLDS            ::= 'holds'
- EDGES            ::= 'edges'
-+INDEGREES        ::= 'indegrees'
- ORIGINS          ::= 'origins'
- OUTCOMES         ::= 'outcomes'
- MODEL            ::= 'model'
-@@ -1186,7 +1189,7 @@ WORD_TOKEN
-       | ASSERT | SUPPOSE | LAMBDA | IS | ALL | EVERY | ANY | SUM | MAX | MIN
-       | MODE | WHY | AFFECTS | STATED | DERIVED | DIFF | DEPTH | PATH
-       | INTERSECT | EXCEPT | EXCEPTION | AS | UNION | XOR | NODES | HOLDS
--      | EDGES | ORIGINS | OUTCOMES | MODEL | FIRST | LAST | PREVIOUS | INIT
-+      | EDGES | INDEGREES | ORIGINS | OUTCOMES | MODEL | FIRST | LAST | PREVIOUS | INIT
-       | PYTHON_INIT
- 
- NEWLINE
-@@ -1374,6 +1377,15 @@ REGEX_ESCAPE
-  *                             list of each of s's steps. It ends the pipeline
-  *                             as nodes and holds do, and a binding named
-  *                             edges shadows it at run time.
-+ * s |> indegrees           -> Expr::Reason with Stage::Indegrees, one Number
-+ *                             equal to each selected step's from length, in
-+ *                             selection order, including inputs not selected
-+ *                             by s. It ends the pipeline as nodes, holds and
-+ *                             edges do, with the same source coercion and
-+ *                             binding-shadow error precedence. INDEGREES is
-+ *                             an ordinary Rust Identifier in the enumName
-+ *                             grammar group, not a reserved word or new lexer
-+ *                             token kind; no prefix or call alias is lowered.
-  * s |> origins             -> Expr::Reason with Stage::Origins, the steps of s
-  *                             that rest on no step of s, and
-  *                             s |> outcomes -> Stage::Outcomes, the steps that
+-  That chain takes 59 lexer tokens, against 47 for the same rule as a
++- That chain takes 59 lexer tokens, against 47 for the same rule as a
+   `match` statement over `$Order.status` with the cases
+-  `"paid", "packed"`, `"shipped"` and `"delivered", "returned"`. A
+-  three-state light whose branches set two properties each takes 65
+-  tokens as a chain and 61 as a `match`. With a bare variable as the
+-  subject and two cases before `else:`, the chain is shorter, 32 tokens
+-  against 34, so the statement pays off as the subject grows and as cases
+-  share suites.
++  `"paid", "packed"`, `"shipped"` and `"delivered", "returned"`. Written as
++  compactly as each allows, with every suite on its line and NUC 97's
++  membership test `$Order.status in ["paid", "packed"]` for the shared
++  values, three separate `if` statements take 46 tokens and the match
++  statement 38.
++- An object lookup,
++  `$Order.stage = {paid: "warehouse", packed: "warehouse", ...}[$Order.status]`,
++  takes 30, because every suite of this rule picks one value of one
++  property. It is not the same rule: it assigns `null` to an order whose
++  status it does not list, where the chain and the match statement leave
++  the stage as it was, and it cannot run a statement. The match statement
++  pays off when suites do more than pick one value, as the cases of this
++  proposal do.
++- The statement pays off as the subject grows and as cases share sui
 ```
 
 #### Recent Merged Pull Requests:
@@ -2065,13 +1748,13 @@ revi
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Draft NUC 146 Reactive Cubing
+## X. NUC 140 Match Statements
 
 **RULE**:
 When implementing operations in `docs/nuc-0000.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `16a373a7`: Draft NUC 146 Reactive Cubing. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2942f5eb`: NUC 140 Match Statements. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/nuc-0000.md`.
@@ -2079,15 +1762,16 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-| [146](nuc-0146.md) | Reactive Cubing | Draft |
-| [146](nuc-0146.md) | Reactive Cubing | Standards Track | Utility enhancement | Draft |
+| [140](nuc-0140.md) | Match Statements | Rejected: not backward compatible, as an accepted statement that starts with `match` followed by `every`, `any` or `all` and `repeat:` or `suppose:` before an indented block, read as `match` beside a quantifier and a repeat-until loop or `suppose` block, now raises a `SyntaxError` |
+| [140](nuc-0140.md) | Match Statements | Standards Track | Runtime features | Rejected: not backward compatible, as an accepted statement that starts with `match` followed by `every`, `any` or `all` and `repeat:` or `suppose:` before an indented block, read as `match` beside a quantifier and a repeat-until loop or `suppose` block, now raises a `SyntaxError` |
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+| [140](nuc-0140.md) | Match Statements | Draft |
+| [140](nuc-0140.md) | Match Statements | Standards Track | Runtime features | Draft |
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `16a373a7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2942f5eb` are properly handled with clean fallback behavior.

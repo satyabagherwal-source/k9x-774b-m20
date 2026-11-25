@@ -13100,3 +13100,8 @@ Every entry in this ledger must capture:
 | `learn-github-gitoxidelabs-gitoxide` | `https://github.com/GitoxideLabs/gitoxide` | `a825f86d` | Multi-dimensional audit evidence | 2026-11-25T12:09:03.596Z |
 | `learn-github-goodrain-rainbond` | `https://github.com/goodrain/rainbond` | `3d312f45` | Multi-dimensional audit evidence | 2026-11-25T12:09:11.057Z |
 | `learn-github-genkit-ai-genkit` | `https://github.com/genkit-ai/genkit` | `5f4d54a0` | Multi-dimensional audit evidence | 2026-11-25T12:09:15.407Z |
+| `learn-huggingface-mistralai-mistral-large-4-1t-a52b` | `https://huggingface.co/mistralai/Mistral-Large-4-1T-A52B` | `hf-mistral` | Multi-dimensional audit evidence | 2026-11-25T12:19:22.288Z |
+| `learn-github-rustcrypto-hashes` | `https://github.com/RustCrypto/hashes` | `ed176fb7` | Multi-dimensional audit evidence | 2026-11-25T12:19:34.021Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `2942f5eb` | Multi-dimensional audit evidence | 2026-11-25T12:19:38.892Z |
+| `learn-github-redisearch-redisearch` | `https://github.com/RediSearch/RediSearch` | `7a24743f` | Multi-dimensional audit evidence | 2026-11-25T12:19:39.707Z |
+| `learn-dom-h-64682323` | `project://redisearch-redisearch` | `7a24743f` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/redisearch-redisearch-learnings.md` | 2026-11-25T12:20:23.952Z |

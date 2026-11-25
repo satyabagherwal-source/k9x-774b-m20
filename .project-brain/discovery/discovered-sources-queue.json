@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-25T12:09:19.047Z",
+  "updated_at": "2026-11-25T12:20:24.498Z",
   "stats": {
-    "total_discovered": 9414,
-    "approved_pending_harvest": 8922,
+    "total_discovered": 9420,
+    "approved_pending_harvest": 8928,
     "harvested_count": 0,
     "rejected_count": 492,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 8913,
+      "COMMUNITY_AND_EXPERT": 8919,
       "OFFICIAL_DOCUMENTATION": 280,
       "STANDARDS_AND_SPECIFICATIONS": 150,
       "ENGINEERING_BLOGS": 7,
@@ -203691,6 +203691,138 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md",
         "fileName": "gitoxidelabs-gitoxide-learnings.md"
+      }
+    },
+    "SRC-78B815168E35": {
+      "id": "SRC-78B815168E35",
+      "url": "https://github.com/RustCrypto/hashes/pull/951",
+      "title": "https://github.com/RustCrypto/hashes/pull/951",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T12:19:44.756Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rustcrypto-hashes-learnings.md",
+        "fileName": "rustcrypto-hashes-learnings.md"
+      }
+    },
+    "SRC-A981B9F7E807": {
+      "id": "SRC-A981B9F7E807",
+      "url": "https://github.com/RediSearch/RediSearch/pull/12122",
+      "title": "https://github.com/RediSearch/RediSearch/pull/12122",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T12:20:24.103Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/redisearch-redisearch-learnings.md",
+        "fileName": "redisearch-redisearch-learnings.md"
+      }
+    },
+    "SRC-C2E33A8EBB6D": {
+      "id": "SRC-C2E33A8EBB6D",
+      "url": "https://github.com/RediSearch/RediSearch/pull/12123",
+      "title": "https://github.com/RediSearch/RediSearch/pull/12123",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T12:20:24.215Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/redisearch-redisearch-learnings.md",
+        "fileName": "redisearch-redisearch-learnings.md"
+      }
+    },
+    "SRC-F9A28F75AC24": {
+      "id": "SRC-F9A28F75AC24",
+      "url": "https://github.com/RediSearch/RediSearch/pull/12124",
+      "title": "https://github.com/RediSearch/RediSearch/pull/12124",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T12:20:24.298Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/redisearch-redisearch-learnings.md",
+        "fileName": "redisearch-redisearch-learnings.md"
+      }
+    },
+    "SRC-AEDBEC5A314C": {
+      "id": "SRC-AEDBEC5A314C",
+      "url": "https://github.com/RediSearch/RediSearch/pull/12125",
+      "title": "https://github.com/RediSearch/RediSearch/pull/12125",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T12:20:24.397Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/redisearch-redisearch-learnings.md",
+        "fileName": "redisearch-redisearch-learnings.md"
+      }
+    },
+    "SRC-8B77DC78A615": {
+      "id": "SRC-8B77DC78A615",
+      "url": "https://github.com/RediSearch/RediSearch/pull/12126",
+      "title": "https://github.com/RediSearch/RediSearch/pull/12126",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T12:20:24.498Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/redisearch-redisearch-learnings.md",
+        "fileName": "redisearch-redisearch-learnings.md"
       }
     }
   }

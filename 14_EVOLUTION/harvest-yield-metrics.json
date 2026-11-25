@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T12:09:15.413Z",
-  "total_cycles_completed": 12406,
-  "total_learnings_persisted": 12406,
-  "total_rules_promoted": 11403,
+  "last_updated": "2026-11-25T12:19:39.714Z",
+  "total_cycles_completed": 12410,
+  "total_learnings_persisted": 12410,
+  "total_rules_promoted": 11406,
   "history": [
-    {
-      "timestamp": "2026-11-24T23:50:54.174Z",
-      "repository": "parcel-bundler/parcel",
-      "learningId": "learn-github-parcel-bundler-parcel",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T23:50:57.841Z",
-      "repository": "clastix/kamaji",
-      "learningId": "learn-github-clastix-kamaji",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T23:51:03.477Z",
-      "repository": "paradedb/paradedb",
-      "learningId": "learn-github-paradedb-paradedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T23:58:36.645Z",
-      "repository": "str4d/rage",
-      "learningId": "learn-github-str4d-rage",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-24T23:58:38.574Z",
       "repository": "TanStack/router",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-25T12:09:15.413Z",
       "repository": "genkit-ai/genkit",
       "learningId": "learn-github-genkit-ai-genkit",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T12:19:22.296Z",
+      "repository": "mistralai/Mistral-Large-4-1T-A52B",
+      "learningId": "learn-huggingface-mistralai-mistral-large-4-1t-a52b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T12:19:34.028Z",
+      "repository": "RustCrypto/hashes",
+      "learningId": "learn-github-rustcrypto-hashes",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T12:19:38.899Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T12:19:39.714Z",
+      "repository": "RediSearch/RediSearch",
+      "learningId": "learn-github-redisearch-redisearch",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -13067,3 +13067,8 @@
 | `CYCLE-20261125-YRFS` | `2026-11-25T12:09:03.592Z` | `GitoxideLabs/gitoxide` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10520` | Yes (`3b812d0d...`) |
 | `CYCLE-20261125-YX70` | `2026-11-25T12:09:11.052Z` | `goodrain/rainbond` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10521` | Yes (`2808c050...`) |
 | `CYCLE-20261125-Z0JV` | `2026-11-25T12:09:15.403Z` | `genkit-ai/genkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10522` | Yes (`38cac477...`) |
+| `CYCLE-20261125-C0TN` | `2026-11-25T12:19:22.283Z` | `mistralai/Mistral-Large-4-1T-A52B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-mistralai-mistral-large-4-1t-a52b-learnings.md` | Yes (`9be4363f...`) |
+| `CYCLE-20261125-C9VJ` | `2026-11-25T12:19:34.015Z` | `RustCrypto/hashes` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10523` | Yes (`9ff33201...`) |
+| `CYCLE-20261125-CDMU` | `2026-11-25T12:19:38.886Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10524` | Yes (`71c42d3a...`) |
+| `CYCLE-20261125-CE9E` | `2026-11-25T12:19:39.698Z` | `RediSearch/RediSearch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10525` | Yes (`3c06bdd8...`) |
+| `CYCLE-2026-11-25-PROJ-EVOLVE` | `2026-11-25T12:20:23.952Z` | `redisearch-redisearch` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-64682323` [Domain H] | Yes (`7db3dde0...`) |

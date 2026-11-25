@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-25T12:09:21.071Z",
+  "last_updated": "2026-11-25T12:20:25.446Z",
   "total_verified_learnings": 9117,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25435,
+  "total_items": 25441,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -230665,8 +230665,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "16a373a7",
-      "content_hash": "9e0ba9dccd64be85b5821d0ed51731c6baea7aa20bc3e0e25b51cc3fe6312b94",
+      "source_version": "2942f5eb",
+      "content_hash": "71c42d3a6e49625346697a76dbdab91bb66541ac7b0acc1767e2a31cb2b2f92a",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -230954,6 +230954,11 @@
           "number": 10515,
           "title": "Draft NUC 146 Reactive Cubing",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10524,
+          "title": "NUC 140 Match Statements",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -230961,7 +230966,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T11:42:39.570Z",
+      "verified_at": "2026-11-25T12:19:38.525Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -231003,10 +231008,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "16a373a7",
-      "content_hash": "6c9fbc21784b63a104cc0bc8a6227448c232e4f33ec0d3e6d9208fcc290e1b5a",
+      "source_version": "2942f5eb",
+      "content_hash": "ad9e3f6c9c70fa73486dd68cb44e39b604babed34b98da4622e4cf09f5477fba",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T11:42:40.228Z"
+      "persisted_at": "2026-11-25T12:19:39.463Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid",
@@ -231015,10 +231020,10 @@
       "relative_path": "08_VERIFICATION/nucleoidai-nucleoid-verification-protocol-empirical-defect-shield-for-nucleoidai.md",
       "title": "Verification Protocol: Empirical Defect Shield for NucleoidAI/Nucleoid",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "16a373a7",
-      "content_hash": "77a87102d2606054c0782692e13241337d7e248bed656dfe2b9d1b38c515ec64",
+      "source_version": "2942f5eb",
+      "content_hash": "062a8dd88990c0eaa8e1ba3b84fac355f73458aee574b2afefc2a008e1317915",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T11:42:40.411Z"
+      "persisted_at": "2026-11-25T12:19:39.707Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -251402,7 +251407,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/mistralai/Mistral-Large-4-1T-A52B",
       "source_version": "hf-mistralai-mistral-large-4-1t-a52b",
-      "content_hash": "6879173e1f9e3a6ca1d27c336994cc7f7e947075b0850c46695a917f2dc84b98",
+      "content_hash": "9be4363fe8344f81f45fc4efd794c262d7ab340c522cf51c21e1df61c108a93c",
       "dossier_path": "07_PROJECT_LEARNING/hf-mistralai-mistral-large-4-1t-a52b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-mistralai-mistral-large-4-1t-a52b-learnings.md",
       "promoted_rules": [],
@@ -251411,7 +251416,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T21:04:29.756Z",
+      "verified_at": "2026-11-25T12:19:21.975Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -251428,9 +251433,9 @@
       "title": "Research & Knowledge Intelligence: mistralai/Mistral-Large-4-1T-A52B Core Invariants",
       "repository": "mistralai/Mistral-Large-4-1T-A52B",
       "source_version": "hf-mistralai-mistral-large-4-1t-a52b",
-      "content_hash": "8e12f87f7bb560a009c6146be278951dba2f056fd9e6f377fabb4563765ab3ef",
+      "content_hash": "0cf6c9613c0ca3671ce7c9bf048711ccd65e65232b77292e7f99bf9938f495a5",
       "domain_letter": "D",
-      "persisted_at": "2026-11-21T21:04:30.205Z"
+      "persisted_at": "2026-11-25T12:19:22.590Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-mistralai-mistral-large-4-1t-a52b-learnings-c": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-mistralai-mistral-large-4-1t-a52b-learnings-c",
@@ -251440,9 +251445,9 @@
       "title": "Research & Knowledge Intelligence: hf-mistralai-mistral-large-4-1t-a52b-learnings Core Invariants",
       "repository": "hf-mistralai-mistral-large-4-1t-a52b-learnings",
       "source_version": "HEAD",
-      "content_hash": "22b2d101c2531e106ffa31fe13fbb507c9cbb36032c7b2174733b227df870897",
+      "content_hash": "2202444889c1650083bbe4351083b593cc85771c09abdce8cbf221ceb0bca74d",
       "domain_letter": "D",
-      "persisted_at": "2026-11-21T21:04:49.298Z"
+      "persisted_at": "2026-11-25T12:19:43.788Z"
     },
     "learn-github-nats-io-nats-go": {
       "learning_id": "learn-github-nats-io-nats-go",
@@ -277627,10 +277632,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-redisearch-redisearch-architecture-intelligence-redisearch-redisearch-core-invar.md",
       "title": "Architecture Intelligence: RediSearch/RediSearch Core Invariants",
       "repository": "RediSearch/RediSearch",
-      "source_version": "3bfa11a6",
-      "content_hash": "35c265777648a3cd76d3501cc7537e789ac983d81d78f2ff98a20c224e30a013",
+      "source_version": "7a24743f",
+      "content_hash": "19ed04e5dde6156eb78210dd2f6eddc518300cc3cf1aac2d6c03439f640a74fa",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T17:13:49.796Z"
+      "persisted_at": "2026-11-25T12:19:40.284Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-redisearch-redisearch": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-redisearch-redisearch",
@@ -277639,10 +277644,10 @@
       "relative_path": "08_VERIFICATION/redisearch-redisearch-verification-protocol-empirical-defect-shield-for-redisear.md",
       "title": "Verification Protocol: Empirical Defect Shield for RediSearch/RediSearch",
       "repository": "RediSearch/RediSearch",
-      "source_version": "3bfa11a6",
-      "content_hash": "61c22439520d357b717e30b0c32812cd33d8aa1af4bdaae95fda00414f49cf1a",
+      "source_version": "7a24743f",
+      "content_hash": "d3bddf34937520dcd4fb400de249eb8d58da56f03b06eba41003c96cd3f372af",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T17:13:50.023Z"
+      "persisted_at": "2026-11-25T12:19:40.522Z"
     },
     "learn-huggingface-autogluon-chronos-2": {
       "learning_id": "learn-huggingface-autogluon-chronos-2",
@@ -294136,14 +294141,19 @@
       "slug": "rustcrypto-hashes",
       "platform": "github",
       "source_url": "https://github.com/RustCrypto/hashes",
-      "source_version": "50a7ea68",
-      "content_hash": "bf7f1dde2e83ec32c5f0719d666a3fee95dca07c3b00af5da19c2dea74461e24",
+      "source_version": "ed176fb7",
+      "content_hash": "9ff33201123f3856be87432c3c0deb60c34449d89a28118b3f338474464b7216",
       "dossier_path": "07_PROJECT_LEARNING/rustcrypto-hashes-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rustcrypto-hashes-learnings.md",
       "promoted_rules": [
         {
           "number": 9256,
           "title": "refactor `riscv_zknh` backends",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10523,
+          "title": "fix `sha512/x86_avx2` backend for 32-bit targets",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -294152,7 +294162,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T16:22:27.902Z",
+      "verified_at": "2026-11-25T12:19:33.730Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -294194,10 +294204,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-rustcrypto-hashes-architecture-intelligence-rustcrypto-hashes-core-invariants.md",
       "title": "Architecture Intelligence: RustCrypto/hashes Core Invariants",
       "repository": "RustCrypto/hashes",
-      "source_version": "50a7ea68",
-      "content_hash": "a6dc494171cf464e3a71242936c0b49b5bb79587788f4c43438547f23ec2d21d",
+      "source_version": "ed176fb7",
+      "content_hash": "da0d09e02c45317c37b5b2287a1cc60f3b7f212fd2643d4783e6abc378bd716b",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T16:22:28.400Z"
+      "persisted_at": "2026-11-25T12:19:34.567Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-rustcrypto-hashes": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-rustcrypto-hashes",
@@ -294206,10 +294216,10 @@
       "relative_path": "08_VERIFICATION/rustcrypto-hashes-verification-protocol-empirical-defect-shield-for-rustcrypto-h.md",
       "title": "Verification Protocol: Empirical Defect Shield for RustCrypto/hashes",
       "repository": "RustCrypto/hashes",
-      "source_version": "50a7ea68",
-      "content_hash": "b1ab30635c03c7c3533af400626ac5a68b211721e0282b91dbf6e45ba4079302",
+      "source_version": "ed176fb7",
+      "content_hash": "e403f94522f80c76fb88206fe67040863dc2d05c2a24ae4fdc83840192d27043",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T16:22:28.531Z"
+      "persisted_at": "2026-11-25T12:19:34.799Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-o2sh-onefetch-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-o2sh-onefetch-learnings",
@@ -294243,9 +294253,9 @@
       "title": "Architecture Intelligence: rustcrypto-hashes-learnings Core Invariants",
       "repository": "rustcrypto-hashes-learnings",
       "source_version": "HEAD",
-      "content_hash": "ffda71d7e8e5f2681dcd951f93a224376947df23cc4547cd5b7dc894808a67af",
+      "content_hash": "2108fed3f0a7ee8edc9c0b0010a7f1edf6800a6c88a72a83801d9bd0a9d73922",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T16:22:33.452Z"
+      "persisted_at": "2026-11-25T12:19:45.319Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-rustcrypto-hashes-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-rustcrypto-hashes-learnings",
@@ -294255,9 +294265,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for rustcrypto-hashes-learnings",
       "repository": "rustcrypto-hashes-learnings",
       "source_version": "HEAD",
-      "content_hash": "eafb3f18c35e36dc95f910dcaadf99df353f2d70475dd9c96e2afd30f88c2984",
+      "content_hash": "383d10f91064b1dac9fb95a63073956247be9591bb12f28df53d624e16026c31",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T16:22:33.604Z"
+      "persisted_at": "2026-11-25T12:19:45.570Z"
     },
     "learn-huggingface-huggingfacetb-smolvlm2-256m-video-instruct": {
       "learning_id": "learn-huggingface-huggingfacetb-smolvlm2-256m-video-instruct",
@@ -307920,9 +307930,9 @@
       "title": "Architecture Intelligence: redisearch-redisearch-learnings Core Invariants",
       "repository": "redisearch-redisearch-learnings",
       "source_version": "HEAD",
-      "content_hash": "a81adbfed48a1c009e7e3c4df1407fe30af14a0c80fc05bdf75539657d073b98",
+      "content_hash": "0ad6e7a31587b03cbae92fd79227f3c6aea7cbcd8aa36ae5b200f70bf1015314",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T20:48:02.395Z"
+      "persisted_at": "2026-11-25T12:20:25.158Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-redisearch-redisearch-learning": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-redisearch-redisearch-learning",
@@ -307932,9 +307942,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for redisearch-redisearch-learnings",
       "repository": "redisearch-redisearch-learnings",
       "source_version": "HEAD",
-      "content_hash": "bc3c6a1f3af1b6f74b54fb8ae5e7bd659294248d5d5b4de47cdcf76a74508939",
+      "content_hash": "af2ed4cf862a7f06bcb1fd69e72f85f96f2a182865bb5a6bc0c606ad038d38b8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T20:48:02.618Z"
+      "persisted_at": "2026-11-25T12:20:25.446Z"
     },
     "rule-9566": {
       "learning_id": "rule-9566",
@@ -348029,6 +348039,82 @@
       "content_hash": "afc0f171ca36945556b1a59744dd354be9ef6c099118fc3b70c22506212ea2ac",
       "domain_letter": "G",
       "persisted_at": "2026-11-25T12:09:19.306Z"
+    },
+    "rule-10523": {
+      "learning_id": "rule-10523",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10523,
+      "title": "fix `sha512/x86_avx2` backend for 32-bit targets",
+      "source_url": "https://github.com/RustCrypto/hashes",
+      "source_version": "ed176fb7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T12:19:33.730Z"
+    },
+    "candidate_directive-fix-sha512-x86_avx2-backend-for-32-bit-targets": {
+      "item_id": "candidate_directive-fix-sha512-x86_avx2-backend-for-32-bit-targets",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-CA4A-fix-sha512-x86_avx2-backend-for-32-bit-targets.md",
+      "title": "fix `sha512/x86_avx2` backend for 32-bit targets",
+      "repository": "RustCrypto/hashes",
+      "source_version": "ed176fb7",
+      "content_hash": "122f16c78d189f0ec64c3e0050bcdfa005f28a04e2f09401278197f7acb2e7ea",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-25T12:19:34.331Z"
+    },
+    "rule-10524": {
+      "learning_id": "rule-10524",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10524,
+      "title": "NUC 140 Match Statements",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "2942f5eb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T12:19:38.525Z"
+    },
+    "candidate_directive-nuc-140-match-statements": {
+      "item_id": "candidate_directive-nuc-140-match-statements",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-CDW9-nuc-140-match-statements.md",
+      "title": "NUC 140 Match Statements",
+      "repository": "NucleoidAI/Nucleoid",
+      "source_version": "2942f5eb",
+      "content_hash": "89c49d2f8807076e08120ced2e9c8c77d4e37235718e054a441e9b36061206ef",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-25T12:19:39.226Z"
+    },
+    "candidate_directive-mod-20693-stop-the-query-pipeline-on-memory-pressure": {
+      "item_id": "candidate_directive-mod-20693-stop-the-query-pipeline-on-memory-pressure",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-DD4X-mod-20693-stop-the-query-pipeline-on-memory-pressure.md",
+      "title": "[MOD-20693] Stop the query pipeline on memory pressure",
+      "repository": "redisearch-redisearch-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2c635b99f5ae7e0df341e014e9828d3044d2e0d55ad79cb0bf7c951a9386dc74",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-25T12:20:24.910Z"
+    },
+    "candidate_directive-sha2-fix-sha512-x86_avx2-backend-for-32-bit-targets": {
+      "item_id": "candidate_directive-sha2-fix-sha512-x86_avx2-backend-for-32-bit-targets",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-CIEV-sha2-fix-sha512-x86_avx2-backend-for-32-bit-targets.md",
+      "title": "sha2: fix `sha512/x86_avx2` backend for 32-bit targets",
+      "repository": "rustcrypto-hashes-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e774b5a1551f73ab69ad5955041ae0ec3ba211ec0d01b2d1ed661f7df270c121",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-25T12:19:45.080Z"
     }
   },
   "ai-builder-brain": {

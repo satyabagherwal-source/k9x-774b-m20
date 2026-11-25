@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-25T12:00:28.205Z",
+  "updated_at": "2026-11-25T12:20:23.948Z",
   "statistics": {
-    "total_nodes": 538,
-    "total_edges": 222,
+    "total_nodes": 539,
+    "total_edges": 223,
     "domain_distribution": {
       "D": 326,
       "M": 1,
-      "H": 97,
+      "H": 98,
       "J": 22,
       "K": 33,
       "L": 9,
@@ -21,7 +21,7 @@
       "C": 1
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 218,
+      "CONSTRAINED_BY_ARCHITECTURE": 219,
       "VERIFIED_BY_TEST": 2,
       "STYLED_BY_DESIGN": 2
     }
@@ -12012,6 +12012,29 @@
       ],
       "created_at": "2026-11-25T12:00:28.204Z",
       "updated_at": "2026-11-25T12:00:28.204Z"
+    },
+    "DOM-H-64682323": {
+      "id": "DOM-H-64682323",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "[MOD-20693] Stop the query pipeline on memory pressure",
+      "summary": "Prevents defects observed in production commit `7a24743f`: [MOD-20693] Stop the query pipeline on memory pressure. Unvalidated execution pat -> When implementing operations in `src/aggregate/aggregate_exec.c`, engineers MUST enforce rigorous boundary validation, safe state transition",
+      "confidence": 0.86,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://redisearch-redisearch/redisearch-redisearch-learnings.md",
+        "source_version": "7a24743f",
+        "observed_at": "2026-11-25T12:19:38.120Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (redisearch-redisearch)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence",
+        "G"
+      ],
+      "created_at": "2026-11-25T12:20:23.948Z",
+      "updated_at": "2026-11-25T12:20:23.948Z"
     }
   },
   "edges": [
@@ -14234,6 +14257,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-D-18CF46EE [D] with Domain M",
       "created_at": "2026-11-25T12:00:28.205Z"
+    },
+    {
+      "id": "EDGE-FEFFA3B3C7FD",
+      "sourceId": "DOM-H-64682323",
+      "targetId": "NODE-G-domain-bridge-g",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-H-64682323 [H] with Domain G",
+      "created_at": "2026-11-25T12:20:23.948Z"
     }
   ]
 }

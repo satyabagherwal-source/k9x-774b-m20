@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T12:09:20.713Z",
+  "last_updated": "2026-11-25T12:20:24.910Z",
   "directives": [
     {
       "id": "CD-001",
@@ -61130,6 +61130,50 @@
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-52DFD1-empirical-invariant-guard-in-vm-power-co.md",
       "staged_date": "2026-11-25"
+    },
+    {
+      "id": "CD-CA4A",
+      "directive_title": "fix `sha512/x86_avx2` backend for 32-bit targets",
+      "source_repo": "RustCrypto/hashes",
+      "source_commit": "ed176fb7",
+      "staged_file": "11_INBOX/candidate-directives/CD-CA4A-fix-sha512-x86_avx2-backend-for-32-bit-targets.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-25",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-CDW9",
+      "directive_title": "NUC 140 Match Statements",
+      "source_repo": "NucleoidAI/Nucleoid",
+      "source_commit": "2942f5eb",
+      "staged_file": "11_INBOX/candidate-directives/CD-CDW9-nuc-140-match-statements.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-25",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-DD4X",
+      "directive_title": "[MOD-20693] Stop the query pipeline on memory pressure",
+      "source_repo": "redisearch-redisearch-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-DD4X-mod-20693-stop-the-query-pipeline-on-memory-pressure.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-25",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-CIEV",
+      "directive_title": "sha2: fix `sha512/x86_avx2` backend for 32-bit targets",
+      "source_repo": "rustcrypto-hashes-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-CIEV-sha2-fix-sha512-x86_avx2-backend-for-32-bit-targets.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-25",
+      "domain_letter": "G"
     }
   ]
 }

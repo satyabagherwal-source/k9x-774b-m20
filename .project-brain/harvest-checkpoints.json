@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-25T12:09:15.424Z",
+  "last_updated": "2026-11-25T12:19:39.729Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "9e0ba9dccd64be85b5821d0ed51731c6baea7aa20bc3e0e25b51cc3fe6312b94",
-      "verified_at": "2026-11-25T11:42:39.814Z",
+      "content_hash": "71c42d3a6e49625346697a76dbdab91bb66541ac7b0acc1767e2a31cb2b2f92a",
+      "verified_at": "2026-11-25T12:19:38.914Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T11:42:39.814Z"
+      "last_updated": "2026-11-25T12:19:38.914Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -4701,14 +4701,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rustcrypto-hashes",
-      "content_hash": "bf7f1dde2e83ec32c5f0719d666a3fee95dca07c3b00af5da19c2dea74461e24",
-      "verified_at": "2026-11-18T16:22:28.092Z",
+      "content_hash": "9ff33201123f3856be87432c3c0deb60c34449d89a28118b3f338474464b7216",
+      "verified_at": "2026-11-25T12:19:34.041Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T16:22:28.092Z"
+      "last_updated": "2026-11-25T12:19:34.041Z"
     },
     "onlook-dev/onlook": {
       "repository": "onlook-dev/onlook",
@@ -9156,14 +9156,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-redisearch-redisearch",
-      "content_hash": "03ffe91e33cc6ceabdc9a1f7a8f4455158881c7d333ed936cf50780f8f241f99",
-      "verified_at": "2026-11-24T17:13:49.256Z",
+      "content_hash": "3c06bdd8dfb893713e667d5f3e01caab50a7f6be6f37cef92af541a6f6a55884",
+      "verified_at": "2026-11-25T12:19:39.728Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T17:13:49.256Z"
+      "last_updated": "2026-11-25T12:19:39.728Z"
     },
     "taiga-family/taiga-ui": {
       "repository": "taiga-family/taiga-ui",
@@ -17271,14 +17271,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-mistralai-mistral-large-4-1t-a52b",
-      "content_hash": "6879173e1f9e3a6ca1d27c336994cc7f7e947075b0850c46695a917f2dc84b98",
-      "verified_at": "2026-11-21T21:04:30.002Z",
+      "content_hash": "9be4363fe8344f81f45fc4efd794c262d7ab340c522cf51c21e1df61c108a93c",
+      "verified_at": "2026-11-25T12:19:22.308Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T21:04:30.002Z"
+      "last_updated": "2026-11-25T12:19:22.308Z"
     },
     "Jakeschincariol/arena-skill": {
       "repository": "Jakeschincariol/arena-skill",

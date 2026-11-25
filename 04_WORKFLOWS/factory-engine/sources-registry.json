@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-25T12:09:18.712Z",
-    "lastVerified": "2026-11-25T12:09:18.712Z",
+    "lastChecked": "2026-11-25T12:19:43.266Z",
+    "lastVerified": "2026-11-25T12:19:43.266Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -379,12 +379,12 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-25T11:42:38.572Z",
-    "lastVerified": "2026-11-25T11:42:38.572Z",
+    "lastChecked": "2026-11-25T12:19:37.319Z",
+    "lastVerified": "2026-11-25T12:19:37.319Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "9e0ba9dccd64be85b5821d0ed51731c6baea7aa20bc3e0e25b51cc3fe6312b94",
+    "contentHash": "71c42d3a6e49625346697a76dbdab91bb66541ac7b0acc1767e2a31cb2b2f92a",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
@@ -1415,22 +1415,21 @@
     "revisionIdentifier": "c6696882"
   },
   "rustcrypto-hashes": {
-    "name": "hashes",
+    "name": "RustCrypto/hashes",
     "officialUrl": "https://github.com/RustCrypto/hashes",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-25T07:04:34.559Z",
-    "lastVerified": "2026-11-25T07:04:34.559Z",
+    "lastChecked": "2026-11-25T12:19:32.541Z",
+    "lastVerified": "2026-11-25T12:19:32.541Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rustcrypto-hashes",
-    "contentHash": "bf7f1dde2e83ec32c5f0719d666a3fee95dca07c3b00af5da19c2dea74461e24",
+    "contentHash": "9ff33201123f3856be87432c3c0deb60c34449d89a28118b3f338474464b7216",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "50a7ea68"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "t8y2-dbx": {
     "name": "t8y2/dbx",
@@ -2731,9 +2730,9 @@
   "permify-permify": {
     "name": "permify",
     "officialUrl": "https://github.com/Permify/permify",
-    "lastChecked": "2026-11-24T18:17:27.120Z",
+    "lastChecked": "2026-11-25T12:19:24.038Z",
     "revisionIdentifier": "18fcfdda",
-    "lastVerified": "2026-11-24T18:17:27.120Z"
+    "lastVerified": "2026-11-25T12:19:24.038Z"
   },
   "ontos-ai-knowhere": {
     "name": "knowhere",
@@ -3589,9 +3588,9 @@
   "imsnif-bandwhich": {
     "name": "bandwhich",
     "officialUrl": "https://github.com/imsnif/bandwhich",
-    "lastChecked": "2026-11-24T11:04:44.230Z",
+    "lastChecked": "2026-11-25T12:19:16.261Z",
     "revisionIdentifier": "1899870c",
-    "lastVerified": "2026-11-24T11:04:44.230Z"
+    "lastVerified": "2026-11-25T12:19:16.261Z"
   },
   "hf-cloudflare-clef-flash": {
     "name": "Cloudflare/clef-flash",
@@ -7133,12 +7132,12 @@
     "officialUrl": "https://github.com/RediSearch/RediSearch",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-24T17:13:47.872Z",
-    "lastVerified": "2026-11-24T17:13:47.872Z",
+    "lastChecked": "2026-11-25T12:19:38.112Z",
+    "lastVerified": "2026-11-25T12:19:38.112Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-redisearch-redisearch",
-    "contentHash": "03ffe91e33cc6ceabdc9a1f7a8f4455158881c7d333ed936cf50780f8f241f99",
+    "contentHash": "3c06bdd8dfb893713e667d5f3e01caab50a7f6be6f37cef92af541a6f6a55884",
     "promotedRulesCount": 1,
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
@@ -9897,9 +9896,9 @@
   "exyte-popupview": {
     "name": "PopupView",
     "officialUrl": "https://github.com/exyte/PopupView",
-    "lastChecked": "2026-11-23T04:00:04.335Z",
+    "lastChecked": "2026-11-25T12:19:21.314Z",
     "revisionIdentifier": "f8769ffd",
-    "lastVerified": "2026-11-23T04:00:04.335Z"
+    "lastVerified": "2026-11-25T12:19:21.314Z"
   },
   "ilamaaa-hreflang-checker": {
     "name": "hreflang-checker",
@@ -13409,12 +13408,12 @@
     "officialUrl": "https://huggingface.co/mistralai/Mistral-Large-4-1T-A52B",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-21T21:04:29.382Z",
-    "lastVerified": "2026-11-21T21:04:29.382Z",
+    "lastChecked": "2026-11-25T12:19:18.872Z",
+    "lastVerified": "2026-11-25T12:19:18.872Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-mistralai-mistral-large-4-1t-a52b",
-    "contentHash": "6879173e1f9e3a6ca1d27c336994cc7f7e947075b0850c46695a917f2dc84b98",
+    "contentHash": "9be4363fe8344f81f45fc4efd794c262d7ab340c522cf51c21e1df61c108a93c",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

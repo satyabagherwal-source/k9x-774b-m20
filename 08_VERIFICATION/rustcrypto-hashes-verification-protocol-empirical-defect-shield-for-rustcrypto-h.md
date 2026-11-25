@@ -4,22 +4,22 @@
 {
   "source_repository": "RustCrypto/hashes",
   "source_url": "https://github.com/RustCrypto/hashes",
-  "source_version": "50a7ea68",
+  "source_version": "ed176fb7",
   "license": "PERMISSIVE_OPEN_SOURCE",
-  "timestamp": "2026-11-18T16:22:28.265Z",
+  "timestamp": "2026-11-25T12:19:34.331Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-rustcrypto-hashes",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [RustCrypto/hashes](https://github.com/RustCrypto/hashes) (Revision: `50a7ea68`).  
-> **License**: PERMISSIVE_OPEN_SOURCE | **Timestamp**: `2026-11-18T16:22:28.265Z`  
+> **Provenance**: Harvested from [RustCrypto/hashes](https://github.com/RustCrypto/hashes) (Revision: `ed176fb7`).  
+> **License**: PERMISSIVE_OPEN_SOURCE | **Timestamp**: `2026-11-25T12:19:34.331Z`  
 > **Learning ID**: `learn-github-rustcrypto-hashes`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `RustCrypto/hashes` (Commit: `50a7ea68`)
+- **Target Repository**: `RustCrypto/hashes` (Commit: `ed176fb7`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rustcrypto-hashes-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/RustCrypto/hashes](https://github.com/RustCrypto/hashes))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T16:22:27.109Z  
+> **Harvest Timestamp**: 2026-11-25T12:19:32.541Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Collection of cryptographic hash functions written in pure Rust
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 2301 stars
+- **Stars / Engagement**: 2335 stars
 
 ---
 
@@ -685,743 +685,87 @@ where
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `50a7ea68` (2026-11-18)
-**Commit Message**: sha2: refactor `riscv_zknh` backends (#929)
+### Incident Patch 1: `ed176fb7` (2026-11-25)
+**Commit Message**: sha2: fix `sha512/x86_avx2` backend for 32-bit targets (#951)
 
-By following the software backend code the changes remove (unreachable)
-panic branches from the compact variants and reduce total amount of
-generated binary code.
+In #943 a call to `_mm_extract_epi64` was introduced in the SHA-512 AVX2
+backend, but that intrinsic is only available on `x86_64`. This PR fixes
+it by using `_mm_extract_epi32` on 32-bit targets.
 
-Unroll backends now unroll round loops fully instead of partially and
-prevent unnecessary caching of round constants to stack.
+The `sha2` Linux CI jobs for `i686` run the tests on the `x86_64` host
+but the switch to `cargo-hack` in #485 dropped `--target` from the test
+commands, the jobs still install the 32-bit target, but Cargo defaults
+to the host and consequently the coverage is wrong.
 
-Resulting assembly:
-|                  |                 Old                  |                 New                  |
-|------------------|--------------------------------------|--------------------------------------|
-| SHA-256 compact  | https://rust.godbolt.org/z/784781hhE | https://rust.godbolt.org/z/MabKT4ssW |
-| SHA-256 unrolled | https://rust.godbolt.org/z/5Gb6rTzqM | https://rust.godbolt.org/z/1ccjaeEYE |
-| SHA-512 compact  | https://rust.godbolt.org/z/4TPoG98j1 | https://rust.godbolt.org/z/T14dovc6s |
-| SHA-512 unrolled | https://rust.godbolt.org/z/1sGrKjxE8 | https://rust.godbolt.org/z/3nffnb15T |
-
-**File**: `sha2/CHANGELOG.md` (modified, +2/-0)
+**File**: `.github/workflows/sha2.yml` (modified, +3/-3)
 ```diff
-@@ -11,8 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - Respect precedence of the `sha2_backend` configuration flag over `sha2_256/512_backend` ([#948])
+@@ -80,11 +80,11 @@ jobs:
+           targets: ${{ matrix.target }}
+       - uses: RustCrypto/actions/cargo-hack-install@master
+       - run: ${{ matrix.deps }}
+-      - run: cargo hack test --feature-powerset
+-      - run: cargo test --all-features
++      - run: cargo hack test --feature-powerset --target ${{ matrix.target }}
++      - run: cargo test --all-features --target ${{ matrix.target }}
+         env:
+           RUSTFLAGS: -Dwarnings --cfg sha2_backend="soft"
+-      - run: cargo test --all-features
++      - run: cargo test --all-features --target ${{ matrix.target }}
+         env:
+           RUSTFLAGS: -Dwarnings --cfg sha2_backend="soft" --cfg sha2_backend_soft="compact"
+ 
+```
+
+**File**: `sha2/CHANGELOG.md` (modified, +2/-1)
+```diff
+@@ -12,13 +12,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  
  ### Changed
-+- Refactored `riscv_zknh` backends ([#929])
- - Improved performance of the SHA-512 `x86-avx2` backend ([#940], [#943])
+ - Refactored `riscv_zknh` backends ([#929])
+-- Improved performance of the SHA-512 `x86-avx2` backend ([#940], [#943])
++- Improved performance of the SHA-512 `x86-avx2` backend ([#940], [#943], [#951])
  
-+[#929]: https://github.com/RustCrypto/hashes/pull/929
+ [#929]: https://github.com/RustCrypto/hashes/pull/929
  [#935]: https://github.com/RustCrypto/hashes/pull/935
  [#940]: https://github.com/RustCrypto/hashes/pull/940
  [#943]: https://github.com/RustCrypto/hashes/pull/943
-```
-
-**File**: `sha2/src/sha256/riscv_zknh.rs` (modified, +2/-15)
-```diff
-@@ -9,22 +9,9 @@ use core::arch::riscv64::{sha256sig0, sha256sig1, sha256sum0, sha256sum1};
- cfg_if::cfg_if! {
-     if #[cfg(sha2_backend_riscv_zknh = "compact")] {
-         mod compact;
--        use compact::compress_block;
-+        pub(super) use compact::compress;
-     } else {
-         mod unroll;
--        use unroll::compress_block;
-+        pub(super) use unroll::compress;
-     }
- }
--
--#[target_feature(enable = "zknh")]
--pub(super) fn compress(state: &mut [u32; 8], blocks: &[[u8; 64]]) {
--    for block in blocks.iter().map(load_block) {
--        compress_block(state, block);
--    }
--}
--
--fn load_block(block: &[u8; 64]) -> [u32; 16] {
--    let (chunks, tail) = block.as_chunks();
--    assert!(tail.is_empty());
--    core::array::from_fn(|i| u32::from_be_bytes(chunks[i]))
--}
-```
-
-**File**: `sha2/src/sha256/riscv_zknh/compact.rs` (modified, +65/-38)
-```diff
-@@ -1,55 +1,82 @@
-+//! RISC-V backend which uses the Zknh extension and does not perform manual loop unrolling.
-+//!
-+//! Generated assembly (for `opt-level=s`):
-+//! RV32: https://rust.godbolt.org/z/MabKT4ssW
-+//! RV64: https://rust.godbolt.org/z/bf7sf1zEe
- use super::{sha256sig0, sha256sig1, sha256sum0, sha256sum1};
- use crate::consts::K32;
- 
--#[inline]
-+const ROUNDS: usize = K32.len();
-+
- #[target_feature(enable = "zknh")]
--pub(super) fn compress_block(state: &mut [u32; 8], mut block: [u32; 16]) {
--    let mut s = *state;
--
--    for r in 0..64 {
--        round(&mut s, &block, r);
--        if r < 48 {
--            schedule(&mut block, r)
--        }
--    }
-+pub(crate) fn compress(state: &mut [u32; 8], blocks: &[[u8; 64]]) {
-+    // Unforuntately, LLVM is unable to remove `memset` for
-+    // `fn message_schedule(block: &[u8; 64]) -> [u32; ROUNDS] { ... }`
-+    // See: https://rust.godbolt.org/z/s61sP3GKj
-+    // So to prevent unnecessary `memset` call for each block we reuse the buffer.
-+    let mut msg = [0u32; ROUNDS];
- 
--    for i in 0..8 {
--        state[i] = state[i].wrapping_add(s[i]);
-+    for block in blocks {
-+        // Pre-computing the whole message schedule instead of doing it during each round
-+        // with a ring buffer results in a smaller binary with less branching
-+        // at the cost of using additional stack space
-+        schedule(block, &mut msg);
-+        rounds(state, &msg);
-     }
- }
- 
- #[inline]
- #[target_feature(enable = "zknh")]
--fn schedule(block: &mut [u32; 16], r: usize) {
--    block[r % 16] = block[r % 16]
--        .wrapping_add(sha256sig1(block[(r + 14) % 16]))
--        .wrapping_add(block[(r + 9) % 16])
--        .wrapping_add(sha256sig0(block[(r + 1) % 16]));
-+fn schedule(block: &[u8; 64], msg: &mut [u32; ROUNDS]) {
-+    let (block_chunks, tail) = block.as_chunks();
-+    assert!(tail.is_empty());
-+
-+    let n = block_chunks.len();
-+    for i in 0..n {
-+        msg[i] = u32::from_be_bytes(block_chunks[i]);
-+    }
-+
-+    for i in n..ROUNDS {
-+        msg[i] = msg[i - 16]
-+            .wrapping_add(sha256sig0(msg[i - 15]))
-+            .wrapping_add(msg[i - 7])
-+            .wrapping_add(sha256sig1(msg[i - 2]));
-+    }
- }
- 
- #[inline]
- #[target_feature(enable = "zknh")]
--fn round(state: &mut [u32; 8], block: &[u32; 16], r: usize) {
--    let n = K32.len() - r;
--    let [a, b, c, d, e, f, g, h] = core::array::from_fn(|i| (n + i) % 8);
--
--    state[h] = state[h]
--        .wrapping_add(sha256sum1(state[e]))
--        .wrapping_add(ch(state[e], state[f], state[g]))
--        .wrapping_add(K32[r])
--        .wrapping_add(block[r % 16]);
--    state[d] = state[d].wrapping_add(state[h]);
--    state[h] = state[h]
--        .wrapping_add(sha256sum0(state[a]))
--        .wrapping_add(maj(state[a], state[b], state[c]))
--}
-+fn rounds(state: &mut [u32; 8], msg: &[u32; ROUNDS]) {
-+    let [mut a, mut b, mut c, mut d, mut e, mut f, mut g, mut h] = *state;
- 
--#[inline(always)]
--fn ch(x: u32, y: u32, z: u32) -> u32 {
--    (x & y) ^ (!x & z)
--}
-+    for i in 0..ROUNDS {
-+        let s1 = sha256sum1(e);
-+        let ch = (e & f) ^ ((!e) & g);
-+        let t1 = s1
-+            .wrapping_add(ch)
-+            .wrapping_add(K32[i])
-+            .wrapping_add(msg[i])
-+            .wrapping_add(h);
-+        let s0 = sha256sum0(a);
-+        let maj = (a & b) ^ (a & c) ^ (b & c);
-+        let t2 = s0.wrapping_add(maj);
-+
-+        h = g;
-+        g = f;
-+        f = e;
-+        e = d.wrapping_add(t1);
-+        d = c;
-+        c = b;
-+        b = a;
-+        a = t1.wrapping_add(t2);
-+    }
- 
--#[inline(always)]
--fn maj(x: u32, y: u32, z: u32) -> u32 {
--    (x & y) ^ (x & z) ^ (y & z)
-+    state[0] = state[0].wrapping_add(a);
-+    state[1] = state[1].wrapping_add(b);
-+    state[2] = state[2].wrapping_add(c);
-+    state[3] = state[3].wrapping_add(d);
-+    state[4] = state[4].wrapping_add(e);
-+    state[5] = state[5].wrapping_add(f);
-+    state[6] = state[6].wrapping_add(g);
-+    state[7] = state[7].wrapping_add(h);
- }
-```
-
-**File**: `sha2/src/sha256/riscv_zknh/unroll.rs` (modified, +139/-81)
-```diff
-@@ -1,120 +1,178 @@
-+//! RISC-V backend which uses the Zknh extension and fully unrolls round loop.
-+//!
-+//! Generated assembly:
-+//! RV32: https://rust.godbolt.org/z/1ccjaeEYE
-+//! RV64: https://rust.godbolt.org/z/Y71ovfh8P
- use super::{sha256sig0, sha256sig1, sha256sum0, sha256sum1};
- use crate::consts::K32;
- 
--#[inline]
- #[target_feature(enable = "zknh")]
--pub(super) fn compress_block(state: &mut [u32; 8], mut block: [u32; 16]) {
--    let s = &mut state.clone();
--    let b = &mut block;
--
--    for i in 0..3 {
--        let k = &K32[16 * i..];
--        round_schedule::<0>(s, b, k);
--        round_schedule::<1>(s, b, k);
--        round_schedule::<2>(s, b, k);
--        round_schedule::<3>(s, b, k);
--        round_schedule::<4>(s, b, k);
--        round_schedule::<5>(s, b, k);
--        round_schedule::<6>(s, b, k);
--        round_schedule::<7>(s, b, k);
--        round_schedule::<8>(s, b, k);
--        round_schedule::<9>(s, b, k);
--        round_schedule::<10>(s, b, k);
--        round_schedule::<11>(s, b, k);
--        round_schedule::<12>(s, b, k);
--        round_schedule::<13>(s, b, k);
--        round_schedule::<14>(s, b, k);
--        round_schedule::<15>(s, b, k);
--    }
--
--    let k = &K32[48..];
--    round::<0>(s, b, k);
--    round::<1>(s, b, k);
--    round::<2>(s, b, k);
--    round::<3>(s, b, k);
--    round::<4>(s, b, k);
--    round::<5>(s, b, k);
--    round::<6>(s, b, k);
--    round::<7>(s, b, k);
--    round::<8>(s, b, k);
--    round::<9>(s, b, k);
--    round::<10>(s, b, k);
--    round::<11>(s, b, k);
--    round::<12>(s, b, k);
--    round::<13>(s, b, k);
--    round::<14>(s, b, k);
--    round::<15>(s, b, k);
--
--    for i in 0..8 {
--        state[i] = state[i].wrapping_add(s[i]);
-+pub(crate) fn compress(state: &mut [u32; 8], blocks: &[[u8; 64]]) {
-+    for block in blocks {
-+        compress_block(state, block);
-     }
- }
- 
- #[inline]
- #[target_feature(enable = "zknh")]
--fn round_schedule<const R: usize>(state: &mut [u32; 8], block: &mut [u32; 16], k: &[u32]) {
--    round::<R>(state, block, k);
-+fn compress_block(state: &mut [u32; 8], block: &[u8; 64]) {
-+    let s = &mut state.clone();
-+    let msg = &mut [0u32; 16];
-+
-+    load_round::<0x00>(s, block, msg);
-+    load_round::<0x01>(s, block, msg);
-+    load_round::<0x02>(s, block, msg);
-+    load_round::<0x03>(s, block, msg);
-+    load_round::<0x04>(s, block, msg);
-+    load_round::<0x05>(s, block, msg);
-+    load_round::<0x06>(s, block, msg);
-+    load_round::<0x07>(s, block, msg);
-+    load_round::<0x08>(s, block, msg);
-+    load_round::<0x09>(s, block, msg);
-+    load_round::<0x0a>(s, block, msg);
-+    load_round::<0x0b>(s, block, msg);
-+    load_round::<0x0c>(s, block, msg);
-+    load_round::<0x0d>(s, block, msg);
-+    load_round::<0x0e>(s, block, msg);
-+    load_round::<0x0f>(s, block, msg);
-+
-+    schedule_round::<0x10>(s, msg);
-+    schedule_round::<0x11>(s, msg);
-+    schedule_round::<0x12>(s, msg);
-+    schedule_round::<0x13>(s, msg);
-+    schedule_round::<0x14>(s, msg);
-+    schedule_round::<0x15>(s, msg);
-+    schedule_round::<0x16>(s, msg);
-+    schedule_round::<0x17>(s, msg);
-+    schedule_round::<0x18>(s, msg);
-+    schedule_round::<0x19>(s, msg);
-+    schedule_round::<0x1a>(s, msg);
-+    schedule_round::<0x1b>(s, msg);
-+    schedule_round::<0x1c>(s, msg);
-+    schedule_round::<0x1d>(s, msg);
-+    schedule_round::<0x1e>(s, msg);
-+    schedule_round::<0x1f>(s, msg);
-+
-+    schedule_round::<0x20>(s, msg);
-+    schedule_round::<0x21>(s, msg);
-+    schedule_round::<0x22>(s, msg);
-+    schedule_round::<0x23>(s, msg);
-+    schedule_round::<0x24>(s, msg);
-+    schedule_round::<0x25>(s, msg);
-+    schedule_round::<0x26>(s, msg);
-+    schedule_round::<0x27>(s, msg);
-+    schedule_round::<0x28>(s, msg);
-+    schedule_round::<0x29>(s, msg);
-+    schedule_round::<0x2a>(s, msg);
-+    schedule_round::<0x2b>(s, msg);
-+    schedule_round::<0x2c>(s, msg);
-+    schedule_round::<0x2d>(s, msg);
-+    schedule_round::<0x2e>(s, msg);
-+    schedule_round::<0x2f>(s, msg);
-+
-+    schedule_round::<0x30>(s, msg);
-+    schedule_round::<0x31>(s, msg);
-+    schedule_round::<0x32>(s, msg);
-+    schedule_round::<0x33>(s, msg);
-+    schedule_round::<0x34>(s, msg);
-+    schedule_round::<0x35>(s, msg);
-+    schedule_round::<0x36>(s, msg);
-+    schedule_round::<0x37>(s, msg);
-+    schedule_round::<0x38>(s, msg);
-+    schedule_round::<0x39>(s, msg);
-+    schedule_round::<0x3a>(s, msg);
-+    schedule_round::<0x3b>(s, msg);
-+    schedule_round::<0x3c>(s, msg);
-+    schedule_round::<0x3d>(s, msg);
-+    schedule_round::<0x3e>(s, msg);
-+    schedule_round::<0x3f>(s, msg);
- 
--    block[R] = block[R]
--        .wrapping_add(sha256sig1(block[(R + 14) % 16]))
--        .wrapping_add(block[(R + 9) % 16])
--        .wrapping_add(sha256sig0(block[(R + 1) % 16]));
-+    state[0] = state[0].wrapping_add(s[0]);
-+    state[1] = state[1].wrapping_add(s[1]);
-+    state[2] = state[2].wrapping_add(s[2]);
-+    state[3] = state[3].wrapping_add(s[3]);
-+    state[4] = state[4].wrapping_add(s[4]);
-+    stat
-```
-
-**File**: `sha2/src/sha512/riscv_zknh.rs` (modified, +2/-15)
-```diff
-@@ -4,26 +4,13 @@ compile_error!("riscv-zknh backend can be used only on riscv32 and riscv64 targe
- cfg_if::cfg_if! {
-     if #[cfg(sha2_backend_riscv_zknh = "compact")] {
-         mod compact;
--        use compact::compress_block;
-+        pub(super) use compact::compress;
-     } else {
-         mod unroll;
--        use unroll::compress_block;
-+        pub(super) use unroll::compress;
-     }
- }
- 
--#[target_feature(enable = "zknh")]
--pub(super) fn compress(state: &mut [u64; 8], blocks: &[[u8; 128]]) {
--    for block in blocks.iter().map(load_block) {
--        compress_block(state, block);
--    }
--}
--
--fn load_block(block: &[u8; 128]) -> [u64; 16] {
--    let (chunks, tail) = block.as_chunks();
--    assert!(tail.is_empty());
--    core::array::from_fn(|i| u64::from_be_bytes(chunks[i]))
--}
--
- cfg_if::cfg_if! {
-     if #[cfg(target_arch = "riscv64")] {
-         use core::arch::riscv64::{sha512sig0, sha512sig1, sha512sum0, sha512sum1};
-```
-
-**File**: `sha2/src/sha512/riscv_zknh/compact.rs` (modified, +65/-38)
-```diff
-@@ -1,55 +1,82 @@
-+//! RISC-V backend which uses the Zknh extension and does not perform manual loop unrolling.
-+//!
-+//! Generated assembly (for `opt-level=s`):
-+//! RV32: https://rust.godbolt.org/z/8axxnoYds
-+//! RV64: https://rust.godbolt.org/z/T14dovc6s
- use super::{sha512sig0, sha512sig1, sha512sum0, sha512sum1};
- use crate::consts::K64;
- 
--#[inline]
-+const ROUNDS: usize = K64.len();
-+
- #[target_feature(enable = "zknh")]
--pub(super) fn compress_block(state: &mut [u64; 8], mut block: [u64; 16]) {
--    let mut s = *state;
--
--    for r in 0..80 {
--        round(&mut s, &block, r);
--        if r < 64 {
--            schedule(&mut block, r)
--        }
--    }
-+pub(crate) fn compress(state: &mut [u64; 8], blocks: &[[u8; 128]]) {
-+    // Unforuntately, LLVM is unable to remove `memset` for
-+    // `fn message_schedule(block: &[u8; 128]) -> [u64; ROUNDS] { ... }`
-+    // See: https://rust.godbolt.org/z/ncxzYrMPh
-+    // So to prevent unnecessary `memset` call for each block we reuse the buffer.
-+    let mut msg = [0u64; ROUNDS];
- 
--    for i in 0..8 {
--        state[i] = state[i].wrapping_add(s[i]);
-+    for block in blocks {
-+        // Pre-computing the whole message schedule instead of doing it during each round
-+        // with a ring buffer results in a smaller binary with less branching
-+        // at the cost of using additional stack space
-+        schedule(block, &mut msg);
-+        rounds(state, &msg);
-     }
- }
- 
- #[inline]
- #[target_feature(enable = "zknh")]
--fn schedule(block: &mut [u64; 16], r: usize) {
--    block[r % 16] = block[r % 16]
--        .wrapping_add(sha512sig1(block[(r + 14) % 16]))
--        .wrapping_add(block[(r + 9) % 16])
--        .wrapping_add(sha512sig0(block[(r + 1) % 16]));
-+fn schedule(block: &[u8; 128], msg: &mut [u64; ROUNDS]) {
-+    let (block_chunks, tail) = block.as_chunks();
-+    assert!(tail.is_empty());
-+
-+    let n = block_chunks.len();
-+    for i in 0..n {
-+        msg[i] = u64::from_be_bytes(block_chunks[i]);
-+    }
-+
-+    for i in n..ROUNDS {
-+        msg[i] = msg[i - 16]
-+            .wrapping_add(sha512sig0(msg[i - 15]))
-+            .wrapping_add(msg[i - 7])
-+            .wrapping_add(sha512sig1(msg[i - 2]));
-+    }
- }
- 
- #[inline]
- #[target_feature(enable = "zknh")]
--fn round(state: &mut [u64; 8], block: &[u64; 16], r: usize) {
--    let n = K64.len() - r;
--    let [a, b, c, d, e, f, g, h] = core::array::from_fn(|i| (n + i) % 8);
--
--    state[h] = state[h]
--        .wrapping_add(sha512sum1(state[e]))
--        .wrapping_add(ch(state[e], state[f], state[g]))
--        .wrapping_add(K64[r])
--        .wrapping_add(block[r % 16]);
--    state[d] = state[d].wrapping_add(state[h]);
--    state[h] = state[h]
--        .wrapping_add(sha512sum0(state[a]))
--        .wrapping_add(maj(state[a], state[b], state[c]))
--}
-+fn rounds(state: &mut [u64; 8], msg: &[u64; ROUNDS]) {
-+    let [mut a, mut b, mut c, mut d, mut e, mut f, mut g, mut h] = *state;
- 
--#[inline(always)]
--fn ch(x: u64, y: u64, z: u64) -> u64 {
--    (x & y) ^ (!x & z)
--}
-+    for i in 0..ROUNDS {
-+        let s1 = sha512sum1(e);
-+        let ch = (e & f) ^ ((!e) & g);
-+        let t1 = s1
-+            .wrapping_add(ch)
-+            .wrapping_add(K64[i])
-+            .wrapping_add(msg[i])
-+            .wrapping_add(h);
-+        let s0 = sha512sum0(a);
-+        let maj = (a & b) ^ (a & c) ^ (b & c);
-+        let t2 = s0.wrapping_add(maj);
-+
-+        h = g;
-+        g = f;
-+        f = e;
-+        e = d.wrapping_add(t1);
-+        d = c;
-+        c = b;
-+        b = a;
-+        a = t1.wrapping_add(t2);
-+    }
- 
--#[inline(always)]
--fn maj(x: u64, y: u64, z: u64) -> u64 {
--    (x & y) ^ (x & z) ^ (y & z)
-+    state[0] = state[0].wrapping_add(a);
-+    state[1] = state[1].wrapping_add(b);
-+    state[2] = state[2].wrapping_add(c);
-+    state[3] = state[3].wrapping_add(d);
-+    state[4] = state[4].wrapping_add(e);
-+    state[5] = state[5].wrapping_add(f);
-+    state[6] = state[6].wrapping_add(g);
-+    state[7] = state[7].wrapping_add(h);
- }
-```
-
-**File**: `sha2/src/sha512/riscv_zknh/unroll.rs` (modified, +170/-86)
-```diff
-@@ -1,121 +1,205 @@
-+//! RISC-V backend which uses the Zknh extension and fully unrolls round loop.
-+//!
-+//! Generated assembly:
-+//! RV32: https://rust.godbolt.org/z/8v9x5fo8q
-+//! RV64: https://rust.godbolt.org/z/3nffnb15T
- use super::{sha512sig0, sha512sig1, sha512sum0, sha512sum1};
- use crate::consts::K64;
- 
--#[inline]
- #[target_feature(enable = "zknh")]
--pub(super) fn compress_block(state: &mut [u64; 8], mut block: [u64; 16]) {
--    let s = &mut state.clone();
--    let b = &mut block;
--
--    for i in 0..4 {
--        let k = &K64[16 * i..];
--        round_schedule::<0>(s, b, k);
--        round_schedule::<1>(s, b, k);
--        round_schedule::<2>(s, b, k);
--        round_schedule::<3>(s, b, k);
--        round_schedule::<4>(s, b, k);
--        round_schedule::<5>(s, b, k);
--        round_schedule::<6>(s, b, k);
--        round_schedule::<7>(s, b, k);
--        round_schedule::<8>(s, b, k);
--        round_schedule::<9>(s, b, k);
--        round_schedule::<10>(s, b, k);
--        round_schedule::<11>(s, b, k);
--        round_schedule::<12>(s, b, k);
--        round_schedule::<13>(s, b, k);
--        round_schedule::<14>(s, b, k);
--        round_schedule::<15>(s, b, k);
--    }
--
--    let k = &K64[64..];
--    round::<0>(s, b, k);
--    round::<1>(s, b, k);
--    round::<2>(s, b, k);
--    round::<3>(s, b, k);
--    round::<4>(s, b, k);
--    round::<5>(s, b, k);
--    round::<6>(s, b, k);
--    round::<7>(s, b, k);
--    round::<8>(s, b, k);
--    round::<9>(s, b, k);
--    round::<10>(s, b, k);
--    round::<11>(s, b, k);
--    round::<12>(s, b, k);
--    round::<13>(s, b, k);
--    round::<14>(s, b, k);
--    round::<15>(s, b, k);
--
--    for i in 0..8 {
--        state[i] = state[i].wrapping_add(s[i]);
-+pub(crate) fn compress(state: &mut [u64; 8], blocks: &[[u8; 128]]) {
-+    for block in blocks {
-+        compress_block(state, block);
-     }
- }
- 
--#[inline]
-+#[inline(always)]
- #[target_feature(enable = "zknh")]
--fn round_schedule<const R: usize>(state: &mut [u64; 8], block: &mut [u64; 16], k: &[u64]) {
--    round::<R>(state, block, k);
-+fn compress_block(state: &mut [u64; 8], block: &[u8; 128]) {
-+    let s = &mut state.clone();
-+    let msg = &mut [0u64; 16];
-+
-+    load_round::<0x00>(s, block, msg);
-+    load_round::<0x01>(s, block, msg);
-+    load_round::<0x02>(s, block, msg);
-+    load_round::<0x03>(s, block, msg);
-+    load_round::<0x04>(s, block, msg);
-+    load_round::<0x05>(s, block, msg);
-+    load_round::<0x06>(s, block, msg);
-+    load_round::<0x07>(s, block, msg);
-+    load_round::<0x08>(s, block, msg);
-+    load_round::<0x09>(s, block, msg);
-+    load_round::<0x0a>(s, block, msg);
-+    load_round::<0x0b>(s, block, msg);
-+    load_round::<0x0c>(s, block, msg);
-+    load_round::<0x0d>(s, block, msg);
-+    load_round::<0x0e>(s, block, msg);
-+    load_round::<0x0f>(s, block, msg);
-+
-+    schedule_round::<0x10>(s, msg);
-+    schedule_round::<0x11>(s, msg);
-+    schedule_round::<0x12>(s, msg);
-+    schedule_round::<0x13>(s, msg);
-+    schedule_round::<0x14>(s, msg);
-+    schedule_round::<0x15>(s, msg);
-+    schedule_round::<0x16>(s, msg);
-+    schedule_round::<0x17>(s, msg);
-+    schedule_round::<0x18>(s, msg);
-+    schedule_round::<0x19>(s, msg);
-+    schedule_round::<0x1a>(s, msg);
-+    schedule_round::<0x1b>(s, msg);
-+    schedule_round::<0x1c>(s, msg);
-+    schedule_round::<0x1d>(s, msg);
-+    schedule_round::<0x1e>(s, msg);
-+    schedule_round::<0x1f>(s, msg);
-+
-+    schedule_round::<0x20>(s, msg);
-+    schedule_round::<0x21>(s, msg);
-+    schedule_round::<0x22>(s, msg);
-+    schedule_round::<0x23>(s, msg);
-+    schedule_round::<0x24>(s, msg);
-+    schedule_round::<0x25>(s, msg);
-+    schedule_round::<0x26>(s, msg);
-+    schedule_round::<0x27>(s, msg);
-+    schedule_round::<0x28>(s, msg);
-+    schedule_round::<0x29>(s, msg);
-+    schedule_round::<0x2a>(s, msg);
-+    schedule_round::<0x2b>(s, msg);
-+    schedule_round::<0x2c>(s, msg);
-+    schedule_round::<0x2d>(s, msg);
-+    schedule_round::<0x2e>(s, msg);
-+    schedule_round::<0x2f>(s, msg);
-+
-+    schedule_round::<0x30>(s, msg);
-+    schedule_round::<0x31>(s, msg);
-+    schedule_round::<0x32>(s, msg);
-+    schedule_round::<0x33>(s, msg);
-+    schedule_round::<0x34>(s, msg);
-+    schedule_round::<0x35>(s, msg);
-+    schedule_round::<0x36>(s, msg);
-+    schedule_round::<0x37>(s, msg);
-+    schedule_round::<0x38>(s, msg);
-+    schedule_round::<0x39>(s, msg);
-+    schedule_round::<0x3a>(s, msg);
-+    schedule_round::<0x3b>(s, msg);
-+    schedule_round::<0x3c>(s, msg);
-+    schedule_round::<0x3d>(s, msg);
-+    schedule_round::<0x3e>(s, msg);
-+    schedule_round::<0x3f>(s, msg);
-+
-+    schedule_round::<0x40>(s, msg);
-+    schedule_round::<0x41>(s, msg);
-+    schedule_round::<0x42>(s, msg);
-+    schedule_round::<0x43>(s, msg);
-+    schedule_round::<0x44>(s, msg);
-+    schedule_round::<0x45>(s, msg);
-+    schedule_round::<0x46>(s, msg);
-+    schedule_round::<0x47>(s, msg);
-+    schedule_round::<0x48>(s, msg);
-+    schedule_round::<0x49>(s, msg);
-+    schedule_round::<0x4a
-```
-
----
-
-### Incident Patch 2: `7a1f8db8` (2026-11-18)
-**Commit Message**: sha2: respect `sha2_backend` precedence over `sha2_256/512_backend` (#948)
-
-**File**: `sha2/CHANGELOG.md` (modified, +2/-0)
-```diff
-@@ -8,13 +8,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- ## 0.11.2 (UNRELEASED)
- ### Fixed
- - SHA-512 `riscv-zknh` backend selection ([#935])
-+- Respect precedence of the `sha2_backend` configuration flag over `sha2_256/512_backend` ([#948])
- 
- ### Changed
- - Improved performance of the SHA-512 `x86-avx2` backend ([#940], [#943])
- 
- [#935]: https://github.com/RustCrypto/hashes/pull/935
- [#940]: https://github.com/RustCrypto/hashes/pull/940
- [#943]: https://github.com/RustCrypto/hashes/pull/943
-+[#948]: https://github.com/RustCrypto/hashes/pull/948
+ [#948]: https://github.com/RustCrypto/hashes/pull/948
++[#951]: https://github.com/RustCrypto/hashes/pull/951
  
  ## 0.11.1 (2026-10-12)
  ### Changed
 ```
 
-**File**: `sha2/src/sha256.rs` (modified, +15/-2)
+**File**: `sha2/src/sha512/x86_avx2.rs` (modified, +12/-0)
 ```diff
-@@ -1,8 +1,21 @@
- cfg_if::cfg_if! {
--    if #[cfg(any(sha2_backend = "soft", sha2_256_backend = "soft"))] {
-+    if #[cfg(sha2_backend = "soft")] {
-         mod soft;
-         use soft::compress;
--    } else if #[cfg(any(sha2_backend = "riscv-zknh", sha2_256_backend = "riscv-zknh"))] {
-+    } else if #[cfg(sha2_backend = "riscv-zknh")] {
-+        mod riscv_zknh;
-+
-+        #[cfg(not(target_feature = "zknh"))]
-+        compile_error!("riscv-zknh backend requires `zknh` target feature");
-+
-+        fn compress(state: &mut [u32; 8], blocks: &[[u8; 64]]) {
-+            // SAFETY: we checked above that the required target features are enabled
-+            unsafe { riscv_zknh::compress(state, blocks) }
-+        }
-+    } else if #[cfg(sha2_256_backend = "soft")] {
-+        mod soft;
-+        use soft::compress;
-+    } else if #[cfg(sha2_256_backend = "riscv-zknh")] {
-         mod riscv_zknh;
- 
-         #[cfg(not(target_feature = "zknh"))]
-```
-
-**File**: `sha2/src/sha512.rs` (modified, +15/-2)
-```diff
-@@ -1,8 +1,21 @@
- cfg_if::cfg_if! {
--    if #[cfg(any(sha2_backend = "soft", sha2_512_backend = "soft"))] {
-+    if #[cfg(sha2_backend = "soft")] {
-         mod soft;
-         use soft::compress;
--    } else if #[cfg(any(sha2_backend = "riscv-zknh", sha2_512_backend = "riscv-zknh"))] {
-+    } else if #[cfg(sha2_backend = "riscv-zknh")] {
-+        mod riscv_zknh;
-+
-+        #[cfg(not(target_feature = "zknh"))]
-+        compile_error!("riscv-zknh backend requires `zknh` target features");
-+
-+        fn compress(state: &mut [u64; 8], blocks: &[[u8; 128]]) {
-+            // SAFETY: we checked above that the required target features are enabled
-+            unsafe { riscv_zknh::compress(state, blocks) }
-+        }
-+    } else if #[cfg(sha2_512_backend = "soft")] {
-+        mod soft;
-+        use soft::compress;
-+    } else if #[cfg(sha2_512_backend = "riscv-zknh")] {
-         mod riscv_zknh;
- 
-         #[cfg(not(target_feature = "zknh"))]
+@@ -323,6 +323,18 @@ fn_sha512_update_x!(sha512_update_x_avx2, "avx2", __m256i, {
+ #[inline]
+ #[target_feature(enable = "sse4.1")]
+ fn extract_u64(a: __m128i) -> [u64; 2] {
++    #[cfg(target_arch = "x86")]
++    {
++        let [lo0, hi0, lo1, hi1] = [
++            _mm_extract_epi32::<0>(a),
++            _mm_extract_epi32::<1>(a),
++            _mm_extract_epi32::<2>(a),
++            _mm_extract_epi32::<3>(a),
++        ]
++        .map(|word| u64::from(word.cast_unsigned()));
++        [lo0 | (hi0 << 32), lo1 | (hi1 << 32)]
++    }
++    #[cfg(target_arch = "x86_64")]
+     [
+         _mm_extract_epi64::<0>(a).cast_unsigned(),
+         _mm_extract_epi64::<1>(a).cast_unsigned(),
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #953** (closed): sha2: fix `sha512/x86_avx2` backend for 32-bit targets (@newpavlov)
+- **PR #951** (2026-11-25): sha2: fix `sha512/x86_avx2` backend for 32-bit targets (@zanieb)
 - **PR #948** (2026-11-18): sha2: respect `sha2_backend` precedence over `sha2_256/512_backend` (@newpavlov)
+- **PR #947** (closed): ci: bump the all-deps group across 1 directory with 5 updates (@dependabot[bot])
 - **PR #945** (closed): sha2: respect global backend selection over per-algorithm soft overrides (@zjuncal)
 - **PR #944** (closed): ripemd: interleave the two RIPEMD-160 lines in compress (@DaniPopes)
-- **PR #943** (2026-11-09): sha2: remove unreachable panic and fix compilation error in the SHA-512 AVX2 backend (@newpavlov)
-- **PR #942** (closed): test(sha3): cover serialized cursors across rate boundaries (@piguagua)
-- **PR #940** (2026-11-09): sha2: enable BMI1 and BMI2 in the SHA-512 AVX2 backend (@334456777)
 
 ---
 
@@ -1441,32 +785,35 @@ Resulting assembly:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. sha2: refactor `riscv_zknh` backends
+## X. sha2: fix `sha512/x86_avx2` backend for 32-bit targets
 
 **RULE**:
-When implementing operations in `sha2/CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in RustCrypto/hashes. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/sha2.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in RustCrypto/hashes. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `50a7ea68`: sha2: refactor `riscv_zknh` backends. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ed176fb7`: sha2: fix `sha512/x86_avx2` backend for 32-bit targets. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `sha2/CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/sha2.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- Refactored `riscv_zknh` backends ([#929])
-[#929]: https://github.com/RustCrypto/hashes/pull/929
+      - run: cargo hack test --feature-powerset --target ${{ matrix.target }}
+      - run: cargo test --all-features --target ${{ matrix.target }}
+      - run: cargo test --all-features --target ${{ matrix.target }}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+      - run: cargo hack test --feature-powerset
+      - run: cargo test --all-features
+      - run: cargo test --all-features
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `50a7ea68` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ed176fb7` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

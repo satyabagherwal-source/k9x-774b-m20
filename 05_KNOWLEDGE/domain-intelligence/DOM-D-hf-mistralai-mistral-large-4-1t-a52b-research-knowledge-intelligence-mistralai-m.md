@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/mistralai/Mistral-Large-4-1T-A52B",
   "source_version": "hf-mistralai-mistral-large-4-1t-a52b",
   "license": "Open-Source",
-  "timestamp": "2026-11-21T21:04:30.204Z",
+  "timestamp": "2026-11-25T12:19:22.588Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-mistralai-mistral-large-4-1t-a52b",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [mistralai/Mistral-Large-4-1T-A52B](https://huggingface.co/mistralai/Mistral-Large-4-1T-A52B) (Revision: `hf-mistral`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-21T21:04:30.204Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T12:19:22.588Z`  
 > **Learning ID**: `learn-huggingface-mistralai-mistral-large-4-1t-a52b`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-mistralai-mistral-large-4-1t-a52b-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/mistralai/Mistral-Large-4-1T-A52B](https://huggingface.co/mistralai/Mistral-Large-4-1T-A52B))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T21:04:29.382Z  
+> **Harvest Timestamp**: 2026-11-25T12:19:18.872Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: image-text-to-text
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 20601 downloads | 1676 likes
+- **Stars / Engagement**: 22906 downloads | 1684 likes
 
 ---
 
