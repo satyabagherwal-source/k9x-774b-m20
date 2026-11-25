@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T12:39:24.241Z",
-  "total_cycles_completed": 12415,
-  "total_learnings_persisted": 12415,
-  "total_rules_promoted": 11408,
+  "last_updated": "2026-11-25T12:48:05.096Z",
+  "total_cycles_completed": 12417,
+  "total_learnings_persisted": 12417,
+  "total_rules_promoted": 11409,
   "history": [
-    {
-      "timestamp": "2026-11-25T00:08:30.426Z",
-      "repository": "infiniflow/infinity",
-      "learningId": "learn-github-infiniflow-infinity",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T00:08:32.624Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-25T00:16:46.601Z",
       "repository": "preactjs/preact",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-25T12:39:24.241Z",
       "repository": "duckdb/duckdb",
       "learningId": "learn-github-duckdb-duckdb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T12:47:48.425Z",
+      "repository": "Pika-Labs/Pika-H3-Flex",
+      "learningId": "learn-huggingface-pika-labs-pika-h3-flex",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T12:48:05.096Z",
+      "repository": "ClickHouse/ClickHouse",
+      "learningId": "learn-github-clickhouse-clickhouse",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

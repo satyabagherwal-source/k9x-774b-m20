@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261124-WQFW",
-    "timestamp": "2026-11-24T00:39:58.172Z",
-    "repository": "datalab-to/indra-ocr",
-    "learningId": "learn-huggingface-datalab-to-indra-ocr",
-    "contentHash": "83e51aa5b787ea82cd29b4ada58a87f534f3ce9ad478cae3b579d069620a1a66",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-WSLV",
-    "timestamp": "2026-11-24T00:40:00.979Z",
-    "repository": "apache/arrow",
-    "learningId": "learn-github-apache-arrow",
-    "contentHash": "d58eb388585ff27d27593ac6536ea68b18b1ddeb659a85c5f21273a9ab2b4a9f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261124-WW89",
     "timestamp": "2026-11-24T00:40:05.673Z",
     "repository": "wcandillon/react-native-skia",
@@ -7490,6 +7460,36 @@
     "repository": "duckdb/duckdb",
     "learningId": "learn-github-duckdb-duckdb",
     "contentHash": "1ef51afcf4650aff2ca063572a5c3cf2f5e0d0af675af220d84f58d3f3adfd53",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-CLA6",
+    "timestamp": "2026-11-25T12:47:48.414Z",
+    "repository": "Pika-Labs/Pika-H3-Flex",
+    "learningId": "learn-huggingface-pika-labs-pika-h3-flex",
+    "contentHash": "f10cb66615f2ae3cc8cb3f4205f8b67f4c0497cd24bfd165f78759c3d7a43a33",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-CY59",
+    "timestamp": "2026-11-25T12:48:05.085Z",
+    "repository": "ClickHouse/ClickHouse",
+    "learningId": "learn-github-clickhouse-clickhouse",
+    "contentHash": "347610a96cf9e29230169a1711d807fe8c89eec87753f885997ab5838f23f1ea",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

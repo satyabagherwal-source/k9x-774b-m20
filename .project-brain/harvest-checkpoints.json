@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-25T12:39:24.255Z",
+  "last_updated": "2026-11-25T12:48:05.107Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -9231,14 +9231,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-clickhouse-clickhouse",
-      "content_hash": "159d25bdad67d9b861e9730a1552fcdf5e66b115212e368014eca81751c5f725",
-      "verified_at": "2026-11-24T17:42:51.961Z",
+      "content_hash": "347610a96cf9e29230169a1711d807fe8c89eec87753f885997ab5838f23f1ea",
+      "verified_at": "2026-11-25T12:48:05.106Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T17:42:51.961Z"
+      "last_updated": "2026-11-25T12:48:05.106Z"
     },
     "dockview/dockview": {
       "repository": "dockview/dockview",
@@ -17376,14 +17376,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-pika-labs-pika-h3-flex",
-      "content_hash": "271ff6d88115eb8a15cc688051af7bd9ac9c33f02631b70692dd07a4e644f972",
-      "verified_at": "2026-11-21T21:40:12.535Z",
+      "content_hash": "f10cb66615f2ae3cc8cb3f4205f8b67f4c0497cd24bfd165f78759c3d7a43a33",
+      "verified_at": "2026-11-25T12:47:48.433Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T21:40:12.535Z"
+      "last_updated": "2026-11-25T12:47:48.433Z"
     },
     "LiquidAI/LFM3-Audio-2B": {
       "repository": "LiquidAI/LFM3-Audio-2B",

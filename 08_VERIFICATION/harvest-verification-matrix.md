@@ -13078,3 +13078,5 @@
 | `CYCLE-20261125-1ETE` | `2026-11-25T12:39:06.818Z` | `LiconStudio/Minimax-H3-VBVR` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liconstudio-minimax-h3-vbvr-learnings.md` | Yes (`6778b920...`) |
 | `CYCLE-20261125-1O5H` | `2026-11-25T12:39:18.917Z` | `karmada-io/karmada` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10526` | Yes (`39129b04...`) |
 | `CYCLE-20261125-1S90` | `2026-11-25T12:39:24.228Z` | `duckdb/duckdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10527` | Yes (`1ef51afc...`) |
+| `CYCLE-20261125-CLA6` | `2026-11-25T12:47:48.414Z` | `Pika-Labs/Pika-H3-Flex` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-pika-labs-pika-h3-flex-learnings.md` | Yes (`f10cb666...`) |
+| `CYCLE-20261125-CY59` | `2026-11-25T12:48:05.085Z` | `ClickHouse/ClickHouse` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10528` | Yes (`347610a9...`) |

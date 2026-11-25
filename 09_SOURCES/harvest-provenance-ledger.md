@@ -13111,3 +13111,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-liconstudio-minimax-h3-vbvr` | `https://huggingface.co/LiconStudio/Minimax-H3-VBVR` | `hf-liconst` | Multi-dimensional audit evidence | 2026-11-25T12:39:06.824Z |
 | `learn-github-karmada-io-karmada` | `https://github.com/karmada-io/karmada` | `fd68f330` | Multi-dimensional audit evidence | 2026-11-25T12:39:18.922Z |
 | `learn-github-duckdb-duckdb` | `https://github.com/duckdb/duckdb` | `bdc96af9` | Multi-dimensional audit evidence | 2026-11-25T12:39:24.234Z |
+| `learn-huggingface-pika-labs-pika-h3-flex` | `https://huggingface.co/Pika-Labs/Pika-H3-Flex` | `hf-pika-la` | Multi-dimensional audit evidence | 2026-11-25T12:47:48.419Z |
+| `learn-github-clickhouse-clickhouse` | `https://github.com/ClickHouse/ClickHouse` | `b88da85b` | Multi-dimensional audit evidence | 2026-11-25T12:48:05.090Z |

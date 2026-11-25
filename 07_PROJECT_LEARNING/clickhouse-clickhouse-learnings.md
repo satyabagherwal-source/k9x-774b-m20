@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md`  
 > **Source**: github ([https://github.com/ClickHouse/ClickHouse](https://github.com/ClickHouse/ClickHouse))  
-> **Source Version**: `b6467a3e`  
+> **Source Version**: `b88da85b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T17:42:50.926Z  
+> **Timestamp**: 2026-11-25T12:48:03.945Z  
 > **Learning ID**: `learn-github-clickhouse-clickhouse`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ClickHouse/ClickHouse](https://github.com/ClickHouse/ClickHouse))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T17:42:50.921Z  
+> **Harvest Timestamp**: 2026-11-25T12:48:03.940Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: ClickHouse® is a real-time analytics database management system
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 51103 stars
+- **Stars / Engagement**: 51128 stars
 
 ---
 
@@ -1317,11 +1317,11 @@ private:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #134120** (2026-11-25): **Keeper: `std::condition_variable` lost-wakeup deadlock in `KeeperReadThreadPool::execute` / `threadFunction`**
+  *Symptoms*: ### Summary  `KeeperReadThreadPool::threadFunction` decrements `busy_threads` and calls `done_cv.notify_all` **before** acquiring `mutex`, while `KeeperReadThreadPool::execute` waits on `done_cv` under `mutex` for `busy_threads.load() == 0`. This creates a classic C++ `std::condition_variable` lost-wakeup race that can permanently deadlock Keeper's read pipeline whenever `parallel_read_threads > 0` (the default is `8`).  ### Root Cause  In `src/Coordination/KeeperReadThreadPool.cpp`:  1. **`KeeperReadThreadPool::execute` (lines 45–107)** holds `std::unique_lock lock(mutex)` and waits for workers to finish:    ```cpp    done_cv.wait(lock, [&] { return busy_threads.load() == 0; });    ``` 2. **`KeeperReadThreadPool::threadFunction` (lines 159–164)** modifies `busy_threads` and notifies `done_cv` **outside** `lock`, right before calling `lock.lock()` on the very next line:    ```cpp    size_t prev_busy_threads = busy_threads.fetch_sub(1, std::memory_order_release);    chassert(prev_busy_threads > 0);    if (prev_busy_threads == 1)        done_cv.notify_all();     lock.lock();    ``` 3. **Lost-wakeup interleaving**:    - Thread A (`execute`, holding `mutex`): evaluates predicate `busy_threads.load() == 0` -> observes `1` -> returns `false`, and prepares to unlock `mutex` and sleep in `done_cv.wait`.    - Thread B (last worker in `threadFunction`, NOT holding `mutex`): executes `busy_threads.fetch_sub(1)` (`1 -> 0`) and calls `done_cv.notify_all()` — nobody is sleeping on `done_cv
+
 - **Issue #133698** (2026-11-24): **SHOW CREATE ROLES bypasses max_result_rows**
   *Symptoms*: ### Describe what's wrong  On ClickHouse 26.11.1.2508, `SHOW CREATE ROLES` returns two rows successfully when `max_result_rows = 1` and `result_overflow_mode = 'throw'`. An equivalent query against `system.roles` correctly fails with `TOO_MANY_ROWS_OR_BYTES`.  ### Does it reproduce on the most recent release?  No  ### How to reproduce  Run as a user allowed to create and inspect roles:  ```sql CREATE ROLE role_a; CREATE ROLE role_b;  SET max_result_rows = 1; SET result_overflow_mode = 'throw';  SHOW CREATE ROLES role_a, role_b; -- Succeeds and returns: -- CREATE ROLE role_a -- CREATE ROLE role_b  SELECT name FROM system.roles WHERE name IN ('role_a', 'role_b') ORDER BY name; -- Fails with TOO_MANY_ROWS_OR_BYTES. ```  ### Expected behavior  `SHOW CREATE ROLES` should enforce `max_result_rows` and fail because it produces two rows while the limit is one. The `max_result_rows` documentation states: “Limits the number of rows in the result. Also checked for subqueries, and on remote servers when running parts of a distributed query. No limit is applied when the value is `0`.”  ### Error message and/or stacktrace  ```text Received exception from server (version 26.11.1): Code: 396. DB::Exception: Received from localhost:9000. DB::Exception: Limit for result exceeded, max rows: 1.00, current rows: 2.00. (TOO_MANY_ROWS_OR_BYTES) (query: SELECT name FROM system.roles WHERE name IN ('role_a', 'role_b') ORDER BY name;) ``` 
-
-- **Issue #133671** (2026-11-24): **Keeper/NuRaft: use-after-free `SIGSEGV` in `auto_fwd_resp_handler` on follower shutdown because `raft_instance` is destroyed before `asio_service->stop`**
-  *Symptoms*: ### Description  Shutting down a ClickHouse Keeper follower while an auto-forwarded write (`auto_forwarding = true`) is in flight triggers a use-after-free `SIGSEGV` in NuRaft's `raft_server::auto_fwd_resp_handler` / `raft_server::auto_fwd_release_rpc_cli`.  ### Root Cause  1. In NuRaft (`contrib/NuRaft/src/handle_user_cmd.cxx:320-327` and `:371-377`), `auto_fwd_resp_handler` is registered onto `rpc_cli->send` using `std::bind` with a **raw `this` pointer** (`raft_server *`), not `shared_from_this` / `weak_ptr`:    ```cpp    rpc_handler handler = std::bind( &raft_server::auto_fwd_resp_handler,                                     this,                                     presult,                                     cur_pkg,                                     rpc_cli,                                     std::placeholders::_1,                                     std::placeholders::_2 );    rpc_cli->send(req, handler, params->auto_forwarding_req_timeout_);    ``` 2. During `raft_server::shutdown` (`contrib/NuRaft/src/raft_server.cxx:595`), `cleanup_auto_fwd_pkgs` (`contrib/NuRaft/src/handle_user_cmd.cxx:417-437`) logs `srv 3, in-use 1, idle 0` and clears `pkg->rpc_client_in_use_` and `auto_fwd_pkgs_` **without stopping/cancelling in-flight `rpc_client` instances or waiting for their callbacks to drain**. 3. In ClickHouse Keeper, `KeeperServer::shutdownRaftServer` (`src/Coordination/KeeperServer.cpp:876-907`) calls `raft_instance->shutdown` and **`raft_instance.reset`** (destroyi
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1338,440 +1338,539 @@ private:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8a27da1e` (2026-11-24)
-**Commit Message**: Merge pull request #133804 from ahaanlimaye/ahaanlimaye/merge-size-overflow
+### Incident Patch 1: `b88da85b` (2026-11-25)
+**Commit Message**: Merge pull request #134144 from lazerg/fix/issue-134120-keeper-read-pool-lost-wakeup
 
-Fix overflow in merge size estimates after lightweight deletes
+Fix lost wakeup in KeeperReadThreadPool when the last worker finishes a batch
 
-**File**: `src/Storages/MergeTree/IMergeTreeDataPart.cpp` (modified, +1/-1)
+**File**: `src/Coordination/KeeperReadThreadPool.cpp` (modified, +2/-2)
 ```diff
-@@ -1321,7 +1321,7 @@ UInt64 IMergeTreeDataPart::getExistingBytesOnDisk() const
- {
-     if ((*storage.getSettings())[MergeTreeSetting::exclude_deleted_rows_for_part_size_in_merge] && supportLightweightDeleteMutate() && hasLightweightDelete()
-         && existing_rows_count.has_value() && existing_rows_count.value() < rows_count && rows_count > 0)
--        return bytes_on_disk * existing_rows_count.value() / rows_count;
-+        return static_cast<UInt64>(UInt128(bytes_on_disk) * existing_rows_count.value() / rows_count);
-     return bytes_on_disk;
- }
- 
-```
-
-**File**: `src/Storages/MergeTree/tests/gtest_existing_bytes_on_disk.cpp` (added, +72/-0)
-```diff
-@@ -0,0 +1,72 @@
-+#include <gtest/gtest.h>
-+
-+#include <Common/ThreadStatus.h>
-+#include <Common/tests/gtest_global_context.h>
-+#include <Common/tests/gtest_global_register.h>
-+#include <DataTypes/DataTypesNumber.h>
-+#include <IO/SharedThreadPools.h>
-+#include <Parsers/ASTFunction.h>
-+#include <Storages/MergeTree/IMergeTreeDataPart.h>
-+#include <Storages/MergeTree/MergeTreeDataPartBuilder.h>
-+#include <Storages/MergeTree/MergeTreeSettings.h>
-+#include <Storages/MergeTree/MergeTreeVirtualColumns.h>
-+#include <Storages/StorageMergeTree.h>
-+
-+#include <Poco/TemporaryFile.h>
-+
-+TEST(MergeTreeDataPart, ExistingBytesOnDiskAfterLightweightDelete)
-+{
-+    using namespace DB;
-+
-+    MainThreadStatus::getInstance();
-+    tryRegisterFunctions();
-+    tryRegisterAggregateFunctions();
-+    getActivePartsLoadingThreadPool().initializeWithDefaultSettingsIfNotInitialized();
-+    getOutdatedPartsLoadingThreadPool().initializeWithDefaultSettingsIfNotInitialized();
-+    getUnexpectedPartsLoadingThreadPool().initializeWithDefaultSettingsIfNotInitialized();
-+    getPartsCleaningThreadPool().initializeWithDefaultSettingsIfNotInitialized();
-+
-+    auto context = Context::createCopy(getContext().context);
-+    StorageInMemoryMetadata metadata;
-+    metadata.setColumns({{"id", std::make_shared<DataTypeUInt64>()}});
-+    metadata.sorting_key = KeyDescription::getKeyFromAST(makeASTFunction("tuple"), metadata.columns, {}, context);
-+    metadata.primary_key = metadata.sorting_key;
-+    metadata.primary_key.definition_ast = nullptr;
-+    metadata.partition_key = KeyDescription::getKeyFromAST(nullptr, metadata.columns, {}, context);
-+
-+    auto settings = std::make_unique<MergeTreeSettings>(context->getMergeTreeSettings());
-+    settings->set("exclude_deleted_rows_for_part_size_in_merge", true);
-+    Poco::TemporaryFile table_dir(".");
-+    auto storage = std::make_shared<StorageMergeTree>(
-+        StorageID("test_db", "existing_bytes_on_disk"), table_dir.path() + "/", metadata, LoadingStrictnessLevel::ATTACH,
-+        context, "", MergeTreeData::MergingParams{}, std::move(settings));
-+
-+    const String part_name = "all_1_1_0";
-+    auto part = MergeTreeDataPartBuilder(
-+        *storage, part_name, storage->getStoragePolicy()->getVolume(0), storage->getRelativeDataPath(),
-+        part_name, context->getReadSettings(), PartDirIntent::CreateFresh)
-+        .withPartFormat({MergeTreeDataPartType::Wide, MergeTreeDataPartStorageType::Full})
-+        .build();
-+    auto columns = metadata.getColumns().getAllPhysical();
-+    columns.emplace_back(RowExistsColumn::name, RowExistsColumn::type);
-+    part->setColumns(columns, SerializationInfoByName(SerializationInfoSettings{}), 0);
-+
-+    auto existing_bytes = [&](UInt64 bytes, size_t total_rows, std::optional<size_t> existing_rows)
-+    {
-+        part->setBytesOnDisk(bytes);
-+        part->rows_count = total_rows;
-+        part->existing_rows_count = existing_rows;
-+        return part->getExistingBytesOnDisk();
-+    };
-+
-+    EXPECT_EQ(existing_bytes(100ULL << 30, 40'000'000'000, 39'999'999'999), 107'374'182'397ULL);
-+    constexpr auto max = std::numeric_limits<UInt64>::max();
-+    EXPECT_EQ(existing_bytes(max, max, max - 1), max - 1);
-+    EXPECT_EQ(existing_bytes(11, 3, 2), 7u);
-+    EXPECT_EQ(existing_bytes(11, 3, 0), 0u);
-+    EXPECT_EQ(existing_bytes(11, 3, 3), 11u);
-+    EXPECT_EQ(existing_bytes(11, 0, 0), 11u);
-+    EXPECT_EQ(existing_bytes(11, 3, std::nullopt), 11u);
-+
-+    storage->flushAndShutdown();
-+}
-```
-
----
-
-### Incident Patch 2: `ce39b030` (2026-11-24)
-**Commit Message**: Pad an empty Protobuf wrapper into Nullable with the type default only
-
-An empty google wrapper read into `Nullable(T)` went through the `value`
-field serializer, so an empty `StringValue` into `Nullable(Date)`,
-`Nullable(Int32)`, `Nullable(UUID)`, ... failed to parse `''` instead of
-storing the type default as master does (review on #134040).
-
-Keep master's borrowed default insertion and pass it the nested type, so
-only a scalar whose type default differs from the column zero changes:
-`Enum`, also inside `Nullable(Tuple(...))`. Calling
-`nested_type->insertDefaultInto` directly is not possible there: for
-`Nullable(Tuple(...))` it dereferences the tuple elements, which the element
-serializers also hold, and aborts on the `use_count() == 1` assertion.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `src/Formats/ProtobufSerializer.cpp` (modified, +13/-6)
-```diff
-@@ -151,7 +151,8 @@ namespace
-     /// of a composite column would reach sub-columns that are also held by the serializers
-     /// of its nested fields through the non-const `WrappedPtr` dereference.
-     /// Exception-safe: on failure, the already appended sub-columns are rolled back.
--    void insertDefaultBorrowed(IColumn & column)
-+    /// With `type`, a scalar gets the default of its type (e.g. the first element of an `Enum`), not the column's.
-+    void insertDefaultBorrowed(IColumn & column, const IDataType * type = nullptr)
-     {
-         if (auto * column_array = typeid_cast<ColumnArray *>(&column))
-         {
-@@ -169,11 +170,12 @@ namespace
-                 return;
+@@ -155,13 +155,13 @@ void KeeperReadThreadPool::threadFunction()
+                     first_exception = std::current_exception();
              }
-             const auto & elements = std::as_const(*column_tuple).getColumns();
-+            const auto * tuple_type = typeid_cast<const DataTypeTuple *>(type);
-             size_t i = 0;
-             try
-             {
-                 for (; i < elements.size(); ++i)
--                    insertDefaultBorrowed(borrowColumnRef(elements[i]));
-+                    insertDefaultBorrowed(borrowColumnRef(elements[i]), tuple_type ? tuple_type->getElement(i).get() : nullptr);
-             }
-             catch (...)
-             {
-@@ -201,6 +203,10 @@ namespace
-                 throw;
-             }
+ 
++            lock.lock();
++
+             /// Report that this thread is finished with this batch.
+             size_t prev_busy_threads = busy_threads.fetch_sub(1, std::memory_order_release);
+             chassert(prev_busy_threads > 0);
+             if (prev_busy_threads == 1)
+                 done_cv.notify_all();
+-
+-            lock.lock();
          }
-+        else if (type)
-+        {
-+            type->insertDefaultInto(column);
-+        }
-         else
-         {
-             column.insertDefault();
-@@ -2258,8 +2264,8 @@ namespace
-     class ProtobufSerializerNullable : public ProtobufSerializer
-     {
-     public:
--        explicit ProtobufSerializerNullable(std::unique_ptr<ProtobufSerializer> nested_serializer_)
--            : nested_serializer(std::move(nested_serializer_))
-+        ProtobufSerializerNullable(DataTypePtr nested_type_, std::unique_ptr<ProtobufSerializer> nested_serializer_)
-+            : nested_type(std::move(nested_type_)), nested_serializer(std::move(nested_serializer_))
-         {
-         }
- 
-@@ -2354,7 +2360,7 @@ namespace
-             if (row_num < column_nullable.size())
-                 return;
-             auto & nested_column = borrowColumnRef(column_nullable.getNestedColumnPtr());
--            nested_serializer->insertDefaults(row_num);
-+            insertDefaultBorrowed(nested_column, nested_type.get());
-             /// Same rollback contract as in `insertDefaults` above.
-             try
-             {
-@@ -2379,6 +2385,7 @@ namespace
-         }
- 
-     private:
-+        const DataTypePtr nested_type;
-         const std::unique_ptr<ProtobufSerializer> nested_serializer;
-         ColumnPtr column;
-     };
-@@ -4186,7 +4193,7 @@ namespace
-                         oneof_presence);
-                     if (!nested_serializer)
-                         return nullptr;
--                    return std::make_unique<ProtobufSerializerNullable>(std::move(nested_serializer));
-+                    return std::make_unique<ProtobufSerializerNullable>(nullable_data_type.getNestedType(), std::move(nested_serializer));
-                 }
- 
-                 case TypeIndex::LowCardinality:
-```
-
-**File**: `tests/queries/0_stateless/05872_input_formats_streaming_enum_type_default.reference` (modified, +5/-2)
-```diff
-@@ -7,10 +7,13 @@ Protobuf, a column missing from the message
- ProtobufList, a column missing from the message
- 7	a	('','x')	\N
- Protobuf, a google wrapper without value
--zero	1
-+a	1
-+neg	1
-+('a')	1
- 0	1
- \N	1
--	1
-+1970-01-01	1
-+00000000-0000-0000-0000-000000000000	1
- FileLog, handle_error_mode = stream
- 0	a	('','x')	\N	1
- 1	b	('p','y')	b	0
-```
-
-**File**: `tests/queries/0_stateless/05872_input_formats_streaming_enum_type_default.sql` (modified, +6/-6)
-```diff
-@@ -27,19 +27,19 @@ SELECT 'ProtobufList, a column missing from the message';
- SET format_schema = 'syntax = "proto3"; message Envelope { message M { int32 x = 1; } repeated M row = 1; }';
- SELECT * FROM format(ProtobufList, 'x Int32, e Enum8(\'a\' = 1, \'b\' = 2), t Tuple(s String, e Enum16(\'x\' = 5, \'y\' = 7)), ne Nullable(Enum8(\'a\' = 1, \'b\' = 2))', '\x04\x0a\x02\x08\x07');
- 
---- A wrapper message without `value` holds the default of `value` (0, or '' for a StringValue), read like the same
---- wrapper into the type without Nullable. An absent wrapper is NULL.
-+-- A wrapper message without `value` gives the default of the column type, also for a StringValue read into a
-+-- non-string type. An absent wrapper is NULL.
- SELECT 'Protobuf, a google wrapper without value';
- SET input_format_protobuf_flatten_google_wrappers = 1;
- SET format_schema = 'syntax = "proto3"; import "google/protobuf/wrappers.proto"; message W { google.protobuf.Int32Value w = 1; int32 k = 2; google.protobuf.StringValue s = 3; }';
- SET format_schema_message_name = 'W';
--SELECT * FROM format(ProtobufSingle, 'w Enum8(\'a\' = 1, \'b\' = 2), k Int32', '\x0a\x00\x10\x01'); -- { serverError UNKNOWN_ELEMENT_OF_ENUM }
--SELECT * FROM format(ProtobufSingle, 'w Nullable(Enum8(\'a\' = 1, \'b\' = 2)), k Int32', '\x0a\x00\x10\x01'); -- { serverError UNKNOWN_ELEMENT_OF_ENUM }
-+SELECT * FROM format(ProtobufSingle, 'w Nullable(Enum8(\'a\' = 1, \'b\' = 2)), k Int32', '\x0a\x00\x10\x01');
- SELECT * FROM format(ProtobufSingle, 'w Nullable(Enum8(\'neg\' = -1, \'zero\' = 0)), k Int32', '\x0a\x00\x10\x01');
-+SELECT * FROM format(ProtobufSingle, 'w Nullable(Tuple(Enum8(\'a\' = 1, \'b\' = 2))), k Int32', '\x0a\x00\x10\x01');
- SELECT * FROM format(ProtobufSingle, 'w Nullable(Int32), k Int32', '\x0a\x00\x10\x01');
- SELECT * FROM format(ProtobufSingle, 'w Nullable(Enum8(\'a\' = 1, \'b\' = 2)), k Int32', '\x10\x01');
--SELECT * FROM format(ProtobufSingle, 's Nullable(Enum8(\'\' = 3, \'b\' = 2)), k Int32', '\x1a\x00\x10\x01');
--SELECT * FROM format(ProtobufSingle, 's Nullable(Date), k Int32', '\x1a\x00\x10\x01'); -- { serverError CANNOT_PARSE_DATE }
-+SELECT * FROM format(ProtobufSingle, 's Nullable(Date), k Int32', '\x1a\x00\x10\x01');
-+SELECT * FROM format(ProtobufSingle, 's Nullable(UUID), k Int32', '\x1a\x00\x10\x01');
- 
- SELECT 'FileLog, handle_error_mode = stream';
- DROP TABLE IF EXISTS file_log;
-```
-
----
-
-### Incident Patch 3: `3fe8314f` (2026-11-24)
-**Commit Message**: feat: add `USE_VORTEX` and `VORTEX_VERSION` to `system.build_options`
-
-`build.rs` reads the version of `vortex` from `Cargo.lock`. `vortex_ffi_version()` returns it.
-
-Signed-off-by: Maksim Dergousov <[REDACTED_EMAIL]>
-
-**File**: `contrib/rust-contrib-workspace/Cargo.lock` (modified, +2/-0)
-```diff
-@@ -52,6 +52,8 @@ dependencies = [
-  "futures",
-  "kanal",
-  "parking",
-+ "serde",
-+ "toml",
-  "vortex",
- ]
- 
-```
-
-**File**: `contrib/vortex-cmake/Cargo.toml` (modified, +3/-0)
-```diff
-@@ -28,3 +28,6 @@ vortex = { version = "0.84.0", default-features = false, features = ["files", "z
- # between patch versions, and the version has to be one `contrib/rust_vendor` carries. Its default
- # features are only needed by the command-line tool.
- cbindgen = { version = "=0.29.2", default-features = false }
-+# Read `Cargo.lock`. The same versions and features as in `cbindgen`, so they are vendored already.
-+serde = { version = "1", default-features = false, features = ["derive", "std"] }
-+toml = { version = "0.9", default-features = false, features = ["parse", "serde", "std"] }
-```
-
-**File**: `contrib/vortex-cmake/build.rs` (modified, +54/-1)
-```diff
-@@ -9,11 +9,27 @@
- 
- use std::env;
- use std::fs;
--use std::path::Path;
-+use std::path::{Path, PathBuf};
-+use std::process::Command;
-+
-+use serde::Deserialize;
- 
- const UPDATE_VAR: &str = "VORTEX_FFI_HEADER_UPDATE";
- 
-+#[derive(Deserialize)]
-+struct Lock {
-+    package: Vec<Package>,
-+}
-+
-+#[derive(Deserialize)]
-+struct Package {
-+    name: String,
-+    version: String,
-+}
-+
- fn main() {
-+    emit_vortex_version();
-+
-     let crate_dir = env::var("CARGO_MANIFEST_DIR").expect("CARGO_MANIFEST_DIR should be set");
-     let crate_dir = Path::new(&crate_dir);
-     let header_path = crate_dir.join("include/vortex_ffi.h");
-@@ -56,3 +72,40 @@ fn main() {
-          Run `{UPDATE_VAR}=1 cargo check -p _ch_rust_vortex` and commit the result."
-     );
- }
-+
-+fn emit_vortex_version() {
-+    let lock_path = workspace_dir().join("Cargo.lock");
-+    println!("cargo::rerun-if-changed={}", lock_path.display());
-+
-+    let lock = fs::read_to_string(&lock_path)
-+        .unwrap_or_else(|error| panic!("cannot read {}: {error}", lock_path.display()));
-+    let lock: Lock = toml::from_str(&lock)
-+        .unwrap_or_else(|error| panic!("cannot parse {}: {error}", lock_path.display()));
-+
-+    let versions: Vec<&str> = lock
-+        .package
-+        .iter()
-+        .filter(|package| package.name == "vortex")
-+        .map(|package| package.version.as_str())
-+        .collect();
-+    let [version] = versions[..] else {
-+        panic!("expected one version of `vortex` in {}, found {versions:?}", lock_path.display());
-+    };
-+    println!("cargo::rustc-env=VORTEX_CRATE_VERSION={version}");
-+}
-+
-+fn workspace_dir() -> PathBuf {
-+    let cargo = env::var_os("CARGO").expect("CARGO should be set");
-+    let output = Command::new(cargo)
-+        .args(["locate-project", "--workspace", "--message-format", "plain"])
-+        .output()
-+        .expect("cannot run `cargo locate-project`");
-+    assert!(
-+        output.status.success(),
-+        "`cargo locate-project` failed: {}",
-+        String::from_utf8_lossy(&output.stderr)
-+    );
-+
-+    let manifest = String::from_utf8(output.stdout).expect("the path should be UTF-8");
-+    Path::new(manifest.trim()).parent().expect("the path should have a parent").to_owned()
-+}
-```
-
-**File**: `contrib/vortex-cmake/include/vortex_ffi.h` (modified, +2/-0)
-```diff
-@@ -362,4 +362,6 @@ void vortex_ffi_writer_free(FFI_VortexWriter *writer);
- /// Frees a string returned by this library, such as an error message.
- void vortex_ffi_free_string(char *string);
- 
-+const char *vortex_ffi_version();
-+
- }  // extern "C"
-```
-
-**File**: `contrib/vortex-cmake/src/lib.rs` (modified, +5/-0)
-```diff
-@@ -1635,6 +1635,11 @@ pub unsafe extern "C" fn vortex_ffi_free_string(string: *mut c_char) {
      }
- }
- 
-+#[no_mangle]
-+pub extern "C" fn vortex_ffi_version() -> *const c_char {
-+    concat!(env!("VORTEX_CRATE_VERSION"), "\0").as_ptr().cast()
-+}
-+
- #[cfg(test)]
- mod tests {
-     use super::*;
+     catch (...)
 ```
 
-**File**: `src/Storages/System/CMakeLists.txt` (modified, +4/-0)
-```diff
-@@ -93,3 +93,7 @@ if (TARGET ch_contrib::icu)
-     target_link_libraries(clickhouse_storages_system PRIVATE ch_contrib::icu)
-     target_compile_definitions(clickhouse_storages_system PRIVATE U_HIDE_DEPRECATED_API)
- endif()
-+
-+if (TARGET ch_rust::vortex)
-+    target_include_directories(clickhouse_storages_system PRIVATE $<TARGET_PROPERTY:ch_rust::vortex,INTERFACE_INCLUDE_DIRECTORIES>)
-+endif()
-```
+---
 
-**File**: `src/Storages/System/StorageSystemBuildOptions.cpp` (modified, +11/-0)
+### Incident Patch 2: `1c87825f` (2026-11-25)
+**Commit Message**: Merge pull request #133398 from groeneai/nullable-unary-grouped-batch
+
+Batch grouped aggregation of a Nullable argument when the block has no NULLs
+
+**File**: `src/AggregateFunctions/Combinators/AggregateFunctionDistinct.h` (modified, +44/-9)
 ```diff
-@@ -5,6 +5,12 @@
- #include <DataTypes/DataTypeString.h>
- #include <Core/Settings.h>
+@@ -8,6 +8,7 @@
+ #include <Common/HashTable/HashMap.h>
+ #include <Common/HashTable/HashSet.h>
+ #include <Common/assert_cast.h>
++#include <base/scope_guard.h>
  
-+#include "config.h"
-+
-+#if USE_VORTEX
-+#include <vortex_ffi.h>
-+#endif
-+
- extern const char * auto_config_build[];
  
  namespace DB
-@@ -26,6 +32,11 @@ void StorageSystemBuildOptions::fillData(MutableColumns & res_columns, ContextPt
-         res_columns[0]->insert(it[0]);
-         res_columns[1]->insert(it[1]);
-     }
-+
-+#if USE_VORTEX
-+    res_columns[0]->insert("VORTEX_VERSION");
-+    res_columns[1]->insert(vortex_ffi_version());
-+#endif
- }
+@@ -233,14 +234,15 @@ class AggregateFunctionDistinct final : public IAggregateFunctionHelper<Aggregat
+     /// Adds the rows in [row_begin, row_end) to the places returned by `get_place(row)` (nullptr to skip the row).
+     /// The rows with the values seen for the first time in their place are collected and passed to the nested function together,
+     /// because adding them one by one is slow for some nested functions (example: the conversion of `Variant` arguments).
++    /// `places` with `place_offset`, if not nullptr, give the same places as `get_place` (they are changed during the call and restored).
+     template <typename GetPlace>
+     void addBatchToNested(
+-        size_t row_begin, size_t row_end, const IColumn ** columns, Arena * arena, ssize_t if_argument_pos, GetPlace && get_place) const
++        size_t row_begin, size_t row_end, const IColumn ** columns, Arena * arena, ssize_t if_argument_pos, GetPlace && get_place,
++        AggregateDataPtr * places = nullptr, size_t place_offset = 0) const
+     {
+         const UInt8 * flags = if_argument_pos >= 0 ? assert_cast<const ColumnUInt8 &>(*columns[if_argument_pos]).getData().data() : nullptr;
+-        auto new_rows = ColumnUInt64::create();
+-        auto & new_rows_data = new_rows->getData();
+-        PaddedPODArray<AggregateDataPtr> new_places;
++        PODArrayWithStackMemory<UInt64, 512> new_rows_data;
++        PODArrayWithStackMemory<AggregateDataPtr, 512> new_places;
+         for (size_t row = row_begin; row < row_end; ++row)
+         {
+             if (flags && !flags[row])
+@@ -260,13 +262,45 @@ class AggregateFunctionDistinct final : public IAggregateFunctionHelper<Aggregat
+         if (new_rows_data.empty())
+             return;
  
- }
+-        /// All rows are new and the places are indexed from zero, there is no need to copy the rows.
+-        if (row_begin == 0 && new_rows_data.size() == row_end)
++        /// All rows are new, there is no need to copy them.
++        if (new_rows_data.size() == row_end - row_begin)
+         {
+-            nested_func->addBatchWithNonNullPlaces(0, row_end, new_places.data(), prefix_size, columns, arena);
++            if (places)
++            {
++                nested_func->addBatchWithNonNullPlaces(row_begin, row_end, places, place_offset + prefix_size, columns, arena);
++                return;
++            }
++            if (row_begin == 0)
++            {
++                nested_func->addBatchWithNonNullPlaces(0, row_end, new_places.data(), prefix_size, columns, arena);
++                return;
++            }
++        }
++
++        /// A short range is not copied: it is passed as it is, with the places of the rows that are not new set to nullptr for the call.
++        static constexpr size_t max_rows_to_hide = 64;
++        if (places && row_end - row_begin <= max_rows_to_hide)
++        {
++            const size_t num_rows = row_end - row_begin;
++            AggregateDataPtr saved_places[max_rows_to_hide];
++            memcpy(saved_places, places + row_begin, num_rows * sizeof(AggregateDataPtr));
++            SCOPE_EXIT(memcpy(places + row_begin, saved_places, num_rows * sizeof(AggregateDataPtr)));
++
++            size_t next_new = 0;
++            for (size_t row = row_begin; row < row_end; ++row)
++            {
++                if (next_new < new_rows_data.size() && new_rows_data[next_new] == row)
++                    ++next_new;
++                else
++                    places[row] = nullptr;
++            }
++
++            nested_func->addBatch(row_begin, row_end, places, place_offset + prefix_size, columns, arena);
+             return;
+         }
+ 
++        auto new_rows = ColumnUInt64::create();
++        new_rows->getData().assign(new_rows_data.begin(), new_rows_data.end());
+         auto new_columns = indexColumns(columns, *new_rows);
+         nested_func->addBatchWithNonNullPlaces(0, new_rows_data.size(), new_places.data(), prefix_size, new_columns.second.data(), arena);
+     }
+@@ -373,7 +407,7 @@ class AggregateFunctionDistinct final : public IAggregateFunctionHelper<Aggregat
+         ssize_t if_argument_pos) const override
+     {
+         addBatchToNested(row_begin, row_end, columns, arena, if_argument_pos,
+-            [&](size_t row) { return places[row] ? places[row] + place_offset : nullptr; });
++            [&](size_t row) { return places[row] ? places[row] + place_offset : nullptr; }, places, place_offset);
+     }
+ 
+     void addBatchWithNonNullPlaces(
+@@ -383,7 +417,8 @@ class AggregateFunctionDistinct final : public IAggregateFunctionHelper<Aggregat
+         Arena * arena,
+         ssize_t if_argument_pos) const override
+     {
+-        addBatchToNested(row_begin, row_end, columns, arena, if_argument_pos, [&](size_t row) { return places[row] + place_offset; });
++        addBatchToNested(
++            row_begin, row_end, c
 ```
 
-**File**: `src/Storages/System/StorageSystemBuildOptions.cpp.in` (modified, +1/-0)
+**File**: `src/AggregateFunctions/Combinators/AggregateFunctionNull.h` (modified, +188/-0)
 ```diff
-@@ -72,6 +72,7 @@ const char * auto_config_build[]
-     "USE_ORC", "@USE_ORC@",
-     "USE_MSGPACK", "@USE_MSGPACK@",
-     "USE_DELTA_KERNEL_RS", "@USE_DELTA_KERNEL_RS@",
-+    "USE_VORTEX", "@USE_VORTEX@",
-     "USE_XRAY", "@USE_XRAY@",
-     "USE_WASMTIME", "@USE_WASMTIME@",
-     "WITH_COVERAGE", "@WITH_COVERAGE@",
+@@ -9,6 +9,7 @@
+ #include <IO/WriteHelpers.h>
+ #include <Common/VectorWithMemoryTracking.h>
+ #include <Common/assert_cast.h>
++#include <base/find_symbols.h>
+ 
+ #include <absl/container/inlined_vector.h>
+ 
+@@ -593,6 +594,71 @@ class AggregateFunctionNullUnary final
+         }
+     }
+ 
++    void addBatch( /// NOLINT
++        size_t row_begin,
++        size_t row_end,
++        AggregateDataPtr * places,
++        size_t place_offset,
++        const IColumn ** columns,
++        Arena * arena,
++        ssize_t if_argument_pos = -1) const override
++    {
++        addBatchImpl<false>(row_begin, row_end, places, place_offset, columns, arena, if_argument_pos);
++    }
++
++    void addBatchWithNonNullPlaces( /// NOLINT
++        size_t row_begin,
++        size_t row_end,
++        AggregateDataPtr * places,
++        size_t place_offset,
++        const IColumn ** columns,
++        Arena * arena,
++        ssize_t if_argument_pos = -1) const override
++    {
++        addBatchImpl<true>(row_begin, row_end, places, place_offset, columns, arena, if_argument_pos);
++    }
++
++    void addBatchLookupTable8(
++        size_t row_begin,
++        size_t row_end,
++        AggregateDataPtr * map,
++        size_t place_offset,
++        std::function<void(AggregateDataPtr &)> init,
++        const UInt8 * key,
++        const IColumn ** columns,
++        Arena * arena) const override
++    {
++        const ColumnNullable * column = assert_cast<const ColumnNullable *>(columns[0]);
++        const UInt8 * null_map = column->getNullMapData().data();
++        const bool has_nulls = !memoryIsZero(null_map, row_begin, row_end);
++        if (has_nulls && hasManyNulls(null_map, row_begin, row_end))
++        {
++            addBatchLookupTable8RowByRow(row_begin, row_end, map, place_offset, std::move(init), key, columns, arena);
++            return;
++        }
++
++        /// The nested addBatchLookupTable8 reorders the rows of a key, which changes order-dependent functions such as deltaSum.
++        PaddedPODArray<AggregateDataPtr> places(row_end);
++        for (size_t i = row_begin; i < row_end; ++i)
++        {
++            AggregateDataPtr & place = map[key[i]];
++            if (unlikely(!place))
++                init(place);
++            places[i] = place;
++        }
++
++        if (!has_nulls)
++        {
++            addBatchWithoutNulls<true>(row_begin, row_end, places.data(), place_offset, &column->getNestedColumn(), arena);
++            return;
++        }
++
++        forEachRangeWithoutNulls(null_map, row_begin, row_end, [&](size_t begin, size_t end)
++        {
++            addBatchWithoutNulls<true>(begin, end, places.data(), place_offset, &column->getNestedColumn(), arena);
++        });
++    }
++
+ #if USE_EMBEDDED_COMPILER
+ 
+     void compileAdd(llvm::IRBuilderBase & builder, llvm::Value * aggregate_data_ptr, const ValuesWithType & arguments) const override
+@@ -630,6 +696,128 @@ class AggregateFunctionNullUnary final
+ 
+ #endif
+ 
++private:
++    template <bool places_are_non_null>
++    void addBatchImpl(
++        size_t row_begin,
++        size_t row_end,
++        AggregateDataPtr * places,
++        size_t place_offset,
++        const IColumn ** columns,
++        Arena * arena,
++        ssize_t if_argument_pos) const
++    {
++        const ColumnNullable * column = assert_cast<const ColumnNullable *>(columns[0]);
++        const UInt8 * null_map = column->getNullMapData().data();
++        const bool has_nulls = !memoryIsZero(null_map, row_begin, row_end);
++        if (if_argument_pos >= 0 || (has_nulls && hasManyNulls(null_map, row_begin, row_end)))
++        {
++            addBatchRowByRow<places_are_non_null>(row_begin, row_end, places, place_offset, columns, arena, if_argument_pos);
++            return;
++        }
++
++        if (!has_nulls)
++        {
++            addBatchWithoutNulls<places_are_non_null>(row_begin, row_end, places, place_offset, &column->getNestedColumn(), arena);
++            return;
++        }
++
++        forEachRangeWithoutNulls(null_map, row_begin, row_end, [&](size_t begin, size_t end)
++        {
++            addBatchWithoutNulls<places_are_non_null>(begin, end, places, place_offset, &column->getNestedColumn(), arena);
++        });
++    }
++
++    /// With more NULLs the ranges between them are short, and the nested function may pay a setup cost per range.
++    static bool hasManyNulls(const UInt8 * null_map, size_t row_begin, size_t row_end)
++    {
++        static constexpr size_t min_rows_per_null = 16;
++        return countBytesInFilter(null_map, row_begin, row_end) * min_rows_per_null > row_end - row_begin;
++    }
++
++    /// Not inlined, so that the row loops are compiled as in IAggregateFunctionHelper.
++    template <bool places_are_non_null>
++    NO_INLINE void addBatchRowByRow(
++        size_t row_begin,
++        size_t row_end,
++        AggregateDataPtr * places,
++        size_t place_offset,
++        const IColumn ** columns,
++        Arena * arena,
++        ssize_t if_argument_pos) const
++    {
++        if constexpr (pla
+```
+
+**File**: `tests/performance/aggregation_nullable_arguments.xml` (added, +24/-0)
+```diff
+@@ -0,0 +1,24 @@
++<test>
++    <settings>
++        <!-- JIT compiles some of these functions after a few runs and then bypasses the batch path -->
++        <compile_aggregate_expressions>0</compile_aggregate_expressions>
++    </settings>
++
++    <create_query>CREATE TABLE nullable_arguments (k8 UInt8, k4 UInt32, k1000 UInt32, k_many UInt32, v Nullable(Decimal(15, 2)), v_rare_nulls Nullable(Decimal(15, 2)), v_half_nulls Nullable(Decimal(15, 2)), v_sixteenth_nulls Nullable(Decimal(15, 2))) ENGINE = Memory</create_query>
++    <fill_query>INSERT INTO nullable_arguments SELECT number % 6, number % 4, number % 1000, number % 1000000, number % 1000, if(number % 20000 = 0, NULL, number % 1000), if(cityHash64(number) % 2 = 0, NULL, number % 1000), if(number % 16 = 0, NULL, number % 1000) FROM numbers_mt(30000000)</fill_query>
++
++    <query>SELECT k8, sum(v), avg(v) FROM nullable_arguments GROUP BY k8 FORMAT Null</query>
++    <query>SELECT k4, sum(v), avg(v) FROM nullable_arguments GROUP BY k4 FORMAT Null</query>
++    <query>SELECT k1000, sum(v), avg(v) FROM nullable_arguments GROUP BY k1000 FORMAT Null</query>
++    <query>SELECT k_many, sum(v), avg(v) FROM nullable_arguments GROUP BY k_many FORMAT Null</query>
++    <query>SELECT k4, uniqExact(v) FROM nullable_arguments GROUP BY k4 FORMAT Null</query>
++    <query>SELECT k8, sum(v_rare_nulls), avg(v_rare_nulls) FROM nullable_arguments GROUP BY k8 FORMAT Null</query>
++    <query>SELECT k1000, sum(v_rare_nulls), avg(v_rare_nulls) FROM nullable_arguments GROUP BY k1000 FORMAT Null</query>
++    <query>SELECT k8, sum(v_half_nulls), avg(v_half_nulls) FROM nullable_arguments GROUP BY k8 FORMAT Null</query>
++    <query>SELECT k1000, sumDistinct(v_half_nulls) FROM nullable_arguments GROUP BY k1000 FORMAT Null</query>
++    <query>SELECT k1000, sumDistinct(v_sixteenth_nulls) FROM nullable_arguments GROUP BY k1000 FORMAT Null</query>
++    <query>SELECT k, sumDistinct(x) FROM (SELECT toUInt8(number % 6) AS k, if(number % 16 = 0, NULL, if(cityHash64(number) % 5 &lt; 3, toDecimal64(number, 2), toDecimal64(number % 1000, 2))) AS x FROM numbers_mt(3000000)) GROUP BY k FORMAT Null</query>
++    <query>SELECT k, sumDistinct(x) FROM (SELECT number % 1000 AS k, if(number % 16 = 0, NULL, if(cityHash64(number) % 5 &lt; 3, toDecimal64(number, 2), toDecimal64(number % 1000, 2))) AS x FROM numbers_mt(3000000)) GROUP BY k FORMAT Null</query>
++
++    <drop_query>DROP TABLE IF EXISTS nullable_arguments</drop_query>
++</test>
+```
+
+**File**: `tests/queries/0_stateless/04003_tuple_combinator.sql` (modified, +2/-2)
+```diff
+@@ -154,8 +154,8 @@ SELECT sumTuple(t) FROM (SELECT if(number % 3 = 0, CAST(NULL, 'Nullable(Tuple(In
+ -- `-TupleIf` over `Nullable(Tuple)`: both the if-flag and the null map filter rows. cond = number % 2
+ -- keeps odd numbers 1,3,5, of which 3 is NULL -> kept 1,5 -> sums 6.
+ SELECT sumTupleIf(t, cond) FROM (SELECT number % 2 AS cond, if(number % 3 = 0, CAST(NULL, 'Nullable(Tuple(Int64, Float64))'), CAST(tuple(toInt64(number), toFloat64(number)), 'Nullable(Tuple(Int64, Float64))')) AS t FROM numbers(6));
+--- GROUP BY over `Nullable(Tuple)` goes through the `Null` wrapper's generic batch loop, which calls
+--- the nested `-Tuple` `add` fallback row by row (the wrapper has no keyed batch override):
++-- GROUP BY over `Nullable(Tuple)` with this many NULLs goes through the `Null` wrapper's row loop, which calls
++-- the nested `-Tuple` `add` fallback row by row:
+ -- k=0 keeps 2,4 (0 is NULL); k=1 keeps 1,5 (3 is NULL).
+ SELECT k, sumTuple(t) FROM (SELECT number % 2 AS k, if(number % 3 = 0, CAST(NULL, 'Nullable(Tuple(Int64, Float64))'), CAST(tuple(toInt64(number), toFloat64(number)), 'Nullable(Tuple(Int64, Float64))')) AS t FROM numbers(6)) GROUP BY k ORDER BY k;
+ 
+```
+
+**File**: `tests/queries/0_stateless/05839_nullable_argument_grouped_batch.reference` (added, +87/-0)
+```diff
+@@ -0,0 +1,87 @@
++0	109888905	20152.008985879333	8	5453	(109888905,5453)	109888905
++1	112499041	20157.50600250851	2	5581	(112499041,5581)	112499041
++2	112514751	20160.32091023114	10	5581	(112514751,5581)	112514751
++3	112490456	20155.967747715462	4	5581	(112490456,5581)	112490456
++4	112475174	20160.454203262234	12	5579	(112475174,5579)	112475174
++5	112501898	20158.017917935853	6	5581	(112501898,5581)	112501898
++6	112538601	20160.981906126835	14	5582	(112538601,5582)	112538601
++7	\N	\N	\N	0	(0,0)	\N
++8	250000	500	1	500	(250000,500)	250000
++9	10187167	30500.5	30001	334	(10187167,334)	10187167
++0	109888905	20152.008985879333	8	5453	(109888905,5453)	109888905	109888905	109888905	20152.008985879333
++1	112499041	20157.50600250851	2	5581	(112499041,5581)	112499041	112499041	112499041	20157.50600250851
++2	112514751	20160.32091023114	10	5581	(112514751,5581)	112514751	112514751	112514751	20160.32091023114
++3	112490456	20155.967747715462	4	5581	(112490456,5581)	112490456	112490456	112490456	20155.967747715462
++4	112475174	20160.454203262234	12	5579	(112475174,5579)	112475174	112475174	112475174	20160.454203262234
++5	112501898	20158.017917935853	6	5581	(112501898,5581)	112501898	112501898	112501898	20158.017917935853
++6	112538601	20160.981906126835	14	5582	(112538601,5582)	112538601	112538601	112538601	20160.981906126835
++7	\N	\N	\N	0	(0,0)	\N	\N	\N	\N
++8	250000	500	1	500	(250000,500)	250000	250000	250000	500
++9	10187167	30500.5	30001	334	(10187167,334)	10187167	10187167	10187167	30500.5
++0	109888905	20152.008985879333	5453
++1	112499041	20157.50600250851	5581
++2	112514751	20160.32091023114	5581
++3	112490456	20155.967747715462	5581
++4	112475174	20160.454203262234	5579
++5	112501898	20158.017917935853	5581
++6	112538601	20160.981906126835	5582
++8	250000	500	500
++40000	228	795345993
++0	39991	39991
++1	39998	39998
++2	39984	39984
++3	39991	39991
++4	39984	39984
++5	39991	39991
++6	39984	39984
++7	0	\N
++8	998	998
++9	999	999
++0	28550024	10000.008406304729	1	2855	28550024	19999	19999
++1	28532682	9997.435879467414	2	2854	28532682	19992	19992
++2	28513935	9997.873422159888	3	2852	28513935	19992	19992
++3	28549097	9999.683712784588	4	2855	28549097	19992	19992
++4	28541853	10000.64926419061	5	2854	28541853	19992	19992
++5	28544609	10001.61492641906	6	2854	28544609	19992	19992
++6	28547267	10002.546250875963	7	2854	28547267	19992	19992
++7	\N	\N	\N	0	\N	0	\N
++8	94018	10446.444444444445	10002	9	94018	900	900
++0	28550024	10000.008406304729	1	2855	28550024	19999	19999
++1	28532682	9997.435879467414	2	2854	28532682	19992	19992
++2	28513935	9997.873422159888	3	2852	28513935	19992	19992
++3	28549097	9999.683712784588	4	2855	28549097	19992	19992
++4	28541853	10000.64926419061	5	2854	28541853	19992	19992
++5	28544609	10001.61492641906	6	2854	28544609	19992	19992
++6	28547267	10002.546250875963	7	2854	28547267	19992	19992
++7	\N	\N	\N	0	\N	0	\N
++8	94018	10446.444444444445	10002	9	94018	900	900
++0	28550024	2855
++1	28532682	2854
++2	28513935	2852
++3	28549097	2855
++4	28541853	2854
++5	28544609	2854
++6	28547267	2854
++0	677195	2198.685064935065	308	1442023748108963931	9
++1	14746078	10340.868162692846	1426	15984173844227074289	9997
++2	14744023	10339.427068723702	1426	18397824656854838453	9998
++3	14747575	10341.917952314165	1426	16319926023925023316	9999
++4	14755303	10340.086194814296	1427	10598553716428402786	9993
++5	14750052	10343.654978962131	1426	7631658335113871590	9994
++6	14755780	10340.42046250876	1427	2853712106680580092	9995
++7	14065997	12178.352380952381	1155	10423346422504321616	9996
++0	677195	2198.685064935065	308	1442023748108963931	9
++1	14746078	10340.868162692846	1426	15984173844227074289	9997
++2	14744023	10339.427068723702	1426	18397824656854838453	9998
++3	14747575	10341.917952314165	1426	16319926023925023316	9999
++4	14755303	10340.086194814296	1427	10598553716428402786	9993
++5	14750052	10343.654978962131	1426	7631658335113871590	9994
++6	14755780	10340.42046250876	1427	2853712106680580092	9995
++7	14065997	12178.352380952381	1155	10423346422504321616	9996
++0	677195	1442023748108963931
++1	14746078	15984173844227074289
++2	14744023	18397824656854838453
++3	14747575	16319926023925023316
++4	14755303	10598553716428402786
++5	14750052	7631658335113871590
++6	14755780	2853712106680580092
+```
+
+**File**: `tests/queries/0_stateless/05839_nullable_argument_grouped_batch.sql` (added, +96/-0)
+```diff
+@@ -0,0 +1,96 @@
++-- Aggregate functions with a Nullable argument under GROUP BY, over blocks of 1000 rows with and without NULLs.
++-- Only block 20 (rows 20000-20999) contains NULLs. Key 7 is NULL in every row and occurs only in block 20,
++-- key 8 occurs only in block 0, key 9 only in block 30.
++
++SET compile_aggregate_expressions = 0;
++SET optimize_injective_functions_in_group_by = 0;
++
++DROP VIEW IF EXISTS tab;
++CREATE VIEW tab AS
++SELECT
++    multiIf(number < 1000 AND number % 2 = 0, 8,
++            number BETWEEN 20000 AND 20999 AND number % 10 = 0, 7,
++            number BETWEEN 30000 AND 30999 AND number % 3 = 0, 9,
++            number % 7) AS k,
++    if(number BETWEEN 20000 AND 20999 AND (number % 7 = 0 OR number % 10 = 0), NULL, number + 1) AS v
++FROM numbers(40000);
++
++-- A UInt8 key
++SELECT toUInt8(k) AS key, sum(v), avg(v), min(v), uniqExact(v), sumCount(v), sumOrNull(v)
++FROM tab GROUP BY key ORDER BY key
++SETTINGS max_block_size = 1000;
++
++-- A String key
++SELECT toString(k) AS key, sum(v), avg(v), min(v), uniqExact(v), sumCount(v), sum(toLowCardinality(v)),
++    finalizeAggregation(sumState(v)), sum(toDecimal64(v, 2)), avg(toDecimal64(v, 2))
++FROM tab GROUP BY key ORDER BY key
++SETTINGS max_block_size = 1000;
++
++-- The rows of the keys that do not fit into max_rows_to_group_by are skipped
++SELECT toString(k) AS key, sum(v), avg(v), uniqExact(v)
++FROM tab GROUP BY key ORDER BY key
++SETTINGS max_block_size = 1000, max_threads = 1, max_rows_to_group_by = 4, group_by_overflow_mode = 'any',
++    max_bytes_before_external_group_by = 0, max_bytes_ratio_before_external_group_by = 0, enable_adaptive_aggregator = 0;
++
++-- One state per row
++SELECT count(), countIf(isNull(s)), sum(s)
++FROM (SELECT initializeAggregation('sum', v) AS s FROM tab)
++SETTINGS max_block_size = 1000;
++
++-- Every state receives its rows in order, also with a UInt8 key: deltaSum of an increasing value is max - min
++SELECT toUInt8(k) AS key, deltaSum(toUInt32(v)), max(v) - min(v)
++FROM tab GROUP BY key ORDER BY key
++SETTINGS max_block_size = 1000, max_threads = 1;
++
++DROP VIEW tab;
++
++-- Block 10 (rows 10000-10999) has 13 NULLs, few enough to be added range by range between them: at the first and
++-- the last row of the block, in a run of three and every 100 rows. Key 7 is NULL in every row, key 8 occurs only in block 10.
++DROP VIEW IF EXISTS tab_few;
++CREATE VIEW tab_few AS
++SELECT
++    multiIf(number BETWEEN 10000 AND 10999 AND number % 100 = 0, 7,
++            number BETWEEN 10000 AND 10999 AND number % 100 = 1, 8,
++            number % 7) AS k,
++    if(number BETWEEN 10000 AND 10999 AND (number % 100 = 0 OR number IN (10501, 10502, 10999)), NULL, number + 1) AS v
++FROM numbers(20000);
++
++SELECT toUInt8(k) AS key, sum(v), avg(v), min(v), uniqExact(v), sumOrNull(v), deltaSum(toUInt32(v)), max(v) - min(v)
++FROM tab_few GROUP BY key ORDER BY key
++SETTINGS max_block_size = 1000, max_threads = 1;
++
++SELECT toString(k) AS key, sum(v), avg(v), min(v), uniqExact(v), sumOrNull(v), deltaSum(toUInt32(v)), max(v) - min(v)
++FROM tab_few GROUP BY key ORDER BY key
++SETTINGS max_block_size = 1000, max_threads = 1;
++
++SELECT toString(k) AS key, sum(v), uniqExact(v)
++FROM tab_few GROUP BY key ORDER BY key
++SETTINGS max_block_size = 1000, max_threads = 1, max_rows_to_group_by = 4, group_by_overflow_mode = 'any',
++    max_bytes_before_external_group_by = 0, max_bytes_ratio_before_external_group_by = 0, enable_adaptive_aggregator = 0;
++
++DROP VIEW tab_few;
++
++-- -Distinct over the ranges between NULLs: in rows 0-9999 one NULL per 20 rows (ranges of 19 rows), in rows 10000-19999
++-- one per 200 rows (ranges of 199 rows). The values repeat in the even blocks and are new in the odd blocks.
++-- Key 7 occurs from row 5000.
++DROP VIEW IF EXISTS tab_distinct;
++CREATE VIEW tab_distinct AS
++SELECT
++    if(number >= 5000 AND number % 7 = 0, 7, number % 7) AS k,
++    if(number % if(number < 10000, 20, 200) = 3, NULL, if(intDiv(number, 1000) % 2 = 0, number % 37, number)) AS v
++FROM numbers(20000);
++
++SELECT toUInt8(k) AS key, sumDistinct(v), avgDistinct(v), uniqExactDistinct(v), cityHash64(groupArrayDistinct(v)), maxDistinct(toString(v))
++FROM tab_distinct GROUP BY key ORDER BY key
++SETTINGS max_block_size = 1000, max_threads = 1;
++
++SELECT toString(k) AS key, sumDistinct(v), avgDistinct(v), uniqExactDistinct(v), cityHash64(groupArrayDistinct(v)), maxDistinct(toString(v))
++FROM tab_distinct GROUP BY key ORDER BY key
++SETTINGS max_block_size = 1000, max_threads = 1;
++
++SELECT toString(k) AS key, sumDistinct(v), cityHash64(groupArrayDistinct(v))
++FROM tab_distinct GROUP BY key ORDER BY key
++SETTINGS max_block_size = 1000, max_threads = 1, max_rows_to_group_by = 4, group_by_overflow_mode = 'any',
++    max_bytes_before_external_group_by = 0, max_bytes_ratio_before_external_group_by = 0, enable_adaptive_aggregator = 0;
++
++DROP VIEW tab_distinct;
+```
+
+---
+
+### Incident Patch 3: `3a1d800d` (2026-11-25)
+**Commit Message**: Merge pull request #134374 from zlareb1/docs/link-loom-coding-agent-memory
+
+Docs: Link the MCP overview to Loom shared memory
+
+**File**: `docs/concepts/features/connect-to-clickhouse/native-tools/mcp.mdx` (modified, +3/-0)
+```diff
+@@ -33,6 +33,9 @@ MCP follows a client-server architecture:
+ 
+ You can find community-maintained collections of [MCP clients](https://github.com/punkpeye/awesome-mcp-clients) and [MCP servers](https://github.com/punkpeye/awesome-mcp-servers) on GitHub.
+ 
++[ClickHouse Loom provides shared memory for coding agents](https://loom.clickhouse.com/docs/use-cases/agent-memory) through a self-hosted MCP server.
++It carries project decisions across sessions and links saved lessons to indexed code.
++
+ ## ClickHouse MCP server {#clickhouse-mcp-server}
+ 
+ The [ClickHouse MCP server](https://github.com/ClickHouse/mcp-clickhouse) lets an AI assistant discover databases and tables, inspect schemas, and run SQL queries against a ClickHouse cluster.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #134198** (2026-11-24): Cherry pick #116550 to 26.10: Apply `SORT + LIMIT` before `ARRAY JOIN` (@robot-clickhouse)
-- **PR #134168** (2026-11-24): Backport #133420 to 26.10: Require `READ` and `WRITE ON FILE` to create a table as `filesystem(...)` (@robot-clickhouse)
-- **PR #134167** (2026-11-24): Backport #133420 to 26.9: Require `READ` and `WRITE ON FILE` to create a table as `filesystem(...)` (@robot-clickhouse)
-- **PR #134163** (closed): Do not read the manifests again when `expireSnapshots` retries after a commit conflict (@scanhex12)
-- **PR #134151** (2026-11-24): Backport #129544 to 26.10: Skip the probe plan when a correlated subquery rules out parallel replicas (@robot-ch-test-poll2)
-- **PR #134149** (closed): Backport #133724 to 26.11: Bound the source before reading the encryption header (@robot-ch-test-poll2)
+- **PR #134415** (2026-11-25): Backport #134050 to 26.11: Fix `LIKE` on a `String` sorting key column ignoring lightweight deletes and updates in patch parts (@robot-ch-test-poll4)
+- **PR #134412** (2026-11-25): Data lake fuzzer: do not drop a partition source column in the PyIceberg writer (@groeneai)
+- **PR #134409** (2026-11-25): Backport #129438 to 26.11: Keep sizes of Nested arrays when a column TTL resets a subcolumn (@robot-ch-test-poll4)
+- **PR #134405** (closed): Remove `eu-west-1` from Gen 2 availability (@Blargian)
+- **PR #134401** (2026-11-25): Backport #129581 to 26.10: Count references in the tupleElement default when pruning ARRAY JOIN columns (@robot-ch-test-poll3)
+- **PR #134386** (2026-11-25): Backport #131034 to 26.10: Fix TOO_SLOW in external aggregation overflow any tests (@robot-clickhouse)
 
 ---
 
@@ -1791,28 +1890,30 @@ Signed-off-by: Maksim Dergousov <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in IMergeTreeDataPart.cpp
+## X. Empirical Invariant Guard in KeeperReadThreadPool.cpp
 
 **RULE**:
-When implementing operations in `src/Storages/MergeTree/IMergeTreeDataPart.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClickHouse/ClickHouse. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/Coordination/KeeperReadThreadPool.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClickHouse/ClickHouse. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8a27da1e`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b88da85b`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/Storages/MergeTree/IMergeTreeDataPart.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/Coordination/KeeperReadThreadPool.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-        return static_cast<UInt64>(UInt128(bytes_on_disk) * existing_rows_count.value() / rows_count);
+            lock.lock();
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-        return bytes_on_disk * existing_rows_count.value() / rows_count;
+
+            lock.lock();
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8a27da1e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b88da85b` are properly handled with clean fallback behavior.

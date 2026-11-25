@@ -6073,10 +6073,10 @@
     "repository": "ClickHouse/ClickHouse",
     "platform": "github",
     "sourceUrl": "https://github.com/ClickHouse/ClickHouse",
-    "sourceVersion": "b6467a3e",
+    "sourceVersion": "b88da85b",
     "license": "Apache-2.0",
-    "contentHash": "159d25bdad67d9b861e9730a1552fcdf5e66b115212e368014eca81751c5f725",
-    "lastHarvestedAt": "2026-11-24T17:42:51.949Z",
+    "contentHash": "347610a96cf9e29230169a1711d807fe8c89eec87753f885997ab5838f23f1ea",
+    "lastHarvestedAt": "2026-11-25T12:48:05.090Z",
     "learningId": "learn-github-clickhouse-clickhouse"
   },
   "dockview-dockview": {
@@ -11555,8 +11555,8 @@
     "sourceUrl": "https://huggingface.co/Pika-Labs/Pika-H3-Flex",
     "sourceVersion": "hf-pika-labs-pika-h3-flex",
     "license": "Open-Source",
-    "contentHash": "271ff6d88115eb8a15cc688051af7bd9ac9c33f02631b70692dd07a4e644f972",
-    "lastHarvestedAt": "2026-11-21T21:40:12.527Z",
+    "contentHash": "f10cb66615f2ae3cc8cb3f4205f8b67f4c0497cd24bfd165f78759c3d7a43a33",
+    "lastHarvestedAt": "2026-11-25T12:47:48.419Z",
     "learningId": "learn-huggingface-pika-labs-pika-h3-flex"
   },
   "hf-liquidai-lfm3-audio-2b": {

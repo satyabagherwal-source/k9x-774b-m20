@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-25T12:39:30.894Z",
+  "updated_at": "2026-11-25T12:48:09.436Z",
   "stats": {
-    "total_discovered": 9423,
-    "approved_pending_harvest": 8931,
+    "total_discovered": 9427,
+    "approved_pending_harvest": 8935,
     "harvested_count": 0,
     "rejected_count": 492,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 8921,
+      "COMMUNITY_AND_EXPERT": 8925,
       "OFFICIAL_DOCUMENTATION": 281,
       "STANDARDS_AND_SPECIFICATIONS": 150,
       "ENGINEERING_BLOGS": 7,
@@ -203889,6 +203889,94 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/duckdb-duckdb-learnings.md",
         "fileName": "duckdb-duckdb-learnings.md"
+      }
+    },
+    "SRC-E64E5E58C82A": {
+      "id": "SRC-E64E5E58C82A",
+      "url": "https://github.com/punkpeye/awesome-mcp-clients",
+      "title": "https://github.com/punkpeye/awesome-mcp-clients",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T12:48:09.226Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md",
+        "fileName": "clickhouse-clickhouse-learnings.md"
+      }
+    },
+    "SRC-61A57C93DE29": {
+      "id": "SRC-61A57C93DE29",
+      "url": "https://github.com/punkpeye/awesome-mcp-servers",
+      "title": "https://github.com/punkpeye/awesome-mcp-servers",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T12:48:09.288Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md",
+        "fileName": "clickhouse-clickhouse-learnings.md"
+      }
+    },
+    "SRC-A1E3A86B95A3": {
+      "id": "SRC-A1E3A86B95A3",
+      "url": "https://loom.clickhouse.com/docs/use-cases/agent-memory",
+      "title": "https://loom.clickhouse.com/docs/use-cases/agent-memory",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T12:48:09.354Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md",
+        "fileName": "clickhouse-clickhouse-learnings.md"
+      }
+    },
+    "SRC-533C00B2B3F2": {
+      "id": "SRC-533C00B2B3F2",
+      "url": "https://github.com/ClickHouse/mcp-clickhouse",
+      "title": "https://github.com/ClickHouse/mcp-clickhouse",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T12:48:09.436Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md",
+        "fileName": "clickhouse-clickhouse-learnings.md"
       }
     }
   }

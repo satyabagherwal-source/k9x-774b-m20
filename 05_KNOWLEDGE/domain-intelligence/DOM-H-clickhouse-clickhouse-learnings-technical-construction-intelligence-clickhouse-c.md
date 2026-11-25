@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-22T19:18:52.510Z",
+  "timestamp": "2026-11-25T12:48:09.632Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-clickhouse-clickhouse-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [clickhouse-clickhouse-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-22T19:18:52.510Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T12:48:09.632Z`  
 > **Learning ID**: `LEARN-EVO-clickhouse-clickhouse-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 58%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 52%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from clickhouse-clickhouse-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md`  
 > **Source**: github ([https://github.com/ClickHouse/ClickHouse](https://github.com/ClickHouse/ClickHouse))  
-> **Source Version**: `841a49be`  
+> **Source Version**: `b88da85b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T19:18:46.619Z  
+> **Timestamp**: 2026-11-25T12:48:03.945Z  
 > **Learning ID**: `learn-github-clickhouse-clickhouse`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ClickHouse/ClickHouse](https://github.com/ClickHouse/ClickHouse))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T19:18:46.612Z  
+> **Harvest Timestamp**: 2026-11-25T12:48:03.940Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: ClickHouse® is a real-time analytics database management system
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 51063 stars
+- **Stars / Engagement**: 51128 stars
 
 ---
 
@@ -1345,11 +1345,11 @@ private:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #132739** (2026-11-19): **ColumnObject::deserializeDynamicPathsAndSharedDataFromArena does not validate unique/sorted paths invariant, allowing corrupted subcolumn sizes and LOGICAL_ERROR exceptions**
-  *Symptoms*: ### Company or project name  IBM  ### Describe what's wrong  Found during review of https://github.com/ClickHouse/ClickHouse/pull/128069  When serializing dynamic paths and shared data into an arena in ColumnObject::serializeDynamicPathsAndSharedDataIntoArena, paths are guaranteed to be serialized in strictly increasing, sorted, and unique order.  However, the matching deserializer ColumnObject::deserializeDynamicPathsAndSharedDataFromArena does not enforce this invariant. If a serialized payload contains duplicate path entries (e.g., num_paths = 2 with two entries for path a in the same row):  1. The reader processes the first entry for a, deserializing a value and appending it to dynamic subcolumn a (increasing its size from current_size to current_size + 1). 2. The reader processes the second entry for a, appending another value to dynamic subcolumn a (increasing its size to current_size + 2). 3. After the path loop finishes, shared_data offsets advance by only 1 row.  Because deserialization consumes all bytes, end-of-buffer checks pass and deserialization returns successfully, but leaves the resulting ColumnObject in an invalid state where individual subcolumns disagree on their row count.  Attempting to read or extract the corrupted subcolumn later throws a LOGICAL_ERROR exception.   ### Does it reproduce on the most recent release?  Yes  ### How to reproduce  A record with num_paths = 2 and two entries for a appends twice to that dynamic subcolumn but only once to shar
+- **Issue #134120** (2026-11-25): **Keeper: `std::condition_variable` lost-wakeup deadlock in `KeeperReadThreadPool::execute` / `threadFunction`**
+  *Symptoms*: ### Summary  `KeeperReadThreadPool::threadFunction` decrements `busy_threads` and calls `done_cv.notify_all` **before** acquiring `mutex`, while `KeeperReadThreadPool::execute` waits on `done_cv` under `mutex` for `busy_threads.load() == 0`. This creates a classic C++ `std::condition_variable` lost-wakeup race that can permanently deadlock Keeper's read pipeline whenever `parallel_read_threads > 0` (the default is `8`).  ### Root Cause  In `src/Coordination/KeeperReadThreadPool.cpp`:  1. **`KeeperReadThreadPool::execute` (lines 45–107)** holds `std::unique_lock lock(mutex)` and waits for workers to finish:    ```cpp    done_cv.wait(lock, [&] { return busy_threads.load() == 0; });    ``` 2. **`KeeperReadThreadPool::threadFunction` (lines 159–164)** modifies `busy_threads` and notifies `done_cv` **outside** `lock`, right before calling `lock.lock()` on the very next line:    ```cpp    size_t prev_busy_threads = busy_threads.fetch_sub(1, std::memory_order_release);    chassert(prev_busy_threads > 0);    if (prev_busy_threads == 1)        done_cv.notify_all();     lock.lock();    ``` 3. **Lost-wakeup interleaving**:    - Thread A (`execute`, holding `mutex`): evaluates predicate `busy_threads.load() == 0` -> observes `1` -> returns `false`, and prepares to unlock `mutex` and sleep in `done_cv.wait`.    - Thread B (last worker in `threadFunction`, NOT holding `mutex`): executes `busy_threads.fetch_sub(1)` (`1 -> 0`) and calls `done_cv.notify_all()` — nobody is sleeping on `done_cv
 
-- **Issue #132436** (2026-11-19): **clickhouse-client prints secrets of a failed query to stderr in non-interactive mode, while the server hides them**
-  *Symptoms*: ### Company or project name  Running ClickHouse in production on Kubernetes (LLM trace store), with native BACKUP to S3 from a CronJob.  ### Describe what's wrong  In non-interactive mode (`--query`, stdin, `--queries-file`, `--ignore-error`), when a query fails, `clickhouse-client` appends the original query text to the error on stderr as `(query: ...)`. Secrets in the query are printed in clear. The server hides the same values in `system.query_log` and in its own logs.  Affected, when the statement fails: `CREATE USER` / `ALTER USER ... IDENTIFIED BY '...'`, `CREATE NAMED COLLECTION`, `BACKUP`/`RESTORE ... S3(url, key, secret)`, and the `s3()` and `mysql()` table functions. `clickhouse-local --ignore-error` does the same.  Non-interactive use is how backup jobs and migrations run, and their stderr usually goes to a log store. I found it when a failed nightly `BACKUP ... TO S3(...)` put the S3 secret key into our central logs while the server logs were clean.  `--echo` printing the query is requested by the user and is not part of this report.  ### Does it reproduce on the most recent release?  Yes  ### How to reproduce  ClickHouse 26.10.4.207 and master 26.11.1.2601 (official Docker images), default config:  ```bash clickhouse-client --query "ALTER USER no_such_user IDENTIFIED WITH plaintext_password BY 'MySecretPassword123'" ```  ``` Received exception from server (version 26.11.1): Code: 192. DB::Exception: Received from localhost:9000. DB::Exception: There is no user `n
+- **Issue #133698** (2026-11-24): **SHOW CREATE ROLES bypasses max_result_rows**
+  *Symptoms*: ### Describe what's wrong  On ClickHouse 26.11.1.2508, `SHOW CREATE ROLES` returns two rows successfully when `max_result_rows = 1` and `result_overflow_mode = 'throw'`. An equivalent query against `system.roles` correctly fails with `TOO_MANY_ROWS_OR_BYTES`.  ### Does it reproduce on the most recent release?  No  ### How to reproduce  Run as a user allowed to create and inspect roles:  ```sql CREATE ROLE role_a; CREATE ROLE role_b;  SET max_result_rows = 1; SET result_overflow_mode = 'throw';  SHOW CREATE ROLES role_a, role_b; -- Succeeds and returns: -- CREATE ROLE role_a -- CREATE ROLE role_b  SELECT name FROM system.roles WHERE name IN ('role_a', 'role_b') ORDER BY name; -- Fails with TOO_MANY_ROWS_OR_BYTES. ```  ### Expected behavior  `SHOW CREATE ROLES` should enforce `max_result_rows` and fail because it produces two rows while the limit is one. The `max_result_rows` documentation states: “Limits the number of rows in the result. Also checked for subqueries, and on remote servers when running parts of a distributed query. No limit is applied when the value is `0`.”  ### Error message and/or stacktrace  ```text Received exception from server (version 26.11.1): Code: 396. DB::Exception: Received from localhost:9000. DB::Exception: Limit for result exceeded, max rows: 1.00, current rows: 2.00. (TOO_MANY_ROWS_OR_BYTES) (query: SELECT name FROM system.roles WHERE name IN ('role_a', 'role_b') ORDER BY name;) ``` 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1366,392 +1366,539 @@ private:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `657a223e` (2026-11-22)
-**Commit Message**: Address review: check the sum of file counts of an Iceberg manifest list entry for overflow
+### Incident Patch 1: `b88da85b` (2026-11-25)
+**Commit Message**: Merge pull request #134144 from lazerg/fix/issue-134120-keeper-read-pool-lost-wakeup
 
-The types of `added_files_count` and `existing_files_count` are taken from
-the schema of the manifest list, so a malformed manifest list can have
-arbitrary `long` values in them, and their sum in `getManifestList` could
-overflow, which is undefined behaviour. The sum is now calculated with
-`common::addOverflow`, and `ICEBERG_SPECIFICATION_VIOLATION` is thrown on
-overflow.
+Fix lost wakeup in KeeperReadThreadPool when the last worker finishes a batch
 
-The test manifest list is the manifest list of
-`void_partition_dropped_column` with these fields of the type `long` and
-the values 9223372036854775807 and 1 in the first entry.
-
-Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
-
-**File**: `src/Storages/ObjectStorage/DataLakes/Iceberg/StatelessMetadataFileGetter.cpp` (modified, +11/-2)
+**File**: `src/Coordination/KeeperReadThreadPool.cpp` (modified, +2/-2)
 ```diff
-@@ -11,6 +11,7 @@
- #include <Poco/JSON/Object.h>
- #include <Poco/JSON/Stringifier.h>
- #include <Common/Exception.h>
-+#include <base/arithmeticOverflow.h>
- #include <Common/FailPoint.h>
- 
- 
-@@ -335,8 +336,16 @@ ManifestFileCacheKeys getManifestList(
-                 if (!manifest_list_deserializer.hasPath(count_field))
-                     continue;
-                 auto count = manifest_list_deserializer.getValueFromRowByName(i, count_field);
--                if (!count.isNull())
--                    live_files_count += std::max<Int64>(0, count.safeGet<Int64>());
-+                if (count.isNull())
-+                    continue;
-+                /// The counts are `int` in the specification, but the type is taken from the schema of the file,
-+                /// so the values can be arbitrary `long`s and their sum can overflow.
-+                if (common::addOverflow(live_files_count, std::max<Int64>(0, count.safeGet<Int64>()), live_files_count))
-+                    throw Exception(
-+                        ErrorCodes::ICEBERG_SPECIFICATION_VIOLATION,
-+                        "Manifest list entry at index {} has too large value of the field '{}'",
-+                        i,
-+                        count_field);
+@@ -155,13 +155,13 @@ void KeeperReadThreadPool::threadFunction()
+                     first_exception = std::current_exception();
              }
  
-             std::optional<UInt64> first_row_id;
-```
-
-**File**: `tests/queries/0_stateless/05843_iceberg_manifest_list_files_count_overflow.reference` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+ICEBERG_SPECIFICATION_VIOLATION
-```
-
-**File**: `tests/queries/0_stateless/05843_iceberg_manifest_list_files_count_overflow.sh` (added, +24/-0)
-```diff
-@@ -0,0 +1,24 @@
-+#!/usr/bin/env bash
-+# Tags: no-fasttest
-+# Tag no-fasttest: `icebergLocal` needs the USE_AVRO build option.
++            lock.lock();
 +
-+# The file counts of a manifest in an Iceberg manifest list are `int` in the specification, but their type is taken
-+# from the schema of the manifest list, so a malformed manifest list can have arbitrary `long` values in them.
-+# The sum of `added_files_count` and `existing_files_count` must be checked for overflow instead of being undefined behaviour.
-+# The manifest list in `data_iceberg/void_partition_malformed_manifest_list` is the manifest list of
-+# `void_partition_dropped_column` with these fields of the type `long` and the values 9223372036854775807 and 1 in the first entry.
-+
-+CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
-+# shellcheck source=../shell_config.sh
-+. "$CUR_DIR"/../shell_config.sh
-+
-+SRC="$CUR_DIR/data_iceberg/void_partition_dropped_column"
-+BAD="$CUR_DIR/data_iceberg/void_partition_malformed_manifest_list"
-+MANIFEST_LIST="snap-2011348865913312671-1-6a6f19d7-4d29-4fe1-9f6f-4cbaf3a20785.avro"
-+
-+T="${CLICKHOUSE_TMP}/${CLICKHOUSE_DATABASE}_files_count_overflow"
-+rm -rf "$T"
-+cp -r "$SRC" "$T"
-+cp "$BAD/files_count_overflow.avro" "$T/metadata/$MANIFEST_LIST"
-+$CLICKHOUSE_LOCAL --query "SELECT id FROM icebergLocal('$T') ORDER BY id" 2>&1 | grep -o -m1 'ICEBERG_SPECIFICATION_VIOLATION'
-+rm -rf "$T"
-```
-
----
-
-### Incident Patch 2: `841a49be` (2026-11-22)
-**Commit Message**: Merge pull request #133482 from groeneai/build-hash-section-in-place
-
-Write the binary hash of official builds in place instead of rewriting `clickhouse` with `llvm-objcopy`
-
-**File**: `CMakeLists.txt` (modified, +1/-3)
-```diff
-@@ -271,9 +271,7 @@ if (LINKER_NAME MATCHES "lld" AND NOT LINKER_NAME MATCHES "ld64")
-     set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--build-id=sha1")
- endif ()
- 
--# Add a section with the hash of the compiled machine code for integrity checks.
--# Only for official builds, because adding a section can be time consuming (rewrite of several GB).
--# And cross compiled binaries are not supported (since you cannot execute clickhouse hash-binary)
-+# Add a section with the hash of the compiled machine code for integrity checks. Only for official builds.
- if (CLICKHOUSE_OFFICIAL_BUILD AND OS_LINUX AND (ARCH_AMD64 OR ARCH_AARCH64) AND NOT ENABLE_CLANG_TIDY)
-     message(STATUS "Official build: A checksum hash will be added to the clickhouse executable")
-     set (USE_BINARY_HASH 1 CACHE STRING "Calculate binary hash and store it in the separate section")
-```
-
-**File**: `programs/CMakeLists.txt` (modified, +4/-6)
-```diff
-@@ -229,6 +229,8 @@ add_custom_target (clickhouse-bundle ALL DEPENDS ${CLICKHOUSE_BUNDLE})
- 
- if (USE_BINARY_HASH)
-     add_dependencies(clickhouse hash-binary)
-+    # The section for the hash is reserved at link time and filled in place by `hash-binary --write-section`.
-+    target_sources(clickhouse PRIVATE binary_hash_section.S)
- 
-     # When cross-compiling, use the native-built hash-binary; otherwise use the regular build output
-     if (CMAKE_CROSSCOMPILING)
-@@ -238,8 +240,8 @@ if (USE_BINARY_HASH)
-     endif()
- 
-     add_custom_command(TARGET clickhouse POST_BUILD
--        COMMAND ${HASH_BINARY_PATH} clickhouse > hash 2> /dev/null
--        COMMENT "Computing hash of clickhouse binary" VERBATIM)
-+        COMMAND ${HASH_BINARY_PATH} --write-section clickhouse > hash 2> /dev/null
-+        COMMENT "Writing hash of clickhouse binary to section '.clickhouse.hash'" VERBATIM)
- 
-     if (NOT CMAKE_CROSSCOMPILING)
-         add_custom_command(TARGET clickhouse POST_BUILD
-@@ -248,10 +250,6 @@ if (USE_BINARY_HASH)
-             COMMAND ${CMAKE_COMMAND} -E rm hash.verify
-             COMMENT "Verifying hash-binary output matches clickhouse hash-binary" VERBATIM)
-     endif()
+             /// Report that this thread is finished with this batch.
+             size_t prev_busy_threads = busy_threads.fetch_sub(1, std::memory_order_release);
+             chassert(prev_busy_threads > 0);
+             if (prev_busy_threads == 1)
+                 done_cv.notify_all();
 -
--    add_custom_command(TARGET clickhouse POST_BUILD
--        COMMAND ${OBJCOPY_PATH} --add-section .clickhouse.hash=hash clickhouse
--        COMMENT "Adding section '.clickhouse.hash' to clickhouse binary" VERBATIM)
- endif()
- 
- if (CHECK_LARGE_OBJECT_SIZES)
-```
-
-**File**: `programs/binary_hash_section.S` (added, +4/-0)
-```diff
-@@ -0,0 +1,4 @@
-+/* The section for the hash of the executable segments (USE_BINARY_HASH), filled in place by `hash-binary --write-section`.
-+   It is not allocated, so it is not a part of the hashed segments. */
-+.section .clickhouse.hash,"",%progbits
-+.fill 32, 1, 0x30
-```
-
-**File**: `utils/hash-binary/hash-binary.cpp` (modified, +124/-7)
-```diff
-@@ -1,5 +1,6 @@
- /// Tool to compute the same hash as ClickHouse's getHashOfLoadedBinary() from a file.
- /// Useful for cross-compilation when you can't execute the target binary.
-+/// With --write-section, also writes the hash in place into the section '.clickhouse.hash' reserved at link time.
- ///
- /// NOTE: This file is intentionally standalone with no ClickHouse dependencies.
- /// We cannot reuse src/Common/SipHash.h because it depends on ClickHouse-specific
-@@ -13,10 +14,14 @@
- #include <fstream>
- #include <iomanip>
- #include <iostream>
-+#include <sstream>
- #include <stdexcept>
-+#include <string>
- #include <vector>
- 
- #include <elf.h>
-+#include <fcntl.h>
-+#include <unistd.h>
- 
- 
- namespace
-@@ -195,6 +200,80 @@ bool hashExecutableSegments(std::istream & in, SipHash & hash)
- }
- 
- 
-+/// Writes `value` into the existing non-allocated section `name` of the same size, without changing anything else in the file.
-+template <typename Ehdr, typename Shdr>
-+bool writeSectionInPlace(std::fstream & file, const std::string & name, const std::string & value)
-+{
-+    Ehdr ehdr;
-+    file.seekg(0);
-+    if (!file.read(reinterpret_cast<char *>(&ehdr), sizeof(ehdr)) || ehdr.e_shoff == 0 || ehdr.e_shentsize != sizeof(Shdr))
-+    {
-+        std::cerr << "Failed to read section headers\n";
-+        return false;
-+    }
-+
-+    auto read_section_header = [&](uint64_t index, Shdr & shdr)
-+    {
-+        file.seekg(static_cast<std::streamoff>(ehdr.e_shoff + index * sizeof(Shdr)));
-+        return static_cast<bool>(file.read(reinterpret_cast<char *>(&shdr), sizeof(shdr)));
-+    };
-+
-+    /// With 0xff00 sections or more, the counts are stored in the first section header.
-+    Shdr first;
-+    if (!read_section_header(0, first))
-+    {
-+        std::cerr << "Failed to read section headers\n";
-+        return false;
-+    }
-+    const uint64_t section_count = ehdr.e_shnum ? ehdr.e_shnum : first.sh_size;
-+    const uint64_t names_index = ehdr.e_shstrndx == SHN_XINDEX ? first.sh_link : ehdr.e_shstrndx;
-+
-+    Shdr names_header;
-+    if (names_index >= section_count || !read_section_header(names_index, names_header))
-+    {
-+        std::cerr << "Failed to read section names\n";
-+        return false;
-+    }
-+    std::string names(names_header.sh_size, '\0');
-+    file.seekg(static_cast<std::streamoff>(names_header.sh_offset));
-+    if (!file.read(names.data(), static_cast<std::streamsize>(names.size())))
-+    {
-+        std::cerr << "Failed to read section names\n";
-+        return false;
-+    }
-+
-+    for (uint64_t i = 0; i < section_count; ++i)
-+    {
-+        Shdr shdr;
-+        if (!read_section_header(i, shdr))
-+        {
-+            std::cerr << "Failed to read section header\n";
-+            return false;
-+        }
-+        if (shdr.sh_name >= names.size() || std::strcmp(names.c_str() + shdr.sh_name, name.c_str()) != 0)
-+            continue;
-+
-+        /// The hash covers only the executable segments: a non-allocated section is not part of any segment.
-+        if (shdr.sh_type != SHT_PROGBITS || (shdr.sh_flags & SHF_ALLOC) || shdr.sh_size != value.size())
-+        {
-+            std::cerr << "Section " << name << " must be non-allocated PROGBITS of " << value.size() << " bytes\n";
-+            return false;
-+        }
-+
-+        file.seekp(static_cast<std::streamoff>(shdr.sh_offset));
-+        if (!file.write(value.data(), static_cast<std::streamsize>(value.size())) || !file.flush())
-+        {
-+            std::cerr << "Failed to write section " << name << "\n";
-+            return false;
-+        }
-+        return true;
-+    }
-+
-+    std::cerr << "Section " << name << " not found\n";
-+    return false;
-+}
-+
-+
- bool hashElfFile(std::istream & in, SipHash & hash)
- {
-     unsigned char e_ident[EI_NIDENT];
-@@ -223,18 +302,28 @@ int main(int argc, char ** argv)
- {
-     try
-     {
--        if (argc != 2)
-+        const bool write_section = argc == 3 && std::string(argv[1]) == "--write-section";
-+        if (argc != 2 && !write_section)
-         {
--            std::cerr << "Usage: " << argv[0] << " <elf-file>\n"
-+            std::cerr << "Usage: " << argv[0] << " [--write-section] <elf-file>\n"
-                       << "\nComputes the same hash as 'clickhouse hash-binary' but from a file.\n"
--                      << "Useful for cross-compilation when you can't execute the target binary.\n";
-+                      << "Useful for cross-compilation when you can't execute the target binary.\n"
-+                      << "--write-section also writes the hash into the section '.clickhouse.hash' of the file, in place.\n";
-             return 1;
+-            lock.lock();
          }
-+        const char * path = argv[argc - 1];
- 
--        std::ifstream file(argv[1], std::ios::binary);
-+        /// With stdout or stderr closed, the file could get that descriptor, and the output would be written into the file.
-+        if (fcntl(STDOUT_FILENO, F_GETFD) == -1 || fcntl(STDERR_FILENO, F_GETFD) == -1)
-+        {
-+            std::cerr << "stdout and stderr must be ope
+     }
+     catch (...)
 ```
 
 ---
 
-### Incident Patch 3: `1afd2c94` (2026-11-22)
-**Commit Message**: Merge pull request #133523 from siddharthapal8240/fix/external-limit-pushdown-int64
+### Incident Patch 2: `1c87825f` (2026-11-25)
+**Commit Message**: Merge pull request #133398 from groeneai/nullable-unary-grouped-batch
 
-Do not push down a `LIMIT` above the signed 64-bit range to `PostgreSQL` and `SQLite` tables
+Batch grouped aggregation of a Nullable argument when the block has no NULLs
 
-**File**: `src/Storages/transformQueryForExternalDatabase.cpp` (modified, +6/-1)
+**File**: `src/AggregateFunctions/Combinators/AggregateFunctionDistinct.h` (modified, +44/-9)
 ```diff
-@@ -31,6 +31,7 @@
- #include <Storages/transformQueryForExternalDatabaseAnalyzer.h>
+@@ -8,6 +8,7 @@
+ #include <Common/HashTable/HashMap.h>
+ #include <Common/HashTable/HashSet.h>
+ #include <Common/assert_cast.h>
++#include <base/scope_guard.h>
  
- #include <cmath>
-+#include <limits>
- #include <queue>
  
+ namespace DB
+@@ -233,14 +234,15 @@ class AggregateFunctionDistinct final : public IAggregateFunctionHelper<Aggregat
+     /// Adds the rows in [row_begin, row_end) to the places returned by `get_place(row)` (nullptr to skip the row).
+     /// The rows with the values seen for the first time in their place are collected and passed to the nested function together,
+     /// because adding them one by one is slow for some nested functions (example: the conversion of `Variant` arguments).
++    /// `places` with `place_offset`, if not nullptr, give the same places as `get_place` (they are changed during the call and restored).
+     template <typename GetPlace>
+     void addBatchToNested(
+-        size_t row_begin, size_t row_end, const IColumn ** columns, Arena * arena, ssize_t if_argument_pos, GetPlace && get_place) const
++        size_t row_begin, size_t row_end, const IColumn ** columns, Arena * arena, ssize_t if_argument_pos, GetPlace && get_place,
++        AggregateDataPtr * places = nullptr, size_t place_offset = 0) const
+     {
+         const UInt8 * flags = if_argument_pos >= 0 ? assert_cast<const ColumnUInt8 &>(*columns[if_argument_pos]).getData().data() : nullptr;
+-        auto new_rows = ColumnUInt64::create();
+-        auto & new_rows_data = new_rows->getData();
+-        PaddedPODArray<AggregateDataPtr> new_places;
++        PODArrayWithStackMemory<UInt64, 512> new_rows_data;
++        PODArrayWithStackMemory<AggregateDataPtr, 512> new_places;
+         for (size_t row = row_begin; row < row_end; ++row)
+         {
+             if (flags && !flags[row])
+@@ -260,13 +262,45 @@ class AggregateFunctionDistinct final : public IAggregateFunctionHelper<Aggregat
+         if (new_rows_data.empty())
+             return;
  
-@@ -1189,7 +1190,11 @@ String transformQueryForExternalDatabaseImpl(
+-        /// All rows are new and the places are indexed from zero, there is no need to copy the rows.
+-        if (row_begin == 0 && new_rows_data.size() == row_end)
++        /// All rows are new, there is no need to copy them.
++        if (new_rows_data.size() == row_end - row_begin)
+         {
+-            nested_func->addBatchWithNonNullPlaces(0, row_end, new_places.data(), prefix_size, columns, arena);
++            if (places)
++            {
++                nested_func->addBatchWithNonNullPlaces(row_begin, row_end, places, place_offset + prefix_size, columns, arena);
++                return;
++            }
++            if (row_begin == 0)
++            {
++                nested_func->addBatchWithNonNullPlaces(0, row_end, new_places.data(), prefix_size, columns, arena);
++                return;
++            }
++        }
++
++        /// A short range is not copied: it is passed as it is, with the places of the rows that are not new set to nullptr for the call.
++        static constexpr size_t max_rows_to_hide = 64;
++        if (places && row_end - row_begin <= max_rows_to_hide)
++        {
++            const size_t num_rows = row_end - row_begin;
++            AggregateDataPtr saved_places[max_rows_to_hide];
++            memcpy(saved_places, places + row_begin, num_rows * sizeof(AggregateDataPtr));
++            SCOPE_EXIT(memcpy(places + row_begin, saved_places, num_rows * sizeof(AggregateDataPtr)));
++
++            size_t next_new = 0;
++            for (size_t row = row_begin; row < row_end; ++row)
++            {
++                if (next_new < new_rows_data.size() && new_rows_data[next_new] == row)
++                    ++next_new;
++                else
++                    places[row] = nullptr;
++            }
++
++            nested_func->addBatch(row_begin, row_end, places, place_offset + prefix_size, columns, arena);
+             return;
+         }
+ 
++        auto new_rows = ColumnUInt64::create();
++        new_rows->getData().assign(new_rows_data.begin(), new_rows_data.end());
+         auto new_columns = indexColumns(columns, *new_rows);
+         nested_func->addBatchWithNonNullPlaces(0, new_rows_data.size(), new_places.data(), prefix_size, new_columns.second.data(), arena);
+     }
+@@ -373,7 +407,7 @@ class AggregateFunctionDistinct final : public IAggregateFunctionHelper<Aggregat
+         ssize_t if_argument_pos) const override
+     {
+         addBatchToNested(row_begin, row_end, columns, arena, if_argument_pos,
+-            [&](size_t row) { return places[row] ? places[row] + place_offset : nullptr; });
++            [&](size_t row) { return places[row] ? places[row] + place_offset : nullptr; }, places, place_offset);
+     }
+ 
+     void addBatchWithNonNullPlaces(
+@@ -383,7 +417,8 @@ class AggregateFunctionDistinct final : public IAggregateFunctionHelper<Aggregat
+         Arena * arena,
+         ssize_t if_argument_pos) const override
+     {
+-        addBatchToNested(row_begin, row_end, columns, arena, if_argument_pos, [&](size_t row) { return places[row] + place_offset; });
++        addBatchToNested(
++            row_begin, row_end, c
+```
+
+**File**: `src/AggregateFunctions/Combinators/AggregateFunctionNull.h` (modified, +188/-0)
+```diff
+@@ -9,6 +9,7 @@
+ #include <IO/WriteHelpers.h>
+ #include <Common/VectorWithMemoryTracking.h>
+ #include <Common/assert_cast.h>
++#include <base/find_symbols.h>
+ 
+ #include <absl/container/inlined_vector.h>
+ 
+@@ -593,6 +594,71 @@ class AggregateFunctionNullUnary final
          }
      }
  
--    if (limit)
-+    /// A `LIMIT` in ClickHouse is any `UInt64` (for example MySQL's "all rows" idiom,
-+    /// `LIMIT 18446744073709551615`), while PostgreSQL and SQLite accept only a signed 64-bit value and
-+    /// fail on a larger one (`bigint out of range`, `datatype mismatch`). A limit that large does not
-+    /// cut off the rows of any table, so it is not sent to the external database at all.
-+    if (limit && *limit <= static_cast<UInt64>(std::numeric_limits<Int64>::max()))
-         select->setExpression(ASTSelectQuery::Expression::LIMIT_LENGTH, make_intrusive<ASTLiteral>(*limit));
++    void addBatch( /// NOLINT
++        size_t row_begin,
++        size_t row_end,
++        AggregateDataPtr * places,
++        size_t place_offset,
++        const IColumn ** columns,
++        Arena * arena,
++        ssize_t if_argument_pos = -1) const override
++    {
++        addBatchImpl<false>(row_begin, row_end, places, place_offset, columns, arena, if_argument_pos);
++    }
++
++    void addBatchWithNonNullPlaces( /// NOLINT
++        size_t row_begin,
++        size_t row_end,
++        AggregateDataPtr * places,
++        size_t place_offset,
++        const IColumn ** columns,
++        Arena * arena,
++        ssize_t if_argument_pos = -1) const override
++    {
++        addBatchImpl<true>(row_begin, row_end, places, place_offset, columns, arena, if_argument_pos);
++    }
++
++    void addBatchLookupTable8(
++        size_t row_begin,
++        size_t row_end,
++        AggregateDataPtr * map,
++        size_t place_offset,
++        std::function<void(AggregateDataPtr &)> init,
++        const UInt8 * key,
++        const IColumn ** columns,
++        Arena * arena) const override
++    {
++        const ColumnNullable * column = assert_cast<const ColumnNullable *>(columns[0]);
++        const UInt8 * null_map = column->getNullMapData().data();
++        const bool has_nulls = !memoryIsZero(null_map, row_begin, row_end);
++        if (has_nulls && hasManyNulls(null_map, row_begin, row_end))
++        {
++            addBatchLookupTable8RowByRow(row_begin, row_end, map, place_offset, std::move(init), key, columns, arena);
++            return;
++        }
++
++        /// The nested addBatchLookupTable8 reorders the rows of a key, which changes order-dependent functions such as deltaSum.
++        PaddedPODArray<AggregateDataPtr> places(row_end);
++        for (size_t i = row_begin; i < row_end; ++i)
++        {
++            AggregateDataPtr & place = map[key[i]];
++            if (unlikely(!place))
++                init(place);
++            places[i] = place;
++        }
++
++        if (!has_nulls)
++        {
++            addBatchWithoutNulls<true>(row_begin, row_end, places.data(), place_offset, &column->getNestedColumn(), arena);
++            return;
++        }
++
++        forEachRangeWithoutNulls(null_map, row_begin, row_end, [&](size_t begin, size_t end)
++        {
++            addBatchWithoutNulls<true>(begin, end, places.data(), place_offset, &column->getNestedColumn(), arena);
++        });
++    }
++
+ #if USE_EMBEDDED_COMPILER
  
-     ASTPtr select_ptr = select;
-```
-
-**File**: `tests/integration/test_storage_postgresql/test.py` (modified, +9/-0)
-```diff
-@@ -969,6 +969,15 @@ def run(query, **settings):
-     assert result == "99"
-     assert len(queries) == 1 and "LIMIT" not in queries[0]
+     void compileAdd(llvm::IRBuilderBase & builder, llvm::Value * aggregate_data_ptr, const ValuesWithType & arguments) const override
+@@ -630,6 +696,128 @@ class AggregateFunctionNullUnary final
  
-+    # A `LIMIT` above the signed 64-bit range is valid in ClickHouse, while the `LIMIT` of PostgreSQL
-+    # is a `bigint`. Such a limit cuts off nothing, so it is not sent, instead of failing the query
-+    # with `bigint out of range`.
-+    result, queries = run(
-+        "SELECT count() FROM (SELECT * FROM pg_limit_pushdown LIMIT 9223372036854775808)"
-+    )
-+    assert result == "100"
-+    assert len(queries) == 1 and "LIMIT" not in queries[0]
+ #endif
+ 
++private:
++    template <bool places_are_non_null>
++    void addBatchImpl(
++        size_t row_begin,
++        size_t row_end,
++        AggregateDataPtr * places,
++        size_t place_offset,
++        const IColumn ** columns,
++        Arena * arena,
++        ssize_t if_argument_pos) const
++    {
++        const ColumnNullable * column = assert_cast<const ColumnNullable *>(columns[0]);
++        const UInt8 * null_map = column->getNullMapData().data();
++        const bool has_nulls = !memoryIsZero(null_map, row_begin, row_end);
++        if (if_argument_pos >= 0 || (has_nulls && hasManyNulls(null_map, row_begin, row_end)))
++        {
++            addBatchRowByRow<places_are_non_null>(row_begin, row_end, places, place_offset, columns, arena, if_argument_pos);
++            return;
++        }
 +
-     # A real `LIMIT 0` returns nothing and never asks PostgreSQL for a single row.
-     result, _ = run("SELECT count() FROM (SELECT * FROM pg_limit_pushdown LIMIT 0)")
-     assert result == "0"
++        if (!has_nulls)
++        {
++            addBatchWithoutNulls<places_are_non_null>(row_begin, row_end, places, place_offset, &column->getNestedColumn(), arena);
++            return;
++        }
++
++        forEachRangeWithoutNulls(null_map, row_begin, row_end, [&](size_t begin, size_t end)
++        {
++            addBatchWithoutNulls<places_are_non_null>(begin, end, places, place_offset, &column->getNestedColumn(), arena);
++        });
++    }
++
++    /// With more NULLs the ranges between them are short, and the nested function may pay a setup cost per range.
++    static bool hasManyNulls(const UInt8 * null_map, size_t row_begin, size_t row_end)
++    {
++        static constexpr size_t min_rows_per_null = 16;
++        return countBytesInFilter(null_map, row_begin, row_end) * min_rows_per_null > row_end - row_begin;
++    }
++
++    /// Not inlined, so that the row loops are compiled as in IAggregateFunctionHelper.
++    template <bool places_are_non_null>
++    NO_INLINE void addBatchRowByRow(
++        size_t row_begin,
++        size_t row_end,
++        AggregateDataPtr * places,
++        size_t place_offset,
++        const IColumn ** columns,
++        Arena * arena,
++        ssize_t if_argument_pos) const
++    {
++        if constexpr (pla
 ```
 
-**File**: `tests/queries/0_stateless/05843_external_table_limit_above_int64.reference` (added, +6/-0)
+**File**: `tests/performance/aggregation_nullable_arguments.xml` (added, +24/-0)
 ```diff
-@@ -0,0 +1,6 @@
-+3
-+3
-+2
-+2
-+3
-+2
+@@ -0,0 +1,24 @@
++<test>
++    <settings>
++        <!-- JIT compiles some of these functions after a few runs and then bypasses the batch path -->
++        <compile_aggregate_expressions>0</compile_aggregate_expressions>
++    </settings>
++
++    <create_query>CREATE TABLE nullable_arguments (k8 UInt8, k4 UInt32, k1000 UInt32, k_many UInt32, v Nullable(Decimal(15, 2)), v_rare_nulls Nullable(Decimal(15, 2)), v_half_nulls Nullable(Decimal(15, 2)), v_sixteenth_nulls Nullable(Decimal(15, 2))) ENGINE = Memory</create_query>
++    <fill_query>INSERT INTO nullable_arguments SELECT number % 6, number % 4, number % 1000, number % 1000000, number % 1000, if(number % 20000 = 0, NULL, number % 1000), if(cityHash64(number) % 2 = 0, NULL, number % 1000), if(number % 16 = 0, NULL, number % 1000) FROM numbers_mt(30000000)</fill_query>
++
++    <query>SELECT k8, sum(v), avg(v) FROM nullable_arguments GROUP BY k8 FORMAT Null</query>
++    <query>SELECT k4, sum(v), avg(v) FROM nullable_arguments GROUP BY k4 FORMAT Null</query>
++    <query>SELECT k1000, sum(v), avg(v) FROM nullable_arguments GROUP BY k1000 FORMAT Null</query>
++    <query>SELECT k_many, sum(v), avg(v) FROM nullable_arguments GROUP BY k_many FORMAT Null</query>
++    <query>SELECT k4, uniqExact(v) FROM nullable_arguments GROUP BY k4 FORMAT Null</query>
++    <query>SELECT k8, sum(v_rare_nulls), avg(v_rare_nulls) FROM nullable_arguments GROUP BY k8 FORMAT Null</query>
++    <query>SELECT k1000, sum(v_rare_nulls), avg(v_rare_nulls) FROM nullable_arguments GROUP BY k1000 FORMAT Null</query>
++    <query>SELECT k8, sum(v_half_nulls), avg(v_half_nulls) FROM nullable_arguments GROUP BY k8 FORMAT Null</query>
++    <query>SELECT k1000, sumDistinct(v_half_nulls) FROM nullable_arguments GROUP BY k1000 FORMAT Null</query>
++    <query>SELECT k1000, sumDistinct(v_sixteenth_nulls) FROM nullable_arguments GROUP BY k1000 FORMAT Null</query>
++    <query>SELECT k, sumDistinct(x) FROM (SELECT toUInt8(number % 6) AS k, if(number % 16 = 0, NULL, if(cityHash64(number) % 5 &lt; 3, toDecimal64(number, 2), toDecimal64(number % 1000, 2))) AS x FROM numbers_mt(3000000)) GROUP BY k FORMAT Null</query>
++    <query>SELECT k, sumDistinct(x) FROM (SELECT number % 1000 AS k, if(number % 16 = 0, NULL, if(cityHash64(number) % 5 &lt; 3, toDecimal64(number, 2), toDecimal64(number % 1000, 2))) AS x FROM numbers_mt(3000000)) GROUP BY k FORMAT Null</query>
++
++    <drop_query>DROP TABLE IF EXISTS nullable_arguments</drop_query>
++</test>
 ```
 
-**File**: `tests/queries/0_stateless/05843_external_table_limit_above_int64.sh` (added, +33/-0)
+**File**: `tests/queries/0_stateless/04003_tuple_combinator.sql` (modified, +2/-2)
 ```diff
-@@ -0,0 +1,33 @@
-+#!/usr/bin/env bash
-+# Tags: no-fasttest
-+# Tag no-fasttest: needs the `sqlite` table function and the `sqlite3` tool
+@@ -154,8 +154,8 @@ SELECT sumTuple(t) FROM (SELECT if(number % 3 = 0, CAST(NULL, 'Nullable(Tuple(In
+ -- `-TupleIf` over `Nullable(Tuple)`: both the if-flag and the null map filter rows. cond = number % 2
+ -- keeps odd numbers 1,3,5, of which 3 is NULL -> kept 1,5 -> sums 6.
+ SELECT sumTupleIf(t, cond) FROM (SELECT number % 2 AS cond, if(number % 3 = 0, CAST(NULL, 'Nullable(Tuple(Int64, Float64))'), CAST(tuple(toInt64(number), toFloat64(number)), 'Nullable(Tuple(Int64, Float64))')) AS t FROM numbers(6));
+--- GROUP BY over `Nullable(Tuple)` goes through the `Null` wrapper's generic batch loop, which calls
+--- the nested `-Tuple` `add` fallback row by row (the wrapper has no keyed batch override):
++-- GROUP BY over `Nullable(Tuple)` with this many NULLs goes through the `Null` wrapper's row loop, which calls
++-- the nested `-Tuple` `add` fallback row by row:
+ -- k=0 keeps 2,4 (0 is NULL); k=1 keeps 1,5 (3 is NULL).
+ SELECT k, sumTuple(t) FROM (SELECT number % 2 AS k, if(number % 3 = 0, CAST(NULL, 'Nullable(Tuple(Int64, Float64))'), CAST(tuple(toInt64(number), toFloat64(number)), 'Nullable(Tuple(Int64, Float64))')) AS t FROM numbers(6)) GROUP BY k ORDER BY k;
+ 
+```
+
+**File**: `tests/queries/0_stateless/05839_nullable_argument_grouped_batch.reference` (added, +87/-0)
+```diff
+@@ -0,0 +1,87 @@
++0	109888905	20152.008985879333	8	5453	(109888905,5453)	109888905
++1	112499041	20157.50600250851	2	5581	(112499041,5581)	112499041
++2	112514751	20160.32091023114	10	5581	(112514751,5581)	112514751
++3	112490456	20155.967747715462	4	5581	(112490456,5581)	112490456
++4	112475174	20160.454203262234	12	5579	(112475174,5579)	112475174
++5	112501898	20158.017917935853	6	5581	(112501898,5581)	112501898
++6	112538601	20160.981906126835	14	5582	(112538601,5582)	112538601
++7	\N	\N	\N	0	(0,0)	\N
++8	250000	500	1	500	(250000,500)	250000
++9	10187167	30500.5	30001	334	(10187167,334)	10187167
++0	109888905	20152.008985879333	8	5453	(109888905,5453)	109888905	109888905	109888905	20152.008985879333
++1	112499041	20157.50600250851	2	5581	(112499041,5581)	112499041	112499041	112499041	20157.50600250851
++2	112514751	20160.32091023114	10	5581	(112514751,5581)	112514751	112514751	112514751	20160.32091023114
++3	112490456	20155.967747715462	4	5581	(112490456,5581)	112490456	112490456	112490456	20155.967747715462
++4	112475174	20160.454203262234	12	5579	(112475174,5579)	112475174	112475174	112475174	20160.454203262234
++5	112501898	20158.017917935853	6	5581	(112501898,5581)	112501898	112501898	112501898	20158.017917935853
++6	112538601	20160.981906126835	14	5582	(112538601,5582)	112538601	112538601	112538601	20160.981906126835
++7	\N	\N	\N	0	(0,0)	\N	\N	\N	\N
++8	250000	500	1	500	(250000,500)	250000	250000	250000	500
++9	10187167	30500.5	30001	334	(10187167,334)	10187167	10187167	10187167	30500.5
++0	109888905	20152.008985879333	5453
++1	112499041	20157.50600250851	5581
++2	112514751	20160.32091023114	5581
++3	112490456	20155.967747715462	5581
++4	112475174	20160.454203262234	5579
++5	112501898	20158.017917935853	5581
++6	112538601	20160.981906126835	5582
++8	250000	500	500
++40000	228	795345993
++0	39991	39991
++1	39998	39998
++2	39984	39984
++3	39991	39991
++4	39984	39984
++5	39991	39991
++6	39984	39984
++7	0	\N
++8	998	998
++9	999	999
++0	28550024	10000.008406304729	1	2855	28550024	19999	19999
++1	28532682	9997.435879467414	2	2854	28532682	19992	19992
++2	28513935	9997.873422159888	3	2852	28513935	19992	19992
++3	28549097	9999.683712784588	4	2855	28549097	19992	19992
++4	28541853	10000.64926419061	5	2854	28541853	19992	19992
++5	28544609	10001.61492641906	6	2854	28544609	19992	19992
++6	28547267	10002.546250875963	7	2854	28547267	19992	19992
++7	\N	\N	\N	0	\N	0	\N
++8	94018	10446.444444444445	10002	9	94018	900	900
++0	28550024	10000.008406304729	1	2855	28550024	19999	19999
++1	28532682	9997.435879467414	2	2854	28532682	19992	19992
++2	28513935	9997.873422159888	3	2852	28513935	19992	19992
++3	28549097	9999.683712784588	4	2855	28549097	19992	19992
++4	28541853	10000.64926419061	5	2854	28541853	19992	19992
++5	28544609	10001.61492641906	6	2854	28544609	19992	19992
++6	28547267	10002.546250875963	7	2854	28547267	19992	19992
++7	\N	\N	\N	0	\N	0	\N
++8	94018	10446.444444444445	10002	9	94018	900	900
++0	28550024	2855
++1	28532682	2854
++2	28513935	2852
++3	28549097	2855
++4	28541853	2854
++5	28544609	2854
++6	28547267	2854
++0	677195	2198.685064935065	308	1442023748108963931	9
++1	14746078	10340.868162692846	1426	15984173844227074289	9997
++2	14744023	10339.427068723702	1426	18397824656854838453	9998
++3	14747575	10341.917952314165	1426	16319926023925023316	9999
++4	14755303	10340.086194814296	1427	10598553716428402786	9993
++5	14750052	10343.654978962131	1426	7631658335113871590	9994
++6	14755780	10340.42046250876	1427	2853712106680580092	9995
++7	14065997	12178.352380952381	1155	10423346422504321616	9996
++0	677195	2198.685064935065	308	1442023748108963931	9
++1	14746078	10340.868162692846	1426	15984173844227074289	9997
++2	14744023	10339.427068723702	1426	18397824656854838453	9998
++3	14747575	10341.917952314165	1426	16319926023925023316	9999
++4	14755303	10340.086194814296	1427	10598553716428402786	9993
++5	14750052	10343.654978962131	1426	7631658335113871590	9994
++6	14755780	10340.42046250876	1427	2853712106680580092	9995
++7	14065997	12178.352380952381	1155	10423346422504321616	9996
++0	677195	1442023748108963931
++1	14746078	15984173844227074289
++2	14744023	18397824656854838453
++3	14747575	16319926023925023316
++4	14755303	10598553716428402786
++5	14750052	7631658335113871590
++6	14755780	2853712106680580092
+```
+
+**File**: `tests/queries/0_stateless/05839_nullable_argument_grouped_batch.sql` (added, +96/-0)
+```diff
+@@ -0,0 +1,96 @@
++-- Aggregate functions with a Nullable argument under GROUP BY, over blocks of 1000 rows with and without NULLs.
++-- Only block 20 (rows 20000-20999) contains NULLs. Key 7 is NULL in every row and occurs only in block 20,
++-- key 8 occurs only in block 0, key 9 only in block 30.
 +
-+# A `LIMIT` of a query is pushed down to an external database, where it is safe. A `LIMIT` in ClickHouse
-+# is any `UInt64`, while SQLite (and PostgreSQL) accept only a signed 64-bit value, so a `LIMIT` above
-+# that range - such as `LIMIT 18446744073709551615`, MySQL's idiom for "all rows" - made the query fail
-+# with `datatype mismatch`. Such a limit does not cut off anything and is not sent.
++SET compile_aggregate_expressions = 0;
++SET optimize_injective_functions_in_group_by = 0;
 +
-+CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
-+# shellcheck source=../shell_config.sh
-+. "$CUR_DIR"/../shell_config.sh
++DROP VIEW IF EXISTS tab;
++CREATE VIEW tab AS
++SELECT
++    multiIf(number < 1000 AND number % 2 = 0, 8,
++            number BETWEEN 20000 AND 20999 AND number % 10 = 0, 7,
++            number BETWEEN 30000 AND 30999 AND number % 3 = 0, 9,
++            number % 7) AS k,
++    if(number BETWEEN 20000 AND 20999 AND (number % 7 = 0 OR number % 10 = 0), NULL, number + 1) AS v
++FROM numbers(40000);
 +
-+DB_PATH="${USER_FILES_PATH}/${CLICKHOUSE_DATABASE}_limit_above_int64.db"
-+rm -f "${DB_PATH}"
++-- A UInt8 key
++SELECT toUInt8(k) AS key, sum(v), avg(v), min(v), uniqExact(v), sumCount(v), sumOrNull(v)
++FROM tab GROUP BY key ORDER BY key
++SETTINGS max_block_size = 1000;
 +
-+sqlite3 "${DB_PATH}" 'CREATE TABLE t (id INTEGER); INSERT INTO t VALUES (1), (2), (3);'
-+chmod ugo+r "${DB_PATH}"
++-- A String key
++SELECT toString(k) AS key, sum(v), avg(v), min(v), uniqExact(v), sumCount(v), sum(toLowCardinality(v)),
++    finalizeAggregation(sumState(v)), sum(toDecimal64(v, 2)), avg(toDecimal64(v, 2))
++FROM tab GROUP BY key ORDER BY key
++SETTINGS max_block_size = 1000;
 +
-+SOURCE="sqlite('${DB_PATH}', 't')"
++-- The rows of the keys that do not fit into max_rows_to_group_by are skipped
++SELECT toString(k) AS key, sum(v), avg(v), uniqExact(v)
++FROM tab GROUP BY key ORDER BY key
++SETTINGS max_block_size = 1000, max_threads = 1, max_rows_to_group_by = 4, group_by_overflow_mode = 'any',
++    max_bytes_before_external_group_by = 0, max_bytes_ratio_before_external_group_by = 0, enable_adaptive_aggregator = 0;
 +
-+${CLICKHOUSE_CLIENT} --query "
-+SELECT count() FROM (SELECT id FROM ${SOURCE} LIMIT 9223372036854775808);
-+SELECT count() FROM (SELECT id FROM ${SOURCE} LIMIT 18446744073709551615);
-+SELECT count() FROM (SELECT id FROM ${SOURCE} LIMIT 9223372036854775807 OFFSET 1);
-+SELECT count() FROM (SELECT id FROM ${SOURCE} WHERE id > 1 LIMIT 18446744073709551615);
++-- One state per row
++SELECT count(), countIf(isNull(s)), sum(s)
++FROM (SELECT initializeAggregation('sum', v) AS s FROM tab)
++SETTINGS max_block_size = 1000;
 +
-+-- The largest limit that SQLite accepts, and an ordinary one.
-+SELECT count() FROM (SELECT id FROM ${SOURCE} LIMIT 9223372036854775807);
-+SELECT count() FROM (SELECT id FROM ${SOURCE} LIMIT 2);
-+"
++-- Every state receives its rows in order, also with a UInt8 key: deltaSum of an increasing value is max - min
++SELECT toUInt8(k) AS key, deltaSum(toUInt32(v)), max(v) - min(v)
++FROM tab GROUP BY key ORDER BY key
++SETTINGS max_block_size = 1000, max_threads = 1;
 +
-+rm -f "${DB_PATH}"
++DROP VIEW tab;
++
++-- Block 10 (rows 10000-10999) has 13 NULLs, few enough to be added range by range between them: at the first and
++-- the last row of the block, in a run of three and every 100 rows. Key 7 is NULL in every row, key 8 occurs only in block 10.
++DROP VIEW IF EXISTS tab_few;
++CREATE VIEW tab_few AS
++SELECT
++    multiIf(number BETWEEN 10000 AND 10999 AND number % 100 = 0, 7,
++            number BETWEEN 10000 AND 10999 AND number % 100 = 1, 8,
++            number % 7) AS k,
++    if(number BETWEEN 10000 AND 10999 AND (number % 100 = 0 OR number IN (10501, 10502, 10999)), NULL, number + 1) AS v
++FROM numbers(20000);
++
++SELECT toUInt8(k) AS key, sum(v), avg(v), min(v), uniqExact(v), sumOrNull(v), deltaSum(toUInt32(v)), max(v) - min(v)
++FROM tab_few GROUP BY key ORDER BY key
++SETTINGS max_block_size = 1000, max_threads = 1;
++
++SELECT toString(k) AS key, sum(v), avg(v), min(v), uniqExact(v), sumOrNull(v), deltaSum(toUInt32(v)), max(v) - min(v)
++FROM tab_few GROUP BY key ORDER BY key
++SETTINGS max_block_size = 1000, max_threads = 1;
++
++SELECT toString(k) AS key, sum(v), uniqExact(v)
++FROM tab_few GROUP BY key ORDER BY key
++SETTINGS max_block_size = 1000, max_threads = 1, max_rows_to_group_by = 4, group_by_overflow_mode = 'any',
++    max_bytes_before_external_group_by = 0, max_bytes_ratio_before_external_group_by = 0, enable_adaptive_aggregator = 0;
++
++DROP VIEW tab_few;
++
++-- -Distinct over the ranges between NULLs: in rows 0-9999 one NULL per 20 rows (ranges of 19 rows), in rows 10000-19999
++-- one per 200 rows (ranges of 199 rows). The values repeat in the even blocks and are new in the odd blocks.
++-- Key 7 occurs from row 5000.
++DROP VIEW IF EXISTS tab_distinct;
++CREATE VIEW tab_distinct AS
++SELECT
++    if(number >= 5000 AND number % 7 = 0, 7, number % 7) AS k,
++    if(number % if(number < 10000, 20, 200) = 3, NULL, if(intDiv(number, 1000) % 2 = 0, number % 37, number)) AS v
++FROM numbers(20000);
++
++SELECT toUInt8(k) AS key, sumDistinct(v), avgDistinct(v), uniqExactDistinct(v), cityHash64(groupArrayDistinct(v)), maxDistinct(toString(v))
++FROM tab_distinct GROUP BY key ORDER BY key
++SETTINGS max_block_size = 1000, max_threads = 1;
++
++SELECT toString(k) AS key, sumDistinct(v), avgDistinct(v), uniqExactDistinct(v), cityHash64(groupArrayDistinct(v)), maxDistinct(toString(v))
++FROM tab_distinct GROUP BY key ORDER BY key
++SETTINGS max_block_size = 1000, max_threads = 1;
++
++SELECT toString(k) AS key, sumDistinct(v), cityHash64(groupArrayDistinct(v))
++FROM tab_distinct GROUP BY key ORDER BY key
++SETTINGS max_block_size = 1000, max_threads = 1, max_rows_to_group_by = 4, group_by_overflow_mode = 'any',
++    max_bytes_before_external_group_by = 0, max_bytes_ratio_before_external_group_by = 0, enable_adaptive_aggregator = 0;
++
++DROP VIEW tab_distinct;
+```
+
+---
+
+### Incident Patch 3: `3a1d800d` (2026-11-25)
+**Commit Message**: Merge pull request #134374 from zlareb1/docs/link-loom-coding-agent-memory
+
+Docs: Link the MCP overview to Loom shared memory
+
+**File**: `docs/concepts/features/connect-to-clickhouse/native-tools/mcp.mdx` (modified, +3/-0)
+```diff
+@@ -33,6 +33,9 @@ MCP follows a client-server architecture:
+ 
+ You can find community-maintained collections of [MCP clients](https://github.com/punkpeye/awesome-mcp-clients) and [MCP servers](https://github.com/punkpeye/awesome-mcp-servers) on GitHub.
+ 
++[ClickHouse Loom provides shared memory for coding agents](https://loom.clickhouse.com/docs/use-cases/agent-memory) through a self-hosted MCP server.
++It carries project decisions across sessions and links saved lessons to indexed code.
++
+ ## ClickHouse MCP server {#clickhouse-mcp-server}
+ 
+ The [ClickHouse MCP server](https://github.com/ClickHouse/mcp-clickhouse) lets an AI assistant discover databases and tables, inspect schemas, and run SQL queries against a ClickHouse cluster.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #133562** (2026-11-22): Backport #131636 to 26.9: Skip a setting value from the server's Hello that this version rejects instead of failing the connection (@robot-ch-test-poll)
-- **PR #133561** (2026-11-22): Backport #131636 to 26.8: Skip a setting value from the server's Hello that this version rejects instead of failing the connection (@robot-ch-test-poll)
-- **PR #133555** (2026-11-22): Backport #131636 to 26.10: Skip a setting value from the server's Hello that this version rejects instead of failing the connection (@robot-ch-test-poll2)
-- **PR #133550** (2026-11-22): Backport #130143 to 26.10: Fix `LOGICAL_ERROR` on `INSERT` into a table whose projection has a subquery in its `SELECT` list or `GROUP BY` (@robot-ch-test-poll2)
-- **PR #133548** (2026-11-22): Backport #133464 to 26.11: Remove the background cleanup of unused directories in `store/` (@robot-ch-test-poll2)
-- **PR #133543** (2026-11-22): Backport #133506 to 26.11: Fix JSON schema inference applying the mark of a freed type to an unrelated value (@robot-ch-test-poll2)
+- **PR #134415** (2026-11-25): Backport #134050 to 26.11: Fix `LIKE` on a `String` sorting key column ignoring lightweight deletes and updates in patch parts (@robot-ch-test-poll4)
+- **PR #134412** (2026-11-25): Data lake fuzzer: do not drop a partition source column in the PyIceberg writer (@groeneai)
+- **PR #134409** (2026-11-25): Backport #129438 to 26.11: Keep sizes of Nested arrays when a column TTL resets a subcolumn (@robot-ch-test-poll4)
+- **PR #134405** (closed): Remove `eu-west-1` from Gen 2 availability (@Blargian)
+- **PR #134401** (2026-11-25): Backport #129581 to 26.10: Count references in the tupleElement default when pruning ARRAY JOIN columns (@robot-ch-test-poll3)
+- **PR #134386** (2026-11-25): Backport #131034 to 26.10: Fix TOO_SLOW in external aggregation overflow any tests (@robot-clickhouse)
 
 ---
 
@@ -1771,42 +1918,33 @@ Do not push down a `LIMIT` above the signed 64-bit range to `PostgreSQL` and `SQ
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Address review: check the sum of file counts of an Iceberg manifest list entry f
+## X. Empirical Invariant Guard in KeeperReadThreadPool.cpp
 
 **RULE**:
-When implementing operations in `src/Storages/ObjectStorage/DataLakes/Iceberg/StatelessMetadataFileGetter.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClickHouse/ClickHouse. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/Coordination/KeeperReadThreadPool.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClickHouse/ClickHouse. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `657a223e`: Address review: check the sum of file counts of an Iceberg manifest list entry for overflow. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b88da85b`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/Storages/ObjectStorage/DataLakes/Iceberg/StatelessMetadataFileGetter.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/Coordination/KeeperReadThreadPool.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-#include <base/arithmeticOverflow.h>
-                if (count.isNull())
-                    continue;
-                /// The counts are `int` in the specification, but the type is taken from the schema of the file,
-                /// so the values can be arbitrary `long`s and their sum can overflow.
-                if (common::addOverflow(live_files_count, std::max<Int64>(0, count.safeGet<Int64>()), live_files_count))
-                    throw Exception(
-                        ErrorCodes::ICEBERG_SPECIFICATION_VIOLATION,
-                        "Manifest list entry at index {} has too large value of the field '{}'",
-                        i,
-                        count_field);
+            lock.lock();
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-                if (!count.isNull())
-                    live_files_count += std::max<Int64>(0, count.safeGet<Int64>());
+
+            lock.lock();
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `657a223e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b88da85b` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

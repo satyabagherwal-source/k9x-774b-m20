@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T12:39:31.490Z",
+  "last_updated": "2026-11-25T12:48:10.845Z",
   "total_records": 2673,
   "domains": {
     "A": {
@@ -8674,8 +8674,8 @@
       "title": "Technical Construction Intelligence: ClickHouse/ClickHouse Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-clickhouse-clickhouse-technical-construction-intelligence-clickhouse-clickhouse-.md",
       "repository": "ClickHouse/ClickHouse",
-      "content_hash": "5393548124a3148f11ede638020004f260cddb24535d406102e14aa96a1bcf83",
-      "created_at": "2026-11-24T17:42:52.324Z"
+      "content_hash": "1e61ef1f317055a2cfe8dad9010e2676fd51cc4b20f8d4eda6b0a6f4d6c4d27f",
+      "created_at": "2026-11-25T12:48:05.519Z"
     },
     "DOM-D-303E5CE5": {
       "record_id": "DOM-D-303E5CE5",
@@ -9406,8 +9406,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "dc4069b1017c7485d8baacce31b58c5a1cbec54879ab3bf0f79a42759b6f055e",
-      "created_at": "2026-11-25T07:31:11.667Z"
+      "content_hash": "b6b8b95f88fba72dabdf44ef377bc6968e518f05211dce39beaeb72c20aa8cb2",
+      "created_at": "2026-11-25T12:48:10.845Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -18915,8 +18915,8 @@
       "title": "Technical Construction Intelligence: clickhouse-clickhouse-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-clickhouse-clickhouse-learnings-technical-construction-intelligence-clickhouse-c.md",
       "repository": "clickhouse-clickhouse-learnings",
-      "content_hash": "e4fed8eb828a3dc93b399815778a7a6e435e6f5420b8301d0ccda844fe01bfa2",
-      "created_at": "2026-11-22T19:18:52.865Z"
+      "content_hash": "7e829d177ea44b0b815e72b509f141adf418d8c12873af0aade45491d4bf4803",
+      "created_at": "2026-11-25T12:48:09.952Z"
     },
     "domain_intelligence-research-knowledge-intelligence-atomicchat-qwen-image-2-1-turbo-uncensored-gguf-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-atomicchat-qwen-image-2-1-turbo-uncensored-gguf-",
@@ -24417,8 +24417,8 @@
       "title": "Research & Knowledge Intelligence: Pika-Labs/Pika-H3-Flex Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-pika-labs-pika-h3-flex-research-knowledge-intelligence-pika-labs-pika-h3-flex.md",
       "repository": "Pika-Labs/Pika-H3-Flex",
-      "content_hash": "1ffff4c7aea2068ec32053d65c39c810bd4c025e12f1576325626b19f5120d90",
-      "created_at": "2026-11-21T21:40:12.721Z"
+      "content_hash": "199660d204b823e81c18acec702ce9016dc04431c580a24db2ac5cc18e3ebf88",
+      "created_at": "2026-11-25T12:47:48.644Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-pika-labs-pika-h3-flex-learnings-core-invaria": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-pika-labs-pika-h3-flex-learnings-core-invaria",
@@ -24426,8 +24426,8 @@
       "title": "Research & Knowledge Intelligence: hf-pika-labs-pika-h3-flex-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-pika-labs-pika-h3-flex-learnings-research-knowledge-intelligence-hf-pika-labs.md",
       "repository": "hf-pika-labs-pika-h3-flex-learnings",
-      "content_hash": "57ec8d831263f90e52a1ae95806ddee57facb8fa79642679b75ff55229afbaf3",
-      "created_at": "2026-11-21T21:40:32.244Z"
+      "content_hash": "726c29eaae0b28923173dbf0260f605ce39d54169f4b334dbcb7890f790f76cc",
+      "created_at": "2026-11-25T12:48:08.788Z"
     },
     "domain_intelligence-technical-construction-intelligence-scrapy-scrapy-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-scrapy-scrapy-core-invariants",
