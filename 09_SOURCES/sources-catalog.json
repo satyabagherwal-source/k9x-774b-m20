@@ -8773,10 +8773,10 @@
     "repository": "JuulLabs/kable",
     "platform": "github",
     "sourceUrl": "https://github.com/JuulLabs/kable",
-    "sourceVersion": "9836c4e2",
+    "sourceVersion": "aa3619b3",
     "license": "Apache-2.0",
-    "contentHash": "af7bab64cdef4af4aaedb59f591e79af64c07b89c2e925de86351403ef103d35",
-    "lastHarvestedAt": "2026-11-20T07:36:01.120Z",
+    "contentHash": "d4957df8466fb61335df1cb5a1d3ab31b536f56a7682004322915ab7457bf979",
+    "lastHarvestedAt": "2026-11-25T15:57:35.398Z",
     "learningId": "learn-github-juullabs-kable"
   },
   "tmolavi-siteprobe": {
@@ -11825,8 +11825,8 @@
     "sourceUrl": "https://huggingface.co/divagr1925/Qwen3.5-4B-Qwenputer",
     "sourceVersion": "hf-divagr1925-qwen3.5-4b-qwenputer",
     "license": "Open-Source",
-    "contentHash": "34e99b3ab676a5f451299e21e7b295db17ef032b029007fa76f5a2a671fb5098",
-    "lastHarvestedAt": "2026-11-22T01:23:45.616Z",
+    "contentHash": "10f99a189d45b344da723428065bdf69f51af6288db5a570e3031255ee441662",
+    "lastHarvestedAt": "2026-11-25T15:57:28.395Z",
     "learningId": "learn-huggingface-divagr1925-qwen3-5-4b-qwenputer"
   },
   "hf-abenzerps-qwen-image-2.1-turbo-quantized": {

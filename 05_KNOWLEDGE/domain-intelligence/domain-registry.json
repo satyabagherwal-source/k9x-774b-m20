@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T15:48:16.418Z",
+  "last_updated": "2026-11-25T15:57:43.173Z",
   "total_records": 2683,
   "domains": {
     "A": {
@@ -8453,8 +8453,8 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-learnings-technical-construction-intelligence-zvec-ai-zvec-gre.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "33161334d32e49a0d407a7637749fc3cb3add7555b3d31812c70978878da0cd7",
-      "created_at": "2026-11-25T15:39:13.079Z"
+      "content_hash": "5615e65d6b405374d90125afaf9ef67fab125665b83ba71b54c08dcda796d4cd",
+      "created_at": "2026-11-25T15:57:43.173Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -24082,8 +24082,8 @@
       "title": "Architecture Intelligence: JuulLabs/kable Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-juullabs-kable-architecture-intelligence-juullabs-kable-core-invariants.md",
       "repository": "JuulLabs/kable",
-      "content_hash": "3df276b8be7da0b1be52ddc567e1687aecade74b1ad271d8e00cd148c1896db5",
-      "created_at": "2026-11-20T07:36:01.456Z"
+      "content_hash": "d14cbc1f5f6de79b0ec67cd000279f776ab84163ad4d03d838b84cc8586609c5",
+      "created_at": "2026-11-25T15:57:35.961Z"
     },
     "DOM-F-4F38FEA1": {
       "record_id": "DOM-F-4F38FEA1",
@@ -24142,8 +24142,8 @@
       "title": "Architecture Intelligence: juullabs-kable-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-juullabs-kable-learnings-architecture-intelligence-juullabs-kable-learnings-core.md",
       "repository": "juullabs-kable-learnings",
-      "content_hash": "a7ff4ec64303ef92b90a041bfc13a7b015ca57b1ec5cb9f236496d4e07b792a5",
-      "created_at": "2026-11-20T07:36:07.755Z"
+      "content_hash": "a3257f1af9bcae1b6561a649f3baab3d92c4f5d3dd720f5659fc2b89c26a9a17",
+      "created_at": "2026-11-25T15:57:41.815Z"
     },
     "domain_intelligence-technical-construction-intelligence-folkbench-folkbench-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-folkbench-folkbench-core-invariants",
@@ -25022,8 +25022,8 @@
       "title": "Research & Knowledge Intelligence: divagr1925/Qwen3.5-4B-Qwenputer Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-divagr1925-qwen3-5-4b-qwenputer-research-knowledge-intelligence-divagr1925-qw.md",
       "repository": "divagr1925/Qwen3.5-4B-Qwenputer",
-      "content_hash": "af5f694b912920dc7d56f9beca551310ac4fcf3f4e43c6a688d8578c64f7342a",
-      "created_at": "2026-11-22T01:23:45.901Z"
+      "content_hash": "6540c3147206d123574b23d17eb62e5404e333e77470979e5667c3f9c5c3b5c4",
+      "created_at": "2026-11-25T15:57:28.722Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-divagr1925-qwen3-5-4b-qwenputer-learnings-cor": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-divagr1925-qwen3-5-4b-qwenputer-learnings-cor",
@@ -25031,8 +25031,8 @@
       "title": "Research & Knowledge Intelligence: hf-divagr1925-qwen3.5-4b-qwenputer-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-divagr1925-qwen3-5-4b-qwenputer-learnings-research-knowledge-intelligence-hf-.md",
       "repository": "hf-divagr1925-qwen3.5-4b-qwenputer-learnings",
-      "content_hash": "2ea0a972f65abd093f35bdf5b886b4ceba5a86d4e29ff624ca9865d71d9f5348",
-      "created_at": "2026-11-22T01:24:03.661Z"
+      "content_hash": "a8956596ebaf544dd8cc71803187cc43f3edb3eec9e8f3a8b64e244007b859a6",
+      "created_at": "2026-11-25T15:57:40.499Z"
     },
     "domain_intelligence-technical-construction-intelligence-fb55-htmlparser2-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-fb55-htmlparser2-core-invariants",

@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T15:47:43.286Z",
-  "total_cycles_completed": 12465,
-  "total_learnings_persisted": 12465,
-  "total_rules_promoted": 11435,
+  "last_updated": "2026-11-25T15:57:35.405Z",
+  "total_cycles_completed": 12467,
+  "total_learnings_persisted": 12467,
+  "total_rules_promoted": 11436,
   "history": [
-    {
-      "timestamp": "2026-11-25T02:47:50.194Z",
-      "repository": "doobidoo/mcp-memory-service",
-      "learningId": "learn-github-doobidoo-mcp-memory-service",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T02:56:02.941Z",
-      "repository": "pola-rs/polars",
-      "learningId": "learn-github-pola-rs-polars",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-25T02:56:11.362Z",
       "repository": "Checkmarx/kics",
@@ -1403,6 +1389,20 @@
       "repository": "weaviate/weaviate",
       "learningId": "learn-github-weaviate-weaviate",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T15:57:28.404Z",
+      "repository": "divagr1925/Qwen3.5-4B-Qwenputer",
+      "learningId": "learn-huggingface-divagr1925-qwen3-5-4b-qwenputer",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T15:57:35.405Z",
+      "repository": "JuulLabs/kable",
+      "learningId": "learn-github-juullabs-kable",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

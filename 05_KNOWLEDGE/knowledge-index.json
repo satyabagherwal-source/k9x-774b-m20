@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-25T15:48:16.619Z",
+  "last_updated": "2026-11-25T15:57:43.625Z",
   "total_verified_learnings": 9119,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -112066,9 +112066,9 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "33161334d32e49a0d407a7637749fc3cb3add7555b3d31812c70978878da0cd7",
+      "content_hash": "5615e65d6b405374d90125afaf9ef67fab125665b83ba71b54c08dcda796d4cd",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T15:39:13.079Z"
+      "persisted_at": "2026-11-25T15:57:43.173Z"
     },
     "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona",
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "83c91719b55a39374f46e3397e4d84aabbc0038e9846fa8759b0970b80cbef5b",
+      "content_hash": "74a5a8a7d5c115425c8fdf6fcc1a82957505699e8d31c4f941540c57ff61ef6a",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T15:39:13.274Z"
+      "persisted_at": "2026-11-25T15:57:43.406Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "69f3a03818fd6ee1fc08e1cde40b641127fa7cd877ebecbfec93076551d86bb7",
+      "content_hash": "91567111a0b7cbea62d211494dffe963e4d0b85d283b487d5cdd49108c6c6f90",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T15:39:13.435Z"
+      "persisted_at": "2026-11-25T15:57:43.625Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -258016,8 +258016,8 @@
       "slug": "juullabs-kable",
       "platform": "github",
       "source_url": "https://github.com/JuulLabs/kable",
-      "source_version": "9836c4e2",
-      "content_hash": "af7bab64cdef4af4aaedb59f591e79af64c07b89c2e925de86351403ef103d35",
+      "source_version": "aa3619b3",
+      "content_hash": "d4957df8466fb61335df1cb5a1d3ab31b536f56a7682004322915ab7457bf979",
       "dossier_path": "07_PROJECT_LEARNING/juullabs-kable-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/juullabs-kable-learnings.md",
       "promoted_rules": [
@@ -258030,6 +258030,11 @@
           "number": 9541,
           "title": "Configure MTU via peripheral builder",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9997,
+          "title": "Update Gradle to v9.9.2",
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -258037,7 +258042,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T07:36:00.933Z",
+      "verified_at": "2026-11-25T15:57:35.115Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -258079,10 +258084,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-juullabs-kable-architecture-intelligence-juullabs-kable-core-invariants.md",
       "title": "Architecture Intelligence: JuulLabs/kable Core Invariants",
       "repository": "JuulLabs/kable",
-      "source_version": "9836c4e2",
-      "content_hash": "3df276b8be7da0b1be52ddc567e1687aecade74b1ad271d8e00cd148c1896db5",
+      "source_version": "aa3619b3",
+      "content_hash": "d14cbc1f5f6de79b0ec67cd000279f776ab84163ad4d03d838b84cc8586609c5",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T07:36:01.456Z"
+      "persisted_at": "2026-11-25T15:57:35.961Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-juullabs-kable": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-juullabs-kable",
@@ -258091,10 +258096,10 @@
       "relative_path": "08_VERIFICATION/juullabs-kable-verification-protocol-empirical-defect-shield-for-juullabs-kable.md",
       "title": "Verification Protocol: Empirical Defect Shield for JuulLabs/kable",
       "repository": "JuulLabs/kable",
-      "source_version": "9836c4e2",
-      "content_hash": "5765933dbbbced182c26837bbde2969a97e1217fd117e6e42c93ff7303e187a2",
+      "source_version": "aa3619b3",
+      "content_hash": "232e709071a53993e6e5fb2f368f47041fd9c61fa9e774937454d14a4ed709b0",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T07:36:01.600Z"
+      "persisted_at": "2026-11-25T15:57:36.192Z"
     },
     "rule-8709": {
       "learning_id": "rule-8709",
@@ -258154,9 +258159,9 @@
       "title": "Architecture Intelligence: juullabs-kable-learnings Core Invariants",
       "repository": "juullabs-kable-learnings",
       "source_version": "HEAD",
-      "content_hash": "a7ff4ec64303ef92b90a041bfc13a7b015ca57b1ec5cb9f236496d4e07b792a5",
+      "content_hash": "a3257f1af9bcae1b6561a649f3baab3d92c4f5d3dd720f5659fc2b89c26a9a17",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T07:36:07.755Z"
+      "persisted_at": "2026-11-25T15:57:41.815Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-juullabs-kable-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-juullabs-kable-learnings",
@@ -258166,9 +258171,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for juullabs-kable-learnings",
       "repository": "juullabs-kable-learnings",
       "source_version": "HEAD",
-      "content_hash": "7527ad54b5d0f7b502572f4cc7e9cc8e4edec8c8b574782ed354e7b16204d60c",
+      "content_hash": "43fa9b2967f676ffdbc9002ce2ffc60582d057f20d6be21579401a40ea56e932",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T07:36:07.897Z"
+      "persisted_at": "2026-11-25T15:57:42.045Z"
     },
     "candidate_directive-deps-bump-golang-org-x-crypto-v0-58-0-v0-59-0": {
       "item_id": "candidate_directive-deps-bump-golang-org-x-crypto-v0-58-0-v0-59-0",
@@ -263218,7 +263223,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/divagr1925/Qwen3.5-4B-Qwenputer",
       "source_version": "hf-divagr1925-qwen3.5-4b-qwenputer",
-      "content_hash": "34e99b3ab676a5f451299e21e7b295db17ef032b029007fa76f5a2a671fb5098",
+      "content_hash": "10f99a189d45b344da723428065bdf69f51af6288db5a570e3031255ee441662",
       "dossier_path": "07_PROJECT_LEARNING/hf-divagr1925-qwen3.5-4b-qwenputer-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-divagr1925-qwen3.5-4b-qwenputer-learnings.md",
       "promoted_rules": [],
@@ -263227,7 +263232,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T01:23:45.344Z",
+      "verified_at": "2026-11-25T15:57:28.099Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -263244,9 +263249,9 @@
       "title": "Research & Knowledge Intelligence: divagr1925/Qwen3.5-4B-Qwenputer Core Invariants",
       "repository": "divagr1925/Qwen3.5-4B-Qwenputer",
       "source_version": "hf-divagr1925-qwen3.5-4b-qwenputer",
-      "content_hash": "af5f694b912920dc7d56f9beca551310ac4fcf3f4e43c6a688d8578c64f7342a",
+      "content_hash": "6540c3147206d123574b23d17eb62e5404e333e77470979e5667c3f9c5c3b5c4",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T01:23:45.901Z"
+      "persisted_at": "2026-11-25T15:57:28.722Z"
     },
     "rule-8773": {
       "learning_id": "rule-8773",
@@ -263344,9 +263349,9 @@
       "title": "Research & Knowledge Intelligence: hf-divagr1925-qwen3.5-4b-qwenputer-learnings Core Invariants",
       "repository": "hf-divagr1925-qwen3.5-4b-qwenputer-learnings",
       "source_version": "HEAD",
-      "content_hash": "2ea0a972f65abd093f35bdf5b886b4ceba5a86d4e29ff624ca9865d71d9f5348",
+      "content_hash": "a8956596ebaf544dd8cc71803187cc43f3edb3eec9e8f3a8b64e244007b859a6",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T01:24:03.661Z"
+      "persisted_at": "2026-11-25T15:57:40.499Z"
     },
     "candidate_directive-deps-bump-cedar-policy": {
       "item_id": "candidate_directive-deps-bump-cedar-policy",
@@ -326589,26 +326594,26 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 9997,
       "title": "Update Gradle to v9.9.2",
-      "source_url": "https://github.com/vanniktech/gradle-maven-publish-plugin",
-      "source_version": "4530ec6c",
+      "source_url": "https://github.com/JuulLabs/kable",
+      "source_version": "aa3619b3",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-22T21:48:59.619Z"
+      "verified_at": "2026-11-25T15:57:35.115Z"
     },
     "candidate_directive-update-gradle-to-v9-9-2": {
       "item_id": "candidate_directive-update-gradle-to-v9-9-2",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-DBF4-update-gradle-to-v9-9-2.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-4SAA-update-gradle-to-v9-9-2.md",
       "title": "Update Gradle to v9.9.2",
-      "repository": "vanniktech-gradle-maven-publish-plugin-learnings",
+      "repository": "juullabs-kable-learnings",
       "source_version": "HEAD",
-      "content_hash": "224452cf5363887799afae93a05c5bb85e8959632703374896c4aa263d16b17c",
-      "domain_letter": "L",
-      "persisted_at": "2026-11-22T21:49:14.129Z"
+      "content_hash": "ca14abc4b6c43a8ea9ab7cd9c66455247a9167921ae7b90a992bc3684d6efcc1",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-25T15:57:41.555Z"
     },
     "candidate_directive-nuc-134-ruby-collection-method-aliases": {
       "item_id": "candidate_directive-nuc-134-ruby-collection-method-aliases",
@@ -342579,13 +342584,13 @@
       "item_id": "candidate_directive-rust-bind-bare-calls-to-the-enclosing-module-s-items",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-H0RS-rust-bind-bare-calls-to-the-enclosing-module-s-items.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-4TCK-rust-bind-bare-calls-to-the-enclosing-module-s-items.md",
       "title": "rust): bind bare calls to the enclosing module's items",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "551afc5bef135865178cee835916e99ec218e5aaf58928ea422f128ce3a8dbea",
+      "content_hash": "85efd22eeaf9eea57bccf5e642117d7c76723d13846d6123201b6e4671c4e6e9",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T15:39:12.812Z"
+      "persisted_at": "2026-11-25T15:57:42.938Z"
     },
     "domain_intelligence-content-information-intelligence-rollup-rollup-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-rollup-rollup-learnings-core-invariants",

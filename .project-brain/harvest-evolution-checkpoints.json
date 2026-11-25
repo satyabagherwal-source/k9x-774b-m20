@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T15:48:16.784Z",
+  "last_updated": "2026-11-25T15:57:43.837Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-25T15:16:00.864Z",
@@ -8,7 +8,7 @@
       "staged_for_review": 1
     },
     "zvec-ai-zvec-grep-learnings.md": {
-      "processed_at": "2026-11-25T15:39:12.229Z",
+      "processed_at": "2026-11-25T15:57:42.273Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -673,7 +673,7 @@
       "staged_for_review": 1
     },
     "hf-divagr1925-qwen3.5-4b-qwenputer-learnings.md": {
-      "processed_at": "2026-11-22T01:24:03.409Z",
+      "processed_at": "2026-11-25T15:57:40.170Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -1293,7 +1293,7 @@
       "staged_for_review": 1
     },
     "juullabs-kable-learnings.md": {
-      "processed_at": "2026-11-20T07:36:07.117Z",
+      "processed_at": "2026-11-25T15:57:40.766Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3933,7 +3933,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 4260,
+  "total_dossiers_evaluated": 4263,
   "total_canonical_promoted": 545,
-  "total_staged_for_review": 3241
+  "total_staged_for_review": 3243
 }

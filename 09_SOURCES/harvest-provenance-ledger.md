@@ -13165,3 +13165,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-unsloth-deepseek-v4-1-flash-1017-gguf` | `https://huggingface.co/unsloth/DeepSeek-V4.1-Flash-1017-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-11-25T15:47:29.406Z |
 | `learn-github-weaviate-weaviate` | `https://github.com/weaviate/weaviate` | `9f6b1e49` | Multi-dimensional audit evidence | 2026-11-25T15:47:43.281Z |
 | `learn-dom-d-21c9d326` | `project://weaviate-weaviate` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/weaviate-weaviate-learnings.md` | 2026-11-25T15:48:16.129Z |
+| `learn-huggingface-divagr1925-qwen3-5-4b-qwenputer` | `https://huggingface.co/divagr1925/Qwen3.5-4B-Qwenputer` | `hf-divagr1` | Multi-dimensional audit evidence | 2026-11-25T15:57:28.395Z |
+| `learn-github-juullabs-kable` | `https://github.com/JuulLabs/kable` | `aa3619b3` | Multi-dimensional audit evidence | 2026-11-25T15:57:35.398Z |
