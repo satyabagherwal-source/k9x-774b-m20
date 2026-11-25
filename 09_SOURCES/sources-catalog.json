@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "bc2854dc",
+    "sourceVersion": "d58e5f56",
     "license": "Apache-2.0",
-    "contentHash": "020b66cf0decbd45c1114aaba6a2b43cb2b708250d4be6ef67438788150d3f0b",
-    "lastHarvestedAt": "2026-11-25T05:10:43.960Z",
+    "contentHash": "ba57f87de9f752caf4a51f11f1ad914a5fe287791440cdfac6ea791d0c9d4530",
+    "lastHarvestedAt": "2026-11-25T08:13:25.601Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -5013,10 +5013,10 @@
     "repository": "arangodb/arangodb",
     "platform": "github",
     "sourceUrl": "https://github.com/arangodb/arangodb",
-    "sourceVersion": "3f2986a0",
+    "sourceVersion": "7dcb28d3",
     "license": "NOASSERTION",
-    "contentHash": "37d0e49506f289e1d8ffdebe9e7b0424ec813d8f041d98034ff7459e0f32b0cf",
-    "lastHarvestedAt": "2026-11-24T14:15:13.893Z",
+    "contentHash": "bfe49f5538b93d23392942911fbc4332a90ba49f68da92348a0c2c3accc10aaa",
+    "lastHarvestedAt": "2026-11-25T08:13:20.336Z",
     "learningId": "learn-github-arangodb-arangodb"
   },
   "chakra-ui-ark": {
@@ -10595,8 +10595,8 @@
     "sourceUrl": "https://huggingface.co/KRAFTON/Raon-1-mini-preview",
     "sourceVersion": "hf-krafton-raon-1-mini-preview",
     "license": "Open-Source",
-    "contentHash": "fd0f35ec045b18f8e993b854d03e955161602832d4547a4bc70c666bf6d3caf6",
-    "lastHarvestedAt": "2026-11-21T15:59:37.071Z",
+    "contentHash": "5f5ea678a6238dab1be0b96c9e232c2fff9c77e2c768c07cfb6838db74b3f55a",
+    "lastHarvestedAt": "2026-11-25T08:13:02.191Z",
     "learningId": "learn-huggingface-krafton-raon-1-mini-preview"
   },
   "hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-gguf": {

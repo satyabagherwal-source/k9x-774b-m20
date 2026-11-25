@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-25T05:10:48.956Z",
+  "timestamp": "2026-11-25T08:13:31.949Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-nucleoidai-nucleoid-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [nucleoidai-nucleoid-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-25T05:10:48.956Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T08:13:31.949Z`  
 > **Learning ID**: `LEARN-EVO-nucleoidai-nucleoid-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `bc2854dc`  
+> **Source Version**: `d58e5f56`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-25T05:10:42.502Z  
+> **Timestamp**: 2026-11-25T08:13:24.609Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T05:10:42.495Z  
+> **Harvest Timestamp**: 2026-11-25T08:13:16.279Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -82,18 +82,13 @@ pub fn generate(statement: &Stmt) -> String {
     match statement {
         Stmt::Assign { target, value } => assignment_source(target, value),
         Stmt::ValueAssign { target, value } => format!("{target}:={value}"),
+        Stmt::NullishValueAssign { target, value } => format!("{target}??:={value}"),
         Stmt::Expression(expression) => expression.to_string(),
         Stmt::If {
             condition,
             consequent,
             alternate,
-        } => {
-            let alternate = alternate
-                .as_ref()
-                .map(|branch| format!("else{{{}}}", generate(branch)))
-                .unwrap_or_default();
-            format!("if({condition}){{{}}}{alternate}", generate_all(consequent))
-        }
+        } => conditional_source(condition, consequent, alternate.as_deref()),
         Stmt::Block(statements) => format!("{{{}}}", generate_all(statements)),
         Stmt::Return(Some(expression)) => format!("return {expression}"),
         Stmt::Return(None) => "return".to_string(),
@@ -139,6 +134,13 @@ pub fn generate(statement: &Stmt) -> String {
             )
         }
     }
+}
+
+fn conditional_source(condition: &Expr, consequent: &[Stmt], alternate: Option<&Stmt>) -> String {
+    let alternate = alternate
+        .map(|branch| format!("else{{{}}}", generate(branch)))
+        .unwrap_or_default();
+    format!("if({condition}){{{}}}{alternate}", generate_all(consequent))
 }
 
 fn loop_key(word: &str, header: &Expr, body: &[Stmt]) -> String {
@@ -517,7 +519,10 @@ impl Parser {
     }
 
     fn expression_statement(&mut self) -> Result<Stmt> {
-        let expression = self.without_head_read(Self::expression)?;
+        let outer = self.nullish_assignment_depth.replace(self.depth + 1);
+        let expression = self.without_head_read(Self::expression);
+        self.nullish_assignment_depth = outer;
+        let expression = expression?;
 
         if self.starts_is_assignment(&expression) {
             return self.is_assignment(expression);
@@ -531,6 +536,17 @@ impl Parser {
     }
 
     pub(super) fn expression_tail(&mut self, expression: Expr) -> Result<Stmt> {
+        if self.starts_nullish_assignment() {
+            self.check_path_target(&expression, "Invalid value assignment target")?;
+            self.advance();
+            self.advance();
+            let value = self.receiving(&expression, Self::expression)?;
+            return Ok(Stmt::NullishValueAssign {
+                target: expression,
+                value,
+            });
+        }
+
         if self.check(&Token::ColonAssign) {
             return self.value_assignment(expression);
         }
@@ -540,6 +556,10 @@ impl Parser {
         }
 
         Ok(simple_statement(expression))
+    }
+
+    pub(super) fn starts_nullish_assignment(&self) -> bool {
+        self.check(&Token::QuestionQuestion) && self.peek_at(1) == &Token::ColonAssign
     }
 
     fn return_statement(&mut self) -> Result<Stmt> {
@@ -598,30 +618,7 @@ impl Parser {
             outcome.clone()
         } else {
             let outcome = self.attempt_suppose_premise();
-            self.suppose_premises.insert(attempt, outcome.clone());
-            outcome
-        };
-        let SupposePremise {
-            premise,
-            end,
-            misplaced_every,
-        } = outcome?;
-        self.position = end;
-        self.adopt(misplaced_every);
-        Some(simple_statement(premise))
-    }
-
-    fn attempt_suppose_premise(&mut self) -> Option<SupposePremise> {
-        let start = self.position;
-        let (clause, misplaced_every) = self.tentatively(Self::clause_before_colon);
-        let outcome = clause.map(|premise| SupposePremise {
-            premise,
-            end: self.position,
-            misplaced_every,
-        });
-        self.position = start;
-        let end = outcome.as_ref()?.end;
-        if se
+            self.suppose_premises.insert(attempt, o
 ```
 
 ### Core Architecture Module: `src/state.rs`
@@ -1606,144 +1603,314 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bc2854dc` (2026-11-25)
-**Commit Message**: Draft NUC 144 Nullish Value Assignment
+### Incident Patch 1: `2a23cd38` (2026-11-25)
+**Commit Message**: NUC 144 Nullish Value Assignment
 
-Category: Runtime features, selected by one unbiased uniform draw from the
-live eligible registry, with no redraw.
+Accepted
 
-Request statement-only TARGET ??:= EXPR: check the ordinary current value
-without recording dependencies; for Null or Undefined perform the existing
-one-shot value assignment, otherwise preserve the target unchanged and
-skip the right-hand expression. Reuse existing ?? and := tokens, preserve
-all accepted forms and keep the pinned ??= diagnostics unchanged.
+Continuous Runtime features proposal; existing_comparable applicability.
+Every hard criterion and independently evaluated policy check passed.
+Independent policy: Accepted; actual saved core: accepted, without issues.
 
-Continuous mode; runtime applicability existing_comparable through guarded
-snapshot reads and accepted := statements. Pin this pushed allocation
-before recording the baseline or drafting implementation details.
-No runtime, executable document, test, dataset, grammar, export, manifest
-or version changes are included. Learning is not_configured/unattributed.
+Integrate frozen candidate tree 8cff3627ecd45a5991aa6e93bc4239eafda45874
+unchanged, with caller-only status, Abstract, Evaluation and index metadata.
+Fresh independent and isolated integrated build --all-targets,
+warning-denied Clippy, formatting and warning-denied rustdoc passed.
+Both full suites: 4096 passed, zero failed, 25 retained ignored;
+all 4091 old identities/statuses/ignore reasons/multiplicities and
+11 expected-panic labels preserved, 30 additions passing.
+Original accepted and candidate library replay: 1316 programs and
+6539 assertions each, preserving all 1314 historical programs and
+6527 historical assertions plus the two original six-assertion controls.
+Caller integration independently replayed the same original sources.
 
-Co-authored-by: Copilot <[REDACTED_EMAIL]>
+Required lexer-token gate ran once: 2 reduced, 1314 unchanged, zero
+increased; spec 141->96 and reference 99->90. No gate rerun.
+Independent expanded controls: 599 accepted / 652 candidate; 
 
-**File**: `docs/nuc-0000.md` (modified, +2/-0)
+**File**: `README.md` (modified, +5/-0)
 ```diff
-@@ -103,6 +103,7 @@ Created: 31-Jul-2026
+@@ -1485,6 +1485,11 @@ assert: (why paid)[0].rule, "paid = 12"
+ - `quote` is a declaration, a law that follows `price` and `quantity`. `paid`
+   is an action taken at one moment, so it keeps `12`, and `why` shows the
+   stated literal. See the [root contract](nucleoid.spec.md#value-assignment).
++- [NUC 144](docs/nuc-0144.md) adds `TARGET ??:= EXPR` for a one-shot fill:
++  only Null or Undefined takes the same action. Every other value skips the
++  RHS and preserves the target's standing law, identity and history. Guard
++  and action reads stay isolated from enclosing rules; see
++  [Nullish value assignment](nucleoid.spec.md#nullish-value-assignment).
+ 
+ ## List and population sums
+ 
+```
+
+**File**: `dataset/nucleoid.spec.jsonl` (modified, +1/-0)
+```diff
+@@ -878,3 +878,4 @@
+ {"id":"spec-0878","description":"Nucleoid keeps cosecants reactive","code":"angle = Math.PI / 2\nratio = Math.csc(angle)\nassert(ratio, 1)\nangle = -Math.PI / 2\nassert(ratio, -1)\nangle = Math.PI / 6\nassert(ratio, 1 / Math.sin(angle))\nangle = -Math.PI / 6\nassert(ratio, 1 / Math.sin(angle))\nangle = Math.PI\nassert(ratio, 1 / Math.sin(angle))\nangle = Math.PI / 2\nassert(ratio, 1)\nratio","return":"1"}
+ {"id":"spec-0879","description":"Nucleoid keeps sign copying reactive","code":"magnitude = 3\ndirection = -1\ncopied = Math.copySign(magnitude, direction)\nassert(copied, -3)\ndirection = 1\nassert(copied, 3)\nmagnitude = -7\nassert(copied, 7)\ndirection = -0\nassert(copied, -7)\nmagnitude = 0\nassert(1 / copied, Number.NEGATIVE_INFINITY)\ndirection = 0\nassert(1 / copied, Number.POSITIVE_INFINITY)\n1","return":"1"}
+ {"id":"spec-0880","description":"Nucleoid keeps squares reactive","code":"sample = {amplitude: 3}\noffset = 2\nsquared = Math.square(sample.amplitude + offset)\nassert(squared, 25)\nsample.amplitude = -4\nassert(squared, 4)\noffset = 1\nassert(squared, 9)\nsample.amplitude = 0\nassert(squared, 1)\noffset = -1\nassert(squared, 1)\nsample.amplitude = 3\nassert(squared, 4)\n1","return":"1"}
++{"id":"spec-0881","description":"Nucleoid fills nullish values with one-shot assignments","code":"source = 5\nchosen = null\nchosen ??:= source\nassert(chosen, 5)\nsource = 9\nassert(chosen, 5)\nchosen = 0\nchosen ??:= missing\nassert(chosen, 0)\nchosen = false\nchosen ??:= missing\nassert(chosen, false)\nchosen = \"\"\nchosen ??:= missing\nassert(chosen, \"\")\nchosen = null\nchosen ??:= 99\nassert(chosen, 99)\n1","return":"1"}
+```
+
+**File**: `dataset/nucleoid.synth.144.jsonl` (added, +4/-0)
+```diff
+@@ -0,0 +1,4 @@
++{"id":"synth-144-0001","description":"Nucleoid fills a missing configuration value once without replacing supplied laws","code":"source = 4\nconfig = {}\nconfig.limit ??:= source\nassert(config.limit, 4)\nsource = 9\nassert(config.limit, 4)\nconfig.limit = source * 2\nconfig.limit ??:= missing\nsource = 6\nassert(config.limit, 12)\nconfig.limit","return":"12"}
++{"id":"synth-144-0002","description":"Nucleoid distinguishes false zero empty text and NaN from nullish targets","code":"flag = false\nflag ??:= missing\nzero = -0\nzero ??:= missing\ntext = \"\"\ntext ??:= missing\nnumber = Number.NaN\nnumber ??:= missing\nassert(flag, false)\nassert(1 / zero, Number.NEGATIVE_INFINITY)\nassert(text, \"\")\nassert(Number.isNaN(number), true)\n[flag, text]","return":"[false,\"\"]"}
++{"id":"synth-144-0003","description":"Nucleoid isolates a conditional fill from the standing rule that executes it","code":"paid = false\nfallback = 3\nchosen = null\nif paid: chosen ??:= fallback\npaid = true\nassert(chosen, 3)\nfallback = 8\nchosen = null\nassert(chosen, null)\npaid = false\npaid = true\nassert(chosen, 8)\nfallback = 12\nassert(chosen, 8)\nchosen","return":"8"}
++{"id":"synth-144-0004","description":"Nucleoid retains constructor target naming and lazy one-shot effects","code":"count = 0\nclass Item(n):\n    this.n = n\n    count := count + 1\nselected = null\nselected ??:= Item(n=5)\nassert(selected.id, \"selected\")\nassert(selected.n, 5)\nassert(count, 1)\nselected ??:= Item(n=9)\nassert(count, 1)\nassert(Item.length, 1)\nselected.n","return":"5"}
+```
+
+**File**: `docs/README.md` (modified, +27/-1)
+```diff
+@@ -407,6 +407,30 @@ qty = 5
+   `tests/reference.md`; the root contract is
+   [Value assignment](../nucleoid.spec.md#value-assignment).
+ 
++### Nullish value assignment
++
++- [NUC 144](nuc-0144.md) adds the statement `target ??:= expression`:
++  perform the existing one-shot `:=` action only when the target's ordinary
++  current value is Null or Undefined. False, either zero sign, empty text,
++  NaN and every other supplied value skip without evaluating the RHS.
++- A skip changes no declaration, identity, history or dependencies. Existing
++  target relationships stay live. A take keeps `:=`'s effects, storage,
++  scope, constructor naming, target timing, instance-rule and transaction
++  semantics, including RHS null-read settlement.
++- The guard, target and taken expression, including called code and structural
++  reads, are isolated from all enclosing tracking frames. Guard null reads
++  cannot defer a constant fill. No standing conditional guard is installed.
++- Use the same grouped paths and bounds as `:=`. Unbound root names remain
++  errors; missing ordinary object properties may be filled. Existing class,
++  read-only-version, invalid-owner and forbidden-property errors still apply.
++- `??:=` is two existing tokens, `??` then `:=`, with ordinary inter-token
++  spacing or comments permitted. It is statement-only, not an assignment
++  expression or a new meaning for `??=`. Public expression parsing and
++  ignored interpolation suffixes retain their old behavior.
++- The executable reference case is
++  `Nucleoid keeps nullish assignment guards isolated`; see the
++  [root contract](../nucleoid.spec.md#nullish-value-assignment).
++
+ ### Is assignments
+ 
+ - `target is value` is a spelling of `target = value` for variables and
+@@ -1529,7 +1553,7 @@ order.label
+ 
+ - This is the complete `Nucleoid reads properties of the assigned object with a leading dot` program in `tests/reference.md`, without its title and expected-return metadata; it returns `"6 for 30"`.
+ - [NUC 102](nuc-0102.md) reads a `.` that begins an operand, directly followed by a name, in the value of an assignment to a property path as that property of the path's object, the receiver. `$Order.total = .price * .qty` is `$Order.total = $Order.price * $Order.qty`, `order.customer.label = .first` reads `order.customer.first`, and `this.area = .w * .h` reads `this.w` and `this.h`.
+-- The forms are `=`, `:=` and every compound assignment. The target is a plain path whose last link is a property, rooted in a name, `$Class`, `every Class`, `all Class` or `any Class`, `this` or `self`; a variable, a destructuring pattern or a computed target such as `xs[0].p` has no receiver.
++- The forms are `=`, `:=`, `??:=` and every compound assignment. The target is a plain path whose last link is a property, rooted in a name, `$Class`, `every Class`, `all Class` or `any Class`, `this` or `self`; a variable, a destructuring pattern or a computed target such as `xs[0].p` has no receiver.
+ - The read continues as member access does, so `.a.b`, `.a[0]`, `.a()` and `.a@first` work, in every operand of the value: operators, `?:` and Python-style conditionals with their conditions, lists, objects, subscripts, lambda and function bodies and template interpolations. The innermost assignment decides, so in `o.p = (q.r = .a)` the dot reads `q.a`.
+ - The parser builds the written-out member path, so evaluation, dependencies, `why`, `affects`, graph keys, rendering and rollback are those of that path, and `why` reports `$Order.total = $Order.price*$Order.qty`.
+ - These keep their accepted readings and errors: a call argument that starts with `.`, which is a selector or its error; `is` assignments; a statement or target that starts with `.`; a dot after a name, such as `x .a`; the values of variables and destructuring declarations; and every position without a property target.
+@@ -5863,6 +5887,8 @@ requirements; the Rust parser remains the implementation of those requirements.
+ name = expression                      variable assignment
+ name := expression                     value assignment: once, no dependency (NUC 66)
+ name.property := expression            value assignment to a property (NUC 66)
++name ??:= expression                   one-shot value assignment only for Null/Undefined (NUC 144)
++name.property ??:= expression          nullish value assignment to a property (NUC 144)
+ name is expression                     is assignment: name = expression (NUC 93)
+ name.property is word                  a bare word reads its name, else its text "word" (NUC 93)
+ name is A if c else B                  bare-word branches are words too (NUC 94)
+```
+
+**File**: `docs/examples.md` (modified, +5/-0)
+```diff
+@@ -2794,6 +2794,11 @@ Deposit.map(deposit -> deposit.rate)
+   updates both, while `opening := total` keeps the total from the moment it
+   was taken. See [NUC 66](nuc-0066.md) and the
+   [root contract](../nucleoid.spec.md#value-assignment).
++- For a value that should be supplied only if still Null or Undefined,
++  [NUC 144](nuc-0144.md) adds the statement `TARGET ??:= EXPR`. Its taken
++  branch is the same one-shot action; a supplied value skips the RHS and
++  leaves its declaration and history untouched. The entire check and action
++  are isolated from enclosing rule dependencies.
+ 
+ ## List and population sums
+ 
+```
+
+**File**: `docs/nuc-0000.md` (modified, +2/-2)
+```diff
+@@ -103,7 +103,7 @@ Created: 31-Jul-2026
  | [130](nuc-0130.md) | Loop-Local Iterator Exits | Rejected: existing corpus-count test fails (1,246 expected; 1,252 actual) |
  | [136](nuc-0136.md) | Unknown Constructor Arguments as Properties | Accepted |
  | [140](nuc-0140.md) | Match Statements | Draft |
-+| [144](nuc-0144.md) | Nullish Value Assignment | Draft |
+-| [144](nuc-0144.md) | Nullish Value Assignment | Draft |
++| [144](nuc-0144.md) | Nullish Value Assignment | Accepted |
  
  ### Utility enhancement
  
-@@ -341,6 +342,7 @@ Created: 31-Jul-2026
+@@ -342,7 +342,7 @@ Created: 31-Jul-2026
  | [141](nuc-0141.md) | Reactive Cosecant | Standards Track | Utility enhancement | Accepted |
  | [142](nuc-0142.md) | Reactive Sign Copying | Standards Track | Utility enhancement | Automatic-Accepted: independent strict rollback graph-dependent ordering check failed, also reproduced on the accepted arithmetic runtime |
  | [143](nuc-0143.md) | Reactive Squaring | Standards Track | Utility enhancement | Accepted |
-+| [144](nuc-0144.md) | Nullish Value Assignment | Standards Track | Runtime features | Draft |
+-| [144](nuc-0144.md) | Nullish Value Assignment | Standards Track | Runtime features | Draft |
++| [144](nuc-0144.md) | Nullish Value Assignment | Standards Track | Runtime features | Accepted |
  
  ## Copyright
  
 ```
 
-**File**: `docs/nuc-0144.md` (added, +95/-0)
+**File**: `docs/nuc-0144.md` (modified, +196/-31)
 ```diff
-@@ -0,0 +1,95 @@
-+# NUC 144 -- Nullish Value Assignment
+@@ -4,7 +4,7 @@
+ NUC: 144
+ Title: Nullish Value Assignment
+ Author: Copilot <223556219+Copilot@users.noreply.github.com>
+-Status: Draft
++Status: Accepted
+ Type: Standards Track
+ Category: Runtime features
+ Created: 25-Nov-2026
+@@ -22,7 +22,9 @@ Requires: 60, 66
+ - Reuse the existing `??` and `:=` tokens without relaxing the accepted
+   `??=` rejection or any other existing syntax, diagnostic or behavior.
+ - The caller's one uniform live-registry draw selected Runtime features.
+-  This allocated Draft is not an implemented or evaluated outcome.
++  **Accepted:** the fresh independent evaluation and unchanged integrated
++  candidate passed every hard criterion and policy check. The single
++  caller-owned Rust-improvement pass is complete.
+ 
+ ## Motivation
+ 
+@@ -43,49 +45,212 @@ Requires: 60, 66
+ 
+ - This is a core short-circuit assignment execution mode, not a
+   cross-language alias. Keep the confirmed Runtime features category.
+-- Complete the detailed rationale in the isolated candidate after pinning
+-  this allocation and the immutable accepted-corpus baseline.
++- A coalescing declaration, `target = target ?? fallback`, is a live law.
++  An unconditional `target := target ?? fallback` still writes on a supplied
++  value, replacing its standing declaration and dependencies. Neither models
++  a no-op skip. A normal standing `if` can also subscribe to its guard.
++- The new statement makes the check an isolated action and delegates a taken
++  write to `:=`. It neither creates a standing guard nor changes what a taken
++  value assignment stores.
++- Existing accepted guarded `if` statements using `target.value == null`
++  and `:=` are comparable for the two selected concrete programs. Their
++  immutable accepted sources were executed and minimized before drafting;
++  that does not make equality a general implementation of nullishness.
+ 
+ ## Specification
+ 
+-- Keep the accepted `:=` target restrictions, storage/null-read behavior,
+-  scope, class-level boundaries, target-resolution timing and transactions.
+-  Check nullishness without leaking reads or guard deferral into the write.
+-- Preserve ordinary lookup errors; this is not an implicit declaration of
+-  an unbound name. Use the existing value-assignment operation only when
+-  the target's ordinary current value is Null or Undefined.
+-- Complete the bounded statement grammar and executable specification in
+-  the candidate. Do not broaden assignment expressions or compound targets.
++- The only new form is the statement `TARGET ??:= EXPR`. The lexer emits its
++  existing `??` and `:=` tokens, with ordinary inter-token whitespace or
++  comments permitted. No token, reserved word or assignment expression is
++  added. A logical newline still separates statements.
++- At an expression-statement head only, the parser stops before the exact
++  `??`/`:=` pair at that head's expression level. It validates the same path
++  as `:=` and parses the ordinary assignment value. Parentheses may group a
++  target; they do not enable assignments inside expressions. Public
++  `parse_expression`, templates, arguments, defaults, headers and nested
++  expression parsing retain their old readings.
++- Resolve and read the target using ordinary lookup in the current scope.
++  An unbound root name remains an error, not an implicit declaration.
++  An ordinary missing object property may yield Undefined. Only the actual
++  Null and Undefined value kinds take the write. False, both zero signs,
++  empty text, NaN and all containers, references and callable values skip.
++- On a skip, do not evaluate `EXPR`, file any declaration, change identity,
++  append history or replace dependencies. In particular, a standing target
++  relationship continues reacting to its existing inputs.
++- On a take, evaluate `EXPR` exactly once through the existing `:=` action.
++  Preserve its scope, effects, called-code and extra-argument behavior,
++  target-resolution timing, named-constructor binding, instance context,
++  null/undefined settlement, propagation and transactions. At the top level
++  the target becomes a stated literal/fact; imperative bodies keep the same
++  carry-out-without-filing behavior as `:=`.
++- Isolate target resolution and guard reads as well as a taken RHS, including
++  functions, methods, callbacks and structural subscriptions, from both the
++  target and every enclosing tracking frame. An enclosing standing `if paid`
++  depends on `paid`, not on this action's guard or fallback.
++- Restore the enclosing null/undefined-read flags after the guard, even on
++  errors. A null guard must not defer a constant fill. Do not disable null-read
++  settlement inside the RHS: reading `nullable + 1` there stores what `:=`
++  would store.
++- Keep the existing path, parser and runtime depth limits, class-level
++  boundaries, property-name restrictions and transaction implementation.
++  This revision does not repair inherited multi-dependent rollback ordering
++  or add a runtime-value nesting policy.
++- 
+```
+
+**File**: `docs/nucleoid.ebnf` (modified, +21/-4)
+```diff
+@@ -23,6 +23,10 @@
+  * - Ordinary tokenization reads the longest token at each position. Only the
+  *   rules of this contract supply INDENT, DEDENT, VERSION_INDEX, REGEX and
+  *   EOF.
++ * - '??:=' is the existing COALESCE then VALUE_ASSIGN tokens, not a new
++ *   token. Ordinary inter-token whitespace/comments are permitted; logical
++ *   layout still applies. '??=' remains COALESCE then ASSIGN and keeps its
++ *   accepted error, never a nullish assignment.
+  * - Where ordinary tokenization would read '/' or '/=', first read a
+  *   C_COMMENT, then, in operand position, a REGEX. Strings, templates and
+  *   '#' comments are read whole before that, so neither starts inside
+@@ -68,7 +72,8 @@ program
+     ::= separator* (statement separator*)* EOF
+ 
+ /* parse_expression skips leading separators and ignores trailing tokens.
+-   Its top level forms no membership test, as an interpolation's does not. */
++   Its top level forms no membership test, as an interpolation's does not.
++   Neither enables the nullishValueAssignment statement-head boundary. */
+ expressionInput
+     ::= separator* expression remainingTokens EOF
+ 
+@@ -139,6 +144,7 @@ statement
+       | typeDeclaration
+       | assertStmt
+       | supposeStmt
++      | nullishValueAssignment
+       | valueAssignment
+       | isAssignment
+       | predicateSentence
+@@ -185,6 +191,16 @@ premise
+ valueAssignment
+     ::= path VALUE_ASSIGN expression      /* Stmt::ValueAssign */
+ 
++/* Only at the expression-statement head's own expression nesting level,
++   stop ordinary coalescing before the exact COALESCE VALUE_ASSIGN pair.
++   Validate the same bounded path as valueAssignment, with grouping erased.
++   The RHS is the ordinary value expression with its lexical receiver.
++   Nested expressions, return/header/default/argument positions, public
++   expressionInput and interpolation parsing keep their accepted behavior.
++   Parentheses may group a target, never make an assignment expression. */
++nullishValueAssignment
++    ::= path COALESCE VALUE_ASSIGN expression  /* Stmt::NullishValueAssign */
 +
-+```
-+NUC: 144
-+Title: Nullish Value Assignment
-+Author: Copilot <223556219+Copilot@users.noreply.github.com>
-+Status: Draft
-+Type: Standards Track
-+Category: Runtime features
-+Created: 25-Nov-2026
-+Requires: 60, 66
-+```
-+
-+## Abstract
-+
-+- Add only the statement `TARGET ??:= EXPR`: when the current target value
-+  is Null or Undefined, perform one ordinary imperative value assignment;
-+  otherwise do nothing and never evaluate the right-hand expression.
-+- Keep the whole operation one-shot and isolated from dependency tracking,
-+  including its guard, target reads and called code. A skipped operation
-+  must not change the target's declaration, history or dependencies.
-+- Reuse the existing `??` and `:=` tokens without relaxing the accepted
-+  `??=` rejection or any other existing syntax, diagnostic or behavior.
-+- The caller's one uniform live-registry draw selected Runtime features.
-+  This allocated Draft is not an implemented or evaluated outcome.
-+
-+## Motivation
-+
-+- A fallback action currently needs an explicit conditional, snapshot reads
-+  for its guard and a separate `:=`. Omitting those snapshot boundaries
-+  can accidentally turn the guard into a standing dependency.
-+- A distinct conditional value-assignment operation should preserve
-+  Nucleoid's law/action distinction: write a missing value once, rather
-+  than installing a coalescing law or replacing an already supplied value.
-+- Preserve false, zero, empty Strings and every other non-nullish value.
-+  A skipped right-hand side must not run effects, raise errors or record
-+  dependencies; a taken one keeps the ordinary `:=` semantics.
-+- The accepted runtime rejects `slot ??:= 7`. Existing proposals expressly
-+  leave out `??=` and protect its diagnostics, so this proposal does not
-+  repurpose that spelling.
-+
-+## Rationale
-+
-+- This is a core short-circuit assignment execution mode, not a
-+  cross-language alias. Keep the confirmed Runtime features category.
-+- Complete the detailed rationale in the isolated candidate after pinning
-+  this allocation and the immutable accepted-corpus baseline.
-+
-+## Specification
-+
-+- Keep the accepted `:=` target restrictions, storage/null-read behavior,
-+  scope, class-level boundaries, target-resolution timing and transactions.
-+  Check nullishness without leaking reads or guard deferral into the write.
-+- Preserve ordinary lookup errors; this is not an implicit declaration of
-+  an unbound name. Use the existing value-assignment operation only when
-+  the target's ordinary current value is Null or Undefined.
-+- Complete the bounded statement grammar and executable specification in
-+  the candidate. Do not broaden assignment expressions or compound targets.
-+
-+## Errors
-+
-+- Preserve all accepted syntax, pinned diagnostics and existing tests.
-+  In particular, keep the old `??=` spellings and scalar-default errors.
-+- Complete the new form's diagnostics without weakening accepted cases.
-+
-+## Reference Implementation
-+
-+- A fresh proposal agent will prototype the operation in its isolated
-+  candidate after the caller records the accepted baseline.
-+- Reuse the existing value-assignment tracking barrier and binding/storage
-+  machinery where possible. Update the W3C EBNF and synchronized documents
-+  and exports with the new accepted syntax.
-+- Report any necessary public Rust AST SemVer review; project versions
-+  remain human-owned and unchanged.
-+
-+## Evaluation
-+
-+- Mode: `continuous`; Category: `Runtime features`.
-+- Runtime applicability: `existing_comparable`. Accepted guarded `if`
-+  statements with snapshot `.value` reads and `:=` supply behavior-
-+  equivalent counterparts for the selected cases.
-+- The continuous token comparison is required and has not run.
-+  Immutable accepted sources, original extra counterparts, full behavior/
-+  integrity and compatibility checks, all development suites and a fresh
-+  independent evaluator remain mandatory.
-+- No hint, scoring rubric or strategy-learning configuration was supplied.
-+  Advisory usefulness is unscored and learning is `not_configured`,
-+  unattributed. Do not invoke either selector or learner.
-+
-+## Copyright
-+
-+Copyright 2020 Nucleoid
-+
-+This document is licensed under the Apache License, Version 2.0. See
-+[LICENSE](../LICENSE) for the full text.
+ /*
+  * Is-assignment contract (NUC 93, NUC 94, NUC 95, NUC 96):
+  * - No NEWLINE separates the path from 'is', and the token after 'is' must
+@@ -529,7 +545,7 @@ assignmentOperator
+       | AND_ASSIGN
+       | OR_ASSIGN
+ 
+-/* Compound assignments, ':=' and isAssignment require a path, not an
++/* Compound assignments, ':=', '??:=' and isAssignment require a path, not an
+    arbitrary expression. The parser checks the tree, where grouping leaves
+    no trace, so parentheses may enclose the path or any part of it that
+    starts at its root. A class root needs at least one link, and a path has
+@@ -801,8 +817,9 @@ atVariable
+ /*
+  * Receiver-read contract (NUC 102):
+  * - It applies only in the final parse of the parse-pass contract, in the
+- *   value of an assignment with a receiver. ASSIGN, VALUE_ASSIGN and the
+- *   compound operators give their value the receiver of their target: a
++ *   value of an assignment with a receiver. ASSIGN, VALUE_ASSIGN, the
++ *   COALESCE VALUE_ASSIGN statement pair and the compound operators give
++ *   their value the receiver of their target: a
+  *   path whose last link is a member, rooted in a name, CLASS_REF,
+  *   spelledClass or THIS, without that last member. A variable, a
+  *   destructuring pattern, a computed target and a path ending in a
 ```
 
 #### Recent Merged Pull Requests:
@@ -1772,22 +1939,25 @@ Co-authored-by: Copilot <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Draft NUC 144 Nullish Value Assignment
+## X. NUC 144 Nullish Value Assignment
 
 **RULE**:
-When implementing operations in `docs/nuc-0000.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `bc2854dc`: Draft NUC 144 Nullish Value Assignment. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2a23cd38`: NUC 144 Nullish Value Assignment. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/nuc-0000.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-| [144](nuc-0144.md) | Nullish Value Assignment | Draft |
-| [144](nuc-0144.md) | Nullish Value Assignment | Standards Track | Runtime features | Draft |
+- [NUC 144](docs/nuc-0144.md) adds `TARGET ??:= EXPR` for a one-shot fill:
+  only Null or Undefined takes the same action. Every other value skips the
+  RHS and preserves the target's standing law, identity and history. Guard
+  and action reads stay isolated from enclosing rules; see
+  [Nullish value assignment](nucleoid.spec.md#nullish-value-assignment).
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1797,7 +1967,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bc2854dc` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2a23cd38` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

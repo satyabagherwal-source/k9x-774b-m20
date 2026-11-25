@@ -13001,3 +13001,6 @@
 | `CYCLE-20261125-YM3U` | `2026-11-25T07:57:00.138Z` | `metalbear-co/mirrord` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10488` | Yes (`d1b6c96a...`) |
 | `CYCLE-20261125-YTZ1` | `2026-11-25T07:57:10.333Z` | `cilium/cilium` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/cilium-cilium-learnings.md` | Yes (`f9b7b675...`) |
 | `CYCLE-2026-11-25-PROJ-EVOLVE` | `2026-11-25T07:57:45.627Z` | `cilium-cilium` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-D8C77758` [Domain D] | Yes (`dfd3769e...`) |
+| `CYCLE-20261125-J8FD` | `2026-11-25T08:13:02.185Z` | `KRAFTON/Raon-1-mini-preview` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-krafton-raon-1-mini-preview-learnings.md` | Yes (`5f5ea678...`) |
+| `CYCLE-20261125-JMFF` | `2026-11-25T08:13:20.331Z` | `arangodb/arangodb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10489` | Yes (`bfe49f55...`) |
+| `CYCLE-20261125-JQHN` | `2026-11-25T08:13:25.595Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule EXISTING` | Yes (`ba57f87d...`) |

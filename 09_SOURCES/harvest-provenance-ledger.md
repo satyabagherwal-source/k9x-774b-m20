@@ -13034,3 +13034,6 @@ Every entry in this ledger must capture:
 | `learn-github-metalbear-co-mirrord` | `https://github.com/metalbear-co/mirrord` | `1a999f8a` | Multi-dimensional audit evidence | 2026-11-25T07:57:00.143Z |
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `79325ed9` | Multi-dimensional audit evidence | 2026-11-25T07:57:10.338Z |
 | `learn-dom-d-d8c77758` | `project://cilium-cilium` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cilium-cilium-learnings.md` | 2026-11-25T07:57:45.627Z |
+| `learn-huggingface-krafton-raon-1-mini-preview` | `https://huggingface.co/KRAFTON/Raon-1-mini-preview` | `hf-krafton` | Multi-dimensional audit evidence | 2026-11-25T08:13:02.191Z |
+| `learn-github-arangodb-arangodb` | `https://github.com/arangodb/arangodb` | `7dcb28d3` | Multi-dimensional audit evidence | 2026-11-25T08:13:20.336Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `d58e5f56` | Multi-dimensional audit evidence | 2026-11-25T08:13:25.601Z |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T07:57:46.429Z",
+  "last_updated": "2026-11-25T08:13:32.350Z",
   "total_records": 2647,
   "domains": {
     "A": {
@@ -15726,8 +15726,8 @@
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "repository": "NucleoidAI/Nucleoid",
-      "content_hash": "37881fd8bacc5e09b5e2c9f61092d47fee5e476edde1d27e26f1abb8e0b362be",
-      "created_at": "2026-11-25T05:10:44.549Z"
+      "content_hash": "780bfe5f3a3e514a96940d70026a25b68e2c30f4e81aeaaece3bb5c2a8c13772",
+      "created_at": "2026-11-25T08:13:26.187Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -16176,8 +16176,8 @@
       "title": "Architecture Intelligence: nucleoidai-nucleoid-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-learnings-architecture-intelligence-nucleoidai-nucleoid-lear.md",
       "repository": "nucleoidai-nucleoid-learnings",
-      "content_hash": "9868b91b85a5fc466beb26c7b7f7b0c3d465af70df7bce550041b01e6c49551a",
-      "created_at": "2026-11-25T05:10:49.356Z"
+      "content_hash": "ea9f6a04026cbe5184f0a9494732def791b695bbdd0c4cfd9f8f97c07dbec0c0",
+      "created_at": "2026-11-25T08:13:32.350Z"
     },
     "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8b-core-invariants",
@@ -16800,8 +16800,8 @@
       "title": "Technical Construction Intelligence: arangodb/arangodb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-arangodb-arangodb-technical-construction-intelligence-arangodb-arangodb-core-inv.md",
       "repository": "arangodb/arangodb",
-      "content_hash": "835a059110e79185b426f103a708b75e9238022462587122f5ad475197309eb3",
-      "created_at": "2026-11-24T14:15:14.308Z"
+      "content_hash": "d22f0f6e73a1cf9823e3cc2d39ec4d3de29c0160db20a7dbe05f2fd6e9034303",
+      "created_at": "2026-11-25T08:13:20.904Z"
     },
     "domain_intelligence-architecture-intelligence-jithin-sabu-purge-app-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-jithin-sabu-purge-app-learnings-core-invariants",
@@ -16869,8 +16869,8 @@
       "title": "Technical Construction Intelligence: arangodb-arangodb-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-arangodb-arangodb-learnings-technical-construction-intelligence-arangodb-arangod.md",
       "repository": "arangodb-arangodb-learnings",
-      "content_hash": "da8f1e025d5c8f0cebc4c3ccc31bb8f0aad600bf92623372ef704b50da0803d5",
-      "created_at": "2026-11-24T14:15:47.713Z"
+      "content_hash": "73d5000dd71875b031646b80ac06e3cf18b560bd622053ec38c5e384d59abe47",
+      "created_at": "2026-11-25T08:13:30.884Z"
     },
     "domain_intelligence-research-knowledge-intelligence-zai-org-glm-5-3-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-zai-org-glm-5-3-core-invariants",
@@ -28894,8 +28894,8 @@
       "title": "Research & Knowledge Intelligence: KRAFTON/Raon-1-mini-preview Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-krafton-raon-1-mini-preview-research-knowledge-intelligence-krafton-raon-1-mi.md",
       "repository": "KRAFTON/Raon-1-mini-preview",
-      "content_hash": "e82990a4b80772c7dd5997aae55bd1e6e86d40bd2ba2e401f7eff647166c0c3e",
-      "created_at": "2026-11-21T15:59:37.329Z"
+      "content_hash": "986b6adbb6efba1487a1d8605290f62cabfe109e20cb02ed78e9fff30c777669",
+      "created_at": "2026-11-25T08:13:02.517Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-krafton-raon-1-mini-preview-learnings-core-in": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-krafton-raon-1-mini-preview-learnings-core-in",
@@ -28903,8 +28903,8 @@
       "title": "Research & Knowledge Intelligence: hf-krafton-raon-1-mini-preview-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-krafton-raon-1-mini-preview-learnings-research-knowledge-intelligence-hf-kraf.md",
       "repository": "hf-krafton-raon-1-mini-preview-learnings",
-      "content_hash": "7db91756f93e9e9db86949ded9cfead1e05f7f56d148a261531c7a821f1bb574",
-      "created_at": "2026-11-21T15:59:54.010Z"
+      "content_hash": "f3cf281032d87f7eeca1bf0ee61d3259f5178decdbcf43130ef60b26a580fefe",
+      "created_at": "2026-11-25T08:13:29.729Z"
     },
     "domain_intelligence-research-knowledge-intelligence-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-cod": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-cod",

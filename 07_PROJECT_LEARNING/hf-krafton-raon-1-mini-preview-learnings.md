@@ -3,7 +3,7 @@
 > **Source Version**: `hf-krafton-r`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T15:59:36.385Z  
+> **Timestamp**: 2026-11-25T08:13:01.507Z  
 > **Learning ID**: `learn-huggingface-krafton-raon-1-mini-preview`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-krafton-raon-1-mini-preview-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/KRAFTON/Raon-1-mini-preview](https://huggingface.co/KRAFTON/Raon-1-mini-preview))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T15:59:36.237Z  
+> **Harvest Timestamp**: 2026-11-25T08:12:58.988Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 4567 downloads | 251 likes
+- **Stars / Engagement**: 3954 downloads | 253 likes
 
 ---
 

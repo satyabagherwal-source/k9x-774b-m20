@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T07:57:10.343Z",
-  "total_cycles_completed": 12346,
-  "total_learnings_persisted": 12346,
-  "total_rules_promoted": 11365,
+  "last_updated": "2026-11-25T08:13:25.608Z",
+  "total_cycles_completed": 12349,
+  "total_learnings_persisted": 12349,
+  "total_rules_promoted": 11367,
   "history": [
-    {
-      "timestamp": "2026-11-24T19:00:40.549Z",
-      "repository": "vcaesar/riot",
-      "learningId": "learn-github-vcaesar-riot",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T19:09:50.073Z",
-      "repository": "axios/axios",
-      "learningId": "learn-github-axios-axios",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T19:09:54.816Z",
-      "repository": "beclab/Olares",
-      "learningId": "learn-github-beclab-olares",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-24T19:09:57.443Z",
       "repository": "trufflesecurity/trufflehog",
@@ -1403,6 +1382,27 @@
       "repository": "cilium/cilium",
       "learningId": "learn-github-cilium-cilium",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T08:13:02.198Z",
+      "repository": "KRAFTON/Raon-1-mini-preview",
+      "learningId": "learn-huggingface-krafton-raon-1-mini-preview",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T08:13:20.343Z",
+      "repository": "arangodb/arangodb",
+      "learningId": "learn-github-arangodb-arangodb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T08:13:25.608Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-25T07:57:46.429Z",
+  "last_updated": "2026-11-25T08:13:32.608Z",
   "total_verified_learnings": 9114,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25326,
+  "total_items": 25329,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -230630,8 +230630,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "bc2854dc",
-      "content_hash": "020b66cf0decbd45c1114aaba6a2b43cb2b708250d4be6ef67438788150d3f0b",
+      "source_version": "d58e5f56",
+      "content_hash": "ba57f87de9f752caf4a51f11f1ad914a5fe287791440cdfac6ea791d0c9d4530",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -230872,7 +230872,7 @@
         },
         {
           "number": "EXISTING",
-          "title": "NUC 141 Reactive Cosecant",
+          "title": "NUC 144 Nullish Value Assignment",
           "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
@@ -230921,7 +230921,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T05:10:43.665Z",
+      "verified_at": "2026-11-25T08:13:25.315Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -230963,10 +230963,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "bc2854dc",
-      "content_hash": "37881fd8bacc5e09b5e2c9f61092d47fee5e476edde1d27e26f1abb8e0b362be",
+      "source_version": "d58e5f56",
+      "content_hash": "780bfe5f3a3e514a96940d70026a25b68e2c30f4e81aeaaece3bb5c2a8c13772",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T05:10:44.549Z"
+      "persisted_at": "2026-11-25T08:13:26.187Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid",
@@ -230975,10 +230975,10 @@
       "relative_path": "08_VERIFICATION/nucleoidai-nucleoid-verification-protocol-empirical-defect-shield-for-nucleoidai.md",
       "title": "Verification Protocol: Empirical Defect Shield for NucleoidAI/Nucleoid",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "bc2854dc",
-      "content_hash": "c57798d941c45f2596cf320a3f176529dab3ef140d3490f69baf94ae5f79312f",
+      "source_version": "d58e5f56",
+      "content_hash": "a98a309d432380af1e5746ea50100de75207859d3d10b4b9df9f3d5f00eb9b17",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T05:10:44.786Z"
+      "persisted_at": "2026-11-25T08:13:26.423Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -232106,9 +232106,9 @@
       "title": "Architecture Intelligence: nucleoidai-nucleoid-learnings Core Invariants",
       "repository": "nucleoidai-nucleoid-learnings",
       "source_version": "HEAD",
-      "content_hash": "9868b91b85a5fc466beb26c7b7f7b0c3d465af70df7bce550041b01e6c49551a",
+      "content_hash": "ea9f6a04026cbe5184f0a9494732def791b695bbdd0c4cfd9f8f97c07dbec0c0",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T05:10:49.356Z"
+      "persisted_at": "2026-11-25T08:13:32.350Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid-learnings",
@@ -232118,9 +232118,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for nucleoidai-nucleoid-learnings",
       "repository": "nucleoidai-nucleoid-learnings",
       "source_version": "HEAD",
-      "content_hash": "7ddced5fe7708d221cc6ea7376ee16d4903577e451038848f4f6c4186a7c10ab",
+      "content_hash": "1e1a3088336be3cc5e82116b9a88aef26241cb795ac3f6bdec0d0e31ff147985",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T05:10:49.602Z"
+      "persisted_at": "2026-11-25T08:13:32.608Z"
     },
     "learn-huggingface-qwen-qwen3-8b": {
       "learning_id": "learn-huggingface-qwen-qwen3-8b",
@@ -233833,8 +233833,8 @@
       "slug": "arangodb-arangodb",
       "platform": "github",
       "source_url": "https://github.com/arangodb/arangodb",
-      "source_version": "3f2986a0",
-      "content_hash": "37d0e49506f289e1d8ffdebe9e7b0424ec813d8f041d98034ff7459e0f32b0cf",
+      "source_version": "7dcb28d3",
+      "content_hash": "bfe49f5538b93d23392942911fbc4332a90ba49f68da92348a0c2c3accc10aaa",
       "dossier_path": "07_PROJECT_LEARNING/arangodb-arangodb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/arangodb-arangodb-learnings.md",
       "promoted_rules": [
@@ -233887,6 +233887,11 @@
           "number": 10276,
           "title": "fix leaks in zip file handling",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10489,
+          "title": "Empirical Invariant Guard in ExecutionNode.cpp",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -233894,7 +233899,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T14:15:13.683Z",
+      "verified_at": "2026-11-25T08:13:20.049Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -233936,10 +233941,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-arangodb-arangodb-technical-construction-intelligence-arangodb-arangodb-core-inv.md",
       "title": "Technical Construction Intelligence: arangodb/arangodb Core Invariants",
       "repository": "arangodb/arangodb",
-      "source_version": "3f2986a0",
-      "content_hash": "835a059110e79185b426f103a708b75e9238022462587122f5ad475197309eb3",
+      "source_version": "7dcb28d3",
+      "content_hash": "d22f0f6e73a1cf9823e3cc2d39ec4d3de29c0160db20a7dbe05f2fd6e9034303",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T14:15:14.308Z"
+      "persisted_at": "2026-11-25T08:13:20.904Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-arangodb-arangodb": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-arangodb-arangodb",
@@ -233948,10 +233953,10 @@
       "relative_path": "08_VERIFICATION/arangodb-arangodb-verification-protocol-empirical-defect-shield-for-arangodb-ara.md",
       "title": "Verification Protocol: Empirical Defect Shield for arangodb/arangodb",
       "repository": "arangodb/arangodb",
-      "source_version": "3f2986a0",
-      "content_hash": "c68a7dbda43029e2c3db5fc637f3779c4bf5cfbb8d159b2ac7c0f91bf6db89aa",
+      "source_version": "7dcb28d3",
+      "content_hash": "6c86b17a487f6cb6f603f3a28b3ad0f63a8c48f32a04e7cb768f9722ea900b1b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T14:15:14.477Z"
+      "persisted_at": "2026-11-25T08:13:21.177Z"
     },
     "domain_intelligence-architecture-intelligence-jithin-sabu-purge-app-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-jithin-sabu-purge-app-learnings-core-invariants",
@@ -233997,9 +234002,9 @@
       "title": "Technical Construction Intelligence: arangodb-arangodb-learnings Core Invariants",
       "repository": "arangodb-arangodb-learnings",
       "source_version": "HEAD",
-      "content_hash": "da8f1e025d5c8f0cebc4c3ccc31bb8f0aad600bf92623372ef704b50da0803d5",
+      "content_hash": "73d5000dd71875b031646b80ac06e3cf18b560bd622053ec38c5e384d59abe47",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T14:15:47.713Z"
+      "persisted_at": "2026-11-25T08:13:30.884Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-arangodb-arangodb-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-arangodb-arangodb-learnings",
@@ -234009,9 +234014,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for arangodb-arangodb-learnings",
       "repository": "arangodb-arangodb-learnings",
       "source_version": "HEAD",
-      "content_hash": "d9bfca5ee009d730cbc22d2fdfa826081d31df58b4e117a847c09ddfef821868",
+      "content_hash": "963b744b5c779d0a4633541f9417e43ac23cc1fd50823e052141ac49273ba2be",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T14:15:47.915Z"
+      "persisted_at": "2026-11-25T08:13:31.128Z"
     },
     "learn-huggingface-zai-org-glm-5-3": {
       "learning_id": "learn-huggingface-zai-org-glm-5-3",
@@ -280818,7 +280823,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/KRAFTON/Raon-1-mini-preview",
       "source_version": "hf-krafton-raon-1-mini-preview",
-      "content_hash": "fd0f35ec045b18f8e993b854d03e955161602832d4547a4bc70c666bf6d3caf6",
+      "content_hash": "5f5ea678a6238dab1be0b96c9e232c2fff9c77e2c768c07cfb6838db74b3f55a",
       "dossier_path": "07_PROJECT_LEARNING/hf-krafton-raon-1-mini-preview-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-krafton-raon-1-mini-preview-learnings.md",
       "promoted_rules": [],
@@ -280827,7 +280832,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T15:59:36.728Z",
+      "verified_at": "2026-11-25T08:13:01.912Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -280844,9 +280849,9 @@
       "title": "Research & Knowledge Intelligence: KRAFTON/Raon-1-mini-preview Core Invariants",
       "repository": "KRAFTON/Raon-1-mini-preview",
       "source_version": "hf-krafton-raon-1-mini-preview",
-      "content_hash": "e82990a4b80772c7dd5997aae55bd1e6e86d40bd2ba2e401f7eff647166c0c3e",
+      "content_hash": "986b6adbb6efba1487a1d8605290f62cabfe109e20cb02ed78e9fff30c777669",
       "domain_letter": "D",
-      "persisted_at": "2026-11-21T15:59:37.329Z"
+      "persisted_at": "2026-11-25T08:13:02.517Z"
     },
     "rule-9023": {
       "learning_id": "rule-9023",
@@ -280882,9 +280887,9 @@
       "title": "Research & Knowledge Intelligence: hf-krafton-raon-1-mini-preview-learnings Core Invariants",
       "repository": "hf-krafton-raon-1-mini-preview-learnings",
       "source_version": "HEAD",
-      "content_hash": "7db91756f93e9e9db86949ded9cfead1e05f7f56d148a261531c7a821f1bb574",
+      "content_hash": "f3cf281032d87f7eeca1bf0ee61d3259f5178decdbcf43130ef60b26a580fefe",
       "domain_letter": "D",
-      "persisted_at": "2026-11-21T15:59:54.010Z"
+      "persisted_at": "2026-11-25T08:13:29.729Z"
     },
     "learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-coder-gguf": {
       "learning_id": "learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-coder-gguf",
@@ -346426,6 +346431,44 @@
       "content_hash": "e579581bdb97ed0ecec6b6def362d51f305aaeacea6f20b244012677e4f327a5",
       "domain_letter": "H",
       "persisted_at": "2026-11-25T07:57:13.897Z"
+    },
+    "rule-10489": {
+      "learning_id": "rule-10489",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10489,
+      "title": "Empirical Invariant Guard in ExecutionNode.cpp",
+      "source_url": "https://github.com/arangodb/arangodb",
+      "source_version": "7dcb28d3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T08:13:20.049Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-executionnode-cpp": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-executionnode-cpp",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-JUD7-empirical-invariant-guard-in-executionnode-cpp.md",
+      "title": "Empirical Invariant Guard in ExecutionNode.cpp",
+      "repository": "arangodb-arangodb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "33030b28a0bc54f8ac0f7b6673eb000fc53d12120d2d4bf1e460f28e9185e96f",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-25T08:13:30.620Z"
+    },
+    "candidate_directive-nuc-144-nullish-value-assignment": {
+      "item_id": "candidate_directive-nuc-144-nullish-value-assignment",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-JVIG-nuc-144-nullish-value-assignment.md",
+      "title": "NUC 144 Nullish Value Assignment",
+      "repository": "nucleoidai-nucleoid-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f53ff32731bd10144c1b7d5f95bc6903e33baae842480e23fc3c75b0e0b362a3",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-25T08:13:32.110Z"
     }
   },
   "ai-builder-brain": {

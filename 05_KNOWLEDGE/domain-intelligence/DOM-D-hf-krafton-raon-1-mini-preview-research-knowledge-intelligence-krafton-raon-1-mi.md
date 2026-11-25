@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/KRAFTON/Raon-1-mini-preview",
   "source_version": "hf-krafton-raon-1-mini-preview",
   "license": "Open-Source",
-  "timestamp": "2026-11-21T15:59:37.328Z",
+  "timestamp": "2026-11-25T08:13:02.516Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-krafton-raon-1-mini-preview",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [KRAFTON/Raon-1-mini-preview](https://huggingface.co/KRAFTON/Raon-1-mini-preview) (Revision: `hf-krafton`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-21T15:59:37.328Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T08:13:02.516Z`  
 > **Learning ID**: `learn-huggingface-krafton-raon-1-mini-preview`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-krafton-raon-1-mini-preview-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/KRAFTON/Raon-1-mini-preview](https://huggingface.co/KRAFTON/Raon-1-mini-preview))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T15:59:36.237Z  
+> **Harvest Timestamp**: 2026-11-25T08:12:58.988Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 4567 downloads | 251 likes
+- **Stars / Engagement**: 3954 downloads | 253 likes
 
 ---
 

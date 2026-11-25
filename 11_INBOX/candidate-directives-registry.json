@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T07:57:13.897Z",
+  "last_updated": "2026-11-25T08:13:32.110Z",
   "directives": [
     {
       "id": "CD-001",
@@ -60318,6 +60318,46 @@
       "source_repo": "metalbear-co-mirrord",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-ACB824-drop-unsafe-jaq-builtins.md",
+      "staged_date": "2026-11-25"
+    },
+    {
+      "id": "CD-JUD7",
+      "directive_title": "Empirical Invariant Guard in ExecutionNode.cpp",
+      "source_repo": "arangodb-arangodb-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-JUD7-empirical-invariant-guard-in-executionnode-cpp.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-25",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-JVIG",
+      "directive_title": "NUC 144 Nullish Value Assignment",
+      "source_repo": "nucleoidai-nucleoid-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-JVIG-nuc-144-nullish-value-assignment.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-25",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-FF1A30",
+      "directive_title": "Empirical Invariant Guard in ExecutionNode.cpp",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "arangodb-arangodb",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-FF1A30-empirical-invariant-guard-in-executionno.md",
+      "staged_date": "2026-11-25"
+    },
+    {
+      "id": "CD-REV-18D720",
+      "directive_title": "NUC 144 Nullish Value Assignment",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "nucleoidai-nucleoid",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-18D720-nuc-144-nullish-value-assignment.md",
       "staged_date": "2026-11-25"
     }
   ]
