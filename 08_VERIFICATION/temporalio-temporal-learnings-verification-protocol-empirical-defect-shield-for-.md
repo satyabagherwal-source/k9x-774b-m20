@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T12:45:49.832Z",
+  "timestamp": "2026-11-25T05:37:22.297Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-temporalio-temporal-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [temporalio-temporal-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T12:45:49.832Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T05:37:22.297Z`  
 > **Learning ID**: `LEARN-EVO-temporalio-temporal-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/temporalio-temporal-learnings.md`  
 > **Source**: github ([https://github.com/temporalio/temporal](https://github.com/temporalio/temporal))  
-> **Source Version**: `4197dfdd`  
+> **Source Version**: `c70df160`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T12:45:40.954Z  
+> **Timestamp**: 2026-11-25T05:37:17.144Z  
 > **Learning ID**: `learn-github-temporalio-temporal`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/temporalio-temporal-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/temporalio/temporal](https://github.com/temporalio/temporal))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T12:45:39.920Z  
+> **Harvest Timestamp**: 2026-11-25T05:37:17.139Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Temporal service
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 24580 stars
+- **Stars / Engagement**: 24588 stars
 
 ---
 
@@ -2146,597 +2146,210 @@ func (x *WorkflowMutableStateMutation) ProtoReflect() protoreflect.Message {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4197dfdd` (2026-11-23)
-**Commit Message**: Add keepalive dial option to local frontend gRPC connection (#12819)
+### Incident Patch 1: `8495e550` (2026-11-24)
+**Commit Message**: Fix panic on empty MySQL isolation level attribute (#13095)
 
 ## What changed?
-Added keepalive dial options to `createLocalFrontendGRPCConnection()` in
-`common/rpc/rpc.go` via
-`d.getClientKeepAliveConfig(primitives.InternalFrontendService)`.
+
+Guard `sanitizeAttr` against an empty isolation-level value, and drop
+blank `transaction_isolation` / `tx_isolation` connect attributes when
+building the DSN so the default `READ-COMMITTED` isolation level applies
+without leaving an empty alias behind.
+
+- `common/persistence/sql/sqlplugin/mysql/session/session.go`
+  - `sanitizeAttr`: check `len(value) > 0` before indexing `value[0]`.
+- `buildDSNAttrs`: skip blank `transaction_isolation` / `tx_isolation`
+entries before inserting them, so no empty `SET <key> =` is emitted.
+Other blank attributes (e.g. `readTimeout`) are still passed through.
+- `common/persistence/sql/sqlplugin/mysql/session/session_test.go`
+- Extend `TestBuildDSN` with cases for both aliases (empty /
+whitespace), both aliases blank, a valid override alongside a blank
+alias, and an unrelated blank attribute; runs for both the `main` and
+`visibility` stores.
 
 ## Why?
-Resolves #12676.
-When dialing `frontendURL`, `createLocalFrontendGRPCConnection()` only
-passed `perServiceDialOptions[InternalFrontendService]`, omitting
-keepalive options configured for the internal frontend service. If a
-frontend host fails abruptly without sending TCP FIN/RST, callers of the
-shared local frontend connection (such as schedules executing
-`GetWorkflowExecutionHistory`) remain blocked waiting for TCP
-retransmission timeouts (approx. 15 minutes) before the failure is
-detected.
 
-## How did you test it?
-- [x] built
-- [x] covered by existing tests
-- [x] added new unit test(s)
+`sanitizeAttr` indexed `value[0]` without checking its length. An empty
+`transaction_isolation` (or legacy `tx_isolation`) connect attribute —
+e.g. from an env-var/template substitution that resolves to an empty
+string — panick
 
-Added unit tests in `common/rpc/rpc_test.go`:
-- `TestCreateLocalFrontendGRPCConnection_DefaultKeepAliveOptions`
-- `TestCreateLocalFrontendGRPCConnection_ConfiguredKeepAliveOptions`
-
-## Potential risks
-None. Default parameters maintain existing inactivity thresholds unless
-keepalive client parameters are explicitly configured or internode
-clien
-
-**File**: `common/rpc/rpc.go` (modified, +10/-3)
+**File**: `common/persistence/sql/sqlplugin/mysql/session/session.go` (modified, +5/-1)
 ```diff
-@@ -320,9 +320,16 @@ func (d *RPCFactory) CreateLocalFrontendGRPCConnection() *grpc.ClientConn {
- }
- 
- func (d *RPCFactory) createLocalFrontendGRPCConnection() *grpc.ClientConn {
--	additionalDialOptions := append([]grpc.DialOption{}, d.perServiceDialOptions[primitives.InternalFrontendService]...)
-+	serviceName := primitives.FrontendService
-+	if d.config != nil {
-+		if _, ok := d.config.Services[string(primitives.InternalFrontendService)]; ok {
-+			serviceName = primitives.InternalFrontendService
+@@ -161,6 +161,10 @@ func buildDSNAttrs(dbKind sqlplugin.DbKind, cfg *config.SQL) (map[string]string,
+ 	}
+ 	for k, v := range cfg.ConnectAttributes {
+ 		k1, v1 := sanitizeAttr(k, v)
++		// Drop blank isolation entries; keeping them would emit an invalid "SET <key> =".
++		if (k1 == isolationLevelAttrName || k1 == isolationLevelAttrNameLegacy) && v1 == "" {
++			continue
 +		}
-+	}
-+
-+	additionalDialOptions := append([]grpc.DialOption{}, d.perServiceDialOptions[serviceName]...)
- 
--	return d.dial(d.frontendURL, d.frontendTLSConfig, additionalDialOptions...)
-+	return d.dial(d.frontendURL, d.frontendTLSConfig, append(additionalDialOptions, d.getClientKeepAliveConfig(serviceName))...)
- }
- 
- // createInternodeGRPCConnection creates connection for gRPC calls
-@@ -433,7 +440,7 @@ func (d *RPCFactory) getClientKeepAliveConfig(serviceName primitives.ServiceName
- 		Timeout:             20 * time.Second,
- 		PermitWithoutStream: false,
- 	}
--	if d.EnableInternodeClientKeepalive {
-+	if d.EnableInternodeClientKeepalive && d.config != nil {
- 		serviceConfig := d.config.Services[string(serviceName)]
- 		params = serviceConfig.RPC.ClientConnectionConfig.GetKeepAliveClientParameters()
- 	}
-```
-
-**File**: `common/rpc/rpc_test.go` (modified, +155/-0)
-```diff
-@@ -4,14 +4,18 @@ import (
- 	"context"
- 	"crypto/tls"
- 	"errors"
-+	"math"
-+	"reflect"
- 	"sync"
- 	"testing"
- 	"time"
-+	"unsafe"
- 
- 	"github.com/stretchr/testify/require"
- 	enumspb "go.temporal.io/api/enums/v1"
- 	errordetailspb "go.temporal.io/api/errordetails/v1"
- 	"go.temporal.io/api/serviceerror"
-+	"go.temporal.io/server/common/config"
- 	"go.temporal.io/server/common/log"
- 	"go.temporal.io/server/common/metrics"
- 	"go.temporal.io/server/common/primitives"
-@@ -21,6 +25,7 @@ import (
- 	"google.golang.org/grpc"
- 	"google.golang.org/grpc/codes"
- 	"google.golang.org/grpc/connectivity"
-+	"google.golang.org/grpc/keepalive"
- 	"google.golang.org/grpc/status"
- 	"google.golang.org/protobuf/types/known/durationpb"
- )
-@@ -70,6 +75,156 @@ func TestCreateLocalFrontendGRPCConnectionIsCached(t *testing.T) {
- 	t.Cleanup(func() { _ = first.Close() })
- }
- 
-+func TestCreateLocalFrontendGRPCConnection_DefaultKeepAliveOptions(t *testing.T) {
-+	t.Parallel()
-+
-+	f := NewFactory(nil, primitives.FrontendService, log.NewNoopLogger(),
-+		metrics.NoopMetricsHandler, nil, "localhost:7233", "", 0, nil, nil, nil, nil, nil, nil)
-+	conn := f.CreateLocalFrontendGRPCConnection()
-+	require.NotNil(t, conn)
-+	t.Cleanup(func() { _ = conn.Close() })
-+
-+	params, ok := getClientConnKeepaliveParams(conn)
-+	require.True(t, ok, "expected keepalive parameters to be present on ClientConn")
-+	require.Equal(t, time.Duration(math.MaxInt64), params.Time)
-+	require.Equal(t, 20*time.Second, params.Timeout)
-+	require.False(t, params.PermitWithoutStream)
-+}
-+
-+func TestCreateLocalFrontendGRPCConnection_ConfiguredKeepAliveOptions(t *testing.T) {
-+	t.Parallel()
-+
-+	keepAliveTime := 45 * time.Second
-+	keepAliveTimeout := 15 * time.Second
-+	permitWithoutStream := true
-+
-+	cfg := &config.Config{
-+		Services: map[string]config.Service{
-+			string(primitives.InternalFrontendService): {
-+				RPC: config.RPC{
-+					ClientConnectionConfig: config.ClientConnectionConfig{
-+						KeepAliveClientConfig: &config.KeepAliveClientParameters{
-+							Time:                &keepAliveTime,
-+							Timeout:             &keepAliveTimeout,
-+							PermitWithoutStream: &permitWithoutStream,
-+						},
-+					},
-+				},
-+			},
-+		},
-+	}
-+
-+	f := NewFactory(cfg, primitives.FrontendService, log.NewNoopLogger(),
-+		metrics.NoopMetricsHandler, nil, "localhost:7233", "", 0, nil, nil, nil, nil, nil, nil)
-+	f.EnableInternodeClientKeepalive = true
-+
-+	conn := f.CreateLocalFrontendGRPCConnection()
-+	require.NotNil(t, conn)
-+	t.Cleanup(func() { _ = conn.Close() })
-+
-+	params, ok := getClientConnKeepaliveParams(conn)
-+	require.True(t, ok, "expected keepalive parameters to be present on ClientConn")
-+	require.Equal(t, keepAliveTime, params.Time)
-+	require.Equal(t, keepAliveTimeout, params.Timeout)
-+	require.True(t, params.PermitWithoutStream)
-+}
-+
-+func TestCreateLocalFrontendGRPCConnection_FallbackToFrontendService(t *testing.T) {
-+	t.Parallel()
-+
-+	keepAliveTime := 30 * time.Second
-+	keepAliveTimeout := 10 * time.Second
-+	permitWithoutStream := true
-+
-+	cfg := &config.Config{
-+		Services: map[string]config.Service{
-+			string(primitives.FrontendService): {
-+				RPC: config.RPC{
-+					ClientConnectionConfig: config.ClientConnectionConfig{
-+						KeepAliveClientConfig: &config.KeepAliveClientParameters{
-+							Time:                &keepAliveTime,
-+							Timeout:             &keepAliveTimeout,
-+							PermitWithoutStream: &permitWithoutStream,
-+						},
-+					},
-+				},
-+			},
-+		},
-+	}
-+
-+	f := NewFactory(cfg, primitives.FrontendService, log.NewNoopLogger(),
-+		metrics.NoopMetricsHandler, nil, "localhost:7233", "", 0, nil, nil, nil, nil, nil, nil)
-+	f.EnableInternodeClientKeepalive = true
-+
-+	conn := f.CreateLocalFrontendGRPCConnection()
-+	require.NotNil(t, conn)
-+	t.Cleanup(func() { _ = conn.Close() })
-+
-+	params, ok := getClientConnKeepaliveParams(conn)
-+	require.True(t, ok, "expected keepalive parameters to be present on ClientConn")
-+	require.Equal(t, keepAliveTime, params.Time)
-+	require.Equal(t, keepAliveTimeout, params.Timeout)
-+	require.True(t, params.PermitWithoutStream)
-+}
-+
-+func TestCreateLocalFrontendGRPCConnection_PrefersInternalFrontendService(t *testing.T) {
-+	t.Parallel()
-+
-+	ifeKeepAliveTime := 50 * time.Second
-+	ifeKeepAliveTimeout := 25 * time.Second
-+	feKeepAliveTime := 10 * time.Second
-+	feKeepAliveTimeout := 5 * time.Second
-+
-+	cfg := &config.Config{
-+		Services: map[string]config.Service{
-+			string(primitives.InternalFrontendService): {
-+				RPC: config.RPC{
-+					ClientConnectionConfig: config.ClientConnectionConfig{
-+						KeepAliveClientConfig: &config.KeepAliveClientParameters{
-+							Time:    &ifeKeepAliveTime,
-+							Timeout: &ifeKeepAliveTimeout,
-+						},
-+					},
-+				},
-+			},
-+			string(primitives.FrontendService): {
-+				RPC: config.RPC{
-+					ClientConnectionConfig: config.ClientConnectionConfig{
-+						KeepAliveClientConfig: &config.KeepAliveClientParameters{
-+							Time:    &feKeepAliveTime,
-+							Timeout: &feKeepAliveTimeout,
-+						},
-+					},
-+				},
-+	
-```
-
----
-
-### Incident Patch 2: `170953cf` (2026-11-23)
-**Commit Message**: Defer V1->V2 schedule auto-migration while a backfill is in progress (#13242)
-
-## What changed?
-- `MigrateScheduleToChasm` returns a non-retryable
-`migration_deferred_backfill` error, without calling
-`CreateFromMigrationState`, when the schedule is selected by the
-auto-migration rollout and has backfillers in flight.
-- The activity logs the deferral and emits a new
-`schedule_migration_deferred` counter. The V1 workflow retries on its
-next iteration through its existing failure path.
-- `workflow.go` is unchanged. Rollout selection is factored into
-`workerComponent.autoMigrationSelected` (byte-identical key and
-evaluation), shared by the workflow's tweakable and the activity.
-
-## Why?
-Converting an in-flight V1 backfill to CHASM can duplicate or drop
-slots: V1's `OngoingBackfills` start is an exclusive cursor (MIG-03).
-Waiting for backfills to drain avoids the conversion entirely.
-
-Related: #11878 fixes the same hazard by preserving the cursor across
-migration. These are complementary, but if #11878 lands this becomes
-defence-in-depth; worth deciding whether we want both.
-
-## How did you test it?
-- [x] built
-- [ ] run locally and tested manually
-- [ ] covered by existing tests
-- [x] 
-
-**File**: `common/metrics/metric_defs.go` (modified, +4/-0)
-```diff
-@@ -1858,6 +1858,10 @@ var (
- 		"schedule_migration_failed",
- 		WithDescription("The number of times a schedule migration fails"),
- 	)
-+	ScheduleMigrationDeferred = NewCounterDef(
-+		"schedule_migration_deferred",
-+		WithDescription("The number of times a schedule migration is deferred until a precondition (e.g. an in-progress backfill) clears"),
-+	)
- 	ScheduleOverlapSkipped = NewCounterDef(
- 		"schedule_overlap_skipped",
- 		WithDescription("The number of schedule actions skipped due to overlap policy"),
-```
-
-**File**: `service/worker/scheduler/activities.go` (modified, +16/-0)
-```diff
-@@ -28,6 +28,8 @@ import (
- 	"google.golang.org/protobuf/types/known/timestamppb"
- )
- 
-+const errTypeMigrationDeferredBackfill = "migration_deferred_backfill"
-+
- type (
- 	activities struct {
- 		activityDeps
-@@ -39,6 +41,9 @@ type (
- 		maxBlobSize              dynamicconfig.IntPropertyFn
- 		localActivitySleepLimit  dynamicconfig.DurationPropertyFn
- 		migrationEnabled         dynamicconfig.BoolPropertyFn
-+		// autoMigrationSelected reports whether the CHASM auto-migration rollout currently
-+		// selects the given schedule ID.
-+		autoMigrationSelected func(scheduleID string) bool
+ 		attrs[k1] = v1
  	}
  
- 	errFollow string
-@@ -404,6 +409,17 @@ func (a *activities) MigrateScheduleToChasm(ctx context.Context, req *schedulerp
- 		// like any other failure and keeps retrying at its normal cadence.
- 		return errors.New("MigrateScheduleToChasm: migration is currently disabled")
- 	}
-+	// Converting an in-flight backfill can duplicate or drop slots (V1's backfill start is an
-+	// exclusive cursor), so auto-migration waits for backfills to drain. The caller retries
-+	// on its next iteration.
-+	if len(req.GetState().GetBackfillers()) > 0 && a.autoMigrationSelected != nil &&
-+		a.autoMigrationSelected(req.GetState().GetSchedulerState().GetScheduleId()) {
-+		return temporal.NewNonRetryableApplicationError(
-+			"MigrateScheduleToChasm: deferred while a backfill is in progress",
-+			errTypeMigrationDeferredBackfill,
-+			nil,
-+		)
-+	}
- 	_, err := a.SchedulerClient.CreateFromMigrationState(ctx, req)
- 	if err != nil {
- 		// Treat "already exists" as success (idempotency).
-```
-
-**File**: `service/worker/scheduler/activities_test.go` (modified, +47/-0)
-```diff
-@@ -7,6 +7,7 @@ import (
- 
- 	"github.com/stretchr/testify/require"
- 	"go.temporal.io/api/serviceerror"
-+	"go.temporal.io/sdk/temporal"
- 	schedulerpb "go.temporal.io/server/chasm/lib/scheduler/gen/schedulerpb/v1"
- 	"go.temporal.io/server/common/log"
- 	"go.temporal.io/server/common/metrics"
-@@ -164,3 +165,49 @@ func TestMigrateScheduleToChasm_MigrationEnabledUnwired(t *testing.T) {
- 	require.NoError(t, err)
- 	require.Equal(t, 1, client.createCalls, "unwired migrationEnabled currently fails open")
- }
-+
-+func TestMigrateScheduleToChasm_DeferredWhileBackfilling(t *testing.T) {
-+	withBackfill := &schedulerpb.SchedulerMigrationState{
-+		SchedulerState: &schedulerpb.SchedulerState{ScheduleId: "sched"},
-+		Backfillers:    map[string]*schedulerpb.BackfillerState{"bf": {}},
-+	}
-+	noBackfill := &schedulerpb.SchedulerMigrationState{
-+		SchedulerState: &schedulerpb.SchedulerState{ScheduleId: "sched"},
-+	}
-+	for _, tc := range []struct {
-+		name     string
-+		selected func(string) bool
-+		state    *schedulerpb.SchedulerMigrationState
-+		deferred bool
-+	}{
-+		{name: "auto-selected with backfill", selected: func(string) bool { return true }, state: withBackfill, deferred: true},
-+		{name: "auto-selected without backfill", selected: func(string) bool { return true }, state: noBackfill},
-+		{name: "not auto-selected with backfill", selected: func(string) bool { return false }, state: withBackfill},
-+		{name: "nil selector with backfill", state: withBackfill},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			client := &mockSchedulerClient{}
-+			a := newTestActivities(client, testNamespaceID)
-+			var gotID string
-+			if tc.selected != nil {
-+				a.autoMigrationSelected = func(id string) bool { gotID = id; return tc.selected(id) }
-+			}
-+
-+			err := a.MigrateScheduleToChasm(context.Background(), &schedulerpb.CreateFromMigrationStateRequest{
-+				NamespaceId: testNamespaceID,
-+				State:       tc.state,
-+			})
-+			if !tc.deferred {
-+				require.NoError(t, err)
-+				require.Equal(t, 1, client.createCalls)
-+				return
-+			}
-+			var appErr *temporal.ApplicationError
-+			require.ErrorAs(t, err, &appErr)
-+			require.Equal(t, errTypeMigrationDeferredBackfill, appErr.Type())
-+			require.True(t, appErr.NonRetryable())
-+			require.Equal(t, "sched", gotID)
-+			require.Zero(t, client.createCalls, "must not create the V2 schedule while deferred")
-+		})
-+	}
-+}
-```
-
-**File**: `service/worker/scheduler/fx.go` (modified, +12/-3)
-```diff
-@@ -113,10 +113,8 @@ func (s *workerComponent) DedicatedWorkerOptions(ns *namespace.Namespace) *worke
- func (s *workerComponent) Register(registry sdkworker.Registry, ns *namespace.Namespace, details workercommon.RegistrationDetails) func() {
- 	nsName := ns.Name().String()
- 	wfFunc := func(ctx workflow.Context, args *schedulespb.StartScheduleArgs) error {
--		key := fmt.Appendf(nil, "%s\x00%s", nsName, args.State.ScheduleId)
- 		enableMigration := func() bool {
--			return s.enableCHASMMigration(nsName) &&
--				dynamicconfig.RolloutAccepts(key, s.chasmMigrationRolloutPercent(nsName))
-+			return s.autoMigrationSelected(nsName, args.State.ScheduleId)
+@@ -192,7 +196,7 @@ func sanitizeAttr(inkey string, invalue string) (string, string) {
+ 	value := strings.ToLower(strings.TrimSpace(invalue))
+ 	switch key {
+ 	case isolationLevelAttrName, isolationLevelAttrNameLegacy:
+-		if value[0] != '\'' { // mysql sys variable values must be enclosed in single quotes
++		if len(value) > 0 && value[0] != '\'' { // mysql sys variable values must be enclosed in single quotes
+ 			value = "'" + value + "'"
  		}
- 		migrateWithRunningWorkflows := func() bool {
- 			return s.migrateWithRunningWorkflows(nsName)
-@@ -161,5 +159,16 @@ func (s *workerComponent) newActivities(name namespace.Name, id namespace.ID, de
- 		maxBlobSize:              func() int { return s.maxBlobSize(name.String()) },
- 		localActivitySleepLimit:  func() time.Duration { return s.localActivitySleepLimit(name.String()) },
- 		migrationEnabled:         func() bool { return s.enableCHASMMigration(name.String()) },
-+		autoMigrationSelected: func(scheduleID string) bool {
-+			return s.autoMigrationSelected(name.String(), scheduleID)
-+		},
- 	}, cancel
- }
-+
-+// autoMigrationSelected is the single source of truth for whether the CHASM auto-migration
-+// rollout selects a schedule; the workflow and the migration activity must agree on it.
-+func (s *workerComponent) autoMigrationSelected(nsName, scheduleID string) bool {
-+	key := fmt.Appendf(nil, "%s\x00%s", nsName, scheduleID)
-+	return s.enableCHASMMigration(nsName) &&
-+		dynamicconfig.RolloutAccepts(key, s.chasmMigrationRolloutPercent(nsName))
-+}
+ 		return key, value
 ```
 
-**File**: `service/worker/scheduler/workflow.go` (modified, +20/-8)
+**File**: `common/persistence/sql/sqlplugin/mysql/session/session_test.go` (modified, +144/-0)
 ```diff
-@@ -428,14 +428,26 @@ func (s *scheduler) run() error {
- 				}).Counter(metrics.ScheduleMigrationCompleted.Name()).Inc(1)
- 				return nil
- 			}
--			s.logger.Error("schedule migration to CHASM failed",
--				"namespace", s.State.Namespace,
--				"schedule-id", s.State.ScheduleId,
--				"error", err,
--			)
--			s.metrics.WithTags(map[string]string{
--				metrics.ScheduleMigrationDirectionTag: metrics.ScheduleMigrationDirectionToChasm,
--			}).Counter(metrics.ScheduleMigrationFailed.Name()).Inc(1)
-+			// Log/metric-only branch: no commands or state differ, so it is replay- and rollback-safe
-+			// without a version bump.
-+			if appErr, ok := errors.AsType[*temporal.ApplicationError](err); ok && appErr.Type() == errTypeMigrationDeferredBackfill {
-+				s.logger.Info("schedule migration to CHASM deferred: backfill in progress",
-+					"namespace", s.State.Namespace,
-+					"schedule-id", s.State.ScheduleId,
-+				)
-+				s.metrics.WithTags(map[string]string{
-+					metrics.ScheduleMigrationDirectionTag: metrics.ScheduleMigrationDirectionToChasm,
-+				}).Counter(metrics.ScheduleMigrationDeferred.Name()).Inc(1)
-+			} else {
-+				s.logger.Error("schedule migration to CHASM failed",
-+					"namespace", s.State.Namespace,
-+					"schedule-id", s.State.ScheduleId,
-+					"error", err,
-+				)
-+				s.metrics.WithTags(map[string]string{
-+					metrics.ScheduleMigrationDirectionTag: metrics.ScheduleMigrationDirectionToChasm,
-+				}).Counter(metrics.ScheduleMigrationFailed.Name()).Inc(1)
-+			}
- 		}
- 
- 		// process backfills if we have any too
-```
-
-**File**: `service/worker/scheduler/workflow_test.go` (modified, +96/-4)
-```diff
-@@ -4,6 +4,7 @@ import (
- 	"context"
- 	"errors"
- 	"math/rand"
-+	"sync"
- 	"testing"
- 	"time"
- 
-@@ -44,14 +45,20 @@ type (
- 
- 	capturingMetricsHandler struct {
- 		timers []capturedTimer
-+		// The SDK increments counters from local-activity goroutines.
-+		countersMu sync.Mutex
-+		counters   map[string]int64
- 	}
- 
- 	capturedTimer struct {
- 		name  string
- 		value time.Duration
- 	}
- 
--	noopMetricsCounter    struct{}
-+	capturingMetricsCounter struct {
-+		handler *capturingMetricsHandler
-+		name    string
-+	}
- 	noopMetricsGauge      struct{}
- 	capturingMetricsTimer struct {
- 		handler *capturingMetricsHandler
-@@ -77,8 +84,8 @@ func (h *capturingMetricsHandler) WithTags(map[string]string) sdkclient.MetricsH
- 	return h
- }
- 
--func (h *capturingMetricsHandler) Counter(string) sdkclient.MetricsCounter {
--	return noopMetricsCounter{}
-+func (h *capturingMetricsHandler) Counter(name string) sdkclient.MetricsCounter {
-+	return capturingMetricsCounter{handler: h, name: name}
- }
- 
- func (h *capturingMetricsHandler) Gauge(string) sdkclient.MetricsGauge {
-@@ -89,6 +96,12 @@ func (h *capturingMetricsHandler) Timer(name string) sdkclient.MetricsTimer {
- 	return capturingMetricsTimer{handler: h, name: name}
- }
- 
-+func (h *capturingMetricsHandler) counter(name string) int64 {
-+	h.countersMu.Lock()
-+	defer h.countersMu.Unlock()
-+	return h.counters[name]
-+}
-+
- func (h *capturingMetricsHandler) timerValues(name string) []time.Duration {
- 	var values []time.Duration
- 	for _, timer := range h.timers {
-@@ -99,7 +112,14 @@ func (h *capturingMetricsHandler) timerValues(name string) []time.Duration {
- 	return values
- }
- 
--func (noopMetricsCounter) Inc(int64) {}
-+func (c capturingMetricsCounter) Inc(delta int64) {
-+	c.handler.countersMu.Lock()
-+	defer c.handler.countersMu.Unlock()
-+	if c.handler.counters == nil {
-+		c.handler.counters = make(map[string]int64)
-+	}
-+	c.handler.counters[c.name] += delta
-+}
- 
- func (noopMetricsGauge) Update(float64) {}
- 
-@@ -3639,3 +3659,75 @@ func (s *workflowSuite) TestOperatorMigrateSignalSurvivesRolloutPercentZero() {
- 	s.Equal(1, migrateCalls, "an operator-requested migration must not be discarded by the rollback reset")
- 	s.Require().NoError(s.env.GetWorkflowError(), "workflow should complete after a successful migration")
- }
-+
-+// An auto-selected schedule with an in-progress backfill must not migrate until the backfill
-+// has drained, since converting an in-flight backfill can duplicate or drop slots.
-+func (s *workflowSuite) TestAutoMigrateDeferredUntilBackfillCompletes() {
-+	backfillStart := time.Date(2022, 5, 30, 0, 0, 0, 0, time.UTC)
-+	backfillEnd := time.Date(2022, 5, 31, 0, 0, 0, 0, time.UTC)
-+
-+	var starts []time.Time
-+	s.env.OnActivity(new(activities).StartWorkflow, mock.Anything, mock.Anything).Return(
-+		func(_ context.Context, req *schedulespb.StartWorkflowRequest) (*schedulespb.StartWorkflowResponse, error) {
-+			starts = append(starts, s.now())
-+			return &schedulespb.StartWorkflowResponse{RunId: uuid.NewString(), RealStartTime: timestamppb.New(s.now())}, nil
-+		})
-+
-+	// Run the real gate against the request the workflow actually builds.
-+	gate := newTestActivities(&mockSchedulerClient{}, "mynsid")
-+	gate.autoMigrationSelected = func(string) bool { return true }
-+	deferrals := 0
-+	var migratedAt time.Time
-+	var startsAtMigration int
-+	s.env.OnActivity(new(activities).MigrateScheduleToChasm, mock.Anything, mock.Anything).Return(
-+		func(ctx context.Context, req *schedulerpb.CreateFromMigrationStateRequest) error {
-+			err := gate.MigrateScheduleToChasm(ctx, req)
-+			if err != nil {
-+				deferrals++
-+				return err
-+			}
-+			migratedAt = s.now()
-+			startsAtMigration = len(starts)
-+			return nil
-+		})
-+
-+	CurrentTweakablePolicies.IterationsBeforeContinueAsNew = 100
-+	s.env.SetStartTime(baseStartTime)
-+	s.env.ExecuteWorkflow(func(ctx workflow.Context, args *schedulespb.StartScheduleArgs) error {
-+		return schedulerWorkflowWithSpecBuilder(ctx, args, newSpecBuilderForTest(0, 0),
-+			schedulerDynamicConfig{enableCHASMMigration: func() bool { return true }, migrateWithRunningWorkflows: func() bool { return true }})
-+	}, &schedulespb.StartScheduleArgs{
-+		Schedule: &schedulepb.Schedule{
-+			Spec: &schedulepb.ScheduleSpec{
-+				Interval: []*schedulepb.IntervalSpec{{Interval: durationpb.New(time.Hour)}},
+@@ -119,6 +119,146 @@ func (s *sessionTestSuite) TestBuildDSN() {
+ 			outIsolationVal: "'repeatable-read'",
+ 			outURLPath:      "test:pass@tcp(192.168.0.1:3306)/db1?",
+ 		},
++		{
++			name: "empty isolation level falls back to default",
++			in: config.SQL{
++				User:              "test",
++				Password:          "pass",
++				ConnectProtocol:   "tcp",
++				ConnectAddr:       "192.168.0.1:3306",
++				DatabaseName:      "db1",
++				ConnectAttributes: map[string]string{"transaction_isolation": ""},
 +			},
-+			Action: s.defaultAction("myid"),
++			outIsolationKey: "transaction_isolation",
++			outIsolationVal: "'READ-COMMITTED'",
++			outURLPath:      "test:pass@tcp(192.168.0.1:3306)/db1?",
 +		},
-+		State: &schedulespb.InternalState{
-+			Namespace:         "myns",
-+			NamespaceId:       "mynsid",
-+			ScheduleId:        "myschedule",
-+			ConflictToken:     InitialConflictToken,
-+			LastProcessedTime: timestamppb.New(baseStartTime),
-+			OngoingBackfills: []*schedulepb.BackfillRequest{{
-+				StartTime:     timestamppb.New(backfillStart),
-+				EndTime:       timestamppb.New(backfillEnd),
-+				OverlapPolicy: enumspb.SCHEDULE_OVERLAP_POLICY_ALLOW_ALL,
-+			}},
++		{
++			name: "whitespace isolation level falls back to default",
++			in: config.SQL{
++				User:              "test",
++				Password:          "pass",
++				ConnectProtocol:   "tcp",
++				ConnectAddr:       "192.168.0.1:3306",
++				DatabaseName:      "db1",
++				ConnectAttributes: map[string]string{"transaction_isolation": " "},
++			},
++			outIsolationKey: "transaction_isolation",
++			outIsolationVal: "'READ-COMMITTED'",
++			outURLPath:      "test:pass@tcp(192.168.0.1:3306)/db1?",
 +		},
-+	})
-+
-+	s.Require().True(s.env.IsWorkflowCompleted())
-+	s.Require().NoError(s.env.GetWorkflowError())
-+	s.Require().False(migratedAt.IsZero(), "schedule should eventually migrate")
-+	s
++		{
++			name: "tab and newline isolation level falls back to default",
++			in: config.SQL{
++				User:              "test",
++				Password:          "pass",
++				ConnectProtocol:   "tcp",
++				ConnectAddr:       "192.168.0.1:3306",
++				DatabaseName:      "db1",
++				ConnectAttributes: map[string]string{"transaction_isolation": "\t\n"},
++			},
++			outIsolationKey: "transaction_isolation",
++			outIsolationVal: "'READ-COMMITTED'",
++			outURLPath:      "test:pass@tcp(192.168.0.1:3306)/db1?",
++		},
++		{
++			name: "empty legacy isolation level falls back to default",
++			in: config.SQL{
++				User:              "test",
++				Password:          "pass",
++				ConnectProtocol:   "tcp",
++				ConnectAddr:       "192.168.0.1:3306",
++				DatabaseName:      "db1",
++				ConnectAttributes: map[string]string{"tx_isolation": ""},
++			},
++			outIsolationKey: "transaction_isolation",
++			outIsolationVal: "'READ-COMMITTED'",
++			outURLPath:      "test:pass@tcp(192.168.0.1:3306)/db1?",
++		},
++		{
++			name: "whitespace legacy isolation level falls back to default",
++			in: config.SQL{
++				User:              "test",
++				Password:          "pass",
++				ConnectProtocol:   "tcp",
++				ConnectAddr:       "192.168.0.1:3306",
++				DatabaseName:      "db1",
++				ConnectAttributes: map[string]string{"tx_isolation": " "},
++			},
++			outIsolationKey: "transaction_isolation",
++			outIsolationVal: "'READ-COMMITTED'",
++			outURLPath:      "test:pass@tcp(192.168.0.1:3306)/db1?",
++		},
++		{
++			name: "tab and newline legacy isolation level falls back to default",
++			in: config.SQL{
++				User:              "test",
++				Password:          "pass",
++				ConnectProtocol:   "tcp",
++				ConnectAddr:       "192.168.0.1:3306",
++				DatabaseName:      "db1",
++				ConnectAttributes: map[string]string{"tx_isolation": "\t\n"},
++			},
++			outIsolationKey: "transaction_isolation",
++			outIsolationVal: "'READ-COMMITTED'",
++			outURLPath:      "test:pass@tcp(192.168.0.1:3306)/db1?",
++		},
++		{
++			name: "both isolation aliases blank fall back to default",
++			in: config.SQL{
++				User:              "test",
++				Password:          "pass",
++				ConnectProtocol:   "tcp",
++				ConnectAddr:       "192.168.0.1:3306",
++				DatabaseName:      "db1",
++				ConnectAttributes: map[string]string{"transaction_isolation": "", "tx_isolation": ""},
++			},
++			outIsolationKey: "transaction_isolation",
++			outIsolationVal: "'READ-COMMITTED'",
++			outURLPath:      "test:pass@tcp(192.168.0.1:3306)/db1?",
++		},
++		{
++			name: "valid isolation level with blank legacy alias",
++			in: config.SQL{
++				User:              "test",
++				Password:          "pass",
++				ConnectProtocol:   "tcp",
++				ConnectAddr:       "192.168.0.1:3306",
++				DatabaseName:      "db1",
++				ConnectAttributes: map[string]string{"transaction_isolation": "REPEATABLE-READ", "tx_isolation": ""},
++			},
++			outIsolationKey: "transaction_isolation",
++			outIsolationVal: "'repeatable-read'",
++			outURLPath:      "test:pass@tcp(192.168.0.1:3306)/db1?",
++		},
++		{
++			name: "valid legacy isolation level with blank full-name alias",
++			in: config.SQL{
++				User:              "test",
++				Password:          "pass",
++				ConnectProtocol:   "tcp",
++				ConnectAddr:       "192.168.0.1:3306",
++				DatabaseName:      "db1",
++				ConnectAttributes: map[string]string{"tx_isolation": "REPEATABLE-READ", "transaction_isolation": ""},
++			},
++			outIsolationKey: "tx_isolation",
++			outIsolationVal: "'repeatable-read'",
++			outURLPath:      "test:pass@tcp(192.168.0.1:3306)/db1?",
++		},
++		{
++			name: "unrelated blank attribute is preserved",
++			in: config.SQL{
++				User:              "test",
++				Password:          "pass",
++				ConnectProtocol:   "tcp",
++				ConnectAddr:       "192.168.0.1:3306",
++				DatabaseName:      "db1",
++				ConnectAttributes: map[string]string{"readTimeout": ""},
++			},
++			out
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #13260** (2026-11-24): 1.33.0: Prepare release branch (@temporal-cicd[bot])
-- **PR #13257** (closed): Fix getproto for new server proto imports (@stephanos)
-- **PR #13242** (2026-11-23): Defer V1->V2 schedule auto-migration while a backfill is in progress (@davidporter-id-au)
-- **PR #13239** (2026-11-23): Check eager namespace refresh membership with the namespace's replication resolver (@michaely520)
-- **PR #13238** (2026-11-23): 1.33.0: Prepare release branch (@temporal-cicd[bot])
-- **PR #13236** (2026-11-22): 1.33.0: Prepare release branch (@temporal-cicd[bot])
+- **PR #13304** (closed): Fix: Recover Activity delivery after a sync-match start timeout (@ali-khokhar-nvidia)
+- **PR #13296** (closed): Add persistence failpoints with namespace scoping (@stephanos)
+- **PR #13295** (closed): Run gRPC and HTTP test faults on failpoints (@stephanos)
+- **PR #13294** (closed): Add server failpoint source and startup switch (@stephanos)
+- **PR #13289** (2026-11-25): Add BUGGIFY to the server (@stephanos)
+- **PR #13288** (2026-11-25): Configure failpoints with the testing.failpointRules setting (@stephanos)
 
 ---
 
@@ -2756,42 +2369,35 @@ defence-in-depth; worth deciding whether we want both.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add keepalive dial option to local frontend gRPC connection
+## X. panic on empty MySQL isolation level attribute
 
 **RULE**:
-When implementing operations in `common/rpc/rpc.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in temporalio/temporal. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `common/persistence/sql/sqlplugin/mysql/session/session.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in temporalio/temporal. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4197dfdd`: Add keepalive dial option to local frontend gRPC connection. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8495e550`: panic on empty MySQL isolation level attribute. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `common/rpc/rpc.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `common/persistence/sql/sqlplugin/mysql/session/session.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	serviceName := primitives.FrontendService
-	if d.config != nil {
-		if _, ok := d.config.Services[string(primitives.InternalFrontendService)]; ok {
-			serviceName = primitives.InternalFrontendService
+		// Drop blank isolation entries; keeping them would emit an invalid "SET <key> =".
+		if (k1 == isolationLevelAttrName || k1 == isolationLevelAttrNameLegacy) && v1 == "" {
+			continue
 		}
-	}
-
-	additionalDialOptions := append([]grpc.DialOption{}, d.perServiceDialOptions[serviceName]...)
-	return d.dial(d.frontendURL, d.frontendTLSConfig, append(additionalDialOptions, d.getClientKeepAliveConfig(serviceName))...)
-	if d.EnableInternodeClientKeepalive && d.config != nil {
+		if len(value) > 0 && value[0] != '\'' { // mysql sys variable values must be enclosed in single quotes
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	additionalDialOptions := append([]grpc.DialOption{}, d.perServiceDialOptions[primitives.InternalFrontendService]...)
-	return d.dial(d.frontendURL, d.frontendTLSConfig, additionalDialOptions...)
-	if d.EnableInternodeClientKeepalive {
+		if value[0] != '\'' { // mysql sys variable values must be enclosed in single quotes
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4197dfdd` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8495e550` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -3,7 +3,7 @@
 > **Source Version**: `hf-mistralai`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T09:52:45.116Z  
+> **Timestamp**: 2026-11-25T05:37:07.824Z  
 > **Learning ID**: `learn-huggingface-mistralai-timestral-209m`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-mistralai-timestral-209m-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/mistralai/Timestral-209M](https://huggingface.co/mistralai/Timestral-209M))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T09:47:13.185Z  
+> **Harvest Timestamp**: 2026-11-25T05:37:07.712Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: time-series-forecasting
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 30653 downloads | 500 likes
+- **Stars / Engagement**: 28686 downloads | 507 likes
 
 ---
 

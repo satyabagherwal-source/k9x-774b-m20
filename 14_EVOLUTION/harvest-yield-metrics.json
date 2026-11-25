@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T05:28:56.157Z",
-  "total_cycles_completed": 12298,
-  "total_learnings_persisted": 12298,
-  "total_rules_promoted": 11337,
+  "last_updated": "2026-11-25T05:37:18.251Z",
+  "total_cycles_completed": 12300,
+  "total_learnings_persisted": 12300,
+  "total_rules_promoted": 11338,
   "history": [
-    {
-      "timestamp": "2026-11-24T16:19:50.910Z",
-      "repository": "ArchiveBox/ArchiveBox",
-      "learningId": "learn-github-archivebox-archivebox",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T16:19:54.840Z",
-      "repository": "nats-io/nats-server",
-      "learningId": "learn-github-nats-io-nats-server",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-24T16:28:13.738Z",
       "repository": "AngelSlim/Hy4-flash-GGUF",
@@ -1403,6 +1389,20 @@
       "repository": "nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4",
       "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b-nvfp4",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T05:37:08.352Z",
+      "repository": "mistralai/Timestral-209M",
+      "learningId": "learn-huggingface-mistralai-timestral-209m",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T05:37:18.251Z",
+      "repository": "temporalio/temporal",
+      "learningId": "learn-github-temporalio-temporal",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

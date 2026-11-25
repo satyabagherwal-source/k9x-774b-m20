@@ -4,24 +4,24 @@
 {
   "source_repository": "temporalio/temporal",
   "source_url": "https://github.com/temporalio/temporal",
-  "source_version": "32ef011f",
+  "source_version": "c70df160",
   "license": "MIT",
-  "timestamp": "2026-11-21T13:53:39.788Z",
+  "timestamp": "2026-11-25T05:37:18.463Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-temporalio-temporal",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [temporalio/temporal](https://github.com/temporalio/temporal) (Revision: `32ef011f`).  
-> **License**: MIT | **Timestamp**: `2026-11-21T13:53:39.788Z`  
+> **Provenance**: Harvested from [temporalio/temporal](https://github.com/temporalio/temporal) (Revision: `c70df160`).  
+> **License**: MIT | **Timestamp**: `2026-11-25T05:37:18.463Z`  
 > **Learning ID**: `learn-github-temporalio-temporal`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain I (Content & Information Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), H (Technical Construction Intelligence), A (Human & Need Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 54%
+- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), G (Architecture Intelligence), H (Technical Construction Intelligence), A (Human & Need Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 53%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from temporalio/temporal:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/temporalio-temporal-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/temporalio/temporal](https://github.com/temporalio/temporal))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T13:53:38.565Z  
+> **Harvest Timestamp**: 2026-11-25T05:37:17.139Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Temporal service
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 24527 stars
+- **Stars / Engagement**: 24588 stars
 
 ---
 
@@ -2135,191 +2135,210 @@ func (x *WorkflowMutableStateMutation) ProtoReflect() protoreflect.Message {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `59c4ca9a` (2026-11-21)
-**Commit Message**: Fix flakes: raise deadlock detection timeout in `TestChildWorkflowInheritance` inherit tests (#13066)
+### Incident Patch 1: `8495e550` (2026-11-24)
+**Commit Message**: Fix panic on empty MySQL isolation level attribute (#13095)
 
 ## What changed?
-In `testChildWorkflowInheritanceExpectInherit`, set
-`DeadlockDetectionTimeout: 30s` on the v1 worker and raise the parent's
-`WorkflowTaskTimeout` from 10s to 30s, matching the other versioning
-helpers that block the same way.
+
+Guard `sanitizeAttr` against an empty isolation-level value, and drop
+blank `transaction_isolation` / `tx_isolation` connect attributes when
+building the DSN so the default `READ-COMMITTED` isolation level applies
+without leaving an empty alias behind.
+
+- `common/persistence/sql/sqlplugin/mysql/session/session.go`
+  - `sanitizeAttr`: check `len(value) > 0` before indexing `value[0]`.
+- `buildDSNAttrs`: skip blank `transaction_isolation` / `tx_isolation`
+entries before inserting them, so no empty `SET <key> =` is emitted.
+Other blank attributes (e.g. `readTimeout`) are still passed through.
+- `common/persistence/sql/sqlplugin/mysql/session/session_test.go`
+- Extend `TestBuildDSN` with cases for both aliases (empty /
+whitespace), both aliases blank, a valid override alongside a blank
+alias, and an unrelated blank attribute; runs for both the `main` and
+`visibility` stores.
 
 ## Why?
-The parent workflow blocks on a Go channel while the test waits for task
-queue user data to propagate. When that took over 1s, the SDK deadlock
-detector failed the workflow task, and the workflow didn't complete
-before the test timed out. Adding a 1.5s delay before unblocking the
-workflow reproduces this every time without the fix.
 
-## How did you test it?
-- [ ] built
-- [ ] run locally and tested manually
-- [ ] covered by existing tests
-- [ ] added new unit test(s)
-- [ ] added new functional test(s)
+`sanitizeAttr` indexed `value[0]` without checking its length. An empty
+`transaction_isolation` (or legacy `tx_isolation`) connect attribute —
+e.g. from an env-var/template substitution that resolves to an empty
+string — panick
 
----------
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `tests/versioning_3_test.go` (modified, +3/-1)
+**File**: `common/persistence/sql/sqlplugin/mysql/session/session.go` (modified, +5/-1)
 ```diff
-@@ -1668,6 +1668,8 @@ func (s *Versioning3Suite) testChildWorkflowInheritanceExpectInherit(crossTq boo
- 			DefaultVersioningBehavior: workflow.VersioningBehaviorAutoUpgrade,
- 		},
- 		MaxConcurrentWorkflowTaskPollers: numPollers,
-+		// Because the wf task can get stuck behind a channel, we make sure sdk does not panic too early
-+		DeadlockDetectionTimeout: 30 * time.Second,
- 	})
- 	w1.RegisterWorkflowWithOptions(wf1, workflow.RegisterOptions{Name: "wf", VersioningBehavior: sdkParentBehavior})
- 	if !crossTq {
-@@ -1683,7 +1685,7 @@ func (s *Versioning3Suite) testChildWorkflowInheritanceExpectInherit(crossTq boo
- 		ID:                  tv1.WorkflowID(),
- 		TaskQueue:           tv1.TaskQueue().GetName(),
- 		VersioningOverride:  nil,
--		WorkflowTaskTimeout: 10 * time.Second,
-+		WorkflowTaskTimeout: 30 * time.Second,
+@@ -161,6 +161,10 @@ func buildDSNAttrs(dbKind sqlplugin.DbKind, cfg *config.SQL) (map[string]string,
  	}
- 	if withOverride {
- 		startOpts.VersioningOverride = &sdkclient.PinnedVersioningOverride{
+ 	for k, v := range cfg.ConnectAttributes {
+ 		k1, v1 := sanitizeAttr(k, v)
++		// Drop blank isolation entries; keeping them would emit an invalid "SET <key> =".
++		if (k1 == isolationLevelAttrName || k1 == isolationLevelAttrNameLegacy) && v1 == "" {
++			continue
++		}
+ 		attrs[k1] = v1
+ 	}
+ 
+@@ -192,7 +196,7 @@ func sanitizeAttr(inkey string, invalue string) (string, string) {
+ 	value := strings.ToLower(strings.TrimSpace(invalue))
+ 	switch key {
+ 	case isolationLevelAttrName, isolationLevelAttrNameLegacy:
+-		if value[0] != '\'' { // mysql sys variable values must be enclosed in single quotes
++		if len(value) > 0 && value[0] != '\'' { // mysql sys variable values must be enclosed in single quotes
+ 			value = "'" + value + "'"
+ 		}
+ 		return key, value
 ```
 
----
-
-### Incident Patch 2: `ea8df3ed` (2026-11-20)
-**Commit Message**: Fix flaky TestMultipleTasks_ValidateStats test (#13185)
-
-## What changed?
-One-line test fix: `validateDescribeWorkerDeploymentVersion` now picks
-the task queue by name **and** type, instead of name **or** type.
-
-## Why?
-Fixes flaky
-`TestTaskQueueStats_Pri_Suite/TestVersioningSuite/*/TestMultipleTasks_ValidateStats`.
-The worst variant fails 5.8% of the time in CI.
-
-The response has two entries with the same task queue name: one
-WORKFLOW, one ACTIVITY. The server builds this list by iterating over a
-Go map, which is unordered, so either entry can come first. Because the
-old check used `||`, the name alone was enough to match, so it matched
-whichever entry came first. When that was the wrong entry, the test
-checked its stats against the other type's expectations, e.g.:
-
-```
-DescribeWorkerDeploymentVersion[Activity]: ApproximateBacklogCount should be at most 0, got 24
-```
-
-The check retries for 5s, so it only failed when every retry got the
-wrong order. That's more likely on slow CI runners, which get fewer
-retries.
-
-## How did you test it?
-- [x] built
-- [x] run locally and tested manually
-- [x] covered by existing tests
-
-To force the failure, I shortened the retry window to 1s. Withou
-
-**File**: `tests/task_queue_stats_test.go` (modified, +1/-1)
+**File**: `common/persistence/sql/sqlplugin/mysql/session/session_test.go` (modified, +144/-0)
 ```diff
-@@ -1551,7 +1551,7 @@ func (s *taskQueueStatsContext) validateDescribeWorkerDeploymentVersion(
- 		require.Len(t, resp.VersionTaskQueues, 2, "should be 1 task queue for Workflows and 1 for Activities")
- 
- 		for _, info := range resp.VersionTaskQueues {
--			if info.Name == tqName || info.Type == tqType {
-+			if info.Name == tqName && info.Type == tqType {
- 				label := "DescribeWorkerDeploymentVersion[" + tqType.String() + "]"
- 				validateTaskQueueStats(require.New(t), label, info.Stats, expectation)
- 				if expectation.BacklogCount > 0 {
-```
-
----
-
-### Incident Patch 3: `c44a13c6` (2026-11-20)
-**Commit Message**: Fix testx bump workflow races (#13209)
-
-## What changed?
-1. Run the pin check after the bump job succeeds.
-2. If a push fails, fetch `main` again and recompute the pin. Allow up
-to three push attempts.
-
-## Why?
-The nightly check reported a stale pin while the same run was updating
-it.
-
-The prior run had left the pin stale because `main` advanced before its
-push. [Nightly
-run](https://github.com/temporalio/temporal/actions/runs/44700468715) ·
-[Prior push
-rejection](https://github.com/temporalio/temporal/actions/runs/44603063841)
-
-## Potential risks
-A persistent push failure uses all three attempts before the existing
-Slack notification fires.
-
-**File**: `.github/workflows/testx-bump.yml` (modified, +25/-12)
-```diff
-@@ -55,26 +55,39 @@ jobs:
- 
-       - name: Update testx on main
-         run: |
--          sha=$(git rev-list -1 HEAD -- common/testx/)
--          go get "go.temporal.io/testx@${sha}"
--          go mod tidy
--
--          if git diff --quiet -- go.mod go.sum; then
--            echo "testx version is already current"
--            exit 0
--          fi
--
-           git config --local user.name 'Temporal Data'
-           git config --local user.email 'commander-data@temporal.io'
- 
--          git add go.mod go.sum
--          git commit -m "Bump go.temporal.io/testx to ${sha::9}"
--          git push origin HEAD:main
-+          max_attempts=3
-+          for ((attempt = 1; attempt <= max_attempts; attempt++)); do
-+            echo "testx bump attempt $attempt of $max_attempts"
-+            git fetch origin main
-+            git switch --detach FETCH_HEAD
-+
-+            sha=$(git rev-list -1 HEAD -- common/testx/)
-+            go get "go.temporal.io/testx@${sha}"
-+            go mod tidy
-+
-+            if git diff --quiet -- go.mod go.sum; then
-+              echo "testx version is already current"
-+              exit 0
-+            fi
-+
-+            git add go.mod go.sum
-+            git commit -m "Bump go.temporal.io/testx to ${sha::9}"
-+            if git push origin HEAD:main; then
-+              exit 0
-+            fi
-+          done
-+
-+          echo "::error::Could not push the testx bump after $max_attempts attempts."
-+          exit 1
- 
-   # Fails if the testx version required on main doesn't match common/testx/, e.g. because the bump failed
-   # to push. Builds in this repo don't notice, since they use the replace.
-   # Runs nightly (US time), when the bump for the day's testx changes should have landed.
-   check-pin:
-+    needs: bump
-     if: github.event_name != 'push'
-     runs-on: ubuntu-latest
- 
+@@ -119,6 +119,146 @@ func (s *sessionTestSuite) TestBuildDSN() {
+ 			outIsolationVal: "'repeatable-read'",
+ 			outURLPath:      "test:pass@tcp(192.168.0.1:3306)/db1?",
+ 		},
++		{
++			name: "empty isolation level falls back to default",
++			in: config.SQL{
++				User:              "test",
++				Password:          "pass",
++				ConnectProtocol:   "tcp",
++				ConnectAddr:       "192.168.0.1:3306",
++				DatabaseName:      "db1",
++				ConnectAttributes: map[string]string{"transaction_isolation": ""},
++			},
++			outIsolationKey: "transaction_isolation",
++			outIsolationVal: "'READ-COMMITTED'",
++			outURLPath:      "test:pass@tcp(192.168.0.1:3306)/db1?",
++		},
++		{
++			name: "whitespace isolation level falls back to default",
++			in: config.SQL{
++				User:              "test",
++				Password:          "pass",
++				ConnectProtocol:   "tcp",
++				ConnectAddr:       "192.168.0.1:3306",
++				DatabaseName:      "db1",
++				ConnectAttributes: map[string]string{"transaction_isolation": " "},
++			},
++			outIsolationKey: "transaction_isolation",
++			outIsolationVal: "'READ-COMMITTED'",
++			outURLPath:      "test:pass@tcp(192.168.0.1:3306)/db1?",
++		},
++		{
++			name: "tab and newline isolation level falls back to default",
++			in: config.SQL{
++				User:              "test",
++				Password:          "pass",
++				ConnectProtocol:   "tcp",
++				ConnectAddr:       "192.168.0.1:3306",
++				DatabaseName:      "db1",
++				ConnectAttributes: map[string]string{"transaction_isolation": "\t\n"},
++			},
++			outIsolationKey: "transaction_isolation",
++			outIsolationVal: "'READ-COMMITTED'",
++			outURLPath:      "test:pass@tcp(192.168.0.1:3306)/db1?",
++		},
++		{
++			name: "empty legacy isolation level falls back to default",
++			in: config.SQL{
++				User:              "test",
++				Password:          "pass",
++				ConnectProtocol:   "tcp",
++				ConnectAddr:       "192.168.0.1:3306",
++				DatabaseName:      "db1",
++				ConnectAttributes: map[string]string{"tx_isolation": ""},
++			},
++			outIsolationKey: "transaction_isolation",
++			outIsolationVal: "'READ-COMMITTED'",
++			outURLPath:      "test:pass@tcp(192.168.0.1:3306)/db1?",
++		},
++		{
++			name: "whitespace legacy isolation level falls back to default",
++			in: config.SQL{
++				User:              "test",
++				Password:          "pass",
++				ConnectProtocol:   "tcp",
++				ConnectAddr:       "192.168.0.1:3306",
++				DatabaseName:      "db1",
++				ConnectAttributes: map[string]string{"tx_isolation": " "},
++			},
++			outIsolationKey: "transaction_isolation",
++			outIsolationVal: "'READ-COMMITTED'",
++			outURLPath:      "test:pass@tcp(192.168.0.1:3306)/db1?",
++		},
++		{
++			name: "tab and newline legacy isolation level falls back to default",
++			in: config.SQL{
++				User:              "test",
++				Password:          "pass",
++				ConnectProtocol:   "tcp",
++				ConnectAddr:       "192.168.0.1:3306",
++				DatabaseName:      "db1",
++				ConnectAttributes: map[string]string{"tx_isolation": "\t\n"},
++			},
++			outIsolationKey: "transaction_isolation",
++			outIsolationVal: "'READ-COMMITTED'",
++			outURLPath:      "test:pass@tcp(192.168.0.1:3306)/db1?",
++		},
++		{
++			name: "both isolation aliases blank fall back to default",
++			in: config.SQL{
++				User:              "test",
++				Password:          "pass",
++				ConnectProtocol:   "tcp",
++				ConnectAddr:       "192.168.0.1:3306",
++				DatabaseName:      "db1",
++				ConnectAttributes: map[string]string{"transaction_isolation": "", "tx_isolation": ""},
++			},
++			outIsolationKey: "transaction_isolation",
++			outIsolationVal: "'READ-COMMITTED'",
++			outURLPath:      "test:pass@tcp(192.168.0.1:3306)/db1?",
++		},
++		{
++			name: "valid isolation level with blank legacy alias",
++			in: config.SQL{
++				User:              "test",
++				Password:          "pass",
++				ConnectProtocol:   "tcp",
++				ConnectAddr:       "192.168.0.1:3306",
++				DatabaseName:      "db1",
++				ConnectAttributes: map[string]string{"transaction_isolation": "REPEATABLE-READ", "tx_isolation": ""},
++			},
++			outIsolationKey: "transaction_isolation",
++			outIsolationVal: "'repeatable-read'",
++			outURLPath:      "test:pass@tcp(192.168.0.1:3306)/db1?",
++		},
++		{
++			name: "valid legacy isolation level with blank full-name alias",
++			in: config.SQL{
++				User:              "test",
++				Password:          "pass",
++				ConnectProtocol:   "tcp",
++				ConnectAddr:       "192.168.0.1:3306",
++				DatabaseName:      "db1",
++				ConnectAttributes: map[string]string{"tx_isolation": "REPEATABLE-READ", "transaction_isolation": ""},
++			},
++			outIsolationKey: "tx_isolation",
++			outIsolationVal: "'repeatable-read'",
++			outURLPath:      "test:pass@tcp(192.168.0.1:3306)/db1?",
++		},
++		{
++			name: "unrelated blank attribute is preserved",
++			in: config.SQL{
++				User:              "test",
++				Password:          "pass",
++				ConnectProtocol:   "tcp",
++				ConnectAddr:       "192.168.0.1:3306",
++				DatabaseName:      "db1",
++				ConnectAttributes: map[string]string{"readTimeout": ""},
++			},
++			out
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #13226** (2026-11-21): 1.33.0: Prepare release branch (@temporal-cicd[bot])
-- **PR #13219** (2026-11-21): Optionally enforce JWT audience on Nexus HTTP handlers (@chrsmith)
-- **PR #13217** (closed): Stop each matching partition exactly once (@gurdasnijor)
-- **PR #13210** (2026-11-20): Preserve activity attempt timestamps across handoff retries (@fretz12)
-- **PR #13209** (2026-11-20): Fix testx bump workflow races (@stephanos)
-- **PR #13205** (2026-11-20): Use namespace.Name in TestEnv.SendSignal (@stephanos)
+- **PR #13304** (closed): Fix: Recover Activity delivery after a sync-match start timeout (@ali-khokhar-nvidia)
+- **PR #13296** (closed): Add persistence failpoints with namespace scoping (@stephanos)
+- **PR #13295** (closed): Run gRPC and HTTP test faults on failpoints (@stephanos)
+- **PR #13294** (closed): Add server failpoint source and startup switch (@stephanos)
+- **PR #13289** (2026-11-25): Add BUGGIFY to the server (@stephanos)
+- **PR #13288** (2026-11-25): Configure failpoints with the testing.failpointRules setting (@stephanos)
 
 ---
 
@@ -2339,33 +2358,35 @@ Slack notification fires.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. flakes: raise deadlock detection timeout in `TestChildWorkflowInheritance` inher
+## X. panic on empty MySQL isolation level attribute
 
 **RULE**:
-When implementing operations in `tests/versioning_3_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in temporalio/temporal. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `common/persistence/sql/sqlplugin/mysql/session/session.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in temporalio/temporal. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `59c4ca9a`: flakes: raise deadlock detection timeout in `TestChildWorkflowInheritance` inherit tests. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8495e550`: panic on empty MySQL isolation level attribute. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/versioning_3_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `common/persistence/sql/sqlplugin/mysql/session/session.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		// Because the wf task can get stuck behind a channel, we make sure sdk does not panic too early
-		DeadlockDetectionTimeout: 30 * time.Second,
-		WorkflowTaskTimeout: 30 * time.Second,
+		// Drop blank isolation entries; keeping them would emit an invalid "SET <key> =".
+		if (k1 == isolationLevelAttrName || k1 == isolationLevelAttrNameLegacy) && v1 == "" {
+			continue
+		}
+		if len(value) > 0 && value[0] != '\'' { // mysql sys variable values must be enclosed in single quotes
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-		WorkflowTaskTimeout: 10 * time.Second,
+		if value[0] != '\'' { // mysql sys variable values must be enclosed in single quotes
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `59c4ca9a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8495e550` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

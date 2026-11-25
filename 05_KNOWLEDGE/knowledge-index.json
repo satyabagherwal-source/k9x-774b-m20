@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-25T05:29:09.310Z",
+  "last_updated": "2026-11-25T05:37:23.933Z",
   "total_verified_learnings": 9112,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25251,
+  "total_items": 25253,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112066,9 +112066,9 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "a828079d1afde3cbc6febe230f80614855377cadf67d2bcf79bf57c30b5d5d43",
+      "content_hash": "2146551fc79b9bced968ee6c9be0f204ca80e7724f8ec5b47b32ebc7ca09fef8",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T04:07:46.741Z"
+      "persisted_at": "2026-11-25T05:37:23.597Z"
     },
     "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona",
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "d2b3f9c74fc4f2346085a5a434c850158f1db2fc0c2c19bf7f583a0d5a9d47e3",
+      "content_hash": "c9395134d831006379628c9ad2d184fa8d0b9690cf2f982994fbe99fb9492580",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T04:07:46.935Z"
+      "persisted_at": "2026-11-25T05:37:23.779Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "d8e464fe4fba055201c534b0fa7bc9f753e2b9b07f1b24a5d80eea7ac7b410e7",
+      "content_hash": "8ff5f87f0de903dc41d1f185dd436ca0fd20ed85712f1b419aaea6ca3273b66b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T04:07:47.089Z"
+      "persisted_at": "2026-11-25T05:37:23.933Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -215573,8 +215573,8 @@
       "slug": "temporalio-temporal",
       "platform": "github",
       "source_url": "https://github.com/temporalio/temporal",
-      "source_version": "4197dfdd",
-      "content_hash": "430caead01ee490cd7ca08a4c30ad092a9623028d8eb9fa0a855c86a4ce857d4",
+      "source_version": "c70df160",
+      "content_hash": "7206d60fabff28f244f1954d8c01f07b602b06c168eca49a5ea6aff7d6a40a2d",
       "dossier_path": "07_PROJECT_LEARNING/temporalio-temporal-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/temporalio-temporal-learnings.md",
       "promoted_rules": [
@@ -215617,6 +215617,11 @@
           "number": 10257,
           "title": "Add keepalive dial option to local frontend gRPC connection",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10463,
+          "title": "panic on empty MySQL isolation level attribute",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -215624,7 +215629,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T12:45:42.128Z",
+      "verified_at": "2026-11-25T05:37:18.034Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -215666,10 +215671,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-temporalio-temporal-content-information-intelligence-temporalio-temporal-core-in.md",
       "title": "Content & Information Intelligence: temporalio/temporal Core Invariants",
       "repository": "temporalio/temporal",
-      "source_version": "32ef011f",
-      "content_hash": "b595e820c9a1b11553804b7f628013ceec2deebd0c0adba1a3466bb538ad28a0",
+      "source_version": "c70df160",
+      "content_hash": "bb8550a22365864fc588cecc705ee329ea635596ddeffeab236cc9cfd994fa32",
       "domain_letter": "I",
-      "persisted_at": "2026-11-21T13:53:39.948Z"
+      "persisted_at": "2026-11-25T05:37:18.641Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-temporalio-temporal": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-temporalio-temporal",
@@ -215678,10 +215683,10 @@
       "relative_path": "08_VERIFICATION/temporalio-temporal-verification-protocol-empirical-defect-shield-for-temporalio.md",
       "title": "Verification Protocol: Empirical Defect Shield for temporalio/temporal",
       "repository": "temporalio/temporal",
-      "source_version": "4197dfdd",
-      "content_hash": "b7dbdf69c55e885d6a66e61769559402eb57ea0ede5d76f79d915fa9a991eb99",
+      "source_version": "c70df160",
+      "content_hash": "fd98b2f6764515ec3603021454ca82cf2782baed67f9369fe867a44d2bbb03ef",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T12:45:43.263Z"
+      "persisted_at": "2026-11-25T05:37:18.816Z"
     },
     "learn-github-alibaba-zvec": {
       "learning_id": "learn-github-alibaba-zvec",
@@ -215811,9 +215816,9 @@
       "title": "Content & Information Intelligence: temporalio-temporal-learnings Core Invariants",
       "repository": "temporalio-temporal-learnings",
       "source_version": "HEAD",
-      "content_hash": "ff84cc8c6da10a78b7d30892c3a6ee9d7b79b56c89f925fa716a04c9fe47dcd6",
+      "content_hash": "b53afcc7860f5c13066183f91a5123aea2e2bcdcfcaecbab32c68ab62fb987cd",
       "domain_letter": "I",
-      "persisted_at": "2026-11-13T20:47:20.566Z"
+      "persisted_at": "2026-11-25T05:37:22.600Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-temporalio-temporal-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-temporalio-temporal-learnings",
@@ -215823,9 +215828,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for temporalio-temporal-learnings",
       "repository": "temporalio-temporal-learnings",
       "source_version": "HEAD",
-      "content_hash": "29de2731917e2c16d0d872cee807a587509858e2fc198b7699c2fc5884b7bb85",
+      "content_hash": "e70924cc9c3122dd03b73cc4cc835d9eb6491bcef28ecd5b87451438f8ab1fe4",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T12:45:50.470Z"
+      "persisted_at": "2026-11-25T05:37:22.779Z"
     },
     "candidate_directive-turbo-constrain-record-int8-kernels-to-dispatched-isa": {
       "item_id": "candidate_directive-turbo-constrain-record-int8-kernels-to-dispatched-isa",
@@ -277779,7 +277784,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/mistralai/Timestral-209M",
       "source_version": "hf-mistralai-timestral-209m",
-      "content_hash": "215ab52ac3bd1c62b89de0e81eb9882b0a8e385ea76f1ce65c7d70ef634cb08c",
+      "content_hash": "90960d1588d9a31b40a212b421b544f409aadc6533fbffbf2447b63bce767f64",
       "dossier_path": "07_PROJECT_LEARNING/hf-mistralai-timestral-209m-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-mistralai-timestral-209m-learnings.md",
       "promoted_rules": [],
@@ -277788,7 +277793,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T09:52:45.376Z",
+      "verified_at": "2026-11-25T05:37:08.100Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -277805,9 +277810,9 @@
       "title": "Research & Knowledge Intelligence: mistralai/Timestral-209M Core Invariants",
       "repository": "mistralai/Timestral-209M",
       "source_version": "hf-mistralai-timestral-209m",
-      "content_hash": "17d8b3a6a1afe1fabe021af33ed5120da76f3e79526a6a0f01e11838c274c66b",
+      "content_hash": "7bf62deb8db713704e4cde2706b196a6c7b7f6fc93b6f6b5417d9bc9721b3067",
       "domain_letter": "D",
-      "persisted_at": "2026-11-21T09:52:45.801Z"
+      "persisted_at": "2026-11-25T05:37:08.572Z"
     },
     "rule-8982": {
       "learning_id": "rule-8982",
@@ -277881,9 +277886,9 @@
       "title": "Research & Knowledge Intelligence: hf-mistralai-timestral-209m-learnings Core Invariants",
       "repository": "hf-mistralai-timestral-209m-learnings",
       "source_version": "HEAD",
-      "content_hash": "de281a2e5479296cd27b285f47afacbffbb5e3a096e27288221b0235489698d4",
+      "content_hash": "9ca28c0cc0b8962dfb0072f4c52f091893709c80b8cd6dbbffbffc6b8c83db87",
       "domain_letter": "D",
-      "persisted_at": "2026-11-21T09:52:48.828Z"
+      "persisted_at": "2026-11-25T05:37:21.876Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-invertase-react-native-firebase-lea": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-invertase-react-native-firebase-lea",
@@ -342143,13 +342148,13 @@
       "item_id": "candidate_directive-rust-bind-bare-calls-to-the-enclosing-module-s-items",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-RTRV-rust-bind-bare-calls-to-the-enclosing-module-s-items.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-Z2KH-rust-bind-bare-calls-to-the-enclosing-module-s-items.md",
       "title": "rust): bind bare calls to the enclosing module's items",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "9a66684cb9e8e2d3fa99c99f7c3bf0b00680d4dd954dd8bb31d7496511a03aec",
+      "content_hash": "2276505ecd32a4bc8ca66a5d10dc2075c7637a8103e172d465a93951e380d389",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T04:07:46.558Z"
+      "persisted_at": "2026-11-25T05:37:23.397Z"
     },
     "domain_intelligence-content-information-intelligence-rollup-rollup-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-rollup-rollup-learnings-core-invariants",
@@ -345305,6 +345310,32 @@
       "content_hash": "af7de360778cf9013aacf771733b45f8eca0550b4b38e511e864948f4e50efc8",
       "domain_letter": "D",
       "persisted_at": "2026-11-25T05:20:33.473Z"
+    },
+    "rule-10463": {
+      "learning_id": "rule-10463",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10463,
+      "title": "panic on empty MySQL isolation level attribute",
+      "source_url": "https://github.com/temporalio/temporal",
+      "source_version": "c70df160",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T05:37:18.034Z"
+    },
+    "candidate_directive-panic-on-empty-mysql-isolation-level-attribute": {
+      "item_id": "candidate_directive-panic-on-empty-mysql-isolation-level-attribute",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-Z1TJ-panic-on-empty-mysql-isolation-level-attribute.md",
+      "title": "panic on empty MySQL isolation level attribute",
+      "repository": "temporalio-temporal-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3733e586645292e5dfa8ace4c2edbe5c206d1e3c594f9d94755ef623c71a0023",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-25T05:37:22.425Z"
     }
   },
   "ai-builder-brain": {

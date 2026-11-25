@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T20:47:20.334Z",
+  "timestamp": "2026-11-25T05:37:22.297Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-temporalio-temporal-learnings",
@@ -14,13 +14,13 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [temporalio-temporal-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T20:47:20.334Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T05:37:22.297Z`  
 > **Learning ID**: `LEARN-EVO-temporalio-temporal-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain I (Content & Information Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
+- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), G (Architecture Intelligence), H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
 - **Confidence Rating**: 53%
 
 ## 2. Core Domain Invariants & Discovered Laws
@@ -28,10 +28,10 @@ The following architectural invariants have been empirically discovered and reco
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/temporalio-temporal-learnings.md`  
 > **Source**: github ([https://github.com/temporalio/temporal](https://github.com/temporalio/temporal))  
-> **Source Version**: `73f1acad`  
+> **Source Version**: `c70df160`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T20:47:09.875Z  
+> **Timestamp**: 2026-11-25T05:37:17.144Z  
 > **Learning ID**: `learn-github-temporalio-temporal`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/temporalio-temporal-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/temporalio/temporal](https://github.com/temporalio/temporal))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T20:47:09.868Z  
+> **Harvest Timestamp**: 2026-11-25T05:37:17.139Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Temporal service
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 24383 stars
+- **Stars / Engagement**: 24588 stars
 
 ---
 
@@ -2149,272 +2149,210 @@ func (x *WorkflowMutableStateMutation) ProtoReflect() protoreflect.Message {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cbeb97f4` (2026-11-13)
-**Commit Message**: Require matching request IDs for Nexus completions (#13077)
+### Incident Patch 1: `8495e550` (2026-11-24)
+**Commit Message**: Fix panic on empty MySQL isolation level attribute (#13095)
 
 ## What changed?
-Require asynchronous Nexus completions to carry a request ID matching
-the pending operation in both HSM and CHASM. Frontend rejects a
-completion token with an empty request ID as an invalid callback token
-(BadRequest). History also rejects empty or mismatched IDs with NotFound
-before applying a completion transition, covering direct internal
-requests.
+
+Guard `sanitizeAttr` against an empty isolation-level value, and drop
+blank `transaction_isolation` / `tx_isolation` connect attributes when
+building the DSN so the default `READ-COMMITTED` isolation level applies
+without leaving an empty alias behind.
+
+- `common/persistence/sql/sqlplugin/mysql/session/session.go`
+  - `sanitizeAttr`: check `len(value) > 0` before indexing `value[0]`.
+- `buildDSNAttrs`: skip blank `transaction_isolation` / `tx_isolation`
+entries before inserting them, so no empty `SET <key> =` is emitted.
+Other blank attributes (e.g. `readTimeout`) are still passed through.
+- `common/persistence/sql/sqlplugin/mysql/session/session_test.go`
+- Extend `TestBuildDSN` with cases for both aliases (empty /
+whitespace), both aliases blank, a valid override alongside a blank
+alias, and an unrelated blank attribute; runs for both the `main` and
+`visibility` stores.
 
 ## Why?
-An empty request ID previously skipped the operation identity check,
-allowing a completion token to be retargeted to another pending
-operation. The Frontend check treats a missing required token field as
-an invalid request; the History checks prevent an invalid completion
-from changing operation state.
 
-## How did you test it?
-- [x] built
-- [ ] run locally and tested manually
-- [x] covered by existing tests
-- [x] added new unit test(s)
-- [x] added new functional test(s)
+`sanitizeAttr` indexed `value[0]` without checking its length. An empty
+`transaction_isolation` (or legacy `tx_isolation`) connect attribute —
+e.g. from an env-var/template substitution that resolves to an empty
+string — panick
 
-## Potential risks
-Completion tokens issued without a request ID will now be rejected if
-their operations remain pending, which may affect long-running
-operations in older self-hosted deployments. HTTP callbacks with an
-empty request ID now receive BadRequest.
-
-**File**: `chasm/lib/nexusoperation/operation.go` (modified, +1/-1)
+**File**: `common/persistence/sql/sqlplugin/mysql/session/session.go` (modified, +5/-1)
 ```diff
-@@ -307,7 +307,7 @@ func (o *Operation) HandleNexusCompletion(
- 	completion *persistencespb.ChasmNexusCompletion,
- ) error {
- 	// Request ID lets us reject a stale or misrouted completion.
--	if completion.GetRequestId() != "" && o.GetRequestId() != completion.GetRequestId() {
-+	if completion.GetRequestId() == "" || o.GetRequestId() != completion.GetRequestId() {
- 		return serviceerror.NewNotFound("operation not found")
+@@ -161,6 +161,10 @@ func buildDSNAttrs(dbKind sqlplugin.DbKind, cfg *config.SQL) (map[string]string,
+ 	}
+ 	for k, v := range cfg.ConnectAttributes {
+ 		k1, v1 := sanitizeAttr(k, v)
++		// Drop blank isolation entries; keeping them would emit an invalid "SET <key> =".
++		if (k1 == isolationLevelAttrName || k1 == isolationLevelAttrNameLegacy) && v1 == "" {
++			continue
++		}
+ 		attrs[k1] = v1
  	}
  
-```
-
-**File**: `chasm/lib/nexusoperation/operation_test.go` (modified, +19/-0)
-```diff
-@@ -10,6 +10,7 @@ import (
- 	commonpb "go.temporal.io/api/common/v1"
- 	enumspb "go.temporal.io/api/enums/v1"
- 	failurepb "go.temporal.io/api/failure/v1"
-+	"go.temporal.io/api/serviceerror"
- 	"go.temporal.io/api/workflowservice/v1"
- 	persistencespb "go.temporal.io/server/api/persistence/v1"
- 	"go.temporal.io/server/chasm"
-@@ -249,6 +250,24 @@ func TestHandleNexusCompletion(t *testing.T) {
+@@ -192,7 +196,7 @@ func sanitizeAttr(inkey string, invalue string) (string, string) {
+ 	value := strings.ToLower(strings.TrimSpace(invalue))
+ 	switch key {
+ 	case isolationLevelAttrName, isolationLevelAttrNameLegacy:
+-		if value[0] != '\'' { // mysql sys variable values must be enclosed in single quotes
++		if len(value) > 0 && value[0] != '\'' { // mysql sys variable values must be enclosed in single quotes
+ 			value = "'" + value + "'"
  		}
- 	}
- 
-+	t.Run("InvalidRequestID", func(t *testing.T) {
-+		for _, tc := range []struct{ name, requestID string }{
-+			{"empty", ""},
-+			{"mismatched", "other-request-id"},
-+		} {
-+			t.Run(tc.name, func(t *testing.T) {
-+				ctx := newCtx()
-+				op := newScheduledTestOperation(t, ctx)
-+				err := op.HandleNexusCompletion(ctx, &persistencespb.ChasmNexusCompletion{
-+					RequestId: tc.requestID,
-+					Outcome:   &persistencespb.ChasmNexusCompletion_Success{Success: mustToPayload(t, "result")},
-+				})
-+				require.ErrorAs(t, err, new(*serviceerror.NotFound))
-+				require.Equal(t, nexusoperationpb.OPERATION_STATUS_SCHEDULED, op.GetStatus())
-+			})
-+		}
-+	})
-+
- 	t.Run("Success", func(t *testing.T) {
- 		t.Run("AfterStarted", func(t *testing.T) {
- 			ctx := newCtx()
+ 		return key, value
 ```
 
-**File**: `service/frontend/nexus_completion_http_handler.go` (modified, +3/-0)
+**File**: `common/persistence/sql/sqlplugin/mysql/session/session_test.go` (modified, +144/-0)
 ```diff
-@@ -135,6 +135,9 @@ func (h *nexusCompletionHandler) CompleteOperation(ctx context.Context, r *nexus
- 		h.Logger.Error("failed to decode completion from token", tag.Error(err))
- 		return nexus.NewHandlerErrorf(nexus.HandlerErrorTypeBadRequest, "invalid callback token")
- 	}
-+	if completion.GetRequestId() == "" {
-+		return nexus.NewHandlerErrorf(nexus.HandlerErrorTypeBadRequest, "invalid callback token")
-+	}
- 
- 	// Determine the target namespace, workflow, and run ID from the completion token. The CHASM
- 	// ComponentRef is canonical when present; otherwise the top-level HSM fields are used. Shared
-```
-
-**File**: `service/history/hsm/nexusoperations/completion.go` (modified, +8/-8)
-```diff
-@@ -179,9 +179,10 @@ func (h *CompletionHandler) Handle(
- 	result *commonpb.Payload,
- 	opFailedError *nexus.OperationError,
- ) error {
--	// The initial version of the completion token did not include a request ID.
--	// Only retry Access without a run ID if the request ID is not empty.
--	isRetryableNotFoundErr := requestID != ""
-+	if requestID == "" {
-+		return serviceerror.NewNotFound("operation not found")
-+	}
-+	isRetryableNotFoundErr := true
- 	// emitMetrics is populated inside the Access closure and invoked only after the write
- 	// transaction commits successfully, so a failed commit (which retries the completion) does not
- 	// double-count the metric. See operationMetricsHandler's doc comment.
-@@ -194,18 +195,17 @@ func (h *CompletionHandler) Handle(
- 		if err != nil {
- 			return err
- 		}
-+		if operation.RequestId != requestID {
-+			isRetryableNotFoundErr = false
-+			return serviceerror.NewNotFound("operation not found")
-+		}
- 		// If the operation has not started yet, this completion arrived before the start response and
- 		// fabricateStartedEventIfMissing will transition it to started below; the executor never emitted
- 		// schedule-to-start in that case, so we emit it here.
- 		fabricatedStart := TransitionStarted.Possible(operation)
- 		if err := fabricateStartedEventIfMissing(node, requestID, operationToken, startTime, links); err != nil {
- 			return err
- 		}
--		if requestID != "" && operation.RequestId != requestID {
--			isRetryableNotFoundErr = false
--			return serviceerror.NewNotFound("operation not found")
--		}
--
- 		if opFailedError != nil {
- 			err = handleOperationError(node, operation, opFailedError)
- 		} else {
-```
-
-**File**: `service/history/hsm/nexusoperations/completion_test.go` (modified, +33/-8)
-```diff
-@@ -9,6 +9,8 @@ import (
- 	"github.com/stretchr/testify/require"
- 	commonpb "go.temporal.io/api/common/v1"
- 	historypb "go.temporal.io/api/history/v1"
-+	"go.temporal.io/api/serviceerror"
-+	enumsspb "go.temporal.io/server/api/enums/v1"
- 	chasmnexus "go.temporal.io/server/chasm/lib/nexusoperation"
- 	"go.temporal.io/server/common/dynamicconfig"
- 	"go.temporal.io/server/common/metrics/metricstest"
-@@ -18,6 +20,27 @@ import (
- 	"google.golang.org/protobuf/types/known/durationpb"
- )
- 
-+func TestCompletionHandlerRejectsInvalidRequestID(t *testing.T) {
-+	t.Parallel()
-+	for _, tc := range []struct{ name, requestID string }{
-+		{"empty", ""},
-+		{"mismatched", "other-request-id"},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			t.Parallel()
-+			node := newOperationNode(t, &hsmtest.NodeBackend{}, mustNewScheduledEvent(time.Now(), &historypb.NexusOperationScheduledEventAttributes{
-+				RequestId: "request-id", ScheduleToCloseTimeout: durationpb.New(time.Hour),
-+			}))
-+			handler := nexusoperations.NewCompletionHandler(metricstest.NewCaptureHandler(), &nexusoperations.Config{})
-+			err := handler.Handle(context.Background(), fakeEnv{node: node}, hsm.Ref{}, tc.requestID, "token", nil, nil, &commonpb.Payload{}, nil)
-+			require.ErrorAs(t, err, new(*serviceerror.NotFound))
-+			op, err := hsm.MachineData[nexusoperations.Operation](node)
-+			require.NoError(t, err)
-+			require.Equal(t, enumsspb.NEXUS_OPERATION_STATE_SCHEDULED, op.NexusOperationInfo.State)
-+		})
-+	}
-+}
-+
- func TestCompletionHandler_EmitsCallerMetrics(t *testing.T) {
- 	// All cases drive a completion that arrives before the start response, so the handler
- 	// fabricates the started transition (emitting schedule-to-start) and then resolves the
-@@ -66,6 +89,7 @@ func TestCompletionHandler_EmitsCallerMetrics(t *testing.T) {
- 			backend := &hsmtest.NodeBackend{}
- 			node := newOperationNode(t, backend, mustNewScheduledEvent(time.Now(), &historypb.NexusOperationScheduledEventAttributes{
- 				ScheduleToCloseTimeout: durationpb.New(time.Hour),
-+				RequestId:              "request-id",
- 			}))
- 
- 			captureHandler := metricstest.NewCaptureHandler()
-@@ -79,10 +103,10 @@ func TestCompletionHandler_EmitsCallerMetrics(t *testing.T) {
- 				context.Background(),
- 				fakeEnv{node: node},
- 				hsm.Ref{},
--				"",      // requestID (empty skips the request-id match check)
--				"token", // operationToken
--				nil,     // startTime
--				nil,     // links
-+				"request-id", // requestID
-+				"token",      // operationToken
-+				nil,          // startTime
-+				nil,          // links
- 				tc.result,
- 				tc.opErr,
- 			))
-@@ -130,6 +154,7 @@ func TestCompletionHandler_AlreadyStartedMetricsUseWorkflowTime(t *testing.T) {
- 	backend := &hsmtest.NodeBackend{WorkflowTimeFn: func() time.Time { return workflowNow }}
- 	node := newOperationNode(t, backend, mustNewScheduledEvent(scheduledTime, &historypb.NexusOperationScheduledEventAttributes{
- 		ScheduleToCloseTimeout: durationpb.New(time.Hour),
-+		RequestId:              "request-id",
- 	}))
- 	require.NoError(t, hsm.MachineTransition(node, func(operation nexusoperations.Operation) (hsm.TransitionOutput, error) {
- 		return nexusoperations.TransitionStarted.Apply(operation, nexusoperations.EventStarted{
-@@ -150,10 +175,10 @@ func TestCompletionHandler_AlreadyStartedMetricsUseWorkflowTime(t *testing.T) {
- 		context.Background(),
- 		fakeEnv{node: node, nowFn: func() time.Time { return wallNow }},
- 		hsm.Ref{},
--		"",      // requestID (empty skips the request-id match check)
--		"token", // operationToken
--		nil,     // startTime
--		nil,     // links
-+		"request-id", // requestID
-+		"token",      // operationToken
-+		nil,          // startTime
-+		nil,          // links
- 		&commonpb.Payload{},
- 		nil,
- 	))
-```
-
-**File**: `tests/nexus_workflow_test.go` (modified, +25/-0)
-```diff
-@@ -2019,6 +2019,31 @@ func (s *NexusWorkflowTestSuite) TestNexusOperationAsyncCompletionErrors(chasmEn
- 		s.Contains(handlerErr.Error(), "invalid callback token", "Response should indicate invalid callback token")
- 	})
- 
-+	s.Run("CallbackTokenWithoutRequestID", func(s *NexusWorkflowTestSuite) {
-+		env := s.newTestEnv(chasmEnabled)
-+		gen := &commonnexus.CallbackTokenGenerator{}
-+		validToken, err := s.generateValidCallbackToken(env.NamespaceID().String(), testcore.RandomizeStr("workflow"), uuid.NewString())
-+		s.NoError(err)
-+		decodedToken, err := commonnexus.DecodeCallbackToken(validToken)
-+		s.NoError(err)
-+		completionToken, err := gen.DecodeCompletion(decodedToken)
-+		s.NoError(err)
-+		completionToken.RequestId = ""
-+		invalidToken, err := gen.Tokenize(completionToken)
-+		s.NoError(err)
-+
-+		completion := nexusrpc.CompleteOperationOptions{
-+			Result: testcore.MustToPayload(s.T(), "result"),
-+			Header: nexus.Header{commonnexus.CallbackTokenHeader: invalidToken},
-+		}
-+		publicCallbackURL := "http://" + env.HttpAPIAddress() + "/" + commonnexus.RouteCompletionCallback.Path(env.Namespace().String())
-+		err = s.sendNexusCompletionRequest(s.Context(), publicCallbackURL, completion)
-+		var handlerErr *nexus.HandlerError
-+		s.ErrorAs(err, &handlerErr)
-+		s.Equal(nexus.HandlerErrorTypeBadRequest, handlerErr.Type)
-+		s.Contains(handlerErr.Error(), "invalid callback token")
-+	})
-+
- 	s.Run("InvalidCallbackTokenNoIdentifier", func(s *NexusWorkflowTestSuite) {
- 		env := s.newTestEnv(chasmEnabled)
- 		completion := nexusrpc.CompleteOperationOptions{
+@@ -119,6 +119,146 @@ func (s *sessionTestSuite) TestBuildDSN() {
+ 			outIsolationVal: "'repeatable-read'",
+ 			outURLPath:      "test:pass@tcp(192.168.0.1:3306)/db1?",
+ 		},
++		{
++			name: "empty isolation level falls back to default",
++			in: config.SQL{
++				User:              "test",
++				Password:          "pass",
++				ConnectProtocol:   "tcp",
++				ConnectAddr:       "192.168.0.1:3306",
++				DatabaseName:      "db1",
++				ConnectAttributes: map[string]string{"transaction_isolation": ""},
++			},
++			outIsolationKey: "transaction_isolation",
++			outIsolationVal: "'READ-COMMITTED'",
++			outURLPath:      "test:pass@tcp(192.168.0.1:3306)/db1?",
++		},
++		{
++			name: "whitespace isolation level falls back to default",
++			in: config.SQL{
++				User:              "test",
++				Password:          "pass",
++				ConnectProtocol:   "tcp",
++				ConnectAddr:       "192.168.0.1:3306",
++				DatabaseName:      "db1",
++				ConnectAttributes: map[string]string{"transaction_isolation": " "},
++			},
++			outIsolationKey: "transaction_isolation",
++			outIsolationVal: "'READ-COMMITTED'",
++			outURLPath:      "test:pass@tcp(192.168.0.1:3306)/db1?",
++		},
++		{
++			name: "tab and newline isolation level falls back to default",
++			in: config.SQL{
++				User:              "test",
++				Password:          "pass",
++				ConnectProtocol:   "tcp",
++				ConnectAddr:       "192.168.0.1:3306",
++				DatabaseName:      "db1",
++				ConnectAttributes: map[string]string{"transaction_isolation": "\t\n"},
++			},
++			outIsolationKey: "transaction_isolation",
++			outIsolationVal: "'READ-COMMITTED'",
++			outURLPath:      "test:pass@tcp(192.168.0.1:3306)/db1?",
++		},
++		{
++			name: "empty legacy isolation level falls back to default",
++			in: config.SQL{
++				User:              "test",
++				Password:          "pass",
++				ConnectProtocol:   "tcp",
++				ConnectAddr:       "192.168.0.1:3306",
++				DatabaseName:      "db1",
++				ConnectAttributes: map[string]string{"tx_isolation": ""},
++			},
++			outIsolationKey: "transaction_isolation",
++			outIsolationVal: "'READ-COMMITTED'",
++			outURLPath:      "test:pass@tcp(192.168.0.1:3306)/db1?",
++		},
++		{
++			name: "whitespace legacy isolation level falls back to default",
++			in: config.SQL{
++				User:              "test",
++				Password:          "pass",
++				ConnectProtocol:   "tcp",
++				ConnectAddr:       "192.168.0.1:3306",
++				DatabaseName:      "db1",
++				ConnectAttributes: map[string]string{"tx_isolation": " "},
++			},
++			outIsolationKey: "transaction_isolation",
++			outIsolationVal: "'READ-COMMITTED'",
++			outURLPath:      "test:pass@tcp(192.168.0.1:3306)/db1?",
++		},
++		{
++			name: "tab and newline legacy isolation level falls back to default",
++			in: config.SQL{
++				User:              "test",
++				Password:          "pass",
++				ConnectProtocol:   "tcp",
++				ConnectAddr:       "192.168.0.1:3306",
++				DatabaseName:      "db1",
++				ConnectAttributes: map[string]string{"tx_isolation": "\t\n"},
++			},
++			outIsolationKey: "transaction_isolation",
++			outIsolationVal: "'READ-COMMITTED'",
++			outURLPath:      "test:pass@tcp(192.168.0.1:3306)/db1?",
++		},
++		{
++			name: "both isolation aliases blank fall back to default",
++			in: config.SQL{
++				User:              "test",
++				Password:          "pass",
++				ConnectProtocol:   "tcp",
++				ConnectAddr:       "192.168.0.1:3306",
++				DatabaseName:      "db1",
++				ConnectAttributes: map[string]string{"transaction_isolation": "", "tx_isolation": ""},
++			},
++			outIsolationKey: "transaction_isolation",
++			outIsolationVal: "'READ-COMMITTED'",
++			outURLPath:      "test:pass@tcp(192.168.0.1:3306)/db1?",
++		},
++		{
++			name: "valid isolation level with blank legacy alias",
++			in: config.SQL{
++				User:              "test",
++				Password:          "pass",
++				ConnectProtocol:   "tcp",
++				ConnectAddr:       "192.168.0.1:3306",
++				DatabaseName:      "db1",
++				ConnectAttributes: map[string]string{"transaction_isolation": "REPEATABLE-READ", "tx_isolation": ""},
++			},
++			outIsolationKey: "transaction_isolation",
++			outIsolationVal: "'repeatable-read'",
++			outURLPath:      "test:pass@tcp(192.168.0.1:3306)/db1?",
++		},
++		{
++			name: "valid legacy isolation level with blank full-name alias",
++			in: config.SQL{
++				User:              "test",
++				Password:          "pass",
++				ConnectProtocol:   "tcp",
++				ConnectAddr:       "192.168.0.1:3306",
++				DatabaseName:      "db1",
++				ConnectAttributes: map[string]string{"tx_isolation": "REPEATABLE-READ", "transaction_isolation": ""},
++			},
++			outIsolationKey: "tx_isolation",
++			outIsolationVal: "'repeatable-read'",
++			outURLPath:      "test:pass@tcp(192.168.0.1:3306)/db1?",
++		},
++		{
++			name: "unrelated blank attribute is preserved",
++			in: config.SQL{
++				User:              "test",
++				Password:          "pass",
++				ConnectProtocol:   "tcp",
++				ConnectAddr:       "192.168.0.1:3306",
++				DatabaseName:      "db1",
++				ConnectAttributes: map[string]string{"readTimeout": ""},
++			},
++			out
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #13077** (2026-11-13): Require matching request IDs for Nexus completions (@tekkaya)
-- **PR #13075** (2026-11-13): 1.33.0: Prepare release branch (@temporal-cicd[bot])
-- **PR #13069** (2026-11-13): Keep CHASM schedule buffers progressing after discarded or failed starts (@chaptersix)
-- **PR #13068** (2026-11-12): Fix flakes: `TestWorkerRegistry_CountWorkers` (@carlydf)
-- **PR #13058** (closed): Add Zap integration for the shared testlogger (@stephanos)
-- **PR #13052** (2026-11-12): 1.33.0: Prepare release branch (@temporal-cicd[bot])
+- **PR #13304** (closed): Fix: Recover Activity delivery after a sync-match start timeout (@ali-khokhar-nvidia)
+- **PR #13296** (closed): Add persistence failpoints with namespace scoping (@stephanos)
+- **PR #13295** (closed): Run gRPC and HTTP test faults on failpoints (@stephanos)
+- **PR #13294** (closed): Add server failpoint source and startup switch (@stephanos)
+- **PR #13289** (2026-11-25): Add BUGGIFY to the server (@stephanos)
+- **PR #13288** (2026-11-25): Configure failpoints with the testing.failpointRules setting (@stephanos)
 
 ---
 
@@ -2434,31 +2372,35 @@ empty request ID now receive BadRequest.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Require matching request IDs for Nexus completions
+## X. panic on empty MySQL isolation level attribute
 
 **RULE**:
-When implementing operations in `chasm/lib/nexusoperation/operation.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in temporalio/temporal. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `common/persistence/sql/sqlplugin/mysql/session/session.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in temporalio/temporal. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `cbeb97f4`: Require matching request IDs for Nexus completions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8495e550`: panic on empty MySQL isolation level attribute. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `chasm/lib/nexusoperation/operation.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `common/persistence/sql/sqlplugin/mysql/session/session.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	if completion.GetRequestId() == "" || o.GetRequestId() != completion.GetRequestId() {
+		// Drop blank isolation entries; keeping them would emit an invalid "SET <key> =".
+		if (k1 == isolationLevelAttrName || k1 == isolationLevelAttrNameLegacy) && v1 == "" {
+			continue
+		}
+		if len(value) > 0 && value[0] != '\'' { // mysql sys variable values must be enclosed in single quotes
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	if completion.GetRequestId() != "" && o.GetRequestId() != completion.GetRequestId() {
+		if value[0] != '\'' { // mysql sys variable values must be enclosed in single quotes
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cbeb97f4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8495e550` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

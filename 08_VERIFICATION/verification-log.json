@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261123-EN1U",
-    "timestamp": "2026-11-23T17:53:59.346Z",
-    "repository": "Reson8/Rumble-2-Flash",
-    "learningId": "learn-huggingface-reson8-rumble-2-flash",
-    "contentHash": "3e2e542abfb7d8bd7afcaa13b14928ab688655d516a55aa1a8ed50fed8cdfa2a",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-EZA7",
-    "timestamp": "2026-11-23T17:54:15.199Z",
-    "repository": "trinodb/trino",
-    "learningId": "learn-github-trinodb-trino",
-    "contentHash": "2c86ea0f37d9e4d4a40002ef4e6482f0a995e5b10fe0ab08736d08830609be9c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261123-QETL",
     "timestamp": "2026-11-23T18:03:08.553Z",
     "repository": "autotrust/GEV-26B-Decide",
@@ -7492,6 +7462,36 @@
     "contentHash": "834298adf89d6d23f6624377c2bddb4ba93f9e6a4070f7bf49d90b915a47821d",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-YQYD",
+    "timestamp": "2026-11-25T05:37:08.341Z",
+    "repository": "mistralai/Timestral-209M",
+    "learningId": "learn-huggingface-mistralai-timestral-209m",
+    "contentHash": "90960d1588d9a31b40a212b421b544f409aadc6533fbffbf2447b63bce767f64",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-YYLD",
+    "timestamp": "2026-11-25T05:37:18.241Z",
+    "repository": "temporalio/temporal",
+    "learningId": "learn-github-temporalio-temporal",
+    "contentHash": "7206d60fabff28f244f1954d8c01f07b602b06c168eca49a5ea6aff7d6a40a2d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

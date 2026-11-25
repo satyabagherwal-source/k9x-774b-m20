@@ -12983,3 +12983,5 @@ Every entry in this ledger must capture:
 | `learn-github-linkerd-linkerd2` | `https://github.com/linkerd/linkerd2` | `103bc2d9` | Multi-dimensional audit evidence | 2026-11-25T05:19:53.702Z |
 | `learn-dom-d-ac435fd0` | `project://hf-comfy-org-z_image_turbo` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-comfy-org-z_image_turbo-learnings.md` | 2026-11-25T05:20:33.090Z |
 | `learn-huggingface-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b-nvfp4` | `https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-11-25T05:28:56.153Z |
+| `learn-huggingface-mistralai-timestral-209m` | `https://huggingface.co/mistralai/Timestral-209M` | `hf-mistral` | Multi-dimensional audit evidence | 2026-11-25T05:37:08.346Z |
+| `learn-github-temporalio-temporal` | `https://github.com/temporalio/temporal` | `c70df160` | Multi-dimensional audit evidence | 2026-11-25T05:37:18.245Z |
