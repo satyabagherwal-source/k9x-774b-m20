@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T06:30:57.206Z",
-  "total_cycles_completed": 12314,
-  "total_learnings_persisted": 12314,
-  "total_rules_promoted": 11345,
+  "last_updated": "2026-11-25T06:39:26.706Z",
+  "total_cycles_completed": 12319,
+  "total_learnings_persisted": 12319,
+  "total_rules_promoted": 11349,
   "history": [
-    {
-      "timestamp": "2026-11-24T17:13:46.023Z",
-      "repository": "rustls/rustls",
-      "learningId": "learn-github-rustls-rustls",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T17:13:49.244Z",
-      "repository": "RediSearch/RediSearch",
-      "learningId": "learn-github-redisearch-redisearch",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T17:22:59.693Z",
-      "repository": "fb55/htmlparser2",
-      "learningId": "learn-github-fb55-htmlparser2",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T17:23:03.620Z",
-      "repository": "czy0729/Bangumi",
-      "learningId": "learn-github-czy0729-bangumi",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T17:23:10.551Z",
-      "repository": "dragonflydb/dragonfly",
-      "learningId": "learn-github-dragonflydb-dragonfly",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-24T17:33:08.765Z",
       "repository": "inikulin/parse5",
@@ -1403,6 +1368,41 @@
       "repository": "nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16",
       "learningId": "learn-huggingface-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T06:39:12.055Z",
+      "repository": "orcarouter/OrcaCyber-Nano-1.0",
+      "learningId": "learn-huggingface-orcarouter-orcacyber-nano-1-0",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T06:39:13.996Z",
+      "repository": "sharkdp/fd",
+      "learningId": "learn-github-sharkdp-fd",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T06:39:20.653Z",
+      "repository": "TableProApp/TablePro",
+      "learningId": "learn-github-tableproapp-tablepro",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T06:39:22.207Z",
+      "repository": "stakater/Reloader",
+      "learningId": "learn-github-stakater-reloader",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T06:39:26.706Z",
+      "repository": "gluesql/gluesql",
+      "learningId": "learn-github-gluesql-gluesql",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

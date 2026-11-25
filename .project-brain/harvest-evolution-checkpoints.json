@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T06:31:12.406Z",
+  "last_updated": "2026-11-25T06:39:32.247Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-25T06:12:57.642Z",
@@ -338,7 +338,7 @@
       "staged_for_review": 1
     },
     "sharkdp-fd-learnings.md": {
-      "processed_at": "2026-11-21T12:29:31.020Z",
+      "processed_at": "2026-11-25T06:39:30.093Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -778,7 +778,7 @@
       "staged_for_review": 1
     },
     "tableproapp-tablepro-learnings.md": {
-      "processed_at": "2026-11-22T20:17:13.961Z",
+      "processed_at": "2026-11-25T06:39:31.390Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1528,7 +1528,7 @@
       "staged_for_review": 1
     },
     "hf-orcarouter-orcacyber-nano-1.0-learnings.md": {
-      "processed_at": "2026-11-21T12:38:14.587Z",
+      "processed_at": "2026-11-25T06:39:30.975Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3908,7 +3908,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 4101,
+  "total_dossiers_evaluated": 4104,
   "total_canonical_promoted": 531,
-  "total_staged_for_review": 3139
+  "total_staged_for_review": 3141
 }

@@ -4,24 +4,24 @@
 {
   "source_repository": "TableProApp/TablePro",
   "source_url": "https://github.com/TableProApp/TablePro",
-  "source_version": "2507448a",
+  "source_version": "e2b0999a",
   "license": "AGPL-3.0",
-  "timestamp": "2026-11-22T20:16:59.947Z",
+  "timestamp": "2026-11-25T06:39:20.906Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-tableproapp-tablepro",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [TableProApp/TablePro](https://github.com/TableProApp/TablePro) (Revision: `2507448a`).  
-> **License**: AGPL-3.0 | **Timestamp**: `2026-11-22T20:16:59.947Z`  
+> **Provenance**: Harvested from [TableProApp/TablePro](https://github.com/TableProApp/TablePro) (Revision: `e2b0999a`).  
+> **License**: AGPL-3.0 | **Timestamp**: `2026-11-25T06:39:20.906Z`  
 > **Learning ID**: `learn-github-tableproapp-tablepro`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), F (Design Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 60%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), F (Design Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), B (Product Intelligence)
+- **Confidence Rating**: 58%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from TableProApp/TablePro:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tableproapp-tablepro-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/TableProApp/TablePro](https://github.com/TableProApp/TablePro))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T20:16:58.762Z  
+> **Harvest Timestamp**: 2026-11-25T06:39:19.558Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Free, open-source native database client for macOS, Linux, iPhone and iPad.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 6519 stars
+- **Stars / Engagement**: 6533 stars
 
 ---
 
@@ -1823,507 +1823,626 @@ public enum MongoVocabulary {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7b2ba0f2` (2026-11-22)
-**Commit Message**: build(release): ship per-arch builds and a per-arch appcast (#4414)
+### Incident Patch 1: `32dc16b7` (2026-11-25)
+**Commit Message**: fix(focus): keep the sidebar selection accent and the keyboard when a window opens or switches connection (#4478)
 
-**File**: `.claude/skills/release/SKILL.md` (modified, +1/-1)
+**File**: `apple/TablePro/Core/DataGrid/DataGridModel+Find.swift` (modified, +4/-0)
 ```diff
-@@ -62,5 +62,5 @@ Run `apple/RELEASING.md`: Cutting a beta, or Cutting a stable or patch with its
- 
- - `apple/scripts/release/tag.sh <tag> <commit>` tags and watches the tag's run. Hold merges and pull request pushes around it as Tagging says, since release jobs get no runner priority.
- - The forward-port goes once the tag's App and Plugins jobs start, not after publishing, so the next beta.1 need not wait for the stable (Forward-port).
--- Then check the source: `gh api -H 'Accept: application/vnd.github.raw' 'repos/TableProApp/TablePro/contents/appcast.xml?ref=gh-pages' | grep -c '<sparkle:shortVersionString>X.Y.Z<'` prints 1; `gh release view vX.Y.Z --json assets -q '.assets | length'` is 4 plus `python3 apple/scripts/release/registry.py targets | wc -l`.
-+- Then check the source: `gh api -H 'Accept: application/vnd.github.raw' 'repos/TableProApp/TablePro/contents/appcast.xml?ref=gh-pages' | grep -c '<sparkle:shortVersionString>X.Y.Z<'` prints 2, one item per arch; `gh release view vX.Y.Z --json assets -q '.assets | length'` is 7 plus `python3 apple/scripts/release/registry.py targets | wc -l`. A line whose `apple/scripts/release/feed.py` has no `ARCHES` ships universal: 1 item and 4 plus `python3 apple/scripts/release/registry.py targets | wc -l`.
- - After an X.Y.0, the `announce` skill in TableProApp/web is next.
+@@ -62,6 +62,7 @@ extension DataGridModel {
+             find.showsReplace = true
+         }
+         let wasVisible = find.isVisible
++        find.requestsFieldFocus = true
+         find.isVisible = true
+         if !wasVisible {
+             refreshFind()
+@@ -73,6 +74,7 @@ extension DataGridModel {
+         if replace, canReplaceInFind {
+             find.showsReplace = true
+         }
++        find.requestsFieldFocus = true
+         find.isVisible = true
+         findQueryDidChange()
+     }
+@@ -82,6 +84,7 @@ extension DataGridModel {
+         find.reset()
+         find.options.columnScope = nil
+         find.showsReplace = false
++        find.requestsFieldFocus = false
+         find.isVisible = false
+         focus()
+     }
+@@ -179,6 +182,7 @@ extension DataGridModel {
+             : storedText(in: row, column: active.column)
+         guard let text = shown else { return }
+         find.term = find.options.usesRegularExpression ? NSRegularExpression.escapedPattern(for: text) : text
++        find.requestsFieldFocus = true
+         find.isVisible = true
+         findQueryDidChange()
+     }
 ```
 
-**File**: `.github/workflows/release.yml` (modified, +15/-8)
+**File**: `apple/TablePro/Core/DataGrid/GridFindState.swift` (modified, +2/-0)
 ```diff
-@@ -85,17 +85,23 @@ jobs:
-           retention-days: 30
+@@ -26,6 +26,8 @@ final class GridFindState: ObservableObject {
+     }
  
-   app:
--    name: App
-+    name: App (${{ matrix.arch }})
-     needs: verify
-     runs-on: xcode-27
-     environment: signing
--    # The archive alone took 138 minutes for v0.84.0-beta.1; signing and two notarizations come on top.
-+    # One arch per leg, the two in parallel. The universal archive, both arches in one job, took 138 minutes
-+    # for v0.84.0-beta.1; signing and two notarizations come on top.
-     timeout-minutes: 240
-+    strategy:
-+      fail-fast: false
-+      matrix:
-+        arch: [arm64, x86_64]
-     permissions:
-       contents: read
-     env:
-       VERSION: ${{ needs.verify.outputs.version }}
-       BUILD: ${{ needs.verify.outputs.build }}
-+      ARCH: ${{ matrix.arch }}
-     defaults:
-       run:
-         working-directory: apple
-@@ -130,20 +136,20 @@ jobs:
-           asc-key-p8: ${{ secrets.ASC_KEY_P8 }}
- 
-       - name: Build the app
--        run: scripts/release/build.sh app
-+        run: scripts/release/build.sh app "$ARCH"
- 
-       - name: Notarize the app
--        run: scripts/release/notarize.sh build/release/TablePro.app
-+        run: scripts/release/notarize.sh "build/release/$ARCH/TablePro.app"
- 
-       - name: Package the app
--        run: scripts/release/package.sh app
-+        run: scripts/release/package.sh app "$ARCH"
- 
-       - name: Notarize the disk image
--        run: scripts/release/notarize.sh "dist/TablePro-$VERSION.dmg"
-+        run: scripts/release/notarize.sh "dist/TablePro-$VERSION-$ARCH.dmg"
- 
-       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
-         with:
--          name: app
-+          name: app-${{ matrix.arch }}
-           path: apple/dist/
-           if-no-files-found: error
-           retention-days: 30
-@@ -230,7 +236,8 @@ jobs:
- 
-       - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
-         with:
--          name: app
-+          pattern: app-*
-+          merge-multiple: true
-           path: dist
- 
-       - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+     @Published var isVisible = false
++    // Set when Find is invoked and taken by the bar's field, so a bar rebuilt by a tab switch leaves the keyboard alone.
++    var requestsFieldFocus = false
+     @Published var showsReplace = false
+     @Published var term = ""
+     @Published var replacement = ""
 ```
 
-**File**: `apple/CONTRIBUTING.md` (modified, +2/-2)
+**File**: `apple/TablePro/Core/Services/Infrastructure/MainSplitViewController+DatabaseMenuActions.swift` (modified, +0/-2)
 ```diff
-@@ -61,7 +61,7 @@ xcodebuild build -project TablePro.xcodeproj -scheme AllPlugins -destination 'pl
+@@ -14,7 +14,6 @@ extension MainSplitViewController {
  
- ### A Release build
- 
--`scripts/release/build.sh` builds the app and the registry plugins the way a tag does, universal, into `build/release/`; `package.sh` writes the assets to `dist/`. The nightly's Release Build job runs the same:
-+`scripts/release/build.sh` builds the app and the registry plugins the way a tag does: the app once per arch into `build/release/<arch>/`, the plugins universal into `build/release/plugins`; `package.sh` writes the assets to `dist/`. The nightly's Release Build job runs the same:
- 
- ```bash
- export VERSION=0.0.0-dev BUILD=9999999
-@@ -72,7 +72,7 @@ scripts/release/build.sh plugins --unsigned && scripts/release/package.sh plugin
- 
- Signed: drop `--unsigned`, with the Developer ID identity and the provisioning profile `scripts/release/ExportOptions.plist` names. `scripts/release/notarize.sh <path>...` needs the profile `xcrun notarytool store-credentials TablePro --key <p8> --key-id <id> --issuer <issuer>` creates.
- 
--The disk image opens to the window `scripts/release/dmg.DS_Store` describes, a file Finder wrote. To change it, edit the Finder settings in `scripts/release/dmg.sh`, run `scripts/release/dmg.sh layout build/release/TablePro.app` on a Mac with a logged-in session, and open a disk image built with the new file before committing it.
-+The disk image opens to the window `scripts/release/dmg.DS_Store` describes, a file Finder wrote. To change it, edit the Finder settings in `scripts/release/dmg.sh`, run `scripts/release/dmg.sh layout build/release/arm64/TablePro.app` on a Mac with a logged-in session, and open a disk image built with the new file before committing it.
- 
- ### Clean builds
- 
+     // The window owns switching because a disconnected workspace has no command actions.
+     func openConnectionSwitcher() {
+-        view.window?.makeFirstResponder(nil)
+         switcherPresenter.present(
+             from: view.window,
+             anchoredTo: MainWindowToolbar.connection,
+@@ -50,7 +49,6 @@ extension MainSplitViewController {
+         else { return }
+         let sourceConnectionId = source.connectionId
+         let title = tab.title
+-        view.window?.makeFirstResponder(nil)
+         switcherPresenter.present(
+             from: view.window,
+             anchoredTo: MainWindowToolbar.connection,
 ```
 
-**File**: `apple/RELEASING.md` (modified, +3/-0)
+**File**: `apple/TablePro/Core/Services/Infrastructure/MainSplitViewController+Focus.swift` (modified, +20/-9)
 ```diff
-@@ -5,6 +5,9 @@ The macOS app, its registry plugins, the static libraries and the manual iOS flo
- ## Channels
+@@ -17,19 +17,30 @@ import TableProTextEngine
+ /// a window hosting several connections has several editors registered at once, and a window-wide
+ /// registry cannot tell them apart.
+ internal extension MainSplitViewController {
+-    /// What the window names as its `initialFirstResponder`: the container the selected tab's content
+-    /// is shown in.
+-    ///
+-    /// AppKit picks a first responder once, as the window is first placed on screen, and only from
+-    /// the views that exist at that moment. The editor, the grid and the object list are SwiftUI and
+-    /// do not exist yet, so left to itself AppKit took the first key view it could find, which was
+-    /// the connections strip, and Command W then closed the connection instead of the tab. The
+-    /// container takes no focus itself, so the window keeps it, and the content adopts it once it is
+-    /// built (`SQLEditorCoordinator`, `SidebarOutlineView`), whatever else the window holds by then.
++    // AppKit picks a first responder once, at first show, from the views that exist then, and the editor, the grid
++    // and the object list are SwiftUI that arrives later. This container takes no focus and names no key view after
++    // it until the window is on screen (`WorkspacePaneHost`), so the window stays vacant and the content adopts it
++    // once built (`SQLEditorCoordinator`, `SidebarOutlineView`). Left to AppKit, the pick was the connections strip
++    // (Command W closed the connection) or the sidebar filter.
+     var initialFirstResponderContainer: NSView {
+         detailPaneHost.view
+     }
  
- - One EdDSA-signed appcast, `https://updates.tablepro.app/appcast.xml`, carries stable and beta items. The app takes betas only while Settings > General > Get beta updates is on.
-+- Each version ships per arch: `TablePro-<ver>-arm64` and `-x86_64`, each a `.dmg`, a `.tar.xz` and a `-dSYMs.zip`. Earlier versions from 0.82.0 shipped one universal app as one item.
-+- The feed carries two items per version: arm64 first, gated by `sparkle:hardwareRequirements`, then x86_64 ungated. Sparkle takes the first of two equal versions, and an Intel Mac skips the gated one. `generate_appcast` refuses two archives of one version, so `feed.py` runs it once per arch and puts the arm64 item before the x86_64 one.
-+- `build.sh`/`package.sh` take an arch (none builds both) and `release.yml`'s App job is an `arm64`/`x86_64` matrix.
- - A stable rolls out in phases of 21600 s. A beta is not phased and is a GitHub prerelease.
- - Critical means a security fix or data loss, nothing else: ` [CRITICAL]` on the version's `CHANGELOG.md` heading, never on a beta. Later stables carry it forward.
- - The legacy `appcast.xml` on `main`, the feed of apps up to 0.81, ends at 0.82.0. No release writes it.
-```
-
-**File**: `apple/scripts/benchmark-app-paths.sh` (modified, +3/-2)
-```diff
-@@ -39,8 +39,9 @@ while [ $# -gt 0 ]; do
- done
- 
- if [ -z "$APP" ]; then
--    (cd "$ROOT" && scripts/release/build.sh app --unsigned)
--    APP="$ROOT/build/release/TablePro.app"
-+    arch="$(uname -m)"
-+    (cd "$ROOT" && scripts/release/build.sh app "$arch" --unsigned)
-+    APP="$ROOT/build/release/$arch/TablePro.app"
- fi
- [ -d "$APP/Contents/MacOS" ] || { echo "not an app bundle: $APP" >&2; exit 2; }
- 
-```
-
-**File**: `apple/scripts/benchmark-large-catalog.sh` (modified, +3/-2)
-```diff
-@@ -42,8 +42,9 @@ while [ $# -gt 0 ]; do
- done
- 
- if [ -z "$APP" ]; then
--    (cd "$ROOT" && scripts/release/build.sh app --unsigned)
--    APP="$ROOT/build/release/TablePro.app"
-+    arch="$(uname -m)"
-+    (cd "$ROOT" && scripts/release/build.sh app "$arch" --unsigned)
-+    APP="$ROOT/build/release/$arch/TablePro.app"
- fi
- [ -d "$APP/Contents/MacOS" ] || { echo "not an app bundle: $APP" >&2; exit 2; }
- 
-```
-
-**File**: `apple/scripts/ci/verify-plugin-loads.sh` (modified, +28/-3)
-```diff
-@@ -3,13 +3,25 @@ set -euo pipefail
- 
- # Loads every built .tableplugin with dlopen and fails naming any that will not load.
- #
--# Usage: verify-plugin-loads.sh <directory-with-tableplugins> [more-directories...]
-+# Usage: verify-plugin-loads.sh [--arch <arch>] <directory-with-tableplugins> [more-directories...]
- #
- # dlopen resolves the binary and every library and framework it links, the dyld path behind
- # "Bundle failed to load executable". It does not instantiate the principal class. PluginKit ABI:
- # .claude/rules/plugin-system.md, ABI, checked with `verify.sh abi`.
-+#
-+# --arch builds the probe for a single-arch build's slice. dlopen refuses a wrong-arch binary, so an
-+# x86_64 build is checked with an x86_64 probe (Rosetta runs it on Apple Silicon). Default: host arch.
-+# A Mac that cannot run that arch skips the check, except in CI.
- 
--[ $# -gt 0 ] || { echo "Usage: $0 <directory-with-tableplugins>..." >&2; exit 2; }
-+ARCH_FLAGS=()
-+ARCH="$(uname -m)"
-+if [ "${1:-}" = --arch ]; then
-+    [ $# -ge 2 ] || { echo "$0: --arch needs an arch" >&2; exit 2; }
-+    ARCH="$2"
-+    ARCH_FLAGS=(-arch "$2")
-+    shift 2
-+fi
-+[ $# -gt 0 ] || { echo "Usage: $0 [--arch <arch>] <directory-with-tableplugins>..." >&2; exit 2; }
- 
- WORK="$(mktemp -d)"
- trap 'rm -rf "$WORK"' EXIT
-@@ -28,7 +40,20 @@ int main(int argc, char **argv) {
-     return 0;
- }
- PROBE
--clang -o "$WORK/probe" "$WORK/probe.c"
-+clang ${ARCH_FLAGS[@]+"${ARCH_FLAGS[@]}"} -o "$WORK/probe" "$WORK/probe.c"
++    var detailPaneHoldsKeyboard: Bool {
++        guard let responder = view.window?.firstResponder as? NSView else { return false }
++        return responder.isDescendant(of: detailPaneHost.view)
++    }
 +
-+# With no argument the probe exits 2; anything else means this Mac cannot run it: an Intel Mac for
-+# arm64, Apple silicon without Rosetta for x86_64.
-+runs=0
-+"$WORK/probe" > /dev/null 2>&1 || runs=$?
-+if [ "$runs" -ne 2 ]; then
-+    if [ "${CI:-}" = true ]; then
-+        echo "verify-plugin-loads.sh: this runner cannot run $ARCH code; x86_64 needs Rosetta 2" >&2
-+        exit 1
-+    fi
-+    echo "verify-plugin-loads.sh: this Mac cannot run $ARCH code, so the $ARCH plugins are not load-checked here" >&2
-+    exit 0
-+fi
- 
- # The plugins link the app's frameworks, which sit beside them in the products directory. Without
- # these dyld cannot resolve TableProPluginKit and every plugin would "fail" for the wrong reason.
++    // A connection switch takes the outgoing editor or grid out of the window. The keyboard follows into the incoming
++    // connection's editor or grid; with neither built yet, its object list adopts the empty window (`SidebarOutlineView`).
++    func keepKeyboardInDetailPane(detailHeldKeyboard: Bool) {
++        guard detailHeldKeyboard, let window = view.window, window.firstResponder === window,
++              let selected = workspaces.selected, selected.detailMode == .browse else { return }
++        guard !focusQueryEditor() else { return }
++        // Not the Focus Results command: a switch must not expand a results pane the user collapsed.
++        _ = selected.sessionState?.coordinator.focusActiveGrid()
++    }
++
+     @discardableResult
+     func focusQueryEditor() -> Bool {
+         guard let textView = mountedQueryEditor, let window = view.window else { return false }
 ```
 
-**File**: `apple/scripts/release/build.sh` (modified, +42/-16)
+**File**: `apple/TablePro/Core/Services/Infrastructure/MainSplitViewController.swift` (modified, +2/-0)
 ```diff
-@@ -1,12 +1,13 @@
- #!/usr/bin/env bash
- set -euo pipefail
+@@ -687,8 +687,10 @@ internal final class MainSplitViewController: NSSplitViewController {
+         /// hands one over with a live session and no phase change to follow, so its panes still
+         /// held the empty view they were constructed with and the connection opened blank. This
+         /// costs a key comparison when nothing has moved, which is what the record is for.
++        let detailHeldKeyboard = detailPaneHoldsKeyboard
+         syncSelectedPanes()
+         showSelectedPanes()
++        keepKeyboardInDetailPane(detailHeldKeyboard: detailHeldKeyboard)
  
--# Usage: build.sh app|plugins [--unsigned]
-+# Usage: build.sh app [arm64|x86_64]|plugins [--unsigned]
- # VERSION and BUILD, when set, become MARKETING_VERSION and CURRENT_PROJECT_VERSION.
--# Writes build/release/TablePro.app and its archive, or build/release/plugins and plugins-dSYMs.
-+# The app builds one arch into build/release/<arch>/TablePro.app and its archive; with no arch it
-+# builds both. plugins writes build/release/plugins and plugins-dSYMs (universal).
+         /// A workspace put into Agent mode while another connection was on screen never reached
+         /// the branch that reveals its columns, because that branch only ever touched the selected
+```
+
+**File**: `apple/TablePro/Core/Services/Infrastructure/WorkspacePaneHost.swift` (modified, +12/-1)
+```diff
+@@ -23,7 +23,7 @@ internal final class WorkspacePaneHost: NSViewController {
+     private(set) var shown: NSViewController?
  
- usage() {
--    echo "Usage: build.sh app|plugins [--unsigned]" >&2
-+    echo "Usage: build.sh app [arm64|x86_64]|plugins [--unsigned]" >&2
-     exit 2
+     override internal func loadView() {
+-        view = NSView()
++        view = PaneContainerView()
+     }
+ 
+     /// A pane can publish a height, which the editor tab strip does when it wraps onto more rows.
+@@ -81,3 +81,14 @@ internal final class WorkspacePaneHost: NSViewController {
+         show(nil)
+     }
+ }
++
++// A window names a pane container its initial first responder (`MainSplitViewController.initialFirstResponderContainer`)
++// so the tab content can take the first focus once SwiftUI builds it. The container refuses focus, and AppKit's
++// first-show pick then walks on to the next key view, the sidebar filter of a window that opens already connected.
++// Naming none until the window is on screen stops that walk; once it is, Tab from the empty window follows the loop.
++private final class PaneContainerView: NSView {
++    override var nextValidKeyView: NSView? {
++        guard window?.isVisible == true else { return nil }
++        return super.nextValidKeyView
++    }
++}
+```
+
+**File**: `apple/TablePro/Views/DataGrid/DataGridFindBar.swift` (modified, +6/-2)
+```diff
+@@ -34,9 +34,13 @@ struct DataGridFindBar: View {
+         }
+         // The search field clears on the first Escape and hands the second on, which closes the bar.
+         .onExitCommand { model.hideFind() }
++        // Read by the field as it is built; a later rebuild of the bar, as on a tab switch, takes no focus.
++        .onAppear { find.requestsFieldFocus = false }
+         // Find while the bar is already open moves focus back to its field.
+         .onReceive(find.$isVisible.dropFirst()) { isVisible in
+-            if isVisible { focusRequest += 1 }
++            guard isVisible else { return }
++            find.requestsFieldFocus = false
++            focusRequest += 1
+         }
+         // Configuration changes bump this revision; the bar observes nothing else on the model.
+         .onReceive(model.$editabilityRevision) { _ in
+@@ -53,7 +57,7 @@ struct DataGridFindBar: View {
+                 text: termBinding,
+                 placeholder: String(localized: "Find"),
+                 onSubmit: { step(forward: NSApp.currentEvent?.modifierFlags.contains(.shift) != true) },
+-                focusOnAppear: true,
++                focusOnAppear: find.requestsFieldFocus,
+                 focusTrigger: focusRequest,
+                 accessibilityIdentifier: "grid-find-field"
+             )
+```
+
+**File**: `apple/TablePro/Views/Main/Extensions/MainContentCommandActions+Switchers.swift` (modified, +0/-2)
+```diff
+@@ -22,8 +22,6 @@ internal extension MainContentCommandActions {
+     /// mean.
+     func openScopeSwitcher(_ target: ContainerSwitchTarget?) {
+         guard let coordinator, canSwitchContainer(target, on: coordinator) else { return }
+-        /// Clearing first responder is what lets the popover's search field take focus.
+-        coordinator.contentWindow?.makeFirstResponder(nil)
+         presentDatabaseSwitcher(on: coordinator, target: target)
+     }
+ 
+```
+
+---
+
+### Incident Patch 2: `78ec49e7` (2026-11-24)
+**Commit Message**: fix(mcp): bind approvals to the scope they showed and harden scope rules (#4440)
+
+**File**: `apple/Configs/PluginKit.xcconfig` (modified, +1/-1)
+```diff
+@@ -1,3 +1,3 @@
+ // When to raise each, and how the build stamps them: .claude/rules/plugin-system.md, ABI.
+-TABLEPRO_PLUGINKIT_VERSION = 46
++TABLEPRO_PLUGINKIT_VERSION = 47
+ TABLEPRO_PLUGINKIT_MINIMUM_VERSION = 19
+```
+
+**File**: `apple/Packages/TableProCore/Sources/TableProSQLGrammar/SQLSessionStateClassifier.swift` (modified, +142/-0)
+```diff
+@@ -521,6 +521,148 @@ extension SQLSessionStateClassifier {
+     }
  }
  
-@@ -16,15 +17,18 @@ die() {
- }
- 
- KIND=""
-+ARCH=""
- SIGNED=true
- for arg in "$@"; do
-     case "$arg" in
-         app | plugins) [ -z "$KIND" ] || usage; KIND="$arg" ;;
-+        arm64 | x86_64) [ -z "$ARCH" ] || usage; ARCH="$arg" ;;
-         --unsigned) SIGNED=false ;;
-         *) usage ;;
-     esac
- done
- [ -n "$KIND" ] || usage
-+[ "$KIND" = app ] || [ -z "$ARCH" ] || die "an arch applies only to the app build"
- case "${BUILD:-}" in
-     *[!0-9]*) echo "build.sh: BUILD must be an integer, got '$BUILD'" >&2; exit 2 ;;
- esac
-@@ -81,35 +85,51 @@ check_universal() {
-     done
- }
- 
-+check_arch() {
-+    local app="$1" arch="$2" other binary
-+    case "$arch" in arm64) other=x86_64 ;; x86_64) other=arm64 ;; *) die "unknown arch $arch" ;; esac
-+    for binary in "$app/Contents/MacOS"/*; do
-+        lipo "$binary" -verify_arch "$arch" || die "$binary has no $arch slice: $(lipo -archs "$binary")"
-+        ! lipo "$binary" -verify_arch "$other" 2> /dev/null \
-+            || die "$binary has an $other slice too: $(lipo -archs "$binary")"
-+    done
++// MARK: - Current database
++
++extension SQLSessionStateClassifier {
++    // The MySQL statements that cannot leave a session in another database: reads and writes of rows, definitions, a
++    // plain variable assignment, transaction control, locks, table maintenance and privileges. Everything else may: a
++    // `USE`, `SET STATEMENT ... FOR`, `HANDLER`, `LOAD`, `DO`, code run by `EXECUTE` or `CALL`, a block, an unknown word.
++    private static let mySQLStayHeads: Set<String> = [
++        "SELECT", "WITH", "TABLE", "VALUES", "INSERT", "REPLACE", "UPDATE", "DELETE", "SHOW", "CREATE", "ALTER", "DROP",
++        "TRUNCATE", "RENAME", "SET", "START", "BEGIN", "COMMIT", "ROLLBACK", "SAVEPOINT", "RELEASE", "XA", "LOCK", "UNLOCK",
++        "ANALYZE", "OPTIMIZE", "CHECK", "CHECKSUM", "REPAIR", "GRANT", "REVOKE", "FLUSH", "KILL", "HELP",
++    ]
++    private static let mySQLExplainHeads: Set<String> = ["EXPLAIN", "DESCRIBE", "DESC"]
++    private static let mySQLExplainModifiers: Set<String> = [
++        "ANALYZE", "EXTENDED", "PARTITIONS", "FORMAT", "JSON", "TREE", "TRADITIONAL",
++    ]
++    // An explained subject that opens a statement of its own rather than naming a table or a query.
++    private static let mySQLStatementWords: Set<String> = ["USE", "CALL", "EXECUTE", "DO", "HANDLER", "LOAD", "PREPARE"]
++
++    // T-SQL runs a batch's statements with no `;` between them, so these count anywhere in one as code. A batch that
++    // opens with a word not listed below calls a procedure by its name, or is read as one.
++    private static let sqlServerMoveWords: Set<String> = ["USE", "EXEC", "EXECUTE", "SP_EXECUTESQL"]
++    private static let sqlServerStayHeads: Set<String> = [
++        "SELECT", "WITH", "INSERT", "UPDATE", "DELETE", "MERGE", "CREATE", "ALTER", "DROP", "TRUNCATE", "DECLARE", "SET",
++        "BEGIN", "COMMIT", "ROLLBACK", "SAVE", "PRINT", "IF", "ELSE", "WHILE", "RETURN", "GRANT", "REVOKE", "DENY",
++        "BACKUP", "RESTORE", "DBCC", "RAISERROR", "THROW", "WAITFOR", "OPEN", "FETCH", "CLOSE", "DEALLOCATE", "BULK",
++        "CHECKPOINT", "KILL", "GOTO", "BREAK", "CONTINUE", "END", "ENABLE", "DISABLE", "REVERT", "RECONFIGURE",
++    ]
++
++    // Whether the statements may leave the session in another database, which a host that pins its own driver cannot
++    // see. Only MySQL's and SQL Server's sessions move, and only a statement known to stay is ruled out. Text it cannot
++    // read whole, too long, with more executable-comment versions than the reader takes, or with a T-SQL move word
++    // behind a literal or comment that never closes, is not ruled out.
++    public static func mayChangeDatabase(
++        ofStatements statements: [String],
++        dialect: SQLSessionDialect,
++        grammar: SQLLexicalGrammar
++    ) -> Bool {
++        guard dialect == .mySQL || dialect == .sqlServer else { return false }
++        return statements.contains { text in
++            guard (text as NSString).length <= classifiedPrefixLength else { return true }
++            if dialect == .sqlServer {
++                // T-SQL reads a word glued to a number on its own, so `SELECT 1USE x` runs a USE: only its tokens say.
++                if holdsWord(of: sqlServerMoveWords, in: text), leavesSpanOpen(text, grammar: grammar) { return true }
++            } else if opensWithStayHead(text) {
++                return false
++            }
++            return SQLStatementClassifier.statements(of: text, grammar: grammar).contains { statement in
++                guard let readings = SQLExecutableCommentReadings.texts(of: statement, grammar: grammar) else { return true }
++                return Array(readings).contains { reading in
++                    SQLStatementClassifier.runnableStatements(of: reading, grammar: grammar).contains {
++                        mayMove($0, dialect: dialect, grammar: grammar)
++                    }
++                }
++            }
++        }
++    }
++
++    // One plain MySQL statement whose first word is known to stay, read without the grammar: no `;`, comment or
++    // backslash can hide a second statement. SET, BEGIN and the explain words need the word after them, so they take
++    // the full read, and so does a word MySQL reads on into a digit, `$` or a letter outside ASCII, as in `SELECT1`.
++    private static func opensWithStayHead(_ text: String) -> Bool {
++        guard !text.contains(";"), !text.contains("/*"), !text.contains("--"), !text.contains("#"), !text.contains("\\")
++        else { return false }
++        let opening = text.drop { $0.isWhitespace || $0 == "(" }
++        let head = opening.prefix { $0.isASCII && ($0.isLetter || $0 == "_") }
++        if let next = opening.dropFirst(head.count).first, next.isLetter || next.isNumber || next == "$" { return false }
++        let word = head.uppercased()
++        guard word != "SET", word != "BEGIN" else { return false }
++        return mySQLStayHeads.contains(word)
++   
+```
+
+**File**: `apple/Packages/TableProCore/Tests/TableProPluginKitTests/DriverPluginSchemaSwitchScopeTests.swift` (added, +54/-0)
+```diff
+@@ -0,0 +1,54 @@
++import Foundation
++import TableProPluginKit
++import Testing
++
++private final class LabelOnlySchemaPlugin: NSObject, TableProPlugin, DriverPlugin {
++    static let pluginName = "Label Only"
++    static let pluginVersion = "1.0.0"
++    static let pluginDescription = "Switches schemas without declaring where names resolve"
++    static let capabilities: [PluginCapability] = [.databaseDriver]
++
++    static let databaseTypeId = "LabelOnlyDB"
++    static let databaseDisplayName = "Label Only"
++    static let iconName = "cylinder"
++    static let defaultPort = 1
++    static let supportsSchemaSwitching = true
++
++    func createDriver(config: DriverConnectionConfig) -> any PluginDatabaseDriver {
++        fatalError("Not used in tests")
++    }
 +}
 +
- build_app() {
--    local archive="$OUT/TablePro.xcarchive" app="$OUT/TablePro.app" name profile=()
--    rm -rf "$archive" "$app" "$OUT/export"
-+    local arch="$1"
-+    local out="$OUT/$arch"
-+    local archive="$out/TablePro.xcarchive" app="$out/TablePro.app" exported="$out/export" name profile=()
-+    # Per-arch so a both-arch build keeps each arch's intermediates apart; xcodebuild_project reads it.
-+    local DERIVED="$out/DerivedData"
-+    rm -rf "$out"
-+    mkdir -p "$out"
-     if [ "$SIGNED" = true ]; then
-         [ -f "$EXPORT_OPTIONS" ] || die "$EXPORT_OPTIONS is missing"
-         name="$(/usr/libexec/PlistBuddy -c 'Print :provisioningProfiles:com.TablePro' "$EXPORT_OPTIONS")"
-         profile=("TABLEPRO_PROVISIONING_PROFILE=$name")
-     fi
++private final class SearchPathSchemaPlugin: NSObject, TableProPlugin, DriverPlugin {
++    static let pluginName = "Search Path"
++    static let pluginVersion = "1.0.0"
++    static let pluginDescription = "Moves the session's name resolution on a schema switch"
++    static let capabilities: [PluginCapability] = [.databaseDriver]
++
++    static let databaseTypeId = "SearchPathDB"
++    static let databaseDisplayName = "Search Path"
++    static let iconName = "cylinder"
++    static let defaultPort = 2
++    static let supportsSchemaSwitching = true
++    static let schemaSwitchScopesUnqualifiedNames = true
++
++    func createDriver(config: DriverConnectionConfig) -> any PluginDatabaseDriver {
++        fatalError("Not used in tests")
++    }
++}
++
++struct DriverPluginSchemaSwitchScopeTests {
++    @Test("A driver that declares nothing reads as a label-only schema switch")
++    func defaultIsLabelOnly() {
++        let pluginType: any DriverPlugin.Type = LabelOnlySchemaPlugin.self
++        let scoped = pluginType.schemaSwitchScopesUnqualifiedNames
++        #expect(!scoped)
++    }
++
++    @Test("A driver's own declaration is what it reports")
++    func overrideIsReported() {
++        let pluginType: any DriverPlugin.Type = SearchPathSchemaPlugin.self
++        let scoped = pluginType.schemaSwitchScopesUnqualifiedNames
++        #expect(scoped)
++    }
++}
+```
+
+**File**: `apple/Packages/TableProCore/Tests/TableProPluginKitTests/DriverPluginStatementSwitchTests.swift` (added, +52/-0)
+```diff
+@@ -0,0 +1,52 @@
++import Foundation
++import TableProPluginKit
++import Testing
++
++private final class SessionDatabasePlugin: NSObject, TableProPlugin, DriverPlugin {
++    static let pluginName = "Session Database"
++    static let pluginVersion = "1.0.0"
++    static let pluginDescription = "Keeps its database on the session, where a statement can move it"
++    static let capabilities: [PluginCapability] = [.databaseDriver]
++
++    static let databaseTypeId = "SessionDB"
++    static let databaseDisplayName = "Session Database"
++    static let iconName = "cylinder"
++    static let defaultPort = 1
++
++    func createDriver(config: DriverConnectionConfig) -> any PluginDatabaseDriver {
++        fatalError("Not used in tests")
++    }
++}
++
++private final class PerRequestDatabasePlugin: NSObject, TableProPlugin, DriverPlugin {
++    static let pluginName = "Per Request"
++    static let pluginVersion = "1.0.0"
++    static let pluginDescription = "Names its database on every request"
++    static let capabilities: [PluginCapability] = [.databaseDriver]
++
++    static let databaseTypeId = "PerRequestDB"
++    static let databaseDisplayName = "Per Request"
++    static let iconName = "cylinder"
++    static let defaultPort = 2
++    static let statementsCanSwitchDatabase = false
++
++    func createDriver(config: DriverConnectionConfig) -> any PluginDatabaseDriver {
++        fatalError("Not used in tests")
++    }
++}
++
++struct DriverPluginStatementSwitchTests {
++    @Test("A driver that declares nothing can have its database moved by a statement")
++    func defaultIsTrue() {
++        let pluginType: any DriverPlugin.Type = SessionDatabasePlugin.self
++        let switches = pluginType.statementsCanSwitchDatabase
++        #expect(switches)
++    }
++
++    @Test("A driver's own declaration is what it reports")
++    func overrideIsReported() {
++        let pluginType: any DriverPlugin.Type = PerRequestDatabasePlugin.self
++        let switches = pluginType.statementsCanSwitchDatabase
++        #expect(!switches)
++    }
++}
+```
+
+**File**: `apple/Packages/TableProCore/Tests/TableProSQLGrammarTests/SQLSessionStateClassifierTests.swift` (modified, +131/-0)
+```diff
+@@ -406,4 +406,135 @@ struct SQLSessionStateClassifierTests {
+     func quickCheckKeepsEveryRule(sql: String, dialect: SQLSessionDialect) {
+         #expect(SQLSessionStateQuickCheck.mayChangeSession(sql, dialect: dialect))
+     }
++
++    // MARK: - Current database
++
++    private func movesDatabase(_ sql: String, _ dialect: SQLSessionDialect) -> Bool {
++        SQLSessionStateClassifier.mayChangeDatabase(
++            ofStatements: [sql], dialect: dialect, grammar: Self.grammar(Self.engines[dialect] ?? "")
++        )
++    }
++
++    @Test("USE moves a MySQL or SQL Server session to another database, in any spelling the server reads", arguments: [
++        ("USE production", SQLSessionDialect.mySQL),
++        ("use `production`;", .mySQL),
++        ("SELECT 1; USE production", .mySQL),
++        ("/*!40000 USE production */", .mySQL),
++        ("\\u production", .mySQL),
++        ("USE [production]", .sqlServer),
++        ("SELECT 1\nUSE production", .sqlServer),
++    ])
++    func useMovesTheDatabase(sql: String, dialect: SQLSessionDialect) {
++        #expect(movesDatabase(sql, dialect))
++    }
++
++    // Past the reader's version limit it reads nothing, and the text as written blanks every executable comment.
++    @Test("A USE behind more executable-comment versions than the reader takes is not ruled out")
++    func useBehindTooManyVersionsMoves() {
++        let versions = (10_000...10_032).map { "/*!\($0) */" }.joined(separator: " ")
++        #expect(movesDatabase("/*! USE production */ \(versions)", .mySQL))
++    }
++
++    @Test("Code the reader cannot see into may switch the database too", arguments: [
++        ("EXECUTE IMMEDIATE 'USE production'", SQLSessionDialect.mySQL),
++        ("PREPARE s FROM 'SELECT 1'; EXECUTE s", .mySQL),
++        ("CALL archive_orders()", .mySQL),
++        ("BEGIN NOT ATOMIC USE production; END", .mySQL),
++        ("outer: BEGIN NOT ATOMIC SELECT 1; END", .mySQL),
++        ("EXEC('USE production')", .sqlServer),
++        ("EXECUTE sp_executesql N'USE production'", .sqlServer),
++        ("sp_executesql N'USE production'", .sqlServer),
++        ("EXEC dbo.archive_orders", .sqlServer),
++    ])
++    func opaqueCodeMovesTheDatabase(sql: String, dialect: SQLSessionDialect) {
++        #expect(movesDatabase(sql, dialect))
++    }
++
++    @Test("Only a statement known to stay is ruled out: a wrapped USE, HANDLER, DO, LOAD or an unknown word may move", arguments: [
++        ("SET STATEMENT max_statement_time=1 FOR USE production", SQLSessionDialect.mySQL),
++        ("HANDLER orders OPEN", .mySQL),
++        ("DO SLEEP(0)", .mySQL),
++        ("LOAD DATA INFILE 'rows.csv' INTO TABLE orders", .mySQL),
++        ("FROBNICATE production", .mySQL),
++        ("EXPLAIN USE production", .mySQL),
++        ("archive_orders 1", .sqlServer),
++    ])
++    func unknownOrWrappedStatementsMove(sql: String, dialect: SQLSessionDialect) {
++        #expect(movesDatabase(sql, dialect))
++    }
++
++    @Test("A statement on the stay list moves nothing, alone or among others", arguments: [
++        "SELECT 1", "WITH a AS (SELECT 1) SELECT * FROM a", "INSERT INTO t VALUES (1)", "REPLACE INTO t VALUES (1)",
++        "UPDATE t SET a = 1", "DELETE FROM t", "SHOW TABLES", "DESCRIBE orders", "DESC orders", "EXPLAIN SELECT 1",
++        "EXPLAIN FORMAT=JSON SELECT 1", "CREATE TABLE t (a INT)", "ALTER TABLE t ADD b INT", "DROP TABLE t",
++        "TRUNCATE TABLE t", "RENAME TABLE a TO b", "SET @x = 1", "SET NAMES utf8mb4", "START TRANSACTION", "BEGIN",
++        "COMMIT", "ROLLBACK", "SAVEPOINT s", "RELEASE SAVEPOINT s", "LOCK TABLES t READ", "UNLOCK TABLES",
++        "ANALYZE TABLE t", "OPTIMIZE TABLE t", "CHECK TABLE t", "REPAIR TABLE t", "GRANT SELECT ON app.* TO reader",
++        "REVOKE SELECT ON app.* FROM reader", "SELECT 1; UPDATE t SET a = 1; COMMIT",
++    ])
++    func stayListMovesNothing(sql: String) {
++        #expect(!movesDatabase(sql, .mySQL))
++    }
++
++    @Test("A T-SQL batch of statements that stay moves nothing, temporary tables included")
++    func tsqlStayBatchMovesNothing() {
++        #expect(!movesDatabase("SELECT * FROM #orders\nDECLARE @n int = 1\nIF @n > 0 PRINT 'x'", .sqlServer))
++    }
++
++    @Test("A T-SQL move word in a literal, a quoted name or a comment moves nothing", arguments: [
++        "SELECT N'use'", "SELECT [exec]", "-- use x", "SELECT \"execute\" FROM t /* sp_executesql */",
++    ])
++    func tsqlMoveWordOutsideCodeMovesNothing(sql: String) {
++        #expect(!movesDatabase(sql, .sqlServer))
++    }
++
++    @Test("A T-SQL move word read as code moves, and one behind a literal or comment that never closes is not ruled out", arguments: [
++        "USE x", "EXEC p", "SELECT 1 EXEC p", "SELECT 'unclosed USE x", "SELECT 1 /* USE x",
++    ])
++    func tsqlMoveWordAsCodeMoves(sql: String) {
++        #expect(movesDatabase(sql, .sqlServer))
++    }
++
++    @Test("T-SQL reads a move word glued to a number on its own, so the batch moves", arguments: [
++        "SELECT 1USE production", "SELECT 1e1USE x", 
+```
+
+**File**: `apple/Packages/TableProEditor/Sources/TableProEditorKit/Extensions/TextView+/TextView+TextFormation.swift` (modified, +2/-0)
+```diff
+@@ -39,6 +39,8 @@ extension TextView: @retroactive TextInterface {
+     /// - Parameter mutation: The mutation to apply.
+     public func applyMutation(_ mutation: TextMutation) {
+         guard !mutation.isEmpty else { return }
++        // A filter's edit skips `replaceCharacters`, so the delegate hears of it here: Vim's marks and `.` track every edit.
++        delegate?.textView(self, willReplaceContentsIn: mutation.range, with: mutation.string)
+         editorUndoManager?.registerMutation(mutation)
+         textStorage.replaceCharacters(in: mutation.range, with: mutation.string)
+         selectionManager.didReplaceCharacters(
+```
+
+**File**: `apple/Plugins/BeancountDriverPlugin/BeancountPluginDriver.swift` (modified, +2/-0)
+```diff
+@@ -171,6 +171,8 @@ final class BeancountPluginDriver: PluginDatabaseDriver, @unchecked Sendable {
+     }
  
--    # One task at a time: the app module's arm64 and x86_64 whole-module compiles at once outgrow
--    # a 7 GB hosted runner and swap, 237 min against 105 min measured in run 42617599195.
--    xcodebuild_project archive-app archive -jobs 1 -scheme TablePro -archivePath "$archive" \
--        ${profile[@]+"${profile[@]}"}
-+    # One arch per build: the app module's whole-module compile for both arches at once outgrew a
-+    # 7 GB hosted runner and swapped (237 min against 105 min, run 42617599195). -jobs 1 still caps
-+    # the peak within the single arch.
-+    xcodebuild_project "archive-app-$arch" archive -jobs 1 -scheme TablePro -archivePath "$archive" \
-+        ARCHS="$arch" ONLY_ACTIVE_ARCH=NO ${profile[@]+"${profile[@]}"}
-     # -exportArchive refuses a generic archive, which is what any other installed product makes it.
-     [ "$(plutil -extract ApplicationProperties.ApplicationPath raw -o - "$archive/Info.plist" 2> /dev/null)" \
-         = "Applications/TablePro.app" ] || die "$archive is not an app archive: $(find "$archive/Products" -mindepth 2 -maxdepth 3)"
- 
-     if [ "$SIGNED" = true ]; then
--        run_xcodebuild export-app -exportArchive -archivePath "$archive" -exportPath "$OUT/export" \
-+        run_xcodebuild "export-app-$arch" -exportArchive -archivePath "$archive" -exportPath "$exported" \
-             -exportOptionsPlist "$EXPORT_OPTIONS"
--        mv "$OUT/export/TablePro.app" "$app"
--        rm -rf "$OUT/export"
-+        mv "$exported/TablePro.app" "$app"
-+        rm -rf "$exported"
-     else
-         ditto "$archive/Products/Applications/TablePro.app" "$app"
-     fi
- 
--    check_universal "$app"
--    scripts/ci/verify-plugin-loads.sh "$app/Contents/PlugIns" "$app/Contents/Frameworks"
--    echo "Built $app ($(plutil -extract CFBundleShortVersionString raw -o - "$app/Contents/Info.plist"))"
-+    check_arch "$app" "$arch"
-+    scripts/ci/verify-plugin-loads.sh --arch "$arch" "$app/Contents/PlugIns" "$app/Contents/Frameworks"
-+    echo "Built $app ($arch, $(plutil -extract CFBundleShortVersionString raw -o - "$app/Contents/Info.plist"))"
- }
- 
- build_plugins() {
-@@ -136,4 +156,10 @@ build_plugins() {
-     echo "Built $(wc -l < "$targets" | tr -d ' ') plugins in $OUT/plugins"
- }
- 
--"build_$KIND"
-+if [ "$KIND" = plugins ]; then
-+    build_plugins
-+elif [ -n "$ARCH" ]; then
-+    build_app "$ARCH"
-+else
-+    for ARCH in arm64 x86_64; do build_app "$ARCH"; done
-+fi
+     var currentSchema: String? { nil }
++    // The ledger it opened, as the connection names it, so the host can tell a caller naming it from one naming another.
++    var currentDatabase: String? { config.database }
+     var serverVersion: String? { lock.withLock { activeBackendVersion } }
+     var supportsSchemas: Bool { false }
+     var supportsTransactions: Bool { false }
+```
+
+**File**: `apple/Plugins/BigQueryDriverPlugin/BigQueryPlugin.swift` (modified, +1/-0)
+```diff
+@@ -38,6 +38,7 @@ final class BigQueryPlugin: NSObject, TableProPlugin, DriverPlugin {
+     static let supportsSchemaEditing = false
+     static let supportsDatabaseSwitching = false
+     static let supportsSchemaSwitching = true
++    static let schemaSwitchScopesUnqualifiedNames = true
+     static let postConnectActions: [PostConnectAction] = [.selectSchemaFromLastSession]
+     static let supportsImport = false
+     static let supportsExport = true
 ```
 
 ---
 
-### Incident Patch 2: `9d0d481c` (2026-11-22)
-**Commit Message**: build(plugins): correct DuckDB size comment, note ParquetExport needs force_load (#4412)
+### Incident Patch 3: `3eb0d7bc` (2026-11-24)
+**Commit Message**: docs(core): ADR 0046, a monthly self-hosted license has 7 days' grace (#4469)
 
-**File**: `apple/project.yml` (modified, +3/-1)
+**File**: `core/docs/decisions/0045-perpetual-monthly-and-multi-year-licenses.md` (modified, +1/-1)
 ```diff
-@@ -736,7 +736,9 @@ targets:
-         PRODUCT_BUNDLE_IDENTIFIER: com.TablePro.ParquetExportPlugin
-         # DuckDB does the Parquet encoding, so this links the same static library the
-         # DuckDB driver does. That is why the plugin is registry-only rather than bundled:
--        # 149MB universal is not worth adding to every app download for one export format.
-+        # 226MB universal is not worth adding to every app download for one export format.
-+        # force_load is required: the static parquet and core_functions extensions register
-+        # through an autoregister constructor nothing references, which a plain link drops.
-         HEADER_SEARCH_PATHS:
-           - $(inherited)
-           - $(SRCROOT)/Plugins/DuckDBDriverPlugin/CDuckDB/include
+@@ -1,6 +1,6 @@
+ # 0045: A self-hosted license can be perpetual, monthly or prepaid for several years
+ 
+-- **Status**: Accepted; amends 0044
++- **Status**: Accepted; amends 0044; the grace of a monthly file superseded by 0046
+ - **Date**: 2026-11-24
+ 
+ ## Context
 ```
 
----
-
-### Incident Patch 3: `3722c097` (2026-11-22)
-**Commit Message**: test(bench): loaded-RSS/wide/big-text paths; fix data-files module chain (#4411)
-
-**File**: `apple/scripts/benchmark-data-files.sh` (modified, +5/-3)
+**File**: `core/docs/decisions/0046-a-monthly-license-has-7-days-grace.md` (added, +35/-0)
 ```diff
-@@ -39,10 +39,12 @@ compile_module() {
-         -emit-module-path "$WORK/$name.swiftmodule" -o "$WORK/lib$name.dylib" 2>> "$WORK/compile.log"
- }
- 
--if ! compile_module TableProTabularIO "$PACKAGE"/TableProTabularIO/*.swift \
--    || ! compile_module TableProTabular -lTableProTabularIO "$PACKAGE"/TableProTabular/*.swift \
-+if ! compile_module TableProWireIO "$PACKAGE"/TableProWireIO/*.swift \
-+    || ! compile_module TableProNumberFormatting "$PACKAGE"/TableProNumberFormatting/*.swift \
-+    || ! compile_module TableProTabularIO -lTableProWireIO "$PACKAGE"/TableProTabularIO/*.swift \
-+    || ! compile_module TableProTabular -lTableProTabularIO -lTableProNumberFormatting "$PACKAGE"/TableProTabular/*.swift \
-     || ! xcrun swiftc -O -parse-as-library -module-name DataFilesBenchmark -I "$WORK" -L "$WORK" \
--        -lTableProTabularIO -lTableProTabular -Xlinker -rpath -Xlinker "$WORK" \
-+        -lTableProTabular -lTableProTabularIO -lTableProNumberFormatting -lTableProWireIO -Xlinker -rpath -Xlinker "$WORK" \
-         "$HERE/main.swift" -o "$WORK/benchmark" 2>> "$WORK/compile.log"; then
-     cat "$WORK/compile.log" >&2
-     exit 1
+@@ -0,0 +1,35 @@
++# 0046: A monthly self-hosted license has 7 days' grace
++
++- **Status**: Accepted
++- **Date**: 2026-11-24
++
++## Context
++
++[0044](0044-sync-through-one-service-run-by-us-or-on-premises.md) gives a license file 30 days' grace after `exp`, and [0045](0045-perpetual-monthly-and-multi-year-licenses.md) kept that for every type, monthly included. On 2026-11-24 the maintainer set a monthly file's grace to 7 days and kept 30 for the others. With 30 days, a monthly install that stopped paying would push for about another month.
++
++## Decision
++
++A license file states the end of its grace in a new `grace_until` claim: 7 days after `exp` on a monthly file, 30 days after `exp` on every other file that has one.
++
++- `grace_until` is a NumericDate (RFC 7519 section 2), a private claim beside `maintenance_until`.
++- A file with `exp` has `grace_until`, later than its `exp`. A perpetual file has neither. The server, `license install` and the apps refuse a file that breaks this.
++- Past `grace_until`, pushes are refused with `license_expired`, and pulls and administration keep working, as 0044 says for the end of the grace.
++- The apps take the grace from the same claim, so a Mac and its server agree on when pushes stop.
++- Nothing else in 0045 changes: the 3 days past the paid period, the renewal fetch, the banner and the log events.
++
++## Rationale
++
++- The issuer knows the type it sold. The server and the apps compare one date and hold no table of types and days, as no plan or price lives in their code.
++- A date, like `exp` and `maintenance_until`, needs no arithmetic in the verifiers.
++
++## Consequences
++
++- A monthly install that stops paying keeps pushing for 10 days after its paid month ends: the 3 days of 0045, then 7 days' grace.
++- A missed renewal fetch on a monthly install has 10 days to succeed, not 33. The server logs each failed fetch (0045), and the banner starts at `exp`.
++- tablepro-cloud's issuer writes `grace_until`, and its verifier and the core's read it in place of `exp` plus 30 days.
++
++## Alternatives considered
++
++- **A `license_type` of `monthly`, mapped to 7 days in the server and the apps.** Each verifier would carry a table of types and days.
++- **A grace length in days.** Each verifier would add it to `exp`, where a date is compared as it stands.
++- **Working out monthly from `exp` minus `nbf`.** A rule that guesses the type from the dates, and an evaluation file is about a month long too.
 ```
 
-**File**: `apple/scripts/benchmark/app-paths/benchmark.py` (modified, +192/-9)
+**File**: `core/docs/decisions/README.md` (modified, +2/-1)
 ```diff
-@@ -2,6 +2,7 @@
- # Driver for scripts/benchmark-app-paths.sh, which builds and signs the app first.
- 
- import argparse
-+import ctypes
- import datetime
- import json
- import math
-@@ -30,6 +31,39 @@
- SETTLE_SECONDS = 0.5
- BENCH_DATABASE = "tablepro_bench"
- 
-+# Wide and big-text fixtures for the opt-in footprint and wide-row paths.
-+WIDE_COLUMNS = int(os.environ.get("BENCH_COLUMNS") or 7)
-+WIDE_ROWS = 2000
-+WIDE_TABLE = "bench_wide"
-+BIGTEXT_ROWS = 300
-+BIGTEXT_TABLE = "bench_bigtext"
-+
-+# proc_pid_rusage backs RunningApp.footprint_mb and cpu_ms.
-+LIBPROC = ctypes.CDLL("/usr/lib/libSystem.B.dylib")
-+
-+
-+class RusageInfo(ctypes.Structure):
-+    _fields_ = [("uuid", ctypes.c_uint8 * 16)] + [(name, ctypes.c_uint64) for name in (
-+        "user_time", "system_time", "pkg_idle_wkups", "interrupt_wkups", "pageins", "wired_size",
-+        "resident_size", "phys_footprint", "proc_start_abstime", "proc_exit_abstime")]
-+
-+
-+class MachTimebase(ctypes.Structure):
-+    _fields_ = [("numer", ctypes.c_uint32), ("denom", ctypes.c_uint32)]
-+
-+
-+def _mach_timebase():
-+    tb = MachTimebase()
-+    LIBPROC.mach_timebase_info(ctypes.byref(tb))
-+    return (tb.numer or 1, tb.denom or 1)
-+
-+
-+# ri_user_time/ri_system_time are Mach ticks, not ns; scale by numer/denom.
-+MACH_TIMEBASE = _mach_timebase()
-+
-+
-+# Opt-in: named in --paths, but kept out of a default run and the baseline until then.
-+OPTIONAL_PATHS = ["table-sqlite-footprint", "table-sqlite-wide", "table-sqlite-bigtext"]
- PATHS = [
-     "launch-welcome",
-     "launch-restore",
-@@ -38,7 +72,8 @@
-     "table-postgresql",
-     "tabs-next",
-     "tabs-recent",
--]
-+] + OPTIONAL_PATHS
-+DEFAULT_PATHS = [name for name in PATHS if name not in OPTIONAL_PATHS]
- 
- LAUNCH_DONE = re.compile(r"^\s+firstFramePresented\s+([0-9.]+)", re.M)
- TAB_SWITCH = re.compile(
-@@ -197,6 +232,88 @@ def prepare_postgres(server):
-     """.format(rows=TABLE_ROWS), BENCH_DATABASE)
- 
- 
-+# A few typed columns, the rest padded as colNNNN, for whichever engine opens the wide table.
-+def wide_columns(engine, count):
-+    if engine == "mysql":
-+        concat = lambda *parts: "CONCAT(%s)" % ", ".join(parts)
-+        id_type, text_type, email_type, amount_type, pad_type = (
-+            "INT PRIMARY KEY", "VARCHAR(64)", "VARCHAR(128)", "DECIMAL(12,2)", "TEXT")
-+        counter = "n"
-+    elif engine == "postgres":
-+        concat = lambda *parts: " || ".join(parts)
-+        id_type, text_type, email_type, amount_type, pad_type = (
-+            "INT PRIMARY KEY", "TEXT", "TEXT", "NUMERIC(12,2)", "TEXT")
-+        counter = "n"
-+    else:
-+        concat = lambda *parts: " || ".join(parts)
-+        id_type, text_type, email_type, amount_type, pad_type = (
-+            "INTEGER PRIMARY KEY", "TEXT", "TEXT", "REAL", "TEXT")
-+        counter = "i"
-+    typed = [
-+        ("id", id_type, counter),
-+        ("name", text_type, concat("'name '", counter)),
-+        ("email", email_type, concat("'user'", counter, "'@example.com'")),
-+        ("amount", amount_type, "(%s %% 100000) / 100.0" % counter),
-+    ]
-+    columns = list(typed[:count])
-+    for place in range(len(columns), count):
-+        columns.append(("col%04d" % (place - len(typed) + 1), pad_type, concat("'v'", counter)))
-+    return columns
-+
-+
-+def mysql_numbers(rows):
-+    places = max(1, len(str(rows)))
-+    digits = ", ".join("%s d%d" % (MYSQL_DIGITS, place) for place in range(places))
-+    number = " + ".join("d%d.d * %d" % (place, 10 ** place) for place in range(places)) + " + 1"
-+    return "(SELECT {number} AS n FROM {digits}) numbers".format(number=number, digits=digits)
-+
-+
-+def wide_table_sql(engine, table, count, rows):
-+    columns = wide_columns(engine, count)
-+    defs = ", ".join("%s %s" % (name, type_) for name, type_, _ in columns)
-+    exprs = ", ".join(expr for _, _, expr in columns)
-+    if engine == "mysql":
-+        return ("CREATE TABLE IF NOT EXISTS {table} ({defs});\n"
-+                "INSERT INTO {table} SELECT {exprs} FROM {source} WHERE n <= {rows};").format(
-+            table=table, defs=defs, exprs=exprs, source=mysql_numbers(rows), rows=rows)
-+    if engine == "postgres":
-+        return ("CREATE TABLE IF NOT EXISTS {table} ({defs});\n"
-+                "INSERT INTO {table} SELECT {exprs} FROM generate_series(1, {rows}) AS n;").format(
-+            table=table, defs=defs, exprs=exprs, rows=rows)
-+    return ("CREATE TABLE {table} ({defs});\n"
-+            "WITH RECURSIVE n(i) AS (SELECT 1 UNION ALL SELECT i + 1 FROM n WHERE i < {rows})\n"
-+            "INSERT INTO {table} SELECT {exprs} FROM n;").format(
-+        table=table, defs=defs, exprs=exprs, rows=rows)
-+
-+
-+def make_sqlite_wide(path, columns, rows):
-+    if path.exists():
-+        path.unlink()
-+    connection = sqlite3.connect(str(path))
-+    try:
-+        connection.executescript(sqlite_rows_sql("bench_small", 3))
-+        connection.executescript(wide_table_sql("sqlite", WIDE_TABLE, columns, rows))
-+        connection.commit()
-+    finally:
-+        connection.close()
-+
+@@ -50,4 +50,5 @@ The format, the statuses and how a later ADR changes an earlier one follow [the
+ | [0042](0042-a-mysql-result-can-be-wider-than-4096-columns.md) | A MySQL result can be wider than 4,096 columns | Accepted | sqlx-mysql 0.9.1 refuses a result set past 4,096 columns, the limit for a table, not a SELECT; sqlx-mysql and sqlx-core come from `TableProApp/sqlx`, the v0.9.1 tag with the refusal dropped and the claimed count's reservation capped at 4,096, until a release has the fix. |
+ | [0043](0043-macos-later-slices-importers-mcp-ssh.md) | Importers, the MCP server and SSH move with the macOS app's later slices | Accepted | Importers after slices 2 and 3 through `ForeignImportReview`, the MCP server after the last engine of slice 5 with an `McpAppHost`, SSH with each engine on the in-process transport reading the app's own `known_hosts`; each Swift copy goes with its slice. |
+ | [0044](0044-sync-through-one-service-run-by-us-or-on-premises.md) | Sync goes through one TablePro service, run by us or entirely on a customer's servers | Accepted; the license types and the calls to tablepro.app amended by 0045 | Team Library's store becomes one record store with personal, history and team scopes under `/v2/sync`; one tablepro-cloud binary runs as SaaS or fully on-premises under a profile with an offline license; `tablepro-sync` in the core is the client for every app, macOS first; secrets and history sync end to end encrypted with signed key objects, gated by an internal security review; history is kept until deleted. |
+-| [0045](0045-perpetual-monthly-and-multi-year-licenses.md) | A self-hosted license can be perpetual, monthly or prepaid for several years | Accepted | A file carries `exp` or `maintenance_until`; a perpetual file covers each release dated on or before its maintenance end, and `migrate up` refuses a later one; an opt-in daily fetch from tablepro.app, with the installed file as the bearer token, renews any type and is required for monthly; signing, claims, seats and grace stay as 0044 set them. |
++| [0045](0045-perpetual-monthly-and-multi-year-licenses.md) | A self-hosted license can be perpetual, monthly or prepaid for several years | Accepted; the grace of a monthly file superseded by 0046 | A file carries `exp` or `maintenance_until`; a perpetual file covers each release dated on or before its maintenance end, and `migrate up` refuses a later one; an opt-in daily fetch from tablepro.app, with the installed file as the bearer token, renews any type and is required for monthly; signing, claims, seats and grace stay as 0044 set them. |
++| [0046](0046-a-monthly-license-has-7-days-grace.md) | A monthly self-hosted license has 7 days' grace | Accepted | A file with `exp` carries `grace_until`, 7 days after `exp` on a monthly file and 30 days on the others; past it pushes are refused with `license_expired`, and the server and the apps read the claim instead of adding 30 days. |
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4416** (2026-11-22): docs(release): move the Homebrew cask to per-arch DMGs on the first per-arch stable (@datlechin)
-- **PR #4414** (2026-11-22): build(release): ship per-arch builds and a per-arch appcast (@datlechin)
-- **PR #4413** (2026-11-22): feat(settings): native macOS Settings sidebar with pushed pages and history (@datlechin)
-- **PR #4412** (2026-11-22): build(plugins): correct DuckDB size comment, note ParquetExport needs force_load (@datlechin)
-- **PR #4411** (2026-11-22): test(bench): loaded-RSS/wide/big-text paths; fix data-files module chain (@datlechin)
-- **PR #4410** (2026-11-22): refactor(connection-form): show General by default, rest behind disclosures (@datlechin)
+- **PR #4483** (2026-11-25): docs(core): ADR 0055, managed policies for the sync provider and tablepro.app traffic (@datlechin)
+- **PR #4480** (2026-11-25): docs(core): ADR 0050, a self-hosted license renewal is requested by tablepro.app and signed by the operator (@datlechin)
+- **PR #4479** (2026-11-25): feat(filter): list the filter column picker alphabetically on request (@datlechin)
+- **PR #4478** (2026-11-25): fix(focus): keep the sidebar selection accent and the keyboard when a window opens or switches connection (@datlechin)
+- **PR #4477** (2026-11-25): feat(ai): read models from each provider and a shared catalog (@datlechin)
+- **PR #4476** (2026-11-24): perf(dashboard): publish one board per Server Dashboard refresh (@datlechin)
 
 ---
 
@@ -2343,31 +2462,34 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(release): ship per-arch builds and a per-arch appcast
+## X. focus): keep the sidebar selection accent and the keyboard when a window opens o
 
 **RULE**:
-When implementing operations in `.claude/skills/release/SKILL.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in TableProApp/TablePro. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apple/TablePro/Core/DataGrid/DataGridModel+Find.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in TableProApp/TablePro. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7b2ba0f2`: build(release): ship per-arch builds and a per-arch appcast. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `32dc16b7`: focus): keep the sidebar selection accent and the keyboard when a window opens or switches connection. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/skills/release/SKILL.md`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `apple/TablePro/Core/DataGrid/DataGridModel+Find.swift`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-- Then check the source: `gh api -H 'Accept: application/vnd.github.raw' 'repos/TableProApp/TablePro/contents/appcast.xml?ref=gh-pages' | grep -c '<sparkle:shortVersionString>X.Y.Z<'` prints 2, one item per arch; `gh release view vX.Y.Z --json assets -q '.assets | length'` is 7 plus `python3 apple/scripts/release/registry.py targets | wc -l`. A line whose `apple/scripts/release/feed.py` has no `ARCHES` ships universal: 1 item and 4 plus `python3 apple/scripts/release/registry.py targets | wc -l`.
+        find.requestsFieldFocus = true
+        find.requestsFieldFocus = true
+        find.requestsFieldFocus = false
+        find.requestsFieldFocus = true
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Induced defect failure mode:
-- Then check the source: `gh api -H 'Accept: application/vnd.github.raw' 'repos/TableProApp/TablePro/contents/appcast.xml?ref=gh-pages' | grep -c '<sparkle:shortVersionString>X.Y.Z<'` prints 1; `gh release view vX.Y.Z --json assets -q '.assets | length'` is 4 plus `python3 apple/scripts/release/registry.py targets | wc -l`.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7b2ba0f2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `32dc16b7` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gluesql-gluesql-learnings.md`  
 > **Source**: github ([https://github.com/gluesql/gluesql](https://github.com/gluesql/gluesql))  
-> **Source Version**: `c91cbdd6`  
+> **Source Version**: `9d354015`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T12:45:44.279Z  
+> **Timestamp**: 2026-11-25T06:39:25.545Z  
 > **Learning ID**: `learn-github-gluesql-gluesql`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gluesql-gluesql-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gluesql/gluesql](https://github.com/gluesql/gluesql))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T12:45:44.269Z  
+> **Harvest Timestamp**: 2026-11-25T06:39:25.540Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: GlueSQL is quite sticky. It sticks to anything.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3141 stars
+- **Stars / Engagement**: 3142 stars
 
 ---
 
@@ -2058,792 +2058,404 @@ impl BigDecimalExt for BigDecimal {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c91cbdd6` (2026-11-24)
-**Commit Message**: Push down IFNULL, COALESCE, and NULLIF in SQLite filters (#2097)
+### Incident Patch 1: `9d354015` (2026-11-24)
+**Commit Message**: Release v0.21.0 (#2098)
 
-Resolve nested function arguments and bind their values in SQL order so
-SQLite can filter rows before returning them to GlueSQL. Keep terms
-whose argument evaluation or comparisons require GlueSQL semantics in
-the common filter.
+* Bump version to v0.21.0
+* Add release notes for GlueSQL v0.21.0
 
-**File**: `storages/sqlite-storage/src/planner/native_filter.rs` (modified, +34/-55)
+Introduce the SlateDB and SQLite backends and explain how to migrate
+existing Sled and Redb databases. Link the notes from the release index
+and navigation so readers can find the SQL and Rust API changes.
+
+---------
+
+Co-authored-by: Taehoon Moon <[REDACTED_EMAIL]>
+
+**File**: `Cargo.lock` (modified, +18/-18)
 ```diff
-@@ -4,12 +4,10 @@
- mod condition;
+@@ -1449,7 +1449,7 @@ dependencies = [
  
- use {
-+    self::condition::ConditionPlan,
-     super::table_read::{self, ScanOrder},
-     gluesql_core::{
--        plan::{
--            ExprPlan, FilterInputPlan, FilterPlan, NativeSourcePlan, ProjectInputPlan, QueryPlan,
--            SchemaMap, SourcePlan,
--        },
-+        plan::{FilterInputPlan, FilterPlan, ProjectInputPlan, QueryPlan, SchemaMap, SourcePlan},
-         planner::{VisitorMut, walk_query_mut},
-     },
-     std::{collections::BTreeSet, convert::Infallible},
-@@ -23,17 +21,6 @@ struct NativeFilterPlanner<'a> {
-     schemas: &'a SchemaMap,
- }
+ [[package]]
+ name = "gluesql"
+-version = "0.20.0"
++version = "0.21.0"
+ dependencies = [
+  "gluesql-cli",
+  "gluesql-composite-storage",
+@@ -1472,7 +1472,7 @@ dependencies = [
  
--enum NativeFilterRewrite {
--    Unchanged,
--    Full {
--        source: NativeSourcePlan,
--    },
--    Partial {
--        source: NativeSourcePlan,
--        remaining: ExprPlan,
--    },
--}
--
- impl VisitorMut for NativeFilterPlanner<'_> {
-     type Error = Infallible;
+ [[package]]
+ name = "gluesql-cli"
+-version = "0.20.0"
++version = "0.21.0"
+ dependencies = [
+  "anyhow",
+  "clap",
+@@ -1494,7 +1494,7 @@ dependencies = [
  
-@@ -43,41 +30,23 @@ impl VisitorMut for NativeFilterPlanner<'_> {
+ [[package]]
+ name = "gluesql-composite-storage"
+-version = "0.20.0"
++version = "0.21.0"
+ dependencies = [
+  "gluesql-core",
+  "gluesql-redb-storage",
+@@ -1505,7 +1505,7 @@ dependencies = [
  
-         if let Some(project) = query.project_mut()
-             && let ProjectInputPlan::Filter(filter) = &project.input
-+            && let Some(input) = plan_filter(filter, self.schemas)
-         {
--            match plan_filter(filter, self.schemas) {
--                NativeFilterRewrite::Unchanged => {}
--                NativeFilterRewrite::Full { source } => {
--                    project.input = ProjectInputPlan::Source(SourcePlan::Native(source));
--                }
--                NativeFilterRewrite::Partial { source, remaining } => {
--                    project.input = ProjectInputPlan::Filter(FilterPlan {
--                        input: FilterInputPlan::Source(SourcePlan::Native(source)),
--                        expr: remaining,
--                    });
--                }
--            }
-+            project.input = input;
-         }
+ [[package]]
+ name = "gluesql-core"
+-version = "0.20.0"
++version = "0.21.0"
+ dependencies = [
+  "bigdecimal",
+  "cfg-if",
+@@ -1530,7 +1530,7 @@ dependencies = [
  
-         Ok(())
-     }
- }
+ [[package]]
+ name = "gluesql-csv-storage"
+-version = "0.20.0"
++version = "0.21.0"
+ dependencies = [
+  "csv",
+  "gluesql-core",
+@@ -1544,7 +1544,7 @@ dependencies = [
  
--fn plan_filter(filter: &FilterPlan, schemas: &SchemaMap) -> NativeFilterRewrite {
-+fn plan_filter(filter: &FilterPlan, schemas: &SchemaMap) -> Option<ProjectInputPlan> {
-     let FilterInputPlan::Source(SourcePlan::Table(table)) = &filter.input else {
--        return NativeFilterRewrite::Unchanged;
--    };
--
--    let Some(schema) = schemas.get(&table.name) else {
--        return NativeFilterRewrite::Unchanged;
-+        return None;
-     };
+ [[package]]
+ name = "gluesql-file-storage"
+-version = "0.20.0"
++version = "0.21.0"
+ dependencies = [
+  "gluesql-core",
+  "gluesql-test-suite",
+@@ -1556,7 +1556,7 @@ dependencies = [
  
--    let Some(columns) = schema.column_defs.as_ref() else {
--        return NativeFilterRewrite::Unchanged;
--    };
--
--    let Some(projection) = table_read::scan_projection(table, columns) else {
--        return NativeFilterRewrite::Unchanged;
--    };
-+    let schema = schemas.get(&table.name)?;
-+    let columns = schema.column_defs.as_ref()?;
-+    let projection = table_read::scan_projection(table, columns)?;
+ [[package]]
+ name = "gluesql-git-storage"
+-version = "0.20.0"
++version = "0.21.0"
+ dependencies = [
+  "gluesql-core",
+  "gluesql-csv-storage",
+@@ -1569,7 +1569,7 @@ dependencies = [
  
-     let alias = table
-         .alias
-@@ -95,27 +64,37 @@ fn plan_filter(filter: &FilterPlan, schemas: &SchemaMap) -> NativeFilterRewrite
-         .enumerate()
-         .any(|(index, column)| !names.insert(column_aliases.get(index).unwrap_or(&column.name)))
-     {
--        return NativeFilterRewrite::Unchanged;
-+        return None;
-     }
+ [[package]]
+ name = "gluesql-json-storage"
+-version = "0.20.0"
++version = "0.21.0"
+ dependencies = [
+  "gluesql-core",
+  "gluesql-test-suite",
+@@ -1583,7 +1583,7 @@ dependencies = [
  
--    let Some(ScanOrder::Sqlite(order)) = table_read::scan_order(&table.name, columns) else {
--        return NativeFilterRewrite::Unchanged;
-+    let ScanOrder::Sqlite(order) = table_read::scan_order(&table.name, columns) else {
-+        return None;
-     };
+ [[package]]
+ name = "gluesql-macros"
+-version = "0.20.0"
++version = "0.21.0"
+ dependencies = [
+  "chrono",
+  "gluesql-core",
+@@ -1598,7 +1598,7 @@ dependencies = [
  
--    let Some(condition) =
--        condition::plan(&filter.expr, &table.name, alias, columns, column_aliases)
--    else {
--        return NativeFilterRewrite::Unchanged;
-+    let condition = condition::plan(&filter.expr, &table.name, alias, columns, column_aliases);
-+    let native_source = |sql, params| {
-+        let mut source = table_read::native_select(table, projection);
-+        source.query = format!("{} WHERE {sql} {order}", source.query);
-+        source.params = params;
-+        SourcePlan::Native(source)
-     };
+ [[package]]
+ name = "gluesql-mongo-storage"
+-version = "0.20.0"
++version = "0.21.0"
+ dependencies = [
+  "bson",
+  "chrono",
+@@ -1615,7 +1615,7 @@ dependencies = [
  
--    let mut source = table_read::native_select(table, projection);
--    source.query = format!("{} WHERE {} {order}", source.query, condition.sql);
--    source.params = condition.params;
--
--    match condition.remaining {
--        Some(remaining) => NativeFilterRewrite::Partial { source, remaining },
--        None => NativeFilterRewrite::Full { source },
--    }
-+    let input = match condition {
-+        ConditionPlan::Unchanged => return None,
-+        ConditionPlan::Full { sql, params } => ProjectInputPlan::Source(native_source(sql, params)),
-+        ConditionPlan::Partial {
-+            sql,
-+            params,
-+            remaining,
-+        } => {
-+            let source = native_source(sql, params);
-+            ProjectInputPlan::Filter(FilterPlan {
-+                input: FilterInputPlan::Source(source),
-+                expr: remaining,
-+            })
-+        }
-+    };
-+    Some(input)
- }
+ [[package]]
+ name = "gluesql-parquet-storage"
+-version = "0.20.0"
++version = "0.21.0"
+ dependencies = [
+  "bincode",
+  "byteorder",
+@@ -1632,7 +1632,7 @@ dependencies = [
  
- #[cfg(test)]
+ [[package]]
+ name = "gluesql-redb-storage"
+-version = "0.20.0"
++version = "0.21.0"
+ dependencies = [
+  "bigdecimal",
+  "bincode",
+@@ -1648,7 +1648,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "gluesql-redis-storage"
+-version = "0.20.0"
++version = "0.21.0"
+ dependencies = [
+  "chrono",
+  "gluesql-core",
+@@ -1661,7 +1661,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "gluesql-shared-memory-storage"
+-version = "0.20.0"
++version = "0.21.0"
+ dependencies = [
+  "gluesql-core",
+  "gluesql-test-suite",
+@@ -1671,7 +1671,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "gluesql-slatedb-storage"
+-version = "0.20.0"
++version = "0.21.0"
+ dependencies = [
+  "async-trait",
+  "bincode",
+@@ -1687,7 +1687,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "gluesql-sqlite-storage"
+-version = "0.20.0"
++version = "0.21.0"
+ dependencies = [
+  "gluesql-core",
+  "gluesql-test-suite",
+@@ -1701,7 +1701,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "gluesql-test-suite"
+-version = "0.20.0"
++version = "0.21.0"
+ dependencies = [
+  "bigdecimal",
+  "chrono",
+@@ -1718,7 +1718,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "gluesql_memory_storage"
+-version = "0.20.0"
++version = "0.21.0"
+ dependencies = [
+  "gluesql-core",
+  "gluesql-test-suite",
 ```
 
-**File**: `storages/sqlite-storage/src/planner/native_filter/condition.rs` (modified, +263/-287)
+**File**: `Cargo.toml` (modified, +17/-17)
 ```diff
-@@ -1,80 +1,108 @@
--//! Extracts supported WHERE conditions into native SQL, bindings, and a remaining expression.
--
--mod operand_type;
-+//! Splits a single-table `WHERE` clause between `SQLite` and the common executor.
-+//!
-+//! [`ConditionPlanner::push_down_where_terms`] considers each top-level `AND`
-+//! term independently. [`ConditionPlanner::build_condition_sql`] translates a
-+//! whole term, including `OR` and `NOT`, when `SQLite` can evaluate it with
-+//! `GlueSQL` semantics. If a term stays in the common filter, the planner
-+//! discards any parameters it collected for that term.
-+//!
-+//! [`operand::plan_operand`] identifies the columns, values and functions in
-+//! each condition. [`ConditionPlanner::render_operand`] writes physical column
-+//! names and binds values to numbered placeholders, visiting function arguments
-+//! from left to right.
-+//!
-+//! [`ConditionPlan`] records whether the filter stays unchanged or moves to
-+//! `SQLite` in full or in part. Both delegated cases carry SQL and parameters in
-+//! placeholder order. Partial delegation also carries the remaining expression.
-+
-+mod operand;
+@@ -18,31 +18,31 @@ default-members = [
+ ]
  
- use {
--    self::operand_type::{Operand, ResolvedOperand},
-+    self::operand::{OperandPlan, ResolvedOperand, plan_operand, sqlite_allows_operator},
-     crate::schema::qualified_column,
-     gluesql_core::{
--        ast::{BinaryOperator, DataType, Literal, ToSql, UnaryOperator},
-+        ast::{BinaryOperator, DataType, ToSql, UnaryOperator},
-         data::Value,
-         plan::{ColumnDefPlan, ExprPlan},
-     },
- };
+ [workspace.package]
+-version = "0.20.0"
++version = "0.21.0"
+ edition = "2024"
+ description = "GlueSQL - Open source SQL database engine fully written in Rust with pure functional execution layer, easily swappable storage and web assembly support!"
+ license = "Apache-2.0"
+ repository = "https://github.com/gluesql/gluesql"
+ documentation = "https://docs.rs/gluesql/"
  
- #[derive(Debug, PartialEq)]
--pub(super) struct PlannedCondition {
--    pub(super) sql: String,
--    pub(super) params: Vec<Value>,
--    pub(super) remaining: Option<ExprPlan>,
-+pub(super) enum ConditionPlan {
-+    Unchanged,
-+    Full {
-+        sql: String,
-+        params: Vec<Value>,
-+    },
-+    Partial {
-+        sql: String,
-+        params: Vec<Value>,
-+        remaining: ExprPlan,
-+    },
- }
+ [workspace.dependencies]
+-gluesql-core = { path = "./core", version = "0.20.0" }
++gluesql-core = { path = "./core", version = "0.21.0" }
  
- pub(super) fn plan(
-     expr: &ExprPlan,
-     table_name: &str,
--    alias: &str,
-+    table_alias: &str,
-     columns: &[ColumnDefPlan],
-     column_aliases: &[String],
--) -> Option<PlannedCondition> {
--    let mut planner = ConditionPlanner::new(table_name, alias, columns, column_aliases);
--    let remaining = planner.extract(expr);
-+) -> ConditionPlan {
-+    let mut planner = ConditionPlanner::new(table_name, table_alias, columns, column_aliases);
-+    let remaining = planner.push_down_where_terms(expr);
+-cli = { package = "gluesql-cli", path = "./cli", version = "0.20.0" }
+-test-suite = { package = "gluesql-test-suite", path = "./test-suite", version = "0.20.0" }
+-gluesql_memory_storage = { path = "./storages/memory-storage", version = "0.20.0" }
+-gluesql-shared-memory-storage = { path = "./storages/shared-memory-storage", version = "0.20.0" }
+-gluesql-redb-storage = { path = "./storages/redb-storage", version = "0.20.0" }
+-gluesql-sqlite-storage = { path = "./storages/sqlite-storage", version = "0.20.0" }
+-gluesql-slatedb-storage = { path = "./storages/slatedb-storage", version = "0.20.0" }
+-gluesql-json-storage = { path = "./storages/json-storage", version = "0.20.0" }
+-gluesql-csv-storage = { path = "./storages/csv-storage", version = "0.20.0" }
+-gluesql-composite-storage = { path = "./storages/composite-storage", version = "0.20.0" }
+-gluesql-redis-storage = { path = "./storages/redis-storage", version = "0.20.0" }
+-gluesql-mongo-storage = { path = "./storages/mongo-storage", version = "0.20.0" }
+-gluesql-parquet-storage = { path = "./storages/parquet-storage", version = "0.20.0" }
+-gluesql-file-storage = { path = "./storages/file-storage", version = "0.20.0" }
+-gluesql-git-storage = { path = "./storages/git-storage", version = "0.20.0" }
++cli = { package = "gluesql-cli", path = "./cli", version = "0.21.0" }
++test-suite = { package = "gluesql-test-suite", path = "./test-suite", version = "0.21.0" }
++gluesql_memory_storage = { path = "./storages/memory-storage", version = "0.21.0" }
++gluesql-shared-memory-storage = { path = "./storages/shared-memory-storage", version = "0.21.0" }
++gluesql-redb-storage = { path = "./storages/redb-storage", version = "0.21.0" }
++gluesql-sqlite-storage = { path = "./storages/sqlite-storage", version = "0.21.0" }
++gluesql-slatedb-storage = { path = "./storages/slatedb-storage", version = "0.21.0" }
++gluesql-json-storage = { path = "./storages/json-storage", version = "0.21.0" }
++gluesql-csv-storage = { path = "./storages/csv-storage", version = "0.21.0" }
++gluesql-composite-storage = { path = "./storages/composite-storage", version = "0.21.0" }
++gluesql-redis-storage = { path = "./storages/redis-storage", version = "0.21.0" }
++gluesql-mongo-storage = { path = "./storages/mongo-storage", version = "0.21.0" }
++gluesql-parquet-storage = { path = "./storages/parquet-storage", version = "0.21.0" }
++gluesql-file-storage = { path = "./storages/file-storage", version = "0.21.0" }
++gluesql-git-storage = { path = "./storages/git-storage", version = "0.21.0" }
  
-     if planner.sql_conditions.is_empty() {
--        return None;
-+        return ConditionPlan::Unchanged;
-     }
- 
--    Some(PlannedCondition {
--        sql: planner.sql_conditions.join(" AND "),
--        params: planner.params,
--        remaining,
--    })
-+    let sql = planner.sql_conditions.join(" AND ");
-+    let params = planner.params;
-+    match remaining {
-+        None => ConditionPlan::Full { sql, params },
-+        Some(remaining) => ConditionPlan::Partial {
-+            sql,
-+            params,
-+            remaining,
-+        },
-+    }
- }
- 
- struct ConditionPlanner<'a> {
-     table_name: &'a str,
--    alias: &'a str,
-+    table_alias: &'a str,
-     columns: &'a [ColumnDefPlan],
--    aliases: &'a [String],
-+    column_aliases: &'a [String],
-     sql_conditions: Vec<String>,
-     params: Vec<Value>,
- }
- 
- impl<'a> ConditionPlanner<'a> {
-     fn new(
-         table_name: &'a str,
--        alias: &'a str,
-+        table_alias: &'a str,
-         columns: &'a [ColumnDefPlan],
--        aliases: &'a [String],
-+        column_aliases: &'a [String],
-     ) -> Self {
-         Self {
-             table_name,
--            alias,
-+            table_alias,
-             columns,
--            aliases,
-+            column_aliases,
-             sql_conditions: Vec::new(),
-             params: Vec::new(),
-         }
-     }
- 
--    fn extract(&mut self, expr: &ExprPlan) -> Option<ExprPlan> {
-+    /// Collects native conditions and their parameters, returning the filter for the common executor.
-+    fn push_down_where_terms(&mut self, expr: &ExprPlan) -> Option<ExprPlan> {
-         match expr {
-             ExprPlan::BinaryOp {
-                 left,
-                 op: BinaryOperator::And,
-                 right,
-             } => {
--                let left = self.extract(left);
--                let right = self.extract(right);
-+                let left = self.push_down_where_terms(left);
-+                let right = self.push_down_where_terms(right);
- 
-                 match (left, right) {
-                     (Some(left), Some(right)) => Some(ExprPlan::BinaryOp {
-@@ -87,13 +115,13 @@ impl<'a> ConditionPlanner<'a> {
-                 }
-             }
-             ExprPlan::Nested(expr) => self
--                .extract(expr)
-+                .push_down_where_terms(expr)
-                 .map(|remaining| ExprPlan::Nested(Box::new(remaining))),
-             // OR/NOT and other expressions move as a whole. Extracting an AND from
-             // inside one of them could discard row
+ [workspace.lints.clippy]
+ pedantic = { level = "deny", priority = -1 }
 ```
 
-**File**: `storages/sqlite-storage/src/planner/native_filter/condition/operand.rs` (renamed, +289/-74)
+**File**: `README.md` (modified, +13/-13)
 ```diff
-@@ -1,60 +1,144 @@
--//! Resolves literals and checks logical type compatibility for native comparisons.
--
--use gluesql_core::{
--    ast::{BinaryOperator, DataType, Literal},
--    data::{BigDecimalExt, Value},
--    plan::ColumnDefPlan,
-+//! Plans scalar operands in a native `WHERE` condition.
-+//!
-+//! [`plan_operand`] looks up column references using the table and column
-+//! aliases visible in the query. The matching column definition supplies its
-+//! type and physical name. [`OperandPlan::Unmatched`] lets a caller try another
-+//! interpretation, such as a condition inside `IS NULL`.
-+//!
-+//! Bound values carry their own types, and [scalar functions](function) supply
-+//! their return types. A literal can take its comparison peer's type. In
-+//! `qty > 10` with `qty` declared `INT8`, it becomes `Value::I8(10)`.
-+//! The planner checks the operator for both operands, then checks whether the
-+//! right operand fits the left operand's type.
-+
-+mod function;
-+
-+use {
-+    self::function::{ResolvedFunction, plan_function_call},
-+    gluesql_core::{
-+        ast::{BinaryOperator, DataType, Literal, UnaryOperator},
-+        data::{BigDecimalExt, Value},
-+        plan::{ColumnDefPlan, ExprPlan},
-+    },
- };
+@@ -21,7 +21,7 @@ GlueSQL is quite sticky: it brings SQL to your application's storage. Use a prov
+ - **Work with flexible data:** query schema-defined and schemaless tables together, including MAP and LIST values.
+ - **Choose a query interface:** write SQL or compose queries with the Rust Query Builder, both backed by the same engine.
  
--#[derive(Clone)]
--pub(super) enum Operand<'a> {
--    Column(&'a ColumnDefPlan),
--    // Literals can adopt a peer type; typed Values retain theirs.
-+#[derive(Clone, Debug, PartialEq)]
-+pub(super) enum OperandPlan<'a> {
-+    // Only a literal can acquire its comparison peer's type.
-     Literal(Literal),
--    Value(Value),
-+    Resolved(ResolvedOperand<'a>),
-+    Unmatched,
- }
+-[Explore the documentation →](https://gluesql.org/docs/dev/)
++[Explore the documentation →](https://gluesql.org/docs/0.21.0/)
  
--#[derive(Debug, PartialEq)]
-+#[derive(Clone, Debug, PartialEq)]
- pub(super) enum ResolvedOperand<'a> {
-     Column(&'a ColumnDefPlan),
-     Value(Value),
-+    Function(ResolvedFunction<'a>),
- }
+ ## Installation
  
--impl<'a> Operand<'a> {
--    pub(super) fn data_type(&self) -> Option<DataType> {
--        match self {
--            Self::Column(column) => Some(column.data_type.clone()),
--            // NULL has no logical type.
--            Self::Value(value) => value.get_type(),
--            Self::Literal(_) => None,
-+pub(super) fn plan_operand<'a>(
-+    expr: &ExprPlan,
-+    table_alias: &str,
-+    columns: &'a [ColumnDefPlan],
-+    column_aliases: &[String],
-+) -> OperandPlan<'a> {
-+    match expr {
-+        ExprPlan::Nested(expr) => plan_operand(expr, table_alias, columns, column_aliases),
-+        ExprPlan::CompoundIdentifier { alias, .. } if alias != table_alias => {
-+            OperandPlan::Unmatched
-         }
--    }
-+        ExprPlan::Identifier(name) | ExprPlan::CompoundIdentifier { ident: name, .. } => {
-+            let Some(column) = columns.iter().enumerate().find_map(|(index, column)| {
-+                let visible_name = column_aliases.get(index).unwrap_or(&column.name);
-+                (visible_name == name).then_some(column)
-+            }) else {
-+                return OperandPlan::Unmatched;
-+            };
-+
-+            OperandPlan::Resolved(ResolvedOperand::Column(column))
-+        }
-+        ExprPlan::Literal(literal) => OperandPlan::Literal(literal.clone()),
-+        ExprPlan::Value(value) => OperandPlan::Resolved(ResolvedOperand::Value(value.clone())),
-+        ExprPlan::UnaryOp {
-+            op: op @ (UnaryOperator::Plus | UnaryOperator::Minus),
-+            expr,
-+        } => {
-+            let OperandPlan::Literal(Literal::Number(number)) =
-+                plan_operand(expr, table_alias, columns, column_aliases)
-+            else {
-+                return OperandPlan::Unmatched;
-+            };
-+
-+            let number = if matches!(op, UnaryOperator::Minus) {
-+                -number
-+            } else {
-+                number
-+            };
-+            OperandPlan::Literal(Literal::Number(number))
-+        }
-+        ExprPlan::Function(function) => {
-+            let Some(function) = plan_function_call(function, table_alias, columns, column_aliases)
-+            else {
-+                return OperandPlan::Unmatched;
-+            };
+@@ -51,22 +51,22 @@ GlueSQL provides reference storage implementations for in-memory data, embedded
  
--    pub(super) fn resolve(self, peer_type: Option<&DataType>) -> Option<ResolvedOperand<'a>> {
--        Some(match self {
--            Self::Column(column) => ResolvedOperand::Column(column),
--            Self::Literal(literal) => ResolvedOperand::Value(literal_to_value(literal, peer_type)?),
--            Self::Value(value) => ResolvedOperand::Value(value),
--        })
-+            OperandPlan::Resolved(ResolvedOperand::Function(function))
-+        }
-+        _ => OperandPlan::Unmatched,
-     }
- }
+ | Use case | Recommended storage |
+ | --- | --- |
+-| Persistent embedded database | [Redb](https://gluesql.org/docs/dev/storages/supported-storages/redb-storage/) |
+-| Persistent database on S3 or Cloudflare R2 | [SlateDB](https://gluesql.org/docs/dev/storages/supported-storages/slatedb-storage/) |
+-| Existing MongoDB or Redis data | [Mongo](https://gluesql.org/docs/dev/storages/supported-storages/mongo-storage/) or [Redis](https://gluesql.org/docs/dev/storages/supported-storages/redis-storage/) |
+-| Using GlueSQL types and functions with SQLite's storage and query engine | [SQLite](https://gluesql.org/docs/dev/storages/supported-storages/sqlite-storage/) |
+-| Temporary data, tests, and prototypes, data across threads | [Memory](https://gluesql.org/docs/dev/storages/supported-storages/memory-storage/), [Shared Memory](https://gluesql.org/docs/dev/storages/supported-storages/shared-memory-storage/) |
+-| Querying CSV, JSON, or Parquet files | [CSV](https://gluesql.org/docs/dev/storages/supported-storages/csv-storage/), [JSON](https://gluesql.org/docs/dev/storages/supported-storages/json-storage/), or [Parquet](https://gluesql.org/docs/dev/storages/supported-storages/parquet-storage/) |
+-| Lightweight filesystem persistence | [File](https://gluesql.org/docs/dev/storages/supported-storages/file-storage/) |
+-| Version-controlled data | [Git](https://gluesql.org/docs/dev/storages/supported-storages/git-storage/) |
+-| Queries across multiple storage backends | [Composite](https://gluesql.org/docs/dev/storages/supported-storages/composite-storage/) |
++| Persistent embedded database | [Redb](https://gluesql.org/docs/0.21.0/storages/supported-storages/redb-storage/) |
++| Persistent database on S3 or Cloudflare R2 | [SlateDB](https://gluesql.org/docs/0.21.0/storages/supported-storages/slatedb-storage/) |
++| Existing MongoDB or Redis data | [Mongo](https://gluesql.org/docs/0.21.0/storages/supported-storages/mongo-storage/) or [Redis](https://gluesql.org/docs/0.21.0/storages/supported-storages/redis-storage/) |
++| Using GlueSQL types and functions with SQLite's storage and query engine | [SQLite](https://gluesql.org/docs/0.21.0/storages/supported-storages/sqlite-storage/) |
++| Temporary data, tests, and prototypes, data across threads | [Memory](https://gluesql.org/docs/0.21.0/storages/supported-storages/memory-storage/), [Shared Memory](https://gluesql.org/docs/0.21.0/storages/supported-storages/shared-memory-storage/) |
++| Querying CSV, JSON, or Parquet files | [CSV](https://gluesql.org/docs/0.21.0/storages/supported-storages/csv-storage/), [JSON](https://gluesql.org/docs/0.21.0/storages/supported-storages/json-storage/), or [Parquet](https://gluesql.org/docs/0.21.0/storages/supported-storages/parquet-storage/) |
++| Lightweight filesystem persistence | [File](https://gluesql.org/docs/0.21.0/storages/supported-storages/file-storage/) |
++| Version-controlled data | [Git](https://gluesql.org/docs/0.21.0/storages/supported-storages/git-storage/) |
++| Queries across multiple storage backends | [Composite](https://gluesql.org/docs/0.21.0/storages/supported-storages/composite-storage/) |
+ | Browser / JS applications | [JavaScript: memory, local Storage, or OPFS](https://github.com/gluesql/gluesql-js#pick-the-storage-that-matches-your-data) |
  
--impl ResolvedOperand<'_> {
--    pub(super) fn data_type(&self) -> Option<DataType> {
-+impl<'a> OperandPlan<'a> {
-+    pub(super) fn with_literal_type_from(self, peer: &Self) -> Option<ResolvedOperand<'a>> {
-+        match peer {
-+            Self::Literal(_) => self.with_literal_type(None),
-+            Self::Resolved(operand) => self.with_literal_type(operand.data_type().as_ref()),
-+            Self::Unmatched => None,
-+        }
-+    }
-+
-+    pub(super) fn with_literal_type(
-+     
+-See the [Storage documentation](https://gluesql.org/docs/dev/storages/intro/) for setup, examples, and limitations.
++See the [Storage documentation](https://gluesql.org/docs/0.21.0/storages/intro/) for setup, examples, and limitations.
+ 
+ ## SQL and Query Builder
+ 
+-GlueSQL supports both SQL and a Query Builder. Use SQL for familiar or dynamic queries, and use the Query Builder when composing queries in Rust or controlling execution more precisely. Both interfaces run through the same GlueSQL engine and storage backend. For more information, check out the [Query Builder documentation](https://gluesql.org/docs/dev/query-builder/intro/) and [SQL documentation](https://gluesql.org/docs/dev/sql-syntax/intro/).
++GlueSQL supports both SQL and a Query Builder. Use SQL for familiar or dynamic queries, and use the Query Builder when composing queries in Rust or controlling execution more precisely. Both interfaces run through the same GlueSQL engine and storage backend. For more information, check out the [Query Builder documentation](https://gluesql.org/docs/0.21.0/query-builder/intro/) and [SQL documentation](ht
 ```
 
-**File**: `storages/sqlite-storage/src/planner/native_filter/condition/operand/function.rs` (added, +229/-0)
+**File**: `docs/docs/releases/index.md` (modified, +1/-0)
 ```diff
-@@ -0,0 +1,229 @@
-+//! Plans scalar function calls used as operands in a native `WHERE` condition.
-+//!
-+//! [`plan_function_call`] plans each argument with the table and column aliases
-+//! visible to the caller. [`ResolvedFunction`] records the SQL name and typed
-+//! arguments for rendering the call, and the return type for the enclosing
-+//! expression.
-+//!
-+//! `IFNULL` and `COALESCE` take their return type from their typed arguments,
-+//! which must agree. `NULLIF(a, b)` checks `a = b` using the filter's comparison
-+//! rules and keeps the type of `a` because it can return `a`. In
-+//! `NULLIF(qty, 0) > 10`, the outer comparison uses that return type to bind `10`.
-+
-+use {
-+    super::{ResolvedOperand, plan_operand, sqlite_allows_operator},
-+    gluesql_core::{
-+        ast::{BinaryOperator, DataType},
-+        plan::{ColumnDefPlan, ExprPlan, FunctionPlan},
-+    },
-+};
-+
-+#[derive(Clone, Debug, PartialEq)]
-+pub(in super::super) struct ResolvedFunction<'a> {
-+    pub(in super::super) name: &'static str,
-+    pub(in super::super) args: Vec<ResolvedOperand<'a>>,
-+    /// `None` represents an untyped `NULL`, as in `COALESCE(NULL, NULL)`.
-+    pub(super) return_type: Option<DataType>,
-+}
-+
-+pub(super) fn plan_function_call<'a>(
-+    function: &FunctionPlan,
-+    table_alias: &str,
-+    columns: &'a [ColumnDefPlan],
-+    column_aliases: &[String],
-+) -> Option<ResolvedFunction<'a>> {
-+    match function {
-+        FunctionPlan::IfNull { expr, then } => {
-+            plan_first_non_null("IFNULL", [expr, then], table_alias, columns, column_aliases)
-+        }
-+        // GlueSQL also accepts a single argument, which SQLite rejects.
-+        FunctionPlan::Coalesce(exprs) if exprs.len() >= 2 => {
-+            plan_first_non_null("COALESCE", exprs, table_alias, columns, column_aliases)
-+        }
-+        FunctionPlan::NullIf { expr1, expr2 } => {
-+            // The first argument can be returned unchanged, so resolve it at its own type.
-+            let value = plan_operand(expr1, table_alias, columns, column_aliases)
-+                .with_literal_type(None)?;
-+            let return_type = value.data_type();
-+            let other = plan_operand(expr2, table_alias, columns, column_aliases)
-+                .with_literal_type(return_type.as_ref())?;
-+
-+            if !sqlite_allows_operator(&value, &BinaryOperator::Eq, &other) {
-+                return None;
-+            }
-+
-+            let other = value.coerce_rhs(other)?;
-+            Some(ResolvedFunction {
-+                name: "NULLIF",
-+                args: vec![value, other],
-+                return_type,
-+            })
-+        }
-+        _ => None,
-+    }
-+}
-+
-+fn plan_first_non_null<'a, 'expr>(
-+    name: &'static str,
-+    exprs: impl IntoIterator<Item = &'expr ExprPlan>,
-+    table_alias: &str,
-+    columns: &'a [ColumnDefPlan],
-+    column_aliases: &[String],
-+) -> Option<ResolvedFunction<'a>> {
-+    let mut args = Vec::new();
-+    let mut return_type = None;
-+
-+    for expr in exprs {
-+        let arg =
-+            plan_operand(expr, table_alias, columns, column_aliases).with_literal_type(None)?;
-+        if let Some(arg_type) = arg.data_type() {
-+            if return_type
-+                .as_ref()
-+                .is_some_and(|known_type| *known_type != arg_type)
-+            {
-+                return None;
-+            }
-+
-+            return_type = Some(arg_type);
-+        }
-+
-+        args.push(arg);
-+    }
-+
-+    Some(ResolvedFunction {
-+        name,
-+        args,
-+        return_type,
-+    })
-+}
-+
-+#[cfg(test)]
-+mod tests {
-+    use {
-+        super::{ResolvedFunction, ResolvedOperand, plan_function_call},
-+        crate::planner::native_filter::condition::tests::expr,
-+        gluesql_core::{
-+            ast::DataType,
-+            data::{Schema, Value},
-+            plan::{ColumnDefPlan, ExprPlan},
-+        },
-+    };
-+
-+    fn plan_call<'a>(sql: &str, columns: &'a [ColumnDefPlan]) -> Option<ResolvedFunction<'a>> {
-+        let ExprPlan::Function(call) = expr(sql, &[]) else {
-+            panic!("expected a function: {sql}");
-+        };
-+        plan_function_call(&call, "q", columns, &[])
-+    }
-+
-+    #[test]
-+    fn if_null() {
-+        let actual = plan_call("IFNULL(NULL, 7)", &[]);
-+        let expected = Some(ResolvedFunction {
-+            name: "IFNULL",
-+            args: vec![
-+                ResolvedOperand::Value(Value::Null),
-+                ResolvedOperand::Value(Value::I64(7)),
-+            ],
-+            return_type: Some(DataType::Int),
-+        });
-+        assert_eq!(actual, expected);
-+
-+        let schema = Schema::from_ddl("CREATE TABLE q (n INT8, f FLOAT32)").unwrap();
-+        let columns: Vec<_> = schema
-+            .column_defs
-+            .unwrap()
-+            .into_iter()
-+            .map(ColumnDefPlan::from)
-+            .collect();
-+
-+        // A numeric literal keeps its standalone type regardless of the other argument.
-+        for sql in ["IFNULL(n, 7)", "IFNULL(0.5, f)", "IFNULL(f, 
+@@ -10,3 +10,4 @@ Release notes for GlueSQL.
+ - [Release v0.14](release-v0.14.md)
+ - [Release v0.15](release-v0.15.md)
+ - [Release v0.20.0](release-v0.20.md)
++- [Release v0.21.0](release-v0.21.md)
 ```
 
-**File**: `storages/sqlite-storage/src/planner/native_scan.rs` (modified, +2/-1)
+**File**: `docs/docs/releases/release-v0.21.md` (added, +134/-0)
 ```diff
-@@ -45,13 +45,14 @@ fn plan_table_scan(table: &TableSourcePlan, schema: &SchemaPlan) -> Option<Sourc
-     };
-     let projection = table_read::scan_projection(table, &columns)?;
- 
--    match table_read::scan_order(&table.name, &columns)? {
-+    match table_read::scan_order(&table.name, &columns) {
-         ScanOrder::Sqlite(order) => {
-             let mut source = table_read::native_select(table, projection);
-             source.query = format!("{} {order}", source.query);
-             Some(SourcePlan::Native(source))
-         }
-         ScanOrder::GlueSql(key) => Some(sort_by_primary_key(table, projection, key)),
-+        ScanOrder::Unavailable => None,
-     }
- }
- 
+@@ -0,0 +1,134 @@
++---
++title: Release v0.21.0
++description: GlueSQL v0.21.0 adds SlateDB and SQLite storage backends.
++---
++
++# GlueSQL v0.21.0
++
++GlueSQL v0.21 adds two storage backends. **SlateDB** lets applications store tables in an Amazon S3 or Cloudflare R2 bucket and update them in SQL transactions. The **SQLite** backend stores GlueSQL tables in a local database and can use SQLite's own query engine to filter rows.
++
++If you have an existing Sled or Redb database, see [Upgrading from v0.20](#upgrading-from-v020).
++
++## ✨ Highlights
++
++### New SlateDB storage backend for S3 and Cloudflare R2
++
++GlueSQL runs the SQL in your Rust application, and SlateDB writes committed changes to the bucket. With bucket credentials configured, an import job can record how many rows it processed in a table on S3.
++
++```rust
++use gluesql::prelude::{Glue, SlatedbStorage};
++
++fn main() -> gluesql::core::error::Result<()> {
++    let storage = SlatedbStorage::open("s3://my-bucket/import-history")?;
++    let mut glue = Glue::new(storage);
++
++    glue.execute("CREATE TABLE IF NOT EXISTS ImportRun (rows_loaded INT)")?;
++    glue.execute("INSERT INTO ImportRun VALUES (120)")?;
++    glue.storage.close()
++}
++```
++
++If the next run opens the same URL and inserts a count of 80, `SELECT SUM(rows_loaded) FROM ImportRun` returns 200. For Cloudflare R2, use your account's endpoint with the bucket name and database path in the URL. [S3 and R2 connection examples](../storages/supported-storages/slatedb-storage.md#s3-and-cloudflare-r2)
++
++Use one writer at a time for each database path. A job can group changes with `BEGIN` and `COMMIT`. Reads in the transaction see a consistent snapshot, and a successful commit means the writes have reached object storage. [SlateDB backend (#2068)](https://github.com/gluesql/gluesql/pull/2068)
++
++### New SQLite storage backend
++
++`SqliteStorage` lets your application use GlueSQL as its SQL interface and SQLite as its database. You create tables and send queries through `glue.execute`, using the same GlueSQL syntax, types, and functions as with other backends. SQLite stores the tables and their rows.
++
++Because SQLite has its own SQL engine, GlueSQL's planner can translate part of a query into a SQLite `SELECT`. SQLite plans and runs that statement against its tables. GlueSQL finishes the original query on the rows SQLite returns.
++
++An inventory application, for example, can declare a `tags LIST` column in a table stored in its SQLite file. Suppose it has 20 apples tagged `fruit`, 30 untagged pears, and 5 plums tagged `fruit`. This GlueSQL query finds tagged items with more than ten units in stock.
++
++```sql
++SELECT name
++FROM Item
++WHERE qty > 10 AND NOT IS_EMPTY(tags);
++```
++
++SQLite runs the `qty > 10` filter, so only the apple and pear rows reach GlueSQL. GlueSQL evaluates `NOT IS_EMPTY(tags)` on their lists and returns the apple row. [SQLite backend (#2078)](https://github.com/gluesql/gluesql/pull/2078)
++
++The planner started with simple comparisons in single-table `WHERE` clauses. It now recognizes `IFNULL`, `COALESCE`, and `NULLIF`, including nested calls when both engines agree on types and comparisons. SQLite can therefore evaluate a whole condition such as `COALESCE(qty, 0) > 10`. In v0.21, GlueSQL handles joins and aggregates. [NULL functions in SQLite filters (#2097)](https://github.com/gluesql/gluesql/pull/2097)
++
++Our goal is for SQLite to run larger parts of each query wherever it gives the same result as GlueSQL. We want to extend the planner to more functions and expressions, and eventually to whole joins and subqueries. For example, SQLite could join orders with inventory and return just the orders for out-of-stock items to GlueSQL.
++
++Open a file with `SqliteStorage::new("inventory.sqlite")` or use `SqliteStorage::in_memory()` for a temporary database. GlueSQL records the logical column types and defaults alongside each table so they are available when you reopen the file. [SQLite storage guide](../storages/supported-storages/sqlite-storage.md)
++
++## ⚠️ Upgrading from v0.20
++
++### Export Sled data before switching versions
++
++v0.21 removes SledStorage, its Cargo feature, and the CLI's Sled backend. To move an existing Sled database to Redb, first export it with the **v0.20 CLI**. Then load the dump into a new database with the **v0.21 CLI**. [Sled removal (#2066)](https://github.com/gluesql/gluesql/pull/2066)
++
++```sh
++# Run with GlueSQL v0.20
++gluesql --path ./sled-data --dump ./dump.sql
++
++# Run with GlueSQL v0.21
++gluesql --storage redb --path ./restored.redb --execute ./dump.sql
++```
++
++The v0.21 CLI can also dump Redb, JSON, CSV, Parquet, and FileStorage databases. Specify `--storage` whenever you pass `--path` or `--dump`. [CLI guide](../getting-started/cli.md#migration-using-cli) · [CLI dump changes (#2065)](https://github.com/gluesql/gluesql/pull/2065)
++
++### Upgrade existing Redb files
++
++RedbStorage now uses GlueSQL storage format v5. Back up your database, then upgrade it w
 ```
 
-**File**: `storages/sqlite-storage/src/planner/table_read.rs` (modified, +20/-20)
+**File**: `docs/zensical.toml` (modified, +1/-0)
 ```diff
-@@ -44,25 +44,27 @@ pub(super) fn scan_projection<'a>(
-     Some(projection)
- }
- 
-+#[derive(Debug, PartialEq)]
- pub(super) enum ScanOrder<'a> {
-     Sqlite(String),
-     GlueSql(&'a ColumnDefPlan),
-+    Unavailable,
- }
- 
--pub(super) fn scan_order<'a>(table: &str, columns: &'a [ColumnDefPlan]) -> Option<ScanOrder<'a>> {
-+pub(super) fn scan_order<'a>(table: &str, columns: &'a [ColumnDefPlan]) -> ScanOrder<'a> {
-     let key = columns
-         .iter()
-         .find(|column| column.unique.is_some_and(|unique| unique.is_primary));
-     let name = match key {
--        None => available_rowid(columns, |column| &column.name)?,
-+        None => match available_rowid(columns, |column| &column.name) {
-+            Some(rowid) => rowid,
-+            None => return ScanOrder::Unavailable,
-+        },
-         Some(key) if key_type_supports_sqlite_order(&key.data_type) => &key.name,
--        Some(key) => return Some(ScanOrder::GlueSql(key)),
-+        Some(key) => return ScanOrder::GlueSql(key),
-     };
- 
--    Some(ScanOrder::Sqlite(format!(
--        "ORDER BY {} ASC",
--        qualified_column(table, name)
--    )))
-+    ScanOrder::Sqlite(format!("ORDER BY {} ASC", qualified_column(table, name)))
- }
- 
- pub(super) fn native_select(
-@@ -200,34 +202,32 @@ mod tests {
-     #[test]
-     fn scan_order() {
-         let columns = [column("_rowid_ INT")];
--        let Some(ScanOrder::Sqlite(actual)) = super::scan_order("Item", &columns) else {
--            panic!("expected SQLite to order by the available rowid");
--        };
--        assert_eq!(actual, r#"ORDER BY "Item"."rowid" ASC"#);
-+        let actual = super::scan_order("Item", &columns);
-+        let expected = ScanOrder::Sqlite(r#"ORDER BY "Item"."rowid" ASC"#.to_owned());
-+        assert_eq!(actual, expected);
- 
-         let columns = [
-             column("_rowid_ INT"),
-             column("rowid INT"),
-             column("oid INT"),
-         ];
--        assert!(super::scan_order("Item", &columns).is_none());
-+        let actual = super::scan_order("Item", &columns);
-+        assert_eq!(actual, ScanOrder::Unavailable);
- 
-         for key_type in [
-             "INT8", "INT16", "INT32", "INT", "UINT8", "UINT16", "UINT32", "BOOLEAN", "TEXT",
-             "BYTEA", "DECIMAL",
-         ] {
-             let columns = [column(&format!("id {key_type} PRIMARY KEY"))];
--            let Some(ScanOrder::Sqlite(actual)) = super::scan_order("Item", &columns) else {
--                panic!("expected SQLite to order a {key_type} key");
--            };
--            assert_eq!(actual, r#"ORDER BY "Item"."id" ASC"#, "{key_type}");
-+            let actual = super::scan_order("Item", &columns);
-+            let expected = ScanOrder::Sqlite(r#"ORDER BY "Item"."id" ASC"#.to_owned());
-+            assert_eq!(actual, expected, "{key_type}");
-         }
- 
-         let columns = [column("name TEXT"), column("id INT128 PRIMARY KEY")];
--        let Some(ScanOrder::GlueSql(actual)) = super::scan_order("Item", &columns) else {
--            panic!("expected GlueSQL to order an INT128 key");
--        };
--        assert_eq!(actual, &columns[1]);
-+        let actual = super::scan_order("Item", &columns);
-+        let expected = ScanOrder::GlueSql(&columns[1]);
-+        assert_eq!(actual, expected);
-     }
- 
-     #[test]
+@@ -274,6 +274,7 @@ nav = [
+       "releases/release-v0.14.md",
+       "releases/release-v0.15.md",
+       "releases/release-v0.20.md",
++      "releases/release-v0.21.md",
+     ]},
+   ]},
+ ]
 ```
 
-**File**: `storages/sqlite-storage/tests/native_query/filter.rs` (modified, +78/-0)
+**File**: `pkg/rust/Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -3,6 +3,7 @@ use {
-     gluesql_core::{
-         data::Value,
-         error::Result,
-+        executor::EvaluateError,
-         prelude::{Glue, Payload},
-         store::NativeQuery,
-     },
-@@ -60,6 +61,83 @@ fn native_filter_reduces_source_rows_and_keeps_common_projection() {
-     assert_eq!(actual, expected);
- }
+@@ -15,7 +15,7 @@ all-features = true
  
-+#[test]
-+fn native_null_functions_choose_a_display_name() {
-+    let mut glue = Glue::new(SqliteStorage::in_memory().unwrap());
-+    glue.execute(
-+        "
-+        CREATE TABLE Location (id INT PRIMARY KEY, name TEXT, label TEXT, qty INT);
-+        INSERT INTO Location VALUES
-+            (1, 'Seoul', NULL, 4),
-+            (2, NULL, 'Seoul', 0),
-+            (3, 'Busan', 'Seoul', 10),
-+            (4, NULL, NULL, 10),
-+            (5, '', 'Seoul', 10),
-+            (6, 'Seoul', NULL, -1);
-+        ",
-+    )
-+    .unwrap();
-+
-+    let sql = "
-+        SELECT id FROM Location
-+        WHERE qty >= 0 AND IFNULL(name, label) = 'Seoul'
-+    ";
-+    let actual = execute_fully_delegated_filter(&mut glue, sql);
-+    let expected = select(&["id"], vec![vec![Value::I64(1)], vec![Value::I64(2)]]);
-+    assert_eq!(actual, expected);
-+
-+    let sql = "
-+        SELECT id FROM Location
-+        WHERE qty >= 0 AND COALESCE(NULLIF(name, ''), label, 'Seoul') = 'Seoul'
-+    ";
-+    let actual = execute_fully_delegated_filter(&mut glue, sql);
-+    let expected = select(
-+        &["id"],
-+        vec![
-+            vec![Value::I64(1)],
-+            vec![Value::I64(2)],
-+            vec![Value::I64(4)],
-+            vec![Value::I64(5)],
-+        ],
-+    );
-+    assert_eq!(actual, expected);
-+}
-+
-+#[test]
-+fn unused_fallbacks_preserve_gluesql_evaluation_errors() {
-+    let mut glue = Glue::new(SqliteStorage::in_memory().unwrap());
-+    glue.execute("CREATE TABLE Item (qty INT); INSERT INTO Item VALUES (10);")
-+        .unwrap();
-+
-+    let sql = "SELECT qty FROM Item WHERE IFNULL(qty, 1 / 0) = 10";
-+    let plan = glue.plan(sql).unwrap().remove(0);
-+    expect_native_source_under_filter(expect_query(&plan));
-+
-+    let actual = glue.execute_prepared(&plan);
-+    let expected = Err(EvaluateError::DivisorShouldNotBeZero.into());
-+    assert_eq!(actual, expected);
-+}
-+
-+#[test]
-+fn nullif_keeps_gluesql_float_equality() {
-+    let mut glue = Glue::new(SqliteStorage::in_memory().unwrap());
-+    glue.execute(
-+        "
-+        CREATE TABLE Sample (id INT, a FLOAT32, b FLOAT32);
-+        INSERT INTO Sample VALUES (1, 1.0, 0.99999994), (2, 1.0, 0.5);
-+        ",
-+    )
-+    .unwrap();
-+
-+    let sql = "SELECT id FROM Sample WHERE NULLIF(a, b) IS NULL";
-+    let plan = glue.plan(sql).unwrap().remove(0);
-+    expect_native_source_under_filter(expect_query(&plan));
-+
-+    let actual = glue.execute_prepared(&plan).unwrap();
-+    let expected = select(&["id"], vec![vec![Value::I64(1)]]);
-+    assert_eq!(actual, expected);
-+}
-+
- #[test]
- fn partial_native_filter_reduces_rows_before_evaluating_the_remaining_condition() {
-     let mut glue = Glue::new(SqliteStorage::in_memory().unwrap());
+ [dependencies]
+ gluesql-core.workspace = true
+-gluesql-macros = { path = "../../macros", version = "0.20.0" }
++gluesql-macros = { path = "../../macros", version = "0.21.0" }
+ cli = { workspace = true, optional = true }
+ test-suite = { workspace = true, optional = true }
+ gluesql_memory_storage = { workspace = true, optional = true }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2098** (2026-11-24): Prepare release v0.21.0 (@github-actions[bot])
 - **PR #2097** (2026-11-24): Push down IFNULL, COALESCE, and NULLIF in SQLite filters (@panarch)
 - **PR #2094** (2026-11-22): Reject multiple DELETE targets before FROM (@ChobobDev)
 - **PR #2092** (2026-11-20): Align the docs introduction with the README (@panarch)
 - **PR #2091** (2026-11-19): Preserve LIST element types in SQL output (@panarch)
 - **PR #2089** (2026-11-18): Separate adjacent minus signs in SQL expressions (@panarch)
-- **PR #2088** (2026-11-18): Escape double quotes in DDL table names (@panarch)
 
 ---
 
@@ -2863,83 +2475,62 @@ the common filter.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Push down IFNULL, COALESCE, and NULLIF in SQLite filters
+## X. Release v0.21.0
 
 **RULE**:
-When implementing operations in `storages/sqlite-storage/src/planner/native_filter.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gluesql/gluesql. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gluesql/gluesql. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c91cbdd6`: Push down IFNULL, COALESCE, and NULLIF in SQLite filters. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9d354015`: Release v0.21.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `storages/sqlite-storage/src/planner/native_filter.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    self::condition::ConditionPlan,
-        plan::{FilterInputPlan, FilterPlan, ProjectInputPlan, QueryPlan, SchemaMap, SourcePlan},
-            && let Some(input) = plan_filter(filter, self.schemas)
-            project.input = input;
-fn plan_filter(filter: &FilterPlan, schemas: &SchemaMap) -> Option<ProjectInputPlan> {
-        return None;
-    let schema = schemas.get(&table.name)?;
-    let columns = schema.column_defs.as_ref()?;
-    let projection = table_read::scan_projection(table, columns)?;
-        return None;
-    let ScanOrder::Sqlite(order) = table_read::scan_order(&table.name, columns) else {
-        return None;
-    let condition = condition::plan(&filter.expr, &table.name, alias, columns, column_aliases);
-    let native_source = |sql, params| {
-        let mut source = table_read::native_select(table, projection);
-        source.query = format!("{} WHERE {sql} {order}", source.query);
-        source.params = params;
-        SourcePlan::Native(source)
-    let input = match condition {
-        ConditionPlan::Unchanged => return None,
-        ConditionPlan::Full { sql, params } => ProjectInputPlan::Source(native_source(sql, params)),
-        ConditionPlan::Partial {
-      
+version = "0.21.0"
+version = "0.21.0"
+version = "0.21.0"
+version = "0.21.0"
+version = "0.21.0"
+version = "0.21.0"
+version = "0.21.0"
+version = "0.21.0"
+version = "0.21.0"
+version = "0.21.0"
+version = "0.21.0"
+version = "0.21.0"
+version = "0.21.0"
+version = "0.21.0"
+version = "0.21.0"
+version = "0.21.0"
+version = "0.21.0"
+version = "0.21.0"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-        plan::{
-            ExprPlan, FilterInputPlan, FilterPlan, NativeSourcePlan, ProjectInputPlan, QueryPlan,
-            SchemaMap, SourcePlan,
-        },
-enum NativeFilterRewrite {
-    Unchanged,
-    Full {
-        source: NativeSourcePlan,
-    },
-    Partial {
-        source: NativeSourcePlan,
-        remaining: ExprPlan,
-    },
-}
-
-            match plan_filter(filter, self.schemas) {
-                NativeFilterRewrite::Unchanged => {}
-                NativeFilterRewrite::Full { source } => {
-                    project.input = ProjectInputPlan::Source(SourcePlan::Native(source));
-                }
-                NativeFilterRewrite::Partial { source, remaining } => {
-                    project.input = ProjectInputPlan::Filter(FilterPlan {
-                        input: FilterInputPlan::Source(SourcePlan::Native(source)),
-                        expr: remaining,
-                    });
-                }
-            }
-fn plan_filter(filter: &FilterPlan, schemas: &SchemaMap) -> NativeFilterRewrite {
-        return NativeFilterRewrite::Unchanged;
-    };
-
-    let Some(schema) = schemas.get(&table.name) else {
-        return NativeFilterRewrite::Unchanged;
-    let Some(columns
+version = "0.20.0"
+version = "0.20.0"
+version = "0.20.0"
+version = "0.20.0"
+version = "0.20.0"
+version = "0.20.0"
+version = "0.20.0"
+version = "0.20.0"
+version = "0.20.0"
+version = "0.20.0"
+version = "0.20.0"
+version = "0.20.0"
+version = "0.20.0"
+version = "0.20.0"
+version = "0.20.0"
+version = "0.20.0"
+version = "0.20.0"
+version = "0.20.0"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c91cbdd6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9d354015` are properly handled with clean fallback behavior.

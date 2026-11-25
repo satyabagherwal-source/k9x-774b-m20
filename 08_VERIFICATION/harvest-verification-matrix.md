@@ -12967,3 +12967,8 @@
 | `CYCLE-20261125-JABH` | `2026-11-25T06:21:06.173Z` | `BurntSushi/ripgrep` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10469` | Yes (`8576ca5e...`) |
 | `CYCLE-20261125-JKCK` | `2026-11-25T06:21:19.172Z` | `slatedb/slatedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10470` | Yes (`f6dbb59f...`) |
 | `CYCLE-20261125-VYCP` | `2026-11-25T06:30:57.193Z` | `nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-labs-dory1.0-4b-bf16-learnings.md` | Yes (`641d2fec...`) |
+| `CYCLE-20261125-6K6M` | `2026-11-25T06:39:12.046Z` | `orcarouter/OrcaCyber-Nano-1.0` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-orcarouter-orcacyber-nano-1.0-learnings.md` | Yes (`5c1bb7f0...`) |
+| `CYCLE-20261125-6LOI` | `2026-11-25T06:39:13.986Z` | `sharkdp/fd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8545` | Yes (`39e80319...`) |
+| `CYCLE-20261125-6QTG` | `2026-11-25T06:39:20.644Z` | `TableProApp/TablePro` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10471` | Yes (`855d1580...`) |
+| `CYCLE-20261125-6S0L` | `2026-11-25T06:39:22.197Z` | `stakater/Reloader` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10472` | Yes (`67ce5517...`) |
+| `CYCLE-20261125-6VHL` | `2026-11-25T06:39:26.697Z` | `gluesql/gluesql` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10473` | Yes (`82a709b3...`) |

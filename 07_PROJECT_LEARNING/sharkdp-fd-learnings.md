@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sharkdp-fd-learnings.md`  
 > **Source**: github ([https://github.com/sharkdp/fd](https://github.com/sharkdp/fd))  
-> **Source Version**: `f8d4e0e7`  
+> **Source Version**: `2e8648f1`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T12:29:18.403Z  
+> **Timestamp**: 2026-11-25T06:39:13.199Z  
 > **Learning ID**: `learn-github-sharkdp-fd`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sharkdp-fd-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sharkdp/fd](https://github.com/sharkdp/fd))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T12:29:18.297Z  
+> **Harvest Timestamp**: 2026-11-25T06:39:13.194Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A simple, fast and user-friendly alternative to 'find'
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 45143 stars
+- **Stars / Engagement**: 45190 stars
 
 ---
 
@@ -1816,31 +1816,248 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f8d4e0e7` (2026-11-21)
-**Commit Message**: Merge pull request #2223 from sharkdp/dependabot/github_actions/softprops/action-gh-release-3.0.4
+### Incident Patch 1: `b6bcfa24` (2026-11-24)
+**Commit Message**: Merge pull request #2224 from DawnofGenX/fix/validate-threads-2078
 
-build(deps): bump softprops/action-gh-release from 3.0.3 to 3.0.4
+fix: validate --threads value to prevent channel-capacity overflow panic (#2078)
 
-**File**: `.github/workflows/CICD.yml` (modified, +1/-1)
+**File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -277,7 +277,7 @@ jobs:
-           ${{ steps.debian-package.outputs.DPKG_PATH }}
+@@ -5,6 +5,7 @@
  
-     - name: Publish archives and packages
--      uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64 # v3.0.3
-+      uses: softprops/action-gh-release@8a0cd651e5b2365bd640854a3fa5dfc70e4875f3 # v3.0.4
-       if: steps.is-release.outputs.IS_RELEASE
-       with:
-         files: |
+ ## Bugfixes
+ - Fix `--type executable`/`--type empty` incorrectly filtering out other explicitly-requested types. When combined with e.g. `--type symlink`, the `executable`/`empty` modifier was applied to *all* results, so non-executable / non-empty symlinks (and other types) were dropped even though `--type` values are meant to be combined as a union.
++- Reject `--threads` values above 1024 instead of aborting with a capacity overflow or a failure to spawn threads, see #2078 (@DawnofGenX)
+ 
+ ## Changes
+ - Delay-load `shell32.dll`, `combase.dll` and `advapi32.dll` in Windows MSVC builds, so most runs no longer load them (and the DLLs they pull in) at startup, see #2217 (@azchohfi)
+```
+
+**File**: `doc/fd.1` (modified, +1/-1)
+```diff
+@@ -321,7 +321,7 @@ Always output hyperlink escapes, regardless of color settings.
+ .RE
+ .TP
+ .BI "\-j, \-\-threads " num
+-Set number of threads to use for searching & executing (default: number of available CPU cores).
++Set number of threads to use for searching & executing (default: number of available CPU cores, up to a maximum of 64). Values above 1024 are rejected.
+ .TP
+ .BI "\-S, \-\-size " size
+ Limit results based on the size of files using the format
+```
+
+**File**: `src/cli.rs` (modified, +45/-2)
+```diff
+@@ -571,8 +571,9 @@ pub struct Opts {
+     pub ignore_contain: Vec<String>,
+ 
+     /// Set number of threads to use for searching & executing (default: number
+-    /// of available CPU cores, up to a maximum of 64)
+-    #[arg(long, short = 'j', value_name = "num", hide_short_help = true, value_parser = str::parse::<NonZeroUsize>)]
++    /// of available CPU cores, up to a maximum of 64). Values above 1024 are
++    /// rejected.
++    #[arg(long, short = 'j', value_name = "num", hide_short_help = true, value_parser = parse_threads)]
+     pub threads: Option<NonZeroUsize>,
+ 
+     /// Milliseconds to buffer before streaming search results to console
+@@ -986,6 +987,28 @@ fn parse_millis(arg: &str) -> Result<Duration, std::num::ParseIntError> {
+     Ok(Duration::from_millis(arg.parse()?))
+ }
+ 
++const MAX_THREADS: usize = 1024;
++
++/// Parse and validate the `--threads` value.
++///
++/// The value is used directly as the number of worker threads and, doubled, as
++/// the capacity of the internal results channel, so an unbounded value makes
++/// `fd` panic (`capacity overflow`, or a failed thread spawn) instead of
++/// reporting a normal error, see #2078.
++///
++/// The maximum is deliberately loose: no current system has more than a couple
++/// of hundred hardware threads, and 1024 worker threads already reserve about
++/// 2 GiB of stack, so a larger value cannot be scheduled usefully anyway.
++fn parse_threads(arg: &str) -> Result<NonZeroUsize, String> {
++    let n: NonZeroUsize = arg
++        .parse()
++        .map_err(|e: std::num::ParseIntError| e.to_string())?;
++    if n.get() > MAX_THREADS {
++        return Err(format!("must not be greater than {MAX_THREADS}"));
++    }
++    Ok(n)
++}
++
+ fn ensure_current_directory_exists(current_directory: &Path) -> anyhow::Result<()> {
+     if filesystem::is_existing_directory(current_directory) {
+         Ok(())
+@@ -995,3 +1018,23 @@ fn ensure_current_directory_exists(current_directory: &Path) -> anyhow::Result<(
+         ))
+     }
+ }
++
++#[test]
++fn test_parse_threads() {
++    assert_eq!(
++        parse_threads(&MAX_THREADS.to_string()),
++        NonZeroUsize::new(1024).ok_or("".to_string())
++    );
++    assert!(
++        parse_threads(&format!("{}", MAX_THREADS + 1)).is_err(),
++        "parse_threads didn't limit threads to MAX_THREADS"
++    );
++    assert!(
++        parse_threads("0").is_err(),
++        "0 threads should not be allowed"
++    );
++    assert!(
++        parse_threads("-1").is_err(),
++        "negative threads should not be allowed"
++    );
++}
+```
+
+**File**: `tests/tests.rs` (modified, +11/-0)
+```diff
+@@ -3036,6 +3036,17 @@ fn test_number_parsing_errors() {
+     te.assert_failure(&["--threads=a"]);
+     te.assert_failure(&["-j", ""]);
+     te.assert_failure(&["--threads=0"]);
++    te.assert_failure_with_error(
++        &["--threads=1025"],
++        "error: invalid value '1025' for '--threads <num>': must not be greater than 1024",
++    );
++    // Large but syntactically valid values used to overflow the results-channel
++    // capacity (or exhaust the thread-spawn limit) and abort instead of
++    // returning a normal usage error, see #2078.
++    te.assert_failure_with_error(
++        &["--threads=99999999"],
++        "error: invalid value '99999999' for '--threads <num>': must not be greater than 1024",
++    );
+ 
+     te.assert_failure(&["--min-depth=a"]);
+     te.assert_failure(&["--mindepth=a"]);
+```
+
+---
+
+### Incident Patch 2: `89d10fc0` (2026-11-13)
+**Commit Message**: fix: validate --threads value to prevent channel-capacity overflow panic (#2078)
+
+**File**: `CHANGELOG.md` (modified, +1/-0)
+```diff
+@@ -5,6 +5,7 @@
+ 
+ ## Bugfixes
+ - Fix `--type executable`/`--type empty` incorrectly filtering out other explicitly-requested types. When combined with e.g. `--type symlink`, the `executable`/`empty` modifier was applied to *all* results, so non-executable / non-empty symlinks (and other types) were dropped even though `--type` values are meant to be combined as a union.
++- Reject `--threads` values above 1024 instead of aborting with a capacity overflow or a failure to spawn threads, see #2078 (@DawnofGenX)
+ 
+ ## Changes
+ - Delay-load `shell32.dll`, `combase.dll` and `advapi32.dll` in Windows MSVC builds, so most runs no longer load them (and the DLLs they pull in) at startup, see #2217 (@azchohfi)
+```
+
+**File**: `doc/fd.1` (modified, +1/-1)
+```diff
+@@ -321,7 +321,7 @@ Always output hyperlink escapes, regardless of color settings.
+ .RE
+ .TP
+ .BI "\-j, \-\-threads " num
+-Set number of threads to use for searching & executing (default: number of available CPU cores).
++Set number of threads to use for searching & executing (default: number of available CPU cores, up to a maximum of 64). Values above 1024 are rejected.
+ .TP
+ .BI "\-S, \-\-size " size
+ Limit results based on the size of files using the format
+```
+
+**File**: `src/cli.rs` (modified, +24/-2)
+```diff
+@@ -571,8 +571,9 @@ pub struct Opts {
+     pub ignore_contain: Vec<String>,
+ 
+     /// Set number of threads to use for searching & executing (default: number
+-    /// of available CPU cores, up to a maximum of 64)
+-    #[arg(long, short = 'j', value_name = "num", hide_short_help = true, value_parser = str::parse::<NonZeroUsize>)]
++    /// of available CPU cores, up to a maximum of 64). Values above 1024 are
++    /// rejected.
++    #[arg(long, short = 'j', value_name = "num", hide_short_help = true, value_parser = parse_threads)]
+     pub threads: Option<NonZeroUsize>,
+ 
+     /// Milliseconds to buffer before streaming search results to console
+@@ -986,6 +987,27 @@ fn parse_millis(arg: &str) -> Result<Duration, std::num::ParseIntError> {
+     Ok(Duration::from_millis(arg.parse()?))
+ }
+ 
++/// Parse and validate the `--threads` value.
++///
++/// The value is used directly as the number of worker threads and, doubled, as
++/// the capacity of the internal results channel, so an unbounded value makes
++/// `fd` panic (`capacity overflow`, or a failed thread spawn) instead of
++/// reporting a normal error, see #2078.
++///
++/// The maximum is deliberately loose: no current system has more than a couple
++/// of hundred hardware threads, and 1024 worker threads already reserve about
++/// 2 GiB of stack, so a larger value cannot be scheduled usefully anyway.
++fn parse_threads(arg: &str) -> Result<NonZeroUsize, String> {
++    let n: NonZeroUsize = arg
++        .parse()
++        .map_err(|e: std::num::ParseIntError| e.to_string())?;
++    const MAX_THREADS: usize = 1024;
++    if n.get() > MAX_THREADS {
++        return Err(format!("must not be greater than {MAX_THREADS}"));
++    }
++    Ok(n)
++}
++
+ fn ensure_current_directory_exists(current_directory: &Path) -> anyhow::Result<()> {
+     if filesystem::is_existing_directory(current_directory) {
+         Ok(())
+```
+
+**File**: `tests/tests.rs` (modified, +11/-0)
+```diff
+@@ -3036,6 +3036,17 @@ fn test_number_parsing_errors() {
+     te.assert_failure(&["--threads=a"]);
+     te.assert_failure(&["-j", ""]);
+     te.assert_failure(&["--threads=0"]);
++    te.assert_failure_with_error(
++        &["--threads=1025"],
++        "error: invalid value '1025' for '--threads <num>': must not be greater than 1024",
++    );
++    // Large but syntactically valid values used to overflow the results-channel
++    // capacity (or exhaust the thread-spawn limit) and abort instead of
++    // returning a normal usage error, see #2078.
++    te.assert_failure_with_error(
++        &["--threads=99999999"],
++        "error: invalid value '99999999' for '--threads <num>': must not be greater than 1024",
++    );
+ 
+     te.assert_failure(&["--min-depth=a"]);
+     te.assert_failure(&["--mindepth=a"]);
+```
+
+---
+
+### Incident Patch 3: `70e44e7e` (2026-11-24)
+**Commit Message**: Fix typo in man page
+
+**File**: `doc/fd.1` (modified, +1/-1)
+```diff
+@@ -37,7 +37,7 @@ or ignore rules in .ignore or .fdignore files.
+ .P
+ By default
+ .B fd
+-will use "smart case" to match paterns. Meaning if the search will only be case sensitive if the supplied pattern contains at least one uppercase letter.
++will use "smart case" to match patterns Meaning if the search will only be case sensitive if the supplied pattern contains at least one uppercase letter.
+ This can be overridden with the '\-\-ignore\-case' or '\-\-case\-sensitive' options.
+ 
+ .P
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2241** (2026-11-25): Fix typo in man page (@Dani-Google)
+- **PR #2240** (2026-11-24): Update jiff to 1.0 (@tmccombs)
+- **PR #2224** (2026-11-24): fix: validate --threads value to prevent channel-capacity overflow panic (#2078) (@DawnofGenX)
 - **PR #2223** (2026-11-21): build(deps): bump softprops/action-gh-release from 3.0.3 to 3.0.4 (@dependabot[bot])
 - **PR #2222** (2026-11-09): Delay-load shell32, combase and advapi32 on Windows MSVC (@azchohfi)
 - **PR #2220** (closed): fix: use native path separator for explicit search paths on Windows (@Hrushikesh-ramilla)
-- **PR #2219** (2026-11-07): v10.5.2 Release (@tmccombs)
-- **PR #2218** (2026-11-07): fix: Zsh completion syntax (@tmccombs)
-- **PR #2214** (2026-11-04): v10.5.1 Release (@tmccombs)
 
 ---
 
@@ -1860,28 +2077,28 @@ build(deps): bump softprops/action-gh-release from 3.0.3 to 3.0.4
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in CICD.yml
+## X. Empirical Invariant Guard in CHANGELOG.md
 
 **RULE**:
-When implementing operations in `.github/workflows/CICD.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sharkdp/fd. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sharkdp/fd. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f8d4e0e7`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b6bcfa24`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/CICD.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-      uses: softprops/action-gh-release@8a0cd651e5b2365bd640854a3fa5dfc70e4875f3 # v3.0.4
+- Reject `--threads` values above 1024 instead of aborting with a capacity overflow or a failure to spawn threads, see #2078 (@DawnofGenX)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-      uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64 # v3.0.3
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f8d4e0e7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b6bcfa24` are properly handled with clean fallback behavior.

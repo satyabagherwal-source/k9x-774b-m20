@@ -13000,3 +13000,8 @@ Every entry in this ledger must capture:
 | `learn-github-burntsushi-ripgrep` | `https://github.com/BurntSushi/ripgrep` | `3e85c6c1` | Multi-dimensional audit evidence | 2026-11-25T06:21:06.177Z |
 | `learn-github-slatedb-slatedb` | `https://github.com/slatedb/slatedb` | `98a8c03c` | Multi-dimensional audit evidence | 2026-11-25T06:21:19.176Z |
 | `learn-huggingface-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16` | `https://huggingface.co/nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-11-25T06:30:57.198Z |
+| `learn-huggingface-orcarouter-orcacyber-nano-1-0` | `https://huggingface.co/orcarouter/OrcaCyber-Nano-1.0` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-11-25T06:39:12.050Z |
+| `learn-github-sharkdp-fd` | `https://github.com/sharkdp/fd` | `2e8648f1` | Multi-dimensional audit evidence | 2026-11-25T06:39:13.991Z |
+| `learn-github-tableproapp-tablepro` | `https://github.com/TableProApp/TablePro` | `e2b0999a` | Multi-dimensional audit evidence | 2026-11-25T06:39:20.649Z |
+| `learn-github-stakater-reloader` | `https://github.com/stakater/Reloader` | `35ca482b` | Multi-dimensional audit evidence | 2026-11-25T06:39:22.202Z |
+| `learn-github-gluesql-gluesql` | `https://github.com/gluesql/gluesql` | `9d354015` | Multi-dimensional audit evidence | 2026-11-25T06:39:26.701Z |

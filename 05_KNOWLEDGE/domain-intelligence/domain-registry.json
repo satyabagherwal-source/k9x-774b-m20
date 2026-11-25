@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T06:31:11.883Z",
+  "last_updated": "2026-11-25T06:39:31.935Z",
   "total_records": 2638,
   "domains": {
     "A": {
@@ -18898,8 +18898,8 @@
       "title": "Search & Distribution Intelligence: sharkdp/fd Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-J-sharkdp-fd-search-distribution-intelligence-sharkdp-fd-core-invariants.md",
       "repository": "sharkdp/fd",
-      "content_hash": "2d9fb4ea4a6f028c6205dd0b082d6ea6be090809ee58c506a13a1e8b1baf0990",
-      "created_at": "2026-11-21T12:29:19.836Z"
+      "content_hash": "a3b5a27934fe5df520d280433edbd45ff753a626342bf14fc79b21ab8cb6b54e",
+      "created_at": "2026-11-25T06:39:14.412Z"
     },
     "domain_intelligence-architecture-intelligence-mikepenz-aboutlibraries-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-mikepenz-aboutlibraries-core-invariants",
@@ -18925,8 +18925,8 @@
       "title": "Search & Distribution Intelligence: sharkdp-fd-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-J-sharkdp-fd-learnings-search-distribution-intelligence-sharkdp-fd-learnings-core-.md",
       "repository": "sharkdp-fd-learnings",
-      "content_hash": "ed2d6f9140947209e494e65c0912eeb3c5a534435a838b376f989998854b0d17",
-      "created_at": "2026-11-21T12:29:31.447Z"
+      "content_hash": "ebd638c839d161b3b5fc24ccb3d4a545f54b5237ab9850cad89c2c7f5fbaa983",
+      "created_at": "2026-11-25T06:39:30.646Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-atomicchat-qwen-image-2-1-turbo-uncensored-gg": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-atomicchat-qwen-image-2-1-turbo-uncensored-gg",
@@ -22034,8 +22034,8 @@
       "title": "Architecture Intelligence: TableProApp/TablePro Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tableproapp-tablepro-architecture-intelligence-tableproapp-tablepro-core-invaria.md",
       "repository": "TableProApp/TablePro",
-      "content_hash": "66c979fd905bfc245d0466864390c6ba67f804b0bee1c5dacbc1eecf1263c1f5",
-      "created_at": "2026-11-22T20:17:00.094Z"
+      "content_hash": "19affe38b7a586dd7b73269a7ae608605c4e6a5a9b0b340e7c2f3bdf75f09eef",
+      "created_at": "2026-11-25T06:39:21.092Z"
     },
     "DOM-D-3B7C0B67": {
       "record_id": "DOM-D-3B7C0B67",
@@ -22094,8 +22094,8 @@
       "title": "Architecture Intelligence: tableproapp-tablepro-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tableproapp-tablepro-learnings-architecture-intelligence-tableproapp-tablepro-le.md",
       "repository": "tableproapp-tablepro-learnings",
-      "content_hash": "5159d47769106420fc40ce3f2e1e372da00792a4414043b5a2294c4eb6f65944",
-      "created_at": "2026-11-22T20:17:14.423Z"
+      "content_hash": "5d63d186fe95646135ae9fcb7d4191509076cc8e1b6a12a2c8a1c550d902d80f",
+      "created_at": "2026-11-25T06:39:31.935Z"
     },
     "domain_intelligence-technical-construction-intelligence-jarvis322-macos-sysdata-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-jarvis322-macos-sysdata-core-invariants",
@@ -28591,8 +28591,8 @@
       "title": "Research & Knowledge Intelligence: orcarouter/OrcaCyber-Nano-1.0 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-orcarouter-orcacyber-nano-1-0-research-knowledge-intelligence-orcarouter-orca.md",
       "repository": "orcarouter/OrcaCyber-Nano-1.0",
-      "content_hash": "bb06fd488a155330920c63fcd926eca4c62006101af2c9f2af5e8bd2e02b8aa3",
-      "created_at": "2026-11-21T12:37:54.307Z"
+      "content_hash": "37c3d97dc2bbbe7a53ed864cd218e09f88d2d88c51c58d47fb34c90788c6253b",
+      "created_at": "2026-11-25T06:39:12.274Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-orcacyber-nano-1-0-learnings-core-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-orcacyber-nano-1-0-learnings-core-",
@@ -28600,8 +28600,8 @@
       "title": "Research & Knowledge Intelligence: hf-orcarouter-orcacyber-nano-1.0-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-orcarouter-orcacyber-nano-1-0-learnings-research-knowledge-intelligence-hf-or.md",
       "repository": "hf-orcarouter-orcacyber-nano-1.0-learnings",
-      "content_hash": "f1e45d6928fa67ecb4f5538860da8abf1f23575068ed5dfae38d221de3293222",
-      "created_at": "2026-11-21T12:38:14.768Z"
+      "content_hash": "12d6e8abaff1333a1af4ac645769ef7e0e227dbc2b0294aee99c46d5584545a3",
+      "created_at": "2026-11-25T06:39:31.188Z"
     },
     "domain_intelligence-research-knowledge-intelligence-recursivesi-flint-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-recursivesi-flint-core-invariants",
@@ -28681,8 +28681,8 @@
       "title": "Architecture Intelligence: stakater/Reloader Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-stakater-reloader-architecture-intelligence-stakater-reloader-core-invariants.md",
       "repository": "stakater/Reloader",
-      "content_hash": "8df814157e578c97410cfbab1f80dcfafc3e942384bd371f8855ae85fb994b4a",
-      "created_at": "2026-11-23T18:16:02.123Z"
+      "content_hash": "44ab90eff6a1725830f133416dd210bb6374cb595f9e8aea24f759f4153750a5",
+      "created_at": "2026-11-25T06:39:22.601Z"
     },
     "DOM-D-66A27B84": {
       "record_id": "DOM-D-66A27B84",
@@ -32739,8 +32739,8 @@
       "title": "Content & Information Intelligence: gluesql/gluesql Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-gluesql-gluesql-content-information-intelligence-gluesql-gluesql-core-invariants.md",
       "repository": "gluesql/gluesql",
-      "content_hash": "5c4c482a50c33aa1df43352184ca94c11d20629547cfcf7ad585f1dbbb757b5b",
-      "created_at": "2026-11-20T04:02:39.060Z"
+      "content_hash": "c756cbb6927bbb7669a465219e7dc5eab311db427c413cca8cb95b7d6dc26d19",
+      "created_at": "2026-11-25T06:39:27.106Z"
     },
     "domain_intelligence-content-information-intelligence-gluesql-gluesql-learnings-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-gluesql-gluesql-learnings-core-invariants",

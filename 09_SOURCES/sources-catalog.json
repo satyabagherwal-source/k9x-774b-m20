@@ -2543,10 +2543,10 @@
     "repository": "sharkdp/fd",
     "platform": "github",
     "sourceUrl": "https://github.com/sharkdp/fd",
-    "sourceVersion": "f8d4e0e7",
+    "sourceVersion": "2e8648f1",
     "license": "Apache-2.0",
-    "contentHash": "d5e3494b42c2155cb604fc486b071a0c79eeec394a0af8870436f0b10d9e21d4",
-    "lastHarvestedAt": "2026-11-21T12:29:19.483Z",
+    "contentHash": "39e8031962b630bb8ad244c6228a414d0383c550a117fef5bfb3c38b4945af3e",
+    "lastHarvestedAt": "2026-11-25T06:39:13.991Z",
     "learningId": "learn-github-sharkdp-fd"
   },
   "maotoumao-musicfree": {
@@ -4123,10 +4123,10 @@
     "repository": "gluesql/gluesql",
     "platform": "github",
     "sourceUrl": "https://github.com/gluesql/gluesql",
-    "sourceVersion": "c91cbdd6",
+    "sourceVersion": "9d354015",
     "license": "Apache-2.0",
-    "contentHash": "0330b74993315df91f73f4382d46a5a622518f9dcd130f49049ac155e8f495b3",
-    "lastHarvestedAt": "2026-11-24T12:45:45.750Z",
+    "contentHash": "82a709b3d541b83d74af5f12c8bde45401cd069297356ff01afaeea1a69a4f52",
+    "lastHarvestedAt": "2026-11-25T06:39:26.701Z",
     "learningId": "learn-github-gluesql-gluesql"
   },
   "mui-base-ui": {
@@ -6513,10 +6513,10 @@
     "repository": "stakater/Reloader",
     "platform": "github",
     "sourceUrl": "https://github.com/stakater/Reloader",
-    "sourceVersion": "6002095f",
+    "sourceVersion": "35ca482b",
     "license": "Apache-2.0",
-    "contentHash": "6c7439ef44d01f1f9fe535122458c170808185093909fbc4204e94d14f1b3a25",
-    "lastHarvestedAt": "2026-11-23T18:16:01.718Z",
+    "contentHash": "67ce5517893a540a17de99b33e245ed3a10324d5046b9549c112c2cf0303d00a",
+    "lastHarvestedAt": "2026-11-25T06:39:22.202Z",
     "learningId": "learn-github-stakater-reloader"
   },
   "pathwaycom-llm-app": {
@@ -8043,10 +8043,10 @@
     "repository": "TableProApp/TablePro",
     "platform": "github",
     "sourceUrl": "https://github.com/TableProApp/TablePro",
-    "sourceVersion": "2507448a",
+    "sourceVersion": "e2b0999a",
     "license": "AGPL-3.0",
-    "contentHash": "c9d24a114bf34c67a6d3133641afcf40a149dd091222807a276ae77c0a164f97",
-    "lastHarvestedAt": "2026-11-22T20:16:59.745Z",
+    "contentHash": "855d1580f0cddfe6392c867364203b7df91d0336c115afdd632ba1bd6bb22a9f",
+    "lastHarvestedAt": "2026-11-25T06:39:20.649Z",
     "learningId": "learn-github-tableproapp-tablepro"
   },
   "twostraws-controlroom": {
@@ -10435,8 +10435,8 @@
     "sourceUrl": "https://huggingface.co/orcarouter/OrcaCyber-Nano-1.0",
     "sourceVersion": "hf-orcarouter-orcacyber-nano-1.0",
     "license": "Open-Source",
-    "contentHash": "626151f90a27cf39d3d9c21f0cec82423b7bc07a4251ec30e0fe8eddae074c3c",
-    "lastHarvestedAt": "2026-11-21T12:37:54.114Z",
+    "contentHash": "5c1bb7f0da79757ae33edc583baa930dec7ca2a9dd77c5d66b550b731bf0268e",
+    "lastHarvestedAt": "2026-11-25T06:39:12.050Z",
     "learningId": "learn-huggingface-orcarouter-orcacyber-nano-1-0"
   },
   "ryder-sun-meldwork": {

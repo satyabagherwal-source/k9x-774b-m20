@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-25T06:31:12.153Z",
+  "last_updated": "2026-11-25T06:39:32.106Z",
   "total_verified_learnings": 9112,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25270,
+  "total_items": 25277,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -220786,13 +220786,13 @@
       "item_id": "candidate_directive-empirical-invariant-guard-in-changelog-md",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-37J2-empirical-invariant-guard-in-changelog-md.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-6YE1-empirical-invariant-guard-in-changelog-md.md",
       "title": "Empirical Invariant Guard in CHANGELOG.md",
-      "repository": "sharkdp-bat-learnings",
+      "repository": "sharkdp-fd-learnings",
       "source_version": "HEAD",
-      "content_hash": "f8dd80c8daaf753a1a9c1c7838241ea794e884c20a06462ab09c176e4360ae95",
+      "content_hash": "2a64ce28a5702397975bfd0798296872d6e7f303d1b2f167c885dd9b033eafde",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T04:28:57.183Z"
+      "persisted_at": "2026-11-25T06:39:30.461Z"
     },
     "domain_intelligence-architecture-intelligence-yvgude-lean-ctx-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-yvgude-lean-ctx-core-invariants",
@@ -241085,8 +241085,8 @@
       "slug": "sharkdp-fd",
       "platform": "github",
       "source_url": "https://github.com/sharkdp/fd",
-      "source_version": "f8d4e0e7",
-      "content_hash": "d5e3494b42c2155cb604fc486b071a0c79eeec394a0af8870436f0b10d9e21d4",
+      "source_version": "2e8648f1",
+      "content_hash": "39e8031962b630bb8ad244c6228a414d0383c550a117fef5bfb3c38b4945af3e",
       "dossier_path": "07_PROJECT_LEARNING/sharkdp-fd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sharkdp-fd-learnings.md",
       "promoted_rules": [
@@ -241106,7 +241106,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T12:29:19.266Z",
+      "verified_at": "2026-11-25T06:39:13.758Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -241120,14 +241120,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 8545,
       "title": "Empirical Invariant Guard in CHANGELOG.md",
-      "source_url": "https://github.com/sharkdp/bat",
-      "source_version": "4bd5c5b6",
+      "source_url": "https://github.com/sharkdp/fd",
+      "source_version": "2e8648f1",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-24T04:28:46.955Z"
+      "verified_at": "2026-11-25T06:39:13.759Z"
     },
     "domain_intelligence-search-distribution-intelligence-sharkdp-fd-core-invariants": {
       "item_id": "domain_intelligence-search-distribution-intelligence-sharkdp-fd-core-invariants",
@@ -241136,10 +241136,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-J-sharkdp-fd-search-distribution-intelligence-sharkdp-fd-core-invariants.md",
       "title": "Search & Distribution Intelligence: sharkdp/fd Core Invariants",
       "repository": "sharkdp/fd",
-      "source_version": "f8d4e0e7",
-      "content_hash": "2d9fb4ea4a6f028c6205dd0b082d6ea6be090809ee58c506a13a1e8b1baf0990",
+      "source_version": "2e8648f1",
+      "content_hash": "a3b5a27934fe5df520d280433edbd45ff753a626342bf14fc79b21ab8cb6b54e",
       "domain_letter": "J",
-      "persisted_at": "2026-11-21T12:29:19.836Z"
+      "persisted_at": "2026-11-25T06:39:14.412Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-sharkdp-fd": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-sharkdp-fd",
@@ -241148,10 +241148,10 @@
       "relative_path": "08_VERIFICATION/sharkdp-fd-verification-protocol-empirical-defect-shield-for-sharkdp-fd.md",
       "title": "Verification Protocol: Empirical Defect Shield for sharkdp/fd",
       "repository": "sharkdp/fd",
-      "source_version": "f8d4e0e7",
-      "content_hash": "4213f23fd39bb454c9836b2b5f90775adb7e31862d7fda528269bdbd4cccce55",
+      "source_version": "2e8648f1",
+      "content_hash": "f130882c9547d38d94f650d6d1852a5764f21a118c915167bed1bacf0468f99d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T12:29:19.997Z"
+      "persisted_at": "2026-11-25T06:39:14.586Z"
     },
     "learn-github-mikepenz-aboutlibraries": {
       "learning_id": "learn-github-mikepenz-aboutlibraries",
@@ -241287,9 +241287,9 @@
       "title": "Search & Distribution Intelligence: sharkdp-fd-learnings Core Invariants",
       "repository": "sharkdp-fd-learnings",
       "source_version": "HEAD",
-      "content_hash": "ed2d6f9140947209e494e65c0912eeb3c5a534435a838b376f989998854b0d17",
+      "content_hash": "ebd638c839d161b3b5fc24ccb3d4a545f54b5237ab9850cad89c2c7f5fbaa983",
       "domain_letter": "J",
-      "persisted_at": "2026-11-21T12:29:31.447Z"
+      "persisted_at": "2026-11-25T06:39:30.646Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-sharkdp-fd-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-sharkdp-fd-learnings",
@@ -241299,9 +241299,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for sharkdp-fd-learnings",
       "repository": "sharkdp-fd-learnings",
       "source_version": "HEAD",
-      "content_hash": "a49ad43907dda89d4659bdda54216d35c0a916d0552b7908c510450bdcd16547",
+      "content_hash": "7e80a9e5668f0b9212cc90a3120a6879cffd1a3eea762f0b806d2fcd673d12ec",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T12:29:31.609Z"
+      "persisted_at": "2026-11-25T06:39:30.816Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-atomicchat-qwen-image-2-1-turbo-uncensored-gg": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-atomicchat-qwen-image-2-1-turbo-uncensored-gg",
@@ -250451,8 +250451,8 @@
       "slug": "tableproapp-tablepro",
       "platform": "github",
       "source_url": "https://github.com/TableProApp/TablePro",
-      "source_version": "2507448a",
-      "content_hash": "c9d24a114bf34c67a6d3133641afcf40a149dd091222807a276ae77c0a164f97",
+      "source_version": "e2b0999a",
+      "content_hash": "855d1580f0cddfe6392c867364203b7df91d0336c115afdd632ba1bd6bb22a9f",
       "dossier_path": "07_PROJECT_LEARNING/tableproapp-tablepro-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tableproapp-tablepro-learnings.md",
       "promoted_rules": [
@@ -250470,6 +250470,11 @@
           "number": 9986,
           "title": "build(release): ship per-arch builds and a per-arch appcast",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10471,
+          "title": "keep the sidebar selection accent and the keyboard when a window opens o",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -250477,7 +250482,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T20:16:59.557Z",
+      "verified_at": "2026-11-25T06:39:20.437Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -250519,10 +250524,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tableproapp-tablepro-architecture-intelligence-tableproapp-tablepro-core-invaria.md",
       "title": "Architecture Intelligence: TableProApp/TablePro Core Invariants",
       "repository": "TableProApp/TablePro",
-      "source_version": "2507448a",
-      "content_hash": "66c979fd905bfc245d0466864390c6ba67f804b0bee1c5dacbc1eecf1263c1f5",
+      "source_version": "e2b0999a",
+      "content_hash": "19affe38b7a586dd7b73269a7ae608605c4e6a5a9b0b340e7c2f3bdf75f09eef",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T20:17:00.094Z"
+      "persisted_at": "2026-11-25T06:39:21.092Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tableproapp-tablepro": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tableproapp-tablepro",
@@ -250531,10 +250536,10 @@
       "relative_path": "08_VERIFICATION/tableproapp-tablepro-verification-protocol-empirical-defect-shield-for-tableproa.md",
       "title": "Verification Protocol: Empirical Defect Shield for TableProApp/TablePro",
       "repository": "TableProApp/TablePro",
-      "source_version": "2507448a",
-      "content_hash": "8ddbe5342cba15ee07c462af4ff1f6ad0755c1e92663ea4c3deba38b0b01c229",
+      "source_version": "e2b0999a",
+      "content_hash": "1268476bace6472a2c27fcf830a8aa844247f75874282c07b52fe572fadbff6a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T20:17:00.243Z"
+      "persisted_at": "2026-11-25T06:39:21.344Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf-lea": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf-lea",
@@ -250568,9 +250573,9 @@
       "title": "Architecture Intelligence: tableproapp-tablepro-learnings Core Invariants",
       "repository": "tableproapp-tablepro-learnings",
       "source_version": "HEAD",
-      "content_hash": "5159d47769106420fc40ce3f2e1e372da00792a4414043b5a2294c4eb6f65944",
+      "content_hash": "5d63d186fe95646135ae9fcb7d4191509076cc8e1b6a12a2c8a1c550d902d80f",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T20:17:14.423Z"
+      "persisted_at": "2026-11-25T06:39:31.935Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tableproapp-tablepro-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tableproapp-tablepro-learnings",
@@ -250580,9 +250585,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for tableproapp-tablepro-learnings",
       "repository": "tableproapp-tablepro-learnings",
       "source_version": "HEAD",
-      "content_hash": "10c00037b99dfd6a87a6d7eec09faf20ad7fc246703d7b9d805467dd1c662d7b",
+      "content_hash": "dba09b21eeb7ad1e0528b8beb8dcbfa498af989b7c9cd65f05a0baf5f680493a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T20:17:14.579Z"
+      "persisted_at": "2026-11-25T06:39:32.106Z"
     },
     "learn-github-jarvis322-macos-sysdata": {
       "learning_id": "learn-github-jarvis322-macos-sysdata",
@@ -261525,8 +261530,8 @@
       "slug": "stakater-reloader",
       "platform": "github",
       "source_url": "https://github.com/stakater/Reloader",
-      "source_version": "6002095f",
-      "content_hash": "6c7439ef44d01f1f9fe535122458c170808185093909fbc4204e94d14f1b3a25",
+      "source_version": "35ca482b",
+      "content_hash": "67ce5517893a540a17de99b33e245ed3a10324d5046b9549c112c2cf0303d00a",
       "dossier_path": "07_PROJECT_LEARNING/stakater-reloader-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/stakater-reloader-learnings.md",
       "promoted_rules": [
@@ -261544,6 +261549,11 @@
           "number": 10090,
           "title": "Empirical Invariant Guard in handler.go",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10472,
+          "title": "add \"We're hiring\" link to careers page",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -261551,7 +261561,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T18:16:01.504Z",
+      "verified_at": "2026-11-25T06:39:21.994Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -261605,10 +261615,10 @@
       "relative_path": "08_VERIFICATION/stakater-reloader-verification-protocol-empirical-defect-shield-for-stakater-rel.md",
       "title": "Verification Protocol: Empirical Defect Shield for stakater/Reloader",
       "repository": "stakater/Reloader",
-      "source_version": "6002095f",
-      "content_hash": "91827143810111b024bc88017eeb50fbfbd3abce5e996b9773f04bf3f218aab6",
+      "source_version": "35ca482b",
+      "content_hash": "b71a825dbdd7e2ec684b44cb3333e5a5dc3d199d1b431be9800199d75d8b0d3a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T18:16:02.296Z"
+      "persisted_at": "2026-11-25T06:39:22.777Z"
     },
     "learn-huggingface-hauhaucs-qwen3-8-27b-uncensored-hauhaucs-aggressive-mtp-gguf": {
       "learning_id": "learn-huggingface-hauhaucs-qwen3-8-27b-uncensored-hauhaucs-aggressive-mtp-gguf",
@@ -271953,8 +271963,8 @@
       "slug": "gluesql-gluesql",
       "platform": "github",
       "source_url": "https://github.com/gluesql/gluesql",
-      "source_version": "c91cbdd6",
-      "content_hash": "0330b74993315df91f73f4382d46a5a622518f9dcd130f49049ac155e8f495b3",
+      "source_version": "9d354015",
+      "content_hash": "82a709b3d541b83d74af5f12c8bde45401cd069297356ff01afaeea1a69a4f52",
       "dossier_path": "07_PROJECT_LEARNING/gluesql-gluesql-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gluesql-gluesql-learnings.md",
       "promoted_rules": [
@@ -271982,6 +271992,11 @@
           "number": 10259,
           "title": "Push down IFNULL, COALESCE, and NULLIF in SQLite filters",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10473,
+          "title": "Release v0.21.0",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -271989,7 +272004,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T12:45:45.475Z",
+      "verified_at": "2026-11-25T06:39:26.494Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -272043,10 +272058,10 @@
       "relative_path": "08_VERIFICATION/gluesql-gluesql-verification-protocol-empirical-defect-shield-for-gluesql-gluesq.md",
       "title": "Verification Protocol: Empirical Defect Shield for gluesql/gluesql",
       "repository": "gluesql/gluesql",
-      "source_version": "c91cbdd6",
-      "content_hash": "a5c473ecf443adc291efe8e37e128cf3bf86feced892c937a0e66de0a98851b2",
+      "source_version": "9d354015",
+      "content_hash": "dbe2bb37642a261bdb9b0754c57bbf937aead5bed2fd2026f54fefe635f6d00b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T12:45:46.555Z"
+      "persisted_at": "2026-11-25T06:39:27.275Z"
     },
     "candidate_directive-deps-update-dependency-rollup-to-v4-59-0-security": {
       "item_id": "candidate_directive-deps-update-dependency-rollup-to-v4-59-0-security",
@@ -279210,7 +279225,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/orcarouter/OrcaCyber-Nano-1.0",
       "source_version": "hf-orcarouter-orcacyber-nano-1.0",
-      "content_hash": "626151f90a27cf39d3d9c21f0cec82423b7bc07a4251ec30e0fe8eddae074c3c",
+      "content_hash": "5c1bb7f0da79757ae33edc583baa930dec7ca2a9dd77c5d66b550b731bf0268e",
       "dossier_path": "07_PROJECT_LEARNING/hf-orcarouter-orcacyber-nano-1.0-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-orcarouter-orcacyber-nano-1.0-learnings.md",
       "promoted_rules": [],
@@ -279219,7 +279234,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T12:37:53.891Z",
+      "verified_at": "2026-11-25T06:39:11.821Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -279236,9 +279251,9 @@
       "title": "Research & Knowledge Intelligence: orcarouter/OrcaCyber-Nano-1.0 Core Invariants",
       "repository": "orcarouter/OrcaCyber-Nano-1.0",
       "source_version": "hf-orcarouter-orcacyber-nano-1.0",
-      "content_hash": "bb06fd488a155330920c63fcd926eca4c62006101af2c9f2af5e8bd2e02b8aa3",
+      "content_hash": "37c3d97dc2bbbe7a53ed864cd218e09f88d2d88c51c58d47fb34c90788c6253b",
       "domain_letter": "D",
-      "persisted_at": "2026-11-21T12:37:54.307Z"
+      "persisted_at": "2026-11-25T06:39:12.274Z"
     },
     "rule-8998": {
       "learning_id": "rule-8998",
@@ -279312,9 +279327,9 @@
       "title": "Research & Knowledge Intelligence: hf-orcarouter-orcacyber-nano-1.0-learnings Core Invariants",
       "repository": "hf-orcarouter-orcacyber-nano-1.0-learnings",
       "source_version": "HEAD",
-      "content_hash": "f1e45d6928fa67ecb4f5538860da8abf1f23575068ed5dfae38d221de3293222",
+      "content_hash": "12d6e8abaff1333a1af4ac645769ef7e0e227dbc2b0294aee99c46d5584545a3",
       "domain_letter": "D",
-      "persisted_at": "2026-11-21T12:38:14.768Z"
+      "persisted_at": "2026-11-25T06:39:31.188Z"
     },
     "candidate_directive-test-deflake-quicinplaceldsintegrationtest-drain-waits": {
       "item_id": "candidate_directive-test-deflake-quicinplaceldsintegrationtest-drain-waits",
@@ -279870,10 +279885,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-stakater-reloader-architecture-intelligence-stakater-reloader-core-invariants.md",
       "title": "Architecture Intelligence: stakater/Reloader Core Invariants",
       "repository": "stakater/Reloader",
-      "source_version": "6002095f",
-      "content_hash": "8df814157e578c97410cfbab1f80dcfafc3e942384bd371f8855ae85fb994b4a",
+      "source_version": "35ca482b",
+      "content_hash": "44ab90eff6a1725830f133416dd210bb6374cb595f9e8aea24f759f4153750a5",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T18:16:02.123Z"
+      "persisted_at": "2026-11-25T06:39:22.601Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-sensenova-sensenova-loop-9b-learnings-core-in": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-sensenova-sensenova-loop-9b-learnings-core-in",
@@ -295612,10 +295627,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-gluesql-gluesql-content-information-intelligence-gluesql-gluesql-core-invariants.md",
       "title": "Content & Information Intelligence: gluesql/gluesql Core Invariants",
       "repository": "gluesql/gluesql",
-      "source_version": "bb30d6be",
-      "content_hash": "5c4c482a50c33aa1df43352184ca94c11d20629547cfcf7ad585f1dbbb757b5b",
+      "source_version": "9d354015",
+      "content_hash": "c756cbb6927bbb7669a465219e7dc5eab311db427c413cca8cb95b7d6dc26d19",
       "domain_letter": "I",
-      "persisted_at": "2026-11-20T04:02:39.060Z"
+      "persisted_at": "2026-11-25T06:39:27.106Z"
     },
     "candidate_directive-stm32-fix-lptim-time-driver-and-low-power-builds-make-the-lptim-clock-explicit": {
       "item_id": "candidate_directive-stm32-fix-lptim-time-driver-and-low-power-builds-make-the-lptim-clock-explicit",
@@ -345589,6 +345604,96 @@
       "content_hash": "7a42ab8ec38f2248abc5b621861b0e5e5c3c81533798f2c70c9ce6b326854038",
       "domain_letter": "I",
       "persisted_at": "2026-11-25T06:21:25.227Z"
+    },
+    "rule-10471": {
+      "learning_id": "rule-10471",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10471,
+      "title": "keep the sidebar selection accent and the keyboard when a window opens o",
+      "source_url": "https://github.com/TableProApp/TablePro",
+      "source_version": "e2b0999a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T06:39:20.437Z"
+    },
+    "candidate_directive-keep-the-sidebar-selection-accent-and-the-keyboard-when-a-window-opens-o": {
+      "item_id": "candidate_directive-keep-the-sidebar-selection-accent-and-the-keyboard-when-a-window-opens-o",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-6R0Q-keep-the-sidebar-selection-accent-and-the-keyboard-when-a-window-opens-o.md",
+      "title": "keep the sidebar selection accent and the keyboard when a window opens o",
+      "repository": "TableProApp/TablePro",
+      "source_version": "e2b0999a",
+      "content_hash": "833db7e983f2a4486b9c247b91639c46d38945acc97c0bed17b7c703364dba90",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-25T06:39:20.910Z"
+    },
+    "rule-10472": {
+      "learning_id": "rule-10472",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10472,
+      "title": "add \"We're hiring\" link to careers page",
+      "source_url": "https://github.com/stakater/Reloader",
+      "source_version": "35ca482b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T06:39:21.994Z"
+    },
+    "candidate_directive-add-we-re-hiring-link-to-careers-page": {
+      "item_id": "candidate_directive-add-we-re-hiring-link-to-careers-page",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-6S6U-add-we-re-hiring-link-to-careers-page.md",
+      "title": "add \"We're hiring\" link to careers page",
+      "repository": "stakater/Reloader",
+      "source_version": "35ca482b",
+      "content_hash": "41930be4ce3c592cd6f2fea8a37a6178b0c8fc59879986f286dd26ebec79421a",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-25T06:39:22.423Z"
+    },
+    "rule-10473": {
+      "learning_id": "rule-10473",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10473,
+      "title": "Release v0.21.0",
+      "source_url": "https://github.com/gluesql/gluesql",
+      "source_version": "9d354015",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T06:39:26.494Z"
+    },
+    "candidate_directive-release-v0-21-0": {
+      "item_id": "candidate_directive-release-v0-21-0",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-6VO2-release-v0-21-0.md",
+      "title": "Release v0.21.0",
+      "repository": "gluesql/gluesql",
+      "source_version": "9d354015",
+      "content_hash": "fe0a2eab1e19909dc37b17055259c3e744616f4e799e668024fb7f96af8e61a6",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-25T06:39:26.934Z"
+    },
+    "candidate_directive-focus-keep-the-sidebar-selection-accent-and-the-keyboard-when-a-window-opens-o": {
+      "item_id": "candidate_directive-focus-keep-the-sidebar-selection-accent-and-the-keyboard-when-a-window-opens-o",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-6ZDR-focus-keep-the-sidebar-selection-accent-and-the-keyboard-when-a-window-opens-o.md",
+      "title": "focus): keep the sidebar selection accent and the keyboard when a window opens o",
+      "repository": "tableproapp-tablepro-learnings",
+      "source_version": "HEAD",
+      "content_hash": "9830f53f3bbd5325e35c5c329162af9835ffbc985bd88012ff73597c61d10702",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-25T06:39:31.746Z"
     }
   },
   "ai-builder-brain": {

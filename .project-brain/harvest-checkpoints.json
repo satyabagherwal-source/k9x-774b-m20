@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-25T06:30:57.219Z",
+  "last_updated": "2026-11-25T06:39:26.717Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3951,14 +3951,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sharkdp-fd",
-      "content_hash": "d5e3494b42c2155cb604fc486b071a0c79eeec394a0af8870436f0b10d9e21d4",
-      "verified_at": "2026-11-21T12:29:19.491Z",
+      "content_hash": "39e8031962b630bb8ad244c6228a414d0383c550a117fef5bfb3c38b4945af3e",
+      "verified_at": "2026-11-25T06:39:14.006Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T12:29:19.491Z"
+      "last_updated": "2026-11-25T06:39:14.006Z"
     },
     "maotoumao/MusicFree": {
       "repository": "maotoumao/MusicFree",
@@ -6306,14 +6306,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gluesql-gluesql",
-      "content_hash": "0330b74993315df91f73f4382d46a5a622518f9dcd130f49049ac155e8f495b3",
-      "verified_at": "2026-11-24T12:45:45.770Z",
+      "content_hash": "82a709b3d541b83d74af5f12c8bde45401cd069297356ff01afaeea1a69a4f52",
+      "verified_at": "2026-11-25T06:39:26.716Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T12:45:45.770Z"
+      "last_updated": "2026-11-25T06:39:26.716Z"
     },
     "mui/base-ui": {
       "repository": "mui/base-ui",
@@ -9861,14 +9861,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-stakater-reloader",
-      "content_hash": "6c7439ef44d01f1f9fe535122458c170808185093909fbc4204e94d14f1b3a25",
-      "verified_at": "2026-11-23T18:16:01.726Z",
+      "content_hash": "67ce5517893a540a17de99b33e245ed3a10324d5046b9549c112c2cf0303d00a",
+      "verified_at": "2026-11-25T06:39:22.217Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T18:16:01.726Z"
+      "last_updated": "2026-11-25T06:39:22.217Z"
     },
     "amir1376/ab-download-manager": {
       "repository": "amir1376/ab-download-manager",
@@ -12096,14 +12096,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tableproapp-tablepro",
-      "content_hash": "c9d24a114bf34c67a6d3133641afcf40a149dd091222807a276ae77c0a164f97",
-      "verified_at": "2026-11-22T20:16:59.752Z",
+      "content_hash": "855d1580f0cddfe6392c867364203b7df91d0336c115afdd632ba1bd6bb22a9f",
+      "verified_at": "2026-11-25T06:39:20.665Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T20:16:59.752Z"
+      "last_updated": "2026-11-25T06:39:20.665Z"
     },
     "twostraws/ControlRoom": {
       "repository": "twostraws/ControlRoom",
@@ -15681,14 +15681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-orcarouter-orcacyber-nano-1-0",
-      "content_hash": "626151f90a27cf39d3d9c21f0cec82423b7bc07a4251ec30e0fe8eddae074c3c",
-      "verified_at": "2026-11-21T12:37:54.122Z",
+      "content_hash": "5c1bb7f0da79757ae33edc583baa930dec7ca2a9dd77c5d66b550b731bf0268e",
+      "verified_at": "2026-11-25T06:39:12.064Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T12:37:54.122Z"
+      "last_updated": "2026-11-25T06:39:12.064Z"
     },
     "Ryder-Sun/Meldwork": {
       "repository": "Ryder-Sun/Meldwork",

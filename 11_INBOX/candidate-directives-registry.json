@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T06:31:11.614Z",
+  "last_updated": "2026-11-25T06:39:31.746Z",
   "directives": [
     {
       "id": "CD-001",
@@ -3678,14 +3678,14 @@
       "learning_id": "learn-github-prometheus-prometheus"
     },
     {
-      "id": "CD-37J2",
+      "id": "CD-6YE1",
       "directive_title": "Empirical Invariant Guard in CHANGELOG.md",
-      "source_repo": "sharkdp-bat-learnings",
+      "source_repo": "sharkdp-fd-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-37J2-empirical-invariant-guard-in-changelog-md.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-6YE1-empirical-invariant-guard-in-changelog-md.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
-      "date_staged": "2026-11-24",
+      "date_staged": "2026-11-25",
       "domain_letter": "D"
     },
     {
@@ -59922,6 +59922,59 @@
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-D80CFE-deps-bump-url-to-2-5-9-and-heapless-to-0.md",
       "staged_date": "2026-11-25"
+    },
+    {
+      "id": "CD-6R0Q",
+      "directive_title": "keep the sidebar selection accent and the keyboard when a window opens o",
+      "source_repo": "TableProApp/TablePro",
+      "source_commit": "e2b0999a",
+      "staged_file": "11_INBOX/candidate-directives/CD-6R0Q-keep-the-sidebar-selection-accent-and-the-keyboard-when-a-window-opens-o.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-25",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-6S6U",
+      "directive_title": "add \"We're hiring\" link to careers page",
+      "source_repo": "stakater/Reloader",
+      "source_commit": "35ca482b",
+      "staged_file": "11_INBOX/candidate-directives/CD-6S6U-add-we-re-hiring-link-to-careers-page.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-25",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-6VO2",
+      "directive_title": "Release v0.21.0",
+      "source_repo": "gluesql/gluesql",
+      "source_commit": "9d354015",
+      "staged_file": "11_INBOX/candidate-directives/CD-6VO2-release-v0-21-0.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-25",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-REV-DC59A0",
+      "directive_title": "Empirical Invariant Guard in CHANGELOG.md",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "sharkdp-fd",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-DC59A0-empirical-invariant-guard-in-changelog-m.md",
+      "staged_date": "2026-11-25"
+    },
+    {
+      "id": "CD-6ZDR",
+      "directive_title": "focus): keep the sidebar selection accent and the keyboard when a window opens o",
+      "source_repo": "tableproapp-tablepro-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-6ZDR-focus-keep-the-sidebar-selection-accent-and-the-keyboard-when-a-window-opens-o.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-25",
+      "domain_letter": "G"
     }
   ]
 }
