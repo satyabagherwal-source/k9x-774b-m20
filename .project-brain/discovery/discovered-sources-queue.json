@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-25T12:00:29.650Z",
+  "updated_at": "2026-11-25T12:09:19.047Z",
   "stats": {
-    "total_discovered": 9412,
-    "approved_pending_harvest": 8920,
+    "total_discovered": 9414,
+    "approved_pending_harvest": 8922,
     "harvested_count": 0,
     "rejected_count": 492,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 8911,
+      "COMMUNITY_AND_EXPERT": 8913,
       "OFFICIAL_DOCUMENTATION": 280,
       "STANDARDS_AND_SPECIFICATIONS": 150,
       "ENGINEERING_BLOGS": 7,
@@ -203647,6 +203647,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/jellyfin-swiftfin-learnings.md",
         "fileName": "jellyfin-swiftfin-learnings.md"
+      }
+    },
+    "SRC-B6BCADF3CB6F": {
+      "id": "SRC-B6BCADF3CB6F",
+      "url": "https://github.com/GitoxideLabs/cargo-smart-release/pull/171",
+      "title": "https://github.com/GitoxideLabs/cargo-smart-release/pull/171",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T12:09:18.927Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md",
+        "fileName": "gitoxidelabs-gitoxide-learnings.md"
+      }
+    },
+    "SRC-1C1F3BA62129": {
+      "id": "SRC-1C1F3BA62129",
+      "url": "https://github.com/GitoxideLabs/gitoxide/pull/3239",
+      "title": "https://github.com/GitoxideLabs/gitoxide/pull/3239",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T12:09:19.047Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md",
+        "fileName": "gitoxidelabs-gitoxide-learnings.md"
       }
     }
   }

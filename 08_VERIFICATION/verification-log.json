@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261123-RJMQ",
-    "timestamp": "2026-11-23T23:39:56.834Z",
-    "repository": "tailscale/tailscale",
-    "learningId": "learn-github-tailscale-tailscale",
-    "contentHash": "e134d954b7e12ccc9076a4cec0b3d20df16bc34bdb8e78e52b7740f59bc69328",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-2RYM",
-    "timestamp": "2026-11-23T23:48:40.846Z",
-    "repository": "nvidia/Qwen3.8-Flash-Next-FP4-Local",
-    "learningId": "learn-huggingface-nvidia-qwen3-8-flash-next-fp4-local",
-    "contentHash": "f957a1b29908f297367dd92b825bc60869508e229cd40820193f440daf3027f7",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-2UDF",
-    "timestamp": "2026-11-23T23:48:43.971Z",
-    "repository": "oven-sh/bun",
-    "learningId": "learn-github-oven-sh-bun",
-    "contentHash": "79f1776b2e74c74671a5f86906732d668f2aebaad41286262e0b32a473f540c1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-311L",
-    "timestamp": "2026-11-23T23:48:52.617Z",
-    "repository": "beclab/Olares",
-    "learningId": "learn-github-beclab-olares",
-    "contentHash": "590e57421d7b210adf27d34329719bd4e0e0fbfedc359744676e6d6580406a21",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261124-QMS3",
     "timestamp": "2026-11-24T00:07:13.875Z",
     "repository": "OpenMOSS-Team/MOSS-Image-Base",
@@ -7490,6 +7430,66 @@
     "repository": "freenet/freenet-core",
     "learningId": "learn-github-freenet-freenet-core",
     "contentHash": "55eaa0460ea19abd70782a839534fe1e4b97d59856af53ac1d7d59848a1d5985",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-YP7S",
+    "timestamp": "2026-11-25T12:09:00.712Z",
+    "repository": "unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF",
+    "learningId": "learn-huggingface-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf",
+    "contentHash": "8b878caba3d541d33bfc9311a59d02d3ac7d3773a4539f194e6cb30ab23af676",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-YRFS",
+    "timestamp": "2026-11-25T12:09:03.592Z",
+    "repository": "GitoxideLabs/gitoxide",
+    "learningId": "learn-github-gitoxidelabs-gitoxide",
+    "contentHash": "3b812d0dd0f60aad7b3e6b29fa3f0b73dbe2b6224bf8cffdfe1fc17e4fbea83f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-YX70",
+    "timestamp": "2026-11-25T12:09:11.052Z",
+    "repository": "goodrain/rainbond",
+    "learningId": "learn-github-goodrain-rainbond",
+    "contentHash": "2808c050594b1dcf933c3ba903d6c41d8eb704bbc809cc551881c30bdc69fd42",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-Z0JV",
+    "timestamp": "2026-11-25T12:09:15.403Z",
+    "repository": "genkit-ai/genkit",
+    "learningId": "learn-github-genkit-ai-genkit",
+    "contentHash": "38cac47798884e565d370340d2105bd180c3cf694eabdac7123e881a3cd1e2cd",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

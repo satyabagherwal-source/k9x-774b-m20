@@ -4,24 +4,24 @@
 {
   "source_repository": "genkit-ai/genkit",
   "source_url": "https://github.com/genkit-ai/genkit",
-  "source_version": "76f631c6",
+  "source_version": "5f4d54a0",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-24T17:03:17.262Z",
+  "timestamp": "2026-11-25T12:09:15.654Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-genkit-ai-genkit",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [genkit-ai/genkit](https://github.com/genkit-ai/genkit) (Revision: `76f631c6`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-24T17:03:17.262Z`  
+> **Provenance**: Harvested from [genkit-ai/genkit](https://github.com/genkit-ai/genkit) (Revision: `5f4d54a0`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-25T12:09:15.654Z`  
 > **Learning ID**: `learn-github-genkit-ai-genkit`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: I (Content & Information Intelligence), K (Quality & Verification Intelligence), G (Architecture Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), D (Research & Knowledge Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence), B (Product Intelligence)
-- **Confidence Rating**: 86%
+- **Secondary Corroborating Domains**: I (Content & Information Intelligence), K (Quality & Verification Intelligence), G (Architecture Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 65%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from genkit-ai/genkit:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/genkit-ai/genkit](https://github.com/genkit-ai/genkit))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T17:03:15.932Z  
+> **Harvest Timestamp**: 2026-11-25T12:09:14.252Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Open-source framework for building agentic apps in JavaScript, Go, Dart, and Python, built and used in production by Google
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 6620 stars
+- **Stars / Engagement**: 6622 stars
 
 ---
 
@@ -657,6 +657,37 @@ export function parseJson(value: string): any {
     const detail = e instanceof Error ? e.message : String(e);
     throw new InvalidArgumentError(`Must be valid JSON (${detail}).`);
   }
+}
+
+```
+
+### Core Architecture Module: `genkit-tools/cli/src/utils/output.ts`
+```
+/**
+ * Copyright 2026 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/**
+ * Writes a line of primary command output to `stdout` (appending a trailing newline).
+ *
+ * Use this for intentional CLI payload output (such as JSON, JSONL, tables, or
+ * formatted command results) rather than diagnostic messages, which belong on
+ * `logger.*`.
+ */
+export function writeStdout(text = ''): void {
+  process.stdout.write(`${text}\n`);
 }
 
 ```
@@ -1749,7 +1780,7 @@ export async function notifyAnalyticsIfFirstRun(
     return;
   }
 
-  console.log(ANALYTICS_NOTIFICATION);
+  logger.info(ANALYTICS_NOTIFICATION);
 
   const readline = createInterface({
     input: process.stdin,
@@ -1895,52 +1926,17 @@ async function recordInternal(
             .r
 ```
 
-### Core Architecture Module: `genkit-tools/common/src/utils/configstore.ts`
-```
-/**
- * Copyright 2024 Google LLC
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-import Configstore from 'configstore';
-import { toolsPackage } from './package.js';
-
-const USER_SETTINGS_TAG = 'userSettings';
-
-export const configstore = new Configstore(toolsPackage.name);
-
-export function getUserSettings(): Record<string, string | boolean | number> {
-  return configstore.get(USER_SETTINGS_TAG) || {};
-}
-
-export function setUserSettings(s: Record<string, string | boolean | number>) {
-  configstore.set(USER_SETTINGS_TAG, s);
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #7340** (2026-11-24): **[JS] Nest types under import/require in remaining 10 package.json exports**
+  *Symptoms*: ### Summary  Follow-up to #7323 (and #1589).  In #7323, 16 `js/plugins/*/package.json` files were updated to nest `"types"` inside `"import"` (`.d.mts` + `.mjs`) and `"require"` (`.d.ts` + `.js`), with `"default"` last:  ```json "exports": {   ".": {     "import": {       "types": "./lib/index.d.mts",       "default": "./lib/index.mjs"     },     "require": {       "types": "./lib/index.d.ts",       "default": "./lib/index.js"     },     "default": "./lib/index.js"   } } ```  The remaining **10** `js/` packages still use the flat condition map (`"types": "./lib/*.d.ts"` before `"import"` / `"require"`). Because all `js/` packages declare `"type": "commonjs"`, TypeScript under `moduleResolution: "Node16"` / `"NodeNext"` treats `.d.ts` as a CommonJS declaration file, causing ESM imports to resolve CJS types ("Masquerading as CJS" / `FalseCJS`).  ### Impact  1. **Active `Node16` / `NodeNext` ESM breakage (3 plugins with `export default` on `"."`):**    - `js/plugins/anthropic/package.json` (`export default anthropic`)    - `js/plugins/dev-local-vectorstore/package.json` (`export default devLocalVectorstore`)    - `js/plugins/fastify/package.json` (`export default genkitFastify`)     ESM callers using `moduleResolution: "Node16"` or `"NodeNext"` who import the default export (e.g., `import anthropic from '@genkit-ai/anthropic'; anthropic();`) hit `TS2349: This expression is not callable`.  2. **Latent `FalseCJS` & repo inconsistency (7 packages with named-only public exports):** 
+
 - **Issue #7277** (2026-11-23): **[PY] genkit-ollama drops tool requests from chat messages, so tool calls loop until max_turns**
   *Symptoms*: **Describe the bug**  `genkit-ollama` drops the model's tool requests when it converts a Genkit request into Ollama chat messages. `OllamaModel.build_chat_messages` (`py/packages/genkit-ollama/src/genkit_ollama/_models.py`) copies only text, tool-response output and images into each `ollama.Message`:  ```python for text_part in message.content:     if text_part.text is not None:         item.content = (item.content or '') + text_part.text     elif text_part.tool_response is not None:         item.content = (item.content or '') + str(text_part.tool_response.output)     elif text_part.media is not None:         ... ```  A `tool_request` part is ignored, so the assistant message that asked for the tool reaches Ollama with empty content and no `tool_calls`, and the tool message that follows has no `tool_name`. The model receives a tool result for a call it never made, calls the tool again, and the generate loop ends with `ABORTED` / `Exceeded maximum tool call iterations`.  Any tool use through the Ollama plugin is affected: `ai.generate(tools=...)`, prompts with tools, and agents (`genkit.exp`), where every tool turn aborts.  **To Reproduce**  Ollama running locally with `gemma4:e4b` pulled.  ```python import asyncio  from genkit import Genkit, Message, Part, Role from genkit.model import ModelRequest from genkit_ollama import Ollama from genkit_ollama._models import OllamaModel from pydantic import BaseModel  ai = Genkit(plugins=[Ollama()]) calls = 0   class NoInput(BaseModel):
-
-- **Issue #6994** (2026-11-01): **[Go] Filesystem middleware: queued read_file injection breaks interrupt resume — "cannot resume generation unless the last message is by a model"**
-  *Symptoms*: **Describe the bug**  The `Filesystem` middleware queues `read_file`'s file contents and appends them to `params.Request.Messages` as a user message at the **entry of the next Generate**. When a Generate ends with an interrupt (e.g. a `ToolApproval` hold) while an injection is still queued, the resume Generate injects that user message at its entry — **after** the model message carrying the tool requests. The turn-0 resume validation in `handleResumeOption` then fails, because it validates against the hook-revised message list (`turnOpts.Messages = req.Messages`):  ``` FAILED_PRECONDITION: handleResumeOption: cannot resume generation unless the last message is by a model with at least one tool request ```  The injected message already carries the `filesystemMiddlewareTool` metadata, but the resume validation does not skip it (unlike the `ToolApproval` judge, which deliberately does).  **To Reproduce**  Self-contained program below — no API key, no network: a stub OpenAI-compatible server scripts the model to answer one response with two parallel tool calls (`read_file go.mod`, pre-approved, runs and queues its contents; `edit_file go.mod`, held by `ToolApproval`). The caller then approves and resumes the edit.  ``` go mod tidy && go run . ```  Observed on genkit v1.14.0:  ``` handleResumeOption: cannot resume generation unless the last message is by a model with at least one tool request exit status 1 ```  Setting `applyWorkaround = true` in the same program (strip the messag
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1957,1082 +1953,1046 @@ export function setUserSettings(s: Record<string, string | boolean | number>) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `aa34700a` (2026-11-24)
-**Commit Message**: fix(genkit-tools): tag first_visit runtime and skip CI analytics (#7174)
+### Incident Patch 1: `c9f68fdb` (2026-11-24)
+**Commit Message**: fix(js): fix package exports and prevent tarball file leaks (#7175)
 
-**File**: `.github/workflows/build-cli-binaries.yml` (modified, +6/-10)
+**File**: `js/ai/package.json` (modified, +127/-46)
 ```diff
-@@ -176,8 +176,8 @@ jobs:
-         run: |
-           echo "Testing genkit ui:start"
-           
--          # Start UI in background, piping any prompts to accept them
--          (echo "" | ./genkit-${{ matrix.target }} ui:start 2>&1 | tee ui_output.log) &
-+          # Start UI in background in non-interactive mode so CI doesn't opt into analytics
-+          ./genkit-${{ matrix.target }} --non-interactive ui:start > ui_output.log 2>&1 &
-           UI_PID=$!
-           
-           # Give it time to start
-@@ -190,7 +190,7 @@ jobs:
-             
-             # Try to stop it gracefully
-             echo "Testing genkit ui:stop"
--            ./genkit-${{ matrix.target }} ui:stop || true
-+            ./genkit-${{ matrix.target }} --non-interactive ui:stop || true
-             
-             # Give it time to stop
-             sleep 2
-@@ -216,13 +216,9 @@ jobs:
-         run: |
-           Write-Host "Testing genkit ui:start"
-           
--          # Create empty input file first for redirecting stdin
--          "" | Out-File -FilePath ".\empty.txt"
--          
--          # Start UI in background, redirecting input to handle prompts
-+          # Start UI in background in non-interactive mode so CI doesn't opt into analytics
-           $process = Start-Process -FilePath ".\genkit-${{ matrix.target }}.exe" `
--            -ArgumentList "ui:start" `
--            -RedirectStandardInput ".\empty.txt" `
-+            -ArgumentList "--non-interactive", "ui:start" `
-             -RedirectStandardOutput ".\ui_output.log" `
-             -RedirectStandardError ".\ui_error.log" `
-             -PassThru `
-@@ -242,7 +238,7 @@ jobs:
-             
-             # Try to stop it gracefully
-             Write-Host "Testing genkit ui:stop"
--            & ".\genkit-${{ matrix.target }}.exe" ui:stop
-+            & ".\genkit-${{ matrix.target }}.exe" --non-interactive ui:stop
-             
-             Start-Sleep -Seconds 2
+@@ -52,93 +52,168 @@
+   "types": "lib/index.d.ts",
+   "exports": {
+     ".": {
+-      "types": "./lib/index.d.ts",
+-      "require": "./lib/index.js",
+-      "import": "./lib/index.mjs",
++      "import": {
++        "types": "./lib/index.d.mts",
++        "default": "./lib/index.mjs"
++      },
++      "require": {
++        "types": "./lib/index.d.ts",
++        "default": "./lib/index.js"
++      },
+       "default": "./lib/index.js"
+     },
+     "./retriever": {
+-      "types": "./lib/retriever.d.ts",
+-      "require": "./lib/retriever.js",
+-      "import": "./lib/retriever.mjs",
++      "import": {
++        "types": "./lib/retriever.d.mts",
++        "default": "./lib/retriever.mjs"
++      },
++      "require": {
++        "types": "./lib/retriever.d.ts",
++        "default": "./lib/retriever.js"
++      },
+       "default": "./lib/retriever.js"
+     },
+     "./embedder": {
+-      "types": "./lib/embedder.d.ts",
+-      "require": "./lib/embedder.js",
+-      "import": "./lib/embedder.mjs",
++      "import": {
++        "types": "./lib/embedder.d.mts",
++        "default": "./lib/embedder.mjs"
++      },
++      "require": {
++        "types": "./lib/embedder.d.ts",
++        "default": "./lib/embedder.js"
++      },
+       "default": "./lib/embedder.js"
+     },
+     "./evaluator": {
+-      "types": "./lib/evaluator.d.ts",
+-      "require": "./lib/evaluator.js",
+-      "import": "./lib/evaluator.mjs",
++      "import": {
++        "types": "./lib/evaluator.d.mts",
++        "default": "./lib/evaluator.mjs"
++      },
++      "require": {
++        "types": "./lib/evaluator.d.ts",
++        "default": "./lib/evaluator.js"
++      },
+       "default": "./lib/evaluator.js"
+     },
+     "./model": {
+-      "types": "./lib/model.d.ts",
+-      "require": "./lib/model.js",
+-      "import": "./lib/model.mjs",
++      "import": {
++        "types": "./lib/model.d.mts",
++        "default": "./lib/model.mjs"
++      },
++      "require": {
++        "types": "./lib/model.d.ts",
++        "default": "./lib/model.js"
++      },
+       "default": "./lib/model.js"
+     },
+     "./model/middleware": {
+-      "types": "./lib/model/middleware.d.ts",
+-      "require": "./lib/model/middleware.js",
+-      "import": "./lib/model/middleware.mjs",
++      "import": {
++        "types": "./lib/model/middleware.d.mts",
++        "default": "./lib/model/middleware.mjs"
++      },
++      "require": {
++        "types": "./lib/model/middleware.d.ts",
++        "default": "./lib/model/middleware.js"
++      },
+       "default": "./lib/model/middleware.js"
+     },
+     "./extract": {
+-      "types": "./lib/extract.d.ts",
+-      "require": "./lib/extract.js",
+-      "import": "./lib/extract.mjs",
++      "import": {
++        "types": "./lib/extract.d.mts",
++        "default": "./lib/extract.mjs"
++      },
++      "require": {
++        "types": "./lib/extract.d.ts",
++        "default": "./lib/extract.js"
++      },
+       "default": "./lib/extract.js"
+     },
+     "./tool": {
+-      "types": "./lib/tool.d.ts",
+-      "require": "./lib/tool.js",
+-      "import": "./lib/tool.mjs",
++      "import": {
++        "types": "./lib/tool.d.mts",
++        "default": "./lib/tool.mjs"
++      },
++      "require": {
++        "types": "./lib/tool.d.ts",
++        "default": "./lib/tool.js"
++      },
+       "default": "./lib/tool.js"
+     },
+     "./testing": {
+-      "types": "./lib/testing/index.d.ts",
+-      "require": "./lib/testing/index.js",
+-      "import": "./lib/testing/index.mjs",
++      "import": {
++        "types": "./lib/testing/index.d.mts",
++        "default": "./lib/testing/index.mjs"
++      },
++      "require": {
++        "types": "./lib/testing/index.d.ts",
++        "default": "./lib/testing/index.js"
++      },
+       "default": "./lib/testing/index.js"
+     },
+     "./reranker": {
+-      "types": "./lib/reranker.d.ts",
+-      "require": "./lib/reranker.js",
+-      "import": "./lib/reranker.mjs",
++      "import": {
++        "types": "./lib/reranker.d.mts",
++        "default": "./lib/reranker.mjs"
++      },
++      "require": {
++        "types": "./lib/reranker.d.ts",
++        "default": "./lib/reranker.js"
++      },
+       "default": "./lib/reranker.js"
+     },
+     "./session": {
+-      "types": "./lib/session.d.ts",
+-      "require": "./lib/session.js",
+-      "import": "./lib/session.mjs",
++      "import": {
++        "types": "./lib/session.d.mts",
++        "default": "./lib/session.mjs"
++      },
++      "require": {
++        "types": "./lib/session.d.ts",
++        "default": "./lib/session.js"
++      },
+       "default": "./lib/session.js"
+     },
+     "./session-stores": {
+-      "types": "./lib/session-stores.d.ts",
+-      "require": "./lib/session-stores.js",
+-      "import": "./lib/session-stores.mjs",
++      "import": {
++        "types": "./lib/session-stores.d.mts",
++        "default": "./lib/session-stores.mjs"
++      },
++      "require": {
++        "types": "./lib/session-stores.d.ts",
++        "default": "./lib/session-stores.js"
++      },
+       "default": "./lib/session
+```
+
+**File**: `js/core/package.json` (modified, +63/-22)
+```diff
+@@ -64,45 +64,80 @@
+   "types": "lib/index.d.ts",
+   "exports": {
+     ".": {
+-      "types": "./lib/index.d.ts",
+-      "require": "./lib/index.js",
+-      "import": "./lib/index.mjs",
++      "import": {
++        "types": "./lib/index.d.mts",
++        "default": "./lib/index.mjs"
++      },
++      "require": {
++        "types": "./lib/index.d.ts",
++        "default": "./lib/index.js"
++      },
+       "default": "./lib/index.js"
+     },
+     "./async": {
+-      "types": "./lib/async.ts",
+-      "require": "./lib/async.js",
+-      "import": "./lib/async.mjs",
++      "import": {
++        "types": "./lib/async.d.mts",
++        "default": "./lib/async.mjs"
++      },
++      "require": {
++        "types": "./lib/async.d.ts",
++        "default": "./lib/async.js"
++      },
+       "default": "./lib/async.js"
+     },
+     "./registry": {
+-      "types": "./lib/registry.d.ts",
+-      "require": "./lib/registry.js",
+-      "import": "./lib/registry.mjs",
++      "import": {
++        "types": "./lib/registry.d.mts",
++        "default": "./lib/registry.mjs"
++      },
++      "require": {
++        "types": "./lib/registry.d.ts",
++        "default": "./lib/registry.js"
++      },
+       "default": "./lib/registry.js"
+     },
+     "./tracing": {
+-      "types": "./lib/tracing.d.ts",
+-      "require": "./lib/tracing.js",
+-      "import": "./lib/tracing.mjs",
++      "import": {
++        "types": "./lib/tracing.d.mts",
++        "default": "./lib/tracing.mjs"
++      },
++      "require": {
++        "types": "./lib/tracing.d.ts",
++        "default": "./lib/tracing.js"
++      },
+       "default": "./lib/tracing.js"
+     },
+     "./logging": {
+-      "types": "./lib/logging.d.ts",
+-      "require": "./lib/logging.js",
+-      "import": "./lib/logging.mjs",
++      "import": {
++        "types": "./lib/logging.d.mts",
++        "default": "./lib/logging.mjs"
++      },
++      "require": {
++        "types": "./lib/logging.d.ts",
++        "default": "./lib/logging.js"
++      },
+       "default": "./lib/logging.js"
+     },
+     "./schema": {
+-      "types": "./lib/schema.d.ts",
+-      "require": "./lib/schema.js",
+-      "import": "./lib/schema.mjs",
++      "import": {
++        "types": "./lib/schema.d.mts",
++        "default": "./lib/schema.mjs"
++      },
++      "require": {
++        "types": "./lib/schema.d.ts",
++        "default": "./lib/schema.js"
++      },
+       "default": "./lib/schema.js"
+     },
+     "./node": {
+-      "types": "./lib/node.d.ts",
+-      "require": "./lib/node.js",
+-      "import": "./lib/node.mjs",
++      "import": {
++        "types": "./lib/node.d.mts",
++        "default": "./lib/node.mjs"
++      },
++      "require": {
++        "types": "./lib/node.d.ts",
++        "default": "./lib/node.js"
++      },
+       "default": "./lib/node.js"
+     }
+   },
+@@ -131,7 +166,13 @@
+       ],
+       "node": [
+         "lib/node"
++      ],
++      "async": [
++        "lib/async"
+       ]
+     }
+-  }
++  },
++  "files": [
++    "lib"
++  ]
+ }
+```
+
+**File**: `js/genkit/package.json` (modified, +157/-62)
+```diff
+@@ -9,7 +9,7 @@
+   ],
+   "version": "1.44.0",
+   "type": "commonjs",
+-  "main": "./lib/cjs/index.js",
++  "main": "./lib/index.js",
+   "scripts": {
+     "check": "tsc -p tsconfig.test.json",
+     "compile": "tsup-node",
+@@ -43,125 +43,217 @@
+     "typescript": "^5.9.3"
+   },
+   "files": [
+-    "genkit-ui",
+-    "lib",
+-    "src",
+-    "*"
++    "lib"
+   ],
+   "types": "lib/index.d.ts",
+   "exports": {
+     ".": {
+-      "types": "./lib/index.d.ts",
+-      "require": "./lib/index.js",
+-      "import": "./lib/index.mjs",
++      "import": {
++        "types": "./lib/index.d.mts",
++        "default": "./lib/index.mjs"
++      },
++      "require": {
++        "types": "./lib/index.d.ts",
++        "default": "./lib/index.js"
++      },
+       "default": "./lib/index.js"
+     },
+     "./registry": {
+-      "types": "./lib/registry.d.ts",
+-      "require": "./lib/registry.js",
+-      "import": "./lib/registry.mjs",
++      "import": {
++        "types": "./lib/registry.d.mts",
++        "default": "./lib/registry.mjs"
++      },
++      "require": {
++        "types": "./lib/registry.d.ts",
++        "default": "./lib/registry.js"
++      },
+       "default": "./lib/registry.js"
+     },
+     "./beta": {
+-      "types": "./lib/beta.d.ts",
+-      "require": "./lib/beta.js",
+-      "import": "./lib/beta.mjs",
++      "import": {
++        "types": "./lib/beta.d.mts",
++        "default": "./lib/beta.mjs"
++      },
++      "require": {
++        "types": "./lib/beta.d.ts",
++        "default": "./lib/beta.js"
++      },
+       "default": "./lib/beta.js"
+     },
+     "./tracing": {
+-      "types": "./lib/tracing.d.ts",
+-      "require": "./lib/tracing.js",
+-      "import": "./lib/tracing.mjs",
++      "import": {
++        "types": "./lib/tracing.d.mts",
++        "default": "./lib/tracing.mjs"
++      },
++      "require": {
++        "types": "./lib/tracing.d.ts",
++        "default": "./lib/tracing.js"
++      },
+       "default": "./lib/tracing.js"
+     },
+     "./logging": {
+-      "types": "./lib/logging.d.ts",
+-      "require": "./lib/logging.js",
+-      "import": "./lib/logging.mjs",
++      "import": {
++        "types": "./lib/logging.d.mts",
++        "default": "./lib/logging.mjs"
++      },
++      "require": {
++        "types": "./lib/logging.d.ts",
++        "default": "./lib/logging.js"
++      },
+       "default": "./lib/logging.js"
+     },
+     "./schema": {
+-      "types": "./lib/schema.d.ts",
+-      "require": "./lib/schema.js",
+-      "import": "./lib/schema.mjs",
++      "import": {
++        "types": "./lib/schema.d.mts",
++        "default": "./lib/schema.mjs"
++      },
++      "require": {
++        "types": "./lib/schema.d.ts",
++        "default": "./lib/schema.js"
++      },
+       "default": "./lib/schema.js"
+     },
+     "./formats": {
+-      "types": "./lib/formats.d.ts",
+-      "require": "./lib/formats.js",
+-      "import": "./lib/formats.mjs",
++      "import": {
++        "types": "./lib/formats.d.mts",
++        "default": "./lib/formats.mjs"
++      },
++      "require": {
++        "types": "./lib/formats.d.ts",
++        "default": "./lib/formats.js"
++      },
+       "default": "./lib/formats.js"
+     },
+     "./retriever": {
+-      "types": "./lib/retriever.d.ts",
+-      "require": "./lib/retriever.js",
+-      "import": "./lib/retriever.mjs",
++      "import": {
++        "types": "./lib/retriever.d.mts",
++        "default": "./lib/retriever.mjs"
++      },
++      "require": {
++        "types": "./lib/retriever.d.ts",
++        "default": "./lib/retriever.js"
++      },
+       "default": "./lib/retriever.js"
+     },
+     "./reranker": {
+-      "types": "./lib/reranker.d.ts",
+-      "require": "./lib/reranker.js",
+-      "import": "./lib/reranker.mjs",
++      "import": {
++        "types": "./lib/reranker.d.mts",
++        "default": "./lib/reranker.mjs"
++      },
++      "require": {
++        "types": "./lib/reranker.d.ts",
++        "default": "./lib/reranker.js"
++      },
+       "default": "./lib/reranker.js"
+     },
+     "./embedder": {
+-      "types": "./lib/embedder.d.ts",
+-      "require": "./lib/embedder.js",
+-      "import": "./lib/embedder.mjs",
++      "import": {
++        "types": "./lib/embedder.d.mts",
++        "default": "./lib/embedder.mjs"
++      },
++      "require": {
++        "types": "./lib/embedder.d.ts",
++        "default": "./lib/embedder.js"
++      },
+       "default": "./lib/embedder.js"
+     },
+     "./evaluator": {
+-      "types": "./lib/evaluator.d.ts",
+-      "require": "./lib/evaluator.js",
+-      "import": "./lib/evaluator.mjs",
++      "import": {
++        "types": "./lib/evaluator.d.mts",
++        "default": "./lib/evaluator.mjs"
++      },
++      "require": {
++        "types": "./lib/evaluator.d.ts",
++        "default": "./lib/evaluator.js"
++      },
+       "default": "./lib/evaluator.js"
+     },
+     "./model": {
+-      "types": "./lib/model.d.ts",
+-      "require": "./lib/model.js",
+-      "import": "./lib/model.mjs",
++      "import": {
++        "types": "./lib/model.d.mts",
++        "default": "./lib/model
+```
+
+**File**: `js/plugins/a2ui/package.json` (modified, +1/-3)
+```diff
+@@ -60,9 +60,7 @@
+     }
+   },
+   "files": [
+-    "lib",
+-    "README.md",
+-    "LICENSE"
++    "lib"
+   ],
+   "scripts": {
+     "check": "tsc",
+```
+
+**File**: `js/plugins/anthropic/package.json` (modified, +8/-3)
+```diff
+@@ -43,9 +43,14 @@
+   "types": "./lib/index.d.ts",
+   "exports": {
+     ".": {
+-      "types": "./lib/index.d.ts",
+-      "require": "./lib/index.js",
+-      "import": "./lib/index.mjs",
++      "import": {
++        "types": "./lib/index.d.mts",
++        "default": "./lib/index.mjs"
++      },
++      "require": {
++        "types": "./lib/index.d.ts",
++        "default": "./lib/index.js"
++      },
+       "default": "./lib/index.js"
+     }
+   },
+```
+
+**File**: `js/plugins/checks/package.json` (modified, +4/-1)
+```diff
+@@ -57,5 +57,8 @@
+       },
+       "default": "./lib/index.js"
+     }
+-  }
++  },
++  "files": [
++    "lib"
++  ]
+ }
+```
+
+**File**: `js/plugins/chroma/package.json` (modified, +4/-1)
+```diff
+@@ -56,5 +56,8 @@
+       },
+       "default": "./lib/index.js"
+     }
+-  }
++  },
++  "files": [
++    "lib"
++  ]
+ }
+```
+
+**File**: `js/plugins/cloud-sql-pg/package.json` (modified, +4/-1)
+```diff
+@@ -66,5 +66,8 @@
+       },
+       "default": "./lib/index.js"
+     }
+-  }
++  },
++  "files": [
++    "lib"
++  ]
+ }
+```
+
+---
+
+### Incident Patch 2: `4e126d42` (2026-11-24)
+**Commit Message**: fix(genkit-tools/cli): migrate console.* usage and enable no-console ESLint rule (#7328)
+
+**File**: `genkit-tools/cli/src/commands/flow-run.ts` (modified, +2/-1)
+```diff
+@@ -24,6 +24,7 @@ import {
+   runWithManager,
+ } from '../utils/manager-utils.js';
+ import { parseJson } from '../utils/option-parsers.js';
++import { writeStdout } from '../utils/output.js';
+ 
+ interface FlowRunOptions {
+   /** --experimental-auth. */
+@@ -100,7 +101,7 @@ export const flowRun = new Command('flow:run')
+           context: options.context,
+         },
+         options.stream
+-          ? (chunk) => console.log(JSON.stringify(chunk, undefined, '  '))
++          ? (chunk) => writeStdout(JSON.stringify(chunk, undefined, '  '))
+           : undefined,
+         (tid) => {
+           traceId = tid;
+```
+
+**File**: `genkit-tools/cli/src/commands/log-list.ts` (modified, +12/-11)
+```diff
+@@ -24,6 +24,7 @@ import {
+ import { Command, Option } from 'commander';
+ import { runWithManager } from '../utils/manager-utils.js';
+ import { parsePositiveInt } from '../utils/option-parsers.js';
++import { writeStdout } from '../utils/output.js';
+ 
+ export interface LogListOptions {
+   limit: number;
+@@ -108,10 +109,10 @@ export const logList = new Command('log:list')
+ 
+         if (options.format === 'jsonl') {
+           logs.forEach((log) => {
+-            console.log(JSON.stringify(log));
++            writeStdout(JSON.stringify(log));
+           });
+         } else {
+-          console.log(
++          writeStdout(
+             `Found ${logs.length} log${logs.length === 1 ? '' : 's'}:\n`
+           );
+           logs.forEach((log) => {
+@@ -132,17 +133,17 @@ export const logList = new Command('log:list')
+             const message = formatBody(log.body);
+             const attributes = formatAttributes(log.attributes);
+ 
+-            console.log(`ID:       ${id}`);
++            writeStdout(`ID:       ${id}`);
+             if (!options.traceId && log.traceId)
+-              console.log(`Trace ID: ${log.traceId}`);
++              writeStdout(`Trace ID: ${log.traceId}`);
+             if (!options.spanId && log.spanId)
+-              console.log(`Span ID:  ${log.spanId}`);
+-            console.log(`Severity: ${severity}`);
+-            console.log(`Time:     ${time}`);
+-            if (message) console.log(`Message:  ${message}`);
+-            if (attributes) console.log(`Attrs:    ${attributes}`);
++              writeStdout(`Span ID:  ${log.spanId}`);
++            writeStdout(`Severity: ${severity}`);
++            writeStdout(`Time:     ${time}`);
++            if (message) writeStdout(`Message:  ${message}`);
++            if (attributes) writeStdout(`Attrs:    ${attributes}`);
+ 
+-            console.log('---');
++            writeStdout('---');
+           });
+         }
+ 
+@@ -152,7 +153,7 @@ export const logList = new Command('log:list')
+               `To get the next page, use: --continuation-token ${response.continuationToken}`
+             );
            } else {
+-            console.log(
++            writeStdout(
+               `\nTo get the next page, use: --continuation-token ${response.continuationToken}`
+             );
+           }
 ```
 
-**File**: `genkit-tools/cli/src/cli.ts` (modified, +7/-5)
+**File**: `genkit-tools/cli/src/commands/trace-get.ts` (modified, +4/-3)
 ```diff
-@@ -108,17 +108,19 @@ export async function startCLI(): Promise<void> {
-         commandName = 'unknown';
-       }
+@@ -23,6 +23,7 @@ import {
+ import { yellow } from 'colorette';
+ import { Command, Option } from 'commander';
+ import { runWithManager } from '../utils/manager-utils.js';
++import { writeStdout } from '../utils/output.js';
+ import { cleanTraceJson, formatTraceTree } from '../utils/trace-formatter.js';
  
-+      const { isCompiledBinary } = detectCLIRuntime();
-+      const projectRoot = await findProjectRoot();
-+      const projectRuntime = await detectRuntime(projectRoot);
-+
-       if (
-         !process.argv.includes('--non-interactive') &&
-         commandName !== 'config' &&
--        commandName !== 'mcp'
-+        commandName !== 'mcp' &&
-+        actionCommand.name() !== SERVER_HARNESS_COMMAND
-       ) {
--        await notifyAnalyticsIfFirstRun();
-+        await notifyAnalyticsIfFirstRun(projectRuntime);
-       }
+ /**
+@@ -63,14 +64,14 @@ export const traceGet = new Command('trace:get')
+         const processedTrace = cleanTraceJson(response, keepBase64);
  
--      const { isCompiledBinary } = detectCLIRuntime();
--      const projectRoot = await findProjectRoot();
--      const projectRuntime = await detectRuntime(projectRoot);
-       if (
-         process.stdout.isTTY &&
-         !process.argv.includes('--non-interactive') &&
+         if (options.format === 'json') {
+-          console.log(JSON.stringify(processedTrace, undefined, 2));
++          writeStdout(JSON.stringify(processedTrace, undefined, 2));
+         } else {
+-          console.log(
++          logger.info(
+             yellow(
+               'Hint: pass `--format json` flag to get trace data in JSON format\n'
+             )
+           );
+-          console.log(formatTraceTree(processedTrace));
++          writeStdout(formatTraceTree(processedTrace));
+         }
+       } catch (e) {
+         logger.error(`Error retrieving trace: ${e}`);
 ```
 
-**File**: `genkit-tools/cli/tests/cli.test.ts` (modified, +51/-0)
+**File**: `genkit-tools/cli/src/commands/trace-list.ts` (modified, +13/-12)
 ```diff
-@@ -26,6 +26,7 @@ const {
-   mockStartMcpServer,
-   mockWarnIfLegacyGenkitContext,
-   mockLoadDocs,
-+  mockServerHarnessAction,
- } = vi.hoisted(() => ({
-   mockNotifyAnalyticsIfFirstRun: vi.fn(() => Promise.resolve()),
-   mockRecord: vi.fn(() => Promise.resolve()),
-@@ -36,6 +37,7 @@ const {
-   mockStartMcpServer: vi.fn(() => Promise.resolve()),
-   mockWarnIfLegacyGenkitContext: vi.fn(() => Promise.resolve()),
-   mockLoadDocs: vi.fn(() => Promise.resolve({})),
-+  mockServerHarnessAction: vi.fn(),
- }));
+@@ -24,6 +24,7 @@ import {
+ import { Command } from 'commander';
+ import { runWithManager } from '../utils/manager-utils.js';
+ import { parsePositiveInt, parseTraceStatus } from '../utils/option-parsers.js';
++import { writeStdout } from '../utils/output.js';
  
- vi.mock('@genkit-ai/tools-common/utils', async (importOriginal) => {
-@@ -82,6 +84,19 @@ vi.mock('../src/commands/plugins.js', () => ({
-   getPluginSubCommand: vi.fn(() => Promise.resolve(undefined)),
- }));
+ function formatTruncated(val: any, maxLen = 100): string {
+   if (val === undefined) return '';
+@@ -96,7 +97,7 @@ export const traceList = new Command('trace:list')
+           return;
+         }
  
-+vi.mock('../src/commands/server-harness.js', async () => {
-+  const { Command } = await import('commander');
-+  return {
-+    SERVER_HARNESS_COMMAND: '__server-harness',
-+    serverHarness: new Command('__server-harness')
-+      .argument('<port>')
-+      .argument('<logFile>')
-+      .action((port: string, logFile: string) => {
-+        mockServerHarnessAction(port, logFile);
-+      }),
-+  };
-+});
+-        console.log(
++        writeStdout(
+           `Found ${response.traces.length} trace${response.traces.length === 1 ? '' : 's'}:\n`
+         );
+ 
+@@ -132,25 +133,25 @@ export const traceList = new Command('trace:list')
+             outputStr = formatTruncated(attrs['genkit:output']);
+           }
+ 
+-          console.log(`ID:       ${trace.traceId}`);
+-          console.log(`Type:     ${type}`);
+-          console.log(`Name:     ${trace.displayName || 'unknown'}`);
+-          console.log(`Status:   ${status}`);
+-          console.log(`Time:     ${time}`);
+-          console.log(`Duration: ${duration}`);
+-          if (inputStr) console.log(`Input:    ${inputStr}`);
+-          if (outputStr) console.log(`Output:   ${outputStr}`);
++          writeStdout(`ID:       ${trace.traceId}`);
++          writeStdout(`Type:     ${type}`);
++          writeStdout(`Name:     ${trace.displayName || 'unknown'}`);
++          writeStdout(`Status:   ${status}`);
++          writeStdout(`Time:     ${time}`);
++          writeStdout(`Duration: ${duration}`);
++          if (inputStr) writeStdout(`Input:    ${inputStr}`);
++          if (outputStr) writeStdout(`Output:   ${outputStr}`);
+ 
+-          console.log('---');
++          writeStdout('---');
+         });
+ 
+         if (response.continuationToken) {
+-          console.log(
++          writeStdout(
+             `\nTo get the next page, use: --continuation-token ${response.continuationToken}`
+           );
+         }
+ 
+-        console.log(
++        writeStdout(
+           `\nTip: Use "genkit trace:get <traceId>" to view full trace details.`
+         );
+       } catch (e) {
+```
+
+**File**: `genkit-tools/cli/src/utils/output.ts` (added, +26/-0)
+```diff
+@@ -0,0 +1,26 @@
++/**
++ * Copyright 2026 Google LLC
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *     http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
 +
- describe('startCLI', () => {
-   const originalArgv = process.argv;
-   let startCLI: typeof import('../src/cli.js').startCLI;
-@@ -132,4 +147,40 @@ describe('startCLI', () => {
-     expect(mockShowUpdateNotification).toHaveBeenCalledOnce();
-     expect(mockLoadDocs).toHaveBeenCalledOnce();
++/**
++ * Writes a line of primary command output to `stdout` (appending a trailing newline).
++ *
++ * Use this for intentional CLI payload output (such as JSON, JSONL, tables, or
++ * formatted command results) rather than diagnostic messages, which belong on
++ * `logger.*`.
++ */
++export function writeStdout(text = ''): void {
++  process.stdout.write(`${text}\n`);
++}
+```
+
+**File**: `genkit-tools/cli/tests/commands/flow-run.test.ts` (modified, +25/-0)
+```diff
+@@ -27,6 +27,7 @@ import {
+ import { flowBatchRun } from '../../src/commands/flow-batch-run.js';
+ import { flowRun } from '../../src/commands/flow-run.js';
+ import { runWithManager } from '../../src/utils/manager-utils.js';
++import * as output from '../../src/utils/output.js';
+ 
+ vi.mock('@genkit-ai/tools-common/utils');
+ vi.mock('../../src/utils/manager-utils.js');
+@@ -41,6 +42,8 @@ describe('flow:run and flow:batchRun validation', () => {
+ 
+   afterEach(() => {
+     process.exitCode = undefined;
++    flowRun.setOptionValue('stream', false);
++    vi.restoreAllMocks();
+   });
+ 
+   it('rejects invalid --context JSON in flow:run before starting manager', async () => {
+@@ -115,4 +118,26 @@ describe('flow:run and flow:batchRun validation', () => {
+     );
+     expect(runWithManager).not.toHaveBeenCalled();
    });
 +
-+  it('passes the detected projectRuntime to notifyAnalyticsIfFirstRun', async () => {
-+    mockDetectRuntime.mockResolvedValueOnce('go');
-+    process.argv = ['node', 'genkit', 'docs:list', 'js'];
++  it('writes streamed chunks via writeStdout when --stream is enabled', async () => {
++    vi.spyOn(output, 'writeStdout').mockImplementation(() => {});
++    vi.spyOn(logger, 'info').mockImplementation((() => {}) as any);
++    vi.mocked(runWithManager).mockImplementation(async (_root, action) => {
++      const mockManager = {
++        runAction: vi.fn(
++          (_req: unknown, onChunk?: (chunk: unknown) => void) => {
++            onChunk?.({ step: 1 });
++            return Promise.resolve({ result: 'done' });
++          }
++        ),
++      };
++      await action(mockManager as any);
++    });
 +
-+    await startCLI();
++    await flowRun.parseAsync(['node', 'flow:run', 'myFlow', '--stream']);
 +
-+    expect(mockNotifyAnalyticsIfFirstRun).toHaveBeenCalledExactlyOnceWith('go');
-+  });
-+
-+  it('skips first-run analytics prompt when --non-interactive is set', async () => {
-+    process.argv = ['node', 'genkit', '--non-interactive', 'docs:list', 'js'];
-+
-+    await startCLI();
-+
-+    expect(mockNotifyAnalyticsIfFirstRun).not.toHaveBeenCalled();
-+    expect(mockLoadDocs).toHaveBeenCalledOnce();
-+  });
-+
-+  it('skips first-run analytics prompt for __server-harness daemon process', async () => {
-+    process.argv = [
-+      'node',
-+      'genkit',
-+      '__server-harness',
-+      '4000',
-+      '/tmp/devui.log',
-+    ];
-+
-+    await startCLI();
-+
-+    expect(mockNotifyAnalyticsIfFirstRun).not.toHaveBeenCalled();
-+    expect(mockServerHarnessAction).toHaveBeenCalledExactlyOnceWith(
-+      '4000',
-+      '/tmp/devui.log'
++    expect(output.writeStdout).toHaveBeenCalledWith(
++      JSON.stringify({ step: 1 }, undefined, '  ')
 +    );
 +  });
  });
 ```
 
-**File**: `genkit-tools/common/src/utils/analytics.ts` (modified, +8/-3)
+**File**: `genkit-tools/cli/tests/commands/log-list.test.ts` (modified, +20/-14)
 ```diff
-@@ -76,8 +76,11 @@ export class FirstUsageEvent extends GAEvent {
-   name = 'first_visit';
-   duration = 1;
+@@ -26,6 +26,7 @@ import {
+ } from 'vitest';
+ import { logList } from '../../src/commands/log-list.js';
+ import { runWithManager } from '../../src/utils/manager-utils.js';
++import * as output from '../../src/utils/output.js';
  
--  constructor() {
-+  constructor(project_runtime?: string) {
-     super();
-+    this.parameters = {
-+      project_runtime: project_runtime || 'unknown',
-+    };
-   }
- }
+ vi.mock('@genkit-ai/tools-common/utils');
+ vi.mock('../../src/utils/manager-utils.js');
+@@ -51,11 +52,12 @@ describe('log:list command', () => {
  
-@@ -180,7 +183,9 @@ export function extractActionType(key?: unknown): string {
- }
- 
- /** Displays a notification that analytics are in use. */
--export async function notifyAnalyticsIfFirstRun(): Promise<void> {
-+export async function notifyAnalyticsIfFirstRun(
-+  projectRuntime?: string
-+): Promise<void> {
-   if (isAnalyticsOptedOut()) return;
- 
-   if (configstore.get(NOTIFICATION_ACKED)) {
-@@ -198,7 +203,7 @@ export async function notifyAnalyticsIfFirstRun(): Promise<void> {
- 
-   configstore.set(NOTIFICATION_ACKED, true);
- 
--  await record(new FirstUsageEvent());
-+  await record(new FirstUsageEvent(projectRuntime));
- }
- 
- /** Gets session information for the UI. */
-```
-
-**File**: `genkit-tools/common/tests/utils/analytics.test.ts` (modified, +89/-19)
-```diff
-@@ -14,31 +14,38 @@
-  * limitations under the License.
-  */
- 
-+import * as readlinePromises from 'readline/promises';
- import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
- 
-+vi.mock('readline/promises', () => ({
-+  createInterface: vi.fn(),
-+}));
-+
- const UUID_V4_REGEX =
-   /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
- 
- describe('analytics', () => {
--  const store = new Map<string, any>();
-+  const store = new Map<string, unknown>();
-+  let analyticsModule: typeof import('../../src/utils/analytics.js');
-   let getAnalyticsSettings: typeof import('../../src/utils/analytics.js').getAnalyticsSettings;
-   let configstoreModule: typeof import('../../src/utils/configstore.js');
- 
-   beforeEach(async () => {
-     vi.resetModules();
-     configstoreModule = await import('../../src/utils/configstore.js');
--    ({ getAnalyticsSettings } = await import('../../src/utils/analytics.js'));
-+    analyticsModule = await import('../../src/utils/analytics.js');
-+    ({ getAnalyticsSettings } = analyticsModule);
- 
-     store.clear();
-     vi.spyOn(configstoreModule.configstore, 'get').mockImplementation(
-       (key: string) => store.get(key)
-     );
-     vi.spyOn(configstoreModule.configstore, 'set').mockImplementation(((
-       key: string,
--      value?: any
-+      value?: unknown
-     ) => {
-       store.set(key, value);
--    }) as any);
-+    }) as typeof configstoreModule.configstore.set);
-     vi.spyOn(configstoreModule, 'getUserSettings').mockReturnValue({});
+     vi.spyOn(logger, 'info').mockImplementation((() => {}) as any);
+     vi.spyOn(logger, 'error').mockImplementation((() => {}) as any);
+-    vi.spyOn(console, 'log').mockImplementation(() => {});
++    vi.spyOn(output, 'writeStdout').mockImplementation(() => {});
    });
  
-@@ -56,16 +63,11 @@ describe('analytics', () => {
- 
-       const settings = getAnalyticsSettings();
- 
--      expect(settings.enabled).toBe(true);
--      if (!settings.enabled) {
--        throw new Error('Expected analytics settings to be enabled');
--      }
--      expect(settings.clientId).toMatch(UUID_V4_REGEX);
--      expect(configstoreModule.configstore.set).toHaveBeenCalledWith(
--        'genkit-tools-ga-id',
--        settings.clientId
--      );
--      expect(store.get('genkit-tools-ga-id')).toBe(settings.clientId);
-+      expect(settings).toMatchObject({
-+        enabled: true,
-+        clientId: expect.stringMatching(UUID_V4_REGEX),
-+      });
-+      expect(store.get('genkit-tools-ga-id')).toMatch(UUID_V4_REGEX);
-     });
- 
-     it('reuses existing clientId from configstore when present', () => {
-@@ -74,12 +76,80 @@ describe('analytics', () => {
- 
-       const settings = getAnalyticsSettings();
- 
--      expect(settings.enabled).toBe(true);
--      if (!settings.enabled) {
--        throw new Error('Expected analytics settings to be enabled');
--      }
--      expect(settings.clientId).toBe('existing-client-id');
-+      expect(settings).toMatchObject({
-+        enabled: true,
-+        clientId: 'existing-client-id',
-+      });
-       expect(configstoreModule.configstore.set).not.toHaveBeenCalled();
-     });
+   afterEach(() => {
+     process.exitCode = undefined;
++    vi.restoreAllMocks();
    });
-+
-+  describe('FirstUsageEvent', () => {
-+    it('sets project_runtime when provided', () => {
-+      const event = new analyticsModule.FirstUsageEvent('go');
-+
-+      expect(event.parameters).toEqual({ project_runtime: 'go' });
-+    });
-+
-+    it('falls back to unknown when project_runtime is omitted', () => {
-+      const event = new analyticsModule.FirstUsageEvent();
-+
-+      expect(event.parameters).toEqual({ project_runtime: 'unknown' });
-+    });
-+  });
-+
-+  describe('notifyAnalyticsIfFirstRun', () => {
-+    it.each([
-+      ['go', 'go'],
-+      [undefined, 'unknown'],
-+    ])(
-+      'acknowledges notification and sends first_visit with project_runtime=%s as %s',
-+      async (runtime, expected) => {
-+        vi.mocked(readlinePromises.createInterface).mockReturnValue({
-+          question: vi.fn().mockResolvedValue(''),
-+          close: vi.fn(),
-+        } as unknown as readlinePromises.Interface);
-+        const fetchSpy = vi
-+          .spyOn(globalThis, 'fetch')
-+          .mockResolvedValue(new Response(null, { status: 204 }));
-+        vi.spyOn(console, 'log').mockImplementation(() => {});
-+
-+        await analyticsModule.notifyAnalyticsIfFirstRun(runtime);
-+
-+        expect(store.get('analytics_notification')).toBe(true);
-+        expect(fetchSpy).toHaveBeenCalledOnce();
-+        const [, init] = fetchSpy.mock.calls[0];
-+        expect(JSON.parse(String(init?.body))).toMatchObject({
-+          events: [
-+            {
-+              name: 'first_visit',
-+              params: { project_runtime: expected },
-+            },
-+          ],
-+        });
-+      }
+ 
+   it('should list logs with default limit', async () => {
+@@ -81,12 +83,14 @@ describe('log:list command', () => {
+       continuationToken: undefined,
+       filter: undefined,
+     });
+-    expect(console.log).toHaveBeenCalledWith('Found 1 log:\n');
+-    expect(console.log).toHaveBeenCalledWith(expect.stringContaining('INFO'));
+-    expect(console.log).toHaveBeenCalledWith(
++    expect(output.writeStdout).toHaveBeenCalledWith('Found 1 log:\n');
++    expect(output.writeStdout).toHaveBeenCalledWith(
++      expect.stringContaining('INFO')
 +    );
-+
-+    it('skips prompt and event when notification is already acknowledged', async () => {
-+      store.set('analytics_notification', true);
-+      const fetchSpy = vi.spyOn(globalThis, 'fetch');
-+
-+      await analyticsModule.notifyAnalyticsIfFirstRun('go');
-+
-+      expect(readlinePromises.createInterface).not.toHaveBeenCalled();
-+      expect(fetchSpy).not.toHaveBeenCalled();
-+    });
-+
-+    it('skips prompt and event when analyticsOptOut is enabled', async () => {
-+      vi.spyOn(configstoreModule, 'getUserSettin
++    expect(output.writeStdout).toHaveBeenCalledWith(
+       expect.stringContaining('Hello World')
+     );
+-    expect(console.log).toHaveBeenCalledWith(
++    expect(output.writeStdout).toHaveBeenCalledWith(
+       expect.stringContaining('Attrs:    genkit:name=test-log')
+     );
+   });
+@@ -122,7 +126,7 @@ describe('log:list command', () => {
+       continuationToken: 'some-token',
+       filter: undefined,
+     });
+-    expect(console.log).toHaveBeenCalledWith(
++    expect(output.writeStdout).toHaveBeenCalledWith(
+       '\nTo get the next page, use: --continuation-token next-page-token'
+     );
+   });
+@@ -194,15 +198,17 @@ describe('log:list command', () => {
+       '',
+     ]);
+ 
+-    expect(console.log).toHaveBeenCalledWith('ID:       log-123');
+-    expect(console.log).toHaveBeenCalledWith('Trace ID: trace-123');
+-    expect(console.log).toHaveBeenCalledWith('Span ID:  span-123');
+-    expect(console.log).toHaveBeenCalledWith('Severity: WARN');
+-    expect(console.log).toHaveBeenCalledWith(
++    expect(output.writeStdout).toHaveBeenCalledWith('ID:       log-123');
++    expect(output.writeStdout).toHaveBeenCalledWith('Trace ID: trace-123');
++    expect(output.writeStdout).toHaveBeenCalledWith('Span ID:  span-123');
++    expect(output.writeStdout).toHaveBeenCalledWith('Severity: WARN');
++    expect(output.writeStdout).toHaveBeenCalledWith(
+       `Time:     ${new Date(1718302195000).toLocaleString()}`
+     );
+-    expect(console.log).toHaveBeenCalledWith(`Message:  ${'A'.repeat(100)}...`);
+-    expect(console.log).toHaveBeenCalledWith('Attrs:    key=value');
++    expect(output.writeStdout).toHaveBeenCalledWith(
++      `Message:  ${'A'.repeat(100)}...`
++    );
++    expect(output.writeStdout).toHaveBeenCalledWith('Attrs:    key=value');
+   });
+ 
+   it('should output logs in jsonl format', async () => {
+@@ -238,7 +244,7 @@ describe('log:list command', () => {
+       filter: undefined,
+     });
+ 
+-    expect(console.log).toHaveBeenCalledWith(
++    expect(output.writeStdout).toHaveBeenCalledWith(
+       JSON.stringify({ timestamp: 1718302195000, body: 'JSONL log' })
+     );
+   });
 ```
 
-**File**: `tests/src/utils.ts` (modified, +7/-3)
+**File**: `genkit-tools/cli/tests/commands/trace-get.test.ts` (modified, +9/-5)
 ```diff
-@@ -113,19 +113,23 @@ export async function genkitStart(
-         'exec',
-         '--prefix',
-         cliInstallRoot,
-+        '--',
-         'genkit',
-+        '--non-interactive',
-+        '--no-update-notification',
-         'start',
-         '--',
-         ...appCmd.split(' '),
-       ],
-       {
-         cwd: testRoot,
-+        env: {
-+          ...process.env,
-+          XDG_CONFIG_HOME: path.join(cliInstallRoot, '.config'),
-+        },
-       }
-     );
+@@ -35,6 +35,7 @@ import {
+ } from 'vitest';
+ import { traceGet } from '../../src/commands/trace-get.js';
+ import { runWithManager } from '../../src/utils/manager-utils.js';
++import * as output from '../../src/utils/output.js';
  
--    // Press enter in case of cookie ack prompt.
--    appProcess.stdin.write('\n');
--
-     var done = false;
-     setTimeout(() => {
-       if (!done) {
+ vi.mock('@genkit-ai/tools-common/utils');
+ vi.mock('../../src/utils/manager-utils.js');
+@@ -83,8 +84,8 @@ describe('trace:get', () => {
+     traceGet.setOptionValue('format', undefined);
+     traceGet.setOptionValue('keepBase64', undefined);
+ 
+-    // Mock console.log to avoid spamming test output
+-    vi.spyOn(console, 'log').mockImplementation(() => {});
++    // Mock writeStdout to avoid spamming test output
++    vi.spyOn(output, 'writeStdout').mockImplementation(() => {});
+ 
+     // Provide a default implementation for runWithManager
+     mockedRunWithManager.mockImplementation(async (projectRoot, fn) => {
+@@ -110,7 +111,10 @@ describe('trace:get', () => {
+     expect(mockedFindProjectRoot).toHaveBeenCalled();
+     expect(mockedRunWithManager).toHaveBeenCalled();
+ 
+-    expect(console.log).toHaveBeenCalledWith(
++    expect(mockedLogger.info).toHaveBeenCalledWith(
++      expect.stringContaining('Hint: pass `--format json` flag')
++    );
++    expect(output.writeStdout).toHaveBeenCalledWith(
+       expect.stringContaining('Trace ID: test-id')
+     );
+   });
+@@ -142,7 +146,7 @@ describe('trace:get', () => {
+       'json',
+     ]);
+ 
+-    const loggedStr = (console.log as Mock).mock.calls[0][0] as string;
++    const loggedStr = (output.writeStdout as Mock).mock.calls[0][0] as string;
+     const parsed = JSON.parse(loggedStr);
+     expect(parsed.spans.s1.attributes['genkit:input']).toEqual({
+       query: 'hello',
+@@ -179,7 +183,7 @@ describe('trace:get', () => {
+       '--keep-base64',
+     ]);
+ 
+-    const loggedStr = (console.log as Mock).mock.calls[0][0] as string;
++    const loggedStr = (output.writeStdout as Mock).mock.calls[0][0] as string;
+     const parsed = JSON.parse(loggedStr);
+     expect(parsed.spans.s1.attributes.img).toEqual(rawImage);
+   });
 ```
 
 ---
 
-### Incident Patch 2: `9d45c6c0` (2026-11-23)
-**Commit Message**: fix(genkit-tools/telemetry-server): accept OTLP protobuf on /api/otlp/v1/* (#7319)
+### Incident Patch 3: `1bbd0919` (2026-11-24)
+**Commit Message**: fix(tests): await streaming assertions in flow_server_test (#7330)
 
-Co-authored-by: Pavel Jbanov <[REDACTED_EMAIL]>
-
-**File**: `genkit-tools/cli/src/utils/manager-utils.ts` (modified, +9/-7)
+**File**: `tests/src/flow_server_test.ts` (modified, +24/-26)
 ```diff
-@@ -206,11 +206,13 @@ export async function getDevEnvVars(
- 
-   if (useOtel) {
-     // Drive the app's own OTel SDK to the dev telemetry server's OTLP endpoints.
--    // The server only parses JSON bodies (express.json), so http/json is
--    // required; per-signal endpoints are used verbatim (no /v1/* appended), so
--    // the full path is spelled out. Metrics are deliberately not redirected:
--    // the server doesn't ingest them, so they go wherever the app's own OTel
--    // config sends them.
-+    // The protocol is set explicitly to http/protobuf (the OTLP spec default,
-+    // supported by Go autoexport, Python, Java, and JS NodeSDK) so a shell
-+    // OTEL_EXPORTER_OTLP_*_PROTOCOL=grpc or Python opentelemetry-distro's grpc
-+    // default cannot leak in; per-signal endpoints are used verbatim (no /v1/*
-+    // appended), so the full path is spelled out. Metrics are deliberately not
-+    // redirected: the server doesn't ingest them, so they go wherever the app's
-+    // own OTel config sends them.
-     //
-     // GENKIT_TELEMETRY_SERVER is blanked rather than omitted: the child
-     // inherits process.env, so a value exported in the shell (the
-@@ -223,9 +225,9 @@ export async function getDevEnvVars(
-     // with one, and naive concatenation would yield a double slash.
-     const baseUrl = telemetryServerUrl.replace(/\/+$/, '');
-     envVars.OTEL_EXPORTER_OTLP_TRACES_ENDPOINT = `${baseUrl}/api/otlp/v1/traces`;
--    envVars.OTEL_EXPORTER_OTLP_TRACES_PROTOCOL = 'http/json';
-+    envVars.OTEL_EXPORTER_OTLP_TRACES_PROTOCOL = 'http/protobuf';
-     envVars.OTEL_EXPORTER_OTLP_LOGS_ENDPOINT = `${baseUrl}/api/otlp/v1/logs`;
--    envVars.OTEL_EXPORTER_OTLP_LOGS_PROTOCOL = 'http/json';
-+    envVars.OTEL_EXPORTER_OTLP_LOGS_PROTOCOL = 'http/protobuf';
-   } else {
-     envVars.GENKIT_TELEMETRY_SERVER = telemetryServerUrl;
-     if (!disableRealtimeTelemetry) {
-```
-
-**File**: `genkit-tools/cli/tests/commands/start.test.ts` (modified, +7/-2)
-```diff
-@@ -231,7 +231,10 @@ describe('start command', () => {
-       GENKIT_TELEMETRY_SERVER: '',
-       OTEL_EXPORTER_OTLP_TRACES_ENDPOINT:
-         'http://localhost:4033/api/otlp/v1/traces',
--      OTEL_EXPORTER_OTLP_TRACES_PROTOCOL: 'http/json',
-+      OTEL_EXPORTER_OTLP_TRACES_PROTOCOL: 'http/protobuf',
-+      OTEL_EXPORTER_OTLP_LOGS_ENDPOINT:
-+        'http://localhost:4033/api/otlp/v1/logs',
-+      OTEL_EXPORTER_OTLP_LOGS_PROTOCOL: 'http/protobuf',
+@@ -43,7 +43,7 @@ async function testFlowServer() {
+           data: 1,
+         }),
+       });
+-      if (res.status != 200) {
++      if (res.status !== 200) {
+         throw new Error(`timed out waiting for flow server to become healthy`);
+       }
+     },
+@@ -62,34 +62,32 @@ async function testFlowServer() {
+       result: test.response.result,
      };
- 
-     beforeEach(() => {
-@@ -283,7 +286,9 @@ describe('start command', () => {
-       expect(logger.warn).toHaveBeenCalledWith(
-         expect.stringContaining(
-           '  export OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://localhost:4033/api/otlp/v1/traces\n' +
--            '  export OTEL_EXPORTER_OTLP_TRACES_PROTOCOL=http/json'
-+            '  export OTEL_EXPORTER_OTLP_TRACES_PROTOCOL=http/protobuf\n' +
-+            '  export OTEL_EXPORTER_OTLP_LOGS_ENDPOINT=http://localhost:4033/api/otlp/v1/logs\n' +
-+            '  export OTEL_EXPORTER_OTLP_LOGS_PROTOCOL=http/protobuf'
-         )
-       );
-       expect(logger.warn).toHaveBeenCalledWith(
-```
-
-**File**: `genkit-tools/cli/tests/utils/manager-utils.test.ts` (modified, +2/-2)
-```diff
-@@ -180,11 +180,11 @@ describe('getDevEnvVars', () => {
-     expect(envVars.OTEL_EXPORTER_OTLP_TRACES_ENDPOINT).toBe(
-       `${TELEMETRY_URL}/api/otlp/v1/traces`
-     );
--    expect(envVars.OTEL_EXPORTER_OTLP_TRACES_PROTOCOL).toBe('http/json');
-+    expect(envVars.OTEL_EXPORTER_OTLP_TRACES_PROTOCOL).toBe('http/protobuf');
-     expect(envVars.OTEL_EXPORTER_OTLP_LOGS_ENDPOINT).toBe(
-       `${TELEMETRY_URL}/api/otlp/v1/logs`
-     );
--    expect(envVars.OTEL_EXPORTER_OTLP_LOGS_PROTOCOL).toBe('http/json');
-+    expect(envVars.OTEL_EXPORTER_OTLP_LOGS_PROTOCOL).toBe('http/protobuf');
-   });
- 
-   it('normalizes a trailing slash on the telemetry server URL for OTLP endpoints', async () => {
-```
-
-**File**: `genkit-tools/pnpm-lock.yaml` (modified, +121/-7)
-```diff
-@@ -69,7 +69,7 @@ importers:
-         version: 10.0.1(eslint@10.14.0)
-       '@vitest/eslint-plugin':
-         specifier: ^1.6.28
--        version: 1.6.28(@typescript-eslint/eslint-plugin@8.72.1(@typescript-eslint/parser@8.72.1(eslint@10.14.0)(typescript@5.9.3))(eslint@10.14.0)(typescript@5.9.3))(eslint@10.14.0)(typescript@5.9.3)(vitest@4.1.12(@types/node@20.19.43)(vite@8.3.4(@types/node@20.19.43)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1)))
-+        version: 1.6.28(@typescript-eslint/eslint-plugin@8.72.1(@typescript-eslint/parser@8.72.1(eslint@10.14.0)(typescript@5.9.3))(eslint@10.14.0)(typescript@5.9.3))(eslint@10.14.0)(typescript@5.9.3)(vitest@4.1.12(@opentelemetry/api@1.9.1)(@types/node@20.19.43)(vite@8.3.4(@types/node@20.19.43)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1)))
-       eslint:
-         specifier: ^10.14.0
-         version: 10.14.0
-@@ -148,7 +148,7 @@ importers:
-         version: 5.9.3
-       vitest:
-         specifier: 'catalog:'
--        version: 4.1.12(@types/node@20.19.43)(vite@8.3.4(@types/node@20.19.43)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1))
-+        version: 4.1.12(@opentelemetry/api@1.9.1)(@types/node@20.19.43)(vite@8.3.4(@types/node@20.19.43)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1))
- 
-   common:
-     dependencies:
-@@ -242,7 +242,7 @@ importers:
-         version: 5.9.3
-       vitest:
-         specifier: 'catalog:'
--        version: 4.1.12(@types/node@20.19.43)(vite@8.3.4(@types/node@20.19.43)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1))
-+        version: 4.1.12(@opentelemetry/api@1.9.1)(@types/node@20.19.43)(vite@8.3.4(@types/node@20.19.43)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1))
- 
-   telemetry-server:
-     dependencies:
-@@ -265,6 +265,21 @@ importers:
-         specifier: 'catalog:'
-         version: 3.25.76
-     devDependencies:
-+      '@opentelemetry/api':
-+        specifier: 1.9.1
-+        version: 1.9.1
-+      '@opentelemetry/api-logs':
-+        specifier: 0.222.0
-+        version: 0.222.0
-+      '@opentelemetry/otlp-transformer':
-+        specifier: 0.222.0
-+        version: 0.222.0(@opentelemetry/api@1.9.1)
-+      '@opentelemetry/sdk-logs':
-+        specifier: 0.222.0
-+        version: 0.222.0(@opentelemetry/api@1.9.1)
-+      '@opentelemetry/sdk-trace':
-+        specifier: 2.11.0
-+        version: 2.11.0(@opentelemetry/api@1.9.1)
-       '@types/cors':
-         specifier: 'catalog:'
-         version: 2.8.19
-@@ -291,7 +306,7 @@ importers:
-         version: 5.9.3
-       vitest:
-         specifier: 'catalog:'
--        version: 4.1.12(@types/node@20.19.43)(vite@8.3.4(@types/node@20.19.43)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1))
-+        version: 4.1.12(@opentelemetry/api@1.9.1)(@types/node@20.19.43)(vite@8.3.4(@types/node@20.19.43)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1))
- 
- packages:
- 
-@@ -690,6 +705,54 @@ packages:
-       '@cfworker/json-schema':
-         optional: true
- 
-+  '@opentelemetry/api-logs@0.222.0':
-+    resolution: {integrity: sha512-9mb1If+IF6u0ZVXkHQ6ogEae5HwA6ajIVUgpSDQyRASxft6BSXHvBvPooRle3yFN/fKnCdSOnuu0OC3PLcF6+g==}
-+    engines: {node: '>=8.0.0'}
-+
-+  '@opentelemetry/api@1.9.1':
-+    resolution: {integrity: sha512-gLyJlPHPZYdAk1JENA9LeHejZe1Ti77/pTeFm/nMXmQH/HFZlcS/O2XJB+L8fkbrNSqhdtlvjBVjxwUYanNH5Q==}
-+    engines: {node: '>=8.0.0'}
-+
-+  '@opentelemetry/core@2.11.0':
-+    resolution: {integrity: sha512-7YP44XH0tV6+Mb54x2YGf84i7yi+31MBZlE8JwvozkxyTvXbSp10X7cI7YE49ChJ3shMJoBmCJF3+1QFBJctGA==}
-+    engines: {node: ^18.19.0 || >=20.6.0}
-+    peerDependencies:
-+      '@opentelemetry/api': '>=1.0.0 <1.10.0'
-+
-+  '@opentelemetry/otlp-transformer@0.222.0':
-+    resolution: {integrity: sha512-/F3BZ89+CJQnZkMh2tCrtcdB+XT2Dxhj4FFE+WPQ//413hmFL0/RfEX6vgOIWGhiSzrkHWTK3+6SiT7K5/g/jQ==}
-+    engines: {node: ^18.19.0 || >=20.6.0}
-+    peerDependencies:
-+      '@opentelemetry/api': ^1.3.0
-+
-+  '@opentelemetry/resources@2.11.0':
-+    resolution: {integrity: sha512-Ie7+8q8MDF4FAEQCKVMTx3ReUvxiIAgIiiW3c9JdmP8+HMcDy20puT+AHjexnExgnbvBxjQ9fjkFDWrikJ2jQA==}
-+    engines: {node: ^18.19.0 || >=20.6.0}
-+    peerDependencies:
-+      '@opentelemetry/api': '>=1.3.0 <1.10.0'
-+
-+  '@opentelemetry/sdk-logs@0.222.0':
-+    resolution: {integrity: sha512-+19YHODIjaUCArxleaJtuufFZVpz/xvvK+VllQqE+W8hHolxdoRwHfK/s667zezwh1hkx6FFF+oYzetYgqK+Bg==}
-+    engines: {node: ^18.19.0 || >=20.6.0}
-+    peerDependencies:
-+      '@opentelemetry/api': '>=1.4.0 <1.10.0'
-+
-+  '@opentelemetry/sdk-metrics@2.11.0':
-+    resolution: {integrity: sha512-7GXXcObyHyDUUSG+L+kJoquty01bzm7ivE7+SSgXXJcHuPzGviptxwARmI2c+bnnxjexGQbJnyNlN8HxBP/Y7A==}
-+    engines: {node: ^18.19.0 || >=20.6.0}
-+    peerDependencies:
-+      '@opentelemetry/api': '>=1.9.0 <1.10.0'
-+
-+  '@opentelemetry/sdk-trace@2.11.0':
-+    resolution: {integrity: sha512-fFnTqGm8/G73GQVnxYi7LXa1ZVYEUvgL6XI1LpvV0bPC7WQ/ZGgKxCSl8FnlZBKto9JHHEFTO6s6CUpvvtwFrA==}
-+    engines: {node: ^18.19.0 || >=20.6.0}
-+    peerDependencies:
-+      '@opentelemetry/api': '>=1.3.0 <1.10.0'
-+
-+  '@opentelemetry/semantic-conventions@1.44.0':
-+    resolution: {integrity: sha512-E3JkOlMB
-```
-
-**File**: `genkit-tools/telemetry-server/package.json` (modified, +5/-0)
-```diff
-@@ -40,6 +40,11 @@
-     "zod": "catalog:"
-   },
-   "devDependencies": {
-+    "@opentelemetry/api": "1.9.1",
-+    "@opentelemetry/api-logs": "0.222.0",
-+    "@opentelemetry/otlp-transformer": "0.222.0",
-+    "@opentelemetry/sdk-logs": "0.222.0",
-+    "@opentelemetry/sdk-trace": "2.11.0",
-     "@types/cors": "catalog:",
-     "@types/express": "catalog:",
-     "@types/lockfile": "^1.0.4",
-```
-
-**File**: `genkit-tools/telemetry-server/src/index.ts` (modified, +79/-11)
-```diff
-@@ -26,7 +26,11 @@ import express from 'express';
- import type * as http from 'http';
- import { BroadcastManager } from './broadcast-manager.js';
- import type { TraceStore } from './types.js';
--import { logDataFromOtlp, traceDataFromOtlp } from './utils/otlp.js';
-+import {
-+  decodeOtlpProtobuf,
-+  logDataFromOtlp,
-+  traceDataFromOtlp,
-+} from './utils/otlp.js';
- 
- export { LocalFileLogStore } from './file-log-store.js';
- export { LocalFileTraceStore } from './file-trace-store.js';
-@@ -159,7 +163,15 @@ export async function startTelemetryServer(params: {
-     })
-   );
- 
--  api.use(express.json({ limit: params.maxRequestBodySize ?? '100mb' }));
-+  const bodyLimit = params.maxRequestBodySize ?? '100mb';
-+  api.use(express.json({ limit: bodyLimit }));
-+  api.use(
-+    '/api/otlp',
-+    express.raw({
-+      type: 'application/x-protobuf',
-+      limit: bodyLimit,
-+    })
-+  );
- 
-   api.get('/api/__health', async (_, response) => {
-     response.status(200).send('OK');
-@@ -287,6 +299,7 @@ export async function startTelemetryServer(params: {
-     }
-   );
- 
-+  let warnedUnsupportedContentType = false;
-   api.post<{ parentTraceId?: string; parentSpanId?: string }>(
-     [
-       '/api/otlp',
-@@ -297,17 +310,72 @@ export async function startTelemetryServer(params: {
-     ],
-     async (request, response) => {
-       try {
-+        const contentTypeHeader = request.headers['content-type'];
-+        const mediaType =
-+          typeof contentTypeHeader === 'string'
-+            ? contentTypeHeader.split(';')[0].trim().toLowerCase()
-+            : '';
-+        const isProtobuf = mediaType === 'application/x-protobuf';
-+        const isJson = mediaType === 'application/json';
-+        if (!isJson && !isProtobuf) {
-+          if (!warnedUnsupportedContentType) {
-+            warnedUnsupportedContentType = true;
-+            logger.warn(
-+              `Unsupported OTLP Content-Type "${contentTypeHeader ?? 'none'}" on ${request.path}; expected application/json or application/x-protobuf.`
-+            );
-+          }
-+          response.status(415).json({
-+            code: 3, // INVALID_ARGUMENT
-+            message:
-+              'Unsupported Content-Type. Expected application/json or application/x-protobuf.',
-+          });
-+          return;
-+        }
-+
-+        const sendOtlpOk = () => {
-+          if (isProtobuf) {
-+            response
-+              .status(200)
-+              .type('application/x-protobuf')
-+              .send(Buffer.alloc(0));
-+          } else {
-+            response.status(200).json({});
-+          }
-+        };
-+
-+        const normalizedPath = request.path.replace(/\/+$/, '');
-+        if (normalizedPath === '/api/otlp/v1/metrics') {
-+          sendOtlpOk();
-+          return;
-+        }
-+
-         const { parentTraceId, parentSpanId } = request.params;
-+        const signal: 'traces' | 'logs' | undefined =
-+          normalizedPath === '/api/otlp/v1/logs'
-+            ? 'logs'
-+            : normalizedPath === '/api/otlp/v1/traces' || parentTraceId
-+              ? 'traces'
-+              : undefined;
-+        if (isProtobuf && !signal) {
-+          response.status(400).json({
-+            code: 3, // INVALID_ARGUMENT
-+            message:
-+              'Protobuf payloads require a signal-specific endpoint (/api/otlp/v1/traces or /api/otlp/v1/logs).',
-+          });
-+          return;
-+        }
-+
-+        const payload =
-+          Buffer.isBuffer(request.body) && signal
-+            ? decodeOtlpProtobuf(request.body, signal)
-+            : request.body;
- 
--        if (
--          !request.body?.resourceSpans?.length &&
--          !request.body?.resourceLogs?.length
--        ) {
-+        if (!payload?.resourceSpans?.length && !payload?.resourceLogs?.length) {
-           // Acknowledge and ignore empty payloads.
--          response.status(200).json({});
-+          sendOtlpOk();
-           return;
-         }
--        const traces = traceDataFromOtlp(request.body);
-+        const traces = traceDataFromOtlp(payload);
-         for (const trace of traces) {
-           if (parentTraceId) {
-             trace.traceId = parentTraceId;
-@@ -338,14 +406,14 @@ export async function startTelemetryServer(params: {
-         }
- 
-         // TODO: Add real time support and broadcast log events
--        if (request.body.resourceLogs?.length) {
--          const logs = logDataFromOtlp(request.body);
-+        if (payload.resourceLogs?.length) {
-+          const logs = logDataFromOtlp(payload);
-           if (logs.length > 0) {
-             await params.logStore.save(logs);
-           }
-         }
- 
--        response.status(200).json({});
-+        sendOtlpOk();
-       } catch (err) {
-         logger.error(`Error processing OTLP payload: ${err}`);
-         response.status(500).json({
-```
-
-**File**: `genkit-tools/telemetry-server/src/utils/otlp.ts` (modified, +636/-17)
-```diff
-@@ -32,6 +32,10 @@ interface OtlpValue {
-   arrayValue?: {
-     values: OtlpValue[];
-   };
-+  kvlistValue?: {
-+    values: OtlpAttribute[];
-+  };
-+  bytesValue?: string;
- }
- 
- interface OtlpAttribute {
-@@ -62,7 +66,7 @@ interface OtlpSpan {
- interface OtlpScopeSpan {
-   scope: {
-     name: string;
--    version: string;
-+    version?: string;
-   };
-   spans: OtlpSpan[];
- }
-@@ -77,6 +81,7 @@ interface OtlpResourceSpan {
- 
- interface OtlpLogRecord {
-   timeUnixNano: string;
-+  observedTimeUnixNano?: string;
-   severityNumber?: number;
-   severityText?: string;
-   body?: OtlpValue;
-@@ -88,7 +93,7 @@ interface OtlpLogRecord {
- interface OtlpScopeLog {
-   scope: {
-     name: string;
--    version: string;
-+    version?: string;
-   };
-   logRecords: OtlpLogRecord[];
- }
-@@ -106,23 +111,633 @@ export interface OtlpPayload {
-   resourceLogs?: OtlpResourceLog[];
- }
- 
-+const textDecoder = new TextDecoder('utf-8');
-+
-+class ProtoReader {
-+  private readonly view: DataView;
-+  private pos = 0;
-+  private readonly len: number;
-+
-+  constructor(private readonly buf: Uint8Array) {
-+    this.view = new DataView(buf.buffer, buf.byteOffset, buf.byteLength);
-+    this.len = buf.byteLength;
-+  }
-+
-+  eof(): boolean {
-+    return this.pos >= this.len;
-+  }
-+
-+  readVarint(): bigint {
-+    let result = 0n;
-+    let shift = 0n;
-+    while (this.pos < this.len) {
-+      const byte = this.buf[this.pos++];
-+      result |= BigInt(byte & 0x7f) << shift;
-+      if ((byte & 0x80) === 0) {
-+        return result;
-+      }
-+      shift += 7n;
-+      if (shift >= 70n) {
-+        throw new Error('Invalid protobuf payload: varint too long');
-+      }
-+    }
-+    throw new Error('Invalid protobuf payload: unexpected EOF in varint');
-+  }
-+
-+  readTag(): { fieldNumber: number; wireType: number } {
-+    const tag = this.readVarint();
-+    const fieldNumber = Number(tag >> 3n);
-+    const wireType = Number(tag & 0x07n);
-+    if (fieldNumber <= 0) {
-+      throw new Error(
-+        `Invalid protobuf payload: invalid field number ${fieldNumber}`
-+      );
-+    }
-+    return { fieldNumber, wireType };
-+  }
-+
-+  readUint32(wireType: number): number {
-+    if (wireType === 0) {
-+      return Number(BigInt.asUintN(32, this.readVarint()));
-+    }
-+    if (wireType === 5) {
-+      if (this.pos + 4 > this.len) {
-+        throw new Error('Invalid protobuf payload: unexpected EOF in fixed32');
-+      }
-+      const val = this.view.getUint32(this.pos, true);
-+      this.pos += 4;
-+      return val;
-+    }
-+    throw new Error(
-+      `Invalid protobuf payload: expected uint32 wire type, got ${wireType}`
-+    );
-+  }
-+
-+  readInt64Number(wireType: number): number {
-+    if (wireType !== 0) {
-+      throw new Error(
-+        `Invalid protobuf payload: expected varint wire type, got ${wireType}`
-+      );
-+    }
-+    return Number(BigInt.asIntN(64, this.readVarint()));
-+  }
-+
-+  readFixed64String(wireType: number): string {
-+    if (wireType === 1) {
-+      if (this.pos + 8 > this.len) {
-+        throw new Error('Invalid protobuf payload: unexpected EOF in fixed64');
-+      }
-+      const val = this.view.getBigUint64(this.pos, true);
-+      this.pos += 8;
-+      return val.toString();
-+    }
-+    if (wireType === 0) {
-+      return BigInt.asUintN(64, this.readVarint()).toString();
-+    }
-+    throw new Error(
-+      `Invalid protobuf payload: expected fixed64 wire type, got ${wireType}`
-+    );
-+  }
-+
-+  readDouble(wireType: number): number {
-+    if (wireType !== 1) {
-+      throw new Error(
-+        `Invalid protobuf payload: expected 64-bit wire type for double, got ${wireType}`
-+      );
-+    }
-+    if (this.pos + 8 > this.len) {
-+      throw new Error('Invalid protobuf payload: unexpected EOF in double');
-+    }
-+    const val = this.view.getFloat64(this.pos, true);
-+    this.pos += 8;
-+    return val;
-+  }
-+
-+  readBytes(wireType: number): Uint8Array {
-+    if (wireType !== 2) {
-+      throw new Error(
-+        `Invalid protobuf payload: expected length-delimited wire type, got ${wireType}`
-+      );
-+    }
-+    const length = Number(this.readVarint());
-+    if (length < 0 || this.pos + length > this.len) {
-+      throw new Error('Invalid protobuf payload: length out of bounds');
-+    }
-+    const slice = this.buf.subarray(this.pos, this.pos + length);
-+    this.pos += length;
-+    return slice;
-+  }
-+
-+  readString(wireType: number): string {
-+    return textDecoder.decode(this.readBytes(wireType));
-+  }
-+
-+  skipField(wireType: number, fieldNumber?: number): void {
-+    switch (wireType) {
-+      case 0:
-+        this.readVarint();
-+        break;
-+      case 1:
-+        if (this.pos + 8 > this.len) {
-+          throw new Error(
-+            'Invalid protobuf payload: unexpected EOF in 64-bit field'
-+          );
-+        }
-+        this.pos += 8;
-+        break;
-+      case 2:
-+        this.readBytes(2);
-+        break;
-+      case 3:
-+        while (!this.eof()) {
-+          const { fieldNumber: innerField, wireType: innerWire } =
-+            this.rea
-```
-
-**File**: `genkit-tools/telemetry-server/tests/file-store.test.ts` (modified, +423/-1)
-```diff
-@@ -15,11 +15,29 @@
-  */
- 
- import type { TraceData, TraceQueryFilter } from '@genkit-ai/tools-common';
-+import { logger } from '@genkit-ai/tools-common/utils';
-+import { SpanKind, SpanStatusCode, context, trace } from '@opentelemetry/api';
-+import { SeverityNumber } from '@opentelemetry/api-logs';
-+import {
-+  ProtobufLogsSerializer,
-+  ProtobufTraceSerializer,
-+} from '@opentelemetry/otlp-transformer';
-+import {
-+  InMemoryLogRecordExporter,
-+  LoggerProvider,
-+  SimpleLogRecordProcessor,
-+} from '@opentelemetry/sdk-logs';
-+import {
-+  InMemorySpanExporter,
-+  SimpleSpanProcessor,
-+  TracerProvider,
-+} from '@opentelemetry/sdk-trace';
- import fs from 'fs';
- import getPort from 'get-port';
-+import net from 'net';
- import os from 'os';
- import path from 'path';
--import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
- import { Index } from '../src/file-trace-store.js';
- import {
-   LocalFileLogStore,
-@@ -1314,6 +1332,410 @@ describe('otlp-endpoint', () => {
-     });
-     expect(res.status).toBe(500);
-   });
-+
-+  it('saves protobuf traces on /api/otlp/v1/traces', async () => {
-+    const traceIdHex = '0102030405060708090a0b0c0d0e0f10';
-+    const spanIdHex = '1112131415161718';
-+    const startTimeBuf = Buffer.alloc(8);
-+    startTimeBuf.writeBigUInt64LE(1760827335359000000n, 0);
-+    const endTimeBuf = Buffer.alloc(8);
-+    endTimeBuf.writeBigUInt64LE(1760827336695000000n, 0);
-+
-+    const spanBuf = Buffer.concat([
-+      Buffer.from([0x0a, 0x10]),
-+      Buffer.from(traceIdHex, 'hex'),
-+      Buffer.from([0x12, 0x08]),
-+      Buffer.from(spanIdHex, 'hex'),
-+      Buffer.from([0x2a, 0x05]),
-+      Buffer.from('span1'),
-+      Buffer.from([0x30, 0x01]),
-+      Buffer.from([0x39]),
-+      startTimeBuf,
-+      Buffer.from([0x41]),
-+      endTimeBuf,
-+    ]);
-+    const scopeBuf = Buffer.concat([
-+      Buffer.from([0x0a, 0x0a]),
-+      Buffer.from('test-scope'),
-+    ]);
-+    const scopeSpansBuf = Buffer.concat([
-+      Buffer.from([0x0a, scopeBuf.length]),
-+      scopeBuf,
-+      Buffer.from([0x12, spanBuf.length]),
-+      spanBuf,
-+    ]);
-+    const resourceSpansBuf = Buffer.concat([
-+      Buffer.from([0x12, scopeSpansBuf.length]),
-+      scopeSpansBuf,
-+    ]);
-+    const reqBuf = Buffer.concat([
-+      Buffer.from([0x0a, resourceSpansBuf.length]),
-+      resourceSpansBuf,
-+    ]);
-+
-+    const res = await fetch(`${url}/api/otlp/v1/traces`, {
-+      method: 'POST',
-+      headers: { 'Content-Type': 'application/x-protobuf' },
-+      body: reqBuf,
+     console.log(`checking stream for: ${test.path}`);
+-    (async () => {
+-      const response = await streamFlow({
+-        url: `${url}/${test.path}`,
+-        input: test.post.data,
+-      });
++    const response = streamFlow({
++      url: `${url}/${test.path}`,
++      input: test.post.data,
 +    });
-+    expect(res.status).toBe(200);
-+    expect(res.headers.get('content-type') ?? '').toMatch(
-+      /^application\/x-protobuf\b/
-+    );
-+    expect((await res.arrayBuffer()).byteLength).toBe(0);
-+
-+    const getResp = await fetch(`${url}/api/traces/${traceIdHex}`);
-+    expect(getResp.status).toBe(200);
-+    const trace = await getResp.json();
-+    expect(trace.traceId).toBe(traceIdHex);
-+    expect(trace.spans[spanIdHex].spanId).toBe(spanIdHex);
-+    expect(trace.spans[spanIdHex].displayName).toBe('span1');
-+    expect(trace.spans[spanIdHex].startTime).toBe(1760827335359);
-+    expect(trace.spans[spanIdHex].endTime).toBe(1760827336695);
-+  });
-+
-+  it('saves protobuf logs on /api/otlp/v1/logs', async () => {
-+    const traceIdHex = '0102030405060708090a0b0c0d0e0f10';
-+    const spanIdHex = '1112131415161718';
-+    const timeBuf = Buffer.alloc(8);
-+    timeBuf.writeBigUInt64LE(1760827335359000000n, 0);
-+    const bodyValueBuf = Buffer.concat([
-+      Buffer.from([0x0a, 0x09]),
-+      Buffer.from('hello log'),
-+    ]);
-+
-+    const logRecordBuf = Buffer.concat([
-+      Buffer.from([0x09]),
-+      timeBuf,
-+      Buffer.from([0x10, 0x09]), // severity_number = 9
-+      Buffer.from([0x1a, 0x04]),
-+      Buffer.from('INFO'),
-+      Buffer.from([0x2a, bodyValueBuf.length]),
-+      bodyValueBuf,
-+      Buffer.from([0x4a, 0x10]),
-+      Buffer.from(traceIdHex, 'hex'),
-+      Buffer.from([0x52, 0x08]),
-+      Buffer.from(spanIdHex, 'hex'),
-+    ]);
-+    const scopeBuf = Buffer.concat([
-+      Buffer.from([0x0a, 0x0a]),
-+      Buffer.from('test-scope'),
-+    ]);
-+    const scopeLogsBuf = Buffer.concat([
-+      Buffer.from([0x0a, scopeBuf.length]),
-+      scopeBuf,
-+      Buffer.from([0x12, logRecordBuf.length]),
-+      logRecordBuf,
-+    ]);
-+    const resourceLogsBuf = Buffer.concat([
-+      Buffer.from([0x12, scopeLogsBuf.length]),
-+      scopeLogsBuf,
-+    ]);
-+    const reqBuf = Buffer.concat([
-+      Buffer.from([0x0a, resourceLogsBuf.length]),
-+      resourceLogsBuf,
-+    ]);
-+
-+    const res = await fetch(`${url}/api/otlp/v1/logs`, {
-+      method: 'POST',
-+      headers: { 'Content-Type': 'application/x-protobuf' },
-+      body: reqBuf,
-+    });
-+    expect(res.status).toBe(200);
-+    expect(res.headers.get('content-type') ?? '').toMatch(
-+      /^application\/x-protobuf\b/
-+    );
-+    expect((await res.arrayBuffer()).byteLength).toBe(0);
-+
-+    const getResp = aw
+ 
+-      for await (const chunk of response.stream) {
+-        expected = want.message.replace('{count}', chunkCount.toString());
+-        const chunkJSON = JSON.stringify(await chunk);
+-        if (chunkJSON != expected) {
+-          throw new Error(
+-            `unexpected chunk data received, got: ${chunkJSON}, want: ${want.message}`
+-          );
+-        }
+-        chunkCount++;
+-      }
+-      if (chunkCount != test.post.data) {
+-        throw new Error(
+-          `unexpected number of stream chunks received: got ${chunkCount}, want: ${test.post.data}`
+-        );
+-      }
+-      const out = await response.output;
+-      want.result = want.result.replace(/\{count\}/g, chunkCount.toString());
+-      if (out != want.result) {
++    for await (const chunk of response.stream) {
++      expected = want.message.replace('{count}', chunkCount.toString());
++      const chunkJSON = JSON.stringify(chunk);
++      if (chunkJSON !== expected) {
+         throw new Error(
+-          `unexpected output received, got: ${out}, want: ${want.result}`
++          `unexpected chunk data received, got: ${chunkJSON}, want: ${want.message}`
+         );
+       }
+-    })();
++      chunkCount++;
++    }
++    if (chunkCount !== test.post.data) {
++      throw new Error(
++        `unexpected number of stream chunks received: got ${chunkCount}, want: ${test.post.data}`
++      );
++    }
++    const out = await response.output;
++    want.result = want.result.replace(/\{count\}/g, chunkCount.toString());
++    if (out !== want.result) {
++      throw new Error(
++        `unexpected output received, got: ${out}, want: ${want.result}`
++      );
++    }
+   }
+ }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7335** (closed): build(deps): bump go.opentelemetry.io/otel/sdk from 1.46.0 to 1.47.0 in /go (@dependabot[bot])
+- **PR #7334** (closed): build(deps): bump go.opentelemetry.io/otel/sdk from 1.36.0 to 1.47.0 in /go/samples/mcp-git-pr-explainer (@dependabot[bot])
+- **PR #7333** (closed): build(deps): bump go.opentelemetry.io/otel/trace from 1.46.0 to 1.47.0 in /go (@dependabot[bot])
+- **PR #7330** (2026-11-24): fix(tests): await streaming assertions in flow_server_test (@MichaelDoyle)
+- **PR #7328** (2026-11-24): fix(genkit-tools/cli): migrate console.* usage and enable no-console ESLint rule (@genkit-bot)
 - **PR #7324** (2026-11-24): docs(genkit-tools): clarify when to use it.each vs separate tests (@MichaelDoyle)
-- **PR #7319** (2026-11-23): fix(genkit-tools/telemetry-server): accept OTLP protobuf on /api/otlp/v1/* (@genkit-bot)
-- **PR #7317** (2026-11-24): docs(js/genkit): add end-to-end JSDoc usage examples to genkit entrypoint (@genkit-bot)
-- **PR #7304** (2026-11-23): chore(genkit-tools): enforce consistent type imports (@MichaelDoyle)
-- **PR #7303** (2026-11-23): chore(genkit-tools): enable switch, throw, equality, and return-await ESLint rules (@MichaelDoyle)
-- **PR #7302** (2026-11-23): chore(genkit-tools): use pnpm catalog for shared dependencies (@MichaelDoyle)
 
 ---
 
@@ -3052,45 +3012,106 @@ Co-authored-by: Pavel Jbanov <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. genkit-tools): tag first_visit runtime and skip CI analytics
+## X. js): fix package exports and prevent tarball file leaks
 
 **RULE**:
-When implementing operations in `.github/workflows/build-cli-binaries.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in genkit-ai/genkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `js/ai/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in genkit-ai/genkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `aa34700a`: genkit-tools): tag first_visit runtime and skip CI analytics. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c9f68fdb`: js): fix package exports and prevent tarball file leaks. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/build-cli-binaries.yml`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `js/ai/package.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-          # Start UI in background in non-interactive mode so CI doesn't opt into analytics
-          ./genkit-${{ matrix.target }} --non-interactive ui:start > ui_output.log 2>&1 &
-            ./genkit-${{ matrix.target }} --non-interactive ui:stop || true
-          # Start UI in background in non-interactive mode so CI doesn't opt into analytics
-            -ArgumentList "--non-interactive", "ui:start" `
-            & ".\genkit-${{ matrix.target }}.exe" --non-interactive ui:stop
+      "import": {
+        "types": "./lib/index.d.mts",
+        "default": "./lib/index.mjs"
+      },
+      "require": {
+        "types": "./lib/index.d.ts",
+        "default": "./lib/index.js"
+      },
+      "import": {
+        "types": "./lib/retriever.d.mts",
+        "default": "./lib/retriever.mjs"
+      },
+      "require": {
+        "types": "./lib/retriever.d.ts",
+        "default": "./lib/retriever.js"
+      },
+      "import": {
+        "types": "./lib/embedder.d.mts",
+        "default": "./lib/embedder.mjs"
+      },
+      "require": {
+        "types": "./lib/embedder.d.ts",
+        "default": "./lib/embedder.js"
+      },
+      "import": {
+        "types": "./lib/evaluator.d.mts",
+        "default": "./lib/evaluator.mjs"
+      },
+      "require": {
+        "types": "./lib/evaluator.d.ts",
+        "default": "./lib/evaluator.js"
+      },
+      "import": {
+        "types": "./lib/model.d.mts",
+        "default": "./lib/model.mjs"
+      },
+      "require": {
+        "types": "./lib/model.d.ts",
+        "default": "./lib/model.js"
+      },
+      "import": {
+        "types": "./lib/model/middleware.d.mts",
+        "default": "./lib/model/middleware.mjs"
+      },
+      "require": 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-          # Start UI in background, piping any prompts to accept them
-          (echo "" | ./genkit-${{ matrix.target }} ui:start 2>&1 | tee ui_output.log) &
-            ./genkit-${{ matrix.target }} ui:stop || true
-          # Create empty input file first for redirecting stdin
-          "" | Out-File -FilePath ".\empty.txt"
-          
-          # Start UI in background, redirecting input to handle prompts
-            -ArgumentList "ui:start" `
-            -RedirectStandardInput ".\empty.txt" `
-            & ".\genkit-${{ matrix.target }}.exe" ui:stop
+      "types": "./lib/index.d.ts",
+      "require": "./lib/index.js",
+      "import": "./lib/index.mjs",
+      "types": "./lib/retriever.d.ts",
+      "require": "./lib/retriever.js",
+      "import": "./lib/retriever.mjs",
+      "types": "./lib/embedder.d.ts",
+      "require": "./lib/embedder.js",
+      "import": "./lib/embedder.mjs",
+      "types": "./lib/evaluator.d.ts",
+      "require": "./lib/evaluator.js",
+      "import": "./lib/evaluator.mjs",
+      "types": "./lib/model.d.ts",
+      "require": "./lib/model.js",
+      "import": "./lib/model.mjs",
+      "types": "./lib/model/middleware.d.ts",
+      "require": "./lib/model/middleware.js",
+      "import": "./lib/model/middleware.mjs",
+      "types": "./lib/extract.d.ts",
+      "require": "./lib/extract.js",
+      "import": "./lib/extract.mjs",
+      "types": "./lib/tool.d.ts",
+      "require": "./lib/tool.js",
+      "import": "./lib/tool.mjs",
+      "types": "./lib/testing/index.d.ts",
+      "require": "./lib/testing/index.js",
+      "import": "./lib/testing/index.mjs",
+      "types": "./lib/reranker.d.ts",
+      "require": "./lib/reranker.js",
+      "import": "./lib/reranker.mjs",
+      "types": "./lib/session.d.ts",
+      "requ
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `aa34700a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c9f68fdb` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

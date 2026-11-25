@@ -13096,3 +13096,7 @@ Every entry in this ledger must capture:
 | `learn-github-nats-io-nats-go` | `https://github.com/nats-io/nats.go` | `c0846a17` | Multi-dimensional audit evidence | 2026-11-25T11:59:54.049Z |
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `ef8c0626` | Multi-dimensional audit evidence | 2026-11-25T11:59:56.651Z |
 | `learn-dom-d-18cf46ee` | `project://hf-thinkingmachines-tml-d24-varloop-research` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-thinkingmachines-tml-d24-varloop-research-learnings.md` | 2026-11-25T12:00:28.208Z |
+| `learn-huggingface-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf` | `https://huggingface.co/unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-11-25T12:09:00.716Z |
+| `learn-github-gitoxidelabs-gitoxide` | `https://github.com/GitoxideLabs/gitoxide` | `a825f86d` | Multi-dimensional audit evidence | 2026-11-25T12:09:03.596Z |
+| `learn-github-goodrain-rainbond` | `https://github.com/goodrain/rainbond` | `3d312f45` | Multi-dimensional audit evidence | 2026-11-25T12:09:11.057Z |
+| `learn-github-genkit-ai-genkit` | `https://github.com/genkit-ai/genkit` | `5f4d54a0` | Multi-dimensional audit evidence | 2026-11-25T12:09:15.407Z |

@@ -13063,3 +13063,7 @@
 | `CYCLE-20261125-MZEL` | `2026-11-25T11:59:54.045Z` | `nats-io/nats.go` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10518` | Yes (`e2041a3c...`) |
 | `CYCLE-20261125-N1EU` | `2026-11-25T11:59:56.646Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10519` | Yes (`55eaa046...`) |
 | `CYCLE-2026-11-25-PROJ-EVOLVE` | `2026-11-25T12:00:28.208Z` | `hf-thinkingmachines-tml-d24-varloop-research` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-18CF46EE` [Domain D] | Yes (`6973b579...`) |
+| `CYCLE-20261125-YP7S` | `2026-11-25T12:09:00.712Z` | `unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf-learnings.md` | Yes (`8b878cab...`) |
+| `CYCLE-20261125-YRFS` | `2026-11-25T12:09:03.592Z` | `GitoxideLabs/gitoxide` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10520` | Yes (`3b812d0d...`) |
+| `CYCLE-20261125-YX70` | `2026-11-25T12:09:11.052Z` | `goodrain/rainbond` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10521` | Yes (`2808c050...`) |
+| `CYCLE-20261125-Z0JV` | `2026-11-25T12:09:15.403Z` | `genkit-ai/genkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10522` | Yes (`38cac477...`) |

@@ -2623,10 +2623,10 @@
     "repository": "goodrain/rainbond",
     "platform": "github",
     "sourceUrl": "https://github.com/goodrain/rainbond",
-    "sourceVersion": "99c65654",
+    "sourceVersion": "3d312f45",
     "license": "NOASSERTION",
-    "contentHash": "5bf09ff334fb90781f552b2b5719748e50e5ffcc7b6a702ec999862f98c0cb0a",
-    "lastHarvestedAt": "2026-11-24T18:09:11.332Z",
+    "contentHash": "2808c050594b1dcf933c3ba903d6c41d8eb704bbc809cc551881c30bdc69fd42",
+    "lastHarvestedAt": "2026-11-25T12:09:11.057Z",
     "learningId": "learn-github-goodrain-rainbond"
   },
   "bee-san-ciphey": {
@@ -4043,10 +4043,10 @@
     "repository": "GitoxideLabs/gitoxide",
     "platform": "github",
     "sourceUrl": "https://github.com/GitoxideLabs/gitoxide",
-    "sourceVersion": "9ca9eb57",
+    "sourceVersion": "a825f86d",
     "license": "Apache-2.0",
-    "contentHash": "44e5afc4772d1d032a909be7bd15575f22a279f5132c4776ca5d096d09047a04",
-    "lastHarvestedAt": "2026-11-24T10:43:53.682Z",
+    "contentHash": "3b812d0dd0f60aad7b3e6b29fa3f0b73dbe2b6224bf8cffdfe1fc17e4fbea83f",
+    "lastHarvestedAt": "2026-11-25T12:09:03.596Z",
     "learningId": "learn-github-gitoxidelabs-gitoxide"
   },
   "devhubapp-devhub": {
@@ -5973,10 +5973,10 @@
     "repository": "genkit-ai/genkit",
     "platform": "github",
     "sourceUrl": "https://github.com/genkit-ai/genkit",
-    "sourceVersion": "76f631c6",
+    "sourceVersion": "5f4d54a0",
     "license": "Apache-2.0",
-    "contentHash": "d3c6bc422d31a1e0d54e4d916e2ced52db6cf78658bb3126536c6582ae783376",
-    "lastHarvestedAt": "2026-11-24T17:03:17.032Z",
+    "contentHash": "38cac47798884e565d370340d2105bd180c3cf694eabdac7123e881a3cd1e2cd",
+    "lastHarvestedAt": "2026-11-25T12:09:15.407Z",
     "learningId": "learn-github-genkit-ai-genkit"
   },
   "guokaigdg-animal-island-ui": {
@@ -11465,8 +11465,8 @@
     "sourceUrl": "https://huggingface.co/unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF",
     "sourceVersion": "hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf",
     "license": "Open-Source",
-    "contentHash": "e1fa39d680fe8260a25aa6cd41c7c13025f111580dee1f1d0ab126f1386f66b1",
-    "lastHarvestedAt": "2026-11-21T20:49:40.823Z",
+    "contentHash": "8b878caba3d541d33bfc9311a59d02d3ac7d3773a4539f194e6cb30ab23af676",
+    "lastHarvestedAt": "2026-11-25T12:09:00.716Z",
     "learningId": "learn-huggingface-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf"
   },
   "liketrek-trek": {

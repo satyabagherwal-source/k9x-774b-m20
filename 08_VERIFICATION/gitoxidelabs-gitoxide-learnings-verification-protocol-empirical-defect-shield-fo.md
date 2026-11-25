@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T10:44:02.302Z",
+  "timestamp": "2026-11-25T12:09:19.161Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-gitoxidelabs-gitoxide-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [gitoxidelabs-gitoxide-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T10:44:02.302Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T12:09:19.161Z`  
 > **Learning ID**: `LEARN-EVO-gitoxidelabs-gitoxide-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md`  
 > **Source**: github ([https://github.com/GitoxideLabs/gitoxide](https://github.com/GitoxideLabs/gitoxide))  
-> **Source Version**: `9ca9eb57`  
+> **Source Version**: `a825f86d`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T10:43:52.547Z  
+> **Timestamp**: 2026-11-25T12:09:02.411Z  
 > **Learning ID**: `learn-github-gitoxidelabs-gitoxide`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/GitoxideLabs/gitoxide](https://github.com/GitoxideLabs/gitoxide))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T10:43:52.371Z  
+> **Harvest Timestamp**: 2026-11-25T12:09:02.406Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: A tasteful, lean, fast & safe pure Rust implementation of Git
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 12170 stars
+- **Stars / Engagement**: 12171 stars
 
 ---
 
@@ -1638,11 +1638,15 @@ where
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #3239** (2026-11-24): **perf(gix-odb): validate pack offsets on lookup**
-  *Symptoms*: Opening a fresh object store for a single Chromium object scans a 973 MiB index. Validate the fixed layout at open, then check each requested offset against the large-offset table. The strict File constructors, bulk iteration, and store verification still validate all offset references. Cache the result for repeated bulk users of an open index.  Keep the lookup type separate so unchecked offsets cannot reach APIs which require a fully validated index. Exercise both index versions and 64-bit offset slots written by Git.   | Operation | Before | Patched | Samples per version | |---|---:|---:|---:| | Open repository, resolve HEAD, read the object | 45.568 ms | 0.259 ms | 9 runs × 11 opens | | Open index with full validation and read all 29,340,201 offsets | 290.15 ms | 288.05 ms | 8 runs × 3 scans |  Assisted-by: OpenAI Codex
+- **Issue #3241** (2026-11-24): **move experimental APIs to parallel major-zero releases**
+  *Symptoms*: Sibling PR: https://github.com/GitoxideLabs/cargo-smart-release/pull/171  ---  Cargo cannot resolve disjoint minor-series pins of a major-positive crate in one dependency graph. Publish experimental APIs in parallel `0.x` series so downstream libraries can select the APIs they need by version and resolve different experimental series alongside the stable crate.  Keep the `unstable` switch for workspace builds and let cargo smart-release translate those path dependencies for publication. Re-export `SharedPermissions` and `Retries` from the paired stable `gix-fs` release to preserve their type identity across both series. 
+  **Post-Mortem & Fix Analysis**:
+  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"3422bfe91f6692e3a1b0fe84786dcacbd3ba766a","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"},"security_review":{"commit_sha":null,"has_any_findings":null,"has_unresolved_findings":null,"status":null}} -->  <details> <summary><strong>Codex Review Summary</strong>: ✅ Completed</summary>  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-11-24T15:19:02.317464Z">2026-11-24T15:19:02.317464Z</relative-time> | `3422bfe` | Draft marked ready |    <details> <summary>ℹ️ About Codex in GitHub</summary> <br/>  [Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/general). Reviews are triggered when you - Open a pull request for review - Mark a draft as rea
 
-- **Issue #3238** (2026-11-23): **Upgrade `sirocco` to 0.4**
-  *Symptoms*: I maintain `sirocco`, which backs `gix-zlib`'s `sirocco` feature, and want `gitoxide` to stay on its current release so it gets the encoder fixes in 0.4 and isn't left on a line that won't get them.  ## What changes  Only the version requirement in `gix-zlib/Cargo.toml`, and `sirocco` and `crc32fast` (which 0.4 requires at 1.5.5) in `Cargo.lock`. 0.4's one breaking change is a new `Flush::Partial` variant, with `Flush` now `#[non_exhaustive]`. The `sirocco` backend only passes `Flush::None` and `Flush::Finish`, so it builds unchanged.  0.4 also:  - lets a full flush right after a sync flush reset the match history (it used to be skipped as a repeat); - fixes an overflow in `Encoder::make_room()` between blocks, which only debug builds noticed.  Neither is reachable from how `gix-zlib` drives the encoder: it only makes room after draining with `Flush::None`.  ## Testing  Against `sirocco` 0.4.0 on an M4 Mac:  - `cargo test -p gix-zlib`, with and without `--features sirocco` - `cargo test -p gix-odb -p gix-pack --features gix-zlib/sirocco` - `cargo clippy -p gix-zlib --features sirocco --all-targets -- -D warnings` - `cargo test -p gix --features zlib-sirocco --test gix -- object`  `bundle::write_to_directory::immutable_bundle_permissions_match_git_after_umask` failed in my checkout with and without `sirocco` (a setgid bit inherited from the scratch directory), so it is unrelated.  I couldn't run `just qa`: it passes `--locked`, and `Cargo.lock` on `main` is already out of date
+- **Issue #3240** (2026-11-24): **validate pack offsets on lookup**
+  *Symptoms*: Supersedes https://github.com/GitoxideLabs/gitoxide/pull/3239 
+  **Post-Mortem & Fix Analysis**:
+  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"baf3a2ea73bcbdf1c8ddb02669ee2ab30a178a8d","has_any_findings":true,"has_unresolved_findings":true,"status":"completed"},"security_review":{"commit_sha":null,"has_any_findings":null,"has_unresolved_findings":null,"status":null}} -->  <details> <summary><strong>Codex Review Summary</strong>: ✅ Completed</summary>  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-11-24T09:32:16.416698Z">2026-11-24T09:32:16.416698Z</relative-time> | `baf3a2e` | PR opened |    <details> <summary>ℹ️ About Codex in GitHub</summary> <br/>  [Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/general). Reviews are triggered when you - Open a pull request for review - Mark a draft as ready - Commen
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1659,937 +1663,820 @@ where
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4f0a09bd` (2026-11-23)
-**Commit Message**: fix(gix-protocol)!: preserve shallow boundaries during ordinary fetch
-
-This is probably more of a quick fix, and the full history search is a potential
-high cost to pay, but that payment is due only rarely I think, so it should be fine.
-Git also does things differently and fetches the pack first, then does something clever
-that might be faster, but I like not having to fetch a pack just to reject it later.
+### Incident Patch 1: `3befd38c` (2026-11-24)
+**Commit Message**: fix(gix-testtools): confine Git discovery to scripted fixtures
 
 <!-- agent -->
-`Shallow::NoChange` now preserves the local shallow boundary. A fetch
-that requires a different boundary returns a validation error. A shallow
-source can still advertise roots whose ancestry the client already has.
+When a fixture is generated inside a checkout, Git can discover the
+checkout and read its local config. A checkout-local `pack.threads`
+setting can then break `git index-pack` during fixture generation.
 
-Initial clones can accept the source's boundary, and explicit depth
-changes remain available. Callers constructing `fetch::Options`
-must set `accept_shallow_remote` to `false` for ordinary fetches.
-
-Git's `fetch-pack.c::update_shallow()` and `t/t5537-fetch-shallow.sh`
-at `f7de8145694` distinguish shallow clones from ordinary fetches.
-The regression checks both supported protocol versions and both I/O
-modes with and without the remote boundary's history available locally.
+Set `GIT_CEILING_DIRECTORIES` to the fixture directory's parent when
+launching the script. Git can still discover repositories inside the
+fixture from nested directories. Test both discovery boundaries.
 
 Assisted-by: GPT 6.2 Sol
 Co-authored-by: GPT 6.2 Sol <[REDACTED_EMAIL]>
 
-**File**: `gitoxide-core/src/pack/receive.rs` (modified, +1/-1)
+**File**: `tests/tools/src/lib.rs` (modified, +10/-3)
 ```diff
-@@ -148,7 +148,7 @@ where
-             shared_repository_permissions: gix::fs::SharedPermissions::Umask,
-             shallow: &Default::default(),
-             tags: Default::default(),
--            reject_shallow_remote: true,
-+            unrequested_shallow_updates: gix::protocol::fetch::UnrequestedShallowUpdates::Reject,
-         },
-     )
-     .await?;
-```
-
-**File**: `gix-protocol/src/fetch/function.rs` (modified, +39/-12)
-```diff
-@@ -8,7 +8,8 @@ use gix_fs::SharedPermissions;
- use gix_utils::progress::DynNestedProgress;
- 
- use crate::fetch::{
--    Arguments, Context, Negotiate, NegotiateOutcome, Options, Outcome, ProgressId, Shallow, Tags, negotiate,
-+    Arguments, Context, Negotiate, NegotiateOutcome, Options, Outcome, ProgressId, Shallow, Tags,
-+    UnrequestedShallowUpdates, negotiate, response::ShallowUpdate,
- };
- #[crate::bisync::only_async]
- use crate::transport::client::async_io::{ExtendedBufRead, HandleProgress, Transport};
-@@ -54,7 +55,7 @@ pub async fn fetch<P, T>(
-         shared_repository_permissions,
-         shallow,
-         tags,
--        reject_shallow_remote,
-+        unrequested_shallow_updates,
-     }: Options<'_>,
- ) -> Result<Option<Outcome>>
- where
-@@ -154,13 +155,39 @@ where
- 
-             let mut previous_response = previous_response.expect("knowledge of a pack means a response was received");
-             previous_response.append_v1_shallow_updates(v1_shallow_updates);
--            if !previous_response.shallow_updates().is_empty() && shallow_lock.is_none() {
--                if reject_shallow_remote {
--                    bail!(validation(
--                        "Receiving objects from shallow remotes is prohibited due to the value of `clone.rejectShallow`"
--                    ));
-+            let shallow_updates = previous_response.shallow_updates();
-+            if !shallow_updates.is_empty() && shallow_lock.is_none() {
-+                match unrequested_shallow_updates {
-+                    UnrequestedShallowUpdates::Reject => {
-+                        bail!(validation(
-+                            "Receiving objects from shallow remotes is prohibited due to the value of `clone.rejectShallow`"
-+                        ));
-+                    }
-+                    UnrequestedShallowUpdates::Accept => {
-+                        shallow_lock = acquire_shallow_lock(&shallow_file, shared_repository_permissions).map(Some)?;
-+                    }
-+                    UnrequestedShallowUpdates::KeepLocal => {
-+                        let boundary_change = || {
-+                            validation("The remote requires changing shallow boundaries, but no change was requested")
-+                        };
-+                        let mut remote_shallow_roots = Vec::new();
-+                        for update in shallow_updates {
-+                            let ShallowUpdate::Shallow(commit_id) = update else {
-+                                bail!(boundary_change());
-+                            };
-+                            if !shallow_commits.as_ref().is_some_and(|commits| {
-+                                commits.head == *commit_id || commits.tail.binary_search(commit_id).is_ok()
-+                            }) {
-+                                remote_shallow_roots.push(*commit_id);
-+                            }
-+                        }
-+                        if !remote_shallow_roots.is_empty()
-+                            && !negotiate.has_local_commit_history(&remote_shallow_roots, should_interrupt)?
-+                        {
-+                            bail!(boundary_change());
-+                        }
-+                    }
-                 }
--                shallow_lock = acquire_shallow_lock(&shallow_file, shared_repository_permissions).map(Some)?;
-             }
- 
-             let (mut reader, may_read_to_end) =
-@@ -178,11 +205,11 @@ where
-             drop(reader);
- 
-             if let Some(shallow_lock) = shallow_lock
--                && !previous_response.shallow_updates().is_empty()
-+                && !shallow_updates.is_empty()
-             {
--                gix_shallow::write(shallow_lock, shallow_commits, previous_response.shallow_updates()).or_raise(
--                    || message("Could not write 'shallow' file to incorporate remote updates after fetching"),
--                )?;
-+                gix_shallow::write(shallow_lock, shallow_commits, shallow_updates).or_raise(|| {
-+                    message("Could not write 'shallow' file to incorporate remote updates after fetching")
-+                })?;
-             }
-             Ok(Some(Outcome {
-                 last_response: previous_response,
-```
-
-**File**: `gix-protocol/src/fetch/types.rs` (modified, +28/-6)
-```diff
-@@ -15,9 +15,21 @@ pub struct Options<'a> {
-     pub shallow: &'a Shallow,
-     /// Describe how to handle tags when fetching.
-     pub tags: Tags,
--    /// If `true`, if we fetch from a remote that only offers shallow clones, the operation will fail with an error
--    /// instead of writing the shallow boundary to the shallow file.
--    pub reject_shallow_remote: bool,
-+    /// How to handle shallow updates from the remote when `shallow` is [`Shallow::NoChange`].
-+    pub unrequested_shallow_updates: UnrequestedShallowUpdates,
-+}
-+
-+/// How to handle shallow updates from the remote when no change to the local boundary was requested.
-+#[derive(Default, Debug, Copy, Clone, PartialEq, Eq)]
-+pub enum UnrequestedShallowUpdates {
-+    /// Reject any shallow update, even if it would leave the local boundary unchanged.
-+    Reject,
-+    /// Fetch only if the local boundary can stay unchanged: each update must declare a boundary
-+    /// that is already recorded locally or for which the local repository already has the history.
-+    #[default]
-+    KeepLocal,
-+    /// Apply the remote's shallow updates to the local boundary. Use only for a newly created clone.
-+    Accept,
+@@ -38,6 +38,7 @@
+ //! and set `init.defaultBranch=main` and `core.longpaths=true`. The latter lets Git for Windows use long paths
+ //! without depending on external configuration. A script's own `GIT_CONFIG_COUNT` entries coexist with this
+ //! configuration, with isolation taking precedence for shared keys. Explicit `git -c` options can override isolation.
++//! Fixture scripts stop Git's upward repository discovery at the fixture root.
+ //! Bash fixtures trace commands to a separate descriptor so redirected stderr baselines remain unchanged.
+ //! Bash older than 4.1 reports failed commands instead. Captured diagnostics are printed only on failure.
+ //!
+@@ -2026,7 +2027,9 @@ pub fn git(current_dir: impl AsRef<Path>, arguments: &str) -> Result<String> {
+     Ok(String::from_utf8(output.stdout)?)
  }
  
- /// For use in [`crate::Handshake::prepare_lsrefs_or_extract_refmap()`] and [`fetch`](crate::fetch()).
-@@ -41,6 +53,8 @@ pub struct Context<'a, T> {
- 
- #[cfg(feature = "fetch")]
- mod with_fetch {
-+    use std::sync::atomic::AtomicBool;
-+
-     use bstr::ByteSlice;
-     use gix_error::Result;
- 
-@@ -77,6 +91,15 @@ mod with_fetch {
-         /// Returns `true` if wants were added, or `false` if the negotiation should be aborted.
-         #[must_use]
-         fn add_wants(&mut self, arguments: &mut fetch::Arguments, remote_ref_target_known: &[bool]) -> bool;
-+        /// Return whether all `commit_ids` and their ancestors are available under the existing local shallow boundary.
-+        /// The default assumes the history is unavailable when the implementation cannot inspect local objects.
-+        fn has_local_commit_history(
-+            &mut self,
-+            _commit_ids: &[gix_hash::ObjectId],
-+            _should_interrupt: &AtomicBool,
-+        ) -> Result<bool> {
-+            Ok(false)
-+        }
-         /// Typically invokes [`negotiate::one_round()`].
-         fn one_round(
-             &mut self,
-@@ -181,9 +204,8 @@ pub use with_fetch::*;
- /// The *shallow boundary* is a set of commits whose parents are not present in the repository.
- #[derive(Default, Debug, Clone, PartialEq, Eq)]
- pub enum Shallow {
--    /// Fetch all changes from the remote without affecting the shallow boundary at all.
--    ///
--    /// This also means that repositories that aren't shallow will remain like that.
-+    /// Don't request a change to the local shallow boundary.
-+    /// [`Options::unrequested_shallow_updates`] controls how to handle updates sent by the remote anyway.
-     #[default]
-     NoChange,
-     /// Receive update to `depth` commits in the history of the refs to fetch (from the viewpoint of the remote),
-```
-
-**File**: `gix-protocol/tests/protocol/fetch/v1.rs` (modified, +1/-1)
-```diff
-@@ -88,7 +88,7 @@ async fn fetch_receives_pack_after_ready_with_no_done() -> TestResult {
-                 shallow_file: temp.path().join("shallow"),
-                 shallow: &fetch::Shallow::NoChange,
-                 tags: fetch::Tags::None,
--                reject_shallow_remote: false,
-+                unrequested_shallow_updates: fetch::UnrequestedShallowUpdates::KeepLocal,
-             },
-         )
-         .await?
-```
-
-**File**: `gix-shallow/src/lib.rs` (modified, +1/-1)
-```diff
-@@ -45,7 +45,7 @@ pub enum Update {
-     Unshallow(gix_hash::ObjectId),
- }
- 
--/// Return a list of shallow commits as unconditionally read from `shallow_file`.
-+/// Return a sorted list of shallow commits as unconditionally read from `shallow_file`.
+-/// Prepare an isolated Git command in `current_dir`, using the same environment as fixture scripts.
++/// Prepare an isolated Git command in `current_dir`.
++///
++/// Repository discovery may walk above `current_dir`, which allows commands from fixture subdirectories.
  ///
- /// The list of shallow commits represents the shallow boundary, beyond which we are lacking all (parent) commits.
- /// Note that the list is never empty, as `Ok(None)` is returned in that case indicating the repository
-```
-
-**File**: `gix/src/clone/fetch/mod.rs` (modified, +6/-1)
-```diff
-@@ -310,7 +310,12 @@ impl PrepareFetch {
-                 message: reflog_message.clone(),
-             })
-             .with_shallow(self.shallow.clone())
--            .receive(&receiving_repo, &mut progress, should_interrupt)
-+            .receive(
-+                &receiving_repo,
-+                &mut progress,
-+                should_interrupt,
-+                /* is_initial_clone */ true,
-+            )
-             .await?;
- 
-         // Before finalisation, the current repo handle still needs to
-```
-
-**File**: `gix/src/remote/connection/fetch/mod.rs` (modified, +2/-3)
-```diff
-@@ -230,9 +230,8 @@ where
-         self
-     }
- 
--    /// Define what to do when the current repository is a shallow clone.
--    ///
--    /// *Has no effect if the current repository is not as shallow clone.*
-+    /// Set how this fetch may change the local shallow boundary.
-+    /// By default, the fetch fails if it requires changing that boundary.
-     pub fn with_shallow(mut self, shallow: remote::fetch::Shallow) -> Self {
-         self.inner.shallow = shallow;
-         self
-```
-
-**File**: `gix/src/remote/connection/fetch/receive_pack.rs` (modified, +58/-16)
-```diff
-@@ -1,8 +1,12 @@
--use std::{ops::DerefMut, path::PathBuf, sync::atomic::AtomicBool};
-+use std::{
-+    ops::DerefMut,
-+    path::PathBuf,
-+    sync::atomic::{AtomicBool, Ordering},
-+};
- 
- use gix_error::{ResultExt, bail, message};
- use gix_odb::store::RefreshMode;
--use gix_protocol::fetch::{Arguments, negotiate};
-+use gix_protocol::fetch::{Arguments, UnrequestedShallowUpdates, negotiate};
- #[cfg(feature = "async-network-client")]
- use gix_transport::client::async_io::Transport;
- #[cfg(feature = "blocking-network-client")]
-@@ -78,7 +82,9 @@ where
-         P::SubProgress: 'static,
-     {
-         let Prepare { inner, repo } = self;
--        inner.receive(repo, progress, should_interrupt).await
-+        inner
-+            .receive(repo, progress, should_interrupt, /* is_initial_clone */ false)
-+            .await
-     }
- }
- 
-@@ -92,6 +98,7 @@ where
-         repo: &crate::Repository,
-         progress: P,
-         should_interrupt: &AtomicBool,
-+        is_initial_clone: bool,
-     ) -> Result<Outcome>
-     where
-         P: gix_utils::progress::NestedProgress,
-@@ -123,19 +130,27 @@ where
-             );
-         }
- 
-+        let shallow_file = repo.shallow_file()?;
-+        let reject_shallow = Clone::REJECT_SHALLOW
-+            .enrich_error(
-+                repo.config
-+                    .resolved
-+                    .boolean_filter("clone.rejectShallow", &mut repo.filter_config_section()),
-+            )
-+            .or_raise(|| message("Could not obtain configuration to learn if shallow remotes should be rejected"))?
-+            .unwrap_or(false);
-         let fetch_options = gix_protocol::fetch::Options {
-             shared_repository_permissions: repo.config.shared_repository_permissions,
--            shallow_file: repo.shallow_file()?,
-+            shallow_file,
-             shallow: &self.shallow,
-             tags: con.remote.fetch_tags,
--            reject_shallow_remote: Clone::REJECT_SHALLOW
--                .enrich_error(
--                    repo.config
--                        .resolved
--                        .boolean_filter("clone.rejectShallow", &mut repo.filter_config_section()),
--                )
--                .or_raise(|| message("Could not obtain configuration to learn if shallow remotes should be rejected"))?
--                .unwrap_or(false),
-+            unrequested_shallow_updates: if reject_shallow {
-+                UnrequestedShallowUpdates::Reject
-+            } else if is_initial_clone {
-+                UnrequestedShallowUpdates::Accept
-+            } else {
-+                UnrequestedShallowUpdates::KeepLocal
-+            },
-         };
-         let context = gix_protocol::fetch::Context {
-             handshake: &mut handshake,
-@@ -165,7 +180,7 @@ where
-         let mut graph = graph_repo.revision_graph(cache.as_ref());
-         let alternates = repo.objects.store_ref().alternate_db_paths()?;
-         let mut negotiate = Negotiate {
--            objects: &graph_repo.objects,
-+            repo: &graph_repo,
-             refs: &graph_repo.refs,
-             graph: &mut graph,
-             alternates,
-@@ -269,7 +284,7 @@ where
- }
- 
- struct Negotiate<'a, 'b, 'c> {
--    objects: &'a crate::OdbHandle,
-+    repo: &'a crate::Repository,
-     refs: &'a gix_ref::file::Store,
-     graph: &'a mut gix_negotiate::Graph<'b, 'c>,
-     alternates: Vec<PathBuf>,
-@@ -283,7 +298,7 @@ struct Negotiate<'a, 'b, 'c> {
- impl gix_protocol::fetch::Negotiate for Negotiate<'_, '_, '_> {
-     fn mark_complete_and_common_ref(&mut self) -> Result<gix_protocol::fetch::negotiate::Action> {
-         negotiate::mark_complete_and_common_ref(
--            &self.objects,
-+            &self.repo.objects,
-             self.refs,
-             {
-                 let alternates = std::mem::take(&mut self.alternates);
-@@ -309,7 +324,7 @@ impl gix_protocol::fetch::Negotiate for Negotiate<'_, '_, '_> {
- 
-     fn add_wants(&mut self, arguments: &mut Arguments, remote_ref_target_known: &[bool]) -> bool {
-         negotiate::add_wants(
--            self.objects,
-+            &self.repo.objects,
-             arguments,
-             self.ref_map,
-             remote_ref_target_known,
-@@ -318,6 +333,33 @@ impl gix_protocol::fetch::Negotiate for Negotiate<'_, '_, '_> {
-         )
-     }
- 
-+    fn has_local_commit_history(
-+        &mut self,
-+        commit_ids: &[gix_hash::ObjectId],
-+        should_interrupt: &AtomicBool,
-+    ) -> Result<bool> {
-+        let result = self
-+            .repo
-+            .rev_walk(commit_ids.iter().copied())
-+            .use_commit_graph(false)
-+            .all()?
-+            .try_for_each(|item| {
-+                if should_interrupt.load(Ordering::Relaxed) {
-+                    bail!(std::io::Error::new(
-+                        std::io::ErrorKind::Interrupted,
-+                        "Checking the history of remote shallow boundaries was interrupted",
-+                    ));
-+                }
-+                item.map(|_| ())
-+            });
-+        match result {
-+    
-```
-
----
-
-### Incident Patch 2: `281697f9` (2026-11-24)
-**Commit Message**: fix(gix-glob): preserve whitespace-only patterns
-
-<!-- agent -->
-The glob parser discarded a tab-only ignore pattern because it treated
-all ASCII whitespace as empty. Git keeps the tabs: for example, a file
-containing two tabs followed by spaces ignores a path named by just the
-two tabs. A line containing only spaces still produces no pattern.
-
-Reject only empty glob text after handling negation, and leave trailing
-space and line-ending rules to the ignore-file parser.
-
-Assisted-by: GPT 6.2 Sol
-Co-authored-by: GPT 6.2 Sol <[REDACTED_EMAIL]>
-
-**File**: `gix-glob/src/parse.rs` (modified, +1/-4)
-```diff
-@@ -11,9 +11,6 @@ use crate::{pattern, pattern::Mode};
- /// Returns `(pattern, mode, no_wildcard_len)`
- pub fn pattern(mut pat: &[u8], may_alter: bool) -> Option<(&[u8], pattern::Mode, Option<usize>)> {
-     let mut mode = Mode::empty();
--    if pat.is_empty() {
--        return None;
--    }
-     if may_alter {
-         if pat.first() == Some(&b'!') {
-             mode |= Mode::NEGATIVE;
-@@ -25,7 +22,7 @@ pub fn pattern(mut pat: &[u8], may_alter: bool) -> Option<(&[u8], pattern::Mode,
-             }
-         }
-     }
--    if pat.iter().all(u8::is_ascii_whitespace) {
-+    if pat.is_empty() {
-         return None;
-     }
-     if pat.first() == Some(&b'/') {
-```
-
-**File**: `gix-glob/src/pattern.rs` (modified, +3/-2)
-```diff
-@@ -42,7 +42,8 @@ pub enum Case {
- 
- /// Instantiation
- impl Pattern {
--    /// Parse the given `text` as pattern, or return `None` if `text` was empty.
-+    /// Parse the given `text` as pattern, or return `None` if it is empty or consists of just `!`.
-+    /// Whitespace is literal, including in patterns made entirely of whitespace.
-     pub fn from_bytes(text: &[u8]) -> Option<Self> {
-         crate::parse::pattern(text, true).map(|(text, mode, first_wildcard_pos)| Pattern {
-             text: text.into(),
-@@ -53,7 +54,7 @@ impl Pattern {
- 
-     /// Parse the given `text` as pattern without supporting leading `!` or `\\!` , or return `None` if `text` was empty.
-     ///
--    /// This assures that `text` remains entirely unaltered, but removes built-in support for negation as well.
-+    /// As with [`Self::from_bytes()`], whitespace is literal.
-     pub fn from_bytes_without_negation(text: &[u8]) -> Option<Self> {
-         crate::parse::pattern(text, false).map(|(text, mode, first_wildcard_pos)| Pattern {
-             text: text.into(),
-```
-
-**File**: `gix-glob/tests/fixtures/make_baseline.sh` (modified, +2/-1)
-```diff
-@@ -167,9 +167,10 @@ EOF
- # Preserve whitespace-only paths, including newline, with NUL-delimited input and output.
- # Each record contains the requested pattern followed by Git's source, line, matched pattern and path.
- # Git's [:blank:] accepts space/tab; [:space:] also accepts LF/CR, but neither accepts VT/FF.
-+# A tab by itself is a literal ignore rule, not an empty line.
- for ignorecase in false true; do
-   git config core.ignorecase "$ignorecase"
--  for pattern in '[[:blank:]]' '[[:space:]]'; do
-+  for pattern in '[[:blank:]]' '[[:space:]]' $'\t'; do
-     printf '%s\n' "$pattern" > .gitignore
-     for value in ' ' $'\t' $'\n' $'\v' $'\f' $'\r'; do
-       printf '%s\0' "$pattern"
-```
-
-**File**: `gix-glob/tests/glob/parse.rs` (modified, +11/-2)
-```diff
-@@ -35,8 +35,17 @@ fn pat(pattern: &str, mode: Mode, first_glob_char_pos: Option<usize>) -> Option<
- }
- 
- #[test]
--fn whitespace_only_is_ignored() {
--    assert!(gix_glob::parse(b"\n\r\n\t\t   \n").is_none());
-+fn only_empty_patterns_are_ignored() -> gix_testtools::TestResult {
-+    assert!(gix_glob::parse(b"").is_none(), "an empty input has no pattern");
-+    assert!(gix_glob::parse(b"!").is_none(), "negation alone has no pattern");
-+    for text in [" ", "\t", "\r", "\n"] {
-+        assert_eq!(
-+            gix_glob::parse(text),
-+            pat(text, Mode::NO_SUB_DIR, None),
-+            "whitespace is literal even when it makes up the entire pattern"
-+        );
+ /// The inherited environment is captured at construction, so subsequent process-wide changes
+ /// cannot bypass the command's isolation before it is spawned.
+@@ -2450,8 +2453,12 @@ fn configure_command<'a, I: IntoIterator<Item = S>, S: AsRef<OsStr>>(
+     args: I,
+     script_result_directory: &Path,
+ ) -> &'a mut std::process::Command {
+-    configure_git_environment(cmd, script_result_directory)
+-        .args(args)
++    configure_git_environment(cmd, script_result_directory);
++    if let Some(parent) = script_result_directory.parent() {
++        // Git may discover a repository in the fixture itself, including from its subdirectories.
++        cmd.env("GIT_CEILING_DIRECTORIES", parent);
 +    }
-+    Ok(())
++    cmd.args(args)
+         .current_dir(script_result_directory)
+         .env("GIT_DEFAULT_HASH", object_hash.to_string())
  }
- 
- #[test]
 ```
 
-**File**: `gix-glob/tests/glob/pattern/matching.rs` (modified, +3/-3)
+**File**: `tests/tools/src/tests.rs` (modified, +27/-0)
 ```diff
-@@ -118,14 +118,14 @@ fn compare_whitespace_baseline_with_ours() -> gix_testtools::TestResult {
-         assert!(remainder.is_empty(), "each baseline record has five fields");
-         assert_eq!(
-             records.len(),
--            12,
--            "both classes are tested against all six whitespace bytes"
-+            18,
-+            "both classes and the literal tab are tested against all six whitespace bytes"
-         );
-         for record in records {
-             let [pattern, source, _line, matched_pattern, value] = record;
-             let is_match = !source.is_empty();
-             if is_match {
--                assert_eq!(matched_pattern, pattern, "Git matched the requested character class");
-+                assert_eq!(matched_pattern, pattern, "Git matched the requested pattern");
-             }
-             assert_eq!(
-                 match_file(&pat(*pattern), *value, case),
-```
-
-**File**: `gix-ignore/tests/ignore/parse.rs` (modified, +13/-2)
-```diff
-@@ -109,7 +109,12 @@ fn trailing_carriage_return_without_newline_is_a_line_ending() {
- #[test]
- fn comments_are_ignored_as_well_as_empty_ones() {
-     assert!(gix_ignore::parse(b"# hello world", false).next().is_none());
--    assert!(gix_ignore::parse(b"\n\r\n\t\t   \n", false).next().is_none());
-+    for line in [b"\n".as_slice(), b"\r\n", b"   \n"] {
-+        assert!(
-+            gix_ignore::parse(line, false).next().is_none(),
-+            "empty lines and lines containing only spaces do not produce patterns"
-+        );
-+    }
+@@ -85,6 +85,33 @@ fn configure_command_clears_external_config() -> TestResult {
+     Ok(())
  }
  
- #[test]
-@@ -121,13 +126,18 @@ fn backslashes_before_hashes_are_no_comments() {
- }
- 
- #[test]
--fn trailing_spaces_can_be_escaped_to_be_literal() {
-+fn trailing_spaces_can_be_escaped_to_be_literal() -> gix_testtools::TestResult {
-     fn parse_one(input: &str) -> (BString, Mode, usize, gix_ignore::Kind) {
-         let actual: Vec<_> = gix_ignore::parse(input.as_bytes(), false).map(flat_map).collect();
-         assert_eq!(actual.len(), 1, "{input:?} should match");
-         actual.into_iter().next().expect("present")
-     }
- 
-+    assert_eq!(
-+        parse_one("\t\t   \n"),
-+        pat("\t\t", Mode::NO_SUB_DIR, 1),
-+        "trimming unescaped trailing spaces leaves a literal tab-only pattern"
++#[test]
++fn configure_command_limits_repository_discovery_to_the_fixture() -> TestResult {
++    let parent = tempfile::tempdir()?;
++    git(parent.path(), "init")?;
++    git(parent.path(), "config fixture.scope parent")?;
++    let fixture = parent.path().join("fixture");
++    let nested = fixture.join("nested");
++    std::fs::create_dir_all(&nested)?;
++
++    let mut cmd = git_command(&fixture);
++    let result = configure_command(&mut cmd, object_hash(), ["config", "--get", "fixture.scope"], &fixture).output()?;
++    assert_eq!(result.status.code(), Some(1), "Git must skip the parent config");
++
++    git(&fixture, "init")?;
++    git(&fixture, "config fixture.scope fixture")?;
++    let mut cmd = git_command(&fixture);
++    let result = configure_command(&mut cmd, object_hash(), ["config", "--get", "fixture.scope"], &fixture)
++        .current_dir(nested)
++        .output()?;
++    assert!(
++        result.status.success(),
++        "Git can discover a repository inside the fixture"
 +    );
-     assert_eq!(
-         parse_one(r"a  \ "),
-         pat(r"a  \ ", Mode::NO_SUB_DIR, 1),
-@@ -163,6 +173,7 @@ fn trailing_spaces_can_be_escaped_to_be_literal() {
-         pat(r"a   \\", Mode::NO_SUB_DIR, 1),
-         "strange things like these work as well, but trailers are removed if the backslash is escaped"
-     );
++    assert_eq!(result.stdout.to_str()?.trim(), "fixture");
 +    Ok(())
- }
- 
- fn flatten(
++}
++
+ #[test]
+ fn configure_command_keeps_destructive_git_operations_in_the_fixture() -> TestResult {
+     let fixture = tempfile::TempDir::new()?;
 ```
 
 ---
 
-### Incident Patch 3: `9abb5318` (2026-11-23)
-**Commit Message**: Merge pull request #3236 from GitoxideLabs/fix-gix-protocol
+### Incident Patch 2: `fff99b82` (2026-11-24)
+**Commit Message**: fix(gix-transport): preserve Git SSH argument boundaries
 
-Preserve shallow boundaries during ordinary fetch
+I changes service program and path to execute to one argument, and quotes it,
+possibly with special git quoting.
+Let's see if this is the solution or causes new problems elsewhere.
+Only on Winodws fortunately.
 
-**File**: `gitoxide-core/src/pack/receive.rs` (modified, +1/-1)
+<!-- agent -->
+On Windows, the MSYS2 runtime can expand an SSH destination before
+OpenSSH checks whether it looks like an option. Use Git-compatible
+Windows quoting for both the SSH feature probe and the connection.
+
+Pass the service and the single-quoted repository path together as one
+remote command, as Git does in `connect.c`. This keeps the path's
+quoting through local argument parsing and into the remote shell.
+Document the caller's quoting responsibility in `gix-url` and escape
+raw arguments at the transport trace sites.
+
+Assisted-by: GPT 6.2 Sol
+Co-authored-by: GPT 6.2 Sol <[REDACTED_EMAIL]>
+
+**File**: `gix-command/src/prepare.rs` (modified, +1/-1)
 ```diff
-@@ -148,7 +148,7 @@ where
-             shared_repository_permissions: gix::fs::SharedPermissions::Umask,
-             shallow: &Default::default(),
-             tags: Default::default(),
--            reject_shallow_remote: true,
-+            unrequested_shallow_updates: gix::protocol::fetch::UnrequestedShallowUpdates::Reject,
-         },
-     )
-     .await?;
+@@ -179,7 +179,7 @@ impl Prepare {
+     pub fn spawn(self) -> std::io::Result<std::process::Child> {
+         let mut cmd =
+             Command::try_from(self).map_err(|err| std::io::Error::new(std::io::ErrorKind::InvalidInput, err))?;
+-        gix_trace::debug!(program = ?cmd.get_program(), args = ?cmd.get_args().collect::<Vec<_>>());
++        gix_trace::debug_command!(cmd);
+         cmd.spawn()
+     }
+ }
 ```
 
-**File**: `gix-protocol/src/fetch/function.rs` (modified, +39/-12)
+**File**: `gix-transport/src/client/blocking_io/file.rs` (modified, +62/-20)
 ```diff
-@@ -8,7 +8,8 @@ use gix_fs::SharedPermissions;
- use gix_utils::progress::DynNestedProgress;
+@@ -120,8 +120,11 @@ impl SpawnProcessOnDemand {
+             });
+         }
+         let repo_path = if self.ssh_cmd.is_some() {
+-            cmd.args.push(service.as_str().into());
+-            gix_quote::single(self.path.as_ref()).to_os_str_lossy().into_owned()
++            // SSH forwards a shell command, including the path's quotes, to the remote host.
++            let mut command = OsString::from(service.as_str());
++            command.push(" ");
++            command.push(&*gix_quote::single(self.path.as_ref()).to_os_str_lossy());
++            command
+         } else {
+             self.path.to_os_str_lossy().into_owned()
+         };
+@@ -279,7 +282,12 @@ impl client::blocking_io::Transport for SpawnProcessOnDemand {
+             cmd.stdin = Stdio::piped();
+             cmd.stdout = Stdio::piped();
  
- use crate::fetch::{
--    Arguments, Context, Negotiate, NegotiateOutcome, Options, Outcome, ProgressId, Shallow, Tags, negotiate,
-+    Arguments, Context, Negotiate, NegotiateOutcome, Options, Outcome, ProgressId, Shallow, Tags,
-+    UnrequestedShallowUpdates, negotiate, response::ShallowUpdate,
- };
- #[crate::bisync::only_async]
- use crate::transport::client::async_io::{ExtendedBufRead, HandleProgress, Transport};
-@@ -54,7 +55,7 @@ pub async fn fetch<P, T>(
-         shared_repository_permissions,
-         shallow,
-         tags,
--        reject_shallow_remote,
-+        unrequested_shallow_updates,
-     }: Options<'_>,
- ) -> Result<Option<Outcome>>
- where
-@@ -154,13 +155,39 @@ where
+-            let mut cmd = std::process::Command::try_from(cmd).map_err(|err| client::Error::InvokeProgram {
++            let prepared = if ssh_kind.is_some() {
++                cmd.into_command_with_git_quoting()
++            } else {
++                cmd.try_into()
++            };
++            let mut cmd = prepared.map_err(|err| client::Error::InvokeProgram {
+                 source: std::io::Error::new(std::io::ErrorKind::InvalidInput, err),
+                 command: command.to_owned(),
+             })?;
+@@ -291,15 +299,15 @@ impl client::blocking_io::Transport for SpawnProcessOnDemand {
+         };
  
-             let mut previous_response = previous_response.expect("knowledge of a pack means a response was received");
-             previous_response.append_v1_shallow_updates(v1_shallow_updates);
--            if !previous_response.shallow_updates().is_empty() && shallow_lock.is_none() {
--                if reject_shallow_remote {
--                    bail!(validation(
--                        "Receiving objects from shallow remotes is prohibited due to the value of `clone.rejectShallow`"
--                    ));
-+            let shallow_updates = previous_response.shallow_updates();
-+            if !shallow_updates.is_empty() && shallow_lock.is_none() {
-+                match unrequested_shallow_updates {
-+                    UnrequestedShallowUpdates::Reject => {
-+                        bail!(validation(
-+                            "Receiving objects from shallow remotes is prohibited due to the value of `clone.rejectShallow`"
-+                        ));
-+                    }
-+                    UnrequestedShallowUpdates::Accept => {
-+                        shallow_lock = acquire_shallow_lock(&shallow_file, shared_repository_permissions).map(Some)?;
-+                    }
-+                    UnrequestedShallowUpdates::KeepLocal => {
-+                        let boundary_change = || {
-+                            validation("The remote requires changing shallow boundaries, but no change was requested")
-+                        };
-+                        let mut remote_shallow_roots = Vec::new();
-+                        for update in shallow_updates {
-+                            let ShallowUpdate::Shallow(commit_id) = update else {
-+                                bail!(boundary_change());
-+                            };
-+                            if !shallow_commits.as_ref().is_some_and(|commits| {
-+                                commits.head == *commit_id || commits.tail.binary_search(commit_id).is_ok()
-+                            }) {
-+                                remote_shallow_roots.push(*commit_id);
-+                            }
-+                        }
-+                        if !remote_shallow_roots.is_empty()
-+                            && !negotiate.has_local_commit_history(&remote_shallow_roots, should_interrupt)?
-+                        {
-+                            bail!(boundary_change());
-+                        }
-+                    }
-                 }
--                shallow_lock = acquire_shallow_lock(&shallow_file, shared_repository_permissions).map(Some)?;
+         let mut cmd = into_std_command(cmd, &cmd_name)?;
+-        gix_trace::debug!(command = ?cmd, "gix_transport::SpawnProcessOnDemand");
++        gix_trace::debug_command!(cmd, "gix_transport::SpawnProcessOnDemand");
+         let mut child = match cmd.spawn() {
+             Ok(child) => child,
+             Err(err) if ssh_kind.is_none() && err.kind() == std::io::ErrorKind::NotFound => {
+                 // The service program wasn't found in `PATH`, but as `git` itself can be found,
+                 // the service can still be run through it (#2313).
+                 let (cmd, cmd_name) = self.prepare_fallback_command(service);
+                 let mut cmd = into_std_command(cmd, &cmd_name)?;
+-                gix_trace::debug!(command = ?cmd, "gix_transport::SpawnProcessOnDemand (fallback)");
++                gix_trace::debug_command!(cmd, "gix_transport::SpawnProcessOnDemand (fallback)");
+                 cmd.spawn().map_err(|err| client::Error::InvokeProgram {
+                     source: err,
+                     command: cmd_name,
+@@ -431,15 +439,15 @@ mod tests {
+                 for (url, expected) in [
+                     (
+                         "git@forge.com:/path/repo",
+-                        &["ssh", "git@forge.com", "git-upload-pack", "'/path/repo'"][..],
++                        &["ssh", "git@forge.com", "git-upload-pack '/path/repo'"][..],
+                     ),
+                     (
+                         "git@forge.com:path/repo",
+-                        &["ssh", "git@forge.com", "git-upload-pack", "'path/repo'"][..],
++                        &["ssh", "git@forge.com", "git-upload-pack 'path/repo'"][..],
+                     ),
+                     (
+                         "ssh://git@forge.com/path/repo",
+-                        &["ssh", "git@forge.com", "git-upload-pack", "'/path/repo'"][..],
++                        &["ssh", "git@forge.com", "git-upload-pack '/path/repo'"][..],
+                     ),
+                 ] {
+                     let url = gix_url::parse(url)?;
+@@ -453,6 +461,50 @@ mod tests {
+                 Ok(())
              }
  
-             let (mut reader, may_read_to_end) =
-@@ -178,11 +205,11 @@ where
-             drop(reader);
- 
-             if let Some(shallow_lock) = shallow_lock
--                && !previous_response.shallow_updates().is_empty()
-+                && !shallow_updates.is_empty()
-             {
--                gix_shallow::write(shallow_lock, shallow_commits, previous_response.shallow_updates()).or_raise(
--                    || message("Could not write 'shallow' file to incorporate remote updates after fetching"),
--                )?;
-+                gix_shallow::write(shallow_lock, shallow_commits, shallow_updates).or_raise(|| {
-+                    message("Could not write 'shallow' file to incorporate remote updates after fetching")
-+                })?;
-             }
-             Ok(Some(Outcome {
-                 last_response: previous_response,
++            #[test]
++            fn remote_command_preserves_shell_quoting_in_one_argument() -> gix_testtools::TestResult {
++                if gix_testtools::run_in_isolated_process()? {
++                    return Ok(());
++                }
++                let root = gix_testtools::tempfile::tempdir()?;
++                let _cwd = gix_testtools::set_current_dir(root.path())?;
++                for kind in [
++                    ssh::ProgramKind::Ssh,
++                    ssh::ProgramKind::Plink,
++                    ssh::ProgramKind::Putty,
++                    ssh::ProgramKind::TortoisePlink,
++                    ssh::ProgramKind::Simple,
++                ] {
++                    for service in [crate::Service::UploadPack, crate::Service::ReceivePack] {
++                        let transport = ssh::connect(
++                            "user@host:team/repo.git;echo harmless'!".try_into()?,
++                            Protocol::V1,
++                            ssh::connect::Options {
++                                command: Some(r#"printf '<%s>\n' "$@""#.into()),
++                                kind: Some(kind),
++                                ..Default::default()
++                            },
++                            false,
++                        )?;
++                        let cmd = transport.prepare_command(service)?.0;
++                        let remote_command = format!(r"{} 'team/repo.git;echo harmless'\''
 ```
 
-**File**: `gix-protocol/src/fetch/types.rs` (modified, +28/-6)
+**File**: `gix-transport/src/client/blocking_io/ssh/mod.rs` (modified, +2/-2)
 ```diff
-@@ -15,9 +15,21 @@ pub struct Options<'a> {
-     pub shallow: &'a Shallow,
-     /// Describe how to handle tags when fetching.
-     pub tags: Tags,
--    /// If `true`, if we fetch from a remote that only offers shallow clones, the operation will fail with an error
--    /// instead of writing the shallow boundary to the shallow file.
--    pub reject_shallow_remote: bool,
-+    /// How to handle shallow updates from the remote when `shallow` is [`Shallow::NoChange`].
-+    pub unrequested_shallow_updates: UnrequestedShallowUpdates,
+@@ -192,7 +192,7 @@ fn determine_client_kind(
+     let mut kind = known_kind.unwrap_or_else(|| ProgramKind::from(ssh_cmd));
+     if known_kind.is_none() && kind == ProgramKind::Simple {
+         let mut cmd = build_client_feature_check_command(ssh_cmd, url, disallow_shell)?;
+-        gix_trace::debug!(cmd = ?cmd, "invoking `ssh` for feature check");
++        gix_trace::debug_command!(cmd, "invoking `ssh` for feature check");
+         kind = if cmd.status().ok().is_some_and(|status| status.success()) {
+             ProgramKind::Ssh
+         } else {
+@@ -221,7 +221,7 @@ fn build_client_feature_check_command(ssh_cmd: &OsStr, url: &Url, disallow_shell
+     if disallow_shell {
+         prepare.use_shell = false;
+     }
+-    prepare.try_into().map_err(Error::PrepareCommand)
++    prepare.into_command_with_git_quoting().map_err(Error::PrepareCommand)
+ }
+ 
+ #[cfg(test)]
+```
+
+**File**: `gix-url/src/lib.rs` (modified, +2/-0)
+```diff
+@@ -112,6 +112,8 @@ pub fn expand_path(user: Option<&expand_path::ForUser>, path: &BStr) -> Result<P
+ ///
+ /// This type only expresses known *syntactic* risk. It does not cover other risks, such as passing a personal access
+ /// token as a username rather than a password in an application that logs usernames.
++/// The caller must preserve the argument literally when invoking the program. MSYS2/Cygwin programs on Windows
++/// require additional quoting to prevent the runtime from expanding arguments or removing quotes.
+ #[derive(Debug, PartialEq, Eq, Copy, Clone)]
+ pub enum ArgumentSafety<'a> {
+     /// May be safe. There is nothing to pass, so there is nothing dangerous.
+```
+
+---
+
+### Incident Patch 3: `860ec3d2` (2026-11-23)
+**Commit Message**: fix(gix-command): prepare Git-compatible Windows arguments
+
+Looked at it carefully, improved some details to make them easier to follow,
+and rubber-stamped the tests and the actual quoting implementation.
+
+<!-- agent -->
+Git's MSVC quoting protects arguments that MSYS2 and Cygwin could
+expand before the called program sees them. Make that quoting available
+to callers without inspecting executable images or changing the normal
+argument handling of native helpers.
+
+Prefer an explicit path's `.exe` sibling before shebang dispatch. Keep
+the bundled Git shell's MSYS2 quoting and Rust's batch file escaping.
+Reject literal double quotes for custom transports under `noglob`,
+where a runtime could otherwise change the argument boundaries. Escape
+raw arguments in trace output and exercise the behavior on Windows.
+
+**File**: `gix-command/src/lib.rs` (modified, +32/-7)
+```diff
+@@ -28,6 +28,8 @@ use bstr::{BString, ByteSlice};
+ pub mod parse;
+ 
+ mod prepare;
++#[cfg(windows)]
++mod windows;
+ 
+ ///
+ pub mod shebang {
+@@ -65,8 +67,10 @@ pub mod shebang {
+ /// after creating it with [`prepare()`].
+ ///
+ /// Convert it to [`std::process::Command`] with [`TryFrom::try_from()`] to finish preparation
+-/// without spawning. Preparation reports an error when shell quoting or namespace conversion
+-/// requires an encoding the platform cannot represent.
++/// without spawning. Preparation reports an error when argument quoting or namespace conversion
++/// requires an encoding the selected parser or platform cannot represent.
++/// On Windows, arguments to the bundled Git shell can use `CommandExt::raw_arg`, so
++/// `Command::get_args()` can include command-line quoting rather than only the decoded contents.
+ pub struct Prepare {
+     /// The command to invoke, either directly or with a shell depending on `use_shell`.
+     pub command: OsString,
+@@ -160,21 +164,39 @@ fn is_bare_command(command: &Path) -> bool {
+     command.components().take(2).count() == 1
+ }
+ 
++/// Return `Some(path)` if appending `.exe` to `command` yields a path to a file, as in Rust's
++/// Windows process launcher for explicit paths. For example, `bin/ssh` returns `Some(bin/ssh.exe)`
++/// if `bin/ssh.exe` is a file, even if `bin/ssh` also exists.
++///
++/// Return `None` if there is no such file, if `command` already has an `.exe` extension (ignoring
++/// ASCII case), or if it ends in a [Windows path separator](prepare::has_trailing_windows_separator).
++fn win_exe_suffix_lookup(command: &Path) -> Option<PathBuf> {
++    if prepare::has_trailing_windows_separator(command)
++        || command
++            .extension()
++            .is_some_and(|ext| ext.as_encoded_bytes().eq_ignore_ascii_case(b"exe"))
++    {
++        return None;
++    }
++    let mut executable = command.as_os_str().to_owned();
++    executable.push(".exe");
++    let executable = PathBuf::from(executable);
++    executable.is_file().then_some(executable)
 +}
 +
-+/// How to handle shallow updates from the remote when no change to the local boundary was requested.
-+#[derive(Default, Debug, Copy, Clone, PartialEq, Eq)]
-+pub enum UnrequestedShallowUpdates {
-+    /// Reject any shallow update, even if it would leave the local boundary unchanged.
-+    Reject,
-+    /// Fetch only if the local boundary can stay unchanged: each update must declare a boundary
-+    /// that is already recorded locally or for which the local repository already has the history.
-+    #[default]
-+    KeepLocal,
-+    /// Apply the remote's shallow updates to the local boundary. Use only for a newly created clone.
-+    Accept,
- }
- 
- /// For use in [`crate::Handshake::prepare_lsrefs_or_extract_refmap()`] and [`fetch`](crate::fetch()).
-@@ -41,6 +53,8 @@ pub struct Context<'a, T> {
- 
- #[cfg(feature = "fetch")]
- mod with_fetch {
-+    use std::sync::atomic::AtomicBool;
-+
-     use bstr::ByteSlice;
-     use gix_error::Result;
- 
-@@ -77,6 +91,15 @@ mod with_fetch {
-         /// Returns `true` if wants were added, or `false` if the negotiation should be aborted.
-         #[must_use]
-         fn add_wants(&mut self, arguments: &mut fetch::Arguments, remote_ref_target_known: &[bool]) -> bool;
-+        /// Return whether all `commit_ids` and their ancestors are available under the existing local shallow boundary.
-+        /// The default assumes the history is unavailable when the implementation cannot inspect local objects.
-+        fn has_local_commit_history(
-+            &mut self,
-+            _commit_ids: &[gix_hash::ObjectId],
-+            _should_interrupt: &AtomicBool,
-+        ) -> Result<bool> {
-+            Ok(false)
-+        }
-         /// Typically invokes [`negotiate::one_round()`].
-         fn one_round(
-             &mut self,
-@@ -181,9 +204,8 @@ pub use with_fetch::*;
- /// The *shallow boundary* is a set of commits whose parents are not present in the repository.
- #[derive(Default, Debug, Clone, PartialEq, Eq)]
- pub enum Shallow {
--    /// Fetch all changes from the remote without affecting the shallow boundary at all.
--    ///
--    /// This also means that repositories that aren't shallow will remain like that.
-+    /// Don't request a change to the local shallow boundary.
-+    /// [`Options::unrequested_shallow_updates`] controls how to handle updates sent by the remote anyway.
-     #[default]
-     NoChange,
-     /// Receive update to `depth` commits in the history of the refs to fetch (from the viewpoint of the remote),
-```
-
-**File**: `gix-protocol/tests/protocol/fetch/v1.rs` (modified, +1/-1)
-```diff
-@@ -88,7 +88,7 @@ async fn fetch_receives_pack_after_ready_with_no_done() -> TestResult {
-                 shallow_file: temp.path().join("shallow"),
-                 shallow: &fetch::Shallow::NoChange,
-                 tags: fetch::Tags::None,
--                reject_shallow_remote: false,
-+                unrequested_shallow_updates: fetch::UnrequestedShallowUpdates::KeepLocal,
-             },
-         )
-         .await?
-```
-
-**File**: `gix-shallow/src/lib.rs` (modified, +1/-1)
-```diff
-@@ -45,7 +45,7 @@ pub enum Update {
-     Unshallow(gix_hash::ObjectId),
- }
- 
--/// Return a list of shallow commits as unconditionally read from `shallow_file`.
-+/// Return a sorted list of shallow commits as unconditionally read from `shallow_file`.
- ///
- /// The list of shallow commits represents the shallow boundary, beyond which we are lacking all (parent) commits.
- /// Note that the list is never empty, as `Ok(None)` is returned in that case indicating the repository
-```
-
-**File**: `gix/src/clone/fetch/mod.rs` (modified, +6/-1)
-```diff
-@@ -310,7 +310,12 @@ impl PrepareFetch {
-                 message: reflog_message.clone(),
-             })
-             .with_shallow(self.shallow.clone())
--            .receive(&receiving_repo, &mut progress, should_interrupt)
-+            .receive(
-+                &receiving_repo,
-+                &mut progress,
-+                should_interrupt,
-+                /* is_initial_clone */ true,
-+            )
-             .await?;
- 
-         // Before finalisation, the current repo handle still needs to
-```
-
-**File**: `gix/src/remote/connection/fetch/mod.rs` (modified, +2/-3)
-```diff
-@@ -230,9 +230,8 @@ where
-         self
-     }
- 
--    /// Define what to do when the current repository is a shallow clone.
--    ///
--    /// *Has no effect if the current repository is not as shallow clone.*
-+    /// Set how this fetch may change the local shallow boundary.
-+    /// By default, the fetch fails if it requires changing that boundary.
-     pub fn with_shallow(mut self, shallow: remote::fetch::Shallow) -> Self {
-         self.inner.shallow = shallow;
-         self
-```
-
-**File**: `gix/src/remote/connection/fetch/receive_pack.rs` (modified, +58/-16)
-```diff
-@@ -1,8 +1,12 @@
--use std::{ops::DerefMut, path::PathBuf, sync::atomic::AtomicBool};
-+use std::{
-+    ops::DerefMut,
-+    path::PathBuf,
-+    sync::atomic::{AtomicBool, Ordering},
-+};
- 
- use gix_error::{ResultExt, bail, message};
- use gix_odb::store::RefreshMode;
--use gix_protocol::fetch::{Arguments, negotiate};
-+use gix_protocol::fetch::{Arguments, UnrequestedShallowUpdates, negotiate};
- #[cfg(feature = "async-network-client")]
- use gix_transport::client::async_io::Transport;
- #[cfg(feature = "blocking-network-client")]
-@@ -78,7 +82,9 @@ where
-         P::SubProgress: 'static,
-     {
-         let Prepare { inner, repo } = self;
--        inner.receive(repo, progress, should_interrupt).await
-+        inner
-+            .receive(repo, progress, should_interrupt, /* is_initial_clone */ false)
-+            .await
-     }
- }
- 
-@@ -92,6 +98,7 @@ where
-         repo: &crate::Repository,
-         progress: P,
-         should_interrupt: &AtomicBool,
-+        is_initial_clone: bool,
-     ) -> Result<Outcome>
-     where
-         P: gix_utils::progress::NestedProgress,
-@@ -123,19 +130,27 @@ where
-             );
+ /// Try to find `command` in `joined_paths` using [`split_paths()`].
+ /// Commands with an explicit extension are matched verbatim. Otherwise, `.exe` is preferred over an extensionless file.
+ /// Note that just like Git, no lookup is performed if a slash or backslash is in `command`.
+ fn win_path_lookup(command: &Path, joined_paths: &std::ffi::OsStr) -> Option<PathBuf> {
+     fn lookup(root: &Path, command: &Path, has_extension: bool) -> Option<PathBuf> {
+-        let mut path = root.join(command);
++        let path = root.join(command);
+         if has_extension {
+             return path.is_file().then_some(path);
          }
  
-+        let shallow_file = repo.shallow_file()?;
-+        let reject_shallow = Clone::REJECT_SHALLOW
-+            .enrich_error(
-+                repo.config
-+                    .resolved
-+                    .boolean_filter("clone.rejectShallow", &mut repo.filter_config_section()),
-+            )
-+            .or_raise(|| message("Could not obtain configuration to learn if shallow remotes should be rejected"))?
-+            .unwrap_or(false);
-         let fetch_options = gix_protocol::fetch::Options {
-             shared_repository_permissions: repo.config.shared_repository_permissions,
--            shallow_file: repo.shallow_file()?,
-+            shallow_file,
-             shallow: &self.shallow,
-             tags: con.remote.fetch_tags,
--            reject_shallow_remote: Clone::REJECT_SHALLOW
--                .enrich_error(
--                    repo.config
--                        .resolved
--                        .boolean_filter("clone.rejectShallow", &mut repo.filter_config_section()),
--                )
--                .or_raise(|| message("Could not obtain configuration to learn if shallow remotes should be rejected"))?
--                .unwrap_or(false),
-+            unrequested_shallow_updates: if reject_shallow {
-+                UnrequestedShallowUpdates::Reject
-+            } else if is_initial_clone {
-+                UnrequestedShallowUpdates::Accept
-+            } else {
-+                UnrequestedShallowUpdates::KeepLocal
-+            },
-         };
-         let context = gix_protocol::fetch::Context {
-             handshake: &mut handshake,
-@@ -165,7 +180,7 @@ where
-         let mut graph = graph_repo.revision_graph(cache.as_ref());
-         let alternates = repo.objects.store_ref().alternate_db_paths()?;
-         let mut negotiate = Negotiate {
--            objects: &graph_repo.objects,
-+            repo: &graph_repo,
-             refs: &graph_repo.refs,
-             graph: &mut graph,
-             alternates,
-@@ -269,7 +284,7 @@ where
+-        path.set_extension("exe");
+-        if path.is_file() {
+-            return Some(path);
++        if let Some(executable) = win_exe_suffix_lookup(&path) {
++            return Some(executable);
+         }
+-        path.set_extension("");
+         path.is_file().then_some(path)
+     }
+     if !is_bare_command(command) {
+@@ -212,6 +234,9 @@ pub fn extract_interpreter(executable: &Path) -> Option<shebang::Data> {
+ /// - `stderr` is inherited to allow the command to provide context to the user
+ ///
+ /// On Windows, terminal Windows will be suppressed automatically.
++/// Explicit program paths also prefer an existing `.exe` sibling, matching Rust's process launcher.
++/// The bundled Git shell receives MSYS2 quoting. For external Git transports use
++/// [`Prepare::into_command_with_git_quoting()`] to enable Git's additional Windows quoting.
+ ///
+ /// ### Warning
+ ///
+```
+
+**File**: `gix-command/src/prepare.rs` (modified, +74/-21)
+```diff
+@@ -8,7 +8,9 @@ use std::{
+ use bstr::ByteSlice;
+ use gix_error::Result;
+ 
+-use crate::{Context, Prepare, extract_interpreter, is_bare_command, split_paths, win_path_lookup};
++use crate::{
++    Context, Prepare, extract_interpreter, is_bare_command, split_paths, win_exe_suffix_lookup, win_path_lookup,
++};
+ 
+ /// Builder
+ impl Prepare {
+@@ -177,16 +179,39 @@ impl Prepare {
+     pub fn spawn(self) -> std::io::Result<std::process::Child> {
+         let mut cmd =
+             Command::try_from(self).map_err(|err| std::io::Error::new(std::io::ErrorKind::InvalidInput, err))?;
+-        gix_trace::debug!(cmd = ?cmd);
++        gix_trace::debug!(program = ?cmd.get_program(), args = ?cmd.get_args().collect::<Vec<_>>());
+         cmd.spawn()
+     }
  }
  
- struct Negotiate<'a, 'b, 'c> {
--    objects: &'a crate::OdbHandle,
-+    repo: &'a crate::Repository,
-     refs: &'a gix_ref::file::Store,
-     graph: &'a mut gix_negotiate::Graph<'b, 'c>,
-     alternates: Vec<PathBuf>,
-@@ -283,7 +298,7 @@ struct Negotiate<'a, 'b, 'c> {
- impl gix_protocol::fetch::Negotiate for Negotiate<'_, '_, '_> {
-     fn mark_complete_and_common_ref(&mut self) -> Result<gix_protocol::fetch::negotiate::Action> {
-         negotiate::mark_complete_and_common_ref(
--            &self.objects,
-+            &self.repo.objects,
-             self.refs,
-             {
-                 let alternates = std::mem::take(&mut self.alternates);
-@@ -309,7 +324,7 @@ impl gix_protocol::fetch::Negotiate for Negotiate<'_, '_, '_> {
+ impl TryFrom<Prepare> for Command {
+     type Error = gix_error::Error;
  
-     fn add_wants(&mut self, arguments: &mut Arguments, remote_ref_target_known: &[bool]) -> bool {
-         negotiate::add_wants(
--            self.objects,
-+            &self.repo.objects,
-             arguments,
-             self.ref_map,
-             remote_ref_target_known,
-@@ -318,6 +333,33 @@ impl gix_protocol::fetch::Negotiate for Negotiate<'_, '_, '_> {
-         )
+-    fn try_from(mut prep: Prepare) -> Result<Self> {
++    fn try_from(prep: Prepare) -> Result<Self> {
++        prep.into_command(false)
++    }
++}
++
++/// Lifecycle
++impl Prepare {
++    /// Finish preparation using Git for Windows' additional argument quoting on Windows.
++    ///
++    /// Use this for external Git transports whose arguments may be parsed again by MSYS2 or Cygwin.
++    /// As with the bundled shell, `Command::get_args()` includes quoting for arguments passed with `raw_arg`.
++    /// For other programs, disabling globbing in `MSYS` or `CYGWIN` can make literal double quotes
++    /// ambiguous, so preparation rejects them in that mode.
++    /// On other platforms this is identical to converting with [`Command::try_from()`].
++    pub fn into_command_with_git_quoting(self) -> Result<Command> {
++        self.into_command(true)
++    }
++
++    fn into_command(self, git_quoting: bool) -> Result<Command> {
++        #[cfg(not(windows))]
++        let _ = git_quoting;
++        let mut prep = self;
+         let mut inline_env = Vec::new();
++        #[cfg(windows)]
++        let mut bundled_shell = false;
+         let mut cmd = if prep.use_shell {
+             let split_args = prep
+                 .allow_manual_arg_splitting
+@@ -213,7 +238,15 @@ impl TryFrom<Prepare> for Command {
+                 None => {
+                     let mut cmd = match prep.shell_program {
+                         Some(shell) => Command::new(shell),
+-                        None => gix_path::env::shell_command(),
++                        None => {
++                            let shell = gix_path::env::shell_command();
++                            #[cfg(windows)]
++                            {
++                                // Discovery returns a full path for Git's MSYS2 shell or its shim.
++                                bundled_shell = Path::new(shell.get_program()).is_absolute();
++                            }
++                            shell
++                        }
+                     };
+                     // Passed as `command_name` after `-c <script>`; the shell uses it
+                     // as `$0`, which prefixes its own diagnostic messages. If the
+@@ -250,6 +283,9 @@ impl TryFrom<Prepare> for Command {
+         } else {
+             Command::new(prep.command)
+         };
++        cmd.args(prep.args);
++        #[cfg(windows)]
++        let mut cmd = crate::windows::quote_arguments(cmd, git_quoting, bundled_shell, &prep.env, &inline_env)?;
+         // We never want to have terminals pop-up on Windows if this runs from a GUI application.
+         #[cfg(windows)]
+         {
+@@ -260,8 +296,7 @@ impl TryFrom<Prepare> for Command {
+         cmd.stdin(prep.stdin)
+             .stdout(prep.stdout)
+             .stderr(prep.stderr)
+-            .envs(prep.env)
+-            .args(prep.args);
++            .envs(prep.env);
+         if let Some(ctx) = prep.context {
+             if let Some(git_dir) = ctx.git_dir {
+                 cmd.env("GIT_DIR", &git_dir);
+@@ -307,18 +342,7 @@ impl TryFrom<Prepare> for Command {
+ /// arguments. If `PATH` does not resolve a bare command, the missing program remains anchored in its first entry
+ /// so Rust's broader Windows lookup cannot find it elsewhere.
+ fn windows_command(command: OsString, env: &[(OsString, OsString)], inline_env: &[(String, OsString)]) -> Command {
+-    let explicit_joined_paths = inline_env
+-        .iter()
+-        .rev()
+-        .find(|(name, _)| name.eq_ignore_ascii_case("PATH"))
+-        .map(|(_, value)| value.as_os_str())
+-        .or_else(|| {
+-            env.iter()
+-                .rev()
+-                .find(|(name, _)| name.to_str().is_some_and(|name| name.eq_ignore_ascii_case("PATH")))
+-                .map(|(_, value)| value.as_os_str())
+-        });
+-    let joined_paths = explicit_joined_paths
++    let joined_paths = windows_env_override("PATH", env, inline_env)
+         .map(Cow::Borrowed)
+         .or_else(|| std::env::var_os("PATH").map(Cow::Owned));
+     let looked_up = joined_paths
+@@ -329,15 +353,20 @@ fn windows_command(command: OsString, env: &[(OsString, OsString)], inline_env:
+         Some(program) => Cow::Owned(program),
+```
+
+**File**: `gix-command/src/windows.rs` (added, +182/-0)
+```diff
+@@ -0,0 +1,182 @@
++use std::{
++    borrow::Cow,
++    ffi::{OsStr, OsString},
++    os::windows::{ffi::OsStrExt, ffi::OsStringExt, process::CommandExt},
++    path::Path,
++    process::Command,
++};
++
++use gix_error::{Result, bail, validation};
++
++/// Apply Git's extra quoting without probing the executable.
++pub(super) fn quote_arguments(
++    cmd: Command,
++    git_quoting: bool,
++    bundled_shell: bool,
++    env: &[(OsString, OsString)],
++    inline_env: &[(String, OsString)],
++) -> Result<Command> {
++    let glob = |key| {
++        crate::prepare::windows_env_override(key, env, inline_env)
++            .map(Cow::Borrowed)
++            .or_else(|| std::env::var_os(key).map(Cow::Owned))
++            .as_deref()
++            .is_none_or(glob_enabled)
++    };
++    let quote: fn(&OsStr) -> Option<OsString> = if bundled_shell {
++        if !cmd.get_args().any(needs_msys_quoting) {
++            return Ok(cmd);
++        }
++        if glob("MSYS") {
++            quote_for_msys_glob
++        } else {
++            quote_for_msys_noglob
++        }
++    } else if git_quoting {
++        let has_double_quote = cmd.get_args().any(|arg| arg.as_encoded_bytes().contains(&b'"'));
++        let needs_quoting = cmd.get_args().any(needs_msvc_quoting);
++        if !(has_double_quote || needs_quoting) || may_be_batch_file(cmd.get_program()) {
++            return Ok(cmd);
++        }
++        // The noglob parser does not decode the backslash escapes used by the Windows C runtime.
++        // Without identifying the executable, reject an argument that could lose its quote boundary.
++        if has_double_quote && (!glob("MSYS") || !glob("CYGWIN")) {
++            bail!(validation(
++                "cannot pass literal double quotes to a Windows Git transport with globbing disabled"
++            ));
++        }
++        if !needs_quoting {
++            return Ok(cmd);
++        }
++        quote_for_msvc
++    } else {
++        return Ok(cmd);
++    };
++
++    let mut quoted = Command::new(cmd.get_program());
++    for arg in cmd.get_args() {
++        if let Some(arg) = quote(arg) {
++            quoted.raw_arg(arg);
++        } else {
++            quoted.arg(arg);
++        }
++    }
++    Ok(quoted)
++}
++
++fn may_be_batch_file(program: &OsStr) -> bool {
++    // Rust uses a separate, safer encoder for batch files. In particular, raw_arg would bypass
++    // its escaping of percent signs and its checks for line breaks.
++    let has_suffix = |name: &OsStr, suffix: &[u8]| {
++        let bytes = name.as_encoded_bytes();
++        bytes
++            .get(bytes.len().saturating_sub(suffix.len())..)
++            .is_some_and(|tail| tail.eq_ignore_ascii_case(suffix))
++    };
++    !has_suffix(program, b".exe")
++        && std::path::absolute(Path::new(program)).map_or(true, |path| {
++            has_suffix(path.as_os_str(), b".cmd") || has_suffix(path.as_os_str(), b".bat")
++        })
++}
++
++fn needs_msvc_quoting(arg: &OsStr) -> bool {
++    let bytes = arg.as_encoded_bytes();
++    // Spaces and tabs already make Rust wrap the entire argument in double quotes.
++    !bytes.iter().any(|byte| matches!(byte, b' ' | b'\t')) && bytes.iter().any(|&byte| requires_quotes(byte))
++}
++
++fn needs_msys_quoting(arg: &OsStr) -> bool {
++    arg.as_encoded_bytes()
++        .iter()
++        .any(|&byte| byte == b'\\' || requires_quotes(byte))
++}
++
++fn requires_quotes(byte: u8) -> bool {
++    // As in Git's quote_arg_msvc(), also quote characters that trigger argument expansion.
++    // Include bracket and tilde expansion to preserve the SSH destination literally.
++    matches!(
++        byte,
++        b'\n' | b'\r' | 0x0b | 0x0c | b'"' | b'\'' | b'*' | b'?' | b'[' | b'{' | b'~'
++    )
++}
++
++/// The last glob, noglob or -glob setting controls Windows argument expansion.
++fn glob_enabled(options: &OsStr) -> bool {
++    let mut quoted = false;
++    let mut glob = true;
++    for option in options.as_encoded_bytes().split(|&byte| {
++        if byte == b'"' {
++            quoted = !quoted;
++        }
++        !quoted && matches!(byte, b' ' | b'\t')
++    }) {
++        let split = option
++            .iter()
++            .position(|&b| b == b'=')
++            .or_else(|| option.iter().position(|&b| b == b':'));
++        let (name, value) = split.map_or((option, None), |at| (&option[..at], Some(&option[at + 1..])));
++        if name.eq_ignore_ascii_case(b"glob") {
++            glob = value.is_none_or(|value| value.iter().any(|&byte| byte != b'"'));
++        } else if name.eq_ignore_ascii_case(b"noglob") || name.eq_ignore_ascii_case(b"-glob") {
++            glob = false;
++        }
++    }
++    glob
++}
++
++const DOUBLE: u16 = b'"' as u16;
++const SINGLE: u16 = b'\'' as u16;
++const SLASH: u16 = b'\\' as u16;
++
++fn quote_for_msvc(arg: &OsStr) -> Option<OsString> {
++    if !needs_msvc_quoting(arg) {
++        return None;
++    }
++    let mut quoted = vec![DOUBLE];
++    let mut slashes = 0;
++    for c in arg.encode_wide() {
++        if c == SLASH {
++            slashes += 1;
++        } else {
++ 
+```
+
+**File**: `gix-command/tests/command/main.rs` (modified, +2/-0)
+```diff
+@@ -158,3 +158,5 @@ mod command_line;
+ mod context;
+ mod prepare;
+ mod spawn;
++#[cfg(windows)]
++mod windows;
+```
+
+**File**: `gix-command/tests/command/windows.rs` (added, +179/-0)
+```diff
+@@ -0,0 +1,179 @@
++use bstr::ByteSlice;
++use gix_testtools::TestResult;
++
++#[test]
++fn git_style_quoting_preserves_msys_ssh_arguments() -> TestResult {
++    if gix_testtools::run_in_isolated_process()? {
++        return Ok(());
++    }
++    let printf = gix_path::env::installation_program("printf").expect("Git for Windows provides MSYS printf");
++    let root = gix_testtools::tempfile::tempdir()?;
++    let _cwd = gix_testtools::set_current_dir(root.path())?;
++    std::fs::write(root.path().join("hostname.invalid"), [])?;
++    let args = [
++        "{first,second}",
++        "host*.invalid",
++        "host?ame.invalid",
++        "host[n]ame.invalid",
++        "O'Brien.invalid",
++        "git-upload-pack 'team/repo with spaces.git'",
++        r"git-upload-pack 'team/O'\''Brien.git'",
++    ];
++    let expected = format!("<{}>", args.join("><"));
++    for mode in ["glob", "noglob"] {
++        let output = gix_command::prepare(&printf)
++            .env("MSYS", mode)
++            .arg("<%s>")
++            .args(args)
++            .into_command_with_git_quoting()?
++            .output()?;
++        assert!(
++            output.status.success(),
++            "the MSYS argument recorder completes in mode {mode}"
++        );
++        assert_eq!(
++            output.stdout.as_bstr(),
++            expected.as_bytes().as_bstr(),
++            "the SSH destination stays literal and the remote command arrives in one argument"
++        );
++    }
++    Ok(())
++}
++
++#[test]
++fn explicit_msys_ssh_path_can_omit_exe_suffix() -> TestResult {
++    if gix_testtools::run_in_isolated_process()? {
++        return Ok(());
++    }
++    let ssh = gix_path::env::installation_program("ssh").expect("Git for Windows provides MSYS ssh");
++    let mut cmd = gix_command::prepare(ssh.with_extension(""))
++        .env("MSYS", "glob")
++        .args(["-F", "/dev/null", "-G", "{first,second}"])
++        .stderr(std::process::Stdio::piped())
++        .into_command_with_git_quoting()?;
++    assert_eq!(cmd.get_program(), ssh, "the .exe sibling selected at launch is used");
++    let output = cmd.output()?;
++    assert!(
++        !output.status.success(),
++        "the invalid hostname is rejected during the configuration probe"
++    );
++    assert!(
++        output.stderr.contains_str("hostname contains invalid characters"),
++        "OpenSSH sees the literal brace argument without a connection attempt"
++    );
++    Ok(())
++}
++
++#[test]
++fn bundled_msys_shell_preserves_positional_arguments() -> TestResult {
++    if gix_testtools::run_in_isolated_process()? {
++        return Ok(());
++    }
++    let args = ["{first,second}", "'repo name'", r"C:\example directory\", r#"a"b"#];
++    let expected = format!("<{}>", args.join("><"));
++    for mode in ["glob", "noglob"] {
++        let output = gix_command::prepare(r#"printf '<%s>' "$@""#)
++            .with_shell()
++            .env("MSYS", mode)
++            .args(args)
++            .spawn()?
++            .wait_with_output()?;
++        assert!(output.status.success(), "the bundled shell completes in mode {mode}");
++        assert_eq!(
++            output.stdout.as_bstr(),
++            expected.as_bytes().as_bstr(),
++            "the shell preserves its positional arguments"
++        );
++    }
++    Ok(())
++}
++
++#[test]
++fn native_fallback_shell_retains_standard_argument_encoding() -> TestResult {
++    if gix_testtools::run_in_isolated_process()? {
++        return Ok(());
++    }
++    let root = gix_testtools::tempfile::tempdir()?;
++    let _env = gix_testtools::Env::new().set("GIT_EXEC_PATH", root.path().to_string_lossy());
++    std::fs::copy(std::env::current_exe()?, root.path().join("sh.exe"))?;
++    assert_eq!(
++        gix_path::env::shell(),
++        "sh.exe",
++        "the fixture disables bundled shell discovery"
++    );
++
++    let arg = r"C:\example directory\";
++    let script = r#"printf '%s' "$1" "$@""#;
++    let cmd = std::process::Command::try_from(
++        gix_command::prepare(script)
++            .with_shell()
++            .env("PATH", root.path())
++            .arg(arg),
++    )?;
++    assert_eq!(cmd.get_program(), "sh.exe", "Rust resolves the fallback shell at spawn");
++    assert_eq!(
++        cmd.get_args().collect::<Vec<_>>(),
++        ["-c", script, "sh.exe", arg],
++        "the native fallback receives ordinary Windows arguments"
++    );
++    Ok(())
++}
++
++#[test]
++fn explicit_shell_does_not_discover_git_shell() -> TestResult {
++    if gix_testtools::run_in_isolated_process()? {
++        return Ok(());
++    }
++    let root = gix_testtools::tempfile::tempdir()?;
++    let shell = std::env::current_exe()?;
++    {
++        let _env = gix_testtools::Env::new().set("GIT_EXEC_PATH", root.path().to_string_lossy());
++        let cmd = std::process::Command::try_from(
++            gix_command::prepare("echo hello")
++                .with_shell()
++                .with_shell_program(&shell),
++        )?;
++        assert_eq!(cmd.get_program(), shell, "the explicit absolute shell is used directly");
++    }
+```
+
+**File**: `gix-credentials/src/program/mod.rs` (modified, +5/-2)
+```diff
+@@ -172,6 +172,9 @@ mod tests {
+ 
+     #[test]
+     fn git_program_with_spaces_is_quoted_in_external_name_shell_scripts() -> gix_testtools::TestResult {
++        if gix_testtools::run_in_isolated_process()? {
++            return Ok(());
++        }
+         let cmd = super::external_name_command(
+             Path::new(r"C:\Program Files\Git\mingw64\bin\git.exe"),
+             "manager --config=~/credentials".into(),
+@@ -186,11 +189,11 @@ mod tests {
+         assert_eq!(
+             script,
+             OsStr::new(if cfg!(windows) {
+-                r#"'C:/Program Files/Git/mingw64/bin/git.exe' credential-manager --config=~/credentials "$@""#
++                r#""'C:/Program Files/Git/mingw64/bin/git.exe' credential-manager --config=~/credentials \"$@\"""#
+             } else {
+                 r#"'C:\Program Files\Git\mingw64\bin\git.exe' credential-manager --config=~/credentials "$@""#
+             }),
+-            "the Git executable is a single shell token even when its path contains spaces"
++            "the Git executable stays a single shell token through runtime quoting even when its path contains spaces"
+         );
+         Ok(())
      }
- 
-+    fn has_local_commit_history(
-+        &mut self,
-+        commit_ids: &[gix_hash::ObjectId],
-+        should_interrupt: &AtomicBool,
-+    ) -> Result<bool> {
-+        let result = self
-+            .repo
-+            .rev_walk(commit_ids.iter().copied())
-+            .use_commit_graph(false)
-+            .all()?
-+            .try_for_each(|item| {
-+                if should_interrupt.load(Ordering::Relaxed) {
-+                    bail!(std::io::Error::new(
-+                        std::io::ErrorKind::Interrupted,
-+                        "Checking the history of remote shallow boundaries was interrupted",
-+                    ));
-+                }
-+                item.map(|_| ())
-+            });
-+        match result {
-+    
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3241** (2026-11-24): move experimental APIs to parallel major-zero releases (@Byron)
+- **PR #3240** (2026-11-24): validate pack offsets on lookup (@Byron)
 - **PR #3239** (closed): perf(gix-odb): validate pack offsets on lookup (@Havunen)
 - **PR #3238** (2026-11-23): Upgrade `sirocco` to 0.4 (@srijs)
 - **PR #3237** (2026-11-24): fix(gix-ignore): drop a `` that ends an ignore file without `
 `, like Git. (@AbuYahya94)
 - **PR #3236** (2026-11-23): Preserve shallow boundaries during ordinary fetch (@Byron)
-- **PR #3233** (2026-11-23): Release gix-testtools v0.23.0 (@Byron)
-- **PR #3231** (2026-11-23): follow-up to november report (@Byron)
 
 ---
 
@@ -2609,31 +2496,42 @@ Preserve shallow boundaries during ordinary fetch
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. gix-protocol)!: preserve shallow boundaries during ordinary fetch
+## X. gix-testtools): confine Git discovery to scripted fixtures
 
 **RULE**:
-When implementing operations in `gitoxide-core/src/pack/receive.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in GitoxideLabs/gitoxide. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tests/tools/src/lib.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in GitoxideLabs/gitoxide. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4f0a09bd`: gix-protocol)!: preserve shallow boundaries during ordinary fetch. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3befd38c`: gix-testtools): confine Git discovery to scripted fixtures. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `gitoxide-core/src/pack/receive.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/tools/src/lib.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-            unrequested_shallow_updates: gix::protocol::fetch::UnrequestedShallowUpdates::Reject,
+//! Fixture scripts stop Git's upward repository discovery at the fixture root.
+/// Prepare an isolated Git command in `current_dir`.
+///
+/// Repository discovery may walk above `current_dir`, which allows commands from fixture subdirectories.
+    configure_git_environment(cmd, script_result_directory);
+    if let Some(parent) = script_result_directory.parent() {
+        // Git may discover a repository in the fixture itself, including from its subdirectories.
+        cmd.env("GIT_CEILING_DIRECTORIES", parent);
+    }
+    cmd.args(args)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-            reject_shallow_remote: true,
+/// Prepare an isolated Git command in `current_dir`, using the same environment as fixture scripts.
+    configure_git_environment(cmd, script_result_directory)
+        .args(args)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4f0a09bd` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3befd38c` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

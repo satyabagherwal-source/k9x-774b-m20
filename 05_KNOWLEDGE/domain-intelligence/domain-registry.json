@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T12:00:30.155Z",
+  "last_updated": "2026-11-25T12:09:20.891Z",
   "total_records": 2671,
   "domains": {
     "A": {
@@ -18541,8 +18541,8 @@
       "title": "Technical Construction Intelligence: genkit-ai/genkit Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-genkit-ai-genkit-technical-construction-intelligence-genkit-ai-genkit-core-invar.md",
       "repository": "genkit-ai/genkit",
-      "content_hash": "b6f16701c7df336268896cd73e33525f18c59441748cadda1582179ab375b234",
-      "created_at": "2026-11-24T17:03:17.433Z"
+      "content_hash": "ac004cd0009365b8cb77bbfe6a7fe5a76a484038afdbff1af0109bff6f8fe6d5",
+      "created_at": "2026-11-25T12:09:15.839Z"
     },
     "domain_intelligence-quality-verification-intelligence-automattic-harper-learnings-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-automattic-harper-learnings-core-invariants",
@@ -21061,8 +21061,8 @@
       "title": "Architecture Intelligence: GitoxideLabs/gitoxide Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-gitoxidelabs-gitoxide-architecture-intelligence-gitoxidelabs-gitoxide-core-invar.md",
       "repository": "GitoxideLabs/gitoxide",
-      "content_hash": "c9f7d880ee2e7d24e31206f3825c68563279af8d1a05ac74a366fdfe9b8c2434",
-      "created_at": "2026-11-24T10:43:54.103Z"
+      "content_hash": "851a7467f23fc146d0078213fb746a45677871bf5096dd41a525f699859688ba",
+      "created_at": "2026-11-25T12:09:04.037Z"
     },
     "domain_intelligence-technical-construction-intelligence-melnixdev-seo-crawl-audit-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-melnixdev-seo-crawl-audit-core-invariants",
@@ -21079,8 +21079,8 @@
       "title": "Architecture Intelligence: gitoxidelabs-gitoxide-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-gitoxidelabs-gitoxide-learnings-architecture-intelligence-gitoxidelabs-gitoxide-.md",
       "repository": "gitoxidelabs-gitoxide-learnings",
-      "content_hash": "998508461c0f9083f1a0b47deb82dc854d58b6d4e50cb4d540a44a5e00408af4",
-      "created_at": "2026-11-24T10:44:02.618Z"
+      "content_hash": "cf7f4faa1bf3a3ccc644a2d4b84bc7a46fcca5eb9477c99cf178fc04d08e8d4f",
+      "created_at": "2026-11-25T12:09:19.495Z"
     },
     "DOM-J-C5E210D6": {
       "record_id": "DOM-J-C5E210D6",
@@ -22058,8 +22058,8 @@
       "title": "Research & Knowledge Intelligence: unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf-research-knowledge-intelligence-uns.md",
       "repository": "unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF",
-      "content_hash": "2591ff68b88934c4f35c0eed91961e4ed37bc668b31e3c52613836cbfbda220f",
-      "created_at": "2026-11-15T16:07:01.206Z"
+      "content_hash": "9ada7ad31f1f7a6ac0ffa21e02b9ed3ed35167e3539f93887efc345bc24fa06d",
+      "created_at": "2026-11-25T12:09:00.957Z"
     },
     "domain_intelligence-architecture-intelligence-tableproapp-tablepro-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-tableproapp-tablepro-core-invariants",
@@ -22118,8 +22118,8 @@
       "title": "Research & Knowledge Intelligence: hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf-learnings-research-knowledge-intell.md",
       "repository": "hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf-learnings",
-      "content_hash": "ab49d30ad028c29a60ec3280162efb2b2654f0c077d7918314a77dbcf28bba1d",
-      "created_at": "2026-11-15T16:07:37.672Z"
+      "content_hash": "b5aaf06c8129fc65fcf1d961d5775412908c41fe1129dd1ed1b04189adf4d6b4",
+      "created_at": "2026-11-25T12:09:20.077Z"
     },
     "domain_intelligence-architecture-intelligence-tableproapp-tablepro-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-tableproapp-tablepro-learnings-core-invariants",
@@ -22355,8 +22355,8 @@
       "title": "Technical Construction Intelligence: goodrain/rainbond Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-goodrain-rainbond-technical-construction-intelligence-goodrain-rainbond-core-inv.md",
       "repository": "goodrain/rainbond",
-      "content_hash": "2c0a0d6f6cd4d529565bdc4666d8e9d5d4fb15f48711d100a8bd81205750cea1",
-      "created_at": "2026-11-17T21:56:49.598Z"
+      "content_hash": "9b0de79e871362cf07ea27efd6ef35062fbf4c9969c3084522adddb31d7b96a2",
+      "created_at": "2026-11-25T12:09:11.498Z"
     },
     "domain_intelligence-search-distribution-intelligence-seekstorm-seekstorm-core-invariants": {
       "record_id": "domain_intelligence-search-distribution-intelligence-seekstorm-seekstorm-core-invariants",
@@ -22424,8 +22424,8 @@
       "title": "Technical Construction Intelligence: goodrain-rainbond-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-goodrain-rainbond-learnings-technical-construction-intelligence-goodrain-rainbon.md",
       "repository": "goodrain-rainbond-learnings",
-      "content_hash": "37e47a9e006a271dffcb1bc5d1aa1d972e3525b3d18dbbc5bd132f98add8d071",
-      "created_at": "2026-11-24T18:09:15.403Z"
+      "content_hash": "4aa768c6cbc7880311907734a2f3c0ce1b87693b492ac61b4a10c24e65e1644b",
+      "created_at": "2026-11-25T12:09:20.891Z"
     },
     "domain_intelligence-search-distribution-intelligence-seekstorm-seekstorm-learnings-core-invariants": {
       "record_id": "domain_intelligence-search-distribution-intelligence-seekstorm-seekstorm-learnings-core-invariants",

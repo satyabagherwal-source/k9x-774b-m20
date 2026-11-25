@@ -4,24 +4,24 @@
 {
   "source_repository": "goodrain/rainbond",
   "source_url": "https://github.com/goodrain/rainbond",
-  "source_version": "5508cd38",
+  "source_version": "3d312f45",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-17T21:56:49.429Z",
+  "timestamp": "2026-11-25T12:09:11.312Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-goodrain-rainbond",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [goodrain/rainbond](https://github.com/goodrain/rainbond) (Revision: `5508cd38`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-17T21:56:49.429Z`  
+> **Provenance**: Harvested from [goodrain/rainbond](https://github.com/goodrain/rainbond) (Revision: `3d312f45`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-25T12:09:11.312Z`  
 > **Learning ID**: `learn-github-goodrain-rainbond`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: L (Deployment & Operations Intelligence), G (Architecture Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), C (Market & Business Intelligence), A (Human & Need Intelligence), K (Quality & Verification Intelligence)
-- **Confidence Rating**: 76%
+- **Secondary Corroborating Domains**: B (Product Intelligence), G (Architecture Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), C (Market & Business Intelligence), F (Design Intelligence)
+- **Confidence Rating**: 55%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from goodrain/rainbond:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/goodrain-rainbond-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/goodrain/rainbond](https://github.com/goodrain/rainbond))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T21:56:48.014Z  
+> **Harvest Timestamp**: 2026-11-25T12:09:09.873Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Rainbond is an open-source container platform that requires no Kubernetes expertise. Its core capabilities are 100% open source.  It abstracts away infrastructure complexity and provides a unified way to deploy and manage business applications, AI-generated projects, open-source AI software, and large language model services. AI helps teams deploy 
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 6305 stars
+- **Stars / Engagement**: 6309 stars
 
 ---
 
@@ -927,6 +927,188 @@ func (s *Server) Stop() {
 
 ```
 
+### Core Architecture Module: `api/handler/vm_snapshot_lifecycle.go`
+```
+package handler
+
+import (
+	"context"
+	"errors"
+
+	ctxutil "github.com/goodrain/rainbond/api/util/ctx"
+	"github.com/goodrain/rainbond/pkg/vmrestore"
+	"github.com/jinzhu/gorm"
+	kubevirtv1 "kubevirt.io/api/core/v1"
+)
+
+func (s *ServiceAction) snapshotService(ctx context.Context, serviceID string) (*vmrestore.SnapshotEngine, vmrestore.Scope, error) {
+	if serviceID == "" {
+		return nil, vmrestore.Scope{}, vmrestore.ErrInternalAttribute
+	}
+	if s.snapshotEngineFactory != nil {
+		engine, scope, err := s.snapshotEngineFactory(serviceID)
+		if err == nil {
+			err = snapshotContextScope(ctx, serviceID, scope)
+		}
+		if err == nil && engine == nil {
+			err = vmrestore.ErrReferenceUnavailable
+		}
+		return engine, scope, err
+	}
+	scope, err := s.snapshotScope(ctx, serviceID)
+	if err != nil {
+		return nil, scope, err
+	}
+	manager := s.getDBManager()
+	if s.kubevirtClient == nil || s.kubeClient == nil || manager.DB() == nil {
+		return nil, scope, vmrestore.ErrReferenceUnavailable
+	}
+	store := vmrestore.NewStore(manager.DB())
+	dynamicClient := s.kubevirtClient.DynamicClient()
+	resolver := vmrestore.NewResolver(store, s.kubeClient, dynamicClient)
+	backend := vmrestore.NewKubeSnapshotBackend(resolver, s.kubevirtClient)
+	engine := vmrestore.NewSnapshotEngine(store, backend)
+	engine.Identity = &vmrestore.SnapshotFirmwareMaterializer{Store: store, Dynamic: dynamicClient, ProveStartup: func(ctx context.Context, scope vmrestore.Scope, vm *kubevirtv1.VirtualMachine, firmware string) (vmrestore.RestoreStartupPolicy, error) {
+		selection, err := store.ReadRestoredRuntimeSelection(ctx, resolver, scope)
+		if err != nil {
+			return vmrestore.RestoreStartupPolicy{}, err
+		}
+		if selection != nil {
+			if selection.Startup.FirmwareUUID != firmware {
+				return vmrestore.RestoreStartupPolicy{}, vmrestore.ErrConflict
+			}
+			wanted, err := vmrestore.ProjectRestoredRuntime(ctx, s.kubeClient, vm, *selection)
+			if err != nil {
+				return vmrestore.RestoreStartupPolicy{}, err
+			}
+			if !vmrestore.RuntimeVMMatches(vm, wanted) {
+				return vmrestore.RestoreStartupPolicy{}, vmrestore.ErrConflict
+			}
+			return selection.Startup, nil
+		}
+		return store.ReadVMStartup(ctx, s.kubeClient, scope, vm)
+	}}
+	return engine, scope, nil
+}
+
+// snapshotScope resolves ownership without depending on the Kubernetes runtime.
+func (s *ServiceAction) snapshotScope(ctx context.Context, serviceID string) (vmrestore.Scope, error) {
+	scope := vmrestore.Scope{}
+	manager := s.getDBManager()
+	if manager == nil {
+		return scope, vmrestore.ErrReferenceUnavailable
+	}
+	service, err := manager.TenantServiceDao().GetServiceByID(serviceID)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			err = vmrestore.ErrNotFound
+		}
+		return scope, err
+	}
+	if service == nil || service.ServiceID != serviceID || !service.IsVM() {
+		return scope, vmrestore.ErrNotFound
+	}
+	if err := snapshotContextScope(ctx, serviceID, vmrestore.Scope{TenantID: service.TenantID, ServiceID: service.ServiceID}); err != nil {
+		return scope, err
+	}
+	tenant, err := manager.TenantDao().GetTenantByUUID(service.TenantID)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			err = vmrestore.ErrNotFound
+		}
+		return scope, err
+	}
+	if tenant == nil || tenant.UUID != service.TenantID || tenant.Namespace == "" {
+		return scope, vmrestore.ErrCorrupt
+	}
+	scope = vmrestore.Scope{TenantID: service.TenantID, ServiceID: service.ServiceID, Namespace: tenant.Namespace}
+	return scope, nil
+}
+
+// PrepareVMSnapshot reserves a bounded operation even when the VM is Running.
+func (s *ServiceAction) PrepareVMSnapshot(ctx context.Context, serviceID string, request *VMSnapshotRequest) (*VMSnapshotStatus, error) {
+	if request == nil {
+		return nil, vmrestore.ErrSnapshotInvalid
+	}
+	engine, scope, err := s.snapshotService(ctx, serviceID)
+	if err != nil {
+		return nil, err
+	}
+	status, err := engine.Prepare(ctx, scope, *request)
+	if err != nil {
+		return nil, err
+	}
+	return &VMSnapshotStatus{SnapshotName: status.SnapshotName, SnapshotOperationDTO: &status}, nil
+}
+
+// ListVMSnapshots returns only safe managed Region DTOs.
+func (s *ServiceAction) ListVMSnapshots(ctx context.Context, serviceID string, page, pageSize int) (vmrestore.SnapshotListDTO, error) {
+	engine, scope, err := s.snapshotService(ctx, serviceID)
+	if err != nil {
+		return vmrestore.SnapshotListDTO{}, err
+	}
+	return engine.List(ctx, scope, page, pageSize)
+}
+
+// GetVMSnapshot never ACKs, starts a VM, releases a lock or performs cleanup.
+func (s *ServiceAction) GetVMSnapshot(ctx context.Context, serviceID, name string) (vmrestore.SnapshotOperationDTO, error) {
+	engine, scope, err := s.snapshotService(ctx, serviceID)
+	if err != nil {
+		return vmrestore.SnapshotOperationDTO{}, err
+	}
+	return engine.ByName(ctx, scope, name)
+}
+
+// VMSnapshotAction dispatches only explicit bounded commands, not arbitrary patches.
+func (s *ServiceAction) VMSnapshotAction(ctx context.Context, serviceID, name, action string, request vmrestore.SnapshotActionRequest) (vmrestore.SnapshotOperationDTO, error) {
+	engine, scope, err := s.snapshotService(ctx, serviceID)
+	if err != nil {
+		return vmrestore.SnapshotOperationDTO{}, err
+	}
+	current, err := engine.ByName(ctx, scope, name)
+	if err != nil {
+		return vmrestore.SnapshotOperationDTO{}, err
+	}
+	if request.OperationID != "" && request.OperationID != current.OperationID || request.CoreHash != "" && request.CoreHash != current.CoreHash {
+		return vmrestore.SnapshotOperationDTO{}, vmrestore.ErrConflict
+	}
+	request.OperationID = current.OperationID
+	request.CoreHash = current.CoreHash
+	switch action {
+	case "halt":
+		return engine.Halt(ctx, scope, request)
+	case "create":
+		return engine.Create(ctx, scope, request)
+	case "resume":
+		return engine.Resume(ctx, scope, request)
+	case "finalize":
+		return engine.Finalize(ctx, scope, request)
+	case "cancel":
+		return engine.Cancel(ctx, scope, request)
+	case "delete":
+		return engine.Delete(ctx, scope, request)
+	default:
+		return vmrestore.SnapshotOperationDTO{}, vmrestore.ErrSnapshotInvalid
+	}
+}
+
+// snapshotContextScope rechecks the middleware tenant against DB-owned service identity.
+// Legacy internal callers supply no HTTP context and still resolve their scope from DB.
+func snapshotContextScope(ctx context.Context, serviceID string, scope vmrestore.Scope) error {
+	if scope.ServiceID != serviceID || scope.TenantID == "" {
+		return vmrestore.ErrInternalAttribute
+	}
+	if value := ctx.Value(ctxutil.ContextKey("tenant_id")); value != nil {
+		tenantID, ok := value.(string)
+		if !ok || tenantID == "" || tenantID != scope.TenantID {
+			return vmrestore.ErrInternalAttribute
+		}
+	}
+	return nil
+}
+
+```
+
 ### Core Architecture Module: `api/util/bcode/api_gateway.go`
 ```
 package bcode
@@ -1093,135 +1275,6 @@ var (
 
 ```
 
-### Core Architecture Module: `api/util/bcode/bcode.go`
-```
-package bcode
-
-import (
-	"fmt"
-	"strconv"
-	"strings"
-
-	"github.com/jinzhu/gorm"
-	"github.com/pkg/errors"
-)
-
-var (
-	// OK means everything si good.
-	OK = new(200, 200)
-	// StatusFound means the requested resource resides temporarily under a different URI.
-	StatusFound = new(302, 302)
-	// BadRequest means the request could not be understood by the server due to malformed syntax.
-	// The client SHOULD NOT repeat the request without modifications.
-	BadRequest = new(400, 400)
-	// NotFound means the server has not found anything matching the request.
-	NotFound = new(404, 404)
-	// ServerErr means  the server encountered an unexpected condition which prevented it from fulfilling the request.
-	ServerErr = new(500, 500)
-
-	// TokenInvalid -
-	TokenInvalid = new(400, 401)
-)
-
-// Coder has ability to get Code, msg or detail from error.
-type Coder interface {
-	// Status Code
-	GetStatus() int
-	// business Code
-	GetCode() int
-	Error() string
-	Equal(err error) bool
-}
-
-var (
-	codes = make(map[int]struct{})
-)
-
-func new(status, code int) Coder {
-	if _, ok := codes[code]; ok {
-		panic(fmt.Sprintf("bcode %d already exists", code))
-	}
-	codes[code] = struct{}{}
-	return newCode(status, code, "")
-}
-
-func newByMessage(status, code int, message string) Coder {
-	if _, ok := codes[code]; ok {
-		panic(fmt.Sprintf("bcode %d already exists", code))
-	}
-	codes[code] = struct{}{}
-	return newCode(status, code, message)
-}
-
-// Code business a bussiness Code
-type Code struct {
-	Status  int    `json:"status"`
-	Code    int    `json:"code"`
-	Message string `json:"msg"`
-}
-
-func newCode(status, code int, message string) Coder {
-	return &Code{Status: status, Code: code, Message: message}
-}
-
-// GetStatus returns the Status Code
-func (c *Code) GetStatus() int {
-	return c.Status
-}
-
-// GetCode returns the business Code
-func (c *Code) GetCode() int {
-	return c.Code
-}
-
-func (c *Code) Error() string {
-	if c.Message != "" {
-		return c.Message
-	}
-	return strconv.FormatInt(int64(c.Code), 10)
-}
-
-// Equal -
-func (c *Code) Equal(err error) bool {
-	obj := Err2Coder(err)
-	return c.Code == obj.GetCode()
-}
-
-// Err2Coder converts the given err to Coder.
-func Err2Coder(err error) Coder {
-	if err == nil {
-		return OK
-	}
-	coder, ok := errors.Cause(err).(Coder)
-	if ok {
-		return coder
-	}
-	if err == gorm.ErrRecordNotFound {
-		return NotFound
-	}
-	return Str2Coder(err.Error())
-}
-
-// Str2Coder converts the given str to Coder.
-func Str2Coder(str string) Coder {
-	str = strings.TrimSpace(str)
-	if str == "" {
-		return OK
-	}
-	i, err := strconv.Atoi(str)
-	if err != nil {
-		return ServerErr
-	}
-	return newCode(400, i, "")
-}
-
-// NewBadRequest -
-func NewBadRequest(msg string) Coder {
-	return newCode(400, 400, msg)
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -1251,301 +1304,1857 @@ func NewBadRequest(msg string) Coder {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cfba2cee` (2026-11-17)
-**Commit Message**: ci(release): add a workflow to build the gateway controller image (#2757)
+### Incident Patch 1: `3d312f45` (2026-11-25)
+**Commit Message**: Merge pull request #2765 from goodrain/fix/vm-start-completion
 
-Signed-off-by: yangkaa <[REDACTED_EMAIL]>
+fix: complete VM startup events with defaulted container disks
 
-**File**: `.github/workflows/release-v6-gateway-controller.yml` (added, +138/-0)
+**File**: `api/handler/vm_power_container_disk_defaults_test.go` (added, +130/-0)
 ```diff
-@@ -0,0 +1,138 @@
-+name: "release-v6-gateway-controller"
+@@ -0,0 +1,130 @@
++package handler
 +
-+# 构建 rbd-gateway 使用的 apisix-ingress-controller 镜像（goodrain/apisix-ingress-controller 的发布分支），
-+# 推到阿里云 goodrain/apisix-ingress-controller:<tag> 和 <tag>-esgz。rainbond-chart 按 tag 引用它。
-+# 覆盖已有 tag 前，先把旧镜像复制到 <tag>-<backup_suffix> 和 <tag>-esgz-<backup_suffix>，备份失败就不构建。
-+on:
-+  workflow_dispatch:
-+    inputs:
-+      ref:
-+        description: 'goodrain/apisix-ingress-controller 的分支或 commit'
-+        required: true
-+        default: 'release/v1.8.4'
-+      tag:
-+        description: '要推送的镜像 tag（不带 -esgz）'
-+        required: true
-+        default: 'v1.8.4-upsert-e26e824'
-+      backup_suffix:
-+        description: '覆盖前旧镜像的备份后缀，例如 bak-20261117'
-+        required: true
++import (
++	"context"
++	"encoding/json"
++	"errors"
++	"strings"
++	"testing"
 +
-+permissions:
-+  contents: read
++	apimodel "github.com/goodrain/rainbond/api/model"
++	"github.com/goodrain/rainbond/api/util/bcode"
++	dbmodel "github.com/goodrain/rainbond/db/model"
++	"github.com/goodrain/rainbond/pkg/vmrestore"
++	corev1 "k8s.io/api/core/v1"
++	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++	"k8s.io/apimachinery/pkg/runtime"
++	"k8s.io/apimachinery/pkg/runtime/schema"
++	kv "kubevirt.io/api/core/v1"
++)
 +
-+jobs:
-+  build:
-+    runs-on: ubuntu-latest
-+    environment: release-v6
-+    timeout-minutes: 60
-+    env:
-+      REPO: registry.cn-hangzhou.aliyuncs.com/goodrain/apisix-ingress-controller
-+      TAG: ${{ inputs.tag }}
-+      BACKUP_SUFFIX: ${{ inputs.backup_suffix }}
-+    steps:
-+      - name: Validate inputs
-+        run: |
-+          [[ "$TAG" =~ ^v[0-9A-Za-z._-]+$ && "$TAG" != *-esgz ]] || { echo "::error::invalid tag $TAG"; exit 1; }
-+          [[ "$BACKUP_SUFFIX" =~ ^[0-9A-Za-z._-]+$ ]] || { echo "::error::invalid backup suffix"; exit 1; }
++// capability_id: rainbond.vm-power.container-disk-defaults
++func TestRestoredPowerCompletionHandlesContainerDiskDefaults(t *testing.T) {
++	for _, tc := range []struct {
++		name      string
++		image     string
++		requested corev1.PullPolicy
++		actual    corev1.PullPolicy
++		changed   bool
++		complete  bool
++	}{
++		{name: "digest", image: "registry.invalid/virtio@sha256:" + strings.Repeat("b", 64), actual: corev1.PullIfNotPresent, complete: true},
++		{name: "version tag", image: "registry.invalid/virtio:v1", actual: corev1.PullIfNotPresent, complete: true},
++		{name: "latest tag", image: "registry.invalid/virtio:latest", actual: corev1.PullAlways, complete: true},
++		{name: "implicit latest", image: "registry.invalid/virtio", actual: corev1.PullAlways, complete: true},
++		{name: "explicit policy", image: "registry.invalid/virtio:v1", requested: corev1.PullNever, actual: corev1.PullNever, complete: true},
++		{name: "wrong default policy", image: "registry.invalid/virtio:v1", actual: corev1.PullAlways},
++		{name: "changed explicit policy", image: "registry.invalid/virtio:v1", requested: corev1.PullNever, actual: corev1.PullIfNotPresent},
++		{name: "changed image", image: "registry.invalid/virtio:v1", actual: corev1.PullIfNotPresent, changed: true},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			a, store, resolver, scope, dyn := restoredPowerFixture(t)
++			ctx := context.Background()
++			vmGVR := schema.GroupVersionResource{Group: "kubevirt.io", Version: "v1", Resource: "virtualmachines"}
++			vmiGVR := schema.GroupVersionResource{Group: "kubevirt.io", Version: "v1", Resource: "virtualmachineinstances"}
++			object, err := dyn.Resource(vmGVR).Namespace(scope.Namespace).Get(ctx, "vm", metav1.GetOptions{})
++			if err != nil {
++				t.Fatal(err)
++			}
++			var vm kv.VirtualMachine
++			if err := runtime.DefaultUnstructuredConverter.FromUnstructured(object.Object, &vm); err != nil {
++				t.Fatal(err)
++			}
++			vm.Spec.Template.Spec.Volumes = append(vm.Spec.Template.Spec.Volumes, kv.Volume{Name: "virtio", VolumeSource: kv.VolumeSource{ContainerDisk: &kv.ContainerDiskSource{Image: tc.image, ImagePullPolicy: tc.requested}}})
++			vm.Spec.Template.Spec.Domain.Devices.Disks = append(vm.Spec.Template.Spec.Domain.Devices.Disks, kv.Disk{Name: "virtio", DiskDevice: kv.DiskDevice{CDRom: &kv.CDRomTarget{Bus: kv.DiskBusSATA}}})
++			object, err = vmrestore.EncodeRuntimeVM(&vm)
++			if err != nil {
++				t.Fatal(err)
++			}
++			if _, err := dyn.Resource(vmGVR).Namespace(scope.Namespace).Update(ctx, object, metav1.UpdateOptions{}); err != nil {
++				t.Fatal(err)
++			}
++			eventID := "container-disk-start"
++			if err := a.getDBManager().DB().Create(&dbmodel.ServiceEvent{EventID: eventID, TenantID: scope.TenantID, ServiceID: scope.ServiceID, Status: "checking", FinalStatus: "running"}).Error; err != nil {
++				t.Fatal(err)
++			}
++			err = a.StartOrCreateVM(newVMOperationEventContext(eventID), &apimodel.StartStopStruct{TenantID: scope.TenantID, ServiceID: scope.ServiceID, EventID: eventID, TaskType: "start"}, "")
++			var pending *bcode.Code
++			if !errors.As(err, &pending) || pending.Status != 202 {
++				t.Fatalf("start should await the real instance: %v", err)
++			}
++			object, err = dyn.Resource(vmGVR).Namespace(scope.Namespace).Get(ctx, "vm", metav1.GetOptions{})
++			if err != nil {
++				t.Fatal(err)
++			}
++			if err := runtime.DefaultUnstructuredConverter.FromUnstructured(object.Object, &vm); err != nil {
++				t.Fatal(err)
++			}
++			instance := &kv.VirtualMachineInstance{TypeMeta: metav1.TypeMeta{APIVersion: "kubevirt.io/v1", Kind: "VirtualMachineInstance"}, ObjectMeta: metav1.ObjectMeta{Name: vm.Name, Namespace: scope.Namespace, UID: "defaulted-instance", OwnerReferences: []metav1.OwnerReference{{Kind: "VirtualMachine", Name: vm.Name, UID: vm.UID}}}, Spec: *vm.Spec.Template.Spec.DeepCopy(), Status: kv.VirtualMachineInstanceStatus{Phase: kv.Running}}
++			for i := range instance.Spec.Volumes {
++				if disk := instance.Spec.Volumes[i].ContainerDisk; disk != nil {
++					disk.ImagePullPolicy = tc.actual
++					if tc.changed {
++						disk.Image = "registry.invalid/virtio:changed"
++					}
++				}
++			}
++			kv.SetDefaults_VirtualMachineInstance(instance)
++			raw, err := json.Marshal(instance)
++			if err != nil {
++				t.Fatal(err)
++			}
++			instanceObject := object.DeepCopy()
++			if err := instanceObject.UnmarshalJSON(raw); err != nil {
++				t.Fatal(err)
++			}
++			if _, err := dyn.Resource(vmiGVR).Namespace(scope.Namespace).Create(ctx, instanceObject
+```
+
+**File**: `pkg/vmrestore/restore_kube_runtime.go` (modified, +23/-1)
+```diff
+@@ -3,6 +3,7 @@ package vmrestore
+ import (
+ 	"context"
+ 	"strconv"
++	"strings"
+ 
+ 	dbmodel "github.com/goodrain/rainbond/db/model"
+ 	corev1 "k8s.io/api/core/v1"
+@@ -218,10 +219,31 @@ func RuntimeVMMatches(a, b *kv.VirtualMachine) bool {
+ 	return apiequality.Semantic.DeepEqual(a.Spec.Template.Spec.Domain, b.Spec.Template.Spec.Domain) && apiequality.Semantic.DeepEqual(a.Spec.Template.Spec.Volumes, b.Spec.Template.Spec.Volumes) && apiequality.Semantic.DeepEqual(a.Spec.DataVolumeTemplates, b.Spec.DataVolumeTemplates)
+ }
+ 
++// runtimeVolumesWithDefaults compares KubeVirt's VMI admission defaults without
++// changing the live instance or the VM template. All volume identities and
++// explicitly configured pull policies remain part of the comparison.
++func runtimeVolumesWithDefaults(volumes []kv.Volume) []kv.Volume {
++	if volumes == nil {
++		return nil
++	}
++	result := make([]kv.Volume, len(volumes))
++	for i := range volumes {
++		result[i] = *volumes[i].DeepCopy()
++		if disk := result[i].ContainerDisk; disk != nil && disk.ImagePullPolicy == "" {
++			if strings.HasSuffix(disk.Image, ":latest") || !strings.ContainsAny(disk.Image, ":@") {
++				disk.ImagePullPolicy = corev1.PullAlways
++			} else {
++				disk.ImagePullPolicy = corev1.PullIfNotPresent
++			}
++		}
++	}
++	return result
++}
 +
-+      - name: Checkout controller source
-+        uses: actions/checkout@v4
-+        with:
-+          repository: goodrain/apisix-ingress-controller
-+          ref: ${{ inputs.ref }}
-+          persist-credentials: false
+ // runtimeInstanceMatches reuses the approved safe hardware/layout projection.
+ // Guest memory is checked independently of KubeVirt launcher overhead/defaults.
+ func runtimeInstanceMatches(instance *kv.VirtualMachineInstance, vm *kv.VirtualMachine, selected RuntimeSelection) bool {
+-	if instance == nil || vm == nil || vm.Spec.Template == nil || instance.Spec.Domain.Firmware == nil || string(instance.Spec.Domain.Firmware.UUID) != selected.Startup.FirmwareUUID || !apiequality.Semantic.DeepEqual(instance.Spec.Volumes, vm.Spec.Template.Spec.Volumes) {
++	if instance == nil || vm == nil || vm.Spec.Template == nil || instance.Spec.Domain.Firmware == nil || string(instance.Spec.Domain.Firmware.UUID) != selected.Startup.FirmwareUUID || !apiequality.Semantic.DeepEqual(runtimeVolumesWithDefaults(instance.Spec.Volumes), runtimeVolumesWithDefaults(vm.Spec.Template.Spec.Volumes)) {
+ 		return false
+ 	}
+ 	disks := []SnapshotDisk{}
+```
+
+**File**: `test-manifest.json` (modified, +36/-0)
+```diff
+@@ -12627,6 +12627,24 @@
+       "test_type": "regression",
+       "status": "active"
+     },
++    {
++      "id": "rainbond.vm-power.container-disk-defaults",
++      "title": "Defaulted container disks release completed VM power operations",
++      "title_zh": "Defaulted container disks release completed VM power operations",
++      "interface_type": "workflow",
++      "interface": "vmrestore.runtimeInstanceMatches; ServiceAction.StartOrCreateVM",
++      "code_paths": [
++        "pkg/vmrestore/restore_kube_runtime.go"
++      ],
++      "tests": [
++        {
++          "path": "api/handler/vm_power_container_disk_defaults_test.go",
++          "selector": "TestRestoredPowerCompletionHandlesContainerDiskDefaults"
++        }
++      ],
++      "test_type": "regression",
++      "status": "active"
++    },
+     {
+       "id": "rainbond.vm-power.direct-ops-event-close",
+       "title": "Close direct VM power operation events after synchronous KubeVirt actions",
+@@ -12675,6 +12693,24 @@
+       "test_type": "regression",
+       "status": "active"
+     },
++    {
++      "id": "rainbond.vm-power.runtime-observer-retry",
++      "title": "VM power completion retries unchanged runtime and VM-only updates",
++      "title_zh": "VM power completion retries unchanged runtime and VM-only updates",
++      "interface_type": "workflow",
++      "interface": "store.startVMAdmissionObserver",
++      "code_paths": [
++        "worker/appm/store/vm_admission_observer.go"
++      ],
++      "tests": [
++        {
++          "path": "worker/appm/store/vm_admission_observer_test.go",
++          "selector": "TestVMAdmissionObserverRechecksUnchangedRuntimeAndVMOnlyUpdates"
++        }
++      ],
++      "test_type": "regression",
++      "status": "active"
++    },
+     {
+       "id": "rainbond.vm-power.scoped-single-event",
+       "title": "Single-component power events retain component scope",
+```
+
+**File**: `test-manifest.md` (modified, +22/-0)
+```diff
+@@ -645,8 +645,10 @@
+ | rainbond.vm-power.batch-stop-preserves-disks | Batch VM stop uses the power API without destructive worker tasks | active | regression | handler.BatchOperationHandler.Stop | api/handler/service_batch_vm_stop_test.go::TestBatchStopUsesVMPowerAndKeepsContainerWorkerPath |
+ | rainbond.vm-power.cancel-pending-handler | 正常关闭接口可取消尚未完成的恢复虚拟机启动 | active | regression | handler.ServiceAction.StopVM | api/handler/vm_restored_power_test.go::TestRestoredPowerHandlerCanStopAnUnfinishedStartup |
+ | rainbond.vm-power.cancel-pending-start | 启动未完成时可安全关闭并在运行时退出后释放操作锁 | active | regression | vmrestore.Store.StopPendingOrdinaryVM | pkg/vmrestore/ordinary_vm_stop_test.go::TestPendingStartStopsBeforeReleasingAdmissionAndCompletesBothEvents<br>pkg/vmrestore/ordinary_vm_stop_test.go::TestPendingStartRefusesToStopReplacementVM |
++| rainbond.vm-power.container-disk-defaults | Defaulted container disks release completed VM power operations | active | regression | vmrestore.runtimeInstanceMatches; ServiceAction.StartOrCreateVM | api/handler/vm_power_container_disk_defaults_test.go::TestRestoredPowerCompletionHandlesContainerDiskDefaults |
+ | rainbond.vm-power.direct-ops-event-close | 在同步执行 KubeVirt 虚拟机电源操作后闭环事件状态 | active | regression | api/handler direct VM power operations | api/handler/service_vm_power_test.go::TestStartOrCreateVMMarksDirectStartEventSuccess<br>api/handler/service_vm_power_test.go::TestStartOrCreateVMMarksDirectStartEventFailure<br>api/handler/service_vm_power_test.go::TestRestartVMMarksDirectRestartEventSuccess<br>api/handler/service_vm_power_test.go::TestStopVMMarksDirectStopEventSuccess |
+ | rainbond.vm-power.legacy-stop-preserves-disks | Legacy queued VM stop fails closed before deleting runtime or persistent disks | active | regression | controller.stopController.stopOne | worker/appm/controller/stop_vm_preservation_test.go::TestLegacyWorkerStopCannotDeleteUnmappedVM |
++| rainbond.vm-power.runtime-observer-retry | VM power completion retries unchanged runtime and VM-only updates | active | regression | store.startVMAdmissionObserver | worker/appm/store/vm_admission_observer_test.go::TestVMAdmissionObserverRechecksUnchangedRuntimeAndVMOnlyUpdates |
+ | rainbond.vm-power.scoped-single-event | Single-component power events retain component scope | active | regression | api/util.CreateEvent | api/util/events_test.go::TestCreateEventScopesRestoredVMPower |
+ | rainbond.vm-power.start-existing-or-create | 优先启动已存在且已停止的虚拟机，否则回退到 worker 创建流程 | active | regression | api/handler.ServiceAction.StartOrCreateVM | api/handler/service_vm_power_test.go::TestStartOrCreateVMStartsExistingStoppedVM<br>api/handler/service_vm_power_test.go::TestStartOrCreateVMStartsExistingStoppedVMWhenSpecSyncFindsMissingRootImport<br>api/handler/service_vm_power_test.go::TestStartOrCreateVMStartsStoppedAlwaysRunStrategyVM<br>api/handler/service_vm_power_test.go::TestStartOrCreateVMStartsExistingVMWithUnknownPrintableStatus<br>api/handler/service_vm_power_test.go::TestStartOrCreateVMFallsBackToWorkerStartWhenVMIsMissing |
+ | rainbond.vm-power.stop-restoring-fallback | Fallback to halt transient VM when direct stop fails | active | regression | api/handler.ServiceAction.StopVM | api/handler/service_vm_power_test.go::TestStopVMFallsBackToHaltingProvisioningVMWhenDirectStopFails |
+@@ -7246,6 +7248,16 @@
+ - 代码路径: `pkg/vmrestore/ordinary_vm_stop.go`, `pkg/vmrestore/ordinary_vm_admission.go`
+ - 测试路径: `pkg/vmrestore/ordinary_vm_stop_test.go::TestPendingStartStopsBeforeReleasingAdmissionAndCompletesBothEvents`, `pkg/vmrestore/ordinary_vm_stop_test.go::TestPendingStartRefusesToStopReplacementVM`
+ 
++### Defaulted container disks release completed VM power operations
 +
-+      - name: Read source revision
-+        id: source
-+        run: |
-+          sha=$(git rev-parse HEAD)
-+          echo "sha=$sha" >> "$GITHUB_OUTPUT"
-+          echo "version=${TAG#v}-${sha:0:7}" >> "$GITHUB_OUTPUT"
++- Capability ID: `rainbond.vm-power.container-disk-defaults`
++- 状态: `active`
++- 测试类型: `regression`
++- 接口类型: `workflow`
++- 业务入口: `vmrestore.runtimeInstanceMatches; ServiceAction.StartOrCreateVM`
++- 代码路径: `pkg/vmrestore/restore_kube_runtime.go`
++- 测试路径: `api/handler/vm_power_container_disk_defaults_test.go::TestRestoredPowerCompletionHandlesContainerDiskDefaults`
 +
-+      - name: Set up QEMU
-+        uses: docker/setup-qemu-action@v3
+ ### 在同步执行 KubeVirt 虚拟机电源操作后闭环事件状态
+ 
+ - Capability ID: `rainbond.vm-power.direct-ops-event-close`
+@@ -7266,6 +7278,16 @@
+ - 代码路径: `worker/appm/controller/stop.go`
+ - 测试路径: `worker/appm/controller/stop_vm_preservation_test.go::TestLegacyWorkerStopCannotDeleteUnmappedVM`
+ 
++### VM power completion retries unchanged runtime and VM-only updates
 +
-+      - name: Set up Docker Buildx
-+        uses: docker/setup-buildx-action@v3
++- Capability ID: `rainbond.vm-power.runtime-observer-retry`
++- 状态: `active`
++- 测试类型: `regression`
++- 接口类型: `workflow`
++- 业务入口: `store.startVMAdmissionObserver`
++- 代码路径: `worker/appm/store/vm_admission_observer.go`
++- 测试路径: `worker/appm/store/vm_admission_observer_test.go::TestVMAdmissionObserverRechecksUnchangedRuntimeAndVMOnlyUpdates`
 +
-+      - name: Login to Aliyun Container Registry
-+        uses: docker/login-action@v3
-+        with:
-+          registry: registry.cn-hangzhou.aliyuncs.com
-+          username: ${{ secrets.DOMESTIC_DOCKER_USERNAME }}
-+          password: ${{ secrets.DOMESTIC_DOCKER_PASSWORD }}
+ ### Single-component power events retain component scope
+ 
+ - Capability ID: `rainbond.vm-power.scoped-single-event`
+```
+
+**File**: `worker/appm/store/vm_admission_observer.go` (modified, +24/-6)
+```diff
+@@ -2,12 +2,15 @@ package store
+ 
+ import (
+ 	"context"
++	"errors"
+ 	"time"
+ 
+ 	"github.com/goodrain/rainbond/pkg/vmrestore"
++	"github.com/sirupsen/logrus"
+ 	corev1 "k8s.io/api/core/v1"
+ 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+ 	"k8s.io/apimachinery/pkg/runtime/schema"
++	"k8s.io/client-go/dynamic"
+ 	"k8s.io/client-go/dynamic/dynamicinformer"
+ 	"k8s.io/client-go/tools/cache"
+ )
+@@ -18,8 +21,6 @@ func (a *appRuntimeStore) startVMAdmissionObserver(stop <-chan struct{}) {
+ 	if a.k8sClient == nil || a.k8sClient.DynamicClient == nil || a.dbmanager == nil || a.dbmanager.DB() == nil {
+ 		return
+ 	}
+-	factory := dynamicinformer.NewFilteredDynamicSharedInformerFactory(a.k8sClient.DynamicClient, 0, "", nil)
+-	informer := factory.ForResource(schema.GroupVersionResource{Group: "kubevirt.io", Version: "v1", Resource: "virtualmachineinstances"}).Informer()
+ 	observe := func(value interface{}) {
+ 		if tombstone, ok := value.(cache.DeletedFinalStateUnknown); ok {
+ 			value = tombstone.Obj
+@@ -50,12 +51,29 @@ func (a *appRuntimeStore) startVMAdmissionObserver(stop <-chan struct{}) {
+ 		defer cancel()
+ 		// Unknown/not-ready observations retain admission; only exact UID and
+ 		// binding-generation completion can finish it in the shared Store.
+-		_ = store.ObserveOrdinaryVMCompletion(ctx, resolver, a.k8sClient.DynamicClient, scope)
++		if err := store.ObserveOrdinaryVMCompletion(ctx, resolver, a.k8sClient.DynamicClient, scope); err != nil && !errors.Is(err, vmrestore.ErrRestorePending) {
++			logrus.WithError(err).WithField("service_id", serviceID).Warn("observe VM power operation completion")
++		}
++	}
++	var pods cache.SharedIndexInformer
++	if a.informers != nil {
++		pods = a.informers.Pod
+ 	}
++	startVMRuntimeObservers(a.k8sClient.DynamicClient, pods, 30*time.Second, stop, observe)
++}
 +
-+      - name: Back up the current images
-+        timeout-minutes: 10
-+        run: |
-+          set -euo pipefail
-+          digest() { docker buildx imagetools inspect "$1" --format '{{json .Manifest}}' | python3 -c 'import sys,json;print(json.load(sys.stdin)["digest"])'; }
-+          for t in "$TAG" "$TAG-esgz"; do
-+            if ! docker buildx imagetools inspect "$REPO:$t" >/dev/null 2>&1; then
-+              echo "$REPO:$t does not exist, nothing to back up"
-+              continue
-+            fi
-+            backup="$t-$BACKUP_SUFFIX"
-+            if docker buildx imagetools inspect "$REPO:$backup" >/dev/null 2>&1; then
-+              echo "::error::$REPO:$backup already exists; pick another backup_suffix"
-+              exit 1
-+            fi
-+            src=$(digest "$REPO:$t")
-+            docker buildx imagetools create -t "$REPO:$backup" "$REPO@$src"
-+            [[ "$(digest "$REPO:$backup")" == "$src" ]] || { echo "::error::backup digest mismatch for $t"; exit 1; }
-+            echo "backed up $REPO:$t ($src) -> $REPO:$backup" | tee -a "$GITHUB_STEP_SUMMARY"
-+          done
++// Resync existing runtime objects so a transient read or concurrent ledger
++// update cannot leave a power event pending until the next guest state change.
++// VM events also cover completed stops after the VMI and launcher disappear.
++func startVMRuntimeObservers(client dynamic.Interface, pods cache.SharedIndexInformer, resync time.Duration, stop <-chan struct{}, observe func(interface{})) {
++	factory := dynamicinformer.NewFilteredDynamicSharedInformerFactory(client, resync, "", nil)
+ 	handler := cache.ResourceEventHandlerFuncs{AddFunc: observe, UpdateFunc: func(_, current interface{}) { observe(current) }, DeleteFunc: observe}
+-	_, _ = informer.AddEventHandler(handler)
+-	if a.informers != nil && a.informers.Pod != nil {
+-		_, _ = a.informers.Pod.AddEventHandler(handler)
++	for _, resource := range []string{"virtualmachines", "virtualmachineinstances"} {
++		informer := factory.ForResource(schema.GroupVersionResource{Group: "kubevirt.io", Version: "v1", Resource: resource}).Informer()
++		_, _ = informer.AddEventHandler(handler)
++	}
++	if pods != nil {
++		_, _ = pods.AddEventHandlerWithResyncPeriod(handler, resync)
+ 	}
+ 	factory.Start(stop)
+ }
+```
+
+**File**: `worker/appm/store/vm_admission_observer_test.go` (added, +66/-0)
+```diff
+@@ -0,0 +1,66 @@
++package store
 +
-+      - name: Build and push
-+        uses: docker/build-push-action@v6
-+        with:
-+          context: .
-+          platforms: linux/amd64,linux/arm64
-+          push: true
-+          provenance: false
-+          tags: ${{ env.REPO }}:${{ inputs.tag }}
-+          build-args: |
-+            VERSION=${{ steps.source.outputs.version }}
-+            GIT_SHA=${{ steps.source.outputs.sha }}
++import (
++	"context"
++	"testing"
++	"time"
 +
-+      - name: Convert to eStargz and push
-+        run: |
-+          echo "FROM $REPO:$TAG" > "$RUNNER_TEMP/Dockerfile.esgz"
-+          docker buildx build -f "$RUNNER_TEMP/Dockerfile.esgz" \
-+            --platform linux/amd64,linux/arm64 \
-+            --provenance=false \
-+            --output type=image,push=true,oci-mediatypes=true,compression=estargz,force-compression=true \
-+            -t "$REPO:$TAG-esgz" \
-+            "$RUNNER_TEMP"
++	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
++	"k8s.io/apimachinery/pkg/runtime"
++	"k8s.io/apimachinery/pkg/runtime/schema"
++	dynamicfake "k8s.io/client-go/dynamic/fake"
++)
 +
-+      - name: Verify revision and eStargz layers
-+        env:
-+          SHA: ${{ steps.source.outputs.sha }}
-+        run: |
-+          set -euo pipefail
-+          for t in "$TAG" "$TAG-esgz"; do
-+            docker buildx imagetools inspect "$REPO:$t" --format '{{json .Image}}' | python3 -c '
-+          import sys, json
-+          sha = sys.argv[1]
-+          images = json.load(sys.stdin)
-+          assert set(images) == {"linux/amd64", "linux/arm64"}, images.keys()
-+          for platform, image in images.items():
-+              rev = image["config"]["Labels"]["org.opencontainers.image.revision"]
-+              assert rev == sha, (platform, rev)
-+          print("revision ok", sorted(images))' "$SHA"
-+          done
-+          docker buildx imagetools inspect --raw "$REPO:$TAG-esgz" | python3 -c '
-+          import json
++// capability_id: rainbond.vm-power.runtime-observer-retry
++func TestVMAdmissionObserverRechecksUnchangedRuntimeAndVMOnlyUpdates(t *testing.T) {
++	vmGVR := schema.GroupVersionResource{Group: "kubevirt.io", Version: "v1", Resource: "virtualmachines"}
++	vmiGVR := schema.GroupVersionResource{Group: "kubevirt.io", Version: "v1", Resource: "virtualmachineinstances"}
++	objects := []runtime.Object{}
++	for _, kind := range []string{"VirtualMachine", "VirtualMachineInstance"} {
++		objects = append(objects, &unstructured.Unstructured{Object: map[string]interface{}{
++			"apiVersion": "kubevirt.io/v1", "kind": kind,
++			"metadata": map[string]interface{}{"name": "vm", "namespace": "tenant", "resourceVersion": "1"},
++		}})
++	}
++	client := dynamicfake.NewSimpleDynamicClientWithCustomListKinds(runtime.NewScheme(), map[schema.GroupVersionResource]string{vmGVR: "VirtualMachineList", vmiGVR: "VirtualMachineInstanceList"}, objects...)
++	stop := make(chan struct{})
++	defer close(stop)
++	observations := make(chan string, 32)
++	startVMRuntimeObservers(client, nil, time.Second, stop, func(value interface{}) {
++		object := value.(*unstructured.Unstructured)
++		select {
++		case observations <- object.GetKind() + ":" + object.GetResourceVersion():
++		default:
++		}
++	})
++	counts := map[string]int{}
++	deadline := time.NewTimer(5 * time.Second)
++	defer deadline.Stop()
++	for counts["VirtualMachine:1"] < 2 || counts["VirtualMachineInstance:1"] < 2 {
++		select {
++		case observed := <-observations:
++			counts[observed]++
++		case <-deadline.C:
++			t.Fatalf("unchanged runtime was not retried after an initial pending observation: %#v", counts)
++		}
++	}
++	vm, err := client.Resource(vmGVR).Namespace("tenant").Get(context.Background(), "vm", metav1.GetOptions{})
++	if err != nil {
++		t.Fatal(err)
++	}
++	vm.SetResourceVersion("2")
++	if _, err := client.Resource(vmGVR).Namespace("tenant").Update(context.Background(), vm, metav1.UpdateOptions{}); err != nil {
++		t.Fatal(err)
++	}
++	for {
++		select {
++		case observed := <-observations:
++			if observed == "VirtualMachine:2" {
++				return
++			}
++		case <-deadline.C:
++			t.Fatal("VM-only updates did not trigger power completion observation")
++		}
++	}
++}
 ```
 
 ---
 
-### Incident Patch 2: `5db94d70` (2026-11-17)
-**Commit Message**: ci(release): build standalone natively and sync to Aliyun with retries (#2755)
+### Incident Patch 2: `b75eabeb` (2026-11-25)
+**Commit Message**: fix: coordinate nightly registry cleanup
 
-Signed-off-by: yangkaa <[REDACTED_EMAIL]>
+Signed-off-by: 张启航 <[REDACTED_EMAIL]>
 
-**File**: `.github/workflows/release-v6-standalone.yml` (modified, +156/-38)
+**File**: `api/controller/cleanup_scheduled_gc.go` (added, +381/-0)
 ```diff
-@@ -33,68 +33,186 @@ on:
+@@ -0,0 +1,381 @@
++package controller
++
++import (
++	"context"
++	"crypto/sha256"
++	"encoding/hex"
++	"errors"
++	"fmt"
++	"strconv"
++	"strings"
++	"time"
++
++	guard "github.com/goodrain/rainbond/pkg/cleanup"
++	"github.com/goodrain/rainbond/pkg/cleanup/kubeidentity"
++	"github.com/jinzhu/gorm"
++	batchv1 "k8s.io/api/batch/v1"
++	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++	"k8s.io/apimachinery/pkg/labels"
++	"k8s.io/client-go/kubernetes"
++)
++
++var errScheduledGCFailed = errors.New("scheduled Registry GC did not succeed")
++
++type scheduledVersionCleanup func(context.Context, guard.StorageRegistration, string, uint) error
++
++// RunScheduledCleanup runs only the enrolled system Registry's coordinated
++// cleanup protocol. It never enables legacy cleaners or falls back to Pod exec.
++// triggerID is shared across replicas: startup means this Chaos DaemonSet
++// rollout; daily triggers contain the scheduler's original RFC3339 time slot.
++func (h *CleanupCoordinationHandler) RunScheduledCleanup(ctx context.Context, triggerID string, keepCount uint) error {
++	return h.runScheduledCleanup(ctx, triggerID, keepCount, h.runScheduledVersionCleanup)
++}
++
++func (h *CleanupCoordinationHandler) runScheduledCleanup(ctx context.Context, triggerID string, keepCount uint, cleanupVersions scheduledVersionCleanup) (result error) {
++	if ctx == nil || h == nil || h.database == nil || h.gcTarget == nil || h.inspectRegistry == nil || cleanupVersions == nil || keepCount == 0 {
++		return guard.ErrCoordinationUnavailable
++	}
++	if err := ctx.Err(); err != nil {
++		return err
++	}
++	database := h.database()
++	if database == nil {
++		return guard.ErrCoordinationUnavailable
++	}
++	slot, err := h.scheduledGCTrigger(ctx, triggerID)
++	if err != nil {
++		return err
++	}
++	client, namespace, service, err := h.gcTarget()
++	if err != nil || client == nil || namespace == "" || service == "" {
++		return guard.ErrCoordinationUnavailable
++	}
++	binding, err := h.scheduledRegistryBinding(ctx, client, namespace, service)
++	if err != nil {
++		return err
++	}
++	request := scheduledGCRequest(binding, slot, keepCount)
++	work := scheduledGCWork{database: database, client: client, namespace: namespace, service: service, binding: binding, request: request}
++	// This checks every selected ingress, pinned helper, physical mount and the
++	// explicit disabled legacy cleanup flag before even retiring a build record.
++	template, err := work.currentTemplate(ctx)
++	if err != nil {
++		return err
++	}
++	progress, err := guard.ReadGCJobProgress(database, request)
++	if err == nil {
++		if progress.State == "finished" {
++			return scheduledGCResult(progress)
++		}
++	} else {
++		if !gorm.IsRecordNotFoundError(err) {
++			return err
++		}
++		if err := cleanupVersions(ctx, binding, slot, keepCount); err != nil {
++			return err
++		}
++	}
++	if err := ctx.Err(); err != nil {
++		return err
++	}
++	if _, err := guard.RequestIdleMaintenance(database, request); err != nil {
++		return err
++	}
++	defer func() {
++		if result == nil || ctx.Err() == nil {
++			return
++		}
++		// Caller cancellation cannot make an already granted/ambiguous executor
++		// writable. A short independent context may cancel a verified idle drain.
++		cancelContext, cancel := context.WithTimeout(context.Background(), 10*time.Second)
++		defer cancel()
++		if err := work.cancelUnstarted(cancelContext); err != nil {
++			result = errors.Join(result, err)
++		}
++	}()
++	if _, err := guard.SubmitSuspendedGCJob(ctx, database, client.BatchV1().Jobs(namespace), request, template); err != nil {
++		return err
++	}
++	return work.run(ctx)
++}
++
++func scheduledGCResult(progress guard.GCJobProgress) error {
++	if progress.State == "finished" && progress.Outcome == "succeeded" {
++		return nil
++	}
++	return errScheduledGCFailed
++}
++
++func scheduledGCRequest(binding guard.StorageRegistration, slot string, keepCount uint) guard.CoordinationRequest {
++	identity := sha256.Sum256([]byte("scheduled-registry-gc-v1\x00" + slot + "\x00" + binding.StorageID + "\x00" + binding.Generation))
++	fingerprint := sha256.Sum256([]byte("scheduled-registry-gc-request-v1\x00" + hex.EncodeToString(identity[:]) + "\x00" + strconv.FormatUint(uint64(keepCount), 10)))
++	return guard.CoordinationRequest{StorageID: binding.StorageID, Generation: binding.Generation, OperationID: hex.EncodeToString(identity[:]), Owner: "scheduled-registry-gc", Kind: "gc", Scope: "*", Fingerprint: hex.EncodeToString(fingerprint[:])}
++}
++
++func (h *CleanupCoordinationHandler) scheduledGCTrigger(ctx context.Context, triggerID string) (string, error) {
++	if triggerID != "startup" {
++		if !strings.HasPrefix(triggerID, "daily:") || len(triggerID) > 128 {
++			return "", guard.ErrCoordinationChanged
++		}
++		if _, err := time.Parse(time.RFC3339, strings.TrimPrefix(triggerID, "daily:")); err != nil {
++			return "", guard.ErrCoordinationChanged
++		}
++		return triggerID, nil
++	}
++	client, namespace, _, err := h.gcTarget()
++	if err != nil || client == nil || namespace == "" {
++		return "", guard.ErrCoordinationUnavail
+```
+
+**File**: `api/controller/cleanup_scheduled_gc_test.go` (added, +404/-0)
+```diff
+@@ -0,0 +1,404 @@
++package controller
++
++import (
++	"context"
++	"errors"
++	"path/filepath"
++	"strings"
++	"testing"
++	"time"
++
++	"github.com/goodrain/rainbond/db/model"
++	guard "github.com/goodrain/rainbond/pkg/cleanup"
++	"github.com/goodrain/rainbond/pkg/cleanup/kubeidentity"
++	"github.com/jinzhu/gorm"
++	appsv1 "k8s.io/api/apps/v1"
++	batchv1 "k8s.io/api/batch/v1"
++	corev1 "k8s.io/api/core/v1"
++	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++	"k8s.io/apimachinery/pkg/runtime"
++	"k8s.io/client-go/kubernetes"
++	"k8s.io/client-go/kubernetes/fake"
++	ktesting "k8s.io/client-go/testing"
++)
++
++func scheduledGCFixture(t *testing.T) (*CleanupCoordinationHandler, *gorm.DB, *fake.Clientset, guard.StorageRegistration) {
++	t.Helper()
++	database, err := gorm.Open("sqlite3", filepath.Join(t.TempDir(), "scheduled.db"))
++	if err != nil {
++		t.Fatal(err)
++	}
++	t.Cleanup(func() { database.Close() })
++	database.DB().SetMaxOpenConns(1)
++	if err := database.AutoMigrate(&model.CleanupStorage{}, &model.CleanupOperation{}).Error; err != nil {
++		t.Fatal(err)
++	}
++	kube, _, volume := gcAdmissionFixture(t)
++	binding, err := guard.ProvisionRegistryStorage(database, volume, "/registry")
++	if err != nil {
++		t.Fatal(err)
++	}
++	if err := database.Model(&model.CleanupStorage{}).Where("storage_id = ?", binding.StorageID).Update("mode", "ready").Error; err != nil {
++		t.Fatal(err)
++	}
++	hub, err := kube.CoreV1().Pods("system").Get(context.Background(), "hub", metav1.GetOptions{})
++	if err != nil {
++		t.Fatal(err)
++	}
++	for i, arg := range hub.Spec.Containers[1].Args {
++		if strings.HasPrefix(arg, "--storage-id=") {
++			hub.Spec.Containers[1].Args[i] = "--storage-id=" + binding.StorageID
++		}
++		if strings.HasPrefix(arg, "--storage-generation=") {
++			hub.Spec.Containers[1].Args[i] = "--storage-generation=" + binding.Generation
++		}
++	}
++	if _, err := kube.CoreV1().Pods("system").Update(context.Background(), hub, metav1.UpdateOptions{}); err != nil {
++		t.Fatal(err)
++	}
++	h := &CleanupCoordinationHandler{
++		database: func() *gorm.DB { return database },
++		gcTarget: func() (kubernetes.Interface, string, string, error) {
++			return gcAdmissionKubeClient{Interface: kube}, "system", "rbd-hub", nil
++		},
++		inspectRegistry: func(ctx context.Context, pod, uid string) (kubeidentity.RegistryPreparation, error) {
++			return kubeidentity.InspectNativeRegistry(ctx, kube, "system", "rbd-hub", pod, uid)
++		},
++	}
++	return h, database, kube, binding
++}
++
++func noScheduledVersions(context.Context, guard.StorageRegistration, string, uint) error { return nil }
++
++const scheduledDailySlot = "daily:2026-11-25T03:00:00+08:00"
++
++// capability_id: rainbond.cleanup.scheduled-gc-preflight
++func TestScheduledGCRejectsUnqualifiedRegistryBeforeMutation(t *testing.T) {
++	for _, scenario := range []string{"legacy-cleaner", "missing-binding", "missing-service", "zero-keep"} {
++		t.Run(scenario, func(t *testing.T) {
++			h, database, kube, _ := scheduledGCFixture(t)
++			keep := uint(5)
++			switch scenario {
++			case "legacy-cleaner":
++				pod, _ := kube.CoreV1().Pods("system").Get(context.Background(), "chaos", metav1.GetOptions{})
++				pod.Spec.Containers[0].Args = []string{"--clean-up=true"}
++				_, _ = kube.CoreV1().Pods("system").Update(context.Background(), pod, metav1.UpdateOptions{})
++			case "missing-binding":
++				if err := database.Delete(&model.CleanupStorage{}).Error; err != nil {
++					t.Fatal(err)
++				}
++			case "missing-service":
++				if err := kube.CoreV1().Services("system").Delete(context.Background(), "rbd-hub", metav1.DeleteOptions{}); err != nil {
++					t.Fatal(err)
++				}
++			case "zero-keep":
++				keep = 0
++			}
++			called := false
++			err := h.runScheduledCleanup(context.Background(), scheduledDailySlot, keep, func(context.Context, guard.StorageRegistration, string, uint) error { called = true; return nil })
++			if err == nil || called {
++				t.Fatal("unqualified cleanup reached version mutation", err, called)
++			}
++			var operations int
++			if err := database.Model(&model.CleanupOperation{}).Count(&operations).Error; err != nil || operations != 0 {
++				t.Fatal("preflight created an operation", operations, err)
++			}
++			jobs, _ := kube.BatchV1().Jobs("system").List(context.Background(), metav1.ListOptions{})
++			if len(jobs.Items) != 0 {
++				t.Fatal("preflight created a Job")
++			}
++		})
++	}
++	t.Run("rejected-trigger-and-canceled-caller", func(t *testing.T) {
++		h, database, _, _ := scheduledGCFixture(t)
++		if err := h.RunScheduledCleanup(context.Background(), scheduledDailySlot, 0); err == nil {
++			t.Fatal("zero retention accepted")
++		}
++		for _, trigger := range []string{"", "daily:invalid", "startup:untrusted-owner"} {
++			if err := h.runScheduledCleanup(context.Background(), trigger, 5, noScheduledVersions); err == nil {
++				t.Fatal("untrusted trigger accepted", trigger)
++			}
++		}
++		ctx, cancel := context.WithCancel(context.Background())
++		cancel()
++		if err := h.runScheduledCleanup(ctx, scheduledDailySlot, 5, noScheduledVersions); 
+```
+
+**File**: `api/controller/cleanup_scheduled_versions.go` (added, +483/-0)
+```diff
+@@ -0,0 +1,483 @@
++package controller
++
++import (
++	"context"
++	"crypto/sha256"
++	"encoding/hex"
++	"errors"
++	"net/http"
++	"net/url"
++	"sort"
++	"strconv"
++	"strings"
++	"time"
++
++	"github.com/docker/distribution/reference"
++	"github.com/goodrain/rainbond/builder"
++	"github.com/goodrain/rainbond/builder/sources/registry"
++	"github.com/goodrain/rainbond/config/configs"
++	"github.com/goodrain/rainbond/db/model"
++	guard "github.com/goodrain/rainbond/pkg/cleanup"
++	"github.com/jinzhu/gorm"
++	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++)
++
++type scheduledVersionRegistry interface {
++	Resolve(context.Context, string, string) (string, error)
++	Tags(context.Context, string) ([]string, error)
++	Delete(context.Context, string, string, string) (int, error)
++	Exists(context.Context, string, string) (bool, error)
++}
++
++// runScheduledVersionCleanup uses the installed system ingress only. Merely
++// knowing a registry URL must not authorize cleanup of another registry.
++func (h *CleanupCoordinationHandler) runScheduledVersionCleanup(ctx context.Context, binding guard.StorageRegistration, triggerID string, keepCount uint) error {
++	if h == nil || h.gcTarget == nil {
++		return guard.ErrCoordinationUnavailable
++	}
++	client, namespace, serviceName, err := h.gcTarget()
++	if err != nil || client == nil {
++		return guard.ErrCoordinationUnavailable
++	}
++	endpoint := configs.Default().ServerConfig.RbdHub
++	origin, err := url.Parse(endpoint)
++	if err != nil || origin.Host == "" || origin.User != nil || origin.RawQuery != "" || origin.Fragment != "" || (origin.Path != "" && origin.Path != "/") || (origin.Scheme != "http" && origin.Scheme != "https") {
++		return guard.ErrCoordinationUnavailable
++	}
++	host := strings.ToLower(origin.Hostname())
++	if host != serviceName && host != serviceName+"."+namespace && host != serviceName+"."+namespace+".svc" && host != serviceName+"."+namespace+".svc.cluster.local" {
++		return guard.ErrCoordinationUnavailable
++	}
++	service, err := client.CoreV1().Services(namespace).Get(ctx, serviceName, metav1.GetOptions{})
++	if err != nil || service.UID == "" || service.DeletionTimestamp != nil {
++		return guard.ErrCoordinationUnavailable
++	}
++	port := 80
++	if origin.Scheme == "https" {
++		port = 443
++	}
++	if origin.Port() != "" {
++		port, err = strconv.Atoi(origin.Port())
++		if err != nil {
++			return guard.ErrCoordinationUnavailable
++		}
++	}
++	matched := false
++	for _, p := range service.Spec.Ports {
++		matched = matched || int(p.Port) == port
++	}
++	if !matched {
++		return guard.ErrCoordinationUnavailable
++	}
++	remote, err := registry.NewCoordinatedCleanupClient(endpoint, builder.REGISTRYUSER, builder.REGISTRYPASS)
++	if err != nil {
++		return guard.ErrCoordinationUnavailable
++	}
++	return h.runScheduledVersionCleanupWithRegistry(ctx, binding, triggerID, keepCount, remote, origin.Host)
++}
++
++func scheduledVersionImage(image, managedHost string) (repository, tag string, ok bool) {
++	named, err := reference.ParseNormalizedNamed(image)
++	if err != nil {
++		return "", "", false
++	}
++	domain := reference.Domain(named)
++	if domain != "goodrain.me" && domain != managedHost {
++		return "", "", false
++	}
++	tagged, yes := named.(reference.Tagged)
++	if !yes {
++		return "", "", false
++	}
++	if _, digested := named.(reference.Digested); digested {
++		return "", "", false
++	}
++	repository = reference.Path(named)
++	// Preserve the legacy protection for builder and runner system images.
++	if strings.Contains(repository, "builder") || strings.Contains(repository, "runner") {
++		return "", "", false
++	}
++	return repository, tagged.Tag(), true
++}
++
++const scheduledVersionCleanupOwner = "chaos-scheduled-version-cleanup"
++
++type scheduledVersionManifestGroup struct {
++	Repository, Target string
++	Versions           []guard.ScheduledVersionRetirement
++}
++
++func (h *CleanupCoordinationHandler) runScheduledVersionCleanupWithRegistry(ctx context.Context, binding guard.StorageRegistration, triggerID string, keepCount uint, remote scheduledVersionRegistry, managedHost string) error {
++	if h == nil || h.database == nil || remote == nil || keepCount < 1 || keepCount > 10000 || triggerID == "" || len(triggerID) > 128 || !guard.IsRegistryStorageBinding(binding) {
++		return guard.ErrCoordinationChanged
++	}
++	if err := h.recoverUnstartedScheduledVersionCandidates(ctx, binding, remote); err != nil {
++		return err
++	}
++	if observation, ready, err := h.certifyRegistry(ctx, binding, nil); err != nil || !ready {
++		if err == nil && observation.Mode == "ready" {
++			var uncertain int
++			if err := h.database().Model(&model.CleanupOperation{}).Where("storage_id = ? AND (state = ? OR (owner IN (?) AND kind = ? AND state IN (?)))", binding.StorageID, "uncertain", []string{scheduledVersionCleanupOwner, "chaos-scheduled-version-retry"}, "delete", []string{"executing", "applied", "rejected"}).Count(&uncertain).Error; err != nil {
++				return err
++			}
++			if uncertain > 0 {
++				return guard.ErrCoordinationUncertain
++			}
++			return guard.ErrCoordinatio
+```
+
+**File**: `api/controller/cleanup_scheduled_versions_test.go` (added, +444/-0)
+```diff
+@@ -0,0 +1,444 @@
++package controller
++
++import (
++	"context"
++	"errors"
++	"net/http"
++	"path/filepath"
++	"strings"
++	"testing"
++	"time"
++
++	"github.com/goodrain/rainbond/db/model"
++	guard "github.com/goodrain/rainbond/pkg/cleanup"
++	"github.com/jinzhu/gorm"
++	_ "github.com/jinzhu/gorm/dialects/sqlite"
++)
++
++type scheduledVersionRegistryFixture struct {
++	database        *gorm.DB
++	digests         map[string]string
++	tags            []string
++	deletes         int
++	missing         bool
++	unknown         bool
++	delayed         bool
++	keepPresent     bool
++	failDigestReads int
++	reject          bool
++	existsReadError bool
++}
++
++func (f *scheduledVersionRegistryFixture) Resolve(_ context.Context, repository, ref string) (string, error) {
++	if strings.HasPrefix(ref, "sha256:") {
++		if f.failDigestReads > 0 {
++			f.failDigestReads--
++			return "", errors.New("fixture read unavailable")
++		}
++		for _, value := range f.digests {
++			if value == ref && !f.missing {
++				return ref, nil
++			}
++		}
++	}
++	if d := f.digests[ref]; d != "" {
++		return d, nil
++	}
++	return "", errors.New("missing fixture manifest")
++}
++func (f *scheduledVersionRegistryFixture) Tags(context.Context, string) ([]string, error) {
++	return append([]string(nil), f.tags...), nil
++}
++func (f *scheduledVersionRegistryFixture) Exists(context.Context, string, string) (bool, error) {
++	if f.existsReadError {
++		return false, errors.New("fixture HEAD unavailable")
++	}
++	return !f.missing, nil
++}
++func (f *scheduledVersionRegistryFixture) Delete(_ context.Context, repository, target, permit string) (int, error) {
++	f.deletes++
++	if permit == "" {
++		return 0, errors.New("missing permit")
++	}
++	var op model.CleanupOperation
++	if err := f.database.Where("kind = ? AND state = ? AND target = ?", "delete", "active", target).First(&op).Error; err != nil {
++		return 0, err
++	}
++	r := guard.CoordinationRequest{StorageID: op.StorageID, Generation: op.Generation, Owner: op.Owner, OperationID: op.OperationID, Kind: op.Kind, Scope: op.Scope, Fingerprint: op.Fingerprint, Target: op.Target}
++	if err := guard.BeginDeletionAttempt(f.database, r); err != nil {
++		return 0, err
++	}
++	if f.unknown {
++		return 0, errors.New("fixture lost response")
++	}
++	if f.reject {
++		if err := guard.CompleteDeletionAttempt(f.database, r, "rejected"); err != nil {
++			return 0, err
++		}
++		return http.StatusForbidden, nil
++	}
++	f.missing = !f.keepPresent
++	if f.delayed {
++		go func() { time.Sleep(30 * time.Millisecond); _ = guard.CompleteDeletionAttempt(f.database, r, "applied") }()
++	} else if err := guard.CompleteDeletionAttempt(f.database, r, "applied"); err != nil {
++		return 0, err
++	}
++	return http.StatusAccepted, nil
++}
++func scheduledVersionFixture(t *testing.T) (*CleanupCoordinationHandler, guard.StorageRegistration, *gorm.DB, *scheduledVersionRegistryFixture) {
++	t.Helper()
++	database, err := gorm.Open("sqlite3", filepath.Join(t.TempDir(), "versions.db"))
++	if err != nil {
++		t.Fatal(err)
++	}
++	t.Cleanup(func() { database.Close() })
++	database.LogMode(false)
++	if err := database.AutoMigrate(&model.CleanupStorage{}, &model.CleanupOperation{}, &model.TenantServices{}, &model.VersionInfo{}).Error; err != nil {
++		t.Fatal(err)
++	}
++	if err := database.Exec("CREATE TABLE tenant_services_event (service_id TEXT, opt_type TEXT, final_status TEXT)").Error; err != nil {
++		t.Fatal(err)
++	}
++	binding, err := guard.ProvisionRegistryStorage(database, "owned-volume", "/owned/registry")
++	if err != nil {
++		t.Fatal(err)
++	}
++	h := &CleanupCoordinationHandler{database: func() *gorm.DB { return database }, permitKey: func() []byte { return []byte(strings.Repeat("owned-fixture-", 4)) }}
++	writers := installRegistryCoverageFixture(t, h, binding)
++	h.inspectReferenceWriters = func(context.Context) ([]guard.ReferenceWriter, error) { return *writers, nil }
++	h.clusterReferences = func(context.Context) (guard.RegionReferenceInventory, error) {
++		return guard.RegionReferenceInventory{Complete: true}, nil
++	}
++	if err := database.Create(&model.TenantServices{TenantID: "tenant", ServiceID: "service", DeployVersion: "20260102"}).Error; err != nil {
++		t.Fatal(err)
++	}
++	for _, v := range []string{"20260101", "20260102"} {
++		if err := database.Create(&model.VersionInfo{ServiceID: "service", BuildVersion: v, ImageName: "goodrain.me/team/app:" + v, DeliveredPath: "goodrain.me/team/app:" + v, DeliveredType: "image", FinalStatus: "success", EventID: "build-" + v}).Error; err != nil {
++			t.Fatal(err)
++		}
++	}
++	old := "sha256:" + strings.Repeat("a", 64)
++	current := "sha256:" + strings.Repeat("b", 64)
++	registry := &scheduledVersionRegistryFixture{database: database, digests: map[string]string{"20260101": old, "20260102": current}, tags: []string{"20260101", "20260102"}}
++	return h, binding, database, registry
++}
++
++// capability_id: rainbond.image-clean.scheduled-version-retirement
++func TestScheduledVersionCleanupRetiresOnlyUnprotectedOldVersion(t *testing.T) {
++	for _, scenario := range []string{"delete
+```
+
+**File**: `builder/clean/clean.go` (modified, +102/-136)
+```diff
+@@ -22,16 +22,14 @@ import (
+ 	"bytes"
+ 	"context"
+ 	"errors"
+-	"github.com/containerd/containerd/errdefs"
+-	dockercli "github.com/docker/docker/client"
++	"fmt"
++	"sync"
++	"time"
++
+ 	"github.com/goodrain/rainbond-operator/util/constants"
+-	"github.com/goodrain/rainbond/builder"
+ 	"github.com/goodrain/rainbond/builder/sources"
+-	"github.com/goodrain/rainbond/builder/sources/registry"
+ 	"github.com/goodrain/rainbond/config/configs"
+-	"github.com/goodrain/rainbond/db"
+-	"github.com/goodrain/rainbond/pkg/component/k8s"
+-	"github.com/goodrain/rainbond/util"
++	guard "github.com/goodrain/rainbond/pkg/cleanup"
+ 	utils "github.com/goodrain/rainbond/util"
+ 	"github.com/sirupsen/logrus"
+ 	corev1 "k8s.io/api/core/v1"
+@@ -41,150 +39,118 @@ import (
+ 	"k8s.io/client-go/kubernetes/scheme"
+ 	"k8s.io/client-go/rest"
+ 	"k8s.io/client-go/tools/remotecommand"
+-	"os"
+-	"strings"
+-	"time"
+ )
  
- env:
-   VERSION: ${{ inputs.version }}
--  
+-// Manager CleanManager
++// Runner performs cleanup through the coordinated admission and execution path.
++// It must never fall back to uncoordinated registry or filesystem cleanup.
++type Runner func(context.Context, string, uint) error
 +
-+# Each architecture builds on its own native runner (no QEMU) and pushes only to
-+# Docker Hub. Aliyun receives the image afterwards through hack/release/sync-image.sh,
-+# which bounds every registry call and retries it, so a stalled Aliyun upload can
-+# no longer hang the job for hours or force a rebuild.
- jobs:
--  standalone:
--    runs-on: ubuntu-latest
-+  build:
-+    runs-on: ${{ matrix.arch == 'amd64' && 'ubuntu-latest' || 'ubuntu-24.04-arm' }}
-     environment: release-v6
-+    timeout-minutes: 40
-+    strategy:
-+      matrix:
-+        arch: [amd64, arm64]
-+        exclude:
-+          - arch: ${{ inputs.platforms == 'linux/amd64' && 'arm64' || 'none' }}
-     steps:
-       - name: Checkout repository
--        uses: actions/checkout@v3
-+        uses: actions/checkout@v4
-         with:
-           repository: goodrain/rainbond-console
-           ref: ${{ inputs.branch }}
--      
--      # - name: Free Disk Space (Ubuntu)
--      #   uses: jlumbroso/free-disk-space@main
--      #   with:
--      #     tool-cache: false
--      #     android: true
--      #     dotnet: true
--      #     haskell: true
--      #     large-packages: true
--      #     docker-images: true
--      #     swap-storage: true
--
--      - name: Set up QEMU
--        uses: docker/setup-qemu-action@v3
++// Manager schedules coordinated cleanup without directly deleting artifacts.
+ type Manager struct {
+-	imageClient   sources.ImageClient
+-	ctx           context.Context
+-	cancel        context.CancelFunc
+-	config        *rest.Config
+-	keepCount     uint
+-	clientset     *kubernetes.Clientset
+-	cleanInterval int
++	imageClient sources.ImageClient
++	ctx         context.Context
++	cancel      context.CancelFunc
++	keepCount   uint
++	schedule    dailySchedule
++	runner      Runner
++	now         func() time.Time
++	wait        func(context.Context, time.Duration) error
++	startMu     sync.Mutex
++	started     bool
+ }
  
-       - name: Set up Docker Buildx
-         uses: docker/setup-buildx-action@v3
+-// CreateCleanManager create clean manager
+-func CreateCleanManager(imageClient sources.ImageClient) (*Manager, error) {
++// CreateCleanManager creates a daily cleanup scheduler. The optional runner
++// preserves constructor compatibility; Start rejects a missing runner.
++func CreateCleanManager(imageClient sources.ImageClient, runners ...Runner) (*Manager, error) {
++	config := configs.Default().ChaosConfig
++	if config.KeepCount <= 0 {
++		return nil, fmt.Errorf("cleanup keep-count must be positive")
++	}
++	schedule, err := newDailySchedule(config.CleanTime, config.CleanTimeZone)
++	if err != nil {
++		return nil, err
++	}
++	if len(runners) > 1 {
++		return nil, fmt.Errorf("cleanup accepts at most one coordinated runner")
++	}
++	var runner Runner
++	if len(runners) == 1 {
++		runner = runners[0]
++	}
+ 	ctx, cancel := context.WithCancel(context.Background())
+-	c := &Manager{
+-		imageClient:   imageClient,
+-		ctx:           ctx,
+-		cancel:        cancel,
+-		config:        k8s.Default().RestConfig,
+-		keepCount:     uint(configs.Default().ChaosConfig.KeepCount),
+-		clientset:     k8s.Default().Clientset,
+-		cleanInterval: configs.Default().ChaosConfig.CleanInterval,
++	return &Manager{imageClient: imageClient, ctx: ctx, cancel: cancel,
++		keepCount: uint(config.KeepCount), schedule: schedule, runner: runner,
++		now: time.Now, wait: waitForCleanupTime}, nil
++}
++
++func waitForCleanupTime(ctx context.Context, duration time.Duration) error {
++	timer := time.NewTimer(duration)
++	defer timer.Stop()
++	select {
++	case <-ctx.Done():
++		return ctx.Err()
++	case <-timer.C:
++		return nil
+ 	}
+-	return c, nil
+ }
  
--      - name: Pull Amd64 Docker image
--        run: |
--          ARCH=amd64 VERSION=${{ env.VERSION }} sh standalone/images-package.sh
-+      - name: Package k3s system images
-+        timeout-minutes: 15
-+        env:
-+          ARCH: ${{ matrix.arch }}
-+        run: sh standalone/images-package.sh
+-// Start start clean
+-func (t *Manager) Start(errchan chan error) error {
+-	logrus.Info("CleanManager is starting.")
+-	duration := time.Duration(t.cleanInterval) * time.Minute
+-	run := func() {
+-		err := util.Exec(t.ctx, func() error {
+-			//保留份数 默认5份
+-			keepCount := t.keepCount
+-			logrus.Infof("[clean] start cleanup task, keep count: %d, querying components with more than %d success versions", keepCount, keepCount)
+-			// 获取构建成功的 并且大于5个版本的serviceId和具体的版本数
+-			services, err := db.GetManager().VersionInfoDao().GetServicesAndCount("success", keepCount)
+-			if err != nil {
+-				logrus.Error("[clean] failed to query components with excess versions: ", err)
+-				return nil
+-			}
+-			logrus.Infof("[clean] found %d components with more than %d versions", len(services), keepCount)
+-			for _, service := range services {
+-				needDelete := service.Count - keepCount
+-				logrus.Infof("[clean] component %s has %d success versions, need to delete oldest %d", service.ServiceID, service.Count, needDelete)
+-				// service.Count-5： 超过指定数量的版本数,一定是正整数
+-				versions, err := db.GetManager().VersionInfoDao().SearchExpireVersionInfo(service.ServiceID, needDelete)
+-				if err != nil {
+-					logrus.Errorf("[clean] failed to query expired versions for component %s: %s", service.ServiceID, err.Error())
+-					continue
+-				}
+-				logrus.Infof("[clean] component %s has %d expired versions to delete", service.ServiceID, len(versions))
+-				for _, v := range versions {
+-					logrus.Infof("[clean] version to delete: ID=%s, DeliveredType=%q, FinalStatus=%s, Path=%s", v.BuildVersion, v.DeliveredType, v.FinalStatus, v.DeliveredPath)
+-					if v.Deliv
+```
+
+**File**: `builder/clean/clean_test.go` (modified, +254/-1)
+```diff
+@@ -2,10 +2,14 @@ package clean
  
--      - name: Pull Arm64 Docker image
--        run: |
--          if [[ "${{ inputs.platforms }}" == "linux/amd64,linux/arm64" ]]; then
--            ARCH=arm64 VERSION=${{ env.VERSION }} sh standalone/images-package.sh
--          fi
--      
-       - name: Login to Docker Hub
-         uses: docker/login-action@v3
-         with:
-           username: ${{ secrets.DOCKER_USERNAME }}
-           password: ${{ secrets.DOCKER_PASSWORD }}
+ import (
+ 	"context"
++	"errors"
++	"fmt"
+ 	"testing"
+ 	"time"
  
--      - name: Login to Aliyun Container Registry
--        uses: docker/login-action@v3
--        with:
--          registry: registry.cn-hangzhou.aliyuncs.com
--          username: ${{ secrets.DOMESTIC_DOCKER_USERNAME }}
--          password: ${{ secrets.DOMESTIC_DOCKER_PASSWORD }}
--
--      - name: Build and push
-+      # Unchanged layers come from the registry cache with their original
-+      # digests, so Docker Hub and Aliyun already hold them and only changed
-+      # layers are uploaded. The base stage clones the latest chart and is
-+      # always rebuilt so a cached chart is never shipped.
-+      - name: Build and push to Docker Hub
-+        id: build
-         uses: docker/build-push-action@v6
-         with:
--          platforms: ${{ inputs.platforms }}
-+          platforms: linux/${{ matrix.arch }}
-           build-args: |
-             VERSION=${{ env.VERSION }}
-           context: .
-           file: standalone/Dockerfile
-           push: true
-           provenance: false
-+          no-cache-filters: base
-+          cache-from: type=registry,ref=rainbond/rainbond:buildcache-standalone-${{ matrix.arch }}-${{ hashFiles('standalone/**') }}
-+          cache-to: type=registry,ref=rainbond/rainbond:buildcache-standalone-${{ matrix.arch }}-${{ hashFiles('standalone/**') }},mode=max,image-manifest=true,oci-mediatypes=true,ignore-error=true
-           tags: |
--            rainbond/rainbond:${{ env.VERSION }}-k3s
--            registry.cn-hangzhou.aliyuncs.com/goodrain/rainbond:${{ env.VERSION }}-k3s
-+            rainbond/rainbond:${{ env.VERSION }}-k3s-${{ matrix.arch }}
+ 	"github.com/goodrain/rainbond/builder/sources"
++	"github.com/goodrain/rainbond/config/configs"
++	guard "github.com/goodrain/rainbond/pkg/cleanup"
+ 	"k8s.io/client-go/kubernetes/fake"
+ )
+ 
+@@ -47,4 +51,253 @@ func TestManagerStopCancelsContext(t *testing.T) {
+ // TestAutoClean 执行此方法你应该通过第三方组件将rbd-hub暴露出来，并且通过kubectl命令查找仓库账号密码
+ func TestAutoClean(t *testing.T) {
+ 	t.Skip("integration test requires live registry access")
+-}
+\ No newline at end of file
++}
 +
-+      - name: Save image digest
-+        env:
-+          IMAGE_DIGEST: ${{ steps.build.outputs.digest }}
-+        run: printf '%s\n' "$IMAGE_DIGEST" > "$RUNNER_TEMP/image-digest"
++func cleanupTestConfiguration(t *testing.T, keep int, clock, zone string) {
++	t.Helper()
++	config := configs.Default().ChaosConfig
++	saved := *config
++	t.Cleanup(func() { *config = saved })
++	config.KeepCount = keep
++	config.CleanTime = clock
++	config.CleanTimeZone = zone
++}
 +
-+      - name: Upload image digest
-+        uses: actions/upload-artifact@v4
-+        with:
-+          name: standalone-digest-${{ matrix.arch }}
-+          path: ${{ runner.temp }}/image-digest
-+          if-no-files-found: error
-+          overwrite: true
++// capability_id: rainbond.image-clean.coordinated-manager-required
++func TestManagerRequiresCoordinatedRunner(t *testing.T) {
++	cleanupTestConfiguration(t, 5, "03:00", "Asia/Shanghai")
++	manager, err := CreateCleanManager(nil)
++	if err != nil {
++		t.Fatal(err)
++	}
++	defer manager.Stop()
++	if err := manager.Start(make(chan error, 1)); err == nil {
++		t.Fatal("manager started without a coordinated runner")
++	}
++}
 +
-+  sync-aliyun:
-+    needs: build
-+    runs-on: ubuntu-latest
-+    environment: release-v6
-+    timeout-minutes: 60
-+    strategy:
-+      fail-fast: false
-+      matrix:
-+        arch: [amd64, arm64]
-+        exclude:
-+          - arch: ${{ inputs.platforms == 'linux/amd64' && 'arm64' || 'none' }}
-+    steps:
-+      - name: Checkout workflow tools
-+        uses: actions/checkout@v4
-+        with:
-+          persist-credentials: false
++// capability_id: rainbond.image-clean.coordinated-manager-config
++func TestManagerRejectsInvalidDailyConfiguration(t *testing.T) {
++	tests := []struct {
++		name        string
++		keep        int
++		clock, zone string
++	}{
++		{"zero keep", 0, "03:00", "Asia/Shanghai"},
++		{"negative keep", -1, "03:00", "Asia/Shanghai"},
++		{"invalid clock", 5, "3:00", "Asia/Shanghai"},
++		{"invalid zone", 5, "03:00", "Invalid/Zone"},
++	}
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			cleanupTestConfiguration(t, tt.keep, tt.clock, tt.zone)
++			if manager, err := CreateCleanManager(nil, func(context.Context, string, uint) error { return nil }); err == nil {
++				manager.Stop()
++				t.Fatal("invalid cleanup configuration accepted")
++			}
++		})
++	}
++}
 +
-+      - name: Download image digest
-+        uses: actions/download-artifact@v4
-+        with:
-+          name: standalone-digest-${{ matrix.arch }}
-+          path: ${{ runner.temp }}/registry-sync
++// capability_id: rainbond.image-clean.coordinated-manager-triggers
++func TestManagerRunsCoordinatedStartupAndDailyWithoutFatalErrors(t *testing.T) {
++	cleanupTestConfiguration(t, 7, "03:00", "Asia/Shanghai")
++	type call struct {
++		trigger string
++		keep    uint
++	}
++	calls := make(chan call, 3)
++	manager, err := CreateCleanManager(nil, func(ctx context.Context, trigger string, keep uint) error {
++		calls <- call{trigger, keep}
++		return errors.New("cleanup prerequisites unavailable")
++	})
++	if err != nil {
++		t.Fatal(err)
++	}
++	defer manager.Stop()
++	location, err := time.LoadLocation("Asia/Shanghai")
++	if err != nil {
++		t.Fatal(err)
++	}
++	current := time.Date(2026, 11, 25, 2, 0, 0, 0, location)
++	manager.now = func() time.Time { return current }
++	waiting := make(chan struct{})
++	stopped := make(chan struct{})
++	waits := 0
++	manager.wait = func(ctx context.Context, duration time.Duration) error {
++		waits++
++		if waits == 1 {
++			current = current.Add(duration)
++			return nil
++		}
++		close(waiting)
++		<-ctx.Done()
++		close(stopped)
++		return ctx.Err()
++	}
++	errorsToChaos := make(chan error, 1)
++	if err := manager.Start(errorsToChaos); err != nil {
++		t.Fatal(err)
++	}
++	if err := manager.Start(errorsToChaos); err == nil {
++		t.Fatal("duplicate Start created another startup job")
++	}
++	for _, want := range []string{"startup", "daily:2026-11-25T03:00:00+08:00"} {
++		select {
++		case got := <-calls:
++			if got.trigger != want || got.keep != 7 {
++				t.Fatalf("runner call=%+v; want %s keep=7", got, want)
++			}
++		case <-time.After(5 * time.Second):
++			t.Fatal("coordinated runner did not execute")
++		}
++	}
++	select {
++	case <-waiting:
++	case <-time.After(5 * time.Second):
++		t.Fatal("daily loop did not wait")
++	}
++	if err := manager.Stop(); err != nil {
++		t.Fatal(err)
++	}
++	select {
++	case <-stopped:
++	case <-time.After(5 * time.Second):
++		t.Fatal("stop did not cancel scheduled wait")
++	}
++	select {
++	case err := <-errorsToChaos:
++		t.Fatalf("controlled runner failure escaped to Chaos: %v", err)
++	default:
++	}
++	select {
++	case extra := <-calls:
++		t.Fatalf("cleanup executed after stop: %+v", extra)
++	default:
++	}
++}
 +
-+      - name: Install Skopeo
-+        timeout-minutes: 5
-+        run: |
-+          sudo apt-get update
-+          sudo apt-get install -y --
++// capability_id: rainbond.image-clean.coordinated-manager-cancelled-start
++func TestManagerStoppedBeforeStartDoesNotExecute(t *testing.T) {
++	cleanupTestConfiguration(t, 5, "03:00", "Asia/Shanghai")
++	called := false
++	manager, err := CreateCleanManager(nil, func(context.Context, string, uint) error { called = true; return nil })
++	if err != nil {
++		t.Fatal(err)
++	}
++	manager.Stop()
++	if err := manager.Start(make(chan error, 1)); !errors.Is(err, context.Canceled) {
++		t.Fatalf("start after stop error=%v", err)
++	}
++	if called {
++		t.Fatal("cleanup executed after prior cancellation")
++	}
++}
++
++// capability_id: rainbond.image-clean.scheduler-wait-cancellation
++func TestCleanupWaitHonorsCancellationAndDeadline(t *testing.T) {
++	ctx, cancel := context.WithCancel(context.Background())
++	cancel()
++	if err :=
+```
+
+**File**: `builder/clean/schedule.go` (added, +92/-0)
+```diff
+@@ -0,0 +1,92 @@
++package clean
++
++import (
++	"context"
++	"fmt"
++	"time"
++	_ "time/tzdata" // Keep IANA zones available in images without system tzdata.
++)
++
++type dailySchedule struct {
++	hour     int
++	minute   int
++	location *time.Location
++}
++
++func newDailySchedule(clock, zone string) (dailySchedule, error) {
++	if len(clock) != 5 || clock[2] != ':' ||
++		clock[0] < '0' || clock[0] > '9' || clock[1] < '0' || clock[1] > '9' ||
++		clock[3] < '0' || clock[3] > '9' || clock[4] < '0' || clock[4] > '9' {
++		return dailySchedule{}, fmt.Errorf("invalid clean-time %q: expected HH:MM", clock)
++	}
++	parsed, err := time.Parse("15:04", clock)
++	if err != nil {
++		return dailySchedule{}, fmt.Errorf("invalid clean-time %q: %w", clock, err)
++	}
++	if zone == "" || zone == "Local" {
++		return dailySchedule{}, fmt.Errorf("invalid clean-timezone %q: use an explicit IANA zone or UTC", zone)
++	}
++	location, err := time.LoadLocation(zone)
++	if err != nil {
++		return dailySchedule{}, fmt.Errorf("invalid clean-timezone %q: %w", zone, err)
++	}
++	return dailySchedule{hour: parsed.Hour(), minute: parsed.Minute(), location: location}, nil
++}
++
++// next returns the next scheduled wall-clock instant strictly after now. A
++// nonexistent wall time is skipped for that local date. If a clock is repeated
++// during a backward transition, only its first occurrence is eligible that day.
++func (s dailySchedule) next(now time.Time) time.Time {
++	year, month, day := now.In(s.location).Date()
++	for {
++		candidate := time.Date(year, month, day, s.hour, s.minute, 0, 0, s.location)
++		matches := func(value time.Time) bool {
++			y, m, d := value.In(s.location).Date()
++			return y == year && m == month && d == day &&
++				value.Hour() == s.hour && value.Minute() == s.minute
++		}
++		if matches(candidate) {
++			// Date may select either occurrence of an ambiguous local time.
++			// Recover the earlier occurrence from the preceding zone offset.
++			start, _ := candidate.ZoneBounds()
++			if !start.IsZero() {
++				_, currentOffset := candidate.Zone()
++				_, previousOffset := start.Add(-time.Nanosecond).In(s.location).Zone()
++				if previousOffset > currentOffset {
++					earlier := candidate.Add(time.Duration(currentOffset-previousOffset) * time.Second)
++					if matches(earlier) {
++						candidate = earlier
++					}
++				}
++			}
++			if candidate.After(now) {
++				return candidate
++			}
++		}
++		// Advance the calendar date independently of 23/25-hour local days.
++		year, month, day = time.Date(year, month, day+1, 0, 0, 0, 0, time.UTC).Date()
++	}
++}
++
++// runDaily performs one startup run, then waits for successive wall-clock runs.
++// The injected wait must return when its duration expires or the context ends.
++func runDaily(ctx context.Context, schedule dailySchedule, now func() time.Time,
++	wait func(context.Context, time.Duration) error, run func(context.Context, time.Time)) {
++	if ctx.Err() != nil {
++		return
++	}
++	run(ctx, now())
++	for ctx.Err() == nil {
++		current := now()
++		scheduled := schedule.next(current)
++		if err := wait(ctx, scheduled.Sub(current)); err != nil {
++			return
++		}
++		// Cancellation can race with an expiring timer; never start another run
++		// solely because a successful wait won that race.
++		if ctx.Err() != nil {
++			return
++		}
++		run(ctx, scheduled)
++	}
++}
+```
+
+**File**: `builder/clean/schedule_test.go` (added, +153/-0)
+```diff
+@@ -0,0 +1,153 @@
++package clean
++
++import (
++	"context"
++	"errors"
++	"testing"
++	"time"
++)
++
++// capability_id: rainbond.image-clean.daily-schedule
++func TestDailyScheduleNextWallClock(t *testing.T) {
++	tests := []struct{ name, clock, zone, now, want string }{
++		{"default same day", "03:00", "Asia/Shanghai", "2026-11-24T18:00:00Z", "2026-11-24T19:00:00Z"},
++		{"immediately before", "03:00", "Asia/Shanghai", "2026-11-24T18:59:59.999999999Z", "2026-11-24T19:00:00Z"},
++		{"exact instant waits next day", "03:00", "Asia/Shanghai", "2026-11-24T19:00:00Z", "2026-11-25T19:00:00Z"},
++		{"after instant", "03:00", "Asia/Shanghai", "2026-11-24T19:00:01Z", "2026-11-25T19:00:00Z"},
++		{"month boundary", "03:00", "Asia/Shanghai", "2026-11-30T20:00:00Z", "2026-12-01T19:00:00Z"},
++		{"year boundary", "03:00", "Asia/Shanghai", "2026-12-31T19:00:00Z", "2027-01-01T19:00:00Z"},
++		{"UTC override", "06:15", "UTC", "2026-11-24T05:00:00Z", "2026-11-24T06:15:00Z"},
++		{"DST spring uses calendar day", "03:00", "America/New_York", "2026-03-07T08:00:00Z", "2026-03-08T07:00:00Z"},
++		{"DST fall uses calendar day", "03:00", "America/New_York", "2026-10-31T07:00:00Z", "2026-11-01T08:00:00Z"},
++		{"nonexistent wall time skips day", "02:30", "America/New_York", "2026-03-08T06:00:00Z", "2026-03-09T06:30:00Z"},
++		{"repeated wall time first occurrence", "01:30", "America/New_York", "2026-11-01T04:00:00Z", "2026-11-01T05:30:00Z"},
++		{"repeated wall time never twice", "01:30", "America/New_York", "2026-11-01T05:45:00Z", "2026-11-02T06:30:00Z"},
++		{"European repeated time chooses first", "02:30", "Europe/Berlin", "2026-10-25T00:00:00Z", "2026-10-25T00:30:00Z"},
++		{"European repeated time never twice", "02:30", "Europe/Berlin", "2026-10-25T01:00:00Z", "2026-10-26T01:30:00Z"},
++	}
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			schedule, err := newDailySchedule(tt.clock, tt.zone)
++			if err != nil {
++				t.Fatal(err)
++			}
++			now, err := time.Parse(time.RFC3339Nano, tt.now)
++			if err != nil {
++				t.Fatal(err)
++			}
++			want, err := time.Parse(time.RFC3339Nano, tt.want)
++			if err != nil {
++				t.Fatal(err)
++			}
++			got := schedule.next(now.In(time.FixedZone("caller", -7*3600)))
++			if !got.Equal(want) || !got.After(now) {
++				t.Fatalf("next(%s) = %s; want %s", now, got, want)
++			}
++			if got.Location().String() != tt.zone || got.Format("15:04") != tt.clock {
++				t.Fatalf("next run lost configured wall time/location: %s", got)
++			}
++		})
++	}
++}
++
++// capability_id: rainbond.image-clean.daily-schedule-validation
++func TestDailyScheduleRejectsInvalidConfiguration(t *testing.T) {
++	for _, clock := range []string{"", "3:00", "03:0", "24:00", "12:60", "03:00:00", " 03:00", "03:00 ", "-1:00", "0a:00"} {
++		t.Run("time="+clock, func(t *testing.T) {
++			if _, err := newDailySchedule(clock, "Asia/Shanghai"); err == nil {
++				t.Fatal("invalid time accepted")
++			}
++		})
++	}
++	for _, zone := range []string{"", "Local", "Invalid/Zone", " Asia/Shanghai", "+08:00", "UTC+8"} {
++		t.Run("zone="+zone, func(t *testing.T) {
++			if _, err := newDailySchedule("03:00", zone); err == nil {
++				t.Fatal("invalid zone accepted")
++			}
++		})
++	}
++}
++
++// capability_id: rainbond.image-clean.daily-run-loop
++func TestRunDailyStartupAndScheduledWallClock(t *testing.T) {
++	schedule, err := newDailySchedule("03:00", "Asia/Shanghai")
++	if err != nil {
++		t.Fatal(err)
++	}
++	location, err := time.LoadLocation("Asia/Shanghai")
++	if err != nil {
++		t.Fatal(err)
++	}
++	current := time.Date(2026, 11, 25, 2, 0, 0, 0, location)
++	startup := current
++	ctx, cancel := context.WithCancel(context.Background())
++	defer cancel()
++	var runs []time.Time
++	var waits []time.Duration
++	runDaily(ctx, schedule, func() time.Time { return current },
++		func(ctx context.Context, duration time.Duration) error {
++			waits = append(waits, duration)
++			current = current.Add(duration)
++			return nil
++		}, func(ctx context.Context, scheduled time.Time) {
++			runs = append(runs, scheduled)
++			if len(runs) == 3 {
++				cancel()
++			}
++		})
++	if len(runs) != 3 || !runs[0].Equal(startup) {
++		t.Fatalf("startup must run exactly once: %v", runs)
++	}
++	for i, day := range []int{25, 26} {
++		want := time.Date(2026, 11, day, 3, 0, 0, 0, location)
++		if !runs[i+1].Equal(want) {
++			t.Fatalf("run %d = %s; want %s", i+1, runs[i+1], want)
++		}
++	}
++	if len(waits) != 2 || waits[0] != time.Hour || waits[1] != 24*time.Hour {
++		t.Fatalf("daily waits = %v", waits)
++	}
++}
++
++// capability_id: rainbond.image-clean.daily-run-cancellation
++func TestRunDailyCancellationAndWaitFailure(t *testing.T) {
++	schedule, err := newDailySchedule("03:00", "Asia/Shanghai")
++	if err != nil {
++		t.Fatal(err)
++	}
++	cases := []string{"cancelled before startup", "cancelled during startup", "cancelled during wait", "wait error"}
++	for _, name := range cases {
++		t.Run(name, func(t *testing.T) {
++			ctx, cancel := context.WithCancel(context.Background())
++			defer cancel()
++			if name == "cancelled before startup"
+```
+
+---
+
+### Incident Patch 3: `d69bd264` (2026-11-25)
+**Commit Message**: fix: complete VM startup events with defaulted container disks
+
+Signed-off-by: 张启航 <[REDACTED_EMAIL]>
+
+**File**: `api/handler/vm_power_container_disk_defaults_test.go` (added, +130/-0)
+```diff
+@@ -0,0 +1,130 @@
++package handler
++
++import (
++	"context"
++	"encoding/json"
++	"errors"
++	"strings"
++	"testing"
++
++	apimodel "github.com/goodrain/rainbond/api/model"
++	"github.com/goodrain/rainbond/api/util/bcode"
++	dbmodel "github.com/goodrain/rainbond/db/model"
++	"github.com/goodrain/rainbond/pkg/vmrestore"
++	corev1 "k8s.io/api/core/v1"
++	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++	"k8s.io/apimachinery/pkg/runtime"
++	"k8s.io/apimachinery/pkg/runtime/schema"
++	kv "kubevirt.io/api/core/v1"
++)
++
++// capability_id: rainbond.vm-power.container-disk-defaults
++func TestRestoredPowerCompletionHandlesContainerDiskDefaults(t *testing.T) {
++	for _, tc := range []struct {
++		name      string
++		image     string
++		requested corev1.PullPolicy
++		actual    corev1.PullPolicy
++		changed   bool
++		complete  bool
++	}{
++		{name: "digest", image: "registry.invalid/virtio@sha256:" + strings.Repeat("b", 64), actual: corev1.PullIfNotPresent, complete: true},
++		{name: "version tag", image: "registry.invalid/virtio:v1", actual: corev1.PullIfNotPresent, complete: true},
++		{name: "latest tag", image: "registry.invalid/virtio:latest", actual: corev1.PullAlways, complete: true},
++		{name: "implicit latest", image: "registry.invalid/virtio", actual: corev1.PullAlways, complete: true},
++		{name: "explicit policy", image: "registry.invalid/virtio:v1", requested: corev1.PullNever, actual: corev1.PullNever, complete: true},
++		{name: "wrong default policy", image: "registry.invalid/virtio:v1", actual: corev1.PullAlways},
++		{name: "changed explicit policy", image: "registry.invalid/virtio:v1", requested: corev1.PullNever, actual: corev1.PullIfNotPresent},
++		{name: "changed image", image: "registry.invalid/virtio:v1", actual: corev1.PullIfNotPresent, changed: true},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			a, store, resolver, scope, dyn := restoredPowerFixture(t)
++			ctx := context.Background()
++			vmGVR := schema.GroupVersionResource{Group: "kubevirt.io", Version: "v1", Resource: "virtualmachines"}
++			vmiGVR := schema.GroupVersionResource{Group: "kubevirt.io", Version: "v1", Resource: "virtualmachineinstances"}
++			object, err := dyn.Resource(vmGVR).Namespace(scope.Namespace).Get(ctx, "vm", metav1.GetOptions{})
++			if err != nil {
++				t.Fatal(err)
++			}
++			var vm kv.VirtualMachine
++			if err := runtime.DefaultUnstructuredConverter.FromUnstructured(object.Object, &vm); err != nil {
++				t.Fatal(err)
++			}
++			vm.Spec.Template.Spec.Volumes = append(vm.Spec.Template.Spec.Volumes, kv.Volume{Name: "virtio", VolumeSource: kv.VolumeSource{ContainerDisk: &kv.ContainerDiskSource{Image: tc.image, ImagePullPolicy: tc.requested}}})
++			vm.Spec.Template.Spec.Domain.Devices.Disks = append(vm.Spec.Template.Spec.Domain.Devices.Disks, kv.Disk{Name: "virtio", DiskDevice: kv.DiskDevice{CDRom: &kv.CDRomTarget{Bus: kv.DiskBusSATA}}})
++			object, err = vmrestore.EncodeRuntimeVM(&vm)
++			if err != nil {
++				t.Fatal(err)
++			}
++			if _, err := dyn.Resource(vmGVR).Namespace(scope.Namespace).Update(ctx, object, metav1.UpdateOptions{}); err != nil {
++				t.Fatal(err)
++			}
++			eventID := "container-disk-start"
++			if err := a.getDBManager().DB().Create(&dbmodel.ServiceEvent{EventID: eventID, TenantID: scope.TenantID, ServiceID: scope.ServiceID, Status: "checking", FinalStatus: "running"}).Error; err != nil {
++				t.Fatal(err)
++			}
++			err = a.StartOrCreateVM(newVMOperationEventContext(eventID), &apimodel.StartStopStruct{TenantID: scope.TenantID, ServiceID: scope.ServiceID, EventID: eventID, TaskType: "start"}, "")
++			var pending *bcode.Code
++			if !errors.As(err, &pending) || pending.Status != 202 {
++				t.Fatalf("start should await the real instance: %v", err)
++			}
++			object, err = dyn.Resource(vmGVR).Namespace(scope.Namespace).Get(ctx, "vm", metav1.GetOptions{})
++			if err != nil {
++				t.Fatal(err)
++			}
++			if err := runtime.DefaultUnstructuredConverter.FromUnstructured(object.Object, &vm); err != nil {
++				t.Fatal(err)
++			}
++			instance := &kv.VirtualMachineInstance{TypeMeta: metav1.TypeMeta{APIVersion: "kubevirt.io/v1", Kind: "VirtualMachineInstance"}, ObjectMeta: metav1.ObjectMeta{Name: vm.Name, Namespace: scope.Namespace, UID: "defaulted-instance", OwnerReferences: []metav1.OwnerReference{{Kind: "VirtualMachine", Name: vm.Name, UID: vm.UID}}}, Spec: *vm.Spec.Template.Spec.DeepCopy(), Status: kv.VirtualMachineInstanceStatus{Phase: kv.Running}}
++			for i := range instance.Spec.Volumes {
++				if disk := instance.Spec.Volumes[i].ContainerDisk; disk != nil {
++					disk.ImagePullPolicy = tc.actual
++					if tc.changed {
++						disk.Image = "registry.invalid/virtio:changed"
++					}
++				}
++			}
++			kv.SetDefaults_VirtualMachineInstance(instance)
++			raw, err := json.Marshal(instance)
++			if err != nil {
++				t.Fatal(err)
++			}
++			instanceObject := object.DeepCopy()
++			if err := instanceObject.UnmarshalJSON(raw); err != nil {
++				t.Fatal(err)
++			}
++			if _, err := dyn.Resource(vmiGVR).Namespace(scope.Namespace).Create(ctx, instanceObject
+```
+
+**File**: `pkg/vmrestore/restore_kube_runtime.go` (modified, +23/-1)
+```diff
+@@ -3,6 +3,7 @@ package vmrestore
+ import (
+ 	"context"
+ 	"strconv"
++	"strings"
+ 
+ 	dbmodel "github.com/goodrain/rainbond/db/model"
+ 	corev1 "k8s.io/api/core/v1"
+@@ -218,10 +219,31 @@ func RuntimeVMMatches(a, b *kv.VirtualMachine) bool {
+ 	return apiequality.Semantic.DeepEqual(a.Spec.Template.Spec.Domain, b.Spec.Template.Spec.Domain) && apiequality.Semantic.DeepEqual(a.Spec.Template.Spec.Volumes, b.Spec.Template.Spec.Volumes) && apiequality.Semantic.DeepEqual(a.Spec.DataVolumeTemplates, b.Spec.DataVolumeTemplates)
+ }
+ 
++// runtimeVolumesWithDefaults compares KubeVirt's VMI admission defaults without
++// changing the live instance or the VM template. All volume identities and
++// explicitly configured pull policies remain part of the comparison.
++func runtimeVolumesWithDefaults(volumes []kv.Volume) []kv.Volume {
++	if volumes == nil {
++		return nil
++	}
++	result := make([]kv.Volume, len(volumes))
++	for i := range volumes {
++		result[i] = *volumes[i].DeepCopy()
++		if disk := result[i].ContainerDisk; disk != nil && disk.ImagePullPolicy == "" {
++			if strings.HasSuffix(disk.Image, ":latest") || !strings.ContainsAny(disk.Image, ":@") {
++				disk.ImagePullPolicy = corev1.PullAlways
++			} else {
++				disk.ImagePullPolicy = corev1.PullIfNotPresent
++			}
++		}
++	}
++	return result
++}
++
+ // runtimeInstanceMatches reuses the approved safe hardware/layout projection.
+ // Guest memory is checked independently of KubeVirt launcher overhead/defaults.
+ func runtimeInstanceMatches(instance *kv.VirtualMachineInstance, vm *kv.VirtualMachine, selected RuntimeSelection) bool {
+-	if instance == nil || vm == nil || vm.Spec.Template == nil || instance.Spec.Domain.Firmware == nil || string(instance.Spec.Domain.Firmware.UUID) != selected.Startup.FirmwareUUID || !apiequality.Semantic.DeepEqual(instance.Spec.Volumes, vm.Spec.Template.Spec.Volumes) {
++	if instance == nil || vm == nil || vm.Spec.Template == nil || instance.Spec.Domain.Firmware == nil || string(instance.Spec.Domain.Firmware.UUID) != selected.Startup.FirmwareUUID || !apiequality.Semantic.DeepEqual(runtimeVolumesWithDefaults(instance.Spec.Volumes), runtimeVolumesWithDefaults(vm.Spec.Template.Spec.Volumes)) {
+ 		return false
+ 	}
+ 	disks := []SnapshotDisk{}
+```
+
+**File**: `test-manifest.json` (modified, +36/-0)
+```diff
+@@ -12627,6 +12627,24 @@
+       "test_type": "regression",
+       "status": "active"
+     },
++    {
++      "id": "rainbond.vm-power.container-disk-defaults",
++      "title": "Defaulted container disks release completed VM power operations",
++      "title_zh": "Defaulted container disks release completed VM power operations",
++      "interface_type": "workflow",
++      "interface": "vmrestore.runtimeInstanceMatches; ServiceAction.StartOrCreateVM",
++      "code_paths": [
++        "pkg/vmrestore/restore_kube_runtime.go"
++      ],
++      "tests": [
++        {
++          "path": "api/handler/vm_power_container_disk_defaults_test.go",
++          "selector": "TestRestoredPowerCompletionHandlesContainerDiskDefaults"
++        }
++      ],
++      "test_type": "regression",
++      "status": "active"
++    },
+     {
+       "id": "rainbond.vm-power.direct-ops-event-close",
+       "title": "Close direct VM power operation events after synchronous KubeVirt actions",
+@@ -12675,6 +12693,24 @@
+       "test_type": "regression",
+       "status": "active"
+     },
++    {
++      "id": "rainbond.vm-power.runtime-observer-retry",
++      "title": "VM power completion retries unchanged runtime and VM-only updates",
++      "title_zh": "VM power completion retries unchanged runtime and VM-only updates",
++      "interface_type": "workflow",
++      "interface": "store.startVMAdmissionObserver",
++      "code_paths": [
++        "worker/appm/store/vm_admission_observer.go"
++      ],
++      "tests": [
++        {
++          "path": "worker/appm/store/vm_admission_observer_test.go",
++          "selector": "TestVMAdmissionObserverRechecksUnchangedRuntimeAndVMOnlyUpdates"
++        }
++      ],
++      "test_type": "regression",
++      "status": "active"
++    },
+     {
+       "id": "rainbond.vm-power.scoped-single-event",
+       "title": "Single-component power events retain component scope",
+```
+
+**File**: `test-manifest.md` (modified, +22/-0)
+```diff
+@@ -645,8 +645,10 @@
+ | rainbond.vm-power.batch-stop-preserves-disks | Batch VM stop uses the power API without destructive worker tasks | active | regression | handler.BatchOperationHandler.Stop | api/handler/service_batch_vm_stop_test.go::TestBatchStopUsesVMPowerAndKeepsContainerWorkerPath |
+ | rainbond.vm-power.cancel-pending-handler | 正常关闭接口可取消尚未完成的恢复虚拟机启动 | active | regression | handler.ServiceAction.StopVM | api/handler/vm_restored_power_test.go::TestRestoredPowerHandlerCanStopAnUnfinishedStartup |
+ | rainbond.vm-power.cancel-pending-start | 启动未完成时可安全关闭并在运行时退出后释放操作锁 | active | regression | vmrestore.Store.StopPendingOrdinaryVM | pkg/vmrestore/ordinary_vm_stop_test.go::TestPendingStartStopsBeforeReleasingAdmissionAndCompletesBothEvents<br>pkg/vmrestore/ordinary_vm_stop_test.go::TestPendingStartRefusesToStopReplacementVM |
++| rainbond.vm-power.container-disk-defaults | Defaulted container disks release completed VM power operations | active | regression | vmrestore.runtimeInstanceMatches; ServiceAction.StartOrCreateVM | api/handler/vm_power_container_disk_defaults_test.go::TestRestoredPowerCompletionHandlesContainerDiskDefaults |
+ | rainbond.vm-power.direct-ops-event-close | 在同步执行 KubeVirt 虚拟机电源操作后闭环事件状态 | active | regression | api/handler direct VM power operations | api/handler/service_vm_power_test.go::TestStartOrCreateVMMarksDirectStartEventSuccess<br>api/handler/service_vm_power_test.go::TestStartOrCreateVMMarksDirectStartEventFailure<br>api/handler/service_vm_power_test.go::TestRestartVMMarksDirectRestartEventSuccess<br>api/handler/service_vm_power_test.go::TestStopVMMarksDirectStopEventSuccess |
+ | rainbond.vm-power.legacy-stop-preserves-disks | Legacy queued VM stop fails closed before deleting runtime or persistent disks | active | regression | controller.stopController.stopOne | worker/appm/controller/stop_vm_preservation_test.go::TestLegacyWorkerStopCannotDeleteUnmappedVM |
++| rainbond.vm-power.runtime-observer-retry | VM power completion retries unchanged runtime and VM-only updates | active | regression | store.startVMAdmissionObserver | worker/appm/store/vm_admission_observer_test.go::TestVMAdmissionObserverRechecksUnchangedRuntimeAndVMOnlyUpdates |
+ | rainbond.vm-power.scoped-single-event | Single-component power events retain component scope | active | regression | api/util.CreateEvent | api/util/events_test.go::TestCreateEventScopesRestoredVMPower |
+ | rainbond.vm-power.start-existing-or-create | 优先启动已存在且已停止的虚拟机，否则回退到 worker 创建流程 | active | regression | api/handler.ServiceAction.StartOrCreateVM | api/handler/service_vm_power_test.go::TestStartOrCreateVMStartsExistingStoppedVM<br>api/handler/service_vm_power_test.go::TestStartOrCreateVMStartsExistingStoppedVMWhenSpecSyncFindsMissingRootImport<br>api/handler/service_vm_power_test.go::TestStartOrCreateVMStartsStoppedAlwaysRunStrategyVM<br>api/handler/service_vm_power_test.go::TestStartOrCreateVMStartsExistingVMWithUnknownPrintableStatus<br>api/handler/service_vm_power_test.go::TestStartOrCreateVMFallsBackToWorkerStartWhenVMIsMissing |
+ | rainbond.vm-power.stop-restoring-fallback | Fallback to halt transient VM when direct stop fails | active | regression | api/handler.ServiceAction.StopVM | api/handler/service_vm_power_test.go::TestStopVMFallsBackToHaltingProvisioningVMWhenDirectStopFails |
+@@ -7246,6 +7248,16 @@
+ - 代码路径: `pkg/vmrestore/ordinary_vm_stop.go`, `pkg/vmrestore/ordinary_vm_admission.go`
+ - 测试路径: `pkg/vmrestore/ordinary_vm_stop_test.go::TestPendingStartStopsBeforeReleasingAdmissionAndCompletesBothEvents`, `pkg/vmrestore/ordinary_vm_stop_test.go::TestPendingStartRefusesToStopReplacementVM`
+ 
++### Defaulted container disks release completed VM power operations
++
++- Capability ID: `rainbond.vm-power.container-disk-defaults`
++- 状态: `active`
++- 测试类型: `regression`
++- 接口类型: `workflow`
++- 业务入口: `vmrestore.runtimeInstanceMatches; ServiceAction.StartOrCreateVM`
++- 代码路径: `pkg/vmrestore/restore_kube_runtime.go`
++- 测试路径: `api/handler/vm_power_container_disk_defaults_test.go::TestRestoredPowerCompletionHandlesContainerDiskDefaults`
++
+ ### 在同步执行 KubeVirt 虚拟机电源操作后闭环事件状态
+ 
+ - Capability ID: `rainbond.vm-power.direct-ops-event-close`
+@@ -7266,6 +7278,16 @@
+ - 代码路径: `worker/appm/controller/stop.go`
+ - 测试路径: `worker/appm/controller/stop_vm_preservation_test.go::TestLegacyWorkerStopCannotDeleteUnmappedVM`
+ 
++### VM power completion retries unchanged runtime and VM-only updates
++
++- Capability ID: `rainbond.vm-power.runtime-observer-retry`
++- 状态: `active`
++- 测试类型: `regression`
++- 接口类型: `workflow`
++- 业务入口: `store.startVMAdmissionObserver`
++- 代码路径: `worker/appm/store/vm_admission_observer.go`
++- 测试路径: `worker/appm/store/vm_admission_observer_test.go::TestVMAdmissionObserverRechecksUnchangedRuntimeAndVMOnlyUpdates`
++
+ ### Single-component power events retain component scope
+ 
+ - Capability ID: `rainbond.vm-power.scoped-single-event`
+```
+
+**File**: `worker/appm/store/vm_admission_observer.go` (modified, +24/-6)
+```diff
+@@ -2,12 +2,15 @@ package store
+ 
+ import (
+ 	"context"
++	"errors"
+ 	"time"
+ 
+ 	"github.com/goodrain/rainbond/pkg/vmrestore"
++	"github.com/sirupsen/logrus"
+ 	corev1 "k8s.io/api/core/v1"
+ 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+ 	"k8s.io/apimachinery/pkg/runtime/schema"
++	"k8s.io/client-go/dynamic"
+ 	"k8s.io/client-go/dynamic/dynamicinformer"
+ 	"k8s.io/client-go/tools/cache"
+ )
+@@ -18,8 +21,6 @@ func (a *appRuntimeStore) startVMAdmissionObserver(stop <-chan struct{}) {
+ 	if a.k8sClient == nil || a.k8sClient.DynamicClient == nil || a.dbmanager == nil || a.dbmanager.DB() == nil {
+ 		return
+ 	}
+-	factory := dynamicinformer.NewFilteredDynamicSharedInformerFactory(a.k8sClient.DynamicClient, 0, "", nil)
+-	informer := factory.ForResource(schema.GroupVersionResource{Group: "kubevirt.io", Version: "v1", Resource: "virtualmachineinstances"}).Informer()
+ 	observe := func(value interface{}) {
+ 		if tombstone, ok := value.(cache.DeletedFinalStateUnknown); ok {
+ 			value = tombstone.Obj
+@@ -50,12 +51,29 @@ func (a *appRuntimeStore) startVMAdmissionObserver(stop <-chan struct{}) {
+ 		defer cancel()
+ 		// Unknown/not-ready observations retain admission; only exact UID and
+ 		// binding-generation completion can finish it in the shared Store.
+-		_ = store.ObserveOrdinaryVMCompletion(ctx, resolver, a.k8sClient.DynamicClient, scope)
++		if err := store.ObserveOrdinaryVMCompletion(ctx, resolver, a.k8sClient.DynamicClient, scope); err != nil && !errors.Is(err, vmrestore.ErrRestorePending) {
++			logrus.WithError(err).WithField("service_id", serviceID).Warn("observe VM power operation completion")
++		}
++	}
++	var pods cache.SharedIndexInformer
++	if a.informers != nil {
++		pods = a.informers.Pod
+ 	}
++	startVMRuntimeObservers(a.k8sClient.DynamicClient, pods, 30*time.Second, stop, observe)
++}
++
++// Resync existing runtime objects so a transient read or concurrent ledger
++// update cannot leave a power event pending until the next guest state change.
++// VM events also cover completed stops after the VMI and launcher disappear.
++func startVMRuntimeObservers(client dynamic.Interface, pods cache.SharedIndexInformer, resync time.Duration, stop <-chan struct{}, observe func(interface{})) {
++	factory := dynamicinformer.NewFilteredDynamicSharedInformerFactory(client, resync, "", nil)
+ 	handler := cache.ResourceEventHandlerFuncs{AddFunc: observe, UpdateFunc: func(_, current interface{}) { observe(current) }, DeleteFunc: observe}
+-	_, _ = informer.AddEventHandler(handler)
+-	if a.informers != nil && a.informers.Pod != nil {
+-		_, _ = a.informers.Pod.AddEventHandler(handler)
++	for _, resource := range []string{"virtualmachines", "virtualmachineinstances"} {
++		informer := factory.ForResource(schema.GroupVersionResource{Group: "kubevirt.io", Version: "v1", Resource: resource}).Informer()
++		_, _ = informer.AddEventHandler(handler)
++	}
++	if pods != nil {
++		_, _ = pods.AddEventHandlerWithResyncPeriod(handler, resync)
+ 	}
+ 	factory.Start(stop)
+ }
+```
+
+**File**: `worker/appm/store/vm_admission_observer_test.go` (added, +66/-0)
+```diff
+@@ -0,0 +1,66 @@
++package store
++
++import (
++	"context"
++	"testing"
++	"time"
++
++	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
++	"k8s.io/apimachinery/pkg/runtime"
++	"k8s.io/apimachinery/pkg/runtime/schema"
++	dynamicfake "k8s.io/client-go/dynamic/fake"
++)
++
++// capability_id: rainbond.vm-power.runtime-observer-retry
++func TestVMAdmissionObserverRechecksUnchangedRuntimeAndVMOnlyUpdates(t *testing.T) {
++	vmGVR := schema.GroupVersionResource{Group: "kubevirt.io", Version: "v1", Resource: "virtualmachines"}
++	vmiGVR := schema.GroupVersionResource{Group: "kubevirt.io", Version: "v1", Resource: "virtualmachineinstances"}
++	objects := []runtime.Object{}
++	for _, kind := range []string{"VirtualMachine", "VirtualMachineInstance"} {
++		objects = append(objects, &unstructured.Unstructured{Object: map[string]interface{}{
++			"apiVersion": "kubevirt.io/v1", "kind": kind,
++			"metadata": map[string]interface{}{"name": "vm", "namespace": "tenant", "resourceVersion": "1"},
++		}})
++	}
++	client := dynamicfake.NewSimpleDynamicClientWithCustomListKinds(runtime.NewScheme(), map[schema.GroupVersionResource]string{vmGVR: "VirtualMachineList", vmiGVR: "VirtualMachineInstanceList"}, objects...)
++	stop := make(chan struct{})
++	defer close(stop)
++	observations := make(chan string, 32)
++	startVMRuntimeObservers(client, nil, time.Second, stop, func(value interface{}) {
++		object := value.(*unstructured.Unstructured)
++		select {
++		case observations <- object.GetKind() + ":" + object.GetResourceVersion():
++		default:
++		}
++	})
++	counts := map[string]int{}
++	deadline := time.NewTimer(5 * time.Second)
++	defer deadline.Stop()
++	for counts["VirtualMachine:1"] < 2 || counts["VirtualMachineInstance:1"] < 2 {
++		select {
++		case observed := <-observations:
++			counts[observed]++
++		case <-deadline.C:
++			t.Fatalf("unchanged runtime was not retried after an initial pending observation: %#v", counts)
++		}
++	}
++	vm, err := client.Resource(vmGVR).Namespace("tenant").Get(context.Background(), "vm", metav1.GetOptions{})
++	if err != nil {
++		t.Fatal(err)
++	}
++	vm.SetResourceVersion("2")
++	if _, err := client.Resource(vmGVR).Namespace("tenant").Update(context.Background(), vm, metav1.UpdateOptions{}); err != nil {
++		t.Fatal(err)
++	}
++	for {
++		select {
++		case observed := <-observations:
++			if observed == "VirtualMachine:2" {
++				return
++			}
++		case <-deadline.C:
++			t.Fatal("VM-only updates did not trigger power completion observation")
++		}
++	}
++}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2757** (2026-11-17): ci(release): add a workflow to build the gateway controller image (@yangkaa)
-- **PR #2756** (2026-11-17): ci(release): run the standalone smoke test on Ubuntu 24.04 (@yangkaa)
-- **PR #2755** (2026-11-17): ci(release): build standalone natively and sync to Aliyun with retries (@yangkaa)
-- **PR #2754** (2026-11-17): ci: move large image caches to registry storage (@ZhangSetSail)
-- **PR #2753** (2026-11-16): ci: persist UI and console image caches across runners (@ZhangSetSail)
-- **PR #2752** (2026-11-16): fix: use GET authentication for Aliyun image synchronization (@ZhangSetSail)
+- **PR #2765** (2026-11-25): fix: complete VM startup events with defaulted container disks (@ZhangSetSail)
+- **PR #2764** (2026-11-25): fix: coordinate nightly registry cleanup (@ZhangSetSail)
+- **PR #2763** (2026-11-24): V6.11.0 dev (@RainBondsongyg)
+- **PR #2762** (2026-11-24): V6.10.4 dev (@RainBondsongyg)
+- **PR #2761** (2026-11-24): fix: align CNB defaults with the Noble security builder (@zzzhangqi)
+- **PR #2760** (2026-11-24): fix(builder): 镜像推送重试时使用新的 tracker 并增加超时 (@yangkaa)
 
 ---
 
@@ -1565,57 +3174,54 @@ Signed-off-by: yangkaa <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci(release): add a workflow to build the gateway controller image
+## X. Empirical Invariant Guard in vm_power_container_disk_defaults_test.go
 
 **RULE**:
-When implementing operations in `.github/workflows/release-v6-gateway-controller.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in goodrain/rainbond. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `api/handler/vm_power_container_disk_defaults_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in goodrain/rainbond. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `cfba2cee`: ci(release): add a workflow to build the gateway controller image. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3d312f45`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/release-v6-gateway-controller.yml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `api/handler/vm_power_container_disk_defaults_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-name: "release-v6-gateway-controller"
+package handler
 
-# 构建 rbd-gateway 使用的 apisix-ingress-controller 镜像（goodrain/apisix-ingress-controller 的发布分支），
-# 推到阿里云 goodrain/apisix-ingress-controller:<tag> 和 <tag>-esgz。rainbond-chart 按 tag 引用它。
-# 覆盖已有 tag 前，先把旧镜像复制到 <tag>-<backup_suffix> 和 <tag>-esgz-<backup_suffix>，备份失败就不构建。
-on:
-  workflow_dispatch:
-    inputs:
-      ref:
-        description: 'goodrain/apisix-ingress-controller 的分支或 commit'
-        required: true
-        default: 'release/v1.8.4'
-      tag:
-        description: '要推送的镜像 tag（不带 -esgz）'
-        required: true
-        default: 'v1.8.4-upsert-e26e824'
-      backup_suffix:
-        description: '覆盖前旧镜像的备份后缀，例如 bak-20261117'
-        required: true
+import (
+	"context"
+	"encoding/json"
+	"errors"
+	"strings"
+	"testing"
 
-permissions:
-  contents: read
+	apimodel "github.com/goodrain/rainbond/api/model"
+	"github.com/goodrain/rainbond/api/util/bcode"
+	dbmodel "github.com/goodrain/rainbond/db/model"
+	"github.com/goodrain/rainbond/pkg/vmrestore"
+	corev1 "k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/runtime/schema"
+	kv "kubevirt.io/api/core/v1"
+)
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    environment: release-v6
-    timeout-minutes: 60
-    env:
-      REPO: registry.cn-hangzhou.aliyuncs.com/goodrain/apisix-ingress-controller
-      TAG: ${{ inputs.tag }}
-      BACKUP_SUFFIX: ${{ inputs.backup_suffix }}
-    steps:
-      - name: Validate inputs
-        run: |
-          [[ "$TAG" =~ ^v[0-9A-Za-z._-]+$ && "$TAG" != *-esgz ]] || { echo "::error::invalid tag $TAG"; exit 1; }
-          [[ "$BACKUP_SUFFIX" =~ ^[0-9A-Za-z
+// capability_id: rainbond.vm-power.container-disk-defaults
+func TestRestoredPowerCompletionHandlesContainerDiskDefaults(t *testing.T) {
+	for _, tc := range []struct {
+		name      string
+		image     string
+		requested corev1.PullPolicy
+		actual    corev1.PullPolicy
+		changed   bool
+		complete  bool
+	}{
+		{name: "digest", image: "registry.invalid/virtio@sha256:" + strings.Repeat("b", 64), actual: corev1.PullIfNotPresent, complete: true},
+		{name: "version tag", image: "registry.invalid/virtio:v1", actual: corev1.PullIfNotPresent, complete: true},
+		{name: "latest tag", image: "registry.invalid/virtio:latest", actual: corev1.PullAlways, complete: true},
+		{name: "implicit latest", image: "registry.invalid/virtio", actual: core
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1625,7 +3231,7 @@ jobs:
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cfba2cee` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3d312f45` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

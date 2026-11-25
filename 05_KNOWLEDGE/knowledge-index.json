@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-25T12:00:30.360Z",
+  "last_updated": "2026-11-25T12:09:21.071Z",
   "total_verified_learnings": 9117,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25428,
+  "total_items": 25435,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -239975,8 +239975,8 @@
       "slug": "genkit-ai-genkit",
       "platform": "github",
       "source_url": "https://github.com/genkit-ai/genkit",
-      "source_version": "76f631c6",
-      "content_hash": "d3c6bc422d31a1e0d54e4d916e2ced52db6cf78658bb3126536c6582ae783376",
+      "source_version": "5f4d54a0",
+      "content_hash": "38cac47798884e565d370340d2105bd180c3cf694eabdac7123e881a3cd1e2cd",
       "dossier_path": "07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md",
       "promoted_rules": [
@@ -240009,6 +240009,11 @@
           "number": 10311,
           "title": "tag first_visit runtime and skip CI analytics",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10522,
+          "title": "fix package exports and prevent tarball file leaks",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -240016,7 +240021,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T17:03:16.825Z",
+      "verified_at": "2026-11-25T12:09:15.185Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -240058,10 +240063,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-genkit-ai-genkit-technical-construction-intelligence-genkit-ai-genkit-core-invar.md",
       "title": "Technical Construction Intelligence: genkit-ai/genkit Core Invariants",
       "repository": "genkit-ai/genkit",
-      "source_version": "76f631c6",
-      "content_hash": "b6f16701c7df336268896cd73e33525f18c59441748cadda1582179ab375b234",
+      "source_version": "5f4d54a0",
+      "content_hash": "ac004cd0009365b8cb77bbfe6a7fe5a76a484038afdbff1af0109bff6f8fe6d5",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T17:03:17.433Z"
+      "persisted_at": "2026-11-25T12:09:15.839Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-genkit-ai-genkit": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-genkit-ai-genkit",
@@ -240070,10 +240075,10 @@
       "relative_path": "08_VERIFICATION/genkit-ai-genkit-verification-protocol-empirical-defect-shield-for-genkit-ai-gen.md",
       "title": "Verification Protocol: Empirical Defect Shield for genkit-ai/genkit",
       "repository": "genkit-ai/genkit",
-      "source_version": "76f631c6",
-      "content_hash": "04fca83908669fffc6b3fd7f560ba5cebd54647ad9f43f6147c730c42b281815",
+      "source_version": "5f4d54a0",
+      "content_hash": "886ddac1ed21c90984aa17eec376bba991df5dc900436de4f35ecd4aacd392dc",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T17:03:17.597Z"
+      "persisted_at": "2026-11-25T12:09:16.025Z"
     },
     "candidate_directive-theytothem-avoid-flagging-coordinating-conjunction-for-they": {
       "item_id": "candidate_directive-theytothem-avoid-flagging-coordinating-conjunction-for-they",
@@ -247788,8 +247793,8 @@
       "slug": "gitoxidelabs-gitoxide",
       "platform": "github",
       "source_url": "https://github.com/GitoxideLabs/gitoxide",
-      "source_version": "9ca9eb57",
-      "content_hash": "44e5afc4772d1d032a909be7bd15575f22a279f5132c4776ca5d096d09047a04",
+      "source_version": "a825f86d",
+      "content_hash": "3b812d0dd0f60aad7b3e6b29fa3f0b73dbe2b6224bf8cffdfe1fc17e4fbea83f",
       "dossier_path": "07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md",
       "promoted_rules": [
@@ -247852,6 +247857,11 @@
           "number": 10244,
           "title": "!: preserve shallow boundaries during ordinary fetch",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10520,
+          "title": "confine Git discovery to scripted fixtures",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -247859,7 +247869,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T10:43:53.458Z",
+      "verified_at": "2026-11-25T12:09:03.363Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -247901,10 +247911,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-gitoxidelabs-gitoxide-architecture-intelligence-gitoxidelabs-gitoxide-core-invar.md",
       "title": "Architecture Intelligence: GitoxideLabs/gitoxide Core Invariants",
       "repository": "GitoxideLabs/gitoxide",
-      "source_version": "9ca9eb57",
-      "content_hash": "c9f7d880ee2e7d24e31206f3825c68563279af8d1a05ac74a366fdfe9b8c2434",
+      "source_version": "a825f86d",
+      "content_hash": "851a7467f23fc146d0078213fb746a45677871bf5096dd41a525f699859688ba",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T10:43:54.103Z"
+      "persisted_at": "2026-11-25T12:09:04.037Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-gitoxidelabs-gitoxide": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-gitoxidelabs-gitoxide",
@@ -247913,10 +247923,10 @@
       "relative_path": "08_VERIFICATION/gitoxidelabs-gitoxide-verification-protocol-empirical-defect-shield-for-gitoxide.md",
       "title": "Verification Protocol: Empirical Defect Shield for GitoxideLabs/gitoxide",
       "repository": "GitoxideLabs/gitoxide",
-      "source_version": "9ca9eb57",
-      "content_hash": "22b705451e92f454aaad9c18e928b340ce513b698d48f611f7fb7bb1c6bef06b",
+      "source_version": "a825f86d",
+      "content_hash": "b799445f6f63178bd491cf2b58d0b2c76a6660a46e03c413d53a3b0e1a77f247",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T10:43:54.298Z"
+      "persisted_at": "2026-11-25T12:09:04.240Z"
     },
     "learn-github-melnixdev-seo-crawl-audit": {
       "learning_id": "learn-github-melnixdev-seo-crawl-audit",
@@ -248088,9 +248098,9 @@
       "title": "Architecture Intelligence: gitoxidelabs-gitoxide-learnings Core Invariants",
       "repository": "gitoxidelabs-gitoxide-learnings",
       "source_version": "HEAD",
-      "content_hash": "998508461c0f9083f1a0b47deb82dc854d58b6d4e50cb4d540a44a5e00408af4",
+      "content_hash": "cf7f4faa1bf3a3ccc644a2d4b84bc7a46fcca5eb9477c99cf178fc04d08e8d4f",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T10:44:02.618Z"
+      "persisted_at": "2026-11-25T12:09:19.495Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-gitoxidelabs-gitoxide-learning": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-gitoxidelabs-gitoxide-learning",
@@ -248100,9 +248110,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for gitoxidelabs-gitoxide-learnings",
       "repository": "gitoxidelabs-gitoxide-learnings",
       "source_version": "HEAD",
-      "content_hash": "6bcc571a9a9527f096a8bb5625a85bdd0bc59f11311b286a6839e11390d3a2e9",
+      "content_hash": "a48b176ba917415d8fbad6cf9fc904fa1b805be5e9f8823f9753af4a236a32ea",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T10:44:02.794Z"
+      "persisted_at": "2026-11-25T12:09:19.676Z"
     },
     "domain_intelligence-technical-construction-intelligence-melnixdev-seo-crawl-audit-learnings-core-inv": {
       "item_id": "domain_intelligence-technical-construction-intelligence-melnixdev-seo-crawl-audit-learnings-core-inv",
@@ -250537,7 +250547,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF",
       "source_version": "hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf",
-      "content_hash": "e1fa39d680fe8260a25aa6cd41c7c13025f111580dee1f1d0ab126f1386f66b1",
+      "content_hash": "8b878caba3d541d33bfc9311a59d02d3ac7d3773a4539f194e6cb30ab23af676",
       "dossier_path": "07_PROJECT_LEARNING/hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf-learnings.md",
       "promoted_rules": [
@@ -250562,7 +250572,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T20:49:40.507Z",
+      "verified_at": "2026-11-25T12:09:00.457Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -250579,9 +250589,9 @@
       "title": "Research & Knowledge Intelligence: unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF Core Invariants",
       "repository": "unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF",
       "source_version": "hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf",
-      "content_hash": "2591ff68b88934c4f35c0eed91961e4ed37bc668b31e3c52613836cbfbda220f",
+      "content_hash": "9ada7ad31f1f7a6ac0ffa21e02b9ed3ed35167e3539f93887efc345bc24fa06d",
       "domain_letter": "D",
-      "persisted_at": "2026-11-15T16:07:01.206Z"
+      "persisted_at": "2026-11-25T12:09:00.957Z"
     },
     "learn-github-tableproapp-tablepro": {
       "learning_id": "learn-github-tableproapp-tablepro",
@@ -250689,9 +250699,9 @@
       "title": "Research & Knowledge Intelligence: hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf-learnings Core Invariants",
       "repository": "hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf-learnings",
       "source_version": "HEAD",
-      "content_hash": "ab49d30ad028c29a60ec3280162efb2b2654f0c077d7918314a77dbcf28bba1d",
+      "content_hash": "b5aaf06c8129fc65fcf1d961d5775412908c41fe1129dd1ed1b04189adf4d6b4",
       "domain_letter": "D",
-      "persisted_at": "2026-11-15T16:07:37.672Z"
+      "persisted_at": "2026-11-25T12:09:20.077Z"
     },
     "candidate_directive-duckdb-keep-duckdb-s-expression-recursion-within-the-stacks-it-runs-on": {
       "item_id": "candidate_directive-duckdb-keep-duckdb-s-expression-recursion-within-the-stacks-it-runs-on",
@@ -251738,8 +251748,8 @@
       "slug": "goodrain-rainbond",
       "platform": "github",
       "source_url": "https://github.com/goodrain/rainbond",
-      "source_version": "99c65654",
-      "content_hash": "5bf09ff334fb90781f552b2b5719748e50e5ffcc7b6a702ec999862f98c0cb0a",
+      "source_version": "3d312f45",
+      "content_hash": "2808c050594b1dcf933c3ba903d6c41d8eb704bbc809cc551881c30bdc69fd42",
       "dossier_path": "07_PROJECT_LEARNING/goodrain-rainbond-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/goodrain-rainbond-learnings.md",
       "promoted_rules": [
@@ -251762,6 +251772,11 @@
           "number": 10327,
           "title": "align CNB defaults with the Noble security builder",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10521,
+          "title": "Empirical Invariant Guard in vm_power_container_disk_defaults_test.go",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -251769,7 +251784,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T18:09:11.099Z",
+      "verified_at": "2026-11-25T12:09:10.826Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -251811,10 +251826,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-goodrain-rainbond-technical-construction-intelligence-goodrain-rainbond-core-inv.md",
       "title": "Technical Construction Intelligence: goodrain/rainbond Core Invariants",
       "repository": "goodrain/rainbond",
-      "source_version": "5508cd38",
-      "content_hash": "2c0a0d6f6cd4d529565bdc4666d8e9d5d4fb15f48711d100a8bd81205750cea1",
+      "source_version": "3d312f45",
+      "content_hash": "9b0de79e871362cf07ea27efd6ef35062fbf4c9969c3084522adddb31d7b96a2",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T21:56:49.598Z"
+      "persisted_at": "2026-11-25T12:09:11.498Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-goodrain-rainbond": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-goodrain-rainbond",
@@ -251823,10 +251838,10 @@
       "relative_path": "08_VERIFICATION/goodrain-rainbond-verification-protocol-empirical-defect-shield-for-goodrain-rai.md",
       "title": "Verification Protocol: Empirical Defect Shield for goodrain/rainbond",
       "repository": "goodrain/rainbond",
-      "source_version": "99c65654",
-      "content_hash": "1def575261189dce659790869281861a6fdcb92700044e225a5797daec28aa9a",
+      "source_version": "3d312f45",
+      "content_hash": "e84c0658177bb4623fb186c7efcfc438efb1a5dc963e135ff02f202989937582",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T18:09:11.965Z"
+      "persisted_at": "2026-11-25T12:09:11.695Z"
     },
     "learn-github-seekstorm-seekstorm": {
       "learning_id": "learn-github-seekstorm-seekstorm",
@@ -251929,9 +251944,9 @@
       "title": "Technical Construction Intelligence: goodrain-rainbond-learnings Core Invariants",
       "repository": "goodrain-rainbond-learnings",
       "source_version": "HEAD",
-      "content_hash": "37e47a9e006a271dffcb1bc5d1aa1d972e3525b3d18dbbc5bd132f98add8d071",
+      "content_hash": "4aa768c6cbc7880311907734a2f3c0ce1b87693b492ac61b4a10c24e65e1644b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T18:09:15.403Z"
+      "persisted_at": "2026-11-25T12:09:20.891Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-goodrain-rainbond-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-goodrain-rainbond-learnings",
@@ -251941,9 +251956,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for goodrain-rainbond-learnings",
       "repository": "goodrain-rainbond-learnings",
       "source_version": "HEAD",
-      "content_hash": "6a17168bef5c6bb19d1b293c248d7a6c154cf1eb47aa90cda3d5c62e550afb3a",
+      "content_hash": "f53e64cb55e5a1c4ad7752b57f2335c0daf47f59e924ae377dcfe4d718f8b236",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T18:09:15.593Z"
+      "persisted_at": "2026-11-25T12:09:21.071Z"
     },
     "domain_intelligence-search-distribution-intelligence-seekstorm-seekstorm-learnings-core-invariants": {
       "item_id": "domain_intelligence-search-distribution-intelligence-seekstorm-seekstorm-learnings-core-invariants",
@@ -347924,6 +347939,96 @@
       "content_hash": "09b3bc043bd2968f3aaaa19752d9f8dfb57c4dd54c672a0c77b315ceedc44b59",
       "domain_letter": "D",
       "persisted_at": "2026-11-25T12:00:28.525Z"
+    },
+    "rule-10520": {
+      "learning_id": "rule-10520",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10520,
+      "title": "confine Git discovery to scripted fixtures",
+      "source_url": "https://github.com/GitoxideLabs/gitoxide",
+      "source_version": "a825f86d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T12:09:03.363Z"
+    },
+    "candidate_directive-confine-git-discovery-to-scripted-fixtures": {
+      "item_id": "candidate_directive-confine-git-discovery-to-scripted-fixtures",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-YRMX-confine-git-discovery-to-scripted-fixtures.md",
+      "title": "confine Git discovery to scripted fixtures",
+      "repository": "GitoxideLabs/gitoxide",
+      "source_version": "a825f86d",
+      "content_hash": "ea822fa526129d8a07897ff97c51de7a504e443de176a1fd371e386dd36fcb3f",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-25T12:09:03.853Z"
+    },
+    "rule-10521": {
+      "learning_id": "rule-10521",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10521,
+      "title": "Empirical Invariant Guard in vm_power_container_disk_defaults_test.go",
+      "source_url": "https://github.com/goodrain/rainbond",
+      "source_version": "3d312f45",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T12:09:10.826Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-vm_power_container_disk_defaults_test-go": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-vm_power_container_disk_defaults_test-go",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-Z4NA-empirical-invariant-guard-in-vm_power_container_disk_defaults_test-go.md",
+      "title": "Empirical Invariant Guard in vm_power_container_disk_defaults_test.go",
+      "repository": "goodrain-rainbond-learnings",
+      "source_version": "HEAD",
+      "content_hash": "96de6f925ca119ea3f7c0de44f9efdeb3a8961758708bf996752abaa9a452b5e",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-25T12:09:20.713Z"
+    },
+    "rule-10522": {
+      "learning_id": "rule-10522",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10522,
+      "title": "fix package exports and prevent tarball file leaks",
+      "source_url": "https://github.com/genkit-ai/genkit",
+      "source_version": "5f4d54a0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T12:09:15.185Z"
+    },
+    "candidate_directive-fix-package-exports-and-prevent-tarball-file-leaks": {
+      "item_id": "candidate_directive-fix-package-exports-and-prevent-tarball-file-leaks",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-Z0QU-fix-package-exports-and-prevent-tarball-file-leaks.md",
+      "title": "fix package exports and prevent tarball file leaks",
+      "repository": "genkit-ai/genkit",
+      "source_version": "5f4d54a0",
+      "content_hash": "c280b253224ce8723217878c8ce0bab59836d618001d5c70d8f668f3a5a22422",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-25T12:09:15.658Z"
+    },
+    "candidate_directive-gix-testtools-confine-git-discovery-to-scripted-fixtures": {
+      "item_id": "candidate_directive-gix-testtools-confine-git-discovery-to-scripted-fixtures",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-Z3K6-gix-testtools-confine-git-discovery-to-scripted-fixtures.md",
+      "title": "gix-testtools): confine Git discovery to scripted fixtures",
+      "repository": "gitoxidelabs-gitoxide-learnings",
+      "source_version": "HEAD",
+      "content_hash": "afc0f171ca36945556b1a59744dd354be9ef6c099118fc3b70c22506212ea2ac",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-25T12:09:19.306Z"
     }
   },
   "ai-builder-brain": {
