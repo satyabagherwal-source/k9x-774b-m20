@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T07:13:06.106Z",
-  "total_cycles_completed": 12330,
-  "total_learnings_persisted": 12330,
-  "total_rules_promoted": 11355,
+  "last_updated": "2026-11-25T07:22:37.722Z",
+  "total_cycles_completed": 12333,
+  "total_learnings_persisted": 12333,
+  "total_rules_promoted": 11357,
   "history": [
-    {
-      "timestamp": "2026-11-24T18:00:27.712Z",
-      "repository": "react/metro",
-      "learningId": "learn-github-react-metro",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T18:00:38.133Z",
-      "repository": "tursodatabase/turso",
-      "learningId": "learn-github-tursodatabase-turso",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T18:09:11.338Z",
-      "repository": "goodrain/rainbond",
-      "learningId": "learn-github-goodrain-rainbond",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-24T18:17:37.840Z",
       "repository": "tickernelz/opencode-mem",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-25T07:13:06.106Z",
       "repository": "kubernetes-sigs/aws-load-balancer-controller",
       "learningId": "learn-github-kubernetes-sigs-aws-load-balancer-controller",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T07:22:22.862Z",
+      "repository": "Comfy-Org/Z-Image-Turbo",
+      "learningId": "learn-huggingface-comfy-org-z-image-turbo",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T07:22:24.839Z",
+      "repository": "alejandrobujan/tendedero",
+      "learningId": "learn-github-alejandrobujan-tendedero",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T07:22:37.722Z",
+      "repository": "etcd-io/etcd",
+      "learningId": "learn-github-etcd-io-etcd",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T07:13:42.312Z",
-  "total_records": 2644,
+  "last_updated": "2026-11-25T07:22:44.551Z",
+  "total_records": 2646,
   "domains": {
     "A": {
       "total": 22,
@@ -2294,7 +2294,7 @@
       ]
     },
     "I": {
-      "total": 155,
+      "total": 157,
       "record_ids": [
         "DOM-I-16F011E5",
         "DOM-I-BF0A22A6",
@@ -2450,7 +2450,9 @@
         "domain_intelligence-content-information-intelligence-openyurtio-openyurt-core-invariants",
         "domain_intelligence-content-information-intelligence-openyurtio-openyurt-learnings-core-invariants",
         "domain_intelligence-content-information-intelligence-googleworkspace-cli-core-invariants",
-        "domain_intelligence-content-information-intelligence-googleworkspace-cli-learnings-core-invariants"
+        "domain_intelligence-content-information-intelligence-googleworkspace-cli-learnings-core-invariants",
+        "domain_intelligence-content-information-intelligence-alejandrobujan-tendedero-core-invariants",
+        "domain_intelligence-content-information-intelligence-alejandrobujan-tendedero-learnings-core-invaria"
       ]
     },
     "J": {
@@ -23278,8 +23280,8 @@
       "title": "Content & Information Intelligence: etcd-io/etcd Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-etcd-io-etcd-content-information-intelligence-etcd-io-etcd-core-invariants.md",
       "repository": "etcd-io/etcd",
-      "content_hash": "fef756bca0727115b06f5d4bc8c4dc1d17e4fdcc69b84bf0c6b00e68eb5ccd4c",
-      "created_at": "2026-11-24T13:30:22.271Z"
+      "content_hash": "c82a6312c7235d9c54f940358e708efcb5a4acdce22c99872e177445ef00c5bd",
+      "created_at": "2026-11-25T07:22:38.152Z"
     },
     "DOM-D-CB5F7DEE": {
       "record_id": "DOM-D-CB5F7DEE",
@@ -23380,8 +23382,8 @@
       "title": "Content & Information Intelligence: etcd-io-etcd-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-etcd-io-etcd-learnings-content-information-intelligence-etcd-io-etcd-learnings-c.md",
       "repository": "etcd-io-etcd-learnings",
-      "content_hash": "f3cb375ce6bcc6c4f50d5a81f1925f878da2ff1ed26ab985c46a24854fb763f9",
-      "created_at": "2026-11-24T13:30:30.725Z"
+      "content_hash": "516199cefb059fdf18e4118d007f01598390db8ea47539d70d649153836422f8",
+      "created_at": "2026-11-25T07:22:44.551Z"
     },
     "domain_intelligence-architecture-intelligence-metrolistgroup-metrolist-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-metrolistgroup-metrolist-core-invariants",
@@ -28256,10 +28258,10 @@
       "record_id": "domain_intelligence-research-knowledge-intelligence-comfy-org-z-image-turbo-core-invariants",
       "domain_letter": "D",
       "title": "Research & Knowledge Intelligence: Comfy-Org/Z-Image-Turbo Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-comfy-org-z_image_turbo-research-knowledge-intelligence-comfy-org-z-image-tur.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-comfy-org-z-image-turbo-research-knowledge-intelligence-comfy-org-z-image-tur.md",
       "repository": "Comfy-Org/Z-Image-Turbo",
-      "content_hash": "6d8119c41f4562f3a83f92f1a7556886d90b0a52be8bc59e4b79db76ac3622ae",
-      "created_at": "2026-11-25T05:19:43.605Z"
+      "content_hash": "95144848c58d616ec5ea568a1934789fde52dd732e3aad5330b771a80cab4d23",
+      "created_at": "2026-11-25T07:22:23.115Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-z-image-turbo-learnings-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-z-image-turbo-learnings-core-invari",
@@ -28267,8 +28269,8 @@
       "title": "Research & Knowledge Intelligence: hf-comfy-org-z-image-turbo-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-comfy-org-z-image-turbo-learnings-research-knowledge-intelligence-hf-comfy-or.md",
       "repository": "hf-comfy-org-z-image-turbo-learnings",
-      "content_hash": "31747d485e10cae79fbb9bcbcbbeed610de96398f7c91810915c6b1e5b277191",
-      "created_at": "2026-11-25T05:19:57.774Z"
+      "content_hash": "d9e57f57ce053ef854d5f27ed9458c7c1544202f8576140f717062a841a01b79",
+      "created_at": "2026-11-25T07:22:42.444Z"
     },
     "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b-nv": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b-nv",
@@ -44421,6 +44423,24 @@
       "repository": "kubernetes-sigs-aws-load-balancer-controller-learnings",
       "content_hash": "590f4403caab601d840c65bd9422d2b08fcba8561a88db151ad09c16bf8b943d",
       "created_at": "2026-11-25T07:13:42.312Z"
+    },
+    "domain_intelligence-content-information-intelligence-alejandrobujan-tendedero-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-alejandrobujan-tendedero-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: alejandrobujan/tendedero Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-alejandrobujan-tendedero-content-information-intelligence-alejandrobujan-tendede.md",
+      "repository": "alejandrobujan/tendedero",
+      "content_hash": "88ead1a6774a5a33a01e46609203fe931687811ab889cccfa416a72e34f65af6",
+      "created_at": "2026-11-25T07:22:25.312Z"
+    },
+    "domain_intelligence-content-information-intelligence-alejandrobujan-tendedero-learnings-core-invaria": {
+      "record_id": "domain_intelligence-content-information-intelligence-alejandrobujan-tendedero-learnings-core-invaria",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: alejandrobujan-tendedero-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-alejandrobujan-tendedero-learnings-content-information-intelligence-alejandrobuj.md",
+      "repository": "alejandrobujan-tendedero-learnings",
+      "content_hash": "916b0f5f093b5059aaa839cb1c976c5061c0fd61d77202ba6a5aa4ebadefa56e",
+      "created_at": "2026-11-25T07:22:41.857Z"
     }
   }
 }

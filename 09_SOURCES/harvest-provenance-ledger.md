@@ -13017,3 +13017,6 @@ Every entry in this ledger must capture:
 | `learn-github-cachix-devenv` | `https://github.com/cachix/devenv` | `221e8c7e` | Multi-dimensional audit evidence | 2026-11-25T07:12:58.014Z |
 | `learn-github-kubernetes-sigs-aws-load-balancer-controller` | `https://github.com/kubernetes-sigs/aws-load-balancer-controller` | `faa99854` | Multi-dimensional audit evidence | 2026-11-25T07:13:06.100Z |
 | `learn-dom-k-7a10fb7b` | `project://kubernetes-sigs-aws-load-balancer-controller` | `faa99854` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kubernetes-sigs-aws-load-balancer-controller-learnings.md` | 2026-11-25T07:13:39.922Z |
+| `learn-huggingface-comfy-org-z-image-turbo` | `https://huggingface.co/Comfy-Org/Z-Image-Turbo` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-11-25T07:22:22.856Z |
+| `learn-github-alejandrobujan-tendedero` | `https://github.com/alejandrobujan/tendedero` | `483e54ba` | Multi-dimensional audit evidence | 2026-11-25T07:22:24.834Z |
+| `learn-github-etcd-io-etcd` | `https://github.com/etcd-io/etcd` | `4e090c03` | Multi-dimensional audit evidence | 2026-11-25T07:22:37.717Z |

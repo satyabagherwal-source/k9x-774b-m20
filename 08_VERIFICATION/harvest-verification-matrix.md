@@ -12984,3 +12984,6 @@
 | `CYCLE-20261125-DZFD` | `2026-11-25T07:12:58.009Z` | `cachix/devenv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10478` | Yes (`1d4e0ac3...`) |
 | `CYCLE-20261125-E5O0` | `2026-11-25T07:13:06.096Z` | `kubernetes-sigs/aws-load-balancer-controller` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10479` | Yes (`513d2cfd...`) |
 | `CYCLE-2026-11-25-PROJ-EVOLVE` | `2026-11-25T07:13:39.922Z` | `kubernetes-sigs-aws-load-balancer-controller` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-K-7A10FB7B` [Domain K] | Yes (`fb4dcd01...`) |
+| `CYCLE-20261125-Q39F` | `2026-11-25T07:22:22.851Z` | `Comfy-Org/Z-Image-Turbo` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-comfy-org-z-image-turbo-learnings.md` | Yes (`8af85aae...`) |
+| `CYCLE-20261125-Q4SD` | `2026-11-25T07:22:24.829Z` | `alejandrobujan/tendedero` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10480` | Yes (`00c613ee...`) |
+| `CYCLE-20261125-QEQ9` | `2026-11-25T07:22:37.713Z` | `etcd-io/etcd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10481` | Yes (`c8ccc82b...`) |

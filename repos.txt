@@ -5400,3 +5400,7 @@ https://huggingface.co/prism-ml/Ternary-Bonsai-2.5-27B-GGUF
 # --- Automatically Discovered by AI Scout Engine [2026-11-25T02:28:35.182Z] ---
 # [HUGGINGFACE-AI-MODELS] MemTensor/MemT-1.0-Pro (1377 score) - Verified Hugging Face Model: MemTensor/MemT-1.0-Pro (98 likes, 397 downloads)
 https://huggingface.co/MemTensor/MemT-1.0-Pro
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-25T07:22:13.730Z] ---
+# [MOBILE-CROSS-PLATFORM] alejandrobujan/tendedero (2041 score) - Capture it. Copy it. Hang it all out to dry. A tiny native macOS app that hangs 
+https://github.com/alejandrobujan/tendedero

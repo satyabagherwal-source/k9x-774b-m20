@@ -22252,5 +22252,20 @@
     "downloads": 397,
     "qualityScore": 1377,
     "discoveredAt": "2026-11-25T02:26:27.088Z"
+  },
+  {
+    "name": "tendedero",
+    "fullName": "alejandrobujan/tendedero",
+    "url": "https://github.com/alejandrobujan/tendedero",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "Capture it. Copy it. Hang it all out to dry. A tiny native macOS app that hangs every screenshot, and anything you copy, on a line at the top of your screen, and finds any word on it.",
+    "stars": 3425,
+    "forks": 302,
+    "openIssues": 44,
+    "language": "Swift",
+    "qualityScore": 2041,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-11-25T07:20:11.845Z"
   }
 ]

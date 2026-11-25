@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-25T07:13:42.522Z",
-  "total_verified_learnings": 9113,
+  "last_updated": "2026-11-25T07:22:44.765Z",
+  "total_verified_learnings": 9114,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25299,
+  "total_items": 25309,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -254553,8 +254553,8 @@
       "slug": "etcd-io-etcd",
       "platform": "github",
       "source_url": "https://github.com/etcd-io/etcd",
-      "source_version": "776d2ee8",
-      "content_hash": "5bee2fab0737eaf5deeefb767bc873c9b84672d29f2fdd22ed440dab44ff5ec2",
+      "source_version": "4e090c03",
+      "content_hash": "c8ccc82be3525a5ad8943fc8dc1f26758a824e0050b96c209a84dd34988e1f83",
       "dossier_path": "07_PROJECT_LEARNING/etcd-io-etcd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/etcd-io-etcd-learnings.md",
       "promoted_rules": [
@@ -254587,6 +254587,11 @@
           "number": 10267,
           "title": "build(deps): bump ossf/scorecard-action from 2.5.0 to 2.6.0",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10481,
+          "title": "bump gorilla/websocket to fix GO-2026-6278",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -254594,7 +254599,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T13:30:21.438Z",
+      "verified_at": "2026-11-25T07:22:37.483Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -254622,10 +254627,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-etcd-io-etcd-content-information-intelligence-etcd-io-etcd-core-invariants.md",
       "title": "Content & Information Intelligence: etcd-io/etcd Core Invariants",
       "repository": "etcd-io/etcd",
-      "source_version": "776d2ee8",
-      "content_hash": "fef756bca0727115b06f5d4bc8c4dc1d17e4fdcc69b84bf0c6b00e68eb5ccd4c",
+      "source_version": "4e090c03",
+      "content_hash": "c82a6312c7235d9c54f940358e708efcb5a4acdce22c99872e177445ef00c5bd",
       "domain_letter": "I",
-      "persisted_at": "2026-11-24T13:30:22.271Z"
+      "persisted_at": "2026-11-25T07:22:38.152Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-etcd-io-etcd": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-etcd-io-etcd",
@@ -254634,10 +254639,10 @@
       "relative_path": "08_VERIFICATION/etcd-io-etcd-verification-protocol-empirical-defect-shield-for-etcd-io-etcd.md",
       "title": "Verification Protocol: Empirical Defect Shield for etcd-io/etcd",
       "repository": "etcd-io/etcd",
-      "source_version": "776d2ee8",
-      "content_hash": "4dc5248dbd885560495e171b889eaca1b8335de01d57ead9e060908fb54dae81",
+      "source_version": "4e090c03",
+      "content_hash": "2057282382eeeccad9cb9a9719469f0eeadbff08ce23679d160d460ab254b1fe",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T13:30:22.504Z"
+      "persisted_at": "2026-11-25T07:22:38.328Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-webai-official-twil-8b-learnings-core-invaria": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-webai-official-twil-8b-learnings-core-invaria",
@@ -254671,9 +254676,9 @@
       "title": "Content & Information Intelligence: etcd-io-etcd-learnings Core Invariants",
       "repository": "etcd-io-etcd-learnings",
       "source_version": "HEAD",
-      "content_hash": "f3cb375ce6bcc6c4f50d5a81f1925f878da2ff1ed26ab985c46a24854fb763f9",
+      "content_hash": "516199cefb059fdf18e4118d007f01598390db8ea47539d70d649153836422f8",
       "domain_letter": "I",
-      "persisted_at": "2026-11-24T13:30:30.725Z"
+      "persisted_at": "2026-11-25T07:22:44.551Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-etcd-io-etcd-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-etcd-io-etcd-learnings",
@@ -254683,9 +254688,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for etcd-io-etcd-learnings",
       "repository": "etcd-io-etcd-learnings",
       "source_version": "HEAD",
-      "content_hash": "c5e43c3d59d29cda29123819115b392b90b335c93ca90cb7737444df890b1932",
+      "content_hash": "2212d3fafdbebfd60b4077c3a35c03dd1978037be9f9f6885a044a6b00cac71c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T13:30:30.948Z"
+      "persisted_at": "2026-11-25T07:22:44.765Z"
     },
     "learn-github-metrolistgroup-metrolist": {
       "learning_id": "learn-github-metrolistgroup-metrolist",
@@ -277667,13 +277672,13 @@
       "item_id": "domain_intelligence-research-knowledge-intelligence-comfy-org-z-image-turbo-core-invariants",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-comfy-org-z_image_turbo-research-knowledge-intelligence-comfy-org-z-image-tur.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-comfy-org-z-image-turbo-research-knowledge-intelligence-comfy-org-z-image-tur.md",
       "title": "Research & Knowledge Intelligence: Comfy-Org/Z-Image-Turbo Core Invariants",
       "repository": "Comfy-Org/Z-Image-Turbo",
-      "source_version": "hf-comfy-org-z_image_turbo",
-      "content_hash": "6d8119c41f4562f3a83f92f1a7556886d90b0a52be8bc59e4b79db76ac3622ae",
+      "source_version": "hf-comfy-org-z-image-turbo",
+      "content_hash": "95144848c58d616ec5ea568a1934789fde52dd732e3aad5330b771a80cab4d23",
       "domain_letter": "D",
-      "persisted_at": "2026-11-25T05:19:43.605Z"
+      "persisted_at": "2026-11-25T07:22:23.115Z"
     },
     "rule-8978": {
       "learning_id": "rule-8978",
@@ -277735,9 +277740,9 @@
       "title": "Research & Knowledge Intelligence: hf-comfy-org-z-image-turbo-learnings Core Invariants",
       "repository": "hf-comfy-org-z-image-turbo-learnings",
       "source_version": "HEAD",
-      "content_hash": "31747d485e10cae79fbb9bcbcbbeed610de96398f7c91810915c6b1e5b277191",
+      "content_hash": "d9e57f57ce053ef854d5f27ed9458c7c1544202f8576140f717062a841a01b79",
       "domain_letter": "D",
-      "persisted_at": "2026-11-25T05:19:57.774Z"
+      "persisted_at": "2026-11-25T07:22:42.444Z"
     },
     "candidate_directive-test-fix-flaky-tests-in-socket-auth-capture-and-fd-churn": {
       "item_id": "candidate_directive-test-fix-flaky-tests-in-socket-auth-capture-and-fd-churn",
@@ -280139,7 +280144,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Comfy-Org/Z-Image-Turbo",
       "source_version": "hf-comfy-org-z-image-turbo",
-      "content_hash": "141c759a5eb78bf21cf49890220c9c4aba09e8fa9481e5e87e7393aa9587fd5f",
+      "content_hash": "8af85aae58e070583b0128d64ad06d07ed85859efd6ab895a722a9c8ffc36c51",
       "dossier_path": "07_PROJECT_LEARNING/hf-comfy-org-z-image-turbo-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-comfy-org-z-image-turbo-learnings.md",
       "promoted_rules": [],
@@ -280148,7 +280153,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T14:27:40.699Z",
+      "verified_at": "2026-11-25T07:22:22.568Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -346016,6 +346021,151 @@
       "content_hash": "590f4403caab601d840c65bd9422d2b08fcba8561a88db151ad09c16bf8b943d",
       "domain_letter": "K",
       "persisted_at": "2026-11-25T07:13:42.312Z"
+    },
+    "learn-github-alejandrobujan-tendedero": {
+      "learning_id": "learn-github-alejandrobujan-tendedero",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "alejandrobujan/tendedero",
+      "repository": "alejandrobujan/tendedero",
+      "slug": "alejandrobujan-tendedero",
+      "platform": "github",
+      "source_url": "https://github.com/alejandrobujan/tendedero",
+      "source_version": "483e54ba",
+      "content_hash": "00c613eeba3f7243cf2add417fae8c203e74d383c15931aa9197feede299fc6e",
+      "dossier_path": "07_PROJECT_LEARNING/alejandrobujan-tendedero-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/alejandrobujan-tendedero-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 10480,
+          "title": "prevent crash when reattaching the screenshot line",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-25T07:22:24.608Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-10480": {
+      "learning_id": "rule-10480",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10480,
+      "title": "prevent crash when reattaching the screenshot line",
+      "source_url": "https://github.com/alejandrobujan/tendedero",
+      "source_version": "483e54ba",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T07:22:24.608Z"
+    },
+    "candidate_directive-prevent-crash-when-reattaching-the-screenshot-line": {
+      "item_id": "candidate_directive-prevent-crash-when-reattaching-the-screenshot-line",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-QHS7-prevent-crash-when-reattaching-the-screenshot-line.md",
+      "title": "prevent crash when reattaching the screenshot line",
+      "repository": "alejandrobujan-tendedero-learnings",
+      "source_version": "HEAD",
+      "content_hash": "5636c38b9ae67b29ae2a71d92ccfeb1b1e0139c712cbc72af4e9dfdd4f8b3abc",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-25T07:22:41.675Z"
+    },
+    "domain_intelligence-content-information-intelligence-alejandrobujan-tendedero-core-invariants": {
+      "item_id": "domain_intelligence-content-information-intelligence-alejandrobujan-tendedero-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-alejandrobujan-tendedero-content-information-intelligence-alejandrobujan-tendede.md",
+      "title": "Content & Information Intelligence: alejandrobujan/tendedero Core Invariants",
+      "repository": "alejandrobujan/tendedero",
+      "source_version": "483e54ba",
+      "content_hash": "88ead1a6774a5a33a01e46609203fe931687811ab889cccfa416a72e34f65af6",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-25T07:22:25.312Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-alejandrobujan-tendedero": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-alejandrobujan-tendedero",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/alejandrobujan-tendedero-verification-protocol-empirical-defect-shield-for-aleja.md",
+      "title": "Verification Protocol: Empirical Defect Shield for alejandrobujan/tendedero",
+      "repository": "alejandrobujan/tendedero",
+      "source_version": "483e54ba",
+      "content_hash": "72911da4a601723512d7a80205e4effd7c3df966abdb8d8b7da9aca0fd7014d3",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-25T07:22:25.492Z"
+    },
+    "rule-10481": {
+      "learning_id": "rule-10481",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10481,
+      "title": "bump gorilla/websocket to fix GO-2026-6278",
+      "source_url": "https://github.com/etcd-io/etcd",
+      "source_version": "4e090c03",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T07:22:37.483Z"
+    },
+    "candidate_directive-bump-gorilla-websocket-to-fix-go-2026-6278": {
+      "item_id": "candidate_directive-bump-gorilla-websocket-to-fix-go-2026-6278",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-QEXD-bump-gorilla-websocket-to-fix-go-2026-6278.md",
+      "title": "bump gorilla/websocket to fix GO-2026-6278",
+      "repository": "etcd-io/etcd",
+      "source_version": "4e090c03",
+      "content_hash": "bae55a7ebb8a83ea5673fd03b2af596f8acd270c838c613509d1d570359a4c70",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-25T07:22:37.970Z"
+    },
+    "domain_intelligence-content-information-intelligence-alejandrobujan-tendedero-learnings-core-invaria": {
+      "item_id": "domain_intelligence-content-information-intelligence-alejandrobujan-tendedero-learnings-core-invaria",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-alejandrobujan-tendedero-learnings-content-information-intelligence-alejandrobuj.md",
+      "title": "Content & Information Intelligence: alejandrobujan-tendedero-learnings Core Invariants",
+      "repository": "alejandrobujan-tendedero-learnings",
+      "source_version": "HEAD",
+      "content_hash": "916b0f5f093b5059aaa839cb1c976c5061c0fd61d77202ba6a5aa4ebadefa56e",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-25T07:22:41.857Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-alejandrobujan-tendedero-learn": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-alejandrobujan-tendedero-learn",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/alejandrobujan-tendedero-learnings-verification-protocol-empirical-defect-shield.md",
+      "title": "Verification Protocol: Empirical Defect Shield for alejandrobujan-tendedero-learnings",
+      "repository": "alejandrobujan-tendedero-learnings",
+      "source_version": "HEAD",
+      "content_hash": "6d071402f5ca269e82e510410d0ee3f85d4597da3893150abe6a0bcb0b62745d",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-25T07:22:42.045Z"
+    },
+    "candidate_directive-deps-bump-gorilla-websocket-to-fix-go-2026-6278": {
+      "item_id": "candidate_directive-deps-bump-gorilla-websocket-to-fix-go-2026-6278",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-QJVA-deps-bump-gorilla-websocket-to-fix-go-2026-6278.md",
+      "title": "deps: bump gorilla/websocket to fix GO-2026-6278",
+      "repository": "etcd-io-etcd-learnings",
+      "source_version": "HEAD",
+      "content_hash": "18d5a3717f75e4f535b09feda7f1fb4f2683b6b4146c408fe8a80b9c901cab18",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-25T07:22:44.374Z"
     }
   },
   "ai-builder-brain": {

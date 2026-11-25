@@ -4773,10 +4773,10 @@
     "repository": "etcd-io/etcd",
     "platform": "github",
     "sourceUrl": "https://github.com/etcd-io/etcd",
-    "sourceVersion": "776d2ee8",
+    "sourceVersion": "4e090c03",
     "license": "Apache-2.0",
-    "contentHash": "5bee2fab0737eaf5deeefb767bc873c9b84672d29f2fdd22ed440dab44ff5ec2",
-    "lastHarvestedAt": "2026-11-24T13:30:21.706Z",
+    "contentHash": "c8ccc82be3525a5ad8943fc8dc1f26758a824e0050b96c209a84dd34988e1f83",
+    "lastHarvestedAt": "2026-11-25T07:22:37.717Z",
     "learningId": "learn-github-etcd-io-etcd"
   },
   "wasm-bindgen-wasm-pack": {
@@ -10545,8 +10545,8 @@
     "sourceUrl": "https://huggingface.co/Comfy-Org/Z-Image-Turbo",
     "sourceVersion": "hf-comfy-org-z-image-turbo",
     "license": "Open-Source",
-    "contentHash": "141c759a5eb78bf21cf49890220c9c4aba09e8fa9481e5e87e7393aa9587fd5f",
-    "lastHarvestedAt": "2026-11-21T14:27:40.935Z",
+    "contentHash": "8af85aae58e070583b0128d64ad06d07ed85859efd6ab895a722a9c8ffc36c51",
+    "lastHarvestedAt": "2026-11-25T07:22:22.856Z",
     "learningId": "learn-huggingface-comfy-org-z-image-turbo"
   },
   "hf-unsloth-flint-gguf": {
@@ -13428,5 +13428,15 @@
     "contentHash": "414d41e2e8dcfd77f638ef8243fa2b87ed3323b6e8c9b22d4577d963e42dcfa1",
     "lastHarvestedAt": "2026-11-25T02:28:41.809Z",
     "learningId": "learn-huggingface-memtensor-memt-1-0-pro"
+  },
+  "alejandrobujan-tendedero": {
+    "repository": "alejandrobujan/tendedero",
+    "platform": "github",
+    "sourceUrl": "https://github.com/alejandrobujan/tendedero",
+    "sourceVersion": "483e54ba",
+    "license": "NOASSERTION",
+    "contentHash": "00c613eeba3f7243cf2add417fae8c203e74d383c15931aa9197feede299fc6e",
+    "lastHarvestedAt": "2026-11-25T07:22:24.834Z",
+    "learningId": "learn-github-alejandrobujan-tendedero"
   }
 }
