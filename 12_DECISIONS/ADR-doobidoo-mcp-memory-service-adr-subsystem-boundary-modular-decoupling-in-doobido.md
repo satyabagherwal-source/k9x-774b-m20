@@ -4,17 +4,17 @@
 {
   "source_repository": "doobidoo/mcp-memory-service",
   "source_url": "https://github.com/doobidoo/mcp-memory-service",
-  "source_version": "e4501cbf",
+  "source_version": "f4eac406",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-23T08:07:46.665Z",
+  "timestamp": "2026-11-25T02:47:50.428Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-doobidoo-mcp-memory-service",
   "canonical_classification": "architecture_decision"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service) (Revision: `e4501cbf`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-23T08:07:46.665Z`  
+> **Provenance**: Harvested from [doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service) (Revision: `f4eac406`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-25T02:47:50.428Z`  
 > **Learning ID**: `learn-github-doobidoo-mcp-memory-service`
 
 
@@ -30,7 +30,7 @@ During deep inspection of doobidoo/mcp-memory-service, modular boundaries, perfo
 > **Canonical Artifact**: `07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T08:06:47.478Z  
+> **Harvest Timestamp**: 2026-11-25T02:47:49.073Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -40,7 +40,7 @@ During deep inspection of doobidoo/mcp-memory-service, modular boundaries, perfo
 - **Description**: Open-source persistent memory for AI agent pipelines (LangGraph, CrewAI, AutoGen) and Claude. REST API + knowledge graph + autonomous consolidation.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 2145 stars
+- **Stars / Engagement**: 2154 stars
 
 ---
 
@@ -2945,1004 +2945,539 @@ Commands:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8ca7d81c` (2026-11-22)
-**Commit Message**: feat(opencode): start the memory service when nothing answers (#2109)
+### Incident Patch 1: `41b792b2` (2026-11-24)
+**Commit Message**: fix(graph): confine entity reads to the claimed store (#2118) (#2121)
 
-* feat(opencode): start the memory service when nothing answers
+* fix(graph): confine entity reads to the claimed store
 
-The start half of #2088. The stop half stays out: the service is shared with
-the dashboard, a second editor and other MCP clients, and the plugin cannot
-know who else is connected, so stopping it on exit was a guess that could take
-their backend down mid-session.
+`memory_graph` carries no store column of its own, so every `GraphStorage`
+entity read was global: `list_entities`, `get_entity_profile`,
+`find_memories_by_entity` and `get_entities_for_memory` counted and returned
+links from every store, and `_discover_related_entities` walked
+`common_neighbors` unfiltered.
 
-autoStart is opt-in and off by default. When the health check fails, the plugin
-spawns the configured argv (default `memory launch`, with the port from
-`endpoint`: launch moves to a free port when the one it was given is taken) and
-polls until one startTimeoutMs deadline runs out. A reachable endpoint is used
-as-is and a started service is never stopped.
+`get_entity_detail` already confined `chunks` by post-filtering `get_by_hash`,
+but `related_entities` was not confined at all, so a store-scoped
+`memory_detail` returned entity names reachable only through another store's
+memories.
 
-The block is read from the user configuration only. A project checkout that
-carries `.opencode/memory-plugin.json` must not be able to name the command the
-editor runs, so that block is dropped with a warning.
+The graph is opened from the same SQLite file as `memories`, so the readers now
+confine through the store of the edge's source memory instead of a new column
+and a migration: `_store_predicate` builds the fragment, and `None`/`"all"`
+produce nothing so every unscoped caller is byte-identical. The `limit * 10`
+scan-then-filter window in `get_entity_detail` is gone with it, since the query
+filters now.
 
-Adopts #2089 by testx1011.
+`MilvusGraphStorage` accepts the same `store` keyword to keep the
+signature-parity guard green and refuses a named store wi
 
-* fix(opencode): start the launcher outside the project and probe basic health
-
-Greptile P1 on #2109: an editor opened in a cloned repository spawned the launcher with the checkout as cwd. Python puts t
-
-**File**: `changelog.d/2109.added.md` (added, +14/-0)
+**File**: `changelog.d/2118.fixed.md` (added, +1/-0)
 ```diff
-@@ -0,0 +1,14 @@
-+- **The OpenCode plugin can start the memory service when nothing answers (#2088, testx1011).**
-+  `memoryService.autoStart` is off by default. With `enabled: true` the plugin runs the
-+  configured argv (`["memory", "launch"]` by default, with the port taken from
-+  `memoryService.endpoint`, because `memory launch` moves to a free port when the
-+  configured one is taken) once the health check fails, and waits under a single
-+  `startTimeoutMs` deadline before the session continues without memories. The launcher
-+  runs from the user's home directory, so a cloned checkout cannot shadow `uvicorn` or
-+  supply the server's `.env`, and the start decision uses the storage-free
-+  `/api/health`, so a slow detailed check cannot make a running service look stopped. A
-+  reachable endpoint is used as-is and a started service is never stopped: the
-+  dashboard, a second editor and other MCP clients share it. The block is honoured from
-+  the user configuration only, so a cloned repository cannot name the command the editor
-+  runs; server settings such as `MCP_ALLOW_ANONYMOUS_ACCESS` stay in the service's own
-+  `.env`.
+@@ -0,0 +1 @@
++- **Store-scoped entity reads no longer cross partitions (#2118, part of #1880).** `memory_graph` has no store column, so every `GraphStorage` entity read was global: `list_entities`, `get_entity_profile`, `find_memories_by_entity` and `get_entities_for_memory` counted and returned links from every store, and `_discover_related_entities` walked `common_neighbors` unfiltered. A credential scoped to one store therefore received `related_entities` reachable only through another store's memories — `chunks` was already confined by post-filtering `get_by_hash`, `related_entities` was not. The graph shares its SQLite file with `memories`, so each of those reads now confines through the store of the edge's source memory, and `memory_detail` passes its claimed store down instead of scanning a `limit * 10` window and discarding the difference. `None` and `"all"` stay unscoped, so single-store installs and every unscoped caller see exactly what they saw before. `MilvusGraphStorage` accepts the same `store` keyword to keep the signature-parity guard green and returns nothing for a named store until #2119 gives its collection the field — refusing rather than serving the global answer.
 ```
 
-**File**: `opencode/README.md` (modified, +30/-0)
+**File**: `src/mcp_memory_service/server/handlers/graph.py` (modified, +37/-37)
 ```diff
-@@ -129,6 +129,7 @@ Then it applies environment overrides:
- - `OPENCODE_MEMORY_INBOX_OVERLAP_MINUTES` — minutes re-queried before the last check to catch late sync (default: `30`)
- - `OPENCODE_MEMORY_INBOX_AGENT_ID` — excludes messages tagged `agent:<id>` for this agent
- - `OPENCODE_MEMORY_INBOX_STATE_FILE` — overrides the persisted last-check marker path
-+- `OPENCODE_MEMORY_AUTOSTART` — set to `true` or `1` to start the memory service when nothing answers (see [Auto-starting the service](#auto-starting-the-service))
+@@ -680,6 +680,7 @@ async def _select_explore_entities(
+     graph: Any,
+     chunk_pool: List[Dict[str, Any]],
+     max_entities: int,
++    store: Optional[str] = None,
+ ) -> tuple[List[Dict[str, Any]], Dict[str, set]]:
+     """Select entities linked to the highest-relevance retrieved chunks.
  
- The files are not layered: an existing global file takes precedence over a
- project-local file. To select a project's configuration explicitly, launch
-@@ -239,6 +240,35 @@ One JSON object per line, with `&`, `<` and `>` escaped as `&`, `<` and `>`, so
+@@ -708,7 +709,7 @@ async def _select_explore_entities(
+         memory_hash = chunk.get("hash")
+         if not memory_hash:
+             continue
+-        for name in await graph.get_entities_for_memory(memory_hash):
++        for name in await graph.get_entities_for_memory(memory_hash, store=store):
+             if not name:
+                 continue
+             entity_id = normalize_entity_id(name)
+@@ -722,7 +723,7 @@ async def _select_explore_entities(
  
- The successful-check marker, the seen set, and the lower bound of the query window are stored in `~/.local/state/opencode/.memory-inbox-state.json`; the first run looks back 24 hours. The last successful check time is stored alongside them so a client clock rollback can be detected, including for state files that only hold a marker. The window bound only moves forward, so paging through a backlog cannot reach back into rows that were already delivered and pruned, and seen entries older than the bound are pruned so the set stays bounded. A client clock that jumps backwards past the window, or leaves a persisted marker after the current time, resets the window and may replay the jumped-over interval once. A state file written before this change carries no seen set, so the first check after upgrading may re-inject messages from the overlap window once. Markers are isolated by Memory Service endpoint, tag set, and agent ID. Each check re-reads the state file, so a second OpenCode instance normally sees what the first one delivered; only two overlapping checks can both deliver the same message. Updates use a cross-process lock and an atomic file replacement so simultaneous OpenCode instances cannot overwrite one another's markers; locks abandoned for 30 seconds are atomically moved to a unique quarantine path before removal, so competing recovery attempts cannot delete a fresh lock. Failed queries do not advance the marker. A sync lag or clock offset larger than the configured overlap can still skip a message, so set `overlapMinutes` above the deployment's worst case; raising it takes effect as the marker advances. See [Tags as inter-agent signals](../docs/agents/README.md#tags-as-inter-agent-signals) for the shared message-bus convention and a storage example.
+     if entities:
+         return entities, hashes_by_entity
+-    return await graph.list_entities(limit=max_entities), {}
++    return await graph.list_entities(limit=max_entities, store=store), {}
  
-+## Auto-starting the service
+ 
+ def extract_extractive_summary(
+@@ -743,7 +744,8 @@ def extract_extractive_summary(
+ 
+ 
+ async def _build_knowledge_map(
+-    graph, entities_raw, chunk_pool, chunks_per_entity, scoring=None, hashes_by_entity=None
++    graph, entities_raw, chunk_pool, chunks_per_entity, scoring=None,
++    hashes_by_entity=None, store=None
+ ):
+     """Assemble the memory_explore response shape from discovered entities.
+ 
+@@ -759,7 +761,7 @@ async def _build_knowledge_map(
+     knowledge_map = []
+     for ent in entities_raw:
+         name = ent.get("entity_name", "")
+-        profile = await graph.get_entity_profile(name) if graph else {}
++        profile = await graph.get_entity_profile(name, store=store) if graph else {}
+         entity_types = profile.get("entity_types") or []
+ 
+         # Entity-specific chunk filtering
+@@ -770,7 +772,7 @@ async def _build_knowledge_map(
+             # without the very chunk that caused it to be selected -- leaving
+             # top_chunks empty and summary blank. Union in the links found
+             # while selecting, which are retrieved chunks by construction.
+-            entity_hashes = set(await graph.find_memories_by_entity(name))
++            entity_hashes = set(await graph.find_memories_by_entity(name, store=store))
+             entity_hashes |= (hashes_by_entity or {}).get(normalize_entity_id(name), set())
+             entity_chunks = [chunk_by_hash[h] for h in entity_hashes if h in chunk_by_hash]
+ 
+@@ -860,7 +862,7 @@ async def handle_memory_explore(server, arguments: dict) -> List[types.TextConte
+         # 2. Entity discovery — scoped to entities linked from retrieved chunks.
+         graph = await get_graph_storage()
+         entities_raw, hashes_by_entity = await _select_explore_entities(
+-            graph, chunk_pool, max_entities
++            graph, chunk_pool, max_entities, store=store
+         )
+ 
+         knowledge_map = await _build_knowledge_map(
+@@ -870,6 +872,7 @@ async def handle_memory_explore(server, arguments: dict) -> List[types.TextConte
+             chunks_per_entity,
+             scoring=scoring,
+             hashes_by_entity=hashes_by_entity,
++            store=store,
+         )
+         knowledge_map = knowledge_map[:max_entities]
+ 
+@@ -895,9 +898,13 @@ async def handle_memory_explore(server, arguments: dict) -> List[types.TextConte
+         )]
+ 
+ 
+-async def _resolve_entity_name(graph, entity_id: str):
+-    """Resolve a canonical slug back to its stored entity name (or None)."""
+-    entities = await graph.list_entities(limit=500)
++async def _resolve_entity_name(graph, entity_id: str, store=None):
++    """Resolve a canonical slug back to its stored entity name (or None).
 +
-+By default the plugin is a client: it expects the memory service to already be running, started by a systemd unit, a launchd agent, a Startup entry or `memory launch`. `memoryService.autoStart` lets the plugin start it when nothing answers. It is off by default.
++    ``store`` keeps the resolution inside the caller's partition, so a slug that
++    only exists elsewhere does not resolve to another store's entity (#2118).
++    """
++    entities = await graph.list_entities(limit=500, store=store)
+     return next(
+         (e.get("entity_name", "") for e in entities
+          if normalize_entity_id(e.get("entity_name", "")) == entity_id),
+@@ -949,18 +956,22 @@ async def _hydrate_chunks(storage, memory_hashes, scoring=None, graph=None, enti
+     return chunks
+ 
+ 
+-async def _discover_related_entities(graph, memory_hashes, max_hops: int):
++async def _discover_related_entities(graph, memory_hashes, max_hops: int, store=None):
+     """Discover related entities via shared neighbours with dedup and ranking.
+ 
+     Resolves memory hashes to linked entity names via graph.get_entities_for_memory.
+     Deduplicates by entity_id, merging shared_count for same entity.
+     Returns top 10 sorted by shared_count descending.
 +
-+```json
-+{
-+  "memoryService": {
-+    "autoStart": {
-+      "enabled": true,
-+      "command": ["memory", "launch"],
-+      "startTimeoutMs": 5000
-+    }
-+  }
-+}
-+```
-+
-+- A reachable endpoint is used as-is. A service already started by the OS or by another editor is never duplicated.
-+- The start decision uses `/api/health`, which answers without touching storage. A slow `/api/health/detailed` cannot make a running service look stopped and start a second launcher over it.
-+- `command` is an argv array, not a shell string. The default `["memory", "launch"]` gets `--port <port of memoryService.endpoint>` appended, because `memory launch` moves to a free port when the configured one is taken, and a server that moved would never be found by the health poll. A custom command is spawned exactly as configured, so it has to bind the port from `endpoint` itself.
-+- The launcher runs from the user's home directory, not from the project. Python puts the working directory on `sys.path`, so a checkout could otherwise shadow `uvicorn`, and the server's `.env` lookup reads the current directory first. A cloned repository must not be able to influence either.
-+- `startTimeoutMs` is one deadline for the first health check and every poll after it. If the service does not answer in time, the session continues without memories instead of failing; an endpoint that accepts the connection and never answers cannot hold up OpenCode's start either.
-+- `OPENCODE_MEMORY_AUTOSTART=1` enables auto-start without a configuration file; command and timeout still come from the configuration.
-+
-+`autoStart` is only read from the user-level configuration (`OPENCODE_MEMORY_PLUGIN_CONFIG`, `~/.config/opencode/`). A `.opencode/memory-plugin.json` inside a project is ignored for this block, and the plugin logs a warning. Otherwise cloning a repository and opening it in OpenCode would run a command chosen by that repository.
-+
-+The plugin never stops the service. It is shared by a second OpenCode window, the dashboard, Claude Code and other MCP clients, and the plugin cannot know who else is connected. A service started this way there
++    ``store`` confines both the neighbour walk and the entity resolution, so a
++    store-scoped caller never sees entities reachable only through another
++    partition (#2118).
+     """
+     entity_map: dict = {}  # entity_id -> {name, shared_count}
+     for h in memory_hashes[:max_hops + 1]:
+-        for cand_hash, shared, _deg in await graph.common_neighbors(h):
++        for cand_hash,
 ```
 
-**File**: `opencode/memory-plugin.config.example.json` (modified, +6/-1)
+**File**: `src/mcp_memory_service/storage/graph.py` (modified, +147/-45)
 ```diff
-@@ -12,7 +12,12 @@
-       "{project} architecture decisions",
-       "{project} recent work",
-       "{project} open issues"
--    ]
-+    ],
-+    "autoStart": {
-+      "enabled": false,
-+      "command": ["memory", "launch"],
-+      "startTimeoutMs": 5000
-+    }
-   },
-   "output": {
-     "verbose": true,
-```
-
-**File**: `opencode/memory-plugin.js` (modified, +171/-2)
-```diff
-@@ -1,3 +1,4 @@
-+import { spawn } from "node:child_process"
- import { mkdir, readFile, rename, rm, stat, writeFile } from "node:fs/promises"
- import { homedir } from "node:os"
- import http from "node:http"
-@@ -74,6 +75,16 @@ const DEFAULT_CONFIG = {
-       "{project} recent work",
-       "{project} open issues",
-     ],
-+    // Start the service from the plugin when nothing answers. Off by default,
-+    // and only ever read from the user configuration, never from a project
-+    // checkout: the value decides which command the editor runs.
-+    autoStart: {
-+      enabled: false,
-+      // `memory launch` already does the background start, PID tracking, log
-+      // redirection and health polling; the plugin only waits for the endpoint.
-+      command: ["memory", "launch"],
-+      startTimeoutMs: 5000,
-+    },
-   },
-   output: {
-     verbose: true,
-@@ -187,6 +198,11 @@ function environmentOverrides() {
-     overrides.inbox.agentId = inboxAgentId
-   }
+@@ -149,6 +149,88 @@ def __init__(self, db_path: str):
+         self._lock = asyncio.Lock()  # Instance-level lock for thread safety
+         logger.info(f"Initialized GraphStorage with database: {_sanitize_log_value(db_path)}")
  
-+  const autoStartEnabled = parseBoolean(process.env.OPENCODE_MEMORY_AUTOSTART)
-+  if (autoStartEnabled !== undefined) {
-+    overrides.memoryService.autoStart = { enabled: autoStartEnabled }
-+  }
++    @staticmethod
++    def _store_predicate(
++        store: Optional[str],
++        alias: str = "memory_graph",
++        both_endpoints: bool = False,
++    ) -> Tuple[str, List[Any]]:
++        """SQL fragment confining edges to one store, plus its parameters.
 +
-   return overrides
- }
- 
-@@ -197,6 +213,10 @@ function mergeConfig(base, overrides = {}) {
-     memoryService: {
-       ...base.memoryService,
-       ...(overrides.memoryService || {}),
-+      autoStart: {
-+        ...base.memoryService.autoStart,
-+        ...(overrides.memoryService?.autoStart || {}),
-+      },
-     },
-     output: {
-       ...base.output,
-@@ -240,13 +260,28 @@ function pluginConfigPaths(directory, options = {}) {
-   return paths.filter(Boolean)
- }
- 
--async function loadConfig(directory) {
-+function projectConfigPaths(directory) {
-+  if (!directory) return []
-+  return [
-+    path.join(directory, ".opencode", "memory-plugin.json"),
-+    path.join(directory, ".opencode", "memory-awareness.json"),
-+  ]
-+}
++        Entity links and associations live in ``memory_graph``, which has no
++        store column of its own. It is opened from the same SQLite file as
++        ``memories`` (both callers pass the memory database path), so an edge is
++        confined through the store of the memory behind it (#2118). Soft-deleted
++        memories are excluded, the same rule ``get_by_hash`` applies.
 +
-+async function loadConfig(directory, { warn } = {}) {
-   let config = DEFAULT_CONFIG
-+  const projectPaths = new Set(projectConfigPaths(directory))
- 
-   for (const configPath of pluginConfigPaths(directory)) {
-     try {
-       const raw = await readFile(configPath, "utf8")
-       const parsed = JSON.parse(raw)
-+      // A cloned repository must not be able to name the command the editor
-+      // runs, so autoStart is only honoured from the user configuration.
-+      if (projectPaths.has(configPath) && parsed?.memoryService?.autoStart) {
-+        delete parsed.memoryService.autoStart
-+        await warn?.(`Ignoring memoryService.autoStart from ${configPath}; it is only read from the user configuration`)
-+      }
-       config = mergeConfig(config, parsed)
-       break
-     } catch {
-@@ -1054,6 +1089,129 @@ async function getHealth(config) {
-   }
- }
- 
-+// The service is normally a daemon of its own (systemd unit, launchd agent,
-+// Startup entry). autoStart lets the plugin start it when nothing answers. It is
-+// opt-in, it never starts a second instance, and it never stops one: the service
-+// is shared with the dashboard and other MCP clients.
-+const AUTO_START_POLL_MS = 250
++        An edge "lives in" a store when every endpoint that is a memory lives
++        there. ``source_hash`` is always a memory, so it is always checked.
++        ``target_hash`` is an entity name on ``has_entity`` rows and a memory on
++        every association, so ``both_endpoints`` adds the target check for the
++        associations only — an association whose far end sits in another store
++        must not be traversed, or two in-store memories would be linked through
++        a foreign one (Greptile, #2121).
 +
-+// Race one health probe against the remaining budget and clear the timer, so a
-+// service that accepts the connection and never answers cannot outlive it.
-+function withTimeout(promise, ms) {
-+  let timer
-+  const timeout = new Promise((resolve) => {
-+    timer = setTimeout(() => resolve(false), Math.max(0, ms))
-+  })
-+  return Promise.race([promise, timeout]).finally(() => clearTimeout(timer))
-+}
-+
-+async function probe(health, config, deadline) {
-+  return withTimeout(
-+    Promise.resolve().then(() => health(config)).then(() => true).catch(() => false),
-+    deadline - Date.now(),
-+  )
-+}
-+
-+async function answersBefore(health, config, deadline, pause) {
-+  while (true) {
-+    if (await probe(health, config, deadline)) return true
-+    if (Date.now() >= deadline) return false
-+    await pause(Math.min(AUTO_START_POLL_MS, Math.max(0, deadline - Date.now())))
-+  }
-+}
-+
-+function endpointPort(endpoint) {
-+  try {
-+    const { port, protocol } = new URL(endpoint)
-+    if (port) return Number(port)
-+    // URL drops the protocol's standard port, so an endpoint written without
-+    // one still has a port: the launcher must not fall back to 8000 while the
-+    // plugin polls 80 or 443.
-+    if (protocol === "https:") return 443
-+    if (protocol === "http:") return 80
-+    return null
-+  } catch {
-+    return null
-+  }
-+}
-+
-+// `memory launch` moves to a free port when the configured one is taken, so the
-+// plugin hands it the port of its own endpoint: a server on another port would
-+// never be found by the poll below. Only the default launcher takes the flag; a
-+// custom command is spawned exactly as configured.
-+function startCommand(autoStart, endpoint) {
-+  const command = [...(autoStart.command || [])]
-+  const isDefaultLauncher = command.length === 2 && command[0] === "memory" && command[1] === "launch"
-+  const port = endpointPort(endpoint)
-+  if (isDefaultL
-```
-
-**File**: `opencode/tests/autostart.test.js` (added, +298/-0)
-```diff
-@@ -0,0 +1,298 @@
-+/**
-+ * Tests for the optional memory-service auto-start in memory-plugin.js.
-+ *
-+ * Run: node opencode/tests/autostart.test.js
-+ *
-+ * autoStart spawns a process from inside the editor, so its decisions (start or
-+ * not, which command, from which config file, how long to wait) are pinned here
-+ * with injected dependencies instead of a live service. The failures that matter
-+ * in production: a second instance started next to a healthy one, a command
-+ * named by a cloned repository, and a start that hangs the editor.
-+ */
-+
-+import { test } from "node:test"
-+import assert from "node:assert"
-+import http from "node:http"
-+import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises"
-+import { homedir, tmpdir } from "node:os"
-+import path from "node:path"
-+
-+import { _internal } from "../memory-plugin.js"
-+
-+const { DEFAULT_CONFIG, endpointPort, ensureMemoryService, loadConfig } = _internal
-+
-+function configWith(autoStart) {
-+  return {
-+    memoryService: {
-+      ...DEFAULT_CONFIG.memoryService,
-+      autoStart: { ...DEFAULT_CONFIG.memoryService.autoStart, ...autoStart },
-+    },
-+  }
-+}
-+
-+function fakeChild(pid = 4242) {
-+  return {
-+    pid,
-+    unref() {},
-+    on() {},
-+  }
-+}
-+
-+// Polling sleeps are stubbed out; the deadline itself is real, so the timeout
-+// cases use a small startTimeoutMs instead of a fake clock.
-+const noSleep = async () => {}
-+
-+test("autoStart is off unless the configuration enables it", async () => {
-+  let spawnCalls = 0
-+  let healthCalls = 0
-+  const started = await ensureMemoryService(configWith({ enabled: false }), {
-+    health: async () => { healthCalls += 1; return { status: "healthy" } },
-+    spawn: () => { spawnCalls += 1 },
-+  })
-+  assert.strictEqual(started, null)
-+  assert.strictEqual(spawnCalls, 0)
-+  assert.strictEqual(healthCalls, 0)
-+})
-+
-+test("a reachable service is reused instead of starting a second instance", async () => {
-+  let spawnCalls = 0
-+  const started = await ensureMemoryService(configWith({ enabled: true }), {
-+    health: async () => ({ status: "healthy" }),
-+    spawn: () => { spawnCalls += 1 },
-+  })
-+  assert.strictEqual(started, null)
-+  assert.strictEqual(spawnCalls, 0)
-+})
-+
-+test("endpointPort keeps standard ports and rejects garbage", () => {
-+  assert.strictEqual(endpointPort("http://127.0.0.1:8123"), 8123)
-+  // URL drops :80 and :443, and the launcher must not fall back to 8000 while
-+  // the plugin polls the standard port.
-+  assert.strictEqual(endpointPort("http://127.0.0.1"), 80)
-+  assert.strictEqual(endpointPort("https://memory.example.com"), 443)
-+  assert.strictEqual(endpointPort("not a url"), null)
-+})
-+
-+test("the default launcher is given the port of the configured endpoint", async () => {
-+  const child = fakeChild()
-+  const spawnCalls = []
-+  let healthCalls = 0
-+  const config = configWith({ enabled: true, startTimeoutMs: 5000 })
-+  config.memoryService.endpoint = "http://127.0.0.1:8123"
-+
-+  const started = await ensureMemoryService(config, {
-+    health: async () => {
-+      healthCalls += 1
-+      if (healthCalls === 1) throw new Error("down")
-+      return { status: "healthy" }
-+    },
-+    sleep: noSleep,
-+    platform: "linux",
-+    spawn: (command, args, options) => {
-+      spawnCalls.push({ command, args, options })
-+      return child
-+    },
-+  })
-+
-+  assert.strictEqual(started, child)
-+  // `memory launch` moves to a free port when 8123 is taken, so the plugin has
-+  // to name the port its own endpoint uses.
-+  assert.deepStrictEqual(spawnCalls, [{
-+    command: "memory",
-+    args: ["launch", "--port", "8123"],
-+    options: {
-+      stdio: "ignore",
-+      windowsHide: true,
-+      cwd: homedir(),
-+      detached: true,
-+    },
-+  }])
-+})
-+
-+test("a custom command is spawned exactly as configured", async () => {
-+  const child = fakeChild()
-+  const spawnCalls = []
-+  let healthCalls = 0
-+
-+  const started = await ensureMemoryService(configWith({
-+    enabled: true,
-+    command: ["/opt/memory/start-service", "--background"],
-+    startTimeoutMs: 5000,
-+  }), {
-+    health: async () => {
-+      healthCalls += 1
-+      if (healthCalls === 1) throw new Error("down")
-+      return { status: "healthy" }
-+    },
-+    sleep: noSleep,
-+    platform: "linux",
-+    spawn: (command, args, options) => {
-+      spawnCalls.push({ command, args, options })
-+      return child
-+    },
-+  })
-+
-+  assert.strictEqual(started, child)
-+  assert.strictEqual(spawnCalls.length, 1)
-+  assert.strictEqual(spawnCalls[0].command, "/opt/memory/start-service")
-+  assert.deepStrictEqual(spawnCalls[0].args, ["--background"])
-+})
-+
-+test("Windows does not detach the child", async () => {
-+  let detached
-+  await ensureMemoryService(configWith({ enabled: true, startTimeoutMs: 50 }), {
-+    health: async () => { throw new Error("down") },
-+    sleep: noSleep,
-+    platform: "win32",
-+    spawn: (_command, _args, options) => { detached = options.detached; return fakeChild() },
-+  })
-+  assert.strictEqual(de
-```
-
----
-
-### Incident Patch 2: `1bac43e2` (2026-11-22)
-**Commit Message**: feat(consolidation): record every run as a memory (#2097) (#2106)
-
-* feat(consolidation): record every run as a memory (#2097)
-
-Each run of consolidate() now stores one consolidation-run memory from
-its finally block: scheduled, manual, failed and cancelled runs, tagged
-horizon:<h> and node:<id>, with the report counters, errors, run id and
-trigger in its metadata. Each node keeps its newest
-MCP_CONSOLIDATION_RUN_LOG_KEEP runs (default 50).
-
-Consolidation, forgetting, compression and insight cards skip these
-memories. GET /api/consolidation/runs lists them by node and horizon.
-
-Part of #2097
-
-* fix(consolidation): bound the run log write so a timed-out run returns promptly
-
-The MCP tool cancels an incremental run after 10 s and waits for its finally block. On Cloudflare the log write and pruning could retry for minutes there. They now get RUN_LOG_TIMEOUT_SECONDS (5 s); past that the log is dropped with a warning and the completion is still sent.
-
----------
-
-Co-authored-by: Henry Krupp <[REDACTED_EMAIL]>
-
-**File**: `changelog.d/2097.added.md` (added, +14/-0)
-```diff
-@@ -0,0 +1,14 @@
-+- **Every consolidation run is recorded as a memory, so its history survives restarts and reaches other nodes (#2097, seung-waedet).**
-+  A run used to leave nothing behind but an SSE event and, for scheduled runs, an
-+  in-memory list the next restart cleared, so a failed overnight run or a run on
-+  another node could not be seen. `consolidate()` now stores one `consolidation-run`
-+  memory per run, scheduled, manual or failed, tagged `horizon:<h>` and `node:<id>`
-+  (`MCP_AGENT_ID`, else the hostname), with the report counters, the errors, the run
-+  id and a new `trigger` (`scheduled` or `manual`) in its metadata. The normal sync
-+  carries it to other nodes, and a failing write never fails the run. Incremental runs
-+  that found nothing are not recorded. Each node keeps its newest 50 runs
-+  (`MCP_CONSOLIDATION_RUN_LOG_KEEP`); set `MCP_AGENT_ID` where the hostname changes, as
-+  in containers, or every new hostname starts a history of its own. Consolidation,
-+  forgetting, compression and insight cards skip these memories.
-+  `GET /api/consolidation/runs` (read scope) lists them newest first, filtered by
-+  `node` and `horizon`.
-```
-
-**File**: `src/mcp_memory_service/config/consolidation.py` (modified, +4/-1)
-```diff
-@@ -80,7 +80,10 @@
- 
-     # Incremental consolidation settings
-     'batch_size': int(os.getenv('MCP_CONSOLIDATION_BATCH_SIZE', '500')),
--    'incremental_mode': os.getenv('MCP_CONSOLIDATION_INCREMENTAL', 'true').lower() == 'true'
-+    'incremental_mode': os.getenv('MCP_CONSOLIDATION_INCREMENTAL', 'true').lower() == 'true',
-+
-+    # Run log settings
-+    'run_log_keep': safe_get_int_env('MCP_CONSOLIDATION_RUN_LOG_KEEP', 50, min_value=1),
- }
- 
- # Consolidation scheduling settings (for APScheduler integration)
-```
-
-**File**: `src/mcp_memory_service/consolidation/base.py` (modified, +3/-0)
-```diff
-@@ -100,6 +100,9 @@ class ConsolidationConfig:
-     batch_size: int = 500  # Memories to process per consolidation run
-     incremental_mode: bool = True  # Enable oldest-first batch processing
- 
-+    # Run log settings
-+    run_log_keep: int = 50  # Run log memories each node keeps (#2097)
-+
- @dataclass
- class ConsolidationReport:
-     """Report of consolidation operations performed."""
-```
-
-**File**: `src/mcp_memory_service/consolidation/compression.py` (modified, +6/-3)
-```diff
-@@ -27,9 +27,12 @@
- from ..models.memory import Memory
- 
- # Tags on memories the service or its hooks write without the user: discovered
--# associations and auto-captured session summaries (Claude Code and opencode
--# hooks). Earlier compression output is matched by COMPRESSION_OUTPUT_TAGS.
--SELF_GENERATED_TAGS = frozenset({'association', 'session-consolidation', 'session-summary'})
-+# associations, consolidation run logs and auto-captured session summaries
-+# (Claude Code and opencode hooks). Earlier compression output is matched by
-+# COMPRESSION_OUTPUT_TAGS.
-+SELF_GENERATED_TAGS = frozenset({
-+    'association', 'consolidation-run', 'session-consolidation', 'session-summary',
-+})
- 
- # _aggregate_tags puts both on every pattern this engine writes. 'compressed'
- # alone is not enough: forgetting uses it for shortened user memories too.
-```
-
-**File**: `src/mcp_memory_service/consolidation/consolidator.py` (modified, +64/-17)
-```diff
-@@ -45,6 +45,7 @@
-     RelationshipInferenceEngine,
-     apply_review_band,
- )
-+from .run_log import RUN_LOG_TYPE, build_run_log, store_run_log
- from .run_tracker import RunTracker
- from ..compat import _sanitize_log_value
- from ..utils.time_parser import memory_statement_time
-@@ -61,6 +62,11 @@
- # Receives (event_type, data). The consolidator awaits it and swallows its errors.
- ConsolidationNotifier = Callable[[str, Dict[str, Any]], Awaitable[None]]
- 
-+# Deadline for storing a run log and pruning old ones (#2097). It also runs
-+# when a timeout cancels the run, where a remote backend's retries would
-+# otherwise hold the caller for minutes.
-+RUN_LOG_TIMEOUT_SECONDS = 5.0
-+
- 
- def _said_at(memory: Memory) -> float:
-     """When a memory was said (see memory_statement_time), 0.0 if unknown (#1858)."""
-@@ -81,7 +87,11 @@ def _supersede_pair(source: Memory, target: Memory) -> Tuple[str, str]:
- # Protocol for storage backend interface
- class StorageProtocol(Protocol):
-     async def get_all_memories(
--        self, memory_type: Optional[str] = None
-+        self,
-+        limit: Optional[int] = None,
-+        offset: int = 0,
-+        memory_type: Optional[str] = None,
-+        tags: Optional[List[str]] = None,
-     ) -> List[Memory]: pass
-     async def get_memories_by_time_range(
-         self, start_time: float, end_time: float, include_embeddings: bool = False
-@@ -410,12 +420,15 @@ def _resolve_tracker_db_path(self) -> Optional[Path]:
-             self.logger.debug("BASE_DIR unavailable for consolidation run tracker")
-         return None
- 
--    async def consolidate(self, time_horizon: str, **kwargs) -> ConsolidationReport:
-+    async def consolidate(
-+        self, time_horizon: str, trigger: str = "manual", **kwargs
-+    ) -> ConsolidationReport:
-         """
-         Run full consolidation pipeline for given time horizon.
- 
-         Args:
-             time_horizon: 'daily', 'weekly', 'monthly', 'quarterly', 'yearly'
-+            trigger: 'scheduled' or 'manual', recorded in the run log
-             **kwargs: Additional parameters for consolidation
- 
-         Returns:
-@@ -472,24 +485,55 @@ async def consolidate(self, time_horizon: str, **kwargs) -> ConsolidationReport:
-             self.health_monitor.record_error(
-                 "consolidator", e, {"time_horizon": time_horizon}
-             )
-+            report.errors.append(str(e))
-             raise
-         except Exception as e:
-             self.logger.error("Error during %s consolidation: %s", _sanitize_log_value(time_horizon), _sanitize_log_value(e))
-             self.health_monitor.record_error(
-                 "consolidator", e, {"time_horizon": time_horizon}
-             )
--            report.errors.append(str(e))
-             return self._finalize_report(report, [str(e)])
-+        except asyncio.CancelledError:
-+            report.errors.append("Cancelled")
-+            raise
-         finally:
-             if is_incremental and self.run_tracker:
-                 self.run_tracker.release("incremental")
-             if run_id is not None:
-                 # Also reached on cancellation (a timeout around this call),
-                 # where succeeded is still False.
--                await self._notify(
--                    CONSOLIDATION_COMPLETED,
--                    {"run_id": run_id, "time_horizon": time_horizon, "success": succeeded},
--                )
-+                try:
-+                    await self._log_run(report, run_id, trigger, succeeded)
-+                finally:
-+                    await self._notify(
-+                        CONSOLIDATION_COMPLETED,
-+                        {
-+                            "run_id": run_id,
-+                            "time_horizon": time_horizon,
-+                            "success": succeeded,
-+                        },
-+                    )
-+
-+    async def _log_run(
-+        self, report: ConsolidationReport, run_id: str, trigger: str, succeeded: bool
-+    ) -> None:
-+        """Store the run as a run log memory; its failure never fails the run (#2097).
-+
-+        Incremental runs that found nothing to do are not logged.
++        ``None`` and ``"all"`` are unscoped and produce nothing, which leaves
++        every pre-#2118 query path byte-identical.
 +        """
-+        nothing_done = succeeded and not report.memories_processed
-+        if report.time_horizon == "incremental" and nothing_done:
-+            return
++        if store in (None, "all"):
++            return "", []
++        in_store = (
++            "IN (SELECT content_hash FROM memories "
++            "WHERE store = ? AND deleted_at IS NULL)"
++        )
++        fragment = f"AND {alias}.source_hash {in_store}"
++        params: List[Any] = [store]
++        if both_endpoints:
++            fragment += (
++                f" AND ({alias}.relationship_type = 'has_entity'"
++                f" OR {alias}.target_hash {in_store})"
++            )
++            params.append(store)
++        return fragment, params
++
++    @classmethod
++    def _common_neighbors_sql(cls, store: Optional[str]) -> Tuple[str, List[Any]]:
++        """Self-join query for ``common_neighbors``, plus its store parameters.
++
++        Both the seed edges and the expansion edges are confined on both
++        endpoints, so a named store never reaches a candidate through another
++        partition's memory (#2118). Returns the SQL with ``(memory_hash, memory_hash, memory_hash,
++        *store_params, memory_hash, min_shared)`` as its parameters.
++        """
++        seed_filter, seed_params = cls._store_predicate(store, both_endpoints=True)
++        join_filter, join_params = cls._store_predicate(
++            store, alias="mg", both_endpoints=True
++        )
++        sql = f"""
++                    WITH my_neighbors AS (
++                        -- All direct neighbors of the source (both directions)
++                        SELECT CASE WHEN source_hash = ? THEN target_hash ELSE source_hash END as neighbor
++                        FROM memory_graph
++                        WHERE (source_hash = ? OR target_hash = ?) {seed_filter}
++                    ),
++                    my_degree AS (
++                        SELECT COUNT(*) as deg FROM my_neighbors
++                    ),
++                    candidates AS (
++                        -- For each of my neighbors, find THEIR neighbors (2-hop from me)
++                        SELECT CASE WHEN mg.source_hash = mn.neighbor THEN mg.target_hash ELSE mg.source_hash END as candidate
++                        FROM my_neighbors mn
++                        JOIN memory_graph mg ON (mg.source_hash = mn.neighbor OR mg.target_hash = mn.neighbor) {join_filter}
++                        WHERE CASE WHEN mg.source_hash = mn.neighbor THEN mg.target_hash ELSE mg.source_hash END != ?
++                    )
++                    SELECT c.candidate, COUNT(*) as shared_count, (SELECT deg FROM my_degree) as source_degree
++                    FROM candidates c
++                    -- Exclude already-connected nodes
++                    WHERE c.candidate NOT IN (SELECT neighbor FROM my_neighbors)
++                    GROUP BY c.candidate
++                    HAVING COUNT(*) >= ?
++                    ORDER BY shared_count DESC
++                    LIMIT 10
++                """
++        return sql, [*seed_params, *join_params]
++
+     async def _get_connection(self) -> sqlite3.Connection:
+         """Get or create database connection with optimizations."""
+         if self._connection is None:
+@@ -900,17 +982,25 @@ async def store_entity_link(self, memory_hash: str, entity_name: str, entity_typ
+             logger.error(f"Failed to store entity link: {_sanitize_log_value(e)}")
+             return False
+ 
+-    async def list_entities(self, limit: int = 50) -> List[Dict[str, Any]]:
+-        """List all known entities with count and types."""
++    async def 
+```
+
+**File**: `src/mcp_memory_service/storage/milvus_graph.py` (modified, +77/-7)
+```diff
+@@ -52,6 +52,36 @@
+ 
+ logger = logging.getLogger(__name__)
+ 
++
++def _named_store_refused(storage, store: Optional[str], method: str) -> bool:
++    """Whether a named-store read must be refused on the Milvus graph.
++
++    The association collection has no store field yet, so it cannot confine an
++    entity read to one partition. Refusing is the only honest answer: falling
++    through to the unscoped query would hand a store-scoped caller another
++    store's entities, which is the leak #2118 closes for SQLite. #2119 adds the
++    field, the filter and the real implementation.
++
++    ``None`` and ``"all"`` are unscoped, as everywhere else. Warns once per
++    instance rather than once per call.
++    """
++    if store in (None, "all"):
++        return False
++    if not getattr(storage, "_store_scope_warned", False):
 +        try:
-+            run_log = build_run_log(report, run_id, trigger, succeeded)
-+            await asyncio.wait_for(
-+                store_run_log(self.storage, run_log, self.config.run_log_keep),
-+                timeout=RUN_LOG_TIMEOUT_SECONDS,
-+            )
-+        except Exception as exc:
-+            self.logger.warning(
-+                "Failed to store consolidation run log: %s", _sanitize_log_value(exc)
-+            )
++            storage._store_scope_warned = True
++        except AttributeError:
++            # A slotted or foreign storage cannot carry the flag; the warning
++            # then repeats, which is louder than silence but still honest.
++            pass
++        logger.warning(
++            "Milvus graph storage cannot confine %s to store %s yet (#2119); "
++            "returning no results for a named store",
++            _sanitize_log_value(method),
++            _sanitize_log_value(store),
++        )
++    return True
++
+ # Milvus per-call result limit ceiling.
+ _MILVUS_MAX_LIMIT = 16384
  
-     async def _notify(self, event_type: str, data: Dict[str, Any]) -> None:
-         """Hand one lifecycle event to the notifier; its failure never fails the run."""
-@@ -761,21 +805,26 @@ async def _get_memories_for_horizon(
-             # Bootstrap: use the configu
-```
-
-**File**: `src/mcp_memory_service/consolidation/insights.py` (modified, +2/-0)
-```diff
-@@ -17,6 +17,7 @@
+@@ -1067,12 +1097,20 @@ async def store_entity_link(
+             logger.error("Failed to store entity link: %s", _sanitize_log_value(exc))
+             return False
  
- from ..compat import _sanitize_log_value
- from ..models.memory import Memory
-+from .run_log import RUN_LOG_TYPE
+-    async def list_entities(self, limit: int = 50) -> List[Dict[str, Any]]:
++    async def list_entities(
++        self, limit: int = 50, store: Optional[str] = None
++    ) -> List[Dict[str, Any]]:
+         """List all known entities with link count and last activity.
  
- 
- @dataclass
-@@ -67,6 +68,7 @@ def generate_insights(
-         Returns:
-             List of InsightCard objects.
+         Milvus has no GROUP BY, so the has_entity edges are drained and
+         aggregated in Python — the same shape GraphStorage returns via SQL.
++
++        ``store`` is accepted for parity with GraphStorage (#2118) and refused
++        with an empty result until #2119 teaches this backend the field.
          """
-+        memories = [m for m in memories if m.get("memory_type") != RUN_LOG_TYPE]
-         insights: List[InsightCard] = []
-         insights.extend(self._detect_patterns(memories))
-         insights.extend(self._detect_trends(memories))
++        if _named_store_refused(self, store, "list_entities"):
++            return []
++
+         if not self._ensure_ready():
+             return []
+ 
+@@ -1104,9 +1142,16 @@ async def list_entities(self, limit: int = 50) -> List[Dict[str, Any]]:
+         return ordered[:limit]
+ 
+     async def find_memories_by_entity(
+-        self, entity_name: str, limit: int = 20
++        self, entity_name: str, limit: int = 20, store: Optional[str] = None
+     ) -> List[str]:
+-        """Find memory hashes linked to a given entity name, newest first."""
++        """Find memory hashes linked to a given entity name, newest first.
++
++        ``store`` is accepted for parity with GraphStorage (#2118) and refused
++        with an empty result until #2119 teaches this backend the field.
++        """
++        if _named_store_refused(self, store, "find_memories_by_entity"):
++            return []
++
+         if not self._ensure_ready():
+             return []
+ 
+@@ -1121,8 +1166,17 @@ async def find_memories_by_entity(
+         rows.sort(key=lambda r: float(r.get("created_at") or 0.0), reverse=True)
+         return [r["source_hash"] for r in rows[:limit] if r.get("source_hash")]
+ 
+-    async def get_entities_for_memory(self, memory_hash: str) -> List[str]:
+-        """Get entity names linked to a memory hash."""
++    async def get_entities_for_memory(
++        self, memory_hash: str, store: Optional[str] = None
++    ) -> List[str]:
++        """Get entity names linked to a memory hash.
++
++        ``store`` is accepted for parity with GraphStorage (#2118) and refused
++        with an empty result until #2119 teaches this backend the field.
++        """
++        if _named_store_refused(self, store, "get_entities_for_memory"):
++            return []
++
+         if not self._ensure_ready():
+             return []
+ 
+@@ -1137,8 +1191,17 @@ async def get_entities_for_memory(self, memory_hash: str) -> List[str]:
+         names = [self._entity_name_from_row(r) for r in rows]
+         return [n for n in names if n]
+ 
+-    async def get_entity_profile(self, entity_name: str) -> Dict[str, Any]:
+-        """Get entity profile: memory count, entity types, last activity."""
++    async def get_entity_profile(
++        self, entity_name: str, store: Optional[str] = None
++    ) -> Dict[str, Any]:
++        """Get entity profile: memory count, entity types, last activity.
++
++        ``store`` is accepted for parity with GraphStorage (#2118) and refused
++        with an empty result until #2119 teaches this backend the field.
++        """
++        if _named_store_refused(self, store, "get_entity_profile"):
++            return {}
++
+         if not self._ensure_ready():
+             return {}
+ 
+@@ -1269,13 +1332,20 @@ async def common_neighbors(
+         self,
+         memory_hash: str,
+         min_
 ```
 
-**File**: `src/mcp_memory_service/consolidation/run_log.py` (added, +81/-0)
+**File**: `tests/test_two_phase_aggregation.py` (modified, +2/-2)
 ```diff
-@@ -0,0 +1,81 @@
-+"""One memory per consolidation run, so the history syncs like any memory (#2097)."""
-+
-+import os
-+import socket
-+from datetime import datetime
-+
-+from ..models.memory import Memory
-+from ..storage.base import MemoryStorage
-+from ..utils.hashing import generate_content_hash
-+from .base import ConsolidationReport
-+
-+RUN_LOG_TYPE = "consolidation-run"
-+
-+_MAX_ERRORS = 10
-+_MAX_ERROR_CHARS = 500
-+
-+
-+def build_run_log(
-+    report: ConsolidationReport, run_id: str, trigger: str, success: bool
-+) -> Memory:
-+    """The log memory for one run, filed under ``MCP_AGENT_ID`` or else the hostname."""
-+    agent_id = os.environ.get("MCP_AGENT_ID")
-+    hostname = socket.gethostname()
-+    node = agent_id or hostname
-+    ended_at = datetime.now()
-+    duration = (ended_at - report.start_time).total_seconds()
-+    status = "" if success else ", failed"
-+    content = (
-+        f"Consolidation {report.time_horizon} on {node}: "
-+        f"{report.memories_processed} processed, "
-+        f"{report.associations_discovered} associations, "
-+        f"{report.clusters_created} clusters, "
-+        f"{report.memories_compressed} compressed, "
-+        f"{report.memories_archived} archived, "
-+        f"{duration:.0f} s{status} (run {run_id})"
-+    )
-+    return Memory(
-+        content=content,
-+        content_hash=generate_content_hash(content),
-+        tags=[RUN_LOG_TYPE, f"horizon:{report.time_horizon}", f"node:{node}"],
-+        memory_type=RUN_LOG_TYPE,
-+        metadata={
-+            "run_id": run_id,
-+            "node": node,
-+            "horizon": report.time_horizon,
-+            "trigger": trigger,
-+            "agent_id": agent_id,
-+            "hostname": hostname,
-+            "started_at": report.start_time.timestamp(),
-+            "ended_at": ended_at.timestamp(),
-+            "duration_seconds": duration,
-+            "success": success,
-+            "memories_processed": report.memories_processed,
-+            "associations_discovered": report.associations_discovered,
-+            "clusters_created": report.clusters_created,
-+            "memories_compressed": report.memories_compressed,
-+            "memories_archived": report.memories_archived,
-+            "errors": [
-+                error[:_MAX_ERROR_CHARS] for error in report.errors[:_MAX_ERRORS]
-+            ],
-+        },
-+    )
-+
-+
-+async def store_run_log(storage: MemoryStorage, run_log: Memory, keep: int) -> None:
-+    """Store *run_log*, then delete this node's runs beyond the newest *keep*."""
-+    stored, message = await storage.store(run_log, skip_semantic_dedup=True)
-+    if not stored:
-+        raise RuntimeError(message)
-+    node_tags = [f"node:{run_log.metadata['node']}"]
-+    overflow = (
-+        await storage.count_all_memories(memory_type=RUN_LOG_TYPE, tags=node_tags)
-+        - keep
-+    )
-+    if overflow <= 0:
-+        return
-+    stale = await storage.get_all_memories(
-+        limit=overflow, offset=keep, memory_type=RUN_LOG_TYPE, tags=node_tags
-+    )
-+    for run in stale:
-+        await storage.delete(run.content_hash)
+@@ -180,7 +180,7 @@ async def test_uses_entities_linked_to_highest_relevance_chunks(self):
+ 
+         graph = AsyncMock()
+         graph.get_entities_for_memory = AsyncMock(
+-            side_effect=lambda memory_hash: {
++            side_effect=lambda memory_hash, store=None: {
+                 "high": ["Python", "Testing"],
+                 "low": ["Testing", "python", "SQLite"],
+             }[memory_hash]
+@@ -220,7 +220,7 @@ async def test_falls_back_to_global_entities_when_chunks_have_no_links(self):
+         )
+ 
+         assert result == [{"entity_name": "Global", "count": 3}]
+-        graph.list_entities.assert_awaited_once_with(limit=1)
++        graph.list_entities.assert_awaited_once_with(limit=1, store=None)
+         # The fallback path has no retrieved-chunk link to report, so the
+         # builder still leaves those entities' chunks empty.
+         assert hashes_by_entity == {}
 ```
 
-**File**: `src/mcp_memory_service/consolidation/scheduler.py` (modified, +3/-1)
+**File**: `tests/unit/test_store_scoped_entity_graph.py` (added, +307/-0)
 ```diff
-@@ -890,7 +890,9 @@ async def _run_consolidation_job(self, time_horizon: str):
-         
-         try:
-             # Run the consolidation
--            report = await self.consolidator.consolidate(time_horizon)
-+            report = await self.consolidator.consolidate(
-+                time_horizon, trigger="scheduled"
+@@ -0,0 +1,307 @@
++"""Store confinement for the entity graph (#2118).
++
++The entity graph carries no store of its own: entity links are rows in
++``memory_graph`` with ``relationship_type='has_entity'``, and the table shares
++its SQLite file with ``memories``. Before the fix every entity read in
++``GraphStorage`` was global, so a credential scoped to one store could reach
++entity names through another store's memories. ``get_entity_detail`` confined
++``chunks`` by post-filtering ``get_by_hash``, but ``_discover_related_entities``
++walked ``common_neighbors`` unfiltered and returned ``related_entities`` from
++every partition.
++
++These tests are red before the fix and green after it. They seed two stores with
++an entity that exists in both (``Shared``) plus one entity each that exists only
++in that store, then assert that a store-scoped read never crosses over while the
++unscoped read stays exactly as wide as before.
++"""
++
++from __future__ import annotations
++
++import json
++import sqlite3
++from pathlib import Path
++
++import pytest
++
++from mcp_memory_service.server.handlers.graph import (
++    _discover_related_entities,
++    get_entity_detail,
++)
++from mcp_memory_service.storage.graph import GraphStorage
++
++STORE_A = "alpha"
++STORE_B = "beta"
++
++MEM_A1 = "a1" * 32
++MEM_A2 = "a2" * 32
++MEM_B1 = "b1" * 32
++MEM_B2 = "b2" * 32
++# A pair of in-store memories that a foreign memory associates with on both
++# sides, plus a soft-deleted memory that still carries an entity link.
++MEM_X1 = "x1" * 32
++MEM_X2 = "x2" * 32
++MEM_Y1 = "y1" * 32
++MEM_D1 = "d1" * 32
++
++
++def _seed_database(db_path: Path) -> None:
++    """Two stores, two memories each, and the entity links that connect them.
++
++    ``Shared`` is carried by memories in both stores, so a global read counts it
++    more often than a scoped read. ``OnlyB`` is reachable from ``MEM_A1`` only
++    through ``MEM_B1`` — that is the hop the old code allowed.
++    """
++    conn = sqlite3.connect(db_path)
++    try:
++        conn.execute(
++            "CREATE TABLE memories ("
++            "content_hash TEXT PRIMARY KEY, store TEXT NOT NULL, deleted_at REAL)"
++        )
++        conn.execute(
++            """
++            CREATE TABLE memory_graph (
++                source_hash TEXT NOT NULL,
++                target_hash TEXT NOT NULL,
++                similarity REAL NOT NULL,
++                connection_types TEXT NOT NULL,
++                metadata TEXT,
++                created_at REAL NOT NULL,
++                relationship_type TEXT NOT NULL DEFAULT 'related',
++                PRIMARY KEY (source_hash, target_hash)
 +            )
-             
-             # Run belief derivation (opt-in via MCP_BELIEFS_ENABLED)
-             belief_stats = {}
-```
-
----
-
-### Incident Patch 3: `8e251a70` (2026-11-22)
-**Commit Message**: fix(dashboard): report removals and bulk deletes to the status island instead of covering the page (#2107)
-
-* fix(dashboard): report removals and bulk deletes to the status island instead of covering the page
-
-* fix(dashboard): guard document removal per upload id
-
-A language switch re-renders the recent memories list and wires a fresh, enabled Remove button while the DELETE is still in flight, so a second click started a second removal for the same upload id and both wrote to the same island source. Track pending removals on the dashboard object, return early for an id that is already running and keep re-rendered buttons disabled until the request settles.
-
-* fix(dashboard): re-enable the removal button a re-render replaced
-
-A language switch re-renders the recent memories list (and the upload history)
-while a DELETE is in flight. The fresh button was disabled for the pending
-upload, but finally re-enabled only the node removeDocument() had been handed,
-so a failed removal left the visible Remove button dead until the next render.
-Track the button on screen per pending upload and re-enable that one.
-
-The repeat-click guard now runs before the confirm dialog and before
-_clearOperat
-
-**File**: `changelog.d/2107.fixed.md` (added, +8/-0)
-```diff
-@@ -0,0 +1,8 @@
-+- **Document removal and the bulk operations no longer cover the dashboard with the
-+  loading overlay (#2009).** `removeDocument()` and the four Manage bulk operations now
-+  report busy to the status island on their existing sources, clear the entry on success
-+  and keep their failure there, disable the triggering button while the request runs and
-+  rely on it instead of `setLoading(true)`. A removal in flight is tracked per upload id,
-+  so a re-render cannot start a second delete for the same document. The overlay stays on
-+  the view loads, search, the document viewer and ontology writes, which the island does
-+  not report.
-```
-
-**File**: `src/mcp_memory_service/web/static/app.js` (modified, +97/-13)
-```diff
-@@ -98,6 +98,13 @@ class MemoryDashboard {
-         this.isLoading = false;
-         this.liveSearchEnabled = true;
-         this.debounceTimer = null;
-+        // Upload ids with a removal in flight. A re-render replaces the button with an
-+        // enabled one, so the guard has to live on the dashboard, not on the DOM node.
-+        this._pendingRemovals = new Set();
-+        // The button currently on screen per pending upload. A re-render replaces the
-+        // node removeDocument() was handed, and the finally block has to re-enable the
-+        // visible one or a failed removal cannot be retried.
-+        this._pendingRemovalButtons = new Map();
- 
-         // Authentication state
-         this.authState = {
-@@ -1612,6 +1619,11 @@ class MemoryDashboard {
-         }).join('');
- 
-         historyContainer.innerHTML = historyHtml;
-+        // A re-render during a removal rebuilds these buttons; keep the ones that
-+        // are on screen now disabled and reachable from the finally block.
-+        historyContainer.querySelectorAll('.upload-item').forEach((item) => {
-+            this._trackRemovalButton(item.dataset.uploadId, item.querySelector('.btn-remove'));
-+        });
-     }
- 
-     /**
-@@ -1782,7 +1794,7 @@ class MemoryDashboard {
-                 if (button.classList.contains('btn-view-memory')) {
-                     this.viewDocumentMemory(uploadId);
-                 } else if (button.classList.contains('btn-remove')) {
--                    this.removeDocument(uploadId, filename);
-+                    this.removeDocument(uploadId, filename, button);
-                 }
-             });
-         }
-@@ -4073,9 +4085,11 @@ class MemoryDashboard {
-                 // Remove button
-                 const removeBtn = groupEl.querySelector('.btn-remove');
-                 if (removeBtn) {
-+                    // A re-render during a removal must not hand out a fresh, enabled button.
-+                    this._trackRemovalButton(group.upload_id, removeBtn);
-                     removeBtn.addEventListener('click', async (e) => {
-                         e.stopPropagation();
--                        await this.removeDocument(group.upload_id, group.source_file);
-+                        await this.removeDocument(group.upload_id, group.source_file, removeBtn);
-                         // removeDocument() already handles view refresh
-                     });
-                 }
-@@ -5236,17 +5250,34 @@ class MemoryDashboard {
-     /**
-      * Remove document and its memories
-      */
--    async removeDocument(uploadId, filename) {
-+    async removeDocument(uploadId, filename, button = null) {
-         console.log('removeDocument called with:', { uploadId, filename, currentView: this.currentView });
- 
-+        // One removal per upload: a second click after a re-render (Dashboard or
-+        // Documents) must not start another DELETE, and it must not clear the island
-+        // row that the running removal owns.
-+        if (this._pendingRemovals.has(uploadId)) {
-+            console.log('Removal already in flight for:', uploadId);
-+            return;
-+        }
++            """
++        )
++        conn.executemany(
++            "INSERT INTO memories (content_hash, store, deleted_at) VALUES (?, ?, ?)",
++            [
++                (MEM_A1, STORE_A, None),
++                (MEM_A2, STORE_A, None),
++                (MEM_B1, STORE_B, None),
++                (MEM_B2, STORE_B, None),
++                (MEM_X1, STORE_A, None),
++                (MEM_X2, STORE_A, None),
++                (MEM_Y1, STORE_B, None),
++                # Soft-deleted: its edges must not count for a scoped read.
++                (MEM_D1, STORE_A, 1234.0),
++            ],
++        )
++        # Entity links: source is the memory, target is the entity name.
++        conn.executemany(
++            "INSERT INTO memory_graph (source_hash, target_hash, similarity,"
++            " connection_types, metadata, created_at, relationship_type)"
++            " VALUES (?, ?, 1.0, '[\"entity\"]', ?, 1.0, 'has_entity')",
++            [
++                (MEM_A1, "Shared", json.dumps({"entity_type": "concept"})),
++                (MEM_A2, "Shared", json.dumps({"entity_type": "concept"})),
++                (MEM_A2, "OnlyA", json.dumps({"entity_type": "concept"})),
++                (MEM_B1, "Shared", json.dumps({"entity_type": "concept"})),
++                (MEM_B1, "OnlyB", json.dumps({"entity_type": "concept"})),
++                (MEM_B2, "Shared", json.dumps({"entity_type": "concept"})),
++                (MEM_D1, "Ghost", json.dumps({"entity_type": "concept"})),
++            ],
++        )
++        # A foreign memory (Y1, store beta) associated with both X1 and X2 in
++        # store alpha. Symmetric "related" edges are stored in both directions.
++        conn.executemany(
++            "INSERT INTO memory_graph (source_hash, target_hash, similarity,"
++            " connection_types, metadata, created_at, relationship_type)"
++            " VALUES (?, ?, 0.8, '[\"semantic\"]', '{}', 2.0, 'related')",
++            [
++                (MEM_X1, MEM_Y1),
++                (MEM_Y1, MEM_X1),
++                (MEM_X2, MEM_Y1),
++                (MEM_Y1, MEM_X2),
++            ],
++        )
++        conn.commit()
++    finally:
++        conn.close()
 +
-         if (!confirm(this.t('documents.removeConfirm', 'Remove "{filename}" and all its memory chunks?\n\nThis action cannot be undone.', { filename }))) {
-             console.log('User cancelled removal');
-             return;
-         }
- 
-         this._clearOperationError(`document-remove-${uploadId}`);
-+        this._pendingRemovals.add(uploadId);
-+        this._pendingRemovalButtons.set(uploadId, button);
-+        // No page overlay: the island shows the removal, the button shows it is running.
-+        if (button) button.disabled = true;
-+        this._reportOperation(`document-remove-${uploadId}`, {
-+            state: 'busy',
-+            progress: 'unknown',
-+            label: { fallback: filename },
-+            text: { key: 'island.document.removing', fallback: 'Removing document' },
-+        });
-         try {
--            this.setLoading(true);
-             console.log('Making DELETE request to:', `/documents/remove/${uploadId}`);
- 
-             const response = await this.apiCall(`/documents/remove/${uploadId}`, 'DELETE');
-@@ -5261,6 +5292,7 @@ class MemoryDashboard {
-                     }),
-                     'success'
-                 );
-+                this.statusIsland?.clear(`document-remove-${uploadId}`);
-                 // Refresh the current view (Dashboard or Documents tab)
-                 console.log('Refreshing view:', this.currentView);
-                 if (this.currentView === 'dashboard') {
-@@ -5285,10 +5317,26 @@ class MemoryDashboard {
-                 { fallback: filename }
-             );
-         } finally {
--            this.setLoading(false);
-+            // A re-render while the request ran replaced the button we were handed;
-+            // re-enable the one that is on screen now so a failed removal can be
-+            // retried without waiting for the next render.
-+            const current = this._p
-```
-
-**File**: `src/mcp_memory_service/web/static/i18n/de.json` (modified, +2/-0)
-```diff
-@@ -296,6 +296,7 @@
-   "manage.bulk.deleteUntagged.title": "Ohne Tags löschen",
-   "manage.bulk.deleteUntagged.desc": "Erinnerungen ohne Tags entfernen ({count} gefunden)",
-   "manage.bulk.deleteUntagged.confirm": "{count} Erinnerungen ohne Tags löschen?",
-+  "manage.bulk.deleting": "Erinnerungen werden gelöscht",
-   "manage.bulk.deleteDate.title": "Nach Datum löschen",
-   "manage.bulk.deleteTag.desc": "Alle Erinnerungen mit spezifischem Tag entfernen",
-   "manage.bulk.deleteTag.placeholder": "Tag auswählen...",
-@@ -625,6 +626,7 @@
-   "island.upload.completed": "Importiert",
-   "island.upload.failed": "Import fehlgeschlagen",
-   "island.upload.partial": "Mit Fehlern importiert: {error}",
-+  "island.document.removing": "Dokument wird entfernt",
-   "island.source.consolidation": "Konsolidierung",
-   "island.consolidation.completed": "Abgeschlossen ({horizon})",
-   "island.consolidation.failed": "Fehlgeschlagen ({horizon})",
-```
-
-**File**: `src/mcp_memory_service/web/static/i18n/en.json` (modified, +2/-0)
-```diff
-@@ -438,6 +438,7 @@
-   "manage.bulk.deleteUntagged.title": "Delete Untagged",
-   "manage.bulk.deleteUntagged.desc": "Remove memories without any tags ({count} found)",
-   "manage.bulk.deleteUntagged.confirm": "Delete {count} memories without tags?",
-+  "manage.bulk.deleting": "Deleting memories",
-   "manage.tags.title": "Tag Management",
-   "manage.tags.loading": "Loading tag statistics...",
-   "manage.tags.loadFailed": "Failed to load tag statistics",
-@@ -646,6 +647,7 @@
-   "island.upload.completed": "Imported",
-   "island.upload.failed": "Import failed",
-   "island.upload.partial": "Imported with errors: {error}",
-+  "island.document.removing": "Removing document",
-   "island.source.consolidation": "Consolidation",
-   "island.consolidation.completed": "Finished ({horizon})",
-   "island.consolidation.failed": "Failed ({horizon})",
-```
-
-**File**: `src/mcp_memory_service/web/static/i18n/es.json` (modified, +2/-0)
-```diff
-@@ -296,6 +296,7 @@
-   "manage.bulk.deleteUntagged.title": "Eliminar sin etiquetas",
-   "manage.bulk.deleteUntagged.desc": "Eliminar memorias sin etiquetas ({count} encontradas)",
-   "manage.bulk.deleteUntagged.confirm": "¿Eliminar {count} memorias sin etiquetas?",
-+  "manage.bulk.deleting": "Eliminando memorias",
-   "manage.bulk.deleteDate.title": "Eliminar por Fecha",
-   "manage.bulk.deleteTag.desc": "Eliminar todas las memorias con una etiqueta específica",
-   "manage.bulk.deleteTag.placeholder": "Seleccionar etiqueta...",
-@@ -625,6 +626,7 @@
-   "island.upload.completed": "Importado",
-   "island.upload.failed": "Error al importar",
-   "island.upload.partial": "Importado con errores: {error}",
-+  "island.document.removing": "Eliminando el documento",
-   "island.source.consolidation": "Consolidación",
-   "island.consolidation.completed": "Completada ({horizon})",
-   "island.consolidation.failed": "Fallida ({horizon})",
-```
-
-**File**: `src/mcp_memory_service/web/static/i18n/fr.json` (modified, +2/-0)
-```diff
-@@ -296,6 +296,7 @@
-   "manage.bulk.deleteUntagged.title": "Supprimer sans tags",
-   "manage.bulk.deleteUntagged.desc": "Supprimer les mémoires sans tags ({count} trouvées)",
-   "manage.bulk.deleteUntagged.confirm": "Supprimer {count} mémoires sans tags ?",
-+  "manage.bulk.deleting": "Suppression des mémoires",
-   "manage.bulk.deleteDate.title": "Supprimer par Date",
-   "manage.bulk.deleteTag.desc": "Supprimer toutes les mémoires avec un tag spécifique",
-   "manage.bulk.deleteTag.placeholder": "Sélectionner un tag...",
-@@ -625,6 +626,7 @@
-   "island.upload.completed": "Importé",
-   "island.upload.failed": "Échec de l'importation",
-   "island.upload.partial": "Importé avec des erreurs : {error}",
-+  "island.document.removing": "Suppression du document",
-   "island.source.consolidation": "Consolidation",
-   "island.consolidation.completed": "Terminée ({horizon})",
-   "island.consolidation.failed": "Échec ({horizon})",
-```
-
-**File**: `src/mcp_memory_service/web/static/i18n/hi.json` (modified, +2/-0)
-```diff
-@@ -438,6 +438,7 @@
-   "manage.bulk.deleteUntagged.title": "बिना टैग वाले हटाएँ",
-   "manage.bulk.deleteUntagged.desc": "बिना किसी टैग की मेमोरी हटाएँ ({count} मिलीं)",
-   "manage.bulk.deleteUntagged.confirm": "बिना टैग की {count} मेमोरी हटाएँ?",
-+  "manage.bulk.deleting": "मेमोरी हटाई जा रही हैं",
-   "manage.tags.title": "टैग प्रबंधन",
-   "manage.tags.loading": "टैग आँकड़े लोड हो रहे हैं...",
-   "manage.tags.loadFailed": "टैग आँकड़े लोड नहीं हो सके",
-@@ -646,6 +647,7 @@
-   "island.upload.completed": "आयात हुआ",
-   "island.upload.failed": "आयात विफल",
-   "island.upload.partial": "त्रुटियों के साथ आयात हुआ: {error}",
-+  "island.document.removing": "दस्तावेज़ हटाया जा रहा है",
-   "island.source.consolidation": "समेकन",
-   "island.consolidation.completed": "पूरा हुआ ({horizon})",
-   "island.consolidation.failed": "विफल ({horizon})",
-```
-
-**File**: `src/mcp_memory_service/web/static/i18n/id.json` (modified, +2/-0)
-```diff
-@@ -438,6 +438,7 @@
-   "manage.bulk.deleteUntagged.title": "Hapus yang tanpa tag",
-   "manage.bulk.deleteUntagged.desc": "Hapus memori tanpa tag ({count} ditemukan)",
-   "manage.bulk.deleteUntagged.confirm": "Hapus {count} memori tanpa tag?",
-+  "manage.bulk.deleting": "Menghapus memori",
-   "manage.tags.title": "Manajemen Tag",
-   "manage.tags.loading": "Memuat statistik tag...",
-   "manage.tags.loadFailed": "Gagal memuat statistik tag",
-@@ -646,6 +647,7 @@
-   "island.upload.completed": "Diimpor",
-   "island.upload.failed": "Impor gagal",
-   "island.upload.partial": "Diimpor dengan kesalahan: {error}",
-+  "island.document.removing": "Menghapus dokumen",
-   "island.source.consolidation": "Konsolidasi",
-   "island.consolidation.completed": "Selesai ({horizon})",
-   "island.consolidation.failed": "Gagal ({horizon})",
++
++@pytest.fixture
++async def graph(tmp_path):
++    db_path = tmp_path / "graph.db"
++    _seed_database(db_path)
++    storage = GraphStorage(str(db_path))
++    try:
++        yield storage
++    finally:
++        await s
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2122** (2026-11-24): feat(milvus): carry the store on graph edges and confine entity reads (#2119) (@doobidoo)
+- **PR #2121** (2026-11-24): fix(graph): confine entity reads to the claimed store (#2118) (@doobidoo)
 - **PR #2116** (2026-11-22): test(dsh): add a live functional test for the bundle (@doobidoo)
 - **PR #2115** (2026-11-22): feat(dsh): capture turn outcomes and skip non-project directories (@doobidoo)
 - **PR #2114** (2026-11-22): feat(dsh): inject project memories into new DeepSeek Harness agents (@doobidoo)
 - **PR #2113** (2026-11-22): docs(changelog): record the DeepSeek Harness integration from #2112 (@doobidoo)
-- **PR #2112** (2026-11-22): docs(dsh): connect the service to DeepSeek Harness over MCP (@doobidoo)
-- **PR #2110** (2026-11-22): refactor(dashboard): remove the dead full-page loading overlay (#2096) (@doobidoo)
 
 ---
 
@@ -3962,34 +3497,21 @@ _clearOperat
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. opencode): start the memory service when nothing answers
+## X. graph): confine entity reads to the claimed store
 
 **RULE**:
-When implementing operations in `changelog.d/2109.added.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in doobidoo/mcp-memory-service. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelog.d/2118.fixed.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in doobidoo/mcp-memory-service. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8ca7d81c`: opencode): start the memory service when nothing answers. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `41b792b2`: graph): confine entity reads to the claimed store. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/2109.added.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/2118.fixed.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-- **The OpenCode plugin can start the memory service when nothing answers (#2088, testx1011).**
-  `memoryService.autoStart` is off by default. With `enabled: true` the plugin runs the
-  configured argv (`["memory", "launch"]` by default, with the port taken from
-  `memoryService.endpoint`, because `memory launch` moves to a free port when the
-  configured one is taken) once the health check fails, and waits under a single
-  `startTimeoutMs` deadline before the session continues without memories. The launcher
-  runs from the user's home directory, so a cloned checkout cannot shadow `uvicorn` or
-  supply the server's `.env`, and the start decision uses the storage-free
-  `/api/health`, so a slow detailed check cannot make a running service look stopped. A
-  reachable endpoint is used as-is and a started service is never stopped: the
-  dashboard, a second editor and other MCP clients share it. The block is honoured from
-  the user configuration only, so a cloned repository cannot name the command the editor
-  runs; server settings such as `MCP_ALLOW_ANONYMOUS_ACCESS` stay in the service's own
-  `.env`.
+- **Store-scoped entity reads no longer cross partitions (#2118, part of #1880).** `memory_graph` has no store column, so every `GraphStorage` entity read was global: `list_entities`, `get_entity_profile`, `find_memories_by_entity` and `get_entities_for_memory` counted and returned links from every store, and `_discover_related_entities` walked `common_neighbors` unfiltered. A credential scoped to one store therefore received `related_entities` reachable only through another store's memories — `chunks` was already confined by post-filtering `get_by_hash`, `related_entities` was not. The graph shares its SQLite file with `memories`, so each of those reads now confines through the store of the edge's source memory, and `memory_detail` passes its claimed store down instead of scanning a `limit * 10` window and discarding the difference. `None` and `"all"` stay unscoped, so single-store installs and every unscoped caller see exactly what they saw before. `MilvusGraphStorage` accepts the same `store` keyword to keep the signature-parity guard green and returns nothing for a named store until #2119 gives its collection the field — refusing rather than serving the global answer.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -3999,7 +3521,7 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8ca7d81c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `41b792b2` are properly handled with clean fallback behavior.
 
 
 ## Consequences

@@ -3293,10 +3293,10 @@
     "repository": "doobidoo/mcp-memory-service",
     "platform": "github",
     "sourceUrl": "https://github.com/doobidoo/mcp-memory-service",
-    "sourceVersion": "e4501cbf",
+    "sourceVersion": "f4eac406",
     "license": "Apache-2.0",
-    "contentHash": "8e3b44322defd5bdfdf9d7d2bc7779450a858bb96a2897538fd40286bf56d640",
-    "lastHarvestedAt": "2026-11-23T08:07:46.409Z",
+    "contentHash": "e129aabb37fb828d5625416eb3f0c33da2b708354da4c1fca590280583a8cfb2",
+    "lastHarvestedAt": "2026-11-25T02:47:50.189Z",
     "learningId": "learn-github-doobidoo-mcp-memory-service"
   },
   "21st-dev-magic-mcp": {
@@ -7823,10 +7823,10 @@
     "repository": "astral-sh/uv",
     "platform": "github",
     "sourceUrl": "https://github.com/astral-sh/uv",
-    "sourceVersion": "d99121a2",
+    "sourceVersion": "e3e7c1ea",
     "license": "Apache-2.0",
-    "contentHash": "402548bff7636dfccbcbcaef3cf6cc80a7adb2cb43966656f9e5e343dce668a1",
-    "lastHarvestedAt": "2026-11-24T00:07:15.273Z",
+    "contentHash": "1b9d5cd5bd9c515fc17db03cb1e20d762c18eaee2423406dbcc57846f3fb6494",
+    "lastHarvestedAt": "2026-11-25T02:47:37.921Z",
     "learningId": "learn-github-astral-sh-uv"
   },
   "thaw-app-thaw": {

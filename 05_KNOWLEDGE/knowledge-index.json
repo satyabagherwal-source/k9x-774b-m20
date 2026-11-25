@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-25T02:39:22.669Z",
+  "last_updated": "2026-11-25T02:47:56.623Z",
   "total_verified_learnings": 9110,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25171,
+  "total_items": 25176,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112066,9 +112066,9 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "d4819eb13159f0ec3f379f63f5cba7bab46213f909f7507679a9bdd3b6f01ed5",
+      "content_hash": "ecc933e1bd4c20b68cc51dbbacc1069c5062cb81415594ea319dff48c98f72b5",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T01:36:13.865Z"
+      "persisted_at": "2026-11-25T02:47:56.303Z"
     },
     "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona",
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "20cd9db075bfba84d5eed2179053a210c1f164f61254360427a105a5457f6a3c",
+      "content_hash": "174f95315510d64bf8b65b6a3ad26b78b6b436d4593c33aad19a52005a33245b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T01:36:14.059Z"
+      "persisted_at": "2026-11-25T02:47:56.479Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "fe26df6cc885d2e8723e458ca291c276d8ff31b10ce88181d8b6e8f297ba5fdb",
+      "content_hash": "3f61c96638cef9d5873fb95b90a58fd185c34af58e2444e2987320a87051747a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T01:36:14.208Z"
+      "persisted_at": "2026-11-25T02:47:56.623Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -224600,8 +224600,8 @@
       "slug": "doobidoo-mcp-memory-service",
       "platform": "github",
       "source_url": "https://github.com/doobidoo/mcp-memory-service",
-      "source_version": "e4501cbf",
-      "content_hash": "8e3b44322defd5bdfdf9d7d2bc7779450a858bb96a2897538fd40286bf56d640",
+      "source_version": "f4eac406",
+      "content_hash": "e129aabb37fb828d5625416eb3f0c33da2b708354da4c1fca590280583a8cfb2",
       "dossier_path": "07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
       "promoted_rules": [
@@ -224649,6 +224649,11 @@
           "number": 10039,
           "title": "start the memory service when nothing answers",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10437,
+          "title": "confine entity reads to the claimed store",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -224656,7 +224661,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T08:07:46.127Z",
+      "verified_at": "2026-11-25T02:47:49.983Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -224698,10 +224703,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-doobidoo-mcp-memory-service-technical-construction-intelligence-doobidoo-mcp-mem.md",
       "title": "Technical Construction Intelligence: doobidoo/mcp-memory-service Core Invariants",
       "repository": "doobidoo/mcp-memory-service",
-      "source_version": "e4501cbf",
-      "content_hash": "b4b3500ab9a36f9fe49b721341db13387f5f55c2deacd04c3b92b6aeb233e68a",
+      "source_version": "f4eac406",
+      "content_hash": "9b7072fdba4b15b072107bd581e33dd62392c7fdfca221cac9a334b6ed43b838",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T08:07:46.889Z"
+      "persisted_at": "2026-11-25T02:47:50.603Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-doobidoo-mcp-memory-service": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-doobidoo-mcp-memory-service",
@@ -224710,10 +224715,10 @@
       "relative_path": "12_DECISIONS/ADR-doobidoo-mcp-memory-service-adr-subsystem-boundary-modular-decoupling-in-doobido.md",
       "title": "ADR: Subsystem Boundary & Modular Decoupling in doobidoo/mcp-memory-service",
       "repository": "doobidoo/mcp-memory-service",
-      "source_version": "e4501cbf",
-      "content_hash": "d7b9ddf1f2181f3fbd5cbccf23420b13fc6b5f8749fec8f2da13fea77607488a",
+      "source_version": "f4eac406",
+      "content_hash": "4b9452ea632d4cdb3cb691267387c1627ce486bbc38cb075dc0105253a0d926b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T08:07:47.072Z"
+      "persisted_at": "2026-11-25T02:47:50.778Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-doobidoo-mcp-memory-service": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-doobidoo-mcp-memory-service",
@@ -224722,10 +224727,10 @@
       "relative_path": "08_VERIFICATION/doobidoo-mcp-memory-service-verification-protocol-empirical-defect-shield-for-do.md",
       "title": "Verification Protocol: Empirical Defect Shield for doobidoo/mcp-memory-service",
       "repository": "doobidoo/mcp-memory-service",
-      "source_version": "e4501cbf",
-      "content_hash": "384754d4275e7ee8ea7bd523447e3a19d516bd75c593a581ecb65d5da5eff783",
+      "source_version": "f4eac406",
+      "content_hash": "4ff4ed63a98b19feb850ed31d882a01e9b7b7de1310a621641b6ce46f77da08e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T08:07:47.253Z"
+      "persisted_at": "2026-11-25T02:47:50.923Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-stabilityai-stable-diffusion-3-medium-learnin": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-stabilityai-stable-diffusion-3-medium-learnin",
@@ -235517,8 +235522,8 @@
       "slug": "astral-sh-uv",
       "platform": "github",
       "source_url": "https://github.com/astral-sh/uv",
-      "source_version": "d99121a2",
-      "content_hash": "402548bff7636dfccbcbcaef3cf6cc80a7adb2cb43966656f9e5e343dce668a1",
+      "source_version": "e3e7c1ea",
+      "content_hash": "1b9d5cd5bd9c515fc17db03cb1e20d762c18eaee2423406dbcc57846f3fb6494",
       "dossier_path": "07_PROJECT_LEARNING/astral-sh-uv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/astral-sh-uv-learnings.md",
       "promoted_rules": [
@@ -235551,6 +235556,11 @@
           "number": 9952,
           "title": "Skip distribution selection for packages excluded from installation",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10436,
+          "title": "Revert \"Update CodSpeedHQ/action action to v5.6.0\"",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -235558,7 +235568,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T00:07:15.054Z",
+      "verified_at": "2026-11-25T02:47:37.705Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -235600,10 +235610,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-astral-sh-uv-architecture-intelligence-astral-sh-uv-core-invariants.md",
       "title": "Architecture Intelligence: astral-sh/uv Core Invariants",
       "repository": "astral-sh/uv",
-      "source_version": "d99121a2",
-      "content_hash": "db4662ab149ab909a18e442e0771e894e8f03f8dc621019b0ea4267b8a0387d9",
+      "source_version": "e3e7c1ea",
+      "content_hash": "44eedc7d1c0a700f74caeb3467383999703662f60aa0c791d83d60a0a7d510bf",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T00:07:15.557Z"
+      "persisted_at": "2026-11-25T02:47:38.337Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-astral-sh-uv": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-astral-sh-uv",
@@ -235612,10 +235622,10 @@
       "relative_path": "08_VERIFICATION/astral-sh-uv-verification-protocol-empirical-defect-shield-for-astral-sh-uv.md",
       "title": "Verification Protocol: Empirical Defect Shield for astral-sh/uv",
       "repository": "astral-sh/uv",
-      "source_version": "264d8b4a",
-      "content_hash": "1f743ad76519bb9bab540758f66ca7d0fa11cd3970829e9de885d1643d758296",
+      "source_version": "e3e7c1ea",
+      "content_hash": "2fd02481b3370e2f6140bf0be0bc0d60a227291338f285b7c63390df27cf4436",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T16:28:13.136Z"
+      "persisted_at": "2026-11-25T02:47:38.530Z"
     },
     "learn-github-callstack-agent-device": {
       "learning_id": "learn-github-callstack-agent-device",
@@ -235863,9 +235873,9 @@
       "title": "Architecture Intelligence: astral-sh-uv-learnings Core Invariants",
       "repository": "astral-sh-uv-learnings",
       "source_version": "HEAD",
-      "content_hash": "a1fba4e6c3de4134294db18e88aa0261b29c6ce0feb0ebf86614da687d4902f4",
+      "content_hash": "325e497e642462a0682a49673aa96e40d3fb5b97b323b81bc07d7611d326d2cd",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T00:08:00.462Z"
+      "persisted_at": "2026-11-25T02:47:54.237Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-astral-sh-uv-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-astral-sh-uv-learnings",
@@ -235875,9 +235885,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for astral-sh-uv-learnings",
       "repository": "astral-sh-uv-learnings",
       "source_version": "HEAD",
-      "content_hash": "72b5293f4852641e2320f167e044ee3d23ba72778312ee56d8a914f75cacc719",
+      "content_hash": "28e7e2638d2f56b3c3a68f1553978e8839c8200cfe95cbc9333d5aaae0df58fc",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T16:29:05.508Z"
+      "persisted_at": "2026-11-25T02:47:54.415Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-google-embeddinggemma-2-learnings-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-google-embeddinggemma-2-learnings-core-invari",
@@ -251329,9 +251339,9 @@
       "title": "Technical Construction Intelligence: doobidoo-mcp-memory-service-learnings Core Invariants",
       "repository": "doobidoo-mcp-memory-service-learnings",
       "source_version": "HEAD",
-      "content_hash": "26f5fc2aa3ab5919f3f093d61f8ab35e59fe9fb4cc3aff6f7c5a75492d568713",
+      "content_hash": "7001d8cef91e13f7fd36efb3ebed0565d0b0e51cd872e01bb725ab49dc186383",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T08:12:34.580Z"
+      "persisted_at": "2026-11-25T02:47:55.167Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-doobidoo-mcp-memory-service-learnin": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-doobidoo-mcp-memory-service-learnin",
@@ -251341,9 +251351,9 @@
       "title": "ADR: Subsystem Boundary & Modular Decoupling in doobidoo-mcp-memory-service-learnings",
       "repository": "doobidoo-mcp-memory-service-learnings",
       "source_version": "HEAD",
-      "content_hash": "c9d354748ea3444d938f465604af7b3d547462fc52279c30e40d34d9e4171426",
+      "content_hash": "c3de52ee7529c51fe04ffc356883966db21e6b269b0e4dd5d2d16d89efb077c2",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T08:12:34.797Z"
+      "persisted_at": "2026-11-25T02:47:55.349Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-doobidoo-mcp-memory-service-le": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-doobidoo-mcp-memory-service-le",
@@ -251353,9 +251363,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for doobidoo-mcp-memory-service-learnings",
       "repository": "doobidoo-mcp-memory-service-learnings",
       "source_version": "HEAD",
-      "content_hash": "9a1d08d2a9106f5f06a7ec39e47451d33c11d0f6886d5af0fe81f1354351508b",
+      "content_hash": "1387d2644bbdbc2fe256de87f6402077c4c1c48b7442971b0b1556720b760b72",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T08:12:34.974Z"
+      "persisted_at": "2026-11-25T02:47:55.510Z"
     },
     "learn-github-lottie-react-native-lottie-react-native": {
       "learning_id": "learn-github-lottie-react-native-lottie-react-native",
@@ -342012,13 +342022,13 @@
       "item_id": "candidate_directive-rust-bind-bare-calls-to-the-enclosing-module-s-items",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-CXO3-rust-bind-bare-calls-to-the-enclosing-module-s-items.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-X5GI-rust-bind-bare-calls-to-the-enclosing-module-s-items.md",
       "title": "rust): bind bare calls to the enclosing module's items",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "4179d36965b77168531390967bcd81a8f3eab2c0dcf19220961ec296c0969ff8",
+      "content_hash": "3272954b0d791332449e603d0be67c200b2e83cb1fe602d96dc8ace0a084a57b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T01:36:13.686Z"
+      "persisted_at": "2026-11-25T02:47:56.133Z"
     },
     "domain_intelligence-content-information-intelligence-rollup-rollup-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-rollup-rollup-learnings-core-invariants",
@@ -344118,6 +344128,70 @@
       "content_hash": "4353a7acfc848342a1d0afa54c51e88022159620eb610dee25d5a484616b1c66",
       "domain_letter": "H",
       "persisted_at": "2026-11-25T02:39:19.903Z"
+    },
+    "rule-10436": {
+      "learning_id": "rule-10436",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10436,
+      "title": "Revert \"Update CodSpeedHQ/action action to v5.6.0\"",
+      "source_url": "https://github.com/astral-sh/uv",
+      "source_version": "e3e7c1ea",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T02:47:37.705Z"
+    },
+    "candidate_directive-revert-update-codspeedhq-action-action-to-v5-6-0": {
+      "item_id": "candidate_directive-revert-update-codspeedhq-action-action-to-v5-6-0",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-X3UO-revert-update-codspeedhq-action-action-to-v5-6-0.md",
+      "title": "Revert \"Update CodSpeedHQ/action action to v5.6.0\"",
+      "repository": "astral-sh-uv-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f70e5084808a817d37134985354d55838a14414db25a3e390565310dfe203910",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-25T02:47:54.049Z"
+    },
+    "rule-10437": {
+      "learning_id": "rule-10437",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10437,
+      "title": "confine entity reads to the claimed store",
+      "source_url": "https://github.com/doobidoo/mcp-memory-service",
+      "source_version": "f4eac406",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T02:47:49.983Z"
+    },
+    "candidate_directive-confine-entity-reads-to-the-claimed-store": {
+      "item_id": "candidate_directive-confine-entity-reads-to-the-claimed-store",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-X121-confine-entity-reads-to-the-claimed-store.md",
+      "title": "confine entity reads to the claimed store",
+      "repository": "doobidoo/mcp-memory-service",
+      "source_version": "f4eac406",
+      "content_hash": "03591615ede67cf20f7cdf3f5589799f95b1d2c5d10ca8c3c00ae6c1adc1d334",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-25T02:47:50.429Z"
+    },
+    "candidate_directive-graph-confine-entity-reads-to-the-claimed-store": {
+      "item_id": "candidate_directive-graph-confine-entity-reads-to-the-claimed-store",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-X4KQ-graph-confine-entity-reads-to-the-claimed-store.md",
+      "title": "graph): confine entity reads to the claimed store",
+      "repository": "doobidoo-mcp-memory-service-learnings",
+      "source_version": "HEAD",
+      "content_hash": "43a13b552ed355a47c731c878c6b645fd41f903859caa0dbd8b6897c18c35fde",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-25T02:47:54.990Z"
     }
   },
   "ai-builder-brain": {

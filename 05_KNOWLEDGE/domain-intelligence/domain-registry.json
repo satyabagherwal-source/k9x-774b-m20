@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T02:39:22.456Z",
+  "last_updated": "2026-11-25T02:47:56.303Z",
   "total_records": 2628,
   "domains": {
     "A": {
@@ -8398,8 +8398,8 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-learnings-technical-construction-intelligence-zvec-ai-zvec-gre.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "d4819eb13159f0ec3f379f63f5cba7bab46213f909f7507679a9bdd3b6f01ed5",
-      "created_at": "2026-11-25T01:36:13.865Z"
+      "content_hash": "ecc933e1bd4c20b68cc51dbbacc1069c5062cb81415594ea319dff48c98f72b5",
+      "created_at": "2026-11-25T02:47:56.303Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -13578,8 +13578,8 @@
       "title": "Technical Construction Intelligence: doobidoo/mcp-memory-service Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-doobidoo-mcp-memory-service-technical-construction-intelligence-doobidoo-mcp-mem.md",
       "repository": "doobidoo/mcp-memory-service",
-      "content_hash": "b4b3500ab9a36f9fe49b721341db13387f5f55c2deacd04c3b92b6aeb233e68a",
-      "created_at": "2026-11-23T08:07:46.889Z"
+      "content_hash": "9b7072fdba4b15b072107bd581e33dd62392c7fdfca221cac9a334b6ed43b838",
+      "created_at": "2026-11-25T02:47:50.603Z"
     },
     "DOM-D-0BBA6E16": {
       "record_id": "DOM-D-0BBA6E16",
@@ -17405,8 +17405,8 @@
       "title": "Architecture Intelligence: astral-sh/uv Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-astral-sh-uv-architecture-intelligence-astral-sh-uv-core-invariants.md",
       "repository": "astral-sh/uv",
-      "content_hash": "db4662ab149ab909a18e442e0771e894e8f03f8dc621019b0ea4267b8a0387d9",
-      "created_at": "2026-11-24T00:07:15.557Z"
+      "content_hash": "44eedc7d1c0a700f74caeb3467383999703662f60aa0c791d83d60a0a7d510bf",
+      "created_at": "2026-11-25T02:47:38.337Z"
     },
     "domain_intelligence-technical-construction-intelligence-callstack-agent-device-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-callstack-agent-device-core-invariants",
@@ -17432,8 +17432,8 @@
       "title": "Architecture Intelligence: astral-sh-uv-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-astral-sh-uv-learnings-architecture-intelligence-astral-sh-uv-learnings-core-inv.md",
       "repository": "astral-sh-uv-learnings",
-      "content_hash": "a1fba4e6c3de4134294db18e88aa0261b29c6ce0feb0ebf86614da687d4902f4",
-      "created_at": "2026-11-24T00:08:00.462Z"
+      "content_hash": "325e497e642462a0682a49673aa96e40d3fb5b97b323b81bc07d7611d326d2cd",
+      "created_at": "2026-11-25T02:47:54.237Z"
     },
     "DOM-D-CCF89F8A": {
       "record_id": "DOM-D-CCF89F8A",
@@ -22294,8 +22294,8 @@
       "title": "Technical Construction Intelligence: doobidoo-mcp-memory-service-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-doobidoo-mcp-memory-service-learnings-technical-construction-intelligence-doobid.md",
       "repository": "doobidoo-mcp-memory-service-learnings",
-      "content_hash": "26f5fc2aa3ab5919f3f093d61f8ab35e59fe9fb4cc3aff6f7c5a75492d568713",
-      "created_at": "2026-11-23T08:12:34.580Z"
+      "content_hash": "7001d8cef91e13f7fd36efb3ebed0565d0b0e51cd872e01bb725ab49dc186383",
+      "created_at": "2026-11-25T02:47:55.167Z"
     },
     "domain_intelligence-technical-construction-intelligence-lottie-react-native-lottie-react-native-core": {
       "record_id": "domain_intelligence-technical-construction-intelligence-lottie-react-native-lottie-react-native-core",

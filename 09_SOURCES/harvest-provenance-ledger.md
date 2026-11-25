@@ -12947,3 +12947,5 @@ Every entry in this ledger must capture:
 | `learn-dom-d-615f4579` | `project://freenet-freenet-core` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/freenet-freenet-core-learnings.md` | 2026-11-25T02:30:10.455Z |
 | `learn-github-oven-sh-bun` | `https://github.com/oven-sh/bun` | `d3588a3c` | Multi-dimensional audit evidence | 2026-11-25T02:38:39.998Z |
 | `learn-dom-h-fbc5ba6f` | `project://oven-sh-bun` | `d3588a3c` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oven-sh-bun-learnings.md` | 2026-11-25T02:39:19.303Z |
+| `learn-github-astral-sh-uv` | `https://github.com/astral-sh/uv` | `e3e7c1ea` | Multi-dimensional audit evidence | 2026-11-25T02:47:37.921Z |
+| `learn-github-doobidoo-mcp-memory-service` | `https://github.com/doobidoo/mcp-memory-service` | `f4eac406` | Multi-dimensional audit evidence | 2026-11-25T02:47:50.189Z |

@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T02:38:40.004Z",
-  "total_cycles_completed": 12264,
-  "total_learnings_persisted": 12264,
-  "total_rules_promoted": 11309,
+  "last_updated": "2026-11-25T02:47:50.194Z",
+  "total_cycles_completed": 12266,
+  "total_learnings_persisted": 12266,
+  "total_rules_promoted": 11311,
   "history": [
-    {
-      "timestamp": "2026-11-24T14:15:13.899Z",
-      "repository": "arangodb/arangodb",
-      "learningId": "learn-github-arangodb-arangodb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T14:24:12.693Z",
-      "repository": "kubernetes-sigs/aws-load-balancer-controller",
-      "learningId": "learn-github-kubernetes-sigs-aws-load-balancer-controller",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-24T14:24:18.528Z",
       "repository": "trinodb/trino",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-25T02:38:40.004Z",
       "repository": "oven-sh/bun",
       "learningId": "learn-github-oven-sh-bun",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T02:47:37.927Z",
+      "repository": "astral-sh/uv",
+      "learningId": "learn-github-astral-sh-uv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T02:47:50.194Z",
+      "repository": "doobidoo/mcp-memory-service",
+      "learningId": "learn-github-doobidoo-mcp-memory-service",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
