@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T15:16:03.385Z",
+  "last_updated": "2026-11-25T15:21:41.904Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-25T15:16:00.864Z",
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-25T15:07:26.582Z",
+      "processed_at": "2026-11-25T15:21:41.095Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1253,7 +1253,7 @@
       "staged_for_review": 1
     },
     "prof18-feed-flow-learnings.md": {
-      "processed_at": "2026-11-23T07:45:12.731Z",
+      "processed_at": "2026-11-25T15:21:40.188Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2968,7 +2968,7 @@
       "staged_for_review": 0
     },
     "hf-sensenova-sensenova-loop-9b-preview-learnings.md": {
-      "processed_at": "2026-11-22T00:24:55.576Z",
+      "processed_at": "2026-11-25T15:21:39.764Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3928,7 +3928,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 4248,
+  "total_dossiers_evaluated": 4251,
   "total_canonical_promoted": 544,
-  "total_staged_for_review": 3233
+  "total_staged_for_review": 3235
 }

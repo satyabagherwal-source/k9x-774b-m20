@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-25T15:15:48.423Z",
+  "last_updated": "2026-11-25T15:21:35.239Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -13041,14 +13041,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-prof18-feed-flow",
-      "content_hash": "6f10eacecd6e91a1bf26ac51f96b44e564ab86a9c2cd35a554623dbbbb455615",
-      "verified_at": "2026-11-23T07:45:06.610Z",
+      "content_hash": "080082ea48390b7d3c72a4fbea613cb933c233cdddb0e919658319dd80e862db",
+      "verified_at": "2026-11-25T15:21:35.238Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T07:45:06.610Z"
+      "last_updated": "2026-11-25T15:21:35.238Z"
     },
     "michaelbull/kotlin-result": {
       "repository": "michaelbull/kotlin-result",
@@ -17676,14 +17676,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-sensenova-sensenova-loop-9b-preview",
-      "content_hash": "61105f69fdab68408ed8cba6590fc7c923de1d92b29d9ade5b17f38a02351075",
-      "verified_at": "2026-11-22T00:24:35.061Z",
+      "content_hash": "49f693080870828846368dbfef6e822c2a6c81978a542d759e26c1075449f7f5",
+      "verified_at": "2026-11-25T15:21:27.856Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T00:24:35.061Z"
+      "last_updated": "2026-11-25T15:21:27.856Z"
     },
     "pyannote/speaker-diarization-3.1": {
       "repository": "pyannote/speaker-diarization-3.1",

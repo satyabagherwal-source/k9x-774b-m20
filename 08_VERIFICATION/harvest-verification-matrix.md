@@ -13122,3 +13122,5 @@
 | `CYCLE-20261125-BSYI` | `2026-11-25T15:07:09.786Z` | `SulphurAI/Sulphur-3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-fusioncow-sulphur-3-learnings.md` | Yes (`70465d66...`) |
 | `CYCLE-20261125-C1LZ` | `2026-11-25T15:07:20.999Z` | `dosco/deeporg` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10547` | Yes (`d96f520f...`) |
 | `CYCLE-20261125-MX4H` | `2026-11-25T15:15:48.401Z` | `xiaomi-research/Xiaomi-OCR-0` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xiaomi-research-xiaomi-ocr-0-learnings.md` | Yes (`3c3610c3...`) |
+| `CYCLE-20261125-U719` | `2026-11-25T15:21:27.837Z` | `sensenova/SenseNova-Loop-9B-Preview` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sensenova-sensenova-loop-9b-preview-learnings.md` | Yes (`49f69308...`) |
+| `CYCLE-20261125-UCQC` | `2026-11-25T15:21:35.220Z` | `prof18/feed-flow` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10548` | Yes (`080082ea...`) |

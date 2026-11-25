@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T15:16:02.596Z",
+  "last_updated": "2026-11-25T15:21:41.405Z",
   "directives": [
     {
       "id": "CD-001",
@@ -56034,11 +56034,11 @@
       "domain_letter": "G"
     },
     {
-      "id": "CD-C6A9",
+      "id": "CD-UHI2",
       "directive_title": "deps): bump url to 2.5.9 and heapless to 0.9.4",
       "source_repo": "zseven-w-openpencil-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-C6A9-deps-bump-url-to-2-5-9-and-heapless-to-0-9-4.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-UHI2-deps-bump-url-to-2-5-9-and-heapless-to-0-9-4.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-25",
@@ -61768,6 +61768,35 @@
       "source_repo": "zvec-ai-zvec-grep",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-7AC656-rust-bind-bare-calls-to-the-enclosing-mo.md",
+      "staged_date": "2026-11-25"
+    },
+    {
+      "id": "CD-UGV8",
+      "directive_title": "Keep desktop reader direction detection from overflowing the stack on long link",
+      "source_repo": "prof18-feed-flow-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-UGV8-keep-desktop-reader-direction-detection-from-overflowing-the-stack-on-long-link.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-25",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-REV-11EDD4",
+      "directive_title": "Keep desktop reader direction detection from overflowing the stack on long link",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "prof18-feed-flow",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-11EDD4-keep-desktop-reader-direction-detection-.md",
+      "staged_date": "2026-11-25"
+    },
+    {
+      "id": "CD-REV-DCA443",
+      "directive_title": "deps): bump url to 2.5.9 and heapless to 0.9.4",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-DCA443-deps-bump-url-to-2-5-9-and-heapless-to-0.md",
       "staged_date": "2026-11-25"
     }
   ]

@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T15:15:48.412Z",
-  "total_cycles_completed": 12456,
-  "total_learnings_persisted": 12456,
-  "total_rules_promoted": 11431,
+  "last_updated": "2026-11-25T15:21:35.229Z",
+  "total_cycles_completed": 12458,
+  "total_learnings_persisted": 12458,
+  "total_rules_promoted": 11432,
   "history": [
-    {
-      "timestamp": "2026-11-25T02:20:17.969Z",
-      "repository": "rmax/scrapy-redis",
-      "learningId": "learn-github-rmax-scrapy-redis",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T02:20:27.522Z",
-      "repository": "aleo-labs-protocol/snarkOS",
-      "learningId": "learn-github-aleo-labs-protocol-snarkos",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-25T02:28:41.815Z",
       "repository": "MemTensor/MemT-1.0-Pro",
@@ -1403,6 +1389,20 @@
       "repository": "xiaomi-research/Xiaomi-OCR-0",
       "learningId": "learn-huggingface-xiaomi-research-xiaomi-ocr-0",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T15:21:27.847Z",
+      "repository": "sensenova/SenseNova-Loop-9B-Preview",
+      "learningId": "learn-huggingface-sensenova-sensenova-loop-9b-preview",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T15:21:35.229Z",
+      "repository": "prof18/feed-flow",
+      "learningId": "learn-github-prof18-feed-flow",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

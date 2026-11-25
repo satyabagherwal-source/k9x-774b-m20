@@ -8663,10 +8663,10 @@
     "repository": "prof18/feed-flow",
     "platform": "github",
     "sourceUrl": "https://github.com/prof18/feed-flow",
-    "sourceVersion": "2d8d2804",
+    "sourceVersion": "dcaa91c6",
     "license": "Apache-2.0",
-    "contentHash": "6f10eacecd6e91a1bf26ac51f96b44e564ab86a9c2cd35a554623dbbbb455615",
-    "lastHarvestedAt": "2026-11-23T07:45:06.602Z",
+    "contentHash": "080082ea48390b7d3c72a4fbea613cb933c233cdddb0e919658319dd80e862db",
+    "lastHarvestedAt": "2026-11-25T15:21:35.224Z",
     "learningId": "learn-github-prof18-feed-flow"
   },
   "michaelbull-kotlin-result": {
@@ -11745,8 +11745,8 @@
     "sourceUrl": "https://huggingface.co/sensenova/SenseNova-Loop-9B-Preview",
     "sourceVersion": "hf-sensenova-sensenova-loop-9b-preview",
     "license": "Open-Source",
-    "contentHash": "61105f69fdab68408ed8cba6590fc7c923de1d92b29d9ade5b17f38a02351075",
-    "lastHarvestedAt": "2026-11-22T00:24:35.054Z",
+    "contentHash": "49f693080870828846368dbfef6e822c2a6c81978a542d759e26c1075449f7f5",
+    "lastHarvestedAt": "2026-11-25T15:21:27.841Z",
     "learningId": "learn-huggingface-sensenova-sensenova-loop-9b-preview"
   },
   "hf-pyannote-speaker-diarization-3.1": {

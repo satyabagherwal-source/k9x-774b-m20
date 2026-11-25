@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261124-EI87",
-    "timestamp": "2026-11-24T03:41:45.031Z",
-    "repository": "dosco/deeporg",
-    "learningId": "learn-github-dosco-deeporg",
-    "contentHash": "7c82de8a03af25225155b95a8b824c3d4ed8119f5fac7391ec8746257734257f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-EMN4",
-    "timestamp": "2026-11-24T03:41:50.752Z",
-    "repository": "infiniflow/infinity",
-    "learningId": "learn-github-infiniflow-infinity",
-    "contentHash": "442e238e7f28b152415aa2d42447be6382dc957367146ba0c649e8e77af53cd3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261124-OZ4O",
     "timestamp": "2026-11-24T03:49:53.496Z",
     "repository": "max-sixty/worktrunk",
@@ -7492,6 +7462,36 @@
     "contentHash": "3c3610c3b905ac60b23f86d172449fb89543470c7b9561588c01938ce91d9934",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-U719",
+    "timestamp": "2026-11-25T15:21:27.837Z",
+    "repository": "sensenova/SenseNova-Loop-9B-Preview",
+    "learningId": "learn-huggingface-sensenova-sensenova-loop-9b-preview",
+    "contentHash": "49f693080870828846368dbfef6e822c2a6c81978a542d759e26c1075449f7f5",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-UCQC",
+    "timestamp": "2026-11-25T15:21:35.220Z",
+    "repository": "prof18/feed-flow",
+    "learningId": "learn-github-prof18-feed-flow",
+    "contentHash": "080082ea48390b7d3c72a4fbea613cb933c233cdddb0e919658319dd80e862db",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
