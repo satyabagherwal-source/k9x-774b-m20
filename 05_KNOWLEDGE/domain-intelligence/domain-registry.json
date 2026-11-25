@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T15:07:27.301Z",
+  "last_updated": "2026-11-25T15:16:02.849Z",
   "total_records": 2678,
   "domains": {
     "A": {
@@ -8448,8 +8448,8 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-learnings-technical-construction-intelligence-zvec-ai-zvec-gre.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "443c01f10c5a6e972c226abc2d5755817567596763bafae62df85c1196a1863b",
-      "created_at": "2026-11-25T11:20:13.927Z"
+      "content_hash": "918ad13d2aca6853c9c4f317f7d1dbf3f19c5d9a08d3e7b96422234664b59f02",
+      "created_at": "2026-11-25T15:16:02.849Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -8493,8 +8493,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "0bc39f4b6cac0532422191e3b2ed4cb7aac3fff6d639ad768dcdd0276950e00e",
-      "created_at": "2026-11-25T14:41:56.271Z"
+      "content_hash": "509be274acb2696517725b3e08046819c4e91825ba559a50f34fec9e0420f72a",
+      "created_at": "2026-11-25T15:16:01.627Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -21476,8 +21476,8 @@
       "title": "Research & Knowledge Intelligence: xiaomi-research/Xiaomi-OCR-0 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-xiaomi-research-xiaomi-ocr-0-research-knowledge-intelligence-xiaomi-research-.md",
       "repository": "xiaomi-research/Xiaomi-OCR-0",
-      "content_hash": "084a750e4b3508d3a478c14a8c80803416c6a01da19e43ef34f5d9cf9cae6333",
-      "created_at": "2026-11-22T00:09:47.270Z"
+      "content_hash": "374ce98eebf97868166762f40da45f9b4221c5ea08bcf6edf1dd17a0cc42334d",
+      "created_at": "2026-11-25T15:15:48.677Z"
     },
     "domain_intelligence-research-knowledge-intelligence-darrylmorley-whatcable-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-darrylmorley-whatcable-core-invariants",
@@ -21596,8 +21596,8 @@
       "title": "Research & Knowledge Intelligence: hf-xiaomi-research-xiaomi-ocr-0-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-xiaomi-research-xiaomi-ocr-0-learnings-research-knowledge-intelligence-hf-xia.md",
       "repository": "hf-xiaomi-research-xiaomi-ocr-0-learnings",
-      "content_hash": "c8be26a6c75e9309724ad22168f82b531811b85be24ed21c14fb86e34ec5584a",
-      "created_at": "2026-11-22T00:09:59.231Z"
+      "content_hash": "ae033109c5de978583e1faf9a3d17cf50562ef71a395e7c2bb93f9e2b476cb83",
+      "created_at": "2026-11-25T15:16:00.627Z"
     },
     "DOM-D-F3C32546": {
       "record_id": "DOM-D-F3C32546",

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T15:07:27.064Z",
+  "last_updated": "2026-11-25T15:16:02.596Z",
   "directives": [
     {
       "id": "CD-001",
@@ -53865,11 +53865,11 @@
       "staged_date": "2026-11-24"
     },
     {
-      "id": "CD-FCZF",
+      "id": "CD-N74B",
       "directive_title": "server_events_dispatch: Rerender DM status emoji on emojiset change.",
       "source_repo": "zulip-zulip-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-FCZF-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-N74B-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-25",
@@ -57837,11 +57837,11 @@
       "domain_letter": "H"
     },
     {
-      "id": "CD-7YQZ",
+      "id": "CD-N82M",
       "directive_title": "rust): bind bare calls to the enclosing module's items",
       "source_repo": "zvec-ai-zvec-grep-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-7YQZ-rust-bind-bare-calls-to-the-enclosing-module-s-items.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-N82M-rust-bind-bare-calls-to-the-enclosing-module-s-items.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-25",
@@ -61750,6 +61750,24 @@
       "source_repo": "zseven-w-openpencil",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-31D471-deps-bump-url-to-2-5-9-and-heapless-to-0.md",
+      "staged_date": "2026-11-25"
+    },
+    {
+      "id": "CD-REV-FFBCD7",
+      "directive_title": "server_events_dispatch: Rerender DM status emoji on emojiset change.",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zulip-zulip",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-FFBCD7-server-events-dispatch-rerender-dm-statu.md",
+      "staged_date": "2026-11-25"
+    },
+    {
+      "id": "CD-REV-7AC656",
+      "directive_title": "rust): bind bare calls to the enclosing module's items",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-7AC656-rust-bind-bare-calls-to-the-enclosing-mo.md",
       "staged_date": "2026-11-25"
     }
   ]

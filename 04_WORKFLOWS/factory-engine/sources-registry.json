@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-25T15:07:24.603Z",
-    "lastVerified": "2026-11-25T15:07:24.603Z",
+    "lastChecked": "2026-11-25T15:16:00.156Z",
+    "lastVerified": "2026-11-25T15:16:00.156Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -197,8 +197,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-25T14:41:52.741Z",
-    "lastVerified": "2026-11-25T14:41:52.741Z",
+    "lastChecked": "2026-11-25T15:16:00.144Z",
+    "lastVerified": "2026-11-25T15:16:00.144Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -594,9 +594,9 @@
   "surrealdb-surrealdb": {
     "name": "surrealdb",
     "officialUrl": "https://github.com/surrealdb/surrealdb",
-    "lastChecked": "2026-11-24T19:55:28.719Z",
+    "lastChecked": "2026-11-25T15:15:57.652Z",
     "revisionIdentifier": "1b73f91b",
-    "lastVerified": "2026-11-24T19:55:28.719Z"
+    "lastVerified": "2026-11-25T15:15:57.652Z"
   },
   "hf-baai-bge-small-en-v1.5": {
     "name": "BAAI/bge-small-en-v1.5",
@@ -653,9 +653,9 @@
   "hashicorp-boundary": {
     "name": "boundary",
     "officialUrl": "https://github.com/hashicorp/boundary",
-    "lastChecked": "2026-11-25T10:45:35.700Z",
+    "lastChecked": "2026-11-25T15:15:55.112Z",
     "revisionIdentifier": "eeb38a1a",
-    "lastVerified": "2026-11-25T10:45:35.700Z"
+    "lastVerified": "2026-11-25T15:15:55.112Z"
   },
   "qdrant-qdrant": {
     "name": "qdrant",
@@ -3914,9 +3914,9 @@
   "alibaba-sentinel-golang": {
     "name": "sentinel-golang",
     "officialUrl": "https://github.com/alibaba/sentinel-golang",
-    "lastChecked": "2026-11-24T21:15:36.670Z",
+    "lastChecked": "2026-11-25T15:15:52.604Z",
     "revisionIdentifier": "f7a7f957",
-    "lastVerified": "2026-11-24T21:15:36.670Z"
+    "lastVerified": "2026-11-25T15:15:52.604Z"
   },
   "parthsarthi03-raptor": {
     "name": "raptor",
@@ -4725,9 +4725,9 @@
   "mtkennerly-ludusavi": {
     "name": "ludusavi",
     "officialUrl": "https://github.com/mtkennerly/ludusavi",
-    "lastChecked": "2026-11-24T14:41:40.201Z",
+    "lastChecked": "2026-11-25T15:15:45.123Z",
     "revisionIdentifier": "c4c2ca99",
-    "lastVerified": "2026-11-24T14:41:40.201Z"
+    "lastVerified": "2026-11-25T15:15:45.123Z"
   },
   "hf-openai-gpt-oss-120b": {
     "name": "openai/gpt-oss-120b",
@@ -10270,9 +10270,9 @@
   "michaelbull-kotlin-result": {
     "name": "kotlin-result",
     "officialUrl": "https://github.com/michaelbull/kotlin-result",
-    "lastChecked": "2026-11-23T07:36:45.491Z",
+    "lastChecked": "2026-11-25T15:15:50.245Z",
     "revisionIdentifier": "aed7438b",
-    "lastVerified": "2026-11-23T07:36:45.491Z"
+    "lastVerified": "2026-11-25T15:15:50.245Z"
   },
   "hf-thejagstudio-tessera-small": {
     "name": "thejagstudio/tessera-small",
@@ -13741,12 +13741,12 @@
     "officialUrl": "https://huggingface.co/xiaomi-research/Xiaomi-OCR-0",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-22T00:09:46.460Z",
-    "lastVerified": "2026-11-22T00:09:46.460Z",
+    "lastChecked": "2026-11-25T15:15:47.664Z",
+    "lastVerified": "2026-11-25T15:15:47.664Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-xiaomi-research-xiaomi-ocr-0",
-    "contentHash": "43186978e3ba6532c8edf2369cff9642a144f577b9b2f512cb53696ba1ff35d0",
+    "contentHash": "3c3610c3b905ac60b23f86d172449fb89543470c7b9561588c01938ce91d9934",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

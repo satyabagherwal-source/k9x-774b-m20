@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T15:07:21.013Z",
-  "total_cycles_completed": 12455,
-  "total_learnings_persisted": 12455,
+  "last_updated": "2026-11-25T15:15:48.412Z",
+  "total_cycles_completed": 12456,
+  "total_learnings_persisted": 12456,
   "total_rules_promoted": 11431,
   "history": [
-    {
-      "timestamp": "2026-11-25T02:20:13.521Z",
-      "repository": "tokio-rs/tokio",
-      "learningId": "learn-github-tokio-rs-tokio",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-25T02:20:17.969Z",
       "repository": "rmax/scrapy-redis",
@@ -1403,6 +1396,13 @@
       "repository": "dosco/deeporg",
       "learningId": "learn-github-dosco-deeporg",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T15:15:48.412Z",
+      "repository": "xiaomi-research/Xiaomi-OCR-0",
+      "learningId": "learn-huggingface-xiaomi-research-xiaomi-ocr-0",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

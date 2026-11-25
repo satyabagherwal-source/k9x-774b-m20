@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-25T15:07:21.024Z",
+  "last_updated": "2026-11-25T15:15:48.423Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -17646,14 +17646,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-xiaomi-research-xiaomi-ocr-0",
-      "content_hash": "43186978e3ba6532c8edf2369cff9642a144f577b9b2f512cb53696ba1ff35d0",
-      "verified_at": "2026-11-22T00:09:47.074Z",
+      "content_hash": "3c3610c3b905ac60b23f86d172449fb89543470c7b9561588c01938ce91d9934",
+      "verified_at": "2026-11-25T15:15:48.422Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T00:09:47.074Z"
+      "last_updated": "2026-11-25T15:15:48.422Z"
     },
     "LiquidAI/d1-2B": {
       "repository": "LiquidAI/d1-2B",

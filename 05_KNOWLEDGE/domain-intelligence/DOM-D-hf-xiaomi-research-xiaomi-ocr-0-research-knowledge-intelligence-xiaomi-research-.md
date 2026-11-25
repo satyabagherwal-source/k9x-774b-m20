@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/xiaomi-research/Xiaomi-OCR-0",
   "source_version": "hf-xiaomi-research-xiaomi-ocr-0",
   "license": "Open-Source",
-  "timestamp": "2026-11-22T00:09:47.269Z",
+  "timestamp": "2026-11-25T15:15:48.676Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-xiaomi-research-xiaomi-ocr-0",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [xiaomi-research/Xiaomi-OCR-0](https://huggingface.co/xiaomi-research/Xiaomi-OCR-0) (Revision: `hf-xiaomi-`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-22T00:09:47.269Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T15:15:48.676Z`  
 > **Learning ID**: `learn-huggingface-xiaomi-research-xiaomi-ocr-0`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-xiaomi-research-xiaomi-ocr-0-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/xiaomi-research/Xiaomi-OCR-0](https://huggingface.co/xiaomi-research/Xiaomi-OCR-0))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T00:09:46.460Z  
+> **Harvest Timestamp**: 2026-11-25T15:15:47.664Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: image-text-to-text
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 36567 downloads | 328 likes
+- **Stars / Engagement**: 40516 downloads | 335 likes
 
 ---
 

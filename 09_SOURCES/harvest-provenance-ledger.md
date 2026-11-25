@@ -13154,3 +13154,4 @@ Every entry in this ledger must capture:
 | `learn-github-milvus-io-milvus` | `https://github.com/milvus-io/milvus` | `45164988` | Multi-dimensional audit evidence | 2026-11-25T15:00:43.825Z |
 | `learn-huggingface-fusioncow-sulphur-3` | `https://huggingface.co/FusionCow/Sulphur-3` | `hf-fusionc` | Multi-dimensional audit evidence | 2026-11-25T15:07:09.792Z |
 | `learn-github-dosco-deeporg` | `https://github.com/dosco/graphjin` | `28191b07` | Multi-dimensional audit evidence | 2026-11-25T15:07:21.005Z |
+| `learn-huggingface-xiaomi-research-xiaomi-ocr-0` | `https://huggingface.co/xiaomi-research/Xiaomi-OCR-0` | `hf-xiaomi-` | Multi-dimensional audit evidence | 2026-11-25T15:15:48.406Z |

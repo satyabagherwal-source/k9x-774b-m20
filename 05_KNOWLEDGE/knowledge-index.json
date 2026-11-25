@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-25T15:07:27.557Z",
+  "last_updated": "2026-11-25T15:16:03.221Z",
   "total_verified_learnings": 9118,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -112066,9 +112066,9 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "443c01f10c5a6e972c226abc2d5755817567596763bafae62df85c1196a1863b",
+      "content_hash": "918ad13d2aca6853c9c4f317f7d1dbf3f19c5d9a08d3e7b96422234664b59f02",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T11:20:13.927Z"
+      "persisted_at": "2026-11-25T15:16:02.849Z"
     },
     "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona",
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "5183ef67fa8ee19ebe28f83f1e4aeff701a00509d20b3c5ef2a0c3f699060a55",
+      "content_hash": "6d14fc02339f8c855a97b5813382b2fe8fc7cc6438e1408856baead000297e30",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T11:20:14.120Z"
+      "persisted_at": "2026-11-25T15:16:03.057Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "74a618df4723a29380343a701621469b226ad7eddb23b4fbb9b0fb22db44da83",
+      "content_hash": "1761e0a3341a656a07f7b0a90492d764abe0b3d69a2b4ae022fde168de5d3e84",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T11:20:14.272Z"
+      "persisted_at": "2026-11-25T15:16:03.221Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -112198,9 +112198,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "0bc39f4b6cac0532422191e3b2ed4cb7aac3fff6d639ad768dcdd0276950e00e",
+      "content_hash": "509be274acb2696517725b3e08046819c4e91825ba559a50f34fec9e0420f72a",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T14:41:56.271Z"
+      "persisted_at": "2026-11-25T15:16:01.627Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -112210,9 +112210,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "bb1123bbbc27957b66cabfb1f858ede131d6b94059962a3967e000fc4fe5bac5",
+      "content_hash": "e5f3ebc5d07658a932ea665031eeb1ce8a35def365415251cbe5ce2a3a184082",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T14:41:56.454Z"
+      "persisted_at": "2026-11-25T15:16:01.842Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -249074,7 +249074,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/xiaomi-research/Xiaomi-OCR-0",
       "source_version": "hf-xiaomi-research-xiaomi-ocr-0",
-      "content_hash": "43186978e3ba6532c8edf2369cff9642a144f577b9b2f512cb53696ba1ff35d0",
+      "content_hash": "3c3610c3b905ac60b23f86d172449fb89543470c7b9561588c01938ce91d9934",
       "dossier_path": "07_PROJECT_LEARNING/hf-xiaomi-research-xiaomi-ocr-0-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-xiaomi-research-xiaomi-ocr-0-learnings.md",
       "promoted_rules": [],
@@ -249083,7 +249083,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T00:09:46.834Z",
+      "verified_at": "2026-11-25T15:15:48.120Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -249100,9 +249100,9 @@
       "title": "Research & Knowledge Intelligence: xiaomi-research/Xiaomi-OCR-0 Core Invariants",
       "repository": "xiaomi-research/Xiaomi-OCR-0",
       "source_version": "hf-xiaomi-research-xiaomi-ocr-0",
-      "content_hash": "084a750e4b3508d3a478c14a8c80803416c6a01da19e43ef34f5d9cf9cae6333",
+      "content_hash": "374ce98eebf97868166762f40da45f9b4221c5ea08bcf6edf1dd17a0cc42334d",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T00:09:47.270Z"
+      "persisted_at": "2026-11-25T15:15:48.677Z"
     },
     "learn-github-darrylmorley-whatcable": {
       "learning_id": "learn-github-darrylmorley-whatcable",
@@ -249243,9 +249243,9 @@
       "title": "Research & Knowledge Intelligence: hf-xiaomi-research-xiaomi-ocr-0-learnings Core Invariants",
       "repository": "hf-xiaomi-research-xiaomi-ocr-0-learnings",
       "source_version": "HEAD",
-      "content_hash": "c8be26a6c75e9309724ad22168f82b531811b85be24ed21c14fb86e34ec5584a",
+      "content_hash": "ae033109c5de978583e1faf9a3d17cf50562ef71a395e7c2bb93f9e2b476cb83",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T00:09:59.231Z"
+      "persisted_at": "2026-11-25T15:16:00.627Z"
     },
     "domain_intelligence-research-knowledge-intelligence-darrylmorley-whatcable-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-darrylmorley-whatcable-learnings-core-invariants",
@@ -336375,13 +336375,13 @@
       "item_id": "candidate_directive-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-FCZF-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-N74B-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change.md",
       "title": "server_events_dispatch: Rerender DM status emoji on emojiset change.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "a9148c2d281801be6383a572367d5214f506816c943fbe0b4c689973fcd83c58",
+      "content_hash": "373bde7929fdfda8c106485de6d64ac7346428c8bbd3c773200968058407719f",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T14:41:56.094Z"
+      "persisted_at": "2026-11-25T15:16:01.360Z"
     },
     "learn-github-xinatian-mroffice": {
       "learning_id": "learn-github-xinatian-mroffice",
@@ -342564,13 +342564,13 @@
       "item_id": "candidate_directive-rust-bind-bare-calls-to-the-enclosing-module-s-items",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-7YQZ-rust-bind-bare-calls-to-the-enclosing-module-s-items.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-N82M-rust-bind-bare-calls-to-the-enclosing-module-s-items.md",
       "title": "rust): bind bare calls to the enclosing module's items",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "70797a64334800e218dead1431eacf6f1c61bc9b19abd89cd1b430bbba1c1052",
+      "content_hash": "0ae5b73043bd9b14350c6fb20160141ac571fcdf55c0d7c566ee091cba5ab331",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T11:20:13.742Z"
+      "persisted_at": "2026-11-25T15:16:02.596Z"
     },
     "domain_intelligence-content-information-intelligence-rollup-rollup-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-rollup-rollup-learnings-core-invariants",
