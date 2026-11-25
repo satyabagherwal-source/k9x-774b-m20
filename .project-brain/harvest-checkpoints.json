@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-25T06:12:45.473Z",
+  "last_updated": "2026-11-25T06:21:19.193Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3831,14 +3831,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-burntsushi-ripgrep",
-      "content_hash": "72bb04ce35cf1b2b70c5ad05b0b292c2640b102f536602b855676c8ca771365a",
-      "verified_at": "2026-11-24T04:20:17.706Z",
+      "content_hash": "8576ca5e570dabf4fabcb6e627b8acdc537aa6dd391c741652c9ac2460c5eb5a",
+      "verified_at": "2026-11-25T06:21:06.194Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T04:20:17.706Z"
+      "last_updated": "2026-11-25T06:21:06.194Z"
     },
     "cosscom/coss": {
       "repository": "cosscom/coss",
@@ -6981,14 +6981,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-slatedb-slatedb",
-      "content_hash": "543ef0868d61caffad97224c04b6e6505d89fc17a3919cc5399aaf242ad0f784",
-      "verified_at": "2026-11-24T12:27:34.005Z",
+      "content_hash": "f6dbb59fb9b17d6e83a06572d8a7e41241c03334f8c326b2df66e473835a2222",
+      "verified_at": "2026-11-25T06:21:19.192Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T12:27:34.005Z"
+      "last_updated": "2026-11-25T06:21:19.192Z"
     },
     "react-component/slider": {
       "repository": "react-component/slider",
@@ -15621,14 +15621,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-lodestones-kromoss",
-      "content_hash": "ee28843308c57b40cb587491c5db6e3d83c8eee0ced52b194aab35fdf238d728",
-      "verified_at": "2026-11-21T12:19:35.440Z",
+      "content_hash": "6b8a8f6edf2f30c8dbc88eac4154107e13171b9a8d9e73519a21c32c95efb322",
+      "verified_at": "2026-11-25T06:21:05.539Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T12:19:35.440Z"
+      "last_updated": "2026-11-25T06:21:05.539Z"
     },
     "HemmingwayAI/Hemmingway-1": {
       "repository": "HemmingwayAI/Hemmingway-1",

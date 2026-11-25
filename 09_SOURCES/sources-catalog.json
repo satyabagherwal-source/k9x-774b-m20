@@ -2463,10 +2463,10 @@
     "repository": "BurntSushi/ripgrep",
     "platform": "github",
     "sourceUrl": "https://github.com/BurntSushi/ripgrep",
-    "sourceVersion": "4a51093f",
+    "sourceVersion": "3e85c6c1",
     "license": "Unlicense",
-    "contentHash": "72bb04ce35cf1b2b70c5ad05b0b292c2640b102f536602b855676c8ca771365a",
-    "lastHarvestedAt": "2026-11-24T04:20:17.690Z",
+    "contentHash": "8576ca5e570dabf4fabcb6e627b8acdc537aa6dd391c741652c9ac2460c5eb5a",
+    "lastHarvestedAt": "2026-11-25T06:21:06.177Z",
     "learningId": "learn-github-burntsushi-ripgrep"
   },
   "cosscom-coss": {
@@ -4573,10 +4573,10 @@
     "repository": "slatedb/slatedb",
     "platform": "github",
     "sourceUrl": "https://github.com/slatedb/slatedb",
-    "sourceVersion": "d6933aea",
+    "sourceVersion": "98a8c03c",
     "license": "Apache-2.0",
-    "contentHash": "543ef0868d61caffad97224c04b6e6505d89fc17a3919cc5399aaf242ad0f784",
-    "lastHarvestedAt": "2026-11-24T12:27:33.988Z",
+    "contentHash": "f6dbb59fb9b17d6e83a06572d8a7e41241c03334f8c326b2df66e473835a2222",
+    "lastHarvestedAt": "2026-11-25T06:21:19.176Z",
     "learningId": "learn-github-slatedb-slatedb"
   },
   "react-component-slider": {
@@ -10405,8 +10405,8 @@
     "sourceUrl": "https://huggingface.co/lodestones/Kromoss",
     "sourceVersion": "hf-lodestones-kromoss",
     "license": "Open-Source",
-    "contentHash": "ee28843308c57b40cb587491c5db6e3d83c8eee0ced52b194aab35fdf238d728",
-    "lastHarvestedAt": "2026-11-21T12:19:35.429Z",
+    "contentHash": "6b8a8f6edf2f30c8dbc88eac4154107e13171b9a8d9e73519a21c32c95efb322",
+    "lastHarvestedAt": "2026-11-25T06:21:05.520Z",
     "learningId": "learn-huggingface-lodestones-kromoss"
   },
   "hf-nvidia-nvidia-nemotron-labs-dory1.0-4b-bf16": {

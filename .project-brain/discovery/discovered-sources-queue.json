@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-25T05:54:48.654Z",
+  "updated_at": "2026-11-25T06:21:24.947Z",
   "stats": {
-    "total_discovered": 9253,
-    "approved_pending_harvest": 8762,
+    "total_discovered": 9262,
+    "approved_pending_harvest": 8771,
     "harvested_count": 0,
     "rejected_count": 491,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 8759,
+      "COMMUNITY_AND_EXPERT": 8768,
       "OFFICIAL_DOCUMENTATION": 275,
       "STANDARDS_AND_SPECIFICATIONS": 149,
       "ENGINEERING_BLOGS": 7,
@@ -200156,6 +200156,204 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/k3s-io-k3s-learnings.md",
         "fileName": "k3s-io-k3s-learnings.md"
+      }
+    },
+    "SRC-6CF871BAB9D7": {
+      "id": "SRC-6CF871BAB9D7",
+      "url": "https://bugzilla.gnome.org/show_bug.cgi?id=754596",
+      "title": "https://bugzilla.gnome.org/show_bug.cgi?id=754596",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T06:21:22.988Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/burntsushi-ripgrep-learnings.md",
+        "fileName": "burntsushi-ripgrep-learnings.md"
+      }
+    },
+    "SRC-C0FF73F34158": {
+      "id": "SRC-C0FF73F34158",
+      "url": "https://github.com/BurntSushi/ripgrep/pull/3630",
+      "title": "https://github.com/BurntSushi/ripgrep/pull/3630",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T06:21:23.074Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/burntsushi-ripgrep-learnings.md",
+        "fileName": "burntsushi-ripgrep-learnings.md"
+      }
+    },
+    "SRC-1DF90DBD6CC8": {
+      "id": "SRC-1DF90DBD6CC8",
+      "url": "https://www.opendata.dev/",
+      "title": "https://www.opendata.dev/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T06:21:24.532Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/slatedb-slatedb-learnings.md",
+        "fileName": "slatedb-slatedb-learnings.md"
+      }
+    },
+    "SRC-21EB8D2B8A56": {
+      "id": "SRC-21EB8D2B8A56",
+      "url": "https://www.prisma.io/",
+      "title": "https://www.prisma.io/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T06:21:24.595Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/slatedb-slatedb-learnings.md",
+        "fileName": "slatedb-slatedb-learnings.md"
+      }
+    },
+    "SRC-9488005ED8ED": {
+      "id": "SRC-9488005ED8ED",
+      "url": "https://responsive.dev/",
+      "title": "https://responsive.dev/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T06:21:24.662Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/slatedb-slatedb-learnings.md",
+        "fileName": "slatedb-slatedb-learnings.md"
+      }
+    },
+    "SRC-A574C0A4F790": {
+      "id": "SRC-A574C0A4F790",
+      "url": "https://rivet.dev/",
+      "title": "https://rivet.dev/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T06:21:24.745Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/slatedb-slatedb-learnings.md",
+        "fileName": "slatedb-slatedb-learnings.md"
+      }
+    },
+    "SRC-480EA5269A0A": {
+      "id": "SRC-480EA5269A0A",
+      "url": "https://github.com/s2-streamstore/s2",
+      "title": "https://github.com/s2-streamstore/s2",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T06:21:24.807Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/slatedb-slatedb-learnings.md",
+        "fileName": "slatedb-slatedb-learnings.md"
+      }
+    },
+    "SRC-55FF7696B943": {
+      "id": "SRC-55FF7696B943",
+      "url": "https://storrito.com/",
+      "title": "https://storrito.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T06:21:24.875Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/slatedb-slatedb-learnings.md",
+        "fileName": "slatedb-slatedb-learnings.md"
+      }
+    },
+    "SRC-87C9B5D21C3F": {
+      "id": "SRC-87C9B5D21C3F",
+      "url": "https://github.com/micllam/taquba",
+      "title": "https://github.com/micllam/taquba",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T06:21:24.947Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/slatedb-slatedb-learnings.md",
+        "fileName": "slatedb-slatedb-learnings.md"
       }
     }
   }

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-21T12:19:50.605Z",
+  "timestamp": "2026-11-25T06:21:24.066Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-hf-lodestones-kromoss-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hf-lodestones-kromoss-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-21T12:19:50.605Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T06:21:24.066Z`  
 > **Learning ID**: `LEARN-EVO-hf-lodestones-kromoss-learnings`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Source Version**: `hf-lodestone`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T12:19:34.819Z  
+> **Timestamp**: 2026-11-25T06:21:04.921Z  
 > **Learning ID**: `learn-huggingface-lodestones-kromoss`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-lodestones-kromoss-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/lodestones/Kromoss](https://huggingface.co/lodestones/Kromoss))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T12:19:34.592Z  
+> **Harvest Timestamp**: 2026-11-25T06:21:04.784Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-to-image
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 60090 downloads | 389 likes
+- **Stars / Engagement**: 57857 downloads | 498 likes
 
 ---
 

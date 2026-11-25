@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T12:27:40.456Z",
+  "timestamp": "2026-11-25T06:21:25.095Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-slatedb-slatedb-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [slatedb-slatedb-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T12:27:40.456Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T06:21:25.095Z`  
 > **Learning ID**: `LEARN-EVO-slatedb-slatedb-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 65%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 61%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from slatedb-slatedb-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/slatedb-slatedb-learnings.md`  
 > **Source**: github ([https://github.com/slatedb/slatedb](https://github.com/slatedb/slatedb))  
-> **Source Version**: `d6933aea`  
+> **Source Version**: `98a8c03c`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T12:27:32.790Z  
+> **Timestamp**: 2026-11-25T06:21:18.006Z  
 > **Learning ID**: `learn-github-slatedb-slatedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/slatedb-slatedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/slatedb/slatedb](https://github.com/slatedb/slatedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T12:27:32.784Z  
+> **Harvest Timestamp**: 2026-11-25T06:21:18.000Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: A cloud native embedded storage engine built on object storage.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3669 stars
+- **Stars / Engagement**: 3676 stars
 
 ---
 
@@ -2376,560 +2376,55 @@ func uniffiCheckChecksums() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d6933aea` (2026-11-23)
-**Commit Message**: Document SlateDB's three-release storage format support window (#2289)
+### Incident Patch 1: `98a8c03c` (2026-11-25)
+**Commit Message**: Allow README.md PRs without vouching (#2292)
 
-**File**: `.github/workflows/release.yaml` (modified, +4/-0)
+**File**: `.github/workflows/vouch-check-pr.yaml` (modified, +6/-3)
 ```diff
-@@ -80,6 +80,10 @@ jobs:
-           name: v${{ github.event.inputs.version }}
-           generateReleaseNotes: true
-           generateReleaseNotesPreviousTag: ${{ steps.previous_release.outputs.tag }}
-+          # GitHub puts this body above the auto-generated notes.
-+          body: |
-+            > [!WARNING]
-+            > **Storage compatibility:** SlateDB can read data written by the three previous minor releases. Data written by older releases may not be readable. Before you upgrade, make sure every database, including its checkpoints and clones, has been fully compacted on a release within that window. See [Upgrading Across a Support Window Boundary](https://slatedb.io/docs/operations/compatibility/#upgrading-across-a-support-window-boundary).
-           token: ${{ secrets.GITHUB_TOKEN }}
+@@ -1,11 +1,14 @@
+ name: Vouch Check PR
  
-       # Publish crate chain to crates.io in dependency order
-```
-
-**File**: `README.md` (modified, +1/-1)
-```diff
-@@ -142,7 +142,7 @@ Visit [slatedb.io](https://slatedb.io) to learn more.
+-# Close pull requests from authors who are not in .github/VOUCHED.td. Users with write access and
+-# bots skip the check. This workflow does not check out pull request code, so
++# Close pull requests from authors who are not in .github/VOUCHED.td. Users with write access,
++# bots, and README.md-only pull requests skip the check. Include `synchronize` so a later push to
++# other files still triggers the check. This workflow does not check out pull request code, so
+ # pull_request_target is safe here.
+ on:
+   pull_request_target:
+-    types: [opened, reopened]
++    types: [opened, reopened, synchronize]
++    paths-ignore:
++      - 'README.md'
  
- ## Release Schedule
- 
--SlateDB follows Semantic Versioning. We release new versions approximately every 2 months at the end of each even month (February, April, and so on). We guarantee forward/backward compatibility for storage formats between adjacent versions, but we do not currently guarantee API compatibility at this time (we reserve the right to break compile-time API compatibility).
-+SlateDB follows Semantic Versioning. We release new versions approximately every 2 months at the end of each even month (February, April, and so on). Each release can read storage formats written by the three previous minor releases (about six months), and by the next minor release so that upgrades can be rolled out and rolled back one process at a time. See [compatibility guide](https://slatedb.io/docs/operations/compatibility/) for upgrade instructions. We do not currently guarantee API compatibility at this time (we reserve the right to break compile-time API compatibility).
- 
- ## Adopters
- 
-```
-
-**File**: `website/src/content/docs/docs/operations/compatibility.mdx` (modified, +27/-2)
-```diff
-@@ -3,16 +3,41 @@ title: Compatibility
- description: What SlateDB currently guarantees across releases, storage formats, object stores, and tested targets
- ---
- 
--SlateDB follows Semantic Versioning and guarantees forward and backward compatibility for storage formats between adjacent releases. **We do not currently guarantee compile-time API compatibility.**
-+SlateDB follows Semantic Versioning. **We do not currently guarantee compile-time API compatibility.**
- 
--Shared deployments should move one release at a time. If several processes read and write the same database path, keep them within one release step of each other until the rollout is complete.
-+## Storage Format Support Window
-+
-+SlateDB releases a new minor version about every two months.
-+
-+- **Backward compatibility:** a release can read and write a database that contains data written by any of the three previous minor releases. At the normal release cadence, that is about six months. For example, `0.21.x` can open a database that still holds SSTs written by `0.18.x`.
-+- **Forward compatibility:** a release can read data written by the next minor release. This lets you roll an upgrade out one process at a time, and roll it back.
- 
- ## Stored Data
- 
- A single database can contain a mix of older and newer SST files during normal operation. Readers and compactors must understand every format already present in the bucket. SlateDB version-checks its persistent formats and fails fast when it sees a version it does not understand.
- 
- Compression is part of compatibility too. A process can only read compressed SSTs for codecs that were compiled into that binary. If one deployment writes Zstd-compressed SSTs, every reader and compactor that touches that database needs the `zstd` feature enabled. [Compression](/docs/design/compression) covers the codec feature flags.
- 
-+## Upgrading Across a Support Window Boundary
-+
-+SlateDB rewrites data as part of normal operation. WAL SSTs are flushed into L0 SSTs, L0 SSTs are compacted into sorted runs, and the manifest is rewritten on every update. Most databases that stay on supported releases move off old formats on their own. Do not rely on this. A sorted run that is rarely compacted can hold SSTs written many releases ago.
-+
-+Suppose release `Y` drops support for data written before release `X`. Before you deploy `Y`, do the following:
-+
-+1. Upgrade every process that uses the database to `X` or newer. This includes writers, readers, compactors, and garbage collectors. Move one release at a time. After this step, every new WAL SST, L0 SST, and compacted SST is written by `X` or newer.
-+2. Let regular compaction move older L0 SSTs into sorted runs. A full compaction does not include L0 SSTs, so this has to happen first. The size-tiered scheduler compacts L0 once enough L0 SSTs build up. On a database with few writes, submit a `Spec` compaction request that names the remaining L0 SSTs.
-+3. Rewrite every sorted run with a full compaction. A compactor must be running to pick up the request:
-+
-+   ```bash
-+   slatedb --path <db-path> submit-compaction --request '"Full"'
-+   ```
-+
-+4. Handle checkpoints and clones. A checkpoint keeps the manifest and SSTs it references, so old SSTs stay in use until the checkpoint expires or you delete it. If you still need a checkpoint, create a new one after the full compaction and delete the old one. Refreshing a checkpoint only extends its expiry; it does not move it to a newer manifest. Use `slatedb --path <db-path> list-checkpoints` to find them. A clone reads SSTs from its parent database through a checkpoint, so run these steps on every clone as well.
-+5. Check the result. Run `slatedb --path <db-path> read-manifest` and look at the SSTs it lists. Compacted SST IDs are ULIDs, and a ULID encodes the time it was created. Every L0 and sorted run SST ID should have a timestamp after step 1 finished. Allow for clock skew between hosts.
-+6. Deploy `Y`, one release at a time.
-+
-+These steps also work for an upgrade that skips more than one release. For example, to upgrade from `0.16.x` to `0.21.x`, upgrade to each minor release in turn. Before each release that drops support for older data, finish steps 2 through 5.
-+
- ## Union clone view IDs
- 
- A union clone combines views from several databases into one database.
+ permissions:
+   contents: read
 ```
 
 ---
 
-### Incident Patch 2: `a9c4f34b` (2026-11-23)
-**Commit Message**: Avoid Bytes clones in SST range checks on the read path (#2287)
+### Incident Patch 2: `8950a4bf` (2026-11-25)
+**Commit Message**: Add Rivet to adopters (#2291)
 
-**File**: `slatedb/src/block_cache_policy.rs` (modified, +14/-10)
+**File**: `README.md` (modified, +1/-0)
 ```diff
-@@ -4,25 +4,29 @@ use std::ops::Bound;
- 
- use bytes::Bytes;
- 
--use crate::bytes_range::BytesRange;
-+use crate::bytes_range::ByteRangeBounds;
-+use crate::comparable_range::ComparableRange;
- use crate::db_cache::CacheTarget;
- 
- /// Whether any [`CacheTarget::Data`] range in `targets` overlaps a data
- /// block whose first and last key are `key_span`.
- pub(crate) fn should_cache_data_block(targets: &[CacheTarget], key_span: &(Bytes, Bytes)) -> bool {
-+    // The block covers `[first_key, last_key]`. Build this range once from borrowed
-+    // slices, so the overlap check for each target clones no `Bytes`.
-+    let (first_key, last_key) = key_span;
-+    let span = ComparableRange::new(
-+        Bound::Included(first_key.as_ref()),
-+        Bound::Included(last_key.as_ref()),
-+    );
-     targets.iter().any(|target| {
-         let CacheTarget::Data(range) = target else {
-             return false;
-         };
--        let (first_key, last_key) = key_span;
--        let Some(range) = BytesRange::try_new(range.0.clone(), range.1.clone()) else {
--            return false;
--        };
--        let span = BytesRange::new(
--            Bound::Included(first_key.clone()),
--            Bound::Included(last_key.clone()),
--        );
--        range.intersect(&span).is_some()
-+        ComparableRange::new(
-+            ByteRangeBounds::start_bound(range),
-+            ByteRangeBounds::end_bound(range),
-+        )
-+        .intersects(&span)
-     })
- }
- 
-```
-
-**File**: `slatedb/src/bytes_range.rs` (modified, +35/-15)
-```diff
-@@ -19,7 +19,8 @@ pub trait ByteRangeBounds {
-     fn end_bound(&self) -> Bound<&[u8]>;
- }
- 
--fn bound_as_bytes<K: AsRef<[u8]>>(bound: Bound<&K>) -> Bound<&[u8]> {
-+/// Borrows the key in `bound` as a byte slice. Nothing is copied.
-+pub(crate) fn bound_as_slice<K: AsRef<[u8]>>(bound: Bound<&K>) -> Bound<&[u8]> {
-     match bound {
-         Included(k) => Included(k.as_ref()),
-         Excluded(k) => Excluded(k.as_ref()),
-@@ -39,11 +40,11 @@ impl<K: AsRef<[u8]>> ByteRangeBounds for Range<K> {
- 
- impl<K: AsRef<[u8]>> ByteRangeBounds for RangeInclusive<K> {
-     fn start_bound(&self) -> Bound<&[u8]> {
--        bound_as_bytes(RangeBounds::start_bound(self))
-+        bound_as_slice(RangeBounds::start_bound(self))
-     }
- 
-     fn end_bound(&self) -> Bound<&[u8]> {
--        bound_as_bytes(RangeBounds::end_bound(self))
-+        bound_as_slice(RangeBounds::end_bound(self))
-     }
- }
- 
-@@ -124,16 +125,10 @@ impl Serialize for BytesRange {
-     }
- }
- 
--#[cfg(test)]
--// Checks for the annoying case when we have ("prefix", "prefix\0").
--// When both bounds are excluded, the range is empty even though
--// "prefix" < "prefix\0".
--pub(crate) fn is_prefix_increment(prefix: &[u8], b: &[u8]) -> bool {
--    if !b.starts_with(prefix.as_ref()) {
--        return false;
--    }
--
--    b[prefix.len()..] == [u8::MIN]
-+/// Whether `key` is `prev` with one `0x00` byte added. That is the smallest key greater
-+/// than `prev`, so no key lies strictly between them.
-+pub(crate) fn is_next_key(prev: &[u8], key: &[u8]) -> bool {
-+    key.starts_with(prev) && key[prev.len()..] == [u8::MIN]
- }
- 
- impl RangeBounds<Bytes> for BytesRange {
-@@ -277,6 +272,19 @@ impl BytesRange {
-             .map(|inner| Self { inner })
-     }
- 
-+    pub(crate) fn intersects(&self, other: &Self) -> bool {
-+        self.inner.intersects(&other.inner)
-+    }
-+
-+    /// Returns a borrowed view of this range so bounds can be compared without
-+    /// cloning [`Bytes`].
-+    pub(crate) fn as_slice_range(&self) -> ComparableRange<&[u8]> {
-+        ComparableRange::new(
-+            ByteRangeBounds::start_bound(self),
-+            ByteRangeBounds::end_bound(self),
-+        )
-+    }
-+
-     pub(crate) fn is_start_bound_included_or_unbounded(&self) -> bool {
-         !matches!(ByteRangeBounds::start_bound(self), Excluded(_))
-     }
-@@ -332,6 +340,14 @@ pub(crate) mod tests {
-         });
-     }
- 
-+    #[test]
-+    fn test_try_new_rejects_excluded_bounds_with_no_key_between() {
-+        let a = Bytes::from_static(b"a");
-+        let next = Bytes::from_static(b"a\0");
-+        assert!(BytesRange::try_new(Excluded(a.clone()), Excluded(next.clone())).is_none());
-+        assert!(BytesRange::try_new(Excluded(a), Included(next)).is_some());
-+    }
-+
-     #[test]
-     fn test_from_prefix_and_subrange_full_subrange_equals_from_prefix() {
-         proptest!(|(prefix in arbitrary::bytes(8))| {
-@@ -512,7 +528,9 @@ pub(crate) mod tests {
-         proptest!(|(
-             non_empty_range in arbitrary::nonempty_range(10),
-         )| {
--            assert!(BytesRange::new_empty().intersect(&non_empty_range).is_none())
-+            let empty = BytesRange::new_empty();
-+            assert!(empty.intersect(&non_empty_range).is_none());
-+            assert!(!empty.intersects(&non_empty_range));
-         });
-     }
- 
-@@ -521,6 +539,7 @@ pub(crate) mod tests {
-         proptest!(|(non_empty_range in arbitrary::nonempty_range(10))| {
-             let unbounded_range = BytesRange::new(Unbounded, Unbounded);
-             assert!(non_empty_range.intersect(&unbounded_range).is_some());
-+            assert!(non_empty_range.intersects(&unbounded_range));
-         });
-     }
- 
-@@ -545,7 +564,8 @@ pub(crate) mod tests {
-         proptest!(|(
-             (non_empty_1, non_empty_2) in arbitrary::nonempty_intersecting_ranges(10),
-         )| {
--            assert!(non_empty_1.intersect(&non_empty_2).is_some())
-+            assert!(non_empty_1.intersect(&non_empty_2).is_some());
-+            assert!(non_empty_1.intersects(&non_empty_2));
-         });
-     }
- 
-```
-
-**File**: `slatedb/src/comparable_range.rs` (modified, +116/-79)
-```diff
-@@ -4,8 +4,11 @@ use std::{
-     ops::{Bound, RangeBounds},
- };
- 
-+use bytes::Bytes;
- use serde::{ser::SerializeStruct, Serialize, Serializer};
- 
-+use crate::bytes_range::is_next_key;
-+
- #[derive(Debug, Eq)]
- pub(crate) struct StartBound<T: Ord> {
-     inner: Bound<T>,
-@@ -181,6 +184,36 @@ fn cmp_bound<T: Ord>(a: &Bound<T>, b: &Bound<T>, start: bool) -> Ordering {
-     }
- }
- 
-+/// A key type for [`ComparableRange`]. `Ord` cannot show that no key lies between
-+/// two keys, so each key type supplies that rule.
-+pub(crate) trait RangeKey: Ord {
-+    /// Whether `self` is the smallest key greater than `prev`.
-+    fn is_next_key_after(&self, prev: &Self) -> bool;
-+}
-+
-+impl RangeKey for Bytes {
-+    fn is_next_key_after(&self, prev: &Self) -> bool {
-+        is_next_key(prev, self)
-+    }
-+}
-+
-+impl RangeKey for &[u8] {
-+    fn is_next_key_after(&self, prev: &Self) -> bool {
-+        is_next_key(prev, self)
-+    }
-+}
-+
-+fn bounds_non_empty<T: RangeKey>(start: &Bound<T>, end: &Bound<T>) -> bool {
-+    match (start, end) {
-+        (Bound::Included(a), Bound::Included(b)) => a <= b,
-+        (Bound::Included(a), Bound::Excluded(b)) => a < b,
-+        // `a < b` is not enough: no key lies between `a` and the next key after it.
-+        (Bound::Excluded(a), Bound::Excluded(b)) => a < b && !b.is_next_key_after(a),
-+        (Bound::Excluded(a), Bound::Included(b)) => a < b,
-+        (Bound::Unbounded, _) | (_, Bound::Unbounded) => true,
-+    }
-+}
-+
- #[derive(Debug, Eq, PartialEq, Ord, PartialOrd)]
- pub(crate) struct ComparableRange<T: Ord> {
-     start: StartBound<T>,
-@@ -194,6 +227,34 @@ impl<T: Ord> ComparableRange<T> {
-             end: EndBound::from(end),
-         }
-     }
-+
-+    pub(crate) fn intersects(&self, other: &Self) -> bool
-+    where
-+        T: RangeKey,
-+    {
-+        let max_start = max(&self.start, &other.start);
-+        let min_end = min(&self.end, &other.end);
-+        bounds_non_empty(&max_start.inner, &min_end.inner)
-+    }
-+
-+    pub(crate) fn non_empty(&self) -> bool
-+    where
-+        T: RangeKey,
-+    {
-+        bounds_non_empty(&self.start.inner, &self.end.inner)
-+    }
-+
-+    pub(crate) fn comparable_start_bound(&self) -> StartBound<&T> {
-+        StartBound {
-+            inner: self.start_bound(),
-+        }
-+    }
-+
-+    pub(crate) fn comparable_end_bound(&self) -> EndBound<&T> {
-+        EndBound {
-+            inner: self.end_bound(),
-+        }
-+    }
- }
- 
- impl<T: Ord + Serialize> Serialize for ComparableRange<T> {
-@@ -221,69 +282,17 @@ impl<T: Ord + Clone> ComparableRange<T> {
-         Self::new(range.start_bound().cloned(), range.end_bound().cloned())
-     }
- 
--    pub(crate) fn intersect(&self, other: &Self) -> Option<Self> {
-+    pub(crate) fn intersect(&self, other: &Self) -> Option<Self>
-+    where
-+        T: RangeKey,
-+    {
-         let max_start = max(&self.start, &other.start);
-         let min_end = min(&self.end, &other.end);
--        let intersection = Self {
-+        bounds_non_empty(&max_start.inner, &min_end.inner).then(|| Self {
-             start: max_start.clone(),
-             end: min_end.clone(),
--        };
--        if intersection.non_empty() {
--            Some(intersection)
--        } else {
--            None
--        }
--    }
--
--    #[allow(dead_code)]
--    pub(crate) fn union(&self, other: &Self) -> Option<Self> {
--        // Sort the ranges to make the function commutative
--        let (first, second) = if self < other {
--            (self, other)
--        } else {
--            (other, self)
--        };
--        // If the ranges are not intersecting and they are not adjacent, no union is possible
--        if first.intersect(second).is_none() && !first.are_adjacent(second) {
--            return None;
--        }
--        // Take the minimum of start bounds and maximum of end bounds
--        Some(Self {
--            start: min(&first.start, &other.start).clone(),
--            end: max(&first.end, &second.end).clone(),
-         })
-     }
--
--    fn are_adjacent(&self, other: &Self) -> bool {
--        match (&self.end.inner, &other.start.inner) {
--            (Bound::Included(a), Bound::Excluded(b)) => a == b,
--            (Bound::Excluded(a), Bound::Included(b)) => a == b,
--            _ => false,
--        }
--    }
--
--    pub(crate) fn non_empty(&self) -> bool {
--        match (&self.start.inner, &self.end.inner) {
--            (Bound::Included(a), Bound::Included(b)) => a <= b,
--            (Bound::Included(a), Bound::Excluded(b)) => a < b,
--            (Bound::Excluded(a), Bound::Excluded(b)) => a < b,
--            (Bound::Excluded(a), Bound::Included(b)) => a < b,
--            (Bound::Unbounded, _) => true,
--            (_, Bound::Unbounded) => true,
--        }
--    }
--
--    pub(crate) fn comparable_start_bound(&self) -> StartBound<&T> {
--        StartBound {
--            inner: self.start_bound(),
--        }
--    }
--
--    pub(crate) fn comparable_end_bound(&self) -> EndBound<&T> {
--        EndBound {
--            inner: self.end_bound(),
--        }
-
-```
-
-**File**: `slatedb/src/db_state.rs` (modified, +102/-44)
-```diff
-@@ -1,4 +1,5 @@
--use crate::bytes_range::BytesRange;
-+use crate::bytes_range::{bound_as_slice, BytesRange};
-+use crate::comparable_range::ComparableRange;
- use crate::config::CompressionCodec;
- use crate::error::SlateDBError;
- use crate::manifest::{Manifest, ManifestCore};
-@@ -258,12 +259,12 @@ impl SsTableView {
-     }
- 
-     /// Point-key form of [`Self::intersects_range`]: equivalent to
--    /// `self.intersects_range(end_bound, &BytesRange::from_slice(key..=key))`
--    /// without building or cloning any range.
-+    /// `self.intersects_range(end_bound, &BytesRange::from_slice(key..=key).as_slice_range())`
-+    /// without building a range.
-     ///
-     /// As there, `end_bound` replaces the view's own end, so a key in the gap
-     /// between this view's last key and `end_bound` still intersects.
--    pub(crate) fn intersects_point(&self, end_bound: Bound<&[u8]>, key: &[u8]) -> bool {
-+    fn intersects_point(&self, end_bound: Bound<&[u8]>, key: &[u8]) -> bool {
-         let after_start = match self.effective_range.start_bound() {
-             Included(start) => key >= start.as_ref(),
-             Excluded(start) => key > start.as_ref(),
-@@ -279,15 +280,15 @@ impl SsTableView {
-         after_start && before_end && self.effective_range.non_empty()
-     }
- 
--    pub(crate) fn intersects_range(&self, end_bound: Bound<Bytes>, range: &BytesRange) -> bool {
--        let sst_range =
--            BytesRange::new(Unbounded, end_bound.clone()).intersect(&self.effective_range);
--        match sst_range {
--            Some(sst_range) => BytesRange::new(sst_range.start_bound().cloned(), end_bound)
--                .intersect(range)
--                .is_some(),
--            None => false,
--        }
-+    /// Whether `[effective_start, end_bound)` overlaps `range` for a non-empty
-+    /// view, where `end_bound` replaces this view's own end bound.
-+    fn intersects_range(&self, end_bound: Bound<&[u8]>, range: &ComparableRange<&[u8]>) -> bool {
-+        self.effective_range.non_empty()
-+            && ComparableRange::new(
-+                bound_as_slice(self.effective_range.start_bound()),
-+                end_bound,
-+            )
-+            .intersects(range)
-     }
- 
-     /// Calculate the view range for the given range.
-@@ -666,11 +667,11 @@ impl SortedRun {
-             .sst_views
-             .last()
-             .expect("non-empty: first exists, so last exists");
--        let span = BytesRange::new(
--            first.compacted_effective_range().start_bound().cloned(),
--            last.compacted_effective_range().end_bound().cloned(),
-+        let span = ComparableRange::new(
-+            bound_as_slice(first.compacted_effective_range().start_bound()),
-+            bound_as_slice(last.compacted_effective_range().end_bound()),
-         );
--        span.intersect(range).is_some()
-+        span.intersects(&range.as_slice_range())
-     }
- 
-     pub(crate) fn find_last_sst_with_range_covering_key(&self, key: &[u8]) -> Option<usize> {
-@@ -689,14 +690,14 @@ impl SortedRun {
-     ///
-     /// The bound is normally the next view's start key, but becomes inclusive
-     /// when adjacent views overlap on that boundary key.
--    fn table_end_bound(&self, idx: usize) -> Bound<&Bytes> {
-+    fn table_end_bound(&self, idx: usize) -> Bound<&[u8]> {
-         let current_sst = &self.sst_views[idx];
-         if idx + 1 < self.sst_views.len() {
-             let next_start = self.sst_views[idx + 1].compacted_effective_start_key();
-             if current_sst.compacted_effective_range().contains(next_start) {
--                Included(next_start)
-+                Included(next_start.as_ref())
-             } else {
--                Excluded(next_start)
-+                Excluded(next_start.as_ref())
-             }
-         } else {
-             Unbounded
-@@ -706,8 +707,13 @@ impl SortedRun {
-     /// Whether the view at `idx` can hold `key`, bounded by the next view's
-     /// start as in [`Self::table_end_bound`].
-     fn point_intersects_table(&self, idx: usize, key: &[u8]) -> bool {
--        let end_bound = self.table_end_bound(idx).map(Bytes::as_ref);
--        self.sst_views[idx].intersects_point(end_bound, key)
-+        self.sst_views[idx].intersects_point(self.table_end_bound(idx), key)
-+    }
-+
-+    /// Whether the view at `idx` can hold a key in `range`, bounded by the
-+    /// next view's start as in [`Self::table_end_bound`].
-+    fn range_intersects_table(&self, idx: usize, range: &ComparableRange<&[u8]>) -> bool {
-+        self.sst_views[idx].intersects_range(self.table_end_bound(idx), range)
-     }
- 
-     /// Returns the contiguous range of SST view indices that can contribute to a
-@@ -731,7 +737,7 @@ impl SortedRun {
-         min_idx..(max_idx + 1)
-     }
- 
--    fn table_idx_covering_range(&self, range: &BytesRange) -> Range<usize> {
-+    fn table_idx_covering_range(&self, range: &ComparableRange<&[u8]>) -> Range<usize> {
-         let views = &self.sst_views;
-         if views.is_empty() {
-             return 0..0
-```
-
-**File**: `slatedb/src/manifest/mod.rs` (modified, +1/-1)
-```diff
-@@ -1389,7 +1389,7 @@ impl Manifest {
-         ranges: &[BytesRange],
-     ) -> Result<(), SlateDBError> {
-         for pair in ranges.windows(2) {
--            if pair[1].intersect(&pair[0]).is_some() {
-+            if pair[1].intersects(&pair[0]) {
-                 let scope = match segment {
-                     Some(prefix) => format!(" in segment `{:?}`", prefix),
-                     None => String::new(),
-```
-
-**File**: `slatedb/src/proptest_util.rs` (modified, +2/-2)
-```diff
-@@ -122,7 +122,7 @@ pub(crate) mod arbitrary {
-             None
-         } else {
-             let (start, end) = min_and_max(a, b);
--            if bytes_range::is_prefix_increment(&start, &end) {
-+            if bytes_range::is_next_key(&start, &end) {
-                 None
-             } else {
-                 Some((start, end))
-@@ -416,7 +416,7 @@ pub(crate) mod sample {
-                 let start = test_utils::bound_as_option(range.start_bound())
-                     .cloned()
-                     .unwrap_or_default();
--                if bytes_range::is_prefix_increment(&start, end) {
-+                if bytes_range::is_next_key(&start, end) {
-                     let mut tmp = Vec::new();
-                     if matches!(range.start_bound(), Included(_) | Unbounded) {
-                         tmp.push(start);
+@@ -163,6 +163,7 @@ See who's using SlateDB.
+ - [OpenData](https://www.opendata.dev)
+ - [Prisma](https://www.prisma.io)
+ - [Responsive](https://responsive.dev)
++- [Rivet](https://rivet.dev)
+ - [s2-lite](https://github.com/s2-streamstore/s2)
+ - [Storrito](https://storrito.com)
+ - [Taquba](https://github.com/micllam/taquba)
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2292** (2026-11-25): Allow README.md PRs without vouching (@criccomini)
+- **PR #2291** (2026-11-25): Add Rivet to adopters (@NathanFlurry)
+- **PR #2290** (closed): Range cache (@jeromegn)
 - **PR #2289** (2026-11-23): Document SlateDB's three-release storage format support window (@criccomini)
 - **PR #2287** (2026-11-23): Avoid Bytes clones in SST range checks on the read path (@nomiero)
 - **PR #2286** (2026-11-22): Remove WarpBuild microbenchmark jobs from nightly workflow (@criccomini)
-- **PR #2284** (2026-11-20): Retry failed local I/O in the mirror with refetch (@nomiero)
-- **PR #2282** (2026-11-20): Report SSTs shorter than the footer as truncated, not as WAL fences (@nomiero)
-- **PR #2280** (2026-11-20): Expose mirror bindings (@nomiero)
 
 ---
 
@@ -2949,34 +2444,38 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Document SlateDB's three-release storage format support window
+## X. Allow README.md PRs without vouching
 
 **RULE**:
-When implementing operations in `.github/workflows/release.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in slatedb/slatedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/vouch-check-pr.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in slatedb/slatedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d6933aea`: Document SlateDB's three-release storage format support window. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `98a8c03c`: Allow README.md PRs without vouching. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/release.yaml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/vouch-check-pr.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-          # GitHub puts this body above the auto-generated notes.
-          body: |
-            > [!WARNING]
-            > **Storage compatibility:** SlateDB can read data written by the three previous minor releases. Data written by older releases may not be readable. Before you upgrade, make sure every database, including its checkpoints and clones, has been fully compacted on a release within that window. See [Upgrading Across a Support Window Boundary](https://slatedb.io/docs/operations/compatibility/#upgrading-across-a-support-window-boundary).
+# Close pull requests from authors who are not in .github/VOUCHED.td. Users with write access,
+# bots, and README.md-only pull requests skip the check. Include `synchronize` so a later push to
+# other files still triggers the check. This workflow does not check out pull request code, so
+    types: [opened, reopened, synchronize]
+    paths-ignore:
+      - 'README.md'
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+# Close pull requests from authors who are not in .github/VOUCHED.td. Users with write access and
+# bots skip the check. This workflow does not check out pull request code, so
+    types: [opened, reopened]
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d6933aea` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `98a8c03c` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

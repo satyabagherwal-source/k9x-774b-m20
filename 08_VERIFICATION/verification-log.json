@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261123-35UG",
-    "timestamp": "2026-11-23T18:41:03.064Z",
-    "repository": "yugabyte/yugabyte-db",
-    "learningId": "learn-github-yugabyte-yugabyte-db",
-    "contentHash": "a4ac71f41a3576909e2a38b33dc2cdf1f505b4f5ac5b5f8b4396ea2d7c82a167",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-FAVS",
-    "timestamp": "2026-11-23T18:50:29.464Z",
-    "repository": "LiquidAI/d1-3B",
-    "learningId": "learn-huggingface-liquidai-d1-3b",
-    "contentHash": "ec981d46fc25e1a3cb5ce12158b9d87489871fff359e827cc05e1f31f5f1d74b",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-FQJQ",
-    "timestamp": "2026-11-23T18:50:49.766Z",
-    "repository": "GreptimeTeam/greptimedb",
-    "learningId": "learn-github-greptimeteam-greptimedb",
-    "contentHash": "b978da9143d6ba27455aeff0c8b12efeadec3dab17af48bd082dc759f02cf402",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261123-SHZ9",
     "timestamp": "2026-11-23T19:00:45.189Z",
     "repository": "Cactus-Compute/whistle",
@@ -7492,6 +7447,51 @@
     "contentHash": "ffea91565f612539d2f796500f294539bac33b6b28880e7de09835472edbf610",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-J9T7",
+    "timestamp": "2026-11-25T06:21:05.515Z",
+    "repository": "lodestones/Kromoss",
+    "learningId": "learn-huggingface-lodestones-kromoss",
+    "contentHash": "6b8a8f6edf2f30c8dbc88eac4154107e13171b9a8d9e73519a21c32c95efb322",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-JABH",
+    "timestamp": "2026-11-25T06:21:06.173Z",
+    "repository": "BurntSushi/ripgrep",
+    "learningId": "learn-github-burntsushi-ripgrep",
+    "contentHash": "8576ca5e570dabf4fabcb6e627b8acdc537aa6dd391c741652c9ac2460c5eb5a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-JKCK",
+    "timestamp": "2026-11-25T06:21:19.172Z",
+    "repository": "slatedb/slatedb",
+    "learningId": "learn-github-slatedb-slatedb",
+    "contentHash": "f6dbb59fb9b17d6e83a06572d8a7e41241c03334f8c326b2df66e473835a2222",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

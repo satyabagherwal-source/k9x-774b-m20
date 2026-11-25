@@ -12996,3 +12996,6 @@ Every entry in this ledger must capture:
 | `learn-github-momenbasel-puremac` | `https://github.com/momenbasel/PureMac` | `878316e2` | Multi-dimensional audit evidence | 2026-11-25T06:03:04.752Z |
 | `learn-dom-d-c25ea6d9` | `project://momenbasel-puremac` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/momenbasel-puremac-learnings.md` | 2026-11-25T06:03:41.295Z |
 | `learn-huggingface-dealignai-deepseek-v4-1-flash-1017-uncensored-fp8` | `https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8` | `hf-dealign` | Multi-dimensional audit evidence | 2026-11-25T06:12:45.454Z |
+| `learn-huggingface-lodestones-kromoss` | `https://huggingface.co/lodestones/Kromoss` | `hf-lodesto` | Multi-dimensional audit evidence | 2026-11-25T06:21:05.520Z |
+| `learn-github-burntsushi-ripgrep` | `https://github.com/BurntSushi/ripgrep` | `3e85c6c1` | Multi-dimensional audit evidence | 2026-11-25T06:21:06.177Z |
+| `learn-github-slatedb-slatedb` | `https://github.com/slatedb/slatedb` | `98a8c03c` | Multi-dimensional audit evidence | 2026-11-25T06:21:19.176Z |

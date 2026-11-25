@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T06:12:45.461Z",
-  "total_cycles_completed": 12310,
-  "total_learnings_persisted": 12310,
-  "total_rules_promoted": 11343,
+  "last_updated": "2026-11-25T06:21:19.182Z",
+  "total_cycles_completed": 12313,
+  "total_learnings_persisted": 12313,
+  "total_rules_promoted": 11345,
   "history": [
-    {
-      "timestamp": "2026-11-24T17:03:17.037Z",
-      "repository": "genkit-ai/genkit",
-      "learningId": "learn-github-genkit-ai-genkit",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T17:13:31.249Z",
-      "repository": "Aleph-Alpha/Kolibri-1.1",
-      "learningId": "learn-huggingface-aleph-alpha-kolibri-1-1",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T17:13:33.797Z",
-      "repository": "OVHaiLLM/Olala-v1.0-mini-7A1B",
-      "learningId": "learn-huggingface-ovhaillm-olala-v1-0-mini-7a1b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-24T17:13:41.811Z",
       "repository": "ZSeven-W/openpencil",
@@ -1403,6 +1382,27 @@
       "repository": "dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8",
       "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-1017-uncensored-fp8",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T06:21:05.527Z",
+      "repository": "lodestones/Kromoss",
+      "learningId": "learn-huggingface-lodestones-kromoss",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T06:21:06.183Z",
+      "repository": "BurntSushi/ripgrep",
+      "learningId": "learn-github-burntsushi-ripgrep",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T06:21:19.182Z",
+      "repository": "slatedb/slatedb",
+      "learningId": "learn-github-slatedb-slatedb",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

@@ -12963,3 +12963,6 @@
 | `CYCLE-20261125-W3VV` | `2026-11-25T06:03:04.747Z` | `momenbasel/PureMac` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/momenbasel-puremac-learnings.md` | Yes (`4fe2baac...`) |
 | `CYCLE-2026-11-25-PROJ-EVOLVE` | `2026-11-25T06:03:41.295Z` | `momenbasel-puremac` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-C25EA6D9` [Domain D] | Yes (`eec2dba7...`) |
 | `CYCLE-20261125-8JYH` | `2026-11-25T06:12:45.449Z` | `dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-dealignai-deepseek-v4.1-flash-1017-uncensored-fp8-learnings.md` | Yes (`ffea9156...`) |
+| `CYCLE-20261125-J9T7` | `2026-11-25T06:21:05.515Z` | `lodestones/Kromoss` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-lodestones-kromoss-learnings.md` | Yes (`6b8a8f6e...`) |
+| `CYCLE-20261125-JABH` | `2026-11-25T06:21:06.173Z` | `BurntSushi/ripgrep` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10469` | Yes (`8576ca5e...`) |
+| `CYCLE-20261125-JKCK` | `2026-11-25T06:21:19.172Z` | `slatedb/slatedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10470` | Yes (`f6dbb59f...`) |

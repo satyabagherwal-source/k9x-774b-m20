@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T06:12:59.784Z",
+  "last_updated": "2026-11-25T06:21:25.460Z",
   "total_records": 2638,
   "domains": {
     "A": {
@@ -15708,8 +15708,8 @@
       "title": "Architecture Intelligence: slatedb/slatedb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-slatedb-slatedb-architecture-intelligence-slatedb-slatedb-core-invariants.md",
       "repository": "slatedb/slatedb",
-      "content_hash": "ff8ab189820d1a5cdd682fdfca99f5f61a4e84ae361f518d1868d71af04f767d",
-      "created_at": "2026-11-24T12:27:34.427Z"
+      "content_hash": "8bdc53c980b8b1b230cf8804460f0f152a366e5770c6bd3f49a003d80b2a1083",
+      "created_at": "2026-11-25T06:21:19.709Z"
     },
     "domain_intelligence-architecture-intelligence-nucleoidai-nucleoid-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-nucleoidai-nucleoid-core-invariants",
@@ -23078,8 +23078,8 @@
       "title": "Architecture Intelligence: slatedb-slatedb-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-slatedb-slatedb-learnings-architecture-intelligence-slatedb-slatedb-learnings-co.md",
       "repository": "slatedb-slatedb-learnings",
-      "content_hash": "37e18a2b9b46789ae1a127549fc8a2c3aae2cf39ef4b7b51e6c685e091a19c78",
-      "created_at": "2026-11-24T12:27:40.785Z"
+      "content_hash": "b6ab1a7f113fe898af631696473c37f2129eae472276ee3aba55455e893cc71b",
+      "created_at": "2026-11-25T06:21:25.460Z"
     },
     "domain_intelligence-architecture-intelligence-dicklesworthstone-destructive_command_guard-learnings-": {
       "record_id": "domain_intelligence-architecture-intelligence-dicklesworthstone-destructive_command_guard-learnings-",
@@ -28537,8 +28537,8 @@
       "title": "Research & Knowledge Intelligence: lodestones/Kromoss Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-lodestones-kromoss-research-knowledge-intelligence-lodestones-kromoss-core-in.md",
       "repository": "lodestones/Kromoss",
-      "content_hash": "69fb60c049f2b02137c6d148c600c2a79e7726951dadcf1fef0784565af34278",
-      "created_at": "2026-11-21T12:19:35.693Z"
+      "content_hash": "cd7a290cbd37cff0915009f78b47d67c3d75a5b9873e614e2a3edfab65b83651",
+      "created_at": "2026-11-25T06:21:05.795Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-lodestones-kromoss-learnings-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-lodestones-kromoss-learnings-core-invariants",
@@ -28546,8 +28546,8 @@
       "title": "Research & Knowledge Intelligence: hf-lodestones-kromoss-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-lodestones-kromoss-learnings-research-knowledge-intelligence-hf-lodestones-kr.md",
       "repository": "hf-lodestones-kromoss-learnings",
-      "content_hash": "d03651e9064d974b526b197c8014c33255ec3e98f149e70cdb8e92d6bcd4b99a",
-      "created_at": "2026-11-21T12:19:50.721Z"
+      "content_hash": "cb7aa7fa6ef283479581fb8fcb603df49e81a26b34e698c12f809113125e3f8d",
+      "created_at": "2026-11-25T06:21:24.183Z"
     },
     "domain_intelligence-architecture-intelligence-opentofu-opentofu-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-opentofu-opentofu-learnings-core-invariants",
@@ -34770,8 +34770,8 @@
       "title": "Architecture Intelligence: BurntSushi/ripgrep Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-burntsushi-ripgrep-architecture-intelligence-burntsushi-ripgrep-core-invariants.md",
       "repository": "BurntSushi/ripgrep",
-      "content_hash": "bddd7bbcb7359f3d6c42dd76aeef05efbe0949af2f02a32abfcd122f507c2e30",
-      "created_at": "2026-11-24T04:20:18.106Z"
+      "content_hash": "30cdcd9ae178e2040521538ba109d6d1b6c2f148a58b494e2d575991398f9f31",
+      "created_at": "2026-11-25T06:21:06.642Z"
     },
     "domain_intelligence-architecture-intelligence-burntsushi-ripgrep-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-burntsushi-ripgrep-learnings-core-invariants",
@@ -34779,8 +34779,8 @@
       "title": "Architecture Intelligence: burntsushi-ripgrep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-burntsushi-ripgrep-learnings-architecture-intelligence-burntsushi-ripgrep-learni.md",
       "repository": "burntsushi-ripgrep-learnings",
-      "content_hash": "2f07975d9aa3e9747e0acce3b538d78f444a992cdfee99cb8810dd8b5515bc39",
-      "created_at": "2026-11-24T04:20:37.784Z"
+      "content_hash": "63d6b892b72ae9ca40f5f46fb9c396e5fb16b828f1a13140336d3e7dd34cb130",
+      "created_at": "2026-11-25T06:21:23.555Z"
     },
     "DOM-D-34CA9B71": {
       "record_id": "DOM-D-34CA9B71",
