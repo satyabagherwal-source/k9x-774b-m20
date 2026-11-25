@@ -12953,3 +12953,5 @@ Every entry in this ledger must capture:
 | `learn-github-checkmarx-kics` | `https://github.com/Checkmarx/kics` | `a572efb2` | Multi-dimensional audit evidence | 2026-11-25T02:56:11.357Z |
 | `learn-github-seekstorm-seekstorm` | `https://github.com/SeekStorm/SeekStorm` | `d7fb1b21` | Multi-dimensional audit evidence | 2026-11-25T02:56:14.072Z |
 | `learn-github-apache-arrow` | `https://github.com/apache/arrow` | `fcd7046f` | Multi-dimensional audit evidence | 2026-11-25T03:05:09.250Z |
+| `learn-github-meta-folly` | `https://github.com/facebook/folly` | `f0ccd5a6` | Multi-dimensional audit evidence | 2026-11-25T03:13:32.342Z |
+| `learn-github-mrkai77-loop` | `https://github.com/mrkai77/Loop` | `ad8564ac` | Multi-dimensional audit evidence | 2026-11-25T03:13:34.659Z |

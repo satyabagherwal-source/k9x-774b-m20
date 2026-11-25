@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/facebook-folly-learnings.md`  
 > **Source**: github ([https://github.com/facebook/folly](https://github.com/facebook/folly))  
-> **Source Version**: `c8588a1e`  
+> **Source Version**: `f0ccd5a6`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T00:48:59.332Z  
+> **Timestamp**: 2026-11-25T03:13:31.191Z  
 > **Learning ID**: `learn-github-meta-folly`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/facebook-folly-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/facebook/folly](https://github.com/facebook/folly))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T00:48:59.327Z  
+> **Harvest Timestamp**: 2026-11-25T03:13:31.026Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1150,11 +1150,8 @@ class SkipListNode {
   SkipListNode(const SkipListNode&) = delete;
   SkipListNode& operator=(const SkipListNode&) = delete;
 
-  template <
-      typename NodeAlloc,
-      typename U,
-      typename =
-          typename std::enable_if<std::is_convertible<U, T>::value>::type>
+  template <typename NodeAlloc, typename U>
+    requires std::is_convertible_v<U, T>
   static SkipListNode* create(
       NodeAlloc& alloc, int height, U&& data, bool isHead = false) {
     DCHECK(height >= 1 && height < 64) << height;
@@ -1332,11 +1329,8 @@ template <typename NodeType, typename NodeAlloc, typename = void>
 class NodeRecycler;
 
 template <typename NodeType, typename NodeAlloc>
-class NodeRecycler<
-    NodeType,
-    NodeAlloc,
-    typename std::enable_if<
-        !NodeType::template DestroyIsNoOp<NodeAlloc>::value>::type> {
+  requires(!NodeType::template DestroyIsNoOp<NodeAlloc>::value)
+class NodeRecycler<NodeType, NodeAlloc, void> {
  public:
   explicit NodeRecycler(const NodeAlloc& alloc)
       : refs_(0), dirty_(false), alloc_(alloc) {
@@ -1417,16 +1411,20 @@ class NodeRecycler<
 // In case of arena allocator, no recycling is necessary, and it's possible
 // to save on ConcurrentSkipList size.
 template <typename NodeType, typename NodeAlloc>
-class NodeRecycler<
-    NodeType,
-    NodeAlloc,
-    typename std::enable_if<
-        NodeType::template DestroyIsNoOp<NodeAlloc>::value>::type> {
+  requires NodeType::template
+DestroyIsNoOp<NodeAlloc>::value class NodeRecycler<NodeType, NodeAlloc, void> {
  public:
   explicit NodeRecycler(const NodeAlloc& alloc) : alloc_(alloc) {}
 
   void addRef() {}
-  void relea
+  void releaseRef() {}
+
+  void add(NodeType* /* node */) {}
+
+  NodeAlloc& alloc() { return alloc_; }
+
+ private:
+  [[FOLLY_ATTR_NO_UNIQUE_ADDRESS]] No
 ```
 
 ### Core Architecture Module: `folly/ConcurrentSkipList.h`
@@ -2388,40 +2386,894 @@ class WriteFileAtomicOptions {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8acf1e2a` (2026-11-23)
-**Commit Message**: Look for fbcode_builder in tool/ first, ahead of the export move
+### Incident Patch 1: `a3422249` (2026-11-24)
+**Commit Message**: Use requires and if constexpr in chrono, hash, simd, compression, result and synchronization
 
 Summary:
-katran's GitHub export carries fbcode_builder under `build/`, the directory `cmake -B build` and the README use for build output, so build output sits next to tracked files and `rm -rf build` deletes fbcode_builder. folly and fbthrift moved theirs to `tool/` for this reason, and katran follows:
+Folly requires C++20, so the remaining `std::enable_if` SFINAE in these
+headers can become `requires` clauses and `if constexpr`. This is part of
+finishing the folly `enable_if` -> `requires` migration.
 
-- The katran manifest sets `shipit_fbcode_builder_layout = tool`, so getdeps' in-fbsource ShipIt emulation and `generate-github-actions` use `tool/fbcode_builder`.
-- `CMakeLists.txt` looks in `tool/fbcode_builder` first and still finds `build/fbcode_builder`, so the export builds before and after the move.
+- `chrono/Conv.h`: the `tryTo`/`to` chrono overloads use `requires` and plain
+  return types.
+- `algorithm/simd/detail/UnrollUtils.h`: the two `arrayReduceImpl` overloads
+  become one function with `if constexpr`.
+- `hash/UniqueHashKey.h`, `algorithm/simd/Contains.h`, `compression/Utils.h`,
+  `synchronization/detail/InlineFunctionRef.h`: `enable_if` constraints become
+  `requires`.
+- `result/detail/result_promise.h`: the void/non-void partial specializations
+  use `requires`.
+- `synchronization/test/LockTest.cpp`: the local `if_` alias is replaced by
+  `requires`.
 
-Reviewed By: p-shah256
+`stats/detail/Bucket.h` was dropped on rebase: master already converted it.
 
-Differential Revision: D132452438
+Behavior is unchanged.
 
-fbshipit-source-id: fdda62a53461d0eb1e706665b9d01df56d157121
+Reviewed By: yfeldblum
 
-**File**: `tool/fbcode_builder/manifests/katran` (modified, +1/-0)
+Differential Revision: D133571438
+
+fbshipit-source-id: 16b97c1f9012c073fde61fd9ff415995c0ed3837
+
+**File**: `folly/algorithm/simd/Contains.h` (modified, +2/-5)
 ```diff
-@@ -3,6 +3,7 @@ name = katran
- fbsource_path = fbcode/katran
- shipit_project = katran
- shipit_fbcode_builder = true
-+shipit_fbcode_builder_layout = tool
+@@ -87,11 +87,8 @@ constexpr bool contains_haystack_needle_test() {
+  *
+  **/
+ struct contains_fn {
+-  template <
+-      typename R,
+-      typename T,
+-      typename =
+-          std::enable_if_t<detail::contains_haystack_needle_test<R, T>()>>
++  template <typename R, typename T>
++    requires(detail::contains_haystack_needle_test<R, T>())
+   FOLLY_ERASE bool operator()(R&& r, T x) const {
+     auto castR = detail::asSimdFriendlyUint(std::span(r));
+     using value_type = detail::std_range_value_t<decltype(castR)>;
+```
+
+**File**: `folly/algorithm/simd/detail/UnrollUtils.h` (modified, +10/-17)
+```diff
+@@ -96,23 +96,16 @@ struct UnrollUtils {
+       typename T,
+       std::size_t N,
+       typename Op>
+-  FOLLY_ALWAYS_INLINE static constexpr std::enable_if_t<l - f == 1, T>
+-  arrayReduceImpl(std::array<T, N> const& x, Op /*unused*/) {
+-    return x[f];
+-  }
+-
+-  template <
+-      std::size_t f,
+-      std::size_t l,
+-      typename T,
+-      std::size_t N,
+-      typename Op>
+-  FOLLY_ALWAYS_INLINE static constexpr std::enable_if_t<l - f != 1, T>
+-  arrayReduceImpl(std::array<T, N> const& x, Op op) {
+-    constexpr std::size_t n = l - f;
+-    T leftSum = arrayReduceImpl<f, f + n / 2>(x, op);
+-    T rightSum = arrayReduceImpl<f + n / 2, l>(x, op);
+-    return op(leftSum, rightSum);
++  FOLLY_ALWAYS_INLINE static constexpr T arrayReduceImpl(
++      std::array<T, N> const& x, [[maybe_unused]] Op op) {
++    if constexpr (l - f == 1) {
++      return x[f];
++    } else {
++      constexpr std::size_t n = l - f;
++      T leftSum = arrayReduceImpl<f, f + n / 2>(x, op);
++      T rightSum = arrayReduceImpl<f + n / 2, l>(x, op);
++      return op(leftSum, rightSum);
++    }
+   }
  
- [git]
- repo_url = https://github.com/facebookincubator/katran.git
+   template <typename Op, std::size_t... i>
+```
+
+**File**: `folly/chrono/Conv.h` (modified, +19/-27)
+```diff
+@@ -617,32 +617,28 @@ Expected<Tgt, ConversionCode> tryPosixTimeToDuration(
+  * struct timespec to std::chrono::duration
+  */
+ template <typename Tgt>
+-typename std::enable_if<
+-    detail::is_duration<Tgt>::value,
+-    Expected<Tgt, ConversionCode>>::type
+-tryTo(const struct timespec& ts) {
++  requires detail::is_duration<Tgt>::value
++Expected<Tgt, ConversionCode> tryTo(const struct timespec& ts) {
+   return detail::tryPosixTimeToDuration<Tgt, std::nano>(ts.tv_sec, ts.tv_nsec);
+ }
+ 
+ /**
+  * struct timeval to std::chrono::duration
+  */
+ template <typename Tgt>
+-typename std::enable_if<
+-    detail::is_duration<Tgt>::value,
+-    Expected<Tgt, ConversionCode>>::type
+-tryTo(const struct timeval& tv) {
++  requires detail::is_duration<Tgt>::value
++Expected<Tgt, ConversionCode> tryTo(const struct timeval& tv) {
+   return detail::tryPosixTimeToDuration<Tgt, std::micro>(tv.tv_sec, tv.tv_usec);
+ }
+ 
+ /**
+  * timespec or timeval to std::chrono::time_point
+  */
+ template <typename Tgt, typename Src>
+-typename std::enable_if<
+-    detail::is_time_point<Tgt>::value && detail::is_posix_time_type<Src>::value,
+-    Expected<Tgt, ConversionCode>>::type
+-tryTo(const Src& value) {
++  requires(
++      detail::is_time_point<Tgt>::value &&
++      detail::is_posix_time_type<Src>::value)
++Expected<Tgt, ConversionCode> tryTo(const Src& value) {
+   return tryTo<typename Tgt::duration>(value).then(
+       [](typename Tgt::duration result) { return Tgt(result); });
+ }
+@@ -651,10 +647,9 @@ tryTo(const Src& value) {
+  * std::chrono::duration to struct timespec
+  */
+ template <typename Tgt, typename Rep, typename Period>
+-typename std::enable_if<
+-    std::is_same<Tgt, struct timespec>::value,
+-    Expected<Tgt, ConversionCode>>::type
+-tryTo(const std::chrono::duration<Rep, Period>& duration) {
++  requires std::is_same_v<Tgt, struct timespec>
++Expected<Tgt, ConversionCode> tryTo(
++    const std::chrono::duration<Rep, Period>& duration) {
+   auto result = detail::durationToPosixTime<std::nano>(duration);
+   if (result.hasError()) {
+     return makeUnexpected(result.error());
+@@ -670,10 +665,9 @@ tryTo(const std::chrono::duration<Rep, Period>& duration) {
+  * std::chrono::duration to struct timeval
+  */
+ template <typename Tgt, typename Rep, typename Period>
+-typename std::enable_if<
+-    std::is_same<Tgt, struct timeval>::value,
+-    Expected<Tgt, ConversionCode>>::type
+-tryTo(const std::chrono::duration<Rep, Period>& duration) {
++  requires std::is_same_v<Tgt, struct timeval>
++Expected<Tgt, ConversionCode> tryTo(
++    const std::chrono::duration<Rep, Period>& duration) {
+   auto result = detail::durationToPosixTime<std::micro>(duration);
+   if (result.hasError()) {
+     return makeUnexpected(result.error());
+@@ -689,20 +683,18 @@ tryTo(const std::chrono::duration<Rep, Period>& duration) {
+  * std::chrono::time_point to timespec or timeval
+  */
+ template <typename Tgt, typename Clock, typename Duration>
+-typename std::enable_if<
+-    detail::is_posix_time_type<Tgt>::value,
+-    Expected<Tgt, ConversionCode>>::type
+-tryTo(const std::chrono::time_point<Clock, Duration>& timePoint) {
++  requires detail::is_posix_time_type<Tgt>::value
++Expected<Tgt, ConversionCode> tryTo(
++    const std::chrono::time_point<Clock, Duration>& timePoint) {
+   return tryTo<Tgt>(timePoint.time_since_epoch());
+ }
+ 
+ /**
+  * For all chrono conversions, to() wraps tryTo()
+  */
+ template <typename Tgt, typename Src>
+-typename std::enable_if<detail::is_chrono_conversion<Tgt, Src>::value, Tgt>::
+-    type
+-    to(const Src& value) {
++  requires detail::is_chrono_conversion<Tgt, Src>::value
++Tgt to(const Src& value) {
+   return tryTo<Tgt>(value).thenOrThrow(
+       [](Tgt res) { return res; },
+       [&](ConversionCode e) { return makeConversionError(e, StringPiece{}); });
+```
+
+**File**: `folly/compression/Utils.h` (modified, +4/-4)
+```diff
+@@ -41,8 +41,8 @@ namespace detail {
+  * a little endian T.
+  */
+ template <typename T>
+-typename std::enable_if<std::is_unsigned<T>::value, bool>::type
+-dataStartsWithLE(const IOBuf* data, T prefix, uint64_t n = sizeof(T)) {
++  requires std::is_unsigned_v<T>
++bool dataStartsWithLE(const IOBuf* data, T prefix, uint64_t n = sizeof(T)) {
+   DCHECK_GT(n, 0);
+   DCHECK_LE(n, sizeof(T));
+   T value;
+@@ -55,8 +55,8 @@ dataStartsWithLE(const IOBuf* data, T prefix, uint64_t n = sizeof(T)) {
+ }
+ 
+ template <typename T>
+-typename std::enable_if<std::is_arithmetic<T>::value, std::string>::type
+-prefixToStringLE(T prefix, uint64_t n = sizeof(T)) {
++  requires std::is_arithmetic_v<T>
++std::string prefixToStringLE(T prefix, uint64_t n = sizeof(T)) {
+   DCHECK_GT(n, 0);
+   DCHECK_LE(n, sizeof(T));
+   prefix = Endian::little(prefix);
+```
+
+**File**: `folly/hash/UniqueHashKey.h` (modified, +6/-11)
+```diff
+@@ -166,9 +166,8 @@ class unique_hash_key {
+ 
+   alignas(data_align) data_type const data_;
+ 
+-  template <
+-      typename Int,
+-      std::enable_if_t<is_non_bool_integral_v<Int>, int> = 0>
++  template <typename Int>
++    requires is_non_bool_integral_v<Int>
+   static item_type init_item(
+       Int const& arg,
+       [[maybe_unused]] size_t idx,
+@@ -204,20 +203,16 @@ class unique_hash_key {
+       (E == data_size / sizeof(T) || E == std::dynamic_extent);
+ 
+  public:
+-  template <
+-      typename Algo,
+-      typename... Arg,
+-      std::enable_if_t<is_algo_v<Algo>, int> = 0>
++  template <typename Algo, typename... Arg>
++    requires is_algo_v<Algo>
+   explicit unique_hash_key(Algo const algo, Arg const&... arg) noexcept
+       : data_{init(algo, arg...)} {
+     static_assert(sizeof(self) == Size);
+     static_assert(alignof(self) == alignof(size_t));
+   }
+ 
+-  template <
+-      typename T,
+-      std::size_t E,
+-      std::enable_if_t<is_span_compatible_v<T, E>, int> = 0>
++  template <typename T, std::size_t E>
++    requires is_span_compatible_v<T, E>
+   explicit operator std::span<T const, E>() const noexcept {
+     constexpr auto count = E == std::dynamic_extent ? data_size / sizeof(T) : E;
+     return std::span<T const, E>{
+```
+
+**File**: `folly/result/detail/result_promise.h` (modified, +4/-4)
+```diff
+@@ -113,8 +113,8 @@ struct result_promise_base {
+ };
+ 
+ template <typename T>
+-struct result_promise<T, typename std::enable_if<!std::is_void_v<T>>::type>
+-    : public result_promise_base<T> {
++  requires(!std::is_void_v<T>)
++struct result_promise<T, void> : public result_promise_base<T> {
+   // For reference types, this deliberately requires users to `co_return`
+   // one of `std::ref`, `std::cref`, or `folly::rref`.
+   //
+@@ -145,8 +145,8 @@ struct result_promise<T, typename std::enable_if<!std::is_void_v<T>>::type>
+ };
+ 
+ template <typename T>
+-struct result_promise<T, typename std::enable_if<std::is_void_v<T>>::type>
+-    : public result_promise_base<T> {
++  requires std::is_void_v<T>
++struct result_promise<T, void> : public result_promise_base<T> {
+   // You can fail via `co_await err` since void coros only allow `co_return;`.
+   // NB: `has_value_sigil_t` sets `eos_` to "has value", nothing to do.
+   void return_void() {}
+```
+
+**File**: `folly/synchronization/detail/InlineFunctionRef.h` (modified, +5/-6)
+```diff
+@@ -136,12 +136,11 @@ class InlineFunctionRef<ReturnType(Args...), Size> {
+    * reference semantics and store the function as a pointer, and add a level
+    * of indirection through type erasure.
+    */
+-  template <
+-      typename Func,
+-      std::enable_if_t<
+-          !std::is_same<std::decay_t<Func>, InlineFunctionRef>{} &&
+-          !std::is_reference<Func>{} &&
+-          folly::is_invocable_r_v<ReturnType, Func&&, Args&&...>>* = nullptr>
++  template <typename Func>
++    requires(
++        !std::is_same_v<std::decay_t<Func>, InlineFunctionRef> &&
++        !std::is_reference_v<Func> &&
++        folly::is_invocable_r_v<ReturnType, Func &&, Args && ...>)
+   InlineFunctionRef(Func&& func) {
+     // We disallow construction from lvalues, so assert that this is not a
+     // reference type.  When invoked with an lvalue, Func is a lvalue
+```
+
+**File**: `folly/synchronization/test/LockTest.cpp` (modified, +34/-20)
+```diff
+@@ -63,9 +63,6 @@ class Mutex {
+   //  - ensure that try-unlock-and-lock functions return bool or state and take
+   //        nothing or state
+ 
+-  template <bool C>
+-  using if_ = std::enable_if_t<C, int>;
+-
+   template <typename State>
+   using v = State;
+ 
+@@ -125,7 +122,8 @@ class Mutex {
+   b<UniqueLockState> try_lock_until(Clock::time_point deadline) {
+     return b<UniqueLockState>(try_op_until(Held::Unique, deadline));
+   }
+-  template <typename... A, if_<a<UniqueLockState, A...>> = 0>
++  template <typename... A>
++    requires a<UniqueLockState, A...>
+   void unlock(A&&... state) {
+     unop(Held::Unique, state...);
+   }
+@@ -142,7 +140,8 @@ class Mutex {
+   b<SharedLockState> try_lock_shared_until(Clock::time_point deadline) {
+     return b<SharedLockState>(try_op_until(Held::Shared, deadline));
+   }
+-  template <typename... A, if_<a<SharedLockState, A...>> = 0>
++  template <typename... A>
++    requires a<SharedLockState, A...>
+   void unlock_shared(A&&... state) {
+     unop(Held::Shared, state...);
+   }
+@@ -159,63 +158,77 @@ class Mutex {
+   b<UpgradeLockState> try_lock_upgrade_until(Clock::time_point deadline) {
+     return b<UpgradeLockState>(try_op_until(Held::Upgrade, deadline));
+   }
+-  template <typename... A, if_<a<UpgradeLockState, A...>> = 0>
++  template <typename... A>
++    requires a<UpgradeLockState, A...>
+   void unlock_upgrade(A&&... state) {
+     unop(Held::Upgrade, state...);
+   }
+ 
+-  template <typename... A, if_<a<UniqueLockState, A...>> = 0>
++  template <typename... A>
++    requires a<UniqueLockState, A...>
+   v<SharedLockState> unlock_and_lock_shared(A&&... state) {
+     return transition_0_(q::unlock, q::lock_shared, state...);
+   }
+-  template <typename... A, if_<a<UniqueLockState, A...>> = 0>
++  template <typename... A>
++    requires a<UniqueLockState, A...>
+   v<UpgradeLockState> unlock_and_lock_upgrade(A&&... state) {
+     return transition_0_(q::unlock, q::lock_upgrade, state...);
+   }
+-  template <typename... A, if_<a<UpgradeLockState, A...>> = 0>
++  template <typename... A>
++    requires a<UpgradeLockState, A...>
+   v<UniqueLockState> unlock_upgrade_and_lock(A&&... state) {
+     return transition_0_(q::unlock_upgrade, q::lock, state...);
+   }
+-  template <typename... A, if_<a<UpgradeLockState, A...>> = 0>
++  template <typename... A>
++    requires a<UpgradeLockState, A...>
+   v<SharedLockState> unlock_upgrade_and_lock_shared(A&&... state) {
+     return transition_0_(q::unlock_upgrade, q::lock_shared, state...);
+   }
+ 
+-  template <typename... A, if_<ap_<m_<SharedLockState>, A...>> = 0>
++  template <typename... A>
++    requires ap_<m_<SharedLockState>, A...>
+   b<UpgradeLockState> try_unlock_shared_and_lock_upgrade(A const&... a) {
+     return transition_0_(q::unlock_shared, q::try_lock_upgrade, a...);
+   }
+-  template <typename... A, if_<ap_<md_<SharedLockState>, A...>> = 0>
++  template <typename... A>
++    requires ap_<md_<SharedLockState>, A...>
+   b<UpgradeLockState> try_unlock_shared_and_lock_upgrade_for(A const&... a) {
+     return transition_1_(q::unlock_shared, q::try_lock_upgrade_for, a...);
+   }
+-  template <typename... A, if_<ap_<mt_<SharedLockState>, A...>> = 0>
++  template <typename... A>
++    requires ap_<mt_<SharedLockState>, A...>
+   b<UpgradeLockState> try_unlock_shared_and_lock_upgrade_until(A const&... a) {
+     return transition_1_(q::unlock_shared, q::try_lock_upgrade_until, a...);
+   }
+ 
+-  template <typename... A, if_<ap_<m_<SharedLockState>, A...>> = 0>
++  template <typename... A>
++    requires ap_<m_<SharedLockState>, A...>
+   b<UniqueLockState> try_unlock_shared_and_lock(A const&... a) {
+     return transition_0_(q::unlock_shared, q::try_lock, a...);
+   }
+-  template <typename... A, if_<ap_<md_<SharedLockState>, A...>> = 0>
++  template <typename... A>
++    requires ap_<md_<SharedLockState>, A...>
+   b<UniqueLockState> try_unlock_shared_and_lock_for(A const&... a) {
+     return transition_1_(q::unlock_shared, q::try_lock_for, a...);
+   }
+-  template <typename... A, if_<ap_<mt_<SharedLockState>, A...>> = 0>
++  template <typename... A>
++    requires ap_<mt_<SharedLockState>, A...>
+   b<UniqueLockState> try_unlock_shared_and_lock_until(A const&... a) {
+     return transition_1_(q::unlock_shared, q::try_lock_until, a...);
+   }
+ 
+-  template <typename... A, if_<ap_<m_<UpgradeLockState>, A...>> = 0>
++  template <typename... A>
++    requires ap_<m_<UpgradeLockState>, A...>
+   b<UniqueLockState> try_unlock_upgrade_and_lock(A const&... a) {
+     return transition_0_(q::unlock_upgrade, q::try_lock, a...);
+   }
+-  template <typename... A, if_<ap_<md_<UpgradeLockState>, A...>> = 0>
++  template <typename... A>
++    requires ap_<md_<UpgradeLockState>, A...>
+   b<UniqueLockState> try_unlock_upgrade_and_lock_for(A const&... a) {
+     return transition_1_(q::unlock_upgrade, q::try_lock_for, a...);
+   }
+-  template <typename... A, if_<ap_<mt_<UpgradeLockState>, A...>> = 0>
++  template <typename... A>
++    requires ap_<mt_<UpgradeLockState>, A...>
+   b<UniqueLockStat
+```
+
+---
+
+### Incident Patch 2: `26bec4f5` (2026-11-24)
+**Commit Message**: Delete `Synchronized::timedAcquire`
+
+Summary:
+`timedAcquire(unsigned int milliseconds)` is the old way to lock a `Synchronized` with a timeout. Its comment has called it deprecated since 2016, and nothing in fbsource calls it any more. `wlock(timeout)`, `rlock(timeout)` and `lock(timeout)` do the same thing.
+
+Delete both overloads. The comment promised a `[[deprecated]]` attribute before removal. With no callers left, this skips that step.
+
+Reviewed By: yfeldblum
+
+Differential Revision: D133592622
+
+fbshipit-source-id: 154a950024b515ceb826f5765523d5fb5fa09e78
+
+**File**: `folly/Synchronized.h` (modified, +0/-26)
+```diff
+@@ -826,32 +826,6 @@ struct Synchronized
+     return ConstLockedPtr(this, timeout);
+   }
+ 
+-  /**
+-   * @brief Acquire a LockedPtr with timeout.
+-   *
+-   * Attempts to acquire for a given number of milliseconds. If
+-   * acquisition is unsuccessful, the returned LockedPtr is nullptr.
+-   *
+-   * NOTE: This API is deprecated.  Use lock(), wlock(), or rlock() instead.
+-   * In the future it will be marked with a deprecation attribute to emit
+-   * build-time warnings, and then it will be removed entirely.
+-   */
+-  LockedPtr timedAcquire(unsigned int milliseconds) {
+-    return LockedPtr(this, std::chrono::milliseconds(milliseconds));
+-  }
+-
+-  /**
+-   * Attempts to acquire for a given number of milliseconds. If
+-   * acquisition is unsuccessful, the returned ConstLockedPtr is nullptr.
+-   *
+-   * NOTE: This API is deprecated.  Use lock(), wlock(), or rlock() instead.
+-   * In the future it will be marked with a deprecation attribute to emit
+-   * build-time warnings, and then it will be removed entirely.
+-   */
+-  ConstLockedPtr timedAcquire(unsigned int milliseconds) const {
+-    return ConstLockedPtr(this, std::chrono::milliseconds(milliseconds));
+-  }
+-
+   /**
+    * @brief Swap datum.
+    *
+```
+
+---
+
+### Incident Patch 3: `16a908df` (2026-11-24)
+**Commit Message**: Use requires in containers, Executor, Random, Benchmark and FBString
+
+Summary:
+Folly now requires C++20, so `std::enable_if` SFINAE can become `requires` clauses. They are easier to read and give clearer errors.
+
+This diff converts:
+- `ConcurrentSkipList`: `insert`, the iterator conversion, `SkipListNode::create` and the `NodeRecycler` specializations.
+- `AtomicHashArray` and `AtomicHashMap` iterator conversions. They no longer need the hidden defaulted pointer parameter.
+- `ThreadLocalPtr::reset(std::unique_ptr)`, plus the `Executor::KeepAlive` converting constructors and assignment operators.
+- `Random`. The private `ValidRNG` alias becomes the `detail::RandomValidRNG` concept, and `secureRandom<T>()` gets a `requires` clause.
+- The four `BenchmarkingState::addBenchmark` overloads.
+- `basic_fbstring`: the string-view-like overloads and the deleted `operator=(TP)`. The `if_is_string_view_like_t` helper is removed. `replaceAliased` had a `std::true_type` and a `std::false_type` tag-dispatch pair; `replaceRange` now calls one function under `if constexpr`.
+
+Behavior does not change. Overload sets, `noexcept` and return types stay the same.
+
+Reviewed By: yfeldblum
+
+Differential Revis
+
+**File**: `folly/AtomicHashArray-inl.h` (modified, +3/-5)
+```diff
+@@ -498,13 +498,11 @@ struct AtomicHashArray<
+   explicit aha_iterator() : aha_(nullptr) {}
+ 
+   // Conversion ctor for interoperability between const_iterator and
+-  // iterator.  The enable_if<> magic keeps us well-behaved for
++  // iterator.  The constraint keeps us well-behaved for
+   // is_convertible<> (v. the iterator_facade documentation).
+   template <class OtherContT, class OtherVal>
+-  aha_iterator(
+-      const aha_iterator<OtherContT, OtherVal>& o,
+-      typename std::enable_if<
+-          std::is_convertible<OtherVal*, IterVal*>::value>::type* = nullptr)
++    requires std::is_convertible_v<OtherVal*, IterVal*>
++  aha_iterator(const aha_iterator<OtherContT, OtherVal>& o)
+       : aha_(o.aha_), offset_(o.offset_) {}
+ 
+   explicit aha_iterator(ContT* array, size_t offset)
+```
+
+**File**: `folly/AtomicHashMap-inl.h` (modified, +3/-5)
+```diff
+@@ -581,13 +581,11 @@ struct AtomicHashMap<
+   explicit ahm_iterator() : ahm_(nullptr) {}
+ 
+   // Conversion ctor for interoperability between const_iterator and
+-  // iterator.  The enable_if<> magic keeps us well-behaved for
++  // iterator.  The constraint keeps us well-behaved for
+   // is_convertible<> (v. the iterator_facade documentation).
+   template <class OtherContT, class OtherVal, class OtherSubIt>
+-  ahm_iterator(
+-      const ahm_iterator<OtherContT, OtherVal, OtherSubIt>& o,
+-      typename std::enable_if<
+-          std::is_convertible<OtherSubIt, SubIt>::value>::type* = nullptr)
++    requires std::is_convertible_v<OtherSubIt, SubIt>
++  ahm_iterator(const ahm_iterator<OtherContT, OtherVal, OtherSubIt>& o)
+       : ahm_(o.ahm_), subMap_(o.subMap_), subIt_(o.subIt_) {}
+ 
+   /*
+```
+
+**File**: `folly/Benchmark.h` (modified, +8/-9)
+```diff
+@@ -252,8 +252,8 @@ template <typename Clock>
+ class BenchmarkingState : public BenchmarkingStateBase {
+  public:
+   template <typename Lambda>
+-  typename std::enable_if<std::is_invocable_v<Lambda, unsigned>>::type
+-  addBenchmark(std::string file, std::string name, Lambda&& lambda) {
++    requires std::is_invocable_v<Lambda, unsigned>
++  void addBenchmark(std::string file, std::string name, Lambda&& lambda) {
+     auto execute = [=](unsigned int times) {
+       BenchmarkSuspender<Clock>::timeSpent = {};
+       BenchmarkSuspender<Clock>::suspensionCount = 0;
+@@ -276,8 +276,8 @@ class BenchmarkingState : public BenchmarkingStateBase {
+   }
+ 
+   template <typename Lambda>
+-  typename std::enable_if<std::is_invocable_v<Lambda>>::type addBenchmark(
+-      std::string file, std::string name, Lambda&& lambda) {
++    requires std::is_invocable_v<Lambda>
++  void addBenchmark(std::string file, std::string name, Lambda&& lambda) {
+     addBenchmark(std::move(file), std::move(name), [=](unsigned int times) {
+       unsigned int niter = 0;
+       while (times-- > 0) {
+@@ -288,9 +288,8 @@ class BenchmarkingState : public BenchmarkingStateBase {
+   }
+ 
+   template <typename Lambda>
+-  typename std::enable_if<
+-      std::is_invocable_v<Lambda, UserCounters&, unsigned>>::type
+-  addBenchmark(std::string file, std::string name, Lambda&& lambda) {
++    requires std::is_invocable_v<Lambda, UserCounters&, unsigned>
++  void addBenchmark(std::string file, std::string name, Lambda&& lambda) {
+     auto execute = [=](unsigned int times) {
+       BenchmarkSuspender<Clock>::timeSpent = {};
+       BenchmarkSuspender<Clock>::suspensionCount = 0;
+@@ -317,8 +316,8 @@ class BenchmarkingState : public BenchmarkingStateBase {
+   }
+ 
+   template <typename Lambda>
+-  typename std::enable_if<std::is_invocable_v<Lambda, UserCounters&>>::type
+-  addBenchmark(std::string file, std::string name, Lambda&& lambda) {
++    requires std::is_invocable_v<Lambda, UserCounters&>
++  void addBenchmark(std::string file, std::string name, Lambda&& lambda) {
+     addBenchmark(
+         std::move(file),
+         std::move(name),
+```
+
+**File**: `folly/ConcurrentSkipList-inl.h` (modified, +6/-15)
+```diff
+@@ -55,11 +55,8 @@ class SkipListNode {
+   SkipListNode(const SkipListNode&) = delete;
+   SkipListNode& operator=(const SkipListNode&) = delete;
+ 
+-  template <
+-      typename NodeAlloc,
+-      typename U,
+-      typename =
+-          typename std::enable_if<std::is_convertible<U, T>::value>::type>
++  template <typename NodeAlloc, typename U>
++    requires std::is_convertible_v<U, T>
+   static SkipListNode* create(
+       NodeAlloc& alloc, int height, U&& data, bool isHead = false) {
+     DCHECK(height >= 1 && height < 64) << height;
+@@ -237,11 +234,8 @@ template <typename NodeType, typename NodeAlloc, typename = void>
+ class NodeRecycler;
+ 
+ template <typename NodeType, typename NodeAlloc>
+-class NodeRecycler<
+-    NodeType,
+-    NodeAlloc,
+-    typename std::enable_if<
+-        !NodeType::template DestroyIsNoOp<NodeAlloc>::value>::type> {
++  requires(!NodeType::template DestroyIsNoOp<NodeAlloc>::value)
++class NodeRecycler<NodeType, NodeAlloc, void> {
+  public:
+   explicit NodeRecycler(const NodeAlloc& alloc)
+       : refs_(0), dirty_(false), alloc_(alloc) {
+@@ -322,11 +316,8 @@ class NodeRecycler<
+ // In case of arena allocator, no recycling is necessary, and it's possible
+ // to save on ConcurrentSkipList size.
+ template <typename NodeType, typename NodeAlloc>
+-class NodeRecycler<
+-    NodeType,
+-    NodeAlloc,
+-    typename std::enable_if<
+-        NodeType::template DestroyIsNoOp<NodeAlloc>::value>::type> {
++  requires NodeType::template
++DestroyIsNoOp<NodeAlloc>::value class NodeRecycler<NodeType, NodeAlloc, void> {
+  public:
+   explicit NodeRecycler(const NodeAlloc& alloc) : alloc_(alloc) {}
+ 
+```
+
+**File**: `folly/ConcurrentSkipList.h` (modified, +4/-8)
+```diff
+@@ -606,10 +606,8 @@ class ConcurrentSkipList<T, Comp, NodeAlloc, MAX_HEIGHT>::Accessor {
+   const_iterator cbegin() const { return begin(); }
+   const_iterator cend() const { return end(); }
+ 
+-  template <
+-      typename U,
+-      typename =
+-          typename std::enable_if<std::is_convertible<U, T>::value>::type>
++  template <typename U>
++    requires std::is_convertible_v<U, T>
+   std::pair<iterator, bool> insert(U&& data) {
+     auto ret = sl_->addOrGetData(std::forward<U>(data));
+     return std::make_pair(iterator(ret.first), ret.second);
+@@ -682,10 +680,8 @@ class detail::csl_iterator
+   explicit csl_iterator(NodeT* node = nullptr) : node_(node) {}
+ 
+   template <typename OtherVal, typename OtherNode>
+-  csl_iterator(
+-      const csl_iterator<OtherVal, OtherNode>& other,
+-      typename std::enable_if<
+-          std::is_convertible<OtherVal*, ValT*>::value>::type* = nullptr)
++    requires std::is_convertible_v<OtherVal*, ValT*>
++  csl_iterator(const csl_iterator<OtherVal, OtherNode>& other)
+       : node_(other.node_) {}
+ 
+   size_t nodeSize() const {
+```
+
+**File**: `folly/Executor.h` (modified, +10/-17)
+```diff
+@@ -195,21 +195,17 @@ class ExecutorKeepAlive : private detail::ExecutorKeepAliveBase {
+ 
+   ExecutorKeepAlive(const ExecutorKeepAlive& other) noexcept;
+ 
+-  template <
+-      typename OtherExecutor,
+-      typename = typename std::enable_if<
+-          std::is_convertible<OtherExecutor*, ExecutorT*>::value>::type>
++  template <typename OtherExecutor>
++    requires std::is_convertible_v<OtherExecutor*, ExecutorT*>
+   /* implicit */ ExecutorKeepAlive(
+       ExecutorKeepAlive<OtherExecutor>&& other) noexcept
+       : ExecutorKeepAlive(other.get(), other.storage_ & kFlagMask) {
+     other.storage_ = 0;
+     detail::traceKeepAliveObjMove(&other, this);
+   }
+ 
+-  template <
+-      typename OtherExecutor,
+-      typename = typename std::enable_if<
+-          std::is_convertible<OtherExecutor*, ExecutorT*>::value>::type>
++  template <typename OtherExecutor>
++    requires std::is_convertible_v<OtherExecutor*, ExecutorT*>
+   /* implicit */ ExecutorKeepAlive(
+       const ExecutorKeepAlive<OtherExecutor>& other) noexcept;
+ 
+@@ -228,19 +224,15 @@ class ExecutorKeepAlive : private detail::ExecutorKeepAliveBase {
+     return operator=(folly::copy(other));
+   }
+ 
+-  template <
+-      typename OtherExecutor,
+-      typename = typename std::enable_if<
+-          std::is_convertible<OtherExecutor*, ExecutorT*>::value>::type>
++  template <typename OtherExecutor>
++    requires std::is_convertible_v<OtherExecutor*, ExecutorT*>
+   ExecutorKeepAlive& operator=(
+       ExecutorKeepAlive<OtherExecutor>&& other) noexcept {
+     return *this = ExecutorKeepAlive(std::move(other));
+   }
+ 
+-  template <
+-      typename OtherExecutor,
+-      typename = typename std::enable_if<
+-          std::is_convertible<OtherExecutor*, ExecutorT*>::value>::type>
++  template <typename OtherExecutor>
++    requires std::is_convertible_v<OtherExecutor*, ExecutorT*>
+   ExecutorKeepAlive& operator=(const ExecutorKeepAlive<OtherExecutor>& other) {
+     return *this = ExecutorKeepAlive(other);
+   }
+@@ -407,7 +399,8 @@ ExecutorKeepAlive<ExecutorT>::ExecutorKeepAlive(
+     : ExecutorKeepAlive(Executor::getKeepAliveToken(other.get())) {}
+ 
+ template <typename ExecutorT>
+-template <typename OtherExecutor, typename>
++template <typename OtherExecutor>
++  requires std::is_convertible_v<OtherExecutor*, ExecutorT*>
+ ExecutorKeepAlive<ExecutorT>::ExecutorKeepAlive(
+     const ExecutorKeepAlive<OtherExecutor>& other) noexcept
+     : ExecutorKeepAlive(Executor::getKeepAliveToken(other.get())) {}
+```
+
+**File**: `folly/FBString.h` (modified, +23/-43)
+```diff
+@@ -1027,10 +1027,6 @@ class basic_fbstring {
+       std::is_convertible_v<StringViewLike const&, string_view_type> &&
+       !std::is_convertible_v<StringViewLike const&, const_pointer>;
+ 
+-  template <typename StringViewLike, typename Dummy>
+-  using if_is_string_view_like_t =
+-      std::enable_if_t<is_string_view_like_v<StringViewLike>, Dummy>;
+-
+   static void procrustes(size_type& n, size_type nmax) {
+     if (n > nmax) {
+       n = nmax;
+@@ -1119,15 +1115,13 @@ class basic_fbstring {
+     assign(il.begin(), il.end());
+   }
+ 
+-  template <
+-      typename StringViewLike,
+-      if_is_string_view_like_t<StringViewLike, int> = 0>
++  template <typename StringViewLike>
++    requires is_string_view_like_v<StringViewLike>
+   explicit basic_fbstring(const StringViewLike& view, const A& a = A())
+       : basic_fbstring(string_view_type(view), a, string_view_ctor{}) {}
+ 
+-  template <
+-      typename StringViewLike,
+-      if_is_string_view_like_t<StringViewLike, int> = 0>
++  template <typename StringViewLike>
++    requires is_string_view_like_v<StringViewLike>
+   basic_fbstring(
+       const StringViewLike& view, size_type pos, size_type n, const A& a = A())
+       : basic_fbstring(
+@@ -1166,15 +1160,13 @@ class basic_fbstring {
+   // traits_type::char_type, which won't compare as equal when determining
+   // which overload the implementation is referring to.
+   template <typename TP>
+-  typename std::enable_if<
+-      std::is_convertible<
+-          TP,
+-          typename basic_fbstring<E, T, A, Storage>::value_type>::value &&
+-          !std::is_same<
+-              typename std::decay<TP>::type,
+-              typename basic_fbstring<E, T, A, Storage>::value_type>::value,
+-      basic_fbstring<E, T, A, Storage>&>::type
+-  operator=(TP c) = delete;
++    requires(std::is_convertible_v<
++                 TP,
++                 typename basic_fbstring<E, T, A, Storage>::value_type> &&
++             !std::is_same_v<
++                 std::decay_t<TP>,
++                 typename basic_fbstring<E, T, A, Storage>::value_type>)
++  basic_fbstring<E, T, A, Storage>& operator=(TP c) = delete;
+ 
+   basic_fbstring& operator=(std::initializer_list<value_type> il) {
+     return assign(il.begin(), il.end());
+@@ -1313,9 +1305,8 @@ class basic_fbstring {
+     return *this;
+   }
+ 
+-  template <
+-      typename StringViewLike,
+-      if_is_string_view_like_t<StringViewLike, int> = 0>
++  template <typename StringViewLike>
++    requires is_string_view_like_v<StringViewLike>
+   basic_fbstring& operator+=(const StringViewLike& like) {
+     append(like);
+     return *this;
+@@ -1344,9 +1335,8 @@ class basic_fbstring {
+     return append(il.begin(), il.end());
+   }
+ 
+-  template <
+-      typename StringViewLike,
+-      if_is_string_view_like_t<StringViewLike, int> = 0>
++  template <typename StringViewLike>
++    requires is_string_view_like_v<StringViewLike>
+   basic_fbstring& append(const StringViewLike& like) {
+     string_view_type view = like;
+     return append(view.begin(), view.end());
+@@ -1535,18 +1525,7 @@ class basic_fbstring {
+ 
+  private:
+   template <class FwdIterator>
+-  bool replaceAliased(
+-      iterator /* i1 */,
+-      iterator /* i2 */,
+-      FwdIterator /* s1 */,
+-      FwdIterator /* s2 */,
+-      std::false_type) {
+-    return false;
+-  }
+-
+-  template <class FwdIterator>
+-  bool replaceAliased(
+-      iterator i1, iterator i2, FwdIterator s1, FwdIterator s2, std::true_type);
++  bool replaceAliased(iterator i1, iterator i2, FwdIterator s1, FwdIterator s2);
+ 
+   template <class InputIter>
+   void replaceRange(iterator i1, iterator i2, InputIter b, InputIter e);
+@@ -2127,7 +2106,7 @@ inline basic_fbstring<E, T, A, S>& basic_fbstring<E, T, A, S>::replaceFill(
+ template <typename E, class T, class A, class S>
+ template <class FwdIterator>
+ inline bool basic_fbstring<E, T, A, S>::replaceAliased(
+-    iterator i1, iterator i2, FwdIterator s1, FwdIterator s2, std::true_type) {
++    iterator i1, iterator i2, FwdIterator s1, FwdIterator s2) {
+   std::less_equal<const value_type*> le{};
+   const bool aliased = le(&*begin(), &*s1) && le(&*s1, &*end());
+   if (!aliased) {
+@@ -2149,11 +2128,12 @@ inline void basic_fbstring<E, T, A, S>::replaceRange(
+     Invariant checker(*this);
+ 
+     // Handle aliased replace
+-    using Sel = std::bool_constant<
+-        std::is_same<InputIter, iterator>::value ||
+-        std::is_same<InputIter, const_iterator>::value>;
+-    if (replaceAliased(i1, i2, b, e, Sel())) {
+-      return;
++    if constexpr (
++        std::is_same_v<InputIter, iterator> ||
++        std::is_same_v<InputIter, const_iterator>) {
++      if (replaceAliased(i1, i2, b, e)) {
++        return;
++      }
+     }
+ 
+     auto const n1 = i2 - i1;
+```
+
+**File**: `folly/Random-inl.h` (modified, +4/-2)
+```diff
+@@ -34,13 +34,15 @@ struct SeedSeqSecureRandom {
+ 
+ } // namespace detail
+ 
+-template <class RNG, class /* EnableIf */>
++template <class RNG>
++  requires detail::RandomValidRNG<RNG>
+ void Random::seed(RNG& rng) {
+   detail::SeedSeqSecureRandom seq;
+   rng.seed(seq);
+ }
+ 
+-template <class RNG, class /* EnableIf */>
++template <class RNG>
++  requires detail::RandomValidRNG<RNG>
+ auto Random::create() -> RNG {
+   detail::SeedSeqSecureRandom seq;
+   return RNG(seq);
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2759** (closed): Pack capacityScale in PackedSizeAndChunkShift to avoid cold chunks_[0] loads in clearImpl (@suyashmahar)
 - **PR #2757** (closed): Fix Subprocess.cpp build with clang and glibc >= 2.40 fortify (@adiroy28852)
 - **PR #2756** (2026-11-18): Re-sync with internal repository (@meta-codesync[bot])
 - **PR #2755** (closed): Fix dead fmt format-syntax link in logging docs (@farisbasha)
-- **PR #2747** (closed): Reject multi-character labels in `IPAddressV6::fromInverseArpaName` (@0z5a)
-- **PR #2746** (closed): Reject `\x` without hex digits in `cUnescape` (@0z5a)
 - **PR #2742** (closed): Handle signed overflow in checked_div and checked_mod (@ZainnQureshii)
+- **PR #2741** (closed): Split the chunk header into F14ChunkHeader; the empty chunk is a real header object (#2741) (@DenisYaroshevskiy)
 
 ---
 
@@ -2441,28 +3293,33 @@ fbshipit-source-id: fdda62a53461d0eb1e706665b9d01df56d157121
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Look for fbcode_builder in tool/ first, ahead of the export move
+## X. Use requires and if constexpr in chrono, hash, simd, compression, result and syn
 
 **RULE**:
-When implementing operations in `tool/fbcode_builder/manifests/katran`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meta/folly. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `folly/algorithm/simd/Contains.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meta/folly. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8acf1e2a`: Look for fbcode_builder in tool/ first, ahead of the export move. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a3422249`: Use requires and if constexpr in chrono, hash, simd, compression, result and synchronization. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `tool/fbcode_builder/manifests/katran`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `folly/algorithm/simd/Contains.h`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-shipit_fbcode_builder_layout = tool
+  template <typename R, typename T>
+    requires(detail::contains_haystack_needle_test<R, T>())
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+  template <
+      typename R,
+      typename T,
+      typename =
+          std::enable_if_t<detail::contains_haystack_needle_test<R, T>()>>
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8acf1e2a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a3422249` are properly handled with clean fallback behavior.

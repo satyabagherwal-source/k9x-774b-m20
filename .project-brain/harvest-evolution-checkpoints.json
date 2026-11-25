@@ -1,9 +1,9 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T03:05:23.520Z",
+  "last_updated": "2026-11-25T03:13:41.877Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
-      "processed_at": "2026-11-25T03:05:20.769Z",
+      "processed_at": "2026-11-25T03:13:40.937Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -138,7 +138,7 @@
       "staged_for_review": 1
     },
     "facebook-folly-learnings.md": {
-      "processed_at": "2026-11-24T00:49:11.595Z",
+      "processed_at": "2026-11-25T03:13:39.167Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -553,7 +553,7 @@
       "staged_for_review": 0
     },
     "mrkai77-loop-learnings.md": {
-      "processed_at": "2026-11-22T16:48:25.453Z",
+      "processed_at": "2026-11-25T03:13:40.069Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3903,7 +3903,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 4038,
+  "total_dossiers_evaluated": 4041,
   "total_canonical_promoted": 528,
-  "total_staged_for_review": 3090
+  "total_staged_for_review": 3093
 }

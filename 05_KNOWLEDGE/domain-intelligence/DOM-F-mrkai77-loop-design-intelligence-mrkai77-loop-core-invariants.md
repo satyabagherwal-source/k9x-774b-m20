@@ -4,24 +4,24 @@
 {
   "source_repository": "mrkai77/Loop",
   "source_url": "https://github.com/mrkai77/Loop",
-  "source_version": "5cc7551c",
+  "source_version": "ad8564ac",
   "license": "GPL-3.0",
-  "timestamp": "2026-11-22T16:48:11.887Z",
+  "timestamp": "2026-11-25T03:13:34.895Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-mrkai77-loop",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [mrkai77/Loop](https://github.com/mrkai77/Loop) (Revision: `5cc7551c`).  
-> **License**: GPL-3.0 | **Timestamp**: `2026-11-22T16:48:11.887Z`  
+> **Provenance**: Harvested from [mrkai77/Loop](https://github.com/mrkai77/Loop) (Revision: `ad8564ac`).  
+> **License**: GPL-3.0 | **Timestamp**: `2026-11-25T03:13:34.895Z`  
 > **Learning ID**: `learn-github-mrkai77-loop`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain F (Design Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), G (Architecture Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), D (Research & Knowledge Intelligence)
-- **Confidence Rating**: 66%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), H (Technical Construction Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence)
+- **Confidence Rating**: 57%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from mrkai77/Loop:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mrkai77-loop-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/mrkai77/Loop](https://github.com/mrkai77/Loop))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T16:48:10.646Z  
+> **Harvest Timestamp**: 2026-11-25T03:13:33.502Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Window management made elegant.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 12009 stars
+- **Stars / Engagement**: 12023 stars
 
 ---
 
@@ -644,16 +644,16 @@ import UserNotifications
 
 @Loggable
 final class AppDelegate: NSObject, NSApplicationDelegate {
-    private let urlCommandHandler = URLCommandHandler()
-
     private static let terminateNotificationName = Notification.Name("com.MrKai77.Loop.terminate")
     private var terminateObserver: Any?
 
-    private var launchedAsLoginItem: Bool {
-        guard let event = NSAppleEventManager.shared().currentAppleEvent else { return false }
-        return
-            event.eventID == kAEOpenApplication &&
-            event.paramDescriptor(forKeyword: keyAEPropData)?.enumCodeValue == keyAELaunchedAsLogInItem
+    /// Launched from Finder, the Dock or `open`, rather than at login or to open a `loop://` URL, which has no open-application event
+    private var launchedByUser: Bool {
+        guard let event = NSAppleEventManager.shared().currentAppleEvent, event.eventID == kAEOpenApplication else {
+            return false
+        }
+
+        return event.paramDescriptor(forKeyword: keyAEPropData)?.enumCodeValue != keyAELaunchedAsLogInItem
     }
 
     func applicationDidFinishLaunching(_: Notification) {
@@ -668,8 +668,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             DataPatcher.run()
         }
 
-        // Show settings window only if not launched as login item AND startHidden is disabled
-        if !launchedAsLoginItem, !Defaults[.startHidden] {
+        // Show settings window only if launched by the user AND startHidden is disabled
+        if launchedByUser, !Defaults[.startHidden] {
             SettingsWindowManager.shared.show()
         } else {
             // Closing also hides the dock icon if needed.
@@ -697,6 +697,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             let stalePIDs = broadcastTerminateToOtherInstances()
             await waitForInstancesToExit(pids: stalePIDs, timeout: .seconds(3))
             LoopManager.shared.start()
+            // After older instances exit, as they remove their socket file while quitting
+            LoopSocketManager.shared.start()
             WindowDragManager.shared.addObservers()
             StashManager.shared.start()
             AccessibilityManager.requestAccess()
@@ -790,8 +792,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             return
         }
 
-        log.info("Received URL: \(url)")
-        urlCommandHandler.handle(url)
+        processIncomingURL(url)
     }
 
     func applicationShouldTerminateAfterLastWindowClosed(_: NSApplication) -> Bool {
@@ -810,12 +811,26 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         LoopManager.shared.shutdown()
         WindowDragManager.shared.shutdown()
         StashManager.shared.shutdown()
+        LoopSocketManager.shared.shutdown()
         return .terminateNow
     }
 
     func application(_: NSApplication, open urls: [URL]) {
         for url in urls {
-            urlCommandHandler.handle(url)
+            processIncomingURL(url)
+        }
+    }
+
+    private func processIncomingURL(_ url: URL) {
+        log.info("Received URL: \(url)")
+
+        Task { @MainActor in
+            // macOS gives Loop a Dock icon before handing it a URL, as Loop isn't an `LSUIElement` app
+            SettingsWindowManager.shared.hideDockIconIfUnused()
+
+            let result = await LoopCommandHandler.shared.handle(url)
+            log.debug("Response: \(result.jsonResponse)")
+            result.presentIfNeeded()
         }
     }
 }
@@ -1398,574 +1413,762 @@ extension LoopManager {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5cc7551c` (2026-11-22)
-**Commit Message**: 🐞 Shrink a window before moving it to a smaller frame (#1190)
+### Incident Patch 1: `ad8564ac` (2026-11-23)
+**Commit Message**: 🌐 Update translations from Crowdin (#1213)
 
-* 🐞 Shrink a window before moving it to a smaller frame
+* 🌐 Update Localizable.xcstrings from Crowdin
 
-A same-screen snap moved the window at its old width first, so the frame hung off the display. Finder and TextEdit then shrink. iTerm2 keeps that frame, and AppKit latches it as the minimum size.
-
-Co-authored-by: Cursor <[REDACTED_EMAIL]>
-
-* 🐞 Shrink in place before a move, even when the other axis grows
-
-setFrame now reduces any shrinking side before it changes the origin, so a caller that forgets sizeFirst cannot slide the old frame off the display. Growth on the other axis happens after the move. A screen change that only grows still sets the full size first.
-
-Co-authored-by: Cursor <[REDACTED_EMAIL]>
-
-* 🐞 Fix window resize order and skip redundant frame writes
+* 🌐 Format translations
 
 ---------
 
-Co-authored-by: Kai Azim <[REDACTED_EMAIL]>
+Co-authored-by: Crowdin Bot <[REDACTED_EMAIL]>
 
-**File**: `Loop/Core/WindowDragManager.swift` (modified, +3/-1)
-```diff
-@@ -240,7 +240,9 @@ final class WindowDragManager {
-             newWindowFrame = newWindowFrame.pushInside(screen.displayBounds)
-             await window.setFrame(newWindowFrame)
-         } else {
--            window.setSize(initialFrame.size)
-+            window.performFrameAdjustment { writer in
-+                writer.setSize(initialFrame.size)
-+            }
-         }
- 
-         // If the window doesn't contain the cursor, keep the original maxX
-```
 
-**File**: `Loop/Window Management/Window Manipulation/WindowEngine.swift` (modified, +78/-5)
-```diff
-@@ -193,12 +193,13 @@ enum WindowEngine {
-             try await window.setFrameAnimated(targetFrame, bounds: bounds, resolvedProperties: resolvedProperties)
-             actualFrame = window.frame
-         } else {
--            await window.setFrame(targetFrame, sizeFirst: willChangeScreens, resolvedProperties: resolvedProperties)
-+            let placement = Window.FramePlacement(bounds: bounds, willChangeScreens: willChangeScreens)
-+            await window.setFrame(targetFrame, placement: placement, resolvedProperties: resolvedProperties)
-             try Task.checkCancellation()
- 
-             var frameAfterResize = window.frame
-             if !frameAfterResize.approximatelyEqual(to: targetFrame) {
--                await window.setFrame(targetFrame, resolvedProperties: resolvedProperties)
-+                await window.setFrame(targetFrame, placement: placement, resolvedProperties: resolvedProperties)
-                 try Task.checkCancellation()
-                 frameAfterResize = window.frame
-             }
-@@ -209,7 +210,8 @@ enum WindowEngine {
-             window: window,
-             actualFrame: actualFrame,
-             targetFrame: targetFrame,
--            bounds: bounds
-+            bounds: bounds,
-+            resolvedProperties: resolvedProperties
-         )
-     }
- 
-@@ -219,7 +221,8 @@ enum WindowEngine {
-         window: Window,
-         actualFrame: CGRect,
-         targetFrame: CGRect,
--        bounds: CGRect
-+        bounds: CGRect,
-+        resolvedProperties: Window.ResolvedProperties?
-     ) -> CGRect {
-         guard !window.isOwnWindow, bounds != .zero else {
-             return actualFrame
-@@ -244,10 +247,80 @@ enum WindowEngine {
-             return actualFrame
-         }
- 
--        window.setPosition(correctedFrame.origin)
-+        window.performFrameAdjustment(resolvedProperties: resolvedProperties) { writer in
-+            writer.setPosition(correctedFrame.origin)
-+        }
-         return correctedFrame
-     }
- 
-+    /// Whether to resize before moving, picking whichever order keeps more of the window on screen in between.
-+    /// Based on Rectangle's `ImmediateFrameOrder` located here :)
-+    ///  https://github.com/rxhanson/Rectangle/blob/adbc8a0560367a6c0a56b2e8ae6f39a24740ab14/Rectangle/WindowMover/StandardWindowMover.swift#L38-L52
-+    static func shouldSizeFirst(
-+        from current: CGRect,
-+        to target: CGRect,
-+        within bounds: CGRect,
-+        willChangeScreens: Bool
-+    ) -> Bool {
-+        // Moving at the old size can resize the window against the Dock or the new screen's edge
-+        if willChangeScreens {
-+            return true
-+        }
-+
-+        guard !current.size.approximatelyEqual(to: target.size, tolerance: 1) else {
-+            return false
-+        }
-+
-+        guard bounds.size.area > 0 else {
-+            return false
-+        }
-+
-+        // Same for a window that's already partly off screen
-+        if !bounds.insetBy(dx: -1, dy: -1).contains(current) {
-+            return true
-+        }
-+
-+        let sizedFirst = overflow(of: CGRect(origin: current.origin, size: target.size), outside: bounds)
-+        let movedFirst = overflow(of: CGRect(origin: target.origin, size: current.size), outside: bounds)
-+        if abs(sizedFirst - movedFirst) > 1 {
-+            return sizedFirst < movedFirst
-+        }
-+
-+        return true
-+    }
-+
-+    /// The origin to move to after sizing first, anchored to the size the app accepted.
-+    /// A smaller size may only be the old position clamping it, so that's left to `handleSizeConstrainedWindow`.
-+    static func origin(
-+        afterAccepting acceptedSize: CGSize,
-+        for targetFrame: CGRect,
-+        within bounds: CGRect
-+    ) -> CGPoint {
-+        let placedSize = CGSize(
-+            width: max(acceptedSize.width, targetFrame.width),
-+            height: max(acceptedSize.height, targetFrame.height)
-+        )
-+
-+        guard !placedSize.approximatelyEqual(to: targetFrame.size, tolerance: 2),
-+              placedSize.width <= bounds.width,
-+              placedSize.height <= bounds.height
-+        else {
-+            return targetFrame.origin
-+        }
-+
-+        return anchoredFrame(
-+            for: placedSize,
-+            within: targetFrame,
-+            targetEdges: targetFrame.getEdgesTouchingBounds(bounds),
-+            bounds: bounds
-+        ).origin
-+    }
-+
-+    private static func overflow(of frame: CGRect, outside bounds: CGRect) -> CGFloat {
-+        max(0, bounds.minX - frame.minX) + max(0, frame.maxX - bounds.maxX)
-+            + max(0, bounds.minY - frame.minY) + max(0, frame.maxY - bounds.maxY)
-+    }
-+
-     static func anchoredFrame(
-         for actualSize: CGSize,
-         within requestedFrame: CGRect,
-```
-
-**File**: `Loop/Window Management/Window Manipulation/WindowTransformAnimation.swift` (modified, +7/-4)
-```diff
-@@ -27,6 +27,7 @@ final class WindowTransformAnimation: NSAnimation {
-     private var targetFrame: CGRect
-     private let originalFrame: CGRect
-     private let window: Window
-+    private let writer: FrameWriter
-     private let bounds: CGRect
-     private let shouldSetSize: Bool
-     private let targetEdges: Edge.Set
-@@ -44,6 +45,7 @@ final class WindowTransformAnimation: NSAnimation {
-     init(
-         _ newRect: CGRect,
-         window: Window,
-+        writer: FrameWriter,
-         bounds: CGRect,
-         shouldSetSize: Bool,
-         completionHandler: @escaping (Error?) -> ()
-@@ -52,6 +54,7 @@ final class WindowTransformAnimation: NSAnimation {
-         self.targetFrame = newRect
-         self.originalFrame = originalFrame
-         self.window = window
-+        self.writer = writer
-         self.bounds = bounds
-         self.shouldSetSize = shouldSetSize
-         self.targetEdges = newRect.getEdgesTouchingBounds(bounds)
-@@ -140,7 +143,7 @@ final class WindowTransformAnimation: NSAnimation {
-                 sizeToSet: sizeToSet
-             ) {
-                 if !lastWindowFrame.origin.approximatelyEqual(to: preResizeOrigin, tolerance: 1) {
--                    window.setPosition(preResizeOrigin)
-+                    writer.setPosition(preResizeOrigin)
-                     currentOrigin = preResizeOrigin
-                 }
-             } else if growsHorizontally || growsVertically {
-@@ -152,12 +155,12 @@ final class WindowTransformAnimation: NSAnimation {
-                     preResizeOrigin.y = requestedFrame.origin.y
-                 }
-                 if !lastWindowFrame.origin.approximatelyEqual(to: preResizeOrigin, tolerance: 1) {
--                    window.setPosition(preResizeOrigin)
-+                    writer.setPosition(preResizeOrigin)
-                     currentOrigin = preResizeOrigin
-                 }
-             }
- 
--            window.setSize(sizeToSet)
-+            writer.setSize(sizeToSet)
-             if bounds != .zero {
-                 let actualFrame = window.frame
-                 updateConstraint(actualFrame: actualFrame, requestedFrame: requestedFrame, tolerance: resizeTolerance)
-@@ -190,7 +193,7 @@ final class WindowTransformAnimation: NSAnimation {
-         }
- 
-         if !currentOrigin.approximatelyEqual(to: newFrame.origin, tolerance: 1) {
--            window.setPosition(newFrame.origin)
-+            writer.setPosition(newFrame.origin)
-         }
- 
-         lastWindowFrame = window.frame
-```
-
-**File**: `Loop/Window Management/Window/Window.swift` (modified, +72/-32)
-```diff
-@@ -426,7 +426,7 @@ final class Window {
-         }
-     }
- 
--    func setPosition(_ point: CGPoint) {
-+    fileprivate func setPosition(_ point: CGPoint) {
-         if isOwnWindow {
-             Task { @MainActor in
-                 guard let win = ownNSWindow() else { return }
-@@ -453,7 +453,7 @@ final class Window {
-         }
-     }
- 
--    func setSize(_ size: CGSize) {
-+    fileprivate func setSize(_ size: CGSize) {
-         if isOwnWindow {
-             Task { @MainActor in
-                 guard let win = ownNSWindow() else { return }
-@@ -535,66 +535,87 @@ final class Window {
-         return true
-     }
- 
-+    /// The screen a frame is placed on, used to choose whether to resize or move first.
-+    struct FramePlacement {
-+        let bounds: CGRect
-+        let willChangeScreens: Bool
-+    }
-+
-+    /// - Parameter placement: When `nil`, the window is moved, then resized.
-     func setFrame(
-         _ rect: CGRect,
--        sizeFirst: Bool = false,
-+        placement: FramePlacement? = nil,
-         resolvedProperties: ResolvedProperties? = nil
-     ) async {
-         guard await !MainActor.run(resultType: Bool.self, body: { applyOwnWindowFrame(rect) }) else {
-             return
-         }
- 
--        let enhancedUI = resolvedProperties?.isEnhancedUserInterface ?? enhancedUserInterface
-         let shouldSetSize = resolvedProperties?.isResizable ?? true
- 
--        if enhancedUI {
--            let appName = nsRunningApplication?.localizedName
--            log.info("\(appName ?? "This app")'s enhanced UI will be temporarily disabled while resizing.")
--            enhancedUserInterface = false
-+        performFrameAdjustment(resolvedProperties: resolvedProperties) {
-+            writeChangedFrame(rect, with: $0, placement: placement, shouldSetSize: shouldSetSize)
-         }
-+    }
- 
--        if sizeFirst, shouldSetSize {
--            setSize(rect.size)
-+    func setFrameSynchronously(
-+        _ rect: CGRect,
-+        resolvedProperties: ResolvedProperties? = nil
-+    ) {
-+        guard !applyOwnWindowFrameSynchronously(rect) else {
-+            return
-         }
- 
--        setPosition(rect.origin)
--
--        if shouldSetSize {
--            setSize(rect.size)
--        }
-+        let shouldSetSize = resolvedProperties?.isResizable ?? true
- 
--        if enhancedUI {
--            enhancedUserInterface = true
-+        performFrameAdjustment(resolvedProperties: resolvedProperties) {
-+            writeChangedFrame(rect, with: $0, placement: nil, shouldSetSize: shouldSetSize)
-         }
-     }
- 
--    func setFrameSynchronously(
-+    /// Only writes the parts of `rect` that differ from the current frame, as each write can make the app redraw.
-+    private func writeChangedFrame(
-         _ rect: CGRect,
--        sizeFirst: Bool = false,
--        resolvedProperties: ResolvedProperties? = nil
-+        with writer: FrameWriter,
-+        placement: FramePlacement?,
-+        shouldSetSize: Bool
-     ) {
--        guard !applyOwnWindowFrameSynchronously(rect) else {
--            return
-+        var current = frame
-+        var origin = rect.origin
-+
-+        let sizeFirst = placement.map {
-+            WindowEngine.shouldSizeFirst(from: current, to: rect, within: $0.bounds, willChangeScreens: $0.willChangeScreens)
-+        } ?? false
-+
-+        if sizeFirst, shouldSetSize, !current.size.approximatelyEqual(to: rect.size, tolerance: 1) {
-+            writer.setSize(rect.size)
-+            current = frame
-+            if let placement {
-+                origin = WindowEngine.origin(afterAccepting: current.size, for: rect, within: placement.bounds)
-+            }
-+        }
-+
-+        if !current.origin.approximatelyEqual(to: origin, tolerance: 1) {
-+            writer.setPosition(origin)
-+        }
-+
-+        // Set again in case the old position clamped the size
-+        if shouldSetSize, !current.size.approximatelyEqual(to: rect.size, tolerance: 1) {
-+            writer.setSize(rect.size)
-         }
-+    }
- 
-+    /// Runs frame writes with enhanced UI disabled, as some apps animate or ignore frame changes while it's on.
-+    func performFrameAdjustment(resolvedProperties: ResolvedProperties? = nil, _ adjustment: (FrameWriter) -> ()) {
-         let enhancedUI = resolvedProperties?.isEnhancedUserInterface ?? enhancedUserInterface
--        let shouldSetSize = resolvedProperties?.isResizable ?? true
- 
-         if enhancedUI {
-             let appName = nsRunningApplication?.localizedName
-             log.info("\(appName ?? "This app")'s enhanced UI will be temporarily disabled while resizing.")
-             enhancedUserInterface = false
-         }
- 
--        if sizeFirst, shouldSetSize {
--            setSize(rect.size)
--        }
--
--        setPosition(rect.origin)
--
--        if shouldSetSize {
--            setSize(rect.size)
--        }
-+        adjustment(FrameWriter(self))
- 
-         if enhancedUI {
-             enhancedUserInterface = true
-@@ -631,6 +652,7 @@ final class Window {
-             let animation = WindowTra
-```
-
-**File**: `LoopTests/WindowEngineSizeFirstTests.swift` (added, +68/-0)
-```diff
-@@ -0,0 +1,68 @@
-+//
-+//  WindowEngineSizeFirstTests.swift
-+//  LoopTests
-+//
-+
-+import CoreGraphics
-+@testable import Loop
-+import Testing
-+
-+struct WindowEngineSizeFirstTests {
-+    private let screen = CGRect(x: 0, y: 0, width: 1920, height: 1080)
-+
-+    private func sizesFirst(from current: CGRect, to target: CGRect) -> Bool {
-+        WindowEngine.shouldSizeFirst(from: current, to: target, within: screen, willChangeScreens: false)
-+    }
-+
-+    @Test func shrinkingTowardTheFarEdgeSizesFirst() {
-+        // Moving first would slide the full-width window 1280 points off the right edge
-+        #expect(sizesFirst(
-+            from: CGRect(x: 0, y: 0, width: 1920, height: 1080),
-+            to: CGRect(x: 1280, y: 0, width: 640, height: 1080)
-+        ))
-+    }
-+
-+    @Test func growingFromTheFarEdgeMovesFirst() {
-+        // Sizing first would grow the right third 1280 points off the right edge
-+        #expect(!sizesFirst(
-+            from: CGRect(x: 1280, y: 0, width: 640, height: 1080),
-+            to: CGRect(x: 0, y: 0, width: 1920, height: 1080)
-+        ))
-+    }
-+
-+    @Test func mixedResizePicksTheOrderThatSticksOutLess() {
-+        // Sizing first hangs 600 points off the bottom, moving first 1080 points off the right
-+        #expect(sizesFirst(
-+            from: CGRect(x: 0, y: 600, width: 1900, height: 400),
-+            to: CGRect(x: 1100, y: 0, width: 800, height: 1080)
-+        ))
-+    }
-+
-+    @Test func eitherOrderOnScreenSizesFirst() {
-+        #expect(sizesFirst(
-+            from: CGRect(x: 0, y: 0, width: 640, height: 1080),
-+            to: CGRect(x: 960, y: 0, width: 960, height: 1080)
-+        ))
-+    }
-+
-+    @Test func partlyOffScreenWindowSizesFirst() {
-+        #expect(sizesFirst(
-+            from: CGRect(x: 1500, y: 0, width: 960, height: 1080),
-+            to: CGRect(x: 0, y: 0, width: 1920, height: 1080)
-+        ))
-+    }
-+
-+    @Test func largerAcceptedSizeStaysAnchoredToTheTargetEdge() {
-+        // A window with an 800-point minimum width snapped to the right third keeps its right edge on the screen's
-+        let target = CGRect(x: 1280, y: 0, width: 640, height: 1080)
-+        let origin = WindowEngine.origin(afterAccepting: CGSize(width: 800, height: 1080), for: target, within: screen)
-+        #expect(origin == CGPoint(x: 1120, y: 0))
-+    }
-+
-+    @Test func smallerAcceptedSizeIsPlacedAtTheTargetSize() {
-+        // May only be the old position clamping it, so it's corrected after the move instead
-+        let target = CGRect(x: 1280, y: 0, width: 640, height: 1080)
-+        let origin = WindowEngine.origin(afterAccepting: CGSize(width: 640, height: 500), for: target, within: screen)
-+        #expect(origin == target.origin)
-+    }
-+}
-```
 
 ---
 
-### Incident Patch 2: `56a96f7f` (2026-11-22)
-**Commit Message**: 🐞 Replace SkyLight window blur with an in-window backdrop blur
+### Incident Patch 2: `0ad44cb0` (2026-11-23)
+**Commit Message**: ✨ Improved URL API and new CLI (#1076)
 
-SkyLight's window background blur unfortunately broke on macOS 27.2 on newer rounded-screen MacBooks when a window approached a screen corner.
+* ✨ List windows and screens through loop:// URLs, with JSON results
 
-**File**: `Loop/Private APIs/SkyLightToolBelt.swift` (modified, +8/-0)
+* ✨ Add an installable loop command-line tool
+
+- Talk to Loop over a per-user Unix socket, with JSON shared between the CLI and the app
+- Install and uninstall the loop symlink from Advanced settings through the privileged helper
+- Remove the old URL command code it replaces
+
+* ♻️ Rewrite the CLI and URL commands around shared code
+
+- Share routes, models, JSON and formatting between the CLI and the app
+- Show list results in a Loop output window, and failures in an alert
+- Fix reopening Settings, a crash with a missing screen, and the alert after canceling authorization
+
+* 🐞 Keep the CLI socket across relaunches and time out stalled clients
+
+- Start the socket after older instances exit, and only remove the socket file this instance bound
+- Time out sends as well as reads, and explain timeouts and oversized requests
+- Share LoopSocketManager like the other managers, with start() and shutdown()
+- Log requests once, and responses at debug level
+
+* ✨ Run any action, keybind, gesture or radial menu action from the CLI
+
+- loop run <target> takes a built-in action like right-ha
+
+**File**: `Loop.xcodeproj/project.pbxproj` (modified, +175/-28)
 ```diff
-@@ -231,6 +231,14 @@ enum SkyLightToolBelt {
+@@ -15,7 +15,9 @@
+ 		2A504E8A2FFD8E8800694B30 /* Subsurface in Frameworks */ = {isa = PBXBuildFile; productRef = 2A504E892FFD8E8800694B30 /* Subsurface */; };
+ 		2A86890D2F80968A005B521B /* LoopDockTile.plugin in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2A8689072F809625005B521B /* LoopDockTile.plugin */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+ 		3ED0A7B92F21DF6800A58629 /* ZIPFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 3ED0A7B82F21DF6800A58629 /* ZIPFoundation */; };
+-		B1AA00412F30000100AABBCC /* LoopUpdaterHelper in CopyFiles */ = {isa = PBXBuildFile; fileRef = B1AA00012F30000100AABBCC /* LoopUpdaterHelper */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
++		B1AA00412F30000100AABBCC /* LoopPrivilegedHelper in CopyFiles */ = {isa = PBXBuildFile; fileRef = B1AA00012F30000100AABBCC /* LoopPrivilegedHelper */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
++		C1BB00412F30000200AABBCC /* loop-cli in CopyFiles */ = {isa = PBXBuildFile; fileRef = C1BB00012F30000200AABBCC /* loop-cli */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
++		C1BB00A52F40000200AABBCC /* ArgumentParser in Frameworks */ = {isa = PBXBuildFile; productRef = C1BB00A42F40000200AABBCC /* ArgumentParser */; };
+ 		F06D768A2DFF7A77007EEDA9 /* SkyLight.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F06D76892DFF7A77007EEDA9 /* SkyLight.framework */; };
+ /* End PBXBuildFile section */
+ 
+@@ -39,7 +41,14 @@
+ 			containerPortal = A8E59C2D297F5E9A0064D4BA /* Project object */;
+ 			proxyType = 1;
+ 			remoteGlobalIDString = B1AA00112F30000100AABBCC;
+-			remoteInfo = LoopUpdaterHelper;
++			remoteInfo = LoopPrivilegedHelper;
++		};
++		C1BB00512F30000200AABBCC /* PBXContainerItemProxy */ = {
++			isa = PBXContainerItemProxy;
++			containerPortal = A8E59C2D297F5E9A0064D4BA /* Project object */;
++			proxyType = 1;
++			remoteGlobalIDString = C1BB00112F30000200AABBCC;
++			remoteInfo = LoopCLI;
+ 		};
+ /* End PBXContainerItemProxy section */
+ 
+@@ -60,7 +69,17 @@
+ 			dstPath = Contents/Library/LaunchServices;
+ 			dstSubfolderSpec = 1;
+ 			files = (
+-				B1AA00412F30000100AABBCC /* LoopUpdaterHelper in CopyFiles */,
++				B1AA00412F30000100AABBCC /* LoopPrivilegedHelper in CopyFiles */,
++			);
++			runOnlyForDeploymentPostprocessing = 0;
++		};
++		C1BB00612F30000200AABBCC /* CopyFiles */ = {
++			isa = PBXCopyFilesBuildPhase;
++			buildActionMask = 2147483647;
++			dstPath = "";
++			dstSubfolderSpec = 6;
++			files = (
++				C1BB00412F30000200AABBCC /* loop-cli in CopyFiles */,
+ 			);
+ 			runOnlyForDeploymentPostprocessing = 0;
+ 		};
+@@ -75,8 +94,9 @@
+ 		A894B0C52C4B31AA00B4CE6F /* CONTRIBUTING.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CONTRIBUTING.md; sourceTree = "<group>"; };
+ 		A8E59C35297F5E9A0064D4BA /* Loop.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Loop.app; sourceTree = BUILT_PRODUCTS_DIR; };
+ 		A8E6D1FC2A4155DC005751D4 /* .gitignore */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
+-		B1AA00012F30000100AABBCC /* LoopUpdaterHelper */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = LoopUpdaterHelper; sourceTree = BUILT_PRODUCTS_DIR; };
++		B1AA00012F30000100AABBCC /* LoopPrivilegedHelper */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = LoopPrivilegedHelper; sourceTree = BUILT_PRODUCTS_DIR; };
+ 		B1AA00802F30000100AABBCC /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
++		C1BB00012F30000200AABBCC /* loop-cli */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "loop-cli"; sourceTree = BUILT_PRODUCTS_DIR; };
+ 		F06D76892DFF7A77007EEDA9 /* SkyLight.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SkyLight.framework; path = ../../../../System/Library/PrivateFrameworks/SkyLight.framework; sourceTree = "<group>"; };
+ /* End PBXFileReference section */
+ 
+@@ -86,15 +106,16 @@
+ 			membershipExceptions = (
+ 				Info.plist,
+ 			);
+-			target = B1AA00112F30000100AABBCC /* LoopUpdaterHelper */;
++			target = B1AA00112F30000100AABBCC /* LoopPrivilegedHelper */;
+ 		};
+ 		2A6A87F22F4D20F4004E995D /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+ 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+ 			membershipExceptions = (
+ 				LoopSupportPaths.swift,
+-				PrivilegedInstallerProtocol.swift,
++				PrivilegedHelperConstants.swift,
++				PrivilegedHelperProtocol.swift,
+ 			);
+-			target = B1AA00112F30000100AABBCC /* LoopUpdaterHelper */;
++			target = B1AA00112F30000100AABBCC /* LoopPrivilegedHelper */;
+ 		};
+ 		A8C751FF2D7BA98600B58784 /* PBXFileSystemSynchronizedBuildFileExcepti
+```
+
+**File**: `Loop/App/AppDelegate.swift` (modified, +27/-12)
+```diff
+@@ -13,16 +13,16 @@ import UserNotifications
+ 
+ @Loggable
+ final class AppDelegate: NSObject, NSApplicationDelegate {
+-    private let urlCommandHandler = URLCommandHandler()
+-
+     private static let terminateNotificationName = Notification.Name("com.MrKai77.Loop.terminate")
+     private var terminateObserver: Any?
+ 
+-    private var launchedAsLoginItem: Bool {
+-        guard let event = NSAppleEventManager.shared().currentAppleEvent else { return false }
+-        return
+-            event.eventID == kAEOpenApplication &&
+-            event.paramDescriptor(forKeyword: keyAEPropData)?.enumCodeValue == keyAELaunchedAsLogInItem
++    /// Launched from Finder, the Dock or `open`, rather than at login or to open a `loop://` URL, which has no open-application event
++    private var launchedByUser: Bool {
++        guard let event = NSAppleEventManager.shared().currentAppleEvent, event.eventID == kAEOpenApplication else {
++            return false
++        }
++
++        return event.paramDescriptor(forKeyword: keyAEPropData)?.enumCodeValue != keyAELaunchedAsLogInItem
      }
  
-     /// Sets the background blur radius of a window.
-+    ///
-+    /// You may need to call something like:
-+    /// ```swift
-+    /// window.backgroundColor = .white.withAlphaComponent(0.001)
-+    /// window.ignoresMouseEvents = false
-+    /// ```
-+    /// to restore pointer interaction with the window.
-+    ///
-     /// - Parameters:
-     ///   - windowID: The `CGWindowID` of the window to manipulate.
-     ///   - radius: The desired blur radius.
-```
-
-**File**: `Loop/Settings Window/SettingsContentView.swift` (modified, +3/-1)
-```diff
-@@ -42,7 +42,6 @@ struct SettingsContentView: View {
-             }
-             .frame(width: 230)
-             .padding(.top, titleBarHeight)
--            .luminareBackground()
- 
-             LuminarePane {
-                 model.currentTab.view()
-@@ -107,6 +106,9 @@ struct SettingsContentView: View {
-                 .animation(animation, value: [showRadialMenu, showPreview])
-                 .padding(12)
-                 .frame(width: 520)
-+                .background {
-+                    BackdropBlurView(radius: 6)
-+                }
-             }
+     func applicationDidFinishLaunching(_: Notification) {
+@@ -37,8 +37,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
+             DataPatcher.run()
          }
-         .luminareTint(overridingWith: accentColorController.color1)
+ 
+-        // Show settings window only if not launched as login item AND startHidden is disabled
+-        if !launchedAsLoginItem, !Defaults[.startHidden] {
++        // Show settings window only if launched by the user AND startHidden is disabled
++        if launchedByUser, !Defaults[.startHidden] {
+             SettingsWindowManager.shared.show()
+         } else {
+             // Closing also hides the dock icon if needed.
+@@ -66,6 +66,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
+             let stalePIDs = broadcastTerminateToOtherInstances()
+             await waitForInstancesToExit(pids: stalePIDs, timeout: .seconds(3))
+             LoopManager.shared.start()
++            // After older instances exit, as they remove their socket file while quitting
++            LoopSocketManager.shared.start()
+             WindowDragManager.shared.addObservers()
+             StashManager.shared.start()
+             AccessibilityManager.requestAccess()
+@@ -159,8 +161,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
+             return
+         }
+ 
+-        log.info("Received URL: \(url)")
+-        urlCommandHandler.handle(url)
++        processIncomingURL(url)
+     }
+ 
+     func applicationShouldTerminateAfterLastWindowClosed(_: NSApplication) -> Bool {
+@@ -179,12 +180,26 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
+         LoopManager.shared.shutdown()
+         WindowDragManager.shared.shutdown()
+         StashManager.shared.shutdown()
++        LoopSocketManager.shared.shutdown()
+         return .terminateNow
+     }
+ 
+     func application(_: NSApplication, open urls: [URL]) {
+         for url in urls {
+-            urlCommandHandler.handle(url)
++            processIncomingURL(url)
++        }
++    }
++
++    private func processIncomingURL(_ url: URL) {
++        log.info("Received URL: \(url)")
++
++        Task { @MainActor in
++            // macOS gives Loop a Dock icon before handing it a URL, as Loop isn't an `LSUIElement` app
++            SettingsWindowManager.shared.hideDockIconIfUnused()
++
++            let result = await LoopCommandHandler.shared.handle(url)
++            log.debug("Response: \(result.jsonResponse)")
++            result.presentIfNeeded()
+         }
+     }
+ }
 ```
 
-**File**: `Loop/Settings Window/SettingsWindowManager.swift` (modified, +0/-8)
+**File**: `Loop/Core/LoopManager.swift` (modified, +57/-74)
 ```diff
-@@ -83,14 +83,6 @@ final class SettingsWindowManager: ObservableObject {
-                     .frame(height: 620)
-             }
+@@ -416,22 +416,25 @@ extension LoopManager {
  
--            SkyLightToolBelt.setBackgroundBlur(
--                windowID: CGWindowID(window.windowNumber),
--                radius: 20
+         let originatingContext = resizeContext
+ 
+-        guard
+-            isLoopActive,
+-            let currentScreen = originatingContext.screen ?? resolveAndStoreTargetScreen(
+-                action: newAction,
+-                window: originatingContext.window
 -            )
+-        else {
++        guard isLoopActive else {
+             return
+         }
+ 
+         let incomingAllowsRepeatedSelection = newAction.allowsRepeatedSelection
+ 
++        // Before choosing a screen, so the "no selection" Loop opens with doesn't choose it for the first real action.
++        // Screen switching actions start from the window's screen, which only the first real action can pick.
+         guard originatingContext.action.id != newAction.id || incomingAllowsRepeatedSelection else {
+             return
+         }
+ 
++        guard let currentScreen = originatingContext.screen ?? resolveAndStoreTargetScreen(
++            action: newAction,
++            window: originatingContext.window
++        ) else {
++            return
++        }
++
+         actionRevision += 1
+         let originatingRevision = actionRevision
+ 
+@@ -505,78 +508,13 @@ extension LoopManager {
+         }
+ 
+         if newAction.direction.willChangeScreen {
+-            var newScreen: NSScreen = currentScreen
 -
--            window.backgroundColor = .white.withAlphaComponent(0.001)
--            window.ignoresMouseEvents = false
+-            if newAction.direction == .nextScreen,
+-               let nextScreen = ScreenUtility.nextScreen(from: currentScreen) {
+-                newScreen = nextScreen
+-            }
 -
-             controller = NSWindowController(window: window)
-         }
+-            if newAction.direction == .previousScreen,
+-               let previousScreen = ScreenUtility.previousScreen(from: currentScreen) {
+-                newScreen = previousScreen
+-            }
+-
+-            if newAction.direction == .leftScreen,
+-               let leftScreen = ScreenUtility.directionalScreen(from: currentScreen, direction: .left) {
+-                newScreen = leftScreen
+-            }
+-
+-            if newAction.direction == .rightScreen,
+-               let rightScreen = ScreenUtility.directionalScreen(from: currentScreen, direction: .right) {
+-                newScreen = rightScreen
+-            }
+-
+-            if newAction.direction == .topScreen,
+-               let topScreen = ScreenUtility.directionalScreen(from: currentScreen, direction: .top) {
+-                newScreen = topScreen
+-            }
+-
+-            if newAction.direction == .bottomScreen,
+-               let bottomScreen = ScreenUtility.directionalScreen(from: currentScreen, direction: .bottom) {
+-                newScreen = bottomScreen
+-            }
++            let newScreen = ScreenUtility.targetScreen(for: newAction.direction, from: currentScreen) ?? currentScreen
  
+             // If the current action is either `.noAction`/`.noSelection`, or `.smaller`/`.larger` etc,
+             // then we will preserve the window's proportional frame relative to the current screen on the new screen.
+             if resizeContext.action.direction.isNoOp || resizeContext.action.willManipulateExistingWindowFrame {
+                 if let targetWindow = resizeContext.window {
+-                    let screenSwitchingCustomActionName = "autogenerated_screen_switching_action"
+-
+-                    if let lastAction = await WindowRecords.shared.getCurrentAction(for: targetWindow),
+-                       lastAction.getName() != screenSwitchingCustomActionName,
+-                       !lastAction.forceProportionalFrameOnScreenChange {
+-                        setResizeAction(to: lastAction, parent: nil)
+-                    } else {
+-                        let currentFrame = targetWindow.frame
+-
+-                        let adjustedBounds = PaddingConfiguration
+-                            .getConfiguredPadding(for: currentScreen)
+-                            .applyToBounds(currentScreen.cgSafeScreenFrame, screen: currentScreen)
+-
+-                        let proportionalSize = CGRect(
+-                            x: (currentFrame.minX - adjustedBounds.minX) / adjustedBounds.width,
+-                            y: (currentFrame.minY - adjustedBounds.minY) / adjustedBounds.height,
+-                            width: currentFrame.width / adjustedBounds.width,
+-                            height: currentFrame.height / adjustedBounds.height
+-                        )
+-
+-                        setResizeAction(
+-                            to: .init(
+-                                .custom,
+-                                keybind: [],
+-                                name: screenSwitchingCustomActionName,
+-                                unit: .percentage,
+-                                width: proportionalSize.width * 100,
+-                                height: proportionalSize.height * 100,
+-                                xPoint: proportionalSize.minX * 100,
+-                                yPoint: proportionalSize.minY * 100,
+-                                positionMode: .coordinates,
+-                               
 ```
 
-**File**: `Loop/Updater/Updater.swift` (modified, +1/-1)
+**File**: `Loop/Core/URLCommandHandler.swift` (removed, +0/-691)
 ```diff
-@@ -253,7 +253,7 @@ final class Updater: ObservableObject {
-         guard updateState == .available else { return }
- 
-         if windowController?.window == nil {
--            windowController = .init(window: LuminareWindow(cornerRadius: 20) { UpdateView() })
-+            windowController = .init(window: LuminareCustomCornerRadiusWindow(cornerRadius: 20) { UpdateView() })
-         }
-         windowController?.window?.makeKeyAndOrderFront(self)
-         windowController?.window?.orderFrontRegardless()
+@@ -1,691 +0,0 @@
+-//
+-//  URLCommandHandler.swift
+-//  Loop
+-//
+-//  Created by Kami on 06/03/2025.
+-//
+-
+-/*
+- Loop URL Scheme Documentation
+- ===========================
+-
+- The Loop app supports URL scheme commands for window management and automation.
+- Base URL format: loop://<command>/<parameters>
+-
+- Available Commands:
+- -----------------
+-
+- 1. Window Direction Commands:
+-    Format: loop://direction/<direction>
+-    Examples:
+-    - loop://direction/left       (Move window to left half)
+-    - loop://direction/right      (Move window to right half)
+-    - loop://direction/top        (Move window to top half)
+-    - loop://direction/bottom     (Move window to bottom half)
+-    - loop://direction/maximize   (Maximize window)
+-    - loop://direction/center     (Center window)
+-
+- 2. Screen Management:
+-    Format: loop://screen/<command>
+-    Examples:
+-    - loop://screen/next          (Move window to next screen)
+-    - loop://screen/previous      (Move window to previous screen)
+-
+- 3. Action Commands:
+-    Format: loop://action/<action>
+-    Examples:
+-    - loop://action/maximize      (Maximize window)
+-    - loop://action/leftHalf      (Move to left half)
+-    Note: See 'loop://list/actions' for all available actions
+-
+- 4. Keybind Commands:
+-    Format: loop://keybind/<name>
+-    Examples:
+-    - loop://keybind/myCustomLayout
+-    Note: See 'loop://list/keybinds' for available keybinds
+-
+- 5. List Commands:
+-    Format: loop://list/<type>
+-    Types:
+-    - actions    (List all window actions)
+-    - keybinds   (List all custom keybinds)
+-    - all        (List everything)
+-
+- Usage Tips:
+- ----------
+- 1. All commands are case-insensitive
+- 2. Parameters with spaces must be URL encoded
+- 3. Window commands operate on the frontmost non-terminal window
+- 4. Use list commands to discover available options
+-
+- Examples:
+- --------
+- # Move current window to right half
+- open "loop://direction/right"
+-
+- # List all available actions
+- open "loop://list/actions"
+-
+- # Execute custom keybind
+- open "loop://keybind/myLayout"
+-
+- Error Examples:
+- -------------
+- # Invalid command
+- open "loop://invalid" -> Returns available commands
+-
+- # Missing parameter
+- open "loop://direction" -> Returns available directions
+-
+- # Invalid keybind
+- open "loop://keybind/nonexistent" -> Returns available keybinds
+- */
+-
+-import Defaults
+-import Foundation
+-import Scribe
+-import SwiftUI
+-
+-/// Handles URL scheme commands for the Loop application
+-@Loggable
+-final class URLCommandHandler {
+-    // MARK: - Types
+-
+-    /// Available URL scheme commands with their descriptions
+-    enum Command: String, CaseIterable {
+-        /// Window positioning commands (left, right, top, bottom, etc.)
+-        case direction
+-        /// Multi-screen management commands (next, previous)
+-        case screen
+-        /// Predefined window actions
+-        case action
+-        /// Custom keybind actions
+-        case keybind
+-        /// List available commands and options
+-        case list
+-
+-        /// Human-readable description of each command type
+-        var description: String {
+-            switch self {
+-            case .direction: "Window direction command"
+-            case .screen: "Screen management"
+-            case .action: "Execute predefined window action"
+-            case .keybind: "Execute custom keybind action"
+-            case .list: "List available commands"
+-            }
+-        }
+-    }
+-
+-    // MARK: - Properties
+-
+-    /// Tracks the last active window for context preservation
+-    private var lastActiveWindow: Window?
+-
+-    /// Timestamp of last window activation
+-    private var lastActiveTime: Date?
+-
+-    /// Current command being processed
+-    private var currentCommand: String?
+-
+-    /// Buffer for collecting output before writing
+-    private var outputBuffer: [String] = []
+-
+-    // MARK: - Output Handling
+-
+-    /// Writes a message to either the buffer (for list commands) or stdout
+-    /// - Parameter message: The message to write
+-    private func writeToOutput(_ message: String) {
+-        // Remove [URLHandler] prefix and clean up the message
+-        let cleanMessage = message.replacingOccurrences(of: "[URLHandler] ", with: "")
+-
+-        // Skip debug-only messages for regular output
+-        if cleanMessage.hasPrefix("Path components:") ||
+-            cleanMessage.hasPrefix("Found") ||
+-            cleanMessage.hasPrefix("Window:") ||
+-            (cleanMessage.hasPrefix("Processing") && !cleanMessage.contains("command:")) {
+-            log.info(cleanMessage)
+-            return
+-        }
+-
+-        let output = cleanMessage
+-        if currentCommand?.contains("/list") == true {
+-            outputBuffer.append(output)
+-        } else {
+-            log.info("\(output)")
+-        }
+-        log.info(cleanMessage)
+-    }
+-
+-    /// Writes a titled list of items to output
+-    /// - Parameters:
+-    ///   - title: The title for the list
+-    ///   - items: Array of items to
 ```
 
-**File**: `Loop/Updater/Views/UpdateView.swift` (modified, +0/-1)
+**File**: `Loop/Localizable.xcstrings` (modified, +1084/-1)
 ```diff
-@@ -68,7 +68,6 @@ struct UpdateView: View {
+@@ -356,6 +356,75 @@
          }
-         .frame(width: 500, height: 480)
-         .padding(.top, 38) // titlebar
--        .luminareBackground()
-     }
- 
-     private func theLoopTimesView() -> some View {
+       }
+     },
++    "%@ is trying to install an update." : {
++      "comment" : "Administrator password prompt shown before installing an update. %@ is the app’s name.",
++      "localizations" : {
++        "en" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "%@ is trying to install an update."
++          }
++        },
++        "fr" : {
++          "stringUnit" : {
++            "state" : "needs_review",
++            "value" : "%@ tente d’installer une mise à jour."
++          }
++        },
++        "ja" : {
++          "stringUnit" : {
++            "state" : "needs_review",
++            "value" : "%@がアップデートをインストールしようとしています。"
++          }
++        }
++      }
++    },
++    "%@ is trying to install its command-line tool." : {
++      "comment" : "Administrator password prompt shown before installing or repairing the command-line tool. %@ is the app’s name.",
++      "localizations" : {
++        "en" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "%@ is trying to install its command-line tool."
++          }
++        },
++        "fr" : {
++          "stringUnit" : {
++            "state" : "needs_review",
++            "value" : "%@ tente d’installer son outil de ligne de commande."
++          }
++        },
++        "ja" : {
++          "stringUnit" : {
++            "state" : "needs_review",
++            "value" : "%@がコマンドラインツールをインストールしようとしています。"
++          }
++        }
++      }
++    },
++    "%@ is trying to uninstall its command-line tool." : {
++      "comment" : "Administrator password prompt shown before uninstalling the command-line tool. %@ is the app’s name.",
++      "localizations" : {
++        "en" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "%@ is trying to uninstall its command-line tool."
++          }
++        },
++        "fr" : {
++          "stringUnit" : {
++            "state" : "needs_review",
++            "value" : "%@ tente de désinstaller son outil de ligne de commande."
++          }
++        },
++        "ja" : {
++          "stringUnit" : {
++            "state" : "needs_review",
++            "value" : "%@がコマンドラインツールをアンインストールしようとしています。"
++          }
++        }
++      }
++    },
+     "%@ isn’t in your Applications folder. Would you like to install the update to your Applications folder instead?" : {
+       "comment" : "Informative text in the alert displayed when the app is not in the user's Applications folder.",
+       "localizations" : {
+@@ -799,6 +868,121 @@
+         }
+       }
+     },
++    "`%@` belongs to another app or file. Remove it, then try again." : {
++      "comment" : "Warning on the command-line tool row in Advanced settings, shown when something other than Loop’s link is at that path. %@ is the path to the link, such as /usr/local/bin/loop.",
++      "localizations" : {
++        "en" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "`%@` belongs to another app or file. Remove it, then try again."
++          }
++        },
++        "fr" : {
++          "stringUnit" : {
++            "state" : "needs_review",
++            "value" : "`%@` appartient à une autre app ou à un autre fichier. Supprimez-le, puis réessayez."
++          }
++        },
++        "ja" : {
++          "stringUnit" : {
++            "state" : "needs_review",
++            "value" : "`%@`はほかのアプリまたはファイルのものです。削除してから、もう一度お試しください。"
++          }
++        }
++      }
++    },
++    "`%@` isn’t owned by an administrator, so another app could have created it. Click Repair to reinstall it." : {
++      "comment" : "Warning on the command-line tool row in Advanced settings, shown when the link wasn’t created with administrator privileges. %@ is the path to the link, such as /usr/local/bin/loop.",
++      "localizations" : {
++        "en" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "`%@` isn’t owned by an administrator, so another app could have created it. Click Repair to reinstall it."
++          }
++        },
++        "fr" : {
++          "stringUnit" : {
++            "state" : "needs_review",
++            "value" : "`%@` n’appartient pas à un administrateur ; une autre app a donc pu le créer. Cliquez sur « Réparer » pour le réinstaller."
++          }
++        },
++        "ja" : {
++          "stringUnit" : {
++            "state" : "needs_review",
++            "value" : "`%@`の所有者が管理者ではないため、ほかのアプリによって作成された可能性があります。“修復”をクリックして再インストールしてください。"
++          }
++        }
++      }
++    },
++    "`%@` points to a copy of Loop that was moved or deleted. Click Repair to use this one." : {
++      "comment" : "Warning on the command-line tool row in Advanced settings, shown when the copy of Loop the link points to no longer exists. %@ is the path to the link, such as /usr/local/bin/loop.",
++      "localizations" : {
++        "en" : {
++          "stringUnit" : {
++            "state" : "translated",
++      
 ```
 
-**File**: `Loop/Utilities/BackdropBlurView.swift` (added, +128/-0)
+**File**: `Loop/Scripting/CommandLineToolInstaller.swift` (added, +102/-0)
 ```diff
-@@ -0,0 +1,128 @@
+@@ -0,0 +1,102 @@
 +//
-+//  BackdropBlurView.swift
++//  CommandLineToolInstaller.swift
 +//  Loop
 +//
-+//  Created by Kai Azim on 2026-11-21.
++//  Created by Kai Azim on 2026-03-29.
 +//
 +
 +import SwiftUI
 +
-+/// A pass-through Gaussian blur of everything behind the window.
-+struct BackdropBlurView: NSViewRepresentable {
-+    let radius: CGFloat
++final class CommandLineToolInstaller {
++    enum Status: Equatable {
++        case notInstalled
++        case installedCurrent
++        case installedStale
++        /// The link points to a copy of Loop that was moved or deleted
++        case installedMissing
++        case installedWithoutAdministrator
++        case blocked
 +
-+    func makeNSView(context _: Context) -> BackdropBlurNSView {
-+        BackdropBlurNSView(radius: radius)
-+    }
++        var warning: AttributedString? {
++            let symlinkPath = PrivilegedHelperConstants.commandLineToolSymlinkURL.path
 +
-+    func updateNSView(_ view: BackdropBlurNSView, context _: Context) {
-+        view.radius = radius
-+    }
-+}
++            return switch self {
++            case .notInstalled, .installedCurrent:
++                nil
++            case .installedStale:
++                AttributedString(localized: "`\(symlinkPath)` points to another copy of Loop. Click Repair to use this one.", comment: "Warning on the command-line tool row in Advanced settings, shown when the link points to a copy of Loop other than the one running. %@ is the path to the link, such as /usr/local/bin/loop.")
++            case .installedMissing:
++                AttributedString(localized: "`\(symlinkPath)` points to a copy of Loop that was moved or deleted. Click Repair to use this one.", comment: "Warning on the command-line tool row in Advanced settings, shown when the copy of Loop the link points to no longer exists. %@ is the path to the link, such as /usr/local/bin/loop.")
++            case .installedWithoutAdministrator:
++                AttributedString(localized: "`\(symlinkPath)` isn’t owned by an administrator, so another app could have created it. Click Repair to reinstall it.", comment: "Warning on the command-line tool row in Advanced settings, shown when the link wasn’t created with administrator privileges. %@ is the path to the link, such as /usr/local/bin/loop.")
++            case .blocked:
++                AttributedString(localized: "`\(symlinkPath)` belongs to another app or file. Remove it, then try again.", comment: "Warning on the command-line tool row in Advanced settings, shown when something other than Loop’s link is at that path. %@ is the path to the link, such as /usr/local/bin/loop.")
++            }
++        }
 +
-+final class BackdropBlurNSView: NSVisualEffectView {
-+    var radius: CGFloat {
-+        didSet {
-+            guard radius != oldValue else { return }
-+            reduceToBlur()
++        /// Why Loop refuses commands from the CLI, in English like the rest of its output. `nil` once it's installed.
++        var commandLineReason: String? {
++            let symlinkPath = PrivilegedHelperConstants.commandLineToolSymlinkURL.path
++
++            return switch self {
++            case .installedCurrent:
++                nil
++            case .notInstalled:
++                "Loop only accepts commands while the command-line tool is installed. Install it in Loop’s Advanced settings."
++            case .installedStale:
++                "\(symlinkPath) points to another copy of Loop. Click Repair in Loop’s Advanced settings."
++            case .installedMissing:
++                "\(symlinkPath) points to a copy of Loop that was moved or deleted. Click Repair in Loop’s Advanced settings."
++            case .installedWithoutAdministrator:
++                "\(symlinkPath) isn’t owned by an administrator, so another app could have created it. Click Repair in Loop’s Advanced settings."
++            case .blocked:
++                "\(symlinkPath) belongs to another app or file. Remove it, then install the command-line tool in Loop’s Advanced settings."
++            }
 +        }
 +    }
 +
-+    init(radius: CGFloat) {
-+        self.radius = radius
-+        super.init(frame: .zero)
++    private let privilegedHelperCoordinator: PrivilegedHelperCoordinator
++    private let fileManager: FileManager
 +
-+        // A behind-window visual effect view is what makes AppKit sample the content behind the window,
-+        // so this works without making the window transparent. Its material is then reduced to just a blur.
-+        material = .menu
-+        blendingMode = .behindWindow
-+        state = .active
++    init(
++        privilegedHelperCoordinator: PrivilegedHelperCoordinator = PrivilegedHelperCoordinator(),
++        fileManager: FileManager = .default
++    ) {
++        self.privilegedHelperCoordinator = privilegedHelperCoordinator
++        self.fileManager = fileManager
++    }
++
++    func status() throws -> Status {
++        switch try PrivilegedHelperConstants.commandLineToolLinkState(fileManager: fileManager) {
++        case .missing:
++            return .notInstalled
++        case .occupied:
++            return .blocked
++        case let .loopManaged(destinationURL, isOwnedByRoot):
++            let currentCLIURL = PrivilegedHelperConstants.commandLineToolURL(inBundle: Bundle.main.bundleURL)
++
++            guard destinationURL.path == currentCLIURL.path else {
++                return fileManager.fileExists(atPath: destinationURL.path) ? .installedStale : .installedMissing
++            }
++
++            return isOwnedByRoot ? .installedCurrent : .installedWithoutAdministrator
++        }
++    }
++
++    /// Installs the tool, replacing an existing Loop-managed link
++    func install() async throws {
++        try await privilegedHelperCoordinator.withPrivilegedSession(
++            prompt: String(localized: "\(Bundle.main.appName) is trying to install its command-line tool.", comment: "Administrator password prompt shown before installing or repairing the command-line tool. %@ is the app’s name.")
++        ) { session in
+```
+
+**File**: `Loop/Scripting/CommandOutputWindowController.swift` (added, +210/-0)
+```diff
+@@ -0,0 +1,210 @@
++//
++//  CommandOutputWindowController.swift
++//  Loop
++//
++//  Created by Kai Azim on 2026-03-28.
++//
++
++import AppKit
++
++@MainActor
++final class CommandOutputWindowController: NSWindowController, NSWindowDelegate, NSToolbarDelegate {
++    private enum ToolbarIdentifier {
++        static let toolbar = NSToolbar.Identifier("LoopCommandOutputToolbar")
++        static let format = NSToolbarItem.Identifier("LoopCommandOutputFormat")
++        static let copy = NSToolbarItem.Identifier("LoopCommandOutputCopy")
++    }
++
++    private let title: String
++    private let text: LoopAutomationText
++    private let json: String
++    private let onClose: (CommandOutputWindowController) -> ()
++
++    private weak var textView: NSTextView?
++    private var showsJSON = false
++
++    private var output: String {
++        showsJSON ? json : text.plainText
++    }
++
++    init(title: String, text: LoopAutomationText, json: String, onClose: @escaping (CommandOutputWindowController) -> ()) {
++        self.title = title
++        self.text = text
++        self.json = json
++        self.onClose = onClose
++        super.init(window: nil)
 +    }
 +
 +    @available(*, unavailable)
@@ -1973,97 +2176,143 @@ SkyLight's window background blur unfortunately broke on macOS 27.2 on newer rou
 +        fatalError("init(coder:) has not been implemented")
 +    }
 +
-+    /// The blur is purely visual
-+    override func hitTest(_: NSPoint) -> NSView? {
-+        nil
++    /// AppKit only loads the window, and cascades it from the previous one, when there's a nib name
++    override var windowNibName: NSNib.Name? {
++        "CommandOutputWindow"
 +    }
 +
-+    // AppKit rebuilds the material's layers on these occasions (such as appearance changes),
-+    // so the blur is reapplied after each one. Reapplying is a no-op when nothing has changed.
++    override func loadWindow() {
++        let window = NSWindow(
++            contentRect: NSRect(x: 0, y: 0, width: 720, height: 560),
++            styleMask: [.titled, .closable, .resizable, .miniaturizable, .fullSizeContentView],
++            backing: .buffered,
++            defer: false
++        )
++        window.title = title
++        window.minSize = NSSize(width: 480, height: 320)
++        window.isReleasedWhenClosed = false
++        window.delegate = self
++        window.toolbar = makeToolbar()
 +
-+    override func layout() {
-+        super.layout()
-+        reduceToBlur()
++        let contentView = NSVisualEffectView()
++        contentView.material = .popover
++        contentView.blendingMode = .behindWindow
++        contentView.state = .active
++        window.contentView = contentView
++
++        let scrollView = NSTextView.scrollableTextView()
++        scrollView.frame = contentView.bounds
++        scrollView.autoresizingMask = [.width, .height]
++        scrollView.drawsBackground = false
++        contentView.addSubview(scrollView)
++
++        if let textView = scrollView.documentView as? NSTextView {
++            textView.isEditable = false
++            textView.isSelectable = true
++            textView.isRichText = false
++            textView.usesFindBar = true
++            textView.drawsBackground = false
++            textView.textContainerInset = NSSize(width: 12, height: 12)
++            textView.textStorage?.setAttributedString(Self.attributedString(for: text))
++            self.textView = textView
++        }
++
++        // center() uses the window's current screen, so move it to the one with the cursor first
++        if let screen = NSScreen.screenWithMouse {
++            window.setFrameOrigin(screen.visibleFrame.origin)
++        }
++        window.center()
++
++        self.window = window
 +    }
 +
-+    override func updateLayer() {
-+        super.updateLayer()
-+        reduceToBlur()
++    func show() {
++        if #available(macOS 14.0, *) {
++            NSApp.activate()
++        } else {
++            NSApp.activate(ignoringOtherApps: true)
++        }
++
++        showWindow(nil)
++        // Activation is only a request since macOS 14, so the window has to come forward even if it's declined
++        window?.orderFrontRegardless()
 +    }
 +
-+    override func viewDidChangeEffectiveAppearance() {
-+        super.viewDidChangeEffectiveAppearance()
-+        reduceToBlur()
++    func windowWillClose(_: Notification) {
++        onClose(self)
 +    }
 +
-+    override func viewDidMoveToWindow() {
-+        super.viewDidMoveToWindow()
-+        reduceToBlur()
++    @objc private func changeFormat(_ sender: NSToolbarItemGroup) {
++        showsJSON = sender.selectedIndex == 1
++        let content = showsJSON ? LoopAutomationText(json) : text
++        textView?.textStorage?.setAttributedString(Self.attributedString(for: content))
 +    }
 +
-+    /// Reduces AppKit's material to a plain Gaussian blur of the given radius.
-+    private func reduceToBlur() {
-+        guard
-+            let layer,
-+            let backdropLayer = Self.findBackdropLayer(in: layer),
-+            let filters = backdropLayer.filters as? [NSObject]
-+        else {
-+            return
++    private static func attributedString(for text: LoopAutomationText) -> NSAttributedString {
++        let result = NSMutableAttributedString()
++        let regularFont = NSFont.monospacedSystemFont(ofSize: 12, weight: .regular)
++        let boldFont = NSFont.monospacedSystemFont(ofSize: 12, weight: .semibold)
++
++        for run in text.runs {
++            var attributes: [NSAttributedString.Key: Any] = [
++                .font: regularFont,
++                .foregroundColor: NSColor.labelColor
++            ]
++
++            switch run.style {
++            case .plain:
++                break
++            case .bold:
++                attributes[.font] = boldFont
++            case .secondary:
++                attributes[.foregroundColor] = NSColor.secondaryLabelColor
++            case .heading:
++                attributes[.font] = boldFont
++            case .success:
++                attributes[.foregroundColor] = NSColor.systemGreen
++            case .failure:
++                attributes[.foregroundColor] = NSColor.s
+```
+
+**File**: `Loop/Scripting/CommandOutputWindowManager.swift` (added, +27/-0)
+```diff
+@@ -0,0 +1,27 @@
++//
++//  CommandOutputWindowManager.swift
++//  Loop
++//
++//  Created by Kai Azim on 2026-03-28.
++//
++
++import AppKit
++
++@MainActor
++final class CommandOutputWindowManager {
++    static let shared = CommandOutputWindowManager()
++
++    /// Keeps each controller alive until its window closes
++    private var controllers: [CommandOutputWindowController] = []
++
++    private init() {}
++
++    func show(title: String, text: LoopAutomationText, json: String) {
++        let controller = CommandOutputWindowController(title: title, text: text, json: json) { [weak self] closed in
++            self?.controllers.removeAll { $0 === closed }
 +        }
 +
-+        // Keep only the blur (and SDR normalization), dropping the material's saturation boost
-+        let keptFilters = filters.filter { filter in
-+            let type = Self.filterType(of: filter)
-+            return type == "gaussianBlur" || type == "sdrNormalize"
-+        }
-+
-+        guard let blurFilter = keptFilters.first(where: { Self.filterType(of: $0) == "gaussianBlur" }) else {
-+            return
-+        }
-+
-+        let radiusChanged = (blurFilter.value(forKey: "inputRadius") as? CGFloat) != radius
-+        if radiusChanged {
-+            blurFilter.setValue(radius, forKey: "inputRadius")
-+        }
-+
-+        // Filters are only applied when reassigned, so reassign them only when something changed
-+        if radiusChanged || keptFilters.count != filters.count {
-+            backdropLayer.filters = keptFilters
-+        }
-+
-+        // Hide the material's tint layers, which sit beside the backdrop layer
-+        for sibling in backdropLayer.superlayer?.sublayers ?? [] where sibling !== backdropLayer && !sibling.isHidden {
-+            sibling.isHidden = true
-+        }
-+    }
-+
-+    private static func filterType(of filter: NSObject) -> String? {
-+        filter.value(forKey: "type") as? String
-+    }
-+
-+    private static func findBackdropLayer(in layer: CALayer) -> CALayer? {
-+        if String(describing: type(of: layer)) == "CABackdropLayer" {
-+            return layer
-+        }
-+
-+        for sublayer in layer.sublayers ?? [] {
-+            if let backdropLayer = findBackdropLayer(in: sublayer) {
-+                return backdropLayer
-+            }
-+        }
-+
-+        return nil
++        controllers.append(controller)
++        controller.show()
 +    }
 +}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1213** (2026-11-23): 🌐 Update translations from Crowdin (@github-actions[bot])
 - **PR #1211** (2026-11-17): 🐞 Fix window focus within frontmost app + gesture rebuild fixes (@mrkai77)
 - **PR #1209** (2026-11-14): 🐞 Fix delayed gesture availability after login (@mrkai77)
 - **PR #1208** (2026-11-13): 🐞 Resolve child windows to their parent when hit-testing the cursor (@mrkai77)
 - **PR #1207** (2026-11-13): 🎨 Make swipe and pinch gesture code consistent (@mrkai77)
 - **PR #1202** (closed): 🐞 Persist updater info logs so failed updates can be diagnosed (@jvanderen1)
-- **PR #1201** (closed): 🐞 Include newer stable releases on the development channel (@jvanderen1)
 
 ---
 
@@ -2083,33 +2332,59 @@ SkyLight's window background blur unfortunately broke on macOS 27.2 on newer rou
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. 🐞 Shrink a window before moving it to a smaller frame
+## X. ✨ Improved URL API and new CLI
 
 **RULE**:
-When implementing operations in `Loop/Core/WindowDragManager.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mrkai77/Loop. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Loop.xcodeproj/project.pbxproj`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mrkai77/Loop. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5cc7551c`: 🐞 Shrink a window before moving it to a smaller frame. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0ad44cb0`: ✨ Improved URL API and new CLI. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Loop/Core/WindowDragManager.swift`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Loop.xcodeproj/project.pbxproj`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-            window.performFrameAdjustment { writer in
-                writer.setSize(initialFrame.size)
-            }
+		B1AA00412F30000100AABBCC /* LoopPrivilegedHelper in CopyFiles */ = {isa = PBXBuildFile; fileRef = B1AA00012F30000100AABBCC /* LoopPrivilegedHelper */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		C1BB00412F30000200AABBCC /* loop-cli in CopyFiles */ = {isa = PBXBuildFile; fileRef = C1BB00012F30000200AABBCC /* loop-cli */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		C1BB00A52F40000200AABBCC /* ArgumentParser in Frameworks */ = {isa = PBXBuildFile; productRef = C1BB00A42F40000200AABBCC /* ArgumentParser */; };
+			remoteInfo = LoopPrivilegedHelper;
+		};
+		C1BB00512F30000200AABBCC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A8E59C2D297F5E9A0064D4BA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C1BB00112F30000200AABBCC;
+			remoteInfo = LoopCLI;
+				B1AA00412F30000100AABBCC /* LoopPrivilegedHelper in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C1BB00612F30000200AABBCC /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 6;
+			files = (
+				C1BB00412F30000200AABBCC /* loop-cli in CopyFiles */,
+		B1AA00012F30000100A
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Induced defect failure mode:
-            window.setSize(initialFrame.size)
+		B1AA00412F30000100AABBCC /* LoopUpdaterHelper in CopyFiles */ = {isa = PBXBuildFile; fileRef = B1AA00012F30000100AABBCC /* LoopUpdaterHelper */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+			remoteInfo = LoopUpdaterHelper;
+				B1AA00412F30000100AABBCC /* LoopUpdaterHelper in CopyFiles */,
+		B1AA00012F30000100AABBCC /* LoopUpdaterHelper */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = LoopUpdaterHelper; sourceTree = BUILT_PRODUCTS_DIR; };
+			target = B1AA00112F30000100AABBCC /* LoopUpdaterHelper */;
+				PrivilegedInstallerProtocol.swift,
+			target = B1AA00112F30000100AABBCC /* LoopUpdaterHelper */;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5cc7551c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0ad44cb0` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

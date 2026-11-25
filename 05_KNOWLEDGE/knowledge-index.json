@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-25T03:05:23.326Z",
+  "last_updated": "2026-11-25T03:13:41.708Z",
   "total_verified_learnings": 9111,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25189,
+  "total_items": 25193,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112198,9 +112198,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "13c989c18d9ee55a445fc3166d592bf4ea50812ffcb4083be41e9d689746214f",
+      "content_hash": "b48f917699f1722af297acba48fc5b74f838ae3e1ee7bf728ae7da2e595590be",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T03:05:21.546Z"
+      "persisted_at": "2026-11-25T03:13:41.531Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -112210,9 +112210,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "8bcc587ba6b09d7315e58ce22b5d35db12f3949784b1100270595264e1eb3094",
+      "content_hash": "e795fcc1f4b3831ffe6fff29790e82b3c8a967f50d3311753d2cad12e070f9ce",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T03:05:21.794Z"
+      "persisted_at": "2026-11-25T03:13:41.708Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -236702,8 +236702,8 @@
       "slug": "facebook-folly",
       "platform": "github",
       "source_url": "https://github.com/facebook/folly",
-      "source_version": "c8588a1e",
-      "content_hash": "64201ea44f3fd1ff6de047a18e5e9c830a28e13cf97e62d772c3af938c0c8824",
+      "source_version": "f0ccd5a6",
+      "content_hash": "29b6eed87e86e6de62c3122719bcb21bda3a8ee426d49aa01b755d2aa0568fe3",
       "dossier_path": "07_PROJECT_LEARNING/facebook-folly-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/facebook-folly-learnings.md",
       "promoted_rules": [
@@ -236736,6 +236736,11 @@
           "number": 10157,
           "title": "Look for fbcode_builder in tool/ first, ahead of the export move",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10441,
+          "title": "Use requires and if constexpr in chrono, hash, simd, compression, result and syn",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -236743,7 +236748,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T00:49:00.172Z",
+      "verified_at": "2026-11-25T03:13:32.120Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -236785,10 +236790,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-facebook-folly-architecture-intelligence-meta-folly-core-invariants.md",
       "title": "Architecture Intelligence: meta/folly Core Invariants",
       "repository": "meta/folly",
-      "source_version": "c8588a1e",
-      "content_hash": "1dfedae90a77892cd161992d1a9d3f33209ec4a183c19340acab99c6852af3e3",
+      "source_version": "f0ccd5a6",
+      "content_hash": "0e7f8302b8bac84c90592239d31db7e140ae0cd04010bc1c1969ea60c153c2ef",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T00:49:00.793Z"
+      "persisted_at": "2026-11-25T03:13:32.770Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-meta-folly": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-meta-folly",
@@ -236797,10 +236802,10 @@
       "relative_path": "08_VERIFICATION/facebook-folly-verification-protocol-empirical-defect-shield-for-meta-folly.md",
       "title": "Verification Protocol: Empirical Defect Shield for meta/folly",
       "repository": "meta/folly",
-      "source_version": "c8588a1e",
-      "content_hash": "dab6a399aa0c50d3c7ec50b611d2f198e209b27b32c0eeef485fe3b6d114dcf9",
+      "source_version": "f0ccd5a6",
+      "content_hash": "142e43160b5b30fa6d5577360d017ccba08206e2249ce9dc6250821636e2726e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T00:49:01.002Z"
+      "persisted_at": "2026-11-25T03:13:32.949Z"
     },
     "learn-github-gkd-kit-gkd": {
       "learning_id": "learn-github-gkd-kit-gkd",
@@ -237011,9 +237016,9 @@
       "title": "Architecture Intelligence: facebook-folly-learnings Core Invariants",
       "repository": "facebook-folly-learnings",
       "source_version": "HEAD",
-      "content_hash": "52ad555b92ab5d2c2e7199b9834fa618123f0ce761ec7b8ba8ddd534128b5ab0",
+      "content_hash": "80de9ed68d3fca68bf06ca4199e0ebeac372dc8e6fa1331800561a49fa7ec837",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T00:49:12.167Z"
+      "persisted_at": "2026-11-25T03:13:39.711Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-facebook-folly-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-facebook-folly-learnings",
@@ -237023,9 +237028,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for facebook-folly-learnings",
       "repository": "facebook-folly-learnings",
       "source_version": "HEAD",
-      "content_hash": "98d690962b7d8f0701b5dea2fbb3d7dcba08ddd17bb3c4ea887dc9e714efb382",
+      "content_hash": "59da743c7ef3b7c9399700470b4591306bc96f17fe9edd5f438b049af01ef7d6",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T00:49:12.348Z"
+      "persisted_at": "2026-11-25T03:13:39.892Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-autotrust-glm5-3-flash-e224-dgx-spark-learnin": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-autotrust-glm5-3-flash-e224-dgx-spark-learnin",
@@ -246771,8 +246776,8 @@
       "slug": "mrkai77-loop",
       "platform": "github",
       "source_url": "https://github.com/mrkai77/Loop",
-      "source_version": "5cc7551c",
-      "content_hash": "710bf06b77dbefe8c3bb7d636aa533183bc30df880029d9cc9cb8cbdf21ba9f8",
+      "source_version": "ad8564ac",
+      "content_hash": "22e7845db77118bd3ada678bb2ddd7d72e6c8a7e28b948391e143327d8f7e688",
       "dossier_path": "07_PROJECT_LEARNING/mrkai77-loop-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mrkai77-loop-learnings.md",
       "promoted_rules": [
@@ -246790,6 +246795,11 @@
           "number": 9955,
           "title": "🐞 Shrink a window before moving it to a smaller frame",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10442,
+          "title": "✨ Improved URL API and new CLI",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -246797,7 +246807,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T16:48:11.479Z",
+      "verified_at": "2026-11-25T03:13:34.438Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -246851,10 +246861,10 @@
       "relative_path": "08_VERIFICATION/mrkai77-loop-verification-protocol-empirical-defect-shield-for-mrkai77-loop.md",
       "title": "Verification Protocol: Empirical Defect Shield for mrkai77/Loop",
       "repository": "mrkai77/Loop",
-      "source_version": "5cc7551c",
-      "content_hash": "483281ca15ff0b917183c002c06639f6f41a2dc06f8c1b494efbff600e973187",
+      "source_version": "ad8564ac",
+      "content_hash": "b50109e916b6dce6aa7408d0156a96d3208c68a52e947133d1419354677c2cbd",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T16:48:12.216Z"
+      "persisted_at": "2026-11-25T03:13:35.261Z"
     },
     "learn-github-gravitl-netmaker": {
       "learning_id": "learn-github-gravitl-netmaker",
@@ -246986,9 +246996,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for mrkai77-loop-learnings",
       "repository": "mrkai77-loop-learnings",
       "source_version": "HEAD",
-      "content_hash": "77fb1db7f0e7c034ada302b5fc6f0308a0a3871553bce39a14526a9079c9980f",
+      "content_hash": "24bf9c3fe19c9c9f8fa137e8973b5bd51f89bf8c8a05a210972ccf619335c914",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T16:48:26.117Z"
+      "persisted_at": "2026-11-25T03:13:40.763Z"
     },
     "candidate_directive-nm-356-enable-ce-user-acl-policies-with-all-users-and-per-user-sources": {
       "item_id": "candidate_directive-nm-356-enable-ce-user-acl-policies-with-all-users-and-per-user-sources",
@@ -299787,10 +299797,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-mrkai77-loop-design-intelligence-mrkai77-loop-core-invariants.md",
       "title": "Design Intelligence: mrkai77/Loop Core Invariants",
       "repository": "mrkai77/Loop",
-      "source_version": "5cc7551c",
-      "content_hash": "6af727fce58e756afbdd47a3e6c1bfc27f2afafa1a0d06cdf6c33fdbf6465692",
+      "source_version": "ad8564ac",
+      "content_hash": "f0de1f91ff27d0e560c3197372e4e73aae7d50bed5a3e2909a60d334e9d58393",
       "domain_letter": "F",
-      "persisted_at": "2026-11-22T16:48:12.048Z"
+      "persisted_at": "2026-11-25T03:13:35.078Z"
     },
     "rule-9391": {
       "learning_id": "rule-9391",
@@ -299852,9 +299862,9 @@
       "title": "Design Intelligence: mrkai77-loop-learnings Core Invariants",
       "repository": "mrkai77-loop-learnings",
       "source_version": "HEAD",
-      "content_hash": "e64a38d991f5ee0f443656da049e3d37d1ea0f29d1011f516064f7202a119c79",
+      "content_hash": "5b6b20b03eecf5328b53dd64e1f6c24f4a851bf3722d904d890522ff38c945a4",
       "domain_letter": "F",
-      "persisted_at": "2026-11-22T16:48:25.942Z"
+      "persisted_at": "2026-11-25T03:13:40.583Z"
     },
     "rule-9393": {
       "learning_id": "rule-9393",
@@ -335849,13 +335859,13 @@
       "item_id": "candidate_directive-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-JJXA-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-U9RC-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change.md",
       "title": "server_events_dispatch: Rerender DM status emoji on emojiset change.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "b620a46914daef9482d88117b205208b11b1183ba2847620b709c5cae7c41987",
+      "content_hash": "fc495df670b04f8e32765a867959554b22058cffd029862aaa753dc3c538c18f",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T03:05:21.316Z"
+      "persisted_at": "2026-11-25T03:13:41.355Z"
     },
     "learn-github-xinatian-mroffice": {
       "learning_id": "learn-github-xinatian-mroffice",
@@ -344391,6 +344401,58 @@
       "content_hash": "a371244232a160f0c65984a838e60d815d7de64bf03cbfeb928f7cc9aa025bf3",
       "domain_letter": "I",
       "persisted_at": "2026-11-25T03:05:20.066Z"
+    },
+    "rule-10441": {
+      "learning_id": "rule-10441",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10441,
+      "title": "Use requires and if constexpr in chrono, hash, simd, compression, result and syn",
+      "source_url": "https://github.com/facebook/folly",
+      "source_version": "f0ccd5a6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T03:13:32.120Z"
+    },
+    "candidate_directive-use-requires-and-if-constexpr-in-chrono-hash-simd-compression-result-and-syn": {
+      "item_id": "candidate_directive-use-requires-and-if-constexpr-in-chrono-hash-simd-compression-result-and-syn",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-U8CN-use-requires-and-if-constexpr-in-chrono-hash-simd-compression-result-and-syn.md",
+      "title": "Use requires and if constexpr in chrono, hash, simd, compression, result and syn",
+      "repository": "facebook-folly-learnings",
+      "source_version": "HEAD",
+      "content_hash": "6916793981d21d46ea8d2094eacb9d9924e8c1d0b23b5a4b408de7e1925f28de",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-25T03:13:39.531Z"
+    },
+    "rule-10442": {
+      "learning_id": "rule-10442",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10442,
+      "title": "✨ Improved URL API and new CLI",
+      "source_url": "https://github.com/mrkai77/Loop",
+      "source_version": "ad8564ac",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T03:13:34.438Z"
+    },
+    "candidate_directive-improved-url-api-and-new-cli": {
+      "item_id": "candidate_directive-improved-url-api-and-new-cli",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-U90N-improved-url-api-and-new-cli.md",
+      "title": "✨ Improved URL API and new CLI",
+      "repository": "mrkai77-loop-learnings",
+      "source_version": "HEAD",
+      "content_hash": "531d83ddf21fd1bb77e1cfebb0882912467d590f2f8865052cc4294eeaf67d20",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-25T03:13:40.394Z"
     }
   },
   "ai-builder-brain": {

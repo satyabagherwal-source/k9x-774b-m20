@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261123-920E",
-    "timestamp": "2026-11-23T16:53:39.566Z",
-    "repository": "linkerd/linkerd2",
-    "learningId": "learn-github-linkerd-linkerd2",
-    "contentHash": "d22b11734688df2cfbd931a1d91a647e540b5c6e47f643f3d20eac29ab3a4465",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-9455",
-    "timestamp": "2026-11-23T16:53:42.329Z",
-    "repository": "DefGuard/defguard",
-    "learningId": "learn-github-defguard-defguard",
-    "contentHash": "0d643bae80dd38273269e7174131befe813cfb9d51b5b38e8d35c13d0b23dd82",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261123-95RM",
     "timestamp": "2026-11-23T16:53:44.434Z",
     "repository": "sqlpage/SQLPage",
@@ -7490,6 +7460,36 @@
     "repository": "apache/arrow",
     "learningId": "learn-github-apache-arrow",
     "contentHash": "7f7e42eb1028cd403cbba7d2342620d45f108849f3349a66539672159df5c8ee",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-U2SX",
+    "timestamp": "2026-11-25T03:13:32.337Z",
+    "repository": "meta/folly",
+    "learningId": "learn-github-meta-folly",
+    "contentHash": "29b6eed87e86e6de62c3122719bcb21bda3a8ee426d49aa01b755d2aa0568fe3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-U4LB",
+    "timestamp": "2026-11-25T03:13:34.655Z",
+    "repository": "mrkai77/Loop",
+    "learningId": "learn-github-mrkai77-loop",
+    "contentHash": "22e7845db77118bd3ada678bb2ddd7d72e6c8a7e28b948391e143327d8f7e688",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

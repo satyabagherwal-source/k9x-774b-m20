@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T03:05:22.663Z",
+  "last_updated": "2026-11-25T03:13:41.355Z",
   "directives": [
     {
       "id": "CD-001",
@@ -53863,11 +53863,11 @@
       "staged_date": "2026-11-24"
     },
     {
-      "id": "CD-JJXA",
+      "id": "CD-U9RC",
       "directive_title": "server_events_dispatch: Rerender DM status emoji on emojiset change.",
       "source_repo": "zulip-zulip-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-JJXA-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-U9RC-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-25",
@@ -59108,6 +59108,55 @@
       "source_repo": "zvec-ai-zvec-grep",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-274D7C-rust-bind-bare-calls-to-the-enclosing-mo.md",
+      "staged_date": "2026-11-25"
+    },
+    {
+      "id": "CD-U8CN",
+      "directive_title": "Use requires and if constexpr in chrono, hash, simd, compression, result and syn",
+      "source_repo": "facebook-folly-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-U8CN-use-requires-and-if-constexpr-in-chrono-hash-simd-compression-result-and-syn.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-25",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-U90N",
+      "directive_title": "✨ Improved URL API and new CLI",
+      "source_repo": "mrkai77-loop-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-U90N-improved-url-api-and-new-cli.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-25",
+      "domain_letter": "F"
+    },
+    {
+      "id": "CD-REV-98E1E8",
+      "directive_title": "Use requires and if constexpr in chrono, hash, simd, compression, result and syn",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "facebook-folly",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-98E1E8-use-requires-and-if-constexpr-in-chrono-.md",
+      "staged_date": "2026-11-25"
+    },
+    {
+      "id": "CD-REV-9B91EA",
+      "directive_title": "✨ Improved URL API and new CLI",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "mrkai77-loop",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-9B91EA--improved-url-api-and-new-cli.md",
+      "staged_date": "2026-11-25"
+    },
+    {
+      "id": "CD-REV-4AFA53",
+      "directive_title": "server_events_dispatch: Rerender DM status emoji on emojiset change.",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zulip-zulip",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-4AFA53-server-events-dispatch-rerender-dm-statu.md",
       "staged_date": "2026-11-25"
     }
   ]

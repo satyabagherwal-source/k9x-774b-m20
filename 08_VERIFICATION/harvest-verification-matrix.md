@@ -12920,3 +12920,5 @@
 | `CYCLE-20261125-7RKO` | `2026-11-25T02:56:11.352Z` | `Checkmarx/kics` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10439` | Yes (`7f1e17f7...`) |
 | `CYCLE-20261125-7TO4` | `2026-11-25T02:56:14.068Z` | `SeekStorm/SeekStorm` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2926` | Yes (`b68533ef...`) |
 | `CYCLE-20261125-JAM5` | `2026-11-25T03:05:09.245Z` | `apache/arrow` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10440` | Yes (`7f7e42eb...`) |
+| `CYCLE-20261125-U2SX` | `2026-11-25T03:13:32.337Z` | `meta/folly` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10441` | Yes (`29b6eed8...`) |
+| `CYCLE-20261125-U4LB` | `2026-11-25T03:13:34.655Z` | `mrkai77/Loop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10442` | Yes (`22e7845d...`) |

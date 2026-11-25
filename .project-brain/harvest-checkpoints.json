@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-25T03:05:09.270Z",
+  "last_updated": "2026-11-25T03:13:34.675Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -11676,14 +11676,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mrkai77-loop",
-      "content_hash": "710bf06b77dbefe8c3bb7d636aa533183bc30df880029d9cc9cb8cbdf21ba9f8",
-      "verified_at": "2026-11-22T16:48:11.690Z",
+      "content_hash": "22e7845db77118bd3ada678bb2ddd7d72e6c8a7e28b948391e143327d8f7e688",
+      "verified_at": "2026-11-25T03:13:34.674Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T16:48:11.690Z"
+      "last_updated": "2026-11-25T03:13:34.674Z"
     },
     "tokio-rs/tokio": {
       "repository": "tokio-rs/tokio",
@@ -17181,14 +17181,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-meta-folly",
-      "content_hash": "64201ea44f3fd1ff6de047a18e5e9c830a28e13cf97e62d772c3af938c0c8824",
-      "verified_at": "2026-11-24T00:49:00.390Z",
+      "content_hash": "29b6eed87e86e6de62c3122719bcb21bda3a8ee426d49aa01b755d2aa0568fe3",
+      "verified_at": "2026-11-25T03:13:32.359Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T00:49:00.390Z"
+      "last_updated": "2026-11-25T03:13:32.359Z"
     },
     "LiquidAI/LFM3-Omni-2B": {
       "repository": "LiquidAI/LFM3-Omni-2B",

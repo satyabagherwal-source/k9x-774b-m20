@@ -7663,10 +7663,10 @@
     "repository": "meta/folly",
     "platform": "github",
     "sourceUrl": "https://github.com/facebook/folly",
-    "sourceVersion": "c8588a1e",
+    "sourceVersion": "f0ccd5a6",
     "license": "Apache-2.0",
-    "contentHash": "64201ea44f3fd1ff6de047a18e5e9c830a28e13cf97e62d772c3af938c0c8824",
-    "lastHarvestedAt": "2026-11-24T00:49:00.381Z",
+    "contentHash": "29b6eed87e86e6de62c3122719bcb21bda3a8ee426d49aa01b755d2aa0568fe3",
+    "lastHarvestedAt": "2026-11-25T03:13:32.342Z",
     "learningId": "learn-github-meta-folly"
   },
   "kotlin-kmp-production-sample": {
@@ -7753,10 +7753,10 @@
     "repository": "mrkai77/Loop",
     "platform": "github",
     "sourceUrl": "https://github.com/mrkai77/Loop",
-    "sourceVersion": "5cc7551c",
+    "sourceVersion": "ad8564ac",
     "license": "GPL-3.0",
-    "contentHash": "710bf06b77dbefe8c3bb7d636aa533183bc30df880029d9cc9cb8cbdf21ba9f8",
-    "lastHarvestedAt": "2026-11-22T16:48:11.682Z",
+    "contentHash": "22e7845db77118bd3ada678bb2ddd7d72e6c8a7e28b948391e143327d8f7e688",
+    "lastHarvestedAt": "2026-11-25T03:13:34.659Z",
     "learningId": "learn-github-mrkai77-loop"
   },
   "tokio-rs-tokio": {
