@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T11:30:12.596Z",
-  "total_cycles_completed": 12391,
-  "total_learnings_persisted": 12391,
-  "total_rules_promoted": 11393,
+  "last_updated": "2026-11-25T11:42:39.804Z",
+  "total_cycles_completed": 12394,
+  "total_learnings_persisted": 12394,
+  "total_rules_promoted": 11395,
   "history": [
-    {
-      "timestamp": "2026-11-24T22:51:10.060Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T23:04:27.073Z",
-      "repository": "solidjs/solid",
-      "learningId": "learn-github-solidjs-solid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T23:04:37.091Z",
-      "repository": "zilliztech/claude-context",
-      "learningId": "learn-github-zilliztech-claude-context",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-24T23:13:49.525Z",
       "repository": "vitejs/vite",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-25T11:30:12.596Z",
       "repository": "kubeedge/kubeedge",
       "learningId": "learn-github-kubeedge-kubeedge",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T11:42:22.892Z",
+      "repository": "nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B",
+      "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T11:42:38.533Z",
+      "repository": "MariaDB/server",
+      "learningId": "learn-github-mariadb-server",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T11:42:39.804Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

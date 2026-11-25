@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-25T11:30:55.226Z",
+  "last_updated": "2026-11-25T11:42:45.579Z",
   "total_verified_learnings": 9116,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25409,
+  "total_items": 25413,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -230655,8 +230655,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "88b0d49b",
-      "content_hash": "9cac9c74de3c8172b1837b4639cb4038e542a86313a1069571b3037f3d0c3be8",
+      "source_version": "16a373a7",
+      "content_hash": "9e0ba9dccd64be85b5821d0ed51731c6baea7aa20bc3e0e25b51cc3fe6312b94",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -230939,6 +230939,11 @@
           "number": 10461,
           "title": "Draft NUC 144 Nullish Value Assignment",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10515,
+          "title": "Draft NUC 146 Reactive Cubing",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -230946,7 +230951,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T09:08:06.620Z",
+      "verified_at": "2026-11-25T11:42:39.570Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -230988,10 +230993,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "88b0d49b",
-      "content_hash": "97c7e71dc1204f192b13f6fd4f7c5c8d5d4be1bf3b2f4e6d8ab16c4af70141fc",
+      "source_version": "16a373a7",
+      "content_hash": "6c9fbc21784b63a104cc0bc8a6227448c232e4f33ec0d3e6d9208fcc290e1b5a",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T09:08:07.259Z"
+      "persisted_at": "2026-11-25T11:42:40.228Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid",
@@ -231000,10 +231005,10 @@
       "relative_path": "08_VERIFICATION/nucleoidai-nucleoid-verification-protocol-empirical-defect-shield-for-nucleoidai.md",
       "title": "Verification Protocol: Empirical Defect Shield for NucleoidAI/Nucleoid",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "d58e5f56",
-      "content_hash": "a98a309d432380af1e5746ea50100de75207859d3d10b4b9df9f3d5f00eb9b17",
+      "source_version": "16a373a7",
+      "content_hash": "77a87102d2606054c0782692e13241337d7e248bed656dfe2b9d1b38c515ec64",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T08:13:26.423Z"
+      "persisted_at": "2026-11-25T11:42:40.411Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -232131,9 +232136,9 @@
       "title": "Architecture Intelligence: nucleoidai-nucleoid-learnings Core Invariants",
       "repository": "nucleoidai-nucleoid-learnings",
       "source_version": "HEAD",
-      "content_hash": "ea9f6a04026cbe5184f0a9494732def791b695bbdd0c4cfd9f8f97c07dbec0c0",
+      "content_hash": "e3e11cbf3ba2270cafd804e0246e66985c9189e3ba8802bfbfac60265d8ee201",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T08:13:32.350Z"
+      "persisted_at": "2026-11-25T11:42:45.390Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid-learnings",
@@ -232143,9 +232148,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for nucleoidai-nucleoid-learnings",
       "repository": "nucleoidai-nucleoid-learnings",
       "source_version": "HEAD",
-      "content_hash": "1e1a3088336be3cc5e82116b9a88aef26241cb795ac3f6bdec0d0e31ff147985",
+      "content_hash": "4f21787058291c6f8aa32e6272f7034ace5bc1705bf0b0515239fd1a3b5b2eb4",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T08:13:32.608Z"
+      "persisted_at": "2026-11-25T11:42:45.579Z"
     },
     "learn-huggingface-qwen-qwen3-8b": {
       "learning_id": "learn-huggingface-qwen-qwen3-8b",
@@ -238803,7 +238808,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B",
       "source_version": "hf-nvidia-nvidia-nemotron-3.5-transcribe-30b-a4b",
-      "content_hash": "b7fcb1171ef21ea461e60acdb36b11c983a0474c5ac7ae6e97e0c8cd946e4aff",
+      "content_hash": "4975dbe933053bb5dd120542c19172b2daefc96e2d88e6819a3ee9ea0a35b8a8",
       "dossier_path": "07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-3.5-transcribe-30b-a4b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-3.5-transcribe-30b-a4b-learnings.md",
       "promoted_rules": [],
@@ -238812,7 +238817,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T20:10:40.928Z",
+      "verified_at": "2026-11-25T11:42:22.643Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -238829,9 +238834,9 @@
       "title": "Research & Knowledge Intelligence: nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B Core Invariants",
       "repository": "nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B",
       "source_version": "hf-nvidia-nvidia-nemotron-3.5-transcribe-30b-a4b",
-      "content_hash": "2d2105bc685f2cd0d9deb1c4e9b911788e860d80785ce5f5d2c1606eda750551",
+      "content_hash": "54c46c334e24f681ed846b255efc160b775f1dd1e81b577c947036049fb04c8f",
       "domain_letter": "D",
-      "persisted_at": "2026-11-21T20:10:41.466Z"
+      "persisted_at": "2026-11-25T11:42:23.107Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b",
@@ -238841,9 +238846,9 @@
       "title": "Research & Knowledge Intelligence: hf-nvidia-nvidia-nemotron-3.5-transcribe-30b-a4b-learnings Core Invariants",
       "repository": "hf-nvidia-nvidia-nemotron-3.5-transcribe-30b-a4b-learnings",
       "source_version": "HEAD",
-      "content_hash": "be41fc5608697a85a6dde275f29fc526b635f86012ab883d309eb4de1c668036",
+      "content_hash": "a01083506546292e31b250ac06389fc4e95de0a213643f49df75f98e7f153188",
       "domain_letter": "D",
-      "persisted_at": "2026-11-21T20:11:01.102Z"
+      "persisted_at": "2026-11-25T11:42:43.507Z"
     },
     "learn-github-sqldelight-sqldelight": {
       "learning_id": "learn-github-sqldelight-sqldelight",
@@ -258205,8 +258210,8 @@
       "slug": "mariadb-server",
       "platform": "github",
       "source_url": "https://github.com/MariaDB/server",
-      "source_version": "820699c7",
-      "content_hash": "ec7144540a2da3df250fef54bfab9be396d535095bb00af11283e0d98d4b86cb",
+      "source_version": "b800539d",
+      "content_hash": "e0b4f48781507f71520eb71b89e9fa190c8bc422cb21108bd1163cfdd273c18a",
       "dossier_path": "07_PROJECT_LEARNING/mariadb-server-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mariadb-server-learnings.md",
       "promoted_rules": [
@@ -258219,6 +258224,11 @@
           "number": 10304,
           "title": "MDEV-40150 galera tests for close() hang and mdev-36554 race",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10514,
+          "title": "MDEV-42350 fixup: innodb_log_recovery_target blocks writes",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -258226,7 +258236,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T16:36:48.890Z",
+      "verified_at": "2026-11-25T11:42:38.297Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -258268,10 +258278,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-mariadb-server-architecture-intelligence-mariadb-server-core-invariants.md",
       "title": "Architecture Intelligence: MariaDB/server Core Invariants",
       "repository": "MariaDB/server",
-      "source_version": "820699c7",
-      "content_hash": "3338b437fe504d02c6ba665bcba5327346f85cb9c905e83cd4b582175596de87",
+      "source_version": "b800539d",
+      "content_hash": "90ad5ed56a7cdb45ab4ab0a32de31127ccdbf39cae255761c3d3acdde154d462",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T16:36:49.531Z"
+      "persisted_at": "2026-11-25T11:42:38.974Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-mariadb-server": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-mariadb-server",
@@ -258280,10 +258290,10 @@
       "relative_path": "08_VERIFICATION/mariadb-server-verification-protocol-empirical-defect-shield-for-mariadb-server.md",
       "title": "Verification Protocol: Empirical Defect Shield for MariaDB/server",
       "repository": "MariaDB/server",
-      "source_version": "820699c7",
-      "content_hash": "a7d2fefd7bca2b3558ba9968f6cd2edd79bb76f97ff68c5c393d5395313df2d4",
+      "source_version": "b800539d",
+      "content_hash": "c0d47f87f75bff8ba6351b40b0f2f24ab2ecf5a2210870867b02ad88bc1b90b3",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T16:36:49.732Z"
+      "persisted_at": "2026-11-25T11:42:39.164Z"
     },
     "domain_intelligence-technical-construction-intelligence-folkbench-folkbench-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-folkbench-folkbench-learnings-core-invariant",
@@ -258317,9 +258327,9 @@
       "title": "Architecture Intelligence: mariadb-server-learnings Core Invariants",
       "repository": "mariadb-server-learnings",
       "source_version": "HEAD",
-      "content_hash": "df8d74d552c460c3abe3d62b89b1c9188a12b7c4a6583778c07aad81093d63e8",
+      "content_hash": "b1412deffeb5c0b4291bdca5bf8fdabaea12e37cce78c6724a37a6ff9eecdbc5",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T16:36:52.978Z"
+      "persisted_at": "2026-11-25T11:42:44.308Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-mariadb-server-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-mariadb-server-learnings",
@@ -258329,9 +258339,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for mariadb-server-learnings",
       "repository": "mariadb-server-learnings",
       "source_version": "HEAD",
-      "content_hash": "e3c009e9fe2c49226be0c9fe2cc6168525949dd33131bd4aba11e28beddbc3e3",
+      "content_hash": "1e66f03bb6688e9a3b0ca192f2da8da2d9c80c3e50feb1277b3042165c54c063",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T16:36:53.149Z"
+      "persisted_at": "2026-11-25T11:42:44.492Z"
     },
     "rule-8714": {
       "learning_id": "rule-8714",
@@ -347634,6 +347644,58 @@
       "content_hash": "5c70218a7ed4742eb2d3f02c544101820472ee5e4676041dc153940ce214b483",
       "domain_letter": "D",
       "persisted_at": "2026-11-25T11:30:53.954Z"
+    },
+    "rule-10514": {
+      "learning_id": "rule-10514",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10514,
+      "title": "MDEV-42350 fixup: innodb_log_recovery_target blocks writes",
+      "source_url": "https://github.com/MariaDB/server",
+      "source_version": "b800539d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T11:42:38.297Z"
+    },
+    "candidate_directive-mdev-42350-fixup-innodb_log_recovery_target-blocks-writes": {
+      "item_id": "candidate_directive-mdev-42350-fixup-innodb_log_recovery_target-blocks-writes",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-0WPE-mdev-42350-fixup-innodb_log_recovery_target-blocks-writes.md",
+      "title": "MDEV-42350 fixup: innodb_log_recovery_target blocks writes",
+      "repository": "mariadb-server-learnings",
+      "source_version": "HEAD",
+      "content_hash": "68237c2ba737a097675853f68eb7e2a65c6860c15dc388acba9d596eb62106b8",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-25T11:42:44.114Z"
+    },
+    "rule-10515": {
+      "learning_id": "rule-10515",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10515,
+      "title": "Draft NUC 146 Reactive Cubing",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "16a373a7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T11:42:39.570Z"
+    },
+    "candidate_directive-draft-nuc-146-reactive-cubing": {
+      "item_id": "candidate_directive-draft-nuc-146-reactive-cubing",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-0XJT-draft-nuc-146-reactive-cubing.md",
+      "title": "Draft NUC 146 Reactive Cubing",
+      "repository": "nucleoidai-nucleoid-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a1bd699876786938940c542582202f26c7cf982934ca9362015d147aed1aae03",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-25T11:42:45.213Z"
     }
   },
   "ai-builder-brain": {

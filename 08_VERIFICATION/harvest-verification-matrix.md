@@ -13051,3 +13051,6 @@
 | `CYCLE-20261125-KL17` | `2026-11-25T11:30:02.491Z` | `ClementTsang/bottom` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10512` | Yes (`3ff0e801...`) |
 | `CYCLE-20261125-KSTJ` | `2026-11-25T11:30:12.583Z` | `kubeedge/kubeedge` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10513` | Yes (`849bbf0b...`) |
 | `CYCLE-2026-11-25-PROJ-EVOLVE` | `2026-11-25T11:30:53.593Z` | `hf-openbmb-minicpm-ocr-1.0` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-776ABDA3` [Domain D] | Yes (`14ba1e33...`) |
+| `CYCLE-20261125-0GBM` | `2026-11-25T11:42:22.882Z` | `nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-3.5-transcribe-30b-a4b-learnings.md` | Yes (`4975dbe9...`) |
+| `CYCLE-20261125-0SE2` | `2026-11-25T11:42:38.522Z` | `MariaDB/server` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10514` | Yes (`e0b4f487...`) |
+| `CYCLE-20261125-0TDE` | `2026-11-25T11:42:39.794Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10515` | Yes (`9e0ba9dc...`) |

@@ -13084,3 +13084,6 @@ Every entry in this ledger must capture:
 | `learn-github-clementtsang-bottom` | `https://github.com/ClementTsang/bottom` | `f992f56d` | Multi-dimensional audit evidence | 2026-11-25T11:30:02.499Z |
 | `learn-github-kubeedge-kubeedge` | `https://github.com/kubeedge/kubeedge` | `8a61b67f` | Multi-dimensional audit evidence | 2026-11-25T11:30:12.589Z |
 | `learn-dom-d-776abda3` | `project://hf-openbmb-minicpm-ocr-1.0` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-openbmb-minicpm-ocr-1.0-learnings.md` | 2026-11-25T11:30:53.593Z |
+| `learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b` | `https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-11-25T11:42:22.886Z |
+| `learn-github-mariadb-server` | `https://github.com/MariaDB/server` | `b800539d` | Multi-dimensional audit evidence | 2026-11-25T11:42:38.527Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `16a373a7` | Multi-dimensional audit evidence | 2026-11-25T11:42:39.799Z |

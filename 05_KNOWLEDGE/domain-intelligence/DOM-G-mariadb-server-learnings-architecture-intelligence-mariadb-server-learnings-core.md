@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T16:36:52.664Z",
+  "timestamp": "2026-11-25T11:42:43.980Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-mariadb-server-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [mariadb-server-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T16:36:52.664Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T11:42:43.980Z`  
 > **Learning ID**: `LEARN-EVO-mariadb-server-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), I (Content & Information Intelligence), H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 64%
+- **Secondary Corroborating Domains**: I (Content & Information Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), L (Deployment & Operations Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 69%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from mariadb-server-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/mariadb-server-learnings.md`  
 > **Source**: github ([https://github.com/MariaDB/server](https://github.com/MariaDB/server))  
-> **Source Version**: `820699c7`  
+> **Source Version**: `b800539d`  
 > **License**: GPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T16:36:48.007Z  
+> **Timestamp**: 2026-11-25T11:42:37.393Z  
 > **Learning ID**: `learn-github-mariadb-server`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mariadb-server-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/MariaDB/server](https://github.com/MariaDB/server))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T16:36:47.890Z  
+> **Harvest Timestamp**: 2026-11-25T11:42:37.388Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: MariaDB server is a community developed fork of MySQL server. Started by core members of the original MySQL team, MariaDB actively works with outside developers to deliver the most featureful, stable, and sanely licensed open SQL server in the industry.
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 8651 stars
+- **Stars / Engagement**: 8655 stars
 
 ---
 
@@ -1642,11 +1642,13 @@ C_MODE_END
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #6209** (2026-11-24): **MDEV-42383 sporadic hangs with galera_sr.mysql-wsrep#215 test**
-  *Symptoms*: The test pauses the only node_1 applier at sync.wsrep_apply_cb while it applies the node_2 writeset, and expects the conflicting node_1 fragment to fail certification. At the same time, Galera delivers a COMMIT_CUT action after about every 128 committed transactions. It has only a local seqno and must pass the local monitor by an applier. When it was delivered between the node_2 writeset and the node_1 fragment, the paused applier could not process it, and the fragment waited in the local monitor until wait_condition timed out.  Configuring two applier threads for node_1 fixes this deadlock, the second applier processes the COMMIT_CUT while the first one is paused.
+- **Issue #6221** (2026-11-25): **MDEV-42420 Use two applier threads in tests that pause the applier**
+  *Symptoms*: Galera periodically delivers a COMMIT_CUT action. It has only a local seqno and must pass the local monitor in an applier thread. Tests that paused the only applier of a node, and then waited for a local transaction on that node to certify or reach a later sync point, could hang until timeout when a COMMIT_CUT was ordered before the local transaction. These hangs are sporadic because a COMMIT_CUT comes only about every 128 transactions.  Fix the affected tests in the same way as galera_sr.mysql-wsrep#215: set wsrep_slave_threads = 2 on the paused node for the duration of the test, so the second applier can process the COMMIT_CUT. At the end, restore the original value and run a DDL from the other node. The extra applier exits only after it applies a writeset, and that DDL brings the applier count back down before the next test.  Fixed tests:   galera.MDEV-29512   galera.galera_MDEV-29512   galera.MW-292   galera.galera_as_slave_replay   galera.galera_ddl_fk_conflict   galera.galera_insert_bulk   galera.galera_savepoint_replay   galera.galera_sequences_bf_kill   galera.galera_sequences_bf_kill_sr   galera.galera_slave_replay   galera.galera_sp_bf_abort   galera.galera_transaction_replay   galera.mysql-wsrep-bugs-607   galera_sr.MDEV-25717   galera_sr.galera_sr_bf_abort  In galera.MW-292, also replace the 3 second sleep and the TIMEDIFF(SYSDATE(), NOW()) < 2 check with two consecutive NOW(6) reads. A stuck timestamp returns the same value in both, so the test no longer needs to
 
-- **Issue #6197** (2026-11-23): **MDEV-31956 SSD based InnoDB buffer pool extension**
-  *Symptoms*: The initial commit was reviewed as PR #4510 - but in this PR it's ported to main. Subsequent commits: - fix some problems with the original commit - introduce variable to control admission rate in place of the fixed 50%.
+- **Issue #6219** (2026-11-25): **MDEV-42354 SET GLOBAL innodb_log_file_size=OFF may break recovery**
+  *Symptoms*: `log_t::set_archive()`: Enforce the strictest `checkpoint_age_max()` limit before switching to `innodb_log_archive=OFF`.  Assisted-by: Claude:claude-opus-5-5
+  **Post-Mortem & Fix Analysis**:
+  > [![CLA assistant check](https://cla-assistant.io/pull/badge/not_signed)](https://cla-assistant.io/MariaDB/server?pullRequest=6219) <br/>Thank you for your submission! We really appreciate it. Like many open source projects, we ask that you sign our [Contributor License Agreement](https://cla-assistant.io/MariaDB/server?pullRequest=6219) before we can accept your contribution.<br/><sub>You have signed the CLA already but the status is still pending? Let us [recheck](https://cla-assistant.io/check/MariaDB/server?pullRequest=6219) it.</sub>
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1663,435 +1665,30 @@ C_MODE_END
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `288c4dc9` (2026-11-15)
-**Commit Message**: MDEV-40150 galera tests for close() hang and mdev-36554 race
+### Incident Patch 1: `0676a13d` (2026-11-24)
+**Commit Message**: MDEV-42350 fixup: innodb_log_recovery_target blocks writes
 
-galera.mdev-36554: node_2's DELETE FROM t1 could race node_1's
-replicating CREATE TABLE/INSERT and fail with ER_NO_SUCH_TABLE. Wait
-for the row to arrive first. Require galera >= 26.4.30, which carries
-the close()-vs-shift_to_CLOSED fix needed to run the rest of this test
-safely.
-
-galera.MDEV-40150: if the last receiver thread exits on an
-inconsistency error while close() has already set closing_, the
-provider never reaches CLOSED and close() waits forever. The test makes
-the receiver exit with the inconsistency error, holds it before the
-closing_ check, runs close() and then releases the receiver.
-
-galera.MDEV-40150_vote: an applier waits for the result of an
-inconsistency vote while the GCS receive thread exits on a core error.
-Galera now wakes the voter, so the applier finds the vote failed and
-the node leaves the cluster.
-
-The two new tests need the debug points from Galera 26.4.30 or later
-(MGL-359).
-
-Assisted-by: Claude:claude-4.6-sonnet
-
-**File**: `mysql-test/suite/galera/r/MDEV-40150.result` (added, +26/-0)
+**File**: `storage/innobase/log/log0recv.cc` (modified, +2/-1)
 ```diff
-@@ -0,0 +1,26 @@
-+connection node_2;
-+connection node_1;
-+# Correct Galera library found
-+CALL mtr.add_suppression("Inconsistency detected");
-+connection node_1;
-+CREATE TABLE t1 (f1 INTEGER);
-+connection node_2;
-+SET GLOBAL wsrep_provider_options = 'dbug=d,async_recv_force_inconsistency,async_recv_exit_before_closing_check';
-+connection node_1;
-+INSERT INTO t1 VALUES (1);
-+connection node_2;
-+SET SESSION wsrep_on = OFF;
-+connect node_2a, 127.0.0.1, root, , test, $NODE_MYPORT_2;
-+connection node_2a;
-+SET SESSION wsrep_on = OFF;
-+SET GLOBAL wsrep_cluster_address = '';
-+connection node_2;
-+SET GLOBAL wsrep_provider_options = 'signal=async_recv_exit_before_closing_check';
-+SET GLOBAL wsrep_provider_options = 'dbug=';
-+connection node_2a;
-+disconnect node_2a;
-+connection node_2;
-+SET SESSION wsrep_on = OFF;
-+connection node_1;
-+SET wsrep_sync_wait = 0;
-+DROP TABLE t1;
-```
-
-**File**: `mysql-test/suite/galera/r/MDEV-40150_vote.result` (added, +25/-0)
-```diff
-@@ -0,0 +1,25 @@
-+connection node_2;
-+connection node_1;
-+# Correct Galera library found
-+CALL mtr.add_suppression("Event .* Update_rows.* apply failed");
-+CALL mtr.add_suppression("mariadbd: Can't find record in 't1'");
-+CALL mtr.add_suppression("Failed to apply write set.*");
-+CALL mtr.add_suppression("Inconsistency detected");
-+CALL mtr.add_suppression("Calling destroy\\(\\) before close");
-+CALL mtr.add_suppression("GCS core destructor failed");
-+connection node_1;
-+CREATE TABLE t1 (f1 INTEGER);
-+INSERT INTO t1 VALUES (1);
-+connection node_2;
-+SET SESSION wsrep_on = OFF;
-+DELETE FROM t1;
-+SET SESSION wsrep_on = ON;
-+SET GLOBAL wsrep_applier_retry_count = 1;
-+SET GLOBAL wsrep_provider_options = 'dbug=d,gcs_recv_exit_on_vote_wait';
-+connection node_1;
-+UPDATE t1 SET f1 = f1 + 1;
-+connection node_2;
-+SET SESSION wsrep_on = OFF;
-+connection node_1;
-+SET wsrep_sync_wait = 0;
-+DROP TABLE t1;
-```
-
-**File**: `mysql-test/suite/galera/r/mdev-36554.result` (modified, +1/-0)
-```diff
-@@ -1,5 +1,6 @@
- connection node_2;
- connection node_1;
-+# Correct Galera library found
- CALL mtr.add_suppression("Event .* Update_rows.* apply failed");
- CALL mtr.add_suppression("mariadbd: Can't find record in 't1'");
- CALL mtr.add_suppression("Failed to apply write set.*");
-```
-
-**File**: `mysql-test/suite/galera/t/MDEV-40150.test` (added, +75/-0)
-```diff
-@@ -0,0 +1,75 @@
-+#
-+# MDEV-40150: close() hangs in wait_for_CLOSED() when the last receiver
-+# thread exits on an inconsistency error while close() is already running.
-+#
-+# The Galera dbug point async_recv_force_inconsistency makes the only
-+# receiver thread on node_2 exit with the inconsistency error, the same exit
-+# the provider takes on GCS_ACT_INCONSISTENCY. The sync point
-+# async_recv_exit_before_closing_check holds the receiver just before it
-+# checks closing_. A concurrent close() sets closing_ and waits for S_CLOSED.
-+# The receiver must then move the provider to S_CLOSED itself, else close()
-+# never returns.
-+#
-+
-+--source include/galera_cluster.inc
-+--source include/have_innodb.inc
-+--source include/have_debug_sync.inc
-+--source include/galera_have_debug_sync.inc
-+
-+# Make sure that the test is operating on the right version of galera library.
-+--let $galera_version=26.4.30
-+source ../wsrep/include/check_galera_version.inc;
-+
-+CALL mtr.add_suppression("Inconsistency detected");
-+
-+--connection node_1
-+CREATE TABLE t1 (f1 INTEGER);
-+
-+--connection node_2
-+--let $wait_condition = SELECT COUNT(*) = 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 't1'
-+--source include/wait_condition.inc
-+
-+# The next action received by node_2 makes its receiver exit on inconsistency.
-+--let $galera_sync_point = async_recv_force_inconsistency,async_recv_exit_before_closing_check
-+--source include/galera_set_sync_point.inc
-+
-+--connection node_1
-+INSERT INTO t1 VALUES (1);
-+
-+--connection node_2
-+SET SESSION wsrep_on = OFF;
-+--let $wait_condition = SELECT VARIABLE_VALUE = 'async_recv_exit_before_closing_check' FROM INFORMATION_SCHEMA.GLOBAL_STATUS WHERE VARIABLE_NAME = 'wsrep_debug_sync_waiters'
-+--source include/wait_condition.inc
-+
-+# Start close() while the receiver is held. It sets closing_ and waits.
-+--connect node_2a, 127.0.0.1, root, , test, $NODE_MYPORT_2
-+--connection node_2a
-+SET SESSION wsrep_on = OFF;
-+--send SET GLOBAL wsrep_cluster_address = ''
-+
-+--connection node_2
-+--let $wait_condition = SELECT COUNT(*) = 1 FROM INFORMATION_SCHEMA.PROCESSLIST WHERE INFO LIKE 'SET GLOBAL wsrep_cluster_address%'
-+--source include/wait_condition.inc
-+--sleep 2
-+--let $galera_sync_point = async_recv_exit_before_closing_check
-+--source include/galera_signal_sync_point.inc
-+--source include/galera_clear_sync_point.inc
-+
-+# close() must return. Without the fix this hangs.
-+--connection node_2a
-+--reap
-+--disconnect node_2a
-+
-+# Restart node_2 and clean up.
-+--connection node_2
-+SET SESSION wsrep_on = OFF;
-+--source include/shutdown_mysqld.inc
-+--source include/wait_until_disconnected.inc
-+--remove_file $MYSQLTEST_VARDIR/mysqld.2/data/grastate.dat
-+--source include/start_mysqld.inc
-+
-+--connection node_1
-+SET wsrep_sync_wait = 0;
-+--let $wait_condition = SELECT VARIABLE_VALUE = 2 FROM information_schema.global_status WHERE VARIABLE_NAME = 'wsrep_cluster_size'
-+--source include/wait_condition.inc
-+DROP TABLE t1;
-```
-
-**File**: `mysql-test/suite/galera/t/MDEV-40150_vote.test` (added, +67/-0)
-```diff
-@@ -0,0 +1,67 @@
-+#
-+# MDEV-40150: a receiver thread waits in gcs_vote() for the result of the
-+# inconsistency vote, but the GCS receive thread exits without a self-leave.
-+# Nothing wakes the voter, so the applier and close() hang.
-+#
-+# The Galera dbug point gcs_recv_exit_on_vote_wait makes the GCS receive
-+# thread on node_2 exit the way a core error does, as soon as a message
-+# arrives while an applier waits for the vote result. The waiting applier
-+# must be woken and the node must leave the cluster.
-+#
-+
-+--source include/galera_cluster.inc
-+--source include/have_innodb.inc
-+--source include/have_debug_sync.inc
-+--source include/galera_have_debug_sync.inc
-+
-+# Make sure that the test is operating on the right version of galera library.
-+--let $galera_version=26.4.30
-+source ../wsrep/include/check_galera_version.inc;
-+
-+CALL mtr.add_suppression("Event .* Update_rows.* apply failed");
-+CALL mtr.add_suppression("mariadbd: Can't find record in 't1'");
-+CALL mtr.add_suppression("Failed to apply write set.*");
-+CALL mtr.add_suppression("Inconsistency detected");
-+# The injected exit leaves the GCS core open until the provider is destroyed.
-+CALL mtr.add_suppression("Calling destroy\\(\\) before close");
-+CALL mtr.add_suppression("GCS core destructor failed");
-+
-+--connection node_1
-+CREATE TABLE t1 (f1 INTEGER);
-+INSERT INTO t1 VALUES (1);
-+
-+--connection node_2
-+--let $wait_condition = SELECT COUNT(*) = 1 FROM t1
-+--source include/wait_condition.inc
-+
-+# Make the next UPDATE fail on node_2 so that its applier starts a vote.
-+SET SESSION wsrep_on = OFF;
-+DELETE FROM t1;
-+SET SESSION wsrep_on = ON;
-+SET GLOBAL wsrep_applier_retry_count = 1;
-+
-+--let $galera_sync_point = gcs_recv_exit_on_vote_wait
-+--source include/galera_set_sync_point.inc
-+
-+--connection node_1
-+UPDATE t1 SET f1 = f1 + 1;
-+
-+# The applier must be woken, find the vote failed and leave the cluster.
-+# Without the fix the applier waits for the vote forever and wsrep_ready
-+# stays ON.
-+--connection node_2
-+SET SESSION wsrep_on = OFF;
-+--let $wait_condition = SELECT VARIABLE_VALUE = 'OFF' FROM INFORMATION_SCHEMA.GLOBAL_STATUS WHERE VARIABLE_NAME = 'wsrep_ready'
-+--source include/wait_condition.inc
-+
-+# Restart node_2.
-+--source include/shutdown_mysqld.inc
-+--source include/wait_until_disconnected.inc
-+--remove_file $MYSQLTEST_VARDIR/mysqld.2/data/grastate.dat
-+--source include/start_mysqld.inc
-+
-+--connection node_1
-+SET wsrep_sync_wait = 0;
-+--let $wait_condition = SELECT VARIABLE_VALUE = 2 FROM information_schema.global_status WHERE VARIABLE_NAME = 'wsrep_cluster_size'
-+--source include/wait_condition.inc
-+DROP TABLE t1;
-```
-
-**File**: `mysql-test/suite/galera/t/mdev-36554.test` (modified, +8/-0)
-```diff
-@@ -4,6 +4,10 @@
- 
- --source include/galera_cluster.inc
- 
-+# Make sure that the test is operating on the right version of galera library.
-+--let $galera_version=26.4.30
-+source ../wsrep/include/check_galera_version.inc;
-+
- CALL mtr.add_suppression("Event .* Update_rows.* apply failed");
- CALL mtr.add_suppression("mariadbd: Can't find record in 't1'");
- CALL mtr.add_suppression("Failed to apply write set.*");
-@@ -14,6 +18,10 @@ CREATE TABLE t1 (f1 INTEGER);
- INSERT INTO t1 VALUES (1);
- 
- --connection node_2
-+# Wait for node_1's CREATE TABLE/INSERT to replicate here first (MDEV-40150),
-+# else this DELETE can race it and fail with ER_NO_SUCH_TABLE.
-+--let $wait_condition = SELECT COUNT(*) = 1 FROM t1
-+--source include/wait_condition.inc
- SET SESSION wsrep_on = OFF;
- DELETE FROM t1;
- SET SESSION wsrep_on = ON;
-```
-
----
-
-### Incident Patch 2: `42ebd088` (2026-11-16)
-**Commit Message**: MDEV-42284 fix galera_sr.mysql-wsrep#215 ER_LOCK_WAIT_TIMEOUT
-
-Node_1's own causality wait (wsrep_sync_wait, on by default) blocked
-its plain SELECT on t1 while the test held node_1's applier paused at
-the sync.wsrep_apply_cb debug sync point, so the SELECT could not
-reach the GTID the paused applier had not yet reached and timed out
-with ER_LOCK_WAIT_TIMEOUT instead of returning.
-
-Set wsrep_sync_wait = 0 on node_1 for that SELECT and the INSERT that
-follows it, saved and restored around each of the test's three blocks.
-
-**File**: `mysql-test/suite/galera_sr/r/mysql-wsrep#215.result` (modified, +9/-0)
-```diff
-@@ -21,6 +21,8 @@ SELECT COUNT(*) = 0 FROM t1;
- COUNT(*) = 0
- 1
- connection node_1;
-+SET @saved_wsrep_sync_wait = @@SESSION.wsrep_sync_wait;
-+SET SESSION wsrep_sync_wait = 0;
- SELECT COUNT(*) = 0 FROM t1;
- COUNT(*) = 0
- 1
-@@ -31,6 +33,7 @@ SET GLOBAL DEBUG_DBUG = '';
- SET DEBUG_SYNC='now SIGNAL signal.wsrep_apply_cb';
- connection node_1;
- ERROR 40001: Deadlock found when trying to get lock; try restarting transaction
-+SET SESSION wsrep_sync_wait = @saved_wsrep_sync_wait;
- COMMIT;
- SELECT COUNT(*) = 1 FROM t1;
- COUNT(*) = 1
-@@ -67,6 +70,8 @@ SELECT COUNT(*) = 0 FROM t1;
- COUNT(*) = 0
- 1
- connection node_1;
-+SET @saved_wsrep_sync_wait = @@SESSION.wsrep_sync_wait;
-+SET SESSION wsrep_sync_wait = 0;
- SELECT COUNT(*) = 0 FROM t1;
- COUNT(*) = 0
- 1
-@@ -76,6 +81,7 @@ SET GLOBAL DEBUG_DBUG = '';
- SET DEBUG_SYNC='now SIGNAL signal.wsrep_apply_cb';
- connection node_1;
- ERROR 40001: Deadlock found when trying to get lock; try restarting transaction
-+SET SESSION wsrep_sync_wait = @saved_wsrep_sync_wait;
- ROLLBACK;
- SELECT * FROM t1;
- f1
-@@ -112,13 +118,16 @@ SELECT COUNT(*) = 0 FROM t1;
- COUNT(*) = 0
- 1
- connection node_1;
-+SET @saved_wsrep_sync_wait = @@SESSION.wsrep_sync_wait;
-+SET SESSION wsrep_sync_wait = 0;
- INSERT INTO t1 VALUES (1);
- INSERT INTO t1 VALUES (2);
- connection node_1a;
- SET GLOBAL DEBUG_DBUG = '';
- SET DEBUG_SYNC='now SIGNAL signal.wsrep_apply_cb';
- connection node_1;
- ERROR 40001: Deadlock found when trying to get lock; try restarting transaction
-+SET SESSION wsrep_sync_wait = @saved_wsrep_sync_wait;
- COMMIT;
- SELECT COUNT(*) = 0 FROM mysql.wsrep_streaming_log;
- COUNT(*) = 0
-```
-
-**File**: `mysql-test/suite/galera_sr/t/mysql-wsrep#215.test` (modified, +9/-0)
-```diff
-@@ -35,6 +35,8 @@ SET SESSION debug_sync = "now WAIT_FOR sync.wsrep_apply_cb_reached";
- SELECT COUNT(*) = 0 FROM t1;
- 
- --connection node_1
-+SET @saved_wsrep_sync_wait = @@SESSION.wsrep_sync_wait;
-+SET SESSION wsrep_sync_wait = 0;
- SELECT COUNT(*) = 0 FROM t1;
- --send INSERT INTO t1 VALUES (1);
- 
-@@ -50,6 +52,7 @@ SET DEBUG_SYNC='now SIGNAL signal.wsrep_apply_cb';
- --connection node_1
- --error ER_LOCK_DEADLOCK
- --reap
-+SET SESSION wsrep_sync_wait = @saved_wsrep_sync_wait;
- 
- COMMIT;
- 
-@@ -89,6 +92,8 @@ SET SESSION debug_sync = "now WAIT_FOR sync.wsrep_apply_cb_reached";
- SELECT COUNT(*) = 0 FROM t1;
- 
- --connection node_1
-+SET @saved_wsrep_sync_wait = @@SESSION.wsrep_sync_wait;
-+SET SESSION wsrep_sync_wait = 0;
- SELECT COUNT(*) = 0 FROM t1;
- --send INSERT INTO t1 VALUES (1)
- 
-@@ -103,6 +108,7 @@ SET DEBUG_SYNC='now SIGNAL signal.wsrep_apply_cb';
- --connection node_1
- --error ER_LOCK_DEADLOCK
- --reap
-+SET SESSION wsrep_sync_wait = @saved_wsrep_sync_wait;
- ROLLBACK;
- 
- SELECT * FROM t1;
-@@ -146,6 +152,8 @@ SET SESSION debug_sync = "now WAIT_FOR sync.wsrep_apply_cb_reached";
- SELECT COUNT(*) = 0 FROM t1;
- 
- --connection node_1
-+SET @saved_wsrep_sync_wait = @@SESSION.wsrep_sync_wait;
-+SET SESSION wsrep_sync_wait = 0;
- INSERT INTO t1 VALUES (1);
- --send INSERT INTO t1 VALUES (2)
- 
-@@ -160,6 +168,7 @@ SET DEBUG_SYNC='now SIGNAL signal.wsrep_apply_cb';
- --connection node_1
- --error ER_LOCK_DEADLOCK
- --reap
-+SET SESSION wsrep_sync_wait = @saved_wsrep_sync_wait;
- COMMIT;
- 
- SELECT COUNT(*) = 0 FROM mysql.wsrep_streaming_log;
-```
-
----
-
-### Incident Patch 3: `26aca20c` (2026-11-18)
-**Commit Message**: MDEV-42237: Fix integer overflow of relay log position
-
-The off_t type is 32-bit signed on Windows, casting the relay log position
-to off_t will overflow when >= 2**31.
-
-Signed-off-by: Kristian Nielsen <[REDACTED_EMAIL]>
-
-**File**: `sql/rpl_rli.cc` (modified, +1/-1)
-```diff
-@@ -749,7 +749,7 @@ int init_relay_log_pos(Relay_log_info* rli,const char* log,
-       */
-       rli->calc_master_bug_bitmask(fdev);
-     }
--    my_b_seek(rli->cur_log,(off_t)pos);
-+    my_b_seek(rli->cur_log,(my_off_t)pos);
-     DBUG_PRINT("info", ("my_b_tell(rli->cur_log)=%llu rli->event_relay_log_pos=%llu",
-                         my_b_tell(rli->cur_log), rli->event_relay_log_pos));
- 
+@@ -6102,7 +6102,8 @@ dberr_t recv_recovery_from_checkpoint_start()
+ 			ut_ad(!log_sys.archive
+ 			      || log_sys.next_checkpoint_no
+ 			      >= uint16_t(4 * log_sys.is_encrypted()));
+-			if (log_sys.archive && log_sys.is_encrypted()
++			if (!recv_sys.rpo
++			    && log_sys.archive && log_sys.is_encrypted()
+ 			    && log_sys.next_checkpoint_no
+ 			    <= uint16_t(4 * log_sys.is_encrypted())) {
+ 				ut_ad(log_sys.next_checkpoint_no == 4);
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6221** (2026-11-25): MDEV-42420 Use two applier threads in tests that pause the applier (@sjaakola)
+- **PR #6219** (2026-11-25): MDEV-42354 SET GLOBAL innodb_log_file_size=OFF may break recovery (@dr-m)
 - **PR #6209** (2026-11-24): MDEV-42383 sporadic hangs with galera_sr.mysql-wsrep#215 test (@sjaakola)
 - **PR #6197** (closed): MDEV-31956 SSD based InnoDB buffer pool extension (@mariadb-andrzejjarzabek)
 - **PR #6196** (2026-11-24): MDEV-42367 : Galera test failure on galera_as_slave_wsrep_error (@janlindstrom)
 - **PR #6188** (2026-11-23): MDEV-42350 innodb_log_archive=ON recovery fails at the end of the log file (@dr-m)
-- **PR #6183** (2026-11-24): MDEV-25848 MVI non-optimizer fixes (@mariadb-YuchenPei)
-- **PR #6159** (closed): MDEV-TBD3 Let SQL extension plugins keep data on the connection (@mariadb-ReneRamirez)
 
 ---
 
@@ -2111,56 +1708,32 @@ Signed-off-by: Kristian Nielsen <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. MDEV-40150 galera tests for close() hang and mdev-36554 race
+## X. MDEV-42350 fixup: innodb_log_recovery_target blocks writes
 
 **RULE**:
-When implementing operations in `mysql-test/suite/galera/r/MDEV-40150.result`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MariaDB/server. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `storage/innobase/log/log0recv.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MariaDB/server. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `288c4dc9`: MDEV-40150 galera tests for close() hang and mdev-36554 race. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0676a13d`: MDEV-42350 fixup: innodb_log_recovery_target blocks writes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `mysql-test/suite/galera/r/MDEV-40150.result`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `storage/innobase/log/log0recv.cc`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-connection node_2;
-connection node_1;
-# Correct Galera library found
-CALL mtr.add_suppression("Inconsistency detected");
-connection node_1;
-CREATE TABLE t1 (f1 INTEGER);
-connection node_2;
-SET GLOBAL wsrep_provider_options = 'dbug=d,async_recv_force_inconsistency,async_recv_exit_before_closing_check';
-connection node_1;
-INSERT INTO t1 VALUES (1);
-connection node_2;
-SET SESSION wsrep_on = OFF;
-connect node_2a, 127.0.0.1, root, , test, $NODE_MYPORT_2;
-connection node_2a;
-SET SESSION wsrep_on = OFF;
-SET GLOBAL wsrep_cluster_address = '';
-connection node_2;
-SET GLOBAL wsrep_provider_options = 'signal=async_recv_exit_before_closing_check';
-SET GLOBAL wsrep_provider_options = 'dbug=';
-connection node_2a;
-disconnect node_2a;
-connection node_2;
-SET SESSION wsrep_on = OFF;
-connection node_1;
-SET wsrep_sync_wait = 0;
-DROP TABLE t1;
+			if (!recv_sys.rpo
+			    && log_sys.archive && log_sys.is_encrypted()
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+			if (log_sys.archive && log_sys.is_encrypted()
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `288c4dc9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0676a13d` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

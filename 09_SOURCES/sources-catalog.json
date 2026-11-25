@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "88b0d49b",
+    "sourceVersion": "16a373a7",
     "license": "Apache-2.0",
-    "contentHash": "9cac9c74de3c8172b1837b4639cb4038e542a86313a1069571b3037f3d0c3be8",
-    "lastHarvestedAt": "2026-11-25T09:08:06.895Z",
+    "contentHash": "9e0ba9dccd64be85b5821d0ed51731c6baea7aa20bc3e0e25b51cc3fe6312b94",
+    "lastHarvestedAt": "2026-11-25T11:42:39.799Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -5823,10 +5823,10 @@
     "repository": "MariaDB/server",
     "platform": "github",
     "sourceUrl": "https://github.com/MariaDB/server",
-    "sourceVersion": "820699c7",
+    "sourceVersion": "b800539d",
     "license": "GPL-2.0",
-    "contentHash": "ec7144540a2da3df250fef54bfab9be396d535095bb00af11283e0d98d4b86cb",
-    "lastHarvestedAt": "2026-11-24T16:36:49.113Z",
+    "contentHash": "e0b4f48781507f71520eb71b89e9fa190c8bc422cb21108bd1163cfdd273c18a",
+    "lastHarvestedAt": "2026-11-25T11:42:38.527Z",
     "learningId": "learn-github-mariadb-server"
   },
   "ng-zorro-ng-zorro-antd": {
@@ -11425,8 +11425,8 @@
     "sourceUrl": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B",
     "sourceVersion": "hf-nvidia-nvidia-nemotron-3.5-transcribe-30b-a4b",
     "license": "Open-Source",
-    "contentHash": "b7fcb1171ef21ea461e60acdb36b11c983a0474c5ac7ae6e97e0c8cd946e4aff",
-    "lastHarvestedAt": "2026-11-21T20:10:41.203Z",
+    "contentHash": "4975dbe933053bb5dd120542c19172b2daefc96e2d88e6819a3ee9ea0a35b8a8",
+    "lastHarvestedAt": "2026-11-25T11:42:22.886Z",
     "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b"
   },
   "hf-liquidai-lfm3-omni-2b": {

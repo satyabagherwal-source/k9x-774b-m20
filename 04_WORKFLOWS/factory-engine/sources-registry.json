@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-25T11:30:16.255Z",
-    "lastVerified": "2026-11-25T11:30:16.255Z",
+    "lastChecked": "2026-11-25T11:42:43.102Z",
+    "lastVerified": "2026-11-25T11:42:43.102Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -375,22 +375,21 @@
     "lastVerified": "2026-11-24T19:27:45.062Z"
   },
   "nucleoidai-nucleoid": {
-    "name": "Nucleoid",
+    "name": "NucleoidAI/Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-25T10:57:50.577Z",
-    "lastVerified": "2026-11-25T10:57:50.577Z",
+    "lastChecked": "2026-11-25T11:42:38.572Z",
+    "lastVerified": "2026-11-25T11:42:38.572Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "9cac9c74de3c8172b1837b4639cb4038e542a86313a1069571b3037f3d0c3be8",
-    "promotedRulesCount": 0,
+    "contentHash": "9e0ba9dccd64be85b5821d0ed51731c6baea7aa20bc3e0e25b51cc3fe6312b94",
+    "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "88b0d49b"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1065,9 +1064,9 @@
   "mimblewimble-grin": {
     "name": "grin",
     "officialUrl": "https://github.com/mimblewimble/grin",
-    "lastChecked": "2026-11-25T06:31:03.646Z",
+    "lastChecked": "2026-11-25T11:42:29.685Z",
     "revisionIdentifier": "dbaff34f",
-    "lastVerified": "2026-11-25T06:31:03.646Z"
+    "lastVerified": "2026-11-25T11:42:29.685Z"
   },
   "chroma-core-chroma": {
     "name": "chroma",
@@ -2460,9 +2459,9 @@
   "alexellis-k3sup": {
     "name": "k3sup",
     "officialUrl": "https://github.com/alexellis/k3sup",
-    "lastChecked": "2026-11-24T17:42:37.834Z",
+    "lastChecked": "2026-11-25T11:42:27.169Z",
     "revisionIdentifier": "07ee3911",
-    "lastVerified": "2026-11-24T17:42:37.834Z"
+    "lastVerified": "2026-11-25T11:42:27.169Z"
   },
   "volcengine-minecontext": {
     "name": "MineContext",
@@ -3318,9 +3317,9 @@
   "orf-gping": {
     "name": "gping",
     "officialUrl": "https://github.com/orf/gping",
-    "lastChecked": "2026-11-24T10:13:06.914Z",
+    "lastChecked": "2026-11-25T11:42:19.674Z",
     "revisionIdentifier": "fad1ee3c",
-    "lastVerified": "2026-11-24T10:13:06.914Z"
+    "lastVerified": "2026-11-25T11:42:19.674Z"
   },
   "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf": {
     "name": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
@@ -6852,14 +6851,14 @@
     "officialUrl": "https://github.com/MariaDB/server",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-11-24T16:36:47.890Z",
-    "lastVerified": "2026-11-24T16:36:47.890Z",
+    "lastChecked": "2026-11-25T11:42:37.388Z",
+    "lastVerified": "2026-11-25T11:42:37.388Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mariadb-server",
-    "contentHash": "ec7144540a2da3df250fef54bfab9be396d535095bb00af11283e0d98d4b86cb",
+    "contentHash": "e0b4f48781507f71520eb71b89e9fa190c8bc422cb21108bd1163cfdd273c18a",
     "promotedRulesCount": 1,
-    "recentFixesCount": 8,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -9822,9 +9821,9 @@
   "swiftwebui-swiftwebui": {
     "name": "SwiftWebUI",
     "officialUrl": "https://github.com/SwiftWebUI/SwiftWebUI",
-    "lastChecked": "2026-11-23T00:48:21.641Z",
+    "lastChecked": "2026-11-25T11:42:24.801Z",
     "revisionIdentifier": "b0b6be06",
-    "lastVerified": "2026-11-23T00:48:21.641Z"
+    "lastVerified": "2026-11-25T11:42:24.801Z"
   },
   "stangirard-seo-audits-toolkit": {
     "name": "seo-audits-toolkit",
@@ -13343,12 +13342,12 @@
     "officialUrl": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-21T20:10:40.316Z",
-    "lastVerified": "2026-11-21T20:10:40.316Z",
+    "lastChecked": "2026-11-25T11:42:22.264Z",
+    "lastVerified": "2026-11-25T11:42:22.264Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b",
-    "contentHash": "b7fcb1171ef21ea461e60acdb36b11c983a0474c5ac7ae6e97e0c8cd946e4aff",
+    "contentHash": "4975dbe933053bb5dd120542c19172b2daefc96e2d88e6819a3ee9ea0a35b8a8",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

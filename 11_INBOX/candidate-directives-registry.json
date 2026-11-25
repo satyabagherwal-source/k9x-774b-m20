@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T11:30:54.650Z",
+  "last_updated": "2026-11-25T11:42:45.213Z",
   "directives": [
     {
       "id": "CD-001",
@@ -60943,6 +60943,55 @@
       "source_repo": "kubeedge-kubeedge",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-A67B30-empirical-invariant-guard-in-synckeeper-.md",
+      "staged_date": "2026-11-25"
+    },
+    {
+      "id": "CD-0WPE",
+      "directive_title": "MDEV-42350 fixup: innodb_log_recovery_target blocks writes",
+      "source_repo": "mariadb-server-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-0WPE-mdev-42350-fixup-innodb_log_recovery_target-blocks-writes.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-25",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-0XJT",
+      "directive_title": "Draft NUC 146 Reactive Cubing",
+      "source_repo": "nucleoidai-nucleoid-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-0XJT-draft-nuc-146-reactive-cubing.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-25",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-9C1071",
+      "directive_title": "Forensic Learning Record (Deep Inspection): nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "hf-nvidia-nvidia-nemotron-3.5-transcribe-30b-a4b",
+      "domain_letter": "M",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-9C1071-forensic-learning-record-deep-inspection.md",
+      "staged_date": "2026-11-25"
+    },
+    {
+      "id": "CD-REV-B49C53",
+      "directive_title": "MDEV-42350 fixup: innodb_log_recovery_target blocks writes",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "mariadb-server",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-B49C53-mdev-42350-fixup-innodb-log-recovery-tar.md",
+      "staged_date": "2026-11-25"
+    },
+    {
+      "id": "CD-REV-2E0851",
+      "directive_title": "Draft NUC 146 Reactive Cubing",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "nucleoidai-nucleoid",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-2E0851-draft-nuc-146-reactive-cubing.md",
       "staged_date": "2026-11-25"
     }
   ]

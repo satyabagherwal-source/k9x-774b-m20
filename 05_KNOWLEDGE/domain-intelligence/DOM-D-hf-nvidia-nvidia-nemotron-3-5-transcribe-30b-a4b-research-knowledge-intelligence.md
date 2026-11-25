@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B",
   "source_version": "hf-nvidia-nvidia-nemotron-3.5-transcribe-30b-a4b",
   "license": "Open-Source",
-  "timestamp": "2026-11-21T20:10:41.465Z",
+  "timestamp": "2026-11-25T11:42:23.106Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B](https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B) (Revision: `hf-nvidia-`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-21T20:10:41.465Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T11:42:23.106Z`  
 > **Learning ID**: `learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-3.5-transcribe-30b-a4b-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B](https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T20:10:40.316Z  
+> **Harvest Timestamp**: 2026-11-25T11:42:22.264Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: automatic-speech-recognition
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 93473 downloads | 2418 likes
+- **Stars / Engagement**: 98303 downloads | 2428 likes
 
 ---
 

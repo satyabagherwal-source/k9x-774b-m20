@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261123-P2MJ",
-    "timestamp": "2026-11-23T23:10:01.867Z",
-    "repository": "cilium/cilium",
-    "learningId": "learn-github-cilium-cilium",
-    "contentHash": "9a07cee7e9c8e1bd3d945b2a93d9364bbb680719561378b4d3b93b560115f90c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-ZIQZ",
-    "timestamp": "2026-11-23T23:18:09.323Z",
-    "repository": "meta-models/Muse-Spark-Open-816B-A42B",
-    "learningId": "learn-huggingface-meta-models-muse-spark-open-816b-a42b",
-    "contentHash": "19e3c3ca2b89218aae7459a38b4ea4125d263a4c8bb47764c360dde3155d4836",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-ZL72",
-    "timestamp": "2026-11-23T23:18:12.494Z",
-    "repository": "zed-industries/zed",
-    "learningId": "learn-github-zed-industries-zed",
-    "contentHash": "4038f42943c43df216a6468b4bdf5046e3049b986638e85bec05d32f1d4f6e23",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261123-ZRR8",
     "timestamp": "2026-11-23T23:18:20.996Z",
     "repository": "kgateway-dev/kgateway",
@@ -7490,6 +7445,51 @@
     "repository": "kubeedge/kubeedge",
     "learningId": "learn-github-kubeedge-kubeedge",
     "contentHash": "849bbf0b61d6c856912f4a411cfef5c05cc228a1a6e75556e3f55e0c134e2e39",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-0GBM",
+    "timestamp": "2026-11-25T11:42:22.882Z",
+    "repository": "nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B",
+    "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b",
+    "contentHash": "4975dbe933053bb5dd120542c19172b2daefc96e2d88e6819a3ee9ea0a35b8a8",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-0SE2",
+    "timestamp": "2026-11-25T11:42:38.522Z",
+    "repository": "MariaDB/server",
+    "learningId": "learn-github-mariadb-server",
+    "contentHash": "e0b4f48781507f71520eb71b89e9fa190c8bc422cb21108bd1163cfdd273c18a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-0TDE",
+    "timestamp": "2026-11-25T11:42:39.794Z",
+    "repository": "NucleoidAI/Nucleoid",
+    "learningId": "learn-github-nucleoidai-nucleoid",
+    "contentHash": "9e0ba9dccd64be85b5821d0ed51731c6baea7aa20bc3e0e25b51cc3fe6312b94",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

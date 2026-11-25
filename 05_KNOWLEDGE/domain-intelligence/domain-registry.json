@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T11:30:54.936Z",
+  "last_updated": "2026-11-25T11:42:45.390Z",
   "total_records": 2666,
   "domains": {
     "A": {
@@ -15745,8 +15745,8 @@
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "repository": "NucleoidAI/Nucleoid",
-      "content_hash": "97c7e71dc1204f192b13f6fd4f7c5c8d5d4be1bf3b2f4e6d8ab16c4af70141fc",
-      "created_at": "2026-11-25T09:08:07.259Z"
+      "content_hash": "6c9fbc21784b63a104cc0bc8a6227448c232e4f33ec0d3e6d9208fcc290e1b5a",
+      "created_at": "2026-11-25T11:42:40.228Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -16195,8 +16195,8 @@
       "title": "Architecture Intelligence: nucleoidai-nucleoid-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-learnings-architecture-intelligence-nucleoidai-nucleoid-lear.md",
       "repository": "nucleoidai-nucleoid-learnings",
-      "content_hash": "ea9f6a04026cbe5184f0a9494732def791b695bbdd0c4cfd9f8f97c07dbec0c0",
-      "created_at": "2026-11-25T08:13:32.350Z"
+      "content_hash": "e3e11cbf3ba2270cafd804e0246e66985c9189e3ba8802bfbfac60265d8ee201",
+      "created_at": "2026-11-25T11:42:45.390Z"
     },
     "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8b-core-invariants",
@@ -18325,8 +18325,8 @@
       "title": "Research & Knowledge Intelligence: nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b-research-knowledge-intelligence.md",
       "repository": "nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B",
-      "content_hash": "2d2105bc685f2cd0d9deb1c4e9b911788e860d80785ce5f5d2c1606eda750551",
-      "created_at": "2026-11-21T20:10:41.466Z"
+      "content_hash": "54c46c334e24f681ed846b255efc160b775f1dd1e81b577c947036049fb04c8f",
+      "created_at": "2026-11-25T11:42:23.107Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b",
@@ -18334,8 +18334,8 @@
       "title": "Research & Knowledge Intelligence: hf-nvidia-nvidia-nemotron-3.5-transcribe-30b-a4b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b-learnings-research-knowledge-in.md",
       "repository": "hf-nvidia-nvidia-nemotron-3.5-transcribe-30b-a4b-learnings",
-      "content_hash": "be41fc5608697a85a6dde275f29fc526b635f86012ab883d309eb4de1c668036",
-      "created_at": "2026-11-21T20:11:01.102Z"
+      "content_hash": "a01083506546292e31b250ac06389fc4e95de0a213643f49df75f98e7f153188",
+      "created_at": "2026-11-25T11:42:43.507Z"
     },
     "domain_intelligence-architecture-intelligence-sqldelight-sqldelight-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-sqldelight-sqldelight-core-invariants",
@@ -24143,8 +24143,8 @@
       "title": "Architecture Intelligence: MariaDB/server Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-mariadb-server-architecture-intelligence-mariadb-server-core-invariants.md",
       "repository": "MariaDB/server",
-      "content_hash": "3338b437fe504d02c6ba665bcba5327346f85cb9c905e83cd4b582175596de87",
-      "created_at": "2026-11-24T16:36:49.531Z"
+      "content_hash": "90ad5ed56a7cdb45ab4ab0a32de31127ccdbf39cae255761c3d3acdde154d462",
+      "created_at": "2026-11-25T11:42:38.974Z"
     },
     "domain_intelligence-technical-construction-intelligence-folkbench-folkbench-learnings-core-invariant": {
       "record_id": "domain_intelligence-technical-construction-intelligence-folkbench-folkbench-learnings-core-invariant",
@@ -24161,8 +24161,8 @@
       "title": "Architecture Intelligence: mariadb-server-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-mariadb-server-learnings-architecture-intelligence-mariadb-server-learnings-core.md",
       "repository": "mariadb-server-learnings",
-      "content_hash": "df8d74d552c460c3abe3d62b89b1c9188a12b7c4a6583778c07aad81093d63e8",
-      "created_at": "2026-11-24T16:36:52.978Z"
+      "content_hash": "b1412deffeb5c0b4291bdca5bf8fdabaea12e37cce78c6724a37a6ff9eecdbc5",
+      "created_at": "2026-11-25T11:42:44.308Z"
     },
     "domain_intelligence-content-information-intelligence-mikepenz-multiplatform-markdown-renderer-core-i": {
       "record_id": "domain_intelligence-content-information-intelligence-mikepenz-multiplatform-markdown-renderer-core-i",
