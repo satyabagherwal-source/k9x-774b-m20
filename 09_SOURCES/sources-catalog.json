@@ -10555,8 +10555,8 @@
     "sourceUrl": "https://huggingface.co/unsloth/flint-GGUF",
     "sourceVersion": "hf-unsloth-flint-gguf",
     "license": "Open-Source",
-    "contentHash": "dcd38815877018ccb0e1d4d687b0752803c4c3f5019c3d08ad4322556c559113",
-    "lastHarvestedAt": "2026-11-21T14:49:30.548Z",
+    "contentHash": "ba7872c760758751caa9b928e71572d628cbbe832ee39fa22d8217d52f5a28b2",
+    "lastHarvestedAt": "2026-11-25T07:30:58.972Z",
     "learningId": "learn-huggingface-unsloth-flint-gguf"
   },
   "gauthierpiarrette-highball": {

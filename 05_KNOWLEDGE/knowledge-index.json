@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-25T07:22:44.765Z",
+  "last_updated": "2026-11-25T07:31:12.854Z",
   "total_verified_learnings": 9114,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -112198,9 +112198,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "4a0f4ee4f1c0015b0f0182e2448ffe9e732a5ca96bc183a8f6cff94de081cd9b",
+      "content_hash": "b48fcad28ba99e576c2eb43a6e01483a3322104cf0715080dfcc06e171a66c8d",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T06:56:24.067Z"
+      "persisted_at": "2026-11-25T07:31:12.643Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -112210,9 +112210,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "b43487b9726b3fa410a732bf326311da53d2ebd485e8ed690e550d9d2df2567d",
+      "content_hash": "5c4ca151e313ea87a58601c599704906cc56c7d7d7757ef169b66dc8f20243be",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T06:56:24.237Z"
+      "persisted_at": "2026-11-25T07:31:12.854Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "20b3896804d964e319c316510d85e69acef5ec4e797d756ce13886997c4ccb75",
+      "content_hash": "dc4069b1017c7485d8baacce31b58c5a1cbec54879ab3bf0f79a42759b6f055e",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T06:56:23.183Z"
+      "persisted_at": "2026-11-25T07:31:11.667Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "149c6b7d959a613d2b2e5bc9c50754464ba3bf908d3020108823453ff3400483",
+      "content_hash": "d08711bf92fcedd8cd31b4344bf1167286d020e4230f9f87788be0f2628f4c35",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T06:56:23.355Z"
+      "persisted_at": "2026-11-25T07:31:11.858Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -280318,7 +280318,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/unsloth/flint-GGUF",
       "source_version": "hf-unsloth-flint-gguf",
-      "content_hash": "dcd38815877018ccb0e1d4d687b0752803c4c3f5019c3d08ad4322556c559113",
+      "content_hash": "ba7872c760758751caa9b928e71572d628cbbe832ee39fa22d8217d52f5a28b2",
       "dossier_path": "07_PROJECT_LEARNING/hf-unsloth-flint-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-unsloth-flint-gguf-learnings.md",
       "promoted_rules": [],
@@ -280327,7 +280327,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T14:49:30.256Z",
+      "verified_at": "2026-11-25T07:30:58.720Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -280344,9 +280344,9 @@
       "title": "Research & Knowledge Intelligence: unsloth/flint-GGUF Core Invariants",
       "repository": "unsloth/flint-GGUF",
       "source_version": "hf-unsloth-flint-gguf",
-      "content_hash": "da66f2237aca4929cccdc78c0b4cf15cf7f20e40e28d26abe041cd09443661ce",
+      "content_hash": "12069a95feb8a9614f4e8762f01b42cce594eff82150c57f6a907f06998aa6cb",
       "domain_letter": "D",
-      "persisted_at": "2026-11-21T14:49:30.813Z"
+      "persisted_at": "2026-11-25T07:30:59.211Z"
     },
     "rule-9016": {
       "learning_id": "rule-9016",
@@ -280418,9 +280418,9 @@
       "title": "Research & Knowledge Intelligence: hf-unsloth-flint-gguf-learnings Core Invariants",
       "repository": "hf-unsloth-flint-gguf-learnings",
       "source_version": "HEAD",
-      "content_hash": "3a863a33c5bb47208ba1b1d931cdf403a360c4ae024f80a75f76bb1bd2a376ad",
+      "content_hash": "92f0a0427c9c886f244039b1e59f6069400e639d283501e4c00cd1393c2cdf1b",
       "domain_letter": "D",
-      "persisted_at": "2026-11-21T14:49:42.362Z"
+      "persisted_at": "2026-11-25T07:31:10.927Z"
     },
     "learn-huggingface-minimaxai-minimax-m3-1-flash": {
       "learning_id": "learn-huggingface-minimaxai-minimax-m3-1-flash",
@@ -336039,13 +336039,13 @@
       "item_id": "candidate_directive-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-SOD0-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-1FWJ-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change.md",
       "title": "server_events_dispatch: Rerender DM status emoji on emojiset change.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "c69bc4cb41e052e71fc873ad13b8c0a272a6e00378c3f9e1707a54f2377bfb27",
+      "content_hash": "f9bde42707e4dc2ce417db08e70e2f22ac823fa2e467dcafc07da5335ca5bf75",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T06:56:23.895Z"
+      "persisted_at": "2026-11-25T07:31:12.454Z"
     },
     "learn-github-xinatian-mroffice": {
       "learning_id": "learn-github-xinatian-mroffice",
@@ -339283,13 +339283,13 @@
       "item_id": "candidate_directive-deps-bump-url-to-2-5-9-and-heapless-to-0-9-4",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-SNON-deps-bump-url-to-2-5-9-and-heapless-to-0-9-4.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-1F5J-deps-bump-url-to-2-5-9-and-heapless-to-0-9-4.md",
       "title": "deps): bump url to 2.5.9 and heapless to 0.9.4",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "63fa506ed9e30142e1a49fc8a30112f5b2cb52986438f265b357ee8aa27e5741",
+      "content_hash": "e642a1e6ffca0aac4ac6a4f2006c5bb11f26d8009db56342504dd6303ca902c4",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T06:56:23.018Z"
+      "persisted_at": "2026-11-25T07:31:11.482Z"
     },
     "rule-10315": {
       "learning_id": "rule-10315",

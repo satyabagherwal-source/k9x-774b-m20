@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261123-LM2H",
-    "timestamp": "2026-11-23T19:51:23.129Z",
-    "repository": "flux-iac/tofu-controller",
-    "learningId": "learn-github-flux-iac-tofu-controller",
-    "contentHash": "26b3b62a16d66fd5da9c9b5195586ad1590186d25f1ec358dc26cdfdabf043b8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261123-X3ZW",
     "timestamp": "2026-11-23T20:00:19.580Z",
     "repository": "jhspetersson/fselect",
@@ -7492,6 +7477,21 @@
     "contentHash": "c8ccc82be3525a5ad8943fc8dc1f26758a824e0050b96c209a84dd34988e1f83",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-15HZ",
+    "timestamp": "2026-11-25T07:30:58.967Z",
+    "repository": "unsloth/flint-GGUF",
+    "learningId": "learn-huggingface-unsloth-flint-gguf",
+    "contentHash": "ba7872c760758751caa9b928e71572d628cbbe832ee39fa22d8217d52f5a28b2",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

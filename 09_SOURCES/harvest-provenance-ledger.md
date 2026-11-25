@@ -13020,3 +13020,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-comfy-org-z-image-turbo` | `https://huggingface.co/Comfy-Org/Z-Image-Turbo` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-11-25T07:22:22.856Z |
 | `learn-github-alejandrobujan-tendedero` | `https://github.com/alejandrobujan/tendedero` | `483e54ba` | Multi-dimensional audit evidence | 2026-11-25T07:22:24.834Z |
 | `learn-github-etcd-io-etcd` | `https://github.com/etcd-io/etcd` | `4e090c03` | Multi-dimensional audit evidence | 2026-11-25T07:22:37.717Z |
+| `learn-huggingface-unsloth-flint-gguf` | `https://huggingface.co/unsloth/flint-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-11-25T07:30:58.972Z |
