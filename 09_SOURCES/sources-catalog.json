@@ -4963,10 +4963,10 @@
     "repository": "crossplane/crossplane",
     "platform": "github",
     "sourceUrl": "https://github.com/crossplane/crossplane",
-    "sourceVersion": "2088737a",
+    "sourceVersion": "facf2896",
     "license": "Apache-2.0",
-    "contentHash": "1e688fac61c0252da66c67396dbdedd12eda57fededb15674ff2f8cf238f7a32",
-    "lastHarvestedAt": "2026-11-21T04:15:42.082Z",
+    "contentHash": "dd5fc6ff2143012d2f63bd10a341bce19512e7e9f1847c12838c0a16b2beddaf",
+    "lastHarvestedAt": "2026-11-25T01:27:00.529Z",
     "learningId": "learn-github-crossplane-crossplane"
   },
   "apple-foundationdb": {
@@ -7453,10 +7453,10 @@
     "repository": "NativeScript/NativeScript",
     "platform": "github",
     "sourceUrl": "https://github.com/NativeScript/NativeScript",
-    "sourceVersion": "b1fdbd5b",
+    "sourceVersion": "e4c26444",
     "license": "MIT",
-    "contentHash": "511feaeec034d4dfa13fafa766214e13e2770f756e53a352c28d52dd220965d4",
-    "lastHarvestedAt": "2026-11-22T12:37:25.740Z",
+    "contentHash": "659e620f1c19b992a2a41750f7f88fa181d83d5c3605d22222481af93545ddd9",
+    "lastHarvestedAt": "2026-11-25T01:26:59.619Z",
     "learningId": "learn-github-nativescript-nativescript"
   },
   "oramasearch-orama": {

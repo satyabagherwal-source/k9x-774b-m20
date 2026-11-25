@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-25T00:52:38.903Z",
+  "updated_at": "2026-11-25T01:27:35.500Z",
   "statistics": {
-    "total_nodes": 523,
+    "total_nodes": 524,
     "total_edges": 216,
     "domain_distribution": {
-      "D": 316,
+      "D": 317,
       "M": 1,
       "H": 95,
       "J": 22,
@@ -11676,6 +11676,28 @@
       ],
       "created_at": "2026-11-25T00:52:38.903Z",
       "updated_at": "2026-11-25T00:52:38.903Z"
+    },
+    "DOM-D-58839C8D": {
+      "id": "DOM-D-58839C8D",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): crossplane/crossplane",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/crossplane-crossplane-learnings.md`  \n> **Source**: github ([https://github.com/cros -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/crossplane-crossplane-learnings.md`  \n> **Source**: github ([https://github.com/cros",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://crossplane-crossplane/crossplane-crossplane-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-25T01:27:04.804Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (crossplane-crossplane)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-25T01:27:35.500Z",
+      "updated_at": "2026-11-25T01:27:35.500Z"
     }
   },
   "edges": [

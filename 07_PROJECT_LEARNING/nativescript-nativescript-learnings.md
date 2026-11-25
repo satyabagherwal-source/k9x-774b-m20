@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nativescript-nativescript-learnings.md`  
 > **Source**: github ([https://github.com/NativeScript/NativeScript](https://github.com/NativeScript/NativeScript))  
-> **Source Version**: `b1fdbd5b`  
+> **Source Version**: `e4c26444`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T12:37:24.718Z  
+> **Timestamp**: 2026-11-25T01:26:58.394Z  
 > **Learning ID**: `learn-github-nativescript-nativescript`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nativescript-nativescript-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NativeScript/NativeScript](https://github.com/NativeScript/NativeScript))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T12:37:24.574Z  
+> **Harvest Timestamp**: 2026-11-25T01:26:58.212Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: ⚡ Write Native with TypeScript ✨ Best of all worlds (TypeScript, Swift, Objective C, Kotlin, Java, Dart). Use what you love ❤️ Angular, React, Solid, Svelte, Vue with: iOS (UIKit, SwiftUI), Android (View, Jetpack Compose), Flutter and you name it compatible.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 25710 stars
+- **Stars / Engagement**: 25708 stars
 
 ---
 
@@ -944,661 +944,417 @@ export function getTimeInFrameBase(): number;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2f70ec8e` (2026-11-21)
-**Commit Message**: fix(webpack): keep source map positions in native-class loaders (#11647)
+### Incident Patch 1: `8a6f0ca8` (2026-11-22)
+**Commit Message**: fix(android): hold Button and ActionBar from their native listeners weakly (#11658)
 
-The strip and downlevel loaders rewrite @NativeClass classes before
-ts-loader runs but returned no source map. The module's map then described
-the rewritten text: it embedded the ES5 output as the file's source, and
-every line after a native class resolved to the wrong line (11 lines off in
-a real 1000-line file). The strip loader also changed the line count when
-the decorator sat at the start of the file or after blank lines.
+The button's native view holds its ClickListenerImpl, and the toolbar
+holds its MenuItemClickListenerImpl; each listener held its view in a
+strong owner property, which only disposeNativeView cleared. A view
+whose native view is never disposed, such as the previous root after
+Application.resetRootView(), was kept alive by that cycle once wrapper
+resurrection no longer broke it. The listeners now hold their owner
+through a WeakRef, as the iOS handlers and the Android TabView and
+EditableTextBase listeners already do.
 
-The strip loader now keeps every newline it replaces and returns an exact
-map through webpack's ReplaceSource. The downlevel loader maps untouched
-code to itself and each downleveled class through the ES5 transpile's own
-map, so ts-loader composes a map back to the original file, including
-lines inside the class. Emitted code is unchanged.
-
-[skip ci]
-
-**File**: `packages/webpack5/__tests__/loaders/native-class-loaders.spec.ts` (modified, +3/-0)
+**File**: `apps/automated/src/ui/action-bar/action-bar-tests.android.ts` (modified, +25/-1)
 ```diff
-@@ -23,6 +23,9 @@ function createDownlevelContext(
- 			if (err) throw err;
- 			onDone(source || '', warnings);
- 		},
-+		async() {
-+			return this.callback.bind(this);
-+		},
- 	} as any;
- }
+@@ -1,11 +1,35 @@
+ ﻿import * as TKUnit from '../../tk-unit';
+ import { createPageAndNavigate } from './action-bar-tests-common';
+ import { ActionItem } from '@nativescript/core/ui/action-bar';
+-import { CoreTypes } from '@nativescript/core';
++import { CoreTypes, Utils } from '@nativescript/core';
+ import { Button } from '@nativescript/core/ui/button';
  
+ export * from './action-bar-tests-common';
+ 
++function collectJsAndJavaGarbage() {
++	for (let i = 0; i < 3; i++) {
++		Utils.GC();
++		java.lang.System.gc();
++		java.lang.System.runFinalization();
++		TKUnit.wait(0.05);
++	}
++}
++
++export function test_actionItem_tap_after_garbage_collection() {
++	const actionItem = new ActionItem();
++	actionItem.text = 'Test';
++	let tapped = false;
++	actionItem.on(ActionItem.tapEvent, () => (tapped = true));
++	const page = createPageAndNavigate();
++	page.actionBar.actionItems.addItem(actionItem);
++
++	collectJsAndJavaGarbage();
++	const toolbar = <androidx.appcompat.widget.Toolbar>page.actionBar.nativeViewProtected;
++	toolbar.getMenu().performIdentifierAction((<any>actionItem)._getItemId(), 0);
++
++	TKUnit.assertTrue(tapped, 'action item tap should fire after a garbage collection');
++}
++
+ export function test_actionItem_visibility() {
+ 	const actionItem = new ActionItem();
+ 	actionItem.text = 'Test';
 ```
 
-**File**: `packages/webpack5/__tests__/loaders/native-class-sourcemap.spec.ts` (added, +144/-0)
+**File**: `apps/automated/src/ui/button/button-tests.ts` (modified, +25/-1)
 ```diff
-@@ -0,0 +1,144 @@
-+import ts from 'typescript';
-+import { SourceMapConsumer, SourceMapGenerator } from 'source-map';
-+
-+import stripLoader from '../../src/loaders/native-class-strip-loader';
-+import downlevelLoader from '../../src/loaders/native-class-downlevel-loader';
-+
-+const RESOURCE = '/app/delegate.ts';
-+
-+const SOURCE = [
-+	"import { Observable } from '@nativescript/core';",
-+	'',
-+	'',
-+	'@NativeClass()',
-+	'class Delegate extends NSObject {',
-+	'\tstatic ObjCProtocols = [];',
-+	'',
-+	'\tvalue = 1;',
-+	'',
-+	'\trun(): number {',
-+	'\t\treturn this.value + 1;',
-+	'\t}',
-+	'}',
-+	'',
-+	'export function afterClass(): number {',
-+	'\treturn (Delegate.new() as Delegate).run();',
-+	'}',
-+	'',
-+	'export const observable = new Observable();',
-+].join('\n');
-+
-+interface LoaderOutput {
-+	code: string;
-+	map?: any;
-+}
-+
-+function runLoader(loader: Function, content: string, map?: any) {
-+	return new Promise<LoaderOutput>((resolve, reject) => {
-+		const done = (err: Error | null, code?: string, outputMap?: any) =>
-+			err ? reject(err) : resolve({ code: code ?? '', map: outputMap });
-+		loader.call(
-+			{
-+				resourcePath: RESOURCE,
-+				emitWarning: () => {},
-+				callback: done,
-+				async: () => done,
-+			},
-+			content,
-+			map,
-+		);
-+	});
-+}
-+
-+// Compiles like ts-loader: its own map, composed with the incoming one.
-+async function compileLikeTsLoader({ code, map }: LoaderOutput) {
-+	const output = ts.transpileModule(code, {
-+		fileName: RESOURCE,
-+		compilerOptions: {
-+			module: ts.ModuleKind.ESNext,
-+			target: ts.ScriptTarget.ES2020,
-+			sourceMap: true,
-+		},
-+	});
-+	const tsMap = Object.assign(JSON.parse(output.sourceMapText), {
-+		sources: [RESOURCE],
-+		sourcesContent: [code],
-+	});
-+	if (!map) {
-+		return { code: output.outputText, map: tsMap };
-+	}
-+	const tsConsumer = await new SourceMapConsumer(tsMap);
-+	const inputConsumer = await new SourceMapConsumer({ ...map, file: RESOURCE });
-+	const generator = SourceMapGenerator.fromSourceMap(tsConsumer);
-+	generator.applySourceMap(inputConsumer);
-+	tsConsumer.destroy();
-+	inputConsumer.destroy();
-+	return { code: output.outputText, map: generator.toJSON() };
-+}
-+
-+async function build(source: string) {
-+	const stripped = await runLoader(stripLoader, source);
-+	const downleveled = await runLoader(
-+		downlevelLoader,
-+		stripped.code,
-+		stripped.map,
-+	);
-+	return { downleveled, compiled: await compileLikeTsLoader(downleveled) };
-+}
-+
-+async function originalLine(output: LoaderOutput, needle: string) {
-+	const lines = output.code.split('\n');
-+	const line = lines.findIndex((text) => text.includes(needle));
-+	expect(line).toBeGreaterThanOrEqual(0);
-+	const consumer = await new SourceMapConsumer(output.map);
-+	try {
-+		return consumer.originalPositionFor({
-+			line: line + 1,
-+			column: lines[line].indexOf(needle),
-+		}).line;
-+	} finally {
-+		consumer.destroy();
-+	}
-+}
-+
-+describe('native-class loaders source maps', () => {
-+	it('maps code inside and after a downleveled class to its original line', async () => {
-+		const { downleveled, compiled } = await build(SOURCE);
-+
-+		expect(downleveled.code).not.toContain('class Delegate');
-+		expect(await originalLine(compiled, 'this.value + 1')).toBe(11);
-+		expect(await originalLine(compiled, 'afterClass')).toBe(15);
-+		expect(await originalLine(compiled, 'Delegate.new()')).toBe(16);
-+		expect(await originalLine(compiled, 'new Observable()')).toBe(19);
-+	});
-+
-+	it('embeds the original source in the composed map', async () => {
-+		const { compiled } = await build(SOURCE);
-+
-+		expect(compiled.map.sourcesContent).toEqual([SOURCE]);
-+	});
-+
-+	it('keeps the line count when stripping the decorator', async () => {
-+		const atStart = [
-+			'@NativeClass',
-+			'class A extends NSObject {}',
-+			'export const a = 1;',
-+		].join('\n');
-+		const afterBlankLines = [
-+			'const x = 1;',
-+			'',
-+			'',
-+			'@NativeClass({',
-+			'\tprotocols: [],',
-+			'})',
-+			'class B extends NSObject {}',
-+		].join('\n');
-+
-+		for (const source of [atStart, afterBlankLines]) {
-+			const stripped = await runLoader(stripLoader, source);
-+			expect(stripped.code).toContain('/*__NativeClass__*/');
-+			expect(stripped.code).not.toContain('@NativeClass');
-+			expect(stripped.code.split('\n').length).toBe(source.split('\n').length);
+@@ -1,6 +1,6 @@
+ import * as TKUnit from '../../tk-unit';
+ import * as helper from '../../ui-helper';
+-import { View, EventData, Button, Observable, Color, Page, FormattedString, BindingOptions, Span } from '@nativescript/core';
++import { View, EventData, Button, Observable, Color, Page, FormattedString, BindingOptions, Span, Utils } from '@nativescript/core';
+ import * as buttonTestsNative from './button-tests-native';
+ 
+ export function test_recycling() {
+@@ -15,6 +15,30 @@ export var testOnClick = function () {
+ 	helper.buildUIAndRunTest(_createButtonFunc(), _testOnClick);
+ };
+ 
++function collectJsAndJavaGarbage() {
++	for (let i = 0; i < 3; i++) {
++		Utils.GC();
++		if (__ANDROID__) {
++			java.lang.System.gc();
++			java.lang.System.runFinalization();
 +		}
++		TKUnit.wait(0.05);
++	}
++}
++
++export function testOnClickAfterGarbageCollection() {
++	helper.buildUIAndRunTest(_createButtonFunc(), function (views: Array<View>) {
++		const button = <Button>views[0];
++		let tapped = false;
++		button.on(Button.tapEvent, () => (tapped = true));
++
++		collectJsAndJavaGarbage();
++		buttonTestsNative.performNativeClick(button);
++
++		TKUnit.assertTrue(tapped, 'tap should fire after a garbage collection');
 +	});
-+});
++}
++
+ export var testBindTextDirectlyToModel = function () {
+ 	helper.buildUIAndRunTest(_createButtonFunc(), _testBindTextDirectlyToModel);
+ };
 ```
 
-**File**: `packages/webpack5/src/loaders/native-class-downlevel-loader/index.ts` (modified, +313/-79)
+**File**: `packages/core/ui/action-bar/index.android.ts` (modified, +8/-3)
 ```diff
-@@ -1,5 +1,6 @@
- import type { LoaderContext } from 'webpack';
- import ts from 'typescript';
-+import { SourceMapConsumer, SourceMapGenerator } from 'source-map';
- 
- // Downlevels ONLY classes marked with /*__NativeClass__*/ to ES5 IIFE pattern.
- // Operates textually before ts-loader, preserving modern syntax elsewhere.
-@@ -9,6 +10,269 @@ import ts from 'typescript';
- //  - transpileModule(snippet, { target: ES5, module: ESNext, noEmitHelpers: true, useDefineForClassFields: false })
- //  - Force enumerable: true on defineProperty outputs (compat with NativeScript expectations)
- //  - Replace original snippet with downleveled JS
-+// The returned source map maps the output back to the loader's input, so
-+// ts-loader can compose it and stack traces point at the original lines.
+@@ -66,14 +66,19 @@ function initializeMenuItemClickListener(): void {
+ 	@NativeClass
+ 	@Interfaces([androidx.appcompat.widget.Toolbar.OnMenuItemClickListener])
+ 	class MenuItemClickListenerImpl extends java.lang.Object implements androidx.appcompat.widget.Toolbar.OnMenuItemClickListener {
+-		constructor(public owner: ActionBar) {
++		// Weak: the toolbar holds this listener, so a strong owner would be a cycle that
++		// only disposeNativeView breaks.
++		public owner: WeakRef<ActionBar>;
 +
-+interface Candidate {
-+	start: number;
-+	fullStart: number;
-+	end: number;
-+}
-+
-+interface DownleveledClass {
-+	code: string;
-+	map: any;
-+	// Lines added in front of the transpiled class (the IIFE wrapper).
-+	leadingLines: number;
-+}
-+
-+interface Position {
-+	line: number;
-+	column: number;
-+}
-+
-+const SOURCE_MAPPING_URL_RE = /\n?\/\/# sourceMappingURL=[^\n]*\s*$/;
-+
-+function downlevelClass(
-+	loader: LoaderContext<any>,
-+	snippet: string,
-+): DownleveledClass {
-+	// strip marker ONLY, preserve surrounding newline to avoid commenting out the next line
-+	const stripped = snippet.replace(/\/\*__NativeClass__\*\//m, '');
-+	const transpileResult = ts.transpileModule(stripped, {
-+		compilerOptions: {
-+			module: ts.ModuleKind.ESNext,
-+			target: ts.ScriptTarget.ES5,
-+			noEmitHelpers: true,
-+			experimentalDecorators: true,
-+			emitDecoratorMetadata: false,
-+			useDefineForClassFields: false,
-+			sourceMap: true,
-+		},
-+		fileName: loader.resourcePath.endsWith('.ts')
-+			? loader.resourcePath
-+			: `${loader.resourcePath}.ts`,
-+		reportDiagnostics: true,
-+	});
-+	if (process.env.NATIVECLASS_DEBUG && transpileResult.diagnostics?.length) {
-+		const diag = transpileResult.diagnostics[0];
-+		loader.emitWarning(
-+			new Error(
-+				`[native-class-downlevel-loader] transpile diagnostics in ${loader.resourcePath}: ${diag?.messageText}`,
-+			),
-+		);
-+	}
-+	const transpiledRaw = transpileResult.outputText.replace(
-+		SOURCE_MAPPING_URL_RE,
-+		'\n',
-+	);
-+	// force enumerable:true
-+	let transpiled = transpiledRaw.replace(
-+		/(Object\.defineProperty\(.*?{.*?)(enumerable:\s*false)(.*?}\))/gs,
-+		'$1enumerable: true$3',
-+	);
-+
-+	if (
-+		process.env.NATIVECLASS_DEBUG &&
-+		/page-transition\.android\.ts$/.test(loader.resourcePath)
-+	) {
-+		const head = stripped.slice(0, 200).replace(/\n/g, '\\n');
-+		const outHead = transpiled.slice(0, 200).replace(/\n/g, '\\n');
-+		loader.emitWarning(
-+			new Error(
-+				`[native-class-downlevel-loader] debug ${loader.resourcePath} snippetHead="${head}" -> outHead="${outHead}"`,
-+			),
-+		);
-+	}
-+	let leadingLines = 0;
-+	// Safety: parse transpiled snippet to ensure no top-level return statements leaked.
-+	// (Would indicate a slicing bug causing constructor body to escape.)
-+	try {
-+		const checkSource = ts.createSourceFile(
-+			'check.js',
-+			transpiled,
-+			ts.ScriptTarget.ES2017,
-+			true,
-+			ts.ScriptKind.JS,
-+		);
-+		const hasTopLevelReturn = checkSource.statements.some(
-+			(s) => s.kind === ts.SyntaxKind.ReturnStatement,
-+		);
-+		if (hasTopLevelReturn) {
-+			// Wrap in an IIFE to retain semantics and avoid syntax error
-+			transpiled = `(function(){\n${transpiled}\n})();`;
-+			leadingLines = 1;
-+		}
-+	} catch (e) {
-+		// ignore parsing safety guard failures – fallback to raw transpiled
-+	}
-+	if (process.env.NATIVECLASS_DEBUG) {
-+		loader.emitWarning(
-+			new Error(
-+				`[native-class-downlevel-loader] transformed class snippet from ${loader.resourcePath} (bytes: ${snippet.length} -> ${transpiled.length})`,
-+			),
-+		);
-+	}
-+	return {
-+		code: transpiled,
-+		map: JSON.parse(transpileResult.sourceMapText),
-+		leadingLines,
-+	};
-+}
-+
-+function snippetFor(content: string, { fullStart, end }: Candidate) {
-+	// include trailing semicolon if immediately follows class (defensive – TS sometimes emits one when rebundled)
-+	return /^;/.test(content.slice(end, end + 2))
-+		? content.slice(fullStart, end) + ';'
-+		: content.slice(fullStart, end);
-+}
-+
-+function lineStartsOf(text: string) {
-+	const starts = [0];
-+	for (let i = 0; i < text.length; i++) {
-+		if (text[i] === '\n') {
-+			starts.push(i + 1);
-+		}
-+	}
-+	return starts;
-+}
-+
-+function positionAt(lineStarts: number[], offset: number): Position {
-+	let low = 0;
-+	let high = lineStarts.length - 1;
-+	while (low < high) {
-+		const mid = (low + high + 1) >> 1;
-+		if (lineStarts[mid] <= offset) {
-+			low = mid;
-+		} else {
-+			high = mid - 1;
-+		}
-+	}
-+	return { line: low + 1, column: offset - lineStarts[low] };
-+}
-+
-+class OutputBuilder {
-+	code = '';
-+	private line = 1;
-+	private column = 0;
-+
-+	constructor(
-+		private readonly generator: SourceMapGenerator,
-+		private readonly source: string,
-+	) {}
-+
-+	get position(): Position {
-+		return { line: this.line, column
-```
-
-**File**: `packages/webpack5/src/loaders/native-class-strip-loader/index.ts` (modified, +23/-5)
-```diff
-@@ -1,4 +1,4 @@
--import type { LoaderContext } from 'webpack';
-+import { sources, type LoaderContext } from 'webpack';
- 
- // Extremely conservative textual pre-pass to neutralize any top-level '@NativeClass' decorator
- // before TypeScript compilation while leaving a marker for the transformer to detect and
-@@ -29,10 +29,28 @@ export default function nativeClassStripLoader(
- 	}
- 
- 	// We only want to neutralize the decorator and leave a detectable marker for the transformer.
--	const stripped = content.replace(
--		DECORATOR_SINGLE_RE,
--		(m, prefix) => `${prefix || '\n'}/*__NativeClass__*/\n`,
-+	// Every newline of the match is kept, so later lines keep their positions.
-+	const source = new sources.ReplaceSource(
-+		map
-+			? new sources.SourceMapSource(content, this.resourcePath, map)
-+			: new sources.OriginalSource(content, this.resourcePath),
- 	);
-+	let changed = false;
-+	for (const match of content.matchAll(DECORATOR_SINGLE_RE)) {
-+		const [m, prefix] = match;
-+		const newlines = m.slice(prefix.length).split('\n').length - 1;
-+		source.replace(
-+			match.index + prefix.length,
-+			match.index + m.length - 1,
-+			`/*__NativeClass__*/${'\n'.repeat(newlines)}`,
-+		);
-+		changed = true;
-+	}
- 
--	this.callback(null, stripped, map);
-+	if (!changed) {
-+		this.callback(null, content, map);
-+		return;
-+	}
-+	const { source: stripped, map: strippedMap } = source.sourceAndMap();
-+	this.callback(null, stripped as string, strippedMap as any);
- }
-```
-
----
-
-### Incident Patch 2: `587460b1` (2026-11-21)
-**Commit Message**: fix(webpack): keep source map positions in app-css-loader (#11646)
-
-app-css-loader prepends two lines to the app entry module (a comment and
-the app css import) but passed the incoming source map through unchanged.
-Every position in the entry file was then resolved against a map for the
-unprefixed code, so stack frames and breakpoints in it landed a few lines
-off. Offset the map with webpack's ConcatSource/SourceMapSource instead,
-and stop running the module code through ts-dedent.
-
-[skip ci]
-
-**File**: `packages/webpack5/__tests__/loaders/app-css-loader.spec.ts` (added, +96/-0)
-```diff
-@@ -0,0 +1,96 @@
-+import ts from 'typescript';
-+import { SourceMapConsumer } from 'source-map';
-+
-+import appCssLoader from '../../src/loaders/app-css-loader';
-+
-+const SOURCE = [
-+	"import { Application } from '@nativescript/core';",
-+	'',
-+	'declare const unused: number;',
-+	'',
-+	'function fail(): never {',
-+	"\tthrow new Error('boom');",
-+	'}',
-+	'',
-+	"Application.run({ moduleName: 'app-root' });",
-+].join('\n');
-+
-+interface LoaderResult {
-+	code: string;
-+	map?: any;
-+}
-+
-+function transpile() {
-+	const output = ts.transpileModule(SOURCE, {
-+		fileName: '/app/app.ts',
-+		compilerOptions: {
-+			module: ts.ModuleKind.ESNext,
-+			target: ts.ScriptTarget.ES2020,
-+			sourceMap: true,
-+		},
-+	});
-+	return { code: output.outputText, map: JSON.parse(output.sourceMapText) };
-+}
-+
-+function runLoader(
-+	content: string,
-+	map: any,
-+	cssFile: string | null,
-+): Promise<LoaderResult> {
-+	return new Promise((resolve, reject) => {
-+		const context = {
-+			context: '/app',
-+			resourcePath: '/app/app.ts',
-+			getOptions: () => ({ platform: 'ios' }),
-+			getResolve:
-+				() =>
-+				(_context: string, _request: string, done: (err, res?) => void) =>
-+					cssFile ? done(null, cssFile) : done(new Error('not found')),
-+			async: () => (err: Error | null, code: string, outputMap?: any) =>
-+				err ? reject(err) : resolve({ code, map: outputMap }),
-+		};
-+		appCssLoader.call(context, content, map);
-+	});
-+}
-+
-+async function originalLine(result: LoaderResult, needle: string) {
-+	const lines = result.code.split('\n');
-+	const line = lines.findIndex((text) => text.includes(needle));
-+	const consumer = await new SourceMapConsumer(result.map);
-+	try {
-+		return consumer.originalPositionFor({
-+			line: line + 1,
-+			column: lines[line].indexOf(needle),
-+		}).line;
-+	} finally {
-+		consumer.destroy();
-+	}
-+}
-+
-+describe('app-css-loader', () => {
-+	it('imports the app css and keeps source map positions', async () => {
-+		const { code, map } = transpile();
-+		const result = await runLoader(code, map, '/app/app.css');
-+
-+		expect(result.code).toContain('import "./app.css";');
-+		expect(await originalLine(result, 'throw new Error')).toBe(6);
-+		expect(await originalLine(result, 'Application.run')).toBe(9);
-+	});
-+
-+	it('passes content and map through when there is no app css', async () => {
-+		const { code, map } = transpile();
-+		const result = await runLoader(code, map, null);
-+
-+		expect(result.code).toBe(code);
-+		expect(result.map).toBe(map);
-+	});
-+
-+	it('imports the app css without a map when none is given', async () => {
-+		const { code } = transpile();
-+		const result = await runLoader(code, undefined, '/app/app.scss');
-+
-+		expect(result.code).toContain('import "./app.scss";');
-+		expect(result.code).toContain(code);
-+		expect(result.map).toBeUndefined();
-+	});
-+});
-```
-
-**File**: `packages/webpack5/src/loaders/app-css-loader/index.ts` (modified, +12/-7)
-```diff
-@@ -1,5 +1,6 @@
--import { dedent } from 'ts-dedent';
- import { basename } from 'path';
-+import { sources } from 'webpack';
-+
- /**
-  * This loader tries to load an `app.scss` or and `app.css` relative to the main entry
-  */
-@@ -17,12 +18,16 @@ export default function loader(content: string, map: any) {
- 			return callback(null, content, map);
++		constructor(owner: ActionBar) {
+ 			super();
++			this.owner = new WeakRef(owner);
  		}
  
--		const code = dedent`
--			// Added by app-css-loader
--			import "./${basename(res)}";
--			${content}
--		`;
-+		const prefix = `// Added by app-css-loader\nimport "./${basename(res)}";\n`;
-+		if (!map) {
-+			return callback(null, prefix + content);
-+		}
+ 		onMenuItemClick(item: android.view.MenuItem): boolean {
+-			const itemId = item.getItemId();
++			const owner = this.owner?.deref();
  
--		callback(null, code, map);
-+		// The prefix shifts every line, so the incoming map must be offset too.
-+		const { source, map: outputMap } = new sources.ConcatSource(
-+			new sources.RawSource(prefix),
-+			new sources.SourceMapSource(content, this.resourcePath, map),
-+		).sourceAndMap();
-+		callback(null, source, outputMap);
- 	});
- }
+-			return this.owner._onAndroidItemSelected(itemId);
++			return owner ? owner._onAndroidItemSelected(item.getItemId()) : false;
+ 		}
+ 	}
+ 
+```
+
+**File**: `packages/core/ui/button/index.android.ts` (modified, +7/-2)
+```diff
+@@ -25,12 +25,17 @@ function initializeClickListener(): void {
+ 	@NativeClass
+ 	@Interfaces([android.view.View.OnClickListener])
+ 	class ClickListenerImpl extends java.lang.Object implements android.view.View.OnClickListener {
+-		constructor(public owner: Button) {
++		// Weak: the button's native view holds this listener, so a strong owner would be
++		// a cycle that only disposeNativeView breaks.
++		public owner: WeakRef<Button>;
++
++		constructor(owner: Button) {
+ 			super();
++			this.owner = new WeakRef(owner);
+ 		}
+ 
+ 		public onClick(v: android.view.View): void {
+-			const owner = this.owner;
++			const owner = this.owner?.deref();
+ 			if (owner) {
+ 				owner._emit(ButtonBase.tapEvent);
+ 			}
 ```
 
 ---
 
-### Incident Patch 3: `85830dbf` (2026-11-21)
-**Commit Message**: fix(core): preserve unknown and deprecated media query types (#11644)
+### Incident Patch 2: `a3833596` (2026-11-22)
+**Commit Message**: fix(android): hold the SegmentedBar from its tab content factory weakly (#11657)
 
-**File**: `packages/core/css-mediaquery/index.spec.ts` (modified, +46/-0)
-```diff
-@@ -18,6 +18,22 @@ describe('css-mediaquery', () => {
- 					features: [],
- 				},
- 			]);
-+
-+			expect(parseQuery('TV')).toEqual([
-+				{
-+					inverse: false,
-+					type: 'tv',
-+					features: [],
-+				},
-+			]);
-+
-+			expect(parseQuery('not speech')).toEqual([
-+				{
-+					inverse: true,
-+					type: 'speech',
-+					features: [],
-+				},
-+			]);
- 		});
- 
- 		it('should throw a SyntaxError when a media query is invalid', () => {
-@@ -128,5 +144,35 @@ describe('css-mediaquery', () => {
- 				expect(matchQuery('not screen and (min-width: 48px)', { width: 24 })).toBe(true);
- 			});
- 		});
-+
-+		describe('Unknown and deprecated media types', () => {
-+			it('should return false for unknown and deprecated media types', () => {
-+				expect(matchQuery('tv', { type: MediaQueryType.screen })).toBe(false);
-+				expect(matchQuery('speech', { type: MediaQueryType.screen })).toBe(false);
-+				expect(matchQuery('handheld', { type: MediaQueryType.screen })).toBe(false);
-+				expect(matchQuery('projection', { type: MediaQueryType.screen })).toBe(false);
-+				expect(matchQuery('unknown', { type: MediaQueryType.screen })).toBe(false);
-+				expect(matchQuery('only tv', { type: MediaQueryType.screen })).toBe(false);
-+				expect(matchQuery('tv and (min-width: 100px)', { type: MediaQueryType.screen, width: 800 })).toBe(false);
-+			});
-+
-+			it('should return true when negating unknown or deprecated media types with `not`', () => {
-+				expect(matchQuery('not tv', { type: MediaQueryType.screen })).toBe(true);
-+				expect(matchQuery('not speech', { type: MediaQueryType.screen })).toBe(true);
-+				expect(matchQuery('not unknown', { type: MediaQueryType.screen })).toBe(true);
-+				expect(matchQuery('not tv and (min-width: 100px)', { type: MediaQueryType.screen, width: 800 })).toBe(true);
-+			});
-+
-+			it('should treat reserved media type keywords as never-matching (`not all`)', () => {
-+				expect(matchQuery('not only', { type: MediaQueryType.screen })).toBe(false);
-+				expect(matchQuery('not not', { type: MediaQueryType.screen })).toBe(false);
-+				expect(matchQuery('not and', { type: MediaQueryType.screen })).toBe(false);
-+				expect(matchQuery('not or', { type: MediaQueryType.screen })).toBe(false);
-+				expect(matchQuery('not layer', { type: MediaQueryType.screen })).toBe(false);
-+				expect(matchQuery('and', { type: MediaQueryType.screen })).toBe(false);
-+				expect(matchQuery('or', { type: MediaQueryType.screen })).toBe(false);
-+				expect(matchQuery('layer', { type: MediaQueryType.screen })).toBe(false);
-+			});
-+		});
- 	});
- });
-```
+SegmentedBar keeps its TabContentFactoryImpl in _tabContentFactory, and
+the factory kept the bar in a strong owner property, which
+disposeNativeView never cleared. Wrapper resurrection used to break
+this cycle; a runtime that keeps a JS-implemented object's state for as
+long as Java holds the object cannot, so every SegmentedBar and its view
+subtree stayed alive. The factory now holds the bar through a WeakRef
+and falls back to the application context once the bar is gone.
 
-**File**: `packages/core/css-mediaquery/index.ts` (modified, +9/-2)
+**File**: `apps/automated/src/ui/segmented-bar/segmented-bar-tests.ts` (modified, +26/-1)
 ```diff
-@@ -17,6 +17,8 @@ const RE_MEDIA_QUERY = /^(?:(only|not)?\s*([_a-z][_a-z0-9-]*)|(\([^\)]+\)))(?:\s
- 	RE_LENGTH_UNIT = /(em|rem|px|cm|mm|in|pt|pc)?\s*$/,
- 	RE_RESOLUTION_UNIT = /(dpi|dpcm|dppx)?\s*$/;
+@@ -1,7 +1,7 @@
+ import * as TKUnit from '../../tk-unit';
+ import * as segmentedBarTestsNative from './segmented-bar-tests-native';
+ import { buildUIAndRunTest } from '../../ui-helper';
+-import { Color, Observable, BindingOptions, View } from '@nativescript/core';
++import { Color, Observable, BindingOptions, View, Utils } from '@nativescript/core';
+ import * as helper from '../../ui-helper';
  
-+const RESERVED_MEDIA_TYPES = new Set(['only', 'not', 'and', 'or', 'layer']);
-+
- export enum MediaQueryType {
- 	all = 'all',
- 	print = 'print',
-@@ -37,7 +39,7 @@ export interface MediaQueryEnvironmentParams {
- 
- export interface MediaQueryExpression {
- 	inverse: boolean;
--	type: MediaQueryType;
-+	type: MediaQueryType | string;
- 	features: MediaQueryFeature[];
+ // >> article-require-segmentedbar-module
+@@ -34,6 +34,31 @@ function _createItems(count: number): Array<segmentedBarModule.SegmentedBarItem>
+ 	return items;
  }
  
-@@ -135,9 +137,14 @@ export function parseQuery(mediaQuery: string): MediaQueryExpression[] {
- 		const type = captures[2];
- 		const featureString = ((captures[3] || '') + (captures[4] || '')).trim();
- 
-+		const mediaType = type ? type.toLowerCase() : MediaQueryType.all;
-+		if (RESERVED_MEDIA_TYPES.has(mediaType)) {
-+			return { inverse: true, type: MediaQueryType.all, features: [] };
++function collectJsAndJavaGarbage() {
++	for (let i = 0; i < 3; i++) {
++		Utils.GC();
++		if (__ANDROID__) {
++			java.lang.System.gc();
++			java.lang.System.runFinalization();
 +		}
++		TKUnit.wait(0.05);
++	}
++}
 +
- 		const expression: MediaQueryExpression = {
- 			inverse: !!modifier && modifier.toLowerCase() === 'not',
--			type: MediaQueryType[type ? type.toLowerCase() : 'all'] ?? 'all',
-+			type: mediaType,
- 			features: [],
- 		};
++export function test_SelectingTabsAfterGarbageCollection_CreatesTheirContent() {
++	const segmentedBar = _createSegmentedBar();
++	segmentedBar.items = _createItems(3);
++	buildUIAndRunTest(segmentedBar, function (views: Array<View>) {
++		const bar = <segmentedBarModule.SegmentedBar>views[0];
++		collectJsAndJavaGarbage();
++		bar.selectedIndex = 2;
++		collectJsAndJavaGarbage();
++		bar.selectedIndex = 1;
++		TKUnit.assertEqual(bar.selectedIndex, 1, 'selectedIndex');
++		TKUnit.assertEqual(segmentedBarTestsNative.getNativeItemsCount(bar), 3, 'native items');
++	});
++}
++
+ export var testWhenSegmentedBarIsCreatedItemsAreUndefined = function () {
+ 	buildUIAndRunTest(_createSegmentedBar(), function (views: Array<View>) {
+ 		var segmentedBar = <segmentedBarModule.SegmentedBar>views[0];
+```
+
+**File**: `packages/core/ui/segmented-bar/index.android.ts` (modified, +10/-4)
+```diff
+@@ -3,7 +3,7 @@ import { SegmentedBarItemBase, SegmentedBarBase, selectedIndexProperty, itemsPro
+ import { AndroidHelper, isEnabledProperty } from '../core/view';
+ import { colorProperty, fontInternalProperty, fontSizeProperty } from '../styling/style-properties';
+ import { Color } from '../../color';
+-import { layout } from '../../utils';
++import { android as androidUtils, layout } from '../../utils';
+ import { SDK_VERSION } from '../../utils/constants';
+ import { Trace } from '../../trace';
+ import { CoreTypes } from '../../core-types';
+@@ -65,13 +65,19 @@ function initializeNativeClasses(): void {
+ 	@NativeClass
+ 	@Interfaces([android.widget.TabHost.TabContentFactory])
+ 	class TabContentFactoryImpl extends java.lang.Object implements android.widget.TabHost.TabContentFactory {
+-		constructor(public owner: SegmentedBar) {
++		// Weak: the bar holds this factory, so a strong owner would be a cycle
++		// through the factory's native counterpart.
++		private owner: WeakRef<SegmentedBar>;
++
++		constructor(owner: SegmentedBar) {
+ 			super();
++			this.owner = new WeakRef(owner);
+ 		}
+ 
+ 		createTabContent(tag: string): android.view.View {
+-			const tv = new android.widget.TextView(this.owner._context);
+-			const isRtl = this.owner.direction === CoreTypes.LayoutDirection.rtl;
++			const owner = this.owner.deref();
++			const tv = new android.widget.TextView(owner ? owner._context : androidUtils.getApplicationContext());
++			const isRtl = owner?.direction === CoreTypes.LayoutDirection.rtl;
+ 
+ 			// This is collapsed by default and made visible
+ 			// by android when TabItem becomes visible/selected.
+```
+
+---
+
+### Incident Patch 3: `4f92046e` (2026-11-22)
+**Commit Message**: fix(android): hold the TextBase from its text transformation weakly (#11662)
+
+A TextView holds the TextTransformationImpl that text-transform and a
+Button's formatted text install (TextView.mTransformation), and the
+transformation held its TextBase in a strong textBase property, which
+reaches the TextView again through the view's native view. Only tearing
+the view down broke that cycle, so a view that is never torn down, such
+as the previous root after Application.resetRootView(), stayed alive
+once wrapper resurrection no longer collected it. The transformation
+now holds the TextBase through a WeakRef and returns the text unchanged
+once it is gone.
+
+**File**: `apps/automated/src/ui/root-view/reset-root-view-tests.ts` (modified, +26/-1)
+```diff
+@@ -1,6 +1,6 @@
+ import * as TKUnit from '../../tk-unit';
+ import * as helper from '../../ui-helper';
+-import { Page, isAndroid, Frame, NavigationEntry, Application, TabView, TabViewItem } from '@nativescript/core';
++import { Page, isAndroid, Frame, NavigationEntry, Application, TabView, TabViewItem, Label, Button, StackLayout, FormattedString, Span } from '@nativescript/core';
+ 
+ function waitUntilTabViewReady(page: Page, action: Function) {
+ 	helper.waitUntilNavigatedTo(page, action);
+@@ -144,6 +144,31 @@ export function test_reset_during_tab_index_change() {
+ 	TKUnit.assertTrue(true);
+ }
+ 
++export function test_reset_layout_with_transformed_text_to_frame() {
++	const label = new Label();
++	label.text = 'label';
++	label.textTransform = 'uppercase';
++
++	const formattedText = new FormattedString();
++	const span = new Span();
++	span.text = 'button';
++	formattedText.spans.push(span);
++	const button = new Button();
++	button.formattedText = formattedText;
++
++	const layoutRoot = new StackLayout();
++	layoutRoot.addChild(label);
++	layoutRoot.addChild(button);
++
++	Application.resetRootView({ create: () => layoutRoot });
++	TKUnit.waitUntilReady(() => layoutRoot.isLoaded);
++	TKUnit.assertEqual(Application.getRootView(), layoutRoot);
++
++	const testFrameRoot = createTestFrameRootEntry();
++	helper.waitUntilNavigatedTo(testFrameRoot.page, () => Application.resetRootView(testFrameRoot.entry));
++	TKUnit.assertEqual(Application.getRootView(), testFrameRoot.root);
++}
++
+ export function tearDownModule() {
+ 	// reset the root to frame for other tests
+ 	const resetFrameRoot = createTestFrameRootEntry();
+```
+
+**File**: `apps/automated/src/ui/text-base/text-base-tests.ts` (modified, +49/-1)
+```diff
+@@ -1,6 +1,6 @@
+ import * as TKUnit from '../../tk-unit';
+ import * as helper from '../../ui-helper';
+-import { FormattedString, Label, Span, StackLayout } from '@nativescript/core';
++import { Button, FormattedString, Label, Span, StackLayout, Utils } from '@nativescript/core';
+ 
+ export function test_native_font_size_with_a11y_font_scale() {
+ 	if (__APPLE__) {
+@@ -21,3 +21,51 @@ export function test_native_font_size_with_a11y_font_scale() {
+ 		TKUnit.assertEqual(nativeFontSize, expectedNativeFontSize, 'View font size does not respect a11y font scaling');
+ 	}
+ }
++
++function collectJsAndJavaGarbage() {
++	for (let i = 0; i < 3; i++) {
++		Utils.GC();
++		java.lang.System.gc();
++		java.lang.System.runFinalization();
++		TKUnit.wait(0.05);
++	}
++}
++
++function displayedText(view: Label | Button): string {
++	const nativeView = <android.widget.TextView>view.nativeTextViewProtected;
++
++	return nativeView.getTransformationMethod().getTransformation(nativeView.getText(), nativeView).toString();
++}
++
++export function test_android_text_transform_survives_garbage_collection() {
++	if (!__ANDROID__) {
++		return;
++	}
++
++	const label = new Label();
++	label.text = 'label';
++	label.textTransform = 'uppercase';
++
++	const span = new Span();
++	span.text = 'button';
++	const formattedText = new FormattedString();
++	formattedText.spans.push(span);
++	const button = new Button();
++	button.formattedText = formattedText;
++
++	const layout = new StackLayout();
++	layout.addChild(label);
++	layout.addChild(button);
++	helper.getCurrentPage().content = layout;
++	TKUnit.waitUntilReady(() => layout.isLoaded);
++
++	collectJsAndJavaGarbage();
++	label.text = 'changed';
++	span.text = 'span changed';
++	label.nativeViewProtected.requestLayout();
++	button.nativeViewProtected.requestLayout();
++	TKUnit.wait(0.05);
++
++	TKUnit.assertEqual(displayedText(label), 'CHANGED', 'label text-transform after garbage collection');
++	TKUnit.assertEqual(displayedText(button), 'span changed', 'button formatted text after garbage collection');
++}
+```
+
+**File**: `packages/core/ui/text-base/index.android.ts` (modified, +15/-5)
+```diff
+@@ -32,20 +32,30 @@ function initializeTextTransformation(): void {
+ 	@NativeClass
+ 	@Interfaces([android.text.method.TransformationMethod])
+ 	class TextTransformationImpl extends java.lang.Object implements android.text.method.TransformationMethod {
+-		constructor(public textBase: TextBase) {
++		// Weak: the native text view holds this transformation, so a strong owner would be
++		// a cycle that only tearing down the view breaks.
++		public textBase: WeakRef<TextBase>;
++
++		constructor(textBase: TextBase) {
+ 			super();
++			this.textBase = new WeakRef(textBase);
+ 		}
+ 
+ 		public getTransformation(charSeq: any, view: android.view.View): any {
++			const textBase = this.textBase.deref();
++			if (!textBase) {
++				return charSeq;
++			}
++
+ 			// NOTE: Do we need to transform the new text here?
+-			const formattedText = this.textBase.formattedText;
++			const formattedText = textBase.formattedText;
+ 			if (formattedText) {
+-				return this.textBase.createFormattedTextNative(formattedText);
++				return textBase.createFormattedTextNative(formattedText);
+ 			} else {
+-				const text = this.textBase.text;
++				const text = textBase.text;
+ 				const stringValue = isNullOrUndefined(text) ? '' : text.toString();
+ 
+-				return getTransformedText(stringValue, this.textBase.textTransform);
++				return getTransformedText(stringValue, textBase.textTransform);
+ 			}
+ 		}
  
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #11669** (2026-11-24): fix(vite): apply plugins from dependency nativescript.vite.mjs configs (@NathanWalker)
+- **PR #11666** (2026-11-23): chore(ci): pin checkout and setup-node by commit SHA in release workflow (@NathanWalker)
+- **PR #11665** (2026-11-22): chore(ci): add org-wide GitHub Actions CLA workflow (@NathanWalker)
 - **PR #11663** (2026-11-21): fix(windows): send content headers with the request body (@triniwiz)
-- **PR #11647** (2026-11-21): fix(webpack): keep source map positions in native-class loaders (@edusperoni)
-- **PR #11646** (2026-11-21): fix(webpack): keep source map positions in app-css-loader (@edusperoni)
-- **PR #11644** (2026-11-21): fix(core): preserve unknown and deprecated media query types (@amirthn6533)
-- **PR #11642** (2026-11-14): fix(ios): never re-attach torn-down ListView item views (@edusperoni)
-- **PR #11641** (2026-11-14): fix(core): register touch animations once per view (@edusperoni)
+- **PR #11662** (2026-11-22): fix(android): hold the TextBase from its text transformation weakly (@edusperoni)
+- **PR #11661** (2026-11-22): fix(android): keep TabView and ListPicker child views off their native views (@edusperoni)
 
 ---
 
@@ -1618,30 +1374,52 @@ and stop running the module code through ts-dedent.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. webpack): keep source map positions in native-class loaders
+## X. android): hold Button and ActionBar from their native listeners weakly
 
 **RULE**:
-When implementing operations in `packages/webpack5/__tests__/loaders/native-class-loaders.spec.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NativeScript/NativeScript. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apps/automated/src/ui/action-bar/action-bar-tests.android.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NativeScript/NativeScript. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2f70ec8e`: webpack): keep source map positions in native-class loaders. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8a6f0ca8`: android): hold Button and ActionBar from their native listeners weakly. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/webpack5/__tests__/loaders/native-class-loaders.spec.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/automated/src/ui/action-bar/action-bar-tests.android.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-		async() {
-			return this.callback.bind(this);
-		},
+import { CoreTypes, Utils } from '@nativescript/core';
+function collectJsAndJavaGarbage() {
+	for (let i = 0; i < 3; i++) {
+		Utils.GC();
+		java.lang.System.gc();
+		java.lang.System.runFinalization();
+		TKUnit.wait(0.05);
+	}
+}
+
+export function test_actionItem_tap_after_garbage_collection() {
+	const actionItem = new ActionItem();
+	actionItem.text = 'Test';
+	let tapped = false;
+	actionItem.on(ActionItem.tapEvent, () => (tapped = true));
+	const page = createPageAndNavigate();
+	page.actionBar.actionItems.addItem(actionItem);
+
+	collectJsAndJavaGarbage();
+	const toolbar = <androidx.appcompat.widget.Toolbar>page.actionBar.nativeViewProtected;
+	toolbar.getMenu().performIdentifierAction((<any>actionItem)._getItemId(), 0);
+
+	TKUnit.assertTrue(tapped, 'action item tap should fire after a garbage collection');
+}
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+import { CoreTypes } from '@nativescript/core';
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2f70ec8e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8a6f0ca8` are properly handled with clean fallback behavior.

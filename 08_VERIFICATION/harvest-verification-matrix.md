@@ -12884,3 +12884,6 @@
 | `CYCLE-20261125-EC2M` | `2026-11-25T01:09:19.390Z` | `tw93/Mole` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10412` | Yes (`ea317834...`) |
 | `CYCLE-20261125-EE4H` | `2026-11-25T01:09:22.049Z` | `infracost/infracost` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10413` | Yes (`415eee6a...`) |
 | `CYCLE-20261125-Q411` | `2026-11-25T01:18:28.837Z` | `encoredev/encore` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10414` | Yes (`cba3a969...`) |
+| `CYCLE-20261125-125B` | `2026-11-25T01:26:59.615Z` | `NativeScript/NativeScript` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10415` | Yes (`659e620f...`) |
+| `CYCLE-20261125-12UL` | `2026-11-25T01:27:00.525Z` | `crossplane/crossplane` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/crossplane-crossplane-learnings.md` | Yes (`dd5fc6ff...`) |
+| `CYCLE-2026-11-25-PROJ-EVOLVE` | `2026-11-25T01:27:35.503Z` | `crossplane-crossplane` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-58839C8D` [Domain D] | Yes (`b0c1cdc8...`) |

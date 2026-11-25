@@ -4,24 +4,24 @@
 {
   "source_repository": "NativeScript/NativeScript",
   "source_url": "https://github.com/NativeScript/NativeScript",
-  "source_version": "283eb0c5",
+  "source_version": "e4c26444",
   "license": "MIT",
-  "timestamp": "2026-11-15T03:48:10.993Z",
+  "timestamp": "2026-11-25T01:26:59.893Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-nativescript-nativescript",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [NativeScript/NativeScript](https://github.com/NativeScript/NativeScript) (Revision: `283eb0c5`).  
-> **License**: MIT | **Timestamp**: `2026-11-15T03:48:10.993Z`  
+> **Provenance**: Harvested from [NativeScript/NativeScript](https://github.com/NativeScript/NativeScript) (Revision: `e4c26444`).  
+> **License**: MIT | **Timestamp**: `2026-11-25T01:26:59.893Z`  
 > **Learning ID**: `learn-github-nativescript-nativescript`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), I (Content & Information Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 74%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 59%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from NativeScript/NativeScript:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nativescript-nativescript-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NativeScript/NativeScript](https://github.com/NativeScript/NativeScript))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T03:48:09.777Z  
+> **Harvest Timestamp**: 2026-11-25T01:26:58.212Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: ⚡ Write Native with TypeScript ✨ Best of all worlds (TypeScript, Swift, Objective C, Kotlin, Java, Dart). Use what you love ❤️ Angular, React, Solid, Svelte, Vue with: iOS (UIKit, SwiftUI), Android (View, Jetpack Compose), Flutter and you name it compatible.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 25706 stars
+- **Stars / Engagement**: 25708 stars
 
 ---
 
@@ -958,441 +958,417 @@ export function getTimeInFrameBase(): number;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ce4102b0` (2026-11-14)
-**Commit Message**: fix(ios): never re-attach torn-down ListView item views (#11642)
+### Incident Patch 1: `8a6f0ca8` (2026-11-22)
+**Commit Message**: fix(android): hold Button and ActionBar from their native listeners weakly (#11658)
 
-When a cell leaves the table, ListView tears its item view down but kept
-the cell's WeakRef to it and left the dead native root in the cell's
-contentView. A later prepare of that cell re-attached the torn-down view,
-whose graph was no longer rooted, so native parts of it (such as the
-UIColor cached by a CSS Color) could already be released; the resulting
-exception made the data source return a nil cell and UIKit abort. UIKit
-also puts removed cells back into the table without asking for them
-again, and those rows stayed blank. Both happen constantly while an
-accessibility client (XCUITest, VoiceOver) disables cell reuse.
+The button's native view holds its ClickListenerImpl, and the toolbar
+holds its MenuItemClickListenerImpl; each listener held its view in a
+strong owner property, which only disposeNativeView cleared. A view
+whose native view is never disposed, such as the previous root after
+Application.resetRootView(), was kept alive by that cycle once wrapper
+resurrection no longer broke it. The listeners now hold their owner
+through a WeakRef, as the iOS handlers and the Android TabView and
+EditableTextBase listeners already do.
 
-- detach the item's native root from the cell on teardown
-- clear the cell's reference so the next prepare builds a new view
-- prepare a cell that is back in the table without content, from
-  didMoveToSuperview and from willDisplay; cells UIKit announces after
-  taking them out of the table are left alone, since preparing them
-  would keep them in the ListView's map for good
-- the same teardown changes for sticky header views
-
-**File**: `apps/automated/src/ui/list-view/list-view-tests.ts` (modified, +31/-0)
+**File**: `apps/automated/src/ui/action-bar/action-bar-tests.android.ts` (modified, +25/-1)
 ```diff
-@@ -177,6 +177,37 @@ export class ListViewTest extends UITest<ListView> {
- 		}
- 	}
+@@ -1,11 +1,35 @@
+ ﻿import * as TKUnit from '../../tk-unit';
+ import { createPageAndNavigate } from './action-bar-tests-common';
+ import { ActionItem } from '@nativescript/core/ui/action-bar';
+-import { CoreTypes } from '@nativescript/core';
++import { CoreTypes, Utils } from '@nativescript/core';
+ import { Button } from '@nativescript/core/ui/button';
  
-+	// UIKit can take a cell out of the table and display it again without asking for it in
-+	// tableView:cellForRowAtIndexPath: (constantly while an accessibility client disables cell reuse).
-+	public test_cell_displayed_again_after_teardown_gets_new_content_ios() {
-+		if (__APPLE__) {
-+			const listView = this.testView;
-+			listView.on(ListView.itemLoadingEvent, this.loadViewWithItemNumber);
-+			listView.items = FEW_ITEMS;
-+			this.waitUntilListViewReady();
-+
-+			const tableView = <UITableView>listView.ios;
-+			const indexPath = NSIndexPath.indexPathForRowInSection(1, 0);
-+			const cell = <any>tableView.cellForRowAtIndexPath(indexPath);
-+			const tableContent = cell.superview;
-+			const tornDownView = cell.view;
-+			TKUnit.assertNotNull(tornDownView, 'cell has an item view');
-+
-+			cell.removeFromSuperview();
-+			TKUnit.assertEqual(cell.contentView.subviews.count, 0, 'the torn-down item view is detached from the cell');
-+			TKUnit.assertNull(cell.view, 'the cell no longer refers to the torn-down item view');
-+
-+			tableView.delegate.tableViewWillDisplayCellForRowAtIndexPath(tableView, cell, indexPath);
-+			TKUnit.assertNull(cell.view, 'a cell outside the table is not prepared');
-+
-+			tableContent.addSubview(cell);
-+			TKUnit.assertEqual(cell.contentView.subviews.count, 1, 'the cell has exactly one item view again');
-+			TKUnit.assertNotEqual(cell.view, tornDownView, 'the torn-down item view is not re-attached');
-+			TKUnit.assertEqual(cell.view.parent, listView, 'the new item view is a child of the ListView');
-+			TKUnit.assertEqual((<Label>cell.view).text, 'item 1', 'the new item view shows the row');
-+		}
+ export * from './action-bar-tests-common';
+ 
++function collectJsAndJavaGarbage() {
++	for (let i = 0; i < 3; i++) {
++		Utils.GC();
++		java.lang.System.gc();
++		java.lang.System.runFinalization();
++		TKUnit.wait(0.05);
 +	}
-+
- 	public test_set_items_to_array_creates_native_views() {
- 		var listView = this.testView;
- 		listView.on(ListView.itemLoadingEvent, this.loadViewWithItemNumber);
-```
-
-**File**: `packages/core/ui/list-view/index.ios.ts` (modified, +60/-16)
-```diff
-@@ -60,11 +60,25 @@ class ListViewCell extends UITableViewCell {
- 		}
- 	}
- 
-+	public didMoveToSuperview(): void {
-+		super.didMoveToSuperview();
-+
-+		// UIKit can put a cell back into the table without asking for it in tableView:cellForRowAtIndexPath:.
-+		const listView = this.listView?.deref();
-+		if (this.superview && listView && !listView._hasCellContent(this)) {
-+			const indexPath = (listView.nativeViewProtected as UITableView)?.indexPathForCell(this);
-+			if (indexPath) {
-+				listView._prepareCellForDisplay(this, indexPath);
-+			}
-+		}
-+	}
-+
- 	public get view(): View {
- 		return this.owner ? this.owner.deref() : null;
- 	}
- 
- 	public owner: WeakRef<View>;
-+	public listView: WeakRef<ListView>;
- }
- 
- @NativeClass
-@@ -166,18 +180,7 @@ class DataSource extends NSObject implements UITableViewDataSource {
- 		if (owner) {
- 			const template = owner.sectioned ? owner._getItemTemplateInSection(indexPath.section, indexPath.row) : owner._getItemTemplate(indexPath.row);
- 			cell = <ListViewCell>(tableView.dequeueReusableCellWithIdentifier(template.key) || ListViewCell.initWithEmptyBackground());
--			owner._prepareCell(cell, indexPath);
--
--			const cellView: View = cell.view;
--			if (cellView && cellView.isLayoutRequired) {
--				// Arrange cell views. We do it here instead of _layoutCell because _layoutCell is called
--				// from 'tableViewHeightForRowAtIndexPath' method too (in iOS 7.1) and we don't want to arrange the fake cell.
--				const width = layout.getMeasureSpecSize(owner.widthMeasureSpec);
--				const rowHeight = owner._effectiveRowHeight;
--				const cellHeight = rowHeight > 0 ? rowHeight : owner.getHeight(indexPath.row, indexPath.section);
--				cellView.iosOverflowSafeAreaEnabled = false;
--				View.layoutChild(owner, cellView, 0, 0, width, cellHeight);
--			}
-+			owner._prepareCellForDisplay(cell, indexPath);
- 		} else {
- 			cell = <ListViewCell>ListViewCell.initWithEmptyBackground();
- 		}
-@@ -204,6 +207,11 @@ class UITableViewDelegateImpl extends NSObject implements UITableViewDelegate {
- 
- 	public tableViewWillDisplayCellForRowAtIndexPath(tableView: UITableView, cell: UITableViewCell, indexPath: NSIndexPath) {
- 		const owner = this._owner?.deref();
-+		// UIKit also announces cells it has already taken out of the table and will drop; preparing
-+		// those would keep them and their item views in the ListView's map for good.
-+		if (owner && cell instanceof ListViewCell && cell.superview && !owner._hasCellContent(cell)) {
-+			owner._prepareCellForDisplay(cell, indexPath);
-+		}
- 		if (owner && indexPath.row === owner.items.length - 1) {
- 			owner.notify(<EventData>{
- 				eventName: LOADMOREITEMS,
-@@ -315,6 +323,11 @@ class UITableViewRowHeightDelegateImpl extends NSObject implements UITableViewDe
- 
- 	public tableViewWillDisplayCellForRowAtIndexPath(tableView: UITableView, cell: UITableViewCell, indexPath: NSIndexPath) {
- 		const owner = this._owner?.deref();
-+		// UIKit also announces cells it has already taken out of the table and will drop; preparing
-+		// those would keep them and their item views in the ListView's map for good.
-+		if (owner && cell instanceof ListViewCell && cell.superview && !owner._hasCellContent(cell)) {
-+			owner._prepareCellForDisplay(cell, indexPath);
-+		}
- 		if (owner && indexPath.row === owner.items.length - 1) {
- 			owner.notify(<EventData>{
- 				eventName: LOADMOREITEMS,
-@@ -867,8 +880,6 @@ export class ListView extends ListViewBase {
- 			if (!cell.view) {
- 				cell.owner = new WeakRef(view);
- 			} else if (cell.view !== view) {
--				// Remove view from super view now as nativeViewProtected will be null afterwards
--				(<UIView>cell.view.nativeViewProtected)?.removeFromSuperview();
- 				this._removeContainer(cell);
- 				cell.owner = new WeakRef(view);
- 			}
-@@ -882,6 +893,9 @@ export class ListView extends ListViewBase {
- 				view._listViewItemIndex = indexPath.row;
- 			}
- 			this._map.set(cell, view);
-+			if (cell.listView?.deref() !== this) {
-+				cell.listView = new WeakRef(this);
-+			}
- 
- 			// We expect that views returned from itemLoading are new (e.g. not reused).
- 			if (view && !view.parent) {
-@@ -897,8 +911,33 @@ export class ListView extends ListViewBase {
- 		return cellHeight;
- 	}
- 
-+	public _hasCellContent(cell: ListViewCell): boolean {
-+		const view = cell.view;
-+
-+		return !!view && this._map.get(cell) === view;
-+	}
-+
-+	public _prepareCellForDisplay(cell: ListViewCell, indexPath: NSIndexPath): void {
-+		this._prepareCell(cell, indexPath);
-+
-+		const cellView: View = cell.view;
-+		if (cellView && cellView.isLayoutRequired) {
-+			// Arrange cell views. We do it here instead of _layoutCell because _layoutCell is called
-+			// from 'tableViewHeightForRowAtIndexPath' method too (in iOS 7.1) and we don't want to arrange the fake cell.
-+			const width = layout.getMeasureSpecSize(this.widthMeasureSpec);
-+			const rowHeight = this._effectiveRowHeight;
-+			const cellHeight = rowHeight > 0 ? rowHeight : this.getHeight(indexPath.row, indexPath.section);
-+			cellView.iosOverf
-```
-
----
-
-### Incident Patch 2: `9875c2ee` (2026-11-12)
-**Commit Message**: fix(ios): raise orientationChanged from scene geometry updates (#11638)
-
-[skip ci]
-
-**File**: `packages/core/application/application.ios.ts` (modified, +12/-6)
-```diff
-@@ -617,6 +617,17 @@ class SceneDelegate extends UIResponder implements UIWindowSceneDelegate {
- 		deliverUserActivity(windowScene, Application.ios._getWindowForScene(windowScene), userActivity);
- 	}
- 
-+	// Scene-based apps get rotation here rather than through the status bar orientation notification.
-+	// iOS 26+ calls both callbacks per rotation, earlier versions only the coordinate-space one;
-+	// _setOrientation drops the repeat.
-+	windowSceneDidUpdateEffectiveGeometry(windowScene: UIWindowScene, previousEffectiveGeometry: UIWindowSceneGeometry): void {
-+		Application.ios._getWindowForScene(windowScene)?._syncOrientation();
-+	}
-+
-+	windowSceneDidUpdateCoordinateSpaceInterfaceOrientationTraitCollection(windowScene: UIWindowScene, previousCoordinateSpace: UICoordinateSpace, previousInterfaceOrientation: UIInterfaceOrientation, previousTraitCollection: UITraitCollection): void {
-+		Application.ios._getWindowForScene(windowScene)?._syncOrientation();
-+	}
-+
- 	windowScenePerformActionForShortcutItemCompletionHandler(windowScene: UIWindowScene, shortcutItem: UIApplicationShortcutItem, completionHandler: (p1: boolean) => void): void {
- 		deliverShortcutAction(windowScene, Application.ios._getWindowForScene(windowScene), shortcutItem, completionHandler);
- 	}
-@@ -1382,12 +1393,7 @@ export class iOSApplication extends ApplicationCommon implements IiOSApplication
- 		// The notification is app-wide, but scenes rotate independently, so every attached
- 		// window is refreshed from its own scene.
- 		for (const nativeWindow of this._windows) {
--			if (nativeWindow.state !== 'attached') {
--				continue;
--			}
--
--			const orientation = nativeWindow.ios?.scene?.interfaceOrientation ?? UIApplication.sharedApplication.statusBarOrientation;
--			nativeWindow._setOrientation(this.getOrientationValue(orientation));
-+			(nativeWindow as IOSNativeWindow)._syncOrientation();
- 		}
- 	}
- 
-```
-
-**File**: `packages/core/application/scene-orientation.ios.spec.ts` (added, +61/-0)
-```diff
-@@ -0,0 +1,61 @@
-+import { describe, it, expect, afterEach, vi } from 'vitest';
-+import { Application } from './application.ios';
-+import { IOSNativeWindow } from '../native-window/native-window.ios';
-+
-+function createScene(interfaceOrientation: number, effectiveOrientation?: number): any {
-+	return {
-+		session: {},
-+		interfaceOrientation,
-+		effectiveGeometry: effectiveOrientation === undefined ? undefined : { interfaceOrientation: effectiveOrientation },
-+	};
 +}
 +
-+function createSceneDelegate(): any {
-+	return new (global as any).SceneDelegate();
++export function test_actionItem_tap_after_garbage_collection() {
++	const actionItem = new ActionItem();
++	actionItem.text = 'Test';
++	let tapped = false;
++	actionItem.on(ActionItem.tapEvent, () => (tapped = true));
++	const page = createPageAndNavigate();
++	page.actionBar.actionItems.addItem(actionItem);
++
++	collectJsAndJavaGarbage();
++	const toolbar = <androidx.appcompat.widget.Toolbar>page.actionBar.nativeViewProtected;
++	toolbar.getMenu().performIdentifierAction((<any>actionItem)._getItemId(), 0);
++
++	TKUnit.assertTrue(tapped, 'action item tap should fire after a garbage collection');
 +}
 +
-+describe('iOS scene orientation', () => {
-+	afterEach(() => {
-+		vi.restoreAllMocks();
-+	});
-+
-+	it('reads the effective geometry orientation when the scene provides one', () => {
-+		const window = new IOSNativeWindow(createScene(UIInterfaceOrientation.Portrait, UIInterfaceOrientation.LandscapeLeft), {} as UIWindow);
-+
-+		expect(window.orientation()).toBe('landscape');
-+	});
-+
-+	it('falls back to the scene interface orientation without effective geometry', () => {
-+		const window = new IOSNativeWindow(createScene(UIInterfaceOrientation.LandscapeRight), {} as UIWindow);
-+
-+		expect(window.orientation()).toBe('landscape');
-+	});
-+
-+	for (const callback of ['windowSceneDidUpdateEffectiveGeometry', 'windowSceneDidUpdateCoordinateSpaceInterfaceOrientationTraitCollection']) {
-+		it(`raises orientationChanged from ${callback}`, () => {
-+			const scene = createScene(UIInterfaceOrientation.Portrait, UIInterfaceOrientation.Portrait);
-+			const window = new IOSNativeWindow(scene, {} as UIWindow);
-+			vi.spyOn(Application.ios, '_getWindowForScene').mockImplementation((s) => (s === scene ? window : undefined));
-+
-+			expect(window.orientation()).toBe('portrait');
-+
-+			const changes: string[] = [];
-+			window.on('orientationChanged', (args: any) => changes.push(args.newValue));
-+
-+			scene.effectiveGeometry.interfaceOrientation = UIInterfaceOrientation.LandscapeLeft;
-+			createSceneDelegate()[callback](scene, null, null, null);
-+
-+			expect(changes).toEqual(['landscape']);
-+
-+			createSceneDelegate()[callback](scene, null, null, null);
-+
-+			expect(changes).toEqual(['landscape']);
-+		});
-+	}
-+
-+	it('ignores geometry updates for a scene with no window', () => {
-+		vi.spyOn(Application.ios, '_getWindowForScene').mockReturnValue(undefined);
-+
-+		expect(() => createSceneDelegate().windowSceneDidUpdateEffectiveGeometry(createScene(UIInterfaceOrientation.Portrait), null)).not.toThrow();
-+	});
-+});
+ export function test_actionItem_visibility() {
+ 	const actionItem = new ActionItem();
+ 	actionItem.text = 'Test';
 ```
 
-**File**: `packages/core/native-window/native-window.ios.ts` (modified, +10/-1)
+**File**: `apps/automated/src/ui/button/button-tests.ts` (modified, +25/-1)
 ```diff
-@@ -123,11 +123,20 @@ export class IOSNativeWindow extends NativeWindow {
- 			return this._getOrientationValue(NativeScriptEmbedder.sharedInstance().windowScene?.interfaceOrientation);
- 		}
- 		if (this._scene) {
--			return this._getOrientationValue(this._scene.interfaceOrientation);
-+			return this._getOrientationValue(this._scene.effectiveGeometry?.interfaceOrientation ?? this._scene.interfaceOrientation);
- 		}
- 		return this._getOrientationValue(UIApplication.sharedApplication.statusBarOrientation);
- 	}
+@@ -1,6 +1,6 @@
+ import * as TKUnit from '../../tk-unit';
+ import * as helper from '../../ui-helper';
+-import { View, EventData, Button, Observable, Color, Page, FormattedString, BindingOptions, Span } from '@nativescript/core';
++import { View, EventData, Button, Observable, Color, Page, FormattedString, BindingOptions, Span, Utils } from '@nativescript/core';
+ import * as buttonTestsNative from './button-tests-native';
  
-+	/**
-+	 * @internal – re-reads the native orientation and raises `orientationChanged` if it moved.
-+	 */
-+	_syncOrientation(): void {
-+		if (this.state === 'attached') {
-+			this._setOrientation(this._getOrientation());
-+		}
-+	}
-+
- 	protected _getSystemAppearance(): 'light' | 'dark' | null {
- 		if (!__VISIONOS__ && SDK_VERSION <= 11) {
- 			return null;
-```
-
----
-
-### Incident Patch 3: `ff081de9` (2026-11-14)
-**Commit Message**: fix(core): register touch animations once per view (#11641)
-
-**File**: `packages/core/ui/gestures/touch-manager.ts` (modified, +98/-52)
-```diff
-@@ -26,6 +26,34 @@ export type VisionHoverOptions = {
- 	shapeCornerRadius?: number;
+ export function test_recycling() {
+@@ -15,6 +15,30 @@ export var testOnClick = function () {
+ 	helper.buildUIAndRunTest(_createButtonFunc(), _testOnClick);
  };
  
-+/**
-+ * What TouchManager.addAnimations has wired for a view. Kept on the view, so it lives exactly as long as the view does.
-+ */
-+const touchState = Symbol('touchState');
-+type TouchState = {
-+	/** The down animation is hooked to the view's touchDown event. */
-+	down?: boolean;
-+	/** The up animation is hooked to the view's touchUp event. */
-+	up?: boolean;
-+	/** The gesture that raises touchDown/touchUp is attached: touch on Android, long press on iOS views that are not a UIControl. */
-+	gesture?: boolean;
-+	/** Target of the UIControl events. Held here because a UIControl does not retain its targets. */
-+	handler?: any /* TouchControlHandler */;
-+	/** The handler is registered with the current native view for down. */
-+	nativeDown?: boolean;
-+	/** The handler is registered with the current native view for up. */
-+	nativeUp?: boolean;
-+	disposeHook?: boolean;
-+};
-+
-+function getTouchState(view: View): TouchState {
-+	const holder = view as unknown as { [touchState]?: TouchState };
-+	if (!holder[touchState]) {
-+		holder[touchState] = {};
++function collectJsAndJavaGarbage() {
++	for (let i = 0; i < 3; i++) {
++		Utils.GC();
++		if (__ANDROID__) {
++			java.lang.System.gc();
++			java.lang.System.runFinalization();
++		}
++		TKUnit.wait(0.05);
 +	}
-+	return holder[touchState];
 +}
 +
- /**
-  * Manage interactivity in your apps easily with TouchManager.
-  * Store reusable down/up animation settings for touches as well as optionally enable automatic tap (down/up) animations for your app.
-@@ -66,8 +94,7 @@ export class TouchManager {
- 	// }
- 	static animations: TouchAnimationOptions;
- 	/**
--	 * Native Touch handlers (iOS only) registered with the view through the TouchManager.
--	 * The TouchManager uses this internally but makes public for other versatility if needed.
-+	 * @deprecated No longer populated. The native touch handler (iOS only) is kept with its view and released with it.
- 	 */
- 	static touchHandlers: Array<{ view: View; handler: any /* UIGestureRecognizer */ }>;
- 	/**
-@@ -84,59 +111,74 @@ export class TouchManager {
- 		const handleDown = (view?.touchAnimation && (<TouchAnimationOptions>view?.touchAnimation).down) || (TouchManager.animations && TouchManager.animations.down);
- 		const handleUp = (view?.touchAnimation && (<TouchAnimationOptions>view?.touchAnimation).up) || (TouchManager.animations && TouchManager.animations.up);
- 
-+		// View.onLoaded calls this on every load, not only the first one, and a view can gain a
-+		// direction between two loads. Down and up are tracked separately so each is wired once:
-+		// the listeners per view, the control target per native view.
-+		const state = getTouchState(view);
-+		const wireDown = !!handleDown && !state.down;
-+		const wireUp = !!handleUp && !state.up;
-+		if (wireDown) {
-+			state.down = true;
-+		}
-+		if (wireUp) {
-+			state.up = true;
-+		}
++export function testOnClickAfterGarbageCollection() {
++	helper.buildUIAndRunTest(_createButtonFunc(), function (views: Array<View>) {
++		const button = <Button>views[0];
++		let tapped = false;
++		button.on(Button.tapEvent, () => (tapped = true));
 +
- 		if (__APPLE__) {
- 			if (view?.ios?.addTargetActionForControlEvents) {
- 				// can use UIControlEvents
--				if (!TouchManager.touchHandlers) {
--					TouchManager.touchHandlers = [];
-+				if (!state.handler) {
-+					state.handler = TouchControlHandler.initWithOwner(new WeakRef(view));
-+				}
-+				if (handleDown && !state.nativeDown) {
-+					state.nativeDown = true;
-+					(<UIControl>view.ios).addTargetActionForControlEvents(state.handler, GestureEvents.touchDown, UIControlEvents.TouchDown | UIControlEvents.TouchDragEnter);
-+				}
-+				if (handleUp && !state.nativeUp) {
-+					state.nativeUp = true;
-+					(<UIControl>view.ios).addTargetActionForControlEvents(state.handler, GestureEvents.touchUp, UIControlEvents.TouchDragExit | UIControlEvents.TouchCancel | UIControlEvents.TouchUpInside | UIControlEvents.TouchUpOutside);
- 				}
--				TouchManager.touchHandlers.push({
--					view,
--					handler: TouchControlHandler.initWithOwner(new WeakRef(view)),
--				});
++		collectJsAndJavaGarbage();
++		buttonTestsNative.performNativeClick(button);
++
++		TKUnit.assertTrue(tapped, 'tap should fire after a garbage collection');
++	});
++}
++
+ export var testBindTextDirectlyToModel = function () {
+ 	helper.buildUIAndRunTest(_createButtonFunc(), _testBindTextDirectlyToModel);
+ };
+```
+
+**File**: `packages/core/ui/action-bar/index.android.ts` (modified, +8/-3)
+```diff
+@@ -66,14 +66,19 @@ function initializeMenuItemClickListener(): void {
+ 	@NativeClass
+ 	@Interfaces([androidx.appcompat.widget.Toolbar.OnMenuItemClickListener])
+ 	class MenuItemClickListenerImpl extends java.lang.Object implements androidx.appcompat.widget.Toolbar.OnMenuItemClickListener {
+-		constructor(public owner: ActionBar) {
++		// Weak: the toolbar holds this listener, so a strong owner would be a cycle that
++		// only disposeNativeView breaks.
++		public owner: WeakRef<ActionBar>;
++
++		constructor(owner: ActionBar) {
+ 			super();
++			this.owner = new WeakRef(owner);
+ 		}
  
--				if (handleDown) {
--					(<UIControl>view.ios).addTargetActionForControlEvents(TouchManager.touchHandlers[TouchManager.touchHandlers.length - 1].handler, GestureEvents.touchDown, UIControlEvents.TouchDown | UIControlEvents.TouchDragEnter);
-+				if (wireDown) {
- 					view.on(GestureEvents.touchDown, (args) => {
- 						TouchManager.startAnimationForType(view, TouchAnimationTypes.down);
- 					});
- 				}
--				if (handleUp) {
--					(<UIControl>view.ios).addTargetActionForControlEvents(TouchManager.touchHandlers[TouchManager.touchHandlers.length - 1].handler, GestureEvents.touchUp, UIControlEvents.TouchDragExit | UIControlEvents.TouchCancel | UIControlEvents.TouchUpInside | UIControlEvents.TouchUpOutside);
-+				if (wireUp) {
- 					view.on(GestureEvents.touchUp, (args) => {
- 						TouchManager.startAnimationForType(view, TouchAnimationTypes.up);
- 					});
- 				}
--			} else {
--				if (handleDown || handleUp) {
--					view.on(GestureEvents.gestureAttached, (args: GestureEventData) => {
--						if (args.type === GestureTypes.longPress) {
--							(<UILongPressGestureRecognizer>args.ios).minimumPressDuration = (<View>args.object)?.touchDelay || 0;
--						}
--					});
--					view.on(GestureTypes[GestureTypes.longPress], (args: GestureEventDataWithState) => {
--						switch (args.state) {
--			
+ 		onMenuItemClick(item: android.view.MenuItem): boolean {
+-			const itemId = item.getItemId();
++			const owner = this.owner?.deref();
+ 
+-			return this.owner._onAndroidItemSelected(itemId);
++			return owner ? owner._onAndroidItemSelected(item.getItemId()) : false;
+ 		}
+ 	}
+ 
+```
+
+**File**: `packages/core/ui/button/index.android.ts` (modified, +7/-2)
+```diff
+@@ -25,12 +25,17 @@ function initializeClickListener(): void {
+ 	@NativeClass
+ 	@Interfaces([android.view.View.OnClickListener])
+ 	class ClickListenerImpl extends java.lang.Object implements android.view.View.OnClickListener {
+-		constructor(public owner: Button) {
++		// Weak: the button's native view holds this listener, so a strong owner would be
++		// a cycle that only disposeNativeView breaks.
++		public owner: WeakRef<Button>;
++
++		constructor(owner: Button) {
+ 			super();
++			this.owner = new WeakRef(owner);
+ 		}
+ 
+ 		public onClick(v: android.view.View): void {
+-			const owner = this.owner;
++			const owner = this.owner?.deref();
+ 			if (owner) {
+ 				owner._emit(ButtonBase.tapEvent);
+ 			}
+```
+
+---
+
+### Incident Patch 2: `a3833596` (2026-11-22)
+**Commit Message**: fix(android): hold the SegmentedBar from its tab content factory weakly (#11657)
+
+SegmentedBar keeps its TabContentFactoryImpl in _tabContentFactory, and
+the factory kept the bar in a strong owner property, which
+disposeNativeView never cleared. Wrapper resurrection used to break
+this cycle; a runtime that keeps a JS-implemented object's state for as
+long as Java holds the object cannot, so every SegmentedBar and its view
+subtree stayed alive. The factory now holds the bar through a WeakRef
+and falls back to the application context once the bar is gone.
+
+**File**: `apps/automated/src/ui/segmented-bar/segmented-bar-tests.ts` (modified, +26/-1)
+```diff
+@@ -1,7 +1,7 @@
+ import * as TKUnit from '../../tk-unit';
+ import * as segmentedBarTestsNative from './segmented-bar-tests-native';
+ import { buildUIAndRunTest } from '../../ui-helper';
+-import { Color, Observable, BindingOptions, View } from '@nativescript/core';
++import { Color, Observable, BindingOptions, View, Utils } from '@nativescript/core';
+ import * as helper from '../../ui-helper';
+ 
+ // >> article-require-segmentedbar-module
+@@ -34,6 +34,31 @@ function _createItems(count: number): Array<segmentedBarModule.SegmentedBarItem>
+ 	return items;
+ }
+ 
++function collectJsAndJavaGarbage() {
++	for (let i = 0; i < 3; i++) {
++		Utils.GC();
++		if (__ANDROID__) {
++			java.lang.System.gc();
++			java.lang.System.runFinalization();
++		}
++		TKUnit.wait(0.05);
++	}
++}
++
++export function test_SelectingTabsAfterGarbageCollection_CreatesTheirContent() {
++	const segmentedBar = _createSegmentedBar();
++	segmentedBar.items = _createItems(3);
++	buildUIAndRunTest(segmentedBar, function (views: Array<View>) {
++		const bar = <segmentedBarModule.SegmentedBar>views[0];
++		collectJsAndJavaGarbage();
++		bar.selectedIndex = 2;
++		collectJsAndJavaGarbage();
++		bar.selectedIndex = 1;
++		TKUnit.assertEqual(bar.selectedIndex, 1, 'selectedIndex');
++		TKUnit.assertEqual(segmentedBarTestsNative.getNativeItemsCount(bar), 3, 'native items');
++	});
++}
++
+ export var testWhenSegmentedBarIsCreatedItemsAreUndefined = function () {
+ 	buildUIAndRunTest(_createSegmentedBar(), function (views: Array<View>) {
+ 		var segmentedBar = <segmentedBarModule.SegmentedBar>views[0];
+```
+
+**File**: `packages/core/ui/segmented-bar/index.android.ts` (modified, +10/-4)
+```diff
+@@ -3,7 +3,7 @@ import { SegmentedBarItemBase, SegmentedBarBase, selectedIndexProperty, itemsPro
+ import { AndroidHelper, isEnabledProperty } from '../core/view';
+ import { colorProperty, fontInternalProperty, fontSizeProperty } from '../styling/style-properties';
+ import { Color } from '../../color';
+-import { layout } from '../../utils';
++import { android as androidUtils, layout } from '../../utils';
+ import { SDK_VERSION } from '../../utils/constants';
+ import { Trace } from '../../trace';
+ import { CoreTypes } from '../../core-types';
+@@ -65,13 +65,19 @@ function initializeNativeClasses(): void {
+ 	@NativeClass
+ 	@Interfaces([android.widget.TabHost.TabContentFactory])
+ 	class TabContentFactoryImpl extends java.lang.Object implements android.widget.TabHost.TabContentFactory {
+-		constructor(public owner: SegmentedBar) {
++		// Weak: the bar holds this factory, so a strong owner would be a cycle
++		// through the factory's native counterpart.
++		private owner: WeakRef<SegmentedBar>;
++
++		constructor(owner: SegmentedBar) {
+ 			super();
++			this.owner = new WeakRef(owner);
+ 		}
+ 
+ 		createTabContent(tag: string): android.view.View {
+-			const tv = new android.widget.TextView(this.owner._context);
+-			const isRtl = this.owner.direction === CoreTypes.LayoutDirection.rtl;
++			const owner = this.owner.deref();
++			const tv = new android.widget.TextView(owner ? owner._context : androidUtils.getApplicationContext());
++			const isRtl = owner?.direction === CoreTypes.LayoutDirection.rtl;
+ 
+ 			// This is collapsed by default and made visible
+ 			// by android when TabItem becomes visible/selected.
+```
+
+---
+
+### Incident Patch 3: `4f92046e` (2026-11-22)
+**Commit Message**: fix(android): hold the TextBase from its text transformation weakly (#11662)
+
+A TextView holds the TextTransformationImpl that text-transform and a
+Button's formatted text install (TextView.mTransformation), and the
+transformation held its TextBase in a strong textBase property, which
+reaches the TextView again through the view's native view. Only tearing
+the view down broke that cycle, so a view that is never torn down, such
+as the previous root after Application.resetRootView(), stayed alive
+once wrapper resurrection no longer collected it. The transformation
+now holds the TextBase through a WeakRef and returns the text unchanged
+once it is gone.
+
+**File**: `apps/automated/src/ui/root-view/reset-root-view-tests.ts` (modified, +26/-1)
+```diff
+@@ -1,6 +1,6 @@
+ import * as TKUnit from '../../tk-unit';
+ import * as helper from '../../ui-helper';
+-import { Page, isAndroid, Frame, NavigationEntry, Application, TabView, TabViewItem } from '@nativescript/core';
++import { Page, isAndroid, Frame, NavigationEntry, Application, TabView, TabViewItem, Label, Button, StackLayout, FormattedString, Span } from '@nativescript/core';
+ 
+ function waitUntilTabViewReady(page: Page, action: Function) {
+ 	helper.waitUntilNavigatedTo(page, action);
+@@ -144,6 +144,31 @@ export function test_reset_during_tab_index_change() {
+ 	TKUnit.assertTrue(true);
+ }
+ 
++export function test_reset_layout_with_transformed_text_to_frame() {
++	const label = new Label();
++	label.text = 'label';
++	label.textTransform = 'uppercase';
++
++	const formattedText = new FormattedString();
++	const span = new Span();
++	span.text = 'button';
++	formattedText.spans.push(span);
++	const button = new Button();
++	button.formattedText = formattedText;
++
++	const layoutRoot = new StackLayout();
++	layoutRoot.addChild(label);
++	layoutRoot.addChild(button);
++
++	Application.resetRootView({ create: () => layoutRoot });
++	TKUnit.waitUntilReady(() => layoutRoot.isLoaded);
++	TKUnit.assertEqual(Application.getRootView(), layoutRoot);
++
++	const testFrameRoot = createTestFrameRootEntry();
++	helper.waitUntilNavigatedTo(testFrameRoot.page, () => Application.resetRootView(testFrameRoot.entry));
++	TKUnit.assertEqual(Application.getRootView(), testFrameRoot.root);
++}
++
+ export function tearDownModule() {
+ 	// reset the root to frame for other tests
+ 	const resetFrameRoot = createTestFrameRootEntry();
+```
+
+**File**: `apps/automated/src/ui/text-base/text-base-tests.ts` (modified, +49/-1)
+```diff
+@@ -1,6 +1,6 @@
+ import * as TKUnit from '../../tk-unit';
+ import * as helper from '../../ui-helper';
+-import { FormattedString, Label, Span, StackLayout } from '@nativescript/core';
++import { Button, FormattedString, Label, Span, StackLayout, Utils } from '@nativescript/core';
+ 
+ export function test_native_font_size_with_a11y_font_scale() {
+ 	if (__APPLE__) {
+@@ -21,3 +21,51 @@ export function test_native_font_size_with_a11y_font_scale() {
+ 		TKUnit.assertEqual(nativeFontSize, expectedNativeFontSize, 'View font size does not respect a11y font scaling');
+ 	}
+ }
++
++function collectJsAndJavaGarbage() {
++	for (let i = 0; i < 3; i++) {
++		Utils.GC();
++		java.lang.System.gc();
++		java.lang.System.runFinalization();
++		TKUnit.wait(0.05);
++	}
++}
++
++function displayedText(view: Label | Button): string {
++	const nativeView = <android.widget.TextView>view.nativeTextViewProtected;
++
++	return nativeView.getTransformationMethod().getTransformation(nativeView.getText(), nativeView).toString();
++}
++
++export function test_android_text_transform_survives_garbage_collection() {
++	if (!__ANDROID__) {
++		return;
++	}
++
++	const label = new Label();
++	label.text = 'label';
++	label.textTransform = 'uppercase';
++
++	const span = new Span();
++	span.text = 'button';
++	const formattedText = new FormattedString();
++	formattedText.spans.push(span);
++	const button = new Button();
++	button.formattedText = formattedText;
++
++	const layout = new StackLayout();
++	layout.addChild(label);
++	layout.addChild(button);
++	helper.getCurrentPage().content = layout;
++	TKUnit.waitUntilReady(() => layout.isLoaded);
++
++	collectJsAndJavaGarbage();
++	label.text = 'changed';
++	span.text = 'span changed';
++	label.nativeViewProtected.requestLayout();
++	button.nativeViewProtected.requestLayout();
++	TKUnit.wait(0.05);
++
++	TKUnit.assertEqual(displayedText(label), 'CHANGED', 'label text-transform after garbage collection');
++	TKUnit.assertEqual(displayedText(button), 'span changed', 'button formatted text after garbage collection');
++}
+```
+
+**File**: `packages/core/ui/text-base/index.android.ts` (modified, +15/-5)
+```diff
+@@ -32,20 +32,30 @@ function initializeTextTransformation(): void {
+ 	@NativeClass
+ 	@Interfaces([android.text.method.TransformationMethod])
+ 	class TextTransformationImpl extends java.lang.Object implements android.text.method.TransformationMethod {
+-		constructor(public textBase: TextBase) {
++		// Weak: the native text view holds this transformation, so a strong owner would be
++		// a cycle that only tearing down the view breaks.
++		public textBase: WeakRef<TextBase>;
++
++		constructor(textBase: TextBase) {
+ 			super();
++			this.textBase = new WeakRef(textBase);
+ 		}
+ 
+ 		public getTransformation(charSeq: any, view: android.view.View): any {
++			const textBase = this.textBase.deref();
++			if (!textBase) {
++				return charSeq;
++			}
++
+ 			// NOTE: Do we need to transform the new text here?
+-			const formattedText = this.textBase.formattedText;
++			const formattedText = textBase.formattedText;
+ 			if (formattedText) {
+-				return this.textBase.createFormattedTextNative(formattedText);
++				return textBase.createFormattedTextNative(formattedText);
+ 			} else {
+-				const text = this.textBase.text;
++				const text = textBase.text;
+ 				const stringValue = isNullOrUndefined(text) ? '' : text.toString();
+ 
+-				return getTransformedText(stringValue, this.textBase.textTransform);
++				return getTransformedText(stringValue, textBase.textTransform);
+ 			}
+ 		}
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #11642** (2026-11-14): fix(ios): never re-attach torn-down ListView item views (@edusperoni)
-- **PR #11641** (2026-11-14): fix(core): register touch animations once per view (@edusperoni)
-- **PR #11640** (2026-11-13): fix(android): resume Frame navigation after early Activity attachment (@NathanWalker)
-- **PR #11638** (2026-11-12): fix(ios): raise orientationChanged from scene geometry updates (@NathanWalker)
-- **PR #11637** (closed): fix(ios): keep ListView item views attached when UIKit removes their cell (@NathanWalker)
-- **PR #11633** (2026-11-10): fix(webpack): find ExternalModuleFactoryPlugin where webpack 5.112 moved it (@edusperoni)
+- **PR #11669** (2026-11-24): fix(vite): apply plugins from dependency nativescript.vite.mjs configs (@NathanWalker)
+- **PR #11666** (2026-11-23): chore(ci): pin checkout and setup-node by commit SHA in release workflow (@NathanWalker)
+- **PR #11665** (2026-11-22): chore(ci): add org-wide GitHub Actions CLA workflow (@NathanWalker)
+- **PR #11663** (2026-11-21): fix(windows): send content headers with the request body (@triniwiz)
+- **PR #11662** (2026-11-22): fix(android): hold the TextBase from its text transformation weakly (@edusperoni)
+- **PR #11661** (2026-11-22): fix(android): keep TabView and ListPicker child views off their native views (@edusperoni)
 
 ---
 
@@ -1412,54 +1388,55 @@ accessibility client (XCUITest, VoiceOver) disables cell reuse.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ios): never re-attach torn-down ListView item views
+## X. android): hold Button and ActionBar from their native listeners weakly
 
 **RULE**:
-When implementing operations in `apps/automated/src/ui/list-view/list-view-tests.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NativeScript/NativeScript. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apps/automated/src/ui/action-bar/action-bar-tests.android.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NativeScript/NativeScript. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ce4102b0`: ios): never re-attach torn-down ListView item views. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8a6f0ca8`: android): hold Button and ActionBar from their native listeners weakly. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/automated/src/ui/list-view/list-view-tests.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/automated/src/ui/action-bar/action-bar-tests.android.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-	// UIKit can take a cell out of the table and display it again without asking for it in
-	// tableView:cellForRowAtIndexPath: (constantly while an accessibility client disables cell reuse).
-	public test_cell_displayed_again_after_teardown_gets_new_content_ios() {
-		if (__APPLE__) {
-			const listView = this.testView;
-			listView.on(ListView.itemLoadingEvent, this.loadViewWithItemNumber);
-			listView.items = FEW_ITEMS;
-			this.waitUntilListViewReady();
+import { CoreTypes, Utils } from '@nativescript/core';
+function collectJsAndJavaGarbage() {
+	for (let i = 0; i < 3; i++) {
+		Utils.GC();
+		java.lang.System.gc();
+		java.lang.System.runFinalization();
+		TKUnit.wait(0.05);
+	}
+}
 
-			const tableView = <UITableView>listView.ios;
-			const indexPath = NSIndexPath.indexPathForRowInSection(1, 0);
-			const cell = <any>tableView.cellForRowAtIndexPath(indexPath);
-			const tableContent = cell.superview;
-			const tornDownView = cell.view;
-			TKUnit.assertNotNull(tornDownView, 'cell has an item view');
+export function test_actionItem_tap_after_garbage_collection() {
+	const actionItem = new ActionItem();
+	actionItem.text = 'Test';
+	let tapped = false;
+	actionItem.on(ActionItem.tapEvent, () => (tapped = true));
+	const page = createPageAndNavigate();
+	page.actionBar.actionItems.addItem(actionItem);
 
-			cell.removeFromSuperview();
-			TKUnit.assertEqual(cell.contentView.subviews.count, 0, 'the torn-down item view is detached from the cell');
-			TKUnit.assertNull(cell.view, 'the cell no longer refers to the torn-down item view');
+	collectJsAndJavaGarbage();
+	const toolbar = <androidx.appcompat.widget.Toolbar>page.actionBar.nativeViewProtected;
+	toolbar.getMenu().performIdentifierAction((<any>actionItem)._getItemId(), 0);
 
-			tableView.delegate.tableViewWillDisplayCellForRowAtIndexPath(tableView, cell, indexPath);
-			TKUnit.assertNull(cell.view, 'a cell outside the table is not prepared');
+	TKUnit.assertTrue(tapped, 'action item tap should fire after a garbage collection');
+}
 
-			tableContent.addSub
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+import { CoreTypes } from '@nativescript/core';
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ce4102b0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8a6f0ca8` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

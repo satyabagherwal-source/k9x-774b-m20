@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T01:18:36.838Z",
-  "total_records": 2614,
+  "last_updated": "2026-11-25T01:27:37.207Z",
+  "total_records": 2615,
   "domains": {
     "A": {
       "total": 22,
@@ -71,7 +71,7 @@
       ]
     },
     "D": {
-      "total": 980,
+      "total": 981,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -1052,7 +1052,8 @@
         "domain_intelligence-research-knowledge-intelligence-hf-prism-ml-ternary-bonsai-2-5-27b-gguf-learning",
         "DOM-D-74B4B6C4",
         "DOM-D-FF5AF4F8",
-        "DOM-D-183BCB72"
+        "DOM-D-183BCB72",
+        "DOM-D-58839C8D"
       ]
     },
     "E": {
@@ -8429,8 +8430,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "d0639fc3309a99e03cca296f54da9c99440bbca58281fc174c5443e2b23ee1e8",
-      "created_at": "2026-11-25T01:09:28.080Z"
+      "content_hash": "6d9581f86513ae90aace13659aef7112fe7acc7fbe58511773e1b210c78d1def",
+      "created_at": "2026-11-25T01:27:37.207Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -8597,8 +8598,8 @@
       "title": "Content & Information Intelligence: crossplane/crossplane Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-crossplane-crossplane-content-information-intelligence-crossplane-crossplane-cor.md",
       "repository": "crossplane/crossplane",
-      "content_hash": "a9189676ff792ce4685265145a88174bc851c5259d348797b84f777e25eb1b34",
-      "created_at": "2026-11-21T04:15:42.446Z"
+      "content_hash": "07f81b2eeb3fd099175f56e9b26e470a128daa74fcc001209a4b17ada6eaadd0",
+      "created_at": "2026-11-25T01:27:00.847Z"
     },
     "domain_intelligence-architecture-intelligence-mitmproxy-mitmproxy-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-mitmproxy-mitmproxy-core-invariants",
@@ -8675,8 +8676,8 @@
       "title": "Content & Information Intelligence: crossplane-crossplane-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-crossplane-crossplane-learnings-content-information-intelligence-crossplane-cros.md",
       "repository": "crossplane-crossplane-learnings",
-      "content_hash": "11f6b918b686c925192d5dbd66e053dc2124e070057b8cc2af3188876ecc2852",
-      "created_at": "2026-11-21T04:20:40.249Z"
+      "content_hash": "38a93da975622a89cb64290dc3b2ab5b84599b886bc90382d099913e5ddf430e",
+      "created_at": "2026-11-25T01:27:36.068Z"
     },
     "domain_intelligence-architecture-intelligence-mitmproxy-mitmproxy-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-mitmproxy-mitmproxy-learnings-core-invariants",
@@ -19960,8 +19961,8 @@
       "title": "Architecture Intelligence: NativeScript/NativeScript Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nativescript-nativescript-architecture-intelligence-nativescript-nativescript-co.md",
       "repository": "NativeScript/NativeScript",
-      "content_hash": "1e3cc4689e71a88e968125695792ffea38cb5d874b49d87e020e692c26bf6ad0",
-      "created_at": "2026-11-15T03:48:11.114Z"
+      "content_hash": "f56ddb4c471baa995072323fe926369da63ac3f91372fdfa1c527cc9e0401533",
+      "created_at": "2026-11-25T01:27:00.135Z"
     },
     "DOM-J-6AB1B121": {
       "record_id": "DOM-J-6AB1B121",
@@ -20026,8 +20027,8 @@
       "title": "Architecture Intelligence: nativescript-nativescript-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nativescript-nativescript-learnings-architecture-intelligence-nativescript-nativ.md",
       "repository": "nativescript-nativescript-learnings",
-      "content_hash": "4744aedc1c774ce7d26dbdccf1b4898f9ecc2c010eaab2873bcfd5aa6d17246b",
-      "created_at": "2026-11-15T03:48:47.325Z"
+      "content_hash": "d04028fbd46e1e7f6908eed03e8876c36193febe3025f5f605409d0d3b8a552b",
+      "created_at": "2026-11-25T01:27:04.450Z"
     },
     "domain_intelligence-architecture-intelligence-rook-rook-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-rook-rook-learnings-core-invariants",
@@ -43857,6 +43858,48 @@
       "repository": "encoredev-encore-learnings",
       "content_hash": "0a66da50039d229b7fe7f6f545b46d2adca29ee5ea4f18ccef9524b78883986a",
       "created_at": "2026-11-25T01:18:33.672Z"
+    },
+    "DOM-D-58839C8D": {
+      "record_id": "DOM-D-58839C8D",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): crossplane/crossplane",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/crossplane-crossplane-learnings.md`  \n> **Source**: github ([https://github.com/crossplane/crossplane](https://github.com/crossplane/crossplane))  \n> **Source Version**: `facf2896`  \n> **License**: Apache-2.0  \n> **Synthesized By**: zero-clone-",
+      "content_hash": "b0c1cdc8260c5094de3c4f0eb8012af796276d2f757d256c6fc411ea87f84fe0",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/crossplane-crossplane-learnings.md`  \n> **Source**: github ([https://github.com/cros -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/crossplane-crossplane-learnings.md`  \n> **Source**: github ([https://github.com/cros",
+      "provenance": {
+        "source_uri": "project://crossplane-crossplane/crossplane-crossplane-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-25T01:27:04.804Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (crossplane-crossplane)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of crossplane-crossplane"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-25T01:27:35.453Z"
     }
   }
 }

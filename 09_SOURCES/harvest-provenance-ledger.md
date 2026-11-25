@@ -12917,3 +12917,6 @@ Every entry in this ledger must capture:
 | `learn-github-tw93-mole` | `https://github.com/tw93/Mole` | `ee710b48` | Multi-dimensional audit evidence | 2026-11-25T01:09:19.395Z |
 | `learn-github-infracost-infracost` | `https://github.com/infracost/infracost` | `aa717670` | Multi-dimensional audit evidence | 2026-11-25T01:09:22.054Z |
 | `learn-github-encoredev-encore` | `https://github.com/encoredev/encore` | `4bd01c70` | Multi-dimensional audit evidence | 2026-11-25T01:18:28.842Z |
+| `learn-github-nativescript-nativescript` | `https://github.com/NativeScript/NativeScript` | `e4c26444` | Multi-dimensional audit evidence | 2026-11-25T01:26:59.619Z |
+| `learn-github-crossplane-crossplane` | `https://github.com/crossplane/crossplane` | `facf2896` | Multi-dimensional audit evidence | 2026-11-25T01:27:00.529Z |
+| `learn-dom-d-58839c8d` | `project://crossplane-crossplane` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crossplane-crossplane-learnings.md` | 2026-11-25T01:27:35.503Z |

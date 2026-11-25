@@ -1,9 +1,9 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T01:18:37.273Z",
+  "last_updated": "2026-11-25T01:27:37.614Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
-      "processed_at": "2026-11-25T01:09:27.483Z",
+      "processed_at": "2026-11-25T01:27:36.381Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -408,7 +408,7 @@
       "staged_for_review": 1
     },
     "nativescript-nativescript-learnings.md": {
-      "processed_at": "2026-11-22T12:37:38.191Z",
+      "processed_at": "2026-11-25T01:27:03.726Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1923,9 +1923,9 @@
       "staged_for_review": 0
     },
     "crossplane-crossplane-learnings.md": {
-      "processed_at": "2026-11-21T04:20:39.774Z",
-      "promoted_canonical": 0,
-      "staged_for_review": 1
+      "processed_at": "2026-11-25T01:27:35.503Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     },
     "mitmproxy-mitmproxy-learnings.md": {
       "processed_at": "2026-11-23T15:37:35.843Z",
@@ -3883,7 +3883,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 4002,
-  "total_canonical_promoted": 524,
-  "total_staged_for_review": 3058
+  "total_dossiers_evaluated": 4005,
+  "total_canonical_promoted": 525,
+  "total_staged_for_review": 3060
 }

@@ -46,8 +46,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-25T00:52:06.661Z",
-    "lastVerified": "2026-11-25T00:52:06.661Z",
+    "lastChecked": "2026-11-25T01:27:01.853Z",
+    "lastVerified": "2026-11-25T01:27:01.853Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-25T01:18:32.600Z",
-    "lastVerified": "2026-11-25T01:18:32.600Z",
+    "lastChecked": "2026-11-25T01:27:03.567Z",
+    "lastVerified": "2026-11-25T01:27:03.567Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -641,9 +641,9 @@
   "hashicorp-boundary": {
     "name": "boundary",
     "officialUrl": "https://github.com/hashicorp/boundary",
-    "lastChecked": "2026-11-24T20:53:05.086Z",
+    "lastChecked": "2026-11-25T01:26:56.897Z",
     "revisionIdentifier": "eeb38a1a",
-    "lastVerified": "2026-11-24T20:53:05.086Z"
+    "lastVerified": "2026-11-25T01:26:56.897Z"
   },
   "qdrant-qdrant": {
     "name": "qdrant",
@@ -3118,12 +3118,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "xerj-org-xerj": {
-    "name": "xerj-org/xerj",
+    "name": "xerj",
     "officialUrl": "https://github.com/xerj-org/xerj",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-24T05:28:25.422Z",
-    "lastVerified": "2026-11-24T05:28:25.422Z",
+    "lastChecked": "2026-11-25T01:26:59.384Z",
+    "lastVerified": "2026-11-25T01:26:59.384Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-xerj-org-xerj",
@@ -3132,7 +3132,8 @@
     "recentFixesCount": 16,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "7ba0069e"
   },
   "xampprocky-tokei": {
     "name": "tokei",
@@ -5390,22 +5391,21 @@
     "revisionIdentifier": "b3fba7d0"
   },
   "crossplane-crossplane": {
-    "name": "crossplane",
+    "name": "crossplane/crossplane",
     "officialUrl": "https://github.com/crossplane/crossplane",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-24T06:46:14.917Z",
-    "lastVerified": "2026-11-24T06:46:14.917Z",
+    "lastChecked": "2026-11-25T01:26:59.875Z",
+    "lastVerified": "2026-11-25T01:26:59.875Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-crossplane-crossplane",
-    "contentHash": "1e688fac61c0252da66c67396dbdedd12eda57fededb15674ff2f8cf238f7a32",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "contentHash": "dd5fc6ff2143012d2f63bd10a341bce19512e7e9f1847c12838c0a16b2beddaf",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "2088737a"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "sqlpage-sqlpage": {
     "name": "sqlpage/SQLPage",
@@ -7947,14 +7947,14 @@
     "officialUrl": "https://github.com/NativeScript/NativeScript",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-22T12:37:24.574Z",
-    "lastVerified": "2026-11-22T12:37:24.574Z",
+    "lastChecked": "2026-11-25T01:26:58.212Z",
+    "lastVerified": "2026-11-25T01:26:58.212Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nativescript-nativescript",
-    "contentHash": "511feaeec034d4dfa13fafa766214e13e2770f756e53a352c28d52dd220965d4",
+    "contentHash": "659e620f1c19b992a2a41750f7f88fa181d83d5c3605d22222481af93545ddd9",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 10,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -8377,9 +8377,9 @@
   "veirt-weathr": {
     "name": "weathr",
     "officialUrl": "https://github.com/Veirt/weathr",
-    "lastChecked": "2026-11-23T22:32:56.205Z",
+    "lastChecked": "2026-11-25T01:26:46.708Z",
     "revisionIdentifier": "7d403a0c",
-    "lastVerified": "2026-11-23T22:32:56.205Z"
+    "lastVerified": "2026-11-25T01:26:46.708Z"
   },
   "hf-openbmb-minicpm-v-4.7-1b": {
     "name": "openbmb/MiniCPM-V-4.7-1B",
@@ -12056,9 +12056,9 @@
   "testing-library-dom-testing-library": {
     "name": "dom-testing-library",
     "officialUrl": "https://github.com/testing-library/dom-testing-library",
-    "lastChecked": "2026-11-21T01:51:27.179Z",
+    "lastChecked": "2026-11-25T01:26:49.304Z",
     "revisionIdentifier": "6049cc0b",
-    "lastVerified": "2026-11-21T01:51:27.179Z"
+    "lastVerified": "2026-11-25T01:26:49.304Z"
   },
   "software-mansion-react-native-screens": {
     "name": "software-mansion/react-native-screens",

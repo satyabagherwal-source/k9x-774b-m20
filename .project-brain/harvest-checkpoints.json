@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-25T01:18:28.863Z",
+  "last_updated": "2026-11-25T01:27:00.550Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7566,14 +7566,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-crossplane-crossplane",
-      "content_hash": "1e688fac61c0252da66c67396dbdedd12eda57fededb15674ff2f8cf238f7a32",
-      "verified_at": "2026-11-21T04:15:42.090Z",
+      "content_hash": "dd5fc6ff2143012d2f63bd10a341bce19512e7e9f1847c12838c0a16b2beddaf",
+      "verified_at": "2026-11-25T01:27:00.549Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T04:15:42.090Z"
+      "last_updated": "2026-11-25T01:27:00.549Z"
     },
     "apple/foundationdb": {
       "repository": "apple/foundationdb",
@@ -11226,14 +11226,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nativescript-nativescript",
-      "content_hash": "511feaeec034d4dfa13fafa766214e13e2770f756e53a352c28d52dd220965d4",
-      "verified_at": "2026-11-22T12:37:25.747Z",
+      "content_hash": "659e620f1c19b992a2a41750f7f88fa181d83d5c3605d22222481af93545ddd9",
+      "verified_at": "2026-11-25T01:26:59.636Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T12:37:25.747Z"
+      "last_updated": "2026-11-25T01:26:59.636Z"
     },
     "oramasearch/orama": {
       "repository": "oramasearch/orama",
