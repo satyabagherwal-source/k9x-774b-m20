@@ -13103,3 +13103,7 @@
 | `CYCLE-20261125-G4WQ` | `2026-11-25T14:14:32.666Z` | `kumahq/kuma` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/kumahq-kuma-learnings.md` | Yes (`ecad88ff...`) |
 | `CYCLE-20261125-G783` | `2026-11-25T14:14:35.667Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10538` | Yes (`b07f392d...`) |
 | `CYCLE-2026-11-25-PROJ-EVOLVE` | `2026-11-25T14:15:13.820Z` | `kumahq-kuma` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-C2696C97` [Domain D] | Yes (`7d423650...`) |
+| `CYCLE-20261125-RZ6E` | `2026-11-25T14:23:45.110Z` | `Edge0/Audio8-TTS-Realistic-Air` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-edge0-audio8-tts-realistic-0.6b-learnings.md` | Yes (`c93c066b...`) |
+| `CYCLE-20261125-S42N` | `2026-11-25T14:23:51.455Z` | `zoontek/react-native-bootsplash` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10535` | Yes (`b7584c8a...`) |
+| `CYCLE-20261125-S773` | `2026-11-25T14:23:55.503Z` | `skyhook-io/radar` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10539` | Yes (`570c1b46...`) |
+| `CYCLE-20261125-S95I` | `2026-11-25T14:23:58.038Z` | `gravitl/netmaker` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10540` | Yes (`6c1984f7...`) |

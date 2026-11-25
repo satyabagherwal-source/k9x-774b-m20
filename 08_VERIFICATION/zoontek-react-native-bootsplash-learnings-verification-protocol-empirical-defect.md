@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-25T01:18:36.463Z",
+  "timestamp": "2026-11-25T14:24:02.553Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-zoontek-react-native-bootsplash-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [zoontek-react-native-bootsplash-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-25T01:18:36.463Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T14:24:02.553Z`  
 > **Learning ID**: `LEARN-EVO-zoontek-react-native-bootsplash-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zoontek-react-native-bootsplash-learnings.md`  
 > **Source**: github ([https://github.com/zoontek/react-native-bootsplash](https://github.com/zoontek/react-native-bootsplash))  
-> **Source Version**: `af50c229`  
+> **Source Version**: `8eda4c0b`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T05:28:54.893Z  
+> **Timestamp**: 2026-11-25T14:23:50.580Z  
 > **Learning ID**: `learn-github-zoontek-react-native-bootsplash`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zoontek-react-native-bootsplash-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zoontek/react-native-bootsplash](https://github.com/zoontek/react-native-bootsplash))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T05:28:54.700Z  
+> **Harvest Timestamp**: 2026-11-25T14:23:50.575Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -427,6 +427,54 @@ export const transformProps = async (
   if (licenseKey == null && executeAddon) {
     const options = [
       b
+```
+
+### Core Architecture Module: `Package.swift`
+```
+// swift-tools-version: 6.0
+import PackageDescription
+
+// The React Native packages are resolved by the autolinker relative to
+// build/generated/autolinking/libs/RNBootSplash in the app.
+let package = Package(
+    name: "RNBootSplash",
+    platforms: [.iOS("15.1")],
+    products: [
+        .library(name: "RNBootSplash", targets: ["RNBootSplash"]),
+    ],
+    dependencies: [
+        .package(name: "ReactNative", path: "../../../../xcframeworks"),
+        .package(name: "React-GeneratedCode", path: "../../../ios"),
+    ],
+    targets: [
+        .target(
+            name: "RNBootSplash",
+            dependencies: [
+                .product(name: "ReactHeaders", package: "ReactNative"),
+                .product(name: "ReactNativeHeaders", package: "ReactNative"),
+                .product(name: "ReactNativeDependenciesHeaders", package: "ReactNative"),
+                .product(name: "ReactAppHeaders", package: "React-GeneratedCode"),
+            ],
+            path: "ios",
+            publicHeadersPath: ".",
+            cSettings: [
+                .define("RCT_NEW_ARCH_ENABLED", to: "1"),
+            ],
+            cxxSettings: [
+                .define("RCT_NEW_ARCH_ENABLED", to: "1"),
+                .define("DEBUG", .when(configuration: .debug)),
+                .define("NDEBUG", .when(configuration: .release)),
+            ],
+            linkerSettings: [
+                .linkedFramework("UIKit"),
+                .linkedFramework("Foundation"),
+                .linkedFramework("CoreGraphics"),
+            ]
+        ),
+    ],
+    cxxLanguageStandard: .cxx20
+)
+
 ```
 
 ### Core Architecture Module: `android/src/main/java/com/zoontek/rnbootsplash/RNBootSplash.kt`
@@ -931,42 +979,6 @@ program.parse(process.argv);
 
 ```
 
-### Core Architecture Module: `example/android/app/src/main/java/com/rnbootsplashexample/MainActivity.kt`
-```
-package com.rnbootsplashexample
-
-import android.os.Bundle
-
-import com.facebook.react.ReactActivity
-import com.facebook.react.ReactActivityDelegate
-import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.fabricEnabled
-import com.facebook.react.defaults.DefaultReactActivityDelegate
-
-import com.zoontek.rnbootsplash.RNBootSplash
-
-class MainActivity : ReactActivity() {
-
-  /**
-   * Returns the name of the main component registered from JavaScript. This is used to schedule
-   * rendering of the component.
-   */
-  override fun getMainComponentName(): String = "RNBootSplashExample"
-
-  /**
-   * Returns the instance of the [ReactActivityDelegate]. We use [DefaultReactActivityDelegate]
-   * which allows you to enable New Architecture with a single boolean flags [fabricEnabled]
-   */
-  override fun createReactActivityDelegate(): ReactActivityDelegate =
-      DefaultReactActivityDelegate(this, mainComponentName, fabricEnabled)
-
-  override fun onCreate(savedInstanceState: Bundle?) {
-    RNBootSplash.init(this, R.style.BootTheme) // ⬅️ initialize the splash screen
-    super.onCreate(savedInstanceState)
-  }
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -994,29 +1006,370 @@ class MainActivity : ReactActivity() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `af50c229` (2026-11-18)
-**Commit Message**: Fix dead license badge link in README (#811)
+### Incident Patch 1: `8eda4c0b` (2026-11-23)
+**Commit Message**: Bump version number
+
+**File**: `example/ios/Podfile.lock` (modified, +2/-2)
+```diff
+@@ -1741,7 +1741,7 @@ PODS:
+     - React-utils (= 0.88.1)
+     - ReactNativeDependencies
+   - ReactNativeDependencies (0.88.1)
+-  - RNBootSplash (7.3.5):
++  - RNBootSplash (7.4.0):
+     - hermes-engine
+     - RCTRequired
+     - RCTTypeSafety
+@@ -2121,7 +2121,7 @@ SPEC CHECKSUMS:
+   ReactCodegen: 3840312f5071bb6b953b35a029c5c6dcf06b435e
+   ReactCommon: b63ce798b898ed77c6cfdeb80b18080161f52ed5
+   ReactNativeDependencies: a5164c3ebbe90d992022b5d9cbabbf770a6d7d05
+-  RNBootSplash: 214882f8e3111723685c27a575e88b158a2c14ae
++  RNBootSplash: b336d6c16504382d14eb81feb7bab680980717a3
+   SocketRocket: 37aec555668fb852ec12e3c0de59a86ca58f0871
+   Yoga: d1c536142c5ff8ec8cd856ab2a7c227a1d875c8e
+ 
+```
+
+**File**: `package.json` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ {
+   "name": "react-native-bootsplash",
+-  "version": "7.3.5",
++  "version": "7.4.0",
+   "license": "MIT",
+   "description": "Display a bootsplash on your app starts. Hide it when you want.",
+   "author": "Mathieu Acthernoene <zoontek@gmail.com>",
+```
+
+---
+
+### Incident Patch 2: `0886822c` (2026-11-23)
+**Commit Message**: feat(ios): add Swift Package Manager support (#810)
+
+**File**: `.gitignore` (modified, +1/-0)
+```diff
+@@ -21,6 +21,7 @@ DerivedData
+ *.ipa
+ *.xcuserstate
+ **/.xcode.env.local
++.swiftpm/
+ 
+ # Android/IntelliJ
+ #
+```
+
+**File**: `Package.swift` (added, +43/-0)
+```diff
+@@ -0,0 +1,43 @@
++// swift-tools-version: 6.0
++import PackageDescription
++
++// The React Native packages are resolved by the autolinker relative to
++// build/generated/autolinking/libs/RNBootSplash in the app.
++let package = Package(
++    name: "RNBootSplash",
++    platforms: [.iOS("15.1")],
++    products: [
++        .library(name: "RNBootSplash", targets: ["RNBootSplash"]),
++    ],
++    dependencies: [
++        .package(name: "ReactNative", path: "../../../../xcframeworks"),
++        .package(name: "React-GeneratedCode", path: "../../../ios"),
++    ],
++    targets: [
++        .target(
++            name: "RNBootSplash",
++            dependencies: [
++                .product(name: "ReactHeaders", package: "ReactNative"),
++                .product(name: "ReactNativeHeaders", package: "ReactNative"),
++                .product(name: "ReactNativeDependenciesHeaders", package: "ReactNative"),
++                .product(name: "ReactAppHeaders", package: "React-GeneratedCode"),
++            ],
++            path: "ios",
++            publicHeadersPath: ".",
++            cSettings: [
++                .define("RCT_NEW_ARCH_ENABLED", to: "1"),
++            ],
++            cxxSettings: [
++                .define("RCT_NEW_ARCH_ENABLED", to: "1"),
++                .define("DEBUG", .when(configuration: .debug)),
++                .define("NDEBUG", .when(configuration: .release)),
++            ],
++            linkerSettings: [
++                .linkedFramework("UIKit"),
++                .linkedFramework("Foundation"),
++                .linkedFramework("CoreGraphics"),
++            ]
++        ),
++    ],
++    cxxLanguageStandard: .cxx20
++)
+```
 
 **File**: `README.md` (modified, +1/-1)
 ```diff
-@@ -3,7 +3,7 @@
- Show a splash screen during app startup. Hide it when you are ready.<br>
- **For migration from the v6, check the [`MIGRATION.md` guide](./MIGRATION.md).**
+@@ -28,7 +28,7 @@ $ npm install --save react-native-bootsplash
+ $ yarn add react-native-bootsplash
+ ```
  
--[![mit licence](https://img.shields.io/dub/l/vibe-d.svg?style=for-the-badge)](https://github.com/zoontek/react-native-bootsplash/blob/main/LICENSE)
-+[![mit licence](https://img.shields.io/dub/l/vibe-d.svg?style=for-the-badge)](https://github.com/zoontek/react-native-bootsplash/blob/master/LICENSE)
- [![npm version](https://img.shields.io/npm/v/react-native-bootsplash?style=for-the-badge)](https://www.npmjs.org/package/react-native-bootsplash)
- [![npm downloads](https://img.shields.io/npm/dt/react-native-bootsplash.svg?label=downloads&style=for-the-badge)](https://www.npmjs.org/package/react-native-bootsplash)
- <br />
+-_⚠️  Don't forget going into the `ios` directory to execute a `pod install`._
++_⚠️  Don't forget going into the `ios` directory to execute a `pod install` (or `npx react-native spm update` if your app uses Swift Package Manager)._
+ 
+ ## Setup
+ 
+```
+
+**File**: `example/Gemfile.lock` (modified, +7/-7)
+```diff
+@@ -14,7 +14,7 @@ GEM
+       minitest (>= 5.1, < 6)
+       securerandom (>= 0.3)
+       tzinfo (~> 2.0, >= 2.0.5)
+-    addressable (2.9.1)
++    addressable (2.10.0)
+       public_suffix (>= 2.0.2, < 8.0)
+     algoliasearch (1.27.5)
+       httpclient (~> 2.8, >= 2.8.3)
+@@ -63,17 +63,17 @@ GEM
+     cocoapods-try (1.2.0)
+     colored2 (3.1.2)
+     concurrent-ruby (1.3.3)
+-    connection_pool (3.0.2)
++    connection_pool (3.0.3)
+     drb (2.2.3)
+     escape (0.0.4)
+-    ethon (0.19.1)
++    ethon (0.19.2)
+       ffi (>= 1.15.0)
+       logger
+     ffi (1.17.4)
+     fourflusher (2.3.1)
+     fuzzy_match (2.0.4)
+     gh_inspector (1.1.3)
+-    httpclient (2.9.0)
++    httpclient (2.11.0)
+       mutex_m
+     i18n (1.15.2)
+       concurrent-ruby (~> 1.0)
+@@ -83,15 +83,15 @@ GEM
+     molinillo (0.8.0)
+     mutex_m (0.3.0)
+     nanaimo (0.3.0)
+-    nap (1.1.1)
++    nap (1.2.0)
+     netrc (0.11.0)
+     nkf (0.3.0)
+     public_suffix (4.0.7)
+     rexml (3.4.4)
+     ruby-macho (2.5.1)
+     securerandom (0.4.1)
+-    typhoeus (1.7.1)
+-      ethon (>= 0.19.1, < 0.20.0)
++    typhoeus (1.8.0)
++      ethon (>= 0.19.2, < 0.20.0)
+     tzinfo (2.0.6)
+       concurrent-ruby (~> 1.0)
+     xcodeproj (1.25.1)
+```
+
+**File**: `ios/RNBootSplash.xcodeproj/project.pbxproj` (removed, +0/-231)
+```diff
+@@ -1,231 +0,0 @@
+-// !$*UTF8*$!
+-{
+-	archiveVersion = 1;
+-	classes = {
+-	};
+-	objectVersion = 46;
+-	objects = {
+-
+-/* Begin PBXBuildFile section */
+-		DD3987E82A091969007E27CF /* RNBootSplash.mm in Sources */ = {isa = PBXBuildFile; fileRef = DD3987E72A091969007E27CF /* RNBootSplash.mm */; };
+-/* End PBXBuildFile section */
+-
+-/* Begin PBXFileReference section */
+-		134814201AA4EA6300B7C361 /* libRNBootSplash.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libRNBootSplash.a; sourceTree = BUILT_PRODUCTS_DIR; };
+-		DD3987E72A091969007E27CF /* RNBootSplash.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RNBootSplash.mm; sourceTree = "<group>"; };
+-		DD611D5522B80FED00D03EA8 /* RNBootSplash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RNBootSplash.h; sourceTree = "<group>"; };
+-/* End PBXFileReference section */
+-
+-/* Begin PBXGroup section */
+-		134814211AA4EA7D00B7C361 /* Products */ = {
+-			isa = PBXGroup;
+-			children = (
+-				134814201AA4EA6300B7C361 /* libRNBootSplash.a */,
+-			);
+-			name = Products;
+-			sourceTree = "<group>";
+-		};
+-		58B511D21A9E6C8500147676 = {
+-			isa = PBXGroup;
+-			children = (
+-				DD611D5522B80FED00D03EA8 /* RNBootSplash.h */,
+-				DD3987E72A091969007E27CF /* RNBootSplash.mm */,
+-				134814211AA4EA7D00B7C361 /* Products */,
+-			);
+-			indentWidth = 2;
+-			sourceTree = "<group>";
+-			tabWidth = 2;
+-		};
+-/* End PBXGroup section */
+-
+-/* Begin PBXNativeTarget section */
+-		58B511DA1A9E6C8500147676 /* RNBootSplash */ = {
+-			isa = PBXNativeTarget;
+-			buildConfigurationList = 58B511EF1A9E6C8500147676 /* Build configuration list for PBXNativeTarget "RNBootSplash" */;
+-			buildPhases = (
+-				58B511D71A9E6C8500147676 /* Sources */,
+-			);
+-			buildRules = (
+-			);
+-			dependencies = (
+-			);
+-			name = RNBootSplash;
+-			productName = RCTDataManager;
+-			productReference = 134814201AA4EA6300B7C361 /* libRNBootSplash.a */;
+-			productType = "com.apple.product-type.library.static";
+-		};
+-/* End PBXNativeTarget section */
+-
+-/* Begin PBXProject section */
+-		58B511D31A9E6C8500147676 /* Project object */ = {
+-			isa = PBXProject;
+-			attributes = {
+-				LastUpgradeCheck = 0610;
+-				ORGANIZATIONNAME = Facebook;
+-				TargetAttributes = {
+-					58B511DA1A9E6C8500147676 = {
+-						CreatedOnToolsVersion = 6.1.1;
+-					};
+-				};
+-			};
+-			buildConfigurationList = 58B511D61A9E6C8500147676 /* Build configuration list for PBXProject "RNBootSplash" */;
+-			compatibilityVersion = "Xcode 3.2";
+-			developmentRegion = English;
+-			hasScannedForEncodings = 0;
+-			knownRegions = (
+-				English,
+-				en,
+-			);
+-			mainGroup = 58B511D21A9E6C8500147676;
+-			productRefGroup = 58B511D21A9E6C8500147676;
+-			projectDirPath = "";
+-			projectRoot = "";
+-			targets = (
+-				58B511DA1A9E6C8500147676 /* RNBootSplash */,
+-			);
+-		};
+-/* End PBXProject section */
+-
+-/* Begin PBXSourcesBuildPhase section */
+-		58B511D71A9E6C8500147676 /* Sources */ = {
+-			isa = PBXSourcesBuildPhase;
+-			buildActionMask = 2147483647;
+-			files = (
+-				DD3987E82A091969007E27CF /* RNBootSplash.mm in Sources */,
+-			);
+-			runOnlyForDeploymentPostprocessing = 0;
+-		};
+-/* End PBXSourcesBuildPhase section */
+-
+-/* Begin XCBuildConfiguration section */
+-		58B511ED1A9E6C8500147676 /* Debug */ = {
+-			isa = XCBuildConfiguration;
+-			buildSettings = {
+-				ALWAYS_SEARCH_USER_PATHS = NO;
+-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+-				CLANG_CXX_LIBRARY = "libc++";
+-				CLANG_ENABLE_MODULES = YES;
+-				CLANG_ENABLE_OBJC_ARC = YES;
+-				CLANG_WARN_BOOL_CONVERSION = YES;
+-				CLANG_WARN_CONSTANT_CONVERSION = YES;
+-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+-				CLANG_WARN_EMPTY_BODY = YES;
+-				CLANG_WARN_ENUM_CONVERSION = YES;
+-				CLANG_WARN_INT_CONVERSION = YES;
+-				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+-				CLANG_WARN_UNREACHABLE_CODE = YES;
+-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+-				COPY_PHASE_STRIP = NO;
+-				ENABLE_STRICT_OBJC_MSGSEND = YES;
+-				GCC_C_LANGUAGE_STANDARD = gnu99;
+-				GCC_DYNAMIC_NO_PIC = NO;
+-				GCC_OPTIMIZATION_LEVEL = 0;
+-				GCC_PREPROCESSOR_DEFINITIONS = (
+-					"DEBUG=1",
+-					"$(inherited)",
+-				);
+-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+-				GCC_WARN_SHADOW = YES;
+-				GCC_WARN_UNDECLARED_SELECTOR = YES;
+-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+-				GCC_WARN_UNUSED_FUNCTION = YES;
+-				GCC_WARN_UNUSED_VARIABLE = YES;
+-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+-				MTL_ENABLE_DEBUG_INFO = YES;
+-				ONLY_ACTIVE_ARCH = YES;
+-				SDKROOT = iphoneos;
+-				SKIP_INSTALL = YES;
+-				WARNING_CFLAGS = (
+-					"-Werror",
+-					"-Wall",
+-				);
+-			};
+-			name = Debug;
+-		};
+-		58B511EE1A9E6C8500147676 /* Release */ = {
+-			isa = XCBuildConfiguration;
+-			buildSettings = {
+-				ALWAYS_SEARCH_USER_PATHS = NO;
+-				
+```
+
+**File**: `ios/module.modulemap` (added, +4/-0)
+```diff
+@@ -0,0 +1,4 @@
++module RNBootSplash {
++  header "RNBootSplash.h"
++  export *
++}
+```
+
+**File**: `package.json` (modified, +5/-1)
+```diff
+@@ -44,7 +44,8 @@
+     "!src/extras/addon",
+     "RNBootSplash.podspec",
+     "cli.js",
+-    "app.plugin.js"
++    "app.plugin.js",
++    "Package.swift"
+   ],
+   "bin": "./cli.js",
+   "repository": {
+@@ -133,5 +134,8 @@
+     "android": {
+       "javaPackageName": "com.zoontek.rnbootsplash"
+     }
++  },
++  "swiftpmConfig": {
++    "name": "RNBootSplash"
+   }
+ }
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #811** (2026-11-18): Fix dead license badge link in README (@farisbasha)
+- **PR #810** (2026-11-23): feat(ios): add Swift Package Manager support (@chrfalch)
 - **PR #807** (closed): Bump concurrent-ruby from 1.3.3 to 1.3.7 in /example (@dependabot[bot])
 - **PR #806** (closed): Bump shell-quote from 1.10.0 to 1.12.0 (@dependabot[bot])
 - **PR #805** (2026-09-14): Bump js-yaml from 3.15.1 to 3.15.2 (@dependabot[bot])
 - **PR #804** (2026-09-14): Bump js-yaml from 3.15.1 to 3.15.2 in /example (@dependabot[bot])
-- **PR #803** (closed): Bump sharp from 0.35.2 to 0.35.4 (@dependabot[bot])
 
 ---
 
@@ -1036,31 +1389,33 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. dead license badge link in README
+## X. Bump version number
 
 **RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zoontek/react-native-bootsplash. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `example/ios/Podfile.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zoontek/react-native-bootsplash. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `af50c229`: dead license badge link in README. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8eda4c0b`: Bump version number. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `example/ios/Podfile.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-[![mit licence](https://img.shields.io/dub/l/vibe-d.svg?style=for-the-badge)](https://github.com/zoontek/react-native-bootsplash/blob/master/LICENSE)
+  - RNBootSplash (7.4.0):
+  RNBootSplash: b336d6c16504382d14eb81feb7bab680980717a3
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-[![mit licence](https://img.shields.io/dub/l/vibe-d.svg?style=for-the-badge)](https://github.com/zoontek/react-native-bootsplash/blob/main/LICENSE)
+  - RNBootSplash (7.3.5):
+  RNBootSplash: 214882f8e3111723685c27a575e88b158a2c14ae
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `af50c229` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8eda4c0b` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T14:15:17.739Z",
+  "last_updated": "2026-11-25T14:24:04.248Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-25T13:40:09.802Z",
@@ -253,7 +253,7 @@
       "staged_for_review": 1
     },
     "zoontek-react-native-bootsplash-learnings.md": {
-      "processed_at": "2026-11-25T01:18:35.877Z",
+      "processed_at": "2026-11-25T14:24:02.234Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1658,7 +1658,7 @@
       "staged_for_review": 1
     },
     "skyhook-io-radar-learnings.md": {
-      "processed_at": "2026-11-24T20:04:28.519Z",
+      "processed_at": "2026-11-25T14:24:03.282Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3683,8 +3683,8 @@
       "staged_for_review": 0
     },
     "hf-edge0-audio8-tts-realistic-0.6b-learnings.md": {
-      "processed_at": "2026-11-21T22:57:57.569Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-25T14:24:01.693Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "nativewind-nativewind-learnings.md": {
@@ -3928,7 +3928,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 4227,
+  "total_dossiers_evaluated": 4230,
   "total_canonical_promoted": 543,
-  "total_staged_for_review": 3219
+  "total_staged_for_review": 3221
 }

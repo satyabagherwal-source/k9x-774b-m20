@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T14:15:17.240Z",
+  "last_updated": "2026-11-25T14:24:03.870Z",
   "total_records": 2676,
   "domains": {
     "A": {
@@ -15467,8 +15467,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-bootsplash-learnings-technical-construction-intelligence-zo.md",
       "repository": "zoontek-react-native-bootsplash-learnings",
-      "content_hash": "df9aaf39db1952d69f6b60e9f7d1b2e2ca51dae977f49053fca3f5bd7b0b5e28",
-      "created_at": "2026-11-25T01:18:36.838Z"
+      "content_hash": "605cca83aa12d212732b5f13f32418b170d888fd1782fb042631506c21bb260f",
+      "created_at": "2026-11-25T14:24:02.877Z"
     },
     "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari": {
       "record_id": "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari",
@@ -15599,8 +15599,8 @@
       "title": "Architecture Intelligence: skyhook-io/radar Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-skyhook-io-radar-architecture-intelligence-skyhook-io-radar-core-invariants.md",
       "repository": "skyhook-io/radar",
-      "content_hash": "30e62aa5fc0935ddef4ba76e9b59feaf4bce3164da015b602e4951f19d51fe30",
-      "created_at": "2026-11-24T00:57:23.825Z"
+      "content_hash": "a4f89e9bef4e8ff2202158061bfd53c2839e3b28c0269674556bbde89389d188",
+      "created_at": "2026-11-25T14:23:56.009Z"
     },
     "DOM-D-694FEEFE": {
       "record_id": "DOM-D-694FEEFE",
@@ -15710,8 +15710,8 @@
       "title": "Architecture Intelligence: skyhook-io-radar-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-skyhook-io-radar-learnings-architecture-intelligence-skyhook-io-radar-learnings-.md",
       "repository": "skyhook-io-radar-learnings",
-      "content_hash": "4c16ccf9c8fe0351ae637553f43f0bc159f016c3a76305aa781a4907d96012c0",
-      "created_at": "2026-11-24T00:58:05.143Z"
+      "content_hash": "efc3eca1673dbad1d4bd81443c3710976d78a80a733fb301286b751a992739b1",
+      "created_at": "2026-11-25T14:24:03.870Z"
     },
     "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-vl-8b-instruct-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-vl-8b-instruct-core-invariants",
@@ -20916,8 +20916,8 @@
       "title": "Research & Knowledge Intelligence: Edge0/Audio8-TTS-Realistic-Air Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-edge0-audio8-tts-realistic-0-6b-research-knowledge-intelligence-edge0-audio8-.md",
       "repository": "Edge0/Audio8-TTS-Realistic-Air",
-      "content_hash": "2ba7439befdb80203b2cf51a2bdebc0863d773decc5d4708b11e00d69924b38a",
-      "created_at": "2026-11-21T22:56:44.052Z"
+      "content_hash": "39c5507833d9e3b08c3a115d8a620de86a805d73057da454ebb241b6da24cd18",
+      "created_at": "2026-11-25T14:23:45.383Z"
     },
     "domain_intelligence-architecture-intelligence-mrkai77-loop-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-mrkai77-loop-core-invariants",
@@ -24970,8 +24970,8 @@
       "title": "Technical Construction Intelligence: gravitl/netmaker Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-gravitl-netmaker-technical-construction-intelligence-gravitl-netmaker-core-invar.md",
       "repository": "gravitl/netmaker",
-      "content_hash": "63431234baac2fcaf8ad866728d5893ee840dbeb193a8116162d6cee47cc3278",
-      "created_at": "2026-11-17T23:17:38.016Z"
+      "content_hash": "ecdb8de0ce817fbb5fdcfab0f610ddd2df8c61e4e61ec88048b9eba109fa4c77",
+      "created_at": "2026-11-25T14:23:58.528Z"
     },
     "domain_intelligence-research-knowledge-intelligence-lxml-lxml-learnings-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-lxml-lxml-learnings-core-invariants",
@@ -35555,8 +35555,8 @@
       "title": "Technical Construction Intelligence: zoontek/react-native-bootsplash Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-bootsplash-technical-construction-intelligence-zoontek-reac.md",
       "repository": "zoontek/react-native-bootsplash",
-      "content_hash": "81b5fcc959c0d5ff25a9df56eb10de5b32d2295c65d689ff58c04983c411b8a4",
-      "created_at": "2026-11-20T05:28:56.289Z"
+      "content_hash": "ac4c32914ea87571ad0a4ab0aa5d23ffdf21a6a4501711401940fa5a271984a0",
+      "created_at": "2026-11-25T14:23:51.994Z"
     },
     "domain_intelligence-technical-construction-intelligence-crawlcove-robots-txt-tester-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-crawlcove-robots-txt-tester-core-invariants",
@@ -38943,8 +38943,8 @@
       "title": "Research & Knowledge Intelligence: hf-edge0-audio8-tts-realistic-0.6b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-edge0-audio8-tts-realistic-0-6b-learnings-research-knowledge-intelligence-hf-.md",
       "repository": "hf-edge0-audio8-tts-realistic-0.6b-learnings",
-      "content_hash": "ee0d3bca15a97b6c6cda63a6b6931a2fd4ffda273cb0fc0fe468460e1a6599e1",
-      "created_at": "2026-11-21T22:57:57.809Z"
+      "content_hash": "81be9c5c75bbfac84a24d22556da0940465f4b2e697ac98a0a9aebf127e85775",
+      "created_at": "2026-11-25T14:24:01.974Z"
     },
     "domain_intelligence-quality-verification-intelligence-clockworklabs-spacetimedb-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-clockworklabs-spacetimedb-core-invariants",

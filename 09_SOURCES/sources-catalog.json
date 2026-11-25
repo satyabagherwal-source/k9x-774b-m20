@@ -3393,10 +3393,10 @@
     "repository": "skyhook-io/radar",
     "platform": "github",
     "sourceUrl": "https://github.com/skyhook-io/radar",
-    "sourceVersion": "f7efd90e",
+    "sourceVersion": "bf2f2dc1",
     "license": "Apache-2.0",
-    "contentHash": "d73e05893c62b4895d3006fd066285016121d2302b1631ed833787e34b3dae23",
-    "lastHarvestedAt": "2026-11-24T20:04:23.130Z",
+    "contentHash": "570c1b46bd3e19057b0ec30e136a969eb167bef8bb29b76c836850670ee52c97",
+    "lastHarvestedAt": "2026-11-25T14:23:55.507Z",
     "learningId": "learn-github-skyhook-io-radar"
   },
   "mitmproxy-mitmproxy": {
@@ -3703,10 +3703,10 @@
     "repository": "gravitl/netmaker",
     "platform": "github",
     "sourceUrl": "https://github.com/gravitl/netmaker",
-    "sourceVersion": "098d26a7",
+    "sourceVersion": "325c998a",
     "license": "NOASSERTION",
-    "contentHash": "c0a96b8c1dfdb7ddf49b7d570c446d571b1729dfc0c847521d5013b9bfa25eb6",
-    "lastHarvestedAt": "2026-11-17T23:17:37.594Z",
+    "contentHash": "6c1984f769b4224abe95575fc1791abdf99bd184742e7c3b44d59e2f9db9ba83",
+    "lastHarvestedAt": "2026-11-25T14:23:58.043Z",
     "learningId": "learn-github-gravitl-netmaker"
   },
   "pixeltable-pixeltable": {
@@ -8533,10 +8533,10 @@
     "repository": "zoontek/react-native-bootsplash",
     "platform": "github",
     "sourceUrl": "https://github.com/zoontek/react-native-bootsplash",
-    "sourceVersion": "af50c229",
+    "sourceVersion": "8eda4c0b",
     "license": "MIT",
-    "contentHash": "d25a83eea902f50d8a09d3b1281a913a01e82fe3bf9ddcbf28eb72b0d5907457",
-    "lastHarvestedAt": "2026-11-20T05:28:55.936Z",
+    "contentHash": "b7584c8aa75dc96991cc74b28de1ce057669631427a1dcc3cdc20a02118e1f8a",
+    "lastHarvestedAt": "2026-11-25T14:23:51.460Z",
     "learningId": "learn-github-zoontek-react-native-bootsplash"
   },
   "melbahja-seo": {
@@ -11665,8 +11665,8 @@
     "sourceUrl": "https://huggingface.co/Edge0/Audio8-TTS-Realistic-0.6b",
     "sourceVersion": "hf-edge0-audio8-tts-realistic-0.6b",
     "license": "Open-Source",
-    "contentHash": "0e208e0e602ed7adc8860dd171b2c5745c6ce120919e36fa0dcf250c3eaaf4d8",
-    "lastHarvestedAt": "2026-11-21T22:56:43.826Z",
+    "contentHash": "c93c066b6344b42ab52e4c7ba3f5ec9998aa052d86b2c0793fe5ec370ef4c09d",
+    "lastHarvestedAt": "2026-11-25T14:23:45.114Z",
     "learningId": "learn-huggingface-edge0-audio8-tts-realistic-0-6b"
   },
   "dagoste-squadra": {

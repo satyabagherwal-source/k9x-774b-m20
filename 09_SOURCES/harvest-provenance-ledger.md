@@ -13136,3 +13136,7 @@ Every entry in this ledger must capture:
 | `learn-github-kumahq-kuma` | `https://github.com/kumahq/kuma` | `ce6a025c` | Multi-dimensional audit evidence | 2026-11-25T14:14:32.671Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `00510513` | Multi-dimensional audit evidence | 2026-11-25T14:14:35.672Z |
 | `learn-dom-d-c2696c97` | `project://kumahq-kuma` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kumahq-kuma-learnings.md` | 2026-11-25T14:15:13.820Z |
+| `learn-huggingface-edge0-audio8-tts-realistic-0-6b` | `https://huggingface.co/Edge0/Audio8-TTS-Realistic-0.6b` | `hf-edge0-a` | Multi-dimensional audit evidence | 2026-11-25T14:23:45.114Z |
+| `learn-github-zoontek-react-native-bootsplash` | `https://github.com/zoontek/react-native-bootsplash` | `8eda4c0b` | Multi-dimensional audit evidence | 2026-11-25T14:23:51.460Z |
+| `learn-github-skyhook-io-radar` | `https://github.com/skyhook-io/radar` | `bf2f2dc1` | Multi-dimensional audit evidence | 2026-11-25T14:23:55.507Z |
+| `learn-github-gravitl-netmaker` | `https://github.com/gravitl/netmaker` | `325c998a` | Multi-dimensional audit evidence | 2026-11-25T14:23:58.043Z |

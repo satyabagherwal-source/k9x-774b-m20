@@ -4,24 +4,24 @@
 {
   "source_repository": "gravitl/netmaker",
   "source_url": "https://github.com/gravitl/netmaker",
-  "source_version": "098d26a7",
+  "source_version": "325c998a",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-17T23:17:37.849Z",
+  "timestamp": "2026-11-25T14:23:58.332Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-gravitl-netmaker",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [gravitl/netmaker](https://github.com/gravitl/netmaker) (Revision: `098d26a7`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-17T23:17:37.849Z`  
+> **Provenance**: Harvested from [gravitl/netmaker](https://github.com/gravitl/netmaker) (Revision: `325c998a`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-25T14:23:58.332Z`  
 > **Learning ID**: `learn-github-gravitl-netmaker`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: I (Content & Information Intelligence), G (Architecture Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), B (Product Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 52%
+- **Secondary Corroborating Domains**: I (Content & Information Intelligence), G (Architecture Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 56%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from gravitl/netmaker:
@@ -31,17 +31,17 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gravitl-netmaker-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gravitl/netmaker](https://github.com/gravitl/netmaker))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T23:17:36.334Z  
+> **Harvest Timestamp**: 2026-11-25T14:23:56.839Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
 
 ## 1. Context & Architectural Overview
 - **Repository / Resource**: `gravitl/netmaker`
-- **Description**: Netmaker makes networks with WireGuard. Netmaker automates fast, secure, and distributed virtual networks.
+- **Description**: Netmaker is a WireGuard-powered Zero Trust networking platform for building fast, secure, and scalable virtual networks across clouds, devices, and infrastructure.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 11877 stars
+- **Stars / Engagement**: 11884 stars
 
 ---
 
@@ -1031,191 +1031,155 @@ const CheckInInterval = 1
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `098d26a7` (2026-11-17)
-**Commit Message**: V1.8.0: release notes (#4236)
+### Incident Patch 1: `325c998a` (2026-11-25)
+**Commit Message**: build(deps): bump google.golang.org/protobuf from 1.36.11 to 1.36.12 (#4203)
 
-* bump version tag to v1.8.0
+Bumps [google.golang.org/protobuf](https://github.com/protocolbuffers/protobuf-go) from 1.36.11 to 1.36.12.
+- [Release notes](https://github.com/protocolbuffers/protobuf-go/releases)
+- [Changelog](https://github.com/protocolbuffers/protobuf-go/blob/master/release.bash)
+- [Commits](https://github.com/protocolbuffers/protobuf-go/compare/v1.36.11...v1.36.12)
 
-* v1.8.0: update release notes
+---
+updated-dependencies:
+- dependency-name: google.golang.org/protobuf
+  dependency-version: 1.36.12
+  dependency-type: direct:production
+  update-type: version-update:semver-patch
+...
 
-**File**: `.github/ISSUE_TEMPLATE/bug-report.yml` (modified, +1/-0)
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `go.mod` (modified, +1/-1)
 ```diff
-@@ -31,6 +31,7 @@ body:
-       label: Version
-       description: What version are you running?
-       options:
-+        - v1.8.0
-         - v1.7.0
-         - v1.6.0
-         - v1.5.1
+@@ -51,7 +51,7 @@ require (
+ 	golang.org/x/time v0.15.0
+ 	google.golang.org/api v0.278.0
+ 	google.golang.org/grpc v1.84.0
+-	google.golang.org/protobuf v1.36.11
++	google.golang.org/protobuf v1.36.12
+ 	gopkg.in/mail.v2 v2.3.1
+ 	gorm.io/datatypes v1.2.7
+ 	gorm.io/driver/postgres v1.6.3
 ```
 
-**File**: `README.md` (modified, +1/-1)
+**File**: `go.sum` (modified, +2/-2)
 ```diff
-@@ -16,7 +16,7 @@
- 
- <p align="center">
-   <a href="https://github.com/gravitl/netmaker/releases">
--    <img src="https://img.shields.io/badge/Version-1.7.0-informational?style=flat-square" />
-+    <img src="https://img.shields.io/badge/Version-1.8.0-informational?style=flat-square" />
-   </a>
-   <a href="https://hub.docker.com/r/gravitl/netmaker/tags">
-     <img src="https://img.shields.io/docker/pulls/gravitl/netmaker?label=downloads" />
+@@ -233,8 +233,8 @@ google.golang.org/genproto/googleapis/rpc v0.0.0-20260706201446-f0a921348800 h1:
+ google.golang.org/genproto/googleapis/rpc v0.0.0-20260706201446-f0a921348800/go.mod h1:4Hqkh8ycfw05ld/3BWL7rJOSfebL2Q+DVDeRgYgxUU8=
+ google.golang.org/grpc v1.84.0 h1:soMyaPJ8pAak5PIQ0DGBUir0XRo2fRoMqhNWMLlLxO0=
+ google.golang.org/grpc v1.84.0/go.mod h1:ljCht0DrxQrXBDRTZp52Qxh3Ffk8CdYm2sj4O2QN2C0=
+-google.golang.org/protobuf v1.36.11 h1:fV6ZwhNocDyBLK0dj+fg8ektcVegBBuEolpbTQyBNVE=
+-google.golang.org/protobuf v1.36.11/go.mod h1:HTf+CrKn2C3g5S8VImy6tdcUvCska2kB7j23XfzDpco=
++google.golang.org/protobuf v1.36.12 h1:pJOKDDOyeXErUroCihFAd5LQuwXBSpVnKGrj5o/fwxc=
++google.golang.org/protobuf v1.36.12/go.mod h1:HTf+CrKn2C3g5S8VImy6tdcUvCska2kB7j23XfzDpco=
+ gopkg.in/alexcesaro/quotedprintable.v3 v3.0.0-20150716171945-2caba252f4dc h1:2gGKlE2+asNV9m7xrywl36YYNnBG5ZQ0r/BOOxqPpmk=
+ gopkg.in/alexcesaro/quotedprintable.v3 v3.0.0-20150716171945-2caba252f4dc/go.mod h1:m7x9LTH6d71AHyAX77c9yqWCCa3UKHcVEj9y7hAtKDk=
+ gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
 ```
 
-**File**: `compose/docker-compose.netclient.yml` (modified, +1/-1)
+---
+
+### Incident Patch 2: `b5852c61` (2026-11-23)
+**Commit Message**: fix(go): prevent org ownership change;
+
+**File**: `controllers/user.go` (modified, +4/-3)
 ```diff
-@@ -3,7 +3,7 @@ version: "3.4"
- services:
-   netclient:
-     container_name: netclient
--    image: 'gravitl/netclient:v1.7.0'
-+    image: 'gravitl/netclient:v1.8.0'
-     hostname: netmaker-1
-     network_mode: host
-     restart: on-failure
+@@ -1806,13 +1806,14 @@ func updateUser(w http.ResponseWriter, r *http.Request) {
+ 		logic.ReturnErrorResponse(w, r, logic.FormatError(err, "forbidden"))
+ 		return
+ 	}
+-	if user.PlatformRoleID != userchange.PlatformRoleID && userchange.PlatformRoleID == schema.OrgOwner {
+-		err = errors.New("org-owner role cannot be assigned via this method, use the transfer ownership API instead")
++	if userchange.PlatformRoleID != "" && userchange.PlatformRoleID != user.PlatformRoleID &&
++		(userchange.PlatformRoleID == schema.OrgOwner || user.PlatformRoleID == schema.OrgOwner) {
++		err = errors.New("org ownership cannot be changed via this method, use the transfer ownership API instead")
+ 		slog.Error(
+ 			"failed to update user",
+ 			"caller",
+ 			caller.Username,
+-			"attempted to assign org-owner role to user",
++			"attempted to change org-owner role on user",
+ 			username,
+ 			"error",
+ 			err,
 ```
 
-**File**: `k8s/client/netclient-daemonset.yaml` (modified, +1/-1)
+---
+
+### Incident Patch 3: `784929a2` (2026-11-25)
+**Commit Message**: build(deps): bump gorm.io/driver/postgres from 1.6.0 to 1.6.3 (#4204)
+
+Bumps [gorm.io/driver/postgres](https://github.com/go-gorm/postgres) from 1.6.0 to 1.6.3.
+- [Commits](https://github.com/go-gorm/postgres/compare/v1.6.0...v1.6.3)
+
+---
+updated-dependencies:
+- dependency-name: gorm.io/driver/postgres
+  dependency-version: 1.6.3
+  dependency-type: direct:production
+  update-type: version-update:semver-patch
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+Co-authored-by: Abhishek Kondur <[REDACTED_EMAIL]>
+
+**File**: `go.mod` (modified, +2/-2)
 ```diff
-@@ -16,7 +16,7 @@ spec:
-       hostNetwork: true
-       containers:
-       - name: netclient
--        image: gravitl/netclient:v1.7.0
-+        image: gravitl/netclient:v1.8.0
-         env:
-         - name: TOKEN
-           value: "TOKEN_VALUE"
+@@ -54,7 +54,7 @@ require (
+ 	google.golang.org/protobuf v1.36.11
+ 	gopkg.in/mail.v2 v2.3.1
+ 	gorm.io/datatypes v1.2.7
+-	gorm.io/driver/postgres v1.6.0
++	gorm.io/driver/postgres v1.6.3
+ 	gorm.io/driver/sqlite v1.6.0
+ 	gorm.io/gorm v1.31.2
+ )
+@@ -85,7 +85,7 @@ require (
+ 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
+ 	github.com/jackc/pgpassfile v1.0.0 // indirect
+ 	github.com/jackc/pgservicefile v0.0.0-20240606120523-5a60cdf6a761 // indirect
+-	github.com/jackc/pgx/v5 v5.9.2 // indirect
++	github.com/jackc/pgx/v5 v5.10.0 // indirect
+ 	github.com/jackc/puddle/v2 v2.2.2 // indirect
+ 	github.com/jinzhu/inflection v1.0.0 // indirect
+ 	github.com/jinzhu/now v1.1.5 // indirect
 ```
 
-**File**: `k8s/client/netclient.yaml` (modified, +1/-1)
+**File**: `go.sum` (modified, +4/-4)
 ```diff
-@@ -28,7 +28,7 @@ spec:
-       #           - "<node label value>"
-       containers:
-       - name: netclient
--        image: gravitl/netclient:v1.7.0
-+        image: gravitl/netclient:v1.8.0
-         env:
-         - name: TOKEN
-           value: "TOKEN_VALUE"
-```
-
-**File**: `k8s/server/netmaker-ui.yaml` (modified, +1/-1)
-```diff
-@@ -15,7 +15,7 @@ spec:
-     spec:
-       containers:
-       - name: netmaker-ui
--        image: gravitl/netmaker-ui:v1.7.0
-+        image: gravitl/netmaker-ui:v1.8.0
-         ports:
-         - containerPort: 443
-         env:
-```
-
-**File**: `main.go` (modified, +1/-1)
-```diff
-@@ -42,7 +42,7 @@ import (
- var version = "v1.8.0"
- 
- //	@title			NetMaker
--//	@version		1.7.0
-+//	@version		1.8.0
- //	@description	NetMaker API Docs
- //	@tag.name	    APIUsage
- //	@tag.description.markdown
-```
-
-**File**: `release.md` (modified, +81/-33)
-```diff
-@@ -1,53 +1,82 @@
--# Netmaker v1.7.0 Release Notes 🚀
-+# Netmaker v1.8.0 Release Notes 🚀
- 
- ## 🚀 What’s New
- 
--### 🏢 Multi-Tenancy for MSPs (Organizations & Tenants)
-+### 💻 All-New Desktop Apps
- 
--Run multiple customer environments from a single Netmaker server.
-+Completely redesigned **Netmaker Desktop Apps** for a faster, stable connection experience.
- 
--- **Organizations & tenants** — Group customers under an organization; each tenant is an isolated Netmaker environment (networks, devices, users).
--- **MSP license sync** — EE/MSP installs create and update orgs/tenants from the MSP license (including teardown when a tenant is removed from the license). CE and normal Pro accounts continues to use a single local default tenant.
--- **Scoped access** — API and `nmctl` select the target org/tenant via `X-Organization-ID` / `X-Tenant-ID` (`--org_id` / `--tenant_id`), with `nmctl organization list` and `nmctl tenant list` for discovery.
-+- Now available to **CE users** as well (previously limited to Pro/EE).
-+- **Peer-to-peer by default** — desktop devices join the mesh with direct peering (not gateway-only), for lower latency and better connectivity.
-+- Fresh UI and connection flow for connecting to networks and exit nodes.
-+- Improved status visibility for tunnel state and exit modes.
-+- **Auto Exit** — when enabled on a network (`auto_select_exit_node`), desktop/user devices are automatically assigned an allowed internet exit (nearest available) when they connect; users can still switch exits when permitted.
- 
--### 🔌 TCP Proxy / WSS Uplink
-+### 🔐 Managed Access with Netmaker SSH
- 
--Gateways can publish a **TCP/WSS uplink** so clients can reach the mesh in restrictive environments when UDP is blocked.
-+Secure, managed SSH access to hosts through Netmaker — without opening inbound SSH on the public internet.
- 
--- Enable TCP proxy on the gateway/host (`tcp_proxy_enabled` and related listen/TLS settings).
--- Clients can opt into a TCP uplink to the gateway when the proxy is enabled.
--- Supports self-signed and externally terminated TLS modes for WSS endpoints.
-+- Enable **Manage SSH** on hosts so netclient runs an embedded SSH/SCP/SFTP server.
-+- Access mesh hosts over Netmaker with centralized control of who can connect.
-+- Useful for admin access, file transfer, and operational workflows on enrolled devices.
- 
--### 🛡️ EDR Integration (Pro)
-+### 🗺️ Network Map Updates
- 
--Connect endpoint detection and response platforms for **posture checks** from **Integrations**.
-+Updated network map experience for clearer topology and device context.
- 
--- Supported providers: **Microsoft Defender**, **CrowdStrike**, **SentinelOne**, and **Wazuh**.
--- Sync managed endpoints and evaluate EDR compliance (agent health / risk level) as part of device posture.
--- Configure, test, and manage integrations via the REST API (`/api/v1/integrations/edr/{provider}`).
-+- Improved layout and visualization of users, devices, servers, and config clients.
-+- Easier navigation of network relationships and host locations.
-+- Better at-a-glance view of how your mesh is connected.
- 
--### 📱 MDM Integration (Pro)
-+### 🪟 Windows Egress Support
- 
--Connect mobile device management platforms for **device compliance posture** from **Integrations**.
-+Windows hosts can now act as **egress gateways**.
- 
--- Supported providers: **Microsoft Intune**, **Jamf**, **JumpCloud**, and **Iru**.
--- Match devices by Entra device ID, serial number, hardware UUID, or hostname.
--- Enforce MDM enrollment/compliance checks alongside existing posture policies.
--- Configure, test, and manage integrations via the REST API (`/api/v1/integrations/mdm/{provider}`).
-+- Advertise egress ranges from Windows netclients.
-+- Route traffic from the mesh to attached LAN/site networks via Windows.
-+- Uses Windows NetNat where required for egress NAT.
-+
-+### 🔀 Bypass Egress Routes
-+
-+New option on **internet egress** so traffic to other (site) egress destinations does not hairpin through the internet exit.
-+
-+- **Why:** Without bypass, clients using an internet exit often send site-egress traffic up to the exit node and back out again (hairpin), adding latency and load. Bypass keeps allowed site egress as **direct peers**, so traffic to those sites flows peer-to-peer instead of bending through the exit.
-+- **`bypass_egress_routes`** (internet egress only) — enable to avoid that hairpin for other egress sites; disable to force site-egress traffic via the internet exit.
-+- Configurable on create/update; defaults to **on** for new internet egress.
-+- Ignored for non-internet (site) egress types.
- 
- 
- ---
- 
- ## 🗄️ Database Schema Migration
- 
--This release completes the SQL schema path and introduces **multi-tenancy (org/tenant) bootstrap** as part of the v1.7.0 migration.
-+This release runs **`migration-v1.8.0`**, which continues the SQL schema path after multi-tenancy (org/tenant) from v1.7.0. It migrates remaining key-value resources into versioned tables, backfills IP pools/al
+@@ -115,8 +115,8 @@ github.com/jackc/pgpassfile v1.0.0 h1:/6Hmqy13Ss2zCq62VdNG8tM1wchn8zjSGOBJ6icpsI
+ github.com/jackc/pgpassfile v1.0.0/go.mod h1:CEx0iS5ambNFdcRtxPj5JhEz+xB6uRky5eyVu/W2HEg=
+ github.com/jackc/pgservicefile v0.0.0-20240606120523-5a60cdf6a761 h1:iCEnooe7UlwOQYpKFhBabPMi4aNAfoODPEFNiAnClxo=
+ github.com/jackc/pgservicefile v0.0.0-20240606120523-5a60cdf6a761/go.mod h1:5TJZWKEWniPve33vlWYSoGYefn3gLQRzjfDlhSJ9ZKM=
+-github.com/jackc/pgx/v5 v5.9.2 h1:3ZhOzMWnR4yJ+RW1XImIPsD1aNSz4T4fyP7zlQb56hw=
+-github.com/jackc/pgx/v5 v5.9.2/go.mod h1:mal1tBGAFfLHvZzaYh77YS/eC6IX9OWbRV1QIIM0Jn4=
++github.com/jackc/pgx/v5 v5.10.0 h1:VhSvgU2jSli8o3AqIEOTJr7rZwAEUVo4E4XhR94Zfr0=
++github.com/jackc/pgx/v5 v5.10.0/go.mod h1:mal1tBGAFfLHvZzaYh77YS/eC6IX9OWbRV1QIIM0Jn4=
+ github.com/jackc/puddle/v2 v2.2.2 h1:PR8nw+E/1w0GLuRFSmiioY6UooMp6KJv0/61nB7icHo=
+ github.com/jackc/puddle/v2 v2.2.2/go.mod h1:vriiEXHvEE654aYKXXjOvZM39qJ0q+azkZFrfEOc3H4=
+ github.com/jinzhu/inflection v1.0.0 h1:K317FqzuhWc8YvSVlFMCCUb36O/S9MCKRDI7QkRKD/E=
+@@ -249,8 +249,8 @@ gorm.io/datatypes v1.2.7 h1:ww9GAhF1aGXZY3EB3cJPJ7//JiuQo7DlQA7NNlVaTdk=
+ gorm.io/datatypes v1.2.7/go.mod h1:M2iO+6S3hhi4nAyYe444Pcb0dcIiOMJ7QHaUXxyiNZY=
+ gorm.io/driver/mysql v1.5.6 h1:Ld4mkIickM+EliaQZQx3uOJDJHtrd70MxAUqWqlx3Y8=
+ gorm.io/driver/mysql v1.5.6/go.mod h1:sEtPWMiqiN1N1cMXoXmBbd8C6/l+TESwriotuRRpkDM=
+-gorm.io/driver/postgres v1.6.0 h1:2dxzU8xJ+ivvqTRph34QX+WrRaJlmfyPqXmoGVjMBa4=
+-gorm.io/driver/postgres v1.6.0/go.mod h1:vUw0mrGgrTK+uPHEhAdV4sfFELrByKVGnaVRkXDhtWo=
++gorm.io/driver/postgres v1.6.3 h1:bAn6O2pUa8LtpWEvL5NFU4+52Tfx8Ut7IVaIacCLcI0=
++gorm.io/driver/postgres v1.6.3/go.mod h1:0c4fQA44XhOklXDkgtuKqysHCycTa5i9e3EIpDGCwXk=
+ gorm.io/driver/sqlite v1.6.0 h1:WHRRrIiulaPiPFmDcod6prc4l2VGVWHz80KspNsxSfQ=
+ gorm.io/driver/sqlite v1.6.0/go.mod h1:AO9V1qIQddBESngQUKWL9yoH93HIeA1X6V633rBwyT8=
+ gorm.io/driver/sqlserver v1.6.0 h1:VZOBQVsVhkHU/NzNhRJKoANt5pZGQAS1Bwc6m6dgfnc=
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4236** (2026-11-17): V1.8.0: release notes (@abhishek9686)
-- **PR #4235** (2026-11-17): NM-356: Fix device join/pull when host.Nodes drifts from live nodes (@abhishek9686)
-- **PR #4232** (2026-11-16): Pre-Release Fixes v1.8.0 (@VishalDalwadi)
-- **PR #4231** (2026-11-14): NM-356: Enable CE user ACL policies with All Users and per-user sources (@abhishek9686)
-- **PR #4230** (2026-11-12): Pre-Release Fixes v1.8.0 (@VishalDalwadi)
-- **PR #4225** (2026-11-12): NM-356: keep static WireGuard configs on JIT, IdP, and access cleanup  (@abhishek9686)
+- **PR #4266** (2026-11-25): Master (@abhishek9686)
+- **PR #4265** (2026-11-24): Release v1.8.0 (@abhishek9686)
+- **PR #4262** (2026-11-24): Fixes: Release v1.8.0 (@VishalDalwadi)
+- **PR #4261** (2026-11-24): Add license validation trigger api to limited apis list (@VishalDalwadi)
+- **PR #4243** (2026-11-23): Fixes Release v1.8.0 (@VishalDalwadi)
+- **PR #4240** (2026-11-20): Fixes Release v1.8.0 (@VishalDalwadi)
 
 ---
 
@@ -1235,31 +1199,31 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. V1.8.0: release notes
+## X. build(deps): bump google.golang.org/protobuf from 1.36.11 to 1.36.12
 
 **RULE**:
-When implementing operations in `.github/ISSUE_TEMPLATE/bug-report.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gravitl/netmaker. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gravitl/netmaker. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `098d26a7`: V1.8.0: release notes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `325c998a`: build(deps): bump google.golang.org/protobuf from 1.36.11 to 1.36.12. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/ISSUE_TEMPLATE/bug-report.yml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-        - v1.8.0
+	google.golang.org/protobuf v1.36.12
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+	google.golang.org/protobuf v1.36.11
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `098d26a7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `325c998a` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261124-MJNA",
-    "timestamp": "2026-11-24T01:56:01.654Z",
-    "repository": "gauthierpiarrette/highball",
-    "learningId": "learn-github-gauthierpiarrette-highball",
-    "contentHash": "aef2a9124eb6dd3e3aa7c03924de8793e83aca4712300b48a27fc157131d092c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-X17X",
-    "timestamp": "2026-11-24T02:04:10.989Z",
-    "repository": "tuist/tuist",
-    "learningId": "learn-github-tuist-tuist",
-    "contentHash": "1fb62a9182595e701d74a063abd9e3b2d737520c85f304d3eac85866c1ccd7a1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-X93B",
-    "timestamp": "2026-11-24T02:04:21.191Z",
-    "repository": "alibaba/zvec",
-    "learningId": "learn-github-alibaba-zvec",
-    "contentHash": "66c166465240ab19f9225b709830d0f742b103ba1461562f56f75f8cd2c09875",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-7WGR",
-    "timestamp": "2026-11-24T02:12:38.043Z",
-    "repository": "Folkbench/folkbench",
-    "learningId": "learn-github-folkbench-folkbench",
-    "contentHash": "79ad3ec2f5fe046837420f3bafca3c6101d6cece4c3e2ffafec870190cdddd6e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261124-81CN",
     "timestamp": "2026-11-24T02:12:44.375Z",
     "repository": "makecindy/cindy",
@@ -7490,6 +7430,66 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
     "contentHash": "b07f392d10de6c794cb41c678b3aaf409a3abbade1421d171529fa2a836d9fbb",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-RZ6E",
+    "timestamp": "2026-11-25T14:23:45.110Z",
+    "repository": "Edge0/Audio8-TTS-Realistic-Air",
+    "learningId": "learn-huggingface-edge0-audio8-tts-realistic-0-6b",
+    "contentHash": "c93c066b6344b42ab52e4c7ba3f5ec9998aa052d86b2c0793fe5ec370ef4c09d",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-S42N",
+    "timestamp": "2026-11-25T14:23:51.455Z",
+    "repository": "zoontek/react-native-bootsplash",
+    "learningId": "learn-github-zoontek-react-native-bootsplash",
+    "contentHash": "b7584c8aa75dc96991cc74b28de1ce057669631427a1dcc3cdc20a02118e1f8a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-S773",
+    "timestamp": "2026-11-25T14:23:55.503Z",
+    "repository": "skyhook-io/radar",
+    "learningId": "learn-github-skyhook-io-radar",
+    "contentHash": "570c1b46bd3e19057b0ec30e136a969eb167bef8bb29b76c836850670ee52c97",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-S95I",
+    "timestamp": "2026-11-25T14:23:58.038Z",
+    "repository": "gravitl/netmaker",
+    "learningId": "learn-github-gravitl-netmaker",
+    "contentHash": "6c1984f769b4224abe95575fc1791abdf99bd184742e7c3b44d59e2f9db9ba83",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

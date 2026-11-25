@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-25T14:14:35.691Z",
+  "last_updated": "2026-11-25T14:23:58.062Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5211,14 +5211,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-skyhook-io-radar",
-      "content_hash": "d73e05893c62b4895d3006fd066285016121d2302b1631ed833787e34b3dae23",
-      "verified_at": "2026-11-24T20:04:23.146Z",
+      "content_hash": "570c1b46bd3e19057b0ec30e136a969eb167bef8bb29b76c836850670ee52c97",
+      "verified_at": "2026-11-25T14:23:55.528Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T20:04:23.146Z"
+      "last_updated": "2026-11-25T14:23:55.528Z"
     },
     "mitmproxy/mitmproxy": {
       "repository": "mitmproxy/mitmproxy",
@@ -5676,14 +5676,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gravitl-netmaker",
-      "content_hash": "c0a96b8c1dfdb7ddf49b7d570c446d571b1729dfc0c847521d5013b9bfa25eb6",
-      "verified_at": "2026-11-17T23:17:37.604Z",
+      "content_hash": "6c1984f769b4224abe95575fc1791abdf99bd184742e7c3b44d59e2f9db9ba83",
+      "verified_at": "2026-11-25T14:23:58.062Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T23:17:37.604Z"
+      "last_updated": "2026-11-25T14:23:58.062Z"
     },
     "pixeltable/pixeltable": {
       "repository": "pixeltable/pixeltable",
@@ -12846,14 +12846,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zoontek-react-native-bootsplash",
-      "content_hash": "d25a83eea902f50d8a09d3b1281a913a01e82fe3bf9ddcbf28eb72b0d5907457",
-      "verified_at": "2026-11-20T05:28:55.944Z",
+      "content_hash": "b7584c8aa75dc96991cc74b28de1ce057669631427a1dcc3cdc20a02118e1f8a",
+      "verified_at": "2026-11-25T14:23:51.482Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T05:28:55.944Z"
+      "last_updated": "2026-11-25T14:23:51.482Z"
     },
     "melbahja/seo": {
       "repository": "melbahja/seo",
@@ -17585,15 +17585,15 @@
       "pipeline_mode": "CLOUD_HARVEST",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-edge0-audio8-tts-realistic-air",
-      "content_hash": "0fc8d3f4bf16a4e19329741b53c13d31bf753b3d23e4cfc96f39187028582cec",
-      "verified_at": "2026-11-21T23:27:03.292Z",
+      "learning_id": "learn-huggingface-edge0-audio8-tts-realistic-0-6b",
+      "content_hash": "c93c066b6344b42ab52e4c7ba3f5ec9998aa052d86b2c0793fe5ec370ef4c09d",
+      "verified_at": "2026-11-25T14:23:45.131Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T23:27:03.292Z"
+      "last_updated": "2026-11-25T14:23:45.131Z"
     },
     "OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated": {
       "repository": "OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated",
