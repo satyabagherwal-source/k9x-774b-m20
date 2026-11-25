@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T05:10:43.967Z",
-  "total_cycles_completed": 12295,
-  "total_learnings_persisted": 12295,
-  "total_rules_promoted": 11336,
+  "last_updated": "2026-11-25T05:19:53.710Z",
+  "total_cycles_completed": 12297,
+  "total_learnings_persisted": 12297,
+  "total_rules_promoted": 11337,
   "history": [
-    {
-      "timestamp": "2026-11-24T15:53:48.082Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T16:01:38.272Z",
-      "repository": "goharbor/harbor",
-      "learningId": "learn-github-goharbor-harbor",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-24T16:01:45.765Z",
       "repository": "ytsaurus/ytsaurus",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-25T05:10:43.967Z",
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T05:19:43.299Z",
+      "repository": "Comfy-Org/Z-Image-Turbo",
+      "learningId": "learn-huggingface-comfy-org-z_image_turbo",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T05:19:53.710Z",
+      "repository": "linkerd/linkerd2",
+      "learningId": "learn-github-linkerd-linkerd2",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -12946,3 +12946,6 @@
 | `CYCLE-2026-11-25-PROJ-EVOLVE` | `2026-11-25T05:01:26.265Z` | `hf-openai-clip-vit-large-patch14` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-9DE8D876` [Domain D] | Yes (`6a51a66d...`) |
 | `CYCLE-20261125-0FSB` | `2026-11-25T05:10:27.563Z` | `Comfy-Org/MOSS-Image` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-comfy-org-moss-image-learnings.md` | Yes (`0335908c...`) |
 | `CYCLE-20261125-0SFM` | `2026-11-25T05:10:43.954Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10461` | Yes (`020b66cf...`) |
+| `CYCLE-20261125-CCL3` | `2026-11-25T05:19:43.287Z` | `Comfy-Org/Z-Image-Turbo` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-comfy-org-z_image_turbo-learnings.md` | Yes (`d57c8cdb...`) |
+| `CYCLE-20261125-CKM9` | `2026-11-25T05:19:53.697Z` | `linkerd/linkerd2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10462` | Yes (`9d2e2bd3...`) |
+| `CYCLE-2026-11-25-PROJ-EVOLVE` | `2026-11-25T05:20:33.090Z` | `hf-comfy-org-z_image_turbo` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-AC435FD0` [Domain D] | Yes (`aac7792c...`) |

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-21T14:27:58.968Z",
+  "timestamp": "2026-11-25T05:19:57.635Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-hf-comfy-org-z-image-turbo-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hf-comfy-org-z-image-turbo-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-21T14:27:58.968Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T05:19:57.635Z`  
 > **Learning ID**: `LEARN-EVO-hf-comfy-org-z-image-turbo-learnings`
 
 

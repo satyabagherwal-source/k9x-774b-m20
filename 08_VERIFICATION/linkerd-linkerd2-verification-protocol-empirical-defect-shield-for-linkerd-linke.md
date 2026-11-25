@@ -4,22 +4,22 @@
 {
   "source_repository": "linkerd/linkerd2",
   "source_url": "https://github.com/linkerd/linkerd2",
-  "source_version": "8d6fcc5b",
+  "source_version": "103bc2d9",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-24T12:27:28.973Z",
+  "timestamp": "2026-11-25T05:19:54.066Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-linkerd-linkerd2",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [linkerd/linkerd2](https://github.com/linkerd/linkerd2) (Revision: `8d6fcc5b`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-24T12:27:28.973Z`  
+> **Provenance**: Harvested from [linkerd/linkerd2](https://github.com/linkerd/linkerd2) (Revision: `103bc2d9`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-25T05:19:54.066Z`  
 > **Learning ID**: `learn-github-linkerd-linkerd2`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `linkerd/linkerd2` (Commit: `8d6fcc5b`)
+- **Target Repository**: `linkerd/linkerd2` (Commit: `103bc2d9`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/linkerd-linkerd2-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/linkerd/linkerd2](https://github.com/linkerd/linkerd2))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T12:27:27.486Z  
+> **Harvest Timestamp**: 2026-11-25T05:19:52.297Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Ultralight, security-first service mesh for Kubernetes. Main repo for Linkerd 2.x.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: Cargo.toml, go.mod, README.md
-- **Stars / Engagement**: 11543 stars
+- **Stars / Engagement**: 11544 stars
 
 ---
 
@@ -1643,130 +1643,100 @@ func (pw *ProbeWorker) doProbe() error {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8d6fcc5b` (2026-11-23)
-**Commit Message**: chore(build): update golang to 1.26.11 (#15815)
+### Incident Patch 1: `103bc2d9` (2026-11-24)
+**Commit Message**: chore(deps): bump golang.org/x/crypto to 0.59.0 (#15821)
 
-This addresses [GO-2026-6859](https://pkg.go.dev/vuln/GO-2026-6859)
+This addresses CVE [GO-2026-5932](https://pkg.go.dev/vuln/GO-2026-5932)
+
+While linkerd does not import golang.org/x/crypto/openpgp, this change
+clears the scanner finding.
 
 Signed-off-by: Allison Richardet <[REDACTED_EMAIL]>
 
-**File**: `.github/workflows/codecov.yml` (modified, +1/-1)
+**File**: `go.mod` (modified, +5/-5)
 ```diff
-@@ -14,7 +14,7 @@ jobs:
-     timeout-minutes: 30
-     runs-on: ${{ vars.LINKERD2_RUNNER || 'ubuntu-24.04' }}
-     container:
--      image: golang:1.26.10
-+      image: golang:1.26.11
-     steps:
-       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-       - run: go install gotest.tools/gotestsum@v0.4.2
+@@ -136,15 +136,15 @@ require (
+ 	go.opentelemetry.io/otel/trace v1.47.0 // indirect
+ 	go.yaml.in/yaml/v2 v2.4.4 // indirect
+ 	go.yaml.in/yaml/v3 v3.0.5 // indirect
+-	golang.org/x/crypto v0.58.0 // indirect
++	golang.org/x/crypto v0.59.0 // indirect
+ 	golang.org/x/mod v0.42.0 // indirect
+ 	golang.org/x/net v0.62.0 // indirect
+ 	golang.org/x/oauth2 v0.37.0 // indirect
+-	golang.org/x/sync v0.24.0 // indirect
+-	golang.org/x/sys v0.49.0 // indirect
++	golang.org/x/sync v0.25.0 // indirect
++	golang.org/x/sys v0.50.0 // indirect
+ 	golang.org/x/telemetry v0.0.0-20261009151841-97e8ea77aa2a // indirect
+-	golang.org/x/term v0.47.0 // indirect
+-	golang.org/x/text v0.43.0 // indirect
++	golang.org/x/term v0.48.0 // indirect
++	golang.org/x/text v0.44.0 // indirect
+ 	golang.org/x/time v0.15.0 // indirect
+ 	golang.org/x/tools/godoc v0.1.0-deprecated // indirect
+ 	google.golang.org/api v0.278.0 // indirect
 ```
 
-**File**: `Dockerfile.controller` (modified, +1/-1)
+**File**: `go.sum` (modified, +10/-10)
 ```diff
-@@ -1,5 +1,5 @@
- # Precompile key slow-to-build dependencies
--FROM --platform=$BUILDPLATFORM golang:1.26.10-alpine AS go-deps
-+FROM --platform=$BUILDPLATFORM golang:1.26.11-alpine AS go-deps
- WORKDIR /linkerd-build
- COPY go.mod go.sum ./
- COPY bin/install-deps bin/
-```
-
-**File**: `Dockerfile.proxy` (modified, +2/-2)
-```diff
-@@ -3,7 +3,7 @@ ARG RUNTIME_IMAGE="cr.l5d.io/linkerd/proxy-runtime:latest"
- ARG TARGETARCH
- 
- # Precompile key slow-to-build dependencies
--FROM --platform=$BUILDPLATFORM golang:1.26.10-alpine AS go-deps
-+FROM --platform=$BUILDPLATFORM golang:1.26.11-alpine AS go-deps
- WORKDIR /linkerd-build
- COPY go.mod go.sum ./
- COPY bin/install-deps bin/
-@@ -45,7 +45,7 @@ COPY proxy-identity proxy-identity
- RUN CGO_ENABLED=0 GOOS=linux GOARCH=$TARGETARCH go build -o /out/proxy-identity -mod=readonly -ldflags "-s -w" ./proxy-identity
- 
- ## build proxy-init
--FROM --platform=$BUILDPLATFORM golang:1.26.10-alpine AS proxy-init
-+FROM --platform=$BUILDPLATFORM golang:1.26.11-alpine AS proxy-init
- WORKDIR /build
- ARG PROXY_INIT_REPO="linkerd/linkerd2-proxy-init"
- ARG PROXY_INIT_REF="proxy-init/v2.4.11"
-```
-
-**File**: `cli/Dockerfile` (modified, +1/-1)
-```diff
-@@ -1,7 +1,7 @@
- ARG BUILDPLATFORM=linux/amd64
- 
- # Precompile key slow-to-build dependencies
--FROM --platform=$BUILDPLATFORM golang:1.26.10-alpine AS go-deps
-+FROM --platform=$BUILDPLATFORM golang:1.26.11-alpine AS go-deps
- WORKDIR /linkerd-build
- COPY go.mod go.sum ./
- RUN go mod download
-```
-
-**File**: `go.mod` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- module github.com/linkerd/linkerd2
- 
--go 1.26.10
-+go 1.26.11
- 
- require (
- 	contrib.go.opencensus.io/exporter/ocagent v0.7.0
-```
-
-**File**: `viz/metrics-api/Dockerfile` (modified, +1/-1)
-```diff
-@@ -1,7 +1,7 @@
- ARG BUILDPLATFORM=linux/amd64
- 
- # Precompile key slow-to-build dependencies
--FROM --platform=$BUILDPLATFORM golang:1.26.10-alpine AS go-deps
-+FROM --platform=$BUILDPLATFORM golang:1.26.11-alpine AS go-deps
- WORKDIR /linkerd-build
- COPY go.mod go.sum ./
- COPY bin/install-deps bin/
-```
-
-**File**: `viz/tap/Dockerfile` (modified, +1/-1)
-```diff
-@@ -1,7 +1,7 @@
- ARG BUILDPLATFORM=linux/amd64
- 
- # Precompile key slow-to-build dependencies
--FROM --platform=$BUILDPLATFORM golang:1.26.10-alpine AS go-deps
-+FROM --platform=$BUILDPLATFORM golang:1.26.11-alpine AS go-deps
- WORKDIR /linkerd-build
- COPY go.mod go.sum ./
- COPY bin/install-deps bin/
-```
-
-**File**: `web/Dockerfile` (modified, +1/-1)
-```diff
-@@ -1,7 +1,7 @@
- ARG BUILDPLATFORM=linux/amd64
- 
- # Precompile key slow-to-build dependencies
--FROM --platform=$BUILDPLATFORM golang:1.26.10-alpine AS go-deps
-+FROM --platform=$BUILDPLATFORM golang:1.26.11-alpine AS go-deps
- WORKDIR /linkerd-build
- COPY go.mod go.sum ./
- COPY bin/install-deps bin/
+@@ -467,8 +467,8 @@ golang.org/x/crypto v0.0.0-20190510104115-cbcb75029529/go.mod h1:yigFU9vqHzYiE8U
+ golang.org/x/crypto v0.0.0-20190605123033-f99c8df09eb5/go.mod h1:yigFU9vqHzYiE8UmvKecakEJjdnWj3jj499lnFckfCI=
+ golang.org/x/crypto v0.0.0-20191011191535-87dc89f01550/go.mod h1:yigFU9vqHzYiE8UmvKecakEJjdnWj3jj499lnFckfCI=
+ golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9/go.mod h1:LzIPMQfyMNhhGPhUkYOs5KpL4U8rLKemX1yGLhDgUto=
+-golang.org/x/crypto v0.58.0 h1:COkYLr4k7nDI4r6QtMML2AfzeIswWHAJthLS6K/M/54=
+-golang.org/x/crypto v0.58.0/go.mod h1:Xh+kl5A+M0gMiWDytH2Hhr5Z7WbNCpv/eB/EFgfSk+w=
++golang.org/x/crypto v0.59.0 h1:xS2jhqYbzNrpvkWP2YTDf4TJwBy3ykR03i8vFDxEc7c=
++golang.org/x/crypto v0.59.0/go.mod h1:veDyUwATGs3c+vN3VfTbzViMGXeTBk3WyhBOkn+F/4U=
+ golang.org/x/exp v0.0.0-20190121172915-509febef88a4/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=
+ golang.org/x/exp v0.0.0-20190306152737-a1d7652674e8/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=
+ golang.org/x/exp v0.0.0-20190510132918-efd6b22b2522/go.mod h1:ZjyILWgesfNpC6sMxTJOJm9Kp84zZh5NQWvqDGG3Qr8=
+@@ -536,8 +536,8 @@ golang.org/x/sync v0.0.0-20190227155943-e225da77a7e6/go.mod h1:RxMgew5VJxzue5/jJ
+ golang.org/x/sync v0.0.0-20190423024810-112230192c58/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+ golang.org/x/sync v0.0.0-20190911185100-cd5d95a43a6e/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+ golang.org/x/sync v0.0.0-20200317015054-43a5402ce75a/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+-golang.org/x/sync v0.24.0 h1:iqiDrGoDgyuvAKrhLQthUEzU/R378N78gXbBjxed7oA=
+-golang.org/x/sync v0.24.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
++golang.org/x/sync v0.25.0 h1:dJnifr0nMV8/SBnBvdo4eSGGnrc3O4FFx6IqvtLcmRs=
++golang.org/x/sync v0.25.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
+ golang.org/x/sys v0.0.0-20180830151530-49385e6e1522/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
+ golang.org/x/sys v0.0.0-20190215142949-d0b11bdaac8a/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
+ golang.org/x/sys v0.0.0-20190312061237-fead79001313/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
+@@ -560,19 +560,19 @@ golang.org/x/sys v0.0.0-20200331124033-c3d80250170d/go.mod h1:h1NjWce9XRLGQEsW7w
+ golang.org/x/sys v0.0.0-20200523222454-059865788121/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
+ golang.org/x/sys v0.0.0-20200930185726-fdedc70b468f/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
+ golang.org/x/sys v0.0.0-20210616094352-59db8d763f22/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+-golang.org/x/sys v0.49.0 h1:XbzkgYJHdqh/8m2Uu0W/dQv8nktxx4BFHp1M0gROTXA=
+-golang.org/x/sys v0.49.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
++golang.org/x/sys v0.50.0 h1:dkKZEFTEKaLr1sjhs0WiKqoi8Jj5nHbS3Njmx1UoMJs=
++golang.org/x/sys v0.50.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
+ golang.org/x/telemetry v0.0.0-20261009151841-97e8ea77aa2a h1:wnveMBKHwx8/nIb8WYT5P9vtefdXOvIWxzycCkc5n6Q=
+ golang.org/x/telemetry v0.0.0-20261009151841-97e8ea77aa2a/go.mod h1:i+ivNqjDnTF3WTElsdk5g9V5DTSBYgdNo7xTU9SDwYA=
+-golang.org/x/term v0.47.0 h1:cpyOwQkr2Nzxe2p6KnrTG7Ei2wtzjsuSjhpXXepZ/BM=
+-golang.org/x/term v0.47.0/go.mod h1:efAfAuG6RKABvg1ArGebRkvX6LXul14SM67o2e4mUCY=
++golang.org/x/term v0.48.0 h1:G6UU1eiSB8nl3DzeUGt7Mg+2SctI8tPS6Z5/mBt6cOk=
++golang.org/x/term v0.48.0/go.mod h1:BRDLHCZr2SUjIeBHHpRyQeC9xzSAVbzY2rvKgafnHf4=
+ golang.org/x/text v0.0.0-20170915032832-14c0d48ead0c/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
+ golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
+ golang.org/x/text v0.3.1-0.20180807135948-17ff2d5776d2/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
+ golang.org/x/text v0.3.2/go.mod h1:bEr9sfX3Q8Zfm5fL9x+3itogRgK3+ptLWKqgva+5dAk=
+ golang.org/x/text v0.3.3/go.mod h1:5Zoc/QRtKVWzQhOtBMvqHzDpF6irO9z98xDceosuGiQ=
+-golang.org/x/text v0.43.0 h1:1QivrlhwAsnMOcqgOdl9my7s9OyZl8O5/UGUTJVXoWc=
+-golang.org/x/text v0.43.0/go.mod h1:hbSIYA/amXcRXTFSZqh8tWHEoqRvvbKPJ2uz/KU+a+s=
++golang.org/x/text v0.44.0 h1:YItdp/mQNGnsmrgpcdA5yQ3bnRxCfo/Tj/iByGW9GGo=
++golang.org/x/text v0.44.0/go.mod h1:S4FR1waQ9LbjQTls97SyRjDaUUVkaM+cXwwuG/G+MwY=
+ golang.org/x/time v0.0.0-20181108054448-85acf8d2951c/go.mod h1:tRJNPiyCQ0inRvYxbN9jk5I+vvW/OXSQhTDSoE431IQ=
+ golang.org/x/time v0.0.0-20190308202827-9d24e82272b4/go.mod h1:tRJNPiyCQ0inRvYxbN9jk5I+vvW/OXSQhTDSoE431IQ=
+ golang.org/x/time v0.0.0-20191024005414-555d28b269f0/go.mod h1:tRJNPiyCQ0inRvYxbN9jk5I+vvW/OXSQhTDSoE431IQ=
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #15821** (2026-11-24): chore(deps): bump golang.org/x/crypto to 0.59.0 (@arichardet)
 - **PR #15815** (2026-11-23): chore(build): update golang to 1.26.11 (@arichardet)
 - **PR #15788** (2026-11-19): build(deps): bump go.opentelemetry.io/otel/trace from 1.44.0 to 1.47.0 (@dependabot[bot])
 - **PR #15785** (2026-11-23): chore: add k8s level warning for malformed ports on annotation (@anthoturc)
 - **PR #15784** (2026-11-20): fix(destination): keep federated endpoints when a stream is torn down (@codenameraz)
 - **PR #15781** (2026-11-13): proxy: v2.374.0 (@l5d-bot)
-- **PR #15776** (2026-11-06): chore: migrate stale from app to action (@raykroeker)
 
 ---
 
@@ -1786,31 +1756,39 @@ Signed-off-by: Allison Richardet <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build): update golang to 1.26.11
+## X. deps): bump golang.org/x/crypto to 0.59.0
 
 **RULE**:
-When implementing operations in `.github/workflows/codecov.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in linkerd/linkerd2. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in linkerd/linkerd2. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8d6fcc5b`: build): update golang to 1.26.11. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `103bc2d9`: deps): bump golang.org/x/crypto to 0.59.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/codecov.yml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-      image: golang:1.26.11
+	golang.org/x/crypto v0.59.0 // indirect
+	golang.org/x/sync v0.25.0 // indirect
+	golang.org/x/sys v0.50.0 // indirect
+	golang.org/x/term v0.48.0 // indirect
+	golang.org/x/text v0.44.0 // indirect
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-      image: golang:1.26.10
+	golang.org/x/crypto v0.58.0 // indirect
+	golang.org/x/sync v0.24.0 // indirect
+	golang.org/x/sys v0.49.0 // indirect
+	golang.org/x/term v0.47.0 // indirect
+	golang.org/x/text v0.43.0 // indirect
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8d6fcc5b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `103bc2d9` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T05:10:50.506Z",
-  "total_records": 2635,
+  "last_updated": "2026-11-25T05:20:33.473Z",
+  "total_records": 2637,
   "domains": {
     "A": {
       "total": 22,
@@ -71,7 +71,7 @@
       ]
     },
     "D": {
-      "total": 990,
+      "total": 992,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -1062,7 +1062,9 @@
         "domain_intelligence-research-knowledge-intelligence-checkmarx-kics-learnings-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-openai-clip-vit-large-patch14-core-invariants",
         "DOM-D-9DE8D876",
-        "domain_intelligence-research-knowledge-intelligence-hf-openai-clip-vit-large-patch14-learnings-core-"
+        "domain_intelligence-research-knowledge-intelligence-hf-openai-clip-vit-large-patch14-learnings-core-",
+        "DOM-D-AC435FD0",
+        "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-z_image_turbo-learnings-core-invari"
       ]
     },
     "E": {
@@ -10799,8 +10801,8 @@
       "title": "Architecture Intelligence: linkerd/linkerd2 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-linkerd-linkerd2-architecture-intelligence-linkerd-linkerd2-core-invariants.md",
       "repository": "linkerd/linkerd2",
-      "content_hash": "f364e500b65653316ab70a7ae876d9bdd7c814e883c650ce9ed69d29c389a077",
-      "created_at": "2026-11-24T12:27:29.156Z"
+      "content_hash": "8290444bc05c913d1c5ea458277355a59b6cb15127938638151b723c2b7542e4",
+      "created_at": "2026-11-25T05:19:54.304Z"
     },
     "DOM-D-43004423": {
       "record_id": "DOM-D-43004423",
@@ -10859,8 +10861,8 @@
       "title": "Architecture Intelligence: linkerd-linkerd2-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-linkerd-linkerd2-learnings-architecture-intelligence-linkerd-linkerd2-learnings-.md",
       "repository": "linkerd-linkerd2-learnings",
-      "content_hash": "a2e3a30a0ba9c8a4968228597d83105933140ff46f1256e939064dff8530742c",
-      "created_at": "2026-11-24T12:27:39.785Z"
+      "content_hash": "c1e79e72efc14341c8a0c240542a1b86425683b40f654327842c788a0f9be074",
+      "created_at": "2026-11-25T05:19:58.936Z"
     },
     "DOM-D-4CA3BD2A": {
       "record_id": "DOM-D-4CA3BD2A",
@@ -28247,10 +28249,10 @@
       "record_id": "domain_intelligence-research-knowledge-intelligence-comfy-org-z-image-turbo-core-invariants",
       "domain_letter": "D",
       "title": "Research & Knowledge Intelligence: Comfy-Org/Z-Image-Turbo Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-comfy-org-z-image-turbo-research-knowledge-intelligence-comfy-org-z-image-tur.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-comfy-org-z_image_turbo-research-knowledge-intelligence-comfy-org-z-image-tur.md",
       "repository": "Comfy-Org/Z-Image-Turbo",
-      "content_hash": "65c9458462c1a5d12426f3e4f5af340814fbfd9f97ca3235b2bd2ddd7cb06801",
-      "created_at": "2026-11-21T14:27:41.195Z"
+      "content_hash": "6d8119c41f4562f3a83f92f1a7556886d90b0a52be8bc59e4b79db76ac3622ae",
+      "created_at": "2026-11-25T05:19:43.605Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-z-image-turbo-learnings-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-z-image-turbo-learnings-core-invari",
@@ -28258,8 +28260,8 @@
       "title": "Research & Knowledge Intelligence: hf-comfy-org-z-image-turbo-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-comfy-org-z-image-turbo-learnings-research-knowledge-intelligence-hf-comfy-or.md",
       "repository": "hf-comfy-org-z-image-turbo-learnings",
-      "content_hash": "2aece823c335e6a7f09a5a4bb5e2e38abc4cd1e52cb3cc519f0ad5bd21131086",
-      "created_at": "2026-11-21T14:27:59.082Z"
+      "content_hash": "31747d485e10cae79fbb9bcbcbbeed610de96398f7c91810915c6b1e5b277191",
+      "created_at": "2026-11-25T05:19:57.774Z"
     },
     "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b-nv": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b-nv",
@@ -44232,6 +44234,57 @@
       "repository": "hf-openai-clip-vit-large-patch14-learnings",
       "content_hash": "3237e6d66fc15561dcaf6db9ad58600f326a40fee77b2eee796122aced78fcf6",
       "created_at": "2026-11-25T05:01:26.573Z"
+    },
+    "DOM-D-AC435FD0": {
+      "record_id": "DOM-D-AC435FD0",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): Comfy-Org/Z-Image-Turbo",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-comfy-org-z_image_turbo-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/Comfy-Org/z_image_turbo](https://huggingface.co/Comfy-Org/z_image_turbo))  \n> **Source Version**: `hf-comfy-org`  \n> **License**: Open-Source  \n> **Sy",
+      "content_hash": "aac7792cb519bee524b4f9c92b95c0fd6558cf8ea65deca5124271fc18d7c8f7",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-comfy-org-z_image_turbo-learnings.md`  \n> **Source**: huggingface ([https://huggi -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-comfy-org-z_image_turbo-learnings.md`  \n> **Source**: huggingface ([https://huggi",
+      "provenance": {
+        "source_uri": "project://hf-comfy-org-z_image_turbo/hf-comfy-org-z_image_turbo-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-25T05:19:59.387Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-comfy-org-z_image_turbo)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-comfy-org-z_image_turbo"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-25T05:20:33.040Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-z_image_turbo-learnings-core-invari": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-z_image_turbo-learnings-core-invari",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-comfy-org-z_image_turbo-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-comfy-org-z_image_turbo-learnings-research-knowledge-intelligence-hf-comfy-or.md",
+      "repository": "hf-comfy-org-z_image_turbo-learnings",
+      "content_hash": "af7de360778cf9013aacf771733b45f8eca0550b4b38e511e864948f4e50efc8",
+      "created_at": "2026-11-25T05:20:33.473Z"
     }
   }
 }

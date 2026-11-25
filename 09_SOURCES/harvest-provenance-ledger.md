@@ -12979,3 +12979,6 @@ Every entry in this ledger must capture:
 | `learn-dom-d-9de8d876` | `project://hf-openai-clip-vit-large-patch14` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-openai-clip-vit-large-patch14-learnings.md` | 2026-11-25T05:01:26.265Z |
 | `learn-huggingface-comfy-org-moss-image` | `https://huggingface.co/Comfy-Org/MOSS-Image` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-11-25T05:10:27.569Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `bc2854dc` | Multi-dimensional audit evidence | 2026-11-25T05:10:43.960Z |
+| `learn-huggingface-comfy-org-z_image_turbo` | `https://huggingface.co/Comfy-Org/z_image_turbo` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-11-25T05:19:43.292Z |
+| `learn-github-linkerd-linkerd2` | `https://github.com/linkerd/linkerd2` | `103bc2d9` | Multi-dimensional audit evidence | 2026-11-25T05:19:53.702Z |
+| `learn-dom-d-ac435fd0` | `project://hf-comfy-org-z_image_turbo` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-comfy-org-z_image_turbo-learnings.md` | 2026-11-25T05:20:33.090Z |

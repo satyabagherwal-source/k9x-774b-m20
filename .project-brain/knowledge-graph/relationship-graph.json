@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-25T05:01:26.262Z",
+  "updated_at": "2026-11-25T05:20:33.086Z",
   "statistics": {
-    "total_nodes": 528,
-    "total_edges": 218,
+    "total_nodes": 529,
+    "total_edges": 219,
     "domain_distribution": {
-      "D": 320,
+      "D": 321,
       "M": 1,
       "H": 96,
       "J": 22,
@@ -21,7 +21,7 @@
       "C": 1
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 214,
+      "CONSTRAINED_BY_ARCHITECTURE": 215,
       "VERIFIED_BY_TEST": 2,
       "STYLED_BY_DESIGN": 2
     }
@@ -11788,6 +11788,29 @@
       ],
       "created_at": "2026-11-25T05:01:26.262Z",
       "updated_at": "2026-11-25T05:01:26.262Z"
+    },
+    "DOM-D-AC435FD0": {
+      "id": "DOM-D-AC435FD0",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): Comfy-Org/Z-Image-Turbo",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-comfy-org-z_image_turbo-learnings.md`  \n> **Source**: huggingface ([https://huggi -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-comfy-org-z_image_turbo-learnings.md`  \n> **Source**: huggingface ([https://huggi",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-comfy-org-z_image_turbo/hf-comfy-org-z_image_turbo-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-25T05:19:59.387Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-comfy-org-z_image_turbo)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence",
+        "M"
+      ],
+      "created_at": "2026-11-25T05:20:33.086Z",
+      "updated_at": "2026-11-25T05:20:33.086Z"
     }
   },
   "edges": [
@@ -13970,6 +13993,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-H-FBC5BA6F [H] with Domain G",
       "created_at": "2026-11-25T02:39:19.300Z"
+    },
+    {
+      "id": "EDGE-D3AD6645FFD9",
+      "sourceId": "DOM-D-AC435FD0",
+      "targetId": "NODE-M-domain-bridge-m",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-D-AC435FD0 [D] with Domain M",
+      "created_at": "2026-11-25T05:20:33.086Z"
     }
   ]
 }

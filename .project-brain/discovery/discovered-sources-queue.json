@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-25T05:00:54.764Z",
+  "updated_at": "2026-11-25T05:20:33.130Z",
   "stats": {
-    "total_discovered": 9247,
-    "approved_pending_harvest": 8756,
+    "total_discovered": 9248,
+    "approved_pending_harvest": 8757,
     "harvested_count": 0,
     "rejected_count": 491,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 8753,
+      "COMMUNITY_AND_EXPERT": 8754,
       "OFFICIAL_DOCUMENTATION": 275,
       "STANDARDS_AND_SPECIFICATIONS": 149,
       "ENGINEERING_BLOGS": 7,
@@ -200024,6 +200024,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md",
         "fileName": "rtk-ai-rtk-learnings.md"
+      }
+    },
+    "SRC-E9496B04A024": {
+      "id": "SRC-E9496B04A024",
+      "url": "https://huggingface.co/Comfy-Org/z_image_turbo",
+      "title": "https://huggingface.co/Comfy-Org/z_image_turbo",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T05:20:33.130Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-comfy-org-z_image_turbo-learnings.md",
+        "fileName": "hf-comfy-org-z_image_turbo-learnings.md"
       }
     }
   }

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-25T05:10:43.982Z",
+  "last_updated": "2026-11-25T05:19:53.728Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -9441,14 +9441,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-linkerd-linkerd2",
-      "content_hash": "27a33864491c84db9f2a9c3443cb7ac36dc64cf09f442a4b6fd3d5deda62ef69",
-      "verified_at": "2026-11-24T12:27:28.741Z",
+      "content_hash": "9d2e2bd30c83aa7bc840bc6d4e17aa6a9c99d26f352d36324f98fd4a305e5ddd",
+      "verified_at": "2026-11-25T05:19:53.727Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T12:27:28.741Z"
+      "last_updated": "2026-11-25T05:19:53.727Z"
     },
     "tursodatabase/libsql": {
       "repository": "tursodatabase/libsql",
@@ -15845,15 +15845,15 @@
       "pipeline_mode": "CLOUD_HARVEST",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-comfy-org-z-image-turbo",
-      "content_hash": "141c759a5eb78bf21cf49890220c9c4aba09e8fa9481e5e87e7393aa9587fd5f",
-      "verified_at": "2026-11-21T14:27:40.945Z",
+      "learning_id": "learn-huggingface-comfy-org-z_image_turbo",
+      "content_hash": "d57c8cdb5f67ec713e948151e778cc1c96c474805e8ee607199a825830eef1b3",
+      "verified_at": "2026-11-25T05:19:43.310Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T14:27:40.945Z"
+      "last_updated": "2026-11-25T05:19:43.310Z"
     },
     "unsloth/flint-GGUF": {
       "repository": "unsloth/flint-GGUF",

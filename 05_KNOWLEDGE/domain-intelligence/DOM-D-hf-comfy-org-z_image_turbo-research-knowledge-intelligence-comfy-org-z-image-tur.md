@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/Comfy-Org/z_image_turbo",
   "source_version": "hf-comfy-org-z_image_turbo",
   "license": "Open-Source",
-  "timestamp": "2026-11-21T08:54:39.196Z",
+  "timestamp": "2026-11-25T05:19:43.604Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-comfy-org-z_image_turbo",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [Comfy-Org/Z-Image-Turbo](https://huggingface.co/Comfy-Org/z_image_turbo) (Revision: `hf-comfy-o`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-21T08:54:39.196Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T05:19:43.604Z`  
 > **Learning ID**: `learn-huggingface-comfy-org-z_image_turbo`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-comfy-org-z_image_turbo-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/Comfy-Org/z_image_turbo](https://huggingface.co/Comfy-Org/z_image_turbo))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T08:52:13.251Z  
+> **Harvest Timestamp**: 2026-11-25T05:19:42.465Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: ML Foundation Model
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 9973409 downloads | 1048 likes
+- **Stars / Engagement**: 10348674 downloads | 1055 likes
 
 ---
 
