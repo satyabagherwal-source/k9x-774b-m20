@@ -13091,3 +13091,4 @@
 | `CYCLE-20261125-IR7U` | `2026-11-25T13:20:35.658Z` | `beclab/Olares` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10533` | Yes (`dfcf0bc5...`) |
 | `CYCLE-20261125-ISUO` | `2026-11-25T13:20:37.776Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule EXISTING` | Yes (`ddedc0ac...`) |
 | `CYCLE-20261125-WYSU` | `2026-11-25T13:31:38.670Z` | `speridlabs/idol` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-speridlabs-idol-learnings.md` | Yes (`5c91282b...`) |
+| `CYCLE-20261125-7MV1` | `2026-11-25T13:39:56.413Z` | `Comfy-Org/Wan-2.2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-comfy-org-wan-2.2-learnings.md` | Yes (`5da8a82f...`) |

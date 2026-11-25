@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-25T13:31:52.656Z",
+  "last_updated": "2026-11-25T13:40:10.559Z",
   "total_verified_learnings": 9117,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -112198,9 +112198,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "9619d2e3f3dcbd330bc3da09caa67db50811b053d03a632a61125e4f14005d0a",
+      "content_hash": "aafa91b1b4e17f4a9a2dafc5a8892943a47291556eec468fcdfe6d5ea128e95d",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T12:29:48.722Z"
+      "persisted_at": "2026-11-25T13:40:10.382Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -112210,9 +112210,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "3611ae697ce53fd22db46c13c0470ba780e1b9925b6387cd6b04220f3260825a",
+      "content_hash": "4b2211d64ef519fa903f64bf9f005bf71d7dbc28e1dafd87334a787aec68e0f9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T12:29:48.958Z"
+      "persisted_at": "2026-11-25T13:40:10.559Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -112306,9 +112306,9 @@
       "title": "Research & Knowledge Intelligence: Comfy-Org/Wan-2.2 Core Invariants",
       "repository": "Comfy-Org/Wan-2.2",
       "source_version": "hf-comfy-org-wan-2.2",
-      "content_hash": "8cbf380ffa5f57c34befd7f0df6d07d9e681759ccbda05b20b80bf3819bec630",
+      "content_hash": "a189a6883f37248d73cae4917afc4148c8afac6229334acef013e8d42be0e3a2",
       "domain_letter": "D",
-      "persisted_at": "2026-11-21T22:29:51.465Z"
+      "persisted_at": "2026-11-25T13:39:56.651Z"
     },
     "candidate_directive-flush-cookie-stores-to-disk-before-quitting-55745": {
       "item_id": "candidate_directive-flush-cookie-stores-to-disk-before-quitting-55745",
@@ -112474,9 +112474,9 @@
       "title": "Research & Knowledge Intelligence: hf-comfy-org-wan-2.2-learnings Core Invariants",
       "repository": "hf-comfy-org-wan-2.2-learnings",
       "source_version": "HEAD",
-      "content_hash": "b821392d89d9d66dca9cec6732d821d29b5508f3a54eb1baba215dbf414ad53f",
+      "content_hash": "f4e16f10eb03a12c4e3948416f4568362fc2068281ccb79802a1f0283fbe6ae6",
       "domain_letter": "D",
-      "persisted_at": "2026-11-21T22:30:11.558Z"
+      "persisted_at": "2026-11-25T13:40:08.711Z"
     },
     "domain_intelligence-architecture-intelligence-electron-electron-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-electron-electron-learnings-core-invariants",
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "4be223ebb0bf9308621bd5d4513a7eec726b23347365e25a49d7b79069c8f9ee",
+      "content_hash": "a5a33320eb69107a454be98dd8ab447c1108f084da052a9910a24c3ab09d5bef",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T13:31:52.451Z"
+      "persisted_at": "2026-11-25T13:40:09.424Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "74fe6042712cdc24921712f23f166fba967dde1202e598f247f79d9a4e85c249",
+      "content_hash": "dea69fd2524e9742380ab7156f78a85bc4229a25a28b6b49aeb4c9fedb2c9e47",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T13:31:52.656Z"
+      "persisted_at": "2026-11-25T13:40:09.605Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -286567,7 +286567,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Comfy-Org/Wan-2.2",
       "source_version": "hf-comfy-org-wan-2.2",
-      "content_hash": "64fca361eaa83b5888bbbe9eec808442ec62bb2c2b64d08245b8b4aec0f2e450",
+      "content_hash": "5da8a82fbc8aed98619b36811985411f2a0368f36043be67e1a0310dc83e8d07",
       "dossier_path": "07_PROJECT_LEARNING/hf-comfy-org-wan-2.2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-comfy-org-wan-2.2-learnings.md",
       "promoted_rules": [],
@@ -286576,7 +286576,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T22:29:50.928Z",
+      "verified_at": "2026-11-25T13:39:56.181Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -336305,13 +336305,13 @@
       "item_id": "candidate_directive-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-PFYE-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-7XI2-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change.md",
       "title": "server_events_dispatch: Rerender DM status emoji on emojiset change.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "840b85019bd6c13f30a5ae7f12284a8d0fba56494fc7e2cf530e16db3892c30f",
+      "content_hash": "573e919a73dd4b262a33bfac186ee0fa18562fbab67056ebf1315b1a040d87ac",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T12:29:48.437Z"
+      "persisted_at": "2026-11-25T13:40:10.205Z"
     },
     "learn-github-xinatian-mroffice": {
       "learning_id": "learn-github-xinatian-mroffice",
@@ -339549,13 +339549,13 @@
       "item_id": "candidate_directive-deps-bump-url-to-2-5-9-and-heapless-to-0-9-4",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-X99Q-deps-bump-url-to-2-5-9-and-heapless-to-0-9-4.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-7WRE-deps-bump-url-to-2-5-9-and-heapless-to-0-9-4.md",
       "title": "deps): bump url to 2.5.9 and heapless to 0.9.4",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "daf4cf9fe436240e565ea4d160e151ba8c9a451927b39b07c25282fe19355312",
+      "content_hash": "2898ea678f41594172a33c13a0bc45a3b25e98d08c446a64dd05ae398f3eec13",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T13:31:52.242Z"
+      "persisted_at": "2026-11-25T13:40:09.246Z"
     },
     "rule-10315": {
       "learning_id": "rule-10315",

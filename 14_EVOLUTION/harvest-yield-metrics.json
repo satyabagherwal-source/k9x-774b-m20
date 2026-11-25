@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T13:31:38.682Z",
-  "total_cycles_completed": 12427,
-  "total_learnings_persisted": 12427,
+  "last_updated": "2026-11-25T13:39:56.423Z",
+  "total_cycles_completed": 12428,
+  "total_learnings_persisted": 12428,
   "total_rules_promoted": 11415,
   "history": [
-    {
-      "timestamp": "2026-11-25T00:43:31.548Z",
-      "repository": "cypress-io/cypress",
-      "learningId": "learn-github-cypress-io-cypress",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-25T00:43:32.924Z",
       "repository": "abue-ammar/tinycast",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-25T13:31:38.682Z",
       "repository": "speridlabs/idol",
       "learningId": "learn-huggingface-speridlabs-idol",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T13:39:56.423Z",
+      "repository": "Comfy-Org/Wan-2.2",
+      "learningId": "learn-huggingface-comfy-org-wan-2-2",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

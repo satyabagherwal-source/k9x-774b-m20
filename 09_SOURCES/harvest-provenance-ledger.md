@@ -13124,3 +13124,4 @@ Every entry in this ledger must capture:
 | `learn-github-beclab-olares` | `https://github.com/beclab/Olares` | `7a416142` | Multi-dimensional audit evidence | 2026-11-25T13:20:35.664Z |
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `21fc4bdb` | Multi-dimensional audit evidence | 2026-11-25T13:20:37.781Z |
 | `learn-huggingface-speridlabs-idol` | `https://huggingface.co/speridlabs/idol` | `hf-speridl` | Multi-dimensional audit evidence | 2026-11-25T13:31:38.675Z |
+| `learn-huggingface-comfy-org-wan-2-2` | `https://huggingface.co/Comfy-Org/Wan-2.2` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-11-25T13:39:56.417Z |

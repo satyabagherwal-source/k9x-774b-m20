@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T13:31:52.451Z",
+  "last_updated": "2026-11-25T13:40:10.382Z",
   "total_records": 2674,
   "domains": {
     "A": {
@@ -8489,8 +8489,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "9619d2e3f3dcbd330bc3da09caa67db50811b053d03a632a61125e4f14005d0a",
-      "created_at": "2026-11-25T12:29:48.722Z"
+      "content_hash": "aafa91b1b4e17f4a9a2dafc5a8892943a47291556eec468fcdfe6d5ea128e95d",
+      "created_at": "2026-11-25T13:40:10.382Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -8534,8 +8534,8 @@
       "title": "Research & Knowledge Intelligence: Comfy-Org/Wan-2.2 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-comfy-org-wan-2-2-research-knowledge-intelligence-comfy-org-wan-2-2-core-inva.md",
       "repository": "Comfy-Org/Wan-2.2",
-      "content_hash": "8cbf380ffa5f57c34befd7f0df6d07d9e681759ccbda05b20b80bf3819bec630",
-      "created_at": "2026-11-21T22:29:51.465Z"
+      "content_hash": "a189a6883f37248d73cae4917afc4148c8afac6229334acef013e8d42be0e3a2",
+      "created_at": "2026-11-25T13:39:56.651Z"
     },
     "domain_intelligence-architecture-intelligence-electron-electron-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-electron-electron-core-invariants",
@@ -8621,8 +8621,8 @@
       "title": "Research & Knowledge Intelligence: hf-comfy-org-wan-2.2-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-comfy-org-wan-2-2-learnings-research-knowledge-intelligence-hf-comfy-org-wan-.md",
       "repository": "hf-comfy-org-wan-2.2-learnings",
-      "content_hash": "b821392d89d9d66dca9cec6732d821d29b5508f3a54eb1baba215dbf414ad53f",
-      "created_at": "2026-11-21T22:30:11.558Z"
+      "content_hash": "f4e16f10eb03a12c4e3948416f4568362fc2068281ccb79802a1f0283fbe6ae6",
+      "created_at": "2026-11-25T13:40:08.711Z"
     },
     "domain_intelligence-architecture-intelligence-electron-electron-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-electron-electron-learnings-core-invariants",
@@ -9407,8 +9407,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "4be223ebb0bf9308621bd5d4513a7eec726b23347365e25a49d7b79069c8f9ee",
-      "created_at": "2026-11-25T13:31:52.451Z"
+      "content_hash": "a5a33320eb69107a454be98dd8ab447c1108f084da052a9910a24c3ab09d5bef",
+      "created_at": "2026-11-25T13:40:09.424Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",

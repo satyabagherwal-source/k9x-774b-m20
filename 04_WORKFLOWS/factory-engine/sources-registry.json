@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-25T13:31:50.274Z",
-    "lastVerified": "2026-11-25T13:31:50.274Z",
+    "lastChecked": "2026-11-25T13:40:08.328Z",
+    "lastVerified": "2026-11-25T13:40:08.328Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -379,8 +379,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-25T12:56:40.865Z",
-    "lastVerified": "2026-11-25T12:56:40.865Z",
+    "lastChecked": "2026-11-25T13:40:08.320Z",
+    "lastVerified": "2026-11-25T13:40:08.320Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -2133,8 +2133,8 @@
     "officialUrl": "https://github.com/trufflesecurity/trufflehog",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-25T08:29:21.652Z",
-    "lastVerified": "2026-11-25T08:29:21.652Z",
+    "lastChecked": "2026-11-25T13:40:03.345Z",
+    "lastVerified": "2026-11-25T13:40:03.345Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-trufflesecurity-trufflehog",
@@ -3236,9 +3236,9 @@
   "sorintlab-stolon": {
     "name": "stolon",
     "officialUrl": "https://github.com/sorintlab/stolon",
-    "lastChecked": "2026-11-24T19:27:40.018Z",
+    "lastChecked": "2026-11-25T13:40:00.803Z",
     "revisionIdentifier": "bcea7a75",
-    "lastVerified": "2026-11-24T19:27:40.018Z"
+    "lastVerified": "2026-11-25T13:40:00.803Z"
   },
   "lioensky-vcptoolbox": {
     "name": "lioensky/VCPToolBox",
@@ -4085,8 +4085,8 @@
     "officialUrl": "https://github.com/fujiapple852/trippy",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-24T13:03:54.415Z",
-    "lastVerified": "2026-11-24T13:03:54.415Z",
+    "lastChecked": "2026-11-25T13:39:53.258Z",
+    "lastVerified": "2026-11-25T13:39:53.258Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-fujiapple852-trippy",
@@ -7674,9 +7674,9 @@
   "pathwaycom-serviette": {
     "name": "serviette",
     "officialUrl": "https://github.com/pathwaycom/serviette",
-    "lastChecked": "2026-11-24T18:25:59.839Z",
+    "lastChecked": "2026-11-25T13:40:05.766Z",
     "revisionIdentifier": "53c6382b",
-    "lastVerified": "2026-11-24T18:25:59.839Z"
+    "lastVerified": "2026-11-25T13:40:05.766Z"
   },
   "jhspetersson-fselect": {
     "name": "fselect",
@@ -10019,12 +10019,12 @@
     "lastVerified": "2026-11-24T08:59:40.864Z"
   },
   "rainbow-me-rainbow": {
-    "name": "rainbow-me/rainbow",
+    "name": "rainbow",
     "officialUrl": "https://github.com/rainbow-me/rainbow",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-23T05:51:37.104Z",
-    "lastVerified": "2026-11-23T05:51:37.104Z",
+    "lastChecked": "2026-11-25T13:39:58.387Z",
+    "lastVerified": "2026-11-25T13:39:58.387Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rainbow-me-rainbow",
@@ -10033,7 +10033,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "02bfff09"
   },
   "crawlcove-crawlcove-hreflang-checker": {
     "name": "crawlcove-hreflang-checker",
@@ -13547,12 +13548,12 @@
     "officialUrl": "https://huggingface.co/Comfy-Org/Wan-2.2",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-21T22:29:50.388Z",
-    "lastVerified": "2026-11-21T22:29:50.388Z",
+    "lastChecked": "2026-11-25T13:39:55.780Z",
+    "lastVerified": "2026-11-25T13:39:55.780Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-comfy-org-wan-2-2",
-    "contentHash": "64fca361eaa83b5888bbbe9eec808442ec62bb2c2b64d08245b8b4aec0f2e450",
+    "contentHash": "5da8a82fbc8aed98619b36811985411f2a0368f36043be67e1a0310dc83e8d07",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
