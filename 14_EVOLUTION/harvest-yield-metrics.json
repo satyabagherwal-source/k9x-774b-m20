@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T05:19:53.710Z",
-  "total_cycles_completed": 12297,
-  "total_learnings_persisted": 12297,
+  "last_updated": "2026-11-25T05:28:56.157Z",
+  "total_cycles_completed": 12298,
+  "total_learnings_persisted": 12298,
   "total_rules_promoted": 11337,
   "history": [
-    {
-      "timestamp": "2026-11-24T16:01:45.765Z",
-      "repository": "ytsaurus/ytsaurus",
-      "learningId": "learn-github-ytsaurus-ytsaurus",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-24T16:19:50.910Z",
       "repository": "ArchiveBox/ArchiveBox",
@@ -1403,6 +1396,13 @@
       "repository": "linkerd/linkerd2",
       "learningId": "learn-github-linkerd-linkerd2",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T05:28:56.157Z",
+      "repository": "nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4",
+      "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b-nvfp4",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-25T05:20:33.473Z",
+  "last_updated": "2026-11-25T05:29:09.310Z",
   "total_verified_learnings": 9112,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "6351d0d57eecb91cc211fa654e525656dfa5fea8d2aa9d3226d6fe16bf065f54",
+      "content_hash": "f92be0e25d2907e4a2e8e5f61eacaf8e83283a76249e20e68dd109e59042c52f",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T05:10:50.506Z"
+      "persisted_at": "2026-11-25T05:29:09.163Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "43a91f0bcab2921e94c1c20c090f704542e72a43c6b90df5e3ffa2d07e37ab75",
+      "content_hash": "ddcbc39982b53dd1cae2696977aad06916f92fb9c6f86de4dbe8f0bef6eedfe4",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T05:10:50.746Z"
+      "persisted_at": "2026-11-25T05:29:09.310Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -219356,13 +219356,13 @@
       "item_id": "candidate_directive-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-6QMZ-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-OGJL-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
       "title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "66131afed030dd1437fe2cb6fc069e8582c3688c82bdfb2169d2f4c6cad77722",
+      "content_hash": "4c16be3732690b531d9d3cc2d3c25c505a6268e98a81cda1307de20313bbde56",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T00:35:25.403Z"
+      "persisted_at": "2026-11-25T05:29:08.289Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c",
@@ -219372,9 +219372,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "615104408fcce3637ea32cea6a50e6f309a68a30eced910a1357b0e8fed2830c",
+      "content_hash": "71717d7f39c88555a2323c25c8350fb86b60e2d5459fb4402d223abe9b5cfaa0",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T00:35:25.586Z"
+      "persisted_at": "2026-11-25T05:29:08.434Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio",
@@ -219384,9 +219384,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-permissions-learnings",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "f5cea720a9950eb3f0dc95c61d66b624b77587330eecaa9761a232ba92c1a49f",
+      "content_hash": "663dd1895b258a168405153721055265be4003a87914742f6140b7b2a48f077e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T00:35:25.761Z"
+      "persisted_at": "2026-11-25T05:29:08.588Z"
     },
     "learn-huggingface-hexgrad-kokoro-82m": {
       "learning_id": "learn-huggingface-hexgrad-kokoro-82m",
@@ -277690,7 +277690,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4",
       "source_version": "hf-nvidia-nvidia-nemotron-3.5-super-vl-120b-a12b-nvfp4",
-      "content_hash": "d9da591b9401b251de58827312c6aafac32c88ee205dc8b94ee63175bda469b4",
+      "content_hash": "834298adf89d6d23f6624377c2bddb4ba93f9e6a4070f7bf49d90b915a47821d",
       "dossier_path": "07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-3.5-super-vl-120b-a12b-nvfp4-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-3.5-super-vl-120b-a12b-nvfp4-learnings.md",
       "promoted_rules": [],
@@ -277699,7 +277699,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T09:23:44.021Z",
+      "verified_at": "2026-11-25T05:28:55.960Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -277716,9 +277716,9 @@
       "title": "Research & Knowledge Intelligence: nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4 Core Invariants",
       "repository": "nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4",
       "source_version": "hf-nvidia-nvidia-nemotron-3.5-super-vl-120b-a12b-nvfp4",
-      "content_hash": "55f7c3a5947152f5993768f3d562f000f3fe55ab0b7951f0c5a234085b747b3a",
+      "content_hash": "b3047e4e650bd759f17fa63079b5646a87a00de797c63a00969dc8fbaec9abcb",
       "domain_letter": "D",
-      "persisted_at": "2026-11-21T09:23:44.550Z"
+      "persisted_at": "2026-11-25T05:28:56.365Z"
     },
     "rule-8980": {
       "learning_id": "rule-8980",
@@ -277766,9 +277766,9 @@
       "title": "Research & Knowledge Intelligence: hf-nvidia-nvidia-nemotron-3.5-super-vl-120b-a12b-nvfp4-learnings Core Invariants",
       "repository": "hf-nvidia-nvidia-nemotron-3.5-super-vl-120b-a12b-nvfp4-learnings",
       "source_version": "HEAD",
-      "content_hash": "a23ceabea94b1a819e2d1f406dffb25dc534f4fe556c4e42cc230cce44a7a545",
+      "content_hash": "23e5e7867eb5945aa44161415c9ea144a2c8dd1a102c8d5d00dfa8c7c875ce02",
       "domain_letter": "D",
-      "persisted_at": "2026-11-21T09:23:54.639Z"
+      "persisted_at": "2026-11-25T05:29:07.877Z"
     },
     "learn-huggingface-mistralai-timestral-209m": {
       "learning_id": "learn-huggingface-mistralai-timestral-209m",
@@ -339198,13 +339198,13 @@
       "item_id": "candidate_directive-deps-bump-url-to-2-5-9-and-heapless-to-0-9-4",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-0XAZ-deps-bump-url-to-2-5-9-and-heapless-to-0-9-4.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-OH3U-deps-bump-url-to-2-5-9-and-heapless-to-0-9-4.md",
       "title": "deps): bump url to 2.5.9 and heapless to 0.9.4",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "cd5a9add613af37ec3014c3d374d79a264b108308eb9a7d9868904214eb9357c",
+      "content_hash": "e8dd5dbed48dfe429890a05d92616c67fc64db4ceaf75388a5464d9d418e4515",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T05:10:50.274Z"
+      "persisted_at": "2026-11-25T05:29:09.023Z"
     },
     "rule-10315": {
       "learning_id": "rule-10315",

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T05:20:33.736Z",
+  "last_updated": "2026-11-25T05:29:09.424Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-25T04:07:45.064Z",
@@ -43,7 +43,7 @@
       "staged_for_review": 0
     },
     "zoontek-react-native-permissions-learnings.md": {
-      "processed_at": "2026-11-25T00:35:25.116Z",
+      "processed_at": "2026-11-25T05:29:08.034Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-25T05:10:49.827Z",
+      "processed_at": "2026-11-25T05:29:08.748Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1433,7 +1433,7 @@
       "staged_for_review": 0
     },
     "hf-nvidia-nvidia-nemotron-3.5-super-vl-120b-a12b-nvfp4-learnings.md": {
-      "processed_at": "2026-11-21T09:23:54.372Z",
+      "processed_at": "2026-11-25T05:29:07.672Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3908,7 +3908,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 4077,
+  "total_dossiers_evaluated": 4080,
   "total_canonical_promoted": 530,
-  "total_staged_for_review": 3123
+  "total_staged_for_review": 3126
 }

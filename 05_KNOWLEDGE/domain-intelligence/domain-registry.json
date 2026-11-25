@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T05:20:33.473Z",
+  "last_updated": "2026-11-25T05:29:09.163Z",
   "total_records": 2637,
   "domains": {
     "A": {
@@ -9370,8 +9370,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "6351d0d57eecb91cc211fa654e525656dfa5fea8d2aa9d3226d6fe16bf065f54",
-      "created_at": "2026-11-25T05:10:50.506Z"
+      "content_hash": "f92be0e25d2907e4a2e8e5f61eacaf8e83283a76249e20e68dd109e59042c52f",
+      "created_at": "2026-11-25T05:29:09.163Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -12028,8 +12028,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-permissions-learnings-technical-construction-intelligence-z.md",
       "repository": "zoontek-react-native-permissions-learnings",
-      "content_hash": "615104408fcce3637ea32cea6a50e6f309a68a30eced910a1357b0e8fed2830c",
-      "created_at": "2026-11-25T00:35:25.586Z"
+      "content_hash": "71717d7f39c88555a2323c25c8350fb86b60e2d5459fb4402d223abe9b5cfaa0",
+      "created_at": "2026-11-25T05:29:08.434Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants",
@@ -28269,8 +28269,8 @@
       "title": "Research & Knowledge Intelligence: nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b-nvfp4-research-knowledge-intell.md",
       "repository": "nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4",
-      "content_hash": "55f7c3a5947152f5993768f3d562f000f3fe55ab0b7951f0c5a234085b747b3a",
-      "created_at": "2026-11-21T09:23:44.550Z"
+      "content_hash": "b3047e4e650bd759f17fa63079b5646a87a00de797c63a00969dc8fbaec9abcb",
+      "created_at": "2026-11-25T05:28:56.365Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b",
@@ -28278,8 +28278,8 @@
       "title": "Research & Knowledge Intelligence: hf-nvidia-nvidia-nemotron-3.5-super-vl-120b-a12b-nvfp4-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b-nvfp4-learnings-research-knowle.md",
       "repository": "hf-nvidia-nvidia-nemotron-3.5-super-vl-120b-a12b-nvfp4-learnings",
-      "content_hash": "a23ceabea94b1a819e2d1f406dffb25dc534f4fe556c4e42cc230cce44a7a545",
-      "created_at": "2026-11-21T09:23:54.639Z"
+      "content_hash": "23e5e7867eb5945aa44161415c9ea144a2c8dd1a102c8d5d00dfa8c7c875ce02",
+      "created_at": "2026-11-25T05:29:07.877Z"
     },
     "DOM-H-1449F81D": {
       "record_id": "DOM-H-1449F81D",

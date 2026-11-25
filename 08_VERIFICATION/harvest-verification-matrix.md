@@ -12949,3 +12949,4 @@
 | `CYCLE-20261125-CCL3` | `2026-11-25T05:19:43.287Z` | `Comfy-Org/Z-Image-Turbo` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-comfy-org-z_image_turbo-learnings.md` | Yes (`d57c8cdb...`) |
 | `CYCLE-20261125-CKM9` | `2026-11-25T05:19:53.697Z` | `linkerd/linkerd2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10462` | Yes (`9d2e2bd3...`) |
 | `CYCLE-2026-11-25-PROJ-EVOLVE` | `2026-11-25T05:20:33.090Z` | `hf-comfy-org-z_image_turbo` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-AC435FD0` [Domain D] | Yes (`aac7792c...`) |
+| `CYCLE-20261125-O76E` | `2026-11-25T05:28:56.150Z` | `nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-3.5-super-vl-120b-a12b-nvfp4-learnings.md` | Yes (`834298ad...`) |
