@@ -4863,10 +4863,10 @@
     "repository": "infracost/infracost",
     "platform": "github",
     "sourceUrl": "https://github.com/infracost/infracost",
-    "sourceVersion": "b8c2bd6e",
+    "sourceVersion": "aa717670",
     "license": "Apache-2.0",
-    "contentHash": "c56f0faba3229a943bd6b5254e9592e1a4bc74ab7f8ccd2255a3523fce226937",
-    "lastHarvestedAt": "2026-11-21T03:44:42.760Z",
+    "contentHash": "415eee6a5e6c06855d8967ec2f4bc4089f075b1cbfbfa1edc45cb5bb1d5307a4",
+    "lastHarvestedAt": "2026-11-25T01:09:22.054Z",
     "learningId": "learn-github-infracost-infracost"
   },
   "apache-shardingsphere": {
@@ -7373,10 +7373,10 @@
     "repository": "tw93/Mole",
     "platform": "github",
     "sourceUrl": "https://github.com/tw93/Mole",
-    "sourceVersion": "d3b743e0",
+    "sourceVersion": "ee710b48",
     "license": "GPL-3.0",
-    "contentHash": "2fcfd92f58fef8a40403dd210c52f725378a55981b90ff7c8c9a0f53a3a462a3",
-    "lastHarvestedAt": "2026-11-22T11:47:50.676Z",
+    "contentHash": "ea3178340e8191670504b3cea2e19f3e850894dfdd2a390f9fde9da0888c4db6",
+    "lastHarvestedAt": "2026-11-25T01:09:19.395Z",
     "learningId": "learn-github-tw93-mole"
   },
   "siderolabs-talos": {

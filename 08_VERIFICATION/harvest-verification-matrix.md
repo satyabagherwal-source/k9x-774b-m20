@@ -12881,3 +12881,5 @@
 | `CYCLE-2026-11-25-PROJ-EVOLVE` | `2026-11-25T00:52:38.906Z` | `webdriverio-webdriverio` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-K-23B0EC10` [Domain K] | Yes (`7d2077f8...`) |
 | `CYCLE-20261125-3LL3` | `2026-11-25T01:00:58.503Z` | `arkivanov/Decompose` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10410` | Yes (`79899c36...`) |
 | `CYCLE-20261125-3NPJ` | `2026-11-25T01:01:01.255Z` | `aws/aws-cdk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10411` | Yes (`5084389c...`) |
+| `CYCLE-20261125-EC2M` | `2026-11-25T01:09:19.390Z` | `tw93/Mole` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10412` | Yes (`ea317834...`) |
+| `CYCLE-20261125-EE4H` | `2026-11-25T01:09:22.049Z` | `infracost/infracost` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10413` | Yes (`415eee6a...`) |

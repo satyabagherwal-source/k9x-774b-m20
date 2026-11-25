@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-25T01:01:07.541Z",
+  "last_updated": "2026-11-25T01:09:28.281Z",
   "total_verified_learnings": 9107,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25091,
+  "total_items": 25099,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112198,9 +112198,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "50efcd4df10cbd0d8092bda4d88ef3ad42154a061a769fe611e06669ae011942",
+      "content_hash": "d0639fc3309a99e03cca296f54da9c99440bbca58281fc174c5443e2b23ee1e8",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T21:53:48.510Z"
+      "persisted_at": "2026-11-25T01:09:28.080Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -112210,9 +112210,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "f4350bd4effd3f4a265b18b9b49120c36bf833b1c398f7d63132ff0dc3537f9b",
+      "content_hash": "ee217a881bd61092804e12c765d1a8101affc86c7a875110666c4a5730bba2f2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T21:53:48.756Z"
+      "persisted_at": "2026-11-25T01:09:28.281Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -244002,8 +244002,8 @@
       "slug": "tw93-mole",
       "platform": "github",
       "source_url": "https://github.com/tw93/Mole",
-      "source_version": "d3b743e0",
-      "content_hash": "2fcfd92f58fef8a40403dd210c52f725378a55981b90ff7c8c9a0f53a3a462a3",
+      "source_version": "ee710b48",
+      "content_hash": "ea3178340e8191670504b3cea2e19f3e850894dfdd2a390f9fde9da0888c4db6",
       "dossier_path": "07_PROJECT_LEARNING/tw93-mole-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tw93-mole-learnings.md",
       "promoted_rules": [
@@ -244026,6 +244026,11 @@
           "number": 9926,
           "title": "keep sudo sinks' preview rows out of the ownership refusal",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10412,
+          "title": "show and count the aged log sweeps in preview and real runs",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -244033,7 +244038,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T11:47:50.421Z",
+      "verified_at": "2026-11-25T01:09:19.168Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -244087,10 +244092,10 @@
       "relative_path": "02_AGENT_INTELLIGENCE/tw93-mole-agent-contract-tw93-mole-autonomous-specialist-persona.md",
       "title": "Agent Contract: tw93/Mole Autonomous Specialist Persona",
       "repository": "tw93/Mole",
-      "source_version": "d3b743e0",
-      "content_hash": "2b016e829ec6d04ea26f728eda4380aee6ed6502e954e0e76a952244929a763f",
-      "domain_letter": "A",
-      "persisted_at": "2026-11-22T11:47:51.340Z"
+      "source_version": "ee710b48",
+      "content_hash": "93ae5d6de404d7848bf10d096bd16dbf0a47b91ff39688f66ac43641162bb662",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-25T01:09:20.043Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tw93-mole": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tw93-mole",
@@ -244099,10 +244104,10 @@
       "relative_path": "08_VERIFICATION/tw93-mole-verification-protocol-empirical-defect-shield-for-tw93-mole.md",
       "title": "Verification Protocol: Empirical Defect Shield for tw93/Mole",
       "repository": "tw93/Mole",
-      "source_version": "d3b743e0",
-      "content_hash": "066c95c0f966e3e1e39271bdff5a3c0b8eff29955df6daa7baebeda90446b1f9",
+      "source_version": "ee710b48",
+      "content_hash": "ebbc6e9d6791d2326a84c1c1dd30b7a6c8049a246f0a64b75b16ba279284d9c5",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T11:47:51.505Z"
+      "persisted_at": "2026-11-25T01:09:20.200Z"
     },
     "rule-8569": {
       "learning_id": "rule-8569",
@@ -244287,9 +244292,9 @@
       "title": "Agent Contract: tw93-mole-learnings Autonomous Specialist Persona",
       "repository": "tw93-mole-learnings",
       "source_version": "HEAD",
-      "content_hash": "186933c096a3fa507e9aeeb1e5cc0deae7815b4ec7983ee98e96fe10ea3b9924",
-      "domain_letter": "A",
-      "persisted_at": "2026-11-22T11:48:03.249Z"
+      "content_hash": "e3af694cb6e4593da2b3fd5c91e59a6764aaa3dd68c04150bbb7ad870b6d68bc",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-25T01:09:26.201Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tw93-mole-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tw93-mole-learnings",
@@ -244299,9 +244304,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for tw93-mole-learnings",
       "repository": "tw93-mole-learnings",
       "source_version": "HEAD",
-      "content_hash": "421761762e43fa3100412b60dd7ec9e9a5ccd1b58e2d835f7884a333e45d5376",
+      "content_hash": "fb386a5d010eb691d2bab5be94bfddc38d2d804dda942208a808b2708dcce917",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T11:48:03.406Z"
+      "persisted_at": "2026-11-25T01:09:26.383Z"
     },
     "candidate_directive-ci-retry-transient-package-download-failures": {
       "item_id": "candidate_directive-ci-retry-transient-package-download-failures",
@@ -314482,14 +314487,19 @@
       "slug": "infracost-infracost",
       "platform": "github",
       "source_url": "https://github.com/infracost/infracost",
-      "source_version": "b8c2bd6e",
-      "content_hash": "c56f0faba3229a943bd6b5254e9592e1a4bc74ab7f8ccd2255a3523fce226937",
+      "source_version": "aa717670",
+      "content_hash": "415eee6a5e6c06855d8967ec2f4bc4089f075b1cbfbfa1edc45cb5bb1d5307a4",
       "dossier_path": "07_PROJECT_LEARNING/infracost-infracost-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/infracost-infracost-learnings.md",
       "promoted_rules": [
         {
           "number": 9722,
           "title": "bump golang.org/x/net to 0.62.0, otel to 1.47.0 and Go to 1.26.11",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10413,
+          "title": "bump terragrunt fork",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -314498,7 +314508,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T03:44:42.566Z",
+      "verified_at": "2026-11-25T01:09:21.826Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -314540,10 +314550,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-infracost-infracost-content-information-intelligence-infracost-infracost-core-in.md",
       "title": "Content & Information Intelligence: infracost/infracost Core Invariants",
       "repository": "infracost/infracost",
-      "source_version": "b8c2bd6e",
-      "content_hash": "7538d662a280785c7d5fd39bd10c8be7bc66ae53dbce357c9530f87cfd0c504d",
+      "source_version": "aa717670",
+      "content_hash": "c628660478e1047d0e77ef0c03f0eccb10ff5a72eddbc6a5ac026378eff677d9",
       "domain_letter": "I",
-      "persisted_at": "2026-11-21T03:44:43.106Z"
+      "persisted_at": "2026-11-25T01:09:22.514Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-infracost-infracost": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-infracost-infracost",
@@ -314552,10 +314562,10 @@
       "relative_path": "08_VERIFICATION/infracost-infracost-verification-protocol-empirical-defect-shield-for-infracost-.md",
       "title": "Verification Protocol: Empirical Defect Shield for infracost/infracost",
       "repository": "infracost/infracost",
-      "source_version": "b8c2bd6e",
-      "content_hash": "d017691039a2581f8f8ba71cbe34fb04d14001c7aa6eca1cce263e656faabb65",
+      "source_version": "aa717670",
+      "content_hash": "837d67846237e2887c9d8d82f097ac89fdff9d4592fba75e04a0fbde8312f17b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T03:44:43.258Z"
+      "persisted_at": "2026-11-25T01:09:22.717Z"
     },
     "rule-9723": {
       "learning_id": "rule-9723",
@@ -314653,9 +314663,9 @@
       "title": "Content & Information Intelligence: infracost-infracost-learnings Core Invariants",
       "repository": "infracost-infracost-learnings",
       "source_version": "HEAD",
-      "content_hash": "0b0a364555db6eb0547a95904ac695b7a44a679f0e3ea0ebda574fdfe27ccbd5",
+      "content_hash": "0b62a09af29cfd7431dcbc6c637131fab3ce22874e78548f541cb7cb48c02532",
       "domain_letter": "I",
-      "persisted_at": "2026-11-21T03:44:52.446Z"
+      "persisted_at": "2026-11-25T01:09:27.123Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-infracost-infracost-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-infracost-infracost-learnings",
@@ -314665,9 +314675,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for infracost-infracost-learnings",
       "repository": "infracost-infracost-learnings",
       "source_version": "HEAD",
-      "content_hash": "b37edebba17fd099f38882696485ac49e0293ce9b6bb5ab953b985fc4f0ac506",
+      "content_hash": "c8e31a1c24602c230c28ca7f2146af58f4aab47a76bb59764b4473afa833ec08",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T03:44:52.598Z"
+      "persisted_at": "2026-11-25T01:09:27.306Z"
     },
     "rule-9725": {
       "learning_id": "rule-9725",
@@ -335713,13 +335723,13 @@
       "item_id": "candidate_directive-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-EW9Q-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-EIMU-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change.md",
       "title": "server_events_dispatch: Rerender DM status emoji on emojiset change.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "f967619b7d476203e5e2a171c81a549b9bd43d9485fb8ca637f1c354cafd5223",
+      "content_hash": "ef236e196a4c96b6b2a77c5d000b9be2ea406bbc578f828d8ddf7ba392967d64",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T21:53:48.266Z"
+      "persisted_at": "2026-11-25T01:09:27.897Z"
     },
     "learn-github-xinatian-mroffice": {
       "learning_id": "learn-github-xinatian-mroffice",
@@ -342943,6 +342953,106 @@
       "content_hash": "b4a3563840b0101d5e505d306bfa3e6fc0f8bc68042d6b406b5422eedd662e01",
       "domain_letter": "H",
       "persisted_at": "2026-11-25T01:01:06.489Z"
+    },
+    "rule-10412": {
+      "learning_id": "rule-10412",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10412,
+      "title": "show and count the aged log sweeps in preview and real runs",
+      "source_url": "https://github.com/tw93/Mole",
+      "source_version": "ee710b48",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T01:09:19.168Z"
+    },
+    "candidate_directive-show-and-count-the-aged-log-sweeps-in-preview-and-real-runs": {
+      "item_id": "candidate_directive-show-and-count-the-aged-log-sweeps-in-preview-and-real-runs",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-EC9R-show-and-count-the-aged-log-sweeps-in-preview-and-real-runs.md",
+      "title": "show and count the aged log sweeps in preview and real runs",
+      "repository": "tw93/Mole",
+      "source_version": "ee710b48",
+      "content_hash": "33c47935596efaba9e9df0ac6e56d00d472b3033aefa8f38d6fe3d72a00dd133",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-25T01:09:19.651Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-tw93-mole-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-tw93-mole-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tw93-mole-technical-construction-intelligence-tw93-mole-core-invariants.md",
+      "title": "Technical Construction Intelligence: tw93/Mole Core Invariants",
+      "repository": "tw93/Mole",
+      "source_version": "ee710b48",
+      "content_hash": "3d3b79ca7d504b9c51b058e0c2b8517a613178a25b98f96382601cdcc24106fd",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-25T01:09:19.846Z"
+    },
+    "rule-10413": {
+      "learning_id": "rule-10413",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10413,
+      "title": "bump terragrunt fork",
+      "source_url": "https://github.com/infracost/infracost",
+      "source_version": "aa717670",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T01:09:21.826Z"
+    },
+    "candidate_directive-bump-terragrunt-fork": {
+      "item_id": "candidate_directive-bump-terragrunt-fork",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-EEC5-bump-terragrunt-fork.md",
+      "title": "bump terragrunt fork",
+      "repository": "infracost/infracost",
+      "source_version": "aa717670",
+      "content_hash": "be5b2add8e701717019920e21ad3457066b8aa078748710da6848dc5f1b79fe9",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-25T01:09:22.326Z"
+    },
+    "candidate_directive-clean-show-and-count-the-aged-log-sweeps-in-preview-and-real-runs": {
+      "item_id": "candidate_directive-clean-show-and-count-the-aged-log-sweeps-in-preview-and-real-runs",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-EH1A-clean-show-and-count-the-aged-log-sweeps-in-preview-and-real-runs.md",
+      "title": "clean): show and count the aged log sweeps in preview and real runs",
+      "repository": "tw93-mole-learnings",
+      "source_version": "HEAD",
+      "content_hash": "22e81b49181ece113b6f4c19ca262c691aa98d605a45df0f5a1d2a393b4b7aa1",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-25T01:09:25.826Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-tw93-mole-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-tw93-mole-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tw93-mole-learnings-technical-construction-intelligence-tw93-mole-learnings-core.md",
+      "title": "Technical Construction Intelligence: tw93-mole-learnings Core Invariants",
+      "repository": "tw93-mole-learnings",
+      "source_version": "HEAD",
+      "content_hash": "012885b5b96e2554a9783695619cd69ac4a6a5e6573266506516f7fb8d1c07b9",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-25T01:09:26.009Z"
+    },
+    "candidate_directive-deps-bump-terragrunt-fork": {
+      "item_id": "candidate_directive-deps-bump-terragrunt-fork",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-EHWB-deps-bump-terragrunt-fork.md",
+      "title": "deps): bump terragrunt fork",
+      "repository": "infracost-infracost-learnings",
+      "source_version": "HEAD",
+      "content_hash": "78db4af7588ebf381dcebe6dc4173ddbd36aa82bd5518b8c16d9447947082dc6",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-25T01:09:26.939Z"
     }
   },
   "ai-builder-brain": {

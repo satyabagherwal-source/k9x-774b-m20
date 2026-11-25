@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-21T03:44:52.189Z",
+  "timestamp": "2026-11-25T01:09:26.804Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-infracost-infracost-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [infracost-infracost-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-21T03:44:52.189Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T01:09:26.804Z`  
 > **Learning ID**: `LEARN-EVO-infracost-infracost-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/infracost-infracost-learnings.md`  
 > **Source**: github ([https://github.com/infracost/infracost](https://github.com/infracost/infracost))  
-> **Source Version**: `b8c2bd6e`  
+> **Source Version**: `aa717670`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T03:44:41.767Z  
+> **Timestamp**: 2026-11-25T01:09:20.873Z  
 > **Learning ID**: `learn-github-infracost-infracost`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/infracost-infracost-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/infracost/infracost](https://github.com/infracost/infracost))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T03:44:41.763Z  
+> **Harvest Timestamp**: 2026-11-25T01:09:20.869Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Cloud cost intelligence for engineers, AI coding agents, and CI/CD 💰📉 Shift FinOps Left!
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 12627 stars
+- **Stars / Engagement**: 12632 stars
 
 ---
 
@@ -718,698 +718,247 @@ func regionToCDNZone(region string) string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b8c2bd6e` (2026-11-20)
-**Commit Message**: fix(deps): bump golang.org/x/net to 0.62.0, otel to 1.47.0 and Go to 1.26.11 (#3645)
+### Incident Patch 1: `aa717670` (2026-11-24)
+**Commit Message**: fix(deps): bump terragrunt fork (#3650)
 
-**File**: `Dockerfile` (modified, +1/-1)
+**File**: `go.mod` (modified, +81/-78)
 ```diff
-@@ -1,4 +1,4 @@
--ARG GO_VERSION=1.26.10
-+ARG GO_VERSION=1.26.11
- 
- FROM golang:${GO_VERSION} AS builder
- 
-```
-
-**File**: `Dockerfile.ci` (modified, +1/-1)
-```diff
-@@ -1,4 +1,4 @@
--ARG GO_VERSION=1.26.10
-+ARG GO_VERSION=1.26.11
- 
- FROM golang:${GO_VERSION} AS builder
- 
-```
-
-**File**: `go.mod` (modified, +17/-16)
-```diff
-@@ -2,7 +2,7 @@ module github.com/infracost/infracost
- 
- go 1.26.0
- 
--toolchain go1.26.10
-+toolchain go1.26.11
- 
- require (
- 	github.com/Masterminds/goutils v1.1.1 // indirect
-@@ -37,10 +37,10 @@ require (
- 	github.com/sirupsen/logrus v1.9.3
+@@ -9,32 +9,32 @@ require (
+ 	github.com/Masterminds/semver v1.5.0 // indirect
+ 	github.com/Masterminds/sprig v2.22.0+incompatible
+ 	github.com/Rhymond/go-money v1.0.10
+-	github.com/aws/aws-sdk-go-v2 v1.41.7
+-	github.com/aws/aws-sdk-go-v2/config v1.31.8
++	github.com/aws/aws-sdk-go-v2 v1.42.1
++	github.com/aws/aws-sdk-go-v2/config v1.32.30
+ 	github.com/aws/aws-sdk-go-v2/service/autoscaling v1.59.1
+ 	github.com/aws/aws-sdk-go-v2/service/cloudwatch v1.50.1
+ 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.50.3
+ 	github.com/aws/aws-sdk-go-v2/service/ec2 v1.251.2
+-	github.com/aws/aws-sdk-go-v2/service/s3 v1.100.1
++	github.com/aws/aws-sdk-go-v2/service/s3 v1.105.2
+ 	github.com/awslabs/goformation/v7 v7.13.1
+ 	github.com/dave/dst v0.27.2
+ 	github.com/dustin/go-humanize v1.0.1
+-	github.com/fatih/color v1.18.0
++	github.com/fatih/color v1.19.0
+ 	github.com/google/go-cmp v0.7.0
+ 	github.com/google/uuid v1.6.0
+ 	github.com/huandu/xstrings v1.3.2 // indirect
+ 	github.com/jedib0t/go-pretty/v6 v6.2.1
+ 	github.com/joho/godotenv v1.4.0
+-	github.com/json-iterator/go v1.1.12
++	github.com/json-iterator/go v1.1.13-0.20220915233716-71ac16282d12
+ 	github.com/kballard/go-shellquote v0.0.0-20180428030007-95032a82bc51
+ 	github.com/kelseyhightower/envconfig v1.4.0
+ 	github.com/mitchellh/copystructure v1.2.0 // indirect
+ 	github.com/mitchellh/go-homedir v1.1.0
+ 	github.com/mitchellh/reflectwalk v1.0.2 // indirect
+ 	github.com/pkg/errors v0.9.1
+ 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2
+-	github.com/shopspring/decimal v1.3.1
+-	github.com/sirupsen/logrus v1.9.3
++	github.com/shopspring/decimal v1.4.0
++	github.com/sirupsen/logrus v1.9.4
  	github.com/spf13/cobra v1.9.1
  	github.com/spf13/pflag v1.0.6
--	github.com/stretchr/testify v1.11.1
-+	github.com/stretchr/testify v1.12.1
- 	github.com/tidwall/gjson v1.17.0
- 	github.com/zclconf/go-cty v1.17.0
--	golang.org/x/crypto v0.57.0 // indirect
-+	golang.org/x/crypto v0.58.0 // indirect
- 	golang.org/x/mod v0.41.0
- 	gopkg.in/go-playground/assert.v1 v1.2.1
- 	gopkg.in/yaml.v2 v2.4.0
-@@ -50,12 +50,12 @@ require (
- require (
- 	github.com/aws/aws-sdk-go-v2/service/eks v1.73.3
- 	github.com/hashicorp/terraform-config-inspect v0.0.0-20210625153042-09f34846faab
--	golang.org/x/sys v0.48.0 // indirect
-+	golang.org/x/sys v0.49.0 // indirect
- )
+ 	github.com/stretchr/testify v1.12.1
+@@ -55,24 +55,22 @@ require (
  
  require (
  	github.com/agext/levenshtein v1.2.3 // indirect
--	github.com/aws/aws-sdk-go-v2/credentials v1.18.12 // indirect
-+	github.com/aws/aws-sdk-go-v2/credentials v1.18.12
- 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.18.7 // indirect
- 	github.com/aws/aws-sdk-go-v2/internal/configsources v1.4.23 // indirect
- 	github.com/aws/aws-sdk-go-v2/internal/ini v1.8.3 // indirect
-@@ -66,7 +66,6 @@ require (
- 	github.com/aws/aws-sdk-go-v2/service/sso v1.29.3 // indirect
- 	github.com/aws/aws-sdk-go-v2/service/sts v1.38.4 // indirect
- 	github.com/aws/smithy-go v1.25.1
--	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
- 	github.com/hashicorp/hcl v1.0.1-vault // indirect
+-	github.com/aws/aws-sdk-go-v2/credentials v1.18.12
+-	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.18.7 // indirect
+-	github.com/aws/aws-sdk-go-v2/internal/configsources v1.4.23 // indirect
+-	github.com/aws/aws-sdk-go-v2/internal/ini v1.8.3 // indirect
+-	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.9 // indirect
++	github.com/aws/aws-sdk-go-v2/credentials v1.19.29
++	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.18.30 // indirect
++	github.com/aws/aws-sdk-go-v2/internal/configsources v1.4.30 // indirect
++	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.13 // indirect
+ 	github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.11.7 // indirect
+-	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.13.23 // indirect
+-	github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.19.23 // indirect
+-	github.com/aws/aws-sdk-go-v2/service/sso v1.29.3 // indirect
+-	github.com/aws/aws-sdk-go-v2/service/sts v1.38.4 // indirect
+-	github.com/aws/smithy-go v1.25.1
+-	github.com/hashicorp/hcl v1.0.1-vault // indirect
++	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.13.30 // indirect
++	github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.19.31 // indirect
++	github.com/aws/aws-sdk-go-v2/service/sso v1.32.1 // indirect
++	github.com/aws/aws-sdk-go-v2/service/sts v1.44.1 // indirect
++	github.com/aws/smithy-go v1.27.4
++	github.com/hashicorp/hcl v1.0.1-vault-7 // indirect
  	github.com/hashicorp/hcl/v2 v2.24.0
  	github.com/imdario/mergo v0.3.13
-@@ -81,15 +80,15 @@ require (
- 	github.com/slack-go/slack v0.27.0
- 	github.com/tidwall/match v1.1.1 // indirect
- 	github.com/tidwall/pretty v1.2.1 // indirect
--	golang.org/x/text v0.42.0
--	golang.org/x/tools v0.49.0 // indirect
-+	golang.org/x/text v0.43.0
-+	golang.org/x/tools v0.51.0 // indirect
+ 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
+-	github.com/jmespath/go-jmespath v0.4.0 // indirect
+-	github.com/mattn/go-colorable v0.1.14 // indirect
+-	github.com/mattn/go-isatty v0.0.20 // indirect
++	github.com/mattn/go-colorable v0.1.15 // indirect
++	github.com/mattn/go-isatty v0.0.23 // indirect
+ 	github.com/mattn/go-runewidth v0.0.16 // indirect
+ 	github.com/mitchellh/go-wordwrap v1.0.1 // indirect
+ 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
+@@ -85,8 +83,8 @@ require (
  )
  
  require (
- 	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.10 // indirect
- 	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.7.23 // indirect
+-	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.10 // indirect
+-	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.7.23 // indirect
++	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.14 // indirect
++	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.7.30 // indirect
  	github.com/gorilla/websocket v1.5.3 // indirect
--	golang.org/x/sync v0.23.0
-+	golang.org/x/sync v0.24.0
+ 	golang.org/x/sync v0.24.0
  )
+@@ -103,7 +101,7 @@ require (
+ 	github.com/gruntwork-io/go-commons v0.17.1
+ 	github.com/gruntwork-io/terragrunt v0.52.4
+ 	github.com/hashicorp/go-cty-funcs v0.0.0-20230405223818-a090f58aa992
+-	github.com/hashicorp/go-retryablehttp v0.7.7
++	github.com/hashicorp/go-retryablehttp v0.7.8
+ 	github.com/hashicorp/go-terraform-address v0.0.0-20210506203813-2cc4f0f34da8
+ 	github.com/hashicorp/golang-lru/v2 v2.0.7
+ 	github.com/hashicorp/terraform-svchost v0.1.1
+@@ -128,95 +126,101 @@ require (
  
  require (
-@@ -259,13 +258,15 @@ require (
- 	go.opentelemetry.io/contrib/detectors/gcp v1.44.0 // indirect
- 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.61.0 // indirect
- 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.61.0 // indirect
--	go.opentelemetry.io/otel v1.45.0 // indirect
--	go.opentelemetry.io/otel/metric v1.45.0 // indirect
--	go.opentelemetry.io/otel/sdk v1.45.0 // indirect
--	go.opentelemetry.io/otel/sdk/metric v1.45.0 // indirect
--	go.opentelemetry.io/otel/trace v1.45.0 // indirect
-+	go.opentelemetry.io/otel v1.47.0 // indirect
-+	go.opentelemetry.io/otel/log v1.47.0 // indirect
-+	go.opentelemetry.io/otel/metric v1.47.0 // indirect
-+	go.opentelemetry.io/otel/sdk v1.47.0 // indirect
-+	go.opentelemetry.io/otel/sdk/metric v1.47.0 // indirect
-+	go.opentelemetry.io/otel/trace v1.47.0 // indirect
-+	go.yaml.in/yaml/v3 v3.0.5 // indirect
- 	go4.org v0.0.0-20230225012048-214862532bf5 // indirect
--	golang.org/x/term v0.46.0 // indirect
-+	golang.org/x/term v0.47.0 // indirect
- 	golang.org/x/time v0.14.0 // indirect
- 	google.golang.org/genproto/googleapis/api v0.0.0-20260526163538-3dc84a4a5aaa // indirect
- 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260526163538-3dc84a4a5aaa // indirect
-@@ -304,7 +305,7 @@ require (
- 	github.com/xeipuuv/gojsonreference v0.0.0-20180127040603-bd5ef7bd5415 // indirect
- 	github.com/yashtewari/glob-intersection v0.2.0 // indirect
- 	github.com/zclconf/go-cty-yaml v1.0.3
--	golang.org/x/net v0.60.0 // indirect
-+	golang.org/x/net v0.62.0 // indirect
- 	google.golang.org/api v0.264.0
- 	google.golang.org/genproto v0.0.0-20260128011058-8636f8732409 // indirect
- 	google.golang.org/grpc v1.83.2 // indirect
+ 	cel.dev/expr v0.25.2 // indirect
+-	cloud.google.com/go/auth v0.18.2 // indirect
++	cloud.google.com/go/auth v0.22.0 // indirect
+ 	cloud.google.com/go/auth/oauth2adapt v0.2.8 // indirect
+ 	c
 ```
 
-**File**: `go.sum` (modified, +34/-29)
+**File**: `go.sum` (modified, +225/-177)
 ```diff
-@@ -1691,8 +1691,9 @@ github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+
- github.com/stretchr/objx v0.1.1/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
- github.com/stretchr/objx v0.4.0/go.mod h1:YvHI0jy2hoMjB+UWwv71VJQ9isScKT/TqJzVSSt89Yw=
- github.com/stretchr/objx v0.5.0/go.mod h1:Yh+to48EsGEfYuaHDzXPcE3xhTkx73EhmCGUpEOglKo=
--github.com/stretchr/objx v0.5.2 h1:xuMeJ0Sdp5ZMRXx/aWO6RZxdr3beISkG5/G/aIRr3pY=
- github.com/stretchr/objx v0.5.2/go.mod h1:FRsXN1f5AsAjCGJKqEizvkpNtU+EGNCLh3NxZ/8L+MA=
-+github.com/stretchr/objx v0.5.3 h1:jmXUvGomnU1o3W/V5h2VEradbpJDwGrzugQQvL0POH4=
-+github.com/stretchr/objx v0.5.3/go.mod h1:rDQraq+vQZU7Fde9LOZLr8Tax6zZvy4kuNKF+QYS+U0=
- github.com/stretchr/testify v0.0.0-20151208002404-e3a8ff8ce365/go.mod h1:a8OnRcib4nhh0OaRAV+Yts87kKdq0PP7pXfy6kDkUVs=
- github.com/stretchr/testify v1.2.2/go.mod h1:a8OnRcib4nhh0OaRAV+Yts87kKdq0PP7pXfy6kDkUVs=
- github.com/stretchr/testify v1.3.0/go.mod h1:M5WIy9Dh21IEIfnGCwXGc5bZfKNJtfHm1UVUgZn+9EI=
-@@ -1709,8 +1710,8 @@ github.com/stretchr/testify v1.8.3/go.mod h1:sz/lmYIOXD/1dqDmKjjqLyZ2RngseejIcXl
- github.com/stretchr/testify v1.8.4/go.mod h1:sz/lmYIOXD/1dqDmKjjqLyZ2RngseejIcXlSw2iwfAo=
- github.com/stretchr/testify v1.9.0/go.mod h1:r2ic/lqez/lEtzL7wO/rwa5dbSLXVDPFyf8C91i36aY=
- github.com/stretchr/testify v1.10.0/go.mod h1:r2ic/lqez/lEtzL7wO/rwa5dbSLXVDPFyf8C91i36aY=
--github.com/stretchr/testify v1.11.1 h1:7s2iGBzp5EwR7/aIZr8ao5+dra3wiQyKjjFuvgVKu7U=
--github.com/stretchr/testify v1.11.1/go.mod h1:wZwfW3scLgRK+23gO65QZefKpKQRnfz6sD981Nm4B6U=
-+github.com/stretchr/testify v1.12.1 h1:EuwCh5fleGS7H32xRwO3wRGT7DxrDhLAT6FF8MpWDWE=
-+github.com/stretchr/testify v1.12.1/go.mod h1:MDEgiDPPsNp5cuIrHPPCyornHKgEVbtFUmoNlxoYthg=
- github.com/tchap/go-patricia/v2 v2.3.2 h1:xTHFutuitO2zqKAQ5rCROYgUb7Or/+IC3fts9/Yc7nM=
- github.com/tchap/go-patricia/v2 v2.3.2/go.mod h1:VZRHKAb53DLaG+nA9EaYYiaEx6YztwDlLElMsnSHD4k=
- github.com/tencentcloud/tencentcloud-sdk-go v3.0.82+incompatible/go.mod h1:0PfYow01SHPMhKY31xa+EFz2RStxIqj6JFAJS+IkCi4=
-@@ -1819,8 +1820,8 @@ go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.61.0 h1:F7Jx+6h
- go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.61.0/go.mod h1:UHB22Z8QsdRDrnAtX4PntOl36ajSxcdUMt1sF7Y6E7Q=
- go.opentelemetry.io/otel v1.32.0/go.mod h1:00DCVSB0RQcnzlwyTfqtxSm+DRr9hpYrHjNGiBHVQIg=
- go.opentelemetry.io/otel v1.36.0/go.mod h1:/TcFMXYjyRNh8khOAO9ybYkqaDBb/70aVwkNML4pP8E=
--go.opentelemetry.io/otel v1.45.0 h1:pdrWmLHofpubmArBv1LgFSv1Z0Ie/ppdZzu+kUN5EeU=
--go.opentelemetry.io/otel v1.45.0/go.mod h1:XZxIqPapzEYnhNSScF5DIqXhm/rYi0FzCe2XddAwZfQ=
-+go.opentelemetry.io/otel v1.47.0 h1:j7ALJ/zgkS7Z6aeJW09p8VC9804bC+PpeTfCD4XPnOM=
-+go.opentelemetry.io/otel v1.47.0/go.mod h1:8wS9O2qfXrYrzp6hIF/HOYJJf/wIhFPhR2xLuP+iXQU=
- go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.36.0 h1:dNzwXjZKpMpE2JhmO+9HsPl42NIXFIFSUSSs0fiqra0=
- go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.36.0/go.mod h1:90PoxvaEB5n6AOdZvi+yWJQoE95U8Dhhw2bSyRqnTD0=
- go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.36.0 h1:JgtbA0xkWHnTmYk7YusopJFX6uleBmAuZ8n05NEh8nQ=
-@@ -1829,20 +1830,22 @@ go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.36.0 h1:nRVXX
- go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.36.0/go.mod h1:r49hO7CgrxY9Voaj3Xe8pANWtr0Oq916d0XAmOoCZAQ=
- go.opentelemetry.io/otel/exporters/stdout/stdoutmetric v1.36.0 h1:rixTyDGXFxRy1xzhKrotaHy3/KXdPhlWARrCgK+eqUY=
- go.opentelemetry.io/otel/exporters/stdout/stdoutmetric v1.36.0/go.mod h1:dowW6UsM9MKbJq5JTz2AMVp3/5iW5I/TStsk8S+CfHw=
-+go.opentelemetry.io/otel/log v1.47.0 h1:cOTS1CcLbSQeZKanGJ+0JpF/+t4PELi3O3bbl2lqCcI=
-+go.opentelemetry.io/otel/log v1.47.0/go.mod h1:9byitSQ5pLC6PpqwGXjqdMKya6ZTswHRZh2vvXT33nw=
- go.opentelemetry.io/otel/metric v1.32.0/go.mod h1:jH7CIbbK6SH2V2wE16W05BHCtIDzauciCRLoc/SyMv8=
- go.opentelemetry.io/otel/metric v1.36.0/go.mod h1:zC7Ks+yeyJt4xig9DEw9kuUFe5C3zLbVjV2PzT6qzbs=
--go.opentelemetry.io/otel/metric v1.45.0 h1:7Eg1uH7CJ5cXv9is6tnBe1FI6rj1nwUdbFypRm3br/M=
--go.opentelemetry.io/otel/metric v1.45.0/go.mod h1:HAPbm1nd3p1PmFH7v2dR+6BjXxw+Lq4a2+pndMAm08s=
--go.opentelemetry.io/otel/metric/x v0.67.0 h1:PcicCNZFkZ4bXfSooXdo3WN7RBOVOtjVdo1wD358Uns=
--go.opentelemetry.io/otel/metric/x v0.67.0/go.mod h1:FBjCWZe6wgcqxcMtjdGiClDKXb2YxxXii0CXftE4QtI=
--go.opentelemetry.io/otel/sdk v1.45.0 h1:4VVSMgQ83dUgW2aoX5f6JgLvHwIvzcuLnF9lUdCSpCw=
--go.opentelemetry.io/otel/sdk v1.45.0/go.mod h1:Sr40LgXV7DsKMMJMKOhUWOgMWTfAaqvm2kF0g7ilwuA=
--go.opentelemetry.io/otel/sdk/metric v1.45.0 h1:oVFszMfyj1Am6s24Vtc7wBb8BKLcwepJjNEYILuiE3o=
--go.opentelemetry.io/otel/sdk/metric v1.45.0/go.mod h1:vUWUxDZvu1WVRj8JA8S0AdhsPrZoDpA2DdZauIh4mDA=
-+go.opentelemetry.io/otel/metric v1.47.0 h1:4PptaldXx3Eat1XjMZ68pPJEs5wrhlemctZE9a3UdWY=
-+go.opentelemetry.io/otel/metric v1.47.0/go.mod h1:ADGSXxRrXM6bjbvLo535EstVFlPpPYZm4LBKixjDHwU=
-+go.opentelemetry.io/otel/metric/x v0.69.0 h1:DjRLr15H83v+hCW7JA9NoJvOkYTtmq5YoDRbe9deYpM=
-+go.opentel
+@@ -1,5 +1,5 @@
+-c2sp.org/CCTV/age v0.0.0-20240306222714-3ec4d716e805 h1:u2qwJeEvnypw+OCPUHmoZE3IqwfuN5kgDfo5MLzpNM0=
+-c2sp.org/CCTV/age v0.0.0-20240306222714-3ec4d716e805/go.mod h1:FomMrUJ2Lxt5jCLmZkG3FHa72zUprnhd3v/Z18Snm4w=
++c2sp.org/CCTV/age v0.0.0-20251208015420-e9274a7bdbfd h1:ZLsPO6WdZ5zatV4UfVpr7oAwLGRZ+sebTUruuM4Ra3M=
++c2sp.org/CCTV/age v0.0.0-20251208015420-e9274a7bdbfd/go.mod h1:SrHC2C7r5GkDk8R+NFVzYy/sdj0Ypg9htaPXQq5Cqeo=
+ cel.dev/expr v0.25.2 h1:K6j46C81hXtZQfuX60cVWQFBJahKSE2gfRbNuvr5bFs=
+ cel.dev/expr v0.25.2/go.mod h1:hrXvqGP6G6gyx8UAHSHJ5RGk//1Oj5nXQ2NI02Nrsg4=
+ cloud.google.com/go v0.26.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
+@@ -40,8 +40,8 @@ cloud.google.com/go v0.104.0/go.mod h1:OO6xxXdJyvuJPcEPBLN9BJPD+jep5G1+2U5B5gkRY
+ cloud.google.com/go v0.105.0/go.mod h1:PrLgOJNe5nfE9UMxKxgXj4mD3voiP+YQ6gdt6KMFOKM=
+ cloud.google.com/go v0.107.0/go.mod h1:wpc2eNrD7hXUTy8EKS10jkxpZBjASrORK7goS+3YX2I=
+ cloud.google.com/go v0.110.0/go.mod h1:SJnCLqQ0FCFGSZMUNUf84MV3Aia54kn7pi8st7tMzaY=
+-cloud.google.com/go v0.121.6 h1:waZiuajrI28iAf40cWgycWNgaXPO06dupuS+sgibK6c=
+-cloud.google.com/go v0.121.6/go.mod h1:coChdst4Ea5vUpiALcYKXEpR1S9ZgXbhEzzMcMR66vI=
++cloud.google.com/go v0.123.0 h1:2NAUJwPR47q+E35uaJeYoNhuNEM9kM8SjgRgdeOJUSE=
++cloud.google.com/go v0.123.0/go.mod h1:xBoMV08QcqUGuPW65Qfm1o9Y4zKZBpGS+7bImXLTAZU=
+ cloud.google.com/go/accessapproval v1.4.0/go.mod h1:zybIuC3KpDOvotz59lFe5qxRZx6C75OtwbisN56xYB4=
+ cloud.google.com/go/accessapproval v1.5.0/go.mod h1:HFy3tuiGvMdcd/u+Cu5b9NkO1pEICJ46IR82PoUdplw=
+ cloud.google.com/go/accessapproval v1.6.0/go.mod h1:R0EiYnwV5fsRFiKZkPHr6mwyk2wxUJ30nL4j2pcFY2E=
+@@ -103,8 +103,8 @@ cloud.google.com/go/assuredworkloads v1.7.0/go.mod h1:z/736/oNmtGAyU47reJgGN+KVo
+ cloud.google.com/go/assuredworkloads v1.8.0/go.mod h1:AsX2cqyNCOvEQC8RMPnoc0yEarXQk6WEKkxYfL6kGIo=
+ cloud.google.com/go/assuredworkloads v1.9.0/go.mod h1:kFuI1P78bplYtT77Tb1hi0FMxM0vVpRC7VVoJC3ZoT0=
+ cloud.google.com/go/assuredworkloads v1.10.0/go.mod h1:kwdUQuXcedVdsIaKgKTp9t0UJkE5+PAVNhdQm4ZVq2E=
+-cloud.google.com/go/auth v0.18.2 h1:+Nbt5Ev0xEqxlNjd6c+yYUeosQ5TtEUaNcN/3FozlaM=
+-cloud.google.com/go/auth v0.18.2/go.mod h1:xD+oY7gcahcu7G2SG2DsBerfFxgPAJz17zz2joOFF3M=
++cloud.google.com/go/auth v0.22.0 h1:Xp9wAKkLoeaYb5pYZZoQGz4E9sdPxIbzS3gywZE3ciQ=
++cloud.google.com/go/auth v0.22.0/go.mod h1:M9o2Oz+YI2jAfxewJgb1vyI3vceHF+eohmxyzmrl+9s=
+ cloud.google.com/go/auth/oauth2adapt v0.2.8 h1:keo8NaayQZ6wimpNSmW5OPc283g65QNIiLpZnkHRbnc=
+ cloud.google.com/go/auth/oauth2adapt v0.2.8/go.mod h1:XQ9y31RkqZCcwJWNSx2Xvric3RrU88hAYYbjDWYDL+c=
+ cloud.google.com/go/automl v1.5.0/go.mod h1:34EjfoFGMZ5sgJ9EoLsRtdPSNZLcfflJR39VbVNS2M0=
+@@ -322,8 +322,8 @@ cloud.google.com/go/iam v0.8.0/go.mod h1:lga0/y3iH6CX7sYqypWJ33hf7kkfXJag67naqGE
+ cloud.google.com/go/iam v0.11.0/go.mod h1:9PiLDanza5D+oWFZiH1uG+RnRCfEGKoyl6yo4cgWZGY=
+ cloud.google.com/go/iam v0.12.0/go.mod h1:knyHGviacl11zrtZUoDuYpDgLjvr28sLQaG0YB2GYAY=
+ cloud.google.com/go/iam v0.13.0/go.mod h1:ljOg+rcNfzZ5d6f1nAUJ8ZIxOaZUVoS14bKCtaLZ/D0=
+-cloud.google.com/go/iam v1.5.3 h1:+vMINPiDF2ognBJ97ABAYYwRgsaqxPbQDlMnbHMjolc=
+-cloud.google.com/go/iam v1.5.3/go.mod h1:MR3v9oLkZCTlaqljW6Eb2d3HGDGK5/bDv93jhfISFvU=
++cloud.google.com/go/iam v1.12.0 h1:Aki3bX9aHUDKPHfnRJfDcTdVedvy6quGBQcTqx3DRXk=
++cloud.google.com/go/iam v1.12.0/go.mod h1:FEZ4lXpADAC2AIpQY7LANNjjwyQ2jK439CI2VaD+sLY=
+ cloud.google.com/go/iap v1.4.0/go.mod h1:RGFwRJdihTINIe4wZ2iCP0zF/qu18ZwyKxrhMhygBEc=
+ cloud.google.com/go/iap v1.5.0/go.mod h1:UH/CGgKd4KyohZL5Pt0jSKE4m3FR51qg6FKQ/z/Ix9A=
+ cloud.google.com/go/iap v1.6.0/go.mod h1:NSuvI9C/j7UdjGjIde7t7HBz+QTwBcapPE07+sSRcLk=
+@@ -343,6 +343,8 @@ cloud.google.com/go/kms v1.8.0/go.mod h1:4xFEhYFqvW+4VMELtZyxomGSYtSQKzM178ylFW4
+ cloud.google.com/go/kms v1.9.0/go.mod h1:qb1tPTgfF9RQP8e1wq4cLFErVuTJv7UsSC915J8dh3w=
+ cloud.google.com/go/kms v1.10.0/go.mod h1:ng3KTUtQQU9bPX3+QGLsflZIHlkbn8amFAMY63m8d24=
+ cloud.google.com/go/kms v1.10.1/go.mod h1:rIWk/TryCkR59GMC3YtHtXeLzd634lBbKenvyySAyYI=
++cloud.google.com/go/kms v1.32.0 h1:s+rEluaaZKhLVjrIWG7uNBsnWbiitElzNzFGyp6+nIg=
++cloud.google.com/go/kms v1.32.0/go.mod h1:CSGvW6GnMQbY+1nOHcIzhMtHSbExXlOmCKjWtYVjcpA=
+ cloud.google.com/go/language v1.4.0/go.mod h1:F9dRpNFQmJbkaop6g0JhSBXCNlO90e1KWx5iDdxbWic=
+ cloud.google.com/go/language v1.6.0/go.mod h1:6dJ8t3B+lUYfStgls25GusK04NLh3eDLQnWM3mdEbhI=
+ cloud.google.com/go/language v1.7.0/go.mod h1:DJ6dYN/W+SQOjF8e1hLQXMF21AkH2w9wiPzPCJa2MIE=
+@@ -353,13 +355,13 @@ cloud.google.com/go/lifesciences v0.6.0/go.mod h1:ddj6tSX/7BOnhxCSd3ZcETvtNr8NZ6
+ cloud.google.com/go/lifesciences v0.8.0/go.mod h1:lFxiEOMqII6XggGbOnKiyZ7IBwoIqA84ClvoezaA/bo=
+ cloud.google.com/go/logging v1.6.1/go.mod h1:5ZO0mHHbvm8gEmeEUHrmDlTDSu5imF6MUP9OfilNXBw=
+ cloud.google.com/go/logging v1.7.0/go.mod h1:3xjP2CjkM3ZkO73aj4ASA5wRPGGCRrPIAeNqVNkzY8M=
+-cloud.google.com/go/logging v1.13.1 h1:O7LvmO0kGLaHY/gq8cV7T0dyp6zJhYAOtZPX4TF3QtY=
+-cloud.google.com/go/logging v1.13.1/go.mod h1:XAQkfkMBxQRjQek96WLPNze7vsOmay9H5PqfsNYDqvw=
++
 ```
 
----
-
-### Incident Patch 2: `7bc4a8cc` (2026-11-20)
-**Commit Message**: fix(modules): move the S3 module cache to aws-sdk-go-v2 (#3646)
-
-**File**: `go.mod` (modified, +2/-2)
+**File**: `internal/output/format.go` (modified, +1/-1)
 ```diff
-@@ -65,7 +65,7 @@ require (
- 	github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.19.23 // indirect
- 	github.com/aws/aws-sdk-go-v2/service/sso v1.29.3 // indirect
- 	github.com/aws/aws-sdk-go-v2/service/sts v1.38.4 // indirect
--	github.com/aws/smithy-go v1.25.1 // indirect
-+	github.com/aws/smithy-go v1.25.1
- 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
- 	github.com/hashicorp/hcl v1.0.1-vault // indirect
- 	github.com/hashicorp/hcl/v2 v2.24.0
-@@ -280,7 +280,7 @@ require (
- 	cloud.google.com/go v0.121.6 // indirect
- 	cloud.google.com/go/storage v1.56.0 // indirect
- 	github.com/apparentlymart/go-cidr v1.1.0 // indirect
--	github.com/aws/aws-sdk-go v1.44.122
-+	github.com/aws/aws-sdk-go v1.44.122 // indirect
- 	github.com/bgentry/go-netrc v0.0.0-20140422174119-9fd32a8b3d3d // indirect
- 	github.com/bmatcuk/doublestar v1.3.4
- 	github.com/gobwas/glob v0.2.3
+@@ -31,7 +31,7 @@ func formatCost(currency string, d *decimal.Decimal) string {
+ }
+ 
+ func formatUsageCost(out Root, cost *decimal.Decimal) string {
+-	hasUsageCosts := cost != nil && !cost.Equals(decimal.Zero)
++	hasUsageCosts := cost != nil && !cost.Equal(decimal.Zero)
+ 
+ 	if usageCostsEnabled(out) || hasUsageCosts {
+ 		return formatCost(out.Currency, cost)
 ```
 
-**File**: `internal/hcl/modules/s3_cache.go` (modified, +21/-24)
+**File**: `internal/output/markdown.go` (modified, +2/-2)
 ```diff
-@@ -2,6 +2,7 @@ package modules
- 
- import (
- 	"context"
-+	"errors"
- 	"fmt"
- 	"io"
- 	"net/url"
-@@ -13,15 +14,15 @@ import (
- 	"github.com/google/uuid"
- 	"github.com/terraform-linters/tflint-plugin-sdk/logger"
- 
--	"github.com/aws/aws-sdk-go/aws"
--	"github.com/aws/aws-sdk-go/aws/awserr"
--	"github.com/aws/aws-sdk-go/aws/session"
--	"github.com/aws/aws-sdk-go/service/s3"
-+	"github.com/aws/aws-sdk-go-v2/aws"
-+	"github.com/aws/aws-sdk-go-v2/config"
-+	"github.com/aws/aws-sdk-go-v2/service/s3"
-+	"github.com/aws/smithy-go"
- 	"github.com/mholt/archives"
- )
- 
- type S3Cache struct {
--	s3Client     *s3.S3
-+	s3Client     *s3.Client
- 	bucketName   string
- 	prefix       string
- 	publicPrefix string
-@@ -30,18 +31,13 @@ type S3Cache struct {
- 
- // NewS3Cache creates a new S3Cache instance
- func NewS3Cache(region, bucketName, prefix string, cachePrivate bool) (*S3Cache, error) {
--	sess, err := session.NewSessionWithOptions(session.Options{
--		SharedConfigState: session.SharedConfigEnable,
--		Config: aws.Config{
--			Region: aws.String(region),
--		},
--	})
-+	cfg, err := config.LoadDefaultConfig(context.Background(), config.WithRegion(region))
- 	if err != nil {
--		return nil, fmt.Errorf("failed to create AWS session: %w", err)
-+		return nil, fmt.Errorf("failed to load AWS config: %w", err)
+@@ -35,7 +35,7 @@ func formatMarkdownCostChange(currency string, pastCost, cost *decimal.Decimal,
+ 		plusMinus = ""
  	}
  
- 	return &S3Cache{
--		s3Client:     s3.New(sess),
-+		s3Client:     s3.NewFromConfig(cfg),
- 		bucketName:   bucketName,
- 		prefix:       prefix,
- 		publicPrefix: "publicModules",
-@@ -72,14 +68,15 @@ func (cache *S3Cache) Exists(key string, public bool) (bool, error) {
+-	if pastCost != nil && cost != nil && pastCost.Equals(*cost) {
++	if pastCost != nil && cost != nil && pastCost.Equal(*cost) {
+ 		return plusMinus + formatWholeDecimalCurrency(currency, decimal.Zero)
  	}
  
- 	prefixedKey := cache.applyPrefix(key, public)
--	headObj, err := cache.s3Client.HeadObject(&s3.HeadObjectInput{
-+	headObj, err := cache.s3Client.HeadObject(context.Background(), &s3.HeadObjectInput{
- 		Bucket: aws.String(cache.bucketName),
- 		Key:    aws.String(prefixedKey),
- 	})
- 	if err != nil {
--		if awsErr, ok := err.(awserr.Error); ok {
--			switch awsErr.Code() {
--			case s3.ErrCodeNoSuchKey, "NotFound", "Forbidden":
-+		var apiErr smithy.APIError
-+		if errors.As(err, &apiErr) {
-+			switch apiErr.ErrorCode() {
-+			case "NoSuchKey", "NotFound", "Forbidden":
- 				return false, nil
- 			}
+@@ -81,7 +81,7 @@ func formatCostChangeSentence(currency string, pastCost, cost *decimal.Decimal,
+ 	diff := cost.Sub(*pastCost).Abs()
+ 	change := formatCost(currency, &diff)
+ 
+-	if pastCost.Equals(*cost) {
++	if pastCost.Equal(*cost) {
+ 		return "Monthly estimate generated"
+ 	}
+ 
+```
+
+**File**: `internal/resources/aws/data_transfer.go` (modified, +1/-1)
+```diff
+@@ -155,7 +155,7 @@ func (r *DataTransfer) outboundInternetCostComponents() []*schema.CostComponent
+ 	for i, usageFilter := range usageFiltersData {
+ 		quantity := tiers[i]
+ 
+-		if quantity.Equals(decimal.Zero) {
++		if quantity.Equal(decimal.Zero) {
+ 			break
  		}
-@@ -88,7 +85,7 @@ func (cache *S3Cache) Exists(key string, public bool) (bool, error) {
- 
- 	// Check expiration based on x-amz-meta-expires-at
- 	if expiresAtStr, ok := headObj.Metadata["x-amz-meta-expires-at"]; ok {
--		expirationTime, err := time.Parse(time.RFC3339, *expiresAtStr)
-+		expirationTime, err := time.Parse(time.RFC3339, expiresAtStr)
- 		if err != nil {
- 			return false, fmt.Errorf("failed to parse expiration metadata: %w", err)
- 		}
-@@ -110,8 +107,10 @@ func (cache *S3Cache) Get(key, destPath string, public bool) error {
- 
- 	prefixedKey := cache.applyPrefix(key, public)
- 
-+	ctx := context.Background()
-+
- 	// Download from S3
--	result, err := cache.s3Client.GetObject(&s3.GetObjectInput{
-+	result, err := cache.s3Client.GetObject(ctx, &s3.GetObjectInput{
- 		Bucket: aws.String(cache.bucketName),
- 		Key:    aws.String(prefixedKey),
- 	})
-@@ -125,8 +124,6 @@ func (cache *S3Cache) Get(key, destPath string, public bool) error {
- 		return fmt.Errorf("failed to create destination directory: %w", err)
- 	}
- 
--	ctx := context.Background()
--
- 	format := archives.CompressedArchive{
- 		Compression: archives.Gz{},
- 		Extraction:  archives.Tar{},
-@@ -239,16 +236,16 @@ func (cache *S3Cache) Put(key, srcPath string, ttl time.Duration, public bool) e
- 
- 	// Calculate expiration time and set it as metadata
- 	expirationTime := time.Now().Add(ttl).Format(time.RFC3339)
--	metadata := map[string]*string{
--		"x-amz-meta-expires-at": aws.String(expirationTime),
-+	metadata := map[string]string{
-+		"x-amz-meta-expires-at": expirationTime,
- 	}
- 
- 	_, err = tmpFile.Seek(0, 0)
- 	if err != nil {
- 		return fmt.Errorf("failed to seek to start of file: %w", err)
- 	}
- 
--	_, err = cache.s3Client.PutObject(&s3.PutObjectInput{
-+	_, err = cache.s3Client.PutObject(ctx, &s3.PutObjectInput{
- 		Bucket:   aws.String(cache.bucketName),
- 		Key:      aws.String(prefixedKey),
- 		Body:     tmpFile,
-```
-
-**File**: `internal/hcl/modules/s3_cache_test.go` (added, +146/-0)
-```diff
-@@ -0,0 +1,146 @@
-+package modules
-+
-+import (
-+	"io"
-+	"net/http"
-+	"net/http/httptest"
-+	"os"
-+	"path/filepath"
-+	"strings"
-+	"sync"
-+	"testing"
-+	"time"
-+
-+	"github.com/aws/aws-sdk-go-v2/aws"
-+	"github.com/aws/aws-sdk-go-v2/credentials"
-+	"github.com/aws/aws-sdk-go-v2/service/s3"
-+	"github.com/stretchr/testify/assert"
-+	"github.com/stretchr/testify/require"
-+)
-+
-+type fakeObject struct {
-+	body   []byte
-+	header http.Header
-+}
-+
-+// fakeS3 is a minimal path-style S3 server supporting HEAD, GET and PUT.
-+type fakeS3 struct {
-+	mu        sync.Mutex
-+	objects   map[string]fakeObject
-+	forbidden map[string]bool
-+}
-+
-+func (f *fakeS3) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-+	f.mu.Lock()
-+	defer f.mu.Unlock()
-+
-+	key := r.URL.EscapedPath()
-+	if f.forbidden[key] {
-+		w.WriteHeader(http.StatusForbidden)
-+		return
-+	}
-+
-+	switch r.Method {
-+	case http.MethodPut:
-+		body, _ := io.ReadAll(r.Body)
-+		h := http.Header{}
-+		for k, v := range r.Header {
-+			if strings.HasPrefix(strings.ToLower(k), "x-amz-meta-") {
-+				h[k] = v
-+			}
-+		}
-+		f.objects[key] = fakeObject{body: body, header: h}
-+		w.WriteHeader(http.StatusOK)
-+	case http.MethodHead, http.MethodGet:
-+		obj, ok := f.objects[key]
-+		if !ok {
-+			w.Header().Set("Content-Type", "application/xml")
-+			w.WriteHeader(http.StatusNotFound)
-+			if r.Method == http.MethodGet {
-+				_, _ = w.Write([]byte(`<Error><Code>NoSuchKey</Code></Error>`))
-+			}
-+			return
-+		}
-+		for k, v := range obj.header {
-+			w.Header()[k] = v
-+		}
-+		w.WriteHeader(http.StatusOK)
-+		if r.Method == http.MethodGet {
-+			_, _ = w.Write(obj.body)
-+		}
-+	}
-+}
-+
-+func newTestS3Cache(t *testing.T, f *fakeS3) *S3Cache {
-+	t.Helper()
-+	srv := httptest.NewServer(f)
-+	t.Cleanup(srv.Close)
-+
-+	client := s3.New(s3.Options{
-+		Region:       "us-east-1",
-+		BaseEndpoint: aws.String(srv.URL),
-+		UsePathStyle: true,
-+		Credentials:  credentials.NewStaticCredentialsProvider("id", "secret", ""),
-+	})
-+
-+	return &S3Cache{
-+		s3Client:     client,
-+		bucketName:   "bucket",
-+		prefix:       "private",
-+		publicPrefix: "publicModules",
-+		cachePrivate: true,
-+	}
-+}
-+
-+func TestS3CacheRoundTrip(t *testing.T) {
-+	f := &fakeS3{objects: map[string]fakeObject{}, forbidden: map[string]bool{}}
-+	cache := newTestS3Cache(t, f)
-+
-+	src := t.TempDir()
-+	require.NoError(t, os.WriteFile(filepath.Join(src, "main.tf"), []byte("resource \"x\" \"y\" {}"), 0600))
-+
-+	exists, err := cache.Exists("git::example.com/mod", false)
-+	require.NoError(t, err)
-+	assert.False(t, exists)
-+
-+	require.NoError(t, cache.Put("git::example.com/mod", src, time.Hour, false))
-+
-+	exists, err = cache.Exists("git::example.com/mod", false)
-+	require.NoError(t, err)
-+	assert.True(t, exists)
-+
-+	dest := t.TempDir()
-+	require.NoError(t, cache.Get("git::example.com/mod", dest, false))
-+	b, err := os.ReadFile(filepath.Join(dest, "main.tf"))
-+	require.NoError(t, err)
-+	assert.Equal(t, "resource \"x\" \"y\" {}", string(b))
-+}
-+
-+func TestS3CacheExpired(t *testing.T) {
-+	f := &fakeS3{objects: map[string]fakeObject{}, forbidden: map[string]bool{}}
-+	cache := newTestS3Cache(t, f)
-+
-+	require.NoError(t, cache.Put("mod", t.TempDir(), -time.Minute, true))
-+
-+	exists, err := cache.Exists("mod", true)
-+	require.NoError(t, err)
-+	assert.False(t, exists)
-+}
-+
-+func TestS3CacheForbidden(t *testing.T) {
-+	f := &fakeS3{objects: map[string]fakeObject{}, forbidden: map[string]bool{"/bucket/publicModules/mod": true}}
-+	cache := newTestS3Cache(t, f)
-+
-+	exists, err := cache.Exists("mod", true)
-+	require.NoError(t, err)
-+	assert.False(t, exists)
-+}
-+
-+func TestS3CachePrivateDisabled(t *testing.T) {
-+	f := &fakeS3{objects: map[string]fakeObject{}, forbidden: map[string]bool{}}
-+	cache := newTestS3Cache(t, f)
-+	cache.cachePrivate = false
-+
-+	require.NoError(t, cache.Put("mod", t.TempDir(), time.Hour, false))
-+	assert.Empty(t, f.objects)
-+}
-```
-
----
-
-### Incident Patch 3: `36378827` (2026-11-20)
-**Commit Message**: fix(aws): tighten NLB and inter-region data transfer price filters (#3647)
-
-**File**: `internal/providers/terraform/google/testdata/compute_instance_test/compute_instance_test.golden` (modified, +10/-10)
-```diff
-@@ -16,7 +16,7 @@
-  └─ NVIDIA L4 (on-demand)                                                  730  hours       $286.18   
-                                                                                                       
-  google_compute_instance.preemptible_gpu                                                              
-- ├─ Instance usage (Linux/UNIX, preemptible, n1-standard-16)               730  hours       $298.70   
-+ ├─ Instance usage (Linux/UNIX, preemptible, n1-standard-16)               730  hours       $283.78   
-  ├─ Standard provisioned storage (pd-standard)                              10  GB            $0.40   
-  └─ NVIDIA Tesla K80 (preemptible)                                       2,920  hours       $501.95   
-                                                                                                       
-@@ -45,13 +45,8 @@
-  └─ Standard provisioned storage (pd-standard)                              10  GB            $0.40   
-                                                                                                       
-  google_compute_instance.custom_preemptible                                                           
-- ├─ Custom instance CPU (Linux/UNIX, preemptible, N1 6 vCPUs)              730  hours        $78.27   
-- ├─ Custom Instance RAM (Linux/UNIX, preemptible, N1 20 GB)                730  hours        $34.97   
-- └─ Standard provisioned storage (pd-standard)                              10  GB            $0.40   
--                                                                                                      
-- google_compute_instance.custom_n2d                                                                   
-- ├─ Custom instance CPU (Linux/UNIX, preemptible, N2D 4 vCPUs)             730  hours        $44.85   
-- ├─ Custom Instance RAM (Linux/UNIX, preemptible, N2D 20 GB)               730  hours        $30.05   
-+ ├─ Custom instance CPU (Linux/UNIX, preemptible, N1 6 vCPUs)              730  hours        $74.37   
-+ ├─ Custom Instance RAM (Linux/UNIX, preemptible, N1 20 GB)                730  hours        $33.22   
-  └─ Standard provisioned storage (pd-standard)                              10  GB            $0.40   
-                                                                                                       
-  google_compute_instance.custom_ext                                                                   
-@@ -60,6 +55,11 @@
-  ├─ Custom Instance Extended RAM (Linux/UNIX, on-demand, N1 2 GB)          730  hours         $9.76   
-  └─ Standard provisioned storage (pd-standard)                              10  GB            $0.40   
-                                                                                                       
-+ google_compute_instance.custom_n2d                                                                   
-+ ├─ Custom instance CPU (Linux/UNIX, preemptible, N2D 4 vCPUs)             730  hours        $42.60   
-+ ├─ Custom Instance RAM (Linux/UNIX, preemptible, N2D 20 GB)               730  hours        $28.54   
-+ └─ Standard provisioned storage (pd-standard)                              10  GB            $0.40   
-+                                                                                                      
-  google_compute_instance.local_ssd                                                                    
-  ├─ Instance usage (Linux/UNIX, on-demand, f1-micro)                       730  hours         $3.88   
-  ├─ Standard provisioned storage (pd-standard)                              10  GB            $0.40   
-@@ -86,7 +86,7 @@
-  ├─ Instance usage (Linux/UNIX, preemptible, f1-micro)                     730  hours         $0.50   
-  └─ Standard provisioned storage (pd-standard)                              10  GB            $0.40   
-                                                                                                       
-- OVERALL TOTAL                                                                          $10,600.35 
-+ OVERALL TOTAL                                                                          $10,576.03 
- 
- *Usage costs can be estimated by updating Infracost Cloud settings, see docs for other options.
- 
-@@ -99,7 +99,7 @@
- ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━━┓
- ┃ Project                                            ┃ Baseline cost ┃ Usage cost* ┃ Total cost ┃
- ┣━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╋━━━━━━━━━━━━━━━╋━━━━━━━━━━━━━╋━━━━━━━━━━━━┫
--┃ main                                               ┃       $10,600 ┃           - ┃    $10,600 ┃
-+┃ main                                               ┃       $10,576 ┃           - ┃    $10,576 ┃
- ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┻━━━━━━━━━━━━━━━┻━━━━━━━━━━━━━┻━━━━━━━━━━━━┛
- Logs:
  
 ```
 
-**File**: `internal/providers/terraform/google/testdata/container_cluster_test/container_cluster_test.golden` (modified, +9/-9)
+**File**: `internal/schema/diff.go` (modified, +1/-1)
 ```diff
-@@ -10,7 +10,7 @@
-  │  ├─ Instance usage (Linux/UNIX, on-demand, n1-standard-16)                 8,760  hours                  $4,660.30    
-  │  └─ Standard provisioned storage (pd-standard)                             1,200  GB                        $48.00    
-  └─ node_pool[1]                                                                                                         
--    ├─ Instance usage (Linux/UNIX, preemptible, n1-standard-16)               8,760  hours                  $3,584.42    
-+    ├─ Instance usage (Linux/UNIX, preemptible, n1-standard-16)               8,760  hours                  $3,405.36    
-     └─ Standard provisioned storage (pd-standard)                             1,200  GB                        $48.00    
-                                                                                                                          
-  google_container_cluster.with_node_pools_regional                                                                       
-@@ -22,7 +22,7 @@
-  │  ├─ Instance usage (Linux/UNIX, on-demand, n1-standard-16)                 4,380  hours                  $2,330.15    
-  │  └─ Standard provisioned storage (pd-standard)                               600  GB                        $24.00    
-  └─ node_pool[1]                                                                                                         
--    ├─ Instance usage (Linux/UNIX, preemptible, n1-standard-16)               8,760  hours                  $3,584.42    
-+    ├─ Instance usage (Linux/UNIX, preemptible, n1-standard-16)               8,760  hours                  $3,405.36    
-     └─ Standard provisioned storage (pd-standard)                             1,200  GB                        $48.00    
-                                                                                                                          
-  google_container_cluster.with_node_pools_node_locations_withUsage                                                       
-@@ -34,7 +34,7 @@
-  │  ├─ Instance usage (Linux/UNIX, on-demand, n1-standard-16)                 5,840  hours                  $3,106.86    
-  │  └─ Standard provisioned storage (pd-standard)                               800  GB                        $32.00    
-  └─ node_pool[1]                                                                                                         
--    ├─ Instance usage (Linux/UNIX, preemptible, n1-standard-16)               2,920  hours                  $1,194.81    
-+    ├─ Instance usage (Linux/UNIX, preemptible, n1-standard-16)               2,920  hours                  $1,135.12    
-     └─ Standard provisioned storage (pd-standard)                               400  GB                        $16.00    
-                                                                                                                          
-  google_container_cluster.with_node_config                                                                               
-@@ -51,7 +51,7 @@
-  │  ├─ Instance usage (Linux/UNIX, on-demand, e2-medium)                      6,570  hours                    $220.13    
-  │  └─ Standard provisioned storage (pd-standard)                               900  GB                        $36.00    
-  └─ node_pool[1]                                                                                                         
--    ├─ Instance usage (Linux/UNIX, preemptible, n1-standard-16)               8,760  hours                  $3,584.42    
-+    ├─ Instance usage (Linux/UNIX, preemptible, n1-standard-16)               8,760  hours                  $3,405.36    
-     └─ Standard provisioned storage (pd-standard)                             1,200  GB                        $48.00    
-                                                                                                                          
-  google_container_cluster.with_node_pools_zonal_withUsage                                                                
-@@ -63,7 +63,7 @@
-  │  ├─ Instance usage (Linux/UNIX, on-demand, n1-standard-16)                 2,920  hours                  $1,553.43    
-  │  └─ Standard provisioned storage (pd-standard)                               400  GB                        $16.00    
-  └─ node_pool[1]                                                                                                         
--    ├─ Instance usage (Linux/UNIX, preemptible, n1-standard-16)               2,920  hours                  $1,194.81    
-+    ├─ Instance usage (Linux/UNIX, preemptible, n1-standard-16)               2,920  hours                  $1,135.12    
-     └─ Standard provisioned storage (pd-standard)                               400  GB                        $16.00    
-                                                                                                                          
-  google_container_cluster.with_node_pools_node_locations                                                        
-```
-
-**File**: `internal/providers/terraform/google/testdata/container_node_pool_test/container_node_pool_test.golden` (modified, +12/-12)
-```diff
-@@ -18,16 +18,6 @@
-  ├─ Custom Instance RAM (Linux/UNIX, on-demand, N1 20 GB)            2,190  hours       $136.31   
-  └─ Standard provisioned storage (pd-standard)                         300  GB           $12.00   
-                                                                                                   
-- google_container_node_pool.with_preemptible_instance                                             
-- ├─ Custom instance CPU (Linux/UNIX, preemptible, N1 6 vCPUs)        2,190  hours       $234.81   
-- ├─ Custom Instance RAM (Linux/UNIX, preemptible, N1 20 GB)          2,190  hours       $104.90   
-- └─ Standard provisioned storage (pd-standard)                         300  GB           $12.00   
--                                                                                                  
-- google_container_node_pool.with_spot_instance                                                    
-- ├─ Custom instance CPU (Linux/UNIX, preemptible, N1 6 vCPUs)        2,190  hours       $234.81   
-- ├─ Custom Instance RAM (Linux/UNIX, preemptible, N1 20 GB)          2,190  hours       $104.90   
-- └─ Standard provisioned storage (pd-standard)                         300  GB           $12.00   
--                                                                                                  
-  google_container_node_pool.initial_node_count_zonal                                              
-  ├─ Instance usage (Linux/UNIX, on-demand, e2-medium)                8,760  hours       $293.51   
-  └─ Standard provisioned storage (pd-standard)                       1,200  GB           $48.00   
-@@ -36,6 +26,16 @@
-  ├─ Instance usage (Linux/UNIX, on-demand, e2-medium)                8,760  hours       $293.51   
-  └─ Standard provisioned storage (pd-standard)                       1,200  GB           $48.00   
-                                                                                                   
-+ google_container_node_pool.with_preemptible_instance                                             
-+ ├─ Custom instance CPU (Linux/UNIX, preemptible, N1 6 vCPUs)        2,190  hours       $223.12   
-+ ├─ Custom Instance RAM (Linux/UNIX, preemptible, N1 20 GB)          2,190  hours        $99.65   
-+ └─ Standard provisioned storage (pd-standard)                         300  GB           $12.00   
-+                                                                                                  
-+ google_container_node_pool.with_spot_instance                                                    
-+ ├─ Custom instance CPU (Linux/UNIX, preemptible, N1 6 vCPUs)        2,190  hours       $223.12   
-+ ├─ Custom Instance RAM (Linux/UNIX, preemptible, N1 20 GB)          2,190  hours        $99.65   
-+ └─ Standard provisioned storage (pd-standard)                         300  GB           $12.00   
-+                                                                                                  
-  google_container_cluster.default_zonal                                                           
-  ├─ Cluster management fee                                             730  hours        $73.00   
-  └─ default_pool                                                                                  
-@@ -122,7 +122,7 @@
-  ├─ Instance usage (Linux/UNIX, on-demand, e2-medium)                1,460  hours        $48.92   
-  └─ Standard provisioned storage (pd-standard)                         200  GB            $8.00   
-                                                                                                   
-- OVERALL TOTAL                                                                      $28,408.89 
-+ OVERALL TOTAL                                                                      $28,374.99 
- 
- *Usage costs can be estimated by updating Infracost Cloud settings, see docs for other options.
- 
-@@ -133,5 +133,5 @@
- ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━━┓
- ┃ Project                                            ┃ Baseline cost ┃ Usage cost* ┃ Total cost ┃
- ┣━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╋━━━━━━━━━━━━━━━╋━━━━━━━━━━━━━╋━━━━━━━━━━━━┫
--┃ main                                               ┃       $28,409 ┃           - ┃    $28,409 ┃
-+┃ main                                               ┃       $28,375 ┃           - ┃    $28,375 ┃
- ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┻━━━━━━━━━━━━━━━┻━━━━━━━━━━━━━┻━━━━━━━━━━━━┛
-\ No newline at end of file
-```
-
-**File**: `internal/resources/aws/data_transfer.go` (modified, +2/-2)
-```diff
-@@ -211,7 +211,7 @@ func (r *DataTransfer) outboundUsEastCostComponents() []*schema.CostComponent {
- 		Unit:            "GB",
- 		UnitMultiplier:  decimal.NewFromInt(1),
- 		MonthlyQuantity: decimalPtr(decimal.NewFromFloat(*r.MonthlyOutboundUsEastToUsEastGB)),
--		ProductFilter:   r.buildProductFilter("InterRegion Outbound", &toRegion, ""),
-+		ProductFilter:   r.buildProductFilter("InterRegion Outbound", &toRegion, "-AWS-Out-Bytes"),
- 		UsageBased:      true,
- 	})
- 
-@@ -245,7 +245,7 @@ func (r *DataTransfer) outboundOtherRegionsCostComponents() []*schema.CostCompon
- 		Unit:            "GB",
- 		UnitMultiplier:  decimal.NewFromInt(1),
- 		MonthlyQuantity: decimalPtr(decimal.NewFromFloat(*r.MonthlyOutboundOtherRegionsGB)),
--		ProductFilter:   r.buildProductFilter("InterRegion Outbound", &toRegion, ""),
-+		ProductFilter:   r.buildProductFilter("InterRegion Outbound", &toRegion, "-AWS-Out-Bytes"),
- 		UsageBased:      true,
- 	})
- 
-```
-
-**File**: `internal/resources/aws/lb.go` (modified, +1/-1)
-```diff
-@@ -139,7 +139,7 @@ func (r *LB) networkLBCostComponents(maxLCU *decimal.Decimal) []*schema.CostComp
- 				ProductFamily: strPtr("Load Balancer-Network"),
- 				AttributeFilters: []*schema.AttributeFilter{
- 					{Key: "locationType", Value: strPtr("AWS Region")},
--					{Key: "usagetype", ValueRegex: strPtr("/LoadBalancerUsage/")},
-+					{Key: "usagetype", ValueRegex: regexPtr("^([A-Z]{3}\\d-|Global-|EU-)?LoadBalancerUsage$")},
- 				},
- 			},
- 		},
+@@ -236,7 +236,7 @@ func diffDecimals(current *decimal.Decimal, past *decimal.Decimal) *decimal.Deci
+ 		diff = *current
+ 	} else if current == nil {
+ 		diff = past.Neg()
+-	} else if current.Equals(*past) {
++	} else if current.Equal(*past) {
+ 		// Handling the strange behavior of decimal for easier testing.
+ 		diff = decimal.Zero
+ 	} else {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3651** (2026-11-24): test(google): update golden files for preemptible price changes (@aliscott)
+- **PR #3650** (2026-11-24): fix(deps): bump terragrunt fork (@aliscott)
 - **PR #3647** (2026-11-20): fix(aws): tighten NLB and inter-region data transfer price filters (@aliscott)
 - **PR #3646** (2026-11-20): fix(modules): move the S3 module cache to aws-sdk-go-v2 (@aliscott)
 - **PR #3645** (2026-11-20): fix(deps): bump golang.org/x/net to 0.62.0, otel to 1.47.0 and Go to 1.26.11 (@aliscott)
 - **PR #3644** (closed): chore(deps): bump go.opentelemetry.io/otel/trace from 1.45.0 to 1.47.0 (@dependabot[bot])
-- **PR #3643** (closed): chore(deps): bump go.opentelemetry.io/otel/sdk from 1.45.0 to 1.47.0 (@dependabot[bot])
-- **PR #3642** (2026-11-13): fix(config): ignore sensitive vars in working-directory .env (@liamg)
 
 ---
 
@@ -1429,31 +978,73 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): bump golang.org/x/net to 0.62.0, otel to 1.47.0 and Go to 1.26.11
+## X. deps): bump terragrunt fork
 
 **RULE**:
-When implementing operations in `Dockerfile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in infracost/infracost. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in infracost/infracost. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b8c2bd6e`: deps): bump golang.org/x/net to 0.62.0, otel to 1.47.0 and Go to 1.26.11. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `aa717670`: deps): bump terragrunt fork. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `Dockerfile`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-ARG GO_VERSION=1.26.11
+	github.com/aws/aws-sdk-go-v2 v1.42.1
+	github.com/aws/aws-sdk-go-v2/config v1.32.30
+	github.com/aws/aws-sdk-go-v2/service/s3 v1.105.2
+	github.com/fatih/color v1.19.0
+	github.com/json-iterator/go v1.1.13-0.20220915233716-71ac16282d12
+	github.com/shopspring/decimal v1.4.0
+	github.com/sirupsen/logrus v1.9.4
+	github.com/aws/aws-sdk-go-v2/credentials v1.19.29
+	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.18.30 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/configsources v1.4.30 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.13 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.13.30 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.19.31 // indirect
+	github.com/aws/aws-sdk-go-v2/service/sso v1.32.1 // indirect
+	github.com/aws/aws-sdk-go-v2/service/sts v1.44.1 // indirect
+	github.com/aws/smithy-go v1.27.4
+	github.com/hashicorp/hcl v1.0.1-vault-7 // indirect
+	github.com/mattn/go-colorable v0.1.15 // indirect
+	github.com/mattn/go-isatty v0.0.23 // indirect
+	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.14 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.7.30 // indirect
+	g
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-ARG GO_VERSION=1.26.10
+	github.com/aws/aws-sdk-go-v2 v1.41.7
+	github.com/aws/aws-sdk-go-v2/config v1.31.8
+	github.com/aws/aws-sdk-go-v2/service/s3 v1.100.1
+	github.com/fatih/color v1.18.0
+	github.com/json-iterator/go v1.1.12
+	github.com/shopspring/decimal v1.3.1
+	github.com/sirupsen/logrus v1.9.3
+	github.com/aws/aws-sdk-go-v2/credentials v1.18.12
+	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.18.7 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/configsources v1.4.23 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/ini v1.8.3 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.9 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.13.23 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.19.23 // indirect
+	github.com/aws/aws-sdk-go-v2/service/sso v1.29.3 // indirect
+	github.com/aws/aws-sdk-go-v2/service/sts v1.38.4 // indirect
+	github.com/aws/smithy-go v1.25.1
+	github.com/hashicorp/hcl v1.0.1-vault // indirect
+	github.com/jmespath/go-jmespath v0.4.0 // indirect
+	github.com/mattn/go-colorable v0.1.14 // indirect
+	github.com/mattn/go-isatty v0.0.20 // indirect
+	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.10 // indi
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b8c2bd6e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `aa717670` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

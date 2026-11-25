@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-25T01:01:01.277Z",
+  "last_updated": "2026-11-25T01:09:22.072Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7416,14 +7416,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-infracost-infracost",
-      "content_hash": "c56f0faba3229a943bd6b5254e9592e1a4bc74ab7f8ccd2255a3523fce226937",
-      "verified_at": "2026-11-21T03:44:42.768Z",
+      "content_hash": "415eee6a5e6c06855d8967ec2f4bc4089f075b1cbfbfa1edc45cb5bb1d5307a4",
+      "verified_at": "2026-11-25T01:09:22.071Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T03:44:42.768Z"
+      "last_updated": "2026-11-25T01:09:22.071Z"
     },
     "apache/shardingsphere": {
       "repository": "apache/shardingsphere",
@@ -11106,14 +11106,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tw93-mole",
-      "content_hash": "2fcfd92f58fef8a40403dd210c52f725378a55981b90ff7c8c9a0f53a3a462a3",
-      "verified_at": "2026-11-22T11:47:50.686Z",
+      "content_hash": "ea3178340e8191670504b3cea2e19f3e850894dfdd2a390f9fde9da0888c4db6",
+      "verified_at": "2026-11-25T01:09:19.411Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T11:47:50.686Z"
+      "last_updated": "2026-11-25T01:09:19.411Z"
     },
     "siderolabs/talos": {
       "repository": "siderolabs/talos",

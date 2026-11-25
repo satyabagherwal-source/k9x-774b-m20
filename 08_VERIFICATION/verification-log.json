@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261123-0VH7",
-    "timestamp": "2026-11-23T14:55:19.387Z",
-    "repository": "FacebookAI/xlm-roberta-base",
-    "learningId": "learn-huggingface-facebookai-xlm-roberta-base",
-    "contentHash": "1243dd58a2a22d502bc63c80bea59a690cd8549b7bd4eca3da238c02eacd7ba4",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-CHJS",
-    "timestamp": "2026-11-23T15:04:21.208Z",
-    "repository": "openai-community/gpt2",
-    "learningId": "learn-huggingface-openai-community-gpt2",
-    "contentHash": "303ad1fd0256c8e4f78c1e8942e30b4e53e71a5b38cce77ad2eadfdeb7627570",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261123-CSSJ",
     "timestamp": "2026-11-23T15:04:35.779Z",
     "repository": "cilium/cilium",
@@ -7490,6 +7460,36 @@
     "repository": "aws/aws-cdk",
     "learningId": "learn-github-aws-aws-cdk",
     "contentHash": "5084389c966afca81705e836d642f98718336342ebf4e4d7152837674466fee2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-EC2M",
+    "timestamp": "2026-11-25T01:09:19.390Z",
+    "repository": "tw93/Mole",
+    "learningId": "learn-github-tw93-mole",
+    "contentHash": "ea3178340e8191670504b3cea2e19f3e850894dfdd2a390f9fde9da0888c4db6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-EE4H",
+    "timestamp": "2026-11-25T01:09:22.049Z",
+    "repository": "infracost/infracost",
+    "learningId": "learn-github-infracost-infracost",
+    "contentHash": "415eee6a5e6c06855d8967ec2f4bc4089f075b1cbfbfa1edc45cb5bb1d5307a4",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T01:01:01.265Z",
-  "total_cycles_completed": 12235,
-  "total_learnings_persisted": 12235,
-  "total_rules_promoted": 11284,
+  "last_updated": "2026-11-25T01:09:22.059Z",
+  "total_cycles_completed": 12237,
+  "total_learnings_persisted": 12237,
+  "total_rules_promoted": 11286,
   "history": [
-    {
-      "timestamp": "2026-11-24T12:27:21.963Z",
-      "repository": "Nasiko-Labs/nasiko",
-      "learningId": "learn-github-nasiko-labs-nasiko",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T12:27:28.729Z",
-      "repository": "linkerd/linkerd2",
-      "learningId": "learn-github-linkerd-linkerd2",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-24T12:27:33.993Z",
       "repository": "slatedb/slatedb",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-25T01:01:01.265Z",
       "repository": "aws/aws-cdk",
       "learningId": "learn-github-aws-aws-cdk",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T01:09:19.401Z",
+      "repository": "tw93/Mole",
+      "learningId": "learn-github-tw93-mole",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T01:09:22.059Z",
+      "repository": "infracost/infracost",
+      "learningId": "learn-github-infracost-infracost",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

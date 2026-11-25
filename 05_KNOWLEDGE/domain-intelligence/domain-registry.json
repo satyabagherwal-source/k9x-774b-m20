@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T01:01:07.354Z",
-  "total_records": 2610,
+  "last_updated": "2026-11-25T01:09:28.080Z",
+  "total_records": 2612,
   "domains": {
     "A": {
       "total": 22,
@@ -1644,7 +1644,7 @@
       ]
     },
     "H": {
-      "total": 623,
+      "total": 625,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -2268,7 +2268,9 @@
         "domain_intelligence-technical-construction-intelligence-solidjs-solid-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-zilliztech-claude-context-learnings-core-inv",
         "domain_intelligence-technical-construction-intelligence-cypress-io-cypress-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-cypress-io-cypress-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-cypress-io-cypress-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-tw93-mole-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-tw93-mole-learnings-core-invariants"
       ]
     },
     "I": {
@@ -8425,8 +8427,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "50efcd4df10cbd0d8092bda4d88ef3ad42154a061a769fe611e06669ae011942",
-      "created_at": "2026-11-24T21:53:48.510Z"
+      "content_hash": "d0639fc3309a99e03cca296f54da9c99440bbca58281fc174c5443e2b23ee1e8",
+      "created_at": "2026-11-25T01:09:28.080Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -37758,8 +37760,8 @@
       "title": "Content & Information Intelligence: infracost/infracost Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-infracost-infracost-content-information-intelligence-infracost-infracost-core-in.md",
       "repository": "infracost/infracost",
-      "content_hash": "7538d662a280785c7d5fd39bd10c8be7bc66ae53dbce357c9530f87cfd0c504d",
-      "created_at": "2026-11-21T03:44:43.106Z"
+      "content_hash": "c628660478e1047d0e77ef0c03f0eccb10ff5a72eddbc6a5ac026378eff677d9",
+      "created_at": "2026-11-25T01:09:22.514Z"
     },
     "domain_intelligence-content-information-intelligence-infracost-infracost-learnings-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-infracost-infracost-learnings-core-invariants",
@@ -37767,8 +37769,8 @@
       "title": "Content & Information Intelligence: infracost-infracost-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-infracost-infracost-learnings-content-information-intelligence-infracost-infraco.md",
       "repository": "infracost-infracost-learnings",
-      "content_hash": "0b0a364555db6eb0547a95904ac695b7a44a679f0e3ea0ebda574fdfe27ccbd5",
-      "created_at": "2026-11-21T03:44:52.446Z"
+      "content_hash": "0b62a09af29cfd7431dcbc6c637131fab3ce22874e78548f541cb7cb48c02532",
+      "created_at": "2026-11-25T01:09:27.123Z"
     },
     "domain_intelligence-design-intelligence-a2ui-project-a2ui-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-a2ui-project-a2ui-core-invariants",
@@ -43817,6 +43819,24 @@
       "confidence": 0.75,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-25T00:52:38.866Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-tw93-mole-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-tw93-mole-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: tw93/Mole Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tw93-mole-technical-construction-intelligence-tw93-mole-core-invariants.md",
+      "repository": "tw93/Mole",
+      "content_hash": "3d3b79ca7d504b9c51b058e0c2b8517a613178a25b98f96382601cdcc24106fd",
+      "created_at": "2026-11-25T01:09:19.846Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-tw93-mole-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-tw93-mole-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: tw93-mole-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tw93-mole-learnings-technical-construction-intelligence-tw93-mole-learnings-core.md",
+      "repository": "tw93-mole-learnings",
+      "content_hash": "012885b5b96e2554a9783695619cd69ac4a6a5e6573266506516f7fb8d1c07b9",
+      "created_at": "2026-11-25T01:09:26.009Z"
     }
   }
 }

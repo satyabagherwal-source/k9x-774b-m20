@@ -1,9 +1,9 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T01:01:07.714Z",
+  "last_updated": "2026-11-25T01:09:28.437Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
-      "processed_at": "2026-11-24T21:53:47.661Z",
+      "processed_at": "2026-11-25T01:09:27.483Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -383,7 +383,7 @@
       "staged_for_review": 1
     },
     "tw93-mole-learnings.md": {
-      "processed_at": "2026-11-22T11:48:02.587Z",
+      "processed_at": "2026-11-25T01:09:25.523Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1023,7 +1023,7 @@
       "staged_for_review": 1
     },
     "infracost-infracost-learnings.md": {
-      "processed_at": "2026-11-21T03:44:52.006Z",
+      "processed_at": "2026-11-25T01:09:26.581Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3883,7 +3883,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 3996,
+  "total_dossiers_evaluated": 3999,
   "total_canonical_promoted": 524,
-  "total_staged_for_review": 3052
+  "total_staged_for_review": 3055
 }
