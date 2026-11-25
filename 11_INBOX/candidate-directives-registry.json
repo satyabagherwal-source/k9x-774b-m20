@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T15:30:19.093Z",
+  "last_updated": "2026-11-25T15:39:14.102Z",
   "directives": [
     {
       "id": "CD-001",
@@ -57837,11 +57837,11 @@
       "domain_letter": "H"
     },
     {
-      "id": "CD-N82M",
+      "id": "CD-H0RS",
       "directive_title": "rust): bind bare calls to the enclosing module's items",
       "source_repo": "zvec-ai-zvec-grep-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-N82M-rust-bind-bare-calls-to-the-enclosing-module-s-items.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-H0RS-rust-bind-bare-calls-to-the-enclosing-module-s-items.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-25",
@@ -61416,11 +61416,11 @@
       "domain_letter": "G"
     },
     {
-      "id": "CD-SCQF",
+      "id": "CD-H1RQ",
       "directive_title": "Bump version number",
       "source_repo": "zoontek-react-native-bootsplash-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-SCQF-bump-version-number.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-H1RQ-bump-version-number.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-25",
@@ -61837,6 +61837,33 @@
       "source_repo": "nucleoidai-nucleoid",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-13BBBC-draft-nuc-147-deferred-suites.md",
+      "staged_date": "2026-11-25"
+    },
+    {
+      "id": "CD-REV-BC4140",
+      "directive_title": "Forensic Learning Record (Deep Inspection): AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "hf-atomicchat-deepseek-v4.1-flash-1017-uncensored-gsq-rco-gguf",
+      "domain_letter": "M",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-BC4140-forensic-learning-record-deep-inspection.md",
+      "staged_date": "2026-11-25"
+    },
+    {
+      "id": "CD-REV-462CF7",
+      "directive_title": "rust): bind bare calls to the enclosing module's items",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-462CF7-rust-bind-bare-calls-to-the-enclosing-mo.md",
+      "staged_date": "2026-11-25"
+    },
+    {
+      "id": "CD-REV-A215EB",
+      "directive_title": "Bump version number",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zoontek-react-native-bootsplash",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-A215EB-bump-version-number.md",
       "staged_date": "2026-11-25"
     }
   ]

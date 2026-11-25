@@ -11765,8 +11765,8 @@
     "sourceUrl": "https://huggingface.co/AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF",
     "sourceVersion": "hf-atomicchat-deepseek-v4.1-flash-1017-uncensored-gsq-rco-gguf",
     "license": "Open-Source",
-    "contentHash": "5b69bbbd645391a6565eb9ae03c5c3258354f634f0768757dd817a0192859758",
-    "lastHarvestedAt": "2026-11-22T00:53:45.076Z",
+    "contentHash": "3a98c189c310e6c515a855c464e40618265df174a301873bca93846cd1ae13f6",
+    "lastHarvestedAt": "2026-11-25T15:38:59.891Z",
     "learningId": "learn-huggingface-atomicchat-deepseek-v4-1-flash-1017-uncensored-gsq-rco-gguf"
   },
   "alfa546-crawler": {

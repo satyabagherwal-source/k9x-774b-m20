@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261124-056F",
-    "timestamp": "2026-11-24T03:58:34.551Z",
-    "repository": "lingyired/status-trio",
-    "learningId": "learn-github-lingyired-status-trio",
-    "contentHash": "9d123b9184778504abed3e9679f93b6d9b8674b564f30052483b214d77960bf7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261124-0779",
     "timestamp": "2026-11-24T03:58:37.173Z",
     "repository": "zarf-dev/zarf",
@@ -7492,6 +7477,21 @@
     "contentHash": "a0960af7ab4a0ae2524039605fe29e134f3931fc5b4b0f5d8b0a3a46240792dd",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-GQSV",
+    "timestamp": "2026-11-25T15:38:59.887Z",
+    "repository": "AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF",
+    "learningId": "learn-huggingface-atomicchat-deepseek-v4-1-flash-1017-uncensored-gsq-rco-gguf",
+    "contentHash": "3a98c189c310e6c515a855c464e40618265df174a301873bca93846cd1ae13f6",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

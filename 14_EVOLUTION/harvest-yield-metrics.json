@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T15:30:12.881Z",
-  "total_cycles_completed": 12461,
-  "total_learnings_persisted": 12461,
+  "last_updated": "2026-11-25T15:38:59.897Z",
+  "total_cycles_completed": 12462,
+  "total_learnings_persisted": 12462,
   "total_rules_promoted": 11434,
   "history": [
-    {
-      "timestamp": "2026-11-25T02:29:00.647Z",
-      "repository": "matrixorigin/matrixone",
-      "learningId": "learn-github-matrixorigin-matrixone",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-25T02:29:02.176Z",
       "repository": "NucleoidAI/Nucleoid",
@@ -1403,6 +1396,13 @@
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T15:38:59.897Z",
+      "repository": "AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF",
+      "learningId": "learn-huggingface-atomicchat-deepseek-v4-1-flash-1017-uncensored-gsq-rco-gguf",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

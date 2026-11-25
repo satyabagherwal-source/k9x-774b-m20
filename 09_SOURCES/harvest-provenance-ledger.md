@@ -13160,3 +13160,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-pyannote-speaker-diarization-3-1` | `https://huggingface.co/pyannote/speaker-diarization-3.1` | `hf-pyannot` | Multi-dimensional audit evidence | 2026-11-25T15:29:54.716Z |
 | `learn-github-actix-actix-web` | `https://github.com/actix/actix-web` | `98f5b221` | Multi-dimensional audit evidence | 2026-11-25T15:29:58.229Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `3b956215` | Multi-dimensional audit evidence | 2026-11-25T15:30:12.876Z |
+| `learn-huggingface-atomicchat-deepseek-v4-1-flash-1017-uncensored-gsq-rco-gguf` | `https://huggingface.co/AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF` | `hf-atomicc` | Multi-dimensional audit evidence | 2026-11-25T15:38:59.891Z |

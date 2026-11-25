@@ -13127,3 +13127,4 @@
 | `CYCLE-20261125-5253` | `2026-11-25T15:29:54.711Z` | `pyannote/speaker-diarization-3.1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-pyannote-speaker-diarization-3.1-learnings.md` | Yes (`e46347ba...`) |
 | `CYCLE-20261125-54UO` | `2026-11-25T15:29:58.224Z` | `actix/actix-web` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10549` | Yes (`b2496198...`) |
 | `CYCLE-20261125-5G5J` | `2026-11-25T15:30:12.871Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10550` | Yes (`a0960af7...`) |
+| `CYCLE-20261125-GQSV` | `2026-11-25T15:38:59.887Z` | `AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-atomicchat-deepseek-v4.1-flash-1017-uncensored-gsq-rco-gguf-learnings.md` | Yes (`3a98c189...`) |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-25T15:30:12.894Z",
+  "last_updated": "2026-11-25T15:38:59.908Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -17706,14 +17706,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-atomicchat-deepseek-v4-1-flash-1017-uncensored-gsq-rco-gguf",
-      "content_hash": "5b69bbbd645391a6565eb9ae03c5c3258354f634f0768757dd817a0192859758",
-      "verified_at": "2026-11-22T00:53:45.085Z",
+      "content_hash": "3a98c189c310e6c515a855c464e40618265df174a301873bca93846cd1ae13f6",
+      "verified_at": "2026-11-25T15:38:59.907Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T00:53:45.085Z"
+      "last_updated": "2026-11-25T15:38:59.907Z"
     },
     "alfa546/Crawler": {
       "repository": "alfa546/Crawler",
