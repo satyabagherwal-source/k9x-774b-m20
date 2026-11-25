@@ -13099,3 +13099,7 @@
 | `CYCLE-20261125-3OSV` | `2026-11-25T14:04:51.919Z` | `AtomicChat/LFM3-1.7B-Uncensored-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-atomicchat-lfm3-1.7b-uncensored-gguf-learnings.md` | Yes (`080ea234...`) |
 | `CYCLE-20261125-41SR` | `2026-11-25T14:05:08.763Z` | `apache/pinot` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10537` | Yes (`9e41809f...`) |
 | `CYCLE-20261125-42G2` | `2026-11-25T14:05:09.602Z` | `dathere/qsv` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/dathere-qsv-learnings.md` | Yes (`6157c9de...`) |
+| `CYCLE-20261125-FXOC` | `2026-11-25T14:14:23.292Z` | `SulphurAI/Sulphur-3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sulphurai-sulphur-3-learnings.md` | Yes (`891bcc8c...`) |
+| `CYCLE-20261125-G4WQ` | `2026-11-25T14:14:32.666Z` | `kumahq/kuma` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/kumahq-kuma-learnings.md` | Yes (`ecad88ff...`) |
+| `CYCLE-20261125-G783` | `2026-11-25T14:14:35.667Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10538` | Yes (`b07f392d...`) |
+| `CYCLE-2026-11-25-PROJ-EVOLVE` | `2026-11-25T14:15:13.820Z` | `kumahq-kuma` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-C2696C97` [Domain D] | Yes (`7d423650...`) |

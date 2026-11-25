@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kumahq-kuma-learnings.md`  
 > **Source**: github ([https://github.com/kumahq/kuma](https://github.com/kumahq/kuma))  
-> **Source Version**: `a38cd168`  
+> **Source Version**: `ce6a025c`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T00:49:07.144Z  
+> **Timestamp**: 2026-11-25T14:14:31.988Z  
 > **Learning ID**: `learn-github-kumahq-kuma`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kumahq-kuma-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kumahq/kuma](https://github.com/kumahq/kuma))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T00:49:07.140Z  
+> **Harvest Timestamp**: 2026-11-25T14:14:31.984Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 🐻 The multi-zone service mesh for containers, Kubernetes and VMs. Built with Envoy. CNCF Sandbox Project.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 4021 stars
+- **Stars / Engagement**: 4023 stars
 
 ---
 
@@ -998,11 +998,11 @@ var DefaultEnabled = []string{
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #19466** (2026-11-25): **chore(deps): bump kumahq/kuma-gui to ddf0779896dee8e799a2d1368eddbf19f63eebef**
+  *Symptoms*: Bumps kumahq/kuma-gui to version  [master@ddf0779896dee8e799a2d1368eddbf19f63eebef](https://github.com/kumahq/kuma-gui/tree/ddf0779896dee8e799a2d1368eddbf19f63eebef)  > Changelog: chore(deps): use latest kumahq/kuma-gui
+
 - **Issue #19462** (2026-11-23): **chore(deps/dev): bump oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen from 2.8.2 to 2.9.0**
   *Symptoms*: > [!NOTE] > This PR body was truncated due to platform limits.  This PR contains the following updates:  | Package | Type | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Adoption](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---|---| | [go:github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen](https://redirect.github.com/oapi-codegen/oapi-codegen) | tools | `v2.8.2` → `v2.9.0` | ![age](https://developer.mend.io/api/mc/badges/age/go/github.com%2foapi-codegen%2foapi-codegen%2fv2%2fcmd%2foapi-codegen/v2.9.0?slim=true) | ![adoption](https://developer.mend.io/api/mc/badges/adoption/go/github.com%2foapi-codegen%2foapi-codegen%2fv2%2fcmd%2foapi-codegen/v2.9.0?slim=true) |  ---  > [!WARNING] > Some dependencies could not be looked up. Check the [Dependency Dashboard](../issues/12547) for more information.  ---  ### Release Notes  <details> <summary>oapi-codegen/oapi-codegen (go:github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen)</summary>  ### [`v2.9.0`](https://redirect.github.com/oapi-codegen/oapi-codegen/releases/tag/v2.9.0): : OpenAPI 3.2 methods, smarter schema merging, more naming control  [Compare Source](https://redirect.github.com/oapi-codegen/oapi-codegen/compare/v2.8.2...v2.9.0)  This is another large release. Most of the work went into three areas: a rewrite of how `allOf`, `anyOf` and `oneOf` become Go types (available as an option for now), more configuration for things we used to hard-code (names, struct tags, content type
-
-- **Issue #19461** (2026-11-23): **chore(deps/dev): bump npm:@redocly/cli from 2.71.2 to 2.77.0**
-  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---| | [npm:@redocly/cli](https://redirect.github.com/Redocly/redocly-cli) | `2.71.2` → `2.77.0` | ![age](https://developer.mend.io/api/mc/badges/age/npm/@redocly%2fcli/2.77.0?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/@redocly%2fcli/2.71.2/2.77.0?slim=true) |  ---  > [!WARNING] > Some dependencies could not be looked up. Check the [Dependency Dashboard](../issues/12547) for more information.  ---  ### Release Notes  <details> <summary>Redocly/redocly-cli (npm:@&#8203;redocly/cli)</summary>  ### [`v2.77.0`](https://redirect.github.com/Redocly/redocly-cli/releases/tag/%40redocly/cli%402.77.0)  [Compare Source](https://redirect.github.com/Redocly/redocly-cli/compare/@redocly/cli@2.76.0...@redocly/cli@2.77.0)  ##### Minor Changes  - Changed the usage telemetry event of the generated clients to the CloudEvent schema of the other Redocly CLI events.  ##### Patch Changes  - Fixed an issue where the `push-status` and `push --wait-for-deployment` commands did not show why a deployment to Redocly platform failed.   The error message lists the failed checks, and the command output includes the link checker result. - Changed JSON Pointers in `respect` runtime expressions to accept every character that the Arazzo grammar allows, so put a space before `&&` tha
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1019,65 +1019,25 @@ var DefaultEnabled = []string{
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `64a12ddb` (2026-11-23)
-**Commit Message**: chore(deps): bump gcr.io/distroless/base-nossl-debian13:debug-nonroot from 37b8b2d to 4d040a1 (#19433)
+### Incident Patch 1: `ce6a025c` (2026-11-25)
+**Commit Message**: chore(deps): bump kumahq/kuma-gui to ddf0779896dee8e799a2d1368eddbf19f63eebef (#19466)
 
-Signed-off-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
-Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+Signed-off-by: GitHub <[REDACTED_EMAIL]>
+Co-authored-by: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
 
-**File**: `tools/releases/dockerfiles/base.Dockerfile` (modified, +1/-1)
+**File**: `app/kuma-ui/pkg/resources/kuma-gui-cve-report.json` (modified, +1/-1)
 ```diff
-@@ -1,4 +1,4 @@
--FROM gcr.io/distroless/base-nossl-debian13:debug-nonroot@sha256:37b8b2d30e81bf028eae7c1e8c65d775d46b2a21a2b76cde6bf8bf59ef0e3289
-+FROM gcr.io/distroless/base-nossl-debian13:debug-nonroot@sha256:4d040a10bd12b8a0a44346381a1cbbedf3965dcda822b0ae4314ce1bf53a2111
- 
- COPY /tools/releases/templates/LICENSE \
-     /tools/releases/templates/README \
-```
-
----
-
-### Incident Patch 2: `1fdd20e7` (2026-11-23)
-**Commit Message**: chore(deps): bump registry.k8s.io/build-image/distroless-iptables from 0.11.2 to 0.11.3 (#19448)
-
-Signed-off-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
-Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
-
-**File**: `tools/releases/dockerfiles/kuma-init.Dockerfile` (modified, +1/-1)
-```diff
-@@ -1,4 +1,4 @@
--FROM registry.k8s.io/build-image/distroless-iptables:v0.11.2@sha256:5517fe2d12edec9f133a1ba58e5dd700f9adf5d0ccd7d50e67c7609509e4e53f
-+FROM registry.k8s.io/build-image/distroless-iptables:v0.11.3@sha256:59e36fe0907c035386bde9c9030ba5eeacb3c3eb7c1a8aade9ccaa9e3856b146
- ARG ARCH
- 
- COPY /build/artifacts-linux-$ARCH/kumactl/kumactl /usr/bin
-```
-
----
-
-### Incident Patch 3: `9b759acb` (2026-11-23)
-**Commit Message**: chore(deps): bump gcr.io/distroless/static-debian13:debug-nonroot from 12c2026 to 3e7f48d (#19434)
-
-Signed-off-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
-Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
-
-**File**: `tools/releases/dockerfiles/static.Dockerfile` (modified, +1/-1)
-```diff
-@@ -1,4 +1,4 @@
--FROM gcr.io/distroless/static-debian13:debug-nonroot@sha256:12c2026b21e05857a4c730b4dbf812becf02b396cb7916166c8305f45f140ab0
-+FROM gcr.io/distroless/static-debian13:debug-nonroot@sha256:3e7f48d714a3298b4df1a69fbc8809dd6fadd16c306838862fffc2895b168158
- 
- COPY /tools/releases/templates/LICENSE \
-     /tools/releases/templates/README \
+@@ -1 +1 @@
+-{"matches":[{"vulnerability":{"id":"GHSA-gfr2-rv44-r23c","dataSource":"https://github.com/advisories/GHSA-gfr2-rv44-r23c","namespace":"github:language:javascript","severity":"High","urls":["https://github.com/markdown-it/markdown-it/security/advisories/GHSA-gfr2-rv44-r23c","https://github.com/markdown-it/markdown-it/commit/48fbc465812c440020c663f040ab22deaf8f1eca","https://github.com/markdown-it/markdown-it/commit/d99f48839d37af6fd8a2617516c43dab90755503","https://github.com/markdown-it/markdown-it/releases/tag/14.3.3","https://github.com/markdown-it/markdown-it/releases/tag/15.0.3"],"description":"markdown-it: Quadratic-time rendering of a single multi-line link reference definition with default options (regression since 14.0)","cvss":[{"type":"Secondary","version":"3.1","vector":"CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H","metrics":{"baseScore":7.5,"exploitabilityScore":3.9,"impactScore":3.6},"vendorMetadata":{}}],"epss":[{"cve":"CVE-2026-111758","epss":0.0055,"percentile":0.46593,"date":"2026-11-16"}],"cwes":[{"cve":"CVE-2026-111758","cwe":"CWE-400","source":"security-advisories@github.com","type":"Secondary"},{"cve":"CVE-2026-111758","cwe":"CWE-407","source":"security-advisories@github.com","type":"Secondary"}],"fix":{"versions":["15.0.3"],"state":"fixed","available":[{"version":"15.0.3","date":"2026-10-21","kind":"first-observed"}]},"advisories":[],"risk":0.41250000000000003},"relatedVulnerabilities":[{"id":"CVE-2026-111758","dataSource":"https://nvd.nist.gov/vuln/detail/CVE-2026-111758","namespace":"nvd:cpe","severity":"High","urls":["https://github.com/markdown-it/markdown-it/commit/48fbc465812c440020c663f040ab22deaf8f1eca","https://github.com/markdown-it/markdown-it/commit/d99f48839d37af6fd8a2617516c43dab90755503","https://github.com/markdown-it/markdown-it/releases/tag/14.3.3","https://github.com/markdown-it/markdown-it/releases/tag/15.0.3","https://github.com/markdown-it/markdown-it/security/advisories/GHSA-gfr2-rv44-r23c"],"description":"markdown-it is a Markdown parser. From versions 14.1.0 to before 14.3.3, and 15.0.0 to before 15.0.3, a link reference definition whose label or title is never closed is O(n²) with default options. Continuation lines are pulled lazily with str += lineContent in src/rules_block/reference.ts, and the subsequent charCodeAt and slice calls flatten the V8 cons-string, copying everything collected so far; this runs before the rule decides the definition is invalid. No options are required to trigger it. This issue has been patched in versions 14.3.3 and 15.0.3.","cvss":[{"source":"security-advisories@github.com","type":"Secondary","version":"3.1","vector":"CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H","metrics":{"baseScore":7.5,"exploitabilityScore":3.9,"impactScore":3.6},"vendorMetadata":{}}],"epss":[{"cve":"CVE-2026-111758","epss":0.0055,"percentile":0.46593,"date":"2026-11-16"}],"cwes":[{"cve":"CVE-2026-111758","cwe":"CWE-400","source":"security-advisories@github.com","type":"Secondary"},{"cve":"CVE-2026-111758","cwe":"CWE-407","source":"security-advisories@github.com","type":"Secondary"}]}],"matchDetails":[{"type":"exact-direct-match","matcher":"javascript-matcher","searchedBy":{"language":"javascript","namespace":"github:language:javascript","package":{"name":"markdown-it","version":"15.0.2"}},"found":{"vulnerabilityID":"GHSA-gfr2-rv44-r23c","versionConstraint":">=15.0.0,<15.0.3 (semantic)"},"fix":{"suggestedVersion":"15.0.3"}}],"artifact":{"id":"Package-npm-markdown-it-496b962fd0718814","name":"markdown-it","version":"15.0.2","type":"npm","locations":null,"language":"javascript","licenses":["MIT"],"cpes":["cpe:2.3:a:markdown-it_project:markdown-it:15.0.2:*:*:*:*:*:*:*"],"purl":"pkg:npm/markdown-it@15.0.2","upstreams":[]}},{"vulnerability":{"id":"GHSA-3g3m-2fjr-6pw4","dataSource":"https://github.com/advisories/GHSA-3g3m-2fjr-6pw4","namespace":"github:language:javascript","severity":"Medium","urls":["https://github.com/isaacs/node-glob/security/advisories/GHSA-3g3m-2fjr-6pw4","https://nvd.nist.gov/vuln/detail/CVE-2026-118773","https://github.com/isaacs/node-glob/commit/4682e8c9babee1b385202ede36389634e12076d7","https://github.com/isaacs/node-glob/releases/tag/v14.0.2"],"description":"Glob: AbortSignal cancellation bypass allows post-timeout filesystem traversal","cvss":[{"type":"Secondary","version":"4.0","vector":"CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:N/VC:N/VI:N/VA:L/SC:N/SI:N/SA:N","metrics":{"baseScore":6.3},"vendorMetadata":{}}],"epss":[{"cve":"CVE-2026-118773","epss":0.0035,"percentile":0.29147,"date":"2026-11-16"}],"cwes":[{"cve":"CVE-2026-118773","cwe":"CWE-400","source":"security-advisories@github.com","type":"Secondary"}],"fix":{"versions":["14.0.2"],"state":"fixed","available":[{"version":"14.0.2","date":"2026-10-31","kind":"first-observed"}]},"advisories":[],"risk":0.19774999999999995},"relatedVulnerabilities":[{"id":"CVE-2026-118773","dataSource":"https://nvd.nist.gov/vuln/detail/CVE-2026-118773","namespace":"nvd:cpe","severity":"Medium","url
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #19466** (2026-11-25): chore(deps): bump kumahq/kuma-gui to ddf0779896dee8e799a2d1368eddbf19f63eebef (@kumahq[bot])
 - **PR #19462** (2026-11-23): chore(deps/dev): bump oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen from 2.8.2 to 2.9.0 (@renovate[bot])
 - **PR #19461** (2026-11-23): chore(deps/dev): bump npm:@redocly/cli from 2.71.2 to 2.77.0 (@renovate[bot])
 - **PR #19460** (2026-11-23): chore(deps): bump reviewdog/action-actionlint from 1.83.0 to 1.84.0 (@renovate[bot])
 - **PR #19459** (2026-11-23): chore(deps): bump ossf/scorecard-action from 2.5.0 to 2.6.0 (@renovate[bot])
 - **PR #19458** (2026-11-23): chore(deps): bump jdx/mise from 2026.10.21 to 2026.11.6 (@renovate[bot])
-- **PR #19457** (closed): chore(deps): bump golang.org/x/tools from 0.52.1-0.20261106145633-d407941a339a to 0.53.0 - autoclosed (@renovate[bot])
 
 ---
 
@@ -1091,34 +1051,3 @@ Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. deps): bump gcr.io/distroless/base-nossl-debian13:debug-nonroot from 37b8b2d to 
-
-**RULE**:
-When implementing operations in `tools/releases/dockerfiles/base.Dockerfile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kumahq/kuma. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `64a12ddb`: deps): bump gcr.io/distroless/base-nossl-debian13:debug-nonroot from 37b8b2d to 4d040a1. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `tools/releases/dockerfiles/base.Dockerfile`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```go
-// Verified production-grade fix pattern:
-FROM gcr.io/distroless/base-nossl-debian13:debug-nonroot@sha256:4d040a10bd12b8a0a44346381a1cbbedf3965dcda822b0ae4314ce1bf53a2111
-```
-
-**NEGATIVE CONSTRAINT**:
-```go
-// Induced defect failure mode:
-FROM gcr.io/distroless/base-nossl-debian13:debug-nonroot@sha256:37b8b2d30e81bf028eae7c1e8c65d775d46b2a21a2b76cde6bf8bf59ef0e3289
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `64a12ddb` are properly handled with clean fallback behavior.

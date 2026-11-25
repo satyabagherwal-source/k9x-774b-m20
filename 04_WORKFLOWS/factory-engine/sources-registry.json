@@ -25,12 +25,12 @@
     "lastVerified": "2026-11-25T09:24:56.184Z"
   },
   "mintplex-labs-anything-llm": {
-    "name": "Mintplex-Labs/anything-llm",
+    "name": "anything-llm",
     "officialUrl": "https://github.com/Mintplex-Labs/anything-llm",
     "sourceType": "github",
     "technology": "JavaScript",
-    "lastChecked": "2026-11-24T18:52:02.435Z",
-    "lastVerified": "2026-11-24T18:52:02.435Z",
+    "lastChecked": "2026-11-25T14:14:32.400Z",
+    "lastVerified": "2026-11-25T14:14:32.400Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mintplex-labs-anything-llm",
@@ -39,7 +39,8 @@
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "b0144700"
   },
   "bitterbot-ai-bitterbot-desktop": {
     "name": "bitterbot-desktop",
@@ -81,8 +82,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-25T14:05:13.253Z",
-    "lastVerified": "2026-11-25T14:05:13.253Z",
+    "lastChecked": "2026-11-25T14:14:39.320Z",
+    "lastVerified": "2026-11-25T14:14:39.320Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -274,9 +275,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-25T13:31:50.263Z",
+    "lastChecked": "2026-11-25T14:14:35.037Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-25T13:31:50.263Z"
+    "lastVerified": "2026-11-25T14:14:35.037Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -2390,22 +2391,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "aleo-labs-protocol-snarkos": {
-    "name": "snarkOS",
+    "name": "aleo-labs-protocol/snarkOS",
     "officialUrl": "https://github.com/aleo-labs-protocol/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-25T09:07:55.498Z",
-    "lastVerified": "2026-11-25T09:07:55.498Z",
+    "lastChecked": "2026-11-25T14:14:34.208Z",
+    "lastVerified": "2026-11-25T14:14:34.208Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "7332a10398829d3e1f53c9b9641184caa8b1c58820d1f07c2f06ab9f27090da5",
+    "contentHash": "b07f392d10de6c794cb41c678b3aaf409a3abbade1421d171529fa2a836d9fbb",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "b2a26d2e"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "paradedb-paradedb": {
     "name": "paradedb/paradedb",
@@ -3410,22 +3410,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "kumahq-kuma": {
-    "name": "kuma",
+    "name": "kumahq/kuma",
     "officialUrl": "https://github.com/kumahq/kuma",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-24T19:55:23.716Z",
-    "lastVerified": "2026-11-24T19:55:23.716Z",
+    "lastChecked": "2026-11-25T14:14:31.984Z",
+    "lastVerified": "2026-11-25T14:14:31.984Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kumahq-kuma",
-    "contentHash": "6410c9a3357d56b66b21c21613b6075a4427cd29e5849639c29d39aa8e9fde50",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "contentHash": "ecad88ff0f1ae0876abba866d05399c08072c47187b609751c39b71478dfbd89",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "a38cd168"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "tensorchord-pgvecto.rs": {
     "name": "pgvecto.rs",
@@ -4282,9 +4281,9 @@
   "mufeedvh-code2prompt": {
     "name": "code2prompt",
     "officialUrl": "https://github.com/mufeedvh/code2prompt",
-    "lastChecked": "2026-11-24T13:30:02.722Z",
+    "lastChecked": "2026-11-25T14:14:19.841Z",
     "revisionIdentifier": "d762d9bb",
-    "lastVerified": "2026-11-24T13:30:02.722Z"
+    "lastVerified": "2026-11-25T14:14:19.841Z"
   },
   "hf-meta-llama-meta-llama-3-8b": {
     "name": "meta-llama/Meta-Llama-3-8B",
@@ -10095,9 +10094,9 @@
   "kdchang-reactjs101": {
     "name": "reactjs101",
     "officialUrl": "https://github.com/kdchang/reactjs101",
-    "lastChecked": "2026-11-23T06:22:17.745Z",
+    "lastChecked": "2026-11-25T14:14:24.994Z",
     "revisionIdentifier": "9a6f238b",
-    "lastVerified": "2026-11-23T06:22:17.745Z"
+    "lastVerified": "2026-11-25T14:14:24.994Z"
   },
   "aliarifsoydas-sitemap-checker": {
     "name": "sitemap-checker",
@@ -13609,12 +13608,12 @@
     "officialUrl": "https://huggingface.co/SulphurAI/Sulphur-3",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-21T22:56:40.378Z",
-    "lastVerified": "2026-11-21T22:56:40.378Z",
+    "lastChecked": "2026-11-25T14:14:22.402Z",
+    "lastVerified": "2026-11-25T14:14:22.402Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-sulphurai-sulphur-3",
-    "contentHash": "2ea5f4010de33f37c3a13f7e7ba6f3d2018e817854a34f49634bb6a7f517aedb",
+    "contentHash": "891bcc8c9c7ba7bba451f73eb0a6faf28f8d3be01db74ee670efb2347052d42b",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

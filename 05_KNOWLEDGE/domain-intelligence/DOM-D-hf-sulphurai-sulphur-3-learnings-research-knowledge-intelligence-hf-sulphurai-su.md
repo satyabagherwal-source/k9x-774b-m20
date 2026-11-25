@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-21T22:57:27.218Z",
+  "timestamp": "2026-11-25T14:14:39.659Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-hf-sulphurai-sulphur-3-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hf-sulphurai-sulphur-3-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-21T22:57:27.218Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T14:14:39.659Z`  
 > **Learning ID**: `LEARN-EVO-hf-sulphurai-sulphur-3-learnings`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Source Version**: `hf-sulphurai`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T22:56:40.520Z  
+> **Timestamp**: 2026-11-25T14:14:22.547Z  
 > **Learning ID**: `learn-huggingface-sulphurai-sulphur-3`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-sulphurai-sulphur-3-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/SulphurAI/Sulphur-3](https://huggingface.co/SulphurAI/Sulphur-3))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T22:56:40.378Z  
+> **Harvest Timestamp**: 2026-11-25T14:14:22.402Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: ML Foundation Model
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 1186 downloads | 658 likes
+- **Stars / Engagement**: 189735 downloads | 984 likes
 
 ---
 

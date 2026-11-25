@@ -13132,3 +13132,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-atomicchat-lfm3-1-7b-uncensored-gguf` | `https://huggingface.co/AtomicChat/LFM3-1.7B-Uncensored-GGUF` | `hf-atomicc` | Multi-dimensional audit evidence | 2026-11-25T14:04:51.924Z |
 | `learn-github-apache-pinot` | `https://github.com/apache/pinot` | `95ec60fa` | Multi-dimensional audit evidence | 2026-11-25T14:05:08.768Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `c9b35465` | Multi-dimensional audit evidence | 2026-11-25T14:05:09.607Z |
+| `learn-huggingface-sulphurai-sulphur-3` | `https://huggingface.co/SulphurAI/Sulphur-3` | `hf-sulphur` | Multi-dimensional audit evidence | 2026-11-25T14:14:23.297Z |
+| `learn-github-kumahq-kuma` | `https://github.com/kumahq/kuma` | `ce6a025c` | Multi-dimensional audit evidence | 2026-11-25T14:14:32.671Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `00510513` | Multi-dimensional audit evidence | 2026-11-25T14:14:35.672Z |
+| `learn-dom-d-c2696c97` | `project://kumahq-kuma` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kumahq-kuma-learnings.md` | 2026-11-25T14:15:13.820Z |

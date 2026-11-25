@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T14:05:16.685Z",
-  "total_records": 2675,
+  "last_updated": "2026-11-25T14:15:17.240Z",
+  "total_records": 2676,
   "domains": {
     "A": {
       "total": 22,
@@ -71,7 +71,7 @@
       ]
     },
     "D": {
-      "total": 1004,
+      "total": 1005,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -1076,7 +1076,8 @@
         "domain_intelligence-research-knowledge-intelligence-thinkingmachines-tml-d24-varloop-research-core-i",
         "DOM-D-18CF46EE",
         "domain_intelligence-research-knowledge-intelligence-hf-thinkingmachines-tml-d24-varloop-research-lea",
-        "DOM-D-B35DECA2"
+        "DOM-D-B35DECA2",
+        "DOM-D-C2696C97"
       ]
     },
     "E": {
@@ -8779,10 +8780,10 @@
       "record_id": "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants",
       "domain_letter": "G",
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-core-inv.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-.md",
       "repository": "aleo-labs-protocol/snarkOS",
-      "content_hash": "55b126249dc11d955d2963fca9cfd9ce451eb424ef604fdfeb8cb183be9a085b",
-      "created_at": "2026-11-25T02:20:28.085Z"
+      "content_hash": "9b44fa064ac9101e075d63b9bb691671b5a13a47203545a999a968b572295cd7",
+      "created_at": "2026-11-25T14:14:36.302Z"
     },
     "DOM-D-7123D3B0": {
       "record_id": "DOM-D-7123D3B0",
@@ -24197,8 +24198,8 @@
       "title": "Architecture Intelligence: aleo-labs-protocol-snarkos-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-learnings-architecture-intelligence-aleo-labs-protoco.md",
       "repository": "aleo-labs-protocol-snarkos-learnings",
-      "content_hash": "6085b5ab41714209e67810c00e8bd12a9addb726529e9e30e16dc4ce5bf3bcb8",
-      "created_at": "2026-11-24T15:36:15.811Z"
+      "content_hash": "e08b83b305fa7f864c50cd39e73a261fcc257ef0325032b02614cc7ac878d294",
+      "created_at": "2026-11-25T14:15:17.240Z"
     },
     "domain_intelligence-technical-construction-intelligence-chrisbanes-skills-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-chrisbanes-skills-core-invariants",
@@ -38838,10 +38839,10 @@
       "record_id": "domain_intelligence-research-knowledge-intelligence-sulphurai-sulphur-3-core-invariants",
       "domain_letter": "D",
       "title": "Research & Knowledge Intelligence: SulphurAI/Sulphur-3 Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-fusioncow-sulphur-3-research-knowledge-intelligence-sulphurai-sulphur-3-core-.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-sulphurai-sulphur-3-research-knowledge-intelligence-sulphurai-sulphur-3-core-.md",
       "repository": "SulphurAI/Sulphur-3",
-      "content_hash": "1a53e56a1662b442c1bcc5c1ee63ec9f9274fc721772345c041bfff21dba6414",
-      "created_at": "2026-11-21T23:55:32.013Z"
+      "content_hash": "6daff9e2e5fdda408632444683b4139c61f0734646be9de1d29c674873494c5c",
+      "created_at": "2026-11-25T14:14:23.601Z"
     },
     "DOM-D-3CF395C7": {
       "record_id": "DOM-D-3CF395C7",
@@ -38891,8 +38892,8 @@
       "title": "Research & Knowledge Intelligence: hf-sulphurai-sulphur-3-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-sulphurai-sulphur-3-learnings-research-knowledge-intelligence-hf-sulphurai-su.md",
       "repository": "hf-sulphurai-sulphur-3-learnings",
-      "content_hash": "25b70434725675f33c69fe218555396a969b572a67876218d243775a18381911",
-      "created_at": "2026-11-21T22:57:27.354Z"
+      "content_hash": "95ff28aa217435facf127b55f35b4f5ccab92f2531b4521eb7a5b3e7edd47bfb",
+      "created_at": "2026-11-25T14:14:39.810Z"
     },
     "DOM-D-8372CBCD": {
       "record_id": "DOM-D-8372CBCD",
@@ -41705,8 +41706,8 @@
       "title": "Architecture Intelligence: kumahq/kuma Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-kumahq-kuma-architecture-intelligence-kumahq-kuma-core-invariants.md",
       "repository": "kumahq/kuma",
-      "content_hash": "3119bb1780d53f8ebfabb8f3f75706cd132a45596f588f4fdef1671747153504",
-      "created_at": "2026-11-24T00:49:08.608Z"
+      "content_hash": "692d49fcdded6e7380f42ae9d624f4f16df43542fa25d95951caa89272ecc5f0",
+      "created_at": "2026-11-25T14:14:33.062Z"
     },
     "domain_intelligence-architecture-intelligence-kumahq-kuma-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-kumahq-kuma-learnings-core-invariants",
@@ -41714,8 +41715,8 @@
       "title": "Architecture Intelligence: kumahq-kuma-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-kumahq-kuma-learnings-architecture-intelligence-kumahq-kuma-learnings-core-invar.md",
       "repository": "kumahq-kuma-learnings",
-      "content_hash": "fb34c2491d79994b36be44d36d685da8caa9ba12156d2b2a424b3565ba543aae",
-      "created_at": "2026-11-24T00:49:13.935Z"
+      "content_hash": "853ce9eb71e72400b957cb47d0ebfcf0db59ee9210c4f3c2a3018c546dedcb2c",
+      "created_at": "2026-11-25T14:15:15.776Z"
     },
     "DOM-F-0B02F7F4": {
       "record_id": "DOM-F-0B02F7F4",
@@ -45037,6 +45038,48 @@
       "repository": "zoontek/react-native-permissions",
       "content_hash": "2305fc02b3378c50a62b738e2f0d518551ce9a5fc0a88c029b2dac271dcacb3b",
       "created_at": "2026-11-25T13:49:27.135Z"
+    },
+    "DOM-D-C2696C97": {
+      "record_id": "DOM-D-C2696C97",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): kumahq/kuma",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kumahq-kuma-learnings.md`  \n> **Source**: github ([https://github.com/kumahq/kuma](https://github.com/kumahq/kuma))  \n> **Source Version**: `ce6a025c`  \n> **License**: Apache-2.0  \n> **Synthesized By**: zero-clone-structural-synthesizer  \n> **T",
+      "content_hash": "7d423650a08573cfc543ed0e5334e4691fd90b56b33166ac5f4f93fe6211514a",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kumahq-kuma-learnings.md`  \n> **Source**: github ([https://github.com/kumahq/kuma](h -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kumahq-kuma-learnings.md`  \n> **Source**: github ([https://github.com/kumahq/kuma](h",
+      "provenance": {
+        "source_uri": "project://kumahq-kuma/kumahq-kuma-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-25T14:14:40.117Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (kumahq-kuma)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of kumahq-kuma"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-25T14:15:13.759Z"
     }
   }
 }

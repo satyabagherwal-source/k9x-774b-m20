@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-25T14:05:09.682Z",
+  "last_updated": "2026-11-25T14:14:35.691Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "d64f17dd0e61ac41b80d693b9b870da51367d45f63dadf845c1fdf0adc56c12f",
-      "verified_at": "2026-11-25T02:20:27.537Z",
+      "content_hash": "b07f392d10de6c794cb41c678b3aaf409a3abbade1421d171529fa2a836d9fbb",
+      "verified_at": "2026-11-25T14:14:35.690Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T02:20:27.537Z"
+      "last_updated": "2026-11-25T14:14:35.690Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",
@@ -5121,14 +5121,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kumahq-kuma",
-      "content_hash": "6410c9a3357d56b66b21c21613b6075a4427cd29e5849639c29d39aa8e9fde50",
-      "verified_at": "2026-11-24T00:49:08.208Z",
+      "content_hash": "ecad88ff0f1ae0876abba866d05399c08072c47187b609751c39b71478dfbd89",
+      "verified_at": "2026-11-25T14:14:32.770Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T00:49:08.208Z"
+      "last_updated": "2026-11-25T14:14:32.770Z"
     },
     "cilium/cilium": {
       "repository": "cilium/cilium",
@@ -19820,15 +19820,15 @@
       "pipeline_mode": "CLOUD_HARVEST",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-fusioncow-sulphur-3",
-      "content_hash": "3bbf7a4a075c1c933d3d23831ecc9844aebf8d8ba5a61639093fa8a3d8590551",
-      "verified_at": "2026-11-21T23:55:31.814Z",
+      "learning_id": "learn-huggingface-sulphurai-sulphur-3",
+      "content_hash": "891bcc8c9c7ba7bba451f73eb0a6faf28f8d3be01db74ee670efb2347052d42b",
+      "verified_at": "2026-11-25T14:14:23.315Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T23:55:31.814Z"
+      "last_updated": "2026-11-25T14:14:23.315Z"
     },
     "PrunaAI/P-Image-OSS-Comfy": {
       "repository": "PrunaAI/P-Image-OSS-Comfy",

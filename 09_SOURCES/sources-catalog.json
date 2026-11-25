@@ -1593,10 +1593,10 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "platform": "github",
     "sourceUrl": "https://github.com/aleo-labs-protocol/snarkOS",
-    "sourceVersion": "b2a26d2e",
+    "sourceVersion": "00510513",
     "license": "Apache-2.0",
-    "contentHash": "7332a10398829d3e1f53c9b9641184caa8b1c58820d1f07c2f06ab9f27090da5",
-    "lastHarvestedAt": "2026-11-25T00:26:49.895Z",
+    "contentHash": "b07f392d10de6c794cb41c678b3aaf409a3abbade1421d171529fa2a836d9fbb",
+    "lastHarvestedAt": "2026-11-25T14:14:35.672Z",
     "learningId": "learn-github-aleo-labs-protocol-snarkos"
   },
   "volcengine-openviking": {
@@ -3333,10 +3333,10 @@
     "repository": "kumahq/kuma",
     "platform": "github",
     "sourceUrl": "https://github.com/kumahq/kuma",
-    "sourceVersion": "a38cd168",
+    "sourceVersion": "ce6a025c",
     "license": "Apache-2.0",
-    "contentHash": "6410c9a3357d56b66b21c21613b6075a4427cd29e5849639c29d39aa8e9fde50",
-    "lastHarvestedAt": "2026-11-24T00:49:08.201Z",
+    "contentHash": "ecad88ff0f1ae0876abba866d05399c08072c47187b609751c39b71478dfbd89",
+    "lastHarvestedAt": "2026-11-25T14:14:32.671Z",
     "learningId": "learn-github-kumahq-kuma"
   },
   "cilium-cilium": {
@@ -13155,8 +13155,8 @@
     "sourceUrl": "https://huggingface.co/SulphurAI/Sulphur-3",
     "sourceVersion": "hf-sulphurai-sulphur-3",
     "license": "Open-Source",
-    "contentHash": "2ea5f4010de33f37c3a13f7e7ba6f3d2018e817854a34f49634bb6a7f517aedb",
-    "lastHarvestedAt": "2026-11-21T22:56:41.035Z",
+    "contentHash": "891bcc8c9c7ba7bba451f73eb0a6faf28f8d3be01db74ee670efb2347052d42b",
+    "lastHarvestedAt": "2026-11-25T14:14:23.297Z",
     "learningId": "learn-huggingface-sulphurai-sulphur-3"
   },
   "apache-maka": {
