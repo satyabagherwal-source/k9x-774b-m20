@@ -46,8 +46,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-25T10:21:28.955Z",
-    "lastVerified": "2026-11-25T10:21:28.955Z",
+    "lastChecked": "2026-11-25T11:11:26.461Z",
+    "lastVerified": "2026-11-25T11:11:26.461Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-25T10:58:03.241Z",
-    "lastVerified": "2026-11-25T10:58:03.241Z",
+    "lastChecked": "2026-11-25T11:11:31.653Z",
+    "lastVerified": "2026-11-25T11:11:31.653Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -827,9 +827,9 @@
   "chrispybacon-dev-dockflare": {
     "name": "DockFlare",
     "officialUrl": "https://github.com/ChrispyBacon-dev/DockFlare",
-    "lastChecked": "2026-11-25T06:03:04.627Z",
+    "lastChecked": "2026-11-25T11:11:21.451Z",
     "revisionIdentifier": "9c7bed82",
-    "lastVerified": "2026-11-25T06:03:04.627Z"
+    "lastVerified": "2026-11-25T11:11:21.451Z"
   },
   "nirdiamant-rag_techniques": {
     "name": "RAG_Techniques",
@@ -2210,9 +2210,9 @@
   "fission-fission": {
     "name": "fission",
     "officialUrl": "https://github.com/fission/fission",
-    "lastChecked": "2026-11-24T17:13:37.946Z",
+    "lastChecked": "2026-11-25T11:11:18.972Z",
     "revisionIdentifier": "8152c961",
-    "lastVerified": "2026-11-24T17:13:37.946Z"
+    "lastVerified": "2026-11-25T11:11:18.972Z"
   },
   "tailscale-tailscale": {
     "name": "tailscale/tailscale",
@@ -3087,9 +3087,9 @@
   "asciinema-asciinema": {
     "name": "asciinema",
     "officialUrl": "https://github.com/asciinema/asciinema",
-    "lastChecked": "2026-11-24T09:28:38.301Z",
+    "lastChecked": "2026-11-25T11:11:11.474Z",
     "revisionIdentifier": "e2c66002",
-    "lastVerified": "2026-11-24T09:28:38.301Z"
+    "lastVerified": "2026-11-25T11:11:11.474Z"
   },
   "hf-alissonerdx-bfs-best-face-swap": {
     "name": "Alissonerdx/BFS-Best-Face-Swap",
@@ -6651,11 +6651,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "apache-incubator-pegasus": {
-    "name": "incubator-pegasus",
+    "name": "apache/incubator-pegasus",
     "officialUrl": "https://github.com/apache/incubator-pegasus",
-    "lastChecked": "2026-11-24T16:10:40.722Z",
-    "revisionIdentifier": "31da6f5e",
-    "lastVerified": "2026-11-24T16:10:40.722Z"
+    "sourceType": "github",
+    "technology": "C++",
+    "lastChecked": "2026-11-25T11:11:27.294Z",
+    "lastVerified": "2026-11-25T11:11:27.294Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-apache-incubator-pegasus",
+    "contentHash": "a9341c4018422f7fa7070b4b4d97c9e56f9a5ab64ac533b53f3d9d3afdb373bd",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "sentrux-sentrux": {
     "name": "sentrux",
@@ -9771,9 +9781,9 @@
   "sventiigi-whatsnewkit": {
     "name": "WhatsNewKit",
     "officialUrl": "https://github.com/SvenTiigi/WhatsNewKit",
-    "lastChecked": "2026-11-23T00:07:45.829Z",
+    "lastChecked": "2026-11-25T11:11:16.557Z",
     "revisionIdentifier": "6157c77e",
-    "lastVerified": "2026-11-23T00:07:45.829Z"
+    "lastVerified": "2026-11-25T11:11:16.557Z"
   },
   "codetot-web-schema-test": {
     "name": "schema-test",
@@ -13283,13 +13293,13 @@
     "officialUrl": "https://huggingface.co/tencent/Hy-SimulMT-30B-A3B-FP8",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-21T19:07:29.791Z",
-    "lastVerified": "2026-11-21T19:07:29.791Z",
+    "lastChecked": "2026-11-25T11:11:14.000Z",
+    "lastVerified": "2026-11-25T11:11:14.000Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-tencent-hy-simulmt-30b-a3b-fp8",
-    "contentHash": "ee54df7924a115c55c1831eee7c09fd3aab1f1eeaba92af4f798126d7c97de55",
-    "promotedRulesCount": 2,
+    "contentHash": "017c161de8876f1b12d7274dad53183f7a354715ed1a650622599b5ab2f02c56",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",

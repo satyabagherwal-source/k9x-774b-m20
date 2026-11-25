@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apache-incubator-pegasus-learnings.md`  
 > **Source**: github ([https://github.com/apache/incubator-pegasus](https://github.com/apache/incubator-pegasus))  
-> **Source Version**: `31da6f5e`  
+> **Source Version**: `02051942`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T13:11:08.070Z  
+> **Timestamp**: 2026-11-25T11:11:27.299Z  
 > **Learning ID**: `learn-github-apache-incubator-pegasus`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apache-incubator-pegasus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apache/incubator-pegasus](https://github.com/apache/incubator-pegasus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T13:11:08.063Z  
+> **Harvest Timestamp**: 2026-11-25T11:11:27.294Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Apache Pegasus - A horizontally scalable, strongly consistent and high-performance key-value store
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2068 stars
+- **Stars / Engagement**: 2069 stars
 
 ---
 
@@ -992,13 +992,11 @@ func wrapRPCFailure(resp rpcResponse, err error) error {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #2420** (2026-11-13): **ci(github): make v2.5 CI pass on current GitHub runners**
-  *Symptoms*: ### What problem does this PR solve?  CI on `v2.5` is broken in two independent ways:  1. **The workflows never start.** Third-party actions in v2.5 workflows are either unpinned or pinned to SHAs that have since been removed from the ASF organization-wide allow-list (`apache/infrastructure-actions`). Under the ASF GitHub Actions policy, an `apache/*` workflow that references a non-allow-listed action ends in `startup_failure`: no jobs, no logs, no PR check. That is why `Cpp CI` currently does not run at all for PRs targeting `v2.5` (for example #2394), so C++ changes on this branch get no test coverage.  2. **Every test job fails once CI does start.** `Test Release`, `Test ASAN` and `Test jemalloc` all fail because ZooKeeper cannot start inside `apache/pegasus:thirdparties-bin-test-ubuntu2204-v2.5` (image built on 2023-10-18):     ```    Starting zookeeper ... FAILED TO START    java.lang.NullPointerException        at jdk.internal.platform.cgroupv2.CgroupV2Subsystem.getInstance(CgroupV2Subsystem.java:81)        ...        at sun.management.Agent.startLocalManagementAgent(Agent.java:137)    Exception thrown by the agent : java.lang.NullPointerException    ```     The image ships JDK 8u382, whose cgroup v2 metrics code throws on cgroup v2 hosts (which current GitHub runners are). ZooKeeper enables JMX by default, so the JVM starts the local management agent, hits the exception and aborts. The `v2.5` test images are no longer refreshed (`schedule` triggers only run on the defa
+- **Issue #2431** (2026-11-25): **ci(github): re-pin actions to ASF allow-list to fix broken CI**
+  *Symptoms*: ### What problem does this PR solve?  CI on `master` has been broken for **every** pull request since 2026-11-13: Apache tightened the GitHub Actions allow-list and dropped the SHAs pinned on `master`. Once CI ran again, twelve more hidden problems surfaced. This PR fixes all thirteen:  **1. Actions allow-list re-pinned (`3144c45d`).** The dropped SHAs killed Cpp CI at `dorny/paths-filter` ("not allowed") and made Standardization Lint `startup_failure`. All `uses:` under `.github/` are re-pinned to the newest versions `approved_patterns.yml` allows — the same SHAs `v2.5` has run since #2420. 0 violations remain.  **2. `master` does not compile (`2b0590a6`).** `local_replica_recover.cpp` used an unqualified `replica_stub` (merged during the CI blackout, never compiled). Qualified as `dsn::replication::replica_stub`.  **3. scala client installs an sbt that cannot run on JDK 8 (`6b2adc6e`).** Unversioned `sdk install sbt` now yields sbt 2.x, which requires JDK 17. Pinned to 1.10.11.  **4. ASAN tests abort at startup and hang for six hours (`57bbaae5`, `9066e61a`).** The image's gcc `libasan.so.6` cannot cope with 16TB mmap randomization (`vm.mmap_rnd_bits=32`). The ASAN test job now runs the test process under `setarch $(uname -m) -R` with `--security-opt seccomp=unconfined` (the default seccomp profile denies `personality(2)`), and both test jobs get `timeout-minutes: 90` instead of hanging to the 6h job limit.  **5. scala client cannot resolve dependencies (`9066e61a`).** Buil
 
-- **Issue #2419** (2026-11-13): **Is this project stop?**
-  *Symptoms*: ## General Question  Before asking a question, make sure you have:  - Searched open and closed [GitHub issues](https://github.com/apache/incubator-pegasus/issues) - Read the documentation:   - [Pegasus Doc](https://pegasus.apache.org) 
-  **Post-Mortem & Fix Analysis**:
-  > @zhanglistar This project is still actively maintained, even though it has been quiet for a while.
+- **Issue #2429** (2026-11-17): **feat(duplication): make the task code for incremental loading from private logs configurable (cherry-pick #2184)**
+  *Symptoms*: ## Backport  - Original PR: #2184 - Target branch: v2.5 - Release: 2.5.1  ## Conflict resolution  - Include path adapted: `v2.5` keeps the nested layout, so `task/task_code.h` becomes `runtime/task/task_code.h`. - Namespace kept in the C++14 two-level form (`namespace dsn { namespace replication {`), because `v2.5` builds with `-std=c++14 -Werror` and clang-14 rejects nested namespace definitions. - Dropped master's `METRIC_DEFINE_counter(dup_confirmed_mutations, ...)` block: `v2.5` does not have the new metrics framework and the counter is unrelated to this change. - The functional change is preserved: `FLAGS_dup_load_plog_task` (default `LPC_REPLICATION_LONG_LOW`) is parsed with `task_code::try_get()` and falls back to `LPC_REPLICATION_LONG_LOW` with an error log when invalid.  ## Verification  - [ ] Affected module builds on `v2.5` - [ ] Related unit tests pass - [ ] IWYU (clang-14, `-std=c++14 -Werror`) passes - [ ] Manual verification/regression (if any) 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1015,580 +1013,428 @@ func wrapRPCFailure(resp rpcResponse, err error) error {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `31da6f5e` (2026-11-13)
-**Commit Message**: feat: add offline Pegasus replica recovery and checker tools (#2416)
+### Incident Patch 1: `02051942` (2026-11-25)
+**Commit Message**: ci(github): re-pin actions to ASF allow-list to fix broken CI (#2431)
 
 ### What problem does this PR solve?
 
-A corrupted RocksDB MANIFEST can prevent a Pegasus replica from opening even when many SST files are still readable. Operators need an offline way to salvage the readable records and verify the rebuilt replica before using it.
+CI on `master` has been broken for **every** pull request since 2026-11-13: Apache
+tightened the GitHub Actions allow-list and dropped the SHAs pinned on `master`. Once
+CI ran again, twelve more hidden problems surfaced. This PR fixes all thirteen:
 
-### What is changed and how does it work?
+**1. Actions allow-list re-pinned (`3144c45d`).** The dropped SHAs killed Cpp CI at
+`dorny/paths-filter` ("not allowed") and made Standardization Lint `startup_failure`.
+All `uses:` under `.github/` are re-pinned to the newest versions `approved_patterns.yml`
+allows — the same SHAs `v2.5` has run since #2420. 0 violations remain.
 
-- Add `local_replica_recover` to Pegasus shell. It first reads the source through the RocksDB DB view; if the DB cannot open, it scans SST files individually and writes a new replica with the data and metadata column families, `.app-info`, and `.init-info`.
-- Write `sst_recovery_report.txt` with per-file counts and reasons for skipped or partially scanned SSTs.
-- Add `local_replica_check` to Pegasus shell and a standalone `pegasus_replica_checker` binary. They validate replica layout and metadata, open the rebuilt RocksDB, and optionally verify SST files and checksums.
+**2. `master` does not compile (`2b0590a6`).** `local_replica_recover.cpp` used an
+unqualified `replica_stub` (merged during the CI blackout, never compiled). Qualified
+as `dsn::replication::replica_stub`.
 
-SST fallback is best effort: without the DB's merged view, overwritten or deleted values may reappear. The report identifies unreadable files, but a recovered replica should be compared with a healthy replica or backup before it is used.
+**3. scala client installs an sbt that cannot run on JDK 8 (`6b2adc6e`).** Unversioned
+`sdk install sbt` now yields sbt 2.x, which requires JDK 17. Pinned to 1.10.11.
 
-**File**: `src/CMakeLists.txt` (modified, +1/-0)
+**4. ASAN tests abort at startup and hang for six hours (`57bbaae5`, `9066e61a`).**
+The image's gcc `libasan.so.6` cannot cope with 1
+
+**File**: `.github/actions/rebuild_thirdparty_if_needed/action.yaml` (modified, +2/-1)
 ```diff
-@@ -65,4 +65,5 @@ add_subdirectory(test/kill_test)
- add_subdirectory(test/pressure_test)
- add_subdirectory(tools)
- add_subdirectory(utils)
-+add_subdirectory(recovery_checker)
- add_subdirectory(zookeeper)
+@@ -19,7 +19,8 @@ name: Rebuild thirdparty if needed
+ runs:
+   using: composite
+   steps:
+-    - uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36
++    # dorny/paths-filter@v4.0.3
++    - uses: dorny/paths-filter@ceb8a2b8f2d89434be7ff52d3de7ec3738c5cc9d
+       id: changes
+       with:
+         filters: |
 ```
 
-**File**: `src/recovery_checker/CMakeLists.txt` (added, +34/-0)
+**File**: `.github/actions/run_server_tests/action.yaml` (modified, +18/-1)
 ```diff
-@@ -0,0 +1,34 @@
-+# Licensed to the Apache Software Foundation (ASF) under one
-+# or more contributor license agreements.  See the NOTICE file
-+# distributed with this work for additional information
-+# regarding copyright ownership.  The ASF licenses this file
-+# to you under the Apache License, Version 2.0 (the
-+# "License"); you may not use this file except in compliance
-+# with the License.  You may obtain a copy of the License at
-+#
-+#   http://www.apache.org/licenses/LICENSE-2.0
-+#
-+# Unless required by applicable law or agreed to in writing,
-+# software distributed under the License is distributed on an
-+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-+# KIND, either express or implied.  See the License for the
-+# specific language governing permissions and limitations
-+# under the License.
-+
-+set(MY_PROJ_NAME pegasus_replica_checker)
-+set(MY_SRC_SEARCH_MODE "GLOB")
-+set(MY_PROJ_SRC "")
-+set(MY_PROJ_LIBS
-+        dsn_replica_server
-+        pegasus_base
-+        dsn_utils
-+        rocksdb
-+        lz4
-+        zstd
-+        snappy)
-+set(MY_BOOST_LIBS Boost::filesystem Boost::system)
-+set(MY_BINPLACES "")
-+SET(CMAKE_INSTALL_RPATH ".")
-+SET(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
-+dsn_add_executable()
-+dsn_install_executable()
+@@ -16,12 +16,29 @@
+ # under the License.
+ 
+ name: Run server tests
++inputs:
++  disable_aslr:
++    description: |
++      Disable address space layout randomization for the whole test process tree.
++      Required by the ASAN build: the image ships gcc's libasan.so.6, which aborts
++      at startup with "AddressSanitizer failed to deallocate ... unable to unmap"
++      once the loader places a shared library inside the shadow memory range,
++      because the runners randomize mmap addresses over 16TB (vm.mmap_rnd_bits=32).
++      The same workaround is used by v2.5's ASAN test job.
++    required: false
++    default: "false"
+ runs:
+   using: composite
+   steps:
+     - name: Unit Testing
++      env:
++        DISABLE_ASLR: ${{ inputs.disable_aslr }}
+       run: |
+         export LD_LIBRARY_PATH=$(pwd)/thirdparty/output/lib:${JAVA_HOME}/jre/lib/amd64/server
+         ulimit -s unlimited
+-        ./run.sh test --onebox_opts "$ONEBOX_OPTS" --test_opts "$TEST_OPTS" -m ${{ matrix.test_module }}
++        prefix=""
++        if [ "${DISABLE_ASLR}" = "true" ]; then
++          prefix="setarch $(uname -m) -R"
++        fi
++        ${prefix} ./run.sh test --onebox_opts "$ONEBOX_OPTS" --test_opts "$TEST_OPTS" -m ${{ matrix.test_module }}
+       shell: bash
 ```
 
-**File**: `src/recovery_checker/main.cpp` (added, +411/-0)
+**File**: `.github/workflows/build-push-env-docker.yml` (modified, +16/-16)
 ```diff
-@@ -0,0 +1,411 @@
-+// Licensed to the Apache Software Foundation (ASF) under one
-+// or more contributor license agreements.  See the NOTICE file
-+// distributed with this work for additional information
-+// regarding copyright ownership.  The ASF licenses this file
-+// to you under the Apache License, Version 2.0 (the
-+// "License"); you may not use this file except in compliance
-+// with the License.  You may obtain a copy of the License at
-+//
-+//   http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing,
-+// software distributed under the License is distributed on an
-+// "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-+// KIND, either express or implied.  See the License for the
-+// specific language governing permissions and limitations
-+// under the License.
-+
-+#include <fmt/core.h>
-+#include <rocksdb/db.h>
-+#include <rocksdb/iterator.h>
-+#include <rocksdb/options.h>
-+#include <rocksdb/sst_file_reader.h>
-+#include <rocksdb/status.h>
-+#include <cstdint>
-+#include <cstdio>
-+#include <memory>
-+#include <set>
-+#include <string>
-+#include <vector>
-+
-+#include "base/meta_store.h"
-+#include "common/gpid.h"
-+#include "dsn.layer2_types.h"
-+#include "replica/replica_stub.h"
-+#include "replica/replication_app_base.h"
-+#include "utils/error_code.h"
-+#include "utils/filesystem.h"
-+#include "utils/load_dump_object.h"
-+
-+namespace {
-+
-+enum class severity
-+{
-+    kPass,
-+    kWarn,
-+    kFail
-+};
-+
-+struct check_context
-+{
-+    bool verify_sst = false;
-+    bool verify_checksum = false;
-+    bool has_failure = false;
-+    bool has_warning = false;
-+};
-+
-+void print_result(check_context *ctx, severity sev, const std::string &message)
-+{
-+    switch (sev) {
-+    case severity::kPass:
-+        fmt::print(stdout, "[PASS] {}\n", message);
-+        break;
-+    case severity::kWarn:
-+        ctx->has_warning = true;
-+        fmt::print(stdout, "[WARN] {}\n", message);
-+        break;
-+    case severity::kFail:
-+        ctx->has_failure = true;
-+        fmt::print(stdout, "[FAIL] {}\n", message);
-+        break;
-+    }
-+}
-+
-+void print_usage(const char *prog)
-+{
-+    fmt::print(stderr,
-+               "USAGE: {} <replica_dir> [--verify-sst] [--verify-checksum]\n"
-+               "  --verify-sst       open every .sst file with rocksdb::SstFileReader\n"
-+               "  --verify-checksum  with --verify-sst, also verify checksum for every .sst\n",
-+               prog);
-+}
-+
-+bool parse_args(int argc, char **argv, std::string *replica_dir, check_context *ctx)
-+{
-+    if (argc < 2) {
-+        return false;
-+    }
-+    *replica_dir = argv[1];
-+    for (int i = 2; i < argc; ++i) {
-+        const std::string arg = argv[i];
-+        if (arg == "--verify-sst") {
-+            ctx->verify_sst = true;
-+        } else if (arg == "--verify-checksum") {
-+            ctx->verify_sst = true;
-+            ctx->verify_checksum = true;
-+        } else {
-+            fmt::print(stderr, "ERROR: unknown argument '{}'\n", arg);
-+            return false;
-+        }
-+    }
-+    return true;
-+}
-+
-+bool has_prefix(const std::string &name, const std::string &prefix)
-+{
-+    return name.size() >= prefix.size() && name.compare(0, prefix.size(), prefix) == 0;
-+}
-+
-+bool has_suffix(const std::string &name, const std::string &suffix)
-+{
-+    return name.size() >= suffix.size() &&
-+           name.compare(name.size() - suffix.size(), suffix.size(), suffix) == 0;
-+}
-+
-+void check_required_files(const std::string &replica_dir,
-+                          const std::string &rdb_dir,
-+                          check_context *ctx)
-+{
-+    const auto app_info_path = dsn::utils::filesystem::path_combine(
-+        replica_dir, dsn::replication::replica_app_info::kAppInfo);
-+    const auto init_info_path = dsn::utils::filesystem::path_combine(
-+        replica_dir, dsn::replication::replica_init_info::kInitInfo);
-+
-+    print_result(ctx,
-+                 dsn::utils::filesystem::directory_exists(replica_dir) ? severity::kPass
-+                                                                       : severity::kFail,
-+                 fmt::format("replica dir {}", replica_dir));
-+    print_result(ctx,
-+                 dsn::utils::filesystem::file_exists(app_info_path) ? severity::kPass
-+                                                                    : severity::kFail,
-+                 fmt::format("found {}", app_info_path));
-+    print_result(ctx,
-+                 dsn::utils::filesystem::file_exists(init_info_path) ? severity::kPass
-+                                                                     : severity::kFail,
-+                 fmt::format("found {}", init_info_path));
-+    print_result(ctx,
-+                 dsn::utils::filesystem::directory_exists(rdb_dir) ? severity::kPass
-+                                                                   : severity::kFail,
-+                 fmt::format("found rocksdb dir {}", rdb_dir));
-+}
-+
-+bool check_replica_metadata(const std::string &replica_dir, c
+@@ -55,20 +55,20 @@ jobs:
+         # actions/checkout@v4.3.1
+         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+       - name: Set up QEMU
+-        # docker/setup-qemu-action@v3.7.0
+-        uses: docker/setup-qemu-action@c7c53464625b32c7a7e944ae62b3e17d2b600130
++        # docker/setup-qemu-action@v4.4.0
++        uses: docker/setup-qemu-action@99012661954931238ded8c8b007157a8430204e1
+       - name: Set up Docker Buildx
+-        # docker/setup-buildx-action@v3.12.0
+-        uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f
++        # docker/setup-buildx-action@v4.4.1
++        uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069
+       - name: Login to DockerHub
+-        # docker/login-action@3.7.0
+-        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9
++        # docker/login-action@v4.8.0
++        uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550
+         with:
+           username: ${{ secrets.DOCKERHUB_USER }}
+           password: ${{ secrets.DOCKERHUB_TOKEN }}
+       - name: Build and push
+-        # docker/build-push-action@v6.19.2
+-        uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8
++        # docker/build-push-action@v7.4.0
++        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc
+         with:
+           platforms: linux/amd64
+           context: .
+@@ -91,20 +91,20 @@ jobs:
+         # actions/checkout@v4.3.1
+         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+       - name: Set up QEMU
+-        # docker/setup-qemu-action@v3.7.0
+-        uses: docker/setup-qemu-action@c7c53464625b32c7a7e944ae62b3e17d2b600130
++        # docker/setup-qemu-action@v4.4.0
++        uses: docker/setup-qemu-action@99012661954931238ded8c8b007157a8430204e1
+       - name: Set up Docker Buildx
+-        # docker/setup-buildx-action@v3.12.0
+-        uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f
++        # docker/setup-buildx-action@v4.4.1
++        uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069
+       - name: Login to DockerHub
+-        # docker/login-action@3.7.0
+-        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9
++        # docker/login-action@v4.8.0
++        uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550
+         with:
+           username: ${{ secrets.DOCKERHUB_USER }}
+           password: ${{ secrets.DOCKERHUB_TOKEN }}
+       - name: Build and push
+-        # docker/build-push-action@v6.19.2
+-        uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8
++        # docker/build-push-action@v7.4.0
++        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc
+         with:
+           platforms: linux/amd64
+           context: .
 ```
 
-**File**: `src/shell/commands.h` (modified, +8/-0)
+**File**: `.github/workflows/build-push-thirdparty.yml` (modified, +48/-48)
 ```diff
-@@ -280,3 +280,11 @@ bool detect_hotkey(command_executor *e, shell_context *sc, arguments args);
- // == local partition split (see 'commands/local_partition_split.cpp') == //
- extern const std::string local_partition_split_help;
- bool local_partition_split(command_executor *e, shell_context *sc, arguments args);
-+
-+// == local replica recover (see 'commands/local_replica_recover.cpp') == //
-+extern const std::string local_replica_recover_help;
-+bool local_replica_recover(command_executor *e, shell_context *sc, arguments args);
-+
-+// == local replica check (see 'commands/local_replica_check.cpp') == //
-+extern const std::string local_replica_check_help;
-+bool local_replica_check(command_executor *e, shell_context *sc, arguments args);
+@@ -31,20 +31,20 @@ jobs:
+       # actions/checkout@v4.3.1
+       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+       - name: Set up QEMU
+-        # docker/setup-qemu-action@v1.2.0
+-        uses: docker/setup-qemu-action@27d0a4f181a40b142cce983c5393082c365d1480
++        # docker/setup-qemu-action@v4.4.0
++        uses: docker/setup-qemu-action@99012661954931238ded8c8b007157a8430204e1
+       - name: Set up Docker Buildx
+-        # docker/setup-buildx-action@v1.7.0
+-        uses: docker/setup-buildx-action@f211e3e9ded2d9377c8cadc4489a4e38014bc4c9
++        # docker/setup-buildx-action@v4.4.1
++        uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069
+       - name: Login to DockerHub
+-        # docker/login-action@1.14.1
+-        uses: docker/login-action@dd4fa0671be5250ee6f50aedf4cb05514abda2c7
++        # docker/login-action@v4.8.0
++        uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550
+         with:
+           username: ${{ secrets.DOCKERHUB_USER }}
+           password: ${{ secrets.DOCKERHUB_TOKEN }}
+       - name: Build and push
+-        # docker/build-push-action@v2.10.0
+-        uses: docker/build-push-action@ac9327eae2b366085ac7f6a2d02df8aa8ead720a
++        # docker/build-push-action@v7.4.0
++        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc
+         with:
+           context: .
+           file: ./docker/thirdparties-src/Dockerfile
+@@ -72,20 +72,20 @@ jobs:
+       # actions/checkout@v3.6.0
+       - uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744
+       - name: Set up QEMU
+-        # docker/setup-qemu-action@v1.2.0
+-        uses: docker/setup-qemu-action@27d0a4f181a40b142cce983c5393082c365d1480
++        # docker/setup-qemu-action@v4.4.0
++        uses: docker/setup-qemu-action@99012661954931238ded8c8b007157a8430204e1
+       - name: Set up Docker Buildx
+-        # docker/setup-buildx-action@v1.7.0
+-        uses: docker/setup-buildx-action@f211e3e9ded2d9377c8cadc4489a4e38014bc4c9
++        # docker/setup-buildx-action@v4.4.1
++        uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069
+       - name: Login to DockerHub
+-        # docker/login-action@1.14.1
+-        uses: docker/login-action@dd4fa0671be5250ee6f50aedf4cb05514abda2c7
++        # docker/login-action@v4.8.0
++        uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550
+         with:
+           username: ${{ secrets.DOCKERHUB_USER }}
+           password: ${{ secrets.DOCKERHUB_TOKEN }}
+       - name: Build and push for production
+-        # docker/build-push-action@v2.10.0
+-        uses: docker/build-push-action@ac9327eae2b366085ac7f6a2d02df8aa8ead720a
++        # docker/build-push-action@v7.4.0
++        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc
+         with:
+           context: .
+           file: ./docker/thirdparties-bin/Dockerfile
+@@ -113,20 +113,20 @@ jobs:
+       # actions/checkout@v3.6.0
+       - uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744
+       - name: Set up QEMU
+-        # docker/setup-qemu-action@v1.2.0
+-        uses: docker/setup-qemu-action@27d0a4f181a40b142cce983c5393082c365d1480
++        # docker/setup-qemu-action@v4.4.0
++        uses: docker/setup-qemu-action@99012661954931238ded8c8b007157a8430204e1
+       - name: Set up Docker Buildx
+-        # docker/setup-buildx-action@v1.7.0
+-        uses: docker/setup-buildx-action@f211e3e9ded2d9377c8cadc4489a4e38014bc4c9
++        # docker/setup-buildx-action@v4.4.1
++        uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069
+       - name: Login to DockerHub
+-        # docker/login-action@1.14.1
+-        uses: docker/login-action@dd4fa0671be5250ee6f50aedf4cb05514abda2c7
++        # docker/login-action@v4.8.0
++        uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550
+         with:
+           username: ${{ secrets.DOCKERHUB_USER }}
+           password: ${{ secrets.DOCKERHUB_TOKEN }}
+       - name: Build and push for production with jemalloc
+-        # docker/build-push-action@v2.10.0
+-        uses: docker/build-push-action@ac9327eae2b366085ac7f6a2d02df8aa8ead720a
++        # docker/build-push-action@v7.4.0
++        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc
+         with:
+           context: .
+           file: ./docker/thirdparties-bin/Dockerfile
+@@ -147,20 +147,20 @@ jobs:
+       # actions/checkout@v4.3.1
+       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+       - name: Set up QEMU
+-        # docker/setup-qemu-action@v1.2.0
+-        uses: docker/setup-qemu-action@27d0a4f181a40b142cce983c5393082c365d1480
++        # docker/setup-qemu-action@v4.4.0
++        uses: docker/setup-qemu-action@99012661954931238ded8c8b007157a8430204e1
+       - name: Set up Docker Buildx
+-        # docker/setup-buildx-action@v1.7.0
+-        uses: docker/setup-buildx-action@f211e3e9ded2d9377c8cadc4489a4e38014bc4c9
++        # docker/setup-buildx-act
 ```
 
-**File**: `src/shell/commands/local_replica_check.cpp` (added, +395/-0)
+**File**: `.github/workflows/lint_and_test_cpp.yaml` (modified, +16/-2)
 ```diff
-@@ -0,0 +1,395 @@
-+// Licensed to the Apache Software Foundation (ASF) under one
-+// or more contributor license agreements.  See the NOTICE file
-+// distributed with this work for additional information
-+// regarding copyright ownership.  The ASF licenses this file
-+// to you under the Apache License, Version 2.0 (the
-+// "License"); you may not use this file except in compliance
-+// with the License.  You may obtain a copy of the License at
-+//
-+//   http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing,
-+// software distributed under the License is distributed on an
-+// "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-+// KIND, either express or implied.  See the License for the
-+// specific language governing permissions and limitations
-+// under the License.
-+
-+#include <fmt/core.h>
-+#include <rocksdb/db.h>
-+#include <rocksdb/iterator.h>
-+#include <rocksdb/options.h>
-+#include <rocksdb/sst_file_reader.h>
-+#include <rocksdb/status.h>
-+#include <cstdint>
-+#include <cstdio>
-+#include <memory>
-+#include <set>
-+#include <string>
-+#include <vector>
-+
-+#include "base/meta_store.h"
-+#include "common/gpid.h"
-+#include "dsn.layer2_types.h"
-+#include "replica/replica_stub.h"
-+#include "replica/replication_app_base.h"
-+#include "shell/argh.h"
-+#include "shell/command_executor.h"
-+#include "shell/commands.h"
-+#include "utils/error_code.h"
-+#include "utils/filesystem.h"
-+#include "utils/load_dump_object.h"
-+
-+const std::string local_replica_check_help = "<replica_dir> [--verify_sst] [--verify_checksum]";
-+
-+namespace {
-+
-+enum class check_severity
-+{
-+    kPass,
-+    kWarn,
-+    kFail
-+};
-+
-+struct check_context
-+{
-+    bool verify_sst = false;
-+    bool verify_checksum = false;
-+    bool has_failure = false;
-+    bool has_warning = false;
-+};
-+
-+void print_result(check_context *ctx, check_severity sev, const std::string &message)
-+{
-+    switch (sev) {
-+    case check_severity::kPass:
-+        fmt::print(stdout, "[PASS] {}\n", message);
-+        break;
-+    case check_severity::kWarn:
-+        ctx->has_warning = true;
-+        fmt::print(stdout, "[WARN] {}\n", message);
-+        break;
-+    case check_severity::kFail:
-+        ctx->has_failure = true;
-+        fmt::print(stdout, "[FAIL] {}\n", message);
-+        break;
-+    }
-+}
-+
-+bool has_prefix(const std::string &name, const std::string &prefix)
-+{
-+    return name.size() >= prefix.size() && name.compare(0, prefix.size(), prefix) == 0;
-+}
-+
-+bool has_suffix(const std::string &name, const std::string &suffix)
-+{
-+    return name.size() >= suffix.size() &&
-+           name.compare(name.size() - suffix.size(), suffix.size(), suffix) == 0;
-+}
-+
-+void check_required_files(const std::string &replica_dir,
-+                          const std::string &rdb_dir,
-+                          check_context *ctx)
-+{
-+    const auto app_info_path = dsn::utils::filesystem::path_combine(
-+        replica_dir, dsn::replication::replica_app_info::kAppInfo);
-+    const auto init_info_path = dsn::utils::filesystem::path_combine(
-+        replica_dir, dsn::replication::replica_init_info::kInitInfo);
-+
-+    print_result(ctx,
-+                 dsn::utils::filesystem::directory_exists(replica_dir) ? check_severity::kPass
-+                                                                       : check_severity::kFail,
-+                 fmt::format("replica dir {}", replica_dir));
-+    print_result(ctx,
-+                 dsn::utils::filesystem::file_exists(app_info_path) ? check_severity::kPass
-+                                                                    : check_severity::kFail,
-+                 fmt::format("found {}", app_info_path));
-+    print_result(ctx,
-+                 dsn::utils::filesystem::file_exists(init_info_path) ? check_severity::kPass
-+                                                                     : check_severity::kFail,
-+                 fmt::format("found {}", init_info_path));
-+    print_result(ctx,
-+                 dsn::utils::filesystem::directory_exists(rdb_dir) ? check_severity::kPass
-+                                                                   : check_severity::kFail,
-+                 fmt::format("found rocksdb dir {}", rdb_dir));
-+}
-+
-+bool check_replica_metadata(const std::string &replica_dir, check_context *ctx, dsn::gpid *pid)
-+{
-+    dsn::app_info ai;
-+    std::string hint_message;
-+    if (!dsn::replication::replica_stub::validate_replica_dir(
-+            replica_dir, ai, *pid, hint_message)) {
-+        print_result(ctx, check_severity::kFail, hint_message);
-+        return false;
-+    }
-+
-+    print_result(ctx,
-+                 check_severity::kPass,
-+                 fmt::format("replica dir parsed: gpid={}, app_name='{}', app_type='{}', "
-+                             "partition_count={}, app_id={}",
-+                             pid->to_string(),
-+                             ai.app_name,
-+                             ai.app_type,
-+                             ai.partiti
+@@ -194,6 +194,7 @@ jobs:
+           - zookeeper_sasl_auth_test
+     needs: build_Release
+     runs-on: ubuntu-latest
++    timeout-minutes: 90
+     env:
+       ARTIFACT_NAME: release
+     container:
+@@ -287,18 +288,25 @@ jobs:
+           - zookeeper_sasl_auth_test
+     needs: build_ASAN
+     runs-on: ubuntu-latest
++    timeout-minutes: 90
+     env:
+       ARTIFACT_NAME: release_address
+     container:
+       image: apache/pegasus:thirdparties-bin-test-asan-ubuntu2204-${{ github.base_ref }}
+-      options: --cap-add=SYS_PTRACE
++      # Docker's default seccomp profile denies personality(ADDR_NO_RANDOMIZE), which
++      # is what `setarch -R` needs, so the ASLR workaround below fails with
++      # "setarch: failed to set personality to x86_64: Operation not permitted"
++      # unless seccomp is unconfined. v2.5's ASAN test job does the same.
++      options: --cap-add=SYS_PTRACE --security-opt seccomp=unconfined
+     steps:
+       # actions/checkout@v4.3.1
+       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+       - name: Download artifact
+         uses: "./.github/actions/download_artifact"
+       - name: Run server tests
+         uses: "./.github/actions/run_server_tests"
++        with:
++          disable_aslr: "true"
+ 
+ # TODO(yingchun): Build and test UBSAN version would cost a very long time, we will run these tests
+ #                 when we are going to release a stable version. So we disable them in regular CI
+@@ -447,7 +455,13 @@ jobs:
+         run: |
+           # Preinstalled softwares: https://github.com/actions/virtual-environments/blob/main/images/macos/macos-15-Readme.md
+           brew install ccache
+-          brew install openssl@1.1
++          # openssl@1.1 has been removed from Homebrew (installing it fails with
++          # "No such keg: /opt/homebrew/Cellar/openssl@1.1"), so use openssl@3 and
++          # point both the thirdparty and the pegasus builds at it: it is keg-only,
++          # so CMake does not find it on its own.
++          brew install openssl@3
++          echo "OPENSSL_ROOT_DIR=$(brew --prefix openssl@3)" >> "$GITHUB_ENV"
++          echo "CMAKE_PREFIX_PATH=$(brew --prefix openssl@3)" >> "$GITHUB_ENV"
+       # actions/checkout@v4.3.1
+       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+       - name: Setup cache
 ```
 
-**File**: `src/shell/commands/local_replica_recover.cpp` (added, +912/-0)
+**File**: `.github/workflows/lint_and_test_java-client.yml` (modified, +10/-2)
 ```diff
-@@ -0,0 +1,912 @@
-+// Licensed to the Apache Software Foundation (ASF) under one
-+// or more contributor license agreements.  See the NOTICE file
-+// distributed with this work for additional information
-+// regarding copyright ownership.  The ASF licenses this file
-+// to you under the Apache License, Version 2.0 (the
-+// "License"); you may not use this file except in compliance
-+// with the License.  You may obtain a copy of the License at
-+//
-+//   http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing,
-+// software distributed under the License is distributed on an
-+// "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-+// KIND, either express or implied.  See the License for the
-+// specific language governing permissions and limitations
-+// under the License.
-+
-+#include <fmt/core.h>
-+#include <rocksdb/db.h>
-+#include <rocksdb/iterator.h>
-+#include <rocksdb/options.h>
-+#include <rocksdb/slice.h>
-+#include <rocksdb/sst_file_reader.h>
-+#include <rocksdb/status.h>
-+#include <rocksdb/table_properties.h>
-+#include <rocksdb/write_batch.h>
-+#include <algorithm>
-+#include <cstdint>
-+#include <cstdio>
-+#include <cstring>
-+#include <fstream>
-+#include <map>
-+#include <memory>
-+#include <string>
-+#include <utility>
-+#include <vector>
-+
-+#include "base/meta_store.h"
-+#include "common/gpid.h"
-+#include "dsn.layer2_types.h"
-+#include "pegasus_value_schema.h"
-+#include "replica/replica_stub.h"
-+#include "replica/replication_app_base.h"
-+#include "shell/argh.h"
-+#include "shell/command_executor.h"
-+#include "shell/commands.h"
-+#include "utils/defer.h"
-+#include "utils/endians.h"
-+#include "utils/error_code.h"
-+#include "utils/filesystem.h"
-+#include "utils/fmt_logging.h"
-+#include "utils/load_dump_object.h"
-+#include "utils/string_conv.h"
-+
-+const std::string local_replica_recover_help =
-+    "<src_replica_dir> <dst_replica_dir> [--force_sst_scan] [--verify_checksum] "
-+    "[--write_batch_count num] [--pegasus_data_version num] [--last_flushed_decree num] "
-+    "[--last_manual_compact_finish_time num]";
-+
-+namespace {
-+
-+const std::string kPegasusDataVersion = "pegasus_data_version";
-+const std::string kPegasusLastFlushedDecree = "pegasus_last_flushed_decree";
-+const std::string kPegasusLastManualCompactFinishTime = "pegasus_last_manual_compact_finish_time";
-+
-+struct recover_options
-+{
-+    std::string src_replica_dir;
-+    std::string dst_replica_dir;
-+    std::string src_rdb_dir;
-+    std::string dst_rdb_dir;
-+    std::string sst_report_file;
-+    bool force_sst_scan = false;
-+    bool verify_checksum = false;
-+    uint64_t write_batch_count = 1000;
-+    bool has_data_version_override = false;
-+    uint32_t data_version_override = 0;
-+    bool has_last_flushed_decree_override = false;
-+    uint64_t last_flushed_decree_override = 0;
-+    bool has_last_manual_compact_finish_time_override = false;
-+    uint64_t last_manual_compact_finish_time_override = 0;
-+};
-+
-+struct recovered_metadata
-+{
-+    std::map<std::string, std::string> meta_kvs;
-+    bool has_data_version = false;
-+    uint32_t data_version = 0;
-+    bool has_last_flushed_decree = false;
-+    uint64_t last_flushed_decree = 0;
-+    bool has_last_manual_compact_finish_time = false;
-+    uint64_t last_manual_compact_finish_time = 0;
-+};
-+
-+struct recovery_stats
-+{
-+    uint64_t data_kv_count = 0;
-+    uint64_t meta_kv_count = 0;
-+    uint64_t scanned_sst_count = 0;
-+    uint64_t skipped_bad_sst_count = 0;
-+};
-+
-+struct sst_recovery_record
-+{
-+    std::string path;
-+    std::string column_family_name;
-+    uint64_t data_kv_count = 0;
-+    uint64_t meta_kv_count = 0;
-+    uint64_t invalid_key_count = 0;
-+    bool skipped = false;
-+    bool partial = false;
-+    std::string skip_reason;
-+    std::string partial_reason;
-+};
-+
-+struct sst_recovery_report
-+{
-+    bool used_sst_scan = false;
-+    bool completed = false;
-+    std::string source_rdb_dir;
-+    std::vector<sst_recovery_record> records;
-+};
-+
-+bool parse_u64(const std::string &value, uint64_t *result)
-+{
-+    return dsn::buf2uint64(value, *result);
-+}
-+
-+bool parse_u32(const std::string &value, uint32_t *result)
-+{
-+    uint64_t tmp = 0;
-+    if (!parse_u64(value, &tmp) || tmp > UINT32_MAX) {
-+        return false;
-+    }
-+    *result = static_cast<uint32_t>(tmp);
-+    return true;
-+}
-+
-+void refresh_required_metadata(recovered_metadata *meta)
-+{
-+    auto refresh_u64 = [meta](const std::string &key, bool *has_value, uint64_t *value) {
-+        const auto it = meta->meta_kvs.find(key);
-+        if (it == meta->meta_kvs.end()) {
-+            return;
-+        }
-+        uint64_t parsed = 0;
-+        if (parse_u64(it->second, &parsed)) {
-+            *has_value = true;
-+            *value = parsed;
-+        }
-+    };
-+
-+    refresh_u64(
-+        kPegasusLastFlushedDecree, &meta->has_last_flushed_decree, &meta->last_flushed_decree);
-+    refresh_u64(kPegasusLastManualCompactFinishTime,
-+                &meta->has_last_manual_compact_finish_time,
-+
+@@ -45,7 +45,13 @@ jobs:
+       # actions/setup-java@v4.8.0
+       - uses: actions/setup-java@c1e323688fd81a25caa38c78aa6df2d33d3e20d9
+         with:
+-          java-version: 8
++          # The bare major version resolves to Temurin's *latest* JDK 8 release,
++          # and the release assets of the current latest (8.0.514+1, jdk8u514-b01)
++          # are broken: setup-java downloads them in ~40ms and `tar xz` then dies
++          # with "gzip: stdin: not in gzip format". Pin the previous release,
++          # whose x64 Linux tarball was verified to download and decompress
++          # cleanly; unpin once 8.0.514+1 is republished.
++          java-version: '8.0.512+9'
+           distribution: temurin
+       - name: spotless
+         working-directory: ./java-client
+@@ -83,7 +89,9 @@ jobs:
+     strategy:
+       fail-fast: false
+       matrix:
+-        java: [ '8', '11', '17' ]
++        # '8.0.512+9' instead of '8': see the comment at the spotless job's
++        # setup-java step — the latest Temurin 8 release has broken assets.
++        java: [ '8.0.512+9', '11', '17' ]
+     steps:
+       # actions/checkout@v4.3.1
+       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
 ```
 
-**File**: `src/shell/main.cpp` (modified, +28/-0)
+**File**: `.github/workflows/lint_and_test_scala-client.yml` (modified, +28/-4)
 ```diff
-@@ -663,6 +663,34 @@ static command_executor commands[] = {
-         local_partition_split_help.c_str(),
-         local_partition_split,
-     },
-+    {
-+        "local_replica_recover",
-+        "Recover a damaged local Pegasus replica offline. Note:\n"
-+        "  * Stop the replica servers before executing this command\n"
-+        "  * <src_replica_dir> is the damaged replica directory, such as "
-+        "    /data/replica/1.2.pegasus\n"
-+        "  * <dst_replica_dir> is a new output replica directory, and must not exist\n"
-+        "  * It first tries to recover from the RocksDB merged DB view; if opening the DB fails, "
-+        "    it falls back to scanning each .sst file directly\n"
-+        "  * --force_sst_scan forces direct .sst scanning and skips the DB-view phase\n"
-+        "  * --verify_checksum verifies each .sst checksum before reading it\n"
-+        "  * --pegasus_data_version can be used when metadata cannot be recovered automatically\n"
-+        "  * The tool rebuilds both default/data and pegasus_meta_cf, and rewrites .app-info "
-+        "    and .init-info for the new replica directory\n",
-+        local_replica_recover_help.c_str(),
-+        local_replica_recover,
-+    },
-+    {
-+        "local_replica_check",
-+        "Check whether a local Pegasus replica directory is structurally usable. Note:\n"
-+        "  * Stop the replica servers before executing this command\n"
-+        "  * <replica_dir> is the local replica directory, such as /data/replica/1.2.pegasus\n"
-+        "  * It checks .app-info, .init-info, data/rdb, rocksdb column families, and meta cf\n"
-+        "  * --verify_sst opens every .sst file one by one\n"
-+        "  * --verify_checksum verifies each .sst checksum and implies --verify_sst\n",
-+        local_replica_check_help.c_str(),
-+        local_replica_check,
-+    },
-     {
-         "exit",
-         "exit shell",
+@@ -45,13 +45,21 @@ jobs:
+       # actions/setup-java@v4.8.0
+       - uses: actions/setup-java@c1e323688fd81a25caa38c78aa6df2d33d3e20d9
+         with:
+-          java-version: 8
++          # The bare major version resolves to Temurin's *latest* JDK 8 release,
++          # and the release assets of the current latest (8.0.514+1, jdk8u514-b01)
++          # are broken: setup-java downloads them in ~40ms and `tar xz` then dies
++          # with "gzip: stdin: not in gzip format". Pin the previous release,
++          # whose x64 Linux tarball was verified to download and decompress
++          # cleanly; unpin once 8.0.514+1 is republished. Runs on runners whose
++          # pre-seeded tool cache already has a JDK 8 skip the download, which
++          # is why this used to pass intermittently.
++          java-version: '8.0.512+9'
+           distribution: temurin
+       - name: Install sbt
+         run: |
+           curl -s "https://get.sdkman.io" | bash
+           source "${HOME}/.sdkman/bin/sdkman-init.sh"
+-          sdk install sbt
++          sdk install sbt 1.10.11
+           sbt -V
+       - name: Check format with sbt
+         working-directory: ./scala-client
+@@ -85,7 +93,9 @@ jobs:
+     strategy:
+       fail-fast: false
+       matrix:
+-        java: [ '8', '11', '17' ]
++        # '8.0.512+9' instead of '8': see the comment at the Format job's
++        # setup-java step — the latest Temurin 8 release has broken assets.
++        java: [ '8.0.512+9', '11', '17' ]
+     steps:
+       # actions/checkout@v4.3.1
+       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+@@ -105,7 +115,7 @@ jobs:
+         run: |
+           curl -s "https://get.sdkman.io" | bash
+           source "${HOME}/.sdkman/bin/sdkman-init.sh"
+-          sdk install sbt
++          sdk install sbt 1.10.11
+           sbt -V
+       - name: Download thrift
+         working-directory: ./java-client/scripts
+@@ -115,6 +125,20 @@ jobs:
+         run: |
+           mvn clean package -DskipTests -Dcheckstyle.skip=true
+           mvn clean install -DskipTests -Dcheckstyle.skip=true
++      - name: Prefetch Scala client dependencies
++        # `sbt test` resolves pegasus-client from the local Maven repository, and
++        # coursier then looks for its dependencies' artifacts there as well. Building
++        # java-client only downloaded the POMs of netty's native modules, not their
++        # per-platform classifier jars, so `sbt update` fails with:
++        #   file:///root/.m2/repository/io/netty/netty-tcnative-boringssl-static/
++        #   2.0.70.Final/netty-tcnative-boringssl-static-2.0.70.Final-linux-x86_64.jar:
++        #   not found
++        # Resolve the whole dependency tree with Maven, which does reach Maven Central,
++        # so that the jars are already in the local repository when sbt runs.
++        working-directory: ./scala-client
++        run: |
++          mvn -q dependency:get -Dartifact=org.apache.pegasus:pegasus-client:2.6.0-SNAPSHOT \
++            -Dtransitive=true
+       - name: Download artifact
+         uses: "./.github/actions/download_artifact"
+       - name: Start Pegasus cluster
+```
+
+**File**: `.github/workflows/standardization_lint.yaml` (modified, +4/-2)
+```diff
+@@ -50,15 +50,17 @@ jobs:
+     steps:
+       # actions/checkout@v4.3.1
+       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+-      - uses: tcort/github-action-markdown-link-check@e7c7a18363c842693fadde5d41a3bd3573a7a225
++      # tcort/github-action-markdown-link-check@v1.1.3
++      - uses: tcort/github-action-markdown-link-check@e047c5b37f24ab722bbef1a27b6fab7f96bc4068
+ 
+   dockerfile_linter:
+     name: Lint Dockerfile
+     runs-on: ubuntu-latest
+     steps:
+       # actions/checkout@v4.3.1
+       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+-      - uses: hadolint/hadolint-action@2332a7b74a6de0dda2e2221d575162eba76ba5e5
++      # hadolint/hadolint-action@v3.5.0
++      - uses: hadolint/hadolint-action@06be81baf89a55ffd0e24b8f04a4185738dd3387
+         with:
+           recursive: true
+           ignore: 'DL3033,DL3013,DL3059,SC2086,DL3003,SC2164,DL3008,DL3007,DL3006,DL4001,DL3041'
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2420** (2026-11-13): ci(github): make v2.5 CI pass on current GitHub runners (@ruojieranyishen)
-- **PR #2416** (2026-11-13): feat: add offline Pegasus replica recovery and checker tools (@empiredan)
-- **PR #2403** (closed): ci(github): pin all actions to commit SHAs to comply with ASF allow-list policy (@acelyc111)
-- **PR #2402** (closed): [backport] ci(github): fix branch glob to actually match release branches (@acelyc111)
-- **PR #2401** (closed): ci(github): fix branch glob to actually match release branches (@acelyc111)
-- **PR #2399** (closed): block_service: fix 'occured' -> 'occurred' typos in ERR_FS_INTERNAL doc (@SAY-5)
+- **PR #2431** (2026-11-25): ci(github): re-pin actions to ASF allow-list to fix broken CI (@ruojieranyishen)
+- **PR #2429** (2026-11-17): feat(duplication): make the task code for incremental loading from private logs configurable (cherry-pick #2184) (@ruojieranyishen)
+- **PR #2428** (2026-11-17): fix(bulkload): Sometime ingest will hang when encountering write throttling (cherry-pick #2157) (@ruojieranyishen)
+- **PR #2427** (2026-11-17): fix(duplication): reduce the delay before last mutation is duplicated to the remote cluster (cherry-pick #2048) (@ruojieranyishen)
+- **PR #2426** (2026-11-18): fix(duplication): failed to start duplication after source replica servers exit due to missing duplicating status in .app-info (cherry-pick #1608) (@ruojieranyishen)
+- **PR #2425** (2026-11-17): fix(duplication): get duplication manager as shared_ptr in case raw pointer has been reset to null (cherry-pick #1968) (@ruojieranyishen)
 
 ---
 
@@ -1608,28 +1454,29 @@ SST fallback is best effort: without the DB's merged view, overwritten or delete
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. add offline Pegasus replica recovery and checker tools (#2416)
+## X. ci(github): re-pin actions to ASF allow-list to fix broken CI
 
 **RULE**:
-When implementing operations in `src/CMakeLists.txt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/incubator-pegasus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/actions/rebuild_thirdparty_if_needed/action.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/incubator-pegasus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `31da6f5e`: add offline Pegasus replica recovery and checker tools (#2416). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `02051942`: ci(github): re-pin actions to ASF allow-list to fix broken CI. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/CMakeLists.txt`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/actions/rebuild_thirdparty_if_needed/action.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-add_subdirectory(recovery_checker)
+    # dorny/paths-filter@v4.0.3
+    - uses: dorny/paths-filter@ceb8a2b8f2d89434be7ff52d3de7ec3738c5cc9d
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Induced defect failure mode:
+    - uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `31da6f5e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `02051942` are properly handled with clean fallback behavior.

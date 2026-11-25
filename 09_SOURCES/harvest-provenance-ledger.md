@@ -13076,3 +13076,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-liquidai-lfm3-1-7b` | `https://huggingface.co/LiquidAI/LFM3-1.7B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-25T10:57:39.058Z |
 | `learn-github-orange-opensource-hurl` | `https://github.com/Orange-OpenSource/hurl` | `013ceaf3` | Multi-dimensional audit evidence | 2026-11-25T10:57:45.238Z |
 | `learn-github-ytsaurus-ytsaurus` | `https://github.com/ytsaurus/ytsaurus` | `597eabf7` | Multi-dimensional audit evidence | 2026-11-25T10:57:59.770Z |
+| `learn-huggingface-tencent-hy-simulmt-30b-a3b-fp8` | `https://huggingface.co/tencent/Hy-SimulMT-30B-A3B-FP8` | `hf-tencent` | Multi-dimensional audit evidence | 2026-11-25T11:11:14.608Z |
+| `learn-github-apache-incubator-pegasus` | `https://github.com/apache/incubator-pegasus` | `02051942` | Multi-dimensional audit evidence | 2026-11-25T11:11:28.411Z |

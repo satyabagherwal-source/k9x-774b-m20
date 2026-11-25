@@ -1,48 +1,34 @@
-# Verification Protocol: Verification Protocol: Empirical Defect Shield for apache/incubator/pegasus
+# Verification Protocol: Verification Protocol: Empirical Defect Shield for apache/incubator-pegasus
 
 <!-- PROVENANCE_START
 {
-  "source_repository": "apache/incubator/pegasus",
-  "source_url": "https://github.com/apache/incubator/pegasus",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_repository": "apache/incubator-pegasus",
+  "source_url": "https://github.com/apache/incubator-pegasus",
+  "source_version": "02051942",
+  "license": "Apache-2.0",
+  "timestamp": "2026-11-25T11:11:28.636Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-apache-incubator-pegasus",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [apache/incubator/pegasus](https://github.com/apache/incubator/pegasus) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [apache/incubator-pegasus](https://github.com/apache/incubator-pegasus) (Revision: `02051942`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-25T11:11:28.636Z`  
+> **Learning ID**: `learn-github-apache-incubator-pegasus`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `apache/incubator/pegasus` (Commit: `historical`)
+- **Target Repository**: `apache/incubator-pegasus` (Commit: `02051942`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apache-incubator-pegasus-learnings.md`  
-> **Source**: github ([https://github.com/apache/incubator-pegasus](https://github.com/apache/incubator-pegasus))  
-> **Source Version**: `75015467`  
-> **License**: Apache-2.0  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T04:19:40.949Z  
-> **Learning ID**: `learn-github-apache-incubator-pegasus`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): apache/incubator-pegasus
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apache-incubator-pegasus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apache/incubator-pegasus](https://github.com/apache/incubator-pegasus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T04:19:40.940Z  
+> **Harvest Timestamp**: 2026-11-25T11:11:27.294Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Apache Pegasus - A horizontally scalable, strongly consistent and high-performance key-value store
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2066 stars
+- **Stars / Engagement**: 2069 stars
 
 ---
 
@@ -1017,11 +1003,11 @@ func wrapRPCFailure(resp rpcResponse, err error) error {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #2402** (2026-05-26): **[backport] ci(github): fix branch glob to actually match release branches**
-  *Symptoms*: ## Summary  Backport of #2401 to `v2.5`.  The branch filter `'v[0-9]+.*'` used in workflow files **never matches the `v2.5` branch**, because GitHub Actions branch filters use glob syntax (not regex):  - `+` is a **literal character**, not a quantifier - `[0-9]` matches **exactly one** digit, not "one or more"  As a result, PRs targeting `v2.5` silently skip every workflow that has this filter, while only those without `branches:` filters (e.g., the Golang/Labeler ones) actually run.  ## Evidence  **PR #2394** targets `v2.5` and modifies `src/replica/duplication/**` (C++ code):  - ✅ Triggered: `Golang Lint and Unit Test - admin-cli/pegic`, `Module Labeler` (no `branches` filter) - ❌ Did NOT trigger: `Cpp CI`, `Lint and Test - admin-cli` (cli proper), `Lint and Test - go-client`, etc.  Confirmed historically: ``` $ gh run list --repo apache/incubator-pegasus \     --workflow lint_and_test_cpp.yaml --branch v2.5 --limit 5 (empty — never run) ```  `Cpp CI` has **never run on the `v2.5` branch** since the workflow was added.  ## Fix  Replace `'v[0-9]+.*'` with `'v[0-9]*'`, which is valid GitHub Actions glob syntax and matches `v2.5`, `v2.5.1`, `v10.20`, etc. Applied uniformly to all 14 affected workflows on `v2.5` (mechanical sed replacement, one-line change per file).  ## Self-validating  This PR modifies `.github/workflows/lint_and_test_cpp.yaml`, which matches `Cpp CI`'s own `paths:` filter. Combined with the branch glob fix on `v2.5`, **this PR itself should be the first time
+- **Issue #2431** (2026-11-25): **ci(github): re-pin actions to ASF allow-list to fix broken CI**
+  *Symptoms*: ### What problem does this PR solve?  CI on `master` has been broken for **every** pull request since 2026-11-13: Apache tightened the GitHub Actions allow-list and dropped the SHAs pinned on `master`. Once CI ran again, twelve more hidden problems surfaced. This PR fixes all thirteen:  **1. Actions allow-list re-pinned (`3144c45d`).** The dropped SHAs killed Cpp CI at `dorny/paths-filter` ("not allowed") and made Standardization Lint `startup_failure`. All `uses:` under `.github/` are re-pinned to the newest versions `approved_patterns.yml` allows — the same SHAs `v2.5` has run since #2420. 0 violations remain.  **2. `master` does not compile (`2b0590a6`).** `local_replica_recover.cpp` used an unqualified `replica_stub` (merged during the CI blackout, never compiled). Qualified as `dsn::replication::replica_stub`.  **3. scala client installs an sbt that cannot run on JDK 8 (`6b2adc6e`).** Unversioned `sdk install sbt` now yields sbt 2.x, which requires JDK 17. Pinned to 1.10.11.  **4. ASAN tests abort at startup and hang for six hours (`57bbaae5`, `9066e61a`).** The image's gcc `libasan.so.6` cannot cope with 16TB mmap randomization (`vm.mmap_rnd_bits=32`). The ASAN test job now runs the test process under `setarch $(uname -m) -R` with `--security-opt seccomp=unconfined` (the default seccomp profile denies `personality(2)`), and both test jobs get `timeout-minutes: 90` instead of hanging to the 6h job limit.  **5. scala client cannot resolve dependencies (`9066e61a`).** Buil
 
-- **Issue #2401** (2026-05-26): **ci(github): fix branch glob to actually match release branches**
-  *Symptoms*: ## Summary  The branch filter `'v[0-9]+.*'` used in 15 workflow files **never matches any release branch**, because GitHub Actions branch filters use glob syntax (not regex):  - `+` is a **literal character**, not a quantifier - `[0-9]` matches **exactly one** digit, not "one or more"  As a result, PRs targeting release branches like `v2.5` silently skip every workflow that has this filter, while only those without `branches:` filters (e.g., the Golang/Labeler ones) actually run.  ## Evidence  **PR #2394** targets `v2.5` and modifies `src/replica/duplication/**` (C++ code):  - ✅ Triggered: `Golang Lint and Unit Test - admin-cli/pegic`, `Module Labeler` (no `branches` filter) - ❌ Did NOT trigger: `Cpp CI`, `Lint and Test - admin-cli` (cli proper), `Lint and Test - go-client`, etc.  Confirmed historically: ``` $ gh run list --repo apache/incubator-pegasus \     --workflow lint_and_test_cpp.yaml --branch v2.5 --limit 5 (empty — never run) ```  `Cpp CI` has **never run on the v2.5 branch** since the workflow was added.  ## Fix  Replace `'v[0-9]+.*'` with `'v[0-9]*'`, which is valid GitHub Actions glob syntax and matches `v2.5`, `v2.5.1`, `v10.20`, etc.  Applied uniformly to all 15 affected workflows (mechanical sed replacement, one-line change per file).  ## Verification  - [x] All 18 workflow YAMLs parse successfully (`yaml.safe_load`) - [x] Diff is minimal: 15 files changed, +15/-15 - [ ] After merge: backport to active release branches (`v2.5`, etc.) so existing release-branch
+- **Issue #2429** (2026-11-17): **feat(duplication): make the task code for incremental loading from private logs configurable (cherry-pick #2184)**
+  *Symptoms*: ## Backport  - Original PR: #2184 - Target branch: v2.5 - Release: 2.5.1  ## Conflict resolution  - Include path adapted: `v2.5` keeps the nested layout, so `task/task_code.h` becomes `runtime/task/task_code.h`. - Namespace kept in the C++14 two-level form (`namespace dsn { namespace replication {`), because `v2.5` builds with `-std=c++14 -Werror` and clang-14 rejects nested namespace definitions. - Dropped master's `METRIC_DEFINE_counter(dup_confirmed_mutations, ...)` block: `v2.5` does not have the new metrics framework and the counter is unrelated to this change. - The functional change is preserved: `FLAGS_dup_load_plog_task` (default `LPC_REPLICATION_LONG_LOW`) is parsed with `task_code::try_get()` and falls back to `LPC_REPLICATION_LONG_LOW` with an error log when invalid.  ## Verification  - [ ] Affected module builds on `v2.5` - [ ] Related unit tests pass - [ ] IWYU (clang-14, `-std=c++14 -Werror`) passes - [ ] Manual verification/regression (if any) 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1038,662 +1024,428 @@ func wrapRPCFailure(resp rpcResponse, err error) error {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `68a76223` (2026-01-06)
-**Commit Message**: ci(github): build third-party images independently per OS version to prevent a single OS build failure from breaking the entire build (#2346)
+### Incident Patch 1: `02051942` (2026-11-25)
+**Commit Message**: ci(github): re-pin actions to ASF allow-list to fix broken CI (#2431)
 
-Currently, the third-party images used for CI are built in roughly two stages: the first stage
-builds the *src* images, and the second stage builds the *bin* images. In each stage,
-images are built for multiple OS versions. If the src image build fails for **any** OS version,
-all bin image builds are canceled.
+### What problem does this PR solve?
 
-In practice, this is not ideal. The likelihood of build failures differs across OS versions —
-for example, older OS versions are more prone to issues. A failure in a single older OS
-version can block the entire third-party image build process.
+CI on `master` has been broken for **every** pull request since 2026-11-13: Apache
+tightened the GitHub Actions allow-list and dropped the SHAs pinned on `master`. Once
+CI ran again, twelve more hidden problems surfaced. This PR fixes all thirteen:
 
-This PR improves the process by fully decoupling image builds across different OS versions
-so they do not affect each other. If a third-party image build fails for one OS version, it can
-be fixed independently without impacting the builds for other OS versions.
+**1. Actions allow-list re-pinned (`3144c45d`).** The dropped SHAs killed Cpp CI at
+`dorny/paths-filter` ("not allowed") and made Standardization Lint `startup_failure`.
+All `uses:` under `.github/` are re-pinned to the newest versions `approved_patterns.yml`
+allows — the same SHAs `v2.5` has run since #2420. 0 violations remain.
 
-**File**: `.github/workflows/build-push-thirdparty.yml` (added, +185/-0)
+**2. `master` does not compile (`2b0590a6`).** `local_replica_recover.cpp` used an
+unqualified `replica_stub` (merged during the CI blackout, never compiled). Qualified
+as `dsn::replication::replica_stub`.
+
+**3. scala client installs an sbt that cannot run on JDK 8 (`6b2adc6e`).** Unversioned
+`sdk install sbt` now yields sbt 2.x, which requires JDK 17. Pinned to 1.10.11.
+
+**4. ASAN tests abort at startup and hang for six hours (`57bbaae5`, `9066e61a`).**
+The image's gcc `libasan.so.6` cannot cope with 1
+
+**File**: `.github/actions/rebuild_thirdparty_if_needed/action.yaml` (modified, +2/-1)
 ```diff
-@@ -0,0 +1,185 @@
-+# Licensed to the Apache Software Foundation (ASF) under one
-+# or more contributor license agreements.  See the NOTICE file
-+# distributed with this work for additional information
-+# regarding copyright ownership.  The ASF licenses this file
-+# to you under the Apache License, Version 2.0 (the
-+# "License"); you may not use this file except in compliance
-+# with the License.  You may obtain a copy of the License at
-+#
-+#   http://www.apache.org/licenses/LICENSE-2.0
-+#
-+# Unless required by applicable law or agreed to in writing,
-+# software distributed under the License is distributed on an
-+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-+# KIND, either express or implied.  See the License for the
-+# specific language governing permissions and limitations
-+# under the License.
-+
-+name: BuildThirdpartyDocker - build and publish thirdparty
-+
-+on:
-+  workflow_call:
-+    inputs:
-+      osversion:
-+        required: true
-+        type: string
-+
-+jobs:
-+  build_push_src_docker_images:
-+    runs-on: ubuntu-latest
-+    steps:
-+      - uses: actions/checkout@v4
-+      - name: Set up QEMU
-+        uses: docker/setup-qemu-action@v1
-+      - name: Set up Docker Buildx
-+        uses: docker/setup-buildx-action@v1
-+      - name: Login to DockerHub
-+        uses: docker/login-action@v1
-+        with:
-+          username: ${{ secrets.DOCKERHUB_USER }}
-+          password: ${{ secrets.DOCKERHUB_TOKEN }}
-+      - name: Build and push
-+        uses: docker/build-push-action@v2.10.0
-+        with:
-+          context: .
-+          file: ./docker/thirdparties-src/Dockerfile
-+          push: true
-+          tags: |
-+            apache/pegasus:thirdparties-src-${{ inputs.osversion }}-${{ github.ref_name }}
-+          build-args: |
-+            GITHUB_BRANCH=${{ github.ref_name }}
-+            OS_VERSION=${{ inputs.osversion }}
-+            HADOOP_BIN_PATH=hadoop-bin
-+            ZOOKEEPER_BIN_PATH=zookeeper-bin
-+
-+  build_push_bin_docker_images:
-+    runs-on: ubuntu-latest
-+    env:
-+      # The glibc version on ubuntu1804 is lower than the node20 required, so
-+      # we need to force the node version to 16.
-+      # See more details: https://github.com/actions/checkout/issues/1809
-+      ACTIONS_RUNNER_FORCE_ACTIONS_NODE_VERSION: node16
-+      ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
-+    needs: build_push_src_docker_images
-+    steps:
-+      # The glibc version on ubuntu1804 is lower than the actions/checkout@v4 required, so
-+      # we need to force to use actions/checkout@v3.
-+      - uses: actions/checkout@v3
-+      - name: Set up QEMU
-+        uses: docker/setup-qemu-action@v1
-+      - name: Set up Docker Buildx
-+        uses: docker/setup-buildx-action@v1
-+      - name: Login to DockerHub
-+        uses: docker/login-action@v1
-+        with:
-+          username: ${{ secrets.DOCKERHUB_USER }}
-+          password: ${{ secrets.DOCKERHUB_TOKEN }}
-+      - name: Build and push for production
-+        uses: docker/build-push-action@v2.10.0
-+        with:
-+          context: .
-+          file: ./docker/thirdparties-bin/Dockerfile
-+          push: true
-+          tags: |
-+            apache/pegasus:thirdparties-bin-${{ inputs.osversion }}-${{ github.ref_name }}
-+          build-args: |
-+            GITHUB_BRANCH=${{ github.ref_name }}
-+            OS_VERSION=${{ inputs.osversion }}
-+            HADOOP_BIN_PATH=hadoop-bin
-+            ZOOKEEPER_BIN_PATH=zookeeper-bin
-+
-+  build_push_bin_jemalloc_docker_images:
-+    runs-on: ubuntu-latest
-+    env:
-+      # The glibc version on ubuntu1804 is lower than the node20 required, so
-+      # we need to force the node version to 16.
-+      # See more details: https://github.com/actions/checkout/issues/1809
-+      ACTIONS_RUNNER_FORCE_ACTIONS_NODE_VERSION: node16
-+      ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
-+    needs: build_push_src_docker_images
-+    steps:
-+      # The glibc version on ubuntu1804 is lower than the actions/checkout@v4 required, so
-+      # we need to force to use actions/checkout@v3.
-+      - uses: actions/checkout@v3
-+      - name: Set up QEMU
-+        uses: docker/setup-qemu-action@v1
-+      - name: Set up Docker Buildx
-+        uses: docker/setup-buildx-action@v1
-+      - name: Login to DockerHub
-+        uses: docker/login-action@v1
-+        with:
-+          username: ${{ secrets.DOCKERHUB_USER }}
-+          password: ${{ secrets.DOCKERHUB_TOKEN }}
-+      - name: Build and push for production with jemalloc
-+        uses: docker/build-push-action@v2.10.0
-+        with:
-+          context: .
-+          file: ./docker/thirdparties-bin/Dockerfile
-+          push: true
-+          tags: |
-+            apache/pegasus:thirdparties-bin-jemallc-${{ inputs.osversion }}-${{ github.ref_name }}
-+          build-args: |
-+            GITHUB_BRANCH=${{ github.ref_name }}
-+            OS_VERSION=${{ inputs.osversion }}
-+            USE_JEMALLOC=ON
-+            HADOOP_BIN_PATH=hadoop-bin
-+            ZOOKEEPER_BIN_PATH=zookeeper-bin
-+
-+  build_p
+@@ -19,7 +19,8 @@ name: Rebuild thirdparty if needed
+ runs:
+   using: composite
+   steps:
+-    - uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36
++    # dorny/paths-filter@v4.0.3
++    - uses: dorny/paths-filter@ceb8a2b8f2d89434be7ff52d3de7ec3738c5cc9d
+       id: changes
+       with:
+         filters: |
 ```
 
-**File**: `.github/workflows/thirdparty-regular-push.yml` (modified, +6/-185)
+**File**: `.github/actions/run_server_tests/action.yaml` (modified, +18/-1)
 ```diff
-@@ -15,7 +15,7 @@
- # specific language governing permissions and limitations
+@@ -16,12 +16,29 @@
  # under the License.
- ---
--name:  BuildThirdpartyDockerRegularly - build and publish thirdparty every week
-+name: BuildThirdpartyDockerRegularly - build and publish thirdparty every week
  
- on:
-   push:
-@@ -40,8 +40,7 @@ on:
-     - cron:  '0 18 * * 1'
+ name: Run server tests
++inputs:
++  disable_aslr:
++    description: |
++      Disable address space layout randomization for the whole test process tree.
++      Required by the ASAN build: the image ships gcc's libasan.so.6, which aborts
++      at startup with "AddressSanitizer failed to deallocate ... unable to unmap"
++      once the loader places a shared library inside the shadow memory range,
++      because the runners randomize mmap addresses over 16TB (vm.mmap_rnd_bits=32).
++      The same workaround is used by v2.5's ASAN test job.
++    required: false
++    default: "false"
+ runs:
+   using: composite
+   steps:
+     - name: Unit Testing
++      env:
++        DISABLE_ASLR: ${{ inputs.disable_aslr }}
+       run: |
+         export LD_LIBRARY_PATH=$(pwd)/thirdparty/output/lib:${JAVA_HOME}/jre/lib/amd64/server
+         ulimit -s unlimited
+-        ./run.sh test --onebox_opts "$ONEBOX_OPTS" --test_opts "$TEST_OPTS" -m ${{ matrix.test_module }}
++        prefix=""
++        if [ "${DISABLE_ASLR}" = "true" ]; then
++          prefix="setarch $(uname -m) -R"
++        fi
++        ${prefix} ./run.sh test --onebox_opts "$ONEBOX_OPTS" --test_opts "$TEST_OPTS" -m ${{ matrix.test_module }}
+       shell: bash
+```
+
+**File**: `.github/workflows/build-push-env-docker.yml` (modified, +16/-16)
+```diff
+@@ -55,20 +55,20 @@ jobs:
+         # actions/checkout@v4.3.1
+         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+       - name: Set up QEMU
+-        # docker/setup-qemu-action@v3.7.0
+-        uses: docker/setup-qemu-action@c7c53464625b32c7a7e944ae62b3e17d2b600130
++        # docker/setup-qemu-action@v4.4.0
++        uses: docker/setup-qemu-action@99012661954931238ded8c8b007157a8430204e1
+       - name: Set up Docker Buildx
+-        # docker/setup-buildx-action@v3.12.0
+-        uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f
++        # docker/setup-buildx-action@v4.4.1
++        uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069
+       - name: Login to DockerHub
+-        # docker/login-action@3.7.0
+-        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9
++        # docker/login-action@v4.8.0
++        uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550
+         with:
+           username: ${{ secrets.DOCKERHUB_USER }}
+           password: ${{ secrets.DOCKERHUB_TOKEN }}
+       - name: Build and push
+-        # docker/build-push-action@v6.19.2
+-        uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8
++        # docker/build-push-action@v7.4.0
++        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc
+         with:
+           platforms: linux/amd64
+           context: .
+@@ -91,20 +91,20 @@ jobs:
+         # actions/checkout@v4.3.1
+         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+       - name: Set up QEMU
+-        # docker/setup-qemu-action@v3.7.0
+-        uses: docker/setup-qemu-action@c7c53464625b32c7a7e944ae62b3e17d2b600130
++        # docker/setup-qemu-action@v4.4.0
++        uses: docker/setup-qemu-action@99012661954931238ded8c8b007157a8430204e1
+       - name: Set up Docker Buildx
+-        # docker/setup-buildx-action@v3.12.0
+-        uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f
++        # docker/setup-buildx-action@v4.4.1
++        uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069
+       - name: Login to DockerHub
+-        # docker/login-action@3.7.0
+-        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9
++        # docker/login-action@v4.8.0
++        uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550
+         with:
+           username: ${{ secrets.DOCKERHUB_USER }}
+           password: ${{ secrets.DOCKERHUB_TOKEN }}
+       - name: Build and push
+-        # docker/build-push-action@v6.19.2
+-        uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8
++        # docker/build-push-action@v7.4.0
++        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc
+         with:
+           platforms: linux/amd64
+           context: .
+```
+
+**File**: `.github/workflows/build-push-thirdparty.yml` (modified, +48/-48)
+```diff
+@@ -31,20 +31,20 @@ jobs:
+       # actions/checkout@v4.3.1
+       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+       - name: Set up QEMU
+-        # docker/setup-qemu-action@v1.2.0
+-        uses: docker/setup-qemu-action@27d0a4f181a40b142cce983c5393082c365d1480
++        # docker/setup-qemu-action@v4.4.0
++        uses: docker/setup-qemu-action@99012661954931238ded8c8b007157a8430204e1
+       - name: Set up Docker Buildx
+-        # docker/setup-buildx-action@v1.7.0
+-        uses: docker/setup-buildx-action@f211e3e9ded2d9377c8cadc4489a4e38014bc4c9
++        # docker/setup-buildx-action@v4.4.1
++        uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069
+       - name: Login to DockerHub
+-        # docker/login-action@1.14.1
+-        uses: docker/login-action@dd4fa0671be5250ee6f50aedf4cb05514abda2c7
++        # docker/login-action@v4.8.0
++        uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550
+         with:
+           username: ${{ secrets.DOCKERHUB_USER }}
+           password: ${{ secrets.DOCKERHUB_TOKEN }}
+       - name: Build and push
+-        # docker/build-push-action@v2.10.0
+-        uses: docker/build-push-action@ac9327eae2b366085ac7f6a2d02df8aa8ead720a
++        # docker/build-push-action@v7.4.0
++        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc
+         with:
+           context: .
+           file: ./docker/thirdparties-src/Dockerfile
+@@ -72,20 +72,20 @@ jobs:
+       # actions/checkout@v3.6.0
+       - uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744
+       - name: Set up QEMU
+-        # docker/setup-qemu-action@v1.2.0
+-        uses: docker/setup-qemu-action@27d0a4f181a40b142cce983c5393082c365d1480
++        # docker/setup-qemu-action@v4.4.0
++        uses: docker/setup-qemu-action@99012661954931238ded8c8b007157a8430204e1
+       - name: Set up Docker Buildx
+-        # docker/setup-buildx-action@v1.7.0
+-        uses: docker/setup-buildx-action@f211e3e9ded2d9377c8cadc4489a4e38014bc4c9
++        # docker/setup-buildx-action@v4.4.1
++        uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069
+       - name: Login to DockerHub
+-        # docker/login-action@1.14.1
+-        uses: docker/login-action@dd4fa0671be5250ee6f50aedf4cb05514abda2c7
++        # docker/login-action@v4.8.0
++        uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550
+         with:
+           username: ${{ secrets.DOCKERHUB_USER }}
+           password: ${{ secrets.DOCKERHUB_TOKEN }}
+       - name: Build and push for production
+-        # docker/build-push-action@v2.10.0
+-        uses: docker/build-push-action@ac9327eae2b366085ac7f6a2d02df8aa8ead720a
++        # docker/build-push-action@v7.4.0
++        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc
+         with:
+           context: .
+           file: ./docker/thirdparties-bin/Dockerfile
+@@ -113,20 +113,20 @@ jobs:
+       # actions/checkout@v3.6.0
+       - uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744
+       - name: Set up QEMU
+-        # docker/setup-qemu-action@v1.2.0
+-        uses: docker/setup-qemu-action@27d0a4f181a40b142cce983c5393082c365d1480
++        # docker/setup-qemu-action@v4.4.0
++        uses: docker/setup-qemu-action@99012661954931238ded8c8b007157a8430204e1
+       - name: Set up Docker Buildx
+-        # docker/setup-buildx-action@v1.7.0
+-        uses: docker/setup-buildx-action@f211e3e9ded2d9377c8cadc4489a4e38014bc4c9
++        # docker/setup-buildx-action@v4.4.1
++        uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069
+       - name: Login to DockerHub
+-        # docker/login-action@1.14.1
+-        uses: docker/login-action@dd4fa0671be5250ee6f50aedf4cb05514abda2c7
++        # docker/login-action@v4.8.0
++        uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550
+         with:
+           username: ${{ secrets.DOCKERHUB_USER }}
+           password: ${{ secrets.DOCKERHUB_TOKEN }}
+       - name: Build and push for production with jemalloc
+-        # docker/build-push-action@v2.10.0
+-        uses: docker/build-push-action@ac9327eae2b366085ac7f6a2d02df8aa8ead720a
++        # docker/build-push-action@v7.4.0
++        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc
+         with:
+           context: .
+           file: ./docker/thirdparties-bin/Dockerfile
+@@ -147,20 +147,20 @@ jobs:
+       # actions/checkout@v4.3.1
+       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+       - name: Set up QEMU
+-        # docker/setup-qemu-action@v1.2.0
+-        uses: docker/setup-qemu-action@27d0a4f181a40b142cce983c5393082c365d1480
++        # docker/setup-qemu-action@v4.4.0
++        uses: docker/setup-qemu-action@99012661954931238ded8c8b007157a8430204e1
+       - name: Set up Docker Buildx
+-        # docker/setup-buildx-action@v1.7.0
+-        uses: docker/setup-buildx-action@f211e3e9ded2d9377c8cadc4489a4e38014bc4c9
++        # docker/setup-buildx-act
+```
+
+**File**: `.github/workflows/lint_and_test_cpp.yaml` (modified, +16/-2)
+```diff
+@@ -194,6 +194,7 @@ jobs:
+           - zookeeper_sasl_auth_test
+     needs: build_Release
+     runs-on: ubuntu-latest
++    timeout-minutes: 90
+     env:
+       ARTIFACT_NAME: release
+     container:
+@@ -287,18 +288,25 @@ jobs:
+           - zookeeper_sasl_auth_test
+     needs: build_ASAN
+     runs-on: ubuntu-latest
++    timeout-minutes: 90
+     env:
+       ARTIFACT_NAME: release_address
+     container:
+       image: apache/pegasus:thirdparties-bin-test-asan-ubuntu2204-${{ github.base_ref }}
+-      options: --cap-add=SYS_PTRACE
++      # Docker's default seccomp profile denies personality(ADDR_NO_RANDOMIZE), which
++      # is what `setarch -R` needs, so the ASLR workaround below fails with
++      # "setarch: failed to set personality to x86_64: Operation not permitted"
++      # unless seccomp is unconfined. v2.5's ASAN test job does the same.
++      options: --cap-add=SYS_PTRACE --security-opt seccomp=unconfined
+     steps:
+       # actions/checkout@v4.3.1
+       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+       - name: Download artifact
+         uses: "./.github/actions/download_artifact"
+       - name: Run server tests
+         uses: "./.github/actions/run_server_tests"
++        with:
++          disable_aslr: "true"
  
- jobs:
--  build_push_src_docker_images:
--    runs-on: ubuntu-latest
-+  build_push_thirdparty_docker_images:
+ # TODO(yingchun): Build and test UBSAN version would cost a very long time, we will run these tests
+ #                 when we are going to release a stable version. So we disable them in regular CI
+@@ -447,7 +455,13 @@ jobs:
+         run: |
+           # Preinstalled softwares: https://github.com/actions/virtual-environments/blob/main/images/macos/macos-15-Readme.md
+           brew install ccache
+-          brew install openssl@1.1
++          # openssl@1.1 has been removed from Homebrew (installing it fails with
++          # "No such keg: /opt/homebrew/Cellar/openssl@1.1"), so use openssl@3 and
++          # point both the thirdparty and the pegasus builds at it: it is keg-only,
++          # so CMake does not find it on its own.
++          brew install openssl@3
++          echo "OPENSSL_ROOT_DIR=$(brew --prefix openssl@3)" >> "$GITHUB_ENV"
++          echo "CMAKE_PREFIX_PATH=$(brew --prefix openssl@3)" >> "$GITHUB_ENV"
+       # actions/checkout@v4.3.1
+       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+       - name: Setup cache
+```
+
+**File**: `.github/workflows/lint_and_test_java-client.yml` (modified, +10/-2)
+```diff
+@@ -45,7 +45,13 @@ jobs:
+       # actions/setup-java@v4.8.0
+       - uses: actions/setup-java@c1e323688fd81a25caa38c78aa6df2d33d3e20d9
+         with:
+-          java-version: 8
++          # The bare major version resolves to Temurin's *latest* JDK 8 release,
++          # and the release assets of the current latest (8.0.514+1, jdk8u514-b01)
++          # are broken: setup-java downloads them in ~40ms and `tar xz` then dies
++          # with "gzip: stdin: not in gzip format". Pin the previous release,
++          # whose x64 Linux tarball was verified to download and decompress
++          # cleanly; unpin once 8.0.514+1 is republished.
++          java-version: '8.0.512+9'
+           distribution: temurin
+       - name: spotless
+         working-directory: ./java-client
+@@ -83,7 +89,9 @@ jobs:
      strategy:
        fail-fast: false
        matrix:
-@@ -50,185 +49,7 @@ jobs:
-           - ubuntu2004
-           - ubuntu2204
-           - rockylinux9
--    steps:
--      - uses: actions/checkout@v4
--      - name: Set up QEMU
--        uses: docker/setup-qemu-action@v1
--      - name: Set up Docker Buildx
--        uses: docker/setup-buildx-action@v1
--      - name: Login to DockerHub
--        uses: docker/login-action@v1
--        with:
--          username: ${{ secrets.DOCKERHUB_USER }}
--          password: ${{ secrets.DOCKERHUB_TOKEN }}
--      - name: Build and push
--        uses: docker/build-push-action@v2.10.0
--        with:
--          context: .
--          file: ./docker/thirdparties-src/Dockerfile
--          push: true
--          tags: |
--            apache/pegasus:thirdparties-src-${{ matrix.osversion }}-${{ github.ref_name }}
--          build-args: |
--            GITHUB_BRANCH=${{ github.ref_name }}
--            OS_VERSION=${{ matrix.osversion }}
--            HADOOP_BIN_PATH=hadoop-bin
--            ZOOKEEPER_BIN_PATH=zookeeper-bin
--
--  build_push_bin_docker_images:
--    runs-on: ubuntu-latest
--    env:
--      # The glibc version on ubuntu1804 is lower than the node20 required, so
--      # we need to force the node version to 16.
--      # See more details: https://github.com/actions/checkout/issues/1809
--      ACTIONS_RUNNER_FORCE_ACTIONS_NODE_VERSION: node16
--      ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
--    needs: build_push_src_docker_images
--    strategy:
--      fail-fast: false
--      matrix:
--        osversion:
--          - ubuntu1804
--          - ubuntu2004
--          - ubuntu2204
--          - rockylinux9
--    steps:
--      # The glibc version on ubuntu1804 is lower than the actions/checkout@v4 required, so
--      # we need to force to use actions/checkout@v3.
--      - uses: actions/checkout@v3
--      - name: Set up QEMU
--        uses: docker/setup-qemu-action@v1
--      - name: Set up Docker Buildx
--        uses: docker/setup-buildx-action@v1
--      - name: Login to DockerHub
--        uses: docker/login-action@v1
--        with:
--          username: ${{ secrets.DOCKERHUB_USER }}
--          password: ${{ secrets.DOCKERHUB_TOKEN }}
--      - name: Build and push for production
--        uses: docker/build-push-action@v2.10.0
--        with:
--          context: .
--          file: ./docker/thirdparties-bin/Dockerfile
--          push: true
--          tags: |
--            apache/pegasus:thirdparties-bin-${{ matrix.osversion }}-${{ github.ref_name }}
--          build-args: |
--            GITHUB_BRANCH=${{ github.ref_name }}
--            OS_VERSION=${{ matrix.osversion }}
--            HADOOP_BIN_PATH=hadoop-bin
--            ZOOKEEPER_BIN_PATH=zookeeper-bin
--
--  build_push_bin_jemalloc_docker_images:
--    runs-on: ubuntu-latest
--    env:
--      # The glibc version on ubuntu1804 is lower than the node20 required, so
--      # we need to force the node version to 16.
--      # See more details: https://github.com/actions/checkout/issues/1809
--      ACTIONS_RUNNER_FORCE_ACTIONS_NODE_VERSION: node16
--      ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
--    needs: build_push_src_docker_images
--    strategy:
--      fail-fast: false
--      matrix:
--        osversion:
--          - ubuntu1804
--          - ubuntu2004
--          - ubuntu2204
--          - rockylinux9
--    steps:
--      # The glibc version on ubuntu1804 is lower than the actions/checkout@v4 required, so
--      # we need to force to use actions/checkout@v3.
--      - uses: actions/checkout@v3
--      - name: Set up QEMU
--        uses: docker/setup-qemu-action@v1
--      - name: Set up Docker Buildx
--        uses: docker/setup-buildx-action@v1
--      - name: Login to DockerHub
--        uses: docker/login-action@v1
--        with:
--          username: ${{ secrets.DOCKERHUB_USER }}
--          password: ${{ secrets.DOCKERHUB_TOKEN }}
--      - name: Build and push for production with jemalloc
--        uses: docker/build-push-action@v2.10.0
--        with:
--          context: .
--          file: ./docker/thirdparties-bin/Dockerfile
--          push: true
--          tags: |
--            apache/pegasus:thirdparties-bin-jemallc-${{ matrix.osversion }}-${{ github.ref_name }}
--          build-args: |
--            GITHUB_BRANCH=${{ github.ref_name }}
--            OS_VERSION=${{ matrix.osversion }}
--            USE_JEMALLOC=ON
--            HADOOP_BIN_PATH=hadoop-bin
--            ZOOKEEPER_BIN_PATH=zookeeper-bin
--
--  build_push_bin_test_docker_images:
--    runs-on: ubuntu-latest
--    needs: build_push_src_docker_images
--    strategy:
--     
-```
-
----
-
-### Incident Patch 2: `b507fd36` (2026-01-09)
-**Commit Message**: fix(test): fix the failed ASan test for gutil due to absl::node_hash_map (#2341)
-
-https://github.com/apache/incubator-pegasus/issues/2344.
-
-The internal types used by `absl::node_hash_map` have different layouts when
-compiled with ASan versus non-ASan builds. As a third-party dependency, Abseil
-is always built in non-ASan mode. However, when Pegasus is built with ASan enabled,
-Abseil headers are also compiled under ASan, which leads to a mismatch between the
-header-compiled structures and the Abseil library itself, causing ASAN tests to fail.
-
-Possible solutions include:
-1. When third-party dependencies change, also build those third-party libraries with
-ASan enabled for ASan builds.
-2. When building third-party images, additionally produce a separate ASan-based
-image, which can be used by ASan CI workflows when third-party dependencies
-themselves have not changed.
-
-**File**: `.github/actions/rebuild_thirdparty_if_needed/action.yaml` (modified, +1/-1)
-```diff
-@@ -38,7 +38,7 @@ runs:
-       run: |
-         rm -f /root/thirdparties-src.zip
-         mkdir build
--        cmake -DCMAKE_BUILD_TYPE=Release -DROCKSDB_PORTABLE=1 -DUSE_JEMALLOC=${USE_JEMALLOC} -B build/
-+        cmake -DCMAKE_BUILD_TYPE=Release -DROCKSDB_PORTABLE=1 -DUSE_JEMALLOC=${USE_JEMALLOC} -DENABLE_ASAN=${ENABLE_ASAN} -B build/
-         cmake --build build/ -j $(nproc)
-         rm -rf build/Build build/Download/[a-y]* build/Source/[a-g]* build/Source/[i-q]* build/Source/[s-z]*
-         find ./ -name '*CMakeFiles*' -type d -exec rm -rf "{}" +
-```
-
-**File**: `.github/workflows/lint_and_test_cpp.yaml` (modified, +10/-4)
-```diff
-@@ -60,6 +60,9 @@ jobs:
-   cpp_clang_tidy_linter:
-     name: Tidy
-     runs-on: ubuntu-22.04
-+    env:
-+      USE_JEMALLOC: OFF
-+      ENABLE_ASAN: OFF
-     container:
-       image: apache/pegasus:thirdparties-bin-ubuntu2204-${{ github.base_ref }}
+-        java: [ '8', '11', '17' ]
++        # '8.0.512+9' instead of '8': see the comment at the spotless job's
++        # setup-java step — the latest Temurin 8 release has broken assets.
++        java: [ '8.0.512+9', '11', '17' ]
      steps:
-@@ -86,6 +89,7 @@ jobs:
-     runs-on: ubuntu-latest
-     env:
-       USE_JEMALLOC: OFF
-+      ENABLE_ASAN: OFF
-     container:
-       image: apache/pegasus:thirdparties-bin-ubuntu2204-${{ github.base_ref }}
+       # actions/checkout@v4.3.1
+       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+```
+
+**File**: `.github/workflows/lint_and_test_scala-client.yml` (modified, +28/-4)
+```diff
+@@ -45,13 +45,21 @@ jobs:
+       # actions/setup-java@v4.8.0
+       - uses: actions/setup-java@c1e323688fd81a25caa38c78aa6df2d33d3e20d9
+         with:
+-          java-version: 8
++          # The bare major version resolves to Temurin's *latest* JDK 8 release,
++          # and the release assets of the current latest (8.0.514+1, jdk8u514-b01)
++          # are broken: setup-java downloads them in ~40ms and `tar xz` then dies
++          # with "gzip: stdin: not in gzip format". Pin the previous release,
++          # whose x64 Linux tarball was verified to download and decompress
++          # cleanly; unpin once 8.0.514+1 is republished. Runs on runners whose
++          # pre-seeded tool cache already has a JDK 8 skip the download, which
++          # is why this used to pass intermittently.
++          java-version: '8.0.512+9'
+           distribution: temurin
+       - name: Install sbt
+         run: |
+           curl -s "https://get.sdkman.io" | bash
+           source "${HOME}/.sdkman/bin/sdkman-init.sh"
+-          sdk install sbt
++          sdk install sbt 1.10.11
+           sbt -V
+       - name: Check format with sbt
+         working-directory: ./scala-client
+@@ -85,7 +93,9 @@ jobs:
+     strategy:
+       fail-fast: false
+       matrix:
+-        java: [ '8', '11', '17' ]
++        # '8.0.512+9' instead of '8': see the comment at the Format job's
++        # setup-java step — the latest Temurin 8 release has broken assets.
++        java: [ '8.0.512+9', '11', '17' ]
      steps:
-@@ -115,6 +119,7 @@ jobs:
+       # actions/checkout@v4.3.1
+       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+@@ -105,7 +115,7 @@ jobs:
+         run: |
+           curl -s "https://get.sdkman.io" | bash
+           source "${HOME}/.sdkman/bin/sdkman-init.sh"
+-          sdk install sbt
++          sdk install sbt 1.10.11
+           sbt -V
+       - name: Download thrift
+         working-directory: ./java-client/scripts
+@@ -115,6 +125,20 @@ jobs:
+         run: |
+           mvn clean package -DskipTests -Dcheckstyle.skip=true
+           mvn clean install -DskipTests -Dcheckstyle.skip=true
++      - name: Prefetch Scala client dependencies
++        # `sbt test` resolves pegasus-client from the local Maven repository, and
++        # coursier then looks for its dependencies' artifacts there as well. Building
++        # java-client only downloaded the POMs of netty's native modules, not their
++        # per-platform classifier jars, so `sbt update` fails with:
++        #   file:///root/.m2/repository/io/netty/netty-tcnative-boringssl-static/
++        #   2.0.70.Final/netty-tcnative-boringssl-static-2.0.70.Final-linux-x86_64.jar:
++        #   not found
++        # Resolve the whole dependency tree with Maven, which does reach Maven Central,
++        # so that the jars are already in the local repository when sbt runs.
++        working-directory: ./scala-client
++        run: |
++          mvn -q dependency:get -Dartifact=org.apache.pegasus:pegasus-client:2.6.0-SNAPSHOT \
++            -Dtransitive=true
+       - name: Download artifact
+         uses: "./.github/actions/download_artifact"
+       - name: Start Pegasus cluster
+```
+
+**File**: `.github/workflows/standardization_lint.yaml` (modified, +4/-2)
+```diff
+@@ -50,15 +50,17 @@ jobs:
+     steps:
+       # actions/checkout@v4.3.1
+       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+-      - uses: tcort/github-action-markdown-link-check@e7c7a18363c842693fadde5d41a3bd3573a7a225
++      # tcort/github-action-markdown-link-check@v1.1.3
++      - uses: tcort/github-action-markdown-link-check@e047c5b37f24ab722bbef1a27b6fab7f96bc4068
+ 
+   dockerfile_linter:
+     name: Lint Dockerfile
      runs-on: ubuntu-latest
-     env:
-       USE_JEMALLOC: OFF
-+      ENABLE_ASAN: OFF
-       ARTIFACT_NAME: release
-       BUILD_OPTIONS: -t release --test
-     container:
-@@ -204,6 +209,7 @@ jobs:
-     runs-on: ubuntu-latest
-     env:
-       USE_JEMALLOC: OFF
-+      ENABLE_ASAN: ON
-       ARTIFACT_NAME: release_address
-       BUILD_OPTIONS: --sanitizer address --disable_gperf --test
-     container:
-@@ -259,10 +265,7 @@ jobs:
-           - dsn_task_tests
-           - dsn_utils_tests
-           - dsn.zookeeper.tests
--          # TODO(wangdan): absl::node_hash_map will fail when ASan tests run because some objects
--          # have different structures between non-ASan and ASan building. Will be enabled after
--          # this issue is fixed.
--          # - gutil_test
-+          - gutil_test
-           # TODO(yingchun): Disable it because we find it's too flaky, we will re-enable it after
-           # it has been optimized.
-           # - partition_split_test
-@@ -300,6 +303,7 @@ jobs:
- #    runs-on: ubuntu-latest
- #    env:
- #      USE_JEMALLOC: OFF
-+#      ENABLE_ASAN: OFF
- #      ARTIFACT_NAME: release_undefined
- #      BUILD_OPTIONS: --sanitizer undefined --disable_gperf --test
- #    container:
-@@ -386,6 +390,7 @@ jobs:
-     runs-on: ubuntu-latest
-     env:
-       USE_JEMALLOC: ON
-+      ENABLE_ASAN: OFF
-       ARTIFACT_NAME: release_jemalloc
-       BUILD_OPTIONS: -t release --use_jemalloc --test
-     container:
-@@ -463,6 +468,7 @@ jobs:
-     runs-on: ubuntu-latest
-     env:
-       USE_JEMALLOC: OFF
-+      ENABLE_ASAN: OFF
-       BUILD_OPTIONS: -t debug --test --separate_servers
-       PACK_OPTIONS: --separate_servers
-     container:
-```
-
-**File**: `.github/workflows/lint_and_test_go-client.yml` (modified, +1/-0)
-```diff
-@@ -86,6 +86,7 @@ jobs:
-     runs-on: ubuntu-latest
-     env:
-       USE_JEMALLOC: OFF
-+      ENABLE_ASAN: OFF
-       BUILD_OPTIONS: -t release
-     container:
-       image: apache/pegasus:thirdparties-bin-test-ubuntu2204-${{ github.base_ref }}
-```
-
-**File**: `.github/workflows/lint_and_test_java-client.yml` (modified, +1/-0)
-```diff
-@@ -55,6 +55,7 @@ jobs:
-     runs-on: ubuntu-latest
-     env:
-       USE_JEMALLOC: OFF
-+      ENABLE_ASAN: OFF
-       ARTIFACT_NAME: release_for_java_client
-       BUILD_OPTIONS: -t release
-     container:
-```
-
-**File**: `.github/workflows/lint_and_test_scala-client.yml` (modified, +1/-0)
-```diff
-@@ -63,6 +63,7 @@ jobs:
-     runs-on: ubuntu-latest
-     env:
-       USE_JEMALLOC: OFF
-+      ENABLE_ASAN: OFF
-       BUILD_OPTIONS: -t release
-     container:
-       image: apache/pegasus:thirdparties-bin-test-ubuntu2204-${{ github.base_ref }}
-```
-
-**File**: `.github/workflows/test_nodejs-client.yml` (modified, +1/-0)
-```diff
-@@ -43,6 +43,7 @@ jobs:
-     runs-on: ubuntu-latest
-     env:
-       USE_JEMALLOC: OFF
-+      ENABLE_ASAN: OFF
-       BUILD_OPTIONS: -t release
-     container:
-       image: apache/pegasus:thirdparties-bin-test-ubuntu2204-${{ github.base_ref }}
-```
-
-**File**: `.github/workflows/test_python-client.yml` (modified, +1/-0)
-```diff
-@@ -43,6 +43,7 @@ jobs:
-     runs-on: ubuntu-latest
-     env:
-       USE_JEMALLOC: OFF
-+      ENABLE_ASAN: OFF
-       BUILD_OPTIONS: -t release
-     container:
-       image: apache/pegasus:thirdparties-bin-test-ubuntu2204-${{ github.base_ref }}
-```
-
-**File**: `run.sh` (modified, +4/-0)
-```diff
-@@ -288,6 +288,10 @@ function run_build()
-         echo "Start building third-parties..."
-         mkdir -p build
-         pushd build
-+        if [[ "${SANITIZER}" == *address* ]]; then
-+            echo "ASan for third-parties is enabled"
-+            CMAKE_OPTIONS="${CMAKE_OPTIONS} -DENABLE_ASAN=ON"
-+        fi
-         CMAKE_OPTIONS="${CMAKE_OPTIONS} -DROCKSDB_PORTABLE=${ROCKSDB_PORTABLE}"
-         cmake .. ${CMAKE_OPTIONS}
-         make -j$JOB_NUM
-```
-
----
-
-### Incident Patch 3: `db756dcd` (2026-03-13)
-**Commit Message**: fix: avoid reopening GC-deleted plog during duplication (#2373)
-
-Fix https://github.com/apache/incubator-pegasus/issues/2372.
-
-Duplication replay may access private log files deleted by
-concurrent GC. Track cleanable decree and stop scanning
-plog files beyond GC boundary to prevent crash.
-
-**File**: `src/replica/duplication/load_from_private_log.cpp` (modified, +22/-4)
-```diff
-@@ -156,17 +156,35 @@ void load_from_private_log::find_log_file_to_start()
-     // Reopen the files. Because the internal file handle of `file_map`
-     // is cleared once WAL replay finished. They are unable to read.
-     mutation_log::log_file_map_by_index new_file_map;
--    for (const auto &pr : file_map) {
-+
-+    const decree cleanable_decree = _private_log->get_cleanable_decree();
-+    const decree max_decree_gpid = _private_log->max_decree(get_gpid());
-+
-+    if (max_decree_gpid <= cleanable_decree) {
-+        LOG_ERROR_PREFIX("max_decree_gpid({}) should be > cleanable_decree({}) for plog",
-+                         max_decree_gpid,
-+                         cleanable_decree);
-+        return;
-+    }
-+
-+    for (auto it = file_map.rbegin(); it != file_map.rend(); ++it) {
-         log_file_ptr file;
--        error_s es = log_utils::open_read(pr.second->path(), file);
-+        error_s es = log_utils::open_read(it->second->path(), file);
-         if (!es.is_ok()) {
-             LOG_ERROR_PREFIX("{}", es);
-             return;
-         }
--        new_file_map.emplace(pr.first, file);
-+
-+        new_file_map.emplace(it->first, file);
-+
-+        // If the max decree of a log file falls within `cleanable_decree`, the file may be deleted
-+        // during the GC of plog files. Therefore, these files should be skipped here.
-+        if (cleanable_decree >= file->previous_log_max_decree(get_gpid())) {
-+            break;
-+        }
-     }
- 
--    find_log_file_to_start(std::move(new_file_map));
-+    find_log_file_to_start(new_file_map);
- }
- 
- void load_from_private_log::find_log_file_to_start(
-```
-
-**File**: `src/replica/duplication/load_from_private_log.h` (modified, +1/-2)
-```diff
-@@ -82,9 +82,8 @@ class load_from_private_log final : public replica_base,
-     static constexpr int MAX_ALLOWED_FILE_REPEATS{10};
- 
- private:
--    void find_log_file_to_start(const mutation_log::log_file_map_by_index &log_files);
-+    void find_log_file_to_start(const mutation_log::log_file_map_by_index &log_file_map);
- 
--private:
-     friend class load_from_private_log_test;
-     friend class load_fail_mode_test;
-     FRIEND_TEST(load_fail_mode_test, fail_skip);
-```
-
-**File**: `src/replica/mutation_log.cpp` (modified, +13/-0)
-```diff
-@@ -361,6 +361,7 @@ void mutation_log::init_states()
-     _private_log_info = {0, 0};
-     _plog_max_decree_on_disk = 0;
-     _plog_max_commit_on_disk = 0;
-+    _cleanable_decree = 0;
- }
- 
- error_code mutation_log::open(replay_callback read_callback,
-@@ -898,6 +899,18 @@ void mutation_log::update_max_commit_on_disk_no_lock(decree d)
-     }
- }
- 
-+decree mutation_log::get_cleanable_decree() const
-+{
-+    zauto_lock l(_lock);
-+    return _cleanable_decree;
-+}
-+
-+void mutation_log::set_cleanable_decree(decree d)
-+{
-+    zauto_lock l(_lock);
-+    _cleanable_decree = d;
-+}
-+
- bool mutation_log::get_learn_state(gpid gpid, decree start, /*out*/ learn_state &state) const
- {
-     CHECK(_is_private, "this method is only valid for private logs");
-```
-
-**File**: `src/replica/mutation_log.h` (modified, +14/-3)
-```diff
-@@ -47,6 +47,7 @@
- #include "task/task_code.h"
- #include "task/task_tracker.h"
- #include "utils/autoref_ptr.h"
-+#include "utils/ports.h"
- #include "utils/error_code.h"
- #include "utils/errors.h"
- #include "utils/zlocks.h"
-@@ -301,6 +302,9 @@ class mutation_log : public ref_counter
- 
-     task_tracker *tracker() { return &_tracker; }
- 
-+    decree get_cleanable_decree() const;
-+    void set_cleanable_decree(decree d);
-+
- protected:
-     // 'size' is data size to write; the '_global_end_offset' will be updated by 'size'.
-     // can switch file only when create_new_log_if_needed = true;
-@@ -400,9 +404,14 @@ class mutation_log : public ref_counter
-     // for plog. Since it is set with mutation.data.header.last_committed_decree, it must
-     // be less than _plog_max_decree_on_disk.
-     decree _plog_max_commit_on_disk;
-+
-+    // The decree threshold for private log garbage collection. Mutations with decree <= this
-+    // value are considered cleanable and their log files may be deleted by GC.
-+    // Protected by _lock in get/set.
-+    decree _cleanable_decree;
- };
- 
--typedef dsn::ref_ptr<mutation_log> mutation_log_ptr;
-+using mutation_log_ptr = dsn::ref_ptr<mutation_log>;
- 
- class mutation_log_private : public mutation_log, private replica_base
- {
-@@ -438,6 +447,9 @@ class mutation_log_private : public mutation_log, private replica_base
-     void flush_once() override;
- 
- private:
-+    DISALLOW_COPY_AND_ASSIGN(mutation_log_private);
-+    DISALLOW_MOVE_AND_ASSIGN(mutation_log_private);
-+
-     // async write pending mutations into log file
-     // Preconditions:
-     // - _pending_write != nullptr
-@@ -457,9 +469,8 @@ class mutation_log_private : public mutation_log, private replica_base
-     // if count <= 0, means flush until all data is on disk
-     void flush_internal(int max_count);
- 
--private:
-     // bufferring - only one concurrent write is allowed
--    typedef std::vector<mutation_ptr> mutations;
-+    using mutations = std::vector<mutation_ptr>;
-     std::atomic_bool _is_writing;
-     // Writes that are emitted to `commit_log_block` but are not completely written.
-     // The weak_ptr used here is a trick. Once the pointer freed, ie.
-```
-
-**File**: `src/replica/replica_chkpt.cpp` (modified, +1/-0)
-```diff
-@@ -177,6 +177,7 @@ void replica::on_checkpoint_timer()
-         }
-     }
- 
-+    _private_log->set_cleanable_decree(cleanable_decree);
-     tasking::enqueue(LPC_GARBAGE_COLLECT_LOGS_AND_REPLICAS,
-                      &_tracker,
-                      [this, plog, cleanable_decree, valid_start_offset] {
+     steps:
+       # actions/checkout@v4.3.1
+       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+-      - uses: hadolint/hadolint-action@2332a7b74a6de0dda2e2221d575162eba76ba5e5
++      # hadolint/hadolint-action@v3.5.0
++      - uses: hadolint/hadolint-action@06be81baf89a55ffd0e24b8f04a4185738dd3387
+         with:
+           recursive: true
+           ignore: 'DL3033,DL3013,DL3059,SC2086,DL3003,SC2164,DL3008,DL3007,DL3006,DL4001,DL3041'
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2402** (closed): [backport] ci(github): fix branch glob to actually match release branches (@acelyc111)
-- **PR #2401** (closed): ci(github): fix branch glob to actually match release branches (@acelyc111)
-- **PR #2399** (closed): block_service: fix 'occured' -> 'occurred' typos in ERR_FS_INTERNAL doc (@SAY-5)
-- **PR #2398** (2026-04-15): ci(github): pin all actions to exact commit SHAs instead of tags or branch references (@empiredan)
-- **PR #2396** (2026-04-09): feat(docker): support arm64 (#2081) (@empiredan)
-- **PR #2393** (2026-04-14): feat(new_metrics): support `server_stat` command showing some important server-level metrics (part 4) (@empiredan)
+- **PR #2431** (2026-11-25): ci(github): re-pin actions to ASF allow-list to fix broken CI (@ruojieranyishen)
+- **PR #2429** (2026-11-17): feat(duplication): make the task code for incremental loading from private logs configurable (cherry-pick #2184) (@ruojieranyishen)
+- **PR #2428** (2026-11-17): fix(bulkload): Sometime ingest will hang when encountering write throttling (cherry-pick #2157) (@ruojieranyishen)
+- **PR #2427** (2026-11-17): fix(duplication): reduce the delay before last mutation is duplicated to the remote cluster (cherry-pick #2048) (@ruojieranyishen)
+- **PR #2426** (2026-11-18): fix(duplication): failed to start duplication after source replica servers exit due to missing duplicating status in .app-info (cherry-pick #1608) (@ruojieranyishen)
+- **PR #2425** (2026-11-17): fix(duplication): get duplication manager as shared_ptr in case raw pointer has been reset to null (cherry-pick #1968) (@ruojieranyishen)
 
 ---
 
@@ -1713,66 +1465,32 @@ plog files beyond GC boundary to prevent crash.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci(github): build third-party images independently per OS version to prevent a s
+## X. ci(github): re-pin actions to ASF allow-list to fix broken CI
 
 **RULE**:
-When implementing operations in `.github/workflows/build-push-thirdparty.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/incubator-pegasus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/actions/rebuild_thirdparty_if_needed/action.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/incubator-pegasus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `68a76223`: ci(github): build third-party images independently per OS version to prevent a single OS build failure from breaking the entire build (#2346). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `02051942`: ci(github): re-pin actions to ASF allow-list to fix broken CI. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/build-push-thirdparty.yml`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/actions/rebuild_thirdparty_if_needed/action.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-# Licensed to the Apache Software Foundation (ASF) under one
-# or more contributor license agreements.  See the NOTICE file
-# distributed with this work for additional information
-# regarding copyright ownership.  The ASF licenses this file
-# to you under the Apache License, Version 2.0 (the
-# "License"); you may not use this file except in compliance
-# with the License.  You may obtain a copy of the License at
-#
-#   http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing,
-# software distributed under the License is distributed on an
-# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-# KIND, either express or implied.  See the License for the
-# specific language governing permissions and limitations
-# under the License.
-
-name: BuildThirdpartyDocker - build and publish thirdparty
-
-on:
-  workflow_call:
-    inputs:
-      osversion:
-        required: true
-        type: string
-
-jobs:
-  build_push_src_docker_images:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
-  
+    # dorny/paths-filter@v4.0.3
+    - uses: dorny/paths-filter@ceb8a2b8f2d89434be7ff52d3de7ec3738c5cc9d
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Induced defect failure mode:
+    - uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `68a76223` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `02051942` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

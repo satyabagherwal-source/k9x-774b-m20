@@ -13043,3 +13043,5 @@
 | `CYCLE-20261125-EXGU` | `2026-11-25T10:57:39.054Z` | `LiquidAI/LFM3-1.7B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liquidai-lfm3-1.7b-learnings.md` | Yes (`40b7aa58...`) |
 | `CYCLE-20261125-F28I` | `2026-11-25T10:57:45.234Z` | `Orange-OpenSource/hurl` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7098` | Yes (`9a7a420d...`) |
 | `CYCLE-20261125-FDG6` | `2026-11-25T10:57:59.766Z` | `ytsaurus/ytsaurus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10509` | Yes (`a5fa5910...`) |
+| `CYCLE-20261125-WEQZ` | `2026-11-25T11:11:14.603Z` | `tencent/Hy-SimulMT-30B-A3B-FP8` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-tencent-hy-simulmt-30b-a3b-fp8-learnings.md` | Yes (`017c161d...`) |
+| `CYCLE-20261125-WPEF` | `2026-11-25T11:11:28.407Z` | `apache/incubator-pegasus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10510` | Yes (`a9341c40...`) |

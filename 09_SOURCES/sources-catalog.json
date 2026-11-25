@@ -5723,10 +5723,10 @@
     "repository": "apache/incubator-pegasus",
     "platform": "github",
     "sourceUrl": "https://github.com/apache/incubator-pegasus",
-    "sourceVersion": "31da6f5e",
+    "sourceVersion": "02051942",
     "license": "Apache-2.0",
-    "contentHash": "ac801a7cb05af2396369c4135aaa12e9572ff54b63c2d293291ee448abdb0b8b",
-    "lastHarvestedAt": "2026-11-13T13:11:20.077Z",
+    "contentHash": "a9341c4018422f7fa7070b4b4d97c9e56f9a5ab64ac533b53f3d9d3afdb373bd",
+    "lastHarvestedAt": "2026-11-25T11:11:28.411Z",
     "learningId": "learn-github-apache-incubator-pegasus"
   },
   "benoitvallon-react-native-nw-react-calculator": {
@@ -11395,8 +11395,8 @@
     "sourceUrl": "https://huggingface.co/tencent/Hy-SimulMT-30B-A3B-FP8",
     "sourceVersion": "hf-tencent-hy-simulmt-30b-a3b-fp8",
     "license": "Open-Source",
-    "contentHash": "ee54df7924a115c55c1831eee7c09fd3aab1f1eeaba92af4f798126d7c97de55",
-    "lastHarvestedAt": "2026-11-21T19:11:13.186Z",
+    "contentHash": "017c161de8876f1b12d7274dad53183f7a354715ed1a650622599b5ab2f02c56",
+    "lastHarvestedAt": "2026-11-25T11:11:14.608Z",
     "learningId": "learn-huggingface-tencent-hy-simulmt-30b-a3b-fp8"
   },
   "hf-prithivmlmods-gender-classifier-mini": {

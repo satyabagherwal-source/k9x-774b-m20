@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T10:57:59.776Z",
-  "total_cycles_completed": 12384,
-  "total_learnings_persisted": 12384,
-  "total_rules_promoted": 11389,
+  "last_updated": "2026-11-25T11:11:28.417Z",
+  "total_cycles_completed": 12386,
+  "total_learnings_persisted": 12386,
+  "total_rules_promoted": 11390,
   "history": [
-    {
-      "timestamp": "2026-11-24T22:30:08.020Z",
-      "repository": "medialab/xan",
-      "learningId": "learn-github-medialab-xan",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T22:30:11.696Z",
-      "repository": "kotest/kotest",
-      "learningId": "learn-github-kotest-kotest",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-24T22:42:26.329Z",
       "repository": "restatedev/restate",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-25T10:57:59.776Z",
       "repository": "ytsaurus/ytsaurus",
       "learningId": "learn-github-ytsaurus-ytsaurus",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T11:11:14.614Z",
+      "repository": "tencent/Hy-SimulMT-30B-A3B-FP8",
+      "learningId": "learn-huggingface-tencent-hy-simulmt-30b-a3b-fp8",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T11:11:28.417Z",
+      "repository": "apache/incubator-pegasus",
+      "learningId": "learn-github-apache-incubator-pegasus",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261123-QC9H",
-    "timestamp": "2026-11-23T22:43:01.397Z",
-    "repository": "meilisearch/meilisearch",
-    "learningId": "learn-github-meilisearch-meilisearch",
-    "contentHash": "8f1cd620620b8e7144c5b3aaf9f9185e610394eb5e1771a2e6ef4d96dea3b1a4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-7AKE",
-    "timestamp": "2026-11-23T22:56:12.350Z",
-    "repository": "black-forest-labs/flux-3-image-klein",
-    "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein",
-    "contentHash": "0c7e505cf85cc1a27f37bc3d303d55f7a7f8cc74387cc8125a740053eb999f3e",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261123-7FMD",
     "timestamp": "2026-11-23T22:56:18.901Z",
     "repository": "biomejs/biome",
@@ -7490,6 +7460,36 @@
     "repository": "ytsaurus/ytsaurus",
     "learningId": "learn-github-ytsaurus-ytsaurus",
     "contentHash": "a5fa5910d7f23aef714003fa89242961b94dcf57b14cc333de9345ffb02e28fd",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-WEQZ",
+    "timestamp": "2026-11-25T11:11:14.603Z",
+    "repository": "tencent/Hy-SimulMT-30B-A3B-FP8",
+    "learningId": "learn-huggingface-tencent-hy-simulmt-30b-a3b-fp8",
+    "contentHash": "017c161de8876f1b12d7274dad53183f7a354715ed1a650622599b5ab2f02c56",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-WPEF",
+    "timestamp": "2026-11-25T11:11:28.407Z",
+    "repository": "apache/incubator-pegasus",
+    "learningId": "learn-github-apache-incubator-pegasus",
+    "contentHash": "a9341c4018422f7fa7070b4b4d97c9e56f9a5ab64ac533b53f3d9d3afdb373bd",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

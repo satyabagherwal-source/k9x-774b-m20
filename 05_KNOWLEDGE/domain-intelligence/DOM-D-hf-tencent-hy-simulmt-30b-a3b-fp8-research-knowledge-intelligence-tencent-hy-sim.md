@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/tencent/Hy-SimulMT-30B-A3B-FP8",
   "source_version": "hf-tencent-hy-simulmt-30b-a3b-fp8",
   "license": "Open-Source",
-  "timestamp": "2026-11-17T21:56:40.088Z",
+  "timestamp": "2026-11-25T11:11:14.830Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-tencent-hy-simulmt-30b-a3b-fp8",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [tencent/Hy-SimulMT-30B-A3B-FP8](https://huggingface.co/tencent/Hy-SimulMT-30B-A3B-FP8) (Revision: `hf-tencent`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-17T21:56:40.088Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T11:11:14.830Z`  
 > **Learning ID**: `learn-huggingface-tencent-hy-simulmt-30b-a3b-fp8`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-tencent-hy-simulmt-30b-a3b-fp8-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/tencent/Hy-SimulMT-30B-A3B-FP8](https://huggingface.co/tencent/Hy-SimulMT-30B-A3B-FP8))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T21:56:39.272Z  
+> **Harvest Timestamp**: 2026-11-25T11:11:14.000Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: translation
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 1405 downloads | 461 likes
+- **Stars / Engagement**: 1418 downloads | 461 likes
 
 ---
 

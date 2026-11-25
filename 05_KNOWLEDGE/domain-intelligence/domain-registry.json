@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T10:58:06.280Z",
-  "total_records": 2659,
+  "last_updated": "2026-11-25T11:11:33.633Z",
+  "total_records": 2661,
   "domains": {
     "A": {
       "total": 22,
@@ -2694,7 +2694,7 @@
       ]
     },
     "L": {
-      "total": 24,
+      "total": 26,
       "record_ids": [
         "DOM-L-1B851132",
         "DOM-L-80D1F65C",
@@ -2719,7 +2719,9 @@
         "domain_intelligence-deployment-operations-intelligence-vanniktech-gradle-maven-publish-plugin-learni",
         "domain_intelligence-deployment-operations-intelligence-yugabyte-yugabyte-db-core-invariants",
         "domain_intelligence-deployment-operations-intelligence-appwrite-appwrite-core-invariants",
-        "domain_intelligence-deployment-operations-intelligence-appwrite-appwrite-learnings-core-invariants"
+        "domain_intelligence-deployment-operations-intelligence-appwrite-appwrite-learnings-core-invariants",
+        "domain_intelligence-deployment-operations-intelligence-apache-incubator-pegasus-core-invariants",
+        "domain_intelligence-deployment-operations-intelligence-apache-incubator-pegasus-learnings-core-invar"
       ]
     },
     "M": {
@@ -12050,8 +12052,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-permissions-learnings-technical-construction-intelligence-z.md",
       "repository": "zoontek-react-native-permissions-learnings",
-      "content_hash": "71717d7f39c88555a2323c25c8350fb86b60e2d5459fb4402d223abe9b5cfaa0",
-      "created_at": "2026-11-25T05:29:08.434Z"
+      "content_hash": "ea9b28154eb570bcb5d81c9bffae2f3968647ddf98239891fc27e2bc5de30375",
+      "created_at": "2026-11-25T11:11:33.633Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants",
@@ -29558,8 +29560,8 @@
       "title": "Research & Knowledge Intelligence: tencent/Hy-SimulMT-30B-A3B-FP8 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-tencent-hy-simulmt-30b-a3b-fp8-research-knowledge-intelligence-tencent-hy-sim.md",
       "repository": "tencent/Hy-SimulMT-30B-A3B-FP8",
-      "content_hash": "6f1014603f616b0314ecb8b5288b1189079b9cf3b852272e68d831af506c2856",
-      "created_at": "2026-11-17T21:56:40.088Z"
+      "content_hash": "bf18ba2d42173a914f60c518f79eac54bb3a264de6c8a980b97893d204abfde4",
+      "created_at": "2026-11-25T11:11:14.831Z"
     },
     "DOM-D-E5720888": {
       "record_id": "DOM-D-E5720888",
@@ -29618,8 +29620,8 @@
       "title": "Research & Knowledge Intelligence: hf-tencent-hy-simulmt-30b-a3b-fp8-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-tencent-hy-simulmt-30b-a3b-fp8-learnings-research-knowledge-intelligence-hf-t.md",
       "repository": "hf-tencent-hy-simulmt-30b-a3b-fp8-learnings",
-      "content_hash": "53a3a14fba5d113c3b734b7b7b7ed0f84d7083534911f3e203899d7acbfdd680",
-      "created_at": "2026-11-17T21:57:34.383Z"
+      "content_hash": "586192c5f1a60693a31572479294bab9b75debfe0645b93732253602a9a014e0",
+      "created_at": "2026-11-25T11:11:32.041Z"
     },
     "domain_intelligence-research-knowledge-intelligence-audio-cpp-audio-cpp-gguf-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-audio-cpp-audio-cpp-gguf-core-invariants",
@@ -44712,6 +44714,24 @@
       "repository": "ratatui-ratatui-learnings",
       "content_hash": "3dc76fffd1056f5e4b314c8ffeeffb796c61992463a4ea89e05c0a668b99bce2",
       "created_at": "2026-11-25T10:26:15.226Z"
+    },
+    "domain_intelligence-deployment-operations-intelligence-apache-incubator-pegasus-core-invariants": {
+      "record_id": "domain_intelligence-deployment-operations-intelligence-apache-incubator-pegasus-core-invariants",
+      "domain_letter": "L",
+      "title": "Deployment & Operations Intelligence: apache/incubator-pegasus Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-apache-incubator-pegasus-deployment-operations-intelligence-apache-incubator-peg.md",
+      "repository": "apache/incubator-pegasus",
+      "content_hash": "19bbadc9c7c05a12ce4c57d73a85a58b376b073d4f2fa0ff51a3689ec010e88b",
+      "created_at": "2026-11-25T11:11:28.808Z"
+    },
+    "domain_intelligence-deployment-operations-intelligence-apache-incubator-pegasus-learnings-core-invar": {
+      "record_id": "domain_intelligence-deployment-operations-intelligence-apache-incubator-pegasus-learnings-core-invar",
+      "domain_letter": "L",
+      "title": "Deployment & Operations Intelligence: apache-incubator-pegasus-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-apache-incubator-pegasus-learnings-deployment-operations-intelligence-apache-inc.md",
+      "repository": "apache-incubator-pegasus-learnings",
+      "content_hash": "e0b5737c53ec29ff1611dd28c302432c63dffdbe315c6629cb8f291114044f96",
+      "created_at": "2026-11-25T11:11:32.810Z"
     }
   }
 }

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-25T10:58:04.038Z",
+  "updated_at": "2026-11-25T11:11:32.390Z",
   "stats": {
-    "total_discovered": 9403,
-    "approved_pending_harvest": 8911,
+    "total_discovered": 9405,
+    "approved_pending_harvest": 8913,
     "harvested_count": 0,
     "rejected_count": 492,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 8902,
+      "COMMUNITY_AND_EXPERT": 8904,
       "OFFICIAL_DOCUMENTATION": 280,
       "STANDARDS_AND_SPECIFICATIONS": 150,
       "ENGINEERING_BLOGS": 7,
@@ -203449,6 +203449,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md",
         "fileName": "orange-opensource-hurl-learnings.md"
+      }
+    },
+    "SRC-28867DA2152C": {
+      "id": "SRC-28867DA2152C",
+      "url": "https://github.com/actions/virtual-environments/blob/main/images/macos/macos-15-Readme.md",
+      "title": "https://github.com/actions/virtual-environments/blob/main/images/macos/macos-15-Readme.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T11:11:32.331Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-incubator-pegasus-learnings.md",
+        "fileName": "apache-incubator-pegasus-learnings.md"
+      }
+    },
+    "SRC-8D247048AF55": {
+      "id": "SRC-8D247048AF55",
+      "url": "https://get.sdkman.io/",
+      "title": "https://get.sdkman.io/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T11:11:32.390Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-incubator-pegasus-learnings.md",
+        "fileName": "apache-incubator-pegasus-learnings.md"
       }
     }
   }
