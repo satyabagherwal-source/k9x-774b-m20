@@ -3523,10 +3523,10 @@
     "repository": "sigstore/cosign",
     "platform": "github",
     "sourceUrl": "https://github.com/sigstore/cosign",
-    "sourceVersion": "ab26c80d",
+    "sourceVersion": "2e60a1c3",
     "license": "Apache-2.0",
-    "contentHash": "aef5e7cbf4050a75c2facd39ac844b336278ed9492ad19ec2493a77360b7a04c",
-    "lastHarvestedAt": "2026-11-24T18:43:36.104Z",
+    "contentHash": "0b4fb05f551345006a2279583f8b25f8c1e3358f2c14434cfa2b547cfa36c1cf",
+    "lastHarvestedAt": "2026-11-25T07:48:45.768Z",
     "learningId": "learn-github-sigstore-cosign"
   },
   "llphant-llphant": {
@@ -4913,10 +4913,10 @@
     "repository": "rqlite/rqlite",
     "platform": "github",
     "sourceUrl": "https://github.com/rqlite/rqlite",
-    "sourceVersion": "7feaf262",
+    "sourceVersion": "a7a54625",
     "license": "MIT",
-    "contentHash": "9047bd2756dbf3ea813c0ceb0fd932afd9ca196acd77f4027f76523781d8696e",
-    "lastHarvestedAt": "2026-11-24T13:56:43.163Z",
+    "contentHash": "22cee83c7c0df2786625f8758514d5e13a1a70eb08d2338eb932efb1f4edd800",
+    "lastHarvestedAt": "2026-11-25T07:48:48.257Z",
     "learningId": "learn-github-rqlite-rqlite"
   },
   "arco-design-arco-design": {
@@ -6893,10 +6893,10 @@
     "repository": "gardener/gardener",
     "platform": "github",
     "sourceUrl": "https://github.com/gardener/gardener",
-    "sourceVersion": "86782dd1",
+    "sourceVersion": "44a016aa",
     "license": "Apache-2.0",
-    "contentHash": "ee89560c474315d843a57fd9d57325f2fd626609cc50c7a1c12d408cd2e44501",
-    "lastHarvestedAt": "2026-11-24T14:59:42.480Z",
+    "contentHash": "178e41ee61e7693ec48ffd18fa130d13d844922ed806d1a9865c2cc984e6e136",
+    "lastHarvestedAt": "2026-11-25T07:48:44.202Z",
     "learningId": "learn-github-gardener-gardener"
   },
   "nirdiamant-rag_techniques": {
@@ -8123,10 +8123,10 @@
     "repository": "vanniktech/gradle-maven-publish-plugin",
     "platform": "github",
     "sourceUrl": "https://github.com/vanniktech/gradle-maven-publish-plugin",
-    "sourceVersion": "4530ec6c",
+    "sourceVersion": "054fe435",
     "license": "Apache-2.0",
-    "contentHash": "cb4d12643ff9b468f410cb4f0c87d5f17554f2b00ef328700f62a9c32b2c175d",
-    "lastHarvestedAt": "2026-11-22T21:48:59.829Z",
+    "contentHash": "cd78ac081d752be6de828347c2ab5683b27a9514de67995877f09fd8222e38e7",
+    "lastHarvestedAt": "2026-11-25T07:48:40.273Z",
     "learningId": "learn-github-vanniktech-gradle-maven-publish-plugin"
   },
   "mohamedrejeb-calf": {
@@ -10605,8 +10605,8 @@
     "sourceUrl": "https://huggingface.co/ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF",
     "sourceVersion": "hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-gguf",
     "license": "Open-Source",
-    "contentHash": "e2c93e84da26f55d63bb88d8b12afb73a42674c92652454760ffd812f27b91c1",
-    "lastHarvestedAt": "2026-11-17T17:27:56.156Z",
+    "contentHash": "1941e63e1395ba300276ee8b758e870ad0d19ca72de29cae14c1be7149666297",
+    "lastHarvestedAt": "2026-11-25T07:48:33.641Z",
     "learningId": "learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-gguf"
   },
   "hf-comfy-org-fibo-2.0": {

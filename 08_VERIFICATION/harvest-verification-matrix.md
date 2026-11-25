@@ -12992,3 +12992,8 @@
 | `CYCLE-20261125-BVL0` | `2026-11-25T07:39:19.332Z` | `FalkorDB/FalkorDB` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10482` | Yes (`f299778a...`) |
 | `CYCLE-20261125-C1N9` | `2026-11-25T07:39:27.189Z` | `kube-rs/kube` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10483` | Yes (`fed1202f...`) |
 | `CYCLE-20261125-C66S` | `2026-11-25T07:39:33.076Z` | `apache/shardingsphere` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10484` | Yes (`62972d7d...`) |
+| `CYCLE-20261125-NRAC` | `2026-11-25T07:48:33.636Z` | `ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-gguf-learnings.md` | Yes (`1941e63e...`) |
+| `CYCLE-20261125-NWEK` | `2026-11-25T07:48:40.268Z` | `vanniktech/gradle-maven-publish-plugin` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10485` | Yes (`cd78ac08...`) |
+| `CYCLE-20261125-NZFP` | `2026-11-25T07:48:44.197Z` | `gardener/gardener` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10486` | Yes (`178e41ee...`) |
+| `CYCLE-20261125-O0N7` | `2026-11-25T07:48:45.763Z` | `sigstore/cosign` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10487` | Yes (`0b4fb05f...`) |
+| `CYCLE-20261125-O2KD` | `2026-11-25T07:48:48.253Z` | `rqlite/rqlite` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7863` | Yes (`22cee83c...`) |

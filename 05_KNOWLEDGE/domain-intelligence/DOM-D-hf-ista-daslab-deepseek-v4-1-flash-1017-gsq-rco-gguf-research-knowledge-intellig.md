@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF",
   "source_version": "hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-gguf",
   "license": "Open-Source",
-  "timestamp": "2026-11-17T17:27:56.323Z",
+  "timestamp": "2026-11-25T07:48:33.964Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-gguf",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF](https://huggingface.co/ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF) (Revision: `hf-ista-da`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-17T17:27:56.323Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T07:48:33.964Z`  
 > **Learning ID**: `learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-gguf`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-gguf-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF](https://huggingface.co/ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T17:27:53.749Z  
+> **Harvest Timestamp**: 2026-11-25T07:48:32.849Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 4322841 downloads | 676 likes
+- **Stars / Engagement**: 3807813 downloads | 684 likes
 
 ---
 

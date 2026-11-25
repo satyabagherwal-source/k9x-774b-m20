@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T07:39:39.772Z",
+  "last_updated": "2026-11-25T07:48:55.409Z",
   "total_records": 2646,
   "domains": {
     "A": {
@@ -12235,8 +12235,8 @@
       "title": "Deployment & Operations Intelligence: gardener/gardener Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-gardener-gardener-deployment-operations-intelligence-gardener-gardener-core-inva.md",
       "repository": "gardener/gardener",
-      "content_hash": "032d9a2ffc416166302eaa3427879580c98d7a0ce2b6be3053edfdafd7ef170b",
-      "created_at": "2026-11-24T14:59:42.875Z"
+      "content_hash": "edfca70031e6e6dcd5035f0b1a90e268b099fb09538bac71b6f35f2a748f9f18",
+      "created_at": "2026-11-25T07:48:44.808Z"
     },
     "domain_intelligence-design-intelligence-openai-whisper-large-v3-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-openai-whisper-large-v3-core-invariants",
@@ -12330,8 +12330,8 @@
       "title": "Deployment & Operations Intelligence: gardener-gardener-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-gardener-gardener-learnings-deployment-operations-intelligence-gardener-gardener.md",
       "repository": "gardener-gardener-learnings",
-      "content_hash": "960ee4ad83c33a1895d231d14523da65b8a6f4cd79e154fbfad3496e0f9ff20a",
-      "created_at": "2026-11-23T19:26:22.107Z"
+      "content_hash": "8313b0f46d4d00591ad808e7b6fd61ca874fc941eda86b4c4f55563dd2542b4d",
+      "created_at": "2026-11-25T07:48:55.409Z"
     },
     "domain_intelligence-research-knowledge-intelligence-atomicchat-lfm3-1-7b-uncensored-gguf-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-atomicchat-lfm3-1-7b-uncensored-gguf-core-invari",
@@ -16523,8 +16523,8 @@
       "title": "Architecture Intelligence: rqlite/rqlite Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-rqlite-rqlite-architecture-intelligence-rqlite-rqlite-core-invariants.md",
       "repository": "rqlite/rqlite",
-      "content_hash": "06e9d33f732ee30223d151847a3982d3b447c15e5e9a9da0f1d31e0db2137ef7",
-      "created_at": "2026-11-24T13:56:43.587Z"
+      "content_hash": "236862e155acbc0b7254b7299ab034aa29dcd2d6690f1467e32c039e933610b8",
+      "created_at": "2026-11-25T07:48:48.826Z"
     },
     "domain_intelligence-research-knowledge-intelligence-higurashi-ai-haru-4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-higurashi-ai-haru-4b-core-invariants",
@@ -25432,8 +25432,8 @@
       "title": "Content & Information Intelligence: sigstore/cosign Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-sigstore-cosign-content-information-intelligence-sigstore-cosign-core-invariants.md",
       "repository": "sigstore/cosign",
-      "content_hash": "61e3c146bcfe85e65425804bea8112c18f26ea069901b725678b55eb8c195a4c",
-      "created_at": "2026-11-24T18:43:36.531Z"
+      "content_hash": "4d1d4964b3744a1b37e56a59fc7feed5c6df4da283055e5312297f4511779c68",
+      "created_at": "2026-11-25T07:48:46.347Z"
     },
     "domain_intelligence-technical-construction-intelligence-urllib3-urllib3-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-urllib3-urllib3-learnings-core-invariants",
@@ -28848,17 +28848,17 @@
       "title": "Research & Knowledge Intelligence: ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-gguf-research-knowledge-intellig.md",
       "repository": "ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF",
-      "content_hash": "619708e99d631805cb0b2478607b4f8036d52181b4474a5c78ea22e71ccd120b",
-      "created_at": "2026-11-17T17:27:56.323Z"
+      "content_hash": "ec189630d0635fdeb364ebd07d4a5f90d3d7b24af0d2d356de4b6cd54bb9e43b",
+      "created_at": "2026-11-25T07:48:33.965Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-",
       "domain_letter": "D",
-      "title": "Research & Knowledge Intelligence: hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-coder-gguf-learnings Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-coder-gguf-learnings-research-kn.md",
-      "repository": "hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-coder-gguf-learnings",
-      "content_hash": "3ae8da65040a8f5f31458db129da97d5a3304e16de39819e94340d7c9281d994",
-      "created_at": "2026-11-22T02:29:37.694Z"
+      "title": "Research & Knowledge Intelligence: hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-gguf-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-gguf-learnings-research-knowledg.md",
+      "repository": "hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-gguf-learnings",
+      "content_hash": "26c87d7c7fcc109540b64405d17c5aa58a60eaeb2cec13427e0dc91d7dbb0705",
+      "created_at": "2026-11-25T07:48:52.347Z"
     },
     "domain_intelligence-architecture-intelligence-weaviate-weaviate-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-weaviate-weaviate-learnings-core-invariants",
@@ -34742,8 +34742,8 @@
       "title": "Deployment & Operations Intelligence: vanniktech/gradle-maven-publish-plugin Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-vanniktech-gradle-maven-publish-plugin-deployment-operations-intelligence-vannik.md",
       "repository": "vanniktech/gradle-maven-publish-plugin",
-      "content_hash": "f2273452adc2f595e871857065d8364b21cd0d47321c6318840c2d6580d312c2",
-      "created_at": "2026-11-22T21:49:00.208Z"
+      "content_hash": "aab923d3e0c282e7e2a6cf552f3545d8fd9beace635c600cd0033609bb83d48f",
+      "created_at": "2026-11-25T07:48:40.877Z"
     },
     "domain_intelligence-quality-verification-intelligence-sigstore-cosign-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-sigstore-cosign-core-invariants",
@@ -34760,8 +34760,8 @@
       "title": "Deployment & Operations Intelligence: vanniktech-gradle-maven-publish-plugin-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-vanniktech-gradle-maven-publish-plugin-learnings-deployment-operations-intellige.md",
       "repository": "vanniktech-gradle-maven-publish-plugin-learnings",
-      "content_hash": "87874e36338437c08a4271700c18ac18e6510a48560cd3359b0bd4df838a33e5",
-      "created_at": "2026-11-22T21:49:14.302Z"
+      "content_hash": "16705091560a6ea690e483da86fcd553ead699385fa356ce947f5c12fcb2a931",
+      "created_at": "2026-11-25T07:48:53.424Z"
     },
     "domain_intelligence-quality-verification-intelligence-sigstore-cosign-learnings-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-sigstore-cosign-learnings-core-invariants",

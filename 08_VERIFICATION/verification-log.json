@@ -1,80 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261123-P6L3",
-    "timestamp": "2026-11-23T20:22:09.303Z",
-    "repository": "vespa-engine/vespa",
-    "learningId": "learn-github-vespa-engine-vespa",
-    "contentHash": "7c1db1c42b197404adb50a56d67e4f7a909ea84842c96d85320da79ff79ac96c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-ZUTZ",
-    "timestamp": "2026-11-23T20:30:27.287Z",
-    "repository": "microsoft/FrogNano-4B-2609",
-    "learningId": "learn-huggingface-microsoft-frognano-4b-2609",
-    "contentHash": "787020d3f786e0c430358663063cb5b36b89d13b581953be6fa35cd998ad81b8",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-ZZE2",
-    "timestamp": "2026-11-23T20:30:33.194Z",
-    "repository": "zvec-ai/zvec-grep",
-    "learningId": "learn-github-zvec-ai-zvec-grep",
-    "contentHash": "8b2607ac00accefcb13f086f33da8824f782418b9154fa099859bdc64830051e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-07NV",
-    "timestamp": "2026-11-23T20:30:43.915Z",
-    "repository": "smallstep/cli",
-    "learningId": "learn-github-smallstep-cli",
-    "contentHash": "2c55dd0b0ee93563ec8c6c2026d09af04440f3ab0748a81ea889b40bb28604ee",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-AJ1L",
-    "timestamp": "2026-11-23T20:38:45.225Z",
-    "repository": "FrancisRing/Prism",
-    "learningId": "learn-huggingface-francisring-prism",
-    "contentHash": "7e0ee4ebff94a1d1acef4e3223f38b76324df5f6817d2712f079f4e892f28b6a",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261123-AOKJ",
     "timestamp": "2026-11-23T20:38:52.387Z",
     "repository": "iziz/libPhoneNumber-iOS",
@@ -7490,6 +7415,81 @@
     "repository": "apache/shardingsphere",
     "learningId": "learn-github-apache-shardingsphere",
     "contentHash": "62972d7d61ae10d39dbe50c6e80b9749ccde34b2288843168aa7f68941583ce6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-NRAC",
+    "timestamp": "2026-11-25T07:48:33.636Z",
+    "repository": "ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF",
+    "learningId": "learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-gguf",
+    "contentHash": "1941e63e1395ba300276ee8b758e870ad0d19ca72de29cae14c1be7149666297",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-NWEK",
+    "timestamp": "2026-11-25T07:48:40.268Z",
+    "repository": "vanniktech/gradle-maven-publish-plugin",
+    "learningId": "learn-github-vanniktech-gradle-maven-publish-plugin",
+    "contentHash": "cd78ac081d752be6de828347c2ab5683b27a9514de67995877f09fd8222e38e7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-NZFP",
+    "timestamp": "2026-11-25T07:48:44.197Z",
+    "repository": "gardener/gardener",
+    "learningId": "learn-github-gardener-gardener",
+    "contentHash": "178e41ee61e7693ec48ffd18fa130d13d844922ed806d1a9865c2cc984e6e136",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-O0N7",
+    "timestamp": "2026-11-25T07:48:45.763Z",
+    "repository": "sigstore/cosign",
+    "learningId": "learn-github-sigstore-cosign",
+    "contentHash": "0b4fb05f551345006a2279583f8b25f8c1e3358f2c14434cfa2b547cfa36c1cf",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-O2KD",
+    "timestamp": "2026-11-25T07:48:48.253Z",
+    "repository": "rqlite/rqlite",
+    "learningId": "learn-github-rqlite-rqlite",
+    "contentHash": "22cee83c7c0df2786625f8758514d5e13a1a70eb08d2338eb932efb1f4edd800",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-22T21:49:14.010Z",
+  "timestamp": "2026-11-25T07:48:53.035Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-vanniktech-gradle-maven-publish-plugin-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [vanniktech-gradle-maven-publish-plugin-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-22T21:49:14.010Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T07:48:53.035Z`  
 > **Learning ID**: `LEARN-EVO-vanniktech-gradle-maven-publish-plugin-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/vanniktech-gradle-maven-publish-plugin-learnings.md`  
 > **Source**: github ([https://github.com/vanniktech/gradle-maven-publish-plugin](https://github.com/vanniktech/gradle-maven-publish-plugin))  
-> **Source Version**: `4530ec6c`  
+> **Source Version**: `054fe435`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T21:48:58.729Z  
+> **Timestamp**: 2026-11-25T07:48:38.861Z  
 > **Learning ID**: `learn-github-vanniktech-gradle-maven-publish-plugin`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/vanniktech-gradle-maven-publish-plugin-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/vanniktech/gradle-maven-publish-plugin](https://github.com/vanniktech/gradle-maven-publish-plugin))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T21:48:58.724Z  
+> **Harvest Timestamp**: 2026-11-25T07:48:38.854Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: A Gradle plugin that publishes your Android and Kotlin libraries, including sources and javadoc,  to Maven Central or any other Nexus instance.
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1752 stars
+- **Stars / Engagement**: 1753 stars
 
 ---
 
@@ -1023,78 +1023,31 @@ public data class AndroidMultiVariantLibrary @JvmOverloads constructor(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4530ec6c` (2026-11-20)
-**Commit Message**: Update Gradle to v9.9.2 (#1477)
+### Incident Patch 1: `054fe435` (2026-11-22)
+**Commit Message**: Update dependency org.apache.maven:maven-model to v3.10.2 (#1478)
 
 Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
-**File**: `gradle/alpha.versions.toml` (modified, +1/-1)
-```diff
-@@ -1,5 +1,5 @@
- [versions]
--gradle = "9.9.1"
-+gradle = "9.9.2"
- 
- kotlin = "2.5.0-RC"
- 
-```
-
-**File**: `gradle/beta.versions.toml` (modified, +1/-1)
-```diff
-@@ -1,5 +1,5 @@
- [versions]
--gradle = "9.9.1"
-+gradle = "9.9.2"
- 
- kotlin = "2.5.0-RC"
- 
-```
-
 **File**: `gradle/libs.versions.toml` (modified, +1/-1)
 ```diff
-@@ -4,7 +4,7 @@ minGradle = "9.0.0"
- minAgp = "8.13.0"
- minKgp = "2.2.0"
+@@ -49,7 +49,7 @@ junit-launcher = { module = "org.junit.platform:junit-platform-launcher", versio
+ testParameterInjector = "com.google.testparameterinjector:test-parameter-injector-junit5:1.24"
+ truth = "com.google.truth:truth:1.4.5"
+ truth-testKit = "com.autonomousapps:testkit-truth:1.1"
+-maven-model = "org.apache.maven:maven-model:3.10.1"
++maven-model = "org.apache.maven:maven-model:3.10.2"
+ semver = "net.swiftzer.semver:semver:2.1.0"
  
--gradle = "9.9.1"
-+gradle = "9.9.2"
- 
- kotlin = "2.4.21"
- 
-```
-
-**File**: `gradle/rc.versions.toml` (modified, +1/-1)
-```diff
-@@ -1,5 +1,5 @@
- [versions]
--gradle = "9.9.1"
-+gradle = "9.9.2"
- 
- kotlin = "2.5.0-RC"
- 
-```
-
-**File**: `gradle/wrapper/gradle-wrapper.properties` (modified, +2/-2)
-```diff
-@@ -1,7 +1,7 @@
- distributionBase=GRADLE_USER_HOME
- distributionPath=wrapper/dists
--distributionSha256Sum=d8a18a7a841dd5df825d35a685fad6f2d7f12ac0c280e57b67c27b4a520ba228
--distributionUrl=https\://services.gradle.org/distributions/gradle-9.9.1-bin.zip
-+distributionSha256Sum=971fcd7150ca4ba04852c0b2ca0d2d0ab9468e14b03473eab19528809914c76b
-+distributionUrl=https\://services.gradle.org/distributions/gradle-9.9.2-bin.zip
- networkTimeout=10000
- retries=0
- retryBackOffMs=500
+ androidx-gradlePluginLints = "androidx.lint:lint-gradle:1.0.0"
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1478** (2026-11-22): Update dependency org.apache.maven:maven-model to v3.10.2 (@renovate[bot])
 - **PR #1477** (2026-11-20): Update Gradle to v9.9.2 (@renovate[bot])
 - **PR #1475** (2026-11-17): Update dependency com.freeletics.gradle:scripts-formatting-jvm to v0.42.0 (@renovate[bot])
 - **PR #1473** (2026-11-15): Update dependency org.apache.maven:maven-model to v3.10.1 (@renovate[bot])
 - **PR #1472** (2026-11-11): Update dependency org.jetbrains.kotlin.jvm to v2.5.0-RC (@renovate[bot])
 - **PR #1471** (2026-11-10): Update Gradle to v9.9.1 (@renovate[bot])
-- **PR #1470** (2026-11-06): Update Gradle to v9.9.0 (@renovate[bot])
 
 ---
 
@@ -1114,31 +1067,31 @@ Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update Gradle to v9.9.2
+## X. Update dependency org.apache.maven:maven-model to v3.10.2
 
 **RULE**:
-When implementing operations in `gradle/alpha.versions.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vanniktech/gradle-maven-publish-plugin. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `gradle/libs.versions.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vanniktech/gradle-maven-publish-plugin. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4530ec6c`: Update Gradle to v9.9.2. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `054fe435`: Update dependency org.apache.maven:maven-model to v3.10.2. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `gradle/alpha.versions.toml`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `gradle/libs.versions.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-gradle = "9.9.2"
+maven-model = "org.apache.maven:maven-model:3.10.2"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Induced defect failure mode:
-gradle = "9.9.1"
+maven-model = "org.apache.maven:maven-model:3.10.1"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4530ec6c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `054fe435` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

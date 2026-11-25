@@ -13025,3 +13025,8 @@ Every entry in this ledger must capture:
 | `learn-github-falkordb-falkordb` | `https://github.com/FalkorDB/FalkorDB` | `ef6fd025` | Multi-dimensional audit evidence | 2026-11-25T07:39:19.337Z |
 | `learn-github-kube-rs-kube` | `https://github.com/kube-rs/kube` | `c5141098` | Multi-dimensional audit evidence | 2026-11-25T07:39:27.194Z |
 | `learn-github-apache-shardingsphere` | `https://github.com/apache/shardingsphere` | `03aa12d5` | Multi-dimensional audit evidence | 2026-11-25T07:39:33.080Z |
+| `learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-gguf` | `https://huggingface.co/ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF` | `hf-ista-da` | Multi-dimensional audit evidence | 2026-11-25T07:48:33.641Z |
+| `learn-github-vanniktech-gradle-maven-publish-plugin` | `https://github.com/vanniktech/gradle-maven-publish-plugin` | `054fe435` | Multi-dimensional audit evidence | 2026-11-25T07:48:40.273Z |
+| `learn-github-gardener-gardener` | `https://github.com/gardener/gardener` | `44a016aa` | Multi-dimensional audit evidence | 2026-11-25T07:48:44.202Z |
+| `learn-github-sigstore-cosign` | `https://github.com/sigstore/cosign` | `2e60a1c3` | Multi-dimensional audit evidence | 2026-11-25T07:48:45.768Z |
+| `learn-github-rqlite-rqlite` | `https://github.com/rqlite/rqlite` | `a7a54625` | Multi-dimensional audit evidence | 2026-11-25T07:48:48.257Z |

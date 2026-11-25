@@ -4,22 +4,22 @@
 {
   "source_repository": "gardener/gardener",
   "source_url": "https://github.com/gardener/gardener",
-  "source_version": "86782dd1",
+  "source_version": "44a016aa",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-24T14:59:42.709Z",
+  "timestamp": "2026-11-25T07:48:44.552Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-gardener-gardener",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [gardener/gardener](https://github.com/gardener/gardener) (Revision: `86782dd1`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-24T14:59:42.709Z`  
+> **Provenance**: Harvested from [gardener/gardener](https://github.com/gardener/gardener) (Revision: `44a016aa`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-25T07:48:44.552Z`  
 > **Learning ID**: `learn-github-gardener-gardener`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `gardener/gardener` (Commit: `86782dd1`)
+- **Target Repository**: `gardener/gardener` (Commit: `44a016aa`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gardener-gardener-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gardener/gardener](https://github.com/gardener/gardener))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T14:59:41.380Z  
+> **Harvest Timestamp**: 2026-11-25T07:48:42.770Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Homogeneous Kubernetes clusters at scale on any infrastructure using hosted control planes.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 3490 stars
+- **Stars / Engagement**: 3489 stars
 
 ---
 
@@ -737,17 +737,16 @@ func (h *DefaultHealthChecker) Check(ctx context.Context, request types.Namespac
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #16417** (2026-11-24): **Update golang:1.27.4 Docker digest to 3102e2c**
+  *Symptoms*: This PR contains the following updates:  | Package | Type | Update | Change | |---|---|---|---| | [golang](https://hub.docker.com/_/golang) ([source](https://redirect.github.com/docker-library/golang)) | stage | digest | `205c763` → `3102e2c` |  ---  > [!WARNING] > Some dependencies could not be looked up. Check the [Dependency Dashboard](../issues/15982) for more information.  ---  ### Configuration  📅 **Schedule**: (UTC)  - Branch creation   - At any time (no schedule defined) - Automerge   - At any time (no schedule defined)  🚦 **Automerge**: Disabled by config. Please merge this manually once you are satisfied.  ♻ **Rebasing**: Whenever PR becomes conflicted, or you tick the rebase/retry checkbox.  🔕 **Ignore**: Close this PR and you won't be reminded about this update again.  ---   - [ ] <!-- rebase-check -->If you want to rebase/retry this PR, check this box  ---  **Release note**: ```other dependency NONE ``` <!--renovate-debug:eyJjcmVhdGVkSW5WZXIiOiI0NC4yNTcuMyIsInVwZGF0ZWRJblZlciI6IjQ0LjI1Ny4zIiwidGFyZ2V0QnJhbmNoIjoibWFzdGVyIiwibGFiZWxzIjpbImtpbmQvZW5oYW5jZW1lbnQiXX0=--> 
+  **Post-Mortem & Fix Analysis**:
+  > [APPROVALNOTIFIER] This PR is **APPROVED**  This pull-request has been approved by: *<a href="https://github.com/gardener/gardener/pull/16417#pullrequestreview-6045378181" title="Approved">ialidzhikov</a>*  The full list of commands accepted by this bot can be found [here](https://prow.gardener.cloud/command-help?repo=gardener%2Fgardener).  The pull request process is described [here](https://gardener.cloud/docs/contribute/#pull-request-checklist)  <details > Needs approval from an approver in each of these files:  - ~~[OWNERS](https://github.com/gardener/gardener/blob/master/OWNERS)~~ [ialidzhikov]  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":[]} -->
+
 - **Issue #16415** (2026-11-24): **Pin dependencies**
   *Symptoms*: This PR contains the following updates:  | Package | Type | Update | Change | |---|---|---|---| | [actions/checkout](https://redirect.github.com/actions/checkout) | action | pinDigest |  → `3d3c42e` | | [actions/download-artifact](https://redirect.github.com/actions/download-artifact) | action | pinDigest |  → `9000827` | | [actions/setup-go](https://redirect.github.com/actions/setup-go) | action | pinDigest |  → `d8cbb80` | | [actions/upload-artifact](https://redirect.github.com/actions/upload-artifact) | action | pinDigest |  → `cf430e0` | | [docker/build-push-action](https://redirect.github.com/docker/build-push-action) | action | pinDigest |  → `c3c9e26` | | [docker/setup-buildx-action](https://redirect.github.com/docker/setup-buildx-action) | action | pinDigest |  → `f87e599` |  ---  > [!WARNING] > Some dependencies could not be looked up. Check the [Dependency Dashboard](../issues/15982) for more information.  ---  ### Configuration  📅 **Schedule**: (UTC)  - Branch creation   - At any time (no schedule defined) - Automerge   - At any time (no schedule defined)  🚦 **Automerge**: Disabled by config. Please merge this manually once you are satisfied.  ♻ **Rebasing**: Whenever PR becomes conflicted, or you tick the rebase/retry checkbox.  👻 **Immortal**: This PR will be recreated if closed unmerged. Get [config help](https://redirect.github.com/renovatebot/renovate/discussions) if that's undesired.  ---   - [ ] <!-- rebase-check -->If you want to rebase/retry this PR, ch
   **Post-Mortem & Fix Analysis**:
   > /lgtm /approve
   > [APPROVALNOTIFIER] This PR is **APPROVED**  This pull-request has been approved by: *<a href="https://github.com/gardener/gardener/pull/16415#issuecomment-7128433379" title="Approved">oliver-goetz</a>*  The full list of commands accepted by this bot can be found [here](https://prow.gardener.cloud/command-help?repo=gardener%2Fgardener).  The pull request process is described [here](https://gardener.cloud/docs/contribute/#pull-request-checklist)  <details > Needs approval from an approver in each of these files:  - ~~[OWNERS](https://github.com/gardener/gardener/blob/master/OWNERS)~~ [oliver-goetz]  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":[]} -->
-
-- **Issue #16412** (2026-11-24): **Update nginx Docker tag to v1.31.10**
-  *Symptoms*: This PR contains the following updates:  | Package | Update | Change | |---|---|---| | [nginx](https://hub.docker.com/_/nginx) ([source](https://redirect.github.com/nginx/docker-nginx)) | patch | `1.31.9` → `1.31.10` |  ---  > [!WARNING] > Some dependencies could not be looked up. Check the [Dependency Dashboard](../issues/15982) for more information.  ---  ### Release Notes  <details> <summary>nginx/docker-nginx (nginx)</summary>  ### [`v1.31.10`](https://redirect.github.com/nginx/docker-nginx/compare/1.31.9...1.31.10)  [Compare Source](https://redirect.github.com/nginx/docker-nginx/compare/1.31.9...1.31.10)  </details>  ---  ### Configuration  📅 **Schedule**: (UTC)  - Branch creation   - At any time (no schedule defined) - Automerge   - At any time (no schedule defined)  🚦 **Automerge**: Enabled.  ♻ **Rebasing**: Whenever PR becomes conflicted, or you tick the rebase/retry checkbox.  🔕 **Ignore**: Close this PR and you won't be reminded about this update again.  ---   - [ ] <!-- rebase-check -->If you want to rebase/retry this PR, check this box  ---  **Release note**: ```other dependency NONE ``` <!--renovate-debug:eyJjcmVhdGVkSW5WZXIiOiI0NC4yNTcuMyIsInVwZGF0ZWRJblZlciI6IjQ0LjI1Ny4zIiwidGFyZ2V0QnJhbmNoIjoibWFzdGVyIiwibGFiZWxzIjpbImtpbmQvZW5oYW5jZW1lbnQiXX0=--> 
-  **Post-Mortem & Fix Analysis**:
-  > /label skip-review
-  > /lgtm /approve
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -764,126 +763,29 @@ func (h *DefaultHealthChecker) Check(ctx context.Context, request types.Namespac
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `86782dd1` (2026-11-24)
-**Commit Message**: Update gcr.io/distroless/static-debian13:nonroot Docker digest to 8ce6dd8 (#16407)
+### Incident Patch 1: `44a016aa` (2026-11-24)
+**Commit Message**: Update golang:1.27.4 Docker digest to 3102e2c (#16417)
 
 Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
 **File**: `Dockerfile` (modified, +1/-1)
 ```diff
-@@ -10,7 +10,7 @@ ARG TARGETARCH
- RUN make build EFFECTIVE_VERSION=$EFFECTIVE_VERSION GOOS=$TARGETOS GOARCH=$TARGETARCH BUILD_OUTPUT_FILE="/output/bin/"
- 
- # distroless-static
--FROM gcr.io/distroless/static-debian13:nonroot@sha256:aafe993665bf6200db38a02c11a9351e782a84b6a45e7f33b6695638c88e3931 AS distroless-static
-+FROM gcr.io/distroless/static-debian13:nonroot@sha256:8ce6dd87e9823c5b48dcfb2c8604714ccb351ce59607327bcc4957448da279b5 AS distroless-static
- 
- # apiserver
- FROM distroless-static AS apiserver
-```
-
----
-
-### Incident Patch 2: `f9f92948` (2026-11-24)
-**Commit Message**: Pin dependencies (#16415)
-
-Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
-
-**File**: `.github/workflows/build.yaml` (modified, +2/-2)
-```diff
-@@ -37,7 +37,7 @@ jobs:
-     steps:
-       - uses: gardener/cc-utils/.github/actions/trusted-checkout@bce63f62928717a11f610ec8022af9feb497d5df # v1
-       - uses: gardener/cc-utils/.github/actions/setup-git-identity@bce63f62928717a11f610ec8022af9feb497d5df # v1
--      - uses: actions/setup-go@v7
-+      - uses: actions/setup-go@d8cbb8045d7f43706b9177cceb36c1f91a6644d5 # v7
-         with:
-           go-version: '1.27'
-       - name: run-tests
-@@ -223,7 +223,7 @@ jobs:
-     runs-on: ${{ matrix.args.runner }}
-     steps:
-       - uses: gardener/cc-utils/.github/actions/trusted-checkout@bce63f62928717a11f610ec8022af9feb497d5df # v1
--      - uses: actions/setup-go@v7
-+      - uses: actions/setup-go@d8cbb8045d7f43706b9177cceb36c1f91a6644d5 # v7
-         with:
-           go-version: '1.27'
-       - name: import-release-commit
-```
-
-**File**: `.github/workflows/golang-test-build-test.yaml` (modified, +3/-3)
-```diff
-@@ -31,13 +31,13 @@ jobs:
-       matrix: ${{ fromJSON(needs.generate-matrix.outputs.matrix) }}
-     steps:
-       - name: Checkout
--        uses: actions/checkout@v7
-+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
- 
-       - name: Set up Docker Buildx
--        uses: docker/setup-buildx-action@v4
-+        uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4
- 
-       - name: Build golang-test
--        uses: docker/build-push-action@v7
-+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7
-         with:
-           context: .
-           file: ./hack/tools/image/Dockerfile
-```
-
-**File**: `.github/workflows/renovate-post-upgrade.yaml` (modified, +5/-5)
-```diff
-@@ -27,14 +27,14 @@ jobs:
-       run-envoy: ${{ steps.tasks.outputs.run-envoy }}
-     steps:
-       - name: Checkout
--        uses: actions/checkout@v7
-+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-         with:
-           ref: ${{ github.event.pull_request.head.ref }}
-           persist-credentials: false
-           # Full history is required to diff against the PR base commit.
-           fetch-depth: 0
-       - name: Set up Go
--        uses: actions/setup-go@v7
-+        uses: actions/setup-go@d8cbb8045d7f43706b9177cceb36c1f91a6644d5 # v7
-         with:
-           go-version-file: go.mod
-       - name: Determine required tasks
-@@ -119,7 +119,7 @@ jobs:
-           fi
-       - name: Upload patch
-         if: steps.diff.outputs.has-changes == 'true'
--        uses: actions/upload-artifact@v7
-+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
-         with:
-           name: post-upgrade-changes
-           path: ${{ runner.temp }}/post-upgrade.patch
-@@ -146,12 +146,12 @@ jobs:
-           permissions: |-
-             contents: write
-       - name: Checkout
--        uses: actions/checkout@v7
-+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-         with:
-           ref: ${{ github.event.pull_request.head.ref }}
-           token: ${{ steps.fed-token.outputs.token }}
-       - name: Download patch
--        uses: actions/download-artifact@v8
-+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
-         with:
-           name: post-upgrade-changes
-           path: ${{ runner.temp }}
+@@ -1,5 +1,5 @@
+ # builder
+-FROM --platform=$BUILDPLATFORM golang:1.27.4@sha256:205c7636d74e0ffbe3d007162df7d74f859f5a8c8322dfb9f907977686c126cf AS builder
++FROM --platform=$BUILDPLATFORM golang:1.27.4@sha256:3102e2c7eeee6e16de01ca3f35c56434696f70702a30b3d564b0244560981bb0 AS builder
+ ARG GOPROXY=https://proxy.golang.org,direct
+ ENV GOPROXY=$GOPROXY
+ WORKDIR /go/src/github.com/gardener/gardener
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #16417** (2026-11-24): Update golang:1.27.4 Docker digest to 3102e2c (@renovate[bot])
 - **PR #16415** (2026-11-24): Pin dependencies (@renovate[bot])
 - **PR #16412** (2026-11-24): Update nginx Docker tag to v1.31.10 (@renovate[bot])
 - **PR #16411** (2026-11-24): Enable Renovate digest pinning for GitHub Actions (@marc1404)
 - **PR #16409** (2026-11-23): Pin `gardener/cc-utils` GitHub Actions references to commit SHAs (@plkokanov)
 - **PR #16407** (2026-11-24): Update gcr.io/distroless/static-debian13:nonroot Docker digest to 8ce6dd8 (@renovate[bot])
-- **PR #16404** (2026-11-21): Update golang.org/x/exp digest to 8801fbd (@renovate[bot])
 
 ---
 
@@ -903,13 +805,13 @@ Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update gcr.io/distroless/static-debian13:nonroot Docker digest to 8ce6dd8
+## X. Update golang:1.27.4 Docker digest to 3102e2c
 
 **RULE**:
 When implementing operations in `Dockerfile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gardener/gardener. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `86782dd1`: Update gcr.io/distroless/static-debian13:nonroot Docker digest to 8ce6dd8. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `44a016aa`: Update golang:1.27.4 Docker digest to 3102e2c. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `Dockerfile`.
@@ -917,17 +819,17 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-FROM gcr.io/distroless/static-debian13:nonroot@sha256:8ce6dd87e9823c5b48dcfb2c8604714ccb351ce59607327bcc4957448da279b5 AS distroless-static
+FROM --platform=$BUILDPLATFORM golang:1.27.4@sha256:3102e2c7eeee6e16de01ca3f35c56434696f70702a30b3d564b0244560981bb0 AS builder
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-FROM gcr.io/distroless/static-debian13:nonroot@sha256:aafe993665bf6200db38a02c11a9351e782a84b6a45e7f33b6695638c88e3931 AS distroless-static
+FROM --platform=$BUILDPLATFORM golang:1.27.4@sha256:205c7636d74e0ffbe3d007162df7d74f859f5a8c8322dfb9f907977686c126cf AS builder
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `86782dd1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `44a016aa` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

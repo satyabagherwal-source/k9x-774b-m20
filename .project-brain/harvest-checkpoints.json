@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-25T07:39:33.097Z",
+  "last_updated": "2026-11-25T07:48:48.277Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5406,14 +5406,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sigstore-cosign",
-      "content_hash": "aef5e7cbf4050a75c2facd39ac844b336278ed9492ad19ec2493a77360b7a04c",
-      "verified_at": "2026-11-24T18:43:36.120Z",
+      "content_hash": "0b4fb05f551345006a2279583f8b25f8c1e3358f2c14434cfa2b547cfa36c1cf",
+      "verified_at": "2026-11-25T07:48:45.788Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T18:43:36.120Z"
+      "last_updated": "2026-11-25T07:48:45.788Z"
     },
     "LLPhant/LLPhant": {
       "repository": "LLPhant/LLPhant",
@@ -7491,14 +7491,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rqlite-rqlite",
-      "content_hash": "9047bd2756dbf3ea813c0ceb0fd932afd9ca196acd77f4027f76523781d8696e",
-      "verified_at": "2026-11-24T13:56:43.179Z",
+      "content_hash": "22cee83c7c0df2786625f8758514d5e13a1a70eb08d2338eb932efb1f4edd800",
+      "verified_at": "2026-11-25T07:48:48.276Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T13:56:43.179Z"
+      "last_updated": "2026-11-25T07:48:48.276Z"
     },
     "arco-design/arco-design": {
       "repository": "arco-design/arco-design",
@@ -10401,14 +10401,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gardener-gardener",
-      "content_hash": "ee89560c474315d843a57fd9d57325f2fd626609cc50c7a1c12d408cd2e44501",
-      "verified_at": "2026-11-24T14:59:42.496Z",
+      "content_hash": "178e41ee61e7693ec48ffd18fa130d13d844922ed806d1a9865c2cc984e6e136",
+      "verified_at": "2026-11-25T07:48:44.223Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T14:59:42.496Z"
+      "last_updated": "2026-11-25T07:48:44.223Z"
     },
     "NirDiamant/RAG_Techniques": {
       "repository": "NirDiamant/RAG_Techniques",
@@ -12216,14 +12216,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-vanniktech-gradle-maven-publish-plugin",
-      "content_hash": "cb4d12643ff9b468f410cb4f0c87d5f17554f2b00ef328700f62a9c32b2c175d",
-      "verified_at": "2026-11-22T21:48:59.837Z",
+      "content_hash": "cd78ac081d752be6de828347c2ab5683b27a9514de67995877f09fd8222e38e7",
+      "verified_at": "2026-11-25T07:48:40.294Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T21:48:59.837Z"
+      "last_updated": "2026-11-25T07:48:40.294Z"
     },
     "MohamedRejeb/Calf": {
       "repository": "MohamedRejeb/Calf",
@@ -15936,14 +15936,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-gguf",
-      "content_hash": "e2c93e84da26f55d63bb88d8b12afb73a42674c92652454760ffd812f27b91c1",
-      "verified_at": "2026-11-17T17:27:56.163Z",
+      "content_hash": "1941e63e1395ba300276ee8b758e870ad0d19ca72de29cae14c1be7149666297",
+      "verified_at": "2026-11-25T07:48:33.660Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T17:27:56.163Z"
+      "last_updated": "2026-11-25T07:48:33.660Z"
     },
     "Comfy-Org/Fibo-2.0": {
       "repository": "Comfy-Org/Fibo-2.0",
