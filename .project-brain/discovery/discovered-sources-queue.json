@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-25T15:30:17.014Z",
+  "updated_at": "2026-11-25T15:47:47.073Z",
   "stats": {
-    "total_discovered": 9502,
-    "approved_pending_harvest": 9005,
+    "total_discovered": 9511,
+    "approved_pending_harvest": 9014,
     "harvested_count": 0,
     "rejected_count": 497,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 8998,
+      "COMMUNITY_AND_EXPERT": 9007,
       "OFFICIAL_DOCUMENTATION": 281,
       "STANDARDS_AND_SPECIFICATIONS": 151,
       "ENGINEERING_BLOGS": 7,
@@ -205592,6 +205592,204 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/actix-actix-web-learnings.md",
         "fileName": "actix-actix-web-learnings.md"
+      }
+    },
+    "SRC-B8363C312713": {
+      "id": "SRC-B8363C312713",
+      "url": "https://github.com/withcoral/coral",
+      "title": "https://github.com/withcoral/coral",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T15:47:46.566Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/withcoral-coral-learnings.md",
+        "fileName": "withcoral-coral-learnings.md"
+      }
+    },
+    "SRC-4AB0194AFB0A": {
+      "id": "SRC-4AB0194AFB0A",
+      "url": "https://github.com/radix-ui/primitives/blob/main/packages/react/compose-refs/src/compose-refs.tsx",
+      "title": "https://github.com/radix-ui/primitives/blob/main/packages/react/compose-refs/src/compose-refs.tsx",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T15:47:46.655Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/withcoral-coral-learnings.md",
+        "fileName": "withcoral-coral-learnings.md"
+      }
+    },
+    "SRC-5303EBBB64E4": {
+      "id": "SRC-5303EBBB64E4",
+      "url": "https://github.com/withcoral/coral/actions/runs/44395744453/job/135125180538",
+      "title": "https://github.com/withcoral/coral/actions/runs/44395744453/job/135125180538",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T15:47:46.715Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/withcoral-coral-learnings.md",
+        "fileName": "withcoral-coral-learnings.md"
+      }
+    },
+    "SRC-5801283C8497": {
+      "id": "SRC-5801283C8497",
+      "url": "https://github.com/withcoral/coral/actions/runs/44406675347/job/135163799556",
+      "title": "https://github.com/withcoral/coral/actions/runs/44406675347/job/135163799556",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T15:47:46.774Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/withcoral-coral-learnings.md",
+        "fileName": "withcoral-coral-learnings.md"
+      }
+    },
+    "SRC-CAFF6BF7B682": {
+      "id": "SRC-CAFF6BF7B682",
+      "url": "https://github.com/withcoral/coral/actions/runs/45424201121/job/138551826609",
+      "title": "https://github.com/withcoral/coral/actions/runs/45424201121/job/138551826609",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T15:47:46.832Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/withcoral-coral-learnings.md",
+        "fileName": "withcoral-coral-learnings.md"
+      }
+    },
+    "SRC-A4DDEB82F890": {
+      "id": "SRC-A4DDEB82F890",
+      "url": "https://delta.example/mcp",
+      "title": "https://delta.example/mcp",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T15:47:46.889Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/withcoral-coral-learnings.md",
+        "fileName": "withcoral-coral-learnings.md"
+      }
+    },
+    "SRC-E2BAC160121C": {
+      "id": "SRC-E2BAC160121C",
+      "url": "https://api.{{input.site/",
+      "title": "https://api.{{input.site/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T15:47:46.960Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/withcoral-coral-learnings.md",
+        "fileName": "withcoral-coral-learnings.md"
+      }
+    },
+    "SRC-5418149CCA32": {
+      "id": "SRC-5418149CCA32",
+      "url": "https://{subdomain/",
+      "title": "https://{subdomain/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T15:47:47.015Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/withcoral-coral-learnings.md",
+        "fileName": "withcoral-coral-learnings.md"
+      }
+    },
+    "SRC-D469C7F544F2": {
+      "id": "SRC-D469C7F544F2",
+      "url": "https://logs.example.test/",
+      "title": "https://logs.example.test/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T15:47:47.073Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/withcoral-coral-learnings.md",
+        "fileName": "withcoral-coral-learnings.md"
       }
     }
   }

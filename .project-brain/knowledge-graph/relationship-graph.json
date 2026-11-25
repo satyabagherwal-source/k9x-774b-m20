@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-25T14:33:01.861Z",
+  "updated_at": "2026-11-25T15:48:16.126Z",
   "statistics": {
-    "total_nodes": 543,
+    "total_nodes": 544,
     "total_edges": 223,
     "domain_distribution": {
-      "D": 328,
+      "D": 329,
       "M": 1,
       "H": 99,
       "J": 22,
@@ -12123,6 +12123,28 @@
       ],
       "created_at": "2026-11-25T14:33:01.861Z",
       "updated_at": "2026-11-25T14:33:01.861Z"
+    },
+    "DOM-D-21C9D326": {
+      "id": "DOM-D-21C9D326",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): weaviate/weaviate",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/weaviate-weaviate-learnings.md`  \n> **Source**: github ([https://github.com/weaviate -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/weaviate-weaviate-learnings.md`  \n> **Source**: github ([https://github.com/weaviate",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://weaviate-weaviate/weaviate-weaviate-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-25T15:47:48.490Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (weaviate-weaviate)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-25T15:48:16.126Z",
+      "updated_at": "2026-11-25T15:48:16.126Z"
     }
   },
   "edges": [

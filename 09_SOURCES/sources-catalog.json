@@ -6853,10 +6853,10 @@
     "repository": "weaviate/weaviate",
     "platform": "github",
     "sourceUrl": "https://github.com/weaviate/weaviate",
-    "sourceVersion": "49700341",
+    "sourceVersion": "9f6b1e49",
     "license": "NOASSERTION",
-    "contentHash": "e88eb2de7a461a0c3170da1708669fc9af5f70684606d3fe7f514150d334dc36",
-    "lastHarvestedAt": "2026-11-24T20:38:41.219Z",
+    "contentHash": "db99fc107a578e50bc797c4cc0dd26bd55e4d67571550e005b29e028653710a6",
+    "lastHarvestedAt": "2026-11-25T15:47:43.281Z",
     "learningId": "learn-github-weaviate-weaviate"
   },
   "topgrade-rs-topgrade": {
@@ -11805,8 +11805,8 @@
     "sourceUrl": "https://huggingface.co/unsloth/DeepSeek-V4.1-Flash-1017-GGUF",
     "sourceVersion": "hf-unsloth-deepseek-v4.1-flash-1017-gguf",
     "license": "Open-Source",
-    "contentHash": "765acd7442815b977e810f84150fa7213aba3b7f55f0703e4472455423b770df",
-    "lastHarvestedAt": "2026-11-22T01:07:29.557Z",
+    "contentHash": "f0b8cf41022b75ec1ab276c24cc7f29e325d60ab5bce1e967f9f1ef4319738a0",
+    "lastHarvestedAt": "2026-11-25T15:47:29.406Z",
     "learningId": "learn-huggingface-unsloth-deepseek-v4-1-flash-1017-gguf"
   },
   "kortix-ai-companyos": {
@@ -13458,5 +13458,15 @@
     "contentHash": "1fab3abe4b34b941259aaef95459d2b171630206a0cc55207138341131725106",
     "lastHarvestedAt": "2026-11-25T11:59:41.477Z",
     "learningId": "learn-huggingface-thinkingmachines-tml-d24-varloop-research"
+  },
+  "withcoral-coral": {
+    "repository": "withcoral/coral",
+    "platform": "github",
+    "sourceUrl": "https://github.com/withcoral/coral",
+    "sourceVersion": "358fb27f",
+    "license": "Apache-2.0",
+    "contentHash": "bbd76e6c484e87a01c0a770e3180a314b1741a80a3b6f27e7f10b7823717f232",
+    "lastHarvestedAt": "2026-11-25T15:47:27.578Z",
+    "learningId": "learn-github-withcoral-coral"
   }
 }

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-25T15:39:14.495Z",
-  "total_verified_learnings": 9118,
+  "last_updated": "2026-11-25T15:48:16.619Z",
+  "total_verified_learnings": 9119,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25506,
+  "total_items": 25516,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -115017,10 +115017,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-weaviate-weaviate-architecture-intelligence-weaviate-weaviate-core-invariants.md",
       "title": "Architecture Intelligence: weaviate/weaviate Core Invariants",
       "repository": "weaviate/weaviate",
-      "source_version": "49700341",
-      "content_hash": "4c92ab97aadf26ed4d717e9006154ce8ada8594793b4ca0fb8443f1b19c1c758",
+      "source_version": "9f6b1e49",
+      "content_hash": "6d9a201cac7e19400be6df8a0c14625597cf679391d98380251a1a663303d965",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T20:38:41.630Z"
+      "persisted_at": "2026-11-25T15:47:43.525Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-weaviate-weaviate": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-weaviate-weaviate",
@@ -115029,10 +115029,10 @@
       "relative_path": "08_VERIFICATION/weaviate-weaviate-verification-protocol-empirical-defect-shield-for-weaviate-wea.md",
       "title": "Verification Protocol: Empirical Defect Shield for weaviate/weaviate",
       "repository": "weaviate/weaviate",
-      "source_version": "49700341",
-      "content_hash": "2761126464f56ebc4572cd9c73e29955a6969803b9d572722f522baa0a0ab59b",
+      "source_version": "9f6b1e49",
+      "content_hash": "da1f7afa2818c3ff3b5e412f6c3067b282dd5b3f5326b48ebf17e2fb6cad5aac",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T20:38:41.818Z"
+      "persisted_at": "2026-11-25T15:47:43.706Z"
     },
     "domain_intelligence-technical-construction-intelligence-actix-actix-web-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-actix-actix-web-learnings-core-invariants",
@@ -259711,7 +259711,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/unsloth/DeepSeek-V4.1-Flash-1017-GGUF",
       "source_version": "hf-unsloth-deepseek-v4.1-flash-1017-gguf",
-      "content_hash": "765acd7442815b977e810f84150fa7213aba3b7f55f0703e4472455423b770df",
+      "content_hash": "f0b8cf41022b75ec1ab276c24cc7f29e325d60ab5bce1e967f9f1ef4319738a0",
       "dossier_path": "07_PROJECT_LEARNING/hf-unsloth-deepseek-v4.1-flash-1017-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-unsloth-deepseek-v4.1-flash-1017-gguf-learnings.md",
       "promoted_rules": [],
@@ -259720,7 +259720,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T01:07:29.290Z",
+      "verified_at": "2026-11-25T15:47:29.165Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -259737,9 +259737,9 @@
       "title": "Research & Knowledge Intelligence: unsloth/DeepSeek-V4.1-Flash-1017-GGUF Core Invariants",
       "repository": "unsloth/DeepSeek-V4.1-Flash-1017-GGUF",
       "source_version": "hf-unsloth-deepseek-v4.1-flash-1017-gguf",
-      "content_hash": "a671d445ee399bffd6f9ff08de0696d26d2a30e923785045d3fba422b4ecbfab",
+      "content_hash": "e93c68d715f08bea7f02811b89a778c00703094c78670e2d36297c1c0ae71998",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T01:07:29.753Z"
+      "persisted_at": "2026-11-25T15:47:29.635Z"
     },
     "learn-github-meilisearch-meilisearch": {
       "learning_id": "learn-github-meilisearch-meilisearch",
@@ -259828,9 +259828,9 @@
       "title": "Research & Knowledge Intelligence: hf-unsloth-deepseek-v4.1-flash-1017-gguf-learnings Core Invariants",
       "repository": "hf-unsloth-deepseek-v4.1-flash-1017-gguf-learnings",
       "source_version": "HEAD",
-      "content_hash": "36869650438edb0598fa645e00d49e1fe0911617a367f3e60c39bdc5256cb934",
+      "content_hash": "6eff1a3894672f2d5c1d2b9933aa66c3611132f5849df1e09dcca82585fc0e27",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T01:07:38.704Z"
+      "persisted_at": "2026-11-25T15:47:48.305Z"
     },
     "candidate_directive-ci-fix-cimodel-expectations-and-tiup-bootstrap-failures": {
       "item_id": "candidate_directive-ci-fix-cimodel-expectations-and-tiup-bootstrap-failures",
@@ -261437,8 +261437,8 @@
       "slug": "weaviate-weaviate",
       "platform": "github",
       "source_url": "https://github.com/weaviate/weaviate",
-      "source_version": "49700341",
-      "content_hash": "e88eb2de7a461a0c3170da1708669fc9af5f70684606d3fe7f514150d334dc36",
+      "source_version": "9f6b1e49",
+      "content_hash": "db99fc107a578e50bc797c4cc0dd26bd55e4d67571550e005b29e028653710a6",
       "dossier_path": "07_PROJECT_LEARNING/weaviate-weaviate-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/weaviate-weaviate-learnings.md",
       "promoted_rules": [
@@ -261478,7 +261478,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T20:38:41.019Z",
+      "verified_at": "2026-11-25T15:47:43.065Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -280996,9 +280996,9 @@
       "title": "Architecture Intelligence: weaviate-weaviate-learnings Core Invariants",
       "repository": "weaviate-weaviate-learnings",
       "source_version": "HEAD",
-      "content_hash": "eb054e698746676ab34bb7d009e133ed1b5ca9ec6f1bdc619ace335ad2ad573a",
+      "content_hash": "a9e51f414b284db973a135458b62be5f55638048291cab0927f430a3651a0b68",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T20:38:46.048Z"
+      "persisted_at": "2026-11-25T15:48:16.418Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-weaviate-weaviate-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-weaviate-weaviate-learnings",
@@ -281008,9 +281008,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for weaviate-weaviate-learnings",
       "repository": "weaviate-weaviate-learnings",
       "source_version": "HEAD",
-      "content_hash": "7b9f114de78f6dbad88f2f18a8abcb0c15e7db143a5750691d89f8be93cf781b",
+      "content_hash": "4e2dd22e107dd1344053572651000a44900ebc41097b7a0e58c50ecdb2b263f4",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T20:38:46.212Z"
+      "persisted_at": "2026-11-25T15:48:16.619Z"
     },
     "learn-huggingface-comfy-org-fibo-2-0": {
       "learning_id": "learn-huggingface-comfy-org-fibo-2-0",
@@ -349091,6 +349091,149 @@
       "content_hash": "28ee7dc708b764f491b64a6c1f6b3f09485d75b29e158fc8c32250dd86c11c80",
       "domain_letter": "G",
       "persisted_at": "2026-11-25T15:30:19.093Z"
+    },
+    "learn-github-withcoral-coral": {
+      "learning_id": "learn-github-withcoral-coral",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "withcoral/coral",
+      "repository": "withcoral/coral",
+      "slug": "withcoral-coral",
+      "platform": "github",
+      "source_url": "https://github.com/withcoral/coral",
+      "source_version": "358fb27f",
+      "content_hash": "bbd76e6c484e87a01c0a770e3180a314b1741a80a3b6f27e7f10b7823717f232",
+      "dossier_path": "07_PROJECT_LEARNING/withcoral-coral-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/withcoral-coral-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 10551,
+          "title": "draw focus rings inside sidebar rows, scroll areas and dividers",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-25T15:47:27.347Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-10551": {
+      "learning_id": "rule-10551",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10551,
+      "title": "draw focus rings inside sidebar rows, scroll areas and dividers",
+      "source_url": "https://github.com/withcoral/coral",
+      "source_version": "358fb27f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T15:47:27.347Z"
+    },
+    "candidate_directive-draw-focus-rings-inside-sidebar-rows-scroll-areas-and-dividers": {
+      "item_id": "candidate_directive-draw-focus-rings-inside-sidebar-rows-scroll-areas-and-dividers",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-RMQ8-draw-focus-rings-inside-sidebar-rows-scroll-areas-and-dividers.md",
+      "title": "draw focus rings inside sidebar rows, scroll areas and dividers",
+      "repository": "withcoral/coral",
+      "source_version": "358fb27f",
+      "content_hash": "83dfdc209f7a343d167650e61a6dd8aaa3f236947c5bc04e8969a72269f8ed14",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-25T15:47:27.828Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-withcoral-coral-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-withcoral-coral-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-withcoral-coral-technical-construction-intelligence-withcoral-coral-core-invaria.md",
+      "title": "Technical Construction Intelligence: withcoral/coral Core Invariants",
+      "repository": "withcoral/coral",
+      "source_version": "358fb27f",
+      "content_hash": "8315498a0cb78caa4a036f13c31d6af5cd23e30fb1cd665ae492350468510fdd",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-25T15:47:28.029Z"
+    },
+    "agent_contract-agent-contract-withcoral-coral-autonomous-specialist-persona": {
+      "item_id": "agent_contract-agent-contract-withcoral-coral-autonomous-specialist-persona",
+      "artifact_type": "agent_contract",
+      "target_folder": "02_AGENT_INTELLIGENCE",
+      "relative_path": "02_AGENT_INTELLIGENCE/withcoral-coral-agent-contract-withcoral-coral-autonomous-specialist-persona.md",
+      "title": "Agent Contract: withcoral/coral Autonomous Specialist Persona",
+      "repository": "withcoral/coral",
+      "source_version": "358fb27f",
+      "content_hash": "d48150469ed19f88d456db62918e80c8c16b3c564eef002a7f88e4afcadb4b53",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-25T15:47:28.219Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-withcoral-coral": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-withcoral-coral",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/withcoral-coral-verification-protocol-empirical-defect-shield-for-withcoral-cora.md",
+      "title": "Verification Protocol: Empirical Defect Shield for withcoral/coral",
+      "repository": "withcoral/coral",
+      "source_version": "358fb27f",
+      "content_hash": "f6055a8f7fe673e22468a73e9a33ead199f64dff5963554f57563e523026edba",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-25T15:47:28.378Z"
+    },
+    "candidate_directive-ui-draw-focus-rings-inside-sidebar-rows-scroll-areas-and-dividers": {
+      "item_id": "candidate_directive-ui-draw-focus-rings-inside-sidebar-rows-scroll-areas-and-dividers",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-S1S5-ui-draw-focus-rings-inside-sidebar-rows-scroll-areas-and-dividers.md",
+      "title": "ui): draw focus rings inside sidebar rows, scroll areas and dividers",
+      "repository": "withcoral-coral-learnings",
+      "source_version": "HEAD",
+      "content_hash": "0906707a0003c111fd0a2b2ebbfd5ac19e6d94d6be9147b51e0ab72e8db2095a",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-25T15:47:47.336Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-withcoral-coral-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-withcoral-coral-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-withcoral-coral-learnings-technical-construction-intelligence-withcoral-coral-le.md",
+      "title": "Technical Construction Intelligence: withcoral-coral-learnings Core Invariants",
+      "repository": "withcoral-coral-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e2f303edbf5382895b2e43d983da330286142508f248f6c71ca78c14ad17fe62",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-25T15:47:47.517Z"
+    },
+    "agent_contract-agent-contract-withcoral-coral-learnings-autonomous-specialist-persona": {
+      "item_id": "agent_contract-agent-contract-withcoral-coral-learnings-autonomous-specialist-persona",
+      "artifact_type": "agent_contract",
+      "target_folder": "02_AGENT_INTELLIGENCE",
+      "relative_path": "02_AGENT_INTELLIGENCE/withcoral-coral-learnings-agent-contract-withcoral-coral-learnings-autonomous-sp.md",
+      "title": "Agent Contract: withcoral-coral-learnings Autonomous Specialist Persona",
+      "repository": "withcoral-coral-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f8ba0b830b6695e112cc87cfa1f796da1651c39a0fb949612025096abd108a3d",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-25T15:47:47.699Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-withcoral-coral-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-withcoral-coral-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/withcoral-coral-learnings-verification-protocol-empirical-defect-shield-for-with.md",
+      "title": "Verification Protocol: Empirical Defect Shield for withcoral-coral-learnings",
+      "repository": "withcoral-coral-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f015f460dc9fdfbb224d565f1f5987ac8967adfb5c32e20ef4603195876d62dd",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-25T15:47:47.885Z"
     }
   },
   "ai-builder-brain": {

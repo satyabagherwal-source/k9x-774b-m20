@@ -22291,5 +22291,20 @@
     "downloads": 3398,
     "qualityScore": 3170,
     "discoveredAt": "2026-11-25T11:57:26.826Z"
+  },
+  {
+    "name": "coral",
+    "fullName": "withcoral/coral",
+    "url": "https://github.com/withcoral/coral",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Execution rails for agents. Equip your AI to work with sensitive enterprise systems. Give agents precise permissions and custom tools that work faster with fewer tokens.",
+    "stars": 5030,
+    "forks": 228,
+    "openIssues": 210,
+    "language": "Rust",
+    "qualityScore": 2933,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-11-25T15:43:52.688Z"
   }
 ]

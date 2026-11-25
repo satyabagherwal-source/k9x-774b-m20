@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261124-0779",
-    "timestamp": "2026-11-24T03:58:37.173Z",
-    "repository": "zarf-dev/zarf",
-    "learningId": "learn-github-zarf-dev-zarf",
-    "contentHash": "3ef16bbe5b1adfc5c23a9c90c3c0ffecfbb67d0c29029f88acbea8c6175e8fa8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-0ACF",
-    "timestamp": "2026-11-24T03:58:41.247Z",
-    "repository": "crate/crate",
-    "learningId": "learn-github-crate-crate",
-    "contentHash": "e36d2780b37a503b038180b83e36bb0d8d0ea8ee9060dc516901a60f07bdbf29",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-S2OL",
-    "timestamp": "2026-11-24T04:20:17.685Z",
-    "repository": "BurntSushi/ripgrep",
-    "learningId": "learn-github-burntsushi-ripgrep",
-    "contentHash": "72bb04ce35cf1b2b70c5ad05b0b292c2640b102f536602b855676c8ca771365a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261124-S6VW",
     "timestamp": "2026-11-24T04:20:23.132Z",
     "repository": "jithin-sabu/purge-app",
@@ -7490,6 +7445,51 @@
     "repository": "AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF",
     "learningId": "learn-huggingface-atomicchat-deepseek-v4-1-flash-1017-uncensored-gsq-rco-gguf",
     "contentHash": "3a98c189c310e6c515a855c464e40618265df174a301873bca93846cd1ae13f6",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-RMJ9",
+    "timestamp": "2026-11-25T15:47:27.573Z",
+    "repository": "withcoral/coral",
+    "learningId": "learn-github-withcoral-coral",
+    "contentHash": "bbd76e6c484e87a01c0a770e3180a314b1741a80a3b6f27e7f10b7823717f232",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-RNY2",
+    "timestamp": "2026-11-25T15:47:29.402Z",
+    "repository": "unsloth/DeepSeek-V4.1-Flash-1017-GGUF",
+    "learningId": "learn-huggingface-unsloth-deepseek-v4-1-flash-1017-gguf",
+    "contentHash": "f0b8cf41022b75ec1ab276c24cc7f29e325d60ab5bce1e967f9f1ef4319738a0",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-RYNG",
+    "timestamp": "2026-11-25T15:47:43.276Z",
+    "repository": "weaviate/weaviate",
+    "learningId": "learn-github-weaviate-weaviate",
+    "contentHash": "db99fc107a578e50bc797c4cc0dd26bd55e4d67571550e005b29e028653710a6",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

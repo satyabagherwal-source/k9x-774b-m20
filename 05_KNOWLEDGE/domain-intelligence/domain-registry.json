@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T15:39:14.295Z",
-  "total_records": 2680,
+  "last_updated": "2026-11-25T15:48:16.418Z",
+  "total_records": 2683,
   "domains": {
     "A": {
       "total": 22,
@@ -71,7 +71,7 @@
       ]
     },
     "D": {
-      "total": 1005,
+      "total": 1006,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -1077,7 +1077,8 @@
         "DOM-D-18CF46EE",
         "domain_intelligence-research-knowledge-intelligence-hf-thinkingmachines-tml-d24-varloop-research-lea",
         "DOM-D-B35DECA2",
-        "DOM-D-C2696C97"
+        "DOM-D-C2696C97",
+        "DOM-D-21C9D326"
       ]
     },
     "E": {
@@ -1678,7 +1679,7 @@
       ]
     },
     "H": {
-      "total": 638,
+      "total": 640,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -2317,7 +2318,9 @@
         "domain_intelligence-technical-construction-intelligence-ratatui-ratatui-learnings-core-invariants",
         "DOM-H-64682323",
         "DOM-H-2010FB8D",
-        "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari"
+        "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari",
+        "domain_intelligence-technical-construction-intelligence-withcoral-coral-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-withcoral-coral-learnings-core-invariants"
       ]
     },
     "I": {
@@ -10214,8 +10217,8 @@
       "title": "Architecture Intelligence: weaviate/weaviate Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-weaviate-weaviate-architecture-intelligence-weaviate-weaviate-core-invariants.md",
       "repository": "weaviate/weaviate",
-      "content_hash": "4c92ab97aadf26ed4d717e9006154ce8ada8594793b4ca0fb8443f1b19c1c758",
-      "created_at": "2026-11-24T20:38:41.630Z"
+      "content_hash": "6d9a201cac7e19400be6df8a0c14625597cf679391d98380251a1a663303d965",
+      "created_at": "2026-11-25T15:47:43.525Z"
     },
     "DOM-K-199063A7": {
       "record_id": "DOM-K-199063A7",
@@ -24397,8 +24400,8 @@
       "title": "Research & Knowledge Intelligence: unsloth/DeepSeek-V4.1-Flash-1017-GGUF Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-unsloth-deepseek-v4-1-flash-1017-gguf-research-knowledge-intelligence-unsloth.md",
       "repository": "unsloth/DeepSeek-V4.1-Flash-1017-GGUF",
-      "content_hash": "a671d445ee399bffd6f9ff08de0696d26d2a30e923785045d3fba422b4ecbfab",
-      "created_at": "2026-11-22T01:07:29.753Z"
+      "content_hash": "e93c68d715f08bea7f02811b89a778c00703094c78670e2d36297c1c0ae71998",
+      "created_at": "2026-11-25T15:47:29.635Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-unsloth-deepseek-v4-1-flash-1017-gguf-learnin": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-unsloth-deepseek-v4-1-flash-1017-gguf-learnin",
@@ -24406,8 +24409,8 @@
       "title": "Research & Knowledge Intelligence: hf-unsloth-deepseek-v4.1-flash-1017-gguf-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-unsloth-deepseek-v4-1-flash-1017-gguf-learnings-research-knowledge-intelligen.md",
       "repository": "hf-unsloth-deepseek-v4.1-flash-1017-gguf-learnings",
-      "content_hash": "36869650438edb0598fa645e00d49e1fe0911617a367f3e60c39bdc5256cb934",
-      "created_at": "2026-11-22T01:07:38.704Z"
+      "content_hash": "6eff1a3894672f2d5c1d2b9933aa66c3611132f5849df1e09dcca82585fc0e27",
+      "created_at": "2026-11-25T15:47:48.305Z"
     },
     "domain_intelligence-architecture-intelligence-juicedata-juicefs-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-juicedata-juicefs-learnings-core-invariants",
@@ -28900,8 +28903,8 @@
       "title": "Architecture Intelligence: weaviate-weaviate-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-weaviate-weaviate-learnings-architecture-intelligence-weaviate-weaviate-learning.md",
       "repository": "weaviate-weaviate-learnings",
-      "content_hash": "eb054e698746676ab34bb7d009e133ed1b5ca9ec6f1bdc619ace335ad2ad573a",
-      "created_at": "2026-11-24T20:38:46.048Z"
+      "content_hash": "a9e51f414b284db973a135458b62be5f55638048291cab0927f430a3651a0b68",
+      "created_at": "2026-11-25T15:48:16.418Z"
     },
     "domain_intelligence-research-knowledge-intelligence-comfy-org-fibo-2-0-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-comfy-org-fibo-2-0-core-invariants",
@@ -45153,6 +45156,66 @@
       "repository": "prof18-feed-flow-learnings",
       "content_hash": "f1f9afe96732cde524036ffa3f3bbbad2f4ab0dfa55deb925dbb607bf77fa0c5",
       "created_at": "2026-11-25T15:21:40.754Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-withcoral-coral-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-withcoral-coral-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: withcoral/coral Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-withcoral-coral-technical-construction-intelligence-withcoral-coral-core-invaria.md",
+      "repository": "withcoral/coral",
+      "content_hash": "8315498a0cb78caa4a036f13c31d6af5cd23e30fb1cd665ae492350468510fdd",
+      "created_at": "2026-11-25T15:47:28.029Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-withcoral-coral-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-withcoral-coral-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: withcoral-coral-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-withcoral-coral-learnings-technical-construction-intelligence-withcoral-coral-le.md",
+      "repository": "withcoral-coral-learnings",
+      "content_hash": "e2f303edbf5382895b2e43d983da330286142508f248f6c71ca78c14ad17fe62",
+      "created_at": "2026-11-25T15:47:47.517Z"
+    },
+    "DOM-D-21C9D326": {
+      "record_id": "DOM-D-21C9D326",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): weaviate/weaviate",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/weaviate-weaviate-learnings.md`  \n> **Source**: github ([https://github.com/weaviate/weaviate](https://github.com/weaviate/weaviate))  \n> **Source Version**: `9f6b1e49`  \n> **License**: NOASSERTION  \n> **Synthesized By**: zero-clone-structural-",
+      "content_hash": "dd4740b5bc10f76acaf25de2f27812e4b88aa69b76b7c414bf9c2dec2c94c2db",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/weaviate-weaviate-learnings.md`  \n> **Source**: github ([https://github.com/weaviate -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/weaviate-weaviate-learnings.md`  \n> **Source**: github ([https://github.com/weaviate",
+      "provenance": {
+        "source_uri": "project://weaviate-weaviate/weaviate-weaviate-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-25T15:47:48.490Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (weaviate-weaviate)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of weaviate-weaviate"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-25T15:48:16.099Z"
     }
   }
 }
