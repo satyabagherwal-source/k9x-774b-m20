@@ -3,7 +3,7 @@
 > **Source Version**: `hf-prithivml`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T19:32:18.631Z  
+> **Timestamp**: 2026-11-25T11:19:54.203Z  
 > **Learning ID**: `learn-huggingface-prithivmlmods-gender-classifier-mini`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-prithivmlmods-gender-classifier-mini-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/prithivMLmods/Gender-Classifier-Mini](https://huggingface.co/prithivMLmods/Gender-Classifier-Mini))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T19:27:18.037Z  
+> **Harvest Timestamp**: 2026-11-25T11:19:53.110Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: image-classification
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 4479617 downloads | 23 likes
+- **Stars / Engagement**: 2188124 downloads | 23 likes
 
 ---
 

@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261123-7FMD",
-    "timestamp": "2026-11-23T22:56:18.901Z",
-    "repository": "biomejs/biome",
-    "learningId": "learn-github-biomejs-biome",
-    "contentHash": "1f57f3b1563daccd564f29196bf6492b8f9902990251958719a852113bc78b3f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-7HAB",
-    "timestamp": "2026-11-23T22:56:21.059Z",
-    "repository": "KeyboardKit/KeyboardKit",
-    "learningId": "learn-github-keyboardkit-keyboardkit",
-    "contentHash": "52f037a8af0022ba0ce7aff23ee34f8ed26dc4f864b3a720d498fc62ea05fb90",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261123-OTST",
     "timestamp": "2026-11-23T23:09:50.429Z",
     "repository": "pyannote/speaker-diarization-community-1",
@@ -7490,6 +7460,36 @@
     "repository": "apache/incubator-pegasus",
     "learningId": "learn-github-apache-incubator-pegasus",
     "contentHash": "a9341c4018422f7fa7070b4b4d97c9e56f9a5ab64ac533b53f3d9d3afdb373bd",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-7K3N",
+    "timestamp": "2026-11-25T11:19:54.755Z",
+    "repository": "prithivMLmods/Gender-Classifier-Mini",
+    "learningId": "learn-huggingface-prithivmlmods-gender-classifier-mini",
+    "contentHash": "8933be30f4de8e955ffe1d4319f706cd72c89bfac72ba670c9c262137de1a735",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-7UMV",
+    "timestamp": "2026-11-25T11:20:08.407Z",
+    "repository": "StarTrail-org/LEANN",
+    "learningId": "learn-github-startrail-org-leann",
+    "contentHash": "3ce6b9d9112fe3bb614c9653f2ac5e290e865721d80dacab1feaad19bb9447bc",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

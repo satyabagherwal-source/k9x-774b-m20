@@ -13078,3 +13078,5 @@ Every entry in this ledger must capture:
 | `learn-github-ytsaurus-ytsaurus` | `https://github.com/ytsaurus/ytsaurus` | `597eabf7` | Multi-dimensional audit evidence | 2026-11-25T10:57:59.770Z |
 | `learn-huggingface-tencent-hy-simulmt-30b-a3b-fp8` | `https://huggingface.co/tencent/Hy-SimulMT-30B-A3B-FP8` | `hf-tencent` | Multi-dimensional audit evidence | 2026-11-25T11:11:14.608Z |
 | `learn-github-apache-incubator-pegasus` | `https://github.com/apache/incubator-pegasus` | `02051942` | Multi-dimensional audit evidence | 2026-11-25T11:11:28.411Z |
+| `learn-huggingface-prithivmlmods-gender-classifier-mini` | `https://huggingface.co/prithivMLmods/Gender-Classifier-Mini` | `hf-prithiv` | Multi-dimensional audit evidence | 2026-11-25T11:19:54.760Z |
+| `learn-github-startrail-org-leann` | `https://github.com/StarTrail-org/LEANN` | `12a00553` | Multi-dimensional audit evidence | 2026-11-25T11:20:08.411Z |

@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T11:11:28.417Z",
-  "total_cycles_completed": 12386,
-  "total_learnings_persisted": 12386,
-  "total_rules_promoted": 11390,
+  "last_updated": "2026-11-25T11:20:08.417Z",
+  "total_cycles_completed": 12388,
+  "total_learnings_persisted": 12388,
+  "total_rules_promoted": 11391,
   "history": [
-    {
-      "timestamp": "2026-11-24T22:42:26.329Z",
-      "repository": "restatedev/restate",
-      "learningId": "learn-github-restatedev-restate",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T22:42:27.747Z",
-      "repository": "google/closure-compiler",
-      "learningId": "learn-github-google-closure-compiler",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-24T22:42:37.202Z",
       "repository": "alibaba/zvec",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-25T11:11:28.417Z",
       "repository": "apache/incubator-pegasus",
       "learningId": "learn-github-apache-incubator-pegasus",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T11:19:54.766Z",
+      "repository": "prithivMLmods/Gender-Classifier-Mini",
+      "learningId": "learn-huggingface-prithivmlmods-gender-classifier-mini",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T11:20:08.417Z",
+      "repository": "StarTrail-org/LEANN",
+      "learningId": "learn-github-startrail-org-leann",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

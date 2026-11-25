@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-21T15:59:54.545Z",
+  "timestamp": "2026-11-25T11:20:12.540Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-startrail-org-leann-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [startrail-org-leann-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-21T15:59:54.545Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T11:20:12.540Z`  
 > **Learning ID**: `LEARN-EVO-startrail-org-leann-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/startrail-org-leann-learnings.md`  
 > **Source**: github ([https://github.com/StarTrail-org/LEANN](https://github.com/StarTrail-org/LEANN))  
-> **Source Version**: `dd64641c`  
+> **Source Version**: `12a00553`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T15:59:49.333Z  
+> **Timestamp**: 2026-11-25T11:20:07.236Z  
 > **Learning ID**: `learn-github-startrail-org-leann`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/startrail-org-leann-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/StarTrail-org/LEANN](https://github.com/StarTrail-org/LEANN))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T15:59:49.325Z  
+> **Harvest Timestamp**: 2026-11-25T11:20:07.230Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: [MLsys2026 Best Paper]: https://arxiv.org/abs/2506.08276. RAG on Everything with LEANN. Enjoy 97% storage savings while running a fast, accurate, and 100% private RAG application on your personal device.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 13808 stars
+- **Stars / Engagement**: 13813 stars
 
 ---
 
@@ -1323,6 +1323,7 @@ from .api import Fts5BM25Index, LeannBuilder, LeannChat, LeannSearcher
 from .embedding_server_manager import EmbeddingServerManager
 from .index_offsets import load_offset_map
 from .interactive_utils import create_cli_session
+from .readers import FallbackTextReader
 from .registry import DEFAULT_INDEX_SCAN_DEPTH, iter_index_meta_files, register_project_directory
 from .settings import (
     resolve_anthropic_base_url,
@@ -1337,6 +1338,29 @@ from .settings import (
     resolve_openai_base_url,
 )
 from .sync import DEFAULT_INDEX_EXTENSIONS, FileSynchronizer, parse_include_extensions
+
+
+def _build_text_file_extractor() -> dict[str, FallbackTextReader]:
+    """Map plain-text extensions to a reader that preserves non-UTF-8 text.
+
+    llama-index ships dedicated readers for a few extensions (e.g. .pdf,
+    .docx, .pptx, .ipynb); those keep their default reader. Every other
+    extension in DEFAULT_INDEX_EXTENSIONS is plain text and would otherwise
+    go through SimpleDirectoryReader's standard read, which decodes with
+    errors="ignore" and silently drops undecodable bytes ("crème brûlée"
+    becomes "crme brle", issue #483). Deriving the already-covered set
+    from supported_suffix_fn() keeps this correct across llama-index
+    versions. file_extractor values must be reader instances, not classes.
+    """
+    covered = set(SimpleDirectoryReader.supported_suffix_fn())
+    return {
+        ext: FallbackTextReader() for ext in DEFAULT_INDEX_EXTENSIONS if ext.lower() not in covered
+    }
+
+
+# Plain-text extensions read through FallbackTextReader so Latin-1 /
+# Windows-1252 files keep their accented characters (issue #483).
+TEXT_FILE_EXTRACTOR = _build_text_file_extractor()
 
 
 def _non_negative_int(value: str) -> int:
@@ -1563,23 +1587,7 @@ Examples:
   leann build my-code --docs ./src ./tests ./config                      # Build index from multiple directories
   leann build my-files --docs ./file1.py ./file2.txt ./docs/             # Build index from files and directories
   leann build my-mixed --docs ./readme.md ./src/ ./config.json           # Build index from mixed files/dirs
-  leann build my-ppts --docs ./ --file-types .pptx,.pdf                  # Index only PowerPoint and PDF files
-  leann search my-docs "query"                                           # Search in my-docs index
-  leann ask my-docs "question"                                           # Ask my-docs index
-  leann react my-docs "complex question"                                 # Use ReAct agent for multiturn retrieval
-  leann index-browser chrome                                             # Index Chrome browser history
-  leann index-email                                                      # Index Apple Mail
-  leann index-imessage                                                   # Index iMessage conversations
-  leann index-chatgpt --export-path ~/chatgpt-export.zip                 # Index ChatGPT export
-  leann list                                                             # List all stored indexes
-  leann remove my-docs                                                   # Remove an index (local first, then global)
-            """,
-        )
-
-        # Global verbosity options
-        verbosity_group = parser.add_mutually_exclusive_group()
-        verbosity_group.add_argument(
-            
+  leann build my-ppts --docs ./ --file-types .pptx,.pdf       
 ```
 
 ### Core Architecture Module: `packages/leann-core/src/leann/embedding_compute.py`
@@ -2222,11 +2230,11 @@ class EmbeddingServerManager:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #479** (2026-11-24): **Metadata filters return fewer than top_k results (often none) when the top hits don't match**
+  *Symptoms*: ### What happened?  When I search with `--metadata-filters`, the filter is only applied to the top_k hits that come back from the backend. If the best-ranked passages don't match the filter, I get fewer than top_k results, and often an empty list, even though plenty of passages in the index do match.  `docs/metadata_filtering.md` describes this as post-search filtering, but it doesn't mention that the candidate pool isn't widened, so a selective filter can silently return nothing. I have a fix ready and will open a PR.  ### How to reproduce  1. Build an index from a few markdown files, e.g. some of the repo's own docs:    `leann build play --docs <folder with 5 files from docs/>` 2. Search with a filter on one of the files:    `leann search play "metadata" --metadata-filters '{"file_name":{"==":"faq.md"}}' --top-k 3 --json` 3. The output is `[]`, even though faq.md has 18 chunks in the index.  The Python API behaves the same way. On a 5-passage index where only one passage has chapter 8:  ```python searcher.search("...", top_k=1, metadata_filters={"chapter": {">": 7}}) # returns [] ```  ### Error message  ```shell No error, the result is just empty (CLI prints "Search results for 'metadata' (top 0):"). ```  ### LEANN Version  0.3.9 (main at dd64641)  ### Operating System  macOS
+
 - **Issue #424** (2026-09-26): **build_index_from_arrays loses passages when custom IDs follow add_text**
   *Symptoms*: ### What happened?  `build_index_from_arrays()` accepts document IDs with precomputed embeddings. When the same builder has already received real passages through `add_text()`, the build completes but searches cannot return those passages if the supplied IDs differ from the IDs generated by `add_text()`. This affects a common use of the array API: keeping stable IDs from another data source while reusing embeddings computed elsewhere.  The passage JSONL and offset map are written from each chunk's generated ID (`0`, `1`, ...). The vector backend and ID map are built from the explicit `ids` argument (`doc-a`, `doc-b`, ...). Search receives the vector IDs, cannot find matching passages, and skips those hits. Existing array-build examples use `range(n)`, so both sets of IDs happen to match.  Expected: each supplied ID identifies both its embedding and its passage. Actual: the index builds, but the corresponding text is absent from search results. #422 aligns the stored IDs and adds a regression test for this path.  ### How to reproduce  Using a consistent embedding model, add text first and then build from vectors with non-sequential IDs:  ```python from leann.api import LeannBuilder, LeannSearcher, compute_embeddings  texts = ["Alpha document", "Beta document"] model = "facebook/contriever" embeddings = compute_embeddings(     texts, model_name=model, mode="sentence-transformers",     use_server=False, is_build=True, ) builder = LeannBuilder(     backend_name="hnsw", embedding_
-
-- **Issue #423** (2026-09-26): **MCP --base-dir is ignored when launched outside the index project**
-  *Symptoms*: ### What happened?  `leann_mcp --base-dir <project>` accepts a project directory, but the MCP tools still resolve indexes against the directory where the server was launched. A project-local index therefore appears to be missing when an editor or MCP host starts the server elsewhere. `leann_status` looks under the launch directory, and search, list, and build spawn the CLI there as well. The existing-index metadata lookup used by `leann_build` follows the same incorrect path.  The option was added in #339 to address this working-directory problem. Later MCP changes introduced a shared `_run_leann()` helper without carrying over its `cwd` argument, while `handle_status()` and `handle_build()` kept using `Path.cwd()`. This is a regression of that behavior, rather than the Windows executable lookup reported in #320.  Expected: every MCP tool uses the directory supplied through `--base-dir` for both CLI calls and local index files. Actual: the option is parsed, but the tools use the launch directory. A focused fix and cross-directory regression test are in #421.  ### How to reproduce  1. From a project directory, build an index named `docs` so `<project>/.leann/indexes/docs/documents.leann.meta.json` exists. 2. Change to a different directory and start `leann_mcp --base-dir <project>`. 3. Send this MCP request on stdin:  ```json {"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"leann_status","arguments":{"index_name":"docs"}}} ```  The response says `Index 'docs' no
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2243,136 +2251,538 @@ class EmbeddingServerManager:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `dd64641c` (2026-11-20)
-**Commit Message**: fix(cli): rebuild the index when files are only deleted (#471)
+### Incident Patch 1: `c6096b83` (2026-11-24)
+**Commit Message**: fix(chat): join text blocks in AnthropicChat.ask instead of reading content[0] (#477)
 
-HNSW cannot remove vectors in place, so `leann build` falls back to a
-full rebuild when files are modified or removed. When the only changes
-were deletions, the incremental path loaded the changed paths, got no
-text back and returned with "No documents found" before reaching that
-fallback. The sync snapshot was not committed either, so every later
-run printed the same message and the deleted files stayed in the index
-until another file was added or modified, or --force was used.
+Claude models with adaptive thinking return a thinking block before the
+text block, so response.content[0].text raised AttributeError and ask()
+returned an error string.
 
-Only return early when nothing was modified or removed. IVF indexes
-still remove the old chunks in place.
+Co-authored-by: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
-Signed-off-by: Tianlang (Jackie) Chen <[REDACTED_EMAIL]>
-Co-authored-by: Tianlang (Jackie) Chen <[REDACTED_EMAIL]>
-
-**File**: `docs/CHANGELOG.md` (modified, +10/-0)
+**File**: `packages/leann-core/src/leann/chat.py` (modified, +6/-2)
 ```diff
-@@ -266,3 +266,13 @@ dropped and the wheel floor moved with it.
-   dependencies from source on every macOS job.
- - Coverage is otherwise unchanged: `macos-15` and `macos-26` for Apple Silicon,
-   `macos-15-intel` for x86_64. The build matrix goes from 32 jobs to 27.
-+
-+## 2026-11-20: Deleting files no longer leaves them searchable in HNSW indexes
-+
-+- HNSW cannot delete vectors in place, so `leann build` falls back to a full rebuild when
-+  files are modified or removed. When the only changes were deletions, the incremental path
-+  loaded the changed files, got no text back, and returned with "No documents found" before
-+  reaching that fallback. The sync snapshot was not committed either, so every later run
-+  printed the same message, and the deleted files' chunks stayed in the index until
-+  another file was added or modified, or `--force` was used. The early return now applies
-+  only when nothing was modified or removed; IVF still removes the chunks in place.
-```
-
-**File**: `packages/leann-core/src/leann/cli.py` (modified, +3/-2)
-```diff
-@@ -2754,8 +2754,9 @@ def _normalize_model_name(name: str) -> str:
-                     include_hidden=args.include_hidden,
-                     args=args,
-                 )
--                # Proceed even when all_texts is empty (e.g. file emptied): we still need to remove old chunks
--                if not all_texts and not (can_ivf_update and (modified_paths or removed_paths)):
-+                # Proceed even when all_texts is empty (e.g. files were only deleted): old chunks
-+                # still have to go, through the IVF update or the full rebuild below.
-+                if not all_texts and not (modified_paths or removed_paths):
-                     print("No documents found")
-                     return
+@@ -929,8 +929,12 @@ def ask(self, prompt: str, **kwargs) -> str:
  
+             response = self.client.messages.create(**params)
+ 
+-            # Extract text from response
+-            response_text = response.content[0].text
++            # Extract text from response. Models with thinking enabled return
++            # non-text blocks (e.g. "thinking") before the text, so join only
++            # the text blocks instead of reading content[0].
++            response_text = "".join(
++                block.text for block in response.content if getattr(block, "type", None) == "text"
++            )
+ 
+             # Log token usage
+             print(
 ```
 
-**File**: `tests/test_hnsw_rebuild_fallback.py` (modified, +64/-0)
+**File**: `tests/test_anthropic_default_model.py` (modified, +22/-0)
 ```diff
-@@ -109,3 +109,67 @@ def build_index(self, index_path):
-         "full-rebuild fallback dropped an untouched file from the corpus (issue #386)"
+@@ -44,3 +44,25 @@ def test_factory_keeps_an_explicit_model(self, mock_anthropic_cls):
+ 
+         assert isinstance(llm, AnthropicChat)
+         assert llm.model == "claude-sonnet-5-5"
++
++
++class TestAnthropicAskThinkingBlock:
++    @patch("anthropic.Anthropic")
++    def test_ask_skips_leading_thinking_block(self, mock_anthropic_cls):
++        from types import SimpleNamespace
++
++        from leann.chat import AnthropicChat
++
++        response = SimpleNamespace(
++            content=[
++                SimpleNamespace(type="thinking", thinking="let me think"),
++                SimpleNamespace(type="text", text=" the answer "),
++            ],
++            usage=SimpleNamespace(input_tokens=1, output_tokens=2),
++            stop_reason="end_turn",
++        )
++        mock_anthropic_cls.return_value.messages.create.return_value = response
++
++        llm = AnthropicChat(model="claude-sonnet-5-5", api_key="test-key")
++
++        assert llm.ask("hi") == "the answer"
+```
+
+---
+
+### Incident Patch 2: `6dd94289` (2026-11-24)
+**Commit Message**: fix(sync): skip files that .gitignore excludes from the build (#478)
+
+A full build skips files that the docs directory's .gitignore matches.
+Change detection walked the directory without it, so a new or edited
+ignored file was reported as added or modified, loaded by name and
+indexed, because files named explicitly skip .gitignore on purpose.
+This happened on IVF and on add-only HNSW updates; on a compact HNSW
+index the same change forced a full rebuild. Editing .gitignore itself
+was not seen, so a newly ignored file stayed in the index and a newly
+un-ignored one never arrived.
+
+Give each directory synchronizer the matcher that load_documents()
+builds for that directory, so the snapshot holds the files a full
+build loads. Ignored files no longer show up as changes, and a
+.gitignore edit shows up as files added or removed. Explicitly named
+files are tracked as before. The matcher does not print its notice
+when built for change detection, which leann watch does on every check.
+
+**File**: `packages/leann-core/src/leann/cli.py` (modified, +11/-3)
+```diff
+@@ -1009,7 +1009,7 @@ def register_project_dir(self):
+         """Register current project directory in global registry"""
+         register_project_directory()
+ 
+-    def _build_gitignore_parser(self, docs_dir: str):
++    def _build_gitignore_parser(self, docs_dir: str, announce: bool = True):
+         """Build gitignore parser using gitignore-parser library."""
+         from gitignore_parser import parse_gitignore
+ 
+@@ -1020,11 +1020,12 @@ def _build_gitignore_parser(self, docs_dir: str):
+             try:
+                 # gitignore-parser automatically handles all subdirectory .gitignore files!
+                 matches = parse_gitignore(str(gitignore_path))
+-                print(f"📋 Loaded .gitignore from {docs_dir} (includes all subdirectories)")
++                if announce:
++                    print(f"📋 Loaded .gitignore from {docs_dir} (includes all subdirectories)")
+                 return matches
+             except Exception as e:
+                 print(f"Warning: Could not parse .gitignore: {e}")
+-        else:
++        elif announce:
+             print("📋 No .gitignore found")
+ 
+         # Fallback: basic pattern matching for essential files
+@@ -2115,12 +2116,19 @@ def _create_synchronizers(
+         for root in directories:
+             tag = hashlib.sha256(root.encode()).hexdigest()[:12]
+             snapshot_path = str(index_dir / f"sync_{tag}.pickle")
++            # Track only what a directory scan in load_documents() would load: a file that
++            # .gitignore excludes must not reach the index through an incremental update,
++            # and editing .gitignore must show up as files added or removed.
++            gitignore_matches = self._build_gitignore_parser(root, announce=False)
+             try:
+                 fs = FileSynchronizer(
+                     root_dir=root,
+                     include_extensions=include_extensions,
+                     include_hidden=include_hidden,
+                     snapshot_path=snapshot_path,
++                    exclude=lambda path, matches=gitignore_matches: self._should_exclude_file(
++                        path, matches
++                    ),
+                 )
+                 synchronizers.append(fs)
+             except Exception as exc:
+```
+
+**File**: `packages/leann-core/src/leann/sync.py` (modified, +8/-1)
+```diff
+@@ -4,7 +4,7 @@
+ from dataclasses import dataclass, field
+ from hashlib import sha256
+ from pathlib import Path
+-from typing import Optional
++from typing import Callable, Optional
+ 
+ logger = logging.getLogger(__name__)
+ 
+@@ -93,6 +93,7 @@ def _iter_directory_files(
+     root_dir: str,
+     include_extensions: list[str],
+     include_hidden: bool,
++    exclude: Optional[Callable[[Path], bool]] = None,
+ ) -> list[str]:
+     root = Path(root_dir).resolve()
+     if not root.is_dir():
+@@ -115,6 +116,8 @@ def _iter_directory_files(
+                 continue
+             if not _extension_allowed(file_path, include_extensions):
+                 continue
++            if exclude is not None and exclude(file_path):
++                continue
+             if file_path.is_file():
+                 paths.append(str(file_path))
+     return paths
+@@ -202,6 +205,7 @@ def __init__(
+         include_hidden: bool = False,
+         auto_load=True,
+         snapshot_path: Optional[str] = None,
++        exclude: Optional[Callable[[Path], bool]] = None,
+     ):
+         self.root_dir = str(Path(root_dir).resolve()) if root_dir else None
+         self.explicit_files = (
+@@ -215,6 +219,8 @@ def __init__(
+         self.ignore_patterns = ignore_patterns
+         self.include_extensions = include_extensions or list(DEFAULT_INDEX_EXTENSIONS)
+         self.include_hidden = include_hidden
++        # Files under root_dir for which this returns True are not tracked (explicit files are).
++        self.exclude = exclude
+         self._custom_snapshot_path = snapshot_path
+         self._pending_tree: Optional[MerkleTree] = None
+         self.tree: Optional[MerkleTree] = None
+@@ -229,6 +235,7 @@ def _collect_paths(self) -> list[str]:
+                     self.root_dir,
+                     self.include_extensions,
+                     self.include_hidden,
++                    self.exclude,
+                 )
+             )
+         for file_path in self.explicit_files:
+```
+
+**File**: `tests/test_watch_sync_scope.py` (modified, +44/-0)
+```diff
+@@ -1,5 +1,7 @@
+ """Regression tests for leann watch sync scope (#345)."""
+ 
++from pathlib import Path
++
+ from leann.cli import LeannCLI
+ from leann.sync import FileSynchronizer
+ 
+@@ -81,3 +83,45 @@ def test_mixed_txt_and_bin_directory_skips_bin_without_crash(tmp_path):
      )
-     assert "modified content" in added_texts
+     added, removed, modified = fs2.detect_changes()
+     assert not added and not removed and not modified
 +
 +
-+def test_hnsw_remove_only_triggers_full_rebuild(tmp_path, monkeypatch):
-+    """A deleted file leaves nothing to load from the changed paths.
++def _docs_with_gitignore(tmp_path):
++    docs = tmp_path / "docs"
++    (docs / "build").mkdir(parents=True)
++    (docs / ".gitignore").write_text("secret.txt\nbuild/\n", encoding="utf-8")
++    (docs / "notes.md").write_text("Project notes about glaciers.", encoding="utf-8")
++    (docs / "secret.txt").write_text("API token list, do not index.", encoding="utf-8")
++    (docs / "build" / "out.md").write_text("Generated build output.", encoding="utf-8")
++    return docs
 +
-+    That must not stop the full rebuild, or the deleted file stays searchable.
++
++def test_build_sync_tracks_what_the_directory_scan_loads(tmp_path):
++    """Files that .gitignore excludes from a full build must not enter the snapshot either.
++
++    Otherwise a new or edited ignored file is reported as a change and loaded by name, and
++    files named on --docs skip .gitignore, so the incremental update indexes it.
 +    """
-+    monkeypatch.chdir(tmp_path)
-+    docs_root = tmp_path / "docs"
-+    docs_root.mkdir()
-+    keep_file = docs_root / "keep.md"
-+    keep_file.write_text("keep me around", encoding="utf-8")
-+    gone_path = str((docs_root / "gone.md").resolve())  # indexed earlier, now deleted
-+
++    docs = _docs_with_gitignore(tmp_path)
 +    cli = LeannCLI()
-+    index_dir = tmp_path / ".leann" / "indexes" / "sample"
-+    index_dir.mkdir(parents=True)
-+    (index_dir / "documents.leann.meta.json").write_text(
-+        json.dumps(
-+            {
-+                "backend_name": "hnsw",
-+                "embedding_model": "facebook/contriever",
-+                "embedding_mode": "sentence-transformers",
-+                "backend_kwargs": {"is_compact": False, "is_recompute": True},
-+            }
-+        ),
-+        encoding="utf-8",
++
++    scanned = {chunk["metadata"]["file_path"] for chunk in cli.load_documents([str(docs)])}
++    [fs] = cli._build_synchronizers([str(docs)], tmp_path / "index")
++
++    assert set(fs.generate_file_hashes()) == {str(Path(p).resolve()) for p in scanned}
++    assert set(fs.generate_file_hashes()) == {str((docs / "notes.md").resolve())}
++
++
++def test_gitignore_edits_show_up_as_added_and_removed_files(tmp_path):
++    docs = _docs_with_gitignore(tmp_path)
++    (tmp_path / "index").mkdir()
++    cli = LeannCLI()
++    [fs] = cli._build_synchronizers([str(docs)], tmp_path / "index")
++    fs.create_snapshot()
++
++    (docs / ".gitignore").write_text("build/\nnotes.md\n", encoding="utf-8")
++    [fs] = cli._build_synchronizers([str(docs)], tmp_path / "index")
++    added, removed, modified = fs.detect_changes()
++
++    assert added == [str((docs / "secret.txt").resolve())]
++    assert removed == [str((docs / "notes.md").resolve())]
++    assert modified == []
+```
+
+---
+
+### Incident Patch 3: `e5ecf99c` (2026-11-24)
+**Commit Message**: fix(core): resolve grep search's passage file from the index metadata (#481)
+
+`LeannSearcher._grep_search` located its input through a hardcoded
+`documents.leann.passages.jsonl`, so `search(..., use_grep=True)` raised
+`FileNotFoundError: No .jsonl passages file found for grep search` for every
+index whose basename is not `documents`. That is the normal case: the README
+quickstart builds `demo.leann`, and each app names its index after its own
+`default_index_name`.
+
+It could also return the wrong index's passages. Neither candidate name is this
+index's name, and the first one matches any index called `documents` in the
+same directory, so a grep search on `notes.leann` beside `documents.leann` read
+`documents.leann`'s passages file and returned its text and ids.
+
+`PassageManager` already knows the answer: it resolves each `passage_sources`
+entry from the index's own `meta.json` (metadata-relative, then CWD-relative,
+then the `<index_base>.passages.jsonl` sibling), and `_init_bm25`, earlier in
+the same class, reads that map for exactly this job. Resolve grep the same way
+and drop the duplicated name.
+
+Searching every declared shard also fixes a second gap: `passage_files` is a
+shard m
+
+**File**: `docs/CHANGELOG.md` (modified, +11/-7)
+```diff
+@@ -277,10 +277,14 @@ dropped and the wheel floor moved with it.
+   another file was added or modified, or `--force` was used. The early return now applies
+   only when nothing was modified or removed; IVF still removes the chunks in place.
+ 
+-## 2026-11-24: `leann rebuild` and `leann watch` work for indexes built from files
+-
+-- `leann build --docs a.md b.md` records individual files under `files` in `sync_roots.json`
+-  and leaves `roots` (directories) empty. `leann rebuild` only looked at `roots`, so it
+-  refused with "sync config has no document roots", and `leann watch` reported the changes
+-  but never rebuilt the index, without a message. Both now use the recorded directories
+-  and files.
++## 2026-11-24: Grep search finds the index's own passages
++
++- `search(..., use_grep=True)` looked for a hardcoded `documents.leann.passages.jsonl`, so
++  it raised `FileNotFoundError: No .jsonl passages file found for grep search` for every
++  index named differently — including the repo's own `examples/grep_search_example.py`,
++  which opens `my-documents.leann`.
++- Grep search now reads the passage shards that `PassageManager` resolves from the index's
++  own `meta.json` `passage_sources`, and searches every declared shard instead of a single
++  hardcoded file, so multi-shard indexes no longer drop matches.
++- Nothing that worked before stops working: an index named `documents` resolves the same
++  file as before, and a genuinely missing passages file still raises the same error.
+```
+
+**File**: `packages/leann-core/src/leann/api.py` (modified, +43/-42)
+```diff
+@@ -1681,57 +1681,58 @@ def _bm25_search(self, query: str, top_k: int = 5) -> list[SearchResult]:
+             raise RuntimeError("BM25 scorer failed to initialize")
+         return scorer.search(query, top_k)
+ 
+-    def _find_jsonl_file(self) -> Optional[str]:
+-        """Find the .jsonl file containing raw passages for grep search"""
+-        index_path = Path(self.meta_path_str).parent
+-        potential_files = [
+-            index_path / "documents.leann.passages.jsonl",
+-            index_path.parent / "documents.leann.passages.jsonl",
+-        ]
+-
+-        for file_path in potential_files:
+-            if file_path.exists():
+-                return str(file_path)
+-        return None
++    def _passage_jsonl_files(self) -> list[str]:
++        """Return the passage JSONL shards that exist on disk."""
++        # PassageManager resolves these from the index metadata; a recorded shard
++        # may have no JSONL on disk.
++        shards: list[str] = []
++        for passage_file in self.passage_manager.passage_files.values():
++            if Path(passage_file).exists():
++                shards.append(passage_file)
++            else:
++                logger.warning(f"Passage file missing: {passage_file}")
++        return shards
+ 
+     def _grep_search(self, query: str, top_k: int = 5) -> list[SearchResult]:
+         """Perform grep-based search on raw passages"""
+-        jsonl_file = self._find_jsonl_file()
+-        if not jsonl_file:
++        jsonl_files = self._passage_jsonl_files()
++        if not jsonl_files:
+             raise FileNotFoundError("No .jsonl passages file found for grep search")
+ 
++        matches = []
+         try:
+-            cmd = ["grep", "-i", "-n", query, jsonl_file]
+-            result = subprocess.run(cmd, capture_output=True, text=True, check=False)
+-
+-            if result.returncode == 1:
+-                return []
+-            elif result.returncode != 0:
+-                raise RuntimeError(f"Grep failed: {result.stderr}")
++            for jsonl_file in jsonl_files:
++                # grep prefixes "file:line:" across files, so grep each shard separately.
++                cmd = ["grep", "-i", "-n", query, jsonl_file]
++                result = subprocess.run(cmd, capture_output=True, text=True, check=False)
+ 
+-            matches = []
+-            for line in result.stdout.strip().split("\n"):
+-                if not line:
+-                    continue
+-                parts = line.split(":", 1)
+-                if len(parts) != 2:
++                if result.returncode == 1:
+                     continue
+-
+-                try:
+-                    data = json.loads(parts[1])
+-                    text = data.get("text", "")
+-                    score = text.lower().count(query.lower())
+-
+-                    matches.append(
+-                        SearchResult(
+-                            id=data.get("id", parts[0]),
+-                            text=text,
+-                            metadata=data.get("metadata", {}),
+-                            score=float(score),
++                elif result.returncode != 0:
++                    raise RuntimeError(f"Grep failed: {result.stderr}")
++
++                for line in result.stdout.strip().split("\n"):
++                    if not line:
++                        continue
++                    parts = line.split(":", 1)
++                    if len(parts) != 2:
++                        continue
++
++                    try:
++                        data = json.loads(parts[1])
++                        text = data.get("text", "")
++                        score = text.lower().count(query.lower())
++
++                        matches.append(
++                            SearchResult(
++                                id=data.get("id", parts[0]),
++                                text=text,
++                                metadata=data.get("metadata", {}),
++                                score=float(score),
++                            )
+                         )
+-                    )
+-                except json.JSONDecodeError:
+-                    continue
++                    except json.JSONDecodeError:
++                        continue
+ 
+             matches.sort(key=lambda x: x.score, reverse=True)
+             return matches[:top_k]
+```
+
+**File**: `tests/test_grep_search_passage_path.py` (added, +123/-0)
+```diff
+@@ -0,0 +1,123 @@
++"""Grep search must use the passage shards the index metadata declares.
++
++``_grep_search`` used to look only for ``documents.leann.passages.jsonl``, so grep
++search raised ``FileNotFoundError`` for every index not named ``documents``.
++``PassageManager`` already resolves the real paths from the index's own
++``passage_sources``; these tests pin that behaviour.
++"""
++
++import json
++import pickle
++
++import numpy as np
++import pytest
++
++pytest.importorskip("leann_backend_hnsw")
++
++from leann.api import LeannBuilder, LeannSearcher
++
++
++def _build_index(tmp_path, name, passages):
++    """Build a real HNSW index from precomputed vectors (no model download)."""
++    vectors = np.eye(len(passages), dtype=np.float32)
++    builder = LeannBuilder(
++        backend_name="hnsw",
++        embedding_model="grep-test",
++        embedding_mode="sentence-transformers",
++        dimensions=vectors.shape[1],
++    )
++    for _, text in passages:
++        builder.add_text(text)
++    index_path = str(tmp_path / name)
++    builder.build_index_from_arrays(index_path, [pid for pid, _ in passages], vectors)
++    return index_path
++
++
++def _open_searcher(index_path):
++    return LeannSearcher(
++        index_path,
++        enable_warmup=False,
++        recompute_embeddings=False,
++        use_daemon=False,
 +    )
 +
-+    class FakeSynchronizer:
-+        def detect_changes(self):
-+            return set(), {gone_path}, set()
 +
-+        def create_snapshot(self):
-+            pass
-+
-+    def fake_load_documents(paths, _file_types, include_hidden=False, args=None):
-+        if list(paths) == [str(docs_root)]:
-+            return [{"text": "keep me around", "metadata": {"file_path": str(keep_file)}}]
-+        return []  # nothing left to load from the deleted path
-+
-+    added_texts: list[str] = []
-+
-+    class RecordingBuilder:
-+        def __init__(self, **_kwargs):
-+            pass
-+
-+        def add_text(self, text, metadata=None):
-+            added_texts.append(text)
-+
-+        def build_index(self, index_path):
-+            Path(index_path).parent.mkdir(parents=True, exist_ok=True)
-+
-+    monkeypatch.setattr(cli, "_build_synchronizers", lambda *_a, **_k: [FakeSynchronizer()])
-+    monkeypatch.setattr(cli, "load_documents", fake_load_documents)
-+    monkeypatch.setattr(cli, "register_project_dir", lambda: None)
-+    monkeypatch.setattr("leann.cli.LeannBuilder", RecordingBuilder)
-+
-+    args = cli.create_parser().parse_args(
-+        ["build", "sample", "--docs", str(docs_root), "--backend-name", "hnsw"]
++def test_grep_search_reads_index_own_passages(tmp_path):
++    """An index named ``notes.leann`` finds its own shard instead of ``documents.*``."""
++    index_path = _build_index(
++        tmp_path,
++        "notes.leann",
++        [("note-a", "Boats moor in the harbor at dawn"), ("note-b", "The harbor bell rings")],
 +    )
-+    asyncio.run(cli.build_index(args))
 +
-+    assert added_texts == ["keep me around"]
++    with _open_searcher(index_path) as searcher:
++        results = searcher.search("harbor", use_grep=True)
++
++    assert [(result.id, result.text) for result in results] == [
++        ("note-a", "Boats moor in the harbor at dawn"),
++        ("note-b", "The harbor bell rings"),
++    ]
++
++
++def test_grep_search_works_for_the_default_index_name(tmp_path):
++    """``documents`` is the CLI default index name; its shard must still resolve.
++
++    Regression cover for the common case, not red-on-main evidence: the previous
++    hardcoded lookup already found this name.
++    """
++    index_path = _build_index(
++        tmp_path, "documents.leann", [("doc-a", "The harbor is calm tonight")]
++    )
++
++    with _open_searcher(index_path) as searcher:
++        results = searcher.search("harbor", use_grep=True)
++
++    assert [(result.id, result.text) for result in results] == [
++        ("doc-a", "The harbor is calm tonight")
++    ]
++
++
++def test_grep_search_aggregates_matches_from_every_shard(tmp_path):
++    """Every shard declared in the metadata is searched, not just the first one."""
++    index_path = _build_index(tmp_path, "notes.leann", [("note-a", "harbor light on the pier")])
++
++    # A second shard, declared the same way the builder declares its own.
++    shard = tmp_path / "archive.leann.passages.jsonl"
++    offsets = {}
++    with open(shard, "w", encoding="utf-8") as f:
++        offsets["archive-a"] = f.tell()
++        json.dump({"id": "archive-a", "text": "harbor fog at noon", "metadata": {}}, f)
++        f.write("\n")
++    with open(tmp_path / "archive.leann.passages.idx", "wb") as f:
++        pickle.dump(offsets, f)
++
++    meta_path = tmp_path / "notes.leann.meta.json"
++    meta = json.loads(meta_path.read_text(encoding="utf-8"))
++    meta["passage_sources"].append(
++        {
++            "type": "jsonl",
++            "path": shard.name,
++            "index_path": "archive.leann.passages.idx",
++        }
++    )
++    meta_path.write_text(json.dumps(meta), encoding="utf-8")
++
++    with _open_searcher(index_path) as searcher:
++        results = searcher.search("harbor", use_grep=True)
++
++    assert [(result.id, result.text) for result in results] == [
++        ("note-a", "harbor light on the pier"),
++        ("archive-a", "harbor fog at noon"),
++    ]
++
++
++def test_grep_search_raises_when_passage_jsonl_is_missing(tmp_path):
++    """Error semantics are unchanged: no shard on disk still means FileNotFoundError."""
++    index_path = _build_index(tmp_path, "notes.leann", [("note-a", "harbor at dawn")])
++    (tmp_path / "notes.leann.passages.jsonl").unlink()
++
++    with _open_searcher(index_path) as searcher:
++        with pytest.raises(
++            FileNotFoundError, match="No .jsonl passages file found for grep search"
++        ):
++            searcher.search("harbor", use_grep=True)
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #471** (2026-11-20): fix(cli): rebuild the index when files are only deleted (@jackiectl2)
-- **PR #470** (2026-11-20): ci: cancel superseded CI runs instead of queueing behind them (@ASuresh0524)
-- **PR #469** (2026-11-19): feat(benchmarks): score OCR on olmOCR-Bench with its own tests (rebase of #457) (@ASuresh0524)
-- **PR #468** (2026-11-19): ci: drop the retired macos-14 runner, and move the wheel floor with it (@ASuresh0524)
-- **PR #466** (2026-11-19): docs(changelog): record the 2026-11-17 PR triage pass (@ASuresh0524)
-- **PR #465** (2026-11-17): fix(readers): stop WeChatHistoryReader stripping message text at the first colon (@rtmalikian)
+- **PR #484** (2026-11-24): fix(cli): preserve accented characters in non-UTF-8 text files (@rtmalikian)
+- **PR #482** (2026-11-24): fix(cli): rebuild indexes built from individual files (@Finjineersdev)
+- **PR #481** (2026-11-24): fix(core): resolve grep search's passage file from the index metadata (@SuperMarioYL)
+- **PR #480** (2026-11-24): fix(core): widen the candidate pool when metadata filters leave fewer than top_k results (@tushar-mahalya)
+- **PR #478** (2026-11-24): fix(sync): skip files that .gitignore excludes from the build (@XiaoyuanWang111)
+- **PR #477** (2026-11-24): fix(chat): join text blocks in AnthropicChat.ask instead of reading content[0] (@pcbeingused333)
 
 ---
 
@@ -2392,40 +2802,37 @@ Co-authored-by: Tianlang (Jackie) Chen <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cli): rebuild the index when files are only deleted
+## X. chat): join text blocks in AnthropicChat.ask instead of reading content[0]
 
 **RULE**:
-When implementing operations in `docs/CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in StarTrail-org/LEANN. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/leann-core/src/leann/chat.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in StarTrail-org/LEANN. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `dd64641c`: cli): rebuild the index when files are only deleted. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c6096b83`: chat): join text blocks in AnthropicChat.ask instead of reading content[0]. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/CHANGELOG.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/leann-core/src/leann/chat.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-
-## 2026-11-20: Deleting files no longer leaves them searchable in HNSW indexes
-
-- HNSW cannot delete vectors in place, so `leann build` falls back to a full rebuild when
-  files are modified or removed. When the only changes were deletions, the incremental path
-  loaded the changed files, got no text back, and returned with "No documents found" before
-  reaching that fallback. The sync snapshot was not committed either, so every later run
-  printed the same message, and the deleted files' chunks stayed in the index until
-  another file was added or modified, or `--force` was used. The early return now applies
-  only when nothing was modified or removed; IVF still removes the chunks in place.
+            # Extract text from response. Models with thinking enabled return
+            # non-text blocks (e.g. "thinking") before the text, so join only
+            # the text blocks instead of reading content[0].
+            response_text = "".join(
+                block.text for block in response.content if getattr(block, "type", None) == "text"
+            )
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+            # Extract text from response
+            response_text = response.content[0].text
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `dd64641c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c6096b83` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

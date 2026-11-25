@@ -13045,3 +13045,5 @@
 | `CYCLE-20261125-FDG6` | `2026-11-25T10:57:59.766Z` | `ytsaurus/ytsaurus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10509` | Yes (`a5fa5910...`) |
 | `CYCLE-20261125-WEQZ` | `2026-11-25T11:11:14.603Z` | `tencent/Hy-SimulMT-30B-A3B-FP8` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-tencent-hy-simulmt-30b-a3b-fp8-learnings.md` | Yes (`017c161d...`) |
 | `CYCLE-20261125-WPEF` | `2026-11-25T11:11:28.407Z` | `apache/incubator-pegasus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10510` | Yes (`a9341c40...`) |
+| `CYCLE-20261125-7K3N` | `2026-11-25T11:19:54.755Z` | `prithivMLmods/Gender-Classifier-Mini` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-prithivmlmods-gender-classifier-mini-learnings.md` | Yes (`8933be30...`) |
+| `CYCLE-20261125-7UMV` | `2026-11-25T11:20:08.407Z` | `StarTrail-org/LEANN` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10511` | Yes (`3ce6b9d9...`) |

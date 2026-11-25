@@ -5673,10 +5673,10 @@
     "repository": "StarTrail-org/LEANN",
     "platform": "github",
     "sourceUrl": "https://github.com/StarTrail-org/LEANN",
-    "sourceVersion": "dd64641c",
+    "sourceVersion": "12a00553",
     "license": "MIT",
-    "contentHash": "4b27fa86c05904b01b59337592dafa20a8adc449322bdbc52e4942313f903cfd",
-    "lastHarvestedAt": "2026-11-21T15:59:49.998Z",
+    "contentHash": "3ce6b9d9112fe3bb614c9653f2ac5e290e865721d80dacab1feaad19bb9447bc",
+    "lastHarvestedAt": "2026-11-25T11:20:08.411Z",
     "learningId": "learn-github-startrail-org-leann"
   },
   "adonisjs-core": {
@@ -11405,8 +11405,8 @@
     "sourceUrl": "https://huggingface.co/prithivMLmods/Gender-Classifier-Mini",
     "sourceVersion": "hf-prithivmlmods-gender-classifier-mini",
     "license": "Open-Source",
-    "contentHash": "7efe1ab07a7b21a84a5c0174d4c620f602b2507ee839a4a54c9c7e3a242f9c01",
-    "lastHarvestedAt": "2026-11-21T19:32:19.291Z",
+    "contentHash": "8933be30f4de8e955ffe1d4319f706cd72c89bfac72ba670c9c262137de1a735",
+    "lastHarvestedAt": "2026-11-25T11:19:54.760Z",
     "learningId": "learn-huggingface-prithivmlmods-gender-classifier-mini"
   },
   "hf-openbmb-minicpm-ocr-1.0": {

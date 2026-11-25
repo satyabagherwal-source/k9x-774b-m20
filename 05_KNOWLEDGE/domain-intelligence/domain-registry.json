@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T11:11:33.633Z",
-  "total_records": 2661,
+  "last_updated": "2026-11-25T11:20:13.927Z",
+  "total_records": 2663,
   "domains": {
     "A": {
       "total": 22,
@@ -2469,7 +2469,7 @@
       ]
     },
     "J": {
-      "total": 51,
+      "total": 53,
       "record_ids": [
         "DOM-J-C14FC2D6",
         "DOM-J-B305372A",
@@ -2521,7 +2521,9 @@
         "domain_intelligence-search-distribution-intelligence-encoredev-encore-core-invariants",
         "domain_intelligence-search-distribution-intelligence-encoredev-encore-learnings-core-invariants",
         "domain_intelligence-search-distribution-intelligence-msasikanth-twine-core-invariants",
-        "domain_intelligence-search-distribution-intelligence-msasikanth-twine-learnings-core-invariants"
+        "domain_intelligence-search-distribution-intelligence-msasikanth-twine-learnings-core-invariants",
+        "domain_intelligence-search-distribution-intelligence-startrail-org-leann-core-invariants",
+        "domain_intelligence-search-distribution-intelligence-startrail-org-leann-learnings-core-invariants"
       ]
     },
     "K": {
@@ -8431,8 +8433,8 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-learnings-technical-construction-intelligence-zvec-ai-zvec-gre.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "a61b87fd23275b3a6ab2af67e351a3983d467cae568901da5a9676a5c7bbb0b1",
-      "created_at": "2026-11-25T10:45:43.076Z"
+      "content_hash": "443c01f10c5a6e972c226abc2d5755817567596763bafae62df85c1196a1863b",
+      "created_at": "2026-11-25T11:20:13.927Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -10009,8 +10011,8 @@
       "title": "Research & Knowledge Intelligence: prithivMLmods/Gender-Classifier-Mini Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-prithivmlmods-gender-classifier-mini-research-knowledge-intelligence-prithivm.md",
       "repository": "prithivMLmods/Gender-Classifier-Mini",
-      "content_hash": "d6e8db11b34fd5e7386be17f4e3ceeac0295cb776a886d0a153c729ecd5caeae",
-      "created_at": "2026-11-21T19:32:19.520Z"
+      "content_hash": "20009eaf419680b04af1f5867727b292facd5477b5ff9ec5827d2aab0a0e7d84",
+      "created_at": "2026-11-25T11:19:54.984Z"
     },
     "domain_intelligence-technical-construction-intelligence-laurent22-joplin-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-laurent22-joplin-core-invariants",
@@ -10087,8 +10089,8 @@
       "title": "Research & Knowledge Intelligence: hf-prithivmlmods-gender-classifier-mini-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-prithivmlmods-gender-classifier-mini-learnings-research-knowledge-intelligenc.md",
       "repository": "hf-prithivmlmods-gender-classifier-mini-learnings",
-      "content_hash": "e37e0d7f7d4747645f11943e3a2089d5cdd8704dec545b30e6a9cb07af4f7cfc",
-      "created_at": "2026-11-21T19:32:24.280Z"
+      "content_hash": "c562e240dbf3d4b5e783286e9d2bf3b2cb26d03f3c60a7bbbdeceae79e6d0ad1",
+      "created_at": "2026-11-25T11:20:12.125Z"
     },
     "domain_intelligence-technical-construction-intelligence-laurent22-joplin-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-laurent22-joplin-learnings-core-invariants",
@@ -44732,6 +44734,24 @@
       "repository": "apache-incubator-pegasus-learnings",
       "content_hash": "e0b5737c53ec29ff1611dd28c302432c63dffdbe315c6629cb8f291114044f96",
       "created_at": "2026-11-25T11:11:32.810Z"
+    },
+    "domain_intelligence-search-distribution-intelligence-startrail-org-leann-core-invariants": {
+      "record_id": "domain_intelligence-search-distribution-intelligence-startrail-org-leann-core-invariants",
+      "domain_letter": "J",
+      "title": "Search & Distribution Intelligence: StarTrail-org/LEANN Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-J-startrail-org-leann-search-distribution-intelligence-startrail-org-leann-core-in.md",
+      "repository": "StarTrail-org/LEANN",
+      "content_hash": "eec44266138c15741ab0c908235606e0e79c0ed68a256f5024619bdfc3598417",
+      "created_at": "2026-11-25T11:20:08.856Z"
+    },
+    "domain_intelligence-search-distribution-intelligence-startrail-org-leann-learnings-core-invariants": {
+      "record_id": "domain_intelligence-search-distribution-intelligence-startrail-org-leann-learnings-core-invariants",
+      "domain_letter": "J",
+      "title": "Search & Distribution Intelligence: startrail-org-leann-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-J-startrail-org-leann-learnings-search-distribution-intelligence-startrail-org-lea.md",
+      "repository": "startrail-org-leann-learnings",
+      "content_hash": "830eb6dc0369e89d4f240b4a9c7f0cb9b4c210a5820dc6e2575de2711f933475",
+      "created_at": "2026-11-25T11:20:12.870Z"
     }
   }
 }

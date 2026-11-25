@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-25T11:11:33.811Z",
+  "last_updated": "2026-11-25T11:20:14.272Z",
   "total_verified_learnings": 9116,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25397,
+  "total_items": 25402,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112066,9 +112066,9 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "a61b87fd23275b3a6ab2af67e351a3983d467cae568901da5a9676a5c7bbb0b1",
+      "content_hash": "443c01f10c5a6e972c226abc2d5755817567596763bafae62df85c1196a1863b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T10:45:43.076Z"
+      "persisted_at": "2026-11-25T11:20:13.927Z"
     },
     "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona",
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "1ed976f9b24865bc898c12add3ee32edc86428fd1432162934901e33d5e940b4",
+      "content_hash": "5183ef67fa8ee19ebe28f83f1e4aeff701a00509d20b3c5ef2a0c3f699060a55",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T10:45:43.256Z"
+      "persisted_at": "2026-11-25T11:20:14.120Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "388949ab3e0df8d784fef1d45eb98b5a5400d9524fbc50c245240d83ebd52ee8",
+      "content_hash": "74a618df4723a29380343a701621469b226ad7eddb23b4fbb9b0fb22db44da83",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T10:45:43.398Z"
+      "persisted_at": "2026-11-25T11:20:14.272Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -114718,9 +114718,9 @@
       "title": "Research & Knowledge Intelligence: hf-prithivmlmods-gender-classifier-mini-learnings Core Invariants",
       "repository": "hf-prithivmlmods-gender-classifier-mini-learnings",
       "source_version": "HEAD",
-      "content_hash": "e37e0d7f7d4747645f11943e3a2089d5cdd8704dec545b30e6a9cb07af4f7cfc",
+      "content_hash": "c562e240dbf3d4b5e783286e9d2bf3b2cb26d03f3c60a7bbbdeceae79e6d0ad1",
       "domain_letter": "D",
-      "persisted_at": "2026-11-21T19:32:24.280Z"
+      "persisted_at": "2026-11-25T11:20:12.125Z"
     },
     "domain_intelligence-technical-construction-intelligence-laurent22-joplin-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-laurent22-joplin-learnings-core-invariants",
@@ -276950,14 +276950,19 @@
       "slug": "startrail-org-leann",
       "platform": "github",
       "source_url": "https://github.com/StarTrail-org/LEANN",
-      "source_version": "dd64641c",
-      "content_hash": "4b27fa86c05904b01b59337592dafa20a8adc449322bdbc52e4942313f903cfd",
+      "source_version": "12a00553",
+      "content_hash": "3ce6b9d9112fe3bb614c9653f2ac5e290e865721d80dacab1feaad19bb9447bc",
       "dossier_path": "07_PROJECT_LEARNING/startrail-org-leann-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/startrail-org-leann-learnings.md",
       "promoted_rules": [
         {
           "number": 9548,
           "title": "cancel superseded CI runs instead of queueing behind them",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10511,
+          "title": "join text blocks in AnthropicChat.ask instead of reading content[0]",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -276966,7 +276971,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T15:59:49.716Z",
+      "verified_at": "2026-11-25T11:20:08.182Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -277006,10 +277011,10 @@
       "relative_path": "08_VERIFICATION/startrail-org-leann-verification-protocol-empirical-defect-shield-for-startrail-.md",
       "title": "Verification Protocol: Empirical Defect Shield for StarTrail-org/LEANN",
       "repository": "StarTrail-org/LEANN",
-      "source_version": "dd64641c",
-      "content_hash": "276f2df08cb6c3fe3f1fdc73b0074b920141cec50a6149e0edd08ecca06a505b",
+      "source_version": "12a00553",
+      "content_hash": "ffeac03d47202696526bc612c8f42438e5ab28fd5c2e3b663c84710500690371",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T15:59:50.814Z"
+      "persisted_at": "2026-11-25T11:20:09.039Z"
     },
     "candidate_directive-mobile-fix-locked-note-history-does-not-save-note-title": {
       "item_id": "candidate_directive-mobile-fix-locked-note-history-does-not-save-note-title",
@@ -277043,9 +277048,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for startrail-org-leann-learnings",
       "repository": "startrail-org-leann-learnings",
       "source_version": "HEAD",
-      "content_hash": "413c03e2b0a89397be50a74eff6f2b5b654b4698d5b42fe3b43bd36c7ac2e298",
+      "content_hash": "0beaef4bc5e2e7b5eeae111b4a2ebeb4722a10d7604691f7e85b6d799ada7a69",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T15:59:55.176Z"
+      "persisted_at": "2026-11-25T11:20:13.062Z"
     },
     "learn-github-nitrojs-nitro": {
       "learning_id": "learn-github-nitrojs-nitro",
@@ -288237,7 +288242,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/prithivMLmods/Gender-Classifier-Mini",
       "source_version": "hf-prithivmlmods-gender-classifier-mini",
-      "content_hash": "7efe1ab07a7b21a84a5c0174d4c620f602b2507ee839a4a54c9c7e3a242f9c01",
+      "content_hash": "8933be30f4de8e955ffe1d4319f706cd72c89bfac72ba670c9c262137de1a735",
       "dossier_path": "07_PROJECT_LEARNING/hf-prithivmlmods-gender-classifier-mini-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-prithivmlmods-gender-classifier-mini-learnings.md",
       "promoted_rules": [],
@@ -288246,7 +288251,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T19:32:18.969Z",
+      "verified_at": "2026-11-25T11:19:54.490Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -288263,9 +288268,9 @@
       "title": "Research & Knowledge Intelligence: prithivMLmods/Gender-Classifier-Mini Core Invariants",
       "repository": "prithivMLmods/Gender-Classifier-Mini",
       "source_version": "hf-prithivmlmods-gender-classifier-mini",
-      "content_hash": "d6e8db11b34fd5e7386be17f4e3ceeac0295cb776a886d0a153c729ecd5caeae",
+      "content_hash": "20009eaf419680b04af1f5867727b292facd5477b5ff9ec5827d2aab0a0e7d84",
       "domain_letter": "D",
-      "persisted_at": "2026-11-21T19:32:19.520Z"
+      "persisted_at": "2026-11-25T11:19:54.984Z"
     },
     "rule-9135": {
       "learning_id": "rule-9135",
@@ -342379,13 +342384,13 @@
       "item_id": "candidate_directive-rust-bind-bare-calls-to-the-enclosing-module-s-items",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-ZKVO-rust-bind-bare-calls-to-the-enclosing-module-s-items.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-7YQZ-rust-bind-bare-calls-to-the-enclosing-module-s-items.md",
       "title": "rust): bind bare calls to the enclosing module's items",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "fef74ece5dfbdf3cb1a4ed17fcb03d3741db76e54a774a4754607a70081c27b3",
+      "content_hash": "70797a64334800e218dead1431eacf6f1c61bc9b19abd89cd1b430bbba1c1052",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T10:45:42.903Z"
+      "persisted_at": "2026-11-25T11:20:13.742Z"
     },
     "domain_intelligence-content-information-intelligence-rollup-rollup-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-rollup-rollup-learnings-core-invariants",
@@ -347469,6 +347474,68 @@
       "content_hash": "5e4d26832e12599db30abc37b3c6e3df042ff3ac3f74c738285c15cfc8f3d6df",
       "domain_letter": "K",
       "persisted_at": "2026-11-25T11:11:32.989Z"
+    },
+    "rule-10511": {
+      "learning_id": "rule-10511",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10511,
+      "title": "join text blocks in AnthropicChat.ask instead of reading content[0]",
+      "source_url": "https://github.com/StarTrail-org/LEANN",
+      "source_version": "12a00553",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T11:20:08.182Z"
+    },
+    "candidate_directive-join-text-blocks-in-anthropicchat-ask-instead-of-reading-content-0": {
+      "item_id": "candidate_directive-join-text-blocks-in-anthropicchat-ask-instead-of-reading-content-0",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-7UU5-join-text-blocks-in-anthropicchat-ask-instead-of-reading-content-0.md",
+      "title": "join text blocks in AnthropicChat.ask instead of reading content[0]",
+      "repository": "StarTrail-org/LEANN",
+      "source_version": "12a00553",
+      "content_hash": "99fd5c11043d25362a34d3514f38662cbbcf28dbb6ab7c01ba59514fcad5aba5",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-25T11:20:08.673Z"
+    },
+    "domain_intelligence-search-distribution-intelligence-startrail-org-leann-core-invariants": {
+      "item_id": "domain_intelligence-search-distribution-intelligence-startrail-org-leann-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-J-startrail-org-leann-search-distribution-intelligence-startrail-org-leann-core-in.md",
+      "title": "Search & Distribution Intelligence: StarTrail-org/LEANN Core Invariants",
+      "repository": "StarTrail-org/LEANN",
+      "source_version": "12a00553",
+      "content_hash": "eec44266138c15741ab0c908235606e0e79c0ed68a256f5024619bdfc3598417",
+      "domain_letter": "J",
+      "persisted_at": "2026-11-25T11:20:08.856Z"
+    },
+    "candidate_directive-chat-join-text-blocks-in-anthropicchat-ask-instead-of-reading-content-0": {
+      "item_id": "candidate_directive-chat-join-text-blocks-in-anthropicchat-ask-instead-of-reading-content-0",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-7XXG-chat-join-text-blocks-in-anthropicchat-ask-instead-of-reading-content-0.md",
+      "title": "chat): join text blocks in AnthropicChat.ask instead of reading content[0]",
+      "repository": "startrail-org-leann-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b7161119e944e3af8d3fba8f4304383c26cfc237469ed031a25b08cbe38d7c5f",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-25T11:20:12.679Z"
+    },
+    "domain_intelligence-search-distribution-intelligence-startrail-org-leann-learnings-core-invariants": {
+      "item_id": "domain_intelligence-search-distribution-intelligence-startrail-org-leann-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-J-startrail-org-leann-learnings-search-distribution-intelligence-startrail-org-lea.md",
+      "title": "Search & Distribution Intelligence: startrail-org-leann-learnings Core Invariants",
+      "repository": "startrail-org-leann-learnings",
+      "source_version": "HEAD",
+      "content_hash": "830eb6dc0369e89d4f240b4a9c7f0cb9b4c210a5820dc6e2575de2711f933475",
+      "domain_letter": "J",
+      "persisted_at": "2026-11-25T11:20:12.870Z"
     }
   },
   "ai-builder-brain": {
