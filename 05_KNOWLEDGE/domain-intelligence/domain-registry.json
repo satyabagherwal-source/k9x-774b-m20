@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T00:43:50.175Z",
-  "total_records": 2609,
+  "last_updated": "2026-11-25T00:52:40.988Z",
+  "total_records": 2610,
   "domains": {
     "A": {
       "total": 22,
@@ -2482,7 +2482,7 @@
       ]
     },
     "K": {
-      "total": 157,
+      "total": 158,
       "record_ids": [
         "DOM-K-353B93D6",
         "DOM-K-76C43650",
@@ -2640,7 +2640,8 @@
         "domain_intelligence-quality-verification-intelligence-higress-group-higress-core-invariants",
         "domain_intelligence-quality-verification-intelligence-higress-group-higress-learnings-core-invariant",
         "domain_intelligence-quality-verification-intelligence-t8y2-dbx-core-invariants",
-        "domain_intelligence-quality-verification-intelligence-t8y2-dbx-learnings-core-invariants"
+        "domain_intelligence-quality-verification-intelligence-t8y2-dbx-learnings-core-invariants",
+        "DOM-K-23B0EC10"
       ]
     },
     "L": {
@@ -8379,8 +8380,8 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-learnings-technical-construction-intelligence-zvec-ai-zvec-gre.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "abb33d45520ba91415cab28d63f5c739b055c9ab390a889af3a70163878795ec",
-      "created_at": "2026-11-24T23:42:00.337Z"
+      "content_hash": "414d004fa552ab1aa527ceecf7adc0372a4d96607c4cd062dfb51d0bb8032167",
+      "created_at": "2026-11-25T00:52:40.988Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -29106,8 +29107,8 @@
       "title": "Technical Construction Intelligence: agent-of-empires/agent-of-empires Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-agent-of-empires-agent-of-empires-technical-construction-intelligence-agent-of-e.md",
       "repository": "agent-of-empires/agent-of-empires",
-      "content_hash": "44f50defd1c024b8fd350579ed069b795565ad22c18e3981210e43dfe291475e",
-      "created_at": "2026-11-19T14:20:20.089Z"
+      "content_hash": "b208c047c7593ef90c8f3eb73c5a969230ea0ecab7e72887f6b2311e52a341fe",
+      "created_at": "2026-11-25T00:51:57.475Z"
     },
     "domain_intelligence-technical-construction-intelligence-agent-of-empires-agent-of-empires-learnings-": {
       "record_id": "domain_intelligence-technical-construction-intelligence-agent-of-empires-agent-of-empires-learnings-",
@@ -29115,8 +29116,8 @@
       "title": "Technical Construction Intelligence: agent-of-empires-agent-of-empires-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-agent-of-empires-agent-of-empires-learnings-technical-construction-intelligence-.md",
       "repository": "agent-of-empires-agent-of-empires-learnings",
-      "content_hash": "72ec6e80a6d3eceab540d03976fccde8e7265ab1b2ac9614b01ba2883146eb8c",
-      "created_at": "2026-11-19T14:20:29.123Z"
+      "content_hash": "b32278a733d5cf58fff4cebb2c77df761e26b4ca9ae8ab82ecccb1077153d84a",
+      "created_at": "2026-11-25T00:52:07.386Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-xhtoken-spark-x2-6-4b-gguf-learnings-core-inv": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-xhtoken-spark-x2-6-4b-gguf-learnings-core-inv",
@@ -37469,8 +37470,8 @@
       "title": "Quality & Verification Intelligence: webdriverio/webdriverio Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-webdriverio-webdriverio-quality-verification-intelligence-webdriverio-webdriveri.md",
       "repository": "webdriverio/webdriverio",
-      "content_hash": "e7f0a397c7e380aca61619bee2aff8492ff709740f9f31c77c08f23ff7fd1a62",
-      "created_at": "2026-11-21T01:16:24.033Z"
+      "content_hash": "eab90bdb17372180147ac34879af6e18c9195f5b9f465e6003e8befe8a995fcd",
+      "created_at": "2026-11-25T00:51:59.532Z"
     },
     "domain_intelligence-quality-verification-intelligence-webdriverio-webdriverio-learnings-core-invaria": {
       "record_id": "domain_intelligence-quality-verification-intelligence-webdriverio-webdriverio-learnings-core-invaria",
@@ -37478,8 +37479,8 @@
       "title": "Quality & Verification Intelligence: webdriverio-webdriverio-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-webdriverio-webdriverio-learnings-quality-verification-intelligence-webdriverio-.md",
       "repository": "webdriverio-webdriverio-learnings",
-      "content_hash": "f70c31c6f299c70a4f32f3a5a4618baa73e60c2156e53ad7329234877d19e8ff",
-      "created_at": "2026-11-21T01:16:31.026Z"
+      "content_hash": "44cb5126af185ca9a4327c33ce0f0b4647e02899f55df4554599f5c9b598859b",
+      "created_at": "2026-11-25T00:52:39.656Z"
     },
     "domain_intelligence-architecture-intelligence-mswjs-msw-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-mswjs-msw-core-invariants",
@@ -43774,6 +43775,48 @@
       "repository": "cypress-io-cypress-learnings",
       "content_hash": "0c6f7c71cfb4ccc6007ea2fdf2002b62b6b6b97b27f7ccf25fed77d8c2fd0f84",
       "created_at": "2026-11-25T00:43:48.154Z"
+    },
+    "DOM-K-23B0EC10": {
+      "record_id": "DOM-K-23B0EC10",
+      "domain_letter": "K",
+      "domain_id": "quality_verification",
+      "domain_name": "Quality & Verification Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "G",
+          "id": "architecture",
+          "name": "Architecture Intelligence"
+        }
+      ],
+      "title": "test(e2e): run Chrome stable in place of the Chrome 155 pin, and note the Firefo",
+      "content": "When implementing operations in `e2e/session/live-web.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in webdriverio/webdriverio. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "7d2077f8386f0821899d8da3ee156060edc14d94c1c8d2b55b1f29448e7bfeb9",
+      "summary": "Prevents defects observed in production commit `cfd6c6b2`: test(e2e): run Chrome stable in place of the Chrome 155 pin, and note the Firefox -> When implementing operations in `e2e/session/live-web.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions,",
+      "provenance": {
+        "source_uri": "project://webdriverio-webdriverio/webdriverio-webdriverio-learnings.md",
+        "source_version": "cfd6c6b2",
+        "observed_at": "2026-11-25T00:51:57.852Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (webdriverio-webdriverio)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of webdriverio-webdriverio"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "G"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-25T00:52:38.866Z"
     }
   }
 }

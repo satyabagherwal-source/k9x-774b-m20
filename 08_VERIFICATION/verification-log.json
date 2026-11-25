@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261123-PEE9",
-    "timestamp": "2026-11-23T14:46:24.033Z",
-    "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
-    "learningId": "learn-huggingface-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
-    "contentHash": "3d86d05bf3f98947003b2e2f04cd5b911e2843b233fba2ebf6588a77576da73c",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-PNXP",
-    "timestamp": "2026-11-23T14:46:36.397Z",
-    "repository": "zama-ai/tfhe-rs",
-    "learningId": "learn-github-zama-ai-tfhe-rs",
-    "contentHash": "2dd6800817faf70bee92d574ae15377684075395315fe09b7d90cb7ec662d3a2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261123-PR44",
     "timestamp": "2026-11-23T14:46:40.516Z",
     "repository": "HelixDB/helix-db",
@@ -7490,6 +7460,36 @@
     "repository": "NucleoidAI/Nucleoid",
     "learningId": "learn-github-nucleoidai-nucleoid",
     "contentHash": "000ce08600c8818a9a7c91302d8c4be217f34001b978e154d813427994d85261",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-RZR2",
+    "timestamp": "2026-11-25T00:51:56.990Z",
+    "repository": "agent-of-empires/agent-of-empires",
+    "learningId": "learn-github-agent-of-empires-agent-of-empires",
+    "contentHash": "e6d287dbb7f138cf4caa502486ba873929fde494ac2095718e6e3e2309bb3485",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-S1C4",
+    "timestamp": "2026-11-25T00:51:59.044Z",
+    "repository": "webdriverio/webdriverio",
+    "learningId": "learn-github-webdriverio-webdriverio",
+    "contentHash": "5a6ec9c63b1c4a90cee8474e1fd07b499c08bf9d7766dc63c500f15d80731702",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -4,24 +4,24 @@
 {
   "source_repository": "agent-of-empires/agent-of-empires",
   "source_url": "https://github.com/agent-of-empires/agent-of-empires",
-  "source_version": "593655e0",
+  "source_version": "a6717a44",
   "license": "MIT",
-  "timestamp": "2026-11-19T14:20:19.947Z",
+  "timestamp": "2026-11-25T00:51:57.276Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-agent-of-empires-agent-of-empires",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [agent-of-empires/agent-of-empires](https://github.com/agent-of-empires/agent-of-empires) (Revision: `593655e0`).  
-> **License**: MIT | **Timestamp**: `2026-11-19T14:20:19.947Z`  
+> **Provenance**: Harvested from [agent-of-empires/agent-of-empires](https://github.com/agent-of-empires/agent-of-empires) (Revision: `a6717a44`).  
+> **License**: MIT | **Timestamp**: `2026-11-25T00:51:57.276Z`  
 > **Learning ID**: `learn-github-agent-of-empires-agent-of-empires`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 64%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), F (Design Intelligence), D (Research & Knowledge Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 56%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from agent-of-empires/agent-of-empires:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/agent-of-empires/agent-of-empires](https://github.com/agent-of-empires/agent-of-empires))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T14:20:18.800Z  
+> **Harvest Timestamp**: 2026-11-25T00:51:55.670Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Manage multiple Claude Code, OpenCode agents from either TUI or Web for easy access on mobile. Also supports Mistral Vibe, Codex CLI, Gemini CLI, Pi.dev, Copilot CLI, Factory Droid Coding.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4636 stars
+- **Stars / Engagement**: 4847 stars
 
 ---
 
@@ -927,7 +927,7 @@ pub(crate) enum LifecycleSignal {
     TerminalUsage,
     /// `ScheduleWakeup` registered an absolute wake time.
     WakeupPending {
-        at: chrono::DateTime<chrono::Utc>,
+        at: crate::time::Timestamp,
     },
     /// Validated traffic from a subagent session: liveness only, so it keeps
     /// any end-of-turn accounting already seen.
@@ -1155,14 +1155,14 @@ pub(super) fn detect_off_protocol_work_completed(
 }
 
 /// Wake signal from a non-failed `ScheduleWakeup` tool update. The initial
-/// `ToolCall` is excluded because the tool m
+/// `ToolCall` is excluded because the tool may stil
 ```
 
 ### Core Architecture Module: `src/acp/runner_lifecycle.rs`
 ```
 //! Per-session ownership of a structured-view runner.
 
-use chrono::{DateTime, Utc};
+use crate::time::Timestamp;
 use std::collections::HashMap;
 use std::sync::{Arc, Mutex};
 use std::time::{Duration, Instant};
@@ -1279,7 +1279,7 @@ pub enum ResumeKind {
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct WorkerStart {
     pub first_start: bool,
-    pub started_at: DateTime<Utc>,
+    pub started_at: Timestamp,
 }
 
 /// Authority token for one epoch of one session.
@@ -1341,7 +1341,7 @@ impl Default for Construction {
             retire_previous: std::sync::atomic::AtomicBool::new(false),
             spawn_attestor: Mutex::default(),
             idle_baseline_ms: std::sync::atomic::AtomicI64::new(
-                chrono::Utc::now().timestamp_millis(),
+                crate::time::Timestamp::now().as_millis(),
             ),
             admissions: std::sync::atomic::AtomicU64::new(0),
             defers_rate_limit_rejection: std::sync::atomic::AtomicBool::new(false),
@@ -1448,7 +1448,7 @@ impl Lease {
             .stop_completion
             .lock()
             .unwrap_or_else(|error| error.into_inner())
-            .as_ref
+            .as_ref(
 ```
 
 ### Core Architecture Module: `src/acp/state.rs`
@@ -1457,7 +1457,7 @@ impl Lease {
 
 use crate::daemon::PromptAttachmentRef;
 use crate::session::Status;
-use chrono::{DateTime, Utc};
+use crate::time::Timestamp;
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
@@ -1516,7 +1516,7 @@ pub struct ToolCall {
     /// The `prompt` argument in full, set only when `args_preview` was cut.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub prompt: Option<String>,
-    pub started_at: DateTime<Utc>,
+    pub started_at: Timestamp,
     /// The sub-agent `Task` call this call runs under, from `_meta.claudeCode.parentToolUseId`.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub parent_tool_call_id: Option<String>,
@@ -1542,7 +1542,7 @@ pub struct DiffPreview {
     pub path: String,
     pub old_text: Option<String>,
     pub new_text: Option<String>,
-    pub created_at: DateTime<Utc>,
+    pub created_at: Timestamp,
 }
 
 /// One renderable block of a tool call's completion, bridged from ACP `ToolCallContent`.
@@ -1584,14 +1584,14 @@ pub enum ToolOutputBlock {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ThinkingSignal {
-    pub started_at: DateTime<Utc>,
+    pub started_at: Timestamp,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, schemars::JsonSchema)]
 pub struct RateLimitInfo {
     pub status: String,
     /// When the quota window clears, if the agent reported it.
-    pub resets_at: Option<DateTime<Utc>>,
+    pub resets_at: Option<Timestamp>,
     pub kind: String,
 }
 
@@ -1633,7 +1633,7 @@ pub struct AgentSwitchInfo {
     pub from: String,
     pub to: String,
     pub reason: String,
-    pub switched_at: DateTime<Utc>,
+    pub switched_at: Timestamp,
 }
 
 /// The agent's last-reported context-window usage and cumulative cost.
@@ -1764,7 +1764,7 @@ pub struct ConfigOptionDescriptor {
 
 impl ConfigOptionDescriptor {
     /// A `model_config` option whose only choices are `on` and `off`.
-    pub fn 
+    pub fn is_model_config_toggl
 ```
 
 
@@ -1773,14 +1773,14 @@ impl ConfigOptionDescriptor {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5869** (2026-11-19): **MCP wait_for reports completion when its event-store query fails**
-  *Symptoms*: ### What happened?  When MCP `wait_for` receives `after_seq` and the session still reports `Idle`, it checks the event store for a turn ending after that cursor. If the query fails, `settled` treats the error as a positive result. The call can return `Idle` with `timed_out: false` without confirming that the requested turn ended.  **Expected:** Return a clear query error or keep waiting within the deadline. Report completion only when the event store confirms it. Cover the query-failure branch with a focused regression test.  Follow-up to #5753. [Completion check](https://github.com/agent-of-empires/agent-of-empires/blob/dd7827cbc7800d96bd9db973fbf040d784307ea3/src/server/mcp/wait.rs#L346-L364)  ### aoe version and OS  `main` at `dd7827cbc`. Source-derived scenario. No database fault was injected locally.  ### AI usage  AI drafted the report from a cross-checked source review. 
+- **Issue #5984** (2026-11-24): **Plugin recovery: remove empty staging directories after reclaiming native resources**
+  *Symptoms*: ## What happened?  After a Daemon crash during strict remote plugin staging, successful startup recovery can leave an empty `.staging-*` directory behind after reclaiming the native resource.  Remove the empty directory associated with the recovered operation once resource absence and directory ownership are proven. Leave live, unowned, or non-empty directories untouched. Extend the crash/restart regression to assert that the recovered directory is gone.  Follow-up to #5759 ([review](https://github.com/agent-of-empires/agent-of-empires/pull/5759#pullrequestreview-6021907124)).  ## aoe version and OS  Reported in the review of #5759 against `8cb687e82`. Applies to strict native staging recovery; OS not specified in the review.  ## AI usage  Drafted with OpenAI Codex via omp. 
   **Post-Mortem & Fix Analysis**:
-  > **Castellan triage**  Applied: - Label `P1` - Label `area:server` - Priority: P1 - Size: M - Status: Ready  Reasons: - priority: Incorrect completion reporting under query failure can cause silent hangs or false success—a regression blocker for MCP reliability. - area: Issue is in server-side MCP wait_for completion logic in event-store query handling. - type: Bug: error handling treats query failure as success instead of propagating or retrying. - size: Multi-file change spanning error handling, completion check logic, and new regression test.  Fit is not set by triage; it stays with maintainers.  <!-- castellan triage 60dab506215f0d76b04724e1da53f08e818d77f8bf20cb9484379fd464fef870 -->
-  > <!-- coderabbit-ai-generated:v1 -->  <!-- This is an auto-generated issue plan by CodeRabbit --> <details> <summary>🔗 Related PRs</summary> <dl> <dd> <br>  agent-of-empires/agent-of-empires#5753 - feat(mcp): add wait_for, list_approvals and approve tools [closed] </dd> </dl> </details>  --- <details> <summary>📝 Issue Planner</summary> <dl> <dd> <br>  <sub>Check the box below or use the `@coderabbitai plan` command to generate an implementation plan and prompts that you can use with your favorite coding assistant.</sub>  - [ ] <!-- {"checkboxId":"8d4f2b9c-3e1a-4f7c-a9b2-d5e8f1c4a7b9"} --> Create Plan </dd> </dl> </details>   --- <details> <summary> 🧪 Issue enrichment is currently in open beta.</summary> <dl> <dd> <br>   You can configure auto-planning by selecting labels in the issue_enrichment configuration.  To disable automatic issue enrichment, add the following to your `.coderabbit.yaml`: ```yaml issue_enrichment:   auto_enrich:     enabled: false ``` </dd> </dl> </details>  💬 
+  > **Castellan triage**  Applied: - Label `P2` - Label `area:agents` - Priority: P2 - Size: S - Status: Backlog  Reasons: - priority: Real issue affecting resource cleanup after daemon recovery, but not a blocker or regression. - area: Plugin staging and resource recovery is part of the agent plugin system. - type: Bug fix to properly clean up empty staging directories left after crash recovery. - size: Single component change to add directory cleanup logic and extend existing regression tests.  Fit is not set by triage; it stays with maintainers.  <!-- castellan triage 0cae083c50d9c4a08332ab6c70872177e02bc660956d0328bd0af79b06f3ea35 -->
+  > <!-- coderabbit-ai-generated:v1 -->  <!-- This is an auto-generated issue plan by CodeRabbit --> <details> <summary>🔗 Related PRs</summary> <dl> <dd> <br>  agent-of-empires/agent-of-empires#5759 - fix(plugin): bound pre-consent staging disk use [open] </dd> </dl> </details>  --- <details> <summary>📝 Issue Planner</summary> <dl> <dd> <br>  <sub>Check the box below or use the `@coderabbitai plan` command to generate an implementation plan and prompts that you can use with your favorite coding assistant.</sub>  - [ ] <!-- {"checkboxId":"8d4f2b9c-3e1a-4f7c-a9b2-d5e8f1c4a7b9"} --> Create Plan </dd> </dl> </details>   --- <details> <summary> 🧪 Issue enrichment is currently in open beta.</summary> <dl> <dd> <br>   You can configure auto-planning by selecting labels in the issue_enrichment configuration.  To disable automatic issue enrichment, add the following to your `.coderabbit.yaml`: ```yaml issue_enrichment:   auto_enrich:     enabled: false ``` </dd> </dl> </details>  💬 Have feedbac
 
-- **Issue #5850** (2026-11-19): **Pane PID lookup fails when tmux runs without a UTF-8 locale, so kills skip the process tree**
-  *Symptoms*:  **Priority:** P2. - **Silent:** nothing is logged above trace level. - **What breaks:** every kill path falls back to killing only the tmux session, so a pane's   descendants that left its process group survive. Status and foreground-PID detection lose the   pane PID too. - **Who:** only hosts where the process running `tmux` has no UTF-8 locale. That's common for   daemons started over `ssh` without `SendEnv LANG`, from cron, under `env -i`, or in stock   Debian or Ubuntu container images, where `LANG` is unset. A desktop terminal is usually fine.  ### Repro (tmux 3.6a, Ubuntu 26.04; the code path is the same in 3.5a) ```sh tmux -f /dev/null -L probe new-session -d -s p 'sleep 30' LC_ALL=C      tmux -L probe display-message -p -t p $'#{pane_dead}\t#{pane_pid}' | od -c   # 0 _ 1 9 4 ... LC_ALL=C.UTF-8 tmux -L probe display-message -p -t p $'#{pane_dead}\t#{pane_pid}' | od -c  # 0 \t 1 9 4 ... tmux -u -L probe display-message -p -t p $'#{pane_dead}\t#{pane_pid}' | od -c              # 0 \t 1 9 4 ... tmux -L probe kill-server ``` - `list-panes -F` behaves the same, and `\x1f` also becomes `_`. - With no config file and a private socket, it isn't caused by user configuration.  ### Cause (tmux source) `server_client_print` (server-client.c, 3.6a :3884, 3.5a :3330) handles output for a client with no session: `if (~c->flags & CLIENT_UTF8) sanitized = utf8_sanitize(msg);`. - `utf8_sanitize` (utf8.c) writes `_` for every byte outside 0x20-0x7e. - `CLIENT_UTF8` is set from the clien
+- **Issue #5975** (2026-11-24): **Web dashboard: banner calls a stop-fenced Session a missing adapter, and a prompt to a stopped Session doesn't start it**
+  *Symptoms*: **Note:** Claude handled the investigation and prose via back-and-forth. Idea, decisions, and everything else are mine. — @Seluj78  ## Problem  After a durable stop (`aoe acp stop`, `aoe killall`), a message sent to the Session sits queued and the Web dashboard shows the banner "Claude Code couldn't start in Structured view. The ACP adapter, the program that connects AoE to Claude Code, didn't start. It's usually missing or out of date." with an `npm install -g @agentclientprotocol/claude-agent-acp@latest` command. The adapter is fine. The Session was stopped on purpose and waits for an explicit start. Clicking Retry fixes it, which makes the failure look random.  Two defects:  1. The banner describes the stop fence as a missing adapter. 2. A prompt sent to a stopped Session does not start it, while a prompt sent to an idle auto-stopped Session ("deep sleep") does. Both look the same in the UI, so the difference reads as randomness.  ## Evidence from the affected session  Session `03439a289b024085`, acp-workers log and `acp_events.db`:  - Idle auto-stop wakes normally: `auto-stopped idle structured view worker idle_secs=3600`, then `waking idle-dormant structured view session on prompt; spawning a fresh worker` (twice, Nov 22 20:57Z and Nov 23 06:04Z). - 08:02:35Z: a separate `aoe` CLI process (pid 63602) stops the worker: `acp.runner: shutdown signal received`, `restart_decision: registry entry gone, treating as user-initiated stop`. Event seq 3080 `Stopped {"reason":"user_s
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1797,1480 +1797,1004 @@ impl ConfigOptionDescriptor {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `03e54bee` (2026-11-17)
-**Commit Message**: fix(containers): share one sandbox image pull per runtime and image (#5809)
+### Incident Patch 1: `a5f7f027` (2026-11-24)
+**Commit Message**: perf(web): throttle structured view persistence and cache per-chunk work (#5928)
 
-* fix(containers): share one sandbox image pull per runtime and image
+* test(web): add structured view streaming perf harness
 
-Every pull path (the Daemon banner job, create's pull_latest, ensure_image
-and the TUI banner) now joins one flight per (runtime, image) in the
-process. A joiner waits on the same outcome and no second runtime process
-starts. A cancelled caller detaches; the last one kills the pull and waits
-for it to exit.
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
-A failed pull carries a coded reason (timeout, network, disk_space, auth,
-other) matched from runtime stderr, with shared wording in user_text().
-The pull now runs in its own process group, so a timeout kill reaps
-anything the runtime CLI forked.
+* perf(web): throttle acp state persistence
 
-Fixes #5748
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+* perf(web): hoist the assistant-ui convertMessage identity
 
-* test(containers): scope the unreadable-config pull check to its own image
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
-The check asserted that no pull ran anywhere in the process. Under plain
-`cargo test` the image_pull tests run as threads beside it and hold
-running flights of their own. Configure an image no other test pulls and
-assert that its pull state stays Idle. `any_running` has no other caller,
-so it goes.
+* perf(web): cache shiki highlight results across remounts
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
+* perf(web): key the edit tool card diff stats on stable strings
 
-**File**: `flake.nix` (modified, +1/-0)
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+
+* fix(web): read pending acp state after in-memory eviction
+
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+
+* refactor(web): drop incidental line moves in highlight cache change
+
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+
+* fix(web): fail perf harness when history never settles
+
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+
+* fix(web): keep typing for the whole measured turn in the perf harness
+
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+
+* fix(web): keep cached highlight across theme switch
+
+Seed the highlight result
+
+**File**: `web/playwright.perf.config.ts` (added, +18/-0)
 ```diff
-@@ -55,6 +55,7 @@
-                 ./assets
-                 ./docker
-                 ./tests/fixtures/cli-read
-+                ./tests/fixtures/pull-stderr
-                 ./web/tests/helpers/fakeAcpAgent.mjs
-               ];
-             };
+@@ -0,0 +1,18 @@
++import { defineConfig } from "@playwright/test";
++
++// Perf harness: not picked up by playwright.config.ts (it only matches *.spec.ts).
++export default defineConfig({
++  testDir: "./tests/perf",
++  testMatch: "**/*.perf.ts",
++  globalSetup: "./tests/helpers/liveGlobalSetup.ts",
++  timeout: 300_000,
++  fullyParallel: false,
++  workers: 1,
++  retries: 0,
++  reporter: "list",
++  use: {
++    headless: true,
++    viewport: { width: 1440, height: 900 },
++  },
++  projects: [{ name: "chromium", use: { browserName: "chromium" } }],
++});
 ```
 
-**File**: `src/containers/error.rs` (modified, +2/-0)
+**File**: `web/src/components/__tests__/FilesPane.test.tsx` (modified, +1/-0)
 ```diff
-@@ -32,6 +32,7 @@ pub enum DockerError {
-         runtime: &'static str,
-         image: String,
-         detail: String,
-+        reason: super::image_pull::PullFailureReason,
-     },
+@@ -24,6 +24,7 @@ vi.mock("../../hooks/useShikiTheme", () => ({
+   useShikiTheme: () => ({ theme: "github-dark", appearance: "dark" }),
+ }));
+ vi.mock("../../lib/snippetHighlighter", () => ({
++  peekHighlight: () => undefined,
+   highlightSnippet: vi.fn().mockResolvedValue(null),
+ }));
  
-     #[error("Failed to create container: {0}")]
-@@ -105,6 +106,7 @@ mod tests {
-                 runtime,
-                 image: "img:1".to_string(),
-                 detail: sanitize_stderr("denied\nretry later"),
-+                reason: crate::containers::image_pull::PullFailureReason::Other,
-             }
-             .to_string();
-             assert_eq!(
 ```
 
-**File**: `src/containers/image_pull.rs` (added, +547/-0)
+**File**: `web/src/components/acp/AcpRuntime.tsx` (modified, +3/-1)
 ```diff
-@@ -0,0 +1,547 @@
-+//! One image pull per Container runtime and image in this process. Every caller waits on the
-+//! running pull as a waiter, so a second caller never starts a second runtime process.
+@@ -97,6 +97,8 @@ export interface AcpContext {
+   loadingEarlierHistory: boolean;
+ }
+ 
++const identityMessage: ExternalStoreAdapter<ThreadMessageLike>["convertMessage"] = (m) => m;
 +
-+use std::collections::HashMap;
-+use std::sync::{Arc, Condvar, LazyLock, Mutex, MutexGuard};
-+use std::time::Duration;
+ /** Owns the external store so a new `key` builds a fresh runtime. A `/clear`
+  *  shortens a kept message's parts, and assistant-ui's store would otherwise read
+  *  a stale part index and crash the view (assistant-ui#5708). */
+@@ -222,7 +224,7 @@ export function AcpRuntime({
+     // gate, or a background sub-agent with an idle main turn silently eats
+     // every keystroke.
+     isRunning: acp.state.turnActive,
+-    convertMessage: (m) => m,
++    convertMessage: identityMessage,
+     // The idle Enter path: text comes from the message, attachments from our staging.
+     onNew: async (msg) => {
+       const text = msg.content
+```
+
+**File**: `web/src/components/acp/CoreToolCards.test.tsx` (added, +42/-0)
+```diff
+@@ -0,0 +1,42 @@
++// @vitest-environment jsdom
 +
-+use serde::Serialize;
-+use tokio_util::sync::CancellationToken;
++import { afterEach, expect, it, vi } from "vitest";
++import { cleanup, render } from "@testing-library/react";
 +
-+use super::error::{DockerError, Result};
++vi.mock("../../lib/diffPair", async (importOriginal) => {
++  const actual = await importOriginal<typeof import("../../lib/diffPair")>();
++  return { ...actual, diffPair: vi.fn(actual.diffPair) };
++});
++vi.mock("../../hooks/useShikiTheme", () => ({
++  useShikiTheme: () => ({ theme: "dark-plus", appearance: "dark" }),
++}));
 +
-+/// How often a waiter checks its own cancellation.
-+const CANCEL_POLL: Duration = Duration::from_millis(50);
++import { diffPair } from "../../lib/diffPair";
++import { AgentProfileProvider } from "../../lib/agentProfileContext";
++import { AcpFileRefContext } from "./AcpFileRefContext";
++import { EditToolCard } from "./CoreToolCards";
++import { makeToolCall } from "./__fixtures__/toolCalls";
 +
-+/// Why a pull failed, read from the runtime's stderr. Only Docker's stderr has been captured
-+/// (`tests/fixtures/pull-stderr`), so other runtimes' failures read as `Other` until they are.
-+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize)]
-+#[serde(rename_all = "snake_case")]
-+pub enum PullFailureReason {
-+    Timeout,
-+    Network,
-+    DiskSpace,
-+    Auth,
-+    Other,
-+}
++afterEach(cleanup);
 +
-+impl PullFailureReason {
-+    /// The wording both clients show.
-+    pub fn user_text(self) -> String {
-+        let why = match self {
-+            Self::Timeout => "it took longer than 10 minutes",
-+            Self::Network => "no network connection",
-+            Self::DiskSpace => "not enough disk space",
-+            Self::Auth => "the registry needs you to sign in",
-+            Self::Other => "see aoe logs",
-+        };
-+        format!("Couldn't download the sandbox image: {why}.")
-+    }
++const edit = (text: string) => {
++  const diffs = [{ path: "a.rs", old_text: "a", new_text: text, created_at: "t" }];
++  return makeToolCall({ kind: "edit", args_preview: JSON.stringify({ _aoe_diffs: diffs }), diffs });
++};
 +
-+    /// Network is checked before auth, so a connection error can't read as a sign-in problem.
-+    pub(crate) fn classify(stderr: &str) -> Self {
-+        let has = |phrases: &[&str]| phrases.iter().any(|p| stderr.contains(p));
-+        if has(&["no space left on device"]) {
-+            Self::DiskSpace
-+        } else if has(&["no such host", "dial tcp"]) {
-+            Self::Network
-+        } else if has(&[
-+            "pull access denied",
-+            "error from registry: denied",
-+            "unauthorized",
-+        ]) {
-+            Self::Auth
-+        } else {
-+            Self::Other
-+        }
-+    }
-+}
++const ui = (tool: ReturnType<typeof edit>) => (
++  <AcpFileRefContext.Provider value={{ fileRefSession: null, onOpenFileRef: undefined }}>
++    <AgentProfileProvider toolKey={null}>
++      <EditToolCard tool={tool} />
++    </AgentProfileProvider>
++  </AcpFileRefContext.Provider>
++);
 +
-+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
-+#[serde(tag = "state", rename_all = "snake_case")]
-+pub enum PullState {
-+    Idle,
-+    Running,
-+    Done,
-+    /// `message` is `reason`'s shared wording; `error` is the runtime's output, for Details.
-+    Failed {
-+        reason: PullFailureReason,
-+        message: String,
-+        error: String,
-+    },
-+}
++it("does not re-run diffPair for a new-but-equal diffs array, and does when args_preview changes", () => {
++  const { rerender } = render(ui(edit("b")));
++  expect(diffPair).toHaveBeenCalledTimes(1);
++  rerender(ui(edit("b")));
++  expect(diffPair).toHaveBeenCalledTimes(1);
++  rerender(ui(edit("bc")));
++  expect(diffPair).toHaveBeenCalledTimes(2);
++});
+```
+
+**File**: `web/src/components/acp/CoreToolCards.tsx` (modified, +3/-1)
+```diff
+@@ -181,7 +181,9 @@ export function EditToolCard({ tool, result }: ToolCardProps) {
+       },
+       { adds: 0, dels: 0 },
+     );
+-  }, [tool.diffs, legacyOld, legacyNew]);
++    // `tool.diffs` is rebuilt every render from `args_preview` (its `_aoe_diffs` key), so the string is the stable key.
++    // eslint-disable-next-line react-hooks/exhaustive-deps
++  }, [tool.args_preview, legacyOld, legacyNew]);
+ 
+   return (
+     <CardChrome
+```
+
+**File**: `web/src/components/acp/Markdown.test.tsx` (modified, +37/-2)
+```diff
+@@ -11,11 +11,16 @@ import remarkGfm from "remark-gfm";
+ 
+ import type { FileRefSession } from "../../lib/fileRef";
+ 
++const { shikiThemeRef } = vi.hoisted(() => ({
++  shikiThemeRef: { current: { theme: "vitesse-dark", appearance: "dark" } },
++}));
 +
-+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
-+pub(crate) struct PullKey {
-+    pub runtime: &'static str,
-+    pub image: String,
-+}
+ vi.mock("../../hooks/useShikiTheme", () => ({
+-  useShikiTheme: () => ({ theme: "vitesse-dark", appearance: "dark" }),
++  useShikiTheme: () => shikiThemeRef.current,
+ }));
+ 
+ vi.mock("../../lib/snippetHighlighter", () => ({
++  peekHighlight: vi.fn((): string | undefined => undefined),
+   highlightSnippet: vi.fn().mockResolvedValue("<pre><code>highlighted</code></pre>"),
+ }));
+ 
+@@ -59,7 +64,7 @@ vi.mock("../../lib/clipboard", () => ({
+ 
+ import { Markdown, remarkPluginsFor } from "./Markdown";
+ import { AcpFileRefContext } from "./AcpFileRefContext";
+-import { highlightSnippet } from "../../lib/snippetHighlighter";
++import { highlightSnippet, peekHighlight } from "../../lib/snippetHighlighter";
+ import { writeClipboard } from "../../lib/clipboard";
+ import type { SyntaxHighlighterProps } from "@assistant-ui/react-markdown";
+ import { renderWithLateResolution } from "../../__tests__/lateResolution";
+@@ -311,6 +316,36 @@ describe("ShikiSyntaxHighlighter stale-content transitions (#3974)", () => {
+   afterEach(() => {
+     vi.mocked(highlightSnippet).mockReset();
+     vi.mocked(highlightSnippet).mockResolvedValue("<pre><code>highlighted</code></pre>");
++    vi.mocked(peekHighlight).mockReset();
++    vi.mocked(peekHighlight).mockReturnValue(undefined);
++    shikiThemeRef.current = { theme: "vitesse-dark", appearance: "dark" };
++  });
 +
-+struct Flight {
-+    /// Cancelled when the last waiter leaves; kills the runtime process.
-+    kill: CancellationToken,
-+    state: Mutex<FlightState>,
-+    finished: Condvar,
-+}
-+
-+struct FlightState {
-+    waiters: usize,
-+    outcome: Option<Result<()>>,
-+}
-+
-+impl Flight {
-+    /// Gives up one waiter's place; the last one out kills the pull. Returns whether it was last.
-+    fn leave(&self, state: &mut FlightState) -> bool {
-+        state.waiters -= 1;
-+        if state.waiters > 0 {
-+            return false;
-+        }
-+        self.kill.cancel();
-+        true
-+    }
-+}
-+
-+enum Entry {
-+    Running(Arc<Flight>),
-+    Finished(PullState),
-+}
-+
-+static FLIGHTS: LazyLock<Mutex<HashMap<PullKey, Entry>>> = LazyLock::new(Mutex::default);
-+
-+fn lock<T>(mutex: &Mutex<T>) -> MutexGuard<'_, T> {
-+    mutex.lock().unwrap_or_else(|e| e.into_inner())
-+}
-+
-+/// A caller's place in a running pull.
-+pub(crate) struct Waiter {
-+    flight: Arc<Flight>,
-+    image: String,
-+    /// Still counted in the flight's waiters.
-+    joined: bool,
-+}
-+
-+/// Joins `key`'s running pull, or starts `pull` on its own thread when none is running.
-+pub(crate) fn join_with<F>(key: PullKey, pull: F) -> Waiter
-+where
-+    F: FnOnce(&CancellationToken) -> Result<()> + Send + 'static,
-+{
-+    let mut flights = lock(&FLIGHTS);
-+    if let Some(Entry::Running(flight)) = flights.get(&key) {
-+        let mut state = lock(&flight.state);
-+        // Under the flight's lock, so a pull its last waiter is killing can't gain a waiter.
-+        if !flight.kill.is_cancelled() {
-+            state.waiters += 1;
-+            return Waiter {
-+                flight: flight.clone(),
-+                image: key.image,
-+                joined: true,
-+            };
-+        }
-+    }
-+    let flight = Arc::new(Flight {
-+        kill: CancellationToken::new(),
-+        state: Mutex::new(FlightState {
-+            waiters: 1,
-+            outcome: None,
-+        }),
-+        finished: Condvar::new(),
++  it("keeps a mount-time cache hit while an uncached theme is pending", async () => {
++    vi.mocked(peekHighlight).mockImplementation((_code, opts) =>
++      opts?.theme === "vitesse-dark" ? '<pre class="shiki">theme A</pre>' : undefined,
++    );
++    const pending = Promise.withResolvers<string | null>();
++    const started = Promise.withResolvers<void>();
++    vi.mocked(highlightSnippet).mockImplementationOnce(() => {
++      started.resolve();
++      return pending.promise;
 +    });
-+    flights.insert(key.clone(), Entry::Running(flight.clone()));
-+    drop(flights);
-+    let runner = flight.clone();
-+    let image = key.image.clone();
-+    std::thread::spawn(move || {
-+        let started = std::time::Instant::now();
-+        // A panic still finishes the flight; otherwise its waiters and every later joiner hang.
-+        let outcome = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| pull(&ru
++    const Comp = getSyntaxHighlighter();
++
++    const { container, rerender } = render(<Comp language="rust" code="fn main() {}" />);
++    expect(container.textContent).toContain("theme A");
++
++    shikiThemeRef.current = { theme: "vitesse-light", appearance: "light" };
++    rerender(<Comp language="rust" code="fn main() {}" />);
++    await started.promise;
++    expect(container.textContent).toContain("theme A");
++
++    pending.resolve('<pre class="shiki">theme B</pre>');
++    await waitFor(() => {
++      expect(container.textContent).toContain("theme B");
++    });
++    expect(container.textContent).not.toContain("theme A");
+   });
+ 
+   it("clears highlighted output when a reused block transitions to unfenced text", async () => {
 ```
 
-**File**: `src/containers/mod.rs` (modified, +1/-0)
+**File**: `web/src/components/acp/Markdown.tsx` (modified, +16/-4)
 ```diff
-@@ -1,6 +1,7 @@
- pub mod container_interface;
- pub mod error;
- mod execution;
-+pub mod image_pull;
- pub mod image_update;
- mod runtime;
- pub(crate) mod runtime_base;
-```
-
-**File**: `src/containers/runtime.rs` (modified, +32/-4)
-```diff
-@@ -8,6 +8,7 @@ use super::container_interface::{
-     ContainerConfig, InspectedContainer, InspectedMount, VolumeMount,
- };
- use super::error::{DockerError, Result};
-+use super::image_pull;
- use super::image_update::LocalDigest;
- use super::runtime_base::RuntimeBase;
+@@ -12,7 +12,7 @@ import remarkGfm from "remark-gfm";
  
-@@ -115,16 +116,38 @@ impl ContainerRuntime {
-     }
+ import { writeClipboard } from "../../lib/clipboard";
+ import { tableSource } from "../../lib/tableMarkdown";
+-import { highlightSnippet } from "../../lib/snippetHighlighter";
++import { highlightSnippet, peekHighlight } from "../../lib/snippetHighlighter";
+ import { useShikiTheme } from "../../hooks/useShikiTheme";
+ import { parseFileRef, resolveArtifactUrl, resolveToRepoRelative } from "../../lib/fileRef";
+ import { useAcpFileRef } from "./AcpFileRefContext";
+@@ -170,13 +170,25 @@ function ShikiSyntaxHighlighter({ language, code }: SyntaxHighlighterProps) {
+   // NUL-delimited (as the escape sequence: a raw NUL byte in source makes
+   // git treat the file as binary) so field concatenations cannot collide.
+   const inputKey = `${language ?? ""}\u0000${code}`;
+-  const [result, setResult] = useState<{ key: string; html: string } | null>(null);
+   const shiki = useShikiTheme();
++  // A cache hit renders highlighted on first paint, so a remounted block never flashes plain text.
++  const cached = useMemo(
++    () =>
++      language
++        ? peekHighlight(code, { langHint: language, theme: shiki.theme, appearance: shiki.appearance })
++        : undefined,
++    [language, code, shiki.theme, shiki.appearance],
++  );
++  // Seeded from a mount-time cache hit so a later theme switch keeps that palette.
++  const [result, setResult] = useState<{ key: string; html: string } | null>(() =>
++    cached !== undefined ? { key: inputKey, html: cached } : null,
++  );
+   const [wrapped, toggleWrap] = useWrapState();
  
-     pub fn pull_image(&self, image: &str) -> Result<()> {
--        self.base.pull_image(image)
-+        self.join_pull(image)
-+            .wait(&tokio_util::sync::CancellationToken::new())
-     }
- 
--    /// [`Self::pull_image`], killed when `cancel` fires.
-+    /// [`Self::pull_image`]; when `cancel` fires this caller stops waiting, and the pull is
-+    /// killed if no other caller is waiting on it.
-     pub fn pull_image_until_cancelled(
-         &self,
-         image: &str,
-         cancel: &tokio_util::sync::CancellationToken,
-     ) -> Result<()> {
--        self.base.pull_until_cancelled(image, cancel)
-+        self.join_pull(image).wait(cancel)
-+    }
-+
-+    /// Joins this process's running pull of `image`, or starts one.
-+    pub(crate) fn join_pull(&self, image: &str) -> image_pull::Waiter {
-+        let base = self.base;
-+        let pulled = image.to_string();
-+        image_pull::join_with(self.pull_key(image), move |kill| {
-+            base.pull_until_cancelled(&pulled, kill)
-+        })
-+    }
-+
-+    pub(crate) fn pull_state(&self, image: &str) -> image_pull::PullState {
-+        image_pull::state(&self.pull_key(image))
-+    }
-+
-+    fn pull_key(&self, image: &str) -> image_pull::PullKey {
-+        image_pull::PullKey {
-+            runtime: self.display_name(),
-+            image: image.to_string(),
-+        }
-     }
- 
-     /// The command [`Self::pull_image`] runs, for a user to copy when the dashboard can't pull.
-@@ -151,7 +174,12 @@ impl ContainerRuntime {
-         image: &str,
-         cancel: &tokio_util::sync::CancellationToken,
-     ) -> Result<()> {
--        self.base.ensure_image(image, cancel)
-+        if self.base.image_exists_locally(image) {
-+            tracing::info!(target: "containers.runtime", "Using local {} image '{}'", self.base.name, image);
-+            return Ok(());
-+        }
-+        tracing::info!(target: "containers.runtime", "Pulling {} image '{}'", self.base.name, image);
-+        self.pull_image_until_cancelled(image, cancel)
-     }
- 
-     pub fn default_sandbox_image(&self) -> &'static str {
-```
-
-**File**: `src/containers/runtime_base.rs` (modified, +72/-16)
-```diff
-@@ -2,6 +2,7 @@ use super::container_interface::{
-     docker_env_args, ContainerConfig, RunFlag, TargetEnvFile, CGROUP_PARENT_LABEL,
- };
- use super::error::{sanitize_stderr, DockerError, Result};
-+use super::image_pull::PullFailureReason;
- use std::collections::HashSet;
- use std::process::{Command, Stdio};
- use std::time::{Duration, Instant};
-@@ -60,6 +61,7 @@ fn joins_user_slice(output: &str, rootless_marker: &str) -> bool {
-         && words.any(|word| word.trim_matches(['[', ']']) == rootless_marker)
- }
- 
-+#[derive(Clone, Copy)]
- pub(crate) struct RuntimeBase {
-     pub binary: &'static str,
-     pub name: &'static str,
-@@ -303,18 +305,25 @@ impl RuntimeBase {
-         self.probe_succeeds(&["image", "inspect", image])
-     }
- 
--    pub fn pull_image(&self, image: &str) -> Result<()> {
--        self.pull_until_cancelled(image, &CancellationToken::new())
-+    pub fn pull_until_cancelled(&self, image: &str, cancel: &CancellationToken) -> Result<()> {
-+        self.pull_with_timeout(image, cancel, PULL_TIMEOUT)
-     }
- 
--    pub fn pull_until_cancelled(&self, image: &str, cancel: &CancellationToken) -> Result<()> {
-+    fn pull_with_timeout(
-+        &self,
-+        image: &str,
-+        cancel: &CancellationToken,
-+        timeout: Duration,
-+    ) -> Result<()> {
-         let mut cmd = self.command();
-         cmd.args(self.pull_prefix);
-         cmd.arg(image);
-         cmd.stdin(Stdio::null());
-         let start = Instant::now();
-         tracing::info!(target: "containers.image", runtime = %self.name, %image, "pulling image");
--        let output = match crate::process::run_until_cancelled(&mut cmd, PULL_TIMEOUT, cancel)? {
-+        let output = match crate::process::run_until_cancelled_process_group(
-+            &mut cmd, timeout, cancel,
-+        )? {
-             Some(output) => output,
-             None if cancel.is_cancelled() => {
-                 tracing::info!(target: "containers.image", runtime = %self.name, %image, "image pull cancelled");
-@@ -327,13 +336,14 @@ impl RuntimeBase {
-                     runtime = %self.name,
-                     %image,
-                     duration_ms = dur_ms,
--                    timeout_s = PULL_TIMEOUT.as_secs(),
-+                    timeout_s = timeout.as_secs(),
-                     "image pull timed out; killed",
-                 );
-                 return Err(DockerError::ImagePullFailed {
-                     runtime: self.name,
-                     image: image.to_string(),
--                    detail: format!("timed out after {}s", PULL_TIMEOUT.as_secs()),
-+                    detail: format!("timed out after {}s", timeout.as_secs()),
-+                    reason: PullFailureReason::Timeout,
-                 });
-             }
-         };
-@@ -353,6 +363,7 @@ impl RuntimeBase {
-                 runtime: self.name,
-                 image: image.to_string(),
-                 detail: sanitize_stderr(&stderr),
-+                reason: PullFailureReason::classify(&stderr),
-             });
-         }
- 
-@@ -366,16 +377,6 @@ impl RuntimeBase {
-         Ok(())
-     }
- 
--    pub fn ensure_image(&self, image: &str, cancel: &CancellationToken) -> Result<()> {
--        if self.image_exists_locally(image) {
--            tracing::info!(target: "containers.runtime", "Using local {} image '{}'", self.name, image);
--            return Ok(());
--        }
--
--        tracing::info!(target: "containers.runtime", "Pulling {} image '{}'", self.name, image);
--        self.pull_until_cancelled(image, cancel)
--    }
--
-     pub fn default_sandbox_image(&self) -> &'static str {
-         "ghcr.io/agent-of-empires/aoe-sandbox:latest"
-     }
-@@ -1056,6 +1057,61 @@ mod tests {
-         ));
-     }
- 
-+    #[cfg(target_os = "linux")]
-+    #[test]
-+    #[serial_test::parallel]
-+    fn a_pull_timeout_kills_a_runtime_that_ignores_sigterm_and_its_children() {
-+        use std::os::unix::fs::PermissionsExt;
-+        let _env = crate::session::test_support::EnvGuard::read_lock();
-+        let dir = tempfile::tempdir().unwrap();
-+        let (shell, child) = (dir.path().join("shell"), dir.path().join("child"));
-+        let binary = dir.path().join("docker");
-+        std::fs::write(
-+            &binary,
-+            format!(
-+                "#!/bin/sh\ntrap '' TERM\necho $$ > '{}'\nsleep 300 &\necho $! > '{}'\nwait\n",
-+                shell.display(),
-+                child.display()
-+            ),
-+        )
-+        .unwrap();
-+        std::fs::set_permissions(&binary, std::fs::Permissions::from_mode(0o755)).unwrap();
-+        let runtime = RuntimeBase {
-+            binary: Box::leak(binary.to_string_lossy().into_owned().into_boxed_str()),
-+            ..RuntimeBase::DOCKER
-+        };
-+
-+        let result =
-+            runtime.pull_with_timeout("img", &CancellationToken::new(), Duration::from_secs(1));
-+        assert!(matches!(
-+            result,
-+            Err(DockerError::ImagePullFailed {
-+                reason: PullFailureReason::Timeout,
-+                ..
-+           
-```
-
-**File**: `src/server/api/sandbox_image.rs` (modified, +90/-89)
-```diff
-@@ -16,6 +16,7 @@ use serde::{Deserialize, Serialize};
- use tokio::time::Instant;
- 
- use super::{api_error, cityhall_block, read_only_block};
-+use crate::containers::image_pull::PullState;
- use crate::containers::image_update::{self, ImageCheck};
- use crate::containers::ContainerRuntime;
- use crate::server::AppState;
-@@ -103,6 +104,10 @@ impl StatusCache {
- }
- 
- static STATUS: LazyLock<Mutex<StatusCache>> = LazyLock::new(Mutex::default);
-+/// The key's dashboard waiter, by the id its cleanup checks. One per running pull, so repeated
-+/// POSTs don't each hold a blocking thread for the whole pull.
-+static DASHBOARD_WAITERS: LazyLock<Mutex<HashMap<ImageKey, u64>>> = LazyLock::new(Mutex::default);
-+static NEXT_DASHBOARD_WAITER: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(0);
- /// One registry check per image and runtime at a time, so callers arriving together share it.
- static CHECK_TURNS: LazyLock<Mutex<HashMap<ImageKey, Arc<tokio::sync::Mutex<()>>>>> =
-     LazyLock::new(Mutex::default);
-@@ -159,38 +164,6 @@ where
-     })
- }
- 
--#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
--#[serde(tag = "state", rename_all = "snake_case")]
--pub enum PullState {
--    Idle,
--    Running,
--    Done,
--    /// `error` carries the Container runtime's stderr.
--    Failed {
--        error: String,
--    },
--}
--
--static PULLS: LazyLock<Mutex<HashMap<ImageKey, PullState>>> = LazyLock::new(Mutex::default);
--
--/// Marks the image running unless it already is; true when the caller should start the pull.
--fn claim_pull(pulls: &mut HashMap<ImageKey, PullState>, key: &ImageKey) -> bool {
--    if pulls.get(key) == Some(&PullState::Running) {
--        return false;
--    }
--    pulls.insert(key.clone(), PullState::Running);
--    true
--}
--
--fn pull_state(key: &ImageKey) -> PullState {
--    PULLS
--        .lock()
--        .unwrap_or_else(|e| e.into_inner())
--        .get(key)
--        .cloned()
--        .unwrap_or(PullState::Idle)
--}
--
- /// What the Daemon would sandbox with. Only these are checked or pulled, so a request can't
- /// make the Daemon contact an arbitrary registry or pull an arbitrary image.
- struct Configured {
-@@ -388,7 +361,7 @@ pub async fn sandbox_image_status(
-             .iter()
-             .any(|i| i.is_sandboxed());
-     Json(ImageStatusResponse {
--        pull: pull_state(&key),
-+        pull: runtime.pull_state(&image),
-         pull_blocked: pull_blocked(&state, &configured),
-         pull_command: runtime.pull_command(&image),
-         runtime: runtime.display_name(),
-@@ -458,44 +431,28 @@ pub async fn sandbox_image_pull(
-         Err(resp) => return resp,
+   useEffect(() => {
+     let cancelled = false;
+     if (!language) return;
++    if (cached !== undefined) return;
+     (async () => {
+       try {
+         const out = await highlightSnippet(code, {
+@@ -193,9 +205,9 @@ function ShikiSyntaxHighlighter({ language, code }: SyntaxHighlighterProps) {
+     return () => {
+       cancelled = true;
      };
-     let key = configured.key(image.clone());
--    let started = claim_pull(&mut PULLS.lock().unwrap_or_else(|e| e.into_inner()), &key);
--    if started {
--        let runtime = configured.runtime;
--        tokio::spawn(async move {
--            let pulled = key.image.clone();
--            let started = std::time::Instant::now();
--            let result = tokio::task::spawn_blocking(move || {
--                ContainerRuntime::from(runtime).pull_image(&pulled)
--            })
--            .await;
--            let outcome = match result {
--                Ok(Ok(())) => PullState::Done,
--                Ok(Err(e)) => PullState::Failed {
--                    error: e.to_string(),
--                },
--                Err(e) => PullState::Failed {
--                    error: format!("pull task failed: {e}"),
--                },
--            };
--            let duration_ms = started.elapsed().as_millis();
--            match &outcome {
--                PullState::Failed { error } => {
--                    tracing::warn!(target: "containers.image", image = %key.image, ok = false, duration_ms, %error, "image pull finished")
--                }
--                _ => {
--                    tracing::info!(target: "containers.image", image = %key.image, ok = true, duration_ms, "image pull finished")
--                }
--            }
-+    let runtime = ContainerRuntime::from(configured.runtime);
-+    let mut waiters = DASHBOARD_WAITERS.lock().unwrap_or_else(|e| e.into_inner());
-+    // Joined under the map's lock, so two POSTs can't both add a waiter to one pull.
-+    if !(waiters.contains_key(&key) && runtime.pull_state(&image) == PullState::Running) {
-+        // Registered now, so the next status read already sees it running.
-+        let waiter = runtime.join_pull(&image);
-+        let id = NEXT_DASHBOARD_WAITER.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
-+        waiters.insert(key.clone(), id);
-+        tokio::task::spawn_blocking(move || {
-+            // A pull the dashboard asked for is never cancelled by a create that joined it.
-+            let _ = waiter.wait(&tokio_util::sync::CancellationToken::new());
-             STATUS
-                 .lock()
-                 .unwrap_or_else(|e| e.into_inner())
-                 .invalidate(&key);
--            PULLS
--                .lock()
--                .unwrap_or_else(|e| e.into_inner
+-  }, [language, code, inputKey, shiki.theme, shiki.appearance]);
++  }, [language, code, inputKey, shiki.theme, shiki.appearance, cached]);
+ 
+-  const html = result && result.key === inputKey ? result.html : null;
++  const html = cached ?? (result && result.key === inputKey ? result.html : null);
+ 
+   // The em-based size carries no line-height, so set it or code inherits the looser body leading.
+   return (
 ```
 
-**File**: `src/server/api/sessions/tests.rs` (modified, +2/-0)
+**File**: `web/src/components/acp/ReadFileResult.test.tsx` (modified, +1/-0)
 ```diff
-@@ -5817,6 +5817,7 @@ fn public_create_session_error_forwards_typed_causes_as_fixed_templates() {
-                 runtime: "Podman",
-                 image: "ghcr.io/acme/sandbox:1".into(),
-                 detail: format!("denied: token {SECRET} at /root/.docker/config.json"),
-+                reason: crate::containers::image_pull::PullFailureReason::Other,
-             })
-             .context("ensure image"),
-             (
-@@ -5922,6 +5923,7 @@ fn public_create_session_error_forwards_typed_causes_as_fixed_templates() {
-                 runtime: "Docker",
-                 image: "x".repeat(2000),
-                 detail: String::new(),
-+                reason: crate::containers::image_pull::PullFailureReason::Other,
-             }),
-             "sandbox_image_pull_failed",
-         ),
+@@ -5,6 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+ import { cleanup, fireEvent, render, waitFor } from "@testing-library/react";
+ 
+ vi.mock("../../lib/snippetHighlighter", () => ({
++  peekHighlight: () => undefined,
+   highlightSnippet: vi.fn().mockResolvedValue(null),
+   getSnippetHighlighter: vi.fn().mockResolvedValue(null),
+   langHintForPath: () => "",
 ```
 
 ---
 
-### Incident Patch 2: `b47a466c` (2026-11-19)
-**Commit Message**: fix(acp): keep the connection when the agent rejects a prompt (#5864)
+### Incident Patch 2: `204b9f32` (2026-11-24)
+**Commit Message**: fix(plugin): journal default-mode publication (#5989)
 
-* fix(acp): keep the connection when the agent rejects a prompt
+* fix(plugin): journal default-mode publication
 
-An error answer to session/prompt was returned as a connection error, so
-aoe tore down the ACP connection, respawned the agent and left the
-session in Error. The queue had already retired the prompt, so the
-user's message was lost.
+Record durable publication authority before installed-tree changes.
+Recover proven outcomes and retain ambiguous state for manual repair.
 
-The agent answering with an error now ends only that turn: the error
-surfaces as a PromptRuntimeError and the text comes back as a
-PromptRejected retry pill. A lost transport or runner, and a resumed
-session the agent no longer has, still end the connection as before. An
-error that answers our own cancel ends the turn as cancelled.
+* fix(plugin): distinguish pre-journal refusals
 
-Fixes #5662
+Keep uncertain publication fenced and verify rename destinations.
+Exercise daemon startup with isolated cross-platform crash fixtures.
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+* fix(plugin): preserve recovery for prior backups
 
-* fix(acp): cancel the leftover turn and narrow what counts as rejected
+Clean the unjournaled copy before fencing an ambiguous prior backup.
+Isolate the restart fixture from the host tmux socket.
 
-Review follow-ups for #5662:
-
-- A rejection sends session/cancel, so a turn the agent still runs from
-  before a restart no longer rejects every retry.
-- The runner client's duplicate-waiter guard is a local error, not a
-  PromptOutcome::Error, so it is never mistaken for the agent's answer.
-- A session the agent no longer has still tears down for recovery
-
-**File**: `src/acp/acp_client/commands.rs` (modified, +29/-4)
+**File**: `docs/plugins.md` (modified, +18/-0)
 ```diff
-@@ -4,15 +4,40 @@
- use agent_client_protocol::v1::schema::ContentBlock;
- use tokio::sync::oneshot;
- 
-+use crate::daemon::PromptAttachmentRef;
+@@ -158,6 +158,24 @@ The previous tree stays backed up until both metadata writes commit. Restoration
+ preserves the prior enabled, source, dev, grant, dismissal and settings values
+ without overwriting unrelated config. A backup cleanup failure after commit is
+ reported as recovery required; do not restore that backup over the committed tree.
 +
- use super::delete::DeleteSessionOutcome;
- use super::reset::ResetSessionOutcome;
- 
-+/// A user prompt as `send_prompt` built it (#1000): the blocks the agent
-+/// receives, and refs to the stored attachments among them, which a refusal
-+/// hands back so Retry resends the same payload.
-+#[derive(Debug, Clone, Default)]
-+pub(super) struct PromptInput {
-+    pub(super) blocks: Vec<ContentBlock>,
-+    pub(super) attachments: Vec<PromptAttachmentRef>,
-+}
++Default-mode remote installs and updates write
++`<app_dir>/.plugin-publication-active` before changing the installed tree. On
++writable Daemon startup, recovery takes the plugin operation lock. It can
++restore the prior installation if no build or metadata write could have
++started, or keep a committed installation and remove its owned backup if
++both metadata entries and descriptor-derived directory birth identities
++match the journal. Publication requires file birth and mount identity
++support. Recovery never traverses a mounted directory during cleanup.
 +
-+impl PromptInput {
-+    /// The text the retry pill shows and resends.
-+    pub(super) fn text(&self) -> String {
-+        super::steer::first_text_block(&self.blocks)
++An interrupted build, a partial metadata write, or conflicting evidence
++still requires manual recovery. While the journal remains, plugin mutations
++and external worker launches are fenced. Verify that owned commands have
++exited and restore or confirm the intended tree and both metadata entries
++before removing the journal. Recovery does not scan or delete abandoned
++acquisition directories. Local sources and strict staging keep their
++existing recovery rules.
++
+ Local release-binary targets must be regular executable files before publication.
+ Release assets are streamed into staging and may only add files: an asset entry
+ that would replace a file already in the source tree, or that is a symlink,
+```
+
+**File**: `src/plugin/fetch.rs` (modified, +17/-0)
+```diff
+@@ -183,6 +183,14 @@ fn cleanup_staging(
+ }
+ 
+ impl FetchedPlugin {
++    pub(super) fn journals_publication(&self) -> bool {
++        matches!(&self.source, PluginSource::Github { .. })
++            && self
++                .staging
++                .as_ref()
++                .is_some_and(|stage| stage.marker.is_none())
 +    }
-+}
 +
+     pub(super) fn begin_publication(&self) -> Result<()> {
+         if let Some(marker) = self
+             .staging
+@@ -302,6 +310,15 @@ fn stage(
+     stage_with_limit(source, plugins_root, clone_url, STAGING_LIMIT)
+ }
+ 
 +#[cfg(test)]
-+impl From<Vec<ContentBlock>> for PromptInput {
-+    fn from(blocks: Vec<ContentBlock>) -> Self {
-+        Self {
-+            blocks,
-+            attachments: Vec::new(),
-+        }
++pub(super) fn stage_remote_fixture(source: PluginSource, repo: &Path) -> Result<FetchedPlugin> {
++    stage(
++        source,
++        super::plugins_dir()?,
++        Some(format!("file://{}", repo.display())),
++    )
++}
++
+ fn stage_with_limit(
+     source: PluginSource,
+     plugins_root: PathBuf,
+```
+
+**File**: `src/plugin/install.rs` (modified, +722/-61)
+```diff
+@@ -21,6 +21,8 @@ use super::registry::ValidationState;
+ use super::source::PluginSource;
+ use super::NodeEnv;
+ 
++mod publication;
++
+ pub enum OperationLog {
+     Inherit,
+     File(std::fs::File),
+@@ -468,7 +470,7 @@ fn check_recovery_evidence_inner(allow_live_staging: bool) -> Result<()> {
+         bail!("plugin recovery is required in this Daemon process; stop the Daemon, verify owned commands have exited and restore the installation before restarting");
+     }
+     let live = LIVE_STAGING.lock();
+-    for name in [RECOVERY_MARKER, STAGING_MARKER] {
++    for name in [RECOVERY_MARKER, STAGING_MARKER, publication::MARKER] {
+         let evidence = root.join(name);
+         if name == STAGING_MARKER && allow_live_staging && live.contains(&evidence) {
+             continue;
+@@ -482,6 +484,16 @@ fn check_recovery_evidence_inner(allow_live_staging: bool) -> Result<()> {
+     Ok(())
+ }
+ 
++pub(crate) fn recover_stale_publication() -> Result<()> {
++    let app = crate::session::get_app_dir()?;
++    if !publication::exists(&app)? {
++        return Ok(());
 +    }
++    let _operation = crate::session::try_acquire_storage_flock(&app, OPERATION_LOCK)?
++        .context("another plugin operation owns publication recovery")?;
++    publication::recover(&app)
 +}
 +
- /// Commands sent from `AcpClient` methods to the background connection task.
- pub(super) enum ClientCmd {
--    /// The fully-built prompt content blocks (text first, then any
--    /// attachments). Built in `send_prompt` so the connection task just
--    /// forwards them to `session/prompt`. See #1000.
--    Prompt(Vec<ContentBlock>),
-+    Prompt(PromptInput),
-     Cancel,
-     /// `session/cancel` for one subagent session. Answers whether it was sent:
-     /// false when the child is unknown or did not advertise `cancel`.
-```
-
-**File**: `src/acp/acp_client/connection/command_loop.rs` (modified, +9/-8)
-```diff
-@@ -3,9 +3,8 @@
- 
- use crate::acp::state::Event;
- use agent_client_protocol::v1::schema::{
--    CancelNotification, ContentBlock, McpServer, NewSessionRequest, NewSessionResponse,
--    SessionConfigId, SessionConfigOption, SessionConfigValueId, SessionId,
--    SetSessionConfigOptionRequest,
-+    CancelNotification, McpServer, NewSessionRequest, NewSessionResponse, SessionConfigId,
-+    SessionConfigOption, SessionConfigValueId, SessionId, SetSessionConfigOptionRequest,
- };
- use agent_client_protocol::v1::ConnectionTo;
- use agent_client_protocol::Agent;
-@@ -20,7 +19,7 @@ use super::notifications::{now_ms, Shared};
- use crate::acp::acp_client::between_prompt::{
-     between_prompt_stop_reason, BETWEEN_PROMPT_IDLE_CHECK_INTERVAL,
- };
--use crate::acp::acp_client::commands::ClientCmd;
-+use crate::acp::acp_client::commands::{ClientCmd, PromptInput};
- use crate::acp::acp_client::config_options::{
-     config_option_failure_event, config_options_event, dispatch_set_config_option,
-     dispatch_set_mode, mode_config_id, model_config_values, model_option, modes_available_event,
-@@ -62,7 +61,7 @@ pub(super) struct Session {
-     pub(super) lifecycle_rx: mpsc::Receiver<LifecycleEnvelope>,
-     /// Steers the adapter handed back unconsumed, run as ordinary turns.
-     /// Kept here rather than re-sent on the bounded channel this task drains.
--    pub(super) pending_prompts: VecDeque<Vec<ContentBlock>>,
-+    pub(super) pending_prompts: VecDeque<PromptInput>,
+ pub(crate) fn begin_operation() -> Result<Arc<StorageFlock>> {
+     let root = crate::session::get_app_dir()?;
+     #[cfg(test)]
+@@ -492,6 +504,7 @@ pub(crate) fn begin_operation() -> Result<Arc<StorageFlock>> {
+         .ok_or_else(|| {
+             anyhow!("another plugin operation is running; inspect its outcome before retrying")
+         })?;
++    publication::recover(&root).context("recovering interrupted plugin publication")?;
+     if !LIVE_STAGING.lock().contains(&root.join(STAGING_MARKER))
+         && std::fs::symlink_metadata(root.join(STAGING_MARKER)).is_ok()
+     {
+@@ -800,6 +813,7 @@ async fn prepare_install(
+     result
  }
  
- impl Session {
-@@ -157,7 +156,7 @@ impl Session {
-             let cancel_deadline = *shared.cancel_deadline.lock().unwrap();
-             // Fallback prompts go first so later messages cannot overtake them.
-             let cmd = match self.pending_prompts.pop_front() {
--                Some(blocks) => Some(ClientCmd::Prompt(blocks)),
-+                Some(prompt) => Some(ClientCmd::Prompt(prompt)),
-                 None => tokio::select! {
-                     biased;
-                     outcome = async {
-@@ -196,8 +195,8 @@ impl Session {
-                 },
-             };
-             match cmd {
--                Some(ClientCmd::Prompt(blocks)) => {
--                    if self.run_prompt(blocks).await? {
-+                Some(ClientCmd::Prompt(prompt)) => {
-+                    if self.run_prompt(prompt).await? {
-                         break;
-                     }
-                 }
-@@ -405,6 +404,7 @@ impl Session {
-                 .emit(Event::PromptRejected {
-                     reason: "agent_busy".into(),
-                     text,
-+                    attachments: Vec::new(),
-                 })
-                 .await;
-             let _ = respond_to.send(ResetSessionOutcome::Failed {
-@@ -428,6 +428,7 @@ impl Session {
-                 .emit(Event::PromptRejected {
-                     reason: "agent_busy".into(),
-                     text,
-+                    attachments: Vec::new(),
-                 })
-                 .await;
-             let _ = respond_to.send(ResetSessionOutcome::Failed {
-```
-
-**File**: `src/acp/acp_client/connection/prompt.rs` (modified, +142/-58)
-```diff
-@@ -17,15 +17,16 @@ use tracing::{debug, info, trace, warn};
- use super::command_loop::Session;
- use super::notifications::now_ms;
- use super::CANCEL_ESCALATION_GRACE;
--use crate::acp::acp_client::commands::ClientCmd;
-+use crate::acp::acp_client::commands::{ClientCmd, PromptInput};
- use crate::acp::acp_client::control::prompt_outcome_to_response;
- use crate::acp::acp_client::delete::handle_delete_session_cmd;
--use crate::acp::acp_client::errors::acp_internal_error;
-+use crate::acp::acp_client::errors::{acp_internal_error, is_authentication_failure};
- use crate::acp::acp_client::lifecycle::{LifecycleSignal, OffProtocolWorkKind};
- use crate::acp::acp_client::opencode::recover_opencode_prompt_error;
- use crate::acp::acp_client::rate_limit::{
--    captured_rate_limit_reset, classify_rate_limit_error, clear_captured_rejections,
--    is_unsupported_session_error, take_rate_limit_from_captured_rejection,
-+    captured_rate_limit_reset, classify_rate_limit_error, classify_rate_limit_from_message,
-+    clear_captured_rejections, is_unsupported_session_error,
-+    take_rate_limit_from_captured_rejection,
- };
- use crate::acp::acp_client::reset::ResetSessionOutcome;
- use crate::acp::acp_client::steer::{first_text_block, SteerOutcome, SteerRequest};
-@@ -34,11 +35,11 @@ use crate::acp::acp_client::watchdog::{
-     terminal_stop_reason, SilentOrphanWatchdog, SilentOrphanWatchdogConfig,
-     OFF_PROTOCOL_WORK_GRACE_FLOOR,
- };
-+use crate::daemon::PromptAttachmentRef;
- 
- type AcpResult<T> = Result<T, agent_client_protocol::Error>;
--type PromptFut = Pin<Box<dyn Future<Output = AcpResult<PromptResponse>> + Send>>;
--type SteerFut =
--    Pin<Box<dyn Future<Output = (Vec<ContentBlock>, AcpResult<serde_json::Value>)> + Send>>;
-+type PromptFut = Pin<Box<dyn Future<Output = PromptReply> + Send>>;
-+type SteerFut = Pin<Box<dyn Future<Output = (PromptInput, AcpResult<serde_json::Value>)> + Send>>;
- 
- #[cfg(test)]
- pub(super) struct SelectProbe {
-@@ -68,6 +69,13 @@ fn observe_select_win(command: bool) {
-     });
- }
- 
-+/// `session/prompt`'s result. `rejected` marks an error the agent answered
-+/// with, as opposed to a lost transport or runner.
-+struct PromptReply {
-+    result: AcpResult<PromptResponse>,
-+    rejected: bool,
-+}
++#[derive(Serialize)]
+ struct PriorMetadata {
+     config: Option<PluginConfig>,
+     locked: Option<LockedPlugin>,
+@@ -869,10 +883,43 @@ fn apply_prepared_install(
+         "installing {} {}",
+         p.id, p.fetched.manifest.version
+     ));
+-    move_into_place(&p.fetched, &final_dir)?;
++    if p.fetched.journals_publication() {
++        with_publication_transaction(&p.fetched, &final_dir, &prior, false, |tree, journal| {
++            place_publication_tree(journal.as_deref(), tree, &final_dir)?;
++            settle_install(p, &final_dir, node_env, log, &prior, journal)
++        })?;
++    } else {
++        move_into_place(&p.fetched, &final_dir)?;
++        settle_install(p, &final_dir, node_env, log, &prior, None)?;
++    }
++    super::reload_registry();
++    log.line(&format!(
++        "installed {} {}",
++        p.id, p.fetched.manifest.version
++    ));
++    tracing::info!(target: "plugin.install", plugin = %p.id, version = %p.fetched.manifest.version, "plugin installed");
 +
- enum Flow {
-     Continue,
-     Break,
-@@ -87,10 +95,15 @@ struct TurnFlags {
-     cancelling: bool,
-     /// What the adapter reported; `None` when no `PromptResponse` arrived.
-     agent_stop_reason: Option<StopReason>,
-+    /// The error the agent answered `session/prompt` with.
-+    rejection: Option<String>,
- }
- 
- struct Turn {
-     epoch: u64,
-+    /// Handed back on a rejection so the user can retry it.
-+    prompt_text: String,
-+    prompt_attachments: Vec<PromptAttachmentRef>,
-     flags: TurnFlags,
-     watchdog: SilentOrphanWatchdog,
-     cfg: SilentOrphanWatchdogConfig,
-@@ -101,7 +114,7 @@ struct Turn {
-     /// At most one steer is outstanding so racing steers cannot reorder the
-     /// user's messages; later ones wait in the backlog.
-     steer_fut: Option<SteerFut>,
--    steer_backlog: VecDeque<Vec<ContentBlock>>,
-+    steer_backlog: VecDeque<PromptInput>,
- }
- 
- impl Turn {
-@@ -116,6 +129,12 @@ impl Turn {
-     }
- }
- 
-+/// The SDK's own error for a connection that ended before the response.
-+fn is_lost_response(error: &agent_client_protocol::Error) -> bool {
-+    agent_client_protocol::is_connection_terminated(error)
-+        || agent_client_protocol::is_incoming_transport_closed(error)
-+}
-+
- /// Debug-only fault injection: suppress the prompt response once so the
- /// silent-orphan watchdog must break the loop (#1240).
- fn simulate_orphan(session_label: &str) -> bool {
-@@ -139,7 +158,11 @@ fn simulate_orphan(session_label: &str) -> bool {
- impl Session {
-     /// Runs one turn and always emits its terminal `Stopped`. Returns whether
-     /// the connection should shut down.
--    pub(super) async fn run_prompt(&mut self, blocks: Vec<ContentBlock>) -> AcpResult<bool> {
-+    pub(super) async fn run_prompt(&mut self, prompt: PromptInput) -> AcpResult<bool> {
-+        let PromptInput {
-+            blocks,
-+            attachments,
-+        } = prompt;
-         let shared = self.shared.clone();
-         if let Some(control) = self.control.as_ref() {
-             control.supersede_adopted_turn();
-@@ -193,6 +216,8 @@ impl Session {
-         let orphan_check_period = silent_orphan_check_interval();
-         let mut turn = Turn {
-             epoch,
-+            prompt_text: first_text_block(&blocks),
-+            prompt_attachments: attachments,
-             flags: TurnFlags::default(),
-             watchdog: SilentOrphanWatchdog::default(),
-             cfg: SilentOrphanWatchdogConfig {
-@@ -259,10 +284,10 @@ impl Session {
-                 {
-                     self.on_orphan_check(&mut turn).await
-                 }
--                (blocks, res) = async {
-+                (prompt, res) = async {
-                     turn.steer_fut.as_mut().expect("guarded by the arm condition").await
-            
-```
-
-**File**: `src/acp/acp_client/connection/tests.rs` (modified, +85/-12)
-```diff
-@@ -3,6 +3,7 @@
- use super::super::pending::{ApprovalResolutionMessage, PendingResolver, PendingResponder};
- use super::prompt::{SelectProbe, SELECT_PROBE};
- use super::*;
-+use crate::acp::acp_client::commands::PromptInput;
- use crate::acp::acp_client::reset::ResetSessionOutcome;
- use crate::acp::approvals::ApprovalDecision;
- use crate::acp::fs_handler::FsPolicy;
-@@ -161,9 +162,9 @@ async fn cancel_under_flood() {
-         .expect("handshake completes")
-         .expect("handshake ok");
-     cmd_tx
--        .send(ClientCmd::Prompt(vec![ContentBlock::Text(
--            TextContent::new("hi"),
--        )]))
-+        .send(ClientCmd::Prompt(PromptInput::from(vec![
-+            ContentBlock::Text(TextContent::new("hi")),
-+        ])))
-         .await
-         .unwrap();
- 
-@@ -604,9 +605,9 @@ async fn default_mode_reaches_the_live_mode_option_only_when_configured() {
-             })
-             .await;
-         fake.cmd_tx
--            .send(ClientCmd::Prompt(vec![ContentBlock::Text(
--                TextContent::new("hi"),
--            )]))
-+            .send(ClientCmd::Prompt(PromptInput::from(vec![
-+                ContentBlock::Text(TextContent::new("hi")),
-+            ])))
-             .await
-             .unwrap();
-         tokio::time::timeout(Duration::from_secs(10), prompted_rx.recv())
-@@ -733,9 +734,9 @@ async fn prompted_turn_ending_on_a_rejected_window_parks() {
-         })
-         .await;
-         fake.cmd_tx
--            .send(ClientCmd::Prompt(vec![ContentBlock::Text(
--                TextContent::new("hi"),
--            )]))
-+            .send(ClientCmd::Prompt(PromptInput::from(vec![
-+                ContentBlock::Text(TextContent::new("hi")),
-+            ])))
-             .await
-             .unwrap();
- 
-@@ -783,6 +784,78 @@ async fn prompted_turn_ending_on_a_rejected_window_parks() {
-     }
- }
- 
-+/// Sends one prompt and returns the events before its `Stopped`, and its reason.
-+async fn prompt_turn(fake: &mut FakeConnection, text: &str) -> (Vec<Event>, String) {
-+    fake.cmd_tx
-+        .send(ClientCmd::Prompt(PromptInput::from(vec![
-+            ContentBlock::Text(TextContent::new(text)),
-+        ])))
-+        .await
-+        .unwrap();
-+    let mut seen = Vec::new();
-+    tokio::time::timeout(Duration::from_secs(10), async {
-+        loop {
-+            match fake.event_rx.recv().await.expect("connection remains open") {
-+                Event::Stopped { reason } => return (seen, reason),
-+                event => seen.push(event),
-+            }
-+        }
++    Ok(InstallReport {
++        id: p.id.clone(),
++        version: p.fetched.manifest.version.clone(),
++        capabilities: p.capabilities.clone(),
++        granted: true,
++        validation: p.validation,
 +    })
-+    .await
-+    .expect("the turn must reach a terminal event")
 +}
 +
-+/// An agent that answers `session/prompt` with an error ends only that turn:
-+/// the error and the prompt text come back, and the connection takes the next
-+/// prompt (#5662).
-+#[tokio::test]
-+async fn rejected_prompt_keeps_the_connection_and_returns_the_text() {
-+    let prompts = Arc::new(std::sync::atomic::AtomicUsize::new(0));
-+    let counter = prompts.clone();
-+    let mut fake = spawn_fake_connection("s-rejected", move |id| {
-+        vec![if counter.fetch_add(1, Ordering::SeqCst) == 0 {
-+            format!(
-+                r#"{{"jsonrpc":"2.0","id":{id},"error":{{"code":-32603,"message":"a turn is already running"}}}}"#
-+            )
-+        } else {
-+            format!(r#"{{"jsonrpc":"2.0","id":{id},"result":{{"stopReason":"end_turn"}}}}"#)
-+        }]
-+    })
-+    .await;
-+
-+    let (seen, reason) = prompt_turn(&mut fake, "retry me").await;
-+    assert_eq!(reason, "prompt_rejected", "{seen:?}");
-+    assert!(
-+        seen.iter().any(|e| matches!(
-+            e,
-+            Event::PromptRuntimeError { message } if message.contains("a turn is already running")
-+        )),
-+        "the agent's error must surface on the turn: {seen:?}"
-+    );
-+    assert!(
-+        seen.iter().any(|e| matches!(
-+            e,
-+            Event::PromptRejected { text, .. } if text == "retry me"
-+        )),
-+        "the prompt text must come back for a retry: {seen:?}"
-+    );
-+
-+    let (seen, reason) = prompt_turn(&mut fake, "again").await;
-+    assert_eq!(reason, "prompt_complete");
-+    assert!(
-+        !seen.iter().any(|e| matches!(
-+            e,
-+            Event::PromptRuntimeError { .. } | Event::PromptRejected { .. }
-+        )),
-+        "{seen:?}"
-+    );
-+    assert_eq!(prompts.load(Ordering::SeqCst), 2);
-+    assert!(!fake.connection.is_finished());
-+    fake.connection.abort();
-+    fake.agent.abort();
-+    let _ = fake.agent.await;
-+}
-+
- /// A child cancel reaches the agent addressed to the child and only when the
- /// child announced `cancel`; the root turn's cancel stays a separate command.
- #[tokio::test]
-@@ -1045,9 +1118,9 @@ async fn reset_waits_for_a_running_subagent() {
- 
-     // The agent reports the child idle before it ends the turn.
-     cmd_tx
--        .send(ClientCmd::Prompt(vec![ContentBlock::Text(
--            TextContent::new("go"),
--        )]))
-+        .send(ClientCmd::Prompt(PromptInput::from(vec![
-+            
-```
-
-**File**: `src/acp/acp_client/control.rs` (modified, +31/-30)
-```diff
-@@ -288,21 +288,20 @@ impl DaemonControlClient {
-         }
-     }
- 
--    /// Registers the completion waiter before sending the `Prompt` frame.
-+    /// Registers the completion waiter before sending the `Prompt` frame. A
-+    /// waiter already pending is refused locally, without a frame.
-     pub(super) async fn prompt(
-         &self,
-         request: serde_json::Value,
--    ) -> oneshot::Receiver<control_protocol::PromptOutcome> {
-+    ) -> Result<oneshot::Receiver<control_protocol::PromptOutcome>, agent_client_protocol::Error>
-+    {
-         let (tx, rx) = oneshot::channel();
++fn settle_install(
++    p: &PreparedInstall,
++    final_dir: &Path,
++    node_env: &NodeEnv,
++    log: &OperationLog,
++    prior: &PriorMetadata,
++    mut journal: Option<&mut publication::Journal>,
++) -> Result<()> {
++    before_publication_build(&mut journal, final_dir, &p.fetched.manifest)?;
+     if let Err(e) = build_in_place(
+         &p.id,
+-        &final_dir,
++        final_dir,
+         &p.fetched.manifest,
+         node_env,
+         log,
+@@ -883,7 +930,7 @@ fn apply_prepared_install(
          {
-             let mut completion = self.completion.lock().expect("completion mutex poisoned");
-             if matches!(*completion, PromptCompletion::Pending { .. }) {
--                let _ = tx.send(control_protocol::PromptOutcome::Error {
--                    code: control_protocol::INTERNAL_ERROR as i32,
--                    message: "a local prompt is already awaiting completion".into(),
--                    data: None,
--                });
--                return rx;
-+                return Err(acp_internal_error(
-+                    "a local prompt is already awaiting completion".into(),
-+                ));
-             }
-             *completion = PromptCompletion::Pending {
-                 prompt_req_id: None,
-@@ -315,7 +314,7 @@ impl DaemonControlClient {
-             *self.completion.lock().expect("completion mutex poisoned") =
-                 PromptCompletion::LocalIdle;
+             return Err(e);
          }
--        rx
-+        Ok(rx)
+-        remove_owned_tree(&final_dir).map_err(|error| {
++        remove_published_tree(journal.as_deref(), final_dir).map_err(|error| {
+             super::execution::RecoveryRequired(format!(
+                 "removing failed install {}: {error}; original failure: {e:#}",
+                 final_dir.display()
+@@ -892,9 +939,10 @@ fn apply_prepared_install(
+         return Err(e);
      }
  
-     pub(super) async fn cancel(&self) {
-@@ -975,7 +974,7 @@ mod tests {
-         }
- 
-         async fn prompt(&mut self) -> oneshot::Receiver<PromptOutcome> {
--            let rx = self.client.prompt(serde_json::json!({})).await;
-+            let rx = self.client.prompt(serde_json::json!({})).await.unwrap();
-             assert!(matches!(
-                 control_protocol::read_frame(&mut self.peer).await.unwrap(),
-                 Some(ControlBody::Prompt { .. })
-@@ -1112,14 +1111,11 @@ mod tests {
-     async fn duplicate_local_prompt_preserves_first_waiter_and_sends_no_prompt() {
-         let mut peer = PromptControlPeer::new().await;
-         let completion = peer.prompt().await;
--        let mut duplicate = peer
-+        let duplicate = peer
-             .client
-             .prompt(serde_json::json!({"duplicate": true}))
-             .await;
--        assert!(matches!(
--            duplicate.try_recv().unwrap(),
--            PromptOutcome::Error { code, .. } if i64::from(code) == control_protocol::INTERNAL_ERROR
--        ));
-+        assert!(duplicate.is_err());
-         // Cancel arriving next proves the duplicate sent no Prompt frame.
-         peer.client.cancel().await;
-         assert!(matches!(
-@@ -1398,7 +1394,7 @@ mod tests {
-         let (client, crate_side) = connect(&control, "eof", Arc::new(TerminalClaim::new()), false)
-             .await
-             .unwrap();
--        let completion = client.prompt(serde_json::json!({})).await;
-+        let completion = client.prompt(serde_json::json!({})).await.unwrap();
-         fake.await.unwrap();
-         assert!(tokio::time::timeout(Duration::from_secs(1), completion)
-             .await
-@@ -1413,13 +1409,16 @@ mod tests {
-     }
- 
-     #[tokio::test]
--    async fn attached_session_only_resets_for_missing_session_errors() {
-+    async fn attached_session_prompt_errors_reset_tear_down_or_end_the_turn() {
-         use crate::acp::acp_client::AcpClient;
-         use crate::acp::state::AcpSessionId;
- 
--        for (message, should_reset) in [
--            ("Unsupported ACP session", true),
--            ("Unsupported session mode", false),
-+        // -32000 alone is not a login: some adapters use it for any failure.
-+        for (message, code, want) in [
-+            ("Unsupported ACP session", -32603, &["reset", "stopped"][..]),
-+            ("Unsupported session mode", -32603, &["rejected"]),
-+            ("Authentication required", -32000, &["startup_error"]),
-+            ("model overloaded", -32000, &["rejected"]),
-         ] {
-             let tmp = tempfile::tempdir().unwrap();
-             let socket = tmp.path().join("s.sock");
-@@ -1452,12 +1451,14 @@ mod tests {
-                             ControlBody::PromptCompleted {
-                                 prompt_req_id: 1,
-                                 outcome: PromptOutcome::Error {
--                                    code: -32603,
-+                                    code,
-                                     message: message.into(),
-                                     data: None,
-                                 },
-                             }
-                         }
-+                        // Sent after a plain rejection (#5662).
-+                        ControlBody::Cancel => continue,
-                         frame => panic!("unexpected resumed-session request: {frame:?}"),
-                     };
-                     control_protocol::write_frame(&mut peer
++    #[cfg(test)]
++    fetch::test_gate::reach(final_dir, "metadata-commit");
++    publication_working(&mut journal, final_dir)?;
+     let persisted = (|| -> Result<()> {
+-        #[cfg(test)]
+-        fetch::test_gate::reach(&final_dir, "metadata-commit");
+         persist_install(
+             &p.persisted_source,
+             &p.id,
+@@ -911,30 +959,17 @@ fn apply_prepared_install(
+     })();
+     if let Err(e) = persisted {
+         #[cfg(test)]
+-        fetch::test_gate::reach(&final_dir, "rollback");
++        fetch::test_gate::reach(final_dir, "rollback");
+         let metadata = prior.restore(&p.id);
+-        let tree = remove_owned_tree(&final_dir);
++        let tree = remove_published_tree(journal.as_deref(), final_dir);
+         if metadata.is_err() || tree.is_err() {
+             return Err(super::execution::RecoveryRequired(format!(
+                 "install {} failed: {e:#}; metadata restoration
 ```
 
-**File**: `src/acp/acp_client/mod.rs` (modified, +11/-5)
+**File**: `src/plugin/install/publication.rs` (added, +518/-0)
 ```diff
-@@ -79,7 +79,7 @@ use tokio::sync::{mpsc, oneshot, Mutex};
- use tokio_util::compat::{TokioAsyncReadCompatExt, TokioAsyncWriteCompatExt};
- use tracing::Instrument;
- 
--use self::commands::{ClientCmd, ConnectMode};
-+use self::commands::{ClientCmd, ConnectMode, PromptInput};
- use self::connection::{run_connection_task, ConnectionParams, RunnerLink};
- use self::control::{connect_runner_control_v3, ShutdownControlOnDrop};
- use self::delete::ACP_SESSION_DELETE_TIMEOUT;
-@@ -841,8 +841,8 @@ impl AcpClient {
-         cmd_tx.send(cmd).await.map_err(|_| AcpError::AgentExited)
-     }
- 
--    /// Attachments follow the text block. Callers gate kinds on the agent's
--    /// prompt capabilities (#1000).
-+    /// Attachments follow the text block, which an attachment-only prompt
-+    /// omits. Callers gate kinds on the agent's prompt capabilities (#1000).
-     pub async fn send_prompt(
-         &self,
-         text: &str,
-@@ -853,7 +853,9 @@ impl AcpClient {
-             return Err(AcpError::NotRunning);
-         }
-         let mut blocks = Vec::with_capacity(1 + attachments.len());
--        blocks.push(ContentBlock::Text(TextContent::new(text)));
-+        if !text.is_empty() || attachments.is_empty() {
-+            blocks.push(ContentBlock::Text(TextContent::new(text)));
-+        }
-         for att in attachments {
-             let data = base64::engine::general_purpose::STANDARD.encode(&att.data);
-             let mime = att.mime_type.clone();
-@@ -870,7 +872,11 @@ impl AcpClient {
-                 }
-             });
-         }
--        self.send_cmd(ClientCmd::Prompt(blocks)).await
-+        self.send_cmd(ClientCmd::Prompt(PromptInput {
-+            blocks,
-+            attachments: attachments.iter().map(AttachmentBlob::to_ref).collect(),
-+        }))
-+        .await
-     }
- 
-     /// Best-effort `session/cancel`; Ok even with no turn in flight.
-```
-
-**File**: `src/acp/acp_client/recovery_tests.rs` (modified, +97/-0)
-```diff
-@@ -643,3 +643,100 @@ async fn recovered_completion_orders_updates_and_applies_rate_limit_parking() {
-         }
-     }
- }
+@@ -0,0 +1,518 @@
++use std::ffi::OsStr;
++use std::io::{Read, Write};
++use std::os::fd::{AsFd, BorrowedFd};
++use std::os::unix::fs::MetadataExt;
++use std::path::{Path, PathBuf};
++use std::time::SystemTime;
 +
-+/// The runner relays the agent's error answer to `session/prompt`: the turn
-+/// surfaces it, returns the prompt as sent (text and attachment refs) and
-+/// cancels any leftover agent turn, unless it answers a cancel. The same
-+/// connection runs the next prompt (#5662).
-+#[tokio::test]
-+async fn rejected_prompt_over_the_runner_keeps_the_connection() {
-+    let _env = crate::session::test_support::EnvGuard::read_lock();
-+    let image = AttachmentBlob {
-+        id: "att-1".into(),
-+        kind: PromptAttachmentKind::Image,
-+        mime_type: "image/png".into(),
-+        name: Some("shot.png".into()),
-+        data: b"png".to_vec(),
-+    };
-+    let image_block = serde_json::json!({"type": "image", "data": "cG5n", "mimeType": "image/png"});
-+    let text_block = |text: &str| serde_json::json!({"type": "text", "text": text});
-+    for (text, with_image, cancel_first, want_blocks) in [
-+        ("retry me", false, false, vec![text_block("retry me")]),
-+        (
-+            "look at this",
-+            true,
-+            false,
-+            vec![text_block("look at this"), image_block.clone()],
-+        ),
-+        ("", true, false, vec![image_block.clone()]),
-+        ("retry me", false, true, vec![text_block("retry me")]),
-+    ] {
-+        let attachments: &[AttachmentBlob] = if with_image {
-+            std::slice::from_ref(&image)
-+        } else {
-+            &[]
-+        };
-+        let mut runner = Runner::new();
-+        let mut client = runner.attach(false).await;
-+        client.send_prompt(text, attachments).await.unwrap();
-+        match runner.frame().await {
-+            ControlBody::Prompt { request } => {
-+                assert_eq!(
-+                    request["prompt"],
-+                    serde_json::json!(want_blocks),
-+                    "{text:?}"
-+                );
-+            }
-+            other => panic!("expected the prompt: {other:?}"),
-+        }
-+        if cancel_first {
-+            client.cancel_prompt().await.unwrap();
-+            assert!(matches!(runner.frame().await, ControlBody::Cancel));
-+        }
-+        runner
-+            .send(ControlBody::PromptCompleted {
-+                prompt_req_id: 7,
-+                outcome: PromptOutcome::Error {
-+                    code: -32603,
-+                    message: "a turn is already running".into(),
-+                    data: None,
-+                },
-+            })
-+            .await;
-+        let (mut surfaced, mut returned) = (false, None);
-+        let reason = timeout(Duration::from_secs(5), async {
-+            loop {
-+                match client.next_event().await.expect("connection remains open") {
-+                    Event::PromptRuntimeError { message } => {
-+                        surfaced = message.contains("a turn is already running");
-+                    }
-+                    Event::PromptRejected {
-+                        text, attachments, ..
-+                    } => returned = Some((text, attachments)),
-+                    Event::Stopped { reason } => return reason,
-+                    _ => {}
-+                }
-+            }
++use anyhow::{ensure, Context, Result};
++use serde::{Deserialize, Serialize};
++use sha2::{Digest, Sha256};
++
++use crate::session::AnchoredDir;
++
++use super::{publication_error, remove_owned_tree_checked, PriorMetadata};
++
++pub(super) const MARKER: &str = ".plugin-publication-active";
++const MAX_RECORD: usize = 4096;
++
++#[derive(Debug, thiserror::Error)]
++#[error("publication backup already exists")]
++pub(super) struct PriorBackup;
++
++#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
++#[serde(deny_unknown_fields)]
++pub(super) struct Identity {
++    device: u64,
++    inode: u64,
++    birth: SystemTime,
++}
++
++impl Identity {
++    pub(super) fn capture(fd: BorrowedFd<'_>) -> Result<Self> {
++        let metadata = std::fs::File::from(fd.try_clone_to_owned()?).metadata()?;
++        ensure!(
++            metadata.is_dir() && metadata.uid() == nix::unistd::geteuid().as_raw(),
++            "publication path is not an owned directory"
++        );
++        Ok(Self {
++            device: metadata.dev(),
++            inode: metadata.ino(),
++            birth: metadata
++                .created()
++                .context("publication directory birth is unproven")?,
 +        })
-+        .await
-+        .unwrap();
-+        if cancel_first {
-+            assert_eq!(reason, "cancelled");
-+            assert!(!surfaced && returned.is_none());
-+        } else {
-+            assert_eq!(reason, "prompt_rejected");
-+            assert!(surfaced);
-+            let refs: Vec<_> = attachments.iter().map(AttachmentBlob::to_ref).collect();
-+            assert_eq!(returned, Some((text.to_string(), refs)), "{text:?}");
-+            // The rejection clears a turn the agent may still be running.
-+            assert!(matches!(runner.frame().await, ControlBody::Cancel));
-+        }
-+
-+        client.send_prompt("again", &[]).await.unwrap();
-+        assert!(matches!(runner.frame().await, ControlBody::Prompt { .. }));
-+        runner.complete("end_turn").await;
-+        assert_eq!(stopped(&mut client).await, "prompt_complete");
-+        assert!(client.control_loss().is_none());
-+        client.shutdown().await.unwrap();
 +    }
 +}
++
++#[derive(Debug, PartialEq, Eq, Serialize, Deserialize)]
++#[serde(deny_unknown_fields)]
++enum Phase {
++    Ready,
++    // The operation lock proves the publisher is gone, not its build children.
++    Working,
++    Committed { metadata: [u8; 32] },
++}
++
++#[derive(Debug, PartialEq, Eq, Serialize, Deserialize)]
++#[serde(deny_unknown_fields)]
++pub(super) struct Journal {
++    schema: u32,
++    id: String,
++    directory: String,
++    plugins: Identity,
++    container: Identity,
++    new_tree: Identity,
++    old_tree: Option<Identity>,
++    prior_metadata: [u8; 32],
++    phase: Phase,
++}
++
++fn metadata_digest(metadata: &PriorMetadata) -> Result<[u8; 32]> {
++    Ok(Sha256::digest(toml::to_string(metadata)?).into())
++}
++
++pub(super) fn exists(app: &Path) -> Result<bool> {
++    marker_exists(app, MARKER)
++}
++
++fn marker_exists(app: &Path, name: &str) -> Result<bool> {
++    match std::fs::symlink_metadata(app.join(name)) {
++        Ok(_) => Ok(true),
++        Err(error) if error.kind() == std::io::ErrorKind::NotFound => Ok(false),
++        Err(error) => Err(error).with_context(|| format!("inspecting plugin evidence {name}")),
++    }
++}
++
++fn read(app: &AnchoredDir) -> Result<Journal> {
++    let file = app
++        .open_regular(Path::new(MARKER), MAX_RECORD)?
++        .context("publication journal is not a bounded regular file")?;
++    crate::process::validate_recovery_file(&file)?;
++    crate::process::prove_same_mount(app.descriptor(), file.as_fd())?;
++    let mut bytes = Vec::new();
++    file.take(MAX_RECORD as u64 + 1).read_to_end(&mut bytes)?;
++    ensure!(
++        bytes.len() <= MAX_RECORD && bytes.last() == Some(&b'\n'),
++        "incomplete publication journal"
++    );
++    let record: Journal = serde_json::from_slice(&bytes).context("invalid publication journal")?;
++    ensure!(record.schema == 1, "unsupported publication journal schema");
++    aoe_plugin_api::PluginId::new(record.id.as_str())?;
++    ensure!(
++        record
++            .directory
++            .strip_prefix(".publish-")
++            .is_some_and(|suffix| {
++                !suffix.is_empty() && suffix.bytes().all(|byte| byte.is_ascii_alphanumeric())
++            }),
++        "invalid publication directory"
++    );
++    ensure!(
++        record.container != record.new_tree
++            && record.old_tree != Some(record.new_tree)
++            && record.old_tree != Some(record.container)
++            && [
++                Some(record.container),
++                Some(record.new_tree),
++                record.old_tree
++            ]
++            .into_iter()
++            .flatten()
++            .all(|identity| identity.device == record.plugins.device && identity.inode != 0),
++        "invalid publication tree identities"
++    );
++    Ok(record)
++}
++
++fn directory_at(parent: &AnchoredDir, leaf: &Path) -> Result<Option<Identity>> {
++    let Some(stat) = parent.entry_stat(leaf)? else {
++        return Ok(None);
++    };
++    ensure!(
++        stat.st_mode & libc::S_IFMT == libc::S_IFDIR
++            && stat.st_uid == nix::unistd::geteuid().as_raw(),
++        "publication path {} is not an owned directory",
++        parent.path().join(leaf).display()
++    );
++    #[cfg(target_os = "macos")]
++    let device = stat.st_dev as u64;
++    #[cfg(not(target_os = "macos"))]
++    let device = stat.st_dev;
++    let child = parent.child(leaf)?;
++    crate::process::prove_same_mount(parent.descriptor(), child.descriptor())?;
++    let identity = Identity::capture(child.descriptor())?;
++    ensure!(
++        (identity.device, identity.inode) == (device, stat.st_ino),
++
 ```
 
-**File**: `src/acp/acp_client/reset.rs` (modified, +2/-2)
+**File**: `src/process/linux.rs` (modified, +14/-5)
 ```diff
-@@ -1162,7 +1162,7 @@ done
-             .await;
-             assert!(matches!(
-                 events.last(),
--                Some(Event::PromptRejected { reason, text }) if reason == "agent_busy" && text == "/new"
-+                Some(Event::PromptRejected { reason, text, .. }) if reason == "agent_busy" && text == "/new"
-             ));
-             assert_eq!(requests(&capture, "session/new"), 1);
-             let _ = client.shutdown().await;
-@@ -1341,7 +1341,7 @@ done
-             events_until(&mut client, |e| matches!(e, Event::PromptRejected { .. })).await;
-         assert!(matches!(
-             rejected.last(),
--            Some(Event::PromptRejected { reason, text }) if reason == "agent_busy" && text == "/new"
-+            Some(Event::PromptRejected { reason, text, .. }) if reason == "agent_busy" && text == "/new"
-         ));
-         std::fs::write(tmp.path().join("capture.ndjson.prompt-release"), "release").unwrap();
-         let rest = events_until(&mut client, |e| matches!(e, Event::Stopped { .. })).await;
+@@ -830,18 +830,27 @@ pub(super) fn prove_staging_host_mount_absent(mount: &Path) -> anyhow::Result<()
+         "/proc/self/fd/{}/..",
+         mount.as_raw_fd()
+     )))?;
+-    let mount_id = |file: &fs::File| -> anyhow::Result<u64> {
+-        let info = fs::read_to_string(format!("/proc/self/fdinfo/{}", file.as_raw_fd()))?;
++    use std::os::fd::AsFd as _;
++    prove_same_mount(parent.as_fd(), mount.as_fd()).context("staging path remains a host mount")
++}
++
++pub(super) fn prove_same_mount(
++    parent: std::os::fd::BorrowedFd<'_>,
++    child: std::os::fd::BorrowedFd<'_>,
++) -> anyhow::Result<()> {
++    use std::os::fd::AsRawFd as _;
++    let mount_id = |fd: std::os::fd::BorrowedFd<'_>| -> anyhow::Result<u64> {
++        let info = fs::read_to_string(format!("/proc/self/fdinfo/{}", fd.as_raw_fd()))?;
+         Ok(info
+             .lines()
+             .find_map(|line| line.strip_prefix("mnt_id:"))
+-            .context("staging host mount identity unavailable")?
++            .context("host mount identity unavailable")?
+             .trim()
+             .parse()?)
+     };
+     anyhow::ensure!(
+-        mount_id(&mount)? == mount_id(&parent)?,
+-        "staging path remains a host mount"
++        mount_id(child)? == mount_id(parent)?,
++        "operation crosses a host mount"
+     );
+     Ok(())
+ }
+```
+
+**File**: `src/process/macos.rs` (modified, +22/-0)
+```diff
+@@ -85,6 +85,28 @@ pub(super) fn prove_staging_host_mount_absent(mount: &std::path::Path) -> anyhow
+     Ok(())
+ }
+ 
++pub(super) fn prove_same_mount(
++    parent: std::os::fd::BorrowedFd<'_>,
++    child: std::os::fd::BorrowedFd<'_>,
++) -> anyhow::Result<()> {
++    use std::os::fd::AsRawFd as _;
++    let mount = |fd: std::os::fd::BorrowedFd<'_>| -> anyhow::Result<_> {
++        let mut stat = std::mem::MaybeUninit::<libc::statfs>::uninit();
++        // SAFETY: fd is borrowed and stat points to writable storage.
++        if unsafe { libc::fstatfs(fd.as_raw_fd(), stat.as_mut_ptr()) } != 0 {
++            return Err(std::io::Error::last_os_error()).context("inspecting host mount");
++        }
++        // SAFETY: successful fstatfs initialized stat.
++        let stat = unsafe { stat.assume_init() };
++        Ok((stat.f_mntonname, stat.f_mntfromname))
++    };
++    anyhow::ensure!(
++        mount(parent)? == mount(child)?,
++        "operation crosses a host mount"
++    );
++    Ok(())
++}
++
+ impl StagingVolume {
+     #[cfg(test)]
+     pub(super) fn create(private_mount_path: &std::path::Path, limit: u64) -> anyhow::Result<Self> {
+```
+
+**File**: `src/process/mod.rs` (modified, +15/-0)
+```diff
+@@ -195,6 +195,21 @@ pub(crate) fn prove_staging_host_mount_absent(mount: &Path) -> anyhow::Result<()
+     }
+ }
+ 
++pub(crate) fn prove_same_mount(
++    parent: std::os::fd::BorrowedFd<'_>,
++    child: std::os::fd::BorrowedFd<'_>,
++) -> anyhow::Result<()> {
++    #[cfg(any(target_os = "linux", target_os = "macos"))]
++    {
++        platform::prove_same_mount(parent, child)
++    }
++    #[cfg(not(any(target_os = "linux", target_os = "macos")))]
++    {
++        let _ = (parent, child);
++        anyhow::bail!("mount identity unavailable on this platform")
++    }
++}
++
+ /// A private filesystem with an enforced allocation ceiling. Unsupported hosts fail closed.
+ pub(crate) struct StagingVolume {
+     #[cfg(any(target_os = "linux", target_os = "macos"))]
+```
+
+**File**: `src/server/startup.rs` (modified, +6/-0)
+```diff
+@@ -520,6 +520,12 @@ pub(crate) async fn start_server(
+     crate::process::systemd::mark_daemon();
+     raise_fd_limit();
+ 
++    if !read_only {
++        if let Err(error) = crate::plugin::install::recover_stale_publication() {
++            tracing::warn!(target: "plugin.install", %error, "plugin publication recovery is fenced");
++        }
++    }
++
+     // Single live `FileWatchService` per daemon.
+     let file_watch = FileWatchService::new().unwrap_or_else(|e| {
+         tracing::warn!(
 ```
 
 ---
 
-### Incident Patch 3: `92fedad0` (2026-11-19)
-**Commit Message**: fix(tmux): read tmux queries with the UTF-8 flag (#5852)
+### Incident Patch 3: `121dc011` (2026-11-24)
+**Commit Message**: fix(web): show Trash as an icon with a count badge (#6006)
 
-* fix(process): read the pane PID with tmux's UTF-8 flag
+* fix(web): show Trash as an icon with a count badge
 
-A tmux client without a UTF-8 locale prints control characters in format
-output as `_`, so the tab in the pane PID query came back as `0_<pid>` and
-the lookup returned nothing. Kills then skipped the pane's process tree. The
-lookup now goes through the query builder, which passes `-u`.
-
-Fixes #5850.
+The footer Trash control showed an icon, a count pill and the word "Trash".
+It is now a 32px icon button beside Settings with a count badge (99+ above
+99), named "Trash, N sessions" for screen readers and the tooltip. The badge
+no longer collides with Settings on the compact rail.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-* test(tmux): give the locale only to a child test process
-
-The pane PID test set and restored LANG, LC_ALL and LC_CTYPE in the test
-process itself. Under `cargo test`, which runs tests on threads, any
-concurrent test could read or inherit that environment while it was changed.
-The test now re-runs itself as a child of the test binary with the C locale
-set on that child's command, and leaves its own environment alone.
+* fix(web): match the Trash badge to the activity bar badge
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-* fix(tmux): read pane titles with tmux's UTF-8 flag
+* fix(web): stack the rail footer so Trash and Settings fit with scaled text
 
-Without a UTF-8 locale, tmux prints every character outside printable ASCII
-in format output as `_`. A pane title such as omp's `π ⠋ working` then read
-as underscores, so omp's working rule never match
+At a 24px root font the side-by-side 2rem controls overflowed the fixed
+88px compact rail, putting Settings over the resize handle. Stack them in
+rail mode and cover a 24px root font in the bounds test.
 
-**File**: `src/process/mod.rs` (modified, +3/-2)
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+---------
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `web/src/components/WorkspaceSidebar.tsx` (modified, +6/-1)
 ```diff
-@@ -897,8 +897,9 @@ fn collect_descendants_from_map(
- pub fn get_pane_pid(session_name: &str) -> Option<u32> {
-     let pane = crate::tmux::first_pane_id(session_name)?;
-     // The pane id must travel alone: `session:%id` reads as a window
--    // spec and falls back to the window's active pane (tmux 3.7c).
--    let output = crate::tmux::tmux_command()
-+    // spec and falls back to the window's active pane (tmux 3.7c). A client
-+    // without UTF-8 prints the tab as `_`, so the query passes `-u`.
-+    let output = crate::tmux::tmux_query_command()
-         .args([
-             "display-message",
-             "-t",
-```
-
-**File**: `src/tmux/mod.rs` (modified, +5/-4)
-```diff
-@@ -230,10 +230,11 @@ pub(crate) fn tmux_command() -> Command {
- /// non-`ECONNREFUSED` connect failure, and glibc localizes `strerror` by
- /// `LC_MESSAGES`, so on a non-English host the `(No such file or directory)`
- /// ENOENT marker for an absent socket (#3337) would not match. `LC_ALL` is
--/// removed so it cannot override that. Global `-u` forces UTF-8 session names
--/// even when the caller has `LC_CTYPE=C` or when `LC_ALL` was the only UTF-8
--/// locale source. Used by the status-query callers (which classify via
--/// [`tmux_no_server_running`]) and by `kill_session_if_present`. NOT folded into
-+/// removed so it cannot override that. Global `-u` keeps format output intact
-+/// (separators, session names, pane titles) even when the caller has
-+/// `LC_CTYPE=C` or when `LC_ALL` was the only UTF-8 locale source, since tmux
-+/// prints anything outside printable ASCII as `_` to a non-UTF-8 client. Used
-+/// for every query whose output aoe parses, and by `kill_session_if_present`. NOT folded into
- /// [`tmux_command`]: the interactive attach/switch-client/capture-pane paths must
- /// keep the user's locale for UTF-8 and status-bar rendering, and `-u` would
- /// assert UTF-8 to a terminal that may not be.
-```
-
-**File**: `src/tmux/session.rs` (modified, +71/-0)
-```diff
-@@ -5119,6 +5119,77 @@ mod tests {
-         );
-     }
+@@ -466,7 +466,12 @@ export function WorkspaceSidebar(props: Props) {
  
-+    /// #5850: a tmux client without a UTF-8 locale prints every byte outside printable ASCII
-+    /// as `_`. The locale reaches only a child test process, never this one's environment.
-+    #[test]
-+    #[serial_test::serial]
-+    fn pane_queries_read_intact_without_a_utf8_locale() {
-+        const CHILD: &str = "AOE_TEST_PANE_QUERY_LOCALE_CHILD";
-+        if !tmux_available() {
-+            eprintln!("Skipping test: tmux not available");
-+            return;
-+        }
-+        if std::env::var_os(CHILD).is_none() {
-+            let child = std::process::Command::new(std::env::current_exe().unwrap())
-+                .args([
-+                    "--exact",
-+                    "tmux::session::tests::pane_queries_read_intact_without_a_utf8_locale",
-+                    "--nocapture",
-+                ])
-+                .env(CHILD, "1")
-+                .env("LANG", "C")
-+                .env("LC_ALL", "C")
-+                .env("LC_CTYPE", "C")
-+                // tmux treats a set TMUX as UTF-8 before it reads the locale.
-+                .env_remove("TMUX")
-+                .output()
-+                .unwrap();
-+            let stdout = String::from_utf8_lossy(&child.stdout);
-+            assert!(
-+                child.status.success() && stdout.contains("1 passed"),
-+                "{stdout}{}",
-+                String::from_utf8_lossy(&child.stderr)
-+            );
-+            return;
-+        }
-+        let guard = TmuxTestSession::new("aoe_test_pane_query_locale");
-+        let session_name = guard.name().to_string();
-+        let mut args: Vec<String> = ["new-session", "-d", "-s", &session_name, "sleep 30"]
-+            .iter()
-+            .map(|arg| arg.to_string())
-+            .collect();
-+        append_pane_base_index_args(&mut args, &session_name);
-+        assert!(crate::tmux::tmux_command()
-+            .args(&args)
-+            .status()
-+            .expect("tmux new-session")
-+            .success());
-+        let pane = only_pane_id(&session_name);
-+        wait_for_pane_command(&pane, "sleep");
-+        let title = "π ⠋ working";
-+        assert!(crate::tmux::tmux_query_command()
-+            .args(["select-pane", "-t", &pane, "-T", title])
-+            .status()
-+            .expect("set pane title")
-+            .success());
-+        let pid = pane_field(&pane, "#{pane_pid}");
-+        let cases = [
-+            (
-+                "pane PID",
-+                crate::process::get_pane_pid(&session_name).map(|pid| pid.to_string()),
-+                pid.as_str(),
-+            ),
-+            (
-+                "pane title",
-+                crate::tmux::utils::pane_title(&session_name),
-+                title,
-+            ),
-+        ];
-+        for (query, read, expected) in cases {
-+            assert_eq!(read.as_deref(), Some(expected), "{query}");
-+        }
-+    }
+         <SidebarSystemHealth />
+ 
+-        <div className="border-t border-surface-700/20 p-2 max-md:pb-[max(0.5rem,env(safe-area-inset-bottom))] flex items-center gap-1">
++        {/* The rail is a fixed 88px, so its controls stack to fit a scaled root font. */}
++        <div
++          className={`border-t border-surface-700/20 p-2 max-md:pb-[max(0.5rem,env(safe-area-inset-bottom))] flex items-center ${
++            compact ? "flex-col gap-2" : "gap-1"
++          }`}
++        >
+           {(trashedWorkspaces.length > 0 || (props.trashedCount ?? 0) > 0) && (
+             <TrashMenu
+               trashedWorkspaces={trashedWorkspaces}
+```
+
+**File**: `web/src/components/__tests__/WorkspaceSidebarTrash.test.tsx` (modified, +10/-7)
+```diff
+@@ -184,14 +184,17 @@ describe("WorkspaceSidebar Trash control", () => {
+     ]);
+   });
+ 
+-  it("puts the count right after the Trash icon, not against Settings (#2574)", () => {
+-    withTrash();
++  it.each([
++    [1, "1", "Trash, 1 session"],
++    [4, "4", "Trash, 4 sessions"],
++    [120, "99+", "Trash, 120 sessions"],
++  ])("labels %i trashed sessions with an icon and a count badge, not a text label", (n, badge, name) => {
++    renderSidebar([], { trashedWorkspaces: [], trashedCount: n, trashLoaded: false });
+     const toggle = screen.getByTestId("sidebar-trash-toggle");
+-    const badge = screen.getByTestId("sidebar-trash-count");
+-    expect(badge.textContent).toBe("1");
+-    expect(toggle.contains(badge)).toBe(true);
+-    const label = Array.from(toggle.querySelectorAll("span")).find((s) => s.textContent === "Trash")!;
+-    expect(follows(badge, label)).toBe(true);
++    expect(toggle.getAttribute("aria-label")).toBe(name);
++    expect(toggle.getAttribute("title")).toBe(name);
++    expect(toggle.textContent).toBe(badge);
++    expect(screen.getByTestId("sidebar-trash-count").getAttribute("aria-hidden")).toBe("true");
+   });
+ 
+   it.each([
+```
+
+**File**: `web/src/components/sidebar/TrashMenu.tsx` (modified, +16/-11)
+```diff
+@@ -101,6 +101,7 @@ export function TrashMenu({
+   // Sessions, the unit the daemon reports before the rows load, so the badge does not change meaning when Trash opens.
+   const loadedCount = trashedWorkspaces.reduce((sum, ws) => sum + ws.sessions.length, 0);
+   const count = loaded ? loadedCount : loadedCount || trashedCount;
++  const label = `Trash, ${count} ${count === 1 ? "session" : "sessions"}`;
+   const pendingMenu = menu?.ws.sessions.some(hasPendingTrash) ?? false;
+   const menuTargets = menu
+     ? menu.ws.sessions
+@@ -109,7 +110,7 @@ export function TrashMenu({
+     : [];
+ 
+   return (
+-    <div ref={ref} className="relative min-w-0 flex-1">
++    <div ref={ref} className="relative shrink-0">
+       <button
+         onClick={() => {
+           if (!open) {
+@@ -121,18 +122,22 @@ export function TrashMenu({
+         aria-expanded={open}
+         aria-controls={open ? "sidebar-trash-panel" : undefined}
+         data-testid="sidebar-trash-toggle"
+-        className="h-8 w-full min-w-0 flex items-center gap-2 rounded-md px-2.5 text-text-secondary hover:text-text-primary hover:bg-surface-800/50 cursor-pointer transition-colors"
+-        title={`Trash (${count})`}
+-        aria-label={`Trash (${count})`}
++        className="relative w-8 h-8 flex items-center justify-center rounded-md text-text-secondary hover:text-text-primary hover:bg-surface-800/50 cursor-pointer transition-colors"
++        title={label}
++        aria-label={label}
+       >
+-        <Trash2 className="h-4 w-4 shrink-0" />
+-        <span
+-          data-testid="sidebar-trash-count"
+-          className="shrink-0 rounded-full bg-surface-900 px-1.5 py-0.5 text-[10px] font-mono tabular-nums text-text-dim leading-none"
+-        >
+-          {count}
++        <span className="relative">
++          <Trash2 className="h-4 w-4" />
++          {count > 0 && (
++            <span
++              data-testid="sidebar-trash-count"
++              aria-hidden="true"
++              className="pointer-events-none absolute -top-1.5 -right-2.5 min-w-[1rem] rounded-full border border-surface-600 bg-surface-800 px-1 text-[10px] font-semibold leading-[0.875rem] tabular-nums text-text-secondary text-center"
++            >
++              {count > 99 ? "99+" : count}
++            </span>
++          )}
+         </span>
+-        <span className="min-w-0 flex-1 truncate text-left text-[13px] font-medium">Trash</span>
+       </button>
+       {open &&
+         panelPosition &&
+```
+
+**File**: `web/tests/coverage-matrix.json` (modified, +3/-2)
+```diff
+@@ -2390,8 +2390,9 @@
+       "id": "sidebar.trash-control",
+       "kind": "vitest",
+       "risk": "medium",
+-      "specs": ["src/components/__tests__/WorkspaceSidebarTrash.test.tsx"],
+-      "components": ["web/src/components/WorkspaceSidebar.tsx", "web/src/components/sidebar/TrashMenu.tsx"]
++      "specs": ["src/components/__tests__/WorkspaceSidebarTrash.test.tsx", "tests/session-trash.spec.ts"],
++      "components": ["web/src/components/WorkspaceSidebar.tsx", "web/src/components/sidebar/TrashMenu.tsx"],
++      "notes": "The footer Trash control is an icon button beside Settings, shown only while something is trashed. Its count is a badge on the icon (99+ above 99) and its accessible name and tooltip read \"Trash, N sessions\". On the compact rail Trash stacks above Settings, so both stay inside the rail and the badge clear of Settings with a 24px root font."
+     },
+     {
+       "id": "sidebar.trash-on-demand",
+```
+
+**File**: `web/tests/live/session-actions.spec.ts` (modified, +1/-1)
+```diff
+@@ -166,7 +166,7 @@ test.describe("delete and trash (#1220, #2489)", () => {
+     await expect(row).toHaveCount(0, { timeout: 10_000 });
+ 
+     const trashToggle = page.locator("[data-testid='sidebar-trash-toggle']");
+-    await expect(trashToggle).toHaveAttribute("aria-label", "Trash (1)");
++    await expect(trashToggle).toHaveAttribute("aria-label", "Trash, 1 session");
+     await trashToggle.click();
+     const restorePromise = page.waitForResponse(
+       (res) => res.url().endsWith(`/api/sessions/${sessionId}/restore`) && res.request().method() === "POST",
+```
+
+**File**: `web/tests/session-trash.spec.ts` (modified, +35/-0)
+```diff
+@@ -10,6 +10,7 @@ import {
+   trashRows,
+   trashToggle,
+ } from "./helpers/trashMocks";
++import { dragSidebarHandle } from "./helpers/sidebar";
+ 
+ test.use({ viewport: { width: 1280, height: 720 } });
+ 
+@@ -65,6 +66,40 @@ test.describe("Session trash flow", () => {
+     await confirmDelete(dialog);
+     await expect.poll(() => handle.deletedIds.length, { timeout: 10_000 }).toBe(1);
+   });
 +
-     #[test]
-     #[serial_test::serial]
-     /// Regression test for #488: when a user creates a split pane and makes it
-```
-
-**File**: `src/tmux/utils.rs` (modified, +3/-3)
-```diff
-@@ -442,7 +442,7 @@ fn classify_live_panes(succeeded: bool, stdout: &[u8], stderr: &[u8]) -> bool {
++  // A 24px root font is browser text scaled to 150%.
++  for (const rootFontPx of [16, 24]) {
++    test(`the footer Trash and Settings controls stay inside the compact rail at a ${rootFontPx}px root font`, async ({
++      page,
++    }) => {
++      await installTrashMocks(page, [{ ...SESSION, trashed: true }]);
++      await page.addInitScript((px) => {
++        document.addEventListener("DOMContentLoaded", () => {
++          document.documentElement.style.fontSize = `${px}px`;
++        });
++      }, rootFontPx);
++      await page.goto("/");
++      await expect(trashToggle(page)).toHaveAccessibleName("Trash, 1 session");
++      await dragSidebarHandle(page, 100);
++      const panel = page.locator('[data-tour="sidebar"]');
++      await expect(panel).toHaveAttribute("data-compact", "true");
++
++      const panelBox = (await panel.boundingBox())!;
++      const toggle = (await trashToggle(page).boundingBox())!;
++      const badge = (await page.getByTestId("sidebar-trash-count").boundingBox())!;
++      const settings = (await page.getByRole("button", { name: "Settings" }).boundingBox())!;
++      for (const box of [toggle, badge, settings]) {
++        expect(box.x).toBeGreaterThanOrEqual(panelBox.x);
++        expect(box.x + box.width).toBeLessThanOrEqual(panelBox.x + panelBox.width);
++      }
++      const overlaps =
++        badge.x < settings.x + settings.width &&
++        settings.x < badge.x + badge.width &&
++        badge.y < settings.y + settings.height &&
++        settings.y < badge.y + badge.height;
++      expect(overlaps).toBe(false);
++    });
++  }
+ });
  
- pub(crate) fn pane_current_command(session_name: &str) -> Option<String> {
-     let first = first_pane_id(session_name)?;
--    crate::tmux::tmux_command()
-+    crate::tmux::tmux_query_command()
-         .args([
-             "display-message",
-             "-t",
-@@ -466,7 +466,7 @@ pub(crate) fn pane_current_command(session_name: &str) -> Option<String> {
- /// read one way through the poller and another through `aoe session capture`.
- pub(crate) fn pane_title(session_name: &str) -> Option<String> {
-     let target = format!("={session_name}:^");
--    crate::tmux::tmux_command()
-+    crate::tmux::tmux_query_command()
-         .args(["display-message", "-t", &target, "-p", "#{pane_title}"])
-         .output()
-         .ok()
-@@ -488,7 +488,7 @@ pub(crate) fn pane_start_command_is_protected(session_name: &str) -> bool {
-         return false;
-     };
-     let target = first;
--    crate::tmux::tmux_command()
-+    crate::tmux::tmux_query_command()
-         .args([
-             "display-message",
-             "-t",
-```
-
-**File**: `web/scripts/check-env-isolation.mjs` (modified, +1/-0)
-```diff
-@@ -83,6 +83,7 @@ const TEST_BINARY_READS = new Set([
-   "AOE_RECHECK_TEST_CHILD",
-   "AOE_TEST_APP_DIR_UMASK_CHILD",
-   "AOE_TEST_KILL_LAST_PANE_CHILD",
-+  "AOE_TEST_PANE_QUERY_LOCALE_CHILD",
-   "AOE_TEST_TMUX_EMPTY_CHILD",
-   "AOE_TEST_TMUX_ABSENCE_CHILD",
-   "AOE_TEST_TMUX_KILL_CHILD",
+ // #2530, #2533: sessions on one `repoPath::branch` form one workspace even when
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5873** (2026-11-19): test: de-flake two macOS timing tests (transport deadlines, late group child) (@Seluj78)
-- **PR #5872** (2026-11-19): fix(mcp): keep wait_for waiting when the turn-end query fails (@Seluj78)
-- **PR #5871** (2026-11-19): docs: drop the nightly not-published note (@Seluj78)
-- **PR #5864** (2026-11-19): fix(acp): keep the connection when the agent rejects a prompt (@njbrake)
-- **PR #5852** (2026-11-19): fix(tmux): read tmux queries with the UTF-8 flag (@klubrake)
-- **PR #5847** (2026-11-19): test(serve): fix the Funnel fixture backend port (@jerome-benoit)
+- **PR #6027** (2026-11-24): docs(agents): add a record-pr-demo skill for recording PR demo videos (@njbrake)
+- **PR #6022** (2026-11-24): ci(tessl): let the Tessl App's relabel wake Implement (@Seluj78)
+- **PR #6020** (2026-11-24): ci(tessl): move factory loops into tessl.json with maintainer allowlist (@tessl-app[bot])
+- **PR #6012** (2026-11-24): fix(server): refuse Agent default model writes while pin is on (@klubrake)
+- **PR #6011** (2026-11-24): refactor(server): call Instance::handoff_refused without a wrapper (@klubrake)
+- **PR #6007** (2026-11-24): feat(web): crisper terminal text and a font dropdown with JetBrains Mono (@njbrake)
 
 ---
 
@@ -3290,21 +2814,38 @@ as underscores, so omp's working rule never match
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. containers): share one sandbox image pull per runtime and image
+## X. web): throttle structured view persistence and cache per-chunk work
 
 **RULE**:
-When implementing operations in `flake.nix`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in agent-of-empires/agent-of-empires. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `web/playwright.perf.config.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in agent-of-empires/agent-of-empires. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `03e54bee`: containers): share one sandbox image pull per runtime and image. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a5f7f027`: web): throttle structured view persistence and cache per-chunk work. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `flake.nix`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `web/playwright.perf.config.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-                ./tests/fixtures/pull-stderr
+import { defineConfig } from "@playwright/test";
+
+// Perf harness: not picked up by playwright.config.ts (it only matches *.spec.ts).
+export default defineConfig({
+  testDir: "./tests/perf",
+  testMatch: "**/*.perf.ts",
+  globalSetup: "./tests/helpers/liveGlobalSetup.ts",
+  timeout: 300_000,
+  fullyParallel: false,
+  workers: 1,
+  retries: 0,
+  reporter: "list",
+  use: {
+    headless: true,
+    viewport: { width: 1440, height: 900 },
+  },
+  projects: [{ name: "chromium", use: { browserName: "chromium" } }],
+});
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -3314,7 +2855,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `03e54bee` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a5f7f027` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

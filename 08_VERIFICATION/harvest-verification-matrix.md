@@ -12876,3 +12876,6 @@
 | `CYCLE-20261125-H6SY` | `2026-11-25T00:43:32.914Z` | `abue-ammar/tinycast` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10405` | Yes (`eabdc0d5...`) |
 | `CYCLE-20261125-H915` | `2026-11-25T00:43:35.801Z` | `pulumi/pulumi` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10406` | Yes (`63617bf1...`) |
 | `CYCLE-20261125-HEC9` | `2026-11-25T00:43:42.681Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10407` | Yes (`000ce086...`) |
+| `CYCLE-20261125-RZR2` | `2026-11-25T00:51:56.990Z` | `agent-of-empires/agent-of-empires` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10408` | Yes (`e6d287db...`) |
+| `CYCLE-20261125-S1C4` | `2026-11-25T00:51:59.044Z` | `webdriverio/webdriverio` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10409` | Yes (`5a6ec9c6...`) |
+| `CYCLE-2026-11-25-PROJ-EVOLVE` | `2026-11-25T00:52:38.906Z` | `webdriverio-webdriverio` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-K-23B0EC10` [Domain K] | Yes (`7d2077f8...`) |

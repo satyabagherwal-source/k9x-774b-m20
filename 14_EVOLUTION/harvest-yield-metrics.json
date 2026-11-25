@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T00:43:42.691Z",
-  "total_cycles_completed": 12231,
-  "total_learnings_persisted": 12231,
-  "total_rules_promoted": 11280,
+  "last_updated": "2026-11-25T00:51:59.055Z",
+  "total_cycles_completed": 12233,
+  "total_learnings_persisted": 12233,
+  "total_rules_promoted": 11282,
   "history": [
-    {
-      "timestamp": "2026-11-24T11:44:33.558Z",
-      "repository": "microsoft/agent-governance-toolkit",
-      "learningId": "learn-github-microsoft-agent-governance-toolkit",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T12:05:14.395Z",
-      "repository": "open-policy-agent/opa",
-      "learningId": "learn-github-open-policy-agent-opa",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-24T12:18:19.568Z",
       "repository": "nari-labs/Qwen3.8-27B-NariQ-GGUF",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-25T00:43:42.691Z",
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T00:51:57.001Z",
+      "repository": "agent-of-empires/agent-of-empires",
+      "learningId": "learn-github-agent-of-empires-agent-of-empires",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T00:51:59.055Z",
+      "repository": "webdriverio/webdriverio",
+      "learningId": "learn-github-webdriverio-webdriverio",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

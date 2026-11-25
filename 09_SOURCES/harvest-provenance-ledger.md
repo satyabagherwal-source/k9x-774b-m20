@@ -12909,3 +12909,6 @@ Every entry in this ledger must capture:
 | `learn-github-abue-ammar-tinycast` | `https://github.com/abue-ammar/tinycast` | `ed7c2917` | Multi-dimensional audit evidence | 2026-11-25T00:43:32.918Z |
 | `learn-github-pulumi-pulumi` | `https://github.com/pulumi/pulumi` | `783a0060` | Multi-dimensional audit evidence | 2026-11-25T00:43:35.806Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `08ccc24f` | Multi-dimensional audit evidence | 2026-11-25T00:43:42.686Z |
+| `learn-github-agent-of-empires-agent-of-empires` | `https://github.com/agent-of-empires/agent-of-empires` | `a6717a44` | Multi-dimensional audit evidence | 2026-11-25T00:51:56.995Z |
+| `learn-github-webdriverio-webdriverio` | `https://github.com/webdriverio/webdriverio` | `cfd6c6b2` | Multi-dimensional audit evidence | 2026-11-25T00:51:59.048Z |
+| `learn-dom-k-23b0ec10` | `project://webdriverio-webdriverio` | `cfd6c6b2` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/webdriverio-webdriverio-learnings.md` | 2026-11-25T00:52:38.906Z |

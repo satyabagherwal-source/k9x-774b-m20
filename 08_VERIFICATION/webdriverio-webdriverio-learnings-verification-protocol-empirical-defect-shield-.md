@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-21T01:16:30.769Z",
+  "timestamp": "2026-11-25T00:52:39.306Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-webdriverio-webdriverio-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [webdriverio-webdriverio-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-21T01:16:30.769Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T00:52:39.306Z`  
 > **Learning ID**: `LEARN-EVO-webdriverio-webdriverio-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/webdriverio-webdriverio-learnings.md`  
 > **Source**: github ([https://github.com/webdriverio/webdriverio](https://github.com/webdriverio/webdriverio))  
-> **Source Version**: `68055ce4`  
+> **Source Version**: `cfd6c6b2`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T01:16:23.227Z  
+> **Timestamp**: 2026-11-25T00:51:57.852Z  
 > **Learning ID**: `learn-github-webdriverio-webdriverio`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/webdriverio-webdriverio-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/webdriverio/webdriverio](https://github.com/webdriverio/webdriverio))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T01:16:23.079Z  
+> **Harvest Timestamp**: 2026-11-25T00:51:57.847Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Next-gen browser and mobile automation test framework for Node.js
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 9885 stars
+- **Stars / Engagement**: 9886 stars
 
 ---
 
@@ -382,11 +382,11 @@ export default {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #16497** (2026-11-22): **test(e2e): run Chrome stable in place of the Chrome 155 pin, and note the Firefox 160 fix**
+  *Symptoms*: ## Proposed changes  Follow-up to #16206. Chrome 158 fixes the BiDi hang in a tab that `window.open` opened ([crbug 571161446](https://issues.chromium.org/issues/571161446)), and Chrome 158 is now stable (Chrome for Testing 158.0.8127.36).  - `e2e/wdio/ai/wdio.conf.ts` and `e2e/session/live-web.test.ts`: `browserVersion` / `--browser-version` go from `'155'` to `'stable'`. I did not remove the pin: the runner images of 2026-11-16 still have Chrome 157.0.8103.78/79 on Ubuntu 24.04 and Windows, and a spec without `browserVersion` uses that Chrome, which hangs. `'stable'` downloads Chrome for Testing stable. A comment says to remove `stable` and `no-sandbox` on 2026-12-01 if the runner Chrome is 158+ (the next weekly images should have it). The Linux `no-sandbox` argument and its comment stay, because the Chrome is still downloaded. - `interception/index.ts` and `mocking.e2e.ts`: the [Mozilla 2077785](https://bugzilla.mozilla.org/show_bug.cgi?id=2077785) comments now say that Firefox 160 has the fix. The workaround stays for older Firefox. Comments only, no code change.  Lets us close #16343.  ## How you tested  - The #16343 repro (popup opened by the top page, by a cross-site iframe, and with `noopener`) with `browserVersion: 'stable'`, headless, on macOS:   ```   Chrome 158.0.8127.36   top              title "OAuth login" (18 ms)   iframe           title "OAuth login" (2 ms)   iframe-noopener  title "OAuth login" (2 ms)   ```   On Chrome 156/157 the same calls hang. - `oxlint`
+
 - **Issue #16488** (2026-11-20): **docs(v9): explain when the CLI reads spec paths from stdin**
   *Symptoms*: ## Proposed changes  Backports #16485 to v9 for #10618. Explain how `wdio run` selects spec paths from standard input when stdout is a terminal. The previous example said that an explicit `--spec` always takes precedence. A nonempty pipe actually replaces it. The revised guide also covers captured output in CI and Node.js, plus Git pre-push hooks that pass ref updates on stdin.  ## How you tested  Ran the CLI with the repository's mock WebDriver service and passing spec fixtures. With stdin piped, stdout attached to a pseudo-terminal, and an explicit `--spec`, only the file named on stdin ran. With stdout captured, only the explicit spec ran. With an empty pipe and terminal output, only the explicit spec ran. All three exited successfully. Compiled the updated page with the site's MDX compiler.  ## Types of changes  - [x] Documentation  ## Backport Request  Companion to #16485. Confirmed all three CLI selections on the v9 implementation using its mock-driver smoke environment.  AI assistance was used to prepare and test this contribution. 
-
-- **Issue #16487** (2026-11-20): **fix(@wdio/mocha-framework): respect custom Mocha interfaces on v9**
-  *Symptoms*: ## Proposed changes  Backports #16486 to v9 for #12843. The Node.js adapter can load a third-party Mocha interface, but TypeScript configurations rejected names registered by that interface's type declarations. A local CommonJS interface such as `custom-tdd.cjs` also fell back to BDD hook names, so its tests ran without WebdriverIO's `beforeTest` and `afterTest` hooks.  Use Mocha’s extensible interface type and recognize the BDD, TDD and QUnit naming conventions with JavaScript file extensions. The framework guide shows how to select a module and declare its name in TypeScript.  ## How you tested  - [x] The regression test failed for `custom-tdd.cjs` before the fix. All 45 v9 Mocha adapter unit tests passed after the backport. - [x] `pnpm run test:typings:mocha` passed with a third-party interface in the config. - [x] `pnpm run test:smoke mochaTestrunner` passed. A separate CLI run with the mock driver and a real local CommonJS interface ran one TDD spec and recorded both WebdriverIO hooks exactly once. - [x] The v9 packages compiled. The updated framework guide compiled as MDX.  ## Types of changes  - [x] Bug fix - [x] Documentation  ## Backport Request  Companion to #16486.  AI assistance was used to prepare and test this contribution. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -403,51 +403,108 @@ export default {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `68055ce4` (2026-11-19)
-**Commit Message**: docs(devtools): describe how the test tree shows retries and failed Cucumber hooks (#16458)
+### Incident Patch 1: `cfd6c6b2` (2026-11-22)
+**Commit Message**: test(e2e): run Chrome stable in place of the Chrome 155 pin, and note the Firefox 160 fix (#16497)
 
-**File**: `website/docs/devtools/Wdio.md` (modified, +7/-0)
+* test(e2e): run Chrome stable in place of the Chrome 155 pin, and note the Firefox 160 fix
+
+Chrome 158 fixes the BiDi hang in a `window.open` tab (crbug 571161446).
+The runner images still have Chrome 157, so the AI and Session live-web
+specs download Chrome stable. The Mozilla 2077785 comments now say that
+Firefox 160 has the fix; the workaround stays for older Firefox.
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* test(e2e): drop the Chrome 155 pin comments
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* test(e2e): say when to remove the Chrome stable download
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* test(e2e): give the date to remove the Chrome stable download
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+---------
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `e2e/session/live-web.test.ts` (modified, +3/-3)
 ```diff
-@@ -65,6 +65,13 @@ services: [['devtools', options]]
- | `maskInputs` | `boolean` | `true` | Mask password fields in the replayed page, live and trace mode alike; `false` records them as typed. Command rows always keep the typed text ([see Password masking](/docs/devtools/dashboard#password-masking)) |
- | `maskSelectors` | `string[]` | `[]` | Also mask the text and value of every element these CSS selectors match, and everything inside it, in the replayed page |
+@@ -21,11 +21,11 @@ describe('wdio session on live-web pages', () => {
+     beforeAll(async () => {
+         server = await startServer()
+         project = createProject('live-web')
+-        // Chrome 156 and 157 hang every BiDi command in a tab that `window.open` opened: https://issues.chromium.org/issues/571161446
+-        // Fixed in Chrome 158 (https://chromium-review.googlesource.com/c/chromium/src/+/8574800): remove the pin then.
++        // the runner images still have Chrome 157, which hangs BiDi in a `window.open` tab
++        // (https://issues.chromium.org/issues/571161446). On 2026-12-01, if the runner Chrome is 158+, remove `stable` and `no-sandbox`.
+         // a downloaded Chrome has no AppArmor profile for its sandbox on Ubuntu
+         const sandbox = process.platform === 'linux' ? ['--arg=--no-sandbox'] : []
+-        await run('open', 'chrome', `${server.url}/live.html`, '--browser-version', '155', ...sandbox)
++        await run('open', 'chrome', `${server.url}/live.html`, '--browser-version', 'stable', ...sandbox)
+     }, 60_000)
  
-+## Test tree
-+
-+The sidebar lists each spec's suites and tests (each Cucumber feature's scenarios and steps) as they run, the same on WebdriverIO 9 and 10.
-+
-+- **Retries.** A retried test is one row. Its next attempt replaces the failed one in place, and the row shows the final attempt's result with its retry count; for a Cucumber scenario retried with `cucumberOpts.retry`, the count is on the scenario. The failed attempt is still recorded, so the retry-aware `tracePolicy` values see it.
-+- **Failed Cucumber hooks.** A hook fails no step, so a failed `BeforeAll` or `AfterAll` shows as a failed row of its feature (an `AfterAll` below the scenarios), and a failed `Before` or `After` as a failed row of its scenario, carrying the hook's error. Each failed hook is a row of its own, titled with its position among the hooks of that kind on the same feature or scenario, whether those passed or failed: the second `After` hook is `After #2` even when the first passed. When a retried scenario runs again, the failed hooks of the earlier attempt leave the tree with the rest of that attempt. Mocha and Jasmine hooks are left to the framework's own reporting.
-+
- ## Runtime snapshot
- 
- The service adds a `browser.getSnapshot()` command that returns an AI-readable accessibility tree of the current page (`text`) plus an `elements` map from short refs (`e1`, `e2`, …) to selectors:
+     afterAll(async () => {
 ```
 
----
-
-### Incident Patch 2: `e59ff433` (2026-11-19)
-**Commit Message**: docs: add a troubleshooting note for hover tests with headed parallel browsers (#16002)
-
-**File**: `website/docs/platforms/Web.md` (modified, +1/-0)
+**File**: `e2e/wdio/ai/wdio.conf.ts` (modified, +4/-4)
 ```diff
-@@ -122,6 +122,7 @@ The Browser Runner requires `@wdio/browser-runner`. The React preset also needs
- ## Troubleshooting
- 
- - Chrome fails to start in CI with "user data directory is already in use" or "DevToolsActivePort file doesn't exist": see [Headless & Display Servers](/docs/headless-and-display-servers#troubleshooting).
-+- Hover or `moveTo()` tests fail intermittently with a headed browser and parallel workers, on Windows or under Xvfb on Linux: when another worker's browser window opens or closes under the OS pointer, the page under it gets real mouse events. Run headless, with `wdio run --headless` or the args in [Run Browser Headless](/docs/capabilities#run-browser-headless). On Linux, [Weston](/docs/headless-and-display-servers#which-display-server-is-used) (`displayServer: 'wayland'`) also avoids it.
- - `browser.mock()` or `browser.emulate()` has no effect: the session is not using WebDriver BiDi. Check your browser (Safari has no BiDi support), your cloud vendor, and `wdio:enforceWebDriverClassic`.
- - Drivers or browsers can't be downloaded behind a proxy: see [Custom Driver Download Host](/docs/capabilities#custom-driver-download-host) and [Proxy Setup](/docs/proxy).
- - Flaky tests: see [Retry Flaky Tests](/docs/retry) and [Debugging](/docs/debugging).
+@@ -17,11 +17,11 @@ export const config: WebdriverIO.Config = {
+     capabilities: [{
+         browserName: 'chrome',
+         /**
+-         * Chrome 156 and 157 hang every BiDi command in a tab that `window.open`
+-         * opened (frames.e2e.ts): https://issues.chromium.org/issues/571161446
+-         * Fixed in Chrome 158 (https://chromium-review.googlesource.com/c/chromium/src/+/8574800): remove the pin then.
++         * The runner images still have Chrome 157, which hangs BiDi in a
++         * `window.open` tab (https://issues.chromium.org/issues/571161446).
++         * On 2026-12-01, if the runner Chrome is 158+, remove `browserVersion` and `no-sandbox`.
+          */
+-        browserVersion: '155',
++        browserVersion: 'stable',
+         webSocketUrl: true,
+         // a downloaded Chrome has no AppArmor profile for its sandbox on Ubuntu
+         'goog:chromeOptions': { args: ['headless', 'disable-gpu', ...(isLinux ? ['no-sandbox'] : [])] }
+```
+
+**File**: `e2e/wdio/headless/mocking.e2e.ts` (modified, +2/-1)
+```diff
+@@ -143,7 +143,8 @@ describe('network mocking', () => {
+          * Bypass the HTTP cache: earlier tests load this page, so the browser
+          * can revalidate it and get 304 Not Modified. Firefox can then leave
+          * `network.getData` for the body unanswered
+-         * (https://bugzilla.mozilla.org/show_bug.cgi?id=2077785).
++         * (https://bugzilla.mozilla.org/show_bug.cgi?id=2077785, fixed in
++         * Firefox 160; kept for older Firefox).
+          */
+         await browser.networkSetCacheBehavior({ cacheBehavior: 'bypass' })
+         try {
+```
+
+**File**: `packages/webdriverio/src/utils/interception/index.ts` (modified, +2/-1)
+```diff
+@@ -1111,7 +1111,8 @@ export default class WebDriverInterception {
+                 /**
+                  * The response completed, but the browser did not return its body in time.
+                  * Firefox can leave `network.getData` unanswered for a response that it
+-                 * revalidated with 304 Not Modified (https://bugzilla.mozilla.org/show_bug.cgi?id=2077785).
++                 * revalidated with 304 Not Modified (https://bugzilla.mozilla.org/show_bug.cgi?id=2077785,
++                 * fixed in Firefox 160; kept for older Firefox).
+                  * Continue without the body: it is still added to `calls` if it arrives later.
+                  * A response that started but did not complete (e.g. it failed) still times out.
+                  */
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #16497** (2026-11-22): test(e2e): run Chrome stable in place of the Chrome 155 pin, and note the Firefox 160 fix (@plum117)
 - **PR #16488** (closed): docs(v9): explain when the CLI reads spec paths from stdin (@singhaditya21)
 - **PR #16487** (closed): fix(@wdio/mocha-framework): respect custom Mocha interfaces on v9 (@singhaditya21)
 - **PR #16486** (closed): fix(@wdio/mocha-framework): respect custom Mocha interfaces (@singhaditya21)
 - **PR #16485** (closed): docs: explain when the CLI reads spec paths from stdin (@singhaditya21)
 - **PR #16484** (closed): docs(v9): explain the spec job counts in onComplete (@singhaditya21)
-- **PR #16483** (closed): docs: explain the spec job counts in onComplete (@singhaditya21)
 
 ---
 
@@ -467,37 +524,35 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs(devtools): describe how the test tree shows retries and failed Cucumber hoo
+## X. test(e2e): run Chrome stable in place of the Chrome 155 pin, and note the Firefo
 
 **RULE**:
-When implementing operations in `website/docs/devtools/Wdio.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in webdriverio/webdriverio. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `e2e/session/live-web.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in webdriverio/webdriverio. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `68055ce4`: docs(devtools): describe how the test tree shows retries and failed Cucumber hooks. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `cfd6c6b2`: test(e2e): run Chrome stable in place of the Chrome 155 pin, and note the Firefox 160 fix. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `website/docs/devtools/Wdio.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `e2e/session/live-web.test.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-## Test tree
-
-The sidebar lists each spec's suites and tests (each Cucumber feature's scenarios and steps) as they run, the same on WebdriverIO 9 and 10.
-
-- **Retries.** A retried test is one row. Its next attempt replaces the failed one in place, and the row shows the final attempt's result with its retry count; for a Cucumber scenario retried with `cucumberOpts.retry`, the count is on the scenario. The failed attempt is still recorded, so the retry-aware `tracePolicy` values see it.
-- **Failed Cucumber hooks.** A hook fails no step, so a failed `BeforeAll` or `AfterAll` shows as a failed row of its feature (an `AfterAll` below the scenarios), and a failed `Before` or `After` as a failed row of its scenario, carrying the hook's error. Each failed hook is a row of its own, titled with its position among the hooks of that kind on the same feature or scenario, whether those passed or failed: the second `After` hook is `After #2` even when the first passed. When a retried scenario runs again, the failed hooks of the earlier attempt leave the tree with the rest of that attempt. Mocha and Jasmine hooks are left to the framework's own reporting.
-
+        // the runner images still have Chrome 157, which hangs BiDi in a `window.open` tab
+        // (https://issues.chromium.org/issues/571161446). On 2026-12-01, if the runner Chrome is 158+, remove `stable` and `no-sandbox`.
+        await run('open', 'chrome', `${server.url}/live.html`, '--browser-version', 'stable', ...sandbox)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+        // Chrome 156 and 157 hang every BiDi command in a tab that `window.open` opened: https://issues.chromium.org/issues/571161446
+        // Fixed in Chrome 158 (https://chromium-review.googlesource.com/c/chromium/src/+/8574800): remove the pin then.
+        await run('open', 'chrome', `${server.url}/live.html`, '--browser-version', '155', ...sandbox)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `68055ce4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `cfd6c6b2` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -46,8 +46,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-25T00:16:55.030Z",
-    "lastVerified": "2026-11-25T00:16:55.030Z",
+    "lastChecked": "2026-11-25T00:52:06.661Z",
+    "lastVerified": "2026-11-25T00:52:06.661Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-25T00:43:45.930Z",
-    "lastVerified": "2026-11-25T00:43:45.931Z",
+    "lastChecked": "2026-11-25T00:52:06.671Z",
+    "lastVerified": "2026-11-25T00:52:06.671Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -253,8 +253,8 @@
     "officialUrl": "https://github.com/microsoft/agent-governance-toolkit",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-24T20:04:20.354Z",
-    "lastVerified": "2026-11-24T20:04:20.354Z",
+    "lastChecked": "2026-11-25T00:52:01.758Z",
+    "lastVerified": "2026-11-25T00:52:01.758Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-microsoft-agent-governance-toolkit",
@@ -2867,9 +2867,9 @@
   "zilliztech-attu": {
     "name": "attu",
     "officialUrl": "https://github.com/zilliztech/attu",
-    "lastChecked": "2026-11-24T04:37:03.147Z",
+    "lastChecked": "2026-11-25T00:52:04.172Z",
     "revisionIdentifier": "d51e1c78",
-    "lastVerified": "2026-11-24T04:37:03.147Z"
+    "lastVerified": "2026-11-25T00:52:04.172Z"
   },
   "1jehuang-jcode": {
     "name": "1jehuang/jcode",
@@ -5125,12 +5125,12 @@
     "lastVerified": "2026-11-24T17:51:52.641Z"
   },
   "saltstack-salt": {
-    "name": "saltstack/salt",
+    "name": "salt",
     "officialUrl": "https://github.com/saltstack/salt",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-24T06:11:17.644Z",
-    "lastVerified": "2026-11-24T06:11:17.644Z",
+    "lastChecked": "2026-11-25T00:51:59.491Z",
+    "lastVerified": "2026-11-25T00:51:59.491Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-saltstack-salt",
@@ -5139,7 +5139,8 @@
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "55df51a7"
   },
   "gluesql-gluesql": {
     "name": "gluesql/gluesql",
@@ -7769,9 +7770,9 @@
   "kosi-libs-kodein": {
     "name": "Kodein",
     "officialUrl": "https://github.com/kosi-libs/Kodein",
-    "lastChecked": "2026-11-22T11:14:17.350Z",
+    "lastChecked": "2026-11-25T00:51:56.685Z",
     "revisionIdentifier": "8ef0da27",
-    "lastVerified": "2026-11-22T11:14:17.350Z"
+    "lastVerified": "2026-11-25T00:51:56.685Z"
   },
   "hf-autotrust-gev-26b-decide-nvfp4": {
     "name": "autotrust/GEV-26B-Decide-NVFP4",
@@ -8244,14 +8245,14 @@
     "officialUrl": "https://github.com/agent-of-empires/agent-of-empires",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-23T21:56:59.424Z",
-    "lastVerified": "2026-11-23T21:56:59.424Z",
+    "lastChecked": "2026-11-25T00:51:55.670Z",
+    "lastVerified": "2026-11-25T00:51:55.670Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-agent-of-empires-agent-of-empires",
-    "contentHash": "39ff4df6afe7fc21fa3a767bd57fa02c15389142972090e9a1d3607a3fe7bfe6",
+    "contentHash": "e6d287dbb7f138cf4caa502486ba873929fde494ac2095718e6e3e2309bb3485",
     "promotedRulesCount": 1,
-    "recentFixesCount": 14,
+    "recentFixesCount": 13,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -11960,14 +11961,14 @@
     "officialUrl": "https://github.com/webdriverio/webdriverio",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-21T01:16:23.079Z",
-    "lastVerified": "2026-11-21T01:16:23.079Z",
+    "lastChecked": "2026-11-25T00:51:57.847Z",
+    "lastVerified": "2026-11-25T00:51:57.847Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-webdriverio-webdriverio",
-    "contentHash": "d5e39396c082cb72d0fd95f17c3ba756354e70d61c797b0e59401a7210a97a8b",
-    "promotedRulesCount": 0,
-    "recentFixesCount": 0,
+    "contentHash": "5a6ec9c63b1c4a90cee8474e1fd07b499c08bf9d7766dc63c500f15d80731702",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

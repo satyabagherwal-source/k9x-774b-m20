@@ -1953,10 +1953,10 @@
     "repository": "webdriverio/webdriverio",
     "platform": "github",
     "sourceUrl": "https://github.com/webdriverio/webdriverio",
-    "sourceVersion": "68055ce4",
+    "sourceVersion": "cfd6c6b2",
     "license": "MIT",
-    "contentHash": "d5e39396c082cb72d0fd95f17c3ba756354e70d61c797b0e59401a7210a97a8b",
-    "lastHarvestedAt": "2026-11-21T01:16:23.660Z",
+    "contentHash": "5a6ec9c63b1c4a90cee8474e1fd07b499c08bf9d7766dc63c500f15d80731702",
+    "lastHarvestedAt": "2026-11-25T00:51:59.048Z",
     "learningId": "learn-github-webdriverio-webdriverio"
   },
   "rubenverborgh-sparql.js": {
@@ -7443,10 +7443,10 @@
     "repository": "agent-of-empires/agent-of-empires",
     "platform": "github",
     "sourceUrl": "https://github.com/agent-of-empires/agent-of-empires",
-    "sourceVersion": "b33999ea",
+    "sourceVersion": "a6717a44",
     "license": "MIT",
-    "contentHash": "39ff4df6afe7fc21fa3a767bd57fa02c15389142972090e9a1d3607a3fe7bfe6",
-    "lastHarvestedAt": "2026-11-23T21:57:00.502Z",
+    "contentHash": "e6d287dbb7f138cf4caa502486ba873929fde494ac2095718e6e3e2309bb3485",
+    "lastHarvestedAt": "2026-11-25T00:51:56.995Z",
     "learningId": "learn-github-agent-of-empires-agent-of-empires"
   },
   "nativescript-nativescript": {

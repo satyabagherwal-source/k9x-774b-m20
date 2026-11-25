@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T00:43:50.494Z",
+  "last_updated": "2026-11-25T00:52:41.552Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-24T21:53:47.661Z",
@@ -8,7 +8,7 @@
       "staged_for_review": 1
     },
     "zvec-ai-zvec-grep-learnings.md": {
-      "processed_at": "2026-11-24T23:41:59.770Z",
+      "processed_at": "2026-11-25T00:52:40.147Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1203,9 +1203,9 @@
       "staged_for_review": 1
     },
     "webdriverio-webdriverio-learnings.md": {
-      "processed_at": "2026-11-21T01:16:30.669Z",
-      "promoted_canonical": 0,
-      "staged_for_review": 1
+      "processed_at": "2026-11-25T00:52:38.906Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     },
     "devexpress-testcafe-learnings.md": {
       "processed_at": "2026-11-12T15:25:51.481Z",
@@ -1378,7 +1378,7 @@
       "staged_for_review": 1
     },
     "agent-of-empires-agent-of-empires-learnings.md": {
-      "processed_at": "2026-11-23T21:57:09.519Z",
+      "processed_at": "2026-11-25T00:52:06.829Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3883,7 +3883,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 3990,
-  "total_canonical_promoted": 523,
-  "total_staged_for_review": 3047
+  "total_dossiers_evaluated": 3993,
+  "total_canonical_promoted": 524,
+  "total_staged_for_review": 3049
 }

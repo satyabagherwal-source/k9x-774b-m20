@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-25T00:43:50.348Z",
+  "last_updated": "2026-11-25T00:52:41.380Z",
   "total_verified_learnings": 9107,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25078,
+  "total_items": 25085,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112066,9 +112066,9 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "abb33d45520ba91415cab28d63f5c739b055c9ab390a889af3a70163878795ec",
+      "content_hash": "414d004fa552ab1aa527ceecf7adc0372a4d96607c4cd062dfb51d0bb8032167",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T23:42:00.337Z"
+      "persisted_at": "2026-11-25T00:52:40.988Z"
     },
     "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona",
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "3e54e5afdce29723c4c0a44d45ea7be6151c3a3b401016ca71bf50ba4852c60b",
+      "content_hash": "17b679f85b60bd03bcef978eecab27803ff496ffb3ae9018dc4b52a37c9ac4eb",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T23:42:00.507Z"
+      "persisted_at": "2026-11-25T00:52:41.203Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "b7a3f274e3df450ba235851b17740990939a6ed4e86c72fe53e24924269fdd1e",
+      "content_hash": "28fa4430a7e14032b2b5dc6e7ffc2282ea83ac33dbe2e272e727e074e55ccfa5",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T23:42:00.639Z"
+      "persisted_at": "2026-11-25T00:52:41.380Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -231451,8 +231451,8 @@
       "slug": "agent-of-empires-agent-of-empires",
       "platform": "github",
       "source_url": "https://github.com/agent-of-empires/agent-of-empires",
-      "source_version": "b33999ea",
-      "content_hash": "39ff4df6afe7fc21fa3a767bd57fa02c15389142972090e9a1d3607a3fe7bfe6",
+      "source_version": "a6717a44",
+      "content_hash": "e6d287dbb7f138cf4caa502486ba873929fde494ac2095718e6e3e2309bb3485",
       "dossier_path": "07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md",
       "promoted_rules": [
@@ -231490,6 +231490,11 @@
           "number": 10131,
           "title": "bound pre-consent staging disk use",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10408,
+          "title": "throttle structured view persistence and cache per-chunk work",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -231497,7 +231502,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T21:57:00.289Z",
+      "verified_at": "2026-11-25T00:51:56.761Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -231552,9 +231557,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for agent-of-empires-agent-of-empires-learnings",
       "repository": "agent-of-empires-agent-of-empires-learnings",
       "source_version": "HEAD",
-      "content_hash": "6a41a2ec28b6bc4c504541b2efbee2514922a726fd9f14037c780ad14e25ecf7",
+      "content_hash": "86e500535d4aa890f6969f4b4d05dcec5e31ce3c5245cdf89d42047b8ecaa27d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T21:57:10.095Z"
+      "persisted_at": "2026-11-25T00:52:07.737Z"
     },
     "learn-github-koderover-zadig": {
       "learning_id": "learn-github-koderover-zadig",
@@ -271875,14 +271880,19 @@
       "slug": "webdriverio-webdriverio",
       "platform": "github",
       "source_url": "https://github.com/webdriverio/webdriverio",
-      "source_version": "68055ce4",
-      "content_hash": "d5e39396c082cb72d0fd95f17c3ba756354e70d61c797b0e59401a7210a97a8b",
+      "source_version": "cfd6c6b2",
+      "content_hash": "5a6ec9c63b1c4a90cee8474e1fd07b499c08bf9d7766dc63c500f15d80731702",
       "dossier_path": "07_PROJECT_LEARNING/webdriverio-webdriverio-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/webdriverio-webdriverio-learnings.md",
       "promoted_rules": [
         {
           "number": 8893,
           "title": "update remaining LambdaTest references to TestMu AI",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10409,
+          "title": "test(e2e): run Chrome stable in place of the Chrome 155 pin, and note the Firefo",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -271891,7 +271901,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T01:16:23.450Z",
+      "verified_at": "2026-11-25T00:51:58.774Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -271945,10 +271955,10 @@
       "relative_path": "08_VERIFICATION/webdriverio-webdriverio-verification-protocol-empirical-defect-shield-for-webdri.md",
       "title": "Verification Protocol: Empirical Defect Shield for webdriverio/webdriverio",
       "repository": "webdriverio/webdriverio",
-      "source_version": "68055ce4",
-      "content_hash": "6107ad5e24c0d0ad5f451143962a7d2158faf6f792b6092aa605026515702ef4",
+      "source_version": "cfd6c6b2",
+      "content_hash": "0053ab2922baed89a00e13d048cef305c73403012344c9e1035f3da6b058dc19",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T01:16:24.182Z"
+      "persisted_at": "2026-11-25T00:51:59.750Z"
     },
     "learn-github-kirillzyusko-react-native-keyboard-controller": {
       "learning_id": "learn-github-kirillzyusko-react-native-keyboard-controller",
@@ -272046,9 +272056,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for webdriverio-webdriverio-learnings",
       "repository": "webdriverio-webdriverio-learnings",
       "source_version": "HEAD",
-      "content_hash": "0bece62fbed3bd0f28bab2324df432c2fd83c8d54b3fd9e50a8672a3f4b5a127",
+      "content_hash": "900f968fa9e2099158a039b7d371998caa8b7c55173aff2eeb9e67b5c018cf23",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T01:16:31.192Z"
+      "persisted_at": "2026-11-25T00:52:39.936Z"
     },
     "learn-github-mdiri-ai-soduwork": {
       "learning_id": "learn-github-mdiri-ai-soduwork",
@@ -281562,10 +281572,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-agent-of-empires-agent-of-empires-technical-construction-intelligence-agent-of-e.md",
       "title": "Technical Construction Intelligence: agent-of-empires/agent-of-empires Core Invariants",
       "repository": "agent-of-empires/agent-of-empires",
-      "source_version": "593655e0",
-      "content_hash": "44f50defd1c024b8fd350579ed069b795565ad22c18e3981210e43dfe291475e",
+      "source_version": "a6717a44",
+      "content_hash": "b208c047c7593ef90c8f3eb73c5a969230ea0ecab7e72887f6b2311e52a341fe",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T14:20:20.089Z"
+      "persisted_at": "2026-11-25T00:51:57.475Z"
     },
     "candidate_directive-plugin-avoid-blocking-runtime-on-asset-downloads": {
       "item_id": "candidate_directive-plugin-avoid-blocking-runtime-on-asset-downloads",
@@ -281587,9 +281597,9 @@
       "title": "Technical Construction Intelligence: agent-of-empires-agent-of-empires-learnings Core Invariants",
       "repository": "agent-of-empires-agent-of-empires-learnings",
       "source_version": "HEAD",
-      "content_hash": "72ec6e80a6d3eceab540d03976fccde8e7265ab1b2ac9614b01ba2883146eb8c",
+      "content_hash": "b32278a733d5cf58fff4cebb2c77df761e26b4ca9ae8ab82ecccb1077153d84a",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T14:20:29.123Z"
+      "persisted_at": "2026-11-25T00:52:07.386Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-xhtoken-spark-x2-6-4b-gguf-learnings-core-inv": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-xhtoken-spark-x2-6-4b-gguf-learnings-core-inv",
@@ -313167,10 +313177,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-webdriverio-webdriverio-quality-verification-intelligence-webdriverio-webdriveri.md",
       "title": "Quality & Verification Intelligence: webdriverio/webdriverio Core Invariants",
       "repository": "webdriverio/webdriverio",
-      "source_version": "68055ce4",
-      "content_hash": "e7f0a397c7e380aca61619bee2aff8492ff709740f9f31c77c08f23ff7fd1a62",
+      "source_version": "cfd6c6b2",
+      "content_hash": "eab90bdb17372180147ac34879af6e18c9195f5b9f465e6003e8befe8a995fcd",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T01:16:24.033Z"
+      "persisted_at": "2026-11-25T00:51:59.532Z"
     },
     "domain_intelligence-quality-verification-intelligence-webdriverio-webdriverio-learnings-core-invaria": {
       "item_id": "domain_intelligence-quality-verification-intelligence-webdriverio-webdriverio-learnings-core-invaria",
@@ -313180,9 +313190,9 @@
       "title": "Quality & Verification Intelligence: webdriverio-webdriverio-learnings Core Invariants",
       "repository": "webdriverio-webdriverio-learnings",
       "source_version": "HEAD",
-      "content_hash": "f70c31c6f299c70a4f32f3a5a4618baa73e60c2156e53ad7329234877d19e8ff",
+      "content_hash": "44cb5126af185ca9a4327c33ce0f0b4647e02899f55df4554599f5c9b598859b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T01:16:31.026Z"
+      "persisted_at": "2026-11-25T00:52:39.656Z"
     },
     "rule-9690": {
       "learning_id": "rule-9690",
@@ -341882,13 +341892,13 @@
       "item_id": "candidate_directive-rust-bind-bare-calls-to-the-enclosing-module-s-items",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-A1GV-rust-bind-bare-calls-to-the-enclosing-module-s-items.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-SXJ1-rust-bind-bare-calls-to-the-enclosing-module-s-items.md",
       "title": "rust): bind bare calls to the enclosing module's items",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "94295c0157ee082ca5eddfe51f8900b405b1a898d6df51f7a2464860df977f23",
+      "content_hash": "d439d6b7a7003737961908d42ce99765bcafabba4f7ac86ef4b05d5487fd6a0a",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T23:42:00.178Z"
+      "persisted_at": "2026-11-25T00:52:40.778Z"
     },
     "domain_intelligence-content-information-intelligence-rollup-rollup-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-rollup-rollup-learnings-core-invariants",
@@ -342759,6 +342769,94 @@
       "content_hash": "0c6f7c71cfb4ccc6007ea2fdf2002b62b6b6b97b27f7ccf25fed77d8c2fd0f84",
       "domain_letter": "H",
       "persisted_at": "2026-11-25T00:43:48.154Z"
+    },
+    "rule-10408": {
+      "learning_id": "rule-10408",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10408,
+      "title": "throttle structured view persistence and cache per-chunk work",
+      "source_url": "https://github.com/agent-of-empires/agent-of-empires",
+      "source_version": "a6717a44",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T00:51:56.761Z"
+    },
+    "candidate_directive-throttle-structured-view-persistence-and-cache-per-chunk-work": {
+      "item_id": "candidate_directive-throttle-structured-view-persistence-and-cache-per-chunk-work",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-RZZ0-throttle-structured-view-persistence-and-cache-per-chunk-work.md",
+      "title": "throttle structured view persistence and cache per-chunk work",
+      "repository": "agent-of-empires/agent-of-empires",
+      "source_version": "a6717a44",
+      "content_hash": "58eac495a99c8f9310f4e53e5e88ec3bd5271eb3958ed5d5160c59a01549afaa",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-25T00:51:57.282Z"
+    },
+    "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-agent-of-empires-agent-of-empires": {
+      "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-agent-of-empires-agent-of-empires",
+      "artifact_type": "architecture_decision",
+      "target_folder": "12_DECISIONS",
+      "relative_path": "12_DECISIONS/ADR-agent-of-empires-agent-of-empires-adr-subsystem-boundary-modular-decoupling-in-a.md",
+      "title": "ADR: Subsystem Boundary & Modular Decoupling in agent-of-empires/agent-of-empires",
+      "repository": "agent-of-empires/agent-of-empires",
+      "source_version": "a6717a44",
+      "content_hash": "017dc2e706de72ba1ae2e7de7c319f866dd3155ac24ad958078533671bf65efb",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-25T00:51:57.691Z"
+    },
+    "rule-10409": {
+      "learning_id": "rule-10409",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10409,
+      "title": "test(e2e): run Chrome stable in place of the Chrome 155 pin, and note the Firefo",
+      "source_url": "https://github.com/webdriverio/webdriverio",
+      "source_version": "cfd6c6b2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T00:51:58.774Z"
+    },
+    "candidate_directive-test-e2e-run-chrome-stable-in-place-of-the-chrome-155-pin-and-note-the-firefo": {
+      "item_id": "candidate_directive-test-e2e-run-chrome-stable-in-place-of-the-chrome-155-pin-and-note-the-firefo",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-SWI7-test-e2e-run-chrome-stable-in-place-of-the-chrome-155-pin-and-note-the-firefo.md",
+      "title": "test(e2e): run Chrome stable in place of the Chrome 155 pin, and note the Firefo",
+      "repository": "webdriverio-webdriverio-learnings",
+      "source_version": "HEAD",
+      "content_hash": "c9016c6a96debcb9b4137948d309ae0a626bd56b8b54b7b87f08a09924235849",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-25T00:52:39.440Z"
+    },
+    "candidate_directive-web-throttle-structured-view-persistence-and-cache-per-chunk-work": {
+      "item_id": "candidate_directive-web-throttle-structured-view-persistence-and-cache-per-chunk-work",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-S7M7-web-throttle-structured-view-persistence-and-cache-per-chunk-work.md",
+      "title": "web): throttle structured view persistence and cache per-chunk work",
+      "repository": "agent-of-empires-agent-of-empires-learnings",
+      "source_version": "HEAD",
+      "content_hash": "8de12bd04252f0012c365f5ed7451f3cbaa40ebc653b4a875a3a1df0ff5daa66",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-25T00:52:07.189Z"
+    },
+    "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-agent-of-empires-agent-of-empires-l": {
+      "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-agent-of-empires-agent-of-empires-l",
+      "artifact_type": "architecture_decision",
+      "target_folder": "12_DECISIONS",
+      "relative_path": "12_DECISIONS/ADR-agent-of-empires-agent-of-empires-learnings-adr-subsystem-boundary-modular-decou.md",
+      "title": "ADR: Subsystem Boundary & Modular Decoupling in agent-of-empires-agent-of-empires-learnings",
+      "repository": "agent-of-empires-agent-of-empires-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ba8c489bf726aa0e8d5b47e54e01d6092fbea53aa5bf6fdc7dd473b81d6b54cc",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-25T00:52:07.574Z"
     }
   },
   "ai-builder-brain": {

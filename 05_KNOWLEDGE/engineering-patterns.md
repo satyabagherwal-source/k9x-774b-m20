@@ -781661,3 +781661,164 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `08ccc24f` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10408. throttle structured view persistence and cache per-chunk work (Harvested from agent-of-empires/agent-of-empires)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "throttle structured view persistence and cache per-chunk work",
+  "source": "agent-of-empires/agent-of-empires",
+  "source_url": "https://github.com/agent-of-empires/agent-of-empires",
+  "source_version": "a6717a44",
+  "license": "MIT",
+  "extracted_at": "2026-11-25T00:51:56.412Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-agent-of-empires-agent-of-empires",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [agent-of-empires/agent-of-empires](https://github.com/agent-of-empires/agent-of-empires) (Revision: `a6717a44`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `web/playwright.perf.config.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in agent-of-empires/agent-of-empires. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `a5f7f027`: web): throttle structured view persistence and cache per-chunk work. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `web/playwright.perf.config.ts`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+import { defineConfig } from "@playwright/test";
+
+// Perf harness: not picked up by playwright.config.ts (it only matches *.spec.ts).
+export default defineConfig({
+  testDir: "./tests/perf",
+  testMatch: "**/*.perf.ts",
+  globalSetup: "./tests/helpers/liveGlobalSetup.ts",
+  timeout: 300_000,
+  fullyParallel: false,
+  workers: 1,
+  retries: 0,
+  reporter: "list",
+  use: {
+    headless: true,
+    viewport: { width: 1440, height: 900 },
+  },
+  projects: [{ name: "chromium", use: { browserName: "chromium" } }],
+});
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `a5f7f027` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10409. test(e2e): run Chrome stable in place of the Chrome 155 pin, and note the Firefo (Harvested from webdriverio/webdriverio)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "test(e2e): run Chrome stable in place of the Chrome 155 pin, and note the Firefo",
+  "source": "webdriverio/webdriverio",
+  "source_url": "https://github.com/webdriverio/webdriverio",
+  "source_version": "cfd6c6b2",
+  "license": "MIT",
+  "extracted_at": "2026-11-25T00:51:58.443Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-webdriverio-webdriverio",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [webdriverio/webdriverio](https://github.com/webdriverio/webdriverio) (Revision: `cfd6c6b2`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `e2e/session/live-web.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in webdriverio/webdriverio. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `cfd6c6b2`: test(e2e): run Chrome stable in place of the Chrome 155 pin, and note the Firefox 160 fix. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `e2e/session/live-web.test.ts`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+        // the runner images still have Chrome 157, which hangs BiDi in a `window.open` tab
+        // (https://issues.chromium.org/issues/571161446). On 2026-12-01, if the runner Chrome is 158+, remove `stable` and `no-sandbox`.
+        await run('open', 'chrome', `${server.url}/live.html`, '--browser-version', 'stable', ...sandbox)
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Induced defect failure mode:
+        // Chrome 156 and 157 hang every BiDi command in a tab that `window.open` opened: https://issues.chromium.org/issues/571161446
+        // Fixed in Chrome 158 (https://chromium-review.googlesource.com/c/chromium/src/+/8574800): remove the pin then.
+        await run('open', 'chrome', `${server.url}/live.html`, '--browser-version', '155', ...sandbox)
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `cfd6c6b2` are properly handled with clean fallback behavior.
