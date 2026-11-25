@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-25T14:41:43.672Z",
+  "last_updated": "2026-11-25T14:50:22.874Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5481,14 +5481,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-peerdb-io-peerdb",
-      "content_hash": "9f66763509172d13ca34d17c861eaa43a9b872ae0e3292153eb10dcf74e843cf",
-      "verified_at": "2026-11-24T20:38:36.490Z",
+      "content_hash": "c83614ecbe8985bc54f641e2638298296a902469c97ede71a829b9e56b0fdbd2",
+      "verified_at": "2026-11-25T14:50:22.874Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T20:38:36.490Z"
+      "last_updated": "2026-11-25T14:50:22.874Z"
     },
     "tailscale/tailscale": {
       "repository": "tailscale/tailscale",
@@ -17601,14 +17601,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-obliteratus-deepseek-v4-1-flash-1017-obliterated",
-      "content_hash": "0b89a22d536d0b7f5c342d998d504e9f83819c1ec0c786f93123034a5c17e18a",
-      "verified_at": "2026-11-21T23:39:37.323Z",
+      "content_hash": "9395c686bfb44488c130f4e6f7fa4f3fbe2f5fa73f176b5e6664e8f3426d4a2f",
+      "verified_at": "2026-11-25T14:50:12.386Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T23:39:37.323Z"
+      "last_updated": "2026-11-25T14:50:12.386Z"
     },
     "burner22/numbat": {
       "repository": "burner22/numbat",

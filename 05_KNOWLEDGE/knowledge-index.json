@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-25T14:41:56.454Z",
+  "last_updated": "2026-11-25T14:50:29.016Z",
   "total_verified_learnings": 9118,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25485,
+  "total_items": 25487,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "a5a33320eb69107a454be98dd8ab447c1108f084da052a9910a24c3ab09d5bef",
+      "content_hash": "820e4ddb88fdcd85a901f9e101a713b0bd0e09baad3727307cf46dec14b27777",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T13:40:09.424Z"
+      "persisted_at": "2026-11-25T14:50:28.811Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "dea69fd2524e9742380ab7156f78a85bc4229a25a28b6b49aeb4c9fedb2c9e47",
+      "content_hash": "03ee806f90a2872de317e0d1cbf6b64db8a059dee619558f23d2f4ba9356fe67",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T13:40:09.605Z"
+      "persisted_at": "2026-11-25T14:50:29.016Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -231392,8 +231392,8 @@
       "slug": "peerdb-io-peerdb",
       "platform": "github",
       "source_url": "https://github.com/PeerDB-io/peerdb",
-      "source_version": "e8b30c7d",
-      "content_hash": "9f66763509172d13ca34d17c861eaa43a9b872ae0e3292153eb10dcf74e843cf",
+      "source_version": "cec4a6e5",
+      "content_hash": "c83614ecbe8985bc54f641e2638298296a902469c97ede71a829b9e56b0fdbd2",
       "dossier_path": "07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md",
       "promoted_rules": [
@@ -231436,6 +231436,11 @@
           "number": 10357,
           "title": "unblock and skip and report on error for pgdump",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10543,
+          "title": "Renovate config: Comments link to tracking issue",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -231443,7 +231448,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T20:38:36.261Z",
+      "verified_at": "2026-11-25T14:50:22.588Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -231497,10 +231502,10 @@
       "relative_path": "08_VERIFICATION/peerdb-io-peerdb-verification-protocol-empirical-defect-shield-for-peerdb-io-pee.md",
       "title": "Verification Protocol: Empirical Defect Shield for PeerDB-io/peerdb",
       "repository": "PeerDB-io/peerdb",
-      "source_version": "e8b30c7d",
-      "content_hash": "3889016523a3d2d8cda1f595515e613b9d14003f2a57cafb349382e2fec1d9eb",
+      "source_version": "cec4a6e5",
+      "content_hash": "578faadf3c88a94bfc6521a7ed6aa56449f5cd0324845ff3ecd3322ac08fbc94",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T20:38:37.062Z"
+      "persisted_at": "2026-11-25T14:50:23.596Z"
     },
     "domain_intelligence-deployment-operations-intelligence-bahdotsh-wrkflw-learnings-core-invariants": {
       "item_id": "domain_intelligence-deployment-operations-intelligence-bahdotsh-wrkflw-learnings-core-invariants",
@@ -247453,7 +247458,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated",
       "source_version": "hf-obliteratus-deepseek-v4.1-flash-1017-obliterated",
-      "content_hash": "0b89a22d536d0b7f5c342d998d504e9f83819c1ec0c786f93123034a5c17e18a",
+      "content_hash": "9395c686bfb44488c130f4e6f7fa4f3fbe2f5fa73f176b5e6664e8f3426d4a2f",
       "dossier_path": "07_PROJECT_LEARNING/hf-obliteratus-deepseek-v4.1-flash-1017-obliterated-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-obliteratus-deepseek-v4.1-flash-1017-obliterated-learnings.md",
       "promoted_rules": [
@@ -247478,7 +247483,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T23:39:37.076Z",
+      "verified_at": "2026-11-25T14:50:12.117Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -286552,10 +286557,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-peerdb-io-peerdb-architecture-intelligence-peerdb-io-peerdb-core-invariants.md",
       "title": "Architecture Intelligence: PeerDB-io/peerdb Core Invariants",
       "repository": "PeerDB-io/peerdb",
-      "source_version": "e8b30c7d",
-      "content_hash": "27741b2b21409461a4a634f92b8cb4247681d13115d8f12d6bfc2154a7219798",
+      "source_version": "cec4a6e5",
+      "content_hash": "ef9fa28c5d87b877b3d7b3ac32500dde239531a469c301080845e0e01c4e2d62",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T20:38:36.879Z"
+      "persisted_at": "2026-11-25T14:50:23.400Z"
     },
     "candidate_directive-postgres-keep-sql-null-elements-of-a-json-add-column-default-as-null-on-nulla": {
       "item_id": "candidate_directive-postgres-keep-sql-null-elements-of-a-json-add-column-default-as-null-on-nulla",
@@ -286577,9 +286582,9 @@
       "title": "Architecture Intelligence: peerdb-io-peerdb-learnings Core Invariants",
       "repository": "peerdb-io-peerdb-learnings",
       "source_version": "HEAD",
-      "content_hash": "b77652b69608b794589ca5e9c7d133662dcb91515e65ce86d5c3e5d957116111",
+      "content_hash": "441e3df7e825b612a215dbb64b033d39f5717cf3bac46cee56950b646d090b10",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T20:38:45.090Z"
+      "persisted_at": "2026-11-25T14:50:27.754Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-peerdb-io-peerdb-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-peerdb-io-peerdb-learnings",
@@ -286589,9 +286594,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for peerdb-io-peerdb-learnings",
       "repository": "peerdb-io-peerdb-learnings",
       "source_version": "HEAD",
-      "content_hash": "f9e7fe178534c6b61600ed94df979a0a5014c40ac50dbb0e12dc34cf6267dfae",
+      "content_hash": "c8c960197449d2c09db9da79c1c2dd96cc7c99f8f3a9748d5d3acb59cdfc4ac3",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T20:38:45.257Z"
+      "persisted_at": "2026-11-25T14:50:27.994Z"
     },
     "learn-huggingface-comfy-org-wan-2-2": {
       "learning_id": "learn-huggingface-comfy-org-wan-2-2",
@@ -320796,9 +320801,9 @@
       "title": "Research & Knowledge Intelligence: OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated Core Invariants",
       "repository": "OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated",
       "source_version": "hf-obliteratus-deepseek-v4.1-flash-1017-obliterated",
-      "content_hash": "8f552326d1dc407373d1981e1220a593ee7bf5cdfb3e8b9910fbccca36a7ba75",
+      "content_hash": "8c62948f9dd4acbea74b5541dd203e1afa934168617961b7107e3e89515e722b",
       "domain_letter": "D",
-      "persisted_at": "2026-11-21T23:39:37.518Z"
+      "persisted_at": "2026-11-25T14:50:12.637Z"
     },
     "rule-9869": {
       "learning_id": "rule-9869",
@@ -320834,9 +320839,9 @@
       "title": "Research & Knowledge Intelligence: hf-obliteratus-deepseek-v4.1-flash-1017-obliterated-learnings Core Invariants",
       "repository": "hf-obliteratus-deepseek-v4.1-flash-1017-obliterated-learnings",
       "source_version": "HEAD",
-      "content_hash": "058a391ac3a61b63c76df222f321e98a237df5b4def4336b34f15c2ae0e24af6",
+      "content_hash": "9dda27b7d4c1a29cf5713be522e6eae5d19982a7f72b7cf5e7e14554fd9af01a",
       "domain_letter": "D",
-      "persisted_at": "2026-11-21T23:39:49.556Z"
+      "persisted_at": "2026-11-25T14:50:26.767Z"
     },
     "rule-9870": {
       "learning_id": "rule-9870",
@@ -339594,13 +339599,13 @@
       "item_id": "candidate_directive-deps-bump-url-to-2-5-9-and-heapless-to-0-9-4",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-7WRE-deps-bump-url-to-2-5-9-and-heapless-to-0-9-4.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-QCEN-deps-bump-url-to-2-5-9-and-heapless-to-0-9-4.md",
       "title": "deps): bump url to 2.5.9 and heapless to 0.9.4",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "2898ea678f41594172a33c13a0bc45a3b25e98d08c446a64dd05ae398f3eec13",
+      "content_hash": "69202d7aa2e09fd7929c8d8bb6c227cb39198448252464b658273f7be17c81ff",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T13:40:09.246Z"
+      "persisted_at": "2026-11-25T14:50:28.564Z"
     },
     "rule-10315": {
       "learning_id": "rule-10315",
@@ -348783,6 +348788,32 @@
       "content_hash": "17884787db19b4d4ebccece70230eea14e4eed334ef63f87afcfb4949842231d",
       "domain_letter": "G",
       "persisted_at": "2026-11-25T14:41:54.919Z"
+    },
+    "rule-10543": {
+      "learning_id": "rule-10543",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10543,
+      "title": "Renovate config: Comments link to tracking issue",
+      "source_url": "https://github.com/PeerDB-io/peerdb",
+      "source_version": "cec4a6e5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T14:50:22.588Z"
+    },
+    "candidate_directive-renovate-config-comments-link-to-tracking-issue": {
+      "item_id": "candidate_directive-renovate-config-comments-link-to-tracking-issue",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-QBMU-renovate-config-comments-link-to-tracking-issue.md",
+      "title": "Renovate config: Comments link to tracking issue",
+      "repository": "peerdb-io-peerdb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "9ea0d439aa0d23c0a4c37d16e3ee0730146189df129805544b3cc1b9c23f2e8f",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-25T14:50:27.564Z"
     }
   },
   "ai-builder-brain": {

@@ -13112,3 +13112,5 @@
 | `CYCLE-2026-11-25-PROJ-EVOLVE` | `2026-11-25T14:33:01.864Z` | `okteto-okteto` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-K-2EF72417` [Domain K] | Yes (`f8c93ffb...`) |
 | `CYCLE-20261125-F1AB` | `2026-11-25T14:41:40.931Z` | `Edge0/Audio8-TTS-Realistic-Air` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-edge0-audio8-tts-realistic-air-learnings.md` | Yes (`ea27053e...`) |
 | `CYCLE-20261125-F3DX` | `2026-11-25T14:41:43.653Z` | `pimalaya/himalaya` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10542` | Yes (`f23cd9bb...`) |
+| `CYCLE-20261125-PZWU` | `2026-11-25T14:50:12.366Z` | `OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-obliteratus-deepseek-v4.1-flash-1017-obliterated-learnings.md` | Yes (`9395c686...`) |
+| `CYCLE-20261125-Q804` | `2026-11-25T14:50:22.852Z` | `PeerDB-io/peerdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10543` | Yes (`c83614ec...`) |

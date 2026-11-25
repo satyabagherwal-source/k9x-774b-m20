@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated",
   "source_version": "hf-obliteratus-deepseek-v4.1-flash-1017-obliterated",
   "license": "Open-Source",
-  "timestamp": "2026-11-21T23:39:37.517Z",
+  "timestamp": "2026-11-25T14:50:12.636Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-obliteratus-deepseek-v4-1-flash-1017-obliterated",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated](https://huggingface.co/OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated) (Revision: `hf-obliter`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-21T23:39:37.517Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T14:50:12.636Z`  
 > **Learning ID**: `learn-huggingface-obliteratus-deepseek-v4-1-flash-1017-obliterated`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-obliteratus-deepseek-v4.1-flash-1017-obliterated-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated](https://huggingface.co/OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T23:39:36.701Z  
+> **Harvest Timestamp**: 2026-11-25T14:50:11.638Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 24543 downloads | 308 likes
+- **Stars / Engagement**: 30281 downloads | 315 likes
 
 ---
 

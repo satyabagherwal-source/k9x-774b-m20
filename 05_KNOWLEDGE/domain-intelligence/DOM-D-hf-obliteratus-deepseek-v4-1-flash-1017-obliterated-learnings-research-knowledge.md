@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-21T23:39:49.447Z",
+  "timestamp": "2026-11-25T14:50:26.644Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-hf-obliteratus-deepseek-v4.1-flash-1017-obliterated-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hf-obliteratus-deepseek-v4.1-flash-1017-obliterated-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-21T23:39:49.447Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T14:50:26.644Z`  
 > **Learning ID**: `LEARN-EVO-hf-obliteratus-deepseek-v4.1-flash-1017-obliterated-learnings`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Source Version**: `hf-obliterat`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T23:39:36.808Z  
+> **Timestamp**: 2026-11-25T14:50:11.811Z  
 > **Learning ID**: `learn-huggingface-obliteratus-deepseek-v4-1-flash-1017-obliterated`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-obliteratus-deepseek-v4.1-flash-1017-obliterated-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated](https://huggingface.co/OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T23:39:36.701Z  
+> **Harvest Timestamp**: 2026-11-25T14:50:11.638Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 24543 downloads | 308 likes
+- **Stars / Engagement**: 30281 downloads | 315 likes
 
 ---
 

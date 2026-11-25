@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261124-VIX3",
-    "timestamp": "2026-11-24T02:31:00.231Z",
-    "repository": "rtk-ai/rtk",
-    "learningId": "learn-github-rtk-ai-rtk",
-    "contentHash": "9b96751146a7c5d461c67f307dfec4808038862928992fdf314dedd715eca955",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-VSW4",
-    "timestamp": "2026-11-24T02:31:13.156Z",
-    "repository": "lancedb/lancedb",
-    "learningId": "learn-github-lancedb-lancedb",
-    "contentHash": "82575462f0a39b4b3a9bf6cb10c78d13b9d044f049a88e5bc327110f80566865",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261124-OI99",
     "timestamp": "2026-11-24T02:53:32.397Z",
     "repository": "kirillzyusko/react-native-keyboard-controller",
@@ -7490,6 +7460,36 @@
     "repository": "pimalaya/himalaya",
     "learningId": "learn-github-pimalaya-himalaya",
     "contentHash": "f23cd9bb58f88998c6337f89a6580d5feb8a98bc696dc7e2f3fccad7b7f26234",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-PZWU",
+    "timestamp": "2026-11-25T14:50:12.366Z",
+    "repository": "OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated",
+    "learningId": "learn-huggingface-obliteratus-deepseek-v4-1-flash-1017-obliterated",
+    "contentHash": "9395c686bfb44488c130f4e6f7fa4f3fbe2f5fa73f176b5e6664e8f3426d4a2f",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-Q804",
+    "timestamp": "2026-11-25T14:50:22.852Z",
+    "repository": "PeerDB-io/peerdb",
+    "learningId": "learn-github-peerdb-io-peerdb",
+    "contentHash": "c83614ecbe8985bc54f641e2638298296a902469c97ede71a829b9e56b0fdbd2",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

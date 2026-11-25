@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-25T14:41:52.750Z",
-    "lastVerified": "2026-11-25T14:41:52.750Z",
+    "lastChecked": "2026-11-25T14:50:26.324Z",
+    "lastVerified": "2026-11-25T14:50:26.324Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -287,9 +287,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-25T14:14:35.037Z",
+    "lastChecked": "2026-11-25T14:50:24.287Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-25T14:14:35.037Z"
+    "lastVerified": "2026-11-25T14:50:24.287Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -366,8 +366,8 @@
     "officialUrl": "https://github.com/openziti/zrok",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-25T10:07:25.783Z",
-    "lastVerified": "2026-11-25T10:07:25.783Z",
+    "lastChecked": "2026-11-25T14:50:18.975Z",
+    "lastVerified": "2026-11-25T14:50:18.975Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-openziti-zrok",
@@ -382,9 +382,9 @@
   "run-llama-llama_index": {
     "name": "llama_index",
     "officialUrl": "https://github.com/run-llama/llama_index",
-    "lastChecked": "2026-11-24T19:27:45.062Z",
+    "lastChecked": "2026-11-25T14:50:21.572Z",
     "revisionIdentifier": "99d7433f",
-    "lastVerified": "2026-11-24T19:27:45.062Z"
+    "lastVerified": "2026-11-25T14:50:21.572Z"
   },
   "nucleoidai-nucleoid": {
     "name": "Nucleoid",
@@ -3699,14 +3699,14 @@
     "officialUrl": "https://github.com/PeerDB-io/peerdb",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-24T20:38:35.177Z",
-    "lastVerified": "2026-11-24T20:38:35.177Z",
+    "lastChecked": "2026-11-25T14:50:21.627Z",
+    "lastVerified": "2026-11-25T14:50:21.627Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-peerdb-io-peerdb",
-    "contentHash": "9f66763509172d13ca34d17c861eaa43a9b872ae0e3292153eb10dcf74e843cf",
+    "contentHash": "c83614ecbe8985bc54f641e2638298296a902469c97ede71a829b9e56b0fdbd2",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -4536,9 +4536,9 @@
   "wasm-bindgen-wasm-pack": {
     "name": "wasm-pack",
     "officialUrl": "https://github.com/wasm-bindgen/wasm-pack",
-    "lastChecked": "2026-11-24T14:05:31.454Z",
+    "lastChecked": "2026-11-25T14:50:09.041Z",
     "revisionIdentifier": "c262c330",
-    "lastVerified": "2026-11-24T14:05:31.454Z"
+    "lastVerified": "2026-11-25T14:50:09.041Z"
   },
   "hf-qwen-qwen3.8-flash-next": {
     "name": "Qwen/Qwen3.8-Flash-Next",
@@ -10196,9 +10196,9 @@
   "hi-manshu-charty": {
     "name": "charty",
     "officialUrl": "https://github.com/hi-manshu/charty",
-    "lastChecked": "2026-11-23T07:05:29.613Z",
+    "lastChecked": "2026-11-25T14:50:14.073Z",
     "revisionIdentifier": "c7ba0b05",
-    "lastVerified": "2026-11-23T07:05:29.613Z"
+    "lastVerified": "2026-11-25T14:50:14.073Z"
   },
   "berkaycubuk-kitsune": {
     "name": "kitsune",
@@ -13689,12 +13689,12 @@
     "officialUrl": "https://huggingface.co/OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-21T23:39:36.701Z",
-    "lastVerified": "2026-11-21T23:39:36.701Z",
+    "lastChecked": "2026-11-25T14:50:11.638Z",
+    "lastVerified": "2026-11-25T14:50:11.638Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-obliteratus-deepseek-v4-1-flash-1017-obliterated",
-    "contentHash": "0b89a22d536d0b7f5c342d998d504e9f83819c1ec0c786f93123034a5c17e18a",
+    "contentHash": "9395c686bfb44488c130f4e6f7fa4f3fbe2f5fa73f176b5e6664e8f3426d4a2f",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

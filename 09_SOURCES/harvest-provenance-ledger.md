@@ -13145,3 +13145,5 @@ Every entry in this ledger must capture:
 | `learn-dom-k-2ef72417` | `project://okteto-okteto` | `ea8eb1a4` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/okteto-okteto-learnings.md` | 2026-11-25T14:33:01.864Z |
 | `learn-huggingface-edge0-audio8-tts-realistic-air` | `https://huggingface.co/Edge0/Audio8-TTS-Realistic-Air` | `hf-edge0-a` | Multi-dimensional audit evidence | 2026-11-25T14:41:40.936Z |
 | `learn-github-pimalaya-himalaya` | `https://github.com/pimalaya/himalaya` | `fceae497` | Multi-dimensional audit evidence | 2026-11-25T14:41:43.658Z |
+| `learn-huggingface-obliteratus-deepseek-v4-1-flash-1017-obliterated` | `https://huggingface.co/OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated` | `hf-obliter` | Multi-dimensional audit evidence | 2026-11-25T14:50:12.370Z |
+| `learn-github-peerdb-io-peerdb` | `https://github.com/PeerDB-io/peerdb` | `cec4a6e5` | Multi-dimensional audit evidence | 2026-11-25T14:50:22.856Z |

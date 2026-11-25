@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T20:38:44.792Z",
+  "timestamp": "2026-11-25T14:50:27.426Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-peerdb-io-peerdb-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [peerdb-io-peerdb-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T20:38:44.792Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T14:50:27.426Z`  
 > **Learning ID**: `LEARN-EVO-peerdb-io-peerdb-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 69%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), A (Human & Need Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), L (Deployment & Operations Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 77%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from peerdb-io-peerdb-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md`  
 > **Source**: github ([https://github.com/PeerDB-io/peerdb](https://github.com/PeerDB-io/peerdb))  
-> **Source Version**: `e8b30c7d`  
+> **Source Version**: `cec4a6e5`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T20:38:35.376Z  
+> **Timestamp**: 2026-11-25T14:50:21.633Z  
 > **Learning ID**: `learn-github-peerdb-io-peerdb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/PeerDB-io/peerdb](https://github.com/PeerDB-io/peerdb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T20:38:35.177Z  
+> **Harvest Timestamp**: 2026-11-25T14:50:21.627Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1907,335 +1907,348 @@ func getChainedRoleSessionName() string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e8b30c7d` (2026-11-24)
-**Commit Message**: fix(pg-pg): unblock and skip and report on error for pgdump (#5120)
+### Incident Patch 1: `cec4a6e5` (2026-11-25)
+**Commit Message**: Renovate config: Comments link to tracking issue (#5119)
 
-Currently we block if pgdump runs into an error (like missing extension
-etc), but worth just letting it run while skipping those errors (they
-are already reported in the UI)
+This PR instructs renovate to add the following comment:
 
-**File**: `flow/activities/flowable.go` (modified, +10/-1)
-```diff
-@@ -2377,11 +2377,20 @@ func (a *FlowableActivity) RunPgDumpSchema(
- 		fmt.Sprintf("starting pg_dump schema migration from %s to %s", input.SourceName, input.DestinationName))
- 
- 	start := time.Now()
--	if err := connpostgres.RunPgDumpSchema(ctx, srcPgConfig.PostgresConfig, dstPgConfig.PostgresConfig); err != nil {
-+	ignoredErrors, err := connpostgres.RunPgDumpSchema(ctx, srcPgConfig.PostgresConfig, dstPgConfig.PostgresConfig)
-+	if err != nil {
- 		return false, a.Alerter.LogFlowError(ctx, input.FlowName, fmt.Errorf("pg_dump schema migration failed: %w", err))
- 	}
- 
- 	elapsed := time.Since(start).Round(time.Millisecond)
-+	if ignoredErrors != "" {
-+		logger.Warn("pg_dump schema migration completed with skipped statements",
-+			slog.Duration("elapsed", elapsed), slog.String("errors", ignoredErrors))
-+		a.Alerter.LogFlowWarning(ctx, input.FlowName,
-+			fmt.Errorf("pg_dump schema migration completed in %s, but some statements were skipped:\n%s", elapsed, ignoredErrors))
-+		return true, nil
-+	}
-+
- 	logger.Info("pg_dump schema migration completed successfully", slog.Duration("elapsed", elapsed))
- 	a.Alerter.LogFlowInfo(ctx, input.FlowName,
- 		fmt.Sprintf("pg_dump schema migration completed successfully in %s", elapsed))
+```
+Part of https://linear.app/clickhouse/issue/DBI-1390
 ```
 
-**File**: `flow/connectors/postgres/pgdump_schema.go` (modified, +46/-18)
-```diff
-@@ -14,6 +14,7 @@ import (
- 	"os/exec"
- 	"regexp"
- 	"strconv"
-+	"strings"
- 	"syscall"
- 
- 	"github.com/PeerDB-io/peerdb/flow/generated/protos"
-@@ -28,25 +29,34 @@ var incompatibleLineRE = regexp.MustCompile(`^SET\s+transaction_timeout\s*=`)
- 
- // RunPgDumpSchema streams a schema-only pg_dump from source directly into psql
- // on the destination, piping stdout into stdin without intermediate files.
--func RunPgDumpSchema(ctx context.Context, srcConfig *protos.PostgresConfig, dstConfig *protos.PostgresConfig) error {
-+//
-+// The dump is applied in a single transaction, but individual statement
-+// failures are rolled back to a savepoint and skipped (ON_ERROR_ROLLBACK) so
-+// the remaining statements still apply. The returned string reports any
-+// skipped-statement errors psql emitted; it is empty when everything applied
-+// cleanly.
-+func RunPgDumpSchema(ctx context.Context, srcConfig *protos.PostgresConfig, dstConfig *protos.PostgresConfig) (string, error) {
- 	srcAddr, err := resolvePgAddr(ctx, srcConfig)
- 	if err != nil {
--		return fmt.Errorf("source: %w", err)
-+		return "", fmt.Errorf("source: %w", err)
- 	}
- 	dstAddr, err := resolvePgAddr(ctx, dstConfig)
- 	if err != nil {
--		return fmt.Errorf("destination: %w", err)
-+		return "", fmt.Errorf("destination: %w", err)
- 	}
- 
--	if err := pipeCommand(ctx, srcConfig, dstConfig, srcAddr, dstAddr,
--		"pg_dump", buildPgDumpArgs(srcConfig, srcAddr.host)); err != nil {
--		return fmt.Errorf("pg_dump schema migration failed: %w", err)
-+	ignoredErrors, err := pipeCommand(ctx, srcConfig, dstConfig, srcAddr, dstAddr,
-+		"pg_dump", buildPgDumpArgs(srcConfig, srcAddr.host))
-+	if err != nil {
-+		return "", fmt.Errorf("pg_dump schema migration failed: %w", err)
- 	}
- 
--	return nil
-+	return ignoredErrors, nil
- }
- 
--// pipeCommand runs srcBinary with the given args, piping its stdout into psql on the destination.
-+// pipeCommand runs srcBinary with the given args, piping its stdout into psql
-+// on the destination. On success it returns psql's stderr output, which with
-+// ON_ERROR_ROLLBACK contains the errors of any statements that were skipped.
- func pipeCommand(
- 	ctx context.Context,
- 	srcConfig *protos.PostgresConfig,
-@@ -55,12 +65,17 @@ func pipeCommand(
- 	dstAddr pgAddr,
- 	srcBinary string,
- 	srcArgs []string,
--) error {
-+) (string, error) {
- 	psqlArgs := buildPsqlArgs(dstConfig, dstAddr.host)
- 
- 	srcCmd := exec.CommandContext(ctx, srcBinary, srcArgs...)
- 	psqlCmd := exec.CommandContext(ctx, "psql", psqlArgs...)
- 
-+	// Provide psql's stderr buffer ourselves so we can report skipped-statement
-+	// errors even when the pipeline exits successfully.
-+	var psqlStderr bytes.Buffer
-+	psqlCmd.Stderr = &psqlStderr
-+
- 	// set PGPASSWORD for each command via separate env slices
- 	srcCmd.Env = append(os.Environ(), "PGPASSWORD="+srcConfig.Password)
- 	psqlCmd.Env = append(os.Environ(), "PGPASSWORD="+dstConfig.Password)
-@@ -76,7 +91,10 @@ func pipeCommand(
- 	appendTLSEnv(ctx, srcCmd, srcConfig, srcAddr)
- 	appendTLSEnv(ctx, psqlCmd, dstConfig, dstAddr)
- 
--	return runPipeline(ctx, srcCmd, psqlCmd, srcBinary, "psql", filterIncompatibleLines)
-+	if err := runPipeline(ctx, srcCmd, psqlCmd, srcBinary, "psql", filterIncompatibleLines); err != nil {
-+		return "", err
-+	}
-+	return strings.TrimSpace(psqlStderr.String()), nil
- }
- 
- // filterIncompatibleLines copies r->w line by line, dropping statements that
-@@ -145,9 +163,15 @@ func runPipeline(
- 		filterDone = make(chan error, 1)
- 	}
- 
--	var srcStderr, dstStderr bytes.Buffer
-+	var srcStderr bytes.Buffer
- 	srcCmd.Stderr = &srcStderr
--	dstCmd.Stderr = &dstStderr
-+	// Keep a caller-provided stderr buffer (pipeCommand sets one so it can
-+	// report skipped-statement errors on success); otherwise capture locally.
-+	dstStderr, ok := dstCmd.Stderr.(*bytes.Buffer)
-+	if !ok {
-+		dstStderr = new(bytes.Buffer)
-+		dstCmd.Stderr = dstStderr
-+	}
- 
- 	// Start dst first so it's ready to read.
- 	if err := dstCmd.Start(); err != nil {
-@@ -372,14 +396,18 @@ func buildPsqlArgs(config *protos.PostgresConfig, host string) []string {
- 		"-h", host,
- 		"-p", strconv.FormatUint(uint64(port), 10),
- 		"-d", config.Database,
--		// Wrap the entire dump in a single transaction so partial failures
--		// roll back cleanly (makes the activity safely retryable) and avoid
-+		// Wrap the entire dump in a single transaction so a pipeline failure
-+		// rolls back cleanly (makes the activity safely retryable) and avoid
- 		// per-statement autocommit overhead on high-latency links.
- 		"--single-transaction",
--		// Without this, psql logs errors to stderr but exits 0, so a half-
--		// applied schema would be reported as success. ON_ERROR_STOP=1 makes
--		// psql exit non-zero on the first failed statement.
--		"-v", "ON_ERROR_STOP=1",
-+		// Set a savepoint before each statement and roll back to it on error,
-+		// so a failed statement (e.g. an object that already exists on the
-+		// destination) is skipped while subsequent statements still apply.
-+		// psql reports each skipped statement's e
-```
+to the descriptions of the PRs it creates.  
 
-**File**: `flow/connectors/postgres/pgdump_schema_test.go` (modified, +21/-2)
+Part of: https://linear.app/clickhouse/issue/DBI-1390
+
+**File**: `renovate.json5` (modified, +4/-0)
 ```diff
-@@ -41,6 +41,25 @@ func TestRunPipeline_HappyPath(t *testing.T) {
- 	}
- }
- 
-+// A caller-provided dst stderr buffer is kept (not replaced) so skipped-
-+// statement errors can be reported even when the pipeline exits successfully.
-+func TestRunPipeline_CallerProvidedDstStderrCapturedOnSuccess(t *testing.T) {
-+	requireUnix(t)
-+	ctx := t.Context()
-+
-+	src := exec.CommandContext(ctx, "sh", "-c", "printf 'payload'")
-+	dst := exec.CommandContext(ctx, "sh", "-c", "cat >/dev/null; echo 'ERROR: relation exists' >&2")
-+	var dstStderr bytes.Buffer
-+	dst.Stderr = &dstStderr
-+
-+	if err := runPipeline(ctx, src, dst, "src", "dst", nil); err != nil {
-+		t.Fatalf("unexpected error: %v", err)
-+	}
-+	if got := dstStderr.String(); !strings.Contains(got, "ERROR: relation exists") {
-+		t.Fatalf("dst stderr = %q, want it to contain the reported error", got)
-+	}
-+}
-+
- func TestRunPipeline_SrcStartFails(t *testing.T) {
- 	ctx := t.Context()
- 
-@@ -340,7 +359,7 @@ func TestBuildPsqlArgs(t *testing.T) {
- 			wantArgs: []string{
- 				"-h", "dst-host", "-p", "5433", "-d", "target",
- 				"--single-transaction",
--				"-v", "ON_ERROR_STOP=1",
-+				"-v", "ON_ERROR_ROLLBACK=on",
- 				"--quiet",
- 				"-U", "writer",
- 			},
-@@ -355,7 +374,7 @@ func TestBuildPsqlArgs(t *testing.T) {
- 			wantArgs: []string{
- 				"-h", "localhost", "-p", "5432", "-d", "db",
- 				"--single-transaction",
--				"-v", "ON_ERROR_STOP=1",
-+				"-v", "ON_ERROR_ROLLBACK=on",
- 				"--quiet",
- 			},
- 		},
+@@ -4,6 +4,10 @@
+     "local>PeerDB-io/.github:renovate-config",
+     ":preserveSemverRanges"
+   ],
++  "prBodyNotes": [
++    // This adds a comment in the description referencing the continuous task of keeping deps up to date
++    "Part of https://linear.app/clickhouse/issue/DBI-1390"
++  ], 
+   "packageRules": [
+     {
+       "groupName": "{{manager}} dependencies",
 ```
 
 ---
 
-### Incident Patch 2: `737f83e2` (2026-11-24)
-**Commit Message**: fix(pg-pg): casing on reset sequences (#5083)
+### Incident Patch 2: `b2a1dab2` (2026-11-25)
+**Commit Message**: Remove unreachable functions found by deadcode (#5122)
 
-Casing was not handled correctly for the reset sequences endpoint for PG
-PG cutover. This PR fixes that.
-Adapts test.
+## Why
+`deadcode -test -tags tilt ./...` on `flow` reports functions nothing
+calls.
+Tool: [deadcode](https://pkg.go.dev/golang.org/x/tools/cmd/deadcode),
+see also the Go blog post [Finding unreachable functions with
+deadcode](https://go.dev/blog/deadcode).
 
----------
+## What
+Removes 15 of the 17 reported functions:
+- `cmd/logged_interceptor.go` (whole file; `NewLoggedWorkerInterceptor`
+is never constructed)
+- `AsAPIError`, `connectors.LoadPeerTypes`,
+`exceptions.NewPostgresSetupError`, `e2e.EnvEqualTables`
+- `TypedSignal.SignalChildWorkflow`, `TypedReceiveChannel.Receive` /
+`ReceiveWithTimeout` / `ReceiveAsyncWithMoreFlag`
 
-Co-authored-by: Copilot <[REDACTED_EMAIL]>
+Kept on purpose:
+- `pkg/mysql.GetSchemaMapping`: `flow/pkg` is a separate published
+module and has users outside this repo
+- `SetupSuiteMinIO_TLS`: no test has ever run it. Should we wire it up
+or delete it (along with `MinioTls`)?
 
-**File**: `flow/cmd/reset_sequences.go` (modified, +7/-1)
+Follow-up: `PostgresSetupError` is never constructed, so the check for
+it in `alerting/classifier.go:422` is dead.
+
+## Testing
+- `go build ./...` and `go vet -tags tilt ./...` pass
+- `go test` on `model`, `shared`, `cmd` and `alerting` passes (1 run,
+11/11 packages ok)
+- Rerunning deadcod
+
+**File**: `flow/alerting/classifier.go` (modified, +0/-8)
 ```diff
-@@ -9,6 +9,7 @@ import (
- 	"github.com/PeerDB-io/peerdb/flow/connectors"
- 	connpostgres "github.com/PeerDB-io/peerdb/flow/connectors/postgres"
- 	"github.com/PeerDB-io/peerdb/flow/generated/protos"
-+	"github.com/PeerDB-io/peerdb/flow/pkg/common"
- )
- 
- func (h *FlowRequestHandler) ResetMirrorSequences(
-@@ -45,7 +46,12 @@ func (h *FlowRequestHandler) ResetMirrorSequences(
- 
- 	destTables := make([]string, 0, len(config.TableMappings))
- 	for _, tm := range config.TableMappings {
--		destTables = append(destTables, tm.DestinationTableIdentifier)
-+		parsed, err := common.ParseTableIdentifier(tm.DestinationTableIdentifier)
-+		if err != nil {
-+			return nil, NewInternalApiError(fmt.Errorf("failed to parse destination table %s: %w",
-+				tm.DestinationTableIdentifier, err))
-+		}
-+		destTables = append(destTables, parsed.String())
+@@ -418,14 +418,6 @@ func GetErrorClass(ctx context.Context, err error) (ErrorClass, ErrorInfo) {
+ 			// For now we are not making it as verbose, will take this up later
+ 			return errorClass, unknownErrorInfo(ErrorSourceOther)
+ 		}
+-
+-		if _, ok := errors.AsType[*exceptions.PostgresSetupError](err); ok {
+-			errorClass := ErrorNotifyConnectivity
+-			if pgErr != nil {
+-				return errorClass, pgErrorInfo
+-			}
+-			return errorClass, unknownErrorInfo(pgErrSource)
+-		}
  	}
  
- 	quotedTables := make([]string, 0, len(destTables))
+ 	if changefeedErr, ok := errors.AsType[*exceptions.CockroachChangefeedIrrecoverableError](err); ok {
 ```
 
-**File**: `flow/e2e/api_suite.go` (modified, +37/-2)
+**File**: `flow/cmd/api_error.go` (modified, +0/-18)
 ```diff
-@@ -4432,17 +4432,28 @@ func (s APITestSuite) TestResetMirrorSequences() {
- 
- 	srcTable := AttachSchema(s, "seq_src")
- 	dstTable := AttachSchema(s, "seq_dst")
-+	// mixed-case destination table and columns to exercise identifier quoting in the reset
-+	mixedSrcTable := AttachSchema(s, "seq_src_mixed")
-+	mixedDstTable := AttachSchema(s, "seq_Dst_MixedCase")
-+	quotedMixedDstTable := fmt.Sprintf(`"e2e_test_%s"."seq_Dst_MixedCase"`, s.suffix)
- 
--	// Create source table with a serial column and insert rows
-+	// Create source tables with a serial column and insert rows
- 	require.NoError(s.t, s.source.Exec(s.t.Context(),
- 		fmt.Sprintf("CREATE TABLE %s(id SERIAL PRIMARY KEY, val TEXT)", srcTable)))
- 	require.NoError(s.t, s.source.Exec(s.t.Context(),
- 		fmt.Sprintf("INSERT INTO %s(val) VALUES ('a'),('b'),('c'),('d'),('e')", srcTable)))
-+	require.NoError(s.t, s.source.Exec(s.t.Context(),
-+		fmt.Sprintf(`CREATE TABLE %s("Id" SERIAL PRIMARY KEY, "Val" TEXT)`, mixedSrcTable)))
-+	require.NoError(s.t, s.source.Exec(s.t.Context(),
-+		fmt.Sprintf(`INSERT INTO %s("Val") VALUES ('x'),('y'),('z')`, mixedSrcTable)))
- 
--	// Create destination table with same structure (serial column)
-+	// Create destination tables with same structure (serial column)
- 	_, err := s.pg.Conn().Exec(s.t.Context(),
- 		fmt.Sprintf("CREATE TABLE %s(id SERIAL PRIMARY KEY, val TEXT)", dstTable))
- 	require.NoError(s.t, err)
-+	_, err = s.pg.Conn().Exec(s.t.Context(),
-+		fmt.Sprintf(`CREATE TABLE %s("Id" SERIAL PRIMARY KEY, "Val" TEXT)`, quotedMixedDstTable))
-+	require.NoError(s.t, err)
- 
- 	// Create PG-to-PG mirror with initial snapshot only
- 	flowJobName := "reset_seq_" + s.suffix
-@@ -4453,6 +4464,9 @@ func (s APITestSuite) TestResetMirrorSequences() {
- 		TableMappings: []*protos.TableMapping{{
- 			SourceTableIdentifier:      srcTable,
- 			DestinationTableIdentifier: dstTable,
-+		}, {
-+			SourceTableIdentifier:      mixedSrcTable,
-+			DestinationTableIdentifier: mixedDstTable,
- 		}},
- 		DoInitialSnapshot:   true,
- 		InitialSnapshotOnly: true,
-@@ -4478,6 +4492,12 @@ func (s APITestSuite) TestResetMirrorSequences() {
- 	require.NoError(s.t, err)
- 	require.Equal(s.t, int64(5), rowCount)
- 
-+	var mixedRowCount int64
-+	err = s.pg.Conn().QueryRow(s.t.Context(),
-+		"SELECT COUNT(*) FROM "+quotedMixedDstTable).Scan(&mixedRowCount)
-+	require.NoError(s.t, err)
-+	require.Equal(s.t, int64(3), mixedRowCount)
-+
- 	// Before reset: destination sequence has not been advanced by the snapshot (ids were copied
- 	// explicitly), so it is not yet at the max id. pg_sequence_last_value is NULL until the
- 	// sequence is first used, so coalesce to 0.
-@@ -4507,6 +4527,21 @@ func (s APITestSuite) TestResetMirrorSequences() {
- 		fmt.Sprintf("SELECT nextval(pg_get_serial_sequence('%s', 'id'))", dstTable)).Scan(&nextVal)
- 	require.NoError(s.t, err)
- 	require.Equal(s.t, int64(6), nextVal)
-+
-+	// Mixed-case table: sequence should be at 3 (max id), nextval should return 4
-+	var mixedSeqValAfter int64
-+	err = s.pg.Conn().QueryRow(s.t.Context(),
-+		fmt.Sprintf("SELECT pg_sequence_last_value(pg_get_serial_sequence('%s', 'Id'))",
-+			quotedMixedDstTable)).Scan(&mixedSeqValAfter)
-+	require.NoError(s.t, err)
-+	require.Equal(s.t, int64(3), mixedSeqValAfter)
-+
-+	var mixedNextVal int64
-+	err = s.pg.Conn().QueryRow(s.t.Context(),
-+		fmt.Sprintf("SELECT nextval(pg_get_serial_sequence('%s', 'Id'))",
-+			quotedMixedDstTable)).Scan(&mixedNextVal)
-+	require.NoError(s.t, err)
-+	require.Equal(s.t, int64(4), mixedNextVal)
+@@ -89,24 +89,6 @@ func convertToStatus(code codes.Code, err error, details ...protoadapt.MessageV1
+ 	return richStatus
  }
  
- func (s APITestSuite) TestResetMirrorSequences_EmptyTable() {
+-// AsAPIError converts an error to APIError if it's a gRPC status error,
+-// otherwise wraps it as an Internal error
+-func AsAPIError(err error) APIError {
+-	if err == nil {
+-		return nil
+-	}
+-
+-	if apiErr, ok := err.(APIError); ok {
+-		return apiErr
+-	}
+-
+-	if s, ok := status.FromError(err); ok {
+-		return newAPIError(s)
+-	}
+-
+-	return NewInternalApiError(err)
+-}
+-
+ func NewMirrorErrorInfo(metadata map[string]string) *rpc.ErrorInfo {
+ 	return &rpc.ErrorInfo{
+ 		Reason:   common.ErrorInfoReasonMirror,
+```
+
+**File**: `flow/cmd/logged_interceptor.go` (removed, +0/-79)
+```diff
+@@ -1,79 +0,0 @@
+-package cmd
+-
+-import (
+-	"context"
+-
+-	"go.temporal.io/sdk/interceptor"
+-	"go.temporal.io/sdk/workflow"
+-)
+-
+-type LoggedWorkflowInboundInterceptor struct {
+-	interceptor.WorkflowInboundInterceptorBase
+-	Next interceptor.WorkflowInboundInterceptor
+-}
+-
+-func NewLoggedWorkflowInboundInterceptor(next interceptor.WorkflowInboundInterceptor) *LoggedWorkflowInboundInterceptor {
+-	return &LoggedWorkflowInboundInterceptor{
+-		WorkflowInboundInterceptorBase: interceptor.WorkflowInboundInterceptorBase{Next: next},
+-		Next:                           next,
+-	}
+-}
+-
+-func (w *LoggedWorkflowInboundInterceptor) ExecuteWorkflow(
+-	ctx workflow.Context,
+-	in *interceptor.ExecuteWorkflowInput,
+-) (any, error) {
+-	// Workflow starts here
+-	result, err := w.Next.ExecuteWorkflow(ctx, in)
+-	// Workflow ends here
+-	return result, err
+-}
+-
+-type LoggedActivityInboundInterceptor struct {
+-	interceptor.ActivityInboundInterceptorBase
+-	Next interceptor.ActivityInboundInterceptor
+-}
+-
+-func NewLoggedActivityInboundInterceptor(next interceptor.ActivityInboundInterceptor) *LoggedActivityInboundInterceptor {
+-	return &LoggedActivityInboundInterceptor{
+-		ActivityInboundInterceptorBase: interceptor.ActivityInboundInterceptorBase{Next: next},
+-		Next:                           next,
+-	}
+-}
+-
+-func (c *LoggedActivityInboundInterceptor) ExecuteActivity(
+-	ctx context.Context,
+-	in *interceptor.ExecuteActivityInput,
+-) (any, error) {
+-	// Activity starts here
+-	out, err := c.Next.ExecuteActivity(ctx, in)
+-	// Activity ends here
+-	return out, err
+-}
+-
+-type LoggedWorkerInterceptor struct {
+-	interceptor.WorkerInterceptorBase
+-}
+-
+-func NewLoggedWorkerInterceptor() *LoggedWorkerInterceptor {
+-	return &LoggedWorkerInterceptor{
+-		WorkerInterceptorBase: interceptor.WorkerInterceptorBase{},
+-	}
+-}
+-
+-func (c LoggedWorkerInterceptor) InterceptActivity(
+-	ctx context.Context,
+-	next interceptor.ActivityInboundInterceptor,
+-) interceptor.ActivityInboundInterceptor {
+-	return NewLoggedActivityInboundInterceptor(next)
+-}
+-
+-func (c LoggedWorkerInterceptor) InterceptWorkflow(
+-	ctx workflow.Context,
+-	next interceptor.WorkflowInboundInterceptor,
+-) interceptor.WorkflowInboundInterceptor {
+-	// Workflow intercepted here
+-	intercepted := NewLoggedWorkflowInboundInterceptor(next)
+-	// Workflow intercepting ends here
+-	return intercepted
+-}
+```
+
+**File**: `flow/connectors/core.go` (modified, +0/-35)
+```diff
+@@ -460,41 +460,6 @@ func LoadFlowSourcePeerType(ctx context.Context, catalogPool shared.CatalogPool,
+ 	return dbtype, nil
+ }
+ 
+-func LoadPeerTypes(ctx context.Context, catalogPool shared.CatalogPool, peerNames []string) (map[string]protos.DBType, error) {
+-	if len(peerNames) == 0 {
+-		return nil, nil
+-	}
+-
+-	rows, err := catalogPool.Query(ctx, "SELECT name, type FROM peers WHERE name = ANY($1)", peerNames)
+-	if err != nil {
+-		return nil, fmt.Errorf("failed to query peer types: %w", err)
+-	}
+-
+-	peerTypes := make(map[string]protos.DBType, len(peerNames))
+-	var peerName string
+-	var dbtype protos.DBType
+-	if _, err := pgx.ForEachRow(rows, []any{&peerName, &dbtype}, func() error {
+-		peerTypes[peerName] = dbtype
+-		return nil
+-	}); err != nil {
+-		return nil, fmt.Errorf("error querying peer rows: %w", err)
+-	}
+-
+-	// Verify all requested peers were found
+-	var missingPeers []string
+-	for _, peerName := range peerNames {
+-		if _, found := peerTypes[peerName]; !found {
+-			missingPeers = append(missingPeers, peerName)
+-		}
+-	}
+-
+-	if len(missingPeers) > 0 {
+-		return nil, fmt.Errorf("peers not found: %v", missingPeers)
+-	}
+-
+-	return peerTypes, nil
+-}
+-
+ func LoadPeers(ctx context.Context, catalogPool shared.CatalogPool, peerNames []string) (map[string]*protos.Peer, error) {
+ 	if len(peerNames) == 0 {
+ 		return nil, nil
+```
+
+**File**: `flow/e2e/test_utils.go` (modified, +0/-4)
+```diff
+@@ -144,10 +144,6 @@ func RequireEqualTablesWithNames(suite RowSource, srcTable string, dstTable stri
+ 	require.True(t, e2eshared.CheckEqualRecordBatches(t, sourceRows, rows))
+ }
+ 
+-func EnvEqualTables[TSource connectors.Connector](env WorkflowRun, suite RowSource, table string, cols string) {
+-	EnvEqualTablesWithNames(env, suite, table, table, cols)
+-}
+-
+ func EnvEqualTablesWithNames(
+ 	env WorkflowRun, suite RowSource, srcTable string, dstTable string, cols string,
+ ) {
+```
+
+**File**: `flow/model/signals.go` (modified, +0/-26)
+```diff
+@@ -33,14 +33,6 @@ func (self TypedSignal[T]) SignalClientWorkflow(
+ 	return c.SignalWorkflow(ctx, workflowID, runID, self.Name, value)
+ }
+ 
+-func (self TypedSignal[T]) SignalChildWorkflow(
+-	ctx workflow.Context,
+-	wf workflow.ChildWorkflowFuture,
+-	value T,
+-) workflow.Future {
+-	return wf.SignalChildWorkflow(ctx, self.Name, value)
+-}
+-
+ func (self TypedSignal[T]) SignalExternalWorkflow(
+ 	ctx workflow.Context,
+ 	workflowID string,
+@@ -54,30 +46,12 @@ type TypedReceiveChannel[T any] struct {
+ 	Chan workflow.ReceiveChannel
+ }
+ 
+-func (self TypedReceiveChannel[T]) Receive(ctx workflow.Context) (T, bool) {
+-	var result T
+-	more := self.Chan.Receive(ctx, &result)
+-	return result, more
+-}
+-
+-func (self TypedReceiveChannel[T]) ReceiveWithTimeout(ctx workflow.Context, timeout time.Duration) (T, bool, bool) {
+-	var result T
+-	ok, more := self.Chan.ReceiveWithTimeout(ctx, timeout, &result)
+-	return result, ok, more
+-}
+-
+ func (self TypedReceiveChannel[T]) ReceiveAsync() (T, bool) {
+ 	var result T
+ 	ok := self.Chan.ReceiveAsync(&result)
+ 	return result, ok
+ }
+ 
+-func (self TypedReceiveChannel[T]) ReceiveAsyncWithMoreFlag() (T, bool, bool) {
+-	var result T
+-	ok, more := self.Chan.ReceiveAsyncWithMoreFlag(&result)
+-	return result, ok, more
+-}
+-
+ func (self TypedReceiveChannel[T]) AddToSelector(selector workflow.Selector, f func(T, bool)) workflow.Selector {
+ 	return selector.AddReceive(self.Chan, func(c workflow.ReceiveChannel, more bool) {
+ 		var result T
+```
+
+**File**: `flow/shared/exceptions/postgres.go` (modified, +0/-17)
+```diff
+@@ -7,23 +7,6 @@ import (
+ 	"github.com/jackc/pgx/v5/pgproto3"
+ )
+ 
+-// PostgresSetupError represents errors during setup of Postgres peers, maybe we can later replace with a more generic error type
+-type PostgresSetupError struct {
+-	error
+-}
+-
+-func NewPostgresSetupError(err error) *PostgresSetupError {
+-	return &PostgresSetupError{err}
+-}
+-
+-func (e *PostgresSetupError) Error() string {
+-	return "Postgres setup error: " + e.error.Error()
+-}
+-
+-func (e *PostgresSetupError) Unwrap() error {
+-	return e.error
+-}
+-
+ type CatalogError struct {
+ 	error
+ }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5122** (2026-11-25): Remove unreachable functions found by deadcode (@gheorghepucea)
 - **PR #5120** (2026-11-24): fix(pg-pg): unblock and skip and report on error for pgdump (@Amogh-Bharadwaj)
+- **PR #5119** (2026-11-25): Renovate config: Comments link to tracking issue (@pfcoperez)
 - **PR #5115** (2026-11-24): Stop copying state table mappings into CDCFlowWorkflow cfg (@dtunikov)
 - **PR #5114** (closed): remove redundant copy-back logic (@jgao54)
 - **PR #5112** (2026-11-24): Update gomod dependencies (@renovate[bot])
-- **PR #5106** (closed): cdc: omit duplicate table mappings from CDCFlowWorkflow payloads (@dtunikov)
-- **PR #5105** (2026-11-20): improve claude review to remind author to check public documentations (@jgao54)
 
 ---
 
@@ -2255,40 +2268,34 @@ Co-authored-by: Copilot <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. pg-pg): unblock and skip and report on error for pgdump
+## X. Renovate config: Comments link to tracking issue
 
 **RULE**:
-When implementing operations in `flow/activities/flowable.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in PeerDB-io/peerdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `renovate.json5`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in PeerDB-io/peerdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e8b30c7d`: pg-pg): unblock and skip and report on error for pgdump. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `cec4a6e5`: Renovate config: Comments link to tracking issue. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `flow/activities/flowable.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `renovate.json5`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	ignoredErrors, err := connpostgres.RunPgDumpSchema(ctx, srcPgConfig.PostgresConfig, dstPgConfig.PostgresConfig)
-	if err != nil {
-	if ignoredErrors != "" {
-		logger.Warn("pg_dump schema migration completed with skipped statements",
-			slog.Duration("elapsed", elapsed), slog.String("errors", ignoredErrors))
-		a.Alerter.LogFlowWarning(ctx, input.FlowName,
-			fmt.Errorf("pg_dump schema migration completed in %s, but some statements were skipped:\n%s", elapsed, ignoredErrors))
-		return true, nil
-	}
-
+  "prBodyNotes": [
+    // This adds a comment in the description referencing the continuous task of keeping deps up to date
+    "Part of https://linear.app/clickhouse/issue/DBI-1390"
+  ], 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	if err := connpostgres.RunPgDumpSchema(ctx, srcPgConfig.PostgresConfig, dstPgConfig.PostgresConfig); err != nil {
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e8b30c7d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `cec4a6e5` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-25T14:41:54.333Z",
+  "updated_at": "2026-11-25T14:50:27.281Z",
   "stats": {
-    "total_discovered": 9488,
-    "approved_pending_harvest": 8991,
+    "total_discovered": 9491,
+    "approved_pending_harvest": 8994,
     "harvested_count": 0,
     "rejected_count": 497,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 8985,
+      "COMMUNITY_AND_EXPERT": 8988,
       "OFFICIAL_DOCUMENTATION": 281,
       "STANDARDS_AND_SPECIFICATIONS": 150,
       "ENGINEERING_BLOGS": 7,
@@ -205284,6 +205284,72 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pimalaya-himalaya-learnings.md",
         "fileName": "pimalaya-himalaya-learnings.md"
+      }
+    },
+    "SRC-75F26A15733C": {
+      "id": "SRC-75F26A15733C",
+      "url": "https://linear.app/clickhouse/issue/DBI-1390",
+      "title": "https://linear.app/clickhouse/issue/DBI-1390",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T14:50:27.137Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md",
+        "fileName": "peerdb-io-peerdb-learnings.md"
+      }
+    },
+    "SRC-02CAE361399D": {
+      "id": "SRC-02CAE361399D",
+      "url": "https://pkg.go.dev/golang.org/x/tools/cmd/deadcode",
+      "title": "https://pkg.go.dev/golang.org/x/tools/cmd/deadcode",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T14:50:27.212Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md",
+        "fileName": "peerdb-io-peerdb-learnings.md"
+      }
+    },
+    "SRC-2E544127E48B": {
+      "id": "SRC-2E544127E48B",
+      "url": "https://go.dev/blog/deadcode",
+      "title": "https://go.dev/blog/deadcode",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T14:50:27.281Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md",
+        "fileName": "peerdb-io-peerdb-learnings.md"
       }
     }
   }

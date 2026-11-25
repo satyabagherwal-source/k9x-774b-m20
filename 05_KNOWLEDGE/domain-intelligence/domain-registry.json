@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T14:41:56.271Z",
+  "last_updated": "2026-11-25T14:50:28.811Z",
   "total_records": 2678,
   "domains": {
     "A": {
@@ -9411,8 +9411,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "a5a33320eb69107a454be98dd8ab447c1108f084da052a9910a24c3ab09d5bef",
-      "created_at": "2026-11-25T13:40:09.424Z"
+      "content_hash": "820e4ddb88fdcd85a901f9e101a713b0bd0e09baad3727307cf46dec14b27777",
+      "created_at": "2026-11-25T14:50:28.811Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -30216,8 +30216,8 @@
       "title": "Architecture Intelligence: PeerDB-io/peerdb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-peerdb-io-peerdb-architecture-intelligence-peerdb-io-peerdb-core-invariants.md",
       "repository": "PeerDB-io/peerdb",
-      "content_hash": "27741b2b21409461a4a634f92b8cb4247681d13115d8f12d6bfc2154a7219798",
-      "created_at": "2026-11-24T20:38:36.879Z"
+      "content_hash": "ef9fa28c5d87b877b3d7b3ac32500dde239531a469c301080845e0e01c4e2d62",
+      "created_at": "2026-11-25T14:50:23.400Z"
     },
     "domain_intelligence-architecture-intelligence-peerdb-io-peerdb-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-peerdb-io-peerdb-learnings-core-invariants",
@@ -30225,8 +30225,8 @@
       "title": "Architecture Intelligence: peerdb-io-peerdb-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-peerdb-io-peerdb-learnings-architecture-intelligence-peerdb-io-peerdb-learnings-.md",
       "repository": "peerdb-io-peerdb-learnings",
-      "content_hash": "b77652b69608b794589ca5e9c7d133662dcb91515e65ce86d5c3e5d957116111",
-      "created_at": "2026-11-24T20:38:45.090Z"
+      "content_hash": "441e3df7e825b612a215dbb64b033d39f5717cf3bac46cee56950b646d090b10",
+      "created_at": "2026-11-25T14:50:27.754Z"
     },
     "domain_intelligence-architecture-intelligence-amir1376-ab-download-manager-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-amir1376-ab-download-manager-core-invariants",
@@ -39160,8 +39160,8 @@
       "title": "Research & Knowledge Intelligence: OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-obliteratus-deepseek-v4-1-flash-1017-obliterated-research-knowledge-intellige.md",
       "repository": "OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated",
-      "content_hash": "8f552326d1dc407373d1981e1220a593ee7bf5cdfb3e8b9910fbccca36a7ba75",
-      "created_at": "2026-11-21T23:39:37.518Z"
+      "content_hash": "8c62948f9dd4acbea74b5541dd203e1afa934168617961b7107e3e89515e722b",
+      "created_at": "2026-11-25T14:50:12.637Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-obliteratus-deepseek-v4-1-flash-1017-oblitera": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-obliteratus-deepseek-v4-1-flash-1017-oblitera",
@@ -39169,8 +39169,8 @@
       "title": "Research & Knowledge Intelligence: hf-obliteratus-deepseek-v4.1-flash-1017-obliterated-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-obliteratus-deepseek-v4-1-flash-1017-obliterated-learnings-research-knowledge.md",
       "repository": "hf-obliteratus-deepseek-v4.1-flash-1017-obliterated-learnings",
-      "content_hash": "058a391ac3a61b63c76df222f321e98a237df5b4def4336b34f15c2ae0e24af6",
-      "created_at": "2026-11-21T23:39:49.556Z"
+      "content_hash": "9dda27b7d4c1a29cf5713be522e6eae5d19982a7f72b7cf5e7e14554fd9af01a",
+      "created_at": "2026-11-25T14:50:26.767Z"
     },
     "DOM-D-6EECDBA7": {
       "record_id": "DOM-D-6EECDBA7",

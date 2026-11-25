@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T14:41:43.663Z",
-  "total_cycles_completed": 12446,
-  "total_learnings_persisted": 12446,
-  "total_rules_promoted": 11425,
+  "last_updated": "2026-11-25T14:50:22.862Z",
+  "total_cycles_completed": 12448,
+  "total_learnings_persisted": 12448,
+  "total_rules_promoted": 11426,
   "history": [
-    {
-      "timestamp": "2026-11-25T01:52:49.187Z",
-      "repository": "oxc-project/oxc",
-      "learningId": "learn-github-oxc-project-oxc",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T01:52:50.132Z",
-      "repository": "mochajs/mocha",
-      "learningId": "learn-github-mochajs-mocha",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-25T01:52:52.797Z",
       "repository": "microsoft/react-native-windows",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-25T14:41:43.663Z",
       "repository": "pimalaya/himalaya",
       "learningId": "learn-github-pimalaya-himalaya",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T14:50:12.376Z",
+      "repository": "OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated",
+      "learningId": "learn-huggingface-obliteratus-deepseek-v4-1-flash-1017-obliterated",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T14:50:22.862Z",
+      "repository": "PeerDB-io/peerdb",
+      "learningId": "learn-github-peerdb-io-peerdb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
