@@ -12985,3 +12985,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b-nvfp4` | `https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-11-25T05:28:56.153Z |
 | `learn-huggingface-mistralai-timestral-209m` | `https://huggingface.co/mistralai/Timestral-209M` | `hf-mistral` | Multi-dimensional audit evidence | 2026-11-25T05:37:08.346Z |
 | `learn-github-temporalio-temporal` | `https://github.com/temporalio/temporal` | `c70df160` | Multi-dimensional audit evidence | 2026-11-25T05:37:18.245Z |
+| `learn-huggingface-meta-models-muse-spark-open-816b-a42b-nvfp4` | `https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B-NVFP4` | `hf-meta-mo` | Multi-dimensional audit evidence | 2026-11-25T05:45:24.348Z |
+| `learn-github-iii-hq-iii` | `https://github.com/iii-hq/iii` | `d14aa58e` | Multi-dimensional audit evidence | 2026-11-25T05:45:25.533Z |
+| `learn-github-envoyproxy-envoy` | `https://github.com/envoyproxy/envoy` | `a7ae7600` | Multi-dimensional audit evidence | 2026-11-25T05:45:34.545Z |

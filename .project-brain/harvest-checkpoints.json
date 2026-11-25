@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-25T05:37:18.262Z",
+  "last_updated": "2026-11-25T05:45:34.560Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3396,14 +3396,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-iii-hq-iii",
-      "content_hash": "46f72e92e6261d067ea1453097d033009a23277334d4ef17f32d4ccfb3c50150",
-      "verified_at": "2026-11-24T03:33:24.233Z",
+      "content_hash": "8fb3a23578f98fe64f16afde4bf97504474974fd9b8b060290acd02b09bd8109",
+      "verified_at": "2026-11-25T05:45:25.546Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T03:33:24.233Z"
+      "last_updated": "2026-11-25T05:45:25.546Z"
     },
     "crawlseo/crawlseo": {
       "repository": "crawlseo/crawlseo",
@@ -9501,14 +9501,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-envoyproxy-envoy",
-      "content_hash": "301791ea36a28ac44ad05990e80e88e7b678cc7bc44838febce23680d3902da8",
-      "verified_at": "2026-11-24T12:54:06.985Z",
+      "content_hash": "d3ad89768da387ce9600a50bc1e0348243d23cda588801602cd492e6df4cf33f",
+      "verified_at": "2026-11-25T05:45:34.560Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T12:54:06.985Z"
+      "last_updated": "2026-11-25T05:45:34.560Z"
     },
     "tursodatabase/turso": {
       "repository": "tursodatabase/turso",
@@ -12891,14 +12891,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-meta-models-muse-spark-open-816b-a42b-nvfp4",
-      "content_hash": "eeec5fe5f1ee00f546f996b5a3afed28bfaa25774454f01cf20094a38d7e9727",
-      "verified_at": "2026-11-21T10:37:32.597Z",
+      "content_hash": "6e3e5773feb5a0f26f07a10b7dc6f46fcda021dd2eb426fc537f4a54f9a2b53f",
+      "verified_at": "2026-11-25T05:45:24.363Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T10:37:32.597Z"
+      "last_updated": "2026-11-25T05:45:24.363Z"
     },
     "rickclephas/KMP-NativeCoroutines": {
       "repository": "rickclephas/KMP-NativeCoroutines",

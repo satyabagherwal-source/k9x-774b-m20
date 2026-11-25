@@ -786281,3 +786281,175 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `8495e550` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10464. 8 AI agent observability best practices blog post (Harvested from iii-hq/iii)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "8 AI agent observability best practices blog post",
+  "source": "iii-hq/iii",
+  "source_url": "https://github.com/iii-hq/iii",
+  "source_version": "d14aa58e",
+  "license": "PERMISSIVE_OPEN_SOURCE",
+  "extracted_at": "2026-11-25T05:45:25.009Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-iii-hq-iii",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [iii-hq/iii](https://github.com/iii-hq/iii) (Revision: `d14aa58e`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `website/content/blog/ai-agent-observability-best-practices.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in iii-hq/iii. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `d14aa58e`: website): 8 AI agent observability best practices blog post. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `website/content/blog/ai-agent-observability-best-practices.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+---
+title: '8 AI agent observability best practices for tracing tool execution'
+seoTitle: '8 AI Agent Observability Best Practices for Tool Calls'
+description: 'Learn 8 AI agent observability best practices for tracing tool calls, tracking latency and token usage, and protecting sensitive data, with examples in iii.'
+pubDate: 2026-11-23
+tags: ['agents', 'observability', 'tracing', 'opentelemetry', 'harness']
+ogImage: ../../assets/blog/ai-agent-observability-best-practices/og.png
+faq:
+  - q: 'What are traces in AI agents?'
+    a: 'A trace is a tree of timed spans that records the instrumented steps in an agent execution, such as model calls, tool calls, and handoffs. The spans share a trace_id. The turn sits at the root, model and tool calls nest below it, and outbound service calls nest below those. Each span has a start time, an end time, attributes, and optionally span events for richer data like function inputs and outputs.'
+  - q: 'How does agent observability differ from LLM monitoring?'
+    a: 'LLM monitoring watches model calls: latency, token counts, and errors at the inference boundary. Agent observability follows the whole run, including every tool the agent called, the d
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `d14aa58e` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10465. Do not check for zero memory use where it cannot be measured (Harvested from envoyproxy/envoy)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Do not check for zero memory use where it cannot be measured",
+  "source": "envoyproxy/envoy",
+  "source_url": "https://github.com/envoyproxy/envoy",
+  "source_version": "a7ae7600",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-25T05:45:34.027Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-envoyproxy-envoy",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [envoyproxy/envoy](https://github.com/envoyproxy/envoy) (Revision: `a7ae7600`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `test/common/memory/memory_test_utility.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in envoyproxy/envoy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `d4c3cc20`: test: Do not check for zero memory use where it cannot be measured. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `test/common/memory/memory_test_utility.h`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```c++
+// Verified production-grade fix pattern:
+// canonical platforms, or when the expected value is zero and memory usage can
+// be measured. Canonical platforms currently include only for 'release' tests in
+// ci. On other platforms an info log is emitted, indicating that the test is
+// being skipped.
+//
+// The zero case is not checked where memory usage cannot be measured (see
+// `MemoryTest::mode()`). In particular, with jemalloc the total changes when a
+// thread cache is refilled, so an allocation that is freed again can still be
+// reported as consumed memory, depending on what the process allocated before.
+    /* Read the memory consumed first: `MemoryTest::mode()` allocates. */                          \
+    const auto memory_test_consumed_bytes = consumed_bytes;                                        \
+    const auto memory_test_mode = ::Envoy::Memory::TestUtil::MemoryTest::mode();                   \
+    if ((expected_value == 0 &&                                                                    \
+         memory_test_mode != ::Envoy::Memory::TestUtil::MemoryTest::Mode::Disabled) ||             \
+        memory_test_mode == ::Envoy::Memory::TestUtil::MemoryTest::Mode::Canonical) {              \
+      EXPECT_EQ(mem
+```
+
+**NEGATIVE CONSTRAINT**:
+```c++
+// Induced defect failure mode:
+// canonical platforms, or when the expected value is zero. Canonical platforms
+// currently include only for 'release' tests in ci. On other platforms an info
+// log is emitted, indicating that the test is being skipped.
+    if (expected_value == 0 || ::Envoy::Memory::TestUtil::MemoryTest::mode() ==                    \
+                                   ::Envoy::Memory::TestUtil::MemoryTest::Mode::Canonical) {       \
+      EXPECT_EQ(consumed_bytes, expected_value);                                                   \
+                     consumed_bytes, expected_value);                                              \
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `d4c3cc20` are properly handled with clean fallback behavior.

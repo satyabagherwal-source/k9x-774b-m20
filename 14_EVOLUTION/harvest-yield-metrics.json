@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T05:37:18.251Z",
-  "total_cycles_completed": 12300,
-  "total_learnings_persisted": 12300,
-  "total_rules_promoted": 11338,
+  "last_updated": "2026-11-25T05:45:34.551Z",
+  "total_cycles_completed": 12303,
+  "total_learnings_persisted": 12303,
+  "total_rules_promoted": 11340,
   "history": [
-    {
-      "timestamp": "2026-11-24T16:28:13.738Z",
-      "repository": "AngelSlim/Hy4-flash-GGUF",
-      "learningId": "learn-huggingface-angelslim-hy4-flash-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T16:36:49.119Z",
-      "repository": "MariaDB/server",
-      "learningId": "learn-github-mariadb-server",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T16:45:59.383Z",
-      "repository": "lxml/lxml",
-      "learningId": "learn-github-lxml-lxml",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-24T16:46:04.701Z",
       "repository": "siderolabs/talos",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-25T05:37:18.251Z",
       "repository": "temporalio/temporal",
       "learningId": "learn-github-temporalio-temporal",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T05:45:24.354Z",
+      "repository": "meta-models/Muse-Spark-Open-816B-A42B-NVFP4",
+      "learningId": "learn-huggingface-meta-models-muse-spark-open-816b-a42b-nvfp4",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T05:45:25.537Z",
+      "repository": "iii-hq/iii",
+      "learningId": "learn-github-iii-hq-iii",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T05:45:34.551Z",
+      "repository": "envoyproxy/envoy",
+      "learningId": "learn-github-envoyproxy-envoy",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

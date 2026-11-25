@@ -2173,10 +2173,10 @@
     "repository": "iii-hq/iii",
     "platform": "github",
     "sourceUrl": "https://github.com/iii-hq/iii",
-    "sourceVersion": "81dfce48",
+    "sourceVersion": "d14aa58e",
     "license": "PERMISSIVE_OPEN_SOURCE",
-    "contentHash": "46f72e92e6261d067ea1453097d033009a23277334d4ef17f32d4ccfb3c50150",
-    "lastHarvestedAt": "2026-11-24T03:33:24.204Z",
+    "contentHash": "8fb3a23578f98fe64f16afde4bf97504474974fd9b8b060290acd02b09bd8109",
+    "lastHarvestedAt": "2026-11-25T05:45:25.533Z",
     "learningId": "learn-github-iii-hq-iii"
   },
   "crawlseo-crawlseo": {
@@ -6253,10 +6253,10 @@
     "repository": "envoyproxy/envoy",
     "platform": "github",
     "sourceUrl": "https://github.com/envoyproxy/envoy",
-    "sourceVersion": "ef0e49cf",
+    "sourceVersion": "a7ae7600",
     "license": "Apache-2.0",
-    "contentHash": "301791ea36a28ac44ad05990e80e88e7b678cc7bc44838febce23680d3902da8",
-    "lastHarvestedAt": "2026-11-24T12:54:06.968Z",
+    "contentHash": "d3ad89768da387ce9600a50bc1e0348243d23cda588801602cd492e6df4cf33f",
+    "lastHarvestedAt": "2026-11-25T05:45:34.545Z",
     "learningId": "learn-github-envoyproxy-envoy"
   },
   "tursodatabase-limbo": {
@@ -8565,8 +8565,8 @@
     "sourceUrl": "https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B-NVFP4",
     "sourceVersion": "hf-meta-models-muse-spark-open-816b-a42b-nvfp4",
     "license": "Open-Source",
-    "contentHash": "eeec5fe5f1ee00f546f996b5a3afed28bfaa25774454f01cf20094a38d7e9727",
-    "lastHarvestedAt": "2026-11-21T10:37:32.589Z",
+    "contentHash": "6e3e5773feb5a0f26f07a10b7dc6f46fcda021dd2eb426fc537f4a54f9a2b53f",
+    "lastHarvestedAt": "2026-11-25T05:45:24.348Z",
     "learningId": "learn-huggingface-meta-models-muse-spark-open-816b-a42b-nvfp4"
   },
   "rickclephas-kmp-nativecoroutines": {

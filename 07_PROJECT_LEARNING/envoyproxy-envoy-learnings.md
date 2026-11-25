@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md`  
 > **Source**: github ([https://github.com/envoyproxy/envoy](https://github.com/envoyproxy/envoy))  
-> **Source Version**: `ef0e49cf`  
+> **Source Version**: `a7ae7600`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T12:54:05.817Z  
+> **Timestamp**: 2026-11-25T05:45:33.477Z  
 > **Learning ID**: `learn-github-envoyproxy-envoy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/envoyproxy/envoy](https://github.com/envoyproxy/envoy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T12:54:05.812Z  
+> **Harvest Timestamp**: 2026-11-25T05:45:33.472Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Cloud-native high-performance edge/middle/service proxy
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: Cargo.toml, go.mod, README.md
-- **Stars / Engagement**: 29287 stars
+- **Stars / Engagement**: 29291 stars
 
 ---
 
@@ -1047,859 +1047,432 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d0dfd6b3` (2026-11-23)
-**Commit Message**: resource_monitors: add WorkerUtilizationTracker for event-loop utilization (#49399)
+### Incident Patch 1: `d4c3cc20` (2026-11-24)
+**Commit Message**: test: Do not check for zero memory use where it cannot be measured (#49597)
 
-Introduces `WorkerUtilizationTrackerInterface` and
-`WorkerUtilizationTracker`, a single-threaded `Event::Evwatch::Observer`
-that measures a worker thread's event-loop utilization (`[0.0, 1.0]`):
-- Records completed `epoll_wait` idle durations (`onPrepare` to
-`onCheck`), capping intentional sleep at `*timeout` when a finite poll
-timeout was requested so late-wakeup scheduler delays count as busy
-time.
-- Because `sampleUtilization(now)` always executes inside a callback on
-its own dispatcher thread (outside `epoll_wait`), computes `1.0 - idle /
-delta_wall` directly over completed idle intervals up to the
-caller-supplied snapshot timestamp `now` and resets accumulated idle
-time without cross-window carry-over.
 
-Additional Description:
-Part 2 of a 4-PR series introducing the
-`envoy.resource_monitors.adaptive_worker_capacity` synchronous-feedback
-resource monitor (#49325, building on #47607 and #46101):
-1. `DynamicTokenBucket` (#49323, merged)
-2. **This PR**: `WorkerUtilizationTracker`
-3. `RefillRateController` (log-linear refill-rate adaptation, plus
-passing a shared snapshot `MonotonicTime` across col
+`EXPECT_MEMORY_EQ(x, 0)` was checked with every allocator, where any
+other expected value is only checked on canonical tcmalloc builds.
 
-**File**: `source/extensions/resource_monitors/adaptive_worker_capacity/BUILD` (modified, +12/-0)
+With jemalloc, `Memory::Stats::totalCurrentlyAllocated()` is the process
+wide `stats.allocated`, which changes when a thread cache is refilled.
+An allocation that is freed again can then be reported as consumed
+memory, depending on what the process allocated before.
+
+This makes
+`Http1ClientConnectionImplTest.ShouldDumpCorrespondingRequestWithoutAllocatingMemory`
+order dependent in the jemalloc compile time options build
+(`cto.jemalloc`): it passes when it is run on its own, but can fail
+every time, with 96 bytes reported as consumed, when the tests that run
+before it in `codec_impl_test` change. Even the length of the
+`--gtest_filter` string is enough to flip the result.
+
+Only check the zero case where `MemoryTest::mode()` says that memory
+usage can be measured, which is unchanged for tcmalloc builds. The
+consumed bytes are also read before `MemoryTest::mode()` is called, as
+that allocates.
+
+Additional Description: gperftools builds still enforce the zero check.
+Risk Lev
+
+**File**: `test/common/memory/memory_test_utility.h` (modified, +17/-7)
 ```diff
-@@ -19,3 +19,15 @@ envoy_cc_library(
-         "@abseil-cpp//absl/time",
-     ],
- )
-+
-+envoy_cc_library(
-+    name = "worker_utilization_tracker_lib",
-+    srcs = ["worker_utilization_tracker.cc"],
-+    hdrs = ["worker_utilization_tracker.h"],
-+    deps = [
-+        "//envoy/common:time_interface",
-+        "//envoy/event:dispatcher_interface",
-+        "//envoy/event:evwatch_interface",
-+        "//source/common/common:assert_lib",
-+    ],
-+)
-```
-
-**File**: `source/extensions/resource_monitors/adaptive_worker_capacity/worker_utilization_tracker.cc` (added, +69/-0)
-```diff
-@@ -0,0 +1,69 @@
-+#include "source/extensions/resource_monitors/adaptive_worker_capacity/worker_utilization_tracker.h"
-+
-+#include <algorithm>
-+#include <chrono>
-+#include <optional>
-+#include <utility>
-+
-+#include "envoy/common/time.h"
-+#include "envoy/event/dispatcher.h"
-+
-+#include "source/common/common/assert.h"
-+
-+namespace Envoy {
-+namespace Extensions {
-+namespace ResourceMonitors {
-+namespace AdaptiveWorkerCapacity {
-+
-+WorkerUtilizationTracker::WorkerUtilizationTracker(Event::Dispatcher& dispatcher)
-+    : dispatcher_(dispatcher), last_sample_time_(dispatcher_.timeSource().monotonicTime()) {
-+  ASSERT(dispatcher_.isThreadSafe());
-+  dispatcher_.registerEvwatchObserver(*this);
-+}
-+
-+WorkerUtilizationTracker::~WorkerUtilizationTracker() {
-+  ASSERT(dispatcher_.isThreadSafe());
-+  dispatcher_.unregisterEvwatchObserver(*this);
-+}
-+
-+void WorkerUtilizationTracker::onPrepare(MonotonicTime prepare_time,
-+                                         std::optional<MonotonicTime::duration> timeout) {
-+  ASSERT(dispatcher_.isThreadSafe());
-+  pending_poll_ = PendingPoll{prepare_time, timeout};
-+}
-+
-+void WorkerUtilizationTracker::onCheck(MonotonicTime check_time) {
-+  ASSERT(dispatcher_.isThreadSafe());
-+  if (pending_poll_.has_value()) {
-+    if (check_time > pending_poll_->prepare_time) {
-+      MonotonicTime::duration idle_time = check_time - pending_poll_->prepare_time;
-+      if (pending_poll_->timeout.has_value()) {
-+        idle_time =
-+            std::min(idle_time, std::max(MonotonicTime::duration::zero(), *pending_poll_->timeout));
-+      }
-+      accumulated_idle_time_ += idle_time;
-+    }
-+    pending_poll_.reset();
-+  }
-+}
-+
-+double WorkerUtilizationTracker::sampleUtilization(MonotonicTime now) {
-+  ASSERT(dispatcher_.isThreadSafe());
-+  ASSERT(!pending_poll_.has_value());
-+  if (now <= last_sample_time_) {
-+    return 0.0;
-+  }
-+  const MonotonicTime::duration delta_wall = now - last_sample_time_;
-+  last_sample_time_ = now;
-+
-+  const MonotonicTime::duration idle_time =
-+      std::exchange(accumulated_idle_time_, MonotonicTime::duration::zero());
-+  const double idle_fraction = std::chrono::duration<double>(idle_time).count() /
-+                               std::chrono::duration<double>(delta_wall).count();
-+  return std::clamp(1.0 - idle_fraction, 0.0, 1.0);
-+}
-+
-+} // namespace AdaptiveWorkerCapacity
-+} // namespace ResourceMonitors
-+} // namespace Extensions
-+} // namespace Envoy
-```
-
-**File**: `source/extensions/resource_monitors/adaptive_worker_capacity/worker_utilization_tracker.h` (added, +66/-0)
-```diff
-@@ -0,0 +1,66 @@
-+#pragma once
-+
-+#include <optional>
-+
-+#include "envoy/common/time.h"
-+#include "envoy/event/dispatcher.h"
-+#include "envoy/event/evwatch.h"
-+
-+namespace Envoy {
-+namespace Extensions {
-+namespace ResourceMonitors {
-+namespace AdaptiveWorkerCapacity {
-+
-+// WorkerUtilizationTrackerInterface defines the interface for measuring a worker thread's
-+// event-loop utilization. All methods must be called on the worker's dispatcher thread.
-+class WorkerUtilizationTrackerInterface {
-+public:
-+  virtual ~WorkerUtilizationTrackerInterface() = default;
-+
-+  // Calculates thread utilization in [0.0, 1.0] over the window ending at now (a monotonic
-+  // timestamp obtained from the worker dispatcher's TimeSource) since the previous sample.
-+  virtual double sampleUtilization(MonotonicTime now) = 0;
-+};
-+
-+// WorkerUtilizationTracker measures event-loop utilization on a persistent blocking worker event
-+// loop (RunType::Block or RunType::RunUntilExit).
+@@ -55,19 +55,29 @@ class MemoryTest {
+ };
+ 
+ // Compares the memory consumed against an exact expected value, but only on
+-// canonical platforms, or when the expected value is zero. Canonical platforms
+-// currently include only for 'release' tests in ci. On other platforms an info
+-// log is emitted, indicating that the test is being skipped.
++// canonical platforms, or when the expected value is zero and memory usage can
++// be measured. Canonical platforms currently include only for 'release' tests in
++// ci. On other platforms an info log is emitted, indicating that the test is
++// being skipped.
 +//
-+// Because sampleUtilization(now) is always invoked from a callback on dispatcher's thread (between
-+// onCheck and onPrepare, never while blocked inside epoll_wait), every idle sleep interval since
-+// last_sample_time_ has already completed by the time sampleUtilization(now) runs using the
-+// caller-provided snapshot timestamp now.
-+//
-+// Not thread-safe; dispatcher must outlive WorkerUtilizationTracker, and construction,
-+// destruction, and all method calls must occur on dispatcher's thread.
-+class WorkerUtilizationTracker final : public WorkerUtilizationTrackerInterface,
-+                                       public Event::Evwatch::Observer {
-+public:
-+  explicit WorkerUtilizationTracker(Event::Dispatcher& dispatcher);
-+  WorkerUtilizationTracker(const WorkerUtilizationTracker&) = delete;
-+  WorkerUtilizationTracker& operator=(const WorkerUtilizationTracker&) = delete;
-+  ~WorkerUtilizationTracker() override;
-+
-+  // Event::Evwatch::Observer
-+  void onPrepare(MonotonicTime prepare_time,
-+                 std::optional<MonotonicTime::duration> timeout) override;
-+  void onCheck(MonotonicTime check_time) override;
-+
-+  // WorkerUtilizationTrackerInterface
-+  double sampleUtilization(MonotonicTime now) override;
-+
-+private:
-+  struct PendingPoll {
-+    MonotonicTime prepare_time;
-+    std::optional<MonotonicTime::duration> timeout;
-+  };
-+
-+  Event::Dispatcher& dispatcher_;
-+  std::optional<PendingPoll> pending_poll_;
-+  MonotonicTime::duration accumulated_idle_time_{0};
-+  MonotonicTime last_sample_time_;
-+};
-+
-+} // namespace AdaptiveWorkerCapacity
-+} // namespace ResourceMonitors
-+} // namespace Extensions
-+} // namespace Envoy
-```
-
-**File**: `test/extensions/resource_monitors/adaptive_worker_capacity/BUILD` (modified, +10/-0)
-```diff
-@@ -17,3 +17,13 @@ envoy_cc_test(
-         "@abseil-cpp//absl/time",
-     ],
- )
-+
-+envoy_cc_test(
-+    name = "worker_utilization_tracker_test",
-+    srcs = ["worker_utilization_tracker_test.cc"],
-+    deps = [
-+        "//source/extensions/resource_monitors/adaptive_worker_capacity:worker_utilization_tracker_lib",
-+        "//test/mocks/event:event_mocks",
-+        "//test/test_common:simulated_time_system_lib",
-+    ],
-+)
-```
-
-**File**: `test/extensions/resource_monitors/adaptive_worker_capacity/worker_utilization_tracker_test.cc` (added, +287/-0)
-```diff
-@@ -0,0 +1,287 @@
-+#include <chrono>
-+#include <memory>
-+#include <optional>
-+#include <type_traits>
-+
-+#include "source/extensions/resource_monitors/adaptive_worker_capacity/worker_utilization_tracker.h"
-+
-+#include "test/mocks/event/mocks.h"
-+#include "test/test_common/simulated_time_system.h"
-+
-+#include "gmock/gmock.h"
-+#include "gtest/gtest.h"
-+
-+namespace Envoy {
-+namespace Extensions {
-+namespace ResourceMonitors {
-+namespace AdaptiveWorkerCapacity {
-+namespace {
-+
-+static_assert(!std::is_copy_constructible_v<WorkerUtilizationTracker>);
-+static_assert(!std::is_copy_assignable_v<WorkerUtilizationTracker>);
-+static_assert(!std::is_move_constructible_v<WorkerUtilizationTracker>);
-+static_assert(!std::is_move_assignable_v<WorkerUtilizationTracker>);
-+
-+using testing::NiceMock;
-+
-+TEST(WorkerUtilizationTrackerTest, CalculatesUtilizationCorrectly) {
-+  Event::SimulatedTimeSystem time_system;
-+  NiceMock<Event::MockDispatcher> dispatcher;
-+
-+  WorkerUtilizationTracker tracker(dispatcher);
-+
-+  // Initial active callback work for 5ms before the first onPrepare.
-+  time_system.advanceTimeWait(std::chrono::milliseconds(5));
-+  tracker.onPrepare(time_system.monotonicTime(), std::nullopt);
-+
-+  // Epoll wait for 75ms.
-+  time_system.advanceTimeWait(std::chrono::milliseconds(75));
-+  tracker.onCheck(time_system.monotonicTime());
-+
-+  // Active event processing for 20ms.
-+  time_system.advanceTimeWait(std::chrono::milliseconds(20));
-+
-+  // Polling at T0 + 100ms: idle = 75ms, wall = 100ms -> utilization = 1.0 - 75 / 100 = 0.25.
-+  EXPECT_DOUBLE_EQ(tracker.sampleUtilization(time_system.monotonicTime()), 0.25);
-+}
-+
-+TEST(WorkerUtilizationTrackerTest, IncludesWakeupDelayInUtilization) {
-+  Event::SimulatedTimeSystem time_system;
-+  NiceMock<Event::MockDispatcher> dispatcher;
-+
-+  WorkerUtilizationTracker tracker(dispatcher);
-+
-+  // onPrepare sets timeout of 10ms at T0.
-+  tracker.onPrepare(time_system.monotonicTime(), std::chrono::milliseconds(10));
-+
-+  // System experiences CPU starvation/delay: epoll wakes up at T0 + 30ms (only 10ms idle; the 20ms
-+  // wakeup delay counts as busy).
-+  time_system.advanceTimeWait(std::chrono::milliseconds(30));
-+  tracker.onCheck(time_system.monotonicTime());
-+
-+  // Active event processing for 20ms until T0 + 50ms: idle = 10ms, wall = 50ms -> 0.80.
-+  time_system.advanceTimeWait(std::chrono::milliseconds(20));
-+  EXPECT_DOUBLE_EQ(tracker.sampleUtilization(time_system.monotonicTime()), 0.80);
-+}
-+
-+TEST(WorkerUtilizationTrackerTest, HandlesContinuousActiveExecutionAcrossMultipleSamples) {
-+  Event::SimulatedTimeSystem time_system;
-+  NiceMock<Event::MockDispatcher> dispatcher;
-+
-+  WorkerUtilizationTracker tracker(dispatcher);
-+
-+  // Sleep 50ms, then wake up at T0 + 50ms and execute active callbacks through T0 + 350ms.
-+  tracker.onPrepare(time_system.monotonicTime(), std::nullopt);
-+  time_system.advanceTimeWait(std::chrono::milliseconds(50));
-+  tracker.onCheck(time_system.monotonicTime());
-+
-+  // Poll 1 at T0 + 100ms: idle = 50ms, wall = 100ms -> utilization = 0.50.
-+  time_system.advanceTimeWait(std::chrono::milliseconds(50));
-+  EXPECT_DOUBLE_EQ(tracker.sampleUtilization(time_system.monotonicTime()), 0.50);
-+
-+  // Poll 2 at T0 + 200ms: idle = 0ms, wall = 100ms -> utilization = 1.00.
-+  time_system.advanceTimeWait(std::chrono::milliseconds(100));
-+  EXPECT_DOUBLE_EQ(tracker.sampleUtilization(time_system.monotonicTime()), 1.00);
-+
-+  // Poll 3 at T0 + 300ms: idle = 0ms, wall = 100ms -> utilization = 1.00.
-+  time_system.advanceTimeWait(std::chrono::milliseconds(100));
-+  EXPECT_DOUBLE_EQ(tracker.sampleUtilization(time_system.monotonicTime()), 1.00);
-+
-+  // T0 + 350ms: active callbacks finish and dispatcher sleeps 50ms until T0 + 400ms.
-+  time_system.advanceTimeWait(std::chrono::milliseconds(50));
-+  tracker.onPrepare(time_system.monotonicTime(), std::nullopt);
-+  time_system.advanceTimeWait(std::chrono::milliseconds(50));
-+  tracker.onCheck(time_system.monotonicTime());
-+
-+  // Poll 4 at T0 + 400ms: idle = 50ms, wall = 100ms -> utilization = 0.50.
-+  EXPECT_DOUBLE_EQ(tracker.sampleUtilization(time_system.monotonicTime()), 0.50);
-+
-+  // Poll 5 at T0 + 500ms: pure idle 400ms -> 500ms, wall = 100ms -> utilization = 0.00.
-+  tracker.onPrepare(time_system.monotonicTime(), std::nullopt);
-+  time_system.advanceTimeWait(std::chrono::milliseconds(100));
-+  tracker.onCheck(time_system.monotonicTime());
-+  EXPECT_DOUBLE_EQ(tracker.sampleUtilization(time_system.monotonicTime()), 0.00);
-+}
-+
-+TEST(WorkerUtilizationTrackerTest, ReturnsZeroUtilizationWhenDeltaWallIsZero) {
-+  Event::SimulatedTimeSystem time_system;
-+  time_system.advanceTimeWait(std::chrono::milliseconds(50));
-+  NiceMock<Event::MockDispatcher> dispatcher;
-+
-+  WorkerUtilizationTracker tracker(dispatcher);
-+  const auto t0 = time_system.monotonicTime();
-+
-+  // Zero elapsed time since construction returns 0.0.
-+  EXPECT_DOUBLE_EQ(tracker.sampleUtilization(t0), 0.0);
-+
-+  // Accumulate 50ms of idle time and sample at t
++// The zero case is not checked where memory usage cannot be measured (see
++// `MemoryTest::mode()`). In particular, with jemalloc the total changes when a
++// thread cache is refilled, so an allocation that is freed again can still be
++// reported as consumed memory, depending on what the process allocated before.
+ #define EXPECT_MEMORY_EQ(consumed_bytes, expected_value)                                           \
+   do {                                                                                             \
+-    if (expected_value == 0 || ::Envoy::Memory::TestUtil::MemoryTest::mode() ==                    \
+-                                   ::Envoy::Memory::TestUtil::MemoryTest::Mode::Canonical) {       \
+-      EXPECT_EQ(consumed_bytes, expected_value);                                                   \
++    /* Read the memory consumed first: `MemoryTest::mode()` allocates. */                          \
++    const auto memory_test_consumed_bytes = consumed_bytes;                                        \
++    const auto memory_test_mode = ::Envoy::Memory::TestUtil::MemoryTest::mode();                   \
++    if ((expected_value == 0 &&                                                                    \
++         memory_test_mode != ::Envoy::Memory::TestUtil::MemoryTest::Mode::Disabled) ||             \
++        memory_test_mode == ::Envoy::Memory::TestUtil::MemoryTest::Mode::Canonical) {              \
++      EXPECT_EQ(memory_test_consumed_bytes, expected_value) << #consumed_bytes;                    \
+     } else {                                                                                       \
+       ENVOY_LOG_MISC(info,                                                                         \
+                      "Skipping exact memory test of actual={} versus expected={} "                 \
+                      "bytes as platform is non-canonical",                                         \
+-                     consumed_bytes, expected_value);                                              \
++                     memory_test_consumed_bytes, expected_value);                                  \
+     }                                                                                              \
+   } while (false)
+ 
 ```
 
 ---
 
-### Incident Patch 2: `c17e0d33` (2026-11-23)
-**Commit Message**: http: fix decoder filter local reply abort lifecycle in FilterManager. (#49102)
+### Incident Patch 2: `ef520a59` (2026-11-24)
+**Commit Message**: mcp_json_rest_bridge: fix notification HTTP responses (#48784)
 
-Commit Message: http: fix decoder filter local reply abort lifecycle in
-FilterManager.
-Additional Description: This is the first pull request in the chain that
-makes local replies from upstream HTTP filters retriable.
-
-When a decoder filter aborts the chain with sendLocalReply,
-FilterManager::decodeHeaders ran the prepared local reply before
-finishing that filter's bookkeeping (processed_headers_,
-commonHandleAfterHeadersCallback(), and decodeComplete()), and
-FilterManager::decodeTrailers ran it before
-commonHandleAfterTrailersCallback(). Running the prepared local reply
-can complete the stream synchronously and destroy the filters, so
-decodeHeaders could call decodeComplete() on a filter after onDestroy().
-The downstream HCM hits this today: a filter local reply in
-decodeHeaders(end_stream=true) that ends the stream got decodeComplete()
-after onDestroy(). HttpConnectionManagerImplTest.FilterHeadReply encoded
-that order and is updated.
-
-Each filter's bookkeeping now finishes before
-executeLocalReplyIfPrepared() runs, and iteration returns right after
-it:
-
-* decodeData and decodeTrailers now clear filte
-
-**File**: `source/common/http/filter_manager.cc` (modified, +40/-8)
-```diff
-@@ -806,11 +806,24 @@ void FilterManager::decodeHeaders(ActiveStreamDecoderFilter* filter, RequestHead
-       state_.filter_call_state_ &= ~FilterCallState::EndOfStream;
-     }
-     if (state_.decoder_filter_chain_aborted_) {
--      executeLocalReplyIfPrepared();
-       ENVOY_STREAM_LOG(trace,
-                        "decodeHeaders filter iteration aborted due to local reply: filter={}",
-                        *this, (*entry)->filter_context_.config_name);
-+      // Finish this filter's bookkeeping, including decodeComplete(), before running the prepared
-+      // local reply. Running the local reply encodes the response and may complete or reset the
-+      // stream synchronously, destroying the filters.
-       status = FilterHeadersStatus::StopIteration;
-+      (*entry)->processed_headers_ = true;
-+      (*entry)->commonHandleAfterHeadersCallback(status, end_stream);
-+      if ((*entry)->end_stream_ && !state_.destroyed_) {
-+        (*entry)->handle_->decodeComplete();
-+      }
-+      executeLocalReplyIfPrepared();
-+      if (end_stream && !state_.destroyed_ &&
-+          !filter_manager_callbacks_.responseHeaders().has_value()) {
-+        disarmRequestTimeout();
-+      }
-+      return;
-     }
- 
-     ASSERT(!(status == FilterHeadersStatus::ContinueAndDontEndStream && !(*entry)->end_stream_),
-@@ -834,13 +847,12 @@ void FilterManager::decodeHeaders(ActiveStreamDecoderFilter* filter, RequestHead
-                   (*entry)->filter_context_.config_name));
- 
-     // If this filter ended the stream, decodeComplete() should be called for it.
--    if ((*entry)->end_stream_) {
-+    if ((*entry)->end_stream_ && !state_.destroyed_) {
-       (*entry)->handle_->decodeComplete();
-     }
- 
-     // Skip processing metadata after sending local reply
-     if (stopDecoderFilterChain() && std::next(entry) != decoder_filters_.end()) {
--      maybeContinueDecoding(continue_data_entry);
-       return;
-     }
- 
-@@ -881,6 +893,9 @@ void FilterManager::decodeHeaders(ActiveStreamDecoderFilter* filter, RequestHead
-   }
- 
-   maybeContinueDecoding(continue_data_entry);
-+  if (state_.destroyed_) {
-+    return;
-+  }
- 
-   if (end_stream) {
-     disarmRequestTimeout();
-@@ -968,7 +983,8 @@ void FilterManager::decodeData(ActiveStreamDecoderFilter* filter, Buffer::Instan
-     // is replayed to it with end_stream false, and that delivery must not retract the marker.
-     (*entry)->observed_end_stream_ |= (*entry)->end_stream_;
-     FilterDataStatus status = (*entry)->handle_->decodeData(data, (*entry)->end_stream_);
--    if ((*entry)->end_stream_) {
-+    // Run decodeComplete() inside the call state so an abort it triggers stops the iteration.
-+    if ((*entry)->end_stream_ && !state_.destroyed_) {
-       (*entry)->handle_->decodeComplete();
-     }
-     state_.filter_call_state_ &= ~FilterCallState::DecodeData;
-@@ -978,9 +994,13 @@ void FilterManager::decodeData(ActiveStreamDecoderFilter* filter, Buffer::Instan
-     ENVOY_STREAM_LOG(trace, "decode data called: filter={} status={}", *this,
-                      (*entry)->filter_context_.config_name, static_cast<uint64_t>(status));
-     if (state_.decoder_filter_chain_aborted_) {
--      executeLocalReplyIfPrepared();
-       ENVOY_STREAM_LOG(trace, "decodeData filter iteration aborted due to local reply: filter={}",
-                        *this, (*entry)->filter_context_.config_name);
-+      executeLocalReplyIfPrepared();
-+      if (end_stream && !state_.destroyed_ &&
-+          !filter_manager_callbacks_.responseHeaders().has_value()) {
-+        disarmRequestTimeout();
-+      }
-       return;
-     }
- 
-@@ -1010,6 +1030,10 @@ void FilterManager::decodeData(ActiveStreamDecoderFilter* filter, Buffer::Instan
-     }
-   }
- 
-+  if (state_.destroyed_) {
-+    return;
-+  }
-+
-   if (forward_held_trailers_) {
-     // Trailers added in this pass follow the data from the filter holding them, if it iterates.
-     forwardRequestTrailers();
-@@ -1092,17 +1116,25 @@ void FilterManager::decodeTrailers(ActiveStreamDecoderFilter* filter, RequestTra
-     state_.filter_call_state_ |= FilterCallState::DecodeTrailers;
-     FilterTrailersStatus status = (*entry)->handle_->decodeTrailers(trailers);
-     request_trailers_state_.processed_ = true;
--    (*entry)->handle_->decodeComplete();
-     (*entry)->end_stream_ = true;
-+    // Run decodeComplete() inside the call state so an abort it triggers stops the iteration.
-+    if (!state_.destroyed_) {
-+      (*entry)->handle_->decodeComplete();
-+    }
-     state_.filter_call_state_ &= ~FilterCallState::DecodeTrailers;
-     ENVOY_STREAM_LOG(trace, "decode trailers called: filter={} status={}", *this,
-                      (*entry)->filter_context_.config_name, static_cast<uint64_t>(status));
-     if (state_.decoder_filter_chain_aborted_) {
--      executeLocalReplyIfPrepared();
-+      status = FilterTrailersStatus::StopIteration;
-       ENVOY_STREAM_LOG(trace,
-                        "decodeTrailers filter iteration aborted due to local reply: filter={}",
-                       
-```
-
-**File**: `test/common/http/conn_manager_impl_test_2.cc` (modified, +2/-1)
-```diff
-@@ -2088,6 +2088,8 @@ TEST_F(HttpConnectionManagerImplTest, FilterHeadReply) {
-   });
- 
-   EXPECT_CALL(response_encoder_, streamErrorOnInvalidHttpMessage()).WillOnce(Return(true));
-+  // decodeComplete() runs before the local reply is encoded, which ends and destroys the stream.
-+  EXPECT_CALL(*decoder_filters_[0], decodeComplete());
-   EXPECT_CALL(*encoder_filters_[0], encodeHeaders(_, true))
-       .WillOnce([&](ResponseHeaderMap& headers, bool) -> FilterHeadersStatus {
-         EXPECT_EQ("11", headers.getContentLengthValue());
-@@ -2099,7 +2101,6 @@ TEST_F(HttpConnectionManagerImplTest, FilterHeadReply) {
-         response_encoder_.stream_.codec_callbacks_->onCodecEncodeComplete();
-       });
-   expectOnDestroy();
--  EXPECT_CALL(*decoder_filters_[0], decodeComplete());
-   // Kick off the incoming data.
-   Buffer::OwnedImpl fake_input("1234");
-   EXPECT_CALL(filter_callbacks_.connection_.stream_info_, protocol(Envoy::Http::Protocol::Http11));
-```
-
-**File**: `test/common/http/filter_manager_test.cc` (modified, +436/-0)
-```diff
-@@ -2295,6 +2295,411 @@ TEST_F(FilterManagerTest, ResponseBufferDrainedAfterTooLargeReleasesNothing) {
-   filter_manager_->destroyFilters();
- }
- 
-+class FilterManagerDecodeLifecycleTest : public FilterManagerTest {
-+public:
-+  enum class DecodePhase { Headers, Data, Trailers };
-+
-+  using StrictDecoderFilterPtr = std::shared_ptr<StrictMock<MockStreamDecoderFilter>>;
-+
-+  StrictDecoderFilterPtr setupSingleDecoderFilter() {
-+    initialize();
-+    auto filter = std::make_shared<StrictMock<MockStreamDecoderFilter>>();
-+    EXPECT_CALL(*filter, setDecoderFilterCallbacks(_));
-+    EXPECT_CALL(filter_factory_, createFilterChain(_))
-+        .WillOnce([&](FilterChainFactoryCallbacks& callbacks) -> bool {
-+          callbacks.setFilterConfigName("configName1");
-+          createDecoderFilterFactoryCb(filter)(callbacks);
-+          return true;
-+        });
-+    initHeaders();
-+    return filter;
-+  }
-+
-+  std::pair<StrictDecoderFilterPtr, StrictDecoderFilterPtr> setupTwoDecoderFilters() {
-+    initialize();
-+    auto filter_1 = std::make_shared<StrictMock<MockStreamDecoderFilter>>();
-+    auto filter_2 = std::make_shared<StrictMock<MockStreamDecoderFilter>>();
-+    EXPECT_CALL(*filter_1, setDecoderFilterCallbacks(_));
-+    EXPECT_CALL(*filter_2, setDecoderFilterCallbacks(_));
-+    EXPECT_CALL(filter_factory_, createFilterChain(_))
-+        .WillOnce([&](FilterChainFactoryCallbacks& callbacks) -> bool {
-+          callbacks.setFilterConfigName("configName1");
-+          createDecoderFilterFactoryCb(filter_1)(callbacks);
-+          callbacks.setFilterConfigName("configName2");
-+          createDecoderFilterFactoryCb(filter_2)(callbacks);
-+          return true;
-+        });
-+    initHeaders();
-+    return {filter_1, filter_2};
-+  }
-+
-+  void initHeaders() {
-+    filter_manager_->createDownstreamFilterChain();
-+    ON_CALL(filter_manager_callbacks_, requestHeaders())
-+        .WillByDefault(Return(makeOptRef(*headers_)));
-+    ON_CALL(filter_manager_callbacks_, requestTrailers())
-+        .WillByDefault(
-+            [this]() -> RequestTrailerMapOptRef { return makeOptRefFromPtr(trailers_.get()); });
-+    filter_manager_->requestHeadersInitialized();
-+  }
-+
-+  void sendData(absl::string_view data, bool end_stream) {
-+    Buffer::OwnedImpl body(data);
-+    filter_manager_->decodeData(body, end_stream);
-+  }
-+
-+  void sendTrailers() {
-+    trailers_ = std::make_unique<TestRequestTrailerMapImpl>(
-+        TestRequestTrailerMapImpl{{"trailer", "value"}});
-+    filter_manager_->decodeTrailers(*trailers_);
-+  }
-+
-+  void applyStopIterationActionInPhase(StrictMock<MockStreamDecoderFilter>& filter,
-+                                       DecodePhase phase, bool end_stream,
-+                                       std::function<void()> abort_action) {
-+    switch (phase) {
-+    case DecodePhase::Headers:
-+      EXPECT_CALL(filter, decodeHeaders(_, end_stream))
-+          .WillOnce([abort_action](RequestHeaderMap&, bool) {
-+            abort_action();
-+            return FilterHeadersStatus::StopIteration;
-+          });
-+      return;
-+    case DecodePhase::Data:
-+      EXPECT_CALL(filter, decodeHeaders(_, false)).WillOnce(Return(FilterHeadersStatus::Continue));
-+      EXPECT_CALL(filter, decodeData(_, end_stream))
-+          .WillOnce([abort_action](Buffer::Instance&, bool) {
-+            abort_action();
-+            return FilterDataStatus::StopIterationNoBuffer;
-+          });
-+      return;
-+    case DecodePhase::Trailers:
-+      ASSERT(end_stream);
-+      EXPECT_CALL(filter, decodeHeaders(_, false)).WillOnce(Return(FilterHeadersStatus::Continue));
-+      EXPECT_CALL(filter, decodeTrailers(_)).WillOnce([abort_action](RequestTrailerMap&) {
-+        abort_action();
-+        return FilterTrailersStatus::StopIteration;
-+      });
-+      return;
-+    }
-+  }
-+
-+  // Runs phases up to and including `phase`
-+  void driveThroughPhase(DecodePhase phase, bool end_stream) {
-+    switch (phase) {
-+    case DecodePhase::Headers:
-+      filter_manager_->decodeHeaders(*headers_, end_stream);
-+      return;
-+    case DecodePhase::Data:
-+      filter_manager_->decodeHeaders(*headers_, false);
-+      sendData("body", end_stream);
-+      return;
-+    case DecodePhase::Trailers:
-+      filter_manager_->decodeHeaders(*headers_, false);
-+      sendTrailers();
-+      return;
-+    }
-+  }
-+
-+  void runLocalReplyOnEndStreamTest(DecodePhase end_stream_phase) {
-+    auto filter = setupSingleDecoderFilter();
-+    EXPECT_CALL(*filter, decodeMetadata(_)).Times(0);
-+
-+    InSequence s;
-+    applyStopIterationActionInPhase(*filter, end_stream_phase, /*end_stream=*/true, [&]() {
-+      if (end_stream_phase == DecodePhase::Headers) {
-+        MetadataMap metadata_map = {{"a", "b"}};
-+        filter->callbacks_->addDecodedMetadata().emplace_back(
-+            std::make_unique<MetadataMap>(metadata_map));
-+      }
-+      filter->callbacks_->sendLocalReply(Code::InternalServerError, "err", nullptr, std::nullopt,
-+                                         "err");
-
-```
-
----
-
-### Incident Patch 3: `26032923` (2026-11-24)
-**Commit Message**: dynamic_modules: add memory limits to the Rust SDK (#49549)
-
-## Description
-
-This PR adds a hard memory limit to the tracking allocator of the Rust
-SDK. A module can set and remove the limit, for example from the
-configuration of its resource monitor, and the allocator refuses any
-allocation that would exceed it.
-
----
-
-**Commit Message:** dynamic_modules: add memory limits to the Rust SDK
-**Risk Level:** Low
-**Testing:** Added Tests
-**Docs Changes:** Added
-**Release Notes:** Added
+Commit Message: mcp_json_rest_bridge: fix incorrect HTTP response
+handling and request-ID validation for MCP notifications in the
+JSON-REST Bridge. Unsupported legacy notifications now return HTTP 400
+instead of HTTP 200, while unsupported MCP 2026-07-28 notifications
+retain their existing HTTP 404 behavior where applicable. The change
+also ensures that `notifications/initialized` messages containing an ID
+are handled as regular requests rather than incorrectly receiving HTTP
+202. Existing legacy notification behavior is preserved without
+introducing additional notification support.
+Risk Level: Low
+Testing: Added and updated unit tests covering unsupported
+notifications, request-ID validation, and protocol-version
+compatibility.
+Docs Changes: NA
+Release Notes: Fixed the `mcp_json_rest_bridge` HTTP filter to return
+appropriate HTTP error statuses for unsupported JSON-RPC notifications
+and prevent ID-bearing `notifications/initialized` requests from
+incorrectly receiving HTTP 202 Accepted.
+Platform Specific Features: NA
 
 ---------
 
-Signed-off-by: Rohit Agrawal <[REDACTED_EMAIL]>
+Signed-off-by: Wenwei Zhao <[REDACTED_EMAIL]>
 
-**File**: `changelogs/current/new_features/dynamic_modules__rust-sdk-memory-tracking.rst` (modified, +4/-1)
+**File**: `changelogs/current/bug_fixes/mcp_json_rest_bridge__notification-http-status.rst` (added, +6/-0)
 ```diff
-@@ -3,4 +3,7 @@ as its global allocator counts the memory that it allocates through that allocat
- ``TrackingAllocator::allocated_bytes`` returns. ``MemoryResourceMonitor`` reports this memory as the
- pressure of a dynamic modules resource monitor (``envoy.resource_monitors.dynamic_modules``), so
- that the overload manager can act when the module exceeds its budget. On Linux, a module that uses
--the allocator stays loaded, so a new build of the module needs a new path.
-+the allocator stays loaded, so a new build of the module needs a new path. The allocator can also
-+refuse the allocations beyond a limit that ``TrackingAllocator::set_limit`` sets and
-+``TrackingAllocator::remove_limit`` removes. A refused allocation aborts Envoy unless the module
-+makes it with a fallible API such as ``Vec::try_reserve``.
+@@ -0,0 +1,6 @@
++Fixed the ``mcp_json_rest_bridge`` HTTP filter to reject unsupported JSON-RPC notifications, i.e. messages without an
++``id`` whose method starts with ``notifications/``, as unsupported methods with an HTTP error status, as required by the
++Streamable HTTP transport. Previously, they got HTTP ``200 OK`` with a JSON-RPC ``-32600`` error for the missing ``id``.
++Rejected legacy notifications now get HTTP ``400 Bad Request``, and MCP ``2026-07-28`` notifications keep the existing
++HTTP ``404 Not Found`` for unsupported methods. A ``notifications/initialized`` message with an ``id`` is now validated
++as a request instead of getting ``202 Accepted``.
 ```
 
-**File**: `docs/root/configuration/operations/overload_manager/overload_manager.rst` (modified, +5/-1)
+**File**: `source/extensions/filters/http/mcp_json_rest_bridge/mcp_json_rest_bridge_filter.cc` (modified, +14/-6)
 ```diff
-@@ -129,7 +129,11 @@ resource monitor must load the same shared object as the filters of the module,
- local file name, since a module loaded from another file is a separate instance with an allocator of
- its own. A module whose global allocator is another one reports failed updates, which the
- ``failed_updates`` statistic of the resource counts. On Linux, a module that uses the allocator
--stays loaded, so a new build of the module needs a new path.
-+stays loaded, so a new build of the module needs a new path. The module can also give its allocator
-+a hard limit, for example from the configuration of its resource monitor. A refused allocation
-+aborts Envoy unless the module makes it with a fallible API such as ``Vec::try_reserve``, so the
-+hard limit should leave room above the budget of the resource monitor for the overload manager to
-+act first.
+@@ -1672,7 +1672,8 @@ void McpJsonRestBridgeFilter::handleMcpMethod(
+         json_rpc.contains(McpConstants::PARAMS_FIELD) ? json_rpc[McpConstants::PARAMS_FIELD]
+                                                       : json::object());
  
- The following configuration reports the pressure of the module ``my_module`` in the
- ``overload.my_module_memory.pressure`` gauge, for a module whose ``memory`` resource monitor takes
+-  } else if (method == McpConstants::Methods::NOTIFICATION_INITIALIZED && !is_stateless_request_) {
++  } else if (method == McpConstants::Methods::NOTIFICATION_INITIALIZED && is_notification_ &&
++             !is_stateless_request_) {
+     mcp_operation_ = McpOperation::InitializationAck;
+     setParsingMetadata(method, json_rpc.contains(McpConstants::PARAMS_FIELD)
+                                    ? json_rpc[McpConstants::PARAMS_FIELD]
+@@ -1980,7 +1981,12 @@ void McpJsonRestBridgeFilter::sendErrorResponse(
+   }
+   setParsingMetadata(method, params);
+ 
+-  decoder_callbacks_->sendLocalReply(response_code, response_body, modify_headers, grpc_status,
++  // The Streamable HTTP transport requires an HTTP error status for a rejected notification:
++  // https://modelcontextprotocol.io/specification/2026-07-28/basic/transports/streamable-http
++  const Http::Code code = (is_notification_ && response_code == Http::Code::OK)
++                              ? Http::Code::BadRequest
++                              : response_code;
++  decoder_callbacks_->sendLocalReply(code, response_body, modify_headers, grpc_status,
+                                      bridgeStatusToString(status));
+ }
+ 
+@@ -2136,10 +2142,12 @@ absl::Status McpJsonRestBridgeFilter::validateJsonRpcIdAndMethod(const nlohmann:
+     sendErrorResponse(Http::Code::OK, BridgeStatus::RequestMcpMethodMalformed,
+                       generateErrorJsonResponse(-32600, "MCP method field is not a string").dump());
+     return absl::InvalidArgumentError("MCP method field is not a string");
+-  } else if (McpConstants::Methods::NOTIFICATION_INITIALIZED ==
+-             json_rpc[McpConstants::METHOD_FIELD].get_ref<const nlohmann::json::string_t&>()) {
+-    // The notifications/initialized request is not required to have an ID
+-    // field.
++  } else if (!json_rpc.contains(McpConstants::ID_FIELD) &&
++             absl::StartsWith(json_rpc[McpConstants::METHOD_FIELD].get<absl::string_view>(),
++                              McpConstants::Methods::NOTIFICATION_PREFIX)) {
++    // A notification, i.e. a message without an "id" member whose method is an MCP notification,
++    // is not required to have an ID field.
++    is_notification_ = true;
+   } else if (!session_id.ok()) {
+     sendErrorResponse(Http::Code::OK, BridgeStatus::RequestIdNotFound,
+                       generateErrorJsonResponse(-32600, "Missing ID field").dump(), nullptr,
 ```
 
-**File**: `source/extensions/dynamic_modules/sdk/rust/src/memory.rs` (modified, +607/-34)
+**File**: `source/extensions/filters/http/mcp_json_rest_bridge/mcp_json_rest_bridge_filter.h` (modified, +6/-1)
 ```diff
-@@ -1,9 +1,10 @@
- //! Tracking of the heap memory allocated by a dynamic module.
- //!
- //! A module that declares a [`TrackingAllocator`] as its global allocator counts the bytes that it
--//! allocates through it. A [`MemoryResourceMonitor`] reports these bytes to the overload manager
--//! through the dynamic module resource monitor, so that overload actions and load shed points can
--//! act when the module exceeds its budget.
-+//! allocates through it, and can refuse the allocations beyond a memory limit. A
-+//! [`MemoryResourceMonitor`] reports these bytes to the overload manager through the dynamic module
-+//! resource monitor, so that overload actions and load shed points can act when the module exceeds
-+//! its budget.
- //!
- //! Only a module built as a shared object of its own can use the allocator, since all the Rust
- //! code linked into Envoy has a single global allocator.
-@@ -45,20 +46,25 @@
- use crate::resource_monitor::{ResourceMonitor, ResourceMonitorUpdate};
- use std::alloc::{GlobalAlloc, Layout, System};
- use std::cell::Cell;
-+use std::fmt::Write;
- use std::num::NonZeroU64;
- use std::sync::atomic::{AtomicBool, AtomicI64, Ordering};
-+use std::sync::{Mutex, MutexGuard, PoisonError};
+@@ -317,6 +317,9 @@ class McpJsonRestBridgeFilter : public Http::PassThroughFilter,
+   //      * 404 Not Found with -32601 (Method not found), as required by the Streamable HTTP
+   //        transport:
+   //        https://modelcontextprotocol.io/specification/2026-07-28/basic/transports/streamable-http
++  //    - Rejected JSON-RPC notifications (generated by this filter). A notification has no JSON-RPC
++  //      response, so the Streamable HTTP transport requires an HTTP error status. 200 OK is
++  //      replaced with 400 Bad Request for them.
+   //    - Authorization errors preserved from upstream (401 Unauthorized, 403 Forbidden):
+   //      * 401 and 403 from upstream are preserved as non-200 HTTP responses as required by the MCP
+   //        authorization spec:
+@@ -335,7 +338,8 @@ class McpJsonRestBridgeFilter : public Http::PassThroughFilter,
  
- /// The largest allocation that the allocator forwards, which keeps the arithmetic of the counters
- /// within `i64`. No allocator can provide this much memory.
- const MAX_ALLOCATION_BYTES: usize = 1 << 62;
+   // Validates the "id" and "method" fields of a JSON-RPC request.
+   // It sends local error response and return an error status if the validation
+-  // fails. Otherwise, it returns OK status.
++  // fails. Otherwise, it returns OK status. A JSON-RPC notification, i.e. a message without an "id"
++  // member whose method is an MCP notification, does not need an ID and sets is_notification_.
+   absl::Status validateJsonRpcIdAndMethod(const nlohmann::json& json_rpc);
  
-+/// The largest memory limit, which keeps the arithmetic of the counters within `i64`.
-+const MAX_LIMIT_BYTES: u64 = 1 << 62;
-+
- /// The number of threads that count their allocations in a slot of their own. A thread that finds
- /// every slot taken counts in the pool instead.
- const THREAD_SLOTS: usize = 256;
- const UNASSIGNED_SLOT: usize = usize::MAX;
- const NO_SLOT: usize = usize::MAX - 1;
- 
--/// The credit that a slot reserves from the pool at once.
-+/// The largest credit that a slot reserves from the pool at once.
- const CREDIT_BATCH: i64 = 64 << 10;
- 
- /// A counter on a cache line of its own, so that threads counting in different slots never contend.
-@@ -71,6 +77,10 @@ impl Counter {
-   }
+   // Sets dynamic metadata for the filter based on the MCP request method and parameters.
+@@ -378,6 +382,7 @@ class McpJsonRestBridgeFilter : public Http::PassThroughFilter,
+   McpOperation mcp_operation_ = McpOperation::Unspecified;
+   std::optional<nlohmann::json> session_id_;
+   bool is_stateless_request_{false};
++  bool is_notification_{false};
+   std::string server_name_;
+   std::string path_;
+   Buffer::OwnedImpl request_body_;
+```
+
+**File**: `test/extensions/filters/http/mcp_json_rest_bridge/mcp_json_rest_bridge_filter_test.cc` (modified, +66/-1)
+```diff
+@@ -813,6 +813,71 @@ TEST_F(McpJsonRestBridgeFilterTest, IdFieldWithFloatReturnsError) {
+           R"json({"error":{"code":-32600,"message":"Missing ID field"},"id":null,"jsonrpc":"2.0"})json"));
  }
  
-+/// A lock on a cache line of its own, so that the refusals that take it do not slow down counting.
-+#[repr(align(128))]
-+struct LimitUpdateLock(Mutex<()>);
++TEST_F(McpJsonRestBridgeFilterTest, UnsupportedNotificationReturnsBadRequest) {
++  ASSERT_OK(makeFilter());
 +
- static SLOT_IN_USE: [AtomicBool; THREAD_SLOTS] = [const { AtomicBool::new(false) }; THREAD_SLOTS];
- 
- thread_local! {
-@@ -124,15 +134,31 @@ impl Drop for ThreadSlotReleaser {
-   }
- }
- 
--/// A global allocator that counts the bytes allocated through it and not yet freed.
-+/// The credit that a slot reserves at once under the given limit, a small fraction of the limit so
-+/// that the credit idle in the slots matters little, between 1 KiB and [`CREDIT_BATCH`].
-+fn credit_batch(limit_bytes: i64) -> i64 {
-+  (limit_bytes / 8192).clamp(1 << 10, CREDIT_BATCH)
++  request_headers_ = {{":method", "POST"}, {":path", "/mcp"}};
++  EXPECT_EQ(filter_->decodeHeaders(request_headers_, /*end_stream=*/false),
++            Http::FilterHeadersStatus::StopIteration);
++
++  // A notification without an ID is rejected as an unsupported method rather than for the missing
++  // ID, and with an HTTP error status since it has no JSON-RPC response.
++  EXPECT_CALL(
++      decoder_callbacks_,
++      sendLocalReply(
++          Eq(Http::Code::BadRequest),
++          StrEq(
++              R"json({"code":-32601,"message":"MCP method notifications/cancelled is not supported"})json"),
++          _, _, StrEq("mcp_json_rest_bridge_request_mcp_method_not_supported")));
++
++  Buffer::OwnedImpl body(
++      R"json({"jsonrpc":"2.0","method":"notifications/cancelled","params":{"requestId":1}})json");
++  EXPECT_EQ(filter_->decodeData(body, /*end_stream=*/true),
++            Http::FilterDataStatus::StopIterationNoBuffer);
 +}
 +
-+/// A global allocator that counts the bytes allocated through it and not yet freed, and refuses an
-+/// allocation that would exceed its memory limit.
- ///
--/// Every thread reserves credit for its allocations from a shared pool in batches of 64 KiB and
--/// spends it in a slot that only it writes, with a plain load and store, so counting costs no
-+/// Every thread reserves credit for its allocations from a shared pool in batches of up to 64 KiB
-+/// and spends it in a slot that only it writes, with a plain load and store, so counting costs no
- /// atomic read-modify-write in the common case. A slot holds at most two batches of credit, which
- /// keeps the count accurate when memory is freed by a thread other than the one that allocated it.
- /// Up to 256 threads hold a slot at a time. A thread that exits hands its slot over to the next
- /// thread, and a thread that finds every slot taken counts every allocation in the pool.
- ///
-+/// Credit is only reserved within the limit, so the bytes allocated never exceed it, but the credit
-+/// that other threads hold can make the allocator refuse an allocation below the limit, by up to
-+/// two batches per slot. Under a limit, a batch is 1/8192 of the limit, between 1 KiB and 64 KiB.
-+/// Threads other than the one that sets a limit keep the credit that they hold until they next free
-+/// memory. A refused allocation behaves like running out of memory, which aborts the process unless
-+/// the module allocates with a fallible API such as `Vec::try_reserve`. On Unix, the first
-+/// allocation that a limit refuses is reported on the standard error, once in the life of the
-+/// allocator.
-+///
- /// Only the allocations made through this allocator are counted, by the size that they request.
- /// Memory that the module allocates directly from the C allocator, for example in a library written
- /// in C, is not counted. A module that needs another global allocator wraps it, since a module has
-@@ -143,22 +169,32 @@ impl Drop for ThreadSlotReleaser {
- /// then reuses the loaded module, even if the file changed.
- pub struct TrackingAllocator<A: GlobalAlloc = System
-```
-
-**File**: `test/extensions/dynamic_modules/test_data/rust/memory_tracking_integration_test.rs` (modified, +22/-4)
-```diff
-@@ -22,7 +22,9 @@ fn init() -> bool {
- }
- 
- /// Creates a monitor that reports the memory of the module against the heap size in bytes that the
--/// configuration holds.
-+/// configuration holds. A second number in the configuration sets a hard limit in bytes, which the
-+/// allocator enforces. Without it, the monitor removes the limit that an earlier monitor set, since
-+/// the module stays loaded between the tests of a test binary.
- fn new_resource_monitor_fn(
-   name: &str,
-   config: &[u8],
-@@ -31,7 +33,16 @@ fn new_resource_monitor_fn(
-   if name != "memory" {
-     return None;
-   }
--  let max_heap_size_bytes: NonZeroU64 = std::str::from_utf8(config).ok()?.parse().ok()?;
-+  let mut sizes = std::str::from_utf8(config).ok()?.split_whitespace();
-+  let max_heap_size_bytes: NonZeroU64 = sizes.next()?.parse().ok()?;
-+  match sizes.next() {
-+    Some(hard_limit_bytes) => {
-+      if !ALLOCATOR.set_limit(hard_limit_bytes.parse().ok()?) {
-+        return None;
-+      }
-+    },
-+    None => ALLOCATOR.remove_limit(),
-+  }
-   Some(Box::new(MemoryResourceMonitor::new(
-     &ALLOCATOR,
-     max_heap_size_bytes,
-@@ -61,7 +72,8 @@ impl<EHF: EnvoyHttpFilter> HttpFilterConfig<EHF> for MemoryFilterConfig {
- }
- 
- /// Retains the number of bytes in the `x-retain-bytes` request header, releases all the retained
--/// memory when the `x-release` request header is present, and replies without an upstream.
-+/// memory when the `x-release` request header is present, and replies without an upstream. A
-+/// retention that the memory limit refuses is replied to with a 507.
- struct MemoryFilter {}
- 
- impl<EHF: EnvoyHttpFilter> HttpFilter<EHF> for MemoryFilter {
-@@ -79,7 +91,13 @@ impl<EHF: EnvoyHttpFilter> HttpFilter<EHF> for MemoryFilter {
-           .ok()
-       });
-     if let Some(bytes) = retain_bytes {
--      RETAINED.lock().unwrap().push(vec![1; bytes]);
-+      let mut memory = Vec::new();
-+      if memory.try_reserve_exact(bytes).is_err() {
-+        envoy_filter.send_response(507, &[], None, None);
-+        return envoy_dynamic_module_type_on_http_filter_request_headers_status::StopIteration;
-+      }
-+      memory.resize(bytes, 1);
-+      RETAINED.lock().unwrap().push(memory);
-     }
-     if envoy_filter.get_request_header_value("x-release").is_some() {
-       // Replacing the vector frees its buffer as well, which would otherwise outlive the module.
-```
-
-**File**: `test/extensions/resource_monitors/dynamic_modules/integration_test.cc` (modified, +12/-0)
-```diff
-@@ -206,5 +206,17 @@ TEST_P(DynamicModuleResourceMonitorIntegrationTest, ReportsMemoryRetainedByFilte
-   test_server_->waitForGauge("overload.dynamic_module_monitor.pressure", Lt(10));
- }
- 
-+TEST_P(DynamicModuleResourceMonitorIntegrationTest, RefusesMemoryBeyondHardLimit) {
-+  initializeMemoryMonitor("memory_tracking_integration_test", "1048576 2097152");
++TEST_F(McpJsonRestBridgeFilterTest, NotificationsInitializedWithIdReturnsUnsupportedMethodError) {
++  ASSERT_OK(makeFilter());
 +
-+  // The budget does not refuse allocations, so the module can retain more than it.
-+  expectReply("x-retain-bytes", "1572864", "200");
-+  test_server_->waitForGauge("overload.dynamic_module_monitor.pressure", Eq(100));
++  request_headers_ = {{":method", "POST"}, {":path", "/mcp"}};
++  EXPECT_EQ(filter_->decodeHeaders(request_headers_, /*end_stream=*/false),
++            Http::FilterHeadersStatus::StopIteration);
 +
-+  expectReply("x-retain-bytes", "1048576", "507");
-+  expectReply("x-release", "true", "200");
-+  test_server_->waitForGauge("overload.dynamic_module_monitor.pressure", Lt(10));
++  // With an ID, the message is a request rather than a notification, so it does not get an empty
++  // 202 Accepted response.
++  EXPECT_CALL(
++      decoder_callbacks_,
++      sendLocalReply(
++          Eq(Http::Code::OK),
++          StrEq(
++              R"json({"code":-32601,"message":"MCP method notifications/initialized is not supported"})json"),
++          _, _, StrEq("mcp_json_rest_bridge_request_mcp_method_not_supported")));
++
++  Buffer::OwnedImpl body(
++      R"json({"jsonrpc":"2.0","id":1,"method":"notifications/initialized"})json");
++  EXPECT_EQ(filter_->decodeData(body, /*end_stream=*/true),
++            Http::FilterDataStatus::StopIterationNoBuffer);
 +}
 +
- } // namespace
- } // namespace Envoy
++TEST_F(McpJsonRestBridgeFilterTest, NotificationsInitializedWithNullIdReturnsError) {
++  ASSERT_OK(makeFilter());
++
++  request_headers_ = {{":method", "POST"}, {":path", "/mcp"}};
++  EXPECT_EQ(filter_->decodeHeaders(request_headers_, /*end_stream=*/false),
++            Http::FilterHeadersStatus::StopIteration);
++
++  // A message with an "id" member, even a null one, is not a notification, so its ID is validated.
++  EXPECT_CALL(decoder_callbacks_,
++              sendLocalReply(Eq(Http::Code::OK),
++                             StrEq(R"json({"code":-32600,"message":"Missing ID field"})json"), _, _,
++                             StrEq("mcp_json_rest_bridge_request_id_not_found")));
++
++  Buffer::OwnedImpl body(
++      R"json({"jsonrpc":"2.0","id":null,"method":"notifications/initialized"})json");
++  EXPECT_EQ(filter_->decodeData(body, /*end_stream=*/true),
++            Http::FilterDataStatus::StopIterationNoBuffer);
++}
++
+ TEST_F(McpJsonRestBridgeFilterTest, InvalidInputJsonReturnsError) {
+   ASSERT_OK(makeFilter());
+ 
+@@ -3637,7 +3702,7 @@ TEST_F(McpJsonRestBridgeFilterTest,
+ 
+   EXPECT_CALL(
+       decoder_callbacks_,
+-      sendLocalReply(Eq(Http::Code::OK),
++      sendLocalReply(Eq(Http::Code::BadRequest),
+                      StrEq(R"json({"code":-32602,"message":"Unsupported MCP version"})json"), _, _,
+                      StrEq("mcp_json_rest_bridge_request_unsupported_mcp_version")));
+   Buffer::OwnedImpl body(R"json({"jsonrpc":"2.0","method":"notifications/initialized"})json");
+```
+
+---
+
+### Incident Patch 3: `1e013e6b` (2026-11-24)
+**Commit Message**: Enable envoy.reloadable_features.unified_mux by default (#49412)
+
+envoy.reloadable_features.unified_mux has been tested in Google prod for
+some time without problems.
+
+The change is larger because test/common/config/xds_manager_impl_test.cc
+was hardcoded to only test with `envoy.reloadable_features.unified_mux
+== false`. The test was parameterized to test with unified_mux true and
+false, which resulted in a lot of small changes to the test file.
+
+Risk Level: medium
+Testing: unit tests
+Docs Changes: no
+Release Notes: yes
+Platform Specific Features: no
+
+---------
+
+Signed-off-by: Yan Avlasov <[REDACTED_EMAIL]>
+
+**File**: `changelogs/changelogs.yaml` (modified, +3/-0)
+```diff
+@@ -280,6 +280,9 @@ areas:
+   websocket:
+     title: websocket
+ 
++  xds:
++    title: xds
++
+   zipkin:
+     title: zipkin
+   zstd:
+```
+
+**File**: `changelogs/current/behavior_changes/xds__enabled_envoy_reloadable_features_unified_mux.rst` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++The ``envoy_reloadable_features_unified_mux`` is enabled by default after prod testing.
+```
+
+**File**: `mobile/envoy_build_config/BUILD` (modified, +1/-0)
+```diff
+@@ -62,6 +62,7 @@ envoy_cc_library(
+         "@envoy//source/extensions/config_subscription/grpc:grpc_collection_subscription_lib",
+         "@envoy//source/extensions/config_subscription/grpc:grpc_mux_lib",
+         "@envoy//source/extensions/config_subscription/grpc:grpc_subscription_lib",
++        "@envoy//source/extensions/config_subscription/grpc/xds_mux:grpc_mux_lib",
+     ]),
+ )
+ 
+```
+
+**File**: `mobile/envoy_build_config/extension_registry.cc` (modified, +3/-0)
+```diff
+@@ -50,6 +50,7 @@
+ #include "source/extensions/config_subscription/grpc/grpc_mux_impl.h"
+ #include "source/extensions/config_subscription/grpc/grpc_subscription_factory.h"
+ #include "source/extensions/config_subscription/grpc/new_grpc_mux_impl.h"
++#include "source/extensions/config_subscription/grpc/xds_mux/grpc_mux_impl.h"
+ #include "source/common/tls/cert_validator/default_validator.h"
+ #endif // ENVOY_MOBILE_XDS
+ 
+@@ -208,6 +209,8 @@ void ExtensionRegistry::registerFactories() {
+   Config::forceRegisterAdsCollectionConfigSubscriptionFactory();
+   Config::forceRegisterGrpcMuxFactory();
+   Config::forceRegisterNewGrpcMuxFactory();
++  Config::XdsMux::forceRegisterDeltaGrpcMuxFactory();
++  Config::XdsMux::forceRegisterSotwGrpcMuxFactory();
+   Extensions::TransportSockets::Tls::forceRegisterDefaultCertValidatorFactory();
+ #endif // ENVOY_MOBILE_XDS
+ }
+```
+
+**File**: `mobile/test/common/integration/BUILD` (modified, +1/-0)
+```diff
+@@ -219,6 +219,7 @@ envoy_cc_test_library(
+         "@envoy//source/extensions/config_subscription/grpc:grpc_collection_subscription_lib",
+         "@envoy//source/extensions/config_subscription/grpc:grpc_mux_lib",
+         "@envoy//source/extensions/config_subscription/grpc:grpc_subscription_lib",
++        "@envoy//source/extensions/config_subscription/grpc/xds_mux:grpc_mux_lib",
+         "@envoy//test/integration:autonomous_upstream_lib",
+         "@envoy//test/integration:utility_lib",
+         "@envoy//test/mocks/server:server_factory_context_mocks",
+```
+
+**File**: `mobile/test/common/integration/xds_integration_test.cc` (modified, +3/-4)
+```diff
+@@ -31,10 +31,9 @@ void XdsIntegrationTest::initialize() {
+   // For server TLS.
+   Extensions::TransportSockets::Tls::forceRegisterServerContextFactoryImpl();
+ 
+-  if (sotw_or_delta_ == Grpc::SotwOrDelta::UnifiedSotw ||
+-      sotw_or_delta_ == Grpc::SotwOrDelta::UnifiedDelta) {
+-    config_helper_.addRuntimeOverride("envoy.reloadable_features.unified_mux", "true");
+-  }
++  const bool use_unified_mux = sotw_or_delta_ == Grpc::SotwOrDelta::UnifiedSotw ||
++                               sotw_or_delta_ == Grpc::SotwOrDelta::UnifiedDelta;
++  builder_.addRuntimeGuard("unified_mux", use_unified_mux);
+ 
+   // xDS upstream is created separately in the test infra, and there's only one non-xDS cluster.
+   setUpstreamCount(1);
+```
+
+**File**: `mobile/test/common/integration/xds_test_server.cc` (modified, +3/-0)
+```diff
+@@ -14,6 +14,7 @@
+ #include "source/extensions/config_subscription/grpc/grpc_mux_impl.h"
+ #include "source/extensions/config_subscription/grpc/grpc_subscription_factory.h"
+ #include "source/extensions/config_subscription/grpc/new_grpc_mux_impl.h"
++#include "source/extensions/config_subscription/grpc/xds_mux/grpc_mux_impl.h"
+ 
+ #include "test/integration/fake_upstream.h"
+ #include "test/test_common/environment.h"
+@@ -62,6 +63,8 @@ XdsTestServer::XdsTestServer()
+   Config::forceRegisterAdsCollectionConfigSubscriptionFactory();
+   Config::forceRegisterGrpcMuxFactory();
+   Config::forceRegisterNewGrpcMuxFactory();
++  Config::XdsMux::forceRegisterDeltaGrpcMuxFactory();
++  Config::XdsMux::forceRegisterSotwGrpcMuxFactory();
+ 
+   envoy::extensions::transport_sockets::tls::v3::DownstreamTlsContext tls_context;
+   auto* common_tls_context = tls_context.mutable_common_tls_context();
+```
+
+**File**: `source/common/runtime/runtime_features.cc` (modified, +1/-2)
+```diff
+@@ -228,6 +228,7 @@ RUNTIME_GUARD(envoy_reloadable_features_udp_send_zero_length_datagrams);
+ RUNTIME_GUARD(envoy_reloadable_features_udp_set_do_not_fragment);
+ RUNTIME_GUARD(envoy_reloadable_features_uhv_allow_malformed_url_encoding);
+ RUNTIME_GUARD(envoy_reloadable_features_unambiguous_tls_session_context_id);
++RUNTIME_GUARD(envoy_reloadable_features_unified_mux);
+ RUNTIME_GUARD(envoy_reloadable_features_upstream_bind_config_fix_port_exhaustion);
+ RUNTIME_GUARD(envoy_reloadable_features_upstream_http_filters_correct_stats_prefix);
+ RUNTIME_GUARD(envoy_reloadable_features_upstream_wasm_filter_uses_root_scope);
+@@ -276,8 +277,6 @@ FALSE_RUNTIME_GUARD(envoy_reloadable_features_enable_stats_explicit_tags);
+ // descriptor_value fields by default.
+ FALSE_RUNTIME_GUARD(
+     envoy_reloadable_features_enable_formatter_for_ratelimit_action_descriptor_value);
+-// TODO(adisuissa) reset to true to enable unified mux by default
+-FALSE_RUNTIME_GUARD(envoy_reloadable_features_unified_mux);
+ // OAuth2 filter cookie encryption: when true, encrypt() emits AES-256-GCM ciphertexts with a
+ // "gcm." marker; when false (the default), it emits the legacy AES-256-CBC format with no
+ // marker. The default is false so that newly upgraded instances stay wire-compatible with
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #49597** (2026-11-24): test: Do not check for zero memory use where it cannot be measured (@phlax)
+- **PR #49595** (2026-11-24): test: Harden open_telemetry_integration_test against failure-path UAF (@phlax)
+- **PR #49586** (2026-11-24): gcp_authn: Let gcp_authn_filter_test use the default (medium) size (@phlax)
+- **PR #49584** (2026-11-24): deps: Bump `bazel-registry` -> 2297928 (+envoy-examples) (@dependency-envoy[bot])
+- **PR #49566** (2026-11-24): ai_protocol_manager: give each AI filter its own configuration page (@botengyao)
 - **PR #49563** (2026-11-24): network: fail listener filter buffer drain beyond buffered data (@basundhara-c)
-- **PR #49559** (2026-11-24): dynamic_modules: support for runtime key of string type (@mathetake)
-- **PR #49556** (2026-11-24): router: support refreshRouteCluster in HeaderClusterSpecifierPlugin (@paul-r-gall)
-- **PR #49555** (2026-11-23): [async_files] Fix gcc warning (@ravenblackx)
-- **PR #49551** (2026-11-23): mobile/ci: Consolidate the workflows into android, ios and checks suites (@phlax)
-- **PR #49550** (2026-11-23): resource_monitors: pass snapshot MonotonicTime to DynamicTokenBucket cold path (@antoniovleonti)
 
 ---
 
@@ -1919,39 +1492,49 @@ Signed-off-by: Rohit Agrawal <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. resource_monitors: add WorkerUtilizationTracker for event-loop utilization
+## X. test: Do not check for zero memory use where it cannot be measured
 
 **RULE**:
-When implementing operations in `source/extensions/resource_monitors/adaptive_worker_capacity/BUILD`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in envoyproxy/envoy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `test/common/memory/memory_test_utility.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in envoyproxy/envoy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d0dfd6b3`: resource_monitors: add WorkerUtilizationTracker for event-loop utilization. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d4c3cc20`: test: Do not check for zero memory use where it cannot be measured. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `source/extensions/resource_monitors/adaptive_worker_capacity/BUILD`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `test/common/memory/memory_test_utility.h`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-
-envoy_cc_library(
-    name = "worker_utilization_tracker_lib",
-    srcs = ["worker_utilization_tracker.cc"],
-    hdrs = ["worker_utilization_tracker.h"],
-    deps = [
-        "//envoy/common:time_interface",
-        "//envoy/event:dispatcher_interface",
-        "//envoy/event:evwatch_interface",
-        "//source/common/common:assert_lib",
-    ],
-)
+// canonical platforms, or when the expected value is zero and memory usage can
+// be measured. Canonical platforms currently include only for 'release' tests in
+// ci. On other platforms an info log is emitted, indicating that the test is
+// being skipped.
+//
+// The zero case is not checked where memory usage cannot be measured (see
+// `MemoryTest::mode()`). In particular, with jemalloc the total changes when a
+// thread cache is refilled, so an allocation that is freed again can still be
+// reported as consumed memory, depending on what the process allocated before.
+    /* Read the memory consumed first: `MemoryTest::mode()` allocates. */                          \
+    const auto memory_test_consumed_bytes = consumed_bytes;                                        \
+    const auto memory_test_mode = ::Envoy::Memory::TestUtil::MemoryTest::mode();                   \
+    if ((expected_value == 0 &&                                                                    \
+         memory_test_mode != ::Envoy::Memory::TestUtil::MemoryTest::Mode::Disabled) ||             \
+        memory_test_mode == ::Envoy::Memory::TestUtil::MemoryTest::Mode::Canonical) {              \
+      EXPECT_EQ(mem
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+// canonical platforms, or when the expected value is zero. Canonical platforms
+// currently include only for 'release' tests in ci. On other platforms an info
+// log is emitted, indicating that the test is being skipped.
+    if (expected_value == 0 || ::Envoy::Memory::TestUtil::MemoryTest::mode() ==                    \
+                                   ::Envoy::Memory::TestUtil::MemoryTest::Mode::Canonical) {       \
+      EXPECT_EQ(consumed_bytes, expected_value);                                                   \
+                     consumed_bytes, expected_value);                                              \
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d0dfd6b3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d4c3cc20` are properly handled with clean fallback behavior.

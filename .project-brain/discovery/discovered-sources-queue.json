@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-25T05:20:33.130Z",
+  "updated_at": "2026-11-25T05:45:39.550Z",
   "stats": {
-    "total_discovered": 9248,
-    "approved_pending_harvest": 8757,
+    "total_discovered": 9250,
+    "approved_pending_harvest": 8759,
     "harvested_count": 0,
     "rejected_count": 491,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 8754,
+      "COMMUNITY_AND_EXPERT": 8756,
       "OFFICIAL_DOCUMENTATION": 275,
       "STANDARDS_AND_SPECIFICATIONS": 149,
       "ENGINEERING_BLOGS": 7,
@@ -200046,6 +200046,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-comfy-org-z_image_turbo-learnings.md",
         "fileName": "hf-comfy-org-z_image_turbo-learnings.md"
+      }
+    },
+    "SRC-D2A4157CF13F": {
+      "id": "SRC-D2A4157CF13F",
+      "url": "https://opentelemetry.io/docs/specs/semconv/gen-ai",
+      "title": "https://opentelemetry.io/docs/specs/semconv/gen-ai",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T05:45:38.083Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/iii-hq-iii-learnings.md",
+        "fileName": "iii-hq-iii-learnings.md"
+      }
+    },
+    "SRC-6E1C66CFB825": {
+      "id": "SRC-6E1C66CFB825",
+      "url": "https://modelcontextprotocol.io/specification/2026-07-28/basic/transports/streamable-http",
+      "title": "https://modelcontextprotocol.io/specification/2026-07-28/basic/transports/streamable-http",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T05:45:39.550Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
+        "fileName": "envoyproxy-envoy-learnings.md"
       }
     }
   }

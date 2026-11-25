@@ -12952,3 +12952,6 @@
 | `CYCLE-20261125-O76E` | `2026-11-25T05:28:56.150Z` | `nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-3.5-super-vl-120b-a12b-nvfp4-learnings.md` | Yes (`834298ad...`) |
 | `CYCLE-20261125-YQYD` | `2026-11-25T05:37:08.341Z` | `mistralai/Timestral-209M` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-mistralai-timestral-209m-learnings.md` | Yes (`90960d15...`) |
 | `CYCLE-20261125-YYLD` | `2026-11-25T05:37:18.241Z` | `temporalio/temporal` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10463` | Yes (`7206d60f...`) |
+| `CYCLE-20261125-9DO8` | `2026-11-25T05:45:24.344Z` | `meta-models/Muse-Spark-Open-816B-A42B-NVFP4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-models-muse-spark-open-816b-a42b-nvfp4-learnings.md` | Yes (`6e3e5773...`) |
+| `CYCLE-20261125-9EL5` | `2026-11-25T05:45:25.529Z` | `iii-hq/iii` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10464` | Yes (`8fb3a235...`) |
+| `CYCLE-20261125-9LJH` | `2026-11-25T05:45:34.541Z` | `envoyproxy/envoy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10465` | Yes (`d3ad8976...`) |

@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261123-QETL",
-    "timestamp": "2026-11-23T18:03:08.553Z",
-    "repository": "autotrust/GEV-26B-Decide",
-    "learningId": "learn-huggingface-autotrust-gev-26b-decide",
-    "contentHash": "bdc04db740557364283ed2bc5da9e0835f1955a49d021e90ee88acfcb5c0b59e",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-QQPU",
-    "timestamp": "2026-11-23T18:03:23.970Z",
-    "repository": "apache/zookeeper",
-    "learningId": "learn-github-apache-zookeeper",
-    "contentHash": "aa7d00401c442008d5232e7f01c9bc38695936298d021b8c96e9623ec28ff88a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-6UOW",
-    "timestamp": "2026-11-23T18:15:55.616Z",
-    "repository": "google/embeddinggemma-2",
-    "learningId": "learn-huggingface-google-embeddinggemma-2",
-    "contentHash": "5f4b1cd153df9739c37a255ab635a1b23469bf62ae6913d67c0de7cc4eb60ba7",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261123-6ZE9",
     "timestamp": "2026-11-23T18:16:01.713Z",
     "repository": "stakater/Reloader",
@@ -7490,6 +7445,51 @@
     "repository": "temporalio/temporal",
     "learningId": "learn-github-temporalio-temporal",
     "contentHash": "7206d60fabff28f244f1954d8c01f07b602b06c168eca49a5ea6aff7d6a40a2d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-9DO8",
+    "timestamp": "2026-11-25T05:45:24.344Z",
+    "repository": "meta-models/Muse-Spark-Open-816B-A42B-NVFP4",
+    "learningId": "learn-huggingface-meta-models-muse-spark-open-816b-a42b-nvfp4",
+    "contentHash": "6e3e5773feb5a0f26f07a10b7dc6f46fcda021dd2eb426fc537f4a54f9a2b53f",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-9EL5",
+    "timestamp": "2026-11-25T05:45:25.529Z",
+    "repository": "iii-hq/iii",
+    "learningId": "learn-github-iii-hq-iii",
+    "contentHash": "8fb3a23578f98fe64f16afde4bf97504474974fd9b8b060290acd02b09bd8109",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-9LJH",
+    "timestamp": "2026-11-25T05:45:34.541Z",
+    "repository": "envoyproxy/envoy",
+    "learningId": "learn-github-envoyproxy-envoy",
+    "contentHash": "d3ad89768da387ce9600a50bc1e0348243d23cda588801602cd492e6df4cf33f",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

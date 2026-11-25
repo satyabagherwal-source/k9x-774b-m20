@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T03:33:35.008Z",
+  "timestamp": "2026-11-25T05:45:38.205Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-iii-hq-iii-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [iii-hq-iii-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T03:33:35.008Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T05:45:38.205Z`  
 > **Learning ID**: `LEARN-EVO-iii-hq-iii-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), L (Deployment & Operations Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), I (Content & Information Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 58%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), L (Deployment & Operations Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 70%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from iii-hq-iii-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/iii-hq-iii-learnings.md`  
 > **Source**: github ([https://github.com/iii-hq/iii](https://github.com/iii-hq/iii))  
-> **Source Version**: `81dfce48`  
+> **Source Version**: `d14aa58e`  
 > **License**: PERMISSIVE_OPEN_SOURCE  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T03:33:22.846Z  
+> **Timestamp**: 2026-11-25T05:45:24.420Z  
 > **Learning ID**: `learn-github-iii-hq-iii`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/iii-hq-iii-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/iii-hq/iii](https://github.com/iii-hq/iii))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T03:33:22.698Z  
+> **Harvest Timestamp**: 2026-11-25T05:45:24.413Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Effortlessly compose, extend, observe, discover, and react to every service in real-time for the first time ever.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 18937 stars
+- **Stars / Engagement**: 18939 stars
 
 ---
 
@@ -2265,170 +2265,63 @@ pub use tui::run;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `81dfce48` (2026-11-23)
-**Commit Message**: fix(sdk): read every engine socket through an 8 KiB buffer, not 128 KiB (#2599)
+### Incident Patch 1: `d14aa58e` (2026-11-24)
+**Commit Message**: feat(website): 8 AI agent observability best practices blog post (#2596)
 
-**File**: `sdk/packages/rust/helpers/src/observability/telemetry/connection.rs` (modified, +14/-2)
+**File**: `website/content/blog/ai-agent-observability-best-practices.md` (added, +362/-0)
 ```diff
-@@ -5,9 +5,17 @@ use std::sync::Arc;
- use tokio::sync::{Mutex, RwLock, mpsc, oneshot};
- use tokio_tungstenite::tungstenite::client::IntoClientRequest;
- use tokio_tungstenite::tungstenite::http::{HeaderName, HeaderValue, Request};
--use tokio_tungstenite::{connect_async, tungstenite::Message};
-+use tokio_tungstenite::{
-+    connect_async_with_config,
-+    tungstenite::{Message, protocol::WebSocketConfig},
-+};
- use tracing::{debug, error, info, warn};
- 
-+/// Read buffer of the telemetry socket. tungstenite zero-fills the free part of
-+/// its read buffer before every read, up to this size (128 KiB by default), and
-+/// the engine sends this socket little (as the SDK's `transport::READ_BUFFER_BYTES`).
-+const READ_BUFFER_BYTES: usize = 8 * 1024;
+@@ -0,0 +1,362 @@
++---
++title: '8 AI agent observability best practices for tracing tool execution'
++seoTitle: '8 AI Agent Observability Best Practices for Tool Calls'
++description: 'Learn 8 AI agent observability best practices for tracing tool calls, tracking latency and token usage, and protecting sensitive data, with examples in iii.'
++pubDate: 2026-11-23
++tags: ['agents', 'observability', 'tracing', 'opentelemetry', 'harness']
++ogImage: ../../assets/blog/ai-agent-observability-best-practices/og.png
++faq:
++  - q: 'What are traces in AI agents?'
++    a: 'A trace is a tree of timed spans that records the instrumented steps in an agent execution, such as model calls, tool calls, and handoffs. The spans share a trace_id. The turn sits at the root, model and tool calls nest below it, and outbound service calls nest below those. Each span has a start time, an end time, attributes, and optionally span events for richer data like function inputs and outputs.'
++  - q: 'How does agent observability differ from LLM monitoring?'
++    a: 'LLM monitoring watches model calls: latency, token counts, and errors at the inference boundary. Agent observability follows the whole run, including every tool the agent called, the downstream services those tools reached, and the handoffs between workers. OpenTelemetry''s GenAI agent-span conventions use a similar hierarchy: an invoke_agent span is intended to be the parent of the agent''s tool and task spans.'
++  - q: 'Can an agent read its own traces?'
++    a: 'In iii, yes. The engine exposes engine::traces::list and engine::traces::tree, which a worker can call to retrieve trace data for the current or past sessions. The AI Agent Harness only allows calls to functions it has been explicitly authorized to reach, so you can deliberately grant an agent access to trace functions. Grant read-only access only when the agent needs it, with the same scrutiny you would apply to other operational data.'
++---
 +
- /// Message to send over the shared WebSocket connection
- /// <!-- docs:internal -->
- pub struct OtelMessage {
-@@ -181,7 +189,11 @@ async fn connection_loop(
- 
-         // Try to connect, racing against shutdown signal
-         let ws_result = tokio::select! {
--            result = async { connect_async(handshake_request(&ws_url, headers.as_ref())?).await } => result,
-+            result = async {
-+                let request = handshake_request(&ws_url, headers.as_ref())?;
-+                let config = WebSocketConfig::default().read_buffer_size(READ_BUFFER_BYTES);
-+                connect_async_with_config(request, Some(config), false).await
-+            } => result,
-             _ = shutdown_rx.recv() => {
-                 info!("Shutting down OTEL connection during connect");
-                 *state.write().await = ConnectionState::Disconnected;
-```
-
-**File**: `sdk/packages/rust/iii/src/channels.rs` (modified, +17/-0)
-```diff
-@@ -615,6 +615,23 @@ mod end_of_stream_tests {
-         }
-     }
- 
-+    // The socket reads in pieces of `transport::READ_BUFFER_BYTES`: a frame
-+    // many times that size still arrives whole.
-+    #[tokio::test]
-+    async fn a_frame_larger_than_the_read_buffer_arrives_whole() {
-+        let (address, server) = test_engine::spawn(false).await;
-+        let body: Vec<u8> = (0..1_000_000u32).map(|i| i as u8).collect();
-+        let sent = body.clone();
-+        let server = tokio::spawn(async move {
-+            let mut ws = server.await.unwrap();
-+            ws.send(WsMessage::Binary(sent.into())).await.unwrap();
-+            ws.close(None).await.unwrap();
-+        });
-+        let reader = ChannelReader::new(&format!("ws://{address}"), &channel_ref());
-+        assert_eq!(reader.read_all().await.unwrap(), body);
-+        server.await.unwrap();
-+    }
++![Tracing agent tool calls: an agent turn with a model call and a tool call nested beneath it.](../../assets/blog/ai-agent-observability-best-practices/banner.png)
 +
-     // The engine sends 1011 when the writer aborted: what was read is not the
-     // whole stream, and reading on must not turn it into a clean end.
-     #[tokio::test]
-```
-
-**File**: `sdk/packages/rust/iii/src/transport.rs` (modified, +30/-1)
-```diff
-@@ -16,13 +16,24 @@ pub(crate) type WsStream = WebSocketStream<MaybeTlsStream<TcpStream>>;
- /// What opening a [`WsStream`] returns.
- pub(crate) type WsConnectResult = Result<(WsStream, Response), Error>;
- 
-+/// Read buffer of every socket to the engine. Before each read tungstenite
-+/// zero-fills the free part of its read buffer, up to this size (128 KiB by
-+/// default), so each open socket kept 128 KiB resident and paid a 128 KiB
-+/// `memset` per read. A worker that serves HTTP holds a channel socket per
-+/// request in flight. A larger frame still grows the buffer to fit; it is read
-+/// in pieces of this size, as the engine's own `WS_READ_BUFFER_BYTES`.
-+pub(crate) const READ_BUFFER_BYTES: usize = 8 * 1024;
++Your agent says it added a label to a GitHub issue, but the label isn't there. You go into the logs to debug.
 +
- /// Opens a WebSocket to the engine and negotiates `TCP_NODELAY` with it (see
- /// [`negotiate_nodelay`]). The socket connects with Nagle on.
- pub(crate) async fn connect<R>(request: R, config: Option<WebSocketConfig>) -> WsConnectResult
- where
-     R: IntoClientRequest + Unpin,
- {
--    let (stream, response) = connect_async_with_config(request, config, false).await?;
-+    let config = config
-+        .unwrap_or_default()
-+        .read_buffer_size(READ_BUFFER_BYTES);
-+    let (stream, response) = connect_async_with_config(request, Some(config), false).await?;
-     let tcp_nodelay = negotiate_nodelay(&stream, &response);
-     tracing::debug!(tcp_nodelay, "connected to the engine");
-     Ok((stream, response))
-@@ -129,6 +140,24 @@ mod tests {
- 
-     use super::*;
- 
-+    #[tokio::test]
-+    async fn every_socket_reads_through_a_small_buffer() {
-+        let (address, server) = test_engine::spawn(false).await;
-+        // Not tungstenite's default (64 MiB): a `connect` that dropped the
-+        // caller's config would fail the second assertion.
-+        let limits = WebSocketConfig::default().max_message_size(Some(1 << 20));
-+        let (stream, _) = connect(format!("ws://{address}"), Some(limits))
-+            .await
-+            .unwrap();
-+        assert_eq!(stream.get_config().read_buffer_size, READ_BUFFER_BYTES);
-+        assert_eq!(
-+            stream.get_config().max_message_size,
-+            Some(1 << 20),
-+            "the caller's limits stay"
-+        );
-+        server.await.unwrap();
-+    }
++The logs show a request and a response, but there's no shared ID to connect them. You can't tell when the function started or finished, or whether it succeeded or hid an upstream error. The data is there, but the logs don't show how the steps fit together.
 +
-     fn response_with(values: &[&str]) -> Response {
-         let mut builder = http::Response::builder();
-         for value in values {
-```
-
----
-
-### Incident Patch 2: `83bf92de` (2026-11-23)
-**Commit Message**: fix(deps): bump url to 2.5.9 for RUSTSEC-2026-0592 (#2610)
-
-Co-authored-by: iii harness (claude-code/claude-opus-5-5) <[REDACTED_EMAIL]>
-
-**File**: `Cargo.lock` (modified, +4/-4)
-```diff
-@@ -1090,9 +1090,9 @@ checksum = "77ce24cb58228fbb8aa041425bb1050850ac19177686ea6e0f41a70416f56fdb"
- 
- [[package]]
- name = "form_urlencoded"
--version = "1.2.2"
-+version = "1.2.3"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "cb4cb245038516f5f85277875cdaa4f7d2c9a0fa0468de06ed190163b1581fcf"
-+checksum = "afa489199eaffb1211795df1c6236ce1ad0d41a6fa45250add73e3b02420f06e"
- dependencies = [
-  "percent-encoding",
- ]
-@@ -4530,9 +4530,9 @@ checksum = "8ecb6da28b8a351d773b68d5825ac39017e680750f980f3a1a85cd8dd28a47c1"
- 
- [[package]]
- name = "url"
--version = "2.5.8"
-+version = "2.5.9"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "ff67a8a4397373c3ef660812acab3268222035010ab8680ec4215f38ba3d0eed"
-+checksum = "f00cd2407bb42c0ef17be88d4cf020f5cceffd121665bac9b8b9493a369b3b1a"
- dependencies = [
-  "form_urlencoded",
-  "idna",
++Agent observability connects those steps so you can follow a run from start to finish. This guide covers what to record on tool calls, how to set up tracing, and 8 practices that make traces easier to use. The walkthrough shows what end-to-end tracing looks like in iii.
++
++> **Versions:** the worked example runs through a TypeScript worker that calls the GitHub REST API using iii engine 0.25.0, AI Agent Harness 1.8.61, and the ade console 1.9.70, verified October 22 to 23, 2026. iii traces SDK-handled worker calls and supports HTTP and queue handoffs in its console without any instrumentation code.
++
++## What to record for every tool call
++
++Give each call an ID that travels with it and nest it under the agent turn that ran it. Record its outcome, timing, and the step's token use. To connect a model's tool call to its result, pair the model's tool call ID with your trace and span IDs, and keep the result on the same span as the call.
++
++The [OpenTelemetry GenAI conventions](https://opentelemetry.io/docs/specs/semconv/gen-ai/) define names for commonly recorded fields. They have "Development" status as of October 23, 2026, so those names may change.
++
++| Field | OpenTelemetry name (Development status) | Where iii records it |
++| --- | --- | --- |
++| Trace and span ID | `trace_id`, `span_id` (W3C `traceparent`) | Every span, automatically |
++| Run and turn ID | `gen_ai.conversation.id` | `iii.session.id` and `iii.message.id`, propagated via baggage onto recording spans |
++| Tool call ID | `gen_ai.tool.call.id` | Not recorded as a span attribute. The provider's raw call ID (for example, Anthropic's `tool_use.id`) is preserved in the `FunctionCall` and `FunctionResult` content blocks of the session transcript (`session::messages`), which pair each call with its result. An execute span is a sibling of `router::chat` under the same turn step. Its position does not carry the call ID or distinguish calls when a turn requests multiple tools. |
++| Tool name | `gen_ai.tool.name` | Span name: `execute` plus the function ID |
++| Arguments and result | `gen_ai.tool.call.arguments`, `gen_ai.tool.call.result` (opt-in in the OTel spec) | `iii.invocation.input` and `iii.invocation.output` span events, recorded by default |
++| Outcome and error | Span status, `error.type` | Span status, `iii.payload.ok`, `iii.turn.status` |
++| Timing | Span start and end time | Every span, visible in the console waterfall |
++| Token usage | `gen_ai.usage.input_tokens`, `gen_ai.usage.ou
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2619** (2026-11-24): docs(compose): make the rest of Using iii / Compose a how-to page (@guibeira)
+- **PR #2618** (2026-11-24): docs(compose): leave the cloud block out of the docs for now (@guibeira)
+- **PR #2617** (2026-11-24): chore(compose): stop rewriting iii sandbox run and build lines (@guibeira)
+- **PR #2616** (2026-11-24): feat(cli): drop --stdout, --stderr and --stdin FIELD from iii call (@guibeira)
+- **PR #2615** (2026-11-24): docs(compose): keep Using iii to how-to and move VM detail out (@guibeira)
 - **PR #2614** (2026-11-24): feat(cli): fold --no-bind into --no-follow for iii call (@guibeira)
-- **PR #2612** (2026-11-23): fix: address the CodeRabbit review of the 0.27.0 release (MSRV, Compose, sandbox build) (@guibeira)
-- **PR #2610** (2026-11-23): fix(deps): bump url to 2.5.9 for RUSTSEC-2026-0592 (@guibeira)
-- **PR #2607** (2026-11-23): feat(compose): accept a top-level cloud block and leave it unread (@ytallo)
-- **PR #2606** (2026-11-23): feat(website): Thanksgiving iii mark in the header and footer (@arihantcodes)
-- **PR #2603** (2026-11-23): docs: cover the 0.27 project changes in the upgrade guides and changelog (@guibeira)
 
 ---
 
@@ -2448,45 +2341,42 @@ Co-authored-by: iii harness (claude-code/claude-opus-5-5) <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. sdk): read every engine socket through an 8 KiB buffer, not 128 KiB
+## X. website): 8 AI agent observability best practices blog post
 
 **RULE**:
-When implementing operations in `sdk/packages/rust/helpers/src/observability/telemetry/connection.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in iii-hq/iii. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `website/content/blog/ai-agent-observability-best-practices.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in iii-hq/iii. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `81dfce48`: sdk): read every engine socket through an 8 KiB buffer, not 128 KiB. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d14aa58e`: website): 8 AI agent observability best practices blog post. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `sdk/packages/rust/helpers/src/observability/telemetry/connection.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `website/content/blog/ai-agent-observability-best-practices.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-use tokio_tungstenite::{
-    connect_async_with_config,
-    tungstenite::{Message, protocol::WebSocketConfig},
-};
-/// Read buffer of the telemetry socket. tungstenite zero-fills the free part of
-/// its read buffer before every read, up to this size (128 KiB by default), and
-/// the engine sends this socket little (as the SDK's `transport::READ_BUFFER_BYTES`).
-const READ_BUFFER_BYTES: usize = 8 * 1024;
-
-            result = async {
-                let request = handshake_request(&ws_url, headers.as_ref())?;
-                let config = WebSocketConfig::default().read_buffer_size(READ_BUFFER_BYTES);
-                connect_async_with_config(request, Some(config), false).await
-            } => result,
+---
+title: '8 AI agent observability best practices for tracing tool execution'
+seoTitle: '8 AI Agent Observability Best Practices for Tool Calls'
+description: 'Learn 8 AI agent observability best practices for tracing tool calls, tracking latency and token usage, and protecting sensitive data, with examples in iii.'
+pubDate: 2026-11-23
+tags: ['agents', 'observability', 'tracing', 'opentelemetry', 'harness']
+ogImage: ../../assets/blog/ai-agent-observability-best-practices/og.png
+faq:
+  - q: 'What are traces in AI agents?'
+    a: 'A trace is a tree of timed spans that records the instrumented steps in an agent execution, such as model calls, tool calls, and handoffs. The spans share a trace_id. The turn sits at the root, model and tool calls nest below it, and outbound service calls nest below those. Each span has a start time, an end time, attributes, and optionally span events for richer data like function inputs and outputs.'
+  - q: 'How does agent observability differ from LLM monitoring?'
+    a: 'LLM monitoring watches model calls: latency, token counts, and errors at the inference boundary. Agent observability follows the whole run, including every tool the agent called, the d
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-use tokio_tungstenite::{connect_async, tungstenite::Message};
-            result = async { connect_async(handshake_request(&ws_url, headers.as_ref())?).await } => result,
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `81dfce48` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d14aa58e` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction
