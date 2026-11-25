@@ -12865,3 +12865,8 @@
 | `CYCLE-20261125-IUEI` | `2026-11-25T00:16:50.538Z` | `Tencent-TDS/KuiklyUI` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10396` | Yes (`93ea4597...`) |
 | `CYCLE-20261125-IVQS` | `2026-11-25T00:16:52.276Z` | `openyurtio/openyurt` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10397` | Yes (`f7abfd66...`) |
 | `CYCLE-2026-11-25-PROJ-EVOLVE` | `2026-11-25T00:17:25.888Z` | `preactjs-preact` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-183BCB72` [Domain D] | Yes (`79441f98...`) |
+| `CYCLE-20261125-VHAT` | `2026-11-25T00:26:40.085Z` | `zenbu-labs/terminal-browser` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10398` | Yes (`1960374c...`) |
+| `CYCLE-20261125-VJMR` | `2026-11-25T00:26:43.107Z` | `QwikDev/qwik` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10399` | Yes (`b85f6b54...`) |
+| `CYCLE-20261125-VN8Y` | `2026-11-25T00:26:47.794Z` | `hashicorp/terraform` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10400` | Yes (`eed36a1c...`) |
+| `CYCLE-20261125-VOV6` | `2026-11-25T00:26:49.890Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9283` | Yes (`7332a103...`) |
+| `CYCLE-20261125-VQY4` | `2026-11-25T00:26:52.588Z` | `crate/crate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10401` | Yes (`1ec39489...`) |

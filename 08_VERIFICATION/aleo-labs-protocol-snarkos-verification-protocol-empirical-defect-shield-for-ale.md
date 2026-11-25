@@ -4,22 +4,22 @@
 {
   "source_repository": "aleo-labs-protocol/snarkOS",
   "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
-  "source_version": "04985e7d",
+  "source_version": "b2a26d2e",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-24T15:36:10.607Z",
+  "timestamp": "2026-11-25T00:26:50.222Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-aleo-labs-protocol-snarkos",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [aleo-labs-protocol/snarkOS](https://github.com/aleo-labs-protocol/snarkOS) (Revision: `04985e7d`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-24T15:36:10.607Z`  
+> **Provenance**: Harvested from [aleo-labs-protocol/snarkOS](https://github.com/aleo-labs-protocol/snarkOS) (Revision: `b2a26d2e`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-25T00:26:50.222Z`  
 > **Learning ID**: `learn-github-aleo-labs-protocol-snarkos`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `aleo-labs-protocol/snarkOS` (Commit: `04985e7d`)
+- **Target Repository**: `aleo-labs-protocol/snarkOS` (Commit: `b2a26d2e`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/aleo-labs-protocol/snarkOS](https://github.com/aleo-labs-protocol/snarkOS))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T15:36:09.727Z  
+> **Harvest Timestamp**: 2026-11-25T00:26:48.890Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1863,11 +1863,11 @@ if __name__ == "__main__":
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #4778** (2026-11-24): **Build no block from a subdag with committed certificates**
+  *Symptoms*: ## Motivation  A testnet validator forked after a clean restart on v4.13.0. Its block held the certificates of two blocks.  - The canonical block had 30 certificates. - The validator's block at the same height had 61: the 31 certificates of the previous block, then the same 30. - The leader certificate, the timestamp, and the previous hash were the same. Only the subdag root was different.  The cause is a race between the BFT and block sync.  1. The BFT orders a subdag in [`order_dag_with_dfs`](https://github.com/aleo-labs-protocol/snarkOS/blob/04985e7d64edc1747aedbf18c5be4a225659814f/node/bft/src/bft.rs#L862). It excludes a certificate only if the DAG or the ledger has it as committed. 2. Consensus takes the ledger update lock later, in [`try_advance_to_next_block`](https://github.com/aleo-labs-protocol/snarkOS/blob/04985e7d64edc1747aedbf18c5be4a225659814f/node/consensus/src/lib.rs#L647). 3. Block sync takes the same lock. If sync adds a block between steps 1 and 2, the subdag still holds the certificates of that block. 4. The ledger then builds a block on the new tip. The block commits those certificates again. No check rejects it.  This PR adds the missing check. [`prepare_advance_to_next_quorum_block`](https://github.com/aleo-labs-protocol/snarkOS/blob/079c813cffabf8abba5241c394fa23892b3e11b1/node/bft/ledger-service/src/ledger.rs#L102-L126) now returns an error if a certificate of the subdag is already in the ledger. The BFT does not commit the subdag to the DAG after an 
+
 - **Issue #4775** (2026-11-24): **Drop failed block requests above every advertised peer height**
   *Symptoms*: ## Motivation  This PR fixes the pre-existing issue from the [review of #4755](https://github.com/aleo-labs-protocol/snarkOS/pull/4755#discussion_r4672382702).  A failed block request left the queue only when it was re-issued or when the ledger passed its height. When the only peer ahead disconnected, its requests stayed queued. A synced client then ran the request pass on every wake-up, because the "Nothing to sync" early return needs an empty queue.  Commit 1: "Drop failed block requests above every advertised peer height".  - [`prepare_block_requests`](https://github.com/aleo-labs-protocol/snarkOS/blob/160f24c21/node/sync/src/block_sync.rs#L1260-L1269) now drops the failed requests above the greatest height any peer advertises. Without peers, it drops all of them. - New locators bring those heights back as new requests: the new-request path starts at the first height above the ledger that is not requested. - A failed request stays queued when a peer advertises its height but does not serve it (a `NotYet` cap or a pruning floor). - The requests of a removed peer are not dropped as such. Other peers that advertise those heights still get them.  Commit 2: "Request a gap below buffered block responses past the total request cap". It fixes the [stall that Veria found](https://github.com/aleo-labs-protocol/snarkOS/pull/4775#discussion_r4675343288) in commit 1.  - New requests stop when the buffer holds 1000 entries. Only the failed-request path passed that cap. Commit 1 can drop
-
-- **Issue #4745** (2026-11-23): **Re-issue block requests that were never sent**
-  *Symptoms*: ## Motivation  A syncing client stalled permanently after a peer disconnected while block requests to it were outstanding.  `prepare_block_requests` re-issues heights from `failed_requests`. It removes them from that map when `construct_requests` returns them, before they are sent. When `send_block_requests` returns `false`, these heights are then in neither `failed_requests` nor `requests`. This happens when:  - a send fails, for example to a peer that the router dropped but whose locators are still present; - a selected peer has disconnected, so the chunk is skipped; - `insert_block_request` fails partway through a chunk.  In each case, `try_issuing_block_requests` also stops the chunk loop, so the later chunks of the batch are not sent.  Usually `construct_requests` picks the lowest missing height again. But `prepare_block_requests` returns early when `num_total_block_requests()` is at its cap. If completed responses above the gap fill the requests map, they cannot be applied until the gap arrives, and they do not time out. Sync stalls.  Commits:  - When a send fails, put each height of the batch that is not in `requests` back into `failed_requests`, with its hash and previous hash.  This covers all of the failure paths above in one place. Heights from chunks that were sent stay in `requests`. New batches, not only re-issued ones, also go back to `failed_requests` when their send fails.  ## Test Plan  - New `test_reissue_unsent_block_requests`: the first chunk of a re-issu
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1884,115 +1884,372 @@ if __name__ == "__main__":
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `04985e7d` (2026-11-24)
-**Commit Message**: Merge pull request #4775 from aleo-labs-protocol/fix/drop-unservable-failed-requests
+### Incident Patch 1: `8444af96` (2026-11-24)
+**Commit Message**: Merge pull request #4778 from aleo-labs-protocol/fix/stale-subdag-guard
 
-Drop failed block requests above every advertised peer height
+Build no block from a subdag with committed certificates
 
-**File**: `node/sync/src/block_sync.rs` (modified, +160/-4)
+**File**: `node/bft/ledger-service/src/ledger.rs` (modified, +20/-2)
 ```diff
-@@ -311,6 +311,12 @@ pub struct BlockSync<N: Network> {
- }
+@@ -40,6 +40,7 @@ use snarkvm::{
+         Ledger,
+         PendingBlock,
+         Transaction,
++        authority::Authority,
+         committee::Committee,
+         narwhal::{BatchCertificate, Data, Subdag, Transmission, TransmissionID},
+         puzzle::{Solution, SolutionID},
+@@ -58,7 +59,7 @@ use snarkvm::{
+     },
+ };
  
- impl<N: Network> BlockSync<N> {
-+    /// The maximum number of block requests that await a response.
-+    const MAX_OUTSTANDING_BLOCK_REQUESTS: u32 =
-+        (MAX_BLOCK_REQUESTS as u32) * (DataBlocks::<N>::MAXIMUM_NUMBER_OF_BLOCKS as u32);
-+    /// The maximum number of block requests, including the answered ones that are not processed yet.
-+    const MAX_TOTAL_BLOCK_REQUESTS: u32 = 4 * Self::MAX_OUTSTANDING_BLOCK_REQUESTS;
+-use anyhow::ensure;
++use anyhow::{anyhow, ensure};
+ use indexmap::IndexMap;
+ use rayon::prelude::*;
+ 
+@@ -104,7 +105,24 @@ impl<'a, N: Network, C: ConsensusStorage<N>> LedgerUpdateService<N> for LedgerUp
+         subdag: Subdag<N>,
+         transmissions: IndexMap<TransmissionID<N>, Transmission<N>>,
+     ) -> Result<Block<N>, CheckBlockError<N>> {
+-        self.ledger.prepare_advance_to_next_quorum_block(subdag, transmissions, &mut rand::rng())
++        let block = self.ledger.prepare_advance_to_next_quorum_block(subdag, transmissions, &mut rand::rng())?;
 +
-     /// Initializes a new block sync module.
-     pub fn new(ledger: Arc<dyn LedgerService<N>>, connection_mode: ConnectionMode) -> Self {
-         // Make sync state aware of the blocks that already exist on disk at startup.
-@@ -1257,6 +1263,10 @@ impl<N: Network> BlockSync<N> {
-         {
-             failed_requests.pop_first();
-         }
-+        // Drop the failed requests above every height a peer advertises. A peer that advertises
-+        // those heights brings them back as new requests.
-+        let advertised_tip = tips.map_or(0, |(_, advertised_tip)| advertised_tip);
-+        failed_requests.split_off(&advertised_tip.saturating_add(1));
- 
-         // Re-issue the remaining failed requests.
-         if !failed_requests.is_empty() {
-@@ -1346,21 +1356,23 @@ impl<N: Network> BlockSync<N> {
-         }
- 
-         // Ensure to not exceed the maximum number of outstanding block requests.
--        let max_outstanding_block_requests =
--            (MAX_BLOCK_REQUESTS as u32) * (DataBlocks::<N>::MAXIMUM_NUMBER_OF_BLOCKS as u32);
-+        let max_outstanding_block_requests = Self::MAX_OUTSTANDING_BLOCK_REQUESTS;
- 
-         // Ensure there is a finite bound on the number of block respnoses we receive, that have not been processed yet.
--        let max_total_requests = 4 * max_outstanding_block_requests;
-+        let max_total_requests = Self::MAX_TOTAL_BLOCK_REQUESTS;
- 
-         let max_new_blocks_to_request =
-             max_outstanding_block_requests.saturating_sub(self.num_outstanding_block_requests() as u32);
- 
-         // The first height to request: the next one this node needs, or the first above it not
-         // already requested.
-         let start_height = self.first_unrequested_height(current_height.saturating_add(1));
-+        // The total request cap does not apply to a gap below a requested height: the answered
-+        // requests above the gap leave the map only once the gap is filled.
-+        let fills_gap = self.requests.read().last_key_value().is_some_and(|(height, _)| start_height < *height);
- 
-         // Prepare the block requests and sync peers, or returns an empty result if there is nothing to request.
--        if self.num_total_block_requests() >= max_total_requests as usize {
-+        if !fills_gap && self.num_total_block_requests() >= max_total_requests as usize {
-             trace!(
-                 "We are already requested at least {max_total_requests} blocks that have not been fully processed yet. Will not issue more."
-             );
-@@ -3053,6 +3065,150 @@ mod tests {
-         assert!(service.sent.lock().unwrap().is_empty());
++        // The caller orders the subdag before it begins this update, so a block added in between
++        // can hold some of its certificates. A block that commits them again forks this node.
++        if let Authority::Quorum(subdag) = block.authority() {
++            for certificate_id in subdag.certificate_ids() {
++                if self.ledger.contains_certificate(&certificate_id)? {
++                    return Err(anyhow!(
++                        "Certificate '{}' of the subdag for round {} is already in the ledger",
++                        fmt_id(certificate_id),
++                        subdag.anchor_round()
++                    )
++                    .into());
++                }
++            }
++        }
++
++        Ok(block)
      }
  
-+    /// Tests that failed requests above every height a peer advertises are dropped, and that the
-+    /// request pass then finds nothing to sync.
+     /// Adds the given block as the next block in the ledger.
+```
+
+**File**: `node/bft/ledger-service/src/traits.rs` (modified, +2/-0)
+```diff
+@@ -60,6 +60,8 @@ pub trait LedgerUpdateService<N: Network> {
+     /// Checks the given block is a valid next block for the ledger.
+     fn check_next_block(&self, block: Block<N>) -> Result<Block<N>, CheckBlockError<N>>;
+     /// Prepares the next block in the ledger, using a committed subdag and its transmissions.
++    ///
++    /// Returns an error if a certificate of the subdag is already in the ledger.
+     fn prepare_advance_to_next_quorum_block(
+         &self,
+         subdag: Subdag<N>,
+```
+
+**File**: `node/bft/src/sync/mod.rs` (modified, +49/-0)
+```diff
+@@ -1812,6 +1812,55 @@ mod tests {
+         assert!(syncing_ledger.contains_block_height(2));
+     }
+ 
++    /// Tests that the ledger builds no block from a subdag that also holds the certificates of the latest block.
++    ///
++    /// The BFT orders such a subdag when sync adds a block between the ordering and the ledger update.
 +    #[tokio::test]
-+    #[tracing_test::traced_test]
-+    async fn test_failed_requests_above_advertised_tip_are_dropped() {
-+        let sync = sample_sync_at_height(1_000);
-+        let peer_ahead = sample_peer_ip(1);
-+        add_peers(&sync, 1, 1, 1_100, 0);
-+        add_peers(&sync, 2, 1, 1_020, 0);
-+        insert_requests_to(&sync, peer_ahead, 1_001..1_051);
-+        sync.remove_peer(&peer_ahead);
-+        assert_eq!(sync.failed_requests.lock().len(), 50);
++    async fn test_prepare_block_rejects_committed_certificates() {
++        let rng = &mut TestRng::default();
++        let (genesis, blocks) = setup_commit_chain(rng).await;
++        let ledger = Arc::new(CoreLedgerService::new(
++            spawn_blocking!(CurrentLedger::load(genesis, StorageMode::new_test(None))).unwrap(),
++            SimpleStoppable::new(),
++        ));
 +
-+        // The remaining peer serves the failed requests up to its tip.
-+        let (requests, _) = sync.prepare_block_requests().pop().unwrap();
-+        assert_eq!(heights_of(&requests), (1_001..=1_020).collect::<Vec<_>>());
-+        assert!(sync.failed_requests.lock().is_empty());
++        let Authority::Quorum(committed_subdag) = blocks[1].authority().clone() else {
++            panic!("Expected a quorum block")
++        };
++        let Authority::Quorum(next_subdag) = blocks[2].authority().clone() else { panic!("Expected a quorum block") };
 +
-+        // Without a peer ahead, none of the failed requests remain.
-+        let sync = sample_sync_at_height(1_000);
-+        add_peers(&sync, 1, 1, 1_100, 0);
-+        add_peers(&sync, 2, 1, 1_000, 0);
-+        insert_requests_to(&sync, peer_ahead, 1_001..1_051);
-+        sync.remove_peer(&peer_ahead);
-+        assert_eq!(sync.failed_requests.lock().len(), 50);
-+        let service = RecordingService::default();
-+        assert!(sync.try_issuing_block_requests(&service).await.is_none());
-+        assert!(sync.failed_requests.lock().is_empty());
-+        assert!(!logs_contain("Nothing to sync"));
-+        assert!(sync.try_issuing_block_requests(&service).await.is_none());
-+        assert!(logs_contain("Nothing to sync"));
-+        assert!(service.sent.lock().unwrap().is_empty());
++        // Order the subdag of the third block as if the second block were not in the ledger.
++        let mut stale_subdag_map: BTreeMap<u64, IndexSet<BatchCertificate<CurrentNetwork>>> = BTreeMap::new();
++        for (round, certificates) in committed_subdag.iter().chain(next_subdag.iter()) {
++            stale_subdag_map.entry(*round).or_default().extend(certificates.iter().cloned());
++        }
++        let stale_subdag = Subdag::from(stale_subdag_map).unwrap();
++        assert_eq!(stale_subdag.anchor_round(), next_subdag.anchor_round());
++
++        let (committed_result, stale_result, block) = spawn_blocking!({
++            let ledger_update = ledger.begin_ledger_update()?;
++            // Advance the ledger to the second block.
++            for block in &blocks[..2] {
++                ledger_update.advance_to_next_block(block)?;
++            }
++            let committed_result =
++                ledger_update.prepare_advance_to_next_quorum_block(committed_subdag, Default::default());
++            let stale_result = ledger_update
++                .prepare_advance_to_next_quorum_block(stale_subdag, Default::default())
++                .map(|block| block.hash());
++            // The subdag without the committed certificates becomes the third block.
++            let block = ledger_update.prepare_advance_to_next_quorum_block(next_subdag, Default::default())?;
++            Ok((committed_result, stale_result, block))
++        })
++        .unwrap();
++
++        // The subdag of the latest block keeps its own error, which tells the BFT that the ledger already advanced.
++        assert!(matches!(committed_result, Err(CheckBlockError::InvalidRound { .. })));
++        let error = stale_result.expect_err("A subdag with committed certificates must not become a block").to_string();
++        assert!(error.contains("is already in the ledger"), "Unexpected error: {error}");
++        assert_eq!(block.height(), 3);
 +    }
 +
-+    /// Fills the response buffer to the total request cap with answered requests from `start`.
-+    fn fill_response_buffer(sync: &BlockSync<CurrentNetwork>, start: u32) {
+     #[tokio::test]
+     #[tracing_test::traced_test]
+     async fn test_pending_certificates() -> anyhow::Result<()> {
+```
+
+---
+
+### Incident Patch 2: `e6ee78ac` (2026-11-24)
+**Commit Message**: Build no block from a subdag with committed certificates
+
+The BFT orders a subdag before consensus takes the ledger update lock.
+Block sync takes the same lock. When sync adds a block in between, the
+subdag still holds that block's certificates, and the ledger built a
+second block that committed them again. That block forks the node.
+
+A testnet validator did this after a restart. Its block held the 31
+certificates of the previous block and the 30 certificates of its own
+height.
+
+The ledger update now returns an error for such a subdag. The BFT leaves
+the subdag uncommitted and orders it again with the next commit, when the
+ledger lookup excludes the committed certificates.
+
+Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
+
+**File**: `node/bft/ledger-service/src/ledger.rs` (modified, +20/-2)
+```diff
+@@ -40,6 +40,7 @@ use snarkvm::{
+         Ledger,
+         PendingBlock,
+         Transaction,
++        authority::Authority,
+         committee::Committee,
+         narwhal::{BatchCertificate, Data, Subdag, Transmission, TransmissionID},
+         puzzle::{Solution, SolutionID},
+@@ -58,7 +59,7 @@ use snarkvm::{
+     },
+ };
+ 
+-use anyhow::ensure;
++use anyhow::{anyhow, ensure};
+ use indexmap::IndexMap;
+ use rayon::prelude::*;
+ 
+@@ -104,7 +105,24 @@ impl<'a, N: Network, C: ConsensusStorage<N>> LedgerUpdateService<N> for LedgerUp
+         subdag: Subdag<N>,
+         transmissions: IndexMap<TransmissionID<N>, Transmission<N>>,
+     ) -> Result<Block<N>, CheckBlockError<N>> {
+-        self.ledger.prepare_advance_to_next_quorum_block(subdag, transmissions, &mut rand::rng())
++        let block = self.ledger.prepare_advance_to_next_quorum_block(subdag, transmissions, &mut rand::rng())?;
 +
++        // The caller orders the subdag before it begins this update, so a block added in between
++        // can hold some of its certificates. A block that commits them again forks this node.
++        if let Authority::Quorum(subdag) = block.authority() {
++            for certificate_id in subdag.certificate_ids() {
++                if self.ledger.contains_certificate(&certificate_id)? {
++                    return Err(anyhow!(
++                        "Certificate '{}' of the subdag for round {} is already in the ledger",
++                        fmt_id(certificate_id),
++                        subdag.anchor_round()
++                    )
++                    .into());
++                }
++            }
++        }
++
++        Ok(block)
+     }
+ 
+     /// Adds the given block as the next block in the ledger.
+```
+
+**File**: `node/bft/src/sync/mod.rs` (modified, +57/-0)
+```diff
+@@ -1812,6 +1812,63 @@ mod tests {
+         assert!(syncing_ledger.contains_block_height(2));
+     }
+ 
++    /// Tests that the ledger builds no block from a subdag that also holds the certificates of the latest block.
++    ///
++    /// The BFT orders such a subdag when sync adds a block between the ordering and the ledger update.
++    #[tokio::test]
++    async fn test_prepare_block_rejects_committed_certificates() {
++        let rng = &mut TestRng::default();
++        let (genesis, blocks) = setup_commit_chain(rng).await;
++        let ledger = Arc::new(CoreLedgerService::new(
++            spawn_blocking!(CurrentLedger::load(genesis, StorageMode::new_test(None))).unwrap(),
++            SimpleStoppable::new(),
++        ));
++
++        // Advance the ledger to the second block.
++        let committed_blocks = blocks[..2].to_vec();
++        let ledger_ = ledger.clone();
++        spawn_blocking!({
++            for block in &committed_blocks {
++                ledger_.begin_ledger_update()?.advance_to_next_block(block)?;
++            }
++            Ok(())
++        })
++        .unwrap();
++
++        let Authority::Quorum(committed_subdag) = blocks[1].authority() else { panic!("Expected a quorum block") };
++        let Authority::Quorum(next_subdag) = blocks[2].authority().clone() else { panic!("Expected a quorum block") };
++
++        // Order the subdag of the third block as if the second block were not in the ledger.
++        let mut stale_subdag_map: BTreeMap<u64, IndexSet<BatchCertificate<CurrentNetwork>>> = BTreeMap::new();
++        for (round, certificates) in committed_subdag.iter().chain(next_subdag.iter()) {
++            stale_subdag_map.entry(*round).or_default().extend(certificates.iter().cloned());
++        }
++        let stale_subdag = Subdag::from(stale_subdag_map).unwrap();
++        assert_eq!(stale_subdag.anchor_round(), next_subdag.anchor_round());
++
++        let committed_subdag = committed_subdag.clone();
++        let (committed_result, stale_result, block) = spawn_blocking!({
++            let ledger_update = ledger.begin_ledger_update()?;
++            let committed_result =
++                ledger_update.prepare_advance_to_next_quorum_block(committed_subdag, Default::default());
++            let stale_result = ledger_update
++                .prepare_advance_to_next_quorum_block(stale_subdag, Default::default())
++                .map(|block| block.hash())
++                .map_err(|error| error.to_string());
++            // The subdag without the committed certificates becomes the third block.
++            let block = ledger_update.prepare_advance_to_next_quorum_block(next_subdag, Default::default())?;
++            Ok((committed_result, stale_result, block))
++        })
++        .unwrap();
++
++        // The subdag of the latest block keeps its own error, which tells the BFT that the ledger already advanced.
++        assert!(matches!(committed_result, Err(CheckBlockError::InvalidRound { .. })));
++        let error = stale_result.expect_err("A subdag with committed certificates must not become a block");
++        assert!(error.contains("is already in the ledger"), "Unexpected error: {error}");
++        assert_eq!(block.authority(), blocks[2].authority());
++        assert_eq!(block.height(), 3);
++    }
++
+     #[tokio::test]
+     #[tracing_test::traced_test]
+     async fn test_pending_certificates() -> anyhow::Result<()> {
+```
+
+---
+
+### Incident Patch 3: `73fd1643` (2026-11-24)
+**Commit Message**: Merge pull request #4602 from aleo-labs-protocol/fix/fast-forward-reinsert
+
+Return proposal transmissions to the workers when fast-forwarding rounds
+
+**File**: `node/bft/src/primary.rs` (modified, +233/-28)
+```diff
+@@ -75,7 +75,7 @@ use snarkvm::{
+         narwhal::{BatchCertificate, BatchHeader, Data, Transmission, TransmissionID},
+         puzzle::{Solution, SolutionID},
+     },
+-    prelude::{Signature, committee::Committee},
++    prelude::Signature,
+     utilities::flatten_error,
+ };
+ 
+@@ -1314,11 +1314,11 @@ impl<N: Network> Primary<N> {
+ 
+         info!("Quorum threshold reached - Preparing to certify our batch for round {}...", proposal.round());
+ 
+-        // Retrieve the committee lookback for the round.
+-        let committee_lookback = self.ledger.get_committee_lookback_for_round(proposal.round())?;
+         // Store the certified batch and broadcast it to all validators.
+-        // If there was an error storing the certificate, reinsert the transmissions back into the ready queue.
+-        if let Err(e) = self.store_and_broadcast_certificate(&proposal, &committee_lookback).await {
++        if let Err(e) = self.store_and_broadcast_certificate(&proposal).await {
++            // Clear `Certified` if it still holds this batch, as `propose_batch` does not run while it is set.
++            let batch_id = proposal.batch_id();
++            self.take_proposed_batch_if(|state| matches!(state, ProposedBatchState::Certified(id) if *id == batch_id));
+             // Reinsert the transmissions back into the ready queue for the next proposal.
+             self.reinsert_transmissions_into_workers(proposal.into_transmissions())?;
+             return Err(e);
+@@ -1730,35 +1730,37 @@ impl<N: Network> Primary<N> {
+     }
+ 
+     /// Checks if the proposed batch is expired, and clears the proposed batch if it has expired.
+-    ///
+-    /// The proposal is inspected and cleared under a single write lock, so that the proposal which
+-    /// is discarded is exactly the one that was found to be expired.
+     fn check_proposed_batch_for_expiration(&self) -> Result<()> {
+-        // Read the current round before taking the lock below, so that no other lock is acquired
+-        // while it is held. The round only ever increases, so reading it early is conservative: at
+-        // worst a proposal that just expired is left for the next call to clear.
++        // Read the current round before taking the lock in `take_proposed_batch_if`, so that no
++        // other lock is acquired while it is held. The round only ever increases, so reading it early
++        // is conservative: at worst a proposal that just expired is left for the next call to clear.
+         let current_round = self.current_round();
+ 
+-        // Take the proposed batch only if it has expired; taking it leaves the state cleared.
+         // A batch being certified is not considered expired.
+-        let expired = {
+-            let mut proposed_batch = self.proposed_batch.write();
+-            let is_expired = matches!(
+-                &*proposed_batch,
+-                ProposedBatchState::Certifying(proposal) if proposal.round() < current_round
+-            );
+-            is_expired.then(|| std::mem::take(&mut *proposed_batch))
+-        };
++        let expired = self.take_proposed_batch_if(
++            |state| matches!(state, ProposedBatchState::Certifying(proposal) if proposal.round() < current_round),
++        );
+ 
+-        // Reinsert the transmissions once the lock above has been released, since this acquires the
+-        // workers' locks in turn.
++        // The lock is released at this point, which matters since reinserting acquires the workers' locks.
+         if let Some(ProposedBatchState::Certifying(proposal)) = expired {
+             debug!("Cleared expired proposal for round {}", proposal.round());
+             self.reinsert_transmissions_into_workers(proposal.into_transmissions())?;
+         }
+         Ok(())
+     }
+ 
++    /// Takes the proposed batch if `should_take` holds for it, leaving the state cleared.
++    ///
++    /// The state is inspected and taken under a single write lock, so that the state which is
++    /// taken is exactly the one that `should_take` accepted.
++    fn take_proposed_batch_if(
++        &self,
++        should_take: impl FnOnce(&ProposedBatchState<N>) -> bool,
++    ) -> Option<ProposedBatchState<N>> {
++        let mut proposed_batch = self.proposed_batch.write();
++        should_take(&proposed_batch).then(|| std::mem::take(&mut *proposed_batch))
++    }
++
+     /// Increments to the next round.
+     async fn try_increment_to_the_next_round(&self, next_round: u64) -> Result<()> {
+         // If the next round is within GC range, then iterate to the penultimate round.
+@@ -1768,8 +1770,13 @@ impl<N: Network> Primary<N> {
+             while fast_forward_round < next_round.saturating_sub(1) {
+                 // Update to the next round in storage.
+                 fast_forward_round = self.storage.increment_to_next_round(fast_forward_round)?;
+-                // Clear the proposed batch.
+-                *self.proposed_batch.write() = ProposedBatchState::None;
++            }
++            // Clear a proposal for a round that has now
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4782** (2026-11-24): Bump snarkVM to aleo-labs-protocol/snarkVM@4606f61d8 (@aleo-labs-merge-bot[bot])
+- **PR #4779** (2026-11-24): Bump snarkVM to aleo-labs-protocol/snarkVM@c91682f16 (@aleo-labs-merge-bot[bot])
+- **PR #4778** (2026-11-24): Build no block from a subdag with committed certificates (@cbeck88)
 - **PR #4777** (2026-11-24): Check advisories only on scheduled and release CI runs (@cbeck88)
 - **PR #4775** (2026-11-24): Drop failed block requests above every advertised peer height (@cbeck88)
-- **PR #4772** (2026-11-23): Bump snarkVM to aleo-labs-protocol/snarkVM@1a1c603dc (@cbeck88)
-- **PR #4771** (2026-11-23): Bump crates with security advisories (@aleo-labs-merge-bot[bot])
-- **PR #4770** (2026-11-23): Bump jsonwebtoken from 11.1.0 to 12.0.0 (@dependabot[bot])
-- **PR #4769** (2026-11-23): Bump nix from 0.31.3 to 0.32.0 (@dependabot[bot])
+- **PR #4774** (2026-11-24): Warn operators before JSON history deprecation (@raychu86)
 
 ---
 
@@ -2012,49 +2269,51 @@ Drop failed block requests above every advertised peer height
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in block_sync.rs
+## X. Empirical Invariant Guard in ledger.rs
 
 **RULE**:
-When implementing operations in `node/sync/src/block_sync.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `node/bft/ledger-service/src/ledger.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `04985e7d`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8444af96`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `node/sync/src/block_sync.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `node/bft/ledger-service/src/ledger.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    /// The maximum number of block requests that await a response.
-    const MAX_OUTSTANDING_BLOCK_REQUESTS: u32 =
-        (MAX_BLOCK_REQUESTS as u32) * (DataBlocks::<N>::MAXIMUM_NUMBER_OF_BLOCKS as u32);
-    /// The maximum number of block requests, including the answered ones that are not processed yet.
-    const MAX_TOTAL_BLOCK_REQUESTS: u32 = 4 * Self::MAX_OUTSTANDING_BLOCK_REQUESTS;
+        authority::Authority,
+use anyhow::{anyhow, ensure};
+        let block = self.ledger.prepare_advance_to_next_quorum_block(subdag, transmissions, &mut rand::rng())?;
 
-        // Drop the failed requests above every height a peer advertises. A peer that advertises
-        // those heights brings them back as new requests.
-        let advertised_tip = tips.map_or(0, |(_, advertised_tip)| advertised_tip);
-        failed_requests.split_off(&advertised_tip.saturating_add(1));
-        let max_outstanding_block_requests = Self::MAX_OUTSTANDING_BLOCK_REQUESTS;
-        let max_total_requests = Self::MAX_TOTAL_BLOCK_REQUESTS;
-        // The total request cap does not apply to a gap below a requested height: the answered
-        // requests above the gap leave the map only once the gap is filled.
-        let fills_gap = self.requests.read().last_key_value().is_some_and(|(height, _)| start_height < *height);
-        if !fills_gap && self.num_total_block_requests() >= max_
+        // The caller orders the subdag before it begins this update, so a block added in between
+        // can hold some of its certificates. A block that commits them again forks this node.
+        if let Authority::Quorum(subdag) = block.authority() {
+            for certificate_id in subdag.certificate_ids() {
+                if self.ledger.contains_certificate(&certificate_id)? {
+                    return Err(anyhow!(
+                        "Certificate '{}' of the subdag for round {} is already in the ledger",
+                        fmt_id(certificate_id),
+                        subdag.anchor_round()
+                    )
+                    .into());
+                }
+            }
+        }
+
+        Ok(block)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-        let max_outstanding_block_requests =
-            (MAX_BLOCK_REQUESTS as u32) * (DataBlocks::<N>::MAXIMUM_NUMBER_OF_BLOCKS as u32);
-        let max_total_requests = 4 * max_outstanding_block_requests;
-        if self.num_total_block_requests() >= max_total_requests as usize {
+use anyhow::ensure;
+        self.ledger.prepare_advance_to_next_quorum_block(subdag, transmissions, &mut rand::rng())
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `04985e7d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8444af96` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T00:17:28.446Z",
-  "total_records": 2605,
+  "last_updated": "2026-11-25T00:26:59.792Z",
+  "total_records": 2607,
   "domains": {
     "A": {
       "total": 22,
@@ -1181,7 +1181,7 @@
       ]
     },
     "G": {
-      "total": 456,
+      "total": 458,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1638,7 +1638,9 @@
         "domain_intelligence-architecture-intelligence-vitejs-vite-core-invariants",
         "domain_intelligence-architecture-intelligence-vitejs-vite-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-str4d-rage-core-invariants",
-        "domain_intelligence-architecture-intelligence-str4d-rage-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-str4d-rage-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-qwikdev-qwik-core-invariants",
+        "domain_intelligence-architecture-intelligence-qwikdev-qwik-learnings-core-invariants"
       ]
     },
     "H": {
@@ -8709,10 +8711,10 @@
       "record_id": "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants",
       "domain_letter": "G",
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-core-inv.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-.md",
       "repository": "aleo-labs-protocol/snarkOS",
-      "content_hash": "b249da509a7ab7226afeac44162c20811b622117e44b3e02e366d3b432210ec7",
-      "created_at": "2026-11-24T22:07:32.533Z"
+      "content_hash": "896e65b5bd5c94f1c9e5baf98d691e49b73ca7bbc8b1bc03110787399092d013",
+      "created_at": "2026-11-25T00:26:50.467Z"
     },
     "DOM-D-7123D3B0": {
       "record_id": "DOM-D-7123D3B0",
@@ -15657,8 +15659,8 @@
       "title": "Architecture Intelligence: zenbu-labs/terminal-browser Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zenbu-labs-terminal-browser-architecture-intelligence-zenbu-labs-terminal-browse.md",
       "repository": "zenbu-labs/terminal-browser",
-      "content_hash": "95baaa2d0308cc7a889d01bc08cfd45714af69be78d463c745c1fd7a9baf9eaa",
-      "created_at": "2026-11-22T10:54:50.920Z"
+      "content_hash": "7fab58bbd37f39b35f9f97f6badf776b95efb0758b64cd729dc0f780ed49b3c8",
+      "created_at": "2026-11-25T00:26:40.719Z"
     },
     "domain_intelligence-content-information-intelligence-okteto-okteto-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-okteto-okteto-core-invariants",
@@ -15693,8 +15695,8 @@
       "title": "Architecture Intelligence: zenbu-labs-terminal-browser-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zenbu-labs-terminal-browser-learnings-architecture-intelligence-zenbu-labs-termi.md",
       "repository": "zenbu-labs-terminal-browser-learnings",
-      "content_hash": "7dc5410fed94f07ed7b8eccea2763e0cd8ba79e74f0fef40aa89ef65f325af95",
-      "created_at": "2026-11-22T10:55:06.958Z"
+      "content_hash": "f60e0347b1dbaa97e86d8705545f198191eee20568d39f76adc3e632975f0428",
+      "created_at": "2026-11-25T00:26:57.146Z"
     },
     "DOM-D-2F30EB65": {
       "record_id": "DOM-D-2F30EB65",
@@ -17880,8 +17882,8 @@
       "title": "Architecture Intelligence: hashicorp/terraform Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-hashicorp-terraform-architecture-intelligence-hashicorp-terraform-core-invariant.md",
       "repository": "hashicorp/terraform",
-      "content_hash": "aa891c7f9d5590d5edb4d49592ad817989575219a2cb7eece48f44db054b770c",
-      "created_at": "2026-11-24T05:14:12.190Z"
+      "content_hash": "d1450073a463779f6060934b50784d015c9b681ba639e670c9b5c9a2a74dacc5",
+      "created_at": "2026-11-25T00:26:48.382Z"
     },
     "DOM-D-666917A5": {
       "record_id": "DOM-D-666917A5",
@@ -17940,8 +17942,8 @@
       "title": "Architecture Intelligence: hashicorp-terraform-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-hashicorp-terraform-learnings-architecture-intelligence-hashicorp-terraform-lear.md",
       "repository": "hashicorp-terraform-learnings",
-      "content_hash": "4a2e5333bfd3f1d0446e1e790a3a800998b3d63dcefdd57791d9183f0f4caaf2",
-      "created_at": "2026-11-24T05:14:20.847Z"
+      "content_hash": "306773ecab8c63ae0af9e548442443b62dea9adce7349a11cb97972310bbbab6",
+      "created_at": "2026-11-25T00:26:59.792Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-qwen3-8-flash-next-uncensored-gguf-co": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-qwen3-8-flash-next-uncensored-gguf-co",
@@ -25265,8 +25267,8 @@
       "title": "Quality & Verification Intelligence: crate/crate Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-crate-crate-quality-verification-intelligence-crate-crate-core-invariants.md",
       "repository": "crate/crate",
-      "content_hash": "e1595e1ca6e04e3ac864433afbb20c4beed04d09d5d21a72964994c696698dcf",
-      "created_at": "2026-11-17T20:45:40.670Z"
+      "content_hash": "1bc3d7bc5c7c275b9d1adbc05ba76f3902cfd3cf17f914123fc46ebea1824a44",
+      "created_at": "2026-11-25T00:26:53.145Z"
     },
     "domain_intelligence-quality-verification-intelligence-falkordb-falkordb-learnings-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-falkordb-falkordb-learnings-core-invariants",
@@ -43734,6 +43736,24 @@
       "repository": "openyurtio-openyurt-learnings",
       "content_hash": "eb543445d18870c8ca36b2b5a5e85d730adc34f4b9244f9179abbb1096d030a3",
       "created_at": "2026-11-25T00:17:28.446Z"
+    },
+    "domain_intelligence-architecture-intelligence-qwikdev-qwik-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-qwikdev-qwik-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: QwikDev/qwik Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-qwikdev-qwik-architecture-intelligence-qwikdev-qwik-core-invariants.md",
+      "repository": "QwikDev/qwik",
+      "content_hash": "134cc325eb26cff8f940d2b7b2b609625dee0d21dadc08f443c13056e302cc9f",
+      "created_at": "2026-11-25T00:26:43.672Z"
+    },
+    "domain_intelligence-architecture-intelligence-qwikdev-qwik-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-qwikdev-qwik-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: qwikdev-qwik-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-qwikdev-qwik-learnings-architecture-intelligence-qwikdev-qwik-learnings-core-inv.md",
+      "repository": "qwikdev-qwik-learnings",
+      "content_hash": "03f6e96942fbc3bd366d7e6f7c2c7bec79db296916a263a0e7c78022fb32d5cb",
+      "created_at": "2026-11-25T00:26:58.563Z"
     }
   }
 }

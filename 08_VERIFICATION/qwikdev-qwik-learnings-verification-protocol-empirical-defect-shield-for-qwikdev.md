@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-21T00:52:13.301Z",
+  "timestamp": "2026-11-25T00:26:58.148Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-qwikdev-qwik-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [qwikdev-qwik-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-21T00:52:13.301Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T00:26:58.148Z`  
 > **Learning ID**: `LEARN-EVO-qwikdev-qwik-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/qwikdev-qwik-learnings.md`  
 > **Source**: github ([https://github.com/QwikDev/qwik](https://github.com/QwikDev/qwik))  
-> **Source Version**: `fa8e12f1`  
+> **Source Version**: `04c312f5`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T00:51:57.081Z  
+> **Timestamp**: 2026-11-25T00:26:41.604Z  
 > **Learning ID**: `learn-github-qwikdev-qwik`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/qwikdev-qwik-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/QwikDev/qwik](https://github.com/QwikDev/qwik))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T00:51:57.074Z  
+> **Harvest Timestamp**: 2026-11-25T00:26:41.598Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Instant-loading web apps, without effort
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 22077 stars
+- **Stars / Engagement**: 22073 stars
 
 ---
 
@@ -120,7 +120,6 @@ export const PORT = 4318;
 export const ORIGIN = `https://localhost:${PORT}`;
 
 type Manifest = {
-  core?: string;
   preloader?: string;
   bundleGraphAsset?: string;
   bundles: Record<string, { origins?: string[]; symbols?: string[]; imports?: string[] }>;
@@ -131,6 +130,17 @@ let manifest: Manifest | undefined;
 
 export const getManifest = (): Manifest =>
   (manifest ||= JSON.parse(readFileSync(join(APP_DIR, 'dist/q-manifest.json'), 'utf8')));
+
+export const getCoreBundle = () => {
+  const { bundles } = getManifest();
+  const coreBundle = Object.keys(bundles).find((file) =>
+    bundles[file].origins?.some((origin) => /\/core(\.prod|\.min)?\.qwik\.mjs$/.test(origin))
+  );
+  if (!coreBundle) {
+    throw new Error('No bundle in q-manifest.json holds core');
+  }
+  return coreBundle;
+};
 
 const SYMBOL_HASH = /_[A-Za-z0-9]{11}\.js$/;
 
@@ -1403,421 +1413,702 @@ export const EventsLifecycle = component$(() => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fa8e12f1` (2026-11-20)
-**Commit Message**: Merge pull request #9538 from mmporong/fix/dev-ssr-error-no-crash
+### Incident Patch 1: `72f9e0c8` (2026-11-18)
+**Commit Message**: Import inlinedQrl once in library builds that use bind:
 
-fix(core): don't crash the dev server when SSR can't serialize a function
+A library compiled in lib mode with `bind:value` or `bind:checked` imported
+`inlinedQrl` twice: once for the bind handler and once when the QRLs were
+collapsed into `inlinedQrl()` literals. Stripping TypeScript then failed on
+the duplicate declaration, so the library didn't build.
 
-**File**: `.changeset/calm-dev-server-ssr-error.md` (added, +5/-0)
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_017cSLFfHZnKT7FXc9do1VYh
+
+**File**: `.changeset/lib-mode-bind-import.md` (added, +5/-0)
 ```diff
 @@ -0,0 +1,5 @@
 +---
 +'@qwik.dev/core': patch
 +---
 +
-+fix: keep the dev server running when SSR can't serialize a function
++fix: building a library with `bind:value` or `bind:checked` failed with the TS optimizer
 ```
 
-**File**: `packages/qwik/src/core/shared/error/error.ts` (modified, +7/-1)
+**File**: `e2e/qwik-e2e/apps/e2e-library/src/index.tsx` (modified, +15/-0)
 ```diff
-@@ -1,5 +1,5 @@
- import { isDev } from '@qwik.dev/core/build';
--import { logErrorAndStop } from '../utils/log';
-+import { logError, logErrorAndStop } from '../utils/log';
- import { isObject } from '../utils/types';
- 
- const baseUrl = 'https://qwikdev-build-v2.qwik-8nx.pages.dev/docs/errors/#q';
-@@ -116,3 +116,9 @@ export const qError = (code: number, errorMessageArgs: any[] = []): Error => {
-   const text = codeToText(code, ...errorMessageArgs);
-   return logErrorAndStop(text, ...errorMessageArgs);
- };
-+
-+/** Like `qError`, but skips the debugger pause and the async rethrow. */
-+export const qErrorWithoutStop = (code: number, errorMessageArgs: any[] = []): Error => {
-+  const text = codeToText(code, ...errorMessageArgs);
-+  return logError(text, ...errorMessageArgs);
-+};
-```
-
-**File**: `packages/qwik/src/serializer/qwik-copy.ts` (modified, +1/-1)
-```diff
-@@ -12,7 +12,7 @@ export {
-   EffectProperty,
-   SerializationSignalFlags,
- } from '../core/reactive-primitives/types';
--export { qError, QError } from '../core/shared/error/error';
-+export { qError, qErrorWithoutStop, QError } from '../core/shared/error/error';
- export { isQrl } from '../core/shared/qrl/qrl-utils';
- export { Constants, TypeIds } from '../core/shared/serdes/constants';
- export {
-```
-
-**File**: `packages/qwik/src/serializer/serialize.ts` (modified, +7/-2)
-```diff
-@@ -1,4 +1,4 @@
--import { isDev } from '@qwik.dev/core/build';
-+import { isDev, isServer } from '@qwik.dev/core/build';
- import {
-   _BIGINT_PAYLOAD_REGEXP as BIGINT_PAYLOAD_REGEXP,
-   _canSerialize as canSerialize,
-@@ -53,6 +53,7 @@ import {
-   _PROPS_HANDLER,
-   QBackRefs,
-   qError,
-+  qErrorWithoutStop,
-   QError,
-   QUOTE,
-   SerializationSignalFlags,
-@@ -543,7 +544,11 @@ export class Serializer {
-             this.output(TypeIds.Component, [qrl]);
-             this.$parent$ = oldParent;
-           } else {
--            throw qError(QError.serializeErrorCannotSerializeFunction, [value.toString()]);
-+            const args = [value.toString()];
-+            // on the server, the async rethrow would crash the dev server
-+            throw isServer
-+              ? qErrorWithoutStop(QError.serializeErrorCannotSerializeFunction, args)
-+              : qError(QError.serializeErrorCannotSerializeFunction, args);
-           }
-           break;
-         case 'object':
-```
-
-**File**: `packages/qwik/src/serializer/serialize.unit.ts` (modified, +36/-1)
-```diff
-@@ -1,6 +1,6 @@
- import { createDocument } from '@qwik.dev/core/testing';
- import { _deserialize } from '@qwik.dev/core/internal';
--import { describe, expect, it } from 'vitest';
-+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
- import { _serialize } from './index';
- 
- describe('serialized state script', () => {
-@@ -18,3 +18,38 @@ describe('serialized state script', () => {
-     }
+@@ -41,6 +41,21 @@ export const LibCounter = component$(() => {
    );
  });
+ 
++/** `bind:` compiles to core's `_val`/`_chk`, imported from the library's own copy of core. */
++export const LibBindings = component$(() => {
++  const text = useSignal('from the library');
++  const checked = useSignal(false);
 +
-+/** Loads the serializer with `qTest` off, as an app would. */
-+const loadSerializer = async () => {
-+  vi.resetModules();
-+  (globalThis as any).qTest = false;
-+  try {
-+    return await import('./index');
-+  } finally {
-+    (globalThis as any).qTest = true;
-+  }
-+};
-+
-+describe('serialization errors on the server in dev mode', () => {
-+  beforeEach(() => {
-+    vi.useFakeTimers();
-+    vi.spyOn(console, 'error').mockImplementation(() => undefined);
-+  });
-+
-+  afterEach(() => {
-+    vi.useRealTimers();
-+    vi.restoreAllMocks();
-+    vi.resetModules();
-+  });
-+
-+  it('logs a function it cannot serialize without rethrowing the error later', async () => {
-+    const serializer = await loadSerializer();
-+
-+    await expect(serializer._serialize({ describe: () => 'a plain function' })).rejects.toThrow(
-+      'Cannot serialize function'
-+    );
-+
-+    expect(console.error).toHaveBeenCalledOnce();
-+    expect(() => vi.runAllTimers()).not.toThrow();
-+  });
++  return (
++    <div id="lib-bindings">
++      <input id="lib-bind-value" bind:value={text} />
++      <p id="lib-bound-text">{text.value}</p>
++      <input id="lib-bind-checked" type="checkbox" bind:checked={checked} />
++      <p id="lib-bound-checked">{String(checked.value)}</p>
++    </div>
++  );
 +});
++
+ /** A router link rendered by the library's own copy of the router. */
+ export const LibLink = component$((props: { href: string }) => {
+   return (
+```
+
+**File**: `e2e/qwik-e2e/apps/external-library/src/routes/index.tsx` (modified, +2/-1)
+```diff
+@@ -1,5 +1,5 @@
+ import { component$, useContextProvider, useStore } from '@qwik.dev/core';
+-import { GreetingContext, LibCounter, LibLink, LibRequest } from 'e2e-library';
++import { GreetingContext, LibBindings, LibCounter, LibLink, LibRequest } from 'e2e-library';
+ 
+ export default component$(() => {
+   const greeting = useStore({ greeting: 'Hello from the app' });
+@@ -8,6 +8,7 @@ export default component$(() => {
+   return (
+     <>
+       <LibCounter />
++      <LibBindings />
+       <LibLink href="/external-library/other/">other page</LibLink>
+       <LibRequest />
+     </>
+```
+
+**File**: `e2e/qwik-e2e/tests/external-library.e2e.ts` (modified, +16/-0)
+```diff
+@@ -20,6 +20,22 @@ test.describe('externalized qwik library', () => {
+     await expect(page.locator('#lib-task-runs')).toHaveText('2');
+   });
+ 
++  test("the external library's bind:value and bind:checked render and update their signals", async ({
++    page,
++  }) => {
++    assertNoBrowserErrors(page);
++    await page.goto('/external-library/');
++
++    await expect(page.locator('#lib-bind-value')).toHaveValue('from the library');
++    await expect(page.locator('#lib-bind-checked')).not.toBeChecked();
++
++    await page.locator('#lib-bind-value').fill('edited');
++    await page.locator('#lib-bind-checked').check();
++
++    await expect(page.locator('#lib-bound-text')).toHaveText('edited');
++    await expect(page.locator('#lib-bound-checked')).toHaveText('true');
++  });
++
+   test('a router link from the external library navigates without a reload', async ({ page }) => {
+     assertNoBrowserErrors(page);
+     await page.goto('/external-library/');
+```
+
+**File**: `packages/ts-optimizer/src/optimizer/rewrite/lib-mode-collapse.ts` (modified, +32/-9)
+```diff
+@@ -160,7 +160,7 @@ export function collapseToLibInlinedQrl(source: string): string {
+     edits.remove(r.start, r.end);
+   }
+ 
+-  rewriteImports(edits, source, usedHelpers);
++  rewriteImports(edits, source, usedHelpers, coreImportNames(program));
+ 
+   return edits.toString();
+ }
+@@ -481,18 +481,41 @@ function collectQVarReferenceRanges(
+   return out;
+ }
+ 
+-function rewriteImports(edits: MagicString, source: string, usedHelpers: Set<string>): void {
++function rewriteImports(
++  edits: MagicString,
++  source: string,
++  usedHelpers: Set<string>,
++  coreImports: Set<string>
++): void {
+   const noopImportRe =
+     /import\s*\{\s*_noopQrl(?:DEV)?\s*\}\s*from\s*(["'])@qwik\.dev\/core\1\s*;\s*\n?/g;
+   const match = noopImportRe.exec(source);
+-  if (match) {
+-    const helpers = [...usedHelpers].sort().join(', ');
+-    edits.overwrite(
+-      match.index,
+-      match.index + match[0].length,
+-      `import { ${helpers} } from "@qwik.dev/core";\n`
+-    );
++  if (!match) {
++    return;
++  }
++  // `bind:` handlers may already import `inlinedQrl`; a second import fails to parse.
++  const helpers = [...usedHelpers]
++    .filter((helper) => !coreImports.has(helper))
++    .sort()
++    .join(', ');
++  edits.overwrite(
++    match.index,
++    match.index + match[0].length,
++    helpers ? `import { ${helpers} } from "@qwik.dev/core";\n` : ''
++  );
++}
++
++/** Local names the module already imports from `@qwik.dev/core`. */
++function coreImportNames(program: AstProgram): Set<string> {
++  const names = new Set<string>();
++  for (const stmt of program.body ?? []) {
++    if (stmt.type === 'ImportDeclaration' && stmt.source.value === '@qwik.dev/core') {
++      for (const specifier of stmt.specifiers ?? []) {
++        names.add(specifier.local.name);
++      }
++    }
+   }
++  return names;
+ }
+ 
+ function includeTrailingNewline(source: string, end: number): number {
+```
+
+**File**: `packages/ts-optimizer/tests/optimizer/rewrite/lib-mode-imports.test.ts` (modified, +36/-0)
+```diff
+@@ -38,6 +38,42 @@ const STYLES = '.class {}';
+     expect(code).toMatch(/import \{ useTaskQrl \} from ["']@qwik\.dev\/core["']/);
+   });
+ 
++  it('imports inlinedQrl once when a bind: handler already imports it', () => {
++    const input = `
++import { component$, useSignal } from '@qwik.dev/core';
++export const C = component$(() => {
++  const text = useSignal('');
++  return <input bind:value={text} />;
++});
++`;
++    const result = transformModule({
++      input: [{ path: mkFilePath('test.tsx'), code: mkSourceText(input) }],
++      srcDir: mkFilePath('.'),
++      mode: 'lib',
++      transpileTs: true,
++      transpileJsx: true,
++    });
++    const code = findParent(result).code;
++    expect(code.match(/import \{[^}]*\binlinedQrl\b[^}]*\}/g)).toHaveLength(1);
++  });
++
++  it('imports inlinedQrl when only a string in the module mentions that import', () => {
++    const input = `
++import { $ } from '@qwik.dev/core';
++export const example = "import { inlinedQrl } from '@qwik.dev/core'";
++export const run = $(() => 1);
++`;
++    const result = transformModule({
++      input: [{ path: mkFilePath('test.tsx'), code: mkSourceText(input) }],
++      srcDir: mkFilePath('.'),
++      mode: 'lib',
++      transpileTs: true,
++      transpileJsx: true,
++    });
++    const code = findParent(result).code;
++    expect(code).toMatch(/^import \{[^}]*\binlinedQrl\b[^}]*\} from "@qwik\.dev\/core";$/m);
++  });
++
+   it('strips bare `$` (no marker-function semantics) under lib mode', () => {
+     const input = `
+ import { $, component$ } from '@qwik.dev/core';
 ```
 
 ---
 
-### Incident Patch 2: `062ca130` (2026-11-20)
-**Commit Message**: fix(core): don't crash the dev server when SSR can't serialize a function
+### Incident Patch 2: `07324adf` (2026-11-22)
+**Commit Message**: feat(core): remove the statePrewarm render option
 
-Keep logErrorAndStop as it was. On the server, its async rethrow is
-uncaught and kills the dev server, so the serializer reports this error
-there with a variant of qError that only logs it. The browser, where the
-serializer runs for server$ and worker$ arguments, keeps qError.
+Restoring the whole state at startup also imports every computed's code
+and asks for most QRL chunks at the highest priority, which the docs said
+it would not do. State is now always restored lazily.
 
-**File**: `.changeset/calm-dev-server-ssr-error.md` (modified, +1/-1)
+**File**: `.changeset/remove-state-prewarm.md` (added, +5/-0)
 ```diff
-@@ -2,4 +2,4 @@
- '@qwik.dev/core': patch
- ---
- 
--fix: keep the dev server running after an SSR error
-+fix: keep the dev server running when SSR can't serialize a function
-```
-
-**File**: `packages/qwik/src/core/shared/error/error.ts` (modified, +7/-1)
-```diff
-@@ -1,5 +1,5 @@
- import { isDev } from '@qwik.dev/core/build';
--import { logErrorAndStop } from '../utils/log';
-+import { logError, logErrorAndStop } from '../utils/log';
- import { isObject } from '../utils/types';
- 
- const baseUrl = 'https://qwikdev-build-v2.qwik-8nx.pages.dev/docs/errors/#q';
-@@ -116,3 +116,9 @@ export const qError = (code: number, errorMessageArgs: any[] = []): Error => {
-   const text = codeToText(code, ...errorMessageArgs);
-   return logErrorAndStop(text, ...errorMessageArgs);
- };
+@@ -0,0 +1,5 @@
++---
++'@qwik.dev/core': minor
++---
 +
-+/** Like `qError`, but skips the debugger pause and the async rethrow. */
-+export const qErrorWithoutStop = (code: number, errorMessageArgs: any[] = []): Error => {
-+  const text = codeToText(code, ...errorMessageArgs);
-+  return logError(text, ...errorMessageArgs);
-+};
++feat: remove the `statePrewarm` render option; state is always restored lazily
 ```
 
-**File**: `packages/qwik/src/core/shared/utils/log.ts` (modified, +1/-3)
+**File**: `packages/docs/src/routes/api/qwik-server/api.json` (modified, +1/-1)
 ```diff
-@@ -1,4 +1,3 @@
--import { isServer } from '@qwik.dev/core/build';
- import { qDev, qTest } from './qdev';
- 
- const STYLE = qDev
-@@ -21,8 +20,7 @@ export const throwErrorAndStop = (message?: any, ...optionalParams: any[]): neve
- };
- 
- export const logErrorAndStop = (message?: any, ...optionalParams: any[]) => {
--  // On the server, an uncaught async rethrow kills the dev server.
--  const err = createAndLogError(qDev && !isServer, message, ...optionalParams);
-+  const err = createAndLogError(qDev, message, ...optionalParams);
-   // eslint-disable-next-line no-debugger
-   debugger;
-   return err;
+@@ -166,7 +166,7 @@
+         }
+       ],
+       "kind": "Interface",
+-      "content": "```typescript\nexport interface RenderOptions extends SerializeDocumentOptions \n```\n**Extends:** [SerializeDocumentOptions](#serializedocumentoptions)\n\n\n<table><thead><tr><th>\n\nProperty\n\n\n</th><th>\n\nModifiers\n\n\n</th><th>\n\nType\n\n\n</th><th>\n\nDescription\n\n\n</th></tr></thead>\n<tbody><tr><td>\n\nbase?\n\n\n</td><td>\n\n\n</td><td>\n\nstring \\| ((options: [RenderOptions](#renderoptions)<!-- -->) =&gt; string)\n\n\n</td><td>\n\n_(Optional)_ Specifies the root of the JS files of the client build. Setting a base, will cause the render of the `q:base` attribute in the `q:container` element.\n\n\n</td></tr>\n<tr><td>\n\ncontainerAttributes?\n\n\n</td><td>\n\n\n</td><td>\n\nRecord&lt;string, string&gt;\n\n\n</td><td>\n\n_(Optional)_\n\n\n</td></tr>\n<tr><td>\n\ncontainerTagName?\n\n\n</td><td>\n\n\n</td><td>\n\nstring\n\n\n</td><td>\n\n_(Optional)_ When set, the app is serialized into a fragment. And the returned html is not a complete document. Defaults to `html`\n\n\n</td></tr>\n<tr><td>\n\nlocale?\n\n\n</td><td>\n\n\n</td><td>\n\nstring \\| ((options: [RenderOptions](#renderoptions)<!-- -->) =&gt; string)\n\n\n</td><td>\n\n_(Optional)_ Language to use when rendering the document.\n\n\n</td></tr>\n<tr><td>\n\npreloader?\n\n\n</td><td>\n\n\n</td><td>\n\n[PreloaderOptions](#preloaderoptions) \\| false\n\n\n</td><td>\n\n_(Optional)_ Specifies how preloading is handled. This ensures that code is instantly available when needed.\n\n\n</td></tr>\n<tr><td>\n\nqwikLoader?\n\n\n</td><td>\n\n\n</td><td>\n\n[QwikLoaderOptions](#qwikloaderoptions)\n\n\n</td><td>\n\n_(Optional)_ Specifies how the Qwik Loader is included in the document. This enables interactivity and lazy loading.\n\n`module`<!-- -->: Use a `<script>` tag to load the Qwik Loader. Subsequent page loads will have the script cached and instantly running.\n\n`inline`<!-- -->: This embeds the Qwik Loader script directly in the document. This adds about 3kB before compression, which typically is reduced to about 1.6kB with gzip.\n\n`never`<!-- -->: Do not include the Qwik Loader script. This is mostly useful when embedding multiple containers on the same page.\n\nDefaults to `module`<!-- -->.\n\nNote that the Qwik Loader is absolutely required for Qwik to work. There must be an instance of it loaded for any interactivity to happen.\n\n\n</td></tr>\n<tr><td>\n\nserverData?\n\n\n</td><td>\n\n\n</td><td>\n\nRecord&lt;string, any&gt;\n\n\n</td><td>\n\n_(Optional)_ Metadata that can be retrieved during SSR with `useServerData()`<!-- -->.\n\n\n</td></tr>\n<tr><td>\n\nsnapshot?\n\n\n</td><td>\n\n\n</td><td>\n\nboolean\n\n\n</td><td>\n\n_(Optional)_ Defaults to `true`\n\n\n</td></tr>\n<tr><td>\n\nstatePrewarm?\n\n\n</td><td>\n\n\n</td><td>\n\nnumber \\| false\n\n\n</td><td>\n\n_(Optional)_ Root-count threshold for eager yielded state prewarm during client resume.\n\nDefaults to `false`<!-- -->, keeping state fully lazy. Set to a number to enable eager prewarm when serialized state has at least that many roots.\n\n\n</td></tr>\n<tr><td>\n\ntransformError?\n\n\n</td><td>\n\n\n</td><td>\n\n(error: unknown) =&gt; Error \\| undefined \\| null \\| void\n\n\n</td><td>\n\n_(Optional)_ Server-only. Projects a thrown error into the `Error` a `<Catch>` fallback displays during SSR; `onError$` still receives the original. It never runs on the client, where a re-derived fallback shows the error as thrown.\n\nReturn an `Error` to project it, or `undefined`<!-- -->/`null` to decline; any other return, or a throw, redacts to the generic error.\n\nIt is called synchronously, so it cannot be `async`<!-- -->: a returned promise redacts every error.\n\n\n</td></tr>\n</tbody></table>",
++      "content": "```typescript\nexport interface RenderOptions extends SerializeDocumentOptions \n```\n**Extends:** [SerializeDocumentOptions](#serializedocumentoptions)\n\n\n<table><thead><tr><th>\n\nProperty\n\n\n</th><th>\n\nModifiers\n\n\n</th><th>\n\nType\n\n\n</th><th>\n\nDescription\n\n\n</th></tr></thead>\n<tbody><tr><td>\n\nbase?\n\n\n</td><td>\n\n\n</td><td>\n\nstring \\| ((options: [RenderOptions](#renderoptions)<!-- -->) =&gt; string)\n\n\n</td><td>\n\n_(Optional)_ Specifies the root of the JS files of the client build. Setting a base, will cause the render of the `q:base` attribute in the `q:container` element.\n\n\n</td></tr>\n<tr><td>\n\ncontainerAttributes?\n\n\n</td><td>\n\n\n</td><td>\n\nRecord&lt;string, string&gt;\n\n\n</td><td>\n\n_(Optional)_\n\n\n</td></tr>\n<tr><td>\n\ncontainerTagName?\n\n\n</td><td>\n\n\n</td><td>\n\nstring\n\n\n</td><td>\n\n_(Optional)_ When set, the app is serialized into a fragment. And the returned html is not a complete document. Defaults to `html`\n\n\n</td></tr>\n<tr><td>\n\nlocale?\n\n\n</td><td>\n\n\n</td><td>\n\nstring \\| ((options: [RenderOptions](#renderoptions)<!-- -->) =&gt; string)\n\n\n</td><td>\n\n_(Optional)_ Language to use when rendering 
 ```
 
-**File**: `packages/qwik/src/core/shared/utils/log.unit.ts` (removed, +0/-35)
+**File**: `packages/docs/src/routes/api/qwik-server/index.mdx` (modified, +0/-17)
 ```diff
-@@ -1,35 +0,0 @@
--import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+@@ -564,23 +564,6 @@ _(Optional)_ Defaults to `true`
+ </td></tr>
+ <tr><td>
+ 
+-statePrewarm?
 -
--/** Loads `log.ts` with `qTest` off, as an app would. */
--const loadLog = async () => {
--  vi.resetModules();
--  (globalThis as any).qTest = false;
--  try {
--    return await import('./log');
--  } finally {
--    (globalThis as any).qTest = true;
--  }
--};
+-</td><td>
 -
--describe('logErrorAndStop in dev mode', () => {
--  beforeEach(() => {
--    vi.useFakeTimers();
--    vi.spyOn(console, 'error').mockImplementation(() => undefined);
+-</td><td>
+-
+-number \| false
+-
+-</td><td>
+-
+-_(Optional)_ Root-count threshold for eager yielded state prewarm during client resume.
+-
+-Defaults to `false`, keeping state fully lazy. Set to a number to enable eager prewarm when serialized state has at least that many roots.
+-
+-</td></tr>
+-<tr><td>
+-
+ transformError?
+ 
+ </td><td>
+```
+
+**File**: `packages/docs/src/routes/api/qwik-testing/api.json` (modified, +1/-1)
+```diff
+@@ -248,7 +248,7 @@
+         }
+       ],
+       "kind": "Function",
+-      "content": "```typescript\nexport declare function ssrRenderToDom(jsx: JSXOutput, opts?: {\n    debug?: boolean;\n    raw?: boolean;\n    qwikLoader?: boolean;\n    containerTagName?: string;\n    statePrewarm?: number | false;\n    stream?: StreamWriter;\n    streaming?: StreamingOptions;\n    resume?: boolean;\n    onBeforeResume?: (document: Document) => void;\n    transformError?: (error: unknown) => Error | undefined | null | void;\n}): Promise<{\n    container: _DomContainer;\n    document: Document;\n    vNode: _VNode | null;\n    getStyles: () => Record<string, string | string[]>;\n}>;\n```\n\n\n<table><thead><tr><th>\n\nParameter\n\n\n</th><th>\n\nType\n\n\n</th><th>\n\nDescription\n\n\n</th></tr></thead>\n<tbody><tr><td>\n\njsx\n\n\n</td><td>\n\nJSXOutput\n\n\n</td><td>\n\n\n</td></tr>\n<tr><td>\n\nopts\n\n\n</td><td>\n\n{ debug?: boolean; raw?: boolean; qwikLoader?: boolean; containerTagName?: string; statePrewarm?: number \\| false; stream?: StreamWriter; streaming?: [StreamingOptions](#streamingoptions)<!-- -->; resume?: boolean; onBeforeResume?: (document: Document) =&gt; void; transformError?: (error: unknown) =&gt; Error \\| undefined \\| null \\| void; }\n\n\n</td><td>\n\n_(Optional)_\n\n\n</td></tr>\n</tbody></table>\n\n**Returns:**\n\nPromise&lt;{ container: \\_DomContainer; document: Document; vNode: \\_VNode \\| null; getStyles: () =&gt; Record&lt;string, string \\| string\\[\\]&gt;; }&gt;",
++      "content": "```typescript\nexport declare function ssrRenderToDom(jsx: JSXOutput, opts?: {\n    debug?: boolean;\n    raw?: boolean;\n    qwikLoader?: boolean;\n    containerTagName?: string;\n    stream?: StreamWriter;\n    streaming?: StreamingOptions;\n    resume?: boolean;\n    onBeforeResume?: (document: Document) => void;\n    transformError?: (error: unknown) => Error | undefined | null | void;\n}): Promise<{\n    container: _DomContainer;\n    document: Document;\n    vNode: _VNode | null;\n    getStyles: () => Record<string, string | string[]>;\n}>;\n```\n\n\n<table><thead><tr><th>\n\nParameter\n\n\n</th><th>\n\nType\n\n\n</th><th>\n\nDescription\n\n\n</th></tr></thead>\n<tbody><tr><td>\n\njsx\n\n\n</td><td>\n\nJSXOutput\n\n\n</td><td>\n\n\n</td></tr>\n<tr><td>\n\nopts\n\n\n</td><td>\n\n{ debug?: boolean; raw?: boolean; qwikLoader?: boolean; containerTagName?: string; stream?: StreamWriter; streaming?: [StreamingOptions](#streamingoptions)<!-- -->; resume?: boolean; onBeforeResume?: (document: Document) =&gt; void; transformError?: (error: unknown) =&gt; Error \\| undefined \\| null \\| void; }\n\n\n</td><td>\n\n_(Optional)_\n\n\n</td></tr>\n</tbody></table>\n\n**Returns:**\n\nPromise&lt;{ container: \\_DomContainer; document: Document; vNode: \\_VNode \\| null; getStyles: () =&gt; Record&lt;string, string \\| string\\[\\]&gt;; }&gt;",
+       "editUrl": "https://github.com/QwikDev/qwik/tree/main/packages/qwik/src/testing/rendering.unit-util.tsx",
+       "mdFile": "core.ssrrendertodom.md"
+     },
+```
+
+**File**: `packages/docs/src/routes/api/qwik-testing/index.mdx` (modified, +1/-2)
+```diff
+@@ -618,7 +618,6 @@ export declare function ssrRenderToDom(
+     raw?: boolean;
+     qwikLoader?: boolean;
+     containerTagName?: string;
+-    statePrewarm?: number | false;
+     stream?: StreamWriter;
+     streaming?: StreamingOptions;
+     resume?: boolean;
+@@ -663,7 +662,7 @@ opts
+ 
+ </td><td>
+ 
+-\{ debug?: boolean; raw?: boolean; qwikLoader?: boolean; containerTagName?: string; statePrewarm?: number \| false; stream?: StreamWriter; streaming?: [StreamingOptions](#streamingoptions); resume?: boolean; onBeforeResume?: (document: Document) =&gt; void; transformError?: (error: unknown) =&gt; Error \| undefined \| null \| void; }
++\{ debug?: boolean; raw?: boolean; qwikLoader?: boolean; containerTagName?: string; stream?: StreamWriter; streaming?: [StreamingOptions](#streamingoptions); resume?: boolean; onBeforeResume?: (document: Document) =&gt; void; transformError?: (error: unknown) =&gt; Error \| undefined \| null \| void; }
+ 
+ </td><td>
+ 
+```
+
+**File**: `packages/docs/src/routes/docs/(qwik)/advanced/state-prewarm/index.mdx` (removed, +0/-145)
+```diff
+@@ -1,145 +0,0 @@
+----
+-title: State Prewarm | Advanced
+----
+-
+-import { Note } from '~/components/note/note';
+-
+-# State Prewarm
+-
+-Qwik resumes an SSR-rendered application from serialized state in the HTML. By default, that state
+-stays lazy in the browser: Qwik parses the state payload, but individual state roots are
+-deserialized only when code reads them.
+-
+-This keeps startup work low, which is usually the best default. On very large pages, however, the
+-first read can touch a large connected state graph. In that case the lazy read can turn into one
+-large synchronous task. `statePrewarm` is an opt-in render option that performs that state work
+-during client resume and slices it into yielded tasks.
+-
+-## What It Does
+-
+-When `statePrewarm` is enabled, Qwik eagerly deserializes the container state as part of client
+-resume.
+-
+-- The number is a root-count threshold.
+-- If the serialized state has fewer roots than the threshold, state remains lazy.
+-- If the serialized state has at least that many roots, Qwik deserializes the state eagerly during
+-  resume.
+-- The work is yielded across small tasks, so the browser can stay responsive.
+-
+-`statePrewarm` does not load all QRL chunks or run components. It only
+-prepares serialized state so later synchronous state reads are cheaper.
+-
+-<Note>
+-  The default is `false`. With no `statePrewarm` option, Qwik keeps serialized state lazy.
+-</Note>
+-
+-## When To Use It
+-
+-Use `statePrewarm` only when profiling shows that the first state access creates a long task during
+-resume. This is most useful for pages with a large serialized state graph, such as data-heavy product
+-pages, dashboards, search pages, or large routed documents.
+-
+-It is usually not needed for small or typical pages. Prewarming can increase the amount of work done
+-during client resume, even though that work is split into smaller tasks.
+-
+-Good reasons to enable it:
+-
+-- A performance trace shows a long deserialize or state-inflate task after the first state read.
+-- The page serializes thousands of state roots.
+-- The page feels blocked soon after resume, and the stack points to state deserialization.
+-
+-Reasons to keep it disabled:
+-
+-- The page has little serialized state.
+-- The state is rarely read on startup.
+-- You want the smallest possible amount of client work during resume.
+-
+-## Setting The Threshold
+-
+-Set `statePrewarm` on the server render options. The value is the minimum number of serialized state
+-roots required before Qwik prewarms the state.
+-
+-```tsx
+-import { renderToStream, type RenderOptions } from '@qwik.dev/core/server';
+-import Root from './root';
+-
+-export default function (opts: RenderOptions) {
+-  return renderToStream(<Root />, {
+-    ...opts,
+-    statePrewarm: 2048,
 -  });
+-}
+-```
 -
--  afterEach(() => {
--    vi.useRealTimers();
--    vi.restoreAllMocks();
--    vi.resetModules();
+-The same option is available with `renderToString`:
+-
+-```tsx
+-import { renderToString, type RenderOptions } from '@qwik.dev/core/server';
+-import Root from './root';
+-
+-export default function (opts: RenderOptions) {
+-  return renderToString(<Root />, {
+-    ...opts,
+-    statePrewarm: 2048,
 -  });
+-}
+-```
 -
--  it('logs the error on the server without rethrowing it', async () => {
--    const { logErrorAndStop } = await loadLog();
+-In Qwik Router applications, set `statePrewarm` in the server entry or custom renderer where
+-`renderToStream` receives the adapter-provided render options:
 -
--    const error = logErrorAndStop('Cannot serialize function');
--
--    expect(console.error).toHaveBeenCalledOnce();
--    expect(error.message).toBe('Cannot serialize function');
--    expect(() => vi.runAllTimers()).not.toThrow();
+-```tsx
+-export default function (opts: RenderOptions) {
+-  return renderToStream(<Root />, {
+-    ...opts,
+-    statePrewarm: 2048,
 -  });
+-}
+-```
+-
+-Use a lower number to prewarm smaller state payloads:
+-
+-```tsx
+-renderToStream(<Root />, {
+-  ...opts,
+-  statePrewarm: 512,
 -});
+-```
+-
+-Use `0` to prewarm any non-empty serialized state:
+-
+-```tsx
+-renderToStream(<Root />, {
+-  ...opts,
+-  statePrewarm: 0,
+-});
+-```
+-
+-## Disabling It
+-
+-The default is disabled, so most applications do not need to set anything.
+-
+-```tsx
+-renderToStream(<Root />, {
+-  ...opts,
+-  statePrewarm: false,
+-});
+-```
+-
+-`false` and `undefined` both mean that Qwik will not emit the internal prewarm marker and the
+-browser will keep state lazy.
+-
+-## Choosing A Value
+-
+-Start with a conservative value such as `2048` and compare traces before and after the change. The
+-goal is not to reduce total deserialization work. The goal is to avoid one large synchronous task by
+-doing the state work earlier in the resume process and slicing it.
+-
+-After rebuilding and cache-busting the app, check:
+-
+-- Whether long tasks caused by state deserialization disappear.
+-- Whether state work during resume is split into smaller tasks.
+-- Whether the additional resume work is acceptable for the page.
+-
+-If the page still has long tasks after enabling `statePrewarm`, inspect the trace for other causes
+-such as layout, rendering, third-party scripts, image decode, or application microtasks.
 ```
 
-**File**: `packages/qwik/src/serializer/qwik-copy.ts` (modified, +1/-1)
+**File**: `packages/docs/src/routes/docs/menu.md` (modified, +0/-1)
 ```diff
-@@ -12,7 +12,7 @@ export {
-   EffectProperty,
-   SerializationSignalFlags,
- } from '../core/reactive-primitives/types';
--export { qError, QError } from '../core/shared/error/error';
-+export { qError, qErrorWithoutStop, QError } from '../core/shared/error/error';
- export { isQrl } from '../core/shared/qrl/qrl-utils';
- export { Constants, TypeIds } from '../core/shared/serdes/constants';
- export {
-```
-
-**File**: `packages/qwik/src/serializer/serialize.ts` (modified, +7/-2)
-```diff
-@@ -1,4 +1,4 @@
--import { isDev } from '@qwik.dev/core/build';
-+import { isDev, isServer } from '@qwik.dev/core/build';
- import {
-   _BIGINT_PAYLOAD_REGEXP as BIGINT_PAYLOAD_REGEXP,
-   _canSerialize as canSerialize,
-@@ -53,6 +53,7 @@ import {
-   _PROPS_HANDLER,
-   QBackRefs,
-   qError,
-+  qErrorWithoutStop,
-   QError,
-   QUOTE,
-   SerializationSignalFlags,
-@@ -538,7 +539,11 @@ export class Serializer {
-             this.output(TypeIds.Component, [qrl]);
-             this.$parent$ = oldParent;
-           } else {
--            throw qError(QError.serializeErrorCannotSerializeFunction, [value.toString()]);
-+            const args = [value.toString()];
-+            // on the server, the async rethrow would crash the dev server
-+            throw isServer
-+              ? qErrorWithoutStop(QError.serializeErrorCannotSerializeFunction, args)
-+              : qError(QError.serializeErrorCannotSerializeFunction, args);
-           }
-           break;
-         case 'object':
-```
-
-**File**: `packages/qwik/src/serializer/serialize.unit.ts` (modified, +36/-1)
-```diff
-@@ -1,6 +1,6 @@
- import { createDocument } from '@qwik.dev/core/testing';
- import { _deserialize } from '@qwik.dev/core/internal';
--import { describe, expect, it } from 'vitest';
-+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
- import { _serialize } from './index';
+@@ -31,7 +31,6 @@
  
- describe('serialized state script', () => {
-@@ -18,3 +18,38 @@ describe('serialized state script', () => {
+ - [The $ dollar sign](</docs/(qwik)/advanced/dollar/index.mdx>)
+ - [Containers](</docs/(qwik)/advanced/containers/index.mdx>)
+-- [State Prewarm](</docs/(qwik)/advanced/state-prewarm/index.mdx>)
+ - [QRL](</docs/(qwik)/advanced/qrl/index.mdx>)
+ - [Library mode](</docs/(qwik)/advanced/library/index.mdx>)
+ - [Qwikloader](</docs/(qwik)/advanced/qwikloader/index.mdx>)
+```
+
+**File**: `packages/qwik/src/core/client/dom-container.ts` (modified, +1/-9)
+```diff
+@@ -16,7 +16,6 @@ import {
+ import type { CatchInfo } from '../shared/error/error-handling';
+ import type { QRL } from '../shared/qrl/qrl.public';
+ import { wrapDeserializerProxy } from '../shared/serdes/deser-proxy';
+-import { eagerDeserializeStateIterator } from '../shared/serdes/inflate';
+ import { getObjectById, parseQRL } from '../shared/serdes/index';
+ import { preprocessStateIterator } from '../shared/serdes/preprocess-state';
+ import { _SharedContainer } from '../shared/shared-container';
+@@ -41,7 +40,6 @@ import {
+   QLocaleAttr,
+   QManifestHashAttr,
+   QScopedStyle,
+-  QStatePrewarmAttr,
+   QStatePatchAttrSelector,
+   QStateStreamAttr,
+   QStyle,
+@@ -224,13 +222,7 @@ export class DomContainer extends _SharedContainer implements IClientContainer {
+       this.$rawStateData$ = JSON.parse(rootState.textContent!);
+       yield* preprocessStateIterator(this.$rawStateData$, this);
+       this.$rootForwardRefs$ = this.$forwardRefs$;
+-      const rootCount = this.$rawStateData$.length / 2;
+-      const statePrewarm = element.getAttribute(QStatePrewarmAttr);
+-      if (statePrewarm !== null && rootCount > 0 && rootCount >= Number(statePrewarm)) {
+-        this.$stateData$ = yield* eagerDeserializeStateIterator(this, this.$rawStateData$);
+-      } else {
+-        this.$stateData$ = wrapDeserializerProxy(this, this.$rawStateData$) as unknown[];
+-      }
++      this.$stateData$ = wrapDeserializerProxy(this, this.$rawStateData$) as unknown[];
      }
-   );
- });
-+
-+/** Loads the serializer with `qTest` off, as an app would. */
-+const loadSerializer = async () => {
-+  vi.resetModules();
-+  (globalThis as any).qTest = false;
-+  try {
-+    return await import('./index');
-+  } finally {
-+    (globalThis as any).qTest = true;
-+  }
-+};
-+
-+describe('serialization errors on the server in dev mode', () => {
-+  beforeEach(() => {
-+    vi.useFakeTimers();
-+    vi.spyOn(console, 'error').mockImplementation(() => undefined);
-+  });
-+
-+  afterEach(() => {
-+    vi.useRealTimers();
-+    vi.restoreAllMocks();
-+    vi.resetModules();
-+  });
-+
-+  it('logs a function it cannot serialize without rethrowing the error later', async () => {
-+    const serializer = await loadSerializer();
-+
-+    await expect(serializer._serialize({ describe: () => 'a plain function' })).rejects.toThrow(
-+      'Cannot serialize function'
-+    );
-+
-+    expect(console.error).toHaveBeenCalledOnce();
-+    expect(() => vi.runAllTimers()).not.toThrow();
-+  });
-+});
+     if (__EXPERIMENTAL__.pendingBoundary) {
+       yield* processSegmentStateScriptsIterator(this);
 ```
 
 ---
 
-### Incident Patch 3: `05702ff6` (2026-11-17)
-**Commit Message**: fix(core): keep the dev server running after an SSR error
+### Incident Patch 3: `bb6b21f5` (2026-11-12)
+**Commit Message**: Load control-flow components only on pages that render them
 
-In dev, logErrorAndStop (used by qError) rethrows the error on a new
-macrotask so it reaches the global error handler. On the server that
-rethrow is an uncaught exception and exits the Vite process, even
-though the render already rejected to its caller. Skip it on the
-server.
+Their QRL sites passed exported top-level functions, so each segment was a
+one-line re-export and Show, Each, Pending, Reveal and Catch shipped in every
+app's core chunk. The functions are now inline at their QRL sites, so app
+optimizers move them into the segments, and only event and task handlers
+stay in the qwik-core chunk group. The SSG fixture's core chunk shrinks by
+about 560 bytes brotli.
 
-Fixes #9329
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_017cSLFfHZnKT7FXc9do1VYh
 
-**File**: `.changeset/calm-dev-server-ssr-error.md` (added, +5/-0)
+**File**: `.changeset/control-flow-segments.md` (added, +5/-0)
 ```diff
 @@ -0,0 +1,5 @@
 +---
 +'@qwik.dev/core': patch
 +---
 +
-+fix: keep the dev server running after an SSR error
++perf: `<Show>`, `<Each>`, `<Pending>`, `<Reveal>` and `<Catch>` load only on pages that render them
 ```
 
-**File**: `packages/qwik/src/core/shared/utils/log.ts` (modified, +3/-1)
+**File**: `.ruler/skills/qwik-core-development/references/core-notes.md` (modified, +8/-2)
 ```diff
-@@ -1,3 +1,4 @@
-+import { isServer } from '@qwik.dev/core/build';
- import { qDev, qTest } from './qdev';
+@@ -243,8 +243,14 @@ Out-of-order (OOOS) invariants:
+   `shared/qrl/library-qrl.ts`; the build turns that import into `@qwik.dev/core`. Never create them
+   with `createQRL(null, '_x', fn)`: the optimizer must see them to give them a chunk and a dev URL.
+   Add each hash to `CORE_QRL_HASHES` and match core QRLs by hash, not symbol (prod renames `q_run`
+-  to `s_run`). Make `fn` a function declaration: the Rust optimizer's SSR output calls `.s(fn)` at
+-  the top of the module. Give the QRL a name different from `fn`'s, or dev segments redeclare it.
++  to `s_run`). Pass `fn` as a function declaration (the Rust optimizer's SSR output calls `.s(fn)`
++  at the top of the module) or, so the segment owns the code, as an inline named function
++  expression that reads only module scope and `_capturesObj`; never as a `const` arrow. Give the
++  QRL a name different from `fn`'s, or dev segments redeclare it.
++- Only event/task handler QRLs share the app's `qwik-core` chunk (the `qwik-core` group in
++  `packages/qwik-vite/src/plugins/plugin.ts` lists their hashes). Everything else, like the
++  control-flow components, is an ordinary segment: write its function inline at the QRL site and
++  don't export it, or the segment is a one-line re-export and its code stays in every app's core.
  
- const STYLE = qDev
-@@ -20,7 +21,8 @@ export const throwErrorAndStop = (message?: any, ...optionalParams: any[]): neve
- };
+ ## Focused Verification
  
- export const logErrorAndStop = (message?: any, ...optionalParams: any[]) => {
--  const err = createAndLogError(qDev, message, ...optionalParams);
-+  // On the server, an uncaught async rethrow kills the dev server.
-+  const err = createAndLogError(qDev && !isServer, message, ...optionalParams);
-   // eslint-disable-next-line no-debugger
-   debugger;
-   return err;
 ```
 
-**File**: `packages/qwik/src/core/shared/utils/log.unit.ts` (added, +35/-0)
+**File**: `e2e/qwik-e2e/tests/qwikrouter/ssg-snapshot.e2e.ts` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,35 @@
-+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-+
-+/** Loads `log.ts` with `qTest` off, as an app would. */
-+const loadLog = async () => {
-+  vi.resetModules();
-+  (globalThis as any).qTest = false;
-+  try {
-+    return await import('./log');
-+  } finally {
-+    (globalThis as any).qTest = true;
-+  }
-+};
-+
-+describe('logErrorAndStop in dev mode', () => {
-+  beforeEach(() => {
-+    vi.useFakeTimers();
-+    vi.spyOn(console, 'error').mockImplementation(() => undefined);
-+  });
-+
-+  afterEach(() => {
-+    vi.useRealTimers();
-+    vi.restoreAllMocks();
-+    vi.resetModules();
-+  });
-+
-+  it('logs the error on the server without rethrowing it', async () => {
-+    const { logErrorAndStop } = await loadLog();
-+
-+    const error = logErrorAndStop('Cannot serialize function');
-+
-+    expect(console.error).toHaveBeenCalledOnce();
-+    expect(error.message).toBe('Cannot serialize function');
-+    expect(() => vi.runAllTimers()).not.toThrow();
-+  });
-+});
+@@ -14,7 +14,7 @@ import tsconfigPaths from 'vite-tsconfig-paths';
+ // the growth. Keep each budget above the actual size by at least 500 bytes for core and 100 bytes
+ // for the preloader and qwikloader; brotli output varies between builds, so a tighter budget is flaky.
+ const PRELOADER_BROTLI_BUDGET = 1800; // We currently group the vite preload helper with the preloader, adding ~500bytes brotli.
+-const CORE_BROTLI_BUDGET = 32600; // Core's own QRLs, now library segments, add ~120B.
++const CORE_BROTLI_BUDGET = 32200;
+ const QWIKLOADER_BROTLI_BUDGET = 2200;
+ 
+ const __dirname = fileURLToPath(new URL('.', import.meta.url));
+```
+
+**File**: `packages/docs/src/routes/api/qwik/api.json` (modified, +1/-1)
+```diff
+@@ -2171,7 +2171,7 @@
+         }
+       ],
+       "kind": "Variable",
+-      "content": "```typescript\nReveal: typeof revealCmp\n```",
++      "content": "```typescript\nReveal: Component<RevealProps>\n```",
+       "editUrl": "https://github.com/QwikDev/qwik/tree/main/packages/qwik/src/core/control-flow/reveal.tsx",
+       "mdFile": "core.reveal.md"
+     },
+```
+
+**File**: `packages/docs/src/routes/api/qwik/index.mdx` (modified, +1/-1)
+```diff
+@@ -4413,7 +4413,7 @@ export type ResourceReturn<T> = {
+ <h2 id="reveal">Reveal</h2>
+ 
+ ```typescript
+-Reveal: typeof revealCmp;
++Reveal: Component<RevealProps>;
+ ```
+ 
+ [Edit this section](https://github.com/QwikDev/qwik/tree/main/packages/qwik/src/core/control-flow/reveal.tsx)
+```
+
+**File**: `packages/qwik-vite/src/plugins/plugin.ts` (modified, +3/-2)
+```diff
+@@ -1452,10 +1452,11 @@ export const isDev = ${JSON.stringify(isDev)};
+     };
+     return {
+       groups: [
+-        // core's entry, runtime and own segments share a chunk: no import waterfall
++        // core's entry, runtime and event/task handlers share a chunk: no import waterfall. Its
++        // control-flow components (Show, Each, Pending, …) are ordinary segments.
+         {
+           name: 'qwik-core',
+-          test: /[/\\](core|qwik)[/\\]dist[/\\]core(-qrl)?(\.prod|\.min)?(\.qwik\.mjs(_[^/\\]+\.js)?|\.mjs)$/,
++          test: /[/\\](core|qwik)[/\\]dist[/\\]core(-qrl)?(\.prod|\.min)?(\.qwik\.mjs(_[qs]_(run|chk|val|task|rsc|res|hmr)\.js)?|\.mjs)$/,
+           includeDependenciesRecursively: false,
+         },
+         {
+```
+
+**File**: `packages/qwik-vite/src/plugins/rolldown.unit.ts` (modified, +9/-2)
+```diff
+@@ -697,7 +697,7 @@ test('codeSplitting starts with the qwik groups and disables dependency recursio
+   );
+ });
+ 
+-test('the qwik-core group holds the core library, its QRL chunk and its segments', async () => {
++test('the qwik-core group holds the core library, its QRL chunk and its handler segments', async () => {
+   const codeSplitting = await clientCodeSplitting({});
+   const coreTest = codeSplitting.groups![0].test as RegExp;
+   const core = '/app/node_modules/@qwik.dev/core/dist';
+@@ -707,10 +707,17 @@ test('the qwik-core group holds the core library, its QRL chunk and its segments
+     `${core}/core.prod.qwik.mjs`,
+     `${core}/core-qrl.prod.mjs`,
+     `${core}/core.prod.qwik.mjs_s_run.js`,
++    `${core}/core.qwik.mjs_q_task.js`,
+   ]) {
+     assert.ok(coreTest.test(id), id);
+   }
+-  for (const id of [`${core}/preloader.mjs`, '/app/src/root.tsx_root_component_abc.js']) {
++  // Control-flow components load like any segment, only on pages that render them.
++  for (const id of [
++    `${core}/preloader.mjs`,
++    '/app/src/root.tsx_root_component_abc.js',
++    `${core}/core.prod.qwik.mjs_s_shC.js`,
++    `${core}/core.min.qwik.mjs_s_peT.js`,
++  ]) {
+     assert.notOk(coreTest.test(id), id);
+   }
+ });
+```
+
+**File**: `packages/qwik/src/core/control-flow/each.ts` (modified, +26/-26)
+```diff
+@@ -26,32 +26,32 @@ export type EachComponent = <T, ITEM extends JSXOutput = JSXOutput>(
+   dev?: DevJSX
+ ) => JSXOutput;
+ 
+-/** @internal */
+-export async function eachCmpTask({ track }: TaskCtx) {
+-  const props = _capturesObj._![0] as EachProps<any>;
+-  track(() => props.items);
+-  const context = tryGetInvokeContext()!;
+-  const host = context.$hostElement$!;
+-  const container = context.$container$!;
+-  const renderPromise = markVNodeDirty(container, host, ChoreBits.RECONCILE);
+-  const isSsr = qTest ? isServerPlatform() : isServer;
+-  if (isSsr) {
+-    await renderPromise;
+-  }
+-}
+-
+-/** @internal */
+-export function eachCmp(props: EachProps<any>) {
+-  if (!__EXPERIMENTAL__.each) {
+-    throw new Error(
+-      'Each is experimental and must be enabled with `experimental: ["each"]` in the `qwikVite` plugin.'
+-    );
+-  }
+-  useTaskQrl(/*#__PURE__*/ _inlinedQrl(eachCmpTask, 'q_eaT', [props]));
+-  return SkipRender;
+-}
+-
+ /** @public @experimental */
+ export const Each = /*#__PURE__*/ componentQrl<EachProps<any>>(
+-  /*#__PURE__*/ _inlinedQrl(eachCmp, 'q_eaC')
++  /*#__PURE__*/ _inlinedQrl(function eachCmp(props: EachProps<any>) {
++    if (!__EXPERIMENTAL__.each) {
++      throw new Error(
++        'Each is experimental and must be enabled with `experimental: ["each"]` in the `qwikVite` plugin.'
++      );
++    }
++    useTaskQrl(
++      /*#__PURE__*/ _inlinedQrl(
++        async function eachCmpTask({ track }: TaskCtx) {
++          const props = _capturesObj._![0] as EachProps<any>;
++          track(() => props.items);
++          const context = tryGetInvokeContext()!;
++          const host = context.$hostElement$!;
++          const container = context.$container$!;
++          const renderPromise = markVNodeDirty(container, host, ChoreBits.RECONCILE);
++          const isSsr = qTest ? isServerPlatform() : isServer;
++          if (isSsr) {
++            await renderPromise;
++          }
++        },
++        'q_eaT',
++        [props]
++      )
++    );
++    return SkipRender;
++  }, 'q_eaC')
+ ) as EachComponent;
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #9567** (2026-11-20): fix(core): replace resource results without mutating previous values (@Varixo)
-- **PR #9564** (closed): fix(preloader): preload early interactions while the page is still loading (@zhengdaodeguL)
-- **PR #9560** (closed): Preload url-subscribed layout chunks on link navigation (@zhengdaodeguL)
-- **PR #9550** (2026-11-19): docs: richer playground examples, production preloader and nicer options (@wmertens)
-- **PR #9549** (2026-11-19): fix(optimizer): declare each QRL right before its first use (@wmertens)
-- **PR #9547** (2026-11-18): test(preloader): stop calling a helper that main removed (@maiieul)
+- **PR #9589** (2026-11-23): chore: drop Ruler, commit agent skills in .agents/skills (@maiieul)
+- **PR #9588** (2026-11-23): docs(ruler): add qwik-plan skill for plans and PR descriptions (@maiieul)
+- **PR #9587** (closed): fix(core): notify store subscribers when an array index is deleted (@anasdahani220)
+- **PR #9582** (closed): fix(core): wait for a computed inside a captured object, store or props (@maiieul)
+- **PR #9580** (2026-11-22): feat(core): remove the statePrewarm render option (@maiieul)
+- **PR #9575** (closed): fix(core): wait only for the computed modules a QRL's own restore started (@maiieul)
 
 ---
 
@@ -1837,16 +2128,16 @@ Fixes #9329
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in calm-dev-server-ssr-error.md
+## X. Import inlinedQrl once in library builds that use bind:
 
 **RULE**:
-When implementing operations in `.changeset/calm-dev-server-ssr-error.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in QwikDev/qwik. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.changeset/lib-mode-bind-import.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in QwikDev/qwik. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fa8e12f1`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `72f9e0c8`: Import inlinedQrl once in library builds that use bind:. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/calm-dev-server-ssr-error.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/lib-mode-bind-import.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
@@ -1855,7 +2146,7 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 '@qwik.dev/core': patch
 ---
 
-fix: keep the dev server running when SSR can't serialize a function
+fix: building a library with `bind:value` or `bind:checked` failed with the TS optimizer
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1865,7 +2156,7 @@ fix: keep the dev server running when SSR can't serialize a function
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fa8e12f1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `72f9e0c8` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -4,22 +4,22 @@
 {
   "source_repository": "crate/crate",
   "source_url": "https://github.com/crate/crate",
-  "source_version": "2799f146",
+  "source_version": "364278b1",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-24T03:58:41.510Z",
+  "timestamp": "2026-11-25T00:26:52.895Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-crate-crate",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [crate/crate](https://github.com/crate/crate) (Revision: `2799f146`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-24T03:58:41.510Z`  
+> **Provenance**: Harvested from [crate/crate](https://github.com/crate/crate) (Revision: `364278b1`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-25T00:26:52.895Z`  
 > **Learning ID**: `learn-github-crate-crate`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `crate/crate` (Commit: `2799f146`)
+- **Target Repository**: `crate/crate` (Commit: `364278b1`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/crate-crate-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/crate/crate](https://github.com/crate/crate))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T03:58:40.129Z  
+> **Harvest Timestamp**: 2026-11-25T00:26:51.172Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -545,11 +545,11 @@ def patch_system_information(text: str, version: str, previous: str) -> str:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #20651** (2026-11-24): **Rows with a null-only nested array become unreadable after a typed nested array is added (`EOFException`)**
+  *Symptoms*: ### CrateDB version  master commit `c728540efefb31b6cc0d889890547609f46e7ffb`  ### CrateDB setup information   Number of nodes: ? CRATE_HEAP_SIZE: ? CRATE_JAVA_OPTS: ?  crate.yml contents:  ### Problem description and reproduction steps  ### Problem description  A dynamic `OBJECT` child first written as `[[null]]` is mapped as `undefined_array_array`. A later `[[1]]` changes its type to `integer_array_array`. After that, any read of the first row's object fails with `java.io.EOFException`; the second row is still readable.  ### Steps to Reproduce  ```sql CREATE TABLE t (id INT, o OBJECT(DYNAMIC)) WITH (number_of_replicas = 0); INSERT INTO t (id, o) VALUES (1, '{"a": [[null]]}'); INSERT INTO t (id, o) VALUES (2, '{"a": [[1]]}'); REFRESH TABLE t; SELECT id FROM t ORDER BY id; SELECT id, o FROM t WHERE id = 2; SELECT id, o FROM t WHERE id = 1; ```    ### Actual Result  ### Actual Result  | Query | Result | | --- | --- | | `SELECT id FROM t` | 1, 2 | | `SELECT id, o FROM t WHERE id = 2` | `{"a":[[1]]}` | | `SELECT id, o FROM t WHERE id = 1` | Error below |  ```text ERROR:  java.io.EOFException ```    ### Expected Result  ### Expected Result  Both inserted documents should stay readable.  | Query | Result | | --- | --- | | `SELECT id FROM t` | 1, 2 | | `SELECT id, o FROM t WHERE id = 2` | `{"a":[[1]]}` | | `SELECT id, o FROM t WHERE id = 1` | `{"a":[[null]]}` | 
+
 - **Issue #20640** (2026-11-23): **Updating a nested object array with a JSON null raises `NullPointerException`**
   *Symptoms*: ### CrateDB version  6.6.0-SNAPSHOT, commit `39117a4b9f23692cbb4085b873867c6de32b5322`.  ### CrateDB setup information   Number of nodes: ? CRATE_HEAP_SIZE: ? CRATE_JAVA_OPTS: ?  crate.yml contents:  ### Problem description and reproduction steps  INSERT accepts a nested object array containing a JSON-null element. Updating an existing row to an array of the same shape raises a NullPointerException, while the update without the null element succeeds.  ### Steps to Reproduce  ```sql DROP TABLE IF EXISTS crate_json_nested_update_repro; CREATE TABLE crate_json_nested_update_repro (     id INTEGER PRIMARY KEY,     doc OBJECT AS (         groups ARRAY(OBJECT AS (             entries ARRAY(OBJECT AS (v INTEGER))         ))     ) ) WITH (number_of_replicas = 0); INSERT INTO crate_json_nested_update_repro VALUES     (1, '{"groups":[{"entries":[{"v":1}]}]}'),     (2, '{"groups":[{"entries":[{"v":2},null]}]}'); REFRESH TABLE crate_json_nested_update_repro; SELECT id, doc FROM crate_json_nested_update_repro ORDER BY id; UPDATE crate_json_nested_update_repro SET doc['groups'][1] = '{"entries":[{"v":3}]}'::OBJECT WHERE id = 1 RETURNING doc; UPDATE crate_json_nested_update_repro SET doc['groups'][1] = '{"entries":[{"v":4},null]}'::OBJECT WHERE id = 1 RETURNING doc; REFRESH TABLE crate_json_nested_update_repro; SELECT id, doc FROM crate_json_nested_update_repro ORDER BY id; ```  ### Actual Result  The initial insert stores the JSON null, and the update without null succeeds. The next update
-
-- **Issue #20639** (2026-11-23): **`OBJECT` equality filter includes rows with extra JSON keys**
-  *Symptoms*: ### CrateDB version  6.6.0-SNAPSHOT, commit `39117a4b9f23692cbb4085b873867c6de32b5322`.  ### CrateDB setup information   Number of nodes: ? CRATE_HEAP_SIZE: ? CRATE_JAVA_OPTS: ?  crate.yml contents:  ### Problem description and reproduction steps  ### Problem description  The projected equality is FALSE for the object with an extra key. The same expression in WHERE incorrectly includes that row; adding IS TRUE returns only the matching row.  ### Steps to Reproduce  ```sql DROP TABLE IF EXISTS crate_json_object_extra_key_repro; CREATE TABLE crate_json_object_extra_key_repro (     id INTEGER PRIMARY KEY,     doc OBJECT AS (a INTEGER, b INTEGER) ) WITH (number_of_replicas = 0); INSERT INTO crate_json_object_extra_key_repro VALUES     (1, '{"a":1}'),     (2, '{"a":1,"b":2}'); REFRESH TABLE crate_json_object_extra_key_repro;  SELECT id, doc = '{"a":1}'::OBJECT AS equal_to_target FROM crate_json_object_extra_key_repro ORDER BY id; SELECT id FROM crate_json_object_extra_key_repro WHERE doc = '{"a":1}'::OBJECT ORDER BY id; SELECT id FROM crate_json_object_extra_key_repro WHERE (doc = '{"a":1}'::OBJECT) IS TRUE ORDER BY id; ```  ### Actual Result  Projected equality:  | id | equal_to_target | | --- | --- | | 1 | `TRUE` | | 2 | `FALSE` |  Direct `WHERE` filter:  | id | | --- | | 1 | | 2 |   ### Expected Result  Only row 1 is equal to `{"a":1}`, as confirmed by projection and the `IS TRUE` filter:  | id | | --- | | 1 |  PostgreSQL 16.14 returns only row 1 for the corresponding `JSONB` e
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -566,14 +566,27 @@ def patch_system_information(text: str, version: str, previous: str) -> str:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e3b6b9db` (2026-11-23)
-**Commit Message**: Fix NullPointerException updating object array with null element
+### Incident Patch 1: `77887ead` (2026-11-23)
+**Commit Message**: Fix SHOW CREATE TABLE output for geo_point literals
 
-`UPDATE` with an `ARRAY(OBJECT)` value containing a null element failed
-in `ValueNormalizer`. Null elements are now kept, matching `INSERT`
-behaviour.
+LiteralValueFormatter printed points as 'Pt(x=..,y=..)', which can't be
+cast back to geo_point. SHOW CREATE TABLE output with a geo_point
+default or generated expression failed when run again. Format points as
+WKT instead.
 
-Fixes #20640
+This showed up in
+`NotPredicateTest.test_neq_on_array_types_with_non_empty_array_does_not_filter_empty_array`:
+
+```
+io.crate.exceptions.ConversionException: Cannot cast object element `x` with value `Pt(x=-87.80467239193526,y=89.99999999999993)` to type `geo_point`
+	at __randomizedtesting.SeedInfo.seed([7CD48C4F5F584031:AA6ACC2804F79164]:0)
+	at io.crate.exceptions.ConversionException.forObjectChild(ConversionException.java:61)
+	at io.crate.types.ObjectType.convert(ObjectType.java:281)
+	at io.crate.types.ObjectType.implicitCast(ObjectType.java:230)
+	at io.crate.types.ObjectType.implicitCast(ObjectType.java:75)
+	at io.crate.expression.scalar.cast.ImplicitCastFunction.normalizeSymbol(ImplicitCastFunction.java:109)
+	at io.crate.expression.eval.EvaluatingNormalizer$BaseVisitor.normalizeFunction(EvaluatingNormalizer.java:208)
+	at io.crate.expression.eval.EvaluatingNormalizer$BaseVisitor.visitFunction(EvaluatingNorma
 
 **File**: `docs/appendices/release-notes/6.5.2.rst` (modified, +5/-0)
 ```diff
@@ -581,222 +594,270 @@ Fixes #20640
  Fixes
  =====
  
-+- Fixed a ``NullPointerException`` that occurred when updating a column of
-+  type ``ARRAY(OBJECT)``, or an object containing one, with an array that
-+  contains a ``null`` element. The ``null`` element is now stored, matching the
-+  behaviour of ``INSERT``.
++- Fixed an issue where :ref:`SHOW CREATE TABLE <ref-show-create-table>`
++  printed ``GEO_POINT`` default values and generated expressions in a format
++  that could not be used to recreate the table, for example
++  ``DEFAULT 'Pt(x=3.0,y=4.0)'``.
 +
- - Fixed an issue where an ``<obj_column> = <obj_literal>`` expression could
-   match rows where the object column had additional properties not present in
-   the object literal.
+ - Fixed an issue that caused ``EOFException`` to be thrown, when reading rows
+   from a dynamic column, which was first written with a nested array of only
+   ``null`` values, e.g.: ``[[null]]``, and later with a nested array of a
 ```
 
-**File**: `server/src/main/java/io/crate/analyze/expressions/ValueNormalizer.java` (modified, +4/-0)
+**File**: `server/src/main/java/io/crate/expression/symbol/LiteralValueFormatter.java` (modified, +4/-1)
 ```diff
-@@ -166,6 +166,10 @@ private static boolean isObjectArray(DataType<?> type) {
- 
-     private static void normalizeObjectArrayValue(List<Map<String, Object>> values, Reference arrayInfo, TableInfo tableInfo) {
-         for (Map<String, Object> value : values) {
-+            if (value == null) {
-+                // Keep null elements as they are, like INSERT does
-+                continue;
-+            }
-             // return value not used and replaced in value as arrayItem is a map that is mutated
-             normalizeObjectValue(value, arrayInfo, tableInfo);
-         }
+@@ -44,8 +44,11 @@ public static void format(Object value, StringBuilder builder) {
+             formatIterable(iterable, builder);
+         } else if (value.getClass().isArray()) {
+             formatArray(value, builder);
+-        } else if (value instanceof String || value instanceof Point) {
++        } else if (value instanceof String) {
+             builder.append(Literals.quoteStringLiteral(value.toString()));
++        } else if (value instanceof Point point) {
++            // WKT, so that the formatted literal can be cast back to geo_point
++            builder.append(Literals.quoteStringLiteral("POINT (" + point.getX() + " " + point.getY() + ")"));
+         } else if (value instanceof Period) {
+             builder.append(Literals.quoteStringLiteral(value.toString()));
+             builder.append("::interval");
 ```
 
-**File**: `server/src/test/java/io/crate/analyze/ValueNormalizerTest.java` (modified, +34/-2)
+**File**: `server/src/test/java/io/crate/analyze/TableInfoToASTTest.java` (modified, +11/-6)
 ```diff
-@@ -22,10 +22,11 @@
- package io.crate.analyze;
+@@ -323,7 +323,8 @@ public void testBuildCreateTableColumnDefaultClause() throws Exception {
+                       "   col1 TEXT," +
+                       "   col2 INTEGER DEFAULT 1 + 1," +
+                       "   col3 TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP(3)," +
+-                      "   col4 TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP(3)" +
++                      "   col4 TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP(3)," +
++                      "   col5 GEO_POINT DEFAULT 'POINT (3 4)'::GEO_POINT" +
+                       ") with (" +
+                       " \"merge.scheduler.max_thread_count\" = 1" +
+                       ")");
+@@ -334,7 +335,8 @@ public void testBuildCreateTableColumnDefaultClause() throws Exception {
+                "col1" TEXT,
+                "col2" INTEGER DEFAULT 2,
+                "col3" TIMESTAMP WITH TIME ZONE DEFAULT current_timestamp(3),
+-               "col4" TIMESTAMP WITHOUT TIME ZONE DEFAULT current_timestamp(3)
++               "col4" TIMESTAMP WITHOUT TIME ZONE DEFAULT current_timestamp(3),
++               "col5" GEO_POINT DEFAULT 'POINT (3.0 4.0)'
+             )
+             CLUSTERED INTO 4 SHARDS
+             WITH (
+@@ -363,13 +365,16 @@ public void test_bit_string_length_is_shown_in_show_create_table_output() throws
+     }
  
- import static io.crate.testing.Asserts.assertThat;
--import static org.assertj.core.api.Assertions.assertThat;
- import static org.assertj.core.api.Assertions.assertThatThrownBy;
+     @Test
+-    public void test_generated_expression_on_geo_shape_in_show_create_table_output() throws Exception {
++    public void test_generated_expression_on_geo_point_and_shape_in_show_create_table_output() throws Exception {
+         SQLExecutor e = SQLExecutor.of(clusterService)
+-            .addTable("create table t (g geo_shape generated always as 'POLYGON (( 5 5, 30 5, 30 30, 5 30, 5 5 ))')");
++            .addTable("create table t (" +
++                "g geo_shape generated always as 'POLYGON (( 5 5, 30 5, 30 30, 5 30, 5 5 ))', " +
++                "p geo_point generated always as [5, 6]::geo_point)");
+         DocTableInfo table = e.resolveTableInfo("t");
+         var node = new TableInfoToAST(table).toStatement();
+-        assertThat(SqlFormatter.formatSql(node)).contains(
+-            "\"g\" GEO_SHAPE GENERATED ALWAYS AS 'POLYGON (( 5 5, 30 5, 30 30, 5 30, 5 5 ))");
++        assertThat(SqlFormatter.formatSql(node))
++            .contains("\"g\" GEO_SHAPE GENERATED ALWAYS AS 'POLYGON (( 5 5, 30 5, 30 30, 5 30, 5 5 ))")
++            .contains("\"p\" GEO_POINT GENERATED ALWAYS AS 'POINT (5.0 6.0)'");
+     }
  
-+import java.util.Arrays;
- import java.util.HashMap;
+     @Test
+```
+
+**File**: `server/src/test/java/io/crate/expression/symbol/LiteralValueFormatterTest.java` (modified, +16/-0)
+```diff
+@@ -23,8 +23,14 @@
+ 
+ import static org.assertj.core.api.Assertions.assertThat;
+ 
 +import java.util.List;
- import java.util.Map;
++import java.util.Map;
++
+ import org.joda.time.Period;
+ import org.junit.Test;
++import org.locationtech.spatial4j.shape.Point;
++
++import io.crate.types.DataTypes;
  
- import org.junit.Before;
-@@ -48,6 +49,7 @@
- import io.crate.metadata.doc.DocSchemaInfo;
- import io.crate.test.integration.CrateDummyClusterServiceUnitTest;
- import io.crate.testing.SQLExecutor;
-+import io.crate.types.ArrayType;
- import io.crate.types.DataTypes;
+ public class LiteralValueFormatterTest {
  
- 
-@@ -83,7 +85,15 @@ public void prepare() throws Exception {
-                       " strict object(strict) as (" +
-                       "  inner_d double" +
-                       " )," +
--                      " ignored object(ignored)" +
-+                      " ignored object(ignored)," +
-+                      " obj_arr array(object as (" +
-+                      "  v int" +
-+                      " ))," +
-+                      " nested object as (" +
-+                      "  groups array(object as (" +
-+                      "   entries array(object as (v int))" +
-+                      "  ))" +
-+                      " )" +
-                       ") " +
-                       "clustered by (id)");
-         userTableInfo = e.resolveTableInfo("doc.test1");
-@@ -232,4 +242,26 @@ public void testNormalizeStringToNumberColumn() throws Exception {
-         Symbol literal = normalizeInputForReference(stringDoubleLiteral, objInfo);
-         assertThat(literal).isLiteral(298.444d, DataTypes.DOUBLE);
+@@ -41,4 +47,14 @@ public void test_format_intervals() throws Exception {
+         LiteralValueFormatter.format(Period.seconds(1), sb);
+         assertThat(sb.toString()).isEqualTo("'PT1S'::interval");
      }
 +
 +    @Test
-+    public void test_normalize_object_array_keeps_null_elements() throws Exception {
-+        Reference objArr = userTableInfo.getReference(ColumnIdent.of("obj_arr"));
-+        List<Map<String, Object>> value = Arrays.asList(new HashMap<>(Map.of("v", 1)), null);
-+        Symbol normalized = normalizeInputForReference(
-+            Literal.of(new ArrayType<>(DataTypes.UNTYPED_OBJECT), value),
-+            objArr
-+        );
-+        assertThat(normalized).isLiteral(Arrays.asList(Map.of("v", 1), null));
-+    }
++    public void test_format_geo_point_as_wkt_that_can_be_cast_back() throws Exception {
++        Point point = DataTypes.GEO_POINT.implicitCast(List.of(9.7417, 47.4108));
++        StringBuilder sb = new StringBuilder();
++        LiteralValueFormatter.format(Map.of("p", point), sb);
++        assertThat(sb.toString()).isEqualTo("{\"p\"='POINT (9.7417 47.4108)'}");
 +
-+    @Test
-+    public void test_normalize_nested_object_array_keeps_null_elements() throws Exception {
-+        Reference nested = userTableInfo.getReference(ColumnIdent.of("nested"));
-+        List<Map<String, Object>> entries = Arrays.asList(new HashMap<>(Map.of("v", 4)), null);
-+        Map<String, Object> group = new HashMap<>(Map.of("entries", entries));
-+        Map<String, Object> value = new HashMap<>(Map.of("groups", List.of(group)));
-+        Symbol normalized = normalizeInputForReference(Literal.of(value), nested);
-+        assertThat(normalized).isLiteral(
-+            Map.of("groups", List.of(Map.of("entries", Arrays.asList(Map.of("v", 4), null)))));
++        assertThat(DataTypes.GEO_POINT.implicitCast("POINT (9.7417 47.4108)")).isEqualTo(point);
 +    }
  }
 ```
 
 ---
 
-### Incident Patch 2: `a6ee235d` (2026-11-23)
-**Commit Message**: Fix NullPointerException building eq query on object literal with null
+### Incident Patch 2: `f7b6d99b` (2026-11-23)
+**Commit Message**: Fix EOFException reading nested array of nulls after upcast
 
-**File**: `docs/appendices/release-notes/6.5.2.rst` (modified, +3/-0)
+A nested array of nulls like `[[null]]`, stored before its column was
+upcast to a defined type, was previsouly read back as a 1-dim array.
+
+Fixes #20651
+
+**File**: `docs/appendices/release-notes/6.5.2.rst` (modified, +5/-0)
 ```diff
-@@ -46,6 +46,9 @@ series.
+@@ -46,6 +46,11 @@ series.
  Fixes
  =====
  
-+- Fixed a ``NullPointerException`` that could occur if comparing an object to a
-+  full literal containing a ``null`` value.
-+
- - Fixed an issue in the PostgreSQL wire protocol implementation that could cause
-   clients to not receive an error message if:
- 
++- Fixed an issue that caused ``EOFException`` to be thrown, when reading rows
++  from a dynamic column, which was first written with a nested array of only
++  ``null`` values, e.g.: ``[[null]]``, and later with a nested array of a
++  defined type, e.g.: ``[[1]]``.
++ 
+ - Fixed a ``NullPointerException`` that occurred when updating a column of
+   type ``ARRAY(OBJECT)``, or an object containing one, with an array that
+   contains a ``null`` element. The ``null`` element is now stored, matching the
 ```
 
-**File**: `server/src/main/java/io/crate/expression/operator/EqOperator.java` (modified, +6/-2)
+**File**: `server/src/main/java/io/crate/types/ArrayType.java` (modified, +16/-12)
 ```diff
-@@ -305,6 +305,10 @@ public static Query refEqObject(Function eq,
-         int preFilters = 0;
-         for (Map.Entry<String, Object> entry : value.entrySet()) {
-             String key = entry.getKey();
-+            Object innerValue = entry.getValue();
-+            if (innerValue == null) {
-+                continue;
-+            }
-             DataType<?> innerType = type.innerType(key);
-             if (innerType == UndefinedType.INSTANCE) {
-                 // could be a nested object or not part of meta data; skip pre-filtering
-@@ -316,9 +320,9 @@ public static Query refEqObject(Function eq,
-             Query innerQuery;
-             if (DataTypes.isArray(innerType)) {
-                 innerQuery = termsAndGenericFilter(
--                    eq, nestedStorageIdentifier, innerType, (Collection<?>) entry.getValue(), context, childRef.hasDocValues(), childRef.indexType(), termQueryOccur);
-+                    eq, nestedStorageIdentifier, innerType, (Collection<?>) innerValue, context, childRef.hasDocValues(), childRef.indexType(), termQueryOccur);
-             } else {
--                innerQuery = fromPrimitive(innerType, nestedStorageIdentifier, entry.getValue(), childRef.hasDocValues(), childRef.indexType());
-+                innerQuery = fromPrimitive(innerType, nestedStorageIdentifier, innerValue, childRef.hasDocValues(), childRef.indexType());
-                 // instead of adding a MUST_NOT clause for the negation, we negate the innerQuery to also match null values
-                 if (termQueryOccur == Occur.MUST_NOT) {
-                     innerQuery = Queries.not(innerQuery);
-```
-
-**File**: `server/src/test/java/io/crate/expression/operator/EqOperatorTest.java` (modified, +29/-0)
-```diff
-@@ -29,10 +29,12 @@
- import java.util.List;
- import java.util.Map;
+@@ -139,12 +139,7 @@ public List<T> decode(ColumnIdent column, SourceParser sourceParser, Version tab
+                         return (List<T>) map.values().iterator().next();
+                     } catch (NotXContentException e) {
+                         // may be an array of nulls inserted before the field was upcast to an array of objects
+-                        try (StreamInput in = new ByteBufferStreamInput(ByteBuffer.wrap(bytes))) {
+-                            in.setVersion(tableVersion);
+-                            return (List<T>) ArrayType.ARRAY_OF_UNDEFINED.streamer().readValueFrom(in);
+-                        } catch (IOException io) {
+-                            throw new UncheckedIOException(io);
+-                        }
++                        return (List<T>) readArrayOfNulls(bytes, tableVersion, dimensions(ArrayType.this));
+                     }
+                 }
  
-+import org.apache.lucene.search.BooleanQuery;
- import org.apache.lucene.search.Query;
- import org.elasticsearch.Version;
- import org.junit.Test;
+@@ -187,12 +182,7 @@ public List<T> decode(ColumnIdent column, SourceParser sourceParser, Version tab
+                     } catch (Exception e) {
+                         // Might be an array of nulls inserted before the column was upcast to an
+                         // array of defined type
+-                        try (StreamInput in = new ByteBufferStreamInput(ByteBuffer.wrap(bytes))) {
+-                            in.setVersion(tableVersion);
+-                            return (List<T>) ArrayType.ARRAY_OF_UNDEFINED.streamer().readValueFrom(in);
+-                        } catch (IOException ee) {
+-                            throw new UncheckedIOException(ee);
+-                        }
++                        return (List<T>) readArrayOfNulls(bytes, tableVersion, dimensions(ArrayType.this));
+                     }
+                 }
  
-+import io.crate.common.collections.MapBuilder;
- import io.crate.expression.scalar.ScalarTestCase;
- import io.crate.expression.symbol.Literal;
- import io.crate.lucene.GenericFunctionQuery;
-@@ -176,6 +178,33 @@ public void test_terms_query_on_empty_object() throws Exception {
-         }
+@@ -491,6 +481,20 @@ public static int dimensions(DataType<?> type) {
+         return dimensions;
      }
  
-+    @Test
-+    public void test_obj_eq_obj_literal_with_null_value() throws Exception {
-+        QueryTester.Builder builder = new QueryTester.Builder(
-+            THREAD_POOL,
-+            clusterService,
-+            Version.CURRENT,
-+            "create table tbl (obj object(strict) as (x int, y int))");
-+        Map<String, Integer> map1 = Map.of("x", 10, "y", 20);
-+        Map<String, Integer> map2 = Map.of("x", 42, "y", 84);
-+        Map<String, Integer> map3 = MapBuilder.<String, Integer>newMapBuilder()
-+            .put("x", 10)
-+            .put("y", null)
-+            .map();
-+        Map<String, Integer> map4 = MapBuilder.<String, Integer>newMapBuilder()
-+            .put("x", 20)
-+            .put("y", null)
-+            .map();
-+        builder.indexValues("obj", map1, map2, map3, map4);
-+        try (QueryTester tester = builder.build()) {
-+            Query query = tester.toQuery("obj = {x=10, y=null}");
-+            assertThat(query)
-+                .isExactlyInstanceOf(BooleanQuery.class)
-+                .hasToString("+obj.x:[10 TO 10] #(obj = {\"x\"=10, \"y\"=NULL})");
-+            assertThat(tester.runQuery("obj", "obj = {x=10, y=null}")).containsExactly(map3);
++    /// Reads an array of nulls, like `[null]` or `[[null]]`, that was stored before its
++    /// column was upcast to an array of a defined type. It must be read with an array of
++    /// undefined of the same dimensions, as each nested level was written with its own size.
++    @SuppressWarnings("unchecked")
++    private static List<?> readArrayOfNulls(byte[] bytes, Version tableVersion, int dimensions) {
++        Streamer<List<?>> streamer = (Streamer<List<?>>) makeArray(UndefinedType.INSTANCE, dimensions).streamer();
++        try (StreamInput in = new ByteBufferStreamInput(ByteBuffer.wrap(bytes))) {
++            in.setVersion(tableVersion);
++            return streamer.readValueFrom(in);
++        } catch (IOException e) {
++            throw new UncheckedIOException(e);
 +        }
 +    }
 +
-     @Test
-     public void test_numeric_type_equals_number_types() {
-         assertEvaluate("numeric_4_2 = 1.111", false, Literal.of(new BigDecimal("1.11")));
+     static class ArrayStreamer<T> implements Streamer<List<T>> {
+ 
+         private final DataType<T> innerType;
 ```
 
----
-
-### Incident Patch 3: `fe62b476` (2026-11-20)
-**Commit Message**: Fix spelling of 'accommodate' in alter-table docs
-
-**File**: `docs/sql/statements/alter-table.rst` (modified, +1/-1)
+**File**: `server/src/test/java/io/crate/integrationtests/SQLTypeMappingTest.java` (modified, +23/-12)
 ```diff
-@@ -83,7 +83,7 @@ Clauses
+@@ -244,7 +244,7 @@ public void testSetUpdate() throws Exception {
+     /**
+      * We must fix this test to run ALL statements via JDBC or not because object/map values are NOT preserving exact
+      * its elements numeric types (e.g. Long(0) becomes Integer(0)). This is caused by the usage of JSON for psql text
+-     * serialization. See e.g. {@link org.codehaus.jackson.io.NumberOutput#outputLong(long, byte[], int)}.
++     * serialization. See e.g. {@link com.fasterxml.jackson.core.io.NumberOutput#outputLong(long, byte[], int)}.
+      */
+     @UseJdbc(0)
+     @Test
+@@ -472,14 +472,23 @@ public void test_dynamic_null_array_within_objects() {
  
-    Multiple files (in this directory) use the same standard text for
-    documenting the ``PARTITION`` clause. (Minor verb changes are made to
--   accomodate the specifics of the parent statement.)
-+   accommodate the specifics of the parent statement.)
+     @Test
+     public void test_dynamic_nested_array_of_null_upcast() {
+-        execute("create table t (a int) with (column_policy= 'dynamic')");
+-        execute("insert into t(a, b) values (1, [[]])");
+-        execute("insert into t(a, b) values (2, [[1, 2], [3, 4]])");
++        execute("create table t (a int, o object(dynamic)) with (column_policy= 'dynamic')");
++        // https://github.com/crate/crate/issues/20651: [[null]] must stay readable after the upcast
++        execute("insert into t(a, b, c, o) values (1, [[]], [[null]], {n=[[null]]})");
++        execute("insert into t(a, b, c, o) values (2, [[1, 2], [3, 4]], [[1]], {n=[[1]]})");
+         execute("refresh table t");
+-        execute("select data_type from information_schema.columns as tt where tt.table_name = 't' and tt.column_name = 'b'");
+-        assertThat(response).hasRows("integer_array_array");
+-        execute("select b from t");
+-        assertThat(response).hasRowsInAnyOrder("[[]]", "[[1, 2], [3, 4]]");
++        execute("select column_name, data_type from information_schema.columns as tt " +
++                "where tt.table_name = 't' and tt.column_name in ('b', 'c', 'o[''n'']') order by 1");
++        assertThat(response).hasRows(
++            "b| integer_array_array",
++            "c| integer_array_array",
++            "o['n']| integer_array_array"
++        );
++        execute("select b, c, o from t order by a");
++        assertThat(response).hasRows(
++            "[[]]| [[NULL]]| {n=[[NULL]]}",
++            "[[1, 2], [3, 4]]| [[1]]| {n=[[1]]}"
++        );
+     }
  
-    For consistency, if you make changes here, please be sure to make a
-    corresponding change to the other files.
+     @Test
+@@ -498,21 +507,23 @@ public void test_array_of_null_use_in_selects() {
+     @Test
+     public void test_array_of_null_upcasts_to_array_of_object() throws Exception {
+         execute("create table t (a int) with (column_policy ='dynamic')");
+-        execute("insert into t (a, x) values (1, [])");
+-        execute("insert into t (a, x) values (2, [{y=1},{y=2}])");
++        execute("insert into t (a, x, z) values (1, [], [[null]])");
++        execute("insert into t (a, x, z) values (2, [{y=1},{y=2}], [[{y=1}]])");
+         execute("refresh table t");
+ 
+         // Ensure correct type is stored into the table's metadata
+         execute("SELECT column_name, data_type FROM information_schema.columns WHERE table_name = 't' ORDER BY ordinal_position");
+         assertThat(response).hasRows(
+             "a| integer",
+             "x| object_array",
+-            "x['y']| bigint"
++            "z| object_array_array",
++            "x['y']| bigint",
++            "z['y']| bigint"
+         );
+ 
+         assertBusy(() -> {
+             execute("select * from t order by a");
+-            assertThat(response).hasRows("1| []", "2| [{y=1}, {y=2}]");
++            assertThat(response).hasRows("1| []| [[NULL]]", "2| [{y=1}, {y=2}]| [[{y=1}]]");
+         });
+         execute("select x['y'] from t order by a");
+         assertThat(response).hasRows("[]", "[1, 2]");
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #20662** (2026-11-23): docs: fix spelling mistake in SQL statements documentation (backport #20634) (@mergify[bot])
-- **PR #20661** (2026-11-23): Fix NullPointerException updating object array with null element (backport #20658) (@mergify[bot])
-- **PR #20658** (2026-11-23): Fix NullPointerException updating object array with null element (@matriv)
-- **PR #20650** (2026-11-23): Fix object column equals obj literal matching despite missing properties (backport #20645) (@mergify[bot])
-- **PR #20649** (2026-11-23): Ensure that StreamBucket doesn't overwrite actual version used to serilalze bytes (backport #20601) (@mergify[bot])
-- **PR #20648** (2026-11-23): Ensure that StreamBucket doesn't overwrite actual version used to serilalze bytes (backport #20601) (@mergify[bot])
+- **PR #20679** (2026-11-24): Reflect 6.2.12, 6.3.8, 6.4.8 and 6.5.2 (@BaurzhanSakhariev)
+- **PR #20678** (2026-11-24): Bump version to 6.5.3-SNAPSHOT (@BaurzhanSakhariev)
+- **PR #20677** (2026-11-24): Update JDK to 27.0.1.1+4 (@BaurzhanSakhariev)
+- **PR #20676** (2026-11-24): Release 6.5.2 (@BaurzhanSakhariev)
+- **PR #20675** (2026-11-24): Release 6.4.8 (@BaurzhanSakhariev)
+- **PR #20674** (2026-11-24): Release 6.3.8 (@BaurzhanSakhariev)
 
 ---
 
@@ -816,13 +877,13 @@ Fixes #20640
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. NullPointerException updating object array with null element
+## X. SHOW CREATE TABLE output for geo_point literals
 
 **RULE**:
 When implementing operations in `docs/appendices/release-notes/6.5.2.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in crate/crate. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e3b6b9db`: NullPointerException updating object array with null element. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `77887ead`: SHOW CREATE TABLE output for geo_point literals. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/appendices/release-notes/6.5.2.rst`.
@@ -830,10 +891,10 @@ Subsystems managing Java data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-- Fixed a ``NullPointerException`` that occurred when updating a column of
-  type ``ARRAY(OBJECT)``, or an object containing one, with an array that
-  contains a ``null`` element. The ``null`` element is now stored, matching the
-  behaviour of ``INSERT``.
+- Fixed an issue where :ref:`SHOW CREATE TABLE <ref-show-create-table>`
+  printed ``GEO_POINT`` default values and generated expressions in a format
+  that could not be used to recreate the table, for example
+  ``DEFAULT 'Pt(x=3.0,y=4.0)'``.
 
 ```
 
@@ -844,7 +905,7 @@ Subsystems managing Java data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e3b6b9db` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `77887ead` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

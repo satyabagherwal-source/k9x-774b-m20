@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-25T00:17:28.655Z",
+  "last_updated": "2026-11-25T00:27:00.064Z",
   "total_verified_learnings": 9107,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25051,
+  "total_items": 25062,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112818,25 +112818,25 @@
       "item_id": "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-core-inv.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-.md",
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
       "repository": "aleo-labs-protocol/snarkOS",
-      "source_version": "8856065f",
-      "content_hash": "b249da509a7ab7226afeac44162c20811b622117e44b3e02e366d3b432210ec7",
+      "source_version": "b2a26d2e",
+      "content_hash": "896e65b5bd5c94f1c9e5baf98d691e49b73ca7bbc8b1bc03110787399092d013",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T22:07:32.533Z"
+      "persisted_at": "2026-11-25T00:26:50.467Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/provablehq-snarkos-verification-protocol-empirical-defect-shield-for-aleo-labs-p.md",
+      "relative_path": "08_VERIFICATION/aleo-labs-protocol-snarkos-verification-protocol-empirical-defect-shield-for-ale.md",
       "title": "Verification Protocol: Empirical Defect Shield for aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "source_version": "8856065f",
-      "content_hash": "e9bb777e7bc7a699690ce4bc2d703a997548396787e560defa6861e8208c8fa8",
+      "source_version": "b2a26d2e",
+      "content_hash": "b69092cfeb1ee0f90e0492a4b68466259741c2dc852912130bca6a320919174f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T22:07:32.703Z"
+      "persisted_at": "2026-11-25T00:26:50.717Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-fastino-gliner2-5-decide-learnings-core-invar": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-fastino-gliner2-5-decide-learnings-core-invar",
@@ -216103,13 +216103,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "slug": "provablehq-snarkos",
+      "slug": "aleo-labs-protocol-snarkos",
       "platform": "github",
-      "source_url": "https://github.com/ProvableHQ/snarkOS",
-      "source_version": "8856065f",
-      "content_hash": "fbb63a4bcd3af9a8cb3d53c6699e62e992ef7cfd5d642ec1f728234316945dfc",
-      "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
+      "source_version": "b2a26d2e",
+      "content_hash": "7332a10398829d3e1f53c9b9641184caa8b1c58820d1f07c2f06ab9f27090da5",
+      "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
       "promoted_rules": [
         {
           "number": 3992,
@@ -216154,7 +216154,7 @@
         {
           "number": 9283,
           "title": "Empirical Invariant Guard in ledger.rs",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 9414,
@@ -216232,7 +216232,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T22:07:31.896Z",
+      "verified_at": "2026-11-25T00:26:49.586Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -219616,8 +219616,8 @@
       "slug": "crate-crate",
       "platform": "github",
       "source_url": "https://github.com/crate/crate",
-      "source_version": "2799f146",
-      "content_hash": "e36d2780b37a503b038180b83e36bb0d8d0ea8ee9060dc516901a60f07bdbf29",
+      "source_version": "364278b1",
+      "content_hash": "1ec39489f42249c153e218b1c8f93e77295303415e0d19b591076fa8cd9d38be",
       "dossier_path": "07_PROJECT_LEARNING/crate-crate-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/crate-crate-learnings.md",
       "promoted_rules": [
@@ -219650,6 +219650,11 @@
           "number": 10195,
           "title": "NullPointerException updating object array with null element",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10401,
+          "title": "SHOW CREATE TABLE output for geo_point literals",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -219657,7 +219662,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T03:58:41.036Z",
+      "verified_at": "2026-11-25T00:26:52.292Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -219711,10 +219716,10 @@
       "relative_path": "08_VERIFICATION/crate-crate-verification-protocol-empirical-defect-shield-for-crate-crate.md",
       "title": "Verification Protocol: Empirical Defect Shield for crate/crate",
       "repository": "crate/crate",
-      "source_version": "2799f146",
-      "content_hash": "6340ae970335aecd002c11a96c833b95bfcbd201ab55d1df4e2805a00aad3715",
+      "source_version": "364278b1",
+      "content_hash": "763b5443af6207fc9a3fb7d28d76a95977cc2df40cc0c3abe5269d9921d575b7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T03:58:41.907Z"
+      "persisted_at": "2026-11-25T00:26:53.409Z"
     },
     "candidate_directive-ci-add-risc-v-64-kernel-and-ovmf-binaries-docker-push-action": {
       "item_id": "candidate_directive-ci-add-risc-v-64-kernel-and-ovmf-binaries-docker-push-action",
@@ -230196,8 +230201,8 @@
       "slug": "zenbu-labs-terminal-browser",
       "platform": "github",
       "source_url": "https://github.com/zenbu-labs/terminal-browser",
-      "source_version": "d486e054",
-      "content_hash": "8871071470abab78c850ad4b015cc6343ce932595f20f446f8a2eedfdc68e8b8",
+      "source_version": "99022d83",
+      "content_hash": "1960374ccacd00981aa38092f2326b35d9e2e638369df989a860e0fc7924f226",
       "dossier_path": "07_PROJECT_LEARNING/zenbu-labs-terminal-browser-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zenbu-labs-terminal-browser-learnings.md",
       "promoted_rules": [
@@ -230235,6 +230240,11 @@
           "number": 10126,
           "title": "add conditional ui location for zoomed rex pane",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10398,
+          "title": "electron patch conflicts, update to latest electron",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -230242,7 +230252,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T21:23:04.868Z",
+      "verified_at": "2026-11-25T00:26:39.758Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -230284,10 +230294,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zenbu-labs-terminal-browser-architecture-intelligence-zenbu-labs-terminal-browse.md",
       "title": "Architecture Intelligence: zenbu-labs/terminal-browser Core Invariants",
       "repository": "zenbu-labs/terminal-browser",
-      "source_version": "6cb727eb",
-      "content_hash": "95baaa2d0308cc7a889d01bc08cfd45714af69be78d463c745c1fd7a9baf9eaa",
+      "source_version": "99022d83",
+      "content_hash": "7fab58bbd37f39b35f9f97f6badf776b95efb0758b64cd729dc0f780ed49b3c8",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T10:54:50.920Z"
+      "persisted_at": "2026-11-25T00:26:40.719Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zenbu-labs-terminal-browser": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zenbu-labs-terminal-browser",
@@ -230296,10 +230306,10 @@
       "relative_path": "08_VERIFICATION/zenbu-labs-terminal-browser-verification-protocol-empirical-defect-shield-for-ze.md",
       "title": "Verification Protocol: Empirical Defect Shield for zenbu-labs/terminal-browser",
       "repository": "zenbu-labs/terminal-browser",
-      "source_version": "d486e054",
-      "content_hash": "ece854f91aa8cd9b7bd4aafb092985cf084ae53d64dbae20b66aef22f516ea35",
+      "source_version": "99022d83",
+      "content_hash": "a91a82a7eebcc713ba4a148cabf281f59c16c5e347d585d93514ab0c3a87095f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T21:23:05.654Z"
+      "persisted_at": "2026-11-25T00:26:40.983Z"
     },
     "learn-github-okteto-okteto": {
       "learning_id": "learn-github-okteto-okteto",
@@ -230878,9 +230888,9 @@
       "title": "Architecture Intelligence: zenbu-labs-terminal-browser-learnings Core Invariants",
       "repository": "zenbu-labs-terminal-browser-learnings",
       "source_version": "HEAD",
-      "content_hash": "7dc5410fed94f07ed7b8eccea2763e0cd8ba79e74f0fef40aa89ef65f325af95",
+      "content_hash": "f60e0347b1dbaa97e86d8705545f198191eee20568d39f76adc3e632975f0428",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T10:55:06.958Z"
+      "persisted_at": "2026-11-25T00:26:57.146Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zenbu-labs-terminal-browser-le": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zenbu-labs-terminal-browser-le",
@@ -230890,9 +230900,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zenbu-labs-terminal-browser-learnings",
       "repository": "zenbu-labs-terminal-browser-learnings",
       "source_version": "HEAD",
-      "content_hash": "03a7631a970e3a470ed23811421fab286fb3da9d35540fc0789ea95a1f1e01ab",
+      "content_hash": "d319d033da6118677816bb14404443626f6ad4ca3bb5148f7043dedd010f6920",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T21:23:17.191Z"
+      "persisted_at": "2026-11-25T00:26:57.451Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen3-vl-8b-instruct-learnings-core-inva": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen3-vl-8b-instruct-learnings-core-inva",
@@ -237359,8 +237369,8 @@
       "slug": "hashicorp-terraform",
       "platform": "github",
       "source_url": "https://github.com/hashicorp/terraform",
-      "source_version": "80e6fc28",
-      "content_hash": "4c93538b6451eba662b4e04ddf17eddbba96190a8869f882dfb99004dd182f37",
+      "source_version": "56460311",
+      "content_hash": "eed36a1c77c10efa86a03e9b70ef8410445a1921a4812f253ceaa479843b9eed",
       "dossier_path": "07_PROJECT_LEARNING/hashicorp-terraform-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hashicorp-terraform-learnings.md",
       "promoted_rules": [
@@ -237403,6 +237413,11 @@
           "number": 9703,
           "title": "Refactor how mock user input is defined in tests, fix minor difference in",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10400,
+          "title": "Remove ability to define mocked inputs via a slice argument",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -237410,7 +237425,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T02:26:52.529Z",
+      "verified_at": "2026-11-25T00:26:47.446Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -237452,10 +237467,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-hashicorp-terraform-architecture-intelligence-hashicorp-terraform-core-invariant.md",
       "title": "Architecture Intelligence: hashicorp/terraform Core Invariants",
       "repository": "hashicorp/terraform",
-      "source_version": "80e6fc28",
-      "content_hash": "eaa68cad3f7e96f6139c7bf325873ef06afa0cfca3d7e5be9073b8919defe039",
+      "source_version": "56460311",
+      "content_hash": "d1450073a463779f6060934b50784d015c9b681ba639e670c9b5c9a2a74dacc5",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T02:26:53.115Z"
+      "persisted_at": "2026-11-25T00:26:48.382Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-hashicorp-terraform": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-hashicorp-terraform",
@@ -237464,10 +237479,10 @@
       "relative_path": "08_VERIFICATION/hashicorp-terraform-verification-protocol-empirical-defect-shield-for-hashicorp-.md",
       "title": "Verification Protocol: Empirical Defect Shield for hashicorp/terraform",
       "repository": "hashicorp/terraform",
-      "source_version": "80e6fc28",
-      "content_hash": "2f4d96cac18aed28648ac076149476d738b44a73614ed52bdbbece65bc9b2d98",
+      "source_version": "56460311",
+      "content_hash": "d6c492e12a69b06954e28e1a1e3df66db09c5325677d354db56c3bbb900a4c5c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T02:26:53.277Z"
+      "persisted_at": "2026-11-25T00:26:48.639Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-cactus-compute-whistle-learnings-core-invaria": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-cactus-compute-whistle-learnings-core-invaria",
@@ -237489,9 +237504,9 @@
       "title": "Architecture Intelligence: hashicorp-terraform-learnings Core Invariants",
       "repository": "hashicorp-terraform-learnings",
       "source_version": "HEAD",
-      "content_hash": "4a2e5333bfd3f1d0446e1e790a3a800998b3d63dcefdd57791d9183f0f4caaf2",
+      "content_hash": "306773ecab8c63ae0af9e548442443b62dea9adce7349a11cb97972310bbbab6",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T05:14:20.847Z"
+      "persisted_at": "2026-11-25T00:26:59.792Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-hashicorp-terraform-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-hashicorp-terraform-learnings",
@@ -237501,9 +237516,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for hashicorp-terraform-learnings",
       "repository": "hashicorp-terraform-learnings",
       "source_version": "HEAD",
-      "content_hash": "f4cb09710084e477b9db45c746a878e99720cd2046bbaab340cd6dd3258b556b",
+      "content_hash": "464efbfb40c3197ba7204598962f61d901e89e7f07044d7e124cadd81c10b6e2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T05:14:21.031Z"
+      "persisted_at": "2026-11-25T00:27:00.064Z"
     },
     "learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf": {
       "learning_id": "learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf",
@@ -264634,10 +264649,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-crate-crate-quality-verification-intelligence-crate-crate-core-invariants.md",
       "title": "Quality & Verification Intelligence: crate/crate Core Invariants",
       "repository": "crate/crate",
-      "source_version": "bf89cdfb",
-      "content_hash": "e1595e1ca6e04e3ac864433afbb20c4beed04d09d5d21a72964994c696698dcf",
+      "source_version": "364278b1",
+      "content_hash": "1bc3d7bc5c7c275b9d1adbc05ba76f3902cfd3cf17f914123fc46ebea1824a44",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T20:45:40.670Z"
+      "persisted_at": "2026-11-25T00:26:53.145Z"
     },
     "domain_intelligence-quality-verification-intelligence-falkordb-falkordb-learnings-core-invariants": {
       "item_id": "domain_intelligence-quality-verification-intelligence-falkordb-falkordb-learnings-core-invariants",
@@ -271069,8 +271084,8 @@
       "slug": "qwikdev-qwik",
       "platform": "github",
       "source_url": "https://github.com/QwikDev/qwik",
-      "source_version": "fa8e12f1",
-      "content_hash": "25fe586776364bc2820e759a63cf06ec3798056175fc33366f225c7cc149e179",
+      "source_version": "04c312f5",
+      "content_hash": "b85f6b5415af7f67c57064528481a92825daf3b7b693954c92de50b9798d9470",
       "dossier_path": "07_PROJECT_LEARNING/qwikdev-qwik-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/qwikdev-qwik-learnings.md",
       "promoted_rules": [
@@ -271093,6 +271108,11 @@
           "number": 9684,
           "title": "Empirical Invariant Guard in calm-dev-server-ssr-error.md",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10399,
+          "title": "Import inlinedQrl once in library builds that use bind:",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -271100,7 +271120,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T00:51:57.906Z",
+      "verified_at": "2026-11-25T00:26:42.764Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -271206,10 +271226,10 @@
       "relative_path": "08_VERIFICATION/qwikdev-qwik-verification-protocol-empirical-defect-shield-for-qwikdev-qwik.md",
       "title": "Verification Protocol: Empirical Defect Shield for QwikDev/qwik",
       "repository": "QwikDev/qwik",
-      "source_version": "fa8e12f1",
-      "content_hash": "41de0c4de50c865aecbf19d9964c45925d9e76c09ff4d77613fe31305e169e59",
+      "source_version": "04c312f5",
+      "content_hash": "8b8d3a81347b9e0cb693a35134539407aeec30b10b2f1b77003b3cfbe1500adb",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T00:51:58.663Z"
+      "persisted_at": "2026-11-25T00:26:43.998Z"
     },
     "domain_intelligence-technical-construction-intelligence-qwikdev-qwik-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-qwikdev-qwik-learnings-core-invariants",
@@ -271231,9 +271251,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for qwikdev-qwik-learnings",
       "repository": "qwikdev-qwik-learnings",
       "source_version": "HEAD",
-      "content_hash": "4ce204cfd9076427a7141231d3655c938c7bff97f22e1dbe5722a57d4d4316a1",
+      "content_hash": "e7b67f99103d30d6cf52f2550b0c9e6e09db5f452ea653991031b69704dbe0d9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T00:52:13.743Z"
+      "persisted_at": "2026-11-25T00:26:58.828Z"
     },
     "candidate_directive-github-notify-only-when-reconciled-pr-associations-change": {
       "item_id": "candidate_directive-github-notify-only-when-reconciled-pr-associations-change",
@@ -295018,26 +295038,26 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 9283,
       "title": "Empirical Invariant Guard in ledger.rs",
-      "source_url": "https://github.com/ProvableHQ/snarkOS",
-      "source_version": "f5adbe87",
+      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
+      "source_version": "b2a26d2e",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-18T21:33:56.073Z"
+      "verified_at": "2026-11-25T00:26:49.586Z"
     },
     "candidate_directive-empirical-invariant-guard-in-ledger-rs": {
       "item_id": "candidate_directive-empirical-invariant-guard-in-ledger-rs",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-2U0U-empirical-invariant-guard-in-ledger-rs.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-VP4B-empirical-invariant-guard-in-ledger-rs.md",
       "title": "Empirical Invariant Guard in ledger.rs",
-      "repository": "provablehq-snarkos-learnings",
-      "source_version": "HEAD",
-      "content_hash": "3f0b6356770fe0dfa546ed78c63844b8bdb53f3eef6a86720e24dfdf0832ba48",
+      "repository": "aleo-labs-protocol/snarkOS",
+      "source_version": "b2a26d2e",
+      "content_hash": "a4c219380fcfdefd743b657d8fd23eac6e2a9140e500018d4adc381159819dfa",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T21:34:24.140Z"
+      "persisted_at": "2026-11-25T00:26:50.223Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-openai-gpt-oss-20b-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-openai-gpt-oss-20b-learnings-core-invariants",
@@ -342365,6 +342385,146 @@
       "content_hash": "b2943767dbf821535b7ecf00ff6dd170d87ed86e69116494008b7a5e98f72715",
       "domain_letter": "K",
       "persisted_at": "2026-11-25T00:17:28.655Z"
+    },
+    "rule-10398": {
+      "learning_id": "rule-10398",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10398,
+      "title": "electron patch conflicts, update to latest electron",
+      "source_url": "https://github.com/zenbu-labs/terminal-browser",
+      "source_version": "99022d83",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T00:26:39.758Z"
+    },
+    "candidate_directive-electron-patch-conflicts-update-to-latest-electron": {
+      "item_id": "candidate_directive-electron-patch-conflicts-update-to-latest-electron",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-VU8U-electron-patch-conflicts-update-to-latest-electron.md",
+      "title": "electron patch conflicts, update to latest electron",
+      "repository": "zenbu-labs-terminal-browser-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2260a37af1fd870008d70ee610b6a98c979359326baaf337cdad893e261c949b",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-25T00:26:56.866Z"
+    },
+    "rule-10399": {
+      "learning_id": "rule-10399",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10399,
+      "title": "Import inlinedQrl once in library builds that use bind:",
+      "source_url": "https://github.com/QwikDev/qwik",
+      "source_version": "04c312f5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T00:26:42.764Z"
+    },
+    "candidate_directive-import-inlinedqrl-once-in-library-builds-that-use-bind": {
+      "item_id": "candidate_directive-import-inlinedqrl-once-in-library-builds-that-use-bind",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-VVCX-import-inlinedqrl-once-in-library-builds-that-use-bind.md",
+      "title": "Import inlinedQrl once in library builds that use bind:",
+      "repository": "qwikdev-qwik-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e34671fbaaf2e4556e9e7fc46db5a8b890aee90a74712448076cccb03a852566",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-25T00:26:58.309Z"
+    },
+    "domain_intelligence-architecture-intelligence-qwikdev-qwik-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-qwikdev-qwik-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-qwikdev-qwik-architecture-intelligence-qwikdev-qwik-core-invariants.md",
+      "title": "Architecture Intelligence: QwikDev/qwik Core Invariants",
+      "repository": "QwikDev/qwik",
+      "source_version": "04c312f5",
+      "content_hash": "134cc325eb26cff8f940d2b7b2b609625dee0d21dadc08f443c13056e302cc9f",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-25T00:26:43.672Z"
+    },
+    "rule-10400": {
+      "learning_id": "rule-10400",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10400,
+      "title": "Remove ability to define mocked inputs via a slice argument",
+      "source_url": "https://github.com/hashicorp/terraform",
+      "source_version": "56460311",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T00:26:47.446Z"
+    },
+    "candidate_directive-remove-ability-to-define-mocked-inputs-via-a-slice-argument": {
+      "item_id": "candidate_directive-remove-ability-to-define-mocked-inputs-via-a-slice-argument",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-VNHU-remove-ability-to-define-mocked-inputs-via-a-slice-argument.md",
+      "title": "Remove ability to define mocked inputs via a slice argument",
+      "repository": "hashicorp/terraform",
+      "source_version": "56460311",
+      "content_hash": "dd87ebf459d863fd77360404908d459786973406626ff3f9b45b8a7dccd10652",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-25T00:26:48.118Z"
+    },
+    "rule-10401": {
+      "learning_id": "rule-10401",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10401,
+      "title": "SHOW CREATE TABLE output for geo_point literals",
+      "source_url": "https://github.com/crate/crate",
+      "source_version": "364278b1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T00:26:52.292Z"
+    },
+    "candidate_directive-show-create-table-output-for-geo_point-literals": {
+      "item_id": "candidate_directive-show-create-table-output-for-geo_point-literals",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-VR6M-show-create-table-output-for-geo_point-literals.md",
+      "title": "SHOW CREATE TABLE output for geo_point literals",
+      "repository": "crate/crate",
+      "source_version": "364278b1",
+      "content_hash": "7810746c4249dad2b9c1c084cb8cca782e26842241990b9738f6f9dbbe88bbcd",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-25T00:26:52.896Z"
+    },
+    "domain_intelligence-architecture-intelligence-qwikdev-qwik-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-qwikdev-qwik-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-qwikdev-qwik-learnings-architecture-intelligence-qwikdev-qwik-learnings-core-inv.md",
+      "title": "Architecture Intelligence: qwikdev-qwik-learnings Core Invariants",
+      "repository": "qwikdev-qwik-learnings",
+      "source_version": "HEAD",
+      "content_hash": "03f6e96942fbc3bd366d7e6f7c2c7bec79db296916a263a0e7c78022fb32d5cb",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-25T00:26:58.563Z"
+    },
+    "candidate_directive-tests-remove-ability-to-define-mocked-inputs-via-a-slice-argument": {
+      "item_id": "candidate_directive-tests-remove-ability-to-define-mocked-inputs-via-a-slice-argument",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-VWB2-tests-remove-ability-to-define-mocked-inputs-via-a-slice-argument.md",
+      "title": "tests: Remove ability to define mocked inputs via a slice argument",
+      "repository": "hashicorp-terraform-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e78aac148bccfbd07e8e3b43a29cd6639ff92c167af6c9cb0b38061091837bca",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-25T00:26:59.537Z"
     }
   },
   "ai-builder-brain": {

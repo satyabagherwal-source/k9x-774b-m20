@@ -12898,3 +12898,8 @@ Every entry in this ledger must capture:
 | `learn-github-tencent-tds-kuiklyui` | `https://github.com/Tencent-TDS/KuiklyUI` | `ad420ccc` | Multi-dimensional audit evidence | 2026-11-25T00:16:50.543Z |
 | `learn-github-openyurtio-openyurt` | `https://github.com/openyurtio/openyurt` | `4840e2d1` | Multi-dimensional audit evidence | 2026-11-25T00:16:52.280Z |
 | `learn-dom-d-183bcb72` | `project://preactjs-preact` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/preactjs-preact-learnings.md` | 2026-11-25T00:17:25.888Z |
+| `learn-github-zenbu-labs-terminal-browser` | `https://github.com/zenbu-labs/terminal-browser` | `99022d83` | Multi-dimensional audit evidence | 2026-11-25T00:26:40.090Z |
+| `learn-github-qwikdev-qwik` | `https://github.com/QwikDev/qwik` | `04c312f5` | Multi-dimensional audit evidence | 2026-11-25T00:26:43.113Z |
+| `learn-github-hashicorp-terraform` | `https://github.com/hashicorp/terraform` | `56460311` | Multi-dimensional audit evidence | 2026-11-25T00:26:47.799Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `b2a26d2e` | Multi-dimensional audit evidence | 2026-11-25T00:26:49.895Z |
+| `learn-github-crate-crate` | `https://github.com/crate/crate` | `364278b1` | Multi-dimensional audit evidence | 2026-11-25T00:26:52.594Z |

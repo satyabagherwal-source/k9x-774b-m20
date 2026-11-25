@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-25T00:16:52.298Z",
+  "last_updated": "2026-11-25T00:26:52.613Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "fbb63a4bcd3af9a8cb3d53c6699e62e992ef7cfd5d642ec1f728234316945dfc",
-      "verified_at": "2026-11-24T22:07:32.114Z",
+      "content_hash": "7332a10398829d3e1f53c9b9641184caa8b1c58820d1f07c2f06ab9f27090da5",
+      "verified_at": "2026-11-25T00:26:49.915Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T22:07:32.114Z"
+      "last_updated": "2026-11-25T00:26:49.915Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",
@@ -3471,14 +3471,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-crate-crate",
-      "content_hash": "e36d2780b37a503b038180b83e36bb0d8d0ea8ee9060dc516901a60f07bdbf29",
-      "verified_at": "2026-11-24T03:58:41.268Z",
+      "content_hash": "1ec39489f42249c153e218b1c8f93e77295303415e0d19b591076fa8cd9d38be",
+      "verified_at": "2026-11-25T00:26:52.613Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T03:58:41.268Z"
+      "last_updated": "2026-11-25T00:26:52.613Z"
     },
     "NucleoidAI/Nucleoid": {
       "repository": "NucleoidAI/Nucleoid",
@@ -7041,14 +7041,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-hashicorp-terraform",
-      "content_hash": "0d1eab44125921ae29a1b58c4a9be0b6f5dbae7b7daac5c4bf4868fde811fcec",
-      "verified_at": "2026-11-24T05:14:11.600Z",
+      "content_hash": "eed36a1c77c10efa86a03e9b70ef8410445a1921a4812f253ceaa479843b9eed",
+      "verified_at": "2026-11-25T00:26:47.818Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T05:14:11.600Z"
+      "last_updated": "2026-11-25T00:26:47.818Z"
     },
     "TaKO8Ki/gobang": {
       "repository": "TaKO8Ki/gobang",
@@ -11001,14 +11001,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zenbu-labs-terminal-browser",
-      "content_hash": "8871071470abab78c850ad4b015cc6343ce932595f20f446f8a2eedfdc68e8b8",
-      "verified_at": "2026-11-23T21:23:05.093Z",
+      "content_hash": "1960374ccacd00981aa38092f2326b35d9e2e638369df989a860e0fc7924f226",
+      "verified_at": "2026-11-25T00:26:40.110Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T21:23:05.093Z"
+      "last_updated": "2026-11-25T00:26:40.110Z"
     },
     "kosi-libs/Kodein": {
       "repository": "kosi-libs/Kodein",
@@ -15186,14 +15186,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-qwikdev-qwik",
-      "content_hash": "25fe586776364bc2820e759a63cf06ec3798056175fc33366f225c7cc149e179",
-      "verified_at": "2026-11-21T00:51:58.121Z",
+      "content_hash": "b85f6b5415af7f67c57064528481a92825daf3b7b693954c92de50b9798d9470",
+      "verified_at": "2026-11-25T00:26:43.134Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T00:51:58.121Z"
+      "last_updated": "2026-11-25T00:26:43.134Z"
     },
     "TypeWhisper/typewhisper-mac": {
       "repository": "TypeWhisper/typewhisper-mac",

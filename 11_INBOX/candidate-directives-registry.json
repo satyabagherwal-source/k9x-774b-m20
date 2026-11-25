@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T00:17:28.236Z",
+  "last_updated": "2026-11-25T00:26:59.537Z",
   "directives": [
     {
       "id": "CD-001",
@@ -30893,14 +30893,14 @@
       "staged_date": "2026-11-18"
     },
     {
-      "id": "CD-2U0U",
+      "id": "CD-VP4B",
       "directive_title": "Empirical Invariant Guard in ledger.rs",
-      "source_repo": "provablehq-snarkos-learnings",
-      "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-2U0U-empirical-invariant-guard-in-ledger-rs.md",
-      "status": "QUARANTINED_REJECT",
-      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
-      "date_staged": "2026-11-18",
+      "source_repo": "aleo-labs-protocol/snarkOS",
+      "source_commit": "b2a26d2e",
+      "staged_file": "11_INBOX/candidate-directives/CD-VP4B-empirical-invariant-guard-in-ledger-rs.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-25",
       "domain_letter": "D"
     },
     {
@@ -58125,6 +58125,79 @@
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-25",
       "domain_letter": "I"
+    },
+    {
+      "id": "CD-VU8U",
+      "directive_title": "electron patch conflicts, update to latest electron",
+      "source_repo": "zenbu-labs-terminal-browser-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-VU8U-electron-patch-conflicts-update-to-latest-electron.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-25",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-VVCX",
+      "directive_title": "Import inlinedQrl once in library builds that use bind:",
+      "source_repo": "qwikdev-qwik-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-VVCX-import-inlinedqrl-once-in-library-builds-that-use-bind.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-25",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-VNHU",
+      "directive_title": "Remove ability to define mocked inputs via a slice argument",
+      "source_repo": "hashicorp/terraform",
+      "source_commit": "56460311",
+      "staged_file": "11_INBOX/candidate-directives/CD-VNHU-remove-ability-to-define-mocked-inputs-via-a-slice-argument.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-25",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-VR6M",
+      "directive_title": "SHOW CREATE TABLE output for geo_point literals",
+      "source_repo": "crate/crate",
+      "source_commit": "364278b1",
+      "staged_file": "11_INBOX/candidate-directives/CD-VR6M-show-create-table-output-for-geo_point-literals.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-25",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-REV-90EFE3",
+      "directive_title": "electron patch conflicts, update to latest electron",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zenbu-labs-terminal-browser",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-90EFE3-electron-patch-conflicts-update-to-lates.md",
+      "staged_date": "2026-11-25"
+    },
+    {
+      "id": "CD-REV-7C3305",
+      "directive_title": "Import inlinedQrl once in library builds that use bind:",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "qwikdev-qwik",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-7C3305-import-inlinedqrl-once-in-library-builds.md",
+      "staged_date": "2026-11-25"
+    },
+    {
+      "id": "CD-VWB2",
+      "directive_title": "tests: Remove ability to define mocked inputs via a slice argument",
+      "source_repo": "hashicorp-terraform-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-VWB2-tests-remove-ability-to-define-mocked-inputs-via-a-slice-argument.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-25",
+      "domain_letter": "G"
     }
   ]
 }

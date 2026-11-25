@@ -4,22 +4,22 @@
 {
   "source_repository": "zenbu-labs/terminal-browser",
   "source_url": "https://github.com/zenbu-labs/terminal-browser",
-  "source_version": "d486e054",
+  "source_version": "99022d83",
   "license": "MIT",
-  "timestamp": "2026-11-23T21:23:05.306Z",
+  "timestamp": "2026-11-25T00:26:40.414Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-zenbu-labs-terminal-browser",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [zenbu-labs/terminal-browser](https://github.com/zenbu-labs/terminal-browser) (Revision: `d486e054`).  
-> **License**: MIT | **Timestamp**: `2026-11-23T21:23:05.306Z`  
+> **Provenance**: Harvested from [zenbu-labs/terminal-browser](https://github.com/zenbu-labs/terminal-browser) (Revision: `99022d83`).  
+> **License**: MIT | **Timestamp**: `2026-11-25T00:26:40.414Z`  
 > **Learning ID**: `learn-github-zenbu-labs-terminal-browser`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `zenbu-labs/terminal-browser` (Commit: `d486e054`)
+- **Target Repository**: `zenbu-labs/terminal-browser` (Commit: `99022d83`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zenbu-labs-terminal-browser-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zenbu-labs/terminal-browser](https://github.com/zenbu-labs/terminal-browser))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T21:23:03.988Z  
+> **Harvest Timestamp**: 2026-11-25T00:26:38.504Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: A real browser inside your terminal
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 4761 stars
+- **Stars / Engagement**: 4857 stars
 
 ---
 
@@ -1572,332 +1572,570 @@ impl Bridge {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3e5be01b` (2026-11-22)
-**Commit Message**: add conditional ui location for zoomed rex pane (#327)
+### Incident Patch 1: `99022d83` (2026-11-24)
+**Commit Message**: Fix electron patch conflicts, update to latest electron (#334)
 
-* add conditional ui location for zoomed rex pane
+* rebase electron patches onto 45.4.1, keeping 44.11.5
 
-* update safe spaces cases
+* publish branch builds of patched electron as previews, promote them without rebuilding
 
-**File**: `browser/src/session/session.tsx` (modified, +2/-0)
+Runs of pixel electron build off the default branch publish a prerelease
+electron-v<version>-preview.<branch> and keep a status comment on the branch's PR
+instead of opening issues. The promote input copies a complete preview's assets to
+electron-v<version>.
+
+* pin patched electron 45.4.1
+
+* route offscreen input through the router only once it knows the view
+
+Chromium 156 drops routed mouse and wheel events whose root view is not in the
+router's map yet; forward those straight to the widget instead.
+
+* keep the electron release notes inline, without a preview preamble
+
+* download promoted assets outside the checkout
+
+**File**: `.github/workflows/pixel-electron-build.yml` (modified, +176/-19)
 ```diff
-@@ -593,6 +593,8 @@ class Session {
-         devtools={this.devtoolsView()}
-         profiling={this.profiling}
-         grabActive={this.activeGrab()?.active ?? false}
-+        env={this.ctx.env}
-+        displayScale={this.root.displayScale}
-       />,
-     );
-   }
+@@ -1,5 +1,5 @@
+ name: pixel electron build
+-run-name: "build patched electron v${{ inputs.version }}"
++run-name: "${{ inputs.promote && format('promote electron v{0} preview from {1}', inputs.version, github.ref_name) || github.ref_name == github.event.repository.default_branch && format('build patched electron v{0}', inputs.version) || format('preview patched electron v{0} on {1}', inputs.version, github.ref_name) }}"
+ 
+ on:
+   workflow_dispatch:
+@@ -11,24 +11,60 @@ on:
+         description: "Comma separated platforms to build; the others keep their published assets"
+         required: false
+         default: "darwin-arm64,darwin-x64,linux-x64,linux-arm64"
++      promote:
++        description: "Copy this branch's preview release to the production release instead of building"
++        type: boolean
++        default: false
+ 
+ permissions:
+   contents: write
+   issues: write
++  pull-requests: write
+ 
+ concurrency:
+-  group: electron-build-${{ inputs.version }}
++  group: electron-build-${{ inputs.version }}-${{ github.ref_name }}
+   cancel-in-progress: false
+ 
+-# Releases are tagged electron-v<version> so they never collide with the pixel-v<version>
+-# tags of the pixel packages or terminal-browser's own v<version> tags.
++# Runs on the default branch publish the production release, tagged electron-v<version> so it
++# never collides with the pixel-v<version> tags of the pixel packages or terminal-browser's own
++# v<version> tags. Runs on any other branch publish a prerelease tagged
++# electron-v<version>-preview.<branch>, which installs ignore unless PIXEL_ELECTRON_MIRROR points
++# at it, and report on the branch's PR. Promoting copies a preview's assets to production as is.
+ jobs:
+   plan:
+     runs-on: ubuntu-latest
+     timeout-minutes: 5
+     outputs:
+       matrix: ${{ steps.matrix.outputs.matrix }}
++      channel: ${{ steps.channel.outputs.channel }}
++      tag: ${{ steps.channel.outputs.tag }}
++      preview_tag: ${{ steps.channel.outputs.preview_tag }}
+     steps:
++      - id: channel
++        env:
++          VERSION: ${{ inputs.version }}
++          PROMOTE: ${{ inputs.promote }}
++          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
++        run: |
++          set -euo pipefail
++          slug=$(printf %s "$GITHUB_REF_NAME" | tr -c 'A-Za-z0-9.-' '-')
++          preview_tag="electron-v$VERSION-preview.$slug"
++          if [ "$GITHUB_REF_NAME" = "$DEFAULT_BRANCH" ]; then
++            if [ "$PROMOTE" = "true" ]; then
++              echo "::error::promote runs on the branch whose preview should become production, not on $DEFAULT_BRANCH"
++              exit 1
++            fi
++            channel=production
++            tag="electron-v$VERSION"
++          else
++            channel=preview
++            tag="$preview_tag"
++          fi
++          echo "channel=$channel" >> "$GITHUB_OUTPUT"
++          echo "tag=$tag" >> "$GITHUB_OUTPUT"
++          echo "preview_tag=$preview_tag" >> "$GITHUB_OUTPUT"
++          echo "channel: $channel, release: $tag"
++
+       - id: matrix
+         env:
+           PLATFORMS: ${{ inputs.platforms || 'darwin-arm64,darwin-x64,linux-x64,linux-arm64' }}
+@@ -51,6 +87,7 @@ jobs:
+ 
+   build:
+     needs: plan
++    if: ${{ !inputs.promote }}
+     strategy:
+       fail-fast: false
+       matrix: ${{ fromJSON(needs.plan.outputs.matrix) }}
+@@ -84,8 +121,9 @@ jobs:
+             ${{ runner.temp }}/out/sha-${{ matrix.platform }}.txt
+           if-no-files-found: error
+ 
++      # a preview reports on its PR instead, and must not block the sync workflow
+       - name: Report failure loudly
+-        if: failure()
++        if: ${{ failure() && needs.plan.outputs.channel == 'production' }}
+         env:
+           GH_TOKEN: ${{ github.token }}
+         run: |
+@@ -104,11 +142,13 @@ jobs:
+   publish:
+     # single writer for the release and SHASUMS256.txt: the build legs run in
+     # parallel and never touch the release themselves
+-    needs: build
+-    if: ${{ !cancelled() }}
++    needs: [plan, build]
++    if: ${{ !cancelled() && !inputs.promote }}
+     runs-on: ubuntu-latest
+     timeout-minutes: 30
+     steps:
++      - uses: actions/checkout@v4
++
+       - uses: actions/download-artifact@v4
+         with:
+           pattern: electron-asset-*
+@@ -118,10 +158,12 @@ jobs:
+       - name: Publish whatever built
+         env:
+           GH_TOKEN: ${{ github.token }}
++          CHANNEL: ${{ needs.plan.outputs.channel }}
++          TAG: ${{ needs.plan.outputs.tag }}
++          PLATFORMS: ${{ inputs.platforms }}
+         run: |
+           set -euo pipefail
+           version="${{ inputs.version }}"
+-          tag="electron-v$version"
+           cd out
+           ls *.zip electron.d.ts >/dev/null
+           # every platform leg generates the same electron.d.ts and lists it
+@@ -142,23 +184,31 @@ jobs:
+           Build: cookies on disk are encrypted with an OS keychain key (the \`EnableCookieEncryption\` fuse), the macOS app is marked \`LSUIElement\` so it never shows in the Dock, and it is si
 ```
 
-**File**: `browser/src/ui/chrome.tsx` (modified, +17/-6)
+**File**: `.github/workflows/pixel-electron-sync.yml` (modified, +1/-1)
 ```diff
-@@ -21,6 +21,7 @@ import { TabStrip } from "./tab-strip";
- import { makeTheme, mix, withAlpha } from "./theme";
- import type { Theme } from "./theme";
- import { usePulse } from "./pulse";
-+import { REX_ZOOM_BUTTONS_POINTS, useInsideRexZoom } from "./rex-zoom";
- import type { RecordView } from "../record/types";
- import type {
-   ChromeActions,
-@@ -64,6 +65,8 @@ export function Chrome({
-   devtools,
-   profiling,
-   grabActive,
-+  env,
-+  displayScale,
- }: {
-   state: WebViewState;
-   actions: ChromeActions;
-@@ -89,11 +92,15 @@ export function Chrome({
-   devtools: DevtoolsView | null;
-   profiling: boolean;
-   grabActive: boolean;
-+  env: NodeJS.ProcessEnv;
-+  displayScale: number;
- }) {
-   const theme = useMemo(() => makeTheme(colors), [colors]);
-   const progress = useProgress(state.loading);
-   const agentActive = tabs.some((tab) => tab.active && tab.agentControlled);
-   const glowPulse = usePulse(agentActive);
-+  const safeRight = useInsideRexZoom(env) ? Math.round(REX_ZOOM_BUTTONS_POINTS * displayScale) : 0;
-+  const pageSafeRight = layout.toolbarHeight > 0 ? 0 : safeRight;
-   return (
-     <Box
-       style={{
-@@ -107,7 +114,7 @@ export function Chrome({
-     >
-       {layout.toolbarHeight > 0 &&
-         (record?.stopped ? (
--          <ReviewToolbar view={record} actions={actions} layout={layout} theme={theme} />
-+          <ReviewToolbar view={record} actions={actions} layout={layout} theme={theme} safeRight={safeRight} />
-         ) : (
-           <Toolbar
-             state={state}
-@@ -118,6 +125,7 @@ export function Chrome({
-             record={record}
-             profiling={profiling}
-             grabActive={grabActive}
-+            safeRight={safeRight}
-           />
-         ))}
-       <BrowserTabContents
-@@ -152,13 +160,13 @@ export function Chrome({
-         <RecordBar view={record} actions={actions} layout={layout} theme={theme} />
-       )}
-       {record && layout.toolbarHeight === 0 && (
--        <RecordCornerButton view={record} actions={actions} layout={layout} theme={theme} />
-+        <RecordCornerButton view={record} actions={actions} layout={layout} theme={theme} safeRight={pageSafeRight} />
-       )}
-       {pageMenu && (
-         <PageContextMenu view={pageMenu} actions={actions} layout={layout} theme={theme} />
-       )}
-       {findOpen && (
--        <FindBar state={state} actions={actions} layout={layout} theme={theme} />
-+        <FindBar state={state} actions={actions} layout={layout} theme={theme} safeRight={pageSafeRight} />
-       )}
-       {permissionPrompt && !record?.canvas && (
-         <PermissionPrompt view={permissionPrompt} actions={actions} layout={layout} theme={theme} />
-@@ -167,7 +175,7 @@ export function Chrome({
-         <ZoomHud factor={zoomHud} layout={layout} theme={theme} findOpen={findOpen} />
-       )}
-       {download && <DownloadHud download={download} layout={layout} theme={theme} />}
--      {toast && <Toast toast={toast} actions={actions} layout={layout} theme={theme} />}
-+      {toast && <Toast toast={toast} actions={actions} layout={layout} theme={theme} safeRight={pageSafeRight} />}
-       {progress != null && (
-         <Box
-           style={{
-@@ -280,6 +288,7 @@ function Toolbar({
-   record,
-   profiling,
-   grabActive,
-+  safeRight,
- }: {
-   state: WebViewState;
-   actions: ChromeActions;
-@@ -289,6 +298,7 @@ function Toolbar({
-   record: RecordView | null;
-   profiling: boolean;
-   grabActive: boolean;
-+  safeRight: number;
- }) {
-   const rem = layout.rem;
-   const stopIcon = useStopIcon(state.loading);
-@@ -300,15 +310,16 @@ function Toolbar({
-     rem * 3.5 -
-     (nav ? rem * 3.5 : 0) -
-     (record ? rem * 7.25 : 0) -
--    (profiling ? rem * 6.5 : 0);
-+    (profiling ? rem * 6.5 : 0) -
-+    safeRight;
-   return (
-     <Box
-       style={{
-         height: layout.toolbarHeight,
-         flexShrink: 0,
-         alignItems: "center",
-         gap: rem * 0.25,
--        padding: { left: rem * 0.4, right: rem * 0.4 },
-+        padding: { left: rem * 0.4, right: rem * 0.4 + safeRight },
-       }}
-     >
-       {(state.canGoBack || state.canGoForward) && (
+@@ -66,7 +66,7 @@ jobs:
+               echo "v$version: open issue exists (close it to re-enable), skipping"
+               continue
+             fi
+-            if grep -q "v$version" active-builds.txt; then
++            if grep -qx "build patched electron v$version" active-builds.txt; then
+               echo "v$version: build already queued or running, skipping"
+               continue
+             fi
 ```
 
-**File**: `browser/src/ui/overlays.tsx` (modified, +7/-3)
+**File**: `pixel/electron/patches/0001-osr-shm-frame.patch` (modified, +36/-36)
 ```diff
-@@ -11,11 +11,13 @@ export function FindBar({
-   actions,
-   layout,
-   theme,
-+  safeRight,
- }: {
-   state: WebViewState;
-   actions: ChromeActions;
-   layout: ChromeLayout;
-   theme: Theme;
-+  safeRight: number;
- }) {
-   const rem = layout.rem;
-   const [text, setText] = useState("");
-@@ -29,7 +31,7 @@ export function FindBar({
-     <Box
-       style={{
-         position: "absolute",
--        inset: { top: layout.toolbarHeight + rem * 0.45, right: rem * 0.75 },
-+        inset: { top: layout.toolbarHeight + rem * 0.45, right: rem * 0.75 + safeRight },
-         width: rem * 16,
-         height: rem * 2,
-         alignItems: "center",
-@@ -133,11 +135,13 @@ export function Toast({
-   actions,
-   layout,
-   theme,
-+  safeRight,
- }: {
-   toast: ToastView;
-   actions: ChromeActions;
-   layout: ChromeLayout;
-   theme: Theme;
-+  safeRight: number;
- }) {
-   const rem = layout.rem;
-   const detailLines = toast.detail ? toast.detail.split("\n") : [];
-@@ -146,11 +150,11 @@ export function Toast({
-     <Box
-       style={{
-         position: "absolute",
--        inset: { top: layout.toolbarHeight + rem * 0.5, right: rem * 0.75 },
-+        inset: { top: layout.toolbarHeight + rem * 0.5, right: rem * 0.75 + safeRight },
-         flexDirection: "column",
-         justifyContent: "center",
-         gap: rem * 0.6,
--        maxWidth: Math.min(rem * 21, layout.width - rem * 1.5),
-+        maxWidth: Math.min(rem * 21, layout.width - rem * 1.5 - safeRight),
-         padding: { left: rem * 0.9, right: rem * 0.9, top: rem * 0.5, bottom: rem * 0.5 },
-         background: toast.alert ? mix(theme.overlay, theme.red, 0.22) : theme.overlay,
-         cornerRadius: rem * 0.5,
+@@ -40,15 +40,15 @@ diff --git a/docs/api/structures/web-preferences.md b/docs/api/structures/web-pr
+ diff --git a/docs/api/web-contents.md b/docs/api/web-contents.md
+ --- a/docs/api/web-contents.md
+ +++ b/docs/api/web-contents.md
+-@@ -930,6 +930,7 @@ Returns:
++@@ -927,6 +927,7 @@ Returns:
+  
+  * `details` Event\<\>
+    * `texture` [OffscreenSharedTexture](structures/offscreen-shared-texture.md) (optional) _Experimental_ - The GPU shared texture of the frame, when `webPreferences.offscreen.useSharedTexture` is `true`.
+ +  * `softwareFrame` [OffscreenSoftwareFrame](structures/offscreen-software-frame.md) (optional) _Experimental_ - The shared memory frame, when `webPreferences.offscreen.useSharedMemory` is `true`.
+  * `dirtyRect` [Rectangle](structures/rectangle.md)
+  * `image` [NativeImage](native-image.md) - The image data of the whole frame.
+  
+-@@ -953,6 +954,8 @@ By managing the texture lifecycle by yourself, you can safely pass the `texture.
++@@ -950,6 +951,8 @@ By managing the texture lifecycle by yourself, you can safely pass the `texture.
+  
+  More details can be found in the [offscreen rendering tutorial](../tutorial/offscreen-rendering.md). To learn about how to handle the texture in native code, refer to [offscreen rendering's code documentation.](../../shell/browser/osr/README.md).
+  
+@@ -60,7 +60,7 @@ diff --git a/docs/api/web-contents.md b/docs/api/web-contents.md
+ diff --git a/shell/browser/api/electron_api_web_contents.cc b/shell/browser/api/electron_api_web_contents.cc
+ --- a/shell/browser/api/electron_api_web_contents.cc
+ +++ b/shell/browser/api/electron_api_web_contents.cc
+-@@ -927,6 +927,8 @@ WebContents::WebContents(v8::Isolate* isolate,
++@@ -1053,6 +1053,8 @@ WebContents::WebContents(v8::Isolate* isolate,
+        options.Get(options::kOffscreen, &use_offscreen_dict);
+        use_offscreen_dict.Get(options::kUseSharedTexture,
+                               &offscreen_use_shared_texture_);
+@@ -69,7 +69,7 @@ diff --git a/shell/browser/api/electron_api_web_contents.cc b/shell/browser/api/
+        use_offscreen_dict.Get(options::kSharedTexturePixelFormat,
+                               &offscreen_shared_texture_pixel_format_);
+        use_offscreen_dict.Get(options::kDeviceScaleFactor,
+-@@ -976,7 +978,7 @@ WebContents::WebContents(v8::Isolate* isolate,
++@@ -1099,7 +1101,7 @@ WebContents::WebContents(v8::Isolate* isolate,
+  
+      if (embedder_ && embedder_->IsOffScreen()) {
+        auto* view = new OffScreenWebContentsView(
+@@ -78,8 +78,8 @@ diff --git a/shell/browser/api/electron_api_web_contents.cc b/shell/browser/api/
+            offscreen_shared_texture_pixel_format_,
+            offscreen_device_scale_factor_,
+            base::BindRepeating(&WebContents::OnPaint, base::Unretained(this)));
+-@@ -1001,7 +1003,8 @@ WebContents::WebContents(v8::Isolate* isolate,
+-     params.starting_sandbox_flags = starting_sandbox_flags;
++@@ -1123,7 +1125,8 @@ WebContents::WebContents(v8::Isolate* isolate,
++     content::WebContents::CreateParams params{browser_context};
+      auto* view = new OffScreenWebContentsView(
+          transparent, offscreen_use_shared_texture_,
+ -        offscreen_shared_texture_pixel_format_, offscreen_device_scale_factor_,
+@@ -88,7 +88,7 @@ diff --git a/shell/browser/api/electron_api_web_contents.cc b/shell/browser/api/
+          base::BindRepeating(&WebContents::OnPaint, base::Unretained(this)));
+      params.view = view;
+      params.delegate_view = view;
+-@@ -1446,7 +1449,7 @@ void WebContents::MaybeOverrideCreateParamsForNewWindow(
++@@ -1600,7 +1603,7 @@ void WebContents::MaybeOverrideCreateParamsForNewWindow(
+        // Use a no-op callback here. The real OnPaint callback will be bound
+        // to the child WebContents in AddNewContents via SetCallback().
+        auto* view = new OffScreenWebContentsView(
+@@ -97,7 +97,7 @@ diff --git a/shell/browser/api/electron_api_web_contents.cc b/shell/browser/api/
+            offscreen_shared_texture_pixel_format_,
+            offscreen_device_scale_factor_, base::DoNothing());
+        create_params->view = view;
+-@@ -4295,7 +4298,8 @@ bool WebContents::IsOffScreen() const {
++@@ -4714,7 +4717,8 @@ bool WebContents::IsOffScreen() const {
+  
+  void WebContents::OnPaint(const gfx::Rect& dirty_rect,
+                            const SkBitmap& bitmap,
+@@ -107,7 +107,7 @@ diff --git a/shell/browser/api/electron_api_web_contents.cc b/shell/browser/api/
+    v8::Isolate* isolate = JavascriptEnvironment::GetIsolate();
+    v8::HandleScope handle_scope(isolate);
+  
+-@@ -4305,10 +4309,18 @@ void WebContents::OnPaint(const gfx::Rect& dirty_rect,
++@@ -4724,10 +4728,18 @@ void WebContents::OnPaint(const gfx::Rect& dirty_rect,
+        event->GetWrapper(isolate).ToLocalChecked();
+    gin_helper::Dictionary dict(isolate, event_object);
+  
+@@ -130,7 +130,7 @@ diff --git a/shell/browser/api/electron_api_web_contents.cc b/shell/browser/api/
+ diff --git a/shell/browser/api/electron_api_web_contents.h b/shell/browser/api/electron_api_web_contents.h
+ ---
 ```
 
-**File**: `browser/src/ui/record-bar.tsx` (modified, +6/-2)
+**File**: `pixel/electron/patches/0002-osr-vsync-display.patch` (modified, +6/-6)
 ```diff
-@@ -776,11 +776,13 @@ export function ReviewToolbar({
-   actions,
-   layout,
-   theme,
-+  safeRight,
- }: {
-   view: RecordView;
-   actions: ChromeActions;
-   layout: ChromeLayout;
-   theme: Theme;
-+  safeRight: number;
- }) {
-   const rem = layout.rem;
-   return (
-@@ -790,7 +792,7 @@ export function ReviewToolbar({
-         flexShrink: 0,
-         alignItems: "center",
-         gap: rem * 0.25,
--        padding: { left: rem * 0.4, right: rem * 0.4 },
-+        padding: { left: rem * 0.4, right: rem * 0.4 + safeRight },
-       }}
-     >
-       <Box
-@@ -915,14 +917,16 @@ export function RecordCornerButton({
-   actions,
-   layout,
-   theme,
-+  safeRight,
- }: {
-   view: RecordView;
-   actions: ChromeActions;
-   layout: ChromeLayout;
-   theme: Theme;
-+  safeRight: number;
- }) {
-   const rem = layout.rem;
--  const right = layout.width - (layout.page.x + layout.page.width) + rem * 0.9;
-+  const right = layout.width - (layout.page.x + layout.page.width) + rem * 0.9 + safeRight;
-   return (
-     <Box style={{ position: "absolute", inset: { right, top: layout.page.y + rem * 0.9 } }}>
-       <RecordToolbarPill view={view} actions={actions} rem={rem} theme={theme} />
+@@ -1,7 +1,7 @@
+ diff --git a/shell/browser/osr/osr_render_widget_host_view.cc b/shell/browser/osr/osr_render_widget_host_view.cc
+ --- a/shell/browser/osr/osr_render_widget_host_view.cc
+ +++ b/shell/browser/osr/osr_render_widget_host_view.cc
+-@@ -208,6 +208,9 @@ OffScreenRenderWidgetHostView::OffScreenRenderWidgetHostView(
++@@ -215,6 +215,9 @@ OffScreenRenderWidgetHostView::OffScreenRenderWidgetHostView(
+    compositor_->SetAcceleratedWidget(gfx::kNullAcceleratedWidget);
+    compositor_->SetDelegate(this);
+    compositor_->SetRootLayer(root_layer_.get());
+@@ -11,7 +11,7 @@ diff --git a/shell/browser/osr/osr_render_widget_host_view.cc b/shell/browser/os
+  
+    ResizeRootLayer(false);
+  
+-@@ -908,6 +911,10 @@ void OffScreenRenderWidgetHostView::SetupFrameRate(bool force) {
++@@ -927,6 +930,10 @@ void OffScreenRenderWidgetHostView::SetupFrameRate(bool force) {
+    if (!force && frame_rate_threshold_us_ != 0)
+      return;
+  
+@@ -22,7 +22,7 @@ diff --git a/shell/browser/osr/osr_render_widget_host_view.cc b/shell/browser/os
+    frame_rate_threshold_us_ = 1000000 / frame_rate_;
+  
+    if (compositor_) {
+-@@ -916,6 +923,21 @@ void OffScreenRenderWidgetHostView::SetupFrameRate(bool force) {
++@@ -935,6 +942,21 @@ void OffScreenRenderWidgetHostView::SetupFrameRate(bool force) {
+    }
+  }
+  
+@@ -47,13 +47,13 @@ diff --git a/shell/browser/osr/osr_render_widget_host_view.cc b/shell/browser/os
+ diff --git a/shell/browser/osr/osr_render_widget_host_view.h b/shell/browser/osr/osr_render_widget_host_view.h
+ --- a/shell/browser/osr/osr_render_widget_host_view.h
+ +++ b/shell/browser/osr/osr_render_widget_host_view.h
+-@@ -271,6 +271,9 @@ class OffScreenRenderWidgetHostView
+-  private:
++@@ -268,6 +268,9 @@ class OffScreenRenderWidgetHostView
+    void ReleaseCompositor();
+    void SetupFrameRate(bool force);
++   void ResizeRootLayer(bool force);
+ +#if BUILDFLAG(IS_MAC)
+ +  void UpdateVSyncDisplay();
+ +#endif
+-   void ResizeRootLayer(bool force);
+  
+    viz::FrameSinkId AllocateFrameSinkId();
++ 
 ```
 
-**File**: `browser/src/ui/rex-zoom.ts` (added, +80/-0)
+**File**: `pixel/electron/patches/0003-osr-wayland-scale.patch` (modified, +2/-2)
 ```diff
-@@ -0,0 +1,80 @@
-+import { execFile, spawn } from "node:child_process";
-+import type { ChildProcess } from "node:child_process";
-+import { createInterface } from "node:readline";
-+import { promisify } from "node:util";
+@@ -1,7 +1,7 @@
+ diff --git a/shell/browser/osr/osr_render_widget_host_view.cc b/shell/browser/osr/osr_render_widget_host_view.cc
+ --- a/shell/browser/osr/osr_render_widget_host_view.cc
+ +++ b/shell/browser/osr/osr_render_widget_host_view.cc
+-@@ -972,6 +972,43 @@ OffScreenRenderWidgetHostView::GetNewScreenInfosForUpdate() {
++@@ -991,6 +991,43 @@ OffScreenRenderWidgetHostView::GetNewScreenInfosForUpdate() {
+    return screen_infos;
+  }
+  
+@@ -48,7 +48,7 @@ diff --git a/shell/browser/osr/osr_render_widget_host_view.cc b/shell/browser/os
+ diff --git a/shell/browser/osr/osr_render_widget_host_view.h b/shell/browser/osr/osr_render_widget_host_view.h
+ --- a/shell/browser/osr/osr_render_widget_host_view.h
+ +++ b/shell/browser/osr/osr_render_widget_host_view.h
+-@@ -169,6 +169,9 @@ class OffScreenRenderWidgetHostView
++@@ -162,6 +162,9 @@ class OffScreenRenderWidgetHostView
+    gfx::Size GetCompositorViewportPixelSize() override;
+    ui::Compositor* GetCompositor() override;
+    display::ScreenInfos GetNewScreenInfosForUpdate() override;
+```
+
+**File**: `pixel/electron/patches/0004-osr-wheel-phase.patch` (modified, +1/-1)
+```diff
+@@ -1,7 +1,7 @@
+ diff --git a/shell/browser/osr/osr_render_widget_host_view.cc b/shell/browser/osr/osr_render_widget_host_view.cc
+ --- a/shell/browser/osr/osr_render_widget_host_view.cc
+ +++ b/shell/browser/osr/osr_render_widget_host_view.cc
+-@@ -857,7 +857,7 @@ void OffScreenRenderWidgetHostView::SendMouseWheelEvent(
++@@ -876,7 +876,7 @@ void OffScreenRenderWidgetHostView::SendMouseWheelEvent(
+    }
+    if (!render_widget_host_)
+      return;
+```
+
+**File**: `pixel/electron/patches/0005-osr-resize-surface-id.patch` (modified, +8/-8)
+```diff
+@@ -1,7 +1,7 @@
+ diff --git a/shell/browser/osr/osr_render_widget_host_view.cc b/shell/browser/osr/osr_render_widget_host_view.cc
+ --- a/shell/browser/osr/osr_render_widget_host_view.cc
+ +++ b/shell/browser/osr/osr_render_widget_host_view.cc
+-@@ -281,6 +281,15 @@ void OffScreenRenderWidgetHostView::InitAsChild(gfx::NativeView) {
++@@ -288,6 +288,15 @@ void OffScreenRenderWidgetHostView::InitAsChild(gfx::NativeView) {
+  }
+  
+  void OffScreenRenderWidgetHostView::SetSize(const gfx::Size& size) {
+@@ -17,7 +17,7 @@ diff --git a/shell/browser/osr/osr_render_widget_host_view.cc b/shell/browser/os
+    size_ = size;
+    SynchronizeVisualProperties();
+  }
+-@@ -736,6 +745,10 @@ void OffScreenRenderWidgetHostView::SynchronizeVisualProperties() {
++@@ -755,6 +764,10 @@ void OffScreenRenderWidgetHostView::SynchronizeVisualProperties() {
+      return;
+    }
+  
+@@ -28,7 +28,7 @@ diff --git a/shell/browser/osr/osr_render_widget_host_view.cc b/shell/browser/os
+    ResizeRootLayer(true);
+  }
+  
+-@@ -1012,16 +1025,26 @@ void OffScreenRenderWidgetHostView::UpdateScreenInfo() {
++@@ -1031,16 +1044,26 @@ void OffScreenRenderWidgetHostView::UpdateScreenInfo() {
+  void OffScreenRenderWidgetHostView::ResizeRootLayer(bool force) {
+    SetupFrameRate(false);
+  
+@@ -59,7 +59,7 @@ diff --git a/shell/browser/osr/osr_render_widget_host_view.cc b/shell/browser/os
+    root_layer()->SetBounds(gfx::Rect(size));
+  
+    auto sf = GetDeviceScaleFactor();
+-@@ -1034,10 +1057,6 @@ void OffScreenRenderWidgetHostView::ResizeRootLayer(bool force) {
++@@ -1053,10 +1076,6 @@ void OffScreenRenderWidgetHostView::ResizeRootLayer(bool force) {
+      compositor_->SetDisplayColorSpaces(new_screen_info.display_color_spaces);
+    }
+  
+@@ -70,7 +70,7 @@ diff --git a/shell/browser/osr/osr_render_widget_host_view.cc b/shell/browser/os
+    delegated_frame_host()->EmbedSurface(
+        delegated_frame_host_surface_id_, size,
+        cc::DeadlinePolicy::UseDefaultDeadline());
+-@@ -1050,6 +1069,12 @@ void OffScreenRenderWidgetHostView::ResizeRootLayer(bool force) {
++@@ -1069,6 +1088,12 @@ void OffScreenRenderWidgetHostView::ResizeRootLayer(bool force) {
+    }
+  }
+  
+@@ -94,15 +94,15 @@ diff --git a/shell/browser/osr/osr_render_widget_host_view.h b/shell/browser/osr
+  #include <string>
+  #include <vector>
+  
+-@@ -278,6 +279,7 @@ class OffScreenRenderWidgetHostView
++@@ -274,6 +275,7 @@ class OffScreenRenderWidgetHostView
++ #if BUILDFLAG(IS_MAC)
+    void UpdateVSyncDisplay();
+  #endif
+-   void ResizeRootLayer(bool force);
+ +  void AllocateDelegatedFrameHostSurfaceId();
+  
+    viz::FrameSinkId AllocateFrameSinkId();
+  
+-@@ -315,6 +317,7 @@ class OffScreenRenderWidgetHostView
++@@ -311,6 +313,7 @@ class OffScreenRenderWidgetHostView
+  
+    bool hold_resize_ = false;
+    bool pending_resize_ = false;
+```
+
+**File**: `pixel/electron/patches/0006-media-capture-state.patch` (modified, +31/-29)
+```diff
+@@ -11,7 +11,7 @@ new file mode 100644
+ diff --git a/docs/api/web-contents.md b/docs/api/web-contents.md
+ --- a/docs/api/web-contents.md
+ +++ b/docs/api/web-contents.md
+-@@ -743,6 +743,15 @@ Returns:
++@@ -740,6 +740,15 @@ Returns:
+  
+  Emitted when media becomes audible or inaudible.
+  
+@@ -27,7 +27,7 @@ diff --git a/docs/api/web-contents.md b/docs/api/web-contents.md
+  #### Event: 'did-change-theme-color'
+  
+  Returns:
+-@@ -1541,6 +1550,10 @@ Returns `boolean` - Whether this page has been muted.
++@@ -1533,6 +1542,10 @@ Returns `boolean` - Whether this page has been muted.
+  
+  Returns `boolean` - Whether audio is currently playing.
+  
+@@ -41,7 +41,7 @@ diff --git a/docs/api/web-contents.md b/docs/api/web-contents.md
+ diff --git a/filenames.gni b/filenames.gni
+ --- a/filenames.gni
+ +++ b/filenames.gni
+-@@ -442,6 +442,8 @@ filenames = {
++@@ -479,6 +479,8 @@ filenames = {
+      "shell/browser/login_handler.h",
+      "shell/browser/media/media_capture_devices_dispatcher.cc",
+      "shell/browser/media/media_capture_devices_dispatcher.h",
+@@ -53,15 +53,15 @@ diff --git a/filenames.gni b/filenames.gni
+ diff --git a/shell/browser/api/electron_api_web_contents.cc b/shell/browser/api/electron_api_web_contents.cc
+ --- a/shell/browser/api/electron_api_web_contents.cc
+ +++ b/shell/browser/api/electron_api_web_contents.cc
+-@@ -207,6 +207,7 @@
++@@ -216,6 +216,7 @@
+  #include "extensions/browser/view_type_utils.h"
+  #include "extensions/common/mojom/view_type.mojom.h"
+  #include "shell/browser/extensions/electron_extension_web_contents_observer.h"
+ +#include "shell/browser/media/media_capture_ui.h"
+  #endif
+  
+  #if BUILDFLAG(ENABLE_PRINTING)
+-@@ -3683,6 +3684,32 @@ bool WebContents::IsCurrentlyAudible() {
++@@ -4019,6 +4020,32 @@ bool WebContents::IsCurrentlyAudible() {
+    return web_contents()->IsCurrentlyAudible();
+  }
+  
+@@ -94,18 +94,20 @@ diff --git a/shell/browser/api/electron_api_web_contents.cc b/shell/browser/api/
+  #if BUILDFLAG(ENABLE_PRINTING)
+  namespace {
+  
+-@@ -5262,6 +5289,7 @@ void WebContents::FillObjectTemplate(v8::Isolate* isolate,
+-       .SetMethod("setAudioMuted", &WebContents::SetAudioMuted)
+-       .SetMethod("isAudioMuted", &WebContents::IsAudioMuted)
+-       .SetMethod("isCurrentlyAudible", &WebContents::IsCurrentlyAudible)
++@@ -5787,6 +5814,9 @@ void WebContents::FillObjectTemplate(v8::Isolate* isolate,
++       gin::CreateFunctionTemplate(
++           isolate, base::BindRepeating(&gin_helper::Destroyable::IsDestroyed),
++           options));
+++  gin_helper::ObjectTemplateBuilder(isolate, templ)
+ +      .SetMethod("getMediaCapture", &WebContents::GetMediaCapture)
+-       .SetMethod("setCaretBrowsingEnabled",
+-                  &WebContents::SetCaretBrowsingEnabled)
+-       .SetMethod("isCaretBrowsingEnabled", &WebContents::IsCaretBrowsingEnabled)
+++      .Build();
++   // We use gin_helper::ObjectTemplateBuilder instead of
++   // gin::ObjectTemplateBuilder here to handle the fact that WebContents is
++   // destroyable.
+ diff --git a/shell/browser/api/electron_api_web_contents.h b/shell/browser/api/electron_api_web_contents.h
+ --- a/shell/browser/api/electron_api_web_contents.h
+ +++ b/shell/browser/api/electron_api_web_contents.h
+-@@ -101,6 +101,8 @@ class DevToolsEyeDropper;
++@@ -108,6 +108,8 @@ class DevToolsEyeDropper;
+  
+  namespace electron {
+  
+@@ -114,7 +116,7 @@ diff --git a/shell/browser/api/electron_api_web_contents.h b/shell/browser/api/e
+  class DevToolsContextMenu;
+  class DraggableRegionDebugger;
+  class ElectronBrowserContext;
+-@@ -263,6 +265,8 @@ class WebContents final : public ExclusiveAccessContext,
++@@ -273,6 +275,8 @@ class WebContents final : public ExclusiveAccessContext,
+    void SetAudioMuted(bool muted);
+    bool IsAudioMuted();
+    bool IsCurrentlyAudible();
+@@ -127,7 +129,7 @@ diff --git a/shell/browser/media/media_capture_ui.cc b/shell/browser/media/media
+ new file mode 100644
+ --- /dev/null
+ +++ b/shell/browser/media/media_capture_ui.cc
+-@@ -0,0 +1,152 @@
++@@ -0,0 +1,153 @@
+ +// Copyright (c) 2026 Zenbu Labs. All rights reserved.
+ +// Use of this source code is governed by the MIT license that can be
+ +// found in the LICENSE file.
+@@ -273,7 +275,8 @@ new file mode 100644
+ +content::MediaResponseCallback TrackMediaCapture(
+ +    content::WebContents* web_contents,
+ +    content::MediaResponseCallback callback) {
+-+  return base::BindOnce(&RespondWithTracking, web_contents->GetWeakPtr(),
+++  return base::BindOnce(&RespondWithTracking,
+++                        web_contents ? web_contents->GetWeakPtr() : nullptr,
+ +                        std::move(callback));
+ +}
+ +
+@@ -346,23 +349,22 @@ new file mode 100644
+ diff --git a/shell/browser/web_contents_permission_helper.cc b/shell/browser/web_contents_permission_helper.cc
+ --- a/shell/browser/web_contents_permission_helper.cc
+ +++ b/shell/browser/web_contents_permission_helper.cc
+-@@ -18,6 +18,7 @@
++@@ -19,6 +19,7 @@
+  #include "shell/browser/electron_browser_context.h"
+  #include "shell/browser/electron_permission_mana
+```
+
+---
+
+### Incident Patch 2: `a47886a0` (2026-11-24)
+**Commit Message**: fix ratio not respected inside rex
+
+**File**: `pixel/packages/pixel/src/terminal/terminals/rex.ts` (modified, +19/-3)
+```diff
+@@ -1,3 +1,5 @@
++import path from "node:path";
 +
-+import { useEffect, useState } from "react";
-+
-+const exec = promisify(execFile);
-+
-+export const REX_ZOOM_BUTTONS_POINTS = 35;
-+
-+const RECONNECT_MS = 1000;
-+
-+interface RexSession {
-+  windows: { zoomed_block_id?: string }[];
-+}
-+
-+interface RexEvent {
-+  payload?: { event?: { type?: string } };
-+}
-+
-+export function useInsideRexZoom(env: NodeJS.ProcessEnv): boolean {
-+  const [zoomed, setZoomed] = useState(false);
-+  const session = env.REX_SESSION;
-+  const block = env.REX_BLOCK;
-+
-+  useEffect(() => {
-+    if (!session || !block) return;
-+    let stopped = false;
-+    let checking = false;
-+    let stale = false;
-+
-+    async function check() {
-+      if (checking) {
-+        stale = true;
-+        return;
-+      }
-+      checking = true;
-+      do {
-+        stale = false;
-+        const view = await exec("rex", ["session", "inspect", session!, "--json"], { env })
-+          .then(({ stdout }) => JSON.parse(stdout) as RexSession)
-+          .catch(() => null);
-+        if (view && !stopped) setZoomed(view.windows.some((window) => window.zoomed_block_id === block));
-+      } while (stale && !stopped);
-+      checking = false;
-+    }
-+
-+    let events: ChildProcess | null = null;
-+    let reconnect: ReturnType<typeof setTimeout> | null = null;
-+
-+    function follow() {
-+      const child = spawn("rex", ["events", "-s", session!, "--json"], {
-+        env,
-+        stdio: ["ignore", "pipe", "ignore"],
-+      });
-+      child.on("error", () => {});
-+      child.on("exit", () => {
-+        if (!stopped) reconnect = setTimeout(follow, RECONNECT_MS);
-+      });
-+      createInterface({ input: child.stdout }).on("line", (line) => {
-+        try {
-+          const event = JSON.parse(line) as RexEvent;
-+          if (event.payload?.event?.type === "session_view_changed") void check();
-+        } catch {}
-+      });
-+      events = child;
-+      void check();
-+    }
-+
-+    follow();
-+    return () => {
-+      stopped = true;
-+      if (reconnect) clearTimeout(reconnect);
-+      events?.kill();
-+    };
-+  }, [session, block]);
-+
-+  return zoomed;
-+}
+ import { adjacentPane, bracketedPaste, paneById, PASTE_KEY } from "../shared";
+ import type { PaneRect } from "../shared";
+ import type { Detect, Pane, PaneDetails } from "../terminal";
+@@ -35,7 +37,8 @@ function layoutRects(layout: RexLayout | undefined, into: PaneRect[] = []): Pane
+ export const rex: Detect = (env, run) => {
+   if (!env.REX_BLOCK && env.TERM_PROGRAM !== "rex") return null;
+ 
+-  const rex = (args: string[], input?: string) => run("rex", args, input);
++  const bin = env.REX_BIN_DIR ? path.join(env.REX_BIN_DIR, "rex") : "rex";
++  const rex = (args: string[], input?: string) => run(bin, args, input);
+ 
+   async function panes(): Promise<Pane[]> {
+     const { blocks } = JSON.parse(await rex(["block", "ls", "--json"])) as {
+@@ -90,8 +93,21 @@ export const rex: Detect = (env, run) => {
+       await rex(["focus", pane]);
+     },
+     async split({ from, direction, command, size }) {
+-      const ratio = size ? ["--ratio", String(Math.round(size * 100))] : [];
+-      await rex(["split", "--block", from.id, "--split", SPLIT_DIRECTION[direction], ...ratio, "--", ...command]);
++      const created = (await rex(["split", "--block", from.id, "--split", SPLIT_DIRECTION[direction], "--", ...command])).trim();
++      if (!size || !created || !env.REX_SESSION) return;
++      const newBlockFirst = direction === "left" || direction === "up";
++      await rex([
++        "api",
++        "call",
++        "session.resize_pane",
++        JSON.stringify({
++          session_id: env.REX_SESSION,
++          direction: direction === "left" || direction === "right" ? "horizontal" : "vertical",
++          before_block_id: newBlockFirst ? created : from.id,
++          after_block_id: newBlockFirst ? from.id : created,
++          ratio: newBlockFirst ? size : 1 - size,
++        }),
++      ]);
+     },
+   };
+ };
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #334** (2026-11-24): Fix electron patch conflicts, update to latest electron (@RobPruzan)
 - **PR #328** (2026-11-23): move webview content with chromium's scroll tree (@RobPruzan)
 - **PR #327** (2026-11-22): add conditional ui location for zoomed rex pane (@RobPruzan)
 - **PR #325** (2026-11-21): instant wheel scroll (@RobPruzan)
 - **PR #319** (2026-11-20): apply webview page scrolls as image offset instructions (@RobPruzan)
 - **PR #318** (2026-11-19): fix incorrect cell size report (@RobPruzan)
-- **PR #309** (2026-11-21): pixel ssh mode v2 (@RobPruzan)
 
 ---
 
@@ -1917,32 +2155,53 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. add conditional ui location for zoomed rex pane
+## X. electron patch conflicts, update to latest electron
 
 **RULE**:
-When implementing operations in `browser/src/session/session.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zenbu-labs/terminal-browser. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/pixel-electron-build.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zenbu-labs/terminal-browser. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3e5be01b`: add conditional ui location for zoomed rex pane. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `99022d83`: electron patch conflicts, update to latest electron. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `browser/src/session/session.tsx`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/pixel-electron-build.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        env={this.ctx.env}
-        displayScale={this.root.displayScale}
+run-name: "${{ inputs.promote && format('promote electron v{0} preview from {1}', inputs.version, github.ref_name) || github.ref_name == github.event.repository.default_branch && format('build patched electron v{0}', inputs.version) || format('preview patched electron v{0} on {1}', inputs.version, github.ref_name) }}"
+      promote:
+        description: "Copy this branch's preview release to the production release instead of building"
+        type: boolean
+        default: false
+  pull-requests: write
+  group: electron-build-${{ inputs.version }}-${{ github.ref_name }}
+# Runs on the default branch publish the production release, tagged electron-v<version> so it
+# never collides with the pixel-v<version> tags of the pixel packages or terminal-browser's own
+# v<version> tags. Runs on any other branch publish a prerelease tagged
+# electron-v<version>-preview.<branch>, which installs ignore unless PIXEL_ELECTRON_MIRROR points
+# at it, and report on the branch's PR. Promoting copies a preview's assets to production as is.
+      channel: ${{ steps.channel.outputs.channel }}
+      tag: ${{ steps.channel.outputs.tag }}
+      preview_tag: ${{ steps.channel.outputs.preview_tag }}
+      - id:
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+run-name: "build patched electron v${{ inputs.version }}"
+  group: electron-build-${{ inputs.version }}
+# Releases are tagged electron-v<version> so they never collide with the pixel-v<version>
+# tags of the pixel packages or terminal-browser's own v<version> tags.
+        if: failure()
+    needs: build
+    if: ${{ !cancelled() }}
+          tag="electron-v$version"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3e5be01b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `99022d83` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

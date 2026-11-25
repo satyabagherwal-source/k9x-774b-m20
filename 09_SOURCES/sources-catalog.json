@@ -1593,10 +1593,10 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "platform": "github",
     "sourceUrl": "https://github.com/aleo-labs-protocol/snarkOS",
-    "sourceVersion": "04985e7d",
+    "sourceVersion": "b2a26d2e",
     "license": "Apache-2.0",
-    "contentHash": "9e8a2fe30a49aa9ba5a59684a1ad61f9aea37beb3a3a755db085eb2f6cfa26cd",
-    "lastHarvestedAt": "2026-11-24T15:36:10.372Z",
+    "contentHash": "7332a10398829d3e1f53c9b9641184caa8b1c58820d1f07c2f06ab9f27090da5",
+    "lastHarvestedAt": "2026-11-25T00:26:49.895Z",
     "learningId": "learn-github-aleo-labs-protocol-snarkos"
   },
   "volcengine-openviking": {
@@ -2223,10 +2223,10 @@
     "repository": "crate/crate",
     "platform": "github",
     "sourceUrl": "https://github.com/crate/crate",
-    "sourceVersion": "2799f146",
+    "sourceVersion": "364278b1",
     "license": "Apache-2.0",
-    "contentHash": "e36d2780b37a503b038180b83e36bb0d8d0ea8ee9060dc516901a60f07bdbf29",
-    "lastHarvestedAt": "2026-11-24T03:58:41.251Z",
+    "contentHash": "1ec39489f42249c153e218b1c8f93e77295303415e0d19b591076fa8cd9d38be",
+    "lastHarvestedAt": "2026-11-25T00:26:52.594Z",
     "learningId": "learn-github-crate-crate"
   },
   "nucleoidai-nucleoid": {
@@ -4613,10 +4613,10 @@
     "repository": "hashicorp/terraform",
     "platform": "github",
     "sourceUrl": "https://github.com/hashicorp/terraform",
-    "sourceVersion": "2a1f0dad",
+    "sourceVersion": "56460311",
     "license": "NOASSERTION",
-    "contentHash": "0d1eab44125921ae29a1b58c4a9be0b6f5dbae7b7daac5c4bf4868fde811fcec",
-    "lastHarvestedAt": "2026-11-24T05:14:11.582Z",
+    "contentHash": "eed36a1c77c10efa86a03e9b70ef8410445a1921a4812f253ceaa479843b9eed",
+    "lastHarvestedAt": "2026-11-25T00:26:47.799Z",
     "learningId": "learn-github-hashicorp-terraform"
   },
   "tako8ki-gobang": {
@@ -7303,10 +7303,10 @@
     "repository": "zenbu-labs/terminal-browser",
     "platform": "github",
     "sourceUrl": "https://github.com/zenbu-labs/terminal-browser",
-    "sourceVersion": "d486e054",
+    "sourceVersion": "99022d83",
     "license": "MIT",
-    "contentHash": "8871071470abab78c850ad4b015cc6343ce932595f20f446f8a2eedfdc68e8b8",
-    "lastHarvestedAt": "2026-11-23T21:23:05.084Z",
+    "contentHash": "1960374ccacd00981aa38092f2326b35d9e2e638369df989a860e0fc7924f226",
+    "lastHarvestedAt": "2026-11-25T00:26:40.090Z",
     "learningId": "learn-github-zenbu-labs-terminal-browser"
   },
   "kosi-libs-kodein": {
@@ -10093,10 +10093,10 @@
     "repository": "QwikDev/qwik",
     "platform": "github",
     "sourceUrl": "https://github.com/QwikDev/qwik",
-    "sourceVersion": "fa8e12f1",
+    "sourceVersion": "04c312f5",
     "license": "MIT",
-    "contentHash": "25fe586776364bc2820e759a63cf06ec3798056175fc33366f225c7cc149e179",
-    "lastHarvestedAt": "2026-11-21T00:51:58.112Z",
+    "contentHash": "b85f6b5415af7f67c57064528481a92825daf3b7b693954c92de50b9798d9470",
+    "lastHarvestedAt": "2026-11-25T00:26:43.113Z",
     "learningId": "learn-github-qwikdev-qwik"
   },
   "typewhisper-typewhisper-mac": {
