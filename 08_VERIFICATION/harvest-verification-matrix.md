@@ -12972,3 +12972,6 @@
 | `CYCLE-20261125-6QTG` | `2026-11-25T06:39:20.644Z` | `TableProApp/TablePro` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10471` | Yes (`855d1580...`) |
 | `CYCLE-20261125-6S0L` | `2026-11-25T06:39:22.197Z` | `stakater/Reloader` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10472` | Yes (`67ce5517...`) |
 | `CYCLE-20261125-6VHL` | `2026-11-25T06:39:26.697Z` | `gluesql/gluesql` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10473` | Yes (`82a709b3...`) |
+| `CYCLE-20261125-HG16` | `2026-11-25T06:47:39.882Z` | `RecursiveSI/flint` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-recursivesi-flint-learnings.md` | Yes (`26aa5c7c...`) |
+| `CYCLE-20261125-HJ4F` | `2026-11-25T06:47:43.887Z` | `codewhale-hq/Codewhale` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hmbown-codewhale-learnings.md` | Yes (`e1decd0d...`) |
+| `CYCLE-20261125-HQLG` | `2026-11-25T06:47:53.572Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10474` | Yes (`e628f53f...`) |

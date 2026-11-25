@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T06:39:31.746Z",
+  "last_updated": "2026-11-25T06:47:59.035Z",
   "directives": [
     {
       "id": "CD-001",
@@ -58537,11 +58537,11 @@
       "staged_date": "2026-11-25"
     },
     {
-      "id": "CD-CVT0",
+      "id": "CD-HTRR",
       "directive_title": "docs(dsh,release): record 0.10.5 DSH qualification, restore credits, and fix web",
-      "source_repo": "codewhale-hq-codewhale-learnings",
+      "source_repo": "hmbown-codewhale-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-CVT0-docs-dsh-release-record-0-10-5-dsh-qualification-restore-credits-and-fix-web.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-HTRR-docs-dsh-release-record-0-10-5-dsh-qualification-restore-credits-and-fix-web.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-25",
@@ -59975,6 +59975,55 @@
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-25",
       "domain_letter": "G"
+    },
+    {
+      "id": "CD-HJ56",
+      "directive_title": "docs(dsh,release): record 0.10.5 DSH qualification, restore credits, and fix web",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "codewhale-hq/Codewhale",
+      "source_commit": "b4f71726",
+      "date_staged": "2026-11-25",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **VERIFICATION METHOD** automated verification protocol",
+      "learning_id": "learn-github-codewhale-hq-codewhale",
+      "candidateDomain": "UNASSIGNED",
+      "candidateDomainName": null,
+      "secondaryDomains": [],
+      "classificationConfidence": 0,
+      "intendedFolder": "05_KNOWLEDGE",
+      "intendedPath": "05_KNOWLEDGE/engineering-patterns.md",
+      "isUntrusted": false
+    },
+    {
+      "id": "CD-HQS5",
+      "directive_title": "sync main to 0.2.166 after release",
+      "source_repo": "freenet/freenet-core",
+      "source_commit": "d71c022a",
+      "staged_file": "11_INBOX/candidate-directives/CD-HQS5-sync-main-to-0-2-166-after-release.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-25",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-62293E",
+      "directive_title": "docs(dsh,release): record 0.10.5 DSH qualification, restore credits, and fix web",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "hmbown-codewhale",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-62293E-docs-dsh-release-record-0-10-5-dsh-quali.md",
+      "staged_date": "2026-11-25"
+    },
+    {
+      "id": "CD-HUT4",
+      "directive_title": "build: sync main to 0.2.166 after release",
+      "source_repo": "freenet-freenet-core-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-HUT4-build-sync-main-to-0-2-166-after-release.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-25",
+      "domain_letter": "H"
     }
   ]
 }

@@ -2603,10 +2603,10 @@
     "repository": "codewhale-hq/Codewhale",
     "platform": "github",
     "sourceUrl": "https://github.com/Hmbown/Codewhale",
-    "sourceVersion": "f7634e86",
+    "sourceVersion": "b4f71726",
     "license": "MIT",
-    "contentHash": "4a356a2d400a771e3ef29690a44a06fffb4ac6762d13ad61ae38e25bf93d3c26",
-    "lastHarvestedAt": "2026-11-24T04:45:10.518Z",
+    "contentHash": "e1decd0ddd4da9a2cb34bf70efa3e8224cae19a912abcd4369be7bdea63bba17",
+    "lastHarvestedAt": "2026-11-25T06:47:43.891Z",
     "learningId": "learn-github-codewhale-hq-codewhale"
   },
   "zulip-zulip": {
@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "1b511d59",
+    "sourceVersion": "d71c022a",
     "license": "NOASSERTION",
-    "contentHash": "8102926d168534cbeb3f21ce293009b3cc6dc3959c1e031b51c310b19af7bcca",
-    "lastHarvestedAt": "2026-11-25T02:28:57.053Z",
+    "contentHash": "e628f53fb6a3efc37ce3605e9886673abc3d9ed06e5bc1f3afc177d7fe2db5ea",
+    "lastHarvestedAt": "2026-11-25T06:47:53.576Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {
@@ -10515,8 +10515,8 @@
     "sourceUrl": "https://huggingface.co/RecursiveSI/flint",
     "sourceVersion": "hf-recursivesi-flint",
     "license": "Open-Source",
-    "contentHash": "f9a6aed6a4524603092be0d0010dc42401dd0d44cb7c5a937b8b24c749134007",
-    "lastHarvestedAt": "2026-11-21T12:48:40.859Z",
+    "contentHash": "26aa5c7c8fb97b34eace158732e831827ef3767ba0382ed572491780625a8d32",
+    "lastHarvestedAt": "2026-11-25T06:47:39.887Z",
     "learningId": "learn-huggingface-recursivesi-flint"
   },
   "hf-qwen-qwen3-14b": {

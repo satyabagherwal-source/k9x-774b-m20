@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261123-EEHF",
-    "timestamp": "2026-11-23T19:17:47.091Z",
-    "repository": "autotrust/GEV-26B-Decide-NVFP4",
-    "learningId": "learn-huggingface-autotrust-gev-26b-decide-nvfp4",
-    "contentHash": "4e319837218a37d4b36c5cf9db10d054576ecbfafdcdff975c8b88198ab68890",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-EMOX",
-    "timestamp": "2026-11-23T19:17:57.729Z",
-    "repository": "kube-rs/kube",
-    "learningId": "learn-github-kube-rs-kube",
-    "contentHash": "340cdec43fa6b19b6ad9c26d6b29af6d8476f95e85b58a6ee7cb8699e00b4c9b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-P42I",
-    "timestamp": "2026-11-23T19:26:06.810Z",
-    "repository": "domcyrus/rustnet",
-    "learningId": "learn-github-domcyrus-rustnet",
-    "contentHash": "b8d1c94b15a378f62a1dda6089967129f28d28be7e0fe0555cbd8e115bfd7fde",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261123-P4XQ",
     "timestamp": "2026-11-23T19:26:07.934Z",
     "repository": "RadixArk/DaisyRose-27B",
@@ -7490,6 +7445,51 @@
     "repository": "gluesql/gluesql",
     "learningId": "learn-github-gluesql-gluesql",
     "contentHash": "82a709b3d541b83d74af5f12c8bde45401cd069297356ff01afaeea1a69a4f52",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-HG16",
+    "timestamp": "2026-11-25T06:47:39.882Z",
+    "repository": "RecursiveSI/flint",
+    "learningId": "learn-huggingface-recursivesi-flint",
+    "contentHash": "26aa5c7c8fb97b34eace158732e831827ef3767ba0382ed572491780625a8d32",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-HJ4F",
+    "timestamp": "2026-11-25T06:47:43.887Z",
+    "repository": "codewhale-hq/Codewhale",
+    "learningId": "learn-github-codewhale-hq-codewhale",
+    "contentHash": "e1decd0ddd4da9a2cb34bf70efa3e8224cae19a912abcd4369be7bdea63bba17",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-HQLG",
+    "timestamp": "2026-11-25T06:47:53.572Z",
+    "repository": "freenet/freenet-core",
+    "learningId": "learn-github-freenet-freenet-core",
+    "contentHash": "e628f53fb6a3efc37ce3605e9886673abc3d9ed06e5bc1f3afc177d7fe2db5ea",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

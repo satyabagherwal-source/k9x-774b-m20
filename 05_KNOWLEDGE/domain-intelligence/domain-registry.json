@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T06:39:31.935Z",
+  "last_updated": "2026-11-25T06:47:59.209Z",
   "total_records": 2638,
   "domains": {
     "A": {
@@ -10004,8 +10004,8 @@
       "title": "Technical Construction Intelligence: freenet/freenet-core Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-technical-construction-intelligence-freenet-freenet-core-co.md",
       "repository": "freenet/freenet-core",
-      "content_hash": "6126778233f617bec07ec9f2318e9478d183347356a6523a40e064c2e0bc814c",
-      "created_at": "2026-11-25T02:28:57.295Z"
+      "content_hash": "c00a9d6b75522b510fa2fb1224b9d141ee817c88dd59e81be68fc73987fa94d4",
+      "created_at": "2026-11-25T06:47:53.989Z"
     },
     "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-core-invariants",
@@ -10082,8 +10082,8 @@
       "title": "Technical Construction Intelligence: freenet-freenet-core-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-learnings-technical-construction-intelligence-freenet-freen.md",
       "repository": "freenet-freenet-core-learnings",
-      "content_hash": "037e1b5d9dab3aa55072556ccbb9317cbf0c2dd375433dc21fbed4b573c14115",
-      "created_at": "2026-11-25T02:30:10.923Z"
+      "content_hash": "47a699dcd81b06fe5ae4a7f621d731ac29402d59ffc1d0382e5d723288365bc0",
+      "created_at": "2026-11-25T06:47:59.209Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c",
@@ -16477,10 +16477,10 @@
       "record_id": "domain_intelligence-architecture-intelligence-codewhale-hq-codewhale-core-invariants",
       "domain_letter": "G",
       "title": "Architecture Intelligence: codewhale-hq/Codewhale Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-codewhale-hq-codewhale-architecture-intelligence-codewhale-hq-codewhale-core-inv.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-hmbown-codewhale-architecture-intelligence-codewhale-hq-codewhale-core-invariant.md",
       "repository": "codewhale-hq/Codewhale",
-      "content_hash": "c24b0e89b502e219dfbc305848692235a80b9694c27c4cfb8988ae1dc124c508",
-      "created_at": "2026-11-25T01:35:58.536Z"
+      "content_hash": "e475b634bf4573ce1f108fc14b1d7ba6d782ba4038ff75944668246e48d94a00",
+      "created_at": "2026-11-25T06:47:44.342Z"
     },
     "domain_intelligence-architecture-intelligence-codewhale-hq-codewhale-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-codewhale-hq-codewhale-learnings-core-invariants",
@@ -18970,8 +18970,8 @@
       "title": "Architecture Intelligence: hmbown-codewhale-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-hmbown-codewhale-learnings-architecture-intelligence-hmbown-codewhale-learnings-.md",
       "repository": "hmbown-codewhale-learnings",
-      "content_hash": "be57c52588a3e324fa7e0e0e0b1103dd5b6831f0bc6a85ed7f78541c3fc16d96",
-      "created_at": "2026-11-24T04:45:22.658Z"
+      "content_hash": "254bc44361d2b4c96ba5f213928561c25495630d97ee7242ff8cbf0ee0fc05d5",
+      "created_at": "2026-11-25T06:47:57.872Z"
     },
     "DOM-D-D6B073D5": {
       "record_id": "DOM-D-D6B073D5",
@@ -28609,8 +28609,8 @@
       "title": "Research & Knowledge Intelligence: RecursiveSI/flint Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-recursivesi-flint-research-knowledge-intelligence-recursivesi-flint-core-inva.md",
       "repository": "RecursiveSI/flint",
-      "content_hash": "3cc1db3100c6cadc058209e0fb751d615c8503e5047e8ef3ba8ca47e2c466ef9",
-      "created_at": "2026-11-21T12:48:41.056Z"
+      "content_hash": "2d5c86cb24c3099b2bc387b2a09913440c9cbea76658ffe491433103e3913504",
+      "created_at": "2026-11-25T06:47:40.112Z"
     },
     "domain_intelligence-quality-verification-intelligence-milvus-io-milvus-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-milvus-io-milvus-core-invariants",
@@ -28627,8 +28627,8 @@
       "title": "Research & Knowledge Intelligence: hf-recursivesi-flint-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-recursivesi-flint-learnings-research-knowledge-intelligence-hf-recursivesi-fl.md",
       "repository": "hf-recursivesi-flint-learnings",
-      "content_hash": "2913a1f448ac69182be33718d86490304dcfbb7ac71f051328770ef23283c92d",
-      "created_at": "2026-11-21T12:48:56.362Z"
+      "content_hash": "1f12ad2b08320f3237e893d5344f2db1de0af9ab6aad075389a59947a17a6dfe",
+      "created_at": "2026-11-25T06:47:58.583Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xhtoken-spark-x2-6-4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xhtoken-spark-x2-6-4b-core-invariants",

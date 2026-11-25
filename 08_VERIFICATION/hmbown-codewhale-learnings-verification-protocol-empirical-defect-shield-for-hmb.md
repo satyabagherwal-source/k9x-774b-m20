@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T04:45:22.365Z",
+  "timestamp": "2026-11-25T06:47:57.546Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-hmbown-codewhale-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hmbown-codewhale-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T04:45:22.365Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T06:47:57.546Z`  
 > **Learning ID**: `LEARN-EVO-hmbown-codewhale-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hmbown-codewhale-learnings.md`  
 > **Source**: github ([https://github.com/Hmbown/Codewhale](https://github.com/Hmbown/Codewhale))  
-> **Source Version**: `f7634e86`  
+> **Source Version**: `b4f71726`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T04:45:09.438Z  
+> **Timestamp**: 2026-11-25T06:47:43.362Z  
 > **Learning ID**: `learn-github-codewhale-hq-codewhale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,17 +42,17 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hmbown-codewhale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Hmbown/Codewhale](https://github.com/Hmbown/Codewhale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T04:45:09.224Z  
+> **Harvest Timestamp**: 2026-11-25T06:47:43.356Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
 
 ## 1. Context & Architectural Overview
 - **Repository / Resource**: `codewhale-hq/Codewhale`
-- **Description**: An open-source coding agent for your terminal, written in Rust. It works with any model, can split one task across several agents, and every line of it is yours to read.
+- **Description**: Open-source Rust coding agent for terminal, web, and desktop. Any model, multi-agent fleets, MCP & plugins, OS sandboxing, and session receipts.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 41198 stars
+- **Stars / Engagement**: 41205 stars
 
 ---
 
@@ -1991,11 +1991,14 @@ pub use codewhale_protocol::request::*;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7518** (2026-11-24): **fix(tui): a running background shell job no longer keeps the ambient scene drawing (#6728)**
-  *Symptoms*: ## Summary Lane 11 (0.10.5 small user bugs: #7344, #7347, #6728, #6184). Only #6728 still needed code.  **#6728:** the underwater ambient scene is supposed to settle 6 s after the shell goes idle. But `ambient_busy` counted every queued, running or waiting jobs-panel row, including `TaskPanelEntryKind::Shell`. So a backgrounded `sleep 900` kept the scene redrawing at ambient cadence for the job's whole life.  ```rust // before let durable_tasks_active = app.task_panel.iter()     .any(|t| matches!(t.status.as_str(), "queued" | "running" | "waiting")); // after: only Background (agent) tasks keep the scene awake let durable_tasks_active = has_live_durable_tasks(app); ``` The jobs panel's 1 Hz elapsed tick for a visible running shell is unchanged. This brings back what the superseded `boat/issue-6728` branch meant to do, rebuilt on the current `IdleClock` code.  Measured on Linux x86_64 with a dev build in tmux 160x45, default theme, after allowing a background `sleep 900`. Draws are counted as `/dev/tty` opens, which happen once per frame via crossterm `size()`:  | state | draws/s | CPU | |---|---|---| | main, job running | ~25 | 15.5% | | main, job killed | 0 | 0.43% | | this PR, job running | 1 | 1.02% |  On main, the idle composer (0.46%) and the approval wait (1.00%) were already quiet. The FreeBSD measurement is still the issue's acceptance step.  Tests: `RUST_MIN_STACK=16777216 cargo test -p codewhale-tui --lib --locked` with the new regression test plus the existing jobs
+- **Issue #7557** (2026-11-24): **fix(tui): use the engine catalog effort parser and add the Ollama Cloud effort ladder**
+  *Symptoms*: The model picker had its own catalog-token parser (`catalog_effort_value`) duplicating one the engine already owns.  - Use `ReasoningEffort::from_catalog_token` and `ReasoningEffort::catalog_effort_values_for_offering` instead, and always keep `Auto` first in the resulting list. - Add an explicit Ollama Cloud effort ladder (`Auto`, `Off`, `Low`, `Medium`, `High`, `Max`).  Rebased onto current `main`. The branch's separate skills commit was dropped: that work is already on `main` via #7544, and re-applying it would have reverted the merged version.  Net effect: `crates/tui/src/tui/model_picker.rs`, one file. <!-- devin-review-badge-begin -->  ---  <a href="https://app.devin.ai/review/codewhale-hq/codewhale/pull/7557" target="_blank"><picture><source media="(prefers-color-scheme: dark)" srcset="https://static.devin.ai/assets/gh-devin-review-dark.svg?v=4"><img src="https://static.devin.ai/assets/gh-devin-review-light.svg?v=4" alt="Devin Review"></picture></a> <!-- devin-review-badge-end -->
+  **Post-Mortem & Fix Analysis**:
+  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"942707f524abff1409e2682fc600857967ae4775","has_any_findings":true,"has_unresolved_findings":true,"status":"failed"},"security_review":{"commit_sha":null,"has_any_findings":null,"has_unresolved_findings":null,"status":null}} -->  <details> <summary><strong>Codex Review Summary</strong>: ❌ Failed</summary>  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ❌ **Failed** <relative-time datetime="2026-11-24T19:35:39.042376Z">2026-11-24T19:35:39.042376Z</relative-time><br/>We couldn’t complete this review. Comment `@codex review` to try again. | `942707f` | PR opened |    <details> <summary>ℹ️ About Codex in GitHub</summary> <br/>  [Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/general). Reviews are triggered when yo
+  > You have reached your Codex usage limits for code reviews. You can see your limits in the [Codex usage dashboard](https://chatgpt.com/codex/cloud/settings/usage). To continue using code reviews, add credits to your account and enable them for code reviews in your [settings](https://chatgpt.com/settings/code-review).
 
-- **Issue #7515** (2026-11-24): **fix(tui): #6561 component pass — copy masks, osascript path, modal click targets**
-  *Symptoms*: ## Summary  This is a pass over the #6561 component-hardening backlog against `main` @ `642239fed`. It covers all 138 findings in 37 zones. Each finding was checked against current source and the commit that fixed it (`git log --grep=<ID>`, plus `merge-base --is-ancestor` for every cited commit).  | Result | Count | |---|---| | fixed on main | 123 | | fixed in this PR | 3 | | still open | 10 | | not a defect | 2 |  **Fixed here**  - **U07-12** — `is_copy_shortcut` now compares exact modifier masks, so Cmd+Alt+C and Ctrl+Shift+Alt+C no longer count as copy (`crates/tui/src/tui/key_shortcuts.rs`). - **U06-06** — the macOS notification banner runs `/usr/bin/osascript` instead of resolving `osascript` through `PATH` (`crates/tui/src/tui/notifications.rs`). - **U08-m1** — the user-input modal records option hitboxes when it renders. Left-clicking an option selects it, and Enter submits it. Test: `clicking_a_painted_option_submits_it` (`crates/tui/src/tui/user_input.rs`).  **Still open.** Each of these needs a design or release decision, or touches files an open PR owns:  - **R02-01 / O01-m3** — release signing. `TRUSTED_RELEASE_KEYS` is empty and there is no publisher attestation. This needs a signing-key decision. - **R06-10** — fail-fast `parallel()` / `Promise.all` does not cancel running sibling tasks. This needs per-task cancel on the workflow drive. - **T07-07** — the bounded read is fixed. The project-context capture still runs synchronously from `refresh_system_prompt_from
+- **Issue #7555** (2026-11-24): **fix(security): hardening batch — grants, secrets, runtime probes, execpolicy deny bypasses**
+  *Symptoms*: Security hardening for 0.10.5, rebased onto current `main` (four commits already landed there, including the CodeQL fixes, dropped out):  - Fail closed on grant/posture persist failures and redact tool logs. - Harden the runtime bundle secrets path, URL redaction and webhook TLS. - Harden the remote runtime probe against loopback and metadata targets. - Harden read-only and auto-approved git commands against repo config helpers. - Reject elevated automation permissions and unattended full-access dispatch. - Port 7 execpolicy deny-bypass fixes (from #7397) and fail closed on dynamic `PermitLocalCommand` and unsplit `screen -X`. - Stabilise heartbeat and unbound-thread respawn flakes (CW-8242), gate unix-only test imports on Windows, gate the unix-only `is_secret_env` binding in the remote_setup bundle. - Record post-0.10.4 contributor credits and the unreleased changelog.  Net effect: 30 files, +2432/−281.  Rebased onto current `main`; the one conflicting hunk (`config/tests.rs`, `Runtime` vs `Full` env policy) was resolved in favour of `main`, where that repair already landed. <!-- devin-review-badge-begin -->  ---  <a href="https://app.devin.ai/review/codewhale-hq/codewhale/pull/7555" target="_blank"><picture><source media="(prefers-color-scheme: dark)" srcset="https://static.devin.ai/assets/gh-devin-review-dark.svg?v=4"><img src="https://static.devin.ai/assets/gh-devin-review-light.svg?v=4" alt="Devin Review"></picture></a> <!-- devin-review-badge-end -->
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2012,215 +2015,563 @@ pub use codewhale_protocol::request::*;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `61e073db` (2026-11-23)
-**Commit Message**: release: keep build-machine paths out of self-hosted macOS shipping binaries
+### Incident Patch 1: `3235e2ec` (2026-11-24)
+**Commit Message**: docs(dsh,release): record 0.10.5 DSH qualification, restore credits, and fix web tests
 
-Proof run 45138848324 (release-artifacts dispatched directly from
-ci/selfhosted-mac-release-proof) built both macOS legs on codewhale-mac:
-macos-x64 68.9 min (34.3 waiting for the machine build lock, cargo build
-33.8), then macos-arm64 29.3 min (cargo build 28.6), 98 min wall for both
-against 205/220 min on hosted Macs in RC 44908205009. Compared with that
-RC's hosted binaries: same architectures, minos 11.0 / 10.12, the same nine
-linked system frameworks and libraries, arm64 ad-hoc linker-signed and x64
-unsigned; SDK 26.2 (the runner's Xcode 26.2) against 26.5.
+- Refresh docs/DSH_COMPATIBILITY.md and docs/DSH_PLUGIN_COMPAT.md with verified 0.10.5 source-build receipts (13/33 pinned full local lifecycle, 3/33 pinned BLOCKED, 17/33 npm-approval gated, 0 scan-limit failures; 15/36 direct extension-host cold-activate; codewhale web shared-dist HTTP 200).
+- Consolidate CHANGELOG.md [Unreleased], restore @Goldloli (#7521), @jperla (#7350 TrustedRouter), @WTFitsmemyself (#7496), and @Serendo (#7451, Refs #6225, #6418) receipts with zero §284 forbidden mentions, and sync crates/tui/CHANGELOG.md.
+- Fix all 3 web.yml test failures: export gt-catalog/{en,zh}.json, align docs/public-surface-facts.json sourceCandidate telemetry version (0.10.4 pre-bump) and public-surface-contract.test.ts policy notice version 6, and filter agent-docs.test.ts mainOnly lines against released snapshot text so paragraph re-wraps do not false-positive.
 
-But the self-hosted arm64 binary carried 1,069 strings under
-/Users/hunterbown/actions-runner/_work/_temp/release-home/.cargo/registry/src
-(panic locations of registry crates) and one OUT_DIR path under
-/Volumes/VIXinSSD/CW/.codewhale-ci/...; hosted binaries carry /Users/runner/
-paths in the same places. The self-hosted legs now build with
-CARGO_ENCODED_RUSTFLAGS = the workflow's RUSTFLAGS plus
---remap-path-prefix for the fresh CARGO_HOME (logical and physical) to /cargo
-and the workspace (logical and physical) to /codewhale. Hosted legs are
-unch
+Checks:
+- §284 forbidden grep: 0 matches
+- python3 scripts/check-contributor-credit.py: PASS (10/10 contributors)
+- ./scripts/release/check-versions.sh --range-audit-advisory: PASS (4/4 linked issue receipts, workspace=0.10.4)
+- sh scri
 
-**File**: `.github/scripts/release-workflows.test.js` (modified, +6/-1)
+**File**: `CHANGELOG.md` (modified, +9/-21)
 ```diff
-@@ -1283,7 +1283,12 @@ assert.equal(
-   "only macOS release builds may use the self-hosted Mac, and only when pin chose it",
- );
- const releaseBuild = jobBlock(artifacts, "build");
--assert.match(namedStep(releaseBuild, "Fresh rustup, Cargo home and temp for a self-hosted release build"), /rm -rf "\$\{fresh\}"/);
-+const freshReleaseHome = namedStep(releaseBuild, "Fresh rustup, Cargo home and temp for a self-hosted release build");
-+assert.match(freshReleaseHome, /rm -rf "\$\{fresh\}"/);
-+for (const remap of [/"\$\{CARGO_HOME\}=\/cargo"/, /"\$\(cd "\$\{fresh\}" && pwd -P\)\/\.cargo=\/cargo"/, /"\$\{GITHUB_WORKSPACE\}=\/codewhale"/, /"\$\(cd "\$\{GITHUB_WORKSPACE\}" && pwd -P\)=\/codewhale"/]) {
-+  assert.match(freshReleaseHome, remap, "self-hosted shipping binaries must not embed the build machine's home or workspace paths");
-+}
-+assert.match(freshReleaseHome, /CARGO_ENCODED_RUSTFLAGS=/);
- assert.match(namedStep(releaseBuild, "Start the self-hosted release build from an empty target"), /rm -rf target\n\s+test -z "\$\(git status --porcelain --ignored\)"/);
- assert.match(releaseBuild, /uses: Swatinem\/rust-cache@[^\n]+\n        if: runner\.environment != 'self-hosted'\n/, "self-hosted shipping builds must not restore or save a shared cache");
- assert.match(candidate, /^      macos_runner: \$\{\{ inputs\.macos_runner \}\}$/m);
+@@ -10,44 +10,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ ### Added
+ 
+ - **DSH P1/P2 host shims, client frame allowlist, and seat table lockstep:** added `@deepseek-ai/dsh-agent` and `@deepseek-ai/dsh-app-boot` module singletons plus read-only/owner-scoped `sessionPersistence`, `storageDomain`, `invariants`, and `permissionPresets` services in the extension host (keeping all mutating/escalation paths fail-closed); admitted `@deepseek-ai/dsh-settings`, `@deepseek-ai/dsh-tools`, and `@deepseek-ai/dsh-credentials` in `DSH_FRAME_MODULES`, synced `DSH_SEAT_TABLE` with desktop DSH slot aliases, and listed `npm:`/`git:`/`dsh:` sources in the plugin install error hint (§280).
++- **Serve the shared web app build from `codewhale web`:** `codewhale web` now serves a built `codewhale-app/apps/web/dist` directory when `CODEWHALE_WEB_DIST` points to a valid directory containing `index.html`, including `/plugin-host.html` (with sandboxed `connect-src 'none'` / `frame-ancestors 'self'` CSP), immutable `/static/*` hashed assets, bounded SPA route fallback, path-traversal/symlink refusal, and preserved auth-bootstrap cookie sessions; falls back to the embedded web client when unset. (#7237)
++- **Choose an external ACP agent in the terminal:** `/model` now lists installed external ACP agents (`antigravity`, `opencode`, `copilot`, `dsh`, and others) alongside Codewhale models, showing why non-runnable agents are blocked and what to run, and `codewhale --agent <id>` / `codewhale exec --agent <id>` starts an interactive or headless session through the Engine ACP executor. (CW-8361)
+ - **Verified candidate evaluator for experimental search workflows:** `workflows/operate_best_of_n.workflow.js` now supports an optional host-owned `args.evaluator` (`task.verifyCandidate`) that freezes a clean Git baseline, seals candidate diffs, and replays public and held-out gates inside Linux bubblewrap with `proposal_only` receipts. Thanks [@axobase001](https://github.com/axobase001). (#7294)
++- **TrustedRouter bundled provider and inclusion bar:** added `TrustedRouter` (`trustedrouter`, `TRUSTEDROUTER_API_KEY`) as a bundled OpenAI-compatible provider and documented the bundled-provider inclusion bar. Thanks [@jperla](https://github.com/jperla). (#7350)
++- **Simplified Chinese Auto-Review documentation:** added `docs/zh_hans/AUTO_REVIEW.md` covering Auto-Review posture, approval flow, and configuration. Thanks [@Goldloli](https://github.com/Goldloli). (#7521)
++
+ ### Changed
+ 
+ - **Full Access is selected through `Shift+Tab` instead of the legacy yolo-compat funnel:** removed `Alt+Y`, `Alt+Shift+Y`, and the `/mode yolo|bypass|4` permission shortcut; `/mode yolo` now points to `Shift+Tab` (or `/auto`), and `/zidong` is now an alias for `/auto` (Auto-Review). Launch flags (`--yolo`, `--full-access`, `CODEWHALE_YOLO`, `default_mode = "yolo"`) keep their startup behavior.
++- **Test-only Fleet methods gated behind `#[cfg(test)]`:** gated the five remaining test-only `pub` methods in `crates/engine/src/fleet/` (`FleetLedger::{claim_next,record_alert,mark_task_terminal_status_if_unchanged}`, `FleetScheduler::cancel_run`, `FleetExecutor::all_terminal`) under `#[cfg(test)]` so production builds expose no unused Fleet helpers. Thanks [@luochen211](https://github.com/luochen211). (Refs #7270)
++- **Updated `0.10.5` DSH compatibility documentation:** refreshed `docs/DSH_COMPATIBILITY.md` and `docs/DSH_PLUGIN_COMPAT.md` with verified `0.10.5` pinned 33-row Engine lifecycle receipts (13 full local lifecycle, 3 pinned blocked, 17 npm-approval gated, 0 scan-limit failures), 15/36 direct extension-host cold-activate results, and `codewhale web` loopback dist verification (§280).
+ 
+ ### Fixed
+ 
++- **Adopt a populated Runtime store on session switch:** switching sessions in the TUI now adopts an already-populated Runtime session store instead of dropping live Runtime thread state. Thanks [@Serendo](https://github.com/Serendo). (#7451, Refs #6225, #6418)
++- **Treat `find -delete` as a destructive action in execution policy:** `execpolicy` now classifies `find ... -delete` as destructive so Auto-Review and Ask postures gate it consistently. Thanks [@WTFitsmemyself](https://github.com/WTFitsmemyself). (#7496)
+ - **Composer vim mode no longer swallows typing after pressing `v`:** removed the unfinished `VimMode::Visual` state that absorbed all keys until `Esc` with no on-screen indicator or operators.
+ - **Lone non-ASCII keys now reach normal key routing on untrusted terminals:** single IME/non-ASCII commits in paste-burst detection keep their Enter-suppression window while falling through to the main key match (vim Normal mode, Esc-Esc backtrack reset, and ordinary insertion) instead of bypassing it.
+ - **Launch-card resume always opens confirmation from mouse and keyboard:** unified mouse and keyboard launch-action dispatchers into one `apply_launch_action` path and removed the unreachable direct-resume mouse arm.
+-### Adde
 ```
 
-**File**: `.github/workflows/release-artifacts.yml` (modified, +6/-0)
+**File**: `crates/tui/CHANGELOG.md` (modified, +9/-21)
 ```diff
-@@ -203,13 +203,19 @@ jobs:
-           export HOME="${fresh}" CARGO_HOME="${fresh}/.cargo" RUSTUP_HOME="${fresh}/.rustup"
-           curl --proto '=https' --tlsv1.2 --retry 10 --retry-connrefused -sSf https://sh.rustup.rs \
-             | sh -s -- -y --no-modify-path --profile minimal --default-toolchain none
-+          read -ra flags <<< "${RUSTFLAGS}"
-+          for prefix in "${CARGO_HOME}=/cargo" "$(cd "${fresh}" && pwd -P)/.cargo=/cargo" \
-+            "${GITHUB_WORKSPACE}=/codewhale" "$(cd "${GITHUB_WORKSPACE}" && pwd -P)=/codewhale"; do
-+            flags+=("--remap-path-prefix=${prefix}")
-+          done
-           {
-             echo "HOME=${HOME}"
-             echo "CARGO_HOME=${CARGO_HOME}"
-             echo "RUSTUP_HOME=${RUSTUP_HOME}"
-             echo "TMPDIR=${fresh}/tmp"
-             echo "CARGO_BUILD_JOBS=6"
-             echo "CW_RELEASE_HOME=${fresh}"
-+            printf 'CARGO_ENCODED_RUSTFLAGS=%s\n' "$(IFS=$'\037'; echo "${flags[*]}")"
-           } >> "${GITHUB_ENV}"
-           echo "${CARGO_HOME}/bin" >> "${GITHUB_PATH}"
-       # No ref: — GITHUB_SHA only. CodeQL treats workflow_call checkout-with-ref
+@@ -10,44 +10,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ ### Added
+ 
+ - **DSH P1/P2 host shims, client frame allowlist, and seat table lockstep:** added `@deepseek-ai/dsh-agent` and `@deepseek-ai/dsh-app-boot` module singletons plus read-only/owner-scoped `sessionPersistence`, `storageDomain`, `invariants`, and `permissionPresets` services in the extension host (keeping all mutating/escalation paths fail-closed); admitted `@deepseek-ai/dsh-settings`, `@deepseek-ai/dsh-tools`, and `@deepseek-ai/dsh-credentials` in `DSH_FRAME_MODULES`, synced `DSH_SEAT_TABLE` with desktop DSH slot aliases, and listed `npm:`/`git:`/`dsh:` sources in the plugin install error hint (§280).
++- **Serve the shared web app build from `codewhale web`:** `codewhale web` now serves a built `codewhale-app/apps/web/dist` directory when `CODEWHALE_WEB_DIST` points to a valid directory containing `index.html`, including `/plugin-host.html` (with sandboxed `connect-src 'none'` / `frame-ancestors 'self'` CSP), immutable `/static/*` hashed assets, bounded SPA route fallback, path-traversal/symlink refusal, and preserved auth-bootstrap cookie sessions; falls back to the embedded web client when unset. (#7237)
++- **Choose an external ACP agent in the terminal:** `/model` now lists installed external ACP agents (`antigravity`, `opencode`, `copilot`, `dsh`, and others) alongside Codewhale models, showing why non-runnable agents are blocked and what to run, and `codewhale --agent <id>` / `codewhale exec --agent <id>` starts an interactive or headless session through the Engine ACP executor. (CW-8361)
+ - **Verified candidate evaluator for experimental search workflows:** `workflows/operate_best_of_n.workflow.js` now supports an optional host-owned `args.evaluator` (`task.verifyCandidate`) that freezes a clean Git baseline, seals candidate diffs, and replays public and held-out gates inside Linux bubblewrap with `proposal_only` receipts. Thanks [@axobase001](https://github.com/axobase001). (#7294)
++- **TrustedRouter bundled provider and inclusion bar:** added `TrustedRouter` (`trustedrouter`, `TRUSTEDROUTER_API_KEY`) as a bundled OpenAI-compatible provider and documented the bundled-provider inclusion bar. Thanks [@jperla](https://github.com/jperla). (#7350)
++- **Simplified Chinese Auto-Review documentation:** added `docs/zh_hans/AUTO_REVIEW.md` covering Auto-Review posture, approval flow, and configuration. Thanks [@Goldloli](https://github.com/Goldloli). (#7521)
++
+ ### Changed
+ 
+ - **Full Access is selected through `Shift+Tab` instead of the legacy yolo-compat funnel:** removed `Alt+Y`, `Alt+Shift+Y`, and the `/mode yolo|bypass|4` permission shortcut; `/mode yolo` now points to `Shift+Tab` (or `/auto`), and `/zidong` is now an alias for `/auto` (Auto-Review). Launch flags (`--yolo`, `--full-access`, `CODEWHALE_YOLO`, `default_mode = "yolo"`) keep their startup behavior.
++- **Test-only Fleet methods gated behind `#[cfg(test)]`:** gated the five remaining test-only `pub` methods in `crates/engine/src/fleet/` (`FleetLedger::{claim_next,record_alert,mark_task_terminal_status_if_unchanged}`, `FleetScheduler::cancel_run`, `FleetExecutor::all_terminal`) under `#[cfg(test)]` so production builds expose no unused Fleet helpers. Thanks [@luochen211](https://github.com/luochen211). (Refs #7270)
++- **Updated `0.10.5` DSH compatibility documentation:** refreshed `docs/DSH_COMPATIBILITY.md` and `docs/DSH_PLUGIN_COMPAT.md` with verified `0.10.5` pinned 33-row Engine lifecycle receipts (13 full local lifecycle, 3 pinned blocked, 17 npm-approval gated, 0 scan-limit failures), 15/36 direct extension-host cold-activate results, and `codewhale web` loopback dist verification (§280).
+ 
+ ### Fixed
+ 
++- **Adopt a populated Runtime store on session switch:** switching sessions in the TUI now adopts an already-populated Runtime session store instead of dropping live Runtime thread state. Thanks [@Serendo](https://github.com/Serendo). (#7451, Refs #6225, #6418)
++- **Treat `find -delete` as a destructive action in execution policy:** `execpolicy` now classifies `find ... -delete` as destructive so Auto-Review and Ask postures gate it consistently. Thanks [@WTFitsmemyself](https://github.com/WTFitsmemyself). (#7496)
+ - **Composer vim mode no longer swallows typing after pressing `v`:** removed the unfinished `VimMode::Visual` state that absorbed all keys until `Esc` with no on-screen indicator or operators.
+ - **Lone non-ASCII keys now reach normal key routing on untrusted terminals:** single IME/non-ASCII commits in paste-burst detection keep their Enter-suppression window while falling through to the main key match (vim Normal mode, Esc-Esc backtrack reset, and ordinary insertion) instead of bypassing it.
+ - **Launch-card resume always opens confirmation from mouse and keyboard:** unified mouse and keyboard launch-action dispatchers into one `apply_launch_action` path and removed the unreachable direct-resume mouse arm.
+-### Adde
+```
+
+**File**: `docs/DSH_COMPATIBILITY.md` (modified, +91/-70)
+```diff
+@@ -1,39 +1,52 @@
+ # Published DeepSeek Harness packages in Codewhale
+ 
+-Of the 32 published DeepSeek Harness packages we tried unmodified, 2
+-activate in the Codewhale terminal with the default network policy.
+-`@michengai/dsh-code-review` 1.0.9 registers its `dsh_code_review` tool and
+-three commands, and its tool ran end to end in one terminal turn against a
+-scripted local model: the plugin was called, started its reviewer sub-agent
+-and returned its report. Review quality with a real model was not tested.
+-`dsh-anchored-standard` 1.2.1 activates and registers nothing. A third,
+-`dsh-plugin-model-proxy` 0.1.6, activates once `registry.npmjs.org` is allowed
+-and registers nothing. The other 29 do not activate; each now reports the
+-service, module or export it is missing, or stops at import review and says
+-why.
+-
+-This page lists every published DeepSeek Harness (DSH) package we tried,
+-unmodified, in the terminal. The services and limits behind each row are in
++On the `0.10.5` source build (`6f093967ae3`, macOS arm64, default network
++policy, no model provider calls):
++
++- **Pinned 33-row Engine lifecycle (`dsh_acceptance.py run`):** **13 of 33**
++  packages pass every local Engine lifecycle step (`admission.preview`,
++  `install`, `trust`, `enable`, `restart_retained`, `revoke`, `uninstall`, and
++  `security.no_key_leak`; provider and desktop slot steps remain `UNAVAILABLE`),
++  **3 of 33** match their pinned `BLOCKED` admission refusals
++  (`dsh-agent-squad`, `dsh-im`, `dsh-archive-manager`), and **17 of 33** stop
++  cleanly at `registry.npmjs.org` network approval (**0** stop at the 2 MiB
++  scan limit).
++- **Direct extension-host cold-activate (all 36 surveyed tarballs, without
++  `npm install`):** **15 of 36** activate cleanly in the extension host,
++  registering **18 tools**, **9 commands**, and **2 hooks** (`dsh-image-gen` 6
++  tools, `dsh-client-ui-task-board` 8 tools + 1 hook, `modsearch` 2 tools,
++  `modlens` 1 tool, `dsh-code-review` 1 tool + 3 commands, `dsh-btw` 3 commands
++  + 1 hook, `dsh-pet` 3 commands, plus 8 zero-registration plugins). Of the
++  remaining 21: **14** fail only on missing third-party npm packages in the raw
++  tarball (zero missing `@deepseek-ai/*` peers prior to npm staging), **6** hit
++  explicit policy or runtime boundaries, and **1** (`dsh-web-ui`) has no server
++  entry.
++- **Prior `0.10.3` scripted-turn check:** `@michengai/dsh-code-review` 1.0.9
++  ran its `dsh_code_review` tool end to end in one terminal turn against a
++  scripted local model (starting its reviewer sub-agent and returning its
++  report). Review quality with a real model was not tested.
++
++This page lists the published DeepSeek Harness (DSH) packages we qualified,
++unmodified, in Codewhale. The services and limits behind each row are in
+ [DSH plugin compatibility](DSH_PLUGIN_COMPAT.md).
+ 
+ ## How this was tested
+ 
+-Built from source on 2026-11-22 (codewhale 0.10.3 dev build of this change,
+-macOS arm64, Node 26.10). Each package got its own throwaway Codewhale home
+-with `[features] extension_host = true`, telemetry and update checks off, and
+-the provider pointed at a closed local port, so no model provider was called.
+-For each package: `codewhale plugins import dsh <dir>`, `plugins import dsh
+-approve <dir> <hash>`, `plugins trust <name> --review-token <token> --yes`,
+-`plugins enable <name>`, then the terminal UI was started once and the
+-extension host's line for the plugin was read from the log. Packages marked
+-"npm approved" were run again with `registry.npmjs.org` in `allow` under
+-`[network]`, which fetches their declared npm dependencies. For
+-`dsh-code-review`, the terminal UI was then pointed at a local scripted
+-OpenAI-compatible endpoint that asks for one `dsh_code_review` call and
+-answers the reviewer sub-agent with fixed text; both approval cards (the
+-plugin tool and the sub-agent start) were approved by hand. The packages are
+-the SHA-256-pinned tarballs of the 0.10.3 survey. Nothing here was run on
+-Windows, Linux, Bun or the desktop app.
++Built from source on 2026-11-24 (`0.10.5` wave-3 build `6f093967ae3`, macOS
++arm64, Node runtime). Two checks ran with zero model-provider calls:
++
++1. **Pinned 33-row Engine lifecycle:** `scripts/dsh-plugin-acceptance/dsh_acceptance.py`
++   (`selftest` 15/15 passed; `pins` 33/33 SHA-256 verified) drove every pinned
++   row through `/v1/apps/plugins` on a throwaway `CODEWHALE_HOME` with
++   `--enable extension_host` and default network policy (no `--allow-provider`).
++2. **Direct extension-host cold-activate:** each of the 36 SHA-256-pinned
++   survey tarballs was extracted without `npm install` and activated directly
++   against `crates/engine/extension-host/dist/codewhale-extension-host.mjs`
++   with an isolated `data_dir`.
++
++Earlier `0.10.3` npm-approved terminal checks and the scripted local-model turn
++for `dsh-code-review` are marked where carried forward. Nothing here was run on
++Windows, Linux, Bun, or live Desktop slot mounts.
+ 
+```
+
+**File**: `docs/DSH_PLUGIN_COMPAT.md` (modified, +12/-4)
+```diff
+@@ -102,6 +102,9 @@ walkthroughs below.
+ | `subagents.getProvider('fork')`, `inheritsParentContext`, command `invocation.agent.session` | not provided | Not implemented |
+ | `agents`, `systemPrompt` | injectable so plugins that name them activate; `agents` offers nothing and `systemPrompt` methods refuse outside a child's `agent/created` context | Verified with the child-agent probe |
+ | `llm`, `credentials` | grant-gated brokered host services in `compatibility.json` v3 | Grant-gated brokered |
++| `sessionPersistence`, `storageDomain`, `invariants`, `permissionPresets` | read-only / owner-scoped `0.10.5` P1/P2 host services (bounded JSON-serializable `storageDomain` values at 64 KiB, 64-entry per-owner `invariants` cap, fail-closed on mutating/escalation paths; all 4 in `refused_services` so plugins cannot override them) | Verified by focused extension-host tests (`e42ec6f09f0`, `e5571935a95`) |
++| `@deepseek-ai/dsh-agent`, `@deepseek-ai/dsh-app-boot` | `0.10.5` P1/P2 module singletons (`assembleContextFor`, `installModelSelection`, `getDshRuntimeVersion`; fail-closed `loadProfileDirectory`, `resolveBundleDir`, `createRuntimeResolution`) | Verified by focused extension-host tests (`e42ec6f09f0`) |
++| `agentPresets`, `agentDefaultModel`, `sessionProjections`, `workspaceRegistry`, `typertGateway`, `web` | `0.10.5` read-only/scoped adapters plus pure-API module exports (`ReasoningEffortId`, `deriveEventMessage`, `KNOWN_SESSION_EVENT_TYPES`, `credentialRef`, `settingsNamespace`, `resolveDshHome`, `writeFileAtomic`, `Remote`, `TypertRemoteService`) | Verified by focused extension-host tests and `0.10.5` 36-tarball cold-activate survey (15/36 pass) |
+ | `approval`, `fs`, `subprocess` | refused by design until each maps to Engine authority | Not implemented |
+ | Rich or media tool output | dropped | Not implemented |
+ | Git review scopes | Bounded `execFile` metadata requests use the Engine Git tool and its approval path; the Native host still cannot read the repository directly | Current-source qualification pending |
+@@ -110,11 +113,13 @@ walkthroughs below.
+ 
+ The same DSH-format probe plugin (a tool that saves the session and asks one
+ question, plus two commands), run against a local fake model provider on
+-macOS with no account or spend:
++macOS with no account or spend, plus the `0.10.5` loopback `codewhale web`
++dist check (`6f093967ae3`):
+ 
+ | Surface | What was seen | Status |
+ | --- | --- | --- |
+-| Runtime API | preview → exact-hash install → review → trust → enable; first-turn tool; approval; question answered through `POST /v1/user-input`; command result | Verified |
++| Runtime API | preview → exact-hash install → review → trust → enable; first-turn tool; approval; question answered through `POST /v1/user-input`; command result; plus `0.10.5` pinned 33-row lifecycle (`13` full local lifecycle pass, `3` pinned `BLOCKED`, `17` npm-approval gated) | Verified |
++| `codewhale web` (`CODEWHALE_WEB_DIST`) | `GET /` HTTP 200 (byte-for-byte match with `codewhale-app/apps/web/dist/index.html`) and `GET /v1/apps/plugins` HTTP 200 on loopback (`6f093967ae3`) | Verified |
+ | `codewhale exec --auto` | first-turn tool runs and saves the session; the plugin's question is refused with `NO_PROVIDER` because no person is present to answer | Verified |
+ | Desktop app | the tool's approval card; the plugin's question rendered as a native card (option descriptions, your own answer, Skip, Send answers); the answer reaches the plugin; `/probe-count` in the command palette with plugin attribution | Verified (plugin installed through the Runtime API, not the app's own settings flow) |
+ | Terminal UI (interactive) | — | Not walked through; its question and approval code is covered by focused tests only |
+@@ -154,8 +159,11 @@ An imported DSH plugin's client UI is served, on the seats the Engine admits.
+ The importer retains the reviewed client closure; at serve time the Engine
+ re-verifies it byte for byte against the reviewed hashes, maps each declared
+ slot key to a seat, and loads one Engine-generated bootstrap built from those
+-bytes. A native client is admitted only on `customize.plugins.detail`. A slot
+-key with no seat answers `plugin_ui_seat_unsupported`; several keys on one seat
++bytes. A native client is admitted only on `customize.plugins.detail`. In `0.10.5`,
++`DSH_FRAME_MODULES` admits `@deepseek-ai/dsh-settings`,
++`@deepseek-ai/dsh-tools`, and `@deepseek-ai/dsh-credentials`, and
++`DSH_SEAT_TABLE` is synced to 41 entries matching desktop `DSH_SLOT_ALIASES`
++(`5cdf092bc77`). A slot key with no seat answers `plugin_ui_seat_unsupported`; several keys on one seat
+ need the caller to name one (`plugin_ui_dsh_slot_required`). A closure that needs
+ a host module the frame does not provide, uses ES module syntax or is not valid
+ JSON answers `plugin_ui_unsupported`. Code Review 1.0.8's client decorates
+```
+
+**File**: `docs/public-surface-facts.json` (modified, +1/-1)
+```diff
+@@ -198,7 +198,7 @@
+     "localRuntime": "runtime, workspace state, and audit log stay on the user's machine",
+     "hostedProviderBoundary": "the selected hosted provider receives turn context required for inference",
+     "localInference": "a loopback local-model route can keep inference local",
+-    "telemetry": "Codewhale 0.10.5 counts anonymous usage by default and discloses it at first launch (policy notice version 6, naming Codewhale as the sole first-party collector), while the earlier 0.9.11 release asked first; turning it off is a saved choice that later versions keep, an opt-out recorded under the earlier opt-in policy stays off, and showing the notice never records any acceptance on the user's behalf; Codewhale does not collect conversations, code, prompts, files, file/repo/branch names, model content, credentials, or per-turn/per-tool timelines; while on, sessions post aggregate counts and closed enums (including provider families, public catalog models, token totals, and built-in tool counts) to the first-party endpoint https://telemetry.codewhale.net/v1/telemetry, whose storage has no IP, country, or geo column and a fixed three-month retention; counts are first-party only and not forwarded to any third-party analytics processor; telemetry_endpoint = \"\" writes only to a local dry-run file; no mandatory hosted relay",
++    "telemetry": "Codewhale 0.10.4 counts anonymous usage by default and discloses it at first launch (policy notice version 6, naming Codewhale as the sole first-party collector), while the earlier 0.9.11 release asked first; turning it off is a saved choice that later versions keep, an opt-out recorded under the earlier opt-in policy stays off, and showing the notice never records any acceptance on the user's behalf; Codewhale does not collect conversations, code, prompts, files, file/repo/branch names, model content, credentials, or per-turn/per-tool timelines; while on, sessions post aggregate counts and closed enums (including provider families, public catalog models, token totals, and built-in tool counts) to the first-party endpoint https://telemetry.codewhale.net/v1/telemetry, whose storage has no IP, country, or geo column and a fixed three-month retention; counts are first-party only and not forwarded to any third-party analytics processor; telemetry_endpoint = \"\" writes only to a local dry-run file; no mandatory hosted relay",
+     "account": "no account required for the local runtime",
+     "plan": "Plan centrally refuses file mutation and shell execution; policy-allowed research may contact external services and local session state can still be persisted.",
+     "sandbox": "Seatbelt is used on macOS when available; Linux bubblewrap is on by default once installed and verified working, and prefer_bwrap = false opts out; Windows currently reports no OS sandbox",
+```
+
+**File**: `web/gt-catalog/en.json` (modified, +1/-1)
+```diff
+@@ -2237,7 +2237,7 @@
+               ],
+               [
+                 "Sent while on",
+-                "Version and platform classes, session length and outcome, feature and error counts as fixed categories, and a random install id that changes every 90 days."
++                "Version and platform classes, session length and outcome, built-in provider IDs, bundled public-catalog model IDs (custom/private/local models map to \"other\"), aggregate token totals, built-in tool call and error counts, feature and error counts as fixed categories, and a random install id that changes every 90 days."
+               ],
+               [
+                 "Where it goes",
+```
+
+**File**: `web/gt-catalog/zh.json` (modified, +1/-1)
+```diff
+@@ -2234,7 +2234,7 @@
+               ],
+               [
+                 "开启时发送",
+-                "版本与平台类别、会话时长与结果、以固定类别统计的功能与错误计数，以及一个每 90 天更换一次的随机安装 id。"
++                "版本与平台类别、会话时长与结果、内置提供商 ID、内置公开目录中的模型 ID（自定义/私有/本地模型记为 \"other\"）、汇总 token 数量、内置工具调用与错误计数、以固定类别统计的功能与错误计数，以及一个每 90 天更换一次的随机安装 id。"
+               ],
+               [
+                 "发往哪里",
+```
+
+**File**: `web/lib/agent-docs.test.ts` (modified, +2/-2)
+```diff
+@@ -12,9 +12,9 @@ import { REPO_URL } from "./i18n/links";
+ const release = FACTS.latestPublishedRelease!;
+ const SNAPSHOT: typeof RELEASE_DOCS = JSON.parse(readFileSync(new URL("../data/agent-docs.release.json", import.meta.url), "utf8"));
+ const SERVED = SNAPSHOT.topics.filter((topic) => topic.slug !== "install");
+-const releasedLines = new Set(SNAPSHOT.topics.flatMap((topic) => topic.sources.flatMap((source) => source.content.split("\n"))));
++const releasedText = SNAPSHOT.topics.flatMap((topic) => topic.sources.map((source) => source.content)).join("\n");
+ const mainOnly = [...new Set(AGENT_DOCS.filter((topic) => topic.slug !== "install").flatMap((topic) => topic.sources.flatMap((source) => source.content.split("\n"))))]
+-  .filter((line) => line.trim().length >= 40 && !releasedLines.has(line));
++  .filter((line) => line.trim().length >= 40 && !releasedText.includes(line));
+ 
+ async function topicBody(slug: string): Promise<string> {
+   const topic = `${slug}.md`;
 ```
 
 ---
 
-### Incident Patch 2: `2afc9092` (2026-11-23)
-**Commit Message**: test(config,windows): do not require WRITE_OWNER to be denied on every account
+### Incident Patch 2: `7f0497a5` (2026-11-24)
+**Commit Message**: fix(wave2): resolve clippy, conformance golden, strict skills test, quarantine guard, flake, and @jperla credit
 
-owner_with_modify_but_not_full_control_secures_its_private_directory
-asserted that opening the directory with WRITE_OWNER fails after the
-thread drops its privileges. That holds for a normal user (it failed
-this way before the fix and passes after it on a Windows 11 PC), but on
-the GitHub-hosted runner the runneradmin account is still granted
-WRITE_OWNER and the precondition itself panicked (run 45138761359,
-Windows shard 4/4). The test now checks the error code when the open is
-denied and otherwise notes that the fallback was not exercised, then
-requires PrivateDirectory::open and ::inspect to succeed either way.
+- Fix clippy contains() lints in child_host.rs tests.
+- Update provider_error_after_tool_call.golden.jsonl line 10 for structured ProviderFailureCause (#7328).
+- Update extension_creator_skills_config_cannot_be_set_from_config_toml for #[serde(deny_unknown_fields)] on [skills].
+- Align default_launch allow_shell value assertion in runtime_api tests with Config::default().
+- Guard rebuild_thread_from_event_log when a pending seed journal exists so startup quarantine is preserved.
+- Bump sleep 0.2 -> 0.8 in consumed_worker_exit_is_not_recorded_as_a_timeout.
+- Credit @jperla (#7350) in AUTHOR_MAP, CONTRIBUTORS.md, CHANGELOG.md, and release-credits.ts; sync facts.generated.ts and crates/tui/CHANGELOG.md.
 
-Checks: rustfmt --check; the Windows compile and run are left to hosted
-CI on the wave.
+Checks:
+- extension_creator_skills_config_cannot_be_set_from_config_toml: PASS
+- startup_quarantines_only_the_thread_whose_seed_journal_is_uncertain: PASS
+- damaged_thread_record_rebuilds_from_event_log_on_load_and_list: PASS
+- settings_schema_allow_shell_reports_interactive_default_and_explicit_opt_out: PASS
+- settings_schema_telemetry_config_toggle_persists_and_validates:
 
-Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
-
-**File**: `crates/config/src/private_directory.rs` (modified, +5/-3)
+**File**: `.github/AUTHOR_MAP` (modified, +2/-0)
 ```diff
-@@ -1814,13 +1814,15 @@ mod windows_tests {
-             guard
-         };
- 
--        let denied = fs::OpenOptions::new()
-+        match fs::OpenOptions::new()
-             .access_mode(FILE_GENERIC_READ | WRITE_DAC | WRITE_OWNER)
-             .share_mode(FILE_SHARE_READ | FILE_SHARE_WRITE)
-             .custom_flags(FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OPEN_REPARSE_POINT)
-             .open(&state)
--            .expect_err("Modify must not grant WRITE_OWNER");
--        assert_eq!(denied.raw_os_error(), Some(5));
-+        {
-+            Err(denied) => assert_eq!(denied.raw_os_error(), Some(5)),
-+            Ok(_) => eprintln!("this account is granted WRITE_OWNER here; fallback not exercised"),
-+        }
- 
-         drop(
-             PrivateDirectory::open(&state)
+@@ -336,3 +336,5 @@ River (Codex) = axobase001 <138223345+axobase001@users.noreply.github.com>
+ river@users.noreply.github.com = axobase001 <138223345+axobase001@users.noreply.github.com>
+ samhandsome = SamhandsomeLee <135809116+SamhandsomeLee@users.noreply.github.com>
+ samhandsome@vip.qq.com = SamhandsomeLee <135809116+SamhandsomeLee@users.noreply.github.com>
++Joseph Perla = jperla <3724+jperla@users.noreply.github.com>
++claude@jperla.com = jperla <3724+jperla@users.noreply.github.com>
 ```
 
----
-
-### Incident Patch 3: `17896612` (2026-11-24)
-**Commit Message**: fix(tui): a running background shell job no longer keeps the ambient scene drawing (#6728)
-
-The underwater ambient scene settles 6 s after the shell goes idle, but
-ambient_busy counted every queued/running/waiting row in the jobs panel,
-including TaskPanelEntryKind::Shell. A backgrounded `sleep 900` therefore
-held the scene awake for the job's whole life, redrawing at the ambient
-cadence long after the turn ended. Only Background (agent) tasks keep it
-busy now, via has_live_durable_tasks; the jobs panel's 1 Hz elapsed tick
-for a visible running shell is unchanged. This revives the intent of the
-superseded boat/issue-6728 branch on top of the IdleClock work.
-
-Measured on Linux x86_64, dev build, tmux 160x45, default theme, DeepSeek
-provider, after allowing a background `sleep 900` (draws counted as
-/dev/tty opens, one per frame via crossterm size()):
-  main, job running:   ~25 draws/s, 15.5% CPU (40 s window)
-  main, job killed:    0 draws/s,   0.43% CPU
-  fix,  job running:   1 draw/s,    1.02% CPU (40 s window)
-Idle composer (0.46%) and approval wait (1.00%) were already quiet on main.
-
-Refs #6728
-
-Regression test a_running_background_shell_job_does_not_hold_the_ambient_scene_awak
-
-**File**: `crates/tui/src/tui/ui/event_loop.rs` (modified, +1/-4)
+**File**: `CHANGELOG.md` (modified, +1/-1)
 ```diff
-@@ -5602,10 +5602,7 @@ pub(crate) async fn run_event_loop(
-         // browsing. After a short grace the aquarium stops requesting frames
-         // and the scene is genuinely still until real activity resumes
-         // (owner pain, captains-log #16).
--        let durable_tasks_active = app
--            .task_panel
--            .iter()
--            .any(|task| matches!(task.status.as_str(), "queued" | "running" | "waiting"));
-+        let durable_tasks_active = has_live_durable_tasks(app);
-         let ambient_busy = shell_phase_working
-             || app.turn_started_at.is_some()
-             || has_running_agents
+@@ -32,7 +32,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ 
+ - **Cross-process item index cache and owner-only indexing:** cached the item index across processes and skipped non-owner records during indexing. Thanks [@gaord](https://github.com/gaord). (#7446, #7522)
+ - **Simplified Chinese Auto-Review documentation:** added `docs/zh_hans/AUTO_REVIEW.md`. Thanks [@Goldloli](https://github.com/Goldloli). (#7521)
+-- **Bundled Onomeo and AtmoRouter providers:** added Onomeo (`ONOMEO_API_KEY`, thanks [@Owaid0723666](https://github.com/Owaid0723666), #7525) and AtmoRouter (`ATMOROUTER_API_KEY`, thanks [@BeckleyTenriajeng](https://github.com/BeckleyTenriajeng), #7506) as bundled OpenAI-compatible provider descriptors.
++- **Bundled Onomeo, AtmoRouter, and TrustedRouter providers:** added Onomeo (`ONOMEO_API_KEY`, thanks [@Owaid0723666](https://github.com/Owaid0723666), #7525), AtmoRouter (`ATMOROUTER_API_KEY`, thanks [@BeckleyTenriajeng](https://github.com/BeckleyTenriajeng), #7506), and TrustedRouter (`TRUSTEDROUTER_API_KEY`, thanks [@jperla](https://github.com/jperla), #7350) as bundled OpenAI-compatible provider descriptors.
+ - **One paste path in the terminal and off-thread clipboard reads:** simplified Ctrl+V handling to a single press/release edge rule and moved clipboard file reads off the UI thread. (#7516)
+ - **`/model` splits use-now from saving the default:** pressing `Enter` switches the current session's model immediately while `Shift+D` saves it as the default route. (#7517)
+ - **Standalone `/pet` dot whale:** every terminal draws the dot whale directly from its own session activity without depending on the companion source session. (#7514)
 ```
 
-**File**: `crates/tui/src/tui/ui/terminal.rs` (modified, +35/-0)
+**File**: `crates/app-server/src/runtime_api/tests.rs` (modified, +1/-1)
 ```diff
-@@ -862,6 +862,13 @@ pub(crate) struct IdleFacts {
-     pub(crate) pending_engine_op: bool,
+@@ -14143,7 +14143,7 @@ async fn settings_schema_allow_shell_reports_interactive_default_and_explicit_op
+         .iter()
+         .find(|row| row["key"] == "allow_shell")
+         .expect("allow_shell row present");
+-    assert_eq!(default_launch_row["value"], "false");
++    assert_eq!(default_launch_row["value"], "true");
+     assert_eq!(default_launch_row["persisted"], true);
+     Ok(())
  }
+```
+
+**File**: `crates/engine/src/core/engine/tests/child_host.rs` (modified, +2/-12)
+```diff
+@@ -2567,12 +2567,7 @@ async fn child_engine_inherits_parent_tools_overrides_and_excludes_disabled_tool
+         )
+         .await;
+     assert!(
+-        baseline
+-            .surface
+-            .registry
+-            .names()
+-            .iter()
+-            .any(|name| *name == "diagnostics"),
++        baseline.surface.registry.names().contains(&"diagnostics"),
+         "control: worker child includes diagnostics without overrides"
+     );
  
-+pub(crate) fn has_live_durable_tasks(app: &App) -> bool {
-+    app.task_panel.iter().any(|task| {
-+        task.kind == crate::tui::app::TaskPanelEntryKind::Background
-+            && matches!(task.status.as_str(), "queued" | "running" | "waiting")
-+    })
-+}
-+
- /// Whether the UI has nothing to do *right now*: no turn, no live work, no
- /// animation, no pending redraw, no toast about to expire, no modal ticking.
- /// Pure on purpose. A state that is not listed here keeps the 48 ms poll, so
-@@ -1012,6 +1019,34 @@ mod idle_poll_tests {
-     const FAST: Duration = Duration::from_millis(UI_IDLE_POLL_MS);
-     const SLOW: Duration = Duration::from_millis(UI_QUIESCENT_POLL_MS);
+@@ -2618,12 +2613,7 @@ async fn child_engine_inherits_parent_tools_overrides_and_excludes_disabled_tool
+             .await;
+         for disabled in ["diagnostics", "tasks"] {
+             assert!(
+-                !restricted
+-                    .surface
+-                    .registry
+-                    .names()
+-                    .iter()
+-                    .any(|name| *name == disabled),
++                !restricted.surface.registry.names().contains(&disabled),
+                 "child registry must exclude disabled tool {disabled}"
+             );
+             assert!(
+```
+
+**File**: `crates/engine/src/fleet/manager.rs` (modified, +2/-2)
+```diff
+@@ -4429,7 +4429,7 @@ sleep 30
+         let fake = fake_codewhale(
+             &tmp,
+             r#"#!/bin/sh
+-sleep 0.2
++sleep 0.8
+ printf '{"type":"done"}\n'
+ exit 0
+ "#,
+@@ -4473,7 +4473,7 @@ exit 0
+         let fake = fake_codewhale(
+             &tmp,
+             r#"#!/bin/sh
+-sleep 0.2
++sleep 0.8
+ printf '{"type":"done"}\n'
+ exit 0
+ "#,
+```
+
+**File**: `crates/engine/src/runtime_threads.rs` (modified, +6/-0)
+```diff
+@@ -3393,6 +3393,12 @@ impl RuntimeThreadStore {
  
-+    #[test]
-+    fn a_running_background_shell_job_does_not_hold_the_ambient_scene_awake() {
-+        let mut app = quiet_app();
-+        let shell = crate::tui::app::TaskPanelEntry {
-+            exit_code: None,
-+            id: "shell-live".to_string(),
-+            status: "running".to_string(),
-+            prompt_summary: "shell: sleep 900".to_string(),
-+            duration_ms: Some(60_000),
-+            kind: crate::tui::app::TaskPanelEntryKind::Shell,
-+            stale: false,
-+            elapsed_since_output_ms: None,
-+            owner_agent_id: None,
-+            owner_agent_name: None,
-+            current_tool: None,
-+            role: None,
-+            files_touched: 0,
-+        };
-+        app.task_panel.push(shell.clone());
-+        assert!(!has_live_durable_tasks(&app));
-+
-+        app.task_panel.push(crate::tui::app::TaskPanelEntry {
-+            kind: crate::tui::app::TaskPanelEntryKind::Background,
-+            ..shell
-+        });
-+        assert!(has_live_durable_tasks(&app));
-+    }
-+
-     #[test]
-     fn a_settled_ui_relaxes_only_after_the_quiet_period() {
-         let app = quiet_app();
+     pub fn rebuild_thread_from_event_log(&self, thread_id: &str) -> Result<Option<ThreadRecord>> {
+         validated_record_id(thread_id, "thread id")?;
++        if self
++            .seed_journal_path(thread_id)
++            .is_ok_and(|journal_path| journal_path.exists())
++        {
++            return Ok(None);
++        }
+         let mut rebuilt: Option<ThreadRecord> = None;
+         let mut latest_turn_id: Option<String> = None;
+         let mut latest_ts: Option<DateTime<Utc>> = None;
+```
+
+**File**: `crates/tui/CHANGELOG.md` (modified, +1/-1)
+```diff
+@@ -32,7 +32,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ 
+ - **Cross-process item index cache and owner-only indexing:** cached the item index across processes and skipped non-owner records during indexing. Thanks [@gaord](https://github.com/gaord). (#7446, #7522)
+ - **Simplified Chinese Auto-Review documentation:** added `docs/zh_hans/AUTO_REVIEW.md`. Thanks [@Goldloli](https://github.com/Goldloli). (#7521)
+-- **Bundled Onomeo and AtmoRouter providers:** added Onomeo (`ONOMEO_API_KEY`, thanks [@Owaid0723666](https://github.com/Owaid0723666), #7525) and AtmoRouter (`ATMOROUTER_API_KEY`, thanks [@BeckleyTenriajeng](https://github.com/BeckleyTenriajeng), #7506) as bundled OpenAI-compatible provider descriptors.
++- **Bundled Onomeo, AtmoRouter, and TrustedRouter providers:** added Onomeo (`ONOMEO_API_KEY`, thanks [@Owaid0723666](https://github.com/Owaid0723666), #7525), AtmoRouter (`ATMOROUTER_API_KEY`, thanks [@BeckleyTenriajeng](https://github.com/BeckleyTenriajeng), #7506), and TrustedRouter (`TRUSTEDROUTER_API_KEY`, thanks [@jperla](https://github.com/jperla), #7350) as bundled OpenAI-compatible provider descriptors.
+ - **One paste path in the terminal and off-thread clipboard reads:** simplified Ctrl+V handling to a single press/release edge rule and moved clipboard file reads off the UI thread. (#7516)
+ - **`/model` splits use-now from saving the default:** pressing `Enter` switches the current session's model immediately while `Shift+D` saves it as the default route. (#7517)
+ - **Standalone `/pet` dot whale:** every terminal draws the dot whale directly from its own session activity without depending on the companion source session. (#7514)
+```
+
+**File**: `crates/tui/tests/fixtures/conformance/events/provider_error_after_tool_call.golden.jsonl` (modified, +1/-1)
+```diff
+@@ -7,7 +7,7 @@
+ {"event":"tool_request_snapshot","snapshot":{"active_tool_catalog_sha256":"511d2f86960858be97eeec3cb89937ebced084359012281aad9bb5cc0ccfb4d5","capture_source":"prepared model-client request","delivery_status":"unknown (capture does not prove provider delivery)","omitted_tool_count":0,"payload_json_bytes":15275,"payload_measurement_status":"exact (within 1048576-byte measurement bound)","provider":{"model":"deepseek-v4-pro","provider":"Deepseek","status":"available"},"registry_facts_present":true,"registry_only_tools":{"status":"known","value":{"count":43,"omitted":11,"rendered":[{"truncated":false,"value":"Git"},{"truncated":false,"value":"Run"},{"truncated":false,"value":"Web"},{"truncated":false,"value":"apply_patch"},{"truncated":false,"value":"automation"},{"truncated":false,"value":"context_archive_get"},{"truncated":false,"value":"context_archive_search"},{"truncated":false,"value":"diagnostics"},{"truncated":false,"value":"finance"},{"truncated":false,"value":"get_goal"},{"truncated":false,"value":"github"},{"truncated":false,"value":"handle_read"},{"truncated":false,"value":"harness"},{"truncated":false,"value":"image_ocr"},{"truncated":false,"value":"note"},{"truncated":false,"value":"notify"},{"truncated":false,"value":"pandoc_convert"},{"truncated":false,"value":"project_map"},{"truncated":false,"value":"registry_sync"},{"truncated":false,"value":"request_plugin_install"},{"truncated":false,"value":"request_user_input"},{"truncated":false,"value":"retrieve_tool_result"},{"truncated":false,"value":"revert_turn"},{"truncated":false,"value":"review"},{"truncated":false,"value":"rlm"},{"truncated":false,"value":"send_later"},{"truncated":false,"value":"session_get"},{"truncated":false,"value":"session_search"},{"truncated":false,"value":"show_data"},{"truncated":false,"value":"start_mcp_server"},{"truncated":false,"value":"start_registry_mcp_server"},{"truncated":false,"value":"task_shell_wait"}]}},"registry_tool_count":{"status":"known","value":70},"rendered_tool_count":13,"schema_version":1,"step":0,"tool_count":13,"tools":[{"allowed_callers":{"status":"known","value":{"count":1,"omitted":0,"rendered":[{"truncated":false,"value":"direct"}]}},"approval":{"status":"known","value":{"truncated":false,"value":"Required"}},"cache_control_type":{"reason":"request field absent","status":"unknown"},"capabilities":{"status":"known","value":{"count":3,"omitted":0,"rendered":[{"truncated":false,"value":"ExecutesCode"},{"truncated":false,"value":"Sandboxable"},{"truncated":false,"value":"RequiresApproval"}]}},"defer_loading":{"status":"known","value":false},"description":{"truncated":true,"value":"Execute a shell command in the workspace (optional cwd) and return stdout and stderr (last 400 lines or 16KB; the full output is saved as an artifact). Optional timeout is foreground seconds (default 30 seconds); a command still running then moves to the background by itself — never killed for time — returning output so far, last-output age, build phase, and a task_id. Set background=true for >5s or parallel jobs, and description for a short UI label. Call task_shell_wait with that task_id to read more or w"},"input_examples":{"reason":"request field absent","status":"unknown"},"input_schema_json":{"truncated":true,"value":"{\"additionalProperties\":false,\"properties\":{\"background\":{\"description\":\"Run immediately in the background and return a task_id (good for >5s or parallel jobs; incompatible with read_only=true). Call task_shell_wait to wait or cancel.\",\"type\":\"boolean\"},\"command\":{\"description\":\"The command to execute. Actual execution shell: `/bin/bash`. Use Bash syntax: pipelines, redirections, $(command), and && / || are supported. Quote paths and variable expansions, such as \\\"$path\\\"; use single quotes for literal text. For literal multiline input, use a quoted heredoc delimiter (<<'EOF') with its closing delimiter on a separate line. Use only installed programs; do not assume GNU-specific flags on macOS/BSD. Example: printf '%s\\\\n' 'sample'.\",\"type\":\"string\"},\"cwd\":{\"description\":\"Optional workspace-relative working directory.\",\"type\":\"string\"},\"description\":{\"description\":\"Optional few-word summary shown to the user beside the command.\",\"type\":\"string\"},\"justification\":{\"description\":\"Required with sandbox_permissions: one sentence explaining why this exact command needs wider access.\",\"type\":\"string\"},\"read_only\":{\"description\":\"Set true to run analysis code (including Python/SQLite) or a network fetch (curl) with mandatory native filesystem read-only isolation. Outbound network is on only in Full Access when the session sandbox, the network policy and your network grant allow it. Available during peer writes. Refused when native enforcement is unavailable; no background, stdin, external backend, or sandbox escalation.\",\"type\":\"boolean\"},\"sandbox_permissions\":{\"description\":\"The wider sandbox mode this exact command n
+```
+
+---
+
+### Incident Patch 3: `9874729a` (2026-11-24)
+**Commit Message**: fix(tui): box run_event_loop and fat handle_view_events futures to prevent debug stack overflow
+
+- Box run_event_loop inside run_tui so startup and poll frames never
+  coexist on the codewhale-main stack.
+- Box apply_model_picker_choice, open_provider_picker,
+  open_model_connection_setup, apply_plan_handoff, switch_provider, and
+  apply_range_undo inside handle_view_events.
+
+Verified locally:
+- cargo fmt --all -- --check
+- sh scripts/sync-changelog.sh --check
+- python3 scripts/check-contributor-credit.py (exit 0)
+
+**File**: `crates/tui/src/tui/ui/event_loop.rs` (modified, +2/-2)
+```diff
+@@ -1535,7 +1535,7 @@ pub async fn run_tui(
+     if let Some(millis) = codewhale_runtime::startup_trace::cold_start_ms() {
+         codewhale_telemetry::set_cold_start_ms(millis);
+     }
+-    let result = run_event_loop(
++    let result = Box::pin(run_event_loop(
+         &mut terminal,
+         &mut app,
+         config,
+@@ -1545,7 +1545,7 @@ pub async fn run_tui(
+         translation_client,
+         pending_telemetry_notice,
+         dispatch_completion_rx,
+-    )
++    ))
+     .await;
+     automation_cancel.cancel();
+     automation_scheduler.abort();
+```
+
+**File**: `crates/tui/src/tui/ui/handlers.rs` (modified, +47/-17)
+```diff
+@@ -1982,13 +1982,13 @@ pub(crate) async fn handle_view_events(
+                         let identity = config
+                             .builtin_provider_identity(ProviderKind::Codewhale)
+                             .map_err(anyhow::Error::msg)?;
+-                        let switched = switch_provider(
++                        let switched = Box::pin(switch_provider(
+                             app,
+                             engine_handle,
+                             config,
+                             identity,
+                             Some(model.clone()),
+-                        )
++                        ))
+                         .await;
+                         if switched {
+                             if app.onboarding == OnboardingState::Provider {
+@@ -2026,7 +2026,7 @@ pub(crate) async fn handle_view_events(
+                                 app.ui_locale,
+                             ))
+                     }
+-                    Some(false) => open_provider_picker(app, config, engine_handle).await,
++                    Some(false) => Box::pin(open_provider_picker(app, config, engine_handle)).await,
+                     None if app.onboarding == OnboardingState::Provider => {
+                         back_from_provider_onboarding(app)
+                     }
+@@ -2084,7 +2084,13 @@ pub(crate) async fn handle_view_events(
+                 app.push_status_toast(message, level, Some(8_000));
+                 if needs_model {
+                     begin_first_connection_setup(app);
+-                    open_model_connection_setup(app, config, engine_handle, false).await;
++                    Box::pin(open_model_connection_setup(
++                        app,
++                        config,
++                        engine_handle,
++                        false,
++                    ))
++                    .await;
+                 }
+                 app.needs_redraw = true;
+             }
+@@ -2182,17 +2188,24 @@ pub(crate) async fn handle_view_events(
+                 if is_plan_handoff_request(app, &tool_id) =>
+             {
+                 let choice = crate::tui::plan_handoff::choice(app.ui_locale, &response);
+-                apply_plan_handoff(app, config, engine_handle, &tool_id, choice).await?;
++                Box::pin(apply_plan_handoff(
++                    app,
++                    config,
++                    engine_handle,
++                    &tool_id,
++                    choice,
++                ))
++                .await?;
+             }
+             // Esc follows the same owned-seed cleanup as Keep planning.
+             ViewEvent::UserInputCancelled { tool_id } if is_plan_handoff_request(app, &tool_id) => {
+-                apply_plan_handoff(
++                Box::pin(apply_plan_handoff(
+                     app,
+                     config,
+                     engine_handle,
+                     &tool_id,
+                     crate::tui::plan_handoff::PlanHandoffChoice::KeepPlanning,
+-                )
++                ))
+                 .await?;
+             }
+             ViewEvent::UserInputSubmitted { tool_id, response } => {
+@@ -3125,7 +3138,7 @@ pub(crate) async fn handle_view_events(
+                         .replace("{model}", &model);
+                     app.add_message(HistoryCell::System { content: notice });
+                 }
+-                apply_model_picker_choice(
++                Box::pin(apply_model_picker_choice(
+                     app,
+                     engine_handle,
+                     config,
+@@ -3135,7 +3148,7 @@ pub(crate) async fn handle_view_events(
+                     previous_model,
+                     previous_effort,
+                     save_as_startup_default,
+-                )
++                ))
+                 .await;
+                 refresh_parked_fleet_roster(app, config);
+             }
+@@ -3265,7 +3278,7 @@ pub(crate) async fn handle_view_events(
+                 apply_status_toast_event(app, message, level);
+             }
+             ViewEvent::TopbarRoutePickerRequested => {
+-                open_provider_picker(app, config, engine_handle).await;
++                Box::pin(open_provider_picker(app, config, engine_handle)).await;
+             }
+             ViewEvent::TopbarModelPickerRequested => {
+                 if app.view_stack.top_kind() != Some(ModalKind::ModelPicker) {
+@@ -3296,8 +3309,14 @@ pub(crate) async fn handle_view_events(
+             ViewEvent::ProviderPickerApplied { identity } => {
+                 let provider = identity.provider;
+                 let model_override = provider_picker_model_override(app, config, &identity);
+-                let switched =
+-                    switch_provider(app, engine_handle, config, identity, model_override).await;
++                let switched = Box::pin(switch_provider(
++                    app,
++                    engine_handle,
++                    config,
++                    identity,
++                    model_override,
++                ))
++   
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7518** (2026-11-24): fix(tui): a running background shell job no longer keeps the ambient scene drawing (#6728) (@Hmbown)
-- **PR #7515** (2026-11-24): fix(tui): #6561 component pass — copy masks, osascript path, modal click targets (@Hmbown)
-- **PR #7509** (2026-11-24): chore(web): record v0.10.4 as the published release (@Hmbown)
-- **PR #7508** (closed): build(engine): raise the engine crate recursion limit to 512 (@Hmbown)
-- **PR #7504** (2026-11-24): fix(acp): enforce Ask through the agent's mode, harden discovery, keep agent error detail (@Hmbown)
-- **PR #7498** (2026-11-24): fix(r21): bound VS Code buffers, gate workflow results, harden bridges (@Hmbown)
+- **PR #7559** (closed): docs(changelog): consolidate and deduplicate the 0.10.5 Unreleased notes (@Hmbown)
+- **PR #7558** (2026-11-24): feat(0.10.5): DSH 0.2.2 host services, per-plugin settings, telemetry honesty, and Wave 2 runtime (@Hmbown)
+- **PR #7557** (2026-11-24): fix(tui): use the engine catalog effort parser and add the Ollama Cloud effort ladder (@Hmbown)
+- **PR #7556** (2026-11-24): test(engine): match the strict [skills] contract in the creator-skills test (@Hmbown)
+- **PR #7555** (2026-11-24): fix(security): hardening batch — grants, secrets, runtime probes, execpolicy deny bypasses (@Hmbown)
+- **PR #7554** (2026-11-24): fix(tui): guard background session persistence while dispatch_in_flight (@Hmbown)
 
 ---
 
@@ -2240,36 +2591,34 @@ Regression test a_running_background_shell_job_does_not_hold_the_ambient_scene_a
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. release: keep build-machine paths out of self-hosted macOS shipping binaries
+## X. docs(dsh,release): record 0.10.5 DSH qualification, restore credits, and fix web
 
 **RULE**:
-When implementing operations in `.github/scripts/release-workflows.test.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in codewhale-hq/Codewhale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in codewhale-hq/Codewhale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `61e073db`: release: keep build-machine paths out of self-hosted macOS shipping binaries. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3235e2ec`: docs(dsh,release): record 0.10.5 DSH qualification, restore credits, and fix web tests. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/scripts/release-workflows.test.js`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-const freshReleaseHome = namedStep(releaseBuild, "Fresh rustup, Cargo home and temp for a self-hosted release build");
-assert.match(freshReleaseHome, /rm -rf "\$\{fresh\}"/);
-for (const remap of [/"\$\{CARGO_HOME\}=\/cargo"/, /"\$\(cd "\$\{fresh\}" && pwd -P\)\/\.cargo=\/cargo"/, /"\$\{GITHUB_WORKSPACE\}=\/codewhale"/, /"\$\(cd "\$\{GITHUB_WORKSPACE\}" && pwd -P\)=\/codewhale"/]) {
-  assert.match(freshReleaseHome, remap, "self-hosted shipping binaries must not embed the build machine's home or workspace paths");
-}
-assert.match(freshReleaseHome, /CARGO_ENCODED_RUSTFLAGS=/);
+- **Serve the shared web app build from `codewhale web`:** `codewhale web` now serves a built `codewhale-app/apps/web/dist` directory when `CODEWHALE_WEB_DIST` points to a valid directory containing `index.html`, including `/plugin-host.html` (with sandboxed `connect-src 'none'` / `frame-ancestors 'self'` CSP), immutable `/static/*` hashed assets, bounded SPA route fallback, path-traversal/symlink refusal, and preserved auth-bootstrap cookie sessions; falls back to the embedded web client when unset. (#7237)
+- **Choose an external ACP agent in the terminal:** `/model` now lists installed external ACP agents (`antigravity`, `opencode`, `copilot`, `dsh`, and others) alongside Codewhale models, showing why non-runnable agents are blocked and what to run, and `codewhale --agent <id>` / `codewhale exec --agent <id>` starts an interactive or headless session through the Engine ACP executor. (CW-8361)
+- **TrustedRouter bundled provider and inclusion bar:** added `TrustedRouter` (`trustedrouter`, `TRUSTEDROUTER_API_KEY`) as a bundled OpenAI-compatible provider and documented the bundled-provider inclusion bar. Thanks [@jperla](https://github.com/jperla). (#7350)
+- **Simplified Chinese Auto
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-assert.match(namedStep(releaseBuild, "Fresh rustup, Cargo home and temp for a self-hosted release build"), /rm -rf "\$\{fresh\}"/);
+### Adde
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `61e073db` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3235e2ec` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

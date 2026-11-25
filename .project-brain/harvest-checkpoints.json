@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-25T06:39:26.717Z",
+  "last_updated": "2026-11-25T06:47:53.592Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4041,14 +4041,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-codewhale-hq-codewhale",
-      "content_hash": "6557dbe6d31decd6ad8b1c24133b9b5c9fd0104401cadf824fc0741ac4decb35",
-      "verified_at": "2026-11-25T01:35:58.084Z",
+      "content_hash": "e1decd0ddd4da9a2cb34bf70efa3e8224cae19a912abcd4369be7bdea63bba17",
+      "verified_at": "2026-11-25T06:47:43.937Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T01:35:58.084Z"
+      "last_updated": "2026-11-25T06:47:43.937Z"
     },
     "zulip/zulip": {
       "repository": "zulip/zulip",
@@ -4416,14 +4416,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-freenet-freenet-core",
-      "content_hash": "8102926d168534cbeb3f21ce293009b3cc6dc3959c1e031b51c310b19af7bcca",
-      "verified_at": "2026-11-25T02:28:57.071Z",
+      "content_hash": "e628f53fb6a3efc37ce3605e9886673abc3d9ed06e5bc1f3afc177d7fe2db5ea",
+      "verified_at": "2026-11-25T06:47:53.591Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T02:28:57.071Z"
+      "last_updated": "2026-11-25T06:47:53.591Z"
     },
     "vearch/vearch": {
       "repository": "vearch/vearch",
@@ -15801,14 +15801,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-recursivesi-flint",
-      "content_hash": "f9a6aed6a4524603092be0d0010dc42401dd0d44cb7c5a937b8b24c749134007",
-      "verified_at": "2026-11-21T12:48:40.867Z",
+      "content_hash": "26aa5c7c8fb97b34eace158732e831827ef3767ba0382ed572491780625a8d32",
+      "verified_at": "2026-11-25T06:47:39.902Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T12:48:40.867Z"
+      "last_updated": "2026-11-25T06:47:39.902Z"
     },
     "Qwen/Qwen3-14B": {
       "repository": "Qwen/Qwen3-14B",

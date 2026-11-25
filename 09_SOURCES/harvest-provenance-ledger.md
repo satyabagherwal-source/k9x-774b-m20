@@ -13005,3 +13005,6 @@ Every entry in this ledger must capture:
 | `learn-github-tableproapp-tablepro` | `https://github.com/TableProApp/TablePro` | `e2b0999a` | Multi-dimensional audit evidence | 2026-11-25T06:39:20.649Z |
 | `learn-github-stakater-reloader` | `https://github.com/stakater/Reloader` | `35ca482b` | Multi-dimensional audit evidence | 2026-11-25T06:39:22.202Z |
 | `learn-github-gluesql-gluesql` | `https://github.com/gluesql/gluesql` | `9d354015` | Multi-dimensional audit evidence | 2026-11-25T06:39:26.701Z |
+| `learn-huggingface-recursivesi-flint` | `https://huggingface.co/RecursiveSI/flint` | `hf-recursi` | Multi-dimensional audit evidence | 2026-11-25T06:47:39.887Z |
+| `learn-github-codewhale-hq-codewhale` | `https://github.com/Hmbown/Codewhale` | `b4f71726` | Multi-dimensional audit evidence | 2026-11-25T06:47:43.891Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `d71c022a` | Multi-dimensional audit evidence | 2026-11-25T06:47:53.576Z |
