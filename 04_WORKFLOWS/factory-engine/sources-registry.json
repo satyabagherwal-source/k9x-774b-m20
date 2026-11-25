@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-25T07:48:51.816Z",
-    "lastVerified": "2026-11-25T07:48:51.816Z",
+    "lastChecked": "2026-11-25T07:57:13.299Z",
+    "lastVerified": "2026-11-25T07:57:13.299Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -275,9 +275,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-25T07:22:34.436Z",
+    "lastChecked": "2026-11-25T07:57:08.977Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-25T07:22:34.436Z"
+    "lastVerified": "2026-11-25T07:57:08.977Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -965,9 +965,9 @@
   "devspace-sh-devspace": {
     "name": "devspace",
     "officialUrl": "https://github.com/devspace-sh/devspace",
-    "lastChecked": "2026-11-24T15:08:44.394Z",
+    "lastChecked": "2026-11-25T07:57:01.605Z",
     "revisionIdentifier": "8ff62607",
-    "lastVerified": "2026-11-24T15:08:44.394Z"
+    "lastVerified": "2026-11-25T07:57:01.605Z"
   },
   "rustls-rustls": {
     "name": "rustls",
@@ -1935,22 +1935,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "cilium-cilium": {
-    "name": "cilium",
+    "name": "cilium/cilium",
     "officialUrl": "https://github.com/cilium/cilium",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-25T03:50:51.899Z",
-    "lastVerified": "2026-11-25T03:50:51.899Z",
+    "lastChecked": "2026-11-25T07:57:09.768Z",
+    "lastVerified": "2026-11-25T07:57:09.768Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cilium-cilium",
-    "contentHash": "8feceb942d8fa4b0e2d29ec50b2bd7cbbeb311e55cee7a010d94cb4b03a1168a",
-    "promotedRulesCount": 1,
+    "contentHash": "f9b7b675f6d5d2026f8be68c0b56d4bf169893ac54d50d865d45e0a627004fff",
+    "promotedRulesCount": 0,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "ad7c0f73"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "zilliztech-claude-context": {
     "name": "zilliztech/claude-context",
@@ -2161,14 +2160,14 @@
     "officialUrl": "https://github.com/metalbear-co/mirrord",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-24T06:30:05.514Z",
-    "lastVerified": "2026-11-24T06:30:05.514Z",
+    "lastChecked": "2026-11-25T07:56:58.930Z",
+    "lastVerified": "2026-11-25T07:56:58.930Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-metalbear-co-mirrord",
-    "contentHash": "6ed05e4d8608695a799ff06dbaa404adfeb3490dca08135efcd639cc28057361",
+    "contentHash": "d1b6c96ac4f0d500f188e43a4279534e28ff196142e8889fe2f3a7a9049c0b27",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -5732,12 +5731,12 @@
     "lastVerified": "2026-11-25T02:10:26.380Z"
   },
   "apple-foundationdb": {
-    "name": "apple/foundationdb",
+    "name": "foundationdb",
     "officialUrl": "https://github.com/apple/foundationdb",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-11-24T14:05:48.011Z",
-    "lastVerified": "2026-11-24T14:05:48.011Z",
+    "lastChecked": "2026-11-25T07:57:06.632Z",
+    "lastVerified": "2026-11-25T07:57:06.632Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-apple-foundationdb",
@@ -5746,7 +5745,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "58f80b14"
   },
   "mlua-rs-mlua": {
     "name": "mlua",
@@ -9510,9 +9510,9 @@
   "gitliveapp-firebase-kotlin-sdk": {
     "name": "firebase-kotlin-sdk",
     "officialUrl": "https://github.com/GitLiveApp/firebase-kotlin-sdk",
-    "lastChecked": "2026-11-22T21:56:57.663Z",
+    "lastChecked": "2026-11-25T07:56:59.108Z",
     "revisionIdentifier": "888384d7",
-    "lastVerified": "2026-11-22T21:56:57.663Z"
+    "lastVerified": "2026-11-25T07:56:59.108Z"
   },
   "anonymousaak-seo-skills": {
     "name": "seo-skills",
@@ -13042,12 +13042,12 @@
     "officialUrl": "https://huggingface.co/Comfy-Org/Fibo-2.0",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-21T15:48:41.955Z",
-    "lastVerified": "2026-11-21T15:48:41.955Z",
+    "lastChecked": "2026-11-25T07:56:56.858Z",
+    "lastVerified": "2026-11-25T07:56:56.858Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-comfy-org-fibo-2-0",
-    "contentHash": "d0948d74f1e086e77f501d7827a02564f8b8a6b1f9fdebede3702da8cf8080a3",
+    "contentHash": "67a0e20442b3b63634d212c86bd55e6c1043a6c20f8938c84d954590ee117897",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

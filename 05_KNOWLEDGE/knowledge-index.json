@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-25T07:48:55.643Z",
+  "last_updated": "2026-11-25T07:57:46.429Z",
   "total_verified_learnings": 9114,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25324,
+  "total_items": 25326,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -111993,10 +111993,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-cilium-cilium-product-intelligence-cilium-cilium-core-invariants.md",
       "title": "Product Intelligence: cilium/cilium Core Invariants",
       "repository": "cilium/cilium",
-      "source_version": "ad7c0f73",
-      "content_hash": "df528a8f55603e732d564ced207f8f30352d206a75e246fe0e374d76fb190ac8",
+      "source_version": "79325ed9",
+      "content_hash": "3a581006b526bd18d1d1c10fd000ca5a7130578f40f28d54f940b5d37b7e926b",
       "domain_letter": "B",
-      "persisted_at": "2026-11-24T23:41:53.705Z"
+      "persisted_at": "2026-11-25T07:57:10.586Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-cilium-cilium": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-cilium-cilium",
@@ -112030,9 +112030,9 @@
       "title": "Product Intelligence: cilium-cilium-learnings Core Invariants",
       "repository": "cilium-cilium-learnings",
       "source_version": "HEAD",
-      "content_hash": "d18f672f40e6bdfd5c03d2c10b6a1b35328a11d11cf5a3c877bb3e1bfcdd01d9",
+      "content_hash": "b3deb13bcf353e4869a00e3421b8d60fb93d2809428f88bff1eefc921ad8a402",
       "domain_letter": "B",
-      "persisted_at": "2026-11-24T23:41:58.650Z"
+      "persisted_at": "2026-11-25T07:57:46.429Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-cilium-cilium-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-cilium-cilium-learnings",
@@ -214357,8 +214357,8 @@
       "slug": "cilium-cilium",
       "platform": "github",
       "source_url": "https://github.com/cilium/cilium",
-      "source_version": "ad7c0f73",
-      "content_hash": "8feceb942d8fa4b0e2d29ec50b2bd7cbbeb311e55cee7a010d94cb4b03a1168a",
+      "source_version": "79325ed9",
+      "content_hash": "f9b7b675f6d5d2026f8be68c0b56d4bf169893ac54d50d865d45e0a627004fff",
       "dossier_path": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "promoted_rules": [
@@ -214498,7 +214498,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T23:41:53.079Z",
+      "verified_at": "2026-11-25T07:57:10.067Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -243430,8 +243430,8 @@
       "slug": "metalbear-co-mirrord",
       "platform": "github",
       "source_url": "https://github.com/metalbear-co/mirrord",
-      "source_version": "f3111f6b",
-      "content_hash": "6ed05e4d8608695a799ff06dbaa404adfeb3490dca08135efcd639cc28057361",
+      "source_version": "1a999f8a",
+      "content_hash": "d1b6c96ac4f0d500f188e43a4279534e28ff196142e8889fe2f3a7a9049c0b27",
       "dossier_path": "07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md",
       "promoted_rules": [
@@ -243474,6 +243474,11 @@
           "number": 10218,
           "title": "Publish docs and guides when a labeled pull request merges",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10488,
+          "title": "Drop unsafe jaq builtins",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -243481,7 +243486,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T06:30:07.092Z",
+      "verified_at": "2026-11-25T07:56:59.908Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -243523,10 +243528,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-metalbear-co-mirrord-technical-construction-intelligence-metalbear-co-mirrord-co.md",
       "title": "Technical Construction Intelligence: metalbear-co/mirrord Core Invariants",
       "repository": "metalbear-co/mirrord",
-      "source_version": "f3111f6b",
-      "content_hash": "470d329abe98dcad75e1f012282dc8aa1afdcc3d9596571019b0581521df9dfc",
+      "source_version": "1a999f8a",
+      "content_hash": "a498a721d433d4973dfc0e6b0818aa1e1295a212bf2f6c36485af9d4f0c6971e",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T06:30:07.901Z"
+      "persisted_at": "2026-11-25T07:57:00.586Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-metalbear-co-mirrord": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-metalbear-co-mirrord",
@@ -243535,10 +243540,10 @@
       "relative_path": "08_VERIFICATION/metalbear-co-mirrord-verification-protocol-empirical-defect-shield-for-metalbear.md",
       "title": "Verification Protocol: Empirical Defect Shield for metalbear-co/mirrord",
       "repository": "metalbear-co/mirrord",
-      "source_version": "f3111f6b",
-      "content_hash": "8a200f29291936c21f4870b9db991608e2975718ac84f8d8afee7e914d6bbaf7",
+      "source_version": "1a999f8a",
+      "content_hash": "35dc30a03b3ff66b72f1a70a9fc3db903c7675514d89e1b32def6a0029979e16",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T06:30:08.125Z"
+      "persisted_at": "2026-11-25T07:57:00.795Z"
     },
     "learn-github-run-llama-llama_index": {
       "learning_id": "learn-github-run-llama-llama_index",
@@ -243694,9 +243699,9 @@
       "title": "Technical Construction Intelligence: metalbear-co-mirrord-learnings Core Invariants",
       "repository": "metalbear-co-mirrord-learnings",
       "source_version": "HEAD",
-      "content_hash": "e3acea1ce5a350c7a03f524c14a5c8b344d10d4b7d0d3f9d1a1881f805203a87",
+      "content_hash": "a9df87a2e74efa7e8f2872e23d15b5c18b229f0b0ef404104432e0a3b79679e6",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T06:30:18.301Z"
+      "persisted_at": "2026-11-25T07:57:14.095Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-metalbear-co-mirrord-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-metalbear-co-mirrord-learnings",
@@ -243706,9 +243711,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for metalbear-co-mirrord-learnings",
       "repository": "metalbear-co-mirrord-learnings",
       "source_version": "HEAD",
-      "content_hash": "18eb7b69f3df432bfbf9863b5b650496f74c2442e7bceffbeed47d36b87e92bf",
+      "content_hash": "fed404d2a927090dbc75771c54a3ca10a8cfb08da48f9a7ca547ae055294402e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T06:30:18.535Z"
+      "persisted_at": "2026-11-25T07:57:14.282Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-dealignai-deepseek-v4-1-flash-uncensored-fp8-": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-dealignai-deepseek-v4-1-flash-uncensored-fp8-",
@@ -280736,7 +280741,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Comfy-Org/Fibo-2.0",
       "source_version": "hf-comfy-org-fibo-2.0",
-      "content_hash": "d0948d74f1e086e77f501d7827a02564f8b8a6b1f9fdebede3702da8cf8080a3",
+      "content_hash": "67a0e20442b3b63634d212c86bd55e6c1043a6c20f8938c84d954590ee117897",
       "dossier_path": "07_PROJECT_LEARNING/hf-comfy-org-fibo-2.0-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-comfy-org-fibo-2.0-learnings.md",
       "promoted_rules": [],
@@ -280745,7 +280750,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T15:49:15.070Z",
+      "verified_at": "2026-11-25T07:56:57.243Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -280762,9 +280767,9 @@
       "title": "Research & Knowledge Intelligence: Comfy-Org/Fibo-2.0 Core Invariants",
       "repository": "Comfy-Org/Fibo-2.0",
       "source_version": "hf-comfy-org-fibo-2.0",
-      "content_hash": "00b1513c68a0a50bc9d5f1484c6a3b52d1fdefd3672f708bb588241ac7b768cc",
+      "content_hash": "9ea544392d4a803a4fe0696311202823327631ecce9a0194ce635117d895d34e",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T17:36:37.315Z"
+      "persisted_at": "2026-11-25T07:56:57.733Z"
     },
     "rule-9022": {
       "learning_id": "rule-9022",
@@ -280800,9 +280805,9 @@
       "title": "Research & Knowledge Intelligence: hf-comfy-org-fibo-2.0-learnings Core Invariants",
       "repository": "hf-comfy-org-fibo-2.0-learnings",
       "source_version": "HEAD",
-      "content_hash": "828e681bf56411e2edbf2089242f4c7b4384a1e9042cde8282716f9e53bb78fa",
+      "content_hash": "2e4da8c5a6fd36686252c31f40156951dcb1399f0dffd901d8b849251abf9cdb",
       "domain_letter": "D",
-      "persisted_at": "2026-11-21T15:49:49.120Z"
+      "persisted_at": "2026-11-25T07:57:14.701Z"
     },
     "learn-huggingface-krafton-raon-1-mini-preview": {
       "learning_id": "learn-huggingface-krafton-raon-1-mini-preview",
@@ -346395,6 +346400,32 @@
       "content_hash": "ef46b7c7d75f431a8971b9110e2e7c878951ef37c7ab0c17f83eea29ae60f452",
       "domain_letter": "G",
       "persisted_at": "2026-11-25T07:48:48.594Z"
+    },
+    "rule-10488": {
+      "learning_id": "rule-10488",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10488,
+      "title": "Drop unsafe jaq builtins",
+      "source_url": "https://github.com/metalbear-co/mirrord",
+      "source_version": "1a999f8a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T07:56:59.908Z"
+    },
+    "candidate_directive-drop-unsafe-jaq-builtins": {
+      "item_id": "candidate_directive-drop-unsafe-jaq-builtins",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-YWPX-drop-unsafe-jaq-builtins.md",
+      "title": "Drop unsafe jaq builtins",
+      "repository": "metalbear-co-mirrord-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e579581bdb97ed0ecec6b6def362d51f305aaeacea6f20b244012677e4f327a5",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-25T07:57:13.897Z"
     }
   },
   "ai-builder-brain": {

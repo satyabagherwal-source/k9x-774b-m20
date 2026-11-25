@@ -13030,3 +13030,7 @@ Every entry in this ledger must capture:
 | `learn-github-gardener-gardener` | `https://github.com/gardener/gardener` | `44a016aa` | Multi-dimensional audit evidence | 2026-11-25T07:48:44.202Z |
 | `learn-github-sigstore-cosign` | `https://github.com/sigstore/cosign` | `2e60a1c3` | Multi-dimensional audit evidence | 2026-11-25T07:48:45.768Z |
 | `learn-github-rqlite-rqlite` | `https://github.com/rqlite/rqlite` | `a7a54625` | Multi-dimensional audit evidence | 2026-11-25T07:48:48.257Z |
+| `learn-huggingface-comfy-org-fibo-2-0` | `https://huggingface.co/Comfy-Org/Fibo-2.0` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-11-25T07:56:57.496Z |
+| `learn-github-metalbear-co-mirrord` | `https://github.com/metalbear-co/mirrord` | `1a999f8a` | Multi-dimensional audit evidence | 2026-11-25T07:57:00.143Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `79325ed9` | Multi-dimensional audit evidence | 2026-11-25T07:57:10.338Z |
+| `learn-dom-d-d8c77758` | `project://cilium-cilium` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cilium-cilium-learnings.md` | 2026-11-25T07:57:45.627Z |

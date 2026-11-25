@@ -3013,10 +3013,10 @@
     "repository": "metalbear-co/mirrord",
     "platform": "github",
     "sourceUrl": "https://github.com/metalbear-co/mirrord",
-    "sourceVersion": "f3111f6b",
+    "sourceVersion": "1a999f8a",
     "license": "MIT",
-    "contentHash": "6ed05e4d8608695a799ff06dbaa404adfeb3490dca08135efcd639cc28057361",
-    "lastHarvestedAt": "2026-11-24T06:30:07.359Z",
+    "contentHash": "d1b6c96ac4f0d500f188e43a4279534e28ff196142e8889fe2f3a7a9049c0b27",
+    "lastHarvestedAt": "2026-11-25T07:57:00.143Z",
     "learningId": "learn-github-metalbear-co-mirrord"
   },
   "openkruise-kruise": {
@@ -3343,10 +3343,10 @@
     "repository": "cilium/cilium",
     "platform": "github",
     "sourceUrl": "https://github.com/cilium/cilium",
-    "sourceVersion": "ad7c0f73",
+    "sourceVersion": "79325ed9",
     "license": "Apache-2.0",
-    "contentHash": "8feceb942d8fa4b0e2d29ec50b2bd7cbbeb311e55cee7a010d94cb4b03a1168a",
-    "lastHarvestedAt": "2026-11-24T23:41:53.286Z",
+    "contentHash": "f9b7b675f6d5d2026f8be68c0b56d4bf169893ac54d50d865d45e0a627004fff",
+    "lastHarvestedAt": "2026-11-25T07:57:10.338Z",
     "learningId": "learn-github-cilium-cilium"
   },
   "seekstorm-seekstorm": {
@@ -10615,8 +10615,8 @@
     "sourceUrl": "https://huggingface.co/Comfy-Org/Fibo-2.0",
     "sourceVersion": "hf-comfy-org-fibo-2.0",
     "license": "Open-Source",
-    "contentHash": "d0948d74f1e086e77f501d7827a02564f8b8a6b1f9fdebede3702da8cf8080a3",
-    "lastHarvestedAt": "2026-11-21T15:49:15.300Z",
+    "contentHash": "67a0e20442b3b63634d212c86bd55e6c1043a6c20f8938c84d954590ee117897",
+    "lastHarvestedAt": "2026-11-25T07:56:57.496Z",
     "learningId": "learn-huggingface-comfy-org-fibo-2-0"
   },
   "hf-ornith-ai-ornith-1.5-122b": {

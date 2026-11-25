@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261123-AOKJ",
-    "timestamp": "2026-11-23T20:38:52.387Z",
-    "repository": "iziz/libPhoneNumber-iOS",
-    "learningId": "learn-github-iziz-libphonenumber-ios",
-    "contentHash": "5c48a167a5e6d7559a737009da2530048f3fbfbcfcffd42f99b717b9cb78d397",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-AR17",
-    "timestamp": "2026-11-23T20:38:55.579Z",
-    "repository": "go-kratos/kratos",
-    "learningId": "learn-github-go-kratos-kratos",
-    "contentHash": "eecf0022168ed4598ef2ce5909821152b8386def82ccfff6792f915c44c80603",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-ASH9",
-    "timestamp": "2026-11-23T20:38:57.453Z",
-    "repository": "nolabs-ai/nono",
-    "learningId": "learn-github-nolabs-ai-nono",
-    "contentHash": "2f8a1607f5a6dd379d6c4a345b1172a20be2debee01203d3c6f6afc0fc74b00d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261123-AUVO",
     "timestamp": "2026-11-23T20:39:00.564Z",
     "repository": "genkit-ai/genkit",
@@ -7492,6 +7447,51 @@
     "contentHash": "22cee83c7c0df2786625f8758514d5e13a1a70eb08d2338eb932efb1f4edd800",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-YK2B",
+    "timestamp": "2026-11-25T07:56:57.491Z",
+    "repository": "Comfy-Org/Fibo-2.0",
+    "learningId": "learn-huggingface-comfy-org-fibo-2-0",
+    "contentHash": "67a0e20442b3b63634d212c86bd55e6c1043a6c20f8938c84d954590ee117897",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-YM3U",
+    "timestamp": "2026-11-25T07:57:00.138Z",
+    "repository": "metalbear-co/mirrord",
+    "learningId": "learn-github-metalbear-co-mirrord",
+    "contentHash": "d1b6c96ac4f0d500f188e43a4279534e28ff196142e8889fe2f3a7a9049c0b27",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-YTZ1",
+    "timestamp": "2026-11-25T07:57:10.333Z",
+    "repository": "cilium/cilium",
+    "learningId": "learn-github-cilium-cilium",
+    "contentHash": "f9b7b675f6d5d2026f8be68c0b56d4bf169893ac54d50d865d45e0a627004fff",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

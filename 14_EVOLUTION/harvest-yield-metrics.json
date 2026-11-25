@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T07:48:48.264Z",
-  "total_cycles_completed": 12343,
-  "total_learnings_persisted": 12343,
-  "total_rules_promoted": 11364,
+  "last_updated": "2026-11-25T07:57:10.343Z",
+  "total_cycles_completed": 12346,
+  "total_learnings_persisted": 12346,
+  "total_rules_promoted": 11365,
   "history": [
-    {
-      "timestamp": "2026-11-24T19:00:29.282Z",
-      "repository": "Dicklesworthstone/destructive_command_guard",
-      "learningId": "learn-github-dicklesworthstone-destructive_command_guard",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T19:00:31.676Z",
-      "repository": "nodejs/undici",
-      "learningId": "learn-github-nodejs-undici",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T19:00:39.220Z",
-      "repository": "projectdiscovery/nuclei",
-      "learningId": "learn-github-projectdiscovery-nuclei",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-24T19:00:40.549Z",
       "repository": "vcaesar/riot",
@@ -1403,6 +1382,27 @@
       "repository": "rqlite/rqlite",
       "learningId": "learn-github-rqlite-rqlite",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T07:56:57.502Z",
+      "repository": "Comfy-Org/Fibo-2.0",
+      "learningId": "learn-huggingface-comfy-org-fibo-2-0",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T07:57:00.149Z",
+      "repository": "metalbear-co/mirrord",
+      "learningId": "learn-github-metalbear-co-mirrord",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T07:57:10.343Z",
+      "repository": "cilium/cilium",
+      "learningId": "learn-github-cilium-cilium",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

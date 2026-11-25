@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T07:48:55.409Z",
-  "total_records": 2646,
+  "last_updated": "2026-11-25T07:57:46.429Z",
+  "total_records": 2647,
   "domains": {
     "A": {
       "total": 22,
@@ -71,7 +71,7 @@
       ]
     },
     "D": {
-      "total": 993,
+      "total": 994,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -1065,7 +1065,8 @@
         "domain_intelligence-research-knowledge-intelligence-hf-openai-clip-vit-large-patch14-learnings-core-",
         "DOM-D-AC435FD0",
         "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-z_image_turbo-learnings-core-invari",
-        "DOM-D-C25EA6D9"
+        "DOM-D-C25EA6D9",
+        "DOM-D-D8C77758"
       ]
     },
     "E": {
@@ -8389,8 +8390,8 @@
       "title": "Product Intelligence: cilium/cilium Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-cilium-cilium-product-intelligence-cilium-cilium-core-invariants.md",
       "repository": "cilium/cilium",
-      "content_hash": "df528a8f55603e732d564ced207f8f30352d206a75e246fe0e374d76fb190ac8",
-      "created_at": "2026-11-24T23:41:53.705Z"
+      "content_hash": "3a581006b526bd18d1d1c10fd000ca5a7130578f40f28d54f940b5d37b7e926b",
+      "created_at": "2026-11-25T07:57:10.586Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-",
@@ -8407,8 +8408,8 @@
       "title": "Product Intelligence: cilium-cilium-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-cilium-cilium-learnings-product-intelligence-cilium-cilium-learnings-core-invari.md",
       "repository": "cilium-cilium-learnings",
-      "content_hash": "d18f672f40e6bdfd5c03d2c10b6a1b35328a11d11cf5a3c877bb3e1bfcdd01d9",
-      "created_at": "2026-11-24T23:41:58.650Z"
+      "content_hash": "b3deb13bcf353e4869a00e3421b8d60fb93d2809428f88bff1eefc921ad8a402",
+      "created_at": "2026-11-25T07:57:46.429Z"
     },
     "domain_intelligence-technical-construction-intelligence-zvec-ai-zvec-grep-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-zvec-ai-zvec-grep-learnings-core-invariants",
@@ -19635,8 +19636,8 @@
       "title": "Technical Construction Intelligence: metalbear-co/mirrord Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-metalbear-co-mirrord-technical-construction-intelligence-metalbear-co-mirrord-co.md",
       "repository": "metalbear-co/mirrord",
-      "content_hash": "470d329abe98dcad75e1f012282dc8aa1afdcc3d9596571019b0581521df9dfc",
-      "created_at": "2026-11-24T06:30:07.901Z"
+      "content_hash": "a498a721d433d4973dfc0e6b0818aa1e1295a212bf2f6c36485af9d4f0c6971e",
+      "created_at": "2026-11-25T07:57:00.586Z"
     },
     "domain_intelligence-technical-construction-intelligence-run-llama-llama_index-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-run-llama-llama_index-core-invariants",
@@ -19662,8 +19663,8 @@
       "title": "Technical Construction Intelligence: metalbear-co-mirrord-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-metalbear-co-mirrord-learnings-technical-construction-intelligence-metalbear-co-.md",
       "repository": "metalbear-co-mirrord-learnings",
-      "content_hash": "e3acea1ce5a350c7a03f524c14a5c8b344d10d4b7d0d3f9d1a1881f805203a87",
-      "created_at": "2026-11-24T06:30:18.301Z"
+      "content_hash": "a9df87a2e74efa7e8f2872e23d15b5c18b229f0b0ef404104432e0a3b79679e6",
+      "created_at": "2026-11-25T07:57:14.095Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-dealignai-deepseek-v4-1-flash-uncensored-fp8-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-dealignai-deepseek-v4-1-flash-uncensored-fp8-",
@@ -28875,8 +28876,8 @@
       "title": "Research & Knowledge Intelligence: Comfy-Org/Fibo-2.0 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-comfy-org-fibo-2-0-research-knowledge-intelligence-comfy-org-fibo-2-0-core-in.md",
       "repository": "Comfy-Org/Fibo-2.0",
-      "content_hash": "82e9037d8ad519b05b1fa31af134c174bb6722be11b070ed29263d6ceb681c13",
-      "created_at": "2026-11-21T15:49:15.535Z"
+      "content_hash": "9ea544392d4a803a4fe0696311202823327631ecce9a0194ce635117d895d34e",
+      "created_at": "2026-11-25T07:56:57.733Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-fibo-2-0-learnings-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-fibo-2-0-learnings-core-invariants",
@@ -28884,8 +28885,8 @@
       "title": "Research & Knowledge Intelligence: hf-comfy-org-fibo-2.0-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-comfy-org-fibo-2-0-learnings-research-knowledge-intelligence-hf-comfy-org-fib.md",
       "repository": "hf-comfy-org-fibo-2.0-learnings",
-      "content_hash": "828e681bf56411e2edbf2089242f4c7b4384a1e9042cde8282716f9e53bb78fa",
-      "created_at": "2026-11-21T15:49:49.120Z"
+      "content_hash": "2e4da8c5a6fd36686252c31f40156951dcb1399f0dffd901d8b849251abf9cdb",
+      "created_at": "2026-11-25T07:57:14.701Z"
     },
     "domain_intelligence-research-knowledge-intelligence-krafton-raon-1-mini-preview-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-krafton-raon-1-mini-preview-core-invariants",
@@ -44441,6 +44442,48 @@
       "repository": "alejandrobujan-tendedero-learnings",
       "content_hash": "916b0f5f093b5059aaa839cb1c976c5061c0fd61d77202ba6a5aa4ebadefa56e",
       "created_at": "2026-11-25T07:22:41.857Z"
+    },
+    "DOM-D-D8C77758": {
+      "record_id": "DOM-D-D8C77758",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): cilium/cilium",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  \n> **Source**: github ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  \n> **Source Version**: `79325ed9`  \n> **License**: Apache-2.0  \n> **Synthesized By**: zero-clone-structural-synthesizer",
+      "content_hash": "dfd3769efcf1e669f3683472bcd955c2e9e8fd40f8c4be1319ce892b9234c254",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  \n> **Source**: github ([https://github.com/cilium/ciliu -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  \n> **Source**: github ([https://github.com/cilium/ciliu",
+      "provenance": {
+        "source_uri": "project://cilium-cilium/cilium-cilium-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-25T07:57:14.895Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (cilium-cilium)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of cilium-cilium"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-25T07:57:45.596Z"
     }
   }
 }

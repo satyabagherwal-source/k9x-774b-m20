@@ -12997,3 +12997,7 @@
 | `CYCLE-20261125-NZFP` | `2026-11-25T07:48:44.197Z` | `gardener/gardener` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10486` | Yes (`178e41ee...`) |
 | `CYCLE-20261125-O0N7` | `2026-11-25T07:48:45.763Z` | `sigstore/cosign` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10487` | Yes (`0b4fb05f...`) |
 | `CYCLE-20261125-O2KD` | `2026-11-25T07:48:48.253Z` | `rqlite/rqlite` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7863` | Yes (`22cee83c...`) |
+| `CYCLE-20261125-YK2B` | `2026-11-25T07:56:57.491Z` | `Comfy-Org/Fibo-2.0` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-comfy-org-fibo-2.0-learnings.md` | Yes (`67a0e204...`) |
+| `CYCLE-20261125-YM3U` | `2026-11-25T07:57:00.138Z` | `metalbear-co/mirrord` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10488` | Yes (`d1b6c96a...`) |
+| `CYCLE-20261125-YTZ1` | `2026-11-25T07:57:10.333Z` | `cilium/cilium` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/cilium-cilium-learnings.md` | Yes (`f9b7b675...`) |
+| `CYCLE-2026-11-25-PROJ-EVOLVE` | `2026-11-25T07:57:45.627Z` | `cilium-cilium` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-D8C77758` [Domain D] | Yes (`dfd3769e...`) |

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T07:48:55.874Z",
+  "last_updated": "2026-11-25T07:57:46.645Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-25T07:31:12.028Z",
@@ -398,9 +398,9 @@
       "staged_for_review": 1
     },
     "cilium-cilium-learnings.md": {
-      "processed_at": "2026-11-24T23:41:57.860Z",
-      "promoted_canonical": 0,
-      "staged_for_review": 1
+      "processed_at": "2026-11-25T07:57:45.627Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     },
     "falkordb-falkordb-learnings.md": {
       "processed_at": "2026-11-25T07:39:36.659Z",
@@ -428,7 +428,7 @@
       "staged_for_review": 1
     },
     "metalbear-co-mirrord-learnings.md": {
-      "processed_at": "2026-11-24T06:30:17.399Z",
+      "processed_at": "2026-11-25T07:57:13.446Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1588,7 +1588,7 @@
       "staged_for_review": 1
     },
     "hf-comfy-org-fibo-2.0-learnings.md": {
-      "processed_at": "2026-11-21T15:49:48.891Z",
+      "processed_at": "2026-11-25T07:57:14.457Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3918,7 +3918,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 4128,
-  "total_canonical_promoted": 532,
-  "total_staged_for_review": 3157
+  "total_dossiers_evaluated": 4131,
+  "total_canonical_promoted": 533,
+  "total_staged_for_review": 3158
 }

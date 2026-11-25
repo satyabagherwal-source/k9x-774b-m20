@@ -3,7 +3,7 @@
 > **Source Version**: `hf-comfy-org`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T15:49:14.759Z  
+> **Timestamp**: 2026-11-25T07:56:56.958Z  
 > **Learning ID**: `learn-huggingface-comfy-org-fibo-2-0`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-comfy-org-fibo-2.0-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/Comfy-Org/Fibo-2.0](https://huggingface.co/Comfy-Org/Fibo-2.0))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T15:48:41.955Z  
+> **Harvest Timestamp**: 2026-11-25T07:56:56.858Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: image-to-image
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 354287 downloads | 241 likes
+- **Stars / Engagement**: 327750 downloads | 243 likes
 
 ---
 

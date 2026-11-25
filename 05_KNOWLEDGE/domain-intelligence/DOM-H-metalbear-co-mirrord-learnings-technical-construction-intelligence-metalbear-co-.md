@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T06:30:17.912Z",
+  "timestamp": "2026-11-25T07:57:13.754Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-metalbear-co-mirrord-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [metalbear-co-mirrord-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T06:30:17.912Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T07:57:13.754Z`  
 > **Learning ID**: `LEARN-EVO-metalbear-co-mirrord-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 77%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), L (Deployment & Operations Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 87%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from metalbear-co-mirrord-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md`  
 > **Source**: github ([https://github.com/metalbear-co/mirrord](https://github.com/metalbear-co/mirrord))  
-> **Source Version**: `f3111f6b`  
+> **Source Version**: `1a999f8a`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T06:30:05.988Z  
+> **Timestamp**: 2026-11-25T07:56:58.935Z  
 > **Learning ID**: `learn-github-metalbear-co-mirrord`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/metalbear-co/mirrord](https://github.com/metalbear-co/mirrord))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T06:30:05.514Z  
+> **Harvest Timestamp**: 2026-11-25T07:56:58.930Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Run any process, on your machine or in an AI agent's environment, as if it were a pod in your Kubernetes cluster: real env vars, DNS, network, traffic.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 5428 stars
+- **Stars / Engagement**: 5430 stars
 
 ---
 
@@ -255,9 +255,9 @@ use tokio::sync::mpsc;
 
 pub mod error;
 pub mod io;
-pub mod path_resolver;
 pub mod protocol_version;
 pub mod rolledback_stream;
+pub mod target_root;
 
 /// Id of an agent's client. Each new client connection is assigned with a unique id.
 pub type ClientId = u32;
@@ -1029,286 +1029,6 @@ impl<T, S: Sink<T, Error = io::Error>> Sink<T> for TimeoutSink<S> {
 
 ```
 
-### Core Architecture Module: `mirrord/agent/src/util/path_resolver.rs`
-```
-use std::{
-    io,
-    ops::Not,
-    os::unix::ffi::OsStrExt,
-    path::{Component, Path, PathBuf},
-};
-
-use tracing::Level;
-
-/// A helper struct for resolving paths as seen in the target container to paths accessible from the
-/// root host.
-///
-/// Should be used whenever we need to access a file in the target container filesystem.
-#[derive(Debug, Clone)]
-pub struct InTargetPathResolver {
-    root: PathBuf,
-}
-
-impl InTargetPathResolver {
-    /// Number of chained symlinks that we can resolve before returning ELOOP.
-    /// 40 matches the default on Linux.
-    const MAX_SYMLINK_HOPS: u8 = 40;
-
-    pub fn from_pid(target_pid: u64) -> Self {
-        let root = format!("/proc/{target_pid}/root");
-
-        Self {
-            root: PathBuf::from(root),
-        }
-    }
-
-    pub fn from_root() -> Self {
-        Self {
-            root: PathBuf::from("/"),
-        }
-    }
-
-    /// Returns the given path, resolved with [`Self::root`] as root.
-    /// The returned path will never climb above [`Self::root`] and
-    /// will contain no symlinks.
-    #[tracing::instrument(level = Level::TRACE, ret, err(level = Level::DEBUG))]
-    pub fn resolve(&self, path: &Path) -> io::Result<PathBuf> {
-        let mut depth = Self::MAX_SYMLINK_HOPS;
-        self.resolve_inner(path, PathBuf::new(), &mut depth)
-            .map(|p| self.root.join(&p))
-    }
-
-    /// Turns a path returned by [`Self::resolve`] back into the path as seen in the target
-    /// container, by replacing the [`Self::root`] prefix with `/`.
-    ///
-    /// Needed when a resolved path is combined with further user-provided components (e.g. the
-    /// `pathname` of `fstatat` relative to a `dirfd`), since the result has to go through
-    /// resolution again.
-    pub fn unresolve(&self, resolved: &Path) -> io::Result<PathBuf> {
-        resolved
-            .strip_prefix(&self.root)
-            .map(|path| Path::new("/").join(path))
-            .map_err(|_| {
-                io::Error::new(
-                    io::ErrorKind::InvalidInput,
-                    "path is not under the target root",
-                )
-            })
-    }
-
-    /// Main (bounded) recursive implementation function for resolving paths.
-    /// Returns paths *without* the [`Self::root`] prefix, so these paths are
-    /// *relative* to [`Self::root`]. Use [`Self::resolve`] to get real paths.
-    /// This function is mainly for normalizing the path and correctly resolving
-    /// any symlinks.
-    ///
-    /// `max_depth` is the max number of symlinks we are allowed to resolve
-    /// before returning ELOOP. We use a `&mut` instead of passing it by value
-    /// because it is decremented in recursive child calls, of which there might
-    /// be multiple at the same recursion depth.
-    fn resolve_inner(&self, path: &Path, from: PathBuf, max_depth: &mut u8) -> io::Result<PathBuf> {
-        let mut tmp_path = if path.has_root() {
-            PathBuf::new()
-        } else {
-            from
-        };
-
-        for comp in path.components() {
-            match comp {
-                Component::Prefix(_) => {
-                    return Err(io::Error::new(
-                        io::ErrorKind::InvalidInput,
-                        "path prefixes are not supported",
-                    ));
-                }
-                Component::RootDir => {}
-                Component::CurDir => {}
-                Component::ParentDir => {
-                    tmp_path.pop();
-                }
-                Component::Normal(comp) => {
-                    tmp_path.push(comp);
-                    let real_path = self.root.join(&tmp_path);
-
-                    // We don't use [`Path::is_symlink`] because it
-                    // consumes all errors and returns false.
-                    let is_symlink = match real_path.symlink_metadata() {
-                        Ok(meta) => meta.file_type().is_symlink(),
-                        Err(err) if err.kind() == io::ErrorKind::NotFound => false,
-                        Err(err) => return Err(err),
-                    };
-
-                    if is_symlink.not() {
-                        continue;
-                    }
-
-                    if *max_depth == 0 {
-                        return Err(io::Error::from_raw_os_error(libc::ELOOP));
-                    }
-
-                    *max_depth -= 1;
-
-                    // Symlink logic
-                    let link = real_path.read_link()?;
-
-                    let from = tmp_path
-                        .parent()
-                        .expect("tmp_path should not be empty at this point");
-
-                    tmp_path = self.resolve_inner(&link, from.to_path_buf(), max_depth)?;
-                }
-            }
-        }
-
-        assert!(tmp_path.has_root().not());
-
-        if path.as_os_str().as_bytes().ends_with(b"/") {
-            tmp_path.push("");
-        }
-
-        Ok(tmp_path)
-    }
-
-    /// Resolves `path` like [`Self::resolve`], but does not follow a symlink in the last
-    /// component.
-    ///
-    /// Meant for operations that act on the link itself, such as `lstat` and `readlink`. Joining
-    /// the unresolved path onto the target root is not enough for those: the kernel resolves
-    /// absolute symlinks in the intermediate components (e.g. `/var/run -> /run`) against the
-    /// agent's root instead of the target's.
-    ///
-    /// A trailing slash makes the last component follow symlinks, same as in the kernel.
-    pub fn resolve_no_follow(&self, path: &Path) -> io::Result<PathBuf> {
-        if path.as_os_str().as_bytes().ends_with(b"/") {
-            return self.resolve(path);
-        }
-
-        match (path.parent(), path.file_name()) {
-            (Some(parent), Some(name)) => Ok(self.resolve(parent)?.join(name)),
-            _ => self.resolve(path),
-        }
-    }
-}
-
-#[cfg(test)]
-impl InTargetPathResolver {
-    /// Constructs a new resolver with the given root path.
-    ///
-    /// Makes it easy to test with [`tempfile::tempdir`].
-    pub fn with_root_path(root: PathBuf) -> Self {
-        Self { root }
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use std::{fs, os::unix::fs::symlink};
-
-    use super::*;
-
-    /// Target root with `/var/run -> /run` (absolute) and `/run/secrets/token -> ..data/token`.
-    fn target_root() -> tempfile::TempDir {
-        let root = tempfile::tempdir().unwrap();
-        fs::create_dir_all(root.path().join("var")).unwrap();
-        fs::create_dir_all(root.path().join("run/secrets/..data")).unwrap();
-        fs::write(root.path().join("run/secrets/..data/token"), "secret").unwrap();
-        symlink("/run", root.path().join("var/run")).unwrap();
-        symlink("..data/token", root.path().join("run/secrets/token")).unwrap();
-        root
-    }
-
-    #[test]
-    fn no_follow_resolves_absolute_symlink_in_parent() {
-        let root = target_root();
-        let resolver = InTargetPathResolver::with_root_path(root.path().to_path_buf());
-
-        let resolved = resolver
-            .resolve_no_follow(Path::new("/var/run/secrets/token"))
-            .unwrap();
-
-        assert_eq!(resolved, root.path().join("run/secrets/token"));
-        assert!(resolved.symlink_metadata().unwrap().is_symlink());
-        assert_eq!(resolved.read_link().unwrap(), PathBuf::from("..data/token"));
-    }
-
-    #[test]
-    fn no_follow_keeps_last_component_symlink() {
-        let root = target_root();
-        let resolver = InTargetPathResolver::with_root_path(root.path().to_path_buf());
-
-        let resolved = resolver.resolve_no_follow(Path::new("/var/run")).unwrap();
-
-        assert_eq!(resolved, root.path().join("var/run"));
-        assert_eq!(resolved.read_link().unwrap(), PathBuf::from("/run"));
-    }
-
-    #[test]
-    fn no_follow_with_trailing_slash_follows_last_component() {
-        let root = target_root();
-        let resolver = InTargetPathResolver::with_root_path(root.path().to_path_buf());
-
-        let resolved = resolver.resolve_no_follow(Path::new("/var/run/")).unwrap();
-
-        assert!(resolved.symlink_metadata().unwrap().is_dir());
-    }
-
-    #[test]
-    fn no_follow_root() {
-        let root = target_root();
-        let resolver = InTargetPathResolver::with_root_path(root.path().to_path_buf());
-
-        let resolved = resolver.resolve_no_follow(Path::new("/")).unwrap();
-
-        assert!(resolved.symlink_metadata().unwrap().is_dir());
-    }
-
-    /// `/a/b -> c`, `/a/c -> d`, `/a/d` is a file.
-    #[test]
-    fn follows_chain_of_relative_symlinks() {
-        let root = tempfile::tempdir().unwrap();
-        fs::create_dir_all(root.path().join("a")).unwrap();
-        fs::write(root.path().join("a/d"), "").unwrap();
-        symlink("c", root.path().join("a/b")).unwrap();
-        symlink("d", root.path().join("a/c")).unwrap();
-        let resolver = InTargetPathResolver::with_root_path(root.path().to_path_buf());
-
-        let resolved = resolver.resolve(Path::new("/a/b")).unwrap();
-
-        assert_eq!(resolved, root.path().join("a/d"));
-    }
-
-    /// `/x -> /y`, `/y -> /z`, `/z` is a file.
-    #[test]
-    fn follows_chain_of_absolute_symlinks() {
-        let root = tempfile::tempdir().unwrap();
-        fs::write(root.path().join("z"), "").unwrap();
-        symlink("/y", root.path().join("x")).unwrap();
-        symlink("/z", root.path().join("y")).unwrap();
-        let resolver = InTargetPathResolver::with_root_path(root.path().to_path_buf());
-
-        let resolved = resolver.resolve(Path::new("/x")).unwrap();
-
-        assert_eq!(resolved, root.path().join("z"));
-    }
-
-    /// `/a -> b`, `/b -> a`.
-    #[test]
-    fn symlink_loop_is_eloop() {
-        let root = tempfile::tempdir().unwrap();
-        symlink("b", root.path().join("a")).unwrap();
-        symlink("a", root.path().join("b")).unwrap();
-        let resolver = InTargetPathResolver::with_root_path(root.path().to_path_buf());
-
-        let err = resolver.resolve(Path::new("/a")).unwrap_err();
-
-        assert_eq!(err.raw_os_error(), Some(libc::ELOOP));
-    }
-
-    /// `/d0 -> d1/../d1`, `/d1 -> d2/../d2`, and so on down to a real directory.
-    ///
-  
-```
-
 ### Core Architecture Module: `mirrord/agent/src/util/protocol_version.rs`
 ```
 use std::sync::{Arc, Mutex};
@@ -1530,17 +1250,280 @@ mod test {
 
 ```
 
+### Core Architecture Module: `mirrord/agent/src/util/target_root.rs`
+```
+//! Confines paths to the target's filesystem.
+//!
+//! tl;dr:
+//! 1. When `mirrord-protocol` requires us to open a file descriptor in a target's filesystem,
+//!    **always** do it through [`TargetRoot`];
+//! 2. When `mirrord-protocol` requires us to act on a path in the target's filesystem,
+//!    **always** obtain the file descriptor with [`TargetRoot`],
+//!    then use the path returned from [`proc_fd_path`].
+//!
+//! # Rationale
+//!
+//! The agent opens paths it can't trust: those of file requests
+//! ([`FileManager`](crate::file::FileManager)) and Unix socket addresses (`outgoing`), which a
+//! client can set to anything. The agent itself can reach
+//! far more than the target: a targeted agent runs with `hostPID`, so `/proc/1/root` is the node's
+//! root, and it mounts the node's `/run` and `/var`. A path may be absolute, climb with `..`, or
+//! lead through symlinks in the target's filesystem, and none of these should reach a file outside
+//! the target's root. Paths from the agent's own configuration, such as the TLS steal config's
+//! certificates, go through here too, since they lead through the same symlinks.
+//!
+//! [`TargetRoot`] is the **only** place that turns such a path into a file descriptor. It opens
+//! paths with `openat2(2)` and `RESOLVE_IN_ROOT`, so the kernel resolves `..`, absolute paths and
+//! absolute symlinks against the target's root, and with `RESOLVE_NO_MAGICLINKS`, so procfs links
+//! such as `/proc/<pid>/root` or `/proc/<pid>/fd/<n>` can't jump out of it. The kernel resolves
+//! the whole path in one syscall, so a concurrent rename or symlink swap in the target can't
+//! redirect it. `openat2(2)` needs Linux 5.6, and on older kernels we use [`userspace`] instead.
+//!
+//! Callers act on the returned descriptors with `f*` syscalls, with `*at` syscalls on the single
+//! final component that [`TargetRoot::open_parent`] returns, or through [`proc_fd_path`] for APIs
+//! that only take a path. They never pass the path itself to a path-based syscall.
+//!
+//! # Alternatives
+//!
+//! File access could instead run with its root changed to the target's, with `chroot(2)` into
+//! `/proc/<pid>/root`, in a separate process or in a thread that first leaves the process's
+//! shared filesystem attributes with `unshare(CLONE_FS)`. The kernel would then resolve `..`,
+//! absolute paths and absolute symlinks against the target's root in every syscall, with no
+//! special resolution on our side, and on any kernel.
+//!
+//! That approach was rejected because `chroot(2)` requires `CAP_SYS_CHROOT`, a capability the
+//! agent doesn't otherwise need. mirrord doesn't request it for the agent's container, and
+//! container runtimes such as CRI-O don't grant it by default.
+
+mod userspace;
+
+use std::{
+    ffi::{OsStr, OsString},
+    fs::{File, ReadDir},
+    io,
+    ops::Not,
+    os::{
+        fd::{AsFd, AsRawFd, BorrowedFd, OwnedFd},
+        unix::{ffi::OsStrExt, fs::DirEntryExt},
+    },
+    path::{Path, PathBuf},
+    sync::{Arc, OnceLock},
+};
+
+use nix::{
+    errno::Errno,
+    fcntl::{self, AT_FDCWD, AtFlags, OFlag, OpenHow, ResolveFlag},
+    sys::stat::{FileStat, Mode, fstat, fstatat},
+};
+use tracing::warn;
+
+/// A directory a client opened, which relative paths in its later requests resolve against.
+#[derive(Debug)]
+pub(crate) struct Directory {
+    pub(crate) file: File,
+}
+
+impl Directory {
+    /// Lists the entries of [`Self::file`].
+    pub(crate) fn read_dir(&self) -> io::Result<ReadDir> {
+        std::fs::read_dir(proc_fd_path(&self.file))
+    }
+}
+
+fn same_file(a: &FileStat, b: &FileStat) -> bool {
+    (a.st_dev, a.st_ino) == (b.st_dev, b.st_ino)
+}
+
+/// The path of `fd` in the agent's own `/proc/self/fd`, for APIs that only take a path, such as
+/// [`std::fs::read_dir`] or `connect(2)` on a Unix socket.
+///
+/// The kernel follows it to the file that `fd` holds, without resolving a path in the target
+/// again. It's also short, unlike `/proc/<pid>/root` and a path in the target, which may not fit
+/// in the 108 bytes of a Unix socket address.
+pub(crate) fn proc_fd_path(fd: &impl AsRawFd) -> PathBuf {
+    PathBuf::from(format!("/proc/self/fd/{}", fd.as_raw_fd()))
+}
+
+/// Where a resolution may go, like the `RESOLVE_*` flag of the same name.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum Scope {
+    /// The starting directory is the root: `..` stops at it, and absolute paths and symlinks
+    /// start from it.
+    InRoot,
+    /// The resolution fails with `EXDEV` if it would leave the starting directory, with `..`,
+    /// an absolute path or an absolute symlink.
+    Beneath,
+}
+
+/// What resolves the paths of [`TargetRoot`].
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub(crate) enum Resolver {
+    /// `openat2(2)`.
+    Kernel,
+    /// [`userspace`], for kernels without `openat2(2)`, or where a seccomp profile blocks it.
+    Userspace,
+}
+
+impl Resolver {
+    /// How many times a resolution is retried after the kernel aborts it with `EAGAIN`, which
+    /// `RESOLVE_IN_ROOT` and `RESOLVE_BENEATH` do when a concurrent rename races a `..`.
+    const EAGAIN_RETRIES: usize = 8;
+
+    /// Picks [`Self::Kernel`] when `openat2(2)` works, once per process.
+    ///
+    /// Tests take their kernel case from here, so that where `openat2(2)` doesn't work they
+    /// exercise the userspace walk, as the agent would, rather than fail.
+    pub(crate) fn detect() -> Self {
+        static DETECTED: OnceLock<Resolver> = OnceLock::new();
+
+        *DETECTED.get_or_init(|| {
+            let how = OpenHow::new()
+                .flags(OFlag::O_PATH | OFlag::O_CLOEXEC)
+                .resolve(ResolveFlag::RESOLVE_IN_ROOT | ResolveFlag::RESOLVE_NO_MAGICLINKS);
+
+            match fcntl::openat2(AT_FDCWD, "/", how) {
+                Ok(_) => Self::Kernel,
+                Err(error) => {
+                    warn!(
+                        %error,
+                        "openat2(2) is unavailable, file requests resolve their paths in userspace"
+                    );
+                    Self::Userspace
+                }
+            }
+        })
+    }
+
+    fn open(
+        self,
+        dirfd: BorrowedFd<'_>,
+        path: &Path,
+        flags: OFlag,
+        mode: Mode,
+        scope: Scope,
+    ) -> io::Result<OwnedFd> {
+        let flags = flags | OFlag::O_CLOEXEC;
+
+        if self == Self::Userspace {
+            return userspace::open(dirfd, path, flags, mode, scope);
+        }
+
+        // Unlike `openat(2)`, `openat2(2)` fails with `EINVAL` on a `mode` it wouldn't use.
+        let mode = if flags.contains(OFlag::O_CREAT) {
+            mode
+        } else {
+            Mode::empty()
+        };
+        let resolve = match scope {
+            Scope::InRoot => ResolveFlag::RESOLVE_IN_ROOT,
+            Scope::Beneath => ResolveFlag::RESOLVE_BENEATH,
+        };
+        let how = OpenHow::new()
+            .flags(flags)
+            .mode(mode)
+            .resolve(resolve | ResolveFlag::RESOLVE_NO_MAGICLINKS);
+
+        let mut retries = Self::EAGAIN_RETRIES;
+        loop {
+            match fcntl::openat2(dirfd, path, how) {
+                Err(Errno::EAGAIN) if retries > 0 => retries -= 1,
+                result => return result.map_err(io::Error::from),
+            }
+        }
+    }
+}
+
+/// The root of the filesystem that the agent confines paths to.
+///
+/// The agent builds one, and shares clones of it, which are cheap: they share the descriptor of
+/// the root.
+#[derive(Debug, Clone)]
+pub(crate) struct TargetRoot(Arc<Inner>);
+
+#[derive(Debug)]
+struct Inner {
+    /// `/proc/<pid>/root` for a target container, `/` for the agent's own filesystem.
+    path: PathBuf,
+    /// [`Self::path`], opened when the [`TargetRoot`] is built.
+    ///
+    /// Opening it right away pins the target's root before the target can exit and another
+    /// process reuse its PID, after which `/proc/<pid>/root` would be that process's root. When
+    /// the open fails, every open that needs the root tries again. Opening `/proc/<pid>/root`
+    /// needs ptrace access to the target, which an agent without `CAP_SYS_PTRACE` may not have,
+    /// and then only what needs the root fails, not the whole agent.
+    fd: OnceLock<OwnedFd>,
+    resolver: Resolver,
+}
+
+impl TargetRoot {
+    /// The root of the container of the process `pid`, or the agent's own root without one.
+    pub(crate) fn for_target(pid: Option<u64>) -> Self {
+        Self::new(match pid {
+            Some(pid) => PathBuf::from(format!("/proc/{pid}/root")),
+            None => PathBuf::from("/"),
+        })
+    }
+
+    pub(crate) fn new(path: PathBuf) -> Self {
+        Self::with_resolver(path, Resolver::detect())
+    }
+
+    pub(crate) fn with_resolver(path: PathBuf, resolver: Resolver) -> Self {
+        let fd = OnceLock::new();
+        match Self::open_root(&path) {
+            Ok(opened) => {
+                let _ = fd.set(opened);
+            }
+            Err(error) => warn!(
+                %error,
+                ?path,
+                "Failed to open the target's root, opens in it will try again"
+            ),
+        }
+
+        Self(Arc::new(Inner { path, fd, resolver }))
+    }
+
+    fn open_root(path: &Path) -> io::Result<OwnedFd> {
+        // The agent picks this path, and `/proc/<pid>/root` is a magic link that has to be
+        // followed.
+        Ok(fcntl::open(
+            path,
+            OFlag::O_PATH | OFlag::O_DIRECTORY | OFlag::O_CLOEXEC,
+            Mode::empty(),
+        )?)
+    }
+
+    fn fd(&self) -> io::Result<BorrowedFd<'_>> {
+        if let Some(fd) = self.0.fd.get() {
+            return Ok(fd.as_fd());
+        }
+
+        let fd = Self::open_root(&self.0.path)?;
+
+        // A concurrent open may have won, and then `fd` is closed.
+        Ok(self.0.fd.get_or_init(|| fd).as_fd())
+    }
+
+    /// Opens `path` inside the root, with `flags` and `mode` as `openat(2)` takes them.
+    ///
+    /// A relative `path` resolves from `base`. An absolute `path` always resolves from the
+    /// root, the way `openat(2)` ignores its `dirfd` for one.
+    ///
+    /// A relative `path` without
+```
+
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #5277** (2026-11-25): **Target paths with extra segments after the container name are accepted and the extras dropped**
+  *Symptoms*: ### Bug Description  A target path with extra segments after the container name is accepted, and the extra segments are silently dropped. For example, `pod/foo/container/bar/baz` parses as pod `foo` with container `bar`.  This happens for every target type that goes through `FromSplit` (pod, deployment/deploy, rollout, job, cronjob, statefulset, service, replicaset, serverless): each `from_split` reads the name and an optional `container/{name}` pair and never checks that the path ends there.  Other inputs are already rejected, so the behaviour is inconsistent:  - `label/app=x/container/c/extra` is rejected with "must use `label/key=value[,key=value...][/container/name]`". - `pod/foo/` is rejected.  ### Steps to Reproduce  At `a300913`, in `mirrord/config`:  ```rust let target: Target = "pod/foo/container/bar/baz".parse().unwrap(); // Ok assert_eq!(target.to_string(), "pod/foo/container/bar"); ```  Same with `mirrord exec --target pod/foo/container/bar/baz -- ...` or `"target": "deployment/foo/container/bar/baz"` in the config file.  ### mirrord CLI version  `main` at `a300913`  ### Your operating system and version  macOS 26.6.2 (arm64); the parsing code is platform-independent.  ### Local process  Not relevant; this is target path parsing in `mirrord-config`.  ### Expected  An `InvalidTargetPath` error, like the other malformed paths, so a mistyped target isn't used silently.  I'd like to fix this; I have a small change in `Target::from_str` with a test ready. 
+
 - **Issue #5092** (2026-10-18): **mirrord crashes Go programs on Linux ARM64**
   *Symptoms*: ### Bug Description  Under mirrord 3.274.0 on Linux ARM64, a Go program can crash with SIGSEGV when a system call returns a 64-bit value, such as a pointer. The kernel call succeeds, but the program receives a corrupted result.  Example: an anonymous `mmap` returns `0xffff83298000`. The Go program receives `0xffffffff83298000` with no error, and its first write to that address faults. `mmap` is only one example. Any hooked syscall with a result wider than 32 bits is affected.  Cause: mirrord intercepts Go syscalls in the [ARM64 hook](https://github.com/metalbear-co/mirrord/blob/747cc39839876068bbd031cf1d31cdf3ced70f34/mirrord/layer-go/src/linux_aarch64.rs#L24-L81). The hook uses Go's `runtime.asmcgocall` to run mirrord's Rust handler, which returns a 64-bit `i64`. Go declares `asmcgocall` as returning `int32`, so its [assembly implementation](https://github.com/golang/go/blob/6885bad7dd86880be6929c02085e5c7a67ff2887/src/runtime/asm_arm64.s#L1012) stores the result with `MOVW`, keeping only the low 32 bits (sign-extended). The hook then treats this truncated value as the full syscall result.  ```mermaid sequenceDiagram     participant G as Go caller (Syscall6)     participant D as mirrord hook (asm)     participant A as runtime.asmcgocall     participant H as Rust handler     participant K as Linux kernel      G->>D: Syscall6(SYS_MMAP, ...)     D->>A: asmcgocall(handler)     A->>H: call     H->>K: mmap(...)     K-->>H: 0xffff83298000     H-->>A: i64 result     Note over A: Dec
-
-- **Issue #5026** (2026-10-16): **README example for disabling agent capabilities doesn't disable anything**
-  *Symptoms*: ### Bug Description  Hi, I tried the example from the ["Additional capabilities"](https://github.com/metalbear-co/mirrord/blob/c0bfc954bb9e89f04dafe01d90022424d9038716/README.md#L155-L168) section of the README and the agent still gets all of its capabilities:  ``` $ MIRRORD_AGENT_DISABLED_CAPABILITIES=CAP_NET_RAW,CAP_SYS_PTRACE mirrord exec --target pod/root-target -- sleep 12 $ kubectl get pod/mirrord-agent-xie9vwzomp-sl9dv -o jsonpath='{.spec.containers[0].securityContext.capabilities}' {"add":["SYS_ADMIN","SYS_PTRACE","NET_ADMIN"]} ```  I think there are two reasons. [`agent.disabled_capabilities`](https://github.com/metalbear-co/mirrord/blob/c0bfc954bb9e89f04dafe01d90022424d9038716/mirrord/config/src/agent.rs#L241-L250) has no env variable, so it can only be set in the config file. And in the config file the names only work without the `CAP_` prefix, because [`get_capabilities`](https://github.com/metalbear-co/mirrord/blob/c0bfc954bb9e89f04dafe01d90022424d9038716/mirrord/kube/src/api/container/util.rs#L25-L38) compares the strings as they are, so `["CAP_SYS_PTRACE"]` and `["sys_ptrace"]` are ignored without any warning and only `["SYS_PTRACE"]` removes it. Also `NET_RAW` is not in the list anymore.  Since I had the cluster up I also checked what happens without each one, because the README only says it "will possibly limit mirrord functionalities":  | disabled | agent as a job | ephemeral agent | |---|---|---| | `SYS_PTRACE` | the agent doesn't start (`failed to open tar
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1557,167 +1540,461 @@ mod test {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2057b2a2` (2026-11-23)
-**Commit Message**: Publish docs and guides when a labeled pull request merges (#5291)
+### Incident Patch 1: `aee4b8a5` (2026-11-24)
+**Commit Message**: Drop unsafe jaq builtins (#5301)
 
-* Publish docs and guides when a labeled pull request merges
+* Dropped unsage jaq builtins
 
-A docs fix reached the site only with the next release or through a
-manual run of publish-docs.yaml. A pull request from this repository
-with the `publish-docs` label now runs that workflow for `main` when it
-merges. A fork's pull request is skipped, because its `pull_request`
-run has a read-only token and no secrets, and GitHub blocks
-`pull_request_target` by default in public repositories from December
-2, 2026. A maintainer publishes such a change by hand.
+* Added UT
 
-The label publishes all of `docs/` and `guides/`, so it also ships
-unreleased pages merged earlier. A release cut before a labeled merge
-puts the site back on the released commit when it publishes, until the
-next publish.
+* Copy mirrord-jaq and mirrord-test-macros into the agent image build
 
-The job publishes `main` rather than the merge commit, and its runs
-share a concurrency group, so two close merges can't leave the site on
-the older one. The group is on the calling job so that releases stay
-outside it, because by default GitHub cancels a run waiting in a group
-when another joins.
-
-The workflow hasn't run on GitHub yet. A local evaluation of the job's
-`if` and gro
-
-**File**: `.github/workflows/publish-docs-on-merge.yaml` (added, +37/-0)
+**File**: `Cargo.lock` (modified, +3/-5)
 ```diff
-@@ -0,0 +1,37 @@
-+name: Publish docs and guides on labeled merge
-+
-+# The `publish-docs` label publishes the docs and guides without needing a release. When a pull request with the label
-+# merges into `main`, this workflow runs publish-docs.yaml for `main`. That publishes the whole `docs/` and `guides/`
-+# trees, so it also ships anything merged earlier that hasn't been released yet.
-+#
-+# The trigger is `pull_request`, because GitHub blocks `pull_request_target` by default in public repositories from
-+# December 2, 2026, and a `push` to `main` would have to look up the pull request of each commit to read its labels. A
-+# `pull_request` run from a fork gets a read-only token and no secrets, so it can neither push the publish commits nor
-+# post to #ci-alerts. The job skips a fork's pull request, because its run could only fail with nobody told, and a
-+# maintainer publishes it with the manual steps in docs/AGENTS.md. Only a pull request from a branch of this repository
-+# can publish, and creating such a branch takes write access.
-+
-+on:
-+  pull_request:
-+    types: [closed]
-+    branches: [main]
-+
-+permissions: {}
-+
-+jobs:
-+  # Publishes `main` rather than the merge commit, so that the last of several close merges publishes all of them. A
-+  # release that publishes afterwards puts the site back on the released commit, as docs/AGENTS.md describes.
-+  publish_docs:
-+    if: ${{ github.event.pull_request.merged == true && github.event.pull_request.head.repo.full_name == github.repository && contains(github.event.pull_request.labels.*.name, 'publish-docs') }}
-+    concurrency:
-+      group: ${{ github.event.pull_request.merged == true && github.event.pull_request.head.repo.full_name == github.repository && contains(github.event.pull_request.labels.*.name, 'publish-docs') && 'publish docs on merge' || github.run_id }}
-+      cancel-in-progress: false
-+    permissions:
-+      contents: write
-+      statuses: read
-+    uses: ./.github/workflows/publish-docs.yaml
-+    with:
-+      ref: main
-+      dry_run: false
-+    secrets:
-+      SLACK_CI_ALERTS_WEBHOOK_URL: ${{ secrets.SLACK_CI_ALERTS_WEBHOOK_URL }}
-```
-
-**File**: `.github/workflows/publish-docs.yaml` (modified, +3/-2)
-```diff
-@@ -2,8 +2,9 @@ name: Publish docs and guides
+@@ -5195,12 +5195,12 @@ dependencies = [
+  "hyper-util",
+  "jaq-core",
+  "jaq-json",
+- "jaq-std",
+  "k8s-cri",
+  "libc",
+  "mirrord-agent-env",
+  "mirrord-agent-iptables",
+  "mirrord-cluster-auth",
++ "mirrord-jaq",
+  "mirrord-nightly-polyfill",
+  "mirrord-protocol",
+  "mirrord-protocol-io",
+@@ -5827,7 +5827,7 @@ dependencies = [
  
- # GitBook's Documentation and Guides spaces sync the `docs-published` and `guides-published` branches, not `main`, so
- # a page merged to `docs/` or `guides/` reaches the site only when this workflow publishes it. The release calls it for
--# the released commit, so the site describes what users can install. A dispatch publishes a fix between releases: run
--# it with `dry_run` first to list the files that differ from the published branches.
-+# the released commit, so the site describes what users can install. publish-docs-on-merge.yaml calls it for `main`
-+# when a pull request with the `publish-docs` label merges. A dispatch publishes a fix between releases: run it with
-+# `dry_run` first to list the files that differ from the published branches.
- #
- # Each publish appends one commit whose tree is exactly `<ref>:docs` or `<ref>:guides`, on top of the branch tip. The
- # branch is never force-pushed, because GitBook also pushes to it when a change request merges, and so can another run
+ [[package]]
+ name = "mirrord-protocol"
+-version = "1.30.2"
++version = "1.30.3"
+ dependencies = [
+  "actix-codec",
+  "bincode",
+@@ -5838,10 +5838,8 @@ dependencies = [
+  "http-body-util",
+  "http-serde",
+  "hyper",
+- "jaq-core",
+- "jaq-json",
+- "jaq-std",
+  "libc",
++ "mirrord-jaq",
+  "mirrord-macros",
+  "nix 0.31.3",
+  "semver 1.0.28",
 ```
 
-**File**: `AGENTS.md` (modified, +4/-2)
-```diff
-@@ -153,8 +153,10 @@ schedule. What's only on `main` hasn't shipped and needs no compatibility; what'
-   exception: it isn't in `docs/`, but is generated from `mirrord-config`'s doc comments (`mirrord/config/AGENTS.md`), so
-   a config change updates those instead. GitBook builds the site from the `docs-published` and `guides-published`
-   branches, which every mirrord release updates from the released commit (`publish-docs.yaml`), so an edit reaches the
--  site with the next release. `mirrord mcp` embeds `docs/docs` when it's built, so an edit there also reaches it with
--  the next release. `docs/AGENTS.md` says how to publish a fix between releases.
-+  site with the next release. A pull request from this repository with the `publish-docs` label publishes sooner: when
-+  it merges, `publish-docs-on-merge.yaml` publishes all of `docs/` and `guides/` from `main`. `mirrord mcp` embeds
-+  `docs/docs` when it's built, so an edit there reaches it only with the next release, whatever the label.
-+  `docs/AGENTS.md` says how to publish a fix between releases.
- - `skills/` came from `metalbear-co/skills`, which keeps its earlier history. `mirrord mcp` embeds `skills/skills` when
-   it's built (`mirrord/mcp/AGENTS.md`), so an edit reaches it with the next mirrord release. Nothing copies `skills/` to
-   `metalbear-co/skills` yet, so an edit doesn't reach that repository.
-```
-
-**File**: `CONTRIBUTING.md` (modified, +4/-0)
-```diff
-@@ -966,3 +966,7 @@ When the job warns or fails:
-     --urls "https://github.com/metalbear-co/mirrord/releases/download/<version>/mirrord.msi|x64" \
-     --skip-pr-check --submit
-   ```
-+
-+## Publishing docs between releases
-+
-+A merged pull request from this repository with the `publish-docs` label publishes `docs/` and `guides/` from `main`, including pages for changes that aren't released yet. [`docs/AGENTS.md`](/docs/AGENTS.md#publishing-a-fix-between-releases) says how to publish without those pages.
-```
-
-**File**: `changelog.d/+publish-docs-label.internal.md` (added, +1/-0)
+**File**: `changelog.d/+jq-env-halt-builtins.security.md` (added, +1/-0)
 ```diff
 @@ -0,0 +1 @@
-+A merged pull request with the `publish-docs` label now publishes the mirrord docs and guides without a release.
++User-supplied jq filters can no longer call `env`, `halt`, or `halt_error`. A filter that calls one of these now fails with an `Undefined filter` error.
 ```
 
-**File**: `docs/AGENTS.md` (modified, +8/-4)
+**File**: `mirrord/agent/Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -2,7 +2,7 @@
+@@ -25,6 +25,7 @@ mirrord-sessions-manager-client.workspace = true
+ mirrord-cluster-auth = { workspace = true, features = ["eks"] }
+ mirrord-remote-layer-protocol.workspace = true
+ mirrord-agent-env = { path = "./env", default-features = false }
++mirrord-jaq = { path = "../jaq", default-features = false }
+ mirrord-agent-iptables = { path = "./iptables" }
+ mirrord-tls-util = { path = "../tls-util" }
+ mirrord-nightly-polyfill = { path = "../nightly-polyfill" }
+@@ -84,7 +85,6 @@ rcgen.workspace = true
+ serde_json_path.workspace = true
+ dns-lookup.workspace = true
+ tokio-retry.workspace = true
+-jaq-std.workspace = true
+ jaq-core.workspace = true
+ jaq-json = { workspace = true, features = ["serde_json"] }
  
- ## Overview
+```
+
+**File**: `mirrord/agent/Dockerfile` (modified, +3/-1)
+```diff
+@@ -22,6 +22,8 @@ COPY .cargo /app/.cargo
+ COPY mirrord/macros /app/mirrord/macros
+ COPY mirrord/nightly-polyfill /app/mirrord/nightly-polyfill
+ COPY mirrord/tls-util /app/mirrord/tls-util
++COPY mirrord/test-macros /app/mirrord/test-macros
++COPY mirrord/jaq /app/mirrord/jaq
+ COPY mirrord/protocol /app/mirrord/protocol
+ COPY mirrord/protocol-io /app/mirrord/protocol-io
+ COPY mirrord/remote-layer-protocol /app/mirrord/remote-layer-protocol
+@@ -36,7 +38,7 @@ COPY Cargo.toml Cargo.lock CHANGELOG.md README.md LICENSE rust-toolchain.toml /a
+ # so we remove from the workspace. `default-members` goes first: it names crates not copied here,
+ # and its `members` substring would otherwise make the members rewrite match it too.
+ RUN sed -i '/^default-members = \[/,/^\]/d' /app/Cargo.toml && \
+-    sed -i '/members = \[/,/\]/c\members = [\n    "mirrord/agent",\n    "mirrord/agent/env",\n    "mirrord/agent/iptables",\n    "mirrord/cluster-auth",\n    "mirrord/macros",\n    "mirrord/nightly-polyfill",\n    "mirrord/operator-websocket",\n    "mirrord/protocol",\n    "mirrord/protocol-io",\n    "mirrord/remote-layer-protocol",\n    "mirrord/sessions-manager/client",\n    "mirrord/sessions-manager/protocol",\n    "mirrord/tls-util",\n]' /app/Cargo.toml
++    sed -i '/members = \[/,/\]/c\members = [\n    "mirrord/agent",\n    "mirrord/agent/env",\n    "mirrord/agent/iptables",\n    "mirrord/cluster-auth",\n    "mirrord/jaq",\n    "mirrord/macros",\n    "mirrord/nightly-polyfill",\n    "mirrord/operator-websocket",\n    "mirrord/protocol",\n    "mirrord/protocol-io",\n    "mirrord/remote-layer-protocol",\n    "mirrord/sessions-manager/client",\n    "mirrord/sessions-manager/protocol",\n    "mirrord/test-macros",\n    "mirrord/tls-util",\n]' /app/Cargo.toml
  
--Paths in this file are relative to this directory of the mirrord repository, which holds the Documentation tab of the [mirrord docs](https://metalbear.com/mirrord/docs), built by GitBook from the Markdown under `docs/`. GitBook builds the site from the `docs-published` branch, which every mirrord release updates to the `docs/` of the released commit, so a merged page reaches the site with the next mirrord release. `mirrord mcp` embeds the pages, so it gets them with the same release. Each publish replaces the branch's content, so a page change merged in the GitBook editor is lost at the next publish: make page changes here.
-+Paths in this file are relative to this directory of the mirrord repository, which holds the Documentation tab of the [mirrord docs](https://metalbear.com/mirrord/docs), built by GitBook from the Markdown under `docs/`. GitBook builds the site from the `docs-published` branch, which every mirrord release updates to the `docs/` of the released commit, so a merged page reaches the site with the next mirrord release, or sooner if a publish runs between releases (see [Publishing a Fix Between Releases](#publishing-a-fix-between-releases)). `mirrord mcp` embeds the pages, so it gets them only with the next release. Each publish replaces the branch's content, so a page change merged in the GitBook editor is lost at the next publish: make page changes here.
  
- A page for an unreleased change names the versions expected to ship it. Every mirrord release publishes the merged pages and ships them in `mirrord mcp`, so a page for a CLI feature can merge with the feature. The operator ships on its own schedule, so a page for an unreleased operator feature merges only once the operator version that ships it is out. Otherwise a mirrord release would document a feature that users can't get yet.
+ # Build final binary against BuildKit cache mounts. The target directory is one of them, so cargo's
+```
+
+**File**: `mirrord/agent/src/http/filter.rs` (modified, +2/-20)
+```diff
+@@ -3,10 +3,7 @@ use std::{fmt::Debug, io::Read, ops::Not, sync::LazyLock, time::Duration};
+ use fancy_regex::Regex;
+ use http::HeaderMap;
+ use hyper::http::request::Parts;
+-use jaq_core::{
+-    Ctx, RcIter,
+-    load::{Arena, File, Loader},
+-};
++use jaq_core::{Ctx, RcIter};
+ use jaq_json::Val;
+ use mirrord_agent_env::envs::JAQ_TIME_LIMIT;
+ use mirrord_protocol::tcp::{HttpMethodFilter, JqQuery};
+@@ -228,22 +225,7 @@ async fn eval_jaq(query: JqQuery, payload: String) -> Result<bool, String> {
+     let span = tracing::warn_span!("jaq eval", ?query);
  
-@@ -21,14 +21,18 @@ CI runs it in the `content_check` job of the root `.github/workflows/ci.yaml`. T
+     let mut handle = tokio::task::spawn_blocking(move || {
+-        let program = File {
+-            code: query.as_str(),
+-            path: (),
+-        };
+-        let loader = Loader::new(jaq_std::defs().chain(jaq_json::defs()));
+-        let arena = Arena::default();
+-        let modules = loader
+-            .load(&arena, program)
+-            .map_err(|errors| format!("failed to parse the filter: {errors:?}"))?;
+-
+-        let filter =
+-            jaq_core::Compiler::default().with_funs(jaq_std::funs().chain(jaq_json::funs()));
+-
+-        let filter = filter
+-            .compile(modules)
+-            .map_err(|errors| format!("failed to compile the filter: {errors:?}"))?;
++        let filter = mirrord_jaq::compile_jq(query.as_str()).map_err(|error| error.to_string())?;
  
- ## Publishing a Fix Between Releases
+         let inputs = RcIter::new(core::iter::empty());
+         let mut out = filter.run((Ctx::new([], &inputs), Val::from(payload)));
+```
+
+**File**: `mirrord/jaq/src/lib.rs` (modified, +40/-2)
+```diff
+@@ -87,9 +87,25 @@ fn compiler_error_to_string(error: CompileError) -> String {
+     compile_error
+ }
  
--A fix that can't wait for the next release goes out through the `Publish docs and guides` workflow (`.github/workflows/publish-docs.yaml` at the repository root), which publishes `docs/` to `docs-published` and `guides/` to `guides-published`. To publish a fix:
-+A fix that can't wait for the next release goes out through the `Publish docs and guides` workflow (`.github/workflows/publish-docs.yaml` at the repository root), which publishes `docs/` to `docs-published` and `guides/` to `guides-published`.
- 
--1. Merge the fix to `main` first, like any other change, so that the next release keeps it.
-+The `publish-docs` label publishes all of `docs/` and `guides/` from `main` when its pull request merges (`.github/workflows/publish-docs-on-merge.yaml` at the repository root), including anything merged since the last publish. A failed publish posts to `#ci-alerts`, and re-running the failed job publishes the current `main`.
++/// Builtins of `jaq_std` that reach outside the program.
++///
++/// * `env` reads the environment of the process that runs it,
++/// * `halt` and `halt_error` exit that process.
++///
++/// Filters are written by user, and a user-defined program should not be able to call these
++/// in a shared environment. Such program should fail to compile.
++const DENIED_BUILTINS: &[&str] = &["env", "halt", "halt_error"];
 +
-+Run the `Publish docs and guides` workflow by hand for a pull request from a fork, for a label added after the merge, to see what would go out first, or to leave out pages that must wait:
++/// Compiles a user-supplied jq program with the standard library, minus [`DENIED_BUILTINS`].
++///
++/// Every place that runs a user's jq program should be compiled here, so that no caller can grant the
++/// program access to its environment or the power to exit.
+ pub fn compile_jq(code: &str) -> Result<jaq_core::Filter<jaq_core::Native<jaq_json::Val>>> {
+     let file = jaq_core::load::File { code, path: () };
+-    let loader = jaq_core::load::Loader::new(jaq_std::defs().chain(jaq_json::defs()));
++    let defs = jaq_std::defs()
++        .chain(jaq_json::defs())
++        .filter(|def| !DENIED_BUILTINS.contains(&def.name));
++    let loader = jaq_core::load::Loader::new(defs);
+     let arena = jaq_core::load::Arena::default();
+     let modules = loader.load(&arena, file).map_err(|errors| {
+         // Since we only load 1 file, there should only be 1 error, take first.
+@@ -99,7 +115,10 @@ pub fn compile_jq(code: &str) -> Result<jaq_core::Filter<jaq_core::Native<jaq_js
+         }
+     })?;
+ 
+-    let filter = jaq_core::Compiler::default().with_funs(jaq_std::funs().chain(jaq_json::funs()));
++    let funs = jaq_std::funs()
++        .chain(jaq_json::funs())
++        .filter(|(name, ..)| !DENIED_BUILTINS.contains(name));
++    let filter = jaq_core::Compiler::default().with_funs(funs);
+ 
+     // Convert the compile errors into a human-readable string using our helper.
+     filter.compile(modules).map_err(|errors| JqError::Compile {
+@@ -248,6 +267,25 @@ mod tests {
+         VerifiedJqString::try_from("idk | whatever").unwrap_err();
+     }
+ 
++    #[test]
++    fn jq_verification_rejects_denied_builtins() {
++        for (program, builtin) in [
++            ("env | has(\"PATH\")", "env"),
++            (".a or (env.HOME == \"/root\")", "env"),
++            ("halt", "halt"),
++            ("halt_error", "halt_error"),
++            ("halt_error(1)", "halt_error"),
++        ] {
++            match VerifiedJqString::try_from(program) {
++                Err(JqError::Compile { error, .. }) => assert!(
++                    error.contains(&format!("Undefined filter: {builtin}")),
++                    "{program:?} failed with an unexpected error: {error}"
++                ),
++                other => panic!("{program:?} should fail to compile, got {other:?}"),
++            }
++        }
++    }
 +
-+1. If the fix hasn't merged, merge it to `main` without the `publish-docs` label. Another labeled merge would still publish it.
- 2. From the Actions tab, with "Use workflow from" left on `main`, run the workflow with `ref` set to `main` and `dry_run` on. The step summary names the commit that `main` resolved to and lists the files that differ from the published branches. Everything merged to `docs/` or `guides/` since the last publish goes out with the fix, so check that the list holds only what is ready to publish. If both branches already match, there is nothing to publish.
- 3. If the list holds pages that must wait, such as one for a CLI feature that merged but isn't released yet, create a branch from the latest release tag, cherry-pick the fix onto it, push it, and dry-run that branch instead. Any name works except one that starts with `docs/`, which git refuses because the repository has a `docs` branch.
- 4. Run the workflow again with `ref` set to the commit SHA from the dry run's summary and `dry_run` off, so it publishes the commit that the dry run checked. The workflow pushes, waits for GitBook to import the commits, and posts to `#ci-alerts` if any of it fails. Delete the branch from step 3 afterwards.
+     #[test]
+     fn test_estimate_string_len() {
+         // This error doesn't make sens (complains about undefined symbols that don't appear in the
+```
+
+**File**: `mirrord/protocol/Cargo.toml` (modified, +2/-4)
+```diff
+@@ -1,6 +1,6 @@
+ [package]
+ name = "mirrord-protocol"
+-version = "1.30.2"
++version = "1.30.3"
+ authors.workspace = true
+ description.workspace = true
+ documentation.workspace = true
+@@ -44,9 +44,7 @@ uuid = { workspace = true, features = ["v4"] }
+ mirrord-macros = { path = "../macros" }
+ strum.workspace = true
+ strum_macros.workspace = true
+-jaq-core.workspace = true
+-jaq-std.workspace = true
+-jaq-json.workspace = true
++mirrord-jaq = { path = "../jaq", default-features = false }
  
--A fix published while a release pull request is open disappears from the site when that release publishes, and comes back with the next release. The open release's branch was cut before the fix.
-+A release publishes the head of its release branch, so a fix that merged to `main` after the branch was cut disappears from the site when that release publishes, whichever way the fix was published. The fix comes back with the next publish that contains it: the next labeled merge, the next release, or a run of steps 2 to 4.
+ [target.'cfg(unix)'.dependencies]
+ libc.workspace = true
+```
+
+**File**: `mirrord/protocol/src/tcp.rs` (modified, +8/-39)
+```diff
+@@ -17,10 +17,6 @@ use hyper::{
+     HeaderMap, Method, Request, Response, StatusCode, Uri, Version,
+     body::{Body, Frame},
+ };
+-use jaq_core::{
+-    Compiler,
+-    load::{Arena, File, Loader},
+-};
+ use mirrord_macros::protocol_break;
+ use semver::VersionReq;
+ use serde::{Deserialize, Serialize};
+@@ -345,39 +341,12 @@ pub struct JqQuery(String);
  
- The workflow waits up to five minutes in all for GitBook to import the commits that it pushed, and fails
+ impl JqQuery {
+     pub fn new(expr: &str) -> Result<Self, String> {
+-        let inner = || {
+-            let program = File {
+-                code: expr,
+-                path: (),
+-            };
+-            let loader = Loader::new(jaq_std::defs().chain(jaq_json::defs()));
+-            let arena = Arena::default();
+-
+-            let modules = loader.load(&arena, program).map_err(|errors| {
+-                errors
+-                    .into_iter()
+-                    .map(|e| format!("{e:?}"))
+-                    .collect::<Vec<_>>()
+-                    .join("; ")
+-            })?;
+-
+-            Compiler::default()
+-                .with_funs(jaq_std::funs().chain(jaq_json::funs()))
+-                .compile(modules)
+-                .map_err(|errors| {
+-                    errors
+-                        .into_iter()
+-                        .map(|e| format!("{e:?}"))
+-                        .collect::<Vec<_>>()
+-                        .join("; ")
+-                })?;
+-
+-            Ok(JqQuery(expr.to_owned()))
+-        };
+-
+-        inner().inspect_err(|fail| {
+-            tracing::error!(
+-                r"
++        mirrord_jaq::compile_jq(expr)
++            .map(|_| JqQuery(expr.to_owned()))
++            .map_err(|error| error.to_string())
++            .inspect_err(|fail| {
++                tracing::error!(
++                    r"
+                 Something went wrong while compiling jaq query {expr:?}
+ 
+                 >> Please check that the string supplied is a valid jaq expression according to
+@@ -386,8 +355,8 @@ impl JqQuery {
+                 > Error:
+                 {fail:#?}
+                 "
+-            )
+-        })
++                )
++            })
+     }
+ }
+ 
+```
+
+---
+
+### Incident Patch 2: `99480b10` (2026-11-24)
+**Commit Message**: Describe what the mirrord MCP Server does, and link it from Quick Start (#5289)
+
+* Link the mirrord MCP Server from Quick Start and Install mirrord
+
+* Say what the mirrord MCP Server does for the user in its getting-started links
+
+* Lead the mirrord MCP Server page with what it does for the user
+
+The page opened with a list of tools, and the getting-started links
+described the server in the same terms. The intro and both links now
+say what the agent can do with it: generate and validate configs,
+explain options, follow the skills and the safe defaults, offline.
+
+The page also gains facts from the server at 3.291.0: Windows needs
+3.291.0 for the skills, `validate_config` takes the directory mirrord
+runs from, and the instructions list now has every instruction the
+server sends.
+
+* Use the new MCP Server description on the AI agents overview
+
+* Add one-click install links for Cursor and VS Code to the MCP Server page
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+* Drop the schema_file note from the validate_config row
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+* Ask for the absolute path only when the client doesn't find mirrord
+
+🤖 Generate
+
+**File**: `docs/docs/getting-started/install-mirrord.md` (modified, +1/-0)
+```diff
+@@ -86,6 +86,7 @@ mirrord supports Kubernetes `1.22` or later. This applies to the open-source ver
+ 
+ ## Next steps
+ 
++- [mirrord MCP Server](../using-mirrord-with-ai/mcp-server.md): your AI agent generates mirrord configs, validates them deterministically, explains each option, and follows mirrord's skills and safe defaults, all offline.
+ - [Onboarding Wizard](onboarding-wizard.md): generate a `mirrord-up.yaml` for your services.
+ - [Starting your first session](first-session.md): run your local code in the context of the cluster.
+ - [Install the Operator](install-the-operator.md): for teams sharing a cluster, the platform team installs it once per cluster.
+```
+
+**File**: `docs/docs/getting-started/quick-start.md` (modified, +3/-2)
+```diff
+@@ -24,8 +24,9 @@ Get mirrord running against your cluster in a few minutes.
+ ## Developers
+ 
+ 1. [Install mirrord](install-mirrord.md): the CLI, or the extension for VS Code or a JetBrains IDE.
+-2. [Onboarding Wizard](onboarding-wizard.md) (optional): generate a `mirrord-up.yaml` for your services.
+-3. [Starting your first session](first-session.md): run your local code in the context of the cluster.
++2. [mirrord MCP Server](../using-mirrord-with-ai/mcp-server.md) (optional, needs the CLI): your AI agent generates mirrord configs, validates them deterministically, explains each option, and follows mirrord's skills and safe defaults, all offline.
++3. [Onboarding Wizard](onboarding-wizard.md) (optional): generate a `mirrord-up.yaml` for your services.
++4. [Starting your first session](first-session.md): run your local code in the context of the cluster.
+ 
+ ## Platform teams
+ 
+```
+
+**File**: `docs/docs/using-mirrord-with-ai/README.md` (modified, +1/-1)
+```diff
+@@ -12,7 +12,7 @@ If you're using tools like Claude Code, Cursor, or Codex, mirrord lets you safel
+ 
+ Here are some ways you can connect mirrord to your AI coding workflow:
+ 
+-- **[mirrord MCP Server](./mcp-server.md)** - Register the MCP server built into the mirrord CLI, so your agent validates configs and reads the docs of your installed mirrord version.
++- **[mirrord MCP Server](./mcp-server.md)** - Register the MCP server built into the mirrord CLI, so your agent generates mirrord configs, validates them deterministically, explains each option, and follows mirrord's skills and safe defaults, all offline.
+ - **[Agent skills for mirrord](./ai-skills-plugin.md)** - Install skills that give your AI assistant built-in mirrord expertise.
+ - **[Test Claude Code Changes Against Staging](./claude-code.md)** - Set up Claude Code to run the code it writes against the real services in your staging cluster, step by step.
+ - **[Configure AI Agents to Use mirrord](./the-meta-prompt.md)** - A prompt generator that creates project-specific `AGENTS.md` files and configurations automatically, saving hours of manual setup across multiple services.
+```
+
+**File**: `docs/docs/using-mirrord-with-ai/mcp-server.md` (modified, +21/-6)
+```diff
+@@ -1,6 +1,6 @@
+ ---
+ title: mirrord MCP Server
+-description: Register the MCP server built into the mirrord CLI, so that your AI agent checks mirrord configs and reads the mirrord docs of the version you have installed.
++description: Register the MCP server built into the mirrord CLI, so that your AI agent generates and validates mirrord configs offline, for the mirrord version you run.
+ tags:
+   - oss
+   - team
+@@ -9,16 +9,24 @@ tags:
+ 
+ # mirrord MCP Server
+ 
+-The mirrord CLI includes an [MCP](https://modelcontextprotocol.io) server, `mirrord mcp`. It gives an AI agent tools to validate `mirrord.json` and `mirrord-up.yaml` against the schema of your installed mirrord version, to explain config options, and to search and read the mirrord docs and [skills](./ai-skills-plugin.md) that this version ships with. It works offline and never starts a session.
++`mirrord mcp` is the [MCP](https://modelcontextprotocol.io) server built into the mirrord CLI. With it, your AI agent:
++
++- Generates `mirrord.json` and `mirrord-up.yaml` files, and validates them against the schema of the mirrord version you run.
++- Explains any config option: what it does, the values it takes, and the mirrord plan it needs.
++- Follows the mirrord [skills](./ai-skills-plugin.md) for tasks such as database branching, Kafka splitting, preview environments, and CI.
++- Uses safe defaults on shared clusters: it mirrors incoming traffic, steals only with an HTTP filter, and targets staging or development clusters, never production.
++- Answers mirrord questions from the docs of your installed version.
++
++The server works offline, from the docs and schema built into your mirrord binary, and never starts a session.
+ 
+ ## What you need
+ 
+-- mirrord CLI `3.273.0` or later. Check with `mirrord --version`, and see [Install mirrord](../getting-started/install-mirrord.md).
++- mirrord CLI `3.273.0` or later, and `3.291.0` or later on Windows for the skills. Check with `mirrord --version`, and see [Install mirrord](../getting-started/install-mirrord.md).
+ - An agent that supports MCP servers over stdio, such as Claude Code, Codex, Cursor, VS Code, Windsurf, Claude Desktop, or OpenCode.
+ 
+ ## Register the server
+ 
+-Use the absolute path to the `mirrord` binary. Clients that start from a desktop launcher don't inherit your shell's `PATH`. To find the path, run:
++If the client doesn't find `mirrord` on its `PATH`, use the absolute path to the binary. Clients started from a desktop launcher often don't see your shell's `PATH`. To find the path, run:
+ 
+ ```sh
+ which mirrord
+@@ -43,7 +51,9 @@ codex mcp add mirrord -- /absolute/path/to/mirrord mcp
+ {% endtab %}
+ {% tab title="Cursor, Windsurf, Claude Desktop" %}
+ 
+-Add the entry under `"mcpServers"` in the client's config file:
++In Cursor, you can [add the server with one click](cursor://anysphere.cursor-deeplink/mcp/install?name=mirrord&config=eyJjb21tYW5kIjoibWlycm9yZCIsImFyZ3MiOlsibWNwIl19). The link registers the command `mirrord` without a path, so Cursor has to find `mirrord` on its `PATH`. If Cursor lists no `mirrord` tools, replace `mirrord` in the entry's `command` with the absolute path.
++
++To register the server by hand, add the entry under `"mcpServers"` in the client's config file:
+ 
+ - Cursor: `~/.cursor/mcp.json`, or `.cursor/mcp.json` in the project.
+ - Windsurf: `~/.codeium/windsurf/mcp_config.json`.
+@@ -56,7 +66,9 @@ Add the entry under `"mcpServers"` in the client's config file:
+ {% endtab %}
+ {% tab title="VS Code" %}
+ 
+-Add the entry under `"servers"` in `.vscode/mcp.json`:
++You can [install the server with one click](vscode:mcp/install?%7B%22name%22%3A%22mirrord%22%2C%22command%22%3A%22mirrord%22%2C%22args%22%3A%5B%22mcp%22%5D%7D). The link registers the command `mirrord` without a path, so VS Code has to find `mirrord` on its `PATH`. If VS Code lists no `mirrord` tools, replace `mirrord` in `command` with the absolute path.
++
++To register the server by hand, add the entry under `"servers"` in `.vscode/mcp.json`:
+ 
+ ```json
+ "mirrord": { "type": "stdio", "command": "/absolute/path/to/mirrord", "args": ["mcp"] }
+@@ -100,9 +112,12 @@ The server sends the agent instructions when it connects. They tell the agent to
+ 
+ - Get the matching skill with `get_skill` before it starts a mirrord task.
+ - Validate every config with `validate_config` before it writes the file, and fix issues until none remain.
++- Look up options with `explain_config_option` instead of guessing.
++- When mirrord fails, validate every config involved before it proposes a fix, and propose one fix at a time.
+ - Answer questions about mirrord with `search_docs` and `read_doc`, not from memory.
+ - Default to `mirror` for incoming traffic, and on a shared cluster use `steal` only with an HTTP filter.
+ - Target staging or development clusters, never production.
++- Know that `mirrord exec` and `mirrord up` deploy nothing to the cluster, that database branches stay until their TTL runs out, and that preview environments stay until sto
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5306** (2026-11-24): Trim dependencies of the CLI and the agent (@Razz4780)
+- **PR #5304** (2026-11-24): Release 3.291.1 (@cubby-mb[bot])
+- **PR #5303** (2026-11-24): Harden filesystem path handling in the agent (@Razz4780)
+- **PR #5301** (2026-11-24): Drop unsafe jaq builtins (@Razz4780)
 - **PR #5294** (2026-11-24): ci: submit WinGet manifests from a workflow dispatched on main (@meowjesty)
 - **PR #5291** (2026-11-23): Publish docs and guides when a labeled pull request merges (@meowjesty)
-- **PR #5274** (2026-11-23): Update url and cookie for RUSTSEC-2026-0592 and RUSTSEC-2026-0594 (@DmitryDodzin)
-- **PR #5272** (2026-11-22): Say DynamoDB branches need `connection` (@trawler)
-- **PR #5270** (2026-11-22): Make three docs config examples load in mirrord (@trawler)
-- **PR #5269** (2026-11-22): Point four broken links at pages and headings that exist (@trawler)
 
 ---
 
@@ -1737,52 +2014,37 @@ The workflow hasn't run on GitHub yet. A local evaluation of the job's
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Publish docs and guides when a labeled pull request merges
+## X. Drop unsafe jaq builtins
 
 **RULE**:
-When implementing operations in `.github/workflows/publish-docs-on-merge.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in metalbear-co/mirrord. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in metalbear-co/mirrord. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2057b2a2`: Publish docs and guides when a labeled pull request merges. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `aee4b8a5`: Drop unsafe jaq builtins. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/publish-docs-on-merge.yaml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-name: Publish docs and guides on labeled merge
-
-# The `publish-docs` label publishes the docs and guides without needing a release. When a pull request with the label
-# merges into `main`, this workflow runs publish-docs.yaml for `main`. That publishes the whole `docs/` and `guides/`
-# trees, so it also ships anything merged earlier that hasn't been released yet.
-#
-# The trigger is `pull_request`, because GitHub blocks `pull_request_target` by default in public repositories from
-# December 2, 2026, and a `push` to `main` would have to look up the pull request of each commit to read its labels. A
-# `pull_request` run from a fork gets a read-only token and no secrets, so it can neither push the publish commits nor
-# post to #ci-alerts. The job skips a fork's pull request, because its run could only fail with nobody told, and a
-# maintainer publishes it with the manual steps in docs/AGENTS.md. Only a pull request from a branch of this repository
-# can publish, and creating such a branch takes write access.
-
-on:
-  pull_request:
-    types: [closed]
-    branches: [main]
-
-permissions: {}
-
-jobs:
-  # Publishes `main` rather than the merge commit, so that the last of several close merges pub
+ "mirrord-jaq",
+version = "1.30.3"
+ "mirrord-jaq",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+ "jaq-std",
+version = "1.30.2"
+ "jaq-core",
+ "jaq-json",
+ "jaq-std",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2057b2a2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `aee4b8a5` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

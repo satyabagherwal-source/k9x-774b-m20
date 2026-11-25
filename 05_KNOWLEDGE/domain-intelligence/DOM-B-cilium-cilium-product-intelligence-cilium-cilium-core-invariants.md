@@ -4,24 +4,24 @@
 {
   "source_repository": "cilium/cilium",
   "source_url": "https://github.com/cilium/cilium",
-  "source_version": "ad7c0f73",
+  "source_version": "79325ed9",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-24T23:41:53.524Z",
+  "timestamp": "2026-11-25T07:57:10.585Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-cilium-cilium",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [cilium/cilium](https://github.com/cilium/cilium) (Revision: `ad7c0f73`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-24T23:41:53.524Z`  
+> **Provenance**: Harvested from [cilium/cilium](https://github.com/cilium/cilium) (Revision: `79325ed9`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-25T07:57:10.585Z`  
 > **Learning ID**: `learn-github-cilium-cilium`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain B (Product Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), L (Deployment & Operations Intelligence), D (Research & Knowledge Intelligence), H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 77%
+- **Secondary Corroborating Domains**: L (Deployment & Operations Intelligence), G (Architecture Intelligence), D (Research & Knowledge Intelligence), H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 85%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from cilium/cilium:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T23:41:52.001Z  
+> **Harvest Timestamp**: 2026-11-25T07:57:09.768Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: eBPF-based Networking, Security, and Observability
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod
-- **Stars / Engagement**: 25903 stars
+- **Stars / Engagement**: 25906 stars
 
 ---
 
@@ -1276,9 +1276,10 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 - **Issue #50258** (2026-11-24): **Update auto-merge-trusted-deps (v1.18)**
   *Symptoms*: This PR contains the following updates:  | Package | Type | Update | Change | |---|---|---|---| | [actions/create-github-app-token](https://redirect.github.com/actions/create-github-app-token) | action | minor | `v3.3.0` → `v3.4.0` | | [actions/setup-go](https://redirect.github.com/actions/setup-go) | action | minor | `v7.0.0` → `v7.1.0` | | [cilium/actions](https://redirect.github.com/cilium/actions) ([changelog](https://redirect.github.com/cilium/actions/compare/687b48a0547e534dd7270d5069a5ab7967c0e907..079219db27301da70306eb5c0a038dc21c59781b)) | action | digest | `687b48a` → `079219d` | | [docker.io/library/golang](https://hub.docker.com/_/golang) ([source](https://redirect.github.com/docker-library/golang)) | stage | digest | `4165ee6` → `6e59e17` | | [docker.io/library/golang](https://hub.docker.com/_/golang) ([source](https://redirect.github.com/docker-library/golang)) | final | digest | `4165ee6` → `6e59e17` | | [docker.io/library/nginx](https://hub.docker.com/_/nginx) ([source](https://redirect.github.com/nginx/docker-nginx)) |  | patch | `1.31.9-alpine-slim` → `1.31.10-alpine-slim` | | [docker.io/library/ubuntu](https://hub.docker.com/_/ubuntu) ([source](https://git.launchpad.net/cloud-images/+oci/ubuntu-base)) | stage | digest | `9c7f200` → `562111b` | | [eksctl-io/eksctl](https://redirect.github.com/eksctl-io/eksctl) |  | minor | `v0.231.0` → `v0.232.0` | | quay.io/cilium/cilium-envoy |  | patch | `v1.39.6-1794557904-dee711ff0e84b106edd0abcdd71961af1b870359` → `v1
 
-- **Issue #50242** (2026-11-24): **gha: Fail EKS matrix filtering when the AWS call fails**
-  *Symptoms*: The Filter Matrix step of conformance-eks and conformance-aws-cni pipes "aws eks describe-cluster-versions" into jq. The step has no shell: key, so it runs under "bash -e" without pipefail. When the aws call fails, jq reads empty input and exits 0, and the loop drops every version as unsupported. GitHub then skips the test job for the empty matrix, and outside the default branch the success expression accepts that, so the workflow posts a green commit status without running a single test.  This commit fetches the cluster versions once, before the loop, so a failed aws call fails the step. The call takes no per-version argument and returns the same list on every iteration.  This PR was prepared with AIL:3. I personally checked both Filter Matrix steps locally against a failing aws stub. 
+- **Issue #50249** (2026-11-25): **Revert "ciliumenvoyconfig: skip empty initial xDS updates"**
+  *Symptoms*: This reverts commit 5a4bbee33241ee6589e07eb5bd1328aa02f5359e.  Since this commit, the agents in the split leg of Conformance Kind Envoy Embedded log "Failed to apply L7 proxy policy changes" during the connectivity test setup [1], and the warning goes away with the revert [2]. CI on main misses it because the agent log rotates before check-log-errors reads it, which #49542 fixes.  1: https://github.com/cilium/cilium/actions/runs/45185768634/job/137730843626 2: https://github.com/cilium/cilium/actions/runs/45191055350/job/137749207139 
   **Post-Mortem & Fix Analysis**:
+  > cc @paulpal1 @jrajahalme @fristonio 
   > /test
 
 ### D4: Resource Lifecycle & Leak Defenses
@@ -1296,116 +1297,44 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ad7c0f73` (2026-11-19)
-**Commit Message**: policy: fix policy importer cidr leak
+### Incident Patch 1: `79325ed9` (2026-11-23)
+**Commit Message**: Revert "ciliumenvoyconfig: skip empty initial xDS updates"
 
-The Set inside pkg/container/set is a beast, and the mutating functions
-like Remove returns a bool that has a different meaning than other set
-implementations. They return true only when the underlying storage
-reference was changed, not if the content of the set was changed.
+This reverts commit 5a4bbee33241ee6589e07eb5bd1328aa02f5359e.
 
-This results in a policy with 3 or more CIDRs that is updated will once
-again upsert at least some of the cidrs. This results in the reference
-counter being off by one - and we leak the CIDR once the policy is
-delted, or the CIDR is removed from the policy.
+Since this commit, the agents in the split leg of Conformance Kind Envoy
+Embedded log "Failed to apply L7 proxy policy changes" during the
+connectivity test setup [1], and the warning goes away with the revert
+[2]. CI on main misses it because the agent log rotates before
+check-log-errors reads it, which #49542 fixes.
 
-Keeping this small and simple to simplify backports. However I do wonder
-if the set implementation should change its signature to make it more
-clear. The set implementation is however very good and space efficient
-for certain sparse data structures, so we should not remove it.
+1: https://github.com/cilium/cilium/actions/runs/45185768634/job/137730843626
+2: https://github.com/cilium/cilium/actions/runs/45191055350/job/137749207139
 
-From how I see it, this was introduced in the first mentioned patch
-below, but only triggered once the latter was introduced.
+Signed-off-by: André Martins <[REDACTED_EMAIL]>
 
-Fixes: 783465b ("policy: add policy import cell")
-Fixes: a3bd1a6 ("ipcache: Consolidate prefixes from various resources")
-Signed-off-by: Odin Ugedal <[REDACTED_EMAIL]>
-Signed-off-by: Odin Ugedal <[REDACTED_EMAIL]>
-
-**File**: `pkg/policy/cell/policy_importer.go` (modified, +2/-1)
+**File**: `pkg/ciliumenvoyconfig/reconciler.go` (modified, +0/-4)
 ```diff
-@@ -166,7 +166,8 @@ func (i *Importer) updatePrefixes(ctx context.Context, updates []*policytypes.Po
- 		for _, prefix := range newPrefixes {
- 			// If we already allocated this prefix, remove it from the prune list
- 			// and don't bother upserting it again in to the ipcache
--			if oldSet.Remove(prefix) {
-+			if oldSet.Has(prefix) {
-+				oldSet.Remove(prefix)
- 				continue
- 			}
+@@ -90,10 +90,6 @@ func (ops *envoyOps) Initializer(config CECConfig, params reconciler.Params) job
+ // initializeResources seeds the xDS cache with the currently known EnvoyResources so that Envoy
+ // can be started with an up-to-date snapshot before the reconciler starts processing changes.
+ func (ops *envoyOps) initializeResources(ctx context.Context, txn statedb.ReadTxn) error {
+-	if ops.resourceTable.NumObjects(txn) == 0 {
+-		return nil
+-	}
+-
+ 	initCtx, cancel := context.WithTimeout(ctx, maxSyncWaitTime)
+ 	defer cancel()
  
-```
-
-**File**: `pkg/policy/cell/policy_importer_test.go` (modified, +17/-8)
-```diff
-@@ -159,9 +159,9 @@ func TestAddReplaceRemoveRule(t *testing.T) {
- 	require.Equal(t, rev, epm.toRev)
- 	require.ElementsMatch(t, epm.regen.AsSlice(), []identity.NumericIdentity{100})
- 
--	// Update to new rule that selects id 102 and has two prefixes
--	// we should see 1 new prefix, and 2 regenerated endpoints
--	rev = writeRules(policyapi.NewRule().
-+	// Update to new rule that selects id 101 and has three prefixes
-+	// we should see 2 new prefixes, and 2 regenerated endpoints
-+	rule := policyapi.NewRule().
- 		WithEndpointSelector(policyapi.NewESFromK8sLabelSelector("",
- 			&slim_metav1.LabelSelector{
- 				MatchLabels: map[string]string{
-@@ -171,23 +171,32 @@ func TestAddReplaceRemoveRule(t *testing.T) {
- 		).
- 		WithEgressRules([]policyapi.EgressRule{{
- 			EgressCommonRule: policyapi.EgressCommonRule{
--				ToCIDR: policyapi.CIDRSlice{"1.0.1.0/24", "1.0.2.0/24"},
--			}}}))
-+				ToCIDR: policyapi.CIDRSlice{"1.0.1.0/24", "1.0.2.0/24", "1.0.3.0/24"},
-+			}}})
-+	rev = writeRules(rule)
- 
- 	require.True(t, ipc.waited)
--	// We only allocate 1 new cidr
--	require.ElementsMatch(t, ipc.added.AsSlice(), []string{"1.0.2.0/24"})
-+	// We only allocate 2 new CIDRs
-+	require.ElementsMatch(t, ipc.added.AsSlice(), []string{"1.0.2.0/24", "1.0.3.0/24"})
- 	require.Empty(t, ipc.removed.AsSlice())
- 
- 	require.ElementsMatch(t, pi.prefixesByResource[resource], []netip.Prefix{
- 		netip.MustParsePrefix("1.0.1.0/24"),
- 		netip.MustParsePrefix("1.0.2.0/24"),
-+		netip.MustParsePrefix("1.0.3.0/24"),
- 	})
- 
- 	// Check that the right endpoints were updated
- 	require.Equal(t, rev, epm.toRev)
- 	require.ElementsMatch(t, epm.regen.AsSlice(), []identity.NumericIdentity{100, 101})
- 
-+	// Reapplying three unchanged CIDRs must not allocate any additional references.
-+	ipc.added.Clear()
-+	ipc.removed.Clear()
-+	writeRules(rule)
-+	require.Empty(t, ipc.added.AsSlice())
-+	require.Empty(t, ipc.removed.AsSlice())
-+
- 	// Swap endpoints and prefixes
- 	rev = writeRules(policyapi.NewRule().
- 		WithEndpointSelector(policyapi.NewESFromK8sLabelSelector("",
-@@ -204,7 +213,7 @@ func TestAddReplaceRemoveRule(t *testing.T) {
- 
- 	require.True(t, ipc.waited)
- 	// We only allocate 1 new cidr
--	require.ElementsMatch(t, ipc.removed.AsSlice(), []string{"1.0.1.0/24", "1.0.2.0/24"})
-+	require.ElementsMatch(t, ipc.removed.AsSlice(), []string{"1.0.1.0/24", "1.0.2.0/24", "1.0.3.0/24"})
- 	require.ElementsMatch(t, ipc.added.AsSlice(), []string{"2.0.0.0/24"})
- 
- 	// Check that the right endpoints were updated
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #50258** (2026-11-24): Update auto-merge-trusted-deps (v1.18) (@cilium-renovate[bot])
+- **PR #50249** (2026-11-25): Revert "ciliumenvoyconfig: skip empty initial xDS updates" (@aanm)
 - **PR #50242** (2026-11-24): gha: Fail EKS matrix filtering when the AWS call fails (@aanm)
 - **PR #50239** (2026-11-24): labels: explicitly require reserved source (@squeed)
 - **PR #50238** (2026-11-24): .github: Track Kubespray in Renovate and update it to v2.32.0 (@aanm)
 - **PR #50225** (2026-11-24): gateway-api: translation extension and resource registry hooks (@viktor-kurchenko)
-- **PR #50224** (2026-11-24): v1.18 Backports 2026-11-23 (@glrf)
 
 ---
 
@@ -1419,38 +1348,6 @@ Signed-off-by: Odin Ugedal <[REDACTED_EMAIL]>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. policy: fix policy importer cidr leak
-
-**RULE**:
-When implementing operations in `pkg/policy/cell/policy_importer.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `ad7c0f73`: policy: fix policy importer cidr leak. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/policy/cell/policy_importer.go`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```go
-// Verified production-grade fix pattern:
-			if oldSet.Has(prefix) {
-				oldSet.Remove(prefix)
-```
-
-**NEGATIVE CONSTRAINT**:
-```go
-// Induced defect failure mode:
-			if oldSet.Remove(prefix) {
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ad7c0f73` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction
