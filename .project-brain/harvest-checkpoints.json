@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-25T11:20:08.428Z",
+  "last_updated": "2026-11-25T11:30:12.609Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3741,14 +3741,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kubeedge-kubeedge",
-      "content_hash": "40acbfce2db8d12db305c397d88416a0c67590f9db0b0f4f76604d26b84e576e",
-      "verified_at": "2026-11-24T17:33:15.085Z",
+      "content_hash": "849bbf0b61d6c856912f4a411cfef5c05cc228a1a6e75556e3f55e0c134e2e39",
+      "verified_at": "2026-11-25T11:30:12.608Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T17:33:15.085Z"
+      "last_updated": "2026-11-25T11:30:12.608Z"
     },
     "giancarloerra/SocratiCode": {
       "repository": "giancarloerra/SocratiCode",
@@ -5961,14 +5961,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-clementtsang-bottom",
-      "content_hash": "3668c226b36384d22d5779a98ce5a31a45bfee78d123566bde1b1acbd82312a0",
-      "verified_at": "2026-11-24T09:57:09.644Z",
+      "content_hash": "3ff0e801aad0b1eebedf80ab740fdfea8b21648929bc071717ec6d3f2875b566",
+      "verified_at": "2026-11-25T11:30:02.520Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T09:57:09.644Z"
+      "last_updated": "2026-11-25T11:30:02.520Z"
     },
     "jhen0409/react-native-debugger": {
       "repository": "jhen0409/react-native-debugger",
@@ -17151,14 +17151,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-openbmb-minicpm-ocr-1-0",
-      "content_hash": "e2372bd1bcf2da6a8d62423530404ea92e32fffcc434eeba717edd867b3ba495",
-      "verified_at": "2026-11-21T19:47:26.759Z",
+      "content_hash": "16726921b187b6ccaad5e5b6c35737a7d959e723c333316e9e4712eaf5c4f585",
+      "verified_at": "2026-11-25T11:30:00.823Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T19:47:26.760Z"
+      "last_updated": "2026-11-25T11:30:00.823Z"
     },
     "nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B": {
       "repository": "nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B",

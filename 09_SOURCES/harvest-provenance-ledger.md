@@ -13080,3 +13080,7 @@ Every entry in this ledger must capture:
 | `learn-github-apache-incubator-pegasus` | `https://github.com/apache/incubator-pegasus` | `02051942` | Multi-dimensional audit evidence | 2026-11-25T11:11:28.411Z |
 | `learn-huggingface-prithivmlmods-gender-classifier-mini` | `https://huggingface.co/prithivMLmods/Gender-Classifier-Mini` | `hf-prithiv` | Multi-dimensional audit evidence | 2026-11-25T11:19:54.760Z |
 | `learn-github-startrail-org-leann` | `https://github.com/StarTrail-org/LEANN` | `12a00553` | Multi-dimensional audit evidence | 2026-11-25T11:20:08.411Z |
+| `learn-huggingface-openbmb-minicpm-ocr-1-0` | `https://huggingface.co/openbmb/MiniCPM-OCR-1.0` | `hf-openbmb` | Multi-dimensional audit evidence | 2026-11-25T11:30:00.804Z |
+| `learn-github-clementtsang-bottom` | `https://github.com/ClementTsang/bottom` | `f992f56d` | Multi-dimensional audit evidence | 2026-11-25T11:30:02.499Z |
+| `learn-github-kubeedge-kubeedge` | `https://github.com/kubeedge/kubeedge` | `8a61b67f` | Multi-dimensional audit evidence | 2026-11-25T11:30:12.589Z |
+| `learn-dom-d-776abda3` | `project://hf-openbmb-minicpm-ocr-1.0` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-openbmb-minicpm-ocr-1.0-learnings.md` | 2026-11-25T11:30:53.593Z |

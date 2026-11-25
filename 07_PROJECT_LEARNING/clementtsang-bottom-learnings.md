@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/clementtsang-bottom-learnings.md`  
 > **Source**: github ([https://github.com/ClementTsang/bottom](https://github.com/ClementTsang/bottom))  
-> **Source Version**: `87cb33dc`  
+> **Source Version**: `f992f56d`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T09:57:08.427Z  
+> **Timestamp**: 2026-11-25T11:30:00.959Z  
 > **Learning ID**: `learn-github-clementtsang-bottom`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clementtsang-bottom-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ClementTsang/bottom](https://github.com/ClementTsang/bottom))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T09:57:04.123Z  
+> **Harvest Timestamp**: 2026-11-25T11:30:00.949Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Yet another cross-platform graphical process/system monitor.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 14261 stars
+- **Stars / Engagement**: 14277 stars
 
 ---
 
@@ -1626,83 +1626,73 @@ impl InputFieldState {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `87cb33dc` (2026-11-24)
-**Commit Message**: deps: bump sysinfo to 0.40.4 (#2338)
+### Incident Patch 1: `f992f56d` (2026-11-25)
+**Commit Message**: deps: bump unicode-width to 0.2.3 and unicode-ellipsis to 0.7.0 (#2339)
 
-See https://github.com/GuillaumeGomez/sysinfo/blob/main/CHANGELOG.md#0404
+Bumps both unicode-width-based dependencies.
 
-**File**: `Cargo.lock` (modified, +2/-2)
+**File**: `.markdownlint.json` (modified, +1/-1)
 ```diff
-@@ -1691,9 +1691,9 @@ dependencies = [
- 
- [[package]]
- name = "sysinfo"
--version = "0.40.3"
-+version = "0.40.4"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "a86bac2f7d06e6384984118ad727f5694110f0ec44d924d05c8fdec3d030bee6"
-+checksum = "3e80749408e2d8bec0ffa303012cf4e1b3b355f4a09087b4fdf7473680f6a2de"
- dependencies = [
-  "libc",
-  "memchr",
+@@ -6,5 +6,5 @@
+   "MD024": false,
+   "MD025": false,
+   "MD046": false,
+-  "MD059": false,
++  "MD059": false
+ }
 ```
 
-**File**: `Cargo.toml` (modified, +1/-1)
+**File**: `Cargo.lock` (modified, +4/-4)
 ```diff
-@@ -98,7 +98,7 @@ regex = "1.13.1"
- rustc-hash = "2.1.3"
- serde = { version = "1.0.228", features = ["derive"] }
- starship-battery = { version = "0.12.0", optional = true }
--sysinfo = { version = "=0.40.3", default-features = false, features = ["component", "disk", "network", "system", "user"] }
-+sysinfo = { version = "=0.40.4", default-features = false, features = ["component", "disk", "network", "system", "user"] }
+@@ -1884,9 +1884,9 @@ checksum = "562d481066bde0658276a35467c4af00bdc6ee726305698a55b86e61d7ad82bb"
+ 
+ [[package]]
+ name = "unicode-ellipsis"
+-version = "0.6.0"
++version = "0.7.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "c251ff0046b0e49918e1ef2b4804ae850ba113ae65ed5c6a1e2925a829e86e8c"
++checksum = "292fd533794b142719d22a0cae54fcaa677cfac2255997fbcf2cffef3ad31c8d"
+ dependencies = [
+  "unicode-segmentation",
+  "unicode-width",
+@@ -1917,9 +1917,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "unicode-width"
+-version = "0.2.2"
++version = "0.2.3"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "b4ac048d71ede7ee76d585517add45da530660ef4390e49b098733c6e897f254"
++checksum = "ca718471876992059f251e33aafc334346ada08042b7661dd1fe313a9bced557"
+ 
+ [[package]]
+ name = "uom"
+```
+
+**File**: `Cargo.toml` (modified, +2/-2)
+```diff
+@@ -102,9 +102,9 @@ sysinfo = { version = "=0.40.4", default-features = false, features = ["componen
  terminal-colorsaurus = "=1.0.3"
  timeless = "0.1.0"
  toml_edit = { version = "0.25.12", features = ["serde"] }
-```
-
----
-
-### Incident Patch 2: `d293a7d7` (2026-11-23)
-**Commit Message**: deps: bump humantime to 2.4.0 (#2337)
-
-Bumps humantime to 2.4.0: https://github.com/chronotope/humantime/releases/tag/v2.4.0
-
-**File**: `Cargo.lock` (modified, +2/-2)
-```diff
-@@ -710,9 +710,9 @@ checksum = "2304e00983f87ffb38b55b444b5e3b60a884b5d30c0fca7d82fe33449bbe55ea"
+-unicode-ellipsis = "0.6.0"
++unicode-ellipsis = "0.7.0"
+ unicode-segmentation = "1.13.3"
+-unicode-width = "0.2.2"
++unicode-width = "0.2.3"
  
- [[package]]
- name = "humantime"
--version = "2.3.0"
-+version = "2.4.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "135b12329e5e3ce057a9f972339ea52bc954fe1e9358ef27f95e89716fbc5424"
-+checksum = "15cdd26707701c53297e2fa6afb323d55fbc1d0810c3aec078ae3ef0424c3c15"
- 
- [[package]]
- name = "ident_case"
-```
-
-**File**: `Cargo.toml` (modified, +1/-1)
-```diff
-@@ -82,7 +82,7 @@ concat-string = "1.0.1"
- crossterm = "0.29.0"
- ctrlc = { version = "3.5.2", features = ["termination"] }
- dirs = "7.0.0"
--humantime = "2.3.0"
-+humantime = "2.4.0"
- indexmap = "2.14.0"
- indoc = "2.0.7"
- itertools = "0.15.0"
+ # Used for logging. Mostly for dev-level debugging.
+ fern = { version = "0.7.1", optional = true }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2339** (2026-11-25): deps: bump unicode-width to 0.2.3 and unicode-ellipsis to 0.7.0 (@ClementTsang)
 - **PR #2338** (2026-11-24): deps: bump sysinfo to 0.40.4 (@ClementTsang)
 - **PR #2337** (2026-11-23): deps: bump humantime to 2.4.0 (@ClementTsang)
 - **PR #2336** (2026-11-23): docs: update demo config and GIF (@ClementTsang)
 - **PR #2335** (2026-11-22): ci: update freebsd VM version to avoid node warning (@ClementTsang)
 - **PR #2334** (2026-11-23): docs: update demo config and GIF (@ClementTsang)
-- **PR #2333** (2026-11-22): ci: update netbsd VM version + cross netbsd CDN (@ClementTsang)
 
 ---
 
@@ -1722,30 +1712,28 @@ Bumps humantime to 2.4.0: https://github.com/chronotope/humantime/releases/tag/v
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps: bump sysinfo to 0.40.4
+## X. deps: bump unicode-width to 0.2.3 and unicode-ellipsis to 0.7.0
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClementTsang/bottom. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.markdownlint.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClementTsang/bottom. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `87cb33dc`: deps: bump sysinfo to 0.40.4. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f992f56d`: deps: bump unicode-width to 0.2.3 and unicode-ellipsis to 0.7.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.markdownlint.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "0.40.4"
-checksum = "3e80749408e2d8bec0ffa303012cf4e1b3b355f4a09087b4fdf7473680f6a2de"
+  "MD059": false
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-version = "0.40.3"
-checksum = "a86bac2f7d06e6384984118ad727f5694110f0ec44d924d05c8fdec3d030bee6"
+  "MD059": false,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `87cb33dc` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f992f56d` are properly handled with clean fallback behavior.

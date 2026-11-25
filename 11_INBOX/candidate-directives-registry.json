@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T11:20:13.742Z",
+  "last_updated": "2026-11-25T11:30:54.650Z",
   "directives": [
     {
       "id": "CD-001",
@@ -60901,6 +60901,48 @@
       "source_repo": "zvec-ai-zvec-grep",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-3D3BDA-rust-bind-bare-calls-to-the-enclosing-mo.md",
+      "staged_date": "2026-11-25"
+    },
+    {
+      "id": "CD-KLA3",
+      "directive_title": "bump unicode-width to 0.2.3 and unicode-ellipsis to 0.7.0",
+      "source_repo": "ClementTsang/bottom",
+      "source_commit": "f992f56d",
+      "staged_file": "11_INBOX/candidate-directives/CD-KLA3-bump-unicode-width-to-0-2-3-and-unicode-ellipsis-to-0-7-0.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-25",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-LPA1",
+      "directive_title": "Empirical Invariant Guard in synckeeper.go",
+      "source_repo": "kubeedge-kubeedge-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-LPA1-empirical-invariant-guard-in-synckeeper-go.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-25",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-KWAQ",
+      "directive_title": "deps: bump unicode-width to 0.2.3 and unicode-ellipsis to 0.7.0",
+      "source_repo": "clementtsang-bottom-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-KWAQ-deps-bump-unicode-width-to-0-2-3-and-unicode-ellipsis-to-0-7-0.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-25",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-A67B30",
+      "directive_title": "Empirical Invariant Guard in synckeeper.go",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "kubeedge-kubeedge",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-A67B30-empirical-invariant-guard-in-synckeeper-.md",
       "staged_date": "2026-11-25"
     }
   ]

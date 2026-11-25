@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T11:20:13.927Z",
-  "total_records": 2663,
+  "last_updated": "2026-11-25T11:30:54.936Z",
+  "total_records": 2666,
   "domains": {
     "A": {
       "total": 22,
@@ -71,7 +71,7 @@
       ]
     },
     "D": {
-      "total": 997,
+      "total": 1000,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -1069,7 +1069,10 @@
         "DOM-D-D8C77758",
         "domain_intelligence-research-knowledge-intelligence-inclusionai-lingsante-3-1-air-vl-core-invariants",
         "DOM-D-51CE07E9",
-        "domain_intelligence-research-knowledge-intelligence-hf-inclusionai-lingsante-3-1-air-vl-learnings-co"
+        "domain_intelligence-research-knowledge-intelligence-hf-inclusionai-lingsante-3-1-air-vl-learnings-co",
+        "domain_intelligence-research-knowledge-intelligence-openbmb-minicpm-ocr-1-0-core-invariants",
+        "DOM-D-776ABDA3",
+        "domain_intelligence-research-knowledge-intelligence-hf-openbmb-minicpm-ocr-1-0-learnings-core-invari"
       ]
     },
     "E": {
@@ -20825,8 +20828,8 @@
       "title": "Architecture Intelligence: ClementTsang/bottom Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-clementtsang-bottom-architecture-intelligence-clementtsang-bottom-core-invariant.md",
       "repository": "ClementTsang/bottom",
-      "content_hash": "d4b5c1808b4f953477e78d780392d8adc0e6eba80018a750767a19d7b16ca30c",
-      "created_at": "2026-11-24T09:57:10.077Z"
+      "content_hash": "d661a05fc962ef106c79b11e80bcfb49bc978a04d46eb612134b10dc46292795",
+      "created_at": "2026-11-25T11:30:03.078Z"
     },
     "domain_intelligence-architecture-intelligence-clementtsang-bottom-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-clementtsang-bottom-learnings-core-invariants",
@@ -20834,8 +20837,8 @@
       "title": "Architecture Intelligence: clementtsang-bottom-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-clementtsang-bottom-learnings-architecture-intelligence-clementtsang-bottom-lear.md",
       "repository": "clementtsang-bottom-learnings",
-      "content_hash": "7f29de99656d31052ea46641e8ec4c4efb5eed9eb70abaed3b398030dee647b7",
-      "created_at": "2026-11-24T09:57:21.745Z"
+      "content_hash": "eaa03c5301803c19cca97d079859fef23dab036094f777c5212d5f4d6979ad8f",
+      "created_at": "2026-11-25T11:30:17.369Z"
     },
     "domain_intelligence-research-knowledge-intelligence-burner22-numbat-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-burner22-numbat-core-invariants",
@@ -25530,8 +25533,8 @@
       "title": "Architecture Intelligence: kubeedge/kubeedge Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-kubeedge-kubeedge-architecture-intelligence-kubeedge-kubeedge-core-invariants.md",
       "repository": "kubeedge/kubeedge",
-      "content_hash": "631b13758a69620b0ce39d5dc8ad0c3d5d790899b0e088922df5a83883198cd4",
-      "created_at": "2026-11-20T19:06:52.897Z"
+      "content_hash": "88350705383c6ced04e3cdba95bb859c403087184c12f61e68b14cda0ba08ec5",
+      "created_at": "2026-11-25T11:30:13.211Z"
     },
     "domain_intelligence-technical-construction-intelligence-aio-libs-aiohttp-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-aio-libs-aiohttp-learnings-core-invariants",
@@ -25557,8 +25560,8 @@
       "title": "Architecture Intelligence: kubeedge-kubeedge-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-kubeedge-kubeedge-learnings-architecture-intelligence-kubeedge-kubeedge-learning.md",
       "repository": "kubeedge-kubeedge-learnings",
-      "content_hash": "31f63548b25025a4381d3b86808b8a2a18e108b7eec0e5e77727d0473adbb943",
-      "created_at": "2026-11-20T19:11:51.227Z"
+      "content_hash": "dfcc08720d632257391e77caa9d2ad969173f068cf335eeeeb8dd6bb6a083f8f",
+      "created_at": "2026-11-25T11:30:54.936Z"
     },
     "domain_intelligence-technical-construction-intelligence-zeronsh-zeron-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-zeronsh-zeron-core-invariants",
@@ -44752,6 +44755,66 @@
       "repository": "startrail-org-leann-learnings",
       "content_hash": "830eb6dc0369e89d4f240b4a9c7f0cb9b4c210a5820dc6e2575de2711f933475",
       "created_at": "2026-11-25T11:20:12.870Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-openbmb-minicpm-ocr-1-0-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-openbmb-minicpm-ocr-1-0-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: openbmb/MiniCPM-OCR-1.0 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-openbmb-minicpm-ocr-1-0-research-knowledge-intelligence-openbmb-minicpm-ocr-1.md",
+      "repository": "openbmb/MiniCPM-OCR-1.0",
+      "content_hash": "13a876c89e34471ebe2604ce760df58e0d200763c0660c6c1602307552fa46f1",
+      "created_at": "2026-11-25T11:30:01.109Z"
+    },
+    "DOM-D-776ABDA3": {
+      "record_id": "DOM-D-776ABDA3",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): openbmb/MiniCPM-OCR-1.0",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-openbmb-minicpm-ocr-1.0-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/openbmb/MiniCPM-OCR-1.0](https://huggingface.co/openbmb/MiniCPM-OCR-1.0))  \n> **Source Version**: `hf-openbmb-m`  \n> **License**: Open-Source  \n> **Sy",
+      "content_hash": "14ba1e33b2db592b35688f52af8f16adb2516e00708865738d6d35154485b77b",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-openbmb-minicpm-ocr-1.0-learnings.md`  \n> **Source**: huggingface ([https://huggi -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-openbmb-minicpm-ocr-1.0-learnings.md`  \n> **Source**: huggingface ([https://huggi",
+      "provenance": {
+        "source_uri": "project://hf-openbmb-minicpm-ocr-1.0/hf-openbmb-minicpm-ocr-1.0-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-25T11:30:17.861Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-openbmb-minicpm-ocr-1.0)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-openbmb-minicpm-ocr-1.0"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-25T11:30:53.537Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-openbmb-minicpm-ocr-1-0-learnings-core-invari": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-openbmb-minicpm-ocr-1-0-learnings-core-invari",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-openbmb-minicpm-ocr-1.0-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-openbmb-minicpm-ocr-1-0-learnings-research-knowledge-intelligence-hf-openbmb-.md",
+      "repository": "hf-openbmb-minicpm-ocr-1.0-learnings",
+      "content_hash": "5c70218a7ed4742eb2d3f02c544101820472ee5e4676041dc153940ce214b483",
+      "created_at": "2026-11-25T11:30:53.954Z"
     }
   }
 }

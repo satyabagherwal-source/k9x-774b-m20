@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-25T10:26:14.155Z",
+  "updated_at": "2026-11-25T11:30:53.588Z",
   "statistics": {
-    "total_nodes": 536,
-    "total_edges": 220,
+    "total_nodes": 537,
+    "total_edges": 221,
     "domain_distribution": {
-      "D": 324,
+      "D": 325,
       "M": 1,
       "H": 97,
       "J": 22,
@@ -21,7 +21,7 @@
       "C": 1
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 216,
+      "CONSTRAINED_BY_ARCHITECTURE": 217,
       "VERIFIED_BY_TEST": 2,
       "STYLED_BY_DESIGN": 2
     }
@@ -11966,6 +11966,29 @@
       ],
       "created_at": "2026-11-25T10:26:14.154Z",
       "updated_at": "2026-11-25T10:26:14.154Z"
+    },
+    "DOM-D-776ABDA3": {
+      "id": "DOM-D-776ABDA3",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): openbmb/MiniCPM-OCR-1.0",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-openbmb-minicpm-ocr-1.0-learnings.md`  \n> **Source**: huggingface ([https://huggi -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-openbmb-minicpm-ocr-1.0-learnings.md`  \n> **Source**: huggingface ([https://huggi",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-openbmb-minicpm-ocr-1.0/hf-openbmb-minicpm-ocr-1.0-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-25T11:30:17.861Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-openbmb-minicpm-ocr-1.0)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence",
+        "M"
+      ],
+      "created_at": "2026-11-25T11:30:53.588Z",
+      "updated_at": "2026-11-25T11:30:53.588Z"
     }
   },
   "edges": [
@@ -14168,6 +14191,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-K-7A10FB7B [K] with Domain G",
       "created_at": "2026-11-25T07:13:39.919Z"
+    },
+    {
+      "id": "EDGE-28BB6E123247",
+      "sourceId": "DOM-D-776ABDA3",
+      "targetId": "NODE-M-domain-bridge-m",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-D-776ABDA3 [D] with Domain M",
+      "created_at": "2026-11-25T11:30:53.588Z"
     }
   ]
 }

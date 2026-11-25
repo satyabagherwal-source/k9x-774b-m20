@@ -13047,3 +13047,7 @@
 | `CYCLE-20261125-WPEF` | `2026-11-25T11:11:28.407Z` | `apache/incubator-pegasus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10510` | Yes (`a9341c40...`) |
 | `CYCLE-20261125-7K3N` | `2026-11-25T11:19:54.755Z` | `prithivMLmods/Gender-Classifier-Mini` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-prithivmlmods-gender-classifier-mini-learnings.md` | Yes (`8933be30...`) |
 | `CYCLE-20261125-7UMV` | `2026-11-25T11:20:08.407Z` | `StarTrail-org/LEANN` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10511` | Yes (`3ce6b9d9...`) |
+| `CYCLE-20261125-KJQ6` | `2026-11-25T11:30:00.798Z` | `openbmb/MiniCPM-OCR-1.0` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openbmb-minicpm-ocr-1.0-learnings.md` | Yes (`16726921...`) |
+| `CYCLE-20261125-KL17` | `2026-11-25T11:30:02.491Z` | `ClementTsang/bottom` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10512` | Yes (`3ff0e801...`) |
+| `CYCLE-20261125-KSTJ` | `2026-11-25T11:30:12.583Z` | `kubeedge/kubeedge` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10513` | Yes (`849bbf0b...`) |
+| `CYCLE-2026-11-25-PROJ-EVOLVE` | `2026-11-25T11:30:53.593Z` | `hf-openbmb-minicpm-ocr-1.0` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-776ABDA3` [Domain D] | Yes (`14ba1e33...`) |

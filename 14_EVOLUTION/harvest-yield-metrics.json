@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T11:20:08.417Z",
-  "total_cycles_completed": 12388,
-  "total_learnings_persisted": 12388,
-  "total_rules_promoted": 11391,
+  "last_updated": "2026-11-25T11:30:12.596Z",
+  "total_cycles_completed": 12391,
+  "total_learnings_persisted": 12391,
+  "total_rules_promoted": 11393,
   "history": [
-    {
-      "timestamp": "2026-11-24T22:42:37.202Z",
-      "repository": "alibaba/zvec",
-      "learningId": "learn-github-alibaba-zvec",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T22:51:00.067Z",
-      "repository": "sveltejs/svelte",
-      "learningId": "learn-github-sveltejs-svelte",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T22:51:07.510Z",
-      "repository": "langchain4j/langchain4j",
-      "learningId": "learn-github-langchain4j-langchain4j",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-24T22:51:10.060Z",
       "repository": "NucleoidAI/Nucleoid",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-25T11:20:08.417Z",
       "repository": "StarTrail-org/LEANN",
       "learningId": "learn-github-startrail-org-leann",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T11:30:00.811Z",
+      "repository": "openbmb/MiniCPM-OCR-1.0",
+      "learningId": "learn-huggingface-openbmb-minicpm-ocr-1-0",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T11:30:02.507Z",
+      "repository": "ClementTsang/bottom",
+      "learningId": "learn-github-clementtsang-bottom",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T11:30:12.596Z",
+      "repository": "kubeedge/kubeedge",
+      "learningId": "learn-github-kubeedge-kubeedge",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

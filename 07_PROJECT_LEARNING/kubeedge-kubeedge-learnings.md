@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kubeedge-kubeedge-learnings.md`  
 > **Source**: github ([https://github.com/kubeedge/kubeedge](https://github.com/kubeedge/kubeedge))  
-> **Source Version**: `ddced73b`  
+> **Source Version**: `8a61b67f`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T17:33:13.600Z  
+> **Timestamp**: 2026-11-25T11:30:11.122Z  
 > **Learning ID**: `learn-github-kubeedge-kubeedge`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kubeedge-kubeedge-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kubeedge/kubeedge](https://github.com/kubeedge/kubeedge))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T17:33:13.592Z  
+> **Harvest Timestamp**: 2026-11-25T11:30:11.115Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Kubernetes Native Edge Computing Framework (project under CNCF)
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 7644 stars
+- **Stars / Engagement**: 7646 stars
 
 ---
 
@@ -1233,125 +1233,133 @@ func RuleContains(rulePath, rule2Path string) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ddced73b` (2026-11-24)
-**Commit Message**: Merge pull request #7307 from harshrajdebug/fix/offline-sa-token-fallback
+### Incident Patch 1: `8a61b67f` (2026-11-25)
+**Commit Message**: Merge pull request #7453 from arshil42/fix/synckeeper-buffered-channel
 
-metamanager: fall back to the cached service account token when refresh fails
+viaduct: keep sync responses that arrive before the wait starts
 
-**File**: `edge/pkg/metamanager/client/serviceaccount.go` (modified, +183/-26)
+**File**: `pkg/viaduct/pkg/keeper/synckeeper.go` (modified, +3/-1)
 ```diff
-@@ -87,8 +87,10 @@ func requiresRefresh(tr *authenticationv1.TokenRequest) bool {
- 	return false
+@@ -36,7 +36,9 @@ func (k *SyncKeeper) sendToKeepChannel(msg model.Message) error {
  }
  
--// KeyFunc keys should be nonconfidential and safe to log
--func KeyFunc(name, namespace string, tr *authenticationv1.TokenRequest) string {
-+// baseKey is the spec-derived key prefix that identifies the logical token
-+// (independent of which generation). All generations of the same logical token
-+// share this prefix. Used for prefix lookup in metaDB.
-+func baseKey(name, namespace string, tr *authenticationv1.TokenRequest) string {
- 	var exp int64
- 	if tr.Spec.ExpirationSeconds != nil {
- 		exp = *tr.Spec.ExpirationSeconds
-@@ -102,34 +104,106 @@ func KeyFunc(name, namespace string, tr *authenticationv1.TokenRequest) string {
- 	return fmt.Sprintf("%q/%q/%#v/%#v/%#v", name, namespace, tr.Spec.Audiences, exp, ref)
+ func (k *SyncKeeper) addKeepChannel(msgID string) chan model.Message {
+-	channel := make(chan model.Message)
++	// sendToKeepChannel does not block, so the channel holds one message for a
++	// response that arrives before WaitResponse starts receiving.
++	channel := make(chan model.Message, 1)
+ 	k.keeper.Store(msgID, channel)
+ 	return channel
  }
- 
--func getTokenLocally(name, namespace string, tr *authenticationv1.TokenRequest) (*authenticationv1.TokenRequest, error) {
--	resKey := KeyFunc(name, namespace, tr)
-+// KeyFunc returns the per-generation storage key for a TokenRequest. The key
-+// is the base (spec-derived) key suffixed with the token's exp timestamp so
-+// that successive refreshed tokens for the same logical token are stored as
-+// separate rows. This is required to keep the previous (still un-expired)
-+// token's row in metaDB during the propagation window between a refresh and
-+// the moment the pod re-reads the new token from its projected volume; without
-+// it, MetaServer (which authenticates by checking metaDB membership) rejects
-+// requests bearing the previous token.
-+//
-+// Callers without a populated Status.ExpirationTimestamp (i.e., callers that
-+// only have a TokenRequest spec, like an upstream kubelet refresh call) should
-+// not use KeyFunc — they should use baseKey and a prefix query.
-+//
-+// Keys are nonconfidential and safe to log.
-+func KeyFunc(name, namespace string, tr *authenticationv1.TokenRequest) string {
-+	base := baseKey(name, namespace, tr)
-+	if tr.Status.ExpirationTimestamp.IsZero() {
-+		// Defensive: a write without exp is malformed. Return base so the
-+		// behavior is at worst the pre-refactor behavior (one row per
-+		// logical token, overwritten on refresh). The caller should ensure
-+		// Status.ExpirationTimestamp is populated.
-+		return base
-+	}
-+	return fmt.Sprintf("%s/%d", base, tr.Status.ExpirationTimestamp.UnixNano())
-+}
-+
-+// expired reports whether a token can no longer be used, as distinct from
-+// being due for a refresh. requiresRefresh turns true at 80% of the token's
-+// lifetime while the token stays usable until its ExpirationTimestamp. A token
-+// carrying no expiration timestamp is treated as usable, matching
-+// requiresRefresh, which declines to refresh a token whose ExpirationSeconds
-+// is nil.
-+func expired(tr *authenticationv1.TokenRequest) bool {
-+	if tr.Status.ExpirationTimestamp.IsZero() {
-+		return false
-+	}
-+	return time.Now().After(tr.Status.ExpirationTimestamp.Time)
-+}
-+
-+// newestCachedGeneration returns the newest cached generation that has not yet
-+// expired. It does not judge whether that generation is due for a refresh,
-+// because only the caller knows whether a refresh can succeed.
-+func newestCachedGeneration(name, namespace string, tr *authenticationv1.TokenRequest) (*authenticationv1.TokenRequest, error) {
-+	prefix := baseKey(name, namespace, tr)
- 	ms := dbclient.NewMetaService()
--	metas, err := ms.QueryMeta("key", resKey)
-+	metas, err := ms.QueryMetaByKeyPrefix(prefix)
- 	if err != nil {
--		klog.Errorf("query meta %s failed: %v", resKey, err)
-+		klog.Errorf("query meta by prefix %s failed: %v", prefix, err)
- 		return nil, err
- 	}
--	if len(*metas) != 1 {
--		klog.Errorf("query meta %s length error", resKey)
--		return nil, fmt.Errorf("query meta %s length error", resKey)
-+	if len(metas) == 0 {
-+		return nil, fmt.Errorf("no cached token for %s", prefix)
- 	}
--	var tokenRequest authenticationv1.TokenRequest
--	err = json.Unmarshal([]byte((*metas)[0]), &tokenRequest)
-+
-+	// Pick the newest un-expired generation. Older generations may still be
-+	// present (kept intentionally to bridge the refresh-propagation window;
-+	// the GC sweep removes them after their exp passes), but the freshest
-+	// one is what we want to return to the caller.
-+	now := time.Now()
-+	var newest *authenticationv1.TokenRequest
-+	for _, v := range metas {
-+		var cur authenticationv1.TokenRequest
-+		if err := json.Unmarshal([]byte(v), &cur); err != nil {
-+			klog.Errorf("unmarshal cached token under prefix %s failed: %v", prefix, err)
-+			continue
-+		}
-+		if cur.Status.ExpirationTimestamp.IsZero() || !cur.Status.ExpirationTimestamp.Time.After(now) {
-+			continue
-+		}
-+		if newest == nil || cur.Status.ExpirationTimestamp.Time.After(newest.Status.ExpirationTimestamp.Time) {
-+			snapshot := cur
-+			newest = &snapshot
-+		}
-+	}
-+	if newest == nil {
-+		return nil, fmt.Errorf("no un-expired cached token for %s", prefix)
-+	}
-+	return newest, nil
-+}
-+
-+func getTokenLocally(name, namespace string, t
 ```
 
-**File**: `edge/pkg/metamanager/client/serviceaccount_offline_test.go` (added, +322/-0)
+**File**: `pkg/viaduct/pkg/keeper/synckeeper_test.go` (added, +79/-0)
 ```diff
-@@ -0,0 +1,322 @@
+@@ -0,0 +1,79 @@
++/*
++Copyright 2026 The KubeEdge Authors.
++
++Licensed under the Apache License, Version 2.0 (the "License");
++you may not use this file except in compliance with the License.
++You may obtain a copy of the License at
++
++    http://www.apache.org/licenses/LICENSE-2.0
++
++Unless required by applicable law or agreed to in writing, software
++distributed under the License is distributed on an "AS IS" BASIS,
++WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++See the License for the specific language governing permissions and
++limitations under the License.
++*/
++
++package keeper
++
++import (
++	"testing"
++	"time"
++
++	"github.com/stretchr/testify/assert"
++	"github.com/stretchr/testify/require"
++
++	"github.com/kubeedge/beehive/pkg/core/model"
++)
++
++func TestMatchAndNotifyBeforeReceive(t *testing.T) {
++	k := NewSyncKeeper()
++	request := model.NewMessage("")
++	channel := k.addKeepChannel(request.GetID())
++
++	// The response arrives before anyone receives from the channel.
++	response := model.NewMessage(request.GetID())
++	require.True(t, k.MatchAndNotify(*response))
++
++	select {
++	case got := <-channel:
++		assert.Equal(t, response.GetID(), got.GetID())
++	default:
++		t.Fatal("the response was dropped because nobody was receiving yet")
++	}
++}
++
++func TestMatchAndNotifyWithoutWaiter(t *testing.T) {
++	k := NewSyncKeeper()
++	response := model.NewMessage("unknown-request-id")
++
++	assert.False(t, k.Match(*response))
++	assert.False(t, k.MatchAndNotify(*response))
++}
++
++func TestWaitResponse(t *testing.T) {
++	k := NewSyncKeeper()
++	request := model.NewMessage("")
++	response := model.NewMessage(request.GetID())
++
++	go func() {
++		// Notify as soon as WaitResponse has registered the request.
++		for !k.MatchAndNotify(*response) {
++			time.Sleep(time.Millisecond)
++		}
++	}()
++
++	got, err := k.WaitResponse(request, time.Now().Add(10*time.Second))
++	require.NoError(t, err)
++	assert.Equal(t, response.GetID(), got.GetID())
++	assert.False(t, k.Match(*response), "the request should be removed after the response")
++}
++
++func TestWaitResponseTimeout(t *testing.T) {
++	k := NewSyncKeeper()
++	request := model.NewMessage("")
++
++	_, err := k.WaitResponse(request, time.Now().Add(10*time.Millisecond))
++	require.ErrorContains(t, err, "wait response timeout")
++	assert.False(t, k.Match(*model.NewMessage(request.GetID())), "the request should be removed after the timeout")
++}
+```
+
+---
+
+### Incident Patch 2: `5250c989` (2026-11-25)
+**Commit Message**: Merge pull request #7296 from adity1raut/fix/held-pod-unhold-update
+
+edged: replay held pods from pod list as UPDATE instead of SET
+
+**File**: `edge/pkg/edged/edged.go` (modified, +1/-1)
+```diff
+@@ -517,7 +517,7 @@ func (e *edged) handlePodListFromMetaManager(content []byte, updatesChan chan<-
+ 		if filterPodByNodeName(&pod, e.nodeName) {
+ 			if pod.Annotations[holdUpgradeLabel] == "true" && pod.Status.Phase == v1.PodPending {
+ 				key := fmt.Sprintf("%s/%s", pod.Namespace, pod.Name)
+-				e.heldPodUpdates[key] = append(e.heldPodUpdates[key], kubelettypes.PodUpdate{Op: kubelettypes.SET, Pods: []*v1.Pod{&pod}, Source: kubelettypes.ApiserverSource})
++				e.heldPodUpdates[key] = append(e.heldPodUpdates[key], kubelettypes.PodUpdate{Op: kubelettypes.UPDATE, Pods: []*v1.Pod{&pod}, Source: kubelettypes.ApiserverSource})
+ 				continue
+ 			}
+ 
+```
+
+**File**: `edge/pkg/edged/edged_test.go` (added, +219/-0)
+```diff
+@@ -0,0 +1,219 @@
 +/*
 +Copyright 2026 The KubeEdge Authors.
 +
@@ -1368,375 +1376,141 @@ metamanager: fall back to the cached service account token when refresh fails
 +limitations under the License.
 +*/
 +
-+package client
++package edged
 +
 +import (
++	"context"
 +	"encoding/json"
 +	"fmt"
-+	"os"
-+	"path/filepath"
 +	"testing"
 +	"time"
 +
-+	authenticationv1 "k8s.io/api/authentication/v1"
-+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-+
-+	"github.com/kubeedge/api/apis/componentconfig/edgecore/v1alpha2"
-+	"github.com/kubeedge/beehive/pkg/core/model"
-+	"github.com/kubeedge/kubeedge/edge/pkg/metamanager/dao"
-+	"github.com/kubeedge/kubeedge/edge/pkg/metamanager/dao/dbclient"
-+	"github.com/kubeedge/kubeedge/edge/pkg/metamanager/dao/models"
-+)
-+
-+// projectedTTL is the lifetime kubelet requests for a projected service
-+// account token volume.
-+const projectedTTL int64 = 3607
-+
-+// These tests drive the real metaDB through dao.Init rather than stubbing the
-+// data layer, so they exercise the per-generation key scheme end to end.
-+func TestMain(m *testing.M) {
-+	dir, err := os.MkdirTemp("", "kubeedge-sa-offline")
-+	if err != nil {
-+		panic(err)
-+	}
-+	dao.Init(filepath.Join(dir, "meta.db"), &v1alpha2.MetaManager{Enable: true})
-+	code := m.Run()
-+	os.RemoveAll(dir)
-+	os.Exit(code)
-+}
-+
-+// offlineSend fails every sync send, which is what an edge node that has lost
-+// its connection to the cloud sees.
-+type offlineSend struct{}
-+
-+func (offlineSend) SendSync(*model.Message) (*model.Message, error) {
-+	return nil, fmt.Errorf("timeout to get response")
-+}
-+func (offlineSend) Send(*model.Message) {}
-+
-+func specOf(ttl int64) *authenticationv1.TokenRequest {
-+	exp := ttl
-+	return &authenticationv1.TokenRequest{
-+		Spec: authenticationv1.TokenRequestSpec{ExpirationSeconds: &exp},
-+	}
-+}
-+
-+// cacheGeneration stores one generation of a token, issued age ago, under the
-+// per-generation key that metamanager would use for it.
-+func cacheGeneration(t *testing.T, name, namespace string, age time.Duration, token string) *authenticationv1.TokenRequest {
-+	t.Helper()
-+	exp := projectedTTL
-+	issued := time.Now().Add(-age)
-+	tr := &authenticationv1.TokenRequest{
-+		Spec: authenticationv1.TokenRequestSpec{ExpirationSeconds: &exp},
-+		Status: authenticationv1.TokenRequestStatus{
-+			Token:               token,
-+			ExpirationTimestamp: metav1.NewTime(issued.Add(time.Duration(projectedTTL) * time.Second)),
-+		},
-+	}
-+	value, err := json.Marshal(tr)
-+	if err != nil {
-+		t.Fatalf("marshal token: %v", err)
-+	}
-+	if err := dbclient.NewMetaService().SaveMeta(&models.Meta{
-+		Key:   KeyFunc(name, namespace, tr),
-+		Type:  model.ResourceTypeServiceAccountToken,
-+		Value: string(value),
-+	}); err != nil {
-+		t.Fatalf("save meta: %v", err)
-+	}
-+	return tr
-+}
-+
-+// A refresh stores the new token under its own key, so the previous generation
-+// survives the propagation window during which a pod may still present it.
-+func TestGenerationsCoexistAcrossRefresh(t *testing.T) {
-+	const name, namespace = "coexist", "default"
-+	cacheGeneration(t, name, namespace, 50*time.Minute, "tok-old")
-+	cacheGeneration(t, name, namespace, time.Minute, "tok-new")
-+
-+	rows, err := dbclient.NewMetaService().QueryMetaByKeyPrefix(baseKey(name, namespace, specOf(projectedTTL)))
-+	if err != nil {
-+		t.Fatalf("query by prefix: %v", err)
-+	}
-+	if len(rows) != 2 {
-+		t.Fatalf("cached generations = %d, want 2", len(rows))
-+	}
-+
-+	// Both remain usable for authentication while they are un-expired.
-+	if !CheckTokenExist("tok-old") {
-+		t.Error("the previous generation was rejected while it was still valid")
-+	}
-+	if !CheckTokenExist("tok-new") {
-+		t.Error("the refreshed generation was rejected")
-+	}
-+
-+	// The newest generation is the one handed to a caller.
-+	got, err := newestCachedGeneration(name, namespace, specOf(projectedTTL))
-+	if err != nil {
-+		t.Fatalf("newestCachedGeneration: %v", err)
-+	}
-+	if got.Status.Token != "tok-new" {
-+		t.Errorf("token = %q, want %q", got.Status.Token, "tok-new")
-+	}
-+}
-+
-+// With the cloud unreachable and a cached token that is past the refresh
-+// threshold but not expired, the cached token is served so the pod can start.
-+func TestGetServiceAccountTokenServesStaleTokenWhenOffline(t *testing.T) {
-+	const name, namespace = "offline-stale", "default"
-+	tr := cacheGeneration(t, name, namespace, 50*time.Minute, "tok-stale")
-+
-+	if !requiresRefresh(tr) {
-+		t.Fatal("precondition failed: token is not yet due for refresh")
-+	}
-+	if expired(tr) {
-+		t.Fatal("precondition failed: token has already expired")
-+	}
-+
-+	c := &serviceAccountToken{send: offlineSend{}}
-+	got, err := c.GetService
-```
-
-**File**: `edge/pkg/metamanager/client/serviceaccount_test.go` (added, +926/-0)
-```diff
-@@ -0,0 +1,926 @@
-+/*
-+Copyright 2025 The KubeEdge Authors.
-+
-+Licensed under the Apache License, Version 2.0 (the "License");
-+you may not use this file except in compliance with the License.
-+You may obtain a copy of the License at
-+
-+    http://www.apache.org/licenses/LICENSE-2.0
-+
-+Unless required by applicable law or agreed to in writing, software
-+distributed under the License is distributed on an "AS IS" BASIS,
-+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+See the License for the specific language governing permissions and
-+limitations under the License.
-+*/
-+
-+package client
-+
-+import (
-+	"encoding/json"
-+	"errors"
-+	"fmt"
-+	"reflect"
-+	"testing"
-+	"time"
-+
-+	"github.com/agiledragon/gomonkey/v2"
-+	"github.com/stretchr/testify/assert"
-+	authenticationv1 "k8s.io/api/authentication/v1"
++	v1 "k8s.io/api/core/v1"
 +	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 +	"k8s.io/apimachinery/pkg/types"
-+
-+	"github.com/kubeedge/beehive/pkg/core/model"
-+	"github.com/kubeedge/kubeedge/edge/pkg/metamanager/dao/dbclient"
-+	"github.com/kubeedge/kubeedge/edge/pkg/metamanager/dao/models"
++	"k8s.io/client-go/tools/record"
++	"k8s.io/kubernetes/pkg/kubelet/config"
++	kubelettypes "k8s.io/kubernetes/pkg/kubelet/types"
++	kubeletutil "k8s.io/kubernetes/pkg/kubelet/util"
 +)
 +
-+type fakeSend struct {
-+	syncHandler func(*model.Message) (*model.Message, error)
-+	sendHandler func(*model.Message)
-+}
++const testNodeName = "test-node"
 +
-+func (f *fakeSend) SendSync(message *model.Message) (*model.Message, error) {
-+	if f.syncHandler != nil {
-+		return f.syncHandler(message)
++func newTestPod(namespace, name, uid string, phase v1.PodPhase, hold bool) v1.Pod {
++	pod := v1.Pod{
++		ObjectMeta: metav1.ObjectMeta{
++			Namespace: namespace,
++			Name:      name,
++			UID:       types.UID(uid),
++		},
++		Spec: v1.PodSpec{
++			NodeName: testNodeName,
++			Containers: []v1.Container{{
++				Name:  "c",
++				Image: "busybox",
++			}},
++		},
++		Status: v1.PodStatus{Phase: phase},
 +	}
-+	return &model.Message{}, nil
-+}
-+
-+func (f *fakeSend) Send(message *model.Message) {
-+	if f.sendHandler != nil {
-+		f.sendHandler(message)
++	if hold {
++		pod.Annotations = map[string]string{holdUpgradeLabel: "true"}
 +	}
++	return pod
 +}
 +
-+func newFakeSend() *fakeSend {
-+	return &fakeSend{}
-+}
++func marshalPodList(t *testing.T, pods ...v1.Pod) []byte {
++	t.Helper()
 +
-+func TestNewServiceAccountToken(t *testing.T) {
-+	assert := assert.New(t)
-+
-+	sendInterface := newFakeSend()
-+
-+	sat := newServiceAccountToken(sendInterface)
-+	assert.NotNil(sat)
-+	assert.NotNil(sat.send)
-+	assert.Equal(sendInterface, sat.send)
-+}
-+
-+func TestRequiresRefresh(t *testing.T) {
-+	assert := assert.New(t)
-+
-+	now := time.Now()
-+	testcases := []struct {
-+		name     string
-+		tr       *authenticationv1.TokenRequest
-+		expected bool
-+	}{
-+		{
-+			name: "Not expired",
-+			tr: &authenticationv1.TokenRequest{
-+				Spec: authenticationv1.TokenRequestSpec{
-+					ExpirationSeconds: func() *int64 { i := int64(3600); return &i }(),
-+				},
-+				Status: authenticationv1.TokenRequestStatus{
-+					ExpirationTimestamp: metav1.NewTime(now.Add(time.Hour)),
-+				},
-+			},
-+			expected: false,
-+		},
-+		{
-+			name: "Expired",
-+			tr: &authenticationv1.TokenRequest{
-+				Spec: authenticationv1.TokenRequestSpec{
-+					ExpirationSeconds: func() *int64 { i := int64(3600); return &i }(),
-+				},
-+				Status: authenticationv1.TokenRequestStatus{
-+					ExpirationTimestamp: metav1.NewTime(now.Add(-time.Hour)),
-+				},
-+			},
-+			expected: true,
-+		},
-+		{
-+			name: "Near expiration (within 20% of TTL)",
-+			tr: &authenticationv1.TokenRequest{
-+				Spec: authenticationv1.TokenRequestSpec{
-+					ExpirationSeconds: func() *int64 { i := int64(3600); return &i }(),
-+				},
-+				Status: authenticationv1.TokenRequestStatus{
-+					ExpirationTimestamp: metav1.NewTime(now.Add(time.Minute * 10)),
-+				},
-+			},
-+			expected: true,
-+		},
-+		{
-+			name: "Beyond max TTL",
-+			tr: &authenticationv1.TokenRequest{
-+				Spec: authenticationv1.TokenRequestSpec{
-+					ExpirationSeconds: func() *int64 { i := int64(24 * 3600 * 2); return &i }(),
-+				},
-+				Status: authenticationv1.TokenRequestStatus{
-+					ExpirationTimestamp: metav1.NewTime(now.Add(time.Hour * 48)),
-+					Token:               "test-token",
-+				},
-+			},
-+			expected: false,
-+		},
-+		{
-+			name: "Nil ExpirationSeconds",
-+			tr: &authenticationv1.TokenRequest{
-+				Spec: authenticationv1.TokenRequestSpec{
-+					ExpirationSeconds: nil,
-+				},
-+				Status: authenticationv1.TokenRequestStatus{
-+					ExpirationTimestamp: metav1.NewTime(now.Add(time.Hour)),
-+				},
-+			},
-+			expected: false,
-+		},
++	lists := make([]string, 0, len(pods))
++	for _, pod := range pods {
++		data, err := json.Marshal(pod)
++		if err != nil {
++			t.Fatalf("failed to marshal pod %s/%s: %v", pod.Namespace, pod.Name, err)
++		}
++		lists = append(lists, string(data))
 +	}
 +
-+	for _, test := range testcases {
-+		t.Run(test.name, func(t *testing.T) {
-+			result := requiresRefresh(test.tr)
-+			assert.Equal(test.expected, result)
-+		})
-+	}
-+}
-+
-+func TestKeyFunc(t *testing.T) {
-+	assert := assert.New(t)
-+
-+	testcases := []struct {
-+		name      string
-+		saName    string
-+		namespace string
-+		tr        *authenticationv1.TokenRequest
-+		expected  string
-+	}{
-+		{
-+			// Zero ExpirationTimestamp: defensive fallback returns base key only.
-+			name:      "Basic TokenRequest",
-+			saName:    "test-sa",
-+			namespace: "default",
-+			tr: &authenticationv1.TokenRequest{
-+				Spec: authenticationv1.TokenRequestSpec{
-+					Audiences:         []string{"audience1", "audience2"},
-+					ExpirationSeconds: func() *int64 { i := int64(3600); return &i }(),
-+					BoundObjectRef: &authenticationv1.BoundObjectReference{
-+						Kind: "Pod",
-+						Name: "test-pod",
-+						UID:  "12345",
-+					},
-+				},
-+			},
-+			expected: `"test-sa"/"default"/[]string{"audience1", "audience2"}/3600/v1.BoundObjectReference{Kind:"Pod", APIVersion:"", Name:"test-pod", UID:"12345"}`,
-+		},
-+		{
-+			name:      "TokenRequest with nil ExpirationSeconds
-```
-
-**File**: `edge/pkg/metamanager/dao/dbclient/meta.go` (modified, +16/-0)
-```diff
-@@ -106,6 +106,22 @@ func (s *MetaService) QueryMeta(key string, condition string) (*[]string, error)
- 	return &result, nil
- }
- 
-+// QueryMetaByKeyPrefix returns meta values whose Key starts with prefix.
-+// The match is exact and case-sensitive. LIKE is not used because SQLite's
-+// LIKE ignores ASCII case and treats "%" and "_" in the prefix as wildcards.
-+func (s *MetaService) QueryMetaByKeyPrefix(prefix string) ([]string, error) {
-+	var metas []models.Meta
-+	err := s.db.Where("substr(key, 1, length(?)) = ?", prefix, prefix).Find(&metas).Error
++	content, err := json.Marshal(lists)
 +	if err != nil {
-+		return nil, err
++		t.Fatalf("failed to marshal pod list: %v", err)
 +	}
-+	result := make([]string, 0, len(metas))
-+	for _, v := range metas {
-+		result = append(result, v.Value)
-+	}
-+	return result, nil
++	return content
 +}
 +
- // QueryAllMeta returns all metas for given key and condition
- func (s *MetaService) QueryAllMeta(key string, condition string) (*[]models.Meta, error) {
- 	var metas []models.Meta
-```
-
-**File**: `edge/pkg/metamanager/metamanager.go` (modified, +3/-0)
-```diff
-@@ -6,6 +6,7 @@ import (
- 	beehiveContext "github.com/kubeedge/beehive/pkg/core/context"
- 
- 	"github.com/kubeedge/kubeedge/edge/pkg/common/modules"
-+	"github.com/kubeedge/kubeedge/edge/pkg/metamanager/client"
- 	metamanagerconfig "github.com/kubeedge/kubeedge/edge/pkg/metamanager/config"
- 	"github.com/kubeedge/kubeedge/edge/pkg/metamanager/dao/dbclient"
- 	"github.com/kubeedge/kubeedge/edge/pkg/metamanager/metaserver"
-@@ -63,5 +64,7 @@ func (m *metaManager) Start() {
- 		go metaserver.NewMetaServer().Start(beehiveContext.Done())
- 	}
- 
-+	go client.RunExpiredTokenGC(beehiveContext.Done(), 0)
++// TestHandlePodListFromMetaManagerHoldsPodAsUpdate makes sure a held pod is kept out of the
++// pod list snapshot and is queued as an UPDATE, like the holdUpgrade path does.
++func TestHandlePodListFromMetaManagerHoldsPodAsUpdate(t *testing.T) {
++	heldPod := newTestPod("default", "held", "held-uid", v1.PodPending, true)
++	runningPod := newTestPod("default", "running", "running-uid", v1.PodRunning, false)
++	otherNodePod := newTestPod("default", "other", "other-uid", v1.PodRunning, false)
++	otherNodePod.Spec.NodeName = "another-node"
 +
- 	m.runMetaManager()
- }
++	e := &edged{
++		nodeName:       testNodeName,
++		heldPodUpdates: make(map[string][]kubelettypes.PodUpdate),
++	}
++
++	updatesChan := make(chan interface{}, 1)
++	if err := e.handlePodListFromMetaManager(marshalPodList(t, heldPod, runningPod, otherNodePod), updatesChan); err != nil {
++		t.Fatalf("handlePodListFromMetaManager failed: %v", err)
++	}
++
++	update := (<-updatesChan).(kubelettypes.PodUpdate)
++	if update.Op != kubelettypes.SET {
++		t.Errorf("expected the pod list to be sent as SET, got %s", opName(update.Op))
++	}
++	if len(update.Pods) != 1 || update.Pods[0].Name != runningPod.Name {
++		t.Errorf("expected the pod list to contain only %q, got %v", runningPod.Name, podNames(update.Pods))
++	}
++
++	held, exists := e.heldPodUpdates["default/held"]
++	if !exists {
++		t.Fatal("expected the held pod to be cached in heldPodUpdates")
++	}
++	if len(held) != 1 {
++		t.Fatalf("expected 1 held update, got %d", len(held))
++	}
++	if held[0].Op != kubelettypes.UPDATE {
++		t.Errorf("expected the held pod to be queued as UPDATE, got %s, kubelet reads a SET as the full pod list of the source", opName(held[0].Op))
++	}
++	if held[0].Source != kubelettypes.ApiserverSource {
++		t.Errorf("expected source %q, got %q", kubelettypes.ApiserverSource, held[0].Source)
++	}
++	if len(held[0].Pods) != 1 || held[0].Pods[0].Name != heldPod.Name {
++		t.Errorf("expected the held update to carry %q, got %v", heldPod.Name, podNames(held[0].Pods))
++	}
++}
++
++// TestUnholdHeldPodFromPodListKeepsOtherPods replays a held pod through kubelet's PodConfig,
++// the way the unhold-upgrade path does, and makes sure the pods already known to kubelet are
++// not removed while the held pod is still delivered.
++func TestUnholdHeldPodFromPodListKeepsOtherPods(t *testing.T) {
++	heldPod := newTestPod("default", "held", "held-uid", v1.PodPending, true)
++	runningPod := newTestPod("default", "running", "running-uid", v1.PodRunning, false)
++
++	podCfg := config.NewPodConfig(config.PodConfigNotificationIncremental,
++		record.NewFakeRecorder(100), kubeletutil.NewPodStartupLatencyTracker())
++
++	ctx, cancel := context.WithCancel(context.Background())
++	defer cancel()
++	rawUpdateChan := podCfg.Channel(ctx, kubelettypes.ApiserverSource)
++
++	e := &edged{
++		nodeName:       testNodeName,
++		heldPodUpdates: make(map[string][]kubelettypes.PodUpdate),
++	}
++
++	if err := e.handlePodListFromMetaManager(marshalPodList(t, heldPod, runningPod), rawUpdateChan); err != nil {
++		t.Fatalf("handlePodListFromMetaManager failed:
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #7476** (closed): metamanager: key edge device edits by device name (@codeafridi)
 - **PR #7458** (2026-11-20): nodegroup: add and remove the finalizer with a patch (@mkhon)
 - **PR #7454** (2026-11-19): metaserver: keep retrying when getting the CA fails (@arshil42)
+- **PR #7453** (2026-11-25): viaduct: keep sync responses that arrive before the wait starts (@arshil42)
 - **PR #7432** (2026-11-16): Upgrade docker dependency to v28.0.0 (@Shelley-BaoYue)
 - **PR #7431** (2026-11-16): Upgrade golang.org/x/crypto to v0.52.0 (@Shelley-BaoYue)
-- **PR #7428** (closed): Upgrade golang.org/x/crypto to v0.52.0 (@kubeedge-bot)
 
 ---
 
@@ -1756,56 +1530,30 @@ metamanager: fall back to the cached service account token when refresh fails
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in serviceaccount.go
+## X. Empirical Invariant Guard in synckeeper.go
 
 **RULE**:
-When implementing operations in `edge/pkg/metamanager/client/serviceaccount.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kubeedge/kubeedge. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/viaduct/pkg/keeper/synckeeper.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kubeedge/kubeedge. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ddced73b`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8a61b67f`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `edge/pkg/metamanager/client/serviceaccount.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/viaduct/pkg/keeper/synckeeper.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-// baseKey is the spec-derived key prefix that identifies the logical token
-// (independent of which generation). All generations of the same logical token
-// share this prefix. Used for prefix lookup in metaDB.
-func baseKey(name, namespace string, tr *authenticationv1.TokenRequest) string {
-// KeyFunc returns the per-generation storage key for a TokenRequest. The key
-// is the base (spec-derived) key suffixed with the token's exp timestamp so
-// that successive refreshed tokens for the same logical token are stored as
-// separate rows. This is required to keep the previous (still un-expired)
-// token's row in metaDB during the propagation window between a refresh and
-// the moment the pod re-reads the new token from its projected volume; without
-// it, MetaServer (which authenticates by checking metaDB membership) rejects
-// requests bearing the previous token.
-//
-// Callers without a populated Status.ExpirationTimestamp (i.e., callers that
-// only have a TokenRequest spec, like an upstream kubelet refresh call) should
-// not use KeyFunc — they should use baseKey and a prefix query.
-//
-// Keys are nonconfidential and safe to log.
-func KeyFunc(name, namespace string, tr *authentica
+	// sendToKeepChannel does not block, so the channel holds one message for a
+	// response that arrives before WaitResponse starts receiving.
+	channel := make(chan model.Message, 1)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// KeyFunc keys should be nonconfidential and safe to log
-func KeyFunc(name, namespace string, tr *authenticationv1.TokenRequest) string {
-func getTokenLocally(name, namespace string, tr *authenticationv1.TokenRequest) (*authenticationv1.TokenRequest, error) {
-	resKey := KeyFunc(name, namespace, tr)
-	metas, err := ms.QueryMeta("key", resKey)
-		klog.Errorf("query meta %s failed: %v", resKey, err)
-	if len(*metas) != 1 {
-		klog.Errorf("query meta %s length error", resKey)
-		return nil, fmt.Errorf("query meta %s length error", resKey)
-	var tokenRequest authenticationv1.TokenRequest
-	err = json.Unmarshal([]byte((*metas)[0]), &tokenRequest)
+	channel := make(chan model.Message)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ddced73b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8a61b67f` are properly handled with clean fallback behavior.

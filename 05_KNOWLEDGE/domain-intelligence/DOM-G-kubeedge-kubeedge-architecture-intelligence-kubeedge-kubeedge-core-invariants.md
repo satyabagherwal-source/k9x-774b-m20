@@ -4,24 +4,24 @@
 {
   "source_repository": "kubeedge/kubeedge",
   "source_url": "https://github.com/kubeedge/kubeedge",
-  "source_version": "8429622d",
+  "source_version": "8a61b67f",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-20T19:06:52.725Z",
+  "timestamp": "2026-11-25T11:30:12.911Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-kubeedge-kubeedge",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [kubeedge/kubeedge](https://github.com/kubeedge/kubeedge) (Revision: `8429622d`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-20T19:06:52.725Z`  
+> **Provenance**: Harvested from [kubeedge/kubeedge](https://github.com/kubeedge/kubeedge) (Revision: `8a61b67f`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-25T11:30:12.911Z`  
 > **Learning ID**: `learn-github-kubeedge-kubeedge`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 62%
+- **Secondary Corroborating Domains**: I (Content & Information Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), H (Technical Construction Intelligence), J (Search & Distribution Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 54%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from kubeedge/kubeedge:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kubeedge-kubeedge-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kubeedge/kubeedge](https://github.com/kubeedge/kubeedge))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T19:06:29.294Z  
+> **Harvest Timestamp**: 2026-11-25T11:30:11.115Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Kubernetes Native Edge Computing Framework (project under CNCF)
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 7637 stars
+- **Stars / Engagement**: 7646 stars
 
 ---
 
@@ -1247,184 +1247,284 @@ func RuleContains(rulePath, rule2Path string) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `407f2cff` (2026-11-20)
-**Commit Message**: Merge pull request #7458 from 2youio/nodegroup-finalizer-patch
+### Incident Patch 1: `8a61b67f` (2026-11-25)
+**Commit Message**: Merge pull request #7453 from arshil42/fix/synckeeper-buffered-channel
 
-nodegroup: add and remove the finalizer with a patch
+viaduct: keep sync responses that arrive before the wait starts
 
-**File**: `cloud/pkg/controllermanager/nodegroup/finalizer_test.go` (added, +133/-0)
+**File**: `pkg/viaduct/pkg/keeper/synckeeper.go` (modified, +3/-1)
 ```diff
-@@ -0,0 +1,133 @@
-+package nodegroup
+@@ -36,7 +36,9 @@ func (k *SyncKeeper) sendToKeepChannel(msg model.Message) error {
+ }
+ 
+ func (k *SyncKeeper) addKeepChannel(msgID string) chan model.Message {
+-	channel := make(chan model.Message)
++	// sendToKeepChannel does not block, so the channel holds one message for a
++	// response that arrives before WaitResponse starts receiving.
++	channel := make(chan model.Message, 1)
+ 	k.keeper.Store(msgID, channel)
+ 	return channel
+ }
+```
+
+**File**: `pkg/viaduct/pkg/keeper/synckeeper_test.go` (added, +79/-0)
+```diff
+@@ -0,0 +1,79 @@
++/*
++Copyright 2026 The KubeEdge Authors.
++
++Licensed under the Apache License, Version 2.0 (the "License");
++you may not use this file except in compliance with the License.
++You may obtain a copy of the License at
++
++    http://www.apache.org/licenses/LICENSE-2.0
++
++Unless required by applicable law or agreed to in writing, software
++distributed under the License is distributed on an "AS IS" BASIS,
++WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++See the License for the specific language governing permissions and
++limitations under the License.
++*/
++
++package keeper
++
++import (
++	"testing"
++	"time"
++
++	"github.com/stretchr/testify/assert"
++	"github.com/stretchr/testify/require"
++
++	"github.com/kubeedge/beehive/pkg/core/model"
++)
++
++func TestMatchAndNotifyBeforeReceive(t *testing.T) {
++	k := NewSyncKeeper()
++	request := model.NewMessage("")
++	channel := k.addKeepChannel(request.GetID())
++
++	// The response arrives before anyone receives from the channel.
++	response := model.NewMessage(request.GetID())
++	require.True(t, k.MatchAndNotify(*response))
++
++	select {
++	case got := <-channel:
++		assert.Equal(t, response.GetID(), got.GetID())
++	default:
++		t.Fatal("the response was dropped because nobody was receiving yet")
++	}
++}
++
++func TestMatchAndNotifyWithoutWaiter(t *testing.T) {
++	k := NewSyncKeeper()
++	response := model.NewMessage("unknown-request-id")
++
++	assert.False(t, k.Match(*response))
++	assert.False(t, k.MatchAndNotify(*response))
++}
++
++func TestWaitResponse(t *testing.T) {
++	k := NewSyncKeeper()
++	request := model.NewMessage("")
++	response := model.NewMessage(request.GetID())
++
++	go func() {
++		// Notify as soon as WaitResponse has registered the request.
++		for !k.MatchAndNotify(*response) {
++			time.Sleep(time.Millisecond)
++		}
++	}()
++
++	got, err := k.WaitResponse(request, time.Now().Add(10*time.Second))
++	require.NoError(t, err)
++	assert.Equal(t, response.GetID(), got.GetID())
++	assert.False(t, k.Match(*response), "the request should be removed after the response")
++}
++
++func TestWaitResponseTimeout(t *testing.T) {
++	k := NewSyncKeeper()
++	request := model.NewMessage("")
++
++	_, err := k.WaitResponse(request, time.Now().Add(10*time.Millisecond))
++	require.ErrorContains(t, err, "wait response timeout")
++	assert.False(t, k.Match(*model.NewMessage(request.GetID())), "the request should be removed after the timeout")
++}
+```
+
+---
+
+### Incident Patch 2: `5250c989` (2026-11-25)
+**Commit Message**: Merge pull request #7296 from adity1raut/fix/held-pod-unhold-update
+
+edged: replay held pods from pod list as UPDATE instead of SET
+
+**File**: `edge/pkg/edged/edged.go` (modified, +1/-1)
+```diff
+@@ -517,7 +517,7 @@ func (e *edged) handlePodListFromMetaManager(content []byte, updatesChan chan<-
+ 		if filterPodByNodeName(&pod, e.nodeName) {
+ 			if pod.Annotations[holdUpgradeLabel] == "true" && pod.Status.Phase == v1.PodPending {
+ 				key := fmt.Sprintf("%s/%s", pod.Namespace, pod.Name)
+-				e.heldPodUpdates[key] = append(e.heldPodUpdates[key], kubelettypes.PodUpdate{Op: kubelettypes.SET, Pods: []*v1.Pod{&pod}, Source: kubelettypes.ApiserverSource})
++				e.heldPodUpdates[key] = append(e.heldPodUpdates[key], kubelettypes.PodUpdate{Op: kubelettypes.UPDATE, Pods: []*v1.Pod{&pod}, Source: kubelettypes.ApiserverSource})
+ 				continue
+ 			}
+ 
+```
+
+**File**: `edge/pkg/edged/edged_test.go` (added, +219/-0)
+```diff
+@@ -0,0 +1,219 @@
++/*
++Copyright 2026 The KubeEdge Authors.
++
++Licensed under the Apache License, Version 2.0 (the "License");
++you may not use this file except in compliance with the License.
++You may obtain a copy of the License at
++
++   http://www.apache.org/licenses/LICENSE-2.0
++
++Unless required by applicable law or agreed to in writing, software
++distributed under the License is distributed on an "AS IS" BASIS,
++WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++See the License for the specific language governing permissions and
++limitations under the License.
++*/
++
++package edged
 +
 +import (
 +	"context"
 +	"encoding/json"
-+	"slices"
++	"fmt"
 +	"testing"
++	"time"
 +
-+	corev1 "k8s.io/api/core/v1"
-+	apierrors "k8s.io/apimachinery/pkg/api/errors"
-+	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-+	"k8s.io/apimachinery/pkg/runtime"
++	v1 "k8s.io/api/core/v1"
++	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 +	"k8s.io/apimachinery/pkg/types"
-+	controllerruntime "sigs.k8s.io/controller-runtime"
-+	"sigs.k8s.io/controller-runtime/pkg/client"
-+	"sigs.k8s.io/controller-runtime/pkg/client/fake"
-+	"sigs.k8s.io/controller-runtime/pkg/client/interceptor"
-+
-+	appsv1alpha1 "github.com/kubeedge/api/apis/apps/v1alpha1"
++	"k8s.io/client-go/tools/record"
++	"k8s.io/kubernetes/pkg/kubelet/config"
++	kubelettypes "k8s.io/kubernetes/pkg/kubelet/types"
++	kubeletutil "k8s.io/kubernetes/pkg/kubelet/util"
 +)
 +
-+const testNodeGroup = "site-a"
++const testNodeName = "test-node"
 +
-+// newFinalizerTestController records the NodeGroup patches, decoded, and fails on a full
-+// Update. The fake client stores Go types, so it cannot show a dropped omitempty value
-+// itself; the test checks the write that would drop one: a locked patch with no spec.
-+func newFinalizerTestController(t *testing.T, ng *appsv1alpha1.NodeGroup) (*Controller, *[]map[string]map[string]interface{}) {
-+	scheme := runtime.NewScheme()
-+	if err := corev1.AddToScheme(scheme); err != nil {
-+		t.Fatal(err)
++func newTestPod(namespace, name, uid string, phase v1.PodPhase, hold bool) v1.Pod {
++	pod := v1.Pod{
++		ObjectMeta: metav1.ObjectMeta{
++			Namespace: namespace,
++			Name:      name,
++			UID:       types.UID(uid),
++		},
++		Spec: v1.PodSpec{
++			NodeName: testNodeName,
++			Containers: []v1.Container{{
++				Name:  "c",
++				Image: "busybox",
++			}},
++		},
++		Status: v1.PodStatus{Phase: phase},
 +	}
-+	if err := appsv1alpha1.AddToScheme(scheme); err != nil {
-+		t.Fatal(err)
++	if hold {
++		pod.Annotations = map[string]string{holdUpgradeLabel: "true"}
 +	}
-+	var patches []map[string]map[string]interface{}
-+	cli := fake.NewClientBuilder().WithScheme(scheme).WithObjects(ng).
-+		WithStatusSubresource(&appsv1alpha1.NodeGroup{}).
-+		WithInterceptorFuncs(interceptor.Funcs{
-+			Update: func(ctx context.Context, c client.WithWatch, obj client.Object, opts ...client.UpdateOption) error {
-+				if _, ok := obj.(*appsv1alpha1.NodeGroup); ok {
-+					t.Errorf("full Update of NodeGroup %s", obj.GetName())
-+				}
-+				return c.Update(ctx, obj, opts...)
-+			},
-+			Patch: func(ctx context.Context, c client.WithWatch, obj client.Object, patch client.Patch, opts ...client.PatchOption) error {
-+				if _, ok := obj.(*appsv1alpha1.NodeGroup); ok {
-+					data, err := patch.Data(obj)
-+					if err != nil {
-+						t.Fatal(err)
-+					}
-+					var p map[string]map[string]interface{}
-+					if err := json.Unmarshal(data, &p); err != nil {
-+						t.Fatalf("patch %s: %v", data, err)
-+					}
-+					patches = append(patches, p)
-+				}
-+				return c.Patch(ctx, obj, patch, opts...)
-+			},
-+		}).Build()
-+	return NewController(cli), &patches
++	return pod
 +}
 +
-+// checkFinalizerPatch fails unless the only patch touched metadata.finalizers alone, under a
-+// resourceVersion lock, and the stored NodeGroup, which it returns, has the finalizers given.
-+func checkFinalizerPatch(t *testing.T, c *Controller, patches []map[string]map[string]interface{}, want ...string) *appsv1alpha1.NodeGroup {
++func marshalPodList(t *testing.T, pods ...v1.Pod) []byte {
 +	t.Helper()
-+	if len(patches) != 1 {
-+		t.Fatalf("got %d NodeGroup patches, want 1: %v", len(patches), patches)
-+	}
-+	for key := range patches[0] {
-+		if key != "metadata" {
-+			t.Errorf("patch sets %q: %v", key, patches[0])
++
++	lists := make([]string, 0, len(pods))
++	for _, pod := range pods {
++		data, err := json.Marshal(pod)
++		if err != nil {
++			t.Fatalf("failed to marshal pod %s/%s: %v", pod.Namespace, pod.Name, err)
 +		}
++		lists = append(lists, string(data))
 +	}
-+	for key := range patches[0]["metadata"] {
-+		if key != "finalizers" && key != "resourceVersion" {
-+			t.Errorf("patch sets metadata.%s: %v", key, patches[0])
-+		}
++
++	content, err := json.Marshal(lists)
++	if err != nil {
++		t.Fatalf("failed to marshal pod list: %v", err)
 +	}
-+	if _, ok := patches[0]["metadata"]["resourceVersion"]; !ok {
-+		t.Errorf("patch has no resourceVersion lock: %v", patches[0])
-+	}
-+	got := &appsv1alpha1.NodeGroup{}
-+	if err := c.Client.Get(context.Background(), types.NamespacedName{Name: testNodeGroup}, got); err != nil {
-+		t.Fatal(err)
-+	}
-+	if !slices.Equal(got.Finalizers, want) {
-+		t.Errorf("stored finalizers %v, want %v", got.Finalizers, want)
-+	}
-+	return got
++	return content
 +}
 +
-+func TestFinalizerIsPatched(t *testing.T) {
-+	ng := &appsv1alpha1.NodeGroup{
-+		ObjectMeta: v1.ObjectMeta{Name: testNodeGroup},
-+		Spec:       appsv1alpha1.NodeGroupSpec{MatchLabels: map[string]string{}, TopologyEnabled: false},
-+	}
-+	c, patches := newFinalizerTestController(t, ng)
-+	ctx := context.Background()
-+	req := controllerruntime.Request{NamespacedName: types.NamespacedName{Name: testNodeGroup}}
++// TestHandlePodListFromMetaManagerHoldsPodAsUpdate makes sure a held pod is kept out of the
++// pod list snapshot and is queued as an UPDATE, like the holdUpgrade path does.
++func TestHandlePodListFromMetaManagerHoldsPodAsUpdate(t *testing.T) {
++	heldPod := newTestPod("default", "held", "held-uid", v1.PodPending, true)
++	runningPod := newTestPod("default", "running", "running-uid", v1.PodRunning, false)
++	otherNodePod := newTestPod("default", "other", "other-uid", v1.PodRunning, false)
++	otherNodePod.Spec.NodeName = "another-node"
 +
-+	if _, err := c.Reconcile(ctx, req); err != nil {
-+		t.Fatal(err)
++	e := &edged{
++		nodeName:       testNodeName,
++		heldPodUpdates: make(map[string][]kubelettypes.PodUpdate),
 +	}
-+	got := checkFinalizerPatch(t, c, *patches, NodeGroupControllerFinalizer)
 +
-+	*patches = nil
-+	if err := c.removeFinalizer(ctx, got); err != nil {
-+		t.Fatal(err)
++	updatesChan := make(chan interface{}, 1)
++	if err := e.handlePodListFromMetaManager(marshalPodList(t, heldPod, runningPod, otherNodePod), updatesChan); err != nil {
++		t.Fatalf("handlePodListFromMetaManager failed: %v", err)
 +	}
-+	checkFinalizerPatch(t, c, *patches)
++
++	update := (<-updatesChan).(kubelettypes.PodUpdate)
++	if update.Op != kubelettypes.SET {
++		t.Errorf("expected the pod list to be sent as SET, got %s", opName(update.Op))
++	}
++	if len(update.Pods) != 1 || update.Pods[0].Name != runningPod.Name {
++		t.Errorf("expected the pod list to contain only %q, got %v", runningPod.Name, podNames(update.Pods))
++	}
++
++	held, exists := e.heldPodUpdates["default/held"]
++	if !exists {
++		t.Fatal("expected the held pod to be cached in heldPodUpdates")
++	}
++	if len(held) != 1 {
++		t.Fatalf("expected 1 held update, got %d", len(held))
++	}
++	if held[0].Op != kubelettypes.UPDATE {
++		t.Errorf("expected the held pod to be queued as UPDATE, got %s, kubelet reads a SET as the full pod list of the source", opName(held[0].Op))
++	}
++	if held[0].Source != kubelettypes.ApiserverSource {
++		t.Errorf("expected source %q, got %q", kubelettypes.ApiserverSource, held[0].Source)
++	}
++	if len(held[0].Pods) != 1 || held[0].Pods[0].Name != heldPod.Name {
++		t.Errorf("expected the held update to carry %q, got %v", heldPod.Name, podNames(held[0].Pods))
++	}
 +}
 +
-+func TestFinalizerPatchConflictsOnStaleRead(t *testing.T) {
-+	ng := &appsv1alpha1.NodeGroup{
-+		ObjectMeta: v1.ObjectMeta{Name: testNodeGroup, Finalizers: []string{NodeGroupControllerFinalizer}},
++// TestUnholdHeldPodFromPodListKeepsOtherPods replays a held pod through kubelet's PodConfig,
++// the way the unhold-upgrade path does, and makes sure the pods already known to kubelet are
++// not removed while the held pod is still delivered.
++func TestUnholdHeldPodFromPodListKeepsOtherPods(t *testing.T) {
++	heldPod := newTestPod("default", "held", "held-uid", v1.PodPending, true)
++	runningPod := newTestPod("default", "running", "running-uid", v1.PodRunning, false)
++
++	podCfg := config.NewPodConfig(config.PodConfigNotificationIncremental,
++		record.NewFakeRecorder(100), kubeletutil.NewPodStartupLatencyTracker())
++
++	ctx, cancel := context.WithCancel(context.Background())
++	defer cancel()
++	rawUpdateChan := podCfg.Channel(ctx, kubelettypes.ApiserverSource)
++
++	e := &edged{
++		nodeName:       testNodeName,
++		heldPodUpdates: make(map[string][]kubelettypes.PodUpdate),
 +	}
-+	c, _ := newFinalizerTestController(t, ng)
-+	ctx := context.Background()
-+	stale := &appsv1alpha1.NodeGroup{}
-+	if err := c.Client.Get(ctx, types.NamespacedName{Name: testNodeGroup}, stale); err != nil {
-+		t.Fatal(err)
-+	}
-+	// another writer changes the NodeGroup after the read
-+	fresh := stale.DeepCopy()
-+	fresh.Labels = map[string]string{"changed": "yes"}
-+	if err := c.Client.Patch(ctx, fresh, client.MergeFrom(stale)); err != nil {
-+		t.Fatal(err)
-+	}
-+	if err := c.removeFinalizer(ctx, stale); !apierrors.IsConflict(err) {
-+		t.Fatalf("removeFinalizer on a stale read: got %v, want a conflict", err)
-+	}
-+}
-```
-
-**File**: `cloud/pkg/controllermanager/nodegroup/nodegroupcontroller.go` (modified, +6/-2)
-```diff
-@@ -84,8 +84,11 @@ func (c *Controller) Reconcile(ctx context.Context, req controllerruntime.Reques
- 	}
- 
- 	if !controllerutil.ContainsFinalizer(nodeGroup, NodeGroupControllerFinalizer) {
-+		// a patch, so omitempty spec values (topologyEnabled: false, matchLabels: {}) stay;
-+		// the lock gives a stale read a conflict, as the Update did
-+		patch := client.MergeFromWithOptions(nodeGroup.DeepCopy(), client.MergeFromWithOptimisticLock{})
- 		controllerutil.AddFinalizer(nodeGroup, NodeGroupControllerFinalizer)
--		if err := c.Client.Update(ctx, nodeGroup); err != nil {
-+		if err := c.Client.Patch(ctx, nodeGroup, patch); err != nil {
- 			klog.Errorf("failed to add finalizer for nodegroup %s, %s", nodeGroup.Name, err)
- 			return controllerruntime.Result{Requeue: true}, err
- 		}
-@@ -247,8 +250,9 @@ func (c *Controller) removeFinalizer(ctx context.Context, nodeGroup *appsv1alpha
- 	if !controllerutil.ContainsFinalizer(nodeGroup, NodeGroupControllerFinalizer) {
- 		return nil
- 	}
-+	patch := client.MergeFromWithOptions(nodeGroup.DeepCopy(), client.MergeFromWithOptimisticLock{})
- 	controllerutil.RemoveFinalizer(nodeGroup, NodeGroupControllerFinalizer)
--	if err := c.Client.Update(ctx, nodeGroup); err != nil {
-+	if err := c.Client.Patch(ctx, nodeGroup, patch); err != nil {
- 		klog.Errorf("failed to remove finalizer on nodegroup %s, %s", nodeGroup.Name, err)
- 		return err
- 	}
++
++	if err := e.handlePodListFromMetaManager(marshalPodList(t, heldPod, runningPod), rawUpdateChan); err != nil {
++		t.Fatalf("handlePodListFromMetaManager failed:
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #7476** (closed): metamanager: key edge device edits by device name (@codeafridi)
 - **PR #7458** (2026-11-20): nodegroup: add and remove the finalizer with a patch (@mkhon)
 - **PR #7454** (2026-11-19): metaserver: keep retrying when getting the CA fails (@arshil42)
+- **PR #7453** (2026-11-25): viaduct: keep sync responses that arrive before the wait starts (@arshil42)
 - **PR #7432** (2026-11-16): Upgrade docker dependency to v28.0.0 (@Shelley-BaoYue)
 - **PR #7431** (2026-11-16): Upgrade golang.org/x/crypto to v0.52.0 (@Shelley-BaoYue)
-- **PR #7428** (closed): Upgrade golang.org/x/crypto to v0.52.0 (@kubeedge-bot)
 
 ---
 
@@ -1444,66 +1544,33 @@ nodegroup: add and remove the finalizer with a patch
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in finalizer_test.go
+## X. Empirical Invariant Guard in synckeeper.go
 
 **RULE**:
-When implementing operations in `cloud/pkg/controllermanager/nodegroup/finalizer_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kubeedge/kubeedge. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/viaduct/pkg/keeper/synckeeper.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kubeedge/kubeedge. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `407f2cff`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8a61b67f`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cloud/pkg/controllermanager/nodegroup/finalizer_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/viaduct/pkg/keeper/synckeeper.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-package nodegroup
-
-import (
-	"context"
-	"encoding/json"
-	"slices"
-	"testing"
-
-	corev1 "k8s.io/api/core/v1"
-	apierrors "k8s.io/apimachinery/pkg/api/errors"
-	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/runtime"
-	"k8s.io/apimachinery/pkg/types"
-	controllerruntime "sigs.k8s.io/controller-runtime"
-	"sigs.k8s.io/controller-runtime/pkg/client"
-	"sigs.k8s.io/controller-runtime/pkg/client/fake"
-	"sigs.k8s.io/controller-runtime/pkg/client/interceptor"
-
-	appsv1alpha1 "github.com/kubeedge/api/apis/apps/v1alpha1"
-)
-
-const testNodeGroup = "site-a"
-
-// newFinalizerTestController records the NodeGroup patches, decoded, and fails on a full
-// Update. The fake client stores Go types, so it cannot show a dropped omitempty value
-// itself; the test checks the write that would drop one: a locked patch with no spec.
-func newFinalizerTestController(t *testing.T, ng *appsv1alpha1.NodeGroup) (*Controller, *[]map[string]map[string]interface{}) {
-	scheme := runtime.NewScheme()
-	if err := corev1.AddToScheme(scheme); err != nil {
-		t.Fatal(err)
-	}
-	if err := appsv1alpha1.AddToScheme(scheme); err != nil {
-		t.Fatal(err)
-	}
-	var patches []map[string]map[string]interface{}
-	cli := fake.New
+	// sendToKeepChannel does not block, so the channel holds one message for a
+	// response that arrives before WaitResponse starts receiving.
+	channel := make(chan model.Message, 1)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+	channel := make(chan model.Message)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `407f2cff` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8a61b67f` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

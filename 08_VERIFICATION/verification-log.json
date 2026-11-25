@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261123-OTST",
-    "timestamp": "2026-11-23T23:09:50.429Z",
-    "repository": "pyannote/speaker-diarization-community-1",
-    "learningId": "learn-huggingface-pyannote-speaker-diarization-community-1",
-    "contentHash": "7cb37523bf94afd7029a10dbe59bd8631b1e6257b7465157a6267007a567175f",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-OUUV",
-    "timestamp": "2026-11-23T23:09:51.799Z",
-    "repository": "oxc-project/oxc",
-    "learningId": "learn-github-oxc-project-oxc",
-    "contentHash": "0d1a232552241a56c81757f7329020f8dd8ad99df03f1cd34de296325a0774bc",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-OZVK",
-    "timestamp": "2026-11-23T23:09:58.304Z",
-    "repository": "karmada-io/karmada",
-    "learningId": "learn-github-karmada-io-karmada",
-    "contentHash": "a0323c71b3ac7694eff533ced3c189f3706aa6dd623ea7d55bdab044e745aad2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261123-P2MJ",
     "timestamp": "2026-11-23T23:10:01.867Z",
     "repository": "cilium/cilium",
@@ -7490,6 +7445,51 @@
     "repository": "StarTrail-org/LEANN",
     "learningId": "learn-github-startrail-org-leann",
     "contentHash": "3ce6b9d9112fe3bb614c9653f2ac5e290e865721d80dacab1feaad19bb9447bc",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-KJQ6",
+    "timestamp": "2026-11-25T11:30:00.798Z",
+    "repository": "openbmb/MiniCPM-OCR-1.0",
+    "learningId": "learn-huggingface-openbmb-minicpm-ocr-1-0",
+    "contentHash": "16726921b187b6ccaad5e5b6c35737a7d959e723c333316e9e4712eaf5c4f585",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-KL17",
+    "timestamp": "2026-11-25T11:30:02.491Z",
+    "repository": "ClementTsang/bottom",
+    "learningId": "learn-github-clementtsang-bottom",
+    "contentHash": "3ff0e801aad0b1eebedf80ab740fdfea8b21648929bc071717ec6d3f2875b566",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-KSTJ",
+    "timestamp": "2026-11-25T11:30:12.583Z",
+    "repository": "kubeedge/kubeedge",
+    "learningId": "learn-github-kubeedge-kubeedge",
+    "contentHash": "849bbf0b61d6c856912f4a411cfef5c05cc228a1a6e75556e3f55e0c134e2e39",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

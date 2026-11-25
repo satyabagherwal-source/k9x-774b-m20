@@ -2403,10 +2403,10 @@
     "repository": "kubeedge/kubeedge",
     "platform": "github",
     "sourceUrl": "https://github.com/kubeedge/kubeedge",
-    "sourceVersion": "ddced73b",
+    "sourceVersion": "8a61b67f",
     "license": "Apache-2.0",
-    "contentHash": "40acbfce2db8d12db305c397d88416a0c67590f9db0b0f4f76604d26b84e576e",
-    "lastHarvestedAt": "2026-11-24T17:33:15.064Z",
+    "contentHash": "849bbf0b61d6c856912f4a411cfef5c05cc228a1a6e75556e3f55e0c134e2e39",
+    "lastHarvestedAt": "2026-11-25T11:30:12.589Z",
     "learningId": "learn-github-kubeedge-kubeedge"
   },
   "giancarloerra-socraticode": {
@@ -3893,10 +3893,10 @@
     "repository": "ClementTsang/bottom",
     "platform": "github",
     "sourceUrl": "https://github.com/ClementTsang/bottom",
-    "sourceVersion": "87cb33dc",
+    "sourceVersion": "f992f56d",
     "license": "MIT",
-    "contentHash": "3668c226b36384d22d5779a98ce5a31a45bfee78d123566bde1b1acbd82312a0",
-    "lastHarvestedAt": "2026-11-24T09:57:09.626Z",
+    "contentHash": "3ff0e801aad0b1eebedf80ab740fdfea8b21648929bc071717ec6d3f2875b566",
+    "lastHarvestedAt": "2026-11-25T11:30:02.499Z",
     "learningId": "learn-github-clementtsang-bottom"
   },
   "jhen0409-react-native-debugger": {
@@ -11415,8 +11415,8 @@
     "sourceUrl": "https://huggingface.co/openbmb/MiniCPM-OCR-1.0",
     "sourceVersion": "hf-openbmb-minicpm-ocr-1.0",
     "license": "Open-Source",
-    "contentHash": "e2372bd1bcf2da6a8d62423530404ea92e32fffcc434eeba717edd867b3ba495",
-    "lastHarvestedAt": "2026-11-21T19:47:26.754Z",
+    "contentHash": "16726921b187b6ccaad5e5b6c35737a7d959e723c333316e9e4712eaf5c4f585",
+    "lastHarvestedAt": "2026-11-25T11:30:00.804Z",
     "learningId": "learn-huggingface-openbmb-minicpm-ocr-1-0"
   },
   "hf-nvidia-nvidia-nemotron-3.5-transcribe-30b-a4b": {
