@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-25T03:36:56.058Z",
-    "lastVerified": "2026-11-25T03:36:56.058Z",
+    "lastChecked": "2026-11-25T03:50:56.848Z",
+    "lastVerified": "2026-11-25T03:50:56.848Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -379,8 +379,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-25T03:05:19.018Z",
-    "lastVerified": "2026-11-25T03:05:19.018Z",
+    "lastChecked": "2026-11-25T03:50:56.797Z",
+    "lastVerified": "2026-11-25T03:50:56.797Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -1924,12 +1924,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "cilium-cilium": {
-    "name": "cilium/cilium",
+    "name": "cilium",
     "officialUrl": "https://github.com/cilium/cilium",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-24T23:41:52.001Z",
-    "lastVerified": "2026-11-24T23:41:52.001Z",
+    "lastChecked": "2026-11-25T03:50:51.899Z",
+    "lastVerified": "2026-11-25T03:50:51.899Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cilium-cilium",
@@ -1938,7 +1938,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "ad7c0f73"
   },
   "zilliztech-claude-context": {
     "name": "zilliztech/claude-context",
@@ -4064,9 +4065,9 @@
   "neural-maze-ava-whatsapp-agent-course": {
     "name": "ava-whatsapp-agent-course",
     "officialUrl": "https://github.com/neural-maze/ava-whatsapp-agent-course",
-    "lastChecked": "2026-11-24T08:48:22.713Z",
+    "lastChecked": "2026-11-25T03:50:54.382Z",
     "revisionIdentifier": "338fd687",
-    "lastVerified": "2026-11-24T08:48:22.713Z"
+    "lastVerified": "2026-11-25T03:50:54.382Z"
   },
   "fujiapple852-trippy": {
     "name": "trippy",
@@ -6387,9 +6388,9 @@
   "cycloidio-terracognita": {
     "name": "terracognita",
     "officialUrl": "https://github.com/cycloidio/terracognita",
-    "lastChecked": "2026-11-24T10:13:14.392Z",
+    "lastChecked": "2026-11-25T03:50:49.404Z",
     "revisionIdentifier": "802bd4b5",
-    "lastVerified": "2026-11-24T10:13:14.392Z"
+    "lastVerified": "2026-11-25T03:50:49.404Z"
   },
   "netflix-dynomite": {
     "name": "dynomite",
@@ -8567,14 +8568,14 @@
     "officialUrl": "https://github.com/meshtastic/Meshtastic-Android",
     "sourceType": "github",
     "technology": "Kotlin",
-    "lastChecked": "2026-11-22T17:22:07.132Z",
-    "lastVerified": "2026-11-22T17:22:07.132Z",
+    "lastChecked": "2026-11-25T03:50:51.860Z",
+    "lastVerified": "2026-11-25T03:50:51.860Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-meshtastic-meshtastic-android",
-    "contentHash": "f0df1bc02fd0cfa453e463c4b308f14076190283133f476b86eaf2a62f30837e",
+    "contentHash": "adbbb565b71c3929bfd6cdb66ba6243b0e657bf78840efd7cce3874bda39e238",
     "promotedRulesCount": 1,
-    "recentFixesCount": 16,
+    "recentFixesCount": 8,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -9015,14 +9016,14 @@
     "officialUrl": "https://github.com/tw93/Pake",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-24T01:15:33.475Z",
-    "lastVerified": "2026-11-24T01:15:33.475Z",
+    "lastChecked": "2026-11-25T03:50:47.059Z",
+    "lastVerified": "2026-11-25T03:50:47.059Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tw93-pake",
-    "contentHash": "5ce419705e1afe5a827c15347b7ae5a8aa0a31757f2dde3d38c086b10771cab5",
+    "contentHash": "27cf034847681fb4862b9ae8f4a234c4fd50e7882917d7c70e80f1bd5c2dbcbe",
     "promotedRulesCount": 1,
-    "recentFixesCount": 6,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -12460,9 +12461,9 @@
   "expressjs-express": {
     "name": "express",
     "officialUrl": "https://github.com/expressjs/express",
-    "lastChecked": "2026-11-21T06:01:20.728Z",
+    "lastChecked": "2026-11-25T03:50:44.244Z",
     "revisionIdentifier": "43fca52d",
-    "lastVerified": "2026-11-21T06:01:20.728Z"
+    "lastVerified": "2026-11-25T03:50:44.244Z"
   },
   "shifthackz-sdai-kmp": {
     "name": "ShiftHackZ/SDAI-KMP",

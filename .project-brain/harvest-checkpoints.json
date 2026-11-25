@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-25T03:36:49.555Z",
+  "last_updated": "2026-11-25T03:50:53.287Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2691,14 +2691,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tw93-pake",
-      "content_hash": "5ce419705e1afe5a827c15347b7ae5a8aa0a31757f2dde3d38c086b10771cab5",
-      "verified_at": "2026-11-24T01:15:34.814Z",
+      "content_hash": "27cf034847681fb4862b9ae8f4a234c4fd50e7882917d7c70e80f1bd5c2dbcbe",
+      "verified_at": "2026-11-25T03:50:48.643Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T01:15:34.814Z"
+      "last_updated": "2026-11-25T03:50:48.643Z"
     },
     "datalab-to/indra-ocr": {
       "repository": "datalab-to/indra-ocr",
@@ -11751,14 +11751,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-meshtastic-meshtastic-android",
-      "content_hash": "f0df1bc02fd0cfa453e463c4b308f14076190283133f476b86eaf2a62f30837e",
-      "verified_at": "2026-11-22T17:22:08.246Z",
+      "content_hash": "adbbb565b71c3929bfd6cdb66ba6243b0e657bf78840efd7cce3874bda39e238",
+      "verified_at": "2026-11-25T03:50:53.286Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T17:22:08.246Z"
+      "last_updated": "2026-11-25T03:50:53.286Z"
     },
     "astral-sh/uv": {
       "repository": "astral-sh/uv",

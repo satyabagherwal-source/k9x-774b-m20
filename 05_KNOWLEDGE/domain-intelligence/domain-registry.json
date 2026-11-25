@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T03:36:58.934Z",
+  "last_updated": "2026-11-25T03:51:01.141Z",
   "total_records": 2630,
   "domains": {
     "A": {
@@ -8400,8 +8400,8 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-learnings-technical-construction-intelligence-zvec-ai-zvec-gre.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "28bdd25779017a67cf446cac70eb061f350d2779a3614197247c0d6fbe1de3a5",
-      "created_at": "2026-11-25T03:28:35.866Z"
+      "content_hash": "976a22f6f80982eadd1594dfc8f3802865212387943b7148ec7d8c712f7c9cda",
+      "created_at": "2026-11-25T03:51:01.141Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -17983,8 +17983,8 @@
       "title": "Technical Construction Intelligence: tw93/Pake Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tw93-pake-technical-construction-intelligence-tw93-pake-core-invariants.md",
       "repository": "tw93/Pake",
-      "content_hash": "8a6b07dce52efb7d557610a39dabbf436cc11d8bd51d9cc975ecba057d7ad177",
-      "created_at": "2026-11-24T01:15:35.235Z"
+      "content_hash": "7e5fdb0ac45cdceb7fa25157d7de5ac13d4855bc38551a9a6662f102e56a1379",
+      "created_at": "2026-11-25T03:50:49.244Z"
     },
     "domain_intelligence-technical-construction-intelligence-aquasecurity-trivy-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-aquasecurity-trivy-core-invariants",
@@ -18001,8 +18001,8 @@
       "title": "Technical Construction Intelligence: tw93-pake-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tw93-pake-learnings-technical-construction-intelligence-tw93-pake-learnings-core.md",
       "repository": "tw93-pake-learnings",
-      "content_hash": "d95e45dc86734509a3e149d6e4633d201881e9234341c8001aa5b3d081ec6708",
-      "created_at": "2026-11-24T01:15:46.013Z"
+      "content_hash": "a5a71bd5314e68d8e80635db1408d27d5536bf7be80672dda9e3293fe3e37374",
+      "created_at": "2026-11-25T03:50:58.065Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf",
@@ -33964,8 +33964,8 @@
       "title": "Quality & Verification Intelligence: meshtastic/Meshtastic-Android Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-meshtastic-meshtastic-android-quality-verification-intelligence-meshtastic-mesht.md",
       "repository": "meshtastic/Meshtastic-Android",
-      "content_hash": "b04914bd6d00c14fc7d9f9fa697c470771bdcc5ac776724e1aa353320aaaabfe",
-      "created_at": "2026-11-19T15:58:52.412Z"
+      "content_hash": "34583f029adaadc2ca5092a4d88bfb8e0c3ebe23f4a94bf8cb62a6a3d5352832",
+      "created_at": "2026-11-25T03:50:53.832Z"
     },
     "DOM-H-D41DA63C": {
       "record_id": "DOM-H-D41DA63C",
@@ -34015,8 +34015,8 @@
       "title": "Quality & Verification Intelligence: meshtastic-meshtastic-android-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-meshtastic-meshtastic-android-learnings-quality-verification-intelligence-meshta.md",
       "repository": "meshtastic-meshtastic-android-learnings",
-      "content_hash": "8c1b39b4897f54ee2ed2d3b5cce081ba0dd86a140eb129cdb33081205103ad2e",
-      "created_at": "2026-11-19T15:59:29.244Z"
+      "content_hash": "08c25df70d8e37819aabeee111d0332b93202ebf6b1a24252d1ef4ac518ce148",
+      "created_at": "2026-11-25T03:50:59.816Z"
     },
     "domain_intelligence-research-knowledge-intelligence-dealignai-deepseek-v4-1-flash-uncensored-fp8-cor": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-dealignai-deepseek-v4-1-flash-uncensored-fp8-cor",

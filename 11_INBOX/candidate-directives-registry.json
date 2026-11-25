@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T03:36:58.752Z",
+  "last_updated": "2026-11-25T03:51:00.895Z",
   "directives": [
     {
       "id": "CD-001",
@@ -57835,11 +57835,11 @@
       "domain_letter": "H"
     },
     {
-      "id": "CD-DFSL",
+      "id": "CD-69SP",
       "directive_title": "rust): bind bare calls to the enclosing module's items",
       "source_repo": "zvec-ai-zvec-grep-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-DFSL-rust-bind-bare-calls-to-the-enclosing-module-s-items.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-69SP-rust-bind-bare-calls-to-the-enclosing-module-s-items.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-25",
@@ -59246,6 +59246,59 @@
       "source_repo": "zulip-zulip",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-C1BD5E-server-events-dispatch-rerender-dm-statu.md",
+      "staged_date": "2026-11-25"
+    },
+    {
+      "id": "CD-60LX",
+      "directive_title": "fix the sign-in popup note, the inject example and the gallery platforms",
+      "source_repo": "tw93/Pake",
+      "source_commit": "afb688ef",
+      "staged_file": "11_INBOX/candidate-directives/CD-60LX-fix-the-sign-in-popup-note-the-inject-example-and-the-gallery-platforms.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-25",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-645T",
+      "directive_title": "keep existing channels in Add and report failed imports",
+      "source_repo": "meshtastic/Meshtastic-Android",
+      "source_commit": "d1c4c7db",
+      "staged_file": "11_INBOX/candidate-directives/CD-645T-keep-existing-channels-in-add-and-report-failed-imports.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-25",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-67FO",
+      "directive_title": "docs: fix the sign-in popup note, the inject example and the gallery platforms",
+      "source_repo": "tw93-pake-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-67FO-docs-fix-the-sign-in-popup-note-the-inject-example-and-the-gallery-platforms.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-25",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-68RQ",
+      "directive_title": "channels): keep existing channels in Add and report failed imports",
+      "source_repo": "meshtastic-meshtastic-android-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-68RQ-channels-keep-existing-channels-in-add-and-report-failed-imports.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-25",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-REV-4903FB",
+      "directive_title": "rust): bind bare calls to the enclosing module's items",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-4903FB-rust-bind-bare-calls-to-the-enclosing-mo.md",
       "staged_date": "2026-11-25"
     }
   ]

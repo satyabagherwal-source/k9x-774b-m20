@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T03:36:59.289Z",
+  "last_updated": "2026-11-25T03:51:01.757Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-25T03:36:58.339Z",
@@ -8,7 +8,7 @@
       "staged_for_review": 1
     },
     "zvec-ai-zvec-grep-learnings.md": {
-      "processed_at": "2026-11-25T03:28:34.990Z",
+      "processed_at": "2026-11-25T03:51:00.272Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -183,7 +183,7 @@
       "staged_for_review": 1
     },
     "tw93-pake-learnings.md": {
-      "processed_at": "2026-11-24T01:15:45.355Z",
+      "processed_at": "2026-11-25T03:50:57.020Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -583,7 +583,7 @@
       "staged_for_review": 1
     },
     "meshtastic-meshtastic-android-learnings.md": {
-      "processed_at": "2026-11-22T17:22:14.772Z",
+      "processed_at": "2026-11-25T03:50:58.543Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3903,7 +3903,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 4047,
+  "total_dossiers_evaluated": 4050,
   "total_canonical_promoted": 528,
-  "total_staged_for_review": 3099
+  "total_staged_for_review": 3102
 }

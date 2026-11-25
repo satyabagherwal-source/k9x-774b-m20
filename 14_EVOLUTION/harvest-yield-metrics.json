@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T03:36:49.544Z",
-  "total_cycles_completed": 12275,
-  "total_learnings_persisted": 12275,
-  "total_rules_promoted": 11320,
+  "last_updated": "2026-11-25T03:50:53.273Z",
+  "total_cycles_completed": 12277,
+  "total_learnings_persisted": 12277,
+  "total_rules_promoted": 11322,
   "history": [
-    {
-      "timestamp": "2026-11-24T14:50:37.962Z",
-      "repository": "kube-rs/kube",
-      "learningId": "learn-github-kube-rs-kube",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T14:50:42.138Z",
-      "repository": "cilium/cilium",
-      "learningId": "learn-github-cilium-cilium",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-24T14:50:44.732Z",
       "repository": "StarRocks/starrocks",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-25T03:36:49.544Z",
       "repository": "fastify/fastify",
       "learningId": "learn-github-fastify-fastify",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T03:50:48.629Z",
+      "repository": "tw93/Pake",
+      "learningId": "learn-github-tw93-pake",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T03:50:53.273Z",
+      "repository": "meshtastic/Meshtastic-Android",
+      "learningId": "learn-github-meshtastic-meshtastic-android",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

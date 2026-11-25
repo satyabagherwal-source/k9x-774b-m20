@@ -12958,3 +12958,5 @@ Every entry in this ledger must capture:
 | `learn-github-google-tcmalloc` | `https://github.com/google/tcmalloc` | `afcf25e3` | Multi-dimensional audit evidence | 2026-11-25T03:28:23.111Z |
 | `learn-github-simonschubert-linuxcommandlibrary` | `https://github.com/SimonSchubert/LinuxCommandLibrary` | `6bf6a477` | Multi-dimensional audit evidence | 2026-11-25T03:28:28.317Z |
 | `learn-github-fastify-fastify` | `https://github.com/fastify/fastify` | `f5757f12` | Multi-dimensional audit evidence | 2026-11-25T03:36:49.539Z |
+| `learn-github-tw93-pake` | `https://github.com/tw93/Pake` | `afb688ef` | Multi-dimensional audit evidence | 2026-11-25T03:50:48.622Z |
+| `learn-github-meshtastic-meshtastic-android` | `https://github.com/meshtastic/Meshtastic-Android` | `d1c4c7db` | Multi-dimensional audit evidence | 2026-11-25T03:50:53.267Z |

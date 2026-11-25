@@ -1703,10 +1703,10 @@
     "repository": "tw93/Pake",
     "platform": "github",
     "sourceUrl": "https://github.com/tw93/Pake",
-    "sourceVersion": "705f738d",
+    "sourceVersion": "afb688ef",
     "license": "GPL-3.0",
-    "contentHash": "5ce419705e1afe5a827c15347b7ae5a8aa0a31757f2dde3d38c086b10771cab5",
-    "lastHarvestedAt": "2026-11-24T01:15:34.806Z",
+    "contentHash": "27cf034847681fb4862b9ae8f4a234c4fd50e7882917d7c70e80f1bd5c2dbcbe",
+    "lastHarvestedAt": "2026-11-25T03:50:48.622Z",
     "learningId": "learn-github-tw93-pake"
   },
   "hf-datalab-to-indra-ocr": {
@@ -7813,10 +7813,10 @@
     "repository": "meshtastic/Meshtastic-Android",
     "platform": "github",
     "sourceUrl": "https://github.com/meshtastic/Meshtastic-Android",
-    "sourceVersion": "836e48f7",
+    "sourceVersion": "d1c4c7db",
     "license": "GPL-3.0",
-    "contentHash": "f0df1bc02fd0cfa453e463c4b308f14076190283133f476b86eaf2a62f30837e",
-    "lastHarvestedAt": "2026-11-22T17:22:08.237Z",
+    "contentHash": "adbbb565b71c3929bfd6cdb66ba6243b0e657bf78840efd7cce3874bda39e238",
+    "lastHarvestedAt": "2026-11-25T03:50:53.267Z",
     "learningId": "learn-github-meshtastic-meshtastic-android"
   },
   "astral-sh-uv": {

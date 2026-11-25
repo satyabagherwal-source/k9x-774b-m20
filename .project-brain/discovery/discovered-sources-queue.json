@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-25T03:36:56.635Z",
+  "updated_at": "2026-11-25T03:50:59.242Z",
   "stats": {
-    "total_discovered": 9185,
-    "approved_pending_harvest": 8698,
+    "total_discovered": 9195,
+    "approved_pending_harvest": 8708,
     "harvested_count": 0,
     "rejected_count": 487,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 8693,
+      "COMMUNITY_AND_EXPERT": 8703,
       "OFFICIAL_DOCUMENTATION": 275,
       "STANDARDS_AND_SPECIFICATIONS": 149,
       "ENGINEERING_BLOGS": 7,
@@ -198688,6 +198688,226 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fastify-fastify-learnings.md",
         "fileName": "fastify-fastify-learnings.md"
+      }
+    },
+    "SRC-338F7BFE7C70": {
+      "id": "SRC-338F7BFE7C70",
+      "url": "https://github.com/tw93/Pake/tree/main/gallery/apps",
+      "title": "https://github.com/tw93/Pake/tree/main/gallery/apps",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T03:50:57.189Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tw93-pake-learnings.md",
+        "fileName": "tw93-pake-learnings.md"
+      }
+    },
+    "SRC-C6F531CC7C59": {
+      "id": "SRC-C6F531CC7C59",
+      "url": "https://res.wx.qq.com/a/wx_fed/assets/res/OTE0YTAw.png",
+      "title": "https://res.wx.qq.com/a/wx_fed/assets/res/OTE0YTAw.png",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T03:50:57.267Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tw93-pake-learnings.md",
+        "fileName": "tw93-pake-learnings.md"
+      }
+    },
+    "SRC-A9C5793821AD": {
+      "id": "SRC-A9C5793821AD",
+      "url": "https://${inputurl/",
+      "title": "https://${inputurl/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T03:50:57.346Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tw93-pake-learnings.md",
+        "fileName": "tw93-pake-learnings.md"
+      }
+    },
+    "SRC-778E6AB2B594": {
+      "id": "SRC-778E6AB2B594",
+      "url": "https://meshtastic.org/e",
+      "title": "https://meshtastic.org/e",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T03:50:58.769Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/meshtastic-meshtastic-android-learnings.md",
+        "fileName": "meshtastic-meshtastic-android-learnings.md"
+      }
+    },
+    "SRC-09D19EC33A0B": {
+      "id": "SRC-09D19EC33A0B",
+      "url": "https://meshtastic.org/v",
+      "title": "https://meshtastic.org/v",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T03:50:58.849Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/meshtastic-meshtastic-android-learnings.md",
+        "fileName": "meshtastic-meshtastic-android-learnings.md"
+      }
+    },
+    "SRC-8C6B70FEE1AF": {
+      "id": "SRC-8C6B70FEE1AF",
+      "url": "https://meshtastic.org/E",
+      "title": "https://meshtastic.org/E",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T03:50:58.929Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/meshtastic-meshtastic-android-learnings.md",
+        "fileName": "meshtastic-meshtastic-android-learnings.md"
+      }
+    },
+    "SRC-62209FB42A49": {
+      "id": "SRC-62209FB42A49",
+      "url": "https://meshtastic.org/e/?add=true",
+      "title": "https://meshtastic.org/e/?add=true",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T03:50:59.008Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/meshtastic-meshtastic-android-learnings.md",
+        "fileName": "meshtastic-meshtastic-android-learnings.md"
+      }
+    },
+    "SRC-FC559E49CBA9": {
+      "id": "SRC-FC559E49CBA9",
+      "url": "https://www.meshtastic.org/e",
+      "title": "https://www.meshtastic.org/e",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T03:50:59.081Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/meshtastic-meshtastic-android-learnings.md",
+        "fileName": "meshtastic-meshtastic-android-learnings.md"
+      }
+    },
+    "SRC-104DFAE3A54D": {
+      "id": "SRC-104DFAE3A54D",
+      "url": "https://meshtastic.org/channel/e",
+      "title": "https://meshtastic.org/channel/e",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T03:50:59.161Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/meshtastic-meshtastic-android-learnings.md",
+        "fileName": "meshtastic-meshtastic-android-learnings.md"
+      }
+    },
+    "SRC-7B6164E7B42F": {
+      "id": "SRC-7B6164E7B42F",
+      "url": "https://example.com/e",
+      "title": "https://example.com/e",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T03:50:59.241Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/meshtastic-meshtastic-android-learnings.md",
+        "fileName": "meshtastic-meshtastic-android-learnings.md"
       }
     }
   }

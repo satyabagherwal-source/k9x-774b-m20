@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261123-LVIV",
-    "timestamp": "2026-11-23T17:03:37.687Z",
-    "repository": "opentofu/opentofu",
-    "learningId": "learn-github-opentofu-opentofu",
-    "contentHash": "a04dc0e197350ff33b4aa6db724e6d40a2bd476fb057c4da96c9cb339878532b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-LZBY",
-    "timestamp": "2026-11-23T17:03:42.622Z",
-    "repository": "etcd-io/etcd",
-    "learningId": "learn-github-etcd-io-etcd",
-    "contentHash": "11caf0ea9d01fb784ee4636484f91f7c4b9feadff2cea6efe9a12563b061a299",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261123-M0YO",
     "timestamp": "2026-11-23T17:03:44.736Z",
     "repository": "dathere/qsv",
@@ -7490,6 +7460,36 @@
     "repository": "fastify/fastify",
     "learningId": "learn-github-fastify-fastify",
     "contentHash": "a89065c5a8dbeaaae690fc92f25af5254c977f5b277e0b62e9f1518e6e8dfa57",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-60BT",
+    "timestamp": "2026-11-25T03:50:48.617Z",
+    "repository": "tw93/Pake",
+    "learningId": "learn-github-tw93-pake",
+    "contentHash": "27cf034847681fb4862b9ae8f4a234c4fd50e7882917d7c70e80f1bd5c2dbcbe",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-63WU",
+    "timestamp": "2026-11-25T03:50:53.262Z",
+    "repository": "meshtastic/Meshtastic-Android",
+    "learningId": "learn-github-meshtastic-meshtastic-android",
+    "contentHash": "adbbb565b71c3929bfd6cdb66ba6243b0e657bf78840efd7cce3874bda39e238",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

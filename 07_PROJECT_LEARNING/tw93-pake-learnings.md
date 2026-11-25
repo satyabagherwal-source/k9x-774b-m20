@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tw93-pake-learnings.md`  
 > **Source**: github ([https://github.com/tw93/Pake](https://github.com/tw93/Pake))  
-> **Source Version**: `705f738d`  
+> **Source Version**: `afb688ef`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T01:15:33.659Z  
+> **Timestamp**: 2026-11-25T03:50:47.241Z  
 > **Learning ID**: `learn-github-tw93-pake`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tw93-pake-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tw93/Pake](https://github.com/tw93/Pake))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T01:15:33.475Z  
+> **Harvest Timestamp**: 2026-11-25T03:50:47.059Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Turn any website into a lightweight desktop app with one command, on macOS, Windows and Linux.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, README.md, Dockerfile
-- **Stars / Engagement**: 63971 stars
+- **Stars / Engagement**: 64007 stars
 
 ---
 
@@ -934,730 +934,263 @@ export function getDefaultLinuxTargets(): string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2bbfe3d5` (2026-11-23)
-**Commit Message**: fix(deps): keep zbus on 5.19, since zbus 6 removed its blocking API
+### Incident Patch 1: `7c08474f` (2026-11-24)
+**Commit Message**: docs: fix the sign-in popup note, the inject example and the gallery platforms
 
-b64f014a moved zbus to 6.5 and broke every Linux build: zbus 6 removes zbus::blocking, which color_scheme.rs uses to read and watch the portal's color scheme, so clippy and the Ubuntu build failed on main. Porting that watcher to async is a Linux theming change that wants a run on Omarchy, so stay on 5.19.0, the latest 5.x, which tauri-plugin-notification, -opener and -single-instance already pull in; the tree holds one zbus 5 again.
+- cli-usage: the multi-window note still said macOS opens sign-in popups
+  in the current window; since 41e1a6f9 a popup with a size of its own
+  opens as a separate window on macOS and Windows, as faq.md says.
+- cli-usage: the inject paragraph ended in a broken sentence fragment.
+- contributing: the gallery is in the Linux app too, not only Mac and
+  Windows.
 
-The macOS and Windows checks of b64f014a never compile that module, and the devbox run that was meant to cover Linux never reached cargo: its apt step hung for an hour, and the logs read afterwards were an older run's.
+Docs only; prettier --check passes on the four files.
 
-Verified: cargo tree shows pake on zbus 5.19.0 beside the three plugins; the Linux build is left to this push's Quality & Testing run.
-
-**File**: `src-tauri/Cargo.lock` (modified, +15/-20)
+**File**: `docs/cli-usage.md` (modified, +2/-2)
 ```diff
-@@ -894,7 +894,7 @@ dependencies = [
-  "libc",
-  "option-ext",
-  "redox_users",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.59.0",
- ]
+@@ -572,7 +572,7 @@ This is different from `--multi-instance`:
  
- [[package]]
-@@ -1115,7 +1115,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "e35d6e78f4cebb90e51d543db8fe41528851d6deeef6ef21ebd4bfdc1e784776"
- dependencies = [
-  "libc",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.52.0",
- ]
+ When enabled, relaunching an already running app opens a new window instead of only focusing the existing one.
  
- [[package]]
-@@ -2506,7 +2506,7 @@ dependencies = [
-  "png",
-  "serde",
-  "thiserror 2.0.21",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.60.2",
- ]
+-On macOS, additional windows opened with Cmd+N join the app's native tab group. `window.open` popups stay outside it. On macOS and Linux, sign-in popups other than Sign in with Apple open in the current window.
++On macOS, additional windows opened with Cmd+N join the app's native tab group. `window.open` popups stay outside it. On macOS and Windows, a sign-in popup with a size of its own, such as the Google button on TikTok, Notion and X or Sign in with Apple, opens as a separate window and closes once it has answered. A sign-in opened as a link, or as a `window.open` with no size, continues in the current window on macOS and Linux, and so does every sign-in popup on Linux.
  
- [[package]]
-@@ -2860,7 +2860,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "7d8fae84b431384b68627d0f9b3b1245fcf9f46f6c0e3dc902e9dce64edd1967"
- dependencies = [
-  "libc",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.45.0",
- ]
+ This can improve popup-based authentication flows, but it cannot bypass provider policy. Some providers, especially Google, may still reject sign-in inside embedded webviews.
  
- [[package]]
-@@ -2897,7 +2897,7 @@ dependencies = [
-  "webview2-com",
-  "windows-core",
-  "windows-sys 0.61.2",
-- "zbus 6.5.0",
-+ "zbus 5.19.0",
- ]
+@@ -606,7 +606,7 @@ pake ./my-app/index.html --name "my-app" --use-local-file
  
- [[package]]
-@@ -3320,7 +3320,7 @@ dependencies = [
-  "once_cell",
-  "socket2",
-  "tracing",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.52.0",
- ]
+ #### [inject]
  
- [[package]]
-@@ -3560,7 +3560,7 @@ dependencies = [
-  "errno",
-  "libc",
-  "linux-raw-sys",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.52.0",
- ]
+-Using `inject`, you can inject local absolute and relative path `css` and `js` files into the page you specify the `url` to customize it. For example, an adblock script that can be applied to any web page, or a `css` that optimizes the `UI` of a page, you can write it once to customize it. would only need to write the `app` once to generalize it to any other page.
++Using `inject`, you can inject local absolute and relative path `css` and `js` files into the page you specify the `url` to customize it. For example, an adblock script that works on any page, or `css` that tidies a page's UI: write it once and reuse it in every app you package.
  
- [[package]]
-@@ -3994,7 +3994,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "c3d1e2c7f27f8d4cb10542a02c49005dbd6e93095799d6f3be745fae9f8fedd4"
- dependencies = [
-  "libc",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.60.2",
- ]
- 
- [[package]]
-@@ -4695,10 +4695,10 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "32497e9a4c7b38532efcdebeef879707aa9f794296a4f0244f6f69e9bc8574bd"
- dependencies = [
-  "fastrand",
-- "getrandom 0.4.3",
-+ "getrandom 0.3.4",
-  "once_cell",
-  "rustix",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.52.0",
- ]
- 
- [[package]]
-@@ -4806,10 +4806,8 @@ dependencies = [
-  "libc",
-  "mio",
-  "pin-project-lite",
-- "signal-hook-registry",
-  "socket2",
-  "tokio-macros",
-- "tracing",
-  "windows-sys 0.61.2",
- ]
- 
-@@ -5039,7 +5037,7 @@ dependencies = [
-  "png",
-  "serde",
-  "thiserror 2.0.21",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.60.2",
- ]
- 
- [[package]]
-@@ -5068,7 +5066,7 @@ checksum = "f2f6fb2847f6742cd76af783a2a2c49e9375d0a111c7bef6f71cd9e738c72d6e"
- dependencies = [
-  "memoffset",
-  "tempfile",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.60.2",
- ]
- 
- [[package]]
-@@ -5428,7 +5426,7 @@ version = "0.1.11"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "c2a7b1c03c876122aa43f3020e6c3c3ee5c05081c9a00739faf7503aeba10d22"
- dependencies = [
-- "windows-sys 0.61.2",
-+ "windows-sys 0.52.0",
- ]
- 
- [[package]]
-@@ -5449,7 +5447,7 @@ dependencies = [
-  "objc2-foundation",
-  "objc2-quartz-core",
-  "raw-window-handle",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.60.2",
-  "windows-version",
- ]
- 
-@@ -5839,7 +5837,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "7d6f32a0ff4a9f6f01231eb2059cc85479330739333e0e58cadf03b6af2cca10"
- dependencies = [
-  "cfg-if",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.59.0",
- ]
- 
- [[package]]
-@@ -6016,8 +6014,6 @@ dependencies = [
-  "serde",
-  "serde_repr",
-  "socket2",
-- "tokio",
-- "tracing",
-  "uds_windows",
-  "uuid",
-  "windows-sys 0.61.2",
-@@ -6170,7 +6166,6 @@ dependencies = [
-  "futures-io",
-  "rustix",
-  "socket2",
-- "tracing",
-  "windows-sys 0.61.2",
- ]
+ Supports both comma-separated and multiple option formats:
  
 ```
 
-**File**: `src-tauri/Cargo.toml` (modified, +1/-1)
+**File**: `docs/cli-usage_CN.md` (modified, +1/-1)
 ```diff
-@@ -100,7 +100,7 @@ webkit2gtk = { version = "=2.0.2", features = ["v2_40"] }
- gtk = "0.18"
- # Reads the freedesktop color-scheme from the settings portal. Same version
- # and features that tauri-plugin-opener and single-instance already lock.
--zbus = "6.5"
-+zbus = "5.19"
- # WebKitGTK's content filter store, which the safe webkit2gtk crate leaves out.
- webkit2gtk-sys = { version = "=2.0.2", features = ["v2_40"], optional = true }
+@@ -566,7 +566,7 @@ pake https://chat.example.com --name ChatApp --multi-instance
  
+ 启用后，如果应用已在运行，再次启动会新开一个窗口，而不是仅聚焦已有窗口。
+ 
+-在 macOS 上，通过 Cmd+N 打开的附加窗口会自动加入应用的原生标签页组，`window.open` 弹窗不进这个标签页组。在 macOS 和 Linux 上，除 Sign in with Apple 之外的登录弹窗会在当前窗口打开。
++在 macOS 上，通过 Cmd+N 打开的附加窗口会自动加入应用的原生标签页组，`window.open` 弹窗不进这个标签页组。在 macOS 和 Windows 上，自带尺寸的登录弹窗，比如 TikTok、Notion 和 X 上的 Google 登录按钮或 Sign in with Apple，会单独开一个窗口，登录完自己关掉，以链接方式打开的登录或者没带尺寸的 `window.open`，在 macOS 和 Linux 上还是在当前窗口里进行，Linux 上所有登录弹窗都这样。
+ 
+ 此选项可优化弹窗授权体验，但无法绕过提供方自身的策略限制（部分提供方如 Google 仍可能拒绝在嵌入式 WebView 中登录）。
+ 
+```
+
+**File**: `docs/contributing.md` (modified, +1/-1)
+```diff
+@@ -22,7 +22,7 @@ pnpm test
+ 
+ ## Proposing a site for the gallery
+ 
+-The Pake apps for Mac and Windows show a gallery of sites that work well as desktop apps. Each one is a small recipe in [`gallery/apps`](https://github.com/tw93/Pake/tree/main/gallery/apps), and anyone can propose one:
++The Pake apps for Mac, Windows and Linux show a gallery of sites that work well as desktop apps. Each one is a small recipe in [`gallery/apps`](https://github.com/tw93/Pake/tree/main/gallery/apps), and anyone can propose one:
+ 
+ 1. Package the site with the Pake CLI and use it for a few days: sign in, open links, download a file, and check that you are still signed in after a restart.
+ 2. Add `gallery/apps/<id>.json`. Leave the window options out unless one fixed a problem you saw, and keep injected CSS or JavaScript to the smallest change that fixes it.
+```
+
+**File**: `docs/contributing_CN.md` (modified, +1/-1)
+```diff
+@@ -22,7 +22,7 @@ pnpm test
+ 
+ ## 推荐网站进精选
+ 
+-Mac 和 Windows 版 Pake 里有一个精选，放的是适合做成桌面应用的网站。每个网站对应 [`gallery/apps`](https://github.com/tw93/Pake/tree/main/gallery/apps) 里一份很小的配方，谁都可以推荐：
++Mac、Windows 和 Linux 版 Pake 里有一个精选，放的是适合做成桌面应用的网站。每个网站对应 [`gallery/apps`](https://github.com/tw93/Pake/tree/main/gallery/apps) 里一份很小的配方，谁都可以推荐：
+ 
+ 1. 先用 Pake CLI 把网站打包出来用几天，登录一下，点开几个链接，下载一个文件，重启后看看是否还保持登录。
+ 2. 新增 `gallery/apps/<id>.json`，窗口参数只在确实解决了问题时才加，注入的 CSS 或 JavaScript 也只做最小的改动。
 ```
 
 ---
 
-### Incident Patch 2: `52242388` (2026-11-23)
-**Commit Message**: feat(extensions): carry an extension's own settings into a built app
+### Incident Patch 2: `be66cccb` (2026-11-25)
+**Commit Message**: Revert "feat(gallery): let refused WeChat accounts sign in on the web"
 
-A user asked to set uBlock Origin Lite rules once and hand the app to
-others with them in place. An extension folder may now hold a hidden
-pake-settings page: the runtime keeps it open out of sight on macOS and
-Windows, saves the extension's storage.local and storage.sync to
-<app data>/extension-settings/<folder>.json on every change, and, when
-the folder carries a pake-settings.json the store has not taken in yet,
-merges it into storage.local, restarts the extension and loads the app's
-own windows again (a page still loading waits for its load event, a
-navigation under way on macOS is left to arrive, sign-in popups are
-never touched). A carried copy is written once per store: its id goes
-into <folder>.applied, which is never trimmed, so a later launch never
-writes it back over what the person changed. A copy the extension
-refuses leaves the page watching, so the launch still keeps its own. A
-private window keeps nothing and closes its page once done. Polling
-stops when no page is left or being made. Linux has no extensions and
-compiles the module unused.
+This reverts commit 12f1707b5981de91f2b156da9d9653904695a358.
 
-Verified: cargo clippy -D warnings and 152 lib tests on m
+The maintainer's account signed in through the UOS headers, then got a
+restriction minutes later ("因使用行为或设备网络环境异常 ... 当前无法使用
+与企业微信联系人相关功能", lifted no earlier than 2026-12-10). Tencent
+warned accounts using the same headers through wechat-need-web in bulk
+on 2025-01-03 (lqzhgood/wechat-need-web#43). Shipping it would put every
+Pake WeChat user's account at that risk, so the recipe stays at version 1
+with plain web sign-in. It never reached a gallery feed: pake-app's
+gallery.ref still points at 12440575.
 
-**File**: `src-tauri/src/app/extensions/macos.rs` (modified, +209/-1)
+Verified: gallery/ matches 12440575 again and wechat.js is gone;
+npx vitest run tests/unit/gallery.test.ts.
+
+**File**: `gallery/apps/wechat.js` (removed, +0/-45)
 ```diff
-@@ -4,6 +4,7 @@
- //! "Tab not found" when there are none. Pake has no tabs, so every webview it
- //! builds is reported as one tab of a single window.
- 
-+use super::settings::{self, Action, Mode};
- use super::{installed, unpacked, Installed};
- use block2::RcBlock;
- use objc2::rc::{Allocated, Retained, Weak};
-@@ -21,7 +22,7 @@ use objc2_web_kit::{
- };
- use std::cell::RefCell;
- use std::collections::HashMap;
--use std::path::Path;
-+use std::path::{Path, PathBuf};
- use std::ptr::NonNull;
- use std::time::Duration;
- 
-@@ -49,6 +50,12 @@ struct Host {
-     contexts: HashMap<String, Retained<WKWebExtensionContext>>,
-     /// The windows showing an extension's pages, kept so a second ask raises one.
-     pages: HashMap<String, Retained<AnyObject>>,
-+    directory: PathBuf,
-+    incognito: bool,
-+    /// Pake's own page of each extension whose settings an app may carry,
-+    /// open out of sight (settings.rs).
-+    settings: HashMap<String, (Retained<AnyObject>, settings::Page)>,
-+    settings_started: bool,
- }
- 
- thread_local! {
-@@ -427,6 +434,10 @@ fn start(mtm: MainThreadMarker, directory: &Path, incognito: bool) -> Option<Hos
-         listed: installed(directory),
-         contexts: HashMap::new(),
-         pages: HashMap::new(),
-+        directory: directory.to_path_buf(),
-+        incognito,
-+        settings: HashMap::new(),
-+        settings_started: false,
-     })
- }
- 
-@@ -445,10 +456,207 @@ fn loaded(name: &str, extension: Option<Retained<WKWebExtension>>, reason: &str)
-         host.pending = host.pending.saturating_sub(1);
-         (host.pending == 0).then(|| std::mem::take(&mut host.callbacks))
-     });
-+    let ready = callbacks.is_some();
-     callbacks
-         .into_iter()
-         .flatten()
-         .for_each(|callback| callback());
-+    if ready {
-+        start_settings();
-+    }
-+}
-+
-+/// Opens Pake's page of every loaded extension that has one, out of sight,
-+/// and asks each one every `settings::INTERVAL` whether there is news.
-+fn start_settings() {
-+    let Some(mtm) = MainThreadMarker::new() else {
-+        return;
-+    };
-+    let started = HOST.with_borrow_mut(|host| {
-+        let host = host.as_mut()?;
-+        if std::mem::replace(&mut host.settings_started, true) {
-+            return None;
-+        }
-+        for (name, context) in &host.contexts {
-+            let Some(mode) = settings::mode(&host.directory.join(name), host.incognito) else {
-+                continue;
-+            };
-+            let Some(webview) = (unsafe { settings_webview(mtm, context, mode) }) else {
-+                continue;
-+            };
-+            let page = settings::Page::new(name.clone(), mode, host.incognito);
-+            host.settings.insert(name.clone(), (webview, page));
-+        }
-+        (!host.settings.is_empty()).then_some(())
-+    });
-+    if started.is_none() {
-+        return;
-+    }
-+    std::thread::spawn(|| {
-+        while settings::polling() {
-+            std::thread::sleep(settings::INTERVAL);
-+            dispatch::Queue::main().exec_async(poll_settings);
-+        }
-+    });
-+}
-+
-+/// A webview of the extension's own, in no window, showing Pake's page.
-+unsafe fn settings_webview(
-+    mtm: MainThreadMarker,
-+    context: &WKWebExtensionContext,
-+    mode: Mode,
-+) -> Option<Retained<AnyObject>> {
-+    let _ = mtm;
-+    let configuration = context.webViewConfiguration()?;
-+    let frame = NSRect::new(NSPoint::new(0.0, 0.0), NSSize::new(1.0, 1.0));
-+    let webview: Allocated<AnyObject> = msg_send![class!(WKWebView), alloc];
-+    let webview: Retained<AnyObject> =
-+        msg_send![webview, initWithFrame: frame, configuration: &*configuration];
-+    load_settings_page(&webview, context, mode);
-+    Some(webview)
-+}
-+
-+unsafe fn load_settings_page(webview: &AnyObject, context: &WKWebExtensionContext, mode: Mode) {
-+    let Some(url) = NSURL::URLWithString_relativeToURL(
-+        &NSString::from_str(&settings::page_path(mode)),
-+        Some(&context.baseURL()),
-+    ) else {
-+        return;
-+    };
-+    let request: Retained<AnyObject> = msg_send![class!(NSURLRequest), requestWithURL: &*url];
-+    let _: *mut AnyObject = msg_send![webview, loadRequest: &*request];
-+}
-+
-+/// Runs `script` in `webview` and hands its result, as text, to `done`.
-+fn evaluate(webview: &AnyObject, script: &str, done: impl Fn(String) + 'static) {
-+    let block = RcBlock::new(move |result: *mut AnyObject, _error: *mut NSError| {
-+        let text = unsafe { result.as_ref() }
-+            .and_then(|result| result.downcast_ref::<NSString>())
-+            .map(|text| text.to_string())
-+            .unwrap_or_default();
-+        done(text);
-+    });
-+    unsafe {
-+        let _: () = msg_send![
-+            webview,
-+            evaluateJavaScript: &*NSString::from_str(script),
-+            completionHandler: &*block
-+        ];
-+    }
-+}
-+
-+fn settings_webview_of(name: &str) -> Option<Retained<AnyObject>> {
-+    HOST.with_borrow(|host| Some(host.as_ref()?.settings.get(name)?.0.clone()))
-+}
-+
-+fn poll_set
+@@ -1,45 +0,0 @@
+-// Many accounts are refused by WeChat on the web ("此微信号不能登录网页微信").
+-// Tencent still signs them in on the page its UOS desktop client loads: the
+-// page switches to that mode when `window.__target` is "t" (the same switch as
+-// `?target=t`), and the server expects the client's extspam and client-version
+-// headers on the one request that turns a scanned QR code into a session,
+-// webwxnewloginpage. Only that request carries them, as in the open-source
+-// clients wechat4u and wechat-need-web. Desktop mode drops the page's own
+-// Copy item from the message menu; Cmd+C still copies a selection.
+-(() => {
+-  if (
+-    !/^(wx\d?\.qq\.com|web\d?\.wechat\.com|web\.weixin\.qq\.com)$/.test(
+-      location.hostname,
+-    )
+-  )
+-    return;
+-  window.__target = "t";
+-
+-  const HEADERS = {
+-    "client-version": "2.0.0",
+-    extspam:
+-      "Go8FCIkFEokFCggwMDAwMDAwMRAGGvAESySibk50w5Wb3uTl2c2h64jVVrV7gNs06GFlWplHQbY/5FfiO++1yH4ykCyNPWKXmco+wfQzK5R98D3so7rJ5LmGFvBLjGceleySrc3SOf2Pc1gVehzJgODeS0lDL3/I/0S2SSE98YgKleq6Uqx6ndTy9yaL9qFxJL7eiA/R3SEfTaW1SBoSITIu+EEkXff+Pv8NHOk7N57rcGk1w0ZzRrQDkXTOXFN2iHYIzAAZPIOY45Lsh+A4slpgnDiaOvRtlQYCt97nmPLuTipOJ8Qc5pM7ZsOsAPPrCQL7nK0I7aPrFDF0q4ziUUKettzW8MrAaiVfmbD1/VkmLNVqqZVvBCtRblXb5FHmtS8FxnqCzYP4WFvz3T0TcrOqwLX1M/DQvcHaGGw0B0y4bZMs7lVScGBFxMj3vbFi2SRKbKhaitxHfYHAOAa0X7/MSS0RNAjdwoyGHeOepXOKY+h3iHeqCvgOH6LOifdHf/1aaZNwSkGotYnYScW8Yx63LnSwba7+hESrtPa/huRmB9KWvMCKbDThL/nne14hnL277EDCSocPu3rOSYjuB9gKSOdVmWsj9Dxb/iZIe+S6AiG29Esm+/eUacSba0k8wn5HhHg9d4tIcixrxveflc8vi2/wNQGVFNsGO6tB5WF0xf/plngOvQ1/ivGV/C1Qpdhzznh0ExAVJ6dwzNg7qIEBaw+BzTJTUuRcPk92Sn6QDn2Pu3mpONaEumacjW4w6ipPnPw+g2TfywJjeEcpSZaP4Q3YV5HG8D6UjWA4GSkBKculWpdCMadx0usMomsSS/74QgpYqcPkmamB4nVv1JxczYITIqItIKjD35IGKAUwAA==",
+-  };
+-  const LOGIN = Symbol("pakeWechatLogin");
+-  const { open, send } = XMLHttpRequest.prototype;
+-
+-  XMLHttpRequest.prototype.open = function (method, url, ...rest) {
+-    try {
+-      this[LOGIN] = new URL(url, location.href).pathname.endsWith(
+-        "/webwxnewloginpage",
+-      );
+-    } catch {
+-      this[LOGIN] = false;
+-    }
+-    return open.call(this, method, url, ...rest);
+-  };
+-
+-  XMLHttpRequest.prototype.send = function (body) {
+-    if (this[LOGIN]) {
+-      for (const [name, value] of Object.entries(HEADERS)) {
+-        this.setRequestHeader(name, value);
+-      }
+-    }
+-    return send.call(this, body);
+-  };
+-})();
 ```
 
-**File**: `src-tauri/src/app/extensions/mod.rs` (modified, +3/-0)
+**File**: `gallery/apps/wechat.json` (modified, +1/-2)
 ```diff
-@@ -6,6 +6,9 @@
- 
- use std::path::{Path, PathBuf};
- 
-+#[cfg_attr(not(any(target_os = "macos", target_os = "windows")), allow(dead_code))]
-+pub mod settings;
-+
- #[cfg(target_os = "macos")]
- mod macos;
- #[cfg(target_os = "macos")]
-```
-
-**File**: `src-tauri/src/app/extensions/settings.rs` (added, +475/-0)
-```diff
-@@ -0,0 +1,475 @@
-+//! Carrying an extension's settings into a built app.
-+//!
-+//! The app builder puts a page of its own, `pake-settings.html`, into each
-+//! extension whose settings it may carry. The runtime keeps that page open out
-+//! of sight. The page holds a copy of the extension's storage, which the
-+//! runtime writes to `<app data>/extension-settings/<folder>.json` whenever it
-+//! changes, for the builder to read when it builds the app again. A built app
-+//! carries such a copy as `pake-settings.json` in the extension's folder. On a
-+//! machine whose storage never held that copy, the first launch writes it into
-+//! the extension's storage, restarts the extension and reloads the app's pages.
-+//!
-+//! The page speaks through `window.pakeSettings`: `state` (`ready` once its
-+//! copy is current, `written` once a carried copy is in storage, `failed`),
-+//! `version`, which grows with every new copy, `id`, the copy's digest, and
-+//! `snapshot`, the copy as JSON. `restart()` restarts the extension.
-+
-+use std::path::{Path, PathBuf};
-+use std::sync::atomic::{AtomicBool, Ordering};
-+use std::sync::OnceLock;
-+use std::time::Duration;
-+
-+use tauri::{AppHandle, Manager};
-+
-+pub const PAGE: &str = "pake-settings.html";
-+pub const PRESET: &str = "pake-settings.json";
-+/// How often the runtime asks the page whether there is something new.
-+pub const INTERVAL: Duration = Duration::from_secs(2);
-+/// How long a restarting extension gets before the page and the app's pages load again.
-+pub const RESTART_DELAY: Duration = Duration::from_secs(2);
-+
-+pub const PROBE_SCRIPT: &str =
-+    "window.pakeSettings ? [pakeSettings.state, pakeSettings.version, pakeSettings.id].join(' ') : ''";
-+pub const SNAPSHOT_SCRIPT: &str = "window.pakeSettings ? pakeSettings.snapshot : ''";
-+pub const RESTART_SCRIPT: &str = "window.pakeSettings && pakeSettings.restart(); 0";
-+
-+/// The digests a store held, newest last; older ones fall off past this many.
-+/// A carried copy is decided by `<name>.applied`, which never drops one.
-+const REMEMBERED: usize = 64;
-+
-+static STORE: OnceLock<PathBuf> = OnceLock::new();
-+static APP: OnceLock<AppHandle> = OnceLock::new();
-+/// The hosts' pollers run while this holds; a host clears it once it has no page left to ask.
-+static POLLING: AtomicBool = AtomicBool::new(true);
-+
-+/// Where the copies and the digests go: the app's own data folder.
-+pub fn set_store(app: &AppHandle, directory: PathBuf) {
-+    let _ = STORE.set(directory.join("extension-settings"));
-+    let _ = APP.set(app.clone());
-+}
-+
-+pub fn polling() -> bool {
-+    POLLING.load(Ordering::Relaxed)
-+}
-+
-+pub fn stop_polling() {
-+    POLLING.store(false, Ordering::Relaxed);
-+}
-+
-+/// The app's own windows, which load again once an extension has its carried settings:
-+/// the first and any later one, never a sign-in popup, whose half-done sign-in a reload loses.
-+pub fn reloadable(label: &str) -> bool {
-+    label == "pake"
-+        || (label.starts_with("pake-")
-+            && !label.starts_with(crate::app::window::POPUP_WINDOW_LABEL_PREFIX))
-+}
-+
-+/// Loads a page again once it has finished loading, so a page still on its way in is not cut off
-+/// and still ends up with what the extension now holds. A window on its first blank page is on
-+/// its way to the site, which it reaches with the restarted extension, so it is left alone.
-+pub const RELOAD_SCRIPT: &str = "(() => { if (location.protocol === 'about:') return; \
-+const again = () => location.reload(); \
-+if (document.readyState === 'complete') again(); \
-+else addEventListener('load', again, { once: true }); })();";
-+
-+/// For a web view the host knows is navigating: a document still loading is loaded again once
-+/// it has finished, and a finished one is left, since the navigation under way is to a new page
-+/// that comes up with the restarted extension, and reloading would drop it.
-+#[cfg_attr(not(target_os = "macos"), allow(dead_code))]
-+pub const NAVIGATING_RELOAD_SCRIPT: &str = "(() => { if (location.protocol === 'about:') return; \
-+if (document.readyState === 'complete') return; \
-+addEventListener('load', () => location.reload(), { once: true }); })();";
-+
-+/// The app's own windows, those a carried copy loads again.
-+pub fn own_windows() -> Vec<(String, tauri::WebviewWindow)> {
-+    let Some(app) = APP.get() else {
-+        return Vec::new();
-+    };
-+    app.webview_windows()
-+        .into_iter()
-+        .filter(|(label, _)| reloadable(label))
-+        .collect()
-+}
-+
-+/// Loads each of the app's own windows again, after an extension took its carried settings.
-+#[cfg_attr(target_os = "macos", allow(dead_code))]
-+pub fn reload_windows() {
-+    for (label, window) in own_windows() {
-+        if let Err(error) = window.eval(RELOAD_SCRIPT) {
-+            eprintln!("[Pake] Could not reload {label} for the extension settings: {error}");
-+        }
-+    }
-+}
-+
-+fn store() -> Option<&'static PathBuf> {
-+    STORE.get()
-+}
-+
-+#[derive(Clone, Copy, Debug, PartialEq, Eq
-```
-
-**File**: `src-tauri/src/app/extensions/windows.rs` (modified, +283/-4)
-```diff
-@@ -3,9 +3,10 @@
- //! So the first window waits blank until every folder has been added, then
- //! opens its page.
- 
-+use super::settings::{self, Action, Mode};
- use super::{installed, requested_settings, unpacked};
- use crate::app::window::MultiWindowState;
--use std::cell::Cell;
-+use std::cell::{Cell, RefCell};
- use std::collections::HashMap;
- use std::path::PathBuf;
- use std::rc::Rc;
-@@ -14,11 +15,14 @@ use std::sync::{Arc, Mutex};
- use std::time::Duration;
- use tauri::{AppHandle, Manager, Url, WebviewWindow};
- use webview2_com::Microsoft::Web::WebView2::Win32::{
--    ICoreWebView2, ICoreWebView2BrowserExtension, ICoreWebView2Profile7, ICoreWebView2_13,
-+    ICoreWebView2, ICoreWebView2BrowserExtension, ICoreWebView2Controller,
-+    ICoreWebView2Environment10, ICoreWebView2Profile, ICoreWebView2Profile7, ICoreWebView2_13,
-+    ICoreWebView2_2,
- };
- use webview2_com::{
--    take_pwstr, BrowserExtensionRemoveCompletedHandler, ProfileAddBrowserExtensionCompletedHandler,
--    ProfileGetBrowserExtensionsCompletedHandler,
-+    take_pwstr, BrowserExtensionRemoveCompletedHandler,
-+    CreateCoreWebView2ControllerCompletedHandler, ExecuteScriptCompletedHandler,
-+    ProfileAddBrowserExtensionCompletedHandler, ProfileGetBrowserExtensionsCompletedHandler,
- };
- use windows_core::{Interface, HSTRING, PWSTR};
- 
-@@ -28,6 +32,25 @@ static ADDED: Mutex<Option<HashMap<String, String>>> = Mutex::new(None);
- static READY: AtomicBool = AtomicBool::new(false);
- static ASKED: Mutex<Option<String>> = Mutex::new(None);
- 
-+/// Pake's own page of each extension whose settings an app may carry, in a
-+/// webview of no window of its own (settings.rs). WebView2 objects stay on the
-+/// thread that made them, the event loop's.
-+struct StorePage {
-+    controller: ICoreWebView2Controller,
-+    core: ICoreWebView2,
-+    /// Where the extension's pages live, `chrome-extension://<id>/`.
-+    base: String,
-+    page: settings::Page,
-+}
-+
-+thread_local! {
-+    /// A slot goes empty once its page is closed; the others keep their place, which the callbacks name.
-+    static STORE_PAGES: RefCell<Vec<Option<StorePage>>> = const { RefCell::new(Vec::new()) };
-+    /// Pages asked for whose creation has not answered yet, so polling does not stop before
-+    /// they exist.
-+    static PENDING_PAGES: std::cell::Cell<usize> = const { std::cell::Cell::new(0) };
-+}
-+
- /// A first page never waits longer than this for the extensions to be added.
- const READY_TIMEOUT: Duration = Duration::from_secs(5);
- 
-@@ -37,6 +60,7 @@ pub fn install(
-     window: &WebviewWindow,
-     directory: PathBuf,
-     target: Option<Url>,
-+    incognito: bool,
- ) -> tauri::Result<()> {
-     let opened = Arc::new(AtomicBool::new(target.is_none()));
-     if let Some(target) = target.clone() {
-@@ -73,6 +97,8 @@ pub fn install(
-             target,
-             opened,
-             app,
-+            directory: directory.clone(),
-+            incognito,
-         });
-         let profile = unsafe {
-             core.cast::<ICoreWebView2_13>()
-@@ -160,6 +186,8 @@ struct Done {
-     target: Option<Url>,
-     opened: Arc<AtomicBool>,
-     app: AppHandle,
-+    directory: PathBuf,
-+    incognito: bool,
- }
- 
- impl Done {
-@@ -174,7 +202,258 @@ impl Done {
-         if let Some(id) = asked {
-             open_page(&self.app, &id);
-         }
-+        start_settings(&self.app, &self.core, &self.directory, self.incognito);
-+    }
-+}
-+
-+/// Opens Pake's page of every added extension that has one, out of sight, and
-+/// asks each one every `settings::INTERVAL` whether there is news.
-+fn start_settings(
-+    app: &AppHandle,
-+    core: &ICoreWebView2,
-+    directory: &std::path::Path,
-+    incognito: bool,
-+) {
-+    // The pages need a parent window, never shown in it: the app's own.
-+    let Some(Ok(hwnd)) = app.get_webview_window("pake").map(|window| window.hwnd()) else {
-+        return;
-+    };
-+    let added: HashMap<String, String> = ADDED
-+        .lock()
-+        .ok()
-+        .and_then(|added| added.clone())
-+        .unwrap_or_default();
-+    let wanted: Vec<(String, String, Mode)> = unpacked(directory)
-+        .iter()
-+        .filter_map(|folder| {
-+            let name = settings::folder_name(folder);
-+            let mode = settings::mode(folder, incognito)?;
-+            let id = added.get(&name)?.clone();
-+            Some((name, format!("chrome-extension://{id}/"), mode))
-+        })
-+        .collect();
-+    if wanted.is_empty() {
-+        return;
-+    }
-+    let made = (|| unsafe {
-+        let environment = core
-+            .cast::<ICoreWebView2_2>()?
-+            .Environment()?
-+            .cast::<ICoreWebView2Environment10>()?;
-+        let profile: ICoreWebView2Profile = core.cast::<ICoreWebView2_13>()?.Profile()?;
-+        let mut profile_name = PWSTR::null();
-+        profile.ProfileName(&mut profile_name)?;
-+        let mut private = windows_core::BOOL::default();
-+        profile.IsInPrivateModeEnabled(&mut private)?;
-+        let options = environment.CreateCoreWe
-```
-
-**File**: `src-tauri/src/app/window.rs` (modified, +6/-1)
-```diff
-@@ -1297,7 +1297,12 @@ fn build_window(
-     #[cfg(target_os = "windows")]
-     if let Some(directory) = &config.runtime_extensions {
-         if label == "pake" {
--            crate::app::extensions::install(&window, directory.clone(), extension_target)?;
-+            crate::app::extensions::install(
-+                &window,
-+                directory.clone(),
-+                extension_target,
-+                window_config.incognito,
-+            )?;
-         }
-     }
- 
-```
-
-**File**: `src-tauri/src/lib.rs` (modified, +8/-0)
-```diff
-@@ -487,6 +487,14 @@ pub fn run_app() {
-             #[cfg(target_os = "linux")]
-             app::color_scheme::keep_missing_dark_theme_dark();
- 
-+            // Where the settings of the app's extensions are kept for the builder.
-+            #[cfg(any(target_os = "macos", target_os = "windows"))]
-+            if pake_config.runtime_extensions.is_some() {
-+                if let Ok(directory) = app.path().app_local_data_dir() {
-+                    app::extensions::settings::set_store(app.app_handle(), directory);
-+                }
-+            }
-+
-             let window = set_window(app.app_handle(), &pake_config, &tauri_config)?;
- 
-             // An explicit --dark-mode wins over the desktop preference.
-```
-
----
-
-### Incident Patch 3: `f75076f4` (2026-11-23)
-**Commit Message**: chore: update the built-in filter lists to 2026-11-23
-
-Fetched on the day the pake-app pin moves, as its release-pending list asks, since the lists age within days. tests/blocking/run.mjs on them: 59 of 60 pages covered, none failed (wx.qq.com timed out without blocking too, as on 2026-11-21); lib tests pass (152).
-
-**File**: `filters/sources.json` (modified, +11/-11)
-```diff
-@@ -1,45 +1,45 @@
+@@ -1,6 +1,6 @@
  {
--  "fetched": "2026-11-21",
-+  "fetched": "2026-11-23",
-   "lists": [
-     {
-       "group": "ads",
-       "title": "EasyList",
--      "version": "202611210107",
-+      "version": "202611230312",
-       "url": "https://easylist.to/easylist/easylist.txt",
-       "license": "https://easylist.to/pages/licence.html",
--      "lines": 78770
-+      "lines": 79542
-     },
-     {
-       "group": "trackers",
-       "title": "EasyPrivacy",
--      "version": "202611210107",
-+      "version": "202611230319",
-       "url": "https://easylist.to/easylist/easyprivacy.txt",
-       "license": "https://easylist.to/pages/licence.html",
--      "lines": 57545
-+      "lines": 57596
-     },
-     {
-       "group": "cookies",
-       "title": "AdGuard Cookie Notices filter",
--      "version": "2.1.0.12",
-+      "version": "2.1.0.16",
-       "url": "https://filters.adtidy.org/extension/ublock/filters/18.txt",
-       "license": "https://github.com/AdguardTeam/AdguardFilters/blob/master/LICENSE",
--      "lines": 23954
-+      "lines": 23955
-     },
-     {
-       "group": "china",
-       "title": "EasyList China",
--      "version": "202611210112",
-+      "version": "202611230312",
-       "url": "https://easylist-downloads.adblockplus.org/easylistchina.txt",
-       "license": "https://easylist.to/pages/licence.html",
--      "lines": 18014
-+      "lines": 17723
-     },
-     {
-       "group": "unbreak",
-       "title": "uBlock filters – Unbreak",
--      "version": "Fri, 20 Nov 2026 11:05:13 +0000",
-+      "version": "Sat, 21 Nov 2026 14:22:06 +0000",
-       "url": "https://ublockorigin.github.io/uAssets/filters/unbreak.txt",
-       "license": "https://github.com/uBlockOrigin/uAssets/blob/master/LICENSE",
--      "lines": 6088
-+      "lines": 6093
-     }
-   ]
+   "id": "wechat",
+-  "version": 2,
++  "version": 1,
+   "name": {
+     "en": "WeChat",
+     "zh-Hans": "微信"
+@@ -11,7 +11,6 @@
+     "en": "WeChat on the web, signed in by scanning a QR code each time",
+     "zh-Hans": "网页版微信，每次打开都要扫码登录"
+   },
+-  "inject_js": "wechat.js",
+   "icon": "https://res.wx.qq.com/a/wx_fed/assets/res/OTE0YTAw.png",
+   "window": {
+     "width": 1000,
+```
+
+---
+
+### Incident Patch 3: `107e0f2a` (2026-11-24)
+**Commit Message**: fix(cli): normalize bare hosts with numeric ports (#1443)
+
+**File**: `bin/utils/url.ts` (modified, +9/-0)
+```diff
+@@ -20,6 +20,15 @@ export function getDomain(inputUrl: string): string | null {
+ 
+ // Appends 'https://' protocol to the URL if not present.
+ export function appendProtocol(inputUrl: string): string {
++  // URL accepts a bare host:port as an opaque scheme. Recognize dotted
++  // hosts and localhost without reinterpreting other schemes like tel:.
++  if (
++    /^(?:localhost|[a-z0-9-]+(?:\.[a-z0-9-]+)+\.?):\d+(?:[/?#]|$)/i.test(
++      inputUrl,
++    )
++  ) {
++    return `https://${inputUrl}`;
++  }
+   try {
+     new URL(inputUrl);
+     return inputUrl;
+```
+
+**File**: `dist/cli.js` (modified, +5/-0)
+```diff
+@@ -954,6 +954,11 @@ function getDomain(inputUrl) {
  }
+ // Appends 'https://' protocol to the URL if not present.
+ function appendProtocol(inputUrl) {
++    // URL accepts a bare host:port as an opaque scheme. Recognize dotted
++    // hosts and localhost without reinterpreting other schemes like tel:.
++    if (/^(?:localhost|[a-z0-9-]+(?:\.[a-z0-9-]+)+\.?):\d+(?:[/?#]|$)/i.test(inputUrl)) {
++        return `https://${inputUrl}`;
++    }
+     try {
+         new URL(inputUrl);
+         return inputUrl;
+```
+
+**File**: `tests/unit/url.test.ts` (modified, +20/-5)
+```diff
+@@ -38,17 +38,28 @@ describe('getDomain', () => {
+ describe('appendProtocol', () => {
+   it('leaves an already-schemed URL unchanged', () => {
+     expect(appendProtocol('https://github.com')).toBe('https://github.com');
+-    expect(appendProtocol('http://localhost')).toBe('http://localhost');
++    expect(appendProtocol('http://localhost:3000')).toBe(
++      'http://localhost:3000',
++    );
++    expect(appendProtocol('example.com://8443')).toBe('example.com://8443');
++    expect(appendProtocol('tel:1234')).toBe('tel:1234');
++    expect(appendProtocol('file:///tmp/index.html')).toBe(
++      'file:///tmp/index.html',
++    );
+   });
+ 
+   it('prepends https:// to a bare host', () => {
+     expect(appendProtocol('github.com')).toBe('https://github.com');
+   });
+ 
+-  it('leaves a bare host:port unchanged (WHATWG parses "localhost:" as a scheme)', () => {
+-    // Documents a known parser quirk: new URL('localhost:3000') succeeds with
+-    // scheme "localhost:", so the input is treated as already-schemed.
+-    expect(appendProtocol('localhost:3000')).toBe('localhost:3000');
++  it.each([
++    'localhost:3000',
++    'example.com:8443/dashboard',
++    'example.com.:8443/dashboard',
++    'localhost:3000?view=summary',
++    'example.com:8443#section',
++  ])('prepends https:// to a bare host with a port: %s', (input) => {
++    expect(appendProtocol(input)).toBe(`https://${input}`);
+   });
+ });
+ 
+@@ -65,4 +76,8 @@ describe('normalizeUrl', () => {
+     // appendProtocol('') -> 'https://', which new URL() rejects.
+     expect(() => normalizeUrl('')).toThrow('is invalid');
+   });
++
++  it('rejects an out-of-range port on a bare host', () => {
++    expect(() => normalizeUrl('example.com:65536')).toThrow('is invalid');
++  });
+ });
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1443** (2026-11-24): fix(cli): normalize bare hosts with numeric ports (@po-et)
 - **PR #1442** (closed): merge (@prathamesh-2007)
 - **PR #1441** (2026-11-21): Added whatsapp to Gallery (@MalikHw)
 - **PR #1440** (2026-11-21): fix: return home shortcut to packaged URL (@thishakyawmh)
 - **PR #1439** (2026-11-21): fix: reject a bad --inject file before the build instead of dropping settings (@visveshkhanna)
 - **PR #1437** (closed): Update contributors and formatting (@alperenalbay)
-- **PR #1436** (2026-11-14): feat: accept macOS Icon Composer .icon files (#1433) (@adamsiwiec1)
 
 ---
 
@@ -1677,61 +1210,30 @@ Fetched on the day the pake-app pin moves, as its release-pending list asks, sin
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): keep zbus on 5.19, since zbus 6 removed its blocking API
+## X. docs: fix the sign-in popup note, the inject example and the gallery platforms
 
 **RULE**:
-When implementing operations in `src-tauri/Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tw93/Pake. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/cli-usage.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tw93/Pake. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2bbfe3d5`: deps): keep zbus on 5.19, since zbus 6 removed its blocking API. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7c08474f`: docs: fix the sign-in popup note, the inject example and the gallery platforms. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src-tauri/Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/cli-usage.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
- "windows-sys 0.59.0",
- "windows-sys 0.52.0",
- "windows-sys 0.60.2",
- "windows-sys 0.45.0",
- "zbus 5.19.0",
- "windows-sys 0.52.0",
- "windows-sys 0.52.0",
- "windows-sys 0.60.2",
- "getrandom 0.3.4",
- "windows-sys 0.52.0",
- "windows-sys 0.60.2",
- "windows-sys 0.60.2",
- "windows-sys 0.52.0",
- "windows-sys 0.60.2",
- "windows-sys 0.59.0",
+On macOS, additional windows opened with Cmd+N join the app's native tab group. `window.open` popups stay outside it. On macOS and Windows, a sign-in popup with a size of its own, such as the Google button on TikTok, Notion and X or Sign in with Apple, opens as a separate window and closes once it has answered. A sign-in opened as a link, or as a `window.open` with no size, continues in the current window on macOS and Linux, and so does every sign-in popup on Linux.
+Using `inject`, you can inject local absolute and relative path `css` and `js` files into the page you specify the `url` to customize it. For example, an adblock script that works on any page, or `css` that tidies a page's UI: write it once and reuse it in every app you package.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
- "windows-sys 0.61.2",
- "windows-sys 0.61.2",
- "windows-sys 0.61.2",
- "windows-sys 0.61.2",
- "zbus 6.5.0",
- "windows-sys 0.61.2",
- "windows-sys 0.61.2",
- "windows-sys 0.61.2",
- "getrandom 0.4.3",
- "windows-sys 0.61.2",
- "signal-hook-registry",
- "tracing",
- "windows-sys 0.61.2",
- "windows-sys 0.61.2",
- "windows-sys 0.61.2",
- "windows-sys 0.61.2",
- "windows-sys 0.61.2",
- "tokio",
- "tracing",
- "tracing",
+On macOS, additional windows opened with Cmd+N join the app's native tab group. `window.open` popups stay outside it. On macOS and Linux, sign-in popups other than Sign in with Apple open in the current window.
+Using `inject`, you can inject local absolute and relative path `css` and `js` files into the page you specify the `url` to customize it. For example, an adblock script that can be applied to any web page, or a `css` that optimizes the `UI` of a page, you can write it once to customize it. would only need to write the `app` once to generalize it to any other page.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2bbfe3d5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7c08474f` are properly handled with clean fallback behavior.

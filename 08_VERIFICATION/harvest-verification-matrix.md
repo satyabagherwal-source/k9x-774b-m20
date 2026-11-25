@@ -12925,3 +12925,5 @@
 | `CYCLE-20261125-D64I` | `2026-11-25T03:28:23.106Z` | `google/tcmalloc` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10443` | Yes (`0f985a2e...`) |
 | `CYCLE-20261125-DA55` | `2026-11-25T03:28:28.313Z` | `SimonSchubert/LinuxCommandLibrary` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10444` | Yes (`642c4e87...`) |
 | `CYCLE-20261125-O0VY` | `2026-11-25T03:36:49.534Z` | `fastify/fastify` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10445` | Yes (`a89065c5...`) |
+| `CYCLE-20261125-60BT` | `2026-11-25T03:50:48.617Z` | `tw93/Pake` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10446` | Yes (`27cf0348...`) |
+| `CYCLE-20261125-63WU` | `2026-11-25T03:50:53.262Z` | `meshtastic/Meshtastic-Android` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10447` | Yes (`adbbb565...`) |
