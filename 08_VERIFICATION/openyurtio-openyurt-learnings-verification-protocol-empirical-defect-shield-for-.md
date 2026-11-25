@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:42:55.180Z",
+  "timestamp": "2026-11-25T00:17:28.098Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-openyurtio-openyurt-learnings",
+  "learning_id": "LEARN-EVO-openyurtio-openyurt-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [openyurtio-openyurt-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:42:55.180Z`  
-> **Learning ID**: `LEARN-REEXTRACT-openyurtio-openyurt-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-25T00:17:28.098Z`  
+> **Learning ID**: `LEARN-EVO-openyurtio-openyurt-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/openyurtio-openyurt-learnings.md`  
 > **Source**: github ([https://github.com/openyurtio/openyurt](https://github.com/openyurtio/openyurt))  
-> **Source Version**: `552dac7a`  
+> **Source Version**: `4840e2d1`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T08:28:12.408Z  
+> **Timestamp**: 2026-11-25T00:16:51.114Z  
 > **Learning ID**: `learn-github-openyurtio-openyurt`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/openyurtio-openyurt-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/openyurtio/openyurt](https://github.com/openyurtio/openyurt))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T08:27:49.873Z  
+> **Harvest Timestamp**: 2026-11-25T00:16:51.109Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: OpenYurt - Extending your native Kubernetes to edge(project under CNCF)
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 2010 stars
+- **Stars / Engagement**: 2008 stars
 
 ---
 
@@ -1307,14 +1307,11 @@ func GetMatchingTolerations(taints []v1.Taint, tolerations []v1.Toleration) (boo
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #2888** (2026-11-24): **fix(raven): only report tunnel endpoints as v1alpha1 activeEndpoint**
+  *Symptoms*: #### What type of PR is this? /kind bug /sig network  #### What this PR does / why we need it:  When a Gateway is read through `raven.openyurt.io/v1alpha1`, `status.activeEndpoint` can be an L7 proxy endpoint.  `ConvertFrom` in `pkg/apis/raven/v1alpha1/gateway_conversion.go` copied `status.activeEndpoints[0]` without checking its type. The gateway pickup controller keeps proxy and tunnel endpoints in one list sorted by node name, so the first entry may be a proxy. v1alpha1 only models the tunnel gateway.  Changes: - Use the first non-nil active endpoint with `type: tunnel`. Leave `activeEndpoint` nil if there is none. - Remove the early return for a nil `activeEndpoints` list. Previously, a reused destination object kept a stale `activeEndpoint`. This behaviour predates this PR. - Add unit tests for `ConvertTo` and `ConvertFrom`. `pkg/apis/raven/v1alpha1` had no tests before.  v1beta1 (the storage version) and raven-agent, which reads v1beta1, are not affected.  #### Which issue(s) this PR fixes: [Fixes #2887](https://github.com/openyurtio/openyurt/issues/2887)  #### Special notes for your reviewer:  Verified on a live cluster with yurt-manager built from master and from this branch:  | Scenario | v1alpha1 `activeEndpoint` on master | on this PR | |---|---|---| | proxy on node-a, tunnel on node-b | node-a (proxy) | node-b (tunnel) | | node-a is both proxy and tunnel | node-a (proxy) | node-a (tunnel) | | proxy only | node-b (proxy) | empty | | created through v1alpha1 | node-
+
 - **Issue #2873** (2026-11-11): **test(yurthub): fix pool scope metadata key format in multiplexer tests**
   *Symptoms*: poolScopeMetadata is keyed by schema.GroupVersionResource.String() (e.g. "apps/v1, Resource=deployments"), but the tests used the raw ConfigMap value "apps/v1/deployments", so TombstoneAndNilHandling failed its assertion. The concurrent update test also seeded the wrong key format, which triggered GVR cleanup and a nil pointer panic because filterStoreManager was not initialized.  Use gvr.String() keys consistently in the tests, initialize filterStoreManager in the concurrent test, and fix gofmt alignment.  <!--  Thanks for sending a pull request!  Here are some tips for you: https://github.com/openyurtio/openyurt/blob/master/CONTRIBUTING.md  -->  #### What type of PR is this? > Uncomment only one `/kind <>` line, hit enter to put that in a new line, and remove leading whitespace from that line: > /kind bug > /kind documentation > /kind enhancement > /kind good-first-issue > /kind feature > /kind question > /kind design > /sig ai > /sig iot > /sig network > /sig storage  #### What this PR does / why we need it:  #### Which issue(s) this PR fixes: <!-- *Automatically closes linked issue when PR is merged. Usage: `Fixes #<issue number>`, or `Fixes (paste link of issue)`. --> Fixes #  #### Special notes for your reviewer: <!-- use this label to assign your reviewer /assign @your_reviewer -->  #### Does this PR introduce a user-facing change? <!-- If no, just write "NONE" in the release-note block below. If yes, a release note is required: Enter your extended release note in the 
-
-- **Issue #2871** (2026-11-10): **[WIP] Fix failing GitHub Actions job golangci-lint**
-  *Symptoms*: Thanks for asking me to work on this. I will get started on it and keep this PR's description up to date as I form a plan and make progress.  > Fix the failing GitHub Actions job "golangci-lint" > Analyze the Actions logs, identify the root cause of the failure, and implement a fix. > Check run ID: 129605691827 > Job URL: https://github.com/openyurtio/openyurt/actions/runs/42748330255/job/129605691827 
-  **Post-Mortem & Fix Analysis**:
-  > ## [![Quality Gate Passed](https://sonarsource.github.io/sonarcloud-github-static-resources/v2/checks/QualityGateBadge/qg-passed-20px.png 'Quality Gate Passed')](https://sonarcloud.io/dashboard?id=openyurtio_openyurt&pullRequest=2871) **Quality Gate passed**   Issues   ![](https://sonarsource.github.io/sonarcloud-github-static-resources/v2/common/passed-16px.png '') [0 New issues](https://sonarcloud.io/project/issues?id=openyurtio_openyurt&pullRequest=2871&issueStatuses=OPEN,CONFIRMED&sinceLeakPeriod=true)   ![](https://sonarsource.github.io/sonarcloud-github-static-resources/v2/common/accepted-16px.png '') [0 Accepted issues](https://sonarcloud.io/project/issues?id=openyurtio_openyurt&pullRequest=2871&issueStatuses=ACCEPTED)  Measures   ![](https://sonarsource.github.io/sonarcloud-github-static-resources/v2/common/passed-16px.png '') [0 Security Hotspots](https://sonarcloud.io/project/security_hotspots?id=openyurtio_openyurt&pullRequest=2871&issueStatuses=OPEN,CONFIRMED&sinceLeakPerio
-  > ## [Codecov](https://app.codecov.io/gh/openyurtio/openyurt/pull/2871?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=openyurtio) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 46.67%. Comparing base ([`cdcd715`](https://app.codecov.io/gh/openyurtio/openyurt/commit/cdcd71515c046387cfc619f19a00c274d087a787?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=openyurtio)) to head ([`a0d396c`](https://app.codecov.io/gh/openyurtio/openyurt/commit/a0d396c3e53901d4c7dab8405a5f5edd2c2b6b56?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=openyurtio)).  <details><summary>Additional details and impacted files</summary>    ```diff @@           Coverage Diff           @@ ##           master    #2871   +/-   ## ==========
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1331,171 +1328,66 @@ func GetMatchingTolerations(taints []v1.Taint, tolerations []v1.Toleration) (boo
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `552dac7a` (2026-11-11)
-**Commit Message**: test(yurthub): fix pool scope metadata key format in multiplexer tests (#2873)
+### Incident Patch 1: `4840e2d1` (2026-11-24)
+**Commit Message**: fix(raven): only report tunnel endpoints as v1alpha1 activeEndpoint (#2888)
 
-poolScopeMetadata is keyed by schema.GroupVersionResource.String()
-(e.g. "apps/v1, Resource=deployments"), but the tests used the raw
-ConfigMap value "apps/v1/deployments", so TombstoneAndNilHandling failed
-its assertion. The concurrent update test also seeded the wrong key
-format, which triggered GVR cleanup and a nil pointer panic because
-filterStoreManager was not initialized.
+ConvertFrom copied status.activeEndpoints[0] into the v1alpha1
+status.activeEndpoint without checking its type. The gateway pickup
+controller stores proxy and tunnel endpoints in one list sorted by node
+name, so the first entry may be a proxy endpoint. v1alpha1 only models
+the tunnel gateway, so clients reading through v1alpha1 could see a
+proxy node as the active gateway, or an endpoint when only proxies were
+active.
 
-Use gvr.String() keys consistently in the tests, initialize
-filterStoreManager in the concurrent test, and fix gofmt alignment.
+Pick the first non-nil active endpoint whose type is tunnel, and leave
+activeEndpoint nil otherwise. Also drop the early return for a nil
+list, so a reused destination object no longer keeps a stale
+activeEndpoint.
 
-Signed-off-by: bingchang.tbc <[REDACTED_EMAIL]>
-Co-authored-by: bingchang.tbc <[REDACTED_EMAIL]>
+Add unit tests for ConvertTo and ConvertFrom.
 
-**File**: `pkg/yurthub/multiplexer/multiplexer_test.go` (modified, +27/-14)
+Co-authored-by: zhenggongcan <[REDACTED_EMAIL]>
+
+**File**: `pkg/apis/raven/v1alpha1/gateway_conversion.go` (modified, +13/-11)
 ```diff
-@@ -27,6 +27,7 @@ import (
- 	"github.com/stretchr/testify/assert"
- 	corev1 "k8s.io/api/core/v1"
- 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-+	"k8s.io/apimachinery/pkg/runtime/schema"
- 	"k8s.io/apimachinery/pkg/util/sets"
- 	apirequest "k8s.io/apiserver/pkg/endpoints/request"
- 	"k8s.io/client-go/tools/cache"
-@@ -36,11 +37,11 @@ import (
- 
- type dummyHealthChecker struct{}
- 
--func (d *dummyHealthChecker) RenewKubeletLeaseTime()                   {}
--func (d *dummyHealthChecker) IsHealthy() bool                          { return true }
--func (d *dummyHealthChecker) BackendIsHealthy(server *url.URL) bool     { return true }
--func (d *dummyHealthChecker) PickOneHealthyBackend() *url.URL          { return nil }
--func (d *dummyHealthChecker) UpdateBackends(servers []*url.URL)        {}
-+func (d *dummyHealthChecker) RenewKubeletLeaseTime()                {}
-+func (d *dummyHealthChecker) IsHealthy() bool                       { return true }
-+func (d *dummyHealthChecker) BackendIsHealthy(server *url.URL) bool { return true }
-+func (d *dummyHealthChecker) PickOneHealthyBackend() *url.URL       { return nil }
-+func (d *dummyHealthChecker) UpdateBackends(servers []*url.URL)     {}
- 
- type dummyLoadBalancer struct{}
- 
-@@ -92,20 +93,24 @@ func TestMultiplexerManager_TombstoneAndNilHandling(t *testing.T) {
- 		m.addConfigmap(tombstone)
- 	})
- 	assert.Equal(t, 1, m.poolScopeMetadata.Len())
--	assert.True(t, m.poolScopeMetadata.Has("apps/v1/deployments"))
-+	// poolScopeMetadata is keyed by schema.GroupVersionResource.String(),
-+	// e.g. "apps/v1, Resource=deployments", not the raw configmap value.
-+	deploymentsGVR := schema.GroupVersionResource{Group: "apps", Version: "v1", Resource: "deployments"}
-+	assert.True(t, m.poolScopeMetadata.Has(deploymentsGVR.String()))
- }
- 
- func TestMultiplexerManager_FilterStoreCleanupOnGVRDeletion(t *testing.T) {
-+	deploymentsKey := schema.GroupVersionResource{Group: "apps", Version: "v1", Resource: "deployments"}.String()
- 	fsm := &filterStoreManager{
- 		filterStores: make(map[string]*filterStore),
+@@ -104,19 +104,21 @@ func (src *Gateway) ConvertFrom(srcRaw conversion.Hub) error {
+ 			Subnets:   node.Subnets,
+ 		})
  	}
--	fsm.filterStores["apps/v1/deployments"] = &filterStore{}
-+	fsm.filterStores[deploymentsKey] = &filterStore{}
- 
- 	m := &MultiplexerManager{
- 		filterStoreManager:            fsm,
- 		lazyLoadedGVRCache:            make(map[string]Interface),
- 		lazyLoadedGVRCacheDestroyFunc: make(map[string]func()),
--		poolScopeMetadata:             sets.New("apps/v1/deployments"),
-+		poolScopeMetadata:             sets.New(deploymentsKey),
- 		leaderAddresses:               sets.New[string](),
- 		healthCheckerForLeaders:       &dummyHealthChecker{},
- 		loadBalancerForLeaders:        &dummyLoadBalancer{},
-@@ -121,21 +126,29 @@ func TestMultiplexerManager_FilterStoreCleanupOnGVRDeletion(t *testing.T) {
- 	m.updateLeaderHubConfiguration(cm)
- 
- 	// Verify filterStore for apps/v1/deployments was purged
--	assert.False(t, m.poolScopeMetadata.Has("apps/v1/deployments"))
-+	assert.False(t, m.poolScopeMetadata.Has(deploymentsKey))
- 	fsm.RLock()
--	_, exists := fsm.filterStores["apps/v1/deployments"]
-+	_, exists := fsm.filterStores[deploymentsKey]
- 	fsm.RUnlock()
- 	assert.False(t, exists, "filterStore for removed GVR should be purged from filterStoreManager")
- }
- 
- func TestMultiplexerManager_ConcurrentConfigMapUpdateAndResolution(t *testing.T) {
- 	m := &MultiplexerManager{
-+		// updateLeaderHubConfiguration purges filter stores of removed GVRs,
-+		// so filterStoreManager must be initialized as NewRequestMultiplexerManager does.
-+		filterStoreManager: &filterStoreManager{
-+			filterStores: make(map[string]*filterStore),
-+		},
- 		lazyLoadedGVRCache:            make(map[string]Interface),
- 		lazyLoadedGVRCacheDestroyFunc: make(map[string]func()),
--		poolScopeMetadata:             sets.New("apps/v1/deployments", "core/v1/services"),
--		leaderAddresses:               sets.New[string](),
--		healthCheckerForLeaders:       &dummyHealthChecker{},
--		loadBalancerForLeaders:        &dummyLoadBalancer{},
-+		poolScopeMetadata: sets.New(
-+			schema.GroupVersionResource{Group: "apps", Version: "v1", Resource: "deployments"}.String(),
-+			schema.GroupVersionResource{Group: "", Version: "v1", Resource: "services"}.String(),
-+		),
-+		leaderAddresses:         sets.New[string](),
-+		healthCheckerForLeaders: &dummyHealthChecker{},
-+		loadBalancerForLeaders:  &dummyLoadBalancer{},
+-	if srcRawV1beta1.Status.ActiveEndpoints == nil {
+-		klog.Infof("convert from v1beta1 to v1alpha1 for %s", src.Name)
+-		return nil
+-	}
+-	if len(srcRawV1beta1.Status.ActiveEndpoints) < 1 {
+-		src.Status.ActiveEndpoint = nil
+-	} else {
++	// v1alpha1 only knows the tunnel gateway, so pick the first active tunnel
++	// endpoint. ActiveEndpoints is sorted by node name and may also contain
++	// proxy endpoints, which must not be reported as the v1alpha1 gateway.
++	src.Status.ActiveEndpoint = nil
++	for _, ep := range srcRawV1beta1.Status.ActiveEndpoints {
++		if ep == nil || ep.Type != v1beta1.Tunnel {
++			continue
++		}
+ 		src.Status.ActiveEndpoint = &Endpoint{
+-			NodeName: srcRawV1beta1.Status.ActiveEndpoints[0].NodeName,
+-			PublicIP: srcRawV1beta1.Status.ActiveEndpoints[0].PublicIP,
+-			UnderNAT: srcRawV1beta1.Status.ActiveEndpoints[0].UnderNAT,
+-			Config:   srcRawV1beta1.Status.ActiveEndpoints[0].Config,
++			NodeName: ep.NodeName,
++			PublicIP: ep.PublicIP,
++			UnderNAT: ep.UnderNAT,
++			Config:   ep.Config,
+ 		}
++		break
  	}
- 
- 	var wg sync.WaitGroup
-```
-
----
-
-### Incident Patch 2: `47ea2144` (2026-11-10)
-**Commit Message**: Bugfix: do not panic when a yurthub serving port is disabled (#2744)
-
-ApplyTo leaves SecureServingInfo nil when BindPort <= 0, but prepareServerServing dereferenced it, so --proxy-secure-port=0 or --multiplexer-port=0 panicked at startup. Guard both serving blocks with a nil check; default ports stay positive so normal startup is unchanged.
-
-Signed-off-by: Rolando Medina Rosner <[REDACTED_EMAIL]>
-
-**File**: `cmd/yurthub/app/config/config.go` (modified, +22/-4)
-```diff
-@@ -452,8 +452,22 @@ func prepareServerServing(
- 	}).ApplyTo(&cfg.YurtHubSecureProxyServerServing); err != nil {
- 		return err
- 	}
--	cfg.YurtHubSecureProxyServerServing.ClientCA = caBundleProvider
--	cfg.YurtHubSecureProxyServerServing.DisableHTTP2 = true
-+	// SecureServingOptions.ApplyTo returns without populating the SecureServingInfo when
-+	// BindPort is not positive, which is how a port is switched off. Guard the follow-up
-+	// configuration so that disabling the port leaves the listener unconfigured instead of
-+	// panicking here, which would stop yurthub from starting at all.
-+	//
-+	// This one is warned about rather than merely noted: in-cluster clients reach the
-+	// apiserver through the secure proxy port, so switching it off keeps the node running
-+	// while silently cutting every pod's access to the apiserver. Not starting at all was
-+	// worse, but this must not be a quiet consequence of a stray flag either.
-+	if cfg.YurtHubSecureProxyServerServing != nil {
-+		cfg.YurtHubSecureProxyServerServing.ClientCA = caBundleProvider
-+		cfg.YurtHubSecureProxyServerServing.DisableHTTP2 = true
-+	} else {
-+		klog.Warningf("secure proxy port is %d, so the secure proxy server is disabled and in-cluster clients will not be able to reach the apiserver through %s",
-+			options.YurtHubProxySecurePort, projectinfo.GetHubName())
-+	}
- 
- 	if err := (&apiserveroptions.SecureServingOptions{
- 		BindAddress: net.ParseIP(options.NodeIP),
-@@ -468,8 +482,12 @@ func prepareServerServing(
- 	}).ApplyTo(&cfg.YurtHubMultiplexerServerServing); err != nil {
- 		return err
- 	}
--	cfg.YurtHubMultiplexerServerServing.ClientCA = caBundleProvider
--	cfg.YurtHubMultiplexerServerServing.DisableHTTP2 = true
-+	if cfg.YurtHubMultiplexerServerServing != nil {
-+		cfg.YurtHubMultiplexerServerServing.ClientCA = caBundleProvider
-+		cfg.YurtHubMultiplexerServerServing.DisableHTTP2 = true
-+	} else {
-+		klog.Infof("multiplexer port is %d, so the multiplexer server is disabled", options.PortForMultiplexer)
-+	}
+ 	klog.Infof("convert from v1beta1 to v1alpha1 for %s", src.Name)
  	return nil
- }
- 
 ```
 
-**File**: `cmd/yurthub/app/config/serving_disabled_port_test.go` (added, +211/-0)
+**File**: `pkg/apis/raven/v1alpha1/gateway_conversion_test.go` (added, +248/-0)
 ```diff
-@@ -0,0 +1,211 @@
+@@ -0,0 +1,248 @@
 +/*
 +Copyright 2026 The OpenYurt Authors.
 +
@@ -1512,448 +1404,139 @@ Signed-off-by: Rolando Medina Rosner <[REDACTED_EMAIL]>
 +limitations under the License.
 +*/
 +
-+package config
++package v1alpha1
 +
 +import (
-+	"crypto/rand"
-+	"crypto/rsa"
-+	"crypto/tls"
-+	"crypto/x509"
-+	"crypto/x509/pkix"
-+	"encoding/pem"
-+	"math/big"
-+	"os"
-+	"path/filepath"
++	"reflect"
 +	"testing"
-+	"time"
 +
-+	"github.com/openyurtio/openyurt/cmd/yurthub/app/options"
++	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++
++	"github.com/openyurtio/openyurt/pkg/apis/raven/v1beta1"
 +)
 +
-+// fakeCertManager serves a real self-signed certificate file, which is all
-+// prepareServerServing needs: a server cert/key pair path and a CA bundle path.
-+type fakeCertManager struct {
-+	certFile string
-+}
-+
-+func (f *fakeCertManager) Start()                                   {}
-+func (f *fakeCertManager) Stop()                                    {}
-+func (f *fakeCertManager) Ready() bool                              { return true }
-+func (f *fakeCertManager) UpdateBootstrapConf(_ string) error       { return nil }
-+func (f *fakeCertManager) GetHubConfFile() string                   { return "" }
-+func (f *fakeCertManager) GetCAData() []byte                        { return nil }
-+func (f *fakeCertManager) GetCaFile() string                        { return f.certFile }
-+func (f *fakeCertManager) GetAPIServerClientCert() *tls.Certificate { return nil }
-+func (f *fakeCertManager) GetHubServerCert() *tls.Certificate       { return nil }
-+func (f *fakeCertManager) GetHubServerCertFile() string             { return f.certFile }
-+
-+func writeSelfSignedCert(t *testing.T, dir string) string {
-+	t.Helper()
-+	key, err := rsa.GenerateKey(rand.Reader, 2048)
-+	if err != nil {
-+		t.Fatalf("could not generate key: %v", err)
-+	}
-+	tmpl := &x509.Certificate{
-+		SerialNumber:          big.NewInt(1),
-+		Subject:               pkix.Name{CommonName: "yurthub-test-ca"},
-+		NotBefore:             time.Now().Add(-time.Hour),
-+		NotAfter:              time.Now().Add(24 * time.Hour),
-+		IsCA:                  true,
-+		KeyUsage:              x509.KeyUsageCertSign | x509.KeyUsageDigitalSignature | x509.KeyUsageKeyEncipherment,
-+		BasicConstraintsValid: true,
-+	}
-+	der, err := x509.CreateCertificate(rand.Reader, tmpl, tmpl, &key.PublicKey, key)
-+	if err != nil {
-+		t.Fatalf("could not create certificate: %v", err)
-+	}
-+	path := filepath.Join(dir, "yurthub-server-current.pem")
-+	f, err := os.Create(path)
-+	if err != nil {
-+		t.Fatalf("could not create cert file: %v", err)
-+	}
-+	defer f.Close()
-+	if err := pem.Encode(f, &pem.Block{Type: "CERTIFICATE", Bytes: der}); err != nil {
-+		t.Fatalf("could not encode certificate: %v", err)
-+	}
-+	if err := pem.Encode(f, &pem.Block{Type: "RSA PRIVATE KEY", Bytes: x509.MarshalPKCS1PrivateKey(key)}); err != nil {
-+		t.Fatalf("could not encode key: %v", err)
-+	}
-+	return path
-+}
-+
-+// A non-positive port is how a listener is switched off: SecureServingOptions.ApplyTo
-+// returns early without populating the SecureServingInfo. Configuring the returned
-+// (nil) SecureServingInfo unconditionally used to panic here, so setting
-+// --multiplexer-port=0 or --proxy-secure-port=0 stopped yurthub from starting at all —
-+// which on an edge node means it never comes back from a reboot.
-+func TestPrepareServerServingWithDisabledPorts(t *testing.T) {
-+	dir, err := os.MkdirTemp("", "yurthub-serving")
-+	if err != nil {
-+		t.Fatalf("could not create temp dir: %v", err)
-+	}
-+	defer os.RemoveAll(dir)
-+	certMgr := &fakeCertManager{certFile: writeSelfSignedCert(t, dir)}
-+
-+	testcases := map[string]struct {
-+		multiplexerPort int
-+		secureProxyPort int
-+		wantMultiplexer bool
-+		wantSecureProxy bool
++func TestGatewayConvertTo(t *testing.T) {
++	selector := &metav1.LabelSelector{MatchLabels: map[string]string{"raven.openyurt.io/gateway": "gw-a"}}
++	cases := map[string]struct {
++		src  *Gateway
++		want *v1beta1.Gateway
 +	}{
-+		"multiplexer port disabled": {
-+			multiplexerPort: 0, secureProxyPort: 0, wantMultiplexer: false, wantSecureProxy: false,
++		"endpoints and active endpoint become tunnel endpoints": {
++			src: &Gateway{
++				ObjectMeta: metav1.ObjectMeta{Name: "gw-a"},
++				Spec: GatewaySpec{
++					NodeSelector: selector,
++					ExposeType:   ExposeTypeLoadBalancer,
++					Endpoints: []Endpoint{
++						{NodeName: "node-a", UnderNAT: true, Config: map[string]string{"k": "v"}},
++						{NodeName: "node-b", PublicIP: "1.2.3.4"},
++					},
++				},
++				Status: GatewayStatus{
++					Nodes: []NodeInfo{
++						{NodeName: "node-a", PrivateIP: "10.0.0.1", Subnets: []string{"10.244.0.0/24"}},
++					},
++					ActiveEndpoint: &Endpoint{NodeName: "node-b", PublicIP: "1.2.3.4"},
++				},
++			},
++			want: &v1beta1.Gateway{
++				ObjectMeta: metav1.ObjectMeta{Name: "gw-a"},
++				Spec: v1beta1.GatewaySpec{
++					NodeSelector: selector,
++					ExposeType:   v1beta1.ExposeTypeLoadBalancer,
++					ProxyConfig:  v1beta1.ProxyConfiguration{Replicas: 1},
++					TunnelConfig: v1beta1.TunnelConfiguration{Replicas: 1},
++					Endpoints: []v1beta1.Endpoint{
++						{NodeName: "node-a", UnderNAT: true, Config: map[string]string{"k": "v"},
++							Type: v1beta1.Tunnel, Port: v1beta1.DefaultTunnelServerExposedPort},
++						{NodeName: "node-b", PublicIP: "1.2.3.4",
++							Type: v1beta1.Tunnel, Port: v1beta1.DefaultTunnelServerExposedPort},
++					},
++				},
++				Status: v1beta1.GatewayStatus{
++					Nodes: []v1beta1.NodeInfo{
++						{NodeName: "node-a", PrivateIP: "10.0.0.1", Subnets: []string{"10.244.0.0/24"}},
++					},
++					ActiveEndpoints: []*v1beta1.Endpoint{
++						{NodeName: "node-b", PublicIP: "1.2.3.4",
++							Type: v1beta1.Tunnel, Port: v1beta1.DefaultTunnelServerExposedPort},
++					},
++				},
++			},
 +		},
-+		"negative ports are disabled too": {
-+			multiplexerPort: -1, secureProxyPort: -1, wantMultiplexer: false, wantSecureProxy: false,
-+		},
-+		// The realistic mitigation: close the routable multiplexer listener while the
-+		// secure proxy that pods talk to keeps serving. A positive port really binds, so
-+		// use one that will not collide with a yurthub running on this machine.
-+		"only the multiplexer port disabled": {
-+			multiplexerPort: 0, secureProxyPort: 34681, wantMultiplexer: false, wantSecureProxy: true,
++		"no active endpoint": {
++			src: &Gateway{ObjectMeta: metav1.ObjectMeta{Name: "gw-empty"}},
++			want: &v1beta1.Gateway{
++				ObjectMeta: metav1.ObjectMeta{Name: "gw-empty"},
++				Spec: v1beta1.GatewaySpec{
++					ProxyConfig:  v1beta1.ProxyConfiguration{Replicas: 1},
++					TunnelConfig: v1beta1.TunnelConfiguration{Replicas: 1},
++				},
++			},
 +		},
 +	}
 +
-+	for name, tt := range testcases {
++	for name, tc := range cases {
 +		t.Run(name, func(t *testing.T) {
-+			opts := options.NewYurtHubOptions()
-+			opts.NodeIP = "127.0.0.1"
-+			opts.YurtHubHost = "127.0.0.1"
-+			opts.YurtHubProxyHost = "127.0.0.1"
-+			// Insecure listeners actually bind, so keep them off in the unit test.
-+			opts.YurtHubPort = 0
-+			opts.
-```
-
----
-
-### Incident Patch 3: `6cdfd1e4` (2026-11-10)
-**Commit Message**: Security/csr approver identity binding audit logging (#2738)
-
-* fix(yurtmanager): prevent nil map panic in hubleader controller when LeaderNodeLabelSelector is nil
-
-* fix(yurthub): add missing Version in pod GC key construction causing key mismatch in enhancement mode
-
-In gcPodsWhenRestart, KeyBuildInfo for pods fetched from the apiserver
-was missing the Version field. In enhancement mode, this produced keys
-like 'pods..core' instead of 'pods.v1.core', causing them to never
-match the cached keys from ListResourceKeysOfComponent. As a result,
-all cached pods appeared deleted, triggering the safety guard that
-skips GC entirely — making pod GC silently non-functional on restart.
-
-Added Version: 'v1' to the KeyBuildInfo and created gc_test.go with
-unit tests that prove the mismatch and verify the fix.
-
-* fix(yurthub): use uint64 parsing for resourceVersion in completeListObjWithObjs to prevent overflow
-
-In completeListObjWithObjs, resourceVersion was parsed using strconv.Atoi into a signed Go int, ignoring parsing errors. On 32-bit platforms (such as ARM32 linux/arm/v7 edge devices), signed int is 32-bit (max 2147483647). Any resourceVersion above 2^31-1 caused strconv.Atoi to return E
-
-**File**: `pkg/yurthub/cachemanager/cache_manager.go` (modified, +13/-8)
-```diff
-@@ -325,23 +325,28 @@ func (cm *cacheManager) prepareGvkForListObj(gvr schema.GroupVersionResource) (s
- }
- 
- func completeListObjWithObjs(listObj runtime.Object, objs []runtime.Object) error {
--	listRv := 0
--	rvStr := ""
--	rvInt := 0
-+	var listRv uint64
- 	accessor := meta.NewAccessor()
- 	for i := range objs {
--		rvStr, _ = accessor.ResourceVersion(objs[i])
--		rvInt, _ = strconv.Atoi(rvStr)
--		if rvInt > listRv {
--			listRv = rvInt
-+		rvStr, err := accessor.ResourceVersion(objs[i])
-+		if err != nil || len(rvStr) == 0 {
-+			continue
-+		}
-+		rvUint, err := strconv.ParseUint(rvStr, 10, 64)
-+		if err != nil {
-+			klog.Warningf("failed to parse resourceVersion %q: %v", rvStr, err)
-+			continue
-+		}
-+		if rvUint > listRv {
-+			listRv = rvUint
- 		}
- 	}
- 
- 	if err := meta.SetList(listObj, objs); err != nil {
- 		return fmt.Errorf("could not meta set list with %d objects, %v", len(objs), err)
- 	}
- 
--	return accessor.SetResourceVersion(listObj, strconv.Itoa(listRv))
-+	return accessor.SetResourceVersion(listObj, strconv.FormatUint(listRv, 10))
- }
- 
- func generateEmptyListObjOfGVK(listGvk schema.GroupVersionKind) (runtime.Object, error) {
-```
-
-**File**: `pkg/yurthub/cachemanager/cache_manager_test.go` (modified, +57/-0)
-```diff
-@@ -3774,3 +3774,60 @@ func TestCacheWatchResponseKeepsInMemoryCacheConsistentWithDiskOnAccessConflict(
- }
- 
- // TODO: in-memory cache unit tests
-+
-+func Test_completeListObjWithObjs(t *testing.T) {
-+	testcases := map[string]struct {
-+		objs       []runtime.Object
-+		expectedRv string
-+	}{
-+		"normal resourceVersion numbers": {
-+			objs: []runtime.Object{
-+				&v1.Pod{ObjectMeta: metav1.ObjectMeta{Name: "pod1", ResourceVersion: "100"}},
-+				&v1.Pod{ObjectMeta: metav1.ObjectMeta{Name: "pod2", ResourceVersion: "250"}},
-+				&v1.Pod{ObjectMeta: metav1.ObjectMeta{Name: "pod3", ResourceVersion: "150"}},
-+			},
-+			expectedRv: "250",
-+		},
-+		"large uint64 resourceVersion exceeding 32-bit signed int max": {
-+			objs: []runtime.Object{
-+				&v1.Pod{ObjectMeta: metav1.ObjectMeta{Name: "pod1", ResourceVersion: "2147483647"}},
-+				&v1.Pod{ObjectMeta: metav1.ObjectMeta{Name: "pod2", ResourceVersion: "3000000000"}},
-+				&v1.Pod{ObjectMeta: metav1.ObjectMeta{Name: "pod3", ResourceVersion: "2500000000"}},
-+			},
-+			expectedRv: "3000000000",
-+		},
-+		"very large 64-bit unsigned int resourceVersion": {
-+			objs: []runtime.Object{
-+				&v1.Pod{ObjectMeta: metav1.ObjectMeta{Name: "pod1", ResourceVersion: "18446744073709551600"}},
-+				&v1.Pod{ObjectMeta: metav1.ObjectMeta{Name: "pod2", ResourceVersion: "100"}},
-+			},
-+			expectedRv: "18446744073709551600",
-+		},
-+		"empty and invalid resourceVersions handled safely": {
-+			objs: []runtime.Object{
-+				&v1.Pod{ObjectMeta: metav1.ObjectMeta{Name: "pod1", ResourceVersion: ""}},
-+				&v1.Pod{ObjectMeta: metav1.ObjectMeta{Name: "pod2", ResourceVersion: "invalid"}},
-+				&v1.Pod{ObjectMeta: metav1.ObjectMeta{Name: "pod3", ResourceVersion: "500"}},
-+			},
-+			expectedRv: "500",
-+		},
-+	}
-+
-+	for name, tc := range testcases {
-+		t.Run(name, func(t *testing.T) {
-+			listObj := &v1.PodList{}
-+			err := completeListObjWithObjs(listObj, tc.objs)
-+			if err != nil {
-+				t.Fatalf("unexpected error: %v", err)
++			dst := &v1beta1.Gateway{}
++			if err := tc.src.ConvertTo(dst); err != nil {
++				t.Fatalf("ConvertTo() error = %v", err)
 +			}
-+			accessor := meta.NewAccessor()
-+			rv, err := accessor.ResourceVersion(listObj)
-+			if err != nil {
-+				t.Fatalf("failed to get list object resourceVersion: %v", err)
-+			}
-+			if rv != tc.expectedRv {
-+				t.Errorf("expected list resourceVersion %q, got %q", tc.expectedRv, rv)
++			if !reflect.DeepEqual(dst, tc.want) {
++				t.Errorf("ConvertTo() got\n%+v\nwant\n%+v", dst, tc.want)
 +			}
 +		})
 +	}
 +}
-```
-
-**File**: `pkg/yurthub/gc/gc.go` (modified, +1/-0)
-```diff
-@@ -141,6 +141,7 @@ func (m *GCManager) gcPodsWhenRestart() {
- 			Namespace: ns,
- 			Name:      name,
- 			Resources: "pods",
-+			Version:   "v1",
- 		})
- 		if err != nil {
- 			klog.Errorf("could not get pod key for %s/%s, %v", ns, name, err)
-```
-
-**File**: `pkg/yurthub/gc/gc_test.go` (modified, +1/-1)
-```diff
-@@ -1,5 +1,5 @@
- /*
--Copyright 2026 The OpenYurt Authors.
-+Copyright 2025 The OpenYurt Authors.
- 
- Licensed under the Apache License, Version 2.0 (the "License");
- you may not use this file except in compliance with the License.
-```
-
-**File**: `pkg/yurtmanager/controller/csrapprover/csr_approver_controller.go` (modified, +19/-0)
-```diff
-@@ -388,6 +388,10 @@ func isYurtTLSServerCert(csr *certificatesv1.CertificateSigningRequest, x509cr *
- 		return false
- 	}
- 
-+	if strings.HasPrefix(csr.Spec.Username, "system:node:") && csr.Spec.Username != x509cr.Subject.CommonName {
-+		return false
-+	}
 +
- 	if !serverRequiredUsages.Equal(usagesToSet(csr.Spec.Usages)) {
- 		return false
- 	}
-@@ -415,6 +419,21 @@ func isYurtHubNodeCert(csr *certificatesv1.CertificateSigningRequest, x509cr *x5
- 		return false
- 	}
- 
-+	// SECURITY FIX: Bind the requester identity to the requested node identity.
-+	// This prevents lateral movement where one node requests certs for another node.
-+	// Exception: system:bootstrappers group is allowed for initial node certificate issuance.
-+	if strings.HasPrefix(csr.Spec.Username, "system:node:") {
-+		// An existing node is requesting a cert - the CN must match the requesting node's identity
-+		if csr.Spec.Username != x509cr.Subject.CommonName {
-+			klog.Warningf("CSR %s: requester username %q does not match requested CommonName %q",
-+				csr.Name, csr.Spec.Username, x509cr.Subject.CommonName)
-+			return false
-+		}
-+	}
-+	// If username does not start with "system:node:", it should be a bootstrap token (system:bootstrappers).
-+	// Bootstrap tokens are allowed to request node certs during initial join.
-+	// We don't need additional checks here as the API server already validates bootstrap token permissions.
-+
- 	if !clientRequiredUsages.Equal(usagesToSet(csr.Spec.Usages)) {
- 		return false
- 	}
-```
-
-**File**: `pkg/yurtmanager/controller/csrapprover/csr_approver_controller_test.go` (modified, +135/-0)
-```diff
-@@ -308,6 +308,141 @@ func TestReconcile(t *testing.T) {
- 				},
- 			},
- 		},
-+		"yurthub node client CSR with mismatched node username and commonName": {
-+			obj: &certificatesv1.CertificateSigningRequest{
-+				ObjectMeta: metav1.ObjectMeta{
-+					Name:      "mismatched-node-client-csr",
-+					Namespace: "default",
-+				},
-+				Spec: certificatesv1.CertificateSigningRequestSpec{
-+					Username:   "system:node:attacker-node",
-+					SignerName: certificatesv1.KubeAPIServerClientSignerName,
-+					Usages: []certificatesv1.KeyUsage{
-+						certificatesv1.UsageDigitalSignature,
-+						certificatesv1.UsageKeyEncipherment,
-+						certificatesv1.UsageClientAuth,
++func TestGatewayConvertFrom(t *testing.T) {
++	cases := map[string]struct {
++		src                *v1beta1.Gateway
++		wantActiveEndpoint *Endpoint
++		wantEndpoints      []Endpoint
++	}{
++		"proxy endpoint sorted before tunnel endpoint": {
++			// ActiveEndpoints is sorted by node name by the gateway pickup
++			// controller, so a proxy endpoint can come first.
++			src: &v1beta1.Gateway{
++				ObjectMeta: metav1.ObjectMeta{Name: "gw-a"},
++				Spec: v1beta1.GatewaySpec{
++					Endpoints: []v1beta1.Endpoint{
++						{NodeName: "node-a", Type: v1beta1.Proxy, Port: v1beta1.DefaultProxyServerExposedPort},
++						{NodeName: "node-b", Type: v1beta1.Tunnel, Port: v1beta1.DefaultTunnelServerExposedPort, UnderNAT: true},
 +					},
-+					Request: newCSRData("system:node:victim-node", []string{token.YurtHubCSROrg, user.NodesGroup, "openyurt:tenant:xxx"}, []string{}, []net.IP{}),
++				},
++				Status: v1beta1.GatewayStatus{
++					ActiveEndpoints: []*v1beta1.Endpoint{
++						{NodeName: "node-a", Type: v1beta1.Proxy, PublicIP: "1.1.1.1"},
++						{NodeName: "node-b", Type: v1beta1.Tunnel, PublicIP: "2.2.2.2", UnderNAT: true,
++							Config: map[string]string{"enable-l3-tunnel": "true"}},
++					},
 +				},
 +			},
-+			csrV1Supported: true,
-+			skipRequest:    true,
-+			expectedObj: &certificatesv1.CertificateSigningRequest{
-+				TypeMeta: metav1.TypeMeta{},
-+				ObjectMeta: metav1.ObjectMeta{
-+					Name:      "mismatched-node-client-csr",
-+					Namespace: "default",
-+				},
-+				Spec: certificatesv1.CertificateSigningRequestSpec{
-+					Username:   "system:node:attacker-node",
-+					SignerName: certificatesv1.KubeAPIServerClientSignerName,
-+					Usages: []certificatesv1.KeyUsage{
-+						certificatesv1.UsageDigitalSignature,
-+						certificatesv1.UsageKeyEncipherment,
-+						certificatesv1.UsageClientAuth,
-+					},
-+					Request: []byte{},
-+				},
-+				// SECURITY: CSR should NOT be auto-approved - Status should remain empty
-+				Status: certificatesv1.CertificateSigningRequestStatus{},
++			wantActiveEndpoint: &Endpoint{NodeName: "node-b", PublicIP: "2.2.2.2", UnderNAT: true,
++				Config: map[string]string{"enable-l3-tunnel": "true"}},
++			wantEndpoints: []Endpoint{
++				{NodeName: "node-a"},
++				{NodeName: "node-b", UnderNAT: true},
 +			},
 +		},
-+		"yurthub node client CSR with matching node username should be approved": {
-+			obj: &certificatesv1.CertificateSigningRequest{
-+				ObjectMeta: metav1.ObjectMeta{
-+					Name:      "matched-node-client-csr",
-+					Namespace: "default",
-+				},
-+				Spec: certificatesv1.CertificateSigningRequestSpec{
-+					Username:   "system:node:mynode",
-+					SignerName: certificatesv1.KubeAPIServerClientSignerName,
-+					Usages: []certificatesv1.KeyUsage{
-+						certificatesv1.UsageDigitalSignature,
-+						certificatesv1.UsageKeyEncipherment,
-+						certificatesv1.UsageClientAuth,
-+					},
-+					Request: newCSRData("system:node:mynode", []string{token.YurtHubCSROrg, user.NodesGroup, "openyurt:tenant:xxx"}, []string{}, []net.IP{}),
-+				},
-+			},
-+			csrV1Supported: true,
-+			skipRequest:    true,
-+			expectedObj: &certificatesv1.CertificateSigningRequest{
-+				TypeMeta: metav1.TypeMeta{},
-+				ObjectMeta: metav1.ObjectMeta{
-+					Name:      "matched-node-client-csr",
-+					Namespace: "default",
-+				},
-+				Spec: certificatesv1.CertificateSigningRequestSpec{
-+					Username:   "system:node:mynode",
-+					SignerName: certificatesv1.KubeAPIServerClientSignerName,
-+					Usages: []certificatesv1.KeyUsage{
-+						certificatesv1.UsageDigitalSignature,
-+						certificatesv1.UsageKeyEncipherment,
-+						certificatesv1.UsageClientAuth,
-+					},
-+					Request: []byte{},
-+				},
-+				// SECURITY: CSR should be auto-approved because username matches CN
-+				Status: certificatesv1.CertificateSigningRequestStatus{
-+					Conditions: []certificatesv1.CertificateSigningRequestCondition{
-+						{
-+							Type:    certificatesv1.CertificateApproved,
-+							Status:  corev1.ConditionTrue,
-+							Reason:  "AutoApproved",
-+							Message: "Auto approving yurthub node client certificate",
-+						},
-+					},
-+				},
-+			},
-+		},
-+		"yurthub node client CSR from bootstrap token should be approved": {
-+			obj: &certificatesv1.CertificateSigningRequest{
-+				ObjectMeta: metav1.ObjectMeta{
-+					Name:      "bootstrap-node-client-csr",
-+					Namespace: "default",
-+				},
-+				Spec: certificatesv1.CertificateSigningRequestSpec{
-+					Username:   "system:bootstrap:abcdef",
-+					SignerName: certificatesv1.KubeAPIServerClientSignerName,
-+					Usages: []certificatesv1.KeyUsage{
-+						certificatesv1.UsageDigitalSignature,
-+						certificatesv1.UsageKeyEncipherment,
-+						certificatesv1.UsageClientAuth,
-+					},
-+					Request: newCSRData("system:node:new-node", []string{token.YurtHubCSROrg, user.NodesGroup}, []string{}, []net.IP{}),
-+				},
-+			},
-+			csrV1Supported: true,
-+			skipRequest:    true,
-+			expectedObj: &certificatesv1.CertificateSigningRequest{
-+				TypeMeta: metav1.TypeMeta{},
-+				ObjectMeta: metav1.ObjectMeta{
-+					Name:      "bootstrap-node-client-csr",
-+					Namespace: "default",
-+				},
-+				Spec: certificatesv1.CertificateSigningRequestSpec{
-+					Username:   "system:bootstrap:abcdef",
-+					SignerName: certificatesv1.KubeAPIServerClientSignerName,
-+					Usages: []certificatesv1.KeyUsage{
-+						certificatesv1.UsageDigitalSignature,
-+						certificatesv1.UsageKeyEncipherment,
-+						certificatesv1.UsageClientAuth,
-+					},
-+					Request: []byte{},
-+				},
-+				// SECURITY: Bootstrap tokens should be allowed for initial node join
-+				Status: certificatesv1.CertificateSigningRequestStatus{
-+					Conditions: []certificatesv1.Cer
++		"same node serves proxy and tunnel": {
++			// The relative order of entries with equal node names is not
++			// guaranteed by electActiveEndpoint (sort.Slice is not stable),
++			// so this case constructs the proxy-first order explicitly.
++			src: &v1beta1.Gateway{
++				ObjectMeta: metav1.ObjectMeta{Name: "gw-same"},
++				St
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2888** (2026-11-24): fix(raven): only report tunnel endpoints as v1alpha1 activeEndpoint (@Jonny-ee)
 - **PR #2873** (2026-11-11): test(yurthub): fix pool scope metadata key format in multiplexer tests (@zyjhtangtang)
 - **PR #2871** (closed): [WIP] Fix failing GitHub Actions job golangci-lint (@Copilot)
 - **PR #2870** (closed): Normalize kubelet EnvironmentFile paths (@Copilot)
 - **PR #2869** (closed): Normalize kubelet environment-file paths (@Copilot)
 - **PR #2867** (closed): Remove duplicate environment-file parser declaration (@Copilot)
-- **PR #2864** (2026-11-10): build(deps): bump github.com/onsi/gomega from 1.42.1 to 1.44.0 (@dependabot[bot])
 
 ---
 
@@ -1973,60 +1556,53 @@ In completeListObjWithObjs, resourceVersion was parsed using strconv.Atoi into a
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. test(yurthub): fix pool scope metadata key format in multiplexer tests (#2873)
+## X. raven): only report tunnel endpoints as v1alpha1 activeEndpoint
 
 **RULE**:
-When implementing operations in `pkg/yurthub/multiplexer/multiplexer_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in openyurtio/openyurt. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/apis/raven/v1alpha1/gateway_conversion.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in openyurtio/openyurt. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `552dac7a`: test(yurthub): fix pool scope metadata key format in multiplexer tests (#2873). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4840e2d1`: raven): only report tunnel endpoints as v1alpha1 activeEndpoint. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/yurthub/multiplexer/multiplexer_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/apis/raven/v1alpha1/gateway_conversion.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"k8s.io/apimachinery/pkg/runtime/schema"
-func (d *dummyHealthChecker) RenewKubeletLeaseTime()                {}
-func (d *dummyHealthChecker) IsHealthy() bool                       { return true }
-func (d *dummyHealthChecker) BackendIsHealthy(server *url.URL) bool { return true }
-func (d *dummyHealthChecker) PickOneHealthyBackend() *url.URL       { return nil }
-func (d *dummyHealthChecker) UpdateBackends(servers []*url.URL)     {}
-	// poolScopeMetadata is keyed by schema.GroupVersionResource.String(),
-	// e.g. "apps/v1, Resource=deployments", not the raw configmap value.
-	deploymentsGVR := schema.GroupVersionResource{Group: "apps", Version: "v1", Resource: "deployments"}
-	assert.True(t, m.poolScopeMetadata.Has(deploymentsGVR.String()))
-	deploymentsKey := schema.GroupVersionResource{Group: "apps", Version: "v1", Resource: "deployments"}.String()
-	fsm.filterStores[deploymentsKey] = &filterStore{}
-		poolScopeMetadata:             sets.New(deploymentsKey),
-	assert.False(t, m.poolScopeMetadata.Has(deploymentsKey))
-	_, exists := fsm.filterStores[deploymentsKey]
-		// updateLeaderHubConfiguration purges filter stores of removed GVRs,
-		// so filterStoreManager must be initialized as NewReq
+	// v1alpha1 only knows the tunnel gateway, so pick the first active tunnel
+	// endpoint. ActiveEndpoints is sorted by node name and may also contain
+	// proxy endpoints, which must not be reported as the v1alpha1 gateway.
+	src.Status.ActiveEndpoint = nil
+	for _, ep := range srcRawV1beta1.Status.ActiveEndpoints {
+		if ep == nil || ep.Type != v1beta1.Tunnel {
+			continue
+		}
+			NodeName: ep.NodeName,
+			PublicIP: ep.PublicIP,
+			UnderNAT: ep.UnderNAT,
+			Config:   ep.Config,
+		break
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// Anti-pattern to NEVER write (induced failure mode):
-func (d *dummyHealthChecker) RenewKubeletLeaseTime()                   {}
-func (d *dummyHealthChecker) IsHealthy() bool                          { return true }
-func (d *dummyHealthChecker) BackendIsHealthy(server *url.URL) bool     { return true }
-func (d *dummyHealthChecker) PickOneHealthyBackend() *url.URL          { return nil }
-func (d *dummyHealthChecker) UpdateBackends(servers []*url.URL)        {}
-	assert.True(t, m.poolScopeMetadata.Has("apps/v1/deployments"))
-	fsm.filterStores["apps/v1/deployments"] = &filterStore{}
-		poolScopeMetadata:             sets.New("apps/v1/deployments"),
-	assert.False(t, m.poolScopeMetadata.Has("apps/v1/deployments"))
-	_, exists := fsm.filterStores["apps/v1/deployments"]
-		poolScopeMetadata:             sets.New("apps/v1/deployments", "core/v1/services"),
-		leaderAddresses:               sets.New[string](),
-		healthCheckerForLeaders:       &dummyHealthChecker{},
-		loadBalancerForLeaders:        &dummyLoadBalancer{},
+// Induced defect failure mode:
+	if srcRawV1beta1.Status.ActiveEndpoints == nil {
+		klog.Infof("convert from v1beta1 to v1alpha1 for %s", src.Name)
+		return nil
+	}
+	if len(srcRawV1beta1.Status.ActiveEndpoints) < 1 {
+		src.Status.ActiveEndpoint = nil
+	} else {
+			NodeName: srcRawV1beta1.Status.ActiveEndpoints[0].NodeName,
+			PublicIP: srcRawV1beta1.Status.ActiveEndpoints[0].PublicIP,
+			UnderNAT: srcRawV1beta1.Status.ActiveEndpoints[0].UnderNAT,
+			Config:   srcRawV1beta1.Status.ActiveEndpoints[0].Config,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `552dac7a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4840e2d1` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

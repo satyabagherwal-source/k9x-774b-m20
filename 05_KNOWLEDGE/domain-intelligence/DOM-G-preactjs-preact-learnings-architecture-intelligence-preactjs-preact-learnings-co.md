@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-21T00:44:00.692Z",
+  "timestamp": "2026-11-25T00:17:26.428Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-preactjs-preact-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [preactjs-preact-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-21T00:44:00.692Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T00:17:26.428Z`  
 > **Learning ID**: `LEARN-EVO-preactjs-preact-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 77%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 70%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from preactjs-preact-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/preactjs-preact-learnings.md`  
 > **Source**: github ([https://github.com/preactjs/preact](https://github.com/preactjs/preact))  
-> **Source Version**: `39d353a8`  
+> **Source Version**: `1fbc07f6`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T00:43:45.238Z  
+> **Timestamp**: 2026-11-25T00:16:46.068Z  
 > **Learning ID**: `learn-github-preactjs-preact`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/preactjs-preact-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/preactjs/preact](https://github.com/preactjs/preact))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T00:43:45.232Z  
+> **Harvest Timestamp**: 2026-11-25T00:16:45.944Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: ⚛️ Fast 3kB React alternative with the same modern API. Components & Virtual DOM.
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 39011 stars
+- **Stars / Engagement**: 39012 stars
 
 ---
 
@@ -637,7 +637,7 @@ type CreateHandle = () => object;
  * @param inputs If present, effect will only activate if the values in the list change (using ===).
  */
 export function useImperativeHandle<T, R extends T>(
-	ref: Ref<T>,
+	ref: Ref<T> | undefined,
 	create: () => R,
 	inputs?: Inputs
 ): void;
@@ -1086,14 +1086,14 @@ export interface Component extends Omit<
 	'_renderCallbacks'
 > {
 	__hooks?: ComponentHooks;
-	_mask?: [number, number];
+	_mask?: [number | string, number];
 	// Extend to include HookStates
 	_renderCallbacks?: Array<HookState | (() => void)>;
 	_hasScuFromHooks?: boolean;
 }
 
 export interface VNode extends Omit<PreactVNode, '_component'> {
-	_mask?: [number, number];
+	_mask?: [number | string, number];
 	_component?: Component; // Override with our specific Component type
 }
 
@@ -1315,406 +1315,929 @@ export function hydrate(vnode, parentDom) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1d12f15a` (2026-11-19)
-**Commit Message**: fix(types): add capture variants of toggle, dialog and command events
+### Incident Patch 1: `2d3075ec` (2026-11-21)
+**Commit Message**: Revert "Merge pull request #5360 from preactjs/pending-range-hydration"
 
-Preact registers any `on*Capture` prop as a capturing listener, but
-`DOMAttributes` and `DialogHTMLAttributes` had no capture variant for
-`onBeforeToggle`, `onToggle`, `onCancel`, `onClose` and `onCommand`, so
-they failed to type-check.
+This reverts commit 7f8004bf47282c37ed4cd38a9354f5a8651f69f2, reversing
+changes made to 39310e58924654a9371b5e7e66c278ea53c5b90a.
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `src/dom.d.ts` (modified, +7/-0)
+**File**: `compat/test/browser/suspense-hydration.test.jsx` (modified, +0/-284)
 ```diff
-@@ -631,11 +631,15 @@ export interface DOMAttributes<
+@@ -2424,288 +2424,4 @@ describe('suspense hydration owning a streamed range', () => {
+ 		rerender();
+ 		expect(scratch.innerHTML).to.equal('<main></main>');
+ 	});
+-
+-	describe('pending streamed ranges', () => {
+-		// A range whose chunk hasn't arrived opens with `$s?` and still holds the
+-		// fallback, wrapped in `<?start>`/`<?end>` (comments where the parser has
+-		// no processing instructions).
+-		const pending = [
+-			['processing instructions', '<?start name="1">', '<?end>'],
+-			['comments', '<!--?start name="1"-->', '<!--?end-->']
+-		];
+-
+-		pending.forEach(([name, start, end]) => {
+-			it(`should not adopt the fallback for content that rendered first (${name})`, () => {
+-				scratch.innerHTML = `<div><!--$s?:1-->${start}<p class="fb" data-fallback="1">loading</p>${end}<!--/$s:1--><footer>foot</footer></div>`;
+-				const footer = scratch.querySelector('footer');
+-				const onClick = vi.fn();
+-
+-				hydrate(
+-					<div>
+-						<Suspense fallback={<p class="fb">loading</p>}>
+-							<p class="content" onClick={onClick}>
+-								content
+-							</p>
+-						</Suspense>
+-						<footer>foot</footer>
+-					</div>,
+-					scratch
+-				);
+-				rerender();
+-
+-				expect(scratch.querySelectorAll('p').length).to.equal(1);
+-				expect(scratch.querySelector('p').outerHTML).to.equal(
+-					'<p class="content">content</p>'
+-				);
+-				expect(scratch.querySelector('footer')).to.equal(footer);
+-				expect(scratch.querySelector('p').nextElementSibling).to.equal(footer);
+-				scratch.querySelector('p').dispatchEvent(createEvent('click'));
+-				expect(onClick).toHaveBeenCalledOnce();
+-			});
+-
+-			it(`should not adopt the fallback when the client resolves before the chunk (${name})`, async () => {
+-				scratch.innerHTML = `<div><!--$s?:1-->${start}<p class="fb">loading</p>${end}<!--/$s:1--><footer>foot</footer></div>`;
+-				const footer = scratch.querySelector('footer');
+-				const [Lazy, resolve] = createLazy();
+-
+-				hydrate(
+-					<div>
+-						<Suspense fallback={<p class="fb">loading</p>}>
+-							<Lazy />
+-						</Suspense>
+-						<footer>foot</footer>
+-					</div>,
+-					scratch
+-				);
+-				rerender();
+-				expect(scratch.querySelector('p').className).to.equal('fb');
+-
+-				await resolve(() => <p class="content">content</p>);
+-				rerender();
+-
+-				expect(scratch.querySelectorAll('p').length).to.equal(1);
+-				expect(scratch.querySelector('p').outerHTML).to.equal(
+-					'<p class="content">content</p>'
+-				);
+-				expect(scratch.querySelector('p').nextElementSibling).to.equal(footer);
+-			});
+-		});
+-
+-		it('should not adopt fallback text', () => {
+-			scratch.innerHTML =
+-				'<div><!--$s?:1--><!--?start name="1"-->loading<!--?end--><!--/$s:1--></div>';
+-
+-			hydrate(
+-				<div>
+-					<Suspense fallback="loading">content</Suspense>
+-				</div>,
+-				scratch
+-			);
+-			rerender();
+-
+-			expect(scratch.textContent).to.equal('content');
+-		});
+-
+-		it('should still adopt the content of a range that was patched', () => {
+-			scratch.innerHTML =
+-				'<div><!--$s:1--><p class="content">content</p><!--/$s:1--></div>';
+-			const p = scratch.querySelector('p');
+-			clearLog();
+-
+-			hydrate(
+-				<div>
+-					<Suspense fallback={<p class="fb">loading</p>}>
+-						<p class="content">content</p>
+-					</Suspense>
+-				</div>,
+-				scratch
+-			);
+-			rerender();
+-
+-			expect(scratch.querySelector('p')).to.equal(p);
+-			expect(getLog()).to.deep.equal([]);
+-		});
+-
+-		it('should mount every node of content that outnumbers the fallback', () => {
+-			scratch.innerHTML =
+-				'<div><!--$s?:1--><!--?start name="1"--><p class="fb">loading</p><!--?end--><!--/$s:1--><p class="after">after</p></div>';
+-
+-			hydrate(
+-				<div>
+-					<Suspense fallback={<p class="fb">loading</p>}>
+-						<p class="a">a</p>
+-						<p class="b">b</p>
+-					</Suspense>
+-					<p class="after">after</p>
+-				</div>,
+-				scratch
+-			);
+-			rerender();
+-
+-			expect(
+-				[...scratch.querySelectorAll('p')].map(p => p.outerHTML)
+-			).to.deep.equal([
+-				'<p class="a">a</p>',
+-				'<p class="b">b</p>',
+-				'<p class="after">after</p>'
+-			]);
+-		});
+-
+-		it('should hydrate the chunk that arrives while the client is suspended', async () => {
+-			scratch.innerHTML =
+-				'<div><!--$s?:1--><!--?start name="1"--><p class="fb">loading</p><!--?end--><!--/$s:1--></div>';
+-			const [Lazy, resolve] = createLazy();
+-
+-			hydrate(
+-				<div>
+-					<Suspense fallback={<p class="fb">loading</p>}>
+-						<Lazy />
+-					</Suspense>
+-				</div>,
+-				scratch
+-			);
+-			rerender();
+-
+-			// what the stream's patch does to the range
+-			const start = scratch.firstChild.firstChild;
+-			start.data = '$s:1';
+-			while (start.nextSibling.data != '/$s:1') start.nextSibling.remove();
+-			start.after(
+-				Object.assign(document.createElement('p'), {
+-					className: 'content',
+-					textContent: 'content'
+-				})
+-			);
+-			const p = scratch.querySelector('p');
+-			clearLog();
+-
+-			await resolve(() => <p class="content">content</p>);
+-			rerender();
+-
+-			expect(scratch.quer
+```
+
+**File**: `src/diff/index.js` (modified, +18/-44)
+```diff
+@@ -68,9 +68,6 @@ export function diff(
+ ) {
+ 	/** @type {any} */
+ 	let tmp,
+-		// The closing marker of the range a boundary takes over, then what
+-		// followed it
+-		rangeNext,
+ 		resumed,
+ 		newType = newVNode.type;
  
- 	// Popover Events
- 	onBeforeToggle?: ToggleEventHandler<Target> | undefined;
-+	onBeforeToggleCapture?: ToggleEventHandler<Target> | undefined;
+@@ -79,35 +76,23 @@ export function diff(
+ 
+ 	// If the previous diff bailed out, resume creating/hydrating into the DOM
+ 	// that was kept while suspended (server-rendered, or already in the
+-	// container we rendered into).
++	// container we rendered into). `tmp` holds the stored excess node until the
++	// options._diff call below.
+ 	if (
+ 		oldVNode._flags & MODE_SUSPENDED &&
+ 		// @ts-expect-error This is MODE_HYDRATE or 0
+ 		((isHydrating = oldVNode._flags & MODE_HYDRATE),
+ 		(tmp = oldVNode._component._excess))
+ 	) {
+ 		newVNode._flags |= isHydrating;
+-		// Re-scan DOM from stored start marker for streamed hydration.
+-		tmp = rangeEnd(tmp, (resumed = excessDomChildren = []));
+-		oldDom = excessDomChildren[0];
+-		// The closing marker stays until unmount.
+-		if (tmp) excessDomChildren.pop();
+-	} else if (
+-		isHydrating &&
+-		newType &&
+-		(tmp = newType.prototype) &&
+-		tmp._childDidSuspend &&
+-		(rangeNext = rangeEnd(oldDom, (tmp = [oldDom]))) &&
+-		tmp._excess
+-	) {
+-		// A boundary in front of a range that holds a fallback, because the
+-		// server is still streaming it or gave up on it (`$s!`): its children
+-		// only get that range, and diff the attributes of what they adopt.
+-		rangeNext = rangeNext.nextSibling;
+-		tmp.some(node => {
+-			excessDomChildren[excessDomChildren.indexOf(node)] = NULL;
+-		});
+-		resumed = excessDomChildren = tmp;
++		resumed = excessDomChildren = [];
++		if (tmp.nodeType == 8) {
++			// Re-scan DOM from stored start marker for streamed hydration.
++			oldDom = rangeEnd(tmp, excessDomChildren);
++		} else {
++			excessDomChildren.push(tmp);
++		}
++		oldDom = excessDomChildren[0] || oldDom;
+ 	}
+ 
+ 	if ((tmp = options._diff)) tmp(newVNode);
+@@ -356,8 +341,6 @@ export function diff(
+ 
+ 			// Remove the kept DOM this resumed render didn't claim
+ 			if (resumed) resumed.some(removeNode);
+-			// The markers the cursor stopped at go with a range a boundary took
+-			if (resumed && rangeNext !== UNDEFINED) oldDom = rangeNext;
+ 
+ 			if (c._renderCallbacks.length) {
+ 				commitQueue.push(c);
+@@ -462,26 +445,20 @@ export function diff(
+ /**
+  * Find the closing marker of a streamed range.
+  * @param {PreactElement} start A `$s` marker opening a range
+- * @param {PreactElement[]} [nodes] Collects the nodes after `start` up to and
+- * including the closing marker, or `start` itself when it isn't a comment. For
+- * a comment its `_excess` tells whether the range holds a fallback (`$s?`,
+- * `$s!`).
++ * @param {PreactElement[]} [nodes] Collects the nodes inside the range
+  * @returns {PreactElement} The closing marker, or undefined when `start` doesn't
+  * open a range or the range is unclosed
+  */
+ function rangeEnd(start, nodes) {
+-	if (start && start.nodeType == 8) {
+-		if (nodes) nodes._excess = start.data[2] && start.data[2] != ':';
+-		if (start.data.startsWith('$s')) {
+-			for (let depth = 1; (start = start.nextSibling); ) {
+-				if (nodes) nodes.push(start);
+-				if (start.nodeType == 8) {
+-					if (start.data.startsWith('$s')) depth++;
+-					else if (start.data.startsWith('/$s') && !--depth) return start;
+-				}
++	if (start && start.nodeType == 8 && start.data.startsWith('$s')) {
++		for (let depth = 1; (start = start.nextSibling); ) {
++			if (start.nodeType == 8) {
++				if (start.data.startsWith('$s')) depth++;
++				else if (start.data.startsWith('/$s') && !--depth) return start;
+ 			}
++			if (nodes) nodes.push(start);
+ 		}
+-	} else if (nodes) nodes.push(start);
++	}
+ }
+ 
+ function markAsForce(vnode) {
+@@ -569,9 +546,6 @@ function diffElementNodes(
+ 	else if (!namespace) namespace = XHTML_NAMESPACE;
+ 
+ 	if (excessDomChildren) {
+-		// DOM that held a fallback isn't what we render: diff its attributes too
+-		if (excessDomChildren._excess) isHydrating = false;
+-
+ 		for (i = 0; i < excessDomChildren.length; i++) {
+ 			value = excessDomChildren[i];
+ 
+```
+
+---
+
+### Incident Patch 2: `1fbc07f6` (2026-11-21)
+**Commit Message**: Merge pull request #5402 from preactjs/fix/suspense-scoped-use-id
+
+Give each Suspense boundary its own useId counter
+
+**File**: `compat/src/internal.d.ts` (modified, +1/-0)
+```diff
+@@ -38,4 +38,5 @@ export interface SuspenseComponent extends PreactComponent<
+ 	_pendingSuspensionCount: number;
+ 	_suspenders: Component[];
+ 	_detachOnNextRender: null | VNode<any>;
++	_mask?: [string, number];
+ }
+```
+
+**File**: `compat/src/suspense.js` (modified, +5/-0)
+```diff
+@@ -6,6 +6,7 @@ import {
+ 	UNDEFINED,
+ 	VNODE_MARKER
+ } from '../../src/constants';
++import { useId } from 'preact/hooks';
+ import { assign } from './util';
+ 
+ function initSuspenseHooks() {
+@@ -212,6 +213,10 @@ function createSuspense() {
+ 	 * @param {import('./internal').SuspenseState} state
+ 	 */
+ 	Suspense.prototype.render = function (props, state) {
++		// Ids inside a boundary come from its own counter, so they don't depend
++		// on when it resolves on the server or hydrates on the client.
++		this._mask || (this._mask = [useId(), 0]);
++
+ 		if (this._detachOnNextRender) {
+ 			// When the Suspense's _vnode was created by a call to createVNode
+ 			// (i.e. due to a setState further up in the tree)
+```
+
+**File**: `compat/test/browser/suspense-hydration.test.jsx` (modified, +24/-0)
+```diff
+@@ -7,6 +7,7 @@ import React, {
+ 	Suspense,
+ 	use,
+ 	memo,
++	useId,
+ 	useState,
+ 	useSyncExternalStore,
+ 	createPortal
+@@ -2055,6 +2056,29 @@ describe('suspense hydration', () => {
+ 			expect(scratch.innerHTML).to.equal('<p>a</p><p>b</p>');
+ 		});
+ 	});
++
++	it('should give ids inside a boundary the same value whenever it resolves', async () => {
++		const Id = () => <input id={useId()} />;
++		const [Lazy, resolve] = createLazy();
++		const App = ({ Inner }) => (
++			<Fragment>
++				<Id />
++				<Suspense fallback={<i>f</i>}>
++					<Inner />
++				</Suspense>
++				<Id />
++			</Fragment>
++		);
++		const ids = el => [...el.querySelectorAll('input')].map(i => i.id);
++
++		const other = document.createElement('div');
++		render(<App Inner={Id} />, other);
++
++		render(<App Inner={Lazy} />, scratch);
++		await resolve(Id);
++		rerender();
++		expect(ids(scratch)).to.deep.equal(ids(other));
++	});
+ });
+ 
+ describe('suspense hydration resuming into mismatched server DOM', () => {
+```
+
+**File**: `hooks/src/index.js` (modified, +4/-5)
+```diff
+@@ -401,15 +401,14 @@ export function useId() {
+ 	/** @type {import('./internal').IdHookState} */
+ 	const state = getHookState(11);
+ 	if (!state._value) {
+-		// Grab either the root node or the nearest async boundary node.
++		// Grab either the root node or the nearest Suspense boundary. Both keep
++		// their mask on the component: their vnodes get replaced, it doesn't.
+ 		/** @type {import('./internal').VNode | import('./internal').Component} */
+ 		let root = currentComponent._vnode;
+-		while (!root._mask && root._parent) {
++		while (!(root._component || root)._mask && root._parent) {
+ 			root = root._parent;
+ 		}
+-
+-		// The root vnode is replaced on every `render()`, its component isn't.
+-		if (!root._mask && root._component) root = root._component;
++		root = root._component || root;
+ 
+ 		let mask = root._mask || (root._mask = [0, 0]);
+ 		state._value = 'P' + mask[0] + '-' + mask[1]++;
+```
+
+**File**: `hooks/src/internal.d.ts` (modified, +2/-2)
+```diff
+@@ -37,14 +37,14 @@ export interface Component extends Omit<
+ 	'_renderCallbacks'
+ > {
+ 	__hooks?: ComponentHooks;
+-	_mask?: [number, number];
++	_mask?: [number | string, number];
+ 	// Extend to include HookStates
+ 	_renderCallbacks?: Array<HookState | (() => void)>;
+ 	_hasScuFromHooks?: boolean;
+ }
+ 
+ export interface VNode extends Omit<PreactVNode, '_component'> {
+-	_mask?: [number, number];
++	_mask?: [number | string, number];
+ 	_component?: Component; // Override with our specific Component type
+ }
+ 
+```
+
+---
+
+### Incident Patch 3: `0233fc27` (2026-11-21)
+**Commit Message**: Merge branch 'main' into fix/suspense-scoped-use-id
+
+**File**: `compat/src/index.d.ts` (modified, +12/-5)
+```diff
+@@ -125,15 +125,15 @@ declare namespace React {
+ 	// React 18 hooks
+ 	export import useInsertionEffect = _hooks.useLayoutEffect;
+ 	export function useTransition(): [false, typeof startTransition];
+-	export function useDeferredValue<T = any>(val: T): T;
++	export function useDeferredValue<T = any>(val: T, initialValue?: T): T;
+ 	export function useSyncExternalStore<T>(
+ 		subscribe: (flush: () => void) => () => void,
+ 		getSnapshot: () => T,
+ 		getServerSnapshot?: () => T
+ 	): T;
+ 	export function useEffectEvent<T extends Function>(cb: T): T;
+ 	// React 19 hooks
+-	export function use<T>(resource: Promise<T> | _preact.Context<T>): T;
++	export function use<T>(resource: PromiseLike<T> | _preact.Context<T>): T;
+ 
+ 	// Preact Defaults
+ 	export import Context = _preact.Context;
+@@ -246,6 +246,7 @@ declare namespace React {
+ 
+ 	// Events
+ 	export import TargetedEvent = _preact.TargetedEvent;
++	export import SyntheticEvent = _preact.TargetedEvent;
+ 	export import ChangeEvent = _preact.TargetedEvent;
+ 	export import ClipboardEvent = _preact.TargetedClipboardEvent;
+ 	export import CompositionEvent = _preact.TargetedCompositionEvent;
+@@ -256,8 +257,10 @@ declare namespace React {
+ 	export import InvalidEvent = _preact.TargetedEvent;
+ 	export import KeyboardEvent = _preact.TargetedKeyboardEvent;
+ 	export import MouseEvent = _preact.TargetedMouseEvent;
++	export import ToggleEvent = _preact.TargetedToggleEvent;
+ 	export import TouchEvent = _preact.TargetedTouchEvent;
+ 	export import UIEvent = _preact.TargetedUIEvent;
++	export import WheelEvent = _preact.TargetedWheelEvent;
+ 	export import AnimationEvent = _preact.TargetedAnimationEvent;
+ 	export import TransitionEvent = _preact.TargetedTransitionEvent;
+ 
+@@ -270,11 +273,15 @@ declare namespace React {
+ 	export import PointerEventHandler = _preact.PointerEventHandler;
+ 	export import FocusEventHandler = _preact.FocusEventHandler;
+ 	export import FormEventHandler = _preact.GenericEventHandler;
++	export import InputEventHandler = _preact.InputEventHandler;
+ 	export import InvalidEventHandler = _preact.GenericEventHandler;
+ 	export import KeyboardEventHandler = _preact.KeyboardEventHandler;
+ 	export import MouseEventHandler = _preact.MouseEventHandler;
++	export import SubmitEventHandler = _preact.SubmitEventHandler;
++	export import ToggleEventHandler = _preact.ToggleEventHandler;
+ 	export import TouchEventHandler = _preact.TouchEventHandler;
+ 	export import UIEventHandler = _preact.UIEventHandler;
++	export import WheelEventHandler = _preact.WheelEventHandler;
+ 	export import AnimationEventHandler = _preact.AnimationEventHandler;
+ 	export import TransitionEventHandler = _preact.TransitionEventHandler;
+ 
+@@ -310,7 +317,7 @@ declare namespace React {
+ 	export function isFragment(element: any): boolean;
+ 	export function isMemo(element: any): boolean;
+ 	export function findDOMNode(
+-		component: _preact.Component | Element
++		component: _preact.Component | Element | null | undefined
+ 	): Element | null;
+ 
+ 	export abstract class PureComponent<
+@@ -411,12 +418,12 @@ declare namespace React {
+ 
+ 	export const Children: {
+ 		map<T extends _preact.ComponentChild, R>(
+-			children: T | T[],
++			children: T | readonly T[],
+ 			fn: (child: T, i: number) => R,
+ 			context?: any
+ 		): R[];
+ 		forEach<T extends _preact.ComponentChild>(
+-			children: T | T[],
++			children: T | readonly T[],
+ 			fn: (child: T, i: number) => void,
+ 			context?: any
+ 		): void;
+```
+
+**File**: `compat/test/browser/suspense-hydration.test.jsx` (modified, +0/-284)
+```diff
+@@ -2448,288 +2448,4 @@ describe('suspense hydration owning a streamed range', () => {
+ 		rerender();
+ 		expect(scratch.innerHTML).to.equal('<main></main>');
+ 	});
+-
+-	describe('pending streamed ranges', () => {
+-		// A range whose chunk hasn't arrived opens with `$s?` and still holds the
+-		// fallback, wrapped in `<?start>`/`<?end>` (comments where the parser has
+-		// no processing instructions).
+-		const pending = [
+-			['processing instructions', '<?start name="1">', '<?end>'],
+-			['comments', '<!--?start name="1"-->', '<!--?end-->']
+-		];
+-
+-		pending.forEach(([name, start, end]) => {
+-			it(`should not adopt the fallback for content that rendered first (${name})`, () => {
+-				scratch.innerHTML = `<div><!--$s?:1-->${start}<p class="fb" data-fallback="1">loading</p>${end}<!--/$s:1--><footer>foot</footer></div>`;
+-				const footer = scratch.querySelector('footer');
+-				const onClick = vi.fn();
+-
+-				hydrate(
+-					<div>
+-						<Suspense fallback={<p class="fb">loading</p>}>
+-							<p class="content" onClick={onClick}>
+-								content
+-							</p>
+-						</Suspense>
+-						<footer>foot</footer>
+-					</div>,
+-					scratch
+-				);
+-				rerender();
+-
+-				expect(scratch.querySelectorAll('p').length).to.equal(1);
+-				expect(scratch.querySelector('p').outerHTML).to.equal(
+-					'<p class="content">content</p>'
+-				);
+-				expect(scratch.querySelector('footer')).to.equal(footer);
+-				expect(scratch.querySelector('p').nextElementSibling).to.equal(footer);
+-				scratch.querySelector('p').dispatchEvent(createEvent('click'));
+-				expect(onClick).toHaveBeenCalledOnce();
+-			});
+-
+-			it(`should not adopt the fallback when the client resolves before the chunk (${name})`, async () => {
+-				scratch.innerHTML = `<div><!--$s?:1-->${start}<p class="fb">loading</p>${end}<!--/$s:1--><footer>foot</footer></div>`;
+-				const footer = scratch.querySelector('footer');
+-				const [Lazy, resolve] = createLazy();
+-
+-				hydrate(
+-					<div>
+-						<Suspense fallback={<p class="fb">loading</p>}>
+-							<Lazy />
+-						</Suspense>
+-						<footer>foot</footer>
+-					</div>,
+-					scratch
+-				);
+-				rerender();
+-				expect(scratch.querySelector('p').className).to.equal('fb');
+-
+-				await resolve(() => <p class="content">content</p>);
+-				rerender();
+-
+-				expect(scratch.querySelectorAll('p').length).to.equal(1);
+-				expect(scratch.querySelector('p').outerHTML).to.equal(
+-					'<p class="content">content</p>'
+-				);
+-				expect(scratch.querySelector('p').nextElementSibling).to.equal(footer);
+-			});
+-		});
+-
+-		it('should not adopt fallback text', () => {
+-			scratch.innerHTML =
+-				'<div><!--$s?:1--><!--?start name="1"-->loading<!--?end--><!--/$s:1--></div>';
+-
+-			hydrate(
+-				<div>
+-					<Suspense fallback="loading">content</Suspense>
+-				</div>,
+-				scratch
+-			);
+-			rerender();
+-
+-			expect(scratch.textContent).to.equal('content');
+-		});
+-
+-		it('should still adopt the content of a range that was patched', () => {
+-			scratch.innerHTML =
+-				'<div><!--$s:1--><p class="content">content</p><!--/$s:1--></div>';
+-			const p = scratch.querySelector('p');
+-			clearLog();
+-
+-			hydrate(
+-				<div>
+-					<Suspense fallback={<p class="fb">loading</p>}>
+-						<p class="content">content</p>
+-					</Suspense>
+-				</div>,
+-				scratch
+-			);
+-			rerender();
+-
+-			expect(scratch.querySelector('p')).to.equal(p);
+-			expect(getLog()).to.deep.equal([]);
+-		});
+-
+-		it('should mount every node of content that outnumbers the fallback', () => {
+-			scratch.innerHTML =
+-				'<div><!--$s?:1--><!--?start name="1"--><p class="fb">loading</p><!--?end--><!--/$s:1--><p class="after">after</p></div>';
+-
+-			hydrate(
+-				<div>
+-					<Suspense fallback={<p class="fb">loading</p>}>
+-						<p class="a">a</p>
+-						<p class="b">b</p>
+-					</Suspense>
+-					<p class="after">after</p>
+-				</div>,
+-				scratch
+-			);
+-			rerender();
+-
+-			expect(
+-				[...scratch.querySelectorAll('p')].map(p => p.outerHTML)
+-			).to.deep.equal([
+-				'<p class="a">a</p>',
+-				'<p class="b">b</p>',
+-				'<p class="after">after</p>'
+-			]);
+-		});
+-
+-		it('should hydrate the chunk that arrives while the client is suspended', async () => {
+-			scratch.innerHTML =
+-				'<div><!--$s?:1--><!--?start name="1"--><p class="fb">loading</p><!--?end--><!--/$s:1--></div>';
+-			const [Lazy, resolve] = createLazy();
+-
+-			hydrate(
+-				<div>
+-					<Suspense fallback={<p class="fb">loading</p>}>
+-						<Lazy />
+-					</Suspense>
+-				</div>,
+-				scratch
+-			);
+-			rerender();
+-
+-			// what the stream's patch does to the range
+-			const start = scratch.firstChild.firstChild;
+-			start.data = '$s:1';
+-			while (start.nextSibling.data != '/$s:1') start.nextSibling.remove();
+-			start.after(
+-				Object.assign(document.createElement('p'), {
+-					className: 'content',
+-					textContent: 'content'
+-				})
+-			);
+-			const p = scratch.querySelector('p');
+-			clearLog();
+-
+-			await resolve(() => <p class="content">content</p>);
+-			rerender();
+-
+-			expect(scratch.quer
+```
+
+**File**: `hooks/src/index.d.ts` (modified, +1/-1)
+```diff
+@@ -84,7 +84,7 @@ type CreateHandle = () => object;
+  * @param inputs If present, effect will only activate if the values in the list change (using ===).
+  */
+ export function useImperativeHandle<T, R extends T>(
+-	ref: Ref<T>,
++	ref: Ref<T> | undefined,
+ 	create: () => R,
+ 	inputs?: Inputs
+ ): void;
+```
+
+**File**: `src/diff/index.js` (modified, +18/-44)
+```diff
+@@ -68,9 +68,6 @@ export function diff(
+ ) {
+ 	/** @type {any} */
+ 	let tmp,
+-		// The closing marker of the range a boundary takes over, then what
+-		// followed it
+-		rangeNext,
+ 		resumed,
+ 		newType = newVNode.type;
+ 
+@@ -79,35 +76,23 @@ export function diff(
+ 
+ 	// If the previous diff bailed out, resume creating/hydrating into the DOM
+ 	// that was kept while suspended (server-rendered, or already in the
+-	// container we rendered into).
++	// container we rendered into). `tmp` holds the stored excess node until the
++	// options._diff call below.
+ 	if (
+ 		oldVNode._flags & MODE_SUSPENDED &&
+ 		// @ts-expect-error This is MODE_HYDRATE or 0
+ 		((isHydrating = oldVNode._flags & MODE_HYDRATE),
+ 		(tmp = oldVNode._component._excess))
+ 	) {
+ 		newVNode._flags |= isHydrating;
+-		// Re-scan DOM from stored start marker for streamed hydration.
+-		tmp = rangeEnd(tmp, (resumed = excessDomChildren = []));
+-		oldDom = excessDomChildren[0];
+-		// The closing marker stays until unmount.
+-		if (tmp) excessDomChildren.pop();
+-	} else if (
+-		isHydrating &&
+-		newType &&
+-		(tmp = newType.prototype) &&
+-		tmp._childDidSuspend &&
+-		(rangeNext = rangeEnd(oldDom, (tmp = [oldDom]))) &&
+-		tmp._excess
+-	) {
+-		// A boundary in front of a range that holds a fallback, because the
+-		// server is still streaming it or gave up on it (`$s!`): its children
+-		// only get that range, and diff the attributes of what they adopt.
+-		rangeNext = rangeNext.nextSibling;
+-		tmp.some(node => {
+-			excessDomChildren[excessDomChildren.indexOf(node)] = NULL;
+-		});
+-		resumed = excessDomChildren = tmp;
++		resumed = excessDomChildren = [];
++		if (tmp.nodeType == 8) {
++			// Re-scan DOM from stored start marker for streamed hydration.
++			oldDom = rangeEnd(tmp, excessDomChildren);
++		} else {
++			excessDomChildren.push(tmp);
++		}
++		oldDom = excessDomChildren[0] || oldDom;
+ 	}
+ 
+ 	if ((tmp = options._diff)) tmp(newVNode);
+@@ -356,8 +341,6 @@ export function diff(
+ 
+ 			// Remove the kept DOM this resumed render didn't claim
+ 			if (resumed) resumed.some(removeNode);
+-			// The markers the cursor stopped at go with a range a boundary took
+-			if (resumed && rangeNext !== UNDEFINED) oldDom = rangeNext;
+ 
+ 			if (c._renderCallbacks.length) {
+ 				commitQueue.push(c);
+@@ -462,26 +445,20 @@ export function diff(
+ /**
+  * Find the closing marker of a streamed range.
+  * @param {PreactElement} start A `$s` marker opening a range
+- * @param {PreactElement[]} [nodes] Collects the nodes after `start` up to and
+- * including the closing marker, or `start` itself when it isn't a comment. For
+- * a comment its `_excess` tells whether the range holds a fallback (`$s?`,
+- * `$s!`).
++ * @param {PreactElement[]} [nodes] Collects the nodes inside the range
+  * @returns {PreactElement} The closing marker, or undefined when `start` doesn't
+  * open a range or the range is unclosed
+  */
+ function rangeEnd(start, nodes) {
+-	if (start && start.nodeType == 8) {
+-		if (nodes) nodes._excess = start.data[2] && start.data[2] != ':';
+-		if (start.data.startsWith('$s')) {
+-			for (let depth = 1; (start = start.nextSibling); ) {
+-				if (nodes) nodes.push(start);
+-				if (start.nodeType == 8) {
+-					if (start.data.startsWith('$s')) depth++;
+-					else if (start.data.startsWith('/$s') && !--depth) return start;
+-				}
++	if (start && start.nodeType == 8 && start.data.startsWith('$s')) {
++		for (let depth = 1; (start = start.nextSibling); ) {
++			if (start.nodeType == 8) {
++				if (start.data.startsWith('$s')) depth++;
++				else if (start.data.startsWith('/$s') && !--depth) return start;
+ 			}
++			if (nodes) nodes.push(start);
+ 		}
+-	} else if (nodes) nodes.push(start);
++	}
+ }
+ 
+ function markAsForce(vnode) {
+@@ -569,9 +546,6 @@ function diffElementNodes(
+ 	else if (!namespace) namespace = XHTML_NAMESPACE;
+ 
+ 	if (excessDomChildren) {
+-		// DOM that held a fallback isn't what we render: diff its attributes too
+-		if (excessDomChildren._excess) isHydrating = false;
+-
+ 		for (i = 0; i < excessDomChildren.length; i++) {
+ 			value = excessDomChildren[i];
+ 
+```
+
+**File**: `src/dom.d.ts` (modified, +68/-1)
+```diff
+@@ -51,6 +51,23 @@ interface SnapEventInit extends EventInit {
+ 	snapTargetInline?: Element | null;
+ }
+ 
++/** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/API/ContentVisibilityAutoStateChangeEvent) */
++interface ContentVisibilityAutoStateChangeEvent extends Event {
++	readonly skipped: boolean;
++}
++
++declare var ContentVisibilityAutoStateChangeEvent: {
++	prototype: ContentVisibilityAutoStateChangeEvent;
++	new (
++		type: string,
++		eventInitDict?: ContentVisibilityAutoStateChangeEventInit
++	): ContentVisibilityAutoStateChangeEvent;
++};
++
++interface ContentVisibilityAutoStateChangeEventInit extends EventInit {
++	skipped?: boolean;
++}
++
+ type Booleanish = boolean | 'true' | 'false';
+ 
+ export interface SignalLike<T> {
+@@ -516,6 +533,11 @@ export type TargetedSnapEvent<Target extends EventTarget> = TargetedEvent<
+ 	Target,
+ 	SnapEvent
+ >;
++export type TargetedContentVisibilityAutoStateChangeEvent<
++	Target extends EventTarget
++> = TargetedEvent<Target, ContentVisibilityAutoStateChangeEvent>;
++export type TargetedSecurityPolicyViolationEvent<Target extends EventTarget> =
++	TargetedEvent<Target, SecurityPolicyViolationEvent>;
+ export type TargetedSubmitEvent<Target extends EventTarget> = TargetedEvent<
+ 	Target,
+ 	SubmitEvent
+@@ -559,6 +581,9 @@ export type CommandEventHandler<Target extends EventTarget> = EventHandler<
+ export type CompositionEventHandler<Target extends EventTarget> = EventHandler<
+ 	TargetedCompositionEvent<Target>
+ >;
++export type ContentVisibilityAutoStateChangeEventHandler<
++	Target extends EventTarget
++> = EventHandler<TargetedContentVisibilityAutoStateChangeEvent<Target>>;
+ export type DragEventHandler<Target extends EventTarget> = EventHandler<
+ 	TargetedDragEvent<Target>
+ >;
+@@ -583,6 +608,8 @@ export type MouseEventHandler<Target extends EventTarget> = EventHandler<
+ export type PointerEventHandler<Target extends EventTarget> = EventHandler<
+ 	TargetedPointerEvent<Target>
+ >;
++export type SecurityPolicyViolationEventHandler<Target extends EventTarget> =
++	EventHandler<TargetedSecurityPolicyViolationEvent<Target>>;
+ export type SnapEventHandler<Target extends EventTarget> = EventHandler<
+ 	TargetedSnapEvent<Target>
+ >;
+@@ -607,6 +634,23 @@ export type PictureInPictureEventHandler<Target extends EventTarget> =
+ export interface DOMAttributes<
+ 	Target extends EventTarget
+ > extends PreactDOMAttributes {
++	onFullscreenChange?: GenericEventHandler<Target> | undefined;
++	onFullscreenChangeCapture?: GenericEventHandler<Target> | undefined;
++	onFullscreenError?: GenericEventHandler<Target> | undefined;
++	onFullscreenErrorCapture?: GenericEventHandler<Target> | undefined;
++	onContentVisibilityAutoStateChange?:
++		| ContentVisibilityAutoStateChangeEventHandler<Target>
++		| undefined;
++	onContentVisibilityAutoStateChangeCapture?:
++		| ContentVisibilityAutoStateChangeEventHandler<Target>
++		| undefined;
++	onSecurityPolicyViolation?:
++		| SecurityPolicyViolationEventHandler<Target>
++		| undefined;
++	onSecurityPolicyViolationCapture?:
++		| SecurityPolicyViolationEventHandler<Target>
++		| undefined;
++
+ 	// Image Events
+ 	onLoad?: GenericEventHandler<Target> | undefined;
+ 	onLoadCapture?: GenericEventHandler<Target> | undefined;
+@@ -635,6 +679,10 @@ export interface DOMAttributes<
  	onToggle?: ToggleEventHandler<Target> | undefined;
-+	onToggleCapture?: ToggleEventHandler<Target> | undefined;
+ 	onToggleCapture?: ToggleEventHandler<Target> | undefined;
  
++	// Hidden-until-found Events
++	onBeforeMatch?: GenericEventHandler<Target> | undefined;
++	onBeforeMatchCapture?: GenericEventHandler<Target> | undefined;
++
  	// Dialog Events
  	onClose?: GenericEventHandler<Target> | undefined;
-+	onCloseCapture?: GenericEventHandler<Target> | undefined;
- 	onCancel?: GenericEventHandler<Target> | undefined;
-+	onCancelCapture?: GenericEventHandler<Target> | undefined;
+ 	onCloseCapture?: GenericEventHandler<Target> | undefined;
+@@ -769,6 +817,10 @@ export interface DOMAttributes<
+ 	// Selection Events
+ 	onSelect?: GenericEventHandler<Target> | undefined;
+ 	onSelectCapture?: GenericEventHandler<Target> | undefined;
++	onSelectStart?: GenericEventHandler<Target> | undefined;
++	onSelectStartCapture?: GenericEventHandler<Target> | undefined;
++	onSelectionChange?: GenericEventHandler<Target> | undefined;
++	onSelectionChangeCapture?: GenericEventHandler<Target> | undefined;
  
- 	// Focus Events
- 	onFocus?: FocusEventHandler<Target> | undefined;
-@@ -839,6 +843,7 @@ export interface DOMAttributes<
- 	onResizeCapture?: PictureInPictureEventHandler<Target>;
+ 	// Touch Events
+ 	onTouchCancel?: TouchEventHandler<Target> | undefined;
+@@ -801,6 +853,8 @@ export interface DOMAttributes<
+ 	onGotPointerCaptureCapture?: PointerEventHandler<Target> | undefined;
+ 	onLostPointerCapture?: PointerEventHandler<Target> | undefined;
+ 	onLostPointerCaptureCapture?: PointerEventHandler<Target> | undefined;
++	onPointerRawUpdate?: PointerEventHandler<Target> | undefined;
++	onPointerRawUpdateCapture?: PointerEventHandler<Target> | undefined;
  
- 	onCommand?: CommandEventHandler<Target>;
-+	onCommandCapture?: CommandEventHandler<Target>;
- }
+ 	// Scroll Events
+ 	onScroll?: GenericEventHandler<Target> | undefined;
+@@ -817,6 +871,8 @@ export interface DOMAttributes<
+ 	onWheelCapture?: WheelEventHandler<Target> | undefined;
  
- // All the WAI-ARIA 1.1 attributes from https://www.w3.org/TR/wai-aria-1.1/
-@@ -1861,7 +1866,9 @@ export interface DialogHTMLAttributes<
- 	T extends EventTarget = HTMLDialogElement
- > extends HTMLAttributes<T> {
- 	onCancel?: GenericEventHandler<T> | undefined;
-+	onCancelCapture?: GenericEventHandler<T> | undefined;
- 	onClose?: GenericEventHandler<T> | undefined;
-+	onCloseCapture?: GenericEventHandler<T> | undefined;
- 	open?: Signalish<boolean | undefined>;
- 	closedby?: Signalish<'none' | 'closerequest' | 'any' | undefined>;
- 	closedBy?: Signalish<'none' | 'closerequest' | 'any' | undefined>;
-```
-
-**File**: `test/ts/dom-attributes.test-d.tsx` (modified, +18/-0)
-```diff
-@@ -344,3 +344,21 @@ const dangerouslySetInnerHTML = (
- 		<div dangerouslySetInnerHTML={{ __html: 'string' }} />
- 	</>
- );
-+
-+// Capture variants of popover, dialog and command events, which Preact
-+// registers with `addEventListener(name, handler, true)`
-+const testCaptureEvents = (
-+	<div>
-+		<div
-+			popover="auto"
-+			onBeforeToggleCapture={e => e.newState}
-+			onToggleCapture={e => e.oldState}
-+		/>
-+		<dialog
-+			onCancelCapture={e => e.currentTarget.returnValue}
-+			onCloseCapture={e => e.currentTarget.returnValue}
-+		/>
-+		<details onToggleCapture={e => e.currentTarget.open} />
-+		<div onCommandCapture={e => e.command} />
-+	</div>
-+);
-```
-
----
-
-### Incident Patch 2: `39310e58` (2026-11-18)
-**Commit Message**: Merge pull request #5383 from preactjs/golf/inline-render-component
-
-Inline renderComponent into the render queue loop
-
-**File**: `compat/src/suspense.js` (modified, +1/-1)
-```diff
-@@ -153,7 +153,7 @@ function createSuspense() {
+ 	// Animation Events
++	onAnimationCancel?: AnimationEventHandler<Target> | undefined;
++	onAnimationCancelCapture?: AnimationEventHandler<Target> | undefined;
+ 	onAnimationStart?: AnimationEventHandler<Target> | undefined;
  
- 		// Store and null _parentDom to prevent setState/forceUpdate from
- 		// scheduling renders while suspended. Render would be a no-op anyway
--		// since renderComponent checks _parentDom, but this avoids queue churn.
-+		// since process() checks _parentDom, but this avoids queue churn.
- 		const originalParentDom = suspendingComponent._parentDom;
- 		suspendingComponent._parentDom = null;
- 
-```
-
-**File**: `src/component.js` (modified, +51/-54)
-```diff
-@@ -103,7 +103,7 @@ export function getDomSibling(vnode, childIndex) {
- 		sibling = vnode._children[childIndex];
- 
- 		if (sibling && sibling._dom) {
--			// Since renderComponent keeps the _dom pointers correct,
-+			// Since process() keeps the _dom pointers correct,
- 			// we can rely on _dom to tell us if this subtree contains a
- 			// rendered DOM node, and what the first rendered DOM node is
- 			return sibling._dom;
-@@ -120,56 +120,6 @@ export function getDomSibling(vnode, childIndex) {
- 		: NULL;
- }
- 
--/**
-- * Trigger in-place re-rendering of a component.
-- * @param {import('./internal').Component} component The component to rerender
-- */
--function renderComponent(component) {
--	const oldVNode = component._vnode,
--		oldDom = oldVNode._dom,
--		commitQueue = [],
--		refQueue = [];
--
--	const parentDom = component._parentDom;
--	if (parentDom) {
--		let newVNode = assign({ constructor: VNODE_MARKER }, oldVNode);
--		newVNode._original = oldVNode._original + 1;
--		if (options.vnode) options.vnode(newVNode);
--
--		diff(
--			parentDom,
--			newVNode,
--			oldVNode,
--			component._globalContext,
--			parentDom.namespaceURI,
--			oldVNode._flags & MODE_HYDRATE ? [oldDom] : NULL,
--			commitQueue,
--			oldDom || getDomSibling(oldVNode),
--			oldVNode._flags & MODE_HYDRATE,
--			refQueue
--		);
--
--		newVNode._original = oldVNode._original;
--		newVNode._parent._children[newVNode._index] = newVNode;
--		commitRoot(commitQueue, newVNode, refQueue);
--		oldVNode._parent = oldVNode._dom = NULL;
--
--		// Stop at root boundaries (_parentDom)
--		if (newVNode._dom != oldDom) {
--			while (
--				(newVNode = newVNode._parent) &&
--				newVNode._component &&
--				!newVNode.props._parentDom
--			) {
--				// _dom starts nulled, so re-assigning a null child._dom is a no-op and
--				// the first truthy _dom stops the walk.
--				newVNode._dom = NULL;
--				newVNode._children.some(child => child && (newVNode._dom = child._dom));
--			}
--		}
--	}
--}
--
- /**
-  * The render queue
-  * @type {Array<import('./internal').Component>}
-@@ -219,7 +169,13 @@ const depthSort = (a, b) => a._vnode._depth - b._vnode._depth;
- function process() {
- 	try {
- 		let c,
--			l = 1;
-+			l = 1,
-+			oldVNode,
-+			newVNode,
-+			oldDom,
-+			parentDom,
-+			commitQueue,
-+			refQueue;
- 
- 		// Don't update `renderCount` yet. Keep its value non-zero to prevent unnecessary
- 		// process() calls from getting scheduled while `queue` is still being consumed.
-@@ -237,8 +193,49 @@ function process() {
- 			c = rerenderQueue.shift();
- 			l = rerenderQueue.length;
- 
--			if (c._bits & COMPONENT_DIRTY) {
--				renderComponent(c);
-+			// Re-render the component in place, unless it was unmounted.
-+			if (c._bits & COMPONENT_DIRTY && (parentDom = c._parentDom)) {
-+				oldVNode = c._vnode;
-+				oldDom = oldVNode._dom;
-+				commitQueue = [];
-+				refQueue = [];
-+				newVNode = assign({ constructor: VNODE_MARKER }, oldVNode);
-+				newVNode._original = oldVNode._original + 1;
-+				if (options.vnode) options.vnode(newVNode);
-+
-+				diff(
-+					parentDom,
-+					newVNode,
-+					oldVNode,
-+					c._globalContext,
-+					parentDom.namespaceURI,
-+					oldVNode._flags & MODE_HYDRATE ? [oldDom] : NULL,
-+					commitQueue,
-+					oldDom || getDomSibling(oldVNode),
-+					oldVNode._flags & MODE_HYDRATE,
-+					refQueue
-+				);
-+
-+				newVNode._original = oldVNode._original;
-+				newVNode._parent._children[newVNode._index] = newVNode;
-+				commitRoot(commitQueue, newVNode, refQueue);
-+				oldVNode._parent = oldVNode._dom = NULL;
-+
-+				// Stop at root boundaries (_parentDom)
-+				if (newVNode._dom != oldDom) {
-+					while (
-+						(newVNode = newVNode._parent) &&
-+						newVNode._component &&
-+						!newVNode.props._parentDom
-+					) {
-+						// _dom starts nulled, so re-assigning a null child._dom is a no-op and
-+						// the first truthy _dom stops the walk.
-+						newVNode._dom = NULL;
-+						newVNode._children.some(
-+							child => child && (newVNode._dom = child._dom)
-+						);
-+					}
-+				}
- 			}
- 		}
- 	} finally {
-```
-
----
-
-### Incident Patch 3: `28f916d1` (2026-11-18)
-**Commit Message**: Inline renderComponent into the render queue loop
-
-renderComponent() had a single caller. Its body now runs inside
-process(), behind the same two checks (dirty, still has a _parentDom).
-
-The callback that walks the parent _dom pointers now captures a local of
-process(), which runs once per flush, instead of one of renderComponent(),
-which ran once per component.
-
-**File**: `compat/src/suspense.js` (modified, +1/-1)
-```diff
-@@ -153,7 +153,7 @@ function createSuspense() {
- 
- 		// Store and null _parentDom to prevent setState/forceUpdate from
- 		// scheduling renders while suspended. Render would be a no-op anyway
--		// since renderComponent checks _parentDom, but this avoids queue churn.
-+		// since process() checks _parentDom, but this avoids queue churn.
- 		const originalParentDom = suspendingComponent._parentDom;
- 		suspendingComponent._parentDom = null;
- 
-```
-
-**File**: `src/component.js` (modified, +51/-54)
-```diff
-@@ -103,7 +103,7 @@ export function getDomSibling(vnode, childIndex) {
- 		sibling = vnode._children[childIndex];
- 
- 		if (sibling && sibling._dom) {
--			// Since renderComponent keeps the _dom pointers correct,
-+			// Since process() keeps the _dom pointers correct,
- 			// we can rely on _dom to tell us if this subtree contains a
- 			// rendered DOM node, and what the first rendered DOM node is
- 			return sibling._dom;
-@@ -120,56 +120,6 @@ export function getDomSibling(vnode, childIndex) {
- 		: NULL;
- }
- 
--/**
-- * Trigger in-place re-rendering of a component.
-- * @param {import('./internal').Component} component The component to rerender
-- */
--function renderComponent(component) {
--	const oldVNode = component._vnode,
--		oldDom = oldVNode._dom,
--		commitQueue = [],
--		refQueue = [];
--
--	const parentDom = component._parentDom;
--	if (parentDom) {
--		let newVNode = assign({ constructor: VNODE_MARKER }, oldVNode);
--		newVNode._original = oldVNode._original + 1;
--		if (options.vnode) options.vnode(newVNode);
--
--		diff(
--			parentDom,
--			newVNode,
--			oldVNode,
--			component._globalContext,
--			parentDom.namespaceURI,
--			oldVNode._flags & MODE_HYDRATE ? [oldDom] : NULL,
--			commitQueue,
--			oldDom || getDomSibling(oldVNode),
--			oldVNode._flags & MODE_HYDRATE,
--			refQueue
--		);
--
--		newVNode._original = oldVNode._original;
--		newVNode._parent._children[newVNode._index] = newVNode;
--		commitRoot(commitQueue, newVNode, refQueue);
--		oldVNode._parent = oldVNode._dom = NULL;
--
--		// Stop at root boundaries (_parentDom)
--		if (newVNode._dom != oldDom) {
--			while (
--				(newVNode = newVNode._parent) &&
--				newVNode._component &&
--				!newVNode.props._parentDom
--			) {
--				// _dom starts nulled, so re-assigning a null child._dom is a no-op and
--				// the first truthy _dom stops the walk.
--				newVNode._dom = NULL;
--				newVNode._children.some(child => child && (newVNode._dom = child._dom));
--			}
--		}
--	}
--}
--
- /**
-  * The render queue
-  * @type {Array<import('./internal').Component>}
-@@ -219,7 +169,13 @@ const depthSort = (a, b) => a._vnode._depth - b._vnode._depth;
- function process() {
- 	try {
- 		let c,
--			l = 1;
-+			l = 1,
-+			oldVNode,
-+			newVNode,
-+			oldDom,
-+			parentDom,
-+			commitQueue,
-+			refQueue;
- 
- 		// Don't update `renderCount` yet. Keep its value non-zero to prevent unnecessary
- 		// process() calls from getting scheduled while `queue` is still being consumed.
-@@ -237,8 +193,49 @@ function process() {
- 			c = rerenderQueue.shift();
- 			l = rerenderQueue.length;
- 
--			if (c._bits & COMPONENT_DIRTY) {
--				renderComponent(c);
-+			// Re-render the component in place, unless it was unmounted.
-+			if (c._bits & COMPONENT_DIRTY && (parentDom = c._parentDom)) {
-+				oldVNode = c._vnode;
-+				oldDom = oldVNode._dom;
-+				commitQueue = [];
-+				refQueue = [];
-+				newVNode = assign({ constructor: VNODE_MARKER }, oldVNode);
-+				newVNode._original = oldVNode._original + 1;
-+				if (options.vnode) options.vnode(newVNode);
-+
-+				diff(
-+					parentDom,
-+					newVNode,
-+					oldVNode,
-+					c._globalContext,
-+					parentDom.namespaceURI,
-+					oldVNode._flags & MODE_HYDRATE ? [oldDom] : NULL,
-+					commitQueue,
-+					oldDom || getDomSibling(oldVNode),
-+					oldVNode._flags & MODE_HYDRATE,
-+					refQueue
-+				);
-+
-+				newVNode._original = oldVNode._original;
-+				newVNode._parent._children[newVNode._index] = newVNode;
-+				commitRoot(commitQueue, newVNode, refQueue);
-+				oldVNode._parent = oldVNode._dom = NULL;
-+
-+				// Stop at root boundaries (_parentDom)
-+				if (newVNode._dom != oldDom) {
-+					while (
-+						(newVNode = newVNode._parent) &&
-+						newVNode._component &&
-+						!newVNode.props._parentDom
-+					) {
-+						// _dom starts nulled, so re-assigning a null child._dom is a no-op and
-+						// the first truthy _dom stops the walk.
-+						newVNode._dom = NULL;
-+						newVNode._children.some(
-+							child => child && (newVNode._dom = child._dom)
-+						);
-+					}
-+				}
- 			}
- 		}
- 	} finally {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5393** (2026-11-20): Document the Human Voice contribution policy (@JoviDeCroock)
-- **PR #5390** (closed): feat(types): add handler props for missing DOM events (@officialasishkumar)
-- **PR #5388** (closed): Skip processing instructions next to an adopted node (@JoviDeCroock)
-- **PR #5387** (2026-11-19): fix(types): add capture variants of toggle, dialog and command events (@playlikeboy)
-- **PR #5386** (2026-11-18): core: Delete duplicate Code of Conduct (@rschristian)
-- **PR #5383** (2026-11-18): Inline renderComponent into the render queue loop (@JoviDeCroock)
+- **PR #5405** (closed): Clear stale parent links on replaced VNodes (@k0d3r1s)
+- **PR #5404** (closed): Clear _parent of a matched child once it is replaced (#5403) (@tony1233200)
+- **PR #5402** (2026-11-21): Give each Suspense boundary its own useId counter (@JoviDeCroock)
+- **PR #5400** (2026-11-21): Revert DPU streaming (@JoviDeCroock)
+- **PR #5399** (closed): Don't claim past a streamed range for a component that suspends while hydrating (@JoviDeCroock)
+- **PR #5398** (closed): fix(types): accept undefined ref in useImperativeHandle (@ragib-mrb)
 
 ---
 
@@ -1728,43 +2251,6 @@ which ran once per component.
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. types): add capture variants of toggle, dialog and command events
-
-**RULE**:
-When implementing operations in `src/dom.d.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in preactjs/preact. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `1d12f15a`: types): add capture variants of toggle, dialog and command events. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/dom.d.ts`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```javascript
-// Verified production-grade fix pattern:
-	onBeforeToggleCapture?: ToggleEventHandler<Target> | undefined;
-	onToggleCapture?: ToggleEventHandler<Target> | undefined;
-	onCloseCapture?: GenericEventHandler<Target> | undefined;
-	onCancelCapture?: GenericEventHandler<Target> | undefined;
-	onCommandCapture?: CommandEventHandler<Target>;
-	onCancelCapture?: GenericEventHandler<T> | undefined;
-	onCloseCapture?: GenericEventHandler<T> | undefined;
-```
-
-**NEGATIVE CONSTRAINT**:
-```javascript
-// Induced defect failure mode:
-// Defect-prone omission of boundary validation
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1d12f15a` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

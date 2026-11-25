@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T00:08:32.624Z",
-  "total_cycles_completed": 12217,
-  "total_learnings_persisted": 12217,
-  "total_rules_promoted": 11267,
+  "last_updated": "2026-11-25T00:16:52.286Z",
+  "total_cycles_completed": 12220,
+  "total_learnings_persisted": 12220,
+  "total_rules_promoted": 11269,
   "history": [
-    {
-      "timestamp": "2026-11-24T09:41:19.505Z",
-      "repository": "streetwriters/notesnook",
-      "learningId": "learn-github-streetwriters-notesnook",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T09:42:29.297Z",
-      "repository": "cilium/cilium",
-      "learningId": "learn-github-cilium-cilium",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T09:57:09.632Z",
-      "repository": "ClementTsang/bottom",
-      "learningId": "learn-github-clementtsang-bottom",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-24T09:57:10.959Z",
       "repository": "callstack/react-native-paper",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-25T00:08:32.624Z",
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T00:16:46.601Z",
+      "repository": "preactjs/preact",
+      "learningId": "learn-github-preactjs-preact",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T00:16:50.548Z",
+      "repository": "Tencent-TDS/KuiklyUI",
+      "learningId": "learn-github-tencent-tds-kuiklyui",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T00:16:52.286Z",
+      "repository": "openyurtio/openyurt",
+      "learningId": "learn-github-openyurtio-openyurt",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

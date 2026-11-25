@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261123-OYOI",
-    "timestamp": "2026-11-23T13:50:04.434Z",
-    "repository": "gocd/gocd",
-    "learningId": "learn-github-gocd-gocd",
-    "contentHash": "0812a5f9d949558a182c1c7446de41f492e2ecb05f019a92c27b9aa972038e1c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-URXB",
-    "timestamp": "2026-11-23T13:54:35.615Z",
-    "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
-    "learningId": "learn-huggingface-venastine-research-xing4-0-29b-a4b-gguf",
-    "contentHash": "b2a36bda4b54510b47a4a22c17496c7fb8f0f66ecf20e03d658ecff3ed380327",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-HZKA",
-    "timestamp": "2026-11-23T14:12:38.602Z",
-    "repository": "NaiveAI/Naive-N0.5-Flash",
-    "learningId": "learn-huggingface-naiveai-naive-n0-5-flash",
-    "contentHash": "d78bb07575733ab0329d61a32056cf899c3509aabac6437bcffce3464ae8d378",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261123-I5DH",
     "timestamp": "2026-11-23T14:12:46.133Z",
     "repository": "chrisbanes/skills",
@@ -7490,6 +7445,51 @@
     "repository": "NucleoidAI/Nucleoid",
     "learningId": "learn-github-nucleoidai-nucleoid",
     "contentHash": "095540deef4857b72098095d48877379a2341697d728043f5dab1ae0003cd5a1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-IRCU",
+    "timestamp": "2026-11-25T00:16:46.590Z",
+    "repository": "preactjs/preact",
+    "learningId": "learn-github-preactjs-preact",
+    "contentHash": "c93fa054cbb0d577794f5b675a4d348fa77c76dad344d5e492a35d442a528eaa",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-IUEI",
+    "timestamp": "2026-11-25T00:16:50.538Z",
+    "repository": "Tencent-TDS/KuiklyUI",
+    "learningId": "learn-github-tencent-tds-kuiklyui",
+    "contentHash": "93ea459773837cfba859aa15913b00897b9349ad4f8d45f33241e4b2cb426236",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-IVQS",
+    "timestamp": "2026-11-25T00:16:52.276Z",
+    "repository": "openyurtio/openyurt",
+    "learningId": "learn-github-openyurtio-openyurt",
+    "contentHash": "f7abfd6651372e3b85500acb2725acc01a487f9046ce1c046f593a9796962b51",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

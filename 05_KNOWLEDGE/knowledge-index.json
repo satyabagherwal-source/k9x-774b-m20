@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-25T00:08:38.481Z",
-  "total_verified_learnings": 9106,
+  "last_updated": "2026-11-25T00:17:28.655Z",
+  "total_verified_learnings": 9107,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25040,
+  "total_items": 25051,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -242842,8 +242842,8 @@
       "slug": "tencent-tds-kuiklyui",
       "platform": "github",
       "source_url": "https://github.com/Tencent-TDS/KuiklyUI",
-      "source_version": "d606ca05",
-      "content_hash": "b11d6a749e01e541493b3c8a93d07c2a5e39379a1160a2ba7e8cf356587cd3db",
+      "source_version": "ad420ccc",
+      "content_hash": "93ea459773837cfba859aa15913b00897b9349ad4f8d45f33241e4b2cb426236",
       "dossier_path": "07_PROJECT_LEARNING/tencent-tds-kuiklyui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tencent-tds-kuiklyui-learnings.md",
       "promoted_rules": [
@@ -242861,6 +242861,11 @@
           "number": 9919,
           "title": "align OHOS target matrix and Android release publication",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10396,
+          "title": "clean up text selection resources in OnDestroy",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -242868,7 +242873,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T10:18:02.700Z",
+      "verified_at": "2026-11-25T00:16:50.320Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -242908,10 +242913,10 @@
       "relative_path": "08_VERIFICATION/tencent-tds-kuiklyui-verification-protocol-empirical-defect-shield-for-tencent-t.md",
       "title": "Verification Protocol: Empirical Defect Shield for Tencent-TDS/KuiklyUI",
       "repository": "Tencent-TDS/KuiklyUI",
-      "source_version": "d606ca05",
-      "content_hash": "5ca983df0d57fce7b117b68779c7c68210533550de89bc9524cdae33ffa5878b",
+      "source_version": "ad420ccc",
+      "content_hash": "a26646323f1547259d9bdc806bcf615c8fb819aa9b4cefbad1c8eab2f9742b15",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T10:18:03.509Z"
+      "persisted_at": "2026-11-25T00:16:51.151Z"
     },
     "candidate_directive-docker-build-the-valkey-images-on-ubuntu-26-04-lts": {
       "item_id": "candidate_directive-docker-build-the-valkey-images-on-ubuntu-26-04-lts",
@@ -242993,9 +242998,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for tencent-tds-kuiklyui-learnings",
       "repository": "tencent-tds-kuiklyui-learnings",
       "source_version": "HEAD",
-      "content_hash": "fa6987f1c94df222ae9f8badd627d981966b1a7f015fba723b006275049d19aa",
+      "content_hash": "142afbbd2576e1f22e57cd25fe5d517a7e1e6f5f484f6a1bd4184facf15d2a45",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T10:18:08.085Z"
+      "persisted_at": "2026-11-25T00:17:27.583Z"
     },
     "learn-huggingface-fishaudio-drama-3": {
       "learning_id": "learn-huggingface-fishaudio-drama-3",
@@ -270733,8 +270738,8 @@
       "slug": "preactjs-preact",
       "platform": "github",
       "source_url": "https://github.com/preactjs/preact",
-      "source_version": "39d353a8",
-      "content_hash": "e09783bddbcc068c81bbc076c2aeb22f2f2ad418a7f43abe2e5e9cc2e2451bb6",
+      "source_version": "1fbc07f6",
+      "content_hash": "c93fa054cbb0d577794f5b675a4d348fa77c76dad344d5e492a35d442a528eaa",
       "dossier_path": "07_PROJECT_LEARNING/preactjs-preact-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/preactjs-preact-learnings.md",
       "promoted_rules": [
@@ -270754,7 +270759,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T00:43:46.112Z",
+      "verified_at": "2026-11-25T00:16:46.377Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -270796,10 +270801,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-preactjs-preact-architecture-intelligence-preactjs-preact-core-invariants.md",
       "title": "Architecture Intelligence: preactjs/preact Core Invariants",
       "repository": "preactjs/preact",
-      "source_version": "39d353a8",
-      "content_hash": "6283c4404ed1067456b0dbf482eb7f1ad4bc1bfc0166b6ef6966b261e5a77f35",
+      "source_version": "1fbc07f6",
+      "content_hash": "13c53b6601b961ef37a8aa59ddd9995be588084158df7370dfd0b99ec0c4e737",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T00:43:46.687Z"
+      "persisted_at": "2026-11-25T00:16:46.841Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-preactjs-preact": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-preactjs-preact",
@@ -270935,9 +270940,9 @@
       "title": "Architecture Intelligence: preactjs-preact-learnings Core Invariants",
       "repository": "preactjs-preact-learnings",
       "source_version": "HEAD",
-      "content_hash": "c04087fcb03d6891ac3d0c1b5ad2cdbc575b18d82a13edd246becb8bb1bebeaf",
+      "content_hash": "b482af930a0ce617154bac19a60cbe0f8c28b2a7cfdb01776992f972dfa56a2e",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T00:44:00.983Z"
+      "persisted_at": "2026-11-25T00:17:26.585Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-preactjs-preact-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-preactjs-preact-learnings",
@@ -288054,10 +288059,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tencent-tds-kuiklyui-architecture-intelligence-tencent-tds-kuiklyui-core-invaria.md",
       "title": "Architecture Intelligence: Tencent-TDS/KuiklyUI Core Invariants",
       "repository": "Tencent-TDS/KuiklyUI",
-      "source_version": "d606ca05",
-      "content_hash": "274cfa183458cf7623f56fac8df7168d402f95a9250c95adf2c1bd8ecac2c6df",
+      "source_version": "ad420ccc",
+      "content_hash": "fdfbd1409572696f825593779ac4cf3851071c0a67953f4a9d5bb47b6cbd103a",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T10:18:03.329Z"
+      "persisted_at": "2026-11-25T00:16:50.963Z"
     },
     "rule-9140": {
       "learning_id": "rule-9140",
@@ -288117,9 +288122,9 @@
       "title": "Architecture Intelligence: tencent-tds-kuiklyui-learnings Core Invariants",
       "repository": "tencent-tds-kuiklyui-learnings",
       "source_version": "HEAD",
-      "content_hash": "e50f212a0026eb849edb6d308c210c534f1bc4a11e66087928d46bd307147890",
+      "content_hash": "caf987f6b9dec8e0e8a6ba25eb3e3b8f9637065dcb60aa258834c23ca3eca75f",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T10:18:07.909Z"
+      "persisted_at": "2026-11-25T00:17:27.375Z"
     },
     "rule-9141": {
       "learning_id": "rule-9141",
@@ -342203,6 +342208,163 @@
       "content_hash": "5a455b2e70fb1cffb2d92183efb8be9d20f962ab452a82afbc6ca8ac7bfab3ef",
       "domain_letter": "I",
       "persisted_at": "2026-11-25T00:08:38.165Z"
+    },
+    "rule-10396": {
+      "learning_id": "rule-10396",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10396,
+      "title": "clean up text selection resources in OnDestroy",
+      "source_url": "https://github.com/Tencent-TDS/KuiklyUI",
+      "source_version": "ad420ccc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T00:16:50.320Z"
+    },
+    "candidate_directive-clean-up-text-selection-resources-in-ondestroy": {
+      "item_id": "candidate_directive-clean-up-text-selection-resources-in-ondestroy",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-IULE-clean-up-text-selection-resources-in-ondestroy.md",
+      "title": "clean up text selection resources in OnDestroy",
+      "repository": "Tencent-TDS/KuiklyUI",
+      "source_version": "ad420ccc",
+      "content_hash": "245953e2a1df6fff3567267710c1d262f641a942a951bef3a731b1d245612cde",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-25T00:16:50.787Z"
+    },
+    "learn-github-openyurtio-openyurt": {
+      "learning_id": "learn-github-openyurtio-openyurt",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "openyurtio/openyurt",
+      "repository": "openyurtio/openyurt",
+      "slug": "openyurtio-openyurt",
+      "platform": "github",
+      "source_url": "https://github.com/openyurtio/openyurt",
+      "source_version": "4840e2d1",
+      "content_hash": "f7abfd6651372e3b85500acb2725acc01a487f9046ce1c046f593a9796962b51",
+      "dossier_path": "07_PROJECT_LEARNING/openyurtio-openyurt-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/openyurtio-openyurt-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 10397,
+          "title": "only report tunnel endpoints as v1alpha1 activeEndpoint",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-25T00:16:52.049Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-10397": {
+      "learning_id": "rule-10397",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10397,
+      "title": "only report tunnel endpoints as v1alpha1 activeEndpoint",
+      "source_url": "https://github.com/openyurtio/openyurt",
+      "source_version": "4840e2d1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T00:16:52.049Z"
+    },
+    "candidate_directive-only-report-tunnel-endpoints-as-v1alpha1-activeendpoint": {
+      "item_id": "candidate_directive-only-report-tunnel-endpoints-as-v1alpha1-activeendpoint",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-IVXY-only-report-tunnel-endpoints-as-v1alpha1-activeendpoint.md",
+      "title": "only report tunnel endpoints as v1alpha1 activeEndpoint",
+      "repository": "openyurtio/openyurt",
+      "source_version": "4840e2d1",
+      "content_hash": "675e0538771d150439f84fcbbe260d287cde9103e5d6e44a13ffab037ba1f852",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-25T00:16:52.535Z"
+    },
+    "domain_intelligence-content-information-intelligence-openyurtio-openyurt-core-invariants": {
+      "item_id": "domain_intelligence-content-information-intelligence-openyurtio-openyurt-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-openyurtio-openyurt-content-information-intelligence-openyurtio-openyurt-core-in.md",
+      "title": "Content & Information Intelligence: openyurtio/openyurt Core Invariants",
+      "repository": "openyurtio/openyurt",
+      "source_version": "4840e2d1",
+      "content_hash": "66ea5bbb09393a02e07ae1d47c51548406554b387ae5b539136ad819824df016",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-25T00:16:52.715Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-openyurtio-openyurt": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-openyurtio-openyurt",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/openyurtio-openyurt-verification-protocol-empirical-defect-shield-for-openyurtio.md",
+      "title": "Verification Protocol: Empirical Defect Shield for openyurtio/openyurt",
+      "repository": "openyurtio/openyurt",
+      "source_version": "4840e2d1",
+      "content_hash": "789afeabebacb65c05894c778607356d7badef78c4947c4ba323fd99184a14b8",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-25T00:16:52.895Z"
+    },
+    "candidate_directive-ohos-clean-up-text-selection-resources-in-ondestroy": {
+      "item_id": "candidate_directive-ohos-clean-up-text-selection-resources-in-ondestroy",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-JMNP-ohos-clean-up-text-selection-resources-in-ondestroy.md",
+      "title": "ohos): clean up text selection resources in OnDestroy",
+      "repository": "tencent-tds-kuiklyui-learnings",
+      "source_version": "HEAD",
+      "content_hash": "79b83a0571003ba48f0780c35652a453e98939223e79dfb951a190d51a37de61",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-25T00:17:27.168Z"
+    },
+    "candidate_directive-raven-only-report-tunnel-endpoints-as-v1alpha1-activeendpoint": {
+      "item_id": "candidate_directive-raven-only-report-tunnel-endpoints-as-v1alpha1-activeendpoint",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-JNHO-raven-only-report-tunnel-endpoints-as-v1alpha1-activeendpoint.md",
+      "title": "raven): only report tunnel endpoints as v1alpha1 activeEndpoint",
+      "repository": "openyurtio-openyurt-learnings",
+      "source_version": "HEAD",
+      "content_hash": "53411c8426345def6f5a3da5f54c95bbb1afd5bfe2e6e10ea1c11885bfb33a96",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-25T00:17:28.236Z"
+    },
+    "domain_intelligence-content-information-intelligence-openyurtio-openyurt-learnings-core-invariants": {
+      "item_id": "domain_intelligence-content-information-intelligence-openyurtio-openyurt-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-openyurtio-openyurt-learnings-content-information-intelligence-openyurtio-openyu.md",
+      "title": "Content & Information Intelligence: openyurtio-openyurt-learnings Core Invariants",
+      "repository": "openyurtio-openyurt-learnings",
+      "source_version": "HEAD",
+      "content_hash": "eb543445d18870c8ca36b2b5a5e85d730adc34f4b9244f9179abbb1096d030a3",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-25T00:17:28.446Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-openyurtio-openyurt-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-openyurtio-openyurt-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/openyurtio-openyurt-learnings-verification-protocol-empirical-defect-shield-for-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for openyurtio-openyurt-learnings",
+      "repository": "openyurtio-openyurt-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b2943767dbf821535b7ecf00ff6dd170d87ed86e69116494008b7a5e98f72715",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-25T00:17:28.655Z"
     }
   },
   "ai-builder-brain": {

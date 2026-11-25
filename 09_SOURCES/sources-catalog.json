@@ -4563,10 +4563,10 @@
     "repository": "openyurtio/openyurt",
     "platform": "github",
     "sourceUrl": "https://github.com/openyurtio/openyurt",
-    "sourceVersion": "552dac7a",
+    "sourceVersion": "4840e2d1",
     "license": "Apache-2.0",
-    "contentHash": "50002d7471fb876dc766417a4578f13681b99ea3d48d7673e26190a2cb5aa499",
-    "lastHarvestedAt": "2026-11-12T08:28:27.981Z",
+    "contentHash": "f7abfd6651372e3b85500acb2725acc01a487f9046ce1c046f593a9796962b51",
+    "lastHarvestedAt": "2026-11-25T00:16:52.280Z",
     "learningId": "learn-github-openyurtio-openyurt"
   },
   "slatedb-slatedb": {
@@ -7233,10 +7233,10 @@
     "repository": "Tencent-TDS/KuiklyUI",
     "platform": "github",
     "sourceUrl": "https://github.com/Tencent-TDS/KuiklyUI",
-    "sourceVersion": "d606ca05",
+    "sourceVersion": "ad420ccc",
     "license": "NOASSERTION",
-    "contentHash": "b11d6a749e01e541493b3c8a93d07c2a5e39379a1160a2ba7e8cf356587cd3db",
-    "lastHarvestedAt": "2026-11-22T10:18:02.910Z",
+    "contentHash": "93ea459773837cfba859aa15913b00897b9349ad4f8d45f33241e4b2cb426236",
+    "lastHarvestedAt": "2026-11-25T00:16:50.543Z",
     "learningId": "learn-github-tencent-tds-kuiklyui"
   },
   "seaql-sea-orm": {
@@ -10073,10 +10073,10 @@
     "repository": "preactjs/preact",
     "platform": "github",
     "sourceUrl": "https://github.com/preactjs/preact",
-    "sourceVersion": "39d353a8",
+    "sourceVersion": "1fbc07f6",
     "license": "MIT",
-    "contentHash": "e09783bddbcc068c81bbc076c2aeb22f2f2ad418a7f43abe2e5e9cc2e2451bb6",
-    "lastHarvestedAt": "2026-11-21T00:43:46.315Z",
+    "contentHash": "c93fa054cbb0d577794f5b675a4d348fa77c76dad344d5e492a35d442a528eaa",
+    "lastHarvestedAt": "2026-11-25T00:16:46.595Z",
     "learningId": "learn-github-preactjs-preact"
   },
   "alyssaxuu-later": {

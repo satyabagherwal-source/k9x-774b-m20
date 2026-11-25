@@ -12894,3 +12894,7 @@ Every entry in this ledger must capture:
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `012baddc` | Multi-dimensional audit evidence | 2026-11-25T00:08:28.671Z |
 | `learn-github-infiniflow-infinity` | `https://github.com/infiniflow/infinity` | `75bc1f15` | Multi-dimensional audit evidence | 2026-11-25T00:08:30.421Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `fa47c9a1` | Multi-dimensional audit evidence | 2026-11-25T00:08:32.619Z |
+| `learn-github-preactjs-preact` | `https://github.com/preactjs/preact` | `1fbc07f6` | Multi-dimensional audit evidence | 2026-11-25T00:16:46.595Z |
+| `learn-github-tencent-tds-kuiklyui` | `https://github.com/Tencent-TDS/KuiklyUI` | `ad420ccc` | Multi-dimensional audit evidence | 2026-11-25T00:16:50.543Z |
+| `learn-github-openyurtio-openyurt` | `https://github.com/openyurtio/openyurt` | `4840e2d1` | Multi-dimensional audit evidence | 2026-11-25T00:16:52.280Z |
+| `learn-dom-d-183bcb72` | `project://preactjs-preact` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/preactjs-preact-learnings.md` | 2026-11-25T00:17:25.888Z |

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T00:08:38.322Z",
-  "total_records": 2602,
+  "last_updated": "2026-11-25T00:17:28.446Z",
+  "total_records": 2605,
   "domains": {
     "A": {
       "total": 22,
@@ -71,7 +71,7 @@
       ]
     },
     "D": {
-      "total": 979,
+      "total": 980,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -1051,7 +1051,8 @@
         "DOM-D-C22BA2DB",
         "domain_intelligence-research-knowledge-intelligence-hf-prism-ml-ternary-bonsai-2-5-27b-gguf-learning",
         "DOM-D-74B4B6C4",
-        "DOM-D-FF5AF4F8"
+        "DOM-D-FF5AF4F8",
+        "DOM-D-183BCB72"
       ]
     },
     "E": {
@@ -2267,7 +2268,7 @@
       ]
     },
     "I": {
-      "total": 151,
+      "total": 153,
       "record_ids": [
         "DOM-I-16F011E5",
         "DOM-I-BF0A22A6",
@@ -2419,7 +2420,9 @@
         "domain_intelligence-content-information-intelligence-actions-actions-runner-controller-learnings-cor",
         "DOM-I-2DDA15B6",
         "domain_intelligence-content-information-intelligence-rollup-rollup-core-invariants",
-        "domain_intelligence-content-information-intelligence-rollup-rollup-learnings-core-invariants"
+        "domain_intelligence-content-information-intelligence-rollup-rollup-learnings-core-invariants",
+        "domain_intelligence-content-information-intelligence-openyurtio-openyurt-core-invariants",
+        "domain_intelligence-content-information-intelligence-openyurtio-openyurt-learnings-core-invariants"
       ]
     },
     "J": {
@@ -26458,8 +26461,8 @@
       "title": "Architecture Intelligence: preactjs/preact Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-preactjs-preact-architecture-intelligence-preactjs-preact-core-invariants.md",
       "repository": "preactjs/preact",
-      "content_hash": "6283c4404ed1067456b0dbf482eb7f1ad4bc1bfc0166b6ef6966b261e5a77f35",
-      "created_at": "2026-11-21T00:43:46.687Z"
+      "content_hash": "13c53b6601b961ef37a8aa59ddd9995be588084158df7370dfd0b99ec0c4e737",
+      "created_at": "2026-11-25T00:16:46.841Z"
     },
     "domain_intelligence-architecture-intelligence-krakend-krakend-ce-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-krakend-krakend-ce-core-invariants",
@@ -26476,8 +26479,8 @@
       "title": "Architecture Intelligence: preactjs-preact-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-preactjs-preact-learnings-architecture-intelligence-preactjs-preact-learnings-co.md",
       "repository": "preactjs-preact-learnings",
-      "content_hash": "c04087fcb03d6891ac3d0c1b5ad2cdbc575b18d82a13edd246becb8bb1bebeaf",
-      "created_at": "2026-11-21T00:44:00.983Z"
+      "content_hash": "b482af930a0ce617154bac19a60cbe0f8c28b2a7cfdb01776992f972dfa56a2e",
+      "created_at": "2026-11-25T00:17:26.585Z"
     },
     "domain_intelligence-architecture-intelligence-krakend-krakend-ce-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-krakend-krakend-ce-learnings-core-invariants",
@@ -30489,8 +30492,8 @@
       "title": "Architecture Intelligence: Tencent-TDS/KuiklyUI Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tencent-tds-kuiklyui-architecture-intelligence-tencent-tds-kuiklyui-core-invaria.md",
       "repository": "Tencent-TDS/KuiklyUI",
-      "content_hash": "274cfa183458cf7623f56fac8df7168d402f95a9250c95adf2c1bd8ecac2c6df",
-      "created_at": "2026-11-22T10:18:03.329Z"
+      "content_hash": "fdfbd1409572696f825593779ac4cf3851071c0a67953f4a9d5bb47b6cbd103a",
+      "created_at": "2026-11-25T00:16:50.963Z"
     },
     "domain_intelligence-architecture-intelligence-tencent-tds-kuiklyui-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-tencent-tds-kuiklyui-learnings-core-invariants",
@@ -30498,8 +30501,8 @@
       "title": "Architecture Intelligence: tencent-tds-kuiklyui-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tencent-tds-kuiklyui-learnings-architecture-intelligence-tencent-tds-kuiklyui-le.md",
       "repository": "tencent-tds-kuiklyui-learnings",
-      "content_hash": "e50f212a0026eb849edb6d308c210c534f1bc4a11e66087928d46bd307147890",
-      "created_at": "2026-11-22T10:18:07.909Z"
+      "content_hash": "caf987f6b9dec8e0e8a6ba25eb3e3b8f9637065dcb60aa258834c23ca3eca75f",
+      "created_at": "2026-11-25T00:17:27.375Z"
     },
     "domain_intelligence-architecture-intelligence-1jehuang-jcode-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-1jehuang-jcode-core-invariants",
@@ -43671,6 +43674,66 @@
       "confidence": 0.6,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-24T23:59:45.306Z"
+    },
+    "domain_intelligence-content-information-intelligence-openyurtio-openyurt-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-openyurtio-openyurt-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: openyurtio/openyurt Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-openyurtio-openyurt-content-information-intelligence-openyurtio-openyurt-core-in.md",
+      "repository": "openyurtio/openyurt",
+      "content_hash": "66ea5bbb09393a02e07ae1d47c51548406554b387ae5b539136ad819824df016",
+      "created_at": "2026-11-25T00:16:52.715Z"
+    },
+    "DOM-D-183BCB72": {
+      "record_id": "DOM-D-183BCB72",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): preactjs/preact",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/preactjs-preact-learnings.md`  \n> **Source**: github ([https://github.com/preactjs/preact](https://github.com/preactjs/preact))  \n> **Source Version**: `1fbc07f6`  \n> **License**: MIT  \n> **Synthesized By**: zero-clone-structural-synthesizer",
+      "content_hash": "79441f9842e6036424dc2eb9c684f481f8e553f2bd3d0bca843bbfddceb397d9",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/preactjs-preact-learnings.md`  \n> **Source**: github ([https://github.com/preactjs/p -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/preactjs-preact-learnings.md`  \n> **Source**: github ([https://github.com/preactjs/p",
+      "provenance": {
+        "source_uri": "project://preactjs-preact/preactjs-preact-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-25T00:16:55.699Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (preactjs-preact)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of preactjs-preact"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-25T00:17:25.858Z"
+    },
+    "domain_intelligence-content-information-intelligence-openyurtio-openyurt-learnings-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-openyurtio-openyurt-learnings-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: openyurtio-openyurt-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-openyurtio-openyurt-learnings-content-information-intelligence-openyurtio-openyu.md",
+      "repository": "openyurtio-openyurt-learnings",
+      "content_hash": "eb543445d18870c8ca36b2b5a5e85d730adc34f4b9244f9179abbb1096d030a3",
+      "created_at": "2026-11-25T00:17:28.446Z"
     }
   }
 }

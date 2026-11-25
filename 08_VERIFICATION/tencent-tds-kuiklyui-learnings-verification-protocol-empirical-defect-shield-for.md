@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-22T10:18:07.594Z",
+  "timestamp": "2026-11-25T00:17:27.029Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-tencent-tds-kuiklyui-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [tencent-tds-kuiklyui-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-22T10:18:07.594Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T00:17:27.029Z`  
 > **Learning ID**: `LEARN-EVO-tencent-tds-kuiklyui-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tencent-tds-kuiklyui-learnings.md`  
 > **Source**: github ([https://github.com/Tencent-TDS/KuiklyUI](https://github.com/Tencent-TDS/KuiklyUI))  
-> **Source Version**: `d606ca05`  
+> **Source Version**: `ad420ccc`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T10:18:01.857Z  
+> **Timestamp**: 2026-11-25T00:16:49.401Z  
 > **Learning ID**: `learn-github-tencent-tds-kuiklyui`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tencent-tds-kuiklyui-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Tencent-TDS/KuiklyUI](https://github.com/Tencent-TDS/KuiklyUI))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T10:18:01.852Z  
+> **Harvest Timestamp**: 2026-11-25T00:16:49.396Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -781,13 +781,11 @@ class Animatable<T, V : AnimationVector>(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1913** (2026-11-19): **fix(text-area): align placeholder with input text line height**
+- **Issue #1922** (2026-11-24): **fix(ohos): animate pull-to-refresh from release position**
   *Symptoms*: 
-  **Post-Mortem & Fix Analysis**:
-  > lgtm
 
-- **Issue #1912** (2026-11-19): **fix(core): stop clearPlaceholder from adding a placeholder prop to images without one**
-  *Symptoms*: - Compose-side network images never call placeholderSrc, yet the ImageEvent.loadSuccess wrapper unconditionally invokes clearPlaceholder, appending a placeholder="" attr to the node once loading finishes  - the attr set of an image node therefore depends on its loading state: a TurboDisplay cache snapshot saved after loading (10 props) no longer matches the real tree at takeover while still loading (9 props), failing canReuseNode and forcing remove+create — observed as background image flicker on the task center page  - track placeholderPropSet on ImageView so only images that actually set a placeholderSrc emit the clear prop; images without a placeholder keep a stable attr set, and the legacy DSL behavior (placeholder value cleared after load) is unchanged
+- **Issue #1921** (2026-11-24): **feat(ios): expose deferredPropKeys on TurboDisplayConfig for custom side-effect props**
+  *Symptoms*: feat(ios): expose deferredPropKeys on TurboDisplayConfig for custom side-effect props
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -804,209 +802,236 @@ class Animatable<T, V : AnimationVector>(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d606ca05` (2026-11-19)
-**Commit Message**: fix(build): align OHOS target matrix and Android release publication (#1902)
+### Incident Patch 1: `3dede805` (2026-11-23)
+**Commit Message**: fix(ohos): clean up text selection resources in OnDestroy (#1916)
 
-Drop macOS targets from :core-wx OHOS Gradle scripts so commonMain's :core dependency matches Kotlin 2.2+ KMP resolution checks; configure singleVariant("release") for core-render-android on AGP 8.6.
+Fix a non-main thread destruction crash:
 
-Co-authored-by: Cursor <[REDACTED_EMAIL]>
+| 帧 | 地址 | 函数与位置 |
+| --- | --- | --- |
+| #03 | 0x17de8c | KREnsureMainThreadChecker, KRThreadChecker.cpp:39 |
+| #04 | 0xd3f1c | ArkUINativeGestureAPI::removeGestureFromNode, KREventUtil.cpp:203 |
+| #05 | 0xf614c | KRView::CleanupHandleNodes, KRView.cpp:876 |
+| #06 | 0xf5db0 | KRView::~KRView, KRView.cpp:80 |
+| #07 | 0xda294 | shared_ptr<IKRRenderViewExport> 引用释放；RemoveRenderView 的外层 lambda 析构，KRRenderLayerHandler.cpp:86 |
+| #08 | 0x9a804 | std::function 析构 -> TimerContext 析构 -> KRThread::TimerCloseCb, KRThread.cpp:365 |
+| #09 | 系统栈 | uv_run |
+| #10 | 0x997cc | KRThread::WorkerLoop, KRThread.cpp:149 |
+| #11 | 0x9b6f0 | CustomStackSizeThread::Entry, CustomStackSizeThread.h:99 |
 
-**File**: `core-render-android/build.2.4.21.ohos.gradle.kts` (modified, +3/-0)
+**File**: `core-render-ohos/src/main/cpp/libohos_render/expand/components/view/KRView.cpp` (modified, +2/-0)
 ```diff
-@@ -68,6 +68,9 @@ android {
-         sourceCompatibility = JavaVersion.VERSION_1_8
-         targetCompatibility = JavaVersion.VERSION_1_8
-     }
-+    publishing {
-+        singleVariant("release")
-+    }
+@@ -776,6 +776,8 @@ void KRView::WillRemoveFromParentView() {
+ 
+ void KRView::OnDestroy() {
+     ReleaseInputSessions();
++    StopObservingInternalScrollViews();
++    CleanupHandleNodes();
+     IKRRenderViewExport::OnDestroy();
  }
  
- kotlin {
-```
-
-**File**: `core-wx/build.2.0.ohos.gradle.kts` (modified, +1/-4)
-```diff
-@@ -33,7 +33,7 @@ publishing {
- 
- // core-wx: Kuikly WeChat MiniProgram bindings (views + modules).
- //
--// Target matrix aligned with :core — publishes android/iOS/macOS/js(IR)/ohosArm64.
-+// Target matrix aligned with :core — publishes android/iOS/js(IR)/ohosArm64.
- // Rationale: business apps may share cross-platform pages in commonMain and
- // conditionally use WXButton / registerWXModules() only on MiniProgram runtime.
- // The wrappers themselves are pure Kotlin (no js() macros / no wx.* access —
-@@ -61,9 +61,6 @@ kotlin {
-     iosX64()
-     iosArm64()
- 
--    macosX64()
--    macosArm64()
--
-     js(IR) {
-         moduleName = "KuiklyCore-core-wx"
-         browser {
-```
-
-**File**: `core-wx/build.2.4.21.ohos.gradle.kts` (modified, +1/-4)
-```diff
-@@ -48,7 +48,7 @@ publishing {
- 
- // core-wx: Kuikly WeChat MiniProgram bindings (views + modules).
- //
--// Target matrix aligned with :core — publishes android/iOS/macOS/js/ohosArm64.
-+// Target matrix aligned with :core — publishes android/iOS/js/ohosArm64.
- // The wrappers themselves are pure Kotlin (no js() macros / no wx.* access —
- // all `wx.*` calls live in core-render-web), so it is safe to compile on every
- // target. On non-MiniProgram runtime, WX views degrade to a plain view and
-@@ -67,9 +67,6 @@ kotlin {
-     iosX64()
-     iosArm64()
- 
--    macosX64()
--    macosArm64()
--
-     js {
-         outputModuleName.set("KuiklyCore-core-wx")
-         browser {
 ```
 
 ---
 
-### Incident Patch 2: `8be8afff` (2026-11-19)
-**Commit Message**: fix(text-area): align placeholder with input text line height (#1913)
+### Incident Patch 2: `ad420ccc` (2026-11-24)
+**Commit Message**: fix(ohos): animate pull-to-refresh from release position (#1922)
 
-**File**: `core-render-android/src/main/java/com/tencent/kuikly/core/render/android/expand/component/KRTextFieldView.kt` (modified, +17/-0)
+* fix(ohos): animate pull-to-refresh from release position
+
+* fix(ohos): clear actual refresh insets during Compose reuse
+
+* fix(ohos): align scroll offset writes with visual coordinates
+
+**File**: `core-render-ohos/src/main/cpp/libohos_render/expand/components/scroller/KRScrollerContentInset.h` (modified, +1/-0)
 ```diff
-@@ -516,9 +516,25 @@ open class KRTextFieldView(context: Context, private val softInputMode: Int?) :
+@@ -21,6 +21,7 @@
  
-     private fun setPlaceHolder(propValue: Any): Boolean {
-         hint = propValue as String
-+        applyPlaceHolderLineHeight()
-         return true
-     }
- 
-+    /**
-+     * TextView 为 hint 和输入文字分别排版，text 上的行高样式不会作用于 hint。
-+     * 这里给 hint 设置相同行高，让未输入时的提示文字与输入文字保持在同一垂直位置。
-+     */
-+    private fun applyPlaceHolderLineHeight() {
-+        val span = lineHeightSpan ?: return
-+        val raw = hint?.toString().orEmpty()
-+        if (raw.isEmpty()) {
-+            return
-+        }
-+        hint = SpannableString(raw).apply {
-+            setSpan(span, 0, raw.length, Spanned.SPAN_EXCLUSIVE_INCLUSIVE)
-+        }
-+    }
-+
-     private fun setPlaceHolderColor(propValue: Any): Boolean {
-         setHintTextColor((propValue as String).toColor())
-         return true
-@@ -1061,6 +1077,7 @@ open class KRTextFieldView(context: Context, private val softInputMode: Int?) :
-         }
-         lineHeightSpan = HRLineHeightSpan(pxLineHeight)
-         ensureLineHeightSpan(text)
-+        applyPlaceHolderLineHeight()
-         observeTextWatcher()
-         return true
-     }
+ class KRScrollerContentInset {
+  public:
++    KRScrollerContentInset() = default;
+     explicit KRScrollerContentInset(const KRAnyValue &value) {
+         auto content_inset_splits = kuikly::util::SplitString(value->toString(), ' ');
+         top = content_inset_splits[0]->toFloat();
 ```
 
-**File**: `core-render-ios/Extension/Components/KRTextAreaView.m` (modified, +31/-1)
+**File**: `core-render-ohos/src/main/cpp/libohos_render/expand/components/scroller/KRScrollerView.cpp` (modified, +120/-77)
 ```diff
-@@ -198,6 +198,7 @@ - (void)setCss_lineHeight:(NSNumber *)css_lineHeight {
-     if (_css_lineHeight != css_lineHeight) {
-         _css_lineHeight = css_lineHeight;
-         [self updateLineHeightIfApplicable];
-+        [self p_applyLineHeightToPlaceholder];
+@@ -158,7 +158,8 @@ void KRScrollerView::SetRenderViewFrame(const KRRect &frame) {
+     if (!is_set_frame_) {
+         is_set_frame_ = true;
+         if (is_need_set_content_offset_) {
+-            kuikly::util::SetArkUIContentOffset(GetNode(), first_offset_x_, first_offset_y_, first_animate_,
++            auto offset = ToNativeContentOffset(KRPoint{first_offset_x_, first_offset_y_});
++            kuikly::util::SetArkUIContentOffset(GetNode(), offset.x, offset.y, first_animate_,
+                                                 first_duration_, first_curve_, first_damping_);
+             is_need_set_content_offset_ = false;
+         }
+@@ -322,8 +323,19 @@ void KRScrollerView::OnEvent(ArkUI_NodeEvent *event, const ArkUI_NodeEventType &
      }
  }
  
-@@ -346,7 +347,7 @@ - (void)setCss_fontWeight:(NSString *)css_fontWeight {
- 
- - (void)setCss_placeholder:(NSString *)css_placeholder {
-     _css_placeholder = css_placeholder;
--    self.placeholderTextView.text = css_placeholder;
-+    [self p_applyLineHeightToPlaceholder];
-     [self p_updatePlaceholder];
- }
- 
-@@ -988,6 +989,9 @@ - (void)setFrame:(CGRect)frame {
- - (void)setFont:(UIFont *)font {
-     [super setFont:font];
-     _placeholderTextView.font = font;
-+    if (_placeholderTextView) {
-+        [self p_applyLineHeightToPlaceholder];
-+    }
- }
- 
- - (void)setTextAlignment:(NSTextAlignment)textAlignment {
-@@ -1034,6 +1038,32 @@ - (void)p_addKeyboardNotificationIfNeed {
- #endif // macOS]
- }
- 
-+/// 提示文字显示在单独的 UITextView 上，不会继承主视图的段落样式和基线偏移。
-+/// 这里同步相同的行高，让提示文字与输入文字保持在同一垂直位置。
-+- (void)p_applyLineHeightToPlaceholder {
-+    NSString *text = _css_placeholder ?: @"";
-+    if (text.length == 0) {
-+        if (_placeholderTextView) {
-+            self.placeholderTextView.text = @"";
-+        }
-+        return;
-+    }
-+    UITextView *placeholderTextView = self.placeholderTextView;
-+    if (_css_lineHeight.floatValue <= FLT_EPSILON) {
-+        placeholderTextView.text = text;
-+        return;
-+    }
-+    UIFont *font = self.font ?: [UIFont systemFontOfSize:16];
-+    NSMutableAttributedString *attrStr = [[NSMutableAttributedString alloc] initWithString:text];
-+    NSRange range = NSMakeRange(0, attrStr.length);
-+    CGFloat baselineOffset = ([_css_lineHeight floatValue] - font.pointSize) / 2;
-+    [attrStr addAttribute:NSFontAttributeName value:font range:range];
-+    [attrStr addAttribute:NSParagraphStyleAttributeName value:[self p_buildCurrentParagraphStyle] range:range];
-+    [attrStr addAttribute:NSBaselineOffsetAttributeName value:@(baselineOffset) range:range];
-+    placeholderTextView.attributedText = attrStr;
-+    placeholderTextView.font = font;
+-void KRScrollerView::FireOnScrollEvent(ArkUI_NodeEvent *event) {
++KRPoint KRScrollerView::GetScrollEventContentOffset() {
+     auto point = kuikly::util::GetArkUIScrollContentOffset(GetNode());
++    point.x -= current_content_inset_.start;
++    point.y -= current_content_inset_.top;
++    return point;
 +}
 +
- - (void)p_updatePlaceholder {
-     _placeholderTextView.hidden = self.text.length > 0 || self.attributedText.length > 0;
-     if (self.markedTextRange) { // 输入中
-```
-
-**File**: `core-render-web/base/src/jsMain/kotlin/com/tencent/kuikly/core/render/web/expand/components/KRTextAreaView.kt` (modified, +8/-0)
-```diff
-@@ -139,6 +139,13 @@ class KRTextAreaView : IKuiklyRenderViewExport {
-                 true
-             }
- 
-+            LINE_HEIGHT -> {
-+                // textarea 的提示文字继承元素自身的 line-height；
-+                // 设置在元素上，提示文字与输入文字就会保持在同一垂直位置。
-+                ele.style.lineHeight = propValue.toNumberFloat().toPxF()
-+                true
-+            }
++KRPoint KRScrollerView::ToNativeContentOffset(const KRPoint &point) {
++    return KRPoint{point.x + current_content_inset_.start, point.y + current_content_inset_.top};
++}
 +
-             MAX_TEXT_LENGTH -> {
-                 val maxTextLength = propValue.unsafeCast<Int>()
-                 if (maxTextLength <= 0) {
-@@ -615,6 +622,7 @@ class KRTextAreaView : IKuiklyRenderViewExport {
-         private const val TEXT_ALIGN = "textAlign"
-         private const val FONT_SIZE = "fontSize"
-         private const val FONT_WEIGHT = "fontWeight"
-+        private const val LINE_HEIGHT = "lineHeight"
-         private const val TINT_COLOR = "tintColor"
-         private const val SELECTION_COLOR = "selectionColor"
-         private const val MAX_TEXT_LENGTH = "maxTextLength"
++void KRScrollerView::FireOnScrollEvent(ArkUI_NodeEvent *event) {
++    auto point = GetScrollEventContentOffset();
+     if (point.x == last_fired_scroll_x_ && point.y == last_fired_scroll_y_) {
+         return;
+     }
+@@ -509,6 +521,10 @@ void KRScrollerView::SetContentOffset(const KRAnyValue &value) {
+     }
+     // 接着播新的弹簧滚动时，上一笔 scroll 会话继续；否则这次取消就是滚动结束。
+     CancelSpringScrollAnimation(!start_spring);
++    // 主动滚动先冻结当前 inset，再将对外视觉坐标转换为原生目标。
++    auto offset = ToNativeContentOffset(KRPoint{offset_x, offset_y});
++    offset_x = offset.x;
++    offset_y = offset.y;
+     if (start_spring) {
+         float velocity_x = direction_row_ ? velocity : 0;
+         float velocity_y = direction_row_ ? 0 : velocity;
+@@ -551,7 +567,7 @@ float ClampSpringVelocity(float start, float target, float velocity, float omega
+ }  // namespace
+ 
+ bool KRScrollerView::StartSpringScrollAnimation(float target_x, float target_y, int duration_ms, float velocity_x,
+-                                                float velocity_y) {
++                                                float velocity_y, const std::shared_ptr<KRScrollerContentInset> &content_inset) {
+     auto root_view = GetRootView().lock();
+     auto animate_api = GetAnimateApi();
+     if (!root_view || !animate_api || !animate_api->createAnimator) {
+@@ -560,6 +576,11 @@ bool KRScrollerView::StartSpringScrollAnimation(float target_x, float target_y,
+     DisposeSpringScrollAnimator();
+ 
+     auto start = kuikly::util::GetArkUIScrollContentOffset(GetNode());
++    if (content_inset) {
++        spring_anim_content_inset_ = std::make_shared<KRScrollerContentInset>(*content_inset);
++        spring_anim_start_inset_ = GetContentInset();
++        start = KRPoint{spring_anim_start_inset_.start, spring_anim_start_inset_.top};
++    }
+     float omega = kSpringSettleFactor * 1000.0f / duration_ms;
+     spring_anim_omega_ = omega;
+     spring_anim_duration_ms_ = duration_ms;
+@@ -617,15 +638,31 @@ void KRScrollerView::OnSpringScrollAnimationFrame(uint32_t generation) {
+                                              spring_anim_omega_, t_sec);
+     float y = CriticallyDampedSpringPosition(spring_anim_start_y_, spring_anim_target_y_, spring_anim_velocity_y_,
+                                              spring_anim_omega_, t_sec);
+-    kuikly::util::SetArkUIContentOffset(GetNode(), x, y, false, 0, 0, 0);
++    if (spring_anim_content_inset_) {
++        float end = CriticallyDampedSpringPosition(spring_anim_start_inset_.end, spring_anim_content_inset_->end,
++                                                   0, spring_anim_omega_, t_sec);
++        float bottom = CriticallyDampedSpringPosition(spring_anim_start_inset_.bottom, spring_anim_content_inset_->bottom,
++                                                      0, spring_anim_omega_, t_sec);
++        SetContentInsetMargin(x, y, end, bottom);
++        FireOnScrollEvent(nullptr);
++    } else {
++        kuikly::util::SetArkUIContentOffset(GetNode(), x, y, false, 0, 0, 0);
++    }
+ }
+ 
+ void KRScrollerView::OnSpringScrollAnimationEnd(uint32_t generation) {
+     if (!spring_anim_running_ || generation != spring_anim_generation_) {
+         return;
+     }
+     spring_anim_running_ = false;
+-    kuikly::util::SetArkUIContentOffset(GetNode(), spring_anim_target_x_, spring_anim_target_y_, false, 0, 0, 0);
++    if (spring_anim_content_inset_) {
++        auto inset = spring_anim_content_inset_;
++        SetContentInsetMargin(inset->start, inset->top, inset->end, inset->bottom);
++        spring_anim_content_inset_ = nullptr;
++        FireOnScrollEvent(nullptr);
++    } else {
++        kuikly::util::SetArkUIContentOffset(GetNode(), spring_anim_target_x_, spring_anim_target_y_, false, 0, 0, 0);
++    }
+     current_scroll_state_ = ArkUI
 ```
 
-**File**: `demo/src/commonMain/kotlin/com/tencent/kuikly/demo/pages/debug/BugReproTextAreaPlaceholderCenterPage.kt` (added, +224/-0)
+**File**: `core-render-ohos/src/main/cpp/libohos_render/expand/components/scroller/KRScrollerView.h` (modified, +10/-4)
 ```diff
-@@ -0,0 +1,224 @@
+@@ -21,7 +21,7 @@
+ #include "libohos_render/export/IKRRenderViewExport.h"
+ #include "libohos_render/foundation/KRPoint.h"
+ #include "libohos_render/foundation/KRRect.h"
+-#include "libohos_render/utils/animate/KRAnimation.h"
++#include "libohos_render/utils/animate/KRAnimationUtils.h"
+ #include "libohos_render/expand/components/view/SuperTouchHandler.h"
+ 
+ class IKRScrollObserver {
+@@ -133,6 +133,8 @@ class KRScrollerView : public IKRRenderViewExport {
+     bool IsDraggingStateToFlingState(ArkUI_ScrollState new_scroll_state);
+     bool IsDraggingStateToIdeaState(ArkUI_ScrollState new_scroll_state);
+     KRAnyValue GetCommonScrollParams();
++    KRPoint GetScrollEventContentOffset();
++    KRPoint ToNativeContentOffset(const KRPoint &point);
+     void ApplyContentInsetWhenDragEnd();
+     void InnerSetBouncesEnable(bool enable);
+     void AdjustHeaderBouncesEnableWhenWillScroll(ArkUI_NodeEvent *event);
+@@ -141,8 +143,10 @@ class KRScrollerView : public IKRRenderViewExport {
+     bool SetFlingEnable(bool enable);
+     bool SetFlingSpeedLimit(const KRAnyValue &value);
+     KRPoint MaxContentOffsetInContentInset(const std::shared_ptr<KRScrollerContentInset> &content_inset);
++    KRScrollerContentInset GetContentInset();
++    void SetContentInsetMargin(float start, float top, float end, float bottom);
+     bool StartSpringScrollAnimation(float target_x, float target_y, int duration_ms, float velocity_x,
+-                                    float velocity_y);
++                                    float velocity_y, const std::shared_ptr<KRScrollerContentInset> &content_inset = nullptr);
+     void CancelSpringScrollAnimation(bool end_session);
+     void DisposeSpringScrollAnimator();
+     /** 关闭系统内置的"点击状态栏回顶"。节点为空或系统 API < 15 时不设置，保持原有滚动行为。 */
+@@ -179,8 +183,8 @@ class KRScrollerView : public IKRRenderViewExport {
+     float first_damping_ = 0;
+     ArkUI_ScrollState current_scroll_state_;
+ 
+-    std::shared_ptr<KRAnimation> content_inset_animate_;
+     std::shared_ptr<KRScrollerContentInset> content_inset_when_drag_end_;
++    KRScrollerContentInset current_content_inset_;
+     std::unordered_set<IKRScrollObserver *> scroll_observers_;
+ 
+     // 滚动相关的成员变量
+@@ -196,7 +200,9 @@ class KRScrollerView : public IKRRenderViewExport {
+     float last_fired_scroll_y_ = 0;
+     bool direction_row_ = false;
+ 
+-    // setContentOffset spring animation driven frame by frame (aligned with iOS UIView spring animation)
++    // offset 和 inset 共用逐帧弹簧驱动，同一时刻只有一个动画写入位置。
++    std::shared_ptr<KRScrollerContentInset> spring_anim_content_inset_;
++    KRScrollerContentInset spring_anim_start_inset_;
+     ArkUI_AnimatorHandle spring_animator_ = nullptr;
+     ArkUI_AnimatorOption *spring_animator_option_ = nullptr;
+     void *spring_animator_user_data_ = nullptr;
+```
+
+---
+
+### Incident Patch 3: `6793c82d` (2026-11-24)
+**Commit Message**: fix(ohos): preserve bounce state during Compose scroller reuse (#1919)
+
+Keep the cached bounce state aligned with the retained ArkUI node so bouncesEnable(false) is not skipped after prepareForComposeReuse. Include a nested-list pull-to-refresh reproduction demo.
+
+**File**: `core-render-ohos/src/main/cpp/libohos_render/expand/components/scroller/KRScrollerView.cpp` (modified, +0/-2)
+```diff
+@@ -1063,8 +1063,6 @@ void KRScrollerView::PrepareForComposeReuse() {
+     current_scroll_state_ = ArkUI_ScrollState::ARKUI_SCROLL_STATE_IDLE;
+     // Reset drag state
+     is_dragging_ = false;
+-    // Reset bounces dedup flag
+-    current_bounces_enabled_ = false;
+     // Clear PullToRefresh residual
+     content_inset_when_drag_end_ = nullptr;
+     // Reset velocity calculation state
+```
+
+**File**: `demo/src/commonMain/kotlin/com/tencent/kuikly/demo/pages/debug/BugReproNestedScrollRefreshPage.kt` (added, +166/-0)
+```diff
+@@ -0,0 +1,166 @@
 +/*
 + * Tencent is pleased to support the open source community by making KuiklyUI
 + * available.
@@ -1024,136 +1049,114 @@ Co-authored-by: Cursor <[REDACTED_EMAIL]>
 +
 +package com.tencent.kuikly.demo.pages.debug
 +
++import androidx.compose.runtime.Composable
++import androidx.compose.runtime.getValue
++import androidx.compose.runtime.key
++import androidx.compose.runtime.mutableStateOf
++import androidx.compose.runtime.remember
++import androidx.compose.runtime.rememberCoroutineScope
++import androidx.compose.runtime.setValue
++import com.tencent.kuikly.compose.ComposeContainer
++import com.tencent.kuikly.compose.extension.NestedScrollMode
++import com.tencent.kuikly.compose.extension.bouncesEnable
++import com.tencent.kuikly.compose.extension.nestedScroll
++import com.tencent.kuikly.compose.foundation.background
++import com.tencent.kuikly.compose.foundation.clickable
++import com.tencent.kuikly.compose.foundation.layout.Arrangement
++import com.tencent.kuikly.compose.foundation.layout.Box
++import com.tencent.kuikly.compose.foundation.layout.Column
++import com.tencent.kuikly.compose.foundation.layout.Row
++import com.tencent.kuikly.compose.foundation.layout.fillMaxSize
++import com.tencent.kuikly.compose.foundation.layout.fillMaxWidth
++import com.tencent.kuikly.compose.foundation.layout.height
++import com.tencent.kuikly.compose.foundation.layout.padding
++import com.tencent.kuikly.compose.foundation.lazy.LazyColumn
++import com.tencent.kuikly.compose.foundation.lazy.items
++import com.tencent.kuikly.compose.foundation.lazy.rememberLazyListState
++import com.tencent.kuikly.compose.material3.Text
++import com.tencent.kuikly.compose.material3.pullToRefreshItem
++import com.tencent.kuikly.compose.material3.rememberPullToRefreshState
++import com.tencent.kuikly.compose.setContent
++import com.tencent.kuikly.compose.ui.Alignment
++import com.tencent.kuikly.compose.ui.Modifier
++import com.tencent.kuikly.compose.ui.graphics.Color
++import com.tencent.kuikly.compose.ui.unit.Dp
++import com.tencent.kuikly.compose.ui.unit.dp
++import com.tencent.kuikly.compose.ui.unit.sp
 +import com.tencent.kuikly.core.annotations.Page
-+import com.tencent.kuikly.core.base.Color
-+import com.tencent.kuikly.core.base.ViewBuilder
-+import com.tencent.kuikly.core.base.ViewContainer
-+import com.tencent.kuikly.core.reactive.handler.observable
-+import com.tencent.kuikly.core.views.Text
-+import com.tencent.kuikly.core.views.TextArea
-+import com.tencent.kuikly.core.views.View
-+import com.tencent.kuikly.demo.pages.base.BasePager
-+import com.tencent.kuikly.demo.pages.demo.base.NavBar
++import kotlinx.coroutines.delay
++import kotlinx.coroutines.launch
 +
 +/**
-+ * Android TextArea 提示文字位置偏上的复现页，也用于修复后的回归检查。
-+ *
-+ * 黄块是 TextArea，蓝块是同样字号和行高的普通 Text，作为位置对照。
-+ * ①~④ 是原始复现与对照；⑤~⑨ 检查属性设置顺序、不设 minHeight、多行文字、
-+ * 右对齐和空提示文字；底部按钮切换提示文字与行高，检查运行时更新。
-+ * 打开方式：adb shell am start ... --es pageName BugReproTextAreaPlaceholderCenterPage
++ * 鸿蒙 Compose 嵌套列表下拉刷新回归页。
++ * 外层关闭回弹，内层支持刷新，用于比较 SELF_FIRST 和 SELF_ONLY 两种滚动模式。
 + */
-+@Page("BugReproTextAreaPlaceholderCenterPage")
-+internal class BugReproTextAreaPlaceholderCenterPage : BasePager() {
++@Page("BugReproNestedScrollRefreshPage")
++internal class BugReproNestedScrollRefreshPage : ComposeContainer() {
++    override fun willInit() {
++        super.willInit()
++        setContent {
++            NestedScrollRefreshRepro()
++        }
++    }
++}
 +
-+    var step by observable(0)
-+    var dynamicHint by observable("动态提示文字")
-+    var dynamicLineHeight by observable(24f)
-+    var dynamicHintColor by observable(Color(0x80111111))
++@Composable
++private fun NestedScrollRefreshRepro() {
++    var mode by remember { mutableStateOf(NestedScrollMode.SELF_FIRST) }
++    var refreshCount by remember { mutableStateOf(0) }
++    var isRefreshing by remember { mutableStateOf(false) }
++    val outerListState = rememberLazyListState()
++    val innerListState = rememberLazyListState()
++    val innerPtrState = rememberPullToRefreshState(isRefreshing)
++    val scope = rememberCoroutineScope()
 +
-+    override fun body(): ViewBuilder {
-+        val ctx = this
-+        return {
-+            attr {
-+                backgroundColor(Color.WHITE)
++    Column(modifier = Modifier.fillMaxSize().background(Color.White)) {
++        Text(
++            text = "嵌套列表下拉刷新",
++            fontSize = 16.sp,
++            modifier = Modifier.padding(12.dp),
++        )
++        Row(
++            modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp),
++            horizontalArrangement = Arrangement.spacedBy(12.dp),
++        ) {
++            listOf(NestedScrollMode.SELF_FIRST, NestedScrollMode.SELF_ONLY).forEach { option ->
++                ModeButton(option.value, mode == option) {
++                    mode = option
++                }
 +            }
-+            NavBar {
-+                attr {
-+                    title = "TextArea placeholder 居中/边界回归"
-+                }
-+            }
-+            View {
-+                attr {
-+                    flex(1f)
-+                    padding(12f)
-+                }
-+                Text {
-+                    attr {
-+                        text("黄块是 TextArea，蓝块是同样字号和行高的普通 Text，作为位置对照")
-+                        fontSize(12f)
-+                        color(Color.BLACK)
-+                        marginBottom(10f)
-+                    }
-+                }
-+                cases.forEach { reproRow(it) }
-+                View {
-+                    attr {
-+                        flexDirectionRow()
-+                        alignItemsCenter()
-+                        height(48f)
-+                        marginBottom(8f)
-+                    }
-+                    Text {
-+                        attr {
-+                            width(96f)
-+                            text("⑩ 动态属性")
-+                            fontSize(11f)
-+                            color(Color.BLACK)
-+                        }
-+                    }
-+                    TextArea {
-+                        attr {
-+                            overflow(true)
-+                            flex(1f)
-+                            height(48f)
-+                            fontSize(12f)
-+                            lineHeight(ctx.dynamicLineHeight)
-+                            placeholder(ctx.dynamicHint)
-+                            placeholderColor(ctx.dynamicHintColor)
-+                            color(Color.BLACK)
-+                            backgroundColor(Color.YELLOW.opacity(0.3f))
-+                        }
-+                    }
-+                }
-+                View {
-+                    attr {
-+                        height(36f)
-+                        allCenter()
-+                        backgroundColor(Color(0xFF3C6CBDL))
-+                    }
-+                    event {
-+                        click {
-+                            ctx.step += 1
-+                            when (ctx.step % 3) {
-+                                0 -> {
-+                                    ctx.dynamicHint = "动态提示文字"
-+                                    ctx.dynamicLineHeight = 24f
-+                                    ctx.dynamicHintColor = Color(0x80111111)
-+                                }
-+                                1 -> {
-+                                    ctx.dynamicHint = "加长的提示文字"
-+                                    ctx.dynamicLineHeight = 32f
-+                                    ctx.dynamicHintColor = Color(0x80FF0000)
-+                                }
-+                                else -> {
-+                                    ctx.dynamicHint = ""
-+                                    ctx.dynamicLineHeight = 20f
-+                                    ctx.dynamicHintColor = Color(0x800000FF)
-+                                }
-+                            }
-+           
-```
-
-**File**: `docs/API/components/text-area.md` (modified, +2/-0)
-```diff
-@@ -54,6 +54,8 @@ TextArea {
- }
- ```
- 
-+> **提示**：2.33.0 之前，`TextArea` 的 placeholder 位置偏上；自 2.33.0 起已修复，与输入文字对齐。
++        }
++        Text(
++            text = "内层刷新次数：$refreshCount",
++            fontSize = 13.sp,
++            color = Color.Gray,
++            modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
++        )
 +
- ### textInputState方法 <Badge text="2.15+" type="info"/>
- 
- 原子化设置输入框的 raw text、selection、composition 状态。具体说明请参考 [Input#textInputState](input.md#textinputstate方法)。
++        LazyColumn(
++            state = outerListState,
++            modifier = Modifier.fillMaxSize().bouncesEnable(false),
++        ) {
++            items(20) { index ->
++                if (index == 1) {
++                    key(mode) {
++                        LazyColumn(
++                            state = innerListState,
++                            modifier = Modifier
++                                .fillMaxWidth()
++                                .height(260.dp)
++                                .background(Color(0xFFFFF9C4))
++                                .nestedScroll(scrollUp = mode, scrollDown = mode
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1913** (2026-11-19): fix(text-area): align placeholder with input text line height (@iPel)
-- **PR #1912** (2026-11-19): fix(core): stop clearPlaceholder from adding a placeholder prop to images without one (@RoeKun)
-- **PR #1911** (2026-11-18): fix(gradle): skip dependencyResolutionManagement on Gradle older than 6.8 (@ruifanyuan)
-- **PR #1910** (2026-11-18): fix(gradle): resolve Maven Central and the plugin portal from Tencent mirrors (@ruifanyuan)
-- **PR #1909** (2026-11-18): fix(compose): smart sticky header position cache with auto-invalidation (@zenipchen)
-- **PR #1907** (2026-11-18): fix(ios): resolve custom font handler before font name lookup (@RoeKun)
+- **PR #1922** (2026-11-24): fix(ohos): animate pull-to-refresh from release position (@iPel)
+- **PR #1921** (2026-11-24): feat(ios): expose deferredPropKeys on TurboDisplayConfig for custom side-effect props (@RoeKun)
+- **PR #1919** (2026-11-24): fix(ohos): preserve bounce state during Compose scroller reuse (@iPel)
+- **PR #1918** (2026-11-23): fix(ios): align coretext measure width with textkit rendering semantics (@RoeKun)
+- **PR #1916** (2026-11-23): fix(ohos): clean up text selection resources in OnDestroy (@ruifanyuan)
+- **PR #1914** (2026-11-23): fix(ohos): set NODE_ID for V1 forward ArkTS custom view wrapper (@zenipchen)
 
 ---
 
@@ -1173,23 +1176,22 @@ Co-authored-by: Cursor <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build): align OHOS target matrix and Android release publication
+## X. ohos): clean up text selection resources in OnDestroy
 
 **RULE**:
-When implementing operations in `core-render-android/build.2.4.21.ohos.gradle.kts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Tencent-TDS/KuiklyUI. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `core-render-ohos/src/main/cpp/libohos_render/expand/components/view/KRView.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Tencent-TDS/KuiklyUI. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d606ca05`: build): align OHOS target matrix and Android release publication. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3dede805`: ohos): clean up text selection resources in OnDestroy. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `core-render-android/build.2.4.21.ohos.gradle.kts`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `core-render-ohos/src/main/cpp/libohos_render/expand/components/view/KRView.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-    publishing {
-        singleVariant("release")
-    }
+    StopObservingInternalScrollViews();
+    CleanupHandleNodes();
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1199,7 +1201,7 @@ Subsystems managing Kotlin data structures, boundary deserialization, API parsin
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d606ca05` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3dede805` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-25T00:08:32.633Z",
+  "last_updated": "2026-11-25T00:16:52.298Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -6966,14 +6966,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-openyurtio-openyurt",
-      "content_hash": "50002d7471fb876dc766417a4578f13681b99ea3d48d7673e26190a2cb5aa499",
-      "verified_at": "2026-11-12T08:28:28.002Z",
+      "content_hash": "f7abfd6651372e3b85500acb2725acc01a487f9046ce1c046f593a9796962b51",
+      "verified_at": "2026-11-25T00:16:52.297Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T08:28:28.002Z"
+      "last_updated": "2026-11-25T00:16:52.297Z"
     },
     "slatedb/slatedb": {
       "repository": "slatedb/slatedb",
@@ -10896,14 +10896,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tencent-tds-kuiklyui",
-      "content_hash": "b11d6a749e01e541493b3c8a93d07c2a5e39379a1160a2ba7e8cf356587cd3db",
-      "verified_at": "2026-11-22T10:18:02.919Z",
+      "content_hash": "93ea459773837cfba859aa15913b00897b9349ad4f8d45f33241e4b2cb426236",
+      "verified_at": "2026-11-25T00:16:50.559Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T10:18:02.919Z"
+      "last_updated": "2026-11-25T00:16:50.559Z"
     },
     "SeaQL/sea-orm": {
       "repository": "SeaQL/sea-orm",
@@ -15156,14 +15156,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-preactjs-preact",
-      "content_hash": "e09783bddbcc068c81bbc076c2aeb22f2f2ad418a7f43abe2e5e9cc2e2451bb6",
-      "verified_at": "2026-11-21T00:43:46.324Z",
+      "content_hash": "c93fa054cbb0d577794f5b675a4d348fa77c76dad344d5e492a35d442a528eaa",
+      "verified_at": "2026-11-25T00:16:46.611Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T00:43:46.324Z"
+      "last_updated": "2026-11-25T00:16:46.611Z"
     },
     "alyssaxuu/later": {
       "repository": "alyssaxuu/later",

@@ -12861,3 +12861,7 @@
 | `CYCLE-20261125-835N` | `2026-11-25T00:08:28.667Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10394` | Yes (`ebb067b1...`) |
 | `CYCLE-20261125-84I8` | `2026-11-25T00:08:30.416Z` | `infiniflow/infinity` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10395` | Yes (`6082cbd3...`) |
 | `CYCLE-20261125-867B` | `2026-11-25T00:08:32.615Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule EXISTING` | Yes (`095540de...`) |
+| `CYCLE-20261125-IRCU` | `2026-11-25T00:16:46.590Z` | `preactjs/preact` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/preactjs-preact-learnings.md` | Yes (`c93fa054...`) |
+| `CYCLE-20261125-IUEI` | `2026-11-25T00:16:50.538Z` | `Tencent-TDS/KuiklyUI` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10396` | Yes (`93ea4597...`) |
+| `CYCLE-20261125-IVQS` | `2026-11-25T00:16:52.276Z` | `openyurtio/openyurt` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10397` | Yes (`f7abfd66...`) |
+| `CYCLE-2026-11-25-PROJ-EVOLVE` | `2026-11-25T00:17:25.888Z` | `preactjs-preact` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-183BCB72` [Domain D] | Yes (`79441f98...`) |
