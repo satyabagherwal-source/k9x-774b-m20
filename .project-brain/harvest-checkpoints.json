@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-25T16:06:11.383Z",
+  "last_updated": "2026-11-25T23:02:03.789Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3591,14 +3591,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "content_hash": "d16ec1131b66d5fb3f10fd542922236d39d2c88d07231a8adc8c9eeefbe20938",
-      "verified_at": "2026-11-24T16:54:47.974Z",
+      "content_hash": "84124866142efc4662260418b627d6ddf6a0562df833b765f41239c88d13821d",
+      "verified_at": "2026-11-25T23:02:03.788Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T16:54:47.974Z"
+      "last_updated": "2026-11-25T23:02:03.788Z"
     },
     "adobe/react-spectrum": {
       "repository": "adobe/react-spectrum",
@@ -4416,14 +4416,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-freenet-freenet-core",
-      "content_hash": "55eaa0460ea19abd70782a839534fe1e4b97d59856af53ac1d7d59848a1d5985",
-      "verified_at": "2026-11-25T11:59:56.668Z",
+      "content_hash": "307d868b14fe68ce0e32db197ce010542c6e539978d053eaa62204ea98478cc9",
+      "verified_at": "2026-11-25T23:01:58.833Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T11:59:56.668Z"
+      "last_updated": "2026-11-25T23:01:58.833Z"
     },
     "vearch/vearch": {
       "repository": "vearch/vearch",
@@ -10626,14 +10626,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-clockworklabs-spacetimedb",
-      "content_hash": "041113dd366d0d15fa37aa9e1afe093609807c5fbf351e68692a8326e9cbe986",
-      "verified_at": "2026-11-24T21:15:48.216Z",
+      "content_hash": "8753257e37c870e1b4024aced20ca25afa9a70303b6a739714fdc01bd1e89d06",
+      "verified_at": "2026-11-25T23:02:01.210Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T21:15:48.216Z"
+      "last_updated": "2026-11-25T23:02:01.210Z"
     },
     "apollographql/apollo-kotlin": {
       "repository": "apollographql/apollo-kotlin",
@@ -20324,6 +20324,36 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-25T15:47:27.594Z"
+    },
+    "nvidia/Nemotron-Labs-Image-30B-A3B": {
+      "repository": "nvidia/Nemotron-Labs-Image-30B-A3B",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-nvidia-nemotron-labs-image-30b-a3b",
+      "content_hash": "d036346a3432bf1bd386537cf0ed3d98440a55f3b9721a75d750583e59975166",
+      "verified_at": "2026-11-25T23:01:43.691Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-25T23:01:43.691Z"
+    },
+    "KRAFTON/Raon-1-mini": {
+      "repository": "KRAFTON/Raon-1-mini",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-krafton-raon-1-mini",
+      "content_hash": "3f588f6772aa020f51caadf6f19f8497a72cc0fd87252068d833fb0b77d4bec4",
+      "verified_at": "2026-11-25T23:01:46.107Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-25T23:01:46.107Z"
     }
   },
   "repos": {

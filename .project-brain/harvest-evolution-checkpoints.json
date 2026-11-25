@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T16:06:16.568Z",
+  "last_updated": "2026-11-25T23:03:05.191Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-25T15:16:00.864Z",
@@ -603,7 +603,7 @@
       "staged_for_review": 1
     },
     "freenet-freenet-core-learnings.md": {
-      "processed_at": "2026-11-25T06:47:58.782Z",
+      "processed_at": "2026-11-25T23:03:04.362Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3931,9 +3931,19 @@
       "processed_at": "2026-11-25T15:47:46.534Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "hf-nvidia-nemotron-labs-image-30b-a3b-learnings.md": {
+      "processed_at": "2026-11-25T23:02:31.527Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
+    },
+    "hf-krafton-raon-1-mini-learnings.md": {
+      "processed_at": "2026-11-25T23:03:03.807Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 4266,
-  "total_canonical_promoted": 545,
-  "total_staged_for_review": 3245
+  "total_dossiers_evaluated": 4269,
+  "total_canonical_promoted": 547,
+  "total_staged_for_review": 3246
 }

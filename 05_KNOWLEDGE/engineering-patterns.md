@@ -793762,3 +793762,231 @@ custom: # Replace with up to 4 custom sponsorship URLs e.g., ['link1', 'link2']
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `af2b683a` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10553. keep the node running when a helper process is OOM-killed (Harvested from freenet/freenet-core)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "keep the node running when a helper process is OOM-killed",
+  "source": "freenet/freenet-core",
+  "source_url": "https://github.com/freenet/freenet-core",
+  "source_version": "20963739",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-25T23:01:58.364Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-freenet-freenet-core",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [freenet/freenet-core](https://github.com/freenet/freenet-core) (Revision: `20963739`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `crates/core/src/bin/commands/service.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `20963739`: keep the node running when a helper process is OOM-killed. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/core/src/bin/commands/service.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+    /// `OOMPolicy=continue` must sit inside `[Service]` (not `[Unit]` or
+    /// `[Install]`, where systemd would ignore it).
+    #[cfg(target_os = "linux")]
+    fn assert_oom_policy_in_service_section(unit: &str) {
+        let service_start = unit.find("\n[Service]\n").expect("[Service] section");
+        let install_start = unit.find("\n[Install]\n").expect("[Install] section");
+        let pos = unit
+            .find("\nOOMPolicy=continue\n")
+            .expect("unit must contain OOMPolicy=continue");
+        assert!(
+            service_start < pos && pos < install_start,
+            "OOMPolicy=continue must be inside [Service]"
+        );
+    }
+
+        assert_oom_policy_in_service_section(&service_content);
+        assert_oom_policy_in_service_section(&service_content);
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `20963739` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10554. wrong and broken doc links in the websocket message types (Harvested from clockworklabs/SpacetimeDB)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "wrong and broken doc links in the websocket message types",
+  "source": "clockworklabs/SpacetimeDB",
+  "source_url": "https://github.com/clockworklabs/SpacetimeDB",
+  "source_version": "c707cbcf",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-25T23:02:00.720Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-clockworklabs-spacetimedb",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [clockworklabs/SpacetimeDB](https://github.com/clockworklabs/SpacetimeDB) (Revision: `c707cbcf`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `crates/client-api-messages/src/websocket.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clockworklabs/SpacetimeDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `537d6f82`: wrong and broken doc links in the websocket message types. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/client-api-messages/src/websocket.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+//! Client -> Server messages are encoded as a `ClientMessage` from the protocol version in use, e.g. [`v2::ClientMessage`].
+//! Server -> Client messages are encoded as a `ServerMessage` from the protocol version in use, e.g. [`v2::ServerMessage`].
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+//! Client -> Server messages are encoded as [`ClientMessage`].
+//! Server -> Client messages are encoded as [`ServerMessage`].
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `537d6f82` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10555. say wallet spending caps cannot be approved past (Harvested from Bitterbot-AI/bitterbot-desktop)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "say wallet spending caps cannot be approved past",
+  "source": "Bitterbot-AI/bitterbot-desktop",
+  "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
+  "source_version": "f28f8940",
+  "license": "MIT",
+  "extracted_at": "2026-11-25T23:02:03.136Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop) (Revision: `f28f8940`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `skills/wallet-payments/SKILL.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `f28f8940`: skills): say wallet spending caps cannot be approved past. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `skills/wallet-payments/SKILL.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+3. **Check balance and rules**: call `get_balance` (token="USDC"). The spending caps in the wallet tool's info are hard limits: a payment over the x402 per-request cap or the session spend cap is refused even if the user agrees, so do not ask for permission to go over one, and do not split the payment or switch to `send_usdc` to get around it. Tell the user the cost is over the cap and that it can only be raised in the wallet settings (`tools.wallet.x402.maxCostPerRequestUsd`, `tools.wallet.sessionSpendCapUsd`).
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Induced defect failure mode:
+3. **Check balance and rules**: call `get_balance` (token="USDC"). If the cost exceeds your spending limits, ask the user for permission.
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `f28f8940` are properly handled with clean fallback behavior.

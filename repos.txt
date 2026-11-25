@@ -5416,3 +5416,9 @@ https://huggingface.co/thinkingmachines/TML-d24-varloop-research
 # --- Automatically Discovered by AI Scout Engine [2026-11-25T15:47:20.183Z] ---
 # [AI-AGENTS] withcoral/coral (2933 score) - Execution rails for agents. Equip your AI to work with sensitive enterprise syst
 https://github.com/withcoral/coral
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-25T23:01:36.966Z] ---
+# [HUGGINGFACE-AI-MODELS] nvidia/Nemotron-Labs-Image-30B-A3B (1728 score) - Verified Hugging Face Model: nvidia/Nemotron-Labs-Image-30B-A3B (151 likes, 218 
+https://huggingface.co/nvidia/Nemotron-Labs-Image-30B-A3B
+# [HUGGINGFACE-AI-MODELS] KRAFTON/Raon-1-mini (1384 score) - Verified Hugging Face Model: KRAFTON/Raon-1-mini (112 likes, 264 downloads)
+https://huggingface.co/KRAFTON/Raon-1-mini

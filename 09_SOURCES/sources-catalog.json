@@ -2303,10 +2303,10 @@
     "repository": "Bitterbot-AI/bitterbot-desktop",
     "platform": "github",
     "sourceUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-    "sourceVersion": "a0d01b11",
+    "sourceVersion": "f28f8940",
     "license": "MIT",
-    "contentHash": "d16ec1131b66d5fb3f10fd542922236d39d2c88d07231a8adc8c9eeefbe20938",
-    "lastHarvestedAt": "2026-11-24T16:54:47.959Z",
+    "contentHash": "84124866142efc4662260418b627d6ddf6a0562df833b765f41239c88d13821d",
+    "lastHarvestedAt": "2026-11-25T23:02:03.774Z",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop"
   },
   "adobe-react-spectrum": {
@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "ef8c0626",
+    "sourceVersion": "20963739",
     "license": "NOASSERTION",
-    "contentHash": "55eaa0460ea19abd70782a839534fe1e4b97d59856af53ac1d7d59848a1d5985",
-    "lastHarvestedAt": "2026-11-25T11:59:56.651Z",
+    "contentHash": "307d868b14fe68ce0e32db197ce010542c6e539978d053eaa62204ea98478cc9",
+    "lastHarvestedAt": "2026-11-25T23:01:58.818Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {
@@ -7053,10 +7053,10 @@
     "repository": "clockworklabs/SpacetimeDB",
     "platform": "github",
     "sourceUrl": "https://github.com/clockworklabs/SpacetimeDB",
-    "sourceVersion": "01b14a89",
+    "sourceVersion": "c707cbcf",
     "license": "NOASSERTION",
-    "contentHash": "041113dd366d0d15fa37aa9e1afe093609807c5fbf351e68692a8326e9cbe986",
-    "lastHarvestedAt": "2026-11-24T21:15:48.199Z",
+    "contentHash": "8753257e37c870e1b4024aced20ca25afa9a70303b6a739714fdc01bd1e89d06",
+    "lastHarvestedAt": "2026-11-25T23:02:01.196Z",
     "learningId": "learn-github-clockworklabs-spacetimedb"
   },
   "apollographql-apollo-kotlin": {
@@ -13468,5 +13468,25 @@
     "contentHash": "bbd76e6c484e87a01c0a770e3180a314b1741a80a3b6f27e7f10b7823717f232",
     "lastHarvestedAt": "2026-11-25T15:47:27.578Z",
     "learningId": "learn-github-withcoral-coral"
+  },
+  "hf-nvidia-nemotron-labs-image-30b-a3b": {
+    "repository": "nvidia/Nemotron-Labs-Image-30B-A3B",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/nvidia/Nemotron-Labs-Image-30B-A3B",
+    "sourceVersion": "hf-nvidia-nemotron-labs-image-30b-a3b",
+    "license": "Open-Source",
+    "contentHash": "d036346a3432bf1bd386537cf0ed3d98440a55f3b9721a75d750583e59975166",
+    "lastHarvestedAt": "2026-11-25T23:01:43.678Z",
+    "learningId": "learn-huggingface-nvidia-nemotron-labs-image-30b-a3b"
+  },
+  "hf-krafton-raon-1-mini": {
+    "repository": "KRAFTON/Raon-1-mini",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/KRAFTON/Raon-1-mini",
+    "sourceVersion": "hf-krafton-raon-1-mini",
+    "license": "Open-Source",
+    "contentHash": "3f588f6772aa020f51caadf6f19f8497a72cc0fd87252068d833fb0b77d4bec4",
+    "lastHarvestedAt": "2026-11-25T23:01:46.089Z",
+    "learningId": "learn-huggingface-krafton-raon-1-mini"
   }
 }

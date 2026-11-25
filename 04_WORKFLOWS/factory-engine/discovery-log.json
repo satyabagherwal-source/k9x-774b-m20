@@ -22306,5 +22306,29 @@
     "qualityScore": 2933,
     "verifiedOrg": false,
     "discoveredAt": "2026-11-25T15:43:52.688Z"
+  },
+  {
+    "name": "nvidia/Nemotron-Labs-Image-30B-A3B",
+    "fullName": "nvidia/Nemotron-Labs-Image-30B-A3B",
+    "url": "https://huggingface.co/nvidia/Nemotron-Labs-Image-30B-A3B",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: nvidia/Nemotron-Labs-Image-30B-A3B (151 likes, 218 downloads)",
+    "likes": 151,
+    "downloads": 218,
+    "qualityScore": 1728,
+    "discoveredAt": "2026-11-25T22:59:28.591Z"
+  },
+  {
+    "name": "KRAFTON/Raon-1-mini",
+    "fullName": "KRAFTON/Raon-1-mini",
+    "url": "https://huggingface.co/KRAFTON/Raon-1-mini",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: KRAFTON/Raon-1-mini (112 likes, 264 downloads)",
+    "likes": 112,
+    "downloads": 264,
+    "qualityScore": 1384,
+    "discoveredAt": "2026-11-25T22:59:28.591Z"
   }
 ]

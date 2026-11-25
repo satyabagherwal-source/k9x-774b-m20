@@ -13171,3 +13171,10 @@ Every entry in this ledger must capture:
 | `learn-github-transact-rs-sqlx` | `https://github.com/transact-rs/sqlx` | `af2b683a` | Multi-dimensional audit evidence | 2026-11-25T16:05:57.179Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `cbd9ab2c` | Multi-dimensional audit evidence | 2026-11-25T16:06:07.712Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `3bf9d8e5` | Multi-dimensional audit evidence | 2026-11-25T16:06:11.369Z |
+| `learn-huggingface-nvidia-nemotron-labs-image-30b-a3b` | `https://huggingface.co/nvidia/Nemotron-Labs-Image-30B-A3B` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-11-25T23:01:43.678Z |
+| `learn-huggingface-krafton-raon-1-mini` | `https://huggingface.co/KRAFTON/Raon-1-mini` | `hf-krafton` | Multi-dimensional audit evidence | 2026-11-25T23:01:46.089Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `20963739` | Multi-dimensional audit evidence | 2026-11-25T23:01:58.818Z |
+| `learn-github-clockworklabs-spacetimedb` | `https://github.com/clockworklabs/SpacetimeDB` | `c707cbcf` | Multi-dimensional audit evidence | 2026-11-25T23:02:01.196Z |
+| `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `f28f8940` | Multi-dimensional audit evidence | 2026-11-25T23:02:03.774Z |
+| `learn-dom-d-67959b26` | `project://hf-nvidia-nemotron-labs-image-30b-a3b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-nvidia-nemotron-labs-image-30b-a3b-learnings.md` | 2026-11-25T23:02:31.527Z |
+| `learn-dom-d-0a1336c6` | `project://hf-krafton-raon-1-mini` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-krafton-raon-1-mini-learnings.md` | 2026-11-25T23:03:03.807Z |

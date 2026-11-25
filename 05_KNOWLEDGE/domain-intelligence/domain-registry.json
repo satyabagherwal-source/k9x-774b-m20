@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T16:06:16.256Z",
-  "total_records": 2683,
+  "last_updated": "2026-11-25T23:03:04.856Z",
+  "total_records": 2689,
   "domains": {
     "A": {
       "total": 22,
@@ -71,7 +71,7 @@
       ]
     },
     "D": {
-      "total": 1006,
+      "total": 1012,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -1078,7 +1078,13 @@
         "domain_intelligence-research-knowledge-intelligence-hf-thinkingmachines-tml-d24-varloop-research-lea",
         "DOM-D-B35DECA2",
         "DOM-D-C2696C97",
-        "DOM-D-21C9D326"
+        "DOM-D-21C9D326",
+        "domain_intelligence-research-knowledge-intelligence-nvidia-nemotron-labs-image-30b-a3b-core-invarian",
+        "domain_intelligence-research-knowledge-intelligence-krafton-raon-1-mini-core-invariants",
+        "DOM-D-67959B26",
+        "domain_intelligence-research-knowledge-intelligence-hf-nvidia-nemotron-labs-image-30b-a3b-learnings-",
+        "DOM-D-0A1336C6",
+        "domain_intelligence-research-knowledge-intelligence-hf-krafton-raon-1-mini-learnings-core-invariants"
       ]
     },
     "E": {
@@ -10049,8 +10055,8 @@
       "title": "Technical Construction Intelligence: freenet/freenet-core Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-technical-construction-intelligence-freenet-freenet-core-co.md",
       "repository": "freenet/freenet-core",
-      "content_hash": "11f0e31377a392ab4ea642146b7a12a25d8d79adbfac40b421f0313abc9dfc8c",
-      "created_at": "2026-11-25T11:59:57.087Z"
+      "content_hash": "9b0e26187da9c3fbf50f431b0a92ea40d2ebac60469161f2a761ecd72dd2d36d",
+      "created_at": "2026-11-25T23:01:59.193Z"
     },
     "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-core-invariants",
@@ -10127,8 +10133,8 @@
       "title": "Technical Construction Intelligence: freenet-freenet-core-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-learnings-technical-construction-intelligence-freenet-freen.md",
       "repository": "freenet-freenet-core-learnings",
-      "content_hash": "47a699dcd81b06fe5ae4a7f621d731ac29402d59ffc1d0382e5d723288365bc0",
-      "created_at": "2026-11-25T06:47:59.209Z"
+      "content_hash": "178b188a86e766980159c60addb9a89b5a25e19ea053d6fb0d3259625fec928c",
+      "created_at": "2026-11-25T23:03:04.856Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c",
@@ -10460,8 +10466,8 @@
       "title": "Architecture Intelligence: clockworklabs/SpacetimeDB Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-clockworklabs-spacetimedb-architecture-intelligence-clockworklabs-spacetimedb-co.md",
       "repository": "clockworklabs/SpacetimeDB",
-      "content_hash": "e06af31496f0063fcc283cfd39caf1051702c4dd1dc4da59bc13b266a17e7265",
-      "created_at": "2026-11-24T00:57:28.633Z"
+      "content_hash": "6fc29d07d7b2e8a5f69bf3949620f306117d18294fa88add1025271b25f89376",
+      "created_at": "2026-11-25T23:02:01.563Z"
     },
     "domain_intelligence-architecture-intelligence-grpc-grpc-rust-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-grpc-grpc-rust-learnings-core-invariants",
@@ -18961,8 +18967,8 @@
       "title": "Architecture Intelligence: Bitterbot-AI/bitterbot-desktop Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-bitterbot-ai-bitterbot-desktop-architecture-intelligence-bitterbot-ai-bitterbot-.md",
       "repository": "Bitterbot-AI/bitterbot-desktop",
-      "content_hash": "8a109fb11039f07026da15d68a90daa098f2dc6ea5aa0d2782d0a9e8c10fb349",
-      "created_at": "2026-11-24T16:54:48.359Z"
+      "content_hash": "7146d5a9a9167f22935573a4f46bfc98414604a50dc5fe28d92284e8e0da501c",
+      "created_at": "2026-11-25T23:02:04.166Z"
     },
     "domain_intelligence-search-distribution-intelligence-sharkdp-fd-learnings-core-invariants": {
       "record_id": "domain_intelligence-search-distribution-intelligence-sharkdp-fd-learnings-core-invariants",
@@ -45216,6 +45222,126 @@
       "confidence": 0.6,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-25T15:48:16.099Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-nvidia-nemotron-labs-image-30b-a3b-core-invarian": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-nvidia-nemotron-labs-image-30b-a3b-core-invarian",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: nvidia/Nemotron-Labs-Image-30B-A3B Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-nvidia-nemotron-labs-image-30b-a3b-research-knowledge-intelligence-nvidia-nem.md",
+      "repository": "nvidia/Nemotron-Labs-Image-30B-A3B",
+      "content_hash": "65558aa9aa80a69f5e7eb490ad72c158185b93e3210845767e1b1b60f5ba8266",
+      "created_at": "2026-11-25T23:01:43.882Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-krafton-raon-1-mini-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-krafton-raon-1-mini-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: KRAFTON/Raon-1-mini Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-krafton-raon-1-mini-research-knowledge-intelligence-krafton-raon-1-mini-core-.md",
+      "repository": "KRAFTON/Raon-1-mini",
+      "content_hash": "8064378904fee7fa92900435f22a9944a43f807403e2e32c71143e2dc2fa7d11",
+      "created_at": "2026-11-25T23:01:46.349Z"
+    },
+    "DOM-D-67959B26": {
+      "record_id": "DOM-D-67959B26",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): nvidia/Nemotron-Labs-Image-30B-A3B",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-nvidia-nemotron-labs-image-30b-a3b-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/nvidia/Nemotron-Labs-Image-30B-A3B](https://huggingface.co/nvidia/Nemotron-Labs-Image-30B-A3B))  \n> **Source Version**: `hf-nvidia-ne`  \n>",
+      "content_hash": "3488f34dd7919e0f3b6f0917bb04db0819d936de9dc7156364a792ae39e027ce",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-nvidia-nemotron-labs-image-30b-a3b-learnings.md`  \n> **Source**: huggingface ([ht -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-nvidia-nemotron-labs-image-30b-a3b-learnings.md`  \n> **Source**: huggingface ([ht",
+      "provenance": {
+        "source_uri": "project://hf-nvidia-nemotron-labs-image-30b-a3b/hf-nvidia-nemotron-labs-image-30b-a3b-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-25T23:02:07.155Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-nvidia-nemotron-labs-image-30b-a3b)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-nvidia-nemotron-labs-image-30b-a3b"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-25T23:02:31.501Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-nvidia-nemotron-labs-image-30b-a3b-learnings-": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-nvidia-nemotron-labs-image-30b-a3b-learnings-",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-nvidia-nemotron-labs-image-30b-a3b-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-nvidia-nemotron-labs-image-30b-a3b-learnings-research-knowledge-intelligence-.md",
+      "repository": "hf-nvidia-nemotron-labs-image-30b-a3b-learnings",
+      "content_hash": "aace02367ca917943b4aaf757a78015fc126a7d051ca4e2b593c090571861ea9",
+      "created_at": "2026-11-25T23:02:31.831Z"
+    },
+    "DOM-D-0A1336C6": {
+      "record_id": "DOM-D-0A1336C6",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): KRAFTON/Raon-1-mini",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-krafton-raon-1-mini-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/KRAFTON/Raon-1-mini](https://huggingface.co/KRAFTON/Raon-1-mini))  \n> **Source Version**: `hf-krafton-r`  \n> **License**: Open-Source  \n> **Synthesized By",
+      "content_hash": "7fb1df6ab9b981f9a3a35770bed07b0a8ff20b3e2cdf7e11574ebfc6cf02b69b",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-krafton-raon-1-mini-learnings.md`  \n> **Source**: huggingface ([https://huggingfa -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-krafton-raon-1-mini-learnings.md`  \n> **Source**: huggingface ([https://huggingfa",
+      "provenance": {
+        "source_uri": "project://hf-krafton-raon-1-mini/hf-krafton-raon-1-mini-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-25T23:02:32.064Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-krafton-raon-1-mini)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-krafton-raon-1-mini"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-25T23:03:03.428Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-krafton-raon-1-mini-learnings-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-krafton-raon-1-mini-learnings-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-krafton-raon-1-mini-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-krafton-raon-1-mini-learnings-research-knowledge-intelligence-hf-krafton-raon.md",
+      "repository": "hf-krafton-raon-1-mini-learnings",
+      "content_hash": "cb9b3c103167bf2b8ab2ee7d801a4b8281b6439e37f1003751dbbfc70ed0a66d",
+      "created_at": "2026-11-25T23:03:04.092Z"
     }
   }
 }

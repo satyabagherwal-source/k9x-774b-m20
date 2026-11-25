@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-25T06:47:58.910Z",
+  "timestamp": "2026-11-25T23:03:04.535Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-freenet-freenet-core-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [freenet-freenet-core-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-25T06:47:58.910Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T23:03:04.535Z`  
 > **Learning ID**: `LEARN-EVO-freenet-freenet-core-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), G (Architecture Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 76%
+- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), G (Architecture Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 69%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from freenet-freenet-core-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source**: github ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
-> **Source Version**: `d71c022a`  
+> **Source Version**: `20963739`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-25T06:47:52.493Z  
+> **Timestamp**: 2026-11-25T23:01:57.857Z  
 > **Learning ID**: `learn-github-freenet-freenet-core`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T06:47:52.487Z  
+> **Harvest Timestamp**: 2026-11-25T23:01:57.852Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1766,15 +1766,13 @@ pub mod streaming_buffer;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #6387** (2026-11-25): **build: sync main to 0.2.166 after release**
-  *Symptoms*: Syncs main's version files to the published release **v0.2.166** (freenet 0.2.166, fdev 0.3.328).  release.yml ships the soaked commit plus a version bump on `release/v0.2.166`, which never reaches main by itself. This PR is that bump regenerated on main by `.github/workflows/release-sync.yml`. It touches only version files and lockfiles. See docs/RELEASING.md, 'Merge-back'.
+- **Issue #6395** (2026-11-25): **fix: keep the node running when a helper process is OOM-killed**
+  *Symptoms*: ## Problem  The packaged unit uses `Restart=always` and the default `OOMPolicy=stop`. When the cgroup OOM killer kills any process in the service (not only the node), systemd stops the whole unit and restarts it. The stop hook runs `freenet update`, and the restart counts as a crash for the post-update rollback logic and toward `StartLimitBurst=5` / `StartLimitIntervalSec=120` with `StartLimitAction=none`. Repeated OOM kills can therefore leave the unit stopped for good.  ## Approach  Add `OOMPolicy=continue` to `[Service]` in both `generate_user_service_file` and `generate_system_service_file`, with a short comment. `man systemd.service` confirms `OOMPolicy=` is a `[Service]` directive and `continue` is a valid value. The directive was added in systemd v243; older systemd logs and ignores unknown directives, which the templates already rely on (see the `RestartSteps=` comment in `linux.rs`).  Rollout note: `freenet update` rewrites the unit but runs in the OLD binary, so it writes the OLD template. The setting reaches installed nodes one release after the one that ships this change. Units that were hand-edited (differ from the template and from the hash sidecar) are skipped, as before.  ## Testing  - The service template tests now assert `OOMPolicy=continue` appears inside `[Service]` (before `[Install]`) for the user and system units. - New test in `update.rs`: a unit equal to the previous template (current template without the line) is detected as stale and rewritten, with
   **Post-Mortem & Fix Analysis**:
-  > <!-- claude-rule-review --> ### Rule Review: No issues found  **Rules checked:** git-workflow.md, testing.md **Files reviewed:** 4 (`Cargo.lock`, `apps/freenet-ping/Cargo.lock`, `crates/core/Cargo.toml`, `crates/fdev/Cargo.toml`)  This is the automated post-release version sync.  - `freenet` goes from 0.2.165 to 0.2.166, and `fdev` from 0.3.327 to 0.3.328. - The `fdev` binstall `pkg-url` entries and the `freenet` dependency pin are updated to match. - The `apps/freenet-ping/Cargo.lock` wasmtime 47→48 and cranelift changes come from the already-merged wasmtime bump (#6385).  The diff has no source or test changes, so none of the testing rules apply. The title is a valid `build:` conventional commit. I couldn't see the PR description, so I did not check it for the Problem/Solution/Testing sections.  <!-- warning-count: 0 -->  --- *Rule review against `.claude/rules/`. WARNING findings turn the `rule-review/warnings` status red.*
+  > <!-- claude-rule-review --> ### Rule Review: No issues found  **Rules checked:** git-workflow.md, code-style.md, testing.md **Files reviewed:** 3  The PR adds `OOMPolicy=continue` to both the user and system systemd unit templates. It has regression tests, and I found no rule violations.  - **Regression test:** `assert_oom_policy_in_service_section` is added to the existing generation tests, so it checks that the directive is in `[Service]`. A new test in `update.rs` covers three stale-template cases for both unit variants:   - A sidecar that records the previous template is rewritten.   - No sidecar is also rewritten.   - A hand-edited unit is skipped. - **Docs:** No non-Rust docs reference the unit template, so nothing is stale. - **Commit messages:** Both use the `fix:` prefix. The subject of the second commit (833b10ca0) is over 72 characters. The rules rate that as INFO, and it isn't worth a finding. - **Not reviewable here:** I couldn't see the PR description, so I couldn't check
 
-- **Issue #6386** (2026-11-25): **chore: log the first hops of a client GET that ends NotFound**
-  *Symptoms*: ## Problem Which peers a client GET asked is only logged at DEBUG, which release builds compile out. A node reporting repeated fast NotFounds for a contract other peers hold gives no way to see who it asked or how far they were from the key.  ## Approach When the client GET retry loop is exhausted, emit one INFO line listing each attempted hop: address, ring location, distance to the key, and outcome (not_found or no_reply). Lines pass through a process-global token bucket (burst 5, one per 20s) and report a suppressed count. Sub-operation GETs are skipped. No behavior change.  ## Testing Unit tests cover the line contents and order, the limiter and suppressed count, the refill cap and the hop cap. A source-scrape test pins the driver hooks and the emit call. Reviewed independently (Light tier); fmt, clippy -D warnings and the module tests pass locally.  [AI-assisted - Claude] 
-  **Post-Mortem & Fix Analysis**:
-  > <!-- claude-rule-review --> ### Rule Review: No blocking issues found  **Rules checked:** git-workflow.md, code-style.md, testing.md, operations.md **Files reviewed:** 3 (`operations/get.rs`, `operations/get/first_hops_log.rs`, `operations/get/op_ctx_task.rs`)  #### Warnings None.  #### Info - `crates/core/src/operations/get/first_hops_log.rs:219` — `report_notfound_first_hops` reads `tokio::time::Instant::now()` directly instead of going through `TimeSource`. The testing rules say crates/core code should take time from `TimeSource`. The only documented `tokio::time::Instant` exception is the client-API HTTP layer. Other files in `operations/` already use `tokio::time::Instant`, and the limiter takes `now` as a parameter, so tests are deterministic. This is a rate-limiter for log output, not behavior the simulation depends on. A one-line comment saying so would head off the question. (rule: testing.md, code-style.md) - `crates/core/src/operations/get/first_hops_log.rs:58` — `FIRST_HOPS
+- **Issue #6393** (2026-11-25): **feat(transport): run the update check before a transport-fatal exit (dark)**
+  *Symptoms*: ## Problem Once UDP is removed (phase D), a node whose QUIC endpoint cannot be built, or whose endpoint died, has no transport and exits for its supervisor. The binary's update check runs in a task beside the node and may not have asked GitHub yet (its first check waits 0 to 60 s), so a node that exits within seconds would never find the release that fixes it. #6268 only shortens the check on the next start, after the breaker has counted runs. Spec 3.7 requires the update check to run, and be able to stage an update, before any transport-fatal exit (W-S6).  ## Approach **What this adds, plainly:** a pre-download only. Under our systemd unit, `ExecStopPost` already runs `freenet update` on exit 42 and 45 and installs the newest release by itself, so this PR does not add a way to find a release the node would otherwise miss. Unsupervised nodes get no update from this PR at all (nothing installs a staged release), and they skip the check.  - New `transport/quic/fatal_exit.rs`: the binary registers one update check (`register_fatal_exit_update_check`); the library runs it, bounded at 20 s so a dead network cannot hold the exit, before the transport-fatal exits. - The binary's check shares one function, `detect_unblocked_release` (the `startup_update_check` call plus the pinned-bad and install-gated refusal), with the handshake-failure trigger from #6380, which now calls it too; each site keeps its own log lines and its own action. The fatal-exit check adds the cooling and retry-s
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1791,414 +1789,157 @@ pub mod streaming_buffer;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d71c022a` (2026-11-25)
-**Commit Message**: build: sync main to 0.2.166 after release (#6387)
+### Incident Patch 1: `20963739` (2026-11-25)
+**Commit Message**: fix: keep the node running when a helper process is OOM-killed (#6395)
 
-Co-authored-by: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
-
-**File**: `Cargo.lock` (modified, +2/-2)
+**File**: `crates/core/src/bin/commands/service.rs` (modified, +17/-0)
 ```diff
-@@ -1899,7 +1899,7 @@ dependencies = [
+@@ -621,6 +621,21 @@ fn service_logs(_error_only: bool) -> Result<()> {
+ mod tests {
+     use super::*;
  
- [[package]]
- name = "fdev"
--version = "0.3.327"
-+version = "0.3.328"
- dependencies = [
-  "anyhow",
-  "axum",
-@@ -2078,7 +2078,7 @@ dependencies = [
++    /// `OOMPolicy=continue` must sit inside `[Service]` (not `[Unit]` or
++    /// `[Install]`, where systemd would ignore it).
++    #[cfg(target_os = "linux")]
++    fn assert_oom_policy_in_service_section(unit: &str) {
++        let service_start = unit.find("\n[Service]\n").expect("[Service] section");
++        let install_start = unit.find("\n[Install]\n").expect("[Install] section");
++        let pos = unit
++            .find("\nOOMPolicy=continue\n")
++            .expect("unit must contain OOMPolicy=continue");
++        assert!(
++            service_start < pos && pos < install_start,
++            "OOMPolicy=continue must be inside [Service]"
++        );
++    }
++
+     /// Regression guard for the service.rs submodule split: it dropped
+     /// `spawn_first_run_dashboard_opener` entirely (only the call site
+     /// survived) and left several Windows-only items unimported, breaking the
+@@ -1592,6 +1607,7 @@ mod tests {
+         assert!(service_content.contains("LimitNOFILE=65536"));
+         assert!(service_content.contains("MemoryMax=2G"));
+         assert!(service_content.contains("CPUQuota=200%"));
++        assert_oom_policy_in_service_section(&service_content);
  
- [[package]]
- name = "freenet"
--version = "0.2.165"
-+version = "0.2.166"
- dependencies = [
-  "aes-gcm",
-  "ahash",
+         // Verify restart configuration (always restart for auto-update support)
+         assert!(service_content.contains("Restart=always"));
+@@ -1729,6 +1745,7 @@ mod tests {
+ 
+         // Verify it still has all the standard settings
+         assert!(service_content.contains("Restart=always"));
++        assert_oom_policy_in_service_section(&service_content);
+         assert!(service_content.contains("StartLimitBurst=5"));
+         assert!(service_content.contains("StartLimitIntervalSec=120"));
+         // StartLimitBurst/IntervalSec [Unit] placement is asserted by #4570's linux.rs
 ```
 
-**File**: `apps/freenet-ping/Cargo.lock` (modified, +116/-89)
+**File**: `crates/core/src/bin/commands/service/linux.rs` (modified, +10/-0)
 ```diff
-@@ -839,37 +839,37 @@ dependencies = [
+@@ -726,6 +726,11 @@ LimitNOFILE=65536
+ MemoryMax=2G
+ # CPU quota (200% = 2 cores max)
+ CPUQuota=200%
++# Do not stop the unit when a process other than the main process is
++# OOM-killed. The default (stop) stops and restarts the whole unit, and the
++# restart counts toward StartLimitBurst and the post-update rollback logic.
++# OOMPolicy= requires systemd >= 243; older systemd logs and ignores it.
++OOMPolicy=continue
  
- [[package]]
- name = "cranelift-assembler-x64"
--version = "0.134.4"
-+version = "0.135.10"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "16c273ba1bfc3a1cb27cb4f83df27134f3cb638a61f5ed79ab22cf86eb13da0d"
-+checksum = "da23f7367f4f5d003249eb1067760b3e6f5df82ad61829d40db22fdf8d41fd22"
- dependencies = [
-  "cranelift-assembler-x64-meta",
- ]
+ [Install]
+ WantedBy=default.target
+@@ -938,6 +943,11 @@ LimitNOFILE=65536
+ MemoryMax=2G
+ # CPU quota (200% = 2 cores max)
+ CPUQuota=200%
++# Do not stop the unit when a process other than the main process is
++# OOM-killed. The default (stop) stops and restarts the whole unit, and the
++# restart counts toward StartLimitBurst and the post-update rollback logic.
++# OOMPolicy= requires systemd >= 243; older systemd logs and ignores it.
++OOMPolicy=continue
  
- [[package]]
- name = "cranelift-assembler-x64-meta"
--version = "0.134.4"
-+version = "0.135.10"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "cbf8909326a466739e83ffe11e74c0c8c6b4bfa911b612aece915daa746cff58"
-+checksum = "a8dbd10a21204ce6ae3786f8369860ec4e10a24913e987d5abe4c3cc0c7195d6"
- dependencies = [
-  "cranelift-srcgen",
- ]
- 
- [[package]]
- name = "cranelift-bforest"
--version = "0.134.4"
-+version = "0.135.10"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "3cb26b06b54d8b2f8cdf4d440a32fc3b3b91c71c162333a69a70a66fa265fc45"
-+checksum = "4439be9aa2867bcef9effa83a265f550763a37b2cf4ad560c7bc41cbda947a48"
- dependencies = [
-  "cranelift-entity",
-  "wasmtime-internal-core",
- ]
- 
- [[package]]
- name = "cranelift-bitset"
--version = "0.134.4"
-+version = "0.135.10"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "7ce4e57dbb7f73d08011808a19787c3a03c3e7854b2a479ed0b788915fb671be"
-+checksum = "9913a7776903ccf6a3172633f59a0d6da2b428ec631c4b999a4b7401efdca1a7"
- dependencies = [
-  "serde",
-  "serde_derive",
-@@ -878,9 +878,9 @@ dependencies = [
- 
- [[package]]
- name = "cranelift-codegen"
--version = "0.134.4"
-+version = "0.135.10"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "74b0a8968f33d0bc13bc86fe70dd3947e93acc9f358ed9848e9988448972a9be"
-+checksum = "ffc88c2b684ca7df2ed79fa42b38a983e4d3632ee9d57bc2a389f69fc7ff9348"
- dependencies = [
-  "bumpalo",
-  "cranelift-assembler-x64",
-@@ -909,9 +909,9 @@ dependencies = [
- 
- [[package]]
- name = "cranelift-codegen-meta"
--version = "0.134.4"
-+version = "0.135.10"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "f69e8e2fe9deb48ef7b8d0c61612f8c1e2277d0421c201e30a4c844a4ebac698"
-+checksum = "df667a6e48506af68c087cebee157bfe69e04d78df83e243025ce6473a538fcd"
- dependencies = [
-  "cranelift-assembler-x64-meta",
-  "cranelift-codegen-shared",
-@@ -922,24 +922,24 @@ dependencies = [
- 
- [[package]]
- name = "cranelift-codegen-shared"
--version = "0.134.4"
-+version = "0.135.10"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "ad4db1e87a65e9c5a832e3ede160830d4e34df938ac38b5604819f8825687e73"
-+checksum = "ed3fdd2cd7bcd83a9263a978ea1d66477742a1a92095fa08f8752cb9a79ece11"
- 
- [[package]]
- name = "cranelift-control"
--version = "0.134.4"
-+version = "0.135.10"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "9248cd37bb6ec460981f57ead368e32b1eca7a207ad50e3e9c7adc3b161f20e9"
-+checksum = "8e1ecc088bd88f5a271f55b1544a8ec60b9d7373f61efe267d54bd2481adf5a3"
- dependencies = [
-  "arbitrary",
- ]
- 
- [[package]]
- name = "cranelift-entity"
--version = "0.134.4"
-+version = "0.135.10"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "26b8bc91c0a3530d132acbf118965dabe9a084029eb0fa74b64760360dec3316"
-+checksum = "2e9e591820d13f0671f879602ff29b241ea8b1dd54a386acbcbf4c3787f41af0"
- dependencies = [
-  "cranelift-bitset",
-  "serde",
-@@ -949,9 +949,9 @@ dependencies = [
- 
- [[package]]
- name = "cranelift-frontend"
--version = "0.134.4"
-+version = "0.135.10"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "5086f2ebc084a98b387e522680f62ef65a512444d8382151e03088716d3a1714"
-+checksum = "b00cf9b20096b09b3499d19f82cca658c13c6988ecbc54881caf12a2f01b2f8c"
- dependencies = [
-  "cranelift-codegen",
-  "hashbrown 0.17.0",
-@@ -962,15 +962,15 @@ dependencies = [
- 
- [[package]]
- name = "cranelift-isle"
--version = "0.134.4"
-+version = "0.135.10"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "b6a658670f779afc2df083be201ebe54805f69b7b9ffa8dab04142b72ed751c9"
-+checksum = "4c9fc3f2d35b0b5879107b4c83246e3dfb93bf678e0c68f74f7bd9b7001f7a06"
- 
- [[package]]
- name = "cranelift-native"
--version = "0.134.4"
-+version = "0.135.10"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "16a41083b1fd953debd6f32d21fcda765b258f323ce907fdd6b4715f2769c478"
-+checksum = "3c41c07ce15db19296c5ee3bed3019ec95bf2d773fbb28e73bdcb7fbc6ef9196"
- dependencies = [
-  "cranelift-codegen",
-  "libc",
-@@ -979,9 +979,9 @@ dependencies = [
- 
- [[package]]
- name = "cranelift-srcgen"
--version = "0.134.4"
-+version = "0.135.10"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "244d9cd0759b0a3ccdd587cafb13434f9ea43b5c9d07701d277daf5cd0f7b7c1"
-+checksum = "7ed086d4ea76eb20e03b689abcc9a34bacaec54b1fc3e04269004acbed4587f0"
- 
- [[package]]
- name = "crc32fast"
-@@ -1715,7 +1715,7 @@ dependencies = [
- 
- [[package]]
- name = "freenet"
--version = "0.2.
+ [Install]
+ WantedBy=multi-user.target
 ```
 
-**File**: `crates/core/Cargo.toml` (modified, +1/-1)
+**File**: `crates/core/src/bin/commands/update.rs` (modified, +60/-0)
 ```diff
-@@ -1,6 +1,6 @@
- [package]
- name = "freenet"
--version = "0.2.165"
-+version = "0.2.166"
- edition = "2024"
- rust-version = "1.85"
- publish = true
-```
-
-**File**: `crates/fdev/Cargo.toml` (modified, +4/-4)
-```diff
-@@ -1,6 +1,6 @@
- [package]
- name = "fdev"
--version = "0.3.327"
-+version = "0.3.328"
- edition = "2024"
- rust-version = "1.85"
- publish = true
-@@ -14,12 +14,12 @@ readme = "README.md"
- # (v0.2.x), so we embed the matching freenet version literally — `v{ version }`
- # would expand to the fdev crate version and 404. release.yml rewrites the
- # `vX.Y.Z` segment whenever the freenet version is bumped (issue #3995).
--pkg-url = "{ repo }/releases/download/v0.2.165/fdev-{ target }.tar.gz"
-+pkg-url = "{ repo }/releases/download/v0.2.166/fdev-{ target }.tar.gz"
- pkg-fmt = "tgz"
- bin-dir = "fdev"
+@@ -3326,6 +3326,66 @@ mod tests {
+         );
+     }
  
- [package.metadata.binstall.overrides.x86_64-pc-windows-msvc]
--pkg-url = "{ repo }/releases/download/v0.2.165/fdev-{ target }.zip"
-+pkg-url = "{ repo }/releases/download/v0.2.166/fdev-{ target }.zip"
- pkg-fmt = "zip"
- bin-dir = "fdev.exe"
- 
-@@ -56,7 +56,7 @@ ed25519-dalek = { version = "2", features = ["rand_core", "serde"] }
- hex = { workspace = true }
- 
- # internal
--freenet = { path = "../core", version = "0.2.165", features = ["testing"] }
-+freenet = { path = "../core", version = "0.2.166", features = ["testing"] }
- freenet-stdlib = { workspace = true }
- 
- [dev-dependencies]
-```
-
----
-
-### Incident Patch 2: `89da3a5f` (2026-11-25)
-**Commit Message**: build: bump wasmtime to 48.0.9 (#6385)
-
-**File**: `Cargo.lock` (modified, +121/-94)
-```diff
-@@ -149,7 +149,7 @@ version = "1.1.5"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "40c48f72fd53cd289104fc64099abca73db4166ad86ea0b4341abe65af83dadc"
- dependencies = [
-- "windows-sys 0.61.2",
-+ "windows-sys 0.60.2",
- ]
- 
- [[package]]
-@@ -160,7 +160,7 @@ checksum = "291e6a250ff86cd4a820112fb8898808a366d8f9f58ce16d1f538353ad55747d"
- dependencies = [
-  "anstyle",
-  "once_cell_polyfill",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.60.2",
- ]
- 
- [[package]]
-@@ -978,37 +978,37 @@ dependencies = [
- 
- [[package]]
- name = "cranelift-assembler-x64"
--version = "0.134.3"
-+version = "0.135.10"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "d552bd33b7a56dc70aeb1e1c960e51a218fa0db50f23873b500a310379450b2d"
-+checksum = "da23f7367f4f5d003249eb1067760b3e6f5df82ad61829d40db22fdf8d41fd22"
- dependencies = [
-  "cranelift-assembler-x64-meta",
- ]
- 
- [[package]]
- name = "cranelift-assembler-x64-meta"
--version = "0.134.3"
-+version = "0.135.10"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "078e80e4c222279e3330f6aa1a256ca77ddf156d4453166a9f09defedc4594dd"
-+checksum = "a8dbd10a21204ce6ae3786f8369860ec4e10a24913e987d5abe4c3cc0c7195d6"
- dependencies = [
-  "cranelift-srcgen",
- ]
- 
- [[package]]
- name = "cranelift-bforest"
--version = "0.134.3"
-+version = "0.135.9"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "820ce15d4ad3562d613c31a67b6d0434d403e7091a68d1349903842f7d31737e"
-+checksum = "4955ac604c69b279138b2bd1b46c5f21748910d96e96eca5df23c79ee2a5edcc"
- dependencies = [
-  "cranelift-entity",
-  "wasmtime-internal-core",
- ]
- 
- [[package]]
- name = "cranelift-bitset"
--version = "0.134.3"
-+version = "0.135.9"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "61bca563d4b86d285928d9e27f97f27039bb33a0fc524fa130d7d0c106bf8ab3"
-+checksum = "d4be0efebaf985207ba2330083d86c5dd50a03357435e5bdffc97598393b5a19"
- dependencies = [
-  "serde",
-  "serde_derive",
-@@ -1017,9 +1017,9 @@ dependencies = [
- 
- [[package]]
- name = "cranelift-codegen"
--version = "0.134.3"
-+version = "0.135.9"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "709f4b7c0fb57d952658d5b5c07fbdc4149acd7b7f0de9678ae754b9c981949a"
-+checksum = "4f463af533c6fad6aa1d54c454569baebd38a11374deee0c4d104a1e4e4da207"
- dependencies = [
-  "bumpalo",
-  "cranelift-assembler-x64",
-@@ -1048,9 +1048,9 @@ dependencies = [
- 
- [[package]]
- name = "cranelift-codegen-meta"
--version = "0.134.3"
-+version = "0.135.9"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "903dc8915af62aad1d9d0f39a5968d33fa80b9aa899ed6f56e47f40ca4512e1e"
-+checksum = "b5614f7c37ee06c404c1556b2d54859fb74149774f08594625dbe764963b2f7f"
- dependencies = [
-  "cranelift-assembler-x64-meta",
-  "cranelift-codegen-shared",
-@@ -1061,24 +1061,24 @@ dependencies = [
- 
- [[package]]
- name = "cranelift-codegen-shared"
--version = "0.134.3"
-+version = "0.135.10"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "0522d74c227e49f3fd49ab055311486ae4f09083262b66705bed676952491469"
-+checksum = "ed3fdd2cd7bcd83a9263a978ea1d66477742a1a92095fa08f8752cb9a79ece11"
- 
- [[package]]
- name = "cranelift-control"
--version = "0.134.3"
-+version = "0.135.10"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "66560ea1c5cef72e170b18e46d263dba2d3169c9d39e8cafdab2173c6362cc1a"
-+checksum = "8e1ecc088bd88f5a271f55b1544a8ec60b9d7373f61efe267d54bd2481adf5a3"
- dependencies = [
-  "arbitrary",
- ]
- 
- [[package]]
- name = "cranelift-entity"
--version = "0.134.3"
-+version = "0.135.9"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "b62ef5b17cc814d27e96b66a5b46da0e4ce2b8ac55a6d478048bb99d04b05526"
-+checksum = "3613e5a2b21dde0f6591fb54139cf4dbac8b851ea1e79b08bca6631b98ff4299"
- dependencies = [
-  "cranelift-bitset",
-  "serde",
-@@ -1088,9 +1088,9 @@ dependencies = [
- 
- [[package]]
- name = "cranelift-frontend"
--version = "0.134.3"
-+version = "0.135.9"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "a87e0aaa39dbf70693b348a221e45904111704ee8f9fef140498471005f9842d"
-+checksum = "7d3a784683a03e1e2099f8761d473527cfd8d510ecb83b871eb8ac4e2ef662a9"
- dependencies = [
-  "cranelift-codegen",
-  "hashbrown 0.17.1",
-@@ -1101,15 +1101,15 @@ dependencies = [
- 
- [[package]]
- name = "cranelift-isle"
--version = "0.134.3"
-+version = "0.135.9"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "cf79003ebfa1eed5e87f3b84446ad5236f540268289960e14f387dc9b28e40b7"
-+checksum = "1ad758dbc31c9df814ffda594200a24e78a707baa9a78f292dff2483976b2d8e"
- 
- [[package]]
- name = "cranelift-native"
--version = "0.134.3"
-+version = "0.135.9"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "05bf4f235743c81e67ee4db617c5a4a0b65d58d3f0cfc575ee0f1a4e0cd58273"
-+checksum = "c5174bd94292d2e5507b1ffcdeb9ab8b8c98c5951b8b9077e968ec94a240932c"
- dependencies = [
-  "cranelift-c
-```
-
-**File**: `Cargo.toml` (modified, +1/-1)
-```diff
-@@ -123,7 +123,7 @@ console-subscriber = "0.5.0"
- # stack-switching feature (undefined symbol wasmtime_continuation_start).
- # Disable default features and re-enable all defaults except stack-switching.
- # TODO: Re-enable default features once upstream fixes the linker regression.
--wasmtime = { version = "47", default-features = false, features = [
-+wasmtime = { version = "48", default-features = false, features = [
-     "anyhow", "async", "backtrace", "cache", "cranelift",
-     "compile-time-builtins", "component-model", "component-model-async",
-     "coredump", "debug", "debug-builtins", "demangle", "addr2line",
++    /// Linux-only: a unit written by the previous template (the current
++    /// template without `OOMPolicy=continue`) is detected as stale and
++    /// rewritten, with or without a sidecar, while a hand-edited unit
++    /// (differs from both old and new template, sidecar records the old
++    /// hash) is skipped.
++    #[test]
++    #[cfg(target_os = "linux")]
++    fn previous_template_without_oom_policy_is_rewritten_user_edit_is_skipped() {
++        use std::path::PathBuf;
++        let binary = PathBuf::from("/usr/local/bin/freenet");
++        let log_dir = PathBuf::from("/home/u/.local/state/freenet");
++        let home = PathBuf::from("/home/svc");
++        let strip = |unit: &str| {
++            // Remove the whole block (comment lines and directive) so the result is
++            // what a node installed before this change has.
++            let start = unit
++                .find("# Do not stop the unit when a process other than the main process is\n")
++                .expect("template must contain the OOMPolicy comment block");
++            let end = unit.find("OOMPolicy=continue\n").expect("directive")
++                + "OOMPolicy=continue\n".len();
++            format!("{}{}", &unit[..start], &unit[end..])
++        };
++
++        let units = [
++            generate_user_service_file(&binary, &log_dir),
++            generate_system_service_file(&binary, &log_dir, "svc", &home),
++        ];
++        for new_unit in units {
++            assert!(new_unit.contains("OOMPolicy=continue\n"));
++            let previous = strip(&new_unit);
++            assert_ne!(previous, new_unit);
++            let previous_hash = wrapper_content_hash(&previous);
++            let new_hash = wrapper_content_hash(&new_unit);
++
++            // Sidecar records the previous template: stale, rewrite.
++            assert_eq!(
++                decide_wrapper_action(&new_unit, Some(&previous), Some(&previous_hash)),
++                WrapperAction::WriteOurs {
++                    new_hash: new_hash.clone()
++                }
++            );
++            // No sidecar (installs that predate it): treated as ours, rewrite.
++            assert_eq!(
++                decide_wrapper_action(&new_unit, Some(&previous), None),
++                WrapperAction::WriteOurs {
++                    new_hash: new_hash.clone()
++                }
++            );
++            // Hand-edited unit: sidecar still records the previous template.
++            let edited = previous.replace("MemoryMax=2G", "MemoryMax=4G");
++            assert_ne!(edited, previous);
++            assert_eq!(
++                decide_wrapper_action(&new_unit, Some(&edited), Some(&previous_hash)),
++                WrapperAction::UserModified {
++                    on_disk_hash: wrapper_content_hash(&edited)
++                }
++            );
++        }
++    }
++
+     /// Linux-only: `render_current_systemd_unit` must reproduce the
+     /// exact bytes of an installed system unit when fed that unit back
+     /// as `existing` (it re-extracts `User=` / `Environment=HOME=`). If
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6395** (2026-11-25): fix: keep the node running when a helper process is OOM-killed (@sanity)
+- **PR #6393** (2026-11-25): feat(transport): run the update check before a transport-fatal exit (dark) (@sanity)
+- **PR #6391** (2026-11-25): perf: skip redundant validation for contracts that declare update_validates (@sanity)
+- **PR #6390** (2026-11-25): fix: keep a public own_addr when a gateway behind our NAT observes a private one (@sanity)
+- **PR #6388** (2026-11-25): fix: exclude blocking host-call time from the WASM guest budget (@sanity)
 - **PR #6387** (2026-11-25): build: sync main to 0.2.166 after release (@sanity)
-- **PR #6386** (2026-11-25): chore: log the first hops of a client GET that ends NotFound (@sanity)
-- **PR #6385** (2026-11-25): build: bump wasmtime to 48.0.9 (@sanity)
-- **PR #6384** (2026-11-25): chore: remove fixed advisories from the RustSec baseline (@sanity)
-- **PR #6383** (2026-11-25): test: property-test pre-authentication parsing of QUIC peer keys (@sanity)
-- **PR #6382** (2026-11-24): build(deps): bump rustls and quinn-udp for RustSec advisories (@sanity)
 
 ---
 
@@ -2218,33 +1959,47 @@ Co-authored-by: github-actions[bot] <github-actions[bot]@users.noreply.github.co
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build: sync main to 0.2.166 after release
+## X. keep the node running when a helper process is OOM-killed
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/core/src/bin/commands/service.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d71c022a`: build: sync main to 0.2.166 after release. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `20963739`: keep the node running when a helper process is OOM-killed. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/core/src/bin/commands/service.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "0.3.328"
-version = "0.2.166"
+    /// `OOMPolicy=continue` must sit inside `[Service]` (not `[Unit]` or
+    /// `[Install]`, where systemd would ignore it).
+    #[cfg(target_os = "linux")]
+    fn assert_oom_policy_in_service_section(unit: &str) {
+        let service_start = unit.find("\n[Service]\n").expect("[Service] section");
+        let install_start = unit.find("\n[Install]\n").expect("[Install] section");
+        let pos = unit
+            .find("\nOOMPolicy=continue\n")
+            .expect("unit must contain OOMPolicy=continue");
+        assert!(
+            service_start < pos && pos < install_start,
+            "OOMPolicy=continue must be inside [Service]"
+        );
+    }
+
+        assert_oom_policy_in_service_section(&service_content);
+        assert_oom_policy_in_service_section(&service_content);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-version = "0.3.327"
-version = "0.2.165"
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d71c022a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `20963739` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

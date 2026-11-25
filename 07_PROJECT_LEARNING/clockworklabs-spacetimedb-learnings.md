@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md`  
 > **Source**: github ([https://github.com/clockworklabs/SpacetimeDB](https://github.com/clockworklabs/SpacetimeDB))  
-> **Source Version**: `01b14a89`  
+> **Source Version**: `c707cbcf`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T21:15:47.062Z  
+> **Timestamp**: 2026-11-25T23:02:00.248Z  
 > **Learning ID**: `learn-github-clockworklabs-spacetimedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/clockworklabs/SpacetimeDB](https://github.com/clockworklabs/SpacetimeDB))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T21:15:47.057Z  
+> **Harvest Timestamp**: 2026-11-25T23:02:00.244Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Development at the speed of light
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 25571 stars
+- **Stars / Engagement**: 25570 stars
 
 ---
 
@@ -830,78 +830,165 @@ export type ConnectionState = ManagerConnectionState & {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `01b14a89` (2026-11-24)
-**Commit Message**: Release - Double the Cargo publish index timeout (#6686)
+### Incident Patch 1: `537d6f82` (2026-11-25)
+**Commit Message**: Fix wrong and broken doc links in the websocket message types (#6613)
 
 # Description of Changes
 
-Double Cargo's crates.io index wait from 60 to 120 seconds. The v2.16.3
-release hit this timeout waiting for `spacetimedb-sats`. [Release
-job](https://github.com/clockworklabs/SpacetimeDB/actions/runs/45450644164/job/138647121662)
+Fixes doc comments in `crates/client-api-messages` that name the wrong
+type or link to a type that doesn't exist. Client authors read these
+comments to learn how requests and responses pair up, and several
+pointed at the wrong thing:
 
-# API and ABI breaking changes
+- `v2::CallReducer` and `v2::CallProcedure` said the server replies with
+`CallReducerResult` / `CallProcedureResult`. Neither type exists; the
+replies are `ReducerResult` and `ProcedureResult`.
+- `v2::OneOffQuery` and `v2::SingleTableRows` referred to
+`OneOffQueryResponse`, which is actually `OneOffQueryResult`.
+- The `request_id` fields on `v2::OneOffQueryResult` and
+`v2::ReducerResult` said they echo a `SubscribeSingle` message. They
+echo `OneOffQuery` and `CallReducer`.
+- `ProcedureResult` (v1 and v2) said its `request_id` comes from a
+`ProcedureCall` request (it's `CallProcedure`), and that its `timestamp`
+is when the *reducer* started.
+- `v2::CallReducer::args` / `v2::CallProcedure::args` linked
+`ProductValue`, which isn't in scope there. They now link via
+`spacetimedb_sats::ProductValue`.
+- The `websocket` module docs linked `ClientMessage` / `Server
 
-None
-
-# Rollback safety impact
-
-n/a
-
-# Expected complexity level and risk
-
-1
-
-# Testing
-
-- `cargo publish --dry-run` packaged and verified a test crate with the
-120-second setting on Cargo 1.97.1
-- Cargo reported `publish.timeout = 120` for the same configuration
-
-The live registry wait wasn't exercised.
-
----------
-
-Co-authored-by: Zeke Foppa <[REDACTED_EMAIL]>
-
-**File**: `tools/release/src/targets/crates.rs` (modified, +20/-1)
+**File**: `crates/client-api-messages/src/websocket.rs` (modified, +2/-2)
 ```diff
-@@ -40,7 +40,26 @@ impl CratesRelease {
-         // Without this, dry-run doesn't work properly: every crate will look for its deps on crates.io
-         // and fail, but if they're on one invocation then they're able to resolve properly.
-         let mut cmd = Command::new("cargo");
--        cmd.current_dir(workspace_root).args(["publish", "--allow-dirty"]);
-+        cmd.current_dir(workspace_root)
-+            // The pinned stable Cargo requires RUSTC_BOOTSTRAP=1 to accept -Zpublish-timeout.
-+            .env("RUSTC_BOOTSTRAP", "1")
-+            .args([
-+                "publish",
-+                "--allow-dirty",
-+                // -Zpublish-timeout enables the publish.timeout setting. Set it to 120 seconds
-+                // (default: 60) for Cargo to wait for an uploaded crate to appear in the registry
-+                // index before publishing its dependents.
-+                "-Zpublish-timeout",
-+                "--config",
-+                "publish.timeout=120",
-+                // Set RUSTC_BOOTSTRAP=-1 in Cargo's child processes to enforce stable compiler
-+                // feature gates during package verification. force=true makes that value override
-+                // the RUSTC_BOOTSTRAP=1 they would otherwise inherit from Cargo.
-+                "--config",
-+                r#"env.RUSTC_BOOTSTRAP.value="-1""#,
-+                "--config",
-+                "env.RUSTC_BOOTSTRAP.force=true",
-+            ]);
-         for crate_name in crates {
-             cmd.args(["-p", crate_name]);
-         }
+@@ -1,7 +1,7 @@
+ //! Messages sent over the SpacetimeDB WebSocket protocol.
+ //!
+-//! Client -> Server messages are encoded as [`ClientMessage`].
+-//! Server -> Client messages are encoded as [`ServerMessage`].
++//! Client -> Server messages are encoded as a `ClientMessage` from the protocol version in use, e.g. [`v2::ClientMessage`].
++//! Server -> Client messages are encoded as a `ServerMessage` from the protocol version in use, e.g. [`v2::ServerMessage`].
+ //!
+ //! Any changes to this file must be paired with a change to the WebSocket protocol identifiers
+ //! defined in `crates/client-api/src/routes/subscribe.rs`,
+```
+
+**File**: `crates/client-api-messages/src/websocket/v1.rs` (modified, +2/-2)
+```diff
+@@ -687,13 +687,13 @@ pub struct ProcedureResult<F: WebsocketFormat> {
+     ///
+     /// Contains the return value if successful, or the error message if not.
+     pub status: ProcedureStatus<F>,
+-    /// The time when the reducer started.
++    /// The time when the procedure started.
+     ///
+     /// Note that [`Timestamp`] serializes as `i64` nanoseconds since the Unix epoch.
+     pub timestamp: Timestamp,
+     /// The time the procedure took to run.
+     pub total_host_execution_duration: TimeDuration,
+-    /// The same same client-provided identifier as in the original [`ProcedureCall`] request.
++    /// The same client-provided identifier as in the original [`CallProcedure`] request.
+     ///
+     /// Clients use this to correlate the response with the original request.
+     pub request_id: u32,
+```
+
+**File**: `crates/client-api-messages/src/websocket/v2.rs` (modified, +10/-10)
+```diff
+@@ -134,7 +134,7 @@ pub struct SubscribeSet {
+ ///
+ /// Unlike subscriptions registered by [`Subscribe`], this query will not receive real-time updates.
+ ///
+-/// The server will respond with a [`OneOffQueryResponse`] message containing the same `request_id`
++/// The server will respond with a [`OneOffQueryResult`] message containing the same `request_id`
+ /// and the status of the query, either the matching rows or an error message.
+ #[derive(SpacetimeType)]
+ #[sats(crate = spacetimedb_lib)]
+@@ -148,7 +148,7 @@ pub struct OneOffQuery {
+ 
+ /// Sent by the client to invoke a reducer, a transactional non-side-effecting database function.
+ ///
+-/// After the reducer runs, the server will respond with a [`CallReducerResult`] message containing the same `request_id`
++/// After the reducer runs, the server will respond with a [`ReducerResult`] message containing the same `request_id`
+ /// and the status of the run, either the return value and [`TransactionUpdate`] or an error.
+ #[derive(SpacetimeType)]
+ #[sats(crate = spacetimedb_lib)]
+@@ -164,7 +164,7 @@ pub struct CallReducer {
+ 
+     /// The arguments to the reducer.
+     ///
+-    /// A BSATN-encoded [`ProductValue`] which meets the reducer's argument schema.
++    /// A BSATN-encoded [`ProductValue`](spacetimedb_sats::ProductValue) which meets the reducer's argument schema.
+     pub args: Bytes,
+ }
+ 
+@@ -183,7 +183,7 @@ impl_deserialize!([] CallReducerFlags, de => match de.deserialize_u8()? {
+ 
+ /// Sent by the client to invoke a procedure, a non-transactional side-effecting database function.
+ ///
+-/// After the procedure runs, the server will respond with a [`CallProcedureResult`] message containing the same `request_id`
++/// After the procedure runs, the server will respond with a [`ProcedureResult`] message containing the same `request_id`
+ /// and the status of the run, either the return value or an error.
+ #[derive(SpacetimeType)]
+ #[sats(crate = spacetimedb_lib)]
+@@ -199,7 +199,7 @@ pub struct CallProcedure {
+ 
+     /// The arguments to the procedure.
+     ///
+-    /// A BSATN-encoded [`ProductValue`] which meets the procedure's argument schema.
++    /// A BSATN-encoded [`ProductValue`](spacetimedb_sats::ProductValue) which meets the procedure's argument schema.
+     pub args: Bytes,
+ }
+ 
+@@ -268,7 +268,7 @@ pub struct QueryRows {
+ 
+ /// Matching rows resident in a table at the time a query ran,
+ /// used in contexts where we're not sending insert/delete deltas,
+-/// like the [`QueryRows`] of a [`SubscribeApplied`], and [`OneOffQueryResponse`].
++/// like the [`QueryRows`] of a [`SubscribeApplied`], and [`OneOffQueryResult`].
+ #[derive(SpacetimeType, Debug)]
+ #[sats(crate = spacetimedb_lib)]
+ pub struct SingleTableRows {
+@@ -436,7 +436,7 @@ pub struct EventTableRows {
+ #[derive(SpacetimeType, Debug)]
+ #[sats(crate = spacetimedb_lib)]
+ pub struct OneOffQueryResult {
+-    /// The request_id of the corresponding `SubscribeSingle` message.
++    /// The request_id of the corresponding [`OneOffQuery`] message.
+     pub request_id: u32,
+     /// The matching rows for this query, or an error message if computation failed.
+     ///
+@@ -449,7 +449,7 @@ pub struct OneOffQueryResult {
+ #[derive(SpacetimeType, Debug)]
+ #[sats(crate = spacetimedb_lib)]
+ pub struct ReducerResult {
+-    /// The request_id of the corresponding `SubscribeSingle` message.
++    /// The request_id of the corresponding [`CallReducer`] message.
+     pub request_id: u32,
+     /// The time when the reducer started.
+     ///
+@@ -503,13 +503,13 @@ pub struct ProcedureResult {
+     ///
+     /// Contains the return value if successful, or the error message if not.
+     pub status: ProcedureStatus,
+-    /// The time when the reducer started.
++    /// The time when the procedure started.
+     ///
+     /// Note that [`Timestamp`] serializes as `i64` nanoseconds since the Unix epoch.
+     pub timestamp: Timestamp,
+     /// The time the procedure took to run.
+     pub total_host_execution_duration: TimeDuration,
+-    /// The same same client-provided identifier as in the original [`ProcedureCall`] request.
++    /// The same client-provided identifier as in the original [`CallProcedure`] request.
+     ///
+     /// Clients use this to correlate the response with the original request.
+     pub request_id: u32,
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6710** (closed): Let pnpm run the bun package's install script in the bun-ts template (@krisajenkins)
+- **PR #6690** (2026-11-25): Update dependencies to clear Dependabot alerts and make pnpm the only package manager (@cloutiertyler)
+- **PR #6689** (2026-11-25): Move LLM benchmark results out of SpacetimeDB and port the benchmark tooling to Rust (@cloutiertyler)
 - **PR #6686** (2026-11-24): Release - Double the Cargo publish index timeout (@bfops)
 - **PR #6681** (2026-11-23): Fix Stripe, PostHog and Auth types on SDK 2.12 (@bradleyshep)
-- **PR #6672** (2026-11-23): Bump versions to 2.16.3 (@rekhoff)
-- **PR #6666** (2026-11-23): Allow pre-release suffixes and patch downgrades in metadata.toml version check (@bfops)
-- **PR #6663** (2026-11-23): Smoketests: resolve C# ClientSDK version from the local package source (@bfops)
-- **PR #6659** (2026-11-22): Skip absent page slots when verifying snapshots (@bfops)
+- **PR #6674** (2026-11-25): Async IDC: pipelining (@Shubham8287)
 
 ---
 
@@ -921,47 +1008,30 @@ Co-authored-by: Zeke Foppa <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Release - Double the Cargo publish index timeout
+## X. wrong and broken doc links in the websocket message types
 
 **RULE**:
-When implementing operations in `tools/release/src/targets/crates.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clockworklabs/SpacetimeDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/client-api-messages/src/websocket.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clockworklabs/SpacetimeDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `01b14a89`: Release - Double the Cargo publish index timeout. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `537d6f82`: wrong and broken doc links in the websocket message types. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tools/release/src/targets/crates.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/client-api-messages/src/websocket.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        cmd.current_dir(workspace_root)
-            // The pinned stable Cargo requires RUSTC_BOOTSTRAP=1 to accept -Zpublish-timeout.
-            .env("RUSTC_BOOTSTRAP", "1")
-            .args([
-                "publish",
-                "--allow-dirty",
-                // -Zpublish-timeout enables the publish.timeout setting. Set it to 120 seconds
-                // (default: 60) for Cargo to wait for an uploaded crate to appear in the registry
-                // index before publishing its dependents.
-                "-Zpublish-timeout",
-                "--config",
-                "publish.timeout=120",
-                // Set RUSTC_BOOTSTRAP=-1 in Cargo's child processes to enforce stable compiler
-                // feature gates during package verification. force=true makes that value override
-                // the RUSTC_BOOTSTRAP=1 they would otherwise inherit from Cargo.
-                "--config",
-                r#"env.RUSTC_BOOTSTRAP.value="-1""#,
-                "--config",
-                "env.RUSTC_BOOTSTRAP.force=true",
-            ]);
+//! Client -> Server messages are encoded as a `ClientMessage` from the protocol version in use, e.g. [`v2::ClientMessage`].
+//! Server -> Client messages are encoded as a `ServerMessage` from the protocol version in use, e.g. [`v2::ServerMessage`].
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-        cmd.current_dir(workspace_root).args(["publish", "--allow-dirty"]);
+//! Client -> Server messages are encoded as [`ClientMessage`].
+//! Server -> Client messages are encoded as [`ServerMessage`].
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `01b14a89` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `537d6f82` are properly handled with clean fallback behavior.

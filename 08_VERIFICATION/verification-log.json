@@ -1,80 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261124-O90I",
-    "timestamp": "2026-11-24T04:45:18.882Z",
-    "repository": "aleo-labs-protocol/snarkOS",
-    "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "e33d75b68a368ccc3c2f9ca8e2c4c76d441ee52c2a5ce6d4b0ceee18b810e3bb",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-Z6V0",
-    "timestamp": "2026-11-24T04:53:49.308Z",
-    "repository": "ajeetdsouza/zoxide",
-    "learningId": "learn-github-ajeetdsouza-zoxide",
-    "contentHash": "677ce3fdbaae00baed51a505de37ee9231c7c3549ab2ae6d1d7673e8a1ee151d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-ZBPO",
-    "timestamp": "2026-11-24T04:53:55.596Z",
-    "repository": "react/react-native",
-    "learningId": "learn-github-react-react-native",
-    "contentHash": "f8b733d7a1bdf9d1b70dfa3b6119c3abf8da8fc53a2b95c9450bb82c87813506",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-PDYY",
-    "timestamp": "2026-11-24T05:14:11.578Z",
-    "repository": "hashicorp/terraform",
-    "learningId": "learn-github-hashicorp-terraform",
-    "contentHash": "0d1eab44125921ae29a1b58c4a9be0b6f5dbae7b7daac5c4bf4868fde811fcec",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-PE17",
-    "timestamp": "2026-11-24T05:14:11.659Z",
-    "repository": "crawlseo/crawlseo",
-    "learningId": "learn-github-crawlseo-crawlseo",
-    "contentHash": "55fef7bc8a26c0b36ed75a85fc157a825b9275f19b2dafa04a6edb86a0401cd3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261124-PGZ9",
     "timestamp": "2026-11-24T05:14:15.477Z",
     "repository": "liyupi/yu-ai-agent",
@@ -7492,6 +7417,81 @@
     "contentHash": "621293fd1911e148abab84c150f009b5fa317402f91b8e40b1bde8d4153c4570",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-A39X",
+    "timestamp": "2026-11-25T23:01:43.317Z",
+    "repository": "nvidia/Nemotron-Labs-Image-30B-A3B",
+    "learningId": "learn-huggingface-nvidia-nemotron-labs-image-30b-a3b",
+    "contentHash": "d036346a3432bf1bd386537cf0ed3d98440a55f3b9721a75d750583e59975166",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-A5EU",
+    "timestamp": "2026-11-25T23:01:46.086Z",
+    "repository": "KRAFTON/Raon-1-mini",
+    "learningId": "learn-huggingface-krafton-raon-1-mini",
+    "contentHash": "3f588f6772aa020f51caadf6f19f8497a72cc0fd87252068d833fb0b77d4bec4",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-AF8F",
+    "timestamp": "2026-11-25T23:01:58.815Z",
+    "repository": "freenet/freenet-core",
+    "learningId": "learn-github-freenet-freenet-core",
+    "contentHash": "307d868b14fe68ce0e32db197ce010542c6e539978d053eaa62204ea98478cc9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-AH2H",
+    "timestamp": "2026-11-25T23:02:01.193Z",
+    "repository": "clockworklabs/SpacetimeDB",
+    "learningId": "learn-github-clockworklabs-spacetimedb",
+    "contentHash": "8753257e37c870e1b4024aced20ca25afa9a70303b6a739714fdc01bd1e89d06",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-AJ22",
+    "timestamp": "2026-11-25T23:02:03.770Z",
+    "repository": "Bitterbot-AI/bitterbot-desktop",
+    "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
+    "contentHash": "84124866142efc4662260418b627d6ddf6a0562df833b765f41239c88d13821d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

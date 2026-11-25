@@ -4,24 +4,24 @@
 {
   "source_repository": "clockworklabs/SpacetimeDB",
   "source_url": "https://github.com/clockworklabs/SpacetimeDB",
-  "source_version": "c31d4550",
+  "source_version": "c707cbcf",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-24T00:57:28.442Z",
+  "timestamp": "2026-11-25T23:02:01.414Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-clockworklabs-spacetimedb",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [clockworklabs/SpacetimeDB](https://github.com/clockworklabs/SpacetimeDB) (Revision: `c31d4550`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-24T00:57:28.442Z`  
+> **Provenance**: Harvested from [clockworklabs/SpacetimeDB](https://github.com/clockworklabs/SpacetimeDB) (Revision: `c707cbcf`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-25T23:02:01.414Z`  
 > **Learning ID**: `learn-github-clockworklabs-spacetimedb`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), J (Search & Distribution Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 73%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), J (Search & Distribution Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence)
+- **Confidence Rating**: 50%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from clockworklabs/SpacetimeDB:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/clockworklabs/SpacetimeDB](https://github.com/clockworklabs/SpacetimeDB))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T00:57:27.039Z  
+> **Harvest Timestamp**: 2026-11-25T23:02:00.244Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Development at the speed of light
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 25571 stars
+- **Stars / Engagement**: 25570 stars
 
 ---
 
@@ -844,731 +844,165 @@ export type ConnectionState = ManagerConnectionState & {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d0413bd2` (2026-11-23)
-**Commit Message**: Load database before enforcing memory budget (#6658)
+### Incident Patch 1: `537d6f82` (2026-11-25)
+**Commit Message**: Fix wrong and broken doc links in the websocket message types (#6613)
 
 # Description of Changes
 
-Allow databases to finish loading when their resident memory footprint
-exceeds the configured limit. Suspend the hard limit throughout snapshot
-restoration, replay, index rebuilding, and remaining startup work, then
-restore enforcement and attempt eviction.
+Fixes doc comments in `crates/client-api-messages` that name the wrong
+type or link to a type that doesn't exist. Client authors read these
+comments to learn how requests and responses pair up, and several
+pointed at the wrong thing:
 
-Eviction errors are logged without preventing startup. Databases that
-remain over budget reject new ordinary allocations.
+- `v2::CallReducer` and `v2::CallProcedure` said the server replies with
+`CallReducerResult` / `CallProcedureResult`. Neither type exists; the
+replies are `ReducerResult` and `ProcedureResult`.
+- `v2::OneOffQuery` and `v2::SingleTableRows` referred to
+`OneOffQueryResponse`, which is actually `OneOffQueryResult`.
+- The `request_id` fields on `v2::OneOffQueryResult` and
+`v2::ReducerResult` said they echo a `SubscribeSingle` message. They
+echo `OneOffQuery` and `CallReducer`.
+- `ProcedureResult` (v1 and v2) said its `request_id` comes from a
+`ProcedureCall` request (it's `CallProcedure`), and that its `timestamp`
+is when the *reducer* started.
+- `v2::CallReducer::args` / `v2::CallProcedure::args` linked
+`ProductValue`, which isn't in scope there. They now link via
+`spacetimedb_sats::ProductValue`.
+- The `websocket` module docs linked `ClientMessage` / `Server
 
-Unify existing allocation exemptions under the same accounting path with
-scoped suspension.
-
-# API and ABI breaking changes
-
-None.
-
-# Rollback safety impact
-
-n/a
-
-# Expected complexity level and risk
-
-3
-
-Changes shared budget enforcement and the recovery lifecycle
-
-# Testing
-
-Included in
-https://github.com/clockworklabs/SpacetimeDBPrivate/pull/4330.
-
-Co-authored-by: Alessandro Asoni <[REDACTED_EMAIL]>
-
-**File**: `crates/datastore/src/locking_tx_datastore/datastore.rs` (modified, +24/-2)
+**File**: `crates/client-api-messages/src/websocket.rs` (modified, +2/-2)
 ```diff
-@@ -83,6 +83,23 @@ impl MemoryUsage for Locking {
- }
- 
- impl Locking {
-+    /// Ignore the resident memory limit while reconstructing committed data.
-+    ///
-+    /// The caller must keep exclusive access while the synchronous operation
-+    /// runs, then trim storage before serving new transactions.
-+    pub fn with_resident_hard_limit_suspended<R>(&self, operation: impl FnOnce() -> R) -> R {
-+        // Release the state lock before recovery acquires it for writing.
-+        let storage = self.committed_state.read().storage.clone();
-+        storage.with_resident_hard_limit_suspended(operation)
-+    }
-+
-+    /// Trim the resident and local caches to their low watermarks, as far as possible.
-+    /// Required-in-memory data may keep usage above the limit without an error.
-+    #[cfg(feature = "durability")]
-+    pub fn trim(&self) -> Result<()> {
-+        Ok(self.committed_state.read().trim()?)
-+    }
-+
-     #[cfg(feature = "metrics")]
-     pub fn update_data_size_metrics(&self) {
-         let state = self.committed_state.read();
-@@ -184,6 +201,10 @@ impl Locking {
-     ///   after replaying the suffix of the commitlog.
-     #[cfg(feature = "durability")]
-     pub fn restore_from_snapshot(snapshot: ReconstructedSnapshot, config: TieredStorageConfig) -> Result<Self> {
-+        // Full database recovery defers eviction until replay, rebuilding, and
-+        // system-table migration have all completed. Preserve immediate trimming
-+        // for direct snapshot API callers.
-+        let trim_after_restore = !config.resident_budget.is_hard_limit_suspended();
-         let ReconstructedSnapshot {
-             database_identity,
-             tx_offset,
-@@ -243,8 +264,9 @@ impl Locking {
-         // The next TX offset after restoring from a snapshot is one greater than the snapshotted offset.
-         committed_state.next_tx_offset = tx_offset + 1;
- 
--        // Free memory + disk storage to budget.
--        committed_state.trim()?;
-+        if trim_after_restore {
-+            committed_state.trim()?;
-+        }
- 
-         Ok(datastore)
-     }
+@@ -1,7 +1,7 @@
+ //! Messages sent over the SpacetimeDB WebSocket protocol.
+ //!
+-//! Client -> Server messages are encoded as [`ClientMessage`].
+-//! Server -> Client messages are encoded as [`ServerMessage`].
++//! Client -> Server messages are encoded as a `ClientMessage` from the protocol version in use, e.g. [`v2::ClientMessage`].
++//! Server -> Client messages are encoded as a `ServerMessage` from the protocol version in use, e.g. [`v2::ServerMessage`].
+ //!
+ //! Any changes to this file must be paired with a change to the WebSocket protocol identifiers
+ //! defined in `crates/client-api/src/routes/subscribe.rs`,
 ```
 
-**File**: `crates/engine/src/relational_db.rs` (modified, +38/-1)
+**File**: `crates/client-api-messages/src/websocket/v1.rs` (modified, +2/-2)
 ```diff
-@@ -287,6 +287,30 @@ impl RelationalDB {
-         history: impl durability::History<TxData = Txdata>,
-         persistence: Persistence,
-         metrics_recorder_queue: Option<MetricsRecorderQueue>,
-+    ) -> Result<(Self, ConnectedClients), DBError> {
-+        // Persisted transactions must be recoverable even if the memory limit
-+        // was lowered below the size of required-in-memory data. Keep startup
-+        // migrations and reads in the same scope so they cannot block recovery.
-+        let budget = persistence.table_storage.resident_budget.clone();
-+        let (db, connected_clients) = budget.with_hard_limit_suspended(|| {
-+            Self::open_recovering(
-+                database_identity,
-+                owner_identity,
-+                history,
-+                persistence,
-+                metrics_recorder_queue,
-+            )
-+        })?;
-+        db.trim_after_recovery();
-+        Ok((db, connected_clients))
-+    }
-+
-+    fn open_recovering(
-+        database_identity: Identity,
-+        owner_identity: Identity,
-+        history: impl durability::History<TxData = Txdata>,
-+        persistence: Persistence,
-+        metrics_recorder_queue: Option<MetricsRecorderQueue>,
-     ) -> Result<(Self, ConnectedClients), DBError> {
-         log::trace!("[{database_identity}] DATABASE: OPEN");
- 
-@@ -369,6 +393,17 @@ impl RelationalDB {
-         Ok((db, connected_clients))
-     }
- 
-+    fn trim_after_recovery(&self) {
-+        // Recovery is complete and the allocation limit is enforced again.
-+        // Failed eviction must leave the reconstructed database available.
-+        if let Err(error) = self.inner.trim() {
-+            log::warn!(
-+                "[{}] cache eviction after recovery failed: {error:#}",
-+                self.database_identity
-+            );
-+        }
-+    }
-+
-     /// Shut down the database, without dropping it.
+@@ -687,13 +687,13 @@ pub struct ProcedureResult<F: WebsocketFormat> {
      ///
-     /// If the database is in-memory only, this does nothing.
-@@ -760,7 +795,9 @@ impl RelationalDB {
-     where
-         T: durability::History<TxData = Txdata>,
-     {
--        apply_history(&self.inner, self.database_identity, history)?;
-+        self.inner
-+            .with_resident_hard_limit_suspended(|| apply_history(&self.inner, self.database_identity, history))?;
-+        self.trim_after_recovery();
-         Ok(self)
-     }
- 
+     /// Contains the return value if successful, or the error message if not.
+     pub status: ProcedureStatus<F>,
+-    /// The time when the reducer started.
++    /// The time when the procedure started.
+     ///
+     /// Note that [`Timestamp`] serializes as `i64` nanoseconds since the Unix epoch.
+     pub timestamp: Timestamp,
+     /// The time the procedure took to run.
+     pub total_host_execution_duration: TimeDuration,
+-    /// The same same client-provided identifier as in the original [`ProcedureCall`] request.
++    /// The same client-provided identifier as in the original [`CallProcedure`] request.
+     ///
+     /// Clients use this to correlate the response with the original request.
+     pub request_id: u32,
 ```
 
-**File**: `crates/table/src/tiered/budget.rs` (modified, +76/-21)
+**File**: `crates/client-api-messages/src/websocket/v2.rs` (modified, +10/-10)
 ```diff
-@@ -1,7 +1,8 @@
- use spacetimedb_memory_usage::MemoryUsage;
+@@ -134,7 +134,7 @@ pub struct SubscribeSet {
+ ///
+ /// Unlike subscriptions registered by [`Subscribe`], this query will not receive real-time updates.
+ ///
+-/// The server will respond with a [`OneOffQueryResponse`] message containing the same `request_id`
++/// The server will respond with a [`OneOffQueryResult`] message containing the same `request_id`
+ /// and the status of the query, either the matching rows or an error message.
+ #[derive(SpacetimeType)]
+ #[sats(crate = spacetimedb_lib)]
+@@ -148,7 +148,7 @@ pub struct OneOffQuery {
  
- use super::metrics::{CacheTier, Metrics};
--use std::sync::{Arc, Mutex};
-+use parking_lot::Mutex;
-+use std::sync::Arc;
+ /// Sent by the client to invoke a reducer, a transactional non-side-effecting database function.
+ ///
+-/// After the reducer runs, the server will respond with a [`CallReducerResult`] message containing the same `request_id`
++/// After the reducer runs, the server will respond with a [`ReducerResult`] message containing the same `request_id`
+ /// and the status of the run, either the return value and [`TransactionUpdate`] or an error.
+ #[derive(SpacetimeType)]
+ #[sats(crate = spacetimedb_lib)]
+@@ -164,7 +164,7 @@ pub struct CallReducer {
  
- #[derive(Debug, thiserror::Error, PartialEq)]
- #[error("memory limit exceeded")]
-@@ -31,7 +32,10 @@ impl ByteBudget {
- 
-     pub fn new(config: ByteBudgetConfig) -> Result<Self, ConfigError> {
-         config.validate_then(|config| Self {
--            state: Arc::new(Mutex::new(ByteBudgetState { accounted_bytes: 0 })),
-+            state: Arc::new(Mutex::new(ByteBudgetState {
-+                accounted_bytes: 0,
-+                hard_limit_suspensions: 0,
-+            })),
-             config,
-             metrics: Default::default(),
-         })
-@@ -51,41 +55,86 @@ impl ByteBudget {
- 
-     pub fn usage(&self) -> ByteBudgetUsage {
-         ByteBudgetUsage {
--            accounted_bytes: self.state.lock().unwrap().accounted_bytes,
-+            accounted_bytes: self.state.lock().accounted_bytes,
-         }
-     }
- 
-     pub fn acquire(&self, bytes: u64) -> Result<BudgetPermit, BudgetExceeded> {
--        let mut state = self.state.lock().unwrap();
-+        self.acquire_with_exemption(bytes, false)
-+    }
-+
-+    /// Charge an allocation, applying the same exemption policy to system
-+    /// allocations and recovery. Accounting overflow is always rejected.
-+    pub(super) fn acquire_with_exemption(
-+        &self,
-+        bytes: u64,
-+        allocation_exempt: bool,
-+    ) -> Result<BudgetPermit, BudgetExceeded> {
-+        let mut state = self.state.lock();
-         if let Some(accounted_bytes) = state.accounted_bytes.checked_add(bytes)
--            && accounted_bytes <= self.config.hard_limit_bytes
-+            && (allocation_exempt
-+                || state.hard_limit_suspensions > 0
-+                || accounted_bytes <= self.config.hard_limit_bytes)
-         {
-             state.accounted_bytes = accounted_bytes;
-             Ok(BudgetPermit {
-                 state: self.state.clone(),
-                 bytes,
-             })
-         } else {
--            self.metrics.budget_rejected(self.config.tier);
--            Err(BudgetExceeded {
-+            let error = BudgetExceeded {
-                 requested_bytes: bytes,
-                 accounted_bytes: state.accounted_bytes,
-                 hard_limit_bytes: self.config.hard_limit_bytes,
--            })
-+            };
-+            // Metrics callbacks may inspect this budget or unwind. Neither
-+            // should happen while the accounting lock is held.
-+            drop(state);
-+            self.metrics.budget_rejected(self.config.tier);
-+            Err(error)
-         }
-     }
- 
--    pub(super) fn force_acquire(&self, bytes: u64) -> BudgetPermit {
--        let mut state = self.state.lock().unwrap();
--        state.accounted_bytes = state
--            .accounted_bytes
--            .checked_add(bytes)
--            .expect("accounted bytes overflow");
--        BudgetPermit {
-+    /// Run a synchronous recovery operation with the hard limit suspended.
-+    ///
-+    /// Acquisitions still count toward usage, including those from budget clones.
-+    /// The suspension ends before this call returns or unwinds. The caller must
-+    /// exclude ordinary database access for the duration of the operation.
-+    pub fn with_hard_limit_suspended<R>(&self, operation: impl FnOnce() -> R) -> R {
-+        let _suspension = self.suspend_hard_limit();
-+        operation()
-+    }
-+
-+    fn suspend_hard_limit(&self) -> HardLimitSuspension {
-+        let mut state = self.state.lock();
-+        state.hard_limit_suspensions = state
-+            .hard_limit_suspensions
-+            .checked_add(1)
-+            .expect("hard limit suspensions overflow");
-+        HardLimitSuspension {
-             state: self.state.clone(),
--            bytes,
-         }
-     }
-+
-+    pub fn is_hard_limit_suspended(&self) -> bool {
-+        self.state.lock().hard_limit_suspensions > 0
-+    }
-+}
-+
-+/// Keeps the shared budget's hard limit suspended until dropped.
-+#[derive(Debug)]
-+struct HardLimitSuspension {
-+    state: Arc<Mutex<ByteBudgetState>>,
-+}
-+
-+impl Drop for HardLimitSuspension {
-+    fn drop(&mut self) {
-+        let mut state = self.state.lock();
-+        state.hard_limit_suspensions = state
-+            .hard_limit_suspensions
-+            .checked_sub(1)
-+            .expect("hard limit suspensions underflow");
-+    }
+     /// The arguments to the reducer.
+     ///
+-    /// A BSATN-encoded [`ProductValue`] which meets the reducer's argument schema.
++    /// A BSATN-encoded [`ProductValue`](spacetimedb_sats::ProductValue) which meets the reducer's argument schema.
+     pub args: Bytes,
  }
  
- impl TryFrom<ByteBudgetConfig> for ByteBudget {
-@@ -133,6 +182,7 @@ impl ByteBudgetConfig {
- #[derive(Debug)]
- pub struct ByteBudgetState {
-     accounted_bytes: u64,
-+    hard_limit_suspensions: u32,
+@@ -183,7 +183,7 @@ impl_deserialize!([] CallReducerFlags, de => match de.deserialize_u8()? {
+ 
+ /// Sent by the client to invoke a procedure, a non-transactional side-effecting database function.
+ ///
+-/// After the procedure runs, the server will respond with a [`CallProcedureResult`] message containing the same `request_id`
++/// After the procedure runs, the server will respond with a [`ProcedureResult`] message containing the same `request_id`
+ /// and the status of the run, either the return value or an error.
+ #[derive(SpacetimeType)]
+ #[sats(crate = spacetimedb_lib)]
+@@ -199,7 +199,7 @@ pub struct CallProcedure {
+ 
+     /// The arguments to the procedure.
+     ///
+-    /// A BSATN-encoded [`ProductValue`] which meets the procedure's argument schema.
++    /// A BSATN-encoded [`ProductValue`](spacetimedb_sats::ProductValue) which meets the procedure's argument schema.
+     pub args: Bytes,
  }
  
- impl ByteBudgetUsage {
-@@ -149,7 +199,7 @@ pub struct BudgetPermit {
+@@ -268,7 +268,7 @@ pub struct QueryRows {
  
- impl Drop for BudgetPermit {
-     fn drop(&mut self) {
--        let mut state = self.state.lock().unwrap();
-+        let mut state = self.state.lock();
-         state.accounted_bytes = state
-             .accounted_bytes
-             .checked_sub(self.bytes)
-@@ -242,6 +292,11 @@ mod tests {
- 
-          
-```
-
-**File**: `crates/table/src/tiered/mem.rs` (modified, +4/-9)
-```diff
-@@ -186,20 +186,15 @@ impl ResidentObjects {
-     }
- 
-     fn acquire(&self, bytes: u64, memory_limit_exempt: bool) -> Result<BudgetPermit, BudgetExceeded> {
--        if memory_limit_exempt {
--            // Exempt allocations still count toward the database's resident usage.
--            Ok(self.budget.force_acquire(bytes))
--        } else {
--            self.budget.acquire(bytes)
--        }
-+        self.budget.acquire_with_exemption(bytes, memory_limit_exempt)
-     }
- 
-     pub(super) fn acquire_resident_page(&self, memory_limit_exempt: bool) -> Result<BudgetPermit, BudgetExceeded> {
-         self.acquire(PAGE_SIZE as u64, memory_limit_exempt)
-     }
- 
-     pub(super) fn restored_page_permit(&self) -> BudgetPermit {
--        self.budget.force_acquire(PAGE_SIZE as u64)
-+        self.acquire(PAGE_SIZE as u64, true).expect("accounted bytes overflow")
-     }
- 
-     pub fn new(budget: ByteBudget) -> Self {
-@@ -349,7 +344,7 @@ impl ResidentObjects {
-     }
- 
-     pub(super) fn register_page_unchecked(&self, pool: PagePool, page: Box<Page>) -> Arc<PageFrame> {
--        let permit = self.budget.force_acquire(PAGE_SIZE as u64);
-+        let permit = self.restored_page_permit();
-         let reservation = self.reserve_page_with_permit(permit, PooledPage::new(page, pool));
-         self.redeem_page(reservation)
-     }
-@@ -364,7 +359,7 @@ impl ResidentObjects {
-     }
- 
-     pub(super) fn register_blob_unchecked(&self, blob: Box<[u8]>) -> Arc<BlobFrame> {
--        let permit = self.budget.force_acquire(blob.len() as u64);
-+        let permit = self.acquire(blob.len() as u64, true).expect("accounted bytes overflow");
-         let reservation = self.reserve_blob_with_permit(permit, blob);
-         self.redeem_blob(reservation)
-     }
-```
-
-**File**: `crates/table/src/tiered/mod.rs` (modified, +5/-0)
-```diff
-@@ -157,6 +157,11 @@ impl TieredDatabaseStorage {
-         self.cache.metrics()
-     }
- 
-+    /// Run synchronous recovery with the resident memory limit suspended.
-+    pub fn with_resident_hard_limit_suspended<R>(&self, operation: impl FnOnce() -> R) -> R {
-+        self.cache.budget().with_hard_limit_suspended(operation)
-+    }
-+
-     pub fn pages(&self) -> &Arc<PageManager> {
-         &self.pages
-     }
-```
-
----
-
-### Incident Patch 2: `3885ee42` (2026-11-23)
-**Commit Message**: Allow pre-release suffixes and patch downgrades in metadata.toml version check (#6666)
-
-# Description of Changes
-
-The `metadata.toml` compatibility check used
-`semver::Comparator::matches` with `^MAJOR.MINOR`. That crate rejects
-any pre-release version unless the comparator names the same
-`major.minor.patch`, so running a build with a suffix (e.g.
-`2.17.0-rc.1`) against an older database failed unless the versions were
-exactly equal.
-
-Replace it with a direct comparison: same major, and the running minor
-must be >= the on-disk minor. Patch versions and minor/patch pre-release
-suffixes are ignored (e.g. `3.1.0` -> `3.1.0-rc1` is allowed).
-
-Pre-releases of a major version (`X.0.0-*`) are treated as distinct:
-they only run against exactly the same version (e.g. `3.0.0` ->
-`3.0.0-rc1` and `3.0.0-rc1` -> `3.0.0-rc2` are rejected).
-
-Existing tests are kept or updated accordingly, and cases for patch
-downgrades and pre-releases are added.
-
-# API and ABI breaking changes
-
-None.
-
-# Expected complexity level and risk
-
-1
-
-# Rollback safety impact
-n/a
-
-# Testing
-
-- [ ] `cargo test -p spacetimedb-core --lib check_metadata` (not yet
-run; I aborted the compile)
-
-🤖 Generated with [Claude Code](ht
-
-**File**: `crates/core/src/config.rs` (modified, +39/-11)
-```diff
-@@ -83,16 +83,22 @@ impl MetadataFile {
-             return Ok(());
-         }
- 
--        let cmp = semver::Comparator {
--            op: semver::Op::Caret,
--            major: previous.version.major,
--            minor: Some(previous.version.minor),
--            patch: None,
--            // We deal with pre-releases separately above.
--            pre: semver::Prerelease::new("").unwrap(),
--        };
-+        // Pre-releases of a major version (e.g. 3.0.0-rc1) are distinct from everything else:
-+        // they may only run against exactly the same version (handled above).
-+        if !current.version.pre.is_empty() && current.version.minor == 0 && current.version.patch == 0 {
-+            anyhow::bail!(
-+                "metadata.toml indicates that this database is from {:?}, which is not compatible with the running major pre-release {:?}.",
-+                previous.version,
-+                current.version,
-+            );
-+        }
- 
--        if cmp.matches(&current.version) {
-+        // Compatible if the major version matches and the running minor is not older.
-+        // Patch versions and (non-major) pre-release suffixes are ignored, so patch
-+        // downgrades and running minor/patch pre-releases are allowed.
-+        // (`semver::Comparator::matches` can't be used here: it rejects every
-+        // pre-release unless the comparator names the same major.minor.patch.)
-+        if previous.version.major == current.version.major && previous.version.minor <= current.version.minor {
-             return Ok(());
-         }
- 
-@@ -561,18 +567,40 @@ mod tests {
-             .check_compatibility_and_update(mkmeta(2, 0, 0), Path::new("metadata.toml"))
-             .unwrap();
- 
-+        // Pre-release suffixes and patch downgrades are fine within a major.minor.
-+        mkmeta(2, 16, 2)
-+            .check_compatibility_and_update(mkmeta_pre(2, 16, 0, "rc1"), Path::new("metadata.toml"))
-+            .unwrap();
-+        mkmeta(2, 1, 0)
-+            .check_compatibility_and_update(mkmeta_pre(2, 1, 0, "rc1"), Path::new("metadata.toml"))
-+            .unwrap();
-+        mkmeta(2, 0, 0)
-+            .check_compatibility_and_update(mkmeta_pre(2, 1, 0, "rc1"), Path::new("metadata.toml"))
-+            .unwrap();
-+
-         // Now check some failures..
- 
-+        // Major pre-releases are distinct: only the identical version is allowed.
-         mkmeta_pre(2, 0, 0, "rc1")
-             .check_compatibility_and_update(mkmeta_pre(2, 0, 0, "rc2"), Path::new("metadata.toml"))
-             .unwrap_err();
- 
-         mkmeta_pre(2, 0, 0, "rc2")
-             .check_compatibility_and_update(mkmeta_pre(2, 0, 0, "rc1"), Path::new("metadata.toml"))
-             .unwrap_err();
-+        mkmeta(3, 0, 0)
-+            .check_compatibility_and_update(mkmeta_pre(3, 0, 0, "rc1"), Path::new("metadata.toml"))
-+            .unwrap_err();
-+        mkmeta_pre(3, 0, 0, "rc1")
-+            .check_compatibility_and_update(mkmeta_pre(3, 0, 0, "rc2"), Path::new("metadata.toml"))
-+            .unwrap_err();
- 
--        mkmeta(2, 0, 0)
--            .check_compatibility_and_update(mkmeta_pre(2, 1, 0, "rc1"), Path::new("metadata.toml"))
-+        mkmeta_pre(2, 1, 0, "rc1")
-+            .check_compatibility_and_update(mkmeta_pre(2, 0, 5, "rc1"), Path::new("metadata.toml"))
-+            .unwrap_err();
-+
-+        mkmeta(3, 0, 0)
-+            .check_compatibility_and_update(mkmeta_pre(2, 9, 0, "rc1"), Path::new("metadata.toml"))
-             .unwrap_err();
-     }
- 
-```
-
----
-
-### Incident Patch 3: `efcc1e22` (2026-11-23)
-**Commit Message**: Fix Stripe, PostHog and Auth types on SDK 2.12 (#6681)
-
-# Description of Changes
-
-- Stripe, PostHog and Auth no longer emit `IdentityBuilder<Identity>` or
-`IdentityColumnBuilder<M, Identity>` in their types. SDK 2.12 doesn't
-take those type arguments, so apps on 2.12 with `skipLibCheck: false`
-got errors from our `.d.ts`. Same fix as S3 got in #6542
-- Auth and PostHog are bumped to 0.1.1 so the fix can be published.
-Stripe isn't on npm yet
-
-# API and ABI breaking changes
-
-None.
-
-# Rollback safety impact
-
-n/a
-
-# Expected complexity level and risk
-
-1
-
-# Testing
-
-- [x] Typecheck of a fresh project with the built packages on SDK 2.12.0
-and 2.16.1 with `skipLibCheck: false`: no errors from `@spacetimedb/*`
-
-**File**: `modules/spacetime-auth-ts/package.json` (modified, +1/-1)
-```diff
-@@ -1,7 +1,7 @@
- {
-   "name": "@spacetimedb/auth",
-   "description": "Password, OAuth, session, JWT, and profile primitives for SpacetimeDB TypeScript modules.",
--  "version": "0.1.0",
-+  "version": "0.1.1",
-   "license": "Apache-2.0",
-   "type": "module",
-   "main": "./src/index.ts",
-```
-
-**File**: `modules/spacetime-auth-ts/src/procedures.ts` (modified, +4/-1)
-```diff
-@@ -2,6 +2,7 @@ import {
-   Range,
-   SenderError,
-   t,
-+  type IdentityBuilder,
-   type Infer,
-   type InferTypeOfParams,
- } from 'spacetimedb/server';
-@@ -80,7 +81,9 @@ export function setAuthConfig(
-   else ctx.db.authConfig.insert(row);
- }
- 
--export const adminParams = { identity: t.identity() };
-+export const adminParams: { identity: IdentityBuilder } = {
-+  identity: t.identity(),
-+};
- 
- export function addAuthAdmin(
-   ctx: AuthReducerCtx,
-```
-
-**File**: `modules/spacetime-auth-ts/src/tables.ts` (modified, +17/-3)
-```diff
-@@ -1,4 +1,10 @@
--import { table, t } from 'spacetimedb/server';
-+import {
-+  table,
-+  t,
-+  type IdentityColumnBuilder,
-+  type StringColumnBuilder,
-+  type TimestampBuilder,
-+} from 'spacetimedb/server';
- 
- export const authUserRow = {
-   userId: t.string().primaryKey(),
-@@ -72,7 +78,12 @@ export const authConfigRow = {
- 
- // Maps an STDB Identity to the session it presented to link_connection.
- // Deleting a session deletes its bindings.
--export const authConnectionBindingRow = {
-+export const authConnectionBindingRow: {
-+  stdbIdentity: IdentityColumnBuilder<{ isPrimaryKey: true }>;
-+  userId: StringColumnBuilder<{ indexType: 'btree' }>;
-+  sessionId: StringColumnBuilder<{ indexType: 'btree' }>;
-+  linkedAt: TimestampBuilder;
-+} = {
-   stdbIdentity: t.identity().primaryKey(),
-   userId: t.string().index(),
-   sessionId: t.string().index(),
-@@ -81,7 +92,10 @@ export const authConnectionBindingRow = {
- 
- // Operator allowlist. install seeds the publishing identity; privileged calls
- // (set_auth_config, revoke_session, admin changes) must come from an admin.
--export const authAdminIdentityRow = {
-+export const authAdminIdentityRow: {
-+  identity: IdentityColumnBuilder<{ isPrimaryKey: true }>;
-+  addedAt: TimestampBuilder;
-+} = {
-   identity: t.identity().primaryKey(),
-   addedAt: t.timestamp(),
- };
-```
-
-**File**: `modules/spacetime-posthog-ts/package.json` (modified, +1/-1)
-```diff
-@@ -1,7 +1,7 @@
- {
-   "name": "@spacetimedb/posthog",
-   "description": "PostHog capture, durable outbox, delivery logs, and feature flags for SpacetimeDB TypeScript modules.",
--  "version": "0.1.0",
-+  "version": "0.1.1",
-   "license": "Apache-2.0",
-   "type": "module",
-   "main": "./src/index.ts",
-```
-
-**File**: `modules/spacetime-posthog-ts/src/submodule/auth.ts` (modified, +7/-3)
-```diff
-@@ -1,4 +1,4 @@
--import type { ProcedureExport } from 'spacetimedb/server';
-+import type { IdentityBuilder, ProcedureExport } from 'spacetimedb/server';
- import {
-   spacetimedb,
-   t,
-@@ -26,7 +26,9 @@ export function requireAdmin(ctx: WriteCtx, sender: Sender): void {
- 
- const unitResult: ReturnType<typeof t.unit> = t.unit();
- 
--const addAdminIdentityArgs = { identity: t.identity() };
-+const addAdminIdentityArgs: { identity: IdentityBuilder } = {
-+  identity: t.identity(),
-+};
- export const addAdminIdentity: ProcedureExport<
-   typeof spacetimedb.schemaType,
-   typeof addAdminIdentityArgs,
-@@ -48,7 +50,9 @@ export const addAdminIdentity: ProcedureExport<
-   }
- );
- 
--const removeAdminIdentityArgs = { identity: t.identity() };
-+const removeAdminIdentityArgs: { identity: IdentityBuilder } = {
-+  identity: t.identity(),
-+};
- export const removeAdminIdentity: ProcedureExport<
-   typeof spacetimedb.schemaType,
-   typeof removeAdminIdentityArgs,
-```
-
-**File**: `modules/spacetime-posthog-ts/src/submodule/schema.ts` (modified, +6/-1)
-```diff
-@@ -8,6 +8,8 @@ import {
-   type TransactionCtx,
-   type ViewCtx,
-   type SumBuilder,
-+  type IdentityColumnBuilder,
-+  type TimestampBuilder,
- } from 'spacetimedb/server';
- import { install } from './install.js';
- 
-@@ -63,7 +65,10 @@ const posthogAdminIdentityOptions = {
-   name: 'posthog_admin_identity',
-   public: false,
- };
--const posthogAdminIdentityColumns = {
-+const posthogAdminIdentityColumns: {
-+  identity: IdentityColumnBuilder<{ isPrimaryKey: true }>;
-+  addedAt: TimestampBuilder;
-+} = {
-   identity: t.identity().primaryKey(),
-   addedAt: t.timestamp(),
- };
-```
-
-**File**: `modules/spacetime-stripe-ts/src/submodule/auth.ts` (modified, +7/-3)
-```diff
-@@ -1,4 +1,4 @@
--import type { ProcedureExport } from 'spacetimedb/server';
-+import type { IdentityBuilder, ProcedureExport } from 'spacetimedb/server';
- import {
-   spacetimedb,
-   t,
-@@ -32,7 +32,9 @@ export function requireAdmin(ctx: WriteCtx, sender: Sender): void {
- 
- const unitResult: ReturnType<typeof t.unit> = t.unit();
- 
--const addAdminIdentityArgs = { identity: t.identity() };
-+const addAdminIdentityArgs: { identity: IdentityBuilder } = {
-+  identity: t.identity(),
-+};
- export const addAdminIdentity: ProcedureExport<
-   typeof spacetimedb.schemaType,
-   typeof addAdminIdentityArgs,
-@@ -55,7 +57,9 @@ export const addAdminIdentity: ProcedureExport<
-   }
- );
- 
--const removeAdminIdentityArgs = { identity: t.identity() };
-+const removeAdminIdentityArgs: { identity: IdentityBuilder } = {
-+  identity: t.identity(),
-+};
- export const removeAdminIdentity: ProcedureExport<
-   typeof spacetimedb.schemaType,
-   typeof removeAdminIdentityArgs,
-```
-
-**File**: `modules/spacetime-stripe-ts/src/submodule/schema.ts` (modified, +6/-1)
-```diff
-@@ -8,6 +8,8 @@ import {
-   type ReducerCtx,
-   type TransactionCtx,
-   type SumBuilder,
-+  type IdentityColumnBuilder,
-+  type TimestampBuilder,
- } from 'spacetimedb/server';
- import * as v from 'valibot';
- import { install } from './install.js';
-@@ -299,7 +301,10 @@ export const stripeConfigTable: ReturnType<
- > = table(stripeConfigOptions, stripeConfigRow);
- 
- // Allowlist of identities permitted to call privileged procedures.
--export const stripeAdminIdentityRow = {
-+export const stripeAdminIdentityRow: {
-+  identity: IdentityColumnBuilder<{ isPrimaryKey: true }>;
-+  addedAt: TimestampBuilder;
-+} = {
-   identity: t.identity().primaryKey(),
-   addedAt: t.timestamp(),
- };
+ /// Matching rows resident in a table at the time a query ran,
+ /// used in contexts where we're not sending insert/delete deltas,
+-/// like the [`QueryRows`] of a [`SubscribeApplied`], and [`OneOffQueryResponse`].
++/// like the [`QueryRows`] of a [`SubscribeApplied`], and [`OneOffQueryResult`].
+ #[derive(SpacetimeType, Debug)]
+ #[sats(crate = spacetimedb_lib)]
+ pub struct SingleTableRows {
+@@ -436,7 +436,7 @@ pub struct EventTableRows {
+ #[derive(SpacetimeType, Debug)]
+ #[sats(crate = spacetimedb_lib)]
+ pub struct OneOffQueryResult {
+-    /// The request_id of the corresponding `SubscribeSingle` message.
++    /// The request_id of the corresponding [`OneOffQuery`] message.
+     pub request_id: u32,
+     /// The matching rows for this query, or an error message if computation failed.
+     ///
+@@ -449,7 +449,7 @@ pub struct OneOffQueryResult {
+ #[derive(SpacetimeType, Debug)]
+ #[sats(crate = spacetimedb_lib)]
+ pub struct ReducerResult {
+-    /// The request_id of the corresponding `SubscribeSingle` message.
++    /// The request_id of the corresponding [`CallReducer`] message.
+     pub request_id: u32,
+     /// The time when the reducer started.
+     ///
+@@ -503,13 +503,13 @@ pub struct ProcedureResult {
+     ///
+     /// Contains the return value if successful, or the error message if not.
+     pub status: ProcedureStatus,
+-    /// The time when the reducer started.
++    /// The time when the procedure started.
+     ///
+     /// Note that [`Timestamp`] serializes as `i64` nanoseconds since the Unix epoch.
+     pub timestamp: Timestamp,
+     /// The time the procedure took to run.
+     pub total_host_execution_duration: TimeDuration,
+-    /// The same same client-provided identifier as in the original [`ProcedureCall`] request.
++    /// The same client-provided identifier as in the original [`CallProcedure`] request.
+     ///
+     /// Clients use this to correlate the response with the original request.
+     pub request_id: u32,
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6710** (closed): Let pnpm run the bun package's install script in the bun-ts template (@krisajenkins)
+- **PR #6690** (2026-11-25): Update dependencies to clear Dependabot alerts and make pnpm the only package manager (@cloutiertyler)
+- **PR #6689** (2026-11-25): Move LLM benchmark results out of SpacetimeDB and port the benchmark tooling to Rust (@cloutiertyler)
+- **PR #6686** (2026-11-24): Release - Double the Cargo publish index timeout (@bfops)
 - **PR #6681** (2026-11-23): Fix Stripe, PostHog and Auth types on SDK 2.12 (@bradleyshep)
-- **PR #6672** (2026-11-23): Bump versions to 2.16.3 (@rekhoff)
-- **PR #6666** (2026-11-23): Allow pre-release suffixes and patch downgrades in metadata.toml version check (@bfops)
-- **PR #6663** (2026-11-23): Smoketests: resolve C# ClientSDK version from the local package source (@bfops)
-- **PR #6659** (2026-11-22): Skip absent page slots when verifying snapshots (@bfops)
-- **PR #6658** (2026-11-23): Load database before enforcing memory budget (@joshua-spacetime)
+- **PR #6674** (2026-11-25): Async IDC: pipelining (@Shubham8287)
 
 ---
 
@@ -1588,55 +1022,33 @@ and 2.16.1 with `skipLibCheck: false`: no errors from `@spacetimedb/*`
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Load database before enforcing memory budget
+## X. wrong and broken doc links in the websocket message types
 
 **RULE**:
-When implementing operations in `crates/datastore/src/locking_tx_datastore/datastore.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clockworklabs/SpacetimeDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/client-api-messages/src/websocket.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clockworklabs/SpacetimeDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d0413bd2`: Load database before enforcing memory budget. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `537d6f82`: wrong and broken doc links in the websocket message types. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/datastore/src/locking_tx_datastore/datastore.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/client-api-messages/src/websocket.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    /// Ignore the resident memory limit while reconstructing committed data.
-    ///
-    /// The caller must keep exclusive access while the synchronous operation
-    /// runs, then trim storage before serving new transactions.
-    pub fn with_resident_hard_limit_suspended<R>(&self, operation: impl FnOnce() -> R) -> R {
-        // Release the state lock before recovery acquires it for writing.
-        let storage = self.committed_state.read().storage.clone();
-        storage.with_resident_hard_limit_suspended(operation)
-    }
-
-    /// Trim the resident and local caches to their low watermarks, as far as possible.
-    /// Required-in-memory data may keep usage above the limit without an error.
-    #[cfg(feature = "durability")]
-    pub fn trim(&self) -> Result<()> {
-        Ok(self.committed_state.read().trim()?)
-    }
-
-        // Full database recovery defers eviction until replay, rebuilding, and
-        // system-table migration have all completed. Preserve immediate trimming
-        // for direct snapshot API callers.
-        let trim_after_restore = !config.resident_budget.is_hard_limit_suspended();
-        if trim_after_restore {
-            committed_state.trim()?;
-        }
+//! Client -> Server messages are encoded as a `ClientMessage` from the protocol version in use, e.g. [`v2::ClientMessage`].
+//! Server -> Client messages are encoded as a `ServerMessage` from the protocol version in use, e.g. [`v2::ServerMessage`].
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-        // Free memory + disk storage to budget.
-        committed_state.trim()?;
+//! Client -> Server messages are encoded as [`ClientMessage`].
+//! Server -> Client messages are encoded as [`ServerMessage`].
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d0413bd2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `537d6f82` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

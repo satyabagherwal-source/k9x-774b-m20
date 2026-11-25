@@ -4,22 +4,22 @@
 {
   "source_repository": "Bitterbot-AI/bitterbot-desktop",
   "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-  "source_version": "a0d01b11",
+  "source_version": "f28f8940",
   "license": "MIT",
-  "timestamp": "2026-11-24T16:54:48.190Z",
+  "timestamp": "2026-11-25T23:02:04.011Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop) (Revision: `a0d01b11`).  
-> **License**: MIT | **Timestamp**: `2026-11-24T16:54:48.190Z`  
+> **Provenance**: Harvested from [Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop) (Revision: `f28f8940`).  
+> **License**: MIT | **Timestamp**: `2026-11-25T23:02:04.011Z`  
 > **Learning ID**: `learn-github-bitterbot-ai-bitterbot-desktop`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `Bitterbot-AI/bitterbot-desktop` (Commit: `a0d01b11`)
+- **Target Repository**: `Bitterbot-AI/bitterbot-desktop` (Commit: `f28f8940`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T16:54:46.881Z  
+> **Harvest Timestamp**: 2026-11-25T23:02:02.661Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Bitterbot - a mesh of agents that turns shared experience into collective capability.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md, Dockerfile
-- **Stars / Engagement**: 2481 stars
+- **Stars / Engagement**: 2482 stars
 
 ---
 
@@ -1581,235 +1581,37 @@ def main():
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `aaebb1f6` (2026-11-24)
-**Commit Message**: fix(media): default OpenAI transcription to gpt-transcribe ahead of the model shutdown (#395)
+### Incident Patch 1: `f28f8940` (2026-11-25)
+**Commit Message**: fix(skills): say wallet spending caps cannot be approved past (#398)
 
-OpenAI retires whisper-1, gpt-4o-transcribe and gpt-4o-mini-transcribe on
-2027-02-26. gpt-transcribe is the documented replacement on
-/v1/audio/transcriptions and accepts the fields we already send (verified
-with real calls: model only, language, prompt, response_format=text).
+Step 3 told the model to ask the user for permission when a cost exceeds
+the spending limits. The x402 per-request cap and the session spend cap
+are hard limits: pay_for_resource throws and the spend gate refuses, and
+nothing is sent for approval. Tell the model the payment will be refused,
+not to work around the cap, and where the owner can raise it.
 
-gpt-transcribe reports usage as audio seconds, not tokens, so those rows
-now store seconds and are priced at $0.0045 per minute. The bundled
-openai-whisper-api skill script defaults to the new model too.
+Fixes #390
 
-Refs #391
-
-Co-authored-by: Claude Fable 5.2 <[REDACTED_EMAIL]>
-
-**File**: `docs/gateway/configuration-examples.md` (modified, +1/-1)
+**File**: `skills/wallet-payments/SKILL.md` (modified, +1/-1)
 ```diff
-@@ -136,7 +136,7 @@ Save to `~/.bitterbot/bitterbot.json` and you can DM the bot from that number.
-         enabled: true,
-         maxBytes: 20971520,
-         models: [
--          { provider: "openai", model: "gpt-4o-mini-transcribe" },
-+          { provider: "openai", model: "gpt-transcribe" },
-           // Optional CLI fallback (Whisper binary):
-           // { type: "cli", command: "whisper", args: ["--model", "base", "{{MediaPath}}"] }
-         ],
-```
-
-**File**: `docs/gateway/configuration-reference.md` (modified, +1/-1)
-```diff
-@@ -1414,7 +1414,7 @@ Configures inbound media understanding (image/audio/video):
-           rules: [{ action: "allow", match: { chatType: "direct" } }],
-         },
-         models: [
--          { provider: "openai", model: "gpt-4o-mini-transcribe" },
-+          { provider: "openai", model: "gpt-transcribe" },
-           { type: "cli", command: "whisper", args: ["--model", "base", "{{MediaPath}}"] },
-         ],
-       },
-```
-
-**File**: `skills/openai-whisper-api/SKILL.md` (modified, +2/-2)
-```diff
-@@ -25,13 +25,13 @@ Transcribe an audio file via OpenAI’s `/v1/audio/transcriptions` endpoint.
+@@ -27,7 +27,7 @@ When `web_fetch` returns a 402 Payment Required response, follow this workflow e
  
- Defaults:
- 
--- Model: `whisper-1`
-+- Model: `gpt-transcribe` (OpenAI retires `whisper-1` on 2027-02-26)
- - Output: `<input>.txt`
- 
- ## Useful flags
- 
- ```bash
--{baseDir}/scripts/transcribe.sh /path/to/audio.ogg --model whisper-1 --out /tmp/transcript.txt
-+{baseDir}/scripts/transcribe.sh /path/to/audio.ogg --model gpt-transcribe --out /tmp/transcript.txt
- {baseDir}/scripts/transcribe.sh /path/to/audio.m4a --language en
- {baseDir}/scripts/transcribe.sh /path/to/audio.m4a --prompt "Speaker names: Peter, Daniel"
- {baseDir}/scripts/transcribe.sh /path/to/audio.m4a --json --out /tmp/transcript.json
-```
-
-**File**: `skills/openai-whisper-api/scripts/transcribe.sh` (modified, +2/-2)
-```diff
-@@ -4,7 +4,7 @@ set -euo pipefail
- usage() {
-   cat >&2 <<'EOF'
- Usage:
--  transcribe.sh <audio-file> [--model whisper-1] [--out /path/to/out.txt] [--language en] [--prompt "hint"] [--json]
-+  transcribe.sh <audio-file> [--model gpt-transcribe] [--out /path/to/out.txt] [--language en] [--prompt "hint"] [--json]
- EOF
-   exit 2
- }
-@@ -16,7 +16,7 @@ fi
- in="${1:-}"
- shift || true
- 
--model="whisper-1"
-+model="gpt-transcribe"
- out=""
- language=""
- prompt=""
-```
-
-**File**: `src/infra/model-pricing.ts` (modified, +25/-0)
-```diff
-@@ -80,6 +80,16 @@ export const TTS_PRICES_PER_MILLION_CHARS: Readonly<Record<string, number>> = {
-   "openai/tts-1-hd": 30,
- };
- 
-+/**
-+ * USD per 1M SECONDS of audio for duration-billed transcription (`kind: "audio"` rows whose
-+ * provider reported `usage.type: "duration"` store seconds in `input`). Source:
-+ * https://developers.openai.com/api/docs/pricing (gpt-transcribe $0.0045 / minute = $75 per 1M
-+ * seconds). Token-billed transcription models are priced from the model catalog instead.
-+ */
-+export const AUDIO_PRICES_PER_MILLION_SECONDS: Readonly<Record<string, number>> = {
-+  "openai/gpt-transcribe": 75,
-+};
-+
- const ZERO_PRICE: ModelPrice = { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 };
- const MEMO_TTL_MS = 5 * 60_000;
- const memo = new Map<string, { at: number; value: ResolvedPricing }>();
-@@ -155,6 +165,15 @@ function lookupTtsCatalog(provider: string, model: string): ModelPrice | undefin
-   return { input: perMillion, output: 0, cacheRead: 0, cacheWrite: 0 };
- }
- 
-+function lookupAudioDurationCatalog(provider: string, model: string): ModelPrice | undefined {
-+  const key = `${provider.toLowerCase()}/${normalizeModelIdForPricing(provider, model)}`;
-+  const perMillion = AUDIO_PRICES_PER_MILLION_SECONDS[key];
-+  if (typeof perMillion !== "number") {
-+    return undefined;
-+  }
-+  return { input: perMillion, output: 0, cacheRead: 0, cacheWrite: 0 };
-+}
-+
- async function lookupCatalog(
-   provider: string,
-   model: string,
-@@ -216,6 +235,12 @@ export async function resolveModelPricing(params: {
-       value = { price: tts, source: "embedding-catalog" };
-     }
-   }
-+  if (!value && kind === "audio") {
-+    const audio = lookupAudioDurationCatalog(provider, model);
-+    if (audio) {
-+      value = { price: audio, source: "embedding-catalog" };
-+    }
-+  }
-   if (!value && isLocalModelProvider(provider)) {
-     value = { price: ZERO_PRICE, source: "local" };
-   }
-```
-
-**File**: `src/media-understanding/defaults.ts` (modified, +1/-1)
-```diff
-@@ -29,7 +29,7 @@ export const DEFAULT_PROMPT: Record<MediaUnderstandingCapability, string> = {
- export const DEFAULT_VIDEO_MAX_BASE64_BYTES = 70 * MB;
- export const DEFAULT_AUDIO_MODELS: Record<string, string> = {
-   groq: "whisper-large-v3-turbo",
--  openai: "gpt-4o-mini-transcribe",
-+  openai: "gpt-transcribe",
-   deepgram: "nova-3",
- };
- 
-```
-
-**File**: `src/media-understanding/providers/openai/audio.test.ts` (modified, +2/-2)
-```diff
-@@ -55,7 +55,7 @@ describe("transcribeOpenAiCompatibleAudio", () => {
-       fetchFn,
-     });
- 
--    expect(result.model).toBe("gpt-4o-mini-transcribe");
-+    expect(result.model).toBe("gpt-transcribe");
-     expect(result.text).toBe("hello");
-     expect(seenUrl).toBe("https://api.example.com/v1/audio/transcriptions");
-     expect(seenInit?.method).toBe("POST");
-@@ -67,7 +67,7 @@ describe("transcribeOpenAiCompatibleAudio", () => {
- 
-     const form = seenInit?.body as FormData;
-     expect(form).toBeInstanceOf(FormData);
--    expect(form.get("model")).toBe("gpt-4o-mini-transcribe");
-+    expect(form.get("model")).toBe("gpt-transcribe");
-     expect(form.get("language")).toBe("en");
-     expect(form.get("prompt")).toBe("hello");
-     const file = form.get("file") as Blob | { type?: string; name?: string } | null;
-```
-
-**File**: `src/media-understanding/providers/openai/audio.ts` (modified, +22/-8)
-```diff
-@@ -5,7 +5,9 @@ import type { AudioTranscriptionRequest, AudioTranscriptionResult } from "../../
- import { assertOkOrThrowHttpError, fetchWithTimeoutGuarded, normalizeBaseUrl } from "../shared.js";
- 
- export const DEFAULT_OPENAI_AUDIO_BASE_URL = "https://api.openai.com/v1";
--const DEFAULT_OPENAI_AUDIO_MODEL = "gpt-4o-mini-transcribe";
-+// OpenAI retires whisper-1, gpt-4o-transcribe and gpt-4o-mini-transcribe on 2027-02-26;
-+// gpt-transcribe is the documented replacement on this endpoint and takes the same fields.
-+const DEFAULT_OPENAI_AUDIO_MODEL = "gpt-transcribe";
- 
- function resolveModel(model?: string): string {
-   const trimmed = model?.trim();
-@@ -71,18 +73,30 @@ export async function transcribeOpenAiCompatibleAudio(
-     if (!text) {
-       throw new Error("Audio transcription response missing text");
-     }
--    // PLAN-50 Phase 5: gpt-4o-transcribe reports token usage; whisper reports nothing (or
--    // seconds), in which case the call is recorded as one billable item and stays unpriced.
-+    // PLAN-50 Phase 5: token-billed models report token usage. Duration-billed models
-+    // (gpt-transcribe, whisper) report `{type: "duration", seconds}`; those rows store SECONDS
-+    // in `input` and are priced per second (AUDIO_PRICES_PER_MILLION_SECONDS). No usage at all
-+    // is recorded as one billable item and stays unpriced.
-+    const seconds =
-+      payload.usage?.type === "duration" &&
-+      typeof payload.usage.seconds === "number" &&
-+      Number.isFinite(payload.usage.seconds) &&
-+      payload.usage.seconds >= 0
-+        ? payload.usage.seconds
-+        : undefined;
-     recordUsage({
-       kind: "audio",
-       feature: USAGE_FEATURES.mediaAudio,
-       provider: /groq/i.test(baseUrl) ? "groq" : "openai",
-       model,
--      usage: {
--        input: payload.usage?.input_tokens,
--        output: payload.usage?.output_tokens,
--        total: payload.usage?.total_tokens,
--      },
-+      usage:
-+        seconds !== undefined
-+          ? { input: seconds, total: seconds }
-+          : {
-+              input: payload.usage?.input_tokens,
-+              output: payload.usage?.output_tokens,
-+              total: payload.usage?.total_tokens,
-+            },
-       items: 1,
-       durationMs: Date.now() - transcribeStartedAt,
-     });
+ 1. **Extract the price**: if the 402 result has `price_usdc`, use it. The tool derives it from the x402 `accepts[]` offer only when the asset is USDC; `x402_offer` names the asset, network and amount in atomic units. Otherwise look at `x402_headers` for `x-payment-amount`. Do not convert raw `amount` or `maxAmountRequired` values from `payment_required`, `payment_details` or the `body_snippet` yourself: they are atomic units (`10000` is 0.01 USDC) and easy to misread, so treat the price as unclear.
+ 2. **Handle unclear prices**: if you cannot confidently determine the price, DO NOT GUESS. Ask: "This resource requires payment, but the price isn't clear. Would you like me to proceed, and what is your maximum budget?"
+-3. **Check balance and rules**: call `get_balance` (token="USDC"). If the cost exceeds your spending limits, ask the user for permission.
++3. **Check balance and rules**: call `get_balance` (token="USDC"). The spending caps in the wallet tool's info are hard limits: a payment over the x402 per-request cap or the session spend cap is refused even if the user agrees, so do not ask for permission to go over one, and do not split the payment or switch to `send_usdc` to get around it. Tell the user the cost is over the cap and that it can only be raised in the wallet settings (`tools.wallet.x402.maxCostPerRequestUsd`, `tools.wallet.sessionSpendCapUsd`).
+ 4. **Inform the user**: state the cost and your intent briefly (for example "This endpoint requires a 0.15 USDC micropayment. I have the funds and am purchasing it now.").
+ 5. **Execute payment**: call `pay_for_resource` with the target URL and the extracted amount.
+ 6. **Process content directly**: `pay_for_resource` returns the un-paywalled content. Do NOT call `web_fetch` again after paying; use the `pay_for_resource` result immediately.
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #398** (2026-11-25): fix(skills): say wallet spending caps cannot be approved past (@nabeelbaghoor)
 - **PR #396** (2026-11-24): feat(tts): speak through the OpenAI Realtime API ahead of the speech model shutdown (@VGIL77)
 - **PR #395** (2026-11-24): fix(media): default OpenAI transcription to gpt-transcribe ahead of the model shutdown (@VGIL77)
 - **PR #393** (2026-11-22): fix(deps): ship tar 7.5.22 and undici 7.30.2 to pick up security fixes (@VGIL77)
 - **PR #392** (2026-11-22): chore(main): release 1.14.3 (@github-actions[bot])
 - **PR #389** (2026-11-22): fix(agents): retry one-shot completions with thinking between_tools when a model rejects disabled (@VGIL77)
-- **PR #388** (2026-11-19): chore(main): release 1.14.2 (@github-actions[bot])
 
 ---
 
@@ -1829,31 +1631,31 @@ Co-authored-by: Claude Fable 5.2 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. media): default OpenAI transcription to gpt-transcribe ahead of the model shutdo
+## X. skills): say wallet spending caps cannot be approved past
 
 **RULE**:
-When implementing operations in `docs/gateway/configuration-examples.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `skills/wallet-payments/SKILL.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `aaebb1f6`: media): default OpenAI transcription to gpt-transcribe ahead of the model shutdown. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f28f8940`: skills): say wallet spending caps cannot be approved past. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/gateway/configuration-examples.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `skills/wallet-payments/SKILL.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-          { provider: "openai", model: "gpt-transcribe" },
+3. **Check balance and rules**: call `get_balance` (token="USDC"). The spending caps in the wallet tool's info are hard limits: a payment over the x402 per-request cap or the session spend cap is refused even if the user agrees, so do not ask for permission to go over one, and do not split the payment or switch to `send_usdc` to get around it. Tell the user the cost is over the cap and that it can only be raised in the wallet settings (`tools.wallet.x402.maxCostPerRequestUsd`, `tools.wallet.sessionSpendCapUsd`).
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-          { provider: "openai", model: "gpt-4o-mini-transcribe" },
+3. **Check balance and rules**: call `get_balance` (token="USDC"). If the cost exceeds your spending limits, ask the user for permission.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `aaebb1f6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f28f8940` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

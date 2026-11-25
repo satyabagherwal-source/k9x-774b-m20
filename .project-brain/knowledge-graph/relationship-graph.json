@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-25T15:48:16.126Z",
+  "updated_at": "2026-11-25T23:03:03.804Z",
   "statistics": {
-    "total_nodes": 544,
-    "total_edges": 223,
+    "total_nodes": 546,
+    "total_edges": 224,
     "domain_distribution": {
-      "D": 329,
+      "D": 331,
       "M": 1,
       "H": 99,
       "J": 22,
@@ -21,7 +21,7 @@
       "C": 1
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 219,
+      "CONSTRAINED_BY_ARCHITECTURE": 220,
       "VERIFIED_BY_TEST": 2,
       "STYLED_BY_DESIGN": 2
     }
@@ -12145,6 +12145,51 @@
       ],
       "created_at": "2026-11-25T15:48:16.126Z",
       "updated_at": "2026-11-25T15:48:16.126Z"
+    },
+    "DOM-D-67959B26": {
+      "id": "DOM-D-67959B26",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): nvidia/Nemotron-Labs-Image-30B-A3B",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-nvidia-nemotron-labs-image-30b-a3b-learnings.md`  \n> **Source**: huggingface ([ht -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-nvidia-nemotron-labs-image-30b-a3b-learnings.md`  \n> **Source**: huggingface ([ht",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-nvidia-nemotron-labs-image-30b-a3b/hf-nvidia-nemotron-labs-image-30b-a3b-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-25T23:02:07.155Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-nvidia-nemotron-labs-image-30b-a3b)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-25T23:02:31.525Z",
+      "updated_at": "2026-11-25T23:02:31.525Z"
+    },
+    "DOM-D-0A1336C6": {
+      "id": "DOM-D-0A1336C6",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): KRAFTON/Raon-1-mini",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-krafton-raon-1-mini-learnings.md`  \n> **Source**: huggingface ([https://huggingfa -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-krafton-raon-1-mini-learnings.md`  \n> **Source**: huggingface ([https://huggingfa",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-krafton-raon-1-mini/hf-krafton-raon-1-mini-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-25T23:02:32.064Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-krafton-raon-1-mini)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence",
+        "M"
+      ],
+      "created_at": "2026-11-25T23:03:03.804Z",
+      "updated_at": "2026-11-25T23:03:03.804Z"
     }
   },
   "edges": [
@@ -14377,6 +14422,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-H-64682323 [H] with Domain G",
       "created_at": "2026-11-25T12:20:23.948Z"
+    },
+    {
+      "id": "EDGE-B60D5A7E4122",
+      "sourceId": "DOM-D-0A1336C6",
+      "targetId": "NODE-M-domain-bridge-m",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-D-0A1336C6 [D] with Domain M",
+      "created_at": "2026-11-25T23:03:03.804Z"
     }
   ]
 }

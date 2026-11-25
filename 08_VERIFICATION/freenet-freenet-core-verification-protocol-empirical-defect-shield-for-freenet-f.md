@@ -4,22 +4,22 @@
 {
   "source_repository": "freenet/freenet-core",
   "source_url": "https://github.com/freenet/freenet-core",
-  "source_version": "ef8c0626",
+  "source_version": "20963739",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-25T11:59:56.906Z",
+  "timestamp": "2026-11-25T23:01:59.046Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-freenet-freenet-core",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [freenet/freenet-core](https://github.com/freenet/freenet-core) (Revision: `ef8c0626`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-25T11:59:56.906Z`  
+> **Provenance**: Harvested from [freenet/freenet-core](https://github.com/freenet/freenet-core) (Revision: `20963739`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-25T23:01:59.046Z`  
 > **Learning ID**: `learn-github-freenet-freenet-core`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `freenet/freenet-core` (Commit: `ef8c0626`)
+- **Target Repository**: `freenet/freenet-core` (Commit: `20963739`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T11:59:55.471Z  
+> **Harvest Timestamp**: 2026-11-25T23:01:57.852Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1749,11 +1749,13 @@ pub mod streaming_buffer;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #6390** (2026-11-25): **fix: keep a public own_addr when a gateway behind our NAT observes a private one**
-  *Symptoms*: ## Problem A joiner behind the same NAT as a gateway is told a private address (e.g. 192.168.1.1:60454) by that gateway and its public address by the others. Each CONNECT driver applied its own first ObservedAddress, so own_addr and the ring location flipped with whichever gateway answered last. A node could then advertise an unreachable private address to acceptors.  ## Approach Observed addresses are applied through `ConnectionManager::apply_observed_address`. A private or loopback observation never replaces a public own_addr. A public observation replaces a private one and moves a location that an observation set (a configured location is left alone). On an all-LAN or loopback network, with nothing public known, a private observation is adopted as before. The gateway side and the wire format are unchanged: the gateway really does see the joiner's packets from the private address.  Known limits: - A node that moves from a public network to a LAN-only one keeps its public own_addr until restart. A time-window escape was tried and removed in review: observations arrive only on a direct join's first hop, so a stable node had none for 10 minutes and the flip came back. - CGNAT (100.64/10) and IPv4-vs-global-IPv6 observations count as public (`is_private_ip` is shared and not widened), so they can still replace each other. - A public-to-different-public change updates the address but keeps the location.  This does not fix the slow first join (the 15-18% of starts over 5 minutes)
+- **Issue #6395** (2026-11-25): **fix: keep the node running when a helper process is OOM-killed**
+  *Symptoms*: ## Problem  The packaged unit uses `Restart=always` and the default `OOMPolicy=stop`. When the cgroup OOM killer kills any process in the service (not only the node), systemd stops the whole unit and restarts it. The stop hook runs `freenet update`, and the restart counts as a crash for the post-update rollback logic and toward `StartLimitBurst=5` / `StartLimitIntervalSec=120` with `StartLimitAction=none`. Repeated OOM kills can therefore leave the unit stopped for good.  ## Approach  Add `OOMPolicy=continue` to `[Service]` in both `generate_user_service_file` and `generate_system_service_file`, with a short comment. `man systemd.service` confirms `OOMPolicy=` is a `[Service]` directive and `continue` is a valid value. The directive was added in systemd v243; older systemd logs and ignores unknown directives, which the templates already rely on (see the `RestartSteps=` comment in `linux.rs`).  Rollout note: `freenet update` rewrites the unit but runs in the OLD binary, so it writes the OLD template. The setting reaches installed nodes one release after the one that ships this change. Units that were hand-edited (differ from the template and from the hash sidecar) are skipped, as before.  ## Testing  - The service template tests now assert `OOMPolicy=continue` appears inside `[Service]` (before `[Install]`) for the user and system units. - New test in `update.rs`: a unit equal to the previous template (current template without the line) is detected as stale and rewritten, with
+  **Post-Mortem & Fix Analysis**:
+  > <!-- claude-rule-review --> ### Rule Review: No issues found  **Rules checked:** git-workflow.md, code-style.md, testing.md **Files reviewed:** 3  The PR adds `OOMPolicy=continue` to both the user and system systemd unit templates. It has regression tests, and I found no rule violations.  - **Regression test:** `assert_oom_policy_in_service_section` is added to the existing generation tests, so it checks that the directive is in `[Service]`. A new test in `update.rs` covers three stale-template cases for both unit variants:   - A sidecar that records the previous template is rewritten.   - No sidecar is also rewritten.   - A hand-edited unit is skipped. - **Docs:** No non-Rust docs reference the unit template, so nothing is stale. - **Commit messages:** Both use the `fix:` prefix. The subject of the second commit (833b10ca0) is over 72 characters. The rules rate that as INFO, and it isn't worth a finding. - **Not reviewable here:** I couldn't see the PR description, so I couldn't check
 
-- **Issue #6388** (2026-11-25): **fix: exclude blocking host-call time from the WASM guest budget**
-  *Symptoms*: ## Problem  freenet/river#1017: a chat delegate hit the node's 5 s WASM budget ("WASM execution timed out (guest running past its budget; epoch backstop)") at room creation, intermittently on 2-core CI runners.  The budget was wall-clock. The epoch deadline and the wall-clock backstop both counted time the guest spent inside host functions, so a slow secret-store or contract-state read on a loaded machine used up the guest's 5 s. The timeout log did not say which delegate, how long was host time, or which limit fired.  ## Approach  - Host functions that can block on I/O or a lock (secrets, contract-state reads, `create_delegate`) are timed by a per-store `HostCallMeter`. Their time is excluded from the guest budget: the epoch deadline is now a callback that traps only when guest time (wall minus host-call time) reaches the budget, and otherwise extends by what is left. - Host-call time is capped separately at 1.5x the budget per guest entry (7.5 s at the default). Past the cap, further blocking host calls are refused with the namespace's store-error code and no side effect, and the execution is reported as `Timeout` even if the guest returns normally (the stdlib reads refusals as "absent"). - The wall-clock backstop measures wall time net of host time (including a call in flight) and has its own host-cap verdict, so a dead epoch ticker still bounds guest CPU. - CPU-only host functions (log, rand, time, context copies, `fill_buffer`) are not metered, so their time stays charge
+- **Issue #6393** (2026-11-25): **feat(transport): run the update check before a transport-fatal exit (dark)**
+  *Symptoms*: ## Problem Once UDP is removed (phase D), a node whose QUIC endpoint cannot be built, or whose endpoint died, has no transport and exits for its supervisor. The binary's update check runs in a task beside the node and may not have asked GitHub yet (its first check waits 0 to 60 s), so a node that exits within seconds would never find the release that fixes it. #6268 only shortens the check on the next start, after the breaker has counted runs. Spec 3.7 requires the update check to run, and be able to stage an update, before any transport-fatal exit (W-S6).  ## Approach **What this adds, plainly:** a pre-download only. Under our systemd unit, `ExecStopPost` already runs `freenet update` on exit 42 and 45 and installs the newest release by itself, so this PR does not add a way to find a release the node would otherwise miss. Unsupervised nodes get no update from this PR at all (nothing installs a staged release), and they skip the check.  - New `transport/quic/fatal_exit.rs`: the binary registers one update check (`register_fatal_exit_update_check`); the library runs it, bounded at 20 s so a dead network cannot hold the exit, before the transport-fatal exits. - The binary's check shares one function, `detect_unblocked_release` (the `startup_update_check` call plus the pinned-bad and install-gated refusal), with the handshake-failure trigger from #6380, which now calls it too; each site keeps its own log lines and its own action. The fatal-exit check adds the cooling and retry-s
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1770,371 +1772,157 @@ pub mod streaming_buffer;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6081c027` (2026-11-25)
-**Commit Message**: fix: exclude blocking host-call time from the WASM guest budget (#6388)
+### Incident Patch 1: `20963739` (2026-11-25)
+**Commit Message**: fix: keep the node running when a helper process is OOM-killed (#6395)
 
-**File**: `crates/core/src/wasm_runtime/engine/wasmtime_engine.rs` (modified, +1031/-31)
+**File**: `crates/core/src/bin/commands/service.rs` (modified, +17/-0)
 ```diff
-@@ -156,8 +156,8 @@ use std::time::{Duration, Instant};
+@@ -621,6 +621,21 @@ fn service_logs(_error_only: bool) -> Result<()> {
+ mod tests {
+     use super::*;
  
- use dashmap::DashMap;
- use wasmtime::{
--    Cache, CacheConfig, Caller, Config, Engine, EngineWeak, Error as WasmtimeError, Instance,
--    Linker, Module, OptLevel, ResourceLimiter, Store,
-+    AsContextMut, Cache, CacheConfig, Caller, Config, Engine, EngineWeak, Error as WasmtimeError,
-+    Instance, Linker, Module, OptLevel, ResourceLimiter, Store,
- };
- 
- use super::{InstanceHandle, WasmEngine, WasmError};
-@@ -742,8 +742,16 @@ fn arm_epoch_deadline(
-     calling_instance: Option<native_api::InstanceId>,
- ) {
-     store.data_mut().calling_instance = calling_instance;
-+    let meter = Arc::clone(&store.data().meter);
-+    // `ticks` is `ceil(budget / tick) + 1`; the guest budget is the part
-+    // before the phase-safety `+ 1`.
-+    meter.arm(
-+        EPOCH_TICK_PERIOD.saturating_mul(ticks.saturating_sub(1).try_into().unwrap_or(u32::MAX)),
-+    );
-     store.set_epoch_deadline(ticks);
--    store.epoch_deadline_trap();
-+    // At the deadline, trap only if the guest has used its budget EXCLUDING
-+    // time spent in host functions; otherwise extend (river#1017).
-+    store.epoch_deadline_callback(move |_| Ok(meter.on_deadline()));
-     // Piggyback a cheap dead-ticker health check on this already-per-call site.
-     detect_stale_epoch_ticker();
- }
-@@ -832,14 +840,295 @@ pub(crate) struct HostState {
-     /// abandoned thread keeps its own store, so its value stays its own.
-     /// `None` until the first entry.
-     calling_instance: Option<native_api::InstanceId>,
-+    /// Time this store's guest spends inside host functions, kept out of its
-+    /// guest budget and bounded by its own cap. See [`HostCallMeter`].
-+    meter: Arc<HostCallMeter>,
- }
- 
- impl HostState {
-+    /// A state with the default 5 s budget's host-call cap (tests that build
-+    /// a store directly; the engine uses [`Self::with_meter`]).
-+    #[cfg(test)]
-     fn new(memory_limit_pages: u32) -> Self {
-+        Self::with_meter(
-+            memory_limit_pages,
-+            HostCallMeter::new(host_call_cap_for(5.0)),
-+        )
-+    }
-+
-+    fn with_meter(memory_limit_pages: u32, meter: Arc<HostCallMeter>) -> Self {
-         Self {
-             memory_limit_bytes: memory_limit_pages as usize * WASM_PAGE_SIZE,
-             calling_instance: None,
-+            meter,
-+        }
-+    }
-+}
-+
-+/// Host-call cap, as a multiple of the guest budget (`max_execution_seconds`).
-+///
-+/// The guest budget measures guest time only: wall time the guest spends INSIDE
-+/// a blocking host function (a secret read, a contract-state read) is not
-+/// charged to it (river#1017). So that a delegate cannot stall forever inside
-+/// host calls, the time it spends in them is capped SEPARATELY, at this
-+/// multiple of the budget (7.5 s for the default 5 s budget). Total wall time
-+/// for one execution is therefore bounded by `budget + cap` plus trap/backstop
-+/// slack, about 12.7 s at the default (about 5.15 s before river#1017).
-+///
-+/// RESIDUAL, stated honestly: the discount is of WALL time, and a "blocking"
-+/// host function also does CPU with no I/O (`get_contract_state` copies the
-+/// state, `get_secret` on a memo hit is a memcpy, `set_secret` encrypts). A
-+/// guest that loops on those can spend up to the cap in node CPU without
-+/// timing out, so the worst case is `budget + cap` of CPU per execution, not
-+/// `budget`. Discounting only off-CPU time needs a per-thread CPU clock on
-+/// Linux, macOS and Windows, which this crate does not have; the factor is
-+/// kept small instead, so the exposure is 1.5x the budget in extra CPU.
-+const HOST_CALL_CAP_FACTOR: f64 = 1.5;
-+
-+/// The host-call cap for a guest budget of `max_execution_seconds`.
-+fn host_call_cap_for(max_execution_seconds: f64) -> Duration {
-+    Duration::from_secs_f64(max_execution_seconds.max(0.0) * HOST_CALL_CAP_FACTOR)
-+}
-+
-+/// Which of the two separate limits ended a guest execution.
-+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-+enum TimeoutCause {
-+    /// The guest ran past its CPU budget (wall time minus host-call time).
-+    GuestBudget,
-+    /// The guest spent more than the host-call cap inside host functions.
-+    HostCallCap,
-+}
-+
-+impl TimeoutCause {
-+    fn as_str(self) -> &'static str {
-+        match self {
-+            TimeoutCause::GuestBudget => "guest_budget",
-+            TimeoutCause::HostCallCap => "host_call_cap",
-+        }
-+    }
-+}
-+
-+#[derive(Debug)]
-+struct MeterInner {
-+    /// Cap on host-call time per guest entry; set per job by
-+    /// [`HostCallMeter::reset`] from the engine's current budget.
-+    cap: Duration,
-+    /// Host-call time since [`HostCallMeter::reset`], completed calls only.
-+    host_total: Duration,
-+    host_calls: u64,
-+    /// Start of the host call in flight, if any.
-+    in_flight: Option<Instant>,
-+    /// Wall time, host-call time and guest budget at the most recent
-+    /// [`arm_epoch_deadline`].
-+    armed_at: Instant,
-+    armed_host: Duration,
-+    armed_budget
-```
-
-**File**: `crates/core/src/wasm_runtime/native_api.rs` (modified, +11/-0)
-```diff
-@@ -1261,6 +1261,17 @@ impl std::ops::Deref for DelegateEnvSlot {
-     }
- }
- 
-+/// The delegate key of the call running as `instance`, for timeout diagnostics
-+/// only (river#1017). `None` if the call's env is not registered. Takes a
-+/// shared `DELEGATE_ENV` reference for the duration of one `to_string`. Call it
-+/// on the calling thread BEFORE the guest starts, never from a host function or
-+/// after a timeout, where it could queue behind a stuck host call's `Ref`.
-+pub(super) fn delegate_key_for_log(instance: InstanceId) -> Option<String> {
-+    DELEGATE_ENV
-+        .get(&instance)
-+        .map(|env| env.delegate_key.to_string())
-+}
-+
- /// Typed errors from `DelegateCallEnv` contract operations.
- ///
- /// Replaces string-based error matching so `_impl` host functions can map
-```
-
----
-
-### Incident Patch 2: `ef8c0626` (2026-11-25)
-**Commit Message**: fix: keep a public own_addr when a gateway behind our NAT observes a private one (#6390)
-
-**File**: `crates/core/src/node/network_bridge/p2p_protoc.rs` (modified, +1/-1)
-```diff
-@@ -1382,7 +1382,7 @@ impl P2pConnManager {
-         // Initialize our peer identity before any connection attempts so join requests can
-         // reference the correct address.
-         // Note: For peers behind NAT, this initial address is a fallback - the correct
--        // external address is learned via ObservedAddress and updated via set_own_addr().
-+        // external address is learned via ObservedAddress and updated via ConnectionManager::apply_observed_address().
-         // The ring location should be computed from the observed external address,
-         // not from this initial fallback.
-         let advertised_addr = {
-```
-
-**File**: `crates/core/src/operations/connect/op_ctx_task.rs` (modified, +34/-17)
-```diff
-@@ -36,7 +36,7 @@ use tokio::time::Instant;
- use crate::message::{NetMessage, NetMessageV1, NodeEvent, Transaction};
- use crate::node::{OpManager, WaiterReply};
- use crate::operations::OpError;
--use crate::ring::{ConnectionFailureReason, Location, PeerKeyLocation};
-+use crate::ring::{ConnectionFailureReason, Location, ObservedAddrOutcome, PeerKeyLocation};
- use crate::tracing::NetEventLog;
- 
- use super::{
-@@ -1193,21 +1193,27 @@ async fn drive_client_connect(
-                 // diagnostics) and `own_location` (for routing).
-                 // Only the first ObservedAddress per transaction is applied
-                 // (see the guard arm above); repeats are ignored.
--                let location = Location::from_address(&address);
-+                let connection_manager = &op_manager.ring.connection_manager;
-                 // GLOBAL-ADDR-WRITE-OK: production. A real node learning its
-                 // peer-observed address is exactly what the external_address
--                // mirror is for (#4918).
--                op_manager.ring.connection_manager.set_own_addr(address);
--                op_manager
--                    .ring
--                    .connection_manager
--                    .update_location(Some(location));
--                tracing::info!(
--                    tx = %tx,
--                    observed_address = %address,
--                    location = %location,
--                    "connect driver: updated own_addr and location from ObservedAddress"
--                );
-+                // mirror is for (#4918). A private observation (a gateway
-+                // behind our own NAT) never displaces a fresh public own_addr
-+                // (#6378).
-+                let outcome = connection_manager.apply_observed_address(address);
-+                match outcome {
-+                    ObservedAddrOutcome::Applied { location_changed } => tracing::info!(
-+                        tx = %tx,
-+                        observed_address = %address,
-+                        location_changed,
-+                        location = ?connection_manager.get_stored_location(),
-+                        "connect driver: updated own_addr from ObservedAddress"
-+                    ),
-+                    ObservedAddrOutcome::Ignored => tracing::info!(
-+                        tx = %tx,
-+                        observed_address = %address,
-+                        "connect driver: ignoring private ObservedAddress, a public own_addr is known"
-+                    ),
-+                }
-             }
-             other @ ConnectMsg::Request { .. } | other @ ConnectMsg::ConnectFailed { .. } => {
-                 // Bypass at node.rs forwards Response/Rejected/
-@@ -2392,11 +2398,22 @@ mod tests {
-             "the ignoring arm must precede the applying arm"
-         );
-         let body_end = SOURCE[apply..]
--            .find("set_own_addr(address)")
--            .expect("set_own_addr call");
-+            .find("apply_observed_address(address)")
-+            .expect("apply_observed_address call");
-         assert!(
-             body_end < 2000,
--            "set_own_addr must stay in the applying arm"
-+            "apply_observed_address must stay in the applying arm"
-+        );
-+        // The outcome must be consumed, not dropped: the log says whether the
-+        // address and location were really applied.
-+        let after_call = &SOURCE[apply + body_end..];
-+        let arm_end = after_call
-+            .find("other @ ConnectMsg::Request")
-+            .expect("arm after the ObservedAddress arm");
++    /// `OOMPolicy=continue` must sit inside `[Service]` (not `[Unit]` or
++    /// `[Install]`, where systemd would ignore it).
++    #[cfg(target_os = "linux")]
++    fn assert_oom_policy_in_service_section(unit: &str) {
++        let service_start = unit.find("\n[Service]\n").expect("[Service] section");
++        let install_start = unit.find("\n[Install]\n").expect("[Install] section");
++        let pos = unit
++            .find("\nOOMPolicy=continue\n")
++            .expect("unit must contain OOMPolicy=continue");
 +        assert!(
-+            after_call[..arm_end].contains("match outcome")
-+                && after_call[..arm_end].contains("ObservedAddrOutcome::Ignored"),
-+            "the apply outcome must be matched in the applying arm"
-         );
-     }
- 
-```
-
-**File**: `crates/core/src/ring.rs` (modified, +3/-1)
-```diff
-@@ -91,7 +91,9 @@ pub(crate) mod contract_exec_metrics;
- pub(crate) mod delta_incompat;
- /// Shadow-mode detector for repairs that never converge (see the module docs).
- pub(crate) mod futile_repair;
--pub(crate) use connection_manager::{ConnectionManager, TransientRefusal, TransientTtlOutcome};
-+pub(crate) use connection_manager::{
-+    ConnectionManager, ObservedAddrOutcome, TransientRefusal, TransientTtlOutcome,
-+};
- // Nearest-neighbor ring lattice (successor+predecessor base edges).
- // `nn_lattice_active_for` is the full activation gate — the flag AND the
- // minimum-degree floor (`NN_LATTICE_MIN_MAX_CONNECTIONS`) — used by the
-```
-
-**File**: `crates/core/src/ring/connection_manager.rs` (modified, +262/-5)
-```diff
-@@ -490,6 +490,16 @@ impl PeerHealthTracker {
-     }
- }
- 
-+/// Result of [`ConnectionManager::apply_observed_address`].
-+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-+pub(crate) enum ObservedAddrOutcome {
-+    /// A private observation was refused because a public address is held.
-+    Ignored,
-+    /// `own_addr` was replaced. `location_changed` is false when the ring
-+    /// location was left as it was (configured, or already set).
-+    Applied { location_changed: bool },
-+}
++            service_start < pos && pos < install_start,
++            "OOMPolicy=continue must be inside [Service]"
++        );
++    }
 +
- #[derive(Clone)]
- pub(crate) struct ConnectionManager {
-     /// Pending connection reservations, keyed by socket address.
-@@ -508,6 +518,9 @@ pub(crate) struct ConnectionManager {
-     own_location: Arc<AtomicU64>,
-     /// Our own socket address, set once we know it (e.g., from gateway observation).
-     own_addr: Arc<Mutex<Option<SocketAddr>>>,
-+    /// Whether `own_location` was set from an observed address, as opposed to
-+    /// configuration (#6378).
-+    location_from_observation: Arc<std::sync::atomic::AtomicBool>,
-     is_gateway: bool,
-     /// Test-only override for the placement-migration version floor. `None` in
-     /// production (the real `SUBSCRIBE_HINT_MIN_VERSION` applies); `Some(floor)`
-@@ -823,6 +836,7 @@ impl ConnectionManager {
-             topology_manager,
-             own_location: own_location.into(),
-             own_addr: Arc::new(Mutex::new(own_addr)),
-+            location_from_observation: Arc::new(std::sync::atomic::AtomicBool::new(false)),
-             is_gateway,
-             // Default off; `new(config)` overrides from config after init.
-             subscribe_hint_floor_override: None,
-@@ -2428,8 +2442,9 @@ impl ConnectionManager {
-         }
-     }
+     /// Regression guard for the service.rs submodule split: it dropped
+     /// `spawn_first_run_dashboard_opener` entirely (only the call site
+     /// survived) and left several Windows-only items unimported, breaking the
+@@ -1592,6 +1607,7 @@ mod tests {
+         assert!(service_content.contains("LimitNOFILE=65536"));
+         assert!(service_content.contains("MemoryMax=2G"));
+         assert!(service_content.contains("CPUQuota=200%"));
++        assert_oom_policy_in_service_section(&service_content);
  
--    /// Sets the own address unconditionally.
--    /// Used when a peer behind NAT learns their external address from ObservedAddress.
-+    /// Sets the own address unconditionally. Production code goes through
-+    /// `apply_observed_address`, which guards against private overwrites (#6378).
-+    #[cfg(test)]
-     pub fn set_own_addr(&self, addr: SocketAddr) {
-         // Hold the `own_addr` mutex across the `network_status::set_external_address`
-         // call so the two state writes are atomic with respect to each other.
-@@ -2465,6 +2480,70 @@ impl ConnectionManager {
+         // Verify restart configuration (always restart for auto-update support)
+         assert!(service_content.contains("Restart=always"));
+@@ -1729,6 +1745,7 @@ mod tests {
+ 
+         // Verify it still has all the standard settings
+         assert!(service_content.contains("Restart=always"));
++        assert_oom_policy_in_service_section(&service_content);
+         assert!(service_content.contains("StartLimitBurst=5"));
+         assert!(service_content.contains("StartLimitIntervalSec=120"));
+         // StartLimitBurst/IntervalSec [Unit] placement is asserted by #4570's linux.rs
+```
+
+**File**: `crates/core/src/bin/commands/service/linux.rs` (modified, +10/-0)
+```diff
+@@ -726,6 +726,11 @@ LimitNOFILE=65536
+ MemoryMax=2G
+ # CPU quota (200% = 2 cores max)
+ CPUQuota=200%
++# Do not stop the unit when a process other than the main process is
++# OOM-killed. The default (stop) stops and restarts the whole unit, and the
++# restart counts toward StartLimitBurst and the post-update rollback logic.
++# OOMPolicy= requires systemd >= 243; older systemd logs and ignores it.
++OOMPolicy=continue
+ 
+ [Install]
+ WantedBy=default.target
+@@ -938,6 +943,11 @@ LimitNOFILE=65536
+ MemoryMax=2G
+ # CPU quota (200% = 2 cores max)
+ CPUQuota=200%
++# Do not stop the unit when a process other than the main process is
++# OOM-killed. The default (stop) stops and restarts the whole unit, and the
++# restart counts toward StartLimitBurst and the post-update rollback logic.
++# OOMPolicy= requires systemd >= 243; older systemd logs and ignores it.
++OOMPolicy=continue
+ 
+ [Install]
+ WantedBy=multi-user.target
+```
+
+**File**: `crates/core/src/bin/commands/update.rs` (modified, +60/-0)
+```diff
+@@ -3326,6 +3326,66 @@ mod tests {
          );
      }
  
-+    /// Applies an address a gateway observed for us (`ObservedAddress`) to
-+    /// `own_addr` and the ring location, unless that would replace a public
-+    /// address with a private one.
-+    ///
-+    /// A joiner behind the same NAT as a gateway is told its LAN-side address
-+    /// (e.g. `192.168.1.1:60454`) by that gateway, and its public address by
-+    /// every other gateway. A private or loopback observation is therefore
-+    /// accepted only while no public address is known; otherwise `own_addr`
-+    /// and the location would flip with whichever gateway answered last
-+    /// (#6378). All-LAN and loopback networks never see a public address, so
-+    /// they still adopt the private one.
-+    ///
-+    /// Known limit: a node that moves from a public network to a LAN-only one
-+    /// keeps its public `own_addr` until restart. A time-based switch was
-+    /// rejected because public observations only arrive with a direct join
-+    /// through a gateway's first hop, so a stable public node would see none
-+    /// for long stretches and then flip on its next same-NAT join.
-+    ///
-+    /// When the address changes between private and public (either way), a
-+    /// location that an observation set follows it. A configured location, or
-+    /// one set by an earlier observation of the same kind, is left alone (as
-+    /// `update_location` always did).
-+    ///
-+    /// "Public" means "not [`crate::server::is_private_ip`]". That treats
-+    /// CGNAT (100.64/10) as public, and does not compare an IPv4 with an IPv6
-+    /// public address, so two differing public observations (CGNAT vs the
-+    /// real public address, v4 vs v6) still replace each other in arrival
-+    /// order, as before #6378. `is_private_ip` is shared with other callers
-+    /// and is not widened here.
-+    pub fn apply_observed_address(&self, addr: SocketAddr) -> ObservedAddrOutcome {
-+        let is_public = |a: &SocketAddr| !crate::server::is_private_ip(&a.ip());
-+        let mut own_addr = self.own_addr.lock();
-+        let previous = *own_addr;
-+        if !is_public(&addr) && previous.as_ref().is_some_and(is_public) {
-+            return ObservedAddrOutcome::Ignored;
++    /// Linux-only: a unit written by the previous template (the current
++    /// template without `OOMPolicy=continue`) is detected as stale and
++    /// rewritten, with or without a sidecar, while a hand-edited unit
++    /// (differs from both old and new template, sidecar records the old
++    /// hash) is skipped.
++    #[test]
++    #[cfg(target_os = "linux")]
++    fn previous_template_without_oom_policy_is_rewritten_user_edit_is_skipped() {
++        use std::path::PathBuf;
++        let binary = PathBuf::from("/usr/local/bin/freenet");
++        let log_dir = PathBuf::from("/home/u/.local/state/freenet");
++        let home = PathBuf::from("/home/svc");
++        let strip = |unit: &str| {
++            // Remove the whole block (comment lines and directive) so the result is
++            // what a node installed before this change has.
++            let start = unit
++                .find("# Do not stop the unit when a process other than the main process is\n")
++                .expect("template must contain the OOMPolicy comment block");
++            let end = unit.find("OOMPolicy=continue\n").expect("directive")
++                + "OOMPolicy=continue\n".len();
++            format!("{}{}", &unit[..start], &unit[end..])
++        };
++
++        let units = [
++            generate_user_service_file(&binary, &log_dir),
++            generate_system_service_file(&binary, &log_dir, "svc", &home),
++        ];
++        for new_unit in units {
++            assert!(new_unit.contains("OOMPolicy=continue\n"));
++            let previous = strip(&new_unit);
++            assert_ne!(previous, new_unit);
++            let previous_hash = wrapper_content_hash(&previous);
++            let new_hash = wrapper_content_hash(&new_unit);
++
++            // Sidecar records the previous template: stale, rewrite.
++            assert_eq!(
++                decide_wrapper_action(&new_unit, Some(&previous), Some(&previous_hash)),
++                WrapperAction::WriteOurs {
++                    new_hash: new_hash.clone()
++                }
++            );
++            // No sidecar (installs that predate it): treated as ours, rewrite.
++            assert_eq!(
++                decide_wrapper_action(&new_unit, Some(&previous), None),
++                WrapperAction::WriteOurs {
++                    new_hash: new_hash.clone()
++                }
++            );
++            // Hand-edited unit: sidecar still records the previous template.
++            let edited = previous.replace("MemoryMax=2G", "MemoryMax=4G");
++            assert_ne!(edited, previous);
++            assert_eq!(
++                decide_wrapper_action(&new_unit, Some(&edited), Some(&previous_hash)),
++                WrapperAction::UserModified {
++                    on_disk_hash: wrapper_content_hash(&edited)
++                }
++            );
 +        }
-+        // Same atomicity discipline as `set_own_addr`: hold the lock across
-+        // the mirror write.
-+        *own_addr = Some(addr);
-+        crate::node::network_status::set_external_address(addr);
-+        let before = self.get_stored_location();
-+        let new_location = Location::from_address(&addr);
-+        // Only a location that an observation set may follow a change between
-+        // public and private; a configured location never moves, and a second
-+        // observation
++    }
++
+     /// Linux-only: `render_current_systemd_unit` must reproduce the
+     /// exact bytes of an installed system unit when fed that unit back
+     /// as `existing` (it re-extracts `User=` / `Environment=HOME=`). If
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6395** (2026-11-25): fix: keep the node running when a helper process is OOM-killed (@sanity)
+- **PR #6393** (2026-11-25): feat(transport): run the update check before a transport-fatal exit (dark) (@sanity)
+- **PR #6391** (2026-11-25): perf: skip redundant validation for contracts that declare update_validates (@sanity)
 - **PR #6390** (2026-11-25): fix: keep a public own_addr when a gateway behind our NAT observes a private one (@sanity)
 - **PR #6388** (2026-11-25): fix: exclude blocking host-call time from the WASM guest budget (@sanity)
 - **PR #6387** (2026-11-25): build: sync main to 0.2.166 after release (@sanity)
-- **PR #6386** (2026-11-25): chore: log the first hops of a client GET that ends NotFound (@sanity)
-- **PR #6385** (2026-11-25): build: bump wasmtime to 48.0.9 (@sanity)
-- **PR #6384** (2026-11-25): chore: remove fixed advisories from the RustSec baseline (@sanity)
 
 ---
 
@@ -2154,56 +1942,47 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. exclude blocking host-call time from the WASM guest budget
+## X. keep the node running when a helper process is OOM-killed
 
 **RULE**:
-When implementing operations in `crates/core/src/wasm_runtime/engine/wasmtime_engine.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/core/src/bin/commands/service.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6081c027`: exclude blocking host-call time from the WASM guest budget. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `20963739`: keep the node running when a helper process is OOM-killed. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/core/src/wasm_runtime/engine/wasmtime_engine.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/core/src/bin/commands/service.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    AsContextMut, Cache, CacheConfig, Caller, Config, Engine, EngineWeak, Error as WasmtimeError,
-    Instance, Linker, Module, OptLevel, ResourceLimiter, Store,
-    let meter = Arc::clone(&store.data().meter);
-    // `ticks` is `ceil(budget / tick) + 1`; the guest budget is the part
-    // before the phase-safety `+ 1`.
-    meter.arm(
-        EPOCH_TICK_PERIOD.saturating_mul(ticks.saturating_sub(1).try_into().unwrap_or(u32::MAX)),
-    );
-    // At the deadline, trap only if the guest has used its budget EXCLUDING
-    // time spent in host functions; otherwise extend (river#1017).
-    store.epoch_deadline_callback(move |_| Ok(meter.on_deadline()));
-    /// Time this store's guest spends inside host functions, kept out of its
-    /// guest budget and bounded by its own cap. See [`HostCallMeter`].
-    meter: Arc<HostCallMeter>,
-    /// A state with the default 5 s budget's host-call cap (tests that build
-    /// a store directly; the engine uses [`Self::with_meter`]).
-    #[cfg(test)]
-        Self::with_meter(
-            memory_limit_pages,
-            HostCallMeter::new(host_call_cap_for(5.0)),
-        )
+    /// `OOMPolicy=continue` must sit inside `[Service]` (not `[Unit]` or
+    /// `[Install]`, where systemd would ignore it).
+    #[cfg(target_os = "linux")]
+    fn assert_oom_policy_in_service_section(unit: &str) {
+        let service_start = unit.find("\n[Service]\n").expect("[Service] section");
+        let install_start = unit.find("\n[Install]\n").expect("[Install] section");
+        let pos = unit
+            .find("\nOOMPolicy=continue\n")
+            .expect("unit must contain OOMPolicy=continue");
+        assert!(
+            service_start < pos && pos < install_start,
+            "OOMPolicy=continue must be inside [Service]"
+        );
     }
 
-    fn with_meter(memory_limit_pages: u32, meter: Arc<HostCallMeter>) -
+        assert_oom_policy_in_service_section(&service_content);
+        assert_oom_policy_in_service_section(&service_content);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-    Cache, CacheConfig, Caller, Config, Engine, EngineWeak, Error as WasmtimeError, Instance,
-    Linker, Module, OptLevel, ResourceLimiter, Store,
-    store.epoch_deadline_trap();
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6081c027` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `20963739` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

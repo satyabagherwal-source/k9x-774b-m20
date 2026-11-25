@@ -13138,3 +13138,10 @@
 | `CYCLE-20261125-FEPI` | `2026-11-25T16:05:57.174Z` | `transact-rs/sqlx` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10552` | Yes (`1d5a6fec...`) |
 | `CYCLE-20261125-FMU4` | `2026-11-25T16:06:07.708Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9414` | Yes (`3e9b1684...`) |
 | `CYCLE-20261125-FPNP` | `2026-11-25T16:06:11.365Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | Yes (`621293fd...`) |
+| `CYCLE-20261125-A39X` | `2026-11-25T23:01:43.317Z` | `nvidia/Nemotron-Labs-Image-30B-A3B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nvidia-nemotron-labs-image-30b-a3b-learnings.md` | Yes (`d036346a...`) |
+| `CYCLE-20261125-A5EU` | `2026-11-25T23:01:46.086Z` | `KRAFTON/Raon-1-mini` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-krafton-raon-1-mini-learnings.md` | Yes (`3f588f67...`) |
+| `CYCLE-20261125-AF8F` | `2026-11-25T23:01:58.815Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10553` | Yes (`307d868b...`) |
+| `CYCLE-20261125-AH2H` | `2026-11-25T23:02:01.193Z` | `clockworklabs/SpacetimeDB` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10554` | Yes (`8753257e...`) |
+| `CYCLE-20261125-AJ22` | `2026-11-25T23:02:03.770Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10555` | Yes (`84124866...`) |
+| `CYCLE-2026-11-25-PROJ-EVOLVE` | `2026-11-25T23:02:31.527Z` | `hf-nvidia-nemotron-labs-image-30b-a3b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-67959B26` [Domain D] | Yes (`3488f34d...`) |
+| `CYCLE-2026-11-25-PROJ-EVOLVE` | `2026-11-25T23:03:03.807Z` | `hf-krafton-raon-1-mini` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-0A1336C6` [Domain D] | Yes (`7fb1df6a...`) |
