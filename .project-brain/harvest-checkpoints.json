@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-25T12:48:05.107Z",
+  "last_updated": "2026-11-25T12:56:41.022Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5046,14 +5046,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zama-ai-tfhe-rs",
-      "content_hash": "e3ce2c1b786c8edb29147fae84d6aefce7f26aca1fe756cc48ee51bba0e8c7a4",
-      "verified_at": "2026-11-24T23:24:55.400Z",
+      "content_hash": "b60be4bec25ba35becccf0d37491c7eb71c5fa80339231fee3e7e82a75d981f2",
+      "verified_at": "2026-11-25T12:56:41.021Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T23:24:55.400Z"
+      "last_updated": "2026-11-25T12:56:41.021Z"
     },
     "doobidoo/mcp-memory-service": {
       "repository": "doobidoo/mcp-memory-service",
@@ -6561,14 +6561,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nasiko-labs-nasiko",
-      "content_hash": "1f48d9fe654a4eb312529ccab70afa176ec5e9b4862a3224e42a470192605bcb",
-      "verified_at": "2026-11-24T12:27:21.975Z",
+      "content_hash": "32c0888a8d59bf4d49553e58e51a073c85a251db983d00ce1309554116316893",
+      "verified_at": "2026-11-25T12:56:31.675Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T12:27:21.975Z"
+      "last_updated": "2026-11-25T12:56:31.675Z"
     },
     "berty/berty": {
       "repository": "berty/berty",
@@ -17391,14 +17391,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-liquidai-lfm3-audio-2b",
-      "content_hash": "699671e8c539a2389b322a6c5e5654ce419c1ee69f84824ea065fd7cc27483ca",
-      "verified_at": "2026-11-21T21:48:54.580Z",
+      "content_hash": "bdd70dbfecb01ebdbbc49bb8eb472750f333250efae7b4bdcd665e41cbb560f1",
+      "verified_at": "2026-11-25T12:56:29.202Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T21:48:54.580Z"
+      "last_updated": "2026-11-25T12:56:29.202Z"
     },
     "mobile-next/mobile-mcp": {
       "repository": "mobile-next/mobile-mcp",

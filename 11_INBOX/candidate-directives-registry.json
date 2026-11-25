@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T12:48:10.663Z",
+  "last_updated": "2026-11-25T12:56:47.091Z",
   "directives": [
     {
       "id": "CD-001",
@@ -61252,6 +61252,50 @@
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-018008-deps-bump-url-to-2-5-9-and-heapless-to-0.md",
       "staged_date": "2026-11-25"
+    },
+    {
+      "id": "CD-NT8K",
+      "directive_title": "uploaded MCP servers can't redirect the gateway off their origin (",
+      "source_repo": "Nasiko-Labs/nasiko",
+      "source_commit": "4e2d65d1",
+      "staged_file": "11_INBOX/candidate-directives/CD-NT8K-uploaded-mcp-servers-can-t-redirect-the-gateway-off-their-origin.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-25",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-O0G3",
+      "directive_title": "support more than 512 radix blocks in partial sum index kernels",
+      "source_repo": "zama-ai/tfhe-rs",
+      "source_commit": "eaac04df",
+      "staged_file": "11_INBOX/candidate-directives/CD-O0G3-support-more-than-512-radix-blocks-in-partial-sum-index-kernels.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-25",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-O3TZ",
+      "directive_title": "mcp-gateway): uploaded MCP servers can't redirect the gateway off their origin (",
+      "source_repo": "nasiko-labs-nasiko-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-O3TZ-mcp-gateway-uploaded-mcp-servers-can-t-redirect-the-gateway-off-their-origin.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-25",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-O4X9",
+      "directive_title": "gpu): support more than 512 radix blocks in partial sum index kernels",
+      "source_repo": "zama-ai-tfhe-rs-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-O4X9-gpu-support-more-than-512-radix-blocks-in-partial-sum-index-kernels.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-25",
+      "domain_letter": "H"
     }
   ]
 }

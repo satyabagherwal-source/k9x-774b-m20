@@ -13113,3 +13113,6 @@ Every entry in this ledger must capture:
 | `learn-github-duckdb-duckdb` | `https://github.com/duckdb/duckdb` | `bdc96af9` | Multi-dimensional audit evidence | 2026-11-25T12:39:24.234Z |
 | `learn-huggingface-pika-labs-pika-h3-flex` | `https://huggingface.co/Pika-Labs/Pika-H3-Flex` | `hf-pika-la` | Multi-dimensional audit evidence | 2026-11-25T12:47:48.419Z |
 | `learn-github-clickhouse-clickhouse` | `https://github.com/ClickHouse/ClickHouse` | `b88da85b` | Multi-dimensional audit evidence | 2026-11-25T12:48:05.090Z |
+| `learn-huggingface-liquidai-lfm3-audio-2b` | `https://huggingface.co/LiquidAI/LFM3-Audio-2B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-25T12:56:29.186Z |
+| `learn-github-nasiko-labs-nasiko` | `https://github.com/Nasiko-Labs/nasiko` | `4e2d65d1` | Multi-dimensional audit evidence | 2026-11-25T12:56:31.657Z |
+| `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `eaac04df` | Multi-dimensional audit evidence | 2026-11-25T12:56:41.005Z |

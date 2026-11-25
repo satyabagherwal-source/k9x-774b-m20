@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-25T12:48:09.436Z",
+  "updated_at": "2026-11-25T12:56:45.383Z",
   "stats": {
-    "total_discovered": 9427,
+    "total_discovered": 9431,
     "approved_pending_harvest": 8935,
     "harvested_count": 0,
-    "rejected_count": 492,
+    "rejected_count": 496,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 8925,
+      "COMMUNITY_AND_EXPERT": 8929,
       "OFFICIAL_DOCUMENTATION": 281,
       "STANDARDS_AND_SPECIFICATIONS": 150,
       "ENGINEERING_BLOGS": 7,
@@ -203977,6 +203977,66 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md",
         "fileName": "clickhouse-clickhouse-learnings.md"
+      }
+    },
+    "SRC-36B9A90B4E57": {
+      "id": "SRC-36B9A90B4E57",
+      "url": "http://10.x.x.x/",
+      "title": "http://10.x.x.x/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-25T12:56:45.166Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nasiko-labs-nasiko-learnings.md",
+        "fileName": "nasiko-labs-nasiko-learnings.md"
+      }
+    },
+    "SRC-DDB8A42B6C14": {
+      "id": "SRC-DDB8A42B6C14",
+      "url": "http://10.0.0.5/%60",
+      "title": "http://10.0.0.5/%60",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-25T12:56:45.240Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nasiko-labs-nasiko-learnings.md",
+        "fileName": "nasiko-labs-nasiko-learnings.md"
+      }
+    },
+    "SRC-F62DB3FC3E11": {
+      "id": "SRC-F62DB3FC3E11",
+      "url": "http://169.254.169.254/...%60",
+      "title": "http://169.254.169.254/...%60",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-25T12:56:45.311Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nasiko-labs-nasiko-learnings.md",
+        "fileName": "nasiko-labs-nasiko-learnings.md"
+      }
+    },
+    "SRC-2C6E95CD74A0": {
+      "id": "SRC-2C6E95CD74A0",
+      "url": "http://169.254.169.254/%60",
+      "title": "http://169.254.169.254/%60",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-25T12:56:45.383Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nasiko-labs-nasiko-learnings.md",
+        "fileName": "nasiko-labs-nasiko-learnings.md"
       }
     }
   }

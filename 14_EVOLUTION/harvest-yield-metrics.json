@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T12:48:05.096Z",
-  "total_cycles_completed": 12417,
-  "total_learnings_persisted": 12417,
-  "total_rules_promoted": 11409,
+  "last_updated": "2026-11-25T12:56:41.011Z",
+  "total_cycles_completed": 12420,
+  "total_learnings_persisted": 12420,
+  "total_rules_promoted": 11411,
   "history": [
-    {
-      "timestamp": "2026-11-25T00:16:46.601Z",
-      "repository": "preactjs/preact",
-      "learningId": "learn-github-preactjs-preact",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T00:16:50.548Z",
-      "repository": "Tencent-TDS/KuiklyUI",
-      "learningId": "learn-github-tencent-tds-kuiklyui",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T00:16:52.286Z",
-      "repository": "openyurtio/openyurt",
-      "learningId": "learn-github-openyurtio-openyurt",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-25T00:26:40.097Z",
       "repository": "zenbu-labs/terminal-browser",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-25T12:48:05.096Z",
       "repository": "ClickHouse/ClickHouse",
       "learningId": "learn-github-clickhouse-clickhouse",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T12:56:29.192Z",
+      "repository": "LiquidAI/LFM3-Audio-2B",
+      "learningId": "learn-huggingface-liquidai-lfm3-audio-2b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T12:56:31.663Z",
+      "repository": "Nasiko-Labs/nasiko",
+      "learningId": "learn-github-nasiko-labs-nasiko",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T12:56:41.011Z",
+      "repository": "zama-ai/tfhe-rs",
+      "learningId": "learn-github-zama-ai-tfhe-rs",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

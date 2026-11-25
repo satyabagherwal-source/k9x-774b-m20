@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-25T12:48:11.028Z",
+  "last_updated": "2026-11-25T12:56:47.550Z",
   "total_verified_learnings": 9117,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25447,
+  "total_items": 25453,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -213541,8 +213541,8 @@
       "slug": "zama-ai-tfhe-rs",
       "platform": "github",
       "source_url": "https://github.com/zama-ai/tfhe-rs",
-      "source_version": "6f718abc",
-      "content_hash": "e3ce2c1b786c8edb29147fae84d6aefce7f26aca1fe756cc48ee51bba0e8c7a4",
+      "source_version": "eaac04df",
+      "content_hash": "b60be4bec25ba35becccf0d37491c7eb71c5fa80339231fee3e7e82a75d981f2",
       "dossier_path": "07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md",
       "promoted_rules": [
@@ -213620,6 +213620,11 @@
           "number": 10383,
           "title": "doc(hpu): update SVG with latest bench results using HPU backend 0.8.0",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10530,
+          "title": "support more than 512 radix blocks in partial sum index kernels",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -213627,7 +213632,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T23:24:55.037Z",
+      "verified_at": "2026-11-25T12:56:40.746Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -213669,10 +213674,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zama-ai-tfhe-rs-technical-construction-intelligence-zama-ai-tfhe-rs-core-invaria.md",
       "title": "Technical Construction Intelligence: zama-ai/tfhe-rs Core Invariants",
       "repository": "zama-ai/tfhe-rs",
-      "source_version": "6f718abc",
-      "content_hash": "a95b46b2e806e2a1c656013b00bff3183639e5d2e559060cf907d10e6780e2dd",
+      "source_version": "eaac04df",
+      "content_hash": "aec89716ea3270db45f126ecdb881c28f92aef5a99f775fb3e297e570a527922",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T23:24:55.996Z"
+      "persisted_at": "2026-11-25T12:56:41.486Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zama-ai-tfhe-rs": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zama-ai-tfhe-rs",
@@ -213681,10 +213686,10 @@
       "relative_path": "08_VERIFICATION/zama-ai-tfhe-rs-verification-protocol-empirical-defect-shield-for-zama-ai-tfhe-r.md",
       "title": "Verification Protocol: Empirical Defect Shield for zama-ai/tfhe-rs",
       "repository": "zama-ai/tfhe-rs",
-      "source_version": "6f718abc",
-      "content_hash": "8a594d009a93b0798ebb9deeaa04ce82992380c552dd51172d51a9c2b99c538c",
+      "source_version": "eaac04df",
+      "content_hash": "a8bac87211e1bfc5d2508f89b088b0787c03b2198e4d52b980da970581e1207d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T23:24:56.305Z"
+      "persisted_at": "2026-11-25T12:56:41.722Z"
     },
     "learn-github-tursodatabase-turso": {
       "learning_id": "learn-github-tursodatabase-turso",
@@ -249202,8 +249207,8 @@
       "slug": "nasiko-labs-nasiko",
       "platform": "github",
       "source_url": "https://github.com/Nasiko-Labs/nasiko",
-      "source_version": "6bf0ff78",
-      "content_hash": "1f48d9fe654a4eb312529ccab70afa176ec5e9b4862a3224e42a470192605bcb",
+      "source_version": "4e2d65d1",
+      "content_hash": "32c0888a8d59bf4d49553e58e51a073c85a251db983d00ce1309554116316893",
       "dossier_path": "07_PROJECT_LEARNING/nasiko-labs-nasiko-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nasiko-labs-nasiko-learnings.md",
       "promoted_rules": [
@@ -249226,6 +249231,11 @@
           "number": 10253,
           "title": "Empirical Invariant Guard in .sync-marker",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10529,
+          "title": "uploaded MCP servers can't redirect the gateway off their origin (",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -249233,7 +249243,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T12:27:21.720Z",
+      "verified_at": "2026-11-25T12:56:31.398Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -249275,10 +249285,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nasiko-labs-nasiko-architecture-intelligence-nasiko-labs-nasiko-core-invariants.md",
       "title": "Architecture Intelligence: Nasiko-Labs/nasiko Core Invariants",
       "repository": "Nasiko-Labs/nasiko",
-      "source_version": "6bf0ff78",
-      "content_hash": "c92562225e714cddb8aeff3ea5786c75377089b8b3455d9bc239d458fdaa33ed",
+      "source_version": "4e2d65d1",
+      "content_hash": "f529c04c40489b73a0faca324ae56bf91a053511752a37589521db1b6cd05772",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T12:27:22.427Z"
+      "persisted_at": "2026-11-25T12:56:32.145Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nasiko-labs-nasiko": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nasiko-labs-nasiko",
@@ -249287,10 +249297,10 @@
       "relative_path": "08_VERIFICATION/nasiko-labs-nasiko-verification-protocol-empirical-defect-shield-for-nasiko-labs.md",
       "title": "Verification Protocol: Empirical Defect Shield for Nasiko-Labs/nasiko",
       "repository": "Nasiko-Labs/nasiko",
-      "source_version": "6bf0ff78",
-      "content_hash": "69fdec98090b38dc8224fef9ef065b361e56a6b4105ecb8d29fb1c113d8f2923",
+      "source_version": "4e2d65d1",
+      "content_hash": "e47436b56c6b904eab7867415b926899520213d071fe1a7aafb675b9403df5bc",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T12:27:22.621Z"
+      "persisted_at": "2026-11-25T12:56:32.347Z"
     },
     "domain_intelligence-architecture-intelligence-nasiko-labs-nasiko-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-nasiko-labs-nasiko-learnings-core-invariants",
@@ -249300,9 +249310,9 @@
       "title": "Architecture Intelligence: nasiko-labs-nasiko-learnings Core Invariants",
       "repository": "nasiko-labs-nasiko-learnings",
       "source_version": "HEAD",
-      "content_hash": "c37f237e09cc148e37f8895558e916bac51e3a015325bd7b64451083e85f125d",
+      "content_hash": "9c086cdd53762b5f1d35d952aa78959b23c450da56e89f830e0bc6821bce3183",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T12:27:38.696Z"
+      "persisted_at": "2026-11-25T12:56:45.888Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nasiko-labs-nasiko-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nasiko-labs-nasiko-learnings",
@@ -249312,9 +249322,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for nasiko-labs-nasiko-learnings",
       "repository": "nasiko-labs-nasiko-learnings",
       "source_version": "HEAD",
-      "content_hash": "e1e20e9b4add74ba32d7f03623e141825dc7fda65f80b90cc3c6aa58c672d95f",
+      "content_hash": "83961595b5a59ab32c3a461abbe8a069992a954a9b1f8f2f55710a3210893cff",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T12:27:38.897Z"
+      "persisted_at": "2026-11-25T12:56:46.081Z"
     },
     "rule-8612": {
       "learning_id": "rule-8612",
@@ -261909,7 +261919,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/LiquidAI/LFM3-Audio-2B",
       "source_version": "hf-liquidai-lfm3-audio-2b",
-      "content_hash": "699671e8c539a2389b322a6c5e5654ce419c1ee69f84824ea065fd7cc27483ca",
+      "content_hash": "bdd70dbfecb01ebdbbc49bb8eb472750f333250efae7b4bdcd665e41cbb560f1",
       "dossier_path": "07_PROJECT_LEARNING/hf-liquidai-lfm3-audio-2b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-liquidai-lfm3-audio-2b-learnings.md",
       "promoted_rules": [],
@@ -261918,7 +261928,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T21:48:54.345Z",
+      "verified_at": "2026-11-25T12:56:28.928Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -261935,9 +261945,9 @@
       "title": "Research & Knowledge Intelligence: LiquidAI/LFM3-Audio-2B Core Invariants",
       "repository": "LiquidAI/LFM3-Audio-2B",
       "source_version": "hf-liquidai-lfm3-audio-2b",
-      "content_hash": "be3a4e7c9ccbc15ddb821f26b30d04b04926426afd967b6846c50a584ba27e0c",
+      "content_hash": "f42536466960e8961fee2d585033c284efeaf26b92c336cd7feea212c2e6e086",
       "domain_letter": "D",
-      "persisted_at": "2026-11-21T21:48:54.797Z"
+      "persisted_at": "2026-11-25T12:56:29.461Z"
     },
     "learn-github-rtk-ai-rtk": {
       "learning_id": "learn-github-rtk-ai-rtk",
@@ -262125,9 +262135,9 @@
       "title": "Research & Knowledge Intelligence: hf-liquidai-lfm3-audio-2b-learnings Core Invariants",
       "repository": "hf-liquidai-lfm3-audio-2b-learnings",
       "source_version": "HEAD",
-      "content_hash": "cf9e80693757f7dcea58d10305fc08086e4c8f028eda0b51319ce563ffc658a8",
+      "content_hash": "22e0af0390572541d3b74db14046c24b0d171ae76192ae4f0ef1dec77fd82fbd",
       "domain_letter": "D",
-      "persisted_at": "2026-11-21T21:49:11.893Z"
+      "persisted_at": "2026-11-25T12:56:46.530Z"
     },
     "candidate_directive-nuc-108-list-and-population-partitions": {
       "item_id": "candidate_directive-nuc-108-list-and-population-partitions",
@@ -276130,9 +276140,9 @@
       "title": "Technical Construction Intelligence: zama-ai-tfhe-rs-learnings Core Invariants",
       "repository": "zama-ai-tfhe-rs-learnings",
       "source_version": "HEAD",
-      "content_hash": "50f00c063ce4b1690ca4a84219cd4e187ac077dc9e44a7c287e670dbab2be737",
+      "content_hash": "c1dd0c53378d174b40e57649f4b9e88370fe88499ee889e61566818951802d47",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T18:35:07.507Z"
+      "persisted_at": "2026-11-25T12:56:47.354Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zama-ai-tfhe-rs-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zama-ai-tfhe-rs-learnings",
@@ -276142,9 +276152,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zama-ai-tfhe-rs-learnings",
       "repository": "zama-ai-tfhe-rs-learnings",
       "source_version": "HEAD",
-      "content_hash": "722e83478fb54390a0a6666174ba0b0e289d83fb52d4e8814e6cb154c7550c33",
+      "content_hash": "49573ffcfb44ec18de8b5de9a13db21a2ccbac14d392d2dfafd115310e2da9f3",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T18:35:07.718Z"
+      "persisted_at": "2026-11-25T12:56:47.550Z"
     },
     "learn-huggingface-meituan-longcat-longcat-video-avatar-1-6": {
       "learning_id": "learn-huggingface-meituan-longcat-longcat-video-avatar-1-6",
@@ -348208,6 +348218,82 @@
       "content_hash": "556f10f5757595cf935ac374665434d7341ba09fe90d66b507cff054ae89b900",
       "domain_letter": "D",
       "persisted_at": "2026-11-25T12:48:09.770Z"
+    },
+    "rule-10529": {
+      "learning_id": "rule-10529",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10529,
+      "title": "uploaded MCP servers can't redirect the gateway off their origin (",
+      "source_url": "https://github.com/Nasiko-Labs/nasiko",
+      "source_version": "4e2d65d1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T12:56:31.398Z"
+    },
+    "candidate_directive-uploaded-mcp-servers-can-t-redirect-the-gateway-off-their-origin": {
+      "item_id": "candidate_directive-uploaded-mcp-servers-can-t-redirect-the-gateway-off-their-origin",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-NT8K-uploaded-mcp-servers-can-t-redirect-the-gateway-off-their-origin.md",
+      "title": "uploaded MCP servers can't redirect the gateway off their origin (",
+      "repository": "Nasiko-Labs/nasiko",
+      "source_version": "4e2d65d1",
+      "content_hash": "3ea6de7067d768fc847577a107d3d14bf0bc5931a891d6f19cb39519a36c488c",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-25T12:56:31.946Z"
+    },
+    "rule-10530": {
+      "learning_id": "rule-10530",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10530,
+      "title": "support more than 512 radix blocks in partial sum index kernels",
+      "source_url": "https://github.com/zama-ai/tfhe-rs",
+      "source_version": "eaac04df",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T12:56:40.746Z"
+    },
+    "candidate_directive-support-more-than-512-radix-blocks-in-partial-sum-index-kernels": {
+      "item_id": "candidate_directive-support-more-than-512-radix-blocks-in-partial-sum-index-kernels",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-O0G3-support-more-than-512-radix-blocks-in-partial-sum-index-kernels.md",
+      "title": "support more than 512 radix blocks in partial sum index kernels",
+      "repository": "zama-ai/tfhe-rs",
+      "source_version": "eaac04df",
+      "content_hash": "4d92516337c781c8cb044f751e9cfc506ef0ec0d3e6ede0cd3b9d64ea640aae6",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-25T12:56:41.289Z"
+    },
+    "candidate_directive-mcp-gateway-uploaded-mcp-servers-can-t-redirect-the-gateway-off-their-origin": {
+      "item_id": "candidate_directive-mcp-gateway-uploaded-mcp-servers-can-t-redirect-the-gateway-off-their-origin",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-O3TZ-mcp-gateway-uploaded-mcp-servers-can-t-redirect-the-gateway-off-their-origin.md",
+      "title": "mcp-gateway): uploaded MCP servers can't redirect the gateway off their origin (",
+      "repository": "nasiko-labs-nasiko-learnings",
+      "source_version": "HEAD",
+      "content_hash": "36fc35a9520062eac2e7e37221e4d0e48a8ca14354b5faa5b1fd6ec4c691467a",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-25T12:56:45.677Z"
+    },
+    "candidate_directive-gpu-support-more-than-512-radix-blocks-in-partial-sum-index-kernels": {
+      "item_id": "candidate_directive-gpu-support-more-than-512-radix-blocks-in-partial-sum-index-kernels",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-O4X9-gpu-support-more-than-512-radix-blocks-in-partial-sum-index-kernels.md",
+      "title": "gpu): support more than 512 radix blocks in partial sum index kernels",
+      "repository": "zama-ai-tfhe-rs-learnings",
+      "source_version": "HEAD",
+      "content_hash": "9e93b0d0ea64be99c5f44fe3f1ce7484b766d1320cbd4bf4cb40f9fa29b38e09",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-25T12:56:47.091Z"
     }
   },
   "ai-builder-brain": {

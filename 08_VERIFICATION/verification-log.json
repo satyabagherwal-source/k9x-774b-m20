@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261124-WW89",
-    "timestamp": "2026-11-24T00:40:05.673Z",
-    "repository": "wcandillon/react-native-skia",
-    "learningId": "learn-github-wcandillon-react-native-skia",
-    "contentHash": "5f9651873dbda919deec43c8e79c6314543aec63df6ff562919bc9cd71759eac",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-X4EC",
-    "timestamp": "2026-11-24T00:40:16.260Z",
-    "repository": "dathere/qsv",
-    "learningId": "learn-github-dathere-qsv",
-    "contentHash": "1dffe4bbe84d7dc44268cccdcca4561d682d01e35f781c751fb7ff283b127e37",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-8AB6",
-    "timestamp": "2026-11-24T00:48:57.138Z",
-    "repository": "tencent/Hy-Memory-30B-A3B",
-    "learningId": "learn-huggingface-tencent-hy-memory-30b-a3b",
-    "contentHash": "c9880e917b66829e8fac30c45cae5653dab845639aa4648ad75e6ecc55ebafac",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261124-8CT5",
     "timestamp": "2026-11-24T00:49:00.377Z",
     "repository": "meta/folly",
@@ -7490,6 +7445,51 @@
     "repository": "ClickHouse/ClickHouse",
     "learningId": "learn-github-clickhouse-clickhouse",
     "contentHash": "347610a96cf9e29230169a1711d807fe8c89eec87753f885997ab5838f23f1ea",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-NR3Y",
+    "timestamp": "2026-11-25T12:56:29.182Z",
+    "repository": "LiquidAI/LFM3-Audio-2B",
+    "learningId": "learn-huggingface-liquidai-lfm3-audio-2b",
+    "contentHash": "bdd70dbfecb01ebdbbc49bb8eb472750f333250efae7b4bdcd665e41cbb560f1",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-NT0L",
+    "timestamp": "2026-11-25T12:56:31.653Z",
+    "repository": "Nasiko-Labs/nasiko",
+    "learningId": "learn-github-nasiko-labs-nasiko",
+    "contentHash": "32c0888a8d59bf4d49553e58e51a073c85a251db983d00ce1309554116316893",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-O089",
+    "timestamp": "2026-11-25T12:56:41.001Z",
+    "repository": "zama-ai/tfhe-rs",
+    "learningId": "learn-github-zama-ai-tfhe-rs",
+    "contentHash": "b60be4bec25ba35becccf0d37491c7eb71c5fa80339231fee3e7e82a75d981f2",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

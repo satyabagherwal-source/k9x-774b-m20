@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T18:35:07.140Z",
+  "timestamp": "2026-11-25T12:56:46.954Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-zama-ai-tfhe-rs-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [zama-ai-tfhe-rs-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T18:35:07.140Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T12:56:46.954Z`  
 > **Learning ID**: `LEARN-EVO-zama-ai-tfhe-rs-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md`  
 > **Source**: github ([https://github.com/zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs))  
-> **Source Version**: `51c20e76`  
+> **Source Version**: `eaac04df`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T18:34:29.919Z  
+> **Timestamp**: 2026-11-25T12:56:39.764Z  
 > **Learning ID**: `learn-github-zama-ai-tfhe-rs`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T18:34:29.913Z  
+> **Harvest Timestamp**: 2026-11-25T12:56:39.759Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: TFHE-rs: A Pure Rust implementation of the TFHE Scheme for Boolean and Integer Arithmetics Over Encrypted Data.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 1684 stars
+- **Stars / Engagement**: 1685 stars
 
 ---
 
@@ -1963,1307 +1963,630 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `51c20e76` (2026-11-24)
-**Commit Message**: fix(integer)!: make encrypted rotations behavior consistent (#4191)
+### Incident Patch 1: `eaac04df` (2026-11-25)
+**Commit Message**: fix(gpu): support more than 512 radix blocks in partial sum index kernels (#4185)
 
-Rotations by an encrypted amount (value rot amount)
-did a modulo: `amount % next_power_of_two(num_bits(value))`
+* fix(gpu): support more than 512 radix blocks in partial sum index kernels
 
-This was so that the modulo was always a truncation of bits/blocks
-thus, really cheap. However it created an inconsistent behavior
-when `num_bits(value)` was not a power of two because:
+* test(gpu): check sum_ciphertexts on more than 512 radix blocks
 
-* if is_power_of_two(num_bits(value)) then
-        num_bits(value) == next_power_of_two(num_bits(value))
-        e.g  FheUint8 << x
-        num_bits(value) = 8, 8 is a power of two, so we would
-        do modulo x % 8
-* else
-        num_bits(value) != next_power_of_two(num_bits(value))
-        e.g  FheUint6 << x
-        num_bits(value) = 6, 6 is a not power of two, its next
-        power of two is 8,
-        do modulo x % 8 and not x % 6 which means a different result
-        depending on x
-
-Now we call scalar_rem to do the modulo on non powers of two to make
-the operation consitent
-
-This induces a performance cost for these types/sizes,
-there are techniques which should work to do modulo by small
-amount (since the reduction amount is a number of bits and so relatively
-small) that we should explore later to improve the 
-
-**File**: `tfhe/src/integer/gpu/server_key/radix/tests_signed/legacy_default_tests.rs` (modified, +131/-3)
+**File**: `backends/tfhe-cuda-backend/cuda/src/integer/multiplication.cuh` (modified, +91/-55)
 ```diff
-@@ -7,8 +7,15 @@
- //! full propagation cannot take blocks at the maximum degree yet. The overflowing scalar tests also
- //! cover scalars that fit the radix blocks but not the signed range, for which the GPU
- //! implementations return the opposite overflow flag: the CPU fix is `ScalarOverflowFlagSource` in
--//! `radix_parallel::scalar_add`, which the GPU can reuse. Once both are addressed point the
--//! GPU wrappers at the harness tests and delete this file.
-+//! `radix_parallel::scalar_add`, which the GPU can reuse.
-+//!
-+//! The rotations by an encrypted amount also differ: the CPU reduces the amount modulo the
-+//! number of bits (see `unchecked_rotate_bits_assign` in `radix_parallel::rotate`), the GPU
-+//! only reads its low ⌈log₂(num_bits)⌉ bits, i.e. reduces it modulo the next power of two,
-+//! which the rotate tests of this file (unchecked ones included) still model.
-+//!
-+//! Once all are addressed point the GPU wrappers at the harness tests and the CPU unchecked
-+//! tests, and delete this file.
- use crate::core_crypto::prelude::SignedNumeric;
- use crate::integer::block_decomposition::{DecomposableInto, RecomposableSignedInteger};
- use crate::integer::keycache::KEY_CACHE;
-@@ -20,7 +27,8 @@ use crate::integer::server_key::radix_parallel::tests_signed::{
-     signed_right_shift_under_modulus,
- };
- use crate::integer::server_key::radix_parallel::tests_unsigned::{
--    nb_tests_smaller_for_params, panic_if_any_block_is_not_clean_or_trivial, MAX_NB_CTXT, NB_CTXT,
-+    nb_tests_for_params, nb_tests_smaller_for_params, panic_if_any_block_is_not_clean_or_trivial,
-+    MAX_NB_CTXT, NB_CTXT,
- };
- use crate::integer::{
-     BooleanBlock, IntegerKeyKind, RadixCiphertext, RadixClientKey, SignedRadixCiphertext,
-@@ -1349,3 +1357,123 @@ where
-         }
+@@ -78,84 +78,100 @@ static __global__ void radix_vec_to_columns(uint32_t *const *const columns,
+                                             const uint32_t num_radix_blocks,
+                                             const uint32_t num_radix_in_vec) {
+ 
+-  const uint32_t idx = threadIdx.x;
+-  size_t cnt = 0;
+-  for (int i = 0; i < num_radix_in_vec; i++) {
+-    size_t ct_id = i * num_radix_blocks + idx;
+-    if (degrees[ct_id] != 0) {
+-      columns[idx][cnt] = ct_id;
+-      ++cnt;
++  const uint32_t idx = blockIdx.x * blockDim.x + threadIdx.x;
++  if (idx < num_radix_blocks) {
++    size_t cnt = 0;
++    for (int i = 0; i < num_radix_in_vec; i++) {
++      size_t ct_id = i * num_radix_blocks + idx;
++      if (degrees[ct_id] != 0) {
++        columns[idx][cnt] = ct_id;
++        ++cnt;
++      }
      }
- }
-+
-+pub(crate) fn legacy_signed_unchecked_rotate_left_test<P, T>(param: P, mut executor: T)
-+where
-+    P: Into<TestParameters>,
-+    T: for<'a> FunctionExecutor<
-+        (&'a SignedRadixCiphertext, &'a RadixCiphertext),
-+        SignedRadixCiphertext,
-+    >,
-+{
-+    let param = param.into();
-+    let nb_tests = nb_tests_for_params(param);
-+    let (cks, sks) = KEY_CACHE.get_from_params(param, IntegerKeyKind::Radix);
-+    let cks = RadixClientKey::from((cks, NB_CTXT));
-+    let sks = Arc::new(sks);
-+
-+    let mut rng = rand::thread_rng();
-+
-+    executor.setup(&cks, sks);
-+
-+    let modulus = (cks.parameters().message_modulus().0.pow(NB_CTXT as u32) / 2) as i64;
-+
-+    assert!(modulus > 0);
-+    assert!((modulus as u64).is_power_of_two());
-+    let nb_bits = modulus.ilog2() + 1; // We are using signed numbers
-+
-+    for _ in 0..nb_tests {
-+        let clear = rng.gen::<i64>() % modulus;
-+        let clear_shift = rng.gen::<u32>();
-+
-+        let ct = cks.encrypt_signed(clear);
-+
-+        // case when 0 <= rotate < nb_bits
-+        {
-+            let clear_shift = clear_shift % nb_bits;
-+            let shift = cks.encrypt(clear_shift as u64);
-+            let ct_res = executor.execute((&ct, &shift));
-+            let dec_res: i64 = cks.decrypt_signed(&ct_res);
-+            let expected = rotate_left_helper(clear, clear_shift, nb_bits);
-+            assert_eq!(expected, dec_res);
-+        }
-+
-+        // case when shift >= nb_bits
-+        {
-+            let clear_shift = clear_shift.saturating_add(nb_bits);
-+            let shift = cks.encrypt(clear_shift as u64);
-+            let ct_res = executor.execute((&ct, &shift));
-+            panic_if_any_block_is_not_clean_or_trivial(&ct_res, &cks);
-+            let dec_res: i64 = cks.decrypt_signed(&ct_res);
-+            // When nb_bits is not a power of two
-+            // then the behaviour is not the same
-+            let true_nb_bits = nb_bits;
-+            let mut nb_bits = nb_bits;
-+            if !nb_bits.is_power_of_two() {
-+                nb_bits = nb_bits.next_power_of_two();
-+            }
-+            let expected = rotate_left_helper(clear, clear_shift % nb_bits, true_nb_bits);
-+            assert_eq!(expected, dec_res);
-+        }
-+    }
-+}
-+
-+pub(crate) fn legacy_signed_unchecked_rotate_right_test<P, T>(param: P, mut executor: T)
-+where
-+    P: Into<TestParameters>,
-+    T: for<'a> FunctionExecutor<
-+        (&'a SignedRadixCiphertext, &'a RadixCiphertext),
-+        SignedRadixCiphertext,
-+    >,
-+{
-+    let param = param.into();
-+    let nb_tests = nb_tests_for_params(param);
-+    let (cks, sks) = KEY_CACHE.get_from_params(param, IntegerKeyKind::Radix);
-+    let cks = RadixClientKey::from((cks, NB_CTXT));
-+    let sks = Arc::new(sks);
-+
-+    let mut rng = rand::thread_rng();
-+
-+    executor.setup(&cks, sks);
-+
-+    let modulus = (cks.parameters().message_modulus().0.pow(NB_CTXT as u32) / 2) as i64;
-+
-+    assert!(modulus > 0);
-+    assert!((modulus as u64).is_power_of_two());
-+    let nb_bits = modulus.ilog2() + 1; // We are using signed numbers
-+
-+    for _ in 0..nb_tests {
-+        let clear = rng.gen::<i64>() % modulus;
-+        let clear_shift = rng.gen::<u32>();
-+
-+        let ct = cks.
-```
-
-**File**: `tfhe/src/integer/gpu/server_key/radix/tests_signed/test_rotate.rs` (modified, +3/-5)
-```diff
-@@ -1,13 +1,11 @@
- use super::legacy_default_tests::{
-     legacy_signed_default_rotate_left_test, legacy_signed_default_rotate_right_test,
-+    legacy_signed_unchecked_rotate_left_test, legacy_signed_unchecked_rotate_right_test,
- };
- use crate::integer::gpu::server_key::radix::tests_unsigned::{
-     create_gpu_parameterized_test, GpuFunctionExecutor,
- };
- use crate::integer::gpu::CudaServerKey;
--use crate::integer::server_key::radix_parallel::tests_signed::test_rotate::{
--    signed_unchecked_rotate_left_test, signed_unchecked_rotate_right_test,
--};
- use crate::shortint::parameters::test_params::*;
- use crate::shortint::parameters::*;
- 
-@@ -39,7 +37,7 @@ where
-     P: Into<TestParameters> + Copy,
- {
-     let executor = GpuFunctionExecutor::new(&CudaServerKey::unchecked_rotate_right);
--    signed_unchecked_rotate_right_test(param, executor);
-+    legacy_signed_unchecked_rotate_right_test(param, executor);
++    columns_counter[idx] = cnt;
+   }
+-  columns_counter[idx] = cnt;
  }
  
- fn integer_default_rotate_right<P>(param: P)
-@@ -55,7 +53,7 @@ where
-     P: Into<TestParameters> + Copy,
- {
-     let executor = GpuFunctionExecutor::new(&CudaServerKey::unchecked_rotate_left);
--    signed_unchecked_rotate_left_test(param, executor);
-+    legacy_signed_unchecked_rotate_left_test(param, executor);
- }
++// Runs in a single CUDA block: all message PBS indexes must be assigned
++// (through the shared counter) before the carry ones. Each thread handles the
++// columns threadIdx.x, threadIdx.x + blockDim.x, ... so that more than 1024
++// columns are supported.
+ template <typename Torus>
+ static __global__ void prepare_new_columns_and_pbs_indexes(
+     uint32_t *const *const new_columns, uint32_t *const new_columns_counter,
+     Torus *const pbs_indexes_in, Torus *const pbs_indexes_out,
+     Torus *const lut_indexes, const uint32_t *const *const columns,
+-    const uint32_t *const columns_counter, const uint32_t chunk_size) {
++    const uint32_t *const columns_counter, const uint32_t chunk_size,
++    const uint32_t num_radix_blocks) {
+   __shared__ uint32_t counter;
  
- fn integer_default_rotate_left<P>(param: P)
-```
-
-**File**: `tfhe/src/integer/gpu/server_key/radix/tests_unsigned/legacy_default_tests.rs` (modified, +118/-2)
-```diff
-@@ -6,8 +6,14 @@
- //! `test_sum`, `test_neg` and `test_comparison`), which also exercises inputs at the maximum
- //! degree and noise level.
- //! The GPU full propagation cannot take blocks at the maximum degree yet.
--//! Once it is aligned with the CPU one point the GPU wrappers at the harness
--//! tests and delete this file.
-+//!
-+//! The rotations by an encrypted amount also differ: the CPU reduces the amount modulo the
-+//! number of bits (see `unchecked_rotate_bits_assign` in `radix_parallel::rotate`), the GPU
-+//! only reads its low ⌈log₂(num_bits)⌉ bits, i.e. reduces it modulo the next power of two,
-+//! which the rotate tests of this file (unchecked ones included) still model.
-+//!
-+//! Once both are aligned with the CPU point the GPU wrappers at the harness tests and the CPU
-+//! unchecked tests, and delete this file.
- use crate::core_crypto::prelude::UnsignedNumeric;
- use crate::integer::block_decomposition::{DecomposableInto, RecomposableFrom};
- use crate::integer::ciphertext::{IntegerCiphertext, IntegerRadixCiphertext};
-@@ -1153,3 +1159,113 @@ where
-         }
-     }
- }
-+
-+pub(crate) fn legacy_unchecked_rotate_left_test<P, T>(param: P, mut executor: T)
-+where
-+    P: Into<TestParameters>,
-+    T: for<'a> FunctionExecutor<(&'a RadixCiphertext, &'a RadixCiphertext), RadixCiphertext>,
-+{
-+    let param = param.into();
-+    let nb_tests = nb_tests_for_params(param);
-+    let (cks, sks) = KEY_CACHE.get_from_params(param, IntegerKeyKind::Radix);
-+    let sks = Arc::new(sks);
-+    let cks = RadixClientKey::from((cks, NB_CTXT));
-+
-+    let mut rng = rand::thread_rng();
-+
-+    // message_modulus^vec_length
-+    let modulus = cks.parameters().message_modulus().0.pow(NB_CTXT as u32);
-+    assert!(modulus.is_power_of_two());
-+    let nb_bits = modulus.ilog2();
-+
-+    executor.setup(&cks, sks);
-+
-+    for _ in 0..nb_tests {
-+        let clear = rng.gen::<u64>() % modulus;
-+        let clear_shift = rng.gen::<u32>();
-+
-+        let ct = cks.encrypt(clear);
-+
-+        // case when 0 <= rotate < nb_bits
-+        {
-+            let clear_rotate = clear_shift % nb_bits;
-+            let shift = cks.encrypt(clear_rotate as u64);
-+            let encrypted_result = executor.execute((&ct, &shift));
-+            let decrypted_result: u64 = cks.decrypt(&encrypted_result);
-+            let expected = rotate_left_helper(clear, clear_rotate, nb_bits);
-+            assert_eq!(expected, decrypted_result);
-+        }
-+
-+        // case when shift >= nb_bits
-+        {
-+            let clear_rotate = clear_shift.saturating_add(nb_bits);
-+            let shift = cks.encrypt(clear_rotate as u64);
-+            let encrypted_result = executor.execute((&ct, &shift));
-+            let decrypted_result: u64 = cks.decrypt(&encrypted_result);
-+            // When nb_bits is not a power of two
-+            // then the behaviour is not the same
-+            let true_nb_bits = nb_bits;
-+            let mut nb_bits = nb_bits;
-+            if !nb_bits.is_power_of_two() {
-+                nb_bits = nb_bits.next_power_of_two();
-+            }
-+            let expected = rotate_left_helper(clear, clear_rotate % nb_bits, true_nb_bits);
-+            assert_eq!(expected, decrypted_result);
-+        }
-+    }
-+}
-+
-+pub(crate) fn legacy_unchecked_rotate_right_test<P, T>(param: P, mut executor: T)
-+where
-+    P: Into<TestParameters>,
-+    T: for<'a> FunctionExecutor<(&'a RadixCiphertext, &'a RadixCiphertext), RadixCiphertext>,
-+{
-+    let param = param.into();
-+    let nb_tests = nb_tests_for_params(param);
-+    let (cks, sks) = KEY_CACHE.get_from_params(param, IntegerKeyKind::Radix);
-+    let sks = Arc::new(sks);
-+    let cks = RadixClientKey::from((cks, NB_CTXT));
-+
-+    let mut rng = rand::thread_rng();
-+
-+    // message_modulus^vec_length
-+    let modulus = cks.parameters().message_modulus().0.pow(NB_CTXT as u32);
-+    assert!(modulus.is_power_of_two());
-+    let nb_bits = modulus.ilog2();
-+
-+    executor.setup(&cks, sks);
-+
-+    for _ in 0..nb_tests {
-+        let clear = rng.gen::<u64>() % modulus;
-+        let clear_shift = rng.gen::<u32>();
-+
-+        let ct = cks.encrypt(clear);
-+
-+        // case when 0 <= rotate < nb_bits
-+        {
-+            let clear_rotate = clear_shift % nb_bits;
-+            let shift = cks.encrypt(clear_rotate as u64);
-+            let encrypted_result = executor.execute((&ct, &shift));
-+            let decrypted_result: u64 = cks.decrypt(&encrypted_result);
-+            let expected = rotate_right_helper(clear, clear_rotate, nb_bits);
-+            assert_eq!(expected, decrypted_result);
-+        }
-+
-+        // case when shift >= nb_bits
-+        {
-+            let clear_rotate = clear_shift.saturating_add(nb_bits);
-+            let shift = cks.encrypt(clear_rotate as u64);
-+            let encrypted_result = executor.execute((&ct, &shift));
-+            let decrypted_result: u64 = cks.decrypt(&encrypted_result);
-+            // When nb_bits is not a power of two
-+            // then the behaviour is not the sa
-```
-
-**File**: `tfhe/src/integer/gpu/server_key/radix/tests_unsigned/test_rotate.rs` (modified, +3/-5)
-```diff
-@@ -1,13 +1,11 @@
- use super::legacy_default_tests::{
-     legacy_default_rotate_left_test, legacy_default_rotate_right_test,
-+    legacy_unchecked_rotate_left_test, legacy_unchecked_rotate_right_test,
- };
- use crate::integer::gpu::server_key::radix::tests_unsigned::{
-     create_gpu_parameterized_test, GpuFunctionExecutor,
- };
- use crate::integer::gpu::CudaServerKey;
--use crate::integer::server_key::radix_parallel::tests_unsigned::test_rotate::{
--    unchecked_rotate_left_test, unchecked_rotate_right_test,
--};
- use crate::shortint::parameters::test_params::*;
- use crate::shortint::parameters::*;
+   if (threadIdx.x == 0) {
+     counter = 0;
+   }
+   __syncthreads();
  
-@@ -41,7 +39,7 @@ where
-     P: Into<TestParameters> + Copy,
- {
-     let executor = GpuFunctionExecutor::new(&CudaServerKey::unchecked_rotate_right);
--    unchecked_rotate_right_test(param, executor);
-+    legacy_unchecked_rotate_right_test(param, executor);
- }
- 
- fn integer_default_rotate_right<P>(param: P)
-@@ -57,7 +55,7 @@ where
-     P: Into<TestParameters> + Copy,
- {
-     let executor = GpuFunctionExecutor::new(&CudaServerKey::unchecked_rotate_left);
--    unchecked_rotate_left_test(param, executor);
-+    legacy_unchecked_rotate_left_test(param, executor);
- }
- 
- fn integer_default_rotate_left<P>(param: P)
-```
-
-**File**: `tfhe/src/integer/server_key/radix_parallel/rotate.rs` (modified, +82/-3)
-```diff
-@@ -1,6 +1,7 @@
- use super::shift::BarrelShifterOperation;
-+use crate::integer::bigint::{U1024, U2048};
- use crate::integer::ciphertext::{IntegerRadixCiphertext, RadixCiphertext};
--use crate::integer::ServerKey;
-+use crate::integer::{ServerKey, U256, U512};
- 
- impl ServerKey {
-     //======================================================================
-@@ -20,7 +21,7 @@ impl ServerKey {
-     where
-         T: IntegerRadixCiphertext,
-     {
--        self.unchecked_shift_rotate_bits_assign(ct, n, BarrelShifterOperation::RightRotate);
-+        self.unchecked_rotate_bits_assign(ct, n, BarrelShifterOperation::RightRotate);
-     }
- 
-     /// Computes homomorphically a rotation of bits.
-@@ -86,7 +87,85 @@ impl ServerKey {
-     where
-         T: IntegerRadixCiphertext,
-     {
--        self.unchecked_shift_rotate_bits_assign(ct, n, BarrelShifterOperation::LeftRotate);
-+        self.unchecked_rotate_bits_assign(ct, n, BarrelShifterOperation::LeftRotate);
-+    }
-+
-+    /// Rotates the bits of `ct` by `amount` reduced modulo the number of bits of `ct`.
-+    ///
-+    ///
-+    /// Inputs must not have carries.
-+    fn unchecked_rotate_bits_assign<T>(
-+        &self,
-+        ct: &mut T,
-+        amount: &RadixCiphertext,
-+        operation: BarrelShifterOperation,
-+    ) where
-+        T: IntegerRadixCiphertext,
-+    {
-+        assert!(matches!(
-+            operation,
-+            BarrelShifterOperation::LeftRotate | BarrelShifterOperation::RightRotate
-+        ));
-+
-+        let bits_per_block = self.message_modulus().0.ilog2();
-+        let num_bits_encrypted_by_ct = ct.blocks().len() as u64 * u64::from(bits_per_block);
-+        let num_bits_encrypted_by_amount = amount.blocks.len() as u32 * bits_per_block;
-+
-+        // For all block sizes, unchecked_shift_rotate_assign uses a barrel shifter,
-+        // which truncates the `amount` to only take the ⌈log₂(num_bits)⌉.
-+        // This is a modular reduction  only when `num_bits` is a power of two.
-+        // For non powers of two, Rotating a radix that encrypts 6 bits, by `8`
-+        // would rotate by 0 instead of 2 (8 % 6 = 2, 8 % 2^⌈log₂(6)⌉ = 8 % 8 = 0)
-+        //
-+        // So to have the consistent modular reduction `amount % nb_bits(ct)`, we will
-+        // use a scalar_rem, but for powers of two we can skip it.
-+        //
-+        // And there's a reason we skip the call to the remainder op:
-+        // the remainder op would introduce a PBS, to cut the bits of the last block
-+        // when the number of bits to keep is not a multiple of the number of bits in a block.
-+        // The truncation of the barrel shifter used in the rotate does it naturally, without
-+        // extra cost.
-+        // e.g: rot(FheUint32, x), 2_2 params -> num_bits_encrypted_by_ct = 32 -> it is power of 2,
-+        // the number of bits to keep is log2(32) = 5, 5 is not a multiple of 2, thus the remainder
-+        // op would do a PBS to clear the high bit of the 3rd block, whereas the barrel shifter
-+        // already handles this trimming nicely
-+        if num_bits_encrypted_by_ct.is_power_of_two() {
-+            self.unchecked_shift_rotate_bits_assign(ct, amount, operation);
-+            return;
-+        }
-+
-+        // The scalar division requires the scalar type used to have a number of bits >= to the
-+        // number of bits the ciphertext encrypts
-+        //
-+        // The ciphertext we use in the division is the `amount`, so we need to pick a scalar type
-+        // that has at least as many bits as what `amount` encrypts. This type is used to
-+        // store the number of bits encrypted by the `ct` to be rotated
-+        //
-+        // So that we can do `amount` % num_bits_encrypted_by_ct
-+        //
-+        // Currently there's a limit that amount cannot encrypt more than 2048 bits,
-+        // but don't be lost, it does not mean amount can encrypt a value in [0, 2048], but
-+        // that it can encrypt a value in [0, 2**2048[
-+        let amount = if num_bits_encrypted_by_amount <= u64::BITS {
-+            self.unchecked_scalar_rem_parallelized(amount, num_bits_encrypted_by_ct)
-+        } else if num_bits_encrypted_by_amount <= u128::BITS {
-+            self.unchecked_scalar_rem_parallelized(amount, u128::from(num_bits_encrypted_by_ct))
-+        } else if num_bits_encrypted_by_amount <= 256 {
-+            self.unchecked_scalar_rem_parallelized(amount, U256::from(num_bits_encrypted_by_ct))
-+        } else if num_bits_encrypted_by_amount <= 512 {
-+            self.unchecked_scalar_rem_parallelized(amount, U512::from(num_bits_encrypted_by_ct))
-+        } else if num_bits_encrypted_by_amount <= 1024 {
-+            self.unchecked_scalar_rem_parallelized(amount, U1024::from(num_bits_encrypted_by_ct))
-+        } else if num_bits_encrypted_by_amount <= 2048 {
-+            self.unchecked_scalar_rem_parallelized(amount, U2048::from(num_bits_encrypted_by_ct))
-+        } else {
-+            panic!(
-+                "rotations by an `amount` that encrypts more than
-```
-
-**File**: `tfhe/src/integer/server_key/radix_parallel/scalar_bitwise_op.rs` (modified, +15/-2)
-```diff
-@@ -1,6 +1,7 @@
- use crate::integer::block_decomposition::{BlockDecomposer, DecomposableInto};
- use crate::integer::ciphertext::IntegerRadixCiphertext;
- use crate::integer::ServerKey;
-+use crate::shortint::ciphertext::NoiseLevel;
- use rayon::prelude::*;
- 
- impl ServerKey {
-@@ -26,12 +27,24 @@ impl ServerKey {
-             .iter_as::<u8>()
-             .collect::<Vec<_>>();
- 
-+        let all_ones = (message_modulus - 1) as u8;
-         lhs.blocks_mut()
-             .par_iter_mut()
-             .zip(clear_blocks.par_iter().copied())
-             .for_each(|(lhs_block, clear_block)| {
--                self.key
--                    .unchecked_scalar_bitand_assign(lhs_block, clear_block);
-+                if clear_block == 0 {
-+                    self.key.create_trivial_assign(lhs_block, 0);
-+                } else if clear_block == all_ones
-+                    && lhs_block.carry_is_empty()
-+                    && lhs_block.noise_level() <= NoiseLevel::NOMINAL
-+                {
-+                    // The block is clean (no carry, nominal noise)
-+                    // and the corresponding scalar block is a mask on all message bits
-+                    // so we can safely skip a PBS here
-+                } else {
-+                    self.key
-+                        .unchecked_scalar_bitand_assign(lhs_block, clear_block);
-+                }
-             });
- 
-         let num_clear_blocks = clear_blocks.len();
-```
-
-**File**: `tfhe/src/integer/server_key/radix_parallel/scalar_div_mod.rs` (modified, +27/-13)
-```diff
-@@ -373,8 +373,7 @@ impl ServerKey {
-                 .unchecked_scalar_right_shift_parallelized(numerator, divisor.ilog2() as u64);
-         }
- 
--        let log2_divisor = divisor.ceil_ilog2();
--        if log2_divisor > numerator_bits {
-+        if self.divisor_exceeds_numerator(numerator, divisor) {
-             return self.create_trivial_zero_radix(numerator.blocks.len());
-         }
- 
-@@ -862,6 +861,11 @@ impl ServerKey {
-     where
-         T: Reciprocable + ScalarMultiplier + DecomposableInto<u8>,
-     {
-+        if self.divisor_exceeds_numerator(numerator, divisor) {
-+            let quotient = self.create_trivial_zero_radix(numerator.blocks.len());
-+            return (quotient, numerator.clone());
-+        }
-+
-         let quotient = self.unchecked_scalar_div_parallelized(numerator, divisor);
-         let remainder = if MiniUnsignedInteger::is_power_of_two(divisor) {
-             // unchecked_scalar_div would have panicked if divisor was zero
-@@ -883,6 +887,10 @@ impl ServerKey {
-     where
-         T: Reciprocable + ScalarMultiplier + DecomposableInto<u8>,
-     {
-+        if self.divisor_exceeds_numerator(numerator, divisor) {
-+            return numerator.clone();
-+        }
-+
-         if MiniUnsignedInteger::is_power_of_two(divisor) {
-             // The remainder is simply the bits that would get 'shifted out'
-             return self.scalar_bitand_parallelized(numerator, divisor - T::ONE);
-@@ -892,6 +900,20 @@ impl ServerKey {
-         remainder
-     }
- 
-+    /// Whether `divisor` is greater than any value `numerator` can hold, in which case the
-+    /// division has nothing to reduce: the quotient is 0 and the remainder the numerator.
-+    ///
-+    /// Works whatever the width of `T` compared to the numerator's.
-+    fn divisor_exceeds_numerator<T>(&self, numerator: &RadixCiphertext, divisor: T) -> bool
-+    where
-+        T: Reciprocable,
-+    {
-+        let numerator_bits = self.key.message_modulus.0.ilog2() as usize * numerator.blocks.len();
-+        // If the divisor type has more bits than the numerator, and that it's bigger than
-+        // the max value the numerator can encrypt
-+        T::BITS > numerator_bits && divisor > (T::ONE << numerator_bits) - T::ONE
-+    }
-+
-     pub fn scalar_div_assign_parallelized<T>(&self, numerator: &mut RadixCiphertext, divisor: T)
-     where
-         T: Reciprocable + DecomposableInto<u8>,
-@@ -907,10 +929,7 @@ impl ServerKey {
-     where
-         T: Reciprocable + ScalarMultiplier + DecomposableInto<u8>,
-     {
--        if !numerator.block_carries_are_empty() {
--            self.full_propagate_parallelized(numerator);
--        }
+-  const uint32_t base_id = threadIdx.x;
+-  const uint32_t column_len = columns_counter[base_id];
 -
-+        self.clean_inplace_for_default_op(numerator);
-         *numerator = self.unchecked_scalar_rem_parallelized(numerator, divisor);
+-  uint32_t ct_count = 0;
+-  for (uint32_t i = 0; i + chunk_size <= column_len; i += chunk_size) {
+-    // those indexes are for message ciphertexts
+-    // for message ciphertexts in and out index should be same
+-    const uint32_t in_index = columns[base_id][i];
+-    new_columns[base_id][ct_count] = in_index;
+-    const uint32_t pbs_index = atomicAdd(&counter, 1);
+-    pbs_indexes_in[pbs_index] = in_index;
+-    pbs_indexes_out[pbs_index] = in_index;
+-    lut_indexes[pbs_index] = 0;
+-    ++ct_count;
+-  }
+-  __syncthreads();
+-
+-  if (base_id > 0) {
+-    const uint32_t prev_base_id = base_id - 1;
+-    const uint32_t prev_column_len = columns_counter[prev_base_id];
+-
+-    for (uint32_t i = 0; i + chunk_size <= prev_column_len; i += chunk_size) {
+-      // those indexes are for carry ciphertexts
+-      // for carry ciphertexts input is same as for message
+-      // output will be placed to next block in the column
+-      const uint32_t in_index = columns[prev_base_id][i];
+-      const uint32_t out_index = columns[prev_base_id][i + 1];
+-      new_columns[base_id][ct_count] = out_index;
++  for (uint32_t base_id = threadIdx.x; base_id < num_radix_blocks;
++       base_id += blockDim.x) {
++    const uint32_t column_len = columns_counter[base_id];
++    uint32_t ct_count = 0;
++    for (uint32_t i = 0; i + chunk_size <= column_len; i += chunk_size) {
++      // those indexes are for message ciphertexts
++      // for message ciphertexts in and out index should be same
++      const uint32_t in_index = columns[base_id][i];
++      new_columns[base_id][ct_count] = in_index;
+       const uint32_t pbs_index = atomicAdd(&counter, 1);
+       pbs_indexes_in[pbs_index] = in_index;
+-      pbs_indexes_out[pbs_index] = out_index;
+-      lut_indexes[pbs_index] = 1;
++      pbs_indexes_out[pbs_index] = in_index;
++      lut_indexes[pbs_index] = 0;
+       ++ct_count;
      }
+   }
++  __syncthreads();
  
-@@ -1041,13 +1060,8 @@ impl ServerKey {
-     where
-         T: Reciprocable + ScalarMultiplier + DecomposableInto<u8>,
-     {
--        if numerator.block_carries_are_empty() {
--            self.unchecked_scalar_div_rem_parallelized(numerator, divisor)
--        } else {
--            let mut cloned_numerator = numerator.clone();
--            self.full_propagate_parallelized(&mut cloned_numerator);
--            self.unchecked_scalar_div_rem_parallelized(&cloned_numerator, divisor)
--        }
-+        let numerator = self.clean_for_default_op(numerator);
-+        self.unchecked_scalar_div_rem_parallelized(&numerator, divisor)
-     }
- }
- 
+-  const uint32_t start_index = column_len - column_len % chunk_size;
+-  for (uint32_t i = start_index; i < column_len; ++i) {
+-    new_columns[base_id][ct_count] = columns[base_id][i];
+-    ++ct_count;
+-  }
++  for (uint32_t base_id = threadIdx.x; base_id < num_radix_blocks;
++       base_id += blockDim.x) {
++    const uint32_t column_len = columns_counter[base_id];
++    // number of message ciphertexts written to this column above
++    uint32_t ct_count = column_len / chunk_size;
++    if (base_id > 0) {
++      const uint32_t prev_base_id = base_id - 1;
++      const uint32_t prev_column_len = columns_counter[prev_base_id];
++
++      for (uint32_t i = 0; i + chunk_size <= prev_column_len; i += chunk_size) {
++        // those indexes are for carry ciphertexts
++        // for carry ciphertexts input is same as for message
++        // output will be placed to next block in the column
++        const uint32_t in_index = columns[prev_base_id][i];
++        const uint32_t out_index = columns[prev_base_id][i + 1];
++        new_columns[base_id][ct_count] = out_index;
++        const uint32_t pbs_index = atomicAdd(&counter, 1);
++        pbs_indexes_in[pbs_index] = in_index;
++        pbs_indexes_out[pbs_index] = out_index;
++        lut_indexes[pbs_index] = 1;
++  
 ```
 
-**File**: `tfhe/src/integer/server_key/radix_parallel/shift.rs` (modified, +8/-22)
+**File**: `tfhe/src/integer/gpu/server_key/radix/tests_unsigned/test_add.rs` (modified, +38/-0)
 ```diff
-@@ -1,3 +1,4 @@
-+use crate::core_crypto::prelude::UnsignedInteger;
- use crate::integer::ciphertext::{IntegerRadixCiphertext, RadixCiphertext};
- use crate::integer::server_key::radix_parallel::bit_extractor::BitExtractor;
- use crate::integer::{BooleanBlock, ServerKey};
-@@ -223,15 +224,9 @@ impl ServerKey {
-         assert!(carry_bits_per_block >= message_bits_per_block);
+@@ -3,17 +3,21 @@ use super::legacy_default_tests::{
+     legacy_default_sum_ciphertexts_vec_test,
+ };
+ use crate::core_crypto::gpu::{get_number_of_gpus, CudaStreams};
++use crate::integer::bigint::U4096;
+ use crate::integer::gpu::ciphertext::CudaUnsignedRadixCiphertext;
+ use crate::integer::gpu::server_key::radix::tests_signed::GpuMultiDeviceFunctionExecutor;
+ use crate::integer::gpu::server_key::radix::tests_unsigned::{
+     create_gpu_parameterized_test, GpuFunctionExecutor,
+ };
+ use crate::integer::gpu::CudaServerKey;
++use crate::integer::keycache::KEY_CACHE;
+ use crate::integer::server_key::radix_parallel::tests_cases_unsigned::{
+     unchecked_add_assign_test, unchecked_add_test,
+ };
++use crate::integer::{IntegerKeyKind, RadixClientKey};
+ use crate::shortint::parameters::test_params::*;
+ use crate::shortint::parameters::*;
++use rand::Rng;
  
-         let num_bits = ct.blocks().len() * message_bits_per_block as usize;
--        let mut max_num_bits_that_tell_shift = num_bits.ilog2() as u64;
--        // This effectively means, that if the block parameters
--        // give a total_nb_bits that is not a power of two,
--        // then the behaviour of shifting won't be the same
--        // if shift >= total_nb_bits compared to when total_nb_bits
--        // is a power of two, as will 'capture' more bits in `shift_bits`
--        if !num_bits.is_power_of_two() {
--            max_num_bits_that_tell_shift += 1;
--        }
-+        // Number of low bits of the amount the shifter reads. Shifts decide overshifts on the
-+        // whole amount, rotations reduce the amount modulo `num_bits` beforehand
-+        let max_num_bits_that_tell_shift = u64::from(num_bits.ceil_ilog2());
+ create_gpu_parameterized_test!(integer_unchecked_add {
+     PARAM_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
+@@ -44,6 +48,9 @@ create_gpu_parameterized_test!(multi_device_integer_add {
+     TEST_PARAM_GPU_MULTI_BIT_GROUP_3_MESSAGE_2_CARRY_2_KS_PBS_GAUSSIAN_2M64,
+ });
+ create_gpu_parameterized_test!(integer_sum_ciphertexts_vec);
++create_gpu_parameterized_test!(integer_sum_ciphertexts_many_blocks {
++    PARAM_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
++});
+ create_gpu_parameterized_test!(integer_default_overflowing_add);
+ create_gpu_parameterized_test!(multi_device_integer_default_overflowing_add);
  
-         if message_bits_per_block == 1 {
-             *ct = self.barrel_shift_bits_1_bit(
-@@ -1004,15 +999,9 @@ impl ServerKey {
-                 bit_extractor.extract_all_bits()
-             },
-             || {
--                let mut max_num_bits_that_tell_shift = total_nb_bits.ilog2() as u64;
--                // This effectively means, that if the block parameters
--                // give a total_nb_bits that is not a power of two,
--                // then the behaviour of shifting won't be the same
--                // if shift >= total_nb_bits compared to when total_nb_bits
--                // is a power of two, as will 'capture' more bits in `shift_bits`
--                if !total_nb_bits.is_power_of_two() {
--                    max_num_bits_that_tell_shift += 1;
--                }
-+                // Number of low bits of the amount the shifter reads, see
-+                // `unchecked_shift_rotate_bits_assign`
-+                let max_num_bits_that_tell_shift = u64::from(total_nb_bits.ceil_ilog2());
+@@ -99,6 +106,37 @@ where
+     legacy_default_sum_ciphertexts_vec_test(param, executor);
+ }
  
-                 // Extracts bits and put them in the bit index 2 (=> bit number 3)
-                 // so that it is already aligned to the correct position of the cmux input
-@@ -1157,10 +1146,7 @@ impl ServerKey {
-         let message_bits_per_block = self.key.message_modulus.0.ilog2() as u64;
-         let num_bits = num_blocks as u64 * message_bits_per_block;
- 
--        let mut max_num_bits_that_tell_shift = num_bits.ilog2();
--        if !num_bits.is_power_of_two() {
--            max_num_bits_that_tell_shift += 1;
--        }
-+        let max_num_bits_that_tell_shift = num_bits.ceil_ilog2();
-         let split = (max_num_bits_that_tell_shift as usize)
-             .div_ceil(message_bits_per_block as usize)
-             .min(amount.blocks.len());
++fn integer_sum_ciphertexts_many_blocks<P>(param: P)
++where
++    P: Into<TestParameters>,
++{
++    let param = param.into();
++    let (cks, _) = KEY_CACHE.get_from_params(param, IntegerKeyKind::Radix);
++    let streams = CudaStreams::new_multi_gpu();
++    let sks = CudaServerKey::new(&cks, &streams);
++
++    let mut rng = rand::thread_rng();
++    let num_ctxts = 16;
++    let bits_per_block = param.message_modulus().0.ilog2();
++    for num_blocks in [512, 1024, 2048] {
++        let cks = RadixClientKey::from((cks.clone(), num_blocks));
++        let mask = U4096::MAX >> (U4096::BITS - bits_per_block * num_blocks as u32);
++        let clears: Vec<U4096> = (0..num_ctxts).map(|_| rng.gen::<U4096>() & mask).collect();
++        let d_ctxts: Vec<CudaUnsignedRadixCiphertext> = clears
++            .iter()
++            .map(|&clear| {
++                CudaUnsignedRadixCiphertext::from_radix_ciphertext(&cks.encrypt(clear), &streams)
++            })
++            .collect();
++
++        let d_result = sks.sum_ciphertexts(d_ctxts, &streams).unwrap();
++        let result = d_result.to_radix_ciphertext(&streams);
++        let decrypted: U4096 = cks.decrypt(&result);
++        let expected = clears.iter().fold(U4096::ZERO, |acc, &x| acc + x) & mask;
++        assert_eq!(decrypted, expected, "num_blocks = {num_blocks}");
++    }
++}
++
+ fn integer_default_overflowing_add<P>(param: P)
+ where
+     P: Into<TestParameters>,
 ```
 
 ---
 
-### Incident Patch 2: `cbd6b4f2` (2026-11-24)
-**Commit Message**: chore(ci): remove ci file not used anymore and fix gpu build
+### Incident Patch 2: `4d482447` (2026-11-25)
+**Commit Message**: fix(gpu): improve noise squash validations (#4196)
 
-* chore(ci): remove ci file not used anymore
-
-* fix: change gpu setup to handle everything in https over http
-
-**File**: `.github/actions/gpu_setup/action.yml` (modified, +4/-0)
+**File**: `tfhe/src/integer/gpu/noise_squashing/keys.rs` (modified, +137/-12)
 ```diff
-@@ -30,6 +30,10 @@ runs:
+@@ -10,6 +10,7 @@ use crate::integer::gpu::ciphertext::squashed_noise::{
+ use crate::integer::gpu::ciphertext::{CudaRadixCiphertext, CudaSignedRadixCiphertext};
+ use crate::integer::gpu::server_key::CudaBootstrappingKey;
+ use crate::integer::gpu::CudaServerKey;
++use crate::integer::noise_squashing::check_blocks_can_be_packed_and_squashed;
+ use crate::shortint::parameters::CoreCiphertextModulus;
  
-         bash ci/wait_for_apt_lock.sh
+ use crate::shortint::{CarryModulus, MessageModulus};
+@@ -29,18 +30,6 @@ impl CudaNoiseSquashingKey {
+         streams: &CudaStreams,
+     ) -> crate::Result<CudaSquashedNoiseRadixCiphertext> {
+         for block in ciphertext.info.blocks.iter() {
+-            if src_server_key
+-                .max_noise_level
+-                .validate(block.noise_level)
+-                .is_err()
+-            {
+-                return Err(crate::error!(
+-                        "squash_ciphertext_noise requires the input Ciphertext to have at most {:?} noise \
+-                        got {:?}.",
+-                        src_server_key.max_noise_level,
+-                        block.noise_level
+-                    ));
+-            }
+             if block.message_modulus != self.message_modulus {
+                 return Err(crate::error!(
+                     "Mismatched MessageModulus between Ciphertext {:?} and NoiseSquashingKey {:?}.",
+@@ -57,6 +46,19 @@ impl CudaNoiseSquashingKey {
+             }
+         }
  
-+        # Outbound port 80 is blocked by the instance security group, fetch apt sources over HTTPS.
-+        sudo find /etc/apt -maxdepth 2 -type f \( -name '*.list' -o -name '*.sources' \) \
-+          -exec sed -i 's|http://|https://|g' {} +
++        // The CUDA backend packs blocks by pairs before the noise squashing PBS, the checks on
++        // carries and noise must be done on the packed chunks, same as on the CPU
++        check_blocks_can_be_packed_and_squashed(
++            ciphertext
++                .info
++                .blocks
++                .iter()
++                .map(|block| (block.degree, block.noise_level)),
++            self.message_modulus,
++            self.carry_modulus,
++            src_server_key.max_noise_level,
++        )?;
 +
-         sudo apt-get update
-         sudo apt-get install -y cmake-format libclang-dev
-       env:
-```
-
-**File**: `.github/workflows/benchmark_gpu_coprocessor.yml` (modified, +4/-0)
-```diff
-@@ -127,6 +127,10 @@ jobs:
-         run: |
-           bash ci/wait_for_apt_lock.sh
+         Ok(self.unchecked_squash_ciphertext_noise(ciphertext, src_server_key, streams))
+     }
  
-+          # Outbound port 80 is blocked by the instance security group, fetch apt sources over HTTPS.
-+          sudo find /etc/apt -maxdepth 2 -type f \( -name '*.list' -o -name '*.sources' \) \
-+            -exec sed -i 's|http://|https://|g' {} +
+@@ -128,6 +130,16 @@ impl CudaNoiseSquashingKey {
+         ciphertext: &CudaBooleanBlock,
+         streams: &CudaStreams,
+     ) -> crate::Result<CudaSquashedNoiseBooleanBlock> {
++        let blocks = &ciphertext.as_ref().ciphertext.info.blocks;
++        if blocks.len() != 1 {
++            return Err(crate::error!(
++                "A CudaBooleanBlock must contain exactly 1 block, got {}",
++                blocks.len()
++            ));
++        }
++        // The boolean block is checked as a single, unpacked block by the radix checks: its carry
++        // must be empty as the squashed boolean is decrypted as `value != 0` over the whole
++        // message and carry space
+         let squashed_output = self.checked_squash_ciphertext_noise(
+             &ciphertext.as_ref().ciphertext,
+             src_server_key,
+@@ -138,3 +150,116 @@ impl CudaNoiseSquashingKey {
+         })
+     }
+ }
 +
-           sudo apt-get update
-           sudo apt-get install -y git-lfs protobuf-compiler
-           git lfs install
++#[cfg(test)]
++mod tests {
++    use crate::core_crypto::gpu::CudaStreams;
++    use crate::integer::gpu::ciphertext::boolean_value::CudaBooleanBlock;
++    use crate::integer::gpu::ciphertext::{CudaSignedRadixCiphertext, CudaUnsignedRadixCiphertext};
++    use crate::integer::gpu::CudaServerKey;
++    use crate::integer::noise_squashing::NoiseSquashingPrivateKey;
++    use crate::integer::{ClientKey, CompressedServerKey, IntegerCiphertext, ServerKey};
++    use crate::shortint::ciphertext::NoiseLevel;
++    use crate::shortint::parameters::test_params::{
++        TEST_PARAM_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
++        TEST_PARAM_NOISE_SQUASHING_PARAM_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
++    };
++
++    /// The checked GPU noise squashing must reject the same inputs as the CPU one
++    #[test]
++    fn test_cuda_noise_squashing_rejects_unpackable_inputs() {
++        let param = TEST_PARAM_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128;
++        let noise_squashing_parameters =
++            TEST_PARAM_NOISE_SQUASHING_PARAM_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128;
++        let streams = CudaStreams::new_multi_gpu();
++
++        let cks = ClientKey::new(param);
++        let compressed_sks = CompressedServerKey::new_radix_compressed_server_key(&cks);
++        let cuda_sks = CudaServerKey::decompress_from_cpu(&compressed_sks, &streams);
++        let shortint_sks = ServerKey::new_radix_server_key(&cks).into_raw_parts();
++        let max_noise_level = shortint_sks.max_noise_level;
++
++        let nspk = NoiseSquashingPrivateKey::new(noise_squashing_parameters);
++        let cuda_nsk = cks
++            .new_compressed_noise_squashing_key(&nspk)
++            .decompress_to_cuda(&streams);
++
++        // Unclean pair, previously packed to 1 + 4 * 4 = 17 >= 16 (padding bit)
++        {
++            let mut ct = cks.encrypt_signed_radix(1i8, 4);
++            shortint_sks.unchecked_scalar_add_assign(&mut ct.blocks_mut()[1], 4);
++            let d_ct = CudaSignedRadixCiphertext::from_signed_radix_ciphertext(&ct, &streams);
++            assert!(cuda_nsk
++ 
 ```
 
-**File**: `ci/slab.toml` (removed, +0/-338)
+**File**: `tfhe/src/integer/gpu/server_key/radix/tests_noise_distribution/dp_ks_pbs_128_packingks.rs` (modified, +7/-0)
 ```diff
-@@ -1,338 +0,0 @@
--[backend.aws.cpu-big]
--region = "eu-west-3"
--image_id = "ami-01c204b15b504da60"
--instance_type = "m6i.32xlarge"
--user = "ubuntu"
--
--[backend.aws.cpu-big_fallback]
--region = "us-east-1"
--image_id = "ami-0c6e54f3be8d03234"
--instance_type = "m6i.32xlarge"
--user = "ubuntu"
--
--[backend.aws.cpu-small]
--region = "eu-west-3"
--image_id = "ami-01c204b15b504da60"
--instance_type = "m6i.4xlarge"
--user = "ubuntu"
--
--[backend.aws.bench]
--region = "eu-west-1"
--image_id = "ami-067f3893108afe8cd"
--instance_type = "hpc7a.96xlarge"
--user = "ubuntu"
--
--[backend.aws.bench-hpc8]
--region = "eu-north-1"
--image_id = "ami-0d7f32ee367bc2a69"
--instance_type = "hpc8a.96xlarge"
--user = "ubuntu"
--
--# Profile used to build CUDA code without the need to get p-like instance.
--[backend.aws.gpu-build]
--region = "us-east-1"
--image_id = "ami-0250f541bc1358116"
--instance_type = "m6i.4xlarge"
--user = "ubuntu"
--
--[backend.aws.single-h100]
--region = "us-east-1"
--image_id = "ami-0250f541bc1358116"
--instance_type = "p5.4xlarge"
--user = "ubuntu"
--
--[backend.aws.single-h100_1stfallback]
--region = "us-east-2"
--image_id = "ami-0c924a8e0a210a709"
--instance_type = "p5.4xlarge"
--user = "ubuntu"
--
--[backend.aws.single-h100_2ndfallback]
--region = "us-west-1"
--image_id = "ami-0fe3273232bc2fb8a"
--instance_type = "p5.4xlarge"
--user = "ubuntu"
--
--[backend.aws.single-h100_3rdfallback]
--region = "us-west-2"
--image_id = "ami-057682b0cfedeaf20"
--instance_type = "p5.4xlarge"
--user = "ubuntu"
--
--[backend.aws.4-l40]
--region = "us-east-1"
--image_id = "ami-0250f541bc1358116"
--instance_type = "g6e.24xlarge"
--user = "ubuntu"
--fallbacks = [ "hyperstack.4-l40", "terraform.scaleway-4-l40" ]
--
--[backend.aws.small-gpu]
--region = "us-east-1"
--image_id = "ami-0250f541bc1358116"
--instance_type = "g6.2xlarge"
--user = "ubuntu"
--
--[backend.hyperstack.gpu-test]
--environment_name = "canada"
--image_name = "Ubuntu Server 22.04 LTS R570 CUDA 12.8"
--flavor_name = "n3-L40x1"
--user = "ubuntu"
--fallbacks = [ "terraform.scaleway-small-gpu", "hyperstack.rtx-a6000" ]
--
--[backend.hyperstack.gpu-test-sanitizer]
--environment_name = "canada"
--image_name = "Ubuntu Server 22.04 LTS R570 CUDA 12.8"
--flavor_name = "n3-L40x1"
--user = "ubuntu"
--fallbacks = [ "terraform.scaleway-small-gpu-sanitizer" ]
--
--[backend.hyperstack.single-h100]
--environment_name = "canada"
--image_name = "Ubuntu Server 22.04 LTS R570 CUDA 12.8"
--flavor_name = "n3-H100x1"
--user = "ubuntu"
--
--# Primary target of gpu_protocol_stress_h100_tests: one H100 PCIe, falling back to a single
--# Scaleway H100 and then to a 2 GPU Scaleway instance. The fallbacks deliberately name the
--# profiles that carry no fallbacks of their own, so the chain stays exactly these three.
--[backend.hyperstack.single-h100-protocol-stress]
--environment_name = "canada"
--image_name = "Ubuntu Server 22.04 LTS R570 CUDA 12.8"
--flavor_name = "n3-H100x1"
--user = "ubuntu"
--fallbacks = [
--    "terraform.scaleway-single-h100",
--    "terraform.scaleway-2-h100-sxm5",
--]
--
--[backend.hyperstack.2-h100]
--environment_name = "canada"
--image_name = "Ubuntu Server 22.04 LTS R570 CUDA 12.8"
--flavor_name = "n3-H100x2"
--user = "ubuntu"
--
--[backend.hyperstack.4-h100]
--environment_name = "canada"
--image_name = "Ubuntu Server 22.04 LTS R570 CUDA 12.8"
--flavor_name = "n3-H100x4"
--user = "ubuntu"
--
--[backend.hyperstack.multi-h100]
--environment_name = "canada"
--image_name = "Ubuntu Server 22.04 LTS R570 CUDA 12.8"
--flavor_name = "n3-H100x8"
--user = "ubuntu"
--
--[backend.hyperstack.multi-h100-nvlink]
--environment_name = "canada"
--image_name = "Ubuntu Server 22.04 LTS R570 CUDA 12.8"
--flavor_name = "n3-H100x8-NVLink"
--user = "ubuntu"
--
--[backend.hyperstack.multi-h100-sxm5]
--environment_name = "canada"
--image_name = "Ubuntu Server 22.04 LTS R570 CUDA 12.8"
--flavor_name = "n3-H100-SXM5x8"
--user = "ubuntu"
--
--[backend.hyperstack.multi-h100-sxm5_fallback]
--environment_name = "us-1"
--image_name = "Ubuntu Server 22.04 LTS R570 CUDA 12.8"
--flavor_name = "n3-H100-SXM5x8"
--user = "ubuntu"
--
--[backend.hyperstack.multi-a100-nvlink]
--environment_name = "canada"
--image_name = "Ubuntu Server 22.04 LTS R570 CUDA 12.8"
--flavor_name = "n3-A100x8-NVLink"
--user = "ubuntu"
--
--[backend.hyperstack.l40]
--environment_name = "canada"
--image_name = "Ubuntu Server 22.04 LTS R570 CUDA 12.8"
--flavor_name = "n3-L40x1"
--user = "ubuntu"
--
--[backend.hyperstack.l40_fallback]
--environment_name = "canada"
--image_name = "Ubuntu Server 22.04 LTS R570 CUDA 12.8"
--flavor_name = "n3-RTX-A6000x1"
--user = "ubuntu"
--
--# Fallback target only.
--[backend.hyperstack.rtx-a6000]
--environment_name = "canada"
--image_name = "Ubuntu Server 22.04 LTS R570 CUDA 12.8"
--flavor_name = "n3-RTX-A6000x1"
--user = "ubuntu"
--
--[backend.hyperstack.4-l40]
--environment_name = "canada"
--image_name = "Ubuntu Server 22.04 LTS R570 CUDA 12.8"
--flavor_name = "n3-L40x4"
--user = "ubuntu"
--
--[backend.hyperstack.4-l40_fallback]
--environment_name = "norway"
--image_name = "Ubuntu Server 22.04 LTS R570 CUDA 12.8"
--flavor_name = "n3-RTX-A4000x4"
--user = "
+@@ -354,6 +354,13 @@ fn sanity_check_encrypt_dp_ks_standard_pbs128_gpu(
+                 params.carry_modulus(),
+             );
+ 
++            // The scalar mul makes the tracked degree go over the message modulus, but the
++            // encrypted value is 0, so set the degree to its actual value to go through the
++            // checked version, which still validates the noise
++            for block in d_ct_input2.ciphertext.info.blocks.iter_mut() {
++                block.degree = crate::shortint::ciphertext::Degree::new(0);
++            }
++
+             let squashed = cuda_noise_squashing_key
+                 .squash_radix_ciphertext_noise(&cuda_sks, &d_ct_input2.ciphertext, local_streams)
+                 .unwrap();
 ```
 
-**File**: `ci/terraform_scripts/nebius/terraform_h100.tf` (removed, +0/-130)
+**File**: `tfhe/src/integer/noise_squashing/keys.rs` (modified, +11/-0)
 ```diff
-@@ -1,130 +0,0 @@
--terraform {
--  required_providers {
--    nebius = {
--      source  = "terraform-provider.storage.eu-north1.nebius.cloud/nebius/nebius"
--      version = "~> 0.5"
--    }
--  }
--  required_version = "~> 1.14"
--}
--
--provider "nebius" {
--  domain = "api.nebius.cloud:443"
--
--  service_account = {
--    account_id       = var.nebius_sa_account_id
--    public_key_id    = var.nebius_sa_public_key_id
--    private_key_file = "/app/nebius/slab_ci_service_account_private.pem"
--  }
--}
--
--variable "nebius_sa_account_id" {
--  type        = string
--  description = "Nebius service account used by Slab"
--  default     = "serviceaccount-e00ja4a60pzcaabtm0"
--}
--
--variable "nebius_sa_public_key_id" {
--  type        = string
--  description = "ID of the service account authorized key"
--  default     = "publickey-e00vtny4sn819pm0pg"
--}
--
--variable "nebius_project_id" {
--  type        = string
--  description = "Nebius project ID to attach to"
--  default     = "project-e00g2md3pr003aqkq1v4q0"
--}
--
--variable "nebius_subnet_id" {
--  type        = string
--  description = "Nebius VPC subnet ID to attach the instance to"
--  default     = "vpcsubnet-e00zwv8bkn6dxmk91s"
--}
--
--variable "nebius_security_group_id" {
--  type        = string
--  description = "Nebius VPC security group ID to attach to the instance network interface"
--  default     = "vpcsecuritygroup-e00kvyx503efvsc4br"
--}
--
--# Provided via ci/slab.toml
--variable "instance_type" {
--  type        = string
--  description = "Nebius instance preset to be used (e.g. 1gpu-16vcpu-200gb)"
--}
--
--# Presets are platform specific, a different GPU type needs its own script
--variable "platform" {
--  type        = string
--  description = "Nebius compute platform (GPU type)"
--  default     = "gpu-h100-sxm"
--}
--
--# Provided by Slab server
--variable "instance_label" {
--  type        = string
--  description = "Instance name to display in console"
--}
--
--# Provided by Slab server
--variable "user_data" {
--  type        = string
--  description = "Script that will be run at instance startup"
--  sensitive   = true
--}
--
--resource "nebius_compute_v1_disk" "boot_disk" {
--  parent_id        = var.nebius_project_id
--  name             = "${var.instance_label}-boot-disk"
--  type             = "NETWORK_SSD"
--  size_gibibytes   = 200
--  block_size_bytes = 4096
--
--  # Pinned ubuntu24.04-cuda12 image (CUDA 12.8, driver 570), the family alone would drift between runs
--  source_image_id = "computeimage-e00q003g5k851wjgpn"
--}
--
--resource "nebius_compute_v1_instance" "runner" {
--  parent_id = var.nebius_project_id
--  name      = var.instance_label
--
--  resources = {
--    platform = var.platform
--    preset   = var.instance_type
--  }
--
--  boot_disk = {
--    attach_mode = "READ_WRITE"
--    existing_disk = {
--      id = nebius_compute_v1_disk.boot_disk.id
--    }
--  }
--
--  network_interfaces = [
--    {
--      name              = "eth0"
--      subnet_id         = var.nebius_subnet_id
--      security_groups   = [{ id = var.nebius_security_group_id }]
--      ip_address        = {}
--      public_ip_address = {}
--    }
--  ]
--
--  # Nebius expects a #cloud-config document, so the Slab script is shipped as a file and run from it
--  cloud_init_user_data = <<-EOT
--    #cloud-config
--    write_files:
--      - path: /opt/slab/runner_start.sh
--        permissions: "0755"
--        encoding: b64
--        content: ${base64encode(var.user_data)}
--    runcmd:
--      - /opt/slab/runner_start.sh
--  EOT
--}
--
--output "instance_id" {
--  value       = nebius_compute_v1_instance.runner.id
--  description = "Unique ID of the Nebius instance"
--}
+@@ -6,6 +6,7 @@ use crate::integer::ciphertext::{
+     BooleanBlock, RadixCiphertext, SignedRadixCiphertext, SquashedNoiseBooleanBlock,
+     SquashedNoiseRadixCiphertext, SquashedNoiseSignedRadixCiphertext,
+ };
++use crate::integer::noise_squashing::check_blocks_can_be_packed_and_squashed;
+ use crate::integer::server_key::ServerKey;
+ use crate::integer::ClientKey;
+ use crate::named::Named;
+@@ -344,6 +345,16 @@ impl NoiseSquashingKey {
+         src_server_key: &ServerKey,
+         boolean_block: &BooleanBlock,
+     ) -> crate::Result<SquashedNoiseBooleanBlock> {
++        // A boolean block goes through the same checks as the last block of a radix with an odd
++        // block count, its carry must be empty as the squashed boolean is decrypted as
++        // `value != 0` over the whole message and carry space
++        check_blocks_can_be_packed_and_squashed(
++            [(boolean_block.0.degree, boolean_block.0.noise_level())],
++            self.key.message_modulus(),
++            self.key.carry_modulus(),
++            src_server_key.key.max_noise_level,
++        )?;
++
+         Ok(SquashedNoiseBooleanBlock {
+             ciphertext: self
+                 .key
 ```
 
-**File**: `ci/terraform_scripts/nebius/terraform_l40.tf` (removed, +0/-130)
+**File**: `tfhe/src/integer/noise_squashing/mod.rs` (modified, +80/-0)
 ```diff
-@@ -1,130 +0,0 @@
--terraform {
--  required_providers {
--    nebius = {
--      source  = "terraform-provider.storage.eu-north1.nebius.cloud/nebius/nebius"
--      version = "~> 0.5"
--    }
--  }
--  required_version = "~> 1.14"
--}
--
--provider "nebius" {
--  domain = "api.nebius.cloud:443"
--
--  service_account = {
--    account_id       = var.nebius_sa_account_id
--    public_key_id    = var.nebius_sa_public_key_id
--    private_key_file = "/app/nebius/slab_ci_service_account_private.pem"
--  }
--}
--
--variable "nebius_sa_account_id" {
--  type        = string
--  description = "Nebius service account used by Slab"
--  default     = "serviceaccount-e00ja4a60pzcaabtm0"
--}
--
--variable "nebius_sa_public_key_id" {
--  type        = string
--  description = "ID of the service account authorized key"
--  default     = "publickey-e00vtny4sn819pm0pg"
--}
--
--variable "nebius_project_id" {
--  type        = string
--  description = "Nebius project ID to attach to"
--  default     = "project-e00g2md3pr003aqkq1v4q0"
--}
--
--variable "nebius_subnet_id" {
--  type        = string
--  description = "Nebius VPC subnet ID to attach the instance to"
--  default     = "vpcsubnet-e00zwv8bkn6dxmk91s"
--}
--
--variable "nebius_security_group_id" {
--  type        = string
--  description = "Nebius VPC security group ID to attach to the instance network interface"
--  default     = "vpcsecuritygroup-e00kvyx503efvsc4br"
--}
--
--# Provided via ci/slab.toml
--variable "instance_type" {
--  type        = string
--  description = "Nebius instance preset to be used (e.g. 1gpu-16vcpu-200gb)"
--}
--
--# Presets are platform specific, a different GPU type needs its own script
--variable "platform" {
--  type        = string
--  description = "Nebius compute platform (GPU type)"
--  default     = "gpu-l40s-d"
--}
--
--# Provided by Slab server
--variable "instance_label" {
--  type        = string
--  description = "Instance name to display in console"
--}
--
--# Provided by Slab server
--variable "user_data" {
--  type        = string
--  description = "Script that will be run at instance startup"
--  sensitive   = true
--}
--
--resource "nebius_compute_v1_disk" "boot_disk" {
--  parent_id        = var.nebius_project_id
--  name             = "${var.instance_label}-boot-disk"
--  type             = "NETWORK_SSD"
--  size_gibibytes   = 200
--  block_size_bytes = 4096
--
--  # Pinned ubuntu24.04-cuda12 image (CUDA 12.8, driver 570), the family alone would drift between runs
--  source_image_id = "computeimage-e00q003g5k851wjgpn"
--}
--
--resource "nebius_compute_v1_instance" "runner" {
--  parent_id = var.nebius_project_id
--  name      = var.instance_label
--
--  resources = {
--    platform = var.platform
--    preset   = var.instance_type
--  }
--
--  boot_disk = {
--    attach_mode = "READ_WRITE"
--    existing_disk = {
--      id = nebius_compute_v1_disk.boot_disk.id
--    }
--  }
--
--  network_interfaces = [
--    {
--      name              = "eth0"
--      subnet_id         = var.nebius_subnet_id
--      security_groups   = [{ id = var.nebius_security_group_id }]
--      ip_address        = {}
--      public_ip_address = {}
--    }
--  ]
--
--  # Nebius expects a #cloud-config document, so the Slab script is shipped as a file and run from it
--  cloud_init_user_data = <<-EOT
--    #cloud-config
--    write_files:
--      - path: /opt/slab/runner_start.sh
--        permissions: "0755"
--        encoding: b64
--        content: ${base64encode(var.user_data)}
--    runcmd:
--      - /opt/slab/runner_start.sh
--  EOT
--}
--
--output "instance_id" {
--  value       = nebius_compute_v1_instance.runner.id
--  description = "Unique ID of the Nebius instance"
--}
+@@ -3,3 +3,83 @@ mod keys;
+ mod tests;
+ 
+ pub use keys::*;
++
++use crate::shortint::ciphertext::{Degree, MaxNoiseLevel, NoiseLevel};
++use crate::shortint::{CarryModulus, MessageModulus};
++
++/// Checks that a chunk of radix blocks (described by their degree and noise level) can be packed
++/// and then noise squashed.
++///
++/// Integer noise squashing packs blocks by pairs as `low + message_modulus * high` before the
++/// 128 bits PBS, `high` being `None` for the last block of a radix with an odd block count. This
++/// requires:
++/// - room for two messages in a block (carry modulus >= message modulus) when packing a pair;
++/// - empty carries on every block, so that the packed value fits in the message and carry space and
++///   does not reach the padding bit;
++/// - a noise level for the packed block within the max noise level of the source server key.
++///
++/// Boolean blocks are checked as a single unpacked block (`high` is `None`). Their degree may be
++/// above 1, but their carry must be empty as the squashed boolean is decrypted as `value != 0` over
++/// the whole message and carry space.
++///
++/// This is shared between the CPU and GPU backends so both enforce the same invariants.
++pub(crate) fn check_blocks_can_be_packed_and_squashed(
++    blocks: impl IntoIterator<Item = (Degree, NoiseLevel)>,
++    message_modulus: MessageModulus,
++    carry_modulus: CarryModulus,
++    max_noise_level: MaxNoiseLevel,
++) -> crate::Result<()> {
++    // Chunk the blocks by pairs here, so that both backends check the same chunks
++    let mut blocks = blocks.into_iter();
++    while let Some(low) = blocks.next() {
++        check_block_chunk_can_be_packed_and_squashed(
++            low,
++            blocks.next(),
++            message_modulus,
++            carry_modulus,
++            max_noise_level,
++        )?;
++    }
++    Ok(())
++}
++
++fn check_block_chunk_can_be_packed_and_squashed(
++    low: (Degree, NoiseLevel),
++    high: Option<(Degree, NoiseLevel)>,
++    message_modulus: MessageModulus,
++    carry_modulus: CarryModulus,
++    max_noise_level: MaxNoiseLevel,
++) -> crate::Result<()> {
++    if high.is_some() && carry_modulus.0 < message_modulus.0 {
++        return Err(crate::error!(
++            "Cannot pack if carry modulus ({carry_modulus:?}) is smaller than message modulus \
++            ({message_modulus:?})"
++        ));
++    }
++
++    let carry_is_empty = |degree: Degree| degree.get() < message_modulus.0;
++
++    let (low_degree, low_noise) = low;
++    let packed_noise = if let Some((high_degree, high_noise)) = high {
++        if !carry_is_empty(low_degree) || !carry_is_empty(high_degree) {
++            return Err(crate::error!(
++                "Cannot pack blocks: need both carries to be empty \
++                (got degrees {low_degree:?} and {high_degree:?}, \
++                message modulus {message_modulus:?})."
++            ));
++        }
++        high_noise * message_modulus.0 + low_noise
++    } else {
++        if !carry_is_empty(low_degree) {
++            return Err(crate::error!(
++                "Cannot squash block: need carry to be empty \
++                (got degree {low_degree:?}, message modulus {message_modulus:?})."
++            ));
++        }
++        low_noise
++    };
++
++    max_noise_level
++        .validate(packed_noise)
++        .map_err(|e| crate::error!("{}", e))
++}
 ```
 
-**File**: `ci/terraform_scripts/scaleway/terraform.tf` (removed, +0/-75)
+**File**: `tfhe/src/integer/noise_squashing/tests.rs` (modified, +99/-0)
 ```diff
-@@ -1,75 +0,0 @@
--terraform {
--  required_providers {
--    scaleway = {
--      source  = "scaleway/scaleway"
--      version = "~> 2.73"
--    }
--  }
--  required_version = "~> 1.14"
--}
--
--provider "scaleway" {
--  zone = "fr-par-2"
--}
--
--# Provided via Slab server env
--variable "project_id" {
--  type        = string
--  description = "Scaleway project ID to attached to"
--}
--
--# Provided via ci/slab.toml
--variable "instance_type" {
--  type        = string
--  description = "Scaleway instance type to be used"
--}
--
--# Provided by Slab server
--variable "instance_label" {
--  type        = string
--  description = "Instance name to display in console"
--}
--
--# Provided by Slab server
--variable "user_data" {
--  type        = string
--  description = "Script that will be run at instance startup"
--  sensitive   = true
--}
--
--resource "scaleway_instance_ip" "github_runner" {
--  project_id = var.project_id
--}
--
--data "scaleway_instance_security_group" "github_runner" {
--  project_id = var.project_id
--  name       = "github-actions-runner"
--}
--
--data "scaleway_instance_image" "gpu_benchmark_image" {
--    name = "tfhe-rs-ubuntu-24-cuda"
--}
--
--resource "scaleway_instance_server" "scaleway_gpu_instance" {
--  project_id = var.project_id
--  image      = data.scaleway_instance_image.gpu_benchmark_image.id
--  type       = var.instance_type
--  name       = var.instance_label
--
--  root_volume {
--    size_in_gb = 200
--  }
--
--  ip_id = scaleway_instance_ip.github_runner.id
--
--  user_data = {
--    "cloud-init" = var.user_data
--  }
--
--  security_group_id = data.scaleway_instance_security_group.github_runner.id
--}
--
--output "instance_id" {
--  value       = scaleway_instance_server.scaleway_gpu_instance.id
--  description = "Unique ID of the Scaleway instance"
--}
+@@ -141,3 +141,102 @@ fn test_repro_noise_squashing_degree_handling() {
+         assert!(should_fail_unsigned.is_err());
+     }
+ }
++
++#[test]
++fn test_noise_squashing_rejects_unpackable_inputs() {
++    use crate::integer::noise_squashing::{NoiseSquashingKey, NoiseSquashingPrivateKey};
++    use crate::integer::{gen_keys_radix, ClientKey, IntegerCiphertext};
++    use crate::shortint::ciphertext::NoiseLevel;
++    use crate::shortint::parameters::{
++        NOISE_SQUASHING_PARAM_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128 as NSP,
++        PARAM_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128 as P22,
++    };
++
++    let (rck, sks) = gen_keys_radix(P22, 3);
++    let cks: &ClientKey = rck.as_ref();
++    let shortint_sks = sks.clone().into_raw_parts();
++    let max_noise_level = shortint_sks.max_noise_level;
++    let nspk = NoiseSquashingPrivateKey::new(NSP);
++    let nsk = NoiseSquashingKey::new(cks, &nspk);
++
++    // Odd block count: the last block is not packed but its carry must still be empty
++    {
++        let mut ct = cks.encrypt_radix(16u8, 3);
++        shortint_sks.unchecked_scalar_add_assign(&mut ct.blocks_mut()[2], 4);
++        assert!(nsk.squash_radix_ciphertext_noise(&sks, &ct).is_err());
++    }
++    {
++        let mut ct = cks.encrypt_signed_radix(17i8, 3);
++        shortint_sks.unchecked_scalar_add_assign(&mut ct.blocks_mut()[2], 16);
++        let dec: i8 = cks.decrypt_signed_radix(&ct);
++        assert_eq!(dec, 17);
++        assert!(nsk.squash_signed_radix_ciphertext_noise(&sks, &ct).is_err());
++    }
++    // Single block radix
++    {
++        let mut ct = cks.encrypt_radix(1u8, 1);
++        shortint_sks.unchecked_scalar_add_assign(&mut ct.blocks_mut()[0], 4);
++        assert!(nsk.squash_radix_ciphertext_noise(&sks, &ct).is_err());
++    }
++
++    // Clean carries but the noise of the packed block exceeds the max noise level
++    for (low_noise, high_noise) in [
++        (NoiseLevel(1), NoiseLevel(2)),
++        (NoiseLevel(5), NoiseLevel(1)),
++    ] {
++        let mut ct = cks.encrypt_radix(5u8, 2);
++        ct.blocks_mut()[0].set_noise_level(low_noise, max_noise_level);
++        ct.blocks_mut()[1].set_noise_level(high_noise, max_noise_level);
++        assert!(ct.blocks().iter().all(|b| b.carry_is_empty()));
++        assert!(nsk.squash_radix_ciphertext_noise(&sks, &ct).is_err());
++    }
++
++    // BooleanBlock with a non empty carry
++    {
++        let mut b = cks.encrypt_bool(false);
++        shortint_sks.unchecked_scalar_add_assign(&mut b.0, 4);
++        assert!(!cks.decrypt_bool(&b));
++        assert!(nsk.squash_boolean_block_noise(&sks, &b).is_err());
++    }
++    // BooleanBlock with degree 2 but an empty carry: accepted, both decryptions agree
++    {
++        let mut b = cks.encrypt_bool(true);
++        shortint_sks.unchecked_scalar_add_assign(&mut b.0, 1);
++        assert!(b.0.degree.get() > 1 && b.0.carry_is_empty());
++        assert!(cks.decrypt_bool(&b));
++        let squashed = nsk.squash_boolean_block_noise(&sks, &b).unwrap();
++        assert!(nspk.decrypt_bool(&squashed).unwrap());
++    }
++    // BooleanBlock from a list expanded without key keeps the degree of the list blocks
++    // (message_modulus - 1) while holding a value in {0, 1}, it must be accepted
++    {
++        use crate::integer::ciphertext::CompactCiphertextList;
++        use crate::integer::{BooleanBlock, CompactPublicKey};
++
++        let pk = CompactPublicKey::new(cks);
++        let list = CompactCiphertextList::builder(&pk)
++            .push(false)
++            .push(true)
++            .build();
++        let expander = list.expand_without_key().unwrap();
++        for (i, expected) in [false, true].into_iter().enumerate() {
++            let b: BooleanBlock = expander.get(i).unwrap().unwrap();
++            assert!(b.0.degree.get() > 1 && b.0.carry_is_empty());
++            let squashed = nsk.squash_boolean_block_noise(&sks, &b).unwrap();
++            assert_eq!(nspk.decrypt_bool(&squashed).unwrap(), expected);
++        }
++    }
++
++    // Sanity check: clean inputs with odd block counts still work
++    for num_blocks in [1, 3] {
++        let ct = cks.encrypt_radix(2u8, num_blocks);
++        let squashed = nsk.squash_radix_ciphertext_noise(&sks, &ct).unwrap();
++        let d: u8 = nspk.decrypt_radix(&squashed).unwrap();
++        assert_eq!(d, 2);
++
++        let ct = cks.encrypt_signed_radix(-1i8, num_blocks);
++        let squashed = nsk.squash_signed_radix_ciphertext_noise(&sks, &ct).unwrap();
++        let d: i8 = nspk.decrypt_signed_radix(&squashed).unwrap();
++        assert_eq!(d, -1);
++    }
++}
 ```
 
-**File**: `ci/terraform_scripts/scaleway/terraform_sxm_x8.tf` (removed, +0/-75)
+**File**: `tfhe/src/shortint/noise_squashing/server_key.rs` (modified, +8/-3)
 ```diff
-@@ -1,75 +0,0 @@
--# This script is an SXM-8 specific variant for Scaleway instance
--# there is a bug with our current OS image we can't figure out, this uses a base Scaleway image
--terraform {
--  required_providers {
--    scaleway = {
--      source  = "scaleway/scaleway"
--      version = "~> 2.73"
--    }
--  }
--  required_version = "~> 1.14"
--}
--
--provider "scaleway" {
--  zone = "fr-par-2"
--}
--
--# Provided via Slab server env
--variable "project_id" {
--  type        = string
--  description = "Scaleway project ID to attached to"
--}
--
--# Provided via ci/slab.toml
--variable "instance_type" {
--  type        = string
--  description = "Scaleway instance type to be used"
--}
--
--# Provided by Slab server
--variable "instance_label" {
--  type        = string
--  description = "Instance name to display in console"
--}
--
--# Provided by Slab server
--variable "user_data" {
--  type        = string
--  description = "Script that will be run at instance startup"
--  sensitive   = true
--}
--
--resource "scaleway_instance_ip" "github_runner" {
--  project_id = var.project_id
--}
--
--data "scaleway_instance_security_group" "github_runner" {
--  project_id = var.project_id
--  name       = "github-actions-runner"
--}
--
--# trivy:ignore:ZAMA-TF-003 uses the base image label for now
--resource "scaleway_instance_server" "scaleway_gpu_instance" {
--  project_id = var.project_id
--  # Current latest ubuntu GPU OS image from Scaleway (2026/07/28)
--  image      = "ubuntu_noble_gpu_os_13_nvidia"
--  type       = var.instance_type
--  name       = var.instance_label
--
--  root_volume {
--    size_in_gb = 200
--  }
--
--  ip_id = scaleway_instance_ip.github_runner.id
--
--  user_data = {
--    "cloud-init" = var.user_data
--  }
--
--  security_group_id = data.scaleway_instance_security_group.github_runner.id
--}
--
--output "instance_id" {
--  value       = scaleway_instance_server.scaleway_gpu_instance.id
--  description = "Unique ID of the Scaleway instance"
--}
+@@ -473,9 +473,14 @@ impl<AP: NoiseSquashingAtomicPattern> GenericNoiseSquashingKey<AP> {
+         });
+ 
+         // If the number of ciphertexts is odd, the last one is squashed on its own
+-        let last = remainder
+-            .par_iter()
+-            .map(|ct| self.checked_squash_ciphertext_noise(ct, src_server_key));
++        let last = remainder.par_iter().map(|ct| {
++            if !ct.carry_is_empty() {
++                return Err(crate::error!(
++                    "Cannot squash unpaired block: need carry to be empty."
++                ));
++            }
++            self.checked_squash_ciphertext_noise(ct, src_server_key)
++        });
+ 
+         packed.chain(last).collect()
+     }
+```
+
+---
+
+### Incident Patch 3: `9e4bb422` (2026-11-25)
+**Commit Message**: chore: update requests in slab requirements
+
+Co-authored-by: Arthur Meyre <[REDACTED_EMAIL]>
+
+**File**: `ci/slab_send_data_requirements.in` (modified, +1/-1)
+```diff
+@@ -1 +1 @@
+-requests==2.32.4
++requests==2.34.2
+```
+
+**File**: `ci/slab_send_data_requirements.txt` (modified, +3/-3)
+```diff
+@@ -182,9 +182,9 @@ idna==3.20 \
+     --hash=sha256:a7db850025b95ded1eae8a46181a1a6c56c92c96f0e2b005d9ff8dc0210cab44 \
+     --hash=sha256:ab7ae7122974553370f0bdb919e1a960b2cd1bc1ef0276416d896db81c14582c
+     # via requests
+-requests==2.32.4 \
+-    --hash=sha256:27babd3cda2a6d50b30443204ee89830707d396671944c998b5975b031ac2b2c \
+-    --hash=sha256:27d0316682c8a29834d3264820024b62a36942083d52caf2f14c0591336d3422
++requests==2.34.2 \
++    --hash=sha256:2a0d60c172f83ac6ab31e4554906c0f3b3588d37b5cb939b1c061f4907e278e0 \
++    --hash=sha256:f288924cae4e29463698d6d60bc6a4da69c89185ad1e0bcc4104f584e960b9ed
+     # via -r ci/slab_send_data_requirements.in
+ urllib3==2.8.0 \
+     --hash=sha256:0cf3cae568d36aa9576b28dfb35f11328f1cb974ca7647d9475ebb86c75ac6e3 \
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4218** (2026-11-25): chore(deps): bump requests from 2.32.4 to 2.33.0 in /ci (@dependabot[bot])
 - **PR #4217** (2026-11-24): chore(ci): remove ci file not used anymore (@SouchonTheo)
+- **PR #4215** (2026-11-24): HPU bench numbers for v1.9 doc (@pgardratzama)
 - **PR #4214** (2026-11-23): chore: move gpu scripts to dedicated dir with gpu team as codewoners (@IceTDrinker)
 - **PR #4212** (2026-11-23): chore(data-extractor): bump url to 2.5.9 (@nsarlin-zama)
 - **PR #4201** (2026-11-24): fix(zk): handle the identity point in bls12_446 Gt::pairing on the GPU (@pdroalves)
-- **PR #4198** (2026-11-23): Ns/chore/transciphering 2 bits (@nsarlin-zama)
-- **PR #4197** (2026-11-19): fix(ci): use merge commit parent as backward compat base (@SouchonTheo)
 
 ---
 
@@ -3283,59 +2606,87 @@ small) that we should explore later to improve the
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. integer)!: make encrypted rotations behavior consistent
+## X. gpu): support more than 512 radix blocks in partial sum index kernels
 
 **RULE**:
-When implementing operations in `tfhe/src/integer/gpu/server_key/radix/tests_signed/legacy_default_tests.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zama-ai/tfhe-rs. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `backends/tfhe-cuda-backend/cuda/src/integer/multiplication.cuh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zama-ai/tfhe-rs. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `51c20e76`: integer)!: make encrypted rotations behavior consistent. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `eaac04df`: gpu): support more than 512 radix blocks in partial sum index kernels. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tfhe/src/integer/gpu/server_key/radix/tests_signed/legacy_default_tests.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `backends/tfhe-cuda-backend/cuda/src/integer/multiplication.cuh`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-//! `radix_parallel::scalar_add`, which the GPU can reuse.
-//!
-//! The rotations by an encrypted amount also differ: the CPU reduces the amount modulo the
-//! number of bits (see `unchecked_rotate_bits_assign` in `radix_parallel::rotate`), the GPU
-//! only reads its low ⌈log₂(num_bits)⌉ bits, i.e. reduces it modulo the next power of two,
-//! which the rotate tests of this file (unchecked ones included) still model.
-//!
-//! Once all are addressed point the GPU wrappers at the harness tests and the CPU unchecked
-//! tests, and delete this file.
-    nb_tests_for_params, nb_tests_smaller_for_params, panic_if_any_block_is_not_clean_or_trivial,
-    MAX_NB_CTXT, NB_CTXT,
-
-pub(crate) fn legacy_signed_unchecked_rotate_left_test<P, T>(param: P, mut executor: T)
-where
-    P: Into<TestParameters>,
-    T: for<'a> FunctionExecutor<
-        (&'a SignedRadixCiphertext, &'a RadixCiphertext),
-        SignedRadixCiphertext,
-    >,
-{
-    let param = param.into();
-    let nb_tests = nb_tests_for_params(param);
-    let (cks, sks) = KEY_CACHE.get_from_params(param, IntegerKeyKind::Radix);
-    let cks = RadixClientKey::from((cks, NB_CTXT));
-    let sks = Arc::new(sks);
-
-    let mut rng = rand::thread_rng(
+  const uint32_t idx = blockIdx.x * blockDim.x + threadIdx.x;
+  if (idx < num_radix_blocks) {
+    size_t cnt = 0;
+    for (int i = 0; i < num_radix_in_vec; i++) {
+      size_t ct_id = i * num_radix_blocks + idx;
+      if (degrees[ct_id] != 0) {
+        columns[idx][cnt] = ct_id;
+        ++cnt;
+      }
+    columns_counter[idx] = cnt;
+// Runs in a single CUDA block: all message PBS indexes must be assigned
+// (through the shared counter) before the carry ones. Each thread handles the
+// columns threadIdx.x, threadIdx.x + blockDim.x, ... so that more than 1024
+// columns are supported.
+    const uint32_t *const columns_counter, const uint32_t chunk_size,
+    const uint32_t num_radix_blocks) {
+  for (uint32_t base_id = threadIdx.x; base_id < num_radix_blocks;
+       base_id += blockDim.x) {
+    const uint32_t column_len = columns_counter[base_id];
+    uint32_t ct_count = 0;
+    for (uint32_t i = 0; i + chunk_size <= column_len; i += chunk_size) {
+      // those indexes are for message ciphertexts
+      // for message ciphertexts in and out index should be same
+      const uint32_t in_index = columns[base_id][i];
+      new_columns[base_id][ct_count] = in_index;
+      pbs_indexes_out[pbs
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-//! `radix_parallel::scalar_add`, which the GPU can reuse. Once both are addressed point the
-//! GPU wrappers at the harness tests and delete this file.
-    nb_tests_smaller_for_params, panic_if_any_block_is_not_clean_or_trivial, MAX_NB_CTXT, NB_CTXT,
+  const uint32_t idx = threadIdx.x;
+  size_t cnt = 0;
+  for (int i = 0; i < num_radix_in_vec; i++) {
+    size_t ct_id = i * num_radix_blocks + idx;
+    if (degrees[ct_id] != 0) {
+      columns[idx][cnt] = ct_id;
+      ++cnt;
+  columns_counter[idx] = cnt;
+    const uint32_t *const columns_counter, const uint32_t chunk_size) {
+  const uint32_t base_id = threadIdx.x;
+  const uint32_t column_len = columns_counter[base_id];
+
+  uint32_t ct_count = 0;
+  for (uint32_t i = 0; i + chunk_size <= column_len; i += chunk_size) {
+    // those indexes are for message ciphertexts
+    // for message ciphertexts in and out index should be same
+    const uint32_t in_index = columns[base_id][i];
+    new_columns[base_id][ct_count] = in_index;
+    const uint32_t pbs_index = atomicAdd(&counter, 1);
+    pbs_indexes_in[pbs_index] = in_index;
+    pbs_indexes_out[pbs_index] = in_index;
+    lut_indexes[pbs_index] = 0;
+    ++ct_count;
+  }
+  __syncthreads();
+
+  if (base_id > 0) {
+    const uint32_t prev_base_id = base_id - 1;
+    const uint32_t prev_column_len = columns_counter[prev_base_id];
+
+    for (uint32_t i = 0; i + chunk_size <= prev_column_len; i += chunk_size) {
+      // those indexes are for carry ciph
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `51c20e76` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `eaac04df` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

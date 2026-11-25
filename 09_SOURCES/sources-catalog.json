@@ -3283,10 +3283,10 @@
     "repository": "zama-ai/tfhe-rs",
     "platform": "github",
     "sourceUrl": "https://github.com/zama-ai/tfhe-rs",
-    "sourceVersion": "6f718abc",
+    "sourceVersion": "eaac04df",
     "license": "NOASSERTION",
-    "contentHash": "e3ce2c1b786c8edb29147fae84d6aefce7f26aca1fe756cc48ee51bba0e8c7a4",
-    "lastHarvestedAt": "2026-11-24T23:24:55.379Z",
+    "contentHash": "b60be4bec25ba35becccf0d37491c7eb71c5fa80339231fee3e7e82a75d981f2",
+    "lastHarvestedAt": "2026-11-25T12:56:41.005Z",
     "learningId": "learn-github-zama-ai-tfhe-rs"
   },
   "doobidoo-mcp-memory-service": {
@@ -4293,10 +4293,10 @@
     "repository": "Nasiko-Labs/nasiko",
     "platform": "github",
     "sourceUrl": "https://github.com/Nasiko-Labs/nasiko",
-    "sourceVersion": "6bf0ff78",
+    "sourceVersion": "4e2d65d1",
     "license": "NOASSERTION",
-    "contentHash": "1f48d9fe654a4eb312529ccab70afa176ec5e9b4862a3224e42a470192605bcb",
-    "lastHarvestedAt": "2026-11-24T12:27:21.958Z",
+    "contentHash": "32c0888a8d59bf4d49553e58e51a073c85a251db983d00ce1309554116316893",
+    "lastHarvestedAt": "2026-11-25T12:56:31.657Z",
     "learningId": "learn-github-nasiko-labs-nasiko"
   },
   "berty-berty": {
@@ -11565,8 +11565,8 @@
     "sourceUrl": "https://huggingface.co/LiquidAI/LFM3-Audio-2B",
     "sourceVersion": "hf-liquidai-lfm3-audio-2b",
     "license": "Open-Source",
-    "contentHash": "699671e8c539a2389b322a6c5e5654ce419c1ee69f84824ea065fd7cc27483ca",
-    "lastHarvestedAt": "2026-11-21T21:48:54.571Z",
+    "contentHash": "bdd70dbfecb01ebdbbc49bb8eb472750f333250efae7b4bdcd665e41cbb560f1",
+    "lastHarvestedAt": "2026-11-25T12:56:29.186Z",
     "learningId": "learn-huggingface-liquidai-lfm3-audio-2b"
   },
   "mobile-next-mobile-mcp": {

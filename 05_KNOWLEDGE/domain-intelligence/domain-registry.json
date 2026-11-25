@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T12:48:10.845Z",
+  "last_updated": "2026-11-25T12:56:47.354Z",
   "total_records": 2673,
   "domains": {
     "A": {
@@ -10522,8 +10522,8 @@
       "title": "Technical Construction Intelligence: zama-ai/tfhe-rs Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zama-ai-tfhe-rs-technical-construction-intelligence-zama-ai-tfhe-rs-core-invaria.md",
       "repository": "zama-ai/tfhe-rs",
-      "content_hash": "a95b46b2e806e2a1c656013b00bff3183639e5d2e559060cf907d10e6780e2dd",
-      "created_at": "2026-11-24T23:24:55.996Z"
+      "content_hash": "aec89716ea3270db45f126ecdb881c28f92aef5a99f775fb3e297e570a527922",
+      "created_at": "2026-11-25T12:56:41.486Z"
     },
     "domain_intelligence-architecture-intelligence-embassy-rs-embassy-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-embassy-rs-embassy-learnings-core-invariants",
@@ -21651,8 +21651,8 @@
       "title": "Architecture Intelligence: Nasiko-Labs/nasiko Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nasiko-labs-nasiko-architecture-intelligence-nasiko-labs-nasiko-core-invariants.md",
       "repository": "Nasiko-Labs/nasiko",
-      "content_hash": "c92562225e714cddb8aeff3ea5786c75377089b8b3455d9bc239d458fdaa33ed",
-      "created_at": "2026-11-24T12:27:22.427Z"
+      "content_hash": "f529c04c40489b73a0faca324ae56bf91a053511752a37589521db1b6cd05772",
+      "created_at": "2026-11-25T12:56:32.145Z"
     },
     "domain_intelligence-architecture-intelligence-nasiko-labs-nasiko-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-nasiko-labs-nasiko-learnings-core-invariants",
@@ -21660,8 +21660,8 @@
       "title": "Architecture Intelligence: nasiko-labs-nasiko-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nasiko-labs-nasiko-learnings-architecture-intelligence-nasiko-labs-nasiko-learni.md",
       "repository": "nasiko-labs-nasiko-learnings",
-      "content_hash": "c37f237e09cc148e37f8895558e916bac51e3a015325bd7b64451083e85f125d",
-      "created_at": "2026-11-24T12:27:38.696Z"
+      "content_hash": "9c086cdd53762b5f1d35d952aa78959b23c450da56e89f830e0bc6821bce3183",
+      "created_at": "2026-11-25T12:56:45.888Z"
     },
     "domain_intelligence-architecture-intelligence-vi-websocat-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-vi-websocat-core-invariants",
@@ -24781,8 +24781,8 @@
       "title": "Research & Knowledge Intelligence: LiquidAI/LFM3-Audio-2B Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-liquidai-lfm3-audio-2b-research-knowledge-intelligence-liquidai-lfm3-audio-2b.md",
       "repository": "LiquidAI/LFM3-Audio-2B",
-      "content_hash": "be3a4e7c9ccbc15ddb821f26b30d04b04926426afd967b6846c50a584ba27e0c",
-      "created_at": "2026-11-21T21:48:54.797Z"
+      "content_hash": "f42536466960e8961fee2d585033c284efeaf26b92c336cd7feea212c2e6e086",
+      "created_at": "2026-11-25T12:56:29.461Z"
     },
     "domain_intelligence-quality-verification-intelligence-rtk-ai-rtk-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-rtk-ai-rtk-core-invariants",
@@ -24808,8 +24808,8 @@
       "title": "Research & Knowledge Intelligence: hf-liquidai-lfm3-audio-2b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-liquidai-lfm3-audio-2b-learnings-research-knowledge-intelligence-hf-liquidai-.md",
       "repository": "hf-liquidai-lfm3-audio-2b-learnings",
-      "content_hash": "cf9e80693757f7dcea58d10305fc08086e4c8f028eda0b51319ce563ffc658a8",
-      "created_at": "2026-11-21T21:49:11.893Z"
+      "content_hash": "22e0af0390572541d3b74db14046c24b0d171ae76192ae4f0ef1dec77fd82fbd",
+      "created_at": "2026-11-25T12:56:46.530Z"
     },
     "domain_intelligence-search-distribution-intelligence-archivebox-archivebox-core-invariants": {
       "record_id": "domain_intelligence-search-distribution-intelligence-archivebox-archivebox-core-invariants",
@@ -27669,8 +27669,8 @@
       "title": "Technical Construction Intelligence: zama-ai-tfhe-rs-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zama-ai-tfhe-rs-learnings-technical-construction-intelligence-zama-ai-tfhe-rs-le.md",
       "repository": "zama-ai-tfhe-rs-learnings",
-      "content_hash": "50f00c063ce4b1690ca4a84219cd4e187ac077dc9e44a7c287e670dbab2be737",
-      "created_at": "2026-11-24T18:35:07.507Z"
+      "content_hash": "c1dd0c53378d174b40e57649f4b9e88370fe88499ee889e61566818951802d47",
+      "created_at": "2026-11-25T12:56:47.354Z"
     },
     "domain_intelligence-research-knowledge-intelligence-meituan-longcat-longcat-video-avatar-1-6-core-in": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-meituan-longcat-longcat-video-avatar-1-6-core-in",

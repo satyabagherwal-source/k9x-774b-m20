@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T12:27:38.368Z",
+  "timestamp": "2026-11-25T12:56:45.538Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-nasiko-labs-nasiko-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [nasiko-labs-nasiko-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T12:27:38.368Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T12:56:45.538Z`  
 > **Learning ID**: `LEARN-EVO-nasiko-labs-nasiko-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nasiko-labs-nasiko-learnings.md`  
 > **Source**: github ([https://github.com/Nasiko-Labs/nasiko](https://github.com/Nasiko-Labs/nasiko))  
-> **Source Version**: `6bf0ff78`  
+> **Source Version**: `4e2d65d1`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T12:27:20.759Z  
+> **Timestamp**: 2026-11-25T12:56:30.415Z  
 > **Learning ID**: `learn-github-nasiko-labs-nasiko`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nasiko-labs-nasiko-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Nasiko-Labs/nasiko](https://github.com/Nasiko-Labs/nasiko))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T12:27:20.582Z  
+> **Harvest Timestamp**: 2026-11-25T12:56:30.410Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: The Open Runtime for AI Agents
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 11935 stars
+- **Stars / Engagement**: 11932 stars
 
 ---
 
@@ -2276,977 +2276,441 @@ class _Operation:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6bf0ff78` (2026-11-23)
-**Commit Message**: Merge pull request #1100 from Nasiko-Labs/dependabot/npm_and_yarn/ui/npm_and_yarn-9cba24dc92
+### Incident Patch 1: `7a17ab31` (2026-11-24)
+**Commit Message**: fix(mcp-gateway): uploaded MCP servers can't redirect the gateway off their origin (NAS-1770)
 
-chore(deps): bump the npm_and_yarn group across 1 directory with 2 updates
+Connectors built from an uploaded MCP server are `trusted` and were sent
+through the platform's shared client: no resolver guard (their address is
+internal) and reqwest's default policy of following up to 10 redirects. The
+server's code is a member's, so it could answer 302 Location:
+http://10.x.x.x/... and the gateway would follow it inside the cluster,
+past the network separation uploads run under.
+
+- Trusted backends get their own client, `net::trusted_http_client`: it
+  still resolves internal names, but follows a redirect only to the same
+  origin (so `/mcp` to `/mcp/` keeps working) and at most 5 times.
+- Connector verification uses the gateway's own provider, so it sends
+  with the same clients a real call does.
+- `is_blocked_ip` also blocks 0/8, 192.0.0/24, 198.18/15, IPv4 multicast,
+  240/4, and NAT64 (64:ff9b::/96) addresses that embed a blocked IPv4.
+
+Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
 [synced-from-private]
 
-**File**: `.sync-marker` (modified, +1/-1)
+**File**: `mcp-gateway/src/credentials.rs` (modified, +8/-4)
 ```diff
-@@ -1 +1 @@
--a3e2a0a6ca48417a8c9f85c14881221bdec29632
-+6a3fb0fda44fea83debfc235d9859367a0bb312d
+@@ -15,7 +15,6 @@ use uuid::Uuid;
+ 
+ use crate::error::{McpError, Result};
+ use crate::oauth;
+-use crate::provider::GenericMcpProvider;
+ use crate::provider::generic::LIST_TIMEOUT;
+ use crate::repo::{self, McpConnector, McpUserConnection};
+ use crate::state::McpState;
+@@ -238,9 +237,14 @@ pub async fn verify_connector_live(
+         }
+     };
+ 
+-    let provider =
+-        GenericMcpProvider::new(state.guarded_http_client.clone(), state.http_client.clone());
+-    match provider.list_tools(&cfg, LIST_TIMEOUT, None).await {
++    // The same clients a real call uses: guarded for a member's URL, and for an uploaded
++    // server, one that follows no redirect off its own origin.
++    match state
++        .providers
++        .mcp
++        .list_tools(&cfg, LIST_TIMEOUT, None)
++        .await
++    {
+         Ok(_) => VerifyOutcome {
+             verified: true,
+             error: None,
+```
+
+**File**: `mcp-gateway/src/net.rs` (modified, +333/-2)
+```diff
+@@ -34,7 +34,7 @@
+ //! `CreateConnector` body, or any CLI argument) — see
+ //! `provider/generic.rs::GenericMcpProvider`.
+ 
+-use std::net::{IpAddr, SocketAddr};
++use std::net::{IpAddr, Ipv4Addr, SocketAddr};
+ use std::sync::Arc;
+ 
+ use reqwest::dns::{Addrs, Name, Resolve, Resolving};
+@@ -90,6 +90,7 @@ impl Resolve for GuardedResolver {
+ pub fn guarded_http_client() -> reqwest::Client {
+     reqwest::Client::builder()
+         .dns_resolver(Arc::new(GuardedResolver))
++        .redirect(guarded_redirect_policy())
+         .build()
+         .expect("failed to build SSRF-guarded reqwest client")
+ }
+@@ -102,11 +103,172 @@ pub fn guarded_http_client() -> reqwest::Client {
+ pub fn guarded_http_client_no_reuse() -> reqwest::Client {
+     reqwest::Client::builder()
+         .dns_resolver(Arc::new(GuardedResolver))
++        .redirect(guarded_redirect_policy())
+         .pool_max_idle_per_host(0)
+         .build()
+         .expect("failed to build SSRF-guarded reqwest client")
+ }
+ 
++/// Client for uploaded-build MCP servers (`trusted` connectors). The platform
++/// deployed them and resolved their address, which may be internal, so the
++/// resolver is not guarded. Their code is a member's, though, so a redirect is
++/// followed only within the same origin (`/mcp` to `/mcp/`): a `302` to any
++/// other host, `http://10.0.0.5/` or the metadata server, is refused (NAS-1770).
++pub fn trusted_http_client() -> reqwest::Client {
++    reqwest::Client::builder()
++        .redirect(same_origin_redirect_policy())
++        .build()
++        .expect("failed to build the trusted MCP backend client")
++}
++
++/// The most redirects a guarded request follows (reqwest's default is 10).
++const MAX_GUARDED_REDIRECTS: usize = 5;
++
++/// Follow a redirect only to the origin (scheme, host and port) of the hop before it.
++fn same_origin_redirect_policy() -> reqwest::redirect::Policy {
++    reqwest::redirect::Policy::custom(|attempt| {
++        if attempt.previous().len() >= MAX_GUARDED_REDIRECTS {
++            return attempt.error("too many redirects");
++        }
++        let same_origin = attempt
++            .previous()
++            .last()
++            .is_some_and(|previous| previous.origin() == attempt.url().origin());
++        if same_origin {
++            attempt.follow()
++        } else {
++            attempt.error("refused a redirect to another origin")
++        }
++    })
++}
++
++/// Every redirect hop of a guarded request is checked before it is followed.
++///
++/// [`GuardedResolver`] only sees hostnames. A hop to an IP literal
++/// (`http://169.254.169.254/...`, the cloud metadata server) needs no DNS, so
++/// before this a public URL that answered `302 Location: http://169.254.169.254/`
++/// took the request straight to the metadata server, with the connector's own
++/// headers, and the gateway returned the body to the member.
++///
++/// A hop is followed only if it is `http(s)`, not `localhost`, not an IP
++/// literal in a blocked range, and not a downgrade from `https` to `http`.
++/// A hop to a hostname is then checked by [`GuardedResolver`] when it connects.
++fn guarded_redirect_policy() -> reqwest::redirect::Policy {
++    reqwest::redirect::Policy::custom(|attempt| {
++        if attempt.previous().len() >= MAX_GUARDED_REDIRECTS {
++            return attempt.error("too many redirects");
++        }
++        let from_https = attempt
++            .previous()
++            .last()
++            .is_some_and(|previous| previous.scheme() == "https");
++        if from_https && attempt.url().scheme() == "http" {
++            return attempt.error("refused a redirect from https to http");
++        }
++        match redirect_hop_refusal(attempt.url()) {
++            Some(why) => attempt.error(why),
++            None => attempt.follow(),
++        }
++    })
++}
++
++/// Why a guarded request may not follow a redirect to `url`, if it may not.
++fn redirect_hop_refusal(url: &reqwest::Url) -> Option<String> {
++    target_refusal(url).map(|why| format!("refused a redirect to {why}"))
++}
++
++/// Why the gateway may not send a request to `url`, if it may not: what
++/// [`GuardedResolver`] can't see. A hostname is resolved, and checked, when the
++/// request connects; an IP literal or `localhost` never is.
++fn target_refusal(url: &reqwest::Url) -> Option<String> {
++    if !matches!(url.scheme(), "http" | "https") {
++        return Some(format!("a '{}' URL", url.scheme()));
++    }
++    if private_urls_allowed() {
++        return None;
++    }
++    let Some(host) = url.host_str() else {
++        return Some("a URL with no host".to_string());
++    };
++    let lower = host.to_ascii_lowercase();
++    if lower == "localhost" || lower.ends_with(".localhost") {
++        return Some("a loopback address".to_string());
++    }
++    // `host_str` keeps an IPv6 literal's brackets.
++    let literal = lower.trim_start_matches('[').trim_end_matches(']');
++    match literal.parse::<IpAddr>() {
++        Ok(ip) if is_blocked_ip(ip) => Some("a private or internal address".to_str
+```
+
+**File**: `mcp-gateway/src/provider/mod.rs` (modified, +11/-7)
+```diff
+@@ -233,15 +233,19 @@ impl Providers {
+         // so it uses an SSRF/DNS-rebinding-guarded client (rejects private/internal
+         // targets at resolution time) rather than the platform's shared client,
+         // which must still reach internal hosts. The Composio session URL it also
+-        // calls is public, so the guard is transparent there. `http` (the
+-        // platform's own client, already passed in for the Composio provider
+-        // above) is reused as the `plain` client for `trusted == true` backends —
+-        // i.e. uploaded-build MCP-server connectors, whose address the platform
+-        // itself resolved, not a user. Only Composio keeps a connection pool.
++        // calls is public, so the guard is transparent there. `trusted == true`
++        // backends — uploaded-build MCP-server connectors, whose address the
++        // platform itself resolved, not a user — get `trusted_http_client`, which
++        // may reach internal hosts but follows no redirect off the server's own
++        // origin, since the server's code is a member's. Only Composio keeps a
++        // connection pool.
+         Self {
+             composio,
+-            mcp: GenericMcpProvider::new(crate::net::guarded_http_client_no_reuse(), http)
+-                .with_composio_client(crate::net::guarded_http_client()),
++            mcp: GenericMcpProvider::new(
++                crate::net::guarded_http_client_no_reuse(),
++                crate::net::trusted_http_client(),
++            )
++            .with_composio_client(crate::net::guarded_http_client()),
+         }
+     }
+ 
 ```
 
 ---
 
-### Incident Patch 2: `8365bc89` (2026-11-19)
-**Commit Message**: Merge branch 'main' into dependabot/npm_and_yarn/ui/npm_and_yarn-9cba24dc92
+### Incident Patch 2: `c8ed3886` (2026-11-24)
+**Commit Message**: Merge pull request #1190 from Nasiko-Labs/fix/seed-agent-stale-failed-status
+
+Mark a running seed agent running again when an earlier seed left it failed
 [synced-from-private]
 
-**File**: `mcp-gateway/src/protocol.rs` (modified, +149/-29)
+**File**: `server/src/seed.rs` (modified, +61/-0)
 ```diff
-@@ -2157,31 +2157,32 @@ fn connector_disabled(
-         .unwrap_or(false)
- }
+@@ -145,6 +145,9 @@ pub async fn seed_agents_if_configured(state: &AppState) {
+         };
  
--/// Unwrap a `COMPOSIO_MULTI_EXECUTE_TOOL` response back to a normal tool
--/// response the agent expects.
--///
--/// MULTI_EXECUTE returns:
--/// ```json
--/// { "jsonrpc": "2.0", "id": 1, "result": {
--///     "content": [{ "type": "text", "text": "[{\"data\": {...}, ...}]" }]
--/// }}
--/// ```
--///
--/// We extract the inner JSON from the first `content[].text` entry and return
--/// it as a standard `result.content[].text` with the unwrapped payload.
-+/// Follows a preview of a result Composio found too large to send inline. The full copy it keeps
-+/// is a file in its own sandbox, which the agent cannot open, so asking for less is the only way
-+/// to all of it.
-+const PARTIAL_RESULT_NOTE: &str = "Partial result: the full output was too large to return, so \
-+    this is only a preview of it. Ask for less (fewer items, a narrower time range, or without \
-+    full message bodies) to get everything.";
-+
-+/// Stands in for a result Composio found too large to send inline and sent no preview of.
-+const TOO_LARGE_RESULT_NOTE: &str = "The output was too large to return. Ask for less (fewer \
-+    items, a narrower time range, or without full message bodies).";
-+
- /// Unwrap a `COMPOSIO_MULTI_EXECUTE_TOOL` response back to the clean tool
- /// result the agent expects.
- ///
- /// MULTI_EXECUTE returns:
- /// ```text
- /// result.content[0].text = JSON string of {
--///   "data": { "results": [{ "response": { "successful": bool, "data": {…} }, … }] },
-+///   "data": { "results": [{ "response": { "successful": bool, "data": {…} }, … }],
-+///             "remote_file_info": {…} only when the output was too large to send inline },
- ///   "successful": bool
- /// }
- /// ```
- ///
- /// We extract `data.results[0].response.data` (the actual tool output) and
--/// return it as a clean `result.content[0].text`.
-+/// return it as a clean `result.content[0].text`. An output too large to send
-+/// inline comes as `response.data_preview` instead: see [`successful_output`].
- fn unwrap_multi_execute_response(response: Value) -> Value {
-     let text = response
-         .get("result")
-@@ -2207,7 +2208,7 @@ fn unwrap_multi_execute_response(response: Value) -> Value {
-         .and_then(|r| r.as_array())
-         .and_then(|arr| arr.first());
- 
--    let inner_text = match first_result {
-+    let parts: Vec<String> = match first_result {
-         Some(result) => {
-             let tool_response = result.get("response");
-             let successful = tool_response
-@@ -2216,12 +2217,7 @@ fn unwrap_multi_execute_response(response: Value) -> Value {
-                 .unwrap_or(false);
- 
-             if successful {
--                // Success: return response.data (the actual tool output).
--                let data = tool_response
--                    .and_then(|r| r.get("data"))
--                    .cloned()
--                    .unwrap_or(json!({"success": true}));
--                serde_json::to_string(&data).unwrap_or_else(|_| text.to_string())
-+                successful_output(result, &parsed)
-             } else {
-                 // Failure: return a clean error message.
-                 let error = result
-@@ -2234,23 +2230,59 @@ fn unwrap_multi_execute_response(response: Value) -> Value {
-                             .and_then(|m| m.as_str())
-                     })
-                     .unwrap_or("tool execution failed");
--                serde_json::to_string(&json!({"error": error})).unwrap_or_else(|_| text.to_string())
-+                vec![
-+                    serde_json::to_string(&json!({"error": error}))
-+                        .unwrap_or_else(|_| text.to_string()),
-+                ]
-             }
+         if !needs_deploy {
++            if let Some(agent) = &existing {
++                repair_stale_status(&state.db, agent, &agent_name).await;
++            }
+             info!(agent = %agent_name, "seed agent already running, skipping");
+             continue;
          }
--        None => text.to_string(),
-+        None => vec![text.to_string()],
+@@ -509,6 +512,9 @@ async fn seed_internal_agent_now(state: &AppState, seed: InternalAgentSeed) {
+         }
      };
- 
-     // Rebuild as a standard MCP tool response.
-+    let content: Vec<Value> = parts
-+        .into_iter()
-+        .map(|text| json!({ "type": "text", "text": text }))
-+        .collect();
-     let mut out = response.clone();
--    out["result"] = json!({
--        "content": [{
--            "type": "text",
--            "text": inner_text
--        }]
--    });
-+    out["result"] = json!({ "content": content });
-     out
+     if !needs_deploy {
++        if let Some(agent) = &existing {
++            repair_stale_status(&state.db, agent, &agent_name).await;
++        }
+         info!(agent = %agent_name, "internal agent already running, skipping");
+         return;
+     }
+@@ -651,6 +657,44 @@ async fn deploy_internal_agent(
+     Ok(())
  }
  
-+/// A successful tool's output, as content parts: `response.data`; or, when Composio found the
-+/// output too large to send inline, its `response.data_preview` followed by a note that it is
-+/// partial; or only that note when it sent no preview either. Composio's pointer to the full copy
-+/// (`remote_file_info`, a file in its sandbox) is not passed on: the agent cannot open it.
-+fn successful_output(result: &Value, envelope: &Value) -> Vec<String> {
-+    let tool_response = result.get("response");
-+    if let Some(data) = tool_response.and_then(|r| r.get("data")) {
-+        return vec![data.to_string()];
++/// Statuses a seed leaves behind when its deploy failed or was cut short. The resolver routes only
++/// `running` and `parked` agents, so a row left at one of these refuses every call (503) however
++/// healthy its workload is.
++const STALE_SEED_STATUSES: [&str; 2] = ["failed", "deploying"];
++
++fn is_stale_seed_status(status: &str) -> bool {
++    STALE_SEED_STATUSES.contains(&status)
++}
++
++/// Marks a platform agent whose workload the runtime reports running `running` again when an
++/// earlier seed left its row `failed` or `deploying`. A deploy judged failed mid-rollout (the old
++/// pod still showing a pull error) leaves the row `failed` after the rollout completes; the seed
++/// then skips the unchanged, running agent on every boot, so nothing else would repair it. Guarded
++/// on the status, so a row that moved on meanwhile is not overwritten.
++async fn repair_stale_status(db: &sqlx::PgPool, agent: &Agent, agent_name: &str) {
++    if !is_stale_seed_status(&agent.status) {
++        return;
 +    }
-+    let tool = result
-+        .get("tool_slug")
-+        .and_then(Value::as_str)
-+        .unwrap_or_default();
-+    if l
-```
-
-**File**: `orchestrator/src/maf/executor.rs` (modified, +75/-0)
-```diff
-@@ -1,5 +1,6 @@
- use crate::outbound::OutboundPrefix;
- use crate::target::{AgentTargetResolver, ForwardTarget, ResolveCaller, ResolveFailure};
-+use nasiko_types::agent_clock::AgentClock;
- use std::sync::Arc;
- use std::time::Instant;
- 
-@@ -485,6 +486,7 @@ pub async fn run_maf(
-     llm: &LlmClient,
-     content: Option<&str>,
-     outbound: &dyn OutboundPrefix,
-+    clock: AgentClock,
- ) -> Result<StepOutcome, RunError> {
-     // A MAF run is driven by a background worker, not a request, so there is
-     // no inbound traceparent to continue — this span is legitimately a root.
-@@ -518,6 +520,7 @@ pub async fn run_maf(
-         llm,
-         content,
-         outbound,
-+        clock,
-     )
-     .instrument(span)
-     .await
-@@ -536,6 +539,7 @@ async fn run_maf_inner(
-     llm: &LlmClient,
-     content: Option<&str>,
-     outbound: &dyn OutboundPrefix,
-+    clock: AgentClock,
- ) -> Result<StepOutcome, RunError> {
-     // Resolved ONCE for the whole execution, not per step: a run is one unit of work, and a
-     // change landing between step 2 and step 3 would otherwise leave a single execution governed
-@@ -645,6 +649,7 @@ async fn run_maf_inner(
-             &mut total_cost,
-             llm,
-             outbound_prefix.as_deref(),
-+            clock,
-         )
-         .await
-         {
-@@ -742,6 +747,7 @@ pub async fn run_maf_from(
-     resume_context_id: String,
-     injected_answer: String,
-     outbound: &dyn OutboundPrefix,
-+    clock: AgentClock,
- ) -> Result<StepOutcome, RunError> {
-     // Re-resolved on resume rather than carried across the pause. A paused execution can sit for
-     // days, and the steps that run after a human answers should run under the policy in force
-@@ -841,6 +847,7 @@ pub async fn run_maf_from(
-             &mut total_cost,
-             llm,
-             outbound_prefix.as_deref(),
-+            clock,
-         )
-         .await
-         {
-@@ -928,6 +935,8 @@ pub async fn execute_step(
-     total_cost: &mut f64,
-     llm: &LlmClient,
-     outbound_prefix: Option<&str>,
-+    // The current date and time, sent with the step's message after `outbound_prefix`.
-+    clock: AgentClock,
- ) -> StepLoopOutcome {
-     step_results[i].status = "running".to_string();
-     persist_progress(db, execution_id, step_results, *total_tokens, *total_cost).await;
-@@ -1162,6 +1171,7 @@ pub async fn execute_step(
-                 &user_id.to_string(),
-                 &actual_prompt,
-                 outbound_prefix,
-+                clock,
-                 &traceparent,
-             ),
-         ),
-@@ -2488,6 +2498,9 @@ async fn call_agent(
-     // caller). Same representation `a2a_dispatch.rs`/`agent_proxy.rs`/`tool.rs` use for the exact
-     // same reason: a second, independently-addressable part rather than a merged string.
-     outbound_prefix: Option<&str>,
-+    // The current date and time, its own part after the policy. A new step's message only: the
-+    // human's answer on a resume (`call_agent_continuation`) goes out alone, like the policy.
-+    clock: AgentClock,
-     traceparent: &str,
- ) -> Result<AgentCallOutcome, AgentCallError> {
-     let target = AgentCallTarget {
-@@ -2496,8 +2509,10 @@ async fn call_agent(
-         user_id,
-         traceparent,
-     };
-+    let now = clock.note();
-     let mut texts = vec![prompt];
-     texts.extend(outbound_prefix);
-+    texts.extend(now.as_deref());
-     let started = Instant::now();
- 
-     for dialect in [Dialect::Proto, Dialect::JsonRpc] {
-@@ -3178,6 +3193,7 @@ mod resume_tests {
-             "ctx-1".into(),
-             "the human's answer".into(),
-             &crate::outbound::NoOutboundPrefix,
-+            AgentClock::OFF,
-         )
-         .await;
- 
-@@ -3380,6 +3396,38 @@ mod resume_tests {
-             "user-1",
-             "do the thing",
-             Some("POLICY"),
-+            AgentClock::OFF,
-+            "00-trace-span-01",
-+        )
-+        .await;
-+
-+        mock.assert_async().await;
-+        assert!(matches!(result, Ok(AgentCallOutcome::Completed(_))));
-+    }
-+
-+    /// The current date and time follows the policy as its own part. The step's prompt stays the
-+    /// first part, unchanged: it is what `step_results[i].prompt` records.
-+    #[tokio::test]
-+    async fn call_agent_tells_the_time_after_the_policy() {
-+        let mut server = mockito::Server::new_async().await;
-+        let mock = server
-+            .mock("POST", "/jsonrpc")
-+            .match_request(|request| tells_the_time_after(request, "do the thing"))
-+            .with_status(200)
-+            .with_body(completed_agent_response())
-+            .create_async()
-+            .await;
-+
-+        let client = reqwest::Client::new();
-+        let result = call_agent(
-+            &client,
-+            &ForwardTarget::from(server.url()),
-+            None,
-+            "ctx-1",
-+            "user-1",
-+            "do the thing",
-+            Some("POLICY"),
-+            AgentClock::ON,
-             "00-trace-span-01",
-         )
-         .await;
-@@ -34
-```
-
-**File**: `orchestrator/src/maf/worker.rs` (modified, +1/-0)
-```diff
-@@ -601,6 +601,7 @@ async fn process_job(
-         agent_calls: &agent_calls.meter,
-         targets: agent_calls.targets.as_ref(),
-         outbound: agent_calls.outbound.as_ref(),
-+        clock: agent_calls.clock,
-         db,
-         flow_guard,
-         llm: &owner_llm,
-```
-
-**File**: `server/.env.example` (modified, +9/-1)
-```diff
-@@ -89,7 +89,7 @@ SEED_AGENTS=
- # Starter workflows installed after the seed agents, as public workflows every
- # user can run (server/src/seed_workflows.rs). Space-separated template
- # ids; each one's agents must be in SEED_AGENTS or it is skipped.
--# SEED_WORKFLOWS="chief-of-staff-follow-up inbox-morning-brief voice-of-customer-roadmap"
-+# SEED_WORKFLOWS="inbox-morning-brief monthly-work-recap"
- # SEED_IMAGE_PLATFORM=linux/amd64        # os/arch copied from multi-platform seed images
- # SEED_FORCE_PULL=                       # (unset) set to any value to re-pull seed images
- 
-@@ -322,6 +322,14 @@ S3_REGION=us-east-1
- # NASIKO_FLOW_TIMEOUT_SECS. Accepts the former name ROUTER_AGENT_TIMEOUT_SECS.
- # AGENT_CALL_TIMEOUT_SECS=600
- 
-+# Tell agents the current date and time: every new message the platform hands
-+# an agent (chat, the orchestrator's calls, workflow steps, agent-to-agent
-+# calls) carries "Current date and time: ... UTC" as its own text part, after
-+# the message's own text, so "today" or "the last 24 hours" resolve to real
-+# dates. A human's answer to a paused task gets nothing. Off sends agent
-+# messages exactly as before.
-+# AGENT_CONTEXT_CURRENT_TIME=true
-+
- # ═══════════════════════════════════════════════════════════════════════════
- # 10) HUMAN-IN-THE-LOOP
- # ═══════════════════════════════════════════════════════════════════════════
-```
-
-**File**: `server/src/router/a2a_dispatch.rs` (modified, +16/-0)
-```diff
-@@ -789,6 +789,7 @@ pub(crate) async fn orchestrator_stream(
-         preamble,
-         outbound_prefix: org_context,
-         attachment_note: None,
-+        clock: state.agent_clock(),
-         // IP-3. Read here rather than defaulted, because `ContextConfig::default()` is
-         // deliberately inert — without this the compressor is compiled in but unreachable.
-         context: nasiko_react_agent::ContextConfig {
-@@ -1501,6 +1502,19 @@ fn append_org_policy_part(req: &mut JsonRpcRequest, org_context: Option<&str>) {
-     let _ = nasiko_agent_proxy::context_part::append_context_part(message, org, tagging);
- }
- 
-+/// Appends the current date and time as its own part, after organization policy, on the same
-+/// terms the agent proxy does (`crate::current_time`). Every request this path builds opens a
-+/// task, so none is a continuation.
-+fn append_current_time_part(
-+    req: &mut JsonRpcRequest,
-+    clock: nasiko_types::agent_clock::AgentClock,
-+) {
-+    let tagging = nasiko_agent_proxy::context_part::tagging_for_method(&req.method);
-+    if let Some(message) = req.params.as_mut().and_then(|p| p.get_mut("message")) {
-+        crate::current_time::append_current_time(message, clock, tagging);
++    match sqlx::query(
++        "UPDATE agents SET status = 'running', updated_at = now() \
++         WHERE id = $1 AND status = ANY($2)",
++    )
++    .bind(agent.id)
++    .bind(&STALE_SEED_STATUSES[..])
++    .execute(db)
++    .await
++    {
++        Ok(done) if done.rows_affected() > 0 => {
++            warn!(agent = %agent_name, stale = %agent.status,
++                "seed agent's workload is running but its row was not; marked running")
++        }
++        Ok(_) => {}
++        Err(e) => {
++            warn!(agent = %agent_name, error = %e, "repairing a stale seed agent status failed")
++        }
 +    }
 +}
 +
- /// Orchestrator tool names of the agents whose Token optimization switch is off.
- async fn opted_out_agent_tools(
-     db: &sqlx::PgPool,
-@@ -1743,6 +1757,7 @@ async fn agent_stream(
-     };
-     append_attachment_note(&mut req_body, attachment_note.as_deref());
-     append_org_policy_part(&mut req_body, org_context);
-+    append_current_time_part(&mut req_body, state.agent_clock());
- 
-     // No per-request MCP credential: the agent authenticates to /api/mcp with
-     // its own deploy-time MCP_GATEWAY_TOKEN; the forwarded traceparent + the
-@@ -2070,6 +2085,7 @@ async fn agent_stream(
-             );
-             append_attachment_note(&mut retry_body, attachment_note.as_deref());
-             append_org_policy_part(&mut retry_body, org_context);
-+            append_current_time_part(&mut retry_body, state.agent_clock());
-             let retry = build_agent_req()
-                 .json(&retry_body)
-                 .send()
-```
-
-**File**: `server/src/seed_workflows.rs` (modified, +58/-98)
-```diff
-@@ -53,121 +53,81 @@ pub struct TemplateStep {
- /// Every template this server knows. Ids must be unique.
- pub const TEMPLATES: &[WorkflowTemplate] = &[
-     // Showcase workflows: a run needs no input (the dashboard's Run sends none). Each first step
--    // either reads the running user's own app (a connect card the first time, see the agents'
--    // connected-apps support) or carries its own sample data, and its description says which.
-+    // reads the running user's own apps, with a connect card the first time for each app not yet
-+    // connected; the description names the apps.
-     WorkflowTemplate {
--        id: "chief-of-staff-follow-up",
-+        id: "inbox-morning-brief",
-         version: 2,
--        name: "Chief of Staff: Meeting Follow-up",
--        description: "Reads your latest meeting notes from Google Drive and turns them into \
--                      decisions, owners and a ready-to-send follow-up email. Asks you to \
--                      connect Google Drive the first time.",
-+        name: "Inbox Morning Brief",
-+        description: "Reads the last 30 days of your Gmail, Google Calendar and Linear, \
-+                      and turns them into what to do now: meetings to prepare for or follow \
-+                      up, emails that still need a reply, and your top priorities. Asks you \
-+                      to connect each app the first time.",
-         steps: &[
-             TemplateStep {
--                agent: "meeting-notes-processor",
--                agent_version: "1.1.1",
--                task: "Process my latest meeting notes from Google Drive: pull out the \
--                       decisions, the action items with owner and due date, and the open \
--                       questions.",
--            },
--            TemplateStep {
--                agent: "task-breakdown",
--                agent_version: "1.1.1",
--                task: "Turn the action items into an ordered task list, keeping each \
--                       owner and due date, and flag anything due this week as urgent.",
--            },
--            TemplateStep {
--                agent: "reply-drafter",
--                agent_version: "1.1.1",
--                task: "Draft the follow-up email the meeting organiser sends to the \
--                       attendees: thank them, confirm the decisions, and list each task \
--                       with its owner and due date. It goes out by email.",
-+                agent: "scout",
-+                agent_version: "1.0.0",
-+                // The time ranges are spelled out so the search does not depend on the model
-+                // working out "today" on its own; Scout also gets the current date with the step.
-+                task: "Gather my material from the last 30 days: the emails I received \
-+                       in Gmail (Gmail search: newer_than:30d), my meetings in Google \
-+                       Calendar from the last 30 days and today, and my Linear issues \
-+                       assigned to me that changed in the last 30 days, with their status, \
-+                       priority and due date.",
-             },
-             TemplateStep {
--                agent: "humanizer",
--                agent_version: "1.1.1",
--                task: "Rewrite the email so it reads warm and natural, without changing \
--                       any decision, owner or date.",
-+                agent: "distiller",
-+                agent_version: "1.0.0",
-+                task: "From that material, tell me what to do now, with these sections: \
-+                       Meetings (today's first, with what to prepare; then follow-ups from \
-+                       recent meetings), Needs a reply (who, about what, since when), Top \
-+                       priorities (open Linear issues by priority and due date), Everything \
-+                       else (one line each). Order each section by urgency, and say plainly \
-+                       when a source had nothing.",
-             },
-         ],
-     },
-     WorkflowTemplate {
--        id: "voice-of-customer-roadmap",
-+        id: "monthly-work-recap",
-         version: 1,
--        name: "Voice of Customer \u{2192} Roadmap",
--        description: "Turns raw customer feedback into ranked themes, roadmap tasks and \
--                      a reply to the customer in their own language. Runs on built-in \
--                      sample feedback.",
-+        name: "Monthly Work Recap",
-+        description: "Gathers your last 30 days from GitHub, Linear, Gmail and Google \
-+                      Drive, turns it into a monthly update (done, impact, in progress, \
-+                      backlog, risks), saves it as a Gmail draft for your manager and sends \
-+                      you a short version on Slack. Asks you to connect each app the first \
-+                      time.",
-         steps: &[
-             TemplateStep {
--                agent: "summarizer",
--                agent_version: "1.1.1",
--                
-```
-
-**File**: `server/tests/attachments_dispatch.rs` (modified, +8/-1)
-```diff
-@@ -837,7 +837,14 @@ async fn a_turn_without_files_gets_no_attachment_line() {
- 
-     let (status, body) = send_turn(&server, &user, Some(agent_id), &sid, &[], vec![]).await;
-     assert_eq!(status, 200, "{body}");
--    assert_eq!(text_parts_seen(&agent).len(), 1);
-+    // Only the user's text, besides the current time the platform tells every agent.
-+    let texts = text_parts_seen(&agent);
-+    let own: Vec<&String> = texts
-+        .iter()
-+        .filter(|t| !t.starts_with(nasiko_types::agent_clock::NOTE_LEAD))
-+        .collect();
-+    assert_eq!(own.len(), 1, "{texts:?}");
-+    assert!(!own[0].contains("nasiko-file://"), "{texts:?}");
- 
-     server.cleanup().await;
+ /// Keeps a platform agent (a seed or an internal agent) `resident`: it always runs. Written on
+ /// every seed, so a row created while new agents defaulted to `auto` is resident too. A failed
+ /// write is logged and the seed goes on; the agent's next seed tries again.
+@@ -1200,6 +1244,23 @@ mod unmatched_settings_tests {
+     }
  }
-```
-
-**File**: `server/tests/maf_step_flow_retry.rs` (modified, +1/-0)
-```diff
-@@ -233,6 +233,7 @@ impl MafRun {
-             agent_calls: &self.meter,
-             targets: &targets,
-             outbound: &nasiko_orchestrator::outbound::NoOutboundPrefix,
-+            clock: nasiko_types::agent_clock::AgentClock::OFF,
-             db,
-             flow_guard: &self.flow_guard,
-             llm: &self.llm,
+ 
++#[cfg(test)]
++mod stale_status_tests {
++    use super::is_stale_seed_status;
++
++    #[test]
++    fn only_a_failed_or_unfinished_deploy_is_repaired_once_the_workload_runs() {
++        for status in ["failed", "deploying"] {
++            assert!(is_stale_seed_status(status), "{status}");
++        }
++        // `parked` is never woken by a seed; `stopped` and `crashed` belong to the operator
++        // and the crash guardian; `running` needs nothing.
++        for status in ["running", "parked", "stopped", "crashed", "registered"] {
++            assert!(!is_stale_seed_status(status), "{status}");
++        }
++    }
++}
++
+ #[cfg(test)]
+ mod extract_name_tests {
+     use super::extract_name;
 ```
 
 ---
 
-### Incident Patch 3: `679ddc15` (2026-11-17)
-**Commit Message**: Merge branch 'main' into dependabot/npm_and_yarn/ui/npm_and_yarn-9cba24dc92
+### Incident Patch 3: `29ce89ff` (2026-11-25)
+**Commit Message**: Merge pull request #1192 from Nasiko-Labs/fix/mcp-gateway-ssrf-redirect
+
+fix(mcp-gateway): never follow a redirect or OAuth endpoint to an internal address (NAS-1770)
 [synced-from-private]
 
-**File**: `mcp-gateway/src/protocol.rs` (modified, +29/-149)
+**File**: `mcp-gateway/src/connectors.rs` (modified, +14/-0)
 ```diff
-@@ -2157,32 +2157,31 @@ fn connector_disabled(
-         .unwrap_or(false)
- }
+@@ -368,6 +368,13 @@ pub async fn register_connector(
+         ));
+     }
+     crate::net::validate_public_url(&input.url).await?;
++    crate::net::validate_connector_headers(
++        input
++            .headers
++            .iter()
++            .flat_map(|h| h.keys().map(String::as_str))
++            .chain(input.credential_header_name.as_deref()),
++    )?;
+     // Same normalisation the SQL applies, so the returned row matches storage.
+     let oauth_scopes = input
+         .oauth_scopes
+@@ -595,6 +602,13 @@ pub async fn update_connector(
+     if let Some(url) = &input.url {
+         crate::net::validate_public_url(url).await?;
+     }
++    crate::net::validate_connector_headers(
++        input
++            .headers
++            .iter()
++            .flat_map(|h| h.keys().map(String::as_str))
++            .chain(input.credential_header_name.as_deref()),
++    )?;
+     // Name-collision check within the owner's scope.
+     let owner = connector.owner_id.unwrap_or(caller);
+     if let Some(name) = &input.name
+```
+
+**File**: `mcp-gateway/src/oauth.rs` (modified, +12/-0)
+```diff
+@@ -221,6 +221,9 @@ impl RefreshRequest<'_> {
+     }
  
--/// Follows a preview of a result Composio found too large to send inline. The full copy it keeps
--/// is a file in its own sandbox, which the agent cannot open, so asking for less is the only way
--/// to all of it.
--const PARTIAL_RESULT_NOTE: &str = "Partial result: the full output was too large to return, so \
--    this is only a preview of it. Ask for less (fewer items, a narrower time range, or without \
--    full message bodies) to get everything.";
--
--/// Stands in for a result Composio found too large to send inline and sent no preview of.
--const TOO_LARGE_RESULT_NOTE: &str = "The output was too large to return. Ask for less (fewer \
--    items, a narrower time range, or without full message bodies).";
--
-+/// Unwrap a `COMPOSIO_MULTI_EXECUTE_TOOL` response back to a normal tool
-+/// response the agent expects.
-+///
-+/// MULTI_EXECUTE returns:
-+/// ```json
-+/// { "jsonrpc": "2.0", "id": 1, "result": {
-+///     "content": [{ "type": "text", "text": "[{\"data\": {...}, ...}]" }]
-+/// }}
-+/// ```
-+///
-+/// We extract the inner JSON from the first `content[].text` entry and return
-+/// it as a standard `result.content[].text` with the unwrapped payload.
- /// Unwrap a `COMPOSIO_MULTI_EXECUTE_TOOL` response back to the clean tool
- /// result the agent expects.
- ///
- /// MULTI_EXECUTE returns:
- /// ```text
- /// result.content[0].text = JSON string of {
--///   "data": { "results": [{ "response": { "successful": bool, "data": {…} }, … }],
--///             "remote_file_info": {…} only when the output was too large to send inline },
-+///   "data": { "results": [{ "response": { "successful": bool, "data": {…} }, … }] },
- ///   "successful": bool
- /// }
- /// ```
- ///
- /// We extract `data.results[0].response.data` (the actual tool output) and
--/// return it as a clean `result.content[0].text`. An output too large to send
--/// inline comes as `response.data_preview` instead: see [`successful_output`].
-+/// return it as a clean `result.content[0].text`.
- fn unwrap_multi_execute_response(response: Value) -> Value {
-     let text = response
-         .get("result")
-@@ -2208,7 +2207,7 @@ fn unwrap_multi_execute_response(response: Value) -> Value {
-         .and_then(|r| r.as_array())
-         .and_then(|arr| arr.first());
+     async fn send(&self, http: &reqwest::Client, scope: Option<&str>) -> RefreshOutcome {
++        if let Err(why) = crate::net::check_remote_endpoint(self.token_endpoint) {
++            return RefreshOutcome::Failed(format!("token endpoint {why}"));
++        }
+         let mut request = http
+             .post(self.token_endpoint)
+             .timeout(REFRESH_TIMEOUT)
+@@ -580,6 +583,8 @@ pub async fn exchange_code(
+         form.push(("client_secret", secret.to_string()));
+     }
  
--    let parts: Vec<String> = match first_result {
-+    let inner_text = match first_result {
-         Some(result) => {
-             let tool_response = result.get("response");
-             let successful = tool_response
-@@ -2217,7 +2216,12 @@ fn unwrap_multi_execute_response(response: Value) -> Value {
-                 .unwrap_or(false);
- 
-             if successful {
--                successful_output(result, &parsed)
-+                // Success: return response.data (the actual tool output).
-+                let data = tool_response
-+                    .and_then(|r| r.get("data"))
-+                    .cloned()
-+                    .unwrap_or(json!({"success": true}));
-+                serde_json::to_string(&data).unwrap_or_else(|_| text.to_string())
-             } else {
-                 // Failure: return a clean error message.
-                 let error = result
-@@ -2230,59 +2234,23 @@ fn unwrap_multi_execute_response(response: Value) -> Value {
-                             .and_then(|m| m.as_str())
-                     })
-                     .unwrap_or("tool execution failed");
--                vec![
--                    serde_json::to_string(&json!({"error": error}))
--                        .unwrap_or_else(|_| text.to_string()),
--                ]
-+                serde_json::to_string(&json!({"error": error})).unwrap_or_else(|_| text.to_string())
-             }
++    crate::net::check_remote_endpoint(token_endpoint)
++        .map_err(|why| McpError::Oauth(format!("token endpoint {why}")))?;
+     let mut req = http
+         .post(token_endpoint)
+         .timeout(DISCOVERY_TIMEOUT)
+@@ -1094,6 +1099,7 @@ const OFFLINE_ACCESS_SCOPE: &str = "offline_access";
+ /// its `WWW-Authenticate` value (returned here) may name the resource
+ /// metadata URL and the scope to request.
+ async fn fetch_auth_challenge(http: &reqwest::Client, mcp_url: &str) -> Result<AuthProbe> {
++    crate::net::check_remote_endpoint(mcp_url).map_err(McpError::BadRequest)?;
+     let probe = http
+         .post(mcp_url)
+         .timeout(DISCOVERY_TIMEOUT)
+@@ -1256,6 +1262,10 @@ async fn fetch_resource_metadata_document(http: &reqwest::Client, url: &str) ->
+ /// A JSON document from a successful `GET`; `None` for any failure, since
+ /// every caller moves on to its next candidate URL.
+ async fn fetch_json_document(http: &reqwest::Client, url: &str) -> Option<Value> {
++    if let Err(why) = crate::net::check_remote_endpoint(url) {
++        tracing::warn!(%url, %why, "skipped an OAuth metadata URL");
++        return None;
++    }
+     let response = http.get(url).timeout(DISCOVERY_TIMEOUT).send().await.ok()?;
+     if !response.status().is_success() {
+         return None;
+@@ -1363,6 +1373,8 @@ async fn register_dynamic_client(
+     registration_endpoint: &str,
+     redirect_uri: &str,
+ ) -> Result<Option<RegisteredClient>> {
++    crate::net::check_remote_endpoint(registration_endpoint)
++        .map_err(|why| McpError::Oauth(format!("registration endpoint {why}")))?;
+     let response = http
+         .post(registration_endpoint)
+         .timeout(DISCOVERY_TIMEOUT)
+```
+
+**File**: `mcp-gateway/src/provider/generic.rs` (modified, +15/-3)
+```diff
+@@ -202,7 +202,11 @@ impl GenericMcpProvider {
+         if let Some(sid) = session_id {
+             req = req.header("Mcp-Session-Id", sid);
          }
--        None => vec![text.to_string()],
-+        None => text.to_string(),
-     };
+-        for (k, v) in &server.headers {
++        for (k, v) in server
++            .headers
++            .iter()
++            .filter(|(k, _)| crate::net::connector_header_allowed(k))
++        {
+             req = req.header(k.as_str(), v.as_str());
+         }
  
-     // Rebuild as a standard MCP tool response.
--    let content: Vec<Value> = parts
--        .into_iter()
--        .map(|text| json!({ "type": "text", "text": text }))
--        .collect();
-     let mut out = response.clone();
--    out["result"] = json!({ "content": content });
-+    out["result"] = json!({
-+        "content": [{
-+            "type": "text",
-+            "text": inner_text
-+        }]
-+    });
-     out
- }
+@@ -277,7 +281,11 @@ impl GenericMcpProvider {
+         if let Some(tp) = traceparent {
+             req = req.header("traceparent", tp);
+         }
+-        for (k, v) in &server.headers {
++        for (k, v) in server
++            .headers
++            .iter()
++            .filter(|(k, _)| crate::net::connector_header_allowed(k))
++        {
+             req = req.header(k.as_str(), v.as_str());
+         }
  
--/// A successful tool's output, as content parts: `response.data`; or, when Composio found the
--/// output too large to send inline, its `response.data_preview` followed by a note that it is
--/// partial; or only that note when it sent no preview either. Composio's pointer to the full copy
--/// (`remote_file_info`, a file in its sandbox) is not passed on: the agent cannot open it.
--fn successful_output(result: &Value, envelope: &Value) -> Vec<String> {
--    let tool_response = result.get("response");
--    if let Some(data) = tool_response.and_then(|r| r.get("data")) {
--        return vec![data.to_string()];
--    }
--    let tool = result
--        .get("tool_slug")
--        .and_then(Value::as_str)
--        .unwrap_or_default();
--    if l
-```
-
-**File**: `orchestrator/src/maf/executor.rs` (modified, +0/-75)
-```diff
-@@ -1,6 +1,5 @@
- use crate::outbound::OutboundPrefix;
- use crate::target::{AgentTargetResolver, ForwardTarget, ResolveCaller, ResolveFailure};
--use nasiko_types::agent_clock::AgentClock;
- use std::sync::Arc;
- use std::time::Instant;
- 
-@@ -486,7 +485,6 @@ pub async fn run_maf(
-     llm: &LlmClient,
-     content: Option<&str>,
-     outbound: &dyn OutboundPrefix,
--    clock: AgentClock,
- ) -> Result<StepOutcome, RunError> {
-     // A MAF run is driven by a background worker, not a request, so there is
-     // no inbound traceparent to continue — this span is legitimately a root.
-@@ -520,7 +518,6 @@ pub async fn run_maf(
-         llm,
-         content,
-         outbound,
--        clock,
-     )
-     .instrument(span)
-     .await
-@@ -539,7 +536,6 @@ async fn run_maf_inner(
-     llm: &LlmClient,
-     content: Option<&str>,
-     outbound: &dyn OutboundPrefix,
--    clock: AgentClock,
- ) -> Result<StepOutcome, RunError> {
-     // Resolved ONCE for the whole execution, not per step: a run is one unit of work, and a
-     // change landing between step 2 and step 3 would otherwise leave a single execution governed
-@@ -649,7 +645,6 @@ async fn run_maf_inner(
-             &mut total_cost,
-             llm,
-             outbound_prefix.as_deref(),
--            clock,
-         )
-         .await
-         {
-@@ -747,7 +742,6 @@ pub async fn run_maf_from(
-     resume_context_id: String,
-     injected_answer: String,
-     outbound: &dyn OutboundPrefix,
--    clock: AgentClock,
- ) -> Result<StepOutcome, RunError> {
-     // Re-resolved on resume rather than carried across the pause. A paused execution can sit for
-     // days, and the steps that run after a human answers should run under the policy in force
-@@ -847,7 +841,6 @@ pub async fn run_maf_from(
-             &mut total_cost,
-             llm,
-             outbound_prefix.as_deref(),
--            clock,
-         )
-         .await
-         {
-@@ -935,8 +928,6 @@ pub async fn execute_step(
-     total_cost: &mut f64,
-     llm: &LlmClient,
-     outbound_prefix: Option<&str>,
--    // The current date and time, sent with the step's message after `outbound_prefix`.
--    clock: AgentClock,
- ) -> StepLoopOutcome {
-     step_results[i].status = "running".to_string();
-     persist_progress(db, execution_id, step_results, *total_tokens, *total_cost).await;
-@@ -1171,7 +1162,6 @@ pub async fn execute_step(
-                 &user_id.to_string(),
-                 &actual_prompt,
-                 outbound_prefix,
--                clock,
-                 &traceparent,
-             ),
-         ),
-@@ -2498,9 +2488,6 @@ async fn call_agent(
-     // caller). Same representation `a2a_dispatch.rs`/`agent_proxy.rs`/`tool.rs` use for the exact
-     // same reason: a second, independently-addressable part rather than a merged string.
-     outbound_prefix: Option<&str>,
--    // The current date and time, its own part after the policy. A new step's message only: the
--    // human's answer on a resume (`call_agent_continuation`) goes out alone, like the policy.
--    clock: AgentClock,
-     traceparent: &str,
- ) -> Result<AgentCallOutcome, AgentCallError> {
-     let target = AgentCallTarget {
-@@ -2509,10 +2496,8 @@ async fn call_agent(
-         user_id,
-         traceparent,
-     };
--    let now = clock.note();
-     let mut texts = vec![prompt];
-     texts.extend(outbound_prefix);
--    texts.extend(now.as_deref());
-     let started = Instant::now();
- 
-     for dialect in [Dialect::Proto, Dialect::JsonRpc] {
-@@ -3193,7 +3178,6 @@ mod resume_tests {
-             "ctx-1".into(),
-             "the human's answer".into(),
-             &crate::outbound::NoOutboundPrefix,
--            AgentClock::OFF,
-         )
-         .await;
- 
-@@ -3396,38 +3380,6 @@ mod resume_tests {
-             "user-1",
-             "do the thing",
-             Some("POLICY"),
--            AgentClock::OFF,
--            "00-trace-span-01",
--        )
--        .await;
--
--        mock.assert_async().await;
--        assert!(matches!(result, Ok(AgentCallOutcome::Completed(_))));
--    }
--
--    /// The current date and time follows the policy as its own part. The step's prompt stays the
--    /// first part, unchanged: it is what `step_results[i].prompt` records.
--    #[tokio::test]
--    async fn call_agent_tells_the_time_after_the_policy() {
--        let mut server = mockito::Server::new_async().await;
--        let mock = server
--            .mock("POST", "/jsonrpc")
--            .match_request(|request| tells_the_time_after(request, "do the thing"))
--            .with_status(200)
--            .with_body(completed_agent_response())
--            .create_async()
--            .await;
--
--        let client = reqwest::Client::new();
--        let result = call_agent(
--            &client,
--            &ForwardTarget::from(server.url()),
--            None,
--            "ctx-1",
--            "user-1",
--            "do the thing",
--            Some("POLICY"),
--            AgentClock::ON,
-             "00-trace-span-01",
-         )
-         .await;
-@@ -34
-```
-
-**File**: `orchestrator/src/maf/worker.rs` (modified, +0/-1)
-```diff
-@@ -601,7 +601,6 @@ async fn process_job(
-         agent_calls: &agent_calls.meter,
-         targets: agent_calls.targets.as_ref(),
-         outbound: agent_calls.outbound.as_ref(),
--        clock: agent_calls.clock,
-         db,
-         flow_guard,
-         llm: &owner_llm,
-```
-
-**File**: `server/.env.example` (modified, +1/-9)
-```diff
-@@ -89,7 +89,7 @@ SEED_AGENTS=
- # Starter workflows installed after the seed agents, as public workflows every
- # user can run (server/src/seed_workflows.rs). Space-separated template
- # ids; each one's agents must be in SEED_AGENTS or it is skipped.
--# SEED_WORKFLOWS="inbox-morning-brief monthly-work-recap"
-+# SEED_WORKFLOWS="chief-of-staff-follow-up inbox-morning-brief voice-of-customer-roadmap"
- # SEED_IMAGE_PLATFORM=linux/amd64        # os/arch copied from multi-platform seed images
- # SEED_FORCE_PULL=                       # (unset) set to any value to re-pull seed images
- 
-@@ -322,14 +322,6 @@ S3_REGION=us-east-1
- # NASIKO_FLOW_TIMEOUT_SECS. Accepts the former name ROUTER_AGENT_TIMEOUT_SECS.
- # AGENT_CALL_TIMEOUT_SECS=600
- 
--# Tell agents the current date and time: every new message the platform hands
--# an agent (chat, the orchestrator's calls, workflow steps, agent-to-agent
--# calls) carries "Current date and time: ... UTC" as its own text part, after
--# the message's own text, so "today" or "the last 24 hours" resolve to real
--# dates. A human's answer to a paused task gets nothing. Off sends agent
--# messages exactly as before.
--# AGENT_CONTEXT_CURRENT_TIME=true
--
- # ═══════════════════════════════════════════════════════════════════════════
- # 10) HUMAN-IN-THE-LOOP
- # ═══════════════════════════════════════════════════════════════════════════
-```
-
-**File**: `server/src/router/a2a_dispatch.rs` (modified, +0/-16)
-```diff
-@@ -789,7 +789,6 @@ pub(crate) async fn orchestrator_stream(
-         preamble,
-         outbound_prefix: org_context,
-         attachment_note: None,
--        clock: state.agent_clock(),
-         // IP-3. Read here rather than defaulted, because `ContextConfig::default()` is
-         // deliberately inert — without this the compressor is compiled in but unreachable.
-         context: nasiko_react_agent::ContextConfig {
-@@ -1502,19 +1501,6 @@ fn append_org_policy_part(req: &mut JsonRpcRequest, org_context: Option<&str>) {
-     let _ = nasiko_agent_proxy::context_part::append_context_part(message, org, tagging);
- }
- 
--/// Appends the current date and time as its own part, after organization policy, on the same
--/// terms the agent proxy does (`crate::current_time`). Every request this path builds opens a
--/// task, so none is a continuation.
--fn append_current_time_part(
--    req: &mut JsonRpcRequest,
--    clock: nasiko_types::agent_clock::AgentClock,
--) {
--    let tagging = nasiko_agent_proxy::context_part::tagging_for_method(&req.method);
--    if let Some(message) = req.params.as_mut().and_then(|p| p.get_mut("message")) {
--        crate::current_time::append_current_time(message, clock, tagging);
--    }
--}
--
- /// Orchestrator tool names of the agents whose Token optimization switch is off.
- async fn opted_out_agent_tools(
-     db: &sqlx::PgPool,
-@@ -1757,7 +1743,6 @@ async fn agent_stream(
-     };
-     append_attachment_note(&mut req_body, attachment_note.as_deref());
-     append_org_policy_part(&mut req_body, org_context);
--    append_current_time_part(&mut req_body, state.agent_clock());
- 
-     // No per-request MCP credential: the agent authenticates to /api/mcp with
-     // its own deploy-time MCP_GATEWAY_TOKEN; the forwarded traceparent + the
-@@ -2085,7 +2070,6 @@ async fn agent_stream(
-             );
-             append_attachment_note(&mut retry_body, attachment_note.as_deref());
-             append_org_policy_part(&mut retry_body, org_context);
--            append_current_time_part(&mut retry_body, state.agent_clock());
-             let retry = build_agent_req()
-                 .json(&retry_body)
-                 .send()
-```
-
-**File**: `server/src/seed_workflows.rs` (modified, +98/-58)
-```diff
-@@ -53,81 +53,121 @@ pub struct TemplateStep {
- /// Every template this server knows. Ids must be unique.
- pub const TEMPLATES: &[WorkflowTemplate] = &[
-     // Showcase workflows: a run needs no input (the dashboard's Run sends none). Each first step
--    // reads the running user's own apps, with a connect card the first time for each app not yet
--    // connected; the description names the apps.
-+    // either reads the running user's own app (a connect card the first time, see the agents'
-+    // connected-apps support) or carries its own sample data, and its description says which.
-     WorkflowTemplate {
--        id: "inbox-morning-brief",
-+        id: "chief-of-staff-follow-up",
-         version: 2,
--        name: "Inbox Morning Brief",
--        description: "Reads the last 30 days of your Gmail, Google Calendar and Linear, \
--                      and turns them into what to do now: meetings to prepare for or follow \
--                      up, emails that still need a reply, and your top priorities. Asks you \
--                      to connect each app the first time.",
-+        name: "Chief of Staff: Meeting Follow-up",
-+        description: "Reads your latest meeting notes from Google Drive and turns them into \
-+                      decisions, owners and a ready-to-send follow-up email. Asks you to \
-+                      connect Google Drive the first time.",
-         steps: &[
-             TemplateStep {
--                agent: "scout",
--                agent_version: "1.0.0",
--                // The time ranges are spelled out so the search does not depend on the model
--                // working out "today" on its own; Scout also gets the current date with the step.
--                task: "Gather my material from the last 30 days: the emails I received \
--                       in Gmail (Gmail search: newer_than:30d), my meetings in Google \
--                       Calendar from the last 30 days and today, and my Linear issues \
--                       assigned to me that changed in the last 30 days, with their status, \
--                       priority and due date.",
-+                agent: "meeting-notes-processor",
-+                agent_version: "1.1.1",
-+                task: "Process my latest meeting notes from Google Drive: pull out the \
-+                       decisions, the action items with owner and due date, and the open \
-+                       questions.",
-+            },
-+            TemplateStep {
-+                agent: "task-breakdown",
-+                agent_version: "1.1.1",
-+                task: "Turn the action items into an ordered task list, keeping each \
-+                       owner and due date, and flag anything due this week as urgent.",
-+            },
-+            TemplateStep {
-+                agent: "reply-drafter",
-+                agent_version: "1.1.1",
-+                task: "Draft the follow-up email the meeting organiser sends to the \
-+                       attendees: thank them, confirm the decisions, and list each task \
-+                       with its owner and due date. It goes out by email.",
-             },
-             TemplateStep {
--                agent: "distiller",
--                agent_version: "1.0.0",
--                task: "From that material, tell me what to do now, with these sections: \
--                       Meetings (today's first, with what to prepare; then follow-ups from \
--                       recent meetings), Needs a reply (who, about what, since when), Top \
--                       priorities (open Linear issues by priority and due date), Everything \
--                       else (one line each). Order each section by urgency, and say plainly \
--                       when a source had nothing.",
-+                agent: "humanizer",
-+                agent_version: "1.1.1",
-+                task: "Rewrite the email so it reads warm and natural, without changing \
-+                       any decision, owner or date.",
-             },
-         ],
-     },
-     WorkflowTemplate {
--        id: "monthly-work-recap",
-+        id: "voice-of-customer-roadmap",
-         version: 1,
--        name: "Monthly Work Recap",
--        description: "Gathers your last 30 days from GitHub, Linear, Gmail and Google \
--                      Drive, turns it into a monthly update (done, impact, in progress, \
--                      backlog, risks), saves it as a Gmail draft for your manager and sends \
--                      you a short version on Slack. Asks you to connect each app the first \
--                      time.",
-+        name: "Voice of Customer \u{2192} Roadmap",
-+        description: "Turns raw customer feedback into ranked themes, roadmap tasks and \
-+                      a reply to the customer in their own language. Runs on built-in \
-+                      sample feedback.",
-         steps: &[
-             TemplateStep {
--                agent: "scout",
--                agent_version: "1.0.0",
--                // On
-```
-
-**File**: `server/tests/attachments_dispatch.rs` (modified, +1/-8)
-```diff
-@@ -837,14 +837,7 @@ async fn a_turn_without_files_gets_no_attachment_line() {
- 
-     let (status, body) = send_turn(&server, &user, Some(agent_id), &sid, &[], vec![]).await;
-     assert_eq!(status, 200, "{body}");
--    // Only the user's text, besides the current time the platform tells every agent.
--    let texts = text_parts_seen(&agent);
--    let own: Vec<&String> = texts
--        .iter()
--        .filter(|t| !t.starts_with(nasiko_types::agent_clock::NOTE_LEAD))
--        .collect();
--    assert_eq!(own.len(), 1, "{texts:?}");
--    assert!(!own[0].contains("nasiko-file://"), "{texts:?}");
-+    assert_eq!(text_parts_seen(&agent).len(), 1);
- 
-     server.cleanup().await;
- }
-```
-
-**File**: `server/tests/maf_step_flow_retry.rs` (modified, +0/-1)
-```diff
-@@ -233,7 +233,6 @@ impl MafRun {
-             agent_calls: &self.meter,
-             targets: &targets,
-             outbound: &nasiko_orchestrator::outbound::NoOutboundPrefix,
--            clock: nasiko_types::agent_clock::AgentClock::OFF,
-             db,
-             flow_guard: &self.flow_guard,
-             llm: &self.llm,
+@@ -313,7 +321,11 @@ impl GenericMcpProvider {
+             if let Some(tp) = traceparent {
+                 n = n.header("traceparent", tp);
+             }
+-            for (k, v) in &server.headers {
++            for (k, v) in server
++                .headers
++                .iter()
++                .filter(|(k, _)| crate::net::connector_header_allowed(k))
++            {
+                 n = n.header(k.as_str(), v.as_str());
+             }
+             let _ = n.send().await;
 ```
 
 #### Recent Merged Pull Requests:
@@ -3275,31 +2739,41 @@ chore(deps): bump the npm_and_yarn group across 1 directory with 2 updates
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in .sync-marker
+## X. mcp-gateway): uploaded MCP servers can't redirect the gateway off their origin (
 
 **RULE**:
-When implementing operations in `.sync-marker`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Nasiko-Labs/nasiko. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `mcp-gateway/src/credentials.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Nasiko-Labs/nasiko. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6bf0ff78`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7a17ab31`: mcp-gateway): uploaded MCP servers can't redirect the gateway off their origin (NAS-1770). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.sync-marker`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `mcp-gateway/src/credentials.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-6a3fb0fda44fea83debfc235d9859367a0bb312d
+    // The same clients a real call uses: guarded for a member's URL, and for an uploaded
+    // server, one that follows no redirect off its own origin.
+    match state
+        .providers
+        .mcp
+        .list_tools(&cfg, LIST_TIMEOUT, None)
+        .await
+    {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-a3e2a0a6ca48417a8c9f85c14881221bdec29632
+use crate::provider::GenericMcpProvider;
+    let provider =
+        GenericMcpProvider::new(state.guarded_http_client.clone(), state.http_client.clone());
+    match provider.list_tools(&cfg, LIST_TIMEOUT, None).await {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6bf0ff78` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7a17ab31` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

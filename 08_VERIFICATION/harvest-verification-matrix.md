@@ -13080,3 +13080,6 @@
 | `CYCLE-20261125-1S90` | `2026-11-25T12:39:24.228Z` | `duckdb/duckdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10527` | Yes (`1ef51afc...`) |
 | `CYCLE-20261125-CLA6` | `2026-11-25T12:47:48.414Z` | `Pika-Labs/Pika-H3-Flex` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-pika-labs-pika-h3-flex-learnings.md` | Yes (`f10cb666...`) |
 | `CYCLE-20261125-CY59` | `2026-11-25T12:48:05.085Z` | `ClickHouse/ClickHouse` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10528` | Yes (`347610a9...`) |
+| `CYCLE-20261125-NR3Y` | `2026-11-25T12:56:29.182Z` | `LiquidAI/LFM3-Audio-2B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liquidai-lfm3-audio-2b-learnings.md` | Yes (`bdd70dbf...`) |
+| `CYCLE-20261125-NT0L` | `2026-11-25T12:56:31.653Z` | `Nasiko-Labs/nasiko` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10529` | Yes (`32c0888a...`) |
+| `CYCLE-20261125-O089` | `2026-11-25T12:56:41.001Z` | `zama-ai/tfhe-rs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10530` | Yes (`b60be4be...`) |

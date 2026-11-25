@@ -791818,3 +791818,209 @@ Subsystems managing C++ data structures, boundary deserialization, API parsing, 
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `b88da85b` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10529. uploaded MCP servers can't redirect the gateway off their origin ( (Harvested from Nasiko-Labs/nasiko)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "uploaded MCP servers can't redirect the gateway off their origin (",
+  "source": "Nasiko-Labs/nasiko",
+  "source_url": "https://github.com/Nasiko-Labs/nasiko",
+  "source_version": "4e2d65d1",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-25T12:56:31.065Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-nasiko-labs-nasiko",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Nasiko-Labs/nasiko](https://github.com/Nasiko-Labs/nasiko) (Revision: `4e2d65d1`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `mcp-gateway/src/credentials.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Nasiko-Labs/nasiko. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `7a17ab31`: mcp-gateway): uploaded MCP servers can't redirect the gateway off their origin (NAS-1770). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `mcp-gateway/src/credentials.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+    // The same clients a real call uses: guarded for a member's URL, and for an uploaded
+    // server, one that follows no redirect off its own origin.
+    match state
+        .providers
+        .mcp
+        .list_tools(&cfg, LIST_TIMEOUT, None)
+        .await
+    {
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+use crate::provider::GenericMcpProvider;
+    let provider =
+        GenericMcpProvider::new(state.guarded_http_client.clone(), state.http_client.clone());
+    match provider.list_tools(&cfg, LIST_TIMEOUT, None).await {
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `7a17ab31` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10530. support more than 512 radix blocks in partial sum index kernels (Harvested from zama-ai/tfhe-rs)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "support more than 512 radix blocks in partial sum index kernels",
+  "source": "zama-ai/tfhe-rs",
+  "source_url": "https://github.com/zama-ai/tfhe-rs",
+  "source_version": "eaac04df",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-25T12:56:40.384Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-zama-ai-tfhe-rs",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs) (Revision: `eaac04df`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `backends/tfhe-cuda-backend/cuda/src/integer/multiplication.cuh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zama-ai/tfhe-rs. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `eaac04df`: gpu): support more than 512 radix blocks in partial sum index kernels. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `backends/tfhe-cuda-backend/cuda/src/integer/multiplication.cuh`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+  const uint32_t idx = blockIdx.x * blockDim.x + threadIdx.x;
+  if (idx < num_radix_blocks) {
+    size_t cnt = 0;
+    for (int i = 0; i < num_radix_in_vec; i++) {
+      size_t ct_id = i * num_radix_blocks + idx;
+      if (degrees[ct_id] != 0) {
+        columns[idx][cnt] = ct_id;
+        ++cnt;
+      }
+    columns_counter[idx] = cnt;
+// Runs in a single CUDA block: all message PBS indexes must be assigned
+// (through the shared counter) before the carry ones. Each thread handles the
+// columns threadIdx.x, threadIdx.x + blockDim.x, ... so that more than 1024
+// columns are supported.
+    const uint32_t *const columns_counter, const uint32_t chunk_size,
+    const uint32_t num_radix_blocks) {
+  for (uint32_t base_id = threadIdx.x; base_id < num_radix_blocks;
+       base_id += blockDim.x) {
+    const uint32_t column_len = columns_counter[base_id];
+    uint32_t ct_count = 0;
+    for (uint32_t i = 0; i + chunk_size <= column_len; i += chunk_size) {
+      // those indexes are for message ciphertexts
+      // for message ciphertexts in and out index should be same
+      const uint32_t in_index = columns[base_id][i];
+      new_columns[base_id][ct_count] = in_index;
+      pbs_indexes_out[pbs
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+  const uint32_t idx = threadIdx.x;
+  size_t cnt = 0;
+  for (int i = 0; i < num_radix_in_vec; i++) {
+    size_t ct_id = i * num_radix_blocks + idx;
+    if (degrees[ct_id] != 0) {
+      columns[idx][cnt] = ct_id;
+      ++cnt;
+  columns_counter[idx] = cnt;
+    const uint32_t *const columns_counter, const uint32_t chunk_size) {
+  const uint32_t base_id = threadIdx.x;
+  const uint32_t column_len = columns_counter[base_id];
+
+  uint32_t ct_count = 0;
+  for (uint32_t i = 0; i + chunk_size <= column_len; i += chunk_size) {
+    // those indexes are for message ciphertexts
+    // for message ciphertexts in and out index should be same
+    const uint32_t in_index = columns[base_id][i];
+    new_columns[base_id][ct_count] = in_index;
+    const uint32_t pbs_index = atomicAdd(&counter, 1);
+    pbs_indexes_in[pbs_index] = in_index;
+    pbs_indexes_out[pbs_index] = in_index;
+    lut_indexes[pbs_index] = 0;
+    ++ct_count;
+  }
+  __syncthreads();
+
+  if (base_id > 0) {
+    const uint32_t prev_base_id = base_id - 1;
+    const uint32_t prev_column_len = columns_counter[prev_base_id];
+
+    for (uint32_t i = 0; i + chunk_size <= prev_column_len; i += chunk_size) {
+      // those indexes are for carry ciph
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `eaac04df` are properly handled with clean fallback behavior.

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T12:48:11.201Z",
+  "last_updated": "2026-11-25T12:56:47.716Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-25T12:29:47.847Z",
@@ -73,7 +73,7 @@
       "staged_for_review": 1
     },
     "zama-ai-tfhe-rs-learnings.md": {
-      "processed_at": "2026-11-24T18:35:06.898Z",
+      "processed_at": "2026-11-25T12:56:46.745Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -628,7 +628,7 @@
       "staged_for_review": 1
     },
     "hf-liquidai-lfm3-audio-2b-learnings.md": {
-      "processed_at": "2026-11-21T21:49:11.660Z",
+      "processed_at": "2026-11-25T12:56:46.264Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -688,7 +688,7 @@
       "staged_for_review": 1
     },
     "nasiko-labs-nasiko-learnings.md": {
-      "processed_at": "2026-11-24T12:27:37.450Z",
+      "processed_at": "2026-11-25T12:56:44.688Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3928,7 +3928,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 4203,
+  "total_dossiers_evaluated": 4206,
   "total_canonical_promoted": 541,
-  "total_staged_for_review": 3204
+  "total_staged_for_review": 3206
 }
