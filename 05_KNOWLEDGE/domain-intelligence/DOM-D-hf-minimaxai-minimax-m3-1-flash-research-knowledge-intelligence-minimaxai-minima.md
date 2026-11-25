@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/MiniMaxAI/MiniMax-M3.1-Flash",
   "source_version": "hf-minimaxai-minimax-m3.1-flash",
   "license": "Open-Source",
-  "timestamp": "2026-11-21T15:17:37.143Z",
+  "timestamp": "2026-11-25T07:39:18.603Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-minimaxai-minimax-m3-1-flash",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [MiniMaxAI/MiniMax-M3.1-Flash](https://huggingface.co/MiniMaxAI/MiniMax-M3.1-Flash) (Revision: `hf-minimax`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-21T15:17:37.143Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T07:39:18.603Z`  
 > **Learning ID**: `learn-huggingface-minimaxai-minimax-m3-1-flash`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-minimaxai-minimax-m3.1-flash-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/MiniMaxAI/MiniMax-M3.1-Flash](https://huggingface.co/MiniMaxAI/MiniMax-M3.1-Flash))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T15:17:36.131Z  
+> **Harvest Timestamp**: 2026-11-25T07:39:17.680Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: image-text-to-text
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 150581 downloads | 609 likes
+- **Stars / Engagement**: 150451 downloads | 617 likes
 
 ---
 

@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261123-X3ZW",
-    "timestamp": "2026-11-23T20:00:19.580Z",
-    "repository": "jhspetersson/fselect",
-    "learningId": "learn-github-jhspetersson-fselect",
-    "contentHash": "3d6e2921e64843afba526910b44b5294b602163272e8edeb1f1900634f2962ad",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-7PQD",
-    "timestamp": "2026-11-23T20:08:34.309Z",
-    "repository": "pingcap/tidb",
-    "learningId": "learn-github-pingcap-tidb",
-    "contentHash": "9723f36b70acf73d55a0e0456902fdd765350b3a5fa11c85c8ed08c9dadfb03c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-OUGU",
-    "timestamp": "2026-11-23T20:21:53.598Z",
-    "repository": "Phocinae/Phocinae-Largha-150M-v1",
-    "learningId": "learn-huggingface-phocinae-phocinae-largha-150m-v1",
-    "contentHash": "b9e8e64a656e69e564f86b604c87a1f21da53e15f5129bc5f26971930cce2a85",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-P0JP",
-    "timestamp": "2026-11-23T20:22:01.477Z",
-    "repository": "iPlug2/iPlug2",
-    "learningId": "learn-github-iplug2-iplug2",
-    "contentHash": "8117d3fb75c58f61618f03876459be9289a345f773cbed5726e7cd67f4f9972f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261123-P6L3",
     "timestamp": "2026-11-23T20:22:09.303Z",
     "repository": "vespa-engine/vespa",
@@ -7492,6 +7432,66 @@
     "contentHash": "ba7872c760758751caa9b928e71572d628cbbe832ee39fa22d8217d52f5a28b2",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-BUTB",
+    "timestamp": "2026-11-25T07:39:18.335Z",
+    "repository": "MiniMaxAI/MiniMax-M3.1-Flash",
+    "learningId": "learn-huggingface-minimaxai-minimax-m3-1-flash",
+    "contentHash": "f47ac8bc03d59dd588a17a249ec357864f1017f1178ed35686297e555614808e",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-BVL0",
+    "timestamp": "2026-11-25T07:39:19.332Z",
+    "repository": "FalkorDB/FalkorDB",
+    "learningId": "learn-github-falkordb-falkordb",
+    "contentHash": "f299778a2d4bd164b3239c1a865d45f7e2c387d8513667256b93882b58275e20",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-C1N9",
+    "timestamp": "2026-11-25T07:39:27.189Z",
+    "repository": "kube-rs/kube",
+    "learningId": "learn-github-kube-rs-kube",
+    "contentHash": "fed1202f2bb351da8371b3d8b94b759b2c078654505e33904625f5ef8b8ac958",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-C66S",
+    "timestamp": "2026-11-25T07:39:33.076Z",
+    "repository": "apache/shardingsphere",
+    "learningId": "learn-github-apache-shardingsphere",
+    "contentHash": "62972d7d61ae10d39dbe50c6e80b9749ccde34b2288843168aa7f68941583ce6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

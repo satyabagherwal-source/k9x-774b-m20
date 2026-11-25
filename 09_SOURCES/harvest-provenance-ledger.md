@@ -13021,3 +13021,7 @@ Every entry in this ledger must capture:
 | `learn-github-alejandrobujan-tendedero` | `https://github.com/alejandrobujan/tendedero` | `483e54ba` | Multi-dimensional audit evidence | 2026-11-25T07:22:24.834Z |
 | `learn-github-etcd-io-etcd` | `https://github.com/etcd-io/etcd` | `4e090c03` | Multi-dimensional audit evidence | 2026-11-25T07:22:37.717Z |
 | `learn-huggingface-unsloth-flint-gguf` | `https://huggingface.co/unsloth/flint-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-11-25T07:30:58.972Z |
+| `learn-huggingface-minimaxai-minimax-m3-1-flash` | `https://huggingface.co/MiniMaxAI/MiniMax-M3.1-Flash` | `hf-minimax` | Multi-dimensional audit evidence | 2026-11-25T07:39:18.339Z |
+| `learn-github-falkordb-falkordb` | `https://github.com/FalkorDB/FalkorDB` | `ef6fd025` | Multi-dimensional audit evidence | 2026-11-25T07:39:19.337Z |
+| `learn-github-kube-rs-kube` | `https://github.com/kube-rs/kube` | `c5141098` | Multi-dimensional audit evidence | 2026-11-25T07:39:27.194Z |
+| `learn-github-apache-shardingsphere` | `https://github.com/apache/shardingsphere` | `03aa12d5` | Multi-dimensional audit evidence | 2026-11-25T07:39:33.080Z |

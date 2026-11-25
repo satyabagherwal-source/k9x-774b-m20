@@ -4,22 +4,22 @@
 {
   "source_repository": "FalkorDB/FalkorDB",
   "source_url": "https://github.com/FalkorDB/FalkorDB",
-  "source_version": "4c108894",
+  "source_version": "ef6fd025",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-24T06:11:12.279Z",
+  "timestamp": "2026-11-25T07:39:19.577Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-falkordb-falkordb",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [FalkorDB/FalkorDB](https://github.com/FalkorDB/FalkorDB) (Revision: `4c108894`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-24T06:11:12.279Z`  
+> **Provenance**: Harvested from [FalkorDB/FalkorDB](https://github.com/FalkorDB/FalkorDB) (Revision: `ef6fd025`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-25T07:39:19.577Z`  
 > **Learning ID**: `learn-github-falkordb-falkordb`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `FalkorDB/FalkorDB` (Commit: `4c108894`)
+- **Target Repository**: `FalkorDB/FalkorDB` (Commit: `ef6fd025`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/falkordb-falkordb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/FalkorDB/FalkorDB](https://github.com/FalkorDB/FalkorDB))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T06:11:09.969Z  
+> **Harvest Timestamp**: 2026-11-25T07:39:18.161Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: A super fast Graph Database uses GraphBLAS under the hood for its sparse adjacency matrix graph representation. Our goal is to provide the best Knowledge Graph for LLM (GraphRAG).
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 10502 stars
+- **Stars / Engagement**: 10504 stars
 
 ---
 
@@ -1229,1236 +1229,435 @@ print("bgsave status", r.info('persistence')['rdb_last_bgsave_status'])
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0ecba8bc` (2026-11-23)
-**Commit Message**: fix(optimizer): per-row index seek instead of a hash join over a full label scan for UNWIND + consecutive MATCH (#3887) (#3889)
+### Incident Patch 1: `ef6fd025` (2026-11-24)
+**Commit Message**: feat: print the FalkorDB logo when the module loads (#3973)
 
-* fix(optimizer): seek an index per outer row instead of a hash join over a full label scan (#3887)
+* feat: print the FalkorDB logo when the module loads (#3972)
 
-`UNWIND .. MATCH (s ..) MATCH (p:L {k: e.x})` plans the second MATCH as a
-Cartesian Product branch of the first (#2981) with `p.k = e.x` filtered above,
-and `replace_cartesian_with_hash_join` turns that into a Value Hash Join whose
-build side scans the whole label. `utilize_index` runs later and never sees
-the scan, so the cost grows with the label however few rows the UNWIND has
-(300-row batch on 1M nodes: 7.6 -> 55 ms).
+Redis and Valkey print their logo at startup; FalkorDB now prints its own
+after theirs: the falkordb.com lockup in Unicode quadrant blocks (80
+columns), the wordmark in the terminal's bold foreground, the swoosh in the
+logo gradient, then the version.
 
-New pass `replace_cartesian_with_index_seek`, before the hash join: when a
-Cartesian Product branch is a label scan whose label has a range index for an
-equality/range conjunct that reads the other branches, the other branches
-become the scan's input (as for any clause stitched below an earlier one) and
-the conjunct moves onto the scan, where `utilize_index` turns it into a
-per-row index seek. The hash join stays when there is no such index, and when
-the other branches are estimated (UNWIND list length incl. parameters and
-`range`, label
+It is printed only to a terminal and only in a form the terminal can show:
+nothing when stdout is not a TTY or TERM is unset/dumb; a one-line text
+banner on non-UTF-8 locales and the Linux console (no quadrant glyphs);
+no colour under NO_COLOR; 24-bit colour only when COLORTERM advertises it,
+the xterm 256-colour palette otherwise. Write errors are ignored.
 
-**File**: `graph/src/planner/optimizer/eliminate_true_filters.rs` (modified, +1/-1)
-```diff
-@@ -79,7 +79,7 @@ fn expr_has_parameter(expr: &DynTree<ExprIR<Variable>>) -> bool {
- 
- /// Clone the expression tree, replacing `ExprIR::Parameter(name)` nodes
- /// with their evaluated constant values from `params`.
--fn substitute_params(
-+pub(super) fn substitute_params(
-     expr: &DynTree<ExprIR<Variable>>,
-     params: &HashMap<String, Value>,
- ) -> DynTree<ExprIR<Variable>> {
-```
-
-**File**: `graph/src/planner/optimizer/mod.rs` (modified, +8/-1)
-```diff
-@@ -21,7 +21,11 @@
- //! 3. push_filters_down        -- Move Filter conjuncts closer to the
- //!       |                        operators that produce their variables
- //!       v
--//! 4. replace_cartesian_       -- Convert CartesianProduct + equality
-+//! 4. replace_cartesian_       -- Feed an index-served scan branch of a
-+//!    with_index_seek              CartesianProduct with the other branches
-+//!       |
-+//!       v
-+//!    replace_cartesian_       -- Convert CartesianProduct + equality
- //!    with_hash_join               Filter into ValueHashJoin
- //!       |
- //!       v
-@@ -57,6 +61,7 @@ mod reduce_var_len_path;
- pub(in crate::planner) mod references;
- mod reorder_labels;
- mod replace_cartesian_with_hash_join;
-+mod replace_cartesian_with_index_seek;
- mod select_scan_node;
- mod utilize_index;
- mod utilize_node_by_id;
-@@ -84,6 +89,7 @@ use reduce_expand_into::reduce_expand_into;
- use reduce_var_len_path::reduce_var_len_path;
- use reorder_labels::reorder_labels;
- use replace_cartesian_with_hash_join::replace_cartesian_with_hash_join;
-+use replace_cartesian_with_index_seek::replace_cartesian_with_index_seek;
- use select_scan_node::select_scan_node;
- use utilize_index::utilize_index;
- use utilize_node_by_id::utilize_node_by_id;
-@@ -221,6 +227,7 @@ pub fn optimize(
-     select_scan_node(&mut optimized_plan, graph);
-     push_filters_down(&mut optimized_plan);
-     fuse_anonymous_traverse(&mut optimized_plan);
-+    replace_cartesian_with_index_seek(&mut optimized_plan, graph, params);
-     replace_cartesian_with_hash_join(&mut optimized_plan);
-     absorb_edge_filters_into_vlt(&mut optimized_plan);
-     // Re-run path reduction: folding an edge-only filter into a
-```
-
-**File**: `graph/src/planner/optimizer/replace_cartesian_with_index_seek.rs` (added, +386/-0)
-```diff
-@@ -0,0 +1,386 @@
-+//! Index-seek replacement for a Cartesian Product joined on an indexed lookup.
-+//!
-+//! A later `MATCH (p:L {k: e.x})` whose inline property reads a variable bound
-+//! by an earlier clause shares no variable with it, so the planner makes it a
-+//! `CartesianProduct` branch of the earlier clause, with the predicate in a
-+//! `Filter` above (see `Planner::plan_query`). Left to
-+//! `replace_cartesian_with_hash_join`, that becomes a `ValueHashJoin` whose
-+//! build side is a scan of the whole label: its cost grows with the label,
-+//! however few rows the earlier clause produces.
-+//!
-+//! When the label has an index on the joined property, the other branches can
-+//! instead feed the scan, like any later clause stitched below an earlier one:
-+//! each of their rows seeks the index for its own key.
-+//!
-+//! ```text
-+//! Before:                          After:
-+//!
-+//! Filter(p.k = e.x)                Filter(p.k = e.x)       (rewritten to an index scan
-+//!   |                                |                      by `utilize_index`)
-+//!   v                                v
-+//! CartesianProduct                 NodeByLabelScan(p:L)
-+//!   |           |                    |
-+//!   v           v                    v
-+//! ChildA      NodeByLabelScan(p)   ChildA
-+//! ```
-+//!
-+//! Without such an index the hash join stays: it reads the label once instead
-+//! of once per row. It also stays when the other branches are estimated to
-+//! produce so many rows that one index lookup each costs more than reading the
-+//! label once (a bulk `UNWIND` of a large batch): see [`SEEK_COST_IN_SCANNED_NODES`].
-+
-+use std::collections::{HashMap, HashSet};
-+use std::sync::Arc;
-+
-+use orx_tree::{DynNode, DynTree, NodeRef};
-+
-+use crate::{
-+    graph::graph::Graph,
-+    parser::ast::{ExprIR, QueryExpr, QueryNode, Variable},
-+    runtime::{functions::FnType, value::Value},
-+    tree,
-+};
-+
-+use super::super::IR;
-+use super::eliminate_true_filters::substitute_params;
-+use super::utilize_index::{can_seek_index, seek_index_label};
-+use super::{collect_expr_variables, collect_subtree_variables};
-+
-+/// What one index lookup costs, in nodes of a label scan. Measured on a 1M-node
-+/// label: reading it once (the hash join's build side) takes about 52 ms, a
-+/// lookup about 17 us, a ratio of 330. Rounded down: a lookup also keeps the
-+/// result clustered per outer row.
-+const SEEK_COST_IN_SCANNED_NODES: f64 = 256.0;
-+
-+/// Rewrites `Filter -> CartesianProduct(.., [Filter ->] NodeByLabelScan)` so
-+/// the scan reads the other branches' rows and the filter can become an index
-+/// seek, wherever the label has an index for a predicate that reads them.
-+pub(super) fn replace_cartesian_with_index_seek(
-+    optimized_plan: &mut DynTree<IR>,
-+    graph: &Graph,
-+    params: &HashMap<String, Value>,
-+) {
-+    let new_plan = rebuild(&optimized_plan.root(), graph, params);
-+    *optimized_plan = new_plan;
-+}
-+
-+fn rebuild(
-+    node: &DynNode<IR>,
-+    graph: &Graph,
-+    params: &HashMap<String, Value>,
-+) -> DynTree<IR> {
-+    if let IR::Filter(filter) = node.data()
-+        && let Some(child) = node.get_child(0)
-+        && matches!(child.data(), IR::CartesianProduct)
-+        && !child
-+            .walk::<orx_tree::Bfs>()
-+            .any(|data| matches!(data, IR::Argument(_)))
-+        && let Some(result) = try_seek_rewrite(filter, &child, graph, params)
-+    {
-+        return rebuild(&result.root(), graph, params);
-+    }
-+    let mut new_tree = DynTree::new(node.data().clone());
-+    for child in node.children() {
-+        new_tree
-+            .root_mut()
-+            .push_child_tree(rebuild(&child, graph, params));
-+    }
-+    new_tree
-+}
-+
-+/// The `Filter*` chain above a childless `NodeByLabelScan` that makes up
-+/// `branch`, as the filters (top first) and the scanned node.
-+fn scan_chain(
-+    branch: &DynNode<IR>
-+) -> Option<(
-+    Vec<QueryExpr<Variable>>,
-+    Arc<QueryNode<Arc<String>, Variable>>,
-+)> {
-+    let mut filters = Vec::new();
-+    let mut cur: DynTree<IR> = branch.clone_as_tree();
-+    loop {
-+        let root = cur.root();
-+        match root.data() {
-+            IR::Filter(f) if root.num_children() == 1 => {
-+                filters.push(f.clone());
-+                let next = root.child(0).clone_as_tree();
-+                cur = next;
-+            }
-+            IR::NodeByLabelScan { node } if root.num_children() == 0 => {
-+                return Some((filters, node.clone()));
-+            }
-+            _ => return None,
-+        }
-+    }
-+}
-+
-+fn try_seek_rewrite(
-+    filter: &QueryExpr<Variable>,
-+    cp_node: &DynNode<IR>,
-+    graph: &Graph,
-+    params: &HashMap<String, Value>,
-+) -> Option<DynTree<IR>> {
-+    let conjuncts: Vec<DynTree<ExprIR<Variable>>> = if matches!(filter.root().data(), ExprIR::And) {
-+        filter
-+            .root()
-+            .children()
-+            .map(|c| c.clone_as_tree())
-+            .collect()
-+    } else {
-+        vec![(**filter).clone()]
-+  
-```
-
-**File**: `graph/src/planner/optimizer/utilize_index.rs` (modified, +29/-0)
-```diff
-@@ -810,6 +810,35 @@ fn try_filter_pushdown<T: IndexSubject>(
-     }
- }
- 
-+/// Whether `utilize_index` can serve `filter`, a predicate on `node`, from a
-+/// range index of the graph.
-+pub(super) fn can_seek_index(
-+    node: &Arc<QueryNode<Arc<String>, Variable>>,
-+    filter: &DynTree<ExprIR<Variable>>,
-+    graph: &Graph,
-+) -> bool {
-+    try_filter_pushdown(node, filter, graph).is_some()
-+}
-+
-+/// The label whose range index `utilize_index` would serve `filter` from, a
-+/// predicate on `node`; `None` when no index serves it.
-+pub(super) fn seek_index_label(
-+    node: &Arc<QueryNode<Arc<String>, Variable>>,
-+    filter: &DynTree<ExprIR<Variable>>,
-+    graph: &Graph,
-+) -> Option<Arc<String>> {
-+    if matches!(filter.root().data(), ExprIR::Or) {
-+        // One lookup answers every disjunct, so they must share a label.
-+        let mut labels = filter
-+            .root()
-+            .children()
-+            .map(|c| seek_index_label(node, &c.clone_as_tree(), graph));
-+        let first = labels.next()??;
-+        return labels.all(|l| l.as_ref() == Some(&first)).then_some(first);
-+    }
-+    try_filter_pushdown(node, filter, graph).map(|(label, _, _)| label)
-+}
-+
- /// Whether `filter` is `value IN subject.prop` (array-contains): a predicate the index answers
- /// with possible false positives — a numeric key is shared by `1` and `true`, and an element it
- /// cannot index is not in its array tree at all — so its filter is always kept.
-```
-
-**File**: `proofs/optimizer_rewrites/COVERAGE.tsv` (modified, +13/-3)
-```diff
-@@ -1,8 +1,8 @@
- file	function	line	bucket	lean_name_or_reason
- # graphblas *_bench.rs: benchmark harnesses, no production callers; listed here so the aggregator can exclude them
--graph/src/planner/optimizer/mod.rs	collect_expr_variables	92	PROVEN	Passes.routesIdOnly / id_only_routing_unsound (id-only unsound), routesScoped_sound
--graph/src/planner/optimizer/mod.rs	collect_subtree_variables	179	PROVEN	Helpers.mem_subtreeIds (ids of get_variables); ids only — Passes.id_only_routing_unsound; PushPlan.gv walks through Aggregate into the pre-WITH plan
--graph/src/planner/optimizer/mod.rs	optimize	201	PROVEN	Sequence.passes_order (exact order, reduce_var_len_path twice), applyAll_sound (each pass preserves R => optimize does), optimize_nested/optimize_plain
-+graph/src/planner/optimizer/mod.rs	collect_expr_variables	98	PROVEN	Passes.routesIdOnly / id_only_routing_unsound (id-only unsound), routesScoped_sound
-+graph/src/planner/optimizer/mod.rs	collect_subtree_variables	185	PROVEN	Helpers.mem_subtreeIds (ids of get_variables); ids only — Passes.id_only_routing_unsound; PushPlan.gv walks through Aggregate into the pre-WITH plan
-+graph/src/planner/optimizer/mod.rs	optimize	207	PROVEN	Sequence.passes_order (exact order, reduce_var_len_path twice; #3889 adds replace_cartesian_with_index_seek: passes_index_seek_before_hash_join), applyAll_sound (each pass preserves R => optimize does), optimize_nested/optimize_plain
- graph/src/planner/optimizer/absorb_edge_filters_into_vlt.rs	find_descendant_vlt	55	PROVEN	Sequence.findVlt_spec (Filter -> (PathBuilder|Filter)* -> VLT single-child chain)
- graph/src/planner/optimizer/absorb_edge_filters_into_vlt.rs	absorb_edge_filters_into_vlt	87	PROVEN	Sequence.absorb_correct (per-edge reading, C-parity, through PathBuilder/Filter), keepAll_split, absorbSplit_none; #3335 rebuilds the filter with ExprIR::and_of: AndOf.flat_passes (same Filter verdict, errors included), flat_eval
- graph/src/planner/optimizer/eliminate_true_filters.rs	is_constant_true	48	PROVEN	ConstEval.constTrue: constEval_sound (constant verdict = runtime verdict on every row: since #2904 every modelled arm, Pow included, propagates child errors), constTrue_eval, constTrue_filter (eliminate_whole_filter with hconst discharged), pow_var_not_constTrue; slow path (substitute_params then the same constant eval) = ConstEval.constTrue_slow (substP; parameters modelled as marked variable leaves) and Helpers.evX_subst (#2902 fixed)
-@@ -80,3 +80,13 @@ graph/src/graph/graphblas/me_delta_bench.rs	per_op	43	NOT COVERED	TEST-ONLY: ben
- graph/src/graph/graphblas/me_delta_bench.rs	committed_multi	58	NOT COVERED	TEST-ONLY: benchmark harness (me_delta_bench.rs), not production code
- graph/src/graph/graphblas/me_delta_bench.rs	me_delta_step	84	NOT COVERED	TEST-ONLY: benchmark harness (me_delta_bench.rs), not production code
- graph/src/graph/graphblas/me_delta_bench.rs	me_delta_attach_vs_seek	140	NOT COVERED	TEST-ONLY: benchmark harness (me_delta_bench.rs), not production code
-+graph/src/planner/optimizer/replace_cartesian_with_index_seek.rs	replace_cartesian_with_index_seek	58	NOT COVERED	(#3889) entry point of the new plan rewrite (rebuild); the rewrite (try_seek_rewrite) is not modelled
-+graph/src/planner/optimizer/replace_cartesian_with_index_seek.rs	rebuild	67	NOT COVERED	(#3889) tree rebuild applying try_seek_rewrite to Filter->CartesianProduct with no Argument below; the rewrite is not modelled
-+graph/src/planner/optimizer/replace_cartesian_with_index_seek.rs	scan_chain	93	NOT COVERED	(#3889) collects the Filter* chain above a childless NodeByLabelScan; part of the unmodelled try_seek_rewrite
-+graph/src/planner/optimizer/replace_cartesian_with_index_seek.rs	try_seek_rewrite	117	NOT COVERED	(#3889) moves index-served cross-branch conjuncts onto a scan fed by the other CP branches: needs a plan model with Argument-fed scans, index lookups and per-row error order; not modelled
-+graph/src/planner/optimizer/replace_cartesian_with_index_seek.rs	estimate_rows	262	NOT COVERED	(#3889) cost heuristic only: a recursive row estimate over the plan tree and graph label counts; it decides whether to rewrite, never what the rewritten plan returns. Its UNWIND range arm is proven (unwound_len)
-+graph/src/planner/optimizer/replace_cartesian_with_index_seek.rs	unwound_len	312	PROVEN	IndexSeek.rangeEst (range arm; list value/literal arms are the list length): rangeEst_exact (exact when the step points towards `to`), rangeEst_upper (always an upper bound), rangeEst_overcount (range(0,-1,2): 1 vs 0), rangeEst_zero
-+graph/src/planner/optimizer/replace_cartesian_with_index_seek.rs	has_seekable_equality	335	NOT COVERED	(#3889) cost heuristic for estimate_rows (Eq root, or an AND with an index-served Eq conjunct); no effect on results
-+graph/src/planner/optimizer/replace_cartesian_with_index_seek.rs	has_non_deterministic	367	NOT COVERED	(#3889) syntactic walk over the ExprIR tree for non-deterministic or UDF calls; function metadata (FnType, non_deterministic)
-```
-
-**File**: `proofs/optimizer_rewrites/FalkorOptimizer.lean` (modified, +1/-0)
-```diff
-@@ -15,3 +15,4 @@ import FalkorOptimizer.Sequence
- import FalkorOptimizer.CallBoundary
- import FalkorOptimizer.AndOf
- import FalkorOptimizer.PushPlan
-+import FalkorOptimizer.IndexSeek
-```
-
-**File**: `proofs/optimizer_rewrites/FalkorOptimizer/IndexSeek.lean` (added, +86/-0)
-```diff
-@@ -0,0 +1,86 @@
-+/-
-+# `replace_cartesian_with_index_seek` (#3889): the `UNWIND range(..)` row estimate
-+
-+`unwound_len` (`replace_cartesian_with_index_seek.rs`) estimates how many rows
-+`UNWIND range(from, to[, step])` yields, from integer constants, as
-+`(to - from) / step + 1` (i128, truncating division) clamped at `0`; a zero step
-+gives no estimate. `rangeLen` is the length of the list the `range` function
-+(`runtime/functions/math.rs`) returns: empty when the step points away from
-+`to`, else `|to - from| / |step| + 1`.
-+
-+* `rangeEst_exact`: when the step points towards `to` (or `from = to`) the
-+  estimate is the exact length.
-+* `rangeEst_upper`: every estimate is an upper bound on the length (the pass
-+  only uses it to bound the rows fed to an index seek).
-+* `rangeEst_overcount`: it is not always exact: `range(0, -1, 2)` is empty but
-+  is estimated at one row (harmless: an upper bound).
-+
-+Abstraction: `usize::try_from` cannot fail on a 64-bit target for these values
-+(`|to - from| < 2^65`), so the clamp is `Int.toNat`.
-+-/
-+
-+namespace Falkor.Opt.IndexSeek
-+
-+/-- The step points away from `to`: `range` returns `[]` (math.rs). -/
-+def wrongDir (start stop step : Int) : Bool :=
-+  (decide (start > stop) && decide (step > 0)) || (decide (start < stop) && decide (step < 0))
-+
-+/-- Length of `range(start, stop, step)`, `step ≠ 0` (math.rs `range`). -/
-+def rangeLen (start stop step : Int) : Nat :=
-+  if wrongDir start stop step then 0 else (stop - start).natAbs / step.natAbs + 1
-+
-+/-- `unwound_len`, `range` arm: `None` on a zero step, else
-+`max((to - from) / step + 1, 0)` with truncating division. -/
-+def rangeEst (start stop step : Int) : Option Nat :=
-+  if step = 0 then none else some ((stop - start).tdiv step + 1).toNat
-+
-+private theorem tdiv_eq_of_nonneg {d s : Int} (h : 0 ≤ d.tdiv s) :
-+    d.tdiv s = ((d.natAbs / s.natAbs : Nat) : Int) := by
-+  have h1 : ((d.tdiv s).natAbs : Int) = d.tdiv s := Int.natAbs_of_nonneg h
-+  rw [Int.natAbs_tdiv] at h1
-+  exact h1.symm
-+
-+private theorem toNat_succ (n : Nat) : (((n : Int)) + 1).toNat = n + 1 := by
-+  have : ((n : Int) + 1) = ((n + 1 : Nat) : Int) := by simp
-+  rw [this, Int.toNat_natCast]
-+
-+/-- **PROVEN**: when the step points towards `to`, the estimate is the exact length. -/
-+theorem rangeEst_exact (start stop step : Int) (h0 : step ≠ 0)
-+    (hd : wrongDir start stop step = false) :
-+    rangeEst start stop step = some (rangeLen start stop step) := by
-+  simp only [rangeEst, rangeLen, h0, hd, ite_false]
-+  simp only [Bool.false_eq_true, ite_false]
-+  have hnn : 0 ≤ (stop - start).tdiv step := by
-+    simp [wrongDir] at hd
-+    rcases Int.lt_or_gt_of_ne h0 with hs | hs
-+    · have : start ≥ stop := by
-+        by_cases hc : start < stop
-+        · exact absurd hs (Int.not_lt.mpr (hd.2 hc))
-+        · exact Int.not_lt.mp hc
-+      exact Int.tdiv_nonneg_of_nonpos_of_nonpos (by omega) (by omega)
-+    · have : start ≤ stop := by
-+        by_cases hc : start > stop
-+        · exact absurd hs (Int.not_lt.mpr (hd.1 hc))
-+        · exact Int.not_lt.mp hc
-+      exact Int.tdiv_nonneg (by omega) (by omega)
-+  rw [tdiv_eq_of_nonneg hnn, toNat_succ]
-+
-+/-- **PROVEN**: every estimate bounds the length of the unwound list from above. -/
-+theorem rangeEst_upper (start stop step : Int) (k : Nat)
-+    (h : rangeEst start stop step = some k) : rangeLen start stop step ≤ k := by
-+  have h0 : step ≠ 0 := by
-+    intro hz; simp [rangeEst, hz] at h
-+  cases hd : wrongDir start stop step
-+  · rw [rangeEst_exact start stop step h0 hd] at h
-+    cases h; exact Nat.le_refl _
-+  · simp [rangeLen, hd]
-+
-+/-- The estimate is not always exact: `range(0, -1, 2)` is `[]`, estimated at 1. -/
-+theorem rangeEst_overcount : rangeEst 0 (-1) 2 = some 1 ∧ rangeLen 0 (-1) 2 = 0 := by
-+  decide
-+
-+/-- A zero step (a `range` that raises) gives no estimate. -/
-+theorem rangeEst_zero (start stop : Int) : rangeEst start stop 0 = none := by
-+  simp [rangeEst]
-+
-+end Falkor.Opt.IndexSeek
-```
-
-**File**: `proofs/optimizer_rewrites/FalkorOptimizer/Sequence.lean` (modified, +16/-6)
-```diff
-@@ -3,7 +3,8 @@
- 
- * `optimize_sound`: if every pass preserves a relation `R` (reflexive,
-   transitive), so does `optimize`; `optimize_nested` — each nested plan is
--  optimized independently; `passes_order` — the exact order (reduce_var_len_path twice).
-+  optimized independently; `passes_order` — the exact order (reduce_var_len_path twice);
-+  `passes_index_seek_before_hash_join` (#3889).
- * `rebuildHJ_id` (no rewrite: a plain copy) and `rebuildHJ_sound` (a
-   congruence `R` + sound local rewrites ⇒ the rebuilt tree is `R`-equal);
-   `rebuildHJ_fires`: the rewrite is applied wherever it fires, also over a
-@@ -22,22 +23,31 @@ namespace Falkor.Opt.Seq
- 
- inductive Pass
-   | reduceCount | reduceExpandInto | reduceVarLenPath | eliminateTrueFilters | selectScanNode
--  | pushFiltersDown | fuseAnonymousTraverse | replaceCartesianWithHashJoin | absorbEdgeFiltersIntoVlt
-+  | pushFiltersDown | fuseAnonymousTraverse | replaceCartesianWithIndexSeek | replaceCartesianWithHashJoin
-+  | absorbEdgeFiltersIntoVlt
-   | utilizeIndex | utilizeNodeById | reorderLabels | fuseOptionalTraverse | reduceBoundEdge
-   deriving DecidableEq, Repr
- 
- /-- mod.rs, in order. -/
- def passes : List Pass :=
-   [.reduceCount, .reduceExpandInto, .reduceVarLenPath, .eliminateTrueFilters, .selectScanNode,
--   .pushFiltersDown, .fuseAnonymousTraverse, .replaceCartesianWithHashJoin, .absorbEdgeFiltersIntoVlt,
-+   .pushFiltersDown, .fuseAnonymousTraverse, .replaceCartesianWithIndexSeek,
-+   .replaceCartesianWithHashJoin, .absorbEdgeFiltersIntoVlt,
-    .reduceVarLenPath, .utilizeIndex, .utilizeNodeById, .reorderLabels, .fuseOptionalTraverse,
-    .reduceBoundEdge]
- 
- theorem passes_order :
--    passes.length = 15 ∧ passes.count .reduceVarLenPath = 2 ∧
-+    passes.length = 16 ∧ passes.count .reduceVarLenPath = 2 ∧
-     passes.head? = some .reduceCount ∧ passes.getLast? = some .reduceBoundEdge ∧
--    passes.idxOf .absorbEdgeFiltersIntoVlt < 9 ∧ passes[9]? = some .reduceVarLenPath ∧
--    passes.idxOf .fuseOptionalTraverse = 13 := by decide
-+    passes.idxOf .absorbEdgeFiltersIntoVlt < 10 ∧ passes[10]? = some .reduceVarLenPath ∧
-+    passes.idxOf .fuseOptionalTraverse = 14 := by decide
-+
-+/-- #3889: `replace_cartesian_with_index_seek` runs once, right before
-+`replace_cartesian_with_hash_join`. -/
-+theorem passes_index_seek_before_hash_join :
-+    passes.count .replaceCartesianWithIndexSeek = 1 ∧
-+    passes.idxOf .replaceCartesianWithIndexSeek + 1 = passes.idxOf .replaceCartesianWithHashJoin := by
-+  decide
- 
- /-- A plan tree whose root may be `NestedPlans`. -/
- inductive OPlan (P : Type)
-```
-
----
-
-### Incident Patch 2: `4ac2af31` (2026-11-23)
-**Commit Message**: fix: make id() seeks keep exactly the rows their filter keeps (#3017)
-
-* fix: make id() seeks keep exactly the rows their filter keeps
-
-evaluate_id_filter cast every bound with `id as u64` and errored on any
-non-Int. A negative bound wrapped (`id(n) > -1` -> 0 rows, `id(n) <= -1`
--> every node), and `id(n) = null / 1.0 / > 1.5` raised "Node ID must be
-an integer" although the replaced Filter returns rows. Bounds are now
-narrowed as integers in saturating i128: floats via ceil/floor, and
-null, NaN and non-numeric bounds match nothing.
-
-Closes #3008
-Closes #2266
-Closes #2648
-
-Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
-
-* fix(runtime): id seek float bounds follow the f64 cast of the id
-
-The filter a seek replaces casts an integer id to f64 before comparing it with a
-float, which rounds beyond 2^53. Derive the bounds from that cast (searched, as
-it is monotonic) instead of the mathematical ceil/floor, with a unit test.
-
-Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
-
-* style: satisfy strict clippy in id bound tests
+The logo files are generated by build/banner/generate.py (stdlib Python)
+from build/banner/logo.png, a render of the site's fk-footer-lockup.svg.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-* chore: restore the RediSearch submodule pointer to main's
+* fix(banner): never let a paused terminal block module load
 
-Co-Authored-By: Claude Opus 5.5 
+Copilot's review was right: the banner (several KB, more than a tty output
+queue holds) was written with a blocking write_all on the server's main
+thread. With the terminal paused (Ctrl-S), MODULE LOAD
 
-**File**: `graph/src/runtime/runtime.rs` (modified, +97/-46)
+**File**: `.github/workflows/rust-pr.yml` (modified, +4/-2)
 ```diff
-@@ -444,6 +444,41 @@ impl ReturnNames for DynNode<'_, IR> {
-     }
- }
- 
-+/// The smallest integer `i` in `i64::MIN..=i64::MAX + 1` whose `f64` image is
-+/// not below `f`, or `i64::MAX + 1` when none is.
-+///
-+/// The `Filter` a seek replaces compares an integer id with a float by first
-+/// casting the id to `f64`, which is exact up to 2^53 and rounds beyond it, so
-+/// the cast is searched (it is monotonic) rather than `f.ceil()` assumed.
-+fn first_id_where(reached: impl Fn(f64) -> bool) -> i128 {
-+    let (mut lo, mut hi) = (i128::from(i64::MIN), i128::from(i64::MAX) + 1);
-+    while lo < hi {
-+        let mid = lo + (hi - lo) / 2;
-+        if reached(mid as f64) {
-+            hi = mid;
-+        } else {
-+            lo = mid + 1;
-+        }
-+    }
-+    lo
-+}
+@@ -339,6 +339,8 @@ jobs:
+         run: |
+           RUSTFLAGS="-C instrument-coverage -C link-arg=-Wl,--allow-multiple-definition" cargo build
+           RUSTDOCFLAGS="-C instrument-coverage -C link-arg=-Wl,--allow-multiple-definition" RUSTFLAGS="-C instrument-coverage -C link-arg=-Wl,--allow-multiple-definition" cargo test -p graph
++          # The root crate's own unit tests (src/), which `-p graph` skips.
++          RUSTFLAGS="-C instrument-coverage -C link-arg=-Wl,--allow-multiple-definition" cargo test -p falkordb-rs --lib
+           # `cargo build` only produces libfalkordb.so's coverage map, which is
+           # blind to code with no caller reachable from the cdylib (e.g.
+           # graph/src/index/falkordb's cow_btree, not wired into the runtime
+@@ -347,10 +349,10 @@ jobs:
+           # anything) so llvm-cov can also credit coverage recorded by
+           # test-only call paths, not just the shared library's. Cargo prints
+           # "  Executable <target> (<path>)" to stderr for every test binary
+-          # it builds (one per test target; today that's just the lib's own
++          # it builds (one per test target: graph's lib and the root crate's lib
+           # unit tests) — no jq/python needed to find it.
+           TEST_OBJECTS=""
+-          for bin in $(RUSTFLAGS="-C instrument-coverage -C link-arg=-Wl,--allow-multiple-definition" cargo test -p graph --no-run 2>&1 | grep -w Executable | grep -oE 'target/debug/deps/[^)]+'); do
++          for bin in $( (RUSTFLAGS="-C instrument-coverage -C link-arg=-Wl,--allow-multiple-definition" cargo test -p graph --no-run && RUSTFLAGS="-C instrument-coverage -C link-arg=-Wl,--allow-multiple-definition" cargo test -p falkordb-rs --lib --no-run) 2>&1 | grep -w Executable | grep -oE 'target/debug/[^)]+'); do
+             TEST_OBJECTS="$TEST_OBJECTS -object $bin"
+           done
+           echo "Additional coverage objects: $TEST_OBJECTS"
+```
+
+**File**: `.github/workflows/rust-push.yml` (modified, +4/-2)
+```diff
+@@ -160,6 +160,8 @@ jobs:
+         run: |
+           RUSTFLAGS="-C instrument-coverage -C link-arg=-Wl,--allow-multiple-definition" cargo build
+           RUSTDOCFLAGS="-C instrument-coverage -C link-arg=-Wl,--allow-multiple-definition" RUSTFLAGS="-C instrument-coverage -C link-arg=-Wl,--allow-multiple-definition" cargo test -p graph
++          # The root crate's own unit tests (src/), which `-p graph` skips.
++          RUSTFLAGS="-C instrument-coverage -C link-arg=-Wl,--allow-multiple-definition" cargo test -p falkordb-rs --lib
+           # `cargo build` only produces libfalkordb.so's coverage map, which is
+           # blind to code with no caller reachable from the cdylib (e.g.
+           # graph/src/index/falkordb's cow_btree, not wired into the runtime
+@@ -168,10 +170,10 @@ jobs:
+           # anything) so llvm-cov can also credit coverage recorded by
+           # test-only call paths, not just the shared library's. Cargo prints
+           # "  Executable <target> (<path>)" to stderr for every test binary
+-          # it builds (one per test target; today that's just the lib's own
++          # it builds (one per test target: graph's lib and the root crate's lib
+           # unit tests) — no jq/python needed to find it.
+           TEST_OBJECTS=""
+-          for bin in $(RUSTFLAGS="-C instrument-coverage -C link-arg=-Wl,--allow-multiple-definition" cargo test -p graph --no-run 2>&1 | grep -w Executable | grep -oE 'target/debug/deps/[^)]+'); do
++          for bin in $( (RUSTFLAGS="-C instrument-coverage -C link-arg=-Wl,--allow-multiple-definition" cargo test -p graph --no-run && RUSTFLAGS="-C instrument-coverage -C link-arg=-Wl,--allow-multiple-definition" cargo test -p falkordb-rs --lib --no-run) 2>&1 | grep -w Executable | grep -oE 'target/debug/[^)]+'); do
+             TEST_OBJECTS="$TEST_OBJECTS -object $bin"
+           done
+           echo "Additional coverage objects: $TEST_OBJECTS"
+```
+
+**File**: `build/banner/generate.py` (added, +208/-0)
+```diff
+@@ -0,0 +1,208 @@
++#!/usr/bin/env python3
++"""Generate the FalkorDB startup banner from the logo.
 +
-+/// The smallest id `i` with `(i as f64) >= f`.
-+fn first_id_ge(f: f64) -> i128 {
-+    if f.abs() < 9_007_199_254_740_992.0 {
-+        return f.ceil() as i128;
-+    }
-+    first_id_where(|x| x >= f)
-+}
++Reads build/banner/logo.png (the falkordb.com logo lockup, fk-footer-lockup.svg,
++rendered and cropped) and writes the three banner variants src/banner/ embeds:
 +
-+/// The largest id `i` with `(i as f64) <= f`.
-+fn last_id_le(f: f64) -> i128 {
-+    if f.abs() < 9_007_199_254_740_992.0 {
-+        return f.floor() as i128;
-+    }
-+    first_id_where(|x| x > f) - 1
-+}
++  truecolor.ans  quadrant blocks, swoosh in 24-bit colour from the logo gradient
++  ansi256.ans    the same, swoosh colours snapped to the xterm 256-colour palette
++  plain.txt      the same blocks with no colour (NO_COLOR)
 +
- impl<'a> Runtime<'a> {
-     #[inline]
-     pub fn inspect_batch(
-@@ -1441,74 +1476,68 @@ impl<'a> Runtime<'a> {
-         }
-     }
- 
-+    /// Narrow the id range `[0, max_node_id]` by every `id(n) <op> expr`
-+    /// conjunct the optimizer folded into a seek, or `None` when no id can
-+    /// satisfy them all.
-+    ///
-+    /// The seek must return exactly the rows the `Filter` it replaced would
-+    /// keep, so each bound follows Cypher's comparison of an integer id:
-+    /// a negative bound is simply below every id (`id(n) > -1` keeps them
-+    /// all, `id(n) <= -1` none), a float compares numerically (`id(n) = 1.0`
-+    /// is node 1, `id(n) > 1.5` starts at 2), and a null, NaN or
-+    /// non-numeric bound never compares true, so no row survives.
-     pub fn evaluate_id_filter<R: super::row::RowView + ?Sized>(
-         &self,
-         filter: &Vec<(QueryExpr<Variable>, ExprIR<Variable>)>,
-         vars: &R,
-     ) -> Result<Option<RoaringTreemap>, String> {
--        // Bound the seek by where the id space ends, not by `max_node_id`.
--        // `max_node_id` is 0 both when id 0 is the only id and when no id was
--        // ever handed out, so it would make an empty graph seek a node 0 that
--        // does not exist. With an empty id space `max` is 0 here, and the
--        // `node_count() == 0` check below returns no ids once every predicate
--        // has been type-checked.
--        let mut max = self.graph().node_id_bound().saturating_sub(1);
--        let mut min = 0u64;
-+        // Inclusive bounds, widened to i128 so that any `i64` and any finite
-+        // float fit; `±inf` saturates, and the `± 1` below saturates with it.
-+        // Bound the seek by where the id space ends, not by `max_node_id`,
-+        // which is 0 both when id 0 is the only id and when no id was ever
-+        // handed out. With an empty id space `max` is 0 here, and the
-+        // `node_count() == 0` check below returns no ids.
-+        let mut min = 0i128;
-+        let mut max = i128::from(self.graph().node_id_bound().saturating_sub(1));
-         for (expr, op) in filter {
--            let id = match {
--                let this = &self;
-+            let value = {
-                 let idx = expr.root().idx();
--                super::eval::ExprEval::from_runtime(this).eval(expr, idx, Some(vars), None)
--            }? {
--                Value::Int(id) => id as u64,
--                _ => {
--                    return Err(String::from("Node ID must be an integer"));
--                }
-+                super::eval::ExprEval::from_runtime(self).eval(expr, idx, Some(vars), None)
-+            }?;
-+            // The smallest id `>=` and the largest id `<=` the bound, so that a
-+            // non-integer bound turns every operator into an integer one:
-+            // `id > 1.5` is `id >= 2`, `id <= 1.5` is `id <= 1`, and
-+            // `id = 1.5` has no solution because `ceil > floor`.
-+            let (ceil, floor) = match value {
-+                Value::Int(id) => (i128::from(id), i128::from(id)),
-+                Value::Float(f) if !f.is_nan() => (first_id_ge(f), last_id_le(f)),
-+                _ => return Ok(None),
-             };
-             match op {
-                 ExprIR::Eq => {
--                    if id < min || id > max {
--                        return Ok(None);
--                    }
--                    min = id;
--                    max = id;
--                }
--                ExprIR::Gt => {
--                    if id >= max {
--                        return Ok(None);
--                    }
--                    min = std::cmp::max(min, id + 1);
--                }
--                ExprIR::Ge => {
--                    if id > max {
--                        return Ok(None);
--                    }
--                    min = std::cmp::max(min
-```
-
-**File**: `proofs/FINDINGS.md` (modified, +0/-1)
-```diff
-@@ -130,7 +130,6 @@ A bug is **confirmed** only if a repro against the real Rust shows it, and it is
- 
- ## Planner & optimizer
- 
--- **W2-rewrites-2 / W2-scan-***: id seek with a negative bound, `id(n) > -1`, gives 0 rows where C gives 5 (`evaluate_id_filter`, `runtime.rs:1463`: `id as u64` wraps the negative); a non-integer bound (`id(n)=null`, `=1.0`, `>1.5`) raises an error where C gives 0 rows (`runtime.rs:1464-1466`).
- - **W2-scan-3**: a computed constant ≥ 2^52 in an index equality returns every node (`utilize_index.rs:895-910`, `is_non_indexable_subexpr`).
- - **W2-scan-6** (confirmed live on main 43936bab9, 65654bc23 and 256ab4d3f (graph `CREATE (:B {v:1})-[:H]->(:C)`: `WITH` query Rust 0, C 1; `UNWIND` query Rust 1, C 2); this is #2972 (its `UNWIND` row), fix pending in #3099 (open) (2b1e86053), checked on #3099's build: #2972's three repro queries give 1 / 2 / 2 there, as on C, where main gives 0 / 0 / 1): `select_scan_node` prunes a planner scan whole but salvages only its `Filter`s and `Argument` leaf (`is_planner_scan_subtree` `:377` accepts a scan with any child; `argument_leaf_of` `:338`). A `WITH`/`UNWIND` the planner stitched below the scan is lost, and a salvaged filter reading its variable runs unbound. `WITH 1 AS k MATCH (b:B) WHERE b.v = k MATCH (b)-[:H]->(c:C) RETURN count(*)` → Rust 0, C 1; `UNWIND [1,1] AS k MATCH (b:B) WHERE b.v = 1 MATCH (b)-[:H]->(c:C) RETURN count(*)` → Rust 1, C 2 (no `Unwind` in EXPLAIN). Lean `optimizer_scan` `Salvage.premise_fails`, `salvage_loses_row`, `rebuilt_drops_unwind`; it refutes the premise `ScanOrder.salvage_wellScoped` takes, so that premise is now modelled instead of assumed (`Salvage.premise_of_spine` gives a sufficient condition under which it holds; the refutation is the one concrete `Filter → NodeByLabelScan → Unwind` tree, `exChild`).
- - **W9-scan-1** — `try_filter_pushdown`'s OR branch drops the array-contains filter (`utilize_index.rs:782-801`; same family as #3736, which covers AND and the single atom): with `CREATE INDEX FOR (n:L) ON (n.arr, n.k)` and nodes `{arr:[true],k:0}`, `{arr:[1],k:0}`, `{arr:[2],k:9}`, `MATCH (n:L) WHERE 1 IN n.arr OR n.k = 9 RETURN n.arr, n.k` returns `[true],0` too (no Filter in EXPLAIN); without the index Rust returns only `[1],0` and `[2],9`. C with the index returns the same extra row. Lean `optimizer_scan` `tryPushdown_or_ac_drops_filter`. Fix: keep the original filter when any OR branch is array-contains.
-```
-
-**File**: `proofs/optimizer_rewrites/COVERAGE.tsv` (modified, +1/-1)
-```diff
-@@ -53,7 +53,7 @@ graph/src/planner/optimizer/reduce_var_len_path.rs	path_consumed_through_value_h
- graph/src/planner/optimizer/replace_cartesian_with_hash_join.rs	replace_cartesian_with_hash_join	80	PROVEN	Passes.vhj_correct, hash_join_drops_row
- graph/src/planner/optimizer/replace_cartesian_with_hash_join.rs	rebuild_with_hash_joins	87	PROVEN	Sequence.rebuildHJ_id (copy when nothing fires), rebuildHJ_sound (congruence + sound local rewrite vhj_correct), rebuildHJ_fires (no Argument guard since #3930; correlated sub-plans rely on the per-origin join, ops_apply VhjSep.vhjPO_sepT)
- graph/src/planner/optimizer/replace_cartesian_with_hash_join.rs	try_hash_join_rewrite	108	PROVEN	Passes.vhj_correct (side selection is the coverage test of push_cp_left); #3335 rebuilds the filter with ExprIR::and_of: AndOf.flat_passes (same Filter verdict, errors included), flat_eval
--graph/src/planner/optimizer/utilize_node_by_id.rs	utilize_node_by_id	93	PROVEN	Passes.idFilter_correct, step_correct, step_no_wrap, id_gt_neg_empty, id_le_neg_all, id_eq_null_errors (with runtime.rs:1309 evaluate_id_filter); Helpers.root_scan_has_no_parent (hazard: parent().unwrap() on a root scan; the W4-plan-4 repro is rejected by validation since #3297)
-+graph/src/planner/optimizer/utilize_node_by_id.rs	utilize_node_by_id	93	PROVEN	Passes.idFilter_correct (every integer bound since #3017), step_correct, step_no_wrap, idFilter_nonint, id_gt_neg_all, id_le_neg_none, id_eq_null_empty (with runtime.rs evaluate_id_filter; floats in optimizer_scan IdSeek); Helpers.root_scan_has_no_parent (hazard: parent().unwrap() on a root scan; the W4-plan-4 repro is rejected by validation since #3297)
- graph/src/graph/graphblas/block_scaling_bench.rs	per_op	32	NOT COVERED	TEST-ONLY: benchmark harness (block_scaling_bench.rs), not production code
- graph/src/graph/graphblas/block_scaling_bench.rs	spread	47	NOT COVERED	TEST-ONLY: benchmark harness (block_scaling_bench.rs), not production code
- graph/src/graph/graphblas/block_scaling_bench.rs	block_scaling_zero_cost	72	NOT COVERED	TEST-ONLY: benchmark harness (block_scaling_bench.rs), not production code
-```
-
-**File**: `proofs/optimizer_rewrites/FalkorOptimizer/Passes.lean` (modified, +79/-79)
-```diff
-@@ -107,108 +107,108 @@ theorem flip_holds (op : IdOp) (n c : Int) : op.flip.holds n c = op.holdsRev c n
-   cases op <;> simp only [IdOp.flip, IdOp.holds, IdOp.holdsRev] <;>
-     apply Bool.eq_iff_iff.2 <;> simp <;> omega
- 
--/-- Rust `id as u64`. -/
--def wrap (i : Int) : Nat := (i % 2 ^ 64).toNat
--
--/-- One iteration of the `for (expr, op) in filter` loop (runtime.rs). -/
--def step (lo hi c : Nat) : IdOp → Option (Nat × Nat)
--  | .eq => if c < lo ∨ c > hi then none else some (c, c)
--  | .gt => if c ≥ hi then none else some (max lo (c + 1), hi)
--  | .ge => if c > hi then none else some (max lo c, hi)
--  | .lt => if c ≤ lo then none else some (lo, min hi (c - 1))
--  | .le => if c < lo then none else some (lo, min hi c)
--
--/-- The whole function. `Ok(None)` = empty; a non-integer value is an error. -/
-+/-- One iteration of the `for (expr, op) in filter` loop of `evaluate_id_filter` (runtime.rs,
-+PR #3017) for an integer bound `c` (its own ceiling and floor), on the `i128` range. -/
-+def step (lo hi c : Int) : IdOp → Int × Int
-+  | .eq => (max lo c, min hi c)
-+  | .gt => (max lo (c + 1), hi)
-+  | .ge => (max lo c, hi)
-+  | .lt => (lo, min hi (c - 1))
-+  | .le => (lo, min hi c)
++There is no ASCII variant: at 80 columns the letters are six rows tall, and
++every ASCII mapping tried ran them together, so terminals without the block
++glyphs get the one-line text banner src/banner/mod.rs prints instead.
 +
-+/-- The whole function. `Ok(None)` = empty: a non-integer bound (floats are modelled in
-+`proofs/optimizer_scan` `IdSeek`), or a step that leaves `min > max`. At the end the range is
-+cast `min as u64 ..= max as u64`. No value is an error since PR #3017. -/
- def idFilter (maxId : Nat) (fs : List (Val × IdOp)) : Except Err (Option (Nat × Nat)) :=
-   go 0 maxId fs
- where
--  go (lo hi : Nat) : List (Val × IdOp) → Except Err (Option (Nat × Nat))
--    | [] => .ok (some (lo, hi))
-+  go (lo hi : Int) : List (Val × IdOp) → Except Err (Option (Nat × Nat))
-+    | [] => .ok (some (lo.toNat, hi.toNat))
-     | (v, op) :: rest =>
-       match v with
-       | .int i =>
--        match step lo hi (wrap i) op with
--        | none => .ok none
--        | some (lo', hi') => go lo' hi' rest
--      | _ => .error .typeMismatch     -- "Node ID must be an integer"
-+        let r := step lo hi i op
-+        if r.1 > r.2 then .ok none else go r.1 r.2 rest
-+      | _ => .ok none
- 
- def inRange (r : Option (Nat × Nat)) (n : Nat) : Bool :=
-   match r with
-   | none => false
-   | some (lo, hi) => decide (lo ≤ n ∧ n ≤ hi)
- 
--/-- `+ 1` / `- 1` never overflow/underflow: the guards run first. -/
--theorem step_no_wrap (lo hi c : Nat) (hhi : hi < 2 ^ 64) (op : IdOp) (lo' hi' : Nat)
--    (h : step lo hi c op = some (lo', hi')) :
--    (op = .gt → c + 1 < 2 ^ 64) ∧ (op = .lt → 1 ≤ c) := by
--  cases op <;> simp [step] at h ⊢ <;> omega
--
--theorem step_correct (lo hi c n : Nat) (op : IdOp) :
--    inRange (step lo hi c op) n = (decide (lo ≤ n ∧ n ≤ hi) && op.holds n c) := by
--  cases op <;> simp only [step] <;> split <;> simp only [inRange, IdOp.holds] <;>
--    apply Bool.eq_iff_iff.2 <;> simp <;> omega
--
--theorem wrap_of_nonneg (i : Int) (h0 : 0 ≤ i) (h1 : i < 2 ^ 64) : (wrap i : Int) = i := by
--  unfold wrap
--  rw [Int.emod_eq_of_lt h0 h1]
--  omega
--
--/-- **evaluate_id_filter is correct for integer arguments in `[0, 2^63)`**:
--a node id `n` is in the seek range iff `n ≤ max_node_id` and every comparison
--holds. -/
--theorem idFilter_correct (maxId : Nat) (fs : List (Int × IdOp))
--    (hfs : ∀ p ∈ fs, 0 ≤ p.1 ∧ p.1 < 2 ^ 63) (n : Nat) :
-+/-- The `saturating_add(1)` / `saturating_sub(1)` never saturate on an `i64` bound, and the
-+range only narrows, so from `[0, max]` both ends stay in `[0, max]` for the `as u64` casts. -/
-+theorem step_no_wrap (lo hi c : Int) (hc : -2 ^ 63 ≤ c ∧ c < 2 ^ 63) (op : IdOp) (lo' hi' : Int)
-+    (h : step lo hi c op = (lo', hi')) :
-+    (op = .gt → c + 1 < 2 ^ 127) ∧ (op = .lt → -2 ^ 127 ≤ c - 1) ∧ lo ≤ lo' ∧ hi' ≤ hi := by
-+  cases op <;> simp only [step, Prod.mk.injEq] at h <;> obtain ⟨rfl, rfl⟩ := h <;>
-+    simp <;> omega
++The wordmark is drawn in the terminal's own bold foreground rather than the
++logo's navy, so it reads on dark and light themes alike.
 +
-+theorem step_correct (lo hi c n : Int) (op : IdOp) :
-+    decide ((step lo hi c op).1 ≤ n ∧ n ≤ (step lo hi c op).2) =
-+      (decide (lo ≤ n ∧ n ≤ hi) && op.holds n c) := by
-+  cases op <;> simp only [step, IdOp.holds] <;>
-+    apply Bool.eq_iff_iff.2 <;> simp only [decide_eq_true_eq, Bool.and_eq_true, Int.max_le, Int.le_min, beq_iff_eq] <;> omega
++Standard library only. Run from the repository root:
 +
-+/-- **evaluate_id_filter is correct for every integer bound** (PR #3017; it was only for bounds
-+in `[0, 2^63)` while the bound was cast `as u64`): a node id `n` is in the seek range iff
-+`n ≤ max` and every comparison holds. -/
-+theorem idFilter_correct (maxId : Nat) (fs : List (Int × IdOp)) (n : Nat) :
-     (match idFilter maxId (fs.map fun p => (Val.int p.1, p.2)) with
-      | .ok r => inRange r n
-      | .error _ => false) =
-     (decide (n ≤ maxId) && fs.all (fun p => p.2.holds n p.1)) := by
-   unfold idFilter
--  suffices H : ∀ lo hi, (match idFilter.go lo hi (fs.map fun p => (Val.int p.1, p.2)) with
-+  suffices H : ∀ lo hi : Int, 0 ≤ lo → lo ≤ hi →
-+     (match idFilter.go lo hi (fs.map fun p => (Val.int p.1, p.2)) with
-      | .ok r => inRange r n | .error _ => false) =
-   
-```
-
-**File**: `proofs/optimizer_rewrites/README.md` (modified, +2/-5)
-```diff
-@@ -51,8 +51,7 @@ That criterion ignores writes. Since 2026-10-20, `PushPlan.lean` also gives the
- 
- **4. Is the id seek exact?**
- 
--- **For integer bounds in `[0, 2⁶³)`, yes.** `idFilter_correct` proves a node is in the seek range iff it satisfies every comparison, and `step_no_wrap` that the `+1`/`-1` adjustments never overflow.
--- **Outside that range, no.** `id(n) > -1` returns 0 rows (C: all of them) because the bound is cast `as u64` (`id_gt_neg_empty`). `id(n) = null` raises "Node ID must be an integer" where C returns 0 rows (`id_eq_null_errors`).
-+- **Yes, for every bound** (since #3017). `idFilter_correct` proves a node is in the seek range iff it satisfies every comparison, for any integer bound (negative ones included: `id(n) > -1` keeps every node, `id_gt_neg_all`; `id(n) <= -1` none, `id_le_neg_none`, where C returns every node, #2266), and `step_no_wrap` that the `+1`/`-1` adjustments never saturate and the range only narrows. A non-integer bound matches nothing (`idFilter_nonint`, `id_eq_null_empty`). Float bounds are proved in [`../optimizer_scan`](../optimizer_scan) (`IdSeek.seek_sound`).
- 
- **5. Does the hash join return the same rows as the filter it replaces?**
- 
-@@ -87,7 +86,7 @@ Several passes collapse an edge, a bound edge or a variable-length path when nob
- | `flat_passes` | Rebuilding a filter with `and_of` gives the same verdict, errors included | `AndOf.lean` |
- | `refsNew_complete`, `refsNew_sound` | The "is this variable read?" oracle is exact per operator | `References.lean` |
- | `fuse_unread_sound` | Fusion's whole-plan check sees every reader | `References2.lean` |
--| `idFilter_correct`, `step_no_wrap` | The id seek is exact for integer bounds in `[0, 2⁶³)` | `Passes.lean` |
-+| `idFilter_correct`, `step_no_wrap`, `idFilter_nonint` | The id seek is exact for every integer bound; a non-integer one matches nothing | `Passes.lean` |
- | `vhj_correct` | The hash join equals Filter(=) over CP when key equality is `=` | `Passes.lean` |
- | `fuse_same_support`, `fuse_optional_correct` | Traversal fusion keeps the rows | `Passes.lean` |
- | `reorder_preserves`, `reduce_count_correct` | `reorder_labels` and `reduce_count` are exact | `Passes.lean` |
-@@ -111,8 +110,6 @@ Each bug has a Rust repro (`cargo test -p graph --test lean_optimizer_rewrites`,
- | # | Theorem (counterexample) | What it means | Status |
- |---|---|---|---|
- | 1 | `limit_skip_not_excluded`, `limit_not_transparent`, `skip_not_transparent` | A filter is pushed below LIMIT/SKIP: `… ORDER BY n.v LIMIT 2 MATCH (m:N) WHERE n.v > 1 RETURN count(*)` → 10 (openCypher 5) | **Open**, shared with C |
--| 3 (W2-rewrites-2) | `id_gt_neg_empty`, `id_le_neg_all` | `id(n) > -1` → 0 rows (C: 5); `id(n) <= -1` returns every node on both (#2266) | **Open** |
--| 4 (W2-rewrites-2) | `id_eq_null_errors` | `id(n) = null`, `= 1.0`, `> 1.5` → "Node ID must be an integer" (C: 0 rows) | **Open** |
- | 5 (W2-rewrites-3) | `hash_join_drops_row` | The hash join drops Int/Float pairs near 2⁵³: 2 rows where C gives 4 | **Open** |
- | 7 | `main_misses_call_sibling`, `refsNew_misses_sibling_edges` | An edge read outside the traverse's ancestors is collapsed (#2896, W2-traverse-1) | **Open** (PR #2918 not merged) |
- | #2556 | `bug2556_filter_below_binding`, `bug2556_t_seeded`, `bug2556_plan` (property `KeepsFiltersBound`) | `… WITH collect(x) AS fs UNWIND fs AS f MATCH (f)<-[:HAS_CREATOR]-(post:Post), (post)-[:HAS_TAG]->(t:Tag {id:100}), (post)-[:HAS_TAG]->(tag:Tag) RETURN count(post)`: `select_scan_node` picks `t` as the best endpoint, seeds it into `initial_bound` although the outer `Unwind` child is kept and no scan for `t` is built, and places `t.id = 100` after the first hop, before `t` is bound. Rust 0, C 3 (the issue's query: a type error). Not `push_filters_down` (`bug2556_push_not_cause`); `bug2556_fixed` gives the C plan | **Open** |
-```
-
-**File**: `proofs/optimizer_scan/COVERAGE.tsv` (modified, +4/-1)
-```diff
-@@ -69,7 +69,10 @@ graph/src/planner/optimizer/utilize_index.rs	is_array_contains	826	PROVEN	Index.
- graph/src/planner/optimizer/utilize_index.rs	try_filter_pushdown/array-contains	725	PROVEN	IndexArray.utilize_sound_ac (an array-contains conjunct, alone or in an AND, keeps its filter: pushAnd_spec_ac, contains_no_fn, cu_contains); the OR branch keeps none: IndexArray.tryPushdown_or_ac_drops_filter, Cex C12 (confirmed live, shared with C)
- graph/src/planner/optimizer/utilize_node_by_id.rs	get_id_filter	52	PROVEN	IdSeek.getIdFilter: getIdFilter_spec, getIdFilter_other_scope ((id, scope) since #2390), flip_correct, flip_flip
- graph/src/planner/optimizer/reorder_labels.rs	reorder_labels	16	PROVEN	ScanOrder.reorderLabels_sound, sortBy_perm
--graph/src/runtime/runtime.rs	evaluate_id_filter	1444	PROVEN	(support, not a target file) IdSeek.evalIdFilter/evalIdFilterMain; step_none, step_some, step_nonempty, fold_none, fold_some, go_eq_fold, seek_sound, empty_graph_seek_none, idMax_eq_maxNodeId, seek_sound_nonempty (#3394 fixes #3353 / W2-scan-2; #2979 starts at idMax = node_id_bound - 1)
-+graph/src/runtime/runtime.rs	evaluate_id_filter	1489	PROVEN	(support, not a target file) IdSeek.evalIdFilter/evalIdFilterMain/bounds/step/fold; cypherHolds_bounds, step_none, step_some, step_nonempty, fold_none, fold_some, fold_bounds, go_eq_fold, seek_sound (every operand: #3017 fixes W2-rewrites-2 / W2-scan-*), id_gt_neg_all, id_le_neg_none, id_nonint_bounds, empty_graph_seek_none, idMax_eq_maxNodeId, seek_sound_nonempty (#3394 fixes #3353 / W2-scan-2; #2979 starts at idMax = node_id_bound - 1)
-+graph/src/runtime/runtime.rs	first_id_where	453	PROVEN	IdSeek.firstIdWhere/firstIdWhereRust: firstIdWhere_spec, firstIdWhereRust_iff (least i in i64::MIN..=i64::MAX+1 with a monotone reached(i as f64))
-+graph/src/runtime/runtime.rs	first_id_ge	467	NOT COVERED	(#3017) f64 semantics: the fast path relies on f.ceil() being exact below 2^53, the slow path is first_id_where (PROVEN) over the monotone i as f64; no IEEE f64 model in core Lean. Its result is the c of IdSeek.V.float c f
-+graph/src/runtime/runtime.rs	last_id_le	475	NOT COVERED	(#3017) f64 semantics: the fast path relies on f.floor() being exact below 2^53, the slow path is first_id_where (PROVEN) minus 1; no IEEE f64 model in core Lean. Its result is the f of IdSeek.V.float c f
- graph/src/index/mod.rs	build_query_node	1491	PROVEN	(support, not a target file) Index.build (the RediSearch node semantics are the FFI contract, taken as definitions); sel_eq, sel_range, sel_and2, sel_inList, contains_no_fn (ArrayContains arm); also proofs/index_layer buildQ/equal_exact
- graph/src/planner/optimizer/utilize_index.rs	bare_property_of	360	PROVEN	Index.trySingle inn arm (`match l with .prop k` / `match r with .term (.prop k)`; Paren unwrapping abstracted: the model has no Paren); trySingle_inn_bare; IndexCex C7/C7'/C8 agree
- graph/src/planner/optimizer/utilize_index.rs	can_seek_index	815	PROVEN	Index.canSeek; canSeek_iff (true exactly when tryPushdown is some: the rewrite utilize applies)
-```
-
-**File**: `proofs/optimizer_scan/OptimizerScan/IdSeek.lean` (modified, +305/-170)
-```diff
-@@ -6,15 +6,16 @@
- | `Op`, `Op.flip`            | `ExprIR::{Eq,Gt,Ge,Lt,Le}` and the flip table, `planner/optimizer/utilize_node_by_id.rs` |
- | `getIdFilter`              | `get_id_filter`, `utilize_node_by_id.rs` |
- | `collectFilters`           | the AND walk of `utilize_node_by_id`, `utilize_node_by_id.rs` |
--| `asU64`                    | `Value::Int(id) => id as u64`, `runtime/runtime.rs` |
--| `step`                     | one arm of the `match op`, `runtime/runtime.rs` |
--| `evalIdFilter`             | the filter loop of `Runtime::evaluate_id_filter`, `runtime/runtime.rs` |
--| `evalIdFilterMain`         | `Runtime::evaluate_id_filter` on main: the loop, then `node_count() == 0 → Ok(None)`, `runtime.rs` |
-+| `V.float c f`              | a `Value::Float` bound, by its `(first_id_ge(f), last_id_le(f))`, `runtime/runtime.rs` |
-+| `firstIdWhere`             | `first_id_where`, the binary search over `i64::MIN..=i64::MAX + 1`, `runtime/runtime.rs` |
-+| `bounds`                   | the `(ceil, floor)` match of `evaluate_id_filter`: `Int`, non-NaN `Float`, else `return Ok(None)` |
-+| `step`                     | one arm of the `match op` on the `i128` range `[min, max]`, `runtime/runtime.rs` |
-+| `evalIdFilter`             | the filter loop of `Runtime::evaluate_id_filter` (`if min > max { return Ok(None) }` after each arm), then `insert_range(min as u64..=max as u64)`, `runtime/runtime.rs` |
-+| `evalIdFilterMain`         | `Runtime::evaluate_id_filter`: the loop, then `node_count() == 0 → Ok(None)`, `runtime.rs` |
- | `maxNodeId`                | `Graph::max_node_id`, `graph/graph.rs` (`node_ids.max_id()`, id_space.rs) |
- | `idMax`                    | the loop's initial `max = node_id_bound().saturating_sub(1)`, `runtime/runtime.rs` (`Graph::node_id_bound` → `IdSpace::bound`, id_space.rs) |
- | `seek`                     | `NodeByIdSeekOp::next`: range minus `deleted_nodes`, `runtime/ops/node_by_id_seek.rs` |
- | `G.wf`                     | `Graph::node_count` is the number of live ids below the id bound (`id_space.rs`) |
--| `labelIdScan`              | `NodeByLabelAndIdScanOp::next`: `get_nodes(labels, min)` ∩ range, `runtime/ops/node_by_label_and_id_scan.rs` |
- | `reference`                | `Filter(id(n) op v)` over `AllNodeScan` — Cypher semantics, what the rewrite must preserve |
- -/
- namespace OptimizerScan.IdSeek
-@@ -41,15 +42,28 @@ theorem flip_correct (op : Op) (x y : Int) : op.holds y x = op.flip.holds x y :=
- 
- theorem flip_flip (op : Op) : op.flip.flip = op := by cases op <;> rfl
- 
--/-- The operand of an id comparison, after evaluation. Only `int` is accepted by the runtime. -/
--inductive V | int (i : Int) | float (f : Int) | null | str (s : String)
-+/-- The operand of an id comparison, after evaluation (since PR #3017 every value is accepted).
-+A float is represented by where it falls among the `f64` images of the ids: `float c f` is the
-+float `v` with `c = first_id_ge(v)`, the least `i` with `(i as f64) >= v`, and
-+`f = last_id_le(v)`, the greatest `i` with `(i as f64) <= v` (`runtime.rs`; their search is
-+`firstIdWhere`). `nan` is `Value::Float(NaN)`; `null` and `str` stand for every other value. -/
-+inductive V | int (i : Int) | float (c f : Int) | nan | null | str (s : String)
-   deriving DecidableEq, Repr
- 
- /-- Cypher's `id(n) op v` for an integer id `x`, as a WHERE predicate (null/false both drop).
--Int/Float compare numerically; `float f` stands for the float whose value is the integer `f`. -/
--def cypherHolds (op : Op) (x : Nat) : V → Bool
-+Int/Int compare exactly; Int/Float compare `(x as f64)` with the float (`compare_value`,
-+`value.rs`). As `i ↦ i as f64` is monotone, `(x as f64) >= v ↔ c ≤ x` and
-+`(x as f64) <= v ↔ x ≤ f`, so `>` is `x > f` and `<` is `x < c`. NaN, null and every other
-+type never compare true. -/
-+def cypherHolds (op : Op) (x : Int) : V → Bool
-   | .int i => op.holds x i
--  | .float f => op.holds x f
-+  | .float c f => match op with
-+    | .eq => decide (c ≤ x ∧ x ≤ f)
-+    | .gt => decide (x > f)
-+    | .ge => decide (x ≥ c)
-+    | .lt => decide (x < c)
-+    | .le => decide (x ≤ f)
-+  | .nan => false
-   | .null => false
-   | .str _ => false
- 
-@@ -117,36 +131,127 @@ def collectFilters (alias : Var) : List Cmp → List (E × Op)
-     | some fs => fs
-     | none => []
- 
--/-! ### The runtime side -/
--
--/-- `id as u64`: two's-complement reinterpretation (`runtime.rs`). -/
--def asU64 (i : Int) : Nat := (i % (2 ^ 64 : Int)).toNat
--
--/-- One arm of `evaluate_id_filter`'s `match op` on the running `[min, max]`
--(`runtime.rs`). `none` is the early `return Ok(None)`. -/
--def step : Nat × Nat → Op × Nat → Option (Nat × Nat)
--  | (mn, mx), (.eq, id) => if id < mn ∨ id > mx then none else some (id, id)
--  | (mn, mx), (.gt, id) => if id ≥ mx then none else some (max mn (id + 1), mx)
--  | (mn, mx), (.ge, id) => if id > mx then none else some (max mn id, mx)
--  | (mn, mx), (.lt, id) => if id ≤ mn then none else some (mn, min mx (id - 1))
--  | (mn, mx), (.le, id) => if id < mn then no
-```
-
-**File**: `proofs/optimizer_scan/README.md` (modified, +8/-7)
-```diff
-@@ -23,8 +23,9 @@ A plan is a membership test on nodes: each scan yields a node at most once, and
- 
- **2. Does the id seek return the same nodes as `WHERE id(n) …`?**
- 
--- **With non-negative integer bounds below 2⁶³, yes, on any well-formed graph.** `seek_sound` (hypotheses: `g.wf` and every bound `< 2^63`) proves `NodeByIdSeek` equals `Filter(id(n) op v …)` over `AllNodeScan` on every well-formed graph (`node_count` counts the live ids), including one that never held a node.
--- `step_some`, `step_none` and `step_nonempty` prove each arm of `evaluate_id_filter` keeps exactly the ids that satisfy it, and the running range never inverts.
-+- **Yes, for every bound, on any well-formed graph** (since #3017). `seek_sound` (hypothesis: `g.wf`) proves `NodeByIdSeek` equals `Filter(id(n) op v …)` over `AllNodeScan` on every well-formed graph (`node_count` counts the live ids), including one that never held a node, for any operand: negative or huge integers, floats, NaN, null and other types (`id_gt_neg_all`, `id_le_neg_none`, `id_nonint_bounds`).
-+- A float bound is modelled by its `(first_id_ge, last_id_le)` pair; `cypherHolds_bounds` proves that pair decides every comparison. `firstIdWhere_spec` / `firstIdWhereRust_iff` prove the binary search `first_id_where` returns the least id where a monotone predicate holds. The `f64` fast paths of `first_id_ge`/`last_id_le` (`ceil`/`floor` below 2⁵³) are not modelled (no IEEE `f64` in core Lean).
-+- `step_some`, `step_none` and `step_nonempty` prove each arm of `evaluate_id_filter` keeps exactly the ids that satisfy it, that the `min > max` check is exact, and that the range only narrows; `fold_bounds` that the final `min as u64 ..= max as u64` casts are exact.
- - On a graph that never held a node, no range is returned when `node_count() == 0` (`empty_graph_seek_none`).
- 
- **3. Does reordering the hops keep the rows?**
-@@ -54,7 +55,8 @@ A plan is a membership test on nodes: each scan yields a node at most once, and
- | `utilizeIndex_sound`, `tryIndexRewrite_sound` | The whole `utilize_index` driver, including its fixed-point loop, preserves results | `Cleanup.lean` |
- | `overPending_sound` | Over `IncludePending` the kept Filter makes the index scan exact for any set of pending writes | `Cleanup.lean` |
- | `prune_sound` | Dropping the AllNodeScan child of an edge index scan keeps the edges | `Cleanup.lean` |
--| `seek_sound` | NodeByIdSeek equals the id filter on every well-formed graph (empty included) with bounds in `[0, 2⁶³)` | `IdSeek.lean` |
-+| `seek_sound` | NodeByIdSeek equals the id filter on every well-formed graph (empty included), for every bound | `IdSeek.lean` |
-+| `firstIdWhere_spec` | `first_id_where` finds the least id where a monotone predicate holds | `IdSeek.lean` |
- | `empty_graph_seek_none` | A graph that never held a node seeks nothing | `IdSeek.lean` |
- | `order_sound`, `run_perm`, `swap_holds` | Hop ordering and orientation keep the rows | `ScanOrder.lean` |
- | `place_wellScoped`, `salvage_wellScoped` | Filters are placed after their variables are bound, given an honest seed | `ScanOrder.lean` |
-@@ -79,11 +81,10 @@ Each bug has a Rust repro (`cargo test -p graph --test lean_optimizer_scan`, not
- | W2-scan-3 | `IndexCex` C4 | A computed constant ≥ 2⁵² (`n.v = 4503599627370495 + 4503599627370495 + 3`): the Filter is dropped and the op falls back to a label scan, returning every node (C: 0) | **Open** |
- | W2-scan-6 (#2972) | `Salvage.premise_fails`, `salvage_loses_row`, `rebuilt_drops_unwind` | The pass prunes a planner scan whole but salvages only its `Filter`s and `Argument` leaf, so an `Unwind`/`WITH` child is lost: `WITH 1 AS k MATCH (b:B) WHERE b.v = k MATCH (b)-[:H]->(c:C) RETURN count(*)` returns 0 (C 1); `UNWIND [1,1] AS k MATCH (b:B) WHERE b.v = 1 MATCH (b)-[:H]->(c:C) RETURN count(*)` returns 1 (C 2) | **Open**, fix in PR #3099 |
- | W2-scan-7 | `IndexArray.tryPushdown_or_ac_drops_filter`, `Cex C12` | The OR branch of `try_filter_pushdown` keeps no filter for an array-contains disjunct (the same family as #3736, which fixed AND and the single atom): `MATCH (n:L) WHERE 1 IN n.arr OR n.k = 9` on an index over `(arr, k)` also returns `{arr:[true], k:0}`, because Bool and Int share the numeric key. Rust with index and C with index return it; openCypher and Rust without an index do not. Fix: keep the filter whenever an OR branch `is_array_contains` | **Open** |
--| — | `IdSeek.lean` examples on `g5` | `id(n) > -1` returns 0 rows, and non-integer bounds error. Reported as bugs 3–4 of [`../optimizer_rewrites`](../optimizer_rewrites) | **Open** |
- 
- The `IndexCex.lean` examples also reproduce bugs owned by [`../index_layer`](../index_layer): a folded `date()` constant returns every node (C3); `IN [.., date()]` drops the item (C9); multi-label AND/OR (C5, C6); Bool/Int conflation (C1, shared with C).
- 
--- `evaluate_id_filter` stops at the first empty conjunct, so a type error in a later one is masked: `id(n) = 100 AND id(n) = 'x'` returns 0 rows, swapped
-```
-
----
-
-### Incident Patch 3: `4c108894` (2026-11-23)
-**Commit Message**: fix(optimizer): per-row id seek for UNWIND + consecutive MATCH on id() (#3963)
-
-* optimizer: seek by id per row for UNWIND + consecutive MATCH on id() (#3889)
-
-`UNWIND $rows AS e MATCH (a) WHERE id(a) = e.s MATCH (b) WHERE id(b) = e.d`
-is the id() form of #3887: the second MATCH is a Cartesian Product branch,
-and `replace_cartesian_with_hash_join` turned it into a Value Hash Join over
-an All Node Scan (or a label scan), so every batch read the whole graph.
-
-`replace_cartesian_with_index_seek` now also takes a `[Filter ->]
-AllNodeScan` branch, and a branch whose cross-branch conjuncts include
-`id(b) = key` with a key that reads only the other branches. The id()
-comparisons move onto the scan, fed by the other branches, and
-`utilize_node_by_id` makes it a NodeByIdSeek or a Node By Label and ID
-Scan. The same key rules apply as for the index seek. A scan with more
-than one label keeps the hash join, since its per-row lookup intersects
-the label matrices.
-
-An id lookup gets its own cost constant: the hash join is kept when
-rows * 4 > nodes scanned, measured on graphs of 1k to 200k nodes.
-`estimate_rows` counts a scan under an `id(n) = key` filter as one row
-per input row. The pass rewr
-
-**File**: `bench/src/falkorbench/queries.py` (modified, +21/-0)
-```diff
-@@ -15,6 +15,15 @@
- 
- from falkorbench.model import Query as Q
- 
++    python3 build/banner/generate.py
++"""
 +
-+def _unwind_edges(rows: int, match: str) -> str:
-+    """A batch of `rows` edges, each between the nodes `match` finds for one
-+    row `e` of `$rows`, created and deleted again so the graph stays as it was.
-+    """
-+    batch = ", ".join(f"{{s: {i}, d: {(i + 1) % 1000}}}" for i in range(rows))
-+    return f"CYPHER rows=[{batch}] UNWIND $rows AS e {match} CREATE (a)-[r:UWE]->(b) WITH r DELETE r"
++import struct
++import zlib
++from pathlib import Path
++
++ROOT = Path(__file__).resolve().parents[2]
++SOURCE = ROOT / "build" / "banner" / "logo.png"
++OUT = ROOT / "src" / "banner"
++
++COLS = 80  # banner width in terminal cells
++CELL_ASPECT = 2.05  # terminal cell height / width
++SUPERSAMPLE = 6  # samples per sub-cell edge
++FILL = 0.45  # share of a sub-cell that must be inked to fill it
++
++# Quadrant mask bits: 1 top-left, 2 top-right, 4 bottom-left, 8 bottom-right.
++QUADRANTS = " ▘▝▀▖▌▞▛▗▚▐▜▄▙▟█"
 +
 +
- SETUP = [
-     "CREATE INDEX FOR (p:Person) ON (p.id)",
-     "UNWIND range(0, 9999) AS i CREATE (:Person {id: i, name: 'p' + toString(i)})",
-@@ -652,6 +661,18 @@
-     # Upper-bound-only index ranges (Le on node index, Lt on edge index).
-     Q("index le range",       False, "MATCH (p:Person) WHERE p.id <= 50 RETURN count(p)"),
-     Q("edge index lt range",  False, "MATCH ()-[r:SIMILAR]->() WHERE r.weight < 5 RETURN count(r)"),
-+    # Batched edge loading: `UNWIND $rows` and two consecutive MATCH clauses
-+    # that each find one endpoint, by an indexed property (#3887) or by id().
-+    # The later MATCH shares no variable with the earlier one, so it is a
-+    # Cartesian Product branch, and a Value Hash Join over a scan of the whole
-+    # label (or of every node) once cost every such query a full scan, however
-+    # small the batch. `id seek` has no UNWIND and `create edge` finds both
-+    # endpoints in one MATCH, so neither showed it. Endpoint ids stay under
-+    # 1,000: the first 1,000 nodes are :Person here and under CG_SETUP.
-+    Q("UNWIND index MATCH edge 1 row",    True, _unwind_edges(1, "MATCH (a:Person {id: e.s}) MATCH (b:Person {id: e.d})"), cg=True),
-+    Q("UNWIND index MATCH edge 100 rows", True, _unwind_edges(100, "MATCH (a:Person {id: e.s}) MATCH (b:Person {id: e.d})"), cg=True),
-+    Q("UNWIND id MATCH edge 1 row",       True, _unwind_edges(1, "MATCH (a) WHERE id(a) = e.s MATCH (b) WHERE id(b) = e.d"), cg=True),
-+    Q("UNWIND id MATCH edge 100 rows",    True, _unwind_edges(100, "MATCH (a) WHERE id(a) = e.s MATCH (b) WHERE id(b) = e.d"), cg=True),
- 
-     # ---- inline edge predicate, swept by selectivity -----------------------
-     # `absorb_edge_filters_into_traverse` moves these into the CondTraverse so
-```
-
-**File**: `graph/src/planner/optimizer/mod.rs` (modified, +22/-1)
-```diff
-@@ -67,12 +67,13 @@ mod utilize_index;
- mod utilize_node_by_id;
- 
- use std::collections::{HashMap, HashSet};
-+use std::sync::Arc;
- 
- use orx_tree::{Bfs, DynNode, DynTree, NodeRef};
- 
- use crate::{
-     graph::graph::Graph,
--    parser::ast::{ExprIR, VarKey, Variable},
-+    parser::ast::{ExprIR, QueryNode, VarKey, Variable},
-     runtime::value::Value,
- };
- 
-@@ -250,3 +251,23 @@ pub fn optimize(
- 
-     optimized_plan
- }
++def read_png(path):
++    """Decode an 8-bit, non-interlaced RGB or RGBA PNG onto white."""
++    data = path.read_bytes()
++    assert data[:8] == b"\x89PNG\r\n\x1a\n", "not a PNG"
++    pos, idat = 8, b""
++    while pos < len(data):
++        (length,) = struct.unpack_from(">I", data, pos)
++        kind = data[pos + 4 : pos + 8]
++        body = data[pos + 8 : pos + 8 + length]
++        if kind == b"IHDR":
++            width, height, depth, ctype, _, _, interlace = struct.unpack(">IIBBBBB", body)
++            assert depth == 8 and ctype in (2, 6) and interlace == 0, "unsupported PNG"
++        elif kind == b"IDAT":
++            idat += body
++        pos += 12 + length
++    channels = 3 if ctype == 2 else 4
++    stride = width * channels
++    raw = zlib.decompress(idat)
++    rows, prev = [], bytearray(stride)
++    for y in range(height):
++        kind = raw[y * (stride + 1)]
++        line = bytearray(raw[y * (stride + 1) + 1 : (y + 1) * (stride + 1)])
++        for i in range(stride):
++            left = line[i - channels] if i >= channels else 0
++            up = prev[i]
++            corner = prev[i - channels] if i >= channels else 0
++            if kind == 1:
++                line[i] = (line[i] + left) & 0xFF
++            elif kind == 2:
++                line[i] = (line[i] + up) & 0xFF
++            elif kind == 3:
++                line[i] = (line[i] + (left + up) // 2) & 0xFF
++            elif kind == 4:
++                p = left + up - corner
++                pa, pb, pc = abs(p - left), abs(p - up), abs(p - corner)
++                pred = left if pa <= pb and pa <= pc else up if pb <= pc else corner
++                line[i] = (line[i] + pred) & 0xFF
++        rows.append(line)
++        prev = line
++    pixels = []
++    for line in rows:
++        out = []
++        for x in range(width):
++            px = line[x * channels : x * channels + channels]
++            alpha = px[3] / 255 if channels == 4 else 1.0
++            out.append(tuple(round(c * alpha + 255 * (1 - alpha)) for c in px[:3]))
++        pixels.append(out)
++    return width, height, pixels
 +
-+/// The top-level conjuncts of `expr`: the children of an `AND`, or `expr`
-+/// itself.
-+pub(super) fn conjuncts(expr: &DynTree<ExprIR<Variable>>) -> Vec<DynNode<'_, ExprIR<Variable>>> {
-+    let root = expr.root();
-+    if matches!(root.data(), ExprIR::And) {
-+        root.children().collect()
-+    } else {
-+        vec![root]
-+    }
-+}
 +
-+/// The node count of the smallest of `node`'s labels, or `None` when it has
-+/// no label.
-+pub(super) fn min_label_count(
-+    node: &QueryNode<Arc<String>, Variable>,
-+    graph: &Graph,
-+) -> Option<u64> {
-+    node.labels.iter().map(|l| graph.label_node_count(l)).min()
-+}
-```
-
-**File**: `graph/src/planner/optimizer/replace_cartesian_with_index_seek.rs` (modified, +148/-102)
-```diff
-@@ -28,11 +28,17 @@
- //! of once per row. It also stays when the other branches are estimated to
- //! produce so many rows that one index lookup each costs more than reading the
- //! label once (a bulk `UNWIND` of a large batch): see [`SEEK_COST_IN_SCANNED_NODES`].
-+//!
-+//! A later `MATCH (p) WHERE id(p) = e.x` is the same join on the node's id. Its
-+//! scan (an `AllNodeScan`, or a `NodeByLabelScan` when `p` has a label) is fed
-+//! the same way, and `utilize_node_by_id` turns the moved `id()` comparisons
-+//! into a `NodeByIdSeek` (or a `NodeByLabelAndIdScan`): a direct lookup that
-+//! needs no index.
- 
- use std::collections::{HashMap, HashSet};
- use std::sync::Arc;
- 
--use orx_tree::{DynNode, DynTree, NodeRef};
-+use orx_tree::{Bfs, Dfs, DynNode, DynTree, NodeRef, PostOrder};
- 
- use crate::{
-     graph::graph::Graph,
-@@ -44,56 +50,79 @@ use crate::{
- use super::super::IR;
- use super::eliminate_true_filters::substitute_params;
- use super::utilize_index::{can_seek_index, seek_index_label};
--use super::{collect_expr_variables, collect_subtree_variables};
-+use super::utilize_node_by_id::get_id_filter;
-+use super::{collect_expr_variables, collect_subtree_variables, conjuncts, min_label_count};
- 
- /// What one index lookup costs, in nodes of a label scan. Measured on a 1M-node
- /// label: reading it once (the hash join's build side) takes about 52 ms, a
- /// lookup about 17 us, a ratio of 330. Rounded down: a lookup also keeps the
- /// result clustered per outer row.
- const SEEK_COST_IN_SCANNED_NODES: f64 = 256.0;
- 
-+/// What one id lookup costs, in nodes of a scan. Measured against the hash
-+/// join it replaces, on graphs of 1k to 200k nodes: the hash join is faster
-+/// once a batch has more rows than about half the nodes it would scan (no
-+/// label) or about a quarter of them (one label). Where 4 picks the hash join
-+/// over a faster seek, it was at most about 5% slower.
-+const ID_SEEK_COST_IN_SCANNED_NODES: f64 = 4.0;
++def is_ink(c):
++    return not all(v > 235 for v in c)
 +
- /// Rewrites `Filter -> CartesianProduct(.., [Filter ->] NodeByLabelScan)` so
- /// the scan reads the other branches' rows and the filter can become an index
--/// seek, wherever the label has an index for a predicate that reads them.
-+/// seek, wherever the label has an index for a predicate that reads them, or
-+/// an id seek, wherever the predicate is `id(p) = ..` (on any node scan).
- pub(super) fn replace_cartesian_with_index_seek(
-     optimized_plan: &mut DynTree<IR>,
-     graph: &Graph,
-     params: &HashMap<String, Value>,
- ) {
--    let new_plan = rebuild(&optimized_plan.root(), graph, params);
--    *optimized_plan = new_plan;
-+    // In post-order: a later clause's product holds the earlier one, and the
-+    // rows it is estimated to feed depend on whether the earlier clause's
-+    // scan already became a lookup. A rewrite moves nodes, so the walk starts
-+    // over after each one; a product left as it was is left again.
-+    loop {
-+        let rewrite = optimized_plan
-+            .root()
-+            .indices::<PostOrder>()
-+            .find_map(|idx| {
-+                try_rewrite_at(&optimized_plan.node(idx), graph, params).map(|tree| (idx, tree))
-+            });
-+        let Some((idx, tree)) = rewrite else {
-+            break;
-+        };
-+        // Dropping the walk over the replaced nodes removes them.
-+        let _ = optimized_plan.node_mut(idx).replace_with::<Dfs, _>(tree);
-+    }
- }
- 
--fn rebuild(
-+/// The rewrite of `node`, when it is a `Filter` over a `CartesianProduct`
-+/// that reads no `Argument` rows.
-+fn try_rewrite_at(
-     node: &DynNode<IR>,
-     graph: &Graph,
-     params: &HashMap<String, Value>,
--) -> DynTree<IR> {
--    if let IR::Filter(filter) = node.data()
--        && let Some(child) = node.get_child(0)
--        && matches!(child.data(), IR::CartesianProduct)
--        && !child
--            .walk::<orx_tree::Bfs>()
-+) -> Option<DynTree<IR>> {
-+    let IR::Filter(filter) = node.data() else {
-+        return None;
-+    };
-+    let child = node.get_child(0)?;
-+    if !matches!(child.data(), IR::CartesianProduct)
-+        || child
-+            .walk::<Bfs>()
-             .any(|data| matches!(data, IR::Argument(_)))
--        && let Some(result) = try_seek_rewrite(filter, &child, graph, params)
-     {
--        return rebuild(&result.root(), graph, params);
--    }
--    let mut new_tree = DynTree::new(node.data().clone());
--    for child in node.children() {
--        new_tree
--            .root_mut()
--            .push_child_tree(rebuild(&child, graph, params));
-+        return None;
-     }
--    new_tree
-+    try_seek_rewrite(filter, &child, graph, params)
- }
- 
--/// The `Filter*` chain above a childless `NodeByLabelScan` that makes up
--/// `branch`, as the filters (top first) and the scanned node.
-+/// The `Filter*` chain above a childless `NodeByLabelScan` or `AllNodeScan`
-+/// that makes up `branch`, as the filters (top first), the scan and the
-+/// scanned node.
- fn scan_chain(
-     branch: &DynNode<IR>
- ) -> Option<(
-     Vec<QueryExpr<Variable>>,
++
++def is_wordmark(c):
++    # The wordmark is navy rgb(30, 19, 64); the swoosh is saturated.
++    return c[0] < 110 and c[1] < 100 and c[2] < 150
++
++
++def grid(width, height, pixels):
++    """Classify every quadrant sub-cell as None, 'w' (wordmark) or an RGB swoosh colour."""
++    coords = [(x, y) for y in range(height) for x in range(width) if is_ink(pixels[y][x])]
++    x0 = min(x for x, _ in coords)
++    x1 = max(x for x, _ in coords)
++    y0 = min(y for _, y in coords)
++    y1 = max(y for _, y in coords)
++    cw = (x1 - x0 + 1) / COLS
++    ch = cw * CELL_ASPECT
++    rows = int((y1 - y0 + 1) / ch + 0.999)
++    cells = []
++    for cy in range(rows):
++        line = []
++        for cx in range(COLS):
++            subs = []
++            for j in range(2):
++                for i in range(2):
++                    sx, sy = x0 + cx * cw + i * cw / 2, y0 + cy * ch + j * ch / 2
++                    n = dark = 0
++                    swoosh = []
++                    for a in range(SUPERSAMPLE):
++                        for b in range(SUPERSAMPLE):
++                            x = int(sx + (a + 0.5) * cw / 2 / SUPERSAMPLE)
++                            y = int(sy + (b + 0.5) * ch / 2 / SUPERSAMPLE)
++                            n += 1
++                            if x >= width or y >= height:
++                                continue
++                            c = pixels[y][x]
++
 ```
 
-**File**: `graph/src/planner/optimizer/select_scan_node.rs` (modified, +2/-10)
+**File**: `proofs/redis_layer/COVERAGE.tsv` (modified, +18/-12)
 ```diff
-@@ -77,7 +77,7 @@ use crate::{
- use super::super::IR;
- use super::{
-     collect_expr_scoped_variables, collect_expr_variables, collect_subtree_variables,
--    endpoint_scan_score, walk_scans_to_endpoint,
-+    endpoint_scan_score, min_label_count, walk_scans_to_endpoint,
- };
- use crate::runtime::runtime::GetVariables;
+@@ -152,19 +152,25 @@ src/query_session.rs	Gil::acquire	722	PROVEN	QuerySession.gilAcquire (no-op iff
+ src/query_session.rs	Gil::drop	745	PROVEN	QuerySession.gilDrop: gil_stack, gil_out_of_order
+ src/query_session.rs	lock_gil	766	AXIOMATISED	RM_ThreadSafeContextLock/Unlock + FreeThreadSafeContext (Redis API); QuerySession.Ev.gilLock/gilUnlock
+ src/query_session.rs	release_gil	779	AXIOMATISED	RM_ThreadSafeContextLock/Unlock + FreeThreadSafeContext (Redis API); QuerySession.Ev.gilLock/gilUnlock
+-src/module_init.rs	pthread_atfork	95	AXIOMATISED	libc pthread_atfork declaration
+-src/module_init.rs	on_fork_child	122	PROVEN	ModuleInit.forkChildAborts: fork_gc_never_aborts, fork_all_synced
+-src/module_init.rs	sync_deepbind_environ	158	PROVEN	EnvBuild.syncDeepbind: sync_unchanged (NULL dlopen handle, NULL dlsym, or the symbol is this module's own environ: environ untouched, the path CI reaches), sync_installs (otherwise environ becomes a NULL-terminated snapshot of the live array's strings); dlopen/dlsym/dlclose results are the inputs of `Ld`, the libc side being FFI
++src/module_init.rs	pthread_atfork	96	AXIOMATISED	libc pthread_atfork declaration
++src/module_init.rs	on_fork_child	123	PROVEN	ModuleInit.forkChildAborts: fork_gc_never_aborts, fork_all_synced
++src/module_init.rs	sync_deepbind_environ	159	PROVEN	EnvBuild.syncDeepbind: sync_unchanged (NULL dlopen handle, NULL dlsym, or the symbol is this module's own environ: environ untouched, the path CI reaches), sync_installs (otherwise environ becomes a NULL-terminated snapshot of the live array's strings); dlopen/dlsym/dlclose results are the inputs of `Ld`, the libc side being FFI
+ graph/src/env_snapshot.rs	leak_deep_copy	22	PROVEN	EnvBuild.leakDeepCopy: copy_null_src, copy_length, copy_terminated (len+1 cells, last NULL), copy_read_back (the copy reads back exactly the source's entries in order), copy_fresh (every string cell allocated fresh), copy_indep (depends on the entries' bytes only, so a later setenv/putenv/free of the source cannot change it); the unsafe pointer reads are the `# Safety` contract (NULL-terminated source)
+-src/module_init.rs	graph_init	203	PROVEN	ModuleInit.graphInitArgs (args → apply_module_args; Err ⇒ Status::Err): graphInitArgs_refuses; LoadArgs.rust_c_same_accept; table_defaults_in_range
+-src/module_init.rs	info_func	494	PROVEN	ModuleInit.infoSections: info_normal
+-src/module_init.rs	on_flush	511	PROVEN	ModuleInit.onFlush (#3844 FLUSH_IN_PROGRESS): onFlush_start, onFlush_end
+-src/module_init.rs	on_shutdown	525	PROVEN	ModuleInit.onShutdown: onShutdown_flusher_first, onShutdown_no_teardown_under_a_left_worker, onShutdown_without_native_index
+-src/module_init.rs	on_role_change	549	PROVEN	ModuleInit.onRoleChange (no replica flag since #3844): onRoleChange_promote, onRoleChange_demote
+-src/module_init.rs	enforce_pending_constraints_after_promotion	578	PROVEN	ModuleInit.pendingPerGraph: pending_only_uc
+-src/module_init.rs	on_replica_change	645	PROVEN	ModuleInit.onReplicaChange: onReplicaChange_latches
+-src/module_init.rs	on_loading	657	PROVEN	ModuleInit.onLoading: onLoading_only_end
+-src/module_init.rs	on_keyspace_event	678	PROVEN	ModuleInit.onKeyspace: rename_pair, rename_to_alone, other_event
++src/module_init.rs	graph_init	204	PROVEN	ModuleInit.graphInitArgs (args → apply_module_args; Err ⇒ Status::Err): graphInitArgs_refuses; LoadArgs.rust_c_same_accept; table_defaults_in_range
++src/module_init.rs	info_func	496	PROVEN	ModuleInit.infoSections: info_normal
++src/module_init.rs	on_flush	513	PROVEN	ModuleInit.onFlush (#3844 FLUSH_IN_PROGRESS): onFlush_start, onFlush_end
++src/module_init.rs	on_shutdown	527	PROVEN	ModuleInit.onShutdown: onShutdown_flusher_first, onShutdown_no_teardown_under_a_left_worker, onShutdown_without_native_index
++src/module_init.rs	on_role_change	551	PROVEN	ModuleInit.onRoleChange (no replica flag since #3844): onRoleChange_promote, onRoleChange_demote
++src/module_init.rs	enforce_pending_constraints_after_promotion	580	PROVEN	ModuleInit.pendingPerGraph: pending_only_uc
++src/module_init.rs	on_replica_change	647	PROVEN	ModuleInit.onReplicaChange: onReplicaChange_latches
++src/module_init.rs	on_loading	659	PROVEN	ModuleInit.onLoading: onLoading_only_end
++src/module_init.rs	on_keyspace_event	680	PROVEN	ModuleInit.onKeyspace: rename_pair, rename_to_alone, other_event
++src/banner/mod.rs	style	45	PROVEN	Banner.style: style_none_iff, style_textOnly, style_logo_needs_utf8, style_no_color, style_trueColor_iff, locale_lc_all
++src/banner/mod.rs	render	69	PROVEN	Banner.render (logo files = Logos): render_logo, render_textOnly_no_esc, render_plain_no_esc
++src/banner/mod.rs	print	107	AXIOMATISED	stdout isatty, std::env::var and terminal I/O; composes style, render and write_bounded (proven)
++src/banner/mod.rs	write_bounded	126	PROVEN	Banner.writeBounded (write_all && drained = ok i): wb_true_iff, wb_attempted_prefix, wb_stops, wb_true_all
++src/banner/mod.rs	drained	136	AXIOMATISED	libc ioctl(TIOCOUTQ) polling against the clock (OS termi
+```
+
+**File**: `proofs/redis_layer/README.md` (modified, +2/-1)
+```diff
+@@ -148,6 +148,7 @@ C-side bugs seen along the way: C crashes on some malformed bulk tokens, and cou
+ | `SlowLog.lean` | `slow_log.rs` (`MinCache`, `SlowestKept`, `add`) |
+ | `RelLookup.lean` | #3447 (open): the relationship lookups behind the reply encoders (endpoints, type id/name over graph, snapshots and pending), the cascade commit and `GRAPH.RECORD` |
+ | `Allocator.lean` | `allocator.rs`: per-thread allocation counters |
++| `Banner.lean` | `banner/mod.rs`: the startup banner's style choice from the environment, its rendering, and the bounded line-at-a-time write |
+ | `repro_live.py` | Live Rust-vs-C repros for the divergences above |
+ | `COVERAGE.tsv` | One row per Rust function: bucket and the theorem that covers it |
  
-@@ -127,15 +127,7 @@ fn score_endpoint(
-     let filter_runs_late = filtered_vars.above.contains(&key);
-     // Cardinality: minimum label node count (lower is better).
-     // For nodes with no labels, use u64::MAX so labeled nodes win ties.
--    let cardinality = if node.labels.is_empty() {
--        u64::MAX
--    } else {
--        node.labels
--            .iter()
--            .map(|l| graph.label_node_count(l))
--            .min()
--            .unwrap_or(u64::MAX)
--    };
-+    let cardinality = min_label_count(node, graph).unwrap_or(u64::MAX);
-     (score, has_equality, filter_runs_late, cardinality)
- }
+@@ -164,7 +165,7 @@ All `.lean` files except the root are under `RedisLayer/`. The project has no La
+ | AXIOMATISED | 34 |
+ | NOT COVERED | 9 |
+ 
+-- **AXIOMATISED:** wrappers around the Redis module API (`RedisModule_*`), libc (`pipe`, `fork`, `_exit`, `waitpid`, `pthread_atfork`), the OS clock and file-descriptor I/O. Most are in `graph_core.rs` (15).
++- **AXIOMATISED:** wrappers around the Redis module API (`RedisModule_*`), libc (`pipe`, `fork`, `_exit`, `waitpid`, `pthread_atfork`), the OS clock and file-descriptor I/O (including the banner's terminal I/O in `banner/mod.rs`). Most are in `graph_core.rs` (15).
+ - **CONDITIONAL:** `QuerySession::check_fork`; its reason column names the hypothesis.
+ - **NOT COVERED:** `sync_deepbind_environ` (`src/module_init.rs`, Linux-only, bound to ld.so and libc); `RedisBuildHost::publish` and `RedisBuildHost::warn` (`src/graph_core.rs`, the online index build, not modelled yet); and the six functions of `src/divergence_guard.rs`. Those six rows' reason column says "covered by proofs/replication narrative", but `replication` now models them line by line in `Guard.lean` and lists them as PROVEN; `bash proofs/coverage.sh` counts each function once, in its best bucket.
  
 ```
 
-**File**: `graph/src/planner/optimizer/utilize_node_by_id.rs` (modified, +1/-1)
+**File**: `proofs/redis_layer/RedisLayer.lean` (modified, +1/-0)
 ```diff
-@@ -49,7 +49,7 @@ use crate::parser::ast::{ExprIR, QueryExpr, Variable};
- use super::super::IR;
- use super::references::subtree_references_variable;
+@@ -23,6 +23,7 @@ import RedisLayer.KeyName
+ import RedisLayer.ErrorText
+ import RedisLayer.RelLookup
+ import RedisLayer.EnvBuild
++import RedisLayer.Banner
  
--fn get_id_filter(
-+pub(super) fn get_id_filter(
-     filter: &DynNode<ExprIR<Variable>>,
-     node_alias: &Variable,
- ) -> Option<(QueryExpr<Variable>, ExprIR<Variable>)> {
+ /-
+ # redis_layer
 ```
 
-**File**: `proofs/optimizer_rewrites/COVERAGE.tsv` (modified, +15/-13)
+**File**: `proofs/redis_layer/RedisLayer/Banner.lean` (added, +304/-0)
 ```diff
-@@ -1,8 +1,8 @@
- file	function	line	bucket	lean_name_or_reason
- # graphblas *_bench.rs: benchmark harnesses, no production callers; listed here so the aggregator can exclude them
--graph/src/planner/optimizer/mod.rs	collect_expr_variables	98	PROVEN	Passes.routesIdOnly / id_only_routing_unsound (id-only unsound), routesScoped_sound
--graph/src/planner/optimizer/mod.rs	collect_subtree_variables	185	PROVEN	Helpers.mem_subtreeIds (ids of get_variables); ids only — Passes.id_only_routing_unsound; PushPlan.gv walks through Aggregate into the pre-WITH plan
--graph/src/planner/optimizer/mod.rs	optimize	207	PROVEN	Sequence.passes_order (exact order, reduce_var_len_path twice; #3889 adds replace_cartesian_with_index_seek: passes_index_seek_before_hash_join), applyAll_sound (each pass preserves R => optimize does), optimize_nested/optimize_plain
-+graph/src/planner/optimizer/mod.rs	collect_expr_variables	99	PROVEN	Passes.routesIdOnly / id_only_routing_unsound (id-only unsound), routesScoped_sound
-+graph/src/planner/optimizer/mod.rs	collect_subtree_variables	186	PROVEN	Helpers.mem_subtreeIds (ids of get_variables); ids only — Passes.id_only_routing_unsound; PushPlan.gv walks through Aggregate into the pre-WITH plan
-+graph/src/planner/optimizer/mod.rs	optimize	208	PROVEN	Sequence.passes_order (exact order, reduce_var_len_path twice; #3889 adds replace_cartesian_with_index_seek: passes_index_seek_before_hash_join), applyAll_sound (each pass preserves R => optimize does), optimize_nested/optimize_plain
- graph/src/planner/optimizer/absorb_edge_filters_into_vlt.rs	find_descendant_vlt	55	PROVEN	Sequence.findVlt_spec (Filter -> (PathBuilder|Filter)* -> VLT single-child chain)
- graph/src/planner/optimizer/absorb_edge_filters_into_vlt.rs	absorb_edge_filters_into_vlt	87	PROVEN	Sequence.absorb_correct (per-edge reading, C-parity, through PathBuilder/Filter), keepAll_split, absorbSplit_none; #3335 rebuilds the filter with ExprIR::and_of: AndOf.flat_passes (same Filter verdict, errors included), flat_eval
- graph/src/planner/optimizer/eliminate_true_filters.rs	is_constant_true	48	PROVEN	ConstEval.constTrue: constEval_sound (constant verdict = runtime verdict on every row: since #2904 every modelled arm, Pow included, propagates child errors), constTrue_eval, constTrue_filter (eliminate_whole_filter with hconst discharged), pow_var_not_constTrue; slow path (substitute_params then the same constant eval) = ConstEval.constTrue_slow (substP; parameters modelled as marked variable leaves) and Helpers.evX_subst (#2902 fixed)
-@@ -80,13 +80,15 @@ graph/src/graph/graphblas/me_delta_bench.rs	per_op	43	NOT COVERED	TEST-ONLY: ben
- graph/src/graph/graphblas/me_delta_bench.rs	committed_multi	58	NOT COVERED	TEST-ONLY: benchmark harness (me_delta_bench.rs), not production code
- graph/src/graph/graphblas/me_delta_bench.rs	me_delta_step	84	NOT COVERED	TEST-ONLY: benchmark harness (me_delta_bench.rs), not production code
- graph/src/graph/graphblas/me_delta_bench.rs	me_delta_attach_vs_seek	140	NOT COVERED	TEST-ONLY: benchmark harness (me_delta_bench.rs), not production code
--graph/src/planner/optimizer/replace_cartesian_with_index_seek.rs	replace_cartesian_with_index_seek	58	NOT COVERED	(#3889) entry point of the new plan rewrite (rebuild); the rewrite (try_seek_rewrite) is not modelled
--graph/src/planner/optimizer/replace_cartesian_with_index_seek.rs	rebuild	67	NOT COVERED	(#3889) tree rebuild applying try_seek_rewrite to Filter->CartesianProduct with no Argument below; the rewrite is not modelled
--graph/src/planner/optimizer/replace_cartesian_with_index_seek.rs	scan_chain	93	NOT COVERED	(#3889) collects the Filter* chain above a childless NodeByLabelScan; part of the unmodelled try_seek_rewrite
--graph/src/planner/optimizer/replace_cartesian_with_index_seek.rs	try_seek_rewrite	117	NOT COVERED	(#3889) moves index-served cross-branch conjuncts onto a scan fed by the other CP branches: needs a plan model with Argument-fed scans, index lookups and per-row error order; not modelled
--graph/src/planner/optimizer/replace_cartesian_with_index_seek.rs	estimate_rows	262	NOT COVERED	(#3889) cost heuristic only: a recursive row estimate over the plan tree and graph label counts; it decides whether to rewrite, never what the rewritten plan returns. Its UNWIND range arm is proven (unwound_len)
--graph/src/planner/optimizer/replace_cartesian_with_index_seek.rs	unwound_len	312	PROVEN	IndexSeek.rangeEst (range arm; list value/literal arms are the list length): rangeEst_exact (exact when the step points towards `to`), rangeEst_upper (always an upper bound), rangeEst_overcount (range(0,-1,2): 1 vs 0), rangeEst_zero
--graph/src/planner/optimizer/replace_cartesian_with_index_seek.rs	has_seekable_equality	335	NOT COVERED	(#3889) cost heuristic for estimate_rows (Eq root, or an AND with an index-served Eq conjunct); no effect on results
--graph/src/planner/optimizer/replace_cartesian_with_index_seek.rs	has_non_deterministic	367	NOT COVERED	(#3889) syntactic walk over the ExprIR tre
+@@ -0,0 +1,304 @@
++/-!
++# Startup banner (`src/banner/mod.rs`)
++
++**`style`.** The environment is read through `var : String → Option String`, as in the Rust
++(`std::env::var(name).ok()` in `print`). `setVar` is the Rust `set` closure: a variable set to the
++empty string counts as unset. The locale is the first of `LC_ALL`, `LC_CTYPE`, `LANG` that is set
++(`find_map`), ASCII-lowercased (`String.toLower` maps only `A`–`Z`, as `to_ascii_lowercase`).
++
++* `style_none_iff` — no banner exactly when `TERM` is unset, empty or `dumb`;
++* `style_textOnly` — a non-UTF-8 locale or `TERM=linux` gives the one-line ASCII banner;
++* `style_logo_needs_utf8` — a logo (any colour) is printed only under a UTF-8 locale, not on the
++  Linux console;
++* `style_no_color` — with `NO_COLOR` set, no coloured style is chosen;
++* `style_trueColor_iff` — 24-bit colour exactly when advertised by `COLORTERM`, with a capable
++  `TERM`, a UTF-8 locale and no `NO_COLOR`;
++* `locale_lc_all` — POSIX precedence: a set `LC_ALL` names the locale.
++
++**`render`.** The logo files (`include_str!`) are parameters (`Logos`). `render_logo` — each logo
++style's output contains its logo; `render_textOnly_no_esc`, `render_plain_no_esc` — the text-only
++and `NO_COLOR` banners carry no escape byte (given an escape-free version and plain logo).
++
++**`write_bounded`.** `text.split_inclusive('\n')` is the input `lines`; `ok i` is whether attempt
++`i` succeeded (`write_all` and then `drained`, both terminal I/O). `writeBounded` returns the lines
++attempted and the result of `.all`: `wb_true_iff` (true iff every line went out),
++`wb_attempted_prefix` (lines are attempted in order), `wb_stops` (nothing after the first failed
++line is attempted), `wb_true_all` (on success every line was attempted).
++
++`print`, `drained` and `reopen_nonblocking` are terminal I/O (`isatty`, `ioctl(TIOCOUTQ)`,
++`ttyname_r`, `open`) and are not modelled.
++-/
++namespace RedisLayer.Banner
++
++inductive Style where
++  | trueColor
++  | ansi256
++  | plain
++  | textOnly
++  deriving DecidableEq, Repr
++
++abbrev Env := String → Option String
++
++/-- The Rust `set` closure: `var(name).filter(|v| !v.is_empty())`. -/
++def setVar (var : Env) (name : String) : Option String :=
++  (var name).filter (fun v => !v.isEmpty)
++
++/-- `haystack.contains(needle)` on character lists. -/
++def hasInfix (needle : List Char) : List Char → Bool
++  | [] => needle.isEmpty
++  | c :: t => needle.isPrefixOf (c :: t) || hasInfix needle t
++
++/-- `["LC_ALL", "LC_CTYPE", "LANG"].into_iter().find_map(set).unwrap_or_default()
++    .to_ascii_lowercase()`. -/
++def locale (var : Env) : String :=
++  ((["LC_ALL", "LC_CTYPE", "LANG"].findSome? (setVar var)).getD "").toLower
++
++def isUtf8 (loc : String) : Bool :=
++  hasInfix "utf-8".toList loc.toList || hasInfix "utf8".toList loc.toList
++
++def style (var : Env) : Option Style :=
++  match setVar var "TERM" with
++  | none => none
++  | some term =>
++    if term = "dumb" then none
++    else if !isUtf8 (locale var) || term = "linux" then some .textOnly
++    else if (setVar var "NO_COLOR").isSome then some .plain
++    else if setVar var "COLORTERM" = some "truecolor" ∨ setVar var "COLORTERM" = some "24bit" then
++      some .trueColor
++    else some .ansi256
++
++theorem style_none_iff (var : Env) :
++    style var = none ↔ setVar var "TERM" = none ∨ setVar var "TERM" = some "dumb" := by
++  unfold style
++  split
++  · simp_all
++  · rename_i term h
++    rw [h]
++    by_cases hd : term = "dumb"
++    · simp [hd]
++    · simp only [hd, ite_false]
++      constructor
++      · intro h'
++        split at h' <;> (try split at h') <;> (try split at h') <;> simp_all
++      · intro h'; simp_all
++
++theorem style_textOnly (var : Env) (term : String) (hT : setVar var "TERM" = some term)
++    (hd : term ≠ "dumb") (h : isUtf8 (locale var) = false ∨ term = "linux") :
++    style var = some .textOnly := by
++  unfold style
++  rw [hT]
++  simp only [hd, ite_false]
++  rcases h with h | h <;> simp [h]
++
++theorem style_logo_needs_utf8 (var : Env) (s : Style) (hs : style var = some s)
++    (hl : s ≠ .textOnly) :
++    isUtf8 (locale var) = true ∧ setVar var "TERM" ≠ some "linux" := by
++  unfold style at hs
++  split at hs
++  · simp at hs
++  · rename_i term hT
++    rw [hT]
++    by_cases hd : term = "dumb"
++    · simp [hd] at hs
++    · simp only [hd, ite_false] at hs
++      by_cases hc : (!isUtf8 (locale var) || term = "linux") = true
++      · simp only [hc, ite_true, Option.some.injEq] at hs
++        exact absurd hs.symm hl
++      · simp only [Bool.or_eq_true, Bool.not_eq_true', decide_eq_true_eq, not_or] at hc
++        refine ⟨?_, ?_⟩
++        · cases h : isUtf8 (locale var) <;> simp_all
++        · intro h; apply hc.2; simpa using h
++
++theorem style_no_color (var : Env) (s : Style) (hs : style var = some s)
++    (hn : (setVar var "NO_COLOR").isSome = true) :
++    s ≠ .trueColor ∧ s ≠ .ansi256 := by
++  unfold style at hs
++  split at hs
++  · simp at hs
++  · rename_i term _
++    by_cases hd : term = "dumb"
++    · simp [hd] at 
 ```
 
-**File**: `proofs/optimizer_scan/COVERAGE.tsv` (modified, +20/-20)
+**File**: `src/banner/ansi256.ans` (added, +10/-0)
 ```diff
-@@ -1,25 +1,25 @@
- file	function	line	bucket	lean_name_or_reason
- graph/src/planner/optimizer/select_scan_node.rs	score_endpoint	110	PROVEN	ScanTree.scoreEndpoint_spec (bound +3, filtered +2, labelled +1, has_equality and filter_runs_late flags), score_bound_dominant, score_equality_filtered
--graph/src/planner/optimizer/select_scan_node.rs	collect_equalities	170	PROVEN	ScanTree.collectEqualities (Ex: And/Eq/Property/Variable/other): collectEqualities_sub (records only variables of the filter), collectEqualities_other (nothing under OR/NOT), collectEqualities_examples, propertyVar_mem
--graph/src/planner/optimizer/select_scan_node.rs	collect_filtered_vars	210	PROVEN	ScanTree.filteredVars: collectLoop_eq (above), spineVars_eq (downward spine), filteredVars_above_sub; equality (#3821): eqLoop_sub, spineEqs_sub, filteredVars_equality_sub_all
--graph/src/planner/optimizer/select_scan_node.rs	collect	214	PROVEN	ScanTree.filterVars (a Filter is modelled as its Variable list; the BFS collect is that list): collectLoop_eq, spineVars_eq; its collect_equalities call: filterEqOf, filterEqOf_honest, eqLoop_sub
--graph/src/planner/optimizer/select_scan_node.rs	make_scan_subtree	276	PROVEN	ScanTree.makeScanSubtree_planner, filtersOf_makeScanSubtree, filtersOf_makeScanSubtree_tree (#3594: the argument is a whole subtree, push_child_tree); ScanOrder.run_append
--graph/src/planner/optimizer/select_scan_node.rs	filters_of	312	PROVEN	ScanTree.filtersOf: filtersOf_wrap, filtersOf_makeScanSubtree; ScanOrder.salvage_wellScoped, boundAfter_hop; Salvage.salvaged_wellScoped, premise_of_spine (filters' variable sets from the model); premise REFUTED for an Unwind child: Salvage.premise_fails
--graph/src/planner/optimizer/select_scan_node.rs	argument_leaf_of	338	PROVEN	ScanTree.argumentLeafOf_spec
--graph/src/planner/optimizer/select_scan_node.rs	in_merge_match_branch	357	PROVEN	ScanTree.inMergeLoop_spec
--graph/src/planner/optimizer/select_scan_node.rs	is_planner_scan_subtree	377	PROVEN	ScanTree.plannerScan_agree, scanDepth_spec
--graph/src/planner/optimizer/select_scan_node.rs	planner_scan_alias	396	PROVEN	ScanTree.plannerScan_agree, scanDepth_spec (returns (id, scope_id) since #2981, as ScanTree.plannerScanAlias : Option Var already did)
--graph/src/planner/optimizer/select_scan_node.rs	planner_scan_idx	417	PROVEN	ScanTree.plannerScan_agree, scanDepth_spec
--graph/src/planner/optimizer/select_scan_node.rs	swap_relationship	434	PROVEN	ScanOrder.swap_holds, swap_swap
--graph/src/planner/optimizer/select_scan_node.rs	projected_outputs	459	PROVEN	ScanTree.projectedOutputs: collectOutputAliases_projected, collectOutputAliases_aggregate, collectOutputPairs_spec
--graph/src/planner/optimizer/select_scan_node.rs	collect_output_pairs	484	PROVEN	ScanTree.collectOutputPairs (projectedOutputs plus the copies' sources): collectOutputPairs_spec
--graph/src/planner/optimizer/select_scan_node.rs	collect_output_aliases	502	PROVEN	ScanTree.collectOutputAliases_spec, collectOutputAliases_aggregate, collectOutputAliases_projected (#3594: a Project/Aggregate/known Argument gives the ids of projected_outputs)
--graph/src/planner/optimizer/select_scan_node.rs	node_path	542	PROVEN	ScanTree.nodePath_eq
--graph/src/planner/optimizer/select_scan_node.rs	resolve_path	559	PROVEN	ScanTree.resolve_nodePath, pruneAt_parent
--graph/src/planner/optimizer/select_scan_node.rs	child_subtree_binds	575	PROVEN	ScanTree.childSubtreeBinds_spec
--graph/src/planner/optimizer/select_scan_node.rs	subtree_may_bind	602	PROVEN	ScanTree.subtreeMayBind_spec, childSubtreeBinds_mayBind, vl_leaf_never_rebinds_to (the leaf rewrite refuses when a kept child may bind `to`)
--graph/src/planner/optimizer/select_scan_node.rs	select_var_len_scan_node	625	PROVEN	ScanTree.vl_reverse_sound, reach_reverse_iff, vlNonLeaf_keeps_wrappers, vlLeaf_guards, vlLeaf_keeps_filter, vlNonLeaf_attrs, vl_reverse_sound_symm, vlLeaf_bidir, vlLeaf_over_input, vl_leaf_never_rebinds_to, leafScan_keeps_below (#3593: undirected walks allowed, all children kept under the new scan, refuses when edge attrs read an endpoint or a kept child may bind `to`), vl_never_drops_filter, vl_leaf_bug_case_fixed (#3264: the leaf rewrite never prunes a Filter wrapper)
--graph/src/planner/optimizer/select_scan_node.rs	select_scan_node	836	PROVEN	ScanOrder.order_sound, ScanTree.startKeyLt/equality_beats_late (start-point key, #3821 equality tie-break), order_length, pick_perm, run_perm, place_wellScoped, initialBound_wellScoped, initialBound_keeps_row, runScoped_wellScoped, salvage_wellScoped, Salvage.salvaged_wellScoped/premise_of_spine (sound only with an honest initial_bound, and only when the salvaged filters read bound variables); FIXED by #3523 (lines 1070-1075: best_node seeded only when no outer child is kept; initialBound_wellScoped, initialBound_keeps_row); CONFIRMED BUG #2972, open fix PR #3099 (Salvage.premise_fails, salvage_loses_row): a planner scan with an Unwind child is pruned whole (is_planner_scan_subtree:377, argument_leaf_of:338 keep
-```
-
-**File**: `proofs/planner_build/COVERAGE.tsv` (modified, +5/-5)
-```diff
-@@ -76,9 +76,9 @@ graph/src/parser/ast.rs	QueryIR::validate	1310	PROVEN	Ast.validate: call_then_ma
- graph/src/parser/ast.rs	validate_set_items	1494	PROVEN	Ast.setItemsOk_spec
- graph/src/parser/ast.rs	QueryIR::return_column_names	1535	PROVEN	Ast.returnColumns: returnColumns_last_return, returnColumns_skips_updates, returnColumns_nonquery
- graph/src/planner/hop_order.rs	self_loops_after_binders	25	PROVEN	HopOrder.selfLoopsAfterBinders: selfLoops_perm (permutation; run_inv: deferred list empty at the end), kept_sublist (non-deferred hops keep their order), deferred_after_binder (a deferred self-loop follows its first later binder), single_pass (one fold, one step per hop), early_return_sound, pr_cases; eq_reference = pre-#3102 loop (pre3102_reference, tests::reference) under WF (self_loop ⇒ from = to; planner: orderRels_eq_reference when alias ids are unique per pattern), wf_needed (#3102 61284ea4f, fixes #2999)
--graph/src/planner/optimizer/mod.rs	collect_expr_scoped_variables	111	PROVEN	E.scopedVars (Anchor.lean): mem_scopedVars (exactly the (scope,id) of the variables the expression reads), scopedVars_keeps_scope
--graph/src/planner/optimizer/mod.rs	collect_single_variable_conjuncts	126	PROVEN	E.singleVarConj (Anchor.lean): singleVarConj_spec/singleVarConj_sound (every collected var is the only var of a top-level AND conjunct), nodes_conj; singleVarConj_and/_two_vars/_or/_pattern
--graph/src/planner/optimizer/mod.rs	walk	129	PROVEN	E.singleVarConjL (Anchor.lean, the inner walk of collect_single_variable_conjuncts): singleVarConjL_sound
--graph/src/planner/optimizer/mod.rs	endpoint_scan_score	166	PROVEN	E.endpointScanScore (Anchor.lean): endpointScanScore_spec
--graph/src/planner/optimizer/mod.rs	walk_scans_to_endpoint	177	PROVEN	E.walkScansTo (Anchor.lean): walkScansTo_spec, walkScansTo_tie
-+graph/src/planner/optimizer/mod.rs	collect_expr_scoped_variables	112	PROVEN	E.scopedVars (Anchor.lean): mem_scopedVars (exactly the (scope,id) of the variables the expression reads), scopedVars_keeps_scope
-+graph/src/planner/optimizer/mod.rs	collect_single_variable_conjuncts	127	PROVEN	E.singleVarConj (Anchor.lean): singleVarConj_spec/singleVarConj_sound (every collected var is the only var of a top-level AND conjunct), nodes_conj; singleVarConj_and/_two_vars/_or/_pattern
-+graph/src/planner/optimizer/mod.rs	walk	130	PROVEN	E.singleVarConjL (Anchor.lean, the inner walk of collect_single_variable_conjuncts): singleVarConjL_sound
-+graph/src/planner/optimizer/mod.rs	endpoint_scan_score	167	PROVEN	E.endpointScanScore (Anchor.lean): endpointScanScore_spec
-+graph/src/planner/optimizer/mod.rs	walk_scans_to_endpoint	178	PROVEN	E.walkScansTo (Anchor.lean): walkScansTo_spec, walkScansTo_tie
- graph/src/planner/mod.rs	Planner::argument_vars	1221	PROVEN	E.argumentVars_spec (payload = visited), buildPatternSubPlanV_payload (taps carry the outer bound vars, read after visited is restored / before plan_match; runtime ignores the payload, so addArgs row semantics unchanged)
+@@ -0,0 +1,10 @@
++                                                         [38;5;205m▝███[0m[38;5;169m███[0m[38;5;170m████[0m[38;5;134m██▙▖[0m
++                                                                    [38;5;170m▝█[0m[38;5;134m█▌[0m
++  [1m▄▄▄▄▄▄▖       ▄▄▄▄   ▗▄▖                      ▗▄▄▄▄▄▄  ▗▄▄▄▄▄▄    [0m[38;5;170m▐██[0m
++ [1m▗██▘    ▗▄▄▄▄▖ ▀██▌   ██▘ ▗▄▄  ▄▄▄▄▖  ▄▄▗▄▄▄▖  ▐█▛▀▀▜██ ██▘ ▝██▌   [0m[38;5;169m█[0m[38;5;170m██▖[0m
++ [1m▟██▄▄▄  ▀▀▀▜██ ▗██▘  ▐██ ▟█▛▘▄█▛▀▀██▌▐██▀▀▜██  ██▘  ▟█▌▐██▄▄█▛▀    [0m[38;5;169m▝██[0m[38;5;170m████[0m[38;5;134m██▄▄▄[0m
++[1m▗██▀▀▀▘▄▟█▀▀██▛ ▟█▛   █████▌ ▗██▘  ██▘██▌  ▝▀  ▐█▛  ▗██ ▟█▌  ▜█▌  [0m[38;5;205m▗▟███[0m[38;5;169m▛▀[0m[38;5;170m▀▀▀▀[0m[38;5;134m▀▀▘[0m
++[1m▟█▛    ██▄▄▄██▘ ▜█▙▄▄▐██ ▐██▖▝██▄▄▟█▀▗██       ██▙▄▟█▛▘▗██▄▄▄█▛▘ [0m[38;5;205m▗██▛▘[0m
++[1m▝▀      ▀▀▘ ▀▘   ▝▀▀▘▝▀   ▝▀▘  ▀▀▀▘  ▝▀        ▀▀▀▀▘   ▝▀▀▀▀▘   [0m[38;5;204m▗██[0m[38;5;205m▛[0m
++                                                      [38;5;209m▗▄▄▄▄▄[0m[38;5;210m▄▄▄[0m[38;5;204m▄██▛[0m
++                                                     [38;5;209m▐████████[0m[38;5;210m█[0m[38;5;204m▀▀▘[0m
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3998** (closed): perf(bench): size probe — nightly check for costs that grow with the graph (@DvirDukhan)
+- **PR #3995** (2026-11-24): [6.2] Batch backport (5 commits) (@github-actions[bot])
+- **PR #3973** (2026-11-24): feat: print the FalkorDB logo when the module loads (@AviAvni)
 - **PR #3963** (2026-11-23): fix(optimizer): per-row id seek for UNWIND + consecutive MATCH on id() (@DvirDukhan)
 - **PR #3954** (2026-11-22): version 6.2.0 (@DvirDukhan)
 - **PR #3953** (closed): release 6.2.0 through the merge queue (@DvirDukhan)
-- **PR #3952** (2026-11-22): release 6.2.0 through the merge queue (@DvirDukhan)
-- **PR #3951** (2026-11-22): proofs: re-target to main and raise coverage to 99.7% PROVEN; prune FINDINGS.md (@AviAvni)
-- **PR #3950** (2026-11-22): version 6.2.0 (@DvirDukhan)
 
 ---
 
@@ -2478,31 +1677,35 @@ per input row. The pass rewr
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. optimizer): per-row index seek instead of a hash join over a full label scan for
+## X. print the FalkorDB logo when the module loads
 
 **RULE**:
-When implementing operations in `graph/src/planner/optimizer/eliminate_true_filters.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in FalkorDB/FalkorDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/rust-pr.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in FalkorDB/FalkorDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0ecba8bc`: optimizer): per-row index seek instead of a hash join over a full label scan for UNWIND + consecutive MATCH. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ef6fd025`: print the FalkorDB logo when the module loads. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `graph/src/planner/optimizer/eliminate_true_filters.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/rust-pr.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-pub(super) fn substitute_params(
+          # The root crate's own unit tests (src/), which `-p graph` skips.
+          RUSTFLAGS="-C instrument-coverage -C link-arg=-Wl,--allow-multiple-definition" cargo test -p falkordb-rs --lib
+          # it builds (one per test target: graph's lib and the root crate's lib
+          for bin in $( (RUSTFLAGS="-C instrument-coverage -C link-arg=-Wl,--allow-multiple-definition" cargo test -p graph --no-run && RUSTFLAGS="-C instrument-coverage -C link-arg=-Wl,--allow-multiple-definition" cargo test -p falkordb-rs --lib --no-run) 2>&1 | grep -w Executable | grep -oE 'target/debug/[^)]+'); do
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-fn substitute_params(
+          # it builds (one per test target; today that's just the lib's own
+          for bin in $(RUSTFLAGS="-C instrument-coverage -C link-arg=-Wl,--allow-multiple-definition" cargo test -p graph --no-run 2>&1 | grep -w Executable | grep -oE 'target/debug/deps/[^)]+'); do
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0ecba8bc` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ef6fd025` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -12988,3 +12988,7 @@
 | `CYCLE-20261125-Q4SD` | `2026-11-25T07:22:24.829Z` | `alejandrobujan/tendedero` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10480` | Yes (`00c613ee...`) |
 | `CYCLE-20261125-QEQ9` | `2026-11-25T07:22:37.713Z` | `etcd-io/etcd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10481` | Yes (`c8ccc82b...`) |
 | `CYCLE-20261125-15HZ` | `2026-11-25T07:30:58.967Z` | `unsloth/flint-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-flint-gguf-learnings.md` | Yes (`ba7872c7...`) |
+| `CYCLE-20261125-BUTB` | `2026-11-25T07:39:18.335Z` | `MiniMaxAI/MiniMax-M3.1-Flash` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-minimaxai-minimax-m3.1-flash-learnings.md` | Yes (`f47ac8bc...`) |
+| `CYCLE-20261125-BVL0` | `2026-11-25T07:39:19.332Z` | `FalkorDB/FalkorDB` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10482` | Yes (`f299778a...`) |
+| `CYCLE-20261125-C1N9` | `2026-11-25T07:39:27.189Z` | `kube-rs/kube` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10483` | Yes (`fed1202f...`) |
+| `CYCLE-20261125-C66S` | `2026-11-25T07:39:33.076Z` | `apache/shardingsphere` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10484` | Yes (`62972d7d...`) |

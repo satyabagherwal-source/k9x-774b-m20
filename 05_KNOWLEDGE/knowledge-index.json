@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-25T07:31:12.854Z",
+  "last_updated": "2026-11-25T07:39:39.951Z",
   "total_verified_learnings": 9114,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25309,
+  "total_items": 25316,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -242949,8 +242949,8 @@
       "slug": "falkordb-falkordb",
       "platform": "github",
       "source_url": "https://github.com/FalkorDB/FalkorDB",
-      "source_version": "4c108894",
-      "content_hash": "fb1edb8d5341292e5bf9c540b0fc725ba2d148ce46f043b1c82c4f7c0cde80b2",
+      "source_version": "ef6fd025",
+      "content_hash": "f299778a2d4bd164b3239c1a865d45f7e2c387d8513667256b93882b58275e20",
       "dossier_path": "07_PROJECT_LEARNING/falkordb-falkordb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/falkordb-falkordb-learnings.md",
       "promoted_rules": [
@@ -242988,6 +242988,11 @@
           "number": 10213,
           "title": "per-row index seek instead of a hash join over a full label scan for",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10482,
+          "title": "print the FalkorDB logo when the module loads",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -242995,7 +243000,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T06:11:11.485Z",
+      "verified_at": "2026-11-25T07:39:19.115Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -243049,10 +243054,10 @@
       "relative_path": "08_VERIFICATION/falkordb-falkordb-verification-protocol-empirical-defect-shield-for-falkordb-fal.md",
       "title": "Verification Protocol: Empirical Defect Shield for FalkorDB/FalkorDB",
       "repository": "FalkorDB/FalkorDB",
-      "source_version": "4c108894",
-      "content_hash": "30d27e5d153d5e27b2e0ce9dd2ce2d28649903cbfc2bc97086d8a9eea5ff1210",
+      "source_version": "ef6fd025",
+      "content_hash": "29a51272fdbfcfe6f35888bd507cb406c044ca21b8fd4f27c70b22fa0d1c77a6",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T06:11:12.963Z"
+      "persisted_at": "2026-11-25T07:39:19.945Z"
     },
     "learn-github-tencent-tds-kuiklyui": {
       "learning_id": "learn-github-tencent-tds-kuiklyui",
@@ -243170,9 +243175,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for falkordb-falkordb-learnings",
       "repository": "falkordb-falkordb-learnings",
       "source_version": "HEAD",
-      "content_hash": "28ed3d5bb0ce11ea49189728e3549f276f49ec64133695188669c2d10b6dc265",
+      "content_hash": "9a96dede60a4182ef21da7082499552c087337c4cf02a7c24e57dc5a4fc182ad",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T06:11:29.029Z"
+      "persisted_at": "2026-11-25T07:39:37.281Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm2-5-24b-a2b-learnings-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm2-5-24b-a2b-learnings-core-invari",
@@ -254881,8 +254886,8 @@
       "slug": "apache-shardingsphere",
       "platform": "github",
       "source_url": "https://github.com/apache/shardingsphere",
-      "source_version": "00f96061",
-      "content_hash": "aee5d0648532dc2932b370e4985a35cf4996f3fe33221218488dbbb526444004",
+      "source_version": "03aa12d5",
+      "content_hash": "62972d7d61ae10d39dbe50c6e80b9749ccde34b2288843168aa7f68941583ce6",
       "dossier_path": "07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
       "promoted_rules": [
@@ -254930,6 +254935,11 @@
           "number": 10271,
           "title": "prepared statement parameter index validation",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10484,
+          "title": "Clarify standard capability reuse before adding mechanisms",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -254937,7 +254947,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T13:47:29.779Z",
+      "verified_at": "2026-11-25T07:39:32.857Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -254979,10 +254989,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-apache-shardingsphere-research-knowledge-intelligence-apache-shardingsphere-core.md",
       "title": "Research & Knowledge Intelligence: apache/shardingsphere Core Invariants",
       "repository": "apache/shardingsphere",
-      "source_version": "00f96061",
-      "content_hash": "5fde4bdd36d6b5b7c39c23cbfb49dea44cabebb71aee272b53082acac78a52a1",
+      "source_version": "03aa12d5",
+      "content_hash": "4615603d145febd25e8c84ace3e520f0b7808f5769c3d0e01dfcfc1302fb4995",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T13:47:30.578Z"
+      "persisted_at": "2026-11-25T07:39:33.502Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-apache-shardingsphere": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-apache-shardingsphere",
@@ -254991,10 +255001,10 @@
       "relative_path": "08_VERIFICATION/apache-shardingsphere-verification-protocol-empirical-defect-shield-for-apache-s.md",
       "title": "Verification Protocol: Empirical Defect Shield for apache/shardingsphere",
       "repository": "apache/shardingsphere",
-      "source_version": "00f96061",
-      "content_hash": "f6069e32180f6758e4f6a36eaa364a66dabcc6955d7198f8a009549884c02fdb",
+      "source_version": "03aa12d5",
+      "content_hash": "d13d3a7df2999dc642f7c28ce3a3267820cda32642da55a0625b7a679ca2a6b2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T13:47:30.816Z"
+      "persisted_at": "2026-11-25T07:39:33.831Z"
     },
     "candidate_directive-desktop-register-java-rmi-marshalledobject-for-native-clipboard-reflection": {
       "item_id": "candidate_directive-desktop-register-java-rmi-marshalledobject-for-native-clipboard-reflection",
@@ -264809,10 +264819,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-falkordb-falkordb-quality-verification-intelligence-falkordb-falkordb-core-invar.md",
       "title": "Quality & Verification Intelligence: FalkorDB/FalkorDB Core Invariants",
       "repository": "FalkorDB/FalkorDB",
-      "source_version": "543357f1",
-      "content_hash": "5a04ec8d1727dc88b357354c0a1069b1707940c2e4a67d1b8ca0c0e293862634",
+      "source_version": "ef6fd025",
+      "content_hash": "588f1da94891717a8948918cece8296be1c2f3b00af5a1fcb4b7ae5bbf28ddbd",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T22:19:20.439Z"
+      "persisted_at": "2026-11-25T07:39:19.756Z"
     },
     "learn-github-iplug2-iplug2": {
       "learning_id": "learn-github-iplug2-iplug2",
@@ -264953,9 +264963,9 @@
       "title": "Quality & Verification Intelligence: falkordb-falkordb-learnings Core Invariants",
       "repository": "falkordb-falkordb-learnings",
       "source_version": "HEAD",
-      "content_hash": "6a5058137544b168a5b7d08152989640c1dc34354fc8eac013154173e94b753a",
+      "content_hash": "66d63c66b9c0f761bb8a936b5abcbe285db7ee09cad60054c7444cc012e307c5",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T22:19:34.466Z"
+      "persisted_at": "2026-11-25T07:39:37.102Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-facebook-dinov3-vitl16-pretrain-lvd1689m-lear": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-facebook-dinov3-vitl16-pretrain-lvd1689m-lear",
@@ -280431,7 +280441,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/MiniMaxAI/MiniMax-M3.1-Flash",
       "source_version": "hf-minimaxai-minimax-m3.1-flash",
-      "content_hash": "ee48255f09804cdf510a77f82928d118c6ede8131b2e2a8fe3d6471c33fd408a",
+      "content_hash": "f47ac8bc03d59dd588a17a249ec357864f1017f1178ed35686297e555614808e",
       "dossier_path": "07_PROJECT_LEARNING/hf-minimaxai-minimax-m3.1-flash-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-minimaxai-minimax-m3.1-flash-learnings.md",
       "promoted_rules": [],
@@ -280440,7 +280450,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T15:17:36.620Z",
+      "verified_at": "2026-11-25T07:39:18.087Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -280457,9 +280467,9 @@
       "title": "Research & Knowledge Intelligence: MiniMaxAI/MiniMax-M3.1-Flash Core Invariants",
       "repository": "MiniMaxAI/MiniMax-M3.1-Flash",
       "source_version": "hf-minimaxai-minimax-m3.1-flash",
-      "content_hash": "fbba5cbba49f15a012120e48f08230ed90e844df1c1b60176a853f31c2a5079f",
+      "content_hash": "4b2e8b1bd5b0b0f780048a32e8d9eb24875d1a2628f6e83af5790df5f0d1037f",
       "domain_letter": "D",
-      "persisted_at": "2026-11-21T15:17:37.145Z"
+      "persisted_at": "2026-11-25T07:39:18.604Z"
     },
     "rule-9017": {
       "learning_id": "rule-9017",
@@ -280585,9 +280595,9 @@
       "title": "Research & Knowledge Intelligence: hf-minimaxai-minimax-m3.1-flash-learnings Core Invariants",
       "repository": "hf-minimaxai-minimax-m3.1-flash-learnings",
       "source_version": "HEAD",
-      "content_hash": "6f0092df9c330fb56d65fd374a7e3f19fee6d90b435937d9a62a1007fa7546bf",
+      "content_hash": "f6b710ee7bff7f56feeacc035031c1bb1985d855fdd964770a539ce2c54c4696",
       "domain_letter": "D",
-      "persisted_at": "2026-11-21T15:17:58.632Z"
+      "persisted_at": "2026-11-25T07:39:37.686Z"
     },
     "candidate_directive-libkb-stubbed-chain-links-can-no-longer-overwrite-full-links-or-crash-the-servi": {
       "item_id": "candidate_directive-libkb-stubbed-chain-links-can-no-longer-overwrite-full-links-or-crash-the-servi",
@@ -318325,8 +318335,8 @@
       "slug": "kube-rs-kube",
       "platform": "github",
       "source_url": "https://github.com/kube-rs/kube",
-      "source_version": "6ed29aa0",
-      "content_hash": "1d734a6b0e271b9de20f657032a89d35eaed97505c8183dc2af7228efbc149ce",
+      "source_version": "c5141098",
+      "content_hash": "fed1202f2bb351da8371b3d8b94b759b2c078654505e33904625f5ef8b8ac958",
       "dossier_path": "07_PROJECT_LEARNING/kube-rs-kube-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kube-rs-kube-learnings.md",
       "promoted_rules": [
@@ -318344,6 +318354,11 @@
           "number": 10285,
           "title": "bump async-broadcast version to wasm-compatible one",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10483,
+          "title": "update sec policy to be in the spirit of the original intention",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -318351,7 +318366,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T14:50:37.750Z",
+      "verified_at": "2026-11-25T07:39:26.982Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -318405,10 +318420,10 @@
       "relative_path": "08_VERIFICATION/kube-rs-kube-verification-protocol-empirical-defect-shield-for-kube-rs-kube.md",
       "title": "Verification Protocol: Empirical Defect Shield for kube-rs/kube",
       "repository": "kube-rs/kube",
-      "source_version": "6ed29aa0",
-      "content_hash": "06c943130119bd044083d731dc90357046ae4020059e592d81239f5aa5737fae",
+      "source_version": "c5141098",
+      "content_hash": "b3349acdfbfaa67d9fd1a60957731e8559ea8e8ef9c768db4bc45eb21299170c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T14:50:38.541Z"
+      "persisted_at": "2026-11-25T07:39:27.809Z"
     },
     "rule-9816": {
       "learning_id": "rule-9816",
@@ -330680,9 +330695,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for kube-rs-kube-learnings",
       "repository": "kube-rs-kube-learnings",
       "source_version": "HEAD",
-      "content_hash": "0cbc5069481f3293c4b5762a12eebe78b090ef93f21ef7f5cecd91b4016cddde",
+      "content_hash": "24fae692f0902220db0ba5318b244d643fe2bb021366a569d26e1343dfabd62b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T14:51:15.692Z"
+      "persisted_at": "2026-11-25T07:39:39.951Z"
     },
     "rule-10101": {
       "learning_id": "rule-10101",
@@ -338124,10 +338139,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-kube-rs-kube-technical-construction-intelligence-kube-rs-kube-core-invariants.md",
       "title": "Technical Construction Intelligence: kube-rs/kube Core Invariants",
       "repository": "kube-rs/kube",
-      "source_version": "6ed29aa0",
-      "content_hash": "ec88d1948eb472effeac6858e38f5925f3de202b7714e34eb6f0062d3e784862",
+      "source_version": "c5141098",
+      "content_hash": "87bf8441707827d2ac9758b49c1576c5cb3b96e6d1b15ee1631164a0958e554a",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T14:50:38.372Z"
+      "persisted_at": "2026-11-25T07:39:27.624Z"
     },
     "rule-10286": {
       "learning_id": "rule-10286",
@@ -338175,9 +338190,9 @@
       "title": "Technical Construction Intelligence: kube-rs-kube-learnings Core Invariants",
       "repository": "kube-rs-kube-learnings",
       "source_version": "HEAD",
-      "content_hash": "bf71ad07ce30c3b7150eb36b618a959c2081ad1e2b4238bff50c689b73e2435d",
+      "content_hash": "4bf50e87e72682aad5a7754dcbcaf76c6c49d777f1fb7a2cc7e14a4cbfadd4c7",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T14:51:15.504Z"
+      "persisted_at": "2026-11-25T07:39:39.772Z"
     },
     "rule-10287": {
       "learning_id": "rule-10287",
@@ -346166,6 +346181,96 @@
       "content_hash": "18d5a3717f75e4f535b09feda7f1fb4f2683b6b4146c408fe8a80b9c901cab18",
       "domain_letter": "I",
       "persisted_at": "2026-11-25T07:22:44.374Z"
+    },
+    "rule-10482": {
+      "learning_id": "rule-10482",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10482,
+      "title": "print the FalkorDB logo when the module loads",
+      "source_url": "https://github.com/FalkorDB/FalkorDB",
+      "source_version": "ef6fd025",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T07:39:19.115Z"
+    },
+    "candidate_directive-print-the-falkordb-logo-when-the-module-loads": {
+      "item_id": "candidate_directive-print-the-falkordb-logo-when-the-module-loads",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-C95C-print-the-falkordb-logo-when-the-module-loads.md",
+      "title": "print the FalkorDB logo when the module loads",
+      "repository": "falkordb-falkordb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "5674febcda44b6310d44910b64f8e5074c3ba5790237400a1cb6f8af1b69f31a",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-25T07:39:36.915Z"
+    },
+    "rule-10483": {
+      "learning_id": "rule-10483",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10483,
+      "title": "update sec policy to be in the spirit of the original intention",
+      "source_url": "https://github.com/kube-rs/kube",
+      "source_version": "c5141098",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T07:39:26.982Z"
+    },
+    "candidate_directive-update-sec-policy-to-be-in-the-spirit-of-the-original-intention": {
+      "item_id": "candidate_directive-update-sec-policy-to-be-in-the-spirit-of-the-original-intention",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-CB7Q-update-sec-policy-to-be-in-the-spirit-of-the-original-intention.md",
+      "title": "update sec policy to be in the spirit of the original intention",
+      "repository": "kube-rs-kube-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2032a05385cc0e3cc557765fbcd76360dd5200258979bb790029134d88be633b",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-25T07:39:39.593Z"
+    },
+    "rule-10484": {
+      "learning_id": "rule-10484",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10484,
+      "title": "Clarify standard capability reuse before adding mechanisms",
+      "source_url": "https://github.com/apache/shardingsphere",
+      "source_version": "03aa12d5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T07:39:32.857Z"
+    },
+    "candidate_directive-clarify-standard-capability-reuse-before-adding-mechanisms": {
+      "item_id": "candidate_directive-clarify-standard-capability-reuse-before-adding-mechanisms",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-C6DM-clarify-standard-capability-reuse-before-adding-mechanisms.md",
+      "title": "Clarify standard capability reuse before adding mechanisms",
+      "repository": "apache/shardingsphere",
+      "source_version": "03aa12d5",
+      "content_hash": "3d17702e80438eac3d439ae61dd8a31e03db687f25391af35057eca0005220a1",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-25T07:39:33.326Z"
+    },
+    "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-apache-shardingsphere": {
+      "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-apache-shardingsphere",
+      "artifact_type": "architecture_decision",
+      "target_folder": "12_DECISIONS",
+      "relative_path": "12_DECISIONS/ADR-apache-shardingsphere-adr-subsystem-boundary-modular-decoupling-in-apache-shardi.md",
+      "title": "ADR: Subsystem Boundary & Modular Decoupling in apache/shardingsphere",
+      "repository": "apache/shardingsphere",
+      "source_version": "03aa12d5",
+      "content_hash": "f6877cbf02e382d247ca2f17a85977b33d3a43e884142540e6c030af295704fa",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-25T07:39:33.681Z"
     }
   },
   "ai-builder-brain": {

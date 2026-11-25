@@ -2893,10 +2893,10 @@
     "repository": "FalkorDB/FalkorDB",
     "platform": "github",
     "sourceUrl": "https://github.com/FalkorDB/FalkorDB",
-    "sourceVersion": "4c108894",
+    "sourceVersion": "ef6fd025",
     "license": "NOASSERTION",
-    "contentHash": "fb1edb8d5341292e5bf9c540b0fc725ba2d148ce46f043b1c82c4f7c0cde80b2",
-    "lastHarvestedAt": "2026-11-24T06:11:11.843Z",
+    "contentHash": "f299778a2d4bd164b3239c1a865d45f7e2c387d8513667256b93882b58275e20",
+    "lastHarvestedAt": "2026-11-25T07:39:19.337Z",
     "learningId": "learn-github-falkordb-falkordb"
   },
   "feathersjs-feathers": {
@@ -4873,10 +4873,10 @@
     "repository": "apache/shardingsphere",
     "platform": "github",
     "sourceUrl": "https://github.com/apache/shardingsphere",
-    "sourceVersion": "00f96061",
+    "sourceVersion": "03aa12d5",
     "license": "Apache-2.0",
-    "contentHash": "aee5d0648532dc2932b370e4985a35cf4996f3fe33221218488dbbb526444004",
-    "lastHarvestedAt": "2026-11-24T13:47:30.064Z",
+    "contentHash": "62972d7d61ae10d39dbe50c6e80b9749ccde34b2288843168aa7f68941583ce6",
+    "lastHarvestedAt": "2026-11-25T07:39:33.080Z",
     "learningId": "learn-github-apache-shardingsphere"
   },
   "sharkdp-pastel": {
@@ -6843,10 +6843,10 @@
     "repository": "kube-rs/kube",
     "platform": "github",
     "sourceUrl": "https://github.com/kube-rs/kube",
-    "sourceVersion": "6ed29aa0",
+    "sourceVersion": "c5141098",
     "license": "Apache-2.0",
-    "contentHash": "1d734a6b0e271b9de20f657032a89d35eaed97505c8183dc2af7228efbc149ce",
-    "lastHarvestedAt": "2026-11-24T14:50:37.957Z",
+    "contentHash": "fed1202f2bb351da8371b3d8b94b759b2c078654505e33904625f5ef8b8ac958",
+    "lastHarvestedAt": "2026-11-25T07:39:27.194Z",
     "learningId": "learn-github-kube-rs-kube"
   },
   "weaviate-weaviate": {
@@ -10575,8 +10575,8 @@
     "sourceUrl": "https://huggingface.co/MiniMaxAI/MiniMax-M3.1-Flash",
     "sourceVersion": "hf-minimaxai-minimax-m3.1-flash",
     "license": "Open-Source",
-    "contentHash": "ee48255f09804cdf510a77f82928d118c6ede8131b2e2a8fe3d6471c33fd408a",
-    "lastHarvestedAt": "2026-11-21T15:17:36.885Z",
+    "contentHash": "f47ac8bc03d59dd588a17a249ec357864f1017f1178ed35686297e555614808e",
+    "lastHarvestedAt": "2026-11-25T07:39:18.339Z",
     "learningId": "learn-huggingface-minimaxai-minimax-m3-1-flash"
   },
   "nomadamas-cozyclay": {

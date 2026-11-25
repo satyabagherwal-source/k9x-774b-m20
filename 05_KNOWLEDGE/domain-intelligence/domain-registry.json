@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T07:31:12.643Z",
+  "last_updated": "2026-11-25T07:39:39.772Z",
   "total_records": 2646,
   "domains": {
     "A": {
@@ -23409,8 +23409,8 @@
       "title": "Research & Knowledge Intelligence: apache/shardingsphere Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-apache-shardingsphere-research-knowledge-intelligence-apache-shardingsphere-core.md",
       "repository": "apache/shardingsphere",
-      "content_hash": "5fde4bdd36d6b5b7c39c23cbfb49dea44cabebb71aee272b53082acac78a52a1",
-      "created_at": "2026-11-24T13:47:30.578Z"
+      "content_hash": "4615603d145febd25e8c84ace3e520f0b7808f5769c3d0e01dfcfc1302fb4995",
+      "created_at": "2026-11-25T07:39:33.502Z"
     },
     "domain_intelligence-architecture-intelligence-metrolistgroup-metrolist-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-metrolistgroup-metrolist-learnings-core-invariants",
@@ -25288,8 +25288,8 @@
       "title": "Quality & Verification Intelligence: FalkorDB/FalkorDB Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-falkordb-falkordb-quality-verification-intelligence-falkordb-falkordb-core-invar.md",
       "repository": "FalkorDB/FalkorDB",
-      "content_hash": "5a04ec8d1727dc88b357354c0a1069b1707940c2e4a67d1b8ca0c0e293862634",
-      "created_at": "2026-11-16T22:19:20.439Z"
+      "content_hash": "588f1da94891717a8948918cece8296be1c2f3b00af5a1fcb4b7ae5bbf28ddbd",
+      "created_at": "2026-11-25T07:39:19.756Z"
     },
     "domain_intelligence-architecture-intelligence-iplug2-iplug2-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-iplug2-iplug2-core-invariants",
@@ -25315,8 +25315,8 @@
       "title": "Quality & Verification Intelligence: falkordb-falkordb-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-falkordb-falkordb-learnings-quality-verification-intelligence-falkordb-falkordb-.md",
       "repository": "falkordb-falkordb-learnings",
-      "content_hash": "6a5058137544b168a5b7d08152989640c1dc34354fc8eac013154173e94b753a",
-      "created_at": "2026-11-16T22:19:34.466Z"
+      "content_hash": "66d63c66b9c0f761bb8a936b5abcbe285db7ee09cad60054c7444cc012e307c5",
+      "created_at": "2026-11-25T07:39:37.102Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-facebook-dinov3-vitl16-pretrain-lvd1689m-lear": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-facebook-dinov3-vitl16-pretrain-lvd1689m-lear",
@@ -28830,8 +28830,8 @@
       "title": "Research & Knowledge Intelligence: MiniMaxAI/MiniMax-M3.1-Flash Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-minimaxai-minimax-m3-1-flash-research-knowledge-intelligence-minimaxai-minima.md",
       "repository": "MiniMaxAI/MiniMax-M3.1-Flash",
-      "content_hash": "fbba5cbba49f15a012120e48f08230ed90e844df1c1b60176a853f31c2a5079f",
-      "created_at": "2026-11-21T15:17:37.145Z"
+      "content_hash": "4b2e8b1bd5b0b0f780048a32e8d9eb24875d1a2628f6e83af5790df5f0d1037f",
+      "created_at": "2026-11-25T07:39:18.604Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-m3-1-flash-learnings-core-i": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-m3-1-flash-learnings-core-i",
@@ -28839,8 +28839,8 @@
       "title": "Research & Knowledge Intelligence: hf-minimaxai-minimax-m3.1-flash-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-minimaxai-minimax-m3-1-flash-learnings-research-knowledge-intelligence-hf-min.md",
       "repository": "hf-minimaxai-minimax-m3.1-flash-learnings",
-      "content_hash": "6f0092df9c330fb56d65fd374a7e3f19fee6d90b435937d9a62a1007fa7546bf",
-      "created_at": "2026-11-21T15:17:58.632Z"
+      "content_hash": "f6b710ee7bff7f56feeacc035031c1bb1985d855fdd964770a539ce2c54c4696",
+      "created_at": "2026-11-25T07:39:37.686Z"
     },
     "domain_intelligence-research-knowledge-intelligence-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-ggu": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-ggu",
@@ -42707,8 +42707,8 @@
       "title": "Technical Construction Intelligence: kube-rs/kube Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-kube-rs-kube-technical-construction-intelligence-kube-rs-kube-core-invariants.md",
       "repository": "kube-rs/kube",
-      "content_hash": "ec88d1948eb472effeac6858e38f5925f3de202b7714e34eb6f0062d3e784862",
-      "created_at": "2026-11-24T14:50:38.372Z"
+      "content_hash": "87bf8441707827d2ac9758b49c1576c5cb3b96e6d1b15ee1631164a0958e554a",
+      "created_at": "2026-11-25T07:39:27.624Z"
     },
     "DOM-H-01E5EB37": {
       "record_id": "DOM-H-01E5EB37",
@@ -42758,8 +42758,8 @@
       "title": "Technical Construction Intelligence: kube-rs-kube-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-kube-rs-kube-learnings-technical-construction-intelligence-kube-rs-kube-learning.md",
       "repository": "kube-rs-kube-learnings",
-      "content_hash": "bf71ad07ce30c3b7150eb36b618a959c2081ad1e2b4238bff50c689b73e2435d",
-      "created_at": "2026-11-24T14:51:15.504Z"
+      "content_hash": "4bf50e87e72682aad5a7754dcbcaf76c6c49d777f1fb7a2cc7e14a4cbfadd4c7",
+      "created_at": "2026-11-25T07:39:39.772Z"
     },
     "domain_intelligence-architecture-intelligence-yugabyte-yugabyte-db-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-yugabyte-yugabyte-db-core-invariants",

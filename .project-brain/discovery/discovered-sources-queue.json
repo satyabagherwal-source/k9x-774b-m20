@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-25T07:22:44.053Z",
+  "updated_at": "2026-11-25T07:39:39.343Z",
   "stats": {
-    "total_discovered": 9361,
-    "approved_pending_harvest": 8870,
+    "total_discovered": 9379,
+    "approved_pending_harvest": 8888,
     "harvested_count": 0,
     "rejected_count": 491,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 8860,
+      "COMMUNITY_AND_EXPERT": 8878,
       "OFFICIAL_DOCUMENTATION": 280,
       "STANDARDS_AND_SPECIFICATIONS": 150,
       "ENGINEERING_BLOGS": 7,
@@ -202532,6 +202532,402 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/etcd-io-etcd-learnings.md",
         "fileName": "etcd-io-etcd-learnings.md"
+      }
+    },
+    "SRC-AE14C0118C72": {
+      "id": "SRC-AE14C0118C72",
+      "url": "https://github.com/kube-rs/kube/compare/5.2.0...main",
+      "title": "https://github.com/kube-rs/kube/compare/5.2.0...main",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T07:39:38.235Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kube-rs-kube-learnings.md",
+        "fileName": "kube-rs-kube-learnings.md"
+      }
+    },
+    "SRC-1BA23943B2E6": {
+      "id": "SRC-1BA23943B2E6",
+      "url": "https://github.com/kube-rs/kube/releases/tag/5.2.0",
+      "title": "https://github.com/kube-rs/kube/releases/tag/5.2.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T07:39:38.314Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kube-rs-kube-learnings.md",
+        "fileName": "kube-rs-kube-learnings.md"
+      }
+    },
+    "SRC-F1518C67FE3E": {
+      "id": "SRC-F1518C67FE3E",
+      "url": "https://github.com/kube-rs/kube/security/advisories/GHSA-hm5x-4x3m-4w8m",
+      "title": "https://github.com/kube-rs/kube/security/advisories/GHSA-hm5x-4x3m-4w8m",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T07:39:38.387Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kube-rs-kube-learnings.md",
+        "fileName": "kube-rs-kube-learnings.md"
+      }
+    },
+    "SRC-6F193039CFEF": {
+      "id": "SRC-6F193039CFEF",
+      "url": "https://github.com/kube-rs/kube/pull/2153",
+      "title": "https://github.com/kube-rs/kube/pull/2153",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T07:39:38.450Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kube-rs-kube-learnings.md",
+        "fileName": "kube-rs-kube-learnings.md"
+      }
+    },
+    "SRC-22C86963A5D9": {
+      "id": "SRC-22C86963A5D9",
+      "url": "https://github.com/kube-rs/kube/pull/2166",
+      "title": "https://github.com/kube-rs/kube/pull/2166",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T07:39:38.510Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kube-rs-kube-learnings.md",
+        "fileName": "kube-rs-kube-learnings.md"
+      }
+    },
+    "SRC-86782D30B942": {
+      "id": "SRC-86782D30B942",
+      "url": "https://github.com/kube-rs/kube/pull/2168",
+      "title": "https://github.com/kube-rs/kube/pull/2168",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T07:39:38.576Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kube-rs-kube-learnings.md",
+        "fileName": "kube-rs-kube-learnings.md"
+      }
+    },
+    "SRC-AC3D85D12EB9": {
+      "id": "SRC-AC3D85D12EB9",
+      "url": "https://github.com/kube-rs/kube/pull/2163",
+      "title": "https://github.com/kube-rs/kube/pull/2163",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T07:39:38.642Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kube-rs-kube-learnings.md",
+        "fileName": "kube-rs-kube-learnings.md"
+      }
+    },
+    "SRC-0F5145088A8C": {
+      "id": "SRC-0F5145088A8C",
+      "url": "https://github.com/kube-rs/kube/pull/2161",
+      "title": "https://github.com/kube-rs/kube/pull/2161",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T07:39:38.710Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kube-rs-kube-learnings.md",
+        "fileName": "kube-rs-kube-learnings.md"
+      }
+    },
+    "SRC-97F998DFF85A": {
+      "id": "SRC-97F998DFF85A",
+      "url": "https://github.com/kube-rs/kube/pull/2140",
+      "title": "https://github.com/kube-rs/kube/pull/2140",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T07:39:38.772Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kube-rs-kube-learnings.md",
+        "fileName": "kube-rs-kube-learnings.md"
+      }
+    },
+    "SRC-DE664951416E": {
+      "id": "SRC-DE664951416E",
+      "url": "https://github.com/kube-rs/kube/pull/2151",
+      "title": "https://github.com/kube-rs/kube/pull/2151",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T07:39:38.835Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kube-rs-kube-learnings.md",
+        "fileName": "kube-rs-kube-learnings.md"
+      }
+    },
+    "SRC-7AFA1AADF36F": {
+      "id": "SRC-7AFA1AADF36F",
+      "url": "https://github.com/kube-rs/kube/pull/2162",
+      "title": "https://github.com/kube-rs/kube/pull/2162",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T07:39:38.898Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kube-rs-kube-learnings.md",
+        "fileName": "kube-rs-kube-learnings.md"
+      }
+    },
+    "SRC-0F80FF9B5C3C": {
+      "id": "SRC-0F80FF9B5C3C",
+      "url": "https://github.com/kube-rs/kube/compare/5.1.0...5.2.0",
+      "title": "https://github.com/kube-rs/kube/compare/5.1.0...5.2.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T07:39:38.956Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kube-rs-kube-learnings.md",
+        "fileName": "kube-rs-kube-learnings.md"
+      }
+    },
+    "SRC-5C7F6B2A537C": {
+      "id": "SRC-5C7F6B2A537C",
+      "url": "https://github.com/kube-rs/kube/compare/5.1.0...main",
+      "title": "https://github.com/kube-rs/kube/compare/5.1.0...main",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T07:39:39.022Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kube-rs-kube-learnings.md",
+        "fileName": "kube-rs-kube-learnings.md"
+      }
+    },
+    "SRC-CE090CA5C5F9": {
+      "id": "SRC-CE090CA5C5F9",
+      "url": "https://github.com/kube-rs/kube/releases/tag/5.1.0",
+      "title": "https://github.com/kube-rs/kube/releases/tag/5.1.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T07:39:39.086Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kube-rs-kube-learnings.md",
+        "fileName": "kube-rs-kube-learnings.md"
+      }
+    },
+    "SRC-8967C04C6866": {
+      "id": "SRC-8967C04C6866",
+      "url": "https://github.com/kube-rs/kube/releases/tag/5.0.0",
+      "title": "https://github.com/kube-rs/kube/releases/tag/5.0.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T07:39:39.159Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kube-rs-kube-learnings.md",
+        "fileName": "kube-rs-kube-learnings.md"
+      }
+    },
+    "SRC-8D10E5BCBC5A": {
+      "id": "SRC-8D10E5BCBC5A",
+      "url": "https://github.com/kube-rs/kube/releases/tag/4.0.0",
+      "title": "https://github.com/kube-rs/kube/releases/tag/4.0.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T07:39:39.218Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kube-rs-kube-learnings.md",
+        "fileName": "kube-rs-kube-learnings.md"
+      }
+    },
+    "SRC-FF2C43F1A129": {
+      "id": "SRC-FF2C43F1A129",
+      "url": "https://github.com/kube-rs/kube/releases/tag/3.1.0",
+      "title": "https://github.com/kube-rs/kube/releases/tag/3.1.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T07:39:39.282Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kube-rs-kube-learnings.md",
+        "fileName": "kube-rs-kube-learnings.md"
+      }
+    },
+    "SRC-7B03D8177645": {
+      "id": "SRC-7B03D8177645",
+      "url": "https://github.com/kube-rs/kube/releases/tag/3.0.1",
+      "title": "https://github.com/kube-rs/kube/releases/tag/3.0.1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T07:39:39.343Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kube-rs-kube-learnings.md",
+        "fileName": "kube-rs-kube-learnings.md"
       }
     }
   }

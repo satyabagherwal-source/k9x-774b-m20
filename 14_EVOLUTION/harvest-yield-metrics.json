@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T07:30:58.978Z",
-  "total_cycles_completed": 12334,
-  "total_learnings_persisted": 12334,
-  "total_rules_promoted": 11357,
+  "last_updated": "2026-11-25T07:39:33.086Z",
+  "total_cycles_completed": 12338,
+  "total_learnings_persisted": 12338,
+  "total_rules_promoted": 11360,
   "history": [
-    {
-      "timestamp": "2026-11-24T18:34:15.021Z",
-      "repository": "AtomicChat/Inkling-2-Mini-GGUF",
-      "learningId": "learn-huggingface-atomicchat-inkling-2-mini-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T18:34:31.077Z",
-      "repository": "zama-ai/tfhe-rs",
-      "learningId": "learn-github-zama-ai-tfhe-rs",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T18:34:33.608Z",
-      "repository": "volcengine/OpenViking",
-      "learningId": "learn-github-volcengine-openviking",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T18:43:32.656Z",
-      "repository": "kgateway-dev/kgateway",
-      "learningId": "learn-github-kgateway-dev-kgateway",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-24T18:43:36.110Z",
       "repository": "sigstore/cosign",
@@ -1403,6 +1375,34 @@
       "repository": "unsloth/flint-GGUF",
       "learningId": "learn-huggingface-unsloth-flint-gguf",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T07:39:18.345Z",
+      "repository": "MiniMaxAI/MiniMax-M3.1-Flash",
+      "learningId": "learn-huggingface-minimaxai-minimax-m3-1-flash",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T07:39:19.342Z",
+      "repository": "FalkorDB/FalkorDB",
+      "learningId": "learn-github-falkordb-falkordb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T07:39:27.199Z",
+      "repository": "kube-rs/kube",
+      "learningId": "learn-github-kube-rs-kube",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T07:39:33.086Z",
+      "repository": "apache/shardingsphere",
+      "learningId": "learn-github-apache-shardingsphere",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

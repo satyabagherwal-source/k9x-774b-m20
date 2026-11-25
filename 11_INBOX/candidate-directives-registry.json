@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T07:31:12.454Z",
+  "last_updated": "2026-11-25T07:39:39.593Z",
   "directives": [
     {
       "id": "CD-001",
@@ -60185,6 +60185,57 @@
       "source_repo": "zulip-zulip",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-DA150B-server-events-dispatch-rerender-dm-statu.md",
+      "staged_date": "2026-11-25"
+    },
+    {
+      "id": "CD-C95C",
+      "directive_title": "print the FalkorDB logo when the module loads",
+      "source_repo": "falkordb-falkordb-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-C95C-print-the-falkordb-logo-when-the-module-loads.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-25",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-CB7Q",
+      "directive_title": "update sec policy to be in the spirit of the original intention",
+      "source_repo": "kube-rs-kube-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-CB7Q-update-sec-policy-to-be-in-the-spirit-of-the-original-intention.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-25",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-C6DM",
+      "directive_title": "Clarify standard capability reuse before adding mechanisms",
+      "source_repo": "apache/shardingsphere",
+      "source_commit": "03aa12d5",
+      "staged_file": "11_INBOX/candidate-directives/CD-C6DM-clarify-standard-capability-reuse-before-adding-mechanisms.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-25",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-REV-A46D34",
+      "directive_title": "print the FalkorDB logo when the module loads",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "falkordb-falkordb",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-A46D34-print-the-falkordb-logo-when-the-module-.md",
+      "staged_date": "2026-11-25"
+    },
+    {
+      "id": "CD-REV-1E8CDC",
+      "directive_title": "update sec policy to be in the spirit of the original intention",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "kube-rs-kube",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-1E8CDC-update-sec-policy-to-be-in-the-spirit-of.md",
       "staged_date": "2026-11-25"
     }
   ]

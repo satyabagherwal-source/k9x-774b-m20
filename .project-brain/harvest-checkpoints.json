@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-25T07:30:58.989Z",
+  "last_updated": "2026-11-25T07:39:33.097Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4476,14 +4476,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-falkordb-falkordb",
-      "content_hash": "fb1edb8d5341292e5bf9c540b0fc725ba2d148ce46f043b1c82c4f7c0cde80b2",
-      "verified_at": "2026-11-24T06:11:11.881Z",
+      "content_hash": "f299778a2d4bd164b3239c1a865d45f7e2c387d8513667256b93882b58275e20",
+      "verified_at": "2026-11-25T07:39:19.353Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T06:11:11.881Z"
+      "last_updated": "2026-11-25T07:39:19.353Z"
     },
     "feathersjs/feathers": {
       "repository": "feathersjs/feathers",
@@ -7431,14 +7431,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-apache-shardingsphere",
-      "content_hash": "aee5d0648532dc2932b370e4985a35cf4996f3fe33221218488dbbb526444004",
-      "verified_at": "2026-11-24T13:47:30.082Z",
+      "content_hash": "62972d7d61ae10d39dbe50c6e80b9749ccde34b2288843168aa7f68941583ce6",
+      "verified_at": "2026-11-25T07:39:33.096Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T13:47:30.083Z"
+      "last_updated": "2026-11-25T07:39:33.096Z"
     },
     "sharkdp/pastel": {
       "repository": "sharkdp/pastel",
@@ -10326,14 +10326,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kube-rs-kube",
-      "content_hash": "1d734a6b0e271b9de20f657032a89d35eaed97505c8183dc2af7228efbc149ce",
-      "verified_at": "2026-11-24T14:50:37.973Z",
+      "content_hash": "fed1202f2bb351da8371b3d8b94b759b2c078654505e33904625f5ef8b8ac958",
+      "verified_at": "2026-11-25T07:39:27.209Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T14:50:37.973Z"
+      "last_updated": "2026-11-25T07:39:27.209Z"
     },
     "weaviate/weaviate": {
       "repository": "weaviate/weaviate",
@@ -15891,14 +15891,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-minimaxai-minimax-m3-1-flash",
-      "content_hash": "ee48255f09804cdf510a77f82928d118c6ede8131b2e2a8fe3d6471c33fd408a",
-      "verified_at": "2026-11-21T15:17:36.896Z",
+      "content_hash": "f47ac8bc03d59dd588a17a249ec357864f1017f1178ed35686297e555614808e",
+      "verified_at": "2026-11-25T07:39:18.357Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T15:17:36.896Z"
+      "last_updated": "2026-11-25T07:39:18.357Z"
     },
     "NomaDamas/CozyClay": {
       "repository": "NomaDamas/CozyClay",
