@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-25T00:26:52.613Z",
+  "last_updated": "2026-11-25T00:35:19.313Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7116,14 +7116,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aquasecurity-trivy",
-      "content_hash": "46dcc4528ca0917e05bb944926f519c8e9704490e56b8a813e8bc261b0212829",
-      "verified_at": "2026-11-24T05:28:22.153Z",
+      "content_hash": "261f39e6463f05d072dcd4c576c0841869bc9a4bb2d13362200f7d210571b1d0",
+      "verified_at": "2026-11-25T00:35:19.313Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T05:28:22.153Z"
+      "last_updated": "2026-11-25T00:35:19.313Z"
     },
     "sfu-db/connector-x": {
       "repository": "sfu-db/connector-x",
@@ -15216,14 +15216,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-vitest-dev-vitest",
-      "content_hash": "b4235038c7ce72bdfa70c522b66fd669ede52ee02b0e3f4ff0ec9c2f7e7c909d",
-      "verified_at": "2026-11-21T01:00:31.036Z",
+      "content_hash": "84de2b0643e1d58f089026cb067ed5165edf20bee8538fbafe4a3302ba0cdd41",
+      "verified_at": "2026-11-25T00:35:14.634Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T01:00:31.036Z"
+      "last_updated": "2026-11-25T00:35:14.634Z"
     },
     "Mijick/Popups": {
       "repository": "Mijick/Popups",

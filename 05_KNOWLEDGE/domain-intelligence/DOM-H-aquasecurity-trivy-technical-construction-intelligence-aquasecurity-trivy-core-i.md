@@ -4,24 +4,24 @@
 {
   "source_repository": "aquasecurity/trivy",
   "source_url": "https://github.com/aquasecurity/trivy",
-  "source_version": "a7b0d649",
+  "source_version": "c14584a6",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-24T05:28:22.450Z",
+  "timestamp": "2026-11-25T00:35:19.526Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-aquasecurity-trivy",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [aquasecurity/trivy](https://github.com/aquasecurity/trivy) (Revision: `a7b0d649`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-24T05:28:22.450Z`  
+> **Provenance**: Harvested from [aquasecurity/trivy](https://github.com/aquasecurity/trivy) (Revision: `c14584a6`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-25T00:35:19.526Z`  
 > **Learning ID**: `learn-github-aquasecurity-trivy`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), L (Deployment & Operations Intelligence), G (Architecture Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 77%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 80%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from aquasecurity/trivy:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/aquasecurity/trivy](https://github.com/aquasecurity/trivy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T05:28:20.723Z  
+> **Harvest Timestamp**: 2026-11-25T00:35:18.205Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Find vulnerabilities, misconfigurations, secrets, SBOM in containers, Kubernetes, code repositories, clouds and more
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 39665 stars
+- **Stars / Engagement**: 39697 stars
 
 ---
 
@@ -913,7 +913,7 @@ func getQueues(ctx parser.FileContext) (queues []sqs.Queue) {
 			QueueURL: iacTypes.StringDefault("", r.Metadata()),
 			Encryption: sqs.Encryption{
 				Metadata:          r.Metadata(),
-				ManagedEncryption: iacTypes.Bool(false, r.Metadata()),
+				ManagedEncryption: r.GetBoolProperty("SqsManagedSseEnabled"),
 				KMSKeyID:          r.GetStringProperty("KmsMasterKeyId"),
 			},
 		}
@@ -1016,613 +1016,385 @@ type TracingConfiguration struct {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f320e692` (2026-11-23)
-**Commit Message**: fix(arm): read NSG rules from the securityRules property and child resources (#11663)
+### Incident Patch 1: `c14584a6` (2026-11-24)
+**Commit Message**: fix(cloudformation): read SqsManagedSseEnabled for SQS queues (#11722)
 
-**File**: `pkg/iac/adapters/arm/network/adapt.go` (modified, +40/-25)
+Co-authored-by: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+
+**File**: `pkg/iac/adapters/cloudformation/aws/sqs/queue.go` (modified, +1/-1)
 ```diff
-@@ -7,6 +7,11 @@ import (
- 	iacTypes "github.com/aquasecurity/trivy/pkg/iac/types"
- )
- 
-+const (
-+	securityGroupType = "Microsoft.Network/networkSecurityGroups"
-+	securityRuleType  = "securityRules"
-+)
-+
- func parsePortRange(input string, meta iacTypes.Metadata) common.PortRange {
- 	return common.ParsePortRange(input, meta, common.WithWildcard())
- }
-@@ -20,79 +25,89 @@ func Adapt(deployment azure.Deployment) network.Network {
- }
- 
- func adaptSecurityGroups(deployment azure.Deployment) (sgs []network.SecurityGroup) {
--	for _, resource := range deployment.GetResourcesByType("Microsoft.Network/networkSecurityGroups") {
-+	for _, resource := range deployment.GetResourcesByType(securityGroupType) {
- 		sgs = append(sgs, adaptSecurityGroup(resource, deployment))
- 	}
-+	if orphans := deployment.GetOrphanResources(securityGroupType, securityRuleType); len(orphans) > 0 {
-+		sgs = append(sgs, network.SecurityGroup{
-+			Metadata: iacTypes.NewUnmanagedMetadata(),
-+			Rules:    adaptSecurityRuleResources(orphans),
-+		})
-+	}
- 	return sgs
--
- }
- 
- func adaptSecurityGroup(resource azure.Resource, deployment azure.Deployment) network.SecurityGroup {
-+	var rules []network.SecurityGroupRule
-+	for _, rule := range resource.Properties.GetMapValue("securityRules").AsList() {
-+		rules = append(rules, adaptSecurityGroupRule(rule.GetMapValue("properties"), rule.GetMetadata()))
-+	}
- 	return network.SecurityGroup{
- 		Metadata: resource.Metadata,
--		Rules:    adaptSecurityGroupRules(deployment),
-+		Rules:    append(rules, adaptSecurityRuleResources(deployment.GetChildResources(resource, securityRuleType))...),
- 	}
- }
- 
--func adaptSecurityGroupRules(deployment azure.Deployment) (rules []network.SecurityGroupRule) {
--	for _, resource := range deployment.GetResourcesByType("Microsoft.Network/networkSecurityGroups/securityRules") {
--		rules = append(rules, adaptSecurityGroupRule(resource))
-+func adaptSecurityRuleResources(resources []azure.Resource) []network.SecurityGroupRule {
-+	var rules []network.SecurityGroupRule
-+	for _, resource := range resources {
-+		rules = append(rules, adaptSecurityGroupRule(resource.Properties, resource.Metadata))
- 	}
- 	return rules
- }
- 
--func adaptSecurityGroupRule(resource azure.Resource) network.SecurityGroupRule {
--	sourceAddressPrefixes := resource.Properties.GetMapValue("sourceAddressPrefixes").AsStringValuesList("")
--	if prefix := resource.Properties.GetMapValue("sourceAddressPrefix").AsStringValue("", resource.Metadata); prefix.IsNotEmpty() {
-+func adaptSecurityGroupRule(properties azure.Value, metadata iacTypes.Metadata) network.SecurityGroupRule {
-+	sourceAddressPrefixes := properties.GetMapValue("sourceAddressPrefixes").AsStringValuesList("")
-+	if prefix := properties.GetMapValue("sourceAddressPrefix").AsStringValue("", metadata); prefix.IsNotEmpty() {
- 		sourceAddressPrefixes = append(sourceAddressPrefixes, prefix)
- 	}
- 
- 	var sourcePortRanges []common.PortRange
--	for _, portRange := range resource.Properties.GetMapValue("sourcePortRanges").AsList() {
--		rng := parsePortRange(portRange.AsString(), resource.Metadata)
-+	for _, portRange := range properties.GetMapValue("sourcePortRanges").AsList() {
-+		rng := parsePortRange(portRange.AsString(), metadata)
- 		if rng.Valid() {
- 			sourcePortRanges = append(sourcePortRanges, rng)
+@@ -17,7 +17,7 @@ func getQueues(ctx parser.FileContext) (queues []sqs.Queue) {
+ 			QueueURL: iacTypes.StringDefault("", r.Metadata()),
+ 			Encryption: sqs.Encryption{
+ 				Metadata:          r.Metadata(),
+-				ManagedEncryption: iacTypes.Bool(false, r.Metadata()),
++				ManagedEncryption: r.GetBoolProperty("SqsManagedSseEnabled"),
+ 				KMSKeyID:          r.GetStringProperty("KmsMasterKeyId"),
+ 			},
  		}
- 	}
--	if rng := parsePortRange(resource.Properties.GetMapValue("sourcePortRange").AsString(), resource.Metadata); rng.Valid() {
-+	if rng := parsePortRange(properties.GetMapValue("sourcePortRange").AsString(), metadata); rng.Valid() {
- 		sourcePortRanges = append(sourcePortRanges, rng)
- 	}
- 
--	destinationAddressPrefixes := resource.Properties.GetMapValue("destinationAddressPrefixes").AsStringValuesList("")
--	if prefix := resource.Properties.GetMapValue("destinationAddressPrefix").AsStringValue("", resource.Metadata); prefix.IsNotEmpty() {
-+	destinationAddressPrefixes := properties.GetMapValue("destinationAddressPrefixes").AsStringValuesList("")
-+	if prefix := properties.GetMapValue("destinationAddressPrefix").AsStringValue("", metadata); prefix.IsNotEmpty() {
- 		destinationAddressPrefixes = append(destinationAddressPrefixes, prefix)
- 	}
- 
- 	var destinationPortRanges []common.PortRange
--	for _, portRange := range resource.Properties.GetMapValue("destinationPortRanges").AsList() {
--		rng := parsePortRange(portRange.AsString(), resource.Metadata)
-+	for _, portRange := range properties.GetMapValue("destinationPortRanges").AsList() {
-+		rng := parsePortRange(portRange.AsString(), metadata)
- 		if rng.Valid() {
- 			destinationPortRanges = append(destinationPortRanges, rng)
- 		}
- 	}
--	if rng := parsePortRange(resource.Properties.GetMapValue("destinationPortRange").AsString(), resource.Metadata); rng.Valid() {
-+	if rng := parsePortRange(properties.GetMapValue("destinationPortRange").AsString(), metadata); rng.Valid() {
- 		destinationPortRanges = append(destinationPortRanges, rng)
- 	}
- 
--	allow := iacTypes.BoolDefault(false, resource.Metadata)
--	if resource.Properties.GetMapValue("access
 ```
 
-**File**: `pkg/iac/adapters/arm/network/adapt_test.go` (modified, +183/-1)
+**File**: `pkg/iac/adapters/cloudformation/aws/sqs/sqs_test.go` (modified, +38/-0)
 ```diff
-@@ -3,9 +3,14 @@ package network
- import (
- 	"testing"
- 
-+	"github.com/stretchr/testify/assert"
-+	"github.com/stretchr/testify/require"
-+
-+	"github.com/aquasecurity/trivy/internal/testutil"
- 	"github.com/aquasecurity/trivy/pkg/iac/adapters/arm/adaptertest"
- 	"github.com/aquasecurity/trivy/pkg/iac/adapters/common"
- 	"github.com/aquasecurity/trivy/pkg/iac/providers/azure/network"
-+	"github.com/aquasecurity/trivy/pkg/iac/scanners/azure/arm/parser"
- 	"github.com/aquasecurity/trivy/pkg/iac/types"
- )
- 
-@@ -21,10 +26,12 @@ func TestAdapt(t *testing.T) {
-   "resources": [
-     {
-       "type": "Microsoft.Network/networkSecurityGroups",
-+      "name": "nsg",
-       "properties": {}
-     },
- 	{
- 	  "type": "Microsoft.Network/networkSecurityGroups/securityRules",
-+	  "name": "nsg/rule",
- 	  "properties": {}
- 	},
- 	{
-@@ -56,10 +63,12 @@ func TestAdapt(t *testing.T) {
-       }
-     },
-     {
--      "type": "Microsoft.Network/networkSecurityGroups"
-+      "type": "Microsoft.Network/networkSecurityGroups",
-+      "name": "nsg"
-     },
-     {
-       "type": "Microsoft.Network/networkSecurityGroups/securityRules",
-+      "name": "nsg/rule",
-       "properties": {
-         "access": "Allow",
-         "direction": "Inbound",
-@@ -141,6 +150,156 @@ func TestAdapt(t *testing.T) {
- 				}},
+@@ -65,6 +65,44 @@ Resources:
+ 				},
  			},
  		},
 +		{
-+			name: "rules in the securityRules property",
-+			source: `{
-+  "resources": [
-+    {
-+      "type": "Microsoft.Network/networkSecurityGroups",
-+      "name": "nsg",
-+      "properties": {
-+        "securityRules": [
-+          {"name": "ssh", "properties": {"access": "Allow", "protocol": "Tcp"}},
-+          {"name": "dns", "properties": {"access": "Deny", "protocol": "Udp"}}
-+        ]
-+      }
-+    }
-+  ]
-+}`,
-+			expected: network.Network{
-+				SecurityGroups: []network.SecurityGroup{{
-+					Rules: []network.SecurityGroupRule{
-+						{Allow: types.BoolTest(true), Protocol: types.StringTest("Tcp")},
-+						{Protocol: types.StringTest("Udp")},
++			name: "managed SSE enabled",
++			source: `AWSTemplateFormatVersion: '2010-09-09'
++Resources:
++  MyQueue:
++    Type: AWS::SQS::Queue
++    Properties:
++      SqsManagedSseEnabled: true
++`,
++			expected: sqs.SQS{
++				Queues: []sqs.Queue{
++					{
++						Encryption: sqs.Encryption{
++							ManagedEncryption: types.BoolTest(true),
++						},
 +					},
-+				}},
-+			},
-+		},
-+		{
-+			name: "rules as child resources",
-+			source: `{
-+  "resources": [
-+    {
-+      "type": "Microsoft.Network/networkSecurityGroups",
-+      "name": "nsg",
-+      "resources": [
-+        {
-+          "type": "securityRules",
-+          "name": "ssh",
-+          "properties": {"access": "Allow", "protocol": "Tcp"}
-+        },
-+        {
-+          "type": "Microsoft.Network/networkSecurityGroups/securityRules",
-+          "name": "dns",
-+          "properties": {"access": "Allow", "protocol": "Udp"}
-+        }
-+      ]
-+    }
-+  ]
-+}`,
-+			expected: network.Network{
-+				SecurityGroups: []network.SecurityGroup{{
-+					Rules: []network.SecurityGroupRule{
-+						{Allow: types.BoolTest(true), Protocol: types.StringTest("Tcp")},
-+						{Allow: types.BoolTest(true), Protocol: types.StringTest("Udp")},
-+					},
-+				}},
-+			},
-+		},
-+		{
-+			name: "top-level rules go to the group they name",
-+			source: `{
-+  "resources": [
-+    {
-+      "type": "Microsoft.Network/networkSecurityGroups",
-+      "name": "web"
-+    },
-+    {
-+      "type": "Microsoft.Network/networkSecurityGroups",
-+      "name": "db"
-+    },
-+    {
-+      "type": "Microsoft.Network/networkSecurityGroups/securityRules",
-+      "name": "web/https",
-+      "properties": {"access": "Allow", "protocol": "Tcp"}
-+    },
-+    {
-+      "type": "Microsoft.Network/networkSecurityGroups/securityRules",
-+      "name": "DB/sql",
-+      "properties": {"access": "Allow", "protocol": "Udp"}
-+    }
-+  ]
-+}`,
-+			expected: network.Network{
-+				SecurityGroups: []network.SecurityGroup{
-+					{Rules: []network.SecurityGroupRule{
-+						{Allow: types.BoolTest(true), Protocol: types.StringTest("Tcp")},
-+					}},
-+					{Rules: []network.SecurityGroupRule{
-+						{Allow: types.BoolTest(true), Protocol: types.StringTest("Udp")},
-+					}},
 +				},
 +			},
 +		},
 +		{
-+			name: "top-level rule with an expression name goes to the orphan group",
-+			source: `{
-+  "parameters": {
-+    "nsgName": {"type": "string", "defaultValue": "web"}
-+  },
-+  "resources": [
-+    {
-+      "type": "Microsoft.Network/networkSecurityGroups",
-+      "name": "web"
-+    },
-+    {
-+      "type": "Microsoft.Network/networkSecurityGroups",
-+      "name": "db"
-+    },
-+    {
-+      "type": "Microsoft.Network/networkSecurityGroups/securityRules",
-+      "name": "[concat(parameters('nsgName'), '/https')]",
-+      "properties": {"access": "Allow", "protocol": "Tcp"}
-+    }
-+  ]
-+}`,
-+			expected: network.Network{
-+				SecurityGroups: []network.SecurityGroup{
-+					{},
-+					{},
-+					{Rules: []network.SecurityGroupRule{
-+						{Allow: types.BoolTest(true), Protocol: types.StringTest("Tcp")},
-+					}},
++			name: "managed SSE disabled",
++			source: `AWSTemplateFormatVersion: '2010-09-09'
++Resources:
++  MyQueue:
++    Type: AWS::SQS::Queue
++    Properties:
++      SqsManagedSseEnabled: false
++`,
++			expected: sqs.SQS{
++				Queues: []sqs.Queue{
++					{
++						Encryption: sqs.Encryption{
++							ManagedEncryption: types.BoolTest(false),
++						},
++					},
 +				},
 +			},
 +		},
-+		{
-+			name: "top-level rule goes to the orphan group when the group name is an expression",
-+			source: `{
-+  "parameters": {
-+    "nsgName": {"type": "string", "defaultValue": "web"}
-+  },
-+  "resources": [
-+    {
-+      "type": "Microsoft.Network/networkSecurityGroups",
-+      "name": "[parameters('nsgName')]"
-+    },
-+    {
+ 		{
+ 			name: "empty",
+ 			source: `AWSTemplateFormatVersion: 2010-09-09
 ```
 
 ---
 
-### Incident Patch 2: `a7b0d649` (2026-11-23)
-**Commit Message**: fix(cloudformation): handle malformed Fn::Select and Fn::FindInMap (#11711)
+### Incident Patch 2: `4feb155f` (2026-11-24)
+**Commit Message**: fix(arm): give missing resource fields the resource location (#11698)
 
-Signed-off-by: Solomon Wakhungu <[REDACTED_EMAIL]>
-
-**File**: `pkg/iac/scanners/cloudformation/parser/fn_find_in_map.go` (modified, +4/-1)
+**File**: `pkg/iac/scanners/azure/arm/parser/parser.go` (modified, +18/-7)
 ```diff
-@@ -70,7 +70,10 @@ func resolveMapping(ctx *FileContext, mapName, topKey, secKey string) (any, erro
- 	if !ok {
- 		return nil, fmt.Errorf("key %s not found in map %s", topKey, mapName)
- 	}
--	mapValues := k.(map[string]any)
-+	mapValues, ok := k.(map[string]any)
-+	if !ok {
-+		return nil, fmt.Errorf("key %s in map %s has invalid type", topKey, mapName)
-+	}
+@@ -8,6 +8,7 @@ import (
+ 	"github.com/samber/lo"
  
- 	prop, ok := mapValues[secKey]
- 	if !ok {
-```
-
-**File**: `pkg/iac/scanners/cloudformation/parser/fn_find_in_map_test.go` (modified, +44/-0)
-```diff
-@@ -93,3 +93,47 @@ Resources:
- 	nodeTypeProp := testRes.GetBoolProperty("MultiAZ")
- 	assert.False(t, nodeTypeProp.Value())
- }
-+
-+func Test_FindInMap_MalformedMapping(t *testing.T) {
-+	source := `---
-+Mappings:
-+  CacheNodeTypes:
-+    scalarEntry: cache.t2.micro
-+    listEntry:
-+      - cache.t2.small
-+    nullEntry: null
-+Resources:
-+  ClusterScalar:
-+    Type: 'AWS::ElastiCache::CacheCluster'
-+    Properties:
-+      CacheNodeType: !FindInMap [ CacheNodeTypes, scalarEntry, NodeType ]
-+  ClusterScalarWithDefault:
-+    Type: 'AWS::ElastiCache::CacheCluster'
-+    Properties:
-+      CacheNodeType: !FindInMap [ CacheNodeTypes, scalarEntry, NodeType, DefaultValue: cache.t2.medium ]
-+  ClusterList:
-+    Type: 'AWS::ElastiCache::CacheCluster'
-+    Properties:
-+      CacheNodeType: !FindInMap [ CacheNodeTypes, listEntry, NodeType ]
-+  ClusterNull:
-+    Type: 'AWS::ElastiCache::CacheCluster'
-+    Properties:
-+      CacheNodeType: !FindInMap [ CacheNodeTypes, nullEntry, NodeType ]
-+`
-+
-+	ctx := createTestFileContext(t, source)
-+	require.NotNil(t, ctx)
-+
-+	for _, id := range []string{"ClusterScalar", "ClusterList", "ClusterNull"} {
-+		res := ctx.GetResourceByLogicalID(id)
-+		require.NotNil(t, res)
-+		prop := res.GetProperty("CacheNodeType")
-+		require.NotNil(t, prop)
-+		assert.True(t, prop.IsUnresolved())
-+	}
-+
-+	resWithDefault := ctx.GetResourceByLogicalID("ClusterScalarWithDefault")
-+	require.NotNil(t, resWithDefault)
-+	nodeType := resWithDefault.GetStringProperty("CacheNodeType", "")
-+	assert.Equal(t, "cache.t2.medium", nodeType.Value())
-+}
-```
-
-**File**: `pkg/iac/scanners/cloudformation/parser/fn_select.go` (modified, +4/-3)
-```diff
-@@ -30,10 +30,11 @@ func ResolveSelect(property *Property) (resolved *Property, success bool) {
- 	}
- 
- 	listItems := list.AsList()
-+	idx := index.AsInt()
- 
--	if len(listItems) <= index.AsInt() {
--		return nil, false
-+	if idx < 0 || idx >= len(listItems) {
-+		return abortIntrinsic(property, "index on property [%s] is out of bounds, returning original Property", property.name)
- 	}
- 
--	return listItems[index.AsInt()], true
-+	return listItems[idx], true
- }
-```
-
-**File**: `pkg/iac/scanners/cloudformation/parser/fn_select_test.go` (modified, +41/-0)
-```diff
-@@ -75,3 +75,44 @@ Resources:
- 	require.Equal(t, "notification::arn::2", topic.AsString())
- 
- }
-+
-+func Test_SelectOutOfBoundsIndex(t *testing.T) {
-+	tests := []struct {
-+		name  string
-+		index string
-+	}{
-+		{
-+			name:  "negative int index",
-+			index: "-1",
-+		},
-+		{
-+			name:  "negative string index",
-+			index: `"-1"`,
-+		},
-+		{
-+			name:  "index equal to list length",
-+			index: "2",
-+		},
-+	}
-+
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			source := `---
-+Resources:
-+  ElasticacheCluster:
-+    Type: 'AWS::ElastiCache::CacheCluster'
-+    Properties:
-+      Engine: !Select [ ` + tt.index + `, [memcached, redis] ]
-+`
-+			ctx := createTestFileContext(t, source)
-+			require.NotNil(t, ctx)
-+
-+			res := ctx.GetResourceByLogicalID("ElasticacheCluster")
-+			require.NotNil(t, res)
-+
-+			engineProp := res.GetProperty("Engine")
-+			require.NotNil(t, engineProp)
-+			assert.True(t, engineProp.IsUnresolved())
-+		})
-+	}
-+}
-```
-
-**File**: `pkg/iac/scanners/cloudformation/scanner_test.go` (modified, +64/-0)
-```diff
-@@ -223,3 +223,67 @@ Resources:
- 		})
- 	}
- }
-+
-+func Test_ScanMalformedIntrinsics(t *testing.T) {
-+	tests := []struct {
-+		name          string
-+		src           string
-+		wantStartLine int
-+	}{
-+		{
-+			name: "negative Fn::Select index",
-+			src: `---
-+Resources:
-+  BucketWithNegativeSelect:
-+    Type: 'AWS::S3::Bucket'
-+    Properties:
-+      BucketName: !Select [-1, [bucket-a, bucket-b]]
-+  MisconfiguredBucket:
-+    Type: 'AWS::S3::Bucket'
-+    Properties:
-+      BucketName: test-bucket
-+`,
-+			wantStartLine: 10,
-+		},
-+		{
-+			name: "malformed Fn::FindInMap mapping",
-+			src: `---
-+Mappings:
-+  BucketNames:
-+    prod: not-a-map
-+Resources:
-+  BucketWithMalformedFindInMap:
-+    Type: 'AWS::S3::Bucket'
-+    Properties:
-+      BucketName: !FindInMap [BucketNames, prod, Name]
-+  MisconfiguredBucket:
-+    Type: 'AWS::S3::Bucket'
-+    Properties:
-+      BucketName: test-bucket
-+`,
-+			wantStartLine: 13,
-+		},
-+	}
-+
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			fsys := testutil.CreateFS(map[string]string{
-+				"/code/main.yaml": tt.src,
-+			})
-+
-+			scanner := New(
-+				rego.WithEmbeddedPolicies(false),
-+				rego.WithPolicyReader(strings.NewReader(bucketNameCheck)),
-+				rego.WithPolicyNamespaces("user"),
-+			)
-+
-+			results, err := scanner.ScanFS(t.Context(), fsys, "code")
-+			require.NoError(t, err)
-+
-+			failed := results.GetFailed()
-+			require.Len(t, failed, 1)
-+			assert.Equal(t, "AWS-001", failed[0].Rule().ID)
-+			assert.Equal(t, tt.wantStartLine, failed[0].Range().GetStartLine())
-+		})
-+	}
-+}
-```
-
----
-
-### Incident Patch 3: `13e05e74` (2026-11-23)
-**Commit Message**: fix(flag): load built-in compliance spec from --cache-dir (#11675)
-
-Signed-off-by: Aakarsh Maurya <[REDACTED_EMAIL]>
-
-**File**: `pkg/flag/report_flags.go` (modified, +3/-4)
-```diff
-@@ -10,7 +10,6 @@ import (
- 	"golang.org/x/xerrors"
- 
- 	dbTypes "github.com/aquasecurity/trivy-db/pkg/types"
--	"github.com/aquasecurity/trivy/pkg/cache"
- 	"github.com/aquasecurity/trivy/pkg/compliance/spec"
+ 	"github.com/aquasecurity/trivy/pkg/iac/scanners/azure"
++	"github.com/aquasecurity/trivy/pkg/iac/types"
  	"github.com/aquasecurity/trivy/pkg/log"
- 	"github.com/aquasecurity/trivy/pkg/result"
-@@ -257,7 +256,7 @@ func (f *ReportFlagGroup) ToOptions(opts *Options) error {
- 		return xerrors.New(`"--table-mode" can be used only with "--format table".`)
+ )
+ 
+@@ -115,16 +116,26 @@ func (p *Parser) convertResource(input Resource) azure.Resource {
+ 		children = append(children, p.convertResource(child))
  	}
  
--	cs, err := loadComplianceTypes(f.Compliance.Value())
-+	cs, err := loadComplianceTypes(f.Compliance.Value(), opts.CacheDir)
- 	if err != nil {
- 		return xerrors.Errorf("unable to load compliance spec: %w", err)
++	metadata := lo.FromPtr(input.Metadata)
+ 	resource := azure.Resource{
+-		Metadata:   lo.FromPtr(input.Metadata),
+-		APIVersion: input.APIVersion,
+-		Type:       input.Type,
+-		Kind:       input.Kind,
+-		Name:       input.Name,
+-		Location:   input.Location,
+-		Properties: input.Properties,
++		Metadata:   metadata,
++		APIVersion: valueOrNull(input.APIVersion, metadata),
++		Type:       valueOrNull(input.Type, metadata),
++		Kind:       valueOrNull(input.Kind, metadata),
++		Name:       valueOrNull(input.Name, metadata),
++		Location:   valueOrNull(input.Location, metadata),
++		Properties: valueOrNull(input.Properties, metadata),
+ 		Resources:  children,
  	}
-@@ -294,12 +293,12 @@ func (f *ReportFlagGroup) ToOptions(opts *Options) error {
- 	return nil
+ 
+ 	return resource
  }
- 
--func loadComplianceTypes(compliance string) (spec.ComplianceSpec, error) {
-+func loadComplianceTypes(compliance, cacheDir string) (spec.ComplianceSpec, error) {
- 	if compliance != "" && !slices.Contains(types.SupportedCompliances, compliance) && !strings.HasPrefix(compliance, "@") {
- 		return spec.ComplianceSpec{}, xerrors.Errorf("unknown compliance: %v", compliance)
- 	}
- 
--	cs, err := spec.GetComplianceSpec(compliance, cache.DefaultDir())
-+	cs, err := spec.GetComplianceSpec(compliance, cacheDir)
- 	if err != nil {
- 		return spec.ComplianceSpec{}, xerrors.Errorf("spec loading from file system error: %w", err)
- 	}
++
++// valueOrNull returns a null value with the given metadata if v is absent
++// in the template.
++func valueOrNull(v azure.Value, metadata types.Metadata) azure.Value {
++	if v.GetMetadata().IsManaged() {
++		return v
++	}
++	return azure.NewValue(nil, metadata)
++}
 ```
 
-**File**: `pkg/flag/report_flags_test.go` (modified, +35/-0)
+**File**: `pkg/iac/scanners/azure/arm/parser/parser_test.go` (modified, +1/-0)
 ```diff
-@@ -1,6 +1,8 @@
- package flag_test
- 
- import (
-+	"os"
-+	"path/filepath"
- 	"testing"
- 
- 	"github.com/spf13/viper"
-@@ -282,4 +284,37 @@ func TestReportFlagGroup_ToOptions(t *testing.T) {
- 		_, err := flags.ToOptions(nil)
- 		assert.ErrorContains(t, err, "ignore file not found: doesntexist")
- 	})
-+
-+	t.Run("load built-in compliance spec from --cache-dir", func(t *testing.T) {
-+		t.Cleanup(viper.Reset)
-+
-+		cacheDir := t.TempDir()
-+
-+		policyDir := filepath.Join(cacheDir, "policy")
-+		specDir := filepath.Join(policyDir, "content", "specs", "compliance")
-+		require.NoError(t, os.MkdirAll(specDir, 0o755))
-+		require.NoError(t, os.WriteFile(filepath.Join(policyDir, "metadata.json"), []byte(`{}`), 0o600))
-+
-+		specYAML := `spec:
-+  id: docker-cis-1.6.0
-+  title: Spec from the cache dir
-+  description: Custom test spec
-+  version: "1.6.0"
-+  relatedResources: []
-+  controls: []
-+`
-+		require.NoError(t, os.WriteFile(filepath.Join(specDir, "docker-cis-1.6.0.yaml"), []byte(specYAML), 0o600))
-+
-+		setValue(flag.CacheDirFlag.ConfigName, cacheDir)
-+		setValue(flag.ComplianceFlag.ConfigName, "docker-cis-1.6.0")
-+
-+		flags := flag.Flags{
-+			flag.NewGlobalFlagGroup(),
-+			flag.NewReportFlagGroup(),
-+		}
-+
-+		opts, err := flags.ToOptions(nil)
-+		require.NoError(t, err)
-+		assert.Equal(t, "Spec from the cache dir", opts.Compliance.Spec.Title)
-+	})
+@@ -265,6 +265,7 @@ func TestParser_Parse(t *testing.T) {
+ 								"location",
+ 								createMetadata(fsys, filename, 10, 10, "resources.myacc.location", &resourceMetadata),
+ 							),
++							Properties: azure.NewValue(nil, resourceMetadata),
+ 						},
+ 					},
+ 				}
+```
+
+---
+
+### Incident Patch 3: `5ad7d8e1` (2026-11-24)
+**Commit Message**: fix(alpine): preserve dependencies with fuzzy version requirements (#11384)
+
+Co-authored-by: DmitriyLewen <[REDACTED_EMAIL]>
+
+**File**: `pkg/fanal/analyzer/analyzer_test.go` (modified, +2/-2)
+```diff
+@@ -776,7 +776,7 @@ func TestAnalyzerGroup_AnalyzerVersions(t *testing.T) {
+ 				Analyzers: map[string]int{
+ 					"alpine":       1,
+ 					"apk-repo":     1,
+-					"apk":          4,
++					"apk":          5,
+ 					"bundler":      1,
+ 					"dpkg-license": 1,
+ 					"ubuntu":       1,
+@@ -802,7 +802,7 @@ func TestAnalyzerGroup_AnalyzerVersions(t *testing.T) {
+ 			},
+ 			want: analyzer.Versions{
+ 				Analyzers: map[string]int{
+-					"apk":     4,
++					"apk":     5,
+ 					"bundler": 1,
+ 				},
+ 				PostAnalyzers: map[string]int{
+```
+
+**File**: `pkg/fanal/analyzer/pkg/apk/apk.go` (modified, +4/-3)
+```diff
+@@ -27,7 +27,7 @@ func init() {
+ 	analyzer.RegisterAnalyzer(newAlpinePkgAnalyzer())
  }
+ 
+-const analyzerVersion = 4
++const analyzerVersion = 5
+ 
+ var requiredFiles = []string{"lib/apk/db/installed", "usr/lib/apk/db/installed"}
+ 
+@@ -135,8 +135,9 @@ func (a alpinePkgAnalyzer) trimRequirement(s string) string {
+ 	// e.g.
+ 	//   so:libssl.so.1.1=1.1 => so:libssl.so.1.1
+ 	//   musl>=1.2 => musl
+-	if strings.ContainsAny(s, "<>=") {
+-		s = s[:strings.IndexAny(s, "><=")]
++	//   python3~3.12 => python3
++	if strings.ContainsAny(s, "<>=~") {
++		s = s[:strings.IndexAny(s, "><=~")]
+ 	}
+ 	return s
+ }
+```
+
+**File**: `pkg/fanal/analyzer/pkg/apk/testdata/apk` (modified, +1/-1)
+```diff
+@@ -523,7 +523,7 @@ o:test-parent
+ m:Carlo Landmeter <clandmeter@gmail.com>
+ t:1546255353
+ c:856c64b1dc1f9b8176c60e28808482f8503c4e98
+-D:pkgconfig sqlite-libs=3.26.0-r3
++D:pkgconfig~1 sqlite-libs~3.26
+ p:pc:sqlite3=3.26.0
+ F:usr
+ F:usr/lib
+```
+
+**File**: `pkg/fanal/artifact/image/image_test.go` (modified, +17/-17)
+```diff
+@@ -37,7 +37,7 @@ import (
+ 
+ // Common blob IDs used across multiple test cases to reduce duplication
+ const (
+-	alpineBaseLayerID     = "sha256:b16c09c79d37ead0f37afff062d630a63be0abfc806f175cd0d07eceff5f43ca"
++	alpineBaseLayerID     = "sha256:a6aeee7c1819976bb8ed6e4aadc41c0fd0a9d60a140dea25871ff037b45346b1"
+ 	alpineBaseLayerDiffID = "sha256:beee9f30bc1f711043e78d4a2be0668955d4b761d587d6f60c2c8dc081efb203"
+ 	alpineArtifactID      = "sha256:3c709d2a158be3a97051e10cd0e30f047225cb9505101feb3fadcd395c2e0408"
+ 	composerImageID       = "sha256:a187dde48cd289ac374ad8539930628314bc581a481cdb41409c9289419ddb72"
+@@ -609,7 +609,7 @@ func TestArtifact_Inspect(t *testing.T) {
+ 			},
+ 			wantBlobs: []cachetest.WantBlob{
+ 				{
+-					ID: "sha256:fed5b720b4395f2c56c6a6c5601a595de436cb1c04bd511e9710b87c3d5d90be",
++					ID: "sha256:b9197aa85310995d145284e7905f0b912bb8287042295872d7832801e1001154",
+ 					BlobInfo: types.BlobInfo{
+ 						SchemaVersion: types.BlobJSONSchemaVersion,
+ 						Size:          3061760,
+@@ -703,7 +703,7 @@ func TestArtifact_Inspect(t *testing.T) {
+ 					},
+ 				},
+ 				{
+-					ID: "sha256:db6c6f2f4e18f403abc164137e105d43cc8beae06ec9ab45cb95ff4c9406792c",
++					ID: "sha256:d906c67f5cd8ce75ad5734e328d83b6a840ef53e5ef2fd734a1dacdd5f6e983d",
+ 					BlobInfo: types.BlobInfo{
+ 						SchemaVersion: types.BlobJSONSchemaVersion,
+ 						Size:          15441920,
+@@ -804,7 +804,7 @@ func TestArtifact_Inspect(t *testing.T) {
+ 					},
+ 				},
+ 				{
+-					ID: "sha256:6ff39218a560ee82dcb45411c4c5d0ce192a5af8d7736f85b812fd0a53f84947",
++					ID: "sha256:1fa5a531525db30710df775554196ca8a5071cb0f9057579ede8d31687a01d62",
+ 					BlobInfo: types.BlobInfo{
+ 						SchemaVersion: types.BlobJSONSchemaVersion,
+ 						Size:          29696,
+@@ -1025,7 +1025,7 @@ func TestArtifact_Inspect(t *testing.T) {
+ 					},
+ 				},
+ 				{
+-					ID: "sha256:eaaba47f90addaddaa6225c354b74651a050a0af5b73a9b972436852a8c69c8d",
++					ID: "sha256:12c6fe34e31d3fda253fe3d44a9e2e6bf8638bf1b6879509e440f1c9e8938f77",
+ 					BlobInfo: types.BlobInfo{
+ 						SchemaVersion: types.BlobJSONSchemaVersion,
+ 						Size:          6656,
+@@ -1942,10 +1942,10 @@ func TestArtifact_Inspect(t *testing.T) {
+ 				Type: types.TypeContainerImage,
+ 				ID:   "sha256:0bebf0773ffd87baa7c64fbdbdf79a24ae125e3f99a8adebe52d1ccbe6bed16b",
+ 				BlobIDs: []string{
+-					"sha256:fed5b720b4395f2c56c6a6c5601a595de436cb1c04bd511e9710b87c3d5d90be",
+-					"sha256:db6c6f2f4e18f403abc164137e105d43cc8beae06ec9ab45cb95ff4c9406792c",
+-					"sha256:6ff39218a560ee82dcb45411c4c5d0ce192a5af8d7736f85b812fd0a53f84947",
+-					"sha256:eaaba47f90addaddaa6225c354b74651a050a0af5b73a9b972436852a8c69c8d",
++					"sha256:b9197aa85310995d145284e7905f0b912bb8287042295872d7832801e1001154",
++					"sha256:d906c67f5cd8ce75ad5734e328d83b6a840ef53e5ef2fd734a1dacdd5f6e983d",
++					"sha256:1fa5a531525db30710df775554196ca8a5071cb0f9057579ede8d31687a01d62",
++					"sha256:12c6fe34e31d3fda253fe3d44a9e2e6bf8638bf1b6879509e440f1c9e8938f77",
+ 				},
+ 				ImageMetadata: artifact.ImageMetadata{
+ 					ID: "sha256:58701fd185bda36cab0557bb6438661831267aa4a9e0b54211c4d5317a48aff4",
+@@ -2053,7 +2053,7 @@ func TestArtifact_Inspect(t *testing.T) {
+ 			},
+ 			wantBlobs: []cachetest.WantBlob{
+ 				{
+-					ID: "sha256:763ba8250d4ac1d9eb191bf20477ba2923754f6e998962455d62888fcec311ad",
++					ID: "sha256:cd6ae1a3c401e1af5f7841ead2a9fec5e43ae6eefcc52f754d8e5ca58f12818b",
+ 					BlobInfo: types.BlobInfo{
+ 						SchemaVersion: types.BlobJSONSchemaVersion,
+ 						Size:          3061760,
+@@ -2063,7 +2063,7 @@ func TestArtifact_Inspect(t *testing.T) {
+ 					},
+ 				},
+ 				{
+-					ID: "sha256:719eedecc470cd3e9b5955c540f20a8136350f699343519c981b9f90ddb3afe0",
++					ID: "sha256:979f285695355666169fb80f8ab6164d806ce5ee2405cf0a386bb9a6faee0ea9",
+ 					BlobInfo: types.BlobInfo{
+ 						SchemaVersion: types.BlobJSONSchemaVersion,
+ 						Size:          15441920,
+@@ -2073,7 +2073,7 @@ func TestArtifact_Inspect(t *testing.T) {
+ 					},
+ 				},
+ 				{
+-					ID: "sha256:d8bc3f755a79b3a10834c1a32ffbf376819e20ab960de0b946bd4a4d75c9d438",
++					ID: "sha256:3c7597ceccf2ac9683ff3ff4a49e76202e23037827b1f9a82b499becb8c7ac83",
+ 					BlobInfo: types.BlobInfo{
+ 						SchemaVersion: types.BlobJSONSchemaVersion,
+ 						Size:          29696,
+@@ -2084,7 +2084,7 @@ func TestArtifact_Inspect(t *testing.T) {
+ 					},
+ 				},
+ 				{
+-					ID: "sha256:66751e6ebd080058a3f093b4dbc25789da7d8b0e59efcff8924f2acd88235e9c",
++					ID: "sha256:4a2173ebcbe7ae39b27be88294b95aca44d7aa0c3f87cfdfa35acddb1c3d5e99",
+ 					BlobInfo: types.BlobInfo{
+ 						SchemaVersion: types.BlobJSONSchemaVersion,
+ 						Size:          6656,
+@@ -2100,10 +2100,10 @@ func TestArtifact_Inspect(t *testing.T) {
+ 				Type: types.TypeContainerImage,
+ 				ID:   "sha256:0bebf0773ffd87baa7c64fbdbdf79a24ae125e3f99a8adebe52d1ccbe6bed16b",
+ 				BlobIDs: []string{
+-					"sha256:763ba8250d4ac1d9eb191bf20477ba2923754f6e998962455d62888fcec311ad",
+-					"sha256:719eedecc470cd3e9b5955c540f20a8136350f699343519c981b9f90ddb3afe0",
+```
+
+**File**: `pkg/fanal/artifact/local/fs_test.go` (modified, +3/-3)
+```diff
+@@ -240,7 +240,7 @@ func TestArtifact_Inspect(t *testing.T) {
+ 			wantBlobs: []cachetest.WantBlob{
+ 				{
+ 					// Cache key is based on commit hash (8a19b492a589955c3e70c6ad8efd1e4ec6ae0d35)
+-					ID: "sha256:74a32b480af4718f21f6a2102c522d7574987bed398aabe53d334ee6e37fd31e",
++					ID: "sha256:d0685eeb4be367af9b877559b1aa4703407ed34472185b9528023c0de18ff18e",
+ 					BlobInfo: types.BlobInfo{
+ 						SchemaVersion: types.BlobJSONSchemaVersion,
+ 					},
+@@ -249,9 +249,9 @@ func TestArtifact_Inspect(t *testing.T) {
+ 			want: artifact.Reference{
+ 				Name: "../../../../internal/gittest/testdata/test-repo",
+ 				Type: types.TypeRepository,
+-				ID:   "sha256:74a32b480af4718f21f6a2102c522d7574987bed398aabe53d334ee6e37fd31e",
++				ID:   "sha256:d0685eeb4be367af9b877559b1aa4703407ed34472185b9528023c0de18ff18e",
+ 				BlobIDs: []string{
+-					"sha256:74a32b480af4718f21f6a2102c522d7574987bed398aabe53d334ee6e37fd31e",
++					"sha256:d0685eeb4be367af9b877559b1aa4703407ed34472185b9528023c0de18ff18e",
+ 				},
+ 				RepoMetadata: artifact.RepoMetadata{
+ 					RepoURL:   "https://github.com/aquasecurity/trivy-test-repo/",
+```
+
+**File**: `pkg/fanal/artifact/vm/vm_test.go` (modified, +6/-6)
+```diff
+@@ -117,16 +117,16 @@ func TestArtifact_Inspect(t *testing.T) {
+ 			rootDir: "testdata/alpine",
+ 			wantBlobs: []cachetest.WantBlob{
+ 				{
+-					ID:       "sha256:501ce2453820cc0c4e8b6807cb7a5f35f7c63f1f123f3dd8993711ba967684b9",
++					ID:       "sha256:4e3660e57de14f05f4a8a36396b0a3f77952238b115d40a2d291f7c4b2783b73",
+ 					BlobInfo: expectedBlobInfo,
+ 				},
+ 			},
+ 			want: artifact.Reference{
+ 				Name: "rawdata.img",
+ 				Type: types.TypeVM,
+-				ID:   "sha256:501ce2453820cc0c4e8b6807cb7a5f35f7c63f1f123f3dd8993711ba967684b9",
++				ID:   "sha256:4e3660e57de14f05f4a8a36396b0a3f77952238b115d40a2d291f7c4b2783b73",
+ 				BlobIDs: []string{
+-					"sha256:501ce2453820cc0c4e8b6807cb7a5f35f7c63f1f123f3dd8993711ba967684b9",
++					"sha256:4e3660e57de14f05f4a8a36396b0a3f77952238b115d40a2d291f7c4b2783b73",
+ 				},
+ 			},
+ 		},
+@@ -136,16 +136,16 @@ func TestArtifact_Inspect(t *testing.T) {
+ 			rootDir: "testdata/alpine",
+ 			wantBlobs: []cachetest.WantBlob{
+ 				{
+-					ID:       "sha256:e21f910185164358fe21301af84a148632b2aa20bcde806d55b9fb2d02b0f46b",
++					ID:       "sha256:60d51bcb3f9ac0186673b899640c3ae92cf94d36fdcbff2a7c5ccb9c7a708260",
+ 					BlobInfo: expectedBlobInfo,
+ 				},
+ 			},
+ 			want: artifact.Reference{
+ 				Name: "ebs-012345",
+ 				Type: types.TypeVM,
+-				ID:   "sha256:e21f910185164358fe21301af84a148632b2aa20bcde806d55b9fb2d02b0f46b",
++				ID:   "sha256:60d51bcb3f9ac0186673b899640c3ae92cf94d36fdcbff2a7c5ccb9c7a708260",
+ 				BlobIDs: []string{
+-					"sha256:e21f910185164358fe21301af84a148632b2aa20bcde806d55b9fb2d02b0f46b",
++					"sha256:60d51bcb3f9ac0186673b899640c3ae92cf94d36fdcbff2a7c5ccb9c7a708260",
+ 				},
+ 			},
+ 		},
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #11726** (2026-11-24): chore(deps): bump the common group across 1 directory with 18 updates (@dependabot[bot])
+- **PR #11725** (2026-11-24): chore(deps): bump the github-actions group across 1 directory with 11 updates (@dependabot[bot])
+- **PR #11722** (2026-11-24): fix(cloudformation): read SqsManagedSseEnabled for SQS queues (@NarenAdithya14)
+- **PR #11720** (closed): fix(misconf): read SqsManagedSseEnabled in CloudFormation SQS adapter (@jtoledo3970)
+- **PR #11716** (closed): fix(report): add license handling to HTML template (@ghs)
 - **PR #11712** (2026-11-23): chore(deps): upgrade apk packages in container images (@DmitriyLewen)
-- **PR #11711** (2026-11-23): fix(cloudformation): handle malformed Fn::Select and Fn::FindInMap (@1solomonwakhungu)
-- **PR #11702** (closed): fix(flag): use cache-dir flag for compliance spec loading (@prascli)
-- **PR #11700** (closed): Parses TF_VAR_ values for variables of complex types as HCL (@Aakarsh133)
-- **PR #11695** (2026-11-23): ci: trigger backport workflow via workflow_dispatch (@DmitriyLewen)
-- **PR #11687** (closed): chore(deps): bump the common group across 1 directory with 18 updates (@dependabot[bot])
 
 ---
 
@@ -1642,66 +1414,31 @@ Signed-off-by: Aakarsh Maurya <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. arm): read NSG rules from the securityRules property and child resources
+## X. cloudformation): read SqsManagedSseEnabled for SQS queues
 
 **RULE**:
-When implementing operations in `pkg/iac/adapters/arm/network/adapt.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aquasecurity/trivy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/iac/adapters/cloudformation/aws/sqs/queue.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aquasecurity/trivy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f320e692`: arm): read NSG rules from the securityRules property and child resources. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c14584a6`: cloudformation): read SqsManagedSseEnabled for SQS queues. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/iac/adapters/arm/network/adapt.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/iac/adapters/cloudformation/aws/sqs/queue.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-const (
-	securityGroupType = "Microsoft.Network/networkSecurityGroups"
-	securityRuleType  = "securityRules"
-)
-
-	for _, resource := range deployment.GetResourcesByType(securityGroupType) {
-	if orphans := deployment.GetOrphanResources(securityGroupType, securityRuleType); len(orphans) > 0 {
-		sgs = append(sgs, network.SecurityGroup{
-			Metadata: iacTypes.NewUnmanagedMetadata(),
-			Rules:    adaptSecurityRuleResources(orphans),
-		})
-	}
-	var rules []network.SecurityGroupRule
-	for _, rule := range resource.Properties.GetMapValue("securityRules").AsList() {
-		rules = append(rules, adaptSecurityGroupRule(rule.GetMapValue("properties"), rule.GetMetadata()))
-	}
-		Rules:    append(rules, adaptSecurityRuleResources(deployment.GetChildResources(resource, securityRuleType))...),
-func adaptSecurityRuleResources(resources []azure.Resource) []network.SecurityGroupRule {
-	var rules []network.SecurityGroupRule
-	for _, resource := range resources {
-		rules = append(rules, adaptSecurityGroupRule(resource.Properties, resource.Metadata))
-func adaptSecurityGroupRule(properties azure.Value, metadata iacTypes.Metadata) network.SecurityGroupRule {
-	sourceAddressPrefixes := properties.GetMapValue("sourceAddr
+				ManagedEncryption: r.GetBoolProperty("SqsManagedSseEnabled"),
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	for _, resource := range deployment.GetResourcesByType("Microsoft.Network/networkSecurityGroups") {
-
-		Rules:    adaptSecurityGroupRules(deployment),
-func adaptSecurityGroupRules(deployment azure.Deployment) (rules []network.SecurityGroupRule) {
-	for _, resource := range deployment.GetResourcesByType("Microsoft.Network/networkSecurityGroups/securityRules") {
-		rules = append(rules, adaptSecurityGroupRule(resource))
-func adaptSecurityGroupRule(resource azure.Resource) network.SecurityGroupRule {
-	sourceAddressPrefixes := resource.Properties.GetMapValue("sourceAddressPrefixes").AsStringValuesList("")
-	if prefix := resource.Properties.GetMapValue("sourceAddressPrefix").AsStringValue("", resource.Metadata); prefix.IsNotEmpty() {
-	for _, portRange := range resource.Properties.GetMapValue("sourcePortRanges").AsList() {
-		rng := parsePortRange(portRange.AsString(), resource.Metadata)
-	if rng := parsePortRange(resource.Properties.GetMapValue("sourcePortRange").AsString(), resource.Metadata); rng.Valid() {
-	destinationAddressPrefixes := resource.Properties.GetMapValue("destinationAddressPrefixes").AsStringValuesList("")
-	if prefix := resource.Properties.GetMapValue("destinationAddressPrefi
+				ManagedEncryption: iacTypes.Bool(false, r.Metadata()),
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f320e692` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c14584a6` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

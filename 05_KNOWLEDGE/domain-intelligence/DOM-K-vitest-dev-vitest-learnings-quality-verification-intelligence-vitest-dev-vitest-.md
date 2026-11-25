@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-21T01:00:38.727Z",
+  "timestamp": "2026-11-25T00:35:23.500Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-vitest-dev-vitest-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [vitest-dev-vitest-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-21T01:00:38.727Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T00:35:23.500Z`  
 > **Learning ID**: `LEARN-EVO-vitest-dev-vitest-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain K (Quality & Verification Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 81%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), G (Architecture Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence)
+- **Confidence Rating**: 76%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from vitest-dev-vitest-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/vitest-dev-vitest-learnings.md`  
 > **Source**: github ([https://github.com/vitest-dev/vitest](https://github.com/vitest-dev/vitest))  
-> **Source Version**: `8b0ca603`  
+> **Source Version**: `e0e8e000`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T01:00:30.004Z  
+> **Timestamp**: 2026-11-25T00:35:13.494Z  
 > **Learning ID**: `learn-github-vitest-dev-vitest`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/vitest-dev-vitest-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/vitest-dev/vitest](https://github.com/vitest-dev/vitest))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T01:00:29.838Z  
+> **Harvest Timestamp**: 2026-11-25T00:35:13.380Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Next generation testing framework powered by Vite.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 17416 stars
+- **Stars / Engagement**: 17441 stars
 
 ---
 
@@ -1190,18 +1190,19 @@ function isErrorEqual(
 }
 
 function keys(obj: object, hasKey: (obj: object, key: string) => boolean) {
-  const keys = []
+  const keys: (string | symbol)[] = []
 
   for (const key in obj) {
     if (hasKey(obj, key)) {
       keys.push(key)
     }
   }
-  return keys.concat(
-    (Object.getOwnPropertySymbols(obj) as Array<any>).filter(
-      (symbol) => (Object.getOwnPropertyDescriptor(obj, symbol) as PropertyDescriptor).enumerable,
-    ),
-  )
+  for (const symbol of Object.getOwnPropertySymbols(obj)) {
+    if (Object.getOwnPropertyDescriptor(obj, symbol)!.enumerable) {
+      keys.push(symbol)
+    }
+  }
+  return keys
 }
 
 function hasDefinedKey(obj: any, key: string) {
@@ -1246,7 +1247,7 @@ function getPrototype(obj: object) {
   }
 
   if (obj.constructor.prototype === obj) {
-   
+
 ```
 
 ### Core Architecture Module: `packages/expect/src/state.ts`
@@ -1310,14 +1311,14 @@ export function setState<State extends MatcherState = MatcherState>(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #12040** (2026-11-19): **fix(coverage): prevent duplicate metrics caused by source map end column differences**
-  *Symptoms*: - Requires https://github.com/vitest-dev/istanbuljs/pull/25 - Closes https://github.com/vitest-dev/vitest/issues/9366 - Closes https://github.com/vitest-dev/vitest/issues/11921  Adds tests that validate https://github.com/vitest-dev/istanbuljs/pull/25 works in Vitest. Istanbuljs fork side has simulated unit tests for this, but here on Vitest side we can test the actual integration end-to-end.  Fix itself comes from https://github.com/vitest-dev/istanbuljs/pull/25. 
+- **Issue #12106** (2026-11-24): **perf: read external source maps once per run**
+  *Symptoms*: Fixes #12105  The source map of an external module is read once per test run instead of once per stack frame. Errors that the previous update already parsed keep their stacks. 
   **Post-Mortem & Fix Analysis**:
-  > ### <span aria-hidden="true">✅</span> Deploy Preview for *vitest-dev* ready! Built [without sensitive environment variables](https://docs.netlify.com/build/environment-variables/get-started/#untrusted-deploys-and-sensitive-variables)  |  Name | Link | |:-:|------------------------| |<span aria-hidden="true">🔨</span> Latest commit | 6fefc04a32f664a457bf5baf33aeacea3a4eba9a | |<span aria-hidden="true">🔍</span> Latest deploy log | https://app.netlify.com/projects/vitest-dev/deploys/6afef26bfeda23ebb4fb53ee | |<span aria-hidden="true">😎</span> Deploy Preview | [https://deploy-preview-12040--vitest-dev.netlify.app](https://deploy-preview-12040--vitest-dev.netlify.app) | |<span aria-hidden="true">📱</span> Preview on mobile | <details><summary> Toggle QR Code... </summary><br /><br />![QR Code](https://app.netlify.com/qr-code/eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJodHRwczovL2RlcGxveS1wcmV2aWV3LTEyMDQwLS12aXRlc3QtZGV2Lm5ldGxpZnkuYXBwIn0.-R5vP3rZ6oUFrNvfaQtvL9LU91ox7dBA2zTVoA_K1_4)
-  > <!-- flakiness.io pull request comment for project fkproj-3oQJwq1Vt0izSUdZRXJM8g --> ## Test Results Summary  This comment shows the latest test results for this pull request.  | Commit | Status | Test Results | CI Runs | |---|---|---|---| | `6fefc04` | ❌ **Failed** | [1 regressed](https://flakiness.io/Vitest/vitest/pull/12040?q=s%3Aregressed) · [23792 passed](https://flakiness.io/Vitest/vitest/pull/12040?q=s%3Apassed) · [163 flaky](https://flakiness.io/Vitest/vitest/pull/12040?q=s%3Aflaked) · [859 skipped](https://flakiness.io/Vitest/vitest/pull/12040?q=s%3Askipped) | 24 runs |  **1 regressed**  🔥 `win 10.0.26100 · main` [test/e2e/test/public-mocker.test.ts:33 › autospy works correctly](https://flakiness.io/Vitest/vitest/run/9886/test/09e5a0a769535a09?test_timeline=%7B%22type%22%3A%22open%22%2C%22eq%22%3A%7B%22env.id%22%3A%22355209abc8cc5610%22%7D%7D)  <details> <summary><b>⚠️ 163 flaky</b></summary>  ⚠️ `win 10.0.26100 · vmThreads` [test/unit/test/retry.test.ts:55 › describe object 
+  > ### <span aria-hidden="true">✅</span> Deploy Preview for *vitest-dev* ready!   |  Name | Link | |:-:|------------------------| |<span aria-hidden="true">🔨</span> Latest commit | 230935003589a879b622b532b8975fa66b01659e | |<span aria-hidden="true">🔍</span> Latest deploy log | https://app.netlify.com/projects/vitest-dev/deploys/6b05b960dcc3f684d4db6115 | |<span aria-hidden="true">😎</span> Deploy Preview | [https://deploy-preview-12106--vitest-dev.netlify.app](https://deploy-preview-12106--vitest-dev.netlify.app) | |<span aria-hidden="true">📱</span> Preview on mobile | <details><summary> Toggle QR Code... </summary><br /><br />![QR Code](https://app.netlify.com/qr-code/eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJodHRwczovL2RlcGxveS1wcmV2aWV3LTEyMTA2LS12aXRlc3QtZGV2Lm5ldGxpZnkuYXBwIn0.LD9yBZVbMAW288EoYCWyu-BDOBtdnBKikBgn5hek37s)<br /><br />_Use your smartphone camera to open QR code link._</details> | |<span aria-hidden="true">🤖</span> Make changes | [Run an agent on this branch](
+  > <!-- flakiness.io pull request comment for project fkproj-3oQJwq1Vt0izSUdZRXJM8g --> ## Test Results Summary  This comment shows the latest test results for this pull request.  | Commit | Status | Test Results | CI Runs | |---|---|---|---| | `2309350` | ✅ **Passed** | [32281 passed](https://flakiness.io/Vitest/vitest/pull/12106?q=s%3Apassed) · [236 flaky](https://flakiness.io/Vitest/vitest/pull/12106?q=s%3Aflaked) · [1197 skipped](https://flakiness.io/Vitest/vitest/pull/12106?q=s%3Askipped) | 30 runs |  <details> <summary><b>⚠️ 236 flaky</b></summary>  ⚠️ `Ubuntu 26.04 · vmThreads` [test/unit/test/retry.test.ts:55 › describe object add(1, 1) › returned value not be greater than 2](https://flakiness.io/Vitest/vitest/run/11996/test/33ff835a0913c482?test_timeline=%7B%22type%22%3A%22open%22%2C%22eq%22%3A%7B%22env.id%22%3A%2263d3354fe2f7c137%22%7D%7D) ⚠️ `Ubuntu 26.04 · vmThreads` [test/unit/test/retry.test.ts:55 › describe object add(1, 1) › returned value not be greater than 2](https://fl
 
-- **Issue #12039** (2026-11-19): **fix(pool): handle failed forks worker start on bun**
-  *Symptoms*: Fixes #12037  - Bun's IPC channel has no `unref` (https://github.com/oven-sh/bun/issues/33593), so the watchdog threw and no forks worker could start. In Bun, `child.unref()` alone already lets the main process exit. - `watchProcess()` now runs after the stdout/stderr pipes are attached. `stop()` detaches the pipes and lowers the listener limits even when `start()` threw, so a throw before the pipes lowered limits that were never raised. After 10 failed workers, this reached `setMaxListeners(-1)`. - The teardown timer is now cleared when `stop()` rejects, so a failed stop no longer also logs "Timeout terminating".
+- **Issue #12105** (2026-11-24): **Reuse external source maps when reporting repeated failures in the same code**
+  *Symptoms*: ### Clear and concise description of the problem  When the same code runs several times, Vitest can end up reading the same external source map for every failure. I'd like Vitest to reuse that map while it reports the errors together. I used Codex for the performance investigation and to help write this issue. I also checked the impact myself and reviewed the patch.  One way to see this is with `retry: 2`. In a benchmark with 100 tests, each failed on two different lines of the same CommonJS dependency and passed on the third attempt. Vitest synchronously read the dependency 200 times and its `.map` another 200 times.  ### Suggested solution  Cache the lookup by file within a project for one worker result update. Each attempt still gets its own error and source location. The next update reads the map again, so editing it between runs still works. A custom `onStackTrace` keeps its existing lookup behavior.  ### Benchmarks  **Retries.** One file with 100 tests, one fork, `retry: 2`, and `includeTaskLocation: false` on an Apple M5 with Node 24.22.2. Each retried test failed twice in the same external dependency and passed on its third attempt. Times are medians of 7 runs of `runTestSpecifications`, with min–max in parentheses.  | Tests that needed retries | Main (`ff6b4275`) | Patch (`52c9457b`) | Median time saved | | --- | ---: | ---: | ---: | | 0 of 100 | 68 ms (66–68) | 67 ms (66–68) | 1 ms | | 1 of 100 | 75 ms (73–78) | 70 ms (68–167) | 5 ms | | 100 of 100 | 345 ms (325–358
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1334,425 +1335,386 @@ export function setState<State extends MatcherState = MatcherState>(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b3a803b1` (2026-11-19)
-**Commit Message**: fix(cli): disallow --changed in vitest related (#12038)
+### Incident Patch 1: `e0e8e000` (2026-11-24)
+**Commit Message**: fix(browser): save failure screenshots per instance (#12042)
 
-**File**: `docs/guide/cli.md` (modified, +2/-0)
+**File**: `packages/browser/src/client/tester/runner.ts` (modified, +9/-3)
 ```diff
-@@ -67,6 +67,8 @@ Useful to run with [`lint-staged`](https://github.com/okonet/lint-staged) or wit
- vitest related /src/index.ts /src/hello-world.js
- ```
- 
-+`vitest related` cannot be used with [`--changed`](/config/changed) or `--since-last-run`. To run the tests affected by the files that git reports as changed, use `vitest run --changed`.
-+
- ::: tip
- Don't forget that Vitest runs with enabled watch mode by default. If you are using tools like `lint-staged`, you should also pass `--run` option, so that command can exit normally.
- 
-```
-
-**File**: `packages/vitest/src/node/config/resolveConfig.ts` (modified, +8/-1)
-```diff
-@@ -518,7 +518,14 @@ export function resolveTestConfig(
-     }
-   }
-   // CLI options are merged into the test config
--  if ((options as CliOptions).sinceLastRun) {
-+  const { sinceLastRun } = options as CliOptions
-+  if (options.related && (resolved.changed || sinceLastRun)) {
-+    const flag = sinceLastRun ? '--since-last-run' : '--changed'
-+    throw new Error(
-+      `The "${flag}" flag cannot be used with "vitest related". Use "vitest run ${flag}" to run the tests affected by the changed files, or "vitest related <files>" to run the tests affected by the given files.`,
-+    )
-+  }
-+  if (sinceLastRun) {
-     if (resolved.cache === false) {
-       throw new Error(
-         'The "--since-last-run" flag requires the "cache" option to store the dependencies of the test files.',
-```
-
-**File**: `test/e2e/test/git-changed.test.ts` (modified, +25/-1)
-```diff
-@@ -2,7 +2,15 @@ import { execFileSync } from 'node:child_process'
- import { tmpdir } from 'node:os'
- import { join } from 'node:path'
- import { describe, expect, it } from 'vitest'
--import { createFile, editFile, resolvePath, runVitest, useFS, useTmpFS } from '../../test-utils'
-+import {
-+  createFile,
-+  editFile,
-+  resolvePath,
-+  runInlineTests,
-+  runVitest,
-+  useFS,
-+  useTmpFS,
-+} from '../../test-utils'
- 
- const fileName = 'fixtures/git-changed/related/rerun.temp'
- 
-@@ -87,6 +95,22 @@ it('fails when --changed is used outside of a git repository', async () => {
-   `)
- })
- 
-+it('fails when "vitest related" is used with --changed or --since-last-run', async () => {
-+  const files = { 'basic.test.js': `import { test } from 'vitest'\ntest('basic', () => {})` }
-+
-+  const changed = await runInlineTests(files, { $cliOptions: { related: [], changed: 'HEAD' } })
-+  expect(changed.stderr.split('\n')[0]).toMatchInlineSnapshot(
-+    `"Error: The "--changed" flag cannot be used with "vitest related". Use "vitest run --changed" to run the tests affected by the changed files, or "vitest related <files>" to run the tests affected by the given files."`,
-+  )
-+
-+  const sinceLastRun = await runInlineTests(files, {
-+    $cliOptions: { related: ['src/a.js'], sinceLastRun: true },
-+  })
-+  expect(sinceLastRun.stderr.split('\n')[0]).toMatchInlineSnapshot(
-+    `"Error: The "--since-last-run" flag cannot be used with "vitest related". Use "vitest run --since-last-run" to run the tests affected by the changed files, or "vitest related <files>" to run the tests affected by the given files."`,
-+  )
-+})
-+
- it('finds changed files with names that git quotes', async () => {
-   const { root, editFile } = useTmpFS({
-     'src/café/menu.js': 'export const menu = 1',
-```
-
----
-
-### Incident Patch 2: `9b87492f` (2026-11-17)
-**Commit Message**: fix: throw timeout error classes instead of Error (#12003)
-
-**File**: `packages/vitest/src/runtime/runner/context.ts` (modified, +6/-3)
-```diff
-@@ -11,7 +11,7 @@ import type {
- } from './types'
- import { manageArtifactAttachment, recordArtifact, recordAsyncOperation } from './artifact'
- import { TaskDeadline } from './deadline'
--import { PendingError, TestRunAbortError } from './errors'
-+import { HookTimeoutError, PendingError, TestRunAbortError, TestTimeoutError } from './errors'
- import { finishSendTasksUpdate } from './run'
- import { getRunner } from './suite'
- 
-@@ -283,9 +283,12 @@ function makeTimeoutError(
-   }, pass a timeout value as the last argument or configure it globally with "${
-     isHook ? 'hookTimeout' : 'testTimeout'
-   }".`
--  const error = new Error(message)
-+  const error = isHook ? new HookTimeoutError(message) : new TestTimeoutError(message)
-   if (stackTraceError?.stack) {
--    error.stack = stackTraceError.stack.replace(stackTraceError.message, error.message)
-+    error.stack = stackTraceError.stack.replace(
-+      `${stackTraceError.name}: ${stackTraceError.message}`,
-+      `${error.name}: ${error.message}`,
-+    )
-   }
-   return error
- }
-```
-
-**File**: `packages/vitest/src/runtime/runner/errors.ts` (modified, +8/-0)
-```diff
-@@ -23,6 +23,14 @@ export class TestRunAbortError extends Error {
-   }
+@@ -203,7 +203,7 @@ function createBrowserRunner(
+               this.config.attachmentsDir,
+               'failure-screenshots',
+               basename(task.file.filepath),
+-              `${getFailureScreenshotName(task, retry, repeats)}.png`,
++              `${getFailureScreenshotName(task, this.config.name, retry, repeats)}.png`,
+             ),
+           })
+           .catch((err) => {
+@@ -462,8 +462,14 @@ async function updateTestFilesLocations(files: File[], sourceMaps: Map<string, a
+   await Promise.all(promises)
  }
  
-+export class TestTimeoutError extends Error {
-+  public name = 'TestTimeoutError'
-+}
-+
-+export class HookTimeoutError extends Error {
-+  public name = 'HookTimeoutError'
-+}
-+
- export class FixtureDependencyError extends Error {
-   public name = 'FixtureDependencyError'
- }
+-function getFailureScreenshotName(test: Test, retry: number, repeats: number) {
+-  const name = test.fullTestName.replace(/\W/g, '-')
++// the browser instances run the same test at the same time, so each one needs its own file
++function getFailureScreenshotName(
++  test: Test,
++  projectName: string | undefined,
++  retry: number,
++  repeats: number,
++) {
++  const name = `${projectName ? `${projectName}-` : ''}${test.fullTestName}`.replace(/\W/g, '-')
+   const maxRetries = typeof test.retry === 'number' ? test.retry : (test.retry?.count ?? 0)
+   // add '<name>-<repeat>-<retry>' suffix only when test enables retry or repeat
+   if (!maxRetries && !test.repeats) {
 ```
 
-**File**: `test/browser/specs/timeout-actions.test.ts` (modified, +1/-1)
+**File**: `test/browser/specs/failure-screenshot.test.ts` (modified, +45/-10)
 ```diff
-@@ -33,7 +33,7 @@ test('task timeouts wait for pending actions', async () => {
-   const end = report.findIndex((line, index) => index > start && line.startsWith('⎯'))
-   expect(report.slice(start, end).join('\n')).toMatchInlineSnapshot(`
-     " FAIL  |chromium| actions.test.ts > names the pending action when it does not report back
--    Error: Test timed out in 500ms while waiting for screenshot.
-+    TestTimeoutError: Test timed out in 500ms while waiting for screenshot.
-     If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
-      ❯ actions.test.ts:9:14
-           7|
-```
-
-**File**: `test/e2e/test/__snapshots__/fails.test.ts.snap` (modified, +12/-12)
-```diff
-@@ -9,7 +9,7 @@ AssertionError: expected 'xx' to be 'zz' // Object.is equality
- AssertionError: expected 'xx' to be 'yy' // Object.is equality"
- `;
+@@ -4,6 +4,7 @@ import { resolve } from 'pathe'
+ import { describe, expect, test } from 'vitest'
+ import { runInlineTests } from '../../test-utils'
+ import utilsContent from '../fixtures/expect-dom/utils?raw'
++import { instances, runInlineBrowserTests } from './utils'
  
--exports[`should fail each-timeout.test.ts 1`] = `"Error: Test timed out in 10ms."`;
-+exports[`should fail each-timeout.test.ts 1`] = `"TestTimeoutError: Test timed out in 10ms."`;
+ const testFilename = 'basic.test.ts'
  
- exports[`should fail empty.test.ts 1`] = `"Error: No test suite found in file <rootDir>/empty.test.ts"`;
+@@ -76,7 +77,7 @@ describe('failure screenshots', () => {
+       const screenshotPath = extractScreenshotPath(stderr)
  
-@@ -21,7 +21,7 @@ exports[`should fail expect-unreachable.test.ts 1`] = `"AssertionError: expected
- 
- exports[`should fail exports-error.test.js 1`] = `"TypeError: vi is not a function"`;
- 
--exports[`should fail hook-timeout.test.ts 1`] = `"Error: Hook timed out in 10ms."`;
-+exports[`should fail hook-timeout.test.ts 1`] = `"HookTimeoutError: Hook timed out in 10ms."`;
- 
- exports[`should fail hooks-called.test.ts 1`] = `
- "Error: after all
-@@ -37,8 +37,8 @@ exports[`should fail hooks-fail-beforeAll.test.ts 1`] = `"TypeError: "beforeAll"
- exports[`should fail hooks-fail-beforeEach.test.ts 1`] = `"TypeError: "beforeEach" callback value must be function, received "string""`;
- 
- exports[`should fail hooks-timeout-before-hook-cleanup-callback.test.ts 1`] = `
--"Error: Hook timed out in 101ms.
--Error: Hook timed out in 102ms."
-+"HookTimeoutError: Hook timed out in 101ms.
-+HookTimeoutError: Hook timed out in 102ms."
- `;
- 
- exports[`should fail mock-import-proxy-module.test.ts 1`] = `"Error: There are some problems in resolving the mocks API."`;
-@@ -81,7 +81,7 @@ exports[`should fail test-extend/circular-dependency.test.ts 1`] = `"Error: Circ
- 
- exports[`should fail test-extend/fixture-error.test.ts 1`] = `
- "Error: Error fixture teardown
--Error: Test timed out in 20ms.
-+TestTimeoutError: Test timed out in 20ms.
- Error: Error thrown in test fixture
- Error: Error thrown in afterEach fixture
- Error: Error thrown in beforeEach fixture"
-@@ -101,13 +101,13 @@ exports[`should fail test-extend/test-without-destructuring.test.ts 1`] = `"Fixt
- 
- exports[`should fail test-timeout.test.ts 1`] = `
- "Error: Promise returned by \`expect(actual).resolves.toBe(expected)\` was not awaited. This assertion is asynchronous and must be awaited; otherwise, it is not guaranteed to complete before the test finishes:
--Error: Test timed out in 20ms.
--Error: Test timed out in 200ms.
--Error: Test timed out in 100ms.
--Error: Hook timed out in 17ms.
--Error: Test timed out in 15ms.
--Error: Test timed out in 10ms.
--Error: Hook timed out in 16ms."
-+TestTimeoutError: Test timed out in 20ms.
-+TestTimeoutError: Test timed out in 200ms.
-+TestTimeoutError: Test timed out in 100ms.
-+HookTimeoutError: Hook timed out in 17ms.
-+TestTimeoutError: Test timed out in 15ms.
-+TestTimeoutError: Test timed out in 10ms.
-+HookTimeoutError: Hook timed out in 16ms."
- `;
- 
- exports[`should fail unhandled.test.ts 1`] = `"Error: some error"`;
-```
-
-**File**: `test/e2e/test/__snapshots__/hook-timeout.test.ts.snap` (modified, +9/-9)
-```diff
-@@ -5,7 +5,7 @@ exports[`timeout error with stack trace 1`] = `
- ⎯⎯⎯⎯⎯⎯ Failed Suites 3 ⎯⎯⎯⎯⎯⎯⎯
- 
-  FAIL  basic.test.ts > beforeAll
--Error: Hook timed out in 10ms.
-+HookTimeoutError: Hook timed out in 10ms.
- If this is a long-running hook, pass a timeout value as the last argument or configure it globally with "hookTimeout".
-  ❯ basic.test.ts:4:3
-       2|
-@@ -18,7 +18,7 @@ If this is a long-running hook, pass a timeout value as the last argument or con
- ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/10]⎯
- 
-  FAIL  basic.test.ts > afterAll
--Error: Hook timed out in 30ms.
-+HookTimeoutError: Hook timed out in 30ms.
- If this is a long-running hook, pass a timeout value as the last argument or configure it globally with "hookTimeout".
-  ❯ basic.test.ts:16:3
-      14|
-@@ -31,7 +31,7 @@ If this is a long-running hook, pass a timeout value as the last argument or con
- ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/10]⎯
- 
-  FAIL  basic.test.ts > cleanup-beforeAll
--Error: Hook timed out in 50ms.
-+HookTimeoutError: Hook timed out in 50ms.
- If this is a long-running hook, pass a timeout value as the last argument or configure it globally with "hookTimeout".
-  ❯ basic.test.ts:28:3
-      26|
-@@ -47,7 +47,7 @@ If this is a long-running hook, pass a timeout value as the last argument or con
- ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 6 ⎯⎯⎯⎯⎯⎯⎯
- 
-  FAIL  basic.test.ts > beforeEach > ok
--Error: Hook timed out in 20ms.
-+HookTimeoutError: Hook timed out in 20ms.
- If this is a long-running hook, pass a timeout value as the last argument or configure it globally with "hookTimeout".
-  ❯ basic.test.ts:10:3
-       8|
-@@ -60,7 +60,7 @@ If this is a long-running hook, pass a timeout value as the last argument or con
- ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/10]⎯
- 
-  FAIL  basic.test.ts > afterEach > ok
--Error: Hook timed out in 40ms.
-+HookTimeoutError: Hook timed out in 40ms.
- If this is a long-running hook, pass a timeout value as the last argument or configure it globally with "hookTimeout".
-  ❯ basic.test.ts:22:3
-      20|
-@@ -73,7 +73,7 @@ If this is a long-running hook, pass a timeout value as the last argument or con
- ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/10]⎯
- 
-  FAIL  basic.test.ts > cleanup-beforeEach > ok
--Error: Hook timed out in 60ms.
-+HookTimeoutError: Hook timed out in 60ms.
- If this is a long-running hook, pass a timeout value as the last argument or configure it globally with "hookTimeout".
-  ❯ basic.test.ts:34:3
-      32|
-@@ -98,7 +98,7 @@ Error: fail
- ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/10]⎯
- 
-  FAIL  basic.test.ts > onFailed > fail
--Error: Hook timed out in 70ms.
-+HookTimeoutError: Hook timed out in 70ms.
- If this is a long-running hook, pass a timeout value as the last argument or configure it globally with "hookTimeout".
-  ❯ basic.test.ts:41:9
-      39| describe('onFailed', () => {
-@@ -111,7 +111,7 @@ If this is a long-running hook, pass a timeout value as the last argument or con
- ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/10]⎯
- 
-  FAIL  basic.test.ts > onFinished > ok
--Error: Hook timed out in 80ms.
-+HookTimeoutError: Hook timed out in 80ms.
- If this is a long-running hook, pass a timeout value as the last argument or configure it globally with "hookTimeout".
-  ❯ basic.test.ts:48:9
-      46| describe('onFinished', () => {
-@@ -124,7 +124,7 @@ If this is a long-running hook, pass a timeout value as the last argument or con
- ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/10]⎯
- 
-  FAIL  basic.test.ts > test timeout
--Error: Test timed out in 123ms.
-+TestTimeoutError: Test timed out in 123ms.
- If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
-  ❯ basic.test.ts:52:1
-      50| })
-```
-
-**File**: `test/e2e/test/hook-timeout.test.ts` (modified, +4/-4)
-```diff
-@@ -17,10 +17,10 @@ test('timeout error stack starts with the timeout message', async () => {
-     .flatMap((f) => f.tasks.flatMap((t) => t.result?.errors ?? []))
-   expect(errors.map((e) => e.stack?.split('\n')[0])).toMatchInlineSnapshot(`
-     [
--      "Error: Hook timed out in 10ms.",
--      "Error: Hook timed out in 30ms.",
--      "Error: Hook timed out in 50ms.",
--      "Error: Test timed out in 123ms.",
-+      "HookTimeoutError: Hook timed out in 10ms.",
-+      "HookTimeoutError: Hook timed out in 30ms.",
-+      "HookTimeoutError: Hook timed out in 50ms.",
-+      "TestTimeoutError: Test timed out in 123ms.",
-     ]
-   `)
- })
-```
-
----
-
-### Incident Patch 3: `4aec8942` (2026-11-19)
-**Commit Message**: fix(pool): handle failed forks worker start on bun (#12039)
-
-**File**: `packages/vitest/src/node/pools/pool.ts` (modified, +1/-1)
-```diff
-@@ -188,7 +188,7 @@ export class Pool {
-         this.exitPromises.push(
-           runner
-             .stop({ force: resolver.isRejected })
--            .then(() => clearTimeout(id))
-+            .finally(() => clearTimeout(id))
-             .catch((error) =>
-               this.logger.error(
-                 `[vitest-pool]: Failed to terminate ${task.worker} worker for test files ${formatFiles(task)}.`,
-```
-
-**File**: `packages/vitest/src/node/pools/watchdog.ts` (modified, +3/-1)
-```diff
-@@ -46,7 +46,9 @@ function startWatchdog(distPath: string): ChildProcess {
- 
-   // must never keep the main process alive
-   child.unref()
--  child.channel?.unref()
-+  // Bun has no `channel.unref`
-+  // Revert when https://github.com/oven-sh/bun/issues/33593 is done
-+  child.channel?.unref?.()
- 
-   // losing the watchdog only loses the cleanup, the test run is not affected
-   child.on('error', () => {})
-```
-
-**File**: `packages/vitest/src/node/pools/workers/forksWorker.ts` (modified, +2/-1)
-```diff
-@@ -69,7 +69,6 @@ export class ForksPoolWorker implements PoolWorker {
+       expect(screenshotPath).toContain(
+-        '.vitest/attachments/failure-screenshots/basic.test.ts/screenshot-unstable.png',
++        '.vitest/attachments/failure-screenshots/basic.test.ts/chromium-screenshot-unstable.png',
+       )
      })
  
-     this._fork.on('error', this.emitError)
--    watchProcess(this._fork, this.distPath)
+@@ -103,7 +104,7 @@ describe('failure screenshots', () => {
+       const screenshotPath = extractScreenshotPath(stderr)
  
-     // `end: false`: the logger streams are shared by every worker, so one
-     // ending worker stream must not end them for everyone else
-@@ -82,6 +81,8 @@ export class ForksPoolWorker implements PoolWorker {
-       this.stderr.setMaxListeners(1 + this.stderr.getMaxListeners())
-       this._fork.stderr.pipe(this.stderr, { end: false })
-     }
+       expect(screenshotPath).toContain(
+-        '.vitest/attachments/failure-screenshots/basic.test.ts/screenshot-soft-then-fail.png',
++        '.vitest/attachments/failure-screenshots/basic.test.ts/chromium-screenshot-soft-then-fail.png',
+       )
+     })
+   })
+@@ -142,19 +143,19 @@ describe('failure screenshots', () => {
+         " FAIL  |chromium| basic.test.ts > repeated (initial run)
+         AssertionError: expected 1 to be 10 // Object.is equality
+         Failure screenshot:
+-          - <root>/.vitest/attachments/failure-screenshots/basic.test.ts/repeated-0-0.png
++          - <root>/.vitest/attachments/failure-screenshots/basic.test.ts/chromium-repeated-0-0.png
+          FAIL  |chromium| basic.test.ts > repeated (1st retry)
+         AssertionError: expected 2 to be 10 // Object.is equality
+         Failure screenshot:
+-          - <root>/.vitest/attachments/failure-screenshots/basic.test.ts/repeated-0-1.png
++          - <root>/.vitest/attachments/failure-screenshots/basic.test.ts/chromium-repeated-0-1.png
+          FAIL  |chromium| basic.test.ts > repeated (1st repeat)
+         AssertionError: expected 3 to be 10 // Object.is equality
+         Failure screenshot:
+-          - <root>/.vitest/attachments/failure-screenshots/basic.test.ts/repeated-1-0.png
++          - <root>/.vitest/attachments/failure-screenshots/basic.test.ts/chromium-repeated-1-0.png
+          FAIL  |chromium| basic.test.ts > repeated (1st retry of 1st repeat)
+         AssertionError: expected 4 to be 10 // Object.is equality
+         Failure screenshot:
+-          - <root>/.vitest/attachments/failure-screenshots/basic.test.ts/repeated-1-1.png"
++          - <root>/.vitest/attachments/failure-screenshots/basic.test.ts/chromium-repeated-1-1.png"
+       `)
+       expect(new Set(readReportedScreenshots(stderr)).size).toBe(4)
+     })
+@@ -177,14 +178,48 @@ describe('failure screenshots', () => {
+         " FAIL  |chromium| basic.test.ts > soft (initial run, 1st retry)
+         AssertionError: expected 1 to be 2 // Object.is equality
+         Failure screenshots:
+-          - <root>/.vitest/attachments/failure-screenshots/basic.test.ts/soft-0-0.png
+-          - <root>/.vitest/attachments/failure-screenshots/basic.test.ts/soft-0-1.png
++          - <root>/.vitest/attachments/failure-screenshots/basic.test.ts/chromium-soft-0-0.png
++          - <root>/.vitest/attachments/failure-screenshots/basic.test.ts/chromium-soft-0-1.png
+          FAIL  |chromium| basic.test.ts > soft (initial run, 1st retry)
+         AssertionError: expected 2 to be 3 // Object.is equality
+         Failure screenshots:
+-          - <root>/.vitest/attachments/failure-screenshots/basic.test.ts/soft-0-0.png
+-          - <root>/.vitest/attachments/failure-screenshots/basic.test.ts/soft-0-1.png"
++          - <root>/.vitest/attachments/failure-screenshots/basic.test.ts/chromium-soft-0-0.png
++          - <root>/.vitest/attachments/failure-screenshots/basic.test.ts/chromium-soft-0-1.png"
+       `)
+     })
+   })
 +
-+    watchProcess(this._fork, this.distPath)
-   }
- 
-   async stop(): Promise<void> {
++  test('each browser instance saves its own screenshot', async () => {
++    const { root, results } = await runInlineBrowserTests({
++      [testFilename]: /* ts */ `
++        import { expect, test } from 'vitest'
++
++        test('adds an item', () => {
++          document.body.innerHTML = '<button>Add</button>'
++          expect(1).toBe(2)
++        })
++      `,
++    })
++
++    const screenshots = Object.fromEntries(
++      results.map((module) => {
++        const [testCase] = module.children.allTests()
++        const screenshot = testCase
++          .artifacts()
++          .find((artifact) => artifact.type === 'internal:failureScreenshot')
++        return [module.project.name, screenshot?.attachments[0]?.originalPath]
++      }),
++    )
++    expect(screenshots).toEqual(
++      Object.fromEntries(
++        instances.map(({ browser }) => [
++          browser,
++          resolve(
++            root,
++            `.vitest/attachments/failure-screenshots/basic.test.ts/${browser}-adds-an-item.png`,
++          ),
++        ]),
++      ),
++    )
++  })
+ })
 ```
 
-**File**: `test/e2e/test/pool.test.ts` (modified, +35/-0)
+**File**: `test/e2e/snapshots/domain-aria-inline.test.ts` (modified, +1/-1)
 ```diff
-@@ -155,6 +155,41 @@ test('worker start failure should not hang', async () => {
-   expect(stop).toHaveBeenCalled()
- })
+@@ -96,7 +96,7 @@ test('aria inline snapshot', async () => {
+     Error: Snapshot \`semantic match with regex in snapshot 1\` mismatched
  
-+test('worker stop failure is not reported as a teardown timeout', async () => {
-+  const teardownTimeout = 100
+     Failure screenshot:
+-      - snapshots/fixtures/domain-aria-inline/.vitest/attachments/failure-screenshots/basic.test.ts/semantic-match-with-regex-in-snapshot.png
++      - snapshots/fixtures/domain-aria-inline/.vitest/attachments/failure-screenshots/basic.test.ts/chromium-semantic-match-with-regex-in-snapshot.png
+ 
+     - Expected
+     + Received
+```
+
+**File**: `test/e2e/snapshots/domain-aria.test.ts` (modified, +1/-1)
+```diff
+@@ -111,7 +111,7 @@ test('aria snapshot', { tags: ['browser'] }, async () => {
+     Error: Snapshot \`semantic match with regex in snapshot 1\` mismatched
+ 
+     Failure screenshot:
+-      - snapshots/fixtures/domain-aria/.vitest/attachments/failure-screenshots/basic.test.ts/semantic-match-with-regex-in-snapshot.png
++      - snapshots/fixtures/domain-aria/.vitest/attachments/failure-screenshots/basic.test.ts/chromium-semantic-match-with-regex-in-snapshot.png
+ 
+     - Expected
+     + Received
+```
+
+---
+
+### Incident Patch 2: `2123874a` (2026-11-24)
+**Commit Message**: fix(snapshot): remove new snapshots of a failed retry (#12052)
+
+**File**: `packages/snapshot/src/port/state.ts` (modified, +3/-1)
+```diff
+@@ -186,8 +186,10 @@ export default class SnapshotState {
+       const name = keyToTestName(key)
+       const count = this._counters.get(name)
+       if (count > 0) {
+-        if (key in this._snapshotData || key in this._initialData) {
++        if (key in this._initialData) {
+           this._snapshotData[key] = this._initialData[key]
++        } else {
++          delete this._snapshotData[key]
+         }
+         this._counters.set(name, count - 1)
+       }
+```
+
+**File**: `test/e2e/snapshots/test-update.test.ts` (modified, +34/-1)
+```diff
+@@ -2,7 +2,7 @@ import fs, { rmSync } from 'node:fs'
+ import { join } from 'node:path'
+ import { globSync } from 'tinyglobby'
+ import { expect, test } from 'vitest'
+-import { runVitest } from '../../test-utils'
++import { runInlineTests, runVitest } from '../../test-utils'
+ 
+ test('test update', async () => {
+   // copy fixtures/test-update to fixtures/test-update-result
+@@ -84,3 +84,36 @@ function readFiles(dir: string) {
+     files.sort().map((file) => [file, fs.readFileSync(join(dir, file), 'utf-8')]),
+   )
+ }
 +
-+  const { vitest } = await runVitest({
-+    root: './fixtures/pool',
-+    include: ['a.test.ts'],
-+    teardownTimeout,
-+    pool: {
-+      name: 'pool-with-failing-stop',
-+      // @ts-expect-error -- intentional
-+      createPoolWorker: () => ({
-+        start: () => Promise.reject(new Error('Start failure')),
-+        stop: () => Promise.reject(new Error('Stop failure')),
-+        on() {},
-+        off() {},
-+        send() {},
-+      }),
++test('a retry removes the new snapshots of the failed attempt', async () => {
++  const { stderr, errorTree, fs } = await runInlineTests(
++    {
++      'basic.test.ts': `
++import { expect, test } from 'vitest'
++
++test('flaky', { retry: 1 }, ({ task }) => {
++  expect('every attempt').toMatchSnapshot()
++  if (task.result.retryCount === 0) {
++    expect('failed attempt').toMatchSnapshot()
++    throw new Error('boom')
++  }
++})
++`,
 +    },
-+  })
++    { update: 'new' },
++  )
++  expect(stderr).toBe('')
++  expect(errorTree()).toMatchInlineSnapshot(`
++    {
++      "basic.test.ts": {
++        "flaky": "passed",
++      },
++    }
++  `)
++  expect(fs.readFile('__snapshots__/basic.test.ts.snap')).toMatchInlineSnapshot(`
++    "// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 +
-+  await new Promise((resolve) => setTimeout(resolve, teardownTimeout * 2))
-+
-+  const errors = vitest.stderr
-+    .split('\n')
-+    .filter((line) => line.includes('[vitest-pool]'))
-+    .map((line) => line.replace(/ for test files \S+/, ' for test files <file>'))
-+
-+  expect(errors).toMatchInlineSnapshot(`
-+    [
-+      "Error: [vitest-pool]: Failed to start pool-with-failing-stop worker for test files <file>",
-+      "[vitest-pool]: Failed to terminate pool-with-failing-stop worker for test files <file> Error: Stop failure",
-+    ]
++    exports[\`flaky 1\`] = \`"every attempt"\`;
++    "
 +  `)
 +})
-+
- test('worker that fails to start is not re-used', async () => {
-   const workerStartups = new Map<number, number>()
-   let counter = 0
+```
+
+---
+
+### Incident Patch 3: `ff6b4275` (2026-11-23)
+**Commit Message**: fix(deps): update all non-major dependencies (#12050)
+
+Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+Co-authored-by: Vladimir Sheremet <[REDACTED_EMAIL]>
+
+**File**: `.github/workflows/ai-policy.yml` (modified, +1/-1)
+```diff
+@@ -41,7 +41,7 @@ jobs:
+     steps:
+       - name: AgentScan
+         id: agentscan
+-        uses: MatteoGabriele/agentscan-action@8112fb79b33fafb8506159df20129a34209ac410 # v2.5.0
++        uses: MatteoGabriele/agentscan-action@7ad606f1e21df2119da8be99b763f282a670a1c5 # v2.8.0
+         with:
+           github-token: ${{ secrets.GITHUB_TOKEN }}
+           # the `labels` mode also labels accounts with mixed signals,
+```
+
+**File**: `.github/workflows/semgrep.yml` (modified, +2/-2)
+```diff
+@@ -14,7 +14,7 @@ jobs:
+     permissions:
+       security-events: write # Required for upload-sarif to upload SARIF files.
+     container:
+-      image: semgrep/semgrep:1.183.0@sha256:2e45517a85e13a9cca14a2a00df6bb48affd66b8ebfae1b0991cd57578362fb0
++      image: semgrep/semgrep:1.185.0@sha256:67518c174185a2043fdbed16c70631b79209499b3671178e7194379b48295a0d
+     steps:
+       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+         with:
+@@ -29,6 +29,6 @@ jobs:
+           > semgrep-results.sarif
+ 
+       - name: Upload SARIF result
+-        uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
++        uses: github/codeql-action/upload-sarif@33d7b85da1a04171e211befe2c739303b9a4c066 # v4.39.3
+         with:
+           sarif_file: semgrep-results.sarif
+```
+
+**File**: `.github/workflows/zizmor.yml` (modified, +1/-1)
+```diff
+@@ -29,6 +29,6 @@ jobs:
+       # test locally by
+       #   zizmor .github/workflows --pedantic
+       - name: Run zizmor 🌈
+-        uses: zizmorcore/zizmor-action@53290badfa369cb0bf7ad16342cb62c2fa47ac7b # v0.8.0
++        uses: zizmorcore/zizmor-action@45d7276c9ca790aabd705e31ca99c6185c3e76dd # v0.8.1
+         with:
+           persona: pedantic
+```
+
+**File**: `docs/package.json` (modified, +2/-2)
+```diff
+@@ -37,8 +37,8 @@
+     "vite": "^6.3.5",
+     "vite-plugin-pwa": "^2.0.0",
+     "vitepress": "2.0.0-alpha.21",
+-    "vitepress-plugin-group-icons": "^1.8.1",
+-    "vitepress-plugin-llms": "^1.14.0",
++    "vitepress-plugin-group-icons": "^1.8.2",
++    "vitepress-plugin-llms": "^1.15.0",
+     "vitepress-plugin-tabs": "^0.9.1",
+     "vitest": "workspace:*",
+     "workbox-window": "^7.4.1",
+```
+
+**File**: `examples/fastify/package.json` (modified, +1/-1)
+```diff
+@@ -13,7 +13,7 @@
+   "devDependencies": {
+     "@vitest/ui": "latest",
+     "fastify": "^5.12.8",
+-    "supertest": "^7.3.1",
++    "supertest": "^7.3.2",
+     "tsx": "^4.23.15",
+     "vite": "latest",
+     "vitest": "latest"
+```
+
+**File**: `examples/lit/package.json` (modified, +1/-1)
+```diff
+@@ -19,7 +19,7 @@
+   "devDependencies": {
+     "@vitest/browser-playwright": "latest",
+     "jsdom": "^30.1.3",
+-    "playwright": "^1.64.1",
++    "playwright": "^1.65.1",
+     "vite": "latest",
+     "vitest": "latest"
+   },
+```
+
+**File**: `examples/opentelemetry/package.json` (modified, +4/-4)
+```diff
+@@ -9,10 +9,10 @@
+   },
+   "devDependencies": {
+     "@opentelemetry/api": "^1.10.0",
+-    "@opentelemetry/context-zone": "^2.12.0",
+-    "@opentelemetry/exporter-trace-otlp-proto": "^0.300.0",
+-    "@opentelemetry/resources": "^2.12.0",
+-    "@opentelemetry/sdk-node": "^0.300.0",
++    "@opentelemetry/context-zone": "^2.12.1",
++    "@opentelemetry/exporter-trace-otlp-proto": "^0.301.2",
++    "@opentelemetry/resources": "^2.12.1",
++    "@opentelemetry/sdk-node": "^0.301.2",
+     "@opentelemetry/sdk-trace-web": "^2.12.0",
+     "@vitest/browser-playwright": "latest",
+     "vite": "latest",
+```
+
+**File**: `examples/projects/package.json` (modified, +3/-3)
+```diff
+@@ -11,14 +11,14 @@
+   "devDependencies": {
+     "@testing-library/jest-dom": "^7.0.1",
+     "@testing-library/react": "^16.3.3",
+-    "@testing-library/user-event": "^14.6.8",
++    "@testing-library/user-event": "^14.6.12",
+     "@types/react": "^19.3.0",
+-    "@vitejs/plugin-react": "^6.2.1",
++    "@vitejs/plugin-react": "^6.3.0",
+     "@vitest/ui": "latest",
+     "fastify": "^5.12.8",
+     "jsdom": "^30.1.3",
+     "react": "^19.3.1",
+-    "supertest": "^7.3.1",
++    "supertest": "^7.3.2",
+     "tsx": "^4.23.15",
+     "vite": "latest",
+     "vitest": "latest"
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #12040** (2026-11-19): fix(coverage): prevent duplicate metrics caused by source map end column differences (@AriPerkkio)
-- **PR #12039** (2026-11-19): fix(pool): handle failed forks worker start on bun (@sheremet-va)
-- **PR #12038** (2026-11-19): fix(cli): disallow --changed in vitest related (@sheremet-va)
-- **PR #12035** (closed): fix(cli): honor --changed when related is empty (@grindpride)
-- **PR #12033** (2026-11-19): docs(experimental): clarify expect state helpers (@hi-ogawa)
-- **PR #12032** (2026-11-19): test: declare `defineCacheKeyGenerator` for custom multi transform plugin (@sapphi-red)
+- **PR #12106** (2026-11-24): perf: read external source maps once per run (@sheremet-va)
+- **PR #12104** (2026-11-24): perf(expect): reuse the key array in deep equality (@camc314)
+- **PR #12101** (closed): fix(snapshot): match closing quote when inline snapshot ends with escaped backslash (@seragAhmed)
+- **PR #12100** (closed): fix(when): call original method on spyOn when onUnmatched is passthrough (@seragAhmed)
+- **PR #12099** (closed): fix(spy): ensure restoreAllMocks clears registry and restores remaining mocks when one throws (@seragAhmed)
+- **PR #12098** (closed): fix(browser): skip disk threshold check when VITEST_CHROMIUM_GC_FORCE is set (@EnesKartal)
 
 ---
 
@@ -1772,32 +1734,41 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cli): disallow --changed in vitest related
+## X. browser): save failure screenshots per instance
 
 **RULE**:
-When implementing operations in `docs/guide/cli.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vitest-dev/vitest. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/browser/src/client/tester/runner.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vitest-dev/vitest. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b3a803b1`: cli): disallow --changed in vitest related. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e0e8e000`: browser): save failure screenshots per instance. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/guide/cli.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/browser/src/client/tester/runner.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-`vitest related` cannot be used with [`--changed`](/config/changed) or `--since-last-run`. To run the tests affected by the files that git reports as changed, use `vitest run --changed`.
-
+              `${getFailureScreenshotName(task, this.config.name, retry, repeats)}.png`,
+// the browser instances run the same test at the same time, so each one needs its own file
+function getFailureScreenshotName(
+  test: Test,
+  projectName: string | undefined,
+  retry: number,
+  repeats: number,
+) {
+  const name = `${projectName ? `${projectName}-` : ''}${test.fullTestName}`.replace(/\W/g, '-')
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+              `${getFailureScreenshotName(task, retry, repeats)}.png`,
+function getFailureScreenshotName(test: Test, retry: number, repeats: number) {
+  const name = test.fullTestName.replace(/\W/g, '-')
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b3a803b1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e0e8e000` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

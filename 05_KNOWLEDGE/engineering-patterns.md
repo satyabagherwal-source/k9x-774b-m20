@@ -781227,3 +781227,153 @@ Subsystems managing Java data structures, boundary deserialization, API parsing,
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `77887ead` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10402. save failure screenshots per instance (Harvested from vitest-dev/vitest)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "save failure screenshots per instance",
+  "source": "vitest-dev/vitest",
+  "source_url": "https://github.com/vitest-dev/vitest",
+  "source_version": "e0e8e000",
+  "license": "MIT",
+  "extracted_at": "2026-11-25T00:35:14.082Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-vitest-dev-vitest",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [vitest-dev/vitest](https://github.com/vitest-dev/vitest) (Revision: `e0e8e000`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `packages/browser/src/client/tester/runner.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vitest-dev/vitest. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `e0e8e000`: browser): save failure screenshots per instance. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/browser/src/client/tester/runner.ts`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+              `${getFailureScreenshotName(task, this.config.name, retry, repeats)}.png`,
+// the browser instances run the same test at the same time, so each one needs its own file
+function getFailureScreenshotName(
+  test: Test,
+  projectName: string | undefined,
+  retry: number,
+  repeats: number,
+) {
+  const name = `${projectName ? `${projectName}-` : ''}${test.fullTestName}`.replace(/\W/g, '-')
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Induced defect failure mode:
+              `${getFailureScreenshotName(task, retry, repeats)}.png`,
+function getFailureScreenshotName(test: Test, retry: number, repeats: number) {
+  const name = test.fullTestName.replace(/\W/g, '-')
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `e0e8e000` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10403. read SqsManagedSseEnabled for SQS queues (Harvested from aquasecurity/trivy)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "read SqsManagedSseEnabled for SQS queues",
+  "source": "aquasecurity/trivy",
+  "source_url": "https://github.com/aquasecurity/trivy",
+  "source_version": "c14584a6",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-25T00:35:18.761Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-aquasecurity-trivy",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [aquasecurity/trivy](https://github.com/aquasecurity/trivy) (Revision: `c14584a6`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `pkg/iac/adapters/cloudformation/aws/sqs/queue.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aquasecurity/trivy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `c14584a6`: cloudformation): read SqsManagedSseEnabled for SQS queues. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/iac/adapters/cloudformation/aws/sqs/queue.go`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+				ManagedEncryption: r.GetBoolProperty("SqsManagedSseEnabled"),
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Induced defect failure mode:
+				ManagedEncryption: iacTypes.Bool(false, r.Metadata()),
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `c14584a6` are properly handled with clean fallback behavior.

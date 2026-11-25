@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-25T00:26:58.006Z",
+  "updated_at": "2026-11-25T00:35:24.359Z",
   "stats": {
-    "total_discovered": 9040,
-    "approved_pending_harvest": 8562,
+    "total_discovered": 9050,
+    "approved_pending_harvest": 8572,
     "harvested_count": 0,
     "rejected_count": 478,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 8550,
+      "COMMUNITY_AND_EXPERT": 8560,
       "OFFICIAL_DOCUMENTATION": 273,
       "STANDARDS_AND_SPECIFICATIONS": 149,
       "ENGINEERING_BLOGS": 7,
@@ -195561,6 +195561,226 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/qwikdev-qwik-learnings.md",
         "fileName": "qwikdev-qwik-learnings.md"
+      }
+    },
+    "SRC-373ADA0D9935": {
+      "id": "SRC-373ADA0D9935",
+      "url": "https://app.netlify.com/projects/vitest-dev/deploys/6b05b960dcc3f684d4db6115",
+      "title": "https://app.netlify.com/projects/vitest-dev/deploys/6b05b960dcc3f684d4db6115",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T00:35:22.883Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vitest-dev-vitest-learnings.md",
+        "fileName": "vitest-dev-vitest-learnings.md"
+      }
+    },
+    "SRC-022550A21CBC": {
+      "id": "SRC-022550A21CBC",
+      "url": "https://deploy-preview-12106--vitest-dev.netlify.app/",
+      "title": "https://deploy-preview-12106--vitest-dev.netlify.app/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T00:35:22.941Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vitest-dev-vitest-learnings.md",
+        "fileName": "vitest-dev-vitest-learnings.md"
+      }
+    },
+    "SRC-C989437E403A": {
+      "id": "SRC-C989437E403A",
+      "url": "https://app.netlify.com/qr-code/eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJodHRwczovL2RlcGxveS1wcmV2aWV3LTEyMTA2LS12aXRlc3QtZGV2Lm5ldGxpZnkuYXBwIn0.LD9yBZVbMAW288EoYCWyu-BDOBtdnBKikBgn5hek37s",
+      "title": "https://app.netlify.com/qr-code/eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJodHRwczovL2RlcGxveS1wcmV2aWV3LTEyMTA2LS12aXRlc3QtZGV2Lm5ldGxpZnkuYXBwIn0.LD9yBZVbMAW288EoYCWyu-BDOBtdnBKikBgn5hek37s",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T00:35:23.001Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vitest-dev-vitest-learnings.md",
+        "fileName": "vitest-dev-vitest-learnings.md"
+      }
+    },
+    "SRC-9223B52698DD": {
+      "id": "SRC-9223B52698DD",
+      "url": "https://flakiness.io/Vitest/vitest/pull/12106?q=s%3Apassed",
+      "title": "https://flakiness.io/Vitest/vitest/pull/12106?q=s%3Apassed",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T00:35:23.062Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vitest-dev-vitest-learnings.md",
+        "fileName": "vitest-dev-vitest-learnings.md"
+      }
+    },
+    "SRC-2BEB33E471B2": {
+      "id": "SRC-2BEB33E471B2",
+      "url": "https://flakiness.io/Vitest/vitest/pull/12106?q=s%3Aflaked",
+      "title": "https://flakiness.io/Vitest/vitest/pull/12106?q=s%3Aflaked",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T00:35:23.124Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vitest-dev-vitest-learnings.md",
+        "fileName": "vitest-dev-vitest-learnings.md"
+      }
+    },
+    "SRC-B799A4AB3097": {
+      "id": "SRC-B799A4AB3097",
+      "url": "https://flakiness.io/Vitest/vitest/pull/12106?q=s%3Askipped",
+      "title": "https://flakiness.io/Vitest/vitest/pull/12106?q=s%3Askipped",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T00:35:23.201Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vitest-dev-vitest-learnings.md",
+        "fileName": "vitest-dev-vitest-learnings.md"
+      }
+    },
+    "SRC-5555FA8E536F": {
+      "id": "SRC-5555FA8E536F",
+      "url": "https://flakiness.io/Vitest/vitest/run/11996/test/33ff835a0913c482?test_timeline=%7B%22type%22%3A%22open%22%2C%22eq%22%3A%7B%22env.id%22%3A%2263d3354fe2f7c137%22%7D%7D",
+      "title": "https://flakiness.io/Vitest/vitest/run/11996/test/33ff835a0913c482?test_timeline=%7B%22type%22%3A%22open%22%2C%22eq%22%3A%7B%22env.id%22%3A%2263d3354fe2f7c137%22%7D%7D",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T00:35:23.256Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vitest-dev-vitest-learnings.md",
+        "fileName": "vitest-dev-vitest-learnings.md"
+      }
+    },
+    "SRC-BE3D052AD72B": {
+      "id": "SRC-BE3D052AD72B",
+      "url": "https://fl/",
+      "title": "https://fl/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T00:35:23.315Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vitest-dev-vitest-learnings.md",
+        "fileName": "vitest-dev-vitest-learnings.md"
+      }
+    },
+    "SRC-CF6AB30BE9AA": {
+      "id": "SRC-CF6AB30BE9AA",
+      "url": "https://vitest.dev/guide/snapshot.html",
+      "title": "https://vitest.dev/guide/snapshot.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T00:35:23.376Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vitest-dev-vitest-learnings.md",
+        "fileName": "vitest-dev-vitest-learnings.md"
+      }
+    },
+    "SRC-876145DEFDD4": {
+      "id": "SRC-876145DEFDD4",
+      "url": "https://github.com/aquasecurity/trivy-test-repo",
+      "title": "https://github.com/aquasecurity/trivy-test-repo",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T00:35:24.359Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md",
+        "fileName": "aquasecurity-trivy-learnings.md"
       }
     }
   }

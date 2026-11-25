@@ -12903,3 +12903,5 @@ Every entry in this ledger must capture:
 | `learn-github-hashicorp-terraform` | `https://github.com/hashicorp/terraform` | `56460311` | Multi-dimensional audit evidence | 2026-11-25T00:26:47.799Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `b2a26d2e` | Multi-dimensional audit evidence | 2026-11-25T00:26:49.895Z |
 | `learn-github-crate-crate` | `https://github.com/crate/crate` | `364278b1` | Multi-dimensional audit evidence | 2026-11-25T00:26:52.594Z |
+| `learn-github-vitest-dev-vitest` | `https://github.com/vitest-dev/vitest` | `e0e8e000` | Multi-dimensional audit evidence | 2026-11-25T00:35:14.618Z |
+| `learn-github-aquasecurity-trivy` | `https://github.com/aquasecurity/trivy` | `c14584a6` | Multi-dimensional audit evidence | 2026-11-25T00:35:19.297Z |

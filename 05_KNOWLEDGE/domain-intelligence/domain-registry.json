@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T00:26:59.792Z",
+  "last_updated": "2026-11-25T00:35:25.586Z",
   "total_records": 2607,
   "domains": {
     "A": {
@@ -11998,8 +11998,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-permissions-learnings-technical-construction-intelligence-z.md",
       "repository": "zoontek-react-native-permissions-learnings",
-      "content_hash": "d88a6e081040cd0c0e58a19d2ad3840ec0a1afde6f22a0a0bfabba56a8162a75",
-      "created_at": "2026-11-24T22:07:38.515Z"
+      "content_hash": "615104408fcce3637ea32cea6a50e6f309a68a30eced910a1357b0e8fed2830c",
+      "created_at": "2026-11-25T00:35:25.586Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants",
@@ -17969,8 +17969,8 @@
       "title": "Technical Construction Intelligence: aquasecurity/trivy Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-aquasecurity-trivy-technical-construction-intelligence-aquasecurity-trivy-core-i.md",
       "repository": "aquasecurity/trivy",
-      "content_hash": "d9b0703d6a56c5be43a27c5477e0fbdf2697e82d4644d75f4078225930a6eaa9",
-      "created_at": "2026-11-24T05:28:22.685Z"
+      "content_hash": "65b831051088ac2f3474c9c7218f5fbac8cca829389686e5a6d4447d641791e5",
+      "created_at": "2026-11-25T00:35:19.701Z"
     },
     "domain_intelligence-technical-construction-intelligence-tw93-pake-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-tw93-pake-learnings-core-invariants",
@@ -17996,8 +17996,8 @@
       "title": "Technical Construction Intelligence: aquasecurity-trivy-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-aquasecurity-trivy-learnings-technical-construction-intelligence-aquasecurity-tr.md",
       "repository": "aquasecurity-trivy-learnings",
-      "content_hash": "1d3218c3608484965b35d9febde303aa8b05a11361f51b74f48bf1e2d9195c33",
-      "created_at": "2026-11-24T05:28:34.124Z"
+      "content_hash": "c32c596f5d79da21e2f4312c330cf27c6d22f4bcbe3e60138436cd95dffb6a2d",
+      "created_at": "2026-11-25T00:35:24.772Z"
     },
     "domain_intelligence-research-knowledge-intelligence-autotrust-gev-26b-decide-nvfp4-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-autotrust-gev-26b-decide-nvfp4-core-invariants",
@@ -26551,8 +26551,8 @@
       "title": "Quality & Verification Intelligence: vitest-dev/vitest Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-vitest-dev-vitest-quality-verification-intelligence-vitest-dev-vitest-core-invar.md",
       "repository": "vitest-dev/vitest",
-      "content_hash": "a5407a0b68892580547b0d567a0022b90ac9399d4a21a82867b78b6ee4015c36",
-      "created_at": "2026-11-21T01:00:31.407Z"
+      "content_hash": "a47f9fb8f5ab2bdc1cf0af01416fbc758084343ee8537ccbe0aba8a89be9da63",
+      "created_at": "2026-11-25T00:35:15.027Z"
     },
     "domain_intelligence-quality-verification-intelligence-vitest-dev-vitest-learnings-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-vitest-dev-vitest-learnings-core-invariants",
@@ -26560,8 +26560,8 @@
       "title": "Quality & Verification Intelligence: vitest-dev-vitest-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-vitest-dev-vitest-learnings-quality-verification-intelligence-vitest-dev-vitest-.md",
       "repository": "vitest-dev-vitest-learnings",
-      "content_hash": "d057276952f5c2b0fd76cdc7676d4cfde7c0535a288fbfdf8ce7207c5cde071e",
-      "created_at": "2026-11-21T01:00:39.008Z"
+      "content_hash": "b3ce90fdfd15fa7bd773ea06f753d33ed0ee4de2dcaad2faa3c303868391bd8c",
+      "created_at": "2026-11-25T00:35:23.805Z"
     },
     "domain_intelligence-design-intelligence-cypress-io-cypress-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-cypress-io-cypress-core-invariants",

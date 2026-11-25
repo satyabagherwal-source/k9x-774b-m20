@@ -4663,10 +4663,10 @@
     "repository": "aquasecurity/trivy",
     "platform": "github",
     "sourceUrl": "https://github.com/aquasecurity/trivy",
-    "sourceVersion": "a7b0d649",
+    "sourceVersion": "c14584a6",
     "license": "Apache-2.0",
-    "contentHash": "46dcc4528ca0917e05bb944926f519c8e9704490e56b8a813e8bc261b0212829",
-    "lastHarvestedAt": "2026-11-24T05:28:22.133Z",
+    "contentHash": "261f39e6463f05d072dcd4c576c0841869bc9a4bb2d13362200f7d210571b1d0",
+    "lastHarvestedAt": "2026-11-25T00:35:19.297Z",
     "learningId": "learn-github-aquasecurity-trivy"
   },
   "sfu-db-connector-x": {
@@ -10113,10 +10113,10 @@
     "repository": "vitest-dev/vitest",
     "platform": "github",
     "sourceUrl": "https://github.com/vitest-dev/vitest",
-    "sourceVersion": "8b0ca603",
+    "sourceVersion": "e0e8e000",
     "license": "MIT",
-    "contentHash": "b4235038c7ce72bdfa70c522b66fd669ede52ee02b0e3f4ff0ec9c2f7e7c909d",
-    "lastHarvestedAt": "2026-11-21T01:00:31.027Z",
+    "contentHash": "84de2b0643e1d58f089026cb067ed5165edf20bee8538fbafe4a3302ba0cdd41",
+    "lastHarvestedAt": "2026-11-25T00:35:14.618Z",
     "learningId": "learn-github-vitest-dev-vitest"
   },
   "mijick-popups": {

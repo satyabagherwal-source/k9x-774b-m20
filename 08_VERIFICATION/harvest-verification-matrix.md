@@ -12870,3 +12870,5 @@
 | `CYCLE-20261125-VN8Y` | `2026-11-25T00:26:47.794Z` | `hashicorp/terraform` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10400` | Yes (`eed36a1c...`) |
 | `CYCLE-20261125-VOV6` | `2026-11-25T00:26:49.890Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9283` | Yes (`7332a103...`) |
 | `CYCLE-20261125-VQY4` | `2026-11-25T00:26:52.588Z` | `crate/crate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10401` | Yes (`1ec39489...`) |
+| `CYCLE-20261125-6IBA` | `2026-11-25T00:35:14.614Z` | `vitest-dev/vitest` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10402` | Yes (`84de2b06...`) |
+| `CYCLE-20261125-6LX9` | `2026-11-25T00:35:19.293Z` | `aquasecurity/trivy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10403` | Yes (`261f39e6...`) |
