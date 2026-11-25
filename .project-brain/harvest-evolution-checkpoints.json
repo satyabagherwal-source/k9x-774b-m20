@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T15:21:41.904Z",
+  "last_updated": "2026-11-25T15:30:19.636Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-25T15:16:00.864Z",
@@ -773,7 +773,7 @@
       "staged_for_review": 1
     },
     "nucleoidai-nucleoid-learnings.md": {
-      "processed_at": "2026-11-25T11:42:44.673Z",
+      "processed_at": "2026-11-25T15:30:18.547Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -868,7 +868,7 @@
       "staged_for_review": 1
     },
     "actix-actix-web-learnings.md": {
-      "processed_at": "2026-11-24T14:59:45.861Z",
+      "processed_at": "2026-11-25T15:30:16.383Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3048,7 +3048,7 @@
       "staged_for_review": 0
     },
     "hf-pyannote-speaker-diarization-3.1-learnings.md": {
-      "processed_at": "2026-11-22T00:32:48.958Z",
+      "processed_at": "2026-11-25T15:30:18.087Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3928,7 +3928,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 4251,
+  "total_dossiers_evaluated": 4254,
   "total_canonical_promoted": 544,
-  "total_staged_for_review": 3235
+  "total_staged_for_review": 3237
 }

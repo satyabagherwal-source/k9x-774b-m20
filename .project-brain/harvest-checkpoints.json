@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-25T15:21:35.239Z",
+  "last_updated": "2026-11-25T15:30:12.894Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "3e3d793383a8720d6a5d8923a340c1465457478d5b67ec1baa14a043010de0f1",
-      "verified_at": "2026-11-25T15:00:41.111Z",
+      "content_hash": "a0960af7ab4a0ae2524039605fe29e134f3931fc5b4b0f5d8b0a3a46240792dd",
+      "verified_at": "2026-11-25T15:30:12.893Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T15:00:41.111Z"
+      "last_updated": "2026-11-25T15:30:12.893Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -7911,14 +7911,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-actix-actix-web",
-      "content_hash": "c8b2dc04d37875c078352541504d861c6a9ba247c52de098f1c15c71322ebc98",
-      "verified_at": "2026-11-24T14:59:34.969Z",
+      "content_hash": "b2496198c9ec6f53367df8f72be2435b759b79b06a1e2c8cb578218c143aee7c",
+      "verified_at": "2026-11-25T15:29:58.248Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T14:59:34.969Z"
+      "last_updated": "2026-11-25T15:29:58.248Z"
     },
     "wix/react-native-ui-lib": {
       "repository": "wix/react-native-ui-lib",
@@ -17691,14 +17691,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-pyannote-speaker-diarization-3-1",
-      "content_hash": "5ecbc2f1ce49d7673d007f5ea6c2aff3a8ffec128b2ed20392a39484fe31443f",
-      "verified_at": "2026-11-22T00:32:36.504Z",
+      "content_hash": "e46347baceb8cfa839e8813777931db75eaa3ecce3609fccf4917522ee34cc8a",
+      "verified_at": "2026-11-25T15:29:54.732Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T00:32:36.504Z"
+      "last_updated": "2026-11-25T15:29:54.732Z"
     },
     "AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF": {
       "repository": "AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF",

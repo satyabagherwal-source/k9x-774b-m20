@@ -13157,3 +13157,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-xiaomi-research-xiaomi-ocr-0` | `https://huggingface.co/xiaomi-research/Xiaomi-OCR-0` | `hf-xiaomi-` | Multi-dimensional audit evidence | 2026-11-25T15:15:48.406Z |
 | `learn-huggingface-sensenova-sensenova-loop-9b-preview` | `https://huggingface.co/sensenova/SenseNova-Loop-9B-Preview` | `hf-senseno` | Multi-dimensional audit evidence | 2026-11-25T15:21:27.841Z |
 | `learn-github-prof18-feed-flow` | `https://github.com/prof18/feed-flow` | `dcaa91c6` | Multi-dimensional audit evidence | 2026-11-25T15:21:35.224Z |
+| `learn-huggingface-pyannote-speaker-diarization-3-1` | `https://huggingface.co/pyannote/speaker-diarization-3.1` | `hf-pyannot` | Multi-dimensional audit evidence | 2026-11-25T15:29:54.716Z |
+| `learn-github-actix-actix-web` | `https://github.com/actix/actix-web` | `98f5b221` | Multi-dimensional audit evidence | 2026-11-25T15:29:58.229Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `3b956215` | Multi-dimensional audit evidence | 2026-11-25T15:30:12.876Z |

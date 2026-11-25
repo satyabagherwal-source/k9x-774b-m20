@@ -13124,3 +13124,6 @@
 | `CYCLE-20261125-MX4H` | `2026-11-25T15:15:48.401Z` | `xiaomi-research/Xiaomi-OCR-0` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xiaomi-research-xiaomi-ocr-0-learnings.md` | Yes (`3c3610c3...`) |
 | `CYCLE-20261125-U719` | `2026-11-25T15:21:27.837Z` | `sensenova/SenseNova-Loop-9B-Preview` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sensenova-sensenova-loop-9b-preview-learnings.md` | Yes (`49f69308...`) |
 | `CYCLE-20261125-UCQC` | `2026-11-25T15:21:35.220Z` | `prof18/feed-flow` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10548` | Yes (`080082ea...`) |
+| `CYCLE-20261125-5253` | `2026-11-25T15:29:54.711Z` | `pyannote/speaker-diarization-3.1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-pyannote-speaker-diarization-3.1-learnings.md` | Yes (`e46347ba...`) |
+| `CYCLE-20261125-54UO` | `2026-11-25T15:29:58.224Z` | `actix/actix-web` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10549` | Yes (`b2496198...`) |
+| `CYCLE-20261125-5G5J` | `2026-11-25T15:30:12.871Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10550` | Yes (`a0960af7...`) |

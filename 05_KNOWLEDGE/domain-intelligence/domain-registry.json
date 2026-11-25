@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T15:21:41.577Z",
+  "last_updated": "2026-11-25T15:30:19.294Z",
   "total_records": 2680,
   "domains": {
     "A": {
@@ -10196,8 +10196,8 @@
       "title": "Technical Construction Intelligence: actix/actix-web Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-actix-actix-web-technical-construction-intelligence-actix-actix-web-core-invaria.md",
       "repository": "actix/actix-web",
-      "content_hash": "bbbc8a99332db37e9bee8b1b58d5ff27ae9ce35a49329087a114479a6e7d1e4c",
-      "created_at": "2026-11-24T14:59:35.366Z"
+      "content_hash": "1ceea375d2e5e6c5d2f45c5355a93234711c83b394c1aacadc90598af70a1ffd",
+      "created_at": "2026-11-25T15:29:58.688Z"
     },
     "domain_intelligence-architecture-intelligence-dkhamsing-open-source-ios-apps-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-dkhamsing-open-source-ios-apps-core-invariants",
@@ -10265,8 +10265,8 @@
       "title": "Technical Construction Intelligence: actix-actix-web-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-actix-actix-web-learnings-technical-construction-intelligence-actix-actix-web-le.md",
       "repository": "actix-actix-web-learnings",
-      "content_hash": "c7a665b999495e330b4254dec65ada9e192a23e9cfee99a7bf21bd27006700c5",
-      "created_at": "2026-11-24T14:59:48.161Z"
+      "content_hash": "b4c1f8f742e9d01c93e64a8dccd62a2a05ab228df2594c36a649abf506dbb6bd",
+      "created_at": "2026-11-25T15:30:17.720Z"
     },
     "domain_intelligence-research-knowledge-intelligence-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-core-i": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-core-i",
@@ -15759,8 +15759,8 @@
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "repository": "NucleoidAI/Nucleoid",
-      "content_hash": "c9e88f04398e094b102acc1ce27d5414882502f79d9768bb6edf7d47ecee4744",
-      "created_at": "2026-11-25T15:00:41.677Z"
+      "content_hash": "49269507f8a272a56a6e6d9210e3fd2961ed3732413a6aa3526e56b1c9bc445b",
+      "created_at": "2026-11-25T15:30:13.327Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -16209,8 +16209,8 @@
       "title": "Architecture Intelligence: nucleoidai-nucleoid-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-learnings-architecture-intelligence-nucleoidai-nucleoid-lear.md",
       "repository": "nucleoidai-nucleoid-learnings",
-      "content_hash": "e3e11cbf3ba2270cafd804e0246e66985c9189e3ba8802bfbfac60265d8ee201",
-      "created_at": "2026-11-25T11:42:45.390Z"
+      "content_hash": "f0d74c5afbf5a1a32ab9ea30c387891348fe0bef143ca3b3077f890b0ffb0d77",
+      "created_at": "2026-11-25T15:30:19.294Z"
     },
     "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8b-core-invariants",
@@ -22529,8 +22529,8 @@
       "title": "Research & Knowledge Intelligence: pyannote/speaker-diarization-3.1 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-pyannote-speaker-diarization-3-1-research-knowledge-intelligence-pyannote-spe.md",
       "repository": "pyannote/speaker-diarization-3.1",
-      "content_hash": "2a4324503df0c8789f20484f6008feac2ca05cc0df75bb4b1a9f9bfd177fecab",
-      "created_at": "2026-11-22T00:32:36.700Z"
+      "content_hash": "b76bac5f2ba4e0ca6abccb5c64d0780d7ead904ef14b325d838eee24f5d971ef",
+      "created_at": "2026-11-25T15:29:54.961Z"
     },
     "DOM-D-6A7F4F3B": {
       "record_id": "DOM-D-6A7F4F3B",
@@ -22580,8 +22580,8 @@
       "title": "Research & Knowledge Intelligence: hf-pyannote-speaker-diarization-3.1-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-pyannote-speaker-diarization-3-1-learnings-research-knowledge-intelligence-hf.md",
       "repository": "hf-pyannote-speaker-diarization-3.1-learnings",
-      "content_hash": "8bcc8ec9480b9d61b281ced069e708f8e7bb751e25d96e3a2cc96d21743cf3a9",
-      "created_at": "2026-11-22T00:32:49.151Z"
+      "content_hash": "e3fbe32d104aa00041eb70ff46268d25957e2dedf5743155d7712f410fb4926a",
+      "created_at": "2026-11-25T15:30:18.334Z"
     },
     "domain_intelligence-content-information-intelligence-pixeltable-pixeltable-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-pixeltable-pixeltable-core-invariants",

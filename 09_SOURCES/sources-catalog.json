@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "ee267d80",
+    "sourceVersion": "3b956215",
     "license": "Apache-2.0",
-    "contentHash": "3e3d793383a8720d6a5d8923a340c1465457478d5b67ec1baa14a043010de0f1",
-    "lastHarvestedAt": "2026-11-25T15:00:41.089Z",
+    "contentHash": "a0960af7ab4a0ae2524039605fe29e134f3931fc5b4b0f5d8b0a3a46240792dd",
+    "lastHarvestedAt": "2026-11-25T15:30:12.876Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -5193,10 +5193,10 @@
     "repository": "actix/actix-web",
     "platform": "github",
     "sourceUrl": "https://github.com/actix/actix-web",
-    "sourceVersion": "12df9de5",
+    "sourceVersion": "98f5b221",
     "license": "Apache-2.0",
-    "contentHash": "c8b2dc04d37875c078352541504d861c6a9ba247c52de098f1c15c71322ebc98",
-    "lastHarvestedAt": "2026-11-24T14:59:34.953Z",
+    "contentHash": "b2496198c9ec6f53367df8f72be2435b759b79b06a1e2c8cb578218c143aee7c",
+    "lastHarvestedAt": "2026-11-25T15:29:58.229Z",
     "learningId": "learn-github-actix-actix-web"
   },
   "wix-react-native-ui-lib": {
@@ -11755,8 +11755,8 @@
     "sourceUrl": "https://huggingface.co/pyannote/speaker-diarization-3.1",
     "sourceVersion": "hf-pyannote-speaker-diarization-3.1",
     "license": "Open-Source",
-    "contentHash": "5ecbc2f1ce49d7673d007f5ea6c2aff3a8ffec128b2ed20392a39484fe31443f",
-    "lastHarvestedAt": "2026-11-22T00:32:36.496Z",
+    "contentHash": "e46347baceb8cfa839e8813777931db75eaa3ecce3609fccf4917522ee34cc8a",
+    "lastHarvestedAt": "2026-11-25T15:29:54.716Z",
     "learningId": "learn-huggingface-pyannote-speaker-diarization-3-1"
   },
   "hf-atomicchat-deepseek-v4.1-flash-1017-uncensored-gsq-rco-gguf": {

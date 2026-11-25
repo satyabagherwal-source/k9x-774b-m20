@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/pyannote/speaker-diarization-3.1",
   "source_version": "hf-pyannote-speaker-diarization-3.1",
   "license": "Open-Source",
-  "timestamp": "2026-11-22T00:32:36.699Z",
+  "timestamp": "2026-11-25T15:29:54.960Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-pyannote-speaker-diarization-3-1",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [pyannote/speaker-diarization-3.1](https://huggingface.co/pyannote/speaker-diarization-3.1) (Revision: `hf-pyannot`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-22T00:32:36.699Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T15:29:54.960Z`  
 > **Learning ID**: `learn-huggingface-pyannote-speaker-diarization-3-1`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-pyannote-speaker-diarization-3.1-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/pyannote/speaker-diarization-3.1](https://huggingface.co/pyannote/speaker-diarization-3.1))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T00:32:35.879Z  
+> **Harvest Timestamp**: 2026-11-25T15:29:54.034Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: automatic-speech-recognition
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 6096658 downloads | 5441 likes
+- **Stars / Engagement**: 5923899 downloads | 5582 likes
 
 ---
 

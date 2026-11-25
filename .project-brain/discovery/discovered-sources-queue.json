@@ -2,16 +2,16 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-25T15:21:40.325Z",
+  "updated_at": "2026-11-25T15:30:17.014Z",
   "stats": {
-    "total_discovered": 9496,
-    "approved_pending_harvest": 8999,
+    "total_discovered": 9502,
+    "approved_pending_harvest": 9005,
     "harvested_count": 0,
     "rejected_count": 497,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 8993,
+      "COMMUNITY_AND_EXPERT": 8998,
       "OFFICIAL_DOCUMENTATION": 281,
-      "STANDARDS_AND_SPECIFICATIONS": 150,
+      "STANDARDS_AND_SPECIFICATIONS": 151,
       "ENGINEERING_BLOGS": 7,
       "SECURITY_ADVISORIES": 54,
       "LEGAL_AND_REGULATORY": 2,
@@ -205460,6 +205460,138 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/prof18-feed-flow-learnings.md",
         "fileName": "prof18-feed-flow-learnings.md"
+      }
+    },
+    "SRC-B1B13A12AEE7": {
+      "id": "SRC-B1B13A12AEE7",
+      "url": "https://www.rfc-editor.org/rfc/rfc9110.html",
+      "title": "https://www.rfc-editor.org/rfc/rfc9110.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T15:30:16.546Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/actix-actix-web-learnings.md",
+        "fileName": "actix-actix-web-learnings.md"
+      }
+    },
+    "SRC-C73279DFA062": {
+      "id": "SRC-C73279DFA062",
+      "url": "https://github.com/taiki-e/install-action/compare/v2.90.4...v2.90.8",
+      "title": "https://github.com/taiki-e/install-action/compare/v2.90.4...v2.90.8",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T15:30:16.713Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/actix-actix-web-learnings.md",
+        "fileName": "actix-actix-web-learnings.md"
+      }
+    },
+    "SRC-CB6EF43EB35E": {
+      "id": "SRC-CB6EF43EB35E",
+      "url": "https://github.com/tokio-rs/bytes",
+      "title": "https://github.com/tokio-rs/bytes",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T15:30:16.803Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/actix-actix-web-learnings.md",
+        "fileName": "actix-actix-web-learnings.md"
+      }
+    },
+    "SRC-E7AD170F247C": {
+      "id": "SRC-E7AD170F247C",
+      "url": "https://github.com/tokio-rs/bytes/releases",
+      "title": "https://github.com/tokio-rs/bytes/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T15:30:16.872Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/actix-actix-web-learnings.md",
+        "fileName": "actix-actix-web-learnings.md"
+      }
+    },
+    "SRC-41BA0C976341": {
+      "id": "SRC-41BA0C976341",
+      "url": "https://github.com/tokio-rs/bytes/blob/master/CHANGELOG.md",
+      "title": "https://github.com/tokio-rs/bytes/blob/master/CHANGELOG.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T15:30:16.945Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/actix-actix-web-learnings.md",
+        "fileName": "actix-actix-web-learnings.md"
+      }
+    },
+    "SRC-E3AD312368F5": {
+      "id": "SRC-E3AD312368F5",
+      "url": "https://github.com/tokio-rs/bytes/compare/v1.12.1...v1.12.2",
+      "title": "https://github.com/tokio-rs/bytes/compare/v1.12.1...v1.12.2",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T15:30:17.014Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/actix-actix-web-learnings.md",
+        "fileName": "actix-actix-web-learnings.md"
       }
     }
   }

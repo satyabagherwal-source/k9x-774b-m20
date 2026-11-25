@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `ee267d80`  
+> **Source Version**: `3b956215`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-25T15:00:40.011Z  
+> **Timestamp**: 2026-11-25T15:30:11.644Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T15:00:40.003Z  
+> **Harvest Timestamp**: 2026-11-25T15:30:11.639Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1578,355 +1578,131 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ee267d80` (2026-11-25)
-**Commit Message**: NUC 146 Reactive Cubing
+### Incident Patch 1: `3b956215` (2026-11-25)
+**Commit Message**: Draft NUC 147 Deferred Suites
 
-Accepted
+Category: Runtime features; mode continuous; existing_comparable.
 
-Accept the unchanged frozen candidate under the continuous automatic
-acceptance rule: all three hard criteria and every policy check passed.
+Request contextual indented defer suites registered only when reached and unwound LIFO at the current executable block exit, using accepted finalization outcome and transaction rules. Preserve ordinary defer names, typed/layout boundaries, required catch syntax and all accepted behavior. Do not add loop-exit behavior, asynchronous cleanup or a resource protocol. Baselines and fresh independent stages follow this allocation; the continuous token comparison is required.
 
-Independent evaluation and isolated integrated validation each passed
-the all-target build, warning-denied Clippy, formatting and full test suite:
-4,130 passed, zero failed, 25 unchanged ignored. All 4,141 accepted test
-identities and their statuses, displays, ignore reasons and panic labels
-remain; the 14 new tests pass.
+The live-registry draw selected Runtime features once. No allocated stale Draft exists: nine reference Drafts have no allocation/claim. An inline header-audit omission was corrected without a redraw; the original receipt remains retained. NUC119 lists defer as prior art and explicitly out of scope, not the feature it proposes.
 
-Both actual runtimes replayed 1,320 original accepted programs, executing
-6,563 assertions and 380 explicit returns each. Retain the two exact
-inherent clock observations without masking. Integration repeated original
-source replay, not evaluation.
+Co-authored-by: Copilot <[REDACTED_EMAIL]>
 
-The required token comparison ran exactly once: 2 less, 1,318 same, zero
-more, missing, invalid or unpaired. Controls changed 107 to 99 and 114 to
-106 tokens, including layout and excluding only Eof.
-
-Independent decision Accepted; core accepted. Independent report raw blob
-6bd79dca3f8c5c81eb251232107e5cdec35da523; core report
-41f06f3c1e56aec8b7c14223b063ffaa0a646318. Caller review
-76dbef9723b21d2b0ec878d447fe7f1b2374200d and integrated receipt
-
-**File**: `README.md` (modified, +12/-0)
+**File**: `docs/nuc-0000.md` (modified, +2/-0)
 ```diff
-@@ -1154,6 +1154,18 @@ assert(radians, Math.PI / 2)
-   See the [root contract](nucleoid.spec.md#reactive-squaring) and
-   [argument-dependency case](docs/README.md#reactive-squaring-argument-dependencies).
+@@ -104,6 +104,7 @@ Created: 31-Jul-2026
+ | [136](nuc-0136.md) | Unknown Constructor Arguments as Properties | Accepted |
+ | [140](nuc-0140.md) | Match Statements | Rejected: not backward compatible, as an accepted statement that starts with `match` followed by `every`, `any` or `all` and `repeat:` or `suppose:` before an indented block, read as `match` beside a quantifier and a repeat-until loop or `suppose` block, now raises a `SyntaxError` |
+ | [144](nuc-0144.md) | Nullish Value Assignment | Accepted |
++| [147](nuc-0147.md) | Deferred Suites | Draft |
  
-+- The [NUC 146 candidate](docs/nuc-0146.md) adds native static
-+  `Math.cube(value)`: intrinsically convert the first value, square it, then
-+  multiply by that same value, using two separate ordinary multiplications.
-+  Ordered rounding, negative zero, signed underflow, overflow and nonfinite
-+  classification follow those operations, not a universal `** 3` alias.
-+  All arguments evaluate once left to right; ignored extras retain effects,
-+  strict errors and subscriptions without conversion. The supplied
-+  top-level-Undefined gate, live/parameter-null deferral, shadowing, captures
-+  and transaction behavior remain unchanged. No aliases or syntax are added.
-+  See the [root contract](nucleoid.spec.md#reactive-cubing) and
-+  [argument-dependency case](docs/README.md#reactive-cubing-argument-dependencies).
-+
- ## String iteration
+ ### Utility enhancement
  
- **String iteration reads characters directly**
-```
-
-**File**: `dataset/nucleoid.spec.jsonl` (modified, +1/-0)
-```diff
-@@ -880,3 +880,4 @@
- {"id":"spec-0880","description":"Nucleoid keeps squares reactive","code":"sample = {amplitude: 3}\noffset = 2\nsquared = Math.square(sample.amplitude + offset)\nassert(squared, 25)\nsample.amplitude = -4\nassert(squared, 4)\noffset = 1\nassert(squared, 9)\nsample.amplitude = 0\nassert(squared, 1)\noffset = -1\nassert(squared, 1)\nsample.amplitude = 3\nassert(squared, 4)\n1","return":"1"}
- {"id":"spec-0881","description":"Nucleoid fills nullish values with one-shot assignments","code":"source = 5\nchosen = null\nchosen ??:= source\nassert(chosen, 5)\nsource = 9\nassert(chosen, 5)\nchosen = 0\nchosen ??:= missing\nassert(chosen, 0)\nchosen = false\nchosen ??:= missing\nassert(chosen, false)\nchosen = \"\"\nchosen ??:= missing\nassert(chosen, \"\")\nchosen = null\nchosen ??:= 99\nassert(chosen, 99)\n1","return":"1"}
- {"id":"spec-0882","description":"Nucleoid counts direct inputs in reasoning selections","code":"price = 3\nquantity = 4\nsubtotal = price * quantity\ntax = subtotal / 10\ntotal = subtotal + tax\ncounts = total |> why |> indegrees\nassert(counts, [2, 2, 1, 0, 0])\nprice = 5\nassert(counts, [2, 2, 1, 0, 0])\ntax = price * quantity\nassert(counts, [2, 2, 2, 0, 0])\ntax = 0\nassert(counts, [2, 2, 0, 0, 0])\ntotal = subtotal\nassert(counts, [1, 2, 0, 0])\nsubtotal = price\nassert(counts, [1, 1, 0])\n1","return":"1"}
-+{"id":"spec-0883","description":"Nucleoid keeps cubes reactive","code":"sample = {amplitude: 3}\noffset = 2\ncubed = Math.cube(sample.amplitude + offset)\nassert(cubed, 125)\nsample.amplitude = -4\nassert(cubed, -8)\noffset = 1\nassert(cubed, -27)\nsample.amplitude = 0\nassert(cubed, 1)\noffset = -1\nassert(cubed, -1)\nsample.amplitude = 3\nassert(cubed, 8)\n1","return":"1"}
-```
-
-**File**: `dataset/nucleoid.synth.146.jsonl` (added, +4/-0)
-```diff
-@@ -0,0 +1,4 @@
-+{"id":"synth-146-0001","description":"Nucleoid keeps cubic signed residuals live as samples arrive","code":"residuals = [-3, 2, -1]\ncubes = residuals.map(value -> Math.cube(value))\nassert(cubes, [-27, 8, -1])\nresiduals.push(4)\nassert(cubes, [-27, 8, -1, 64])\ncubes.sum()","return":"44"}
-+{"id":"synth-146-0002","description":"Nucleoid derives independent cubic volumes with class rules","code":"class Reading(amplitude):\n    this.amplitude = amplitude\n$Reading.cubic = Math.cube($Reading.amplitude)\nfirst = Reading(-3)\nsecond = Reading(4)\nassert([first.cubic, second.cubic], [-27, 64])\nfirst.amplitude = 2\nassert([first.cubic, second.cubic], [8, 64])\n[first.cubic, second.cubic]","return":"[8,64]"}
-+{"id":"synth-146-0003","description":"Nucleoid retains ignored extra subscriptions when cubing a live reading","code":"probe = {input: -3, extra: 1}\ncubic = Math.cube(probe.input, probe.extra)\nassert(cubic, -27)\ndelete probe.extra\nassert(cubic, null)\nprobe.extra = Number.NaN\nassert(cubic, -27)\nprobe.input = 4\nassert(cubic, 64)\ncubic","return":"64"}
-+{"id":"synth-146-0004","description":"Nucleoid cubes intrinsically converted values with signed results","code":"cubes = [Math.cube(\" -2.5 \"), Math.cube([\"-3\"]), Math.cube(true), Math.cube(null)]\nassert(cubes, [-15.625, -27, 1, 0])\nassert(Number.isNaN(Math.cube()), true)\nassert(1 / Math.cube(-0), Number.NEGATIVE_INFINITY)\nassert(Math.cube(-3, \"ignored\", Number.NaN), -27)\ncubes","return":"[-15.625,-27,1,0]"}
-```
-
-**File**: `docs/README.md` (modified, +40/-0)
-```diff
-@@ -2858,6 +2858,45 @@ Full detail: [NUC 9](nuc-0009.md), [NUC 46](nuc-0046.md), [NUC 119](nuc-0119.md)
-   Undefined/non-callable; no alias, receiver/aggregate dispatch or syntax
-   is added. See the [squaring contract](../nucleoid.spec.md#reactive-squaring).
- 
-+- The [NUC 146 candidate](nuc-0146.md) adds only native static
-+  `Math.cube(value)`: intrinsically convert the first value, multiply it by
-+  itself, then multiply that square by the same converted value, with two
-+  separate ordinary `f64` multiplications. This is not an exponentiation
-+  alias: retain ordered rounding, negative signs, signed-zero underflow and
-+  overflow/nonfinite classification; NaN payload/sign is not promised.
-+  Omission gives numeric NaN. All arguments still evaluate once, left to
-+  right, even after Undefined; ignored extras are not converted and retain
-+  their reads, effects, errors and subscriptions. The top-level-Undefined
-+  gate, live/parameter-null deferral, shadowing, observation, captures,
-+  independent class rules, frames, deletion/recovery and existing rollback
-+  remain unchanged. Native method-value reads stay Undefined/non-callable.
-+  No aliases, receiver methods or syntax are added. See the
-+  [cubing contract](../nucleoid.spec.md#reactive-cubing).
-+
-+### Reactive cubing argument dependencies
-+
-+```
-+probe = {input: 2, extra: 7}
-+offset = 1
-+observed = Math.cube(probe.input + offset, probe.extra)
-+assert(observed, 27)
-+probe.input = 3
-+assert(observed, 64)
-+delete probe.extra
-+assert(observed, null)
-+probe.extra = 0
-+assert(observed, 64)
-+offset = -2
-+assert(observed, 1)
-+probe.input = -1
-+assert(observed, -27)
-+1
-+```
-+
-+- This is the complete `Nucleoid preserves cubing argument dependencies`
-+  program in `tests/reference.md`, without title or expected-return metadata;
-+  its expected return is `1`.
-+
- ### Reactive squaring argument dependencies
- 
- ```
-@@ -6124,6 +6163,7 @@ Math.sec(value)                         static reciprocal of cosine in radians (
- Math.csc(value)                         static reciprocal of sine in radians (NUC 141)
- Math.copySign(value, sign)               static magnitude with the converted non-NaN sign bit (NUC 142)
- Math.square(value)                       static intrinsic first-value multiplication by itself (NUC 143)
-+Math.cube(value)                         ordered square-then-multiply of the intrinsic first value (NUC 146 candidate)
- Name[0]  Name["id"]  Name.find(...)    address an instance
- value[start:end]  value[-n:]           slice, negative counts from the end
- Name[start:end]  Name[:]  Name[-n:]    instance list range (NUC 61)
-```
-
-**File**: `docs/examples.md` (modified, +10/-0)
-```diff
-@@ -1195,6 +1195,16 @@ catch error:
- 
- Full detail: [README.md §11](README.md#11-built-in-objects), [NUC 10](nuc-0010.md).
- 
-+- The [NUC 146 candidate](nuc-0146.md) adds native static `Math.cube(value)`.
-+  Convert the first value intrinsically, square it, then multiply by that
-+  same converted value with separate ordinary multiplications, preserving
-+  their rounding and signs rather than promising equivalence to `** 3`.
-+  All argument expressions still evaluate once left to right, including
-+  ignored extras and reads following Undefined. The existing top-level gate,
-+  live-null deferral, shadowing and rollback remain; no alias or syntax is
-+  added. The complete [reactive argument-dependency example](README.md#reactive-cubing-argument-dependencies)
-+  and [root contract](../nucleoid.spec.md#reactive-cubing) cover recovery.
-+
- ---
- 
- ## 12. Reasoning Operations
-```
-
-**File**: `docs/nuc-0000.md` (modified, +2/-2)
-```diff
-@@ -145,7 +145,7 @@ Created: 31-Jul-2026
- | [141](nuc-0141.md) | Reactive Cosecant | Accepted |
- | [142](nuc-0142.md) | Reactive Sign Copying | Automatic-Accepted: independent strict rollback graph-dependent ordering check failed, also reproduced on the accepted arithmetic runtime |
- | [143](nuc-0143.md) | Reactive Squaring | Accepted |
--| [146](nuc-0146.md) | Reactive Cubing | Draft |
-+| [146](nuc-0146.md) | Reactive Cubing | Accepted |
- 
- ### Reasoning enhancement
- 
-@@ -346,7 +346,7 @@ Created: 31-Jul-2026
- | [143](nuc-0143.md) | Reactive Squaring | Standards Track | Utility enhancement | Accepted |
+@@ -347,6 +348,7 @@ Created: 31-Jul-2026
  | [144](nuc-0144.md) | Nullish Value Assignment | Standards Track | Runtime features | Accepted |
  | [145](nuc-0145.md) | Input Counts of Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
--| [146](nuc-0146.md) | Reactive Cubing | Standards Track | Utility enhancement | Draft |
-+| [146](nuc-0146.md) | Reactive Cubing | Standards Track | Utility enhancement | Accepted |
+ | [146](nuc-0146.md) | Reactive Cubing | Standards Track | Utility enhancement | Accepted |
++| [147](nuc-0147.md) | Deferred Suites | Standards Track | Runtime features | Draft |
  
  ## Copyright
  
 ```
 
-**File**: `docs/nuc-0146.md` (modified, +215/-16)
+**File**: `docs/nuc-0147.md` (added, +91/-0)
 ```diff
-@@ -4,7 +4,7 @@
- NUC: 146
- Title: Reactive Cubing
- Author: Copilot <223556219+Copilot@users.noreply.github.com>
--Status: Draft
-+Status: Accepted
- Type: Standards Track
- Category: Utility enhancement
- Created: 25-Nov-2026
-@@ -25,6 +25,10 @@ Requires: 143
-   an alias or grammar change. Continuous evaluation requires original
-   accepted-source replay, paired per-case lexer-token comparison and
-   every hard criterion.
-+- **Accepted:** Independent evaluation and the caller's integrated recheck
-+  passed every hard criterion and policy check. The unchanged frozen
-+  implementation adds the ordered native operation without a grammar,
-+  public Rust API, dependency, option or version change.
- 
- ## Motivation
- 
-@@ -41,24 +45,112 @@ Requires: 143
- 
- ## Rationale
- 
--- Preparation pending in the caller's isolated candidate after this
--  allocation is pushed and immutable accepted baselines are recorded.
-+- A standard bounded numeric helper is a Utility enhancement. Familiar
-+  mathematical terminology does not make it a cross-language alias or
-+  a core grammar feature.
-+- Reuse the native Math call path and its intrinsic first-value conversion.
-+  Add one unary dispatcher arm, leaving argument evaluation, the Undefined
-+  gate, dependencies and error precedence in their existing owners.
-+- Separate ordinary multiplication preserves square-then-multiply rounding.
-+  Exponentiation, `powf`, `powi`, `cbrt`, fused/rescaled arithmetic and calls
-+  to shadowable `Math.square` or `Number` are not implementations of this
-+  contract. In particular, do not claim a universal alias to `** 3`.
-+- The accepted `Math.square(expression) * expression` is a compact fair
-+  counterpart for the caller's repeated pure expression. It does not promise
-+  to duplicate the effects of a future native call argument: that argument
-+  evaluates once, as every existing native Math argument does.
-+- No alias, prefix/global/lowercase form, non-native receiver method,
-+  aggregate operation, reserved word, token kind, parser/lowering change,
-+  option, dependency, version or public Rust API/type is needed.
- 
- ## Specification
- 
--- Preparation pending. Freeze behavior-equivalent accepted controls
--  before changing runtime or executable documents; preserve their case
--  identities, canonical assertions, explicit returns and coverage.
-+- Only an ordinary call resolved to unshadowed native static
-+  `Math.cube(...)` enters the new arm.
-+- Evaluate all supplied argument expressions exactly once, left to right,
-+  including ignored extras and expressions following an Undefined result.
-+  Their reads, strict errors, effects and subscriptions remain eager.
-+- Before numeric conversion, retain the native gate: any supplied
-+  top-level Undefined, including an extra, returns Undefined. Nested
-+  Undefined alone does not trigger this gate.
-+- Otherwise intrinsically convert only the first value with the existing
-+  `Value::to_number`. Omission supplies numeric NaN. Extras are ignored
-+  numerically and are not converted.
-+- Compute `square = first * first`, then `result = square * first`,
-+  using exactly two separate ordinary `f64` multiplications, and return
-+  the numeric result.
-+- Preserve operation order and rounding, finite/subnormal values, signed
-+  zeros, signed underflow, overflow and infinity signs. Negative zero
-+  cubes to negative zero; negative inputs retain their sign. NaNs match
-+  by classification, without payload or sign promises.
-+- Numbers, literal null as zero, booleans, trimmed numeric strings,
-+  empty/singleton lists and millisecond dates retain intrinsic conversion.
-+  Invalid numeric conversions yield numeric NaN, not a new type error.
-+  Conversion never calls or tracks shadowable helpers.
-+- Live-input/parameter-null deferral remains distinct from literal-null
-+  coercion. Named functions, class rules and methods, captured values/classes,
-+  `.value` snapshots, observation, ordinary AST/graph source, caller frames,
-+  deletion/recovery and transaction rollback retain existing behavior.
-+- State/local `Math` shadowing and ordinary `.Math`/`.cube` members retain
-+  existing lookup. Native `Math.cube` value reads remain
-+  Undefined/non-callable.
-+- Only formerly failing native cube calls gain defined numeric results.
-+  Existing successful supplied-Undefined calls still return Undefined.
-+  Sibling Math helpers, unsupported names, existing successful outputs,
-+  diagnostics and every accepted source form stay unchanged.
-+- The normative entry is
-+  [Reactive cubing](../nucleoid.spec.md#reactive-cubing).
-+  `Nucleoid keeps cubes reactive` changes only
-+  `cubed = Math.square(sample.amplitude + offset) * (sample.amplitude + offset)`
-+  to `cubed = Math.cube(sample.amplitude + offset)`.
-+- The executable reference case
-+  `Nucleoid preserves cubing argument dependencies` changes only
-+  `observed = Math.square(probe.input + offset, probe.extra) * (probe.input + offset)`
-+  to `observed = Math.cube(probe.input + offset, probe.extra)
-```
-
-**File**: `nucleoid.spec.md` (modified, +71/-0)
-```diff
-@@ -29627,6 +29627,25 @@ subtotal = price
- assert(counts, [1, 1, 0])
- 1
- # return: 1
-+---
-+# Nucleoid keeps cubes reactive
+@@ -0,0 +1,91 @@
++# NUC 147 -- Deferred Suites
 +
-+sample = {amplitude: 3}
-+offset = 2
-+cubed = Math.cube(sample.amplitude + offset)
-+assert(cubed, 125)
-+sample.amplitude = -4
-+assert(cubed, -8)
-+offset = 1
-+assert(cubed, -27)
-+sample.amplitude = 0
-+assert(cubed, 1)
-+offset = -1
-+assert(cubed, -1)
-+sample.amplitude = 3
-+assert(cubed, 8)
-+1
-+# return: 1
- ```
- 
- ## Floating-point absolute value alias
-@@ -29878,3 +29897,55 @@ assert(counts, [1, 1, 0])
-   executed and sealed before preparation; only construction of `counts`
-   or `impact` changes. Each retains six ordered canonical assertions,
-   explicit return `1` and executed coverage.
++```
++NUC: 147
++Title: Deferred Suites
++Author: GitHub Copilot <223556219+Copilot@users.noreply.github.com>
++Status: Draft
++Type: Standards Track
++Category: Runtime features
++Created: 25-Nov-2026
++Requires: 119
++```
 +
-+## Reactive cubing
++## Abstract
 +
-+- The NUC 146 candidate adds only native static `Math.cube(value)`. After
-+  the existing any-supplied-top-level-Undefined gate, intrinsically convert
-+  only the first value, compute `square = first * first`, then
-+  `square * first`, as two separate ordinary `f64` multiplications.
-+  Omission supplies numeric NaN.
-+- Keep that operation order and its rounding, signed zeros, subnormals,
-+  underflow, overflow and nonfinite classification. Negative zero cubes to
-+  negative zero, and negative inputs retain their sign. NaN payload/sign
-+  bits are not promised. This is not a universal alias to `** 3`, `powf`
-+  or `powi`; there is no fused/rescaled arithmetic or cube-root operation.
-+- Numbers, literal null as zero, booleans, trimmed numeric strings,
-+  empty/singleton lists and millisecond dates keep intrinsic numeric
-+  conversion. Invalid conversions produce numeric NaN, not new errors.
-+  Conversion never calls or tracks shadowable `Number` or `Math.square`.
-+- Every supplied expression evaluates exactly once, left to right, even
-+  following Undefined. Numerically ignored extras are not converted, but
-+  keep their eager reads, effects, strict errors and subscriptions. Any
-+  supplied top-level Undefined, including an extra, returns Undefined before
-+  conversion. Nested Undefined alone does not trigger that native gate.
-+- Literal-null coercion does not override live-input/parameter-null
-+  deferral. Named functions, independent class rules, captures, `.value`
-+  snapshots, observation, ordinary AST/graph source, call frames,
-+  deletion/recovery and transaction behavior remain unchanged. This utility
-+  does not repair inherited graph-dependent rollback ordering or runtime
-+  value-depth limitations.
-+- State/local `Math` shadowing and ordinary `.Math`/`.cube` members keep
-+  existing lookup. Native `Math.cube` value reads remain
-+  Undefined/non-callable. No alias, prefix/global/lowercase form, receiver
-+  method, aggregate dispatch, lexer/parser change, option, dependency or
-+  public Rust API/type is added.
-+- No new arity, conversion, range or numeric errors are introduced.
-+  Strict missing reads keep `ReferenceError("<name> is not defined")`,
-+  including ignored extras following Undefined. Unsupported native names
-+  retain `TypeError("Math.<name> is not a function")`, and `Math.random()`
-+  retains `TypeError("Math.random is not supported")`, after the unchanged
-+  gate. Numeric `Math = 7` keeps
-+  `TypeError("number.cube is not a function")`. Error positions, catches,
-+  rollback and recovery stay ordinary.
-+- Only formerly failing native `Math.cube(...)` calls gain defined numeric
-+  results. Previously successful Undefined-gated native calls still return
-+  Undefined. All sibling helpers, including unsupported `Math.toDegrees`,
-+  and every other accepted successful output and diagnostic stay unchanged.
-+- `Nucleoid keeps cubes reactive` and
-+  `Nucleoid preserves cubing argument dependencies` change only the RHS
-+  specified in the caller's two executed accepted controls. Each preserves
-+  all six ordered canonical assertions, explicit return `1` and coverage.
-+  Their accepted square-call-times-repeated-pure-expression spelling is a
-+  fair ordered-arithmetic counterpart, not a promise to duplicate a future
-+  call argument's effects. Every historical executable case is unchanged.
++- Add a contextual `defer:` statement with a genuinely indented suite.
++  Reaching it registers that suite for the exit of the current executable
++  statement block; it does not run the suite immediately.
++- Run registered suites in reverse registration order after the remaining
++  statements complete, return, fail or pass through an existing loop-exit
++  outcome, before the block's active parameter/loop/catch scope is removed.
++  A registration not reached has no effect.
++- Evaluate deferred statements at exit in that active scope, not as a new
++  closure or an eager argument snapshot. Preserve the value already computed
++  by a pending return. Each deferred suite uses the outcome precedence and
++  transaction rules of accepted finalization: a return or error can replace
++  the pending outcome, but older registered suites still run.
++- Preserve every accepted source, including runtime-failing sources, except
++  the newly supported suite forms that were errors. Keep `defer` an ordinary
++  name everywhere else; in particular, keep typed declarations, calls,
++  properties and bare-name lines followed by blocks. Do not relax the
++  mandatory catch clause of an ordinary `try`.
++- Keep control flow and registration/unwinding bounded under the crate's
++  existing limits. Add no asynchronous cleanup, new loop-exit behavior,
++  implicit resource protocol, project version or dependency change.
++
++## Motivation
++
++- Cleanup and bookkeeping often belong to a whole block, including its
++  early returns. Stating that action where it becomes necessary is clearer
++  than repeating it before every exit or enclosing the remaining work in
++  another explicit try/catch/finally.
++- NUC 119 supplies finalization but explicitly leaves scope-exit `defer`
++  registration out of scope. Deferred suites add that core execution
++  behavior while retaining its transaction and outcome rules.
++- The accepted executable reports
++  `SyntaxError: Unexpected ':' (line 1, column 6)` for an indented `defer:`
++  suite. The caller retained the actual diagnostic separately; the native
++  REPL's zero process status is not reported as successful execution.
++
++## Rationale
++
++- The continuous caller drew Runtime features once from the live category
++  registry, index 1 of five eligible categories with probability 20%.
++  Scope-exit registration and unwinding are core execution/control flow,
++  as NUC 119's finalization is, rather than a collection or numeric helper.
++- Runtime applicability is `existing_comparable`: accepted
++  try/catch/finally provides the finalization mechanism for equivalent
++  protected control programs. Freeze and execute those original programs
++  before candidate edits. The continuous token comparison is required;
++  neither a missing counterpart nor a new spelling permits a skip.
++- No hint, scoring rubric or strategy-learning configuration was supplied.
++  This revision is unattributed and learning is `not_configured`.
++
++## Specification
++
++- To be completed by the fresh preparation agent after allocation and
++  immutable accepted-baseline capture, within the requested contract above.
++
++## Backwards Compatibility
++
++- To be demonstrated against the accepted corpus and original counterpart
++  sources, including legacy ordinary-name, typed-declaration and layout
++  boundaries. Do not edit protected diagnostics or assertions to pass.
++
++## Reference Implementation
++
++- The isolated candidate and affected W3C EBNF, normative documents,
++  generated exports and synthesized records follow the pushed allocation.
++  Preserve existing public items and signatures; report any required
++  semantic-versioning change for human action without editing a version.
++
++## Evaluation
++
++- Draft allocation only. No candidate, token comparison, independent
++  evaluation or outcome is claimed by this document.
++
++## Copyright
++
++This document is licensed under the Apache License, Version 2.0. See
++[LICENSE](../LICENSE) for the full text.
 ```
 
 #### Recent Merged Pull Requests:
@@ -1955,32 +1731,22 @@ Independent decision Accepted; core accepted. Independent report raw blob
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. NUC 146 Reactive Cubing
+## X. Draft NUC 147 Deferred Suites
 
 **RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/nuc-0000.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ee267d80`: NUC 146 Reactive Cubing. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3b956215`: Draft NUC 147 Deferred Suites. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/nuc-0000.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- The [NUC 146 candidate](docs/nuc-0146.md) adds native static
-  `Math.cube(value)`: intrinsically convert the first value, square it, then
-  multiply by that same value, using two separate ordinary multiplications.
-  Ordered rounding, negative zero, signed underflow, overflow and nonfinite
-  classification follow those operations, not a universal `** 3` alias.
-  All arguments evaluate once left to right; ignored extras retain effects,
-  strict errors and subscriptions without conversion. The supplied
-  top-level-Undefined gate, live/parameter-null deferral, shadowing, captures
-  and transaction behavior remain unchanged. No aliases or syntax are added.
-  See the [root contract](nucleoid.spec.md#reactive-cubing) and
-  [argument-dependency case](docs/README.md#reactive-cubing-argument-dependencies).
-
+| [147](nuc-0147.md) | Deferred Suites | Draft |
+| [147](nuc-0147.md) | Deferred Suites | Standards Track | Runtime features | Draft |
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1990,4 +1756,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ee267d80` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3b956215` are properly handled with clean fallback behavior.

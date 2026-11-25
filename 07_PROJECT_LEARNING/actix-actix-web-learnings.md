@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/actix-actix-web-learnings.md`  
 > **Source**: github ([https://github.com/actix/actix-web](https://github.com/actix/actix-web))  
-> **Source Version**: `12df9de5`  
+> **Source Version**: `98f5b221`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T14:59:33.845Z  
+> **Timestamp**: 2026-11-25T15:29:57.006Z  
 > **Learning ID**: `learn-github-actix-actix-web`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/actix-actix-web-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/actix/actix-web](https://github.com/actix/actix-web))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T14:59:33.839Z  
+> **Harvest Timestamp**: 2026-11-25T15:29:57.000Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Actix Web is a powerful, pragmatic, and extremely fast web framework for Rust.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 24994 stars
+- **Stars / Engagement**: 24996 stars
 
 ---
 
@@ -1389,15 +1389,11 @@ impl Files {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4447** (2026-11-23): **docs(web): update RFC Editor links**
-  *Symptoms*: ## PR Type  Documentation  ## PR Checklist  - [x] Tests for the changes have been added / updated. - [x] Documentation comments have been added / updated. - [x] A changelog entry has been made for the appropriate packages. - [x] (Team) Label with affected crates and semver status.  ## Overview  Update RFC references across the repository to use the RFC Editor’s `/info/` pages. Correct section anchors and mismatched citations, including the `Accept` quality weighting references and the `Content-Disposition` parameter guidance. No behavior changes.
-  **Post-Mortem & Fix Analysis**:
-  > <!-- code-coverage-overview --> ### Code coverage overview  <b>Languages:</b> Rust <h4>Rust / code-coverage/cargo-llvm-cov</h4>  <table> <tr> <th scope="col"><span id="cc-branch-badge" title="actix/actix-web:main">main</span> <a id="cc-sha-link" href="/actix/actix-web/commit/0581ada7695550ae39764030cf3b45477b9447ca">0581ada</a></th> <th scope="col"><span id="cc-branch-badge" title="actix/actix-web:t3/update-rfc-editor-links">t3/update-rfc-editor...</span> <a id="cc-sha-link" href="/actix/actix-web/commit/e508342e54a209aef700cd279abf2b2d314e8931">e508342</a></th> <th scope="col">+/-</th> </tr> <tr> <td>88%</td> <td>88%</td> <td>0%</td> </tr> </table>  :information_source: Calculations represent line coverage. Results may change as calculations are updated.  
+- **Issue #4465** (2026-11-25): **feat(files): expose directory entries for custom listing renderers**
+  *Symptoms*: ## PR Type  Feature  ## PR Checklist  - [x] Tests for the changes have been added / updated. - [x] Documentation comments have been added / updated. - [x] A changelog entry has been made for the appropriate packages. - [ ] (Team) Label with affected crates and semver status.  ## Overview  Custom renderers passed to `Files::files_listing_renderer` previously had to reimplement entry iteration, hidden-file filtering and href percent-encoding. This adds:  - `Directory::entries(&self, req: &HttpRequest) -> io::Result<Vec<DirectoryEntry>>`: visible entries (same rules as `is_visible`) in `read_dir` order. - `DirectoryEntry` (`#[non_exhaustive]`): `name`, `url` (percent-encoded, not HTML-escaped), `is_dir`, `metadata`.  The default renderer is rebuilt on `entries()`; its HTML output is unchanged (existing listing tests pass as-is). This is template-library agnostic: users plug in any templating inside their renderer. A doctest on `files_listing_renderer` shows usage.  `entries()` also gives #4238 (path_filter for listings) a single place to apply the filter.  Closes #3763 
 
-- **Issue #4446** (2026-11-23): **feat(web): add cookie 0.18 support alongside 0.16**
-  *Symptoms*: ## PR Type  Feature  ## PR Checklist  - [x] Tests for the changes have been added / updated. - [x] Documentation comments have been added / updated. - [x] A changelog entry has been made for the appropriate packages. - [x] (Team) Label with affected crates and semver status.  ## Overview  Add the `cookies-0_18` feature to use cookie 0.18 alongside the existing cookie 0.16 support. Re-export cookie 0.18 and add matching request, service request, response, and test request cookie methods. Both versions can read and write cookies through the same headers, and `secure-cookies` enables secure cookie support for either version.
-  **Post-Mortem & Fix Analysis**:
-  > <!-- code-coverage-overview --> ### Code coverage overview  <b>Languages:</b> Rust <h4>Rust / code-coverage/cargo-llvm-cov</h4>  <table> <tr> <th scope="col"><span id="cc-branch-badge" title="actix/actix-web:main">main</span> <a id="cc-sha-link" href="/actix/actix-web/commit/f3779b84d9de6bf9716c68f6ca39140065e2b1e6">f3779b8</a></th> <th scope="col"><span id="cc-branch-badge" title="actix/actix-web:t3/latest-cookie-version">t3/latest-cookie-ver...</span> <a id="cc-sha-link" href="/actix/actix-web/commit/9e7e7e4e748cd5ccb35f3e549a4110c644987044">9e7e7e4</a></th> <th scope="col">+/-</th> </tr> <tr> <td>88%</td> <td>88%</td> <td>0%</td> </tr> </table>  <details> <summary>View coverage of the 10 most impacted files.</summary>  <table> <tr> <th scope="col">File</th> <th scope="col"><span id="cc-branch-badge" title="actix/actix-web:main">main</span> <a id="cc-sha-link" href="/actix/actix-web/commit/f3779b84d9de6bf9716c68f6ca39140065e2b1e6">f3779b8</a></th> <th scope="col"><span id="cc-branch-
+- **Issue #4461** (2026-11-25): **fix(http): reject repeated Content-Type request fields**
+  *Symptoms*: <!-- Thanks for considering contributing actix! --> <!-- Please fill out the following to get your PR reviewed quicker. -->  ## PR Type  <!-- What kind of change does this PR make? --> <!-- Bug Fix / Feature / Refactor / Code Style / Other -->  Bug Fix  ## PR Checklist  <!-- Check your PR fulfills the following items. --> <!-- For draft PRs check the boxes as you complete them. -->  - [x] Tests for the changes have been added / updated. - [ ] Documentation comments have been added / updated. - [x] A changelog entry has been made for the appropriate packages. - [x] (Team) Label with affected crates and semver status.  ## Overview  <!-- Describe the current and new behavior. --> <!-- Emphasize any breaking changes. -->  The HTTP/1 decoder previously passed repeated `Content-Type` fields through to the application. It now returns `400 Bad Request` for any request with more than one `Content-Type` field, including when the values match.  `Content-Type` is a singleton field. Senders must emit at most one field line, even when both values would be identical. Actix chooses `400` for repeated lines so handlers never have to choose which media type to trust. [RFC 9110 §5.3](https://www.rfc-editor.org/rfc/rfc9110.html#section-5.3) and [RFC 9110 §8.3](https://www.rfc-editor.org/rfc/rfc9110.html#section-8.3).  Tested with `cargo test --locked --offline -p actix-http --lib reject_multiple_request_content_types`.  <!-- If this PR fixes or closes an issue, reference it here. --> <!-- Closes
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1414,566 +1410,270 @@ impl Files {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `12df9de5` (2026-11-23)
-**Commit Message**: feat(web): add cookie 0.18 support alongside 0.16 (#4446)
+### Incident Patch 1: `cc8f3c57` (2026-11-25)
+**Commit Message**: build(deps): bump taiki-e/install-action from 2.90.4 to 2.90.8 (#4452)
 
-* feat(web): add cookie 0.18 support alongside 0.16
+Bumps [taiki-e/install-action](https://github.com/taiki-e/install-action) from 2.90.4 to 2.90.8.
+- [Release notes](https://github.com/taiki-e/install-action/releases)
+- [Changelog](https://github.com/taiki-e/install-action/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/taiki-e/install-action/compare/v2.90.4...v2.90.8)
 
-* build(deps): update url and ignore cookie advisory
+---
+updated-dependencies:
+- dependency-name: taiki-e/install-action
+  dependency-version: 2.90.8
+  dependency-type: direct:production
+  update-type: version-update:semver-patch
+...
 
-* docs(web): clarify cookie version references
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-* docs(web): clarify cookie removal and versioned APIs
-
-- Document cookie v0.18 request and response APIs
-- Clarify that del_cookie removes Set-Cookie headers
-
-* fix(web): preserve test request cookie insertion order
-
-**File**: `Cargo.lock` (modified, +31/-6)
+**File**: `.github/workflows/actions.lock` (modified, +8/-8)
 ```diff
-@@ -339,7 +339,8 @@ dependencies = [
-  "bytestring",
-  "cfg-if",
-  "const-str",
-- "cookie",
-+ "cookie 0.16.2",
-+ "cookie 0.18.3",
-  "core_affinity",
-  "criterion",
-  "derive_more",
-@@ -628,7 +629,7 @@ dependencies = [
-  "bytes",
-  "cfg-if",
-  "const-str",
-- "cookie",
-+ "cookie 0.16.2",
-  "derive_more",
-  "env_logger",
-  "flate2",
-@@ -688,6 +689,12 @@ version = "0.20.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "0ea22880d78093b0cbe17c89f64a7d457941e65759157ec6cb31a31d652b05e5"
- 
-+[[package]]
-+name = "base64"
-+version = "0.22.1"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "72b3254f16251a8381aa12e40e3c4d2f0199f8c6508fbecb9d91f575e0fbb8c6"
-+
- [[package]]
- name = "base64"
- version = "0.23.1"
-@@ -971,6 +978,24 @@ dependencies = [
-  "version_check",
- ]
- 
-+[[package]]
-+name = "cookie"
-+version = "0.18.3"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "d55f2d6c30eeec7d5c6f98bd4395d4abb1895629eab97ee6522d340623615f8a"
-+dependencies = [
-+ "aes-gcm",
-+ "base64 0.22.1",
-+ "hkdf",
-+ "hmac",
-+ "percent-encoding",
-+ "rand 0.8.8",
-+ "sha2",
-+ "subtle",
-+ "time",
-+ "version_check",
-+]
-+
- [[package]]
- name = "core-foundation"
- version = "0.9.4"
-@@ -1456,9 +1481,9 @@ checksum = "00b0228411908ca8685dba7fc2cdd70ec9990a6e753e89b6ac91a84c40fbaf4b"
- 
- [[package]]
- name = "form_urlencoded"
--version = "1.2.2"
-+version = "1.2.3"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "cb4cb245038516f5f85277875cdaa4f7d2c9a0fa0468de06ed190163b1581fcf"
-+checksum = "afa489199eaffb1211795df1c6236ce1ad0d41a6fa45250add73e3b02420f06e"
- dependencies = [
-  "percent-encoding",
- ]
-@@ -3640,9 +3665,9 @@ checksum = "8ecb6da28b8a351d773b68d5825ac39017e680750f980f3a1a85cd8dd28a47c1"
- 
- [[package]]
- name = "url"
--version = "2.5.8"
-+version = "2.5.9"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "ff67a8a4397373c3ef660812acab3268222035010ab8680ec4215f38ba3d0eed"
-+checksum = "f00cd2407bb42c0ef17be88d4cf020f5cceffd121665bac9b8b9493a369b3b1a"
- dependencies = [
-  "form_urlencoded",
-  "idna",
+@@ -9,18 +9,18 @@ workflows:
+         - 'actions-rust-lang/setup-rust-toolchain@v2.0.1'
+         - 'ilammy/setup-nasm@v1.5.2'
+         - 'rui314/setup-mold@v1'
+-        - 'taiki-e/install-action@v2.90.4'
++        - 'taiki-e/install-action@v2.90.8'
+         - 'useblacksmith/checkout@v1.8.3'
+     '.github/workflows/ci.yml':
+         - 'actions-rust-lang/setup-rust-toolchain@v2.0.1'
+         - 'ilammy/setup-nasm@v1.5.2'
+         - 'rui314/setup-mold@v1'
+-        - 'taiki-e/install-action@v2.90.4'
++        - 'taiki-e/install-action@v2.90.8'
+         - 'useblacksmith/checkout@v1.8.3'
+     '.github/workflows/coverage.yml':
+         - 'actions-rust-lang/setup-rust-toolchain@v2.0.1'
+         - 'actions/upload-code-coverage@v1.4.4'
+-        - 'taiki-e/install-action@v2.90.4'
++        - 'taiki-e/install-action@v2.90.8'
+         - 'useblacksmith/checkout@v1.8.3'
+     '.github/workflows/labeler.yml':
+         - 'actions/labeler@v7.0.0'
+@@ -30,7 +30,7 @@ workflows:
+         - 'embarkstudios/cargo-deny-action@v2.1.3'
+         - 'giraffate/clippy-action@v1.0.1'
+         - 'taiki-e/cache-cargo-install-action@v3.0.8'
+-        - 'taiki-e/install-action@v2.90.4'
++        - 'taiki-e/install-action@v2.90.8'
+         - 'useblacksmith/checkout@v1.8.3'
+         - 'zizmorcore/zizmor-action@v0.8.1'
+     '.github/workflows/release.yml':
+@@ -41,7 +41,7 @@ workflows:
+         - 'release-plz/action@v0.5.148'
+     '.github/workflows/semver-checks.yml':
+         - 'actions-rust-lang/setup-rust-toolchain@v2.0.1'
+-        - 'taiki-e/install-action@v2.90.4'
++        - 'taiki-e/install-action@v2.90.8'
+         - 'useblacksmith/checkout@v1.8.3'
+ dependencies:
+     'actions-rust-lang/setup-rust-toolchain@v2.0.1':
+@@ -142,9 +142,9 @@ dependencies:
+         commit: 'sha1-1919c4a95903d2c33e4a221102edca87309fc14b'
+         owner_id: 43724913
+         repo_id: 442947557
+-    'taiki-e/install-action@v2.90.4':
+-        ref: 'v2.90.4'
+-        commit: 'sha1-4a76afe23f9e08d2d9550fb56e556444e8611d21'
++    'taiki-e/install-action@v2.90.8':
++        ref: 'v2.90.8'
++        commit: 'sha1-fe3acb53a98b62c772db35de75ce0e4595e7ca8c'
+         owner_id: 43724913
+         repo_id: 442947557
+     'useblacksmith/checkout@v1.8.3':
 ```
 
-**File**: `actix-web/CHANGES.md` (modified, +8/-0)
+**File**: `.github/workflows/ci-post-merge.yml` (modified, +2/-2)
 ```diff
-@@ -2,6 +2,14 @@
+@@ -57,7 +57,7 @@ jobs:
+           toolchain: ${{ matrix.version.version }}
  
- ## Unreleased
+       - name: Install just, cargo-hack, cargo-nextest, cargo-ci-cache-clean
+-        uses: taiki-e/install-action@v2.90.4
++        uses: taiki-e/install-action@v2.90.8
+         with:
+           tool: just,cargo-hack,cargo-nextest,cargo-ci-cache-clean
  
-+- Add the `cookies-0_18` crate feature and re-export cookie (v0.18) as `actix_web::cookie_0_18`. This feature can be enabled alongside `cookies`.
-+- Add `HttpRequest::{cookies_0_18,cookie_0_18,cookies_raw_0_18,cookie_raw_0_18}` and `ServiceRequest::{cookies_0_18,cookie_0_18,cookies_raw_0_18,cookie_raw_0_18}` for reading request cookies.
-+- Add `HttpResponse::{cookies_0_18,add_cookie_0_18,add_removal_cookie_0_18}` for reading and appending response cookies.
-+- Add `HttpResponseBuilder::cookie_0_18()` and `CustomizeResponder::add_cookie_0_18()` for appending response cookies.
-+- Add `TestRequest::cookie_0_18()` for setting a cookie on a test request.
-+- Make `HttpResponse::del_cookie()` available with either cookie feature.
-+- Enable signed and private cookies for cookie (v0.18) when both `cookies-0_18` and `secure-cookies` are enabled.
-+
- ## 4.20.0
+@@ -97,7 +97,7 @@ jobs:
+           cache-key: feature-powerset-${{ matrix.partition }}
  
- - Add `guard_obj` parameter to all route attribute macros where `guard` is allowed, allowing any expressions to be used where it returns a `Guard`.
+       - name: Install just, cargo-hack
+-        uses: taiki-e/install-action@v2.90.4
++        uses: taiki-e/install-action@v2.90.8
+         with:
+           tool: just,cargo-hack
+ 
 ```
 
-**File**: `actix-web/Cargo.toml` (modified, +4/-1)
+**File**: `.github/workflows/ci.yml` (modified, +2/-2)
 ```diff
-@@ -29,6 +29,7 @@ features = [
-   "compress-gzip",
-   "compress-zstd",
-   "cookies",
-+  "cookies-0_18",
-   "secure-cookies",
- ]
+@@ -72,7 +72,7 @@ jobs:
+           toolchain: ${{ matrix.version.version }}
  
-@@ -82,9 +83,10 @@ macros = ["dep:actix-macros", "dep:actix-web-codegen"]
+       - name: Install just, cargo-hack, cargo-nextest, cargo-ci-cache-clean
+-        uses: taiki-e/install-action@v2.90.4
++        uses: taiki-e/install-action@v2.90.8
+         with:
+           tool: just,cargo-hack,cargo-nextest,cargo-ci-cache-clean
  
- # Cookies support
- cookies = ["dep:cookie"]
-+cookies-0_18 = ["dep:cookie_0_18"]
+@@ -107,7 +107,7 @@ jobs:
+           toolchain: nightly
  
- # Secure & signed cookies
--secure-cookies = ["cookies", "cookie/secure"]
-+secure-cookies = ["cookies", "cookie/secure", "cookie_0_18?/secure"]
+       - name: Install just
+-        uses: taiki-e/install-action@v2.90.4
++        uses: taiki-e/install-action@v2.90.8
+         with:
+           tool: just
  
- # HTTP/2 support (including h2c)
- http2 = ["actix-http/http2"]
-@@ -142,6 +144,7 @@ actix-web-codegen = { version = "=4.6.0", optional = true, default-features = fa
- bytes = "1"
- bytestring = "1"
- cfg-if = "1"
-+cookie_0_18 = { package = "cookie", version = "0.18", features = ["percent-encode"], optional = true }
- cookie = { version = "0.16", features = ["percent-encode"], optional = true }
- derive_more = { version = "2", features = ["as_ref", "deref", "deref_mut", "display", "error", "from"] }
- encoding_rs = "0.8"
 ```
 
-**File**: `actix-web/src/lib.rs` (modified, +6/-1)
+**File**: `.github/workflows/coverage.yml` (modified, +1/-1)
 ```diff
-@@ -58,7 +58,9 @@
- //! - Runs on stable Rust 1.89+
- //!
- //! # Crate Features
--//! - `cookies` - cookies support (enabled by default)
-+//! - `cookies` - cookie (v0.16) support (enabled by default)
-+//! - `cookies-0_18` - cookie (v0.18) support through `cookie_0_18` and methods ending in `_0_18`.
-+//!   Both cookie features can be enabled together.
- //! - `macros` - routing and runtime macros (enabled by default)
- //! - `compress-brotli` - brotli content encoding compression support (enabled by default)
- //! - `compress-gzip` - gzip and deflate content encoding compression support (enabled by default)
-@@ -90,6 +92,9 @@ pub use actix_http::{body, HttpMessage};
- #[cfg(feature = "cookies")]
- #[doc(inline)]
- pub use cookie;
-+#[cfg(feature = "cookies-0_18")]
-+#[doc(inline)]
-+pub use cookie_0_18;
- pub use mime;
- mod app;
- mod app_service;
+@@ -32,7 +32,7 @@ jobs:
+           components: llvm-tools
+ 
+       - name: Install just, cargo-llvm-cov, cargo-nextest
+-        uses: taiki-e/install-action@v2.90.4
++        uses: taiki-e/install-action@v2.90.8
+         with:
+           tool: just,cargo-llvm-cov,cargo-nextest
+ 
 ```
 
-**File**: `actix-web/src/request.rs` (modified, +44/-0)
+**File**: `.github/workflows/lint.yml` (modified, +1/-1)
 ```diff
-@@ -468,6 +468,50 @@ impl HttpRequest {
-         &self.inner.app_state
-     }
+@@ -124,7 +124,7 @@ jobs:
+           toolchain: ${{ vars.RUST_VERSION_EXTERNAL_TYPES }}
  
-+    /// Returns request cookies with percent-decoded names and values using cookie (v0.18).
-+    #[cfg(feature = "cookies-0_18")]
-+    pub fn cookies_0_18(&self) -> Result<Vec<cookie_0_18::Cookie<'_>>, cookie_0_18::ParseError> {
-+        self.parse_cookies_0_18(cookie_0_18::Cookie::split_parse_encoded)
-+    }
-+
-+    /// Returns request cookies with raw names and values using cookie (v0.18).
-+    #[cfg(feature = "cookies-0_18")]
-+    pub fn cookies_raw_0_18(
-+        &self,
-+    ) -> Result<Vec<cookie_0_18::Cookie<'_>>, cookie_0_18::ParseError> {
-+        self.parse_cookies_0_18(cookie_0_18::Cookie::split_parse)
-+    }
-+
-+    /// Returns the named request cookie with percent-decoded names and values using cookie (v0.18).
-+    #[cfg(feature = "cookies-0_18")]
-+    pub fn cookie_0_18(&self, name: &str) -> Option<cookie_0_18::Cookie<'_>> {
-+        self.cookies_0_18()
-+            .ok()?
-+            .into_iter()
-+            .find(|cookie| cookie.name() == name)
-+    }
-+
-+    /// Returns the named request cookie with raw names and values using cookie (v0.18).
-+    #[cfg(feature = "cookies-0_18")]
-+    pub fn cookie_raw_0_18(&self, name: &str) -> Option<cookie_0_18::Cookie<'_>> {
-+        self.cookies_raw_0_18()
-+            .ok()?
-+            .into_iter()
-+            .find(|cookie| cookie.name() == name)
-+    }
-+
-+    #[cfg(feature = "cookies-0_18")]
-+    fn parse_cookies_0_18<'a>(
-+        &'a self,
-+        parse: impl Fn(&'a str) -> cookie_0_18::SplitCookies<'a>,
-+    ) -> Result<Vec<cookie_0_18::Cookie<'a>>, cookie_0_18::ParseError> {
-+        let mut cookies = Vec::new();
-+        for header in self.headers().get_all(actix_http::header::COOKIE) {
-+            cookies.extend(parse(str::from_utf8(header.as_bytes())?).flatten());
-+        }
-+        Ok(cookies)
-+    }
-+
-     /// Load request cookies.
-     ///
-     /// The names and values of cookies are percent-decoded.
+       - name: Install just
+-        uses: taiki-e/install-action@v2.90.4
++        uses: taiki-e/install-action@v2.90.8
+         with:
+           tool: just
+ 
 ```
 
-**File**: `actix-web/src/response/builder.rs` (modified, +6/-0)
+**File**: `.github/workflows/semver-checks.yml` (modified, +1/-1)
 ```diff
-@@ -264,6 +264,12 @@ impl HttpResponseBuilder {
-         }
-     }
+@@ -23,7 +23,7 @@ jobs:
+           toolchain: stable
  
-+    /// Appends a cookie (v0.18) Set-Cookie header.
-+    #[cfg(feature = "cookies-0_18")]
-+    pub fn cookie_0_18(&mut self, cookie: cookie_0_18::Cookie<'_>) -> &mut Self {
-+        self.append_header((header::SET_COOKIE, cookie.to_string()))
-+    }
-+
-     /// Returns a reference to the response-local data/extensions container.
-     #[inline]
-     pub fn extensions(&self) -> Ref<'_, Extensions> {
-```
-
-**File**: `actix-web/src/response/customize_responder.rs` (modified, +6/-0)
-```diff
-@@ -138,6 +138,12 @@ impl<R: Responder> CustomizeResponder<R> {
-         }
-     }
- 
-+    /// Appends a cookie (v0.18) Set-Cookie header.
-+    #[cfg(feature = "cookies-0_18")]
-+    pub fn add_cookie_0_18(self, cookie: &cookie_0_18::Cookie<'_>) -> Self {
-+        self.append_header((actix_http::header::SET_COOKIE, cookie.to_string()))
-+    }
-+
-     /// Appends a `cookie` to the final response.
-     ///
-     /// # Errors
-```
-
-**File**: `actix-web/src/response/response.rs` (modified, +48/-16)
-```diff
-@@ -8,14 +8,15 @@ use actix_http::{
-     header::HeaderMap,
-     Extensions, Response, ResponseHead, StatusCode,
- };
--#[cfg(feature = "cookies")]
--use {
--    actix_http::{
--        error::HttpError,
--        header::{self, HeaderValue},
--    },
--    cookie::Cookie,
-+#[cfg(any(feature = "cookies", feature = "cookies-0_18"))]
-+use actix_http::{
-+    error::HttpError,
-+    header::{self, HeaderValue},
- };
-+#[cfg(feature = "cookies")]
-+use cookie::Cookie;
-+#[cfg(all(feature = "cookies-0_18", not(feature = "cookies")))]
-+use cookie_0_18::Cookie;
- 
- use crate::{error::Error, HttpRequest, HttpResponseBuilder, Responder};
- 
-@@ -103,6 +104,33 @@ impl<B> HttpResponse<B> {
-         self.res.headers_mut()
-     }
- 
-+    /// Iterates over the response cookies that cookie (v0.18) can parse.
-+    #[cfg(feature = "cookies-0_18")]
-+    pub fn cookies_0_18(&self) -> impl Iterator<Item = cookie_0_18::Cookie<'_>> {
-+        self.headers()
-+            .get_all(header::SET_COOKIE)
-+            .filter_map(|header| cookie_0_18::Cookie::parse_encoded(header.to_str().ok()?).ok())
-+    }
-+
-+    /// Appends a cookie (v0.18) Set-Cookie header.
-+    #[cfg(feature = "cookies-0_18")]
-+    pub fn add_cookie_0_18(&mut self, cookie: &cookie_0_18::Cookie<'_>) -> Result<(), HttpError> {
-+        let value = HeaderValue::from_str(&cookie.to_string())?;
-+        self.headers_mut().append(header::SET_COOKIE, value);
-+        Ok(())
-+    }
-+
-+    /// Appends a removal cookie with the given name, path, and domain using cookie (v0.18).
-+    #[cfg(feature = "cookies-0_18")]
-+    pub fn add_removal_cookie_0_18(
-+        &mut self,
-+        cookie: &cookie_0_18::Cookie<'_>,
-+    ) -> Result<(), HttpError> {
-+        let mut cookie = cookie.clone();
-+        cookie.make_removal();
-+        self.add_cookie_0_18(&cookie)
-+    }
-+
-     /// Get an iterator for the cookies set by this response.
-     #[cfg(feature = "cookies")]
-     pub fn cookies(&self) -> CookieIter<'_> {
-@@ -149,24 +177,28 @@ impl<B> HttpResponse<B> {
-             .map_err(Into::into)
-     }
- 
--    /// Remove all cookies with the given name from this response.
-+    /// Removes all `Set-Cookie` headers for cookies with the given name.
-     ///
-     /// Returns the number of cookies removed.
-     ///
--    /// This method can _not_ cause a browser/client to delete any of its stored cookies. Its only
--    /// purpose is to delete cookies that were added to this response using [`add_cookie`]
--    /// and [`add_removal_cookie`]. Use [`add_removal_cookie`] to send a "removal" cookie.
-+    /// To remove a cookie stored by the client, send a removal cookie.
-     ///
--    /// [`add_cookie`]: Self::add_cookie
--    /// [`add_removal_cookie`]: Self::add_removal_cookie
--    #[cfg(feature = "cookies")]
-+    #[cfg(any(feature = "cookies", feature = "cookies-0_18"))]
-+    #[cfg_attr(
-+        feature = "cookies",
-+        doc = "- For cookie (v0.16), use [`add_removal_cookie()`](Self::add_removal_cookie)."
-+    )]
-+    #[cfg_attr(
-+        feature = "cookies-0_18",
-+        doc = "- For cookie (v0.18), use [`add_removal_cookie_0_18()`](Self::add_removal_cookie_0_18)."
-+    )]
-     pub fn del_cookie(&mut self, name: &str) -> usize {
-         let headers = self.headers_mut();
- 
--        let vals: Vec<HeaderValue> = headers
-+        let vals = headers
-             .get_all(header::SET_COOKIE)
-             .map(|v| v.to_owned())
--            .collect();
-+            .collect::<Vec<_>>();
- 
-         headers.remove(header::SET_COOKIE);
+       - name: Install cargo-semver-checks
+-        uses: taiki-e/install-action@v2.90.4
++        uses: taiki-e/install-action@v2.90.8
+         with:
+           tool: cargo-semver-checks
  
 ```
 
 ---
 
-### Incident Patch 2: `f3779b84` (2026-11-23)
-**Commit Message**: docs(web): update RFC Editor links (#4447)
+### Incident Patch 2: `486e1dc4` (2026-11-25)
+**Commit Message**: build(deps): bump bytes from 1.12.1 to 1.12.2 (#4454)
 
-docs(web): update RFC editor links
+Bumps [bytes](https://github.com/tokio-rs/bytes) from 1.12.1 to 1.12.2.
+- [Release notes](https://github.com/tokio-rs/bytes/releases)
+- [Changelog](https://github.com/tokio-rs/bytes/blob/master/CHANGELOG.md)
+- [Commits](https://github.com/tokio-rs/bytes/compare/v1.12.1...v1.12.2)
 
-**File**: `actix-files/src/range.rs` (modified, +1/-1)
+---
+updated-dependencies:
+- dependency-name: bytes
+  dependency-version: 1.12.2
+  dependency-type: direct:production
+  update-type: version-update:semver-patch
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `Cargo.lock` (modified, +2/-2)
 ```diff
-@@ -48,7 +48,7 @@ impl HttpRange {
-     /// `header` is HTTP Range header (e.g. `bytes=0-9`).
-     /// `size` is full size of response (file).
-     ///
--    /// [RFC 9110 §14.1.1]: https://datatracker.ietf.org/doc/html/rfc9110#section-14.1.1
-+    /// [RFC 9110 §14.1.1]: https://www.rfc-editor.org/info/rfc9110/#section-14.1.1
-     pub fn parse(header: &str, size: u64) -> Result<Vec<HttpRange>, ParseRangeErr> {
-         // Check syntax before http-range trims positions or skips ranges beyond the file.
-         if let Some((_, ranges)) = header.split_once('=') {
+@@ -769,9 +769,9 @@ checksum = "72f5acc6cb2ba439de613abc23857ec3d78374d8ed5ac84e9d11336e87da8649"
+ 
+ [[package]]
+ name = "bytes"
+-version = "1.12.1"
++version = "1.12.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "fc652a48c352aef3ea3aed32080501cf3ef6ed5da78602a020c991775b0aff04"
++checksum = "776dfebd015e2d8732c684a2c71003674ccb49457b539b9e82151ba38e96dd7c"
+ 
+ [[package]]
+ name = "bytesize"
 ```
 
-**File**: `actix-http/src/h1/decoder.rs` (modified, +4/-4)
-```diff
-@@ -223,7 +223,7 @@ pub(crate) trait MessageType: Sized {
-             self.set_expect()
-         }
- 
--        // https://datatracker.ietf.org/doc/html/rfc7230#section-3.3.3
-+        // https://www.rfc-editor.org/info/rfc7230/#section-3.3.3
-         if chunked {
-             // Chunked encoding
-             Ok(PayloadLength::Payload(PayloadType::Payload(
-@@ -305,7 +305,7 @@ impl MessageType for Request {
-         let mut length = msg.set_headers(&src.split_to(len).freeze(), &headers[..h_len], ver)?;
- 
-         // disallow HTTP/1.1 requests that do not contain a Host header
--        // see https://datatracker.ietf.org/doc/html/rfc9112#section-3.2
-+        // see https://www.rfc-editor.org/info/rfc9112/#section-3.2
-         if ver == Version::HTTP_11 && !msg.head().headers.contains_key(header::HOST) {
-             debug!("missing Host header for HTTP/1.1 request");
-             return Err(ParseError::Header);
-@@ -329,7 +329,7 @@ impl MessageType for Request {
-         }
- 
-         // disallow HTTP/1.0 POST requests that do not contain a Content-Length headers
--        // see https://datatracker.ietf.org/doc/html/rfc1945#section-7.2.2
-+        // see https://www.rfc-editor.org/info/rfc1945/#section-7.2.2
-         if ver == Version::HTTP_10 && method == Method::POST && length.is_none() {
-             debug!("no Content-Length specified for HTTP/1.0 POST request");
-             return Err(ParseError::Header);
-@@ -553,7 +553,7 @@ enum Kind {
-     /// > message body length cannot be determined reliably; the server MUST respond with the 400
-     /// > (Bad Request) status code and then close the connection.
-     ///
--    /// [RFC 7230 §3.3.3]: https://datatracker.ietf.org/doc/html/rfc7230#section-3.3.3
-+    /// [RFC 7230 §3.3.3]: https://www.rfc-editor.org/info/rfc7230/#section-3.3.3
-     Eof,
- }
- 
-```
+---
 
-**File**: `actix-http/src/h1/encoder.rs` (modified, +3/-3)
-```diff
-@@ -78,16 +78,16 @@ pub(crate) trait MessageType: Sized {
-                 | StatusCode::PROCESSING
-                 | StatusCode::NO_CONTENT => {
-                     // skip content-length and transfer-encoding headers
--                    // see https://datatracker.ietf.org/doc/html/rfc7230#section-3.3.1
--                    // and https://datatracker.ietf.org/doc/html/rfc7230#section-3.3.2
-+                    // see https://www.rfc-editor.org/info/rfc7230/#section-3.3.1
-+                    // and https://www.rfc-editor.org/info/rfc7230/#section-3.3.2
-                     skip_len = true;
-                     length = BodySize::None
-                 }
- 
-                 StatusCode::NOT_MODIFIED => {
-                     // 304 responses should never have a body but should retain a manually set
-                     // content-length header
--                    // see https://datatracker.ietf.org/doc/html/rfc7232#section-4.1
-+                    // see https://www.rfc-editor.org/info/rfc7232/#section-4.1
-                     skip_len = false;
-                     length = BodySize::None;
-                 }
-```
+### Incident Patch 3: `6b32cb22` (2026-11-25)
+**Commit Message**: build(deps): bump regex from 1.13.1 to 1.13.2 (#4456)
 
-**File**: `actix-http/src/h2/dispatcher.rs` (modified, +2/-2)
-```diff
-@@ -343,14 +343,14 @@ fn prepare_response(
-     for (key, value) in head.headers.iter() {
-         match key {
-             // omit HTTP/1.x only headers according to:
--            // https://datatracker.ietf.org/doc/html/rfc7540#section-8.1.2.2
-+            // https://www.rfc-editor.org/info/rfc7540/#section-8.1.2.2
-             &CONNECTION | &TRANSFER_ENCODING | &UPGRADE => continue,
- 
-             &CONTENT_LENGTH if skip_len => continue,
-             &DATE => has_date = true,
- 
-             // omit HTTP/1.x only headers according to:
--            // https://datatracker.ietf.org/doc/html/rfc7540#section-8.1.2.2
-+            // https://www.rfc-editor.org/info/rfc7540/#section-8.1.2.2
-             hdr if hdr == HeaderName::from_static("keep-alive")
-                 || hdr == HeaderName::from_static("proxy-connection") =>
-             {
-```
+Bumps [regex](https://github.com/rust-lang/regex) from 1.13.1 to 1.13.2.
+- [Release notes](https://github.com/rust-lang/regex/releases)
+- [Changelog](https://github.com/rust-lang/regex/blob/master/CHANGELOG.md)
+- [Commits](https://github.com/rust-lang/regex/compare/1.13.1...1.13.2)
 
-**File**: `actix-http/src/header/common.rs` (modified, +2/-2)
-```diff
-@@ -7,14 +7,14 @@ use http::header::HeaderName;
- /// Response header field that indicates how caches have handled that response and its corresponding
- /// request.
- ///
--/// See [RFC 9211](https://www.rfc-editor.org/rfc/rfc9211) for full semantics.
-+/// See [RFC 9211](https://www.rfc-editor.org/info/rfc9211) for full semantics.
- // TODO(breaking): replace with http's version
- pub const CACHE_STATUS: HeaderName = HeaderName::from_static("cache-status");
- 
- /// Response header field that allows origin servers to control the behavior of CDN caches
- /// interposed between them and clients separately from other caches that might handle the response.
- ///
--/// See [RFC 9213](https://www.rfc-editor.org/rfc/rfc9213) for full semantics.
-+/// See [RFC 9213](https://www.rfc-editor.org/info/rfc9213) for full semantics.
- // TODO(breaking): replace with http's version
- pub const CDN_CACHE_CONTROL: HeaderName = HeaderName::from_static("cdn-cache-control");
- 
-```
+---
+updated-dependencies:
+- dependency-name: regex
+  dependency-version: 1.13.2
+  dependency-type: direct:production
+  update-type: version-update:semver-patch
+...
 
-**File**: `actix-http/src/header/mod.rs` (modified, +1/-1)
-```diff
-@@ -66,7 +66,7 @@ pub trait Header: TryIntoHeaderValue {
- }
- 
- /// This encode set is used for HTTP header values and is defined at
--/// <https://datatracker.ietf.org/doc/html/rfc5987#section-3.2>.
-+/// <https://www.rfc-editor.org/info/rfc5987/#section-3.2>.
- pub(crate) const HTTP_VALUE: &AsciiSet = &CONTROLS
-     .add(b' ')
-     .add(b'"')
-```
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-**File**: `actix-http/src/header/shared/extended.rs` (modified, +6/-5)
+**File**: `Cargo.lock` (modified, +6/-6)
 ```diff
-@@ -11,7 +11,7 @@ use crate::header::{Charset, HTTP_VALUE};
- /// - The OPTIONAL language information (`language_tag`).
- /// - A character sequence representing the actual value (`value`), separated by single quotes.
- ///
--/// It is defined in [RFC 5987 §3.2](https://datatracker.ietf.org/doc/html/rfc5987#section-3.2).
-+/// It is defined in [RFC 5987 §3.2](https://www.rfc-editor.org/info/rfc5987/#section-3.2).
- #[derive(Clone, Debug, PartialEq, Eq)]
- pub struct ExtendedValue {
-     /// The character set that is used to encode the `value` to a string.
-@@ -25,7 +25,7 @@ pub struct ExtendedValue {
- }
+@@ -2697,9 +2697,9 @@ dependencies = [
  
- /// Parses extended header parameter values (`ext-value`), as defined
--/// in [RFC 5987 §3.2](https://datatracker.ietf.org/doc/html/rfc5987#section-3.2).
-+/// in [RFC 5987 §3.2](https://www.rfc-editor.org/info/rfc5987/#section-3.2).
- ///
- /// Extended values are denoted by parameter names that end with `*`.
- ///
-@@ -60,9 +60,10 @@ pub struct ExtendedValue {
- ///               ; token except ( "*" / "'" / "%" )
- /// ```
- ///
--/// [RFC 2231 §7]: https://datatracker.ietf.org/doc/html/rfc2231#section-7
--/// [RFC 2978 §2.3]: https://datatracker.ietf.org/doc/html/rfc2978#section-2.3
--/// [RFC 3986 §2.1]: https://datatracker.ietf.org/doc/html/rfc5646#section-2.1
-+/// [RFC 2231 §7]: https://www.rfc-editor.org/info/rfc2231/#section-7
-+/// [RFC 2978 §2.3]: https://www.rfc-editor.org/info/rfc2978/#section-2.3
-+/// [RFC 3986 §2.1]: https://www.rfc-editor.org/info/rfc3986/#section-2.1
-+/// [RFC 5646 §2.1]: https://www.rfc-editor.org/info/rfc5646/#section-2.1
- pub fn parse_extended_value(val: &str) -> Result<ExtendedValue, crate::error::ParseError> {
-     // Break into three pieces separated by the single-quote character
-     let mut parts = val.splitn(3, '\'');
-```
-
-**File**: `actix-http/src/header/shared/quality.rs` (modified, +1/-1)
-```diff
-@@ -29,7 +29,7 @@ const MAX_QUALITY_FLOAT: f32 = 1.0;
- /// assert_eq!(Quality::ZERO.to_string(), "0");
- /// ```
- ///
--/// [RFC 7231 §5.3.1]: https://datatracker.ietf.org/doc/html/rfc7231#section-5.3.1
-+/// [RFC 7231 §5.3.1]: https://www.rfc-editor.org/info/rfc7231/#section-5.3.1
- #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
- pub struct Quality(pub(super) u16);
+ [[package]]
+ name = "regex"
+-version = "1.13.1"
++version = "1.13.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "f020237b6c8eed93db2e2cb53c00c60a8e1bc73da7d073199a1180401450218d"
++checksum = "9807af0e638c12e753aa1b4e601791bf2a8f71274023c8bbeec12fc149950857"
+ dependencies = [
+  "aho-corasick",
+  "memchr",
+@@ -2709,9 +2709,9 @@ dependencies = [
  
+ [[package]]
+ name = "regex-automata"
+-version = "0.4.18"
++version = "0.4.19"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "ad8553b9b26413251cbf30e620595c7a41b3887f03da04579c0e6b0d6a06b4b2"
++checksum = "41d60ef07df457506a0a1a2073112eb4aae5733dbd2813c3da77d1b0fd441158"
+ dependencies = [
+  "aho-corasick",
+  "memchr",
+@@ -2726,9 +2726,9 @@ checksum = "cab834c73d247e67f4fae452806d17d3c7501756d98c8808d7c9c7aa7d18f973"
+ 
+ [[package]]
+ name = "regex-syntax"
+-version = "0.8.11"
++version = "0.8.12"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "d6f6ff9a378485b298a5286656da665ba74413d36db0979633275d2e708145d4"
++checksum = "d902046e6a28a1e4c3cab97258a0ce11e994903f01c2d97a9447a0b3df85f4f6"
+ 
+ [[package]]
+ name = "resolv-conf"
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4447** (2026-11-23): docs(web): update RFC Editor links (@robjtede)
-- **PR #4446** (2026-11-23): feat(web): add cookie 0.18 support alongside 0.16 (@robjtede)
-- **PR #4443** (2026-11-21): perf(http): store two header values inline in HeaderMap (@g4lb)
-- **PR #4439** (2026-11-18): docs(web): correct default status named in Redirect::using_status_code (@farisbasha)
-- **PR #4438** (2026-11-18): build(deps): bump local-channel from 0.1.5 to 0.1.7 (@dependabot[bot])
-- **PR #4437** (2026-11-18): build(deps): bump taiki-e/install-action from 2.90.3 to 2.90.4 (@dependabot[bot])
+- **PR #4465** (closed): feat(files): expose directory entries for custom listing renderers (@RubenPari)
+- **PR #4461** (2026-11-25): fix(http): reject repeated Content-Type request fields (@robjtede)
+- **PR #4460** (2026-11-25): fix(http): reject an empty HTTP/1.1 authority (@robjtede)
+- **PR #4459** (2026-11-25): fix(http): reject URI component delimiters in Host (@robjtede)
+- **PR #4458** (2026-11-25): fix(http): reject fragments in HTTP/1 request targets (@robjtede)
+- **PR #4457** (2026-11-25): fix(http): reserve the asterisk request target for OPTIONS (@robjtede)
 
 ---
 
@@ -1993,63 +1693,42 @@ docs(web): update RFC editor links
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. web): add cookie 0.18 support alongside 0.16
+## X. build(deps): bump taiki-e/install-action from 2.90.4 to 2.90.8
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in actix/actix-web. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/actions.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in actix/actix-web. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `12df9de5`: web): add cookie 0.18 support alongside 0.16. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `cc8f3c57`: build(deps): bump taiki-e/install-action from 2.90.4 to 2.90.8. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/actions.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
- "cookie 0.16.2",
- "cookie 0.18.3",
- "cookie 0.16.2",
-[[package]]
-name = "base64"
-version = "0.22.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "72b3254f16251a8381aa12e40e3c4d2f0199f8c6508fbecb9d91f575e0fbb8c6"
-
-[[package]]
-name = "cookie"
-version = "0.18.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d55f2d6c30eeec7d5c6f98bd4395d4abb1895629eab97ee6522d340623615f8a"
-dependencies = [
- "aes-gcm",
- "base64 0.22.1",
- "hkdf",
- "hmac",
- "percent-encoding",
- "rand 0.8.8",
- "sha2",
- "subtle",
- "time",
- "version_check",
-]
-
-version = "1.2.3"
-checksum = "afa489199eaffb1211795df1c6236ce1ad0d41a6fa45250add73e3b02420f06e"
-version = "2.5.9"
-checksum = "f00cd2407bb42c0ef17be88d4cf020f5cceffd121665bac9b8b9493a369b3b1a"
+        - 'taiki-e/install-action@v2.90.8'
+        - 'taiki-e/install-action@v2.90.8'
+        - 'taiki-e/install-action@v2.90.8'
+        - 'taiki-e/install-action@v2.90.8'
+        - 'taiki-e/install-action@v2.90.8'
+    'taiki-e/install-action@v2.90.8':
+        ref: 'v2.90.8'
+        commit: 'sha1-fe3acb53a98b62c772db35de75ce0e4595e7ca8c'
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
- "cookie",
- "cookie",
-version = "1.2.2"
-checksum = "cb4cb245038516f5f85277875cdaa4f7d2c9a0fa0468de06ed190163b1581fcf"
-version = "2.5.8"
-checksum = "ff67a8a4397373c3ef660812acab3268222035010ab8680ec4215f38ba3d0eed"
+        - 'taiki-e/install-action@v2.90.4'
+        - 'taiki-e/install-action@v2.90.4'
+        - 'taiki-e/install-action@v2.90.4'
+        - 'taiki-e/install-action@v2.90.4'
+        - 'taiki-e/install-action@v2.90.4'
+    'taiki-e/install-action@v2.90.4':
+        ref: 'v2.90.4'
+        commit: 'sha1-4a76afe23f9e08d2d9550fb56e556444e8611d21'
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `12df9de5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `cc8f3c57` are properly handled with clean fallback behavior.

@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T15:21:35.229Z",
-  "total_cycles_completed": 12458,
-  "total_learnings_persisted": 12458,
-  "total_rules_promoted": 11432,
+  "last_updated": "2026-11-25T15:30:12.881Z",
+  "total_cycles_completed": 12461,
+  "total_learnings_persisted": 12461,
+  "total_rules_promoted": 11434,
   "history": [
-    {
-      "timestamp": "2026-11-25T02:28:41.815Z",
-      "repository": "MemTensor/MemT-1.0-Pro",
-      "learningId": "learn-huggingface-memtensor-memt-1-0-pro",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T02:28:51.633Z",
-      "repository": "msasikanth/twine",
-      "learningId": "learn-github-msasikanth-twine",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T02:28:57.059Z",
-      "repository": "freenet/freenet-core",
-      "learningId": "learn-github-freenet-freenet-core",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-25T02:29:00.647Z",
       "repository": "matrixorigin/matrixone",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-25T15:21:35.229Z",
       "repository": "prof18/feed-flow",
       "learningId": "learn-github-prof18-feed-flow",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T15:29:54.722Z",
+      "repository": "pyannote/speaker-diarization-3.1",
+      "learningId": "learn-huggingface-pyannote-speaker-diarization-3-1",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T15:29:58.235Z",
+      "repository": "actix/actix-web",
+      "learningId": "learn-github-actix-actix-web",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T15:30:12.881Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
