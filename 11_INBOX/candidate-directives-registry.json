@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T03:13:41.355Z",
+  "last_updated": "2026-11-25T03:28:35.641Z",
   "directives": [
     {
       "id": "CD-001",
@@ -57835,11 +57835,11 @@
       "domain_letter": "H"
     },
     {
-      "id": "CD-JKYP",
+      "id": "CD-DFSL",
       "directive_title": "rust): bind bare calls to the enclosing module's items",
       "source_repo": "zvec-ai-zvec-grep-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-JKYP-rust-bind-bare-calls-to-the-enclosing-module-s-items.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-DFSL-rust-bind-bare-calls-to-the-enclosing-module-s-items.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-25",
@@ -59157,6 +59157,55 @@
       "source_repo": "zulip-zulip",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-4AFA53-server-events-dispatch-rerender-dm-statu.md",
+      "staged_date": "2026-11-25"
+    },
+    {
+      "id": "CD-DDGI",
+      "directive_title": "Drop unused fields from SubreleaseStatsEntry.",
+      "source_repo": "google-tcmalloc-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-DDGI-drop-unused-fields-from-subreleasestatsentry.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-25",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-DERB",
+      "directive_title": "Add commands",
+      "source_repo": "simonschubert-linuxcommandlibrary-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-DERB-add-commands.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-25",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-AC47B4",
+      "directive_title": "Drop unused fields from SubreleaseStatsEntry.",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "google-tcmalloc",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-AC47B4-drop-unused-fields-from-subreleasestatse.md",
+      "staged_date": "2026-11-25"
+    },
+    {
+      "id": "CD-REV-F7A7F4",
+      "directive_title": "Add commands",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "simonschubert-linuxcommandlibrary",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-F7A7F4-add-commands.md",
+      "staged_date": "2026-11-25"
+    },
+    {
+      "id": "CD-REV-00132F",
+      "directive_title": "rust): bind bare calls to the enclosing module's items",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-00132F-rust-bind-bare-calls-to-the-enclosing-mo.md",
       "staged_date": "2026-11-25"
     }
   ]

@@ -12922,3 +12922,5 @@
 | `CYCLE-20261125-JAM5` | `2026-11-25T03:05:09.245Z` | `apache/arrow` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10440` | Yes (`7f7e42eb...`) |
 | `CYCLE-20261125-U2SX` | `2026-11-25T03:13:32.337Z` | `meta/folly` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10441` | Yes (`29b6eed8...`) |
 | `CYCLE-20261125-U4LB` | `2026-11-25T03:13:34.655Z` | `mrkai77/Loop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10442` | Yes (`22e7845d...`) |
+| `CYCLE-20261125-D64I` | `2026-11-25T03:28:23.106Z` | `google/tcmalloc` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10443` | Yes (`0f985a2e...`) |
+| `CYCLE-20261125-DA55` | `2026-11-25T03:28:28.313Z` | `SimonSchubert/LinuxCommandLibrary` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10444` | Yes (`642c4e87...`) |

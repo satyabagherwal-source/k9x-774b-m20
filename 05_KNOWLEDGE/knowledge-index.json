@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-25T03:13:41.708Z",
+  "last_updated": "2026-11-25T03:28:36.288Z",
   "total_verified_learnings": 9111,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25193,
+  "total_items": 25197,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112066,9 +112066,9 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "9b11e94c34bd39aada2bbe4428988b1a4fd9cb22d3c5f364cfe383e04630f7d0",
+      "content_hash": "28bdd25779017a67cf446cac70eb061f350d2779a3614197247c0d6fbe1de3a5",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T03:05:22.892Z"
+      "persisted_at": "2026-11-25T03:28:35.866Z"
     },
     "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona",
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "7f4a84b38890a3984e0f8db691e701895a15460d2e3fd4ace9034abb2d1f55c7",
+      "content_hash": "75889123cb5e87d1c928c650fda2eaa76b31c4bd451a60cb86cd736c8be3ff33",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T03:05:23.135Z"
+      "persisted_at": "2026-11-25T03:28:36.101Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "b52dc8458c6630e77cdc79f0838fe80fa0aa4341f2d7693d56ad0eacf02d3dd1",
+      "content_hash": "abfd21c48848e9ada50a0fa6c64cc108ebd5735aa5e8b23fd4fca36ca8b9dc90",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T03:05:23.326Z"
+      "persisted_at": "2026-11-25T03:28:36.288Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -237115,8 +237115,8 @@
       "slug": "google-tcmalloc",
       "platform": "github",
       "source_url": "https://github.com/google/tcmalloc",
-      "source_version": "fc4555d2",
-      "content_hash": "309ffba8d1eb70bb340df232316d64517f8f17ee85662fcb695eb8022c286b1d",
+      "source_version": "afcf25e3",
+      "content_hash": "0f985a2e8af37fd26217f8125cfcc286b9c30f65784047b8a57361dfaa87359e",
       "dossier_path": "07_PROJECT_LEARNING/google-tcmalloc-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/google-tcmalloc-learnings.md",
       "promoted_rules": [
@@ -237154,6 +237154,11 @@
           "number": 10159,
           "title": "Enable 2-line write prefetch in TCMalloc per-CPU slab Pop.",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10443,
+          "title": "Drop unused fields from SubreleaseStatsEntry.",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -237161,7 +237166,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T00:57:15.784Z",
+      "verified_at": "2026-11-25T03:28:22.829Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -237203,10 +237208,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-google-tcmalloc-technical-construction-intelligence-google-tcmalloc-core-invaria.md",
       "title": "Technical Construction Intelligence: google/tcmalloc Core Invariants",
       "repository": "google/tcmalloc",
-      "source_version": "fc4555d2",
-      "content_hash": "99ff0bbd377671c63dcaff3624d580153652454e65d0062ba6dceb9c6996e554",
+      "source_version": "afcf25e3",
+      "content_hash": "cfd8f8be347f0bb32bc0e6d38f2d761a01757cff3817ca1a8e7dbc1d864391b2",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T00:57:16.462Z"
+      "persisted_at": "2026-11-25T03:28:23.689Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-google-tcmalloc": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-google-tcmalloc",
@@ -237215,10 +237220,10 @@
       "relative_path": "08_VERIFICATION/google-tcmalloc-verification-protocol-empirical-defect-shield-for-google-tcmallo.md",
       "title": "Verification Protocol: Empirical Defect Shield for google/tcmalloc",
       "repository": "google/tcmalloc",
-      "source_version": "fc4555d2",
-      "content_hash": "2d7bb0449ddc0f4baffafbd70941e9285e9bc167a37127aa2de9feddc86a2cbf",
+      "source_version": "afcf25e3",
+      "content_hash": "9a6469aed1d7c346b1618bf47086cf7a008fb6f7be069943d569ec3bc2571d6c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T00:57:16.658Z"
+      "persisted_at": "2026-11-25T03:28:23.916Z"
     },
     "learn-github-open-ani-animeko": {
       "learning_id": "learn-github-open-ani-animeko",
@@ -237338,9 +237343,9 @@
       "title": "Technical Construction Intelligence: google-tcmalloc-learnings Core Invariants",
       "repository": "google-tcmalloc-learnings",
       "source_version": "HEAD",
-      "content_hash": "0a35db3a7f8808fb262928fc46e63703dddd7e497592b86092b808e1929154cc",
+      "content_hash": "81345e5bf69d44e9a76efa1f2aa3ede59c472669872f5119bfb7d426f953e1a9",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T00:57:32.233Z"
+      "persisted_at": "2026-11-25T03:28:32.846Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-google-tcmalloc-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-google-tcmalloc-learnings",
@@ -237350,9 +237355,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for google-tcmalloc-learnings",
       "repository": "google-tcmalloc-learnings",
       "source_version": "HEAD",
-      "content_hash": "6249a6dc7bf4485ab8a635ae22664dd25236e2076914f61ed3dc2fdae89781fe",
+      "content_hash": "33b0f42de0e5ac6e07fc526765fc1eba4708c5957626916578f25f34c7f992a1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T00:57:32.422Z"
+      "persisted_at": "2026-11-25T03:28:33.082Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-liquidai-d1-3b-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-liquidai-d1-3b-learnings-core-invariants",
@@ -247266,8 +247271,8 @@
       "slug": "simonschubert-linuxcommandlibrary",
       "platform": "github",
       "source_url": "https://github.com/SimonSchubert/LinuxCommandLibrary",
-      "source_version": "36cdd4ea",
-      "content_hash": "5a359432599e69be33ca1c54bf3008630c63c5b81bc360e730461f4818f4ac39",
+      "source_version": "6bf6a477",
+      "content_hash": "642c4e87b85420fab5cc699bed2df695d14d61597300d94ca48121118461e237",
       "dossier_path": "07_PROJECT_LEARNING/simonschubert-linuxcommandlibrary-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/simonschubert-linuxcommandlibrary-learnings.md",
       "promoted_rules": [
@@ -247295,6 +247300,11 @@
           "number": 9958,
           "title": "clock-rs config example",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10444,
+          "title": "Add commands",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -247302,7 +247312,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T16:57:29.070Z",
+      "verified_at": "2026-11-25T03:28:28.029Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -247421,9 +247431,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for simonschubert-linuxcommandlibrary-learnings",
       "repository": "simonschubert-linuxcommandlibrary-learnings",
       "source_version": "HEAD",
-      "content_hash": "769639d01a75e859d5b81dbe652f8527ce6f5249d7e3c49f5d983c16143ccc79",
+      "content_hash": "7a909dc76f2657bbbaf5836e1406df1fb0a775e2f2ee6ebae571e6d76e10211f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T16:57:45.468Z"
+      "persisted_at": "2026-11-25T03:28:34.753Z"
     },
     "candidate_directive-server-add-mcp-tools-to-explore-pulse-metrics-logs-and-traces": {
       "item_id": "candidate_directive-server-add-mcp-tools-to-explore-pulse-metrics-logs-and-traces",
@@ -299925,10 +299935,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-simonschubert-linuxcommandlibrary-technical-construction-intelligence-simonschub.md",
       "title": "Technical Construction Intelligence: SimonSchubert/LinuxCommandLibrary Core Invariants",
       "repository": "SimonSchubert/LinuxCommandLibrary",
-      "source_version": "36cdd4ea",
-      "content_hash": "fba7f6cfc7b4e6a47b28eb9d2723c3f02839272fc5cbcee25f5bb082763fa0c9",
+      "source_version": "6bf6a477",
+      "content_hash": "c394e3645c082187b568d3f15c8dab3bb445d0b3f20ba93468d73062662d799f",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T16:57:29.760Z"
+      "persisted_at": "2026-11-25T03:28:28.888Z"
     },
     "agent_contract-agent-contract-simonschubert-linuxcommandlibrary-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-simonschubert-linuxcommandlibrary-autonomous-specialist-persona",
@@ -300002,9 +300012,9 @@
       "title": "Technical Construction Intelligence: simonschubert-linuxcommandlibrary-learnings Core Invariants",
       "repository": "simonschubert-linuxcommandlibrary-learnings",
       "source_version": "HEAD",
-      "content_hash": "271e76947febf890dc2f5e45846264594b6026bb61fbed1caca47214380d0eac",
+      "content_hash": "9f417bf9eb1ef233a3fd9689ab3710dd09745f664cc11af7ce74210c95699069",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T16:57:45.288Z"
+      "persisted_at": "2026-11-25T03:28:34.526Z"
     },
     "agent_contract-agent-contract-simonschubert-linuxcommandlibrary-learnings-autonomous-specialist": {
       "item_id": "agent_contract-agent-contract-simonschubert-linuxcommandlibrary-learnings-autonomous-specialist",
@@ -342048,13 +342058,13 @@
       "item_id": "candidate_directive-rust-bind-bare-calls-to-the-enclosing-module-s-items",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-JKYP-rust-bind-bare-calls-to-the-enclosing-module-s-items.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-DFSL-rust-bind-bare-calls-to-the-enclosing-module-s-items.md",
       "title": "rust): bind bare calls to the enclosing module's items",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "42ff386f29ce9a9daf7823a2050653f326ecf526fae95720852716654fe878a3",
+      "content_hash": "0463f0f814c15d5fa5fd4a54d6b49d1034e0cf1c66d3bb1c4fa8c442dec07dc3",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T03:05:22.663Z"
+      "persisted_at": "2026-11-25T03:28:35.641Z"
     },
     "domain_intelligence-content-information-intelligence-rollup-rollup-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-rollup-rollup-learnings-core-invariants",
@@ -344453,6 +344463,58 @@
       "content_hash": "531d83ddf21fd1bb77e1cfebb0882912467d590f2f8865052cc4294eeaf67d20",
       "domain_letter": "F",
       "persisted_at": "2026-11-25T03:13:40.394Z"
+    },
+    "rule-10443": {
+      "learning_id": "rule-10443",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10443,
+      "title": "Drop unused fields from SubreleaseStatsEntry.",
+      "source_url": "https://github.com/google/tcmalloc",
+      "source_version": "afcf25e3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T03:28:22.829Z"
+    },
+    "candidate_directive-drop-unused-fields-from-subreleasestatsentry": {
+      "item_id": "candidate_directive-drop-unused-fields-from-subreleasestatsentry",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-DDGI-drop-unused-fields-from-subreleasestatsentry.md",
+      "title": "Drop unused fields from SubreleaseStatsEntry.",
+      "repository": "google-tcmalloc-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b8fb79bfdebd8193555202666010694db7e23e6dfe9ac61f65343899e59ee1ad",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-25T03:28:32.614Z"
+    },
+    "rule-10444": {
+      "learning_id": "rule-10444",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10444,
+      "title": "Add commands",
+      "source_url": "https://github.com/SimonSchubert/LinuxCommandLibrary",
+      "source_version": "6bf6a477",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T03:28:28.029Z"
+    },
+    "candidate_directive-add-commands": {
+      "item_id": "candidate_directive-add-commands",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-DERB-add-commands.md",
+      "title": "Add commands",
+      "repository": "simonschubert-linuxcommandlibrary-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ec85516505adea567a76b8436860268215e917b0d74aa4cd439a8b9714b4e9b4",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-25T03:28:34.295Z"
     }
   },
   "ai-builder-brain": {

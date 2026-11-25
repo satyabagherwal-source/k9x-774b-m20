@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261123-95RM",
-    "timestamp": "2026-11-23T16:53:44.434Z",
-    "repository": "sqlpage/SQLPage",
-    "learningId": "learn-github-sqlpage-sqlpage",
-    "contentHash": "c7cbc84c25050e2e33c89c926c0af882fcaac9825590cb2081d1765bf0ad6539",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-LMGS",
-    "timestamp": "2026-11-23T17:03:25.948Z",
-    "repository": "lilylilith/QI_2.1_AnyAngle",
-    "learningId": "learn-huggingface-lilylilith-qi_2-1_anyangle",
-    "contentHash": "4fd6e2565477d3a503ae63c6d4fee0b9eacab1e6d531d8aa9a8b706e63e65d9c",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261123-LONR",
     "timestamp": "2026-11-23T17:03:28.791Z",
     "repository": "kubearmor/KubeArmor",
@@ -7490,6 +7460,36 @@
     "repository": "mrkai77/Loop",
     "learningId": "learn-github-mrkai77-loop",
     "contentHash": "22e7845db77118bd3ada678bb2ddd7d72e6c8a7e28b948391e143327d8f7e688",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-D64I",
+    "timestamp": "2026-11-25T03:28:23.106Z",
+    "repository": "google/tcmalloc",
+    "learningId": "learn-github-google-tcmalloc",
+    "contentHash": "0f985a2e8af37fd26217f8125cfcc286b9c30f65784047b8a57361dfaa87359e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-DA55",
+    "timestamp": "2026-11-25T03:28:28.313Z",
+    "repository": "SimonSchubert/LinuxCommandLibrary",
+    "learningId": "learn-github-simonschubert-linuxcommandlibrary",
+    "contentHash": "642c4e87b85420fab5cc699bed2df695d14d61597300d94ca48121118461e237",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

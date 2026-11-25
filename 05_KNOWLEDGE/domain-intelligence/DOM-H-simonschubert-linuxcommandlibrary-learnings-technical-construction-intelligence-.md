@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-22T16:57:44.992Z",
+  "timestamp": "2026-11-25T03:28:34.117Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-simonschubert-linuxcommandlibrary-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [simonschubert-linuxcommandlibrary-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-22T16:57:44.992Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T03:28:34.117Z`  
 > **Learning ID**: `LEARN-EVO-simonschubert-linuxcommandlibrary-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), L (Deployment & Operations Intelligence), B (Product Intelligence)
-- **Confidence Rating**: 68%
+- **Secondary Corroborating Domains**: I (Content & Information Intelligence), G (Architecture Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), B (Product Intelligence)
+- **Confidence Rating**: 66%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from simonschubert-linuxcommandlibrary-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/simonschubert-linuxcommandlibrary-learnings.md`  
 > **Source**: github ([https://github.com/SimonSchubert/LinuxCommandLibrary](https://github.com/SimonSchubert/LinuxCommandLibrary))  
-> **Source Version**: `36cdd4ea`  
+> **Source Version**: `6bf6a477`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T16:57:28.106Z  
+> **Timestamp**: 2026-11-25T03:28:26.833Z  
 > **Learning ID**: `learn-github-simonschubert-linuxcommandlibrary`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/simonschubert-linuxcommandlibrary-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/SimonSchubert/LinuxCommandLibrary](https://github.com/SimonSchubert/LinuxCommandLibrary))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T16:57:28.101Z  
+> **Harvest Timestamp**: 2026-11-25T03:28:26.825Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: 2M+ app downloads, 500k+ monthly website visitors, Linux basics, tips and formatted man pages
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2127 stars
+- **Stars / Engagement**: 2130 stars
 
 ---
 
@@ -882,56 +882,502 @@ private fun showCommandNonInteractive(terminal: Terminal, commandName: String) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `36cdd4ea` (2026-11-21)
-**Commit Message**: Fix clock-rs config example
+### Incident Patch 1: `6bf6a477` (2026-11-23)
+**Commit Message**: Add commands
 
-**File**: `assets/commands/clock-rs.md` (modified, +9/-20)
+**File**: `assets/commands/index.txt` (modified, +5/-0)
 ```diff
-@@ -89,35 +89,24 @@ A command-line flag overrides the same setting in the configuration file.
- 
- # CONFIGURATION
- 
--The file is TOML. On Linux it is **~/.config/clock-rs/conf.toml**. Another path, or **None** to ignore the file, is the environment variable in this assignment:
-+The file is TOML. On Linux it is **~/.config/clock-rs/conf.toml**. Point the variable **CONF PATH** (one underscore between the words) at another file, or set it to **None** to ignore the file on disk:
- 
- ```
- CONF_PATH=None
- ```
- 
--```
--[general]
--color = "magenta"
--interval = 250
--blink = true
--bold = true
--
--[position]
--horizontal = "center"
--vertical = "center"
--
--[date]
--fmt = "%A, %B %d, %Y"
--use_12h = true
--utc = true
--hide_seconds = true
--```
-+**[general]**
-+> **color** (default white), **interval** in milliseconds (default 200), **blink** (default false), **bold** (default false). These match **--color**, **--interval**, **--blink**, and **--bold**.
+@@ -8345,6 +8345,7 @@ tlmgr-dump-tlpdb.md
+ tlmgr-generate.md
+ tlmgr-gui.md
+ tlmgr-info.md
++tlmgr-init-usertree.md
+ tlmgr-install.md
+ tlmgr-key.md
+ tlmgr-option.md
+@@ -8594,11 +8595,14 @@ ufw-delete.md
+ ufw-deny.md
+ ufw-disable.md
+ ufw-enable.md
++ufw-insert.md
+ ufw-limit.md
+ ufw-logging.md
++ufw-prepend.md
+ ufw-reject.md
+ ufw-reload.md
+ ufw-reset.md
++ufw-route.md
+ ufw-show.md
+ ufw-status.md
+ ufw-version.md
+@@ -9393,6 +9397,7 @@ zcomplete.md
+ zdb.md
+ zdiff.md
+ zdump.md
++zean.md
+ zebra.md
+ zed.md
+ zeditor.md
+```
+
+**File**: `assets/commands/tlmgr-init-usertree.md` (added, +67/-0)
+```diff
+@@ -0,0 +1,67 @@
++# TAGLINE
 +
-+**[position]**
-+> **horizontal** and **vertical**, each **start**, **center**, or **end**. Default **center**. These match **--x-pos** and **--y-pos**.
++Create a user TeX Live tree for tlmgr user mode
++
++# TLDR
++
++Initialize the default user tree (**TEXMFHOME**)
++
++```tlmgr init-usertree```
++
++Initialize a tree in a **chosen directory**
++
++```tlmgr init-usertree --usertree [path/to/texmf]```
++
++After setup, **install** into that tree
++
++```tlmgr --usermode install [package]```
++
++Use a **non-default** tree for one command
++
++```tlmgr --usermode --usertree [path/to/texmf] install [package]```
++
++# SYNOPSIS
++
++**tlmgr** [**--usertree** _dir_] **init-usertree**
++
++# PARAMETERS
++
++**init-usertree**
++> Create the directories and the minimal package database a user tree needs
++
++**--usertree** _dir_
++> Use _dir_ instead of the default user tree (**TEXMFHOME**)
++
++# DESCRIPTION
++
++**tlmgr init-usertree** prepares a texmf tree for TeX Live user mode. It is a **tlmgr** action, not a separate binary.
++
++User mode lets someone without write access to the system TeX Live installation install and update packages in a tree of their own. The action creates `web2c` and `tlpkg/tlpobj` under the user tree, plus a minimal `tlpkg/texlive.tlpdb`. The default location is the directory named by **TEXMFHOME**. **--usertree** selects another directory.
++
++Initialization does not turn user mode on. Later package commands must pass **--usermode** every time. No configuration-file setting enables it. With a non-default tree, pass **--usertree** on those commands as well.
++
++The user tree's `texlive.tlpdb` lists only packages that **tlmgr** installed there, plus options from the virtual package `00texlive.installation`. Only relocatable packages can be installed in user mode. Packages that ship executables, and a few core packages, are not relocatable. Most of the TeX Live catalogue is relocatable.
++
++# CAVEATS
++
++Run **init-usertree** before **--usermode** package actions. **tlmgr** warns and refuses actions that user mode does not support. **platform** is not supported. **gui** is not supported in current releases.
++
++Actions that do not need write permission behave as in normal mode. Those include **check**, **help**, **list**, **search**, **show**, and **version**.
++
++In user mode, installing a collection installs its dependent packages but not dependent collections. A package that ships map files rewrites `updmap.cfg` under the user tree's `web2c` directory and keeps a backup of the previous file.
++
++User-mode logs are written under **TEXMFVAR** `/web2c/` rather than the system variable tree.
++
++# SEE ALSO
++
++[tlmgr](/man/tlmgr)(1), [tlmgr-install](/man/tlmgr-install)(1), [tlmgr-update](/man/tlmgr-update)(1), [tlmgr-remove](/man/tlmgr-remove)(1), [tlmgr-option](/man/tlmgr-option)(1), [tex](/man/tex)(1)
++
++# RESOURCES
++
++```[Homepage](https://www.tug.org/texlive/)```
++
++```[Documentation](https://www.tug.org/texlive/doc/tlmgr.html)```
++
++```[Source code](https://www.tug.org/texlive/svn/)```
++
++<!-- verified: 2026-11-23 -->
+```
+
+**File**: `assets/commands/tlmgr.md` (modified, +1/-1)
+```diff
+@@ -160,7 +160,7 @@ Requires TeX Live (not distro packages). Some distributions manage separately. N
  
--**general.color**, **general.interval**, **general.blink**, and **general.bold** match the display flags. **position.horizontal** and **position.vertical** match **--x-pos** and **--y-pos**. The four **date** keys in the example match **--fmt**, **-t**, **--utc**, and **--hide-seconds**, in that order.
-+**[date]**
-+> **fmt** is a chrono strftime pattern (default **%d-%m-%Y**) and matches **--fmt**. **utc** matches **--utc**. The 12-hour key and the hide-seconds key match **-t** and **--hide-seconds**. Each of those two keys is two words joined by an underscore: use and 12h, hide and seconds.
+ # SEE ALSO
  
- # CAVEATS
+-[latex](/man/latex)(1), [pdflatex](/man/pdflatex)(1), [texdoc](/man/texdoc)(1), [install-tl](/man/install-tl)(1)
++[latex](/man/latex)(1), [pdflatex](/man/pdflatex)(1), [texdoc](/man/texdoc)(1), [install-tl](/man/install-tl)(1), [tlmgr-init-usertree](/man/tlmgr-init-usertree)(1)
  
--**-t** is only a short flag. The matching configuration key is the 12-hour key under **date** in the example above.
-+**-t** is only a short flag. The matching configuration key is the 12-hour key under **date**.
+ # RESOURCES
  
- # INSTALL
+```
+
+**File**: `assets/commands/ufw-delete.md` (modified, +1/-1)
+```diff
+@@ -87,7 +87,7 @@ Part of **ufw** (Uncomplicated Firewall), the Ubuntu-originated frontend for ipt
  
+ # SEE ALSO
+ 
+-[ufw](/man/ufw)(8), [ufw-status](/man/ufw-status)(8), [ufw-allow](/man/ufw-allow)(8), [ufw-deny](/man/ufw-deny)(8), [ufw-default](/man/ufw-default)(8), [iptables](/man/iptables)(8)
++[ufw](/man/ufw)(8), [ufw-status](/man/ufw-status)(8), [ufw-allow](/man/ufw-allow)(8), [ufw-deny](/man/ufw-deny)(8), [ufw-default](/man/ufw-default)(8), [ufw-insert](/man/ufw-insert)(8), [ufw-prepend](/man/ufw-prepend)(8), [ufw-route](/man/ufw-route)(8), [iptables](/man/iptables)(8)
+ 
+ # RESOURCES
+ 
+```
+
+**File**: `assets/commands/ufw-insert.md` (added, +94/-0)
+```diff
+@@ -0,0 +1,94 @@
++# TAGLINE
++
++Insert an Uncomplicated Firewall rule at a numbered position
++
++# TLDR
++
++List rules with **numbers**
++
++```sudo ufw status numbered```
++
++**Insert** a deny rule as rule number 1
++
++```sudo ufw insert 1 deny from [source_address]```
++
++Insert an **allow** for a port and protocol at a chosen position
++
++```sudo ufw insert [3] allow [22]/tcp```
++
++Insert a **full-syntax** rule at a position
++
++```sudo ufw insert 3 deny to any port 22 from 10.0.0.135 proto tcp```
++
++Insert a **rate limit** rule
++
++```sudo ufw insert [2] limit [22]/tcp```
++
++**Preview** an insertion without applying it
++
++```sudo ufw --dry-run insert [3] deny from [source_address]```
++
++# SYNOPSIS
++
++**ufw** [_--dry-run_] **insert** _NUM_ **allow**|**deny**|**reject**|**limit** [_rule_]
++
++**ufw** [_--dry-run_] **route insert** _NUM_ **allow**|**deny**|**reject**|**limit** [_rule_]
++
++# PARAMETERS
++
++**insert** _NUM_
++> Place the new user rule at that 1-based position. Later rules shift down. Read positions from `ufw status numbered`
++
++**route insert** _NUM_
++> Same positioning for a forwarded rule. See **ufw route**
++
++**allow** / **deny** / **reject** / **limit**
++> Action of the inserted rule. The rest of the line is normal ufw rule syntax: a port, an application profile, or the full **from** / **to** / **port** / **proto** / **on** form
++
++**comment** '_text_'
++> Attach a comment to the new rule. **insert** cannot change the comment on a rule that already exists
++
++**--dry-run**
++> Show what would change without applying it
++
++# DESCRIPTION
++
++**ufw insert** adds an Uncomplicated Firewall rule at a specific position instead of appending it. It is a **ufw** subcommand, not a separate binary.
++
++The first matching rule wins, so position is the point of the command. With four rules already loaded, `ufw insert 3 deny to any port 22 from 10.0.0.135 proto tcp` makes the new rule number 3 and shifts the previous third and fourth rules down.
++
++**prepend** is the form that does not take a number: it places the rule ahead of every existing rule of the same IP version. **route insert** uses the same numbering for traffic forwarded through the host.
++
++# CAVEATS
++
++Requires root or sudo. Check `ufw status numbered` immediately before inserting. Deletes and earlier inserts renumber the list. Inserting a rule that blocks the current SSH session can lock you out. Prefer **--dry-run** on a remote host.
++
++When IPv6 is enabled, a generic rule such as `ufw allow 22/tcp` creates paired IPv4 and IPv6 entries. **insert** adds a rule; it does not rewrite rules already in the list.
++
++# HISTORY
++
++Part of **ufw** (Uncomplicated Firewall), the Ubuntu-originated frontend for iptables and nftables.
++
++# INSTALL
++
++```dnf: sudo dnf install ufw```
++
++```pacman: sudo pacman -S ufw```
++
++```apk: sudo apk add ufw```
++
++```zypper: sudo zypper install ufw```
++
++<!-- packages: 2026-11-23 -->
++
++# SEE ALSO
++
++[ufw](/man/ufw)(8), [ufw-prepend](/man/ufw-prepend)(8), [ufw-delete](/man/ufw-delete)(8), [ufw-status](/man/ufw-status)(8), [ufw-allow](/man/ufw-allow)(8), [ufw-route](/man/ufw-route)(8), [iptables](/man/iptables)(8)
++
++# RESOURCES
++
++```[Source code](https://git.launchpad.net/ufw)```
++
++```[Documentation](https://manpages.ubuntu.com/manpages/man8/ufw.8.html)```
++
++<!-- verified: 2026-11-23 -->
+```
+
+**File**: `assets/commands/ufw-prepend.md` (added, +94/-0)
+```diff
+@@ -0,0 +1,94 @@
++# TAGLINE
++
++Add an Uncomplicated Firewall rule ahead of existing rules
++
++# TLDR
++
++**Deny** a source address ahead of the current rules
++
++```sudo ufw prepend deny from [source_address]```
++
++Prepend a deny for a **subnet**
++
++```sudo ufw prepend deny from 192.168.0.0/24```
++
++**Reject** traffic from a source to one port
++
++```sudo ufw prepend reject from [source_address] to any port [25]```
++
++Prepend an **allow** for a port and protocol
++
++```sudo ufw prepend allow [22]/tcp```
++
++Prepend a **routed** rule
++
++```sudo ufw route prepend deny to [destination_address]```
++
++**Preview** a prepend without applying it
++
++```sudo ufw --dry-run prepend deny from [source_address]```
++
++# SYNOPSIS
++
++**ufw** [_--dry-run_] **prepend** **allow**|**deny**|**reject**|**limit** [_rule_]
++
++**ufw** [_--dry-run_] **route prepend** **allow**|**deny**|**reject**|**limit** [_rule_]
++
++# PARAMETERS
++
++**prepend**
++> Insert the rule before every existing user rule of the same IP version. No rule number is required
++
++**route prepend**
++> Same placement for a forwarded rule
++
++**allow** / **deny** / **reject** / **limit**
++> Action of the new rule. The rest of the line is normal ufw rule syntax
++
++**comment** '_text_'
++> Attach a comment to the new rule. **prepend** cannot change the comment on a rule that already exists
++
++**--dry-run**
++> Show what would change without applying it
++
++# DESCRIPTION
++
++**ufw prepend** adds a rule at the front of the matching ruleset. It is a **ufw** subcommand, not a separate binary.
++
++Unlike **ufw insert**, prepend does not take a position. An IPv4 rule is placed before every other IPv4 rule. An IPv6 rule is placed before every other IPv6 rule. That is the form used by dynamic firewalls and intrusion-prevention hooks, which must push a block ahead of rules already loaded without looking up a number.
++
++The rule body is the same syntax as **ufw allow**, **ufw deny**, **ufw reject**, and **ufw limit**, including the full **from** / **to** / **port** / **proto** form. **ufw route prepend** targets traffic forwarded through the host rather than traffic destined to it.
++
++# CAVEATS
++
++Requires root or sudo. A broad prepended allow can shadow a later, more specific deny, because the first match wins. A prepended deny of the current SSH source can lock you out. Prefer **--dry-run**.
++
++IPv4 and IPv6 lists are ordered separately, so the new rule is not always number 1 in the combined `ufw status numbered` listing.
++
++# HISTORY
++
++Part of **ufw** (Uncomplicated Firewall), the Ubuntu-originated frontend for iptables and nftables.
++
++# INSTALL
++
++```dnf: sudo dnf install ufw```
++
++```pacman: sudo pacman -S ufw```
++
++```apk: sudo apk add ufw```
++
++```zypper: sudo zypper install ufw```
++
++<!-- packages: 2026-11-23 -->
++
++# SEE ALSO
++
++[ufw](/man/ufw)(8), [ufw-insert](/man/ufw-insert)(8), [ufw-delete](/man/ufw-delete)(8), [ufw-status](/man/ufw-status)(8), [ufw-allow](/man/ufw-allow)(8), [ufw-deny](/man/ufw-deny)(8), [ufw-route](/man/ufw-route)(8)
++
++# RESOURCES
++
++```[Source code](https://git.launchpad.net/ufw)```
++
++```[Documentation](https://manpages.ubuntu.com/manpages/man8/ufw.8.html)```
++
++<!-- verified: 2026-11-23 -->
+```
+
+**File**: `assets/commands/ufw-route.md` (added, +118/-0)
+```diff
+@@ -0,0 +1,118 @@
++# TAGLINE
++
++Manage Uncomplicated Firewall rules for forwarded traffic
++
++# TLDR
++
++**Allow** traffic forwarded from one interface to another
++
++```sudo ufw route allow in on eth0 out on eth1```
++
++Allow a **subnet** to reach a host on one port and protocol
++
++```sudo ufw route allow from 10.0.0.0/24 to [destination_address] port [80] proto tcp```
++
++**Deny** forwarded traffic to an address
++
++```sudo ufw route deny to [destination_address]```
++
++**Reject** forwarded traffic leaving an interface
++
++```sudo ufw route reject out on [eth1]```
++
++**Insert** a route rule at a numbered position
++
++```sudo ufw route insert [1] deny from [source_address]```
++
++**Delete** a route rule by repeating it
++
++```sudo ufw route delete deny to 192.168.0.12```
++
++**Preview** a route rule without applying it
++
++```sudo ufw --dry-run route allow in on eth0 out on eth1```
++
++# SYNOPSIS
++
++**ufw** [_--dry-run_] **route** [**delete**] [**insert** _NUM_] [**prepend**] **allow**|**deny**|**reject**|**limit** [_rule_]
++
++# PARAMETERS
++
++**route**
++> Match traffic forwarded through this host, not traffic destined to the host
++
++**allow** / **deny** / **reject** / **limit**
++> Action for matching forwarded packets
++
++**in on** _interface_
++> Interface the forwarded packet arrives on
++
++**out on** _interface_
++> Interface the forwarded packet leaves on
++
++**from** _address_ / **to** _address_
++> Source and destination. **to** is often a host behind the firewall, not this machine
++
++**port** _port_ / **proto** _protocol_
++> Destination port and protocol, as in other ufw rules. An application profile uses **app** in place of **port**
++
++**insert** _NUM_
++> Place the route rule at that 1-based position
++
++**prepend**
++> Place the route rule ahead of other route rules of the same IP version
++
++**delete**
++> Remove the route rule given in the rest of the command. Numbered removal is `ufw delete NUM` after `ufw status numbered`
++
++**comment** '_text_'
++> Attach a comment to the rule
++
++**--dry-run**
++> Show what would change without applying it
++
++# DESCRIPTION
++
++**ufw route** manages rules for packets routed through the host. It is a **ufw** subcommand, not a separate binary.
++
++Ordinary **allow** and **deny** rules apply when this machine is an endpoint. A route rule applies when the packet should leave toward another host. `ufw route allow in on eth0 out on eth1 to 12.34.45.67 port 80 proto tcp` accepts packets that arrive on eth0 and are forwarded out eth1 to TCP port 80 on that address.
++
++In `ufw status`, forwarded rules are marked **ALLOW FWD** (or the matching deny, reject, or limit action). Input and output rules print the interface relative to this host as an endpoint. Route rules print it relative to the direction packets flow through the firewall.
++
++The default policy for routed traffic is deny. A route rule does not turn forwarding on. Enable IPv4 forwarding and IPv6 forwarding for `default` and `all` in `/etc/ufw/sysctl.conf`, then run `ufw disable` and `ufw enable` so ufw reloads those settings. Another sysctl configuration can override that file. See **sysctl**.
++
++# CAVEATS
++
++Requires root or sudo. Turning on forwarding makes the host a router. Keep the default routed policy at deny unless every forwarded flow is intentional.
++
++Route syntax is not OpenBSD PF syntax. Interfaces are written **in on** and **out on**, matching netfilter's FORWARD chain.
++
++Deleting by number removes one numbered row. When IPv6 is enabled, prefixing the original rule with **route delete** is the form that drops the rule as specified rather than a single numbered row.
++
++# HISTORY
++
++Part of **ufw** (Uncomplicated Firewall), the Ubuntu-originated frontend for iptables and nftables.
++
++# INSTALL
++
++```dnf: sudo dnf install ufw```
++
++```pacman: sudo pacman -S ufw```
++
++```apk: sudo apk add ufw```
++
++```zypper: sudo zypper install ufw```
++
++<!-- packages: 2026-11-23 -->
++
++# SEE ALSO
++
++[ufw](/man/ufw)(8), [ufw-allow](/man/ufw-allow)(8), [ufw-default](/man/ufw-default)(8), [ufw-delete](/man/ufw-delete)(8), [ufw-insert](/man/ufw-insert)(8), [ufw-prepend](/man/ufw-prepend)(8), [sysctl](/man/sysctl)(8), [iptables](/man/iptables)(8)
++
++# RESOURCES
++
++```[Source code](https://git.launchpad.net/ufw)```
++
++```[Documentation](https://manpages.ubuntu.com/manpages/man8/ufw.8.html)```
++
++<!-- verified: 2026-11-23 -->
+```
+
+**File**: `assets/commands/ufw.md` (modified, +1/-1)
+```diff
+@@ -203,4 +203,4 @@ Default policies are deny incoming, allow outgoing, deny forwarding. Enabling uf
+ 
+ # SEE ALSO
+ 
+-[iptables](/man/iptables)(8), [ip6tables](/man/ip6tables)(8), [nft](/man/nft)(8), [firewall-cmd](/man/firewall-cmd)(1)
++[iptables](/man/iptables)(8), [ip6tables](/man/ip6tables)(8), [nft](/man/nft)(8), [firewall-cmd](/man/firewall-cmd)(1), [ufw-insert](/man/ufw-insert)(8), [ufw-prepend](/man/ufw-prepend)(8), [ufw-route](/man/ufw-route)(8)
+```
+
+---
+
+### Incident Patch 2: `ce6510ce` (2026-11-23)
+**Commit Message**: Upgrade dependencies
+
+**File**: `android/build.gradle.kts` (modified, +2/-0)
+```diff
+@@ -36,6 +36,8 @@ android {
+         libs.versions.android.compileSdk
+             .get()
+             .toInt()
++    // Compose 1.13 (BOM 2026.11.01) AARs require compile SDK 37.1.
++    compileSdkMinor = 1
+     defaultConfig {
+         applicationId = "com.inspiredandroid.linuxcommandbibliotheca"
+         minSdk =
+```
+
+**File**: `gradle/libs.versions.toml` (modified, +1/-1)
+```diff
+@@ -9,7 +9,7 @@ kotlin = "2.4.21"
+ composeMultiplatform = "1.12.2"
+ composeMaterial3 = "1.9.0"
+ composeMaterial3Adaptive = "1.3.0"
+-composeBom = "2026.09.00"
++composeBom = "2026.11.01"
+ activityCompose = "1.13.0"
+ json = "20260814"
+ koinCore = "4.2.2"
 ```
 
 #### Recent Merged Pull Requests:
@@ -960,58 +1406,35 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. clock-rs config example
+## X. Add commands
 
 **RULE**:
-When implementing operations in `assets/commands/clock-rs.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in SimonSchubert/LinuxCommandLibrary. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `assets/commands/index.txt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in SimonSchubert/LinuxCommandLibrary. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `36cdd4ea`: clock-rs config example. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6bf6a477`: Add commands. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `assets/commands/clock-rs.md`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `assets/commands/index.txt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-The file is TOML. On Linux it is **~/.config/clock-rs/conf.toml**. Point the variable **CONF PATH** (one underscore between the words) at another file, or set it to **None** to ignore the file on disk:
-**[general]**
-> **color** (default white), **interval** in milliseconds (default 200), **blink** (default false), **bold** (default false). These match **--color**, **--interval**, **--blink**, and **--bold**.
-
-**[position]**
-> **horizontal** and **vertical**, each **start**, **center**, or **end**. Default **center**. These match **--x-pos** and **--y-pos**.
-**[date]**
-> **fmt** is a chrono strftime pattern (default **%d-%m-%Y**) and matches **--fmt**. **utc** matches **--utc**. The 12-hour key and the hide-seconds key match **-t** and **--hide-seconds**. Each of those two keys is two words joined by an underscore: use and 12h, hide and seconds.
-**-t** is only a short flag. The matching configuration key is the 12-hour key under **date**.
+tlmgr-init-usertree.md
+ufw-insert.md
+ufw-prepend.md
+ufw-route.md
+zean.md
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Induced defect failure mode:
-The file is TOML. On Linux it is **~/.config/clock-rs/conf.toml**. Another path, or **None** to ignore the file, is the environment variable in this assignment:
-```
-[general]
-color = "magenta"
-interval = 250
-blink = true
-bold = true
-
-[position]
-horizontal = "center"
-vertical = "center"
-
-[date]
-fmt = "%A, %B %d, %Y"
-use_12h = true
-utc = true
-hide_seconds = true
-```
-**general.color**, **general.interval**, **general.blink**, and **general.bold** match the display flags. **position.horizontal** and **position.vertical** match **--x-pos** and **--y-pos**. The four **date** keys in the example match **--fmt**, **-t**, **--utc**, and **--hide-seconds**, in that order.
-**-t** is only a short flag. The matching configuration key is the 12-hour key under **date** in the example above.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `36cdd4ea` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6bf6a477` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T03:13:41.877Z",
+  "last_updated": "2026-11-25T03:28:36.474Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-25T03:13:40.937Z",
@@ -8,7 +8,7 @@
       "staged_for_review": 1
     },
     "zvec-ai-zvec-grep-learnings.md": {
-      "processed_at": "2026-11-25T03:05:22.027Z",
+      "processed_at": "2026-11-25T03:28:34.990Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -153,7 +153,7 @@
       "staged_for_review": 1
     },
     "google-tcmalloc-learnings.md": {
-      "processed_at": "2026-11-24T00:57:31.632Z",
+      "processed_at": "2026-11-25T03:28:32.046Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -563,7 +563,7 @@
       "staged_for_review": 1
     },
     "simonschubert-linuxcommandlibrary-learnings.md": {
-      "processed_at": "2026-11-22T16:57:44.705Z",
+      "processed_at": "2026-11-25T03:28:33.301Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3903,7 +3903,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 4041,
+  "total_dossiers_evaluated": 4044,
   "total_canonical_promoted": 528,
-  "total_staged_for_review": 3093
+  "total_staged_for_review": 3096
 }

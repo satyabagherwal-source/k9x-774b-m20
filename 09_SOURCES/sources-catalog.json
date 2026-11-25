@@ -7683,10 +7683,10 @@
     "repository": "google/tcmalloc",
     "platform": "github",
     "sourceUrl": "https://github.com/google/tcmalloc",
-    "sourceVersion": "fc4555d2",
+    "sourceVersion": "afcf25e3",
     "license": "Apache-2.0",
-    "contentHash": "309ffba8d1eb70bb340df232316d64517f8f17ee85662fcb695eb8022c286b1d",
-    "lastHarvestedAt": "2026-11-24T00:57:16.023Z",
+    "contentHash": "0f985a2e8af37fd26217f8125cfcc286b9c30f65784047b8a57361dfaa87359e",
+    "lastHarvestedAt": "2026-11-25T03:28:23.111Z",
     "learningId": "learn-github-google-tcmalloc"
   },
   "russhwolf-multiplatform-settings": {
@@ -7773,10 +7773,10 @@
     "repository": "SimonSchubert/LinuxCommandLibrary",
     "platform": "github",
     "sourceUrl": "https://github.com/SimonSchubert/LinuxCommandLibrary",
-    "sourceVersion": "36cdd4ea",
+    "sourceVersion": "6bf6a477",
     "license": "Apache-2.0",
-    "contentHash": "5a359432599e69be33ca1c54bf3008630c63c5b81bc360e730461f4818f4ac39",
-    "lastHarvestedAt": "2026-11-22T16:57:29.345Z",
+    "contentHash": "642c4e87b85420fab5cc699bed2df695d14d61597300d94ca48121118461e237",
+    "lastHarvestedAt": "2026-11-25T03:28:28.317Z",
     "learningId": "learn-github-simonschubert-linuxcommandlibrary"
   },
   "zed-industries-zed": {

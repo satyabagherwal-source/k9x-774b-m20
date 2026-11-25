@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-25T03:13:34.675Z",
+  "last_updated": "2026-11-25T03:28:28.337Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -11571,14 +11571,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-google-tcmalloc",
-      "content_hash": "309ffba8d1eb70bb340df232316d64517f8f17ee85662fcb695eb8022c286b1d",
-      "verified_at": "2026-11-24T00:57:16.031Z",
+      "content_hash": "0f985a2e8af37fd26217f8125cfcc286b9c30f65784047b8a57361dfaa87359e",
+      "verified_at": "2026-11-25T03:28:23.131Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T00:57:16.031Z"
+      "last_updated": "2026-11-25T03:28:23.131Z"
     },
     "russhwolf/multiplatform-settings": {
       "repository": "russhwolf/multiplatform-settings",
@@ -11706,14 +11706,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-simonschubert-linuxcommandlibrary",
-      "content_hash": "5a359432599e69be33ca1c54bf3008630c63c5b81bc360e730461f4818f4ac39",
-      "verified_at": "2026-11-22T16:57:29.353Z",
+      "content_hash": "642c4e87b85420fab5cc699bed2df695d14d61597300d94ca48121118461e237",
+      "verified_at": "2026-11-25T03:28:28.336Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T16:57:29.353Z"
+      "last_updated": "2026-11-25T03:28:28.336Z"
     },
     "zed-industries/zed": {
       "repository": "zed-industries/zed",

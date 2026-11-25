@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-25T03:05:19.719Z",
+  "updated_at": "2026-11-25T03:28:33.979Z",
   "stats": {
-    "total_discovered": 9174,
-    "approved_pending_harvest": 8687,
+    "total_discovered": 9181,
+    "approved_pending_harvest": 8694,
     "harvested_count": 0,
     "rejected_count": 487,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 8682,
+      "COMMUNITY_AND_EXPERT": 8689,
       "OFFICIAL_DOCUMENTATION": 275,
       "STANDARDS_AND_SPECIFICATIONS": 149,
       "ENGINEERING_BLOGS": 7,
@@ -198446,6 +198446,160 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-arrow-learnings.md",
         "fileName": "apache-arrow-learnings.md"
+      }
+    },
+    "SRC-8F2C6719A5BA": {
+      "id": "SRC-8F2C6719A5BA",
+      "url": "https://github.com/google/tcmalloc/pull/1961/checks?check_run_id=138236406616",
+      "title": "https://github.com/google/tcmalloc/pull/1961/checks?check_run_id=138236406616",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T03:28:32.187Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/google-tcmalloc-learnings.md",
+        "fileName": "google-tcmalloc-learnings.md"
+      }
+    },
+    "SRC-42B30DCD9CB8": {
+      "id": "SRC-42B30DCD9CB8",
+      "url": "https://github.com/google/tcmalloc/pull/1960/checks?check_run_id=138223826326",
+      "title": "https://github.com/google/tcmalloc/pull/1960/checks?check_run_id=138223826326",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T03:28:32.269Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/google-tcmalloc-learnings.md",
+        "fileName": "google-tcmalloc-learnings.md"
+      }
+    },
+    "SRC-A998C73BDB5E": {
+      "id": "SRC-A998C73BDB5E",
+      "url": "https://www.tug.org/texlive",
+      "title": "https://www.tug.org/texlive",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T03:28:33.633Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/simonschubert-linuxcommandlibrary-learnings.md",
+        "fileName": "simonschubert-linuxcommandlibrary-learnings.md"
+      }
+    },
+    "SRC-C12DB64FD7A6": {
+      "id": "SRC-C12DB64FD7A6",
+      "url": "https://www.tug.org/texlive/doc/tlmgr.html",
+      "title": "https://www.tug.org/texlive/doc/tlmgr.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T03:28:33.710Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/simonschubert-linuxcommandlibrary-learnings.md",
+        "fileName": "simonschubert-linuxcommandlibrary-learnings.md"
+      }
+    },
+    "SRC-D3B1E140A438": {
+      "id": "SRC-D3B1E140A438",
+      "url": "https://www.tug.org/texlive/svn",
+      "title": "https://www.tug.org/texlive/svn",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T03:28:33.794Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/simonschubert-linuxcommandlibrary-learnings.md",
+        "fileName": "simonschubert-linuxcommandlibrary-learnings.md"
+      }
+    },
+    "SRC-F9BE1C68FA0B": {
+      "id": "SRC-F9BE1C68FA0B",
+      "url": "https://git.launchpad.net/ufw",
+      "title": "https://git.launchpad.net/ufw",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T03:28:33.894Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/simonschubert-linuxcommandlibrary-learnings.md",
+        "fileName": "simonschubert-linuxcommandlibrary-learnings.md"
+      }
+    },
+    "SRC-42DB1286C142": {
+      "id": "SRC-42DB1286C142",
+      "url": "https://manpages.ubuntu.com/manpages/man8/ufw.8.html",
+      "title": "https://manpages.ubuntu.com/manpages/man8/ufw.8.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T03:28:33.979Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/simonschubert-linuxcommandlibrary-learnings.md",
+        "fileName": "simonschubert-linuxcommandlibrary-learnings.md"
       }
     }
   }

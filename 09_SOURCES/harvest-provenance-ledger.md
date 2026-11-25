@@ -12955,3 +12955,5 @@ Every entry in this ledger must capture:
 | `learn-github-apache-arrow` | `https://github.com/apache/arrow` | `fcd7046f` | Multi-dimensional audit evidence | 2026-11-25T03:05:09.250Z |
 | `learn-github-meta-folly` | `https://github.com/facebook/folly` | `f0ccd5a6` | Multi-dimensional audit evidence | 2026-11-25T03:13:32.342Z |
 | `learn-github-mrkai77-loop` | `https://github.com/mrkai77/Loop` | `ad8564ac` | Multi-dimensional audit evidence | 2026-11-25T03:13:34.659Z |
+| `learn-github-google-tcmalloc` | `https://github.com/google/tcmalloc` | `afcf25e3` | Multi-dimensional audit evidence | 2026-11-25T03:28:23.111Z |
+| `learn-github-simonschubert-linuxcommandlibrary` | `https://github.com/SimonSchubert/LinuxCommandLibrary` | `6bf6a477` | Multi-dimensional audit evidence | 2026-11-25T03:28:28.317Z |

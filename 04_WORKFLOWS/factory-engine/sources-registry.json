@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-25T03:13:39.022Z",
-    "lastVerified": "2026-11-25T03:13:39.022Z",
+    "lastChecked": "2026-11-25T03:28:31.864Z",
+    "lastVerified": "2026-11-25T03:28:31.864Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -186,8 +186,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-25T02:47:48.578Z",
-    "lastVerified": "2026-11-25T02:47:48.578Z",
+    "lastChecked": "2026-11-25T03:28:31.347Z",
+    "lastVerified": "2026-11-25T03:28:31.347Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1736,12 +1736,12 @@
     "lastVerified": "2026-11-24T16:28:17.814Z"
   },
   "zama-ai-tfhe-rs": {
-    "name": "zama-ai/tfhe-rs",
+    "name": "tfhe-rs",
     "officialUrl": "https://github.com/zama-ai/tfhe-rs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-24T23:24:53.815Z",
-    "lastVerified": "2026-11-24T23:24:53.815Z",
+    "lastChecked": "2026-11-25T03:28:26.368Z",
+    "lastVerified": "2026-11-25T03:28:26.368Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zama-ai-tfhe-rs",
@@ -1750,7 +1750,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "6f718abc"
   },
   "alibaba-zvec": {
     "name": "alibaba/zvec",
@@ -3964,8 +3965,8 @@
     "officialUrl": "https://github.com/LLPhant/LLPhant",
     "sourceType": "github",
     "technology": "PHP",
-    "lastChecked": "2026-11-24T08:24:37.401Z",
-    "lastVerified": "2026-11-24T08:24:37.401Z",
+    "lastChecked": "2026-11-25T03:28:28.797Z",
+    "lastVerified": "2026-11-25T03:28:28.797Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-llphant-llphant",
@@ -6245,9 +6246,9 @@
   "pytest-dev-pytest-testinfra": {
     "name": "pytest-testinfra",
     "officialUrl": "https://github.com/pytest-dev/pytest-testinfra",
-    "lastChecked": "2026-11-24T09:41:03.884Z",
+    "lastChecked": "2026-11-25T03:28:23.930Z",
     "revisionIdentifier": "04cccc39",
-    "lastVerified": "2026-11-24T09:41:03.884Z"
+    "lastVerified": "2026-11-25T03:28:23.930Z"
   },
   "greptimeteam-greptimedb": {
     "name": "GreptimeTeam/greptimedb",
@@ -8473,14 +8474,14 @@
     "officialUrl": "https://github.com/SimonSchubert/LinuxCommandLibrary",
     "sourceType": "github",
     "technology": "Kotlin",
-    "lastChecked": "2026-11-22T16:57:28.101Z",
-    "lastVerified": "2026-11-22T16:57:28.101Z",
+    "lastChecked": "2026-11-25T03:28:26.825Z",
+    "lastVerified": "2026-11-25T03:28:26.825Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-simonschubert-linuxcommandlibrary",
-    "contentHash": "5a359432599e69be33ca1c54bf3008630c63c5b81bc360e730461f4818f4ac39",
+    "contentHash": "642c4e87b85420fab5cc699bed2df695d14d61597300d94ca48121118461e237",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -8930,12 +8931,12 @@
     "officialUrl": "https://github.com/google/tcmalloc",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-11-24T00:57:14.692Z",
-    "lastVerified": "2026-11-24T00:57:14.692Z",
+    "lastChecked": "2026-11-25T03:28:21.349Z",
+    "lastVerified": "2026-11-25T03:28:21.349Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-google-tcmalloc",
-    "contentHash": "309ffba8d1eb70bb340df232316d64517f8f17ee85662fcb695eb8022c286b1d",
+    "contentHash": "0f985a2e8af37fd26217f8125cfcc286b9c30f65784047b8a57361dfaa87359e",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
@@ -12410,9 +12411,9 @@
   "pallets-flask": {
     "name": "flask",
     "officialUrl": "https://github.com/pallets/flask",
-    "lastChecked": "2026-11-21T05:01:16.969Z",
+    "lastChecked": "2026-11-25T03:28:18.720Z",
     "revisionIdentifier": "49943b5a",
-    "lastVerified": "2026-11-21T05:01:16.969Z"
+    "lastVerified": "2026-11-25T03:28:18.720Z"
   },
   "jarvis322-macos-sysdata": {
     "name": "macos-sysdata",

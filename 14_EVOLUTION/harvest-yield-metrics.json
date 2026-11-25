@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T03:13:34.665Z",
-  "total_cycles_completed": 12272,
-  "total_learnings_persisted": 12272,
-  "total_rules_promoted": 11317,
+  "last_updated": "2026-11-25T03:28:28.324Z",
+  "total_cycles_completed": 12274,
+  "total_learnings_persisted": 12274,
+  "total_rules_promoted": 11319,
   "history": [
-    {
-      "timestamp": "2026-11-24T14:41:57.449Z",
-      "repository": "sigstore/cosign",
-      "learningId": "learn-github-sigstore-cosign",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T14:41:58.791Z",
-      "repository": "citusdata/citus",
-      "learningId": "learn-github-citusdata-citus",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-24T14:50:30.633Z",
       "repository": "kucherenko/jscpd",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-25T03:13:34.665Z",
       "repository": "mrkai77/Loop",
       "learningId": "learn-github-mrkai77-loop",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T03:28:23.117Z",
+      "repository": "google/tcmalloc",
+      "learningId": "learn-github-google-tcmalloc",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T03:28:28.324Z",
+      "repository": "SimonSchubert/LinuxCommandLibrary",
+      "learningId": "learn-github-simonschubert-linuxcommandlibrary",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
