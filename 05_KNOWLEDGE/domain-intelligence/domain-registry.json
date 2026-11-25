@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T14:50:28.811Z",
+  "last_updated": "2026-11-25T15:00:50.431Z",
   "total_records": 2678,
   "domains": {
     "A": {
@@ -9705,8 +9705,8 @@
       "title": "Technical Construction Intelligence: milvus-io/milvus Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-milvus-io-milvus-technical-construction-intelligence-milvus-io-milvus-core-invar.md",
       "repository": "milvus-io/milvus",
-      "content_hash": "d33185ed502b41cd79376798dbd1560baf01fbcd78cbc6a02c076528d2469d7c",
-      "created_at": "2026-11-24T19:36:14.230Z"
+      "content_hash": "d80d58ed20d19e9ba626fcd5c0541390f7740e434147bd4e65b868e4ef1b6708",
+      "created_at": "2026-11-25T15:00:44.402Z"
     },
     "DOM-D-E7346FF5": {
       "record_id": "DOM-D-E7346FF5",
@@ -15757,8 +15757,8 @@
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "repository": "NucleoidAI/Nucleoid",
-      "content_hash": "ad9e3f6c9c70fa73486dd68cb44e39b604babed34b98da4622e4cf09f5477fba",
-      "created_at": "2026-11-25T12:19:39.463Z"
+      "content_hash": "c9e88f04398e094b102acc1ce27d5414882502f79d9768bb6edf7d47ecee4744",
+      "created_at": "2026-11-25T15:00:41.677Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -19239,10 +19239,10 @@
       "record_id": "domain_intelligence-architecture-intelligence-shifthackz-sdai-kmp-core-invariants",
       "domain_letter": "G",
       "title": "Architecture Intelligence: ShiftHackZ/SDAI-KMP Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-shifthackz-sdai-kmp-architecture-intelligence-shifthackz-sdai-kmp-core-invariant.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-shifthackz-stable-diffusion-kmp-architecture-intelligence-shifthackz-sdai-kmp-co.md",
       "repository": "ShiftHackZ/SDAI-KMP",
-      "content_hash": "fd61f7b9136dbb26a056b1f8c7af72e6cc38b9b398b9bd982025286b3797a32d",
-      "created_at": "2026-11-21T06:01:27.534Z"
+      "content_hash": "a564970faacf6ae3aa99ea063c6f90e43f1960d495350ac56ff4e00040f72f96",
+      "created_at": "2026-11-25T15:00:37.933Z"
     },
     "domain_intelligence-research-knowledge-intelligence-openbmb-minicpm-v-4-7-35b-a3b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-openbmb-minicpm-v-4-7-35b-a3b-core-invariants",
@@ -21260,8 +21260,8 @@
       "title": "Research & Knowledge Intelligence: LiquidAI/d1-2B Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-liquidai-d1-2b-research-knowledge-intelligence-liquidai-d1-2b-core-invariants.md",
       "repository": "LiquidAI/d1-2B",
-      "content_hash": "6ed41a62147692b8a9f5a04b72b6f42466f11c23fe1389c8f6adeead7514bdf3",
-      "created_at": "2026-11-21T23:47:32.839Z"
+      "content_hash": "59cb8bcfa792201a1d177932ca434952ec956736b7e550873789d0e1a1353c9a",
+      "created_at": "2026-11-25T15:00:21.159Z"
     },
     "DOM-D-4EE8ADE1": {
       "record_id": "DOM-D-4EE8ADE1",
@@ -21311,8 +21311,8 @@
       "title": "Research & Knowledge Intelligence: hf-liquidai-d1-2b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-liquidai-d1-2b-learnings-research-knowledge-intelligence-hf-liquidai-d1-2b-le.md",
       "repository": "hf-liquidai-d1-2b-learnings",
-      "content_hash": "595f1d946cab50b6e7795eda58473193decb068a2e73387926e5209458ddfe49",
-      "created_at": "2026-11-21T23:47:51.135Z"
+      "content_hash": "3111d0f6d229b0b31d861c12eda04e999afdac457c6be2b68b47bcfeeec9a1bb",
+      "created_at": "2026-11-25T15:00:47.960Z"
     },
     "domain_intelligence-quality-verification-intelligence-thaw-app-thaw-learnings-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-thaw-app-thaw-learnings-core-invariants",
@@ -26312,8 +26312,8 @@
       "title": "Technical Construction Intelligence: koderover/zadig Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-koderover-zadig-technical-construction-intelligence-koderover-zadig-core-invaria.md",
       "repository": "koderover/zadig",
-      "content_hash": "7ea9c13d2ff1ce1d7b554a706aa1f716e19189b10df35094b3d7d231bb662376",
-      "created_at": "2026-11-20T23:13:38.014Z"
+      "content_hash": "6d9cb3b8916740cc499072e9d77adea24895066ac38be4272c29c5dc7f32fc4c",
+      "created_at": "2026-11-25T15:00:34.773Z"
     },
     "domain_intelligence-architecture-intelligence-solidjs-solid-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-solidjs-solid-learnings-core-invariants",
@@ -26339,8 +26339,8 @@
       "title": "Technical Construction Intelligence: koderover-zadig-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-koderover-zadig-learnings-technical-construction-intelligence-koderover-zadig-le.md",
       "repository": "koderover-zadig-learnings",
-      "content_hash": "652c942fae0d09be175d3a09147a87c2e2e9e351a36162611576c084073b2c46",
-      "created_at": "2026-11-20T23:13:43.011Z"
+      "content_hash": "2c286fde7dbbf101724e85933f91238bd683d8a381a24083e6dedbe889c8f7cc",
+      "created_at": "2026-11-25T15:00:50.431Z"
     },
     "domain_intelligence-technical-construction-intelligence-vitejs-vite-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-vitejs-vite-core-invariants",
@@ -35763,8 +35763,8 @@
       "title": "Architecture Intelligence: shifthackz-stable-diffusion-kmp-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-shifthackz-stable-diffusion-kmp-learnings-architecture-intelligence-shifthackz-s.md",
       "repository": "shifthackz-stable-diffusion-kmp-learnings",
-      "content_hash": "360945ae01ef4b4f84a9e558786be1125f2e534cb9bcb8736489f51ec0e803e7",
-      "created_at": "2026-11-20T06:11:31.450Z"
+      "content_hash": "4fc9cb6ae5a95178acf0500a07e24c1e4d1146bbd253f55f5a3a1e49f87a8cbe",
+      "created_at": "2026-11-25T15:00:49.194Z"
     },
     "domain_intelligence-design-intelligence-simonschubert-kai-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-simonschubert-kai-core-invariants",

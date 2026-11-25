@@ -4,22 +4,22 @@
 {
   "source_repository": "milvus-io/milvus",
   "source_url": "https://github.com/milvus-io/milvus",
-  "source_version": "e5152348",
+  "source_version": "45164988",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-24T19:36:14.056Z",
+  "timestamp": "2026-11-25T15:00:44.162Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-milvus-io-milvus",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [milvus-io/milvus](https://github.com/milvus-io/milvus) (Revision: `e5152348`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-24T19:36:14.056Z`  
+> **Provenance**: Harvested from [milvus-io/milvus](https://github.com/milvus-io/milvus) (Revision: `45164988`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-25T15:00:44.162Z`  
 > **Learning ID**: `learn-github-milvus-io-milvus`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `milvus-io/milvus` (Commit: `e5152348`)
+- **Target Repository**: `milvus-io/milvus` (Commit: `45164988`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/milvus-io-milvus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/milvus-io/milvus](https://github.com/milvus-io/milvus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T19:36:12.693Z  
+> **Harvest Timestamp**: 2026-11-25T15:00:42.262Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Milvus is a high-performance, cloud-native vector database built for scalable vector ANN search
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 46733 stars
+- **Stars / Engagement**: 46739 stars
 
 ---
 
@@ -1558,14 +1558,17 @@ RunDataset(const Dataset& d) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #55914** (2026-11-24): **fix: [3.0] default OpenBLAS to one thread in runtime images**
-  *Symptoms*: Cherry-pick from master pr: #55650 issue: #50892  Backport 08d5f216f56390828c9e416433b22580f88b19b5 to 3.0.  Concurrent Knowhere tasks can call BLAS while OpenBLAS also starts internal workers. #50892 covers ARM Neoverse-V2 PQ loading and amd64 HNSW_PQ loading / IVF_RABITQ searches alongside compaction. This backport supplies the recommended temporary default, OPENBLAS_NUM_THREADS=1, in all six final CPU/GPU runtime images. Deployments can override it through their container environment.
+- **Issue #56021** (2026-11-25): **CI trust-path probe (transient, will be closed)**
+  *Symptoms*: Authorized CI trust-boundary check: this PR adds a single marker file and is closed immediately after observing which base-context workflow jobs (if any) execute it. No secret values are printed.
   **Post-Mortem & Fix Analysis**:
-  > /kind bug /area compilation /milestone 3.0.7 /refresh-label 
-  > [APPROVALNOTIFIER] This PR is **APPROVED**  This pull-request has been approved by: *<a href="https://github.com/milvus-io/milvus/pull/55914#pullrequestreview-6039080591" title="LGTM">foxspy</a>*  The full list of commands accepted by this bot can be found [here](https://go.k8s.io/bot-commands?repo=milvus-io%2Fmilvus).  The pull request process is described [here](https://git.k8s.io/community/contributors/guide/owners.md#the-code-review-process)  <details > Needs approval from an approver in each of these files:  - ~~[build/OWNERS](https://github.com/milvus-io/milvus/blob/3.0/build/OWNERS)~~ [foxspy]  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":[]} -->
+  > Welcome @le-schlo! It looks like this is your first PR to milvus-io/milvus 🎉
+  > [APPROVALNOTIFIER] This PR is **NOT APPROVED**  This pull-request has been approved by: To complete the [pull request process](https://git.k8s.io/community/contributors/guide/owners.md#the-code-review-process), please assign **zhuwenxing** after the PR has been reviewed. You can assign the PR to them by writing `/assign @zhuwenxing` in a comment when ready.  The full list of commands accepted by this bot can be found [here](https://go.k8s.io/bot-commands?repo=milvus-io%2Fmilvus).  <details open> Needs approval from an approver in each of these files:  - **[OWNERS](https://github.com/milvus-io/milvus/blob/master/OWNERS)**  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":["zhuwenxing"]} -->
 
-- **Issue #55907** (2026-11-24): **fix: [3.0] scope default CGO_CXXFLAGS preservation to USE_TSAN builds**
-  *Symptoms*: ## What changed  Backport #55906 to `3.0`: move `CGO_CXXFLAGS ?= $(shell $(GO) env CGO_CXXFLAGS)` in `Makefile` inside the `ifeq ($(USE_TSAN), ON)` branch (matching `scripts/build_plan_parser.sh`), and add `make -n build-go` regression checks in `scripts/sanitizer_env_test.sh`.  ### Why  PR #55130 backported #53895 to `3.0`, which unconditionally set `CGO_CXXFLAGS` from `$(shell $(GO) env CGO_CXXFLAGS)` (`-O2 -g`) and passed `CGO_CXXFLAGS="$(CGO_CXXFLAGS)"` to `go build`. Because Go stamps the raw `CGO_CXXFLAGS` environment variable into `runtime/debug.BuildInfo` (`go version -m`), ordinary (`USE_TSAN=OFF`) `3.0` builds started recording `build CGO_CXXFLAGS="-O2 -g"` instead of `<empty>` (even though Go already applies `-O2 -g` by default when `CGO_CXXFLAGS` is empty or unset).  This broke downstream Go plugin artifact verification comparing `go version -m` build settings between `milvus` and plugin `.so` artifacts (`MISMATCH build setting CGO_CXXFLAGS: milvus="-O2 -g" plugin=<empty>`).  Preserving `$(shell $(GO) env CGO_CXXFLAGS)` is only needed when `USE_TSAN=ON` appends `-fsanitize=thread ...` (which makes `CGO_CXXFLAGS` non-empty and would otherwise drop Go's default `-O2`).  issue: #53763 pr: #55906  ## Verification  - Full `bash scripts/sanitizer_env_test.sh` passed, including the 4 new `make -n build-go` assertions (`USE_TSAN=OFF` unset/overridden and `USE_TSAN=ON` unset/overridden). - Verified with `go build -a -x` and `go version -m` that `CGO_CXXFLAGS=""` preserves 
+- **Issue #55991** (2026-11-25): **enhance: reclaim empty PK version index storage**
+  *Symptoms*: When a vchannel goes idle after a burst of writes, TTL eviction removes the PK version entries but leaves the hash tables and expiration queue allocated. With many previously written collections, that storage remains reachable after the live-entry byte budget drops to zero.  Release the backing storage under the index mutex when the last entry expires. Preserve the forgotten-write boundary for CAS validation and allocate a map on the next admitted PK write.  Related: #52374  design doc: docs/design-docs/design_docs/20260601-partial-update-optimistic-lock-design.md  ## Validation  - The regression fails on the old implementation and passes on the new one. It covers both Int64 and VarChar PKs, stale snapshot rejection, and conflict detection after a later write recreates the index. - Isolated index unit tests pass with the race detector and 95.1% statement coverage on Go 1.26.11 (darwin/arm64). The full interceptor package was blocked by a local C++ dependency mismatch. - In a local workload of 4,096 vchannels with 1,000 distinct PKs each, expiring all entries reduced post-GC retained heap from 177.5 MiB to 0.73 MiB. Active update median was 27.1 µs before and 27.5 µs after. Evicting and refilling a 1,000-PK index took 183 µs before and 227 µs after. 
+  **Post-Mortem & Fix Analysis**:
+  > [ci-v2-notice] Notice: New ci-v2 system is enabled for this PR.  To rerun ci-v2 checks, comment with: - /ci-rerun-code-check  // for ci-v2/code-check - /ci-rerun-code-check-macos  // for Code Checker MacOS (GitHub Actions) - /ci-rerun-build  // for ci-v2/build - /ci-rerun-build-all  // for ci-v2/build-all (multi-arch builds) - /ci-rerun-buildenv  // for ci-v2/build-env (build milvus-env builder images; update .env after the new tag is ready) - /ci-rerun-ut-integration  // for ci-v2/ut-integration, will rerun ci-v2/build - /ci-rerun-ut-go  // for ci-v2/ut-go, will rerun ci-v2/build - /ci-rerun-ut-cpp  // for ci-v2/ut-cpp - /ci-rerun-ut  // for all ci-v2/ut-integration, ci-v2/ut-go, ci-v2/ut-cpp, will rerun ci-v2/build - /ci-rerun-e2e-default  // for ci-v2/e2e-default - /ci-rerun-e2e-pulsar-wp  // for ci-v2/e2e-pulsar-wp (GCP branch-equivalent Pulsar + Woodpecker Python E2E) - /ci-rerun-e2e-amd  // for ci-v2/e2e-amd (e2e pool dispatcher) - /ci-rerun-e2e-dist-wp  // for ci-v2/e2e-dist-wp 
+  > /lgtm /approve
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1582,576 +1585,1241 @@ RunDataset(const Dataset& d) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `08d5f216` (2026-11-24)
-**Commit Message**: fix: default OpenBLAS to one thread in runtime images (#55650)
+### Incident Patch 1: `ae3d2586` (2026-11-25)
+**Commit Message**: fix: Wake QueryView recovery waiters before WAL shutdown (#55391)
 
-issue: #50892
+WAL close waits for active operations before closing the QueryView
+handler, but a query waiting for view recovery can hold the operation
+reference that close is waiting for. Stop new acquisitions and wake
+recovery waiters with the existing on-shutdown ViewError before the
+lifetime wait. Keep resources for already acquired leases until the
+later handoff cleanup.
 
-Concurrent Knowhere tasks can invoke BLAS while OpenBLAS also uses
-internal worker threads. #50892 first reported crashes during PQ index
-loading on ARM Neoverse-V2; later reports cover HNSW_PQ loading on amd64
-and IVF_RABITQ searches alongside compaction. The discussion recommends
-single-threaded OpenBLAS as an immediate mitigation, but the runtime
-images do not currently provide that default.
+Propagate the stopped state to shards created during shutdown, preserve
+cancellation and requested-version semantics, and cover recovery waiting
+through the real SN query/search service entrypoints with injected
+resource backends.
 
-Set `ENV OPENBLAS_NUM_THREADS=1` in all six final CPU/GPU runtime
-Dockerfiles. This supplies the recommended default for both
-architectures and allows deployments to override it through their
-container environment. Set it in the final GPU Ubuntu 20.04 image as
-well, so the mitigation does not depend on rebuilding its pinned base
-image.
+Related issue: #40451
 
-This is a temporary default for BLAS internal threading. Broader
-OpenMP/thread-pool changes remain separate follow-up work, and workloads
-relying on BLAS internal parallelism may need to override the default.
+Validation: focused SN handler, WAL adaptor, ViewError and streaming
+interceptor tests passed with `-tags dynamic,test -gcflags="all=-N -l"`
+on macOS arm64 using an existing native SDK. Tests cover
+ready/unrecoverable/down/dropped/canceled/deadline/shutdown paths, MVCC
+waiting, and the existing retryable wire projection. The recovery-wait
+and query/search RPC regressions also passed under `-race`. The
+production close ordering was traced from lifetime stop through
+acquisition shutdown, operation drain and ha
 
-Validation:
-
-- `git diff --check` passes; all six final runtime Dockerfiles contain
-the default after their final `FROM`, with no later override.
-- On this amd64 host, built
-
-**File**: `build/docker/milvus/amazonlinux2023/Dockerfile` (modified, +2/-0)
+**File**: `docs/design-docs/design_docs/qviews/query/query_plan.md` (modified, +5/-0)
 ```diff
-@@ -57,6 +57,8 @@ ENV LD_PRELOAD=${MILVUS_ASAN_LIB}:${MILVUS_JEMALLOC_LIB}
- ENV TSAN_OPTIONS=${MILVUS_TSAN_OPTIONS}
- ENV OMP_TOOL_LIBRARIES=${MILVUS_ARCHER_LIB}
- ENV MALLOC_CONF=background_thread:true
-+# Milvus provides task-level parallelism; keep BLAS calls single-threaded by default.
-+ENV OPENBLAS_NUM_THREADS=1
- ENV OPENSSL_MODULES=/milvus/lib/ossl-modules
+@@ -9,6 +9,11 @@ locates the local shard by vchannel and returns its real identity in the plan.
+ Matching UpRecovering state waits for local recovery; missing or unusable views
+ return the existing View errors.
  
- # Generate fipsmodule.cnf for FIPS module integrity self-test.
-```
-
-**File**: `build/docker/milvus/gpu/ubuntu20.04/Dockerfile` (modified, +2/-0)
-```diff
-@@ -48,6 +48,8 @@ ENV PATH=/milvus/bin:$PATH
- ENV LD_LIBRARY_PATH=/milvus/lib:$LD_LIBRARY_PATH:/usr/lib
- ENV LD_PRELOAD=/milvus/lib/libjemalloc.so
- ENV MALLOC_CONF=background_thread:true
-+# Milvus provides task-level parallelism; keep BLAS calls single-threaded by default.
-+ENV OPENBLAS_NUM_THREADS=1
- 
- # Run as milvus by default; downstream images may select another user at build time.
- USER ${MILVUS_RUNTIME_USER}
-```
-
-**File**: `build/docker/milvus/gpu/ubuntu22.04/Dockerfile` (modified, +2/-0)
-```diff
-@@ -49,6 +49,8 @@ ENV PATH=/milvus/bin:$PATH
- ENV LD_LIBRARY_PATH=/milvus/lib:$LD_LIBRARY_PATH:/usr/lib
- ENV LD_PRELOAD=/milvus/lib/libjemalloc.so
- ENV MALLOC_CONF=background_thread:true
-+# Milvus provides task-level parallelism; keep BLAS calls single-threaded by default.
-+ENV OPENBLAS_NUM_THREADS=1
- ENV OPENSSL_MODULES=/milvus/lib/ossl-modules
- 
- # Generate fipsmodule.cnf for FIPS module integrity self-test.
-```
-
-**File**: `build/docker/milvus/rockylinux9/Dockerfile` (modified, +2/-0)
-```diff
-@@ -59,6 +59,8 @@ ENV LD_PRELOAD=${MILVUS_ASAN_LIB}:${MILVUS_JEMALLOC_LIB}
- ENV TSAN_OPTIONS=${MILVUS_TSAN_OPTIONS}
- ENV OMP_TOOL_LIBRARIES=${MILVUS_ARCHER_LIB}
- ENV MALLOC_CONF=background_thread:true
-+# Milvus provides task-level parallelism; keep BLAS calls single-threaded by default.
-+ENV OPENBLAS_NUM_THREADS=1
- ENV OPENSSL_MODULES=/milvus/lib/ossl-modules
- 
- # Generate fipsmodule.cnf for FIPS module integrity self-test.
-```
-
-**File**: `build/docker/milvus/ubuntu20.04/Dockerfile` (modified, +2/-0)
-```diff
-@@ -66,6 +66,8 @@ ENV LD_PRELOAD=${MILVUS_ASAN_LIB}:${MILVUS_JEMALLOC_LIB}
- ENV TSAN_OPTIONS=${MILVUS_TSAN_OPTIONS}
- ENV OMP_TOOL_LIBRARIES=${MILVUS_ARCHER_LIB}
- ENV MALLOC_CONF=background_thread:true
-+# Milvus provides task-level parallelism; keep BLAS calls single-threaded by default.
-+ENV OPENBLAS_NUM_THREADS=1
- 
- # protobuf 5.x RepeatedField adds container annotations that trigger ASAN
- # container-overflow false positives during static initialization, disable it.
-```
-
-**File**: `build/docker/milvus/ubuntu22.04/Dockerfile` (modified, +2/-0)
-```diff
-@@ -66,6 +66,8 @@ ENV LD_PRELOAD=${MILVUS_ASAN_LIB}:${MILVUS_JEMALLOC_LIB}
- ENV TSAN_OPTIONS=${MILVUS_TSAN_OPTIONS}
- ENV OMP_TOOL_LIBRARIES=${MILVUS_ARCHER_LIB}
- ENV MALLOC_CONF=background_thread:true
-+# Milvus provides task-level parallelism; keep BLAS calls single-threaded by default.
-+ENV OPENBLAS_NUM_THREADS=1
- ENV OPENSSL_MODULES=/milvus/lib/ossl-modules
- 
- # Generate fipsmodule.cnf for FIPS module integrity self-test.
-```
-
----
-
-### Incident Patch 2: `4e7326e0` (2026-11-24)
-**Commit Message**: fix: scope default CGO_CXXFLAGS preservation to USE_TSAN builds (#55906)
-
-## What changed
-
-Move `CGO_CXXFLAGS ?= $(shell $(GO) env CGO_CXXFLAGS)` in `Makefile`
-inside the `ifeq ($(USE_TSAN), ON)` branch (matching
-`scripts/build_plan_parser.sh`), and add `make -n build-go` regression
-checks in `scripts/sanitizer_env_test.sh`.
-
-### Why
-
-PR #53895 initialized `CGO_CXXFLAGS` unconditionally from `$(shell $(GO)
-env CGO_CXXFLAGS)` (`-O2 -g`) and passed
-`CGO_CXXFLAGS="$(CGO_CXXFLAGS)"` to `go build`. Because Go stamps the
-raw `CGO_CXXFLAGS` environment variable into `runtime/debug.BuildInfo`
-(`go version -m`), ordinary (`USE_TSAN=OFF`) Milvus builds started
-recording `build CGO_CXXFLAGS="-O2 -g"` instead of `<empty>` (even
-though Go already applies `-O2 -g` by default when `CGO_CXXFLAGS` is
-empty or unset).
-
-This broke downstream Go plugin artifact verification comparing `go
-version -m` build settings between `milvus` and plugin `.so` artifacts
-(`MISMATCH build setting CGO_CXXFLAGS: milvus="-O2 -g" plugin=<empty>`).
-
-Preserving `$(shell $(GO) env CGO_CXXFLAGS)` is only needed when
-`USE_TSAN=ON` appends `-fsanitize=thread ...` (which makes
-`CGO_CXXFLAGS` non-empty and would otherwise drop 
-
-**File**: `Makefile` (modified, +3/-2)
-```diff
-@@ -57,8 +57,6 @@ endif
- 
- USE_TSAN ?= OFF
- export USE_TSAN
--# Preserve Go's default C++ flags when the caller did not provide an override.
--CGO_CXXFLAGS ?= $(shell $(GO) env CGO_CXXFLAGS)
- ifneq ($(USE_TSAN),ON)
- ifneq ($(USE_TSAN),OFF)
- $(error USE_TSAN must be ON or OFF)
-@@ -76,6 +74,9 @@ endif
- ifneq ($(filter -race -race=true,$(GOFLAGS) $(shell $(GO) env GOFLAGS)),)
- $(error USE_TSAN cannot be combined with Go -race)
- endif
-+# Preserve Go's default C++ flags before appending TSan flags so ordinary
-+# builds do not stamp CGO_CXXFLAGS="-O2 -g" into Go buildinfo.
-+	CGO_CXXFLAGS ?= $(shell $(GO) env CGO_CXXFLAGS)
- 	override CGO_CFLAGS += -fsanitize=thread -g -fno-omit-frame-pointer
- 	override CGO_CXXFLAGS += -fsanitize=thread -g -fno-omit-frame-pointer
- 	override CGO_LDFLAGS += -fsanitize=thread -shared-libsan
-```
-
-**File**: `scripts/sanitizer_env_test.sh` (modified, +33/-0)
-```diff
-@@ -139,6 +139,39 @@ for target in build-cpp build-cpp-with-unittest build-cpp-with-coverage; do
-     grep -q 'TANTIVY_ANALYZER_REMOTE_TLS=OFF .*core_build.sh .* -T ON .* -G OFF ' "${test_root}/make.log"
- done
- 
-+# Ordinary Go builds must not materialize Go's default CGO_CXXFLAGS into the
-+# environment (which stamps CGO_CXXFLAGS="-O2 -g" into Go buildinfo and breaks
-+# plugin artifact verification), while TSan builds must preserve it before
-+# appending sanitizer flags.
-+mkdir -p "${test_root}/make-bin"
-+cat > "${test_root}/make-bin/go" <<'EOF'
-+#!/usr/bin/env bash
-+if [[ "${1:-}" == env ]]; then
-+    case "${2:-}" in
-+        CGO_CXXFLAGS) printf '%s\n' '-O2 -g' ;;
-+        GOPATH) printf '%s\n' '/tmp/gopath' ;;
-+        GOFLAGS) ;;
-+    esac
-+fi
-+EOF
-+chmod +x "${test_root}/make-bin/go"
-+env -u CGO_CFLAGS -u CGO_CXXFLAGS -u CGO_LDFLAGS \
-+    GIT_CONFIG_GLOBAL=/dev/null make -C "${scripts_dir}/.." -n \
-+    GO="${test_root}/make-bin/go" OS=Linux USE_TSAN=OFF build-go > "${test_root}/make.log" 2>&1
-+grep -q 'CGO_CXXFLAGS="" ' "${test_root}/make.log"
-+env -u CGO_CFLAGS -u CGO_CXXFLAGS -u CGO_LDFLAGS \
-+    GIT_CONFIG_GLOBAL=/dev/null make -C "${scripts_dir}/.." -n \
-+    GO="${test_root}/make-bin/go" OS=Linux USE_TSAN=OFF CGO_CXXFLAGS=-O1 build-go > "${test_root}/make.log" 2>&1
-+grep -q 'CGO_CXXFLAGS="-O1" ' "${test_root}/make.log"
-+env -u CGO_CFLAGS -u CGO_CXXFLAGS -u CGO_LDFLAGS \
-+    GIT_CONFIG_GLOBAL=/dev/null make -C "${scripts_dir}/.." -n \
-+    GO="${test_root}/make-bin/go" OS=Linux USE_TSAN=ON build-go > "${test_root}/make.log" 2>&1
-+grep -q 'CGO_CXXFLAGS="-O2 -g -fsanitize=thread -g -fno-omit-frame-pointer" ' "${test_root}/make.log"
-+env -u CGO_CFLAGS -u CGO_CXXFLAGS -u CGO_LDFLAGS \
-+    GIT_CONFIG_GLOBAL=/dev/null make -C "${scripts_dir}/.." -n \
-+    GO="${test_root}/make-bin/go" OS=Linux USE_TSAN=ON CGO_CXXFLAGS=-O1 build-go > "${test_root}/make.log" 2>&1
-+grep -q 'CGO_CXXFLAGS="-O1 -fsanitize=thread -g -fno-omit-frame-pointer" ' "${test_root}/make.log"
++Waiting is local to SN; the Coord-facing `UpRecovering` to `Up` projection is
++unchanged. WAL shutdown stops query acquisition before draining its in-flight
++operations: waiters wake and new acquisitions fail with an on-shutdown error.
++QueryView resources are released only after those operations finish.
 +
- # Exercise the parser's Go and handwritten C++ commands without compiling. This
- # also protects the non-TSan path on systems whose /bin/bash is still Bash 3.2.
- mkdir -p "${test_root}/repo/scripts" "${test_root}/bin" \
+ Planning first acquires a serving View with the request's exact schema, then
+ fixes one MVCC and waits for the runtime's Growing and Transform data visibility.
+ It resolves the View's loaded partitions and optimizes against its exact read
 ```
 
----
-
-### Incident Patch 3: `8f5bd72b` (2026-11-24)
-**Commit Message**: fix: resolve segment schema at WAL append (#55821)
-
-issue: #55626
-
-- Resolve the collection schema version and TEXT storage requirement
-when CreateSegment holds the data VChannel lock, so the WAL record and
-segment registration agree with schema DDL ordering.
-- Keep schema-dependent decisions out of the asynchronous segment
-allocation worker.
-
-Signed-off-by: chyezh <[REDACTED_EMAIL]>
-
-**File**: `docs/agent_guides/streaming-system/wal/shard-management.md` (modified, +5/-0)
+**File**: `internal/streamingnode/server/wal/adaptor/query_shutdown_test.go` (added, +257/-0)
 ```diff
-@@ -10,6 +10,11 @@ source/spec. Only the `schema` mask flushes/fences segment allocation; ordinary
- metadata updates keep SchemaVersion unchanged. RecoveryStorage applies the same
- mask semantics. `collection.on.truncating` remains coordinator/DataCoord state.
- 
-+The CreateSegment append interceptor sets the encoding SchemaVersion and applies
-+the schema's storage format requirements while holding the VChannel lock.
-+An asynchronous allocation started before a schema DDL therefore uses the
-+schema in effect when its CreateSegment enters the WAL.
+@@ -0,0 +1,257 @@
++package adaptor
 +
- ## Seal Policies
- 
- Growing segments are sealed when any registered policy triggers. See `internal/streamingnode/server/wal/interceptors/shard/policy/seal_policy.go` for the full list of policies.
-```
-
-**File**: `internal/streamingnode/server/wal/interceptors/shard/shard_interceptor.go` (modified, +11/-0)
-```diff
-@@ -5,6 +5,7 @@ import (
- 
- 	"github.com/cockroachdb/errors"
- 
-+	"github.com/milvus-io/milvus/internal/storage"
- 	"github.com/milvus-io/milvus/internal/streamingnode/server/wal/interceptors"
- 	"github.com/milvus-io/milvus/internal/streamingnode/server/wal/interceptors/redo"
- 	"github.com/milvus-io/milvus/internal/streamingnode/server/wal/interceptors/shard/shards"
-@@ -19,6 +20,7 @@ import (
- 	"github.com/milvus-io/milvus/pkg/v3/streaming/util/message/messageutil"
- 	"github.com/milvus-io/milvus/pkg/v3/util/funcutil"
- 	"github.com/milvus-io/milvus/pkg/v3/util/paramtable"
-+	"github.com/milvus-io/milvus/pkg/v3/util/typeutil"
- )
- 
- const interceptorName = "shard"
-@@ -390,6 +392,15 @@ func (impl *shardInterceptor) handleCreateSegment(ctx context.Context, msg messa
- 		return nil, status.NewUnrecoverableError(err.Error())
- 	}
- 
-+	// The worker can start before a schema DDL. The outer VChannel lock
-+	// serializes this append (including registration) with the DDL.
-+	schema := impl.shardManager.GetCollectionSchemaSnapshot(h.GetCollectionId())
-+	h.SchemaVersion = schema.GetVersion()
-+	if typeutil.HasTextField(schema) {
-+		h.StorageVersion = storage.StorageV3
-+	}
-+	createSegmentMsg.OverwriteHeader(h)
-+
- 	msgID, err := appendOp(ctx, msg)
- 	if err != nil {
- 		return nil, err
-```
-
-**File**: `internal/streamingnode/server/wal/interceptors/shard/shard_interceptor_test.go` (modified, +88/-0)
-```diff
-@@ -3,6 +3,7 @@ package shard
- import (
- 	"context"
- 	"testing"
++import (
++	"context"
++	"sync"
++	"sync/atomic"
++	"testing"
 +	"time"
- 
- 	"github.com/bytedance/mockey"
- 	"github.com/cockroachdb/errors"
-@@ -16,11 +17,14 @@ import (
- 	"github.com/milvus-io/milvus-proto/go-api/v3/commonpb"
- 	"github.com/milvus-io/milvus-proto/go-api/v3/msgpb"
- 	"github.com/milvus-io/milvus-proto/go-api/v3/schemapb"
-+	"github.com/milvus-io/milvus/internal/mocks/streamingnode/server/mock_wal"
- 	"github.com/milvus-io/milvus/internal/mocks/streamingnode/server/wal/interceptors/shard/mock_shards"
-+	"github.com/milvus-io/milvus/internal/storage"
- 	"github.com/milvus-io/milvus/internal/streamingnode/server/resource"
- 	"github.com/milvus-io/milvus/internal/streamingnode/server/wal"
- 	"github.com/milvus-io/milvus/internal/streamingnode/server/wal/interceptors"
- 	"github.com/milvus-io/milvus/internal/streamingnode/server/wal/interceptors/shard/shards"
-+	"github.com/milvus-io/milvus/internal/streamingnode/server/wal/interceptors/shard/stats"
- 	"github.com/milvus-io/milvus/internal/streamingnode/server/wal/moduleapi"
- 	"github.com/milvus-io/milvus/internal/streamingnode/server/wal/recovery"
- 	"github.com/milvus-io/milvus/internal/streamingnode/server/wal/utility"
-@@ -1001,3 +1005,87 @@ func TestDropPartitionUpdatesManagerAfterAppend(t *testing.T) {
- 		})
- 	}
- }
 +
-+func TestCreateSegmentSchemaDDLOrdering(t *testing.T) {
++	"github.com/bytedance/mockey"
++	"github.com/stretchr/testify/require"
++
++	"github.com/milvus-io/milvus/internal/metastore"
++	"github.com/milvus-io/milvus/internal/metastore/kv/streamingnode"
++	"github.com/milvus-io/milvus/internal/mocks/streamingnode/server/wal/interceptors/shard/mock_shards"
++	"github.com/milvus-io/milvus/internal/streamingnode/server/resource"
++	"github.com/milvus-io/milvus/internal/streamingnode/server/wal/snview"
++	"github.com/milvus-io/milvus/internal/views/qviews"
++	"github.com/milvus-io/milvus/internal/views/viewerror"
++	worknodehandler "github.com/milvus-io/milvus/internal/views/worknode/handler"
++	"github.com/milvus-io/milvus/pkg/v3/kv"
++	"github.com/milvus-io/milvus/pkg/v3/kv/predicates"
++	"github.com/milvus-io/milvus/pkg/v3/proto/internalpb"
++	"github.com/milvus-io/milvus/pkg/v3/proto/viewpb"
++	"github.com/milvus-io/milvus/pkg/v3/streaming/util/message"
++	"github.com/milvus-io/milvus/pkg/v3/streaming/walimpls/impls/walimplstest"
++	"github.com/milvus-io/milvus/pkg/v3/util/merr"
++	"github.com/milvus-io/milvus/pkg/v3/util/paramtable"
++)
++
++type queryShutdownTestResMgr struct {
++	mu        sync.Mutex
++	acquired  map[qviews.QueryViewKey]snview.AcquireResource
++	onRelease func(snview.ReleaseResource)
++}
++
++func newQueryShutdownTestResMgr(onRelease func(snview.ReleaseResource)) *queryShutdownTestResMgr {
++	return &queryShutdownTestResMgr{
++		acquired:  make(map[qviews.QueryViewKey]snview.AcquireResource),
++		onRelease: onRelease,
++	}
++}
++
++func (m *queryShutdownTestResMgr) Acquire(req snview.AcquireResource) {
++	m.mu.Lock()
++	m.acquired[req.Key] = req
++	m.mu.Unlock()
++}
++
++func (m *queryShutdownTestResMgr) Release(req snview.ReleaseResource) {
++	if m.onRelease != nil {
++		m.onRelease(req)
++	}
++	go req.OnDropped()
++}
++
++func (m *queryShutdownTestResMgr) getAcquired(key qviews.QueryViewKey) (snview.AcquireResource, bool) {
++	m.mu.Lock()
++	defer m.mu.Unlock()
++	req, ok := m.acquired[key]
++	return req, ok
++}
++
++type failingQueryViewMetaKV struct {
++	kv.MetaKv
++	entered chan struct{}
++	once    sync.Once
++}
++
++func (f *failingQueryViewMetaKV) MultiSaveAndRemove(
++	ctx context.Context,
++	_ map[string]string,
++	_ []string,
++	_ ...predicates.Predicate,
++) error {
++	f.once.Do(func() {
++		close(f.entered)
++	})
++	if err := ctx.Err(); err != nil {
++		return err
++	}
++	return merr.WrapErrIoFailedReason("etcd unavailable")
++}
++
++func newQueryShutdownTestView(vchannel string, replicaID int64, state viewpb.QueryViewState) *viewpb.QueryViewOfShard {
++	return &viewpb.QueryViewOfShard{
++		Meta: &viewpb.QueryViewMeta{
++			CollectionId: 1,
++			ReplicaId:    replicaID,
++			Vchannel:     vchannel,
++			State:        state,
++			Version: &viewpb.QueryViewVersion{
++				DataVersion:  &viewpb.DataVersion{StreamingVersion: 1},
++				QueryVersion: 1,
++			},
++		},
++		StreamingNode: &viewpb.QueryViewOfStreamingNode{},
++	}
++}
++
++func newQueryShutdownTestWAL(
++	t *testing.T,
++	catalog metastore.StreamingNodeCataLog,
++	resMgr snview.StreamingNodeResourceManager,
++	views []*viewpb.QueryViewOfShard,
++) *walAdaptorImpl {
++	t.Helper()
 +	paramtable.Init()
 +	resource.InitForTest(t)
-+	cfg := paramtable.Get()
-+	cfg.Save(cfg.CommonCfg.UseLoonFFI.Key, "false")
-+	defer cfg.Reset(cfg.CommonCfg.UseLoonFFI.Key)
 +
-+	// Control when each worker's request reaches the interceptor.
-+	pending := make(chan message.MutableMessage, 1)
-+	appended := make(chan uint64)
-+	transport := mock_wal.NewMockWAL(t)
-+	patch := mockey.Mock((*mock_wal.MockWAL).Append).To(func(_ *mock_wal.MockWAL, _ context.Context, msg message.MutableMessage) (*wal.AppendResult, error) {
-+		pending <- msg
-+		tick := <-appended
-+		return &wal.AppendResult{MessageID: rmq.NewRmqID(int64(tick)), TimeTick: tick}, nil
-+	}).Build()
-+	defer patch.UnPatch()
-+	defer close(appended)
-+	future := syncutil.NewFuture[wal.WAL]()
-+	future.Set(transport)
-+	old := &schemapb.CollectionSchema{Version: 5, Fields: []*schemapb.FieldSchema{{FieldID: 100, IsPrimaryKey: true, DataType: schemapb.DataType_Int64}}}
-+	const channel = "p0_1v0"
-+	manager := shards.RecoverShardManager(&shards.ShardManagerRecoverParam{
-+		ChannelInfo: types.PChannelInfo{Name: "p0", Term: 1}, WAL: future,
-+		InitialRecoverSnapshot: &recovery.RecoverySnapshot{
-+			Checkpoint: &recovery.WALCheckpoint{TimeTick: 1},
-+			WritePathRecovery: &moduleapi.WritePathRecoveryModuleSnapshot{VChannels: map[string]moduleapi.VChannelWritePathRecoveryState{
-+				channel: {VChannel: channel, CollectionID: 1, PartitionIDs: []int64{10, 11}, Schema: old},
-+			}},
-+		},
++	walImpls := newFirstTimeTickWALImpls(func(context.Context, message.MutableMessage) (message.MessageID, error) {
++		return walimplstest.NewTestMessageID(1), nil
 +	})
-+	defer manager.Close()
-+	i := NewInterceptorBuilder().Build(&interceptors.InterceptorBuildParam{ShardManager: manager})
-+	defer i.Close()
++	roWAL := adaptImplsToROWAL(walImpls, func() {})
++	param, err := buildInterceptorParams(context.Background(), walImpls, nil)
++	require.NoError(t, err)
++	shardManager := mock_shards.NewMockShardManager(t)
++	shardManager.EXPECT().Close().Return()
++	param.ShardManager = shardManager
 +
-+	beginAllocation := func(partition int64) message.MutableMessage {
-+		t.Helper()
-+		_, err := manager.AssignSegment(&shards.AssignSegmentRequest{CollectionID: 1, PartitionID: partition, TimeTick: 20, ModifiedMetrics: stats.ModifiedMetrics{Rows: 1, BinarySize: 16}})
-+		require.ErrorIs(t, err, shards.ErrWaitForNewSegment)
-+		select {
-+		case msg := <-pending:
-+			return msg
-+		case <-time.After(5 * time.Second):
-+			t.Fatal("allocation worker did not submit CreateSegment")
-+			return nil
++	w := adaptImplsToRWWAL(roWAL, nil, param)
++	w.queryViewHandler = snview.RecoverPChannelSNQueryViewHandler(
++		roWAL.availableCtx,
++		walImpls.Channel().Name,
++		catalog,
++		resMgr,
++		views,
++	)
++	return w
++}
++
++func TestWALCloseWakesRecoveryWaitersBeforeResourceRelease(t *testing.T) {
++	mockey.PatchConvey("close wakes recovery waiters before lifetime drain and resource release", t, func() {
++		var acquireExited atomic.Bool
++		var released atomic.Int32
++		resMgr := newQueryShutdownTestResMgr(func(snview.ReleaseResource) {
++			require.True(t, acquireExited.Load(), "query plan waiter must exit before handoff releases view resources")
++			released.Add(1)
++		})
++		recovered := newQueryShutdownTestView("first-time-tick-test_1v0", 1, viewpb.QueryViewState_QueryViewStateUp)
++		w := newQueryShutdownTestWAL(t, nil, resMgr, []*viewpb.QueryViewOfShard{recovered})
++
++		entered := make(chan struct{})
++		var enterOnce sync.Once
++		var orig func(*snview.SNQueryViewHandler, context.Context, qviews.ShardID, int32) (*snview.QueryViewLease, error)
++		mockey.Mock((*snview.SNQueryViewHandler).AcquireUpViewAtSchema).Origin(&orig).To(
++			func(h *snview.SNQueryViewHandler, ctx context.Context, shardID qviews.ShardID, schema int32) (*snview.QueryViewLease, error) {
++				enterOnce.Do(func() { close(entered) })
++				lease, er
+```
+
+**File**: `internal/streamingnode/server/wal/adaptor/wal_adaptor.go` (modified, +5/-0)
+```diff
+@@ -403,6 +403,11 @@ func (w *walAdaptorImpl) Close() {
+ 	// begin to close the wal.
+ 	w.lifetime.SetState(typeutil.LifetimeStateStopped)
+ 	w.forceCancelAfterGracefulTimeout()
++	if w.queryViewHandler != nil {
++		// Recovery waiters hold a lifetime reference. Wake them before waiting
++		// for in-flight operations, without releasing their query resources yet.
++		w.queryViewHandler.StopQueryAcquisition()
++	}
+ 	w.lifetime.Wait()
+ 	if w.queryViewHandler != nil {
+ 		w.queryViewHandler.CloseForHandoff()
+```
+
+**File**: `internal/streamingnode/server/wal/snview/handler.go` (modified, +7/-0)
+```diff
+@@ -78,6 +78,8 @@ type SNQueryViewHandler struct {
+ 	resMgr         StreamingNodeResourceManager
+ 	localOptimizer optimizer.LocalOptimizer
+ 	leaseDuration  time.Duration
++	// queriesStopped fails new acquisitions once WAL shutdown starts.
++	queriesStopped bool
+ }
+ 
+ // recoverSNQueryViewHandler reconstructs the handler from persisted views
+@@ -233,6 +235,7 @@ func (h *SNQueryViewHandler) getOrCreateShard(shardID qviews.ShardID) *snShardVi
+ 			onEmpty:       h.makeOnEmpty(shardID),
+ 			leaseDuration: h.leaseDuration,
+ 		}
++		shard.queriesStopped = h.queriesStopped
+ 		h.shards[shardID] = shard
+ 	}
+ 	return shard
+@@ -273,6 +276,10 @@ func (h *SNQueryViewHandler) acquireUpViewForSchema(ctx context.Context, shardID
+ 			return nil, err
+ 		}
+ 		h.mu.Lock()
++		if h.queriesStopped {
++			h.mu.Unlock()
++			return nil, viewerror.NewOnShutdownError("query view handler is shutting down")
++		}
+ 		var candidates []*snShardView
+ 		if shard := h.shards[shardID]; shard != nil {
+ 			candidates = append(candidates, shard)
+```
+
+**File**: `internal/streamingnode/server/wal/snview/handler_test.go` (modified, +15/-0)
+```diff
+@@ -1003,3 +1003,18 @@ func TestSNHandler_Recover_AcquireCallbackFlow(t *testing.T) {
+ func (m *mockResourceManager) QueryRuntime(qviews.QueryViewKey) (QueryRuntime, bool) {
+ 	return m.runtime, m.runtime != nil
+ }
++
++func newFullSNViewWithState(version int64, state viewpb.QueryViewState, qnNodeIDs ...int64) qviews.QueryViewAtWorkNode {
++	meta := buildHandlerTestMeta(version)
++	meta.State = state
++	queryNodes := make([]*viewpb.QueryViewOfQueryNode, 0, len(qnNodeIDs))
++	for _, nodeID := range qnNodeIDs {
++		queryNodes = append(queryNodes, &viewpb.QueryViewOfQueryNode{
++			NodeId: nodeID,
++			Partitions: []*viewpb.QueryViewOfPartition{
++				{PartitionId: 10, SegmentIds: []int64{nodeID * 100}},
++			},
++		})
++	}
++	return qviews.NewFullQueryViewAtStreamingNode(meta, &viewpb.QueryViewOfStreamingNode{}, queryNodes)
++}
+```
+
+**File**: `internal/streamingnode/server/wal/snview/query_lease.go` (modified, +29/-0)
+```diff
+@@ -26,6 +26,10 @@ func (h *SNQueryViewHandler) acquireUpView(ctx context.Context, shardID qviews.S
+ 	default:
+ 	}
+ 	h.mu.Lock()
++	if h.queriesStopped {
++		h.mu.Unlock()
++		return nil, viewerror.NewOnShutdownError("query view handler is shutting down")
++	}
+ 	shard := h.shards[shardID]
+ 	h.mu.Unlock()
+ 	if shard == nil {
+@@ -34,12 +38,37 @@ func (h *SNQueryViewHandler) acquireUpView(ctx context.Context, shardID qviews.S
+ 	return shard.acquireUpView(ctx, version, withTopology)
+ }
+ 
++// StopQueryAcquisition wakes recovery waiters without releasing resources used
++// by in-flight queries. WAL shutdown must call this before waiting for queries
++// to finish; CloseForHandoff performs resource cleanup after that wait.
++func (h *SNQueryViewHandler) StopQueryAcquisition() {
++	h.mu.Lock()
++	if h.queriesStopped {
++		h.mu.Unlock()
++		return
++	}
++	h.queriesStopped = true
++	shards := make([]*snShardView, 0, len(h.shards))
++	for _, shard := range h.shards {
++		shards = append(shards, shard)
++	}
++	h.mu.Unlock()
++	// Never nest shard locks under h.mu: onEmpty takes h.mu under a shard lock.
++	for _, shard := range shards {
++		shard.stopQueryAcquisition()
++	}
++}
++
+ func (s *snShardView) acquireUpView(ctx context.Context, version qviews.QueryViewVersion, withTopology bool) (*QueryViewLease, error) {
+ 	for {
+ 		if err := ctx.Err(); err != nil {
+ 			return nil, err
+ 		}
+ 		s.mu.Lock()
++		if s.queriesStopped {
++			s.mu.Unlock()
++			return nil, viewerror.NewOnShutdownError("query view %s is shutting down", s.shardID.String())
++		}
+ 		entry, exists := s.views[version]
+ 		if !exists {
+ 			s.mu.Unlock()
+```
+
+**File**: `internal/streamingnode/server/wal/snview/query_recovery_rpc_test.go` (added, +124/-0)
+```diff
+@@ -0,0 +1,124 @@
++//go:build test && dynamic
++
++package snview
++
++import (
++	"context"
++	"testing"
++	"time"
++
++	"github.com/stretchr/testify/require"
++
++	"github.com/milvus-io/milvus/internal/views/viewerror"
++	"github.com/milvus-io/milvus/internal/views/viewquery"
++	"github.com/milvus-io/milvus/pkg/v3/proto/internalpb"
++	"github.com/milvus-io/milvus/pkg/v3/proto/viewpb"
++)
++
++type recoveryWaitRuntime struct {
++	mockQueryRuntime
++	entered chan struct{}
++	visible chan struct{}
++}
++
++func (r *recoveryWaitRuntime) WaitMVCCVisible(ctx context.Context, growing, transforming uint64) error {
++	_ = r.mockQueryRuntime.WaitMVCCVisible(ctx, growing, transforming)
++	close(r.entered)
++	select {
++	case <-ctx.Done():
++		return ctx.Err()
++	case <-r.visible:
++		return nil
++	}
++}
++
++func TestSNHandler_Phase2RecoveryRPC(t *testing.T) {
++	for _, operation := range []string{"search", "query"} {
++		for _, event := range []string{"ready", "unrecoverable", "canceled", "shutdown"} {
++			t.Run(operation+"/"+event, func(t *testing.T) {
++				mockResolvePartitions(t)
++				view := newFullSNViewWithState(1, viewpb.QueryViewState_QueryViewStateUp, 101)
++				mgr := newMockResourceManager()
++				runtime := &recoveryWaitRuntime{entered: make(chan struct{}), visible: make(chan struct{})}
++				mgr.runtime = runtime
++				h := recoverSNQueryViewHandler(context.Background(), testPChannel, newMockCatalog(), mgr, []*viewpb.QueryViewOfShard{view.IntoProto()})
++				recovery, ok := mgr.getAcquired(view.QueryViewKey())
++				require.True(t, ok)
++				// Empty growing results exercise the real RPC server and task
++				// provider without needing native segment execution.
++				server := viewquery.NewServer(h, nil)
++				ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
++				defer cancel()
++				result := make(chan error, 1)
++				go func() {
++					id := view.ShardID().IntoProto()
++					version := view.Version().IntoProto()
++					mvcc := &viewpb.QueryPlanMVCC{GrowingTimetick: 11, TransformingTimetick: 10}
++					var err error
++					if operation == "search" {
++						_, err = server.SearchOnView(ctx, &viewpb.SearchOnViewRequest{
++							ShardId: id, Version: version, Mvcc: mvcc,
++							LegacyReq: &internalpb.SearchRequest{CollectionID: testCollectionID},
++						})
++					} else {
++						_, err = server.QueryOnView(ctx, &viewpb.QueryOnViewRequest{
++							ShardId: id, Version: version, Mvcc: mvcc,
++							LegacyReq: &internalpb.RetrieveRequest{CollectionID: testCollectionID},
++						})
++					}
++					result <- err
++				}()
++				waitForRecoveryWaiter(t, h)
++				select {
++				case <-runtime.entered:
++					t.Fatal("runtime used before recovery completed")
++				default:
++				}
++				switch event {
++				case "ready":
++					recovery.OnReady()
++					select {
++					case <-runtime.entered:
++					case <-ctx.Done():
++						t.Fatal("RPC did not resume after recovery")
++					}
++					require.EqualValues(t, 11, runtime.growingTimetick)
++					require.EqualValues(t, 10, runtime.transformingTimetick)
++					select {
++					case err := <-result:
++						t.Fatalf("RPC skipped MVCC visibility wait: %v", err)
++					default:
++					}
++					close(runtime.visible)
++				case "unrecoverable":
++					recovery.OnUnrecoverable()
++				case "canceled":
++					cancel()
++				case "shutdown":
++					h.StopQueryAcquisition()
++				}
++				select {
++				case err := <-result:
++					switch event {
++					case "ready":
++						require.NoError(t, err)
++					case "canceled":
++						require.ErrorIs(t, err, context.Canceled)
++					default:
++						// Check that the real RPC projection preserves retryability.
++						wire := viewerror.ConvertViewError(operation, viewerror.NewGRPCStatusFromError(err).Err())
++						viewErr := viewerror.AsViewError(wire)
++						require.True(t, viewErr.IsRetryable(), "%v", wire)
++						if event == "shutdown" {
++							require.True(t, viewErr.IsOnShutdown())
++						} else {
++							require.True(t, viewErr.IsViewInvalidated())
++						}
++					}
++				case <-time.After(5 * time.Second):
++					t.Fatal("RPC did not finish")
++				}
++			})
 +		}
 +	}
-+	appendCreate := func(msg message.MutableMessage, tick uint64, version int32, format int64) int64 {
-+		t.Helper()
-+		var segmentID int64
-+		_, err := i.DoAppend(t.Context(), msg.WithTimeTick(tick).WithLastConfirmedUseMessageID(), func(_ context.Context, msg message.MutableMessage) (message.MessageID, error) {
-+			h := message.MustAsMutableCreateSegmentMessageV2(msg).Header()
-+			require.Equal(t, version, h.GetSchemaVersion())
-+			require.Equal(t, format, h.GetStorageVersion())
-+			segmentID = h.GetSegmentId()
-+			return rmq.NewRmqID(int64(tick)), nil
-+		})
-+		require.NoError(t, err)
-+		appended <- tick
-+		return segmentID
-+	}
++}
+```
+
+**File**: `internal/streamingnode/server/wal/snview/query_recovery_wait_test.go` (added, +282/-0)
+```diff
+@@ -0,0 +1,282 @@
++//go:build test && dynamic
 +
-+	before := appendCreate(beginAllocation(10), 25, 5, storage.StorageV2)
-+	pendingAtDDL := beginAllocation(11)
-+	updated := proto.CloneOf(old)
-+	updated.Version = 6
-+	updated.Fields = append(updated.Fields, &schemapb.FieldSchema{FieldID: 125, DataType: schemapb.DataType_Text})
-+	ddl := message.NewAlterCollectionMessageBuilderV2().WithVChannel(channel).
-+		WithHeader(&message.AlterCollectionMessageHeader{CollectionId: 1, UpdateMask: &fieldmaskpb.FieldMask{Paths: []string{message.FieldMaskCollectionSchema}}}).
-+		WithBody(&message.AlterCollectionMessageBody{Updates: &message.AlterCollectionMessageUpdates{Schema: updated}}).
-+		MustBuildMutable().WithTimeTick(30)
-+	_, err := i.DoAppend(t.Context(), ddl, func(_ context.Context, msg message.MutableMessage) (message.MessageID, error) {
-+		require.Equal(t, []int64{before}, message.MustAsMutableAlterCollectionMessageV2(msg).Header().GetFlushedSegmentIds())
-+		return rmq.Ne
++package snview
++
++import (
++	"context"
++	"testing"
++	"time"
++
++	"github.com/bytedance/mockey"
++	"github.com/stretchr/testify/require"
++	"google.golang.org/protobuf/proto"
++
++	"github.com/milvus-io/milvus/internal/views/qviews"
++	"github.com/milvus-io/milvus/internal/views/viewerror"
++	"github.com/milvus-io/milvus/internal/views/worknode/handler"
++	"github.com/milvus-io/milvus/pkg/v3/proto/viewpb"
++)
++
++type queryLeaseResult struct {
++	lease *QueryViewLease
++	err   error
++}
++
++// waitForRecoveryWaiter returns once a query has parked on a recovering shard
++// of testVChannel: waiters take the shard's recovery notification under the
++// same lock that inspects the state, so a registered channel means "waiting".
++func waitForRecoveryWaiter(t *testing.T, h *SNQueryViewHandler) {
++	t.Helper()
++	require.Eventually(t, func() bool {
++		h.mu.Lock()
++		shards := make([]*snShardView, 0, len(h.shards))
++		for id, shard := range h.shards {
++			if id.VChannel == testVChannel {
++				shards = append(shards, shard)
++			}
++		}
++		h.mu.Unlock()
++		for _, shard := range shards {
++			shard.mu.Lock()
++			waiting := shard.recoveryChanged != nil
++			shard.mu.Unlock()
++			if waiting {
++				return true
++			}
++		}
++		return false
++	}, 5*time.Second, time.Millisecond)
++}
++
++func startRecoveryQuery(ctx context.Context, h *SNQueryViewHandler, id qviews.ShardID, version *qviews.QueryViewVersion) <-chan queryLeaseResult {
++	result := make(chan queryLeaseResult, 1)
++	go func() {
++		var lease *QueryViewLease
++		var err error
++		if version == nil {
++			lease, err = h.AcquireLatestUpView(ctx, id)
++		} else {
++			lease, err = h.AcquireUpView(ctx, id, *version)
++		}
++		result <- queryLeaseResult{lease, err}
++	}()
++	return result
++}
++
++func receiveRecoveryQuery(t *testing.T, result <-chan queryLeaseResult) queryLeaseResult {
++	t.Helper()
++	select {
++	case got := <-result:
++		if got.lease != nil {
++			t.Cleanup(got.lease.Release)
++		}
++		return got
++	case <-time.After(5 * time.Second):
++		t.Fatal("query did not leave recovery wait")
++		return queryLeaseResult{}
++	}
++}
++
++func TestSNHandler_RecoveryWaitExits(t *testing.T) {
++	for _, exact := range []bool{false, true} {
++		mode := "latest"
++		if exact {
++			mode = "exact"
++		}
++		for _, event := range []string{"unrecoverable", "down", "dropped", "canceled", "deadline", "shutdown"} {
++			t.Run(mode+"/"+event, func(t *testing.T) {
++				view := newFullSNViewWithState(1, viewpb.QueryViewState_QueryViewStateUp, 101)
++				mgr := newMockResourceManager()
++				h := recoverSNQueryViewHandler(context.Background(), testPChannel, newMockCatalog(), mgr, []*viewpb.QueryViewOfShard{view.IntoProto()})
++				recovery, ok := mgr.getAcquired(view.QueryViewKey())
++				require.True(t, ok)
++				timeout := 5 * time.Second
++				if event == "deadline" {
++					timeout = 100 * time.Millisecond
++				}
++				ctx, cancel := context.WithTimeout(context.Background(), timeout)
++				defer cancel()
++				var version *qviews.QueryViewVersion
++				if exact {
++					v := view.Version()
++					version = &v
++				}
++				result := startRecoveryQuery(ctx, h, view.ShardID(), version)
++				waitForRecoveryWaiter(t, h)
++				switch event {
++				case "unrecoverable":
++					recovery.OnUnrecoverable()
++				case "down":
++					h.ApplyViews([]handler.ApplyView{{View: newSNViewWithState(1, viewpb.QueryViewState_QueryViewStateDown)}})
++				case "dropped":
++					h.ApplyViews([]handler.ApplyView{{View: newSNViewWithState(1, viewpb.QueryViewState_QueryViewStateDropped)}})
++				case "canceled":
++					cancel()
++				case "shutdown":
++					h.StopQueryAcquisition()
++					h.StopQueryAcquisition()
++				}
++				got := receiveRecoveryQuery(t, result)
++				require.Nil(t, got.lease)
++				switch event {
++				case "canceled":
++					require.ErrorIs(t, got.err, context.Canceled)
++				case "deadline":
++					require.ErrorIs(t, got.err, context.DeadlineExceeded)
++				case "shutdown":
++					require.True(t, viewerror.AsViewError(got.err).IsOnShutdown(), "%v", got.err)
++				default:
++					viewErr := viewerror.AsViewError(got.err)
++					require.True(t, viewErr.IsRetryable(), "%v", got.err)
++					if exact {
++						require.True(t, viewErr.IsViewInvalidated())
++					} else {
++						require.True(t, viewErr.IsViewNotFound())
++					}
++					// A delayed completion cannot resurrect a failed or retired view.
++					recovery.OnReady()
++					lease, err := h.AcquireUpView(ctx, view.ShardID(), view.Version())
++					require.Nil(t, lease)
++					require.True(t, viewerror.AsViewError(err).IsViewInvalidated())
++				}
++			})
++		}
++	}
++}
++
++func TestSNHandler_RecoveryWaitPinsRequestedVersion(t *testing.T) {
++	old := newFullSNViewWithState(1, viewpb.QueryViewState_QueryViewStateUp, 101)
++	newer := newFullSNViewWithState(2, viewpb.QueryViewState_QueryViewStateUp, 102)
++	mgr := newMockResourceManager()
++	h := recoverSNQueryViewHandler(context.Background(), testPChannel, newMockCatalog(), mgr, []*viewpb.QueryViewOfShard{old.IntoProto(), newer.IntoProto()})
++	ol
 ```
 
-**File**: `internal/streamingnode/server/wal/interceptors/shard/shards/partition_manager.go` (modified, +1/-2)
-```diff
-@@ -89,7 +89,6 @@ func (m *partitionManager) GetSegmentManager(segmentID int64) *segmentAllocManag
- }
- 
- // AssignSegment assigns a segment for a assign segment request.
--// req.SchemaVersion must be set by the caller before invoking.
- func (m *partitionManager) AssignSegment(req *AssignSegmentRequest) (*AssignSegmentResult, error) {
- 	// !!! We have promised that the fencedAssignTimeTick is always less than new incoming insert request by Barrier TimeTick of ManualFlush.
- 	// So it's just a promise check here.
-@@ -210,6 +209,6 @@ func (m *partitionManager) assignSegment(req *AssignSegmentRequest) (*AssignSegm
- 
- 	// There is no segment can be allocated for the insert request.
- 	// Ask a new pending segment to insert.
--	m.asyncAllocSegment(req.SchemaVersion, req.RequiresStorageV3)
-+	m.asyncAllocSegment()
- 	return nil, ErrWaitForNewSegment
- }
-```
+---
 
-**File**: `internal/streamingnode/server/wal/interceptors/shard/shards/partition_manager_test.go` (modified, +2/-2)
-```diff
-@@ -61,7 +61,7 @@ func TestPartitionManagerLogging(t *testing.T) {
- 	}
- 	for _, manager := range managers {
- 		require.Same(t, parent, manager.Logger())
--		manager.asyncAllocSegment(0, false)
-+		manager.asyncAllocSegment()
- 		manager.asyncFlushSegment(ctx, segment)
- 	}
- 	for range 4 {
-@@ -75,7 +75,7 @@ func TestPartitionManagerLogging(t *testing.T) {
- 	canceledCtx, cancel := context.WithCancel(ctx)
- 	cancel()
- 	for _, manager := range managers {
--		manager.asyncAllocSegment(0, false)
-+		manager.asyncAllocSegment()
- 		manager.wal = syncutil.NewFuture[wal.WAL]()
- 		manager.asyncFlushSegment(canceledCtx, segment)
- 	}
-```
+### Incident Patch 2: `16ffc35f` (2026-11-25)
+**Commit Message**: fix: align JSON stats existence with raw empty-container semantics (#55594)
 
-**File**: `internal/streamingnode/server/wal/interceptors/shard/shards/segment_alloc_worker.go` (modified, +11/-20)
-```diff
-@@ -17,7 +17,7 @@ import (
- )
- 
- // asyncAllocSegment allocates a new growing segment asynchronously.
--func (m *partitionManager) asyncAllocSegment(schemaVersion int32, requiresStorageV3 bool) {
-+func (m *partitionManager) asyncAllocSegment() {
- 	if m.onAllocating != nil {
- 		m.Logger().Debug(m.ctx, "segment alloc worker is already on allocating",
- 			mlog.FieldVChannel(m.vchannel),
-@@ -29,13 +29,11 @@ func (m *partitionManager) asyncAllocSegment(schemaVersion int32, requiresStorag
- 	// Create a notifier to notify the waiter when the allocation is done.
- 	m.onAllocating = make(chan struct{})
- 	w := &segmentAllocWorker{
--		ctx:               m.ctx,
--		collectionID:      m.collectionID,
--		partitionID:       m.partitionID,
--		vchannel:          m.vchannel,
--		wal:               m.wal.Get(),
--		schemaVersion:     schemaVersion,
--		requiresStorageV3: requiresStorageV3,
-+		ctx:          m.ctx,
-+		collectionID: m.collectionID,
-+		partitionID:  m.partitionID,
-+		vchannel:     m.vchannel,
-+		wal:          m.wal.Get(),
- 	}
- 	w.SetLogger(m.Logger().With(
- 		mlog.FieldVChannel(m.vchannel),
-@@ -56,11 +54,9 @@ type segmentAllocWorker struct {
- 	wal          wal.WAL
- 	// The following fields are preserved across retries to ensure the same segment
- 	// configuration is used when rebuilding the message after a failed append.
--	segmentID         uint64            // allocated segment ID
--	storageVersion    int64             // storage version determined at first attempt
--	limitation        segmentLimitation // segment limitation determined at first attempt
--	schemaVersion     int32
--	requiresStorageV3 bool
-+	segmentID      uint64            // allocated segment ID
-+	storageVersion int64             // storage version determined at first attempt
-+	limitation     segmentLimitation // segment limitation determined at first attempt
- }
- 
- // do is the main loop of the segment allocation worker.
-@@ -106,10 +102,6 @@ func (w *segmentAllocWorker) doOnce() error {
- 	// Build a fresh message each time to avoid reusing a contaminated message.
- 	// After a failed WAL append, the message may have internal state set (e.g., WAL term)
- 	// that would cause a panic if reused.
--	// TODO: include SchemaVersion in CreateSegmentMessageHeader so that the flusher
--	// can propagate it to DataCoord's AllocSegment RPC. Currently streaming-created
--	// segments get SchemaVersion=0, causing unnecessary backfill triggers.
--	// Tracked in companion PR: https://github.com/milvus-io/milvus/pull/48865
- 	msg := message.NewCreateSegmentMessageBuilderV2().
- 		WithVChannel(w.vchannel).
- 		WithHeader(&message.CreateSegmentMessageHeader{
-@@ -120,7 +112,6 @@ func (w *segmentAllocWorker) doOnce() error {
- 			MaxRows:        w.limitation.SegmentRows,
- 			MaxSegmentSize: w.limitation.SegmentSize,
- 			Level:          datapb.SegmentLevel_L1,
--			SchemaVersion:  w.schemaVersion,
- 		}).
- 		WithBody(&message.CreateSegmentMessageBody{}).
- 		MustBuildMutable()
-@@ -151,9 +142,9 @@ func (w *segmentAllocWorker) initSegmentConfig() error {
- 	}
- 	w.segmentID = segmentID
- 
--	// Determine storage version.
-+	// Capture the configured default across retries. CreateSegment applies schema requirements at append.
- 	w.storageVersion = storage.StorageV2
--	if w.requiresStorageV3 || paramtable.Get().CommonCfg.UseLoonFFI.GetAsBool() {
-+	if paramtable.Get().CommonCfg.UseLoonFFI.GetAsBool() {
- 		w.storageVersion = storage.StorageV3
- 	}
- 
-```
+Fixes #55290
 
-**File**: `internal/streamingnode/server/wal/interceptors/shard/shards/segment_workers_test.go` (modified, +8/-11)
+JSON stats previously treated shredded arrays such as `[]`, `[null]`,
+and recursively empty containers as existing because their column
+entries were valid. Evaluate their BSON contents with the existing
+recursive emptiness check so `EXISTS`, `IS NULL`, and `IS NOT NULL`
+agree with raw JSON evaluation. Scalar columns retain their
+validity-based check.
+
+For parent paths, combine shared and shredded matches with OR. For
+example, in `{"parent":{"a":[1],"empty":null}}`, the empty shared
+remainder must not overwrite the existence established by the shredded
+array.
+
+Resolve scalar descendants first. If all rows are resolved, skip
+remaining arrays and shared data. Otherwise, use the accumulated result
+bitmap to skip fully resolved physical array cells before pinning either
+payload or validity. Mixed cells retain the per-row guard against
+redundant BSON parsing. Ordinary shredding scans retain their existing
+validity handling.
+
+### Validation
+
+- Latest update: `be07357945`. Its source snapshot passed **148 tests
+across 6 suites** through Dev CLI cloud C++ validation, covering JSON
+stats routing, empty
+
+**File**: `internal/core/src/exec/expression/ExistsExpr.cpp` (modified, +68/-2)
 ```diff
-@@ -296,30 +296,27 @@ func TestSegmentAllocWorker_InitSegmentConfig(t *testing.T) {
- 	assert.Equal(t, firstLimitation, w.limitation)
- }
+@@ -41,6 +41,36 @@
+ namespace milvus {
+ namespace exec {
  
--func TestSegmentAllocWorkerStorageVersionFollowsRequirements(t *testing.T) {
-+func TestSegmentAllocWorkerUsesConfiguredStorageVersion(t *testing.T) {
- 	paramtable.Init()
- 	resource.InitForTest(t)
- 	param := paramtable.Get()
- 	defer param.Reset(param.CommonCfg.UseLoonFFI.Key)
++namespace {
++
++// Determine whether each unresolved BSON array contains a nonempty value for
++// EXISTS. Resolved rows in mixed scan batches need no BSON parsing.
++void
++EvaluateShreddedArrayExists(const std::string_view* values,
++                            ValidityView valid,
++                            size_t size,
++                            TargetBitmapView result,
++                            TargetBitmapView /*valid_result*/,
++                            TargetBitmapView resolved) {
++    // The executor slices result for each scan batch; resolved spans the segment.
++    const auto resolved_batch = resolved.view(result.offset(), size);
++    for (size_t i = 0; i < size; ++i) {
++        // Rows already matched by another descendant need no BSON parsing.
++        if (resolved_batch[i] || (valid && !valid[i])) {
++            result[i] = false;
++            continue;
++        }
++        // A valid BSON array can still be recursively empty ([], [null],
++        // [[]], ...). Match Json::exist and the shared BSON evaluator.
++        BsonView bson(reinterpret_cast<const uint8_t*>(values[i].data()),
++                      values[i].size());
++        auto array = bson.ParseAsArrayAtOffset(0);
++        result[i] = array.has_value() && !BsonView::IsBsonValueEmpty(*array);
++    }
++}
++
++}  // namespace
++
+ void
+ PhyExistsFilterExpr::DetermineExecPath() {
+     // JsonStats is the fallback applied by EnsureExecPathDetermined() when no
+@@ -241,17 +271,49 @@ PhyExistsFilterExpr::EvalJsonExistsForDataSegmentByStats() {
+                         });
+                     auto shredding_fields =
+                         index->GetShreddingFieldsWithPrefix(pointer);
++                    // Resolve cheap scalar validity first, regardless of field
++                    // name order, before reading any array payloads.
+                     for (const auto& field : shredding_fields) {
++                        if (index->GetShreddingJsonType(field) ==
++                            index::JSONType::ARRAY) {
++                            continue;
++                        }
++                        if (res_view.all()) {
++                            break;
++                        }
+                         TargetBitmap temp_valid(active_count_, true);
+                         TargetBitmapView temp_valid_view(temp_valid);
+                         index->ExecutorForGettingValid(
+                             op_ctx_, field, temp_valid_view);
+                         res_view |= temp_valid_view;
+                     }
++
++                    // Only read arrays if scalar validity left unresolved rows.
++                    for (const auto& field : shredding_fields) {
++                        if (index->GetShreddingJsonType(field) !=
++                            index::JSONType::ARRAY) {
++                            continue;
++                        }
++                        if (res_view.all()) {
++                            break;
++                        }
++                        TargetBitmap array_exists(active_count_, false);
++                        // Fully resolved cells need neither payload nor
++                        // validity. Mixed cells still skip resolved rows in
++                        // the evaluator; its validity output is unused.
++                        index->ExecutorForUnresolvedShreddingData<
++                            std::string_view>(op_ctx_,
++                                              field,
++                                              EvaluateShreddedArrayExists,
++                                              TargetBitmapView(array_exists),
++                                              TargetBitmapView(array_exists),
++                                              res_view);
++                        res_view |= TargetBitmapView(array_exists);
++                    }
+                 }
  
- 	for name, tc := range map[string]struct {
--		useLoonFFI        string
--		requiresStorageV3 bool
--		expected          int64
-+		useLoonFFI string
-+		expected   int64
- 	}{
- 		"v2_without_requirement": {useLoonFFI: "false", expected: storage.StorageV2},
--		"v3_required_by_schema":  {useLoonFFI: "false", requiresStorageV3: true, expected: storage.StorageV3},
- 		"v3_with_ffi":            {useLoonFFI: "true", expected: storage.StorageV3},
- 	} {
- 		t.Run(name, func(t *testing.T) {
- 			param.Save(param.CommonCfg.UseLoonFFI.Key, tc.useLoonFFI)
- 			w := &segmentAllocWorker{
--				ctx:               context.Background(),
--				collectionID:      1,
--				partitionID:       2,
--				vchannel:          "v1",
--				wal:               mock_wal.NewMockWAL(t),
--				requiresStorageV3: tc.requiresStorageV3,
-+				ctx:          context.Background(),
-+				collectionID: 1,
-+				partitionID:  2,
-+				vchannel:     "v1",
-+				wal:          mock_wal.NewMockWAL(t),
- 			}
- 			w.SetLogger(mlog.With())
+                 // process shared data
+-                {
++                if (!res_view.all()) {
+                     milvus::ScopedTimer timer(
+                         "exists_json_stats_shared_data", [this](double us) {
+                             json_stats_shared_latency_us_ += us;
+@@ -261,7 +323,11 @@ PhyExistsFilterExpr::EvalJsonExistsForDataSegmentByStats() {
+                         bson_index_,
+                         pointer,
+                         [&](BsonView bson, uint32_t row_id, uint32_t offset) {
+-                            res_view[row_id] = !bson.IsBsonValueEmpty(offset);
++                            // A parent can have children in both layouts. An
++                            // empty shared child must not erase a shredded hit.
++                            if (!bson.IsBsonValueEmpty(offset)) {
++                                res_view[row_id] = true;
++                            }
+                         });
+                 }
  
 ```
 
-**File**: `internal/streamingnode/server/wal/interceptors/shard/shards/shard_manager.go` (modified, +0/-11)
+**File**: `internal/core/src/exec/expression/JsonContainsByStatsTest.cpp` (modified, +424/-2)
 ```diff
-@@ -275,17 +275,6 @@ func (c *CollectionInfo) AllowGrowingSourceFlush() bool {
- 		paramtable.Get().CommonCfg.EnableGrowingSourceFlush.GetAsBool())
+@@ -38,7 +38,9 @@
+ #include "common/protobuf_utils.h"
+ #include "exec/expression/BinaryRangeExpr.h"
+ #include "exec/expression/ExprBatchTestUtils.h"
++#include "exec/expression/ExprCache.h"
+ #include "exec/expression/ExprIndexIntegrationTestUtils.h"
++#include "exec/expression/ExistsExpr.h"
+ #include "exec/expression/JsonContainsExpr.h"
+ #include "index/Meta.h"
+ #include "exec/expression/TermExpr.h"
+@@ -80,6 +82,16 @@ using namespace milvus::index;
+ 
+ class JsonStatsProjectionTestAccessor {
+  public:
++    static std::shared_ptr<ChunkedColumnInterface>&
++    ShreddingColumn(JsonKeyStats& stats, const std::string& field_name) {
++        return stats.shredding_columns_.at(field_name);
++    }
++
++    static std::shared_ptr<ChunkedColumnInterface>&
++    SharedColumn(JsonKeyStats& stats) {
++        return stats.shared_column_;
++    }
++
+     static bool
+     IsInMultiFieldColumnGroup(const JsonKeyStats& stats,
+                               const std::string& field_name) {
+@@ -90,6 +102,70 @@ class JsonStatsProjectionTestAccessor {
+ 
+ namespace {
+ 
++struct DisableExprCache {
++    bool was_enabled = exec::ExprResCacheManager::IsEnabled();
++    DisableExprCache() {
++        exec::ExprResCacheManager::SetEnabled(false);
++    }
++    ~DisableExprCache() {
++        exec::ExprResCacheManager::SetEnabled(was_enabled);
++    }
++};
++
++// Keep the real stats reads, but count entry into the expensive scan paths.
++class CountingExistsColumn : public ChunkedVariableColumn<std::string> {
++ public:
++    CountingExistsColumn(std::shared_ptr<cachinglayer::CacheSlot<Chunk>> slot,
++                         const FieldMeta& meta,
++                         std::shared_ptr<ChunkedColumnInterface> source)
++        : ChunkedVariableColumn<std::string>(std::move(slot), meta),
++          source_(std::move(source)) {
++    }
++
++    ScanResult
++    Scan(OpContext* ctx, const ScanOptions& options) const override {
++        ++array_scans;
++        return source_->Scan(ctx, options);
++    }
++
++    void
++    BulkRawBsonAt(OpContext* ctx,
++                  std::function<void(BsonView, uint32_t, uint32_t)> fn,
++                  const uint32_t* rows,
++                  const uint32_t* offsets,
++                  int64_t count) const override {
++        ++shared_reads;
++        source_->BulkRawBsonAt(ctx, std::move(fn), rows, offsets, count);
++    }
++
++    mutable int64_t array_scans = 0;
++    mutable int64_t shared_reads = 0;
++
++ private:
++    std::shared_ptr<ChunkedColumnInterface> source_;
++};
++
++// Use the production scan cursor and record every payload/validity pin.
++class CountingExistsArrayColumn : public ChunkedVariableColumn<std::string> {
++ public:
++    using ChunkedVariableColumn<std::string>::ChunkedVariableColumn;
++
++    PinWrapper<Chunk*>
++    GetChunk(OpContext* ctx, int64_t chunk_id) const override {
++        pinned_chunks.push_back(chunk_id);
++        return ChunkedVariableColumn<std::string>::GetChunk(ctx, chunk_id);
++    }
++
++    ScanResult
++    Scan(OpContext* ctx, const ScanOptions& options) const override {
++        ++array_scans;
++        return ChunkedVariableColumn<std::string>::Scan(ctx, options);
++    }
++
++    mutable std::vector<int64_t> pinned_chunks;
++    mutable int64_t array_scans = 0;
++};
++
+ bool
+ IsValidAt(const std::vector<uint8_t>& valid_data, size_t i) {
+     return ((valid_data[i >> 3] >> (i & 0x07)) & 1) != 0;
+@@ -228,7 +304,8 @@ BuildJsonStatsIndex(const std::vector<std::string>& json_strings,
+                     int64_t field_id,
+                     int64_t build_id,
+                     int64_t version_id,
+-                    const std::vector<uint8_t>* valid_data = nullptr) {
++                    const std::vector<uint8_t>* valid_data = nullptr,
++                    int64_t max_shredding_columns = 1024) {
+     std::vector<milvus::Json> data;
+     data.reserve(json_strings.size());
+     for (const auto& s : json_strings) {
+@@ -284,7 +361,8 @@ BuildJsonStatsIndex(const std::vector<std::string>& json_strings,
+     Config build_config;
+     build_config[INSERT_FILES_KEY] = std::vector<std::string>{log_path};
+ 
+-    auto builder = std::make_shared<JsonKeyStats>(ctx, false);
++    auto builder =
++        std::make_shared<JsonKeyStats>(ctx, false, max_shredding_columns);
+     builder->Build(build_config);
+ 
+     const auto create_index_result = builder->Upload(build_config);
+@@ -2054,3 +2132,347 @@ TEST(JsonStatsExecPathTest, TypedArrayIndexWinsOverJsonStatsForContains) {
+                   exec::ExprExecPath::JsonStats);
+     }
+ }
++
++class JsonStatsExistsOrderTest : public ::testing::TestWithParam<bool> {};
++
++TEST_P(JsonStatsExistsOrderTest, ResolvedParentSkipsRemainingColumns) {
++    DisableExprCache disable_cache;
++    milvus::test::ExprBatchSizeGuard batch_size(7);
++    constexpr int64_t n =
++        17;  // Exercise a partial bitmap word and final batch.
++    const bool array_first = GetParam();
++    const std::string scalar_key = array_first ? "z" : "a";
++    enum LastRow { Scalar, ComplementaryScalars, Array
+```
+
+**File**: `internal/core/src/segcore/json_stats/JsonKeyStats.h` (modified, +59/-8)
+```diff
+@@ -267,6 +267,63 @@ class JsonKeyStats {
+         TargetBitmapView res,
+         TargetBitmapView valid_res,
+         ValTypes... values) {
++        milvus::detail::ColumnFilterPtr filter;
++        if (skip_func) {
++            filter = std::make_shared<milvus::detail::ColumnFilter>(
++                milvus::detail::ColumnFilter::MetricsSource::
++                    PreloadedStatistics,
++                [&](int64_t cell_id) {
++                    return skip_func(skip_index_, path, cell_id);
++                });
++        }
++        return ScanShreddingData<T>(
++            op_ctx, path, func, filter, res, valid_res, values...);
++    }
++
++    // EXISTS has already resolved the rows set in resolved. Skip their entire
++    // physical cells before pinning payload or validity; the callback still
++    // receives resolved to avoid parsing those rows in mixed cells.
++    template <typename T, typename FUNC>
++    int64_t
++    ExecutorForUnresolvedShreddingData(milvus::OpContext* op_ctx,
++                                       const std::string& path,
++                                       FUNC func,
++                                       TargetBitmapView res,
++                                       TargetBitmapView valid_res,
++                                       TargetBitmapView resolved) {
++        const auto it = shredding_columns_.find(path);
++        if (it == shredding_columns_.end()) {
++            return 0;
++        }
++        const auto& column = it->second;
++        column->Prepare(op_ctx);
++        AssertInfo(resolved.size() >= column->NumRows(),
++                   "Resolved bitmap is shorter than shredding column {}",
++                   path);
++        auto filter = std::make_shared<milvus::detail::ColumnFilter>(
++            milvus::detail::ColumnFilter::MetricsSource::PreloadedStatistics,
++            [column, resolved](int64_t cell_id) {
++                const auto start = column->GetNumRowsUntilChunk(cell_id);
++                const auto size = column->chunk_row_nums(cell_id);
++                return resolved.view(start, size).all();
++            },
++            // These rows already have their final result. Their array-column
++            // validity must not trigger a payload pin or clear that result.
++            /*skipped_validity_required=*/false);
++        return ScanShreddingData<T>(
++            op_ctx, path, func, filter, res, valid_res, resolved);
++    }
++
++ private:
++    template <typename T, typename FUNC, typename... ValTypes>
++    int64_t
++    ScanShreddingData(milvus::OpContext* op_ctx,
++                      const std::string& path,
++                      FUNC& func,
++                      milvus::detail::ColumnFilterPtr filter,
++                      TargetBitmapView res,
++                      TargetBitmapView valid_res,
++                      ValTypes... values) {
+         int64_t processed_size = 0;
+         // if path is not in shredding_columns_, return 0
+         if (shredding_columns_.find(path) == shredding_columns_.end()) {
+@@ -284,14 +341,7 @@ class JsonKeyStats {
+                 : ChunkedColumnInterface::ScanPinPolicy::ResultOwned;
+         auto options = ChunkedColumnInterface::ScanOptions::ForData(
+             0, TargetTypeOf<T>(), pin_policy);
+-        if (skip_func) {
+-            options.filter = std::make_shared<milvus::detail::ColumnFilter>(
+-                milvus::detail::ColumnFilter::MetricsSource::
+-                    PreloadedStatistics,
+-                [&](int64_t cell_id) {
+-                    return skip_func(skip_index_, path, cell_id);
+-                });
+-        }
++        options.filter = std::move(filter);
+         auto cursor = column->Scan(op_ctx, options);
+         AssertInfo(cursor != nullptr,
+                    "Shredding column {} does not support data scan",
+@@ -344,6 +394,7 @@ class JsonKeyStats {
+         return processed_size;
+     }
+ 
++ public:
+     std::set<std::string>
+     GetShreddingFields(const std::string& pointer) {
+         std::set<std::string> fields;
+```
+
+**File**: `internal/core/src/segcore/json_stats/JsonKeyStatsScanTest.cpp` (modified, +77/-0)
+```diff
+@@ -16,6 +16,7 @@
+ 
+ #include <gtest/gtest.h>
+ 
++#include <algorithm>
+ #include <cstring>
+ #include <numeric>
+ #include <optional>
+@@ -374,6 +375,82 @@ TEST_P(JsonKeyStatsScanTest, SkipUsesPhysicalCellOnceAndPreservesIncomingBits) {
+     }
  }
  
--func (c *CollectionInfo) RequiresStorageV3() bool {
--	return c.HasTextField()
--}
--
--func (c *CollectionInfo) HasTextField() bool {
--	if c == nil || c.Schema == nil || c.Schema.GetSchema() == nil {
--		return false
--	}
--	return typeutil.HasTextField(c.Schema.GetSchema())
--}
--
- // RuntimeFlushSize estimates the in-memory footprint used by flush pressure decisions.
- func (c *CollectionInfo) RuntimeFlushSize(modified stats.ModifiedMetrics) uint64 {
- 	if modified.Rows == 0 || modified.BinarySize == 0 {
++TEST_P(JsonKeyStatsScanTest, ResolvedCellsNeverPinPayloadOrValidity) {
++    const int64_t first_rows = DEFAULT_EXEC_EVAL_EXPR_BATCH_SIZE + 3;
++    const int64_t rows = first_rows + 5 + 7;
++    for (bool nullable : {false, true}) {
++        for (int mode : {0, 1, 2, 3}) {
++            SCOPED_TRACE(testing::Message()
++                         << "nullable=" << nullable << " mode=" << mode);
++            auto fixture = MakeColumn({first_rows, 5, 7},
++                                      std::vector<std::string>(rows, "payload"),
++                                      DataType::STRING,
++                                      nullable);
++            auto stats = MakeStats(fixture.column);
++            // 0: none resolved, 1: all resolved, 2/3: a single unresolved
++            // valid/invalid row in the middle cell. Both end cells can skip.
++            TargetBitmap resolved(rows, mode != 0);
++            if (mode >= 2) {
++                int64_t unresolved = first_rows;
++                while (ValidRow(unresolved) != (mode == 2)) {
++                    ++unresolved;
++                }
++                ASSERT_LT(unresolved, first_rows + 5);
++                resolved[unresolved] = false;
++            }
++            auto original = resolved.clone();
++            TargetBitmap result(rows, false), valid(rows, true);
++            int64_t parsed_rows = 0;
++            auto predicate = [&](const std::string_view* data,
++                                 ValidityView validity,
++                                 int64_t size,
++                                 TargetBitmapView res,
++                                 TargetBitmapView valid_res,
++                                 TargetBitmapView resolved_rows) {
++                auto resolved_batch = resolved_rows.view(res.offset(), size);
++                for (int64_t i = 0; i < size; ++i) {
++                    if (resolved_batch[i]) {
++                        continue;
++                    }
++                    valid_res[i] = !validity || validity[i];
++                    if (!valid_res[i]) {
++                        continue;
++                    }
++                    ++parsed_rows;
++                    res[i] = data[i] == "payload";
++                }
++            };
++            fixture.trace->fail_pin = mode == 1;
++            EXPECT_EQ(
++                stats->ExecutorForUnresolvedShreddingData<std::string_view>(
++                    nullptr,
++                    "test_path",
++                    predicate,
++                    TargetBitmapView(result),
++                    TargetBitmapView(valid),
++                    TargetBitmapView(resolved)),
++                rows);
++            const auto& pins = fixture.trace->pinned_chunks;
++            if (mode == 1) {
++                EXPECT_TRUE(pins.empty());
++            } else if (mode >= 2) {
++                EXPECT_EQ(pins, (std::vector<int64_t>{1}));
++                EXPECT_EQ(parsed_rows, mode == 2 || !nullable ? 1 : 0);
++            } else {
++                EXPECT_NE(std::find(pins.begin(), pins.end(), 0), pins.end());
++                EXPECT_NE(std::find(pins.begin(), pins.end(), 1), pins.end());
++                EXPECT_NE(std::find(pins.begin(), pins.end(), 2), pins.end());
++            }
++            for (int64_t i = 0; i < rows; ++i) {
++                EXPECT_EQ(resolved[i], original[i]);
++                EXPECT_EQ(result[i],
++                          !resolved[i] && (!nullable || ValidRow(i)));
++                EXPECT_EQ(valid[i], resolved[i] || !nullable || ValidRow(i));
++            }
++        }
++    }
++}
++
+ template <typename T>
+ void
+ CheckFixedWidth(DataType type,
+```
+
+---
+
+### Incident Patch 3: `cd5310ef` (2026-11-25)
+**Commit Message**: fix: honor Talon routing for broker-backed external tables (#55904)
+
+Allow external tables that use a credential broker to follow the
+operator's Talon read settings. The external-table opt-in defaults to
+false. When enabled, AWS broker target roles, supported broker IAM
+modes, and Azure broker targets can use the configured Talon coordinator
+and read mode.
+
+The previous policy in #54986 forced every broker-backed external
+filesystem to origin. The storage revision already pinned on master
+supports per-request broker descriptors. Aliyun and Tencent target-role
+reads continue to use native storage because the pinned Talon S3
+provider accepts AWS target roles only. Local filesystems also use
+native storage. Endpoint allowlisting and Azure alias normalization run
+before routing.
+
+Related to #53875 and #54985. Corresponding 3.0 change in #55901.
+
+**Verification**
+
+- Exercised the existing broker policy, Azure legacy alias/query,
+endpoint normalization and non-broker routing tests in a focused native
+executable. The two updated broker cases failed against the original
+master implementation. All four cases passed with this change.
+- Covered AWS, Aliyun and Tencent with both IAM and target
+
+**File**: `internal/core/src/storage/loon_ffi/util.cpp` (modified, +9/-10)
+```diff
+@@ -1283,9 +1283,14 @@ InjectExternalSpecProperties(
+         ARROW_RETURN_NOT_OK(validate_token_lifetime("GCP Bearer credentials"));
+     }
+ 
+-    // External Tables share the filesystem tuning, with an independently
+-    // configured mode. Local external filesystems never use Talon.
+-    const bool external_is_local = value("storage_type") == "local";
++    // Talon's S3 broker accepts target roles only for AWS. Preserve native
++    // routing for Aliyun and Tencent target roles.
++    const bool native_target_role =
++        !broker_endpoint.empty() &&
++        (spec_cloud_provider == "aliyun" || spec_cloud_provider == "tencent") &&
++        !use_iam;
++    const bool origin_only =
++        native_target_role || value("storage_type") == "local";
+     for (const auto* key : {PROPERTY_FS_TALON_MODE,
+                             PROPERTY_FS_TALON_OPEN_ONLY,
+                             PROPERTY_FS_TALON_SMALL_READ_THRESHOLD,
+@@ -1298,13 +1303,7 @@ InjectExternalSpecProperties(
+                                      : key;
+         const auto value = PropertyValueAsString(properties, source_key);
+         const auto extfs_key = ExternalFsPropertyKey(extfs_prefix, key);
+-        // Keep Broker credential acquisition and refresh on the origin filesystem.
+-        if (!broker_endpoint.empty()) {
+-            properties.erase(extfs_key);
+-            if (std::string_view(key) == PROPERTY_FS_TALON_MODE) {
+-                properties[extfs_key] = std::string("0");
+-            }
+-        } else if (external_is_local) {
++        if (origin_only) {
+             properties.erase(extfs_key);
+         } else if (value.has_value()) {
+             properties[extfs_key] = *value;
+```
+
+**File**: `internal/core/unittest/test_external_take.cpp` (modified, +28/-11)
+```diff
+@@ -33,6 +33,8 @@
+ #include <memory>
+ #include <optional>
+ #include <string>
++#include <string_view>
++#include <utility>
+ #include <vector>
+ 
+ #include "common/ChunkWriter.h"
+@@ -4030,7 +4032,7 @@ TEST(InjectExtfsAllowlist, AzureLegacyBrokerQuery) {
+     EXPECT_EQ(std::get<std::string>(props.at("extfs.42.credential_endpoint")),
+               endpoint);
+     EXPECT_EQ(props.count("extfs.42.azure_credential_endpoint"), 0u);
+-    EXPECT_EQ(std::get<std::string>(props.at("extfs.42.talon.mode")), "0");
++    EXPECT_EQ(props.count("extfs.42.talon.mode"), 0u);
+     EXPECT_ANY_THROW(inject(endpoint + "&extra=1"));
+     EXPECT_ANY_THROW(
+         inject("https://broker.example.com/v1/credentials/"
+@@ -4748,7 +4750,12 @@ TEST(InjectExtfsAllowlist, BrokerIamPolicyAndLegacyAliases) {
+     EXPECT_FALSE(
+         InitCredentialBrokerPolicy(std::string(R"(["file:///tmp/broker"])"))
+             .ok());
+-    for (const auto& cloud : {"aws", "aliyun", "tencent"}) {
++    for (const auto& [cloud, iam] : {std::pair{"aws", true},
++                                     {"aliyun", true},
++                                     {"tencent", true},
++                                     {"aws", false},
++                                     {"aliyun", false},
++                                     {"tencent", false}}) {
+         for (const auto* format : {"parquet", "milvus-table"}) {
+             for (uint32_t mode : {0u, 1u, 2u}) {
+                 milvus_storage::api::Properties props;
+@@ -4761,14 +4768,17 @@ TEST(InjectExtfsAllowlist, BrokerIamPolicyAndLegacyAliases) {
+                                    {"extfs",
+                                     {{"cloud_provider", cloud},
+                                      {"region", "us-west-2"},
+-                                     {"use_iam", "true"},
++                                     {"use_iam", iam ? "true" : "false"},
+                                      {"credential_endpoint", endpoint}}}};
++                if (!iam) {
++                    spec["extfs"]["role_arn"] = "target-role";
++                }
+                 InjectExternalSpecProperties(
+                     props, 42, "s3://bucket/path", spec.dump());
+                 EXPECT_EQ(std::get<std::string>(
+                               props.at("extfs.42.credential_endpoint")),
+                           endpoint);
+-                EXPECT_EQ(props.count("extfs.42.role_arn"), 0u);
++                EXPECT_EQ(props.count("extfs.42.role_arn"), iam ? 0u : 1u);
+                 auto address =
+                     std::get<std::string>(props.at("extfs.42.address"));
+                 auto scheme_end = address.find("://");
+@@ -4779,13 +4789,16 @@ TEST(InjectExtfsAllowlist, BrokerIamPolicyAndLegacyAliases) {
+                         props),
+                     "s3://" + address + "/bucket/path");
+                 ASSERT_TRUE(config.ok()) << config.status();
+-                EXPECT_TRUE(config->use_iam);
++                EXPECT_EQ(config->use_iam, iam);
+                 EXPECT_TRUE(config->IsAwsCredentialBrokerEnabled());
+                 EXPECT_EQ(config->credential_endpoint, endpoint);
+                 EXPECT_FALSE(config->s3_use_crt);
+-                EXPECT_EQ(config->talon_mode,
+-                          milvus_storage::TalonMode::Disabled);
+-                EXPECT_EQ(props.count("extfs.42.talon.coordinator"), 0u);
++                const bool supports_talon =
++                    iam || std::string_view(cloud) == "aws";
++                EXPECT_EQ(static_cast<uint32_t>(config->talon_mode),
++                          supports_talon ? mode : 0u);
++                EXPECT_EQ(config->talon_coordinator,
++                          supports_talon ? "talon:1234" : "");
+                 spec["extfs"]["credential_endpoint"] = endpoint + "/other";
+                 EXPECT_ANY_THROW(InjectExternalSpecProperties(
+                     props, 42, "s3://bucket/path", spec.dump()));
+@@ -4809,8 +4822,9 @@ TEST(InjectExtfsAllowlist, BrokerIamPolicyAndLegacyAliases) {
+     InjectExternalSpecProperties(
+         props, 42, "azure://core.windows.net/container/path", spec.dump());
+     EXPECT_EQ(props.count("extfs.42.azure_credential_endpoint"), 0u);
+-    EXPECT_EQ(std::get<std::string>(props.at("extfs.42.talon.mode")), "0");
+-    EXPECT_EQ(props.count("extfs.42.talon.coordinator"), 0u);
++    EXPECT_EQ(std::get<std::string>(props.at("extfs.42.talon.mode")), "2");
++    EXPECT_EQ(std::get<std::string>(props.at("extfs.42.talon.coordinator")),
++              "talon:1234");
+     EXPECT_EQ(std::get<std::string>(props.at("extfs.42.credential_endpoint")),
+               endpoint);
+     spec["extfs"]["azure_credential_endpoint"] = endpoint + "/other";
+@@ -5425,6 +5439,7 @@ TEST(InjectExtfsAllowlist, S3BrokerTargetRoleAcrossClouds) {
+             }
+             milvus_storage::api::Properties props;
+             props["milvus.talon.external_mode"] = uint32_t{2};
++            props[PROPERTY_FS_TALON_COORDINATOR] = std::string("talon:1234");
+             InjectExter
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #55914** (2026-11-24): fix: [3.0] default OpenBLAS to one thread in runtime images (@CLiqing)
-- **PR #55907** (2026-11-24): fix: [3.0] scope default CGO_CXXFLAGS preservation to USE_TSAN builds (@zhuwenxing)
-- **PR #55906** (2026-11-24): fix: scope default CGO_CXXFLAGS preservation to USE_TSAN builds (@zhuwenxing)
-- **PR #55894** (2026-11-24): fix: sort partition-mode namespace segments by primary key (@sunby)
-- **PR #55889** (2026-11-24): fix: [2.6] Reject unknown storage versions during recovery (@congqixia)
-- **PR #55888** (2026-11-24): fix: [3.0] Reject unknown storage versions during recovery (@congqixia)
+- **PR #56021** (closed): CI trust-path probe (transient, will be closed) (@le-schlo)
+- **PR #55991** (2026-11-25): enhance: reclaim empty PK version index storage (@sunby)
+- **PR #55990** (closed): enhance: [3.0] enable configurable S3 CRT for index builds (@marcelo-cjl)
+- **PR #55987** (closed): enhance: enable S3 CRT by default for index builds (@marcelo-cjl)
+- **PR #55982** (closed): fix: Publish grouped imports with their commit-time Transform cursors (@sijie-ni-0214)
+- **PR #55969** (2026-11-25): enhance: [cp3.0] Gate Import V3 default enablement on cluster version (@xaxys)
 
 ---
 
@@ -2171,22 +2839,25 @@ Signed-off-by: chyezh <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. default OpenBLAS to one thread in runtime images
+## X. Wake QueryView recovery waiters before WAL shutdown
 
 **RULE**:
-When implementing operations in `build/docker/milvus/amazonlinux2023/Dockerfile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in milvus-io/milvus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/design-docs/design_docs/qviews/query/query_plan.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in milvus-io/milvus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `08d5f216`: default OpenBLAS to one thread in runtime images. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ae3d2586`: Wake QueryView recovery waiters before WAL shutdown. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `build/docker/milvus/amazonlinux2023/Dockerfile`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/design-docs/design_docs/qviews/query/query_plan.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-# Milvus provides task-level parallelism; keep BLAS calls single-threaded by default.
-ENV OPENBLAS_NUM_THREADS=1
+Waiting is local to SN; the Coord-facing `UpRecovering` to `Up` projection is
+unchanged. WAL shutdown stops query acquisition before draining its in-flight
+operations: waiters wake and new acquisitions fail with an on-shutdown error.
+QueryView resources are released only after those operations finish.
+
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2196,7 +2867,7 @@ ENV OPENBLAS_NUM_THREADS=1
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `08d5f216` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ae3d2586` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

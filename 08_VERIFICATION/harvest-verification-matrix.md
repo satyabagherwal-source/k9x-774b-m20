@@ -13114,3 +13114,8 @@
 | `CYCLE-20261125-F3DX` | `2026-11-25T14:41:43.653Z` | `pimalaya/himalaya` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10542` | Yes (`f23cd9bb...`) |
 | `CYCLE-20261125-PZWU` | `2026-11-25T14:50:12.366Z` | `OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-obliteratus-deepseek-v4.1-flash-1017-obliterated-learnings.md` | Yes (`9395c686...`) |
 | `CYCLE-20261125-Q804` | `2026-11-25T14:50:22.852Z` | `PeerDB-io/peerdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10543` | Yes (`c83614ec...`) |
+| `CYCLE-20261125-31EO` | `2026-11-25T15:00:20.832Z` | `LiquidAI/d1-2B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liquidai-d1-2b-learnings.md` | Yes (`c8459966...`) |
+| `CYCLE-20261125-3BPP` | `2026-11-25T15:00:34.189Z` | `koderover/zadig` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10544` | Yes (`f9e2b58e...`) |
+| `CYCLE-20261125-3E5O` | `2026-11-25T15:00:37.356Z` | `ShiftHackZ/SDAI-KMP` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10545` | Yes (`16d8784f...`) |
+| `CYCLE-20261125-3H18` | `2026-11-25T15:00:41.084Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule EXISTING` | Yes (`3e3d7933...`) |
+| `CYCLE-20261125-3J57` | `2026-11-25T15:00:43.819Z` | `milvus-io/milvus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10546` | Yes (`b9967214...`) |

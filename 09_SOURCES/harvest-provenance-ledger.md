@@ -13147,3 +13147,8 @@ Every entry in this ledger must capture:
 | `learn-github-pimalaya-himalaya` | `https://github.com/pimalaya/himalaya` | `fceae497` | Multi-dimensional audit evidence | 2026-11-25T14:41:43.658Z |
 | `learn-huggingface-obliteratus-deepseek-v4-1-flash-1017-obliterated` | `https://huggingface.co/OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated` | `hf-obliter` | Multi-dimensional audit evidence | 2026-11-25T14:50:12.370Z |
 | `learn-github-peerdb-io-peerdb` | `https://github.com/PeerDB-io/peerdb` | `cec4a6e5` | Multi-dimensional audit evidence | 2026-11-25T14:50:22.856Z |
+| `learn-huggingface-liquidai-d1-2b` | `https://huggingface.co/LiquidAI/d1-2B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-25T15:00:20.837Z |
+| `learn-github-koderover-zadig` | `https://github.com/koderover/zadig` | `e8abd7c6` | Multi-dimensional audit evidence | 2026-11-25T15:00:34.195Z |
+| `learn-github-shifthackz-sdai-kmp` | `https://github.com/ShiftHackZ/Stable-Diffusion-KMP` | `7d074972` | Multi-dimensional audit evidence | 2026-11-25T15:00:37.361Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `ee267d80` | Multi-dimensional audit evidence | 2026-11-25T15:00:41.089Z |
+| `learn-github-milvus-io-milvus` | `https://github.com/milvus-io/milvus` | `45164988` | Multi-dimensional audit evidence | 2026-11-25T15:00:43.825Z |

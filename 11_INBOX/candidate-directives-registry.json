@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T14:50:28.564Z",
+  "last_updated": "2026-11-25T15:00:50.185Z",
   "directives": [
     {
       "id": "CD-001",
@@ -61656,6 +61656,70 @@
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-28EB95-deps-bump-url-to-2-5-9-and-heapless-to-0.md",
       "staged_date": "2026-11-25"
+    },
+    {
+      "id": "CD-3BZ4",
+      "directive_title": "preserve trigger operation log request bodies",
+      "source_repo": "koderover/zadig",
+      "source_commit": "e8abd7c6",
+      "staged_file": "11_INBOX/candidate-directives/CD-3BZ4-preserve-trigger-operation-log-request-bodies.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-25",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-3N3M",
+      "directive_title": "Add hosted upscaler model catalogs",
+      "source_repo": "shifthackz-stable-diffusion-kmp-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-3N3M-add-hosted-upscaler-model-catalogs.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-25",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-3HAW",
+      "directive_title": "NUC 146 Reactive Cubing",
+      "source_repo": "NucleoidAI/Nucleoid",
+      "source_commit": "ee267d80",
+      "staged_file": "11_INBOX/candidate-directives/CD-3HAW-nuc-146-reactive-cubing.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-25",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-3JEN",
+      "directive_title": "Wake QueryView recovery waiters before WAL shutdown",
+      "source_repo": "milvus-io/milvus",
+      "source_commit": "45164988",
+      "staged_file": "11_INBOX/candidate-directives/CD-3JEN-wake-queryview-recovery-waiters-before-wal-shutdown.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-25",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-13126E",
+      "directive_title": "Add hosted upscaler model catalogs",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "shifthackz-stable-diffusion-kmp",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-13126E-add-hosted-upscaler-model-catalogs.md",
+      "staged_date": "2026-11-25"
+    },
+    {
+      "id": "CD-3O21",
+      "directive_title": "workflow): preserve trigger operation log request bodies",
+      "source_repo": "koderover-zadig-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-3O21-workflow-preserve-trigger-operation-log-request-bodies.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-25",
+      "domain_letter": "A"
     }
   ]
 }

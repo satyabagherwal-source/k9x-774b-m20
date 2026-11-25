@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-25T14:50:29.016Z",
+  "last_updated": "2026-11-25T15:00:50.676Z",
   "total_verified_learnings": 9118,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25487,
+  "total_items": 25495,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -114177,10 +114177,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-milvus-io-milvus-technical-construction-intelligence-milvus-io-milvus-core-invar.md",
       "title": "Technical Construction Intelligence: milvus-io/milvus Core Invariants",
       "repository": "milvus-io/milvus",
-      "source_version": "e5152348",
-      "content_hash": "d33185ed502b41cd79376798dbd1560baf01fbcd78cbc6a02c076528d2469d7c",
+      "source_version": "45164988",
+      "content_hash": "d80d58ed20d19e9ba626fcd5c0541390f7740e434147bd4e65b868e4ef1b6708",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T19:36:14.230Z"
+      "persisted_at": "2026-11-25T15:00:44.402Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-milvus-io-milvus": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-milvus-io-milvus",
@@ -114189,10 +114189,10 @@
       "relative_path": "08_VERIFICATION/milvus-io-milvus-verification-protocol-empirical-defect-shield-for-milvus-io-mil.md",
       "title": "Verification Protocol: Empirical Defect Shield for milvus-io/milvus",
       "repository": "milvus-io/milvus",
-      "source_version": "e5152348",
-      "content_hash": "6a9cea2e22d83220ffa6dfcebb78b442079a097b1a50de5c75dce562de0e851b",
+      "source_version": "45164988",
+      "content_hash": "7454fed4925955bf72e24dd133234dd67efc730b6fc4b6f126d9c95d4a3157c4",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T19:36:14.404Z"
+      "persisted_at": "2026-11-25T15:00:44.643Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-efficient-large-model-open-h3-regenerate-2k-l": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-efficient-large-model-open-h3-regenerate-2k-l",
@@ -230695,8 +230695,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "2942f5eb",
-      "content_hash": "71c42d3a6e49625346697a76dbdab91bb66541ac7b0acc1767e2a31cb2b2f92a",
+      "source_version": "ee267d80",
+      "content_hash": "3e3d793383a8720d6a5d8923a340c1465457478d5b67ec1baa14a043010de0f1",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -230937,7 +230937,7 @@
         },
         {
           "number": "EXISTING",
-          "title": "NUC 144 Nullish Value Assignment",
+          "title": "NUC 146 Reactive Cubing",
           "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
@@ -230996,7 +230996,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T12:19:38.525Z",
+      "verified_at": "2026-11-25T15:00:40.777Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -231038,10 +231038,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "2942f5eb",
-      "content_hash": "ad9e3f6c9c70fa73486dd68cb44e39b604babed34b98da4622e4cf09f5477fba",
+      "source_version": "ee267d80",
+      "content_hash": "c9e88f04398e094b102acc1ce27d5414882502f79d9768bb6edf7d47ecee4744",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T12:19:39.463Z"
+      "persisted_at": "2026-11-25T15:00:41.677Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid",
@@ -231050,10 +231050,10 @@
       "relative_path": "08_VERIFICATION/nucleoidai-nucleoid-verification-protocol-empirical-defect-shield-for-nucleoidai.md",
       "title": "Verification Protocol: Empirical Defect Shield for NucleoidAI/Nucleoid",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "2942f5eb",
-      "content_hash": "062a8dd88990c0eaa8e1ba3b84fac355f73458aee574b2afefc2a008e1317915",
+      "source_version": "ee267d80",
+      "content_hash": "989a3d410d1a75fddf157c2f269a710e2e416f6c31ce55cc055d0a335df82022",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T12:19:39.707Z"
+      "persisted_at": "2026-11-25T15:00:41.921Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -231744,8 +231744,8 @@
       "slug": "koderover-zadig",
       "platform": "github",
       "source_url": "https://github.com/koderover/zadig",
-      "source_version": "2076e082",
-      "content_hash": "ee50bf31586c85e02e108b0a98ac15a2e8dcc7b894fe7444c6299aa1a839b931",
+      "source_version": "e8abd7c6",
+      "content_hash": "f9e2b58e34ebcf958c7d97e4ed8d9efeaa33affbbcf0bb7d40749d7bf1354dc0",
       "dossier_path": "07_PROJECT_LEARNING/koderover-zadig-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/koderover-zadig-learnings.md",
       "promoted_rules": [
@@ -231788,6 +231788,11 @@
           "number": 9658,
           "title": "avoid panic on GitHub push events from GitHub Apps",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10544,
+          "title": "preserve trigger operation log request bodies",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -231795,7 +231800,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T23:13:37.456Z",
+      "verified_at": "2026-11-25T15:00:33.887Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -231861,10 +231866,10 @@
       "relative_path": "08_VERIFICATION/koderover-zadig-verification-protocol-empirical-defect-shield-for-koderover-zadi.md",
       "title": "Verification Protocol: Empirical Defect Shield for koderover/zadig",
       "repository": "koderover/zadig",
-      "source_version": "2076e082",
-      "content_hash": "a39727ab802f57686615b4b0fbae7890af527c32ccd5426a967098b08d9796da",
+      "source_version": "e8abd7c6",
+      "content_hash": "1ec6503acea5e629bc48770bed53e3e0c0e500fda01aabf8cdde48fea6bac9b1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T23:13:38.166Z"
+      "persisted_at": "2026-11-25T15:00:35.038Z"
     },
     "learn-github-projectdiscovery-nuclei": {
       "learning_id": "learn-github-projectdiscovery-nuclei",
@@ -232087,9 +232092,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for koderover-zadig-learnings",
       "repository": "koderover-zadig-learnings",
       "source_version": "HEAD",
-      "content_hash": "311c11936731bcd8e4428141820a6ce4a410ae160846b982c317050580b7d881",
+      "content_hash": "de25e5272075a1118961da1e0fff6926af6c4e8a21ca24280a993ac12d95d0aa",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T23:13:43.184Z"
+      "persisted_at": "2026-11-25T15:00:50.676Z"
     },
     "learn-huggingface-argmaxinc-whisperkit-coreml": {
       "learning_id": "learn-huggingface-argmaxinc-whisperkit-coreml",
@@ -242083,13 +242088,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "ShiftHackZ/SDAI-KMP",
       "repository": "ShiftHackZ/SDAI-KMP",
-      "slug": "shifthackz-sdai-kmp",
+      "slug": "shifthackz-stable-diffusion-kmp",
       "platform": "github",
-      "source_url": "https://github.com/ShiftHackZ/SDAI-KMP",
-      "source_version": "30461ed9",
-      "content_hash": "7d894040763e6a9c06b2deb56ecc4c6c10f8487791d46503c32c2fd117fe7bcf",
-      "dossier_path": "07_PROJECT_LEARNING/shifthackz-sdai-kmp-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/shifthackz-sdai-kmp-learnings.md",
+      "source_url": "https://github.com/ShiftHackZ/Stable-Diffusion-KMP",
+      "source_version": "7d074972",
+      "content_hash": "16d8784f4dabf21140c4b6ce086e6f7020593a816d958f2d95b41ec4223fa9b9",
+      "dossier_path": "07_PROJECT_LEARNING/shifthackz-stable-diffusion-kmp-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/shifthackz-stable-diffusion-kmp-learnings.md",
       "promoted_rules": [
         {
           "number": 8552,
@@ -242110,6 +242115,11 @@
           "number": 10034,
           "title": "Refine shared UI controls and platform navigation",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 10545,
+          "title": "Add hosted upscaler model catalogs",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -242117,7 +242127,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T03:33:30.016Z",
+      "verified_at": "2026-11-25T15:00:37.054Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -242156,25 +242166,25 @@
       "item_id": "domain_intelligence-architecture-intelligence-shifthackz-sdai-kmp-core-invariants",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-shifthackz-sdai-kmp-architecture-intelligence-shifthackz-sdai-kmp-core-invariant.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-shifthackz-stable-diffusion-kmp-architecture-intelligence-shifthackz-sdai-kmp-co.md",
       "title": "Architecture Intelligence: ShiftHackZ/SDAI-KMP Core Invariants",
       "repository": "ShiftHackZ/SDAI-KMP",
-      "source_version": "82ebd42d",
-      "content_hash": "fd61f7b9136dbb26a056b1f8c7af72e6cc38b9b398b9bd982025286b3797a32d",
+      "source_version": "7d074972",
+      "content_hash": "a564970faacf6ae3aa99ea063c6f90e43f1960d495350ac56ff4e00040f72f96",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T06:01:27.534Z"
+      "persisted_at": "2026-11-25T15:00:37.933Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-shifthackz-sdai-kmp": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-shifthackz-sdai-kmp",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/shifthackz-sdai-kmp-verification-protocol-empirical-defect-shield-for-shifthackz.md",
+      "relative_path": "08_VERIFICATION/shifthackz-stable-diffusion-kmp-verification-protocol-empirical-defect-shield-fo.md",
       "title": "Verification Protocol: Empirical Defect Shield for ShiftHackZ/SDAI-KMP",
       "repository": "ShiftHackZ/SDAI-KMP",
-      "source_version": "30461ed9",
-      "content_hash": "af501aca148fa6082f60919af2e7dd91b471c3c25db1e4235435198f5d4324b8",
+      "source_version": "7d074972",
+      "content_hash": "3d294bdfe904c5c957e2580dfb65a71af7596826b48d3317ad227c1fc54260ed",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T03:33:31.062Z"
+      "persisted_at": "2026-11-25T15:00:38.177Z"
     },
     "learn-github-nolabs-ai-nono": {
       "learning_id": "learn-github-nolabs-ai-nono",
@@ -243924,8 +243934,8 @@
       "slug": "milvus-io-milvus",
       "platform": "github",
       "source_url": "https://github.com/milvus-io/milvus",
-      "source_version": "e5152348",
-      "content_hash": "54a3e8e3dd0bb782576c0bcb6b3ae82e15031252918a1fb283f3b88155d63b6a",
+      "source_version": "45164988",
+      "content_hash": "b9967214fb35757e69f24e2dd4bfa22660c8e9ee7ff4badfbc995b158cae8855",
       "dossier_path": "07_PROJECT_LEARNING/milvus-io-milvus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/milvus-io-milvus-learnings.md",
       "promoted_rules": [
@@ -243978,6 +243988,11 @@
           "number": 10347,
           "title": "default OpenBLAS to one thread in runtime images",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10546,
+          "title": "Wake QueryView recovery waiters before WAL shutdown",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -243985,7 +244000,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T19:36:13.596Z",
+      "verified_at": "2026-11-25T15:00:43.520Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -248719,7 +248734,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/LiquidAI/d1-2B",
       "source_version": "hf-liquidai-d1-2b",
-      "content_hash": "1ba061fed393d04be33b7f482aec62f1d4e4ad7a9c62210aba581d1e13d2523b",
+      "content_hash": "c845996689cb603ceacf9e340814bce291b21e2edab15ae1604a45e3cabe4560",
       "dossier_path": "07_PROJECT_LEARNING/hf-liquidai-d1-2b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-liquidai-d1-2b-learnings.md",
       "promoted_rules": [],
@@ -248728,7 +248743,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T23:47:32.388Z",
+      "verified_at": "2026-11-25T15:00:20.514Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -248745,9 +248760,9 @@
       "title": "Research & Knowledge Intelligence: LiquidAI/d1-2B Core Invariants",
       "repository": "LiquidAI/d1-2B",
       "source_version": "hf-liquidai-d1-2b",
-      "content_hash": "6ed41a62147692b8a9f5a04b72b6f42466f11c23fe1389c8f6adeead7514bdf3",
+      "content_hash": "59cb8bcfa792201a1d177932ca434952ec956736b7e550873789d0e1a1353c9a",
       "domain_letter": "D",
-      "persisted_at": "2026-11-21T23:47:32.839Z"
+      "persisted_at": "2026-11-25T15:00:21.159Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-liquidai-d1-2b-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-liquidai-d1-2b-learnings-core-invariants",
@@ -248757,9 +248772,9 @@
       "title": "Research & Knowledge Intelligence: hf-liquidai-d1-2b-learnings Core Invariants",
       "repository": "hf-liquidai-d1-2b-learnings",
       "source_version": "HEAD",
-      "content_hash": "595f1d946cab50b6e7795eda58473193decb068a2e73387926e5209458ddfe49",
+      "content_hash": "3111d0f6d229b0b31d861c12eda04e999afdac457c6be2b68b47bcfeeec9a1bb",
       "domain_letter": "D",
-      "persisted_at": "2026-11-21T23:47:51.135Z"
+      "persisted_at": "2026-11-25T15:00:47.960Z"
     },
     "candidate_directive-ci-cap-the-build-test-packages-only-when-they-change-key-the-compile-cache-on": {
       "item_id": "candidate_directive-ci-cap-the-build-test-packages-only-when-they-change-key-the-compile-cache-on",
@@ -257001,9 +257016,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for shifthackz-stable-diffusion-kmp-learnings",
       "repository": "shifthackz-stable-diffusion-kmp-learnings",
       "source_version": "HEAD",
-      "content_hash": "2a5ec0f2e2b378b3a48b57a4ccfeec351a90ba233365e5cdbfd7ede8217b089b",
+      "content_hash": "4268a6c365600d6c388e555e38eab6df565c3b4575be2a1a5f625ca001965c35",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T07:18:40.533Z"
+      "persisted_at": "2026-11-25T15:00:49.443Z"
     },
     "domain_intelligence-architecture-intelligence-saltstack-salt-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-saltstack-salt-learnings-core-invariants",
@@ -270058,10 +270073,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-koderover-zadig-technical-construction-intelligence-koderover-zadig-core-invaria.md",
       "title": "Technical Construction Intelligence: koderover/zadig Core Invariants",
       "repository": "koderover/zadig",
-      "source_version": "2076e082",
-      "content_hash": "7ea9c13d2ff1ce1d7b554a706aa1f716e19189b10df35094b3d7d231bb662376",
+      "source_version": "e8abd7c6",
+      "content_hash": "6d9cb3b8916740cc499072e9d77adea24895066ac38be4272c29c5dc7f32fc4c",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T23:13:38.014Z"
+      "persisted_at": "2026-11-25T15:00:34.773Z"
     },
     "domain_intelligence-architecture-intelligence-solidjs-solid-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-solidjs-solid-learnings-core-invariants",
@@ -270131,9 +270146,9 @@
       "title": "Technical Construction Intelligence: koderover-zadig-learnings Core Invariants",
       "repository": "koderover-zadig-learnings",
       "source_version": "HEAD",
-      "content_hash": "652c942fae0d09be175d3a09147a87c2e2e9e351a36162611576c084073b2c46",
+      "content_hash": "2c286fde7dbbf101724e85933f91238bd683d8a381a24083e6dedbe889c8f7cc",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T23:13:43.011Z"
+      "persisted_at": "2026-11-25T15:00:50.431Z"
     },
     "learn-github-vitejs-vite": {
       "learning_id": "learn-github-vitejs-vite",
@@ -305890,9 +305905,9 @@
       "title": "Architecture Intelligence: shifthackz-stable-diffusion-kmp-learnings Core Invariants",
       "repository": "shifthackz-stable-diffusion-kmp-learnings",
       "source_version": "HEAD",
-      "content_hash": "360945ae01ef4b4f84a9e558786be1125f2e534cb9bcb8736489f51ec0e803e7",
+      "content_hash": "4fc9cb6ae5a95178acf0500a07e24c1e4d1146bbd253f55f5a3a1e49f87a8cbe",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T06:11:31.450Z"
+      "persisted_at": "2026-11-25T15:00:49.194Z"
     },
     "rule-9526": {
       "learning_id": "rule-9526",
@@ -348814,6 +348829,108 @@
       "content_hash": "9ea0d439aa0d23c0a4c37d16e3ee0730146189df129805544b3cc1b9c23f2e8f",
       "domain_letter": "G",
       "persisted_at": "2026-11-25T14:50:27.564Z"
+    },
+    "rule-10544": {
+      "learning_id": "rule-10544",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10544,
+      "title": "preserve trigger operation log request bodies",
+      "source_url": "https://github.com/koderover/zadig",
+      "source_version": "e8abd7c6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T15:00:33.887Z"
+    },
+    "candidate_directive-preserve-trigger-operation-log-request-bodies": {
+      "item_id": "candidate_directive-preserve-trigger-operation-log-request-bodies",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-3BZ4-preserve-trigger-operation-log-request-bodies.md",
+      "title": "preserve trigger operation log request bodies",
+      "repository": "koderover/zadig",
+      "source_version": "e8abd7c6",
+      "content_hash": "b2eb9dadb6d946a2ef72c4b871949aabee8c4702aeb0e808630af3354fbfe107",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-25T15:00:34.530Z"
+    },
+    "rule-10545": {
+      "learning_id": "rule-10545",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10545,
+      "title": "Add hosted upscaler model catalogs",
+      "source_url": "https://github.com/ShiftHackZ/Stable-Diffusion-KMP",
+      "source_version": "7d074972",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T15:00:37.054Z"
+    },
+    "candidate_directive-add-hosted-upscaler-model-catalogs": {
+      "item_id": "candidate_directive-add-hosted-upscaler-model-catalogs",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-3N3M-add-hosted-upscaler-model-catalogs.md",
+      "title": "Add hosted upscaler model catalogs",
+      "repository": "shifthackz-stable-diffusion-kmp-learnings",
+      "source_version": "HEAD",
+      "content_hash": "8b7f28bec940c4f2e470488c64d425e32a6e266418660238fa6d391d1aafe5d4",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-25T15:00:48.946Z"
+    },
+    "candidate_directive-nuc-146-reactive-cubing": {
+      "item_id": "candidate_directive-nuc-146-reactive-cubing",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-3HAW-nuc-146-reactive-cubing.md",
+      "title": "NUC 146 Reactive Cubing",
+      "repository": "NucleoidAI/Nucleoid",
+      "source_version": "ee267d80",
+      "content_hash": "d6061a02212565351da6fb16b7d4a4b5919648b35029a7b07ae6c2a1fee3e52b",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-25T15:00:41.436Z"
+    },
+    "rule-10546": {
+      "learning_id": "rule-10546",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10546,
+      "title": "Wake QueryView recovery waiters before WAL shutdown",
+      "source_url": "https://github.com/milvus-io/milvus",
+      "source_version": "45164988",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T15:00:43.520Z"
+    },
+    "candidate_directive-wake-queryview-recovery-waiters-before-wal-shutdown": {
+      "item_id": "candidate_directive-wake-queryview-recovery-waiters-before-wal-shutdown",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-3JEN-wake-queryview-recovery-waiters-before-wal-shutdown.md",
+      "title": "Wake QueryView recovery waiters before WAL shutdown",
+      "repository": "milvus-io/milvus",
+      "source_version": "45164988",
+      "content_hash": "fb6696b5f9c5e6e441503fad2dcc1a0452bae095e6c71b60d9000a872e1ba83e",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-25T15:00:44.163Z"
+    },
+    "candidate_directive-workflow-preserve-trigger-operation-log-request-bodies": {
+      "item_id": "candidate_directive-workflow-preserve-trigger-operation-log-request-bodies",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-3O21-workflow-preserve-trigger-operation-log-request-bodies.md",
+      "title": "workflow): preserve trigger operation log request bodies",
+      "repository": "koderover-zadig-learnings",
+      "source_version": "HEAD",
+      "content_hash": "caa82cd09cffb0e0f3f2525257b319140f233674a9e96e9dde9d99435037ad38",
+      "domain_letter": "A",
+      "persisted_at": "2026-11-25T15:00:50.185Z"
     }
   },
   "ai-builder-brain": {
