@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261123-2YTN",
-    "timestamp": "2026-11-23T18:40:53.963Z",
-    "repository": "nginx/kubernetes-ingress",
-    "learningId": "learn-github-nginx-kubernetes-ingress",
-    "contentHash": "74ba0eff437774a91dba7e57772d2447c5fc6c277097903bab6a1692cf2f6886",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261123-35UG",
     "timestamp": "2026-11-23T18:41:03.064Z",
     "repository": "yugabyte/yugabyte-db",
@@ -7490,6 +7475,21 @@
     "repository": "momenbasel/PureMac",
     "learningId": "learn-github-momenbasel-puremac",
     "contentHash": "4fe2baacea4332a6439f704e50d7f93460b98a474aaf907ec279e3cc34689bc7",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-8JYH",
+    "timestamp": "2026-11-25T06:12:45.449Z",
+    "repository": "dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8",
+    "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-1017-uncensored-fp8",
+    "contentHash": "ffea91565f612539d2f796500f294539bac33b6b28880e7de09835472edbf610",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

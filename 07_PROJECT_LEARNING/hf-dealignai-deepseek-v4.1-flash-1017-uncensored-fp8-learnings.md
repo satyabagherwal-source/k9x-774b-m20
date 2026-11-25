@@ -3,7 +3,7 @@
 > **Source Version**: `hf-dealignai`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T11:55:18.041Z  
+> **Timestamp**: 2026-11-25T06:12:44.805Z  
 > **Learning ID**: `learn-huggingface-dealignai-deepseek-v4-1-flash-1017-uncensored-fp8`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-dealignai-deepseek-v4.1-flash-1017-uncensored-fp8-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8](https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T11:55:17.883Z  
+> **Harvest Timestamp**: 2026-11-25T06:12:44.590Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: image-text-to-text
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 15375 downloads | 645 likes
+- **Stars / Engagement**: 12783 downloads | 710 likes
 
 ---
 

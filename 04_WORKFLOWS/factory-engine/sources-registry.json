@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-25T06:03:09.631Z",
-    "lastVerified": "2026-11-25T06:03:09.631Z",
+    "lastChecked": "2026-11-25T06:12:56.845Z",
+    "lastVerified": "2026-11-25T06:12:56.845Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -276,9 +276,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-25T05:37:19.867Z",
+    "lastChecked": "2026-11-25T06:12:56.831Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-25T05:37:19.867Z"
+    "lastVerified": "2026-11-25T06:12:56.831Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -910,9 +910,9 @@
   "bee-san-ciphey": {
     "name": "Ciphey",
     "officialUrl": "https://github.com/bee-san/Ciphey",
-    "lastChecked": "2026-11-25T01:52:51.460Z",
+    "lastChecked": "2026-11-25T06:12:51.896Z",
     "revisionIdentifier": "c500baff",
-    "lastVerified": "2026-11-25T01:52:51.460Z"
+    "lastVerified": "2026-11-25T06:12:51.896Z"
   },
   "weaviate-weaviate": {
     "name": "weaviate/weaviate",
@@ -934,9 +934,9 @@
   "ducaale-xh": {
     "name": "xh",
     "officialUrl": "https://github.com/ducaale/xh",
-    "lastChecked": "2026-11-24T03:58:24.370Z",
+    "lastChecked": "2026-11-25T06:12:41.865Z",
     "revisionIdentifier": "8b21cc07",
-    "lastVerified": "2026-11-24T03:58:24.370Z"
+    "lastVerified": "2026-11-25T06:12:41.865Z"
   },
   "hf-moonshotai-kimi-k3": {
     "name": "moonshotai/Kimi-K3",
@@ -4948,9 +4948,9 @@
   "amrdeveloper-gql": {
     "name": "GQL",
     "officialUrl": "https://github.com/AmrDeveloper/GQL",
-    "lastChecked": "2026-11-24T12:18:31.350Z",
+    "lastChecked": "2026-11-25T06:12:54.388Z",
     "revisionIdentifier": "3a76cfee",
-    "lastVerified": "2026-11-24T12:18:31.350Z"
+    "lastVerified": "2026-11-25T06:12:54.388Z"
   },
   "transact-rs-sqlx": {
     "name": "sqlx",
@@ -7384,12 +7384,12 @@
     "lastVerified": "2026-11-24T23:41:40.533Z"
   },
   "fabio-rovai-open-ontologies": {
-    "name": "fabio-rovai/open-ontologies",
+    "name": "open-ontologies",
     "officialUrl": "https://github.com/fabio-rovai/open-ontologies",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-24T13:21:06.748Z",
-    "lastVerified": "2026-11-24T13:21:06.748Z",
+    "lastChecked": "2026-11-25T06:12:49.373Z",
+    "lastVerified": "2026-11-25T06:12:49.373Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-fabio-rovai-open-ontologies",
@@ -7398,7 +7398,8 @@
     "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "ef583f5e"
   },
   "libsql-libsql": {
     "name": "libsql",
@@ -9221,9 +9222,9 @@
   "nalexn-clean-architecture-swiftui": {
     "name": "clean-architecture-swiftui",
     "officialUrl": "https://github.com/nalexn/clean-architecture-swiftui",
-    "lastChecked": "2026-11-22T19:52:12.494Z",
+    "lastChecked": "2026-11-25T06:12:47.342Z",
     "revisionIdentifier": "9eca97b8",
-    "lastVerified": "2026-11-22T19:52:12.494Z"
+    "lastVerified": "2026-11-25T06:12:47.342Z"
   },
   "tuist-tuist": {
     "name": "tuist/tuist",
@@ -12824,12 +12825,12 @@
     "officialUrl": "https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-21T11:55:17.883Z",
-    "lastVerified": "2026-11-21T11:55:17.883Z",
+    "lastChecked": "2026-11-25T06:12:44.590Z",
+    "lastVerified": "2026-11-25T06:12:44.590Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-1017-uncensored-fp8",
-    "contentHash": "874c405aaa5447bc192047de84ea865216cd2f634382156ec5ba172e6d2654e8",
+    "contentHash": "ffea91565f612539d2f796500f294539bac33b6b28880e7de09835472edbf610",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

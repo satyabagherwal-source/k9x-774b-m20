@@ -12995,3 +12995,4 @@ Every entry in this ledger must capture:
 | `learn-github-max-sixty-worktrunk` | `https://github.com/max-sixty/worktrunk` | `5666a698` | Multi-dimensional audit evidence | 2026-11-25T06:02:59.836Z |
 | `learn-github-momenbasel-puremac` | `https://github.com/momenbasel/PureMac` | `878316e2` | Multi-dimensional audit evidence | 2026-11-25T06:03:04.752Z |
 | `learn-dom-d-c25ea6d9` | `project://momenbasel-puremac` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/momenbasel-puremac-learnings.md` | 2026-11-25T06:03:41.295Z |
+| `learn-huggingface-dealignai-deepseek-v4-1-flash-1017-uncensored-fp8` | `https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8` | `hf-dealign` | Multi-dimensional audit evidence | 2026-11-25T06:12:45.454Z |

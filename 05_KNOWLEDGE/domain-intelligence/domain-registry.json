@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T06:03:41.641Z",
+  "last_updated": "2026-11-25T06:12:59.784Z",
   "total_records": 2638,
   "domains": {
     "A": {
@@ -8408,8 +8408,8 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-learnings-technical-construction-intelligence-zvec-ai-zvec-gre.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "2146551fc79b9bced968ee6c9be0f204ca80e7724f8ec5b47b32ebc7ca09fef8",
-      "created_at": "2026-11-25T05:37:23.597Z"
+      "content_hash": "a88a4b3b2fc73f6ae4b6def119294b8b5e4903dcd40a74720c1b2b4326913019",
+      "created_at": "2026-11-25T06:12:59.784Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -8453,8 +8453,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "9ba3fc424905e04169380085000c1dc24efe13e07a24a41da088702d96c699d6",
-      "created_at": "2026-11-25T04:07:45.687Z"
+      "content_hash": "6d8cd8e21078d128b80b0d3ebfffa318c70ec468c2fafabcbe5655099c255a4e",
+      "created_at": "2026-11-25T06:12:58.443Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -28510,8 +28510,8 @@
       "title": "Research & Knowledge Intelligence: dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-dealignai-deepseek-v4-1-flash-1017-uncensored-fp8-research-knowledge-intellig.md",
       "repository": "dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8",
-      "content_hash": "103c8bec57a8c6c81dbdfb606cf23da6b72d5709773ae1af9ed88b93df3dd7ea",
-      "created_at": "2026-11-21T11:55:18.686Z"
+      "content_hash": "b732724723ee567589f1a0b7265461a83f2585504c6343d500b0a5b5efc4a257",
+      "created_at": "2026-11-25T06:12:45.772Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-dealignai-deepseek-v4-1-flash-1017-uncensored": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-dealignai-deepseek-v4-1-flash-1017-uncensored",
@@ -28519,8 +28519,8 @@
       "title": "Research & Knowledge Intelligence: hf-dealignai-deepseek-v4.1-flash-1017-uncensored-fp8-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-dealignai-deepseek-v4-1-flash-1017-uncensored-fp8-learnings-research-knowledg.md",
       "repository": "hf-dealignai-deepseek-v4.1-flash-1017-uncensored-fp8-learnings",
-      "content_hash": "6fd3a02eae65e68a5f7b488ef10d9d0d98d734a73b7dfef976c1068a7d80493f",
-      "created_at": "2026-11-21T11:55:39.394Z"
+      "content_hash": "0cc9dc2c87a4f19068a5c00f0f151cd8664900d77a687b8a8b9296e86169f8dd",
+      "created_at": "2026-11-25T06:12:57.363Z"
     },
     "domain_intelligence-architecture-intelligence-bitterbot-ai-bitterbot-desktop-learnings-core-invarian": {
       "record_id": "domain_intelligence-architecture-intelligence-bitterbot-ai-bitterbot-desktop-learnings-core-invarian",

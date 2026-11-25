@@ -10375,8 +10375,8 @@
     "sourceUrl": "https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8",
     "sourceVersion": "hf-dealignai-deepseek-v4.1-flash-1017-uncensored-fp8",
     "license": "Open-Source",
-    "contentHash": "874c405aaa5447bc192047de84ea865216cd2f634382156ec5ba172e6d2654e8",
-    "lastHarvestedAt": "2026-11-21T11:55:18.493Z",
+    "contentHash": "ffea91565f612539d2f796500f294539bac33b6b28880e7de09835472edbf610",
+    "lastHarvestedAt": "2026-11-25T06:12:45.454Z",
     "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-1017-uncensored-fp8"
   },
   "hf-lodestones-moss-image-sft-8-steps-dmd": {

@@ -1,14 +1,14 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T06:03:41.857Z",
+  "last_updated": "2026-11-25T06:13:00.423Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
-      "processed_at": "2026-11-25T04:07:45.064Z",
+      "processed_at": "2026-11-25T06:12:57.642Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
     "zvec-ai-zvec-grep-learnings.md": {
-      "processed_at": "2026-11-25T05:37:22.949Z",
+      "processed_at": "2026-11-25T06:12:58.934Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1498,7 +1498,7 @@
       "staged_for_review": 0
     },
     "hf-dealignai-deepseek-v4.1-flash-1017-uncensored-fp8-learnings.md": {
-      "processed_at": "2026-11-21T11:55:39.206Z",
+      "processed_at": "2026-11-25T06:12:57.034Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3908,7 +3908,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 4092,
+  "total_dossiers_evaluated": 4095,
   "total_canonical_promoted": 531,
-  "total_staged_for_review": 3132
+  "total_staged_for_review": 3135
 }
