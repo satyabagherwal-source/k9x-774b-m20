@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T08:44:17.170Z",
-  "total_records": 2647,
+  "last_updated": "2026-11-25T08:56:50.621Z",
+  "total_records": 2650,
   "domains": {
     "A": {
       "total": 22,
@@ -71,7 +71,7 @@
       ]
     },
     "D": {
-      "total": 994,
+      "total": 997,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -1066,7 +1066,10 @@
         "DOM-D-AC435FD0",
         "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-z_image_turbo-learnings-core-invari",
         "DOM-D-C25EA6D9",
-        "DOM-D-D8C77758"
+        "DOM-D-D8C77758",
+        "domain_intelligence-research-knowledge-intelligence-inclusionai-lingsante-3-1-air-vl-core-invariants",
+        "DOM-D-51CE07E9",
+        "domain_intelligence-research-knowledge-intelligence-hf-inclusionai-lingsante-3-1-air-vl-learnings-co"
       ]
     },
     "E": {
@@ -12695,8 +12698,8 @@
       "title": "Content & Information Intelligence: pingcap/tidb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-pingcap-tidb-content-information-intelligence-pingcap-tidb-core-invariants.md",
       "repository": "pingcap/tidb",
-      "content_hash": "1690408cd849ed651597a70c5caeeb060cb13aaedf3d40b89767a3daa3a57662",
-      "created_at": "2026-11-24T15:44:35.992Z"
+      "content_hash": "daa1f09964d6ee866e00d499d6e80528f300b09c2bcb045f0aade0aae3306a5f",
+      "created_at": "2026-11-25T08:56:15.469Z"
     },
     "domain_intelligence-architecture-intelligence-dathere-qsv-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-dathere-qsv-core-invariants",
@@ -12764,8 +12767,8 @@
       "title": "Content & Information Intelligence: pingcap-tidb-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-pingcap-tidb-learnings-content-information-intelligence-pingcap-tidb-learnings-c.md",
       "repository": "pingcap-tidb-learnings",
-      "content_hash": "21caab18b25048f34995a42d15149581ba14f15aea8d8cf86bbb52b48321991f",
-      "created_at": "2026-11-24T15:44:40.517Z"
+      "content_hash": "d20169f15b39b49c42ed1840c2b0e1f27572a961c908220dd30f33f479a383b2",
+      "created_at": "2026-11-25T08:56:50.621Z"
     },
     "domain_intelligence-architecture-intelligence-dathere-qsv-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-dathere-qsv-learnings-core-invariants",
@@ -29002,8 +29005,8 @@
       "title": "Research & Knowledge Intelligence: HuggingFaceBio/Carbon-X Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-huggingfacebio-carbon-x-research-knowledge-intelligence-huggingfacebio-carbon.md",
       "repository": "HuggingFaceBio/Carbon-X",
-      "content_hash": "9ce95a29f40d28fcbb4c9de8b25f4c7e688044ba573ff55ed191c584cda05098",
-      "created_at": "2026-11-21T16:40:02.484Z"
+      "content_hash": "3b79f1032b978961c623afb3aae8ba0136529af669974b966389914b440ca1e0",
+      "created_at": "2026-11-25T08:56:04.514Z"
     },
     "domain_intelligence-technical-construction-intelligence-flux-iac-tofu-controller-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-flux-iac-tofu-controller-core-invariants",
@@ -29029,8 +29032,8 @@
       "title": "Research & Knowledge Intelligence: hf-huggingfacebio-carbon-x-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-huggingfacebio-carbon-x-learnings-research-knowledge-intelligence-hf-huggingf.md",
       "repository": "hf-huggingfacebio-carbon-x-learnings",
-      "content_hash": "60a85e35adca65592c4201668ec01ac2d0eaaa42a2cbc8fe6a47210f4bcbf536",
-      "created_at": "2026-11-21T16:40:22.316Z"
+      "content_hash": "f46c555553234e30099a9b126a6e78bee64f9e57b1b8a9df32c997f8a48198bf",
+      "created_at": "2026-11-25T08:56:49.700Z"
     },
     "domain_intelligence-technical-construction-intelligence-flux-iac-tofu-controller-learnings-core-inva": {
       "record_id": "domain_intelligence-technical-construction-intelligence-flux-iac-tofu-controller-learnings-core-inva",
@@ -44484,6 +44487,66 @@
       "confidence": 0.6,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-25T07:57:45.596Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-inclusionai-lingsante-3-1-air-vl-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-inclusionai-lingsante-3-1-air-vl-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: inclusionAI/LingSante-3.1-air-VL Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-inclusionai-lingsante-3-1-air-vl-research-knowledge-intelligence-inclusionai-.md",
+      "repository": "inclusionAI/LingSante-3.1-air-VL",
+      "content_hash": "8c536ba32ab8f012ed83c80a521fb981b38f8bdcc28838a389d61a82bc52461f",
+      "created_at": "2026-11-25T08:56:01.921Z"
+    },
+    "DOM-D-51CE07E9": {
+      "record_id": "DOM-D-51CE07E9",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): inclusionAI/LingSante-3.1-air-VL",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-inclusionai-lingsante-3.1-air-vl-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/inclusionAI/LingSante-3.1-air-VL](https://huggingface.co/inclusionAI/LingSante-3.1-air-VL))  \n> **Source Version**: `hf-inclusion`  \n> **Lice",
+      "content_hash": "d00a713969fa64a5d8491168e2ff90e5fe2c0fd67c00ee27833b70e5e4640380",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-inclusionai-lingsante-3.1-air-vl-learnings.md`  \n> **Source**: huggingface ([http -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-inclusionai-lingsante-3.1-air-vl-learnings.md`  \n> **Source**: huggingface ([http",
+      "provenance": {
+        "source_uri": "project://hf-inclusionai-lingsante-3.1-air-vl/hf-inclusionai-lingsante-3.1-air-vl-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-25T08:56:18.472Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-inclusionai-lingsante-3.1-air-vl)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-inclusionai-lingsante-3.1-air-vl"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-25T08:56:48.839Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-inclusionai-lingsante-3-1-air-vl-learnings-co": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-inclusionai-lingsante-3-1-air-vl-learnings-co",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-inclusionai-lingsante-3.1-air-vl-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-inclusionai-lingsante-3-1-air-vl-learnings-research-knowledge-intelligence-hf.md",
+      "repository": "hf-inclusionai-lingsante-3.1-air-vl-learnings",
+      "content_hash": "a68a2d5f0b415754c7c10b6dc7319084adace03f98fcf413937f2107fcceb3b7",
+      "created_at": "2026-11-25T08:56:49.205Z"
     }
   }
 }

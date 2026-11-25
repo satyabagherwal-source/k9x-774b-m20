@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-25T08:44:17.354Z",
-  "total_verified_learnings": 9114,
+  "last_updated": "2026-11-25T08:56:50.828Z",
+  "total_verified_learnings": 9115,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25338,
+  "total_items": 25344,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -221544,8 +221544,8 @@
       "slug": "pingcap-tidb",
       "platform": "github",
       "source_url": "https://github.com/pingcap/tidb",
-      "source_version": "0103aff4",
-      "content_hash": "ed1bf2c69d07bbc3d6fecbfbb288732ccb36e38a6953c81d6fe674377ab062c8",
+      "source_version": "e722f8f1",
+      "content_hash": "be1627b5d3bd3ae1a8828ef5bbf5a6e51f3a1fcb2522ec63b28de64869411dd6",
       "dossier_path": "07_PROJECT_LEARNING/pingcap-tidb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pingcap-tidb-learnings.md",
       "promoted_rules": [
@@ -221598,6 +221598,11 @@
           "number": 10297,
           "title": "require reorg when MODIFY COLUMN changes column charset or indexed collatio",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10493,
+          "title": "fix hypothetical expression index creation",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -221605,7 +221610,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T15:44:35.363Z",
+      "verified_at": "2026-11-25T08:56:14.810Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -221647,10 +221652,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-pingcap-tidb-content-information-intelligence-pingcap-tidb-core-invariants.md",
       "title": "Content & Information Intelligence: pingcap/tidb Core Invariants",
       "repository": "pingcap/tidb",
-      "source_version": "0103aff4",
-      "content_hash": "1690408cd849ed651597a70c5caeeb060cb13aaedf3d40b89767a3daa3a57662",
+      "source_version": "e722f8f1",
+      "content_hash": "daa1f09964d6ee866e00d499d6e80528f300b09c2bcb045f0aade0aae3306a5f",
       "domain_letter": "I",
-      "persisted_at": "2026-11-24T15:44:35.992Z"
+      "persisted_at": "2026-11-25T08:56:15.469Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-pingcap-tidb": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-pingcap-tidb",
@@ -221659,10 +221664,10 @@
       "relative_path": "08_VERIFICATION/pingcap-tidb-verification-protocol-empirical-defect-shield-for-pingcap-tidb.md",
       "title": "Verification Protocol: Empirical Defect Shield for pingcap/tidb",
       "repository": "pingcap/tidb",
-      "source_version": "0103aff4",
-      "content_hash": "6cbae6668d1deeac9fddc25100c8e2bd08dc666b4fdc518778df9557d8263c7f",
+      "source_version": "e722f8f1",
+      "content_hash": "0e9241a41d1e0e2dd46b90fb42258c9894fe83dfa0ebdc00a05e40d32087d6e1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T15:44:36.188Z"
+      "persisted_at": "2026-11-25T08:56:15.664Z"
     },
     "rule-8415": {
       "learning_id": "rule-8415",
@@ -221734,9 +221739,9 @@
       "title": "Content & Information Intelligence: pingcap-tidb-learnings Core Invariants",
       "repository": "pingcap-tidb-learnings",
       "source_version": "HEAD",
-      "content_hash": "21caab18b25048f34995a42d15149581ba14f15aea8d8cf86bbb52b48321991f",
+      "content_hash": "d20169f15b39b49c42ed1840c2b0e1f27572a961c908220dd30f33f479a383b2",
       "domain_letter": "I",
-      "persisted_at": "2026-11-24T15:44:40.517Z"
+      "persisted_at": "2026-11-25T08:56:50.621Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-pingcap-tidb-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-pingcap-tidb-learnings",
@@ -221746,9 +221751,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for pingcap-tidb-learnings",
       "repository": "pingcap-tidb-learnings",
       "source_version": "HEAD",
-      "content_hash": "9619f8fb4cd3d632c524a754f6eb627aeaa551f17943a0b5008cce0eed9f3d1b",
+      "content_hash": "845be81599f46ee54273e1eb80f32d17a1ebe388668f86f5208dfbde1805e00a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T15:44:40.689Z"
+      "persisted_at": "2026-11-25T08:56:50.828Z"
     },
     "candidate_directive-deps-bump-lock-file": {
       "item_id": "candidate_directive-deps-bump-lock-file",
@@ -281348,7 +281353,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/HuggingFaceBio/Carbon-X",
       "source_version": "hf-huggingfacebio-carbon-x",
-      "content_hash": "d3ad2147d536d6390328b074f6b8a76128804cbc9dbff4a9d63bb361be1207d4",
+      "content_hash": "4b01d1f0205442f13cbb3b00fff18e1143ddcd00ebd15846a7ed2861faf70194",
       "dossier_path": "07_PROJECT_LEARNING/hf-huggingfacebio-carbon-x-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-huggingfacebio-carbon-x-learnings.md",
       "promoted_rules": [],
@@ -281357,7 +281362,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T16:40:01.898Z",
+      "verified_at": "2026-11-25T08:56:04.012Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -281374,9 +281379,9 @@
       "title": "Research & Knowledge Intelligence: HuggingFaceBio/Carbon-X Core Invariants",
       "repository": "HuggingFaceBio/Carbon-X",
       "source_version": "hf-huggingfacebio-carbon-x",
-      "content_hash": "9ce95a29f40d28fcbb4c9de8b25f4c7e688044ba573ff55ed191c584cda05098",
+      "content_hash": "3b79f1032b978961c623afb3aae8ba0136529af669974b966389914b440ca1e0",
       "domain_letter": "D",
-      "persisted_at": "2026-11-21T16:40:02.484Z"
+      "persisted_at": "2026-11-25T08:56:04.514Z"
     },
     "domain_intelligence-technical-construction-intelligence-flux-iac-tofu-controller-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-flux-iac-tofu-controller-core-invariants",
@@ -281410,9 +281415,9 @@
       "title": "Research & Knowledge Intelligence: hf-huggingfacebio-carbon-x-learnings Core Invariants",
       "repository": "hf-huggingfacebio-carbon-x-learnings",
       "source_version": "HEAD",
-      "content_hash": "60a85e35adca65592c4201668ec01ac2d0eaaa42a2cbc8fe6a47210f4bcbf536",
+      "content_hash": "f46c555553234e30099a9b126a6e78bee64f9e57b1b8a9df32c997f8a48198bf",
       "domain_letter": "D",
-      "persisted_at": "2026-11-21T16:40:22.316Z"
+      "persisted_at": "2026-11-25T08:56:49.700Z"
     },
     "candidate_directive-deps-bump-go-opentelemetry-io-otel-trace-from-1-45-0-to-1-47-0": {
       "item_id": "candidate_directive-deps-bump-go-opentelemetry-io-otel-trace-from-1-45-0-to-1-47-0",
@@ -346598,6 +346603,95 @@
       "content_hash": "4bc692820dea17a49ce617c9f225482209ceb6103f698dbfc133235e5dae6084",
       "domain_letter": "H",
       "persisted_at": "2026-11-25T08:44:16.972Z"
+    },
+    "learn-huggingface-inclusionai-lingsante-3-1-air-vl": {
+      "learning_id": "learn-huggingface-inclusionai-lingsante-3-1-air-vl",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "inclusionAI/LingSante-3.1-air-VL",
+      "repository": "inclusionAI/LingSante-3.1-air-VL",
+      "slug": "hf-inclusionai-lingsante-3.1-air-vl",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/inclusionAI/LingSante-3.1-air-VL",
+      "source_version": "hf-inclusionai-lingsante-3.1-air-vl",
+      "content_hash": "060d8c64aef561505f6c9356459677681ac0abc289b39283b751f3df1495900f",
+      "dossier_path": "07_PROJECT_LEARNING/hf-inclusionai-lingsante-3.1-air-vl-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-inclusionai-lingsante-3.1-air-vl-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-25T08:56:01.426Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-inclusionai-lingsante-3-1-air-vl-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-inclusionai-lingsante-3-1-air-vl-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-inclusionai-lingsante-3-1-air-vl-research-knowledge-intelligence-inclusionai-.md",
+      "title": "Research & Knowledge Intelligence: inclusionAI/LingSante-3.1-air-VL Core Invariants",
+      "repository": "inclusionAI/LingSante-3.1-air-VL",
+      "source_version": "hf-inclusionai-lingsante-3.1-air-vl",
+      "content_hash": "8c536ba32ab8f012ed83c80a521fb981b38f8bdcc28838a389d61a82bc52461f",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-25T08:56:01.921Z"
+    },
+    "rule-10493": {
+      "learning_id": "rule-10493",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10493,
+      "title": "fix hypothetical expression index creation",
+      "source_url": "https://github.com/pingcap/tidb",
+      "source_version": "e722f8f1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T08:56:14.810Z"
+    },
+    "candidate_directive-fix-hypothetical-expression-index-creation": {
+      "item_id": "candidate_directive-fix-hypothetical-expression-index-creation",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-2T9P-fix-hypothetical-expression-index-creation.md",
+      "title": "fix hypothetical expression index creation",
+      "repository": "pingcap/tidb",
+      "source_version": "e722f8f1",
+      "content_hash": "bcfb2307d4c3393409791ddb6d82a85a9780efaa514a251933473b0f6372f441",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-25T08:56:15.281Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-inclusionai-lingsante-3-1-air-vl-learnings-co": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-inclusionai-lingsante-3-1-air-vl-learnings-co",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-inclusionai-lingsante-3-1-air-vl-learnings-research-knowledge-intelligence-hf.md",
+      "title": "Research & Knowledge Intelligence: hf-inclusionai-lingsante-3.1-air-vl-learnings Core Invariants",
+      "repository": "hf-inclusionai-lingsante-3.1-air-vl-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a68a2d5f0b415754c7c10b6dc7319084adace03f98fcf413937f2107fcceb3b7",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-25T08:56:49.205Z"
+    },
+    "candidate_directive-ddl-fix-hypothetical-expression-index-creation": {
+      "item_id": "candidate_directive-ddl-fix-hypothetical-expression-index-creation",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-3KDJ-ddl-fix-hypothetical-expression-index-creation.md",
+      "title": "ddl: fix hypothetical expression index creation",
+      "repository": "pingcap-tidb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "c5508742a2f68562e631931f559957dba6f2d922f05febba4959b7fd682018e5",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-25T08:56:50.418Z"
     }
   },
   "ai-builder-brain": {

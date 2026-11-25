@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T08:44:11.666Z",
-  "total_cycles_completed": 12355,
-  "total_learnings_persisted": 12355,
-  "total_rules_promoted": 11370,
+  "last_updated": "2026-11-25T08:56:15.040Z",
+  "total_cycles_completed": 12358,
+  "total_learnings_persisted": 12358,
+  "total_rules_promoted": 11371,
   "history": [
-    {
-      "timestamp": "2026-11-24T19:44:50.270Z",
-      "repository": "callstack/agent-device",
-      "learningId": "learn-github-callstack-agent-device",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T19:44:51.430Z",
-      "repository": "aio-libs/aiohttp",
-      "learningId": "learn-github-aio-libs-aiohttp",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T19:44:56.977Z",
-      "repository": "VectifyAI/PageIndex",
-      "learningId": "learn-github-vectifyai-pageindex",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-24T19:55:16.826Z",
       "repository": "orcarouter/Inkling-2-Mini-abliterated-GGUF",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-25T08:44:11.666Z",
       "repository": "apache/zookeeper",
       "learningId": "learn-github-apache-zookeeper",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T08:56:01.694Z",
+      "repository": "inclusionAI/LingSante-3.1-air-VL",
+      "learningId": "learn-huggingface-inclusionai-lingsante-3-1-air-vl",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T08:56:04.275Z",
+      "repository": "HuggingFaceBio/Carbon-X",
+      "learningId": "learn-huggingface-huggingfacebio-carbon-x",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T08:56:15.040Z",
+      "repository": "pingcap/tidb",
+      "learningId": "learn-github-pingcap-tidb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

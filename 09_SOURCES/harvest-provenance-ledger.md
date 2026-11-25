@@ -13043,3 +13043,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-orcarouter-deepseek-v4-1-flash-1017-abliterated-gguf` | `https://huggingface.co/orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-11-25T08:43:55.634Z |
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `445df50d` | Multi-dimensional audit evidence | 2026-11-25T08:44:08.964Z |
 | `learn-github-apache-zookeeper` | `https://github.com/apache/zookeeper` | `2b86687b` | Multi-dimensional audit evidence | 2026-11-25T08:44:11.660Z |
+| `learn-huggingface-inclusionai-lingsante-3-1-air-vl` | `https://huggingface.co/inclusionAI/LingSante-3.1-air-VL` | `hf-inclusi` | Multi-dimensional audit evidence | 2026-11-25T08:56:01.688Z |
+| `learn-huggingface-huggingfacebio-carbon-x` | `https://huggingface.co/HuggingFaceBio/Carbon-X` | `hf-hugging` | Multi-dimensional audit evidence | 2026-11-25T08:56:04.269Z |
+| `learn-github-pingcap-tidb` | `https://github.com/pingcap/tidb` | `e722f8f1` | Multi-dimensional audit evidence | 2026-11-25T08:56:15.034Z |
+| `learn-dom-d-51ce07e9` | `project://hf-inclusionai-lingsante-3.1-air-vl` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-inclusionai-lingsante-3.1-air-vl-learnings.md` | 2026-11-25T08:56:48.879Z |

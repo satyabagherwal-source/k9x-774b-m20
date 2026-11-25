@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T15:44:40.186Z",
+  "timestamp": "2026-11-25T08:56:50.268Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-pingcap-tidb-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [pingcap-tidb-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T15:44:40.186Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T08:56:50.268Z`  
 > **Learning ID**: `LEARN-EVO-pingcap-tidb-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pingcap-tidb-learnings.md`  
 > **Source**: github ([https://github.com/pingcap/tidb](https://github.com/pingcap/tidb))  
-> **Source Version**: `0103aff4`  
+> **Source Version**: `e722f8f1`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T15:44:34.473Z  
+> **Timestamp**: 2026-11-25T08:56:13.877Z  
 > **Learning ID**: `learn-github-pingcap-tidb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pingcap-tidb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pingcap/tidb](https://github.com/pingcap/tidb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T15:44:34.467Z  
+> **Harvest Timestamp**: 2026-11-25T08:56:13.871Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: TiDB is built for agentic workloads that grow unpredictably, with ACID guarantees and native support for transactions, analytics, and vector search. No data silos. No noisy neighbors. No infrastructure ceiling.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 40770 stars
+- **Stars / Engagement**: 40772 stars
 
 ---
 
@@ -1312,7 +1312,6 @@ import (
 	"github.com/pingcap/tidb/br/pkg/utils"
 	"github.com/pingcap/tidb/pkg/meta/model"
 	"github.com/pingcap/tidb/pkg/objstore/storeapi"
-	"github.com/pingcap/tidb/pkg/statistics/handle"
 	statstypes "github.com/pingcap/tidb/pkg/statistics/handle/types"
 	statsutil "github.com/pingcap/tidb/pkg/statistics/util"
 	"github.com/pingcap/tidb/pkg/util"
@@ -1439,11 +1438,22 @@ func (s *StatsWriter) BackupStatsDone(ctx context.Context) ([]*backuppb.StatsFil
 	return s.statsFileIndexes, nil
 }
 
+// StatsLoader loads the stats of a table from JSON into the stats storage.
+type StatsLoader interface {
+	LoadStatsFromJSONConcurrently(
+		ctx context.Context,
+		tableInfo *model.TableInfo,
+		taskCh chan *statstypes.PartitionStatisticLoadTask,
+		concurrencyForPartition int,
+	) error
+}
+
+// RestoreStats downloads the stats files of a table and loads them through statsLoader.
 func RestoreStats(
 	ctx context.Context,
 	storage storeapi.Storage,
 	cipher *backuppb.CipherInfo,
-	statsHandler *handle.Handle,
+	statsLoader StatsLoader,
 	newTableInfo *model.TableInfo,
 	statsFileIndexes []*backuppb.StatsFileIndex,
 	rewriteIDMap map[int64]int64,
@@ -1455,7 +1465,7 @@ func RestoreStats(
 	})
 	eg.Go(func() error {
 		// NOTICE: skip updating cache after load stats from json
-		return statsHandler.LoadStatsFromJSONConcurrently(ectx, newTableInfo, taskCh, 0)
+		return statsLoader.LoadStatsFromJSONConcurrently(ectx, newTableInfo, taskCh, 0)
 	})
 	return eg.Wait()
 }
@@ -1944,11 +1954,8 @@ func SearchPlacementRule(tableID int64, placementRules []pdtypes.Rule, role pdty
 - **Issue #73726** (2026-11-24): **tests: stabilize read-only staleness transaction test**
   *Symptoms*: <!--  Thank you for contributing to TiDB!  PR Title Format: 1. pkg [, pkg2, pkg3]: what's changed 2. *: what's changed  -->  ### What problem does this PR solve? <!--  Please create an issue first to describe the problem.  There MUST be one line starting with "Issue Number:  " and linking the relevant issues via the "close" or "ref".  For more info, check https://pingcap.github.io/tidb-dev-guide/contribute-to-tidb/contribute-code.html#referring-to-an-issue.  -->  Issue Number: ref #65731  Problem Summary:  `TestValidateReadOnlyInStalenessTransaction` waits about one second after creating its tables, then reads at `NOW(3) - INTERVAL 5 SECOND`. The snapshot can precede the test DDL, so the test may see an older table definition or fail with `Table 'test.t' doesn't exist`. Both symptoms appeared in CheckDev2 for #73724.  ### What changed and how does it work?  Take a PD timestamp after both tables have been created, then wait for its physical component to advance. This keeps the snapshot after the DDL when `tidb_parse_tso` drops the logical bits. Use the same snapshot for both read-only transaction forms.  ### Check List  Tests <!-- At least one of them must be included. -->  - [ ] Unit test - [x] Integration test - [ ] Manual test (add detailed scripts or steps below) - [ ] No need to test   > - [ ] I checked and no code files have been changed.   > <!-- Or your custom  "No need to test" reasons -->  With local PD and TiKV v8.5.7, the test reproduced the missing-table error bef
 
-- **Issue #73718** (2026-11-24): **planner: estimate missing-stats indexes with exponential backoff and drop prefer-range gate (#72078)**
-  *Symptoms*: This is an automated cherry-pick of #72078  /assign terry1purcell  ```release-note Improve row count estimation for indexes without statistics when their columns have statistics, and apply the missing-statistics index selection rule regardless of tidb_opt_prefer_range_scan. ```
-  **Post-Mortem & Fix Analysis**:
-  > This cherry pick PR is for a release branch and has not yet been approved by triage owners. Adding the `do-not-merge/cherry-pick-not-approved` label.  To merge this cherry pick: 1. It must be LGTMed and approved by the reviewers firstly. 2. For pull requests to TiDB-x branches, it must have no failed tests. 3. **AFTER** it has `lgtm` and `approved` labels, please wait for the cherry-pick merging approval from triage owners.   <details>  Instructions for interacting with me using PR comments are available [here](https://git.k8s.io/community/contributors/guide/pull-requests.md).  If you have questions or suggestions related to my behavior, please file an issue against the [kubernetes-sigs/prow](https://github.com/kubernetes-sigs/prow/issues/new?title=Prow%20issue:) repository. </details>
-  > @terry1purcell This PR has conflicts, I have held it. Please resolve them or ask others to resolve them, then comment `/unhold` to remove the hold label.
+- **Issue #73719** (2026-11-25): **statistics: stop passing the whole stats handle to its components**
+  *Symptoms*: ## Enhancement  Every component of the stats handle (`pkg/statistics/handle`) gets the whole `*Handle` (73 methods), and `Handle` embeds every component. So the components reach each other only through `Handle`, their real dependencies are hidden, and the handle and its components form a cycle.  ```mermaid flowchart TB   subgraph before["Before: every component depends on the whole Handle"]     H1["Handle<br/>73 methods, embeds every component"]     C1[cache] --> H1     RW1[read-writer] --> H1     SL1[sync load] --> H1     AA1[auto-analyze] --> H1     GM1[global merge] --> H1     H1 -.-> C1 & RW1 & SL1 & AA1 & GM1   end ```  Goal (a pure refactor with no behavior change): `NewHandle` builds each component in dependency order and gives it only its real dependencies.  ```mermaid flowchart TB   subgraph after["After: components depend on each other directly"]     H2[Handle]     H2 -.-> GM2[global merge] & AA2[auto-analyze] & SL2[sync load]     GM2 --> RW2[read-writer]     RW2 --> C2[cache]     SL2 --> C2     AA2 --> C2   end ```  A solid arrow means "depends on". A dotted arrow means that `Handle` holds the component; the figure shows only some of these.  This also lets ANALYZE use a set of components without a stats cache (#73495).  Implementation: #73688 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1965,145 +1972,275 @@ func SearchPlacementRule(tableID int64, placementRules []pdtypes.Rule, role pdty
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a935aa47` (2026-11-24)
-**Commit Message**: ddl: require reorg when MODIFY COLUMN changes column charset or indexed collation (#73524)
+### Incident Patch 1: `c09f6278` (2026-11-25)
+**Commit Message**: ddl: fix hypothetical expression index creation (#72887)
 
-close pingcap/tidb#73028
+close pingcap/tidb#72886
 
-**File**: `pkg/ddl/column_modify_test.go` (modified, +41/-0)
+**File**: `pkg/ddl/executor.go` (modified, +20/-7)
 ```diff
-@@ -674,3 +674,44 @@ func TestIssue37611(t *testing.T) {
- 	tk.MustExec("create table t2(a char(5), b char(6) as (concat(a, a)) stored, index idx(b));")
- 	tk.MustGetErrCode("alter table t2 modify b char(10) as (concat(a, a)) stored;", errno.ErrUnsupportedOnGeneratedColumn)
- }
-+
-+func TestModifyColumnCrossCharsetRequiresReorg(t *testing.T) {
-+	store := testkit.CreateMockStoreWithSchemaLease(t, columnModifyLease)
-+	tk := testkit.NewTestKit(t, store)
-+	tk.MustExec("use test")
-+
-+	// BINARY(2) -> VARCHAR(10) utf8mb4 with invalid UTF-8 bytes must reorg and fail.
-+	tk.MustExec("create table t0 (id int primary key, c binary(2))")
-+	tk.MustExec("insert into t0 values (1, x'FFFE')")
-+	tk.MustGetErrCode("alter table t0 modify column c varchar(10) character set utf8mb4 collate utf8mb4_general_ci", errno.ErrTruncatedWrongValueForField)
-+
-+	// CHAR(4) utf8mb4 -> VARCHAR(10) ascii with non-ASCII character must reorg and fail.
-+	tk.MustExec("create table t2 (id int primary key, c char(4) character set utf8mb4)")
-+	tk.MustExec("insert into t2 values (1, 'é')")
-+	tk.MustGetErrCode("alter table t2 modify column c varchar(10) character set ascii", errno.ErrTruncatedWrongValueForField)
-+
-+	// CHAR(4) utf8mb4 -> VARBINARY(4) with 8-byte UTF-8 value must reorg and fail with truncation.
-+	tk.MustExec("create table t3 (id int primary key, c char(4) character set utf8mb4)")
-+	tk.MustExec("insert into t3 values (1, 'éééé')")
-+	tk.MustGetErrCode("alter table t3 modify column c varbinary(4)", errno.WarnDataTruncated)
-+
-+	// Same-charset collation change with multi-byte chars must check character length, not byte length.
-+	tk.MustExec("create table t4 (id int primary key, c varchar(4) character set utf8mb4 collate utf8mb4_bin)")
-+	tk.MustExec("insert into t4 values (1, 'éééé')")
-+	tk.MustExec("alter table t4 modify column c varchar(4) character set utf8mb4 collate utf8mb4_general_ci")
-+
-+	// utf8 -> utf8mb4 with compatible collation does not require reorg even with an index or narrowing.
-+	tk.MustExec("create table t5 (id int primary key, c varchar(10) character set utf8 collate utf8_bin, key idx_c(c))")
-+	tk.MustExec("insert into t5 values (1, 'abc')")
-+	tk.MustExec("alter table t5 modify column c varchar(10) character set utf8mb4 collate utf8mb4_bin")
-+	tk.MustQuery("select row_count from information_schema.ddl_jobs where table_name = 't5' order by job_id desc limit 1").Check(testkit.Rows("0"))
-+	tk.MustExec("alter table t5 modify column c varchar(5) character set utf8mb4 collate utf8mb4_bin")
-+	tk.MustQuery("select row_count from information_schema.ddl_jobs where table_name = 't5' order by job_id desc limit 1").Check(testkit.Rows("0"))
-+	tk.MustExec("admin check table t5")
-+
-+	// Same-length utf8mb4 -> utf8 is rejected upfront; narrowing utf8mb4 -> utf8 triggers row reorg and rejects 4-byte UTF-8 data.
-+	tk.MustExec("create table t6 (id int primary key, c varchar(10) character set utf8mb4 collate utf8mb4_bin)")
-+	tk.MustExec("insert into t6 values (1, '🐱')")
-+	tk.MustGetErrCode("alter table t6 modify column c varchar(10) character set utf8 collate utf8_bin", errno.ErrUnsupportedDDLOperation)
-+	tk.MustGetErrCode("alter table t6 modify column c varchar(5) character set utf8 collate utf8_bin", errno.ErrTruncatedWrongValueForField)
-+}
-```
-
-**File**: `pkg/ddl/executor.go` (modified, +13/-4)
-```diff
-@@ -3912,6 +3912,18 @@ func checkVisibleColumnCnt(t table.Table, addCnt, dropCnt int) error {
- 	return dbterror.ErrCantRemoveAllFields
+@@ -5921,24 +5921,27 @@ func (e *executor) CreateIndex(ctx sessionctx.Context, stmt *ast.CreateIndexStmt
  }
  
-+func isCharsetAllowingDirectCollationChange(origCharset, toCharset string) bool {
-+	return (origCharset == charset.CharsetUTF8 && toCharset == charset.CharsetUTF8MB4) ||
-+		(origCharset == charset.CharsetUTF8 && toCharset == charset.CharsetUTF8) ||
-+		(origCharset == charset.CharsetUTF8MB4 && toCharset == charset.CharsetUTF8MB4) ||
-+		(origCharset == charset.CharsetLatin1 && toCharset == charset.CharsetUTF8MB4)
-+}
-+
-+func canModifyCharsetAndCollateWithoutReorg(origCharset, origCollate, toCharset, toCollate string) bool {
-+	return isCharsetAllowingDirectCollationChange(origCharset, toCharset) ||
-+		(toCharset == origCharset && toCollate == origCollate)
-+}
-+
- // checkModifyCharsetAndCollation returns error when the charset or collation is not modifiable.
- // needRewriteCollationData is used when trying to modify the collation of a column, it is true when the column is with
- // index because index of a string column is collation-aware.
-@@ -3924,10 +3936,7 @@ func checkModifyCharsetAndCollation(toCharset, toCollate, origCharset, origColla
- 		return dbterror.ErrUnsupportedModifyCollation.GenWithStackByArgs(origCollate, toCollate)
+ // addHypoIndexIntoCtx adds this index as a hypo-index into this ctx.
+-func (*executor) addHypoIndexIntoCtx(ctx sessionctx.Context, schemaName, tableName ast.CIStr, indexInfo *model.IndexInfo) error {
++func (*executor) addHypoIndexIntoCtx(ctx sessionctx.Context, schemaName, tableName ast.CIStr, indexInfo *model.IndexInfo, hiddenCols []*model.ColumnInfo) error {
+ 	sctx := ctx.GetSessionVars()
+ 	indexName := indexInfo.Name
+ 
+ 	if sctx.HypoIndexes == nil {
+-		sctx.HypoIndexes = make(map[string]map[string]map[string]*model.IndexInfo)
++		sctx.HypoIndexes = make(map[string]map[string]map[string]*model.HypoIndexInfo)
+ 	}
+ 	if sctx.HypoIndexes[schemaName.L] == nil {
+-		sctx.HypoIndexes[schemaName.L] = make(map[string]map[string]*model.IndexInfo)
++		sctx.HypoIndexes[schemaName.L] = make(map[string]map[string]*model.HypoIndexInfo)
+ 	}
+ 	if sctx.HypoIndexes[schemaName.L][tableName.L] == nil {
+-		sctx.HypoIndexes[schemaName.L][tableName.L] = make(map[string]*model.IndexInfo)
++		sctx.HypoIndexes[schemaName.L][tableName.L] = make(map[string]*model.HypoIndexInfo)
+ 	}
+ 	if _, exist := sctx.HypoIndexes[schemaName.L][tableName.L][indexName.L]; exist {
+ 		return errors.Trace(errors.Errorf("conflict hypo index name %s", indexName.L))
  	}
  
--	if (origCharset == charset.CharsetUTF8 && toCharset == charset.CharsetUTF8MB4) ||
--		(origCharset == charset.CharsetUTF8 && toCharset == charset.CharsetUTF8) ||
--		(origCharset == charset.CharsetUTF8MB4 && toCharset == charset.CharsetUTF8MB4) ||
--		(origCharset == charset.CharsetLatin1 && toCharset == charset.CharsetUTF8MB4) {
-+	if isCharsetAllowingDirectCollationChange(origCharset, toCharset) {
- 		// TiDB only allow utf8/latin1 to be changed to utf8mb4, or changing the collation when the charset is utf8/utf8mb4/latin1.
+-	sctx.HypoIndexes[schemaName.L][tableName.L][indexName.L] = indexInfo
++	sctx.HypoIndexes[schemaName.L][tableName.L][indexName.L] = &model.HypoIndexInfo{
++		IndexInfo:     indexInfo,
++		HiddenColumns: hiddenCols,
++	}
+ 	return nil
+ }
+ 
+@@ -6012,12 +6015,22 @@ func (e *executor) createIndex(ctx sessionctx.Context, ti ast.Ident, keyType ast
+ 	}
+ 
+ 	if isHypo { // for hypo-index
+-		indexInfo, err := BuildIndexInfo(metaBuildCtx, tblInfo, indexName, false, unique, model.ColumnarIndexTypeNA,
++		hypoTblInfo := tblInfo
++		if len(hiddenCols) > 0 {
++			hypoTblInfo = tblInfo.Clone()
++			hypoTblInfo.Columns = finalColumns
++			for i, col := range hiddenCols {
++				col.ID = tblInfo.MaxColumnID + int64(i) + 1
++				col.Offset = len(tblInfo.Columns) + i
++				col.State = model.StatePublic
++			}
++		}
++		indexInfo, err := BuildIndexInfo(metaBuildCtx, hypoTblInfo, indexName, false, unique, model.ColumnarIndexTypeNA,
+ 			indexPartSpecifications, indexOption, model.StatePublic)
+ 		if err != nil {
+ 			return err
+ 		}
+-		return e.addHypoIndexIntoCtx(ctx, ti.Schema, ti.Name, indexInfo)
++		return e.addHypoIndexIntoCtx(ctx, ti.Schema, ti.Name, indexInfo, hiddenCols)
+ 	}
+ 
+ 	splitOpt, autoPreSplit, err := buildIndexPreSplitOpt(indexOption)
+```
+
+**File**: `pkg/ddl/mv_index_test.go` (modified, +6/-0)
+```diff
+@@ -132,6 +132,12 @@ func TestCreateUniqueIndexOnMaterializedView(t *testing.T) {
+ 	)
+ 	tk.MustExec("create index idx_mv_g1 on mv_unique_agg (g1)")
+ 	tk.MustExec("alter table mv_unique_agg add key idx_mv_cnt (cnt)")
++	tk.MustExec("create index idx_mv_hypo_expr type hypo on mv_unique_agg ((cnt + 1))")
++	tk.MustExec("drop hypo index idx_mv_hypo_expr on mv_unique_agg")
++	tk.MustExec("create index idx_mv_hypo type hypo on mv_unique_agg (cnt)")
++	tk.MustExec("drop hypo index idx_mv_hypo on mv_unique_agg")
++	tk.MustExec("create index idx_base_hypo_expr type hypo on t_mv_unique ((v1 + 1))")
++	tk.MustExec("drop hypo index idx_base_hypo_expr on t_mv_unique")
+ 
+ 	tk.MustExec(`create table t_mv_nullable_key (
+ 		id bigint not null primary key,
+```
+
+**File**: `pkg/executor/show.go` (modified, +2/-16)
+```diff
+@@ -1111,6 +1111,7 @@ func ConstructResultOfShowCreateTable(ctx sessionctx.Context, dbName ast.CIStr,
+ 		ConstructResultOfShowCreateSequence(ctx, tableInfo, buf)
  		return nil
  	}
-```
-
-**File**: `pkg/ddl/modify_column.go` (modified, +16/-2)
-```diff
-@@ -1177,7 +1177,12 @@ func needRowReorg(oldCol, changingCol *model.ColumnInfo) bool {
- 		return true
++	tableInfo, hypoIndexes := ctx.GetSessionVars().GetHypoIndexTableInfo(dbName.L, tableInfo)
+ 
+ 	tblCharset := tableInfo.Charset
+ 	if len(tblCharset) == 0 {
+@@ -1257,22 +1258,7 @@ func ConstructResultOfShowCreateTable(ctx sessionctx.Context, dbName ast.CIStr,
+ 		}
  	}
  
--	// We have checked charset before, only need to check binary string, which needs padding.
-+	// Charset/collation changes outside the direct-convertible set require row reorg.
-+	if !canModifyCharsetAndCollateWithoutReorg(oldCol.GetCharset(), oldCol.GetCollate(), changingCol.GetCharset(), changingCol.GetCollate()) {
-+		return true
-+	}
-+
-+	// Binary strings need padding reorg.
- 	return types.IsBinaryStr(&oldCol.FieldType) || types.IsBinaryStr(&changingCol.FieldType)
+-	// consider hypo-indexes
+-	hypoIndexes := ctx.GetSessionVars().HypoIndexes
+-	if hypoIndexes != nil {
+-		schemaName := dbName.L
+-		tblName := tableInfo.Name.L
+-		if hypoIndexes[schemaName] != nil && hypoIndexes[schemaName][tblName] != nil {
+-			hypoIndexList := make([]*model.IndexInfo, 0, len(hypoIndexes[schemaName][tblName]))
+-			for _, index := range hypoIndexes[schemaName][tblName] {
+-				hypoIndexList = append(hypoIndexList, index)
+-			}
+-			sort.Slice(hypoIndexList, func(i, j int) bool { // to make the result stable
+-				return hypoIndexList[i].Name.O < hypoIndexList[j].Name.O
+-			})
+-			publicIndices = append(publicIndices, hypoIndexList...)
+-		}
+-	}
++	publicIndices = append(publicIndices, hypoIndexes...)
+ 	if len(publicIndices) > 0 {
+ 		buf.WriteString(",\n")
+ 	}
+```
+
+**File**: `pkg/meta/model/index.go` (modified, +7/-0)
+```diff
+@@ -297,6 +297,13 @@ type IndexInfo struct {
+ 	RegionSplitPolicy  *RegionSplitPolicy `json:"region_split_policy,omitempty"` // RegionSplitPolicy is the persistent split policy.
  }
  
-@@ -1240,7 +1245,11 @@ func buildCheckSQLFromModifyColumn(
- 			// Integer conversion
- 			conditions = append(conditions, buildCheckRangeForIntegerTypes(oldCol, changingCol))
- 		} else {
--			conditions = append(conditions, fmt.Sprintf("LENGTH(%s) > %d", checkColName, changingCol.FieldType.GetFlen()))
-+			lenFn := "LENGTH"
-+			if isCharChange(oldCol, changingCol) && !types.IsBinaryStr(&changingCol.FieldType) {
-+				lenFn = "CHAR_LENGTH"
++// HypoIndexInfo keeps a session-local index together with its expression columns.
++// Embedding IndexInfo preserves the session-state JSON format of ordinary hypothetical indexes.
++type HypoIndexInfo struct {
++	*IndexInfo
++	HiddenColumns []*ColumnInfo `json:"hidden_columns,omitempty"`
++}
++
+ // Hash64 implement HashEquals interface.
+ func (index *IndexInfo) Hash64(h base.Hasher) {
+ 	h.HashInt64(index.ID)
+```
+
+**File**: `pkg/planner/core/integration_test.go` (modified, +32/-0)
+```diff
+@@ -905,6 +905,38 @@ func TestHypoIndexHint(t *testing.T) {
+ 		testKit.MustHavePlan(`select 1 from t1, t2 where t1.a=1 and t1.b=t2.b`, "─HashJoin")
+ 		testKit.MustHavePlan(`select /*+ HYPO_INDEX(t1, idx_ab, a, b), HYPO_INDEX(t2, idx_b, b) */ 1 from t1, t2 where t1.a=1 and t1.b=t2.b`, "IndexHashJoin")
+ 
++		// Expression hypothetical indexes must keep their hidden columns for planning.
++		testKit.MustExec("insert into t1 values (41, 41, 44)")
++		testKit.MustExec("create index hypo_expr_a type hypo on t1 ((a + 1))")
++		checkRange := func(sql, index, indexRange string) {
++			plan := fmt.Sprint(testKit.MustQuery("explain format = 'brief' " + sql).Rows())
++			require.Contains(t, plan, "IndexRangeScan")
++			require.Contains(t, plan, "index:"+index+"(")
++			require.Contains(t, plan, "range:"+indexRange)
++		}
++		checkRange("select * from t1 where a + 1 = 42", "hypo_expr_a", "[42,42]")
++		testKit.MustExec("create index hypo_expr_bc type hypo on t1 ((b + 2), c)")
++		checkRange("select b + 2, c from t1 where b + 2 = 43 and c = 44", "hypo_expr_bc", "[43 44,43 44]")
++		showCreate := testKit.MustQuery("show create table t1").Rows()[0][1].(string)
++		require.Contains(t, showCreate, "KEY `hypo_expr_a` ((`a` + 1)) /* HYPO INDEX */")
++		require.Contains(t, showCreate, "KEY `hypo_expr_bc` ((`b` + 2),`c`) /* HYPO INDEX */")
++
++		// The hypothetical columns must not leak into execution or another session.
++		testKit.MustQuery("select * from t1").Check(testkit.Rows("41 41 44"))
++		other := testkit.NewTestKit(t, testKit.Session().GetStore())
++		require.NotContains(t, other.MustQuery("show create table test.t1").Rows()[0][1], "HYPO INDEX")
++		other.MustQuery("select * from test.t1").Check(testkit.Rows("41 41 44"))
++		tbl, err := domain.GetDomain(testKit.Session()).InfoSchema().TableByName(context.Background(), ast.NewCIStr("test"), ast.NewCIStr("t1"))
++		require.NoError(t, err)
++		require.Len(t, tbl.Meta().Columns, 3)
++		require.Empty(t, tbl.Meta().Indices)
++
++		testKit.MustExec("drop hypo index hypo_expr_a on t1")
++		checkRange("select b + 2, c from t1 where b + 2 = 43 and c = 44", "hypo_expr_bc", "[43 44,43 44]")
++		testKit.MustExec("drop hypo index hypo_expr_bc on t1")
++		testKit.MustNotHavePlan("select * from t1 where a + 1 = 42", "IndexRangeScan")
++		require.NotContains(t, testKit.MustQuery("show create table t1").Rows()[0][1], "HYPO INDEX")
++
+ 		// invalid cases
+ 		testKit.MustHavePlan(`select /*+ HYPO_INDEX(t1, idx_a) */ a from t1 where a=1`, "TableFullScan")
+ 		testKit.MustQuery(`show warnings`).Check(testkit.Rows("Warning 1105 Invalid HYPO_INDEX hint, valid usage: HYPO_INDEX(tableName, indexName, cols...)"))
+```
+
+**File**: `pkg/planner/core/logical_plan_builder.go` (modified, +13/-2)
+```diff
+@@ -5063,6 +5063,16 @@ func (b *PlanBuilder) buildDataSource(ctx context.Context, tn *ast.TableName, as
+ 		}
+ 	}
+ 	tableInfo := tbl.Meta()
++	if sessionVars.StmtCtx.InExplainStmt {
++		hypoTblInfo, _ := sessionVars.GetHypoIndexTableInfo(dbName.L, tableInfo)
++		if hypoTblInfo != tableInfo {
++			tbl, err = table.TableFromMeta(tbl.Allocators(nil), hypoTblInfo)
++			if err != nil {
++				return nil, err
 +			}
-+			conditions = append(conditions, fmt.Sprintf("%s(%s) > %d", lenFn, checkColName, changingCol.FieldType.GetFlen()))
- 			if oldTp == mysql.TypeVarchar && changingTp == mysql.TypeString {
- 				conditions = append(conditions, fmt.Sprintf("%s LIKE '%% '", checkColName))
- 			}
-@@ -2549,6 +2558,11 @@ func validateMaterializedViewBaseModifyColumn(
- // noReorgDataStrict is a strong check to decide whether we need to change the column data.
- // If it returns true, it means we don't need the reorg no matter what the data is.
- func noReorgDataStrict(tblInfo *model.TableInfo, oldCol, newCol *model.ColumnInfo) bool {
-+	// Incompatible index collation changes are already rejected by checkModifyCharsetAndCollation.
-+	// Charset/collation changes outside the direct-convertible set require row reorg.
-+	if !canModifyCharsetAndCollateWithoutReorg(oldCol.GetCharset(), oldCol.GetCollate(), newCol.GetCharset(), newCol.GetCollate()) {
-+		return false
++			tableInfo = hypoTblInfo
++		}
 +	}
- 	toUnsigned := mysql.HasUnsignedFlag(newCol.GetFlag())
- 	originUnsigned := mysql.HasUnsignedFlag(oldCol.GetFlag())
- 	needTruncationOrToggleSign := func() bool {
+ 
+ 	if b.isCreateView && tableInfo.TempTableType == model.TempTableLocal {
+ 		return nil, plannererrors.ErrViewSelectTemporaryTable.GenWithStackByArgs(tn.Name)
+@@ -5227,8 +5237,9 @@ func (b *PlanBuilder) buildDataSource(ctx context.Context, tn *ast.TableName, as
+ 	}
+ 
+ 	// Try to substitute generate column only if there is an index on generate column.
+-	for _, index := range tableInfo.Indices {
+-		if index.State != model.StatePublic {
++	for _, path := range possiblePaths {
++		index := path.Index
++		if index == nil || index.State != model.StatePublic {
+ 			continue
+ 		}
+ 		for _, indexCol := range index.Columns {
+```
+
+**File**: `pkg/planner/core/planbuilder.go` (modified, +4/-7)
+```diff
+@@ -1448,13 +1448,10 @@ func getPossibleAccessPaths(ctx base.PlanContext, tableHints *hint.PlanHints, in
+ 	}
+ 
+ 	// consider hypo-indexes
+-	hypoIndexes := ctx.GetSessionVars().HypoIndexes // session level hypo-indexes
+-	if ctx.GetSessionVars().StmtCtx.InExplainStmt && hypoIndexes != nil {
+-		originalTableName := tblInfo.Name.L
+-		if hypoIndexes[dbName.L] != nil && hypoIndexes[dbName.L][originalTableName] != nil {
+-			for _, index := range hypoIndexes[dbName.L][originalTableName] {
+-				publicPaths = append(publicPaths, &util.AccessPath{Index: index})
+-			}
++	if ctx.GetSessionVars().StmtCtx.InExplainStmt {
++		_, hypoIndexes := ctx.GetSessionVars().GetHypoIndexTableInfo(dbName.L, tblInfo)
++		for _, index := range hypoIndexes {
++			publicPaths = append(publicPaths, &util.AccessPath{Index: index})
+ 		}
+ 	}
+ 	if len(ctx.GetSessionVars().StmtCtx.HintedHypoIndexes) > 0 { // statement-level hypo-indexes from hints
+```
+
+**File**: `pkg/planner/indexadvisor/optimizer.go` (modified, +6/-4)
+```diff
+@@ -202,15 +202,17 @@ func (opt *optimizerImpl) addHypoIndex(hypoIndexes ...Index) error {
+ 		}
+ 
+ 		if opt.sctx.GetSessionVars().HypoIndexes == nil {
+-			opt.sctx.GetSessionVars().HypoIndexes = make(map[string]map[string]map[string]*model.IndexInfo)
++			opt.sctx.GetSessionVars().HypoIndexes = make(map[string]map[string]map[string]*model.HypoIndexInfo)
+ 		}
+ 		if opt.sctx.GetSessionVars().HypoIndexes[h.SchemaName] == nil {
+-			opt.sctx.GetSessionVars().HypoIndexes[h.SchemaName] = make(map[string]map[string]*model.IndexInfo)
++			opt.sctx.GetSessionVars().HypoIndexes[h.SchemaName] = make(map[string]map[string]*model.HypoIndexInfo)
+ 		}
+ 		if opt.sctx.GetSessionVars().HypoIndexes[h.SchemaName][h.TableName] == nil {
+-			opt.sctx.GetSessionVars().HypoIndexes[h.SchemaName][h.TableName] = make(map[string]*model.IndexInfo)
++			opt.sctx.GetSessionVars().HypoIndexes[h.SchemaName][h.TableName] = make(map[string]*model.HypoIndexInfo)
++		}
++		opt.sctx.GetSessionVars().HypoIndexes[h.SchemaName][h.TableName][h.IndexName] = &model.HypoIndexInfo{
++			IndexInfo: idxInfo,
+ 		}
+-		opt.sctx.GetSessionVars().HypoIndexes[h.SchemaName][h.TableName][h.IndexName] = idxInfo
+ 	}
+ 	return nil
+ }
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #73726** (2026-11-24): tests: stabilize read-only staleness transaction test (@winoros)
 - **PR #73718** (closed): planner: estimate missing-stats indexes with exponential backoff and drop prefer-range gate (#72078) (@ti-chi-bot[bot])
+- **PR #73705** (2026-11-25): br, docs: state that incremental restore skips masking policy DDL (@bb7133)
 - **PR #73701** (2026-11-24): mvservice: restore freshness alerts after rapid schedule changes (#73442) (@windtalker)
 - **PR #73700** (closed): planner: fall back to index stats when col has no stats (#69154) (@ti-chi-bot)
-- **PR #73663** (2026-11-24): deps: update client-go to fix batch response cancellation on release-8.5 (@cfzjywxk)
-- **PR #73649** (2026-11-24): ddl: support partial indexes with fast reorg on unistore (@D3Hunter)
+- **PR #73699** (closed): objstore: support Volcengine TOS for metering-storage-uri and CLOUD_STORAGE_URI (@wd0517)
 
 ---
 
@@ -2123,50 +2260,56 @@ close pingcap/tidb#73028
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ddl: require reorg when MODIFY COLUMN changes column charset or indexed collatio
+## X. ddl: fix hypothetical expression index creation
 
 **RULE**:
-When implementing operations in `pkg/ddl/column_modify_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pingcap/tidb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/ddl/executor.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pingcap/tidb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a935aa47`: ddl: require reorg when MODIFY COLUMN changes column charset or indexed collation. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c09f6278`: ddl: fix hypothetical expression index creation. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/ddl/column_modify_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/ddl/executor.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-
-func TestModifyColumnCrossCharsetRequiresReorg(t *testing.T) {
-	store := testkit.CreateMockStoreWithSchemaLease(t, columnModifyLease)
-	tk := testkit.NewTestKit(t, store)
-	tk.MustExec("use test")
-
-	// BINARY(2) -> VARCHAR(10) utf8mb4 with invalid UTF-8 bytes must reorg and fail.
-	tk.MustExec("create table t0 (id int primary key, c binary(2))")
-	tk.MustExec("insert into t0 values (1, x'FFFE')")
-	tk.MustGetErrCode("alter table t0 modify column c varchar(10) character set utf8mb4 collate utf8mb4_general_ci", errno.ErrTruncatedWrongValueForField)
-
-	// CHAR(4) utf8mb4 -> VARCHAR(10) ascii with non-ASCII character must reorg and fail.
-	tk.MustExec("create table t2 (id int primary key, c char(4) character set utf8mb4)")
-	tk.MustExec("insert into t2 values (1, 'é')")
-	tk.MustGetErrCode("alter table t2 modify column c varchar(10) character set ascii", errno.ErrTruncatedWrongValueForField)
-
-	// CHAR(4) utf8mb4 -> VARBINARY(4) with 8-byte UTF-8 value must reorg and fail with truncation.
-	tk.MustExec("create table t3 (id int primary key, c char(4) character set utf8mb4)")
-	tk.MustExec("insert into t3 values (1, 'éééé')")
-	tk.MustGetErrCode("alter table t3 modify column c varbinary(4)", errno.W
+func (*executor) addHypoIndexIntoCtx(ctx sessionctx.Context, schemaName, tableName ast.CIStr, indexInfo *model.IndexInfo, hiddenCols []*model.ColumnInfo) error {
+		sctx.HypoIndexes = make(map[string]map[string]map[string]*model.HypoIndexInfo)
+		sctx.HypoIndexes[schemaName.L] = make(map[string]map[string]*model.HypoIndexInfo)
+		sctx.HypoIndexes[schemaName.L][tableName.L] = make(map[string]*model.HypoIndexInfo)
+	sctx.HypoIndexes[schemaName.L][tableName.L][indexName.L] = &model.HypoIndexInfo{
+		IndexInfo:     indexInfo,
+		HiddenColumns: hiddenCols,
+	}
+		hypoTblInfo := tblInfo
+		if len(hiddenCols) > 0 {
+			hypoTblInfo = tblInfo.Clone()
+			hypoTblInfo.Columns = finalColumns
+			for i, col := range hiddenCols {
+				col.ID = tblInfo.MaxColumnID + int64(i) + 1
+				col.Offset = len(tblInfo.Columns) + i
+				col.State = model.StatePublic
+			}
+		}
+		indexInfo, err := BuildIndexInfo(metaBuildCtx, hypoTblInfo, indexName, false, unique, model.ColumnarIndexTypeNA,
+		return e.addHypoIndexIntoCtx(ctx, ti.Schema, ti.Name, indexInfo, hiddenCols)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+func (*executor) addHypoIndexIntoCtx(ctx sessionctx.Context, schemaName, tableName ast.CIStr, indexInfo *model.IndexInfo) error {
+		sctx.HypoIndexes = make(map[string]map[string]map[string]*model.IndexInfo)
+		sctx.HypoIndexes[schemaName.L] = make(map[string]map[string]*model.IndexInfo)
+		sctx.HypoIndexes[schemaName.L][tableName.L] = make(map[string]*model.IndexInfo)
+	sctx.HypoIndexes[schemaName.L][tableName.L][indexName.L] = indexInfo
+		indexInfo, err := BuildIndexInfo(metaBuildCtx, tblInfo, indexName, false, unique, model.ColumnarIndexTypeNA,
+		return e.addHypoIndexIntoCtx(ctx, ti.Schema, ti.Name, indexInfo)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a935aa47` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c09f6278` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

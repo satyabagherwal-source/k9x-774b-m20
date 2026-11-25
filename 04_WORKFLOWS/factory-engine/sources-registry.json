@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-25T08:44:14.965Z",
-    "lastVerified": "2026-11-25T08:44:14.965Z",
+    "lastChecked": "2026-11-25T08:56:18.356Z",
+    "lastVerified": "2026-11-25T08:56:18.356Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -275,9 +275,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-25T07:57:08.977Z",
+    "lastChecked": "2026-11-25T08:56:15.956Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-25T07:57:08.977Z"
+    "lastVerified": "2026-11-25T08:56:15.956Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -1330,12 +1330,12 @@
     "officialUrl": "https://github.com/pingcap/tidb",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-24T15:44:34.467Z",
-    "lastVerified": "2026-11-24T15:44:34.467Z",
+    "lastChecked": "2026-11-25T08:56:13.871Z",
+    "lastVerified": "2026-11-25T08:56:13.871Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-pingcap-tidb",
-    "contentHash": "ed1bf2c69d07bbc3d6fecbfbb288732ccb36e38a6953c81d6fe674377ab062c8",
+    "contentHash": "be1627b5d3bd3ae1a8828ef5bbf5a6e51f3a1fcb2522ec63b28de64869411dd6",
     "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
@@ -2303,8 +2303,8 @@
     "officialUrl": "https://github.com/mitmproxy/mitmproxy",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-25T04:31:11.359Z",
-    "lastVerified": "2026-11-25T04:31:11.359Z",
+    "lastChecked": "2026-11-25T08:56:10.844Z",
+    "lastVerified": "2026-11-25T08:56:10.844Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mitmproxy-mitmproxy",
@@ -6006,12 +6006,12 @@
     "revisionIdentifier": "420f2bab"
   },
   "citusdata-citus": {
-    "name": "citusdata/citus",
+    "name": "citus",
     "officialUrl": "https://github.com/citusdata/citus",
     "sourceType": "github",
     "technology": "C",
-    "lastChecked": "2026-11-24T14:41:57.677Z",
-    "lastVerified": "2026-11-24T14:41:57.677Z",
+    "lastChecked": "2026-11-25T08:56:13.393Z",
+    "lastVerified": "2026-11-25T08:56:13.393Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-citusdata-citus",
@@ -6020,7 +6020,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "3a78aa0d"
   },
   "gotham-rs-gotham": {
     "name": "gotham",
@@ -9566,9 +9567,9 @@
   "zacharee-bifrost": {
     "name": "Bifrost",
     "officialUrl": "https://github.com/zacharee/Bifrost",
-    "lastChecked": "2026-11-22T22:37:19.402Z",
+    "lastChecked": "2026-11-25T08:56:05.861Z",
     "revisionIdentifier": "ed73a034",
-    "lastVerified": "2026-11-22T22:37:19.402Z"
+    "lastVerified": "2026-11-25T08:56:05.861Z"
   },
   "booltools-booltools-seo-crawler": {
     "name": "booltools-seo-crawler",
@@ -13110,12 +13111,12 @@
     "officialUrl": "https://huggingface.co/HuggingFaceBio/Carbon-X",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-21T16:40:01.416Z",
-    "lastVerified": "2026-11-21T16:40:01.416Z",
+    "lastChecked": "2026-11-25T08:56:03.716Z",
+    "lastVerified": "2026-11-25T08:56:03.716Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-huggingfacebio-carbon-x",
-    "contentHash": "d3ad2147d536d6390328b074f6b8a76128804cbc9dbff4a9d63bb361be1207d4",
+    "contentHash": "4b01d1f0205442f13cbb3b00fff18e1143ddcd00ebd15846a7ed2861faf70194",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -15295,6 +15296,23 @@
     "promotedRulesCount": 1,
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-inclusionai-lingsante-3.1-air-vl": {
+    "name": "inclusionAI/LingSante-3.1-air-VL",
+    "officialUrl": "https://huggingface.co/inclusionAI/LingSante-3.1-air-VL",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-25T08:56:00.997Z",
+    "lastVerified": "2026-11-25T08:56:00.997Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-inclusionai-lingsante-3-1-air-vl",
+    "contentHash": "060d8c64aef561505f6c9356459677681ac0abc289b39283b751f3df1495900f",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
   }

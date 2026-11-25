@@ -7103,10 +7103,10 @@
     "repository": "pingcap/tidb",
     "platform": "github",
     "sourceUrl": "https://github.com/pingcap/tidb",
-    "sourceVersion": "0103aff4",
+    "sourceVersion": "e722f8f1",
     "license": "Apache-2.0",
-    "contentHash": "ed1bf2c69d07bbc3d6fecbfbb288732ccb36e38a6953c81d6fe674377ab062c8",
-    "lastHarvestedAt": "2026-11-24T15:44:35.581Z",
+    "contentHash": "be1627b5d3bd3ae1a8828ef5bbf5a6e51f3a1fcb2522ec63b28de64869411dd6",
+    "lastHarvestedAt": "2026-11-25T08:56:15.034Z",
     "learningId": "learn-github-pingcap-tidb"
   },
   "neondatabase-neon": {
@@ -10665,8 +10665,8 @@
     "sourceUrl": "https://huggingface.co/HuggingFaceBio/Carbon-X",
     "sourceVersion": "hf-huggingfacebio-carbon-x",
     "license": "Open-Source",
-    "contentHash": "d3ad2147d536d6390328b074f6b8a76128804cbc9dbff4a9d63bb361be1207d4",
-    "lastHarvestedAt": "2026-11-21T16:40:02.237Z",
+    "contentHash": "4b01d1f0205442f13cbb3b00fff18e1143ddcd00ebd15846a7ed2861faf70194",
+    "lastHarvestedAt": "2026-11-25T08:56:04.269Z",
     "learningId": "learn-huggingface-huggingfacebio-carbon-x"
   },
   "hf-orcarouter-deepseek-v4.1-flash-1017-abliterated-gguf": {
@@ -13438,5 +13438,15 @@
     "contentHash": "00c613eeba3f7243cf2add417fae8c203e74d383c15931aa9197feede299fc6e",
     "lastHarvestedAt": "2026-11-25T07:22:24.834Z",
     "learningId": "learn-github-alejandrobujan-tendedero"
+  },
+  "hf-inclusionai-lingsante-3.1-air-vl": {
+    "repository": "inclusionAI/LingSante-3.1-air-VL",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/inclusionAI/LingSante-3.1-air-VL",
+    "sourceVersion": "hf-inclusionai-lingsante-3.1-air-vl",
+    "license": "Open-Source",
+    "contentHash": "060d8c64aef561505f6c9356459677681ac0abc289b39283b751f3df1495900f",
+    "lastHarvestedAt": "2026-11-25T08:56:01.688Z",
+    "learningId": "learn-huggingface-inclusionai-lingsante-3-1-air-vl"
   }
 }

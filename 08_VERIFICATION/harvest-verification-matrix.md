@@ -13010,3 +13010,7 @@
 | `CYCLE-20261125-MYJX` | `2026-11-25T08:43:55.629Z` | `orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-orcarouter-deepseek-v4.1-flash-1017-abliterated-gguf-learnings.md` | Yes (`62d59230...`) |
 | `CYCLE-20261125-N8U7` | `2026-11-25T08:44:08.959Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10491` | Yes (`d8c457a5...`) |
 | `CYCLE-20261125-NAX3` | `2026-11-25T08:44:11.655Z` | `apache/zookeeper` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10492` | Yes (`882eaf13...`) |
+| `CYCLE-20261125-2IS3` | `2026-11-25T08:56:01.683Z` | `inclusionAI/LingSante-3.1-air-VL` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-inclusionai-lingsante-3.1-air-vl-learnings.md` | Yes (`060d8c64...`) |
+| `CYCLE-20261125-2KRS` | `2026-11-25T08:56:04.264Z` | `HuggingFaceBio/Carbon-X` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-huggingfacebio-carbon-x-learnings.md` | Yes (`4b01d1f0...`) |
+| `CYCLE-20261125-2T2U` | `2026-11-25T08:56:15.030Z` | `pingcap/tidb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10493` | Yes (`be1627b5...`) |
+| `CYCLE-2026-11-25-PROJ-EVOLVE` | `2026-11-25T08:56:48.879Z` | `hf-inclusionai-lingsante-3.1-air-vl` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-51CE07E9` [Domain D] | Yes (`d00a7139...`) |

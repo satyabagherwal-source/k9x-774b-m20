@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-25T08:44:11.679Z",
+  "last_updated": "2026-11-25T08:56:15.052Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -10701,14 +10701,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pingcap-tidb",
-      "content_hash": "ed1bf2c69d07bbc3d6fecbfbb288732ccb36e38a6953c81d6fe674377ab062c8",
-      "verified_at": "2026-11-24T15:44:35.597Z",
+      "content_hash": "be1627b5d3bd3ae1a8828ef5bbf5a6e51f3a1fcb2522ec63b28de64869411dd6",
+      "verified_at": "2026-11-25T08:56:15.051Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T15:44:35.597Z"
+      "last_updated": "2026-11-25T08:56:15.051Z"
     },
     "neondatabase/neon": {
       "repository": "neondatabase/neon",
@@ -16026,14 +16026,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-huggingfacebio-carbon-x",
-      "content_hash": "d3ad2147d536d6390328b074f6b8a76128804cbc9dbff4a9d63bb361be1207d4",
-      "verified_at": "2026-11-21T16:40:02.248Z",
+      "content_hash": "4b01d1f0205442f13cbb3b00fff18e1143ddcd00ebd15846a7ed2861faf70194",
+      "verified_at": "2026-11-25T08:56:04.285Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T16:40:02.248Z"
+      "last_updated": "2026-11-25T08:56:04.285Z"
     },
     "orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF": {
       "repository": "orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF",
@@ -20279,6 +20279,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-25T07:22:24.849Z"
+    },
+    "inclusionAI/LingSante-3.1-air-VL": {
+      "repository": "inclusionAI/LingSante-3.1-air-VL",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-inclusionai-lingsante-3-1-air-vl",
+      "content_hash": "060d8c64aef561505f6c9356459677681ac0abc289b39283b751f3df1495900f",
+      "verified_at": "2026-11-25T08:56:01.704Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-25T08:56:01.704Z"
     }
   },
   "repos": {

@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261123-882Q",
-    "timestamp": "2026-11-23T21:04:57.314Z",
-    "repository": "duckdb/duckdb",
-    "learningId": "learn-github-duckdb-duckdb",
-    "contentHash": "ffe21527844b42ff7b11de36f051171d80da703f7cab882b13e2b6877386e5c0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-KM28",
-    "timestamp": "2026-11-23T21:14:35.312Z",
-    "repository": "xevrion/hatchzip",
-    "learningId": "learn-github-xevrion-hatchzip",
-    "contentHash": "f8a36f15f12d4c6620c85e01a12801ba3cbc2ff06877073e3d91dee818ef39b9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-KQM6",
-    "timestamp": "2026-11-23T21:14:41.214Z",
-    "repository": "speridlabs/iris-3b",
-    "learningId": "learn-huggingface-speridlabs-iris-3b",
-    "contentHash": "9574cb32a91402b49f026bfea7ce890fe22f9e70e6f1cc74aeca3fcf2985a2f7",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261123-KQMX",
     "timestamp": "2026-11-23T21:14:41.241Z",
     "repository": "siderolabs/talos",
@@ -7490,6 +7445,51 @@
     "repository": "apache/zookeeper",
     "learningId": "learn-github-apache-zookeeper",
     "contentHash": "882eaf13564c35d3725c85fb05e1be23b3b3e163a205b3ee7111d91cdf54c56d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-2IS3",
+    "timestamp": "2026-11-25T08:56:01.683Z",
+    "repository": "inclusionAI/LingSante-3.1-air-VL",
+    "learningId": "learn-huggingface-inclusionai-lingsante-3-1-air-vl",
+    "contentHash": "060d8c64aef561505f6c9356459677681ac0abc289b39283b751f3df1495900f",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-2KRS",
+    "timestamp": "2026-11-25T08:56:04.264Z",
+    "repository": "HuggingFaceBio/Carbon-X",
+    "learningId": "learn-huggingface-huggingfacebio-carbon-x",
+    "contentHash": "4b01d1f0205442f13cbb3b00fff18e1143ddcd00ebd15846a7ed2861faf70194",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-2T2U",
+    "timestamp": "2026-11-25T08:56:15.030Z",
+    "repository": "pingcap/tidb",
+    "learningId": "learn-github-pingcap-tidb",
+    "contentHash": "be1627b5d3bd3ae1a8828ef5bbf5a6e51f3a1fcb2522ec63b28de64869411dd6",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

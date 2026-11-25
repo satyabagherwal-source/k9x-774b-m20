@@ -22267,5 +22267,17 @@
     "qualityScore": 2041,
     "verifiedOrg": false,
     "discoveredAt": "2026-11-25T07:20:11.845Z"
+  },
+  {
+    "name": "inclusionAI/LingSante-3.1-air-VL",
+    "fullName": "inclusionAI/LingSante-3.1-air-VL",
+    "url": "https://huggingface.co/inclusionAI/LingSante-3.1-air-VL",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: inclusionAI/LingSante-3.1-air-VL (117 likes, 719 downloads)",
+    "likes": 117,
+    "downloads": 719,
+    "qualityScore": 1889,
+    "discoveredAt": "2026-11-25T08:53:47.058Z"
   }
 ]
