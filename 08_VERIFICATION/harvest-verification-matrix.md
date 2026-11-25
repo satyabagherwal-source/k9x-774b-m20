@@ -13083,3 +13083,7 @@
 | `CYCLE-20261125-NR3Y` | `2026-11-25T12:56:29.182Z` | `LiquidAI/LFM3-Audio-2B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liquidai-lfm3-audio-2b-learnings.md` | Yes (`bdd70dbf...`) |
 | `CYCLE-20261125-NT0L` | `2026-11-25T12:56:31.653Z` | `Nasiko-Labs/nasiko` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10529` | Yes (`32c0888a...`) |
 | `CYCLE-20261125-O089` | `2026-11-25T12:56:41.001Z` | `zama-ai/tfhe-rs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10530` | Yes (`b60be4be...`) |
+| `CYCLE-20261125-ZQAS` | `2026-11-25T13:05:48.004Z` | `OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-oliviarossi-minimax-h3_singularity-x-10eros-max_prism-learnings.md` | Yes (`e64ae274...`) |
+| `CYCLE-20261125-ZZQD` | `2026-11-25T13:06:00.229Z` | `sigstore/cosign` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10531` | Yes (`20b64783...`) |
+| `CYCLE-20261125-03VD` | `2026-11-25T13:06:05.593Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10532` | Yes (`4160571a...`) |
+| `CYCLE-2026-11-25-PROJ-EVOLVE` | `2026-11-25T13:06:48.942Z` | `tursodatabase-limbo` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-2010FB8D` [Domain H] | Yes (`e44d5a94...`) |

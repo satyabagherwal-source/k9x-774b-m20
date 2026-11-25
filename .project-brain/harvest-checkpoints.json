@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-25T12:56:41.022Z",
+  "last_updated": "2026-11-25T13:06:05.620Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5406,14 +5406,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sigstore-cosign",
-      "content_hash": "0b4fb05f551345006a2279583f8b25f8c1e3358f2c14434cfa2b547cfa36c1cf",
-      "verified_at": "2026-11-25T07:48:45.788Z",
+      "content_hash": "20b647839cc17081bbefe2b06b3cf70730657d308e6d669173d353b79b0025ff",
+      "verified_at": "2026-11-25T13:06:00.255Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T07:48:45.788Z"
+      "last_updated": "2026-11-25T13:06:00.255Z"
     },
     "LLPhant/LLPhant": {
       "repository": "LLPhant/LLPhant",
@@ -9516,14 +9516,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tursodatabase-turso",
-      "content_hash": "22a97ca174db3922f34aa10a43ff67db0d7cb9dbb572c50681752b762f43816b",
-      "verified_at": "2026-11-24T21:24:22.529Z",
+      "content_hash": "4160571aa48fb1daed1bdc42a0286c2e427add6e49cc4dbd21da35b8533a22df",
+      "verified_at": "2026-11-25T13:06:05.619Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T21:24:22.529Z"
+      "last_updated": "2026-11-25T13:06:05.619Z"
     },
     "carbon-design-system/carbon": {
       "repository": "carbon-design-system/carbon",
@@ -17421,14 +17421,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-oliviarossi-minimax-h3_singularity-x-10eros-max_prism",
-      "content_hash": "935c4843fee372dcd927245766f19a56f3bc9090b7c2dbe48626ca1e982c89e1",
-      "verified_at": "2026-11-21T21:57:51.036Z",
+      "content_hash": "e64ae274f3a468a7974edd107adc7ca97e97b909cb081a08a88b02f8e335c43b",
+      "verified_at": "2026-11-25T13:05:48.029Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T21:57:51.036Z"
+      "last_updated": "2026-11-25T13:05:48.029Z"
     },
     "LiquidAI/LFM3-1.7B-GGUF": {
       "repository": "LiquidAI/LFM3-1.7B-GGUF",

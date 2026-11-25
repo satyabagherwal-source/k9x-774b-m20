@@ -3523,10 +3523,10 @@
     "repository": "sigstore/cosign",
     "platform": "github",
     "sourceUrl": "https://github.com/sigstore/cosign",
-    "sourceVersion": "2e60a1c3",
+    "sourceVersion": "e70053f5",
     "license": "Apache-2.0",
-    "contentHash": "0b4fb05f551345006a2279583f8b25f8c1e3358f2c14434cfa2b547cfa36c1cf",
-    "lastHarvestedAt": "2026-11-25T07:48:45.768Z",
+    "contentHash": "20b647839cc17081bbefe2b06b3cf70730657d308e6d669173d353b79b0025ff",
+    "lastHarvestedAt": "2026-11-25T13:06:00.235Z",
     "learningId": "learn-github-sigstore-cosign"
   },
   "llphant-llphant": {
@@ -6263,10 +6263,10 @@
     "repository": "tursodatabase/turso",
     "platform": "github",
     "sourceUrl": "https://github.com/tursodatabase/limbo",
-    "sourceVersion": "bae03862",
+    "sourceVersion": "13b96ffe",
     "license": "MIT",
-    "contentHash": "7f9bd676be3e28487a9628e6bee2c3eced07314d9297d3f6c52815cb86c994d5",
-    "lastHarvestedAt": "2026-11-24T18:00:38.127Z",
+    "contentHash": "4160571aa48fb1daed1bdc42a0286c2e427add6e49cc4dbd21da35b8533a22df",
+    "lastHarvestedAt": "2026-11-25T13:06:05.598Z",
     "learningId": "learn-github-tursodatabase-turso"
   },
   "carbon-design-system-carbon": {
@@ -11585,8 +11585,8 @@
     "sourceUrl": "https://huggingface.co/OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM",
     "sourceVersion": "hf-oliviarossi-minimax-h3_singularity-x-10eros-max_prism",
     "license": "Open-Source",
-    "contentHash": "935c4843fee372dcd927245766f19a56f3bc9090b7c2dbe48626ca1e982c89e1",
-    "lastHarvestedAt": "2026-11-21T21:57:51.027Z",
+    "contentHash": "e64ae274f3a468a7974edd107adc7ca97e97b909cb081a08a88b02f8e335c43b",
+    "lastHarvestedAt": "2026-11-25T13:05:48.009Z",
     "learningId": "learn-huggingface-oliviarossi-minimax-h3_singularity-x-10eros-max_prism"
   },
   "hf-liquidai-lfm3-1.7b-gguf": {

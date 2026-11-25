@@ -13116,3 +13116,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-liquidai-lfm3-audio-2b` | `https://huggingface.co/LiquidAI/LFM3-Audio-2B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-25T12:56:29.186Z |
 | `learn-github-nasiko-labs-nasiko` | `https://github.com/Nasiko-Labs/nasiko` | `4e2d65d1` | Multi-dimensional audit evidence | 2026-11-25T12:56:31.657Z |
 | `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `eaac04df` | Multi-dimensional audit evidence | 2026-11-25T12:56:41.005Z |
+| `learn-huggingface-oliviarossi-minimax-h3_singularity-x-10eros-max_prism` | `https://huggingface.co/OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM` | `hf-oliviar` | Multi-dimensional audit evidence | 2026-11-25T13:05:48.009Z |
+| `learn-github-sigstore-cosign` | `https://github.com/sigstore/cosign` | `e70053f5` | Multi-dimensional audit evidence | 2026-11-25T13:06:00.235Z |
+| `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/limbo` | `13b96ffe` | Multi-dimensional audit evidence | 2026-11-25T13:06:05.598Z |
+| `learn-dom-h-2010fb8d` | `project://tursodatabase-limbo` | `13b96ffe` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md` | 2026-11-25T13:06:48.942Z |

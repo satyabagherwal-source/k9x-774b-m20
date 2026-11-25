@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T12:56:47.354Z",
-  "total_records": 2673,
+  "last_updated": "2026-11-25T13:06:52.112Z",
+  "total_records": 2674,
   "domains": {
     "A": {
       "total": 22,
@@ -1676,7 +1676,7 @@
       ]
     },
     "H": {
-      "total": 636,
+      "total": 637,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -2313,7 +2313,8 @@
         "domain_intelligence-technical-construction-intelligence-yugabyte-yugabyte-db-learnings-core-invarian",
         "domain_intelligence-technical-construction-intelligence-ratatui-ratatui-core-invariants",
         "domain_intelligence-technical-construction-intelligence-ratatui-ratatui-learnings-core-invariants",
-        "DOM-H-64682323"
+        "DOM-H-64682323",
+        "DOM-H-2010FB8D"
       ]
     },
     "I": {
@@ -8882,10 +8883,10 @@
       "record_id": "domain_intelligence-technical-construction-intelligence-tursodatabase-turso-core-invariants",
       "domain_letter": "H",
       "title": "Technical Construction Intelligence: tursodatabase/turso Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-turso-technical-construction-intelligence-tursodatabase-turso-core.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-limbo-technical-construction-intelligence-tursodatabase-turso-core.md",
       "repository": "tursodatabase/turso",
-      "content_hash": "8bf608703f511bed63e6f1feea0c2bc6bd6b5cd74cbe8de486fcd51c7f0121be",
-      "created_at": "2026-11-24T21:24:22.942Z"
+      "content_hash": "18f01bada5d0227f08ef73b8b61e00805bb87a264981dbce33680a03e4f5299e",
+      "created_at": "2026-11-25T13:06:06.203Z"
     },
     "DOM-D-991F9C3C": {
       "record_id": "DOM-D-991F9C3C",
@@ -24345,8 +24346,8 @@
       "title": "Technical Construction Intelligence: tursodatabase-limbo-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-limbo-learnings-technical-construction-intelligence-tursodatabase-.md",
       "repository": "tursodatabase-limbo-learnings",
-      "content_hash": "7365a97c11ca8fa0917353903f92f67df4deb94b7de0272b3828c99c5ffba6ae",
-      "created_at": "2026-11-24T18:00:44.827Z"
+      "content_hash": "dc0eb702fcf6265e9d461cfe606750d98f91b9dec51c14b12dc46ad2698bc0bc",
+      "created_at": "2026-11-25T13:06:51.244Z"
     },
     "domain_intelligence-technical-construction-intelligence-oxc-project-oxc-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-oxc-project-oxc-core-invariants",
@@ -25459,8 +25460,8 @@
       "title": "Content & Information Intelligence: sigstore/cosign Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-sigstore-cosign-content-information-intelligence-sigstore-cosign-core-invariants.md",
       "repository": "sigstore/cosign",
-      "content_hash": "4d1d4964b3744a1b37e56a59fc7feed5c6df4da283055e5312297f4511779c68",
-      "created_at": "2026-11-25T07:48:46.347Z"
+      "content_hash": "3952db5630e3729b53ac77822e4b79a9de9a849365747e15be831888c74dbeeb",
+      "created_at": "2026-11-25T13:06:00.829Z"
     },
     "domain_intelligence-technical-construction-intelligence-urllib3-urllib3-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-urllib3-urllib3-learnings-core-invariants",
@@ -25477,8 +25478,8 @@
       "title": "Content & Information Intelligence: sigstore-cosign-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-sigstore-cosign-learnings-content-information-intelligence-sigstore-cosign-learn.md",
       "repository": "sigstore-cosign-learnings",
-      "content_hash": "579a309f8ecbe74403814a009eded534845e72a907eb11f24874f363caa136bc",
-      "created_at": "2026-11-24T18:43:42.962Z"
+      "content_hash": "15fecb135be59696185e8df5614e4d9bf2c7de8b10fd9ca993713b2e74482d5d",
+      "created_at": "2026-11-25T13:06:10.310Z"
     },
     "domain_intelligence-content-information-intelligence-encode-httpx-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-encode-httpx-core-invariants",
@@ -25816,8 +25817,8 @@
       "title": "Research & Knowledge Intelligence: OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-oliviarossi-minimax-h3_singularity-x-10eros-max_prism-research-knowledge-inte.md",
       "repository": "OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM",
-      "content_hash": "8b228cd1be67869b78ad3adfed692c565c10b7415d6f8dd355ac53dc38adb432",
-      "created_at": "2026-11-21T21:57:51.250Z"
+      "content_hash": "7fd2cbf0885df0be4ea34b8ac714382312af3bf59f0f3d14deecf7c094eb677b",
+      "created_at": "2026-11-25T13:05:48.340Z"
     },
     "domain_intelligence-architecture-intelligence-keyboardkit-keyboardkit-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-keyboardkit-keyboardkit-core-invariants",
@@ -38769,8 +38770,8 @@
       "title": "Research & Knowledge Intelligence: hf-oliviarossi-minimax-h3_singularity-x-10eros-max_prism-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-oliviarossi-minimax-h3_singularity-x-10eros-max_prism-learnings-research-know.md",
       "repository": "hf-oliviarossi-minimax-h3_singularity-x-10eros-max_prism-learnings",
-      "content_hash": "7268c90b15481d7910988efbb3c0ffeb2324f3cac52bf053ef41817c9c1965ad",
-      "created_at": "2026-11-21T21:58:03.128Z"
+      "content_hash": "68dd790a41ad566a74c47ab2f91e7d5084168986fd31b516338924933bf1e7ca",
+      "created_at": "2026-11-25T13:06:52.112Z"
     },
     "domain_intelligence-research-knowledge-intelligence-erkamyaman-rust-anything-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-erkamyaman-rust-anything-core-invariants",
@@ -44984,6 +44985,48 @@
       "confidence": 0.6,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-25T12:29:46.960Z"
+    },
+    "DOM-H-2010FB8D": {
+      "record_id": "DOM-H-2010FB8D",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "H",
+          "id": "technical_construction",
+          "name": "Technical Construction Intelligence"
+        }
+      ],
+      "title": "Merge 'build(deps): bump fast-xml-parser from 5.11.1 to 5.12.1 in /examples/reac",
+      "content": "When implementing operations in `examples/react-native/package-lock.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "e44d5a949399b5a5f66db4d3fc4e87acaf28bf60d04b9d1bea5bd3029875d9de",
+      "summary": "Prevents defects observed in production commit `bdc0c062`: Merge 'build(deps): bump fast-xml-parser from 5.11.1 to 5.12.1 in /examples/react -> When implementing operations in `examples/react-native/package-lock.json`, engineers MUST enforce rigorous boundary validation, safe state t",
+      "provenance": {
+        "source_uri": "project://tursodatabase-limbo/tursodatabase-limbo-learnings.md",
+        "source_version": "13b96ffe",
+        "observed_at": "2026-11-25T13:06:04.110Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (tursodatabase-limbo)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of tursodatabase-limbo"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "H"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.81,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-25T13:06:48.892Z"
     }
   }
 }

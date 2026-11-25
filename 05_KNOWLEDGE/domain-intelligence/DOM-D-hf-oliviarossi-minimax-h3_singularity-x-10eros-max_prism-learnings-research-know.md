@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-21T21:58:03.032Z",
+  "timestamp": "2026-11-25T13:06:51.965Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-hf-oliviarossi-minimax-h3_singularity-x-10eros-max_prism-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hf-oliviarossi-minimax-h3_singularity-x-10eros-max_prism-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-21T21:58:03.032Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T13:06:51.965Z`  
 > **Learning ID**: `LEARN-EVO-hf-oliviarossi-minimax-h3_singularity-x-10eros-max_prism-learnings`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Source Version**: `hf-oliviaros`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T21:57:50.518Z  
+> **Timestamp**: 2026-11-25T13:05:47.326Z  
 > **Learning ID**: `learn-huggingface-oliviarossi-minimax-h3_singularity-x-10eros-max_prism`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-oliviarossi-minimax-h3_singularity-x-10eros-max_prism-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM](https://huggingface.co/OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T21:57:50.343Z  
+> **Harvest Timestamp**: 2026-11-25T13:05:47.198Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: ML Foundation Model
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 564728 downloads | 377 likes
+- **Stars / Engagement**: 617418 downloads | 398 likes
 
 ---
 

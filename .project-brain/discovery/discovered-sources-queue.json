@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-25T12:56:45.383Z",
+  "updated_at": "2026-11-25T13:06:50.592Z",
   "stats": {
-    "total_discovered": 9431,
-    "approved_pending_harvest": 8935,
+    "total_discovered": 9446,
+    "approved_pending_harvest": 8950,
     "harvested_count": 0,
     "rejected_count": 496,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 8929,
+      "COMMUNITY_AND_EXPERT": 8944,
       "OFFICIAL_DOCUMENTATION": 281,
       "STANDARDS_AND_SPECIFICATIONS": 150,
       "ENGINEERING_BLOGS": 7,
@@ -204037,6 +204037,336 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nasiko-labs-nasiko-learnings.md",
         "fileName": "nasiko-labs-nasiko-learnings.md"
+      }
+    },
+    "SRC-3CB5C5BE4E62": {
+      "id": "SRC-3CB5C5BE4E62",
+      "url": "https://github.com/NaturalIntelligence/fast-xml-",
+      "title": "https://github.com/NaturalIntelligence/fast-xml-",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T13:06:49.091Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
+        "fileName": "tursodatabase-limbo-learnings.md"
+      }
+    },
+    "SRC-1A11184E16A2": {
+      "id": "SRC-1A11184E16A2",
+      "url": "https://github.com/arba-",
+      "title": "https://github.com/arba-",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T13:06:49.195Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
+        "fileName": "tursodatabase-limbo-learnings.md"
+      }
+    },
+    "SRC-413D0F7FC09C": {
+      "id": "SRC-413D0F7FC09C",
+      "url": "https://redirect.github.com/NaturalIntelligence/fast-xml-",
+      "title": "https://redirect.github.com/NaturalIntelligence/fast-xml-",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T13:06:49.280Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
+        "fileName": "tursodatabase-limbo-learnings.md"
+      }
+    },
+    "SRC-1D8B3E14FF61": {
+      "id": "SRC-1D8B3E14FF61",
+      "url": "https://registry.npmjs.org/@nodable/entities/-/entities-3.0.0.tgz",
+      "title": "https://registry.npmjs.org/@nodable/entities/-/entities-3.0.0.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T13:06:49.441Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
+        "fileName": "tursodatabase-limbo-learnings.md"
+      }
+    },
+    "SRC-1EA7618903B7": {
+      "id": "SRC-1EA7618903B7",
+      "url": "https://registry.npmjs.org/@nodable/entities/-/entities-3.1.0.tgz",
+      "title": "https://registry.npmjs.org/@nodable/entities/-/entities-3.1.0.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T13:06:49.526Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
+        "fileName": "tursodatabase-limbo-learnings.md"
+      }
+    },
+    "SRC-44F19C32E9C1": {
+      "id": "SRC-44F19C32E9C1",
+      "url": "https://registry.npmjs.org/fast-xml-builder/-/fast-xml-builder-1.3.1.tgz",
+      "title": "https://registry.npmjs.org/fast-xml-builder/-/fast-xml-builder-1.3.1.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T13:06:49.624Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
+        "fileName": "tursodatabase-limbo-learnings.md"
+      }
+    },
+    "SRC-B01CCEBCE313": {
+      "id": "SRC-B01CCEBCE313",
+      "url": "https://registry.npmjs.org/fast-xml-builder/-/fast-xml-builder-1.3.2.tgz",
+      "title": "https://registry.npmjs.org/fast-xml-builder/-/fast-xml-builder-1.3.2.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T13:06:49.725Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
+        "fileName": "tursodatabase-limbo-learnings.md"
+      }
+    },
+    "SRC-39F180BD56A5": {
+      "id": "SRC-39F180BD56A5",
+      "url": "https://registry.npmjs.org/fast-xml-parser/-/fast-xml-parser-5.11.1.tgz",
+      "title": "https://registry.npmjs.org/fast-xml-parser/-/fast-xml-parser-5.11.1.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T13:06:49.825Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
+        "fileName": "tursodatabase-limbo-learnings.md"
+      }
+    },
+    "SRC-27A706DE4A64": {
+      "id": "SRC-27A706DE4A64",
+      "url": "https://registry.npmjs.org/fast-xml-parser/-/fast-xml-parser-5.12.1.tgz",
+      "title": "https://registry.npmjs.org/fast-xml-parser/-/fast-xml-parser-5.12.1.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T13:06:49.926Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
+        "fileName": "tursodatabase-limbo-learnings.md"
+      }
+    },
+    "SRC-A6AAAEBC8486": {
+      "id": "SRC-A6AAAEBC8486",
+      "url": "https://registry.npmjs.org/is-unsafe/-/is-unsafe-2.0.2.tgz",
+      "title": "https://registry.npmjs.org/is-unsafe/-/is-unsafe-2.0.2.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T13:06:50.026Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
+        "fileName": "tursodatabase-limbo-learnings.md"
+      }
+    },
+    "SRC-0F53C9A3756B": {
+      "id": "SRC-0F53C9A3756B",
+      "url": "https://registry.npmjs.org/is-unsafe/-/is-unsafe-2.0.3.tgz",
+      "title": "https://registry.npmjs.org/is-unsafe/-/is-unsafe-2.0.3.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T13:06:50.129Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
+        "fileName": "tursodatabase-limbo-learnings.md"
+      }
+    },
+    "SRC-AFE7F57055D3": {
+      "id": "SRC-AFE7F57055D3",
+      "url": "https://registry.npmjs.org/strnum/-/strnum-2.4.2.tgz",
+      "title": "https://registry.npmjs.org/strnum/-/strnum-2.4.2.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T13:06:50.231Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
+        "fileName": "tursodatabase-limbo-learnings.md"
+      }
+    },
+    "SRC-B85D04447A9D": {
+      "id": "SRC-B85D04447A9D",
+      "url": "https://registry.npmjs.org/strnum/-/strnum-2.5.1.tgz",
+      "title": "https://registry.npmjs.org/strnum/-/strnum-2.5.1.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T13:06:50.332Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
+        "fileName": "tursodatabase-limbo-learnings.md"
+      }
+    },
+    "SRC-C031722B962E": {
+      "id": "SRC-C031722B962E",
+      "url": "https://registry.npmjs.org/typescript/-/typescript-5.9.3.tgz",
+      "title": "https://registry.npmjs.org/typescript/-/typescript-5.9.3.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T13:06:50.433Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
+        "fileName": "tursodatabase-limbo-learnings.md"
+      }
+    },
+    "SRC-50CFE7E7C7A1": {
+      "id": "SRC-50CFE7E7C7A1",
+      "url": "https://github.com/sporkmonger/addressable/blob/main/CHANG",
+      "title": "https://github.com/sporkmonger/addressable/blob/main/CHANG",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T13:06:50.592Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
+        "fileName": "tursodatabase-limbo-learnings.md"
       }
     }
   }

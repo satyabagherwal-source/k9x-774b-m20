@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T12:56:41.011Z",
-  "total_cycles_completed": 12420,
-  "total_learnings_persisted": 12420,
-  "total_rules_promoted": 11411,
+  "last_updated": "2026-11-25T13:06:05.606Z",
+  "total_cycles_completed": 12423,
+  "total_learnings_persisted": 12423,
+  "total_rules_promoted": 11413,
   "history": [
-    {
-      "timestamp": "2026-11-25T00:26:40.097Z",
-      "repository": "zenbu-labs/terminal-browser",
-      "learningId": "learn-github-zenbu-labs-terminal-browser",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T00:26:43.120Z",
-      "repository": "QwikDev/qwik",
-      "learningId": "learn-github-qwikdev-qwik",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T00:26:47.806Z",
-      "repository": "hashicorp/terraform",
-      "learningId": "learn-github-hashicorp-terraform",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-25T00:26:49.902Z",
       "repository": "aleo-labs-protocol/snarkOS",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-25T12:56:41.011Z",
       "repository": "zama-ai/tfhe-rs",
       "learningId": "learn-github-zama-ai-tfhe-rs",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T13:05:48.016Z",
+      "repository": "OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM",
+      "learningId": "learn-huggingface-oliviarossi-minimax-h3_singularity-x-10eros-max_prism",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T13:06:00.242Z",
+      "repository": "sigstore/cosign",
+      "learningId": "learn-github-sigstore-cosign",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T13:06:05.606Z",
+      "repository": "tursodatabase/turso",
+      "learningId": "learn-github-tursodatabase-turso",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

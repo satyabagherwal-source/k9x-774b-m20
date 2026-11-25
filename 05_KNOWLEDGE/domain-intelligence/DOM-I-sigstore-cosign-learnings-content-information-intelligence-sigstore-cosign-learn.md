@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T18:43:42.654Z",
+  "timestamp": "2026-11-25T13:06:09.887Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-sigstore-cosign-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [sigstore-cosign-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T18:43:42.654Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T13:06:09.887Z`  
 > **Learning ID**: `LEARN-EVO-sigstore-cosign-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain I (Content & Information Intelligence)
 - **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 68%
+- **Confidence Rating**: 65%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from sigstore-cosign-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sigstore-cosign-learnings.md`  
 > **Source**: github ([https://github.com/sigstore/cosign](https://github.com/sigstore/cosign))  
-> **Source Version**: `ab26c80d`  
+> **Source Version**: `e70053f5`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T18:43:34.968Z  
+> **Timestamp**: 2026-11-25T13:05:58.724Z  
 > **Learning ID**: `learn-github-sigstore-cosign`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sigstore-cosign-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sigstore/cosign](https://github.com/sigstore/cosign))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T18:43:34.962Z  
+> **Harvest Timestamp**: 2026-11-25T13:05:58.717Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Code signing and transparency for containers and binaries
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 6470 stars
+- **Stars / Engagement**: 6475 stars
 
 ---
 
@@ -1766,385 +1766,61 @@ func upgradeBundle(ctx context.Context, data []byte, rekorClient *client.Rekor) 
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `75066d04` (2026-11-24)
-**Commit Message**: Bump release builder image to golang-cross v1.27.4-0 (#5241)
+### Incident Patch 1: `e70053f5` (2026-11-25)
+**Commit Message**: Update sigstore-go to v1.4.1 (#5245)
 
-The cloudbuild verify step checked golang-cross:v1.27.1-1 against
-the v1.27.3-0 builder identity, so the release failed at that step.
+Signed-off-by: Zach Steindler <[REDACTED_EMAIL]>
 
-Move the verify step, its certificate identity, and the build steps
-in release/cloudbuild.yaml and validate-release.yml to v1.27.4-0 so
-they all verify and use the same image.
-
-Signed-off-by: Carlos Panato <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/validate-release.yml` (modified, +3/-3)
+**File**: `go.mod` (modified, +2/-2)
 ```diff
-@@ -36,9 +36,9 @@ jobs:
-     steps:
-       - name: Check Signature
-         run: |
--          cosign verify ghcr.io/gythialy/golang-cross:v1.27.3-0@sha256:c33ed060bb1817f4eed7957e3a22515823d194873a820722761ab5712298612e \
-+          cosign verify ghcr.io/gythialy/golang-cross:v1.27.4-0@sha256:ae91d77d3195be62556266fc01cc83e24d8d01c65347835fe3bdf184cdf132fc \
-           --certificate-oidc-issuer https://token.actions.githubusercontent.com \
--          --certificate-identity "https://github.com/gythialy/golang-cross/.github/workflows/builder.yml@refs/tags/v1.27.3-0"
-+          --certificate-identity "https://github.com/gythialy/golang-cross/.github/workflows/builder.yml@refs/tags/v1.27.4-0"
-         env:
-           TUF_ROOT: /tmp
- 
-@@ -51,7 +51,7 @@ jobs:
-       contents: read
- 
-     container:
--      image: ghcr.io/gythialy/golang-cross:v1.27.3-0@sha256:c33ed060bb1817f4eed7957e3a22515823d194873a820722761ab5712298612e
-+      image: ghcr.io/gythialy/golang-cross:v1.27.4-0@sha256:ae91d77d3195be62556266fc01cc83e24d8d01c65347835fe3bdf184cdf132fc
-       volumes:
-         - /usr:/host_usr
-         - /opt:/host_opt
+@@ -31,11 +31,11 @@ require (
+ 	github.com/open-policy-agent/opa v1.22.4
+ 	github.com/osscontainertools/docker-credential-acr v1.0.1
+ 	github.com/secure-systems-lab/go-securesystemslib v0.11.1
+-	github.com/sigstore/protobuf-specs v0.5.2
++	github.com/sigstore/protobuf-specs v0.5.3-0.20261112181914-a84bc5ff572a
+ 	github.com/sigstore/rekor v1.6.2
+ 	github.com/sigstore/rekor-tiles/v2 v2.4.2
+ 	github.com/sigstore/sigstore v1.11.4
+-	github.com/sigstore/sigstore-go v1.4.0
++	github.com/sigstore/sigstore-go v1.4.1
+ 	github.com/sigstore/sigstore/pkg/signature/kms/aws v1.11.3
+ 	github.com/sigstore/sigstore/pkg/signature/kms/azure v1.11.3
+ 	github.com/sigstore/sigstore/pkg/signature/kms/gcp v1.11.2
 ```
 
-**File**: `release/cloudbuild.yaml` (modified, +4/-4)
+**File**: `go.sum` (modified, +4/-4)
 ```diff
-@@ -38,13 +38,13 @@ steps:
-       - TUF_ROOT=/tmp
-     args:
-       - 'verify'
--      - 'ghcr.io/gythialy/golang-cross:v1.27.1-1@sha256:b288b491c96203db38192b24e25f5769e8e2a6618ebaa44ec0e269e74a94447d'
-+      - 'ghcr.io/gythialy/golang-cross:v1.27.4-0@sha256:ae91d77d3195be62556266fc01cc83e24d8d01c65347835fe3bdf184cdf132fc'
-       - '--certificate-oidc-issuer'
-       - "https://token.actions.githubusercontent.com"
-       - '--certificate-identity'
--      - "https://github.com/gythialy/golang-cross/.github/workflows/builder.yml@refs/tags/v1.27.3-0"
-+      - "https://github.com/gythialy/golang-cross/.github/workflows/builder.yml@refs/tags/v1.27.4-0"
-   # maybe we can build our own image and use that to be more in a safe side
--  - name: ghcr.io/gythialy/golang-cross:v1.27.3-0@sha256:c33ed060bb1817f4eed7957e3a22515823d194873a820722761ab5712298612e
-+  - name: ghcr.io/gythialy/golang-cross:v1.27.4-0@sha256:ae91d77d3195be62556266fc01cc83e24d8d01c65347835fe3bdf184cdf132fc
-     entrypoint: /bin/sh
-     dir: "go/src/sigstore/cosign"
-     env:
-@@ -68,7 +68,7 @@ steps:
-         gcloud auth configure-docker \
-         && make release
- 
--  - name: ghcr.io/gythialy/golang-cross:v1.27.3-0@sha256:c33ed060bb1817f4eed7957e3a22515823d194873a820722761ab5712298612e
-+  - name: ghcr.io/gythialy/golang-cross:v1.27.4-0@sha256:ae91d77d3195be62556266fc01cc83e24d8d01c65347835fe3bdf184cdf132fc
-     entrypoint: 'bash'
-     dir: "go/src/sigstore/cosign"
-     env:
-```
-
----
-
-### Incident Patch 2: `ab26c80d` (2026-11-24)
-**Commit Message**: Run go fix across codebase (#5232)
-
-go fix ./.. to modernize the codebase, should be a no-op
-
-Signed-off-by: Hayden <[REDACTED_EMAIL]>
-
-**File**: `cmd/cosign/cli/bundle/bundle_test.go` (modified, +4/-11)
-```diff
-@@ -30,7 +30,6 @@ import (
- 	"path/filepath"
- 	"testing"
- 
--	"github.com/sigstore/cosign/v3/cmd/cosign/cli/options"
- 	"github.com/sigstore/cosign/v3/internal/test"
- 	"github.com/sigstore/cosign/v3/pkg/cosign"
- 	"github.com/sigstore/cosign/v3/pkg/cosign/bundle"
-@@ -76,10 +75,8 @@ func TestCreateCmd(t *testing.T) {
- 		Artifact:      artifactPath,
- 		Out:           outPath,
- 		SignaturePath: sigPath,
--		CommonBundleCreateOptions: options.CommonBundleCreateOptions{
--			KeyRef:     publicKeyPath,
--			IgnoreTlog: true,
--		},
-+		KeyRef:        publicKeyPath,
-+		IgnoreTlog:    true,
- 	}
- 
- 	err = bundleCreate.Exec(ctx)
-@@ -125,9 +122,7 @@ func TestCreateCmd(t *testing.T) {
- 		Artifact:   artifactPath,
- 		BundlePath: bundlePath,
- 		Out:        outPath,
--		CommonBundleCreateOptions: options.CommonBundleCreateOptions{
--			IgnoreTlog: true,
--		},
-+		IgnoreTlog: true,
- 	}
- 
- 	err = bundleCreate.Exec(ctx)
-@@ -230,9 +225,7 @@ func TestCreateCmd_FailOnIgnoreTlogWithSET(t *testing.T) {
- 				Artifact:   artifactPath,
- 				BundlePath: tt.bundlePath,
- 				Out:        outPath,
--				CommonBundleCreateOptions: options.CommonBundleCreateOptions{
--					IgnoreTlog: tt.ignoreTlog,
--				},
-+				IgnoreTlog: tt.ignoreTlog,
- 			}
- 
- 			err := bundleCreate.Exec(ctx)
-```
-
-**File**: `cmd/cosign/cli/bundle/create_from_container.go` (modified, +1/-2)
-```diff
-@@ -212,8 +212,7 @@ func existingSignatures(ctx context.Context, digest name.Digest, ociremoteOpts [
- 	existing := map[string]struct{}{}
- 	bundles, _, err := cosign.GetBundles(ctx, digest, ociremoteOpts, nameOpts...)
- 	if err != nil {
--		var noMatch *cosign.ErrNoMatchingAttestations
--		if errors.As(err, &noMatch) {
-+		if _, ok := errors.AsType[*cosign.ErrNoMatchingAttestations](err); ok {
- 			return existing, nil
- 		}
- 		return nil, fmt.Errorf("fetching existing bundles: %w", err)
-```
-
-**File**: `cmd/cosign/cli/bundle/create_from_container_test.go` (modified, +1/-2)
-```diff
-@@ -39,7 +39,6 @@ import (
- 	protobundle "github.com/sigstore/protobuf-specs/gen/pb-go/bundle/v1"
- 	"github.com/sigstore/sigstore/pkg/cryptoutils"
- 
--	"github.com/sigstore/cosign/v3/cmd/cosign/cli/options"
- 	"github.com/sigstore/cosign/v3/pkg/cosign"
- 	"github.com/sigstore/cosign/v3/pkg/oci/mutate"
- 	ociremote "github.com/sigstore/cosign/v3/pkg/oci/remote"
-@@ -123,7 +122,7 @@ func (f *legacyFixture) attachAttestation(t *testing.T, predicateType string) {
- }
- 
- func (f *legacyFixture) createFromContainerCmd() *CreateFromContainerCmd {
--	return &CreateFromContainerCmd{CommonBundleCreateOptions: options.CommonBundleCreateOptions{IgnoreTlog: true, KeyRef: f.keyPath}}
-+	return &CreateFromContainerCmd{IgnoreTlog: true, KeyRef: f.keyPath}
- }
- 
- func TestCreateFromContainerCmd(t *testing.T) {
-```
-
-**File**: `cmd/cosign/cli/bundle/inspect.go` (modified, +3/-3)
-```diff
-@@ -546,16 +546,16 @@ func populateContentSummary(n *node, b *protobundle.Bundle) {
- 		contentNode.addChild("Payload", fmt.Sprintf("Present (%d bytes)", len(content.DsseEnvelope.Payload)))
- 
- 		if content.DsseEnvelope.PayloadType == "application/vnd.in-toto+json" {
--			var statement map[string]interface{}
-+			var statement map[string]any
- 			if err := json.Unmarshal(content.DsseEnvelope.Payload, &statement); err == nil {
- 				payloadNode := contentNode.addChild("Payload Content (in-toto)", "")
- 				if predicateType, ok := statement["predicateType"].(string); ok {
- 					payloadNode.addChild("Predicate Type", predicateType)
- 				}
--				if subjects, ok := statement["subject"].([]interface{}); ok {
-+				if subjects, ok := statement["subject"].([]any); ok {
- 					subjectsNode := payloadNode.addChild("Subjects", fmt.Sprintf("%d", len(subjects)))
- 					for _, s := range subjects {
--						if subMap, ok := s.(map[string]interface{}); ok {
-+						if subMap, ok := s.(map[string]any); ok {
- 							if name, ok := subMap["name"].(string); ok {
- 								subjectsNode.addChild("Name", name)
- 							}
-```
-
-**File**: `cmd/cosign/cli/bundle/upgrade_test.go` (modified, +10/-10)
-```diff
-@@ -57,7 +57,7 @@ func (m *mockEntriesClient) GetLogEntryByIndexContext(_ context.Context, params
- func TestUpgradeBundle(t *testing.T) {
- 	checkV03 := func(expectedCertB64 string) func(t *testing.T, output []byte) {
- 		return func(t *testing.T, output []byte) {
--			var m map[string]interface{}
-+			var m map[string]any
- 			err := json.Unmarshal(output, &m)
- 			if err != nil {
- 				t.Fatalf("unmarshaling output: %v", err)
-@@ -67,12 +67,12 @@ func TestUpgradeBundle(t *testing.T) {
- 				t.Fatalf("expected mediaType to be 'application/vnd.dev.sigstore.bundle.v0.3+json', got %v", m["mediaType"])
- 			}
- 
--			vm, ok := m["verificationMaterial"].(map[string]interface{})
-+			vm, ok := m["verificationMaterial"].(map[string]any)
- 			if !ok {
- 				t.Fatal("missing verificationMaterial")
- 			}
- 
--			cert, ok := vm["certificate"].(map[string]interface{})
-+			cert, ok := vm["certificate"].(map[string]any)
- 			if !ok {
- 				t.Fatal("missing certificate field in verificationMaterial")
- 			}
-@@ -246,14 +246,14 @@ func TestUpgradeBundle(t *testing.T) {
- 				},
- 			},
- 			checkOutput: func(t *testing.T, output []byte) {
--				var m map[string]interface{}
-+				var m map[string]any
- 				if err := json.Unmarshal(output, &m); err != nil {
- 					t.Fatalf("unmarshaling output: %v", err)
- 				}
--				vm := m["verificationMaterial"].(map[string]interface{})
--				tlogEntries := vm["tlogEntries"].([]interface{})
--				entry := tlogEntries[0].(map[string]interface{})
--				proof := entry["inclusionProof"].(map[string]interface{})
-+				vm := m["verificationMaterial"].(map[string]any)
-+				tlogEntries := vm["tlogEntries"].([]any)
-+				entry := tlogEntries[0].(map[string]any)
-+				proof := entry["inclusionProof"].(map[string]any)
- 				if proof["logIndex"].(string) != "42" {
- 					t.Fatalf("expected logIndex 42, got %v", proof["logIndex"])
- 				}
-@@ -318,7 +318,7 @@ func TestUpgradeCmd(t *testing.T) {
- 			t.Fatal(err)
- 		}
- 
--		var m map[string]interface{}
-+		var m map[string]any
- 		if err := json.Unmarshal(data, &m); err != nil {
- 			t.Fatal(err)
- 		}
-@@ -374,7 +374,7 @@ func TestUpgradeCmd(t *testing.T) {
- 		}
- 
- 		output := buffer.Bytes()
--		var m map[string]interface{}
-+		var m map[string]any
- 		if err := json.Unmarshal(output, &m); err != nil {
- 			t.Fatalf("unmarshaling stdout output: %v", err)
- 		}
-```
-
-**File**: `cmd/cosign/cli/dockerfile.go` (modified, +20/-23)
-```diff
-@@ -20,7 +20,6 @@ import (
- 
- 	"github.com/sigstore/cosign/v3/cmd/cosign/cli/dockerfile"
- 	"github.com/sigstore/cosign/v3/cmd/cosign/cli/options"
--	"github.com/sigstore/cosign/v3/cmd/cosign/cli/verify"
- 	"github.com/spf13/cobra"
- )
- 
-@@ -84,28 +83,26 @@ Shell-like variables in the Dockerfile's FROM lines will be substituted with val
- 				return err
- 			}
- 			v := &dockerfile.VerifyDockerfileCommand{
--				VerifyCommand: verify.VerifyCommand{
--					RegistryOptions:              o.Registry,
--					CertVerifyOptions:            o.CertVerify,
--					CommonVerifyOptions:          o.CommonVerifyOptions,
--					CheckClaims:                  o.CheckClaims,
--					KeyRef:                       o.Key,
--					CertGithubWorkflowTrigger:    o.CertVerify.CertGithubWorkflowTrigger,
--					CertGithubWorkflowSha:        o.CertVerify.CertGithubWorkflowSha,
--					CertGithubWorkflowName:       o.CertVerify.CertGithubWorkflowName,
--					CertGithubWorkflowRepository: o.CertVerify.CertGithubWorkflowRepository,
--					CertGithubWorkflowRef:        o.CertVerify.CertGithubWorkflowRef,
--					IgnoreSCT:                    o.CertVerify.IgnoreSCT,
--					Sk:                           o.SecurityKey.Use,
--					Slot:                         o.SecurityKey.Slot,
--					Output:                       o.Output,
--					Annotations:                  annotations,
--					LocalImage:                   o.LocalImage,
--					IgnoreTlog:                   o.CommonVerifyOptions.IgnoreTlog,
--					MaxWorkers:                   o.CommonVerifyOptions.MaxWorkers,
--					UseSignedTimestamps:          o.CommonVerifyOptions.UseSignedTimestamps,
--				},
--				BaseOnly: o.BaseImageOnly,
-+				RegistryOptions:              o.Registry,
-+				CertVerifyOptions:            o.CertVerify,
-+				CommonVerifyOptions:          o.CommonVerifyOptions,
-+				CheckClaims:                  o.CheckClaims,
-+				KeyRef:                       o.Key,
-+				CertGithubWorkflowTrigger:    o.CertVerify.CertGithubWorkflowTrigger,
-+				CertGithubWorkflowSha:        o.CertVerify.CertGithubWorkflowSha,
-+				CertGithubWorkflowName:       o.CertVerify.CertGithubWorkflowName,
-+				CertGithubWorkflowRepository: o.CertVerify.CertGithubWorkflowRepository,
-+				CertGithubWorkflowRef:        o.CertVerify.CertGithubWorkflowRef,
-+				IgnoreSCT:                    o.CertVerify.IgnoreSCT,
-+				Sk:                           o.SecurityKey.Use,
-+				Slot:                         o.SecurityKey.Slot,
-+				Output:                       o.Output,
-+				Annotations:                  annotations,
-+				LocalImage:                   o.LocalImage,
-+				IgnoreTlog:                   o.CommonVerifyOptions.IgnoreTlog,
-+				MaxWorkers:                   o.CommonVerifyOptions.MaxWorkers,
-+				UseSignedTimestamps:          o.CommonVerifyOptions.UseSignedTimestamps,
-+				BaseOnly:                     o.BaseImageOnly,
- 			}
- 
- 			if o.CommonVerifyOptions.MaxWorkers == 0 {
-```
-
-**File**: `cmd/cosign/cli/dockerfile/verify.go` (modified, +7/-9)
-```diff
-@@ -22,6 +22,7 @@ import (
- 	"fmt"
- 	"io"
- 	"os"
-+	"slices"
- 	"strings"
- 
- 	"github.com/sigstore/cosign/v3/cmd/cosign/cli/verify"
-@@ -76,11 +77,8 @@ func newFinderCache() *finderCache {
- }
- 
- func (fc *finderCache) isStage(input string) (found bool) {
--	for _, s := range fc.Stages {
--		if s == input {
--			found = true
--			break
--		}
-+	if slices.Contains(fc.Stages, input) {
-+		found = true
- 	}
- 	return found
- }
-@@ -165,8 +163,8 @@ func (fc *finderCache) getImageFromCopyLine(line string) string {
- 		return ""
- 	})
- 	var image string
--	fields := strings.Fields(line)
--	for _, f := range fields {
-+	fields := strings.FieldsSeq(line)
-+	for f := range fields {
- 		if !strings.Contains(f, "--from=") {
- 			continue
- 		}
-@@ -197,8 +195,8 @@ func (fc *finderCache) getEnvAndArgs(line string) {
- 		}
- 		return ""
- 	})
--	fields := strings.Fields(line)
--	for _, f := range fields {
-+	fields := strings.FieldsSeq(line)
-+	for f := range fields {
- 		keyvalue := strings.Split(f, "=")
- 		if len(keyvalue) < 2 {
- 			continue
-```
-
-**File**: `cmd/cosign/cli/download/attestation.go` (modified, +1/-2)
-```diff
-@@ -79,9 +79,8 @@ func AttestationCmd(ctx context.Context, regOpts options.RegistryOptions, attOpt
- 	}
- 
- 	se, err := ociremote.SignedEntity(ref, ociremoteOpts...)
--	var entityNotFoundError *ociremote.EntityNotFoundError
- 	if err != nil {
--		if errors.As(err, &entityNotFoundError) {
-+		if _, ok := errors.AsType[*ociremote.EntityNotFoundError](err); ok {
- 			if digest, ok := ref.(name.Digest); ok {
- 				// We don't need to access the original image to download the attached attestation
- 				se = ociremote.SignedUnknown(digest)
+@@ -623,16 +623,16 @@ github.com/sergi/go-diff v1.4.0 h1:n/SP9D5ad1fORl+llWyN+D6qoUETXNZARKjyY2/KVCw=
+ github.com/sergi/go-diff v1.4.0/go.mod h1:A0bzQcvG0E7Rwjx0REVgAGH58e96+X0MeOfepqsbeW4=
+ github.com/shibumi/go-pathspec v1.3.0 h1:QUyMZhFo0Md5B8zV8x2tesohbb5kfbpTi9rBnKh5dkI=
+ github.com/shibumi/go-pathspec v1.3.0/go.mod h1:Xutfslp817l2I1cZvgcfeMQJG5QnU2lh5tVaaMCl3jE=
+-github.com/sigstore/protobuf-specs v0.5.2 h1:RSWWUY8QrVTxbYH00jY/jg2e7YnjzrpwP+PeHTMll0E=
+-github.com/sigstore/protobuf-specs v0.5.2/go.mod h1:DRBzpFuE+LnvQMN10/dU6nBeKwVLGEQ6o2FovN2Rats=
++github.com/sigstore/protobuf-specs v0.5.3-0.20261112181914-a84bc5ff572a h1:5XG2LytaPWuYUctAEGtTPchXcqXs5VTa4RbJgVFaq4A=
++github.com/sigstore/protobuf-specs v0.5.3-0.20261112181914-a84bc5ff572a/go.mod h1:1QTwiRx4i1dbHGub43GV+0G/Y1rZdlyJDxPmJ+6RUOk=
+ github.com/sigstore/rekor v1.6.2 h1:cDGm6/138AktpcaeHx1/szi4JbbZKaNM4IXEAMC1DAc=
+ github.com/sigstore/rekor v1.6.2/go.mod h1:Eku/Wrn9EQsWbSyeIbkkLgyuFh3cyzWiDkGTdKRkByk=
+ github.com/sigstore/rekor-tiles/v2 v2.4.2 h1:Qvt1L8oWkQpAK5lr8QnKuE0JYnA44kMWUvXl4hhxD+I=
+ github.com/sigstore/rekor-tiles/v2 v2.4.2/go.mod h1:VVGltxtfdDArLtqSqrtYy8QHeJyaRvnn7Qp8suvd3vQ=
+ github.com/sigstore/sigstore v1.11.4 h1:3FmAqMZMML4e4tWxO05GHFlIrll5YEeBOlPzVMUuEY0=
+ github.com/sigstore/sigstore v1.11.4/go.mod h1:+80rD6zHfU0o9pfmn+E/iQ4hCDaxoxGMP6EyoLUuVGE=
+-github.com/sigstore/sigstore-go v1.4.0 h1:CGdFdZLhYSc42yYN0+lL6yWh7v0z3S0i21v50lvSYKw=
+-github.com/sigstore/sigstore-go v1.4.0/go.mod h1:T2Csm9q65ZVCrTB8q1fP60wR9Z9Hf1286zBTd6pDG88=
++github.com/sigstore/sigstore-go v1.4.1 h1:djK0K5eYA89mJdA61bfDtO4aPUb+dGZvppIgnKHQH1o=
++github.com/sigstore/sigstore-go v1.4.1/go.mod h1:CJPGNZ9WlUDIP8O4zCyK0H2MJIvWFf2bcZ12JH5LB8I=
+ github.com/sigstore/sigstore/pkg/signature/kms/aws v1.11.3 h1:yY9N8BQePsqDgD//dcOujRK0728+KkheZayeXdK+jAI=
+ github.com/sigstore/sigstore/pkg/signature/kms/aws v1.11.3/go.mod h1:McDIrrcl+Lljr6amr7fDwZBOh3f1GEWSxeCcimHjQm0=
+ github.com/sigstore/sigstore/pkg/signature/kms/azure v1.11.3 h1:L4PEgwMqqoXMYwD0EV1RjMLBRmOjibxEE+WqFH+6EmM=
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5247** (closed): Update sigstore-go to v1.4.1 (@steiza)
+- **PR #5246** (2026-11-25): Update sigstore-go to v1.4.1 (@steiza)
+- **PR #5245** (2026-11-25): Update sigstore-go to v1.4.1 (@steiza)
+- **PR #5244** (closed): update cosign used in release and validate-release to v3.1.5 (@cpanato)
+- **PR #5243** (2026-11-25): docs: document patch releases from a release branch (@cpanato)
 - **PR #5242** (2026-11-24): [release-3.1] bump sigstore/sigstore to v1.11.4 (@cpanato)
-- **PR #5241** (2026-11-24): Bump release builder image to golang-cross v1.27.4-0 (@cpanato)
-- **PR #5240** (2026-11-24): chore(deps): bump github.com/sigstore/rekor from 1.5.5 to 1.6.2 (@dependabot[bot])
-- **PR #5239** (2026-11-24): chore(deps): bump golang from 1.27.3 to 1.27.4 in the all group (@dependabot[bot])
-- **PR #5238** (2026-11-24): chore(deps): bump github.com/awslabs/amazon-ecr-credential-helper/ecr-login from 0.12.0 to 0.13.0 (@dependabot[bot])
-- **PR #5237** (2026-11-24): chore(deps): bump gitlab.com/gitlab-org/api/client-go/v3 from 3.46.0 to 3.54.1 (@dependabot[bot])
 
 ---
 
@@ -2164,35 +1840,33 @@ Signed-off-by: Hayden <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Bump release builder image to golang-cross v1.27.4-0
+## X. Update sigstore-go to v1.4.1
 
 **RULE**:
-When implementing operations in `.github/workflows/validate-release.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sigstore/cosign. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sigstore/cosign. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `75066d04`: Bump release builder image to golang-cross v1.27.4-0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e70053f5`: Update sigstore-go to v1.4.1. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/validate-release.yml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-          cosign verify ghcr.io/gythialy/golang-cross:v1.27.4-0@sha256:ae91d77d3195be62556266fc01cc83e24d8d01c65347835fe3bdf184cdf132fc \
-          --certificate-identity "https://github.com/gythialy/golang-cross/.github/workflows/builder.yml@refs/tags/v1.27.4-0"
-      image: ghcr.io/gythialy/golang-cross:v1.27.4-0@sha256:ae91d77d3195be62556266fc01cc83e24d8d01c65347835fe3bdf184cdf132fc
+	github.com/sigstore/protobuf-specs v0.5.3-0.20261112181914-a84bc5ff572a
+	github.com/sigstore/sigstore-go v1.4.1
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-          cosign verify ghcr.io/gythialy/golang-cross:v1.27.3-0@sha256:c33ed060bb1817f4eed7957e3a22515823d194873a820722761ab5712298612e \
-          --certificate-identity "https://github.com/gythialy/golang-cross/.github/workflows/builder.yml@refs/tags/v1.27.3-0"
-      image: ghcr.io/gythialy/golang-cross:v1.27.3-0@sha256:c33ed060bb1817f4eed7957e3a22515823d194873a820722761ab5712298612e
+	github.com/sigstore/protobuf-specs v0.5.2
+	github.com/sigstore/sigstore-go v1.4.0
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `75066d04` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e70053f5` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

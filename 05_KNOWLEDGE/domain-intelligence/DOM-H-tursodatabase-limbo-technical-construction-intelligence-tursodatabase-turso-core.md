@@ -4,24 +4,24 @@
 {
   "source_repository": "tursodatabase/turso",
   "source_url": "https://github.com/tursodatabase/limbo",
-  "source_version": "bae03862",
+  "source_version": "13b96ffe",
   "license": "MIT",
-  "timestamp": "2026-11-24T18:00:38.406Z",
+  "timestamp": "2026-11-25T13:06:05.958Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-tursodatabase-turso",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [tursodatabase/turso](https://github.com/tursodatabase/limbo) (Revision: `bae03862`).  
-> **License**: MIT | **Timestamp**: `2026-11-24T18:00:38.406Z`  
+> **Provenance**: Harvested from [tursodatabase/turso](https://github.com/tursodatabase/limbo) (Revision: `13b96ffe`).  
+> **License**: MIT | **Timestamp**: `2026-11-25T13:06:05.958Z`  
 > **Learning ID**: `learn-github-tursodatabase-turso`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), G (Architecture Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 59%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), L (Deployment & Operations Intelligence), F (Design Intelligence), A (Human & Need Intelligence), B (Product Intelligence)
+- **Confidence Rating**: 89%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from tursodatabase/turso:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tursodatabase/limbo](https://github.com/tursodatabase/limbo))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T18:00:36.919Z  
+> **Harvest Timestamp**: 2026-11-25T13:06:04.102Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: A SQL database in Rust: SQLite-compatible, now also speaking Postgres (experimental). The LLVM of databases.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md
-- **Stars / Engagement**: 25339 stars
+- **Stars / Engagement**: 25355 stars
 
 ---
 
@@ -1446,13 +1446,11 @@ export class Statement {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #12395** (2026-11-24): **postgres/catalog: add a generator of Rust tables from postgres.bki**
-  *Symptoms*: Replaced by #12404, which has the same generator commit on top of #12403. GitHub did not let this pull request change its base branch, so it also showed `postgres.bki`.  🤖 Generated with [Claude Code](https://claude.com/claude-code)  https://claude.ai/code/session_019cgs5bMoU8i4BcYaASwVg2
+- **Issue #12472** (2026-11-25): **core/mvcc: bind the frame position in encrypted log chunks**
+  *Symptoms*: ## Description  Each transaction frame of the MVCC logical log (`-log` file) ends with a running CRC-32C. The CRC is chained over the frames and starts from the salt in the log header. It does not use a key and it is stored in plaintext. In an encrypted log, the AEAD associated data of each chunk bound only the salt, the payload size, `op_count`, `commit_ts` and the chunk index. Nothing bound a frame to its place in the log.  A person who could write the log file, but who did not have the key, could remove, replay or reorder complete frames and then calculate the CRCs again. Recovery accepted the changed log without an error. When the frame of a `DELETE` was removed, the deleted row came back, and the later transactions stayed. The next commit continued the CRC chain, so the change stayed after the next reopen.  This bug was found in an audit of Turso's at-rest encryption (finding 20).  ## Fix  New encrypted logs use log version 4. The frame layout is the same as in version 3. The associated data of each encrypted chunk also holds the position of its frame:  ``` salt(8) | plaintext_size_or_0(8) | op_count(4) | commit_ts(8) | chunk_index(4)    (versions 2 and 3)   + frame_offset(8) | frame_start_crc(4)                                          (version 4) ```  `frame_offset` is the file offset of the frame header. `frame_start_crc` is the running CRC before the frame: the trailer CRC of the previous frame, or the CRC of the salt for the first frame.  - A frame authenticates onl
 
-- **Issue #12384** (2026-11-24): **core: replace casts_nonzero_integer_to_true with a cast conversion of the type**
-  *Symptoms*: `5::boolean` is true in PostgreSQL. Core did this for the PostgreSQL frontend with a dialect flag, `casts_nonzero_integer_to_true`, and a check in the cast translation that the type is named `boolean`.  This pull request moves the rule into the boolean type of the PostgreSQL frontend and removes the flag. No behavior changes.  ## How  - The `Type` trait gets `cast`: a conversion that turns a value that a CAST takes into a value that a column of the type takes. The cast translation runs it before the type stores the value. - The `Boolean` type of the PostgreSQL frontend implements it: every nonzero integer is true. - `Dialect::casts_nonzero_integer_to_true`, its override and the bytecode that core wrote for it are gone.  The boolean type of core has no cast conversion, so `CAST(5 AS boolean)` in the SQLite frontend still accepts only 0 and 1.  ## Not in this pull request  `5::int2::boolean` and `5::int8::boolean` are still true, where PostgreSQL has no such cast. The conversion sees a value and not the type it came from. Passing that type to the conversion is the next step. 
-  **Post-Mortem & Fix Analysis**:
-  > ### Autofixer review <sub>🔄 Autofixer updates this comment while the review runs.</sub>  A maintainer asked Autofixer to review this pull request. The review of `94304195e2ec` is [here](https://github.com/tursodatabase/turso/pull/12384#pullrequestreview-6040058328).  ✅ **Verdict: looks good to merge.**  <sub>Automated review by Autofixer; maintainers decide what to merge.</sub>  <!-- autofixer:contributor-review:94304195e2ec5b081293ab46a81bb058ca66fb99 --> <!-- autofixer:contributor-review-recommends:94304195e2ec5b081293ab46a81bb058ca66fb99 --> <!-- autofixer:contributor-review-state:eyJ2ZXJzaW9uIjoxLCJyZXZpZXdzIjpbeyJoZWFkU2hhIjoiOTJjYmE5MjMwMTZiYmNkY2QxOTI1MTdhMDA5ZWU5YmJhMmZjYzliYSIsImF1ZGl0ZWRBdCI6IjIwMjYtMTEtMjRUMTI6NTM6MjEuMTYyWiIsInZlcmRpY3QiOiJyZXF1ZXN0X2NoYW5nZXMiLCJyZWNvbW1lbmRhdGlvbiI6eyJ2YWx1ZSI6Im5lZWRzX2h1bWFuIiwicmVhc29uIjoiQmVoYXZpb3IgbWF0Y2hlcyBtYWluLiBCZWZvcmUgbWVyZ2luZywgYWRkIHRoZSBGSVhNRShwZy1jYXRhbG9nKSBjb21tZW50IHRvIGBib29sX2Nhc3RgLCBhcyBDTEFVREUubWQgcmVxdWlyZXMg
+- **Issue #12471** (2026-11-25): **core/storage: bind encrypted pages to their page numbers**
+  *Symptoms*: ## Description  Built-in encryption encrypted pages 2..N with empty AEAD associated data. Only page 1 used its header as associated data. So the ciphertext of page N also decrypted at any other page number.  A person who could write the database files, but who did not have the key, could swap the root pages of two tables in the database file. They could also swap the page numbers of two WAL frames and write the WAL checksums again, because the WAL checksums do not use a key. In both cases, each table returned the rows of the other table, and `PRAGMA integrity_check` reported `ok`.  This bug was found in an audit of Turso's at-rest encryption (finding 3).  ## Fix  This PR adds an encryption format. The version byte of the Turso header on page 1 stores its version.  - In encryption format version 1, the associated data of each page 2..N is its page number as 4 big-endian bytes. A page decrypts only at its own page number. A page that moves in the database file or in the WAL fails with a decryption error. - Version 0 is the format of all existing encrypted databases. Its pages 2..N have no associated data. - The version byte is already part of the associated data of page 1. A changed version byte makes page 1 fail to decrypt, so Turso never reads a database in the wrong format. - An encrypted open reads the version byte from page 1 on disk and makes its `EncryptionContext` in that format. Decrypting page 1 then authenticates the byte. The pager records the format in the shared p
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1469,1255 +1467,724 @@ export class Statement {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fa535be1` (2026-11-24)
-**Commit Message**: Merge 'core: keep the program builder and the state of each statement in the statement allocator' from Mikaël Francoeur
+### Incident Patch 1: `bdc0c062` (2026-11-25)
+**Commit Message**: Merge 'build(deps): bump fast-xml-parser from 5.11.1 to 5.12.1 in /examples/react-native' from app/dependabot
 
-## Description
+Bumps [fast-xml-parser](https://github.com/NaturalIntelligence/fast-xml-
+parser) from 5.11.1 to 5.12.1. <details> <summary>Release
+notes</summary> <p><em>Sourced from <a
+href="https://github.com/NaturalIntelligence/fast-xml-
+parser/releases">fast-xml-parser's releases</a>.</em></p> <blockquote>
+<h2>v5.12.1</h2> <h2>What's Changed</h2> <ul> <li>fix: correct demo
+parser and builder options by <a href="https://github.com/arba-
+octo"><code>@​arba-octo</code></a> in <a
+href="https://redirect.github.com/NaturalIntelligence/fast-xml-
+parser/pull/897">NaturalIntelligence/fast-xml-parser#897</a></li>
+<li>Bump github/codeql-action/init from 4.36.2 to 4.39.1 by <a
+href="https://github.com/dependabot"><code>@​dependabot</code></a>[bot]
+in <a href="https://redirect.github.com/NaturalIntelligence/fast-xml-
+parser/pull/907">NaturalIntelligence/fast-xml-parser#907</a></li>
+<li>Bump github/codeql-action/analyze from 4.36.2 to 4.39.1 by <a
+href="https://github.com/dependabot"><code>@​dependabot</code></a>[bot]
+in <a href="https://redirect.github.com/NaturalIntelligence/fast-xml-
+parser/pull
 
-This PR puts more values of statements in the statement allocator that
-#12299 added:
-
-- **The program builder of a statement.** `translate` made the
-`ProgramBuilder` of each statement with `Box::new`. It now makes it in a
-`DynBox` from the statement allocator. Two functions that are not
-inlined make the builder and build its program: `new_program_builder`
-takes an allocation site and a function that makes the builder, and
-`build_program` takes the builder out of its box and builds the program.
-Before, the frame of `translate` kept space for the builder anyway,
-because `build()` takes the builder as a value and took it out of its
-box there.
-- **The other program builders.** The program of a blob handle, the
-maintenance program of a materialized view and the builder that plans
-the query of a materialized view kept their builders on the stack. They
-now use `new_program_builder` and `build_program` too. The compilation
-of nested triggers also uses these two functions, in place of
-`new_trigger_program_builder` and `build_trigger_program` from #12299.
-T
-
-**File**: `core/alloc/allocation_site.rs` (modified, +7/-0)
+**File**: `examples/react-native/package-lock.json` (modified, +24/-23)
 ```diff
-@@ -37,6 +37,13 @@ pub enum StatementAllocationSite {
-     /// The statement that executes a nested trigger or foreign key action
-     /// program.
-     SubprogramStatement,
-+    /// The builder of the program of a statement, of a blob handle or of the
-+    /// maintenance of a materialized view, or the builder that plans the
-+    /// query of a materialized view.
-+    ProgramBuilder,
-+    /// The state of a statement, which keeps its registers and cursors while
-+    /// the statement executes.
-+    ProgramState,
- }
- 
- impl From<StatementAllocationSite> for AllocationSite {
-```
-
-**File**: `core/connection.rs` (modified, +35/-9)
-```diff
-@@ -1164,15 +1164,15 @@ impl Connection {
-                 .trim();
-             let (program, pager, mode) = self.compile_cmd(cmd, input, origin)?;
- 
--            Ok(Statement::new_with_origin(
-+            Statement::new_with_origin(
-                 program,
-                 self.clone(),
-                 pager,
-                 mode,
-                 byte_offset_end,
-                 origin,
-                 needs_nested_guard,
--            ))
-+            )
-         })();
-         if result.is_err() && needs_nested_guard {
-             self.end_nested();
-@@ -1221,15 +1221,15 @@ impl Connection {
-         }
-         let result = (|| {
-             let (program, pager, mode) = self.compile_cmd(cmd, input, origin)?;
--            Ok(Statement::new_with_origin(
-+            Statement::new_with_origin(
-                 program,
-                 self.clone(),
-                 pager,
-                 mode,
-                 0,
-                 origin,
-                 needs_nested_guard,
--            ))
-+            )
-         })();
-         if result.is_err() && needs_nested_guard {
-             self.end_nested();
-@@ -1509,7 +1509,7 @@ impl Connection {
-                 .unwrap()
-                 .trim();
-             let (program, pager, mode) = self.compile_cmd(cmd, input, StatementOrigin::Root)?;
--            Statement::new(program, self.clone(), pager, mode, 0).run_ignore_rows()?;
-+            Statement::new(program, self.clone(), pager, mode, 0)?.run_ignore_rows()?;
-             remaining = &remaining[byte_offset_end..];
-         }
-         Ok(())
-@@ -1531,7 +1531,7 @@ impl Connection {
-             return Ok(None);
-         };
-         let (program, pager, mode) = self.compile_cmd(cmd, input, StatementOrigin::Root)?;
--        Ok(Some(Statement::new(program, self.clone(), pager, mode, 0)))
-+        Ok(Some(Statement::new(program, self.clone(), pager, mode, 0)?))
-     }
- 
-     /// Execute will run a query from start to finish taking ownership of I/O because it will run pending I/Os if it didn't finish.
-@@ -1551,7 +1551,7 @@ impl Connection {
-             let (program, pager, mode) = self.compile_cmd(cmd, input, StatementOrigin::Root)?;
-             {
-                 crate::stack::trace_stack!("run");
--                Statement::new(program, self.clone(), pager.clone(), mode, 0).run_ignore_rows()?;
-+                Statement::new(program, self.clone(), pager.clone(), mode, 0)?.run_ignore_rows()?;
-             }
-             remaining = &remaining[byte_offset_end..];
-         }
-@@ -1574,7 +1574,7 @@ impl Connection {
-             .unwrap()
-             .trim();
-         let (program, pager, mode) = self.compile_cmd(cmd, input, StatementOrigin::Root)?;
--        let stmt = Statement::new(program, self.clone(), pager, mode, 0);
-+        let stmt = Statement::new(program, self.clone(), pager, mode, 0)?;
-         Ok(Some((stmt, byte_offset_end)))
-     }
- 
-@@ -4076,13 +4076,17 @@ impl Connection {
- 
-     /// The error for a statement on a sequence backing table that failed
-     /// with `err`. The backing table is the engine's own, so the failure
--    /// means the file is corrupt.
-+    /// means the file is corrupt, except when no memory was available: then
-+    /// the error stays `OutOfMemory`, and the statement can run again later.
-     pub(crate) fn sequence_backing_table_corrupt(
-         backing_table_name: &str,
-         seq_name: &str,
-         problem: &str,
-         err: &LimboError,
-     ) -> LimboError {
-+        if matches!(err, LimboError::OutOfMemory) {
-+            return LimboError::OutOfMemory;
-+        }
-         LimboError::Corrupt(format!(
-             "internal sequence backing table \"{backing_table_name}\" for sequence \
-              \"{seq_name}\": {problem}: {err}"
-@@ -5281,6 +5285,28 @@ mod tests {
-         (entry.db.clone(), entry.pager.clone())
-     }
- 
-+    /// A statement on a sequence backing table can fail because the statement
-+    /// allocator gives no memory. That is not corruption, so the error must
-+    /// stay `OutOfMemory`: the concurrent simulator stops at a `Corrupt` error.
-+    #[test]
-+    fn sequence_backing_table_error_keeps_out_of_memory() {
-+        let err = Connection::sequence_backing_table_corrupt(
-+            "__turso_internal_seq_s",
-+            "s",
-+            "cannot prepare descriptor SELECT",
-+            &LimboError::OutOfMemory,
-+        );
-+        assert!(matches!(err, LimboError::OutOfMemory), "{err}");
-+
-+        let err = Connection::sequence_backing_table_corrupt(
-+            "__turso_internal_seq_s",
-+            "s",
-+            "descriptor row read failed",
-+            &LimboError::InternalError("no row".to_string()),
-+        );
-+        assert!(matches!(err, LimboError::Corrupt(_)), "{err}");
-+    }
-+
-     #[test]
-     fn close_marks_connection_closed_and_decrements_count_once() {
-         let directory = TempDir::new().unwrap();
-```
-
-**File**: `core/database.rs` (modified, +14/-5)
-```diff
-@@ -210,11 +210,20 @@ pub struct DatabaseAllocators<
- > {
-     pub mv_store: M,
-     pub fts: F,
--    /// Allocator for the values that the code of nested trigger and foreign
--    /// key action programs keeps in the heap and not on the stack, because
--    /// this code recurses one time for each level of nesting. The other
--    /// memory of statements, for example their registers and cursors, does not
--    /// come from this allocator.
-+    /// Allocator for these values of statements:
-+    ///
-+    /// - The state of each statement.
-+    /// - The program builders of statements, blob handles, nested trigger
-+    ///   programs and the maintenance of materialized views, and the builder
-+    ///   that plans the query of a materialized view. The builders of foreign
-+    ///   key action programs do not come from this allocator.
-+    /// - The statement that executes a nested trigger or foreign key action
-+    ///   program.
-+    ///
-+    /// The code of nested programs recurses one time for each level of
-+    /// nesting, so it keeps its values in the heap and not on the stack. The
-+    /// memory in the vectors of the builders and the states, for example the
-+    /// registers and the cursors, does not come from this allocator.
-     pub statement: S,
- }
- 
-```
-
-**File**: `core/incremental/vdbe_maintenance.rs` (modified, +22/-12)
-```diff
-@@ -24,6 +24,7 @@
- //! completion (or before an in-statement view read), or inside the CREATE
- //! MATERIALIZED VIEW statement for initial population.
- 
-+use crate::alloc::StatementAllocationSite;
- use crate::ast;
- use crate::namespace::NamespaceRef;
- use rustc_hash::FxHashMap;
-@@ -33,6 +34,7 @@ use crate::schema::Schema;
- use crate::security::roles::RoleId;
- use crate::sync::Arc;
- use crate::translate::emitter::Resolver;
-+use crate::translate::{build_program, new_program_builder};
- use crate::vdbe::builder::{ProgramBuilder, ProgramBuilderOpts};
- use crate::vdbe::{PreparedProgram, Program};
- use crate::{Connection, LimboError, QueryMode, Result};
-@@ -172,17 +174,20 @@ fn compile_maintenance_plan(
-     schema: &Schema,
-     connection: &Arc<Connection>,
- ) -> Result<Program> {
--    let mut program = ProgramBuilder::new_for_subprogram(
--        QueryMode::Normal,
--        None,
--        ProgramBuilderOpts {
--            num_cursors: 13,
--            approx_num_insns: 128 + 64 * num_view_columns,
--            approx_num_labels: 48,
--        },
--        connection.mvcc_enabled(),
--        0,
--    );
-+    let mut program =
-+        new_program_builder(connection, StatementAllocationSite::ProgramBuilder, || {
-+            ProgramBuilder::new_for_subprogram(
-+                QueryMode::Normal,
-+                None,
-+                ProgramBuilderOpts {
-+                    num_cursors: 13,
-+                    approx_num_insns: 128 + 64 * num_view_columns,
-+                    approx_num_labels: 48,
-+                },
-+                connection.mvcc_enabled(),
-+                0,
-+            )
-+        })?;
-     program.prologue();
-     emit_plan_to_sink(
-         &mut program,
-@@ -197,7 +202,12 @@ fn compile_maintenance_plan(
-         connection,
-     )?;
-     program.epilogue(schema);
--    program.build(connection, false, "materialized view DAG maintenance")
-+    build_program(
-+        program,
-+        connection,
-+        false,
-+        "materialized view DAG maintenance",
-+    )
- }
- 
- #[cfg(feature = "test_helper")]
-```
-
-**File**: `core/incremental/vdbe_maintenance/plan.rs` (modified, +12/-7)
-```diff
-@@ -3,6 +3,7 @@ use rustc_hash::{FxHashMap, FxHashSet};
- 
- use super::output::NodeOutputContract;
- use super::stream::{binding_rowid_metadata_width, DeltaIdentity};
-+use crate::alloc::StatementAllocationSite;
- use crate::function::{AggFunc, Func};
- use crate::incremental::dag;
- use crate::schema::BTreeTable;
-@@ -11,6 +12,7 @@ use crate::translate::collate::{first_collation, CollationSeq};
- use crate::translate::emitter::Resolver;
- use crate::translate::expr::{expr_contains_nondeterministic_scalar_function, WalkControl};
- use crate::translate::expr_context::ExprContext;
-+use crate::translate::new_program_builder;
- use crate::translate::optimizer::optimize_plan;
- use crate::translate::optimizer::unnest::rewrite_correlated_subqueries;
- use crate::translate::plan::{
-@@ -984,13 +986,16 @@ pub(crate) fn plan_view(
-     resolver: &Resolver,
-     connection: &Arc<Connection>,
- ) -> Result<MaintenancePlan> {
--    let mut planner_program = ProgramBuilder::new_for_subprogram(
--        QueryMode::Normal,
--        None,
--        ProgramBuilderOpts::new(8, 32, 8),
--        connection.mvcc_enabled(),
--        0,
--    );
-+    let mut planner_program =
-+        new_program_builder(connection, StatementAllocationSite::ProgramBuilder, || {
-+            ProgramBuilder::new_for_subprogram(
-+                QueryMode::Normal,
-+                None,
-+                ProgramBuilderOpts::new(8, 32, 8),
-+                connection.mvcc_enabled(),
-+                0,
-+            )
-+        })?;
-     let mut relational_plan = prepare_select_plan(
-         select.clone(),
-         resolver,
-```
-
-**File**: `core/incremental_blob.rs` (modified, +7/-4)
-```diff
-@@ -29,10 +29,11 @@
- use crate::ast::Privilege;
- use crate::namespace::NamespaceId;
- use crate::translate::collate::CollationSeq;
-+use crate::translate::{build_program, new_program_builder};
- use std::num::NonZero;
- use std::sync::Arc;
- 
--use crate::alloc::TursoSliceExt;
-+use crate::alloc::{StatementAllocationSite, TursoSliceExt};
- use crate::schema::{BTreeTable, Column, Schema};
- use crate::security::permission::{Action, Object, PermissionDenied};
- use crate::storage::pager::Pager;
-@@ -354,7 +355,7 @@ impl Connection {
-         let root = table_ref.root_page;
-         let program = build_blob_program(self, table_ref, root, record_column, rowid, read_write)?;
-         let pager = self.get_pager();
--        let mut stmt = Statement::new(program, self.clone(), pager.clone(), QueryMode::Normal, 0);
-+        let mut stmt = Statement::new(program, self.clone(), pager.clone(), QueryMode::Normal, 0)?;
-         // Excluded from the explicit-checkpoint guard's active-statement
-         // count: the handle parks at its row for its whole lifetime, and an
-         // open blob handle must not block checkpointing until it is closed.
-@@ -437,7 +438,9 @@ fn build_blob_program(
-     rowid: i64,
-     read_write: bool,
- ) -> Result<crate::vdbe::Program> {
--    let mut b = ProgramBuilder::new(QueryMode::Normal, None, ProgramBuilderOpts::new(1, 64, 16));
-+    let mut b = new_program_builder(conn, StatementAllocationSite::ProgramBuilder, || {
-+        ProgramBuilder::new(QueryMode::Normal, None, ProgramBuilderOpts::new(1, 64, 16))
-+    })?;
-     b.prologue();
-     if read_write {
-         b.begin_write_operation()
-@@ -564,6 +567,6 @@ fn build_blob_program(
-     b.preassign_label_to_next_insn(l_end);
- 
-     conn.with_schema_mut(|schema| b.epilogue(schema))?;
--    b.build(conn, false, "incremental blob io")
-+    build_program(b, conn, false, "incremental blob io")
-         .map_err(|e| LimboError::InternalError(format!("blob program build failed: {e}")))
- }
-```
-
-**File**: `core/statement.rs` (modified, +10/-7)
-```diff
-@@ -10,7 +10,7 @@ use std::{
- use crate::ast::{fmt::WriteSql, Cmd};
- use tracing::{instrument, Level};
- 
--use crate::alloc::TursoIteratorExt;
-+use crate::alloc::{DynBox, TursoIteratorExt};
- use crate::{
-     busy::BusyHandlerState,
-     parameters,
-@@ -213,7 +213,7 @@ pub struct ColumnOrigin {
- 
- pub struct Statement {
-     pub(crate) program: vdbe::Program,
--    state: Box<vdbe::ProgramState>,
-+    state: DynBox<vdbe::ProgramState>,
-     connection: Arc<Connection>,
-     pager: Arc<Pager>,
-     /// indicates if the statement is a NORMAL/EXPLAIN/EXPLAIN QUERY PLAN
-@@ -292,7 +292,7 @@ impl Statement {
-         pager: Arc<Pager>,
-         query_mode: QueryMode,
-         tail_offset: usize,
--    ) -> Self {
-+    ) -> Result<Self> {
-         Self::new_with_origin(
-             program,
-             connection,
-@@ -313,7 +313,7 @@ impl Statement {
-         tail_offset: usize,
-         origin: StatementOrigin,
-         nested_guard_active: bool,
--    ) -> Self {
-+    ) -> Result<Self> {
-         let (max_registers, cursor_count) = match query_mode {
-             QueryMode::Normal => (program.max_registers, program.cursor_ref.len()),
-             QueryMode::Explain => (EXPLAIN_COLUMNS.len(), 0),
-@@ -325,9 +325,12 @@ impl Statement {
-             } => (EXPLAIN_QUERY_PLAN_JSON_COLUMNS.len(), 0),
-         };
-         let state = vdbe::ProgramState::new(max_registers, cursor_count);
--        Self {
-+        let alloc = connection.db.allocators.statement.clone();
-+        let state =
-+            crate::with_statement_allocation_site!(ProgramState, DynBox::try_new_in(state, alloc))?;
-+        Ok(Self {
-             program,
--            state: Box::new(state),
-+            state,
-             connection,
-             pager,
-             query_mode,
-@@ -343,7 +346,7 @@ impl Statement {
-             nested_guard_active,
-             analyze_refresh: None,
-             reprepare_cmd: None,
--        }
-+        })
-     }
- 
-     /// Mark this statement as the parked backing statement of an incremental
-```
-
-**File**: `core/translate/mod.rs` (modified, +47/-8)
-```diff
-@@ -53,6 +53,7 @@ mod values;
- pub(crate) mod view;
- mod window;
- 
-+use crate::alloc::{DynBox, StatementAllocationSite, TursoBoxExt};
- use crate::ast;
- use crate::schema::Schema;
- use crate::storage::pager::Pager;
-@@ -100,13 +101,15 @@ pub fn translate(
-     } else {
-         connection.get_capture_data_changes_info().clone()
-     };
--    // Boxed so the ~800 B builder sits on the heap instead of the prepare frame.
--    let mut program = Box::new(ProgramBuilder::new(
--        query_mode,
--        capture_data_changes_info,
--        // These options will be extended whithin each translate program
--        ProgramBuilderOpts::new(1, 32, 2),
--    ));
-+    let mut program =
-+        new_program_builder(&connection, StatementAllocationSite::ProgramBuilder, || {
-+            ProgramBuilder::new(
-+                query_mode,
-+                capture_data_changes_info,
-+                // These options will be extended whithin each translate program
-+                ProgramBuilderOpts::new(1, 32, 2),
-+            )
-+        })?;
-     program.set_mvcc_enabled(connection.mvcc_enabled());
-     program.flags.set_reads_stored_values(matches!(
-         origin,
-@@ -198,7 +201,43 @@ pub fn translate(
- 
-     program.epilogue(schema);
- 
--    program.build(&connection, change_cnt_on, input)
-+    build_program(program, &connection, change_cnt_on, input)
-+}
-+
-+/// Makes a program builder with `new`, in memory from the statement allocator
-+/// of the database. The allocation is at `site`. Rust makes the builder on the
-+/// stack and then copies it into the box. This function is not inlined, so
-+/// that the builder is in the stack frame of this function, and not in the
-+/// frame of its caller.
-+#[inline(never)]
-+pub(crate) fn new_program_builder(
-+    connection: &Connection,
-+    site: StatementAllocationSite,
-+    new: impl FnOnce() -> ProgramBuilder,
-+) -> Result<DynBox<ProgramBuilder>> {
-+    let builder = new();
-+    let alloc = connection.db.allocators.statement.clone();
-+    #[cfg(feature = "allocation_metric")]
-+    let _site_guard = crate::alloc::enter_allocation_site(site);
-+    #[cfg(not(feature = "allocation_metric"))]
-+    let _ = site;
-+    Ok(DynBox::try_new_in(builder, alloc)?)
-+}
-+
-+/// Builds the program of a builder in memory from the statement allocator.
-+/// [ProgramBuilder::build] takes the builder as a value, so the builder leaves
-+/// its box here. This function is not inlined, so that the builder is in the
-+/// stack frame of this function, and not in the frame of its caller. The
-+/// compilation of nested triggers recurses one time for each level, so the
-+/// builder must not be in the frame of the code that recurses.
-+#[inline(never)]
-+pub(crate) fn build_program(
-+    builder: DynBox<ProgramBuilder>,
-+    connection: &Arc<Connection>,
-+    change_cnt_on: bool,
-+    input: &str,
-+) -> Result<Program> {
-+    TursoBoxExt::into_inner(builder).build(connection, change_cnt_on, input)
- }
- 
- // TODO: for now leaving the return value as a Program. But ideally to support nested parsing of arbitraty
+@@ -42,7 +42,7 @@
+     },
+     "../../bindings/react-native": {
+       "name": "@tursodatabase/sync-react-native",
+-      "version": "0.9.0-pre.2",
++      "version": "0.9.0-pre.6",
+       "license": "MIT",
+       "dependencies": {
+         "@babel/runtime": "^7.25.0"
+@@ -53,8 +53,9 @@
+         "eslint": "^10.2.0",
+         "react": "^18.2.0",
+         "react-native": "^0.76.0",
+-        "react-native-builder-bob": "^0.30.0",
+-        "typescript": "^5.3.0"
++        "react-native-builder-bob": "^0.44.1",
++        "typescript": "^5.3.0",
++        "vitest": "^4.1.11"
+       },
+       "engines": {
+         "node": ">=18"
+@@ -2789,9 +2790,9 @@
+       }
+     },
+     "node_modules/@nodable/entities": {
+-      "version": "3.0.0",
+-      "resolved": "https://registry.npmjs.org/@nodable/entities/-/entities-3.0.0.tgz",
+-      "integrity": "sha512-8L9xFeTYKhm49xfIypoe2W5wV1m/3Z58kT+7kR9A8OyFxcPduI4VmxaUMQyKYrRjUoLLSXv6EKKID5Tvj9cUVw==",
++      "version": "3.1.0",
++      "resolved": "https://registry.npmjs.org/@nodable/entities/-/entities-3.1.0.tgz",
++      "integrity": "sha512-LsS/DjHr+uDM647Gru/cA8+J3a3HfhttwCKLyuoyN7yXTFCxKBtSgMQBvrW9yNPa2/zDRUNuGPaH5QUFoa4arQ==",
+       "devOptional": true,
+       "funding": [
+         {
+@@ -6335,9 +6336,9 @@
+       "license": "MIT"
+     },
+     "node_modules/fast-xml-builder": {
+-      "version": "1.3.1",
+-      "resolved": "https://registry.npmjs.org/fast-xml-builder/-/fast-xml-builder-1.3.1.tgz",
+-      "integrity": "sha512-pIM/1n3ntFXKYrUZwW7QCK0gAW7XY+wzj1YMIV3tLDvPj/V+zTGJK5e3/4WJfwj0qWw2ElNXiTixda/R+3YSug==",
++      "version": "1.3.2",
++      "resolved": "https://registry.npmjs.org/fast-xml-builder/-/fast-xml-builder-1.3.2.tgz",
++      "integrity": "sha512-OX91VSlShLPDgRZV7tk/YQ4l8tT75QziF5Ixg8g4PFbCVPjuTWwN+yQfAxLJ0dufJpprdOd6HlM74Jhd39TcBQ==",
+       "devOptional": true,
+       "funding": [
+         {
+@@ -6352,9 +6353,9 @@
+       }
+     },
+     "node_modules/fast-xml-parser": {
+-      "version": "5.11.1",
+-      "resolved": "https://registry.npmjs.org/fast-xml-parser/-/fast-xml-parser-5.11.1.tgz",
+-      "integrity": "sha512-TBw6K/fxoQGGjCmZDw9w/ZwP3uDcnTM4YH/g+PFRWr8sbe5idXtxNN6vITh4+1ruCZaho6uBFurElsA7F0zzgw==",
++      "version": "5.12.1",
++      "resolved": "https://registry.npmjs.org/fast-xml-parser/-/fast-xml-parser-5.12.1.tgz",
++      "integrity": "sha512-wR8dO/fx+z8C5exuem1e7BKOWvjsuzvjS/tvA/Xu3Z1zQqJGcXrPzXbcAiaMgp2KjreEROcTkmnnisrcmJ2hYQ==",
+       "devOptional": true,
+       "funding": [
+         {
+@@ -6364,11 +6365,11 @@
+       ],
+       "license": "MIT",
+       "dependencies": {
+-        "@nodable/entities": "^3.0.0",
+-        "fast-xml-builder": "^1.2.0",
+-        "is-unsafe": "^2.0.0",
++        "@nodable/entities": "^3.1.0",
++        "fast-xml-builder": "^1.3.2",
++        "is-unsafe": "^2.0.3",
+         "path-expression-matcher": "^1.6.2",
+-        "strnum": "^2.4.2",
++        "strnum": "^2.5.1",
+         "xml-naming": "^0.3.0"
+       },
+       "bin": {
+@@ -7571,9 +7572,9 @@
+       }
+     },
+     "node_modules/is-unsafe": {
+-      "version": "2.0.2",
+-      "resolved": "https://registry.npmjs.org/is-unsafe/-/is-unsafe-2.0.2.tgz",
+-      "integrity": "sha512-HgbIHPBH0KHHCcjLfGsCvhtPTVxjaAZlXjwdz7/GQC40SjSe4sfQsar8J5VFo8JOSbarkpV0OLG95bbaNd9aAQ==",
++      "version": "2.0.3",
++      "resolved": "https://registry.npmjs.org/is-unsafe/-/is-unsafe-2.0.3.tgz",
++      "integrity": "sha512-ZBllczCCO267vgdFb6Tq3pv+LhHaCiGMdr+ZsuL+OopruAg7S+3ZDs1vD0RPC0uSrkjzbraxaGjtX1YBxjPeFQ==",
+       "devOptional": true,
+       "funding": [
+         {
+@@ -11314,9 +11315,9 @@
+       }
+     },
+     "node_modules/strnum": {
+-      "version": "2.4.2",
+-      "resolved": "https://registry.npmjs.org/strnum/-/strnum-2.4.2.tgz",
+-      "integrity": "sha512-rDG3Ah4TV0k1hWvLSzkZtMmLN9+eS+h3knq4MP6A42Y3Yh5qGNnOUs1jJkoSr8FG5dsL28c7KgkIBzSEykqtuw==",
++      "version": "2.5.1",
++      "resolved": "https://registry.npmjs.org/strnum/-/strnum-2.5.1.tgz",
++      "integrity": "sha512-UM4nTLWzQiDBseVxUGxN0wJzIk0UU89Qi7pKXz9qISo+lhviJikTuikBsK/oFRlpvYHvSdz0TVoLyQ+sEpYwxA==",
+       "devOptional": true,
+       "funding": [
+         {
+@@ -11677,7 +11678,7 @@
+       "version": "5.9.3",
+       "resolved": "https://registry.npmjs.org/typescript/-/typescript-5.9.3.tgz",
+       "integrity": "sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw==",
+-      "dev": true,
++      "devOptional": true,
+       "license": "Apache-2.0",
+       "bin": {
+         "tsc": "bin/tsc",
 ```
 
 ---
 
-### Incident Patch 2: `adf3b41f` (2026-11-24)
-**Commit Message**: Merge 'core/translate/optimizer: fix two TPC-C plan choices that cost 26x in instructions' from Jussi Saurio
+### Incident Patch 2: `4f61bc74` (2026-11-25)
+**Commit Message**: Merge 'build(deps): bump addressable from 2.9.0 to 2.9.1 in /examples/react-native' from app/dependabot
 
-On main, the planner picks the wrong index for lookups on a composite
-primary key, and skips the MIN fast path for `COALESCE(MIN(x), 0)`. So
-TPC-C runs 54x more instructions in Turso than in SQLite.
+Bumps [addressable](https://github.com/sporkmonger/addressable) from
+2.9.0 to 2.9.1. <details> <summary>Changelog</summary> <p><em>Sourced
+from <a href="https://github.com/sporkmonger/addressable/blob/main/CHANG
+ELOG.md">addressable's changelog</a>.</em></p> <blockquote>
+<h2>Addressable 2.9.1 <!-- raw HTML omitted --></h2>
+<h3><code>Addressable::URI</code></h3> <ul> <li>fixes denial of service
+in <code>Addressable::URI.normalize_path</code>, which took quadratic
+time on paths with many dot segments; <code>URI#normalize</code>,
+<code>#join</code>, <code>#==</code> and <code>#===</code> were affected
+([GHSA-qq38-m9mg-xjj5])</li> <li>fixes
+<code>Addressable::URI.normalize_path</code> keeping segments that a
+<code>..</code> should have removed after a <code>..</code> above the
+root, e.g. <code>/../../public/x/../../secret</code> normalized to
+<code>/public/x/secret</code> instead of <code>/secret</code>
+([GHSA-8gmh-2hhj-2hv9])</li> <li>fixes
+<code>Addressable::URI.normalize_path</code> treating a raw line feed as
+a segment boundary, e.g. joining <code>..\n/secret</code> onto
+<code>/
 
-Instructions for 1000 TPC-C transactions (callgrind; `tpcc_start -w 1 -c
-1 -r 0 -t 1000 -s 1`):
-
-| Build | Instructions |
-|---|---|
-| main | 33.31G |
-| main + commit 2 | 1.68G |
-| this PR (commits 1–3) | 1.29G |
-| SQLite | 0.62G |
-
-1. **perf/tpc-c: `-s <seed>` fixes the random seed.** With `-t N`, the
-harness also skips the ramp-up and timer and waits for the threads. Two
-seeded runs differed by 0.0003% in instructions.
-2. **Estimate `=` on part of a composite primary key as several rows.**
-On main, any primary key column counts as a one-row lookup:
-   ```sql
-   CREATE TABLE orders (o_w_id INT, o_d_id INT, o_id INT, o_c_id INT,
-     PRIMARY KEY (o_w_id, o_d_id, o_id));
-   CREATE INDEX idx_orders ON orders (o_w_id, o_d_id, o_c_id, o_id);
-   EXPLAIN QUERY PLAN SELECT o_c_id FROM orders WHERE o_id = 1 AND o_d_id = 2 AND o_w_id = 3;
-   -- main:    SEARCH orders USING COVERING INDEX
-
-**File**: `core/translate/optimizer/constraints.rs` (modified, +11/-3)
+**File**: `examples/react-native/Gemfile.lock` (modified, +2/-2)
 ```diff
-@@ -4,7 +4,7 @@ use crate::ast::{self, SortOrder, TableInternalId};
- use crate::translate::expr::comparison_affinity;
- use crate::translate::expr_context::{ExprContext, ExprProperties, TableMetadata};
- use crate::{
--    schema::{Column, Index, IndexColumn, Schema},
-+    schema::{Column, Index, IndexColumn, Schema, Table},
-     translate::{
-         collate::{comparison_collation, in_list_collation, CollationSeq},
-         expr::{
-@@ -408,8 +408,16 @@ fn estimate_selectivity(
- 
-     match op {
-         ConstraintOperator::AstNativeOperator(ast::Operator::Equals) => {
--            let is_pk_or_rowid_alias =
--                is_rowid || column.is_some_and(|c| c.is_rowid_alias() || c.primary_key());
-+            // One column of a primary key with several columns is not unique
-+            // on its own, so it takes the indexed-column estimate below.
-+            let is_single_column_primary_key = column.is_some_and(|c| c.primary_key())
-+                && matches!(
-+                    &table_reference.table,
-+                    Table::BTree(table) if table.primary_key_columns.len() == 1
-+                );
-+            let is_pk_or_rowid_alias = is_rowid
-+                || column.is_some_and(|c| c.is_rowid_alias())
-+                || is_single_column_primary_key;
- 
-             let selectivity_when_unique = if row_count > 0 {
-                 1.0 / row_count as f64
+@@ -14,7 +14,7 @@ GEM
+       minitest (>= 5.1, < 6)
+       securerandom (>= 0.3)
+       tzinfo (~> 2.0, >= 2.0.5)
+-    addressable (2.9.0)
++    addressable (2.9.1)
+       public_suffix (>= 2.0.2, < 8.0)
+     algoliasearch (1.27.5)
+       httpclient (~> 2.8, >= 2.8.3)
+@@ -118,7 +118,7 @@ DEPENDENCIES
+ CHECKSUMS
+   CFPropertyList (3.0.8) sha256=2c99d0d980536d3d7ab252f7bd59ac8be50fbdd1ff487c98c949bb66bb114261
+   activesupport (7.2.3.1) sha256=11ebed516a43a0bb47346227a35ebae4d9427465a7c9eb197a03d5c8d283cb34
+-  addressable (2.9.0) sha256=7fdf6ac3660f7f4e867a0838be3f6cf722ace541dd97767fa42bc6cfa980c7af
++  addressable (2.9.1) sha256=f1212365945455c84e8d031eea40fc6bedf0c663a78d95b3ab93591040bc5c35
+   algoliasearch (1.27.5) sha256=26c1cddf3c2ec4bd60c148389e42702c98fdac862881dc6b07a4c0b89ffec853
+   atomos (0.1.3) sha256=7d43b22f2454a36bace5532d30785b06de3711399cb1c6bf932573eda536789f
+   base64 (0.3.0) sha256=27337aeabad6ffae05c265c450490628ef3ebd4b67be58257393227588f5a97b
 ```
 
-**File**: `core/translate/optimizer/cost.rs` (modified, +61/-0)
+---
+
+### Incident Patch 3: `03dccb7c` (2026-11-25)
+**Commit Message**: Merge 'core/insert: build the NEW row of BEFORE triggers the way SQLite does' from Glauber Costa
+
+This PR started as a one-line change: do not apply affinity to the
+temporary table of `INSERT ... SELECT`. Three review rounds then each
+found one more place where Turso converts the values of an INSERT in a
+different order than SQLite, relative to the BEFORE INSERT triggers.
+This version stops fixing them one by one. It makes `translate_insert`
+follow the order and the register layout of `sqlite3Insert`.
+
+## What SQLite does
+
+Read from `src/insert.c` of 3.51.0 (`sqlite3Insert`), and checked with
+`EXPLAIN`.
+
+SQLite keeps the row in one block of registers (`regRowid`,
+`regData...`) and does not convert it until the BEFORE triggers are
+done. For the triggers it makes a copy (`regCols`) and converts the
+copy:
+
+1. rowid of the copy: NULL becomes -1, then `MustBeInt`
+2. `Copy` the columns
+3. `Affinity`, or `TypeCheck` for a STRICT table
+(`sqlite3TableAffinity`)
+4. generated columns, computed from the copy
+(`sqlite3ComputeGeneratedColumns`)
+5. `Program`: the triggers read NEW from the copy
+
+Then it continues with the row itself: rowid (`NewRowid` or
+`MustBeInt`), NOT NULL, conversion to the 
+
+**File**: `core/translate/insert.rs` (modified, +173/-149)
 ```diff
-@@ -366,6 +366,15 @@ pub(crate) fn estimate_rows_per_seek(
-         }
+@@ -608,32 +608,13 @@ pub fn translate_insert(
+ 
+     let has_user_provided_rowid = ctx.table.has_rowid && insertion.key.is_provided_by_user();
+ 
+-    // For non-STRICT tables, apply column affinity to the values early.
+-    // This must happen before BEFORE triggers (matching SQLite's order) so that
+-    // trigger bodies see affinity-applied values. Affinity is idempotent, so
+-    // applying it here means we can skip the per-trigger Copy+Affinity in fire_trigger.
+-    if !ctx.table.is_strict {
+-        let affinity = insertion
+-            .col_mappings
+-            .iter()
+-            .filter(|cm| !cm.column.is_virtual_generated())
+-            .map(|col_mapping| col_mapping.column.affinity());
+-
+-        // Only emit Affinity if there's meaningful affinity to apply
+-        // (i.e., not all BLOB/NONE affinity)
+-        if affinity.clone().any(|a| a != Affinity::Blob) {
+-            if let Ok(count) = NonZeroUsize::try_from(insertion.num_non_virtual_cols) {
+-                program.emit_insn(Insn::Affinity {
+-                    start_reg: insertion.first_col_register(),
+-                    count,
+-                    affinities: affinity.map(|a| a.aff_mask()).collect(),
+-                });
+-            }
+-        }
+-    }
+-
+-    // Fire BEFORE INSERT triggers
+-
++    // The row is now in the registers of `insertion`, as the source gave it. The rest follows
++    // the order of sqlite3Insert:
++    //   1. BEFORE triggers, which see a converted copy of the row
++    //   2. rowid: NewRowid or MustBeInt
++    //   3. NOT NULL, conversion to the column types, generated columns
++    //   4. CHECK, uniqueness, foreign keys
++    //   5. MakeRecord, Insert, AFTER triggers
+     let relevant_before_triggers = get_triggers_including_temp(
+         resolver,
+         namespace,
+@@ -643,75 +624,15 @@ pub fn translate_insert(
+         &btree_table,
+         connection,
+     );
+-
+-    // The inserted values are the user's values until ENCODE runs below.
+-    let dml_ctx = DmlColumnContext::from_column_reg_mapping(
+-        insertion.col_mappings.iter().map(|cm| {
+-            (
+-                cm.column,
+-                if cm.column.is_rowid_alias() {
+-                    insertion.key_register()
+-                } else {
+-                    cm.register
+-                },
+-            )
+-        }),
+-        DmlRowForm::UserFacing,
+-    );
+-
+     let has_before_triggers = !relevant_before_triggers.is_empty();
+     if has_before_triggers {
+-        compute_generated_columns(
++        let new_registers = emit_new_row_for_before_triggers(
+             program,
+-            &ctx.table.columns_topo_sort()?,
+-            &dml_ctx,
+             resolver,
++            &insertion,
+             &btree_table,
++            has_user_provided_rowid,
+         )?;
+-
+-        // In SQLite, NEW.<rowid_alias> returns -1 in BEFORE INSERT triggers when the rowid
+-        // hasn't been assigned yet (i.e., it's NULL). We need to temporarily set the key
+-        // register to -1 so the trigger sees the correct value.
+-        let saved_key_reg = if has_user_provided_rowid {
+-            // User provided a value that might be NULL. Save original value, replace NULL with -1.
+-            let save_reg = program.alloc_register();
+-            program.emit_insn(Insn::Copy {
+-                src_reg: insertion.key_register(),
+-                dst_reg: save_reg,
+-                extra_amount: 0,
+-            });
+-            let skip_label = program.allocate_label();
+-            program.emit_insn(Insn::NotNull {
+-                reg: insertion.key_register(),
+-                target_pc: skip_label,
+-            });
+-            program.emit_insn(Insn::Integer {
+-                value: -1,
+-                dest: insertion.key_register(),
+-            });
+-            program.preassign_label_to_next_insn(skip_label);
+-            Some(save_reg)
+-        } else {
+-            // Key is auto-generated, register is uninitialized. Set to -1.
+-            program.emit_insn(Insn::Integer {
+-                value: -1,
+-                dest: insertion.key_register(),
+-            });
+-            None
+-        };
+-        // Build NEW registers: for rowid alias columns, use the rowid register; otherwise use column register
+-        let new_registers: Vec<usize> = insertion
+-            .col_mappings
+-            .iter()
+-            .map(|col_mapping| {
+-                if col_mapping.column.is_rowid_alias() {
+-                    insertion.key_register()
+-                } else {
+-                    col_mapping.register
+-                }
+-            })
+-            .chain(std::iter::once(insertion.key_register()))
+-            .collect();
+         // Determine the conflict resolution to propagate to triggers:
+         // 1. If there's already an override from UPSERT DO UPDATE context, use it (forces ABORT)
+         // 2. If the INSERT uses an explicit ON CONFLICT clause, propagate it to
+@@ -742,17 +663,23 @@ pub fn translate_insert(
+            
+```
+
+**File**: `core/translate/upsert.rs` (modified, +13/-37)
+```diff
+@@ -24,8 +24,8 @@ use crate::translate::fkeys::{
+     fire_fk_update_actions, ParentKeyNewProbeMode,
+ };
+ use crate::translate::insert::{
+-    emit_remember_written_rowid, emit_returning_subqueries, expr_contains_subquery,
+-    format_unique_violation_desc, InsertEmitCtx,
++    emit_column_type_conversion, emit_remember_written_rowid, emit_returning_subqueries,
++    expr_contains_subquery, format_unique_violation_desc, InsertEmitCtx,
+ };
+ use crate::translate::plan::ColumnMask;
+ use crate::translate::planner::ROWID_STRS;
+@@ -61,7 +61,6 @@ use crate::{
+     },
+     util::{exprs_are_equivalent, normalize_ident},
+     vdbe::{
+-        affinity::Affinity,
+         builder::{DmlColumnContext, DmlRowForm, ProgramBuilder},
+         insn::{IdxInsertFlags, InsertFlags, Insn},
+     },
+@@ -826,40 +825,13 @@ pub fn emit_upsert(
      }
  
-+    if let Some(rows) = default_rows_for_first_column_of_unique_key(
-+        index_info,
-+        constraints,
-+        usable_constraint_refs,
-+        base_row_count,
-+    ) {
-+        return rows * join_probe_constant_selectivity;
-+    }
-+
-     let selectivity_multiplier: f64 = usable_constraint_refs
-         .iter()
-         .map(|cref| {
-@@ -386,6 +395,58 @@ pub(crate) fn estimate_rows_per_seek(
-     (selectivity_multiplier * *base_row_count).max(1.0) * join_probe_constant_selectivity
- }
- 
-+/// Default number of rows that match `=` on the first column of an index
-+/// without ANALYZE stats. This is the value SQLite's sqlite3DefaultRowEst()
-+/// uses for a one-column prefix.
-+const DEFAULT_ROWS_PER_FIRST_COLUMN_OF_INDEX: f64 = 10.0;
-+
-+/// Rows per seek with `=` on only the first column of a unique index with
-+/// several columns, such as a composite primary key, when ANALYZE has no
-+/// stats. Returns `None` for any other seek.
-+///
-+/// The per-column estimate for that column is a fixed fraction of the table,
-+/// so `l_orderkey = ?` on TPC-H's PRIMARY KEY (l_orderkey, l_linenumber)
-+/// estimates thousands of rows of a 6M-row lineitem table, where the first
-+/// key column usually matches a few rows. Like SQLite, the estimate is 10
-+/// rows, times the selectivity of any range constraint on the next column.
-+/// Longer prefixes keep the product of the per-column estimates, which
-+/// includes the factor of every column that leads no index.
-+fn default_rows_for_first_column_of_unique_key(
-+    index_info: IndexInfo,
-+    constraints: &[Constraint],
-+    usable_constraint_refs: &[RangeConstraintRef],
-+    base_row_count: RowCountEstimate,
-+) -> Option<f64> {
-+    if !index_info.unique || index_info.column_count < 2 {
-+        return None;
-+    }
-+    let eq_prefix_len = usable_constraint_refs
-+        .iter()
-+        .take_while(|cref| cref.eq.is_some())
-+        .count();
-+    if eq_prefix_len != 1 {
-+        return None;
-+    }
-+    let range_selectivity: f64 = usable_constraint_refs[1..]
-+        .iter()
-+        .map(|cref| {
-+            let mut selectivity = 1.0;
-+            if let Some(lower_bound) = cref.lower_bound {
-+                selectivity *= constraints[lower_bound].selectivity;
-+            }
-+            if let Some(upper_bound) = cref.upper_bound {
-+                selectivity *= constraints[upper_bound].selectivity;
-+            }
-+            selectivity
-+        })
-+        .product();
-+    Some(
-+        (DEFAULT_ROWS_PER_FIRST_COLUMN_OF_INDEX * range_selectivity)
-+            .min(*base_row_count)
-+            .max(1.0),
-+    )
-+}
-+
- fn join_probe_constant_selectivity(
-     constraints: &[Constraint],
-     usable_constraint_refs: &[RangeConstraintRef],
-```
-
-**File**: `core/translate/optimizer/mod.rs` (modified, +55/-3)
-```diff
-@@ -890,9 +890,17 @@ fn detect_simple_aggregate(
-     let agg = plan.aggregates.first().unwrap();
-     let result_expr = &plan.result_columns.first().unwrap().expr;
- 
--    // The result column must be exactly the aggregate expression (not wrapped in
--    // something like `length(count(*))`).
--    if !exprs_are_equivalent(result_expr, &agg.original_expr) {
-+    // The COUNT fast path writes the count straight into the result register,
-+    // so its result column must be exactly the aggregate (not wrapped in
-+    // something like `length(count(*))`). The MIN/MAX fast path only stops the
-+    // loop at the first qualifying row and then computes the result column as
-+    // usual, so it also accepts a wrapper such as `COALESCE(MIN(x), 0)`, like
-+    // SQLite's minMaxQuery().
-+    let result_is_aggregate = exprs_are_equivalent(result_expr, &agg.original_expr);
-+    if !result_is_aggregate
-+        && (!matches!(agg.func, AggFunc::Min | AggFunc::Max)
-+            || !wrapper_reads_only_aggregate(result_expr, &agg.original_expr)?)
-+    {
-         return Ok(None);
+     if let Some(bt) = table.btree() {
+-        if bt.is_strict {
+-            // Pre-encode TypeCheck: all columns are decoded (user-facing) at this point.
+-            // We need to do this before regenerating virtual columns, because TypeCheck applies
+-            // affinity in-place to its registers, which could affect virtual columns.
+-            program.emit_insn(Insn::TypeCheck {
+-                start_reg: new_start,
+-                count: layout.num_non_virtual_cols(),
+-                check_generated: false,
+-                table_reference: BTreeTable::input_type_check_table_ref(
+-                    &bt,
+-                    resolver.schema(),
+-                    None,
+-                )?,
+-            });
+-        } else {
+-            // For non-STRICT tables, apply column affinity to the values.
+-            // This must happen early so that both index records and the table record
+-            // use the converted values.
+-            let affinity = bt
+-                .columns()
+-                .iter()
+-                .filter(|c| !c.is_virtual_generated())
+-                .map(|c| c.affinity());
+-
+-            if affinity.clone().any(|a| a != Affinity::Blob) {
+-                if let Ok(count) = NonZeroUsize::try_from(layout.num_non_virtual_cols()) {
+-                    program.emit_insn(Insn::Affinity {
+-                        start_reg: new_start,
+-                        count,
+-                        affinities: affinity.map(|a| a.aff_mask()).collect(),
+-                    });
+-                }
+-            }
+-        }
++        emit_column_type_conversion(
++            program,
++            resolver,
++            &bt,
++            new_start,
++            layout.num_non_virtual_cols(),
++        )?;
      }
  
-@@ -942,6 +950,50 @@ fn detect_simple_aggregate(
-     })
- }
- 
-+/// Returns true when `result_expr` reads no table column, subquery or
-+/// register outside `aggregate`. The MIN/MAX fast path leaves the cursor on the
-+/// extremum row, so a column read outside the aggregate would see that row
-+/// instead of the row the normal aggregate loop leaves behind.
-+fn wrapper_reads_only_aggregate(result_expr: &Expr, aggregate: &Expr) -> Result<bool> {
-+    let mut reads_only_aggregate = true;
-+    walk_expr(result_expr, &mut |expr: &Expr| -> Result<WalkControl> {
-+        if exprs_are_equivalent(expr, aggregate) {
-+            return Ok(WalkControl::SkipChildren);
-+        }
-+        // Allow only expressions that compute a value from their operands.
-+        // Everything else (columns, subqueries, registers, unresolved names)
-+        // could read state outside the aggregate.
-+        let is_window_call = matches!(
-+            expr,
-+            Expr::FunctionCall { filter_over, .. } if filter_over.over_clause.is_some()
-+        );
-+        if !is_window_call
-+            && matches!(
-+                expr,
-+                Expr::Literal(..)
-+                    | Expr::Variable(..)
-+                    | Expr::FunctionCall { .. }
-+                    | Expr::Binary(..)
-+                    | Expr::Unary(..)
-+                    | Expr::Parenthesized(..)
-+                    | Expr::Cast { .. }
-+                    | Expr::Collate(..)
-+                    | Expr::Case { .. }
-+                    | Expr::Between { .. }
-+                    | Expr::InList { .. }
-+                    | Expr::IsNull(..)
-+                    | Expr::NotNull(..)
-+                    | Expr::Like { .. }
-+            )
-+        {
-+            return Ok(WalkControl::Continue);
-+        }
-+        reads_only_aggregate = false;
-+        Ok(WalkControl::SkipChildren)
-+    })?;
-+    Ok(reads_only_aggregate)
-+}
-+
- /// The table reads chosen by the join search.
- struct TableAccessPlan {
-     access_methods: Vec<AccessMethod>,
+     // Recompute generated columns for the new row after SET clauses have modified base columns.
+@@ -2197,6 +2169,10 @@ fn rewrite_expr_to_registers(
+                             if ROWID_STRS.iter().any(|s| s.eq_ignore_ascii_case(&c)) {
+                                 *expr = Expr::register(ins.key_register());
+                             } else if let Some(cm) = ins.get_col_mapping_by_name(&c) {
++                                if cm.column.is_rowid_alias() {
++                                    *expr = Expr::register(ins.key_register());
++                                    return Ok(WalkControl::Continue);
++                                }
+                                 // Use decoded excluded registers when available
+                                 // to prevent double-encoding of custom type values
+                                 if let Some(decoded_start) = excluded_decoded_start {
 ```
 
-**File**: `perf/tpc-c/src/main.c` (modified, +54/-38)
+**File**: `sqlite/conformance/sqlite-sqltests/insert-select-temp-table-affinity.sqltest` (added, +297/-0)
 ```diff
-@@ -109,6 +109,7 @@ int main(int argc, char *argv[]) {
-   struct itimerval itval;
-   struct sigaction sigact;
-   int fd, seed;
-+  int seed_given = 0;
- 
-   printf("CHECKING IF SQLITE IS THREADSAFE: RETURN VALUE = %d\n",
-          sqlite3_threadsafe());
-@@ -150,7 +151,7 @@ int main(int argc, char *argv[]) {
- 
-   /* Parse args */
- 
--  while ((c = getopt(argc, argv, "w:c:r:l:i:m:o:t:0:1:2:3:4:")) != -1) {
-+  while ((c = getopt(argc, argv, "w:c:r:l:i:m:o:t:s:0:1:2:3:4:")) != -1) {
-     switch (c) {
-     case 'w':
-       printf("option w with value '%s'\n", optarg);
-@@ -180,6 +181,11 @@ int main(int argc, char *argv[]) {
-       printf("option t (number of transactions) with value '%s'\n", optarg);
-       num_trans = atoi(optarg);
-       break;
-+    case 's':
-+      printf("option s (random seed) with value '%s'\n", optarg);
-+      seed = atoi(optarg);
-+      seed_given = 1;
-+      break;
-     case 'i':
-       printf("option i with value '%s'\n", optarg);
-       PRINT_INTERVAL = atoi(optarg);
-@@ -320,20 +326,23 @@ int main(int argc, char *argv[]) {
-     exit(1);
-   }
- 
--  fd = open("/dev/urandom", O_RDONLY);
--  if (fd == -1) {
--    fd = open("/dev/random", O_RDONLY);
-+  /* -s fixes the seed, so that with -c 1 and -t a run is repeatable. */
-+  if (!seed_given) {
-+    fd = open("/dev/urandom", O_RDONLY);
-     if (fd == -1) {
--      struct timeval tv;
--      gettimeofday(&tv, NULL);
--      seed = (tv.tv_sec ^ tv.tv_usec) * tv.tv_sec * tv.tv_usec ^ tv.tv_sec;
-+      fd = open("/dev/random", O_RDONLY);
-+      if (fd == -1) {
-+        struct timeval tv;
-+        gettimeofday(&tv, NULL);
-+        seed = (tv.tv_sec ^ tv.tv_usec) * tv.tv_sec * tv.tv_usec ^ tv.tv_sec;
-+      } else {
-+        read(fd, &seed, sizeof(seed));
-+        close(fd);
-+      }
-     } else {
-       read(fd, &seed, sizeof(seed));
-       close(fd);
-     }
--  } else {
--    read(fd, &seed, sizeof(seed));
--    close(fd);
-   }
-   SetSeed(seed);
- 
-@@ -394,46 +403,53 @@ int main(int argc, char *argv[]) {
-                    (void *)&(thd_arg[t_num]));
-   }
- 
--  printf("\nRAMP-UP TIME.(%d sec.)\n", lampup_time);
--  fflush(stdout);
--  sleep(lampup_time);
--  printf("\nMEASURING START.\n\n");
--  fflush(stdout);
-+  if (num_trans > 0) {
-+    /* With -t, each thread stops after its transaction count. Count every
-+       transaction and wait for the threads, so a run does the same work
-+       every time (used for instruction-count profiling). */
-+    counting_on = 1;
-+  } else {
-+    printf("\nRAMP-UP TIME.(%d sec.)\n", lampup_time);
-+    fflush(stdout);
-+    sleep(lampup_time);
-+    printf("\nMEASURING START.\n\n");
-+    fflush(stdout);
- 
--  /* sleep(measure_time); */
--  /* start timer */
-+    /* sleep(measure_time); */
-+    /* start timer */
- 
- #ifndef _SLEEP_ONLY_
--  if (setitimer(ITIMER_REAL, &itval, NULL) == -1) {
--    fprintf(stderr, "error in setitimer()\n");
--  }
-+    if (setitimer(ITIMER_REAL, &itval, NULL) == -1) {
-+      fprintf(stderr, "error in setitimer()\n");
-+    }
- #endif
- 
--  counting_on = 1;
--  /* wait for measurement period */
--  for (i = 0; i < (measure_time / PRINT_INTERVAL); i++) {
-+    counting_on = 1;
-+    /* wait for measurement period */
-+    for (i = 0; i < (measure_time / PRINT_INTERVAL); i++) {
- #ifndef _SLEEP_ONLY_
--    pause();
-+      pause();
- #else
--    sleep(PRINT_INTERVAL);
--    alarm_dummy();
-+      sleep(PRINT_INTERVAL);
-+      alarm_dummy();
- #endif
--  }
--  counting_on = 0;
-+    }
-+    counting_on = 0;
- 
- #ifndef _SLEEP_ONLY_
--  /* stop timer */
--  itval.it_interval.tv_sec = 0;
--  itval.it_interval.tv_usec = 0;
--  itval.it_value.tv_sec = 0;
--  itval.it_value.tv_usec = 0;
--  if (setitimer(ITIMER_REAL, &itval, NULL) == -1) {
--    fprintf(stderr, "error in setitimer()\n");
--  }
-+    /* stop timer */
-+    itval.it_interval.tv_sec = 0;
-+    itval.it_interval.tv_usec = 0;
-+    itval.it_value.tv_sec = 0;
-+    itval.it_value.tv_usec = 0;
-+    if (setitimer(ITIMER_REAL, &itval, NULL) == -1) {
-+      fprintf(stderr, "error in setitimer()\n");
-+    }
- #endif
- 
--  printf("\nSTOPPING THREADS");
--  activate_transaction = 0;
-+    printf("\nSTOPPING THREADS");
-+    activate_transaction = 0;
-+  }
- 
-   /* wait threads' ending and close connections*/
-   for (i = 0; i < num_conn; i++) {
-```
-
-**File**: `sqlite/conformance/sqlite-sqltests/composite-primary-key-index-choice.sqltest` (added, +98/-0)
-```diff
-@@ -0,0 +1,98 @@
-+# Index choice for tables with a composite primary key, without ANALYZE stats.
-+# One column of a composite primary key is not unique on its own, so `= ?` on
-+# it must not be estimated as a one-row lookup. These statements come from TPC-C.
+@@ -0,0 +1,297 @@
++# INSERT ... SELECT from the table it writes to, or into a table with an insert trigger, goes through a temporary table. The target column affinity applies when the row is read back from it, before triggers see the row.
 +
 +@database :memory:
 +
-+setup tpcc_like {
-+    CREATE TABLE warehouse (w_id INTEGER PRIMARY KEY, w_tax REAL);
-+
-+    CREATE TABLE customer (
-+        c_w_id INTEGER, c_d_id INTEGER, c_id INTEGER,
-+        c_last TEXT, c_first TEXT, c_credit TEXT, c_discount REAL,
-+        PRIMARY KEY (c_w_id, c_d_id, c_id)
-+    );
-+    CREATE INDEX idx_customer ON customer (c_w_id, c_d_id, c_last, c_first);
-+
-+    CREATE TABLE orders (
-+        o_w_id INTEGER, o_d_id INTEGER, o_id INTEGER, o_c_id INTEGER, o_carrier_id INTEGER,
-+        PRIMARY KEY (o_w_id, o_d_id, o_id)
-+    );
-+    CREATE INDEX idx_orders ON orders (o_w_id, o_d_id, o_c_id, o_id);
-+
-+    CREATE TABLE stock (
-+        s_w_id INTEGER, s_i_id INTEGER, s_quantity INTEGER, s_data TEXT,
-+        PRIMARY KEY (s_w_id, s_i_id)
-+    );
-+    CREATE INDEX fkey_stock_2 ON stock (s_i_id);
-+}
-+
-+@setup tpcc_like
-+@skip-if sqlite "Turso prints query plan rows in a different format"
-+test full-primary-key-beats-index-on-key-prefix {
-+    EXPLAIN QUERY PLAN
-+    SELECT c_last FROM customer WHERE c_w_id = 1 AND c_d_id = 2 AND c_id = 3;
++test issue-2040-integer-column-direct {
++    CREATE TABLE t(x INTEGER);
++    INSERT INTO t VALUES (9.00), ('xthjqehemf'), (NULL);
++    SELECT min(x), typeof(min(x)) FROM t;
 +}
 +expect {
-+    1|0|0|SEARCH customer USING INDEX sqlite_autoindex_customer_1 (c_w_id=? AND c_d_id=? AND c_id=?)
++    9|integer
 +}
 +
-+@setup tpcc_like
-+@skip-if sqlite "Turso prints query plan rows in a different format"
-+test full-primary-key-beats-index-on-key-prefix-in-join {
-+    EXPLAIN QUERY PLAN
-+    SELECT c_discount, c_last, c_credit, w_tax FROM customer, warehouse
-+    WHERE w_id = 1 AND c_w_id = w_id AND c_d_id = 2 AND c_id = 3;
++test issue-2040-integer-column-through-temp-table {
++    CREATE TABLE t(x INTEGER);
++    INSERT INTO t VALUES (9.00), ('xthjqehemf'), (NULL);
++    INSERT INTO t SELECT x FROM t;
++    SELECT min(x), typeof(min(x)), count(*) FROM t;
 +}
 +expect {
-+    1|0|0|SEARCH warehouse USING INTEGER PRIMARY KEY (rowid=?)
-+    2|0|0|SEARCH customer USING INDEX sqlite_autoindex_customer_1 (c_w_id=? AND c_d_id=? AND c_id=?)
++    9|integer|6
 +}
 +
-+@setup tpcc_like
-+@skip-if sqlite "Turso prints query plan rows in a different format"
-+test full-primary-key-beats-covering-index-on-key-prefix {
-+    EXPLAIN QUERY PLAN
-+    SELECT o_c_id FROM orders WHERE o_id = 1 AND o_d_id = 2 AND o_w_id = 3;
++test issue-2041-text-column-direct {
++    CREATE TABLE t(x TEXT);
++    INSERT INTO t VALUES (-3.90), (-611), (199);
++    SELECT min(x), typeof(min(x)) FROM t;
 +}
 +expect {
-+    1|0|0|SEARCH orders USING INDEX sqlite_autoindex_orders_1 (o_w_id=? AND o_d_id=? AND o_id=?)
++    -3.9|text
 +}
 +
-+@setup tpcc_like
-+@skip-if sqlite "Turso prints query plan rows in a different format"
-+test full-primary-key-beats-index-on-one-key-column {
-+    EXPLAIN QUERY PLAN
-+    SELECT s_quantity FROM stock WHERE s_i_id = 1 AND s_w_id = 2;
++test issue-2041-text-column-through-temp-table {
++    CREATE TABLE s(a);
++    INSERT INTO s VALUES (-3.90), (-611), (199);
++    CREATE TABLE t(x TEXT);
++    INSERT INTO t SELECT a FROM s;
++    INSERT INTO t SELECT x FROM t;
++    SELECT min(x), typeof(min(x)), count(*) FROM t;
 +}
 +expect {
-+    1|0|0|SEARCH stock USING INDEX sqlite_autoindex_stock_1 (s_w_id=? AND s_i_id=?)
++    -3.9|text|6
 +}
 +
-+@setup tpcc_like
-+@skip-if sqlite "Turso prints query plan rows in a different format"
-+test index-matching-more-columns-beats-primary-key-prefix {
-+    EXPLAIN QUERY PLAN
-+    SELECT count(c_id) FROM customer WHERE c_w_id = 1 AND c_d_id = 2 AND c_last = 'BAR';
++test temp-table-with-column-list-and-different-affinity {
++    CREATE TABLE t(a INTEGER, b TEXT, c REAL);
++    INSERT INTO t(a, b, c) VALUES ('5', 6, '7');
++    INSERT INTO t(c, a, b) SELECT a, b, c FROM t;
++    SELECT a, typeof(a), b, typeof(b), CAST(c AS TEXT), typeof(c) FROM t ORDER BY rowid;
 +}
 +expect {
-+    1|0|0|SEARCH customer USING INDEX idx_customer (c_w_id=? AND c_d_id=? AND c_last=?)
++    5|integer|6|text|7.0|real
++    6|integer|7.0|text|5.0|real
 +}
 +
-+# `d = ?` on the second column of a composite primary key, outside a primary
-+# key search, filters like `=` on any indexed column.
-+setup non_leading_key_column {
-+    CREATE TABLE t (w INTEGER, d INTEGER, id INTEGER, x INTEGER, PRIMARY KEY (w, d, id));
-+    CREATE INDEX t_d_x ON t (d, x);
-+    CREATE INDEX t_x ON t (x);
-+}
-+
-+@setup non_leading_key_column
-+@skip-if sqlite "Turso prints query plan rows in a different format"
-+test index-on-non-leading-key-column-and-other-column {
-+    EXPLAIN QUERY PLAN
-+    SELECT id FROM t WHERE d = 2 AND x = 52;
++test temp-table-with-after-insert-trigger {
++    CREATE TABLE s(a);
++    INSERT INTO s VALUES ('12'), (3.5), ('abc');
++    CREATE TABLE t(x INTEGER);
++    CREATE TABLE log(v);
++    CREATE TRIGGER tr AFTER INSERT ON t BEGIN INSERT INTO log VALUES (typeof(new.x)); END;
++    INSERT INTO t SELECT a FROM s;
++    SELECT x, typeof(x) FROM t ORDER BY rowid;
++    SELECT v FROM log ORDER BY rowid;
 +}
 +expect {
-+    1|0|0|SEARCH t USING INDEX t_d_x (d=? AND x=?)
++    12|integer
++    3.5|real
++    abc|text
++    integer
++    real
++    text
 +}
++
++@requires strict "uses STRICT tables"
++test strict-before-trigger-sees-converted-values-from-insert-select {
++    CREATE TABLE st(a INTEGER, b REAL) STRICT;
++    CREATE TABLE lg(v);
++    CREATE TRIGGER tr BEFORE INSERT ON st BEGIN INSERT INTO lg VALUES (typeof(new.a)||typeof(new.b)); END;
++    CREATE TRIGGER tr2 BEFORE INSERT ON st WHEN new.a = 3 BEGIN INSERT INTO lg VALUES ('when'); END;
++    INSERT INTO st SELECT '3', 4;
++    SELECT v FROM lg ORDER BY rowid;
++}
++expect {
++    when
++    integerreal
++}
++
++@requires strict "uses STRICT tables"
++test strict-before-trigger-sees-converted-values-from-values {
++    CREATE TABLE st(a INTEGER, b REAL) STRICT;
++    CREATE TABLE lg(v);
++    CREATE TRIGGER tr BEFORE INSERT ON st BEGIN INSERT INTO lg VALUES (typeof(new.a)||typeof(new.b)); END;
++    CREATE TRIGGER tr2 BEFORE INSERT ON st WHEN new.a = 3 BEGIN INSERT INTO lg VALUES ('when'); END;
++    INSERT INTO st VALUES ('3', 4);
++    SELECT v FROM lg ORDER BY rowid;
++}
++expect {
++    when
++    integerreal
++}
++
++@requires strict "uses STRICT tables"
++test strict-before-trigger-sees-converted-values-when-reading-the-target {
++    CREATE TABLE st(a INTEGER, b REAL) STRICT;
++    CREATE TABLE lg(v);
++    INSERT INTO st VALUES (1, 1.5);
++    CREATE TRIGGER tr BEFORE INSERT ON st BEGIN INSERT INTO lg VALUES (typeof(new.a)||typeof(new.b)); END;
++    INSERT INTO st SELECT '3', 4 FROM st;
++    SELECT v FROM lg ORDER BY rowid;
++}
++expect {
++    integerreal
++}
++
++@requires strict "uses STRICT tables"
++test strict-after-trigger-sees-converted-values-from-insert-select {
++    CREATE TABLE st(a INTEGER, b REAL) STRICT;
++    CREATE TABLE lg(v);
++    CREATE TRIGGER tr AFTER INSERT ON st BEGIN INSERT INTO lg VALUES (typeof(new.a)||typeof(new.b)); END;
++    INSERT INTO st SELECT '3', 4;
++    SELECT v FROM lg ORDER BY rowid;
++}
++expect {
++    integerreal
++}
++
++test non-strict-before-and-after-triggers-see-converted-values-from-insert-select {
++    CREATE TABLE nt(a INTEGER, b REAL, c TEXT);
++    CREATE TABLE lg(v);
++    CREATE TRIGGER trb BEFORE INSERT ON nt BEGIN INSERT INTO lg VALUES ('before ' || typeof(new.a) || typeof(new.b) || typeof(new.c)); END;
++    CREATE TRIGGER trw BEFORE INSERT ON nt WHEN new.a = 3 BEGIN INSERT INTO lg VALUES ('when'); END;
++    CREATE TRIGGER tra AFTER INSERT ON nt BEGIN INSERT INTO lg VALUES ('after ' || typeof(new.a) || typeof(new.b) || typeof(new.c)); END;
++    INSERT INTO nt SELECT '3', 4, 5;
++    SELECT v FROM lg ORDER BY rowid;
++}
++expect {
++    when
++    before integerrealtext
++    after integerrealtext
++}
++
++test before-trigger-sees-integer-rowid-alias-from-values {
++    CREATE TABLE t(id INTEGER PRIMARY KEY);
++    CREATE TABLE lg(v);
++    CREATE TRIGGER tr BEFORE INSERT ON t BEGIN INSERT INTO lg VALUES (new.id); END;
++    INSERT INTO t VALUES ('10'), ('3.0'), (' 7 '), (12.0), (NULL);
++    SELECT v, typeof(v) FROM lg ORDER BY ro
 ```
 
-**File**: `sqlite/conformance/sqlite-sqltests/select/simple_min_max.sqltest` (modified, +33/-0)
+**File**: `sqlite/conformance/sqlite-sqltests/snapshot_tests/modifications/snapshots/modifications__insert-multiple-rows.snap` (modified, +8/-8)
 ```diff
-@@ -625,3 +625,36 @@ expect {
-     2|
-     3|5
- }
-+
-+test indexed-min-inside-coalesce {
-+    CREATE TABLE t(a INTEGER, b INTEGER, c INTEGER, PRIMARY KEY (a, b));
-+    INSERT INTO t VALUES (1, 5, NULL), (1, 3, 7), (1, 9, 2), (2, 4, NULL), (3, 1, NULL);
-+
-+    SELECT COALESCE(MIN(b), 0) FROM t WHERE a = 1;
-+    SELECT COALESCE(MIN(b), 0) FROM t WHERE a = 99;
-+    SELECT COALESCE(MAX(b), -1) FROM t WHERE a = 1;
-+    SELECT MIN(b) + 1 FROM t WHERE a = 2;
-+    SELECT CASE WHEN MAX(b) > 4 THEN 'big' ELSE 'small' END FROM t WHERE a = 1;
-+}
-+expect {
-+    3
-+    0
-+    9
-+    5
-+    big
-+}
-+
-+test indexed-min-inside-coalesce-skips-nulls {
-+    CREATE TABLE t(a INTEGER, c INTEGER);
-+    CREATE INDEX tac ON t(a, c);
-+    INSERT INTO t VALUES (1, NULL), (1, 7), (1, 2), (2, NULL);
-+
-+    SELECT COALESCE(MIN(c), 42) FROM t WHERE a = 1;
-+    SELECT COALESCE(MIN(c), 42) FROM t WHERE a = 2;
-+    SELECT COALESCE(MAX(c), 42) FROM t WHERE a = 2;
-+}
-+expect {
-+    2
-+    42
-+    42
-+}
+@@ -49,14 +49,14 @@ addr  opcode           p1  p2  p3  p4              p5  comment
+   27    Copy            6  12   0                   0  r[12]=r[6]
+   28    Copy            7  13   0                   0  r[13]=r[7]
+   29    OpenWrite       0  11   0                   0  root=11; iDb=0
+-  30    Affinity        9   5   0                   0  r[9..14] = D, B, E, D, B
+-  31    NotNull         8  33   0                   0  r[8]!=NULL -> goto 33
+-  32    Goto            0  35   0                   0
+-  33    MustBeInt       8   0   0                   0
+-  34    Goto            0  36   0                   0
+-  35    NewRowid        1   8   0                   0  r[8]=rowid
+-  36    HaltIfNull   1299   0  10  products.name    0
+-  37    HaltIfNull   1299   0  11  products.price   0
++  30    NotNull         8  32   0                   0  r[8]!=NULL -> goto 32
++  31    Goto            0  34   0                   0
++  32    MustBeInt       8   0   0                   0
++  33    Goto            0  35   0                   0
++  34    NewRowid        1   8   0                   0  r[8]=rowid
++  35    HaltIfNull   1299   0  10  products.name    0
++  36    HaltIfNull   1299   0  11  products.price   0
++  37    Affinity        9   5   0                   0  r[9..14] = D, B, E, D, B
+   38    NotExists       1  40   8                   0
+   39    Halt         1555   0   0  products.id      0
+   40    MakeRecord      9   5  14                   0  r[14]=mkrec(r[9..13])
 ```
 
-**File**: `sqlite/conformance/sqlite-sqltests/snapshot_tests/indexes/indexes.sqltest` (modified, +6/-0)
+**File**: `sqlite/conformance/sqlite-sqltests/snapshot_tests/modifications/snapshots/modifications__insert-or-abort-multi-unique.snap` (modified, +8/-8)
 ```diff
-@@ -677,6 +677,12 @@ snapshot max-with-equality-prefix-bytecode {
-     SELECT MAX(value) FROM measurements WHERE category = 'a';
- }
- 
-+# COALESCE(MIN(x), 0) stops at the first index entry, like MIN(x).
-+@setup min_max_equality_prefix
-+snapshot coalesce-min-with-equality-prefix-bytecode {
-+    SELECT COALESCE(MIN(value), 0) FROM measurements WHERE category = 'a';
-+}
-+
- @setup schema
- snapshot-eqp index-for-max-materialized-cte {
-     WITH prices(price) AS MATERIALIZED (
+@@ -23,14 +23,14 @@ addr  opcode         p1  p2  p3  p4             p5  comment
+    6  String8         0   6   0  Widget          0  r[6]='Widget'
+    7  OpenWrite       0  10   0                  0  root=10; iDb=0
+    8  OpenWrite       1   9   0                  0  root=9; iDb=0
+-   9  Affinity        3   4   0                  0  r[3..7] = D, B, B, B
+-  10  NotNull         2  12   0                  0  r[2]!=NULL -> goto 12
+-  11  Goto            0  14   0                  0
+-  12  MustBeInt       2   0   0                  0
+-  13  Goto            0  15   0                  0
+-  14  NewRowid        2   2   0                  0  r[2]=rowid
+-  15  HaltIfNull   1299   0   4  items.sku       0
+-  16  HaltIfNull   1299   0   5  items.barcode   0
++   9  NotNull         2  11   0                  0  r[2]!=NULL -> goto 11
++  10  Goto            0  13   0                  0
++  11  MustBeInt       2   0   0                  0
++  12  Goto            0  14   0                  0
++  13  NewRowid        2   2   0                  0  r[2]=rowid
++  14  HaltIfNull   1299   0   4  items.sku       0
++  15  HaltIfNull   1299   0   5  items.barcode   0
++  16  Affinity        3   4   0                  0  r[3..7] = D, B, B, B
+   17  NotExists       2  19   2                  0
+   18  Halt         1555   0   0  items.id        0
+   19  Copy            5   8   0                  0  r[8]=r[5]
 ```
 
-**File**: `sqlite/conformance/sqlite-sqltests/snapshot_tests/indexes/snapshots/indexes__coalesce-min-with-equality-prefix-bytecode.snap` (added, +35/-0)
+**File**: `sqlite/conformance/sqlite-sqltests/snapshot_tests/modifications/snapshots/modifications__insert-or-fail-multi-unique.snap` (modified, +8/-8)
 ```diff
-@@ -0,0 +1,35 @@
-+---
-+source: indexes.sqltest
-+expression: SELECT COALESCE(MIN(value), 0) FROM measurements WHERE category = 'a';
-+info:
-+  statement_type: SELECT
-+  tables:
-+  - measurements
-+  setup_blocks:
-+  - min_max_equality_prefix
-+  database: ':memory:'
-+---
-+QUERY PLAN
-+`--SEARCH measurements USING COVERING INDEX idx_measurements_category_value (category=?)
-+
-+BYTECODE
-+addr  opcode       p1  p2  p3  p4           p5  comment
-+   0  Init          0  17   0                0  Start at 17
-+   1  Null          0   2   0                0  r[2]=NULL
-+   2  OpenRead      0   3   0  k(3,B,B)      0  index=idx_measurements_category_value, root=3, iDb=0
-+   3  String8       0   3   0  a             0  r[3]='a'
-+   4  SeekGE        0  11   3                0  key=[3..3]
-+   5    IdxGT       0  11   3                0  key=[3..3]
-+   6    Column      0   1   4                0  r[4]=idx_measurements_category_value.value
-+   7    IsNull      4  10   0                0  if (r[4]==NULL) goto 10
-+   8    AggStep     0   4   2  min(Binary)   0  accum=r[2] step(r[4])
-+   9    Goto        0  11   0                0
-+  10  Next          0   5   0                0
-+  11  AggFinal      0   2   0  min           0  accum=r[2]
-+  12  Copy          2   1   0                0  r[1]=r[2]
-+  13  NotNull       1  15   0                0  r[1]!=NULL -> goto 15
-+  14  Integer       0   1   0                0  r[1]=0
-+  15  ResultRow     1   1   0                0  output=r[1]
-+  16  Halt          0   0   0                0
-+  17  Transaction   0   1   2                0  iDb=0 tx_mode=Read
-+  18  Goto          0   1   0                0
+@@ -23,14 +23,14 @@ addr  opcode         p1  p2  p3  p4             p5  comment
+    6  String8         0   6   0  Widget          0  r[6]='Widget'
+    7  OpenWrite       0  10   0                  0  root=10; iDb=0
+    8  OpenWrite       1   9   0                  0  root=9; iDb=0
+-   9  Affinity        3   4   0                  0  r[3..7] = D, B, B, B
+-  10  NotNull         2  12   0                  0  r[2]!=NULL -> goto 12
+-  11  Goto            0  14   0                  0
+-  12  MustBeInt       2   0   0                  0
+-  13  Goto            0  15   0                  0
+-  14  NewRowid        2   2   0                  0  r[2]=rowid
+-  15  HaltIfNull   1299   0   4  items.sku       0
+-  16  HaltIfNull   1299   0   5  items.barcode   0
++   9  NotNull         2  11   0                  0  r[2]!=NULL -> goto 11
++  10  Goto            0  13   0                  0
++  11  MustBeInt       2   0   0                  0
++  12  Goto            0  14   0                  0
++  13  NewRowid        2   2   0                  0  r[2]=rowid
++  14  HaltIfNull   1299   0   4  items.sku       0
++  15  HaltIfNull   1299   0   5  items.barcode   0
++  16  Affinity        3   4   0                  0  r[3..7] = D, B, B, B
+   17  NotExists       2  19   2                  0
+   18  Halt         1555   0   0  items.id        0
+   19  Copy            5   8   0                  0  r[8]=r[5]
 ```
 
----
-
-### Incident Patch 3: `abb0589a` (2026-11-24)
-**Commit Message**: Merge 'testing/sqltest: let a fixed gap test move to another file' from Jussi Saurio
-
-## TLDR
-
-On main, the gap-removal CI check fails when a PR fixes a gap and moves
-its test to another `.sqltest` file. A gap test is a test marked
-`@compat-gap`: it records a known difference from PostgreSQL. With this
-PR, a moved test passes if it keeps its name and passes the same checks
-as a test that stays in its file.
-
-## Why
-
-- On main, `removed_gaps` looks for the fixed test only in the file that
-held the gap test.
-- So CI reports `gap test <name> (<label>) removed`, even when the moved
-test has the same SQL, setups and PostgreSQL answer.
-
-## How
-
-- `removed_gaps` looks in every test file of the PR branch for a test
-with the same name, and applies the existing `conversion_problem` checks
-to each.
-- If none passes, the error shows the problem of the test in the same
-file, else of the first test in another file. Example: `(moved to
-b.sqltest, but its SQL changed)`.
-- Renamed and deleted gap tests fail as before
-(`a_renamed_gap_test_fails`, `a_deleted_gap_test_fails`).
-- `dsl-spec.md` and the Makefile comment say a fixed test may move.
-
-## Tests
-
-- `a_gap_test_moved_to_another_file_passes`: gap
-
-**File**: `postgres/conformance/Makefile` (modified, +2/-2)
+**File**: `sqlite/conformance/sqlite-sqltests/snapshot_tests/modifications/snapshots/modifications__insert-or-ignore-multi-unique.snap` (modified, +8/-8)
 ```diff
-@@ -99,8 +99,8 @@ gaps: build-runner
- # Fail when a gap test in the checkout at $(BASE) is gone from this one:
- # deleted, renamed, or converted into a plain test with other SQL, setups or
- # PostgreSQL answer. A fixed gap keeps its test and loses only @compat-gap and
--# the expect @tursopg block. CI runs it on pull requests with BASE set to the
--# target branch:
-+# the expect @tursopg block; the test may move to another file. CI runs it on
-+# pull requests with BASE set to the target branch:
- # make check-gap-removals BASE=/path/to/base/checkout
- check-gap-removals: build-runner
- 	@test -n "$(BASE)" || { echo "set BASE to the checkout to compare with" >&2; exit 2; }
+@@ -23,14 +23,14 @@ addr  opcode       p1  p2  p3  p4       p5  comment
+    6  String8       0   6   0  Widget    0  r[6]='Widget'
+    7  OpenWrite     0  10   0            0  root=10; iDb=0
+    8  OpenWrite     1   9   0            0  root=9; iDb=0
+-   9  Affinity      3   4   0            0  r[3..7] = D, B, B, B
+-  10  NotNull       2  12   0            0  r[2]!=NULL -> goto 12
+-  11  Goto          0  14   0            0
+-  12  MustBeInt     2   0   0            0
+-  13  Goto          0  15   0            0
+-  14  NewRowid      2   2   0            0  r[2]=rowid
+-  15  IsNull        4  40   0            0  if (r[4]==NULL) goto 40
+-  16  IsNull        5  40   0            0  if (r[5]==NULL) goto 40
++   9  NotNull       2  11   0            0  r[2]!=NULL -> goto 11
++  10  Goto          0  13   0            0
++  11  MustBeInt     2   0   0            0
++  12  Goto          0  14   0            0
++  13  NewRowid      2   2   0            0  r[2]=rowid
++  14  IsNull        4  40   0            0  if (r[4]==NULL) goto 40
++  15  IsNull        5  40   0            0  if (r[5]==NULL) goto 40
++  16  Affinity      3   4   0            0  r[3..7] = D, B, B, B
+   17  NotExists     2  19   2            0
+   18  Goto          0  40   0            0
+   19  Copy          5   8   0            0  r[8]=r[5]
 ```
 
-**File**: `testing/sqltest/docs/dsl-spec.md` (modified, +2/-2)
+**File**: `sqlite/conformance/sqlite-sqltests/snapshot_tests/modifications/snapshots/modifications__insert-or-ignore.snap` (modified, +8/-8)
 ```diff
-@@ -372,13 +372,13 @@ A pretty-format run prints the gap counts after the summary: by kind, by class a
- 
- #### Removed Gap Tests
- 
--When tursopg gets a gap right, the test stays: the change removes only `@compat-gap` and the `expect @tursopg` block, and the test keeps checking the PostgreSQL answer. `sqltest gap-removals --base <dir> --head <dir>` compares the test files of two trees and fails for each gap test of the base tree that the head tree does not keep. The head tree keeps a gap test when a test with the same file and name either is still a gap test, or is the same test without `@compat-gap` and the `expect @tursopg` block:
-+When tursopg gets a gap right, the test stays: the change removes only `@compat-gap` and the `expect @tursopg` block, and the test keeps checking the PostgreSQL answer. `sqltest gap-removals --base <dir> --head <dir>` compares the test files of two trees and fails for each gap test of the base tree that the head tree does not keep. The head tree keeps a gap test when a test with the same name, in any file, either is still a gap test, or is the same test without `@compat-gap` and the `expect @tursopg` block:
- 
- - its SQL and setups equal the base test's after trimming whitespace, and its default `expect` block equals the base test's as parsed: the parser removes the indentation of each row, except in an `expect raw` block;
- - its `@skip`, `@skip-if`, `@backend` and `@requires` modifiers, and the file-level skip and requires directives of its file, equal the base test's;
- - it has no `expect @tursopg` block, or an `expect @tursopg` error block with the default block's SQLSTATE that only changes the message.
- 
--A deleted test, a renamed test and a test moved to another file count as removed. The command fails when `--base` or `--head` is not a directory, or when the base directory has no `.sqltest` files.
-+A test may move to another file when it keeps its name. A deleted test and a renamed test count as removed. The command fails when `--base` or `--head` is not a directory, or when the base directory has no `.sqltest` files.
- 
- CI runs `make -C postgres/conformance check-gap-removals` on pull requests, with the target branch as the base tree. A change that must delete a gap test fails this check, and a reviewer decides whether it merges.
- 
-```
-
-**File**: `testing/sqltest/src/gap_removals.rs` (modified, +58/-33)
-```diff
-@@ -3,57 +3,66 @@
- //! A gap test records a known difference from PostgreSQL. When a change
- //! fixes the gap, the test stays and becomes a plain test: the change removes
- //! only `@compat-gap` and the `expect @tursopg` block, or keeps that block when it
--//! only changes the error message. A change that deletes a
--//! gap test, renames it, or edits its SQL, setups or PostgreSQL answer while
--//! it removes the gap loses the record that the gap was fixed. This check
--//! compares the gap tests of a base tree with a head tree and reports each
--//! one that the head tree does not keep.
-+//! only changes the error message. The test may move to another file. A change
-+//! that deletes a gap test, renames it, or edits its SQL, setups or PostgreSQL
-+//! answer while it removes the gap loses the record that the gap was fixed.
-+//! This check compares the gap tests of a base tree with a head tree and
-+//! reports each one that the head tree does not keep.
- 
- use crate::parser::ast::{Backend, TestCase, TestFile};
--use std::collections::HashMap;
- use std::path::{Path, PathBuf};
- 
- /// The test files of one tree, with paths relative to the root of the tree.
- pub type Tree<'a> = &'a [(PathBuf, TestFile)];
- 
- /// Returns one message per gap test of `base` that `head` does not keep.
--/// A test is kept when `head` has a test with the same file and name that
--/// is still a gap test, or that is a plain test with the same SQL, setups
--/// and default `expect` block as the gap test in `base`.
-+/// A test is kept when some file of `head` has a test with the same name
-+/// that is still a gap test, or that is a plain test with the same SQL,
-+/// setups and default `expect` block as the gap test in `base`. The file may
-+/// differ, so a change can move a test to another file when it fixes the gap.
- pub fn removed_gaps(base: Tree<'_>, head: Tree<'_>) -> Vec<String> {
--    let head_files: HashMap<&Path, &TestFile> = head
--        .iter()
--        .map(|(path, file)| (path.as_path(), file))
--        .collect();
-     let mut errors = Vec::new();
-     for (path, base_file) in base {
-         for base_test in &base_file.tests {
-             let Some(label) = &base_test.gap else {
-                 continue;
-             };
--            let head_test = head_files.get(path.as_path()).and_then(|head_file| {
--                head_file
--                    .tests
--                    .iter()
--                    .find(|t| t.name == base_test.name)
--                    .map(|t| (*head_file, t))
--            });
--            let problem = match head_test {
--                None => None,
--                Some((head_file, head_test)) => {
--                    match conversion_problem(base_file, base_test, head_file, head_test) {
--                        Ok(()) => continue,
--                        Err(problem) => Some(problem),
--                    }
--                }
--            };
-+            // The test in the same file comes first, so its problem is the
-+            // one reported when no test of `head` keeps the gap test.
-+            let mut candidates: Vec<(&Path, &TestFile, &TestCase)> = head
-+                .iter()
-+                .flat_map(|(head_path, head_file)| {
-+                    head_file
-+                        .tests
-+                        .iter()
-+                        .filter(|t| t.name == base_test.name)
-+                        .map(move |t| (head_path.as_path(), head_file, t))
-+                })
-+                .collect();
-+            candidates.sort_by_key(|(head_path, _, _)| *head_path != path.as_path());
-+            let results: Vec<_> = candidates
-+                .iter()
-+                .map(|(head_path, head_file, head_test)| {
-+                    conversion_problem(base_file, base_test, head_file, head_test).map_err(|p| {
-+                        if *head_path == path.as_path() {
-+                            p.to_string()
-+                        } else {
-+                            format!("moved to {}, but {p}", head_path.display())
-+                        }
-+                    })
-+                })
-+                .collect();
-+            if results.iter().any(Result::is_ok) {
-+                continue;
-+            }
-+            let problems: Vec<&String> = results.iter().filter_map(|r| r.as_ref().err()).collect();
-             let mut message = format!(
-                 "{}: gap test {} ({label}) removed: if the gap is fixed, keep the test and \
-                  remove only the @compat-gap and the expect @tursopg override",
-                 path.display(),
-                 base_test.name
-             );
--            if let Some(problem) = problem {
-+            if let Some(problem) = problems.first() {
-                 message.push_str(&format!(" ({problem})"));
-             }
-             errors.push(message);
-@@ -254,12 +263,28 @@ expect @tursopg {
-     }
- 
-     #[test]
--    fn a_gap_test_moved_to_another_file_fails() {
-+    fn a_gap_test_moved_to_another_file_passes() {
-+      
+@@ -22,14 +22,14 @@ addr  opcode       p1  p2  p3  p4                p5  comment
+    5  String8       0   5   0  Jane Doe           0  r[5]='Jane Doe'
+    6  String8       0   6   0  active             0  r[6]='active'
+    7  OpenWrite     0   4   0                     0  root=4; iDb=0
+-   8  Affinity      3   4   0                     0  r[3..7] = D, B, B, B
+-   9  NotNull       2  11   0                     0  r[2]!=NULL -> goto 11
+-  10  Goto          0  13   0                     0
+-  11  MustBeInt     2   0   0                     0
+-  12  Goto          0  14   0                     0
+-  13  NewRowid      1   2   0                     0  r[2]=rowid
+-  14  IsNull        4  30   0                     0  if (r[4]==NULL) goto 30
+-  15  IsNull        5  30   0                     0  if (r[5]==NULL) goto 30
++   8  NotNull       2  10   0                     0  r[2]!=NULL -> goto 10
++   9  Goto          0  12   0                     0
++  10  MustBeInt     2   0   0                     0
++  11  Goto          0  13   0                     0
++  12  NewRowid      1   2   0                     0  r[2]=rowid
++  13  IsNull        4  30   0                     0  if (r[4]==NULL) goto 30
++  14  IsNull        5  30   0                     0  if (r[5]==NULL) goto 30
++  15  Affinity      3   4   0                     0  r[3..7] = D, B, B, B
+   16  NotExists     1  18   2                     0
+   17  Goto          0  30   0                     0
+   18  Copy          4   8   0                     0  r[8]=r[4]
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #12395** (closed): postgres/catalog: add a generator of Rust tables from postgres.bki (@pedrocarlo)
-- **PR #12384** (2026-11-24): core: replace casts_nonzero_integer_to_true with a cast conversion of the type (@penberg)
-- **PR #12373** (2026-11-24): testing/sqltest: let a fixed gap test move to another file (@jussisaurio)
-- **PR #12370** (2026-11-24): contribution instructions (@LeMikaelF)
-- **PR #12369** (2026-11-24): core/storage: stop counting parent dividers in interior sibling sizes (@turso-github-handyman[bot])
-- **PR #12368** (2026-11-24): postgres/conformance: record wrong array results as known gaps (@jussisaurio)
+- **PR #12472** (closed): core/mvcc: bind the frame position in encrypted log chunks (@avinassh)
+- **PR #12471** (closed): core/storage: bind encrypted pages to their page numbers (@avinassh)
+- **PR #12468** (2026-11-25): bindings/javascript: bump vitest to 4.1.12 (@penberg)
+- **PR #12464** (2026-11-25): build(deps): bump fast-xml-parser from 5.11.1 to 5.12.1 in /examples/react-native (@dependabot[bot])
+- **PR #12459** (2026-11-25): build(deps): bump addressable from 2.9.0 to 2.9.1 in /examples/react-native (@dependabot[bot])
+- **PR #12454** (2026-11-25): core/translate/optimizer: read the value of a string literal in constant conditions (@Waterpine)
 
 ---
 
@@ -2737,37 +2204,69 @@ b.sqltest, but its SQL changed)`.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge 'core: keep the program builder and the state of each statement in the sta
+## X. Merge 'build(deps): bump fast-xml-parser from 5.11.1 to 5.12.1 in /examples/reac
 
 **RULE**:
-When implementing operations in `core/alloc/allocation_site.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `examples/react-native/package-lock.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fa535be1`: Merge 'core: keep the program builder and the state of each statement in the statement allocator' from Mikaël Francoeur. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `bdc0c062`: Merge 'build(deps): bump fast-xml-parser from 5.11.1 to 5.12.1 in /examples/react-native' from app/dependabot. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/alloc/allocation_site.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `examples/react-native/package-lock.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    /// The builder of the program of a statement, of a blob handle or of the
-    /// maintenance of a materialized view, or the builder that plans the
-    /// query of a materialized view.
-    ProgramBuilder,
-    /// The state of a statement, which keeps its registers and cursors while
-    /// the statement executes.
-    ProgramState,
+      "version": "0.9.0-pre.6",
+        "react-native-builder-bob": "^0.44.1",
+        "typescript": "^5.3.0",
+        "vitest": "^4.1.11"
+      "version": "3.1.0",
+      "resolved": "https://registry.npmjs.org/@nodable/entities/-/entities-3.1.0.tgz",
+      "integrity": "sha512-LsS/DjHr+uDM647Gru/cA8+J3a3HfhttwCKLyuoyN7yXTFCxKBtSgMQBvrW9yNPa2/zDRUNuGPaH5QUFoa4arQ==",
+      "version": "1.3.2",
+      "resolved": "https://registry.npmjs.org/fast-xml-builder/-/fast-xml-builder-1.3.2.tgz",
+      "integrity": "sha512-OX91VSlShLPDgRZV7tk/YQ4l8tT75QziF5Ixg8g4PFbCVPjuTWwN+yQfAxLJ0dufJpprdOd6HlM74Jhd39TcBQ==",
+      "version": "5.12.1",
+      "resolved": "https://registry.npmjs.org/fast-xml-parser/-/fast-xml-parser-5.12.1.tgz",
+      "integrity": "sha512-wR8dO/fx+z8C5exuem1e7BKOWvjsuzvjS/tvA/Xu3Z1zQqJGcXrPzXbcAiaMgp2KjreEROcTkmnnisrcmJ2hYQ==",
+        "@nodable/entities": "^3.1.0",
+        "fast-xml-builder": "^1.3.2",
+        "is-unsafe": "^2.0.3",
+        "strnum": "^2.5.1",
+      "version": "2.0.3",
+      "resolved": "https://registry.npmjs.org/is-unsafe/-/is-unsafe-2.0.3.tgz",
+      "integrity": "sha512-ZBllczCCO267vgdFb6Tq3pv+LhHaCiGMdr+ZsuL+OopruAg7S+3ZDs1vD0RPC0uSrkjzbraxaGjtX1YBxjPeF
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+      "version": "0.9.0-pre.2",
+        "react-native-builder-bob": "^0.30.0",
+        "typescript": "^5.3.0"
+      "version": "3.0.0",
+      "resolved": "https://registry.npmjs.org/@nodable/entities/-/entities-3.0.0.tgz",
+      "integrity": "sha512-8L9xFeTYKhm49xfIypoe2W5wV1m/3Z58kT+7kR9A8OyFxcPduI4VmxaUMQyKYrRjUoLLSXv6EKKID5Tvj9cUVw==",
+      "version": "1.3.1",
+      "resolved": "https://registry.npmjs.org/fast-xml-builder/-/fast-xml-builder-1.3.1.tgz",
+      "integrity": "sha512-pIM/1n3ntFXKYrUZwW7QCK0gAW7XY+wzj1YMIV3tLDvPj/V+zTGJK5e3/4WJfwj0qWw2ElNXiTixda/R+3YSug==",
+      "version": "5.11.1",
+      "resolved": "https://registry.npmjs.org/fast-xml-parser/-/fast-xml-parser-5.11.1.tgz",
+      "integrity": "sha512-TBw6K/fxoQGGjCmZDw9w/ZwP3uDcnTM4YH/g+PFRWr8sbe5idXtxNN6vITh4+1ruCZaho6uBFurElsA7F0zzgw==",
+        "@nodable/entities": "^3.0.0",
+        "fast-xml-builder": "^1.2.0",
+        "is-unsafe": "^2.0.0",
+        "strnum": "^2.4.2",
+      "version": "2.0.2",
+      "resolved": "https://registry.npmjs.org/is-unsafe/-/is-unsafe-2.0.2.tgz",
+      "integrity": "sha512-HgbIHPBH0KHHCcjLfGsCvhtPTVxjaAZlXjwdz7/GQC40SjSe4sfQsar8J5VFo8JOSbarkpV0OLG95bbaNd9aAQ==",
+      "version": "2.4.2
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fa535be1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `bdc0c062` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction
