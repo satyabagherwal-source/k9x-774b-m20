@@ -4,24 +4,24 @@
 {
   "source_repository": "chrisbanes/skills",
   "source_url": "https://github.com/chrisbanes/skills",
-  "source_version": "efeb99dc",
+  "source_version": "9427b3a2",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-23T14:12:46.358Z",
+  "timestamp": "2026-11-25T23:41:44.691Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-chrisbanes-skills",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [chrisbanes/skills](https://github.com/chrisbanes/skills) (Revision: `efeb99dc`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-23T14:12:46.358Z`  
+> **Provenance**: Harvested from [chrisbanes/skills](https://github.com/chrisbanes/skills) (Revision: `9427b3a2`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-25T23:41:44.691Z`  
 > **Learning ID**: `learn-github-chrisbanes-skills`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), F (Design Intelligence)
-- **Confidence Rating**: 55%
+- **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), G (Architecture Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), F (Design Intelligence)
+- **Confidence Rating**: 69%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from chrisbanes/skills:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/chrisbanes-skills-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/chrisbanes/skills](https://github.com/chrisbanes/skills))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T14:12:45.109Z  
+> **Harvest Timestamp**: 2026-11-25T23:41:42.960Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Skills for Kotlin, Jetpack Compose, and Android development
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 1165 stars
+- **Stars / Engagement**: 1166 stars
 
 ---
 
@@ -238,14 +238,14 @@ class ProfileModel {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #179** (2026-11-24): **gradle-run: provide explicit recovery for abandoned uncertain workflows**
+  *Symptoms*: ## Current status  The offline recovery implementation was merged in [PR #187](https://github.com/chrisbanes/skills/pull/187). Deterministic checks and independent review passed. The maintainer approved merging with Windows behavior covered by simulated queries. This issue tracks any follow-up from direct verification of live, absent, and unverifiable PIDs on Windows.  [Agent brief](https://github.com/chrisbanes/skills/issues/179#issuecomment-6982713434) · [Active plan](https://github.com/chrisbanes/skills/issues/179#issuecomment-6983574267) · [Offline evidence](https://github.com/chrisbanes/skills/blob/72f11234388aa64fd74b061bf68292768d5176f3/evals/artifacts/issue-179/r1/delivery.md)  ## Problem  An abandoned `gradle-run` invocation leaves the workflow permanently blocked, even after an ownership investigation finds no remaining wrapper or child process. `status` correctly reports `uncertain`, but neither the script nor the skill provides a supported recovery operation.  Observed on Windows with the skills checkout at `3d9da47`. The invocation stopped returning to the agent; the exact termination mechanism and the Gradle outcome are unknown. The ledger retained `active_run`, with no stored terminal result. A subsequent process-table investigation found neither recorded PID nor children of those PIDs.  Sanitized status excerpt:  ```json {   "state": "uncertain",   "reason": "active run is incomplete or its owner lock is not held",   "run": { "sequence": 1, "wrapper_pid": 7396
+
 - **Issue #173** (2026-11-18): **Align GitLab shepherd polling and blocking manual jobs with the code-host binding**
   *Symptoms*: The GitLab code-host binding from #158 merged in #166. It reads MR pipelines through the REST API and sends the expected head SHA at merge. Two CI guidance gaps remain at merge commit `5257561`:  - Standalone `shepherd` still prescribes `glab ci list --mr <iid>`. glab 1.131.0 rejects the flag. Use the merged binding’s MR pipeline selection and verify that the selected pipeline belongs to the candidate. [Provider commands](https://github.com/chrisbanes/skills/blob/52575618d917e565ac3c47c072d646d0c8f9c140/skills/shepherd/references/provider-commands.md) - Both procedures treat manual jobs as non-blocking by default. Read the effective job policy and pipeline status. An optional manual job may be left pending, while a blocking manual approval must keep the MR pending. [Shepherd](https://github.com/chrisbanes/skills/blob/52575618d917e565ac3c47c072d646d0c8f9c140/skills/shepherd/SKILL.md) · [GitLab binding](https://github.com/chrisbanes/skills/blob/52575618d917e565ac3c47c072d646d0c8f9c140/references/gitlab-binding.md)  Cover both manual-job outcomes offline using the exact MR and candidate. Verify coverage of the existing expected-SHA merge precondition for a concurrent push between the last read and the write.  ## Current status  Triage complete. Next step is to implement and verify the [agent brief](https://github.com/chrisbanes/skills/issues/173#issuecomment-6979596607).
   **Post-Mortem & Fix Analysis**:
   > > *This was generated by AI during triage.*  ## Agent Brief  **Category** `bug`  Use the GitLab binding's candidate-specific pipeline read in standalone `shepherd` and respect manual-job policy in both paths.  ### Current behavior  `glab ci list --mr <iid>` fails with `unknown flag: --mr` on glab 1.131.0. The GitLab binding already describes MR-specific pipeline selection and an expected-SHA direct merge. Both sets of guidance currently treat manual jobs as non-blocking by default.  ### Acceptance criteria  - [ ] Standalone `shepherd` uses the binding's MR pipeline selection. Verify project, MR and candidate identity, including the binding's `head_pipeline` evidence for merged-results pipelines. An unrelated or stale pipeline cannot qualify the candidate. - [ ] Use effective job policy and pipeline status. An optional manual job may stay pending when the candidate otherwise passes. A blocking manual approval keeps delivery pending. Cover both outcomes offline for the exact MR and candi
   > <!-- to-plan:implementation-plan:v2 -->  **Revision:** 1 **Supersedes:** none **Replan report:** none  ## Implementation plan  **Issue:** https://github.com/chrisbanes/skills/issues/173 **Planned against:** `main` at `3d9da4774f441854a8ff4c513487301b057053ca` **Publication mode:** Autonomous **Local state:** Clean **Epoch closure:** null  ### Approach  Make standalone shepherd use the existing GitLab code-host checks operation, correct manual-job interpretation in both entry points, and exercise the candidate and merge-race contracts offline. The authoritative acceptance criteria and scope are in the [accepted brief](https://github.com/chrisbanes/skills/issues/173#issuecomment-6979596607).  ### Guardrails  - Preserve merge authority, review gates, merge trains, and existing provider operations; do not play manual jobs, change policy, or add tracker behavior. Unknown or incomplete identity, job policy, pipeline or read state cannot establish a pass. - Continue routine implementation and
-
-- **Issue #172** (2026-11-18): **Fix Compose examples for transitions, hover tests, measurement and remembered values**
-  *Symptoms*: Several examples lead to compile errors, tests that pass without exercising the behavior, or stale UI. Correct the snippets and cover the behavior each one teaches.  ## Acceptance criteria  - The coordinated animation snippet compiles for a plain enum target. Align the API-choice table with the corrected example. [Transition example](https://github.com/chrisbanes/skills/blob/b67f5cb03543d730befc8fc8214950c3b3599b67/skills/compose-animations/SKILL.md#L38) - The hover test supplies button content, completes the interaction emission, and asserts a result that changes on hover. Removing hover handling makes the test fail. [Interaction test](https://github.com/chrisbanes/skills/blob/b67f5cb03543d730befc8fc8214950c3b3599b67/skills/compose-ui-testing-patterns/references/interaction-state.md#L11) - With incoming height 0–100 and a requested fixed height of 200, the child is measured within the parent’s bounds. [Measure helper](https://github.com/chrisbanes/skills/blob/b67f5cb03543d730befc8fc8214950c3b3599b67/skills/compose-component-design/references/modifier-layout.md#L43) - Replacing a click handler while retaining the item ID invokes the new handler. Mutating an observable map in place updates the merged result. Keep the state and performance examples consistent. [Click handler](https://github.com/chrisbanes/skills/blob/b67f5cb03543d730befc8fc8214950c3b3599b67/skills/compose-performance/references/stability.md#L36) · [Local state](https://github.com/chrisbanes/skills/blob/b67f5cb0
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -262,300 +262,241 @@ class ProfileModel {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `69450002` (2026-11-23)
-**Commit Message**: Clarify when Compose UI tests need device coverage (#193)
+### Incident Patch 1: `282f86a6` (2026-11-24)
+**Commit Message**: Diagnose unresolved bugs before issue planning (#196)
 
 ## Summary
 
-Add a test-selection row for critical flows that depend on the installed
-build or cross an app, process, or OS boundary. Use a focused device
-smoke test or end-to-end test when a narrower test can't prove the
-behavior.
+```text
+Direct delivery with clear expected behavior and no current plan
+└─ Fix would be speculative → diagnose
+   ├─ Cause and verification established → recheck the fast path, otherwise use to-plan
+   └─ Evidence falls short → record the blocker and continue independent work
+```
 
-Add three opt-in Compose eval cases for a system permission dialog,
-R8-optimized startup, and local Compose state restoration.
-
-Proposed by `kacperkapusciak`. Fixes #192.
+Use `diagnosing-bugs` when available and local checks when it’s absent.
+A trace can substitute for a runnable reproducer when it establishes the
+cause and gives the delivery owner a concrete way to verify the fix.
 
 ## Evidence
 
-- The permission fixture validator rejects the fake-callback plan and
-accepts a focused test that denies the system dialog and checks the
-manual-entry fallback.
-- `npm run lint`, `npm run evals:validate` (313 cases), `npm run
-references:check`, and `npm test` passed locally. One existing test was
-skipped.
-
-## Merge impact
-
-Reversible. The change affects Compose test-selection guidance and
-opt-in evaluation coverage.
-
-**File**: `evals/README.md` (modified, +3/-4)
-```diff
-@@ -331,10 +331,9 @@ The Compose benchmark remains 38 scored cases and comprises:
- Case IDs retain their focused concern names even when several concerns route to
- the same clustered public skill.
- 
--Four calibration-only performance challenge cases are also validated with the
--corpus. They are excluded from default plans and published scorecards; select
--them explicitly with `--case` when deciding whether they should graduate into
--the benchmark.
-+The corpus also validates four performance challenges and three cases on when
-+Compose UI tests give way to device tests. These calibration cases are excluded
-+from default plans and published scorecards. Select them explicitly with `--case`.
- 
- Two calibration-only workflow challenges exercise actionable failure behavior
- when a required external `tdd` provider is unavailable. They
-```
-
-**File**: `evals/cases/compose-device-permission-direct/case.json` (added, +19/-0)
-```diff
-@@ -0,0 +1,19 @@
-+{
-+  "id": "compose-device-permission-direct",
-+  "title": "Verify a system permission decision in the installed app",
-+  "family": "testing",
-+  "target_skills": ["compose-ui-testing-patterns"],
-+  "expected_skills": ["compose-ui-testing-patterns"],
-+  "task_mode": "edit",
-+  "kind": "direct",
-+  "fixture": "text",
-+  "allowed_write_paths": ["test-plan.md"],
-+  "validators": [{"argv": ["python3", "@validators/text_case.py", "compose-device-permission-direct"], "timeout_seconds": 30}],
-+  "rubric": [
-+    {"id": "system-boundary", "text": "Identifies the real Android permission dialog and its result as the boundary the fake callback cannot exercise"},
-+    {"id": "focused-device-test", "text": "Recommends a focused device test that denies the system prompt and verifies the installed app shows its fallback"},
-+    {"id": "retain-ui-test", "text": "Retains the existing Compose test for rendering the denied state and limits the recommendation to the permission flow"}
-+  ],
-+  "provenance": {"kind": "synthetic"},
-+  "calibration": true
-+}
-```
-
-**File**: `evals/cases/compose-device-permission-direct/expectations.json` (added, +6/-0)
-```diff
-@@ -0,0 +1,6 @@
-+{
-+  "files": ["test-plan.md"],
-+  "must_contain": ["manual entry", "createComposeRule"],
-+  "must_match": ["(?i)\\b(?:device|emulator|end-to-end)\\b"],
-+  "must_not_contain": ["fakes a denied permission"]
-+}
-```
-
-**File**: `evals/cases/compose-device-permission-direct/overlay/test-plan.md` (added, +9/-0)
-```diff
-@@ -0,0 +1,9 @@
-+# Camera permission
-+
-+When somebody taps Scan for the first time and denies camera access in the
-+Android system dialog, the installed app must offer manual entry.
-+
-+The current `createComposeRule` test renders the denied state and checks that
-+the manual entry button is shown. The proposed test fakes a denied permission
-+callback in that same Compose host and labels the result coverage of the system
-+dialog flow.
-```
-
-**File**: `evals/cases/compose-device-permission-direct/prompt.md` (added, +2/-0)
-```diff
-@@ -0,0 +1,2 @@
-+Update `test-plan.md` with the smallest test setup that proves the acceptance
-+criterion. Keep the change to the plan.
-```
-
-**File**: `evals/cases/compose-device-release-novel/case.json` (added, +19/-0)
-```diff
-@@ -0,0 +1,19 @@
-+{
-+  "id": "compose-device-release-novel",
-+  "title": "Verify startup on the R8-optimized build",
-+  "family": "testing",
-+  "target_skills": ["compose-ui-testing-patterns"],
-+  "expected_skills": ["compose-ui-testing-patterns"],
-+  "task_mode": "review",
-+  "kind": "novel",
-+  "fixture": "text",
-+  "allowed_write_paths": [],
-+  "validators": [{"argv": ["python3", "@validators/text_case.py", "compose-device-release-novel"], "timeout_seconds": 30}],
-+  "rubric": [
-+    {"id": "build-boundary", "text": "Explains that startup depends on the R8-optimized artifact and a passing debug rule does not exercise that artifact even though startup stays in one app"},
-+    {"id": "release-smoke", "text": "Recommends a focused device smoke test that launches the installed R8-optimized release build and checks that the home screen becomes visible"},
-+    {"id": "scope", "text": "Keeps the existing debug integration test for its current purpose without moving unrelated coverage into the release test"}
-+  ],
-+  "provenance": {"kind": "synthetic"},
-+  "calibration": true
-+}
-```
-
-**File**: `evals/cases/compose-device-release-novel/expectations.json` (added, +4/-0)
-```diff
-@@ -0,0 +1,4 @@
-+{
-+  "files": ["test-plan.md"],
-+  "must_contain": ["R8-optimized release build", "existing debug activity integration", "Compose home screen"]
-+}
-```
-
-**File**: `evals/cases/compose-device-release-novel/overlay/test-plan.md` (added, +8/-0)
-```diff
-@@ -0,0 +1,8 @@
-+# Startup after changing keep rules
-+
-+Startup reaches the Compose home screen on debug builds. On the previous
-+R8-optimized release build, an entry point loaded at runtime was stripped and
-+the app crashed before reaching home. The keep rule has been corrected.
-+
-+The proposed regression check extends the existing debug activity integration
-+test with a second home-screen assertion. Startup stays within the app.
-```
-
----
-
-### Incident Patch 2: `edd18ff7` (2026-11-20)
-**Commit Message**: Update everyday model routing guidance (#188)
-
-## Summary
-
-Route settled implementation to Sol/medium and substantial multi-source
-synthesis to Sol/high. Update routing evaluation cases while preserving
-explicit model pins.
-
-## Evidence
-
-| Finding | Source URL | Checked | Change made |
-|---|---|---|---|
-| Sol suits everyday coding and work across several sources; medium
-balances speed and depth, while high suits difficult multi-source work.
-| https://learn.chatgpt.com/docs/models | 2026-11-20 | Use Sol/medium
-for bounded implementation and Sol/high for substantial synthesis. |
-| Sol suits everyday agents that plan, use tools and check their work. |
-https://learn.chatgpt.com/docs/agent-configuration/subagents |
-2026-11-20 | Align the Codex delegation table and evaluation
-expectations. |
-
-## Validation
-
-- `npm run build`: exit 1, missing script (`npm error Missing script:
-"build"`).
-- `npm run lint`: exit 0, no issues found (after installing existing
-dependencies from cache).
-- `npm run evals:validate`: exit 0, validated 307 cases.
-- `npm test`: exit 0, final output `Ran 429 tests in 78.142s` / `OK`.
-- No live model evaluations.
+- **Before.** The fast path excluded unresolved bugs, and the fallback
+led directly to `to-plan`.
+- **After.** Three offline cases cover provider and local diagnosis,
+equivalent evidence, blocked diagnosis, fast-path requalification, and
+when to skip diagnosis.
+- Lint, reference sync, corpus validation (319 cases), and all 431
+evaluation unit tests passed. The full `npm test` command stopped at a
+CRLF release fixture, which passed in isolation with a command-scoped
+`core.autocrlf=false` override.
 
 ## Merge Danger
 
-**Door:** two-way. **Blast Radius:** 
+**Two-way door.** Reverting the commit restores the previous routing.
 
-**File**: `evals/cases/deliver-issue-model-routing-direct/prompt.md` (modified, +1/-1)
+**Scope.** Direct `deliver-issu
+
+**File**: `README.md` (modified, +1/-1)
 ```diff
-@@ -1,6 +1,6 @@
- Assess the proposed workflow using only the supplied state and applicable skill references. Do not run commands other than skill and reference reads, launch agents, contact providers or edit files.
+@@ -132,7 +132,7 @@ for its lane-specific fallback and blocking behavior.
  
--Each snapshot is a qualifying direct fast-path issue: one known CLI help typo, two files, an existing snapshot check, no blockers, no plan chain, and a fresh independent reviewer. The lead picked gpt-6.2-sol/high. The applicable implementation policy recommends gpt-6.1-terra/high for this fix. One authorized, isolated and resumable Terra/high worker is free. There are no installed pins, merge grants, or other restrictions.
-+Each snapshot is a qualifying direct fast-path issue: one known CLI help typo, two files, an existing snapshot check, no blockers, no plan chain, and a fresh independent reviewer. The lead picked gpt-6.2-sol/high. The applicable implementation policy recommends gpt-6.2-sol/medium for this fix. One authorized, isolated and resumable Terra/high worker is free. There are no installed pins, merge grants, or other restrictions.
+ ### Workflows
  
- - advisory: The user supplied only the delivery request and the picker choice.
- - matching: The user also explicitly requested implementation on gpt-6.2-sol/high.
+-- [`deliver-issue`](skills/deliver-issue/SKILL.md) — coordinate a named tracker issue and its descendants, or a verified board-controller handoff through solo or justified delegated implementation, a planning-free fast path for small well-understood tickets, CI-supplied full-suite evidence, concurrent external review with verified draft support or earlier PR readiness, reusable scope approval and revision-isolated evidence with preservation checks, independent integrated-candidate review and focused repair review, and PR shepherding, delivering to GitHub or GitLab code hosts; validate applicable live-qualification harness paths offline (isolated production stores for persistent paths, fake runtimes for asynchronous paths), then reconcile failures under bounded approved allowances.
++- [`deliver-issue`](skills/deliver-issue/SKILL.md) — coordinate a named tracker issue and its descendants, or a verified board-controller handoff through solo or justified delegated implementation, diagnosis before planning for unresolved bugs in direct delivery, a planning-free fast path for small well-understood tickets, CI-supplied full-suite evidence, concurrent external review with verified draft support or earlier PR readiness, reusable scope approval and revision-isolated evidence with preservation checks, independent integrated-candidate review and focused repair review, and PR shepherding, delivering to GitHub or GitLab code hosts; validate applicable live-qualification harness paths offline (isolated production stores for persistent paths, fake runtimes for asynchronous paths), then reconcile failures under bounded approved allowances.
+ - [`release-kotlin-library`](skills/release-kotlin-library/SKILL.md) — assess readiness, prepare, and verify Kotlin library releases; check the `gradle-maven-publish-plugin` prerequisite, use `changelog` for notes, prepare Metalava API snapshots, and follow repository checks and publication gates.
+ - [`gradle-run`](skills/gradle-run/SKILL.md) — run every agent-initiated Gradle command through a compact-output wrapper; recover run identity and bounded results by workflow ID with read-only status, and diagnose failures with optional investigation helpers.
+ - [`subagent-delegation`](skills/subagent-delegation/SKILL.md) — provider-neutral delegation playbook, loaded by name or through a one-line user-level opt-in, with separate Codex, Claude Code, and Antigravity/Gemini model routing, installed-role precedence, parallel briefs, independent audits, and lead acceptance.
 ```
 
-**File**: `evals/cases/implement-with-subagents-model-routing-novel/expectations.json` (modified, +1/-1)
+**File**: `evals/README.md` (modified, +3/-0)
 ```diff
-@@ -8,7 +8,7 @@
-   "decisions": {
-     "chain": {
-       "valid": true,
--      "model": "gpt-6.1-terra",
-+      "model": "gpt-6.2-sol",
-       "effort": "high",
-       "owner": "W1",
-       "next": "dispatch",
+@@ -441,6 +441,9 @@ CI-supplied full-suite evidence versus explicit local rules and checks CI
+ cannot run; and `to-plan` baselines proven from green CI on the exact base SHA
+ while keeping focused checks CI cannot answer. They use immutable synthetic
+ state.
++Three direct-delivery diagnosis calibrations cover diagnosis before planning,
++fast-path requalification, local fallback, equivalent causal evidence, blocked
++reproduction and restraint when an existing plan or verified outcome applies.
+ Three nested-agent calibrations check that a delegated owner waits for its
+ own reviewer, helpers and slice workers before returning, keeps independent
+ launches parallel, and that the top-level controller keeps background launches.
 ```
 
-**File**: `evals/cases/implement-with-subagents-model-routing-novel/prompt.md` (modified, +1/-1)
+**File**: `evals/cases/deliver-issue-bug-diagnosis-direct/case.json` (added, +42/-0)
 ```diff
-@@ -1,6 +1,6 @@
- Assess the proposed workflow using only the supplied state and applicable skill references. Do not run commands other than skill and reference reads, launch agents, contact providers or edit files.
- 
--The worktree is clean. tdd, agreed seams and one independent final reviewer are available throughout. The lead is gpt-6.2-sol/medium. The user opts into automatic implementation routing and pins implementation effort to high. For the full chain below, the installed Codex policy selects gpt-6.1-terra/xhigh. Two authorized resumable gpt-6.1-terra/high workers, W1 and W2, each have safe isolation available. W1 is the proposed chain owner. No installed role pins apply.
-+The worktree is clean. tdd, agreed seams and one independent final reviewer are available throughout. The lead is gpt-6.2-sol/medium. The user opts into automatic implementation routing and pins implementation effort to high. For the full chain below, the installed Codex policy selects gpt-6.2-sol/medium. Two authorized resumable gpt-6.2-sol/high workers, W1 and W2, each have safe isolation available. W1 is the proposed chain owner. No installed role pins apply.
- 
- - chain: A precedes B. A has not begun. The proposal assigns both tasks to W1 and retains W1 for repairs. B remains held until A is accepted, integrated and its affected checks pass on the integrated head.
- - split: Same state, but the proposal assigns A to W1 and B to W2.
+@@ -0,0 +1,42 @@
++{
++  "id": "deliver-issue-bug-diagnosis-direct",
++  "title": "Diagnose an unexplained bug before selecting the delivery route",
++  "family": "workflow",
++  "target_skills": [
++    "deliver-issue"
++  ],
++  "expected_skills": [
++    "deliver-issue"
++  ],
++  "task_mode": "review",
++  "kind": "direct",
++  "fixture": "workflow",
++  "allowed_write_paths": [],
++  "forbid_all_commands": true,
++  "allow_skill_reference_reads": true,
++  "validators": [
++    {
++      "argv": [
++        "python3",
++        "@validators/pr_review_decisions.py",
++        "deliver-issue-bug-diagnosis-direct",
++        "--response"
++      ],
++      "timeout_seconds": 30
++    }
++  ],
++  "rubric": [
++    {
++      "id": "diagnosis",
++      "text": "Uses the installed provider for diagnosis before drafting or editing the fix, with the current delivery owner retaining control."
++    },
++    {
++      "id": "handoff",
++      "text": "Hands the established cause and verification recipe to the delivery owner and rechecks every existing fast-path condition."
++    }
++  ],
++  "provenance": {
++    "kind": "synthetic"
++  },
++  "calibration": true
++}
 ```
 
-**File**: `evals/cases/run-project-model-routing-negative/expectations.json` (modified, +1/-1)
+**File**: `evals/cases/deliver-issue-bug-diagnosis-direct/expectations.json` (added, +14/-0)
 ```diff
-@@ -42,7 +42,7 @@
-       "next": "implement",
-       "owner": "lead",
-       "model": "gpt-6.2-sol",
--      "effort": "medium",
-+      "effort": "high",
-       "unrelated": "continue"
-     }
-   }
+@@ -0,0 +1,14 @@
++{
++  "decisions": {
++    "intake": {
++      "next": "diagnose",
++      "method": "provider",
++      "fix_during_diagnosis": false
++    },
++    "diagnosed": {
++      "next": "fast-path",
++      "retain_cause_and_verification": true,
++      "regression_test_owner": "implementation"
++    }
++  }
++}
 ```
 
-**File**: `evals/cases/run-project-model-routing-negative/prompt.md` (modified, +1/-1)
+**File**: `evals/cases/deliver-issue-bug-diagnosis-direct/prompt.md` (added, +6/-0)
 ```diff
-@@ -6,7 +6,7 @@ For each independent snapshot, a Project drain has two eligible tickets with com
- - unauthorized: A matching gpt-6.1-terra/high worker is available, but the invocation disallows implementation delegation on A.
- - busy: A matching worker is authorized and available in the runtime, but its slot is temporarily occupied.
- - hard_limit: A matching worker is authorized, but A's per-ticket limit can only accommodate its persistent delivery lead. The runtime cannot yield the lead's slot to the worker.
--- unset: In this separate snapshot, A's user only selected the lead in the picker. There is no implementation pin and no auto-routing opt-in. The ordinary-work policy recommendation is Terra/high.
-+- unset: In this separate snapshot, A's user only selected a Sol/high lead in the picker. There is no implementation pin and no auto-routing opt-in. The ordinary-work policy recommendation is Sol/medium.
- 
- Return these exact fields for each independent snapshot:
- - unsupported, unauthorized, busy, hard_limit: next (pause or wait-capacity), blocker (settings, authority, or capacity), model, effort, edit_now (whether A can start edits), unrelated (continue or pause).
+@@ -0,0 +1,6 @@
++Use the supplied snapshots and applicable skill references. Read only the needed skill files. Return one JSON object keyed by snapshot. Do not execute delivery, run checks, contact providers, or edit files.
++
++An explicit direct delivery request names a verified leaf issue. The CLI must preserve escaped spaces when loading a local config. Its current baseline drops them, but there is no current plan or evidence locating the cause. All scope, readiness, and ownership checks passed. An external skill named `diagnosing-bugs` is installed.
++
++- `intake` is the initial snapshot above. Give `next` (`diagnose`, `plan`, or `fast-path`), `method` (`provider`, `local`, or `none`), and `fix_during_diagnosis` (boolean).
++- `diagnosed` is a later snapshot for the same issue. A focused config-loading test reproduces the dropped spaces on the identified baseline. A targeted probe isolates an internal normalization error. One internal file and its test suffice, and every existing fast-path condition now passes. Give `next` (`plan` or `fast-path`), `retain_cause_and_verification` (boolean), and `regression_test_owner` (`diagnosis` or `implementation`).
 ```
 
-**File**: `evals/cases/subagent-delegation-direct/case.json` (modified, +2/-2)
+**File**: `evals/cases/deliver-issue-bug-diagnosis-negative/case.json` (added, +42/-0)
 ```diff
-@@ -27,15 +27,15 @@
-   "rubric": [
-     {
-       "id": "routing",
--      "text": "Uses an available general agent with Luna/low for A; worker or other suitable unpinned role Terra/medium for B and C; worker Terra/high for D; suitable unpinned role Terra/xhigh for E, Sol/medium for F, and Sol/xhigh for G; explorer for specific discovery H, inspecting its exposed pins before choosing unpinned settings. Does not invent unavailable checker/investigator roles, install definitions, inherit the parent model, or escalate to Astra."
-+      "text": "Uses an available general agent with Luna/low for A; worker or other suitable unpinned role Terra/medium for B and C; worker Sol/medium for D; suitable unpinned role Sol/high for E, Sol/medium for F, and Sol/xhigh for G; explorer for specific discovery H, inspecting its exposed pins before choosing unpinned settings. Does not invent unavailable checker/investigator roles, install definitions, inherit the parent model, or escalate to Astra."
-     },
-     {
-       "id": "parallel",
-       "text": "Launches all genuinely independent assignments concurrently within stated capacity; rejects serializing merely for reporting and names actual dependencies if any."
-     },
-     {
-       "id": "brief",
--      "text": "D has self-contained scope, file ownership, constraints, acceptance criteria, context/revision, Terra/high category, fork_turns=none, and explicit unpinned settings; warns worker to preserve others edits, reserves remote writes to root and forbids unauthorized further delegation."
-+      "text": "D has self-contained scope, file ownership, constraints, acceptance criteria, context/revision, Sol/medium category, fork_turns=none, and explicit unpinned settings; warns worker to preserve others edits, reserves remote writes to root and forbids unauthorized further delegation."
-     }
-   ],
-   "provenance": {
+@@ -0,0 +1,42 @@
++{
++  "id": "deliver-issue-bug-diagnosis-negative",
++  "title": "Skip new diagnosis when the current route already applies",
++  "family": "workflow",
++  "target_skills": [
++    "deliver-issue"
++  ],
++  "expected_skills": [
++    "deliver-issue"
++  ],
++  "task_mode": "review",
++  "kind": "negative",
++  "fixture": "workflow",
++  "allowed_write_paths": [],
++  "forbid_all_commands": true,
++  "allow_skill_reference_reads": true,
++  "validators": [
++    {
++      "argv": [
++        "python3",
++        "@validators/pr_review_decisions.py",
++        "deliver-issue-bug-diagnosis-negative",
++        "--response"
++      ],
++      "timeout_seconds": 30
++    }
++  ],
++  "rubric": [
++    {
++      "id": "restraint",
++      "text": "Skips new diagnosis for a known fix, a current approved plan, a verified board handoff, and a fully accepted no-change outcome."
++    },
++    {
++      "id": "readiness",
++      "text": "Resolves missing product behavior before attempting diagnosis and keeps verified no-change distinct from speculation."
++    }
++  ],
++  "provenance": {
++    "kind": "synthetic"
++  },
++  "calibration": true
++}
 ```
 
-**File**: `skills/subagent-delegation/references/codex.md` (modified, +2/-2)
+**File**: `evals/cases/deliver-issue-bug-diagnosis-negative/expectations.json` (added, +24/-0)
 ```diff
-@@ -21,8 +21,8 @@ Use this reference when Codex is the active runtime.
- | Purely mechanical: exact checks, simple extraction, no judgment | Luna / low |
- | Computer use or visual interpretation with a defined outcome: navigating screens, matching images, interpreting screenshots or drawings | Terra / medium |
- | Concise drafting or editing from supplied material, with clear audience and factual requirements | Terra / medium |
--| Ordinary bounded implementation, fixes, refactoring, and UI fixes with settled requirements and interactions (default) | Terra / high |
--| Substantial synthesis across several sources, clear constraints | Terra / xhigh |
-+| Ordinary bounded implementation, fixes, refactoring, and UI fixes with settled requirements and interactions (default) | Sol / medium |
-+| Substantial synthesis across several sources, clear constraints | Sol / high |
- | Complex or ambiguous: judgment across interacting components | Sol / medium |
- | Difficult correctness investigations or independent correctness reviews: competing paths, ownership, ordering, cancellation, security, data integrity | Sol / high |
- | Conflicting evidence, or demanding deliverables needing cross-component polish | Sol / xhigh |
+@@ -0,0 +1,24 @@
++{
++  "decisions": {
++    "known-fix": {
++      "next": "fast-path",
++      "start_new_diagnosis": false
++    },
++    "approved-plan": {
++      "next": "reuse-plan",
++      "start_new_diagnosis": false
++    },
++    "board-owned": {
++      "next": "board-handoff",
++      "start_new_diagnosis": false
++    },
++    "unclear-outcome": {
++      "next": "clarify",
++      "start_new_diagnosis": false
++    },
++    "already-fixed": {
++      "next": "no-change",
++      "start_new_diagnosis": false
++    }
++  }
++}
+```
+
+**File**: `evals/cases/deliver-issue-bug-diagnosis-negative/prompt.md` (added, +9/-0)
+```diff
+@@ -0,0 +1,9 @@
++Use the supplied snapshots and applicable skill references. Read only the needed skill files. Return one JSON object keyed by snapshot, with `next` (`diagnose`, `fast-path`, `reuse-plan`, `board-handoff`, `clarify`, or `no-change`) and `start_new_diagnosis` (boolean) in each. Do not execute delivery, contact providers, or edit files.
++
++All the following issues carry a bug label. Unless otherwise stated, each is a verified, authorized direct delivery with no holds and no plan.
++
++- `known-fix`: A current failing test and a one-variable probe already establish a reversed internal comparator as the cause and the test as verification. Every fast-path condition passes.
++- `approved-plan`: A current verified plan already covers an intermittent failure, with evidence and an affected regression check.
++- `board-owned`: The active board controller sent a verified single-ticket implementation handoff with a current approved plan. No material mismatch emerged.
++- `unclear-outcome`: The observed response is clear, but the ticket has conflicting requirements about what the response should be.
++- `already-fixed`: On the current integrated base an existing fix passes an acceptance check exercising the original failing path. The active approved plan's full acceptance and dependencies are verified, there is no remaining diff or change request, and no new closure authority.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #194** (2026-11-23): Accept permission test plans that explain the fake callback (@chrisbanes)
-- **PR #193** (2026-11-23): Clarify when Compose UI tests need device coverage (@chrisbanes)
-- **PR #191** (2026-11-23): Batch repository-approved post-merge updates in drains (@chrisbanes)
-- **PR #190** (2026-11-21): Add Antigravity and Gemini delegation and workflow support (@chrisbanes)
-- **PR #189** (2026-11-20): Document Antigravity plugin install in README (@chrisbanes)
-- **PR #188** (2026-11-20): Update everyday model routing guidance (@chrisbanes)
+- **PR #204** (2026-11-25): Improve skill eval reliability and Kotlin and Compose coverage (@chrisbanes)
+- **PR #203** (2026-11-24): Restore delivery safeguards and rename simplify to simplify-changes (@chrisbanes)
+- **PR #202** (2026-11-24): Add a standalone simplify skill (@chrisbanes)
+- **PR #201** (2026-11-24): Simplify skill instructions and share references across skills (@chrisbanes)
+- **PR #200** (2026-11-24): Use implement-with-subagents for issue delivery (@chrisbanes)
+- **PR #199** (2026-11-24): Share tracker and triage configuration across delivery skills (@chrisbanes)
 
 ---
 
@@ -575,36 +516,31 @@ dependencies from cache).
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Clarify when Compose UI tests need device coverage
+## X. Diagnose unresolved bugs before issue planning
 
 **RULE**:
-When implementing operations in `evals/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in chrisbanes/skills. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in chrisbanes/skills. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `69450002`: Clarify when Compose UI tests need device coverage. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `282f86a6`: Diagnose unresolved bugs before issue planning. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `evals/README.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-The corpus also validates four performance challenges and three cases on when
-Compose UI tests give way to device tests. These calibration cases are excluded
-from default plans and published scorecards. Select them explicitly with `--case`.
+- [`deliver-issue`](skills/deliver-issue/SKILL.md) — coordinate a named tracker issue and its descendants, or a verified board-controller handoff through solo or justified delegated implementation, diagnosis before planning for unresolved bugs in direct delivery, a planning-free fast path for small well-understood tickets, CI-supplied full-suite evidence, concurrent external review with verified draft support or earlier PR readiness, reusable scope approval and revision-isolated evidence with preservation checks, independent integrated-candidate review and focused repair review, and PR shepherding, delivering to GitHub or GitLab code hosts; validate applicable live-qualification harness paths offline (isolated production stores for persistent paths, fake runtimes for asynchronous paths), then reconcile failures under bounded approved allowances.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Induced defect failure mode:
-Four calibration-only performance challenge cases are also validated with the
-corpus. They are excluded from default plans and published scorecards; select
-them explicitly with `--case` when deciding whether they should graduate into
-the benchmark.
+- [`deliver-issue`](skills/deliver-issue/SKILL.md) — coordinate a named tracker issue and its descendants, or a verified board-controller handoff through solo or justified delegated implementation, a planning-free fast path for small well-understood tickets, CI-supplied full-suite evidence, concurrent external review with verified draft support or earlier PR readiness, reusable scope approval and revision-isolated evidence with preservation checks, independent integrated-candidate review and focused repair review, and PR shepherding, delivering to GitHub or GitLab code hosts; validate applicable live-qualification harness paths offline (isolated production stores for persistent paths, fake runtimes for asynchronous paths), then reconcile failures under bounded approved allowances.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `69450002` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `282f86a6` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

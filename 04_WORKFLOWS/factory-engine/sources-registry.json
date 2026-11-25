@@ -53,12 +53,12 @@
     "revisionIdentifier": "b0144700"
   },
   "bitterbot-ai-bitterbot-desktop": {
-    "name": "Bitterbot-AI/bitterbot-desktop",
+    "name": "bitterbot-desktop",
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-25T23:02:02.661Z",
-    "lastVerified": "2026-11-25T23:02:02.661Z",
+    "lastChecked": "2026-11-25T23:41:49.655Z",
+    "lastVerified": "2026-11-25T23:41:49.655Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -67,7 +67,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "f28f8940"
   },
   "hf-comfy-org-minimax-h3": {
     "name": "Comfy-Org/MiniMax-H3",
@@ -91,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-25T23:32:43.953Z",
-    "lastVerified": "2026-11-25T23:32:43.953Z",
+    "lastChecked": "2026-11-25T23:41:49.668Z",
+    "lastVerified": "2026-11-25T23:41:49.668Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -1537,9 +1538,9 @@
   "valeriansaliou-sonic": {
     "name": "sonic",
     "officialUrl": "https://github.com/valeriansaliou/sonic",
-    "lastChecked": "2026-11-24T22:07:28.122Z",
+    "lastChecked": "2026-11-25T23:41:47.261Z",
     "revisionIdentifier": "f16560b6",
-    "lastVerified": "2026-11-24T22:07:28.122Z"
+    "lastVerified": "2026-11-25T23:41:47.261Z"
   },
   "hf-lightricks-ltx-2.5": {
     "name": "Lightricks/LTX-2.5",
@@ -1586,9 +1587,9 @@
   "lunasec-io-lunasec": {
     "name": "lunasec",
     "officialUrl": "https://github.com/lunasec-io/lunasec",
-    "lastChecked": "2026-11-25T12:39:13.348Z",
+    "lastChecked": "2026-11-25T23:41:44.835Z",
     "revisionIdentifier": "c6bb0762",
-    "lastVerified": "2026-11-25T12:39:13.348Z"
+    "lastVerified": "2026-11-25T23:41:44.835Z"
   },
   "seaql-sea-orm": {
     "name": "sea-orm",
@@ -4508,9 +4509,9 @@
   "sealerio-sealer": {
     "name": "sealer",
     "officialUrl": "https://github.com/sealerio/sealer",
-    "lastChecked": "2026-11-24T23:24:46.328Z",
+    "lastChecked": "2026-11-25T23:41:42.161Z",
     "revisionIdentifier": "e426153a",
-    "lastVerified": "2026-11-24T23:24:46.328Z"
+    "lastVerified": "2026-11-25T23:41:42.161Z"
   },
   "trailbaseio-trailbase": {
     "name": "trailbase",
@@ -5255,9 +5256,9 @@
   "webrtc-rs-webrtc": {
     "name": "webrtc",
     "officialUrl": "https://github.com/webrtc-rs/webrtc",
-    "lastChecked": "2026-11-24T16:01:24.558Z",
+    "lastChecked": "2026-11-25T23:41:34.655Z",
     "revisionIdentifier": "3c4584ae",
-    "lastVerified": "2026-11-24T16:01:24.559Z"
+    "lastVerified": "2026-11-25T23:41:34.655Z"
   },
   "hf-meta-llama-llama-2-7b": {
     "name": "meta-llama/Llama-2-7b",
@@ -10450,14 +10451,14 @@
     "officialUrl": "https://github.com/chrisbanes/skills",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-23T14:12:45.109Z",
-    "lastVerified": "2026-11-23T14:12:45.109Z",
+    "lastChecked": "2026-11-25T23:41:42.960Z",
+    "lastVerified": "2026-11-25T23:41:42.960Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-chrisbanes-skills",
-    "contentHash": "5d903d59cbfbaad438bf7c763f0fee621428d653d38f7a9ee42f9cd9393d9483",
+    "contentHash": "feed1273cf9911e938ebb2351cc479f4b8b9ff83cb03c3a6a85c6f61d767091a",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -13907,12 +13908,12 @@
     "officialUrl": "https://huggingface.co/nvidia/DeepSeek-V4.1-Flash-1017-NVFP4",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-22T02:17:59.690Z",
-    "lastVerified": "2026-11-22T02:17:59.690Z",
+    "lastChecked": "2026-11-25T23:41:37.287Z",
+    "lastVerified": "2026-11-25T23:41:37.287Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-nvidia-deepseek-v4-1-flash-1017-nvfp4",
-    "contentHash": "30227d296abd04c6d7e7d32799cd1686ff2c74860b6278fa60e95a3e83c1ccb2",
+    "contentHash": "083251552c7770fb32c0571141dac570552e20023a6daece34d8921e6527f787",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

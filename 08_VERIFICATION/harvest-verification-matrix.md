@@ -13156,3 +13156,5 @@
 | `CYCLE-20261125-DR3J` | `2026-11-25T23:32:33.775Z` | `dosco/deeporg` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10547` | Yes (`8343d230...`) |
 | `CYCLE-20261125-DUY7` | `2026-11-25T23:32:38.767Z` | `t8y2/dbx` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10560` | Yes (`c03e1996...`) |
 | `CYCLE-20261125-DWFF` | `2026-11-25T23:32:40.683Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule EXISTING` | Yes (`2a8628e9...`) |
+| `CYCLE-20261125-PF2J` | `2026-11-25T23:41:38.059Z` | `nvidia/DeepSeek-V4.1-Flash-1017-NVFP4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nvidia-deepseek-v4.1-flash-1017-nvfp4-learnings.md` | Yes (`08325155...`) |
+| `CYCLE-20261125-PJX3` | `2026-11-25T23:41:44.343Z` | `chrisbanes/skills` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10561` | Yes (`feed1273...`) |

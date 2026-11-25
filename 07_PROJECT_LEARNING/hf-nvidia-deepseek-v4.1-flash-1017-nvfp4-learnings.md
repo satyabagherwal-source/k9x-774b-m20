@@ -3,7 +3,7 @@
 > **Source Version**: `hf-nvidia-de`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T02:17:59.787Z  
+> **Timestamp**: 2026-11-25T23:41:37.410Z  
 > **Learning ID**: `learn-huggingface-nvidia-deepseek-v4-1-flash-1017-nvfp4`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-nvidia-deepseek-v4.1-flash-1017-nvfp4-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/nvidia/DeepSeek-V4.1-Flash-1017-NVFP4](https://huggingface.co/nvidia/DeepSeek-V4.1-Flash-1017-NVFP4))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T02:17:59.690Z  
+> **Harvest Timestamp**: 2026-11-25T23:41:37.287Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: image-text-to-text
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 77600 downloads | 187 likes
+- **Stars / Engagement**: 83041 downloads | 195 likes
 
 ---
 

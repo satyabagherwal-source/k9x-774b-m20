@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T23:32:40.700Z",
-  "total_cycles_completed": 12487,
-  "total_learnings_persisted": 12487,
-  "total_rules_promoted": 11449,
+  "last_updated": "2026-11-25T23:41:44.356Z",
+  "total_cycles_completed": 12489,
+  "total_learnings_persisted": 12489,
+  "total_rules_promoted": 11450,
   "history": [
-    {
-      "timestamp": "2026-11-25T04:51:56.124Z",
-      "repository": "autogluon/chronos-2",
-      "learningId": "learn-huggingface-autogluon-chronos-2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T04:51:57.087Z",
-      "repository": "Folkbench/folkbench",
-      "learningId": "learn-github-folkbench-folkbench",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-25T04:52:10.626Z",
       "repository": "MaterializeInc/materialize",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-25T23:32:40.700Z",
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T23:41:38.073Z",
+      "repository": "nvidia/DeepSeek-V4.1-Flash-1017-NVFP4",
+      "learningId": "learn-huggingface-nvidia-deepseek-v4-1-flash-1017-nvfp4",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T23:41:44.356Z",
+      "repository": "chrisbanes/skills",
+      "learningId": "learn-github-chrisbanes-skills",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

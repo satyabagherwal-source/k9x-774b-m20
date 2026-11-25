@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T23:32:46.228Z",
+  "last_updated": "2026-11-25T23:41:53.166Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-25T15:16:00.864Z",
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-25T15:21:41.095Z",
+      "processed_at": "2026-11-25T23:41:52.040Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1323,7 +1323,7 @@
       "staged_for_review": 0
     },
     "chrisbanes-skills-learnings.md": {
-      "processed_at": "2026-11-23T14:12:59.914Z",
+      "processed_at": "2026-11-25T23:41:50.434Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1463,7 +1463,7 @@
       "staged_for_review": 1
     },
     "hf-nvidia-deepseek-v4.1-flash-1017-nvfp4-learnings.md": {
-      "processed_at": "2026-11-22T02:18:12.358Z",
+      "processed_at": "2026-11-25T23:41:49.848Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3943,7 +3943,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 4278,
+  "total_dossiers_evaluated": 4281,
   "total_canonical_promoted": 547,
-  "total_staged_for_review": 3251
+  "total_staged_for_review": 3253
 }

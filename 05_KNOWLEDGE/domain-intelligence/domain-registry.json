@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T23:32:45.892Z",
+  "last_updated": "2026-11-25T23:41:52.722Z",
   "total_records": 2689,
   "domains": {
     "A": {
@@ -9422,8 +9422,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "c8e4a905bc87337ff52764921bde4e7e8bed730b50430ceda7919dfeab9a77e9",
-      "created_at": "2026-11-25T15:21:41.577Z"
+      "content_hash": "dffac831eb06fbd65687edb8f5ebd199b282ecc2d24a477f3b33b9cbb305fad4",
+      "created_at": "2026-11-25T23:41:52.722Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -24220,8 +24220,8 @@
       "title": "Technical Construction Intelligence: chrisbanes/skills Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-chrisbanes-skills-technical-construction-intelligence-chrisbanes-skills-core-inv.md",
       "repository": "chrisbanes/skills",
-      "content_hash": "3ec3a7dbf72fb98954ac5424cf250639262b1bbe27c17caf23831ae034a51070",
-      "created_at": "2026-11-23T14:12:46.528Z"
+      "content_hash": "635e5ee4890835c605fd167ee7bf7604c7c8ce6f3922b24c96760f6dbc4bbdfa",
+      "created_at": "2026-11-25T23:41:44.934Z"
     },
     "domain_intelligence-technical-construction-intelligence-chrisbanes-skills-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-chrisbanes-skills-learnings-core-invariants",
@@ -24229,8 +24229,8 @@
       "title": "Technical Construction Intelligence: chrisbanes-skills-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-chrisbanes-skills-learnings-technical-construction-intelligence-chrisbanes-skill.md",
       "repository": "chrisbanes-skills-learnings",
-      "content_hash": "2c0ee73d030817a544e9eecd209f761fb3e043b3713c8b6dffb20cea03853098",
-      "created_at": "2026-11-23T14:13:00.600Z"
+      "content_hash": "053bd75577e5ef42442aea8df9aaac98a102246474ff4129399bd71f28f68a43",
+      "created_at": "2026-11-25T23:41:51.388Z"
     },
     "domain_intelligence-content-information-intelligence-kamgurgul-cpu-info-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-kamgurgul-cpu-info-core-invariants",
@@ -28435,8 +28435,8 @@
       "title": "Research & Knowledge Intelligence: nvidia/DeepSeek-V4.1-Flash-1017-NVFP4 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-nvidia-deepseek-v4-1-flash-1017-nvfp4-research-knowledge-intelligence-nvidia-.md",
       "repository": "nvidia/DeepSeek-V4.1-Flash-1017-NVFP4",
-      "content_hash": "de79aff8185e469e4bf79b9cacea6f8c70ef869bf0b50a8d8f1d288a9f240ce5",
-      "created_at": "2026-11-22T02:18:00.477Z"
+      "content_hash": "8ede20afa7b37263882d143463fa4ff5419a8199cce888b08b22ba603f589c0b",
+      "created_at": "2026-11-25T23:41:38.384Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-nvidia-deepseek-v4-1-flash-1017-nvfp4-learnin": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-nvidia-deepseek-v4-1-flash-1017-nvfp4-learnin",
@@ -28444,8 +28444,8 @@
       "title": "Research & Knowledge Intelligence: hf-nvidia-deepseek-v4.1-flash-1017-nvfp4-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-nvidia-deepseek-v4-1-flash-1017-nvfp4-learnings-research-knowledge-intelligen.md",
       "repository": "hf-nvidia-deepseek-v4.1-flash-1017-nvfp4-learnings",
-      "content_hash": "daac5f1e6d4be96ba3decd55dbdcf5c357fe7a12e1943b4ed63be05e3520343b",
-      "created_at": "2026-11-22T02:18:12.563Z"
+      "content_hash": "d6663aabd76a6dd5dbcaed3286549349b604208c134da80dc2ffc379a3c37294",
+      "created_at": "2026-11-25T23:41:50.168Z"
     },
     "domain_intelligence-research-knowledge-intelligence-meta-models-muse-spark-open-816b-a42b-nvfp4-core": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-meta-models-muse-spark-open-816b-a42b-nvfp4-core",

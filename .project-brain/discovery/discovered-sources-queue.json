@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-25T23:32:45.484Z",
+  "updated_at": "2026-11-25T23:41:50.678Z",
   "stats": {
-    "total_discovered": 9521,
-    "approved_pending_harvest": 9024,
+    "total_discovered": 9524,
+    "approved_pending_harvest": 9027,
     "harvested_count": 0,
     "rejected_count": 497,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9017,
+      "COMMUNITY_AND_EXPERT": 9020,
       "OFFICIAL_DOCUMENTATION": 281,
       "STANDARDS_AND_SPECIFICATIONS": 151,
       "ENGINEERING_BLOGS": 7,
@@ -206010,6 +206010,72 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/t8y2-dbx-learnings.md",
         "fileName": "t8y2-dbx-learnings.md"
+      }
+    },
+    "SRC-B31B125EF1E0": {
+      "id": "SRC-B31B125EF1E0",
+      "url": "https://github.com/chrisbanes/skills/pull/187",
+      "title": "https://github.com/chrisbanes/skills/pull/187",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T23:41:50.518Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/chrisbanes-skills-learnings.md",
+        "fileName": "chrisbanes-skills-learnings.md"
+      }
+    },
+    "SRC-057987698DBD": {
+      "id": "SRC-057987698DBD",
+      "url": "https://github.com/chrisbanes/skills/issues/179",
+      "title": "https://github.com/chrisbanes/skills/issues/179",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T23:41:50.594Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/chrisbanes-skills-learnings.md",
+        "fileName": "chrisbanes-skills-learnings.md"
+      }
+    },
+    "SRC-9CA93841C7EE": {
+      "id": "SRC-9CA93841C7EE",
+      "url": "https://github.com/chrisbanes/skills/blob/72f11234388aa64fd74b061bf68292768d5176f3/evals/artifacts/issue-179/r1/delivery.md",
+      "title": "https://github.com/chrisbanes/skills/blob/72f11234388aa64fd74b061bf68292768d5176f3/evals/artifacts/issue-179/r1/delivery.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T23:41:50.678Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/chrisbanes-skills-learnings.md",
+        "fileName": "chrisbanes-skills-learnings.md"
       }
     }
   }

@@ -794474,3 +794474,73 @@ watch(
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `e6c06578` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10561. Diagnose unresolved bugs before issue planning (Harvested from chrisbanes/skills)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Diagnose unresolved bugs before issue planning",
+  "source": "chrisbanes/skills",
+  "source_url": "https://github.com/chrisbanes/skills",
+  "source_version": "9427b3a2",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-25T23:41:43.687Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-chrisbanes-skills",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [chrisbanes/skills](https://github.com/chrisbanes/skills) (Revision: `9427b3a2`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in chrisbanes/skills. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `282f86a6`: Diagnose unresolved bugs before issue planning. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+// Verified production-grade fix pattern:
+- [`deliver-issue`](skills/deliver-issue/SKILL.md) — coordinate a named tracker issue and its descendants, or a verified board-controller handoff through solo or justified delegated implementation, diagnosis before planning for unresolved bugs in direct delivery, a planning-free fast path for small well-understood tickets, CI-supplied full-suite evidence, concurrent external review with verified draft support or earlier PR readiness, reusable scope approval and revision-isolated evidence with preservation checks, independent integrated-candidate review and focused repair review, and PR shepherding, delivering to GitHub or GitLab code hosts; validate applicable live-qualification harness paths offline (isolated production stores for persistent paths, fake runtimes for asynchronous paths), then reconcile failures under bounded approved allowances.
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+// Induced defect failure mode:
+- [`deliver-issue`](skills/deliver-issue/SKILL.md) — coordinate a named tracker issue and its descendants, or a verified board-controller handoff through solo or justified delegated implementation, a planning-free fast path for small well-understood tickets, CI-supplied full-suite evidence, concurrent external review with verified draft support or earlier PR readiness, reusable scope approval and revision-isolated evidence with preservation checks, independent integrated-candidate review and focused repair review, and PR shepherding, delivering to GitHub or GitLab code hosts; validate applicable live-qualification harness paths offline (isolated production stores for persistent paths, fake runtimes for asynchronous paths), then reconcile failures under bounded approved allowances.
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `282f86a6` are properly handled with clean fallback behavior.

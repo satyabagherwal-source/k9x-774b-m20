@@ -8873,10 +8873,10 @@
     "repository": "chrisbanes/skills",
     "platform": "github",
     "sourceUrl": "https://github.com/chrisbanes/skills",
-    "sourceVersion": "efeb99dc",
+    "sourceVersion": "9427b3a2",
     "license": "Apache-2.0",
-    "contentHash": "5d903d59cbfbaad438bf7c763f0fee621428d653d38f7a9ee42f9cd9393d9483",
-    "lastHarvestedAt": "2026-11-23T14:12:46.137Z",
+    "contentHash": "feed1273cf9911e938ebb2351cc479f4b8b9ff83cb03c3a6a85c6f61d767091a",
+    "lastHarvestedAt": "2026-11-25T23:41:44.349Z",
     "learningId": "learn-github-chrisbanes-skills"
   },
   "joreilly-confetti": {
@@ -11885,8 +11885,8 @@
     "sourceUrl": "https://huggingface.co/nvidia/DeepSeek-V4.1-Flash-1017-NVFP4",
     "sourceVersion": "hf-nvidia-deepseek-v4.1-flash-1017-nvfp4",
     "license": "Open-Source",
-    "contentHash": "30227d296abd04c6d7e7d32799cd1686ff2c74860b6278fa60e95a3e83c1ccb2",
-    "lastHarvestedAt": "2026-11-22T02:18:00.274Z",
+    "contentHash": "083251552c7770fb32c0571141dac570552e20023a6daece34d8921e6527f787",
+    "lastHarvestedAt": "2026-11-25T23:41:38.066Z",
     "learningId": "learn-huggingface-nvidia-deepseek-v4-1-flash-1017-nvfp4"
   },
   "hf-moonshotai-kimi-k3.1-pro": {

@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261124-2ZM9",
-    "timestamp": "2026-11-24T06:20:45.393Z",
-    "repository": "laurent22/joplin",
-    "learningId": "learn-github-laurent22-joplin",
-    "contentHash": "dbc01eebac58e8a267f2fd07c1ac6378eff56bc81dce31e3b8a2d6179d4fc0f1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-31ON",
-    "timestamp": "2026-11-24T06:20:48.071Z",
-    "repository": "aws/aws-cdk",
-    "learningId": "learn-github-aws-aws-cdk",
-    "contentHash": "15f14b38fe61c2ad485b7a6f8e8475ba0491b9897abf58036227f0030c1c2be1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261124-F18A",
     "timestamp": "2026-11-24T06:30:07.354Z",
     "repository": "metalbear-co/mirrord",
@@ -7490,6 +7460,36 @@
     "repository": "NucleoidAI/Nucleoid",
     "learningId": "learn-github-nucleoidai-nucleoid",
     "contentHash": "2a8628e9b0716311eaf6a690a88bc97e4e09824ff1eb9914f31d093cef09842f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-PF2J",
+    "timestamp": "2026-11-25T23:41:38.059Z",
+    "repository": "nvidia/DeepSeek-V4.1-Flash-1017-NVFP4",
+    "learningId": "learn-huggingface-nvidia-deepseek-v4-1-flash-1017-nvfp4",
+    "contentHash": "083251552c7770fb32c0571141dac570552e20023a6daece34d8921e6527f787",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-PJX3",
+    "timestamp": "2026-11-25T23:41:44.343Z",
+    "repository": "chrisbanes/skills",
+    "learningId": "learn-github-chrisbanes-skills",
+    "contentHash": "feed1273cf9911e938ebb2351cc479f4b8b9ff83cb03c3a6a85c6f61d767091a",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
