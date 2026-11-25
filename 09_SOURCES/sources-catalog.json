@@ -5963,10 +5963,10 @@
     "repository": "rook/rook",
     "platform": "github",
     "sourceUrl": "https://github.com/rook/rook",
-    "sourceVersion": "d7d7a0e1",
+    "sourceVersion": "394e6dba",
     "license": "Apache-2.0",
-    "contentHash": "a1527fa8e66316a0cd91d4dc2497de9876c4ba4ee1ee7af39cb0f8de1505e25a",
-    "lastHarvestedAt": "2026-11-24T11:30:22.710Z",
+    "contentHash": "98fee9f9e5ef9dacf992ce802511cd8c22d8f8e8d4f9cfbc69d33b1aaa4dd2d6",
+    "lastHarvestedAt": "2026-11-25T04:39:35.736Z",
     "learningId": "learn-github-rook-rook"
   },
   "genkit-ai-genkit": {
@@ -7903,10 +7903,10 @@
     "repository": "XcodesOrg/XcodesApp",
     "platform": "github",
     "sourceUrl": "https://github.com/XcodesOrg/XcodesApp",
-    "sourceVersion": "9836fd83",
+    "sourceVersion": "3231e33a",
     "license": "MIT",
-    "contentHash": "9564bc00ea98fe65773b3ab2c93adb74729cbb8ae1378cf00b62cc4ad8be55b2",
-    "lastHarvestedAt": "2026-11-12T01:23:29.022Z",
+    "contentHash": "32fc704269b0395990313aca38ef4d5fe69962e1c6440fbf88ceb82131adfe59",
+    "lastHarvestedAt": "2026-11-25T04:39:32.985Z",
     "learningId": "learn-github-xcodesorg-xcodesapp"
   },
   "lapce-lapce": {
@@ -12453,10 +12453,10 @@
     "repository": "tuist/tuist",
     "platform": "github",
     "sourceUrl": "https://github.com/tuist/tuist",
-    "sourceVersion": "0d1e4df6",
+    "sourceVersion": "1f231c14",
     "license": "NOASSERTION",
-    "contentHash": "1fb62a9182595e701d74a063abd9e3b2d737520c85f304d3eac85866c1ccd7a1",
-    "lastHarvestedAt": "2026-11-24T02:04:10.993Z",
+    "contentHash": "170f8e3c43976c895e0021a55b3c5005cac4180e23cd810a64699913d6075a34",
+    "lastHarvestedAt": "2026-11-25T04:39:29.856Z",
     "learningId": "learn-github-tuist-tuist"
   },
   "mixelpixx-kicad-mcp-server": {

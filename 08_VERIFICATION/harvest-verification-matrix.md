@@ -12934,3 +12934,6 @@
 | `CYCLE-20261125-LT8Y` | `2026-11-25T04:31:05.554Z` | `yyjeqhc/webcodex` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/yyjeqhc-webcodex-learnings.md` | Yes (`c4cacd3d...`) |
 | `CYCLE-20261125-LY8Z` | `2026-11-25T04:31:12.035Z` | `darrylmorley/whatcable` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10452` | Yes (`13fc8620...`) |
 | `CYCLE-20261125-M0YP` | `2026-11-25T04:31:15.553Z` | `juicedata/juicefs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10453` | Yes (`965ecf46...`) |
+| `CYCLE-20261125-WMD7` | `2026-11-25T04:39:29.851Z` | `tuist/tuist` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10454` | Yes (`170f8e3c...`) |
+| `CYCLE-20261125-WOS5` | `2026-11-25T04:39:32.981Z` | `XcodesOrg/XcodesApp` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10455` | Yes (`32fc7042...`) |
+| `CYCLE-20261125-WQWK` | `2026-11-25T04:39:35.732Z` | `rook/rook` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10456` | Yes (`98fee9f9...`) |

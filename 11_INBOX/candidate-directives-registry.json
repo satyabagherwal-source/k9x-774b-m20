@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T04:31:22.252Z",
+  "last_updated": "2026-11-25T04:39:43.128Z",
   "directives": [
     {
       "id": "CD-001",
@@ -59490,6 +59490,68 @@
       "source_repo": "juicedata-juicefs",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-03A081-sdk-python-fix-native-initialization-and.md",
+      "staged_date": "2026-11-25"
+    },
+    {
+      "id": "CD-WMKS",
+      "directive_title": "upgrade flop to 0.26.7 and db_connection to 2.10.3",
+      "source_repo": "tuist/tuist",
+      "source_commit": "1f231c14",
+      "staged_file": "11_INBOX/candidate-directives/CD-WMKS-upgrade-flop-to-0-26-7-and-db_connection-to-2-10-3.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-25",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-WVJP",
+      "directive_title": "Empirical Invariant Guard in CleanupModel+Cleanup.swift",
+      "source_repo": "xcodesorg-xcodesapp-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-WVJP-empirical-invariant-guard-in-cleanupmodel-cleanup-swift.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-25",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-WWLV",
+      "directive_title": "Empirical Invariant Guard in _cluster-role.tpl",
+      "source_repo": "rook-rook-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-WWLV-empirical-invariant-guard-in-_cluster-role-tpl.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-25",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-WUPS",
+      "directive_title": "server): upgrade flop to 0.26.7 and db_connection to 2.10.3",
+      "source_repo": "tuist-tuist-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-WUPS-server-upgrade-flop-to-0-26-7-and-db_connection-to-2-10-3.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-25",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-ACB477",
+      "directive_title": "Empirical Invariant Guard in CleanupModel+Cleanup.swift",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "xcodesorg-xcodesapp",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-ACB477-empirical-invariant-guard-in-cleanupmode.md",
+      "staged_date": "2026-11-25"
+    },
+    {
+      "id": "CD-REV-DCD143",
+      "directive_title": "Empirical Invariant Guard in _cluster-role.tpl",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "rook-rook",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-DCD143-empirical-invariant-guard-in-cluster-rol.md",
       "staged_date": "2026-11-25"
     }
   ]

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T02:04:25.660Z",
+  "timestamp": "2026-11-25T04:39:40.541Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-tuist-tuist-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [tuist-tuist-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T02:04:25.660Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T04:39:40.541Z`  
 > **Learning ID**: `LEARN-EVO-tuist-tuist-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 60%
+- **Secondary Corroborating Domains**: M (Feedback & Evolution Intelligence), H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence)
+- **Confidence Rating**: 73%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from tuist-tuist-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tuist-tuist-learnings.md`  
 > **Source**: github ([https://github.com/tuist/tuist](https://github.com/tuist/tuist))  
-> **Source Version**: `0d1e4df6`  
+> **Source Version**: `1f231c14`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T02:04:09.881Z  
+> **Timestamp**: 2026-11-25T04:39:28.716Z  
 > **Learning ID**: `learn-github-tuist-tuist`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tuist-tuist-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tuist/tuist](https://github.com/tuist/tuist))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T02:04:09.668Z  
+> **Harvest Timestamp**: 2026-11-25T04:39:28.576Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Tuist builds infrastructure for faster, more reliable build and test workflows across developers, CI, and coding agents. Shared cache, tests, and insights that sit alongside your existing CI.
 - **Primary Language / Ecosystem**: Elixir
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 5869 stars
+- **Stars / Engagement**: 5870 stars
 
 ---
 
@@ -488,879 +488,487 @@ struct PreviewsEmptyStateView: View {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4b0405f1` (2026-11-23)
-**Commit Message**: fix(kura): set aside floor memory for write replies
+### Incident Patch 1: `b62ff4e8` (2026-11-24)
+**Commit Message**: fix(server): upgrade flop to 0.26.7 and db_connection to 2.10.3
 
-A BatchUpdateBlobs or UpdateActionResult reserves its reply from the floor
-without waiting. While a read waits on a full floor, the semaphore hands
-every released permit to that waiter first, so each try-only reply was
-refused however small it was. Under a read burst nearly every write was
-refused with RESOURCE_EXHAUSTED and filed as a decode refusal.
+Flop before 0.26.7 decodes after/before cursors with
+binary_to_term(:safe), which still allows structs. A cursor carrying an
+Ecto.Query.DynamicExpr and a DBConnection.Stream runs attacker-chosen
+code when Ecto inspects it after a failed cast (CVE-2026-130411). The
+server reads these cursors from request params in the runs, builds and
+generations APIs and in LiveViews; our valid_cursor?/cursor_matches_order?
+guards only compare keys, so they did not block it.
 
-Floors of 64 MiB or more now keep a 1 MiB slice that only write replies
-draw on, still floor memory and never borrowed headroom. Limits sized
-from the floor keep using the whole floor. Reply refusals get their own
-memory action, grpc_write_reply_admission_rejected.
+Flop 0.26.7 rejects compressed cursors and any cursor containing a
+struct. db_connection 2.10.3 closes the DBConnection.Stream :log gadget
+(CVE-2026-133555). Atlas gets the same bumps. Only the two lock entries
+change; transitive deps stay put.
 
-Mixed read/write stress against main (3 runs each, 45-60 readers plus
-16 zstd writers): refused write items per phase went from about 1,800 to
-0, written bytes from about 190 MiB to 650 MiB, write latency from about
-100 ms to 34 ms; read throughput, latency and CPU unchanged within noise.
-
-Amp-Thread-ID: https://ampcode.com/threads/T-01a20777-066f-74ac-8b42-e8e6416e81d8
-Co-authored-by: Marek Fort <[REDACTED_EMAIL]>
-
-**File**: `infra/helm/k8s-monitoring/alerts.md` (modified, +9/-6)
-```diff
-@@ -5538,17 +5538,20 @@ The transient budget on the remote-execution surface: decoding a write's
- messages, staging a ByteStream upload, decoding a compressed `BatchUpdateBlobs`
- item, or a write whose reply the floor cannot cover, each refused before it
- stores anything. The counter is the only place it shows. ByteStream staging
--refusals (`bytestream_staging_admission_rejected`) and decode refusals
--(`grpc_write_decode_admission_rejected`) both file under this kind; the memory
-+refusals (`bytestream_staging_admission_rejected`), decode refusals
-+(`grpc_write_decode_admission_rejected`) and reply refusals
-+(`grpc_write_reply_admission_rejected`) all file under this kind; the memory
- action separates them.
- 
- Write decoding and staging borrow the ceiling headroom above the
- floor-derived budget while pressure is normal, so a shed means the pod spent
- its floor *and* that headroom, or it was above normal pressure and the borrow
--was closed. The one exception is a write's reply, which never borrows: it is
--refused when the floor cannot cover it, which happens only after that write's
--own decode borrowed, so `transient_ceiling_headroom_borrowed` in
--`kura_memory_actions_total_total` rises in the same window. A shed burst with
-+was closed. The one exception is a write's reply, which never borrows: it draws
-+on a 1 MiB slice of the floor set aside for replies (outside
-+`kura_memory_transient_capacity_bytes`), so reads queued on a full floor cannot
-+refuse it. Reply refusals mean that slice and the shared floor were both spent;
-+older pods without the slice refused every write behind a queued read, filed
-+as decode refusals. A shed burst with
- no borrows at normal pressure is a pod predating compressed items borrowing,
- which refused them on a full floor with the headroom idle. Read
- `kura_memory_elastic_transient_reserved_bytes` against
-```
-
-**File**: `kura/README.md` (modified, +1/-1)
-```diff
-@@ -462,7 +462,7 @@ The second estimate applies to default 60%/85% watermarks without a limiting mem
- 
- Prefer reducing client concurrency or increasing pod memory before overriding `KURA_MEMORY_SOFT_LIMIT_BYTES` / `KURA_MEMORY_HARD_LIMIT_BYTES`. Lowering the soft watermark sheds optional work earlier; raising the hard watermark reduces the safety reserve beneath the container limit. Neither creates physical memory. Use explicit watermarks only after measuring the application's baseline and mixed-load peaks.
- 
--Watch `kura_memory_transient_{capacity,reserved}_bytes`, `kura_memory_elastic_transient_{capacity,reserved}_bytes`, pressure state, and `kura_memory_actions_total_total{action="bytestream_staging_admission_rejected"}` / `grpc_write_decode_admission_rejected`, together with `kura_capacity_sheds_total_total`. Short bursts can be absorbed by bounded client retries, including against older Kura versions without RetryInfo. Persistent refusals mean the offered concurrency exceeds capacity or requests exceed an individual budget; longer retries alone do not fix that.
-+Watch `kura_memory_transient_{capacity,reserved}_bytes`, `kura_memory_elastic_transient_{capacity,reserved}_bytes`, pressure state, and `kura_memory_actions_total_total{action="bytestream_staging_admission_rejected"}` / `grpc_write_decode_admission_rejected` / `grpc_write_reply_admission_rejected`, together with `kura_capacity_sheds_total_total`. Short bursts can be absorbed by bounded client retries, including against older Kura versions without RetryInfo. Persistent refusals mean the offered concurrency exceeds capacity or requests exceed an individual budget; longer retries alone do not fix that.
- 
- ## 📊 Observability
- 
-```
-
-**File**: `kura/crates/kura-core/src/memory/mod.rs` (modified, +78/-12)
-```diff
-@@ -428,6 +428,18 @@ impl MemoryController {
-         self.inner.pools.elastic_transient_capacity_bytes() as u64
-     }
- 
-+    /// Floor bytes set aside for write replies, outside
-+    /// `transient_capacity_bytes`.
-+    pub fn write_reply_reserve_bytes(&self) -> u64 {
-+        self.inner.pools.write_reply_reserve_bytes() as u64
-+    }
-+
-+    /// Floor bytes held, across the shared floor pool and the slice set aside
-+    /// for write replies.
-+    pub fn floor_reserved_bytes(&self) -> u64 {
-+        self.transient_reserved_bytes() + self.inner.pools.write_reply_reserved_bytes() as u64
-+    }
-+
-     pub fn elastic_transient_reserved_bytes(&self) -> u64 {
-         self.inner.pools.elastic_transient_reserved_bytes() as u64
-     }
-@@ -455,11 +467,13 @@ impl MemoryController {
-     /// independent byte permits. Pressure stops elastic borrowing and halves
-     /// ceiling-derived capacity. Already-open sessions may drain above this cap.
-     pub fn multipart_upload_capacity(&self) -> usize {
-+        // Sized from the whole floor, the reply slice included, like the other
-+        // floor-derived limits.
-+        let floor_bytes = self.transient_capacity_bytes() + self.write_reply_reserve_bytes();
-+        let ceiling_bytes = floor_bytes + self.elastic_transient_capacity_bytes();
-         let capacity_bytes = match self.pressure() {
--            MemoryPressure::Normal => self.foreground_transient_capacity_bytes(),
--            MemoryPressure::Constrained => self
--                .transient_capacity_bytes()
--                .min(self.foreground_transient_capacity_bytes() / 2),
-+            MemoryPressure::Normal => ceiling_bytes,
-+            MemoryPressure::Constrained => floor_bytes.min(ceiling_bytes / 2),
-             MemoryPressure::Critical => return 0,
-         };
-         usize::try_from(capacity_bytes / (1024 * 1024))
-@@ -1675,7 +1689,7 @@ mod tests {
-             None,
-         );
-         assert_eq!(
--            unbounded.transient_capacity_bytes(),
-+            unbounded.transient_capacity_bytes() + unbounded.write_reply_reserve_bytes(),
-             ceiling_headroom as u64
-         );
- 
-@@ -1687,7 +1701,10 @@ mod tests {
-             hard_limit,
-             Some(anon_budget),
-         );
--        assert_eq!(bounded.transient_capacity_bytes(), anon_budget);
-+        assert_eq!(
-+            bounded.transient_capacity_bytes() + bounded.write_reply_reserve_bytes(),
-+            anon_budget
-+        );
-         assert!(bounded.transient_capacity_bytes() < unbounded.transient_capacity_bytes());
- 
-         // A floor roomier than the ceiling allows cannot inflate the budget past
-@@ -1699,7 +1716,10 @@ mod tests {
-             hard_limit,
-             Some(runtime_limit * 4),
-         );
--        assert_eq!(generous.transient_capacity_bytes(), ceiling_headroom as u64);
-+        assert_eq!(
-+            generous.transient_capacity_bytes() + generous.write_reply_reserve_bytes(),
-+            ceiling_headroom as u64
-+        );
-     }
- 
-     /// A controller whose floor-derived budget is a fraction of its ceiling
-@@ -1717,22 +1737,28 @@ mod tests {
-             forced,
-             Some(anon_budget),
-         );
--        (controller, anon_budget, hard_limit - soft_limit)
-+        // The shared floor pool: the published floor less the reply slice.
-+        let floor_pool = controller.transient_capacity_bytes();
-+        assert_eq!(
-+            floor_pool + controller.write_reply_reserve_bytes(),
-+            anon_budget
-+        );
-+        (controller, floor_pool, hard_limit - soft_limit)
-     }
- 
-     #[test]
-     fn the_elastic_pool_is_exactly_the_headroom_the_floor_clamp_discards() {
--        let (controller, anon_budget, ceiling_headroom) = elastic_controller(None);
-+        let (controller, floor_pool, ceiling_headroom) = elastic_controller(None);
-+        let reply_slice = controller.write_reply_reserve_bytes();
- 
--        assert_eq!(controller.transient_capacity_bytes(), anon_budget);
-         assert_eq!(
-             controller.elastic_transient_capacity_bytes(),
--            ceiling_headroom - anon_budget
-+            ceiling_headroom - floor_pool - reply_slice
-         );
-         // Borrowing can never take anonymous admission past what a node with no
-         // published floor would already have granted.
-         assert_eq!(
--            controller.foreground_transient_capacity_bytes(),
-+            controller.foreground_transient_capacity_bytes() + reply_slice,
-             ceiling_headroom
-         );
-     }
-@@ -1815,6 +1841,46 @@ mod tests {
-         assert!(held.try_resize(0).is_ok());
-     }
- 
-+    // A read queued on a full floor takes every permit the floor releases, so
-+    // a try-only reply there fails however small it is. Replies draw on their
-+    // own floor slice instead, or a read burst refuses every write.
-+    #[tokio::test]
-+    async fn a_write_reply_is_admitted_while_a_read_waits_on_a_full_floor() {
-+        let (controller, _, _) = elastic_controller(None);
-+        let f
-```
-
-**File**: `kura/crates/kura-core/src/memory/pools.rs` (modified, +40/-5)
-```diff
-@@ -13,6 +13,11 @@ const MIN_REAPI_RESPONSE_BUDGET_BYTES: usize = 8 * 1024 * 1024;
- const MAX_REAPI_RESPONSE_BUDGET_BYTES: usize = 64 * 1024 * 1024;
- const MAX_REAPI_MATERIALIZATION_POOL_BYTES: usize = 128 * 1024 * 1024;
- const MAX_MMAP_SERVING_POOL_BYTES: usize = 512 * 1024 * 1024;
-+/// Slice of the floor set aside for write replies. A reply is a few hundred
-+/// bytes per item, so this covers thousands of concurrent items. Floors below
-+/// `MIN_FLOOR_FOR_WRITE_REPLY_RESERVE_BYTES` keep the whole floor shared.
-+const WRITE_REPLY_RESERVE_BYTES: usize = 1024 * 1024;
-+const MIN_FLOOR_FOR_WRITE_REPLY_RESERVE_BYTES: usize = 64 * WRITE_REPLY_RESERVE_BYTES;
- const MAX_ENCODED_RESPONSE_STREAM_CHUNK_BYTES: usize =
-     RESPONSE_STREAM_CHUNK_BYTES + RESPONSE_STREAM_MIN_CHUNK_BYTES;
- const MAX_RESPONSE_STREAM_RESERVATION_BYTES: usize = MAX_ENCODED_RESPONSE_STREAM_CHUNK_BYTES * 4;
-@@ -32,6 +37,13 @@ pub(super) struct MemoryPools {
-     /// Caps how much of the elastic pool borrowed batch-read responses may
-     /// hold at once. The whole elastic pool.
-     read_borrow: Arc<Semaphore>,
-+    /// Floor bytes only write replies draw on. A reply is reserved without
-+    /// waiting, and a semaphore hands every released permit to its queued
-+    /// waiters first, so while a read waits on the shared floor every
-+    /// try-only acquisition there fails, however small. Carved out of the
-+    /// floor, so it is protected memory like the rest of it.
-+    write_reply: Arc<Semaphore>,
-+    write_reply_reserve_bytes: usize,
-     reapi_materialization_limit_bytes: usize,
-     foreground_response_streaming: Arc<Semaphore>,
-     elastic_foreground_response_streaming: Arc<Semaphore>,
-@@ -68,9 +80,15 @@ impl MemoryPools {
-         // it, which keeps the floor-to-ceiling gap for page cache and
-         // mmap-served segments instead. Without one, fall back to the
-         // ceiling-derived headroom.
--        let transient_capacity_bytes = semaphore_capacity(
-+        let floor_bytes = semaphore_capacity(
-             anon_budget_bytes.map_or(headroom_bytes, |budget| budget.min(headroom_bytes)),
-         );
-+        let write_reply_reserve_bytes = if floor_bytes >= MIN_FLOOR_FOR_WRITE_REPLY_RESERVE_BYTES {
-+            WRITE_REPLY_RESERVE_BYTES
-+        } else {
-+            0
-+        };
-+        let transient_capacity_bytes = floor_bytes - write_reply_reserve_bytes;
-         // What the floor clamp above discards, held in its own pool. A caller
-         // that opts in may draw on it while pressure is normal, so a burst that
-         // outgrows the floor is answered from headroom the ceiling already
-@@ -81,9 +99,8 @@ impl MemoryPools {
-         // floor is unprotected by `memory.min`, so it must stop being granted
-         // before the kernel is left with the OOM killer as its only remedy.
-         let elastic_transient_capacity_bytes =
--            semaphore_capacity(headroom_bytes).saturating_sub(transient_capacity_bytes);
--        let reapi_materialization_limit_bytes =
--            reapi_materialization_limit_bytes(transient_capacity_bytes);
-+            semaphore_capacity(headroom_bytes).saturating_sub(floor_bytes);
-+        let reapi_materialization_limit_bytes = reapi_materialization_limit_bytes(floor_bytes);
-         let mmap_serving_bytes = mmap_serving_bytes(headroom_bytes);
-         let response_streaming_bytes =
-             response_streaming_pool_bytes(runtime_limit_bytes, hard_limit_bytes, headroom_bytes);
-@@ -98,7 +115,7 @@ impl MemoryPools {
-         // metrics, and enforce it through this exact partition.
-         let elastic_foreground_response_streaming_bytes =
-             elastic_foreground_response_streaming_bytes(
--                transient_capacity_bytes,
-+                floor_bytes,
-                 response_streaming_bytes,
-                 foreground_response_streaming_bytes,
-             );
-@@ -134,6 +151,8 @@ impl MemoryPools {
-             transient_capacity_bytes,
-             elastic_transient_capacity_bytes,
-             read_borrow: Arc::new(Semaphore::new(elastic_transient_capacity_bytes)),
-+            write_reply: Arc::new(Semaphore::new(write_reply_reserve_bytes)),
-+            write_reply_reserve_bytes,
-             reapi_materialization_limit_bytes,
-             foreground_response_streaming: Arc::new(Semaphore::new(
-                 foreground_response_streaming_bytes,
-@@ -210,6 +229,22 @@ impl MemoryPools {
-             .map_err(|_| ())
-     }
- 
-+    pub(super) fn write_reply_reserve_bytes(&self) -> usize {
-+        self.write_reply_reserve_bytes
-+    }
-+
-+    pub(super) fn write_reply_reserved_bytes(&self) -> usize {
-+        self.write_reply_reserve_bytes
-+            .saturating_sub(self.write_reply.available_permits())
-+    }
-+
-+    pub(super) fn try_acquire_write_reply(&self, permits: u32) -> Result<OwnedSemaphorePermit, ()> {
-+        self.write_reply
-+            .clone()
-+            .try_acquire_many_owned(permits)
-+            .map_err(|_| ())
-+    }
-+
-     pub(super) fn ela
-```
-
-**File**: `kura/crates/kura-core/src/memory/reservation.rs` (modified, +28/-10)
-```diff
-@@ -296,10 +296,11 @@ impl Drop for ForegroundWaiter {
- }
- 
- impl TransientMemoryReservation {
--    /// A floor-backed reservation of `bytes`: this reservation's floor-derived
--    /// bytes first, the floor pool for the rest, and never borrowed ceiling
--    /// headroom. Leaves this reservation untouched when the floor cannot cover
--    /// it.
-+    /// A floor-backed reservation of `bytes` for a write's reply, never
-+    /// borrowed ceiling headroom: this reservation's floor-derived bytes when
-+    /// they cover it, else the floor slice set aside for replies, else this
-+    /// reservation's floor bytes plus the shared floor pool for the rest.
-+    /// Leaves this reservation untouched when none of them can cover it.
-     fn try_split_off_floor_backed(&mut self, bytes: u64) -> Result<Self, ()> {
-         let requested = usize::try_from(bytes).map_err(|_| ())?;
-         let floor_held = self
-@@ -308,15 +309,32 @@ impl TransientMemoryReservation {
-             .map_or(0, OwnedSemaphorePermit::num_permits);
-         let from_self = requested.min(floor_held);
-         let from_pool = requested - from_self;
-+        if from_pool > 0 {
-+            if !self
-+                .controller
-+                .allow_transient_admission(AdmissionClass::Foreground)
-+            {
-+                return Err(());
-+            }
-+            // The shared floor refuses every try-only acquisition while a read
-+            // is queued on it, so a reply tries its own slice first. The whole
-+            // reply comes from the slice: permits of different semaphores
-+            // cannot merge.
-+            let permits = u32::try_from(requested).map_err(|_| ())?;
-+            if let Ok(permit) = self.controller.inner.pools.try_acquire_write_reply(permits) {
-+                return Ok(Self {
-+                    controller: self.controller.clone(),
-+                    permit: Some(permit),
-+                    elastic_permit: None,
-+                    _read_borrow_permit: None,
-+                    elasticity: TransientElasticity::Fixed,
-+                    bytes,
-+                });
-+            }
-+        }
-         let mut permit = match from_pool {
-             0 => None,
-             permits => {
--                if !self
--                    .controller
--                    .allow_transient_admission(AdmissionClass::Foreground)
--                {
--                    return Err(());
--                }
-                 let permits = u32::try_from(permits).map_err(|_| ())?;
-                 Some(self.controller.inner.pools.try_acquire_transient(permits)?)
-             }
-```
-
-**File**: `kura/crates/kura-core/src/metrics.rs` (modified, +11/-0)
-```diff
-@@ -465,6 +465,7 @@ impl ReapiLatencyMetrics {
- 
- pub struct GrpcWriteAdmissionMetrics {
-     decode_rejected: Counter,
-+    reply_rejected: Counter,
-     staging_rejected: Counter,
-     capacity_shed: Counter,
- }
-@@ -475,6 +476,13 @@ impl GrpcWriteAdmissionMetrics {
-         self.capacity_shed.inc();
-     }
- 
-+    /// A write refused because the floor could not cover its reply, before
-+    /// anything decoded. Same shed kind as decoding, its own memory action.
-+    pub fn record_reply_rejected(&self) {
-+        self.reply_rejected.inc();
-+        self.capacity_shed.inc();
-+    }
-+
-     pub fn record_staging_rejected(&self) {
-         self.staging_rejected.inc();
-         self.capacity_shed.inc();
-@@ -943,6 +951,9 @@ impl Metrics {
-             decode_rejected: memory_actions.get_or_create_owned(&MemoryActionLabels {
-                 action: "grpc_write_decode_admission_rejected".to_owned(),
-             }),
-+            reply_rejected: memory_actions.get_or_create_owned(&MemoryActionLabels {
-+                action: "grpc_write_reply_admission_rejected".to_owned(),
-+            }),
-             staging_rejected: memory_actions.get_or_create_owned(&MemoryActionLabels {
-                 action: "bytestream_staging_admission_rejected".to_owned(),
-             }),
-```
-
-**File**: `kura/crates/kura-core/src/store.rs` (modified, +5/-2)
-```diff
-@@ -24047,7 +24047,10 @@ mod tests {
-             config.memory_soft_limit_bytes = 64 * MIB;
-             config.memory_hard_limit_bytes = 128 * MIB;
-         });
--        assert_eq!(store.memory.transient_capacity_bytes(), 64 * MIB);
-+        assert_eq!(
-+            store.memory.transient_capacity_bytes() + store.memory.write_reply_reserve_bytes(),
-+            64 * MIB
-+        );
-         let upload_id = store
-             .try_start_multipart_upload("acme", "ios", "builds", "large", "Module")
-             .expect("session should start");
-@@ -24063,7 +24066,7 @@ mod tests {
-         // is charged one drop interval rather than the whole window.
-         let _other_uploads = store
-             .memory
--            .try_reserve_foreground_memory(48 * MIB)
-+            .try_reserve_foreground_memory(store.memory.transient_capacity_bytes() - 16 * MIB)
-             .expect("the pool should admit the other uploads");
- 
-         tokio::time::timeout(
-```
-
-**File**: `kura/crates/kura-reapi/src/admission.rs` (modified, +1/-1)
-```diff
-@@ -245,7 +245,7 @@ impl GrpcWriteAdmission {
-             .file_cache
-             .try_reserve_reply(bytes)
-             .map_err(|_| {
--                self.metrics.record_decode_rejected();
-+                self.metrics.record_reply_rejected();
-                 write_admission_rejected(
-                     "server is limiting concurrent remote-execution writes; retry the write",
-                 )
-```
-
----
-
-### Incident Patch 2: `1ba60806` (2026-11-23)
-**Commit Message**: fix(pulse): validate retained recovery and preserve fractional budgets
-
-Validate source TTL against the aligned recovery scope before scheduling writes. Preserve nanosecond precision and checked wide multiplication for window budgets, and compare source age without constructing overflowing finite-TTL cutoffs.
-
-Amp-Thread-ID: https://ampcode.com/threads/T-01a1fd73-6d99-72c6-b9b7-be982bd87267
+Amp-Thread-ID: https://ampcode.com/threads/T-01a20e77-e7e7-7548-9e22-6c78c5c04bcf
 Co-authored-by: Pedro Piñera Buendía <[REDACTED_EMAIL]>
 
-**File**: `pulse/FORK.md` (modified, +5/-0)
+**File**: `atlas/mix.exs` (modified, +1/-1)
 ```diff
-@@ -62,6 +62,11 @@ covered by this list.
-   expired preceding dirty window cannot consume the retained-window budget.
-   SQL window planning rejects unrepresentable bounds before consuming dirty
-   work instead of falling back to an unfiltered scan outside retention.
-+  Retained recovery validates source TTL against the aligned lower bound on
-+  its frozen clock before marking or writing work. Window budgets and splits
-+  retain nanosecond precision so fractional strides cannot consume future bins.
-+  Budget multiplication is checked without narrowing counts to 32 bits, and
-+  finite TTL validation compares source age without overflowing timestamp cutoffs.
- - **Exact count-rollup prototype.** `tests/perf/count_aggregate_benchmark.py`
-   compares raw dashboard-style counts with minute summaries plus uncovered raw
-   rows in a disposable local database. Immutable ingestion batches and an
+@@ -77,7 +77,7 @@ defmodule Atlas.MixProject do
+       {:money, "~> 1.14"},
+       {:forex, "~> 1.1"},
+       {:flow, "~> 1.2"},
+-      {:flop, "~> 0.26.0"},
++      {:flop, "~> 0.26.7"},
+       {:ueberauth, "~> 0.10"},
+       {:ueberauth_google, "~> 0.12"},
+       {:uniq, "~> 0.6"},
 ```
 
-**File**: `pulse/src/flow/src/batching_mode/state.rs` (modified, +100/-25)
+**File**: `atlas/mix.lock` (modified, +2/-2)
 ```diff
-@@ -600,28 +600,40 @@ impl DirtyTimeWindows {
-     /// Get the effective count of time windows, which is the number of time windows that can be
-     /// used for query, compute from total time window range divided by `window_size`.
-     pub fn effective_count(&self, window_size: &Duration) -> usize {
--        if self.windows.is_empty() {
-+        if self.windows.is_empty() || window_size.is_zero() {
-             return 0;
-         }
--        let window_size =
--            chrono::Duration::from_std(*window_size).unwrap_or(chrono::Duration::zero());
--        let total_window_time_range =
--            self.windows
--                .iter()
--                .fold(chrono::Duration::zero(), |acc, (start, end)| {
--                    if let Some(end) = end {
--                        acc + end.sub(start).unwrap_or(chrono::Duration::zero())
--                    } else {
--                        acc + window_size
--                    }
--                });
--
--        // not sure window_size is zero have any meaning, but just in case
--        if window_size.num_seconds() == 0 {
--            0
--        } else {
--            (total_window_time_range.num_seconds() / window_size.num_seconds()) as usize
--        }
-+        let total_nanos: u128 = self
-+            .windows
-+            .iter()
-+            .map(|(start, end)| {
-+                if let Some(end) = end {
-+                    end.sub(start)
-+                        .and_then(|duration| duration.to_std().ok())
-+                        .unwrap_or_default()
-+                        .as_nanos()
-+                } else {
-+                    window_size.as_nanos()
-+                }
-+            })
-+            .sum();
-+        usize::try_from(total_nanos / window_size.as_nanos()).unwrap_or(usize::MAX)
-+    }
-+
-+    fn window_range(window_size: chrono::Duration, count: u128) -> Result<chrono::Duration, Error> {
-+        let nanos = window_size
-+            .to_std()
-+            .ok()
-+            .and_then(|duration| duration.as_nanos().checked_mul(count));
-+        nanos
-+            .and_then(|nanos| {
-+                let seconds = u64::try_from(nanos / 1_000_000_000).ok()?;
-+                chrono::Duration::from_std(Duration::new(seconds, (nanos % 1_000_000_000) as u32))
-+                    .ok()
-+            })
-+            .context(UnexpectedSnafu {
-+                reason: "time-window budget exceeds the supported duration range",
-+            })
-     }
- 
-     /// Generate all filter expressions consuming all time windows
-@@ -639,7 +651,7 @@ impl DirtyTimeWindows {
-         task_ctx: Option<&BatchingTask>,
-     ) -> Result<Option<FilterExprInfo>, Error> {
-         ensure!(
--            window_size.num_seconds() > 0,
-+            window_size > chrono::Duration::zero(),
-             UnexpectedSnafu {
-                 reason: "window_size is zero, can't generate filter exprs",
-             }
-@@ -681,7 +693,7 @@ impl DirtyTimeWindows {
-         }
- 
-         // get the first `window_cnt` time windows
--        let max_time_range = window_size * window_cnt as i32;
-+        let max_time_range = Self::window_range(window_size, window_cnt as u128)?;
- 
-         let mut to_be_query = BTreeMap::new();
-         let mut new_windows = self.windows.clone();
-@@ -713,13 +725,14 @@ impl DirtyTimeWindows {
-                 // too large a window, split it
-                 // split at window_size * times
-                 let surplus = max_time_range - cur_time_range;
--                if surplus.num_seconds() < window_size.num_seconds() {
-+                if surplus < window_size {
-                     // Skip splitting if surplus is smaller than window_size
-                     break;
-                 }
--                let times = surplus.num_seconds() / window_size.num_seconds();
-+                let times =
-+                    surplus.to_std().unwrap().as_nanos() / window_size.to_std().unwrap().as_nanos();
- 
--                let split_offset = window_size * times as i32;
-+                let split_offset = Self::window_range(window_size, times)?;
-                 let split_at = start
-                     .add_duration(split_offset.to_std().unwrap())
-                     .context(TimeSnafu)?;
-@@ -1198,6 +1211,68 @@ mod test {
-         }
-     }
- 
-+    #[test]
-+    fn test_large_fractional_window_budget_preserves_future_dirty_work() {
-+        for days in [30, 60] {
-+            let mut dirty = DirtyTimeWindows::default();
-+            let start = Timestamp::new_millisecond(0);
-+            let boundary = Timestamp::new_millisecond(days * 24 * 3600 * 1000);
-+            let end = Timestamp::new_millisecond(boundary.value() + 1);
-+            dirty.add_window(start, Some(boundary));
-+            let budget = dirty.effective_count(&Duration::from_millis(1));
-+            assert_eq!(budget as i64, days * 86_400_000);
-+            dirty.add_window(boundary, Some(end));
-+            let selected = dirty
-+                .gen_filter_exprs(
-+                    "ts",
-+              
+@@ -19,7 +19,7 @@
+   "credo": {:hex, :credo, "1.7.18", "5c5596bf7aedf9c8c227f13272ac499fe8eae6237bd326f2f07dfc173786f042", [:mix], [{:bunt, "~> 0.2.1 or ~> 1.0", [hex: :bunt, repo: "hexpm", optional: false]}, {:file_system, "~> 0.2 or ~> 1.0", [hex: :file_system, repo: "hexpm", optional: false]}, {:jason, "~> 1.0", [hex: :jason, repo: "hexpm", optional: false]}], "hexpm", "a189d164685fd945809e862fe76a7420c4398fa288d76257662aecb909d6b3e5"},
+   "crypto_rand": {:hex, :crypto_rand, "1.0.4", "0d32cbbaa8c229a45e79cdaefd7a48cfb9e6ed803a5168731fe27409daa27c6f", [:mix], [], "hexpm", "ad1862fd3e1c938f60982902632474868ea96901d75dd53f0ec32dd55e123549"},
+   "ctx": {:hex, :ctx, "0.6.0", "8ff88b70e6400c4df90142e7f130625b82086077a45364a78d208ed3ed53c7fe", [:rebar3], [], "hexpm", "a14ed2d1b67723dbebbe423b28d7615eb0bdcba6ff28f2d1f1b0a7e1d4aa5fc2"},
+-  "db_connection": {:hex, :db_connection, "2.10.1", "d5465f6bcc125c1b8981c1dbf23c193ca16f446ec0b25832dc174f74f18be510", [:mix], [{:telemetry, "~> 0.4 or ~> 1.0", [hex: :telemetry, repo: "hexpm", optional: false]}], "hexpm", "18ed94c6e627b4bf452dbd4df61b69a35a1e768525140bc1917b7a685026a6a3"},
++  "db_connection": {:hex, :db_connection, "2.10.3", "9d641d9cb56ed7cd03d0f5520b64f023f8c9a2531944991c952aa38e8afd5405", [:mix], [{:telemetry, "~> 0.4 or ~> 1.0", [hex: :telemetry, repo: "hexpm", optional: false]}], "hexpm", "ff441940bfd9ef5cced632e0e36d4ac823abeb9cae2767203fb9b4ccd1bd83cb"},
+   "decimal": {:hex, :decimal, "2.4.1", "6c0fbede12fb122ba685e9ab41c6a40c129e322b3aa192f9e072e61f3a6ffaf2", [:mix], [], "hexpm", "7e618897933a8455f19a727d7c5e50a2c071a544b700e5e724298ecb4340187f"},
+   "deep_merge": {:hex, :deep_merge, "1.0.2", "476aa7ea61c54de96220051b998d893869069094da65b96101aebf79416f8a1e", [:mix], [], "hexpm", "737a53cdc9758fedbb608bdc213969e65729466c4ef3cd8e8726d0335dff116c"},
+   "dns_cluster": {:hex, :dns_cluster, "0.2.0", "aa8eb46e3bd0326bd67b84790c561733b25c5ba2fe3c7e36f28e88f384ebcb33", [:mix], [], "hexpm", "ba6f1893411c69c01b9e8e8f772062535a4cf70f3f35bcc964a324078d8c8240"},
+@@ -38,7 +38,7 @@
+   "file_system": {:hex, :file_system, "1.1.1", "31864f4685b0148f25bd3fbef2b1228457c0c89024ad67f7a81a3ffbc0bbad3a", [:mix], [], "hexpm", "7a15ff97dfe526aeefb090a7a9d3d03aa907e100e262a0f8f7746b78f8f87a5d"},
+   "finch": {:hex, :finch, "0.24.0", "4022b6194e907b6d9b597c168001cac38e488a35fe36cef9d8297e3159782510", [:mix], [{:mime, "~> 1.0 or ~> 2.0", [hex: :mime, repo: "hexpm", optional: false]}, {:mint, "~> 1.8", [hex: :mint, repo: "hexpm", optional: false]}, {:nimble_options, "~> 0.4 or ~> 1.0", [hex: :nimble_options, repo: "hexpm", optional: false]}, {:nimble_pool, "~> 1.1", [hex: :nimble_pool, repo: "hexpm", optional: false]}, {:telemetry, "~> 0.4 or ~> 1.0", [hex: :telemetry, repo: "hexpm", optional: false]}], "hexpm", "33ba40069c3587c2f99f9125b766e19dad87d6d54be3c6961db2304df04cef00"},
+   "fine": {:hex, :fine, "0.1.6", "4bf7151493443c454aac9f2fa2f34f5fefd0346a83fb5586a016c4a135c63247", [:mix], [], "hexpm", "5638eb4495488e885ebec167fa57973e5c35e1a50c344eb7666c90ec1c4e3b12"},
+-  "flop": {:hex, :flop, "0.26.3", "9bc700b34f96a57e56aaa89b850926356311372556eacd5a1abe0fdd0ea40bf2", [:mix], [{:ecto, "~> 3.11", [hex: :ecto, repo: "hexpm", optional: false]}, {:nimble_options, "~> 1.0", [hex: :nimble_options, repo: "hexpm", optional: false]}], "hexpm", "cd77588229778ac55560c90dfbe15ab6486773f067d6e52db9fa703b8c9a9d2d"},
++  "flop": {:hex, :flop, "0.26.7", "e420e09230322ff047cf656b348428406379da876cc71fdb497318c0b91ef8ac", [:mix], [{:ecto, "~> 3.11", [hex: :ecto, repo: "hexpm", optional: false]}, {:nimble_options, "~> 1.0", [hex: :nimble_options, repo: "hexpm", optional: false]}], "hexpm", "aac350bdcb049e4617cb109b9bc053e7701afa104a836f497fa908441ce86f6e"},
+   "flow": {:hex, :flow, "1.2.4", "1dd58918287eb286656008777cb32714b5123d3855956f29aa141ebae456922d", [:mix], [{:gen_stage, "~> 1.0", [hex: :gen_stage, repo: "hexpm", optional: false]}], "hexpm", "874adde96368e71870f3510b91e35bc31652291858c86c0e75359cbdd35eb211"},
+   "forex": {:hex, :forex, "1.1.2", "748dc508ecec33d4c640368208197076a67d2becd97132c4581d1880ebf59ec8", [:mix], [{:decimal, "~> 2.3", [hex: :decimal, repo: "hexpm", optional: false]}, {:nimble_options, "~> 1.1", [hex: :nimble_options, repo: "hexpm", optional: false]}, {:req, "~> 0.5", [hex: :req, repo: "hexpm", optional: false]}, {:sweet_xml, "~> 0.7", [hex: :sweet_xml, repo: "hexpm", optional: false]}], "hexpm", "e9b8b1882f8d5c730ce28f8998340876d89dae45c4d9fdb48017e574ab953536"},
+   "gen_smtp": {:hex, :gen_smtp, "1.3.0", "62c3d91f0dcf6ce9db71bcb6881d7ad0d1d834c7f38c13fa8e952f4104a8442e", [:rebar3], [{:ranch, ">= 1.8.0", [hex: :ranch, repo: "hexpm", optional: false]}], "hexpm", "0b73fbf069864ecbce02fe653b16d3f35fd889d0fdd4e14527675565c39d84e6"},
 ```
 
-**File**: `pulse/src/flow/src/batching_mode/task.rs` (modified, +15/-17)
+**File**: `server/mix.exs` (modified, +2/-2)
 ```diff
-@@ -569,17 +569,9 @@ impl BatchingTask {
-             }
-             .build()
-         })?;
--        let now = Timestamp::new_second(
--            SystemTime::now()
--                .duration_since(UNIX_EPOCH)
--                .map_err(|err| {
--                    UnexpectedSnafu {
--                        reason: format!("Failed to read recovery wall clock: {err}"),
--                    }
--                    .build()
--                })?
--                .as_secs() as i64,
--        );
-+        let now = self.evaluation_time.unwrap_or_else(|| {
-+            Timestamp::current_time(common_time::timestamp::TimeUnit::Nanosecond)
-+        });
-         let lower = now
-             .sub_duration(Duration::from_secs(expire_after))
-             .map_err(BoxedError::new)
-@@ -702,14 +694,18 @@ impl BatchingTask {
-                     for (start, _) in windows {
-                         oldest = oldest.min(*start);
-                     }
--                    let cutoff = Timestamp::current_millis()
--                        .sub_duration(ttl)
--                        .map_err(BoxedError::new)
--                        .context(ExternalSnafu)?;
--                    if oldest <= cutoff {
-+                    let now = self.evaluation_time.unwrap_or_else(|| {
-+                        Timestamp::current_time(common_time::timestamp::TimeUnit::Nanosecond)
-+                    });
-+                    // Compare the source age instead of constructing a cutoff
-+                    // that can precede the nanosecond timestamp range.
-+                    let age = now.sub(&oldest).context(UnexpectedSnafu {
-+                        reason: "Cannot compute source age for recovery retention validation",
-+                    })?;
-+                    if age.to_std().is_ok_and(|age| age >= ttl) {
-                         return UnexpectedSnafu {
-                             reason: format!(
--                                "Flow {} recovery requires source table {} data from {oldest:?}, older than TTL {ttl:?} cutoff {cutoff:?}",
-+                                "Flow {} recovery requires source table {} data from {oldest:?}, at or beyond TTL {ttl:?} at {now:?}",
-                                 self.config.flow_id,
-                                 name.join(".")
-                             ),
-@@ -1000,6 +996,8 @@ impl BatchingTask {
-             })),
-             ..self.clone()
-         };
-+        task.validate_recovery_retention(task.recovery_retention_lower_bound()?, &[])
-+            .await?;
-         let window_count = task.mark_all_windows_as_dirty()?;
-         task.execute_once_with_guard(guard, engine, frontend_client, window_count)
-             .await
+@@ -57,7 +57,7 @@ defmodule Tuist.MixProject do
+       {:phoenix, "~> 1.7"},
+       {:phoenix_ecto, "~> 4.4"},
+       {:ecto_sql, "~> 3.12"},
+-      {:db_connection, "~> 2.9", override: true},
++      {:db_connection, "~> 2.10.3", override: true},
+       {:postgrex, ">= 0.0.0"},
+       {:phoenix_html, "~> 4.0"},
+       {:phoenix_live_reload, "~> 1.6.1", only: :dev},
+@@ -121,7 +121,7 @@ defmodule Tuist.MixProject do
+       {:telemetry_test, "~> 0.1.2"},
+       {:saxy, "~> 1.6"},
+       {:sweet_xml, "~> 0.7.4"},
+-      {:flop, "~> 0.26.0"},
++      {:flop, "~> 0.26.7"},
+       {:timex, "~> 3.7.13"},
+       {:prom_ex, git: "https://github.com/pepicrft/prom_ex", branch: "finch"},
+       # PromEx's standalone metrics server still runs on Cowboy even though
 ```
 
-**File**: `pulse/src/flow/src/batching_mode/task/test.rs` (modified, +87/-0)
+**File**: `server/mix.lock` (modified, +2/-2)
 ```diff
-@@ -522,6 +522,7 @@ async fn test_retained_recovery_preserves_concurrent_arrivals() {
-         ..
-     } = new_time_window_test_task_with_query(query).await;
-     Arc::get_mut(&mut task.config).unwrap().expire_after = Some(60);
-+    configure_source_ttl(&query_engine, Some(TimeToLive::Forever)).await;
-     register_twe_sink(&query_engine, "missing_sink", 9201);
-     let handler = Arc::new(RetainedRecoveryHandler {
-         source: std::sync::atomic::AtomicUsize::new(1),
-@@ -1155,6 +1156,65 @@ async fn configure_source_capability(
-         .unwrap();
- }
- 
-+#[tokio::test]
-+async fn test_retained_recovery_validates_aligned_source_retention_before_writing() {
-+    let mut outcomes = Vec::new();
-+    for ttl in [
-+        Some(TimeToLive::Duration(Duration::from_secs(30))),
-+        Some(TimeToLive::Duration(Duration::from_secs(61))),
-+        Some(TimeToLive::Duration(Duration::from_secs(64))),
-+        Some(TimeToLive::Forever),
-+        None,
-+    ] {
-+        let TestTaskParts {
-+            mut task,
-+            query_engine,
-+            ..
-+        } = new_time_window_test_task_with_query(
-+            "SELECT number, date_bin(INTERVAL '5 second', ts) AS time_window \
-+                 FROM numbers_with_ts GROUP BY time_window, number",
-+        )
-+        .await;
-+        Arc::get_mut(&mut task.config).unwrap().expire_after = Some(60);
-+        // The retained lower bound is 63.4s old after alignment, not 60s.
-+        task.evaluation_time = Some(Timestamp::new_millisecond(123_400));
-+        configure_source_ttl(&query_engine, ttl).await;
-+        register_twe_sink(&query_engine, "missing_sink", 9203);
-+        let handler = Arc::new(RetainedRecoveryHandler {
-+            source: std::sync::atomic::AtomicUsize::new(1),
-+            sink: std::sync::atomic::AtomicUsize::new(99),
-+            captured: tokio::sync::Notify::new(),
-+            release: tokio::sync::Notify::new(),
-+            first: AtomicBool::new(false),
-+        });
-+        let grpc_handler: Arc<
-+            dyn crate::batching_mode::frontend_client::GrpcQueryHandlerWithBoxedError,
-+        > = handler.clone();
-+        let frontend = Arc::new(FrontendClient::from_grpc_handler(
-+            Arc::downgrade(&grpc_handler),
-+            QueryOptions::default(),
-+        ));
-+        let result = task
-+            .recompute_retained_serialized(&query_engine, &frontend)
-+            .await;
-+        outcomes.push((
-+            result.is_ok(),
-+            handler.sink.load(Ordering::SeqCst),
-+            task.state.read().unwrap().dirty_time_windows.is_empty(),
-+        ));
-+    }
-+    assert_eq!(
-+        outcomes,
-+        vec![
-+            (false, 99, true), // Source expires before the nominal retention range.
-+            (false, 99, true), // Nominal range fits, but the leading aligned bin does not.
-+            (true, 1, true),
-+            (true, 1, true),
-+            (false, 99, true), // Unknown inherited TTL must fail closed.
-+        ]
-+    );
-+}
-+
- #[tokio::test]
- async fn test_validate_recovery_retention_explicit_source_ttls() {
-     struct Case {
-@@ -1258,6 +1318,33 @@ async fn test_validate_recovery_retention_explicit_source_ttls() {
-     }
- }
- 
-+#[tokio::test]
-+async fn test_validate_recovery_retention_long_finite_ttl() {
-+    let TestTaskParts {
-+        mut task,
-+        query_engine,
-+        ..
-+    } = new_test_task_engine_and_plan_with_query("SELECT number, ts FROM numbers_with_ts", "sink")
-+        .await;
-+    Arc::get_mut(&mut task.config).unwrap().expire_after = Some(60);
-+    configure_source_ttl(
-+        &query_engine,
-+        Some(TimeToLive::Duration(Duration::from_secs(10_000_000_000))),
-+    )
-+    .await;
-+    let now = Timestamp::current_time(common_time::timestamp::TimeUnit::Nanosecond);
-+    let oldest = now.sub_duration(Duration::from_secs(65)).unwrap();
-+    for clock in [None, Some(now)] {
-+        task.evaluation_time = clock;
-+        assert!(
-+            task.validate_recovery_retention(Some(oldest), &[])
-+                .await
-+                .is_ok(),
-+            "long finite TTL must cover a small retained range with clock {clock:?}"
-+        );
-+    }
-+}
-+
- #[tokio::test]
- async fn test_validate_recovery_retention_rejects_unknown_inherited_ttl() {
-     let TestTaskParts {
+@@ -36,7 +36,7 @@
+   "ctx": {:hex, :ctx, "0.6.0", "8ff88b70e6400c4df90142e7f130625b82086077a45364a78d208ed3ed53c7fe", [:rebar3], [], "hexpm", "a14ed2d1b67723dbebbe423b28d7615eb0bdcba6ff28f2d1f1b0a7e1d4aa5fc2"},
+   "cubdb": {:hex, :cubdb, "2.0.2", "d4253885084dae37a8ff73887d232864eb38ecac962aa08543e686b0183a1d62", [:mix], [], "hexpm", "c99cc8f9e6c4deb98d16cca5ded1928edd22e48b4736b76e8a1a85367d7fe921"},
+   "date_time_parser": {:hex, :date_time_parser, "1.3.0", "6ba16850b5ab83dd126576451023ab65349e29af2336ca5084aa1e37025b476e", [:mix], [{:kday, "~> 1.0", [hex: :kday, repo: "hexpm", optional: false]}], "hexpm", "93c8203a8ddc66b1f1531fc0e046329bf0b250c75ffa09567ef03d2c09218e8c"},
+-  "db_connection": {:hex, :db_connection, "2.10.2", "ae391e803a5adff104da913c2fc1c0c14a37f8b10001dcef568796e1fb7bf95c", [:mix], [{:telemetry, "~> 0.4 or ~> 1.0", [hex: :telemetry, repo: "hexpm", optional: false]}], "hexpm", "510b14482330f1af6490a2fa0efd8d4f1435d1529b165647df22ac0f2df0fa93"},
++  "db_connection": {:hex, :db_connection, "2.10.3", "9d641d9cb56ed7cd03d0f5520b64f023f8c9a2531944991c952aa38e8afd5405", [:mix], [{:telemetry, "~> 0.4 or ~> 1.0", [hex: :telemetry, repo: "hexpm", optional: false]}], "hexpm", "ff441940bfd9ef5cced632e0e36d4ac823abeb9cae2767203fb9b4ccd1bd83cb"},
+   "decimal": {:hex, :decimal, "3.2.0", "f1235f05d841a211fda78a08fdb9777f2ff51a71f18455233fae186ff76187c6", [:mix], [], "hexpm", "190bca80580ce61aa69bb0eacadd7677710205c770225c2c2c07e32a5c31b234"},
+   "decorator": {:hex, :decorator, "1.4.0", "a57ac32c823ea7e4e67f5af56412d12b33274661bb7640ec7fc882f8d23ac419", [:mix], [], "hexpm", "0a07cedd9083da875c7418dea95b78361197cf2bf3211d743f6f7ce39656597f"},
+   "deep_merge": {:hex, :deep_merge, "1.0.2", "476aa7ea61c54de96220051b998d893869069094da65b96101aebf79416f8a1e", [:mix], [], "hexpm", "737a53cdc9758fedbb608bdc213969e65729466c4ef3cd8e8726d0335dff116c"},
+@@ -66,7 +66,7 @@
+   "finch": {:hex, :finch, "0.24.0", "4022b6194e907b6d9b597c168001cac38e488a35fe36cef9d8297e3159782510", [:mix], [{:mime, "~> 1.0 or ~> 2.0", [hex: :mime, repo: "hexpm", optional: false]}, {:mint, "~> 1.8", [hex: :mint, repo: "hexpm", optional: false]}, {:nimble_options, "~> 0.4 or ~> 1.0", [hex: :nimble_options, repo: "hexpm", optional: false]}, {:nimble_pool, "~> 1.1", [hex: :nimble_pool, repo: "hexpm", optional: false]}, {:telemetry, "~> 0.4 or ~> 1.0", [hex: :telemetry, repo: "hexpm", optional: false]}], "hexpm", "33ba40069c3587c2f99f9125b766e19dad87d6d54be3c6961db2304df04cef00"},
+   "fine": {:hex, :fine, "0.1.6", "4bf7151493443c454aac9f2fa2f34f5fefd0346a83fb5586a016c4a135c63247", [:mix], [], "hexpm", "5638eb4495488e885ebec167fa57973e5c35e1a50c344eb7666c90ec1c4e3b12"},
+   "floki": {:hex, :floki, "0.38.0", "62b642386fa3f2f90713f6e231da0fa3256e41ef1089f83b6ceac7a3fd3abf33", [:mix], [], "hexpm", "a5943ee91e93fb2d635b612caf5508e36d37548e84928463ef9dd986f0d1abd9"},
+-  "flop": {:hex, :flop, "0.26.3", "9bc700b34f96a57e56aaa89b850926356311372556eacd5a1abe0fdd0ea40bf2", [:mix], [{:ecto, "~> 3.11", [hex: :ecto, repo: "hexpm", optional: false]}, {:nimble_options, "~> 1.0", [hex: :nimble_options, repo: "hexpm", optional: false]}], "hexpm", "cd77588229778ac55560c90dfbe15ab6486773f067d6e52db9fa703b8c9a9d2d"},
++  "flop": {:hex, :flop, "0.26.7", "e420e09230322ff047cf656b348428406379da876cc71fdb497318c0b91ef8ac", [:mix], [{:ecto, "~> 3.11", [hex: :ecto, repo: "hexpm", optional: false]}, {:nimble_options, "~> 1.0", [hex: :nimble_options, repo: "hexpm", optional: false]}], "hexpm", "aac350bdcb049e4617cb109b9bc053e7701afa104a836f497fa908441ce86f6e"},
+   "flow": {:hex, :flow, "1.2.4", "1dd58918287eb286656008777cb32714b5123d3855956f29aa141ebae456922d", [:mix], [{:gen_stage, "~> 1.0", [hex: :gen_stage, repo: "hexpm", optional: false]}], "hexpm", "874adde96368e71870f3510b91e35bc31652291858c86c0e75359cbdd35eb211"},
+   "fun_with_flags": {:hex, :fun_with_flags, "1.13.0", "8e8eddd6b723691211387923b160bc779fa593f59485209a058c90ea4bbb1cd5", [:mix], [{:ecto_sql, "~> 3.0", [hex: :ecto_sql, repo: "hexpm", optional: true]}, {:phoenix_pubsub, "~> 2.0", [hex: :phoenix_pubsub, repo: "hexpm", optional: true]}, {:redix, "~> 1.0", [hex: :redix, repo: "hexpm", optional: true]}, {:telemetry, "~> 1.3", [hex: :telemetry, repo: "hexpm", optional: false]}], "hexpm", "dbbbff607e6f096d3857c88530d1a4e178d9eeec5dc00118e2cc1d076578710a"},
+   "fun_with_flags_ui": {:hex, :fun_with_flags_ui, "1.1.0", "61a394cd7d80c09943a4b02e07c9ab8899781f3392a157b45527d22731bf871a", [:mix], [{:cowboy, ">= 2.0.0", [hex: :cowboy, repo: "hexpm", optional: true]}, {:fun_with_flags, "~> 1.12", [hex: :fun_with_flags, repo: "hexpm", optional: false]}, {:plug, "~> 1.12", [hex: :plug, repo: "hexpm", optional: false]}, {:plug_cowboy, ">= 2.0.0", [hex: :plug_cowboy, repo: "hexpm", optional: true]}], "hexpm", "99b578a250141537ff7774abb832427f3406a4faff3cfc4f074788beeef38f5d"},
 ```
 
 ---
 
-### Incident Patch 3: `b5f05b3b` (2026-11-23)
-**Commit Message**: fix(server): stop reporting superseded reclaims and disconnected idle Orb pauses as failures
+### Incident Patch 2: `ba7500d6` (2026-11-24)
+**Commit Message**: fix(pulse): repair symptoms deployment validation
 
-ReclaimCapacityWorker failed with {:error, :superseded} when another growth
-or shrink rewrote a node's carve-out size while this shrink reclaimed page
-cache. That writer resizes the Pod itself, so reconcile_allocation/1 now
-succeeds.
+Prevent background Git maintenance from racing disposable source-guard cleanup. Align Loki exception normalization with Sentry fingerprints and cover typed placeholders with independent regression anchors. Use the shared Noora border token for symptom history.
 
-PauseIdleOrbWorker failed with {:error, :node_disconnected} when the node's
-daemon went away mid-pause (in production, sandboxd OOM kills). The node's
-next report settles the Orb and enqueues the pause again if it is still
-quiet, so the worker logs it and succeeds. Other refusals still fail.
+Amp-Thread-ID: https://ampcode.com/threads/T-01a1ea69-2a2b-7537-8802-2df97db9b290
 
-Amp-Thread-ID: https://ampcode.com/threads/T-01a20973-f5b1-7347-818c-ef37bcb384e8
+**File**: `.github/scripts/production-source-guard.sh` (modified, +3/-1)
+```diff
+@@ -43,7 +43,9 @@ trap 'rm -rf "$repo"' EXIT
+ git init --quiet --bare "$repo"
+ git -C "$repo" remote add origin "$remote"
+ # Commits only: main's full history without trees or blobs.
+-git -C "$repo" fetch --quiet --no-tags --filter=tree:0 origin \
++# This disposable repository needs no maintenance; detached writers can race
++# the EXIT trap that removes it.
++git -C "$repo" fetch --quiet --no-tags --no-auto-maintenance --filter=tree:0 origin \
+   +refs/heads/main:refs/remotes/origin/main
+ 
+ # Never fetch the deploy commit on demand: it either arrived with main's
+```
+
+**File**: `.github/scripts/production-source-guard.test.sh` (modified, +11/-0)
+```diff
+@@ -56,4 +56,15 @@ expect fail 'image tag built from a dangling commit' refs/heads/main "$main_tip"
+ expect fail 'image tag that names no commit' refs/heads/main "$main_tip" "image_tag=latest"
+ expect fail 'image tag with too short a prefix' refs/heads/main "$main_tip" "image_tag=sha-${main_tip:0:8}"
+ 
++# Maintenance must not outlive the disposable repository and race its cleanup.
++# Trace real Git processes: a tiny fixture otherwise rarely hits that race.
++trace="$scratch/trace.json"
++GIT_TRACE2_EVENT="$trace" expect pass 'main check without background maintenance' refs/heads/main "$main_tip"
++if grep -Eq '"event":"start".*"argv":\[.*"maintenance"' "$trace"; then
++  echo 'not ok - disposable repository launched maintenance'
++  failures=$((failures + 1))
++else
++  echo 'ok - disposable repository did not launch maintenance'
++fi
++
+ [ "$failures" -eq 0 ]
+```
+
+**File**: `.github/workflows/symptoms-deployment.yml` (modified, +4/-0)
+```diff
+@@ -15,6 +15,8 @@ on:
+     paths:
+       - symptoms/**
+       - infra/helm/symptoms/**
++      - .github/scripts/production-source-guard.sh
++      - .github/scripts/production-source-guard.test.sh
+       - .github/workflows/symptoms-deployment.yml
+   push:
+     branches:
+@@ -24,6 +26,8 @@ on:
+       - infra/certificate-trust/policy.json
+       - infra/certificate-trust/pem-store.sh
+       - infra/helm/symptoms/**
++      - .github/scripts/production-source-guard.sh
++      - .github/scripts/production-source-guard.test.sh
+       - .github/workflows/symptoms-deployment.yml
+   workflow_dispatch:
+     inputs:
+```
+
+**File**: `infra/helm/pulse/loki-otlp.yaml` (modified, +12/-2)
+```diff
+@@ -161,8 +161,18 @@ processors:
+             } else {
+               string(frame.file) ?? ""
+             }
+-            normalized_message = replace(evalue, r'0x[0-9a-fA-F]+', "0x*")
+-            normalized_message = replace(normalized_message, r'[0-9]+', "N")
++            # Keep Atlas Fingerprint.normalize_text/1's typed placeholders
++            # and order aligned with sentry-errors.yaml. Hash the raw value,
++            # not the credential-scrubbed body or the log template.
++            normalized_message = replace(evalue, r'[A-Za-z][A-Za-z0-9+.-]*://[^ \t\n\x0B\x0C\r\x22\x27<>]+', "<url>")
++            normalized_message = replace(normalized_message, r'[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}', "<email>")
++            normalized_message = replace(normalized_message, r'[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}', "<uuid>")
++            normalized_message = replace(normalized_message, r'[0-9]{4}-[0-9]{2}-[0-9]{2}(?:[T ][0-9]{2}:[0-9]{2}(?::[0-9]{2}(?:[.,][0-9]+)?)?(?:Z|[+-][0-9]{2}:?[0-9]{2})?)?', "<date>")
++            normalized_message = replace(normalized_message, r'[0-9]{1,3}(?:\.[0-9]{1,3}){3}', "<ip>")
++            normalized_message = replace(normalized_message, r'(?-u:\b)[0-9a-f]{40}(?-u:\b)', "<git_sha>")
++            normalized_message = replace(normalized_message, r'0[xX][0-9a-fA-F]+|(?-u:\b)[0-9a-fA-F]{16,}(?-u:\b)', "<hex>")
++            normalized_message = replace(normalized_message, r'[0-9]+\.[0-9]+', "<float>")
++            normalized_message = replace(normalized_message, r'[0-9]+', "<int>")
+             normalized_message = replace(normalized_message, r'[ \t\n\x0B\x0C\r]+', " ")
+             normalized_message = string(parse_regex(normalized_message, r'(?s)^(?P<prefix>.{0,200})').prefix ?? "")
+             normalized_message = strip_whitespace(normalized_message)
+```
+
+**File**: `infra/helm/pulse/test-symptoms-inputs.mjs` (modified, +53/-0)
+```diff
+@@ -267,6 +267,9 @@ try {
+   });
+   const issues = await sql(`SELECT event_id, fingerprint FROM ${errors}`);
+   const fingerprint = id => issues.find(issue => issue.event_id === id).fingerprint;
++  // Independent anchor: equality alone could let both pipelines drift from
++  // Atlas's type|function|module|normalized-message contract.
++  assert.equal(fingerprint(crashEvent.event_id), 'd257aae35ea052f66029d8957d4d1b5827f16b161b28f0b6c5709d4dede6d983');
+   assert.equal(row(crash).exception_fp, fingerprint(crashEvent.event_id));
+   assert.equal(row(exit).exception_fp, fingerprint(exitEvent.event_id));
+   assert.notEqual(row(crash).exception_fp, row(exit).exception_fp);
+@@ -313,6 +316,56 @@ try {
+     ['tuist-server', 'GET /api/projects/:id', 'tuist-server', 'tuist.repo.query', 1],
+   ]);
+   assert.ok(edges.every(edge => BigInt(edge.time_window) === BigInt(hour.getTime()) * 1000000n));
++
++  // Asymmetric normalization regression: these expected hashes come from
++  // explicit canonical keys, not either pipeline's output. Two different
++  // values of each type must group together, while different messages must
++  // stay distinct. The key prefixes are:
++  // RuntimeError|Tuist.Worker.run/1|Elixir.Tuist.Worker|
++  const normalizationCases = [
++    {
++      // Sync <uuid> for <email> at <date> calling <url>
++      fingerprint: 'f423bbe5f83fc45d55c8fc6f0e5ca6b5bf2fb7aee16f9c3974550df607b00cb7',
++      values: [
++        'Sync 0190a0b1-c2d3-7e4f-8a9b-0c1d2e3f4a5b for ops@example.com at 2026-11-20T08:15:00Z calling https://api.example.com/v1/runs/42?page=3',
++        'Sync 7F1E2D3C-4B5A-4968-8776-655443322110 for dev@tuist.dev at 2026-11-21 09:00:01 calling http://localhost:8080/v1/runs/7',
++      ],
++    },
++    {
++      // Build <git_sha> on <ip> took <float>s; trace <hex>, buffer <hex> at attempt <int>
++      fingerprint: '335c966cc039d27a7fe3b355ebd071e75da1cdaaa45c6b7ee7bc9b5f00a80e65',
++      values: [
++        'Build 3f2a9c1e5d7b8a6c4e2f0a1b3c5d7e9f1a2b3c4d on 10.0.12.7 took 12.5s; trace 4bf92f3577b34da6a3ce929d0e0e4736, buffer 0x7ffd at attempt 3',
++        'Build 1234567890abcdef1234567890abcdef12345678 on 192.168.1.42 took 0.25s; trace abcdef0123456789, buffer 0XDEAD at attempt 99',
++      ],
++    },
++  ];
++  let regressionIndex = 0;
++  for (const testCase of normalizationCases) {
++    for (const value of testCase.values) {
++      const event = {
++        event_id: (++regressionIndex).toString(16).padStart(32, '0'),
++        exception: { values: [{ type: 'RuntimeError', value, stacktrace: { frames: [{
++          module: 'Elixir.Tuist.Worker', function: 'Tuist.Worker.run/1', filename: 'lib/tuist/worker.ex', lineno: 42, in_app: false,
++        }] } }] },
++      };
++      const line = `** (RuntimeError) ${value}\n    (tuist 0.1.0) lib/tuist/worker.ex:42: Tuist.Worker.run/1`;
++      await call('/v1/loki/api/v1/push', {
++        body: JSON.stringify({ streams: [{ stream: { service_name: 'tuist-regression', level: 'error' },
++          values: [[String(now + BigInt(regressionIndex) * second), line]] }] }),
++        contentType: 'application/json',
++        headers: { 'X-Pulse-DB-Name': 'public', 'X-Pulse-Pipeline-Name': lokiPipeline, 'X-Pulse-Log-Table-Name': logs },
++      });
++      await call(`/v1/ingest?${new URLSearchParams({ db: 'public', table: errors, pipeline_name: errorsPipeline })}`, {
++        body: JSON.stringify([{ service: 'tuist-regression', event }]), contentType: 'application/json',
++      });
++      const [log] = await sql(`SELECT exception_fp FROM ${logs} WHERE "service" = 'tuist-regression' ORDER BY "timestamp" DESC LIMIT 1`);
++      const [error] = await sql(`SELECT fingerprint FROM ${errors} WHERE event_id = '${event.event_id}'`);
++      assert.equal(log.exception_fp, testCase.fingerprint, `Loki: ${value}`);
++      assert.equal(error.fingerprint, testCase.fingerprint, `Sentry: ${value}`);
++    }
++  }
++  console.log(`PASS: ${regressionIndex} typed-normalization crashes match independent fingerprint anchors`);
+   console.log(`PASS: ${lines.length} log lines keyed and masked (${secrets.length} with tokens), 2 crashes fingerprinted like their Sentry events, ${flows.length} Flows and the span-edge table`);
+ } finally {
+   await cleanup();
+```
+
+**File**: `server/assets/app/css/pages/pulse.css` (modified, +1/-1)
+```diff
+@@ -27,7 +27,7 @@
+     & [data-part="timeline-item"] {
+       flex-wrap: nowrap;
+       gap: 10px;
+-      box-shadow: var(--noora-light-border-default);
++      box-shadow: var(--noora-border-small-default);
+       border-radius: var(--noora-radius-4);
+       background: var(--noora-surface-background-primary);
+       padding: var(--noora-spacing-5);
+```
+
+---
+
+### Incident Patch 3: `f752357b` (2026-11-24)
+**Commit Message**: fix(server): keep the compilation cache in macOS repository snapshots and rebuild stale ones
+
+A snapshot build's credential only reads the cache, so the remote refused
+every publication its spool held, the five-minute drain never finished, and
+the build deleted the whole compilation cache before saving. It now stops
+the cache proxy and the build service, waits for them to exit, and drops
+only the spooled publications, keeping the store.
+
+A Mac that boots from a snapshot older than six hours now requests a new
+build. tuist generate takes more targets from the binary cache as it fills
+in after a push, which changes their dependents' build settings: a session's
+first build recompiled 302 Swift files of the Tuist app a few hours after
+its snapshot.
+
+Amp-Thread-ID: https://ampcode.com/threads/T-01a1ef61-c459-7170-9840-a51e65a86eda
 Co-authored-by: Marek Fort <[REDACTED_EMAIL]>
 
-**File**: `server/lib/tuist/sandboxes/capacity.ex` (modified, +7/-4)
+**File**: `server/lib/tuist/sandboxes/AGENTS.md` (modified, +16/-12)
 ```diff
-@@ -266,10 +266,7 @@ defmodule Tuist.Sandboxes.Capacity do
-           # resume; move them, the ones just paused included, to storage.
-           if ci_reclaim?(node_name), do: Archives.move_off_node(node_name)
+@@ -432,6 +432,11 @@ See [the rollout and recovery contract](../../../../infra/sandbox-image/remote-e
+   account's projects is connected to; `mac_source/3`): the Mac boots from the
+   repository's darwin snapshot of its Xcode template and workspace size, else
+   bare with a build requested (`request_mac_build/1`, the default macOS shape).
++  A Mac that boots from a snapshot older than six hours requests a build too:
++  `tuist generate` takes more targets from the binary cache as it fills in
++  after a push, which changes their dependents' build settings, and a
++  session's first build recompiled 302 files of the Tuist app a few hours
++  after its snapshot (measured, 2026-11).
+   Such a Mac records the repository (`sandboxes.repository`): the Macs
+   created for it on the snapshot's template in 24 hours, except creates that
+   failed (`error`), are the snapshot's spawns, which make it popular and so copied out like an Orb snapshot (the
+@@ -447,12 +452,11 @@ See [the rollout and recovery contract](../../../../infra/sandbox-image/remote-e
+   the first sync is a delta and leaves unchanged files' modification times,
+   which Xcode compares, alone (a full sync rewrites every file and rebuilt
+   459 Swift files of the Tuist app in a measurement). A delta drops
+-  `commit`. Measured on Xcode 27.0 (2026-11): every boot mounts the Metal
+-  toolchain cryptex under a new random path that ends up in the link line of
+-  host macro plugins, so after any cold boot, a snapshot boot included, the
+-  macro plugins relink and their dependents rebuild (about 55 s of 140 s for
+-  the Tuist app); the rest stays warm. A stable mount path in the image would
+-  remove it. A Mac build's command starts as `:snapshot_build`, so its
++  `commit`. Every boot mounts the Metal toolchain cryptex under a new random
++  path. On Xcode 27.0 it reached the link line of host macro plugins built
++  from source, so they relinked and their dependents rebuilt after any cold
++  boot; with the macros taken from the binary cache (Xcode 27.2, 2026-11) it
++  reaches only `ExtractAppIntentsMetadata` of targets that rebuild anyway. A Mac build's command starts as `:snapshot_build`, so its
+   script gets a `TUIST_OIDC_TOKEN` with read access to the account's cache
+   that exchanges only while the build runs (`CommandCredentials`): an
+   unauthenticated `tuist generate` skips the cache setup and writes other
+@@ -463,12 +467,12 @@ See [the rollout and recovery contract](../../../../infra/sandbox-image/remote-e
+   deletes the CLI's stored session (`~/.config/tuist/credentials`) and the
+   simulator devices and stops the simulator services, since runtimes mount
+   at new paths on each boot and a Mac restored with the builder's devices
+-  and simulator state lost its iOS runtime. Before that it waits up to five
+-  minutes for the compilation cache's `tuist-spool` to drain, stops the
+-  cache proxy and build service, and deletes `CompilationCache.noindex` if
+-  publications are still owed: a copied store whose spool owed some failed
+-  session compiles with "not a IncludeFileList node kind" (see
+-  `cas-plugin/AGENTS.md`). The build ends with `sync`. The snapshot's key hashes the
++  and simulator state lost its iOS runtime. Before that it stops the cache
++  proxy and build service, waits for them to exit, and deletes the records
++  `tuist-spool` still holds, keeping `CompilationCache.noindex`: the build's
++  credential only reads the cache, so the remote refuses every publication
++  and the spool never drains. A store saved while the proxy and build
++  service ran failed session compiles with "not a IncludeFileList node kind". The build ends with `sync`. The snapshot's key hashes the
+   build script with the macOS setup script, so changing either rebuilds it.
+   `ClaudeCodeRunners` creates a session's sandbox
+   from the repository's snapshot; a new session without one starts on the
+```
+
+**File**: `server/lib/tuist/sandboxes/claude_code_snapshots.ex` (modified, +40/-19)
+```diff
+@@ -106,12 +106,14 @@ defmodule Tuist.Sandboxes.ClaudeCodeSnapshots do
+   # (`SandboxSync` in the CLI): the manifest of the commit's files, named by
+   # its Git hash, and their paths, under the clone's resolved path. The
+   # tracked files the script changed go back to the commit first, so the
+-  # record describes the copy. Before that it waits for the compilation
+-  # cache's publications (`tuist-spool`) to reach the remote, stops the
+-  # cache proxy and the build service that write the cache, and drops the
+-  # cache when publications are still owed: a copied store whose spool owes
+-  # some holds associations no Mac can satisfy, and the sessions' compiles
+-  # failed on it (`cas-plugin/AGENTS.md`, measured 2026-11). It also drops
++  # record describes the copy. Before that it stops the cache proxy and the
++  # build service that write the compilation cache and waits for them to
++  # exit, so the saved store is quiesced: one saved while they ran failed the
++  # sessions' compiles with "not a IncludeFileList node kind" (measured
++  # 2026-11). It keeps the store, which the sessions' first builds reuse, and
++  # drops the records its spool (`tuist-spool`) still owes: the build's
++  # credential only reads the cache, so the remote refuses every publication
++  # and the spool never drains. It also drops
+   # the session the CLI stored from the build's identity token, and the
+   # script's simulators, and stops the simulator services: a Mac booted
+   # from the disks mounts the simulator runtimes at new paths, and the
+@@ -131,14 +133,16 @@ defmodule Tuist.Sandboxes.ClaudeCodeSnapshots do
+   cd "$path"
+   /bin/bash -c 'exec > >(tee "$HOME/.claude-code-setup.log") 2>&1; exec /bin/bash -l -c "$1" setup' sh "$script"
+   cache="$HOME/Library/Developer/Xcode/DerivedData/CompilationCache.noindex"
+-  owed() { find "$cache" -path '*/tuist-spool/*' -type f ! -name '*.tags' 2>/dev/null | wc -l | tr -d ' '; }
+-  deadline=$(( $(date +%s) + 300 ))
+-  while [ "$(owed)" != 0 ] && [ "$(date +%s)" -lt "$deadline" ]; do sleep 5; done
+   launchctl bootout "gui/$(id -u)/tuist.cas-proxy" >/dev/null 2>&1 || true
+   killall -TERM SWBBuildService XCBBuildService >/dev/null 2>&1 || true
+-  if [ "$(owed)" != 0 ]; then
+-    echo "snapshot: dropping the compilation cache, $(owed) publications owed" >> "$HOME/.claude-code-setup.log"
+-    rm -rf "$cache"
++  i=0
++  while pgrep -x SWBBuildService >/dev/null || pgrep -x XCBBuildService >/dev/null; do
++    i=$((i + 1)); [ "$i" -gt 30 ] && break; sleep 1
++  done
++  owed=$(find "$cache" -path '*/tuist-spool/*' -type f ! -name '*.tags' 2>/dev/null | wc -l | tr -d ' ')
++  if [ "$owed" != 0 ]; then
++    echo "snapshot: dropping $owed publications the build could not upload" >> "$HOME/.claude-code-setup.log"
++    find "$cache" -path '*/tuist-spool/*' -type f -delete
+   fi
+   rm -rf "${XDG_CONFIG_HOME:-$HOME/.config}/tuist/credentials"
+   xcrun simctl shutdown all >/dev/null 2>&1 || true
+@@ -266,10 +270,31 @@ defmodule Tuist.Sandboxes.ClaudeCodeSnapshots do
+   def mac_source(_account, _repository, _attrs), do: {:error, :invalid_parameters}
  
--          case keep_warm(node, pressure) || shrink(node, pressure) do
--            {:error, reason} -> {:error, reason}
--            _ -> :ok
--          end
-+          reconcile_result(keep_warm(node, pressure) || shrink(node, pressure))
-         else
-           :ok
-         end
-@@ -279,6 +276,12 @@ defmodule Tuist.Sandboxes.Capacity do
+   @doc """
+-  Starts building the macOS snapshot of a `mac_source/3` that had none,
+-  unless a build of it runs or recently failed. Always `:ok`.
++  Starts building the macOS snapshot of a `mac_source/3` that had none, or
++  whose snapshot is older than six hours, unless a build of it runs or
++  recently failed. Always `:ok`.
++
++  A snapshot fixes which targets `tuist generate` took from the binary cache
++  when it was built. The cache fills in after a push and moves with the
++  default branch, so a later generate replaces other targets with binaries,
++  which changes the build settings of every target that depends on them, and
++  the session's first build compiled those again: 302 files of the Tuist app
++  a few hours after its snapshot (measured, 2026-11). The Macs keep booting
++  from the old snapshot until the new one is saved and replaces it.
+   """
+-  def request_mac_build(%{snapshot: nil, agent_environment: environment, repository: repository} = source) do
++  def request_mac_build(%{snapshot: snapshot, agent_environment: %AgentEnvironment{}} = source) do
++    if is_nil(snapshot) or stale?(snapshot), do: start_mac_build(source)
++    :ok
++  end
++
++  def request_mac_build(_source), do: :ok
++
++  @mac_snapshot_max_age_seconds 6 * 3600
++
++  defp stale?(%DiskSnapshot{inserted_at: inserted_at}),
++    do: DateTime.diff(DateTime.utc_now(), inserted_at) > @mac_snapshot_max_age_seconds
++
++  defp start_mac_build(%{agent_environment: environment, repository: repository} = source) do
+     case DiskSnapshots.start_build(environment, repository, mac_setup_sha256(environment.macos_setup_script),
+            platform: :darwin,
+            template: source.template,
+@@ -293,12 +318,8 @@ defmodule Tuist.Sandboxes.ClaudeCodeSnapshots do
+           reason: inspect(reason)
+         )
      end
+-
+-    :ok
    end
  
-+  # :superseded means another growth or shrink rewrote the size asked for
-+  # while this one reclaimed; that writer resizes the Pod itself.
-+  defp reconcile_result({:error, :superseded}), do: :ok
-+  defp reconcile_result({:error, reason}), do: {:error, reason}
-+  defp reconcile_result(_resized_or_unchanged), do: :ok
-+
-   # A remote execution worker's share of the compute allocator's floor
-   # (`allocation_warm_bytes`): its carve-out grows to it ahead of any
-   # action, without waiting for the kubelet; a deferred growth keeps new
+-  def request_mac_build(_source), do: :ok
+-
+   # The account's 
 ```
 
-**File**: `server/lib/tuist/sandboxes/workers/pause_idle_orb_worker.ex` (modified, +7/-0)
+**File**: `server/test/tuist/sandboxes/claude_code_snapshots_test.exs` (modified, +24/-1)
 ```diff
-@@ -25,6 +25,13 @@ defmodule Tuist.Sandboxes.Workers.PauseIdleOrbWorker do
-       {:error, :locked} ->
-         :ok
+@@ -246,7 +246,10 @@ defmodule Tuist.Sandboxes.ClaudeCodeSnapshotsTest do
+     assert account_id == account.id
+     assert grant == %{"all_projects" => true, "scopes" => ["account:cache:read", "project:cache:read"]}
+     assert command =~ ~S|rm -rf "${XDG_CONFIG_HOME:-$HOME/.config}/tuist/credentials"|
+-    assert command =~ ~S|rm -rf "$cache"|
++    # It keeps the compilation cache and drops only the publications the
++    # read-only credential could not upload.
++    assert command =~ "/tuist-spool/*'\\'' -type f -delete"
++    refute command =~ ~S|rm -rf "$cache"|
+     assert command =~ "unset GIT_CONFIG_COUNT GIT_CONFIG_KEY_0 GIT_CONFIG_VALUE_0 GIT_TERMINAL_PROMPT\n"
  
-+      # The node's socket went away (a daemon restart pauses or loses its
-+      # VMs); its next report settles the Orb's state and, if it still runs
-+      # quiet, enqueues this pause again.
-+      {:error, reason} when reason in [:node_disconnected, :not_connected] ->
-+        Logger.info("sandboxes: idle Orb pause interrupted by its node", sandbox_id: sandbox_id, reason: reason)
-+        :ok
+     finish_command(build, 0)
+@@ -267,6 +270,26 @@ defmodule Tuist.Sandboxes.ClaudeCodeSnapshotsTest do
+ 
+     assert {:ok, %{snapshot: nil, template: "macos-xcode-1-2"}} =
+              ClaudeCodeSnapshots.mac_source(account, "acme/app", %{platform: "darwin", template: "macos-xcode-1-2"})
 +
-       {:error, reason} ->
-         Logger.warning("sandboxes: idle Orb pause failed", sandbox_id: sandbox_id, reason: inspect(reason))
-         {:error, reason}
-```
-
-**File**: `server/test/tuist/sandboxes/allocation_test.exs` (modified, +3/-2)
-```diff
-@@ -174,7 +174,7 @@ defmodule Tuist.Sandboxes.AllocationTest do
++    # A Mac that boots from it builds nothing new while it is recent, and has
++    # it built again once it is older than six hours.
++    building = fn ->
++      Repo.aggregate(from(d in DiskSnapshot, where: d.state == :building and d.platform == :darwin), :count)
++    end
++
++    assert {:ok, source} = ClaudeCodeSnapshots.mac_source(account, "acme/app", %{platform: "darwin"})
++    assert :ok = ClaudeCodeSnapshots.request_mac_build(source)
++    assert building.() == 0
++
++    snapshot
++    |> Ecto.Changeset.change(inserted_at: DateTime.add(DateTime.utc_now(:second), -7, :hour))
++    |> Repo.update!()
++
++    assert {:ok, %{snapshot: %DiskSnapshot{}} = source} =
++             ClaudeCodeSnapshots.mac_source(account, "acme/app", %{platform: "darwin"})
++
++    assert :ok = ClaudeCodeSnapshots.request_mac_build(source)
++    assert building.() == 1
    end
  
-   test "a newer allocation between desired-state growth and resize cancels the API write", %{node: node} do
--    assert :ok = Capacity.update_allocation(grant(node))
-+    assert :ok = Capacity.update_allocation(grant(node, %{"reclaim" => true, "memory_bytes" => 0}))
-     # Reclaim sends a command after lowering desired state but before resizing.
-     # Simulate a different replica publishing/reconciling a newer desired size.
-     expect(Nodes, :call, fn _, "reclaim", _, _ ->
-@@ -183,7 +183,8 @@ defmodule Tuist.Sandboxes.AllocationTest do
-     end)
- 
-     reject(&KubernetesClient.resize_sandbox_daemon_memory/3)
--    assert {:error, :superseded} = Capacity.shrink(node, true)
-+    # The newer size's writer resizes the Pod, so the reclaim job succeeds.
-+    assert :ok = Capacity.reconcile_allocation(node.name)
-     assert Repo.get!(SandboxNode, node.name).memory_limit_bytes == 8 * @gib
-   end
- 
-```
-
-**File**: `server/test/tuist/sandboxes/workers/pause_idle_orb_worker_test.exs` (added, +49/-0)
-```diff
-@@ -0,0 +1,49 @@
-+defmodule Tuist.Sandboxes.Workers.PauseIdleOrbWorkerTest do
-+  use TuistTestSupport.Cases.DataCase, async: true
-+  use Mimic
-+
-+  import TuistTestSupport.Fixtures.SandboxesFixtures
-+
-+  alias Tuist.Repo
-+  alias Tuist.Sandboxes.Nodes
-+  alias Tuist.Sandboxes.Workers.PauseIdleOrbWorker
-+
-+  setup do
-+    quiet_since = DateTime.truncate(DateTime.add(DateTime.utc_now(), -700, :second), :second)
-+
-+    sandbox =
-+      sandbox_fixture(
-+        amp_orb_id: "amp-thread",
-+        node_name: "node-a",
-+        residency_work_id: "amp:amp-thread",
-+        guest_cpu_ms: 1000,
-+        last_active_at: quiet_since
-+      )
-+
-+    %{sandbox: sandbox, args: %{sandbox_id: sandbox.id, last_active_at: DateTime.to_iso8601(quiet_since)}}
-+  end
-+
-+  # Every Orb pause reads the guest's setup log first, then pauses.
-+  defp stub_pause(result) do
-+    stub(Nodes, :call, fn
-+      "node-a", "exec", _args, _opts -> {:ok, %{"exit_code" => 0}}
-+      "node-a", "pause", _args, _opts -> result
-+    end)
-+  end
-+
-+  test "succeeds when the node disconnects mid-pause, leaving the Orb for its next report", %{
-+    sandbox: sandbox,
-+    args: args
-+  } do
-+    stub_pause({:error, :node_disconnected})
-+
-+    assert :ok = perform_job(PauseIdleOrbWorker, args)
-+    assert Repo.reload!(sandbox).state == :running
-+  end
-+
-+  test "fails on a refusal from the node", %{args: args} do
-+    stub_pause({:error, "exec running"})
-+
-+    assert {:error, "exec running"} = perform_job(PauseIdleOrbWorker, args)
-+  end
-+end
+   test "only a Mac for a repository connected to the account's projects has a snapshot source", %{
 ```
 
 #### Recent Merged Pull Requests:
@@ -1368,8 +976,8 @@ Co-authored-by: Marek Fort <[REDACTED_EMAIL]>
 - **PR #15826** (2026-11-24): chore(cli): update Tuist CLI to 4.220.0-canary.7 (@tuist-automation[bot])
 - **PR #15821** (2026-11-23): feat(server): report coverage in the pull request comment (@esnunes)
 - **PR #15808** (2026-11-23): ci(server): instrument the server's coverage once in Build Test Shards (@esnunes)
-- **PR #15807** (closed): test(app): taller NooraButton to exercise snapshot review (do not merge) (@fortmarek)
 - **PR #15806** (2026-11-23): chore(cli): update Tuist CLI to 4.220.0-canary.5 (@tuist-automation[bot])
+- **PR #15805** (2026-11-19): docs(handbook): manage the Tuist Digest in Atlas (@pepicrft)
 
 ---
 
@@ -1389,44 +997,31 @@ Co-authored-by: Marek Fort <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. kura): set aside floor memory for write replies
+## X. server): upgrade flop to 0.26.7 and db_connection to 2.10.3
 
 **RULE**:
-When implementing operations in `infra/helm/k8s-monitoring/alerts.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tuist/tuist. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `atlas/mix.exs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tuist/tuist. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4b0405f1`: kura): set aside floor memory for write replies. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b62ff4e8`: server): upgrade flop to 0.26.7 and db_connection to 2.10.3. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Elixir data structures, boundary deserialization, API parsing, or resource lifecycles matching `infra/helm/k8s-monitoring/alerts.md`.
+Subsystems managing Elixir data structures, boundary deserialization, API parsing, or resource lifecycles matching `atlas/mix.exs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```elixir
 // Verified production-grade fix pattern:
-refusals (`bytestream_staging_admission_rejected`), decode refusals
-(`grpc_write_decode_admission_rejected`) and reply refusals
-(`grpc_write_reply_admission_rejected`) all file under this kind; the memory
-was closed. The one exception is a write's reply, which never borrows: it draws
-on a 1 MiB slice of the floor set aside for replies (outside
-`kura_memory_transient_capacity_bytes`), so reads queued on a full floor cannot
-refuse it. Reply refusals mean that slice and the shared floor were both spent;
-older pods without the slice refused every write behind a queued read, filed
-as decode refusals. A shed burst with
+      {:flop, "~> 0.26.7"},
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```elixir
 // Induced defect failure mode:
-refusals (`bytestream_staging_admission_rejected`) and decode refusals
-(`grpc_write_decode_admission_rejected`) both file under this kind; the memory
-was closed. The one exception is a write's reply, which never borrows: it is
-refused when the floor cannot cover it, which happens only after that write's
-own decode borrowed, so `transient_ceiling_headroom_borrowed` in
-`kura_memory_actions_total_total` rises in the same window. A shed burst with
+      {:flop, "~> 0.26.0"},
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4b0405f1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b62ff4e8` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

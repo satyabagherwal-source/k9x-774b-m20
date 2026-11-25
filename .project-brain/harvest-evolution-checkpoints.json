@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T04:31:22.945Z",
+  "last_updated": "2026-11-25T04:39:43.834Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-25T04:07:45.064Z",
@@ -133,7 +133,7 @@
       "staged_for_review": 0
     },
     "rook-rook-learnings.md": {
-      "processed_at": "2026-11-24T11:31:01.004Z",
+      "processed_at": "2026-11-25T04:39:42.541Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -633,7 +633,7 @@
       "staged_for_review": 0
     },
     "xcodesorg-xcodesapp-learnings.md": {
-      "processed_at": "2026-11-12T01:23:57.648Z",
+      "processed_at": "2026-11-25T04:39:41.289Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1853,7 +1853,7 @@
       "staged_for_review": 1
     },
     "tuist-tuist-learnings.md": {
-      "processed_at": "2026-11-24T02:04:24.615Z",
+      "processed_at": "2026-11-25T04:39:39.429Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3903,7 +3903,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 4062,
+  "total_dossiers_evaluated": 4065,
   "total_canonical_promoted": 528,
-  "total_staged_for_review": 3113
+  "total_staged_for_review": 3116
 }

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-25T04:31:22.724Z",
-  "total_verified_learnings": 9111,
+  "last_updated": "2026-11-25T04:39:43.677Z",
+  "total_verified_learnings": 9112,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25222,
+  "total_items": 25234,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -213406,8 +213406,8 @@
       "slug": "rook-rook",
       "platform": "github",
       "source_url": "https://github.com/rook/rook",
-      "source_version": "d7d7a0e1",
-      "content_hash": "a1527fa8e66316a0cd91d4dc2497de9876c4ba4ee1ee7af39cb0f8de1505e25a",
+      "source_version": "394e6dba",
+      "content_hash": "98fee9f9e5ef9dacf992ce802511cd8c22d8f8e8d4f9cfbc69d33b1aaa4dd2d6",
       "dossier_path": "07_PROJECT_LEARNING/rook-rook-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rook-rook-learnings.md",
       "promoted_rules": [
@@ -213450,6 +213450,11 @@
           "number": 10248,
           "title": "fix purge-osd ClusterRole Helm ownership conflict",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10456,
+          "title": "Empirical Invariant Guard in _cluster-role.tpl",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -213457,7 +213462,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T11:30:22.483Z",
+      "verified_at": "2026-11-25T04:39:35.495Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -213499,10 +213504,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-rook-rook-architecture-intelligence-rook-rook-core-invariants.md",
       "title": "Architecture Intelligence: rook/rook Core Invariants",
       "repository": "rook/rook",
-      "source_version": "d7d7a0e1",
-      "content_hash": "8f8d2151b0d104c5ea11185b40d27aafc9b8c092176ba8cf5269b66e35961dbe",
+      "source_version": "394e6dba",
+      "content_hash": "aab3b1e913effefb155b80e3bc6f8942505165dda6ff0fffe4a67f09a5edf625",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T11:30:23.133Z"
+      "persisted_at": "2026-11-25T04:39:36.204Z"
     },
     "agent_contract-agent-contract-rook-rook-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-rook-rook-autonomous-specialist-persona",
@@ -213511,10 +213516,10 @@
       "relative_path": "02_AGENT_INTELLIGENCE/rook-rook-agent-contract-rook-rook-autonomous-specialist-persona.md",
       "title": "Agent Contract: rook/rook Autonomous Specialist Persona",
       "repository": "rook/rook",
-      "source_version": "d7d7a0e1",
-      "content_hash": "ed01736d001a835994b77eac7708233d58dce8bec557d0eda7b68d6450e96a09",
+      "source_version": "394e6dba",
+      "content_hash": "7d927001799530a24e9ef246ebeb2333ae1f0432e246b462909b5c993d0a4323",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T11:30:23.313Z"
+      "persisted_at": "2026-11-25T04:39:36.394Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-rook-rook": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-rook-rook",
@@ -213523,10 +213528,10 @@
       "relative_path": "08_VERIFICATION/rook-rook-verification-protocol-empirical-defect-shield-for-rook-rook.md",
       "title": "Verification Protocol: Empirical Defect Shield for rook/rook",
       "repository": "rook/rook",
-      "source_version": "d7d7a0e1",
-      "content_hash": "45aac020cc687e50dcc1963775f4c225448db28c1c085b1a71f1df1ea4f36e73",
+      "source_version": "394e6dba",
+      "content_hash": "ef178fbb3871226b0fbc6feaf6f3dc2d8f19e75df6743f5573865eee8e8b17df",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T11:30:23.462Z"
+      "persisted_at": "2026-11-25T04:39:36.559Z"
     },
     "learn-github-zama-ai-tfhe-rs": {
       "learning_id": "learn-github-zama-ai-tfhe-rs",
@@ -244860,9 +244865,9 @@
       "title": "Architecture Intelligence: rook-rook-learnings Core Invariants",
       "repository": "rook-rook-learnings",
       "source_version": "HEAD",
-      "content_hash": "c9117da2fe61acee0f3c8df6cb25ef4f47444bd968e3a5a0ed26b25d6ca9151f",
+      "content_hash": "a84a3f8f11fc778300cfb89d86cca411ca8dd4d7f7b0a1abb7bdf1f9fffb91aa",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T11:31:02.069Z"
+      "persisted_at": "2026-11-25T04:39:43.329Z"
     },
     "agent_contract-agent-contract-rook-rook-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-rook-rook-learnings-autonomous-specialist-persona",
@@ -244872,9 +244877,9 @@
       "title": "Agent Contract: rook-rook-learnings Autonomous Specialist Persona",
       "repository": "rook-rook-learnings",
       "source_version": "HEAD",
-      "content_hash": "af62235506a51afb84550296c6b6c9e6ce84c69a17270ddc99b5d1da3ca66cbd",
+      "content_hash": "f866feff2ce6c7e91eef25dda5f84ed5daa68ffa2c5fd37f78c09a10b3a8bd66",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T11:31:02.278Z"
+      "persisted_at": "2026-11-25T04:39:43.515Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-rook-rook-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-rook-rook-learnings",
@@ -244884,9 +244889,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for rook-rook-learnings",
       "repository": "rook-rook-learnings",
       "source_version": "HEAD",
-      "content_hash": "df0ecff5c341b8b717dd3e6696f18edaf37742afb95508ac607e961916f0efea",
+      "content_hash": "a5f56c4251602a0b92e62e1f3eafa5d8efd6cf6b7dfcb4b23b39b51e4577dc87",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T11:31:02.448Z"
+      "persisted_at": "2026-11-25T04:39:43.677Z"
     },
     "learn-huggingface-black-forest-labs-flux-3-image-klein-comfy": {
       "learning_id": "learn-huggingface-black-forest-labs-flux-3-image-klein-comfy",
@@ -247069,8 +247074,8 @@
       "slug": "tuist-tuist",
       "platform": "github",
       "source_url": "https://github.com/tuist/tuist",
-      "source_version": "0d1e4df6",
-      "content_hash": "1fb62a9182595e701d74a063abd9e3b2d737520c85f304d3eac85866c1ccd7a1",
+      "source_version": "1f231c14",
+      "content_hash": "170f8e3c43976c895e0021a55b3c5005cac4180e23cd810a64699913d6075a34",
       "dossier_path": "07_PROJECT_LEARNING/tuist-tuist-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tuist-tuist-learnings.md",
       "promoted_rules": [
@@ -247108,6 +247113,11 @@
           "number": 10175,
           "title": "set aside floor memory for write replies",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10454,
+          "title": "upgrade flop to 0.26.7 and db_connection to 2.10.3",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -247115,7 +247125,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T02:04:10.777Z",
+      "verified_at": "2026-11-25T04:39:29.628Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -247157,10 +247167,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tuist-tuist-architecture-intelligence-tuist-tuist-core-invariants.md",
       "title": "Architecture Intelligence: tuist/tuist Core Invariants",
       "repository": "tuist/tuist",
-      "source_version": "0d1e4df6",
-      "content_hash": "003cd7deb5250b17d921b83f5829ba2ba1cf84236b78bb34409620c732e2dcf0",
+      "source_version": "1f231c14",
+      "content_hash": "368ad9accb970bf2353a467cc068dcfd83b8da3552e009403ecc9ef9d1e3aa04",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T02:04:11.422Z"
+      "persisted_at": "2026-11-25T04:39:30.318Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tuist-tuist": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tuist-tuist",
@@ -247169,10 +247179,10 @@
       "relative_path": "08_VERIFICATION/tuist-tuist-verification-protocol-empirical-defect-shield-for-tuist-tuist.md",
       "title": "Verification Protocol: Empirical Defect Shield for tuist/tuist",
       "repository": "tuist/tuist",
-      "source_version": "0d1e4df6",
-      "content_hash": "3b290b1556df9ad1cef6880e28dd3e7e841f28aa8dbb50903c8caea36c931bed",
+      "source_version": "1f231c14",
+      "content_hash": "9182c04128f0b8575801943d103bd34cc28ee6a5bc192cd158e7a56ea3297fbc",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T02:04:11.597Z"
+      "persisted_at": "2026-11-25T04:39:30.540Z"
     },
     "learn-huggingface-obliteratus-deepseek-v4-1-flash-1017-obliterated": {
       "learning_id": "learn-huggingface-obliteratus-deepseek-v4-1-flash-1017-obliterated",
@@ -247475,9 +247485,9 @@
       "title": "Architecture Intelligence: tuist-tuist-learnings Core Invariants",
       "repository": "tuist-tuist-learnings",
       "source_version": "HEAD",
-      "content_hash": "751f83a5c7012adf89ac10ff87a4e2802b225fc651c528180c84efca56d084cc",
+      "content_hash": "0a6392f7a2e28c45b4cd135b288cff3f939eabd41b75c052bbe90fdf3c27ecfa",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T02:04:25.971Z"
+      "persisted_at": "2026-11-25T04:39:40.876Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tuist-tuist-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tuist-tuist-learnings",
@@ -247487,9 +247497,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for tuist-tuist-learnings",
       "repository": "tuist-tuist-learnings",
       "source_version": "HEAD",
-      "content_hash": "190830549222f8cbdc98659f06ba403dc082f2a2ec010bb72c021dbb99feddf8",
+      "content_hash": "64a76a74d6f8923e935af6f17a8371a9131f479b4aeab808207301727146bc5e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T02:04:26.151Z"
+      "persisted_at": "2026-11-25T04:39:41.090Z"
     },
     "candidate_directive-orthogonal-weight-projection-invariant-for-activation-ablation": {
       "item_id": "candidate_directive-orthogonal-weight-projection-invariant-for-activation-ablation",
@@ -344878,6 +344888,177 @@
       "content_hash": "a412da018934b2f7ed0af73350575e4a22a83ae64f02db257a3e9bb7c00d5727",
       "domain_letter": "H",
       "persisted_at": "2026-11-25T04:31:19.793Z"
+    },
+    "rule-10454": {
+      "learning_id": "rule-10454",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10454,
+      "title": "upgrade flop to 0.26.7 and db_connection to 2.10.3",
+      "source_url": "https://github.com/tuist/tuist",
+      "source_version": "1f231c14",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T04:39:29.628Z"
+    },
+    "candidate_directive-upgrade-flop-to-0-26-7-and-db_connection-to-2-10-3": {
+      "item_id": "candidate_directive-upgrade-flop-to-0-26-7-and-db_connection-to-2-10-3",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-WMKS-upgrade-flop-to-0-26-7-and-db_connection-to-2-10-3.md",
+      "title": "upgrade flop to 0.26.7 and db_connection to 2.10.3",
+      "repository": "tuist/tuist",
+      "source_version": "1f231c14",
+      "content_hash": "3f9857b3239c15ab144b77a91ba1ef8ff87828952cc67c8f186755eac3edeeaa",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-25T04:39:30.125Z"
+    },
+    "learn-github-xcodesorg-xcodesapp": {
+      "learning_id": "learn-github-xcodesorg-xcodesapp",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "XcodesOrg/XcodesApp",
+      "repository": "XcodesOrg/XcodesApp",
+      "slug": "xcodesorg-xcodesapp",
+      "platform": "github",
+      "source_url": "https://github.com/XcodesOrg/XcodesApp",
+      "source_version": "3231e33a",
+      "content_hash": "32fc704269b0395990313aca38ef4d5fe69962e1c6440fbf88ceb82131adfe59",
+      "dossier_path": "07_PROJECT_LEARNING/xcodesorg-xcodesapp-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/xcodesorg-xcodesapp-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 10455,
+          "title": "Empirical Invariant Guard in CleanupModel+Cleanup.swift",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-25T04:39:32.749Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-10455": {
+      "learning_id": "rule-10455",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10455,
+      "title": "Empirical Invariant Guard in CleanupModel+Cleanup.swift",
+      "source_url": "https://github.com/XcodesOrg/XcodesApp",
+      "source_version": "3231e33a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T04:39:32.749Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-cleanupmodel-cleanup-swift": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-cleanupmodel-cleanup-swift",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-WVJP-empirical-invariant-guard-in-cleanupmodel-cleanup-swift.md",
+      "title": "Empirical Invariant Guard in CleanupModel+Cleanup.swift",
+      "repository": "xcodesorg-xcodesapp-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e64fcf5d79036f5f81a3e2de4388c3f0e7054143477cf7da146b6188cf07c158",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-25T04:39:41.755Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-xcodesorg-xcodesapp-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-xcodesorg-xcodesapp-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-xcodesorg-xcodesapp-technical-construction-intelligence-xcodesorg-xcodesapp-core.md",
+      "title": "Technical Construction Intelligence: XcodesOrg/XcodesApp Core Invariants",
+      "repository": "XcodesOrg/XcodesApp",
+      "source_version": "3231e33a",
+      "content_hash": "52e88b38f63087e3e8180f121d429cf31c7201288acba40978551064f316a425",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-25T04:39:33.511Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-xcodesorg-xcodesapp": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-xcodesorg-xcodesapp",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/xcodesorg-xcodesapp-verification-protocol-empirical-defect-shield-for-xcodesorg-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for XcodesOrg/XcodesApp",
+      "repository": "XcodesOrg/XcodesApp",
+      "source_version": "3231e33a",
+      "content_hash": "477155d8f76623b864e83d8b23c5438a30819ee27ae45474569e3564d103103c",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-25T04:39:33.725Z"
+    },
+    "rule-10456": {
+      "learning_id": "rule-10456",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10456,
+      "title": "Empirical Invariant Guard in _cluster-role.tpl",
+      "source_url": "https://github.com/rook/rook",
+      "source_version": "394e6dba",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T04:39:35.495Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-_cluster-role-tpl": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-_cluster-role-tpl",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-WWLV-empirical-invariant-guard-in-_cluster-role-tpl.md",
+      "title": "Empirical Invariant Guard in _cluster-role.tpl",
+      "repository": "rook-rook-learnings",
+      "source_version": "HEAD",
+      "content_hash": "5be9b5ad83a7b0c0c08b424d7e99f6f5d6550c3299f3137bbbe07a4547bc104e",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-25T04:39:43.128Z"
+    },
+    "candidate_directive-server-upgrade-flop-to-0-26-7-and-db_connection-to-2-10-3": {
+      "item_id": "candidate_directive-server-upgrade-flop-to-0-26-7-and-db_connection-to-2-10-3",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-WUPS-server-upgrade-flop-to-0-26-7-and-db_connection-to-2-10-3.md",
+      "title": "server): upgrade flop to 0.26.7 and db_connection to 2.10.3",
+      "repository": "tuist-tuist-learnings",
+      "source_version": "HEAD",
+      "content_hash": "93dfc7d01a63341680e67fa8255cf8ae5710ae9eb3419e88190dce6e7d5121c5",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-25T04:39:40.673Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-xcodesorg-xcodesapp-learnings-core-invariant": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-xcodesorg-xcodesapp-learnings-core-invariant",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-xcodesorg-xcodesapp-learnings-technical-construction-intelligence-xcodesorg-xcod.md",
+      "title": "Technical Construction Intelligence: xcodesorg-xcodesapp-learnings Core Invariants",
+      "repository": "xcodesorg-xcodesapp-learnings",
+      "source_version": "HEAD",
+      "content_hash": "bea861d7ec942a575f4f86b055ffdc1a0179c0a3931a5a87b1d32bf05051b8fd",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-25T04:39:41.942Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-xcodesorg-xcodesapp-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-xcodesorg-xcodesapp-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/xcodesorg-xcodesapp-learnings-verification-protocol-empirical-defect-shield-for-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for xcodesorg-xcodesapp-learnings",
+      "repository": "xcodesorg-xcodesapp-learnings",
+      "source_version": "HEAD",
+      "content_hash": "6865ef58b3dfd97d019049c666e69d7e36c800c7b99fb09e3f80df36bb5cda84",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-25T04:39:42.283Z"
     }
   },
   "ai-builder-brain": {

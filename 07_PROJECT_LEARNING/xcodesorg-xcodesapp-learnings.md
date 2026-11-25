@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/xcodesorg-xcodesapp-learnings.md`  
 > **Source**: github ([https://github.com/XcodesOrg/XcodesApp](https://github.com/XcodesOrg/XcodesApp))  
-> **Source Version**: `9836fd83`  
+> **Source Version**: `3231e33a`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T01:23:16.434Z  
+> **Timestamp**: 2026-11-25T04:39:31.795Z  
 > **Learning ID**: `learn-github-xcodesorg-xcodesapp`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/xcodesorg-xcodesapp-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/XcodesOrg/XcodesApp](https://github.com/XcodesOrg/XcodesApp))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T01:23:16.428Z  
+> **Harvest Timestamp**: 2026-11-25T04:39:31.789Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The easiest way to install and switch between multiple versions of Xcode - with a mouse click. 
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 8647 stars
+- **Stars / Engagement**: 8660 stars
 
 ---
 
@@ -1258,30 +1258,23 @@ struct XPCDelegateError: CustomNSError {
 
 ```
 
-### Core Architecture Module: `Xcodes/AcknowledgementsGenerator/Package.swift`
+### Core Architecture Module: `Scripts/verify_update.swift`
 ```
-// swift-tools-version:5.4
+import CryptoKit
+import Foundation
 
-import PackageDescription
+guard CommandLine.arguments.count == 4,
+      let signature = Data(base64Encoded: CommandLine.arguments[2]),
+      let publicKey = Data(base64Encoded: CommandLine.arguments[3]) else {
+    throw CocoaError(.fileReadCorruptFile)
+}
 
-let package = Package(
-    name: "AcknowledgementsGenerator",
-    platforms: [.macOS(.v11)],
-    products: [
-        .executable(
-            name: "AcknowledgementsGenerator",
-            targets: ["AcknowledgementsGenerator"]
-        ),
-    ],
-    dependencies: [
-    ],
-    targets: [
-        .executableTarget(
-            name: "AcknowledgementsGenerator",
-            dependencies: []
-        ),
-    ]
-)
+let archive = try Data(contentsOf: URL(fileURLWithPath: CommandLine.arguments[1]), options: .mappedIfSafe)
+let key = try Curve25519.Signing.PublicKey(rawRepresentation: publicKey)
+guard key.isValidSignature(signature, for: archive) else {
+    FileHandle.standardError.write(Data("Sparkle signature does not match the release archive and public key.\n".utf8))
+    exit(EXIT_FAILURE)
+}
 
 ```
 
@@ -1291,11 +1284,14 @@ let package = Package(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #900** (2026-11-24): **Cannot Login (or out)**
+  *Symptoms*: **Describe the bug** I tried logging in. We have apple business accounts that use Microsoft for SSO. When trying to login I get redirected to the microsoft page but there is an error. `AADSTS750056: SAML message was not properly base64-encoded.`  Now I am stuck. I'm currently not logged into an apple id, but when I press the login button in Xcodes I'm immediatley taken to the dialog that wants to open the browser to the Microsoft SSO page. (Which gives me the same error).  So it seems like I'm half signed in.  **Version**  - OS: 27.2.1  - Xcodes: 4.2.0 (42) 
+  **Post-Mortem & Fix Analysis**:
+  > Duplicated here https://github.com/XcodesOrg/XcodesApp/issues/857
+  > https://github.com/XcodesOrg/XcodesApp/releases/tag/v4.2.1b43 should have the updated login bits to fix this. Thanks
+
 - **Issue #876** (2026-10-02): **Unable to install Xcode**
   *Symptoms*: Unable to install xcode. Installing  any version of Xcode through Xcodes gives error unable to install   **Screenshots**  <img width="343" height="234" alt="Image" src="https://github.com/user-attachments/assets/544dfa30-32c6-4f50-8d77-f6f5eb3321ff" />  **Version**  - OS:  27.0.1  - Xcodes: 4.1.1 (41) 
-
-- **Issue #852** (2026-09-14): **Homebrew Install Fails**
-  *Symptoms*: **Describe the bug** Installing the application via homebrew results in an error. It appears to be a 404 when homebrew is looking for the package update. The url it is looking for is `https://github.com/XcodesOrg/XcodesApp/releases/download/v4.1.0b40/Xcodes.zip`.  Error log:  ``` ==> Upgrading 1 outdated package: xcodes-app 4.0.5b40 -> 4.1.0b40 ==> Fetching downloads for: xcodes-app ✘ Cask xcodes-app (4.1.0b40) Error: Download failed on Cask 'xcodes-app' with message: Download failed: https://github.com/XcodesOrg/XcodesApp/releases/download/v4.1.0b40/Xcodes.zip curl: (56) The requested URL returned error: 404 Error: xcodes-app: Download failed for xcodes-app ```  **To Reproduce** Install / upgrade to the latest version via homebrew.  **Expected behavior** The app is installed/updated successfully.  **Screenshots** N/A  **Version**  - OS: MacOS 27.0  - Xcodes: Not latest 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1312,866 +1308,481 @@ let package = Package(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `27bf2654` (2026-11-02)
-**Commit Message**: Fix installed and active state not refreshing after install, select, and uninstall
+### Incident Patch 1: `d7c06449` (2026-11-24)
+**Commit Message**: Merge pull request #898 from anciltech/fix/cleanup-build-scope
 
-Problem
+Scope xcodebuild cleanup protection to active Derived Data
 
-The Xcode list is rebuilt from a cached list of installed Xcodes whenever the active Xcode or the available list changes.
-
-Three actions didn't keep that cache up to date:
-
-* "Install" updated its own row but not the cache, so making the new Xcode active afterwards showed it as not installed, and nothing showed as active.
-* "Make Active" didn't rescan either, so after the "rename to Xcode.app" option moved bundles, the list still pointed at the old paths.
-* "Uninstall" rescanned only after the list was rebuilt, so the removed Xcode briefly showed as installed again.
-
-Fixes #836.
-
-Solution
-
-All three now rescan the install directory first, so the list matches what's on disk.
-
-Two new tests in `AppStateTests`: one makes a newly installed Xcode active and checks it shows as installed and active; the other checks that uninstall never shows the removed Xcode as installed again. Both fail without this change. `xcodebuild test -scheme Xcodes` (the CI command) passes on Xcode 27.2: 53 tests, 0 failures.
-
-**File**: `Xcodes/Backend/AppState+Install.swift` (modified, +3/-0)
+**File**: `Xcodes/Frontend/Cleanup/CleanupModel+Cleanup.swift` (modified, +6/-2)
 ```diff
-@@ -51,6 +51,9 @@ extension AppState {
-                 let (xcode, url) = try await getXcodeArchiveAsync(installationType, downloader: downloader)
-                 try Task.checkCancellation()
-                 let installedXcode = try await installArchivedXcodeAsync(xcode, at: url)
-+                // Refreshed before the row is patched: `updateAllXcodes` rebuilds every row from this cache
-+                // on the next selection or update, carrying over only rows that are still `.installing`.
-+                await updateInstalledXcodesAsync(recomposeAllXcodes: false)
- 
-                 guard let index = allXcodes.firstIndex(where: { $0.version.isEquivalent(to: installedXcode.version) }) else {
-                     return installedXcode
-```
-
-**File**: `Xcodes/Backend/AppState.swift` (modified, +2/-1)
-```diff
-@@ -727,8 +727,8 @@ class AppState: ObservableObject {
-                 try Task.checkCancellation()
-                 try await uninstallXcodeAsync(path: installedXcodePath)
-                 try Task.checkCancellation()
--                await updateSelectedXcodePathAsync()
-                 await updateInstalledXcodesAsync()
-+                await updateSelectedXcodePathAsync()
-             } catch is CancellationError {
-             } catch {
-                 if let index = allXcodes.firstIndex(where: { $0.id == xcode.id }) {
-@@ -798,6 +798,7 @@ class AppState: ObservableObject {
- 
-                 try await Current.helper.switchXcodePathAsync(installedXcodePath.string)
-                 try Task.checkCancellation()
-+                await updateInstalledXcodesAsync()
-                 await updateSelectedXcodePathAsync()
-                 if createSymLinkOnSelect && onSelectActionType != .rename {
-                     await createSymbolicLink(to: installedXcodePath)
-```
-
-**File**: `XcodesTests/AppStateTests.swift` (modified, +54/-0)
-```diff
-@@ -365,6 +365,29 @@ class AppStateTests: XCTestCase {
-         XCTAssertEqual(subject.selectedXcodePath, secondPath.string)
-     }
- 
-+    func test_Select_MarksXcodeInstalledSinceLastScanAsSelected() async throws {
-+        subject.helperInstallState = .installed
-+        let installedPath = try XCTUnwrap(Path("/Applications/Xcode-27.2.0.app"))
-+        let version = try XCTUnwrap(Version("27.2.0"))
-+        let installedXcode = InstalledXcode(path: installedPath, version: version)
-+        let developerPath = (installedPath/"Contents/Developer").string
-+        subject.availableXcodes = [
-+            AvailableXcode(version: version, url: URL(string: "https://apple.com/xcode.xip")!, filename: "mock.xip", releaseDate: nil)
-+        ]
-+        subject.allXcodes[0].installState = .installed(installedPath)
-+        Current.files.installedXcodes = { _ in [installedXcode] }
-+        Current.shell.xcodeSelectPrintPath = {
-+            ProcessOutput(status: 0, out: developerPath, err: "")
-+        }
-+
-+        subject.select(xcode: subject.allXcodes[0], shouldPrepareUserForHelperInstallation: false)
-+        let selectTask = try XCTUnwrap(subject.selectTask)
-+        await selectTask.value
-+
-+        XCTAssertEqual(subject.allXcodes[0].installState, .installed(installedPath))
-+        XCTAssertTrue(subject.allXcodes[0].selected)
-+    }
-+
-     func test_Uninstall_MissingXcodePresentsFileNotFoundError() async throws {
-         let missingPath = try XCTUnwrap(Path("/Applications/Xcode-Missing.app"))
-         let xcode = Xcode(version: Version("15.0.0")!, installState: .installed(missingPath), selected: false, icon: nil)
-@@ -411,6 +434,37 @@ class AppStateTests: XCTestCase {
-         XCTAssertEqual(subject.allXcodes[0].installState, .notInstalled)
-     }
- 
-+    func test_Uninstall_DoesNotShowRemovedXcodeAsInstalledAgain() async throws {
-+        let installedPath = try XCTUnwrap(Path("/Applications/Xcode-0.0.0.app"))
-+        let version = try XCTUnwrap(Version("0.0.0"))
-+        let installedXcode = InstalledXcode(path: installedPath, version: version)
-+        subject.availableXcodes = [
-+            AvailableXcode(version: version, url: URL(string: "https://apple.com/xcode.xip")!, filename: "mock.xip", releaseDate: nil)
-+        ]
-+        Current.files.installedXcodes = { _ in [installedXcode] }
-+        await subject.updateInstalledXcodesAsync()
-+        Current.files.installedXcodes = { _ in [] }
-+        Current.shell.xcodeSelectPrintPath = {
-+            ProcessOutput(status: 0, out: "", err: "")
-+        }
-+
-+        let allXcodeInstallStates = try await recordAllXcodeInstallStates {
-+            subject.uninstall(xcode: subject.allXcodes[0])
-+            let uninstallTask = try XCTUnwrap(subject.uninstallTask)
-+            await uninstallTask.value
-+        }
-+
-+        XCTAssertEqual(
-+            allXcodeInstallStates,
-+            [
-+                [XcodeInstallState.installed(installedPath)],
-+                [.uninstalling(installedPath)],
-+                [.notInstalled],
-+                [.notInstalled]
-+            ]
-+        )
-+    }
-+
-     func test_Signout_RemovesCookiesFromDownloadSession() throws {
-         let session = URLSession(configuration: .ephemeral)
-         Current.network.session = session
-```
-
----
-
-### Incident Patch 2: `2dd2a1a5` (2026-10-01)
-**Commit Message**: Improve refresh, sign-in guidance and recovery from helper failures
-
-**File**: `README.md` (modified, +7/-0)
-```diff
-@@ -97,6 +97,13 @@ Xcodes.app and CLI is updated, maintained with contributors like yourself. Even
- 
- You'll need macOS 15.6 Ventura and Xcode 26 in order to build and run Xcodes.app.
- 
-+### Known build warnings
-+
-+The following dependency and helper limitations remain:
-+
-+- `ld: building for macOS-14.6, but linking with dylib '@rpath/libcbor.0.11.0.dylib' which was built for newer version 15.0`: the prebuilt `libcbor` in LibFido2Swift targets macOS 15 while the app targets 14.6. Resolving it means raising the app's deployment target or rebuilding that dependency for 14.6.
-+- `SMJobBless` is deprecated in favor of `SMAppService`. The one legacy call is isolated in a marked shim in `HelperClient.swift` until the privileged helper moves to `SMAppService`, which uses a different install and approval model.
-+
- `Unxip` and `aria2` must be compiled as a universal binary
- ```
- # compile for Intel
-```
-
-**File**: `Xcodes.xcodeproj/project.pbxproj` (modified, +1/-0)
-```diff
-@@ -850,6 +850,7 @@
- 		};
- 		D971F84C2E79102E005F84C9 /* Fix libfido2 structure */ = {
- 			isa = PBXShellScriptBuildPhase;
-+			alwaysOutOfDate = 1;
- 			buildActionMask = 2147483647;
- 			files = (
- 			);
-```
-
-**File**: `Xcodes/Backend/AppState+Install.swift` (modified, +23/-12)
-```diff
-@@ -250,8 +250,7 @@ extension AppState {
-         do {
-             try await performPostInstallStepsAsync(for: installedXcode)
-         } catch {
--            self.error = error
--            self.presentedAlert = .generic(title: localizeString("Alert.InstallArchive.Error.Title"), message: error.legibleLocalizedDescription)
-+            presentPostInstallRecovery(for: installedXcode)
-         }
-         resetDockProgressTracking()
- 
-@@ -264,8 +263,14 @@ extension AppState {
-             fileExists: { path in Current.files.fileExists(atPath: path) },
-             moveItem: { source, destination in
-                 if Current.helper.usePrivilegedHelperForFileOperations {
--                    try await self.installHelperIfNecessaryAsync()
--                    try await Current.helper.moveAppAsync(source.path, destination.path)
-+                    do {
-+                        try await self.installHelperIfNecessaryAsync()
-+                        try await Current.helper.moveAppAsync(source.path, destination.path)
-+                    } catch is CancellationError {
-+                        throw CancellationError()
-+                    } catch {
-+                        throw HelperFileOperationError(underlyingError: error, command: HelperRecovery.moveCommand(source: source.path, destination: destination.path))
-+                    }
-                 } else {
-                     try Current.files.moveItem(at: source, to: destination)
-                 }
-@@ -362,8 +367,7 @@ extension AppState {
-             } catch is CancellationError {
-             } catch {
-                 guard postInstallTaskID == taskID else { return }
--                self.error = error
--                self.presentedAlert = .generic(title: localizeString("Alert.PostInstall.Title"), message: error.legibleLocalizedDescription)
-+                presentPostInstallRecovery(for: xcode)
+@@ -107,8 +107,12 @@ extension CleanupModel {
+             case "chromeLeftovers": tools = ["google chrome"]
+             default: tools = []
              }
-         }
-     }
-@@ -381,7 +385,9 @@ extension AppState {
-             try await xcodePostInstallWorkflowService.performPostInstallSteps(for: xcode)
-         } catch {
-             Logger.appState.error("Performing post-install steps failed: \(error.legibleLocalizedDescription)")
--            throw InstallationError.postInstallStepsNotPerformed(version: xcode.version, helperInstallState: helperInstallState)
-+            // Keep the underlying reason (unless the user simply declined), so the alert can say why it failed.
-+            let reason: String? = if case InstallationError.postInstallStepsNotPerformed = error { nil } else { error.legibleLocalizedDescription }
-+            throw InstallationError.postInstallStepsNotPerformed(version: xcode.version, helperInstallState: helperInstallState, reason: reason)
-         }
-     }
- 
-@@ -419,7 +425,8 @@ extension AppState {
-                         helperConsent.resume(
-                             throwing: InstallationError.postInstallStepsNotPerformed(
-                                 version: version,
--                                helperInstallState: self.helperInstallState
-+                                helperInstallState: self.helperInstallState,
-+                                reason: nil
-                             )
-                         )
-                     }
-@@ -519,7 +526,8 @@ public enum InstallationError: LocalizedError, Equatable {
-     case versionAlreadyInstalled(InstalledXcode)
-     case invalidVersion(String)
-     case versionNotInstalled(Version)
--    case postInstallStepsNotPerformed(version: Version, helperInstallState: HelperInstallState)
-+    /// `reason` describes the underlying failure, if there was one besides the user declining to install the helper
-+    case postInstallStepsNotPerformed(version: Version, helperInstallState: HelperInstallState, reason: String?)
- 
-     public var errorDescription: String? {
-         switch self {
-@@ -553,13 +561,16 @@ public enum InstallationError: LocalizedError, Equatable {
-             return String(format: localizeString("InstallationError.InvalidVersion"), version)
-         case let .versionNotInstalled(version):
-             return String(format: localizeString("InstallationError.VersionNotInstalled"), version.appleDescription)
--        case let .postInstallStepsNotPerformed(version, helperInstallState):
-+        case let .postInstallStepsNotPerformed(version, helperInstallState, reason):
-+            let message: String
-             switch helperInstallState {
-             case .installed:
--                return String(format: localizeString("InstallationError.PostInstallStepsNotPerformed.Installed"), version.appleDescription)
-+                message = String(format: localizeString("InstallationError.PostInstallStepsNotPerformed.Installed"), version.appleDescription)
-             case .notInstalled, .unknown:
--                return String(format: localizeString("InstallationError.PostInstallStepsNotPerformed.NotInstalled"), version.appleDescription)
-+                message = String(format: localizeString("Installatio
-```
-
-**File**: `Xcodes/Backend/AppState+Update.swift` (modified, +39/-6)
-```diff
-@@ -13,11 +13,14 @@ extension AppState {
-     }
-     
-     func updateIfNeeded() {
-+        // Never cancel a full refresh just because the window became active again.
-+        if isUpdating, updateTaskIsFullRefresh { return }
-         guard
--            isReadyForUpdate
-+            isReadyForUpdate || !hasRefreshedAvailableXcodesThisLaunch
-         else {
-             updateTask?.cancel()
-             let taskID = UUID()
-+            updateTaskIsFullRefresh = false
-             updateTaskID = taskID
-             let task = Task { @MainActor in
-                 defer {
-@@ -35,8 +38,19 @@ extension AppState {
-         update() as Void
-     }
- 
--    func update() {
--        guard !isUpdating else { return }
-+    /// Refreshes installed and available Xcodes and runtimes.
-+    /// - Parameter restartingInFlightUpdate: Cancel a running refresh and start over, e.g. when the
-+    ///   data source or sign-in state changed and the running refresh would return stale results.
-+    func update(restartingInFlightUpdate: Bool = false) {
-+        if isUpdating {
-+            // A quick installed-only rescan is always superseded; a full refresh only when asked.
-+            guard restartingInFlightUpdate || !updateTaskIsFullRefresh else { return }
-+            updateTask?.cancel()
-+            updateTask = nil
-+            updateTaskID = nil
-+        }
-+        hasRefreshedAvailableXcodesThisLaunch = true
-+        updateTaskIsFullRefresh = true
-         updateDownloadableRuntimes()
-         updateInstalledRuntimes()
- 
-@@ -52,14 +66,22 @@ extension AppState {
-             do {
-                 await self.updateInstalledXcodesAsync()
-                 await self.updateSelectedXcodePathAsync()
-+                try Task.checkCancellation()
-                 let xcodes = try await self.updateAvailableXcodes(from: self.dataSource)
-                 try Task.checkCancellation()
-                 self.availableXcodes = xcodes
-                 Current.defaults.setDate(Current.date(), forKey: "lastUpdated")
-             } catch is CancellationError {
-             } catch {
--                // Prevent setting the app state error if it is an invalid session, we will present the sign in view instead
--                if error as? AuthenticationError != .invalidSession {
-+                // A restarted refresh can surface its cancellation as a URLError instead
-+                guard !Task.isCancelled else { return }
-+
-+                if self.dataSource == .apple, Self.isUnauthorizedInstallError(error) || error as? AuthenticationError == .invalidSession {
-+                    // The Apple data source needs a developer session; ask the user to sign in rather than
-+                    // showing a raw 401.
-+                    self.presentedAlert = .unauthenticatedDataSource
-+                } else if error as? AuthenticationError != .invalidSession {
-+                    // Prevent setting the app state error if it is an invalid session, we will present the sign in view instead
-                     self.error = error
-                     self.presentedAlert = .generic(title: localizeString("Alert.Update.Error.Title"), message: error.legibleLocalizedDescription)
-                 }
-@@ -68,10 +90,21 @@ extension AppState {
-         updateTask = task
-     }
- 
-+    /// Selection can change in Terminal while a full catalog refresh is still running.
-+    func refreshSelectedXcodePath() {
-+        guard selectedXcodeRefreshTask == nil else { return }
-+        selectedXcodeRefreshTask = Task { @MainActor in
-+            defer { selectedXcodeRefreshTask = nil }
-+            await updateSelectedXcodePathAsync()
-+        }
-+    }
-+
-     func updateSelectedXcodePathAsync() async {
-         do {
-             let output = try await Current.shell.xcodeSelectPrintPath()
--            selectedXcodePath = output.out
-+            if selectedXcodePath != output.out {
-+                selectedXcodePath = output.out
+-            let running = activeTools.intersection(tools).sorted()
+-            if !running.isEmpty { return "In use by \(running.joined(separator: ", ")). Stop these processes and try again." }
++            var running = activeTools.intersection(tools)
++            if category.id == "derivedData", running.contains("xcodebuild"),
++               !CleanupOperations.xcodebuildMayUseDerivedData(item.path, scopedPaths: xcodebuildDerivedDataPaths) {
++                running.remove("xcodebuild")
 +            }
-         } catch {
-             // Ignore xcode-select failures
++            if !running.isEmpty { return "In use by \(running.sorted().joined(separator: ", ")). Stop these processes and try again." }
+         }
+         if item.path.bytes.split(separator: 47).contains(where: { $0.elementsEqual("node_modules".utf8) }), !activeTools.isDisjoint(with: ["node", "npm", "pnpm", "yarn"]) {
+             return "Stop Node.js and package-manager processes before cleanup."
+```
+
+**File**: `Xcodes/Frontend/Cleanup/CleanupModel+Simulators.swift` (modified, +8/-2)
+```diff
+@@ -35,9 +35,15 @@ extension CleanupModel {
+     /// Ordinary Trash operations need active-use checks, not a full CoreSimulator inventory.
+     func refreshRunningTools() async {
+         protectedPaths = Self.makeProtectedPaths()
+-        let output = try? await Process.runAsync(URL(fileURLWithPath: "/bin/ps"), ["-axo", "comm="])
++        let output = try? await Process.runAsync(URL(fileURLWithPath: "/bin/ps"), ["-axo", "pid=,comm="])
+         guard !Task.isCancelled else { return }
+-        activeTools = Set((output?.out ?? "").split(separator: "\n").map { URL(fileURLWithPath: String($0).trimmingCharacters(in: .whitespaces)).lastPathComponent.lowercased() })
++        let processList = output?.out ?? ""
++        activeTools = Set(processList.split(separator: "\n").compactMap { line in
++            let fields = line.split(maxSplits: 1, whereSeparator: \.isWhitespace)
++            guard fields.count == 2 else { return nil }
++            return URL(fileURLWithPath: String(fields[1])).lastPathComponent.lowercased()
++        })
++        xcodebuildDerivedDataPaths = CleanupOperations.xcodebuildDerivedDataPaths(processList: processList)
+         runningApplications = NSWorkspace.shared.runningApplications.map {
+             (name: $0.localizedName ?? "the running app", bundleID: $0.bundleIdentifier, path: $0.bundleURL.flatMap { try? FilesystemPath($0) })
          }
 ```
 
-**File**: `Xcodes/Backend/AppState.swift` (modified, +100/-13)
+**File**: `Xcodes/Frontend/Cleanup/CleanupModel.swift` (modified, +1/-0)
 ```diff
-@@ -46,7 +46,10 @@ class AppState: ObservableObject {
-     @Published var authenticationState: AuthenticationState = .unauthenticated
-     @Published var availableXcodes: [AvailableXcode] = [] {
-         willSet {
--            if !Self.newlyAvailableXcodes(oldXcodes: availableXcodes, newXcodes: newValue).isEmpty {
-+            if isChangingDataSource {
-+                // The sources identify releases differently, so everything would look new.
-+                isChangingDataSource = false
-+            } else if !Self.newlyAvailableXcodes(oldXcodes: availableXcodes, newXcodes: newValue).isEmpty {
-                 Current.notificationManager.scheduleNotification(title: localizeString("Notification.NewXcodeVersion.Title"), body: localizeString("Notification.NewXcodeVersion.Body"), category: .normal)
-             }
-             updateAllXcodes(
-@@ -84,6 +87,13 @@ class AppState: ObservableObject {
-     @Published var updateTask: Task<Void, Never>?
-     var updateTaskID: UUID?
-     var isUpdating: Bool { updateTask != nil }
-+    /// Whether `updateTask` fetches available Xcodes, as opposed to only rescanning installed ones.
-+    var updateTaskIsFullRefresh = false
-+    /// The available Xcode list is always refreshed once per launch, regardless of cache age.
-+    var hasRefreshedAvailableXcodesThisLaunch = false
-+    /// Set while refreshing after a data source change, so the new list isn't announced as new versions
-+    var isChangingDataSource = false
-+    @Published var showHelperSettings = false
-     @Published var presentedSheet: XcodesSheet? = nil
-     @Published var isProcessingAuthRequest = false
-     private var authenticationRequestID: UUID?
-@@ -93,6 +103,8 @@ class AppState: ObservableObject {
-     @Published var presentedAlert: XcodesAlert?
-     @Published var presentedPreferenceAlert: XcodesPreferencesAlert?
-     @Published var helperInstallState: HelperInstallState = .notInstalled
-+    /// Delay between attempts to reach a newly installed helper
-+    var helperInstallRetryDelay: Duration = .milliseconds(500)
-     /// Whether the user is being prepared for the helper installation alert with an explanation.
-     /// This closure will be performed after the user chooses whether or not to proceed.
-     @Published var isPreparingUserForActionRequiringHelper: ((Bool) -> Void)?
-@@ -201,6 +213,7 @@ class AppState: ObservableObject {
-     internal var helperInstallTaskID: UUID?
-     internal var postInstallTask: Task<Void, Never>?
-     internal var postInstallTaskID: UUID?
-+    internal var selectedXcodeRefreshTask: Task<Void, Never>?
-     private var helperStatusTask: Task<Void, Never>?
-     internal var selectTask: Task<Void, Never>?
-     internal var selectTaskID: UUID?
-@@ -492,21 +505,48 @@ class AppState: ObservableObject {
-                     authenticationTaskID = nil
-                 }
-             }
-+            let wasAuthenticated = isAuthenticated
-             do {
-                 try await operation()
-+                if !wasAuthenticated, isAuthenticated {
-+                    refreshAfterSignIn()
-+                }
-             } catch is CancellationError {
-             } catch {
-                 // performAuthenticationRequest owns auth error presentation.
-             }
-         }
-     }
+@@ -95,6 +95,7 @@ final class CleanupModel: ObservableObject {
+     var activityUnavailable = true
+     var runningApplications: [(name: String, bundleID: String?, path: FilesystemPath?)] = []
+     var activeTools: Set<String> = []
++    var xcodebuildDerivedDataPaths: [FilesystemPath]?
  
-+    private var isAuthenticated: Bool {
-+        if case .authenticated = authenticationState { return true }
-+        return false
-+    }
-+
-+    /// Signing in unlocks the Apple data source, so restart any refresh that ran without a session.
-+    private func refreshAfterSignIn() {
-+        guard !isTesting else { return }
-+        update(restartingInFlightUpdate: dataSource == .apple)
-+    }
-+
-     func signOut() {
-         clearLoginCredentials()
-         Current.network.signout()
-         authenticationState = .unauthenticated
-     }
- 
-+    func presentHelperRecovery(title: String, error: Error, command: String, message: String? = nil) {
-+        self.error = nil
-+        presentedAlert = nil
-+        presentedSheet = .helperRecovery(HelperRecovery(title: title, message: message ?? error.legibleLocalizedDescription, command: command))
-+    }
-+
-+    func presentPostInstallRecovery(for xcode: InstalledXcode) {
-+        error = nil
-+        presentedSheet = nil
-+        presentedAlert = .postInstallFailed(xcode: xcode)
-+    }
-+
-     // MARK: - Helper
- 
-     /// Install the privileged helper if it isn't already installed.
-@@ -558,15 +598,37 @@ class AppState: ObservableObject {
-             try Task.checkCancellation()
-             try await Current.helper.install()
-             try Task.checkCancellation()
--            await checkIfHelperIsInstalled()
-+            // launchd starts a newly blessed helper asynchronously, so give it a moment to answer.
-+            let connectionError = await checkIfHelperIsInstalled(attempts: 5)
-+            try Task.checkCancellation()
-+            guard helperInstallState == .installed else {
-+                throw HelperClientError.unreachableAfterInstall(underlyin
+     init(defaults: Defaults = Current.defaults, folderConfigurationURL: URL? = nil, useFileConfiguration: Bool = false) {
+         folderDefaults = defaults
 ```
 
-**File**: `Xcodes/Backend/HelperClient.swift` (modified, +50/-2)
+**File**: `Xcodes/Frontend/Cleanup/CleanupOperations.swift` (modified, +46/-0)
 ```diff
-@@ -1,4 +1,5 @@
- import Foundation
-+import LegibleError
- import os.log
- import ServiceManagement
- import XcodesKit
-@@ -234,8 +235,21 @@ final class HelperClient {
-         do {
-             let authRef = try authorizationRef(&authRights, nil, [.interactionAllowed, .extendRights, .preAuthorize])
-             var cfError: Unmanaged<CFError>?
--            SMJobBless(kSMDomainSystemLaunchd, machServiceName as CFString, authRef, &cfError)
--            if let error = cfError?.takeRetainedValue() { throw error }
-+            (SMJobBlessInstaller() as PrivilegedHelperBlessing).bless(label: machServiceName, authorization: authRef, error: &cfError)
-+            if let error = cfError?.takeRetainedValue() {
-+                // kSMErrorDomainLaunchd is deprecated, but SMJobBless still reports its errors in that domain
-+                if CFErrorGetDomain(error) as String == "CFErrorDomainLaunchd" {
-+                    switch CFErrorGetCode(error) {
-+                    case kSMErrorInvalidSignature:
-+                        throw HelperClientError.invalidSignature(underlyingError: error)
-+                    case kSMErrorAuthorizationFailure:
-+                        throw HelperClientError.authorizationFailed(underlyingError: error)
-+                    default:
-+                        break
-+                    }
-+                }
-+                throw error
-+            }
- 
-             self.connection?.invalidate()
-             self.connection = nil
-@@ -268,16 +282,50 @@ final class HelperClient {
+@@ -38,6 +38,52 @@ enum CleanupOperations {
+               UInt64(UInt32(bitPattern: metadata.st_dev)) == item.identity.device else { throw CleanupOperationError.changed }
      }
- }
  
-+/// Installs the privileged helper with SMJobBless, which macOS 13 deprecated in favor of SMAppService.
-+/// SMAppService uses a different install and approval model (a bundled launch daemon plist, approved in
-+/// System Settings), so the move is a separate change. Until then the one legacy call lives here, and is
-+/// reached through a protocol so the known deprecation doesn't warn on every build.
-+private protocol PrivilegedHelperBlessing {
-+    @discardableResult
-+    func bless(label: String, authorization: AuthorizationRef?, error: inout Unmanaged<CFError>?) -> Bool
-+}
-+
-+private struct SMJobBlessInstaller: PrivilegedHelperBlessing {
-+    @available(macOS, deprecated: 13.0, message: "Move the privileged helper to SMAppService")
-+    @discardableResult
-+    func bless(label: String, authorization: AuthorizationRef?, error: inout Unmanaged<CFError>?) -> Bool {
-+        SMJobBless(kSMDomainSystemLaunchd, label as CFString, authorization, &error)
++    /// nil means at least one xcodebuild could be using the default Derived Data location.
++    static func xcodebuildDerivedDataPaths(
++        processList: String,
++        arguments: (pid_t) -> [String]? = processArguments
++    ) -> [FilesystemPath]? {
++        var paths: [FilesystemPath] = []
++        for line in processList.split(separator: "\n") {
++            let fields = line.split(maxSplits: 1, whereSeparator: \.isWhitespace)
++            guard fields.count == 2, let pid = pid_t(fields[0]),
++                  URL(fileURLWithPath: String(fields[1])).lastPathComponent.lowercased() == "xcodebuild" else { continue }
++            guard let args = arguments(pid) else { return nil }
++            let flags = args.indices.filter { args[$0] == "-derivedDataPath" }
++            guard flags.count == 1, let flag = flags.first, flag + 1 < args.count,
++                  args[flag + 1].hasPrefix("/"),
++                  let path = try? FilesystemPath(URL(fileURLWithPath: args[flag + 1]).resolvingSymlinksInPath())
++            else { return nil }
++            paths.append(path)
++        }
++        return paths
 +    }
-+}
 +
- enum HelperClientError: LocalizedError {
-     case failedToCreateRemoteObjectProxy
-     case message(String)
-+    /// SMJobBless rejected the helper because its signature doesn't satisfy the app's SMPrivilegedExecutables requirement
-+    case invalidSignature(underlyingError: Error)
-+    /// SMJobBless wasn't authorized, e.g. the administrator prompt was cancelled or couldn't be shown
-+    case authorizationFailed(underlyingError: Error)
-+    /// The helper was blessed but doesn't answer, e.g. it rejects this app's signature via SMAuthorizedClients
-+    case unreachableAfterInstall(underlyingError: Error?)
- 
-     var errorDescription: String? {
-         switch self {
-         case .failedToCreateRemoteObjectProxy:
-             return localizeString("HelperClient.error")
-         case let .message(message):
-             return message
-+        case let .invalidSignature(underlyingError):
-+            return Self.withDetails(localizeString("HelperClient.error.InvalidSignature"), underlyingError)
-+        case let .authorizationFailed(underlyingError):
-+            return Self.withDetails(localizeString("HelperClient.error.AuthorizationFailed"), underlyingError)
-+        case let .unreachableAfterInstall(underlyingError):
-+            return Self.withDetails(localizeString("HelperClient.error.UnreachableAfterInstall"), underlyingError)
-         }
-     }
-+
-+    private static func withDetails(_ message: String, _ underlyingError: Error?) -> String {
-+        guard let underlyingError else { return message }
-+        return "\(message)\n\n\(underlyingError.legibleLocalizedDescription)"
++    static func xcodebuildMayUseDerivedData(_ path: FilesystemPath, scopedPaths: [FilesystemPath]?) -> Bool {
++        guard let scopedPaths, !scopedPaths.isEmpty,
++              let canonicalPath = try? FilesystemPath(path.url.resolvingSymlinksInPath()) else { return true }
++        return scopedPaths.contains { $0.contains(canonicalPath) || canonicalPath.contains($0) }
 +    }
- }
++
++    private static func processArguments(_ pid: pid_t) -> [String]? {
++        var mib: [Int32] = [CTL_KERN, KERN_PROCARGS2, pid]
++        var size = 0
++        guard sysctl(&mib, 3, nil, &size, nil, 0) == 0, size > MemoryLayout<Int32>.size else { return nil }
++        var bytes = [UInt8](repeating: 0, count: size)
++        let status = bytes.withUnsafeMutableBytes { sysctl(&mib, 3, $0.baseAddress, &size, nil, 0) }
++        guard status == 0, size > MemoryLayout<Int32>.size else { return nil }
++        let count = bytes.withUnsafeBytes { Int($0.loadUnaligned(as: Int32.self)) }
++        guard count > 0 else { return nil }
++        // The kernel buffer begins with argc, the executable path, then NUL padding before argv.
++        let payload = bytes[MemoryLayout<Int32>.size..<size]
++        guard let executableEnd = payload.firstIndex(of: 0),
++              let argumentsStart = payload[executableEnd...].firstIndex(where: { $0 != 0 }) else { return nil }
++        let rawArguments = payload[argumentsStart...].split(separator: 0, maxSplits: count, omittingEmptySubsequences: false)
++        guard rawArguments.count > count else { return nil }
++        let arguments = rawArguments.prefix(count).compactMap { String(bytes: $0, encoding: .utf8) }
++        return arguments.count == count ? arguments : nil
++    }
++
+     struct SimulatorRuntime: Sendable, Codable, Identifiable, Equatable {
+         let identifier: String
+         let runtimeIdentifier: String
 ```
 
-**File**: `Xcodes/Backend/NotificationManager.swift` (modified, +12/-10)
+**File**: `Xcodes/Frontend/Cleanup/CleanupWindow.swift` (modified, +14/-2)
 ```diff
-@@ -60,13 +60,13 @@ public final class NotificationManager: NSObject, UNUserNotificationCenterDelega
-         notificationStatusTask = Task { [weak self] in
-             let settings = await UNUserNotificationCenter.current().notificationSettings()
-             guard !Task.isCancelled else {
--                await self?.clearNotificationStatusTask(id: taskID)
-+                self?.clearNotificationStatusTask(id: taskID)
-                 return
-             }
- 
-             let status = NotificationManager.systemPromptStatusFromSettings(settings)
--            await self?.setNotificationStatus(status, ifNotificationStatusTaskID: taskID)
--            await self?.clearNotificationStatusTask(id: taskID)
-+            self?.setNotificationStatus(status, ifNotificationStatusTaskID: taskID)
-+            self?.clearNotificationStatusTask(id: taskID)
+@@ -146,8 +146,20 @@ struct CleanupWindow: View {
+             Text(model.cleanupConfirmationMessage)
          }
-     }
-     
-@@ -94,14 +94,14 @@ public final class NotificationManager: NSObject, UNUserNotificationCenterDelega
-             do {
-                 let granted = try await UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge])
-                 guard !Task.isCancelled else {
--                    await self?.clearRequestAccessTask(id: taskID)
-+                    self?.clearRequestAccessTask(id: taskID)
-                     return
-                 }
- 
-                 Logger.appState.log("User has \(granted ? "Granted" : "NOT GRANTED") notification permission")
-             } catch {
-                 guard !Task.isCancelled else {
--                    await self?.clearRequestAccessTask(id: taskID)
-+                    self?.clearRequestAccessTask(id: taskID)
-                     return
-                 }
- 
-@@ -110,13 +110,13 @@ public final class NotificationManager: NSObject, UNUserNotificationCenterDelega
- 
-             let settings = await UNUserNotificationCenter.current().notificationSettings()
-             guard !Task.isCancelled else {
--                await self?.clearRequestAccessTask(id: taskID)
-+                self?.clearRequestAccessTask(id: taskID)
-                 return
-             }
- 
-             let status = NotificationManager.systemPromptStatusFromSettings(settings)
--            await self?.setNotificationStatus(status, ifRequestAccessTaskID: taskID)
--            await self?.clearRequestAccessTask(id: taskID)
-+            self?.setNotificationStatus(status, ifRequestAccessTaskID: taskID)
-+            self?.clearRequestAccessTask(id: taskID)
-         }
-     }
- 
-@@ -154,9 +154,11 @@ public final class NotificationManager: NSObject, UNUserNotificationCenterDelega
-     }
-     
-     func scheduleNotification(title: String?, body: String, category: XcodesNotificationCategory) {
--          
-         let content = UNMutableNotificationContent()
--        if let title = title {
-+        // Unit tests run inside the app and simulate installing Xcode "0.0"; label those so they aren't mistaken for real installs.
-+        if isTesting {
-+            content.title = ["Test", title].compactMap { $0 }.joined(separator: ": ")
-+        } else if let title = title {
-             content.title = title
-         }
-         content.body = body
-```
-
-**File**: `Xcodes/Frontend/Common/XcodesAlert.swift` (modified, +98/-0)
-```diff
-@@ -6,6 +6,8 @@ enum XcodesAlert: Identifiable {
-     case cancelInstall(xcode: Xcode)
-     case cancelRuntimeInstall(runtime: DownloadableRuntime)
-     case privilegedHelper
-+    case postInstallFailed(xcode: InstalledXcode)
-+    case unauthenticatedDataSource
-     case generic(title: String, message: String)
-     case checkMinSupportedVersion(xcode: AvailableXcode, macOS: String)
-     case unauthenticated
-@@ -16,6 +18,8 @@ enum XcodesAlert: Identifiable {
-         switch self {
-         case .cancelInstall: return 1
-         case .privilegedHelper: return 2
-+        case .postInstallFailed: return 10
-+        case .unauthenticatedDataSource: return 7
-         case .generic: return 3
-         case .checkMinSupportedVersion: return 4
-         case .cancelRuntimeInstall: return 5
-@@ -65,3 +69,97 @@ extension Alert {
-         )
-     }
- }
-+
-+struct HelperFileOperationError: LocalizedError {
-+    let underlyingError: Error
-+    let command: String
-+    var errorDescription: String? { underlyingError.localizedDescription }
-+}
-+
-+/// The command is displayed and copied only; Xcodes never executes it.
-+struct HelperRecovery {
-+    let title: String
-+    let message: String
-+    let command: String
-+
-+    static func quote(_ path: String) -> String {
-+        "'" + path.replacingOccurrences(of: "'", with: "'\"'\"'") + "'"
-+    }
-+
-+    static func selectCommand(path: String) -> String {
-+        "sudo /usr/bin/xcode-select --switch " + quote(path)
-+    }
-+
-+    static func moveCommand(source: String, destination: String) -> String {
-+        // Refuse to overwrite an existing app, including a dangling symlink.
-+        let destination = quote(destination)
-+        return "[ ! -e " + destination + " ] && [ ! -L " + destination + " ] && sudo /bin/mv " + quote(source) + " " + destination
-+    }
-+
-+    static func symlinkCommand(source: String, destination: String) -> String {
-+        let destination = quote(destination)
-+        return "([ ! -e " + destination + " ] || [ -L " + destination + " ]) && sudo /bin/ln -sfn " + quote(source) + " " + destination
-+    }
-+}
-+
-+struct HelperRecoveryView: View {
-+    @EnvironmentObject var appState: AppState
-+    @SwiftUI.Environment(\.dismiss) private var dismiss
-+    @State private var copied = false
-+    let recovery: HelperRecovery
-+
-+    var body: some View {
-+        VStack(alignment: .leading, spacing: 16) {
-+            Text(verbatim: recovery.title).font(.headline)
-+            Text(verbatim: recovery.message).textSelection(.enabled)
-+            Text("HelperRecovery.Explanation")
-+            ScrollView {
-+                Text(verbatim: recovery.command)
-+                    .font(.system(.body, design: .monospaced))
-+                    .textSelection(.enabled)
-+                    .frame(maxWidth: .infinity, alignment: .leading)
-+                    .padding(12)
-+            }
-+            .frame(maxHeight: 180)
-+            .background(Color.secondary.opacity(0.1))
-+            .cornerRadius(6)
-+            HStack {
-+                if #available(macOS 14, *) {
-+                    HelperSettingsButton {
-+                        appState.showHelperSettings = true
-+                        dismiss()
-+                    }
-+                } else {
-+                    Button("HelperRecovery.OpenSettings") {
-+                        appState.showHelperSettings = true
-+                        dismiss()
-+                        NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
-+                    }
-+                }
-+                Button(copied ? "HelperRecovery.Copied" : "HelperRecovery.CopyCommand") {
+         .alert("Cleanup", isPresented: Binding(get: { model.message != nil }, set: { if !$0 { model.message = nil } })) {
+-            Button("OK") { model.message = nil }
+-        } message: { Text(model.message ?? "") }
++            Button("OK", role: .cancel) { model.message = nil }
++            if let details = model.message, details != Self.errorPreview(details) {
++                Button("Copy Details") {
 +                    NSPasteboard.general.clearContents()
-+                    NSPasteboard.general.setString(recovery.command, forType: .string)
-+                    copied = true
++                    NSPasteboard.general.setString(details, forType: .string)
 +                }
-+                Spacer()
-+                Button("Done") { dismiss() }
-+                    .keyboardShortcut(.defaultAction)
 +            }
-+        }
-+        .padding(24)
-+        .frame(width: 620)
++        } message: { Text(Self.errorPreview(model.message ?? "")) }
 +    }
-+}
 +
-+@available(macOS 14, *)
-+private struct HelperSettingsButton: View {
-+    @SwiftUI.Environment(\.openSettings) private var openSettings
-+    let prepare: () -> Void
++    private static func errorPreview(_ message: String) -> String {
++        let lines = message.split(omittingEmptySubsequences: false, whereSeparator: \.isNewline)
++        let preview = String(lines.prefix(6).joined(separator: "\n").prefix(480))
++        return preview == message ? preview : preview + "…"
+     }
+ 
+     private var savingsHelp: some View {
+```
+
+**File**: `XcodesTests/CleanupOperationsTests.swift` (modified, +80/-21)
+```diff
+@@ -5,6 +5,65 @@ import XcodesCleanupKit
+ @testable import Xcodes
+ 
+ final class CleanupOperationsTests: XCTestCase {
++    func testXcodebuildWithExplicitDerivedDataProtectsOnlyOverlappingPaths() throws {
++        let processes = "   123 /Applications/Xcode Beta.app/Contents/Developer/usr/bin/xcodebuild"
++        let paths = try XCTUnwrap(CleanupOperations.xcodebuildDerivedDataPaths(processList: processes) { pid in
++            XCTAssertEqual(pid, 123)
++            return ["xcodebuild", "-derivedDataPath", "/tmp/Build Cache/Active", "test"]
++        })
 +
-+    var body: some View {
-+        Button("HelperRecovery.OpenSettings") {
-+            prepare()
-+            openSettings()
++        for path in ["/tmp/Build Cache", "/tmp/Build Cache/Active", "/tmp/Build Cache/Active/Build"] {
++            XCTAssertTrue(CleanupOperations.xcodebuildMayUseDerivedData(
++                try FilesystemPath(URL(fileURLWithPath: path)), scopedPaths: paths
++            ))
++        }
++        XCTAssertFalse(CleanupOperations.xcodebuildMayUseDerivedData(
++            try FilesystemPath(URL(fileURLWithPath: "/tmp/Build Cache/Active-Old")), scopedPaths: paths
++        ))
++    }
++
++    func testXcodebuildWithUnknownOutputPathKeepsConservativeGuard() throws {
++        let processes = "123 /usr/bin/xcodebuild\n456 /usr/bin/xcodebuild"
++        for unknownArguments in [nil, ["xcodebuild", "test"], ["xcodebuild", "-derivedDataPath", "Relative"]] {
++            let paths = CleanupOperations.xcodebuildDerivedDataPaths(processList: processes) { pid in
++                pid == 123 ? ["xcodebuild", "-derivedDataPath", "/tmp/Scoped"] : unknownArguments
++            }
++            XCTAssertNil(paths)
++            XCTAssertTrue(CleanupOperations.xcodebuildMayUseDerivedData(
++                try FilesystemPath(URL(fileURLWithPath: "/tmp/Unrelated")), scopedPaths: paths
++            ))
 +        }
 +    }
-+}
++
++    @MainActor
++    func testCleanupBlocksActiveDerivedDataAndAllowsUnrelatedCache() async throws {
++        let root = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
++        let active = root.appendingPathComponent("Active Build")
++        let stale = root.appendingPathComponent("Stale Build")
++        for directory in [active, stale] {
++            try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
++        }
++        defer { try? FileManager.default.removeItem(at: root) }
++
++        let location = try FilesystemPath(root)
++        let category = FindingCategory(id: "derivedData", title: "Derived Data", explanation: "",
++                                       location: location, classification: .review)
++        let result = try await ScanSession(request: ScanRequest(roots: [location])).result()
++        let model = CleanupModel(defaults: .mock)
++        model.configureScan(categories: [category], policyCategories: [category])
++        model.activityUnavailable = false
++        model.activeTools = ["xcodebuild"]
++        model.xcodebuildDerivedDataPaths = [try FilesystemPath(active.resolvingSymlinksInPath())]
++
++        let activeItem = try XCTUnwrap(result.item(at: FilesystemPath(active)))
++        let staleItem = try XCTUnwrap(result.item(at: FilesystemPath(stale)))
++        XCTAssertNotNil(model.blockingReason(activeItem, classification: .review))
++        XCTAssertNil(model.blockingReason(staleItem, classification: .review))
++
++        model.activeTools.insert("clang")
++        XCTAssertNotNil(model.blockingReason(staleItem, classification: .review))
++    }
++
+     func testSimulatorInventoryRetainsAvailabilityAndAllDeviceNames() throws {
+         let unavailable = UUID().uuidString
+         let available = UUID().uuidString
+@@ -74,7 +133,7 @@ final class CleanupOperationsTests: XCTestCase {
+         let missing = try FilesystemPath(folder.appendingPathComponent("missing"))
+         let session = try ScanSession(request: ScanRequest(roots: [FilesystemPath(folder), missing]))
+         let result = try await session.result()
+-        let model = CleanupModel()
++        let model = CleanupModel(defaults: .mock)
+         model.finishScan(result)
+         let root = try XCTUnwrap(result.item(at: FilesystemPath(folder)))
+         let children = result.children(of: root.id)
+@@ -102,7 +161,7 @@ final class CleanupOperationsTests: XCTestCase {
+         let session = try ScanSession(request: ScanRequest(roots: [FilesystemPath(folder)]))
+         let result = try await session.result()
+         let item = try XCTUnwrap(result.children(of: result.rootIDs[0]).first)
+-        let model = CleanupModel()
++        let model = CleanupModel(defaults: .mock)
+         model.finishScan(result)
+         model.setSelected(item, selected: true)
+         model.close()
+@@ -123,7 +182,7 @@ final class CleanupOperationsTests: XCTestCase {
+         let category = FindingCategory(id: "fixture", title: "Fixture", explanation: "Fixture", location: try FilesystemPath(folder), classification: .review)
+         let session = try ScanSession(request: ScanRequest(roots: [category.location], categories: [category]))
+         let p
 ```
 
 ---
 
-### Incident Patch 3: `9836fd83` (2026-11-10)
-**Commit Message**: Merge pull request #890 from XcodesOrg/fix/appcast-release-workflow
+### Incident Patch 2: `9555bd01` (2026-11-16)
+**Commit Message**: Scope xcodebuild cleanup protection to its Derived Data
 
-Fix AppCast publishing on Ubuntu 26.04
-
-**File**: `.github/workflows/appcast.yml` (modified, +22/-24)
+**File**: `Xcodes/Frontend/Cleanup/CleanupModel+Cleanup.swift` (modified, +6/-2)
 ```diff
-@@ -3,48 +3,46 @@ name: Build and publish a new appcast file
- on:
-   workflow_dispatch:
-   release:
-+    types: [published]
- 
- jobs:
-   jekyll:
--    runs-on: ubuntu-latest
-+    runs-on: ubuntu-26.04
-+    permissions:
-+      contents: write
-+      pages: write
-     steps:
-     - name: Checkout 🛎
--      uses: actions/checkout@v4
-+      uses: actions/checkout@v7
-       with:
--        # If you're using actions/checkout@v4 you must set persist-credentials to false in most cases for the deployment to work correctly.
-         persist-credentials: false
- 
--#    - name: Cache 📦
--#      uses: actions/cache@v4.1.1
--#      with:
--#        path: AppCast/vendor/bundle
--#        key: ${{ runner.os }}-gems-v1.0-${{ hashFiles('AppCast/Gemfile') }}
--#        restore-keys: |
--#          ${{ runner.os }}-gems-
--          
--    - name: Setup Ruby, JRuby and TruffleRuby
--      uses: ruby/setup-ruby@v1.197.0
-+    - name: Set up Ruby
-+      uses: ruby/setup-ruby@v1
-       with:
--        ruby-version: '3.0'
--
--    - name: Bundler 💎
--      working-directory: AppCast
--      env:
--        BUNDLE_PATH: vendor/bundle
--      run: |
--        gem install bundler
--        bundle install
-+        ruby-version: '3.4'
-+        working-directory: AppCast
-+        bundler-cache: true
- 
-     - name: Build 🛠
-       working-directory: AppCast
-       env:
--        BUNDLE_PATH: vendor/bundle
-         JEKYLL_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-       run: bundle exec jekyll build
--      
-+
-     - name: Publish 🚀
-+      # Manual runs on branches other than the default branch only build the feeds.
-+      if: github.event_name == 'release' || github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
-+      id: publish
-       uses: JamesIves/github-pages-deploy-action@releases/v4
-       with:
-         token: ${{ secrets.GITHUB_TOKEN }}
-         branch: gh-pages
-         folder: AppCast/_site
-+
-+    - name: Request GitHub Pages build
-+      # Pushes made with GITHUB_TOKEN don't trigger a branch-based Pages build.
-+      if: steps.publish.outcome == 'success'
-+      env:
-+        GH_TOKEN: ${{ github.token }}
-+      run: gh api --method POST "repos/$GITHUB_REPOSITORY/pages/builds"
+@@ -107,8 +107,12 @@ extension CleanupModel {
+             case "chromeLeftovers": tools = ["google chrome"]
+             default: tools = []
+             }
+-            let running = activeTools.intersection(tools).sorted()
+-            if !running.isEmpty { return "In use by \(running.joined(separator: ", ")). Stop these processes and try again." }
++            var running = activeTools.intersection(tools)
++            if category.id == "derivedData", running.contains("xcodebuild"),
++               !CleanupOperations.xcodebuildMayUseDerivedData(item.path, scopedPaths: xcodebuildDerivedDataPaths) {
++                running.remove("xcodebuild")
++            }
++            if !running.isEmpty { return "In use by \(running.sorted().joined(separator: ", ")). Stop these processes and try again." }
+         }
+         if item.path.bytes.split(separator: 47).contains(where: { $0.elementsEqual("node_modules".utf8) }), !activeTools.isDisjoint(with: ["node", "npm", "pnpm", "yarn"]) {
+             return "Stop Node.js and package-manager processes before cleanup."
 ```
 
-**File**: `AppCast/Gemfile.lock` (modified, +14/-0)
+**File**: `Xcodes/Frontend/Cleanup/CleanupModel+Simulators.swift` (modified, +8/-2)
 ```diff
-@@ -18,14 +18,22 @@ GEM
-       ruby2_keywords
-     faraday-net_http (1.0.1)
-     ffi (1.17.2)
-+    ffi (1.17.2-arm64-darwin)
-     ffi (1.17.2-x86_64-darwin)
-+    ffi (1.17.2-x86_64-linux-gnu)
-     forwardable-extended (2.6.0)
-     google-protobuf (4.31.1)
-       bigdecimal
-       rake (>= 13)
-+    google-protobuf (4.31.1-arm64-darwin)
-+      bigdecimal
-+      rake (>= 13)
-     google-protobuf (4.31.1-x86_64-darwin)
-       bigdecimal
-       rake (>= 13)
-+    google-protobuf (4.31.1-x86_64-linux-gnu)
-+      bigdecimal
-+      rake (>= 13)
-     http_parser.rb (0.8.0)
-     i18n (1.14.7)
-       concurrent-ruby (~> 1.0)
-@@ -83,8 +91,12 @@ GEM
-     sass-embedded (1.89.2)
-       google-protobuf (~> 4.31)
-       rake (>= 13)
-+    sass-embedded (1.89.2-arm64-darwin)
-+      google-protobuf (~> 4.31)
-     sass-embedded (1.89.2-x86_64-darwin)
-       google-protobuf (~> 4.31)
-+    sass-embedded (1.89.2-x86_64-linux-gnu)
-+      google-protobuf (~> 4.31)
-     sawyer (0.8.2)
-       addressable (>= 2.3.5)
-       faraday (> 0.8, < 2.0)
-@@ -100,8 +112,10 @@ GEM
-     webrick (1.9.1)
+@@ -35,9 +35,15 @@ extension CleanupModel {
+     /// Ordinary Trash operations need active-use checks, not a full CoreSimulator inventory.
+     func refreshRunningTools() async {
+         protectedPaths = Self.makeProtectedPaths()
+-        let output = try? await Process.runAsync(URL(fileURLWithPath: "/bin/ps"), ["-axo", "comm="])
++        let output = try? await Process.runAsync(URL(fileURLWithPath: "/bin/ps"), ["-axo", "pid=,comm="])
+         guard !Task.isCancelled else { return }
+-        activeTools = Set((output?.out ?? "").split(separator: "\n").map { URL(fileURLWithPath: String($0).trimmingCharacters(in: .whitespaces)).lastPathComponent.lowercased() })
++        let processList = output?.out ?? ""
++        activeTools = Set(processList.split(separator: "\n").compactMap { line in
++            let fields = line.split(maxSplits: 1, whereSeparator: \.isWhitespace)
++            guard fields.count == 2 else { return nil }
++            return URL(fileURLWithPath: String(fields[1])).lastPathComponent.lowercased()
++        })
++        xcodebuildDerivedDataPaths = CleanupOperations.xcodebuildDerivedDataPaths(processList: processList)
+         runningApplications = NSWorkspace.shared.runningApplications.map {
+             (name: $0.localizedName ?? "the running app", bundleID: $0.bundleIdentifier, path: $0.bundleURL.flatMap { try? FilesystemPath($0) })
+         }
+```
+
+**File**: `Xcodes/Frontend/Cleanup/CleanupModel.swift` (modified, +1/-0)
+```diff
+@@ -95,6 +95,7 @@ final class CleanupModel: ObservableObject {
+     var activityUnavailable = true
+     var runningApplications: [(name: String, bundleID: String?, path: FilesystemPath?)] = []
+     var activeTools: Set<String> = []
++    var xcodebuildDerivedDataPaths: [FilesystemPath]?
  
- PLATFORMS
-+  arm64-darwin
-   ruby
-   x86_64-darwin-20
-+  x86_64-linux-gnu
+     init(defaults: Defaults = Current.defaults, folderConfigurationURL: URL? = nil, useFileConfiguration: Bool = false) {
+         folderDefaults = defaults
+```
+
+**File**: `Xcodes/Frontend/Cleanup/CleanupOperations.swift` (modified, +46/-0)
+```diff
+@@ -38,6 +38,52 @@ enum CleanupOperations {
+               UInt64(UInt32(bitPattern: metadata.st_dev)) == item.identity.device else { throw CleanupOperationError.changed }
+     }
  
- DEPENDENCIES
-   jekyll (~> 4.4.1)
++    /// nil means at least one xcodebuild could be using the default Derived Data location.
++    static func xcodebuildDerivedDataPaths(
++        processList: String,
++        arguments: (pid_t) -> [String]? = processArguments
++    ) -> [FilesystemPath]? {
++        var paths: [FilesystemPath] = []
++        for line in processList.split(separator: "\n") {
++            let fields = line.split(maxSplits: 1, whereSeparator: \.isWhitespace)
++            guard fields.count == 2, let pid = pid_t(fields[0]),
++                  URL(fileURLWithPath: String(fields[1])).lastPathComponent.lowercased() == "xcodebuild" else { continue }
++            guard let args = arguments(pid) else { return nil }
++            let flags = args.indices.filter { args[$0] == "-derivedDataPath" }
++            guard flags.count == 1, let flag = flags.first, flag + 1 < args.count,
++                  args[flag + 1].hasPrefix("/"),
++                  let path = try? FilesystemPath(URL(fileURLWithPath: args[flag + 1]).resolvingSymlinksInPath())
++            else { return nil }
++            paths.append(path)
++        }
++        return paths
++    }
++
++    static func xcodebuildMayUseDerivedData(_ path: FilesystemPath, scopedPaths: [FilesystemPath]?) -> Bool {
++        guard let scopedPaths, !scopedPaths.isEmpty,
++              let canonicalPath = try? FilesystemPath(path.url.resolvingSymlinksInPath()) else { return true }
++        return scopedPaths.contains { $0.contains(canonicalPath) || canonicalPath.contains($0) }
++    }
++
++    private static func processArguments(_ pid: pid_t) -> [String]? {
++        var mib: [Int32] = [CTL_KERN, KERN_PROCARGS2, pid]
++        var size = 0
++        guard sysctl(&mib, 3, nil, &size, nil, 0) == 0, size > MemoryLayout<Int32>.size else { return nil }
++        var bytes = [UInt8](repeating: 0, count: size)
++        let status = bytes.withUnsafeMutableBytes { sysctl(&mib, 3, $0.baseAddress, &size, nil, 0) }
++        guard status == 0, size > MemoryLayout<Int32>.size else { return nil }
++        let count = bytes.withUnsafeBytes { Int($0.loadUnaligned(as: Int32.self)) }
++        guard count > 0 else { return nil }
++        // The kernel buffer begins with argc, the executable path, then NUL padding before argv.
++        let payload = bytes[MemoryLayout<Int32>.size..<size]
++        guard let executableEnd = payload.firstIndex(of: 0),
++              let argumentsStart = payload[executableEnd...].firstIndex(where: { $0 != 0 }) else { return nil }
++        let rawArguments = payload[argumentsStart...].split(separator: 0, maxSplits: count, omittingEmptySubsequences: false)
++        guard rawArguments.count > count else { return nil }
++        let arguments = rawArguments.prefix(count).compactMap { String(bytes: $0, encoding: .utf8) }
++        return arguments.count == count ? arguments : nil
++    }
++
+     struct SimulatorRuntime: Sendable, Codable, Identifiable, Equatable {
+         let identifier: String
+         let runtimeIdentifier: String
+```
+
+**File**: `Xcodes/Frontend/Cleanup/CleanupWindow.swift` (modified, +14/-2)
+```diff
+@@ -146,8 +146,20 @@ struct CleanupWindow: View {
+             Text(model.cleanupConfirmationMessage)
+         }
+         .alert("Cleanup", isPresented: Binding(get: { model.message != nil }, set: { if !$0 { model.message = nil } })) {
+-            Button("OK") { model.message = nil }
+-        } message: { Text(model.message ?? "") }
++            Button("OK", role: .cancel) { model.message = nil }
++            if let details = model.message, details != Self.errorPreview(details) {
++                Button("Copy Details") {
++                    NSPasteboard.general.clearContents()
++                    NSPasteboard.general.setString(details, forType: .string)
++                }
++            }
++        } message: { Text(Self.errorPreview(model.message ?? "")) }
++    }
++
++    private static func errorPreview(_ message: String) -> String {
++        let lines = message.split(omittingEmptySubsequences: false, whereSeparator: \.isNewline)
++        let preview = String(lines.prefix(6).joined(separator: "\n").prefix(480))
++        return preview == message ? preview : preview + "…"
+     }
+ 
+     private var savingsHelp: some View {
+```
+
+**File**: `XcodesTests/CleanupOperationsTests.swift` (modified, +80/-21)
+```diff
+@@ -5,6 +5,65 @@ import XcodesCleanupKit
+ @testable import Xcodes
+ 
+ final class CleanupOperationsTests: XCTestCase {
++    func testXcodebuildWithExplicitDerivedDataProtectsOnlyOverlappingPaths() throws {
++        let processes = "   123 /Applications/Xcode Beta.app/Contents/Developer/usr/bin/xcodebuild"
++        let paths = try XCTUnwrap(CleanupOperations.xcodebuildDerivedDataPaths(processList: processes) { pid in
++            XCTAssertEqual(pid, 123)
++            return ["xcodebuild", "-derivedDataPath", "/tmp/Build Cache/Active", "test"]
++        })
++
++        for path in ["/tmp/Build Cache", "/tmp/Build Cache/Active", "/tmp/Build Cache/Active/Build"] {
++            XCTAssertTrue(CleanupOperations.xcodebuildMayUseDerivedData(
++                try FilesystemPath(URL(fileURLWithPath: path)), scopedPaths: paths
++            ))
++        }
++        XCTAssertFalse(CleanupOperations.xcodebuildMayUseDerivedData(
++            try FilesystemPath(URL(fileURLWithPath: "/tmp/Build Cache/Active-Old")), scopedPaths: paths
++        ))
++    }
++
++    func testXcodebuildWithUnknownOutputPathKeepsConservativeGuard() throws {
++        let processes = "123 /usr/bin/xcodebuild\n456 /usr/bin/xcodebuild"
++        for unknownArguments in [nil, ["xcodebuild", "test"], ["xcodebuild", "-derivedDataPath", "Relative"]] {
++            let paths = CleanupOperations.xcodebuildDerivedDataPaths(processList: processes) { pid in
++                pid == 123 ? ["xcodebuild", "-derivedDataPath", "/tmp/Scoped"] : unknownArguments
++            }
++            XCTAssertNil(paths)
++            XCTAssertTrue(CleanupOperations.xcodebuildMayUseDerivedData(
++                try FilesystemPath(URL(fileURLWithPath: "/tmp/Unrelated")), scopedPaths: paths
++            ))
++        }
++    }
++
++    @MainActor
++    func testCleanupBlocksActiveDerivedDataAndAllowsUnrelatedCache() async throws {
++        let root = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
++        let active = root.appendingPathComponent("Active Build")
++        let stale = root.appendingPathComponent("Stale Build")
++        for directory in [active, stale] {
++            try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
++        }
++        defer { try? FileManager.default.removeItem(at: root) }
++
++        let location = try FilesystemPath(root)
++        let category = FindingCategory(id: "derivedData", title: "Derived Data", explanation: "",
++                                       location: location, classification: .review)
++        let result = try await ScanSession(request: ScanRequest(roots: [location])).result()
++        let model = CleanupModel(defaults: .mock)
++        model.configureScan(categories: [category], policyCategories: [category])
++        model.activityUnavailable = false
++        model.activeTools = ["xcodebuild"]
++        model.xcodebuildDerivedDataPaths = [try FilesystemPath(active.resolvingSymlinksInPath())]
++
++        let activeItem = try XCTUnwrap(result.item(at: FilesystemPath(active)))
++        let staleItem = try XCTUnwrap(result.item(at: FilesystemPath(stale)))
++        XCTAssertNotNil(model.blockingReason(activeItem, classification: .review))
++        XCTAssertNil(model.blockingReason(staleItem, classification: .review))
++
++        model.activeTools.insert("clang")
++        XCTAssertNotNil(model.blockingReason(staleItem, classification: .review))
++    }
++
+     func testSimulatorInventoryRetainsAvailabilityAndAllDeviceNames() throws {
+         let unavailable = UUID().uuidString
+         let available = UUID().uuidString
+@@ -74,7 +133,7 @@ final class CleanupOperationsTests: XCTestCase {
+         let missing = try FilesystemPath(folder.appendingPathComponent("missing"))
+         let session = try ScanSession(request: ScanRequest(roots: [FilesystemPath(folder), missing]))
+         let result = try await session.result()
+-        let model = CleanupModel()
++        let model = CleanupModel(defaults: .mock)
+         model.finishScan(result)
+         let root = try XCTUnwrap(result.item(at: FilesystemPath(folder)))
+         let children = result.children(of: root.id)
+@@ -102,7 +161,7 @@ final class CleanupOperationsTests: XCTestCase {
+         let session = try ScanSession(request: ScanRequest(roots: [FilesystemPath(folder)]))
+         let result = try await session.result()
+         let item = try XCTUnwrap(result.children(of: result.rootIDs[0]).first)
+-        let model = CleanupModel()
++        let model = CleanupModel(defaults: .mock)
+         model.finishScan(result)
+         model.setSelected(item, selected: true)
+         model.close()
+@@ -123,7 +182,7 @@ final class CleanupOperationsTests: XCTestCase {
+         let category = FindingCategory(id: "fixture", title: "Fixture", explanation: "Fixture", location: try FilesystemPath(folder), classification: .review)
+         let session = try ScanSession(request: ScanRequest(roots: [category.location], categories: [category]))
+         let p
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #902** (2026-11-24): Pin XcodesLoginKit to v1.2.0 (@MattKiazyk)
+- **PR #898** (2026-11-24): Scope xcodebuild cleanup protection to active Derived Data (@anciltech)
+- **PR #891** (2026-11-24): Adjust sidebar sizing, collapse behavior (@LePips)
 - **PR #890** (2026-11-10): Fix AppCast publishing on Ubuntu 26.04 (@MattKiazyk)
 - **PR #889** (2026-11-10): Support AEA archives in Xcodes.app (@MattKiazyk)
 - **PR #888** (2026-11-10): Add disk cleanup to Xcodes (@MattKiazyk)
-- **PR #886** (2026-11-10): Fix installed and active state not refreshing after install, select, and uninstall. (@jrlanglois)
-- **PR #885** (2026-11-10): Fix frozen download progress after a retry (@mahadshahib)
-- **PR #884** (2026-11-10): Preserve Apple account credentials after transient authentication failures (@zunda-pixel)
 
 ---
 
@@ -2191,30 +1802,34 @@ Fix AppCast publishing on Ubuntu 26.04
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. installed and active state not refreshing after install, select, and uninstall
+## X. Empirical Invariant Guard in CleanupModel+Cleanup.swift
 
 **RULE**:
-When implementing operations in `Xcodes/Backend/AppState+Install.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in XcodesOrg/XcodesApp. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Xcodes/Frontend/Cleanup/CleanupModel+Cleanup.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in XcodesOrg/XcodesApp. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `27bf2654`: installed and active state not refreshing after install, select, and uninstall. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d7c06449`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Xcodes/Backend/AppState+Install.swift`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Xcodes/Frontend/Cleanup/CleanupModel+Cleanup.swift`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-                // Refreshed before the row is patched: `updateAllXcodes` rebuilds every row from this cache
-                // on the next selection or update, carrying over only rows that are still `.installing`.
-                await updateInstalledXcodesAsync(recomposeAllXcodes: false)
+            var running = activeTools.intersection(tools)
+            if category.id == "derivedData", running.contains("xcodebuild"),
+               !CleanupOperations.xcodebuildMayUseDerivedData(item.path, scopedPaths: xcodebuildDerivedDataPaths) {
+                running.remove("xcodebuild")
+            }
+            if !running.isEmpty { return "In use by \(running.sorted().joined(separator: ", ")). Stop these processes and try again." }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Induced defect failure mode:
+            let running = activeTools.intersection(tools).sorted()
+            if !running.isEmpty { return "In use by \(running.joined(separator: ", ")). Stop these processes and try again." }
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `27bf2654` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d7c06449` are properly handled with clean fallback behavior.

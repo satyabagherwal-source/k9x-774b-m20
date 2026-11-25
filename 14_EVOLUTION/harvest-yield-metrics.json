@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T04:31:15.566Z",
-  "total_cycles_completed": 12284,
-  "total_learnings_persisted": 12284,
-  "total_rules_promoted": 11328,
+  "last_updated": "2026-11-25T04:39:35.742Z",
+  "total_cycles_completed": 12287,
+  "total_learnings_persisted": 12287,
+  "total_rules_promoted": 11331,
   "history": [
-    {
-      "timestamp": "2026-11-24T15:17:25.626Z",
-      "repository": "tailscale/tailscale",
-      "learningId": "learn-github-tailscale-tailscale",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T15:17:30.532Z",
-      "repository": "GreptimeTeam/greptimedb",
-      "learningId": "learn-github-greptimeteam-greptimedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T15:27:03.134Z",
-      "repository": "Sentinel7/h3",
-      "learningId": "learn-huggingface-sentinel7-h3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-24T15:27:12.069Z",
       "repository": "wcandillon/react-native-skia",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-25T04:31:15.566Z",
       "repository": "juicedata/juicefs",
       "learningId": "learn-github-juicedata-juicefs",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T04:39:29.862Z",
+      "repository": "tuist/tuist",
+      "learningId": "learn-github-tuist-tuist",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T04:39:32.991Z",
+      "repository": "XcodesOrg/XcodesApp",
+      "learningId": "learn-github-xcodesorg-xcodesapp",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T04:39:35.742Z",
+      "repository": "rook/rook",
+      "learningId": "learn-github-rook-rook",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

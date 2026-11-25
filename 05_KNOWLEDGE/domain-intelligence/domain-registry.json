@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T04:31:22.491Z",
-  "total_records": 2630,
+  "last_updated": "2026-11-25T04:39:43.329Z",
+  "total_records": 2632,
   "domains": {
     "A": {
       "total": 22,
@@ -1655,7 +1655,7 @@
       ]
     },
     "H": {
-      "total": 626,
+      "total": 628,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -2282,7 +2282,9 @@
         "domain_intelligence-technical-construction-intelligence-cypress-io-cypress-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-tw93-mole-core-invariants",
         "domain_intelligence-technical-construction-intelligence-tw93-mole-learnings-core-invariants",
-        "DOM-H-FBC5BA6F"
+        "DOM-H-FBC5BA6F",
+        "domain_intelligence-technical-construction-intelligence-xcodesorg-xcodesapp-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-xcodesorg-xcodesapp-learnings-core-invariant"
       ]
     },
     "I": {
@@ -10470,8 +10472,8 @@
       "title": "Architecture Intelligence: rook/rook Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-rook-rook-architecture-intelligence-rook-rook-core-invariants.md",
       "repository": "rook/rook",
-      "content_hash": "8f8d2151b0d104c5ea11185b40d27aafc9b8c092176ba8cf5269b66e35961dbe",
-      "created_at": "2026-11-24T11:30:23.133Z"
+      "content_hash": "aab3b1e913effefb155b80e3bc6f8942505165dda6ff0fffe4a67f09a5edf625",
+      "created_at": "2026-11-25T04:39:36.204Z"
     },
     "domain_intelligence-technical-construction-intelligence-zama-ai-tfhe-rs-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-zama-ai-tfhe-rs-core-invariants",
@@ -20051,8 +20053,8 @@
       "title": "Architecture Intelligence: rook-rook-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-rook-rook-learnings-architecture-intelligence-rook-rook-learnings-core-invariant.md",
       "repository": "rook-rook-learnings",
-      "content_hash": "c9117da2fe61acee0f3c8df6cb25ef4f47444bd968e3a5a0ed26b25d6ca9151f",
-      "created_at": "2026-11-24T11:31:02.069Z"
+      "content_hash": "a84a3f8f11fc778300cfb89d86cca411ca8dd4d7f7b0a1abb7bdf1f9fffb91aa",
+      "created_at": "2026-11-25T04:39:43.329Z"
     },
     "domain_intelligence-research-knowledge-intelligence-black-forest-labs-flux-3-image-klein-comfy-core-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-black-forest-labs-flux-3-image-klein-comfy-core-",
@@ -20966,8 +20968,8 @@
       "title": "Architecture Intelligence: tuist/tuist Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tuist-tuist-architecture-intelligence-tuist-tuist-core-invariants.md",
       "repository": "tuist/tuist",
-      "content_hash": "003cd7deb5250b17d921b83f5829ba2ba1cf84236b78bb34409620c732e2dcf0",
-      "created_at": "2026-11-24T02:04:11.422Z"
+      "content_hash": "368ad9accb970bf2353a467cc068dcfd83b8da3552e009403ecc9ef9d1e3aa04",
+      "created_at": "2026-11-25T04:39:30.318Z"
     },
     "domain_intelligence-quality-verification-intelligence-obliteratus-deepseek-v4-1-flash-1017-obliterat": {
       "record_id": "domain_intelligence-quality-verification-intelligence-obliteratus-deepseek-v4-1-flash-1017-obliterat",
@@ -20993,8 +20995,8 @@
       "title": "Architecture Intelligence: tuist-tuist-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tuist-tuist-learnings-architecture-intelligence-tuist-tuist-learnings-core-invar.md",
       "repository": "tuist-tuist-learnings",
-      "content_hash": "751f83a5c7012adf89ac10ff87a4e2802b225fc651c528180c84efca56d084cc",
-      "created_at": "2026-11-24T02:04:25.971Z"
+      "content_hash": "0a6392f7a2e28c45b4cd135b288cff3f939eabd41b75c052bbe90fdf3c27ecfa",
+      "created_at": "2026-11-25T04:39:40.876Z"
     },
     "domain_intelligence-quality-verification-intelligence-hf-obliteratus-deepseek-v4-1-flash-1017-oblite": {
       "record_id": "domain_intelligence-quality-verification-intelligence-hf-obliteratus-deepseek-v4-1-flash-1017-oblite",
@@ -44149,6 +44151,24 @@
       "repository": "checkmarx-kics-learnings",
       "content_hash": "586d9c0969071133084f150341719ed7f47d4090178daeb1f7a88489d24cdde2",
       "created_at": "2026-11-25T02:56:19.204Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-xcodesorg-xcodesapp-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-xcodesorg-xcodesapp-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: XcodesOrg/XcodesApp Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-xcodesorg-xcodesapp-technical-construction-intelligence-xcodesorg-xcodesapp-core.md",
+      "repository": "XcodesOrg/XcodesApp",
+      "content_hash": "52e88b38f63087e3e8180f121d429cf31c7201288acba40978551064f316a425",
+      "created_at": "2026-11-25T04:39:33.511Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-xcodesorg-xcodesapp-learnings-core-invariant": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-xcodesorg-xcodesapp-learnings-core-invariant",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: xcodesorg-xcodesapp-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-xcodesorg-xcodesapp-learnings-technical-construction-intelligence-xcodesorg-xcod.md",
+      "repository": "xcodesorg-xcodesapp-learnings",
+      "content_hash": "bea861d7ec942a575f4f86b055ffdc1a0179c0a3931a5a87b1d32bf05051b8fd",
+      "created_at": "2026-11-25T04:39:41.942Z"
     }
   }
 }

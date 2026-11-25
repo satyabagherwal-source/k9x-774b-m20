@@ -46,8 +46,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-25T03:59:18.996Z",
-    "lastVerified": "2026-11-25T03:59:18.996Z",
+    "lastChecked": "2026-11-25T04:39:38.411Z",
+    "lastVerified": "2026-11-25T04:39:38.411Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-25T04:31:19.177Z",
-    "lastVerified": "2026-11-25T04:31:19.177Z",
+    "lastChecked": "2026-11-25T04:39:39.271Z",
+    "lastVerified": "2026-11-25T04:39:39.271Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -2381,12 +2381,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "aleo-labs-protocol-snarkos": {
-    "name": "aleo-labs-protocol/snarkOS",
+    "name": "snarkOS",
     "officialUrl": "https://github.com/aleo-labs-protocol/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-25T00:26:48.890Z",
-    "lastVerified": "2026-11-25T00:26:48.890Z",
+    "lastChecked": "2026-11-25T04:39:33.448Z",
+    "lastVerified": "2026-11-25T04:39:33.448Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
@@ -2395,7 +2395,8 @@
     "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "b2a26d2e"
   },
   "paradedb-paradedb": {
     "name": "paradedb/paradedb",
@@ -4331,9 +4332,9 @@
   "erikgrinaker-toydb": {
     "name": "toydb",
     "officialUrl": "https://github.com/erikgrinaker/toydb",
-    "lastChecked": "2026-11-24T09:41:08.534Z",
+    "lastChecked": "2026-11-25T04:39:35.934Z",
     "revisionIdentifier": "2d7cd32e",
-    "lastVerified": "2026-11-24T09:41:08.534Z"
+    "lastVerified": "2026-11-25T04:39:35.934Z"
   },
   "timvisee-ffsend": {
     "name": "ffsend",
@@ -6679,14 +6680,14 @@
     "officialUrl": "https://github.com/rook/rook",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-24T11:30:21.531Z",
-    "lastVerified": "2026-11-24T11:30:21.531Z",
+    "lastChecked": "2026-11-25T04:39:34.537Z",
+    "lastVerified": "2026-11-25T04:39:34.537Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rook-rook",
-    "contentHash": "a1527fa8e66316a0cd91d4dc2497de9876c4ba4ee1ee7af39cb0f8de1505e25a",
+    "contentHash": "98fee9f9e5ef9dacf992ce802511cd8c22d8f8e8d4f9cfbc69d33b1aaa4dd2d6",
     "promotedRulesCount": 1,
-    "recentFixesCount": 7,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -8802,11 +8803,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "xcodesorg-xcodesapp": {
-    "name": "XcodesApp",
+    "name": "XcodesOrg/XcodesApp",
     "officialUrl": "https://github.com/XcodesOrg/XcodesApp",
-    "lastChecked": "2026-11-22T18:12:23.939Z",
-    "revisionIdentifier": "9836fd83",
-    "lastVerified": "2026-11-22T18:12:23.939Z"
+    "sourceType": "github",
+    "technology": "Swift",
+    "lastChecked": "2026-11-25T04:39:31.789Z",
+    "lastVerified": "2026-11-25T04:39:31.789Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-xcodesorg-xcodesapp",
+    "contentHash": "32fc704269b0395990313aca38ef4d5fe69962e1c6440fbf88ceb82131adfe59",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 2,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "pola-rs-polars": {
     "name": "pola-rs/polars",
@@ -9216,14 +9227,14 @@
     "officialUrl": "https://github.com/tuist/tuist",
     "sourceType": "github",
     "technology": "Elixir",
-    "lastChecked": "2026-11-24T02:04:09.668Z",
-    "lastVerified": "2026-11-24T02:04:09.668Z",
+    "lastChecked": "2026-11-25T04:39:28.576Z",
+    "lastVerified": "2026-11-25T04:39:28.576Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tuist-tuist",
-    "contentHash": "1fb62a9182595e701d74a063abd9e3b2d737520c85f304d3eac85866c1ccd7a1",
+    "contentHash": "170f8e3c43976c895e0021a55b3c5005cac4180e23cd810a64699913d6075a34",
     "promotedRulesCount": 1,
-    "recentFixesCount": 22,
+    "recentFixesCount": 23,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -12594,12 +12605,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "facebook-docusaurus": {
-    "name": "meta/docusaurus",
+    "name": "docusaurus",
     "officialUrl": "https://github.com/facebook/docusaurus",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-21T07:41:57.898Z",
-    "lastVerified": "2026-11-21T07:41:57.898Z",
+    "lastChecked": "2026-11-25T04:39:25.825Z",
+    "lastVerified": "2026-11-25T04:39:25.825Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-meta-docusaurus",
@@ -12608,7 +12619,8 @@
     "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "809ffffd"
   },
   "chocoford-excalidrawz": {
     "name": "ExcalidrawZ",

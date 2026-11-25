@@ -2,18 +2,18 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-25T04:31:21.927Z",
+  "updated_at": "2026-11-25T04:39:42.750Z",
   "stats": {
-    "total_discovered": 9219,
-    "approved_pending_harvest": 8730,
+    "total_discovered": 9230,
+    "approved_pending_harvest": 8740,
     "harvested_count": 0,
-    "rejected_count": 489,
+    "rejected_count": 490,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 8727,
+      "COMMUNITY_AND_EXPERT": 8736,
       "OFFICIAL_DOCUMENTATION": 275,
       "STANDARDS_AND_SPECIFICATIONS": 149,
       "ENGINEERING_BLOGS": 7,
-      "SECURITY_ADVISORIES": 50,
+      "SECURITY_ADVISORIES": 52,
       "LEGAL_AND_REGULATORY": 2,
       "RESEARCH_AND_ACADEMIA": 9
     }
@@ -199422,6 +199422,241 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/juicedata-juicefs-learnings.md",
         "fileName": "juicedata-juicefs-learnings.md"
+      }
+    },
+    "SRC-434B4BE2BF78": {
+      "id": "SRC-434B4BE2BF78",
+      "url": "https://ampcode.com/threads/T-01a20e77-e7e7-7548-9e22-6c78c5c04bcf",
+      "title": "https://ampcode.com/threads/T-01a20e77-e7e7-7548-9e22-6c78c5c04bcf",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T04:39:39.973Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tuist-tuist-learnings.md",
+        "fileName": "tuist-tuist-learnings.md"
+      }
+    },
+    "SRC-296F22FF00B8": {
+      "id": "SRC-296F22FF00B8",
+      "url": "https://github.com/pepicrft/prom_ex",
+      "title": "https://github.com/pepicrft/prom_ex",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T04:39:40.038Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tuist-tuist-learnings.md",
+        "fileName": "tuist-tuist-learnings.md"
+      }
+    },
+    "SRC-7A982EDCB177": {
+      "id": "SRC-7A982EDCB177",
+      "url": "https://ampcode.com/threads/T-01a1ea69-2a2b-7537-8802-2df97db9b290",
+      "title": "https://ampcode.com/threads/T-01a1ea69-2a2b-7537-8802-2df97db9b290",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T04:39:40.102Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tuist-tuist-learnings.md",
+        "fileName": "tuist-tuist-learnings.md"
+      }
+    },
+    "SRC-2B533DC256C9": {
+      "id": "SRC-2B533DC256C9",
+      "url": "https://api.example.com/v1/runs/42?page=3",
+      "title": "https://api.example.com/v1/runs/42?page=3",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T04:39:40.165Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tuist-tuist-learnings.md",
+        "fileName": "tuist-tuist-learnings.md"
+      }
+    },
+    "SRC-8C9FDCE4E047": {
+      "id": "SRC-8C9FDCE4E047",
+      "url": "http://localhost:8080/v1/runs/7",
+      "title": "http://localhost:8080/v1/runs/7",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-25T04:39:40.228Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tuist-tuist-learnings.md",
+        "fileName": "tuist-tuist-learnings.md"
+      }
+    },
+    "SRC-5004AF4BA43A": {
+      "id": "SRC-5004AF4BA43A",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-130411",
+      "title": "Vulnerability Advisory CVE-2026-130411",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "SECURITY_ADVISORIES",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.96,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T04:39:40.323Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tuist-tuist-learnings.md",
+        "fileName": "tuist-tuist-learnings.md"
+      }
+    },
+    "SRC-DC32EEFBB354": {
+      "id": "SRC-DC32EEFBB354",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-133555",
+      "title": "Vulnerability Advisory CVE-2026-133555",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "SECURITY_ADVISORIES",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.96,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T04:39:40.389Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tuist-tuist-learnings.md",
+        "fileName": "tuist-tuist-learnings.md"
+      }
+    },
+    "SRC-68FAB488D047": {
+      "id": "SRC-68FAB488D047",
+      "url": "https://github.com/XcodesOrg/XcodesApp/issues/857",
+      "title": "https://github.com/XcodesOrg/XcodesApp/issues/857",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T04:39:41.388Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/xcodesorg-xcodesapp-learnings.md",
+        "fileName": "xcodesorg-xcodesapp-learnings.md"
+      }
+    },
+    "SRC-0E9630D69A61": {
+      "id": "SRC-0E9630D69A61",
+      "url": "https://github.com/XcodesOrg/XcodesApp/releases/tag/v4.2.1b43",
+      "title": "https://github.com/XcodesOrg/XcodesApp/releases/tag/v4.2.1b43",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T04:39:41.452Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/xcodesorg-xcodesapp-learnings.md",
+        "fileName": "xcodesorg-xcodesapp-learnings.md"
+      }
+    },
+    "SRC-EF629CBC53D6": {
+      "id": "SRC-EF629CBC53D6",
+      "url": "https://rook.io/docs/rook/v1.20/Getting-Started/Prerequisites/prerequisites",
+      "title": "https://rook.io/docs/rook/v1.20/Getting-Started/Prerequisites/prerequisites",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T04:39:42.642Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rook-rook-learnings.md",
+        "fileName": "rook-rook-learnings.md"
+      }
+    },
+    "SRC-C265FE84CAAA": {
+      "id": "SRC-C265FE84CAAA",
+      "url": "https://github.com/rook/rook/blob/v1.20.7/deploy/charts/rook-ceph/values.yaml",
+      "title": "https://github.com/rook/rook/blob/v1.20.7/deploy/charts/rook-ceph/values.yaml",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T04:39:42.750Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rook-rook-learnings.md",
+        "fileName": "rook-rook-learnings.md"
       }
     }
   }

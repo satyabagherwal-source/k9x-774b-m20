@@ -12967,3 +12967,6 @@ Every entry in this ledger must capture:
 | `learn-github-yyjeqhc-webcodex` | `https://github.com/yyjeqhc/webcodex` | `70315e49` | Multi-dimensional audit evidence | 2026-11-25T04:31:05.559Z |
 | `learn-github-darrylmorley-whatcable` | `https://github.com/darrylmorley/whatcable` | `0cf0a678` | Multi-dimensional audit evidence | 2026-11-25T04:31:12.040Z |
 | `learn-github-juicedata-juicefs` | `https://github.com/juicedata/juicefs` | `b4f20cf3` | Multi-dimensional audit evidence | 2026-11-25T04:31:15.558Z |
+| `learn-github-tuist-tuist` | `https://github.com/tuist/tuist` | `1f231c14` | Multi-dimensional audit evidence | 2026-11-25T04:39:29.856Z |
+| `learn-github-xcodesorg-xcodesapp` | `https://github.com/XcodesOrg/XcodesApp` | `3231e33a` | Multi-dimensional audit evidence | 2026-11-25T04:39:32.985Z |
+| `learn-github-rook-rook` | `https://github.com/rook/rook` | `394e6dba` | Multi-dimensional audit evidence | 2026-11-25T04:39:35.736Z |

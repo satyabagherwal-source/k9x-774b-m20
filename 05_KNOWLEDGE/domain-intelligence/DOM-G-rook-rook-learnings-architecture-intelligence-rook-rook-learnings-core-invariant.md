@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T11:31:01.718Z",
+  "timestamp": "2026-11-25T04:39:42.996Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-rook-rook-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [rook-rook-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T11:31:01.718Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T04:39:42.996Z`  
 > **Learning ID**: `LEARN-EVO-rook-rook-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), D (Research & Knowledge Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence), B (Product Intelligence)
-- **Confidence Rating**: 68%
+- **Secondary Corroborating Domains**: I (Content & Information Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), J (Search & Distribution Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence), B (Product Intelligence)
+- **Confidence Rating**: 59%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from rook-rook-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rook-rook-learnings.md`  
 > **Source**: github ([https://github.com/rook/rook](https://github.com/rook/rook))  
-> **Source Version**: `d7d7a0e1`  
+> **Source Version**: `394e6dba`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T11:30:21.536Z  
+> **Timestamp**: 2026-11-25T04:39:34.543Z  
 > **Learning ID**: `learn-github-rook-rook`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rook-rook-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rook/rook](https://github.com/rook/rook))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T11:30:21.531Z  
+> **Harvest Timestamp**: 2026-11-25T04:39:34.537Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1434,11 +1434,11 @@ func quanityToInt64(qty string) (*int64, error) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #18805** (2026-11-24): **NixOS documentation references missing CSI Helm values in Rook v1.20.7**
+  *Symptoms*: **Is this a bug report or feature request?**  - Bug Report  **Deviation from expected behavior:**  The [[NixOS prerequisites documentation](https://rook.io/docs/rook/v1.20/Getting-Started/Prerequisites/prerequisites/#nixos)](https://rook.io/docs/rook/v1.20/Getting-Started/Prerequisites/prerequisites/#nixos) instructs users to uncomment and configure the following values in the Rook Helm chart's `values.yaml`:  - `csiRBDPluginVolume` - `csiRBDPluginVolumeMount` - `csiCephFSPluginVolume` - `csiCephFSPluginVolumeMount`  However, none of these values exist in the v1.20.7 Helm chart's [`[values.yaml](https://github.com/rook/rook/blob/v1.20.7/deploy/charts/rook-ceph/values.yaml)`](https://github.com/rook/rook/blob/v1.20.7/deploy/charts/rook-ceph/values.yaml).  **Expected behavior:**  The documentation should reference values that are actually available in the Helm chart or explain the correct configuration for Rook v1.20.7.  **How to reproduce it:**  Compare the NixOS documentation with the `values.yaml` of the v1.20.7 Helm chart.  **Environment:**  - OS: NixOS - Kernel: 6.18.55 - Rook version: v1.20.7 - Ceph version: v20.2.4 (Tentacle) - Kubernetes: K3s
+
 - **Issue #18743** (2026-11-09): **Race can lead to blocked update/upgrade when a Ceph version introduces new health error**
   *Symptoms*: <!-- **Are you in the right place?** 1. For issues or feature requests, please create an issue in this repository. 2. For general technical and non-technical questions, we are happy to help you on our [Rook.io Slack](https://slack.rook.io/). 3. Did you already search the existing open issues for anything similar? -->  **Is this a bug report or feature request?** * Bug Report  **Deviation from expected behavior:**  When Rook restarts after (some) mons are updated but before mon `postMonStartupActions()` complete, Rook can get stuck unable to reconcile the Ceph cluster due to health errors that Rook is otherwise intended to ignore.  **Expected behavior:**  Rook should always ignore the health errors defined [here](https://github.com/rook/rook/blob/a53a960adc15ec4c167c6ef9714e0b4ca009aff1/pkg/operator/ceph/controller/controller_utils.go#L214-L222) for any check that gates reconciliation.  Today, this is not the case for the pre-reconciliation Ceph version check [here](https://github.com/rook/rook/blob/8e7650583263e735b75cbbfd4b52b91bc9b74113/pkg/operator/ceph/cluster/version.go#L194-L210).  The pre-reconciliation check uses a simplified check that prohibits reconciliation from beginning on any HEALTH_ERR, even those intended to be ignored by code above.  **How to reproduce it (minimal and precise):**  Repro is as follows: - Install a Rook cluster with 3 mons using Ceph v19.2.0.   - Required: `skipUpgradeChecks: false` - Update the cluster to Ceph v19.2.6. - Force delete the rook
-
-- **Issue #18621** (2026-11-05): **PVC OSD with a separate metadata PVC is not recreated when wipeDevicesFromOtherClusters is enabled**
-  *Symptoms*: **How to reproduce**  1. Create a CephCluster with the wipe option enabled and a PVC device set with a separate metadata PVC:  ```yaml spec:   cleanupPolicy:     wipeDevicesFromOtherClusters: true   storage:     storageClassDeviceSets:       - name: set1         count: 1         volumeClaimTemplates:           - metadata:               name: data             spec:               volumeMode: Block               # ...           - metadata:               name: metadata             spec:               volumeMode: Block               # ... ```  2. Wait until the OSD is up. 3. Delete the OSD deployment. Rook runs the OSD prepare job again and should recreate the deployment:  ```console kubectl -n rook-ceph delete deploy rook-ceph-osd-0 ```  **Expected**  The OSD comes back up with its data, as it does with `wipeDevicesFromOtherClusters: false`.  **Actual**  The OSD does not come back:  - **Unencrypted OSD:** the OSD's metadata PVC is wiped. The deployment is recreated, but the OSD pod fails to start and the OSD is lost. Its data has to be recovered from other replicas. - **Encrypted OSD:** the deployment is not recreated. The prepare job keeps failing and the OSD stays down. The data is not lost.  In both cases the prepare job wrongly treats the OSD's own metadata PVC as a device from another cluster and wipes it:  ``` cephosd: begin wiping OSD 0 device "/dev/vdc" belonging to a different ceph cluster "" cephosd: zap OSD.0 on device path "/dev/vdc" ```  For the encrypted OSD the wip
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1455,125 +1455,24 @@ func quanityToInt64(qty string) (*int64, error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `dc3975fd` (2026-11-23)
-**Commit Message**: helm: fix purge-osd ClusterRole Helm ownership conflict
+### Incident Patch 1: `394e6dba` (2026-11-24)
+**Commit Message**: Merge pull request #18873 from taraasrita10/purge-osd-change-clusterrole
 
-PR #18634 converted the rook-ceph-purge-osd Role/RoleBinding to a
-cluster-scoped ClusterRole/ClusterRoleBinding (the purge job now needs
-persistentvolumes access, which a namespaced Role cannot grant), but left
-them in the shared library templates library.cluster.roles and
-library.cluster.rolebindings. Both the operator chart (rook-ceph) and the
-cluster chart (rook-ceph-cluster) render those templates when the cluster
-runs in a different namespace than the operator, so two Helm releases each
-tried to own the same cluster-scoped, fixed-name object. The second
-release's upgrade then failed:
+helm: change purge-osd ClusterRole for limited access
 
-  ClusterRole "rook-ceph-purge-osd" exists and cannot be imported into the
-  current release: invalid ownership metadata
-
-This broke the Helm upgrade suite on master.
-
-Follow the pattern already used for the rook-ceph-mgr-cluster and
-rook-ceph-osd cluster-scoped RBAC: define the ClusterRole once in the
-operator chart's clusterrole.yaml, and give the ClusterRoleBinding a
-per-cluster-namespace name suffix via library.suffix-cluster-namespace so
-each release owns a uniquely named binding. The namespaced ServiceAccount
-is unchanged, and deploy/
-
-**File**: `deploy/charts/library/templates/_cluster-clusterrolebinding.tpl` (modified, +16/-0)
+**File**: `deploy/charts/library/templates/_cluster-role.tpl` (modified, +22/-0)
 ```diff
-@@ -34,4 +34,20 @@ subjects:
-   - kind: ServiceAccount
-     name: rook-ceph-osd
-     namespace: {{ .Release.Namespace }} # namespace:cluster
-+---
-+# Allow the osd purge job to run and clean up cluster-wide resources
-+kind: ClusterRoleBinding
-+apiVersion: rbac.authorization.k8s.io/v1
-+metadata:
-+  name: rook-ceph-purge-osd{{ include "library.suffix-cluster-namespace" . }}
-+  labels:
-+    {{- include "library.rook-ceph.labels" . | nindent 4 }}
-+roleRef:
-+  apiGroup: rbac.authorization.k8s.io
-+  kind: ClusterRole
-+  name: rook-ceph-purge-osd
-+subjects:
-+  - kind: ServiceAccount
-+    name: rook-ceph-purge-osd
-+    namespace: {{ .Release.Namespace }} # namespace:cluster
- {{- end }}
-```
-
-**File**: `deploy/charts/library/templates/_cluster-role.tpl` (modified, +0/-24)
-```diff
-@@ -121,28 +121,4 @@ rules:
+@@ -121,4 +121,26 @@ rules:
        - create
        - update
        - delete
-----
--# Aspects of ceph osd purge job that require access to the cluster namespace
--kind: ClusterRole
--apiVersion: rbac.authorization.k8s.io/v1
--metadata:
--  name: rook-ceph-purge-osd
--  labels:
--    {{- include "library.rook-ceph.labels" . | nindent 4 }}
--rules:
--  - apiGroups: [""]
--    resources: ["configmaps"]
--    verbs: ["get"]
--  - apiGroups: ["apps"]
--    resources: ["deployments"]
--    verbs: ["get", "update", "delete"]
--  - apiGroups: ["batch"]
--    resources: ["jobs"]
--    verbs: ["get", "list", "create", "delete"]
--  - apiGroups: [""]
--    resources: ["persistentvolumeclaims"]
--    verbs: ["get", "update", "delete", "list"]
--  - apiGroups: [""]
--    resources: ["persistentvolumes"]
--    verbs: ["get"]
- {{- end }}
-```
-
-**File**: `deploy/charts/library/templates/_cluster-rolebinding.tpl` (modified, +0/-16)
-```diff
-@@ -86,20 +86,4 @@ subjects:
-   - kind: ServiceAccount
-     name: rook-ceph-cmd-reporter
-     namespace: {{ .Release.Namespace }} # namespace:cluster
-----
--# Allow the osd purge job to run in this namespace
--kind: ClusterRoleBinding
--apiVersion: rbac.authorization.k8s.io/v1
--metadata:
--  name: rook-ceph-purge-osd
--  labels:
--    {{- include "library.rook-ceph.labels" . | nindent 4 }}
--roleRef:
--  apiGroup: rbac.authorization.k8s.io
--  kind: ClusterRole
--  name: rook-ceph-purge-osd
--subjects:
--  - kind: ServiceAccount
--    name: rook-ceph-purge-osd
--    namespace: {{ .Release.Namespace }} # namespace:cluster
- {{- end }}
-```
-
-**File**: `deploy/charts/rook-ceph/templates/clusterrole.yaml` (modified, +24/-0)
-```diff
-@@ -412,6 +412,30 @@ rules:
-   - get
-   - list
- ---
-+# Aspects of the ceph osd purge job that require access to cluster-wide resources
-+kind: ClusterRole
++---
++# Aspects of the ceph osd purge job that work within the cluster namespace
++kind: Role
 +apiVersion: rbac.authorization.k8s.io/v1
 +metadata:
 +  name: rook-ceph-purge-osd
++  namespace: {{ .Release.Namespace }} # namespace:cluster
 +  labels:
 +    {{- include "library.rook-ceph.labels" . | nindent 4 }}
 +rules:
@@ -1589,133 +1488,340 @@ is unchanged, and deploy/
 +  - apiGroups: [""]
 +    resources: ["persistentvolumeclaims"]
 +    verbs: ["get", "update", "delete", "list"]
-+  - apiGroups: [""]
-+    resources: ["persistentvolumes"]
-+    verbs: ["get"]
-+---
- kind: ClusterRole
- apiVersion: rbac.authorization.k8s.io/v1
- metadata:
+ {{- end }}
 ```
 
-**File**: `deploy/examples/common.yaml` (modified, +2/-2)
+**File**: `deploy/charts/library/templates/_cluster-rolebinding.tpl` (modified, +17/-0)
 ```diff
-@@ -427,7 +427,7 @@ rules:
-       - get
-       - list
+@@ -86,4 +86,21 @@ subjects:
+   - kind: ServiceAccount
+     name: rook-ceph-cmd-reporter
+     namespace: {{ .Release.Namespace }} # namespace:cluster
++---
++# Allow the osd purge job to run within the cluster namespace
++kind: RoleBinding
++apiVersion: rbac.authorization.k8s.io/v1
++metadata:
++  name: rook-ceph-purge-osd
++  namespace: {{ .Release.Namespace }} # namespace:cluster
++  labels:
++    {{- include "library.rook-ceph.labels" . | nindent 4 }}
++roleRef:
++  apiGroup: rbac.authorization.k8s.io
++  kind: Role
++  name: rook-ceph-purge-osd
++subjects:
++  - kind: ServiceAccount
++    name: rook-ceph-purge-osd
++    namespace: {{ .Release.Namespace }} # namespace:cluster
+ {{- end }}
+```
+
+**File**: `deploy/charts/rook-ceph/templates/clusterrole.yaml` (modified, +0/-12)
+```diff
+@@ -420,18 +420,6 @@ metadata:
+   labels:
+     {{- include "library.rook-ceph.labels" . | nindent 4 }}
+ rules:
+-  - apiGroups: [""]
+-    resources: ["configmaps"]
+-    verbs: ["get"]
+-  - apiGroups: ["apps"]
+-    resources: ["deployments"]
+-    verbs: ["get", "update", "delete"]
+-  - apiGroups: ["batch"]
+-    resources: ["jobs"]
+-    verbs: ["get", "list", "create", "delete"]
+-  - apiGroups: [""]
+-    resources: ["persistentvolumeclaims"]
+-    verbs: ["get", "update", "delete", "list"]
+   - apiGroups: [""]
+     resources: ["persistentvolumes"]
+     verbs: ["get"]
+```
+
+**File**: `deploy/examples/common-second-cluster.yaml` (modified, +16/-2)
+```diff
+@@ -158,6 +158,20 @@ metadata:
+   name: rook-ceph-osd
+   namespace: rook-ceph-secondary # namespace:cluster
  ---
--# Aspects of ceph osd purge job that require access to the cluster namespace
-+# Aspects of the ceph osd purge job that require access to cluster-wide resources
- kind: ClusterRole
++# Allow the osd purge job to run and clean up cluster-wide resources
++kind: ClusterRoleBinding
++apiVersion: rbac.authorization.k8s.io/v1
++metadata:
++  name: rook-ceph-purge-osd-rook-ceph-secondary
++roleRef:
++  apiGroup: rbac.authorization.k8s.io
++  kind: ClusterRole
++  name: rook-ceph-purge-osd
++subjects:
++  - kind: ServiceAccount
++    name: rook-ceph-purge-osd
++    namespace: rook-ceph-secondary # namespace:cluster
++---
+ # Aspects of ceph osd purge job that require access to the operator/cluster namespace
+ kind: Role
  apiVersion: rbac.authorization.k8s.io/v1
- metadata:
-@@ -587,7 +587,7 @@ subjects:
+@@ -170,10 +184,10 @@ rules:
+     verbs: ["get"]
+   - apiGroups: ["apps"]
+     resources: ["deployments"]
+-    verbs: ["get", "delete"]
++    verbs: ["get", "update", "delete"]
+   - apiGroups: ["batch"]
+     resources: ["jobs"]
+-    verbs: ["get", "list", "delete"]
++    verbs: ["get", "list", "create", "delete"]
+   - apiGroups: [""]
+     resources: ["persistentvolumeclaims"]
+     verbs: ["get", "update", "delete", "list"]
+```
+
+**File**: `deploy/examples/common.yaml` (modified, +45/-12)
+```diff
+@@ -438,18 +438,6 @@ metadata:
+     app.kubernetes.io/name: rook-ceph
+     app.kubernetes.io/part-of: rook-ceph-operator
+ rules:
+-  - apiGroups: [""]
+-    resources: ["configmaps"]
+-    verbs: ["get"]
+-  - apiGroups: ["apps"]
+-    resources: ["deployments"]
+-    verbs: ["get", "update", "delete"]
+-  - apiGroups: ["batch"]
+-    resources: ["jobs"]
+-    verbs: ["get", "list", "create", "delete"]
+-  - apiGroups: [""]
+-    resources: ["persistentvolumeclaims"]
+-    verbs: ["get", "update", "delete", "list"]
+   - apiGroups: [""]
+     resources: ["persistentvolumes"]
+     verbs: ["get"]
+@@ -752,6 +740,31 @@ rules:
+     resources: ["cephclusters", "cephclusters/finalizers"]
+     verbs: ["get", "list", "create", "update", "delete"]
+ ---
++# Aspects of the ceph osd purge job that work within the cluster namespace
++kind: Role
++apiVersion: rbac.authorization.k8s.io/v1
++metadata:
++  name: rook-ceph-purge-osd
++  namespace: rook-ceph # namespace:cluster
++  labels:
++    operator: rook
++    storage-backend: ceph
++    app.kubernetes.io/name: rook-ceph
++    app.kubernetes.io/part-of: rook-ceph-operator
++rules:
++  - apiGroups: [""]
++    resources: ["configmaps"]
++    verbs: ["get"]
++  - apiGroups: ["apps"]
++    resources: ["deployments"]
++    verbs: ["get", "update", "delete"]
++  - apiGroups: ["batch"]
++    resources: ["jobs"]
++    verbs: ["get", "list", "create", "delete"]
++  - apiGroups: [""]
++    resources: ["persistentvolumeclaims"]
++    verbs: ["get", "update", "delete", "list"]
++---
+ # Allow the operator to manage resources in its own namespace
+ kind: Role
+ apiVersion: rbac.authorization.k8s.io/v1
+@@ -915,6 +928,26 @@ subjects:
      name: rook-ceph-osd
      namespace: rook-ceph # namespace:cluster
  ---
--# Allow the osd purge job to run in this namespace
-+# Allow the osd purge job to run and clean up cluster-wide resources
- kind: ClusterRoleBinding
++# Allow the osd purge job to run within the cluster namespace
++kind: RoleBinding
++apiVersion: rbac.authorization.k8s.io/v1
++metadata:
++  name: rook-ceph-purge-osd
++  namespace: rook-ceph # namespace:cluster
++  labels:
++    operator: rook
++    storage-backend: ceph
++    app.kubernetes.io/name: rook-ceph
++    app.kubernetes.io/part-of: rook-ceph-operator
++roleRef:
++  apiGroup: rbac.authorization.k8s.io
++  kind: Role
++  name: rook-ceph-purge-osd
++subjects:
++  - kind: ServiceAccount
++    name: rook-ceph-purge-osd
++    namespace: rook-ceph # namespace:cluster
++---
+ # Grant the operator, agent, and discovery agents access to resources in the rook-ceph-system namespace
+ kind: RoleBinding
  apiVersion: rbac.authorization.k8s.io/v1
- metadata:
 ```
 
 ---
 
-### Incident Patch 2: `23e7253f` (2026-11-23)
-**Commit Message**: build(deps): bump ossf/scorecard-action from 2.5.0 to 2.6.0
+### Incident Patch 2: `1fe912d3` (2026-11-24)
+**Commit Message**: Merge pull request #18826 from subhamkrai/doc-nixos-csi-values
 
-Bumps [ossf/scorecard-action](https://github.com/ossf/scorecard-action) from 2.5.0 to 2.6.0.
-- [Release notes](https://github.com/ossf/scorecard-action/releases)
-- [Changelog](https://github.com/ossf/scorecard-action/blob/main/RELEASE.md)
-- [Commits](https://github.com/ossf/scorecard-action/compare/fa7117db83c52d787ae5a89f350999701505d78e...23f22cd43608bae7a1f1fa2603d7314dee9538a5)
+docs: update NixOS CSI plugin volume configuration
 
----
-updated-dependencies:
-- dependency-name: ossf/scorecard-action
-  dependency-version: 2.6.0
-  dependency-type: direct:production
-  update-type: version-update:semver-minor
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/scorecards.yml` (modified, +1/-1)
+**File**: `Documentation/Getting-Started/Prerequisites/prerequisites.md` (modified, +51/-11)
 ```diff
-@@ -34,7 +34,7 @@ jobs:
-           persist-credentials: false
+@@ -124,20 +124,60 @@ and they'll be symlinked inside the also non-standard path `/nix`.
+ Rook containers require read access to those locations to be able to load the required modules.
+ They have to be bind-mounted as volumes in the CephFS and RBD plugin pods.
  
-       - name: "Run analysis"
--        uses: ossf/scorecard-action@fa7117db83c52d787ae5a89f350999701505d78e # v2.5.0
-+        uses: ossf/scorecard-action@23f22cd43608bae7a1f1fa2603d7314dee9538a5 # v2.6.0
-         with:
-           results_file: results.sarif
-           results_format: sarif
-```
-
----
-
-### Incident Patch 3: `59ef15d6` (2026-11-23)
-**Commit Message**: build(deps): bump the codeql-action group with 3 updates
-
-Bumps the codeql-action group with 3 updates: [github/codeql-action/init](https://github.com/github/codeql-action), [github/codeql-action/analyze](https://github.com/github/codeql-action) and [github/codeql-action/upload-sarif](https://github.com/github/codeql-action).
-
-
-Updates `github/codeql-action/init` from 4.39.3 to 4.39.4
-- [Release notes](https://github.com/github/codeql-action/releases)
-- [Changelog](https://github.com/github/codeql-action/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/github/codeql-action/compare/33d7b85da1a04171e211befe2c739303b9a4c066...1bd86f2fdb4b86187fa4059f16f31a3202acc9ea)
-
-Updates `github/codeql-action/analyze` from 4.39.3 to 4.39.4
-- [Release notes](https://github.com/github/codeql-action/releases)
-- [Changelog](https://github.com/github/codeql-action/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/github/codeql-action/compare/33d7b85da1a04171e211befe2c739303b9a4c066...1bd86f2fdb4b86187fa4059f16f31a3202acc9ea)
-
-Updates `github/codeql-action/upload-sarif` from 4.39.3 to 4.39.4
-- [Release notes](https://github.com/github/codeql-action/releases)
-- [Changelog](https://github.com/
-
-**File**: `.github/workflows/codeql.yaml` (modified, +2/-2)
-```diff
-@@ -50,7 +50,7 @@ jobs:
-           go-version: "1.26"
+-If installing Rook with Helm, uncomment these example settings in `values.yaml`:
++If installing with the `ceph-csi-drivers` Helm chart, configure `nodePlugin.volumes` in your `values.yaml`:
  
-       - name: Initialize CodeQL
--        uses: github/codeql-action/init@33d7b85da1a04171e211befe2c739303b9a4c066 # v4.39.3
-+        uses: github/codeql-action/init@1bd86f2fdb4b86187fa4059f16f31a3202acc9ea # v4.39.4
-         with:
-           languages: ${{ matrix.language }}
-           build-mode: ${{ matrix.build-mode }}
-@@ -69,7 +69,7 @@ jobs:
-       # GOFLAGS belongs here and not on init, which warns that passing it
-       # there is deprecated.
-       - name: Analyze
--        uses: github/codeql-action/analyze@33d7b85da1a04171e211befe2c739303b9a4c066 # v4.39.3
-+        uses: github/codeql-action/analyze@1bd86f2fdb4b86187fa4059f16f31a3202acc9ea # v4.39.4
-         env:
-           GOFLAGS: "-tags=ceph_preview"
-         with:
+-* `csi.csiCephFSPluginVolume`
+-* `csi.csiCephFSPluginVolumeMount`
+-* `csi.csiRBDPluginVolume`
+-* `csi.csiRBDPluginVolumeMount`
++```yaml
++operatorConfig:
++  driverSpecDefaults:
++    nodePlugin:
++      volumes:
++        - mount:
++            name: host-nix
++            mountPath: /nix
++            readOnly: true
++          volume:
++            name: host-nix
++            hostPath:
++              path: /nix
++        - mount:
++            name: lib-modules
++            mountPath: /lib/modules
++            readOnly: true
++          volume:
++            name: lib-modules
++            hostPath:
++              path: /run/current-system/kernel-modules/lib/modules
++```
+ 
+-If deploying without Helm, add those same values to the settings in the `rook-ceph-operator-config`
+-ConfigMap found in operator.yaml:
++If deploying without Helm, add the same volume configuration to `spec.driverSpecDefaults.nodePlugin.volumes` in the `OperatorConfig` CR (`ceph-csi-operator-config`) found in `operator.yaml`:
+ 
+-* `CSI_CEPHFS_PLUGIN_VOLUME`
+-* `CSI_CEPHFS_PLUGIN_VOLUME_MOUNT`
+-* `CSI_RBD_PLUGIN_VOLUME`
+-* `CSI_RBD_PLUGIN_VOLUME_MOUNT`
++```yaml
++apiVersion: csi.ceph.io/v1
++kind: OperatorConfig
++metadata:
++  name: ceph-csi-operator-config
++  namespace: rook-ceph
++spec:
++  driverSpecDefaults:
++    nodePlugin:
++      volumes:
++        - mount:
++            name: host-nix
++            mountPath: /nix
++            readOnly: true
++          volume:
++            name: host-nix
++            hostPath:
++              path: /nix
++        - mount:
++            name: lib-modules
++            mountPath: /lib/modules
++            readOnly: true
++          volume:
++            name: lib-modules
++            hostPath:
++              path: /run/current-system/kernel-modules/lib/modules
++```
+ 
+ If using containerd, remove `LimitNOFILE` from containerd service config to avoid issues like slow ceph commands or mons falling out of quorum.
+ 
 ```
 
-**File**: `.github/workflows/scorecards.yml` (modified, +1/-1)
+**File**: `Documentation/Helm-Charts/csi-drivers-chart.md` (modified, +27/-0)
 ```diff
-@@ -65,6 +65,6 @@ jobs:
-       # Upload the results to GitHub's code scanning dashboard (optional).
-       # Commenting out will disable upload of results to your repo's Code Scanning dashboard
-       - name: "Upload to code-scanning"
--        uses: github/codeql-action/upload-sarif@33d7b85da1a04171e211befe2c739303b9a4c066 # v4.39.3
-+        uses: github/codeql-action/upload-sarif@1bd86f2fdb4b86187fa4059f16f31a3202acc9ea # v4.39.4
-         with:
-           sarif_file: results.sarif
+@@ -113,3 +113,30 @@ operatorConfig:
+ ```
+ 
+ See: [Node plugin kubelet path and SELinux host mount](../Storage-Configuration/Ceph-CSI/csi-configuration.md#node-plugin-kubelet-path-and-selinux-host-mount)
++
++### Node plugin custom volumes
++
++```yaml
++operatorConfig:
++  driverSpecDefaults:
++    nodePlugin:
++      volumes:
++        - mount:
++            name: host-nix
++            mountPath: /nix
++            readOnly: true
++          volume:
++            name: host-nix
++            hostPath:
++              path: /nix
++        - mount:
++            name: lib-modules
++            mountPath: /lib/modules
++            readOnly: true
++          volume:
++            name: lib-modules
++            hostPath:
++              path: /run/current-system/kernel-modules/lib/modules
++```
++
++See: [Node plugin custom volumes and volume mounts](../Storage-Configuration/Ceph-CSI/csi-configuration.md#node-plugin-custom-volumes-and-volume-mounts)
+```
+
+**File**: `Documentation/Storage-Configuration/Ceph-CSI/csi-configuration.md` (modified, +29/-0)
+```diff
+@@ -148,3 +148,32 @@ spec:
+       kubeletDirPath: /var/lib/kubelet
+       enableSeLinuxHostMount: true
+ ```
++
++## Node plugin custom volumes and volume mounts
++
++Previously: `CSI_CEPHFS_PLUGIN_VOLUME`, `CSI_CEPHFS_PLUGIN_VOLUME_MOUNT`, `CSI_RBD_PLUGIN_VOLUME`, and `CSI_RBD_PLUGIN_VOLUME_MOUNT` in `rook-ceph-operator-config`.
++Now use `nodePlugin.volumes` in `OperatorConfig` or per-driver `Driver` CR (or in the `ceph-csi-drivers` Helm chart values).
++
++```yaml
++# OperatorConfig (manifest)
++spec:
++  driverSpecDefaults:
++    nodePlugin:
++      volumes:
++        - mount:
++            name: host-nix
++            mountPath: /nix
++            readOnly: true
++          volume:
++            name: host-nix
++            hostPath:
++              path: /nix
++        - mount:
++            name: lib-modules
++            mountPath: /lib/modules
++            readOnly: true
++          volume:
++            name: lib-modules
++            hostPath:
++              path: /run/current-system/kernel-modules/lib/modules
++```
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #18876** (2026-11-24): build: Set release version to v1.21.3 (@travisn)
+- **PR #18875** (2026-11-24): docs: update NixOS CSI plugin volume configuration (backport #18826) (@mergify[bot])
+- **PR #18873** (2026-11-24): helm: change purge-osd ClusterRole for limited access (@taraasrita10)
 - **PR #18872** (2026-11-23): helm: pass mapOptions and unmapOptions to EC pool storage classes (backport #18854) (@mergify[bot])
 - **PR #18871** (2026-11-23): osd: optionally restrict parallel OSD updates to one failure domain (backport #18822) (@mergify[bot])
 - **PR #18870** (2026-11-23): core: keep the mon secret out of the cleanup job spec (backport #18853) (@mergify[bot])
-- **PR #18869** (2026-11-23): core: keep the mon secret out of the cleanup job spec (backport #18853) (@mergify[bot])
-- **PR #18868** (2026-11-23): helm: fix purge-osd ClusterRole Helm ownership conflict (@travisn)
-- **PR #18867** (2026-11-23): object: stop the gateways before deleting an object store (backport #18860) (@mergify[bot])
 
 ---
 
@@ -1735,36 +1841,42 @@ Updates `github/codeql-action/upload-sarif` from 4.39.3 to 4.39.4
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. helm: fix purge-osd ClusterRole Helm ownership conflict
+## X. Empirical Invariant Guard in _cluster-role.tpl
 
 **RULE**:
-When implementing operations in `deploy/charts/library/templates/_cluster-clusterrolebinding.tpl`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rook/rook. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `deploy/charts/library/templates/_cluster-role.tpl`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rook/rook. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `dc3975fd`: helm: fix purge-osd ClusterRole Helm ownership conflict. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `394e6dba`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `deploy/charts/library/templates/_cluster-clusterrolebinding.tpl`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `deploy/charts/library/templates/_cluster-role.tpl`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
 ---
-# Allow the osd purge job to run and clean up cluster-wide resources
-kind: ClusterRoleBinding
+# Aspects of the ceph osd purge job that work within the cluster namespace
+kind: Role
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  name: rook-ceph-purge-osd{{ include "library.suffix-cluster-namespace" . }}
+  name: rook-ceph-purge-osd
+  namespace: {{ .Release.Namespace }} # namespace:cluster
   labels:
     {{- include "library.rook-ceph.labels" . | nindent 4 }}
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: rook-ceph-purge-osd
-subjects:
-  - kind: ServiceAccount
-    name: rook-ceph-purge-osd
-    namespace: {{ .Release.Namespace }} # namespace:cluster
+rules:
+  - apiGroups: [""]
+    resources: ["configmaps"]
+    verbs: ["get"]
+  - apiGroups: ["apps"]
+    resources: ["deployments"]
+    verbs: ["get", "update", "delete"]
+  - apiGroups: ["batch"]
+    resources: ["jobs"]
+    verbs: ["get", "list", "create", "delete"]
+  - apiGroups: [""]
+    resources: ["persistentvolumeclaims"]
+    verbs: ["get", "update", "delete", "list"]
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1774,7 +1886,7 @@ subjects:
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `dc3975fd` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `394e6dba` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction
