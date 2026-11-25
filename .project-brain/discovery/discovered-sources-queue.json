@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-25T11:42:43.864Z",
+  "updated_at": "2026-11-25T11:51:29.975Z",
   "stats": {
-    "total_discovered": 9407,
-    "approved_pending_harvest": 8915,
+    "total_discovered": 9408,
+    "approved_pending_harvest": 8916,
     "harvested_count": 0,
     "rejected_count": 492,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 8906,
+      "COMMUNITY_AND_EXPERT": 8907,
       "OFFICIAL_DOCUMENTATION": 280,
       "STANDARDS_AND_SPECIFICATIONS": 150,
       "ENGINEERING_BLOGS": 7,
@@ -203537,6 +203537,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mariadb-server-learnings.md",
         "fileName": "mariadb-server-learnings.md"
+      }
+    },
+    "SRC-5F84887F4042": {
+      "id": "SRC-5F84887F4042",
+      "url": "https://github.com/bits-and-blooms/bloom",
+      "title": "https://github.com/bits-and-blooms/bloom",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T11:51:29.975Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/authzed-spicedb-learnings.md",
+        "fileName": "authzed-spicedb-learnings.md"
       }
     }
   }

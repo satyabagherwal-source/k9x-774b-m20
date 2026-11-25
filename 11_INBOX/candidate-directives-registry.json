@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T11:42:45.213Z",
+  "last_updated": "2026-11-25T11:51:31.239Z",
   "directives": [
     {
       "id": "CD-001",
@@ -60992,6 +60992,48 @@
       "source_repo": "nucleoidai-nucleoid",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-2E0851-draft-nuc-146-reactive-cubing.md",
+      "staged_date": "2026-11-25"
+    },
+    {
+      "id": "CD-BYG9",
+      "directive_title": "bump the go-mod group across 2 directories with 39 updates",
+      "source_repo": "authzed/spicedb",
+      "source_commit": "9596a364",
+      "staged_file": "11_INBOX/candidate-directives/CD-BYG9-bump-the-go-mod-group-across-2-directories-with-39-updates.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-25",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-C7FQ",
+      "directive_title": "flaky latency assertion in MetricAggregatingRequestLogTest",
+      "source_repo": "vespa-engine-vespa-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-C7FQ-flaky-latency-assertion-in-metricaggregatingrequestlogtest.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-25",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-C6RF",
+      "directive_title": "deps): bump the go-mod group across 2 directories with 39 updates",
+      "source_repo": "authzed-spicedb-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-C6RF-deps-bump-the-go-mod-group-across-2-directories-with-39-updates.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-25",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-46F3AC",
+      "directive_title": "flaky latency assertion in MetricAggregatingRequestLogTest",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "vespa-engine-vespa",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-46F3AC-flaky-latency-assertion-in-metricaggrega.md",
       "staged_date": "2026-11-25"
     }
   ]

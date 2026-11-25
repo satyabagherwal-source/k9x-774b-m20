@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T11:42:45.390Z",
-  "total_records": 2666,
+  "last_updated": "2026-11-25T11:51:31.419Z",
+  "total_records": 2668,
   "domains": {
     "A": {
       "total": 22,
@@ -1203,7 +1203,7 @@
       ]
     },
     "G": {
-      "total": 462,
+      "total": 464,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1666,7 +1666,9 @@
         "domain_intelligence-architecture-intelligence-mochajs-mocha-core-invariants",
         "domain_intelligence-architecture-intelligence-mochajs-mocha-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-rmax-scrapy-redis-core-invariants",
-        "domain_intelligence-architecture-intelligence-rmax-scrapy-redis-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-rmax-scrapy-redis-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-authzed-spicedb-core-invariants",
+        "domain_intelligence-architecture-intelligence-authzed-spicedb-learnings-core-invariants"
       ]
     },
     "H": {
@@ -18352,8 +18354,8 @@
       "title": "Architecture Intelligence: vespa-engine/vespa Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-vespa-engine-vespa-architecture-intelligence-vespa-engine-vespa-core-invariants.md",
       "repository": "vespa-engine/vespa",
-      "content_hash": "5812edb8dc1e0cf1449d70a05bfa4b61cb06cbe4de3cb4e5fa7b1a5f5d70aeef",
-      "created_at": "2026-11-24T16:46:11.152Z"
+      "content_hash": "4cdb5536d8d6c933cebd4fc9fc874bea51603cfe1715b015c804a8d370ada6f6",
+      "created_at": "2026-11-25T11:51:26.151Z"
     },
     "domain_intelligence-technical-construction-intelligence-qwen-qwen-image-2-1-turbo-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-qwen-qwen-image-2-1-turbo-core-invariants",
@@ -18422,8 +18424,8 @@
       "title": "Architecture Intelligence: vespa-engine-vespa-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-vespa-engine-vespa-learnings-architecture-intelligence-vespa-engine-vespa-learni.md",
       "repository": "vespa-engine-vespa-learnings",
-      "content_hash": "eab9343f908eea44bd23cbda47a749838eafb2a5815efd3551a58bbacf2d76a7",
-      "created_at": "2026-11-23T20:22:16.282Z"
+      "content_hash": "f73da6234df7d52e9193705251e7718a6b1ad64b2355ade0ab6e36fb72038b92",
+      "created_at": "2026-11-25T11:51:31.419Z"
     },
     "domain_intelligence-research-knowledge-intelligence-autotrust-qwen3-8-flash-next-e384-fp4-v2-core-in": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-autotrust-qwen3-8-flash-next-e384-fp4-v2-core-in",
@@ -20573,8 +20575,8 @@
       "title": "Research & Knowledge Intelligence: LiquidAI/LFM3-Omni-2B Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-liquidai-lfm3-omni-2b-research-knowledge-intelligence-liquidai-lfm3-omni-2b-c.md",
       "repository": "LiquidAI/LFM3-Omni-2B",
-      "content_hash": "c0330b35e9f843c2c8ae5e8e53198c6aa9ab1185050b2296ebf097f9d46da9d3",
-      "created_at": "2026-11-21T20:24:50.270Z"
+      "content_hash": "a4bf2751e1c13331256d534c9327a97ea19d84ef502dc8f717fac50fd20b516e",
+      "created_at": "2026-11-25T11:51:09.617Z"
     },
     "domain_intelligence-technical-construction-intelligence-orange-opensource-hurl-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-orange-opensource-hurl-core-invariants",
@@ -20642,8 +20644,8 @@
       "title": "Research & Knowledge Intelligence: hf-liquidai-lfm3-omni-2b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-liquidai-lfm3-omni-2b-learnings-research-knowledge-intelligence-hf-liquidai-l.md",
       "repository": "hf-liquidai-lfm3-omni-2b-learnings",
-      "content_hash": "b6efece8df2c621c2bd3265963242a799d27cc7271373f95ad96fc7204ebd2d8",
-      "created_at": "2026-11-21T20:25:10.171Z"
+      "content_hash": "96787d01afb049e40387d40770163a3068406fe2e5b7bf2a7fd95dc95d23ec58",
+      "created_at": "2026-11-25T11:51:29.570Z"
     },
     "DOM-D-7DB1294C": {
       "record_id": "DOM-D-7DB1294C",
@@ -44815,6 +44817,24 @@
       "repository": "hf-openbmb-minicpm-ocr-1.0-learnings",
       "content_hash": "5c70218a7ed4742eb2d3f02c544101820472ee5e4676041dc153940ce214b483",
       "created_at": "2026-11-25T11:30:53.954Z"
+    },
+    "domain_intelligence-architecture-intelligence-authzed-spicedb-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-authzed-spicedb-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: authzed/spicedb Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-authzed-spicedb-architecture-intelligence-authzed-spicedb-core-invariants.md",
+      "repository": "authzed/spicedb",
+      "content_hash": "8254d7bb1d4e8bade0cd7544baf903c238ea617babd04dff5e5fd3bb7a75e815",
+      "created_at": "2026-11-25T11:51:19.775Z"
+    },
+    "domain_intelligence-architecture-intelligence-authzed-spicedb-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-authzed-spicedb-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: authzed-spicedb-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-authzed-spicedb-learnings-architecture-intelligence-authzed-spicedb-learnings-co.md",
+      "repository": "authzed-spicedb-learnings",
+      "content_hash": "8aff09aa2869cfd36577a025786a10edd6d915112ea652745075d8fc0e6ed736",
+      "created_at": "2026-11-25T11:51:30.546Z"
     }
   }
 }

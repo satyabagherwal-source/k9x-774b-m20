@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T11:42:45.722Z",
+  "last_updated": "2026-11-25T11:51:31.923Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-25T10:07:40.992Z",
@@ -578,7 +578,7 @@
       "staged_for_review": 1
     },
     "authzed-spicedb-learnings.md": {
-      "processed_at": "2026-11-24T17:52:06.765Z",
+      "processed_at": "2026-11-25T11:51:29.778Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -933,7 +933,7 @@
       "staged_for_review": 1
     },
     "vespa-engine-vespa-learnings.md": {
-      "processed_at": "2026-11-23T20:22:15.778Z",
+      "processed_at": "2026-11-25T11:51:30.912Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2898,7 +2898,7 @@
       "staged_for_review": 0
     },
     "hf-liquidai-lfm3-omni-2b-learnings.md": {
-      "processed_at": "2026-11-21T20:25:09.919Z",
+      "processed_at": "2026-11-25T11:51:29.325Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3923,7 +3923,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 4182,
+  "total_dossiers_evaluated": 4185,
   "total_canonical_promoted": 538,
-  "total_staged_for_review": 3193
+  "total_staged_for_review": 3195
 }

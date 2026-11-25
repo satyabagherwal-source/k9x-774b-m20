@@ -13054,3 +13054,6 @@
 | `CYCLE-20261125-0GBM` | `2026-11-25T11:42:22.882Z` | `nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-3.5-transcribe-30b-a4b-learnings.md` | Yes (`4975dbe9...`) |
 | `CYCLE-20261125-0SE2` | `2026-11-25T11:42:38.522Z` | `MariaDB/server` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10514` | Yes (`e0b4f487...`) |
 | `CYCLE-20261125-0TDE` | `2026-11-25T11:42:39.794Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10515` | Yes (`9e0ba9dc...`) |
+| `CYCLE-20261125-BQKI` | `2026-11-25T11:51:09.378Z` | `LiquidAI/LFM3-Omni-2B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liquidai-lfm3-omni-2b-learnings.md` | Yes (`5e7f5908...`) |
+| `CYCLE-20261125-BY9A` | `2026-11-25T11:51:19.342Z` | `authzed/spicedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10516` | Yes (`e0722288...`) |
+| `CYCLE-20261125-C36I` | `2026-11-25T11:51:25.722Z` | `vespa-engine/vespa` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10517` | Yes (`540807b7...`) |

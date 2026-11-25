@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T11:42:39.804Z",
-  "total_cycles_completed": 12394,
-  "total_learnings_persisted": 12394,
-  "total_rules_promoted": 11395,
+  "last_updated": "2026-11-25T11:51:25.732Z",
+  "total_cycles_completed": 12397,
+  "total_learnings_persisted": 12397,
+  "total_rules_promoted": 11397,
   "history": [
-    {
-      "timestamp": "2026-11-24T23:13:49.525Z",
-      "repository": "vitejs/vite",
-      "learningId": "learn-github-vitejs-vite",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T23:13:53.111Z",
-      "repository": "dosco/deeporg",
-      "learningId": "learn-github-dosco-deeporg",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T23:14:01.988Z",
-      "repository": "lancedb/lancedb",
-      "learningId": "learn-github-lancedb-lancedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-24T23:24:39.852Z",
       "repository": "prism-ml/Ternary-Bonsai-2.5-27B-GGUF",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-25T11:42:39.804Z",
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T11:51:09.388Z",
+      "repository": "LiquidAI/LFM3-Omni-2B",
+      "learningId": "learn-huggingface-liquidai-lfm3-omni-2b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T11:51:19.352Z",
+      "repository": "authzed/spicedb",
+      "learningId": "learn-github-authzed-spicedb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T11:51:25.732Z",
+      "repository": "vespa-engine/vespa",
+      "learningId": "learn-github-vespa-engine-vespa",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

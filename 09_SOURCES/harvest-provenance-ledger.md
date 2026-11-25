@@ -13087,3 +13087,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b` | `https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-11-25T11:42:22.886Z |
 | `learn-github-mariadb-server` | `https://github.com/MariaDB/server` | `b800539d` | Multi-dimensional audit evidence | 2026-11-25T11:42:38.527Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `16a373a7` | Multi-dimensional audit evidence | 2026-11-25T11:42:39.799Z |
+| `learn-huggingface-liquidai-lfm3-omni-2b` | `https://huggingface.co/LiquidAI/LFM3-Omni-2B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-25T11:51:09.382Z |
+| `learn-github-authzed-spicedb` | `https://github.com/authzed/spicedb` | `9596a364` | Multi-dimensional audit evidence | 2026-11-25T11:51:19.347Z |
+| `learn-github-vespa-engine-vespa` | `https://github.com/vespa-engine/vespa` | `699e6770` | Multi-dimensional audit evidence | 2026-11-25T11:51:25.726Z |

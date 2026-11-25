@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261123-ZRR8",
-    "timestamp": "2026-11-23T23:18:20.996Z",
-    "repository": "kgateway-dev/kgateway",
-    "learningId": "learn-github-kgateway-dev-kgateway",
-    "contentHash": "158ee86c963a0619ec864466166595d21a84804b6709292250cacdf7553df8b4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-ZUQL",
-    "timestamp": "2026-11-23T23:18:24.861Z",
-    "repository": "milvus-io/milvus",
-    "learningId": "learn-github-milvus-io-milvus",
-    "contentHash": "a10c808ac9a24b5be373736e7f45b37d7caec945e3ff18c38d9790f03f27fce3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-GKBT",
-    "timestamp": "2026-11-23T23:31:24.521Z",
-    "repository": "black-forest-labs/flux-3-image-klein-comfy",
-    "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein-comfy",
-    "contentHash": "a03fb243c90d4772453603189942ef067d54cb6e88b83063332b106f21fcd72b",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261123-GMHD",
     "timestamp": "2026-11-23T23:31:27.313Z",
     "repository": "astral-sh/ruff",
@@ -7490,6 +7445,51 @@
     "repository": "NucleoidAI/Nucleoid",
     "learningId": "learn-github-nucleoidai-nucleoid",
     "contentHash": "9e0ba9dccd64be85b5821d0ed51731c6baea7aa20bc3e0e25b51cc3fe6312b94",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-BQKI",
+    "timestamp": "2026-11-25T11:51:09.378Z",
+    "repository": "LiquidAI/LFM3-Omni-2B",
+    "learningId": "learn-huggingface-liquidai-lfm3-omni-2b",
+    "contentHash": "5e7f590838cb19d1098c198243c9902e1c74e7d2d41aa57c34d76b0b6606eca7",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-BY9A",
+    "timestamp": "2026-11-25T11:51:19.342Z",
+    "repository": "authzed/spicedb",
+    "learningId": "learn-github-authzed-spicedb",
+    "contentHash": "e0722288a057c8411b4644b96c7abd40f1ad92ff77d2fac5efd351c9134a23f7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-C36I",
+    "timestamp": "2026-11-25T11:51:25.722Z",
+    "repository": "vespa-engine/vespa",
+    "learningId": "learn-github-vespa-engine-vespa",
+    "contentHash": "540807b7295c69d0e493a0080fd1f987e5d25389659901340c1b0a797cc7f1b9",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

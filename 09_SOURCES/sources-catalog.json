@@ -2503,10 +2503,10 @@
     "repository": "authzed/spicedb",
     "platform": "github",
     "sourceUrl": "https://github.com/authzed/spicedb",
-    "sourceVersion": "188b9411",
+    "sourceVersion": "9596a364",
     "license": "Apache-2.0",
-    "contentHash": "c8550492a4b852ffc0290296b18b683dc16f3d8933fd8809baaddccf586e1885",
-    "lastHarvestedAt": "2026-11-24T17:52:01.340Z",
+    "contentHash": "e0722288a057c8411b4644b96c7abd40f1ad92ff77d2fac5efd351c9134a23f7",
+    "lastHarvestedAt": "2026-11-25T11:51:19.347Z",
     "learningId": "learn-github-authzed-spicedb"
   },
   "hashicorp-boundary": {
@@ -5873,10 +5873,10 @@
     "repository": "vespa-engine/vespa",
     "platform": "github",
     "sourceUrl": "https://github.com/vespa-engine/vespa",
-    "sourceVersion": "0a698de7",
+    "sourceVersion": "699e6770",
     "license": "Apache-2.0",
-    "contentHash": "300f75052632077a92a1b3a348099f1fc1e9edc9d53dca5185f4992b5d377208",
-    "lastHarvestedAt": "2026-11-24T16:46:10.603Z",
+    "contentHash": "540807b7295c69d0e493a0080fd1f987e5d25389659901340c1b0a797cc7f1b9",
+    "lastHarvestedAt": "2026-11-25T11:51:25.726Z",
     "learningId": "learn-github-vespa-engine-vespa"
   },
   "radix-ui-themes": {
@@ -11435,8 +11435,8 @@
     "sourceUrl": "https://huggingface.co/LiquidAI/LFM3-Omni-2B",
     "sourceVersion": "hf-liquidai-lfm3-omni-2b",
     "license": "Open-Source",
-    "contentHash": "90465e2d835c37476f3cf604655d4d1d22860054d3e94df3546c311816e5ae71",
-    "lastHarvestedAt": "2026-11-21T20:24:50.014Z",
+    "contentHash": "5e7f590838cb19d1098c198243c9902e1c74e7d2d41aa57c34d76b0b6606eca7",
+    "lastHarvestedAt": "2026-11-25T11:51:09.382Z",
     "learningId": "learn-huggingface-liquidai-lfm3-omni-2b"
   },
   "fabio-rovai-open-ontologies": {

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-25T11:42:45.579Z",
+  "last_updated": "2026-11-25T11:51:31.765Z",
   "total_verified_learnings": 9116,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25413,
+  "total_items": 25420,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -225910,8 +225910,8 @@
       "slug": "authzed-spicedb",
       "platform": "github",
       "source_url": "https://github.com/authzed/spicedb",
-      "source_version": "188b9411",
-      "content_hash": "c8550492a4b852ffc0290296b18b683dc16f3d8933fd8809baaddccf586e1885",
+      "source_version": "9596a364",
+      "content_hash": "e0722288a057c8411b4644b96c7abd40f1ad92ff77d2fac5efd351c9134a23f7",
       "dossier_path": "07_PROJECT_LEARNING/authzed-spicedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/authzed-spicedb-learnings.md",
       "promoted_rules": [
@@ -225964,6 +225964,11 @@
           "number": 10323,
           "title": "add ctxkeycheck analyzer and migrate context keys to ctxkey",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10516,
+          "title": "bump the go-mod group across 2 directories with 39 updates",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -225971,7 +225976,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T17:52:01.147Z",
+      "verified_at": "2026-11-25T11:51:19.126Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -226089,10 +226094,10 @@
       "relative_path": "08_VERIFICATION/authzed-spicedb-verification-protocol-empirical-defect-shield-for-authzed-spiced.md",
       "title": "Verification Protocol: Empirical Defect Shield for authzed/spicedb",
       "repository": "authzed/spicedb",
-      "source_version": "188b9411",
-      "content_hash": "2c6fe79261b32906bbe238cbc306c216ac5ed9d32d32cfb06269cbc2ecdc8deb",
+      "source_version": "9596a364",
+      "content_hash": "0ef45947d1a27e95d53bc319c28156abd86e5ded90971f1fbab7610b1a78b531",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T17:52:01.908Z"
+      "persisted_at": "2026-11-25T11:51:19.955Z"
     },
     "learn-github-restatedev-restate": {
       "learning_id": "learn-github-restatedev-restate",
@@ -238946,8 +238951,8 @@
       "slug": "vespa-engine-vespa",
       "platform": "github",
       "source_url": "https://github.com/vespa-engine/vespa",
-      "source_version": "0a698de7",
-      "content_hash": "300f75052632077a92a1b3a348099f1fc1e9edc9d53dca5185f4992b5d377208",
+      "source_version": "699e6770",
+      "content_hash": "540807b7295c69d0e493a0080fd1f987e5d25389659901340c1b0a797cc7f1b9",
       "dossier_path": "07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
       "promoted_rules": [
@@ -238985,6 +238990,11 @@
           "number": 10307,
           "title": "Empirical Invariant Guard in flushableattribute.cpp",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10517,
+          "title": "flaky latency assertion in MetricAggregatingRequestLogTest",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -238992,7 +239002,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T16:46:10.345Z",
+      "verified_at": "2026-11-25T11:51:25.505Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -239034,10 +239044,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-vespa-engine-vespa-architecture-intelligence-vespa-engine-vespa-core-invariants.md",
       "title": "Architecture Intelligence: vespa-engine/vespa Core Invariants",
       "repository": "vespa-engine/vespa",
-      "source_version": "0a698de7",
-      "content_hash": "5812edb8dc1e0cf1449d70a05bfa4b61cb06cbe4de3cb4e5fa7b1a5f5d70aeef",
+      "source_version": "699e6770",
+      "content_hash": "4cdb5536d8d6c933cebd4fc9fc874bea51603cfe1715b015c804a8d370ada6f6",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T16:46:11.152Z"
+      "persisted_at": "2026-11-25T11:51:26.151Z"
     },
     "agent_contract-agent-contract-vespa-engine-vespa-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-vespa-engine-vespa-autonomous-specialist-persona",
@@ -239046,10 +239056,10 @@
       "relative_path": "02_AGENT_INTELLIGENCE/vespa-engine-vespa-agent-contract-vespa-engine-vespa-autonomous-specialist-perso.md",
       "title": "Agent Contract: vespa-engine/vespa Autonomous Specialist Persona",
       "repository": "vespa-engine/vespa",
-      "source_version": "0a698de7",
-      "content_hash": "f98e4fef95340a821ddcb31f13c65645e30c629b3d3c546ba5203ce88b530ee0",
+      "source_version": "699e6770",
+      "content_hash": "421e365286a672da755084a8997b7c1e26cc94edf0e21f3d237780cca82e32c4",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T16:46:11.409Z"
+      "persisted_at": "2026-11-25T11:51:26.329Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-vespa-engine-vespa": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-vespa-engine-vespa",
@@ -239058,10 +239068,10 @@
       "relative_path": "08_VERIFICATION/vespa-engine-vespa-verification-protocol-empirical-defect-shield-for-vespa-engin.md",
       "title": "Verification Protocol: Empirical Defect Shield for vespa-engine/vespa",
       "repository": "vespa-engine/vespa",
-      "source_version": "0a698de7",
-      "content_hash": "133a079032598e456e008425b8e83e293e8d2e2846f4845d9d0a36006c08a90f",
+      "source_version": "699e6770",
+      "content_hash": "e55eb40e0bab24079d680e984af84f89e95636847716fd3df936edda04858279",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T16:46:11.600Z"
+      "persisted_at": "2026-11-25T11:51:26.478Z"
     },
     "candidate_directive-update-lock-file": {
       "item_id": "candidate_directive-update-lock-file",
@@ -239269,9 +239279,9 @@
       "title": "Architecture Intelligence: vespa-engine-vespa-learnings Core Invariants",
       "repository": "vespa-engine-vespa-learnings",
       "source_version": "HEAD",
-      "content_hash": "eab9343f908eea44bd23cbda47a749838eafb2a5815efd3551a58bbacf2d76a7",
+      "content_hash": "f73da6234df7d52e9193705251e7718a6b1ad64b2355ade0ab6e36fb72038b92",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T20:22:16.282Z"
+      "persisted_at": "2026-11-25T11:51:31.419Z"
     },
     "agent_contract-agent-contract-vespa-engine-vespa-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-vespa-engine-vespa-learnings-autonomous-specialist-persona",
@@ -239281,9 +239291,9 @@
       "title": "Agent Contract: vespa-engine-vespa-learnings Autonomous Specialist Persona",
       "repository": "vespa-engine-vespa-learnings",
       "source_version": "HEAD",
-      "content_hash": "c1b199d589765b4f0780fe705fa0ba26eb32fc19a163cd757a4b40788f7de6d6",
+      "content_hash": "8ace90a7419ee74762042ed6bf981b2648153b469174252a282cb76eb74201a0",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T20:22:16.470Z"
+      "persisted_at": "2026-11-25T11:51:31.599Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-vespa-engine-vespa-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-vespa-engine-vespa-learnings",
@@ -239293,9 +239303,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for vespa-engine-vespa-learnings",
       "repository": "vespa-engine-vespa-learnings",
       "source_version": "HEAD",
-      "content_hash": "e6cb010872b36c0529e2b738a96357a01b220ba9fb67c43e6d6a59c168e64091",
+      "content_hash": "e0f769a68e98c1ca1e95540ca49fbb2b7fd2596ffd07af3464321dd8247a9d96",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T20:22:16.628Z"
+      "persisted_at": "2026-11-25T11:51:31.765Z"
     },
     "learn-huggingface-autotrust-qwen3-8-flash-next-e384-fp4-v2": {
       "learning_id": "learn-huggingface-autotrust-qwen3-8-flash-next-e384-fp4-v2",
@@ -246333,7 +246343,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/LiquidAI/LFM3-Omni-2B",
       "source_version": "hf-liquidai-lfm3-omni-2b",
-      "content_hash": "90465e2d835c37476f3cf604655d4d1d22860054d3e94df3546c311816e5ae71",
+      "content_hash": "5e7f590838cb19d1098c198243c9902e1c74e7d2d41aa57c34d76b0b6606eca7",
       "dossier_path": "07_PROJECT_LEARNING/hf-liquidai-lfm3-omni-2b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-liquidai-lfm3-omni-2b-learnings.md",
       "promoted_rules": [],
@@ -246342,7 +246352,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T20:24:49.735Z",
+      "verified_at": "2026-11-25T11:51:09.141Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -246359,9 +246369,9 @@
       "title": "Research & Knowledge Intelligence: LiquidAI/LFM3-Omni-2B Core Invariants",
       "repository": "LiquidAI/LFM3-Omni-2B",
       "source_version": "hf-liquidai-lfm3-omni-2b",
-      "content_hash": "c0330b35e9f843c2c8ae5e8e53198c6aa9ab1185050b2296ebf097f9d46da9d3",
+      "content_hash": "a4bf2751e1c13331256d534c9327a97ea19d84ef502dc8f717fac50fd20b516e",
       "domain_letter": "D",
-      "persisted_at": "2026-11-21T20:24:50.270Z"
+      "persisted_at": "2026-11-25T11:51:09.617Z"
     },
     "learn-github-orange-opensource-hurl": {
       "learning_id": "learn-github-orange-opensource-hurl",
@@ -246503,9 +246513,9 @@
       "title": "Research & Knowledge Intelligence: hf-liquidai-lfm3-omni-2b-learnings Core Invariants",
       "repository": "hf-liquidai-lfm3-omni-2b-learnings",
       "source_version": "HEAD",
-      "content_hash": "b6efece8df2c621c2bd3265963242a799d27cc7271373f95ad96fc7204ebd2d8",
+      "content_hash": "96787d01afb049e40387d40770163a3068406fe2e5b7bf2a7fd95dc95d23ec58",
       "domain_letter": "D",
-      "persisted_at": "2026-11-21T20:25:10.171Z"
+      "persisted_at": "2026-11-25T11:51:29.570Z"
     },
     "learn-huggingface-datalab-to-indra-ocr": {
       "learning_id": "learn-huggingface-datalab-to-indra-ocr",
@@ -266924,9 +266934,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for authzed-spicedb-learnings",
       "repository": "authzed-spicedb-learnings",
       "source_version": "HEAD",
-      "content_hash": "9f70ee94b0e462230509b6254855647083263f98c231deb82b73eaf39116ddac",
+      "content_hash": "6933e45a689ec249faaf94b861776d379c9aac639858818b03a83a718d800b7f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T17:52:07.540Z"
+      "persisted_at": "2026-11-25T11:51:30.725Z"
     },
     "rule-8823": {
       "learning_id": "rule-8823",
@@ -347696,6 +347706,94 @@
       "content_hash": "a1bd699876786938940c542582202f26c7cf982934ca9362015d147aed1aae03",
       "domain_letter": "G",
       "persisted_at": "2026-11-25T11:42:45.213Z"
+    },
+    "rule-10516": {
+      "learning_id": "rule-10516",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10516,
+      "title": "bump the go-mod group across 2 directories with 39 updates",
+      "source_url": "https://github.com/authzed/spicedb",
+      "source_version": "9596a364",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T11:51:19.126Z"
+    },
+    "candidate_directive-bump-the-go-mod-group-across-2-directories-with-39-updates": {
+      "item_id": "candidate_directive-bump-the-go-mod-group-across-2-directories-with-39-updates",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-BYG9-bump-the-go-mod-group-across-2-directories-with-39-updates.md",
+      "title": "bump the go-mod group across 2 directories with 39 updates",
+      "repository": "authzed/spicedb",
+      "source_version": "9596a364",
+      "content_hash": "95296691f70912ef9f9a1d8f45360d7b257afaa024bc47e67c916677b6aaa4c0",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-25T11:51:19.596Z"
+    },
+    "domain_intelligence-architecture-intelligence-authzed-spicedb-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-authzed-spicedb-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-authzed-spicedb-architecture-intelligence-authzed-spicedb-core-invariants.md",
+      "title": "Architecture Intelligence: authzed/spicedb Core Invariants",
+      "repository": "authzed/spicedb",
+      "source_version": "9596a364",
+      "content_hash": "8254d7bb1d4e8bade0cd7544baf903c238ea617babd04dff5e5fd3bb7a75e815",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-25T11:51:19.775Z"
+    },
+    "rule-10517": {
+      "learning_id": "rule-10517",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10517,
+      "title": "flaky latency assertion in MetricAggregatingRequestLogTest",
+      "source_url": "https://github.com/vespa-engine/vespa",
+      "source_version": "699e6770",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T11:51:25.505Z"
+    },
+    "candidate_directive-flaky-latency-assertion-in-metricaggregatingrequestlogtest": {
+      "item_id": "candidate_directive-flaky-latency-assertion-in-metricaggregatingrequestlogtest",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-C7FQ-flaky-latency-assertion-in-metricaggregatingrequestlogtest.md",
+      "title": "flaky latency assertion in MetricAggregatingRequestLogTest",
+      "repository": "vespa-engine-vespa-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7cfa588d7109710a78653799040e5f983c2e340cd525f729e299cf5797f212ee",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-25T11:51:31.239Z"
+    },
+    "candidate_directive-deps-bump-the-go-mod-group-across-2-directories-with-39-updates": {
+      "item_id": "candidate_directive-deps-bump-the-go-mod-group-across-2-directories-with-39-updates",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-C6RF-deps-bump-the-go-mod-group-across-2-directories-with-39-updates.md",
+      "title": "deps): bump the go-mod group across 2 directories with 39 updates",
+      "repository": "authzed-spicedb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "62e52027eff49b35466038b1cb1ec1db107c96496c01a221ed7b49338b8c61e9",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-25T11:51:30.366Z"
+    },
+    "domain_intelligence-architecture-intelligence-authzed-spicedb-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-authzed-spicedb-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-authzed-spicedb-learnings-architecture-intelligence-authzed-spicedb-learnings-co.md",
+      "title": "Architecture Intelligence: authzed-spicedb-learnings Core Invariants",
+      "repository": "authzed-spicedb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "8aff09aa2869cfd36577a025786a10edd6d915112ea652745075d8fc0e6ed736",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-25T11:51:30.546Z"
     }
   },
   "ai-builder-brain": {
