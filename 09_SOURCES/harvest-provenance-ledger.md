@@ -13125,3 +13125,7 @@ Every entry in this ledger must capture:
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `21fc4bdb` | Multi-dimensional audit evidence | 2026-11-25T13:20:37.781Z |
 | `learn-huggingface-speridlabs-idol` | `https://huggingface.co/speridlabs/idol` | `hf-speridl` | Multi-dimensional audit evidence | 2026-11-25T13:31:38.675Z |
 | `learn-huggingface-comfy-org-wan-2-2` | `https://huggingface.co/Comfy-Org/Wan-2.2` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-11-25T13:39:56.417Z |
+| `learn-huggingface-efficient-large-model-open-h3-regenerate-2k` | `https://huggingface.co/Efficient-Large-Model/Open-H3-Regenerate-2K` | `hf-efficie` | Multi-dimensional audit evidence | 2026-11-25T13:49:19.066Z |
+| `learn-github-erkamyaman-rust-anything` | `https://github.com/erkamyaman/rust-anything` | `7f35f4d7` | Multi-dimensional audit evidence | 2026-11-25T13:49:21.811Z |
+| `learn-github-zoontek-react-native-permissions` | `https://github.com/zoontek/react-native-permissions` | `2dad426e` | Multi-dimensional audit evidence | 2026-11-25T13:49:26.550Z |
+| `learn-github-volcengine-openviking` | `https://github.com/volcengine/OpenViking` | `af412110` | Multi-dimensional audit evidence | 2026-11-25T13:49:34.588Z |

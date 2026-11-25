@@ -1603,10 +1603,10 @@
     "repository": "volcengine/OpenViking",
     "platform": "github",
     "sourceUrl": "https://github.com/volcengine/OpenViking",
-    "sourceVersion": "e13f0441",
+    "sourceVersion": "af412110",
     "license": "AGPL-3.0",
-    "contentHash": "66670a95a808cb1cbb67f681f14cfa58eeab9fb79bf5c6b52e36defdd63007cb",
-    "lastHarvestedAt": "2026-11-24T18:34:33.602Z",
+    "contentHash": "f5855f34044e197e6895d784e08acacd07dd13eee613e18b1e0983f4cb844711",
+    "lastHarvestedAt": "2026-11-25T13:49:34.588Z",
     "learningId": "learn-github-volcengine-openviking"
   },
   "saffsanity-sill": {
@@ -8513,10 +8513,10 @@
     "repository": "zoontek/react-native-permissions",
     "platform": "github",
     "sourceUrl": "https://github.com/zoontek/react-native-permissions",
-    "sourceVersion": "4f9f820e",
+    "sourceVersion": "2dad426e",
     "license": "MIT",
-    "contentHash": "065d2680c518d1131b42c013a4feb7831a9bf1e81ed81f0b472fc0482d9e558e",
-    "lastHarvestedAt": "2026-10-19T17:50:23.996Z",
+    "contentHash": "98707b02416f064b5ea2d0eec3424394f9ed3b242e7b1ccd73dc700baa54dd4c",
+    "lastHarvestedAt": "2026-11-25T13:49:26.550Z",
     "learningId": "learn-github-zoontek-react-native-permissions"
   },
   "obytes-react-native-template-obytes": {
@@ -11645,8 +11645,8 @@
     "sourceUrl": "https://huggingface.co/Efficient-Large-Model/Open-H3-Regenerate-2K",
     "sourceVersion": "hf-efficient-large-model-open-h3-regenerate-2k",
     "license": "Open-Source",
-    "contentHash": "4b8664ed06b704faa76c6f5b599357107a0424c1bdace175a45fed420f235707",
-    "lastHarvestedAt": "2026-11-21T22:40:04.291Z",
+    "contentHash": "5526bd6d7acd9ea7423aad306d46d89ee035545933b1fc3e759b326c68015bdb",
+    "lastHarvestedAt": "2026-11-25T13:49:19.066Z",
     "learningId": "learn-huggingface-efficient-large-model-open-h3-regenerate-2k"
   },
   "hf-atomicchat-lfm3-1.7b-uncensored-gguf": {
@@ -12913,10 +12913,10 @@
     "repository": "erkamyaman/rust-anything",
     "platform": "github",
     "sourceUrl": "https://github.com/erkamyaman/rust-anything",
-    "sourceVersion": "ef7e9fc4",
+    "sourceVersion": "7f35f4d7",
     "license": "MIT",
-    "contentHash": "cb4b782edad4507c9c389025a7d04fe5940c44112276617070d5a7737c9a6d8a",
-    "lastHarvestedAt": "2026-11-24T13:12:33.349Z",
+    "contentHash": "f3ebc86b6e4b8b7a7bc6f8e3716dc9a1cb2554f5122f9c8c18dd817635471642",
+    "lastHarvestedAt": "2026-11-25T13:49:21.811Z",
     "learningId": "learn-github-erkamyaman-rust-anything"
   },
   "hf-akhaliq-minimax-h3-image-character-swap": {

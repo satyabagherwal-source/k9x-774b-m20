@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-25T13:39:56.433Z",
+  "last_updated": "2026-11-25T13:49:34.609Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2541,14 +2541,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-volcengine-openviking",
-      "content_hash": "66670a95a808cb1cbb67f681f14cfa58eeab9fb79bf5c6b52e36defdd63007cb",
-      "verified_at": "2026-11-24T18:34:33.619Z",
+      "content_hash": "f5855f34044e197e6895d784e08acacd07dd13eee613e18b1e0983f4cb844711",
+      "verified_at": "2026-11-25T13:49:34.608Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T18:34:33.619Z"
+      "last_updated": "2026-11-25T13:49:34.608Z"
     },
     "Saffsanity/sill": {
       "repository": "Saffsanity/sill",
@@ -12816,14 +12816,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zoontek-react-native-permissions",
-      "content_hash": "065d2680c518d1131b42c013a4feb7831a9bf1e81ed81f0b472fc0482d9e558e",
-      "verified_at": "2026-10-19T17:50:24.003Z",
+      "content_hash": "98707b02416f064b5ea2d0eec3424394f9ed3b242e7b1ccd73dc700baa54dd4c",
+      "verified_at": "2026-11-25T13:49:26.570Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T17:50:24.003Z"
+      "last_updated": "2026-11-25T13:49:26.570Z"
     },
     "obytes/react-native-template-obytes": {
       "repository": "obytes/react-native-template-obytes",
@@ -17526,14 +17526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-efficient-large-model-open-h3-regenerate-2k",
-      "content_hash": "4b8664ed06b704faa76c6f5b599357107a0424c1bdace175a45fed420f235707",
-      "verified_at": "2026-11-21T22:40:04.303Z",
+      "content_hash": "5526bd6d7acd9ea7423aad306d46d89ee035545933b1fc3e759b326c68015bdb",
+      "verified_at": "2026-11-25T13:49:19.085Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T22:40:04.303Z"
+      "last_updated": "2026-11-25T13:49:19.085Z"
     },
     "AtomicChat/LFM3-1.7B-Uncensored-GGUF": {
       "repository": "AtomicChat/LFM3-1.7B-Uncensored-GGUF",
@@ -19461,14 +19461,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-erkamyaman-rust-anything",
-      "content_hash": "cb4b782edad4507c9c389025a7d04fe5940c44112276617070d5a7737c9a6d8a",
-      "verified_at": "2026-11-24T13:12:33.365Z",
+      "content_hash": "f3ebc86b6e4b8b7a7bc6f8e3716dc9a1cb2554f5122f9c8c18dd817635471642",
+      "verified_at": "2026-11-25T13:49:21.831Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T13:12:33.365Z"
+      "last_updated": "2026-11-25T13:49:21.831Z"
     },
     "akhaliq/MiniMax-H3-Image-Character-Swap": {
       "repository": "akhaliq/MiniMax-H3-Image-Character-Swap",

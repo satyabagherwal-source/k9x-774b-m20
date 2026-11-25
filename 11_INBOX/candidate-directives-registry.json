@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T13:40:10.205Z",
+  "last_updated": "2026-11-25T13:49:40.549Z",
   "directives": [
     {
       "id": "CD-001",
@@ -61402,6 +61402,59 @@
       "source_repo": "zulip-zulip",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-34DBED-server-events-dispatch-rerender-dm-statu.md",
+      "staged_date": "2026-11-25"
+    },
+    {
+      "id": "CD-JREJ",
+      "directive_title": "reject zero timeout in app record and replay",
+      "source_repo": "erkamyaman/rust-anything",
+      "source_commit": "7f35f4d7",
+      "staged_file": "11_INBOX/candidate-directives/CD-JREJ-reject-zero-timeout-in-app-record-and-replay.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-25",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-K5L1",
+      "directive_title": "Bump version number",
+      "source_repo": "zoontek-react-native-permissions-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-K5L1-bump-version-number.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-25",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-K19C",
+      "directive_title": "session_history support across the memory plugins and two Claude Code",
+      "source_repo": "volcengine/OpenViking",
+      "source_commit": "af412110",
+      "staged_file": "11_INBOX/candidate-directives/CD-K19C-session_history-support-across-the-memory-plugins-and-two-claude-code.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-25",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-K47G",
+      "directive_title": "app): reject zero timeout in app record and replay",
+      "source_repo": "erkamyaman-rust-anything-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-K47G-app-reject-zero-timeout-in-app-record-and-replay.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-25",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-5566CC",
+      "directive_title": "Bump version number",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zoontek-react-native-permissions",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-5566CC-bump-version-number.md",
       "staged_date": "2026-11-25"
     }
   ]

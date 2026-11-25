@@ -4,24 +4,24 @@
 {
   "source_repository": "volcengine/OpenViking",
   "source_url": "https://github.com/volcengine/OpenViking",
-  "source_version": "e13f0441",
+  "source_version": "af412110",
   "license": "AGPL-3.0",
-  "timestamp": "2026-11-24T18:34:33.855Z",
+  "timestamp": "2026-11-25T13:49:34.944Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-volcengine-openviking",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [volcengine/OpenViking](https://github.com/volcengine/OpenViking) (Revision: `e13f0441`).  
-> **License**: AGPL-3.0 | **Timestamp**: `2026-11-24T18:34:33.855Z`  
+> **Provenance**: Harvested from [volcengine/OpenViking](https://github.com/volcengine/OpenViking) (Revision: `af412110`).  
+> **License**: AGPL-3.0 | **Timestamp**: `2026-11-25T13:49:34.944Z`  
 > **Learning ID**: `learn-github-volcengine-openviking`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence), B (Product Intelligence)
-- **Confidence Rating**: 78%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 51%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from volcengine/OpenViking:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/volcengine-openviking-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/volcengine/OpenViking](https://github.com/volcengine/OpenViking))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T18:34:32.437Z  
+> **Harvest Timestamp**: 2026-11-25T13:49:33.097Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Self-evolving Context Database for AI Agents. Unify Agent Memory, Knowledge RAG and Skills.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 42693 stars
+- **Stars / Engagement**: 42755 stars
 
 ---
 
@@ -67,6 +67,7 @@ import { createInterface } from "node:readline";
 import { buildOvHeaders } from "./ov-http.mjs";
 
 const DEFAULT_PROTOCOL_VERSION = "2025-06-18";
+const SESSION_HISTORY_TOOL = "session_history";
 const DELETE_TIMEOUT_MS = 2000;
 const MAX_CONCURRENT_REQUESTS = 16;
 
@@ -200,6 +201,9 @@ export function createOpenVikingMcpProxy({
   loggerFactory,
   fetchImpl = globalThis.fetch,
   localToolProvider = null,
+  // (params) => the OV session id of the host session making this tools/call,
+  // or "" when the harness cannot tell; fills `session_history`'s `session`.
+  defaultHistorySession = null,
 } = {}) {
   if (typeof fetchImpl !== "function") {
     throw new Error("global fetch is required; use Node.js 18 or newer");
@@ -274,6 +278,33 @@ export function createOpenVikingMcpProxy({
     return localToolProvider.callTool(message.params, { config: proxyConfig });
   }
 
+  // A `session` the model passed is kept as is, even one this proxy would not
+  // have chosen; only a missing or blank one is filled.
+  function withDefaultHistorySession(message) {
+    if (
+      typeof defaultHistorySession !== "function"
+      || message.method !== "tools/call"
+      || message.params?.name !== SESSION_HISTORY_TOOL
+    ) {
+      return message;
+    }
+    const args = message.params.arguments;
+    const given = args && typeof args === "object" ? args.session : undefined;
+    if (given != null && (typeof given !== "string" || given.trim())) return message;
+    let session = "";
+    try {
+      session = String(defaultHistorySession(message.params) || "").trim();
+    } catch (err) {
+      logError("default_history_session", err);
+    }
+    log("default_history_session", { filled: Boolean(session) });
+    if (!session) return message;
+    return {
+      ...message,
+      params: { ...message.params, arguments: { ...(args || {}), session } },
+    };
+  }
+
   function reloadConfig(reason) {
     proxyConfig = readConfig();
     logger = loggerFactory("mcp-proxy", proxyConfig);
@@ -335,35 +366,7 @@ export function createOpenVikingMcpProxy({
         return errorResponse(
           id,
           -32001,
-          `OpenViking MCP authentication failed (HTTP ${err.status}). Check ~/.openviking/ovcli.conf or OPENVIKING_API_KEY, and verify the configured account/user for trusted mode.`,
-          {
-            status: err.status,
-            credentialSource: proxyConfig.credentialSource,
-            credentialPath: proxyConfig.credentialPath || undefined,
-            serverMessage: serializeBodyForError(err.bodyText) || undefined,
-          },
-        );
-      }
-      return errorResponse(
-        id,
-        -32002,
-        `OpenViking MCP upstream returned HTTP ${err.status}.`,
-        {
-          status: err.status,
-          serverMessage: serializeBodyForError(err.bodyText) || undefined,
-        },
-      );
-    }
-    const msg = err instanceof Error ? err.message : String(err);
-    if (err && err.name === "AbortError") {
-      // Client-side timeout, not an outage: the server may be healthy and
-      // still computing (rerank-inclusive find/search can legitimately take
-      // longer than the default budget). Keep -32001 for genuine
-      // connection failures so the two are not misdiagnosed as each other.
-      return errorResponse(
-        id,
-        -32004,
-        `OpenViking MCP request timed out after ${proxyConfig.timeoutMs}ms (${proxyConfig.mcpUrl}).
+          `OpenViking MCP authentication failed (HTTP ${err.st
 ```
 
 ### Core Architecture Module: `benchmark/RAG/src/core/judge_util.py`
@@ -1509,687 +1512,631 @@ class AsyncProgressTracker:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e13f0441` (2026-11-24)
-**Commit Message**: fix(acl): restore empty-string grant decoding (#8371)
+### Incident Patch 1: `f905a91c` (2026-11-25)
+**Commit Message**: feat(plugins): session_history support across the memory plugins and two Claude Code capture fixes (#7872)
 
-Restore the exact-empty-string filtering introduced by #6067 and removed by #6956. Normalize offline-index empty ACL elements only at DirectAcl.from_context_fields; preserve valid direct/inherited grants, singleton none serialization, and rejection of every other malformed token.
+* fix(claude-code): keep host-authored transcript records out of capture
 
-Extend the existing ACL roundtrip and mixed-grant tests for list/tuple inputs and both grant prefixes. Document the read contract in English and Chinese.
+Claude Code writes its compaction summary and other meta records into the
+transcript as user turns. They were captured into the OpenViking session
+as if the user had said them. They are now marked when the transcript is
+read and left out of what is sent, for the main session and for subagent
+transcripts; they still count for the capture cursor, so later turns keep
+their positions.
 
-Validation: seven regression cases fail on main before the decoder change; all 22 focused ACL cases pass afterward. Ruff lint/format and git diff --check pass. Focused mypy matches the baseline assignment diagnostic; unrestricted mypy has existing transitive errors. OpenViking has no check-domain Make target. No runtime, deployment, or index changes.
+* fix(claude-code): capture the turn in progress before a compaction commit
 
-**File**: `docs/en/concepts/15-acl.md` (modified, +1/-1)
+An auto-compaction can happen in the middle of a long turn, before any
+Stop hook has run for it, so nothing of that turn was on the server when
+the session was committed. PreCompact now runs the capture over the
+transcript first, in its own process, and waits for it up to 20 s before
+it commits. A catch-up that takes longer is left running, never killed,
+and its messages land in the live tail after the commit as before. A
+commit that does not finish in what is left of the hook timeout is
+queued and replayed later.
+
+Captures of one Claude Code session
+
+**File**: `agent-plugins/servers/shared/mcp-proxy-core.mjs` (modified, +32/-0)
 ```diff
-@@ -127,7 +127,7 @@ acl_inherited_grants
+@@ -12,6 +12,7 @@ import { createInterface } from "node:readline";
+ import { buildOvHeaders } from "./ov-http.mjs";
  
- `acl_direct_grants` is the ACL assigned to the current node. `acl_inherited_grants` stores the parent's current effective ACL. `acl_mode` controls whether inherited grants contribute to the current node's effective permissions. Each principal stores only its highest level as `{mask}:{principal}`: `1` means `read`, `3` means `write`, and `7` means `manage`. There is no separate ACL collection.
+ const DEFAULT_PROTOCOL_VERSION = "2025-06-18";
++const SESSION_HISTORY_TOOL = "session_history";
+ const DELETE_TIMEOUT_MS = 2000;
+ const MAX_CONCURRENT_REQUESTS = 16;
  
--An empty grants list is stored as `["none"]` and decoded as no grants. The `"none"` token must appear alone and never grants access. This storage marker is independent of `acl_mode`: clearing direct grants preserves the mode and any inherited permissions.
-+An empty grants list is stored as `["none"]` and decoded as no grants. The `"none"` token must appear alone and never grants access. Exact empty-string elements introduced by offline indexes are ignored on reads; other invalid grant tokens are rejected. This storage marker is independent of `acl_mode`: clearing direct grants preserves the mode and any inherited permissions.
- 
- ACLs update with the index, so records for the same URI may temporarily hold different versions. Reads use one ACL snapshot returned by the index, without merging grants across versions or blocking on temporary disagreement. Permission changes take effect as index updates complete; strong consistency is not guaranteed.
- 
-```
-
-**File**: `docs/zh/concepts/15-acl.md` (modified, +1/-1)
-```diff
-@@ -122,7 +122,7 @@ acl_inherited_grants
- 
- `acl_direct_grants` 是当前节点直接 ACL，`acl_inherited_grants` 是父节点当前有效 ACL，`acl_mode` 决定 inherited 是否参与当前节点的有效权限。每个 principal 只保存最高 level，编码为 `{mask}:{principal}`：`1` 表示 `read`、`3` 表示 `write`、`7` 表示 `manage`。不维护独立 ACL collection。
- 
--空 grants 列表存储为 `["none"]`，读取时解析为空权限。`"none"` 必须单独出现，不授予任何权限。该存储标记与 `acl_mode` 独立：清空直接授权时，模式和已有继承权限保持原有语义。
-+空 grants 列表存储为 `["none"]`，读取时解析为空权限。`"none"` 必须单独出现，不授予任何权限。读取时忽略离线索引产生的精确空字符串元素，其他非法 grant token 仍报错。该存储标记与 `acl_mode` 独立：清空直接授权时，模式和已有继承权限保持原有语义。
- 
- ACL 随索引更新，允许同一 URI 的不同索引记录短暂保留不同版本。读取采用索引返回的一份 ACL 快照，不合并不同版本的授权，也不因副本暂时不一致阻断处理。权限变更按索引更新进度生效，不保证强一致。
- 
-```
-
-**File**: `openviking/storage/acl.py` (modified, +2/-0)
-```diff
-@@ -126,6 +126,8 @@ def from_context_fields(cls, record: Mapping[str, Any], prefix: str) -> "DirectA
-             raise RuntimeError(f"Invalid ACL grants for {prefix}: expected a list")
-         if len(raw_grants) == 1 and raw_grants[0] == EMPTY_ACL_GRANT:
-             return cls()
-+        # 离线索引可能将空列表还原为空字符串元素；仅忽略精确空串。
-+        raw_grants = [grant for grant in raw_grants if grant != ""]
-         return cls.from_entries(_decode_grant(grant) for grant in raw_grants)
- 
- 
-```
-
-**File**: `tests/storage/test_acl.py` (modified, +29/-6)
-```diff
-@@ -10,6 +10,9 @@
-         {"acl_direct_grants": None},
-         {"acl_direct_grants": []},
-         {"acl_direct_grants": ["none"]},
-+        {"acl_direct_grants": [""]},
-+        {"acl_direct_grants": ["", ""]},
-+        {"acl_direct_grants": ("", "")},
-     ],
- )
- def test_context_fields_roundtrip_empty_grants(record):
-@@ -19,23 +22,43 @@ def test_context_fields_roundtrip_empty_grants(record):
-     assert acl.context_fields("acl_direct") == {"acl_direct_grants": ["none"]}
- 
- 
--def test_context_fields_preserve_valid_grants():
--    raw_grants = ["3:user:alice", "1:group:readers"]
-+@pytest.mark.parametrize("prefix", ["acl_direct", "acl_inherited"])
-+@pytest.mark.parametrize(
-+    "raw_grants",
-+    [
-+        ["3:user:alice", "1:group:readers"],
-+        ["", "3:user:alice", "", "1:group:readers", ""],
-+        ("", "3:user:alice", "1:group:readers", ""),
-+    ],
-+)
-+def test_context_fields_preserve_valid_grants(prefix, raw_grants):
-     acl = DirectAcl.from_context_fields(
--        {"acl_inherited_grants": raw_grants},
--        "acl_inherited",
-+        {f"{prefix}_grants": raw_grants},
-+        prefix,
-     )
- 
-     assert {(entry.principal, entry.level) for entry in acl.entries} == {
-         ("user:alice", AclLevel.WRITE),
-         ("group:readers", AclLevel.READ),
-     }
--    assert set(acl.context_fields("acl_inherited")["acl_inherited_grants"]) == set(raw_grants)
-+    assert set(acl.context_fields(prefix)[f"{prefix}_grants"]) == {
-+        "3:user:alice",
-+        "1:group:readers",
-+    }
- 
- 
- @pytest.mark.parametrize(
-     "raw_grants",
--    [[""], ["none", "3:user:alice"], ["none", "none"], [1]],
-+    [
-+        [" "],
-+        ["invalid"],
-+        ["", "invalid"],
-+        ["", 1],
-+        ["", "none"],
-+        ["none", "3:user:alice"],
-+        ["none", "none"],
-+        [1],
-+    ],
- )
- def test_context_fields_reject_invalid_grants(raw_grants):
-     with pytest.raises(RuntimeError, match="Invalid ACL grant token"):
-```
-
----
-
-### Incident Patch 2: `dfad651f` (2026-11-24)
-**Commit Message**: fix(compile): 修复增量编译漏处理和重复执行 (#7813)
-
-* fix(compile): retain partial delivery across incremental runs
-
-Signed-off-by: lusendong.6789 <[REDACTED_EMAIL]>
-Co-authored-by: TRAE CLI <[REDACTED_EMAIL]>
-
-* test(compile): keep focused delivery regressions
-
-Signed-off-by: lusendong.6789 <[REDACTED_EMAIL]>
-Co-authored-by: TRAE CLI <[REDACTED_EMAIL]>
-
-* fix(compile): preserve failures for individual diff pages
-
-* fix(compile): advance baseline after verified no-change recovery
-
-* fix(compile): retain rejected pages in partial delivery
-
-Apply the rejected-page coverage fix from #8207 (0a6e2fba7). Exercise the Complex service path where a valid page and a rejected page share one source.
-
-Co-authored-by: wrfgup <[REDACTED_EMAIL]>
-
-* test(compile): streamline partial recovery coverage
-
-* refactor(compile): align snapshot and coverage naming with existing terms
-
-- Rename download_snapshot_bytes to git_show_bytes: the wrapper only
-  calls the SDK git_show snapshot endpoint, so "download" misrepresented
-  the operation and diverged from download_bytes, which really hits
-  /content/download.
-- Drop the AI-introduced "delivered" wording in the compile chain:
-  coverage state and output flag become "pu
-
-**File**: `bot/tests/test_compile_markdown.py` (modified, +247/-29)
-```diff
-@@ -14,7 +14,12 @@
- from vikingbot.bus.queue import MessageBus
- from vikingbot.compile import simple
- from vikingbot.compile.file_ops import DocumentReader
--from vikingbot.compile.models import CompileFailure, CompileLimits, SanitizedCompileRequest
-+from vikingbot.compile.models import (
-+    CompileFailure,
-+    CompileLimits,
-+    CompileTask,
-+    SanitizedCompileRequest,
-+)
- from vikingbot.compile.ops import finalize
- from vikingbot.compile.ops import reduce as reduce_op
- from vikingbot.compile.ops.shuffle import Shuffle
-@@ -29,9 +34,11 @@
- from vikingbot.sandbox.backends.direct import DirectBackend
- from vikingbot.session.manager import SessionManager
- 
-+from openviking.utils.compile_recovery import source_set_digest
- from openviking_cli.exceptions import NotFoundError
- 
- MAP_ONLY = "drafts = p.map(sources, task=contract.extract)\np.finalize(drafts, into=target)"
-+INVALID_FRONTMATTER = "---\ntype: concept\ntitle: Rules\n description: invalid\n---\n"
- MERGE = (
-     "drafts = p.map(sources, task=contract.extract)\n"
-     "groups = p.shuffle(drafts, by=contract.routing)\n"
-@@ -150,7 +157,7 @@ def test_plan_rejects_unsafe_or_invalid_flows(program):
-         parse_plan(program, contract(True))
- 
- 
--async def configure_pipeline(pipeline, merge=False, fail_second=False):
-+async def configure_pipeline(pipeline, merge=False, fail_second=False, invalid_sibling=False):
-     """Use actual file collection with controlled agent jobs and JSON control responses."""
-     proposal = PlanProposal(contract=contract(merge), plan=MERGE if merge else MAP_ONLY)
- 
-@@ -173,6 +180,8 @@ async def worker(system, data, model, *, stage, runtime):
-             assert len(data["documents"]) == 2
-             content += "Combined details from both drafts.\n"
-         await model.files.sandbox.write_file(f"{root}/{name}", content)
-+        if invalid_sibling:
-+            await model.files.sandbox.write_file(f"{root}/bad.md", INVALID_FRONTMATTER)
-         await model.files.sandbox.write_file(
-             root.rsplit("/", 1)[0] + "/scratch.md", "private scratch"
-         )
-@@ -432,7 +441,7 @@ async def chat(**kwargs):
-         f"# Fact {i}" in "\n".join(op["content"] for op in bundle.operations) for i in range(3)
-     )
-     await pipeline.write_coverage([op["uri"] for op in bundle.operations])
--    assert (await pipeline.files.get("coverage"))["counts"] == {"delivered": 3}
-+    assert (await pipeline.files.get("coverage"))["counts"] == {"prepared": 3}
- 
- 
- async def test_finalization_requires_unique_paths_and_prior_target_read(pipeline):
-@@ -452,26 +461,7 @@ async def test_finalization_requires_unique_paths_and_prior_target_read(pipeline
-         await finalize.run(pipeline, [doc])
- 
- 
--@pytest.mark.parametrize("cancelled,conflict", [(False, False), (False, True), (True, False)])
--async def test_service_publishes_final_markdown_with_batch_write_and_honors_cancel(
--    pipeline, monkeypatch, cancelled, conflict
--):
--    if conflict:
--        pipeline.client.batch_write.return_value = {
--            "created": [],
--            "updated": [],
--            "unchanged": [],
--            "conflicts": [
--                {
--                    "uri": pipeline.target + "/topic.md",
--                    "code": "ALREADY_EXISTS",
--                    "message": "Exists",
--                }
--            ],
--        }
--    await configure_pipeline(pipeline)
--    task = SimpleNamespace(status="cancelling" if cancelled else "running", meta={}, result=None)
--
-+def compile_service_for_test(pipeline, task, monkeypatch):
-     async def update(task_id, mutate):
-         mutate(task)
- 
-@@ -489,17 +479,51 @@ async def update(task_id, mutate):
-     )
-     service._set_state = AsyncMock()
-     monkeypatch.setattr("vikingbot.compile.service.Pipeline", lambda **kwargs: pipeline)
-+    return service
-+
-+
-+@pytest.mark.parametrize("case", ["normal", "cancelled", "conflict", "source", "worker", "sibling"])
-+async def test_service_publishes_final_markdown_with_batch_write_and_honors_cancel(
-+    pipeline, monkeypatch, case
-+):
-+    source_files = [pipeline.request.from_[0] + "/one.md"]
-+    output_files = [pipeline.target + "/topic.md"]
-+    if case in {"source", "worker"}:
-+        source_files.append(pipeline.request.from_[0] + "/two.md")
-+    if case == "conflict":
-+        pipeline.client.batch_write.return_value = {
-+            "created": [],
-+            "conflicts": [
-+                {
-+                    "uri": output_files[0],
-+                    "code": "ALREADY_EXISTS",
-+                    "message": "Exists",
-+                }
-+            ],
-+        }
-+    await configure_pipeline(
-+        pipeline, fail_second=case == "worker", invalid_sibling=case == "sibling"
-+    )
-+    if case == "source":
-+        pipeline.client.read_raw.side_effect = [
-+            "source fact",
-+            ConnectionError("Source unavailable"),
-+        ]
-+    task = SimpleNamespace(
-+        status="cancelling" if case == "cancelled" else "running", meta={}, result=
-```
-
-**File**: `bot/tests/test_openapi_auth.py` (modified, +2/-2)
-```diff
-@@ -77,7 +77,7 @@ async def create_task(self, request, *, principal_scope, task_id=None):
-                     to=request.to,
-                 )
- 
--            async def get_task(self, task_id, *, principal_scope):
-+            async def get_task(self, task_id, *, principal_scope, include_recovery_proof=False):
-                 if task_id != "cmp_test" or principal_scope != self.scope:
-                     return None
-                 return self.task
-@@ -173,7 +173,7 @@ async def create_task(self, request, *, principal_scope, task_id=None):
-                     to=request.to,
-                 )
- 
--            async def get_task(self, task_id, *, principal_scope):
-+            async def get_task(self, task_id, *, principal_scope, include_recovery_proof=False):
-                 if task_id != "cmp_dev" or principal_scope != self.scope:
-                     return None
-                 return {
-```
-
-**File**: `bot/vikingbot/compile/models.py` (modified, +9/-3)
-```diff
-@@ -207,11 +207,13 @@ class CompileResult(BaseModel):
-     created: list[str] = Field(default_factory=list)
-     updated: list[str] = Field(default_factory=list)
-     unchanged: list[str] = Field(default_factory=list)
--    # Skipped target-state conflicts, each containing uri, code and message; never delivered.
-+    # Skipped target-state conflicts, each containing uri, code and message; never published.
-     conflicts: list[dict[str, str]] = Field(default_factory=list)
-     page_count: int = 0
-     link_count: int = 0
-     warnings: list[str] = Field(default_factory=list)
-+    completion_status: Literal["partial"] | None = None
-+    recovery_proof: str | None = None
- 
- 
- class CompileTask(BaseModel):
-@@ -236,10 +238,14 @@ class CompileTask(BaseModel):
-     result: CompileResult | None = None
-     error: CompileErrorInfo | None = None
- 
--    def public_dict(self) -> dict[str, Any]:
-+    def public_dict(self, *, include_recovery_proof: bool = False) -> dict[str, Any]:
-         data = self.model_dump(exclude={"principal_scope", "sanitized_request"}, exclude_none=True)
-         if self.result is not None:
--            data["result"] = self.result.model_dump(by_alias=True)
-+            data["result"] = self.result.model_dump(
-+                by_alias=True,
-+                exclude_none=True,
-+                exclude=None if include_recovery_proof else {"recovery_proof"},
-+            )
-         return data
- 
- 
-```
-
-**File**: `bot/vikingbot/compile/ops/finalize.py` (modified, +3/-2)
-```diff
-@@ -19,7 +19,7 @@ async def run(runtime, documents):
-     prior read by a worker. This preflight does not provide atomic compare-and-swap writes.
-     """
-     bundle = RenderedBundle()
--    contents, outputs = {}, {}
-+    contents, outputs, rejected = {}, {}, {}
-     seen_paths: set[str] = set()
-     for document in documents:
-         path = validate_relative_file_path(document.path)
-@@ -38,6 +38,7 @@ async def run(runtime, documents):
-                 validate_declared_okf_markdown(uri, content.encode("utf-8"))
-             except ValueError as exc:
-                 runtime.warnings.append(str(exc))
-+                rejected[path] = document.source_refs
-                 continue
-         contents[path] = content
-         outputs[path] = {"source_refs": document.source_refs, "sha256": content_hash(content)}
-@@ -63,5 +64,5 @@ async def run(runtime, documents):
-         outputs[path] = {"source_refs": document.source_refs, "sha256": content_hash(content)}
-     if runtime.skill_target and contents:
-         file_ops.validate_skill_output(contents)
--    await runtime.files.put("finalize", {"outputs": outputs})
-+    await runtime.files.put("finalize", {"outputs": outputs, "rejected": rejected})
-     return bundle
-```
-
-**File**: `bot/vikingbot/compile/pipeline.py` (modified, +18/-12)
-```diff
-@@ -58,6 +58,7 @@ def __init__(
-         self.tools, self.tool_context = {}, None
-         self.sources: dict[str, Source] = {}
-         self.evidence, self.status, self.old = {}, {}, {}
-+        self.recovery_evidence: set[str] = set()
-         self.failures, self.warnings = [], []
-         self.artifacts: list[Document] = []
-         self.noop = False
-@@ -243,30 +244,35 @@ def validate(proposal):
-                     raise
-                 logger.exception("Compile diagnostic write failed; preserving the execution error")
- 
--    async def write_coverage(self, published=()):
--        """Track assignment provenance and acknowledged output URIs without claiming semantic coverage."""
-+    async def write_coverage(self, published=None):
-+        """Record source states; only supplied write results can mark outputs incomplete."""
-         manifest = await self.files.get("inputs") or {}
-         final = await self.files.get("finalize") or {}
--        delivered = set(published)
-+        published = set(published) if published is not None else None
-         inputs = {}
-         for source_id, metadata in self.evidence.items():
-             item = inputs.setdefault(metadata["uri"], {"ranges": {}, "outputs": []})
-             item["ranges"][source_id] = self.status[source_id]
--        for path, output in final.get("outputs", {}).items():
-+        rejected = final.get("rejected", {})
-+        if published is not None:
-+            published.difference_update(safe_join_viking_uri(self.target, path) for path in rejected)
-+        references = {
-+            path: output["source_refs"] for path, output in final.get("outputs", {}).items()
-+        }
-+        for path, refs in (references | rejected).items():
-             uri = safe_join_viking_uri(self.target, path)
--            for source_uri in {self.evidence[ref]["uri"] for ref in output["source_refs"]}:
--                inputs[source_uri]["outputs"].append({"uri": uri, "delivered": uri in delivered})
-+            for source_uri in {self.evidence[ref]["uri"] for ref in refs}:
-+                inputs[source_uri]["outputs"].append(uri)
-         for uri, item in inputs.items():
-             states = item["ranges"].values()
-             state = next(
-                 (s for s in ("failed", "pending", "unreferenced") if s in states), "prepared"
-             )
--            if (
--                state == "prepared"
--                and item["outputs"]
--                and all(o["delivered"] for o in item["outputs"])
--            ):
--                state = "delivered"
-+            if state == "prepared" and published is not None:
-+                if not item["outputs"]:
-+                    state = "unreferenced"
-+                elif any(output not in published for output in item["outputs"]):
-+                    state = "failed"
-             manifest[uri] = item["status"] = state
-         await self.files.put("inputs", manifest)
-         await self.files.put(
-```
-
-**File**: `bot/vikingbot/compile/pipeline_agent.py` (modified, +9/-3)
-```diff
-@@ -113,9 +113,15 @@ async def run(system, data, model, *, stage, runtime):
-             registry.register(
-                 CompileChildTool(tool, output_root, merge_only=True, readonly_paths=readonly_paths)
-             )
--        evidence = EvidenceReader(model.files, data)
--        if evidence.allowed:
--            registry.register(evidence)
-+        reader = EvidenceReader(
-+            model.files,
-+            data,
-+            recovery_evidence=(
-+                runtime.recovery_evidence if (runtime.changes or {}).get("recovery_sources") else None
-+            ),
-+        )
-+        if reader.allowed:
-+            registry.register(reader)
-         registry.register(runtime.resources)
-         registry.register(TargetReader(runtime))
-         search = runtime.tools.get("openviking_search")
-```
-
-**File**: `bot/vikingbot/compile/router.py` (modified, +3/-1)
-```diff
-@@ -124,7 +124,9 @@ async def load_session(
-         if cancel:
-             task = await service.cancel_task(body.session_id, principal_scope=principal_scope)
-         else:
--            task = await service.get_task(body.session_id, principal_scope=principal_scope)
-+            task = await service.get_task(
-+                body.session_id, principal_scope=principal_scope, include_recovery_proof=True
-+            )
-         if task is None:
-             raise HTTPException(
-                 status_code=status.HTTP_404_NOT_FOUND,
-```
-
-**File**: `bot/vikingbot/compile/service.py` (modified, +35/-5)
-```diff
-@@ -43,6 +43,7 @@
- from vikingbot.agent.tools.registry import ToolRegistry
- from vikingbot.agent.tools.spawn import WaitSubagentsTool
- from vikingbot.compile import file_ops, simple
-+from vikingbot.compile.hashing import content_hash
- from vikingbot.compile.models import (
-     COMPILE_DRAFT_ROOT,
-     COMPILE_STAGING_ROOT,
-@@ -68,7 +69,12 @@
-     validate_declared_okf_markdown,
- )
- from vikingbot.compile.sandbox import CompileSandboxManager
--from vikingbot.compile.sources import CompileSourceRange, pack_source_batches, read_source
-+from vikingbot.compile.sources import (
-+    CompileSourceRange,
-+    pack_source_batches,
-+    read_source,
-+    verify_recovery_sources,
-+)
- from vikingbot.compile.store import CompileTaskStore
- from vikingbot.config.schema import SandboxBackend, SandboxMode, SessionKey
- from vikingbot.openviking_mount.ov_server import VikingClient
-@@ -361,15 +367,17 @@ async def create_task(
-             if not runner_started:
-                 await self._release_admission(principal_scope)
- 
--    async def get_task(self, task_id: str, *, principal_scope: str) -> dict[str, Any] | None:
-+    async def get_task(
-+        self, task_id: str, *, principal_scope: str, include_recovery_proof: bool = False
-+    ) -> dict[str, Any] | None:
-         await self.start()
-         try:
-             task = await self.store.get(task_id)
-         except ValueError:
-             return None
-         if task is None or task.principal_scope != principal_scope:
-             return None
--        return task.public_dict()
-+        return task.public_dict(include_recovery_proof=include_recovery_proof)
- 
-     async def cancel_task(self, task_id: str, *, principal_scope: str) -> dict[str, Any] | None:
-         """Request cooperative cancellation of one principal-owned Compile task."""
-@@ -1024,8 +1032,8 @@ async def resolve_wiki_uri(uri: str) -> bool:
-             preserve_workspace = preserve_workspace or bool(warnings)
-             if output_file_count == 0:
-                 warnings.append("No reliable output was produced from the supplied materials.")
--            result = CompileResult(
--                **{
-+            result = CompileResult.model_validate(
-+                {
-                     "from": request.from_,
-                     "to": request.to,
-                     "skill": request.skill,
-@@ -1141,6 +1149,8 @@ def record_metrics(task):
-         source_limits = self.limits.model_copy(
-             update={"source_batch_chars": min(self.limits.source_batch_chars, 10_000)}
-         )
-+        recovery = (request.changes or {}).get("recovery_sources")
-+        source_hashes: dict[str, str] = {}
- 
-         async def source_batches():
-             """Retain at most one read batch of source bodies while seeding task shards."""
-@@ -1160,6 +1170,8 @@ async def source_batches():
-                     elif isinstance(content, BaseException):
-                         raise content
-                     else:
-+                        if recovery and isinstance(content, str):
-+                            source_hashes[uri] = content_hash(content)
-                         readable.append((uri, content))
-                 for batch in pack_source_batches(readable, source_limits):
-                     yield batch
-@@ -1200,6 +1212,22 @@ async def source_batches():
-                 ]
-             )
-             await pipeline.write_coverage(published)
-+            counts = (await pipeline.files.get("coverage") or {}).get("counts", {})
-+            partial = bool(pipeline.failures or conflicts) or any(
-+                counts.get(state, 0) for state in ("failed", "pending", "unreferenced")
-+            )
-+            recovery_proof = None
-+            if (
-+                recovery
-+                and not partial
-+                and not pipeline.warnings
-+                and not rendered.operations
-+                and counts.get("prepared") == len(ordered)
-+                and pipeline.evidence.keys() <= pipeline.recovery_evidence
-+            ):
-+                recovery_proof = await verify_recovery_sources(
-+                    client, request.changes, source_hashes
-+                )
-             summary = await pipeline.files.get("summary")
-             summary["committed"] = True
-             summary["warnings"] = pipeline.warnings
-@@ -1223,6 +1251,8 @@ async def source_batches():
-                 page_count=len(set(published)),
-                 link_count=rendered.link_count,
-                 warnings=pipeline.warnings,
-+                completion_status="partial" if partial else None,
-+                recovery_proof=recovery_proof,
-             )
- 
-             def complete(task):
-```
-
----
-
-### Incident Patch 3: `6b42f562` (2026-11-24)
-**Commit Message**: fix(react): 保持未知预览类型并修复前端测试 (#8369)
-
-* fix(react): 保持未知预览类型并修复前端测试
-
-Only resolve the loading preview type from actual stat metadata. Align existing tests with automatic empty-directory expansion, Skill candidate collapse and independent Wiki badge reads.
-
-Signed-off-by: lusendong.6789 <[REDACTED_EMAIL]>
-Co-authored-by: TRAE CLI <[REDACTED_EMAIL]>
-
-* chore(react): remove release note from CI repair
-
-Signed-off-by: lusendong.6789 <[REDACTED_EMAIL]>
-Co-authored-by: TRAE CLI <[REDACTED_EMAIL]>
-
----------
-
-Signed-off-by: lusendong.6789 <[REDACTED_EMAIL]>
-Co-authored-by: TRAE CLI <[REDACTED_EMAIL]>
-
-**File**: `frontend/packages/react/src/modules/file-browser/use-fs-preview.ts` (modified, +1/-1)
-```diff
-@@ -145,7 +145,7 @@ export function useFsPreview({
-       const stat = resourceType === 'unknown' ? await metadata : undefined;
-       const isDir = stat?.isDirectory ?? resourceType === 'directory';
-       if (signal.aborted) throw abortError();
--      if (resourceType === 'unknown' && isDir !== undefined) {
-+      if (resourceType === 'unknown' && stat?.isDirectory !== undefined) {
-         const type = isDir ? 'directory' : 'file';
-         setStatType({ lookup, type });
-         setTabs([loadingTab(uri, type)]);
-```
-
-**File**: `frontend/packages/react/test/console-inactive-overlays.test.mjs` (modified, +4/-0)
-```diff
-@@ -76,6 +76,10 @@ test('inactive Skill upload releases its focus and body lock while its inline an
-               value: 'viking://agent/skills/wiki/SKILL.md',
-               label: 'Wiki Skill',
-             },
-+            {
-+              value: 'viking://agent/skills/report/SKILL.md',
-+              label: 'Report Skill',
-+            },
-           ],
-           initialValue: 'viking://agent/skills/wiki/SKILL.md',
-         },
-```
-
-**File**: `frontend/packages/react/test/file-browser-metadata-ownership.test.mjs` (modified, +1/-0)
-```diff
-@@ -106,6 +106,7 @@ test('a known Wiki keeps the truncation hint when its full read fails', async ()
-     content,
-     taggedTarget: uri,
-     fullRead: full.promise,
-+    kinds: [],
-   });
-   try {
-     assert.equal(f.tab.source.truncated, true);
-```
-
-**File**: `frontend/packages/react/test/file-browser-preview-priority.test.mjs` (modified, +6/-1)
-```diff
-@@ -185,7 +185,12 @@ test('a listed Markdown file reads its body while Wiki attrs are pending', async
-       ),
-     );
-     await settle();
--    assert.equal(fetch.countOf('/api/v1/content/read'), 1);
-+    assert.deepEqual(
-+      fetch.calls
-+        .filter(({ path }) => path === '/api/v1/content/read')
-+        .map(({ query }) => query.limit),
-+      ['2000', '-1'],
-+    );
-     assert.equal(body(), 'Chapter text');
-   } finally {
-     await view.unmount();
-```
-
-**File**: `frontend/packages/react/test/file-browser-wiki-conflict-editing.test.mjs` (modified, +2/-1)
-```diff
-@@ -171,13 +171,14 @@ test('navigating away discards a pending Wiki conflict edit before preview loadi
-       view.container.textContent,
-       new RegExp(`${otherBody.length} characters`),
-     );
-+    const otherReads = editReads(otherFile);
- 
-     await act(async () => preview.resolve());
-     await settle();
-     assert.equal(activeTab(), otherFile);
-     assert.equal(view.container.querySelector('.cm-content'), null);
-     assert.equal(editReads(file), dashboardReads);
--    assert.equal(editReads(otherFile), 0);
-+    assert.equal(editReads(otherFile), otherReads);
-   } finally {
-     await view.unmount();
+@@ -145,6 +146,9 @@ export function createOpenVikingMcpProxy({
+   loggerFactory,
+   fetchImpl = globalThis.fetch,
+   localToolProvider = null,
++  // (params) => the OV session id of the host session making this tools/call,
++  // or "" when the harness cannot tell; fills `session_history`'s `session`.
++  defaultHistorySession = null,
+ } = {}) {
+   if (typeof fetchImpl !== "function") {
+     throw new Error("global fetch is required; use Node.js 18 or newer");
+@@ -219,6 +223,33 @@ export function createOpenVikingMcpProxy({
+     return localToolProvider.callTool(message.params, { config: proxyConfig });
    }
+ 
++  // A `session` the model passed is kept as is, even one this proxy would not
++  // have chosen; only a missing or blank one is filled.
++  function withDefaultHistorySession(message) {
++    if (
++      typeof defaultHistorySession !== "function"
++      || message.method !== "tools/call"
++      || message.params?.name !== SESSION_HISTORY_TOOL
++    ) {
++      return message;
++    }
++    const args = message.params.arguments;
++    const given = args && typeof args === "object" ? args.session : undefined;
++    if (given != null && (typeof given !== "string" || given.trim())) return message;
++    let session = "";
++    try {
++      session = String(defaultHistorySession(message.params) || "").trim();
++    } catch (err) {
++      logError("default_history_session", err);
++    }
++    log("default_history_session", { filled: Boolean(session) });
++    if (!session) return message;
++    return {
++      ...message,
++      params: { ...message.params, arguments: { ...(args || {}), session } },
++    };
++  }
++
+   function reloadConfig(reason) {
+     proxyConfig = readConfig();
+     logger = loggerFactory("mcp-proxy", proxyConfig);
+@@ -429,6 +460,7 @@ export function createOpenVikingMcpProxy({
+       return;
+     }
+ 
++    message = withDefaultHistorySession(message);
+     const expectsResponse = isRequest(message);
+     if (message.method === "initialize") {
+       initializeRequest = cloneMessage(message);
 ```
 
-**File**: `frontend/packages/react/test/file-tree-root-order.test.mjs` (modified, +1/-2)
+**File**: `docs/en/agent-integrations/12-cursor.md` (modified, +2/-1)
 ```diff
-@@ -128,8 +128,7 @@ test('FileBrowser marks only shared resources and labels an expanded empty folde
-   try {
-     await expand(user);
-     await expand(agent);
--    assert.equal(row(`${endpoints}::empty`), null);
--    await expand(endpoints);
-+    assert.ok(row(`${endpoints}::empty`));
-     assert.match(row(`${endpoints}::empty`).textContent, /该文件夹为空/);
-     assert.doesNotMatch(row(`${endpoints}::empty`).textContent, /暂无文件/);
-     assert.equal(
+@@ -48,7 +48,8 @@ Once installed, start a new Cursor session and ask it to follow https://docs.ope
+ - `beforeReadFile` denies reading a `viking://` path as a local file and points the Agent to OpenViking MCP tools. Shell commands are not checked.
+ - `afterMCPExecution` appends completed calls to the `openviking` MCP server to a local tool log, preserving the native call ID, input, output, and success or failure status. It does not upload messages or rewrite earlier results.
+ - `stop` uploads new conversation turns and locally recorded tool results through `add message`. Capture progress advances only after upload succeeds, and `session commit` follows the existing message threshold. Tool records do not add to that threshold's message count.
+-- `preCompact` and `sessionEnd` commit pending messages for memory extraction.
++- `preCompact` and `sessionEnd` commit pending messages for memory extraction. After a compaction, the next `beforeSubmitPrompt` also adds a short note naming the session's OpenViking id (`cu-<conversation id>`) and the `session_history` MCP tool for looking up exact earlier details.
++- `preToolUse` matches only `MCP:session_history` and adds the current conversation as its `session` argument when the Agent leaves it out.
+ 
+ Tool capture requires `afterMCPExecution` to provide `tool_use_id`, `mcp_server_name`, `tool_name`, `tool_input`, and `result_json`. Events without an identity or result are skipped, never inferred to be successful. Failed uploads remain local for the same conversation's next capture attempt; incomplete capture prevents a commit.
+ 
+```
+
+**File**: `docs/en/agent-integrations/13-trae.md` (modified, +2/-1)
+```diff
+@@ -4,7 +4,7 @@ Give TRAE, TRAE CN, and TraeCode CLI 2.0 long-term memory across projects and se
+ 
+ ## Install
+ 
+-Prerequisites: macOS or Linux, Node.js 18+, and a TRAE/TRAE CN release that supports the `SessionStart`, `UserPromptSubmit`, `PreToolUse`, and `Stop` Hooks. TraeCode CLI 2.0 uses the Codex-compatible plugin format directly. The installer guides you through the OpenViking connection settings.
++Prerequisites: macOS or Linux, Node.js 18+, and a TRAE/TRAE CN release that supports the `SessionStart`, `UserPromptSubmit`, `PreToolUse`, `Stop`, and `PostCompact` Hooks. TraeCode CLI 2.0 uses the Codex-compatible plugin format directly. The installer guides you through the OpenViking connection settings.
+ 
+ For a managed connection, select **OpenViking Managed Service**, then:
+ 
+@@ -48,6 +48,7 @@ Once installed, start a new TRAE session and ask it to follow https://docs.openv
+ - `UserPromptSubmit` recalls and injects context for the current request, including your own skills and those shared with your account under `viking://agent/skills`.
+ - `PreToolUse` on TRAE and TRAE CN denies `Read`, `Glob`, and `Grep` calls whose path is a `viking://` URI and points to OpenViking MCP tools; a `Bash` or `RunCommand` command that carries a `viking://` URI still runs, with a notice suggesting those tools. TraeCode CLI 2.0 uses the Codex plugin, which has no URI guard.
+ - TRAE/TRAE CN `Stop` captures and commits the completed turn. TraeCode CLI 2.0 follows the Codex plugin’s capture and lifecycle commit policy.
++- TRAE/TRAE CN `PostCompact` adds a short note after a compaction, naming the session's OpenViking id and the `session_history` MCP tool for looking up exact earlier details; the Agent passes that id as the tool's `session`.
+ - The OpenViking MCP server transparently exposes the full server MCP tool set (21 tools): `find`, `search`, `read`, `download`, `list`, `tree`, `remember`, `write`, `edit`, `add_resource`, `add_skill`, `list_watches`, `cancel_watch`, `grep`, `glob`, `forget`, `health`, `list_users`, `list_groups`, `get_acl`, and `set_acl`. `search` with `mode="context"` returns assembled context.
+ - TRAE/TRAE CN skills: `openviking-memory`, `openviking-skills`, `ov-experience-memory`, `openviking-rule-search`, and `ov-memory-doctor` are installed into `~/.trae/skills/<name>` (TRAE CN: `~/.trae-cn/skills/<name>`). A skill you edited, or an existing unmanaged directory of the same name, is preserved on upgrade. TraeCode CLI also reads `~/.trae/skills`, so with both the TRAE integration and the TraeCode CLI 2.0 plugin installed, the CLI lists each of these skills twice: once bare and once under the plugin namespace.
+ The skill catalog lists your own skills before those shared with your account, with each description cut to about 40 tokens. Its budget, `skillCatalogTokenBudget` (default `1200` tokens), is separate from the profile budget; when not every description fits, the catalog lists names only. Set `skillCatalog` to `false` or the budget to `0` to turn it off, either in the `plugin` section of `~/.openviking/ovcli.conf` ([Plugin Settings](../configuration/02-client.md#plugin-settings)) or through `OPENVIKING_SKILL_CATALOG` and `OPENVIKING_SKILL_CATALOG_TOKEN_BUDGET`.
+```
+
+**File**: `docs/en/agent-integrations/20-codebuddy.md` (modified, +3/-2)
+```diff
+@@ -44,12 +44,13 @@ The installer assembles a self-contained plugin under `~/.openviking/agent-integ
+ - **UserPromptSubmit** recalls relevant memories and injects them as an `<openviking-context>` block in `additionalContext`. Host-generated continuation turns are skipped, so a turn the host produced on its own never triggers a search.
+ - **PreToolUse** denies reading or writing a `viking://` URI as a local path and points the Agent at the OpenViking MCP tools. Shell commands are not checked, so `ov` invocations and literal `viking://` arguments still work.
+ - **Stop**, **PreCompact**, and **SessionEnd** capture new transcript turns incrementally in a detached worker. `Stop` commits the OpenViking session every 8 captured messages (`commitTurnThreshold`); `PreCompact` and `SessionEnd` commit everything not yet committed, including messages `Stop` already sent.
++- After a compaction or a resume, the next **UserPromptSubmit** also adds a short note naming the session's OpenViking id and the `session_history` MCP tool for looking up exact earlier details. The MCP proxy fills that tool's `session` argument from the call when the Agent leaves it out.
+ 
+ Hooks and MCP read the same credentials from `~/.openviking/ovcli.conf`, so they cannot disagree about the server, account, or user. `OPENVIKING_URL` and `OPENVIKING_API_KEY` override that file, and per-plugin settings live under `plugin.codebuddy` (see [Plugin Settings](../configuration/02-client.md#plugin-settings)). Sessions are stored in OpenViking as `cb-<session id>`.
+ 
+ ### Behaviour that follows from the host
+ 
+-`UserPromptSubmit` and `SessionEnd` fire **only in the interactive TUI**. Headless runs (`-p`, `--input-format stream-json`) never emit them, so a headless session captures on `Stop` but never sends the final commit. `SessionStart` carries no `cwd` and can be delivered twice per session, so the session-start hook is idempotent and falls back to the process working directory. A hook that overruns its timeout is killed, but its child processes are not, which is what lets commits run in a detached worker after the hook process returns.
++`SessionEnd` fires **only in the interactive TUI**, so a headless session (`-p`, `--input-format stream-json`) captures on `Stop` but never sends the final commit. `UserPromptSubmit` also fires only in the TUI before CodeBuddy Code 2.185.0; from 2.185.0 it fires in headless `-p` runs too. `SessionStart` carries no `cwd` and can be delivered twice per session, so the session-start hook is idempotent and falls back to the process working directory. A hook that overruns its timeout is killed, but its child processes are not, which is what lets commits run in a detached worker after the hook process returns.
+ 
+ Subagent capture is not supported yet: the host fires `SubagentStart`/`SubagentStop`, but the shared dispatcher has no subagent stage. The verified host contract and transcript format are recorded in [`hosts/codebuddy/DESIGN.md`](https://github.com/volcengine/OpenViking/blob/main/examples/agent-hook-plugin/hosts/codebuddy/DESIGN.md).
+ 
+@@ -67,7 +68,7 @@ Uninstall removes the plugin, its local marketplace, the copy CodeBuddy caches,
+ 
+ | Symptom | Cause and fix |
+ |---------|---------------|
+-| No recall in headless runs | `UserPromptSubmit` fires only in the interactive TUI. Use an interactive session. |
++| No recall in headless runs | Before CodeBuddy Code 2.185.0, `UserPromptSubmit` fires only in the interactive TUI. Upgrade or use an interactive session. |
+ | The plugin is not listed | Re-run the installer and check that `codebuddy` is on `PATH`, then start a new session. |
+ | MCP does not connect | Check the URL/API key in `~/.openviking/ovcli.conf`, then start a new session. |
+ | Detailed diagnostics are needed | Start CodeBuddy with `OPENVIKING_DEBUG=1` and inspect `~/.openviking/logs/codebuddy-hooks.log`. |
+```
+
+**File**: `docs/en/agent-integrations/21-qoder.md` (modified, +2/-1)
+```diff
+@@ -46,7 +46,8 @@ Every Qoder CLI build on `PATH` gets the plugin: `qodercli` in `~/.qoder` (`QODE
+ 
+ - **SessionStart** injects the user profile and replays anything the offline queue is holding.
+ - **UserPromptSubmit** recalls relevant memories and injects them as an `<openviking-context>` block in `additionalContext`.
+-- **PreToolUse** denies reading or writing a `viking://` URI as a local path and points the Agent at the OpenViking MCP tools. A Bash command that contains such a URI still runs, with a notice pointing at the same tools, so `ov` invocations and literal `viking://` arguments still work.
++- **PreToolUse** denies reading or writing a `viking://` URI as a local path and points the Agent at the OpenViking MCP tools. A Bash command that contains such a URI still runs, with a notice pointing at the same tools, so `ov` invocations and literal `viking://` arguments still work. A second `PreToolUse` entry on `mcp_call` adds the current session as the `session` argument of a `session_history` call that leaves it out.
++- After a compaction or a resume, **SessionStart** also adds a short note naming the session's OpenViking id and the `session_history` MCP tool for looking up exact earlier details.
+ - **Stop**, **PreCompact**, and **SessionEnd** capture new transcript turns incrementally in a detached worker. `Stop` commits the OpenViking session every 8 captured messages (`commitTurnThreshold`); `PreCompact` and `SessionEnd` commit everything not yet committed, including messages `Stop` already sent.
+ 
+ Hooks and MCP read the same credentials from `~/.openviking/ovcli.conf`, so they cannot disagree about the server, account, or user. `OPENVIKING_URL` and `OPENVIKING_API_KEY` override that file, and per-plugin settings live under `plugin.qoder` (see [Plugin Settings](../configuration/02-client.md#plugin-settings)). Sessions are stored in OpenViking as `qd-<session id>`.
+```
+
+**File**: `docs/zh/agent-integrations/12-cursor.md` (modified, +2/-1)
+```diff
+@@ -48,7 +48,8 @@ curl -fsSL https://openviking.ai/install | bash
+ - `beforeReadFile`：阻止把 `viking://` 虚拟路径当作本地文件读取，并提示改用 OpenViking MCP 工具；shell 命令不做检查。
+ - `afterMCPExecution`：将 `openviking` MCP 服务的工具完成记录追加到本地工具日志，保留真实调用 ID、输入、输出和成功或失败状态；此时不向服务端写入消息，也不重写此前的结果。
+ - `stop`：将新增对话与本地工具记录一起通过 `add message` 上报；成功后才推进捕获位置，达到原有消息阈值时执行 `session commit`。工具记录不额外增加该阈值的消息计数。
+-- `preCompact` / `sessionEnd`：提交尚未处理的消息，触发记忆抽取。
++- `preCompact` / `sessionEnd`：提交尚未处理的消息，触发记忆抽取。压缩之后，下一次 `beforeSubmitPrompt` 还会追加一段简短说明，给出会话的 OpenViking id（`cu-<conversation id>`）以及用来查回之前确切细节的 `session_history` MCP 工具。
++- `preToolUse`：只匹配 `MCP:session_history`，Agent 没传 `session` 参数时补上当前会话。
+ 
+ 工具采集要求 `afterMCPExecution` 提供 `tool_use_id`、`mcp_server_name`、`tool_name`、`tool_input` 和 `result_json`。缺少身份或结果的事件会跳过，不会推断为成功。上传失败时保留本地记录，等待同一会话的后续采集重试；消息未传完整时不提交。
+ 
+```
+
+**File**: `docs/zh/agent-integrations/13-trae.md` (modified, +2/-1)
+```diff
+@@ -4,7 +4,7 @@
+ 
+ ## 安装
+ 
+-前置条件：macOS 或 Linux、Node.js 18+，以及支持 `SessionStart`、`UserPromptSubmit`、`PreToolUse`、`Stop` Hook 的 TRAE/TRAE CN 版本。TraeCode CLI 2.0 直接使用兼容 Codex 的插件格式。安装过程中会引导配置 OpenViking 连接信息。
++前置条件：macOS 或 Linux、Node.js 18+，以及支持 `SessionStart`、`UserPromptSubmit`、`PreToolUse`、`Stop`、`PostCompact` Hook 的 TRAE/TRAE CN 版本。TraeCode CLI 2.0 直接使用兼容 Codex 的插件格式。安装过程中会引导配置 OpenViking 连接信息。
+ 
+ 连接托管实例时，选择 **OpenViking 托管服务**，再选择服务商：
+ 
+@@ -48,6 +48,7 @@ TRAE 和 TRAE CN 使用安装后的 `hooks.json`，不需要审阅 hook，安装
+ - `UserPromptSubmit`：根据当前问题召回并注入相关内容，召回范围包括你自己的 skill 和账号内共享在 `viking://agent/skills` 下的 skill。
+ - `PreToolUse`：在 TRAE 和 TRAE CN 上，`Read`、`Glob`、`Grep` 的路径是 `viking://` URI 时拒绝调用，并提示改用 OpenViking MCP 工具；`Bash` 或 `RunCommand` 命令带 `viking://` URI 时照常执行，同时附加改用建议。TraeCode CLI 2.0 使用 Codex 插件，它不安装 URI guard。
+ - TRAE/TRAE CN 的 `Stop` 捕获并提交本轮消息；TraeCode CLI 2.0 遵循 Codex 插件的捕获与生命周期提交策略。
++- TRAE/TRAE CN 的 `PostCompact` 在压缩后追加一段简短说明，给出会话的 OpenViking id 以及用来查回之前确切细节的 `session_history` MCP 工具；Agent 调用时把这个 id 作为 `session` 传入。
+ - OpenViking MCP Server：透传服务端完整 MCP 工具集（21 个工具）：`find`、`search`、`read`、`download`、`list`、`tree`、`remember`、`write`、`edit`、`add_resource`、`add_skill`、`list_watches`、`cancel_watch`、`grep`、`glob`、`forget`、`health`、`list_users`、`list_groups`、`get_acl`、`set_acl`。其中 `search` 的 `mode="context"` 可返回组装后的上下文。
+ - TRAE/TRAE CN 的 skill：`openviking-memory`、`openviking-skills`、`ov-experience-memory`、`openviking-rule-search` 和 `ov-memory-doctor` 安装到 `~/.trae/skills/<name>`（TRAE CN 为 `~/.trae-cn/skills/<name>`）。你修改过的 skill，或已有的同名非托管目录，升级时保留。TraeCode CLI 也读取 `~/.trae/skills`，同时安装 TRAE 集成和 TraeCode CLI 2.0 插件时，CLI 会把这几个 skill 各列两次：一次不带前缀，一次在插件命名空间下。
+ skill 清单先列你自己的 skill，再列账号内共享的 skill，每条描述截到约 40 token。清单的预算 `skillCatalogTokenBudget`（默认 `1200` token）独立于画像预算；描述放不下时只列名称。把 `skillCatalog` 设为 `false` 或把预算设为 `0` 即可关闭，既可以写在 `~/.openviking/ovcli.conf` 的 `plugin` 段（见[插件配置](../configuration/02-client.md#插件配置)），也可以用环境变量 `OPENVIKING_SKILL_CATALOG` 和 `OPENVIKING_SKILL_CATALOG_TOKEN_BUDGET`。
+```
+
+**File**: `docs/zh/agent-integrations/20-codebuddy.md` (modified, +3/-2)
+```diff
+@@ -44,12 +44,13 @@ curl -fsSL https://openviking.ai/install | bash
+ - **UserPromptSubmit** 召回相关记忆，以 `additionalContext` 中的 `<openviking-context>` 块注入。宿主自动生成的续写轮次会被跳过，因此宿主自己产生的轮次不会触发检索。
+ - **PreToolUse** 拒绝把 `viking://` URI 当本地路径读写，并引导 Agent 改用 OpenViking MCP 工具。Shell 命令不做检查，`ov` 调用与字面量 `viking://` 参数照常可用。
+ - **Stop**、**PreCompact** 和 **SessionEnd** 在分离的 worker 中增量捕获 transcript 中的新轮次。`Stop` 每捕获 8 条消息（`commitTurnThreshold`）提交一次 OpenViking session；`PreCompact` 和 `SessionEnd` 提交所有尚未提交的消息，包括 `Stop` 已经发送的。
++- 压缩或恢复之后，下一次 **UserPromptSubmit** 还会追加一段简短说明，给出会话的 OpenViking id 以及用来查回之前确切细节的 `session_history` MCP 工具。Agent 没传该工具的 `session` 参数时，MCP 代理从调用中补上。
+ 
+ hook 与 MCP 从 `~/.openviking/ovcli.conf` 读取同一份凭据，不会在服务端、账号或用户上各说各话。`OPENVIKING_URL` 与 `OPENVIKING_API_KEY` 可覆盖该文件，按插件的配置位于 `plugin.codebuddy` 下（见[插件配置](../configuration/02-client.md#插件配置)）。会话在 OpenViking 中记为 `cb-<session id>`。
+ 
+ ### 宿主决定的行为
+ 
+-`UserPromptSubmit` 与 `SessionEnd` **只在交互式 TUI 触发**。headless 运行（`-p`、`--input-format stream-json`）不会触发它们，因此 headless 会话只在 `Stop` 捕获，不发收尾提交。`SessionStart` 不带 `cwd`，且同一会话内可能投递两次，因此该 hook 是幂等的，并以进程工作目录兜底。hook 超时会被杀，但其子进程不会，这正是提交能在 hook 进程返回后由分离的 worker 完成的原因。
++`SessionEnd` **只在交互式 TUI 触发**，因此 headless 会话（`-p`、`--input-format stream-json`）只在 `Stop` 捕获，不发收尾提交。CodeBuddy Code 2.185.0 之前 `UserPromptSubmit` 也只在 TUI 触发；从 2.185.0 起 headless `-p` 运行同样会触发。`SessionStart` 不带 `cwd`，且同一会话内可能投递两次，因此该 hook 是幂等的，并以进程工作目录兜底。hook 超时会被杀，但其子进程不会，这正是提交能在 hook 进程返回后由分离的 worker 完成的原因。
+ 
+ 暂不支持子代理采集：宿主会触发 `SubagentStart`/`SubagentStop`，但共享 dispatcher 还没有子代理阶段。经过实测的宿主契约与 transcript 格式记录在 [`hosts/codebuddy/DESIGN.md`](https://github.com/volcengine/OpenViking/blob/main/examples/agent-hook-plugin/hosts/codebuddy/DESIGN.md)。
+ 
+@@ -67,7 +68,7 @@ curl -fsSL https://openviking.ai/install | bash -s -- --uninstall --yes --harnes
+ 
+ | 现象 | 原因与处理 |
+ |------|------------|
+-| headless 运行没有召回 | `UserPromptSubmit` 只在交互式 TUI 触发，请使用交互式会话。 |
++| headless 运行没有召回 | CodeBuddy Code 2.185.0 之前 `UserPromptSubmit` 只在交互式 TUI 触发，请升级或使用交互式会话。 |
+ | 插件列表中没有它 | 重新运行安装器并确认 `codebuddy` 在 `PATH` 中，然后新建会话。 |
+ | MCP 连不上 | 检查 `~/.openviking/ovcli.conf` 中的 URL/API Key，然后新建会话。 |
+ | 需要详细诊断 | 以 `OPENVIKING_DEBUG=1` 启动 CodeBuddy，查看 `~/.openviking/logs/codebuddy-hooks.log`。 |
+```
+
+---
+
+### Incident Patch 2: `4afd0e7f` (2026-11-25)
+**Commit Message**: fix(pgvector): preserve cosine pagination and reuse query vector strings (#7985)
+
+* fix(pgvector): avoid costly probes in filtered vector search
+
+Admit narrow exact routing only for cheap scalar index plans and defer cosine eligibility checks to avoid redundant vector reads while preserving native fallback behavior.
+
+* fix(ui): unblock frontend CI after main merge
+
+Extract reference search requests with safe response types and split destination validation tests to satisfy lint limits without changing behavior.
+
+* test(ui): align write URI expectations with plain editor text
+
+Keep clickable URI coverage for command echoes while matching the intentional editor behavior introduced on main.
+
+* fix(pgvector): isolate filter planning and qualify candidate tables
+
+* fix(ci): allow more time for the full UI test suite
+
+* fix(pgvector): retain zero-vector pagination fixes and query string reuse
+
+* fix(pgvector): keep HNSW candidate ordering index-compatible
+
+**File**: `docs/en/guides/25-pgvector.md` (modified, +9/-0)
+```diff
+@@ -99,6 +99,15 @@ scanning to improve recall with filters, but ANN recall and filtered TopK are
+ not guaranteed; measure recall and p99 with representative filters. Cosine
+ zero vectors are not included in a pgvector HNSW index.
+ 
++Cosine search also excludes zero vectors from flat results and dense candidates
++in hybrid/time-decay search. Native dense search drops NaN distances after
++sorting and pagination: PostgreSQL sorts NaN after all finite distances, so zero
++vectors cannot displace eligible results or alter valid pagination. Hybrid
++sparse recall excludes them before applying its candidate budget, with a CASE
++expression that evaluates the norm only after scalar filtering. Sparse-only
++search still accepts these records. Ordinary dense queries serialize the query
++vector once and reuse the string for both SQL parameters.
++
+ Flat search stays exact even when the table also contains an ANN index. On
+ reconnect, the configured collection dimension, metric and index type must
+ match persisted metadata; missing or invalid ANN indexes produce errors.
+```
+
+**File**: `docs/zh/guides/25-pgvector.md` (modified, +7/-0)
+```diff
+@@ -92,6 +92,13 @@ HNSW 开启 strict iterative scanning 来改善带过滤的召回，但不保证
+ 召回率或过滤后 TopK 数量；需用真实过滤条件验证召回率和 p99。
+ pgvector HNSW 的 cosine 索引不包含零向量。
+ 
++Cosine 检索同样从 flat 结果以及 hybrid/时间衰减的 dense 候选中排除零向量。
++原生 dense 查询在距离排序和分页之后排除 NaN：PostgreSQL 将 NaN 排在所有
++有限距离之后，因此零向量不会挤掉有效结果或改变有效分页。hybrid 的 sparse
++分支在候选预算截取之前排除零向量，并通过 CASE 保证标量过滤通过后才计算范数。
++仅 sparse 查询仍允许这些记录参与检索。普通 dense 查询只将查询向量转为字符串
++一次，供两个 SQL 参数复用。
++
+ 即使表中额外存在 ANN 索引，flat 检索仍保持精确。重新连接时会校验配置与
+ 持久化元数据中的维度、距离和索引类型，ANN 索引缺失或无效会明确报错。
+ 修改 `ef_search` 在重新连接后生效，不需要重建索引；修改索引类型或构建参数
+```
+
+**File**: `openviking/storage/vectordb_adapters/opengauss/retrieval.py` (modified, +28/-8)
+```diff
+@@ -432,6 +432,23 @@ def _drop_sparse_postings_on_cursor(self, cursor) -> None:
+     def _validate_ranked_filters(self, filters) -> None:
+         _validate_filters(filters, self._field_names)
+ 
++    def _dense_vector_guard(self, op: str) -> str:
++        return '"vector" IS NOT NULL'
++
++    def _dense_filter_clause(self, op, where, filter_params):
++        condition = f"({where})" if where else "TRUE"
++        return f"{condition} AND {self._dense_vector_guard(op)}", list(filter_params)
++
++    def _dense_candidate_query(self, index_name, where, filter_params, vector_text, op, budget):
++        """Backend hook for dense recall, kept inside the ranking statement's snapshot."""
++        predicate, params = self._dense_filter_clause(op, where, filter_params)
++        return (
++            f'SELECT "id" AS _ov_candidate_id FROM {_quote_identifier(self._name)} '
++            f"WHERE {predicate} "
++            f'ORDER BY "vector" {op} %s::vector LIMIT %s',
++            [*params, vector_text, budget],
++        )
++
+     def search_ranked(
+         self,
+         index_name: str,
+@@ -505,24 +522,27 @@ def search_ranked(
+             for term, weight in sparse.items():
+                 params.extend([term, weight])
+         if has_dense:
+-            ctes.append(
+-                f'dense_candidates AS (SELECT "id" AS _ov_candidate_id FROM {table} '
+-                f'WHERE {condition} AND "vector" IS NOT NULL '
+-                f'ORDER BY "vector" {op} %s::vector LIMIT %s)'
++            dense_sql, dense_params = self._dense_candidate_query(
++                index_name, where, filter_params, vector_text, op, budget
+             )
+-            params.extend([*filter_params, vector_text, budget])
++            ctes.append(f"dense_candidates AS ({dense_sql})")
++            params.extend(dense_params)
+             candidate_selects.append("SELECT _ov_candidate_id FROM dense_candidates")
+         if has_sparse:
+-            vector_guard = ' AND "vector" IS NOT NULL' if has_dense else ""
++            sparse_predicate, sparse_params = (
++                self._dense_filter_clause(op, where, filter_params)
++                if has_dense
++                else (condition, list(filter_params))
++            )
+             ctes.append(
+                 f"sparse_candidates AS (SELECT p.id AS _ov_candidate_id FROM {postings} p "
+                 "JOIN query_sparse q ON p.term = q.term "
+                 f'WHERE EXISTS (SELECT 1 FROM {table} WHERE "id" = p.id '
+-                f"AND {condition}{vector_guard}) GROUP BY p.id "
++                f"AND {sparse_predicate}) GROUP BY p.id "
+                 "HAVING SUM(p.weight * q.weight) > 0 "
+                 "ORDER BY SUM(p.weight * q.weight) DESC, p.id LIMIT %s)"
+             )
+-            params.extend([*filter_params, budget])
++            params.extend([*sparse_params, budget])
+             candidate_selects.append("SELECT _ov_candidate_id FROM sparse_candidates")
+         ctes.append("candidates AS (" + " UNION ".join(candidate_selects) + ")")
+         distance_sql = (
+```
+
+**File**: `openviking/storage/vectordb_adapters/pgvector_adapter.py` (modified, +50/-2)
+```diff
+@@ -10,6 +10,7 @@
+ from __future__ import annotations
+ 
+ import json
++import math
+ import os
+ import re
+ import threading
+@@ -175,6 +176,48 @@ def upsert_data(self, data_list, ttl=0):
+             raise NotImplementedError("pgvector TTL writes are not supported")
+         return super().upsert_data(data_list, ttl=0)
+ 
++    def _dense_vector_guard(self, op):
++        # pgvector does not index cosine zero vectors. Exact fallback must use
++        # the same eligible set and avoid propagating their NaN distances.
++        guard = super()._dense_vector_guard(op)
++        return f"{guard} AND vector_norm(vector) > 0" if op == "<=>" else guard
++
++    def _dense_filter_clause(self, op, where, filter_params):
++        if op != "<=>" or not where:
++            return super()._dense_filter_clause(op, where, filter_params)
++        # SQL AND does not guarantee evaluation order. Keep the scalar predicate
++        # visible to indexes, but fence the TOAST-reading norm behind CASE.
++        return (
++            f'({where}) AND "vector" IS NOT NULL AND '
++            f"CASE WHEN ({where}) THEN vector_norm(vector) > 0 ELSE FALSE END",
++            [*filter_params, *filter_params],
++        )
++
++    def _dense_candidate_query(self, index_name, where, filter_params, vector_text, op, budget):
++        if op != "<=>":
++            return super()._dense_candidate_query(
++                index_name, where, filter_params, vector_text, op, budget
++            )
++        # PostgreSQL sorts NaN after finite distances in ascending order. Cosine
++        # zero vectors therefore cannot displace any eligible top-budget row.
++        # Filter after LIMIT to avoid norm/TOAST reads on scalar-rejected rows
++        # and a second vector read on scalar exact plans. HNSW itself omits zeros.
++        condition = f"({where}) AND " if where else ""
++        # PostgreSQL 16 cannot match a second sort key to the HNSW ordering.
++        # Keep candidate recall distance-only for ANN; final ranking sorts ties.
++        order = "_ov_distance"
++        if self._indexes[index_name]["_pg_index_type"] == "flat":
++            order += ", _ov_candidate_id"
++        return (
++            'SELECT _ov_candidate_id FROM (SELECT "id" AS _ov_candidate_id, '
++            f'"vector" {op} %s::vector AS _ov_distance '
++            f"FROM public.{_quote_identifier(self._name)} "
++            f'WHERE {condition}"vector" IS NOT NULL '
++            f"ORDER BY {order} LIMIT %s) _ov_native_candidates "
++            "WHERE _ov_distance <> 'NaN'::double precision",
++            [vector_text, *filter_params, budget],
++        )
++
+     def search_by_vector(
+         self,
+         index_name,
+@@ -207,6 +250,7 @@ def search_by_vector(
+             return SearchResult(data=[])
+         vector = _validate_vector(dense_vector, self._dim)
+         metric, op = self._resolve_distance_and_op(index_name)
++        vector_text = str(vector)
+         where, params = _build_where_clause(
+             self._normalize_filter_date_times(filters), self._array_fields
+         )
+@@ -215,13 +259,17 @@ def search_by_vector(
+             f"SELECT {self._select_output_columns(output_fields)}, "
+             f"vector {op} %s::vector AS _ov_distance "
+             f"FROM {_quote_identifier(self._name)} "
+-            f"WHERE {condition}vector IS NOT NULL "
++            f'WHERE {condition}"vector" IS NOT NULL '
+             f"ORDER BY vector {op} %s::vector, id LIMIT %s OFFSET %s",
+-            [str(vector), *params, str(vector), limit, offset],
++            [vector_text, *params, vector_text, limit, offset],
+             index_name,
+         )
+         items = []
+         for row in rows:
++            # NaN zero-vector distances sort last, so removing them after native
++            # pagination cannot drop an otherwise eligible result at this offset.
++            if metric == "cosine" and math.isnan(float(row[-1])):
++                continue
+             record = self._row_to_dict(row[:-1], columns[:-1])
+             items.append(
+                 SearchItemResult(
+```
+
+**File**: `tests/storage/test_pgvector_adapter.py` (modified, +229/-0)
+```diff
+@@ -492,6 +492,235 @@ def test_distance_metrics(adapter, metric):
+         other.close()
+ 
+ 
++def test_cosine_guard_never_reads_scalar_rejected_vectors(adapter):
++    adapter.upsert(
++        [
++            {"id": "mine", "vector": [1, 0, 0], "account_id": "one"},
++            {"id": "zero", "vector": [0, 0, 0], "account_id": "one"},
++            {"id": "foreign", "vector": [-1, 0, 0], "account_id": "two"},
++        ]
++    )
++    collection = adapter.get_collection()._Collection__collection
++    predicate, params = collection._dense_filter_clause("<=>", '"account_id" = %s', ["one"])
++    cursor = collection._cursor()
++    try:
++        # A cheap norm function lets the planner evaluate an ordinary AND before
++        # scalar filtering. CASE must protect scalar-rejected heap rows.
++        cursor.execute(
++            """CREATE FUNCTION pg_temp.ov_test_norm(v vector) RETURNS double precision
++               LANGUAGE plpgsql COST 0.0001 AS $$
++               BEGIN
++                 IF v = '[-1,0,0]'::vector THEN
++                   RAISE EXCEPTION 'read scalar-rejected vector';
++                 END IF;
++                 RETURN vector_norm(v);
++               END $$"""
++        )
++        cursor.execute("SET LOCAL enable_indexscan = off")
++        cursor.execute("SET LOCAL enable_bitmapscan = off")
++        cursor.execute(
++            f'SELECT id FROM "{adapter.collection_name}" WHERE '
++            + predicate.replace("vector_norm(vector)", "pg_temp.ov_test_norm(vector)"),
++            params,
++        )
++        assert cursor.fetchall() == [("mine",)]
++    finally:
++        collection._conn.rollback()
++        cursor.close()
++    assert [
++        r["id"]
++        for r in adapter.query(query_vector=[1, 0, 0], filter=Eq("account_id", "one"), limit=10)
++    ] == ["mine"]
++
++
++@pytest.mark.parametrize("offset", [0, 1, 2, 3])
++def test_cosine_zero_vectors_after_dense_pagination(adapter, offset):
++    adapter.upsert(
++        [
++            {"id": "first", "vector": [1, 0, 0], "account_id": "one"},
++            {"id": "second", "vector": [0, 1, 0], "account_id": "one"},
++            *[{"id": f"zero_{i}", "vector": [0, 0, 0], "account_id": "one"} for i in range(8)],
++        ]
++    )
++    expected = ["first", "second"][offset : offset + 3]
++    for advance in [None, {"time_decay": {"protection": "1d"}}]:
++        rows = adapter.query(
++            query_vector=[1, 0, 0],
++            filter=Eq("account_id", "one"),
++            limit=3,
++            offset=offset,
++            advance=advance,
++        )
++        assert [r["id"] for r in rows] == expected
++    assert adapter.query(query_vector=[0, 0, 0], filter=Eq("account_id", "one")) == []
++
++
++@pytest.mark.parametrize("depth", [-1, 0, 1])
++def test_cosine_zero_vectors_scoped_pagination_and_ranked(adapter, depth):
++    collection = adapter.get_collection()._Collection__collection
++    path = "viking://resources/目录_%"
++    records = [
++        {
++            "id": f"mine_{i:02d}",
++            "vector": [1, i / 10, 0],
++            "sparse_vector": {"hello": i + 1},
++            "uri": path if i == 0 else path + ("/sub" if i % 2 else "") + f"/f{i}",
++            "account_id": "one",
++            "search_tags": ["allowed"],
++            "updated_at": "2026-11-12T00:00:00Z",
++        }
++        for i in range(12)
++    ]
++    records += [
++        {
++            "id": "tenant",
++            "vector": [1, 0, 0],
++            "uri": path,
++            "account_id": "two",
++            "search_tags": ["allowed"],
++        },
++        {
++            "id": "acl",
++            "vector": [1, 0, 0],
++            "uri": path,
++            "account_id": "one",
++            "search_tags": ["denied"],
++        },
++        {
++            "id": "sibling",
++            "vector": [1, 0, 0],
++            "uri": path + "suffix/f",
++            "account_id": "one",
++            "search_tags": ["allowed"],
++        },
++        {"id": "null", "uri": path, "account_id": "one", "search_tags": ["allowed"]},
++        {
++            "id": "zero",
++            "vector": [0, 0, 0],
++            "sparse_vector": {"hello": 100},
++            "uri": path,
++            "account_id": "one",
++            "search_tags": ["allowed"],
++        },
++    ]
++    adapter.upsert(records)
++    scope = And(
++        [Eq("account_id", "one"), Eq("search_tags", "allowed"), PathScope("uri", path, depth)]
++    )
++    modes = [
++        {},
++        {"sparse_query_vector": {"hello": 1}},
++        {"advance": {"time_decay": {"protection": "1d", "origin": "2026-11-15T00:00:00Z"}}},
++    ]
++    for mode in modes:
++        actual = adapter.query(
++            query_vector=[1, 0, 0], filter=scope, limit=3, offset=1, output_fields=["uri"], **mode
++        )
++        # Flat search on the same table is the oracle even with a physical HNSW
++        # index. Restore metadata before the next query.
++        index_meta = collection._indexes["default"]
++        previous_type = index_meta["_pg_index_type"]
++        try:
++    
+```
+
+---
+
+### Incident Patch 3: `89a50ed9` (2026-11-25)
+**Commit Message**: fix(snapshot): 拒绝含反斜杠的分支名 (#8415)
+
+让快照分支名校验符合 Git ref 命名规则，在读取分支引用时拒绝非法输入。
+
+**File**: `crates/ragfs/src/git/util.rs` (modified, +3/-0)
+```diff
+@@ -36,6 +36,7 @@ pub fn validate_ref_name(ref_name: &str) -> Result<(), RefStoreError> {
+         || ref_name.contains('?')
+         || ref_name.contains('[')
+         || ref_name.contains('*')
++        || ref_name.contains('\\')
+     {
+         return Err(RefStoreError::InvalidName(
+             "ref name contains invalid characters".to_string(),
+@@ -204,6 +205,7 @@ mod tests {
+     fn test_validate_ref_name() {
+         assert!(validate_ref_name("refs/heads/main").is_ok());
+         assert!(validate_ref_name("refs/tags/v1.0").is_ok());
++        assert!(validate_ref_name("feature/topic").is_ok());
+         assert!(validate_ref_name("HEAD").is_ok());
+ 
+         assert!(validate_ref_name("").is_err());
+@@ -217,6 +219,7 @@ mod tests {
+         assert!(validate_ref_name("refs?head").is_err());
+         assert!(validate_ref_name("refs[head]").is_err());
+         assert!(validate_ref_name("refs*head").is_err());
++        assert!(validate_ref_name(r"feature\topic").is_err());
+     }
+ 
+     #[test]
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #8379** (closed): feat(retrieve): add RL query planner intent-analysis prompt (@Guoxuter)
-- **PR #8372** (2026-11-24): fix(acl): restore empty-string grant decoding on v0.5.2 (@chuanbao666)
-- **PR #8371** (2026-11-24): fix(acl): restore empty-string grant decoding (@chuanbao666)
-- **PR #8369** (2026-11-24): fix(react): 保持未知预览类型并修复前端测试 (@cocolord)
-- **PR #8367** (2026-11-24): test(react): 修复当前用户目录展开测试卡死 (@cocolord)
-- **PR #8363** (2026-11-24): feat(superagent): refresh the /tasks cards in place (@krsish)
+- **PR #8439** (2026-11-25): fix(studio):  disable arranger temporarily (@vikinglbx)
+- **PR #8436** (2026-11-25): feat(gateway): rotate the request log file hourly like the usage log (@t0saki)
+- **PR #8435** (closed): fix(sdk): exclude output archive from directory upload (@ktz03)
+- **PR #8433** (closed): fix(web-studio): preserve numeric values in JSON previews (@ktz03)
+- **PR #8430** (2026-11-25): feat(admin): freeze user agent files through account metadata (@MaojiaSheng)
+- **PR #8427** (closed): fix(cli): match Ollama models by full identity (@ktz03)
 
 ---
 
@@ -2209,31 +2156,58 @@ Co-authored-by: TRAE CLI <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. acl): restore empty-string grant decoding
+## X. plugins): session_history support across the memory plugins and two Claude Code 
 
 **RULE**:
-When implementing operations in `docs/en/concepts/15-acl.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in volcengine/OpenViking. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `agent-plugins/servers/shared/mcp-proxy-core.mjs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in volcengine/OpenViking. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e13f0441`: acl): restore empty-string grant decoding. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f905a91c`: plugins): session_history support across the memory plugins and two Claude Code capture fixes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/en/concepts/15-acl.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `agent-plugins/servers/shared/mcp-proxy-core.mjs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-An empty grants list is stored as `["none"]` and decoded as no grants. The `"none"` token must appear alone and never grants access. Exact empty-string elements introduced by offline indexes are ignored on reads; other invalid grant tokens are rejected. This storage marker is independent of `acl_mode`: clearing direct grants preserves the mode and any inherited permissions.
+const SESSION_HISTORY_TOOL = "session_history";
+  // (params) => the OV session id of the host session making this tools/call,
+  // or "" when the harness cannot tell; fills `session_history`'s `session`.
+  defaultHistorySession = null,
+  // A `session` the model passed is kept as is, even one this proxy would not
+  // have chosen; only a missing or blank one is filled.
+  function withDefaultHistorySession(message) {
+    if (
+      typeof defaultHistorySession !== "function"
+      || message.method !== "tools/call"
+      || message.params?.name !== SESSION_HISTORY_TOOL
+    ) {
+      return message;
+    }
+    const args = message.params.arguments;
+    const given = args && typeof args === "object" ? args.session : undefined;
+    if (given != null && (typeof given !== "string" || given.trim())) return message;
+    let session = "";
+    try {
+      session = String(defaultHistorySession(message.params) || "").trim();
+    } catch (err) {
+      logError("default_history_session", err);
+    }
+    log("default_history_session", { filled: Boolean(session) });
+    if (!session) return message;
+    return {
+      ...message,
+      params: { ...message.params, arguments: { ...(args || {}), se
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Induced defect failure mode:
-An empty grants list is stored as `["none"]` and decoded as no grants. The `"none"` token must appear alone and never grants access. This storage marker is independent of `acl_mode`: clearing direct grants preserves the mode and any inherited permissions.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e13f0441` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f905a91c` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

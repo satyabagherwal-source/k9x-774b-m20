@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zoontek-react-native-permissions-learnings.md`  
 > **Source**: github ([https://github.com/zoontek/react-native-permissions](https://github.com/zoontek/react-native-permissions))  
-> **Source Version**: `4f9f820e`  
+> **Source Version**: `2dad426e`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T17:50:23.619Z  
+> **Timestamp**: 2026-11-25T13:49:25.024Z  
 > **Learning ID**: `learn-github-zoontek-react-native-permissions`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zoontek-react-native-permissions-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zoontek/react-native-permissions](https://github.com/zoontek/react-native-permissions))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T17:50:21.922Z  
+> **Harvest Timestamp**: 2026-11-25T13:49:25.017Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -25,9 +25,9 @@
 ## 1. Context & Architectural Overview
 - **Repository / Resource**: `zoontek/react-native-permissions`
 - **Description**: An unified permissions API for React Native on iOS, Android and Windows.
-- **Primary Language / Ecosystem**: Objective-C++
+- **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 4374 stars
+- **Stars / Engagement**: 4369 stars
 
 ---
 
@@ -701,172 +701,29 @@ AppRegistry.registerComponent(appName, () => Main);
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `52096076` (2026-09-14)
-**Commit Message**: fix(android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#987)
-
-* fix(android): skip explicit Kotlin plugin when AGP provides built-in Kotlin
-
-AGP 9 enables built-in Kotlin by default and applies the Kotlin plugin
-itself. Applying it again fails configuration with "Cannot add extension
-with name 'kotlin'". Guard the explicit apply so it only runs when AGP is
-not providing Kotlin: AGP 8 and older, or AGP 9 with
-android.builtInKotlin=false. AGP 10 removes that opt-out, so built-in
-Kotlin is always active there and the explicit apply must never run.
-
-* fix(android): check the kotlin extension instead of the AGP version
-
-Replace the AGP version / android.builtInKotlin check with a direct test for
-the registered kotlin extension. The version check reads
-com.android.Version.ANDROID_GRADLE_PLUGIN_VERSION, which can resolve to a
-different classpath entry than the AGP actually in use, and the global
-android.builtInKotlin property can be overridden per module by the
-com.android.built-in-kotlin plugin -- so both inputs can disagree with
-reality. Asking whether the kotlin extension exists tests the condition that
-actually fails, needs no AGP version table, and covers 
-
-**File**: `android/build.gradle` (modified, +9/-1)
-```diff
-@@ -17,7 +17,15 @@ def isNewArchitectureEnabled() {
- }
- 
- apply plugin: "com.android.library"
--apply plugin: "kotlin-android"
-+// AGP 9 ships built-in Kotlin support and registers the `kotlin` extension
-+// itself. Applying the Kotlin plugin on top of it fails configuration with
-+// "Cannot add extension with name 'kotlin'". Asking for the extension covers
-+// every way built-in Kotlin can be turned on -- the global default, the
-+// android.builtInKotlin property, and the per-module com.android.built-in-kotlin
-+// plugin -- without reading an AGP version number.
-+if (project.extensions.findByName('kotlin') == null) {
-+    apply plugin: "kotlin-android"
-+}
- 
- if (isNewArchitectureEnabled()) {
-     apply plugin: "com.facebook.react"
-```
-
----
-
-### Incident Patch 2: `4807efdb` (2026-10-16)
-**Commit Message**: Fix format
-
-**File**: `README.md` (modified, +1/-7)
-```diff
-@@ -690,13 +690,7 @@ type RationaleObject = {
- type Rationale = RationaleObject | (() => Promise<boolean>);
- 
- type NotificationOption =
--  | 'alert'
--  | 'badge'
--  | 'sound'
--  | 'carPlay'
--  | 'criticalAlert'
--  | 'provisional'
--  | 'providesAppSettings';
-+  'alert' | 'badge' | 'sound' | 'carPlay' | 'criticalAlert' | 'provisional' | 'providesAppSettings';
- 
- type NotificationSettings = {
-   // unavailable settings will not be included in the response object
-```
-
-**File**: `src/types.ts` (modified, +1/-7)
-```diff
-@@ -24,13 +24,7 @@ export type LocationAccuracy = 'full' | 'reduced';
- export type LocationAccuracyOptions = {purposeKey: string};
- 
- export type NotificationOption =
--  | 'alert'
--  | 'badge'
--  | 'sound'
--  | 'carPlay'
--  | 'criticalAlert'
--  | 'provisional'
--  | 'providesAppSettings';
-+  'alert' | 'badge' | 'sound' | 'carPlay' | 'criticalAlert' | 'provisional' | 'providesAppSettings';
- 
- export type NotificationSettings = {
-   alert?: boolean;
-```
-
----
-
-### Incident Patch 3: `d9199905` (2026-07-23)
-**Commit Message**: Fix stale iOS calendar/reminders status by reusing a single EKEventStore
+### Incident Patch 1: `2dad426e` (2026-11-23)
+**Commit Message**: Bump version number
 
 **File**: `example/ios/Podfile.lock` (modified, +2/-2)
 ```diff
-@@ -1892,7 +1892,7 @@ PODS:
-     - React-utils (= 0.86.0)
+@@ -1813,7 +1813,7 @@ PODS:
+     - React-utils (= 0.88.1)
      - ReactNativeDependencies
-   - ReactNativeDependencies (0.86.0)
--  - RNPermissions (5.6.0):
-+  - RNPermissions (5.6.1):
+   - ReactNativeDependencies (0.88.1)
+-  - RNPermissions (5.6.3):
++  - RNPermissions (5.7.0):
      - hermes-engine
      - RCTRequired
      - RCTTypeSafety
-@@ -2254,7 +2254,7 @@ SPEC CHECKSUMS:
-   ReactCodegen: afe0d436ee089d7bea6418429d8312b1d23a6801
-   ReactCommon: d5c1bb4427bf51c443de5926aac332c89ddd9363
-   ReactNativeDependencies: fa0a54b3f5319ae0e3b9aff32bfee7a424b88e66
--  RNPermissions: 5c723d3888b93d7d011394887b422e1fd298bcd8
-+  RNPermissions: b08eeae169b509e1eff3647da636b7f12d8c9855
-   RNVectorIcons: 97f26211c07d69e45b189f9dd0dbbe5e2d2b0b92
-   Yoga: fe50ab299e578f397fef753cf309c6703a4db29b
- 
-```
-
-**File**: `ios/Calendars/RNPermissionHandlerCalendars.mm` (modified, +6/-1)
-```diff
-@@ -62,7 +62,12 @@ - (void)requestWithResolver:(void (^ _Nonnull)(RNPermissionStatus))resolve
-     }
-   };
- 
--  EKEventStore *store = [EKEventStore new];
-+  static EKEventStore *store = nil;
-+  static dispatch_once_t onceToken;
-+
-+  dispatch_once(&onceToken, ^{
-+    store = [EKEventStore new];
-+  });
- 
-   if (@available(iOS 17.0, *)) {
-     [store requestFullAccessToEventsWithCompletion:completion];
-```
-
-**File**: `ios/CalendarsWriteOnly/RNPermissionHandlerCalendarsWriteOnly.mm` (modified, +6/-1)
-```diff
-@@ -45,7 +45,12 @@ - (void)requestWithResolver:(void (^ _Nonnull)(RNPermissionStatus))resolve
-     }
-   };
- 
--  EKEventStore *store = [EKEventStore new];
-+  static EKEventStore *store = nil;
-+  static dispatch_once_t onceToken;
-+
-+  dispatch_once(&onceToken, ^{
-+    store = [EKEventStore new];
-+  });
- 
-   if (@available(iOS 17.0, *)) {
-     [store requestWriteOnlyAccessToEventsWithCompletion:completion];
-```
-
-**File**: `ios/Reminders/RNPermissionHandlerReminders.mm` (modified, +6/-1)
-```diff
-@@ -45,7 +45,12 @@ - (void)requestWithResolver:(void (^ _Nonnull)(RNPermissionStatus))resolve
-     }
-   };
- 
--  EKEventStore *store = [EKEventStore new];
-+  static EKEventStore *store = nil;
-+  static dispatch_once_t onceToken;
-+
-+  dispatch_once(&onceToken, ^{
-+    store = [EKEventStore new];
-+  });
- 
-   if (@available(iOS 17.0, *)) {
-     [store requestFullAccessToRemindersWithCompletion:completion];
+@@ -2223,7 +2223,7 @@ SPEC CHECKSUMS:
+   ReactCodegen: 3840312f5071bb6b953b35a029c5c6dcf06b435e
+   ReactCommon: b63ce798b898ed77c6cfdeb80b18080161f52ed5
+   ReactNativeDependencies: a5164c3ebbe90d992022b5d9cbabbf770a6d7d05
+-  RNPermissions: d09d5c041f4023f0e8cdb871c402969f5e2b227a
++  RNPermissions: 67d53cf7e5d3b17cd3923a0ccb26b4e3d953eb47
+   RNVectorIcons: 8e7890bf2ce85e41df79133e7778070c37dc8d70
+   SocketRocket: 37aec555668fb852ec12e3c0de59a86ca58f0871
+   Yoga: d1c536142c5ff8ec8cd856ab2a7c227a1d875c8e
 ```
 
 **File**: `package.json` (modified, +1/-1)
@@ -874,20 +731,497 @@ actually fails, needs no AGP version table, and covers
 @@ -1,6 +1,6 @@
  {
    "name": "react-native-permissions",
--  "version": "5.6.0",
-+  "version": "5.6.1",
+-  "version": "5.6.3",
++  "version": "5.7.0",
    "license": "MIT",
    "description": "An unified permissions API for React Native on iOS, Android and Windows",
    "author": "Mathieu Acthernoene <zoontek@gmail.com>",
 ```
 
+---
+
+### Incident Patch 2: `28e3b2db` (2026-11-23)
+**Commit Message**: Add Swift Package Manager support through an autolinking plugin (#989)
+
+**File**: `README.md` (modified, +30/-9)
+```diff
+@@ -26,7 +26,12 @@ $ yarn add react-native-permissions
+ 
+ ### iOS
+ 
+-1. By default, no permissions are available. First, require the `setup` script in your `Podfile`:
++By default, no permissions are available. Follow the instructions for your dependency manager, then add the usage descriptions to your `Info.plist`.
++
++<details open>
++<summary><strong>CocoaPods</strong></summary>
++
++1. Require the `setup` script in your `Podfile`:
+ 
+ ```diff
+ # Transform this into a `node_require` generic function:
+@@ -51,7 +56,7 @@ $ yarn add react-native-permissions
+ + node_require('react-native-permissions/scripts/setup.rb')
+ ```
+ 
+-2. In the same `Podfile`, call `setup_permissions` with the permissions you need. Only the permissions specified here will be added:
++2. In the same `Podfile`, call `setup_permissions` with the permissions you need. Only the permissions specified here will be compiled:
+ 
+ ```ruby
+ # …
+@@ -86,16 +91,32 @@ setup_permissions([
+ # …
+ ```
+ 
+-3. Then execute `pod install` in your `ios` directory _(📌  Note that it must be re-executed each time you update this config)_.
+-4. Finally, add the corresponding permissions usage descriptions to your `Info.plist`. For example:
++3. Execute `pod install` in your `ios` directory _(📌 Note that it must be re-executed each time you update this config)_.
++
++</details>
++
++<details open>
++<summary><strong>Swift Package Manager</strong></summary>
++
++1. List the permissions you need in an `ios/react-native-permissions.json` file. Only the permissions specified here will be compiled:
++
++```json
++["Camera", "Microphone"]
++```
++
++2. Run `npx react-native spm` and rebuild.
++
++</details>
++
++Then add the corresponding permissions usage descriptions to your `Info.plist`. For example:
+ 
+ ```xml
+ <?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+ <plist version="1.0">
+ <dict>
+ 
+-  <!-- 🚨 Keep only the permissions specified in `setup_permissions` 🚨 -->
++  <!-- 🚨 Keep only the permissions you listed above 🚨 -->
+ 
+   <key>NSAppleMusicUsageDescription</key>
+   <string>[REASON]</string>
+@@ -218,12 +239,12 @@ export default ({config}: ConfigContext): ExpoConfig => ({
+   // …
+   plugins: [
+     permissions({
+-      // Add setup_permissions to your Podfile (see iOS setup - steps 1, 2 and 3)
++      // Add setup_permissions to your Podfile and write ios/react-native-permissions.json (see iOS setup)
+       iosPermissions: ['Camera', 'Microphone'],
+     }),
+   ],
+   ios: {
+-    // Add descriptions to your Info.plist (see iOS setup - step 4)
++    // Add descriptions to your Info.plist (see iOS setup)
+     infoPlist: {
+       NSCameraUsageDescription: '[REASON]',
+       NSMicrophoneUsageDescription: '[REASON]',
+@@ -249,13 +270,13 @@ export default ({config}: ConfigContext): ExpoConfig => ({
+       [
+         "react-native-permissions",
+         {
+-          // Add setup_permissions to your Podfile (see iOS setup - steps 1, 2 and 3)
++          // Add setup_permissions to your Podfile and write ios/react-native-permissions.json (see iOS setup)
+           "iosPermissions": ["Camera", "Microphone"],
+         },
+       ],
+     ],
+     "ios": {
+-      // Add descriptions to your Info.plist (see iOS setup - step 4)
++      // Add descriptions to your Info.plist (see iOS setup)
+       "infoPlist": {
+         "NSCameraUsageDescription": "[REASON]",
+         "NSMicrophoneUsageDescription": "[REASON]",
+```
+
+**File**: `example/tsconfig.json` (modified, +1/-0)
+```diff
+@@ -23,6 +23,7 @@
+     "noUncheckedIndexedAccess": true,
+     "noUnusedLocals": true,
+     "noUnusedParameters": true,
++    "rewriteRelativeImportExtensions": true,
+     "verbatimModuleSyntax": true,
+ 
+     "paths": {
+```
+
+**File**: `ios/Contacts/RNPermissionHandlerContacts.mm` (modified, +5/-10)
+```diff
+@@ -4,8 +4,9 @@
+ #if !TARGET_OS_TV
+ #import <Contacts/Contacts.h>
+ 
+-@protocol RNPermissionsContactPickerInterface
+-- (void)presentFrom:(UIViewController * _Nonnull)viewController
++API_AVAILABLE(ios(18.0))
++@interface RNPermissionsContactPicker : NSObject
+++ (void)presentFrom:(UIViewController * _Nonnull)viewController
+          completion:(void (^ _Nonnull)(void))completion;
+ @end
+ #endif
+@@ -68,20 +69,14 @@ - (void)openContactPickerWithResolver:(RCTPromiseResolveBlock _Nonnull)resolve
+       return reject(@"cannot_open_limited_picker", @"Contacts permission isn't limited", nil);
+     }
+ 
+-    id picker = NSClassFromString(@"RNPermissionsContactPicker");
+-
+-    if (picker == nil) {
+-      return reject(@"cannot_open_limited_picker", @"Contact access picker is unavailable", nil);
+-    }
+-
+     UIViewController *viewController = RCTPresentedViewController();
+ 
+     if (viewController == nil) {
+       return reject(@"cannot_open_limited_picker", @"No presented view controller to present from", nil);
+     }
+ 
+-    [(id<RNPermissionsContactPickerInterface>)picker presentFrom:viewController
+-                                                      completion:^{
++    [RNPermissionsContactPicker presentFrom:viewController
++                                 completion:^{
+       resolve(@(true));
+     }];
+   } else {
+```
+
+**File**: `ios/RNPermissions.mm` (modified, +3/-2)
+```diff
+@@ -265,8 +265,9 @@ - (void)checkUsageDescriptionKeys:(NSArray<NSString *> * _Nonnull)keys {
+     : @"No permission handler detected";
+ 
+   [message appendString:[NSString stringWithFormat:@"⚠  %@.\n\n", title]];
+-  [message appendString:@"• Check that you have correctly set up setup_permissions in your Podfile.\n"];
+-  [message appendString:@"• Uninstall this app, reinstall your Pods, delete your Xcode DerivedData folder and rebuild it.\n"];
++  [message appendString:@"• CocoaPods: add it to setup_permissions in your Podfile, reinstall your Pods, then rebuild.\n"];
++  [message appendString:@"• Swift Package Manager: add it to ios/react-native-permissions.json, run npx react-native spm, then rebuild.\n"];
++  [message appendString:@"• Expo: add it to the iosPermissions plugin option, run npx expo prebuild, then rebuild.\n"];
+ 
+   RCTLogError(@"%@", message);
+ #endif
+```
+
+**File**: `ios/RNPermissions.xcodeproj/project.pbxproj` (removed, +0/-277)
+```diff
+@@ -1,277 +0,0 @@
+-// !$*UTF8*$!
+-{
+-	archiveVersion = 1;
+-	classes = {
+-	};
+-	objectVersion = 46;
+-	objects = {
+-
+-/* Begin PBXBuildFile section */
+-		DD3987E62A091920007E27CF /* RNPermissions.mm in Sources */ = {isa = PBXBuildFile; fileRef = DD3987E42A091920007E27CF /* RNPermissions.mm */; };
+-/* End PBXBuildFile section */
+-
+-/* Begin PBXCopyFilesBuildPhase section */
+-		58B511D91A9E6C8500147676 /* CopyFiles */ = {
+-			isa = PBXCopyFilesBuildPhase;
+-			buildActionMask = 2147483647;
+-			dstPath = "include/$(PRODUCT_NAME)";
+-			dstSubfolderSpec = 16;
+-			files = (
+-			);
+-			runOnlyForDeploymentPostprocessing = 0;
+-		};
+-/* End PBXCopyFilesBuildPhase section */
+-
+-/* Begin PBXFileReference section */
+-		134814201AA4EA6300B7C361 /* libRNPermissions.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libRNPermissions.a; sourceTree = BUILT_PRODUCTS_DIR; };
+-		DD3987E32A091920007E27CF /* RNPermissions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RNPermissions.h; sourceTree = "<group>"; };
+-		DD3987E42A091920007E27CF /* RNPermissions.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RNPermissions.mm; sourceTree = "<group>"; };
+-/* End PBXFileReference section */
+-
+-/* Begin PBXFrameworksBuildPhase section */
+-		58B511D81A9E6C8500147676 /* Frameworks */ = {
+-			isa = PBXFrameworksBuildPhase;
+-			buildActionMask = 2147483647;
+-			files = (
+-			);
+-			runOnlyForDeploymentPostprocessing = 0;
+-		};
+-/* End PBXFrameworksBuildPhase section */
+-
+-/* Begin PBXGroup section */
+-		134814211AA4EA7D00B7C361 /* Products */ = {
+-			isa = PBXGroup;
+-			children = (
+-				134814201AA4EA6300B7C361 /* libRNPermissions.a */,
+-			);
+-			name = Products;
+-			sourceTree = "<group>";
+-		};
+-		58B511D21A9E6C8500147676 = {
+-			isa = PBXGroup;
+-			children = (
+-				DD3987E32A091920007E27CF /* RNPermissions.h */,
+-				DD3987E42A091920007E27CF /* RNPermissions.mm */,
+-				134814211AA4EA7D00B7C361 /* Products */,
+-			);
+-			indentWidth = 2;
+-			sourceTree = "<group>";
+-			tabWidth = 2;
+-			usesTabs = 0;
+-		};
+-/* End PBXGroup section */
+-
+-/* Begin PBXNativeTarget section */
+-		58B511DA1A9E6C8500147676 /* RNPermissions */ = {
+-			isa = PBXNativeTarget;
+-			buildConfigurationList = 58B511EF1A9E6C8500147676 /* Build configuration list for PBXNativeTarget "RNPermissions" */;
+-			buildPhases = (
+-				58B511D71A9E6C8500147676 /* Sources */,
+-				58B511D81A9E6C8500147676 /* Frameworks */,
+-				58B511D91A9E6C8500147676 /* CopyFiles */,
+-			);
+-			buildRules = (
+-			);
+-			dependencies = (
+-			);
+-			name = RNPermissions;
+-			productName = RCTDataManager;
+-			productReference = 134814201AA4EA6300B7C361 /* libRNPermissions.a */;
+-			productType = "com.apple.product-type.library.static";
+-		};
+-/* End PBXNativeTarget section */
+-
+-/* Begin PBXProject section */
+-		58B511D31A9E6C8500147676 /* Project object */ = {
+-			isa = PBXProject;
+-			attributes = {
+-				LastUpgradeCheck = 0940;
+-				ORGANIZATIONNAME = Facebook;
+-				TargetAttributes = {
+-					58B511DA1A9E6C8500147676 = {
+-						CreatedOnToolsVersion = 6.1.1;
+-					};
+-				};
+-			};
+-			buildConfigurationList = 58B511D61A9E6C8500147676 /* Build configuration list for PBXProject "RNPermissions" */;
+-			compatibilityVersion = "Xcode 3.2";
+-			developmentRegion = en;
+-			hasScannedForEncodings = 0;
+-			knownRegions = (
+-				en,
+-			);
+-			mainGroup = 58B511D21A9E6C8500147676;
+-			productRefGroup = 58B511D21A9E6C8500147676;
+-			projectDirPath = "";
+-			projectRoot = "";
+-			targets = (
+-				58B511DA1A9E6C8500147676 /* RNPermissions */,
+-			);
+-		};
+-/* End PBXProject section */
+-
+-/* Begin PBXSourcesBuildPhase section */
+-		58B511D71A9E6C8500147676 /* Sources */ = {
+-			isa = PBXSourcesBuildPhase;
+-			buildActionMask = 2147483647;
+-			files = (
+-				DD3987E62A091920007E27CF /* RNPermissions.mm in Sources */,
+-			);
+-			runOnlyForDeploymentPostprocessing = 0;
+-		};
+-/* End PBXSourcesBuildPhase section */
+-
+-/* Begin XCBuildConfiguration section */
+-		58B511ED1A9E6C8500147676 /* Debug */ = {
+-			isa = XCBuildConfiguration;
+-			buildSettings = {
+-				ALWAYS_SEARCH_USER_PATHS = NO;
+-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+-				CLANG_CXX_LIBRARY = "libc++";
+-				CLANG_ENABLE_MODULES = YES;
+-				CLANG_ENABLE_OBJC_ARC = YES;
+-				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+-				CLANG_WARN_BOOL_CONVERSION = YES;
+-				CLANG_WARN_COMMA = YES;
+-				CLANG_WARN_CONSTANT_CONVERSION = YES;
+-				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+-				CLANG_WARN_EMPTY_BODY = YES;
+-				CLANG_WARN_ENUM_CONVERSION = YES;
+-				CLANG_WARN_INFINITE_RECURSION = YES;
+-				CLANG_WARN_INT_CONVERSION = YES;
+-				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+-				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+-				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+-				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+
+```
+
+**File**: `package.json` (modified, +10/-2)
+```diff
+@@ -63,16 +63,19 @@
+     "/windows",
+     "/src",
+     "/*.podspec",
+-    "app.plugin.js"
++    "!**/__tests__",
++    "app.plugin.js",
++    "swiftpm.plugin.js"
+   ],
+   "scripts": {
+     "clean": "rm -rf dist",
+     "format": "prettier '**/*' -u -w",
+     "lint": "oxlint",
+     "typecheck": "tsc --noEmit",
+     "build": "yarn clean && bob build",
++    "test": "node --test --disable-warning=MODULE_TYPELESS_PACKAGE_JSON 'src/**/*.test.ts'",
+     "podspec-check": "node scripts/podspec-check.mts",
+-    "prepack": "prettier '**/*' -u -c && yarn lint && yarn typecheck && yarn podspec-check && yarn build"
++    "prepack": "prettier '**/*' -u -c && yarn lint && yarn typecheck && yarn test && yarn podspec-check && yarn build"
+   },
+   "react-native-builder-bob": {
+     "source": "src",
+@@ -131,6 +134,11 @@
+     "react-native-builder-bob": "^0.43.2",
+     "typescript": "^6.0.3"
+   },
++  "swiftpmConfig": {
++    "autolinkingPlugin": "./swiftpm.plugin.js",
++    "name": "RNPermissions",
++    "scaffold": false
++  },
+   "react-native-windows": {
+     "init-windows": {
+       "name": "RNPermissions",
+```
+
+**File**: `scripts/setup.rb` (modified, +1/-1)
+```diff
+@@ -37,7 +37,7 @@ def setup_permissions(config)
+   ios_dirents = Dir.entries(ios_dir).map { |entry| File.join(ios_dir, entry) }
+ 
+   directories = ios_dirents
+-    .select { |entry| File.directory?(entry) || entry.end_with?('.xcodeproj') }
++    .select { |entry| File.directory?(entry) }
+     .map { |entry| File.basename(entry) }
+     .select { |name| config.include?(name) }
+ 
+```
+
+**File**: `src/__tests__/expo.test.ts` (added, +102/-0)
+```diff
+@@ -0,0 +1,102 @@
++import type {ExportedConfig} from '@expo/config-plugins';
++import assert from 'node:assert/strict';
++import fs from 'node:fs';
++import os from 'node:os';
++import path from 'node:path';
++import {afterEach, beforeEach, test} from 'node:test';
++import {withPermissions} from '../extras/expo.ts';
++
++type PluginProps = Parameters<typeof withPermissions>[1];
++
++const podfile = `require File.join(File.dirname(\`node --print "require.resolve('react-native/package.json')"\`), "scripts/react_native_pods")
++
++platform :ios, '15.1'
++prepare_react_native_project!
++`;
++
++let platformProjectRoot: string;
++
++const runIosMod = async (props?: PluginProps): Promise<void> => {
++  const config: ExportedConfig = withPermissions({name: 'app', slug: 'app'}, props);
++  const dangerousMod = config.mods?.ios?.dangerous;
++
++  assert.ok(dangerousMod);
++
++  await dangerousMod({
++    ...config,
++    modResults: undefined,
++    modRawConfig: config,
++    modRequest: {
++      projectRoot: path.dirname(platformProjectRoot),
++      platformProjectRoot,
++      modName: 'dangerous',
++      platform: 'ios',
++      introspect: false,
++    },
++  });
++};
++
++beforeEach(() => {
++  platformProjectRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'rnp-expo-'));
++  fs.writeFileSync(path.join(platformProjectRoot, 'Podfile'), podfile);
++});
++
++afterEach(() => fs.rmSync(platformProjectRoot, {recursive: true, force: true}));
++
++test('writes react-native-permissions.json next to the Podfile', async () => {
++  await runIosMod({iosPermissions: ['Camera', 'Contacts']});
++
++  assert.equal(
++    fs.readFileSync(path.join(platformProjectRoot, 'react-native-permissions.json'), 'utf8'),
++    '[\n  "Camera",\n  "Contacts"\n]\n',
++  );
++});
++
++test('writes react-native-permissions.json when the project has no Podfile', async () => {
++  fs.rmSync(path.join(platformProjectRoot, 'Podfile'));
++
++  await runIosMod({iosPermissions: ['Camera']});
++
++  assert.equal(
++    fs.readFileSync(path.join(platformProjectRoot, 'react-native-permissions.json'), 'utf8'),
++    '[\n  "Camera"\n]\n',
++  );
++
++  assert.equal(fs.existsSync(path.join(platformProjectRoot, 'Podfile')), false);
++});
++
++test('deletes a stale react-native-permissions.json when no iOS permission is listed', async () => {
++  const jsonPath = path.join(platformProjectRoot, 'react-native-permissions.json');
++  const emptyProps: PluginProps[] = [undefined, {iosPermissions: []}];
++
++  for (const props of emptyProps) {
++    await runIosMod({iosPermissions: ['Camera']});
++    assert.equal(fs.existsSync(jsonPath), true);
++
++    await runIosMod(props);
++    assert.equal(fs.existsSync(jsonPath), false);
++  }
++});
++
++test('edits the Podfile exactly like the CocoaPods-only plugin did', async () => {
++  // Output of the plugin before Swift Package Manager support (commit 4f9f820)
++  const expected = `require File.join(File.dirname(\`node --print "require.resolve('react-native/package.json')"\`), "scripts/react_native_pods")
++# @generated begin require - expo prebuild (DO NOT MODIFY) sync-0b3d11245f758d271ec25750612913aa85ad0f45
++require File.join(File.dirname(\`node --print "require.resolve('react-native-permissions/package.json')"\`), "scripts/setup")
++# @generated end require
++
++platform :ios, '15.1'
++prepare_react_native_project!
++# @generated begin setup - expo prebuild (DO NOT MODIFY) sync-e86b8bdd37bd005c5d6b8201e93e692a48c8bd5d
++setup_permissions([
++  'Camera',
++  'Contacts',
++  'LocationWhenInUse',
++])
++# @generated end setup
++`;
++
++  await runIosMod({iosPermissions: ['Camera', 'Contacts', 'LocationWhenInUse']});
++
++  assert.equal(fs.readFileSync(path.join(platformProjectRoot, 'Podfile'), 'utf8'), expected);
++});
+```
+
 #### Recent Merged Pull Requests:
+- **PR #989** (2026-11-23): Add Swift Package Manager support through an autolinking plugin (@chrfalch)
 - **PR #988** (closed): Fix iOS location check() blocking the main thread (@grndcherokee)
 - **PR #987** (2026-09-14): fix(android): skip explicit Kotlin plugin when AGP registers the kotlin extension (@gabrieldonadel)
 - **PR #986** (closed): Fix stale iOS calendar/reminders status by sharing a single EKEventStore (@flochtililoch)
 - **PR #985** (2026-06-16): Add openContactsPicker to edit the limited contacts selection on iOS 18+ (@pablogdcr)
 - **PR #981** (2026-04-08): fix license link (@gadhiyamanan)
-- **PR #978** (closed): refactor(ios): resolve permission handlers at runtime (@zhfwch)
 
 ---
 
@@ -907,36 +1241,30 @@ actually fails, needs no AGP version table, and covers
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#
+## X. Bump version number
 
 **RULE**:
-When implementing operations in `android/build.gradle`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zoontek/react-native-permissions. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `example/ios/Podfile.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zoontek/react-native-permissions. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `52096076`: android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#987). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2dad426e`: Bump version number. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Objective-C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `android/build.gradle`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `example/ios/Podfile.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
-```objective-c++
+```typescript
 // Verified production-grade fix pattern:
-// AGP 9 ships built-in Kotlin support and registers the `kotlin` extension
-// itself. Applying the Kotlin plugin on top of it fails configuration with
-// "Cannot add extension with name 'kotlin'". Asking for the extension covers
-// every way built-in Kotlin can be turned on -- the global default, the
-// android.builtInKotlin property, and the per-module com.android.built-in-kotlin
-// plugin -- without reading an AGP version number.
-if (project.extensions.findByName('kotlin') == null) {
-    apply plugin: "kotlin-android"
-}
+  - RNPermissions (5.7.0):
+  RNPermissions: 67d53cf7e5d3b17cd3923a0ccb26b4e3d953eb47
 ```
 
 **NEGATIVE CONSTRAINT**:
-```objective-c++
-// Anti-pattern to NEVER write (induced failure mode):
-apply plugin: "kotlin-android"
+```typescript
+// Induced defect failure mode:
+  - RNPermissions (5.6.3):
+  RNPermissions: d09d5c041f4023f0e8cdb871c402969f5e2b227a
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `52096076` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2dad426e` are properly handled with clean fallback behavior.

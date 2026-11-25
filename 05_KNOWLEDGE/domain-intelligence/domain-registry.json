@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T13:40:10.382Z",
-  "total_records": 2674,
+  "last_updated": "2026-11-25T13:49:40.809Z",
+  "total_records": 2675,
   "domains": {
     "A": {
       "total": 22,
@@ -1676,7 +1676,7 @@
       ]
     },
     "H": {
-      "total": 637,
+      "total": 638,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -2314,7 +2314,8 @@
         "domain_intelligence-technical-construction-intelligence-ratatui-ratatui-core-invariants",
         "domain_intelligence-technical-construction-intelligence-ratatui-ratatui-learnings-core-invariants",
         "DOM-H-64682323",
-        "DOM-H-2010FB8D"
+        "DOM-H-2010FB8D",
+        "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari"
       ]
     },
     "I": {
@@ -9251,8 +9252,8 @@
       "title": "Technical Construction Intelligence: volcengine/OpenViking Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-volcengine-openviking-technical-construction-intelligence-volcengine-openviking-.md",
       "repository": "volcengine/OpenViking",
-      "content_hash": "daad9aad58800ca130c42cc935aeea47466e43c64047abebcafb0d03178bbd28",
-      "created_at": "2026-11-24T18:34:34.037Z"
+      "content_hash": "2b4bb5cc8df13d6c873bdb28de6d4aa41f9a761bb2e2750b00f2351fa3dd8cf7",
+      "created_at": "2026-11-25T13:49:35.189Z"
     },
     "DOM-D-E243BB51": {
       "record_id": "DOM-D-E243BB51",
@@ -9692,8 +9693,8 @@
       "title": "Research & Knowledge Intelligence: Efficient-Large-Model/Open-H3-Regenerate-2K Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-efficient-large-model-open-h3-regenerate-2k-research-knowledge-intelligence-e.md",
       "repository": "Efficient-Large-Model/Open-H3-Regenerate-2K",
-      "content_hash": "eb49e214525556de89eb97ab3c1ee349d5506d9de3f5d6c4e8b4d399d69ed9d5",
-      "created_at": "2026-11-21T22:40:04.553Z"
+      "content_hash": "edc5d913df021d8722f8ab6beb62b255705064627d51c1b874ab7443a4d5e3cf",
+      "created_at": "2026-11-25T13:49:19.391Z"
     },
     "domain_intelligence-technical-construction-intelligence-milvus-io-milvus-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-milvus-io-milvus-core-invariants",
@@ -9752,8 +9753,8 @@
       "title": "Research & Knowledge Intelligence: hf-efficient-large-model-open-h3-regenerate-2k-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-efficient-large-model-open-h3-regenerate-2k-learnings-research-knowledge-inte.md",
       "repository": "hf-efficient-large-model-open-h3-regenerate-2k-learnings",
-      "content_hash": "f339159566a62acc9aa08f28001a5edc2a5dc30c1c20a80542d1ce3d8946c45b",
-      "created_at": "2026-11-21T22:40:18.064Z"
+      "content_hash": "b52ba3a99e140ecb61a8c0358e295939d20a4473443aed7bb578004ed9b0d36e",
+      "created_at": "2026-11-25T13:49:39.820Z"
     },
     "domain_intelligence-technical-construction-intelligence-milvus-io-milvus-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-milvus-io-milvus-learnings-core-invariants",
@@ -12065,8 +12066,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-permissions-learnings-technical-construction-intelligence-z.md",
       "repository": "zoontek-react-native-permissions-learnings",
-      "content_hash": "0e5c17b894cf2c74b883dd24226fb45f2dbe0ba455a4ad83b2aa48002fcd974d",
-      "created_at": "2026-11-25T13:31:51.443Z"
+      "content_hash": "57f3242b37a05339b984ac65e7aa3b386149292fe60d4b36b5c7a89442c97a83",
+      "created_at": "2026-11-25T13:49:40.809Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants",
@@ -40555,8 +40556,8 @@
       "title": "Architecture Intelligence: erkamyaman/rust-anything Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-erkamyaman-rust-anything-architecture-intelligence-erkamyaman-rust-anything-core.md",
       "repository": "erkamyaman/rust-anything",
-      "content_hash": "ef99a264d483deb65847e57803e47ea42645d8eb4a636f1d759270950387b233",
-      "created_at": "2026-11-24T13:12:33.759Z"
+      "content_hash": "ae1b5fb8aade6f41bd30ff71368d8db5983dde4b68044834dbbb9d16b7679dff",
+      "created_at": "2026-11-25T13:49:22.417Z"
     },
     "domain_intelligence-architecture-intelligence-erkamyaman-rust-anything-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-erkamyaman-rust-anything-learnings-core-invariants",
@@ -40564,8 +40565,8 @@
       "title": "Architecture Intelligence: erkamyaman-rust-anything-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-erkamyaman-rust-anything-learnings-architecture-intelligence-erkamyaman-rust-any.md",
       "repository": "erkamyaman-rust-anything-learnings",
-      "content_hash": "9a59caa363e3e278172761efdfab8cf853a9bc3687eba0e5583c8a1beccf2396",
-      "created_at": "2026-11-24T13:12:43.963Z"
+      "content_hash": "ca3804119ecccebc4e6dc92bbc7399b8b5cfdf887c167afe95fad5a3dae82946",
+      "created_at": "2026-11-25T13:49:39.028Z"
     },
     "domain_intelligence-architecture-intelligence-xerj-org-xerj-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-xerj-org-xerj-core-invariants",
@@ -45027,6 +45028,15 @@
       "confidence": 0.81,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-25T13:06:48.892Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: zoontek/react-native-permissions Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-permissions-technical-construction-intelligence-zoontek-rea.md",
+      "repository": "zoontek/react-native-permissions",
+      "content_hash": "2305fc02b3378c50a62b738e2f0d518551ce9a5fc0a88c029b2dac271dcacb3b",
+      "created_at": "2026-11-25T13:49:27.135Z"
     }
   }
 }

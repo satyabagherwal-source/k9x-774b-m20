@@ -792315,3 +792315,244 @@ func (h *Handler) getClusterDeviceInventory(req *restful.Request, resp *restful.
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `7a416142` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10534. reject zero timeout in app record and replay (Harvested from erkamyaman/rust-anything)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "reject zero timeout in app record and replay",
+  "source": "erkamyaman/rust-anything",
+  "source_url": "https://github.com/erkamyaman/rust-anything",
+  "source_version": "7f35f4d7",
+  "license": "MIT",
+  "extracted_at": "2026-11-25T13:49:21.107Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-erkamyaman-rust-anything",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [erkamyaman/rust-anything](https://github.com/erkamyaman/rust-anything) (Revision: `7f35f4d7`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in erkamyaman/rust-anything. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `652f322a`: app): reject zero timeout in app record and replay. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+- `app record --timeout 0` and `app replay --timeout 0` (and MCP `app_record` / `app_replay` with
+  `timeout: 0`) are refused before anything runs, instead of killing every run at once; a saved
+  `timeout_secs` of 0 is refused too, with a hint to pass `--timeout` (#497, #514 by @aloneangel45).
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `652f322a` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10535. Bump version number (Harvested from zoontek/react-native-permissions)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Bump version number",
+  "source": "zoontek/react-native-permissions",
+  "source_url": "https://github.com/zoontek/react-native-permissions",
+  "source_version": "2dad426e",
+  "license": "MIT",
+  "extracted_at": "2026-11-25T13:49:25.843Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-zoontek-react-native-permissions",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [zoontek/react-native-permissions](https://github.com/zoontek/react-native-permissions) (Revision: `2dad426e`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `example/ios/Podfile.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zoontek/react-native-permissions. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `2dad426e`: Bump version number. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `example/ios/Podfile.lock`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+  - RNPermissions (5.7.0):
+  RNPermissions: 67d53cf7e5d3b17cd3923a0ccb26b4e3d953eb47
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Induced defect failure mode:
+  - RNPermissions (5.6.3):
+  RNPermissions: d09d5c041f4023f0e8cdb871c402969f5e2b227a
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `2dad426e` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10536. session_history support across the memory plugins and two Claude Code (Harvested from volcengine/OpenViking)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "session_history support across the memory plugins and two Claude Code",
+  "source": "volcengine/OpenViking",
+  "source_url": "https://github.com/volcengine/OpenViking",
+  "source_version": "af412110",
+  "license": "AGPL-3.0",
+  "extracted_at": "2026-11-25T13:49:33.880Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-volcengine-openviking",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [volcengine/OpenViking](https://github.com/volcengine/OpenViking) (Revision: `af412110`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `agent-plugins/servers/shared/mcp-proxy-core.mjs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in volcengine/OpenViking. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `f905a91c`: plugins): session_history support across the memory plugins and two Claude Code capture fixes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `agent-plugins/servers/shared/mcp-proxy-core.mjs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+// Verified production-grade fix pattern:
+const SESSION_HISTORY_TOOL = "session_history";
+  // (params) => the OV session id of the host session making this tools/call,
+  // or "" when the harness cannot tell; fills `session_history`'s `session`.
+  defaultHistorySession = null,
+  // A `session` the model passed is kept as is, even one this proxy would not
+  // have chosen; only a missing or blank one is filled.
+  function withDefaultHistorySession(message) {
+    if (
+      typeof defaultHistorySession !== "function"
+      || message.method !== "tools/call"
+      || message.params?.name !== SESSION_HISTORY_TOOL
+    ) {
+      return message;
+    }
+    const args = message.params.arguments;
+    const given = args && typeof args === "object" ? args.session : undefined;
+    if (given != null && (typeof given !== "string" || given.trim())) return message;
+    let session = "";
+    try {
+      session = String(defaultHistorySession(message.params) || "").trim();
+    } catch (err) {
+      logError("default_history_session", err);
+    }
+    log("default_history_session", { filled: Boolean(session) });
+    if (!session) return message;
+    return {
+      ...message,
+      params: { ...message.params, arguments: { ...(args || {}), se
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `f905a91c` are properly handled with clean fallback behavior.

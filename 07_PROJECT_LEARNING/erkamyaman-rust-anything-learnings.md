@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/erkamyaman-rust-anything-learnings.md`  
 > **Source**: github ([https://github.com/erkamyaman/rust-anything](https://github.com/erkamyaman/rust-anything))  
-> **Source Version**: `ef7e9fc4`  
+> **Source Version**: `7f35f4d7`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T13:12:32.226Z  
+> **Timestamp**: 2026-11-25T13:49:20.298Z  
 > **Learning ID**: `learn-github-erkamyaman-rust-anything`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/erkamyaman-rust-anything-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/erkamyaman/rust-anything](https://github.com/erkamyaman/rust-anything))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T13:12:32.059Z  
+> **Harvest Timestamp**: 2026-11-25T13:49:20.289Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Rewrite your whole app in Rust, one piece at a time, checked against the original's recorded behavior at every step. CLIs, HTTP servers and libraries in TypeScript, Python, C, Go, Ruby and Java.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9048 stars
+- **Stars / Engagement**: 9461 stars
 
 ---
 
@@ -1919,15 +1919,13 @@ pub fn is_default_this_binding(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #364** (2026-11-24): **Java C-style array parameters are bridged as scalars and record 0 cases**
-  *Symptoms*: **What happens**  ```java package acme;  public class Stats {     public static int sum(int values[]) {         int s = 0;         for (int v : values) s += v;         return s;     } } ```  ``` $ rust-anything bridge . src/main/java/acme/Stats.java $ grep "pub fn" rust/stats-rs/src/port.rs pub fn sum(values: i64) -> Result<i64, String> { $ rust-anything record rust/stats-rs Recorded 0 cases (0 threw) in .../rust/stats-rs/cases.jsonl ```  Written as `int[] values`, the same method gets `values: Vec<i64>` and 158 cases are recorded.  **Expected**  `int values[]` is the same type as `int[] values`, so the bridge gives `Vec<i64>` and records cases. If that is not supported, the export should be kept in Java with a reason, not recorded with nothing and no warning.  **Where**  `src/lang/java.rs:502`: the parameter type is read from the `type` field only. In tree-sitter-java, the `[]` of a C-style declarator is a separate `dimensions` child of `formal_parameter`, so it is dropped.  **Notes**  The same applies to `String args[]` and multi-dimensional `int grid[][]`. 
-  **Post-Mortem & Fix Analysis**:
-  > Working on this.
+- **Issue #503** (2026-11-25): **gate and go print "1 lines" and "1 hot functions"**
+  *Symptoms*: #261 fixed the plural in `analyze`'s plan with the `count(n, word)` helper in `src/report.rs:284`. Two more messages still hard-code the plural:  - `src/gate.rs:190`, the `size` check: `"{rust} lines of Rust for {source} lines of {}"` - `src/go.rs:124`: `"none of the {} hot functions is exported by a portable unit"`  ## Repro  ```sh mkdir -p /tmp/ra-demo/src && cd /tmp/ra-demo echo '{"name":"demo","version":"1.0.0"}' > package.json echo 'export function add(a: number, b: number): number { return a + b; }' > src/add.ts ```  ```sh rust-anything bridge . src/add.ts --kind napi # port add in rust/add-rs/src/port.rs (return Ok(a + b)), then: rust-anything record rust/add-rs && rust-anything gate rust/add-rs | grep size # pass  size       4 lines of Rust for 1 lines of TypeScript/JavaScript (4.0x) ```  **Expected:** `4 lines of Rust for 1 line of TypeScript/JavaScript (4.0x)`.  ## Done when  - [ ] Both messages say `1 line` / `1 hot function` for one and the plural otherwise (reuse `count`, or move it somewhere both modules can call) - [ ] A test asserts the `size` detail for a one-line source  ## How to check  ```sh cargo test cargo run -- gate /tmp/ra-demo/rust/add-rs | grep size ``` 
 
-- **Issue #361** (2026-11-24): **YARD @param tags with types before the name are ignored**
-  *Symptoms*: **What happens**  YARD accepts both `@param name [Type]` and `@param [Type] name`. Only the first is read:  ```ruby module Pad   # @param text [String] the text   # @param width [Integer] the width   # @return [String]   def self.left(text, width) = text.rjust(width)    # @param [String] text the text   # @param [Integer] width the width   # @return [String]   def self.right(text, width) = text.ljust(width) end ```  ``` $ rust-anything bridge . lib/pad.rb $ grep "pub fn" rust/pad-rs/src/port.rs pub fn left(text: String, width: i64) -> Result<String, String> { pub fn right(text: serde_json::Value, width: serde_json::Value) -> Result<String, String> { ```  **Expected**  `right` gets `text: String, width: i64`, the same as `left`.  **Where**  `src/lang/ruby.rs:581`: `yard_param` splits the rest of the tag at the first space and compares the first word to the parameter name. With types first, that word is `[String]`, so it never matches.  **Notes**  The types-first form is common in older gems and in what RubyMine generates. With `Value` parameters, `record` also generates untyped inputs for these methods. 
+- **Issue #502** (2026-11-25): **package --version accepts any text, including empty and spaces**
+  *Symptoms*: `package --name` is checked against npm's rules (`validate_npm_name`, `src/package.rs:320`), but `--version` is copied as is (`src/package.rs:195-197`). An empty or malformed version goes into the generated package and only fails later at `npm publish` or the PyPI upload.  ## Repro  ```sh mkdir -p /tmp/ra-demo/src && cd /tmp/ra-demo echo '{"name":"demo","version":"1.0.0"}' > package.json echo 'export function add(a: number, b: number): number { return a + b; }' > src/add.ts ```  ```sh rust-anything bridge . src/add.ts --kind napi rust-anything package rust/add-rs --dry-run --version bogus # Would write 12 add-rs@bogus in .../rust/add-rs/package: rust-anything package rust/add-rs --dry-run --version '' # Would write 12 add-rs@ in .../rust/add-rs/package: rust-anything package rust/add-rs --dry-run --version ' 1.0.0' # Would write 12 add-rs@ 1.0.0 in .../rust/add-rs/package: ```  **Expected:** an error before anything is written, e.g. ``error: `bogus` is not a valid package version (MAJOR.MINOR.PATCH, e.g. 1.2.0); pass --version``.  ## Done when  - [ ] `--version` is refused when empty, when it has whitespace, or when it is not `MAJOR.MINOR.PATCH` with an optional `-prerelease` (npm's semver; also valid for PyPI) - [ ] The check also runs in `--dry-run`, and the MCP `package` tool gets it for free (same `src/package.rs` path) - [ ] Unit tests next to the `validate_npm_name` tests: `1.2.3` and `1.2.3-beta.1` pass; `''`, `bogus`, `1.0`, `' 1.0.0'` fail  ## How to check  ```sh car
   **Post-Mortem & Fix Analysis**:
-  > Working on this.
+  > I will take this one. I will validate --version in the package command so empty, whitespace-only and malformed values are rejected with a clear message, and add a test for each case.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1944,8 +1942,8 @@ pub fn is_default_this_binding(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `15ad3fcc` (2026-11-24)
-**Commit Message**: fix(http): fail when fixed port is already in use or build exits before listening (#395)
+### Incident Patch 1: `652f322a` (2026-11-25)
+**Commit Message**: fix(app): reject zero timeout in app record and replay (#514)
 
 **File**: `CHANGELOG.md` (modified, +3/-0)
 ```diff
@@ -1953,323 +1951,595 @@ Observed empirical fixes and code patches:
  
  ## Unreleased
  
-+- `app record` and `app replay` fail with `port <port> is already in use` before spawning a server
-+  on an occupied port and check whether the child exited before treating the port as ready (#326).
++- `app record --timeout 0` and `app replay --timeout 0` (and MCP `app_record` / `app_replay` with
++  `timeout: 0`) are refused before anything runs, instead of killing every run at once; a saved
++  `timeout_secs` of 0 is refused too, with a hint to pass `--timeout` (#497, #514 by @aloneangel45).
+ - `app record --ready-timeout SECS` (and MCP `app_record`'s `ready_timeout`) sets how long a server
+   start waits for its port instead of a fixed 60 seconds. It is saved with the cases and used by
+   replay and the front door; 0 restores the default (#332, #478 by @XiaoBinGan).
+```
+
+**File**: `src/app.rs` (modified, +102/-5)
+```diff
+@@ -121,6 +121,14 @@ pub(crate) fn default_timeout() -> u64 {
+     30
+ }
+ 
++pub(crate) fn check_timeout(timeout_secs: Option<u64>) -> Result<()> {
++    ensure!(
++        timeout_secs != Some(0),
++        "--timeout must be at least 1 second"
++    );
++    Ok(())
++}
 +
- ## 4.0.0 (2026-11-24)
+ impl Config {
+     pub fn load(repo: &Path) -> Result<Option<Config>> {
+         let path = cases_dir(repo).join(CONFIG_FILE);
+@@ -1923,6 +1931,7 @@ pub(crate) fn reserve_case_name(
+ }
  
- - A documentation site at [rust-anything.com](https://rust-anything.com): the README, the guides
-```
-
-**File**: `src/http.rs` (modified, +9/-3)
-```diff
-@@ -348,6 +348,9 @@ struct Server {
+ pub fn record(opts: &RecordOptions) -> Result<RecordOutcome> {
++    check_timeout(opts.timeout_secs)?;
+     let repo = opts
+         .repo
+         .canonical()
+@@ -1963,6 +1972,14 @@ pub fn record(opts: &RecordOptions) -> Result<RecordOutcome> {
+         .map(str::to_string)
+         .or_else(|| existing.as_ref().map(|c| c.name.clone()));
+     let names = app_names(&repo, &run, explicit.as_deref());
++    let timeout_secs = opts
++        .timeout_secs
++        .or(existing.as_ref().map(|c| c.timeout_secs))
++        .unwrap_or_else(default_timeout);
++    ensure!(
++        timeout_secs >= 1,
++        "--timeout must be at least 1 second (saved timeout_secs in {CONFIG_FILE} is 0; pass --timeout 1 or higher)"
++    );
+     let mut config = Config {
+         schema: SCHEMA.to_string(),
+         name: explicit
+@@ -1971,10 +1988,7 @@ pub fn record(opts: &RecordOptions) -> Result<RecordOutcome> {
+         run,
+         normalize,
+         normalizers,
+-        timeout_secs: opts
+-            .timeout_secs
+-            .or(existing.as_ref().map(|c| c.timeout_secs))
+-            .unwrap_or_else(default_timeout),
++        timeout_secs,
+         http: crate::http::merge_config(existing.as_ref().and_then(|c| c.http.clone()), opts),
+         float_tolerance: match opts.float_tolerance {
+             Some(t) => (crate::tolerance::check(t)? > 0.0).then_some(t),
+@@ -2642,6 +2656,7 @@ pub(crate) fn recorded_args(repo: &Path) -> Result<Vec<(Vec<String>, bool)>> {
+ }
  
- impl Server {
-     fn start(command: &[String], launch: &Launch, repo: &Path, port: u16) -> Result<Server> {
-+        if TcpStream::connect_timeout(&local(port), Duration::from_millis(100)).is_ok() {
-+            bail!("port {port} is already in use");
-+        }
-         let dir = app::temp_dir("server")?;
-         let words: Vec<String> = command
-             .iter()
-@@ -390,11 +393,14 @@ impl Server {
-             .with_context(|| format!("starting `{}`", command.join(" ")))?;
-         let deadline = Instant::now() + READY;
-         loop {
--            if TcpStream::connect_timeout(&local(port), Duration::from_millis(200)).is_ok() {
--                break;
--            }
-             let failure = if let Some(status) = child.try_wait()? {
-                 Some(format!("exited ({status}) before listening"))
-+            } else if TcpStream::connect_timeout(&local(port), Duration::from_millis(200)).is_ok() {
-+                if let Some(status) = child.try_wait()? {
-+                    Some(format!("exited ({status}) before listening"))
-+                } else {
-+                    break;
-+                }
-             } else if Instant::now() > deadline {
-                 Some(format!("did not listen within {}s", READY.as_secs()))
-             } else {
-```
-
-**File**: `tests/http.rs` (modified, +93/-0)
-```diff
-@@ -654,3 +654,96 @@ fn csharp_server() {
-         original: "server",
+ pub fn replay(opts: &ReplayOptions) -> Result<ReplayOutcome> {
++    check_timeout(opts.timeout_secs)?;
+     let repo = opts
+         .repo
+         .canonical()
+@@ -2685,7 +2700,12 @@ pub fn replay(opts: &ReplayOptions) -> Result<ReplayOutcome> {
+         recorded: Vec::new(),
      });
+     let norm = Normalizers::new(&config)?;
+-    let timeout = Duration::from_secs(opts.timeout_secs.unwrap_or(config.timeout_secs));
++    let timeout_secs = opts.timeout_secs.unwrap_or(config.timeout_secs);
++    ensure!(
++        timeout_secs >= 1,
++        "--timeout must be at least 1 second (saved timeout_secs in {CONFIG_FILE} is 0; pass --timeout 1 or higher)"
++    );
++    let timeout = Duration::from_secs(timeout_secs);
+     if config.http.is_some() {
+         return crate::http::replay(
+             &repo, &config, &norm, &command, opts.port, opts.case, timeout,
+@@ -3310,4 +3330,81 @@ mod tests {
+         );
+         assert_eq!(shell_split(r"echo one\\two").unwrap(), ["echo", r"one\two"]);
+     }
++
++    #[test]
++    fn record_and_replay_reject_zero_timeout_and_leave_cases_untouched() {
++        let repo = temp_dir("zero-timeout").unwrap();
++        let dir = cases_dir(&repo);
++        std::fs::create_dir_all(&dir).unwrap();
++        let sentinel_cfg = format!(
++            r#"{{"schema":"{SCHEMA}","name":"app","run":["echo","ok"],"timeout_secs":30,"recorded":["no-args"]}}"#
++        );
++        let cfg_path = dir.join(CONFIG_FILE);
++        let case_path = dir.join("no-args.toml");
++        std::fs::write(&cfg_path, &sentinel_cfg).unwrap();
++        std::fs::write(&case_path, "stdout = \"ok\\n\"\n").unwrap();
++
++        let rec_err = record(&RecordOptions {
++            repo: &repo,
++            run: &["definitely-not-run".to_string()],
++            inputs: None,
++            normalize: &[],
++            name: None,
++            traps: false,
++            timeout_secs: Some(0),
++            http: false,
++            server_args: &[],
++            fresh: &[],
++            pace_ms: None,
++            port: None,
++            float_tolerance: None,
++            float_files: &[],
++            effects: None,
++            ready_secs: None,
++        })
++        .unwrap_err();
++        let rec_msg = format!("{rec_err:#}");
++        assert!(
++            rec_msg.contains("--timeout") && rec_msg.contains("1 second"),
++            "{rec_msg}"
++        );
++
++        let rep_err = replay(&ReplayOptions {
++            repo: &repo,
++            build: None,
++            timeout_secs: Some(0),
++            port: None,
++            case: None,
++        })
++        .unwrap_err();
++        let rep_msg = format!("{rep_err:#}");
++        assert!(
++            rep_msg.contains("--timeout") && rep_msg.contains("1 second"),
++            "{rep_msg}"
++        );
++
++        assert_eq!(std::fs::read_to_string(&cfg_path).unwrap(), sentinel_cfg);
++        assert_eq!(
++            std::fs::read_to_string(&case_path).unwrap(),
++            "stdout = \"ok\\n\"\n"
++        );
++
++        let zero_cfg = sentinel_cfg.replace(r#""timeout_secs":30"#, r#""timeout_se
+```
+
+**File**: `src/mcp.rs` (modified, +38/-2)
+```diff
+@@ -686,6 +686,18 @@ fn call(name: &str, args: &Value) -> Result<Value> {
+             })
+             .unwrap_or_default()
+     };
++    let opt_timeout = || -> Result<Option<u64>> {
++        match args.get("timeout") {
++            None | Some(Value::Null) => Ok(None),
++            Some(v) => {
++                let secs = v
++                    .as_u64()
++                    .ok_or_else(|| anyhow::anyhow!("--timeout must be at least 1 second"))?;
++                app::check_timeout(Some(secs))?;
++                Ok(Some(secs))
++            }
++        }
++    };
+     Ok(match name {
+         "analyze" => {
+             let root = path("root")?;
+@@ -1020,6 +1032,7 @@ fn call(name: &str, args: &Value) -> Result<Value> {
+         )?)?,
+         "app_record" => {
+             let repo = path("repo")?;
++            let timeout_secs = opt_timeout()?;
+             let inputs = opt_path("inputs");
+             let effect_response = match args.get("effect_response") {
+                 None | Some(Value::Null) => Vec::new(),
+@@ -1048,7 +1061,7 @@ fn call(name: &str, args: &Value) -> Result<Value> {
+                 normalize: &strings("normalize"),
+                 name: args["name"].as_str(),
+                 traps: args["traps"].as_bool().unwrap_or(true),
+-                timeout_secs: args["timeout"].as_u64(),
++                timeout_secs,
+                 http: args["http"].as_bool().unwrap_or(false),
+                 port: args["port"].as_u64().and_then(|p| u16::try_from(p).ok()),
+                 server_args: &strings("args"),
+@@ -1062,10 +1075,11 @@ fn call(name: &str, args: &Value) -> Result<Value> {
+         }
+         "app_replay" => {
+             let repo = path("repo")?;
++            let timeout_secs = opt_timeout()?;
+             serde_json::to_value(app::replay(&app::ReplayOptions {
+                 repo: &repo,
+                 build: args["build"].as_str(),
+-                timeout_secs: args["timeout"].as_u64(),
++                timeout_secs,
+                 port: args["port"].as_u64().and_then(|p| u16::try_from(p).ok()),
+                 case: args["case"].as_str(),
+             })?)?
+@@ -1427,4 +1441,26 @@ mod tests {
+         );
+         assert!(bad_mixed.is_err());
+     }
++
++    #[test]
++    fn app_record_and_app_replay_reject_zero_or_negative_timeout() {
++        let dir = std::env::temp_dir().join(format!("ra-mcp-timeout-{}", std::process::id()));
++        let _ = std::fs::remove_dir_all(&dir);
++        std::fs::create_dir_all(&dir).unwrap();
++        for tool in ["app_record", "app_replay"] {
++            for timeout in [json!(0), json!(-1)] {
++                let err = call(tool, &json!({ "repo": dir, "timeout": timeout })).unwrap_err();
++                let msg = format!("{err:#}");
++                assert!(
++                    msg.contains("--timeout") && msg.contains("1 second"),
++                    "{tool} with {timeout}: {msg}"
++                );
++            }
++        }
++        assert!(
++            !dir.join("rust").exists(),
++            "rejected timeout must not create rust/app-cases"
++        );
++        let _ = std::fs::remove_dir_all(&dir);
++    }
+ }
+```
+
+**File**: `tests/app.rs` (modified, +49/-0)
+```diff
+@@ -1067,3 +1067,52 @@ fn a_library_front_door_prints_one_export_in_the_singular() {
+         "{printed}"
+     );
  }
 +
 +#[test]
-+fn http_fixed_port_rejects_existing_listener_and_early_exit() {
-+    if !common::have("node") {
-+        return;
-+    }
-+    let repo = fixture("ts", "fixed-port-guard");
-+    let listener = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
-+    let port = listener.local_addr().unwrap().port();
++fn app_record_and_replay_cli_reject_zero_timeout_without_touching_cases() {
++    let repo = one_off("zero-timeout-cli", &[("cli.py", "print('hi')\n")]);
++    let cases_dir = repo.join("rust/app-cases");
++    std::fs::create_dir_all(&cases_dir).unwrap();
++    let cfg_path = cases_dir.join("rust-anything.json");
++    let case_path = cases_dir.join("no-args.toml");
++    let original_cfg = "{\"schema\":\"rust-anything/app@1\",\"name\":\"app\",\"run\":[\"python3\",\"cli.py\"],\"timeout_secs\":30,\"recorded\":[\"no-args\"]}\n";
++    let original_case = "stdout = \"hi\\n\"\n";
++    std::fs::write(&cfg_path, original_cfg).unwrap();
++    std::fs::write(&case_path, original_case).unwrap();
 +
-+    // Recording against an already-occupied fixed port fails before spawning the server.
-+    let record_err = app::record(&RecordOptions {
-+        repo: &repo,
-+        run: &words("node server.js"),
-+        inputs: None,
-+        normalize: &[],
-+        name: None,
-+        traps: false,
-+        timeout_secs: None,
-+        http: true,
-+        server_args: &[],
-+        fresh: &[],
-+        pace_ms: None,
-+        port: Some(port),
-+        float_tolerance: None,
-+        float_files: &[],
-+        effects: None,
-+    })
-+    .unwrap_err();
++    let rec = Command::new(env!("CARGO_BIN_EXE_rust-anything"))
++        .args([
++            "app",
++            "record",
++            ".",
++            "--timeout",
++            "0",
++            "--",
++            "missing-command",
++        ])
++        .current_dir(&repo)
++        .output()
++        .unwrap();
++    assert!(!rec.status.success(), "{rec:?}");
++    let rec_err = String::from_utf8_lossy(&rec.stderr);
 +    assert!(
-+        record_err
-+            .to_string()
-+            .contains(&format!("port {port} is already in use")),
-+        "expected port-in-use error on record, got: {record_err:#}"
-+    );
-+    drop(listener);
-+
-+    // Record cleanly while the fixed port is free.
-+    let recorded = app::record(&RecordOptions {
-+        repo: &repo,
-+        run: &words("node server.js"),
-+        inputs: None,
-+        normalize: &[],
-+        name: None,
-+        traps: false,
-+        timeout_secs: None,
-+        http: true,
-+        server_args: &[],
-+        fresh: &[],
-+        pace_ms: None,
-+        port: Some(port),
-+        float_tolerance: None,
-+        float_files: &[],
-+        effects: None,
-+    })
-+    .unwrap();
-+    assert!(recorded.cases > 0);
-+
-+    // Reoccupying the fixed port must fail replay instead of passing against the unrelated listener.
-+    let occupied = std::net::TcpListener::bind(("127.0.0.1", port)).unwrap();
-+    let replay_occupied_err = app::replay(&ReplayOptions {
-+        case: None,
-+        repo: &repo,
-+        build: Some("false"),
-+        timeout_secs: None,
-+        port: None,
-+    })
-+    .unwrap_err();
-+    assert!(
-+        replay_occupied_err
-+            .to_string()
-+            .contains(&format!("port {port} is already in use")),
-+        "expected port-in-use error on replay, got: {replay_occupied_err:#}"
-+    );
-+    drop(occupied);
-+
-+    // With the port free, a build that exits immediately must fail as exited before listening.
-+    let early_exit_err = app::replay(&ReplayOptions {
-+        case: None,
-+        repo: &repo,
-+        build: Some("false"),
-+        timeout_secs: None,
-+        port: None,
-+    })
-+    .unwrap_err();
-+    let msg = early_exit_err.to_string();
-+    assert!(
-+        msg.contains("exited") && msg.contains("before listening"),
-+        "expected exited-before-listening error, got: {early_exit_err:#}"
++        rec_err.contains("--timeout") && rec_err.contains("1 second"),
++        "{rec_err}"
 +    );
 +
-+    std::fs::remove_dir_all(repo).unwrap();
++    let rep = Command::new(env!("CARGO_BIN_EXE_rust-anything"))
++        .args(["app", "replay", ".", "--timeout", "0"])
++        .current_dir(&repo)
++        .output()
++        .unwrap();
++    assert!(!rep.status.success(), "{rep:?}");
++    let rep_err = String::from_utf8_lossy(&rep.stderr);
++    assert!(
++        rep_err.contains("--timeout") && rep_err.contains("1 second"),
++        "{rep_err}"
++    );
++
++    assert_eq!(std::fs::read_to_string(&cfg_path).unwrap(), original_cfg);
++    assert_eq!(std::fs::read_to_string(&case_path).unwrap(), original_case);
++    std::fs::remove_dir_all(&repo).unwrap();
 +}
 ```
 
 ---
 
-### Incident Patch 2: `758b6b12` (2026-11-24)
-**Commit Message**: fix(kotlin): say why a primitive array cannot cross the Java wire (#386)
+### Incident Patch 2: `7f35f4d7` (2026-11-25)
+**Commit Message**: fix(mcp): reject invalid kind, profile and keep values instead of defaulting (#530)
 
-**File**: `src/lang/kotlin.rs` (modified, +30/-2)
+**File**: `CHANGELOG.md` (modified, +3/-0)
 ```diff
-@@ -360,8 +360,7 @@ pub fn kotlin_to_ts(t: &str) -> Result<String, String> {
-         | "DoubleArray" | "BooleanArray" => {
-             let inner = if head.ends_with("Array") && !matches!(head, "Array") {
-                 match head {
--                    "IntArray" => "int".into(),
--                    "LongArray" => "int".into(),
-+                    "IntArray" | "LongArray" => "int".into(),
-                     "DoubleArray" => "number".into(),
-                     "BooleanArray" => "boolean".into(),
-                     _ => arg(0)?,
-@@ -381,6 +380,14 @@ pub fn kotlin_to_ts(t: &str) -> Result<String, String> {
-             }
-             format!("Record<string, {}>", arg(1)?)
-         }
-+        // The TS side could map these (`int[]`/`number[]`), but the Java wire only converts element
-+        // arrays of int, long, double and boolean: `java_ty` returns None for byte, short and float, so
-+        // the generated glue would have no call wrapper for the unit.
-+        "ByteArray" | "ShortArray" | "FloatArray" => {
-+            return Err(format!(
-+                "uses `{head}`, which the Java wire cannot carry yet"
-+            ));
-+        }
-         "Char" => return Err("uses `Char`, a UTF-16 code unit".into()),
-         "Any" | "Any?" => return Err("takes or returns `Any`: values of any type".into()),
-         "Set" | "MutableSet" | "HashSet" => {
-@@ -812,6 +819,27 @@ pub fn receiver(f: &ExportedFn) -> (String, String) {
- mod tests {
-     use super::*;
+@@ -2,6 +2,9 @@
  
-+    #[test]
-+    fn a_primitive_array_is_named_with_the_reason_the_wire_gives() {
-+        // int, long, double and boolean element arrays are what the Java wire converts.
-+        for (kotlin, ts) in [
-+            ("IntArray", "int[]"),
-+            ("LongArray", "int[]"),
-+            ("DoubleArray", "number[]"),
-+            ("BooleanArray", "boolean[]"),
-+        ] {
-+            assert_eq!(kotlin_to_ts(kotlin), Ok(ts.to_string()), "{kotlin}");
-+        }
-+        // The other three are refused, and the reason names the wire rather than a "class".
-+        for kotlin in ["ByteArray", "ShortArray", "FloatArray"] {
-+            let reason = kotlin_to_ts(kotlin).unwrap_err();
-+            assert!(reason.contains("Java wire"), "{kotlin}: {reason}");
-+            assert!(!reason.contains("uses the class"), "{kotlin}: {reason}");
-+        }
-+        // `CharArray` is UTF-16 code units, like `Char`, and keeps that reason.
-+        assert!(kotlin_to_ts("CharArray").is_err());
-+    }
+ ## Unreleased
+ 
++- MCP `bridge` refuses a `kind` other than `"napi"` or `"wasm"`, `record`, `build` and `diff` refuse a
++  non-string `profile`, and `fuzz` refuses a non-string `keep`, instead of silently falling back to
++  the default (#530 by @Lewandox).
+ - `bridge --name` (and MCP `bridge`'s `name`) is refused before any folder is written when it is
+   not a valid Cargo crate name: empty, padded, a path such as `../escape`, a leading digit, a Rust
+   keyword or a reserved Windows file name. A unit whose file name starts with a digit or has no
+```
+
+**File**: `src/mcp.rs` (modified, +128/-27)
+```diff
+@@ -657,6 +657,45 @@ fn tool_schemas() -> Value {
+     ])
+ }
+ 
++/// `bridge`'s `kind`: `None` (the plan's choice) when omitted or null, an error for any other
++/// value than `"napi"` or `"wasm"`, so a mistyped argument never bridges with a different kind.
++fn kind_arg(args: &Value) -> Result<Option<bridge::Kind>> {
++    Ok(match args.get("kind") {
++        None | Some(Value::Null) => None,
++        Some(Value::String(s)) if s == "napi" => Some(bridge::Kind::Napi),
++        Some(Value::String(s)) if s == "wasm" => Some(bridge::Kind::Wasm),
++        Some(other) => anyhow::bail!("`kind` is \"napi\" or \"wasm\", not {other}"),
++    })
++}
 +
-     #[test]
-     fn scans_risks_and_imports() {
-         let src =
++#[derive(Clone, Copy, Debug, PartialEq, Eq)]
++enum Profile {
++    Host,
++    Android,
++}
++
++/// `record`/`build`/`diff`'s `profile`: `Host` when omitted or null, an error for any other
++/// value than `"host"` or `"android"`.
++fn profile_arg(args: &Value) -> Result<Profile> {
++    Ok(match args.get("profile") {
++        None | Some(Value::Null) => Profile::Host,
++        Some(Value::String(s)) if s == "host" => Profile::Host,
++        Some(Value::String(s)) if s == "android" => Profile::Android,
++        Some(other) => anyhow::bail!("`profile` is \"host\" or \"android\", not {other}"),
++    })
++}
++
++/// `fuzz`'s `keep`: `None` when omitted or null, an error for any other value than `"mismatches"`
++/// or `"all"`.
++fn keep_arg(args: &Value) -> Result<Option<crate::fuzz::Keep>> {
++    Ok(match args.get("keep") {
++        None | Some(Value::Null) => None,
++        Some(Value::String(s)) if s == "mismatches" => Some(crate::fuzz::Keep::Mismatches),
++        Some(Value::String(s)) if s == "all" => Some(crate::fuzz::Keep::All),
++        Some(other) => anyhow::bail!("`keep` is \"mismatches\" or \"all\", not {other}"),
++    })
++}
++
+ /// `bridge`'s `allocator`: the default when omitted (or null), an error for any other value
+ /// than the two names, so a mistyped argument never bridges with an allocator nobody chose.
+ fn allocator_arg(args: &Value) -> Result<bridge::Allocator> {
+@@ -728,11 +767,7 @@ fn call(name: &str, args: &Value) -> Result<Value> {
+             serde_json::to_value(report)?
+         }
+         "bridge" => {
+-            let kind = match args["kind"].as_str() {
+-                Some("napi") => Some(bridge::Kind::Napi),
+-                Some("wasm") => Some(bridge::Kind::Wasm),
+-                _ => None,
+-            };
++            let kind = kind_arg(args)?;
+             let root = path("root")?;
+             let allocator = allocator_arg(args)?;
+             serde_json::to_value(bridge::bridge(&bridge::Options {
+@@ -751,13 +786,10 @@ fn call(name: &str, args: &Value) -> Result<Value> {
+         }
+         "record" => {
+             let crate_dir = path("crate")?;
+-            let profile = args["profile"].as_str().unwrap_or("host");
+-            if profile == "host" && !args["device"].is_null() {
++            let profile = profile_arg(args)?;
++            if profile == Profile::Host && !args["device"].is_null() {
+                 anyhow::bail!("`device` needs profile `android`");
+             }
+-            if !matches!(profile, "host" | "android") {
+-                anyhow::bail!("unknown record profile `{profile}`: use host or android");
+-            }
+             let mut inputs = opt_path("inputs");
+             let test_command = strings("test_command");
+             let captured = if test_command.is_empty() {
+@@ -803,9 +835,8 @@ fn call(name: &str, args: &Value) -> Result<Value> {
+             };
+             let device = args["device"].as_str();
+             let mut out = serde_json::to_value(match profile {
+-                "host" => harness::record(&opts)?,
+-                "android" => harness::record_android(&opts, device)?,
+-                other => anyhow::bail!("unknown record profile `{other}`: use host or android"),
++                Profile::Host => harness::record(&opts)?,
++                Profile::Android => harness::record_android(&opts, device)?,
+             })?;
+             if let Some(c) = captured {
+                 out["from_tests"] = c;
+@@ -837,8 +868,8 @@ fn call(name: &str, args: &Value) -> Result<Value> {
+         }
+         "build" => {
+             let crate_dir = path("crate")?;
+-            match args["profile"].as_str().unwrap_or("host") {
+-                "android" => {
++            match profile_arg(args)? {
++                Profile::Android => {
+                     if !args["abi"].is_null() && !args["abi"].is_array() {
+                         anyhow::bail!("`abi` must be an array of Android ABI names");
+                     }
+@@ -860,7 +891,7 @@ fn call(name: &str, args: &Value) -> Result<Value> {
+                         },
+                     )?)?
+                 }
+-                "host" => {
++                Profile::Host => {
+                     if !args["abi"].is_null()
+                         || !args["api"].is_null()
+                         || !args["ndk"].is_null()
+@@ -870,7 +901,6 @@ fn call(name: &str, args
 ```
 
 ---
 
-### Incident Patch 3: `cfd2ff34` (2026-11-24)
-**Commit Message**: fix(analyze): refuse a --lang the folder does not hold (#385)
+### Incident Patch 3: `5fe6bfad` (2026-11-25)
+**Commit Message**: fix(bridge): validate --name and ensure derived crate names are Cargo-valid (#529)
 
-* fix(analyze): refuse a --lang the folder does not hold
-
-* fix(analyze): judge an empty language by its files and give the reason
-
-Review follow-up: the check looks at whether any file of the language was found (UI and tests included), so a Go module with a .tsx file still analyzes as TypeScript, and the error carries the warnings that explain why files were left out, such as ignore rules.
-
----------
-
-Co-authored-by: Kam <[REDACTED_EMAIL]>
-
-**File**: `CHANGELOG.md` (modified, +4/-0)
+**File**: `CHANGELOG.md` (modified, +5/-1)
 ```diff
-@@ -13,6 +13,10 @@
- - `app record` joins example commands wrapped with a trailing `\` before reading them, so a curl
-   example split over lines becomes its request instead of being dropped, and a wrapped `$ tool`
-   line is no longer recorded with `\` as an argument (#328).
-+- `analyze --lang` for a language the folder does not hold is an error that names the language it
-+  found (`no Python source files found; the code here looks like TypeScript/JavaScript`) and why
-+  any of its files were left out (such as ignore rules), instead of an empty plan with exit 0
-+  (#345).
+@@ -2,7 +2,11 @@
  
- ## 3.4.0 (2026-11-23)
+ ## Unreleased
  
+-- `build`, `gate` and the other steps that run an outside tool say ``` `cargo` not found on PATH ```
++- `bridge --name` (and MCP `bridge`'s `name`) is refused before any folder is written when it is
++  not a valid Cargo crate name: empty, padded, a path such as `../escape`, a leading digit, a Rust
++  keyword or a reserved Windows file name. A unit whose file name starts with a digit or has no
++  letters gets a valid default name (`unit-123-rs`, `unit-rs`) (#529 by @Lewandox).
++- `build`, `gate` and the other steps that run an outside tool say `` `cargo` not found on PATH ``
+   with `doctor`'s install command when the program is missing, instead of the raw `No such file or
+   directory (os error 2)`; `gate` no longer tells you to fix a compile error when the build never
+   started (#498, #525 by @Lewandox).
 ```
 
-**File**: `src/analyze.rs` (modified, +14/-0)
+**File**: `src/bridge.rs` (modified, +142/-13)
 ```diff
-@@ -295,6 +295,20 @@ pub fn analyze_lang(root: &Path, lang: Lang) -> Result<Report> {
-         })
-         .collect();
-     let mut report = build(root, &ws, &facts, lang);
-+    // A language the folder does not hold (a typo, or code in a subfolder) would read like a
-+    // finished plan with nothing to do. Any file of the language counts, UI and tests included,
-+    // and the warnings (files hidden by ignore rules) say why the plan would have been empty.
-+    if ws.files.is_empty() {
-+        let detected = Lang::detect(root);
-+        if detected != lang {
-+            let reasons: String = report.warnings.iter().map(|w| format!(". {w}")).collect();
-+            bail!(
-+                "no {} source files found; the code here looks like {}{reasons}",
-+                lang.name(),
-+                detected.name()
+@@ -1092,7 +1092,66 @@ pub(crate) const DYNAMIC_LOOKUP_BUILD_RS: &str = r#"fn main() {
+ }
+ "#;
+ 
++/// Rejects Cargo package names that would produce invalid `Cargo.toml` / Rust library names or
++/// write outside `<root>/rust/` via path separators.
++fn validate_crate_name(name: &str) -> Result<&str> {
++    const RUST_KEYWORDS: &[&str] = &[
++        "as", "async", "await", "break", "const", "continue", "crate", "dyn", "else", "enum",
++        "extern", "false", "fn", "for", "gen", "if", "impl", "in", "let", "loop", "match", "mod",
++        "move", "mut", "pub", "ref", "return", "self", "Self", "static", "struct", "super",
++        "trait", "true", "type", "unsafe", "use", "where", "while", "abstract", "become", "box",
++        "do", "final", "macro", "override", "priv", "try", "typeof", "unsized", "virtual", "yield",
++    ];
++    const WINDOWS_RESERVED: &[&str] = &[
++        "con", "prn", "aux", "nul", "com1", "com2", "com3", "com4", "com5", "com6", "com7", "com8",
++        "com9", "lpt1", "lpt2", "lpt3", "lpt4", "lpt5", "lpt6", "lpt7", "lpt8", "lpt9",
++    ];
++    let first = name.bytes().next();
++    let valid_chars = first.is_some_and(|b| b.is_ascii_alphabetic() || b == b'_')
++        && name
++            .bytes()
++            .all(|b| b.is_ascii_alphanumeric() || b == b'-' || b == b'_');
++    if !valid_chars {
++        bail!(
++            "invalid crate name `{name}`: must be non-empty, start with an ASCII letter or `_`, \
++             and use only ASCII letters, digits, `-` and `_`"
++        );
++    }
++    let lib = name.replace('-', "_");
++    if lib == "_" || RUST_KEYWORDS.contains(&lib.as_str()) {
++        bail!("invalid crate name `{name}`: `{lib}` is a reserved Rust keyword");
++    }
++    let lower = name.to_ascii_lowercase();
++    if WINDOWS_RESERVED.contains(&lower.as_str()) {
++        bail!("invalid crate name `{name}`: `{name}` is a reserved filename on Windows");
++    }
++    Ok(name)
++}
++
++/// Derives a valid Cargo crate name from a unit's file/folder stem.
++fn default_crate_name(stem: &str) -> String {
++    let clean: String = stem
++        .chars()
++        .map(|c| {
++            if c.is_ascii_alphanumeric() {
++                c.to_ascii_lowercase()
++            } else {
++                '-'
++            }
++        })
++        .collect();
++    let trimmed = clean.trim_matches('-');
++    if trimmed.is_empty() {
++        "unit-rs".to_string()
++    } else if trimmed.as_bytes()[0].is_ascii_digit() {
++        format!("unit-{trimmed}-rs")
++    } else {
++        format!("{trimmed}-rs")
++    }
++}
++
+ pub fn bridge(opts: &Options) -> Result<Outcome> {
++    let explicit_name = opts.name.as_deref().map(validate_crate_name).transpose()?;
+     let root = opts
+         .root
+         .canonical()
+@@ -1299,19 +1358,9 @@ pub fn bridge(opts: &Options) -> Result<Outcome> {
+         .split('.')
+         .next()
+         .unwrap_or("unit");
+-    let crate_name = opts.name.clone().unwrap_or_else(|| {
+-        let clean: String = stem
+-            .chars()
+-            .map(|c| {
+-                if c.is_ascii_alphanumeric() {
+-                    c.to_ascii_lowercase()
+-                } else {
+-                    '-'
+-                }
+-            })
+-            .collect();
+-        format!("{}-rs", clean.trim_matches('-'))
+-    });
++    let crate_name = explicit_name
++        .map(str::to_string)
++        .unwrap_or_else(|| default_crate_name(stem));
+     let crate_dir = opts
+         .out
+         .clone()
+@@ -2055,4 +2104,84 @@ mod tests {
+         assert_eq!(snake_case("self"), "self_");
+         assert_eq!(snake_case("Super"), "super_");
+     }
++
++    #[test]
++    fn validates_crate_names() {
++        for good in ["add-rs", "my_crate", "_helper", "Foo2", "a-1_b"] {
++            assert_eq!(validate_crate_name(good).unwrap(), good, "{good}");
++        }
++        for bad in [
++            "",
++            " ",
++            " add-rs ",
++            "foo bar",
++            "123-rs",
++            "-foo",
++            "../escape",
++            "a/b",
++            "a\\b",
++            "a\"b",
++            "café",
++            "_",
++            "fn",
++            "type",
++            "self",
++            "Self",
++            "gen",
++            "con",
++            "NUL",
++        ] {
++            assert!(
++                validate_crate_name(bad).is_err(),
++                "expected error for {bad:?}"
 +            );
 +        }
 +    }
-     check_bridgeable(root, &mut report, lang);
-     Ok(report)
- }
-```
-
-**File**: `tests/analyze.rs` (modified, +41/-0)
-```diff
-@@ -220,6 +220,47 @@ fn a_c_unit_depends_on_what_its_own_header_includes() {
-     assert!(a.wave > unit(&report, "src/b.c").wave);
- }
- 
-+#[test]
-+fn a_language_the_folder_lacks_is_an_error_not_an_empty_plan() {
-+    use rust_anything::analyze::analyze_lang;
-+    use rust_anything::lang::Lang;
-+    let mini = Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures/mini");
-+    let err = analyze_lang(&mini, Lang::Python).unwrap_err().to_string();
-+    assert!(err.contains("no Python source files"), "{err}");
-+    assert!(err.contains("TypeScript/JavaScript"), "{err}");
-+    assert!(analyze_lang(&mini, Lang::Ts).is_ok());
 +
-+    // A folder that is empty in its own detected language still gets its (empty) plan.
-+    let empty = std::env::temp_dir().join(format!("ra-lang-empty-{}", std::process::id()));
-+    let _ = std::fs::remove_dir_all(&empty);
-+    std::fs::create_dir_all(&empty).unwrap();
-+    let plan = analyze(&empty);
-+    std::fs::remove_dir_all(&empty).unwrap();
-+    assert_eq!(plan.unwrap().summary.source_files, 0);
-+
-+    let root = std::env::temp_dir().join(format!("ra-lang-cases-{}", std::process::id()));
-+    let _ = std::fs::remove_dir_all(&root);
-+    let write = |path: &str, text: &str| {
-+        let path = root.join(path);
-+        std::fs::create_dir_all(path.parent().unwrap()).unwrap();
-+        std::fs::write(path, text).unwrap();
-+    };
-+    // UI files are the language too: a Go module whose TypeScript is only a React frontend.
-+    write("go.mod", "module example.com/app\n\ngo 1.22\n");
-+    write("web/App.tsx", "export function App() { return <div />; }\n");
-+    assert_eq!(Lang::detect(&root), Lang::Go);
-+    let frontend = analyze_lang(&root, Lang::Ts);
-+    // Python files hidden by ignore rules: the error keeps analyze's reason for the empty plan.
-+    write(".ignore", "py/\n");
-+    write("py/tool.py", "def tool():\n    return 1\n");
-+    let hidden = analyze_lang(&root, Lang::Python);
-+    std::fs::remove_dir_all(&root).unwrap();
-+    assert_eq!(frontend.unwrap().summary.ui_files, 1);
-+    let err = hidden.unwrap_err().to_string();
-+    assert!(err.contains("no Python source files"), "{err}");
-+    assert!(err.contains("excluded by ignore rules"), "{err}");
-+}
-+
- #[test]
- fn json_output_is_versioned() {
-     let json = serde_json::to_value(mini()).unwrap();
++    #[test]
++    fn default_crate_name_is_always_valid_for_cargo() {
++        assert_eq!(default_crate_name("add"), "add-rs");
++        assert_eq!(default_crate_name("my_util"), "my-util-rs");
++        assert_eq!(default_crate_name("123"), "unit-123-rs");
++        assert_eq!(default_crate_name("---"), "unit-rs");
++        assert_eq!(default_crate_name(""), "unit-rs");
++        for stem in ["add", "my_util", "123", "---", "", "00-index", "café"] {
++            let name = default_crate_name(stem);
++            assert!(
++                validate_crate_name(&name).is_ok(),
++       
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #402** (2026-11-24): feat(report): take --resolve-from like bench and fuzz (@XiaoBinGan)
-- **PR #401** (2026-11-24): docs: list the per-language shadow --out defaults in the CLI help (@hkhkkh)
-- **PR #400** (2026-11-24): docs: Spanish C# unit is a file or folder (@hkhkkh)
-- **PR #399** (2026-11-24): docs: add Kotlin and PowerShell to the German language table (@hkhkkh)
-- **PR #396** (2026-11-24): docs: add PowerShell to the Spanish and Italian language tables (@hkhkkh)
-- **PR #395** (2026-11-24): fix(http): fail when fixed port is already in use or build exits before listening (@brixtonpham)
+- **PR #530** (2026-11-25): fix(mcp): reject invalid kind, profile and keep values instead of defaulting (@Lewandox)
+- **PR #529** (2026-11-25): fix(bridge): validate --name and ensure derived crate names are Cargo-valid (@Lewandox)
+- **PR #528** (closed): fix(harness, gate): report missing cargo and runtimes with doctor guidance on spawn not found (@Papito084)
+- **PR #527** (closed): fix(package): validate --version before writing any files (#502) (@P-r-e-m-i-u-m)
+- **PR #526** (closed): fix(batch): list available functions and parameters on batch error (@Papito084)
+- **PR #525** (2026-11-25): fix(build,gate): report missing tools on PATH with doctor install guidance (@Lewandox)
 
 ---
 
@@ -2289,13 +2559,13 @@ Co-authored-by: Kam <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. http): fail when fixed port is already in use or build exits before listening
+## X. app): reject zero timeout in app record and replay
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in erkamyaman/rust-anything. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `15ad3fcc`: http): fail when fixed port is already in use or build exits before listening. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `652f322a`: app): reject zero timeout in app record and replay. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -2303,9 +2573,9 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- `app record` and `app replay` fail with `port <port> is already in use` before spawning a server
-  on an occupied port and check whether the child exited before treating the port as ready (#326).
-
+- `app record --timeout 0` and `app replay --timeout 0` (and MCP `app_record` / `app_replay` with
+  `timeout: 0`) are refused before anything runs, instead of killing every run at once; a saved
+  `timeout_secs` of 0 is refused too, with a hint to pass `--timeout` (#497, #514 by @aloneangel45).
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2315,4 +2585,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `15ad3fcc` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `652f322a` are properly handled with clean fallback behavior.

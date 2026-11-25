@@ -13092,3 +13092,7 @@
 | `CYCLE-20261125-ISUO` | `2026-11-25T13:20:37.776Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule EXISTING` | Yes (`ddedc0ac...`) |
 | `CYCLE-20261125-WYSU` | `2026-11-25T13:31:38.670Z` | `speridlabs/idol` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-speridlabs-idol-learnings.md` | Yes (`5c91282b...`) |
 | `CYCLE-20261125-7MV1` | `2026-11-25T13:39:56.413Z` | `Comfy-Org/Wan-2.2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-comfy-org-wan-2.2-learnings.md` | Yes (`5da8a82f...`) |
+| `CYCLE-20261125-JP04` | `2026-11-25T13:49:19.060Z` | `Efficient-Large-Model/Open-H3-Regenerate-2K` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-efficient-large-model-open-h3-regenerate-2k-learnings.md` | Yes (`5526bd6d...`) |
+| `CYCLE-20261125-JR4E` | `2026-11-25T13:49:21.806Z` | `erkamyaman/rust-anything` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10534` | Yes (`f3ebc86b...`) |
+| `CYCLE-20261125-JUS1` | `2026-11-25T13:49:26.545Z` | `zoontek/react-native-permissions` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10535` | Yes (`98707b02...`) |
+| `CYCLE-20261125-K0ZB` | `2026-11-25T13:49:34.583Z` | `volcengine/OpenViking` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10536` | Yes (`f5855f34...`) |

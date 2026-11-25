@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T13:39:56.423Z",
-  "total_cycles_completed": 12428,
-  "total_learnings_persisted": 12428,
-  "total_rules_promoted": 11415,
+  "last_updated": "2026-11-25T13:49:34.595Z",
+  "total_cycles_completed": 12432,
+  "total_learnings_persisted": 12432,
+  "total_rules_promoted": 11418,
   "history": [
-    {
-      "timestamp": "2026-11-25T00:43:32.924Z",
-      "repository": "abue-ammar/tinycast",
-      "learningId": "learn-github-abue-ammar-tinycast",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T00:43:35.811Z",
-      "repository": "pulumi/pulumi",
-      "learningId": "learn-github-pulumi-pulumi",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T00:43:42.691Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T00:51:57.001Z",
-      "repository": "agent-of-empires/agent-of-empires",
-      "learningId": "learn-github-agent-of-empires-agent-of-empires",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-25T00:51:59.055Z",
       "repository": "webdriverio/webdriverio",
@@ -1403,6 +1375,34 @@
       "repository": "Comfy-Org/Wan-2.2",
       "learningId": "learn-huggingface-comfy-org-wan-2-2",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T13:49:19.073Z",
+      "repository": "Efficient-Large-Model/Open-H3-Regenerate-2K",
+      "learningId": "learn-huggingface-efficient-large-model-open-h3-regenerate-2k",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T13:49:21.819Z",
+      "repository": "erkamyaman/rust-anything",
+      "learningId": "learn-github-erkamyaman-rust-anything",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T13:49:26.558Z",
+      "repository": "zoontek/react-native-permissions",
+      "learningId": "learn-github-zoontek-react-native-permissions",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T13:49:34.595Z",
+      "repository": "volcengine/OpenViking",
+      "learningId": "learn-github-volcengine-openviking",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

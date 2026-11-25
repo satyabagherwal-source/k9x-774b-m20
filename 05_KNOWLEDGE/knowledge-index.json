@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-25T13:40:10.559Z",
-  "total_verified_learnings": 9117,
+  "last_updated": "2026-11-25T13:49:41.044Z",
+  "total_verified_learnings": 9118,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25460,
+  "total_items": 25469,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113541,10 +113541,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-volcengine-openviking-technical-construction-intelligence-volcengine-openviking-.md",
       "title": "Technical Construction Intelligence: volcengine/OpenViking Core Invariants",
       "repository": "volcengine/OpenViking",
-      "source_version": "e13f0441",
-      "content_hash": "daad9aad58800ca130c42cc935aeea47466e43c64047abebcafb0d03178bbd28",
+      "source_version": "af412110",
+      "content_hash": "2b4bb5cc8df13d6c873bdb28de6d4aa41f9a761bb2e2750b00f2351fa3dd8cf7",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T18:34:34.037Z"
+      "persisted_at": "2026-11-25T13:49:35.189Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-volcengine-openviking": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-volcengine-openviking",
@@ -113553,10 +113553,10 @@
       "relative_path": "08_VERIFICATION/volcengine-openviking-verification-protocol-empirical-defect-shield-for-volcengi.md",
       "title": "Verification Protocol: Empirical Defect Shield for volcengine/OpenViking",
       "repository": "volcengine/OpenViking",
-      "source_version": "e13f0441",
-      "content_hash": "fcd7f4dc764f00f66472be7abf635f433e378a7f77eed53725f1234877b67588",
+      "source_version": "af412110",
+      "content_hash": "08e4465764786d4779a9433a6af72146c474cca537f973b745a79d61eb661ec7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T18:34:34.237Z"
+      "persisted_at": "2026-11-25T13:49:35.460Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-qwen-image-2-1-learnings-core-invar": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-qwen-image-2-1-learnings-core-invar",
@@ -114154,9 +114154,9 @@
       "title": "Research & Knowledge Intelligence: Efficient-Large-Model/Open-H3-Regenerate-2K Core Invariants",
       "repository": "Efficient-Large-Model/Open-H3-Regenerate-2K",
       "source_version": "hf-efficient-large-model-open-h3-regenerate-2k",
-      "content_hash": "eb49e214525556de89eb97ab3c1ee349d5506d9de3f5d6c4e8b4d399d69ed9d5",
+      "content_hash": "edc5d913df021d8722f8ab6beb62b255705064627d51c1b874ab7443a4d5e3cf",
       "domain_letter": "D",
-      "persisted_at": "2026-11-21T22:40:04.553Z"
+      "persisted_at": "2026-11-25T13:49:19.391Z"
     },
     "candidate_directive-resolve-azure-germany-regions-and-explicit-storage-authorities-55484": {
       "item_id": "candidate_directive-resolve-azure-germany-regions-and-explicit-storage-authorities-55484",
@@ -114202,9 +114202,9 @@
       "title": "Research & Knowledge Intelligence: hf-efficient-large-model-open-h3-regenerate-2k-learnings Core Invariants",
       "repository": "hf-efficient-large-model-open-h3-regenerate-2k-learnings",
       "source_version": "HEAD",
-      "content_hash": "f339159566a62acc9aa08f28001a5edc2a5dc30c1c20a80542d1ce3d8946c45b",
+      "content_hash": "b52ba3a99e140ecb61a8c0358e295939d20a4473443aed7bb578004ed9b0d36e",
       "domain_letter": "D",
-      "persisted_at": "2026-11-21T22:40:18.064Z"
+      "persisted_at": "2026-11-25T13:49:39.820Z"
     },
     "domain_intelligence-technical-construction-intelligence-milvus-io-milvus-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-milvus-io-milvus-learnings-core-invariants",
@@ -219402,9 +219402,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "0e5c17b894cf2c74b883dd24226fb45f2dbe0ba455a4ad83b2aa48002fcd974d",
+      "content_hash": "57f3242b37a05339b984ac65e7aa3b386149292fe60d4b36b5c7a89442c97a83",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T13:31:51.443Z"
+      "persisted_at": "2026-11-25T13:49:40.809Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio",
@@ -219414,9 +219414,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-permissions-learnings",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "d93be45e9d8ed62148741152a28f389c5eba319b5b6b072a95790837e4e03383",
+      "content_hash": "f4e9ca9ef84093746897012b99b535ae66e39810256cca5624d5781a98cad88a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T13:31:51.671Z"
+      "persisted_at": "2026-11-25T13:49:41.044Z"
     },
     "learn-huggingface-hexgrad-kokoro-82m": {
       "learning_id": "learn-huggingface-hexgrad-kokoro-82m",
@@ -242605,8 +242605,8 @@
       "slug": "volcengine-openviking",
       "platform": "github",
       "source_url": "https://github.com/volcengine/OpenViking",
-      "source_version": "e13f0441",
-      "content_hash": "66670a95a808cb1cbb67f681f14cfa58eeab9fb79bf5c6b52e36defdd63007cb",
+      "source_version": "af412110",
+      "content_hash": "f5855f34044e197e6895d784e08acacd07dd13eee613e18b1e0983f4cb844711",
       "dossier_path": "07_PROJECT_LEARNING/volcengine-openviking-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/volcengine-openviking-learnings.md",
       "promoted_rules": [
@@ -242644,6 +242644,11 @@
           "number": 10330,
           "title": "restore empty-string grant decoding",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10536,
+          "title": "session_history support across the memory plugins and two Claude Code",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -242651,7 +242656,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T18:34:33.375Z",
+      "verified_at": "2026-11-25T13:49:34.300Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -287847,7 +287852,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Efficient-Large-Model/Open-H3-Regenerate-2K",
       "source_version": "hf-efficient-large-model-open-h3-regenerate-2k",
-      "content_hash": "4b8664ed06b704faa76c6f5b599357107a0424c1bdace175a45fed420f235707",
+      "content_hash": "5526bd6d7acd9ea7423aad306d46d89ee035545933b1fc3e759b326c68015bdb",
       "dossier_path": "07_PROJECT_LEARNING/hf-efficient-large-model-open-h3-regenerate-2k-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-efficient-large-model-open-h3-regenerate-2k-learnings.md",
       "promoted_rules": [],
@@ -287856,7 +287861,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T22:40:04.023Z",
+      "verified_at": "2026-11-25T13:49:18.748Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -294878,8 +294883,8 @@
       "slug": "erkamyaman-rust-anything",
       "platform": "github",
       "source_url": "https://github.com/erkamyaman/rust-anything",
-      "source_version": "ef7e9fc4",
-      "content_hash": "cb4b782edad4507c9c389025a7d04fe5940c44112276617070d5a7737c9a6d8a",
+      "source_version": "7f35f4d7",
+      "content_hash": "f3ebc86b6e4b8b7a7bc6f8e3716dc9a1cb2554f5122f9c8c18dd817635471642",
       "dossier_path": "07_PROJECT_LEARNING/erkamyaman-rust-anything-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/erkamyaman-rust-anything-learnings.md",
       "promoted_rules": [
@@ -294907,6 +294912,11 @@
           "number": 10263,
           "title": "fail when fixed port is already in use or build exits before listening",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10534,
+          "title": "reject zero timeout in app record and replay",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -294914,7 +294924,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T13:12:33.123Z",
+      "verified_at": "2026-11-25T13:49:21.527Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -294968,10 +294978,10 @@
       "relative_path": "08_VERIFICATION/erkamyaman-rust-anything-verification-protocol-empirical-defect-shield-for-erkam.md",
       "title": "Verification Protocol: Empirical Defect Shield for erkamyaman/rust-anything",
       "repository": "erkamyaman/rust-anything",
-      "source_version": "ef7e9fc4",
-      "content_hash": "e3172e27d69da3aed6fdb96f12410be72960b2f42a78756f89a4a225da59f0d0",
+      "source_version": "7f35f4d7",
+      "content_hash": "cd0b5719e01e184b76b051ea15f37641ddaf187d98cf7273c547d759efeb4e3e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T13:12:33.935Z"
+      "persisted_at": "2026-11-25T13:49:22.666Z"
     },
     "rule-9273": {
       "learning_id": "rule-9273",
@@ -295019,9 +295029,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for erkamyaman-rust-anything-learnings",
       "repository": "erkamyaman-rust-anything-learnings",
       "source_version": "HEAD",
-      "content_hash": "63da0537282b5beafcd4306c699e9e8010781a4e481a3490b0a1d56f6f2bcd62",
+      "content_hash": "c729d9897bef78489199bfa33a7bed992707455eff48b74d72c08a1d7c24549a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T13:12:44.137Z"
+      "persisted_at": "2026-11-25T13:49:39.265Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-compvis-stable-diffusion-v1-4-learnings-core-": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-compvis-stable-diffusion-v1-4-learnings-core-",
@@ -327816,10 +327826,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-erkamyaman-rust-anything-architecture-intelligence-erkamyaman-rust-anything-core.md",
       "title": "Architecture Intelligence: erkamyaman/rust-anything Core Invariants",
       "repository": "erkamyaman/rust-anything",
-      "source_version": "ef7e9fc4",
-      "content_hash": "ef99a264d483deb65847e57803e47ea42645d8eb4a636f1d759270950387b233",
+      "source_version": "7f35f4d7",
+      "content_hash": "ae1b5fb8aade6f41bd30ff71368d8db5983dde4b68044834dbbb9d16b7679dff",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T13:12:33.759Z"
+      "persisted_at": "2026-11-25T13:49:22.417Z"
     },
     "rule-10031": {
       "learning_id": "rule-10031",
@@ -327893,9 +327903,9 @@
       "title": "Architecture Intelligence: erkamyaman-rust-anything-learnings Core Invariants",
       "repository": "erkamyaman-rust-anything-learnings",
       "source_version": "HEAD",
-      "content_hash": "9a59caa363e3e278172761efdfab8cf853a9bc3687eba0e5583c8a1beccf2396",
+      "content_hash": "ca3804119ecccebc4e6dc92bbc7399b8b5cfdf887c167afe95fad5a3dae82946",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T13:12:43.963Z"
+      "persisted_at": "2026-11-25T13:49:39.028Z"
     },
     "candidate_directive-deps-bump-github-com-containerd-containerd-v2-from-2-3-6-to-2-3-7": {
       "item_id": "candidate_directive-deps-bump-github-com-containerd-containerd-v2-from-2-3-6-to-2-3-7",
@@ -348399,6 +348409,141 @@
       "content_hash": "6c57ae74e1cefcc52e5d0e89aaf28c9887a27ae02ce53f98d49003bd6843412d",
       "domain_letter": "H",
       "persisted_at": "2026-11-25T13:20:42.136Z"
+    },
+    "rule-10534": {
+      "learning_id": "rule-10534",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10534,
+      "title": "reject zero timeout in app record and replay",
+      "source_url": "https://github.com/erkamyaman/rust-anything",
+      "source_version": "7f35f4d7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T13:49:21.527Z"
+    },
+    "candidate_directive-reject-zero-timeout-in-app-record-and-replay": {
+      "item_id": "candidate_directive-reject-zero-timeout-in-app-record-and-replay",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-JREJ-reject-zero-timeout-in-app-record-and-replay.md",
+      "title": "reject zero timeout in app record and replay",
+      "repository": "erkamyaman/rust-anything",
+      "source_version": "7f35f4d7",
+      "content_hash": "25425a2f70a8ec3fe67ea4dd73bbadf5165fe7a2ca3cb3f09142e967f9932ebf",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-25T13:49:22.179Z"
+    },
+    "learn-github-zoontek-react-native-permissions": {
+      "learning_id": "learn-github-zoontek-react-native-permissions",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "zoontek/react-native-permissions",
+      "repository": "zoontek/react-native-permissions",
+      "slug": "zoontek-react-native-permissions",
+      "platform": "github",
+      "source_url": "https://github.com/zoontek/react-native-permissions",
+      "source_version": "2dad426e",
+      "content_hash": "98707b02416f064b5ea2d0eec3424394f9ed3b242e7b1ccd73dc700baa54dd4c",
+      "dossier_path": "07_PROJECT_LEARNING/zoontek-react-native-permissions-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/zoontek-react-native-permissions-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 10535,
+          "title": "Bump version number",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-25T13:49:26.267Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-10535": {
+      "learning_id": "rule-10535",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10535,
+      "title": "Bump version number",
+      "source_url": "https://github.com/zoontek/react-native-permissions",
+      "source_version": "2dad426e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T13:49:26.267Z"
+    },
+    "candidate_directive-bump-version-number": {
+      "item_id": "candidate_directive-bump-version-number",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-K5L1-bump-version-number.md",
+      "title": "Bump version number",
+      "repository": "zoontek-react-native-permissions-learnings",
+      "source_version": "HEAD",
+      "content_hash": "70ddff41c6e32e93d76332b3822748bec16608f309a8471bf904c8b2b6b297e8",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-25T13:49:40.549Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-permissions-technical-construction-intelligence-zoontek-rea.md",
+      "title": "Technical Construction Intelligence: zoontek/react-native-permissions Core Invariants",
+      "repository": "zoontek/react-native-permissions",
+      "source_version": "2dad426e",
+      "content_hash": "2305fc02b3378c50a62b738e2f0d518551ce9a5fc0a88c029b2dac271dcacb3b",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-25T13:49:27.135Z"
+    },
+    "rule-10536": {
+      "learning_id": "rule-10536",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10536,
+      "title": "session_history support across the memory plugins and two Claude Code",
+      "source_url": "https://github.com/volcengine/OpenViking",
+      "source_version": "af412110",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T13:49:34.300Z"
+    },
+    "candidate_directive-session_history-support-across-the-memory-plugins-and-two-claude-code": {
+      "item_id": "candidate_directive-session_history-support-across-the-memory-plugins-and-two-claude-code",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-K19C-session_history-support-across-the-memory-plugins-and-two-claude-code.md",
+      "title": "session_history support across the memory plugins and two Claude Code",
+      "repository": "volcengine/OpenViking",
+      "source_version": "af412110",
+      "content_hash": "b3f7bb7f74f1a8068e1f909cd0f9f83868e3353d1ad1165b76e5b7310fd0c761",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-25T13:49:34.951Z"
+    },
+    "candidate_directive-app-reject-zero-timeout-in-app-record-and-replay": {
+      "item_id": "candidate_directive-app-reject-zero-timeout-in-app-record-and-replay",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-K47G-app-reject-zero-timeout-in-app-record-and-replay.md",
+      "title": "app): reject zero timeout in app record and replay",
+      "repository": "erkamyaman-rust-anything-learnings",
+      "source_version": "HEAD",
+      "content_hash": "fa0ed1ead13202313ea6403297ae73dbd1235c27cdae94022b3c8885f8ed7abf",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-25T13:49:38.772Z"
     }
   },
   "ai-builder-brain": {
