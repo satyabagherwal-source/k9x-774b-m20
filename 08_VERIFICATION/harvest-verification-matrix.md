@@ -13134,3 +13134,7 @@
 | `CYCLE-2026-11-25-PROJ-EVOLVE` | `2026-11-25T15:48:16.129Z` | `weaviate-weaviate` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-21C9D326` [Domain D] | Yes (`dd4740b5...`) |
 | `CYCLE-20261125-4I4M` | `2026-11-25T15:57:28.390Z` | `divagr1925/Qwen3.5-4B-Qwenputer` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-divagr1925-qwen3.5-4b-qwenputer-learnings.md` | Yes (`10f99a18...`) |
 | `CYCLE-20261125-4NJ5` | `2026-11-25T15:57:35.393Z` | `JuulLabs/kable` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9997` | Yes (`d4957df8...`) |
+| `CYCLE-20261125-FDGO` | `2026-11-25T16:05:55.560Z` | `abenzerps/Qwen-Image-2.1-Turbo-Quantized` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-turbo-quantized-learnings.md` | Yes (`0e982773...`) |
+| `CYCLE-20261125-FEPI` | `2026-11-25T16:05:57.174Z` | `transact-rs/sqlx` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10552` | Yes (`1d5a6fec...`) |
+| `CYCLE-20261125-FMU4` | `2026-11-25T16:06:07.708Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9414` | Yes (`3e9b1684...`) |
+| `CYCLE-20261125-FPNP` | `2026-11-25T16:06:11.365Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | Yes (`621293fd...`) |

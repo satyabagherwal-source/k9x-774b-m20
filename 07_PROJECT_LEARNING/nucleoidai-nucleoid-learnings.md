@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `3b956215`  
+> **Source Version**: `3bf9d8e5`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-25T15:30:11.644Z  
+> **Timestamp**: 2026-11-25T16:06:10.889Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T15:30:11.639Z  
+> **Harvest Timestamp**: 2026-11-25T16:06:10.886Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1578,131 +1578,152 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3b956215` (2026-11-25)
-**Commit Message**: Draft NUC 147 Deferred Suites
+### Incident Patch 1: `be8fa3a0` (2026-11-25)
+**Commit Message**: Remove the build-cache cleanup step from continuous loops
 
-Category: Runtime features; mode continuous; existing_comparable.
+Delete the disk-space rule and its references in the instruction index,
+the continuous proposal cycle rule, and the nuc-proposal and nuc-evaluate
+skills, restoring their wording from before 51d61f14.
 
-Request contextual indented defer suites registered only when reached and unwound LIFO at the current executable block exit, using accepted finalization outcome and transaction rules. Preserve ordinary defer names, typed/layout boundaries, required catch syntax and all accepted behavior. Do not add loop-exit behavior, asynchronous cleanup or a resource protocol. Baselines and fresh independent stages follow this allocation; the continuous token comparison is required.
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_01AJtz8e8dqMwocimNqgffMq
 
-The live-registry draw selected Runtime features once. No allocated stale Draft exists: nine reference Drafts have no allocation/claim. An inline header-audit omission was corrected without a redraw; the original receipt remains retained. NUC119 lists defer as prior art and explicitly out of scope, not the feature it proposes.
-
-Co-authored-by: Copilot <[REDACTED_EMAIL]>
-
-**File**: `docs/nuc-0000.md` (modified, +2/-0)
+**File**: `.claude/CLAUDE.md` (modified, +0/-1)
 ```diff
-@@ -104,6 +104,7 @@ Created: 31-Jul-2026
- | [136](nuc-0136.md) | Unknown Constructor Arguments as Properties | Accepted |
- | [140](nuc-0140.md) | Match Statements | Rejected: not backward compatible, as an accepted statement that starts with `match` followed by `every`, `any` or `all` and `repeat:` or `suppose:` before an indented block, read as `match` beside a quantifier and a repeat-until loop or `suppose` block, now raises a `SyntaxError` |
- | [144](nuc-0144.md) | Nullish Value Assignment | Accepted |
-+| [147](nuc-0147.md) | Deferred Suites | Draft |
+@@ -19,7 +19,6 @@ not a replacement for the policies it links to.
+ | [versions.instructions.md](rules/versions.instructions.md) | Human-owned version numbers; no AI version changes |
+ | [proposals.instructions.md](rules/proposals.instructions.md) | Independent NUC proposal preparation and evaluation, the token policy, automatic acceptance on the hard criteria (no compile errors, every test passing, backward compatibility) with the `Automatic-Accepted` status, ARC- and user-requested bases, the pushed `Draft NUC <number> <Title>` allocation of each new NUC before its details, after a pull that claims the next free number or skips a concept already proposed, continuous cycles that first pick up allocated Drafts idle for 24 hours under a pushed `Resume NUC <number> <Title>` claim, and `NUC <number> <Title>` outcome commit messages |
+ | [rust-improvement.instructions.md](rules/rust-improvement.instructions.md) | Focused Rust improvements and the required post-change agent |
+-| [disk-space.instructions.md](rules/disk-space.instructions.md) | Before every round of a continuous or repeated task, check free disk space and, below 50 GB, clear the machine's finished Cargo build caches (`CACHEDIR.TAG` targets and `incremental` folders) before starting; clear your own finished rounds' targets every round, keep anything in use, in progress or not build output, and pause when space stays low |
+ | [git.instructions.md](rules/git.instructions.md) | Only `/nuc-proposal` (NUC allocations, claims and outcomes) and `/arc-purposal` (its own ARC changes, when it is done) commit and push; every agent pulls before it starts (fast-forward only, except those callers before a commit or push), pull before commit/push, push after every commit, resolve conflicts and push |
  
- ### Utility enhancement
- 
-@@ -347,6 +348,7 @@ Created: 31-Jul-2026
- | [144](nuc-0144.md) | Nullish Value Assignment | Standards Track | Runtime features | Accepted |
- | [145](nuc-0145.md) | Input Counts of Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
- | [146](nuc-0146.md) | Reactive Cubing | Standards Track | Utility enhancement | Accepted |
-+| [147](nuc-0147.md) | Deferred Suites | Standards Track | Runtime features | Draft |
- 
- ## Copyright
- 
+ All instruction files use `applyTo: "**"` to preserve their repository-wide scope.
 ```
 
-**File**: `docs/nuc-0147.md` (added, +91/-0)
+**File**: `.claude/rules/disk-space.instructions.md` (removed, +0/-55)
 ```diff
-@@ -0,0 +1,91 @@
-+# NUC 147 -- Deferred Suites
-+
-+```
-+NUC: 147
-+Title: Deferred Suites
-+Author: GitHub Copilot <223556219+Copilot@users.noreply.github.com>
-+Status: Draft
-+Type: Standards Track
-+Category: Runtime features
-+Created: 25-Nov-2026
-+Requires: 119
-+```
-+
-+## Abstract
-+
-+- Add a contextual `defer:` statement with a genuinely indented suite.
-+  Reaching it registers that suite for the exit of the current executable
-+  statement block; it does not run the suite immediately.
-+- Run registered suites in reverse registration order after the remaining
-+  statements complete, return, fail or pass through an existing loop-exit
-+  outcome, before the block's active parameter/loop/catch scope is removed.
-+  A registration not reached has no effect.
-+- Evaluate deferred statements at exit in that active scope, not as a new
-+  closure or an eager argument snapshot. Preserve the value already computed
-+  by a pending return. Each deferred suite uses the outcome precedence and
-+  transaction rules of accepted finalization: a return or error can replace
-+  the pending outcome, but older registered suites still run.
-+- Preserve every accepted source, including runtime-failing sources, except
-+  the newly supported suite forms that were errors. Keep `defer` an ordinary
-+  name everywhere else; in particular, keep typed declarations, calls,
-+  properties and bare-name lines followed by blocks. Do not relax the
-+  mandatory catch clause of an ordinary `try`.
-+- Keep control flow and registration/unwinding bounded under the crate's
-+  existing limits. Add no asynchronous cleanup, new loop-exit behavior,
-+  implicit resource protocol, project version or dependency change.
-+
-+## Motivation
-+
-+- Cleanup and bookkeeping often belong to a whole block, including its
-+  early returns. Stating that action where it becomes necessary is clearer
-+  than repeating it before every exit or enclosing the remaining work in
-+  another explicit try/catch/finally.
-+- NUC 119 supplies finalization but explicitly leaves scope-exit `defer`
-+  registration out of scope. Deferred suites add that core execution
-+  behavior while retaining its transaction and outcome rules.
-+- The accepted executable reports
-+  `SyntaxError: Unexpected ':' (line 1, column 6)` for an indented `defer:`
-+  suite. The caller retained the actual diagnostic separately; the native
-+  REPL's zero process status is not reported as successful execution.
-+
-+## Rationale
-+
-+- The continuous caller drew Runtime features once from the live category
-+  registry, index 1 of five eligible categories with probability 20%.
-+  Scope-exit registration and unwinding are core execution/control flow,
-+  as NUC 119's finalization is, rather than a collection or numeric helper.
-+- Runtime applicability is `existing_comparable`: accepted
-+  try/catch/finally provides the finalization mechanism for equivalent
-+  protected control programs. Freeze and execute those original programs
-+  before candidate edits. The continuous token comparison is required;
-+  neither a missing counterpart nor a new spelling permits a skip.
-+- No hint, scoring rubric or strategy-learning configuration was supplied.
-+  This revision is unattributed and learning is `not_configured`.
-+
-+## Specification
-+
-+- To be completed by the fresh preparation agent after allocation and
-+  immutable accepted-baseline capture, within the requested contract above.
-+
-+## Backwards Compatibility
-+
-+- To be demonstrated against the accepted corpus and original counterpart
-+  sources, including legacy ordinary-name, typed-declaration and layout
-+  boundaries. Do not edit protected diagnostics or assertions to pass.
-+
-+## Reference Implementation
-+
-+- The isolated candidate and affected W3C EBNF, normative documents,
-+  generated exports and synthesized records follow the pushed allocation.
-+  Preserve existing public items and signatures; report any required
-+  semantic-versioning change for human action without editing a version.
-+
-+## Evaluation
-+
-+- Draft allocation only. No candidate, token comparison, independent
-+  evaluation or outcome is claimed by this document.
-+
-+## Copyright
-+
-+This document is licensed under the Apache License, Version 2.0. See
-+[LICENSE](../LICENSE) for the full text.
+@@ -1,55 +0,0 @@
+----
+-applyTo: "**"
+----
+-
+-# Disk space: clear build caches before the next round
+-
+-These rules apply to every agent that works in rounds: the `/nuc-proposal`
+-caller in continuous mode, including cycles coordinated through
+-`/nuc-evaluate`, and any other agent that repeats a task, such as a `/loop`
+-session or a batch of `/arc-purposal` puzzles. Cargo build directories are the
+-cache that fills this machine's drive: a NUC worktree's `target` reaches about
+-14 GB, and a round builds several, for its candidate, baselines, evaluation
+-and integration.
+-
+-## Check before every round
+-
+-- Before every round, the first one included, and before its first pull,
+-  check the free space of the drive that holds the repository, its worktrees
+-  and the agent workspaces, for example with `Get-PSDrive C` or `df -h /c`.
+-- Free space is low below 50 GB. Then clear the caches below on the whole
+-  machine before the round starts, and check again.
+-- If less than 50 GB is still free after clearing, do not start the round.
+-  The disk is a resource limit: pause and report what was cleared and what
+-  still holds the space.
+-- Report what was cleared, with paths and sizes, in the round's report.
+-
+-## What to clear
+-
+-Clear only Cargo build output: a directory that holds a `CACHEDIR.TAG` file,
+-which Cargo writes at the root of every target directory, or the
+-`incremental` folder of a target.
+-
+-- **Your own finished rounds:** once a round's outcome is recorded, its
+-  candidate, baseline, integration, probe and audit targets are no longer
+-  needed. Clear them at the end of every round, whether or not space is low.
+-- **Other sessions' finished work:** build directories in
+-  `.copilot/session-state`, in other agents' scratchpads and in their
+-  worktrees, when the NUC that the directory's path names has an outcome on
+-  `main`, or when nothing has written to the directory for more than 24
+-  hours.
+-- **The primary checkout:** `target/debug/incremental`.
+-
+-## What to keep
+-
+-- A build directory that anything wrote to in the last hour, and every build
+-  directory of a NUC that is still in progress, since another session may be
+-  using it.
+-- The primary checkout's built binaries and compiled dependencies, such as
+-  `target/debug/nucleoid.exe`, which the REPL and the ARC solver use.
+-- Everything that is not build output: worktrees and their sources,
+-  uncommitted candidates, baselines, reports, receipts, checkpoints, and the
+-  logs and artifacts that a NUC or ARC record cites, `arc/` data and
+-  `node_modules`, the Cargo registry and the toolchains. Never remove another
+-  session's worktree; clear only the build directories inside it.
+-- Never read `.env` files while measuring or clearing.
+```
+
+**File**: `.claude/rules/proposals.instructions.md` (modified, +3/-6)
+```diff
+@@ -494,12 +494,9 @@ In continuous mode, after finalizing and committing an `Accepted`,
+ `Automatic-Accepted` or `Rejected` outcome for a new NUC, the caller
+ immediately starts a distinct new proposal under
+ the [continuous-cycle rule](../skills/nuc-proposal/SKILL.md#continue-with-the-next-nuc-caller-only).
+-Before every cycle, the first one included, the caller clears the finished
+-cycle's build directories and checks free disk space under the
+-[disk-space policy](disk-space.instructions.md), clearing the machine's
+-finished build caches when space is low. Each cycle, the first one included,
+-first [picks up a stale Draft](#pick-up-stale-drafts-first-caller-only) when
+-one exists. Run cycles sequentially with fresh agents, baselines, candidate
++Each cycle, the first one included, first
++[picks up a stale Draft](#pick-up-stale-drafts-first-caller-only) when one
++exists. Run cycles sequentially with fresh agents, baselines, candidate
+ worktrees and reports, preserving the selection, compatibility and acceptance
+ requirements.
+ Only the caller continues; workers stop at their handoffs. This does not
+```
+
+**File**: `.claude/skills/nuc-evaluate/SKILL.md` (modified, +1/-3)
+```diff
+@@ -352,9 +352,7 @@ unstaged work. Baselines and reports remain in the session workspace.
+ 
+ After recording the outcome, follow the
+ [continuous-cycle rule](../nuc-proposal/SKILL.md#continue-with-the-next-nuc-caller-only)
+-without requesting confirmation to record outcomes or continue, clearing
+-build caches before the next cycle under the
+-[disk-space policy](../../rules/disk-space.instructions.md). For uncertain
++without requesting confirmation to record outcomes or continue. For uncertain
+ category additions, selections, updates, or assignments, workers return the
+ question to the caller, who asks the user for confirmation under the proposal skill's
+ [classification rule](../nuc-proposal/SKILL.md#classify-every-proposal).
+```
+
+**File**: `.claude/skills/nuc-proposal/SKILL.md` (modified, +2/-8)
+```diff
+@@ -19,10 +19,7 @@ Work on exactly one proposal revision in the caller's isolated candidate.
+ Every `/nuc-proposal` task runs in this order, and every continuous cycle
+ repeats it:
+ 
+-1. **Pull.** In continuous mode, first check free disk space and, when it is
+-   low, clear the machine's finished build caches under the
+-   [disk-space policy](../../rules/disk-space.instructions.md). Then, as
+-   always before starting a task, pull the primary checkout with
++1. **Pull.** As always before starting a task, pull the primary checkout with
+    `git pull --no-rebase --autostash` under the
+    [git synchronization policy](../../rules/git.instructions.md#pull-first),
+    so the task runs against the most current remote state. Report the commits
+@@ -544,13 +541,10 @@ next cycle:
+ - **Rejected:** record and commit only rejection documentation and index/outcome
+   metadata; leave rejected language changes isolated.
+ 
+-Then clear the finished cycle's own build directories and check free disk
+-space under the [disk-space policy](../../rules/disk-space.instructions.md),
+-clearing the machine's finished build caches when less than 50 GB is free.
+ Immediately start another fresh "purpose a NUC" cycle without waiting for a
+ new user prompt. Repeat sequentially in the active agent session until the
+ user stops, pauses or redirects the work, the session ends, or a resource limit
+-is reached; space that stays low after clearing is such a limit. A `Blocked` decision, failed outcome recording, or missing required
++is reached. A `Blocked` decision, failed outcome recording, or missing required
+ input pauses continuation; report the blocker instead of bypassing it.
+ 
+ Continuous cycles do not ask for confirmation before recording an outcome or
 ```
 
 #### Recent Merged Pull Requests:
@@ -1725,35 +1746,3 @@ Co-authored-by: Copilot <[REDACTED_EMAIL]>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. Draft NUC 147 Deferred Suites
-
-**RULE**:
-When implementing operations in `docs/nuc-0000.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `3b956215`: Draft NUC 147 Deferred Suites. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/nuc-0000.md`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```rust
-// Verified production-grade fix pattern:
-| [147](nuc-0147.md) | Deferred Suites | Draft |
-| [147](nuc-0147.md) | Deferred Suites | Standards Track | Runtime features | Draft |
-```
-
-**NEGATIVE CONSTRAINT**:
-```rust
-// Induced defect failure mode:
-// Defect-prone omission of boundary validation
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3b956215` are properly handled with clean fallback behavior.

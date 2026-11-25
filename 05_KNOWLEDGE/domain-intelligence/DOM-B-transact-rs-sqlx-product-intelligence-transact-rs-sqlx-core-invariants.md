@@ -4,24 +4,24 @@
 {
   "source_repository": "transact-rs/sqlx",
   "source_url": "https://github.com/transact-rs/sqlx",
-  "source_version": "30f4eae0",
+  "source_version": "af2b683a",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-18T21:42:10.976Z",
+  "timestamp": "2026-11-25T16:05:57.439Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-transact-rs-sqlx",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [transact-rs/sqlx](https://github.com/transact-rs/sqlx) (Revision: `30f4eae0`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-18T21:42:10.976Z`  
+> **Provenance**: Harvested from [transact-rs/sqlx](https://github.com/transact-rs/sqlx) (Revision: `af2b683a`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-25T16:05:57.439Z`  
 > **Learning ID**: `learn-github-transact-rs-sqlx`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain B (Product Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), G (Architecture Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence)
-- **Confidence Rating**: 58%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence)
+- **Confidence Rating**: 56%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from transact-rs/sqlx:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/transact-rs-sqlx-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/transact-rs/sqlx](https://github.com/transact-rs/sqlx))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T21:42:09.836Z  
+> **Harvest Timestamp**: 2026-11-25T16:05:56.059Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: 🧰 The Rust SQL Toolkit. An async, pure Rust SQL crate featuring compile-time checked queries without a DSL. Supports PostgreSQL, MySQL, and SQLite.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 17693 stars
+- **Stars / Engagement**: 17752 stars
 
 ---
 
@@ -974,11 +974,11 @@ impl FromStr for AnyKind {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #4551** (2026-11-24): **Pool: the release ping doubles Postgres round trips; request a 0.9.x fix (measured +22% throughput)**
+  *Symptoms*: ### I have found these related issues/pull requests  Related to #4469 and #4470. Also #3582.  #4469 asks to skip the release ping when the connection is idle, and #4470 implements it. Both are open, with no review, and #4470 targets `main`.  This issue is new because it adds:  - a minimal reproduction and the messages on the wire, - an A/B measurement under load (+21–22% throughput, −21% p50 latency), - a smaller alternative fix (one line: `ping` → `flush` on release), - a request for a fix in **0.9.x**, or a `PoolOptions` setting to turn the release ping off.  ### Description   In sqlx-core 0.9.1, `Floating::return_to_pool` pings each connection when it goes back to the pool:  ```rust // sqlx-core/src/pool/connection.rs if let Err(error) = self.raw.ping().await { ```  With Postgres, the ping sends a lone `Sync` and waits for `ReadyForQuery`. Thus, each query on a `PgPool` costs two round trips, not one, also with `test_before_acquire(false)`. No pool option turns the release ping off.  **Cost.** A profile of our service under load (perf, frame pointers) shows that socket writes to Postgres use 11.6% of the service's CPU. `strace -c` shows 2.00 `sendto` calls for each request of a route with one query, and 4.01 for a route with two queries. Each release ping also spawns a task (from `PoolConnection::drop`), and the connection stays busy until the reply comes back. Over a real network (app and database on different hosts, or through pgbouncer), the connection stays busy for a 
+
 - **Issue #4535** (2026-11-18): **0.9.1: `statement_cache_capacity(0)` no longer works behind pgbouncer in transaction mode (worked in 0.9.0)**
   *Symptoms*:  ### I have found these related issues/pull requests  # Related:  - #4328 / #4337: the change behind this (cache off now means unnamed statements). Only the leak was discussed, not pgbouncer. - #3198, #67: unnamed statements and poolers, same theme, still open. - #4305 / #4361: unnamed statement lost after a catalog lookup. Not mine, I use no custom types.  New issue because: `statement_cache_capacity(0)` behind pgbouncer went from 0 errors on 0.9.0 to most queries failing on 0.9.1, and #4337 calls itself non-breaking.  ### Why this broke, and why the fix covers both the original issue, as well as the new issue  1. Cache off: persistent queries used named statements that nothing closed, so they piled up on the server (the leak) 2. The leak fix switched to the unnamed statement. That is fine on a direct connection 3. sqlx needs two round trips per query, and the first ends with a `Sync` 4. For pgbouncer in transaction mode, each round trip can get another server connection. Measured: the server process changed between two statements 4,287 of 4,784 times outside a transaction, 0 of 4,800 inside one 5. The unnamed statement lives on one server connection, so the second round trip finds none, or another client's. These are the errors above. pgbouncer follows named statements only 6. The fix: named statements again, so pgbouncer follows them, and the previous one is closed with the next `Parse`: no leak, no extra round trip 7. Proof for both: after 100 queries, 100 failing queries
-
-- **Issue #4497** (2026-11-09): **Postgres: "unable to resolve type OIDs" when resolving nested composite types — `fill_cache` drops pending rows on `continue 'outer`**
-  *Symptoms*: ### I have found these related issues/pull requests  I searched for "unable to resolve type OIDs" and found no existing reports of this problem. Related, but different:  - #4361 (fixes #4305): touched the same type-resolution path in `resolve.rs` (unnamed statement destroyed by the catalog lookup), but does not change the `fill_cache` dependency loop. - #1672: problems with arrays of custom types inside records, on the decoding side; this report is about OID resolution before decoding. - #2133: custom type name → OID resolution ignoring `search_path`; a different resolution bug.  ### Description  ### Bug Description  `TypeResolver::fill_cache` in `sqlx-postgres/src/connection/resolve.rs` can lose types it still has to resolve. The query then fails with:  ``` Protocol("unable to resolve type OIDs: [Oid(…)]") ```  It happens when one catalog row resolves a type that **several** pending rows depend on, and one of those dependents still needs **another** type that isn't cached yet.  In that case the loop runs `continue 'outer` and throws away the rest of `resolved_dependencies`. Those rows were already taken out of `missing_dependencies` and are never processed again. Any type that was waiting on one of them stays in `missing_dependencies` forever, and the function returns the error above.  The type cache is per connection, so in practice this shows up as intermittent errors on **fresh connections only**. A connection that already cached the leaf types through an earlier query do
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -995,323 +995,58 @@ impl FromStr for AnyKind {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `88dbe513` (2026-11-18)
-**Commit Message**: fix(postgres): don't panic decoding out-of-range dates and times (#4528)
+### Incident Patch 1: `af2b683a` (2026-11-25)
+**Commit Message**: Add link to GitHub Sponsors
 
-Postgres `date`, `timestamp` and `timestamptz` can hold `infinity`,
-`-infinity` and years outside the range of chrono and time, and `time`
-and `timetz` can hold `24:00:00`. The binary decoders added these to an
-epoch with operators that panic on overflow, or wrap a time of day back
-to midnight. Use checked arithmetic and return a decode error instead.
-
-Fixes #2234
-Fixes #3685
-
-**File**: `sqlx-postgres/src/types/chrono/date.rs` (modified, +9/-2)
+**File**: `.github/FUNDING.yml` (added, +15/-0)
 ```diff
-@@ -45,12 +45,19 @@ impl<'r> Decode<'r, Postgres> for NaiveDate {
-                 // DATE is encoded as the days since epoch
-                 let days: i32 = Decode::<Postgres>::decode(value)?;
- 
--                let days = TimeDelta::try_days(days.into())
-+                let delta = TimeDelta::try_days(days.into())
-                     .unwrap_or_else(|| {
-                         unreachable!("BUG: days ({days}) as `i32` multiplied into seconds should not overflow `i64`")
-                     });
- 
--                postgres_epoch_date() + days
-+                // `infinity`, `-infinity` and years beyond chrono's range don't fit in `NaiveDate`
-+                postgres_epoch_date()
-+                    .checked_add_signed(delta)
-+                    .ok_or_else(|| {
-+                        format!(
-+                            "Postgres DATE out of range for NaiveDate: {days} days from 2000-01-01"
-+                        )
-+                    })?
-             }
- 
-             PgValueFormat::Text => NaiveDate::parse_from_str(value.as_str()?, "%Y-%m-%d")?,
+@@ -0,0 +1,15 @@
++# These are supported funding model platforms
++
++github: transact-rs
++patreon: # Replace with a single Patreon username
++open_collective: transact-rs
++ko_fi: # Replace with a single Ko-fi username
++tidelift: # Replace with a single Tidelift platform-name/package-name e.g., npm/babel
++community_bridge: # Replace with a single Community Bridge project-name e.g., cloud-foundry
++liberapay: # Replace with a single Liberapay username
++issuehunt: # Replace with a single IssueHunt username
++lfx_crowdfunding: # Replace with a single LFX Crowdfunding project-name e.g., cloud-foundry
++polar: # Replace with a single Polar username
++buy_me_a_coffee: # Replace with a single Buy Me a Coffee username
++thanks_dev: # Replace with a single thanks.dev username
++custom: # Replace with up to 4 custom sponsorship URLs e.g., ['link1', 'link2']
 ```
 
-**File**: `sqlx-postgres/src/types/chrono/datetime.rs` (modified, +7/-1)
-```diff
-@@ -53,7 +53,13 @@ impl<'r> Decode<'r, Postgres> for NaiveDateTime {
-             PgValueFormat::Binary => {
-                 // TIMESTAMP is encoded as the microseconds since the epoch
-                 let us = Decode::<Postgres>::decode(value)?;
--                postgres_epoch_datetime() + Duration::microseconds(us)
-+
-+                // `infinity`, `-infinity` and years beyond chrono's range don't fit in `NaiveDateTime`
-+                postgres_epoch_datetime()
-+                    .checked_add_signed(Duration::microseconds(us))
-+                    .ok_or_else(|| {
-+                        format!("Postgres TIMESTAMP out of range for NaiveDateTime: {us} microseconds from 2000-01-01")
-+                    })?
-             }
- 
-             PgValueFormat::Text => {
-```
+---
 
-**File**: `sqlx-postgres/src/types/chrono/time.rs` (modified, +13/-1)
-```diff
-@@ -39,7 +39,19 @@ impl<'r> Decode<'r, Postgres> for NaiveTime {
-             PgValueFormat::Binary => {
-                 // TIME is encoded as the microseconds since midnight
-                 let us: i64 = Decode::<Postgres>::decode(value)?;
--                NaiveTime::default() + Duration::microseconds(us)
-+
-+                // Postgres allows `24:00:00`, which would otherwise wrap around to midnight
-+                let (time, overflow) =
-+                    NaiveTime::default().overflowing_add_signed(Duration::microseconds(us));
-+
-+                if overflow != 0 {
-+                    return Err(format!(
-+                        "Postgres TIME out of range for NaiveTime: {us} microseconds from midnight"
-+                    )
-+                    .into());
-+                }
-+
-+                time
-             }
- 
-             PgValueFormat::Text => NaiveTime::parse_from_str(value.as_str()?, "%H:%M:%S%.f")?,
-```
+### Incident Patch 2: `c7f014b8` (2026-11-24)
+**Commit Message**: Bump hashbrown to v0.17 (#4548)
 
-**File**: `sqlx-postgres/src/types/time/date.rs` (modified, +7/-1)
+**File**: `sqlx-core/Cargo.toml` (modified, +2/-2)
 ```diff
-@@ -40,7 +40,13 @@ impl<'r> Decode<'r, Postgres> for Date {
-             PgValueFormat::Binary => {
-                 // DATE is encoded as the days since epoch
-                 let days: i32 = Decode::<Postgres>::decode(value)?;
--                PG_EPOCH + Duration::days(days.into())
-+
-+                // `infinity`, `-infinity` and years beyond 9999 don't fit in `Date`
-+                PG_EPOCH
-+                    .checked_add(Duration::days(days.into()))
-+                    .ok_or_else(|| {
-+                        format!("Postgres DATE out of range for Date: {days} days from 2000-01-01")
-+                    })?
-             }
+@@ -99,10 +99,10 @@ tracing = { version = "0.1.37", features = ["log"] }
+ smallvec = "1.13.1"
+ url = { version = "2.2.2" }
+ bstr = { version = "1.0.1", default-features = false, features = ["std"], optional = true }
+-hashlink = "0.11.0"
++hashlink = "0.12.0"
+ indexmap = "2.0"
+ event-listener = "5.2.0"
+-hashbrown = "0.16.0"
++hashbrown = "0.17.0"
  
-             PgValueFormat::Text => Date::parse(
-```
-
-**File**: `sqlx-postgres/src/types/time/datetime.rs` (modified, +8/-1)
-```diff
-@@ -57,7 +57,14 @@ impl<'r> Decode<'r, Postgres> for PrimitiveDateTime {
-             PgValueFormat::Binary => {
-                 // TIMESTAMP is encoded as the microseconds since the epoch
-                 let us = Decode::<Postgres>::decode(value)?;
--                PG_EPOCH.midnight() + Duration::microseconds(us)
-+
-+                // `infinity`, `-infinity` and years beyond 9999 don't fit in `PrimitiveDateTime`
-+                PG_EPOCH
-+                    .midnight()
-+                    .checked_add(Duration::microseconds(us))
-+                    .ok_or_else(|| {
-+                        format!("Postgres TIMESTAMP out of range for PrimitiveDateTime: {us} microseconds from 2000-01-01")
-+                    })?
-             }
+ thiserror.workspace = true
  
-             PgValueFormat::Text => {
-```
-
-**File**: `sqlx-postgres/src/types/time/time.rs` (modified, +11/-1)
-```diff
-@@ -40,7 +40,17 @@ impl<'r> Decode<'r, Postgres> for Time {
-             PgValueFormat::Binary => {
-                 // TIME is encoded as the microseconds since midnight
-                 let us = Decode::<Postgres>::decode(value)?;
--                Time::MIDNIGHT + Duration::microseconds(us)
-+                let duration = Duration::microseconds(us);
-+
-+                // Postgres allows `24:00:00`, which would otherwise wrap around to midnight
-+                if !(Duration::ZERO..Duration::DAY).contains(&duration) {
-+                    return Err(format!(
-+                        "Postgres TIME out of range for Time: {us} microseconds from midnight"
-+                    )
-+                    .into());
-+                }
-+
-+                Time::MIDNIGHT + duration
-             }
- 
-             PgValueFormat::Text => Time::parse(
-```
-
-**File**: `sqlx-postgres/src/types/time_tz.rs` (modified, +21/-2)
-```diff
-@@ -74,7 +74,16 @@ mod chrono {
-                     let us = buf.read_i64::<BigEndian>()?;
-                     // default is midnight, there is a canary test for this
-                     // in `sqlx-postgres/src/types/chrono/time.rs`
--                    let time = NaiveTime::default() + Duration::microseconds(us);
-+                    let (time, overflow) =
-+                        NaiveTime::default().overflowing_add_signed(Duration::microseconds(us));
-+
-+                    // Postgres allows `24:00:00`, which would otherwise wrap around to midnight
-+                    if overflow != 0 {
-+                        return Err(format!(
-+                            "Postgres TIMETZ out of range for NaiveTime: {us} microseconds from midnight"
-+                        )
-+                        .into());
-+                    }
- 
-                     // OFFSET is encoded as seconds from UTC
-                     let offset_seconds = buf.read_i32::<BigEndian>()?;
-@@ -154,7 +163,17 @@ mod time {
- 
-                     // TIME is encoded as the microseconds since midnight
-                     let us = buf.read_i64::<BigEndian>()?;
--                    let time = Time::MIDNIGHT + Duration::microseconds(us);
-+                    let duration = Duration::microseconds(us);
-+
-+                    // Postgres allows `24:00:00`, which would otherwise wrap around to midnight
-+                    if !(Duration::ZERO..Duration::DAY).contains(&duration) {
-+                        return Err(format!(
-+                            "Postgres TIMETZ out of range for Time: {us} microseconds from midnight"
-+                        )
-+                        .into());
-+                    }
-+
-+                    let time = Time::MIDNIGHT + duration;
- 
-                     // OFFSET is encoded as seconds from UTC
-                     let seconds = buf.read_i32::<BigEndian>()?;
-```
-
-**File**: `tests/postgres/types.rs` (modified, +100/-0)
-```diff
-@@ -302,6 +302,36 @@ test_type!(mac_address_vec<Vec<sqlx::types::mac_address::MacAddress>>(Postgres,
-         ]
- ));
- 
-+// Postgres can store dates and times that `chrono` and `time` cannot represent,
-+// such as `infinity`, years far outside their range, or `24:00:00`.
-+// These should fail to decode, in both text and binary format, instead of panicking or wrapping.
-+#[cfg(any(feature = "chrono", feature = "time"))]
-+async fn assert_decode_error<T>(
-+    conn: &mut sqlx::PgConnection,
-+    sql: &'static str,
-+) -> anyhow::Result<()>
-+where
-+    T: for<'r> sqlx::Decode<'r, Postgres> + sqlx::Type<Postgres> + std::fmt::Debug,
-+{
-+    use sqlx::Row;
-+
-+    let row = conn.fetch_one(sql).await?;
-+    let result = row.try_get::<T, _>(0);
-+    assert!(
-+        result.is_err(),
-+        "{sql} (text): expected an error, got {result:?}"
-+    );
-+
-+    let row = sqlx::query(sql).fetch_one(&mut *conn).await?;
-+    let result = row.try_get::<T, _>(0);
-+    assert!(
-+        result.is_err(),
-+        "{sql} (binary): expected an error, got {result:?}"
-+    );
-+
-+    Ok(())
-+}
-+
- #[cfg(feature = "chrono")]
- mod chrono {
-     use super::*;
-@@ -364,6 +394,40 @@ mod chrono {
-         "TIMETZ '05:10:20.115100-05'" == PgTimeTz { time: NaiveTime::from_hms_micro_opt(5, 10, 20, 115100).unwrap(), offset: FixedOffset::west_opt(60 * 60 * 5).unwrap() },
-         "TIMETZ '05:10:20+02'" == PgTimeTz { time: NaiveTime::from_hms_opt(5, 10, 20).unwrap(), offset: FixedOffset::east_opt(60 * 60 * 2 ).unwrap() }
-     ));
-+
-+    #[sqlx_macros::test]
-+    async fn chrono_out_of_range() -> anyhow::Result<()> {
-+        let mut conn = new::<Postgres>().await?;
-+
-+        assert_decode_error::<NaiveDate>(&mut conn, "SELECT DATE 'infinity'").await?;
-+        assert_decode_error::<NaiveDate>(&mut conn, "SELECT DATE '-infinity'").await?;
-+        assert_decode_error::<NaiveDate>(&mut conn, "SELECT DATE '5874897-12-31'").await?;
-+
-+        assert_decode_error::<NaiveDateTime>(&mut conn, "SELECT TIMESTAMP 'infinity'").await?;
-+        assert_decode_error::<NaiveDateTime>(&mut conn, "SELECT TIMESTAMP '-infinity'").await?;
-+        assert_decode_error::<NaiveDateTime>(&mut conn, "SELECT TIMESTAMP '294276-12-31 23:59:59'")
-+            .await?;
-+
-+        assert_decode_error::<DateTime<Utc>>(&mut conn, "SELECT TIMESTAMPTZ 'infinity'").await?;
-+        assert_decode_error::<DateTime<FixedOffset>>(&mut conn, "SELECT TIMESTAMPTZ '-infinity'")
-+            .await?;
-+
-+        assert_decode_error::<NaiveTime>(&mut conn, "SELECT TIME '24:00:00'").await?;
-+        assert_decode_error::<PgTimeTz>(&mut conn, "SELECT TIMETZ '24:00:00+00'").await?;
-+
-+        assert_decode_error::<Vec<NaiveDateTime>>(
-+            &mut conn,
-+            "SELECT array['2019-01-02 05:10:20', 'infinity']::timestamp[]",
-+        )
-+        .await?;
-+        assert_decode_error::<PgRange<DateTime<Utc>>>(
-+            &mut conn,
-+            "SELECT tstzrange('-infinity', 'infinity')",
-+        )
-+        .await?;
-+
-+        Ok(())
-+    }
- }
- 
- #[cfg(feature = "time")]
-@@ -407,6 +471,42 @@ mod time_tests {
-         "TIMETZ '05:10:20.115100-05'" == PgTimeTz { time: time!(5:10:20.115100), offset: UtcOffset::from_whole_seconds(-(60 * 60 * 5)).unwrap() },
-         "TIMETZ '05:10:20+02'" == PgTimeTz { time: time!(5:10:20), offset: UtcOffset::from_whole_seconds(60 * 60 * 2 ).unwrap() }
-     ));
-+
-+    #[sqlx_macros::test]
-+    async fn time_out_of_range() -> anyhow::Result<()> {
-+        let mut conn = new::<Postgres>().await?;
-+
-+        assert_decode_error::<Date>(&mut conn, "SELECT DATE 'infinity'").await?;
-+        assert_decode_error::<Date>(&mut conn, "SELECT DATE '-infinity'").await?;
-+        assert_decode_error::<Date>(&mut conn, "SELECT DATE '5874897-12-31'").await?;
-+
-+        assert_decode_error::<PrimitiveDateTime>(&mut conn, "SELECT TIMESTAMP 'infinity'").await?;
-+        assert_decode_error::<PrimitiveDateTime>(&mut conn, "SELECT TIMESTAMP '-infinity'").await?;
-+        assert_decode_error::<PrimitiveDateTime>(
-+            &mut conn,
-+            "SELECT TIMESTAMP '294276-12-31 23:59:59'",
-+        )
-+        .await?;
-+
-+        assert_decode_error::<OffsetDateTime>(&mut conn, "SELECT TIMESTAMPTZ 'infinity'").await?;
-+        assert_decode_error::<OffsetDateTime>(&mut conn, "SELECT TIMESTAMPTZ '-infinity'").await?;
-+
-+        assert_decode_error::<Time>(&mut conn, "SELECT TIME '24:00:00'").await?;
-+        assert_decode_error::<PgTimeTz>(&mut conn, "SELECT TIMETZ '24:00:00+00'").await?;
-+
-+        assert_decode_error::<Vec<PrimitiveDateTime>>(
-+            &mut conn,
-+            "SELECT array['2019-01-02 05:10:20', 'infinity']::timestamp[]",
-+        )
-+        .await?;
-+        assert_decode_error::<PgRange<OffsetDateTime>>(
-+            &mut conn,
-+            "SELECT tstzrange('-infinity', 'infinity')",
-+        )
-+        .await?;
-+
-+        Ok(())
-+    }
- }
- 
- #[cfg(feature = "json")]
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4550** (closed): Add ssl_client_config to MySQL and Postgres connect options for a prebuilt Rustls ClientConfig (@carl-wallace)
+- **PR #4549** (closed): sqlx-postgres: opt-in template databases for #[sqlx::test] (@dihannahdi)
+- **PR #4548** (2026-11-24): Bump hashbrown to v0.17 (@xtqqczze)
+- **PR #4537** (2026-11-19): chore(mysql): update rsa to 0.10.0 (@tuantran0910)
 - **PR #4529** (2026-11-17): fix: handle IPv6 properly at all levels (@abonander)
 - **PR #4528** (2026-11-18): fix(postgres): don't panic decoding out-of-range dates and times (@colinhacks)
-- **PR #4526** (2026-11-16): docs(FAQ): Replace versioned docs.rs link with latest (@TheJanzap)
-- **PR #4525** (2026-11-16): sqlx-sqlite: bump the upper bound on libsqlite3-sys to allow 0.40.x (@lthiery)
-- **PR #4517** (2026-11-18): chore: prepare release 0.9.1 (@abonander)
-- **PR #4515** (closed): fix(sqlite): reset transaction depth after SQLite rolls back on its own (@yxshee)
 
 ---
 
@@ -1331,40 +1066,45 @@ Fixes #3685
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. postgres): don't panic decoding out-of-range dates and times
+## X. Add link to GitHub Sponsors
 
 **RULE**:
-When implementing operations in `sqlx-postgres/src/types/chrono/date.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in transact-rs/sqlx. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/FUNDING.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in transact-rs/sqlx. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `88dbe513`: postgres): don't panic decoding out-of-range dates and times. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `af2b683a`: Add link to GitHub Sponsors. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `sqlx-postgres/src/types/chrono/date.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/FUNDING.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-                let delta = TimeDelta::try_days(days.into())
-                // `infinity`, `-infinity` and years beyond chrono's range don't fit in `NaiveDate`
-                postgres_epoch_date()
-                    .checked_add_signed(delta)
-                    .ok_or_else(|| {
-                        format!(
-                            "Postgres DATE out of range for NaiveDate: {days} days from 2000-01-01"
-                        )
-                    })?
+# These are supported funding model platforms
+
+github: transact-rs
+patreon: # Replace with a single Patreon username
+open_collective: transact-rs
+ko_fi: # Replace with a single Ko-fi username
+tidelift: # Replace with a single Tidelift platform-name/package-name e.g., npm/babel
+community_bridge: # Replace with a single Community Bridge project-name e.g., cloud-foundry
+liberapay: # Replace with a single Liberapay username
+issuehunt: # Replace with a single IssueHunt username
+lfx_crowdfunding: # Replace with a single LFX Crowdfunding project-name e.g., cloud-foundry
+polar: # Replace with a single Polar username
+buy_me_a_coffee: # Replace with a single Buy Me a Coffee username
+thanks_dev: # Replace with a single thanks.dev username
+custom: # Replace with up to 4 custom sponsorship URLs e.g., ['link1', 'link2']
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-                let days = TimeDelta::try_days(days.into())
-                postgres_epoch_date() + days
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `88dbe513` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `af2b683a` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

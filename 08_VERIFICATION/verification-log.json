@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261124-2ZSY",
-    "timestamp": "2026-11-24T04:28:47.170Z",
-    "repository": "sharkdp/bat",
-    "learningId": "learn-github-sharkdp-bat",
-    "contentHash": "10c19903f59718333631781d16537653dc0c6a11bc267d01657735a3037fa2b9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-DLHR",
-    "timestamp": "2026-11-24T04:37:01.839Z",
-    "repository": "MetrolistGroup/Metrolist",
-    "learningId": "learn-github-metrolistgroup-metrolist",
-    "contentHash": "9564362ff4bb2d3daff9e25baf7e7cf9da8fb0dc60a816a6cb61c3e07728bfef",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-O2K2",
-    "timestamp": "2026-11-24T04:45:10.514Z",
-    "repository": "codewhale-hq/Codewhale",
-    "learningId": "learn-github-codewhale-hq-codewhale",
-    "contentHash": "4a356a2d400a771e3ef29690a44a06fffb4ac6762d13ad61ae38e25bf93d3c26",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-O5AN",
-    "timestamp": "2026-11-24T04:45:14.063Z",
-    "repository": "yazinsai/OpenOats",
-    "learningId": "learn-github-yazinsai-openoats",
-    "contentHash": "cc308f542fe80639414308f371373575d4bc83d3bb27d0bdd2d2ef25f4997bf9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261124-O90I",
     "timestamp": "2026-11-24T04:45:18.882Z",
     "repository": "aleo-labs-protocol/snarkOS",
@@ -7492,6 +7432,66 @@
     "contentHash": "d4957df8466fb61335df1cb5a1d3ab31b536f56a7682004322915ab7457bf979",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-FDGO",
+    "timestamp": "2026-11-25T16:05:55.560Z",
+    "repository": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
+    "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-turbo-quantized",
+    "contentHash": "0e982773b2b7482abbb710057a8383b041c2ed30b0a72163d5aebe26071352bc",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-FEPI",
+    "timestamp": "2026-11-25T16:05:57.174Z",
+    "repository": "transact-rs/sqlx",
+    "learningId": "learn-github-transact-rs-sqlx",
+    "contentHash": "1d5a6fec4b3b6a13b569d74f4c1903eeb43284d48dc6602dc9a78769d9f014f8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-FMU4",
+    "timestamp": "2026-11-25T16:06:07.708Z",
+    "repository": "aleo-labs-protocol/snarkOS",
+    "learningId": "learn-github-aleo-labs-protocol-snarkos",
+    "contentHash": "3e9b1684e01844c60a4af1bc3acec38df1d7c37d138b5715f33a16370d9597ab",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-FPNP",
+    "timestamp": "2026-11-25T16:06:11.365Z",
+    "repository": "NucleoidAI/Nucleoid",
+    "learningId": "learn-github-nucleoidai-nucleoid",
+    "contentHash": "621293fd1911e148abab84c150f009b5fa317402f91b8e40b1bde8d4153c4570",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

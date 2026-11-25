@@ -13167,3 +13167,7 @@ Every entry in this ledger must capture:
 | `learn-dom-d-21c9d326` | `project://weaviate-weaviate` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/weaviate-weaviate-learnings.md` | 2026-11-25T15:48:16.129Z |
 | `learn-huggingface-divagr1925-qwen3-5-4b-qwenputer` | `https://huggingface.co/divagr1925/Qwen3.5-4B-Qwenputer` | `hf-divagr1` | Multi-dimensional audit evidence | 2026-11-25T15:57:28.395Z |
 | `learn-github-juullabs-kable` | `https://github.com/JuulLabs/kable` | `aa3619b3` | Multi-dimensional audit evidence | 2026-11-25T15:57:35.398Z |
+| `learn-huggingface-abenzerps-qwen-image-2-1-turbo-quantized` | `https://huggingface.co/abenzerps/Qwen-Image-2.1-Turbo-Quantized` | `hf-abenzer` | Multi-dimensional audit evidence | 2026-11-25T16:05:55.564Z |
+| `learn-github-transact-rs-sqlx` | `https://github.com/transact-rs/sqlx` | `af2b683a` | Multi-dimensional audit evidence | 2026-11-25T16:05:57.179Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `cbd9ab2c` | Multi-dimensional audit evidence | 2026-11-25T16:06:07.712Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `3bf9d8e5` | Multi-dimensional audit evidence | 2026-11-25T16:06:11.369Z |

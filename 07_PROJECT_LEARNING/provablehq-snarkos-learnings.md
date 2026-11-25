@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/provablehq-snarkos-learnings.md`  
 > **Source**: github ([https://github.com/ProvableHQ/snarkOS](https://github.com/ProvableHQ/snarkOS))  
-> **Source Version**: `b2a26d2e`  
+> **Source Version**: `cbd9ab2c`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-25T02:20:26.522Z  
+> **Timestamp**: 2026-11-25T16:06:06.936Z  
 > **Learning ID**: `learn-github-aleo-labs-protocol-snarkos`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/provablehq-snarkos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ProvableHQ/snarkOS](https://github.com/ProvableHQ/snarkOS))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T02:20:26.513Z  
+> **Harvest Timestamp**: 2026-11-25T16:06:06.930Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1873,237 +1873,191 @@ if __name__ == "__main__":
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8444af96` (2026-11-24)
-**Commit Message**: Merge pull request #4778 from aleo-labs-protocol/fix/stale-subdag-guard
+### Incident Patch 1: `cbd9ab2c` (2026-11-25)
+**Commit Message**: Merge pull request #4785 from aleo-labs-protocol/fix/catch-vm-halts-in-cli
 
-Build no block from a subdag with committed certificates
-
-**File**: `node/bft/ledger-service/src/ledger.rs` (modified, +20/-2)
+**File**: `cli/Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -40,6 +40,7 @@ use snarkvm::{
-         Ledger,
-         PendingBlock,
-         Transaction,
-+        authority::Authority,
-         committee::Committee,
-         narwhal::{BatchCertificate, Data, Subdag, Transmission, TransmissionID},
-         puzzle::{Solution, SolutionID},
-@@ -58,7 +59,7 @@ use snarkvm::{
-     },
+@@ -118,7 +118,7 @@ workspace = true
+ 
+ [dependencies.snarkvm]
+ workspace = true
+-features = [ "parameters", "circuit", "package", "rocks" ]
++features = [ "parameters", "circuit", "package", "rocks", "utilities" ]
+ 
+ [dependencies.sys-info]
+ version = "0.9"
+```
+
+**File**: `cli/src/commands/developer/deploy.rs` (modified, +6/-6)
+```diff
+@@ -142,8 +142,8 @@ impl Deploy {
+         let process = package.get_process()?;
+ 
+         // Generate the deployment
+-        let mut deployment =
+-            package.deploy::<A>(&process, None).with_context(|| "Failed to generate the deployment")?;
++        let mut deployment = Developer::catch_halt(|| package.deploy::<A>(&process, None))
++            .with_context(|| "Failed to generate the deployment")?;
+ 
+         // Get the consensus version.
+         let consensus_version =
+@@ -179,7 +179,7 @@ impl Deploy {
+             let vm = VM::from(store).with_context(|| "Failed to initialize the virtual machine")?;
+ 
+             // Prepare the fees.
+-            let fee = match &self.record {
++            let fee = Developer::catch_halt(|| match &self.record {
+                 Some(record) => {
+                     let fee_record =
+                         Developer::parse_record(&private_key, record).with_context(|| "Failed to parse record")?;
+@@ -192,7 +192,7 @@ impl Deploy {
+                         rng,
+                     )?;
+                     vm.execute_fee_authorization(fee_authorization, Some(&query), rng)
+-                        .with_context(|| "Failed to execute fee authorization")?
++                        .with_context(|| "Failed to execute fee authorization")
+                 }
+                 None => {
+                     let fee_authorization = vm.authorize_fee_public(
+@@ -203,9 +203,9 @@ impl Deploy {
+                         rng,
+                     )?;
+                     vm.execute_fee_authorization(fee_authorization, Some(&query), rng)
+-                        .with_context(|| "Failed to execute fee authorization")?
++                        .with_context(|| "Failed to execute fee authorization")
+                 }
+-            };
++            })?;
+             // Construct the owner.
+             let owner = ProgramOwner::new(&private_key, deployment_id, rng)
+                 .with_context(|| "Failed to construct program owner")?;
+```
+
+**File**: `cli/src/commands/developer/execute.rs` (modified, +11/-9)
+```diff
+@@ -171,15 +171,17 @@ impl Execute {
+             };
+ 
+             // Create a new transaction.
+-            vm.execute(
+-                &private_key,
+-                (program_id, function),
+-                inputs.iter(),
+-                fee_record,
+-                self.priority_fee,
+-                Some(&query),
+-                rng,
+-            )
++            Developer::catch_halt(|| {
++                vm.execute(
++                    &private_key,
++                    (program_id, function),
++                    inputs.iter(),
++                    fee_record,
++                    self.priority_fee,
++                    Some(&query),
++                    rng,
++                )
++            })
+             .with_context(|| "VM failed to execute transaction locally")?
+         };
+ 
+```
+
+**File**: `cli/src/commands/developer/mod.rs` (modified, +32/-0)
+```diff
+@@ -37,6 +37,7 @@ use snarkvm::{
+     ledger::store::helpers::memory::BlockMemory,
+     package::Package,
+     prelude::{query::Query, *},
++    utilities::{VmHalt, try_vm_runtime},
  };
  
--use anyhow::ensure;
-+use anyhow::{anyhow, ensure};
- use indexmap::IndexMap;
- use rayon::prelude::*;
- 
-@@ -104,7 +105,24 @@ impl<'a, N: Network, C: ConsensusStorage<N>> LedgerUpdateService<N> for LedgerUp
-         subdag: Subdag<N>,
-         transmissions: IndexMap<TransmissionID<N>, Transmission<N>>,
-     ) -> Result<Block<N>, CheckBlockError<N>> {
--        self.ledger.prepare_advance_to_next_quorum_block(subdag, transmissions, &mut rand::rng())
-+        let block = self.ledger.prepare_advance_to_next_quorum_block(subdag, transmissions, &mut rand::rng())?;
-+
-+        // The caller orders the subdag before it begins this update, so a block added in between
-+        // can hold some of its certificates. A block that commits them again forks this node.
-+        if let Authority::Quorum(subdag) = block.authority() {
-+            for certificate_id in subdag.certificate_ids() {
-+                if self.ledger.contains_certificate(&certificate_id)? {
-+                    return Err(anyhow!(
-+                        "Certificate '{}' of the subdag for round {} is already in the ledger",
-+                        fmt_id(certificate_id),
-+                        subdag.anchor_round()
-+                    )
-+                    .into());
-+                }
-+            }
-+        }
-+
-+        Ok(block)
-     }
- 
-     /// Adds the given block as the next block in the ledger.
-```
-
-**File**: `node/bft/ledger-service/src/traits.rs` (modified, +2/-0)
-```diff
-@@ -60,6 +60,8 @@ pub trait LedgerUpdateService<N: Network> {
-     /// Checks the given block is a valid next block for the ledger.
-     fn check_next_block(&self, block: Block<N>) -> Result<Block<N>, CheckBlockError<N>>;
-     /// Prepares the next block in the ledger, using a committed subdag and its transmissions.
-+    ///
-+    /// Returns an error if a certificate of the subdag is already in the ledger.
-     fn prepare_advance_to_next_quorum_block(
-         &self,
-         subdag: Subdag<N>,
-```
-
-**File**: `node/bft/src/sync/mod.rs` (modified, +49/-0)
-```diff
-@@ -1812,6 +1812,55 @@ mod tests {
-         assert!(syncing_ledger.contains_block_height(2));
-     }
- 
-+    /// Tests that the ledger builds no block from a subdag that also holds the certificates of the latest block.
-+    ///
-+    /// The BFT orders such a subdag when sync adds a block between the ordering and the ledger update.
-+    #[tokio::test]
-+    async fn test_prepare_block_rejects_committed_certificates() {
-+        let rng = &mut TestRng::default();
-+        let (genesis, blocks) = setup_commit_chain(rng).await;
-+        let ledger = Arc::new(CoreLedgerService::new(
-+            spawn_blocking!(CurrentLedger::load(genesis, StorageMode::new_test(None))).unwrap(),
-+            SimpleStoppable::new(),
-+        ));
-+
-+        let Authority::Quorum(committed_subdag) = blocks[1].authority().clone() else {
-+            panic!("Expected a quorum block")
-+        };
-+        let Authority::Quorum(next_subdag) = blocks[2].authority().clone() else { panic!("Expected a quorum block") };
-+
-+        // Order the subdag of the third block as if the second block were not in the ledger.
-+        let mut stale_subdag_map: BTreeMap<u64, IndexSet<BatchCertificate<CurrentNetwork>>> = BTreeMap::new();
-+        for (round, certificates) in committed_subdag.iter().chain(next_subdag.iter()) {
-+            stale_subdag_map.entry(*round).or_default().extend(certificates.iter().cloned());
-+        }
-+        let stale_subdag = Subdag::from(stale_subdag_map).unwrap();
-+        assert_eq!(stale_subdag.anchor_round(), next_subdag.anchor_round());
-+
-+        let (committed_result, stale_result, block) = spawn_blocking!({
-+            let ledger_update = ledger.begin_ledger_update()?;
-+            // Advance the ledger to the second block.
-+            for block in &blocks[..2] {
-+                ledger_update.advance_to_next_block(block)?;
-+            }
-+            let committed_result =
-+                ledger_update.prepare_advance_to_next_quorum_block(committed_subdag, Default::default());
-+            let stale_result = ledger_update
-+                .prepare_advance_to_next_quorum_block(stale_subdag, Default::default())
-+                .map(|block| block.hash());
-+            // The subdag without the committed certificates becomes the third block.
-+            let block = ledger_update.prepare_advance_to_next_quorum_block(next_subdag, Default::default())?;
-+            Ok((committed_result, stale_result, block))
-+        })
-+        .unwrap();
-+
-+        // The subdag of the latest block keeps its own error, which tells the BFT that the ledger already advanced.
-+        assert!(matches!(committed_result, Err(CheckBlockError::InvalidRound { .. })));
-+        let error = stale_result.expect_err("A subdag with committed certificates must not become a block").to_string();
-+        assert!(error.contains("is already in the ledger"), "Unexpected error: {error}");
-+        assert_eq!(block.height(), 3);
-+    }
-+
-     #[tokio::test]
-     #[tracing_test::traced_test]
-     async fn test_pending_certificates() -> anyhow::Result<()> {
-```
-
----
-
-### Incident Patch 2: `73fd1643` (2026-11-24)
-**Commit Message**: Merge pull request #4602 from aleo-labs-protocol/fix/fast-forward-reinsert
-
-Return proposal transmissions to the workers when fast-forwarding rounds
-
-**File**: `node/bft/src/primary.rs` (modified, +233/-28)
-```diff
-@@ -75,7 +75,7 @@ use snarkvm::{
-         narwhal::{BatchCertificate, BatchHeader, Data, Transmission, TransmissionID},
-         puzzle::{Solution, SolutionID},
-     },
--    prelude::{Signature, committee::Committee},
-+    prelude::Signature,
-     utilities::flatten_error,
- };
- 
-@@ -1314,11 +1314,11 @@ impl<N: Network> Primary<N> {
- 
-         info!("Quorum threshold reached - Preparing to certify our batch for round {}...", proposal.round());
- 
--        // Retrieve the committee lookback for the round.
--        let committee_lookback = self.ledger.get_committee_lookback_for_round(proposal.round())?;
-         // Store the certified batch and broadcast it to all validators.
--        // If there was an error storing the certificate, reinsert the transmissions back into the ready queue.
--        if let Err(e) = self.store_and_broadcast_certificate(&proposal, &committee_lookback).await {
-+        if let Err(e) = self.store_and_broadcast_certificate(&proposal).await {
-+            // Clear `Certified` if it still holds this batch, as `propose_batch` does not run while it is set.
-+            let batch_id = proposal.batch_id();
-+            self.take_proposed_batch_if(|state| matches!(state, ProposedBatchState::Certified(id) if *id == batch_id));
-             // Reinsert the transmissions back into the ready queue for the next proposal.
-             self.reinsert_transmissions_into_workers(proposal.into_transmissions())?;
-             return Err(e);
-@@ -1730,35 +1730,37 @@ impl<N: Network> Primary<N> {
-     }
- 
-     /// Checks if the proposed batch is expired, and clears the proposed batch if it has expired.
--    ///
--    /// The proposal is inspected and cleared under a single write lock, so that the proposal which
--    /// is discarded is exactly the one that was found to be expired.
-     fn check_proposed_batch_for_expiration(&self) -> Result<()> {
--        // Read the current round before taking the lock below, so that no other lock is acquired
--        // while it is held. The round only ever increases, so reading it early is conservative: at
--        // worst a proposal that just expired is left for the next call to clear.
-+        // Read the current round before taking the lock in `take_proposed_batch_if`, so that no
-+        // other lock is acquired while it is held. The round only ever increases, so reading it early
-+        // is conservative: at worst a proposal that just expired is left for the next call to clear.
-         let current_round = self.current_round();
- 
--        // Take the proposed batch only if it has expired; taking it leaves the state cleared.
-         // A batch being certified is not considered expired.
--        let expired = {
--            let mut proposed_batch = self.proposed_batch.write();
--            let is_expired = matches!(
--                &*proposed_batch,
--                ProposedBatchState::Certifying(proposal) if proposal.round() < current_round
--            );
--            is_expired.then(|| std::mem::take(&mut *proposed_batch))
--        };
-+        let expired = self.take_proposed_batch_if(
-+            |state| matches!(state, ProposedBatchState::Certifying(proposal) if proposal.round() < current_round),
-+        );
- 
--        // Reinsert the transmissions once the lock above has been released, since this acquires the
--        // workers' locks in turn.
-+        // The lock is released at this point, which matters since reinserting acquires the workers' locks.
-         if let Some(ProposedBatchState::Certifying(proposal)) = expired {
-             debug!("Cleared expired proposal for round {}", proposal.round());
-             self.reinsert_transmissions_into_workers(proposal.into_transmissions())?;
+ use anyhow::{Context, Result, anyhow, bail, ensure};
+@@ -200,6 +201,17 @@ impl Developer {
          }
-         Ok(())
      }
  
-+    /// Takes the proposed batch if `should_take` holds for it, leaving the state cleared.
-+    ///
-+    /// The state is inspected and taken under a single write lock, so that the state which is
-+    /// taken is exactly the one that `should_take` accepted.
-+    fn take_proposed_batch_if(
-+        &self,
-+        should_take: impl FnOnce(&ProposedBatchState<N>) -> bool,
-+    ) -> Option<ProposedBatchState<N>> {
-+        let mut proposed_batch = self.proposed_batch.write();
-+        should_take(&proposed_batch).then(|| std::mem::take(&mut *proposed_batch))
++    /// Runs `operation`, which can halt the VM, and returns a halt as an error. Any other panic keeps unwinding.
++    fn catch_halt<T, E: Into<anyhow::Error>>(operation: impl FnOnce() -> std::result::Result<T, E>) -> Result<T> {
++        match try_vm_runtime(operation) {
++            Ok(result) => result.map_err(Into::into),
++            Err(payload) => match payload.downcast::<VmHalt>() {
++                Ok(halt) => bail!("The program halted: {halt}"),
++                Err(payload) => std::panic::resume_unwind(payload),
++            },
++        }
 +    }
 +
-     /// Increments to the next round.
-     async fn try_increment_to_the_next_round(&self, next_round: u64) -> Result<()> {
-         // If the next round is within GC range, then iterate to the penultimate round.
-@@ -1768,8 +1770,13 @@ impl<N: Network> Primary<N> {
-             while fast_forward_round < next_round.saturating_sub(1) {
-                 // Update to the next round in storage.
-                 fast_forward_round = self.storage.increment_to_next_round(fast_forward_round)?;
--                // Clear the proposed batch.
--                *self.proposed_batch.write() = ProposedBatchState::None;
-+            }
-+            // Clear a proposal for a round that has now
+     /// Parses an endpoint URL or a JSON static query.
+     ///
+     /// Endpoint URLs are normalized before `Query::from_str`.
+@@ -649,4 +661,24 @@ mod tests {
+         assert_eq!(endpoint, format!("{base_uri_str}/{}/transaction/broadcast", CurrentNetwork::SHORT_NAME));
+         assert_eq!(api_version, ApiVersion::V2);
+     }
++
++    #[test]
++    fn test_catch_halt_returns_the_result() {
++        assert_eq!(Developer::catch_halt(|| Ok::<_, anyhow::Error>(7)).expect("The operation succeeds"), 7);
++        assert_eq!(Developer::catch_halt(|| -> Result<()> { bail!("an error") }).unwrap_err().to_string(), "an error");
++    }
++
++    #[test]
++    fn test_catch_halt_returns_a_halt_as_an_error() {
++        let error = Developer::catch_halt(|| Ok::<_, anyhow::Error>(Field::<CurrentNetwork>::one() / Field::zero()))
++            .expect_err("A division by zero halts");
++        assert!(error.to_string().starts_with("The program halted: Field division by zero"), "{error}");
++    }
++
++    #[test]
++    fn test_catch_halt_resumes_other_panics() {
++        let payload = std::panic::catch_unwind(|| Developer::catch_halt(|| -> Result<()> { panic!("a bug") }))
++            .expect_err("A panic that is not a halt keeps unwinding");
++        assert_eq!(payload.downcast_ref::<&str>(), Some(&"a bug"));
++    }
+ }
+```
+
+**File**: `cli/src/commands/developer/transfer_private.rs` (modified, +11/-9)
+```diff
+@@ -132,15 +132,17 @@ impl TransferPrivate {
+             ];
+ 
+             // Create a new transaction.
+-            vm.execute(
+-                &private_key,
+-                ("credits.aleo", "transfer_private"),
+-                inputs.iter(),
+-                Some(fee_record),
+-                priority_fee,
+-                Some(&query),
+-                rng,
+-            )?
++            Developer::catch_halt(|| {
++                vm.execute(
++                    &private_key,
++                    ("credits.aleo", "transfer_private"),
++                    inputs.iter(),
++                    Some(fee_record),
++                    priority_fee,
++                    Some(&query),
++                    rng,
++                )
++            })?
+         };
+         let locator = Locator::<N>::from_str("credits.aleo/transfer_private")?;
+         println!("✅ Created private transfer of {} microcredits to {}\n", &self.amount, recipient);
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4786** (2026-11-25): ci: offer a 21-validator network in the Gauntlet forms (@cbeck88)
+- **PR #4785** (2026-11-25): Return VM halts in the developer commands as command errors (@cbeck88)
 - **PR #4782** (2026-11-24): Bump snarkVM to aleo-labs-protocol/snarkVM@4606f61d8 (@aleo-labs-merge-bot[bot])
 - **PR #4779** (2026-11-24): Bump snarkVM to aleo-labs-protocol/snarkVM@c91682f16 (@aleo-labs-merge-bot[bot])
 - **PR #4778** (2026-11-24): Build no block from a subdag with committed certificates (@cbeck88)
 - **PR #4777** (2026-11-24): Check advisories only on scheduled and release CI runs (@cbeck88)
-- **PR #4775** (2026-11-24): Drop failed block requests above every advertised peer height (@cbeck88)
-- **PR #4774** (2026-11-24): Warn operators before JSON history deprecation (@raychu86)
 
 ---
 
@@ -2123,48 +2077,28 @@ Return proposal transmissions to the workers when fast-forwarding rounds
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in ledger.rs
+## X. Empirical Invariant Guard in Cargo.toml
 
 **RULE**:
-When implementing operations in `node/bft/ledger-service/src/ledger.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cli/Cargo.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8444af96`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `cbd9ab2c`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `node/bft/ledger-service/src/ledger.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `cli/Cargo.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        authority::Authority,
-use anyhow::{anyhow, ensure};
-        let block = self.ledger.prepare_advance_to_next_quorum_block(subdag, transmissions, &mut rand::rng())?;
-
-        // The caller orders the subdag before it begins this update, so a block added in between
-        // can hold some of its certificates. A block that commits them again forks this node.
-        if let Authority::Quorum(subdag) = block.authority() {
-            for certificate_id in subdag.certificate_ids() {
-                if self.ledger.contains_certificate(&certificate_id)? {
-                    return Err(anyhow!(
-                        "Certificate '{}' of the subdag for round {} is already in the ledger",
-                        fmt_id(certificate_id),
-                        subdag.anchor_round()
-                    )
-                    .into());
-                }
-            }
-        }
-
-        Ok(block)
+features = [ "parameters", "circuit", "package", "rocks", "utilities" ]
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-use anyhow::ensure;
-        self.ledger.prepare_advance_to_next_quorum_block(subdag, transmissions, &mut rand::rng())
+features = [ "parameters", "circuit", "package", "rocks" ]
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8444af96` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `cbd9ab2c` are properly handled with clean fallback behavior.

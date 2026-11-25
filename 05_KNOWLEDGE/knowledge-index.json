@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-25T15:57:43.625Z",
+  "last_updated": "2026-11-25T16:06:16.425Z",
   "total_verified_learnings": 9119,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25516,
+  "total_items": 25518,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112818,25 +112818,25 @@
       "item_id": "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-core-inv.md",
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
       "repository": "aleo-labs-protocol/snarkOS",
-      "source_version": "00510513",
-      "content_hash": "9b44fa064ac9101e075d63b9bb691671b5a13a47203545a999a968b572295cd7",
+      "source_version": "cbd9ab2c",
+      "content_hash": "75fac71f38cfd1b666eef41da0b69f247ae8e10a9803457d77cfa7a206b79a47",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T14:14:36.302Z"
+      "persisted_at": "2026-11-25T16:06:08.121Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/aleo-labs-protocol-snarkos-verification-protocol-empirical-defect-shield-for-ale.md",
+      "relative_path": "08_VERIFICATION/provablehq-snarkos-verification-protocol-empirical-defect-shield-for-aleo-labs-p.md",
       "title": "Verification Protocol: Empirical Defect Shield for aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "source_version": "00510513",
-      "content_hash": "ccb83a6fb48e7b6d018cb522ed6cf0a159ecb8970fb4f947166dac3f46998b6f",
+      "source_version": "cbd9ab2c",
+      "content_hash": "440b0276bcfdc9e624673473da018761b35106b8391a014e08663502a914332d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T14:14:36.562Z"
+      "persisted_at": "2026-11-25T16:06:08.290Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-fastino-gliner2-5-decide-learnings-core-invar": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-fastino-gliner2-5-decide-learnings-core-invar",
@@ -114598,9 +114598,9 @@
       "title": "Architecture Intelligence: provablehq-snarkos-learnings Core Invariants",
       "repository": "provablehq-snarkos-learnings",
       "source_version": "HEAD",
-      "content_hash": "b94bd940cff5fc5540392745d18d9bb60f0bef5f95c1596db9833b3b70b62caa",
+      "content_hash": "fac319b9afafcc56ab4de12ad1562cd862603c3b10e37e88a047c4783da8e5cd",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T02:20:35.311Z"
+      "persisted_at": "2026-11-25T16:06:16.256Z"
     },
     "candidate_directive-server-security-check-the-token-on-the-account-confirmation-page-when-confirm_": {
       "item_id": "candidate_directive-server-security-check-the-token-on-the-account-confirmation-page-when-confirm_",
@@ -216143,13 +216143,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "slug": "aleo-labs-protocol-snarkos",
+      "slug": "provablehq-snarkos",
       "platform": "github",
-      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
-      "source_version": "00510513",
-      "content_hash": "b07f392d10de6c794cb41c678b3aaf409a3abbade1421d171529fa2a836d9fbb",
-      "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+      "source_url": "https://github.com/ProvableHQ/snarkOS",
+      "source_version": "cbd9ab2c",
+      "content_hash": "3e9b1684e01844c60a4af1bc3acec38df1d7c37d138b5715f33a16370d9597ab",
+      "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
       "promoted_rules": [
         {
           "number": 3992,
@@ -216199,7 +216199,7 @@
         {
           "number": 9414,
           "title": "Empirical Invariant Guard in Cargo.toml",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 9437,
@@ -216277,7 +216277,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T14:14:35.375Z",
+      "verified_at": "2026-11-25T16:06:07.498Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -220697,9 +220697,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for provablehq-snarkos-learnings",
       "repository": "provablehq-snarkos-learnings",
       "source_version": "HEAD",
-      "content_hash": "de5190d8b805bba0b5fbd1fb8361641853d9546b6ab2484cede76335ff803d66",
+      "content_hash": "3faae9e7a0ed6d989fcb2bb19d234906f2b3e336ad43fc0e5e6b83cc855f234e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T02:20:35.541Z"
+      "persisted_at": "2026-11-25T16:06:16.425Z"
     },
     "candidate_directive-viz-category-axis-tickvals-are-category-names-not-positions": {
       "item_id": "candidate_directive-viz-category-axis-tickvals-are-category-names-not-positions",
@@ -230695,8 +230695,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "3b956215",
-      "content_hash": "a0960af7ab4a0ae2524039605fe29e134f3931fc5b4b0f5d8b0a3a46240792dd",
+      "source_version": "3bf9d8e5",
+      "content_hash": "621293fd1911e148abab84c150f009b5fa317402f91b8e40b1bde8d4153c4570",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -231001,7 +231001,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T15:30:12.633Z",
+      "verified_at": "2026-11-25T16:06:11.176Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -231043,10 +231043,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "3b956215",
-      "content_hash": "49269507f8a272a56a6e6d9210e3fd2961ed3732413a6aa3526e56b1c9bc445b",
+      "source_version": "3bf9d8e5",
+      "content_hash": "2d52ec03a4e45f6783b14bd24c6b96259880b5533ee8a3a5b5c4254692221a3d",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T15:30:13.327Z"
+      "persisted_at": "2026-11-25T16:06:11.598Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid",
@@ -241827,13 +241827,13 @@
       "item_id": "domain_intelligence-research-knowledge-intelligence-abenzerps-qwen-image-2-1-turbo-quantized-core-in",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-abenzerps-qwen-image-2-1-uncensored-quantized-research-knowledge-intelligence.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-abenzerps-qwen-image-2-1-turbo-quantized-research-knowledge-intelligence-aben.md",
       "title": "Research & Knowledge Intelligence: abenzerps/Qwen-Image-2.1-Turbo-Quantized Core Invariants",
       "repository": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
-      "source_version": "hf-abenzerps-qwen-image-2.1-uncensored-quantized",
-      "content_hash": "9e282991a6e0da9f52b24b666e3356f43749a2a6b63bcc7e389d6ca0772a725f",
+      "source_version": "hf-abenzerps-qwen-image-2.1-turbo-quantized",
+      "content_hash": "1112f7fc26dc544c67a978a4bf12bb95d522b636e780cf053ade216d02ddbb08",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T21:23:03.519Z"
+      "persisted_at": "2026-11-25T16:05:55.788Z"
     },
     "learn-github-dnscontrol-dnscontrol": {
       "learning_id": "learn-github-dnscontrol-dnscontrol",
@@ -265613,7 +265613,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Turbo-Quantized",
       "source_version": "hf-abenzerps-qwen-image-2.1-turbo-quantized",
-      "content_hash": "6752605f5144c89c790b26c8d3c016ca79bdbf9035cd711fa1739c4550c01ca4",
+      "content_hash": "0e982773b2b7482abbb710057a8383b041c2ed30b0a72163d5aebe26071352bc",
       "dossier_path": "07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-turbo-quantized-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-turbo-quantized-learnings.md",
       "promoted_rules": [],
@@ -265622,7 +265622,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T01:32:21.473Z",
+      "verified_at": "2026-11-25T16:05:55.336Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -265801,9 +265801,9 @@
       "title": "Research & Knowledge Intelligence: hf-abenzerps-qwen-image-2.1-turbo-quantized-learnings Core Invariants",
       "repository": "hf-abenzerps-qwen-image-2.1-turbo-quantized-learnings",
       "source_version": "HEAD",
-      "content_hash": "d87e4b5cef929316ca1fc9e46accbc447656e7862e0f097f8dc38231605cc800",
+      "content_hash": "0ed9f095d5893c4ed91311c09bccb4dc8416d0cea665af2ae9d9b50166fd94f4",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T01:32:34.668Z"
+      "persisted_at": "2026-11-25T16:06:15.428Z"
     },
     "candidate_directive-queue-make-native-up-next-injection-work-in-localized-uis-and-with-stale-queue": {
       "item_id": "candidate_directive-queue-make-native-up-next-injection-work-in-localized-uis-and-with-stale-queue",
@@ -273388,8 +273388,8 @@
       "slug": "transact-rs-sqlx",
       "platform": "github",
       "source_url": "https://github.com/transact-rs/sqlx",
-      "source_version": "e8acd6bd",
-      "content_hash": "0de2a9a39ecd65b290c5d9ec499a551fa7f19b7d1f1470fdeb1795a8e40d026c",
+      "source_version": "af2b683a",
+      "content_hash": "1d5a6fec4b3b6a13b569d74f4c1903eeb43284d48dc6602dc9a78769d9f014f8",
       "dossier_path": "07_PROJECT_LEARNING/transact-rs-sqlx-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/transact-rs-sqlx-learnings.md",
       "promoted_rules": [
@@ -273407,6 +273407,11 @@
           "number": 9566,
           "title": "track the ReadyForQuery owed by COPY TO STDOUT",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10552,
+          "title": "Add link to GitHub Sponsors",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -273414,7 +273419,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T12:15:15.605Z",
+      "verified_at": "2026-11-25T16:05:56.957Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -273468,10 +273473,10 @@
       "relative_path": "08_VERIFICATION/transact-rs-sqlx-verification-protocol-empirical-defect-shield-for-transact-rs-s.md",
       "title": "Verification Protocol: Empirical Defect Shield for transact-rs/sqlx",
       "repository": "transact-rs/sqlx",
-      "source_version": "e8acd6bd",
-      "content_hash": "a8d3e1e6a2e98bbbc47a3963f0c80a735951381eefa52bc2db4735465a10d66c",
+      "source_version": "af2b683a",
+      "content_hash": "6f5747e4472183e6d252bd73ea12a73873f635267482b186ac97d72e7f033860",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T12:15:16.166Z"
+      "persisted_at": "2026-11-25T16:05:57.789Z"
     },
     "rule-8903": {
       "learning_id": "rule-8903",
@@ -273557,9 +273562,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for transact-rs-sqlx-learnings",
       "repository": "transact-rs-sqlx-learnings",
       "source_version": "HEAD",
-      "content_hash": "e9e80e5b7cecb56029651b3b0c17309748485ca3842f27c5fa428104d37ff276",
+      "content_hash": "d4a2e3df4b5f0582ee17c296d0c8256ec0cabacdb6f133bfe769f124211dfce3",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T12:15:32.994Z"
+      "persisted_at": "2026-11-25T16:06:15.047Z"
     },
     "learn-github-appwrite-appwrite": {
       "learning_id": "learn-github-appwrite-appwrite",
@@ -295780,10 +295785,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-transact-rs-sqlx-product-intelligence-transact-rs-sqlx-core-invariants.md",
       "title": "Product Intelligence: transact-rs/sqlx Core Invariants",
       "repository": "transact-rs/sqlx",
-      "source_version": "30f4eae0",
-      "content_hash": "6485eb63a193673ca948e06dcc2455210924e318f3f183a4d940acc611ae02c1",
+      "source_version": "af2b683a",
+      "content_hash": "b94b407ea9a7a09349aa66745b0743eecc1fb6eabb30fcd2c26461aca60955f6",
       "domain_letter": "B",
-      "persisted_at": "2026-11-18T21:42:11.117Z"
+      "persisted_at": "2026-11-25T16:05:57.614Z"
     },
     "rule-9285": {
       "learning_id": "rule-9285",
@@ -295857,9 +295862,9 @@
       "title": "Product Intelligence: transact-rs-sqlx-learnings Core Invariants",
       "repository": "transact-rs-sqlx-learnings",
       "source_version": "HEAD",
-      "content_hash": "1c0be7bbf46c135ec9f71b07b8f73dbb78c3a30eb57f82a9ba2fd0c52cc9b509",
+      "content_hash": "7241c334c054d14805c852b4389e8430711d7294b70c941df844d25324ea5675",
       "domain_letter": "B",
-      "persisted_at": "2026-11-18T21:42:29.965Z"
+      "persisted_at": "2026-11-25T16:06:14.881Z"
     },
     "candidate_directive-server-use-the-correct-flag-name-in-the-custom-headers-warning": {
       "item_id": "candidate_directive-server-use-the-correct-flag-name-in-the-custom-headers-warning",
@@ -301181,26 +301186,26 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 9414,
       "title": "Empirical Invariant Guard in Cargo.toml",
-      "source_url": "https://github.com/Kuddev/pebrel",
-      "source_version": "76f74be1",
+      "source_url": "https://github.com/ProvableHQ/snarkOS",
+      "source_version": "cbd9ab2c",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-21T16:40:03.631Z"
+      "verified_at": "2026-11-25T16:06:07.498Z"
     },
     "candidate_directive-empirical-invariant-guard-in-cargo-toml": {
       "item_id": "candidate_directive-empirical-invariant-guard-in-cargo-toml",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-W8SV-empirical-invariant-guard-in-cargo-toml.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-FTAL-empirical-invariant-guard-in-cargo-toml.md",
       "title": "Empirical Invariant Guard in Cargo.toml",
-      "repository": "kuddev-pebrel-learnings",
+      "repository": "provablehq-snarkos-learnings",
       "source_version": "HEAD",
-      "content_hash": "c6a493e5d84b51253d72bba642941f467bec641554222cc5946689b344ff11a9",
+      "content_hash": "35deb21c5e18c1500fe18d2452a1a059a6be665570edb59249d4669120a995a1",
       "domain_letter": "D",
-      "persisted_at": "2026-11-21T16:40:21.396Z"
+      "persisted_at": "2026-11-25T16:06:16.079Z"
     },
     "rule-9415": {
       "learning_id": "rule-9415",
@@ -349239,6 +349244,32 @@
       "content_hash": "f015f460dc9fdfbb224d565f1f5987ac8967adfb5c32e20ef4603195876d62dd",
       "domain_letter": "K",
       "persisted_at": "2026-11-25T15:47:47.885Z"
+    },
+    "rule-10552": {
+      "learning_id": "rule-10552",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10552,
+      "title": "Add link to GitHub Sponsors",
+      "source_url": "https://github.com/transact-rs/sqlx",
+      "source_version": "af2b683a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T16:05:56.957Z"
+    },
+    "candidate_directive-add-link-to-github-sponsors": {
+      "item_id": "candidate_directive-add-link-to-github-sponsors",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-FS8C-add-link-to-github-sponsors.md",
+      "title": "Add link to GitHub Sponsors",
+      "repository": "transact-rs-sqlx-learnings",
+      "source_version": "HEAD",
+      "content_hash": "858752545093105a0645d276b1d2e47b0f9b56326a9fb126519333584de5324d",
+      "domain_letter": "B",
+      "persisted_at": "2026-11-25T16:06:14.701Z"
     }
   },
   "ai-builder-brain": {

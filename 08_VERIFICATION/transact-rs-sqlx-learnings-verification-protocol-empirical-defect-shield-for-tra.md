@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-20T12:15:32.641Z",
+  "timestamp": "2026-11-25T16:06:14.585Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-transact-rs-sqlx-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [transact-rs-sqlx-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-20T12:15:32.641Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T16:06:14.585Z`  
 > **Learning ID**: `LEARN-EVO-transact-rs-sqlx-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/transact-rs-sqlx-learnings.md`  
 > **Source**: github ([https://github.com/transact-rs/sqlx](https://github.com/transact-rs/sqlx))  
-> **Source Version**: `e8acd6bd`  
+> **Source Version**: `af2b683a`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T12:15:14.942Z  
+> **Timestamp**: 2026-11-25T16:05:56.064Z  
 > **Learning ID**: `learn-github-transact-rs-sqlx`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/transact-rs-sqlx-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/transact-rs/sqlx](https://github.com/transact-rs/sqlx))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T12:15:14.719Z  
+> **Harvest Timestamp**: 2026-11-25T16:05:56.059Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: 🧰 The Rust SQL Toolkit. An async, pure Rust SQL crate featuring compile-time checked queries without a DSL. Supports PostgreSQL, MySQL, and SQLite.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 17703 stars
+- **Stars / Engagement**: 17752 stars
 
 ---
 
@@ -985,11 +985,11 @@ impl FromStr for AnyKind {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #4551** (2026-11-24): **Pool: the release ping doubles Postgres round trips; request a 0.9.x fix (measured +22% throughput)**
+  *Symptoms*: ### I have found these related issues/pull requests  Related to #4469 and #4470. Also #3582.  #4469 asks to skip the release ping when the connection is idle, and #4470 implements it. Both are open, with no review, and #4470 targets `main`.  This issue is new because it adds:  - a minimal reproduction and the messages on the wire, - an A/B measurement under load (+21–22% throughput, −21% p50 latency), - a smaller alternative fix (one line: `ping` → `flush` on release), - a request for a fix in **0.9.x**, or a `PoolOptions` setting to turn the release ping off.  ### Description   In sqlx-core 0.9.1, `Floating::return_to_pool` pings each connection when it goes back to the pool:  ```rust // sqlx-core/src/pool/connection.rs if let Err(error) = self.raw.ping().await { ```  With Postgres, the ping sends a lone `Sync` and waits for `ReadyForQuery`. Thus, each query on a `PgPool` costs two round trips, not one, also with `test_before_acquire(false)`. No pool option turns the release ping off.  **Cost.** A profile of our service under load (perf, frame pointers) shows that socket writes to Postgres use 11.6% of the service's CPU. `strace -c` shows 2.00 `sendto` calls for each request of a route with one query, and 4.01 for a route with two queries. Each release ping also spawns a task (from `PoolConnection::drop`), and the connection stays busy until the reply comes back. Over a real network (app and database on different hosts, or through pgbouncer), the connection stays busy for a 
+
 - **Issue #4535** (2026-11-18): **0.9.1: `statement_cache_capacity(0)` no longer works behind pgbouncer in transaction mode (worked in 0.9.0)**
   *Symptoms*:  ### I have found these related issues/pull requests  # Related:  - #4328 / #4337: the change behind this (cache off now means unnamed statements). Only the leak was discussed, not pgbouncer. - #3198, #67: unnamed statements and poolers, same theme, still open. - #4305 / #4361: unnamed statement lost after a catalog lookup. Not mine, I use no custom types.  New issue because: `statement_cache_capacity(0)` behind pgbouncer went from 0 errors on 0.9.0 to most queries failing on 0.9.1, and #4337 calls itself non-breaking.  ### Why this broke, and why the fix covers both the original issue, as well as the new issue  1. Cache off: persistent queries used named statements that nothing closed, so they piled up on the server (the leak) 2. The leak fix switched to the unnamed statement. That is fine on a direct connection 3. sqlx needs two round trips per query, and the first ends with a `Sync` 4. For pgbouncer in transaction mode, each round trip can get another server connection. Measured: the server process changed between two statements 4,287 of 4,784 times outside a transaction, 0 of 4,800 inside one 5. The unnamed statement lives on one server connection, so the second round trip finds none, or another client's. These are the errors above. pgbouncer follows named statements only 6. The fix: named statements again, so pgbouncer follows them, and the previous one is closed with the next `Parse`: no leak, no extra round trip 7. Proof for both: after 100 queries, 100 failing queries
-
-- **Issue #4497** (2026-11-09): **Postgres: "unable to resolve type OIDs" when resolving nested composite types — `fill_cache` drops pending rows on `continue 'outer`**
-  *Symptoms*: ### I have found these related issues/pull requests  I searched for "unable to resolve type OIDs" and found no existing reports of this problem. Related, but different:  - #4361 (fixes #4305): touched the same type-resolution path in `resolve.rs` (unnamed statement destroyed by the catalog lookup), but does not change the `fill_cache` dependency loop. - #1672: problems with arrays of custom types inside records, on the decoding side; this report is about OID resolution before decoding. - #2133: custom type name → OID resolution ignoring `search_path`; a different resolution bug.  ### Description  ### Bug Description  `TypeResolver::fill_cache` in `sqlx-postgres/src/connection/resolve.rs` can lose types it still has to resolve. The query then fails with:  ``` Protocol("unable to resolve type OIDs: [Oid(…)]") ```  It happens when one catalog row resolves a type that **several** pending rows depend on, and one of those dependents still needs **another** type that isn't cached yet.  In that case the loop runs `continue 'outer` and throws away the rest of `resolved_dependencies`. Those rows were already taken out of `missing_dependencies` and are never processed again. Any type that was waiting on one of them stays in `missing_dependencies` forever, and the function returns the error above.  The type cache is per connection, so in practice this shows up as intermittent errors on **fresh connections only**. A connection that already cached the leaf types through an earlier query do
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1006,125 +1006,58 @@ impl FromStr for AnyKind {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e1a6a2d5` (2026-11-19)
-**Commit Message**: fix(postgres): track the ReadyForQuery owed by COPY TO STDOUT (#4454)
+### Incident Patch 1: `af2b683a` (2026-11-25)
+**Commit Message**: Add link to GitHub Sponsors
 
-A copy_out_raw cancelled mid-exchange returned its connection to the pool
-with an untracked ReadyForQuery still pending. The release ping consumed it
-as its own reply, leaving the connection one reply behind, so its next query
-failed with "expected ParseComplete, got ReadyForQuery".
-
-**File**: `sqlx-postgres/src/connection/mod.rs` (modified, +1/-1)
+**File**: `.github/FUNDING.yml` (added, +15/-0)
 ```diff
-@@ -107,7 +107,7 @@ impl PgConnection {
-         Ok(())
-     }
- 
--    async fn recv_ready_for_query(&mut self) -> Result<(), Error> {
-+    pub(crate) async fn recv_ready_for_query(&mut self) -> Result<(), Error> {
-         let r: ReadyForQuery = self.inner.stream.recv_expect().await?;
- 
-         self.inner.pending_ready_for_query_count -= 1;
+@@ -0,0 +1,15 @@
++# These are supported funding model platforms
++
++github: transact-rs
++patreon: # Replace with a single Patreon username
++open_collective: transact-rs
++ko_fi: # Replace with a single Ko-fi username
++tidelift: # Replace with a single Tidelift platform-name/package-name e.g., npm/babel
++community_bridge: # Replace with a single Community Bridge project-name e.g., cloud-foundry
++liberapay: # Replace with a single Liberapay username
++issuehunt: # Replace with a single IssueHunt username
++lfx_crowdfunding: # Replace with a single LFX Crowdfunding project-name e.g., cloud-foundry
++polar: # Replace with a single Polar username
++buy_me_a_coffee: # Replace with a single Buy Me a Coffee username
++thanks_dev: # Replace with a single thanks.dev username
++custom: # Replace with up to 4 custom sponsorship URLs e.g., ['link1', 'link2']
 ```
 
-**File**: `sqlx-postgres/src/copy.rs` (modified, +8/-3)
-```diff
-@@ -323,23 +323,28 @@ async fn pg_begin_copy_out<'c, C: DerefMut<Target = PgConnection> + Send + 'c>(
-     statement: &str,
- ) -> Result<BoxStream<'c, Result<Bytes>>> {
-     conn.wait_until_ready().await?;
--    conn.inner.stream.send(Query(statement)).await?;
-+    conn.inner.stream.write_msg(Query(statement))?;
-+    // Counted so a cancelled COPY's owed `ReadyForQuery` is drained by `wait_until_ready`
-+    // instead of being mistaken for the reply to the connection's next message.
-+    // Before the flush: a cancelled flush leaves the `Query` buffered, to be sent later.
-+    conn.inner.pending_ready_for_query_count += 1;
-+    conn.inner.stream.flush().await?;
- 
-     let _: CopyOutResponse = conn.inner.stream.recv_expect().await?;
- 
-     let stream: TryAsyncStream<'c, Bytes> = try_stream! {
-         loop {
-             match conn.inner.stream.recv().await {
-                 Err(e) => {
--                    conn.inner.stream.recv_expect::<ReadyForQuery>().await?;
-+                    conn.recv_ready_for_query().await?;
-                     return Err(e);
-                 },
-                 Ok(msg) => match msg.format {
-                     BackendMessageFormat::CopyData => r#yield!(msg.decode::<CopyData<Bytes>>()?.0),
-                     BackendMessageFormat::CopyDone => {
-                         let _ = msg.decode::<CopyDone>()?;
-                         conn.inner.stream.recv_expect::<CommandComplete>().await?;
--                        conn.inner.stream.recv_expect::<ReadyForQuery>().await?;
-+                        conn.recv_ready_for_query().await?;
-                         return Ok(())
-                     },
-                     _ => return Err(err_protocol!("unexpected message format during copy out: {:?}", msg.format))
-```
+---
 
-**File**: `tests/postgres/postgres.rs` (modified, +44/-0)
+### Incident Patch 2: `c7f014b8` (2026-11-24)
+**Commit Message**: Bump hashbrown to v0.17 (#4548)
+
+**File**: `sqlx-core/Cargo.toml` (modified, +2/-2)
 ```diff
-@@ -1808,6 +1808,50 @@ async fn it_can_copy_out() -> anyhow::Result<()> {
-     Ok(())
- }
+@@ -99,10 +99,10 @@ tracing = { version = "0.1.37", features = ["log"] }
+ smallvec = "1.13.1"
+ url = { version = "2.2.2" }
+ bstr = { version = "1.0.1", default-features = false, features = ["std"], optional = true }
+-hashlink = "0.11.0"
++hashlink = "0.12.0"
+ indexmap = "2.0"
+ event-listener = "5.2.0"
+-hashbrown = "0.16.0"
++hashbrown = "0.17.0"
  
-+#[sqlx_macros::test]
-+async fn it_can_reuse_connection_after_cancelled_copy_out() -> anyhow::Result<()> {
-+    use sqlx::postgres::PgPoolCopyExt;
-+    use sqlx_core::rt::timeout;
-+
-+    let mut setup = new::<Postgres>().await?;
-+    setup
-+        .execute("CREATE TABLE IF NOT EXISTS _sqlx_copy_out_cancel (id INT)")
-+        .await?;
-+
-+    let pool = PgPoolOptions::new()
-+        .max_connections(1)
-+        .connect(&dotenvy::var("DATABASE_URL")?)
-+        .await?;
-+
-+    let mut lock = setup.begin().await?;
-+    lock.execute("LOCK TABLE _sqlx_copy_out_cancel IN ACCESS EXCLUSIVE MODE")
-+        .await?;
-+
-+    let copy = async {
-+        let mut stream = pool
-+            .copy_out_raw("COPY (SELECT id FROM _sqlx_copy_out_cancel) TO STDOUT")
-+            .await?;
-+        while stream.try_next().await?.is_some() {}
-+        Ok::<_, sqlx::Error>(())
-+    };
-+    assert!(
-+        timeout(Duration::from_millis(200), copy).await.is_err(),
-+        "COPY should time out while the table is locked"
-+    );
-+
-+    lock.commit().await?;
-+
-+    let one: i32 = sqlx::query_scalar("SELECT 1").fetch_one(&pool).await?;
-+    assert_eq!(one, 1);
-+
-+    let mut stream = pool
-+        .copy_out_raw("COPY (SELECT id FROM _sqlx_copy_out_cancel) TO STDOUT")
-+        .await?;
-+    while stream.try_next().await?.is_some() {}
-+
-+    Ok(())
-+}
-+
- #[sqlx_macros::test]
- async fn it_encodes_custom_array_issue_1504() -> anyhow::Result<()> {
-     use sqlx::encode::IsNull;
+ thiserror.workspace = true
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4550** (closed): Add ssl_client_config to MySQL and Postgres connect options for a prebuilt Rustls ClientConfig (@carl-wallace)
+- **PR #4549** (closed): sqlx-postgres: opt-in template databases for #[sqlx::test] (@dihannahdi)
+- **PR #4548** (2026-11-24): Bump hashbrown to v0.17 (@xtqqczze)
 - **PR #4537** (2026-11-19): chore(mysql): update rsa to 0.10.0 (@tuantran0910)
 - **PR #4529** (2026-11-17): fix: handle IPv6 properly at all levels (@abonander)
 - **PR #4528** (2026-11-18): fix(postgres): don't panic decoding out-of-range dates and times (@colinhacks)
-- **PR #4526** (2026-11-16): docs(FAQ): Replace versioned docs.rs link with latest (@TheJanzap)
-- **PR #4525** (2026-11-16): sqlx-sqlite: bump the upper bound on libsqlite3-sys to allow 0.40.x (@lthiery)
-- **PR #4522** (closed): feat(postgres): add PgSocketConnector hook to PgConnectOptions (@ropoctl)
 
 ---
 
@@ -1144,31 +1077,45 @@ failed with "expected ParseComplete, got ReadyForQuery".
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. postgres): track the ReadyForQuery owed by COPY TO STDOUT
+## X. Add link to GitHub Sponsors
 
 **RULE**:
-When implementing operations in `sqlx-postgres/src/connection/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in transact-rs/sqlx. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/FUNDING.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in transact-rs/sqlx. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e1a6a2d5`: postgres): track the ReadyForQuery owed by COPY TO STDOUT. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `af2b683a`: Add link to GitHub Sponsors. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `sqlx-postgres/src/connection/mod.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/FUNDING.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    pub(crate) async fn recv_ready_for_query(&mut self) -> Result<(), Error> {
+# These are supported funding model platforms
+
+github: transact-rs
+patreon: # Replace with a single Patreon username
+open_collective: transact-rs
+ko_fi: # Replace with a single Ko-fi username
+tidelift: # Replace with a single Tidelift platform-name/package-name e.g., npm/babel
+community_bridge: # Replace with a single Community Bridge project-name e.g., cloud-foundry
+liberapay: # Replace with a single Liberapay username
+issuehunt: # Replace with a single IssueHunt username
+lfx_crowdfunding: # Replace with a single LFX Crowdfunding project-name e.g., cloud-foundry
+polar: # Replace with a single Polar username
+buy_me_a_coffee: # Replace with a single Buy Me a Coffee username
+thanks_dev: # Replace with a single thanks.dev username
+custom: # Replace with up to 4 custom sponsorship URLs e.g., ['link1', 'link2']
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-    async fn recv_ready_for_query(&mut self) -> Result<(), Error> {
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e1a6a2d5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `af2b683a` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

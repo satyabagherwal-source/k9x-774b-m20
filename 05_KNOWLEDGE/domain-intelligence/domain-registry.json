@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T15:57:43.173Z",
+  "last_updated": "2026-11-25T16:06:16.256Z",
   "total_records": 2683,
   "domains": {
     "A": {
@@ -8787,10 +8787,10 @@
       "record_id": "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants",
       "domain_letter": "G",
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-core-inv.md",
       "repository": "aleo-labs-protocol/snarkOS",
-      "content_hash": "9b44fa064ac9101e075d63b9bb691671b5a13a47203545a999a968b572295cd7",
-      "created_at": "2026-11-25T14:14:36.302Z"
+      "content_hash": "75fac71f38cfd1b666eef41da0b69f247ae8e10a9803457d77cfa7a206b79a47",
+      "created_at": "2026-11-25T16:06:08.121Z"
     },
     "DOM-D-7123D3B0": {
       "record_id": "DOM-D-7123D3B0",
@@ -10022,8 +10022,8 @@
       "title": "Architecture Intelligence: provablehq-snarkos-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-learnings-architecture-intelligence-provablehq-snarkos-learni.md",
       "repository": "provablehq-snarkos-learnings",
-      "content_hash": "b94bd940cff5fc5540392745d18d9bb60f0bef5f95c1596db9833b3b70b62caa",
-      "created_at": "2026-11-25T02:20:35.311Z"
+      "content_hash": "fac319b9afafcc56ab4de12ad1562cd862603c3b10e37e88a047c4783da8e5cd",
+      "created_at": "2026-11-25T16:06:16.256Z"
     },
     "domain_intelligence-research-knowledge-intelligence-prithivmlmods-gender-classifier-mini-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-prithivmlmods-gender-classifier-mini-core-invari",
@@ -15762,8 +15762,8 @@
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "repository": "NucleoidAI/Nucleoid",
-      "content_hash": "49269507f8a272a56a6e6d9210e3fd2961ed3732413a6aa3526e56b1c9bc445b",
-      "created_at": "2026-11-25T15:30:13.327Z"
+      "content_hash": "2d52ec03a4e45f6783b14bd24c6b96259880b5533ee8a3a5b5c4254692221a3d",
+      "created_at": "2026-11-25T16:06:11.598Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -19082,10 +19082,10 @@
       "record_id": "domain_intelligence-research-knowledge-intelligence-abenzerps-qwen-image-2-1-turbo-quantized-core-in",
       "domain_letter": "D",
       "title": "Research & Knowledge Intelligence: abenzerps/Qwen-Image-2.1-Turbo-Quantized Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-abenzerps-qwen-image-2-1-uncensored-quantized-research-knowledge-intelligence.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-abenzerps-qwen-image-2-1-turbo-quantized-research-knowledge-intelligence-aben.md",
       "repository": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
-      "content_hash": "9e282991a6e0da9f52b24b666e3356f43749a2a6b63bcc7e389d6ca0772a725f",
-      "created_at": "2026-11-23T21:23:03.519Z"
+      "content_hash": "1112f7fc26dc544c67a978a4bf12bb95d522b636e780cf053ade216d02ddbb08",
+      "created_at": "2026-11-25T16:05:55.788Z"
     },
     "domain_intelligence-architecture-intelligence-dnscontrol-dnscontrol-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-dnscontrol-dnscontrol-core-invariants",
@@ -25442,8 +25442,8 @@
       "title": "Research & Knowledge Intelligence: hf-abenzerps-qwen-image-2.1-turbo-quantized-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-abenzerps-qwen-image-2-1-turbo-quantized-learnings-research-knowledge-intelli.md",
       "repository": "hf-abenzerps-qwen-image-2.1-turbo-quantized-learnings",
-      "content_hash": "d87e4b5cef929316ca1fc9e46accbc447656e7862e0f097f8dc38231605cc800",
-      "created_at": "2026-11-22T01:32:34.668Z"
+      "content_hash": "0ed9f095d5893c4ed91311c09bccb4dc8416d0cea665af2ae9d9b50166fd94f4",
+      "created_at": "2026-11-25T16:06:15.428Z"
     },
     "domain_intelligence-content-information-intelligence-sozercan-kaset-learnings-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-sozercan-kaset-learnings-core-invariants",
@@ -32757,8 +32757,8 @@
       "title": "Product Intelligence: transact-rs/sqlx Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-transact-rs-sqlx-product-intelligence-transact-rs-sqlx-core-invariants.md",
       "repository": "transact-rs/sqlx",
-      "content_hash": "6485eb63a193673ca948e06dcc2455210924e318f3f183a4d940acc611ae02c1",
-      "created_at": "2026-11-18T21:42:11.117Z"
+      "content_hash": "b94b407ea9a7a09349aa66745b0743eecc1fb6eabb30fcd2c26461aca60955f6",
+      "created_at": "2026-11-25T16:05:57.614Z"
     },
     "domain_intelligence-product-intelligence-transact-rs-sqlx-learnings-core-invariants": {
       "record_id": "domain_intelligence-product-intelligence-transact-rs-sqlx-learnings-core-invariants",
@@ -32766,8 +32766,8 @@
       "title": "Product Intelligence: transact-rs-sqlx-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-transact-rs-sqlx-learnings-product-intelligence-transact-rs-sqlx-learnings-core-.md",
       "repository": "transact-rs-sqlx-learnings",
-      "content_hash": "1c0be7bbf46c135ec9f71b07b8f73dbb78c3a30eb57f82a9ba2fd0c52cc9b509",
-      "created_at": "2026-11-18T21:42:29.965Z"
+      "content_hash": "7241c334c054d14805c852b4389e8430711d7294b70c941df844d25324ea5675",
+      "created_at": "2026-11-25T16:06:14.881Z"
     },
     "domain_intelligence-architecture-intelligence-pulumi-pulumi-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-pulumi-pulumi-core-invariants",
