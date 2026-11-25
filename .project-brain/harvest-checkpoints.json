@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-25T12:29:09.946Z",
+  "last_updated": "2026-11-25T12:39:24.255Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4341,14 +4341,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-karmada-io-karmada",
-      "content_hash": "a0323c71b3ac7694eff533ced3c189f3706aa6dd623ea7d55bdab044e745aad2",
-      "verified_at": "2026-11-23T23:09:58.315Z",
+      "content_hash": "39129b04ccf96b8a27de1fc4a1d07580937c5e37d6bc50093806ca00ad5c168f",
+      "verified_at": "2026-11-25T12:39:18.944Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T23:09:58.316Z"
+      "last_updated": "2026-11-25T12:39:18.944Z"
     },
     "milvus-io/bootcamp": {
       "repository": "milvus-io/bootcamp",
@@ -9381,14 +9381,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-duckdb-duckdb",
-      "content_hash": "0152358c444b841b7384feeba44c5a76953d96e20e503b6cf7c461036e0f08d7",
-      "verified_at": "2026-11-24T17:33:23.443Z",
+      "content_hash": "1ef51afcf4650aff2ca063572a5c3cf2f5e0d0af675af220d84f58d3f3adfd53",
+      "verified_at": "2026-11-25T12:39:24.254Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T17:33:23.443Z"
+      "last_updated": "2026-11-25T12:39:24.254Z"
     },
     "megh-bari/pattern-craft": {
       "repository": "megh-bari/pattern-craft",
@@ -17331,14 +17331,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-liconstudio-minimax-h3-vbvr",
-      "content_hash": "2af7f9ce90cf2dc3e815efbf724b48128651028ed002d644a09afe55aff26f0f",
-      "verified_at": "2026-11-21T21:31:32.766Z",
+      "content_hash": "6778b9204e06f8236a2ab446c677daced1536336df664194538090d2df9e54b2",
+      "verified_at": "2026-11-25T12:39:06.845Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T21:31:32.766Z"
+      "last_updated": "2026-11-25T12:39:06.845Z"
     },
     "yuezhiai/jonex": {
       "repository": "yuezhiai/jonex",

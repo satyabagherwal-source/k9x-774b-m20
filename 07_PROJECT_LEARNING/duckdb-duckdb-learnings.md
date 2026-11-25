@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/duckdb-duckdb-learnings.md`  
 > **Source**: github ([https://github.com/duckdb/duckdb](https://github.com/duckdb/duckdb))  
-> **Source Version**: `295f0daf`  
+> **Source Version**: `bdc96af9`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T17:33:21.920Z  
+> **Timestamp**: 2026-11-25T12:39:22.745Z  
 > **Learning ID**: `learn-github-duckdb-duckdb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/duckdb-duckdb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/duckdb/duckdb](https://github.com/duckdb/duckdb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T17:33:21.912Z  
+> **Harvest Timestamp**: 2026-11-25T12:39:22.735Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: DuckDB is a high-performance analytical database system
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 43292 stars
+- **Stars / Engagement**: 43334 stars
 
 ---
 
@@ -1844,7 +1844,7 @@ struct ModeString {
 	                        AggregateInputData &aggr_input_data) {
 		if (key.IsInlined()) {
 			if (!mode) {
-				mode = aggr_input_data.allocator.Make<string_t>(nullptr, 0);
+				mode = aggr_input_data.allocator.Make<string_t>();
 			}
 			*mode = key;
 			alloc_size = 0;
@@ -1862,7 +1862,7 @@ struct ModeString {
 			alloc_size = NextPowerOfTwo(len);
 			ptr = char_ptr_cast(aggr_input_data.allocator.Allocate(alloc_size));
 			if (!mode) {
-				mode = aggr_input_data.allocator.Make<string_t>(nullptr, 0);
+				mode = aggr_input_data.allocator.Make<string_t>();
 			}
 		}
 		memcpy(ptr, key.GetData(), len);
@@ -1962,7 +1962,7 @@ struct ModeState {
 			valid = true;
 			count = new_count;
 			Update(key, aggr_input_data);
-	
+		} else if (new_coun
 ```
 
 
@@ -1971,11 +1971,11 @@ struct ModeState {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #29301** (2026-11-24): **Separate join candidate evaluation from enumeration**
-  *Symptoms*: To prepare for implementing LinDP++, separate shared candidate evaluation from the existing exact and greedy join-order algorithms.  Move candidate construction, legality checks, estimates, costs, and tie-breaking into `JoinOrderCandidateEvaluator`, using the existing query graph, cardinality estimator, and cost model. Both enumerators use this evaluator for costing; it also keeps cross-product graph changes and connection-cache invalidation together.  `DPHypEnumerator` owns exact traversal, its working memo, pair counter, and neighbor cache. `GreedyJoinEnumerator` runs the existing greedy search over the memo supplied by its caller.  Keep `PlanEnumerator` responsible for initialization, algorithm selection, fallback, and result ownership through reconstruction. Preserve the partial exact memo when switching to greedy, along with the existing enumeration order, thresholds, and plan-selection behavior. 
+- **Issue #29353** (2026-11-25): **Keep the V2 crypto provider test's destroy flags alive past the test**
+  *Symptoms*: The `V2 crypto provider: registration rules` test from #29088 pointed `ProviderStats::destroyed` at a local `bool`. The registered provider frees its user data only when the instance is destroyed, after that local is gone, so `DestroyStats` wrote to stack memory that was no longer valid. ASan aborts on it in the OSX Debug job. Because the instance outlives the test, the abort is reported under another test of the same batch, `V2 crypto: hashing and HMAC`. For example, job 139123340434 on #29314 aborts in `DestroyStats` from `~CV2EncryptionUtil` / `~DBConfig`.  The flag is now a `std::shared_ptr<bool>` that the stats co-own, so the write stays valid however long the instance lives. The test checks it through the pointer.  `[crypto]` (9 cases) and `[capi_v2]` (641 cases) pass. I couldn't run ASan on my machine, so the OSX Debug job here is the check. 
 
-- **Issue #29298** (2026-11-24): **Skip ART tree verification when assertions are disabled**
-  *Symptoms*: [`ART::VerifyInternal`](https://github.com/duckdb/duckdb/blob/8b2341c3256eadb623ecbcd159a84c85eeb22ac1/src/execution/index/art/art.cpp#L1617-L1621) walks the entire tree and pins and reads every node. It goes through these functions:  - [`NodePtr::Verify`](https://github.com/duckdb/duckdb/blob/8b2341c3256eadb623ecbcd159a84c85eeb22ac1/src/execution/index/art/node.cpp#L473-L503) recurses into every child via `GetNextChild`. - [`Leaf::DeprecatedVerify`](https://github.com/duckdb/duckdb/blob/8b2341c3256eadb623ecbcd159a84c85eeb22ac1/src/execution/index/art/leaf.cpp#L224-L234) follows the leaf chain, checking only `D_ASSERT(leaf.count <= LEAF_SIZE)`. - [`ConstPrefixHandle::Verify`](https://github.com/duckdb/duckdb/blob/8b2341c3256eadb623ecbcd159a84c85eeb22ac1/src/execution/index/art/const_prefix_handle.cpp#L48-L56) follows the prefix chain, checking only two `D_ASSERT`s, then recurses into the tail.  The only checks along this path are `D_ASSERT`s, so release builds pay for a full traversal that checks nothing.  <details> <summary>Benchmark code</summary>  ```sql CREATE TABLE orders (o_id BIGINT PRIMARY KEY, o_uuid UUID, o_custkey INTEGER, o_status VARCHAR,   o_amount DECIMAL(15,2), o_qty INTEGER, o_created TIMESTAMP, o_comment VARCHAR, o_email VARCHAR, o_flag BOOLEAN); CREATE UNIQUE INDEX orders_email ON orders(o_email); INSERT INTO orders SELECT i, md5(i::VARCHAR)::UUID, (hash(i) % 1000000)::INTEGER,   ['NEW','PAID','SHIPPED','DONE','CANCELLED'][(i % 5) + 1], ((i
+- **Issue #29337** (2026-11-25): **Adapt the order of scan conjunction filters**
+  *Symptoms*: Scan predicates on the same column currently execute in a fixed cost-based order. A join against a few widely spaced keys can produce broad range checks alongside a selective runtime `IN` filter. Running the range checks first does unnecessary work on rows the `IN` filter rejects.  Reuse `AdaptiveFilter` to learn the order of these AND predicates during execution. The scan executor and its predicate caches share the learned order. Constant and all-accepting cached batches keep using that order without collecting timing samples.  For example, using a persisted database:  ```sql CREATE TABLE facts AS SELECT ((i * 48271) % 1000000)::INTEGER AS k FROM range(20000000) t(i);  CREATE TABLE selected_keys(k INTEGER); INSERT INTO selected_keys VALUES (1000), (890000); CHECKPOINT;  SELECT count(*) FROM facts JOIN selected_keys USING (k); ```  Four threads, median of five warm query executions, optimized sanitizer build; setup excluded:  | Query | Base | This PR | Change | | --- | ---: | ---: | ---: | | Join 20M rows to two keys | 666 ms | 396 ms | −40.5% | 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1992,731 +1992,225 @@ struct ModeState {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8c36c45a` (2026-11-24)
-**Commit Message**: Build the checkpointed delete mask from the deleted rows (#29286)
+### Incident Patch 1: `d3d8a8f5` (2026-11-24)
+**Commit Message**: Keep the type of the constant when constant_or_null has an untyped NULL child (#29304)
 
-Hi team, while benchmarking scattered deletes on large tables, I found
-that a `CHECKPOINT` after random point deletes spends ~30% of its
-main-thread time writing the per-vector delete masks, mostly toggling
-one bit per *visible* row.
+While testing DuckDB with untrusted SQL under a restricted configuration
+(`enable_external_access = false`, locked configuration) we found a
+short statement that ends in an internal error and invalidates the
+database instance. The configuration is not needed to reproduce it.
 
-For every vector with a delete, `ChunkVectorInfo::Write` ([code ref
-1](https://github.com/duckdb/duckdb/blob/8b2341c3256eadb623ecbcd159a84c85eeb22ac1/src/storage/table/chunk_info.cpp#L987-L1015))
-collects the ~2047 visible rows into a selection vector, calls
-`SetInvalid` once per visible row to build the mask, and
-`ValidityMask::Write` ([code ref
-2](https://github.com/duckdb/duckdb/blob/8b2341c3256eadb623ecbcd159a84c85eeb22ac1/src/common/types/validity_mask.cpp#L267-L295))
-then tests all 2048 bits to find the one or two deleted rows. This PR
-makes the cost proportional to the number of deleted rows, while writing
-the same bytes:
-
-1. When the vector is in the `MASKED` state and its delete is visible,
-`deleted_mask` already holds exactly the deleted rows ([code ref
-3](https://github.com/duckdb/duckdb/blob/8b2341c3256eadb623ecbcd159a84c85eeb22ac1/src/storage/table/chunk_info.cpp#L141-L182
-
-**File**: `src/common/types/validity_mask.cpp` (modified, +10/-2)
-```diff
-@@ -1,4 +1,5 @@
- #include "duckdb/common/types/validity_mask.hpp"
-+#include "duckdb/common/bit_utils.hpp"
- #include "duckdb/common/exception.hpp"
- #include "duckdb/common/limits.hpp"
- #include "duckdb/common/numeric_utils.hpp"
-@@ -278,13 +279,20 @@ void ValidityMask::Write(WriteStream &writer, idx_t count) {
- 		auto flag = serialize_valid ? ValiditySerialization::VALID_VALUES : ValiditySerialization::INVALID_VALUES;
- 		writer.Write(flag);
- 		writer.Write<uint32_t>(NumericCast<uint32_t>(MinValue(valid_values, invalid_values)));
--		for (idx_t i = 0; i < count; i++) {
--			if (RowIsValid(i) == serialize_valid) {
-+		for (idx_t entry_idx = 0; entry_idx < EntryCount(count); entry_idx++) {
-+			auto entry = GetValidityEntry(entry_idx);
-+			validity_t bits = serialize_valid ? entry : ~entry;
-+			while (bits) {
-+				auto i = entry_idx * BITS_PER_VALUE + CountZeros<uint64_t>::Trailing(bits);
-+				if (i >= count) {
-+					break;
-+				}
- 				if (need_u32) {
- 					writer.Write<uint32_t>(UnsafeNumericCast<uint32_t>(i));
- 				} else {
- 					writer.Write<uint16_t>(UnsafeNumericCast<uint16_t>(i));
- 				}
-+				bits &= bits - 1;
- 			}
- 		}
- 	} else {
-```
-
-**File**: `src/storage/table/chunk_info.cpp` (modified, +40/-9)
-```diff
-@@ -990,9 +990,25 @@ transaction_t ChunkVectorInfo::ConstantDeleteId() const {
- 
- void ChunkVectorInfo::Write(WriteStream &writer, VisibilityBound visibility_bound, idx_t row_count) const {
- 	D_ASSERT(row_count > 0 && row_count <= STANDARD_VECTOR_SIZE);
--	SelectionVector sel(STANDARD_VECTOR_SIZE);
--	transaction_t transaction_id = DConstants::INVALID_INDEX;
--	idx_t count = GetSelVector(TransactionData(transaction_id, visibility_bound), sel, row_count);
-+	TransactionData transaction(DConstants::INVALID_INDEX, visibility_bound);
-+	// all rows are inserted and the rows in deleted_mask are exactly the deleted rows
-+	const bool use_deleted_mask = delete_state == DeleteIdState::MASKED && HasConstantInsertionId() &&
-+	                              transaction.view.Sees(ConstantInsertId()) && transaction.view.Sees(mask_delete_id);
-+	SelectionVector sel;
-+	idx_t count;
-+	if (use_deleted_mask) {
-+		count = row_count - deleted_mask.CountValid(row_count);
-+#ifdef DEBUG
-+		SelectionVector verify_sel(STANDARD_VECTOR_SIZE);
-+		D_ASSERT(GetSelVector(transaction, verify_sel, row_count) == count);
-+		for (idx_t i = 0; i < count; i++) {
-+			D_ASSERT(!deleted_mask.RowIsValid(verify_sel.get_index(i)));
-+		}
-+#endif
-+	} else {
-+		sel.Initialize(STANDARD_VECTOR_SIZE);
-+		count = GetSelVector(transaction, sel, row_count);
-+	}
- 	if (count == row_count) {
- 		// nothing is deleted: skip writing anything
- 		writer.Write<ChunkInfoType>(ChunkInfoType::EMPTY_INFO);
-@@ -1008,12 +1024,27 @@ void ChunkVectorInfo::Write(WriteStream &writer, VisibilityBound visibility_boun
- 	writer.Write<ChunkInfoType>(ChunkInfoType::VECTOR_INFO);
- 	writer.Write<idx_t>(start);
- 	ValidityMask mask(STANDARD_VECTOR_SIZE);
--	mask.Initialize(STANDARD_VECTOR_SIZE);
--	for (idx_t i = 0; i < count; i++) {
--		mask.SetInvalid(sel.get_index(i));
--	}
--	for (idx_t i = row_count; i < STANDARD_VECTOR_SIZE; i++) {
--		mask.SetInvalid(i);
-+	if (use_deleted_mask) {
-+		mask.Copy(deleted_mask, STANDARD_VECTOR_SIZE);
-+		mask.EnsureWritable();
-+		for (idx_t i = row_count; i < STANDARD_VECTOR_SIZE; i++) {
-+			mask.SetInvalidUnsafe(i);
-+		}
-+	} else {
-+		// sel holds the visible rows in ascending order: only the rows in between are deleted
-+		mask.SetAllInvalid(STANDARD_VECTOR_SIZE);
-+		idx_t row_idx = 0;
-+		for (idx_t i = 0; i < count; i++) {
-+			auto visible_idx = sel.get_index(i);
-+			D_ASSERT(visible_idx >= row_idx);
-+			for (; row_idx < visible_idx; row_idx++) {
-+				mask.SetValidUnsafe(row_idx);
-+			}
-+			row_idx = visible_idx + 1;
-+		}
-+		for (; row_idx < row_count; row_idx++) {
-+			mask.SetValidUnsafe(row_idx);
-+		}
- 	}
- 	mask.Write(writer, STANDARD_VECTOR_SIZE);
- }
-```
-
-**File**: `test/sql/storage/delete/checkpoint_delete_mask.test` (added, +93/-0)
-```diff
-@@ -0,0 +1,93 @@
-+# name: test/sql/storage/delete/checkpoint_delete_mask.test
-+# description: Checkpoint partially deleted vectors that are stored as a delete mask
-+# group: [delete]
-+
-+load {TEST_DIR}/checkpoint_delete_mask.db
-+
-+# the second vector holds only 952 rows
-+statement ok
-+CREATE TABLE tbl AS SELECT i FROM range(3000) t(i);
-+
-+query I
-+DELETE FROM tbl WHERE i % 3 = 0
-+----
-+1000
-+
-+# sparse masks: few deleted rows in the first vector, few alive rows in the second
-+statement ok
-+CREATE TABLE sparse AS SELECT i FROM range(4096) t(i);
-+
-+query I
-+DELETE FROM sparse WHERE (i < 2048 AND i % 100 = 0) OR (i >= 2048 AND i % 100 <> 0)
-+----
-+2049
-+
-+statement ok
-+CHECKPOINT
-+
-+restart
-+
-+query III
-+SELECT COUNT(*), SUM(i), MIN(i) FROM tbl
-+----
-+2000	3000000	1
-+
-+query III
-+SELECT COUNT(*), SUM(i), MIN(i) FROM sparse
-+----
-+2047	2136128	1
-+
-+# rows appended to the partially filled vector must not load as deleted
-+statement ok
-+INSERT INTO tbl SELECT i FROM range(3000, 5000) t(i);
-+
-+statement ok
-+CHECKPOINT
-+
-+restart
-+
-+query III
-+SELECT COUNT(*), SUM(i), MIN(i) FROM tbl
-+----
-+4000	10999000	1
-+
-+# the delete loads the masks from disk - the checkpoint rewrites the untouched first vector from its mask
-+query I
-+DELETE FROM tbl WHERE i = 3500
-+----
-+1
-+
-+statement ok
-+CHECKPOINT
-+
-+restart
-+
-+query III
-+SELECT COUNT(*), SUM(i), MIN(i) FROM tbl
-+----
-+3999	10995500	1
-+
-+# a checkpoint must not write uncommitted deletes, both in loaded masks and in the vector without deletes
-+statement ok con1
-+BEGIN
-+
-+query I con1
-+DELETE FROM tbl WHERE (i < 2048 AND i % 3 = 1) OR i >= 4900
-+----
-+783
-+
-+statement ok con2
-+CHECKPOINT
-+
-+statement ok con1
-+ROLLBACK
-+
-+statement ok
-+PRAGMA disable_checkpoint_on_shutdown
-+
-+restart
-+
-+query III
-+SELECT COUNT(*), SUM(i), MIN(i) FROM tbl
-+----
-+3999	10995500	1
-```
-
----
-
-### Incident Patch 2: `40d18108` (2026-11-24)
-**Commit Message**: Fix the mapping of declared list and map children for reads with an explicit schema (#29158)
-
-A `schema` can declare the children of a list or map: the element, the
-key and the value. The multi-file column mapper got two things wrong for
-them. Each fix is its own commit.
-
-### 1. A list or map below the root whose children all come from
-defaults
+### What a user sees
 
 ```sql
-COPY (SELECT s FROM (VALUES ({'l': [NULL, NULL]}), (NULL)) t(s)) TO 'n.parquet' (FORMAT parquet);
-
-SELECT s FROM read_parquet('n.parquet', schema = MAP {
-    's': {name: 's', type: 'STRUCT(l STRUCT(z INTEGER)[])', default_value: NULL, children: MAP {
-        'l': {name: 'l', type: 'STRUCT(z INTEGER)[]', default_value: NULL, children: MAP {
-            'list': {name: 'element', type: 'STRUCT(z INTEGER)', default_value: NULL, children: NULL}}}}}});
--- Binder Error: Default value for l is a struct, but the target type 'STRUCT(z INTEGER)[]' is not mapped to a
--- source - map it to a source or provide a default of the target type
+CREATE TABLE x AS SELECT array_contains([NULL], c1) AS l FROM (VALUES (NULL), (NULL)) t(c1);
 ```
 
-The element comes from a default because the file column is
-`NULL`-typed. An element that is missing by field id fails the same way.
+```
+INTERNAL Error: Expected unified vector format of type INT8, but found type INT32
+```
 
-`MapColumnList` and `MapColumnMap` emitted the mapping of a list or map
-o
+and every later statement fails with `FATAL Error: Failed: database has
+been invalidated because of a previous fatal error`. Other forms of the
+same defect:
 
-**File**: `src/common/multi_file/multi_file_column_mapper.cpp` (modified, +35/-7)
+- `WITH c AS MATERIALIZED (SELECT array_contains([NULL], c1) AS l FROM
+(VALUES (NULL), (NULL)) t(c1)) SELECT * FROM c;` and `SELECT
+list_contains([NULL], c1) AND true FROM ...` give `INTERNAL Error:
+Vector::Reference used on vector of different type (source BOOLEAN
+referenced "NULL")`;
+- `... UNION ALL SELECT true` gives `Invalid Input Error: Type mismatch
+for SET OPERATION`;
+- on an assertion build the plain `SELECT list_contains([NULL], c1) FROM
+(VALUES
+
+**File**: `src/optimizer/expression_rewriter.cpp` (modified, +6/-0)
 ```diff
-@@ -90,6 +90,10 @@ struct ColumnMapper {
- 	virtual ~ColumnMapper() = default;
- 	virtual unique_ptr<ColumnMapper> Create(const vector<MultiFileColumnDefinition> &columns) const = 0;
- 	virtual MultiFileLocalIndex Find(const MultiFileColumnDefinition &column) const = 0;
-+	//! Find the element of a LIST among the children of the list
-+	virtual MultiFileLocalIndex FindListChild(const MultiFileColumnDefinition &column) const {
-+		return Find(column);
-+	}
- 	virtual unique_ptr<Expression> GetDefaultExpression(ClientContext &context, const MultiFileColumnDefinition &column,
- 	                                                    bool is_root) const = 0;
- 	virtual idx_t MapCount() const = 0;
-@@ -169,6 +173,14 @@ struct NameMapper : public ColumnMapper {
- 		}
- 		return entry->second;
- 	}
-+	MultiFileLocalIndex FindListChild(const MultiFileColumnDefinition &column) const override {
-+		if (name_map.size() != 1) {
-+			return Find(column);
+@@ -160,6 +160,12 @@ unique_ptr<Expression> ExpressionRewriter::ConstantOrNull(ClientContext &context
+ 
+ unique_ptr<Expression> ExpressionRewriter::ConstantOrNull(ClientContext &context,
+                                                           vector<unique_ptr<Expression>> children, Value value) {
++	for (auto &child : children) {
++		if (child->GetReturnType().id() == LogicalTypeId::SQLNULL) {
++			// an untyped NULL child folds the call before its types are resolved: keep the type of the constant
++			return make_uniq<BoundConstantExpression>(Value(value.type()));
 +		}
-+		// A LIST has exactly one child, and a file names it after its repeated group ("list", "array", "bag", ...).
-+		// That name is not part of the logical schema, so the single child is the element whatever it is called.
-+		return MultiFileLocalIndex(0);
 +	}
- 	unique_ptr<Expression> GetDefaultExpression(ClientContext &context, const MultiFileColumnDefinition &column,
- 	                                            bool is_root) const override {
- 		if (column.default_expression) {
-@@ -249,6 +261,13 @@ static ColumnMapResult MapColumn(ClientContext &context, const MultiFileColumnDe
-                                  const vector<MultiFileColumnDefinition> &local_columns, const ColumnMapper &mapper,
-                                  MultiFileLocalIndex top_level_index = MultiFileLocalIndex());
- 
-+//! Map a global column to the local column the mapper found for it (invalid if the file does not have it)
-+static ColumnMapResult MapColumnToLocal(ClientContext &context, const MultiFileColumnDefinition &global_column,
-+                                        const ColumnIndex &global_index,
-+                                        const vector<MultiFileColumnDefinition> &local_columns,
-+                                        const ColumnMapper &mapper, MultiFileLocalIndex local_idx,
-+                                        MultiFileLocalIndex top_level_index = MultiFileLocalIndex());
-+
- static ColumnMapResult MapColumnList(ClientContext &context, const MultiFileColumnDefinition &global_column,
-                                      const ColumnIndex &global_index, const MultiFileColumnDefinition &local_column,
-                                      const MultiFileLocalIndex &local_id, const ColumnMapper &mapper,
-@@ -289,7 +308,8 @@ static ColumnMapResult MapColumnList(ClientContext &context, const MultiFileColu
- 
- 	ColumnMapResult child_map;
- 	if (is_selected) {
--		child_map = MapColumn(context, global_child, global_child_index.get(), local_column.children, *nested_mapper);
-+		child_map = MapColumnToLocal(context, global_child, global_child_index.get(), local_column.children,
-+		                             *nested_mapper, nested_mapper->FindListChild(global_child));
- 	} else {
- 		// column is not relevant for the query - push a NULL value
- 		child_map.default_value = make_uniq<BoundConstantExpression>(Value(global_child.type));
-@@ -306,8 +326,8 @@ static ColumnMapResult MapColumnList(ClientContext &context, const MultiFileColu
- 
- 	ColumnMapResult result;
- 	result.local_column = local_column;
--	if (!column_mapping.empty()) {
--		// we have column mappings at this level - construct the struct
-+	if (!column_mapping.empty() || !is_root) {
-+		// A nested source still supplies the list entries when the element comes from a default.
- 		result.column_map = Value::STRUCT(std::move(column_mapping));
- 		if (!is_root) {
- 			// if this is nested we need to refer to the current column at this level
-@@ -385,8 +405,8 @@ static ColumnMapResult MapColumnMap(ClientContext &context, const MultiFileColum
- 		    global_column.children.size());
- 	}
- 
-+	// the single child is the repeated group of the map, which most files call "key_value" and some "map"
- 	D_ASSERT(local_column.children.size() == 1);
--	D_ASSERT(local_column.children[0].name == "key_value");
- 	auto &local_key_value = local_column.children[0];
- 
- 	auto nested_mapper = mapper.Create(local_key_value.children);
-@@ -435,8 +455,8 @@ static ColumnMapResult MapColumnMap(ClientContext &context, const MultiFileColum
- 
- 	ColumnMapResult result;
- 	result.local_column = local_column;
--	if (!column_mapping.empty()) {
--		// we have column mappings at this level - construct the struct
-+	if (!column_mapping.empty() || !is_root) {
-+		// A nested source still supplies the map entries when the key and value come from defaults.
- 		result.column_map = Value::STRUCT(std::move(column_mapping));
- 		if (!is_root) {
- 			// if this is nested we need to refer to the current column at this level
-@@ -582,9 +602,17 @@ static ColumnMapResult MapColumn(ClientContext &context, const MultiF
+ 	children.insert(children.begin(), make_uniq<BoundConstantExpression>(std::move(value)));
+ 	// constant_or_null has the type of the leading constant, also when a typed NULL child folds the call
+ 	return BindBuiltinScalarExpression(context, ConstantOrNullFun::Name, std::move(children));
 ```
 
-**File**: `test/configs/variant_vector.json` (modified, +4/-1)
+**File**: `test/optimizer/constant_or_null_untyped_null.test` (added, +68/-0)
 ```diff
-@@ -22,7 +22,10 @@
- 				"test/parquet/test_parquet_schema_incompatible_nested_types.test",
- 				"test/parquet/parquet_schema_renamed_struct_filter.test",
- 				"test/sql/copy/parquet/parquet_schema_pushdown_extract_nested_default.test",
--				"test/sql/copy/parquet/parquet_schema_default_only_struct.test"
-+				"test/sql/copy/parquet/parquet_schema_default_only_struct.test",
-+				"test/sql/copy/parquet/parquet_schema_default_only_list.test",
-+				"test/sql/copy/parquet/parquet_schema_list_child_name.test",
-+				"test/sql/copy/parquet/parquet_schema_list_child_types.test"
- 			]
- 		},
- 		{
-```
-
-**File**: `test/sql/copy/parquet/parquet_schema_default_only_list.test` (added, +342/-0)
-```diff
-@@ -0,0 +1,342 @@
-+# name: test/sql/copy/parquet/parquet_schema_default_only_list.test
-+# description: Nested lists and maps retain their entries when their children all come from defaults
-+# group: [parquet]
+@@ -0,0 +1,68 @@
++# name: test/optimizer/constant_or_null_untyped_null.test
++# description: A rewrite to constant_or_null keeps the type of the constant when its child is an untyped NULL
++# group: [optimizer]
 +
-+require parquet
-+
-+# field ids: the schema refers to the lists and maps of the file, but not to their children
-+statement ok
-+COPY (
-+	SELECT * FROM (VALUES
-+		(1, {'l': [1, 2], 'll': [[1, 2], [], NULL], 'ls': [{'a': 1}, NULL], 'ml': MAP {1: [1, 2], 2: NULL, 3: []},
-+		     'in': {'l': [5, 6], 'm': MAP {8: 80, 9: 90}}, 'lll': [[[1, 2], []], [], NULL],
-+		     'mm': MAP {1: MAP {10: 100}, 2: MAP {}, 3: NULL}, 'm': MAP {1: 10, 2: 20}, 'lm': [MAP {1: 1, 2: 2}, NULL, MAP {}]},
-+		 [1, 2], [[1], [2, 3]], MAP {1: [1]}, [MAP {1: 1, 2: 2}], MAP {1: 10, 2: 20}),
-+		(2, NULL, NULL, NULL, NULL, NULL, NULL),
-+		(3, {'l': [], 'll': [], 'ls': [], 'ml': MAP {}, 'in': {'l': [], 'm': MAP {}}, 'lll': [], 'mm': MAP {}, 'm': MAP {}, 'lm': []}, [], [], MAP {}, [], MAP {}),
-+		(4, {'l': NULL, 'll': NULL, 'ls': NULL, 'ml': NULL, 'in': NULL, 'lll': NULL, 'mm': NULL, 'm': NULL, 'lm': NULL}, [3], [NULL], MAP {4: NULL}, [NULL], MAP {4: 40})
-+	) t(id, s, rl, rll, rml, rlm, rm)
-+) TO '{TEST_DIR}/default_only_list.parquet'
-+(FIELD_IDS {id: 1, s: {__duckdb_field_id: 2,
-+	l: {__duckdb_field_id: 3, element: 4},
-+	ll: {__duckdb_field_id: 5, element: {__duckdb_field_id: 6, element: 7}},
-+	ls: {__duckdb_field_id: 8, element: {__duckdb_field_id: 9, a: 10}},
-+	ml: {__duckdb_field_id: 11, key: 12, value: {__duckdb_field_id: 13, element: 14}},
-+	"in": {__duckdb_field_id: 15, l: {__duckdb_field_id: 16, element: 17}, m: {__duckdb_field_id: 25, key: 26, value: 27}},
-+	m: {__duckdb_field_id: 18, key: 19, value: 20},
-+	lm: {__duckdb_field_id: 21, element: {__duckdb_field_id: 22, key: 23, value: 24}},
-+	lll: {__duckdb_field_id: 50, element: {__duckdb_field_id: 51, element: {__duckdb_field_id: 52, element: 53}}},
-+	mm: {__duckdb_field_id: 54, key: 55, value: {__duckdb_field_id: 56, key: 57, value: 58}}},
-+	rl: {__duckdb_field_id: 30, element: 31},
-+	rll: {__duckdb_field_id: 32, element: {__duckdb_field_id: 33, element: 34}},
-+	rml: {__duckdb_field_id: 35, key: 36, value: {__duckdb_field_id: 37, element: 38}},
-+	rlm: {__duckdb_field_id: 39, element: {__duckdb_field_id: 40, key: 41, value: 42}},
-+	rm: {__duckdb_field_id: 43, key: 44, value: 45}});
-+
-+# the list elements (99) and the keys (98) and values (99) of the maps that are not read by their ids are missing
-+# from the file
-+statement ok
-+CREATE TEMPORARY VIEW defaults AS
-+FROM read_parquet('{TEST_DIR}/default_only_list.parquet', schema = MAP {
-+	1: {name: 'id', type: 'INTEGER', default_value: NULL, children: NULL},
-+	2: {name: 's', type: 'STRUCT(l INTEGER[], ll INTEGER[][], ls STRUCT(b INTEGER)[], ml MAP(INTEGER, INTEGER[]), "in" STRUCT(l INTEGER[]), lll INTEGER[][][], mm MAP(INTEGER, MAP(INTEGER, INTEGER)))', default_value: NULL, children: MAP {
-+		3: {name: 'l', type: 'INTEGER[]', default_value: NULL, children: MAP {
-+			99: {name: 'element', type: 'INTEGER', default_value: 7, children: NULL}}},
-+		5: {name: 'll', type: 'INTEGER[][]', default_value: NULL, children: MAP {
-+			6: {name: 'element', type: 'INTEGER[]', default_value: NULL, children: MAP {
-+				99: {name: 'element', type: 'INTEGER', default_value: 7, children: NULL}}}}},
-+		8: {name: 'ls', type: 'STRUCT(b INTEGER)[]', default_value: NULL, children: MAP {
-+			9: {name: 'element', type: 'STRUCT(b INTEGER)', default_value: NULL, children: MAP {
-+				99: {name: 'b', type: 'INTEGER', default_value: 7, children: NULL}}}}},
-+		11: {name: 'ml', type: 'MAP(INTEGER, INTEGER[])', default_value: NULL, children: MAP {
-+			12: {name: 'key', type: 'INTEGER', default_value: NULL, children: NULL},
-+			13: {name: 'value', type: 'INTEGER[]', default_value: NULL, children: MAP {
-+				99: {name: 'element', type: 'INTEGER', default_value: 7, children: NULL}}}}},
-+		15: {name: 'in', type: 'STRUCT(l INTEGER[])', default_value: NULL, children: MAP {
-+			16: {name: 'l', type: 'INTEGER[]', default_value: NULL, children: MAP {
-+				99: {name: 'element', type: 'INTEGER', default_value: 7, children: NULL}}}}},
-+		50: {name: 'lll', type: 'INTEGER[][][]', default_value: NULL, children: MAP {
-+			51: {name: 'element', type: 'INTEGER[][]', default_value: NULL, children: MAP {
-+				52: {name: 'element', type: 'INTEGER[]', default_value: NULL, children: MAP {
-+					99: {name: 'element', type: 'INTEGER', default_value: 7, children: NULL}}}}}}},
-+		54: {name: 'mm', type: 'MAP(INTEGER, MAP(INTEGER, INTEGER))', default_value: NULL, children: MAP {
-+			55: {name: 'key', type: 'INTEGER', default_value: NULL, children: NULL},
-+			56: {name: 'value', type: 'MAP(INTEGER, INTEGER)', default_value: NULL, children: MAP {
-+				98: {name: 'key', type: 'INTEGER', default_value: 1, children: NULL},
-+				99: {name: 'value', type: 'INTEGER', default_value: 2, children: NULL}}}}}}},
-+	30: {name: 'rl', type: 'INTEGER[]', default_value: NULL, children: MAP {
-+		99: {name: 'element', t
-```
-
-**File**: `test/sql/copy/parquet/parquet_schema_list_child_name.test` (added, +105/-0)
-```diff
-@@ -0,0 +1,105 @@
-+# name: test/sql/copy/parquet/parquet_schema_list_child_name.test
-+# description: A name-keyed schema finds the element of a list whatever the file calls its repeated group
-+# group: [parquet]
-+
-+require parquet
-+
-+# the repeated group of variant.names is called "array": read as a field of the struct, as a pushed-down extract,
-+# and with the keys "array" and "element" instead of "list"
-+query IIII
-+SELECT a.variant, a.variant.names, b.variant, c.variant
-+FROM read_parquet('data/parquet-testing/adam_genotypes.parquet', schema = MAP {
-+	'variant': {name: 'variant', type: 'STRUCT("names" VARCHAR[])', default_value: NULL, children: MAP {
-+		'names': {name: 'names', type: 'VARCHAR[]', default_value: NULL, children: MAP {
-+			'list': {name: 'element', type: 'VARCHAR', default_value: NULL, children: NULL}}}}}}) a,
-+     read_parquet('data/parquet-testing/adam_genotypes.parquet', schema = MAP {
-+	'variant': {name: 'variant', type: 'STRUCT("names" VARCHAR[])', default_value: NULL, children: MAP {
-+		'names': {name: 'names', type: 'VARCHAR[]', default_value: NULL, children: MAP {
-+			'array': {name: 'element', type: 'VARCHAR', default_value: NULL, children: NULL}}}}}}) b,
-+     read_parquet('data/parquet-testing/adam_genotypes.parquet', schema = MAP {
-+	'variant': {name: 'variant', type: 'STRUCT("names" VARCHAR[])', default_value: NULL, children: MAP {
-+		'names': {name: 'names', type: 'VARCHAR[]', default_value: NULL, children: MAP {
-+			'element': {name: 'element', type: 'VARCHAR', default_value: 'x', children: NULL}}}}}}) c;
++# the needle is a column of type "NULL": list_contains over a list without non-NULL elements is rewritten to
++# constant_or_null(false, needle), which must stay a BOOLEAN
++query I
++SELECT list_contains([NULL], c1) FROM (VALUES (NULL), (NULL)) t(c1);
 +----
-+{'names': [name]}	[name]	{'names': [name]}	{'names': [name]}
++NULL
++NULL
 +
 +query I
-+SELECT variant.names
-+FROM read_parquet('data/parquet-testing/adam_genotypes.parquet', schema = MAP {
-+	'variant': {name: 'variant', type: 'STRUCT("names" VARCHAR[])', default_value: NULL, children: MAP {
-+		'names': {name: 'names', type: 'VARCHAR[]', default_value: NULL, children: MAP {
-+			'list': {name: 'element', type: 'VARCHAR', default_value: NULL, children: NULL}}}}}});
++SELECT typeof(list_contains([NULL], c1)) FROM (VALUES (NULL), (NULL)) t(c1);
 +----
-+[name]
++BOOLEAN
++BOOLEAN
 +
-+# a root list whose repeated field has the name of the column, compared with a read without a schema
-+query IIII
-+SELECT count(*), count(intArray), sum(len(intArray)), sum(list_sum(intArray))
-+FROM read_parquet('data/parquet-testing/bug2557.parquet', schema = MAP {
-+	'intArray': {name: 'intArray', type: 'INTEGER[]', default_value: NULL, children: MAP {
-+		'list': {name: 'element', type: 'INTEGER', default_value: NULL, children: NULL}}}});
++query I
++SELECT list_contains([NULL], c1) AND true FROM (VALUES (NULL), (NULL)) t(c1);
 +----
-+100	100	225	110973
++NULL
++NULL
 +
-+query IIII
-+SELECT count(*), count(intArray), sum(len(intArray)), sum(list_sum(intArray)) FROM 'data/parquet-testing/bug2557.parquet';
-+----
-+100	100	225	110973
-+
-+# a file written by DuckDB calls the group "list": every key reads the element, also below a list and in a struct,
-+# and the default of the element is not used
 +statement ok
-+COPY (
-+	SELECT * FROM (VALUES
-+		(1, [1, 2], {'ll': [[1, 2], [], NULL], 'ls': [{'a': 1, 'b': 2}, NULL]}),
-+		(2, NULL, NULL),
-+		(3, [], {'ll': [], 'ls': []}),
-+		(4, [NULL], {'ll': NULL, 'ls': NULL})
-+	) t(id, l, s)
-+) TO '{TEST_DIR}/list_child_name.parquet' (FORMAT parquet);
++CREATE TABLE contains_null AS SELECT array_contains([NULL], c1) AS l FROM (VALUES (NULL), (NULL)) t(c1);
++
++query II
++SELECT l, typeof(l) FROM contains_null;
++----
++NULL	BOOLEAN
++NULL	BOOLEAN
++
++query I
++WITH c AS MATERIALIZED (SELECT array_contains([NULL], c1) AS l FROM (VALUES (NULL), (NULL)) t(c1)) SELECT * FROM c;
++----
++NULL
++NULL
++
++query I
++SELECT list_contains([NULL], c1) AS l FROM (VALUES (NULL), (NULL)) t(c1) UNION ALL SELECT true;
++----
++NULL
++NULL
++true
 +
 +query III
-+SELECT id, l, s FROM read_parquet('{TEST_DIR}/list_child_name.parquet', schema = MAP {
-+	'id': {name: 'id', type: 'INTEGER', default_value: NULL, children: NULL},
-+	'l': {name: 'l', type: 'INTEGER[]', default_value: NULL, children: MAP {
-+		'element': {name: 'element', type: 'INTEGER', default_value: 7, children: NULL}}},
-+	's': {name: 's', type: 'STRUCT(ll INTEGER[][], ls STRUCT(b INTEGER, c INTEGER)[])', default_value: NULL, children: MAP {
-+		'll': {name: 'll', type: 'INTEGER[][]', default_value: NULL, children: MAP {
-+			'item': {name: 'element', type: 'INTEGER[]', default_value: NULL, children: MAP {
-+				'array': {name: 'element', type: 'INTEGER', default_value: 7, children: NULL}}}}},
-+		'ls': {name: 'ls', type: 'STRUCT(b INTEGER, c INTEGER)[]', default_value: NULL, children: MAP {
-+			'bag': {name: 'element', type: 'STRUCT(b INTEGER, c INTEGER)', default_value: NULL, children: MAP {
-+				'b': {name: 'b', type: 'INTEGER', default_value: NULL, children: NULL},
-+				'c': {name: 'c', type: 'INTEGER', default_value: 5, children: NULL}}}}}}}
-+}) ORDER BY id;
++SELECT list_has([NULL, NULL], c1), array_has([NULL], c1), contains([NULL], c1) FROM (VALUES (NULL)) t(c1);
 +----
-+1	[1, 2]	{'ll': [[1, 2], [], NULL], 'ls': [{'b': 2, 'c': 5}, NULL]}
-+2	NULL	NULL
-+3	[]	{'ll': [], 'ls': []}
-+4	[NULL]	{'ll': NULL, 'ls': NULL}
-+
-+# unchanged: the fields of a struct and the key and value of a map are matched by name, so a value that is
-+# declared under another key takes its default
-+statement ok
-+COPY (SELECT {'m': MAP {1: 10, 2: 20}, 'x': 1} AS s) TO '{TEST_DIR}/list_child_name_map.parquet' (FORMAT parquet);
++NULL	NULL	NULL
 +
 +query I
-+SELECT s FROM read_parquet('{TEST_DIR}/list_child_name_map.parquet', schema = MAP {
-+	's': {name: 's', type: 'STRUCT(m MAP(INTEGER, INTEGER), y INTEGER)', default_value: NULL, children: MAP {
-+		'm': {name: 'm', type: 'MAP(INTEGER, INTEGER)', default_value: NULL, children: MAP {
-+			'key': {name: 'key', type: 'INTEGER', defau
-```
-
-**File**: `test/sql/copy/parquet/parquet_schema_list_child_types.test` (added, +142/-0)
-```diff
-@@ -0,0 +1,142 @@
-+# name: test/sql/copy/parquet/parquet_schema_list_child_types.test
-+# description: The element of a list that a name-keyed schema declares is read from the file and cast to the declared type
-+# group: [parquet]
-+
-+require parquet
-+
-+statement ok
-+COPY (
-+	SELECT [1, 2] AS li, ['a', 'b'] AS ls, ['1', '2'] AS ln, [{'a': 1, 'b': 2}] AS lst, [[1, 2], [3]] AS ll, [NULL, NULL] AS lnull
-+) TO '{TEST_DIR}/list_child_types.parquet' (FORMAT parquet);
-+
-+# a declared element type the file's elements can be cast to, whatever the key of the child
-+query III
-+SELECT li, li2, ln FROM read_parquet('{TEST_DIR}/list_child_types.parquet', schema = MAP {
-+	'li': {name: 'li', type: 'BIGINT[]', default_value: NULL, children: MAP {
-+		'element': {name: 'element', type: 'BIGINT', default_value: 7, children: NULL}}},
-+	'ln': {name: 'ln', type: 'INTEGER[]', default_value: NULL, children: MAP {
-+		'element': {name: 'element', type: 'INTEGER', default_value: 7, children: NULL}}}
-+}) AS a, (SELECT li AS li2 FROM read_parquet('{TEST_DIR}/list_child_types.parquet', schema = MAP {
-+	'li': {name: 'li', type: 'VARCHAR[]', default_value: NULL, children: MAP {
-+		'item': {name: 'element', type: 'VARCHAR', default_value: 'x', children: NULL}}}})) AS b;
++SELECT count(*) FROM (VALUES (NULL), (NULL)) t(c1) WHERE list_contains([NULL], c1) IS NULL;
 +----
-+[1, 2]	[1, 2]	[1, 2]
++2
 +
-+# an element that cannot be cast fails. These reads returned the default of the element for every entry
-+# when the key of the child was not the name of the file's repeated group
-+statement error
-+SELECT ls FROM read_parquet('{TEST_DIR}/list_child_types.parquet', schema = MAP {
-+	'ls': {name: 'ls', type: 'INTEGER[]', default_value: NULL, children: MAP {
-+		'element': {name: 'element', type: 'INTEGER', default_value: 7, children: NULL}}}});
++# a typed needle goes through constant_or_null itself
++query II
++SELECT list_contains([NULL], c1), typeof(list_contains([NULL], c1)) FROM (VALUES (1), (NULL)) t(c1);
 +----
-+<REGEX>:Conversion Error:.*Could not convert string 'a' to INT32.*
++false	BOOLEAN
++NULL	BOOLEAN
 +
-+statement error
-+SELECT intArray FROM read_parquet('data/parquet-testing/bug2557.parquet', schema = MAP {
-+	'intArray': {name: 'intArray', type: 'DATE[]', default_value: NULL, children: MAP {
-+		'list': {name: 'element', type: 'DATE', default_value: NULL, children: NULL}}}});
-+----
-+<REGEX>:Conversion Error:.*bug2557.parquet.*
-+
-+# an element of another shape fails as it does with the name of the repeated group as the key
-+statement error
-+SELECT lst FROM read_parquet('{TEST_DIR}/list_child_types.parquet', schema = MAP {
-+	'lst': {name: 'lst', type: 'INTEGER[]', default_value: NULL, children: MAP {
-+		'element': {name: 'element', type: 'INTEGER', default_value: 7, children: NULL}}}});
-+----
-+<REGEX>:Binder Error:.*Can't change source type \(STRUCT\(a INTEGER, b INTEGER\)\) to target type \(INTEGER\).*
-+
-+statement error
-+SELECT ll FROM read_parquet('{TEST_DIR}/list_child_types.parquet', schema = MAP {
-+	'll': {name: 'll', type: 'INTEGER[]', default_value: NULL, children: MAP {
-+		'element': {name: 'element', type: 'INTEGER', default_value: 7, children: NULL}}}});
-+----
-+<REGEX>:Binder Error:.*Can't change source type \(INTEGER\[\]\) to target type \(INTEGER\).*
-+
-+statement error
-+SELECT li FROM read_parquet('{TEST_DIR}/list_child_types.parquet', schema = MAP {
-+	'li': {name: 'li', type: 'STRUCT(a INTEGER)[]', default_value: NULL, children: MAP {
-+		'element': {name: 'element', type: 'STRUCT(a INTEGER)', default_value: NULL, children: MAP {
-+			'a': {name: 'a', type: 'INTEGER', default_value: NULL, children: NULL}}}}}});
-+----
-+<REGEX>:Binder Error:.*Can't change source type \(INTEGER\) to target type \(STRUCT\(a INTEGER\)\).*
-+
-+# a NULL-typed element stays NULL, the default of the element is for an element the file does not have
++# the connection is still usable
 +query I
-+SELECT lnull FROM read_parquet('{TEST_DIR}/list_child_types.parquet', schema = MAP {
-+	'lnull': {name: 'lnull', type: 'INTEGER[]', default_value: NULL, children: MAP {
-+		'element': {name: 'element', type: 'INTEGER', default_value: 7, children: NULL}}}});
++SELECT 42;
 +----
-+[NULL, NULL]
-+
-+# one scan over files with different names for the repeated group: "array" and "list"
-+statement ok
-+COPY (SELECT {'names': ['a', 'b']} AS variant) TO '{TEST_DIR}/list_child_types_names.parquet' (FORMAT parquet);
-+
-+query I
-+SELECT variant FROM read_parquet(['data/parquet-testing/adam_genotypes.parquet', '{TEST_DIR}/list_child_types_names.parquet'], schema = MAP {
-+	'variant': {name: 'variant', type: 'STRUCT("names" VARCHAR[])', default_value: NULL, children: MAP {
-+		'names': {name: 'names', type: 'VARCHAR[]', default_value: NULL, children: MAP {
-+			'list': {name: 'element', type: 'VARCHAR', default_value: NULL, children: NULL}}}}}
-+}) ORDER BY ALL;
-+----
-+{'names': [a, b]}
-+{'names': [name]}
-+
-+# bare repeated groups of structs: the child of the list has the name of the column or of the field
-+query III
-+SELECT count(*), sum(len(tags)), count(DISTINCT t.key)
-+FROM (SELECT tags, unnest(tags) AS t FROM read_parquet('data/parquet-testing/enum.parquet', schema = MAP {
-+	'tags': {name: 'tags', type: 'STRUCT("key" VARCHAR, v_str VARCHAR)[]', default_value: NULL, children: MAP {
-+		'list': {name: 'element', type: 'STRUCT("key" VA
++42
 ```
 
 ---
 
-### Incident Patch 3: `87710499` (2026-11-24)
-**Commit Message**: Fix the state layout of aggregates over `AGGREGATE_STATE` inputs (#29289)
+### Incident Patch 2: `8cbfc3f2` (2026-11-24)
+**Commit Message**: Fix the MSVC build of the mode aggregate states (#29311)
 
-Aggregates that return their input type (`first`, `last`, `any_value`,
-`arg_min`/`arg_max`, `mode`, `quantile_disc`) return `AGGREGATE_STATE`
-when their input is an aggregate state. Their state layout callbacks
-decided whether a function was exported by checking only whether it
-returns `AGGREGATE_STATE`. So they treated these aggregates as exported
-and took the input's state type as the layout of their own state. In a
-`GROUP BY` or with `EXPORT_STATE` this raised `INTERNAL Error:
-ListType::GetChildType called on a non-LIST type: AGGREGATE_STATE`. With
-struct states such as `avg` the wrong layout exported garbage or
-crashed. This PR adds `BoundAggregateFunction::ReturnsExportedState()`,
-which also requires the return type to differ from the bound logical
-return type.
+Fixes the Windows (MSVC) build of `core_functions`, which fails in
+`mode.cpp` since the mode states moved into the aggregate arena.
 
-**File**: `extension/core_functions/aggregate/holistic/lttb.cpp` (modified, +1/-1)
-```diff
-@@ -382,7 +382,7 @@ auto LTTBStateLayout(AggregateLayoutInput &input) -> AggregateStateLayout {
- 	auto &function = input.function;
- 	using ST = LTTBState::STATE_TYPE;
- 	AggregateStateLayout layout;
--	if (function.GetReturnType().IsAggregateState()) {
-+	if (function.ReturnsExportedState()) {
- 		// The function has been modified for state export, its return type IS the state type already
- 		layout.type = function.GetReturnType();
- 	} else {
+```
+mode.cpp(162): note: see reference to function template instantiation 'T *duckdb::ArenaAllocator::Make<duckdb::string_t,int,int>(int &&,int &&)' being compiled
+arena_allocator.hpp(160): error C2665: 'duckdb::string_t::string_t': no overloaded function could convert all the argument types
 ```
 
-**File**: `extension/core_functions/aggregate/variant/variant_group_object.cpp` (modified, +1/-1)
+<details><summary>Details</summary>
+
+`Make<string_t>(nullptr, 0)` forwards its arguments to a `string_t`
+constructor, and MSVC 19.44 does not accept it. Both call sites assign
+the state right after creating it (`*mode = key;` and `*mode =
+string_t(ptr, len);`), so the arguments are never used. They now call
+`Make<string_t>()`, which value-initializes the string exactly as
+`string_t(nullptr, 0)` did.
+
+Found while building duckdb-encodings against DuckDB main on Windows
+(https://github.com/duckdb/duckdb-encodings/pull/37), where the build
+stops in this file. I could not reproduce with MSVC locally, so this
+relies on the Windows job of this PR. On Linux, `test_mode`,
+`mode_rewrite`, `mode_rewrite_memory`,
+
+**File**: `extension/core_functions/aggregate/holistic/mode.cpp` (modified, +2/-2)
 ```diff
-@@ -177,7 +177,7 @@ void VariantObjClusterUpdate(Vector inputs[], AggregateInputData &aggr_input_dat
- 
- AggregateStateLayout VariantObjStateLayout(AggregateLayoutInput &input) {
- 	AggregateStateLayout layout;
--	if (input.function.GetReturnType().IsAggregateState()) {
-+	if (input.function.ReturnsExportedState()) {
- 		layout.type = input.function.GetReturnType();
- 	} else {
- 		layout.type = LogicalType::LIST(GetInternalBufferType());
+@@ -159,7 +159,7 @@ struct ModeString {
+ 	                        AggregateInputData &aggr_input_data) {
+ 		if (key.IsInlined()) {
+ 			if (!mode) {
+-				mode = aggr_input_data.allocator.Make<string_t>(nullptr, 0);
++				mode = aggr_input_data.allocator.Make<string_t>();
+ 			}
+ 			*mode = key;
+ 			alloc_size = 0;
+@@ -177,7 +177,7 @@ struct ModeString {
+ 			alloc_size = NextPowerOfTwo(len);
+ 			ptr = char_ptr_cast(aggr_input_data.allocator.Allocate(alloc_size));
+ 			if (!mode) {
+-				mode = aggr_input_data.allocator.Make<string_t>(nullptr, 0);
++				mode = aggr_input_data.allocator.Make<string_t>();
+ 			}
+ 		}
+ 		memcpy(ptr, key.GetData(), len);
 ```
 
-**File**: `extension/core_functions/include/core_functions/aggregate/quantile_state.hpp` (modified, +1/-1)
-```diff
-@@ -417,7 +417,7 @@ template <class STATE, class STATE_FIELD = StateListType<StateInputType<0>>>
- AggregateStateLayout QuantileStateLayout(AggregateLayoutInput &input) {
- 	auto &function = input.function;
- 	AggregateStateLayout layout;
--	if (function.GetReturnType().IsAggregateState()) {
-+	if (function.ReturnsExportedState()) {
- 		// the function has been modified for state export (see ExportAggregateFunction::SetStateExport) -
- 		// its return type IS the state type already
- 		layout.type = function.GetReturnType();
+---
+
+### Incident Patch 3: `bdc96af9` (2026-11-25)
+**Commit Message**: Fix executable path assignment after readlink  (#29321)
+
+`readlink()` does not append a null terminator. If it fills the entire
+`exe_target` buffer, the preceding `memset()` leaves no terminating
+zero.
+Assigning that buffer as a C++ string can then read past its end.
+
+```
+char exe_target[PATH_MAX];
+		memset(exe_target, '\0', PATH_MAX);
+		auto proc_exe_link = StringUtil::Format("/proc/%d/exe", pid);
+		auto readlink_n = readlink(proc_exe_link.c_str(), exe_target, PATH_MAX);
+		if (readlink_n > 0) {
+			process_name = exe_target;
+        }
 ```
 
-**File**: `src/include/duckdb/function/aggregate_function.hpp` (modified, +5/-1)
+Use `std::string::assign()` with the length returned by `readlink()` so
+that constructing the process description does not depend on null
+termination.
+
+Found using the svace static analyzer
+Reporter: Guschin Egor ([REDACTED_EMAIL])
+
+**File**: `src/common/process_util.cpp` (modified, +1/-1)
 ```diff
-@@ -933,6 +933,10 @@ class BoundAggregateFunction : public BaseAggregateFunction, public BoundSimpleF
- 	const LogicalType &GetLogicalReturnType() const {
- 		return logical_return_type;
+@@ -120,7 +120,7 @@ string ProcessUtil::GetProcessDescription(int64_t pid) {
+ 		auto proc_exe_link = StringUtil::Format("/proc/%d/exe", pid);
+ 		auto readlink_n = readlink(proc_exe_link.c_str(), exe_target, PATH_MAX);
+ 		if (readlink_n > 0) {
+-			process_name = exe_target;
++			process_name.assign(exe_target, static_cast<size_t>(readlink_n));
+ 		}
  	}
-+	//! Whether EXPORT_STATE replaced the return type
-+	bool ReturnsExportedState() const {
-+		return GetReturnType().IsAggregateState() && GetReturnType() != logical_return_type;
-+	}
- 	AggregateStateLayout GetStateType(optional_ptr<const FunctionData> bind_data) const {
- 		D_ASSERT(callbacks.get_state_type);
- 		AggregateLayoutInput input(*this, bind_data);
-@@ -978,7 +982,7 @@ inline AggregateStateLayout AggregateFunction::StructStateLayout(AggregateLayout
- 	using ST = typename STATE::STATE_TYPE;
- 	auto &bound = input.function;
- 	AggregateStateLayout layout;
--	if (bound.GetReturnType().IsAggregateState()) {
-+	if (bound.ReturnsExportedState()) {
- 		// the function has been modified for state export (see ExportAggregateFunction::SetStateExport) -
- 		// its return type IS the state type already
- 		layout.type = bound.GetReturnType();
-```
-
-**File**: `test/sql/aggregate/aggregate_state_export/first_last_export_state.test` (modified, +13/-0)
-```diff
-@@ -167,3 +167,16 @@ SELECT finalize(combine(
-     to_aggregate_state(NULL::STRUCT(value INTEGER), 'first', ['INTEGER'])));
- ----
- NULL
-+
-+# aggregates over AGGREGATE_STATE inputs, grouped by a non-integer key
-+statement ok
-+CREATE TABLE agg_states AS SELECT i, i % 2 g, avg(i // 3) EXPORT_STATE s, count(i) EXPORT_STATE c FROM range(7) t(i) GROUP BY i ORDER BY i;
-+
-+query IIIIIIIIIII
-+SELECT g, finalize(first(s)), finalize(last(s)), finalize(any_value(s)), finalize(arg_max(s, i)),
-+    finalize(arg_min(s, i)), finalize(mode(s)), finalize(first(DISTINCT s)), finalize(finalize(first(s) EXPORT_STATE)),
-+    finalize(finalize(quantile_disc(s, 0.5) EXPORT_STATE)), finalize(first(c))
-+FROM agg_states GROUP BY g::VARCHAR, g ORDER BY g;
-+----
-+0	0.0	2.0	0.0	2.0	0.0	0.0	0.0	0.0	0.0	1
-+1	0.0	1.0	0.0	1.0	0.0	1.0	0.0	0.0	1.0	1
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #29301** (2026-11-24): Separate join candidate evaluation from enumeration (@lnkuiper)
-- **PR #29298** (2026-11-24): Skip ART tree verification when assertions are disabled (@dentiny)
-- **PR #29296** (2026-11-24): Avoid copying parameter maps and values on every EXECUTE (@dentiny)
-- **PR #29292** (2026-11-24): Add GetProfilingInformation to the v2 C API and C++ API (@Robinho-MR)
-- **PR #29291** (2026-11-24): Simplify MARK join disjunctions (@lnkuiper)
-- **PR #29290** (2026-11-24): Exercise approximate join ordering in SQL tests (@lnkuiper)
+- **PR #29353** (2026-11-25): Keep the V2 crypto provider test's destroy flags alive past the test (@Robinho-MR)
+- **PR #29337** (2026-11-25): Adapt the order of scan conjunction filters (@lnkuiper)
+- **PR #29327** (2026-11-25): Issue #29325: C++ Zero Nanos (@hawkfish)
+- **PR #29321** (2026-11-25): Fix executable path assignment after readlink  (@guschin058)
+- **PR #29311** (2026-11-24): Fix the MSVC build of the mode aggregate states (@Robinho-MR)
+- **PR #29308** (2026-11-24): Preserve projection bindings across child join reordering (@lnkuiper)
 
 ---
 
@@ -2736,38 +2230,33 @@ return type.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Build the checkpointed delete mask from the deleted rows
+## X. Keep the type of the constant when constant_or_null has an untyped NULL child
 
 **RULE**:
-When implementing operations in `src/common/types/validity_mask.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in duckdb/duckdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/optimizer/expression_rewriter.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in duckdb/duckdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8c36c45a`: Build the checkpointed delete mask from the deleted rows. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d3d8a8f5`: Keep the type of the constant when constant_or_null has an untyped NULL child. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/common/types/validity_mask.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/optimizer/expression_rewriter.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-#include "duckdb/common/bit_utils.hpp"
-		for (idx_t entry_idx = 0; entry_idx < EntryCount(count); entry_idx++) {
-			auto entry = GetValidityEntry(entry_idx);
-			validity_t bits = serialize_valid ? entry : ~entry;
-			while (bits) {
-				auto i = entry_idx * BITS_PER_VALUE + CountZeros<uint64_t>::Trailing(bits);
-				if (i >= count) {
-					break;
-				}
-				bits &= bits - 1;
+	for (auto &child : children) {
+		if (child->GetReturnType().id() == LogicalTypeId::SQLNULL) {
+			// an untyped NULL child folds the call before its types are resolved: keep the type of the constant
+			return make_uniq<BoundConstantExpression>(Value(value.type()));
+		}
+	}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-		for (idx_t i = 0; i < count; i++) {
-			if (RowIsValid(i) == serialize_valid) {
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8c36c45a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d3d8a8f5` are properly handled with clean fallback behavior.

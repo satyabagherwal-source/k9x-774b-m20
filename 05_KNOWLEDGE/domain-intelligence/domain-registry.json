@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T12:29:48.722Z",
+  "last_updated": "2026-11-25T12:39:31.490Z",
   "total_records": 2673,
   "domains": {
     "A": {
@@ -8569,8 +8569,8 @@
       "title": "Architecture Intelligence: duckdb/duckdb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-duckdb-duckdb-architecture-intelligence-duckdb-duckdb-core-invariants.md",
       "repository": "duckdb/duckdb",
-      "content_hash": "503001e4e60435d7077c6616020d199346cce8df9b043b7355da66beb57006fb",
-      "created_at": "2026-11-24T17:33:23.983Z"
+      "content_hash": "fd3cd2c0aa7a5fbf6b29073a3456379c71c05f606474d70260ac507287331eae",
+      "created_at": "2026-11-25T12:39:24.849Z"
     },
     "DOM-D-A827EB1D": {
       "record_id": "DOM-D-A827EB1D",
@@ -18846,8 +18846,8 @@
       "title": "Architecture Intelligence: duckdb-duckdb-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-duckdb-duckdb-learnings-architecture-intelligence-duckdb-duckdb-learnings-core-i.md",
       "repository": "duckdb-duckdb-learnings",
-      "content_hash": "f48b79d8e20c638f941774886945bfc2516513730c448afd0e8f13dc61bed733",
-      "created_at": "2026-11-23T21:05:34.218Z"
+      "content_hash": "acf7a25a9136d24c96b5349ab37fa351974380ad3f1100d9f591b364c7e88a2d",
+      "created_at": "2026-11-25T12:39:31.490Z"
     },
     "domain_intelligence-research-knowledge-intelligence-facebook-sam3-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-facebook-sam3-core-invariants",
@@ -23472,8 +23472,8 @@
       "title": "Research & Knowledge Intelligence: LiconStudio/Minimax-H3-VBVR Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-liconstudio-minimax-h3-vbvr-research-knowledge-intelligence-liconstudio-minim.md",
       "repository": "LiconStudio/Minimax-H3-VBVR",
-      "content_hash": "c141d74471a7a8edf0639f36d70fd4df12d68a0e66c9794dfe470ef19b97d9f6",
-      "created_at": "2026-11-21T21:31:32.969Z"
+      "content_hash": "e94cf2e68855a45dc5443ba4e016110c1dc0ebd50b348df5afcff936ffe8bfea",
+      "created_at": "2026-11-25T12:39:07.164Z"
     },
     "domain_intelligence-technical-construction-intelligence-alexpasmantier-television-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-alexpasmantier-television-core-invariants",
@@ -23541,8 +23541,8 @@
       "title": "Research & Knowledge Intelligence: hf-liconstudio-minimax-h3-vbvr-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-liconstudio-minimax-h3-vbvr-learnings-research-knowledge-intelligence-hf-lico.md",
       "repository": "hf-liconstudio-minimax-h3-vbvr-learnings",
-      "content_hash": "76c019cdacb7bbf0f06d9c3c7541e2daa1d8d48a645ebff7e293d57df08e129e",
-      "created_at": "2026-11-21T21:31:52.123Z"
+      "content_hash": "f0a5352d5914a8096203c9e54d829384d8e04a51c98dc8a2e1db97057ea5fbc9",
+      "created_at": "2026-11-25T12:39:28.444Z"
     },
     "domain_intelligence-architecture-intelligence-rqlite-rqlite-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-rqlite-rqlite-learnings-core-invariants",
@@ -32012,8 +32012,8 @@
       "title": "Architecture Intelligence: karmada-io/karmada Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-karmada-io-karmada-architecture-intelligence-karmada-io-karmada-core-invariants.md",
       "repository": "karmada-io/karmada",
-      "content_hash": "296093875d8fbd575d19eb39d43d68bb72e9fcbb0b2ca37af8d32fcdc20fa0b7",
-      "created_at": "2026-11-19T18:06:24.412Z"
+      "content_hash": "cb33fb2e5a4883dd1c0c447875f62dc99842252e34c99e4dd698976dc8ddac2f",
+      "created_at": "2026-11-25T12:39:19.523Z"
     },
     "domain_intelligence-architecture-intelligence-karmada-io-karmada-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-karmada-io-karmada-learnings-core-invariants",
@@ -32021,8 +32021,8 @@
       "title": "Architecture Intelligence: karmada-io-karmada-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-karmada-io-karmada-learnings-architecture-intelligence-karmada-io-karmada-learni.md",
       "repository": "karmada-io-karmada-learnings",
-      "content_hash": "0164f6c8e616f34b2b8011fdfe902bf0acd85f11302950b96e1cef0074b6c976",
-      "created_at": "2026-11-19T18:06:30.478Z"
+      "content_hash": "957c117eba48bc30fd90681a630f59f94a3b204dab6ac7fbb3b418f79c1f2bf7",
+      "created_at": "2026-11-25T12:39:30.058Z"
     },
     "domain_intelligence-quality-verification-intelligence-software-mansion-react-native-reanimated-core-": {
       "record_id": "domain_intelligence-quality-verification-intelligence-software-mansion-react-native-reanimated-core-",

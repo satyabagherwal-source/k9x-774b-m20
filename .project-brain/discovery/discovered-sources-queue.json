@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-25T12:20:24.498Z",
+  "updated_at": "2026-11-25T12:39:30.894Z",
   "stats": {
-    "total_discovered": 9420,
-    "approved_pending_harvest": 8928,
+    "total_discovered": 9423,
+    "approved_pending_harvest": 8931,
     "harvested_count": 0,
     "rejected_count": 492,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 8919,
-      "OFFICIAL_DOCUMENTATION": 280,
+      "COMMUNITY_AND_EXPERT": 8921,
+      "OFFICIAL_DOCUMENTATION": 281,
       "STANDARDS_AND_SPECIFICATIONS": 150,
       "ENGINEERING_BLOGS": 7,
       "SECURITY_ADVISORIES": 53,
@@ -203823,6 +203823,72 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/redisearch-redisearch-learnings.md",
         "fileName": "redisearch-redisearch-learnings.md"
+      }
+    },
+    "SRC-28BA038BC09D": {
+      "id": "SRC-28BA038BC09D",
+      "url": "https://docs.github.com/en/code-security/security-advisories/working-with-repository-security-advisories/configuring-private-vulnerability-reporting-for-a-repository",
+      "title": "https://docs.github.com/en/code-security/security-advisories/working-with-repository-security-advisories/configuring-private-vulnerability-reporting-for-a-repository",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T12:39:28.908Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/karmada-io-karmada-learnings.md",
+        "fileName": "karmada-io-karmada-learnings.md"
+      }
+    },
+    "SRC-B782E572E3C6": {
+      "id": "SRC-B782E572E3C6",
+      "url": "https://github.com/karmada-io/community/blob/main/security-team/SECURITY.md",
+      "title": "https://github.com/karmada-io/community/blob/main/security-team/SECURITY.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T12:39:28.994Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/karmada-io-karmada-learnings.md",
+        "fileName": "karmada-io-karmada-learnings.md"
+      }
+    },
+    "SRC-143D3A8CCD8C": {
+      "id": "SRC-143D3A8CCD8C",
+      "url": "https://github.com/duckdb/duckdb-encodings/pull/37",
+      "title": "https://github.com/duckdb/duckdb-encodings/pull/37",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T12:39:30.894Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/duckdb-duckdb-learnings.md",
+        "fileName": "duckdb-duckdb-learnings.md"
       }
     }
   }

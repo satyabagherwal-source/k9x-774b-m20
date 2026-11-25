@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-23T21:05:33.862Z",
+  "timestamp": "2026-11-25T12:39:31.077Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-duckdb-duckdb-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [duckdb-duckdb-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-23T21:05:33.862Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T12:39:31.077Z`  
 > **Learning ID**: `LEARN-EVO-duckdb-duckdb-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/duckdb-duckdb-learnings.md`  
 > **Source**: github ([https://github.com/duckdb/duckdb](https://github.com/duckdb/duckdb))  
-> **Source Version**: `94a1663a`  
+> **Source Version**: `bdc96af9`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-23T21:04:56.172Z  
+> **Timestamp**: 2026-11-25T12:39:22.745Z  
 > **Learning ID**: `learn-github-duckdb-duckdb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/duckdb-duckdb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/duckdb/duckdb](https://github.com/duckdb/duckdb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T21:04:56.166Z  
+> **Harvest Timestamp**: 2026-11-25T12:39:22.735Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: DuckDB is a high-performance analytical database system
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 43275 stars
+- **Stars / Engagement**: 43334 stars
 
 ---
 
@@ -1869,7 +1869,7 @@ struct ModeString {
 	                        AggregateInputData &aggr_input_data) {
 		if (key.IsInlined()) {
 			if (!mode) {
-				mode = aggr_input_data.allocator.Make<string_t>(nullptr, 0);
+				mode = aggr_input_data.allocator.Make<string_t>();
 			}
 			*mode = key;
 			alloc_size = 0;
@@ -1887,7 +1887,7 @@ struct ModeString {
 			alloc_size = NextPowerOfTwo(len);
 			ptr = char_ptr_cast(aggr_input_data.allocator.Allocate(alloc_size));
 			if (!mode) {
-				mode = aggr_input_data.allocator.Make<string_t>(nullptr, 0);
+				mode = aggr_input_data.allocator.Make<string_t>();
 			}
 		}
 		memcpy(ptr, key.GetData(), len);
@@ -1987,7 +1987,7 @@ struct ModeState {
 			valid = true;
 			count = new_count;
 			Update(key, aggr_input_data);
-	
+		} else if (new_coun
 ```
 
 
@@ -1996,13 +1996,11 @@ struct ModeState {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #29244** (2026-11-23): **Cache sort-key suffixes during merging**
-  *Symptoms*: When merge keys share a prefix, cache the first word after it in their existing inline storage so comparisons can avoid reading the heap. Share the temporary substitution and restoration with initial radix sorting, without adding allocations or increasing key size.
+- **Issue #29353** (2026-11-25): **Keep the V2 crypto provider test's destroy flags alive past the test**
+  *Symptoms*: The `V2 crypto provider: registration rules` test from #29088 pointed `ProviderStats::destroyed` at a local `bool`. The registered provider frees its user data only when the instance is destroyed, after that local is gone, so `DestroyStats` wrote to stack memory that was no longer valid. ASan aborts on it in the OSX Debug job. Because the instance outlives the test, the abort is reported under another test of the same batch, `V2 crypto: hashing and HMAC`. For example, job 139123340434 on #29314 aborts in `DestroyStats` from `~CV2EncryptionUtil` / `~DBConfig`.  The flag is now a `std::shared_ptr<bool>` that the stats co-own, so the write stays valid however long the instance lives. The test checks it through the pointer.  `[crypto]` (9 cases) and `[capi_v2]` (641 cases) pass. I couldn't run ASan on my machine, so the OSX Debug job here is the check. 
 
-- **Issue #29242** (2026-11-23): **Move DateTruncSimplificationRule::DatePartToFunc into its own file**
-  *Symptoms*: The parser also needs it, to read INTERVAL literals (transform_expression.cpp). It moves out of the date_trunc rule's translation unit into date_part_to_func.cpp; behavior is unchanged.  Just moving code around, to make different libraries actually compile when stripped down. Function is used at `src/parser/peg/transformer/transform_expression.cpp`
-  **Post-Mortem & Fix Analysis**:
-  > Thanks!
+- **Issue #29337** (2026-11-25): **Adapt the order of scan conjunction filters**
+  *Symptoms*: Scan predicates on the same column currently execute in a fixed cost-based order. A join against a few widely spaced keys can produce broad range checks alongside a selective runtime `IN` filter. Running the range checks first does unnecessary work on rows the `IN` filter rejects.  Reuse `AdaptiveFilter` to learn the order of these AND predicates during execution. The scan executor and its predicate caches share the learned order. Constant and all-accepting cached batches keep using that order without collecting timing samples.  For example, using a persisted database:  ```sql CREATE TABLE facts AS SELECT ((i * 48271) % 1000000)::INTEGER AS k FROM range(20000000) t(i);  CREATE TABLE selected_keys(k INTEGER); INSERT INTO selected_keys VALUES (1000), (890000); CHECKPOINT;  SELECT count(*) FROM facts JOIN selected_keys USING (k); ```  Four threads, median of five warm query executions, optimized sanitizer build; setup excluded:  | Query | Base | This PR | Change | | --- | ---: | ---: | ---: | | Join 20M rows to two keys | 666 ms | 396 ms | −40.5% | 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2019,1429 +2017,225 @@ struct ModeState {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `52dac04d` (2026-11-23)
-**Commit Message**: Fix runtime memory management for growing perfect-hash aggregates (#29175)
+### Incident Patch 1: `d3d8a8f5` (2026-11-24)
+**Commit Message**: Keep the type of the constant when constant_or_null has an untyped NULL child (#29304)
 
-Fixes #29163.
+While testing DuckDB with untrusted SQL under a restricted configuration
+(`enable_external_access = false`, locked configuration) we found a
+short statement that ends in an internal error and invalidates the
+database instance. The configuration is not needed to reproduce it.
 
-With four million rows and a 64 MB memory limit, `list(hash(i))` can
-exhaust memory in `PERFECT_HASH_GROUP_BY` even with only 1,000 groups.
-The key range bounds the number of groups, but each list can grow with
-the input.
+### What a user sees
 
-This change selects the operator at planning time. Every aggregate must
-have a known fixed-size native state or an explicit opt-in to use
-perfect hash aggregation. The built-in `approx_count_distinct` sketch
-and native single-result `min`/`max` opt in. A variable-width minimum
-can still retain a large value per group. Missing layouts, state
-destructors, and custom state export/import callbacks select regular
-hash aggregation unless the implementation opts in. A `list` alongside
-`min`, `min(x, n)` and `max(x, n)`, and wrappers that buffer ordered
-input all use `HASH_GROUP_BY`, which can spill.
-
-### Results under memory pressure
-
-| Workload | Memory limit | Upstream base | Base with
-`perfect_ht_threshold=0` | This PR |
-|---|---:|---|---|---|
-| Reported list query, 4M rows, 1,000 groups | 64 MB | Out of memory |
-Passed | Passed |
-| List and string minimum, 192M rows, 100 group
-
-**File**: `src/execution/physical_plan/plan_aggregate.cpp` (modified, +16/-2)
-```diff
-@@ -240,8 +240,22 @@ static bool CanUsePerfectHashAggregate(ClientContext &context, LogicalAggregate
- 	}
- 	for (auto &expression : op.expressions) {
- 		auto &aggregate = expression->Cast<BoundAggregateExpression>();
--		if (aggregate.IsDistinct() || !aggregate.Function().HasStateCombineCallback()) {
--			// distinct aggregates are not supported in perfect hash aggregates
-+		const auto &function = aggregate.Function();
-+		if (aggregate.IsDistinct() || !function.HasStateCombineCallback()) {
-+			return false;
-+		}
-+		if (!function.HasGetStateTypeCallback() || function.HasStateDestructorCallback()) {
-+			return false;
-+		}
-+		const auto layout = function.GetStateType(aggregate.BindInfo().get());
-+		// Preserve min/max and fixed-size sketch fast paths, excluding sorted aggregate buffers.
-+		const auto &name = function.GetName();
-+		if (function.GetArguments().size() == 1 && layout.field.kind != AggregateFieldKind::LIST &&
-+		    (name == "min" || name == "max" || name == "approx_count_distinct")) {
-+			continue;
-+		}
-+		if (function.HasExportAggregateStateCallback() || function.HasImportAggregateStateCallback() ||
-+		    !layout.field.IsFixedSize(layout.type)) {
- 			return false;
- 		}
- 	}
+```sql
+CREATE TABLE x AS SELECT array_contains([NULL], c1) AS l FROM (VALUES (NULL), (NULL)) t(c1);
 ```
 
-**File**: `src/function/aggregate_state_serialization.cpp` (modified, +26/-0)
+```
+INTERNAL Error: Expected unified vector format of type INT8, but found type INT32
+```
+
+and every later statement fails with `FATAL Error: Failed: database has
+been invalidated because of a previous fatal error`. Other forms of the
+same defect:
+
+- `WITH c AS MATERIALIZED (SELECT array_contains([NULL], c1) AS l FROM
+(VALUES (NULL), (NULL)) t(c1)) SELECT * FROM c;` and `SELECT
+list_contains([NULL], c1) AND true FROM ...` give `INTERNAL Error:
+Vector::Reference used on vector of different type (source BOOLEAN
+referenced "NULL")`;
+- `... UNION ALL SELECT true` gives `Invalid Input Error: Type mismatch
+for SET OPERATION`;
+- on an assertion build the plain `SELECT list_contains([NULL], c1) FROM
+(VALUES
+
+**File**: `src/optimizer/expression_rewriter.cpp` (modified, +6/-0)
 ```diff
-@@ -11,6 +11,32 @@
+@@ -160,6 +160,12 @@ unique_ptr<Expression> ExpressionRewriter::ConstantOrNull(ClientContext &context
  
- namespace duckdb {
- 
-+bool AggregateStateField::IsFixedSize(const LogicalType &type) const {
-+	switch (kind) {
-+	case AggregateFieldKind::PRIMITIVE:
-+		return TypeIsConstantSize(type.InternalType());
-+	case AggregateFieldKind::OPTIONAL_VALUE:
-+		return children.size() == 1 && children[0].IsFixedSize(type);
-+	case AggregateFieldKind::STRUCT: {
-+		if (type.id() != LogicalTypeId::STRUCT) {
-+			return false;
+ unique_ptr<Expression> ExpressionRewriter::ConstantOrNull(ClientContext &context,
+                                                           vector<unique_ptr<Expression>> children, Value value) {
++	for (auto &child : children) {
++		if (child->GetReturnType().id() == LogicalTypeId::SQLNULL) {
++			// an untyped NULL child folds the call before its types are resolved: keep the type of the constant
++			return make_uniq<BoundConstantExpression>(Value(value.type()));
 +		}
-+		const auto &types = StructType::GetChildTypes(type);
-+		if (types.size() != children.size()) {
-+			return false;
-+		}
-+		for (idx_t i = 0; i < types.size(); i++) {
-+			if (!children[i].IsFixedSize(types[i].second)) {
-+				return false;
-+			}
-+		}
-+		return true;
 +	}
-+	default:
-+		return false;
-+	}
-+}
-+
- namespace {
- 
- template <class OP, class... ARGS>
+ 	children.insert(children.begin(), make_uniq<BoundConstantExpression>(std::move(value)));
+ 	// constant_or_null has the type of the leading constant, also when a typed NULL child folds the call
+ 	return BindBuiltinScalarExpression(context, ConstantOrNullFun::Name, std::move(children));
 ```
 
-**File**: `src/include/duckdb/function/aggregate_state_layout.hpp` (modified, +3/-0)
+**File**: `test/optimizer/constant_or_null_untyped_null.test` (added, +68/-0)
 ```diff
-@@ -255,6 +255,9 @@ struct AggregateStateField {
- 	//! aggregate's empty-group finalize (e.g. count -> 0) instead of short-circuiting to NULL on a NULL state.
- 	bool list_empty_as_empty = false;
- 
-+	//! Whether the described native field consists entirely of fixed-size values.
-+	bool IsFixedSize(const LogicalType &type) const;
+@@ -0,0 +1,68 @@
++# name: test/optimizer/constant_or_null_untyped_null.test
++# description: A rewrite to constant_or_null keeps the type of the constant when its child is an untyped NULL
++# group: [optimizer]
 +
- 	//! The alignment of this field when placed as a struct member, mirroring the C++ struct layout rules.
- 	//! For OPTIONAL_VALUE the alignment is that of the wrapped value - the trailing is_set bool does not affect it.
- 	idx_t GetAlignment() const {
-```
-
-**File**: `src/optimizer/common_subplan_optimizer.cpp` (modified, +1/-27)
-```diff
-@@ -108,32 +108,6 @@ static bool CanShareSubplanExpression(const Expression &expr) {
- 	return !unsafe;
- }
- 
--static bool HasFixedSizeState(const LogicalType &type, const AggregateStateField &field) {
--	switch (field.kind) {
--	case AggregateFieldKind::PRIMITIVE:
--		return TypeIsConstantSize(type.InternalType());
--	case AggregateFieldKind::OPTIONAL_VALUE:
--		return field.children.size() == 1 && HasFixedSizeState(type, field.children[0]);
--	case AggregateFieldKind::STRUCT: {
--		if (type.id() != LogicalTypeId::STRUCT) {
--			return false;
--		}
--		const auto &types = StructType::GetChildTypes(type);
--		if (types.size() != field.children.size()) {
--			return false;
--		}
--		for (idx_t i = 0; i < types.size(); i++) {
--			if (!HasFixedSizeState(types[i].second, field.children[i])) {
--				return false;
--			}
--		}
--		return true;
--	}
--	default:
--		return false;
--	}
--}
--
- static bool CanCombineAggregateState(const BoundAggregateExpression &aggregate) {
- 	const auto &function = aggregate.Function();
- 	if (aggregate.IsDistinct() || aggregate.GetOrderBys() ||
-@@ -143,7 +117,7 @@ static bool CanCombineAggregateState(const BoundAggregateExpression &aggregate)
- 	}
- 	// Combining growing states can use more memory than evaluating the original aggregates separately.
- 	const auto layout = function.GetStateType(aggregate.BindInfo().get());
--	return HasFixedSizeState(layout.type, layout.field);
-+	return layout.field.IsFixedSize(layout.type);
- }
- 
- enum class ConversionType {
-```
-
-**File**: `test/sql/aggregate/aggregate_state_export/ordered_aggregate_export_state.test` (modified, +1/-1)
-```diff
-@@ -159,7 +159,7 @@ WHERE d.direct IS DISTINCT FROM e.exported;
- ----
- 0
- 
--# many groups via the perfect hash aggregate (small integer keys)
-+# ordered list states with small integer group keys
- statement ok
- CREATE TABLE narrow AS SELECT (range % 8)::TINYINT AS g, range AS v FROM range(1000);
- 
-```
-
-**File**: `test/sql/aggregate/aggregates/test_order_by_aggregate.test` (modified, +1/-1)
-```diff
-@@ -97,7 +97,7 @@ SELECT string_agg(x, ',' ORDER BY x), string_agg(x, '|' ORDER BY x DESC) FROM (V
- ----
- a string that is not inlined,b,c	c|b|a string that is not inlined
- 
--# the perfect hash aggregate keeps the finalize state alive while its results are scanned
-+# the grouped strings remain valid while the results are scanned
- query I
- SELECT count(*) FROM (SELECT i % 1000 g, string_agg(md5(i::VARCHAR), ',' ORDER BY i) s FROM range(3000) r(i) GROUP BY g) WHERE s != concat_ws(',', md5(g::VARCHAR), md5((g + 1000)::VARCHAR), md5((g + 2000)::VARCHAR));
- ----
-```
-
-**File**: `test/sql/aggregate/external/list_hash_aggregate_spill.test_slow` (added, +50/-0)
-```diff
-@@ -0,0 +1,50 @@
-+# name: test/sql/aggregate/external/list_hash_aggregate_spill.test_slow
-+# description: Regular hash aggregation of lists spills under memory pressure
-+# group: [external]
-+
-+require core_functions
-+
-+statement ok
-+SET threads = 1
-+
-+# Each group is an arithmetic progression starting at its key with a step of 250.
-+statement ok
-+CREATE MACRO group_totals(n) AS TABLE
-+SELECT count(*) AS groups,
-+       bool_and(len(xs) = n // 250 AND list_avg(xs) = g + (n - 250) / 2) AS groups_match
-+FROM (
-+    SELECT (i % 250)::UTINYINT AS g, list(i) AS xs FROM range(n) t(i) GROUP BY g
-+) grouped
-+
-+statement ok
-+SET tracked_metrics = ['operator.type', 'system.total_bytes_spilled']
-+
-+statement ok
-+SET perfect_ht_threshold = 12
-+
-+statement ok
-+SET memory_limit = '48MB'
-+
-+statement ok
-+SET operator_memory_limit = '24MB'
-+
-+query II
-+EXPLAIN ANALYZE (FORMAT JSON) SELECT * FROM group_totals(50000)
++# the needle is a column of type "NULL": list_contains over a list without non-NULL elements is rewritten to
++# constant_or_null(false, needle), which must stay a BOOLEAN
++query I
++SELECT list_contains([NULL], c1) FROM (VALUES (NULL), (NULL)) t(c1);
 +----
-+analyzed_plan	<REGEX>:(?s).*"type": "HASH_GROUP_BY".*"total_bytes_spilled": 0.*
-+
-+query II
-+SELECT * FROM group_totals(50000)
-+----
-+250	true
-+
-+# The lists retain 64 MB of integers. Only the grouped aggregate can spill in this query.
-+query II
-+EXPLAIN ANALYZE (FORMAT JSON) SELECT * FROM group_totals(8000000)
-+----
-+analyzed_plan	<REGEX>:(?s).*"type": "HASH_GROUP_BY".*"total_bytes_spilled": [1-9].*
-+
-+query II
-+SELECT * FROM group_totals(8000000)
-+----
-+250	true
-```
-
-**File**: `test/sql/aggregate/external/perfect_hash_growing_state.test_slow` (added, +232/-0)
-```diff
-@@ -0,0 +1,232 @@
-+# name: test/sql/aggregate/external/perfect_hash_growing_state.test_slow
-+# description: Aggregation of growing lists under a small memory limit
-+# group: [external]
-+
-+require vector_size 2048
-+
-+statement ok
-+SET threads = 1
-+
-+statement ok
-+SET memory_limit = '8MB'
-+
-+query III
-+SELECT count(*), count(xs), count(*) FILTER (WHERE g = 1 AND xs = [repeat('x', 512) || '1']) FROM (
-+    SELECT (i % 10)::UTINYINT AS g, list(repeat('x', 512) || i::VARCHAR) FILTER (WHERE i % 50000 = 1) AS xs
-+    FROM range(6000) t(i) GROUP BY g
-+)
-+----
-+10	1	1
-+
-+statement ok
-+SET memory_limit = '12MB'
-+
-+query II
-+SELECT count(*), count(*) FILTER (WHERE v = repeat('x', 512) || lpad(g::VARCHAR, 4, '0')) FROM (
-+    SELECT (i % 10)::UTINYINT AS g, min(repeat('x', 512) || lpad(i::VARCHAR, 4, '0')) AS v
-+    FROM range(6000) t(i) GROUP BY g
-+)
-+----
-+10	10
-+
-+foreach budget 24 32
-+
-+statement ok
-+SET memory_limit = '{budget}MB'
-+
-+query III
-+SELECT sum(len(xs)), count(v), sum(length(v)) FROM (
-+    SELECT (i % 100)::UTINYINT AS g, list(hash(i)) AS xs,
-+           min(CASE WHEN i < 100 THEN repeat('x', 16384) || i::VARCHAR END) AS v
-+    FROM range(65536) t(i) GROUP BY g
-+)
-+----
-+65536	100	1638590
-+
-+endloop
-+
-+statement ok
-+SET memory_limit = '22MB'
++NULL
++NULL
 +
 +query I
-+SELECT sum(len(xs)) FROM (
-+    SELECT (i % 57)::UTINYINT AS g, list(hash(i)) AS xs
-+    FROM range(524288) t(i) GROUP BY g
-+)
++SELECT typeof(list_contains([NULL], c1)) FROM (VALUES (NULL), (NULL)) t(c1);
 +----
-+524288
-+
-+statement ok
-+SET memory_limit = '16MB'
-+
-+statement ok
-+CREATE TABLE grouped_output AS
-+SELECT (i % 100)::UTINYINT AS g, list(hash(i)) AS xs FROM range(524288) t(i) GROUP BY g
-+
-+statement ok
-+RESET memory_limit
-+
-+query II
-+SELECT count(*), sum(len(xs)) FROM grouped_output
-+----
-+100	524288
-+
-+statement ok
-+DROP TABLE grouped_output
-+
-+statement ok
-+SET memory_limit = '256MB'
-+
-+foreach width 128 1024
-+
-+query II
-+SELECT sum(len(xs)), sum(length(v)) FROM (
-+    SELECT (i % 32)::UTINYINT AS g, list(i) FILTER (WHERE i = 0) AS xs,
-+           last(CASE WHEN (i // 2048) % 2 = 0 THEN repeat('x', {width}) ELSE 'x' END ORDER BY i) AS v
-+    FROM range(1073741824 // {width}) t(i) GROUP BY g
-+)
-+----
-+1	32
-+
-+endloop
-+
-+statement ok
-+SET memory_limit = '32MB'
-+
-+foreach start_row 0 524288
-+
-+query II
-+SELECT sum(len(xs)), sum(length(v)) FROM (
-+    SELECT (i % 100)::UTINYINT AS g, list(hash(i)) AS xs,
-+           min(CASE WHEN i BETWEEN {start_row} AND {start_row} + 99 THEN repeat('x', 16385) || (i % 100)::VARCHAR END) AS v
-+    FROM range(524388) t(i) GROUP BY g
-+)
-+----
-+524388	1638690
-+
-+endloop
-+
-+statement ok
-+SET memory_limit = '48MB'
++BOOLEAN
++BOOLEAN
 +
 +query I
-+SELECT sum(len(xs)) FROM (
-+    SELECT (i % 100)::UTINYINT AS g, list(i::VARCHAR) AS xs FROM range(1500000) t(i) GROUP BY g
-+)
++SELECT list_contains([NULL], c1) AND true FROM (VALUES (NULL), (NULL)) t(c1);
 +----
-+1500000
-+
-+foreach budget 64 80
-+
-+statement ok
-+SET memory_limit = '{budget}MB'
-+
-+query III
-+SELECT sum(len(xs)), max(len(xs)) FILTER (WHERE g = 0), sum(list_sum(xs)) FROM (
-+    SELECT (CASE WHEN i % 3 = 0 THEN 0 ELSE i % 100 END)::UTINYINT AS g, list(i) AS xs
-+    FROM range(1500000) t(i) GROUP BY g
-+)
-+----
-+1500000	510000	1124999250000
-+
-+endloop
++NULL
++NULL
 +
 +statement ok
-+SET memory_limit = '32MB'
-+
-+statement ok
-+CREATE TABLE crossover AS
-+SELECT (i % 100)::UTINYINT AS g, list(hash(i)) AS xs FROM range(1500000) t(i) GROUP BY g
-+
-+statement ok
-+RESET memory_limit
++CREATE TABLE contains_null AS SELECT array_contains([NULL], c1) AS l FROM (VALUES (NULL), (NULL)) t(c1);
 +
 +query II
-+SELECT count(*), sum(len(xs)) FROM crossover
++SELECT l, typeof(l) FROM contains_null;
 +----
-+100	1500000
-+
-+statement ok
-+DROP TABLE crossover
-+
-+# An earlier UNION branch can already have contributed states when the filtered LIST spills.
-+statement ok
-+SET memory_limit = '96MB'
-+
-+statement ok
-+CREATE TABLE merged AS
-+SELECT g, list(hash(i)) FILTER (WHERE i % 13 <> 0) AS xs, count(*) AS n
-+FROM (SELECT i, (i % 100)::UTINYINT AS g FROM range(16384) t(i)
-+      UNION ALL
-+      SELECT i, (i % 100)::UTINYINT AS g FROM range(16384, 1500000) t(i))
-+GROUP BY g
-+
-+statement ok
-+RESET memory_limit
-+
-+query II
-+SELECT count(*), count(*) FILTER (WHERE n <> 15000 OR list_sort(xs) IS DISTINCT FROM
-+    list_sort(list_transform(list_filter(range(g::BIGINT, 1500000, 100), lambda j: j % 13 <> 0), lambda j: hash(j))))
-+FROM merged
-+----
-+100	0
-+
-+statement ok
-+DROP TABLE merged
-+
-+statement ok
-+SET threads = 4
-+
-+foreach groups 1000 100
-+
-+statement ok
-+SET memory_limit = '64MB'
-+
-+statement ok
-+CREATE TABLE grouped AS
-+SELECT g, list(hash(i)) AS xs
-+FROM range(4000000) t(i), (SELECT i % {groups} AS g)
-+GROUP BY g
-+
-+statement ok
-+RESET memory_limit
-+
-+query II
-+SELECT count(*) = {groups},
-+       bool_and(list_sort(xs) IS NOT DISTINCT FROM
-+                list_sort(list_transform(range(4000000 // {groups}), lambda j: hash(j * {groups} + g))))
-+FROM grouped
-+----
-+true	true
-+
-+statement ok
-+DROP TABLE grouped
-+
-+endloop
-+
-+# Compare a parallel table scan with a filtered list, repeated values and a NULL group.
-+statement ok
-+CREATE TABLE input AS
-+SELECT CASE WHEN i % 17 <> 0 THEN (i % 100)::UTINYINT END AS g,
-+       CASE WHEN i % 11 <> 0 THEN i % 127 END AS v, i % 3 <> 0 AS keep
-+FROM range(1000000) t(i)
-+
-+statement ok
-+SE
-```
-
----
-
-### Incident Patch 2: `f9a37d38` (2026-11-23)
-**Commit Message**: Account PEG parser arenas against memory limits (#29032)
-
-PEG parser match and transform arenas now count against the database
-memory limit when parsing with a client context. Match process and
-packrat storage are released before transformation begins, while parse
-results remain alive through transformation.
-
-Parsing allocation failures report that the statement is too large for
-the current memory limit, with guidance to reduce the statement size or
-increase memory_limit. Type parsing and json_serialize_sql propagate OOM
-instead of turning it into an invalid type error or a successful JSON
-error value; ordinary JSON SQL parse errors retain the existing
-error-value behavior.
-
-Validation:
-- DEBUG/FORCE_ASSERT/CRASH_ON_ASSERT build via make reldebug.
-- SQLLogicTests cover repeated parse OOM, allocator memory returning to
-the pre-query baseline, subsequent query recovery, type parsing, and
-JSON SQL error handling.
-- A targeted grammar-extension test exercises OOM inside the transform
-phase and verifies memory returns to its baseline.
-- Parser, grammar-extension, and related JSON regressions: 135 passed.
-- Full JSON SQL suite: 151 passed, one slow test passed on a standalone
-rerun with 
-
-**File**: `extension/json/json_functions/json_serialize_plan.cpp` (modified, +3/-0)
-```diff
-@@ -181,6 +181,9 @@ static void JsonSerializePlanFunction(DataChunk &args, ExpressionState &state, V
- 
- 		} catch (std::exception &ex) {
- 			ErrorData error(ex);
-+			if (error.Type() == ExceptionType::OUT_OF_MEMORY) {
-+				throw;
-+			}
- 			yyjson_mut_obj_add_true(doc, result_obj, "error");
- 			// error type and message
- 			yyjson_mut_obj_add_strcpy(doc, result_obj, "error_type",
-```
-
-**File**: `extension/json/json_functions/json_serialize_sql.cpp` (modified, +3/-0)
-```diff
-@@ -129,6 +129,9 @@ static void JsonSerializeFunction(DataChunk &args, ExpressionState &state, Vecto
- 
- 		} catch (std::exception &ex) {
- 			ErrorData error(ex);
-+			if (error.Type() == ExceptionType::OUT_OF_MEMORY) {
-+				throw;
-+			}
- 			yyjson_mut_obj_add_true(doc, result_obj, "error");
- 			yyjson_mut_obj_add_strcpy(doc, result_obj, "error_type",
- 			                          StringUtil::Lower(Exception::ExceptionTypeToString(error.Type())).c_str());
-```
-
-**File**: `src/common/types/type_manager.cpp` (modified, +4/-0)
-```diff
-@@ -1,6 +1,7 @@
- #include "duckdb/common/types/type_manager.hpp"
- 
- #include "duckdb/common/type_visitor.hpp"
-+#include "duckdb/common/error_data.hpp"
- #include "duckdb/function/cast/cast_function_set.hpp"
- #include "duckdb/parser/parser.hpp"
- #include "duckdb/planner/binder.hpp"
-@@ -26,6 +27,9 @@ static LogicalType TransformStringToUnboundType(const string &str, ClientContext
- 	try {
- 		column_list = Parser(context).ParseColumnList("dummy " + str);
- 	} catch (const std::runtime_error &e) {
-+		if (ErrorData(e).Type() == ExceptionType::OUT_OF_MEMORY) {
-+			throw;
-+		}
- 		const vector<string> suggested_types {"BIGINT",
- 		                                      "INT8",
- 		                                      "LONG",
-```
-
-**File**: `src/include/duckdb/parser/peg/matcher.hpp` (modified, +1/-0)
-```diff
-@@ -536,6 +536,7 @@ static constexpr idx_t PARSER_ARENA_INITIAL_CAPACITY = 8 * ArenaAllocator::ARENA
- class ParseResultAllocator {
- public:
- 	ParseResultAllocator();
-+	explicit ParseResultAllocator(Allocator &allocator);
- 	~ParseResultAllocator();
- 
- 	template <class RESULT, class... ARGS>
-```
-
-**File**: `src/parser/peg/matcher.cpp` (modified, +5/-2)
-```diff
-@@ -217,8 +217,11 @@ void MatcherAllocator::InitializeListChains() {
- 	}
- }
- 
--ParseResultAllocator::ParseResultAllocator()
--    : arena(Allocator::DefaultAllocator(), PARSER_ARENA_INITIAL_CAPACITY), pending_destructors(arena) {
-+ParseResultAllocator::ParseResultAllocator() : ParseResultAllocator(Allocator::DefaultAllocator()) {
-+}
-+
-+ParseResultAllocator::ParseResultAllocator(Allocator &allocator)
-+    : arena(allocator, PARSER_ARENA_INITIAL_CAPACITY), pending_destructors(arena) {
- }
- 
- ParseResultAllocator::~ParseResultAllocator() = default;
-```
-
-**File**: `src/parser/peg/transformer/peg_transformer_factory.cpp` (modified, +31/-19)
-```diff
-@@ -19,6 +19,7 @@
- #include "duckdb/parser/query_node/set_operation_node.hpp"
- #include "duckdb/parser/statement/merge_into_statement.hpp"
- #include "duckdb/parser/constraints/foreign_key_constraint.hpp"
-+#include "duckdb/common/error_data.hpp"
- 
- namespace duckdb {
- 
-@@ -51,30 +52,36 @@ static unique_ptr<SQLStatement> ExtractAndTransformStatement(PEGTransformer &tra
- unique_ptr<SQLStatement> PEGTransformerFactory::TransformTopLevelStatement(TokenIterator &token_iterator,
-                                                                            ParserOptions &options,
-                                                                            const CompiledGrammar &grammar,
--                                                                           optional_idx &failure_index) {
-+                                                                           optional_idx &failure_index) try {
- 	if (!token_iterator.Current()) {
- 		return nullptr;
- 	}
- 	vector<MatcherSuggestion> suggestions;
--	ParseResultAllocator parse_result_allocator;
-+	// Parsing is query work too: count its arenas against the database memory
-+	// limit instead of letting a complex statement grow the process unchecked.
-+	auto &allocator = options.context ? BufferAllocator::Get(*options.context) : Allocator::DefaultAllocator();
-+	ParseResultAllocator parse_result_allocator(allocator);
- 	idx_t max_token_index = token_iterator.Position();
--	// the packrat cache outlives the match processes, so they need separate arenas
--	ArenaAllocator process_allocator(Allocator::DefaultAllocator(), PARSER_ARENA_INITIAL_CAPACITY);
--	ArenaAllocator packrat_allocator(Allocator::DefaultAllocator(), PARSER_ARENA_INITIAL_CAPACITY);
--	ParserPackratCache packrat_cache(packrat_allocator, token_iterator.Position(), token_iterator.Size());
--	MatchContext match_context(suggestions, parse_result_allocator, process_allocator, max_token_index,
--	                           MatchMode::BUILD_PARSE_RESULT, options.identifier_case_mode, &packrat_cache);
--	MatchState state(token_iterator, match_context);
--	auto match_result = grammar.TopLevelStatementMatcher().MatchParseResult(state);
--	process_allocator.FreeAll();
--	if (!match_result.IsSuccess()) {
--		failure_index = state.GetMaxTokenIndex();
--		return nullptr;
--	}
--	D_ASSERT(match_result.HasParseResult());
-+	auto match_result = MatcherResult::Failure();
-+	{
-+		// Match processes and packrat entries are no longer needed once the parse result is built.
-+		// the packrat cache outlives the match processes, so they need separate arenas
-+		ArenaAllocator process_allocator(allocator, PARSER_ARENA_INITIAL_CAPACITY);
-+		ArenaAllocator packrat_allocator(allocator, PARSER_ARENA_INITIAL_CAPACITY);
-+		ParserPackratCache packrat_cache(packrat_allocator, token_iterator.Position(), token_iterator.Size());
-+		MatchContext match_context(suggestions, parse_result_allocator, process_allocator, max_token_index,
-+		                           MatchMode::BUILD_PARSE_RESULT, options.identifier_case_mode, &packrat_cache);
-+		MatchState state(token_iterator, match_context);
-+		match_result = grammar.TopLevelStatementMatcher().MatchParseResult(state);
-+		if (!match_result.IsSuccess()) {
-+			failure_index = state.GetMaxTokenIndex();
-+			return nullptr;
-+		}
-+		D_ASSERT(match_result.HasParseResult());
- 
--	// Advance the caller's cursor past the consumed tokens.
--	token_iterator.SetPosition(state.token_iterator);
-+		// Advance the caller's cursor past the consumed tokens.
-+		token_iterator.SetPosition(state.token_iterator);
-+	}
- 
- 	// TopLevelStatement <- Statement? (';'+ / EndOfInput)
- 	//   child 0: Optional<Statement>
-@@ -95,10 +102,15 @@ unique_ptr<SQLStatement> PEGTransformerFactory::TransformTopLevelStatement(Token
- 		}
- 	}
- 
--	ArenaAllocator transformer_allocator(Allocator::DefaultAllocator(), PARSER_ARENA_INITIAL_CAPACITY);
-+	ArenaAllocator transformer_allocator(allocator, PARSER_ARENA_INITIAL_CAPACITY);
- 	PEGTransformer transformer(transformer_allocator, token_iterator, options, grammar);
- 
- 	return ExtractAndTransformStatement(transformer, token_iterator, stmt_opt.GetResult(), terminator_offset);
-+} catch (const OutOfMemoryException &ex) {
-+	if (!options.context) {
-+		throw;
-+	}
-+	throw OutOfMemoryException("While parsing SQL: %s", ErrorData(ex).RawMessage());
- }
- 
- PEGTransformerFactory::PEGTransformerFactory(ParsedGrammar &grammar_p) : grammar(grammar_p) {
-```
-
-**File**: `test/api/test_grammar_extension.cpp` (modified, +49/-0)
-```diff
-@@ -8,6 +8,7 @@
- #include "duckdb/common/limits.hpp"
- #include "duckdb/main/parse_iterator.hpp"
- #include "duckdb/main/settings.hpp"
-+#include "duckdb/storage/buffer_manager.hpp"
- #include "duckdb/parser/expression/constant_expression.hpp"
- #include "duckdb/parser/grammar_extension.hpp"
- #include "duckdb/parser/parser.hpp"
-@@ -3735,3 +3736,51 @@ TEST_CASE("The parser's tokens keep the literal info the tokenizer cached", "[ap
- 	REQUIRE_FALSE(borrowing_iterator.GetToken(0).HasLiteralInfo(table));
- 	REQUIRE(borrowed[0].GetLiteralInfo(table).LiteralId() == table.Lookup("SELECT").LiteralId());
- }
-+
-+class MemoryLimitGrammarExtension final : public GrammarExtension {
-+public:
-+	MemoryLimitGrammarExtension() : GrammarExtension("memory_limit_test", "ARENA_MEMORY") {
-+	}
-+
-+	vector<GrammarChange> GetChanges() const override {
-+		vector<GrammarChange> changes;
-+		changes.push_back(GrammarChange::AddRule(
-+		    "ArenaMemoryStatement <- 'ARENA_MEMORY'",
-+		    [this](PEGTransformer &transformer, ParseResult &) -> arena_ptr<TransformProcess> {
-+			    transform_calls++;
-+			    auto &buffer_manager = transformer.options.context->GetBufferManager();
-+			    transformer.GetAllocator().Allocate(buffer_manager.GetMaxMemory());
-+			    throw InternalException("Transform arena allocation unexpectedly exceeded the memory limit");
-+		    }));
-+		changes.push_back(GrammarChange::PrependChoice("Statement", "ArenaMemoryStatement"));
-+		return changes;
-+	}
-+
-+	mutable idx_t transform_calls = 0;
-+};
-+
-+TEST_CASE("Top-level transform arenas honor the database memory limit", "[api][grammar_extension]") {
-+	DuckDB db(nullptr);
-+	Connection con(db);
-+	auto extension = make_shared_ptr<MemoryLimitGrammarExtension>();
-+	GrammarExtension::Register(*db.instance, extension);
-+	REQUIRE_NO_FAIL(con.Query("SET active_grammar_extensions=['memory_limit_test']"));
-+	REQUIRE_NO_FAIL(con.Query("SET memory_limit='16MB'"));
-+	auto &buffer_manager = BufferManager::GetBufferManager(*con.context);
-+	const auto memory_before = buffer_manager.GetUsedMemory();
-+	for (idx_t attempt = 0; attempt < 2; attempt++) {
-+		auto result = con.Query("ARENA_MEMORY");
-+		REQUIRE(result->HasError());
-+		REQUIRE(result->GetErrorType() == ExceptionType::OUT_OF_MEMORY);
-+		REQUIRE(extension->transform_calls == attempt + 1);
-+		REQUIRE(buffer_manager.GetUsedMemory() == memory_before);
-+		REQUIRE_NO_FAIL(con.Query("SELECT 42"));
-+	}
-+	Parser parser(*con.context);
-+	try {
-+		parser.ParseQuery("ARENA_MEMORY");
-+		FAIL("Expected an out-of-memory exception during parsing");
-+	} catch (const OutOfMemoryException &ex) {
-+		REQUIRE(StringUtil::Contains(ErrorData(ex).RawMessage(), "While parsing SQL:"));
-+	}
-+}
-```
-
-**File**: `test/sql/json/peg_memory_limit.test` (added, +64/-0)
-```diff
-@@ -0,0 +1,64 @@
-+# name: test/sql/json/peg_memory_limit.test
-+# description: JSON SQL and type parsing preserve PEG out-of-memory errors
-+# group: [json]
-+
-+require json
-+
-+statement ok
-+SET VARIABLE oversized_statement = 'SELECT [' || repeat('1,', 400000) || '1]';
-+
-+statement ok
-+SET VARIABLE oversized_type = (
-+    SELECT '"STRUCT(' || string_agg('c' || i || ' INTEGER', ',') || ')"'
-+    FROM range(10000) t(i)
-+);
-+
-+statement ok
-+SET memory_limit='16MB';
-+
-+statement ok
-+SET VARIABLE parser_memory_before = (
-+    SELECT memory_usage_bytes FROM duckdb_memory() WHERE tag='ALLOCATOR'
-+);
-+
-+# Allocation failure must abort the query, rather than become a successful JSON error value.
-+foreach serializer json_serialize_sql json_serialize_plan
-+
-+statement error
-+SELECT {serializer}(getvariable('oversized_statement'));
-+----
-+<REGEX>:Out of Memory Error: While parsing SQL: failed to allocate data of size .* \(.*/.* used\).*
++NULL	BOOLEAN
++NULL	BOOLEAN
 +
 +query I
-+SELECT memory_usage_bytes <= getvariable('parser_memory_before')
-+FROM duckdb_memory() WHERE tag='ALLOCATOR';
++WITH c AS MATERIALIZED (SELECT array_contains([NULL], c1) AS l FROM (VALUES (NULL), (NULL)) t(c1)) SELECT * FROM c;
 +----
++NULL
++NULL
++
++query I
++SELECT list_contains([NULL], c1) AS l FROM (VALUES (NULL), (NULL)) t(c1) UNION ALL SELECT true;
++----
++NULL
++NULL
 +true
 +
-+endloop
-+
-+# Type parsing must preserve OOM instead of reporting an invalid type name.
-+statement error
-+SELECT json_transform('{}', getvariable('oversized_type'));
++query III
++SELECT list_has([NULL, NULL], c1), array_has([NULL], c1), contains([NULL], c1) FROM (VALUES (NULL)) t(c1);
 +----
-+<REGEX>:Out of Memory Error: While parsing SQL: failed to allocate data of size .* \(.*/.* used\).*
++NULL	NULL	NULL
 +
 +query I
-+SELECT memory_usage_bytes <= getvariable('parser_memory_before')
-+FROM duckdb_memory() WHERE tag='ALLOCATOR';
++SELECT count(*) FROM (VALUES (NULL), (NULL)) t(c1) WHERE list_contains([NULL], c1) IS NULL;
 +----
-+true
++2
 +
-+# Ordinary parse errors still use the existing JSON error-value contract.
-+query TT
-+SELECT json_serialize_sql('SELECT') ->> 'error', json_serialize_sql('SELECT') ->> 'error_type';
++# a typed needle goes through constant_or_null itself
++query II
++SELECT list_contains([NULL], c1), typeof(list_contains([NULL], c1)) FROM (VALUES (1), (NULL)) t(c1);
 +----
-+true	parser
++false	BOOLEAN
++NULL	BOOLEAN
 +
++# the connection is still usable
 +query I
 +SELECT 42;
 +----
 +42
-+
-+statement ok
-+RESET memory_limit;
 ```
 
 ---
 
-### Incident Patch 3: `8b2341c3` (2026-11-23)
-**Commit Message**: Narrow full joins before pushing down null-rejecting filters (#29195)
+### Incident Patch 2: `8cbfc3f2` (2026-11-24)
+**Commit Message**: Fix the MSVC build of the mode aggregate states (#29311)
 
-## Problem
+Fixes the Windows (MSVC) build of `core_functions`, which fails in
+`mode.cpp` since the mode states moved into the aggregate arena.
 
-A query using `FULL JOIN ... WHERE a.age <= 25` can read every Parquet
-row group even when the equivalent `LEFT JOIN` prunes most of them.
-DuckDB proves that the join can become a LEFT join after the general
-filter pushdown pass has already visited it. The predicate ends up in a
-separate filter above the scan. See
-[duckdb/duckdb#29171](https://github.com/duckdb/duckdb/issues/29171).
-
-## Change
-
-During filter pushdown, reuse the existing NULL-rejection check for
-predicates that reference a single input of a FULL comparison join. When
-substituting NULLs for that input proves the predicate cannot be true,
-narrow the join and use the existing LEFT or INNER pushdown path. A
-right-preserving join swaps the inputs and comparison operands. The
-rewrite respects the outer-join simplification setting and guards
-against volatile or potentially throwing expressions.
-
-The shared-key rewrite runs while the comparison join is still FULL. It
-attaches a range on the coalesced equality key to both original inputs.
-The remaining filters can then narrow the join without losing Parquet
-row-group pruning, including when th
-
-**File**: `src/optimizer/pushdown/pushdown_aggregate.cpp` (modified, +8/-7)
-```diff
-@@ -9,15 +9,16 @@ namespace duckdb {
- 
- using Filter = FilterPushdown::Filter;
- 
--static bool IsVolatile(LogicalAggregate &aggr, const Expression &expr) {
--	bool is_volatile = false;
-+static bool CanInlineGroupBindings(LogicalAggregate &aggr, const Expression &expr) {
-+	bool can_inline = true;
- 	ExpressionIterator::VisitExpression<BoundColumnRefExpression>(expr, [&](const BoundColumnRefExpression &colref) {
- 		D_ASSERT(colref.Depth() == 0);
--		if (aggr.GetExpression(colref.Binding()).IsVolatile()) {
--			is_volatile = true;
-+		auto &group_expr = aggr.GetExpression(colref.Binding());
-+		if (group_expr.IsVolatile() || group_expr.CanThrow()) {
-+			can_inline = false;
- 		}
- 	});
--	return is_volatile;
-+	return can_inline;
- }
- 
- static unique_ptr<Expression> ReplaceGroupBindings(LogicalAggregate &aggr, unique_ptr<Expression> root_expr) {
-@@ -82,8 +83,8 @@ unique_ptr<LogicalOperator> FilterPushdown::PushdownAggregate(unique_ptr<Logical
- 		if (!can_pushdown_filter) {
- 			continue;
- 		}
--		if (f.filter->IsVolatile() || IsVolatile(aggr, *f.filter)) {
--			// a volatile filter is evaluated once per group, not once per input row
-+		if (f.filter->IsVolatile() || !CanInlineGroupBindings(aggr, *f.filter)) {
-+			// Keep volatile evaluation counts and the rows seen by throwing group expressions unchanged.
- 			continue;
- 		}
- 		// no aggregate! we can push this down
+```
+mode.cpp(162): note: see reference to function template instantiation 'T *duckdb::ArenaAllocator::Make<duckdb::string_t,int,int>(int &&,int &&)' being compiled
+arena_allocator.hpp(160): error C2665: 'duckdb::string_t::string_t': no overloaded function could convert all the argument types
 ```
 
-**File**: `src/optimizer/pushdown/pushdown_outer_join.cpp` (modified, +86/-22)
+<details><summary>Details</summary>
+
+`Make<string_t>(nullptr, 0)` forwards its arguments to a `string_t`
+constructor, and MSVC 19.44 does not accept it. Both call sites assign
+the state right after creating it (`*mode = key;` and `*mode =
+string_t(ptr, len);`), so the arguments are never used. They now call
+`Make<string_t>()`, which value-initializes the string exactly as
+`string_t(nullptr, 0)` did.
+
+Found while building duckdb-encodings against DuckDB main on Windows
+(https://github.com/duckdb/duckdb-encodings/pull/37), where the build
+stops in this file. I could not reproduce with MSVC locally, so this
+relies on the Windows job of this PR. On Linux, `test_mode`,
+`mode_rewrite`, `mode_rewrite_memory`,
+
+**File**: `extension/core_functions/aggregate/holistic/mode.cpp` (modified, +2/-2)
 ```diff
-@@ -1,7 +1,13 @@
- #include "duckdb/optimizer/filter_pushdown.hpp"
- #include "duckdb/parser/expression_map.hpp"
-+#include "duckdb/planner/expression/bound_between_expression.hpp"
-+#include "duckdb/planner/expression/bound_columnref_expression.hpp"
-+#include "duckdb/planner/expression/bound_comparison_expression.hpp"
- #include "duckdb/planner/expression/bound_constant_expression.hpp"
-+#include "duckdb/planner/expression/bound_operator_expression.hpp"
-+#include "duckdb/planner/expression/expression_barrier.hpp"
- #include "duckdb/planner/expression_iterator.hpp"
-+#include "duckdb/planner/logical_operator_visitor.hpp"
- #include "duckdb/planner/operator/logical_comparison_join.hpp"
- 
- namespace duckdb {
-@@ -93,7 +99,7 @@ static bool ExprIsFunctionOnlyOf(const Expression &expr, const expression_set_t
- //! is a join condition of the form `l = r` where `l` and `r` are join keys for
- //! the left and right table respectively, then pushdown `P(l)` to the left
- //! table, `P(r)` to the right table, and remove the original filter.
--static bool
-+static void
- PushDownFiltersOnCoalescedEqualJoinKeys(vector<unique_ptr<Filter>> &filters, vector<JoinCondition> &join_conditions,
-                                         const std::function<void(unique_ptr<Expression> filter)> &pushdown_left,
-                                         const std::function<void(unique_ptr<Expression> filter)> &pushdown_right) {
-@@ -116,10 +122,9 @@ PushDownFiltersOnCoalescedEqualJoinKeys(vector<unique_ptr<Filter>> &filters, vec
+@@ -159,7 +159,7 @@ struct ModeString {
+ 	                        AggregateInputData &aggr_input_data) {
+ 		if (key.IsInlined()) {
+ 			if (!mode) {
+-				mode = aggr_input_data.allocator.Make<string_t>(nullptr, 0);
++				mode = aggr_input_data.allocator.Make<string_t>();
+ 			}
+ 			*mode = key;
+ 			alloc_size = 0;
+@@ -177,7 +177,7 @@ struct ModeString {
+ 			alloc_size = NextPowerOfTwo(len);
+ 			ptr = char_ptr_cast(aggr_input_data.allocator.Allocate(alloc_size));
+ 			if (!mode) {
+-				mode = aggr_input_data.allocator.Make<string_t>(nullptr, 0);
++				mode = aggr_input_data.allocator.Make<string_t>();
+ 			}
+ 		}
+ 		memcpy(ptr, key.GetData(), len);
+```
+
+---
+
+### Incident Patch 3: `bdc96af9` (2026-11-25)
+**Commit Message**: Fix executable path assignment after readlink  (#29321)
+
+`readlink()` does not append a null terminator. If it fills the entire
+`exe_target` buffer, the preceding `memset()` leaves no terminating
+zero.
+Assigning that buffer as a C++ string can then read past its end.
+
+```
+char exe_target[PATH_MAX];
+		memset(exe_target, '\0', PATH_MAX);
+		auto proc_exe_link = StringUtil::Format("/proc/%d/exe", pid);
+		auto readlink_n = readlink(proc_exe_link.c_str(), exe_target, PATH_MAX);
+		if (readlink_n > 0) {
+			process_name = exe_target;
+        }
+```
+
+Use `std::string::assign()` with the length returned by `readlink()` so
+that constructing the process description does not depend on null
+termination.
+
+Found using the svace static analyzer
+Reporter: Guschin Egor ([REDACTED_EMAIL])
+
+**File**: `src/common/process_util.cpp` (modified, +1/-1)
+```diff
+@@ -120,7 +120,7 @@ string ProcessUtil::GetProcessDescription(int64_t pid) {
+ 		auto proc_exe_link = StringUtil::Format("/proc/%d/exe", pid);
+ 		auto readlink_n = readlink(proc_exe_link.c_str(), exe_target, PATH_MAX);
+ 		if (readlink_n > 0) {
+-			process_name = exe_target;
++			process_name.assign(exe_target, static_cast<size_t>(readlink_n));
+ 		}
  	}
  
- 	if (join_cond_by_coalesced_join_keys.empty()) {
--		return false;
-+		return;
- 	}
- 
--	bool has_applied_pushdown = false;
- 	for (idx_t i = 0; i < filters.size(); i++) {
- 		auto &filter = filters[i]->filter;
- 		if (filter->IsVolatile() || filter->CanThrow()) {
-@@ -164,38 +169,97 @@ PushDownFiltersOnCoalescedEqualJoinKeys(vector<unique_ptr<Filter>> &filters, vec
- 		pushdown_left(std::move(left_filter));
- 		pushdown_right(std::move(right_filter));
- 		filters.erase_at(i);
--		has_applied_pushdown = true;
- 		i--;
- 	}
-+}
- 
--	return has_applied_pushdown;
-+static bool CanSplitOuterJoinFilters(LogicalOperator &join, const vector<unique_ptr<Filter>> &filters) {
-+	for (auto &filter : filters) {
-+		if (filter->filter->IsVolatile() || filter->filter->CanThrow()) {
-+			return false;
-+		}
-+	}
-+	bool can_split = true;
-+	LogicalOperatorVisitor::EnumerateExpressions(join, [&](unique_ptr<Expression> *expr) {
-+		if ((*expr)->IsVolatile() || ExpressionBarrier::Contains(**expr)) {
-+			can_split = false;
-+		}
-+	});
-+	return can_split;
-+}
-+
-+static void PushDownComparisonFilters(vector<unique_ptr<Filter>> &filters, const unordered_set<TableIndex> &bindings,
-+                                      vector<unique_ptr<Expression>> &child_filters) {
-+	auto is_non_null_constant = [](const Expression &expr) {
-+		return expr.GetExpressionClass() == ExpressionClass::BOUND_CONSTANT &&
-+		       !expr.Cast<BoundConstantExpression>().GetValue().IsNull();
-+	};
-+	for (auto &filter_ptr : filters) {
-+		auto &filter = *filter_ptr;
-+		auto &expr = *filter.filter;
-+		optional_ptr<const Expression> column;
-+		if (expr.GetExpressionType() == ExpressionType::COMPARE_BETWEEN) {
-+			auto &between = expr.Cast<BoundFunctionExpression>();
-+			if (!is_non_null_constant(BoundBetweenExpression::LowerBound(between)) ||
-+			    !is_non_null_constant(BoundBetweenExpression::UpperBound(between))) {
-+				continue;
-+			}
-+			column = BoundBetweenExpression::Input(between);
-+		} else {
-+			if (!BoundComparisonExpression::IsComparison(expr) ||
-+			    expr.GetExpressionType() == ExpressionType::COMPARE_DISTINCT_FROM ||
-+			    expr.GetExpressionType() == ExpressionType::COMPARE_NOT_DISTINCT_FROM) {
-+				continue;
-+			}
-+			auto &comparison = expr.Cast<BoundFunctionExpression>();
-+			auto &left = BoundComparisonExpression::Left(comparison);
-+			auto &right = BoundComparisonExpression::Right(comparison);
-+			const auto left_is_column = left.GetExpressionClass() == ExpressionClass::BOUND_COLUMN_REF;
-+			column = left_is_column ? left : right;
-+			if (!is_non_null_constant(left_is_column ? right : left)) {
-+				continue;
-+			}
-+		}
-+		if (column->GetExpressionClass() != ExpressionClass::BOUND_COLUMN_REF) {
-+			continue;
-+		}
-+		auto &colref = column->Cast<BoundColumnRefExpression>();
-+		if (colref.Depth() != 0 || !bindings.count(colref.Binding().table_index)) {
-+			continue;
-+		}
-+		child_filters.push_back(std::move(filter.filter));
-+		// Removing a match can create an unmatched row on the other side: reject its NULL-extended column.
-+		filter.filter = make_uniq<BoundOperatorExpression>(ExpressionType::OPERATOR_IS_NOT_NULL, LogicalType::BOOLEAN,
-+		                                                   column->Copy());
-+		filter.ExtractBindings();
-+	}
- }
- 
- unique_ptr<LogicalOperator> FilterPushdown::PushdownOuterJoin(unique_ptr<LogicalOperator> op,
-                                                               unordered_set<TableIndex> &left_bindings,
-                                       
-```
-
-**File**: `src/optimizer/pushdown/pushdown_projection.cpp` (modified, +31/-25)
-```diff
-@@ -10,16 +10,20 @@
- 
- namespace duckdb {
- 
--static bool IsVolatile(LogicalProjection &proj, const Expression &expr) {
--	bool is_volatile = false;
--	ExpressionIterator::VisitExpression<BoundColumnRefExpression>(expr, [&](const BoundColumnRefExpression &colref) {
--		D_ASSERT(colref.Depth() == 0);
--		auto &proj_expr = proj.GetExpression(colref.Binding());
--		if (proj_expr.IsVolatile()) {
--			is_volatile = true;
--		}
--	});
--	return is_volatile;
-+static bool CanPushProjectionFilter(LogicalProjection &proj, const FilterPushdown::Filter &filter) {
-+	if (filter.filter->CanThrow() && !filter.has_barrier) {
-+		return false;
-+	}
-+	bool can_push = true;
-+	ExpressionIterator::VisitExpression<BoundColumnRefExpression>(
-+	    *filter.filter, [&](const BoundColumnRefExpression &colref) {
-+		    D_ASSERT(colref.Depth() == 0);
-+		    auto &proj_expr = proj.GetExpression(colref.Binding());
-+		    if (proj_expr.IsVolatile()) {
-+			    can_push = false;
-+		    }
-+	    });
-+	return can_push;
- }
- 
- // A compress expression only holds where it was placed, so a filter must not inline it into a position below
-@@ -34,16 +38,20 @@ static bool ReferencesCompressExpression(LogicalProjection &proj, const Expressi
- 	return references_compress_expression;
- }
- 
--static bool ReferencesComputedExpression(LogicalProjection &proj, const Expression &expr) {
--	bool references_computed_expression = false;
--	ExpressionIterator::VisitExpression<BoundColumnRefExpression>(expr, [&](const BoundColumnRefExpression &colref) {
--		D_ASSERT(colref.Depth() == 0);
--		auto &proj_expr = proj.GetExpression(colref.Binding());
--		if (proj_expr.GetExpressionClass() != ExpressionClass::BOUND_COLUMN_REF) {
--			references_computed_expression = true;
--		}
--	});
--	return references_computed_expression;
-+static bool NeedsProjectionSplit(LogicalProjection &proj, const FilterPushdown::Filter &filter,
-+                                 FilterPushdown::ProjectionMode projection_mode) {
-+	bool needs_split = false;
-+	ExpressionIterator::VisitExpression<BoundColumnRefExpression>(
-+	    *filter.filter, [&](const BoundColumnRefExpression &colref) {
-+		    D_ASSERT(colref.Depth() == 0);
-+		    auto &proj_expr = proj.GetExpression(colref.Binding());
-+		    if ((!filter.has_barrier && proj_expr.CanThrow()) ||
-+		        (projection_mode == FilterPushdown::ProjectionMode::PRESERVE_COMPUTED_EXPRESSIONS &&
-+		         proj_expr.GetExpressionClass() != ExpressionClass::BOUND_COLUMN_REF)) {
-+			    needs_split = true;
-+		    }
-+	    });
-+	return needs_split;
- }
- 
- static unique_ptr<Expression> CreateColumnReference(const Expression &expr, ColumnBinding binding) {
-@@ -168,12 +176,10 @@ unique_ptr<LogicalOperator> FilterPushdown::PushdownProjection(unique_ptr<Logica
- 	vector<unique_ptr<Expression>> remain_expressions;
- 	vector<unique_ptr<Expression>> split_expressions;
- 	auto stays_on_top = [&](const Filter &f) {
--		return IsVolatile(proj, *f.filter) || ReferencesCompressExpression(proj, *f.filter) ||
--		       (f.filter->CanThrow() && !f.has_barrier);
-+		return !CanPushProjectionFilter(proj, f) || ReferencesCompressExpression(proj, *f.filter);
- 	};
- 	auto splits_off = [&](const Filter &f) {
--		return projection_mode == ProjectionMode::PRESERVE_COMPUTED_EXPRESSIONS &&
--		       ReferencesComputedExpression(proj, *f.filter);
-+		return NeedsProjectionSplit(proj, f, projection_mode);
- 	};
- 	// barred expressions may only cross the projection if every other filter does: a filter kept on top of the
- 	// projection, or split off below it, would otherwise be evaluated after them
-@@ -187,7 +193,7 @@ unique_ptr<LogicalOperator> FilterPushdown::PushdownProjection(unique_ptr<Logica
- 		auto &f = *filter;
- 		D_ASSERT(f.bindings.size() <= 1);
- 		if (stays_on_top(f) || (f.has_barrier && hold_back_barriers)) {
--			// Volatile and throwing expressions and filters over compressed columns cannot move across the
-+			// Volatile inputs, throwing filters and filters over compressed columns cannot move across the
- 			// projection. Expressions carrying a barrier are the exception: a projection does not remove any rows,
- 			// so pushing them through it does not change which rows they are evaluated on - unless another filter
- 			// stays behind, see above.
-```
-
-**File**: `test/optimizer/full_join_filter_pushdown.test` (added, +270/-0)
-```diff
-@@ -0,0 +1,270 @@
-+# name: test/optimizer/full_join_filter_pushdown.test
-+# description: Push comparisons into FULL join inputs while retaining NULL rejection
-+# group: [optimizer]
-+
-+statement ok
-+CREATE TABLE lhs (id INTEGER, la INTEGER);
-+CREATE TABLE rhs (id INTEGER, ra INTEGER);
-+INSERT INTO lhs VALUES (1, 20), (2, 30), (3, NULL), (4, 25);
-+INSERT INTO rhs VALUES (1, 20), (1, 21), (2, 40), (3, NULL), (5, 25);
-+
-+query II
-+EXPLAIN SELECT l.id, r.id FROM lhs l FULL JOIN rhs r ON l.id = r.id WHERE l.la <= 25;
-+----
-+physical_plan	<REGEX>:.*Filters:.*la <= 25.*
-+
-+query III
-+SELECT l.id, r.id, r.ra FROM lhs l FULL JOIN rhs r ON l.id = r.id WHERE l.la <= 25 ORDER BY 1, 2, 3;
-+----
-+1	1	20
-+1	1	21
-+4	NULL	NULL
-+
-+query II
-+EXPLAIN SELECT l.id, r.id FROM lhs l FULL JOIN rhs r ON l.id = r.id WHERE r.ra <= 25;
-+----
-+physical_plan	<REGEX>:.*Filters:.*ra <= 25.*
-+
-+query III
-+SELECT l.id, r.id, r.ra FROM lhs l FULL JOIN rhs r ON l.id = r.id WHERE r.ra <= 25 ORDER BY 1, 2, 3;
-+----
-+1	1	20
-+1	1	21
-+NULL	5	25
-+
-+query II
-+EXPLAIN SELECT l.id, r.id FROM lhs l FULL JOIN rhs r ON l.id = r.id WHERE l.la <= 25 AND r.ra <= 25;
-+----
-+physical_plan	<REGEX>:.*Join Type: INNER.*
-+
-+query III
-+SELECT l.id, r.id, r.ra FROM lhs l FULL JOIN rhs r ON l.id = r.id
-+WHERE l.la <= 25 AND r.ra <= 25 ORDER BY 1, 2, 3;
-+----
-+1	1	20
-+1	1	21
-+
-+query II
-+SELECT l.id, r.id FROM lhs l FULL JOIN rhs r ON l.id = r.id WHERE l.la IS NULL ORDER BY 1, 2;
-+----
-+3	3
-+NULL	5
-+
-+# Simple projections and reversed operands retain the original output bindings.
-+query IIII
-+SELECT r.ra, l.k, r.id, l.a
-+FROM (SELECT la AS a, id AS k FROM lhs) l FULL JOIN rhs r ON l.k = r.id
-+WHERE 25 >= l.a ORDER BY l.k, r.ra;
-+----
-+20	1	1	20
-+21	1	1	20
-+NULL	4	NULL	25
-+
-+# The ordinary outer-join simplifier still narrows a one-sided predicate.
-+query II
-+EXPLAIN SELECT l.id, r.id FROM lhs l FULL JOIN rhs r ON l.id = r.id WHERE l.la <= 25;
-+----
-+physical_plan	<REGEX>:.*Join Type: (LEFT|RIGHT).*
-+
-+statement ok
-+SET disabled_optimizers = 'outer_join_simplification';
-+
-+query II
-+EXPLAIN SELECT l.id, r.id FROM lhs l FULL JOIN rhs r ON l.id = r.id WHERE l.la <= 25;
-+----
-+physical_plan	<REGEX>:.*la IS NOT NULL.*Join Type: FULL.*Filters:.*la <= 25.*
-+
-+query II
-+EXPLAIN SELECT l.k, r.id
-+FROM (SELECT la AS a, id AS k FROM lhs) l FULL JOIN rhs r ON l.k = r.id WHERE 25 >= l.a;
-+----
-+physical_plan	<REGEX>:.*Join Type: FULL.*Filters:.*la <= 25.*
-+
-+# Removing the last match must not leave a new unmatched row from the other input.
-+query III
-+SELECT l.id, r.id, r.ra FROM lhs l FULL JOIN rhs r ON l.id = r.id
-+WHERE l.la <= 25 ORDER BY 1, 2, 3;
-+----
-+1	1	20
-+1	1	21
-+4	NULL	NULL
-+
-+query III
-+SELECT l.id, r.id, r.ra FROM lhs l FULL JOIN rhs r ON l.id = r.id
-+WHERE 25 >= r.ra ORDER BY 1, 2, 3;
-+----
-+1	1	20
-+1	1	21
-+NULL	5	25
-+
-+query III
-+SELECT l.id, r.id, r.ra FROM lhs l FULL JOIN rhs r ON l.id = r.id
-+WHERE l.la <= 25 AND r.ra <= 25 ORDER BY 1, 2, 3;
-+----
-+1	1	20
-+1	1	21
-+
-+# The residual also protects matches removed from a non-equality FULL join.
-+query II
-+SELECT l.id, r.id FROM lhs l FULL JOIN rhs r ON l.id < r.id
-+WHERE l.la > 25 ORDER BY 1, 2;
-+----
-+2	3
-+2	5
-+
-+# Paired bounds are combined into BETWEEN before filter pushdown.
-+query II
-+SELECT l.id, r.id FROM lhs l FULL JOIN rhs r ON l.id = r.id
-+WHERE l.la >= 20 AND l.la < 25 ORDER BY 1, 2;
-+----
-+1	1
-+1	1
-+
-+# Multiple predicates on one column retain all comparisons.
-+query II
-+SELECT l.id, r.id FROM lhs l FULL JOIN rhs r ON l.id = r.id
-+WHERE l.la <= 25 AND l.la <> 20 ORDER BY 1, 2;
-+----
-+4	NULL
-+
-+# A one-sided ON condition uses a regular ANY join.
-+query II
-+EXPLAIN SELECT l.id, r.id FROM lhs l FULL JOIN rhs r ON l.id < 3 WHERE r.ra <= 25;
-+----
-+physical_plan	<REGEX>:.*Join Type: FULL.*Filters:.*ra <= 25.*
-+
-+query III
-+SELECT l.id, r.id, r.ra FROM lhs l FULL JOIN rhs r ON l.id < 3
-+WHERE r.ra <= 25 ORDER BY 1, 2, 3;
-+----
-+1	1	20
-+1	1	21
-+1	5	25
-+2	1	20
-+2	1	21
-+2	5	25
-+
-+query I
-+SELECT count(*) FROM lhs l FULL JOIN rhs r USING (id)
-+WHERE id BETWEEN 1 AND 2 AND l.id > 2;
-+----
-+0
-+
-+# NULL-safe comparisons must retain their original NULL behavior.
-+query II
-+SELECT l.id, r.id FROM lhs l FULL JOIN rhs r ON l.id = r.id
-+WHERE l.la IS NOT DISTINCT FROM NULL ORDER BY 1, 2;
-+----
-+3	3
-+NULL	5
-+
-+query II
-+SELECT l.id, r.id FROM lhs l FULL JOIN rhs r ON l.id = r.id
-+WHERE l.la IS DISTINCT FROM 25 ORDER BY 1, 2;
-+----
-+1	1
-+1	1
-+2	2
-+3	3
-+NULL	5
-+
-+# A synthesized row must not reach a throwing sibling before the NULL check.
-+statement ok
-+CREATE TABLE match_rhs AS SELECT * FROM rhs WHERE id < 5;
-+
-+query II
-+EXPLAIN SELECT l.id, r.id FROM lhs l FULL JOIN match_rhs r ON l.id = r.id
-+WHERE l.la <= 25 AND CASE WHEN l.id IS NULL THEN (r.ra * 1000)::TINYINT ELSE 0 END = 0;
-+----
-+physical_plan	<!REGEX>:.*Filters:.*la <= 25.*
-+
-+query II
-+SELECT l.id, r.id FROM lhs l FULL JOIN match_rhs r ON l.id = r.id
-+WHERE l.la <= 25 AND CASE WHEN l.id IS NULL THEN (r.ra * 1000)::TINYINT ELSE 0 END = 0
-+ORDER BY 1, 2;
-+----
-+1	1
-+
-```
-
-**File**: `test/optimizer/pushdown/full_join_shared_key_range.test` (added, +107/-0)
-```diff
-@@ -0,0 +1,107 @@
-+# name: test/optimizer/pushdown/full_join_shared_key_range.test
-+# description: FULL join pushdown preserves shared-key and one-sided scan pruning
-+# group: [pushdown]
-+
-+require parquet
-+
-+statement ok
-+SET threads = 1;
-+
-+statement ok
-+COPY (SELECT i AS id, (i % 40)::INTEGER AS age FROM range(16384) t(i) ORDER BY i)
-+TO '{TEST_DIR}/full_join_shared_key_range.parquet' (FORMAT PARQUET, ROW_GROUP_SIZE 2048);
-+
-+statement ok
-+CREATE VIEW ages AS SELECT * FROM read_parquet('{TEST_DIR}/full_join_shared_key_range.parquet');
-+
-+query II
-+EXPLAIN (ANALYZE, FORMAT JSON)
-+SELECT id FROM ages l FULL JOIN ages r USING (id)
-+WHERE id BETWEEN 100 AND 106 AND l.age <= 25 ORDER BY id;
-+----
-+analyzed_plan	<REGEX>:.*"row_groups_scanned": 1,.*"row_groups_scanned": 1,.*
-+
-+query II
-+EXPLAIN (ANALYZE, FORMAT JSON)
-+SELECT id FROM ages l FULL JOIN ages r USING (id)
-+WHERE id BETWEEN 100 AND 106 AND r.age <= 25 ORDER BY id;
-+----
-+analyzed_plan	<REGEX>:.*"row_groups_scanned": 1,.*"row_groups_scanned": 1,.*
-+
-+query II
-+EXPLAIN (ANALYZE, FORMAT JSON)
-+SELECT id FROM ages l FULL JOIN ages r USING (id)
-+WHERE id BETWEEN 100 AND 106 AND l.age <= 25 AND r.age <= 25 ORDER BY id;
-+----
-+analyzed_plan	<REGEX>:.*"row_groups_scanned": 1,.*"row_groups_scanned": 1,.*
-+
-+query I
-+SELECT id FROM ages l FULL JOIN ages r USING (id)
-+WHERE id BETWEEN 100 AND 106 AND l.age <= 25 AND r.age <= 25 ORDER BY id;
-+----
-+100
-+101
-+102
-+103
-+104
-+105
-+
-+# Cluster age independently of the original fixture's repeating values.
-+statement ok
-+COPY (SELECT i AS id, i::INTEGER AS age FROM range(16384) t(i) ORDER BY age)
-+TO '{TEST_DIR}/full_join_age_range.parquet' (FORMAT PARQUET, ROW_GROUP_SIZE 2048);
-+CREATE VIEW sorted_ages AS SELECT * FROM read_parquet('{TEST_DIR}/full_join_age_range.parquet');
-+CREATE TABLE other_ids AS SELECT i AS id FROM range(16384) t(i);
-+
-+# Identify the Parquet input by its eight row groups; age alone must prune it.
-+query II
-+EXPLAIN (ANALYZE, FORMAT JSON)
-+SELECT count(*) FROM sorted_ages l FULL JOIN other_ids r USING (id) WHERE l.age < 2048;
-+----
-+analyzed_plan	<REGEX>:.*"row_groups_scanned": 1,[^{}]*"total_row_groups_to_scan": 8,.*
-+
-+query II
-+EXPLAIN (ANALYZE, FORMAT JSON)
-+SELECT count(*) FROM other_ids l FULL JOIN sorted_ages r USING (id) WHERE r.age < 2048;
-+----
-+analyzed_plan	<REGEX>:.*"row_groups_scanned": 1,[^{}]*"total_row_groups_to_scan": 8,.*
-+
-+query II
-+EXPLAIN (ANALYZE, FORMAT JSON)
-+SELECT count(*) FROM sorted_ages l LEFT JOIN other_ids r USING (id) WHERE l.age < 2048;
-+----
-+analyzed_plan	<REGEX>:.*"row_groups_scanned": 1,[^{}]*"total_row_groups_to_scan": 8,.*
-+
-+# Keep the FULL join while checking BETWEEN and combined-filter pruning.
-+statement ok
-+SET disabled_optimizers = 'outer_join_simplification';
-+
-+query II
-+EXPLAIN (ANALYZE, FORMAT JSON)
-+SELECT count(*) FROM sorted_ages l FULL JOIN other_ids r USING (id)
-+WHERE l.age >= 2048 AND l.age < 4096;
-+----
-+analyzed_plan	<REGEX>:.*"row_groups_scanned": 1,[^{}]*"total_row_groups_to_scan": 8,.*
-+
-+query I
-+SELECT count(*) FROM sorted_ages l FULL JOIN other_ids r USING (id)
-+WHERE l.age >= 2048 AND l.age < 4096;
-+----
-+2048
-+
-+# The shared key admits two groups; age must remove one more on the affected input.
-+query II
-+EXPLAIN (ANALYZE, FORMAT JSON)
-+SELECT count(*) FROM sorted_ages l FULL JOIN sorted_ages r USING (id)
-+WHERE id BETWEEN 0 AND 4095 AND l.age < 2048;
-+----
-+analyzed_plan	<REGEX>:.*("row_groups_scanned": 1,.*"row_groups_scanned": 2,|"row_groups_scanned": 2,.*"row_groups_scanned": 1,).*
-+
-+query I
-+SELECT count(*) FROM sorted_ages l FULL JOIN sorted_ages r USING (id)
-+WHERE id BETWEEN 0 AND 4095 AND l.age < 2048;
-+----
-+2048
-+
-+statement ok
-+RESET disabled_optimizers;
-```
-
-**File**: `test/sql/cte/materialized/cte_filter_pusher.test` (modified, +2/-2)
-```diff
-@@ -94,7 +94,7 @@ WHERE x < 10;
- ----
- 288
- 
--# Ordinary filter pushdown still moves computed predicates below unrelated projection expressions
-+# Ordinary filter pushdown also splits throwing inputs from unrelated projection expressions
- query II
- EXPLAIN SELECT sum(length(payload))
- FROM (
-@@ -103,7 +103,7 @@ FROM (
- ) sq
- WHERE x < 10;
- ----
--logical_opt	<REGEX>:(?s).*Expressions: payload.*Expressions: \(i \+ 1\) < 10.*Range.*
-+logical_opt	<REGEX>:(?s).*Expressions: payload.*Expressions: x < 10.*Expressions: x, i.*Range.*
- 
- # Preserve NULLs and duplicates while splitting a computed projection
- statement ok
-```
-
-**File**: `test/sql/optimizer/barrier_projection_siblings.test` (modified, +11/-0)
-```diff
-@@ -96,3 +96,14 @@ WITH computed AS MATERIALIZED (
- SELECT sum(v) FROM computed WHERE k=2
- ----
- 1
-+
-+# Throwing filter inputs also permit splitting ordinary projections.
-+query I
-+SELECT sum(v)
-+FROM (
-+    SELECT i+1 AS k, CASE WHEN i=0 THEN error('filtered projection') ELSE i END AS v
-+    FROM pushdown_rows
-+) computed
-+WHERE k=2
-+----
-+1
-```
-
-**File**: `test/sql/optimizer/test_no_pushdown_cast_into_cte.test` (modified, +2/-2)
-```diff
-@@ -43,7 +43,7 @@ SELECT a, b
- FROM   t
- WHERE  a < b;
- ----
--logical_opt	<REGEX>:.*FILTER.*CAST\(a AS INTEGER.*<.*b AS INTEGER\).*FILTER.*position.*
-+logical_opt	<REGEX>:.*FILTER.*a < b.*PROJECTION.*CAST\(a AS INTEGER\).*CAST\(b AS INTEGER\).*FILTER.*position.*
- 
- 
- # INT can always be cast to varchar, so the filter a[1] = '1'
-@@ -106,4 +106,4 @@ where mycolname[1:3] != 'xxx' AND mycolname2 = 0 limit 5;
- 0
- 0
- 0
--0
-\ No newline at end of file
-+0
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #29244** (2026-11-23): Cache sort-key suffixes during merging (@lnkuiper)
-- **PR #29242** (2026-11-23): Move DateTruncSimplificationRule::DatePartToFunc into its own file (@carlopi)
-- **PR #29241** (2026-11-23): Declare thread_id in namespace duckdb when threads are disabled (@carlopi)
-- **PR #29238** (2026-11-23): Make transaction-local state safe for concurrent statements of one transaction (@Robinho-MR)
-- **PR #29236** (2026-11-23): GrammarChange: expose Collapsible(), SuppressSuggestions() and HasCode() (@carlopi)
-- **PR #29235** (2026-11-23): Add `duckdb_grammar_changes()`, listing the changes of the active grammar extensions (@carlopi)
+- **PR #29353** (2026-11-25): Keep the V2 crypto provider test's destroy flags alive past the test (@Robinho-MR)
+- **PR #29337** (2026-11-25): Adapt the order of scan conjunction filters (@lnkuiper)
+- **PR #29327** (2026-11-25): Issue #29325: C++ Zero Nanos (@hawkfish)
+- **PR #29321** (2026-11-25): Fix executable path assignment after readlink  (@guschin058)
+- **PR #29311** (2026-11-24): Fix the MSVC build of the mode aggregate states (@Robinho-MR)
+- **PR #29308** (2026-11-24): Preserve projection bindings across child join reordering (@lnkuiper)
 
 ---
 
@@ -3461,47 +2255,36 @@ row-group pruning, including when th
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. runtime memory management for growing perfect-hash aggregates
+## X. Keep the type of the constant when constant_or_null has an untyped NULL child
 
 **RULE**:
-When implementing operations in `src/execution/physical_plan/plan_aggregate.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in duckdb/duckdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/optimizer/expression_rewriter.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in duckdb/duckdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `52dac04d`: runtime memory management for growing perfect-hash aggregates. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d3d8a8f5`: Keep the type of the constant when constant_or_null has an untyped NULL child. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/execution/physical_plan/plan_aggregate.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/optimizer/expression_rewriter.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-		const auto &function = aggregate.Function();
-		if (aggregate.IsDistinct() || !function.HasStateCombineCallback()) {
-			return false;
+	for (auto &child : children) {
+		if (child->GetReturnType().id() == LogicalTypeId::SQLNULL) {
+			// an untyped NULL child folds the call before its types are resolved: keep the type of the constant
+			return make_uniq<BoundConstantExpression>(Value(value.type()));
 		}
-		if (!function.HasGetStateTypeCallback() || function.HasStateDestructorCallback()) {
-			return false;
-		}
-		const auto layout = function.GetStateType(aggregate.BindInfo().get());
-		// Preserve min/max and fixed-size sketch fast paths, excluding sorted aggregate buffers.
-		const auto &name = function.GetName();
-		if (function.GetArguments().size() == 1 && layout.field.kind != AggregateFieldKind::LIST &&
-		    (name == "min" || name == "max" || name == "approx_count_distinct")) {
-			continue;
-		}
-		if (function.HasExportAggregateStateCallback() || function.HasImportAggregateStateCallback() ||
-		    !layout.field.IsFixedSize(layout.type)) {
+	}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-		if (aggregate.IsDistinct() || !aggregate.Function().HasStateCombineCallback()) {
-			// distinct aggregates are not supported in perfect hash aggregates
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `52dac04d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d3d8a8f5` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

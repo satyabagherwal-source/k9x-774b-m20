@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T12:29:09.932Z",
-  "total_cycles_completed": 12412,
-  "total_learnings_persisted": 12412,
-  "total_rules_promoted": 11406,
+  "last_updated": "2026-11-25T12:39:24.241Z",
+  "total_cycles_completed": 12415,
+  "total_learnings_persisted": 12415,
+  "total_rules_promoted": 11408,
   "history": [
-    {
-      "timestamp": "2026-11-24T23:58:50.035Z",
-      "repository": "trufflesecurity/trufflehog",
-      "learningId": "learn-github-trufflesecurity-trufflehog",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T00:08:21.069Z",
-      "repository": "TanStack/query",
-      "learningId": "learn-github-tanstack-query",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T00:08:28.676Z",
-      "repository": "tailscale/tailscale",
-      "learningId": "learn-github-tailscale-tailscale",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-25T00:08:30.426Z",
       "repository": "infiniflow/infinity",
@@ -1403,6 +1382,27 @@
       "repository": "dragonflydb/dragonfly",
       "learningId": "learn-github-dragonflydb-dragonfly",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T12:39:06.831Z",
+      "repository": "LiconStudio/Minimax-H3-VBVR",
+      "learningId": "learn-huggingface-liconstudio-minimax-h3-vbvr",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T12:39:18.930Z",
+      "repository": "karmada-io/karmada",
+      "learningId": "learn-github-karmada-io-karmada",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T12:39:24.241Z",
+      "repository": "duckdb/duckdb",
+      "learningId": "learn-github-duckdb-duckdb",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

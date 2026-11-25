@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261124-M10F",
-    "timestamp": "2026-11-24T00:31:38.655Z",
-    "repository": "pola-rs/polars",
-    "learningId": "learn-github-pola-rs-polars",
-    "contentHash": "5624014237a65927828e393cb4099e341913547fb8e4bdff064f4b11c2ebc121",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-M5LZ",
-    "timestamp": "2026-11-24T00:31:44.615Z",
-    "repository": "sweetpad-dev/sweetpad",
-    "learningId": "learn-github-sweetpad-dev-sweetpad",
-    "contentHash": "975a8dc964d4b0d13e74339da9bebe3eee3e97843800d549b8eeb94d88065bb4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-MAOL",
-    "timestamp": "2026-11-24T00:31:51.190Z",
-    "repository": "weaviate/weaviate",
-    "learningId": "learn-github-weaviate-weaviate",
-    "contentHash": "70fcfd9c547d157fb98c10460bbae26dcd6a0d44462ed807b302c73f52fb6c50",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261124-WQFW",
     "timestamp": "2026-11-24T00:39:58.172Z",
     "repository": "datalab-to/indra-ocr",
@@ -7492,6 +7447,51 @@
     "contentHash": "a2314fc11064c08a76e4f43af95fb79d373d5cc19e599ceb1c36daf361290329",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-1ETE",
+    "timestamp": "2026-11-25T12:39:06.818Z",
+    "repository": "LiconStudio/Minimax-H3-VBVR",
+    "learningId": "learn-huggingface-liconstudio-minimax-h3-vbvr",
+    "contentHash": "6778b9204e06f8236a2ab446c677daced1536336df664194538090d2df9e54b2",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-1O5H",
+    "timestamp": "2026-11-25T12:39:18.917Z",
+    "repository": "karmada-io/karmada",
+    "learningId": "learn-github-karmada-io-karmada",
+    "contentHash": "39129b04ccf96b8a27de1fc4a1d07580937c5e37d6bc50093806ca00ad5c168f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-1S90",
+    "timestamp": "2026-11-25T12:39:24.228Z",
+    "repository": "duckdb/duckdb",
+    "learningId": "learn-github-duckdb-duckdb",
+    "contentHash": "1ef51afcf4650aff2ca063572a5c3cf2f5e0d0af675af220d84f58d3f3adfd53",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

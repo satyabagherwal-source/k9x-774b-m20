@@ -2803,10 +2803,10 @@
     "repository": "karmada-io/karmada",
     "platform": "github",
     "sourceUrl": "https://github.com/karmada-io/karmada",
-    "sourceVersion": "39fe0cb3",
+    "sourceVersion": "fd68f330",
     "license": "Apache-2.0",
-    "contentHash": "a0323c71b3ac7694eff533ced3c189f3706aa6dd623ea7d55bdab044e745aad2",
-    "lastHarvestedAt": "2026-11-23T23:09:58.308Z",
+    "contentHash": "39129b04ccf96b8a27de1fc4a1d07580937c5e37d6bc50093806ca00ad5c168f",
+    "lastHarvestedAt": "2026-11-25T12:39:18.922Z",
     "learningId": "learn-github-karmada-io-karmada"
   },
   "milvus-io-bootcamp": {
@@ -6173,10 +6173,10 @@
     "repository": "duckdb/duckdb",
     "platform": "github",
     "sourceUrl": "https://github.com/duckdb/duckdb",
-    "sourceVersion": "295f0daf",
+    "sourceVersion": "bdc96af9",
     "license": "MIT",
-    "contentHash": "0152358c444b841b7384feeba44c5a76953d96e20e503b6cf7c461036e0f08d7",
-    "lastHarvestedAt": "2026-11-24T17:33:23.424Z",
+    "contentHash": "1ef51afcf4650aff2ca063572a5c3cf2f5e0d0af675af220d84f58d3f3adfd53",
+    "lastHarvestedAt": "2026-11-25T12:39:24.234Z",
     "learningId": "learn-github-duckdb-duckdb"
   },
   "megh-bari-pattern-craft": {
@@ -11525,8 +11525,8 @@
     "sourceUrl": "https://huggingface.co/LiconStudio/Minimax-H3-VBVR",
     "sourceVersion": "hf-liconstudio-minimax-h3-vbvr",
     "license": "Open-Source",
-    "contentHash": "2af7f9ce90cf2dc3e815efbf724b48128651028ed002d644a09afe55aff26f0f",
-    "lastHarvestedAt": "2026-11-21T21:31:32.758Z",
+    "contentHash": "6778b9204e06f8236a2ab446c677daced1536336df664194538090d2df9e54b2",
+    "lastHarvestedAt": "2026-11-25T12:39:06.824Z",
     "learningId": "learn-huggingface-liconstudio-minimax-h3-vbvr"
   },
   "yuezhiai-jonex": {

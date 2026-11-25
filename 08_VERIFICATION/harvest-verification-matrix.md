@@ -13075,3 +13075,6 @@
 | `CYCLE-20261125-OBP9` | `2026-11-25T12:28:56.253Z` | `Diffuspace/Clover-35B-A3B-Preview` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-diffuspace-clover-35b-a3b-preview-learnings.md` | Yes (`4b58a83c...`) |
 | `CYCLE-20261125-OM8X` | `2026-11-25T12:29:09.921Z` | `dragonflydb/dragonfly` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md` | Yes (`a2314fc1...`) |
 | `CYCLE-2026-11-25-PROJ-EVOLVE` | `2026-11-25T12:29:46.995Z` | `dragonflydb-dragonfly` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-B35DECA2` [Domain D] | Yes (`0d7b66b5...`) |
+| `CYCLE-20261125-1ETE` | `2026-11-25T12:39:06.818Z` | `LiconStudio/Minimax-H3-VBVR` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liconstudio-minimax-h3-vbvr-learnings.md` | Yes (`6778b920...`) |
+| `CYCLE-20261125-1O5H` | `2026-11-25T12:39:18.917Z` | `karmada-io/karmada` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10526` | Yes (`39129b04...`) |
+| `CYCLE-20261125-1S90` | `2026-11-25T12:39:24.228Z` | `duckdb/duckdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10527` | Yes (`1ef51afc...`) |

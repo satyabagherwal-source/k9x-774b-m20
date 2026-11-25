@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-25T12:29:12.976Z",
-    "lastVerified": "2026-11-25T12:29:12.976Z",
+    "lastChecked": "2026-11-25T12:39:27.873Z",
+    "lastVerified": "2026-11-25T12:39:27.873Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -185,8 +185,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-25T11:59:55.744Z",
-    "lastVerified": "2026-11-25T11:59:55.744Z",
+    "lastChecked": "2026-11-25T12:39:18.467Z",
+    "lastVerified": "2026-11-25T12:39:18.467Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1575,9 +1575,9 @@
   "lunasec-io-lunasec": {
     "name": "lunasec",
     "officialUrl": "https://github.com/lunasec-io/lunasec",
-    "lastChecked": "2026-11-25T07:22:29.480Z",
+    "lastChecked": "2026-11-25T12:39:13.348Z",
     "revisionIdentifier": "c6bb0762",
-    "lastVerified": "2026-11-25T07:22:29.480Z"
+    "lastVerified": "2026-11-25T12:39:13.348Z"
   },
   "seaql-sea-orm": {
     "name": "sea-orm",
@@ -2860,22 +2860,21 @@
     "lastVerified": "2026-11-24T12:27:20.134Z"
   },
   "karmada-io-karmada": {
-    "name": "karmada",
+    "name": "karmada-io/karmada",
     "officialUrl": "https://github.com/karmada-io/karmada",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-24T18:34:21.853Z",
-    "lastVerified": "2026-11-24T18:34:21.853Z",
+    "lastChecked": "2026-11-25T12:39:17.400Z",
+    "lastVerified": "2026-11-25T12:39:17.400Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-karmada-io-karmada",
-    "contentHash": "a0323c71b3ac7694eff533ced3c189f3706aa6dd623ea7d55bdab044e745aad2",
+    "contentHash": "39129b04ccf96b8a27de1fc4a1d07580937c5e37d6bc50093806ca00ad5c168f",
     "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "39fe0cb3"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "zilliztech-attu": {
     "name": "attu",
@@ -3719,9 +3718,9 @@
   "sigoden-aichat": {
     "name": "aichat",
     "officialUrl": "https://github.com/sigoden/aichat",
-    "lastChecked": "2026-11-24T11:44:17.029Z",
+    "lastChecked": "2026-11-25T12:39:03.344Z",
     "revisionIdentifier": "82976d34",
-    "lastVerified": "2026-11-24T11:44:17.029Z"
+    "lastVerified": "2026-11-25T12:39:03.344Z"
   },
   "hf-google-electra-base-discriminator": {
     "name": "google/electra-base-discriminator",
@@ -7272,14 +7271,14 @@
     "officialUrl": "https://github.com/duckdb/duckdb",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-11-24T17:33:21.912Z",
-    "lastVerified": "2026-11-24T17:33:21.912Z",
+    "lastChecked": "2026-11-25T12:39:22.735Z",
+    "lastVerified": "2026-11-25T12:39:22.735Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-duckdb-duckdb",
-    "contentHash": "0152358c444b841b7384feeba44c5a76953d96e20e503b6cf7c461036e0f08d7",
+    "contentHash": "1ef51afcf4650aff2ca063572a5c3cf2f5e0d0af675af220d84f58d3f3adfd53",
     "promotedRulesCount": 1,
-    "recentFixesCount": 5,
+    "recentFixesCount": 6,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -9924,9 +9923,9 @@
   "touchlab-xcode-kotlin": {
     "name": "xcode-kotlin",
     "officialUrl": "https://github.com/touchlab/xcode-kotlin",
-    "lastChecked": "2026-11-23T04:23:12.436Z",
+    "lastChecked": "2026-11-25T12:39:08.410Z",
     "revisionIdentifier": "8e9834df",
-    "lastVerified": "2026-11-23T04:23:12.436Z"
+    "lastVerified": "2026-11-25T12:39:08.410Z"
   },
   "melbahja-seo": {
     "name": "seo",
@@ -13442,12 +13441,12 @@
     "officialUrl": "https://huggingface.co/LiconStudio/Minimax-H3-VBVR",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-21T21:31:32.064Z",
-    "lastVerified": "2026-11-21T21:31:32.064Z",
+    "lastChecked": "2026-11-25T12:39:05.922Z",
+    "lastVerified": "2026-11-25T12:39:05.922Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-liconstudio-minimax-h3-vbvr",
-    "contentHash": "2af7f9ce90cf2dc3e815efbf724b48128651028ed002d644a09afe55aff26f0f",
+    "contentHash": "6778b9204e06f8236a2ab446c677daced1536336df664194538090d2df9e54b2",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

@@ -13108,3 +13108,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-diffuspace-clover-35b-a3b-preview` | `https://huggingface.co/Diffuspace/Clover-35B-A3B-Preview` | `hf-diffusp` | Multi-dimensional audit evidence | 2026-11-25T12:28:56.257Z |
 | `learn-github-dragonflydb-dragonfly` | `https://github.com/dragonflydb/dragonfly` | `9f52b997` | Multi-dimensional audit evidence | 2026-11-25T12:29:09.925Z |
 | `learn-dom-d-b35deca2` | `project://dragonflydb-dragonfly` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md` | 2026-11-25T12:29:46.995Z |
+| `learn-huggingface-liconstudio-minimax-h3-vbvr` | `https://huggingface.co/LiconStudio/Minimax-H3-VBVR` | `hf-liconst` | Multi-dimensional audit evidence | 2026-11-25T12:39:06.824Z |
+| `learn-github-karmada-io-karmada` | `https://github.com/karmada-io/karmada` | `fd68f330` | Multi-dimensional audit evidence | 2026-11-25T12:39:18.922Z |
+| `learn-github-duckdb-duckdb` | `https://github.com/duckdb/duckdb` | `bdc96af9` | Multi-dimensional audit evidence | 2026-11-25T12:39:24.234Z |
