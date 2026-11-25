@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-24T23:59:45.751Z",
+  "updated_at": "2026-11-25T00:08:36.402Z",
   "stats": {
-    "total_discovered": 9030,
-    "approved_pending_harvest": 8552,
+    "total_discovered": 9035,
+    "approved_pending_harvest": 8557,
     "harvested_count": 0,
     "rejected_count": 478,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 8541,
+      "COMMUNITY_AND_EXPERT": 8546,
       "OFFICIAL_DOCUMENTATION": 272,
       "STANDARDS_AND_SPECIFICATIONS": 149,
       "ENGINEERING_BLOGS": 7,
@@ -195341,6 +195341,116 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tanstack-router-learnings.md",
         "fileName": "tanstack-router-learnings.md"
+      }
+    },
+    "SRC-BA9860EE39ED": {
+      "id": "SRC-BA9860EE39ED",
+      "url": "https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts",
+      "title": "https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T00:08:36.167Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tanstack-query-learnings.md",
+        "fileName": "tanstack-query-learnings.md"
+      }
+    },
+    "SRC-75E9D53C0ED2": {
+      "id": "SRC-75E9D53C0ED2",
+      "url": "https://github.com/Ta",
+      "title": "https://github.com/Ta",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T00:08:36.226Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tanstack-query-learnings.md",
+        "fileName": "tanstack-query-learnings.md"
+      }
+    },
+    "SRC-225C516ADC3E": {
+      "id": "SRC-225C516ADC3E",
+      "url": "https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts",
+      "title": "https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T00:08:36.294Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tanstack-query-learnings.md",
+        "fileName": "tanstack-query-learnings.md"
+      }
+    },
+    "SRC-802374054B84": {
+      "id": "SRC-802374054B84",
+      "url": "https://github.com/TanStack/query/blob/main/packages/query-core/src/query.ts",
+      "title": "https://github.com/TanStack/query/blob/main/packages/query-core/src/query.ts",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T00:08:36.347Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tanstack-query-learnings.md",
+        "fileName": "tanstack-query-learnings.md"
+      }
+    },
+    "SRC-36A90256FD7C": {
+      "id": "SRC-36A90256FD7C",
+      "url": "https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts",
+      "title": "https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T00:08:36.402Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tanstack-query-learnings.md",
+        "fileName": "tanstack-query-learnings.md"
       }
     }
   }

@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "f45b916b",
+    "sourceVersion": "fa47c9a1",
     "license": "Apache-2.0",
-    "contentHash": "dbae65b48ccdb9f59604f08a29280249e3e182dafed38a156cfb63de49207040",
-    "lastHarvestedAt": "2026-11-24T22:51:10.055Z",
+    "contentHash": "095540deef4857b72098095d48877379a2341697d728043f5dab1ae0003cd5a1",
+    "lastHarvestedAt": "2026-11-25T00:08:32.619Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -3583,10 +3583,10 @@
     "repository": "tailscale/tailscale",
     "platform": "github",
     "sourceUrl": "https://github.com/tailscale/tailscale",
-    "sourceVersion": "8bcc919d",
+    "sourceVersion": "012baddc",
     "license": "BSD-3-Clause",
-    "contentHash": "ae281061719df3bfe40c3efc2961d21a70a8265a925fc08f18b16df079006597",
-    "lastHarvestedAt": "2026-11-24T19:19:20.136Z",
+    "contentHash": "ebb067b1af8ac45f816647f7878efc7dd4c29213e1e9eb36b126bbe90660c5a2",
+    "lastHarvestedAt": "2026-11-25T00:08:28.671Z",
     "learningId": "learn-github-tailscale-tailscale"
   },
   "dingodb-dingo": {
@@ -7613,10 +7613,10 @@
     "repository": "infiniflow/infinity",
     "platform": "github",
     "sourceUrl": "https://github.com/infiniflow/infinity",
-    "sourceVersion": "e7db7afb",
+    "sourceVersion": "75bc1f15",
     "license": "Apache-2.0",
-    "contentHash": "442e238e7f28b152415aa2d42447be6382dc957367146ba0c649e8e77af53cd3",
-    "lastHarvestedAt": "2026-11-24T03:41:50.756Z",
+    "contentHash": "6082cbd3438dbdfc87ffe100964b7ef7b3eb742b4996bd709c38cd048a4d052a",
+    "lastHarvestedAt": "2026-11-25T00:08:30.421Z",
     "learningId": "learn-github-infiniflow-infinity"
   },
   "astral-sh-ruff": {
@@ -10053,10 +10053,10 @@
     "repository": "TanStack/query",
     "platform": "github",
     "sourceUrl": "https://github.com/TanStack/query",
-    "sourceVersion": "0911673d",
+    "sourceVersion": "115fdefa",
     "license": "MIT",
-    "contentHash": "2a062f505cc5fb72ebbd97ae3c80f4147c9244c679765365f5d2143b39d0b1a4",
-    "lastHarvestedAt": "2026-11-21T00:32:38.285Z",
+    "contentHash": "6909c36bca375dc9937a3733cd6563da1169332ea96767bbb9add9c3584b3cec",
+    "lastHarvestedAt": "2026-11-25T00:08:21.063Z",
     "learningId": "learn-github-tanstack-query"
   },
   "apple-sample-food-truck": {

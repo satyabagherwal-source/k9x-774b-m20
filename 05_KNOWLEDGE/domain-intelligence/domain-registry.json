@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T23:59:46.669Z",
+  "last_updated": "2026-11-25T00:08:38.322Z",
   "total_records": 2602,
   "domains": {
     "A": {
@@ -8489,8 +8489,8 @@
       "title": "Architecture Intelligence: tailscale/tailscale Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tailscale-tailscale-architecture-intelligence-tailscale-tailscale-core-invariant.md",
       "repository": "tailscale/tailscale",
-      "content_hash": "7ac2a892234dc6fa7f1faacca8b3050449ed4ce0acb7e8398bf096b2a40021b5",
-      "created_at": "2026-11-24T15:17:26.043Z"
+      "content_hash": "16609fcaadff4c2e8ff4d46ca3d2be8fb14c2813d2c9850e8e3fdd4d587710ea",
+      "created_at": "2026-11-25T00:08:29.063Z"
     },
     "domain_intelligence-architecture-intelligence-duckdb-duckdb-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-duckdb-duckdb-core-invariants",
@@ -11888,8 +11888,8 @@
       "title": "Architecture Intelligence: infiniflow/infinity Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-infiniflow-infinity-architecture-intelligence-infiniflow-infinity-core-invariant.md",
       "repository": "infiniflow/infinity",
-      "content_hash": "f61a256522944fbaaa229ab2c2eec95f722066d4f5299db530a16146228d33fc",
-      "created_at": "2026-11-18T14:15:59.324Z"
+      "content_hash": "79b7f7ae9e4661ed930ae60727261e23fbcb50569afb96a323f6fdb41048426a",
+      "created_at": "2026-11-25T00:08:30.809Z"
     },
     "domain_intelligence-technical-construction-intelligence-bitterbot-ai-bitterbot-desktop-core-invarian": {
       "record_id": "domain_intelligence-technical-construction-intelligence-bitterbot-ai-bitterbot-desktop-core-invarian",
@@ -11906,8 +11906,8 @@
       "title": "Architecture Intelligence: infiniflow-infinity-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-infiniflow-infinity-learnings-architecture-intelligence-infiniflow-infinity-lear.md",
       "repository": "infiniflow-infinity-learnings",
-      "content_hash": "c1992c1708d5d2ee8b74545f209da475f9fb9adb8a622dd978a4f1e3c307a894",
-      "created_at": "2026-11-16T21:55:43.613Z"
+      "content_hash": "5b467458da8f2e2c833cb3f3ce0f093d6496296c51a9f4015e1aa55ac134929c",
+      "created_at": "2026-11-25T00:08:38.322Z"
     },
     "domain_intelligence-technical-construction-intelligence-bitterbot-ai-bitterbot-desktop-learnings-cor": {
       "record_id": "domain_intelligence-technical-construction-intelligence-bitterbot-ai-bitterbot-desktop-learnings-cor",
@@ -13516,8 +13516,8 @@
       "title": "Architecture Intelligence: tailscale-tailscale-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tailscale-tailscale-learnings-architecture-intelligence-tailscale-tailscale-lear.md",
       "repository": "tailscale-tailscale-learnings",
-      "content_hash": "8bfa554f67426d027b94704de04469cffc6d4c73e2a5646194619d642c8de4ad",
-      "created_at": "2026-11-24T15:17:35.188Z"
+      "content_hash": "b9e56024f0a8f02dd0c07dfe9abf15f46e2b490da4f906a4bba40c624ce155b2",
+      "created_at": "2026-11-25T00:08:37.575Z"
     },
     "domain_intelligence-research-knowledge-intelligence-stabilityai-stable-diffusion-3-medium-core-invar": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-stabilityai-stable-diffusion-3-medium-core-invar",
@@ -15681,8 +15681,8 @@
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "repository": "NucleoidAI/Nucleoid",
-      "content_hash": "740d8041e736a4aaeff88dc8b427e26ac85deb72b269eec68f71b80dec8fbcef",
-      "created_at": "2026-11-24T22:51:10.437Z"
+      "content_hash": "5af2e27e2645255692db3674fa059ca76ab059034ec6048ae71d8b221bb1f54b",
+      "created_at": "2026-11-25T00:08:33.016Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -26440,8 +26440,8 @@
       "title": "Technical Construction Intelligence: TanStack/query Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tanstack-query-technical-construction-intelligence-tanstack-query-core-invariant.md",
       "repository": "TanStack/query",
-      "content_hash": "ea229b45e30ccf00e1ae36dd3d1cf7b46a4854b7f0cca9b63d73c746a2642504",
-      "created_at": "2026-11-21T00:32:38.624Z"
+      "content_hash": "98ff0cf2162bc602b78de3b949608ad8f1df0daa8997c5b7158fdd89c1e05b52",
+      "created_at": "2026-11-25T00:08:21.479Z"
     },
     "domain_intelligence-technical-construction-intelligence-tanstack-query-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-tanstack-query-learnings-core-invariants",
@@ -26449,8 +26449,8 @@
       "title": "Technical Construction Intelligence: tanstack-query-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tanstack-query-learnings-technical-construction-intelligence-tanstack-query-lear.md",
       "repository": "tanstack-query-learnings",
-      "content_hash": "7c0291ee1c2a6f4d5d81664b4b1f5ab1a6d99c3d7df6dfc32f140fd32b229a13",
-      "created_at": "2026-11-21T00:32:49.567Z"
+      "content_hash": "0835c0e964668878beffd69d26a7f2c264e4877f2aebe96d15bca34d6ed5a706",
+      "created_at": "2026-11-25T00:08:36.820Z"
     },
     "domain_intelligence-architecture-intelligence-preactjs-preact-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-preactjs-preact-core-invariants",

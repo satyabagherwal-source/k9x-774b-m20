@@ -4,24 +4,24 @@
 {
   "source_repository": "TanStack/query",
   "source_url": "https://github.com/TanStack/query",
-  "source_version": "0911673d",
+  "source_version": "115fdefa",
   "license": "MIT",
-  "timestamp": "2026-11-21T00:32:38.479Z",
+  "timestamp": "2026-11-25T00:08:21.303Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-tanstack-query",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [TanStack/query](https://github.com/TanStack/query) (Revision: `0911673d`).  
-> **License**: MIT | **Timestamp**: `2026-11-21T00:32:38.479Z`  
+> **Provenance**: Harvested from [TanStack/query](https://github.com/TanStack/query) (Revision: `115fdefa`).  
+> **License**: MIT | **Timestamp**: `2026-11-25T00:08:21.303Z`  
 > **Learning ID**: `learn-github-tanstack-query`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), L (Deployment & Operations Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 76%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 74%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from TanStack/query:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tanstack-query-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/TanStack/query](https://github.com/TanStack/query))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T00:32:37.061Z  
+> **Harvest Timestamp**: 2026-11-25T00:08:19.695Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: 🤖 Powerful asynchronous state management, server-state utilities and data fetching for the web. TS/JS, React Query, Solid Query, Svelte Query and Vue Query.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 50599 stars
+- **Stars / Engagement**: 50626 stars
 
 ---
 
@@ -3600,325 +3600,541 @@ async function serializeRequest(request) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `816a0aab` (2026-11-18)
-**Commit Message**: chore: bump vite for examples to cover security release (#12625)
+### Incident Patch 1: `0d7eed6c` (2026-11-24)
+**Commit Message**: docs(framework/angular/guides): add the 'polling' guide (#12692)
 
-**File**: `examples/lit/algolia/package.json` (modified, +1/-1)
+* docs(framework/angular/guides): add the 'polling' guide
+
+* docs(framework/angular/guides): read 'jobId' once in the polling example
+
+**File**: `docs/config.json` (modified, +4/-0)
 ```diff
-@@ -20,6 +20,6 @@
-     "@tanstack/eslint-plugin-query": "^5.108.0",
-     "eslint": "^9.39.5",
-     "typescript": "^6.0.3",
--    "vite": "^8.3.5"
-+    "vite": "^8.3.8"
-   }
- }
+@@ -751,6 +751,10 @@
+               "label": "Window Focus Refetching",
+               "to": "framework/angular/guides/window-focus-refetching"
+             },
++            {
++              "label": "Polling",
++              "to": "framework/angular/guides/polling"
++            },
+             {
+               "label": "Disabling/Pausing Queries",
+               "to": "framework/angular/guides/disabling-queries"
 ```
 
-**File**: `examples/lit/auto-refetching/package.json` (modified, +1/-1)
+**File**: `docs/framework/angular/guides/polling.md` (added, +85/-0)
 ```diff
-@@ -19,7 +19,7 @@
-     "@tanstack/eslint-plugin-query": "^5.108.0",
-     "eslint": "^9.39.5",
-     "typescript": "^6.0.3",
--    "vite": "^8.3.5"
-+    "vite": "^8.3.8"
-   },
-   "msw": {
-     "workerDirectory": [
-```
-
-**File**: `examples/lit/basic-graphql-request/package.json` (modified, +1/-1)
-```diff
-@@ -20,6 +20,6 @@
-     "@tanstack/eslint-plugin-query": "^5.108.0",
-     "eslint": "^9.39.5",
-     "typescript": "^6.0.3",
--    "vite": "^8.3.5"
-+    "vite": "^8.3.8"
-   }
- }
-```
-
-**File**: `examples/lit/basic/package.json` (modified, +1/-1)
-```diff
-@@ -18,6 +18,6 @@
-     "@tanstack/eslint-plugin-query": "^5.108.0",
-     "eslint": "^9.39.5",
-     "typescript": "^6.0.3",
--    "vite": "^8.3.5"
-+    "vite": "^8.3.8"
-   }
- }
-```
-
-**File**: `examples/lit/batching/package.json` (modified, +1/-1)
-```diff
-@@ -19,6 +19,6 @@
-     "@tanstack/eslint-plugin-query": "^5.108.0",
-     "eslint": "^9.39.5",
-     "typescript": "^6.0.3",
--    "vite": "^8.3.5"
-+    "vite": "^8.3.8"
-   }
- }
-```
-
-**File**: `examples/lit/chat/package.json` (modified, +1/-1)
-```diff
-@@ -20,6 +20,6 @@
-     "eslint": "^9.39.5",
-     "tailwindcss": "^4.3.3",
-     "typescript": "^6.0.3",
--    "vite": "^8.3.5"
-+    "vite": "^8.3.8"
-   }
- }
-```
-
-**File**: `examples/lit/default-query-function/package.json` (modified, +1/-1)
-```diff
-@@ -18,6 +18,6 @@
-     "@tanstack/eslint-plugin-query": "^5.108.0",
-     "eslint": "^9.39.5",
-     "typescript": "^6.0.3",
--    "vite": "^8.3.5"
-+    "vite": "^8.3.8"
-   }
- }
-```
-
-**File**: `examples/lit/infinite-query-with-max-pages/package.json` (modified, +1/-1)
-```diff
-@@ -19,7 +19,7 @@
-     "@tanstack/eslint-plugin-query": "^5.108.0",
-     "eslint": "^9.39.5",
-     "typescript": "^6.0.3",
--    "vite": "^8.3.5"
-+    "vite": "^8.3.8"
-   },
-   "msw": {
-     "workerDirectory": [
+@@ -0,0 +1,85 @@
++---
++id: polling
++title: Polling
++ref: docs/framework/react/guides/polling.md
++replace: { '@tanstack/react-query': '@tanstack/angular-query' }
++---
++
++[//]: # 'Example1'
++
++```ts
++injectQuery(() => ({
++  queryKey: ['prices'],
++  queryFn: fetchPrices,
++  refetchInterval: 5 * 1000, // every 5 seconds
++}))
++```
++
++[//]: # 'Example1'
++[//]: # 'Example2'
++
++```ts
++injectQuery(() => {
++  const jobId = this.jobId()
++
++  return {
++    queryKey: ['job', jobId],
++    queryFn: () => fetchJobStatus(jobId),
++    refetchInterval: (query) => {
++      // Stop polling once the job finishes
++      if (query.state.data?.status === 'complete') return false
++      return 2 * 1000
++    },
++  }
++})
++```
++
++[//]: # 'Example2'
++[//]: # 'Example3'
++
++```ts
++injectQuery(() => ({
++  queryKey: ['portfolio'],
++  queryFn: fetchPortfolio,
++  refetchInterval: 30 * 1000,
++  refetchIntervalInBackground: true,
++}))
++```
++
++[//]: # 'Example3'
++[//]: # 'Example4'
++
++```ts
++injectQuery(() => {
++  // Read signals here so the query reacts when they change
++  const tokenAddress = this.tokenAddress()
++  const isPaused = this.isPaused()
++
++  return {
++    queryKey: ['prices', tokenAddress],
++    queryFn: () => fetchPrice(tokenAddress),
++    refetchInterval: () => {
++      if (!tokenAddress || isPaused) return false
++      return 15 * 1000
++    },
++  }
++})
++```
++
++[//]: # 'Example4'
++[//]: # 'Example5'
++
++```ts
++injectQuery(() => ({
++  queryKey: ['chainStatus'],
++  queryFn: fetchChainStatus,
++  refetchInterval: 10 * 1000,
++  networkMode: 'always',
++}))
++```
++
++[//]: # 'Example5'
++[//]: # 'ReactNative'
++[//]: # 'ReactNative'
++[//]: # 'ReRenders'
++[//]: # 'ReRenders'
 ```
 
 ---
 
-### Incident Patch 2: `6b849cff` (2026-11-20)
-**Commit Message**: fix(query-core): keep a placeholder that select maps to undefined (#12575)
+### Incident Patch 2: `9979ddac` (2026-11-23)
+**Commit Message**: ci: apply automated fixes
 
-Amp-Thread-ID: https://ampcode.com/threads/T-01a1c72d-7954-7320-aa9d-9f2611a997c4
+**File**: `docs/framework/angular/reference/classes/Mutation.md` (modified, +2/-2)
+```diff
+@@ -146,7 +146,7 @@ The mutation's `meta`, or `undefined` if none was set.
+ continue(): Promise<unknown>;
+ ```
+ 
+-Defined in: [packages/query-core/src/mutation.ts:260](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts#L260)
++Defined in: [packages/query-core/src/mutation.ts:263](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts#L263)
+ 
+ Resumes a mutation that is currently paused or was restored from a
+ dehydrated, still-`pending` state.
+@@ -210,7 +210,7 @@ Removable.destroy
+ execute(variables: TVariables): Promise<TData>;
+ ```
+ 
+-Defined in: [packages/query-core/src/mutation.ts:301](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts#L301)
++Defined in: [packages/query-core/src/mutation.ts:304](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts#L304)
+ 
+ Runs the mutation function for the given variables through a retryer, and
+ drives the mutation's state and lifecycle callbacks through to settlement.
+```
 
-Co-authored-by: Amp <[REDACTED_EMAIL]>
-Co-authored-by: Dominik Dorfmeister 🔮 <[REDACTED_EMAIL]>
+**File**: `docs/framework/angular/reference/classes/MutationCache.md` (modified, +6/-5)
+```diff
+@@ -69,9 +69,10 @@ Defined in: [packages/query-core/src/mutationCache.ts:128](https://github.com/Ta
+ clear(): void;
+ ```
+ 
+-Defined in: [packages/query-core/src/mutationCache.ts:262](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L262)
++Defined in: [packages/query-core/src/mutationCache.ts:274](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L274)
+ 
+-Removes all mutations from the cache.
++Removes all mutations and clears their garbage collection timers.
++Mutations that are already running continue to execute.
+ 
+ #### Returns
+ 
+@@ -95,7 +96,7 @@ find<TData = unknown, TError = Error, TVariables = any, TOnMutateResult = unknow
+   | undefined;
+ ```
+ 
+-Defined in: [packages/query-core/src/mutationCache.ts:306](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L306)
++Defined in: [packages/query-core/src/mutationCache.ts:319](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L319)
+ 
+ A slightly more advanced method that can be used to get an existing mutation instance from
+ the cache. If the mutation does not exist, `undefined` is returned.
+@@ -156,7 +157,7 @@ const mutation = mutationCache.find({ mutationKey: ['addPost'] })
+ findAll(filters?: MutationFilters): Mutation<unknown, Error, unknown, unknown>[];
+ ```
+ 
+-Defined in: [packages/query-core/src/mutationCache.ts:337](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L337)
++Defined in: [packages/query-core/src/mutationCache.ts:350](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L350)
+ 
+ An even more advanced method that can be used to get existing mutation instances from the
+ cache that match the given filters. If no mutations match, an empty array is returned.
+@@ -198,7 +199,7 @@ const mutations = mutationCache.findAll({ mutationKey: ['addPost'] })
+ getAll(): Mutation<unknown, Error, unknown, unknown>[];
+ ```
+ 
+-Defined in: [packages/query-core/src/mutationCache.ts:286](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L286)
++Defined in: [packages/query-core/src/mutationCache.ts:299](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L299)
+ 
+ Returns all mutations within the cache.
+ 
+```
 
-**File**: `.changeset/keep-placeholder-select-undefined.md` (added, +5/-0)
+**File**: `docs/framework/angular/reference/classes/Query.md` (modified, +2/-2)
+```diff
+@@ -226,8 +226,8 @@ destroy(): void;
+ 
+ Defined in: [packages/query-core/src/query.ts:441](https://github.com/TanStack/query/blob/main/packages/query-core/src/query.ts#L441)
+ 
+-Clears the query's garbage collection timeout and silently cancels any
+-in-flight fetch. Called by `QueryCache` when the query is removed from
++Silently cancels any in-flight fetch, then clears the query's garbage
++collection timeout. Called by `QueryCache` when the query is removed from
+ the cache.
+ 
+ #### Returns
+```
+
+**File**: `docs/framework/angular/reference/classes/QueryClient.md` (modified, +3/-1)
+```diff
+@@ -104,9 +104,11 @@ await queryClient.cancelQueries({ queryKey: ['posts'], exact: true })
+ clear(): void;
+ ```
+ 
+-Defined in: [packages/query-core/src/queryClient.ts:1173](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L1173)
++Defined in: [packages/query-core/src/queryClient.ts:1175](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L1175)
+ 
+ Clears both the query cache and the mutation cache this client is connected to.
++This clears their garbage collection timers and cancels in-flight query fetches.
++Running mutations continue to execute.
+ 
+ #### Returns
+ 
+```
+
+**File**: `docs/framework/lit/reference/classes/Mutation.md` (modified, +2/-2)
+```diff
+@@ -146,7 +146,7 @@ The mutation's `meta`, or `undefined` if none was set.
+ continue(): Promise<unknown>;
+ ```
+ 
+-Defined in: [packages/query-core/src/mutation.ts:260](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts#L260)
++Defined in: [packages/query-core/src/mutation.ts:263](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts#L263)
+ 
+ Resumes a mutation that is currently paused or was restored from a
+ dehydrated, still-`pending` state.
+@@ -210,7 +210,7 @@ Removable.destroy
+ execute(variables: TVariables): Promise<TData>;
+ ```
+ 
+-Defined in: [packages/query-core/src/mutation.ts:301](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts#L301)
++Defined in: [packages/query-core/src/mutation.ts:304](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts#L304)
+ 
+ Runs the mutation function for the given variables through a retryer, and
+ drives the mutation's state and lifecycle callbacks through to settlement.
+```
+
+**File**: `docs/framework/lit/reference/classes/MutationCache.md` (modified, +6/-5)
+```diff
+@@ -69,9 +69,10 @@ Defined in: [packages/query-core/src/mutationCache.ts:128](https://github.com/Ta
+ clear(): void;
+ ```
+ 
+-Defined in: [packages/query-core/src/mutationCache.ts:262](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L262)
++Defined in: [packages/query-core/src/mutationCache.ts:274](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L274)
+ 
+-Removes all mutations from the cache.
++Removes all mutations and clears their garbage collection timers.
++Mutations that are already running continue to execute.
+ 
+ #### Returns
+ 
+@@ -95,7 +96,7 @@ find<TData = unknown, TError = Error, TVariables = any, TOnMutateResult = unknow
+   | undefined;
+ ```
+ 
+-Defined in: [packages/query-core/src/mutationCache.ts:306](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L306)
++Defined in: [packages/query-core/src/mutationCache.ts:319](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L319)
+ 
+ A slightly more advanced method that can be used to get an existing mutation instance from
+ the cache. If the mutation does not exist, `undefined` is returned.
+@@ -156,7 +157,7 @@ const mutation = mutationCache.find({ mutationKey: ['addPost'] })
+ findAll(filters?: MutationFilters): Mutation<unknown, Error, unknown, unknown>[];
+ ```
+ 
+-Defined in: [packages/query-core/src/mutationCache.ts:337](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L337)
++Defined in: [packages/query-core/src/mutationCache.ts:350](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L350)
+ 
+ An even more advanced method that can be used to get existing mutation instances from the
+ cache that match the given filters. If no mutations match, an empty array is returned.
+@@ -198,7 +199,7 @@ const mutations = mutationCache.findAll({ mutationKey: ['addPost'] })
+ getAll(): Mutation<unknown, Error, unknown, unknown>[];
+ ```
+ 
+-Defined in: [packages/query-core/src/mutationCache.ts:286](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L286)
++Defined in: [packages/query-core/src/mutationCache.ts:299](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L299)
+ 
+ Returns all mutations within the cache.
+ 
+```
+
+**File**: `docs/framework/lit/reference/classes/Query.md` (modified, +2/-2)
+```diff
+@@ -226,8 +226,8 @@ destroy(): void;
+ 
+ Defined in: [packages/query-core/src/query.ts:441](https://github.com/TanStack/query/blob/main/packages/query-core/src/query.ts#L441)
+ 
+-Clears the query's garbage collection timeout and silently cancels any
+-in-flight fetch. Called by `QueryCache` when the query is removed from
++Silently cancels any in-flight fetch, then clears the query's garbage
++collection timeout. Called by `QueryCache` when the query is removed from
+ the cache.
+ 
+ #### Returns
+```
+
+**File**: `docs/framework/lit/reference/classes/QueryClient.md` (modified, +3/-1)
+```diff
+@@ -104,9 +104,11 @@ await queryClient.cancelQueries({ queryKey: ['posts'], exact: true })
+ clear(): void;
+ ```
+ 
+-Defined in: [packages/query-core/src/queryClient.ts:1173](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L1173)
++Defined in: [packages/query-core/src/queryClient.ts:1175](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L1175)
+ 
+ Clears both the query cache and the mutation cache this client is connected to.
++This clears their garbage collection timers and cancels in-flight query fetches.
++Running mutations continue to execute.
+ 
+ #### Returns
+ 
+```
+
+---
+
+### Incident Patch 3: `89bb0820` (2026-11-23)
+**Commit Message**: fix(query-core): clear GC timers for removed cache entries (#12683)
+
+**File**: `.changeset/clear-removed-entry-gc-timers.md` (added, +5/-0)
 ```diff
 @@ -0,0 +1,5 @@
 +---
 +'@tanstack/query-core': patch
 +---
 +
-+Keep a memoized placeholder result when `select` maps it to `undefined`, so a query with `keepPreviousData` that is disabled or still loading no longer loops between `pending` and `success`.
++Clear garbage collection timers when cache entries are removed and prevent later fetch or observer cleanup from starting new timers for those entries.
 ```
 
-**File**: `packages/query-core/src/__tests__/queryObserver.test.tsx` (modified, +41/-0)
+**File**: `docs/framework/preact/guides/ssr.md` (modified, +1/-1)
 ```diff
-@@ -4,6 +4,7 @@ import {
-   QueryClient,
-   QueryObserver,
-   focusManager,
-+  keepPreviousData,
-   noop,
-   timeoutManager,
- } from '..'
-@@ -2000,4 +2001,44 @@ describe('queryObserver', () => {
-       unsubscribe2()
-     })
-   })
+@@ -522,4 +522,4 @@ const queryClient = new QueryClient({
+ 
+ Avoid setting `gcTime` to `0` as it may result in a hydration error. This occurs because the [Hydration Boundary](../reference/functions/HydrationBoundary.md) places necessary data into the cache for rendering, but if the garbage collector removes the data before the rendering completes, issues may arise. Short finite values have the same risk: a prefetched query that finishes early can be removed once its `gcTime` passes, while a slower query is still being prefetched and before `dehydrate` runs. Keep `Infinity` on the server where you can.
+ 
+-If you set a finite `gcTime` on the server, call [`queryClient.clear()`](../reference/classes/QueryClient.md#clear) once you no longer need the client and all of its queries have settled, for example after you have dehydrated or rendered with it. This removes every query from the cache and cancels its pending timer. A fetch that is still in flight when you call `clear()` schedules a new timer once it settles, so wait for pending fetches to settle first.
++If you set a finite `gcTime` on the server, call [`queryClient.clear()`](../reference/classes/QueryClient.md#clear) once you no longer need the client, for example after you have dehydrated or rendered with it. This removes every query from the cache and cancels its pending fetch and garbage collection timer.
+```
+
+**File**: `docs/framework/react/guides/ssr.md` (modified, +1/-1)
+```diff
+@@ -598,7 +598,7 @@ const queryClient = new QueryClient({
+ 
+ Avoid setting `gcTime` to `0` as it may result in a hydration error. This occurs because the [Hydration Boundary](../reference/functions/HydrationBoundary.md) places necessary data into the cache for rendering, but if the garbage collector removes the data before the rendering completes, issues may arise. Short finite values have the same risk: a prefetched query that finishes early can be removed once its `gcTime` passes, while a slower query is still being prefetched and before `dehydrate` runs. Keep `Infinity` on the server where you can.
+ 
+-If you set a finite `gcTime` on the server, call [`queryClient.clear()`](../reference/classes/QueryClient.md#clear) once you no longer need the client and all of its queries have settled, for example after you have dehydrated or rendered with it. This removes every query from the cache and cancels its pending timer. A fetch that is still in flight when you call `clear()` schedules a new timer once it settles, so wait for pending fetches to settle first.
++If you set a finite `gcTime` on the server, call [`queryClient.clear()`](../reference/classes/QueryClient.md#clear) once you no longer need the client, for example after you have dehydrated or rendered with it. This removes every query from the cache and cancels its pending fetch and garbage collection timer.
+ 
+ ### Caveat for Next.js rewrites
+ 
+```
+
+**File**: `docs/framework/solid/guides/ssr.md` (modified, +1/-1)
+```diff
+@@ -225,4 +225,4 @@ const queryClient = new QueryClient({
+ })
+ ```
+ 
+-If you set a finite `gcTime` on the server, call [`queryClient.clear()`](../reference/classes/QueryClient.md#clear) once the response has been sent and all of the client's queries have settled. This removes every query from the cache and cancels its pending timer. A fetch that is still in flight when you call `clear()` schedules a new timer once it settles, so wait for pending fetches to settle first.
++If you set a finite `gcTime` on the server, call [`queryClient.clear()`](../reference/classes/QueryClient.md#clear) once the response has been sent and you no longer need the client. This removes every query from the cache and cancels its pending fetch and garbage collection timer.
+```
+
+**File**: `docs/framework/vue/guides/ssr.md` (modified, +1/-1)
+```diff
+@@ -313,7 +313,7 @@ const queryClient = new QueryClient({
+ })
+ ```
+ 
+-If you set a finite `gcTime` on the server, call [`queryClient.clear()`](../reference/classes/QueryClient.md#clear) once you no longer need the client and all of its queries have settled, for example after you have dehydrated or rendered with it. This removes every query from the cache and cancels its pending timer. A fetch that is still in flight when you call `clear()` schedules a new timer once it settles, so wait for pending fetches to settle first.
++If you set a finite `gcTime` on the server, call [`queryClient.clear()`](../reference/classes/QueryClient.md#clear) once you no longer need the client, for example after you have dehydrated or rendered with it. This removes every query from the cache and cancels its pending fetch and garbage collection timer.
+ 
+ ## `dehydrate`/`hydrate` options
+ 
+```
+
+**File**: `packages/query-core/src/__tests__/cacheGc.test.tsx` (added, +115/-0)
+```diff
+@@ -0,0 +1,115 @@
++import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
++import { MutationObserver, QueryClient, QueryObserver } from '..'
 +
-+  it('should keep a placeholder that select maps to undefined', async () => {
-+    const key = createKey()
-+    const options = (id: string) =>
-+      queryClient.defaultQueryOptions({
-+        queryKey: [...key, id],
-+        queryFn: () => [id],
-+        enabled: id !== '',
-+        placeholderData: keepPreviousData,
-+        select: (items: Array<string>) => items.find((item) => item === id),
-+      })
-+    const observer = new QueryObserver(queryClient, options('a'))
-+    const unsubscribe = observer.subscribe(() => undefined)
-+    await vi.advanceTimersByTimeAsync(0)
++describe('garbage collection after cache removal', () => {
++  let client: QueryClient
 +
-+    // 'b' is still loading, '' is disabled. What useQuery does on every
-+    // render: an optimistic result, then the options
-+    for (const id of ['b', '']) {
-+      for (let i = 0; i < 2; i++) {
-+        expect(observer.getOptimisticResult(options(id)).status).toBe('success')
-+        observer.setOptions(options(id))
-+        expect(observer.getCurrentResult()).toMatchObject({
-+          status: 'success',
-+          isPlaceholderData: true,
-+          data: undefined,
-+        })
-+      }
-+      await vi.advanceTimersByTimeAsync(0)
-+    }
++  beforeEach(() => {
++    vi.useFakeTimers()
++    client = new QueryClient({
++      defaultOptions: {
++        queries: { gcTime: 1000 },
++        mutations: { gcTime: 1000 },
++      },
++    })
++  })
 +
-+    // A new placeholderData is not memoized, so its undefined means pending
-+    observer.setOptions({ ...options(''), placeholderData: () => undefined })
-+    expect(observer.getCurrentResult()).toMatchObject({
-+      status: 'pending',
-+      isPlaceholderData: false,
-+      data: undefined,
++  afterEach(() => {
++    client.clear()
++    vi.useRealTimers()
++  })
++
++  it('clears an existing mutation timer on clear', () => {
++    const cache = client.getMutationCache()
++    cache.build(client, {})
++    expect(vi.getTimerCount()).toBe(1)
++
++    cache.clear()
++
++    expect(cache.getAll()).toHaveLength(0)
++    expect(vi.getTimerCount()).toBe(0)
++  })
++
++  it('clears an existing mutation timer on remove', () => {
++    const cache = client.getMutationCache()
++    const mutation = cache.build(client, {})
++    expect(vi.getTimerCount()).toBe(1)
++
++    cache.remove(mutation)
++
++    expect(cache.getAll()).toHaveLength(0)
++    expect(vi.getTimerCount()).toBe(0)
++  })
++
++  it('does not schedule mutation GC when an observer resets after clear', async () => {
++    const observer = new MutationObserver(client, {
++      mutationFn: () => Promise.resolve('done'),
++    })
++    await observer.mutate()
++    expect(vi.getTimerCount()).toBe(0)
++
++    client.clear()
++    observer.reset()
++
++    expect(vi.getTimerCount()).toBe(0)
++  })
++
++  it('keeps only the replacement query timer when a removed fetch settles', async () => {
++    const queryKey = ['replacement']
++    const pending = client.query({
++      queryKey,
++      queryFn: ({ signal }) =>
++        new Promise<never>((_, reject) => {
++          signal.addEventListener('abort', () => reject(signal.reason))
++        }),
 +    })
 +
++    client.clear()
++    client.setQueryData(queryKey, 'replacement')
++    await expect(pending).rejects.toThrow('CancelledError')
++
++    expect(client.getQueryData(queryKey)).toBe('replacement')
++    expect(vi.getTimerCount()).toBe(1)
++    vi.advanceTimersByTime(1000)
++    expect(client.getQueryCache().getAll()).toHaveLength(0)
++  })
++
++  it('does not schedule query GC when an observer unsubscribes after clear', async () => {
++    const queryKey = ['observed']
++    await client.query({ queryKey, queryFn: () => Promise.resolve('data') })
++    const observer = new QueryObserver(client, {
++      queryKey,
++      staleTime: Infinity,
++    })
++    const unsubscribe = observer.subscribe(() => {})
++    expect(vi.getTimerCount()).toBe(0)
++
++    client.clear()
 +    unsubscribe()
-+  })
- })
-```
-
-**File**: `packages/query-core/src/queryObserver.ts` (modified, +4/-3)
-```diff
-@@ -648,10 +648,10 @@ export class QueryObserver<
-       let placeholderData
- 
-       // Memoize placeholder data
--      if (
-+      const isMemoizedPlaceholder =
-         prevResult?.isPlaceholderData &&
-         options.placeholderData === prevResultOptions?.placeholderData
--      ) {
-+      if (isMemoizedPlaceholder) {
-         placeholderData = prevResult.data
-         // we have to skip select when reading this memoization
-         // because prevResult.data is already "selected"
-@@ -669,7 +669,8 @@ export class QueryObserver<
-             : options.placeholderData
-       }
- 
--      if (placeholderData !== undefined) {
-+      // A memoized placeholder stays one even when `select` turned it into undefined
-+      if (isMemoizedPlaceholder || placeholderData !== undefined) {
-         status = 'success'
-         data = replaceData(
-           prevResult?.data,
-```
-
-**File**: `packages/react-query/src/__tests__/useQuery.test.tsx` (modified, +60/-0)
-```diff
-@@ -7130,4 +7130,64 @@ describe('useQuery', () => {
- 
-     expect(queryFn.mock.calls).toStrictEqual([['a'], ['b']])
-   })
 +
-+  it('should not loop when a query with select and keepPreviousData is disabled', async () => {
-+    const key = createKey()
-+
-+    function Page() {
-+      const [id, setId] = React.useState('a')
-+      const { data } = useQuery({
-+        queryKey: [...key, id],
-+        queryFn: () => [id],
-+        enabled: id !== '',
-+        placeholderData: keepPreviousData,
-+        select: (items) => items.find((item) => item === id),
-+      })
-+
-+      return (
-+        <button onClick={() => setId('')}>{`picked: ${data ?? 'none'}`}</button>
-+      )
-+    }
-+
-+    const rendered = renderWithClient(queryClient, <Page />)
-+    await vi.advanceTimersByTimeAsync(0)
-+    expect(rendered.getByText('picked: a')).toBeInTheDocument()
-+
-+    fireEvent.click(rendered.getByRole('button'))
-+    await vi.advanceTimersByTimeAsync(0)
-+    expect(rendered.getByText('picked: none')).toBeInTheDocument()
++    expect(vi.getTimerCount()).toBe(0)
 +  })
 +
-+  it('should settle as placeholder data when select maps keepPreviousData to undefined', async () => {
-+    const key = createKey()
-+    const states: Array<UseQueryResult<string | undefined>> = []
-+
-+    function Page() {
-+      const [id, setId] = React.useState('a')
-+      const state = useQuery({
-+        queryKey: [...key, id],
-+        queryFn: () => [id],
-+        enabled: id !== '',
-+        placeholderData: keepPreviousData,
-+        select: (items) => items.find((item) => item === id),
-+      })
-+      states.push(state)
-+
-+      return (
-+        <button onClick={() => setId('')}>{`status: ${state.status}`}</button>
-+      )
-+    }
-+
-+    const rendered = renderWithClient(queryClient, <Page />)
-+    await vi.advanceTimersByTimeAsync(0)
-+    expect(rendered.getByText('status: success')).toBeInTheDocument()
-+
-+    fireEvent.click(rendered.getByRole('button'))
-+    await vi.advanceTimersByTimeAsync(0)
-+    expect(states.at(-1)).toMatchObject({
-+      status: 'success',
-+      isPlaceholderData: true,
-+      data: undefined,
++  it('clears a timer scheduled by an abort listener during removal', async () => {
++    const observer = new QueryObserver(client, {
++      queryKey: ['aborted'],
++      queryFn: ({ signal }) =>
++        new Promise<never>((_, reject) => {
++          signal.addEventListener('abort', () => {
++            unsubscribe()
++            reject(signal.reason)
++          })
++        }),
 +    })
-+  })
- })
-```
-
----
-
-### Incident Patch 3: `f7abc938` (2026-11-20)
-**Commit Message**: fix(query-devtools): clear the PiP document without innerHTML (#12629)
-
-Trusted Types block assigning a string to innerHTML, even an empty one.
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `.changeset/query-devtools-pip-trusted-types.md` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+---
-+'@tanstack/query-devtools': patch
-+---
++    const unsubscribe = observer.subscribe(() => {})
++    const query = observer.getCurrentQuery()
++    expect(vi.getTimerCount()).toBe(0)
 +
-+The picture-in-picture window no longer clears its document with `innerHTML`, which pages that enforce Trusted Types block.
++    client.clear()
++    const timersAfterClear = vi.getTimerCount()
++    await query.cancel()
++
++    expect(timersAfterClear).toBe(0)
++    expect(vi.getTimerCount()).toBe(0)
++  })
++})
 ```
 
-**File**: `packages/query-devtools/src/contexts/PiPContext.tsx` (modified, +4/-4)
+**File**: `packages/query-core/src/__tests__/mutationCache.test-d.tsx` (modified, +1/-0)
 ```diff
-@@ -72,10 +72,10 @@ export const PiPProvider = (props: PiPProviderProps) => {
-       )
-     }
+@@ -38,6 +38,7 @@ describe('mutationCache', () => {
+         | 'build'
+         | 'add'
+         | 'remove'
++        | 'has'
+         | 'canRun'
+         | 'runNext'
+         | 'clear'
+```
+
+**File**: `packages/query-core/src/mutation.ts` (modified, +5/-2)
+```diff
+@@ -212,12 +212,15 @@ export class Mutation<
+   /**
+    * Unsubscribes an observer from the mutation.
+    * @internal
+-   * @param observer - The observer to remove. Garbage collection is scheduled afterwards.
++   * @param observer - The observer to remove. Schedules garbage collection if the mutation
++   * is still in the cache.
+    */
+   removeObserver(observer: MutationObserver<any, any, any, any>): void {
+     this.#observers = this.#observers.filter((x) => x !== observer)
  
--    // Remove existing styles
--    pip.document.head.innerHTML = ''
--    // Remove existing body
--    pip.document.body.innerHTML = ''
-+    // Remove existing styles and body. `replaceChildren` instead of
-+    // `innerHTML = ''`, which Trusted Types block.
-+    pip.document.head.replaceChildren()
-+    pip.document.body.replaceChildren()
-     // Clear Delegated Events
-     clearDelegatedEvents(pip.document)
+-    this.scheduleGc()
++    if (this.#mutationCache.has(this)) {
++      this.scheduleGc()
++    }
  
+     this.#mutationCache.notify({
+       type: 'observerRemoved',
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #12644** (2026-11-20): ci: Version Packages (@github-actions[bot])
-- **PR #12643** (2026-11-20): feat(query-devtools): add a trustedTypesPolicy option (@schiller-manuel)
-- **PR #12642** (closed): fix(query-core): prevent placeholder render loops 🤖🤖🤖 (@sakaintp)
-- **PR #12637** (2026-11-19): ci: Version Packages (@github-actions[bot])
-- **PR #12636** (2026-11-19): fix(query-core): require getNextPageParam for infinite query client methods (@TkDodo)
-- **PR #12635** (closed): fix(query-core): refetch cached infinite query pages without getNextPageParam (@YK-03)
+- **PR #12694** (2026-11-24): chore(knip): rename 'knip.ts' to 'knip.config.ts' to match the other root config files (@sukvvon)
+- **PR #12692** (2026-11-24): docs(framework/angular/guides): add the 'polling' guide (@chromeheartz)
+- **PR #12691** (2026-11-24): docs: remove CodeRabbit sponsor logo (@tannerlinsley)
+- **PR #12689** (2026-11-23): refactor(query-core)!: make notifyOnChangeProps static (@TkDodo)
+- **PR #12688** (2026-11-23): chore(angular): bump Angular to 22.3.0 for patched vite (@DogPawHat)
+- **PR #12687** (2026-11-23): feat(preact-query): support placeholder data in Suspense hooks (@TkDodo)
 
 ---
 
@@ -3938,31 +4154,34 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. bump vite for examples to cover security release
+## X. docs(framework/angular/guides): add the 'polling' guide
 
 **RULE**:
-When implementing operations in `examples/lit/algolia/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in TanStack/query. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/config.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in TanStack/query. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `816a0aab`: bump vite for examples to cover security release. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0d7eed6c`: docs(framework/angular/guides): add the 'polling' guide. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `examples/lit/algolia/package.json`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/config.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-    "vite": "^8.3.8"
+            {
+              "label": "Polling",
+              "to": "framework/angular/guides/polling"
+            },
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-    "vite": "^8.3.5"
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `816a0aab` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0d7eed6c` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

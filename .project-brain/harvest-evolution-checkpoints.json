@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T23:59:46.994Z",
+  "last_updated": "2026-11-25T00:08:38.613Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-24T21:53:47.661Z",
@@ -118,7 +118,7 @@
       "staged_for_review": 1
     },
     "tailscale-tailscale-learnings.md": {
-      "processed_at": "2026-11-24T19:19:24.333Z",
+      "processed_at": "2026-11-25T00:08:37.147Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1153,7 +1153,7 @@
       "staged_for_review": 1
     },
     "tanstack-query-learnings.md": {
-      "processed_at": "2026-11-21T00:32:49.052Z",
+      "processed_at": "2026-11-25T00:08:35.997Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2228,7 +2228,7 @@
       "staged_for_review": 0
     },
     "infiniflow-infinity-learnings.md": {
-      "processed_at": "2026-11-24T03:41:56.063Z",
+      "processed_at": "2026-11-25T00:08:37.898Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3883,7 +3883,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 3975,
+  "total_dossiers_evaluated": 3978,
   "total_canonical_promoted": 522,
-  "total_staged_for_review": 3033
+  "total_staged_for_review": 3036
 }

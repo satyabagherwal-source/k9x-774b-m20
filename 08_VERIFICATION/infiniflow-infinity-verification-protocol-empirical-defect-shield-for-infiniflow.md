@@ -4,22 +4,22 @@
 {
   "source_repository": "infiniflow/infinity",
   "source_url": "https://github.com/infiniflow/infinity",
-  "source_version": "e7db7afb",
+  "source_version": "75bc1f15",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-24T03:41:51.008Z",
+  "timestamp": "2026-11-25T00:08:30.643Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-infiniflow-infinity",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [infiniflow/infinity](https://github.com/infiniflow/infinity) (Revision: `e7db7afb`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-24T03:41:51.008Z`  
+> **Provenance**: Harvested from [infiniflow/infinity](https://github.com/infiniflow/infinity) (Revision: `75bc1f15`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-25T00:08:30.643Z`  
 > **Learning ID**: `learn-github-infiniflow-infinity`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `infiniflow/infinity` (Commit: `e7db7afb`)
+- **Target Repository**: `infiniflow/infinity` (Commit: `75bc1f15`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/infiniflow-infinity-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/infiniflow/infinity](https://github.com/infiniflow/infinity))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T03:41:49.611Z  
+> **Harvest Timestamp**: 2026-11-25T00:08:29.336Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1360,1227 +1360,518 @@ export const isResponseListExist = (response: IResponseBody, filed: string) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e7db7afb` (2026-11-24)
-**Commit Message**: rust_engine: fix five concurrency defects the index-combination soak (#3585)
+### Incident Patch 1: `75bc1f15` (2026-11-24)
+**Commit Message**: rust_engine: align COPY/JSONL import, fulltext chunks & query parsing, and optimize WAND (#3587)
 
-**File**: `rust_engine/crates/catalog/src/layout.rs` (modified, +37/-22)
+**File**: `rust_engine/crates/executor/src/engine/dml.rs` (modified, +5/-14)
 ```diff
-@@ -2406,10 +2406,17 @@ pub fn dropped_segments_with_ts(
- pub fn write_segments(store: &dyn MetaStore, set: &SegmentSet) -> Result<usize> {
-     let mut written = 0usize;
-     // A mirror rewrite can leave fewer blocks (or segments) than the previous
--    // one, so start from an empty segment layer for the table - except for the
--    // segments a compaction deprecated, whose records the reference keeps until
--    // `Cleanup` (the `drop|seg|` record is what makes a reader ignore them).
-+    // one, so the previous layer has to go - except for the segments a
-+    // compaction deprecated, whose records the reference keeps until `Cleanup`
-+    // (the `drop|seg|` record is what makes a reader ignore them).
-+    //
-+    // It goes **after** the new records are in, not before. Deleting first
-+    // opened a window in which the table had a segment and no blocks at all, and
-+    // a query landing in it read the table as missing (`no blocks for table`)
-+    // even though every row was committed. Publishing first means a reader sees
-+    // the old layer or the new one, never neither.
-     let dropped = dropped_segments(store, &set.db_id, &set.table_id)?;
-+    let mut stale: Vec<Vec<u8>> = Vec::new();
-     for prefix in [
-         key::catalog_segment_prefix(&set.db_id, &set.table_id),
-         format!("catalog|blk|{}|{}|", set.db_id, set.table_id),
-@@ -2421,34 +2428,42 @@ pub fn write_segments(store: &dyn MetaStore, set: &SegmentSet) -> Result<usize>
-             if segment.is_some_and(|s| dropped.contains(&s)) {
-                 continue;
-             }
--            store.delete(&k)?;
-+            stale.push(k);
+@@ -1483,20 +1483,11 @@ impl Engine {
          }
      }
-+    // The keys this write publishes, so the sweep below cannot delete a record
-+    // it just wrote.
-+    let mut fresh: std::collections::HashSet<Vec<u8>> = std::collections::HashSet::new();
-     for seg in &set.segments {
--        store.put(
--            key::catalog_segment_key(&set.db_id, &set.table_id, seg.segment_id).as_bytes(),
--            seg.create_ts.to_string().as_bytes(),
--        )?;
--        store.put(
--            key::catalog_segment_tag_key(
--                &set.db_id,
--                &set.table_id,
--                seg.segment_id,
--                "first_delete_ts",
--            )
--            .as_bytes(),
--            seg.first_delete_ts.to_string().as_bytes(),
--        )?;
-+        let segment_key =
-+            key::catalog_segment_key(&set.db_id, &set.table_id, seg.segment_id).into_bytes();
-+        store.put(&segment_key, seg.create_ts.to_string().as_bytes())?;
-+        fresh.insert(segment_key);
-+        let tag_key = key::catalog_segment_tag_key(
-+            &set.db_id,
-+            &set.table_id,
-+            seg.segment_id,
-+            "first_delete_ts",
-+        )
-+        .into_bytes();
-+        store.put(&tag_key, seg.first_delete_ts.to_string().as_bytes())?;
-+        fresh.insert(tag_key);
-         written += 2;
-         for block in &seg.blocks {
--            store.put(
-+            let block_key =
-                 key::catalog_block_key(&set.db_id, &set.table_id, seg.segment_id, block.block_id)
--                    .as_bytes(),
--                block.commit_ts.to_string().as_bytes(),
--            )?;
-+                    .into_bytes();
-+            store.put(&block_key, block.commit_ts.to_string().as_bytes())?;
-+            fresh.insert(block_key);
-             written += 1;
-         }
-     }
-+    for k in stale {
-+        if fresh.contains(&k) {
-+            continue;
-+        }
-+        store.delete(&k)?;
-+    }
-     // The reference writes `next_segment_id` as "0" when the table is created
-     // and **never advances it** (`TableMeta::InitSet`,
-     // `table_meta_impl.cpp:274`): the id it hands out is derived from the
-```
-
-**File**: `rust_engine/crates/executor/src/blocks/engine.rs` (modified, +108/-60)
-```diff
-@@ -854,12 +854,12 @@ impl Engine {
-         let totals = self.append_totals(&table);
-         let append_ts = self.append_ts(&table);
-         let mut counts = self.segment_row_counts(&table);
--        // The rows this write covers, table-wide. The append journal is
--        // table-wide too (`append_ts_of` maps a row id through `counts`), so
--        // the two are comparable: a `create` in a block's `version` may only
--        // name a ts whose append lies entirely inside this total. See
--        // [`Self::block_version_batches`].
--        let covered_rows: u64 = counts.iter().map(|(_, rows)| *rows).sum();
-+        // A `create` in a block's `version` may only name a ts whose append the
-+        // block **holds in full**; that extent is per block, from the rows it
-+        // actually encodes (see [`Self::block_version_batches`]). The window
-+        // this write aimed at is deliberately not used: it is wider by exactly
-+        // the commits that landed mid-checkpoint, and naming their ts is what
-+        // made a restart skip their rows.
-         // The reference decides per block, by ts: a block is flushed when
-         // `record_ts < min(bound_ts, block_max_ts)` where `record_ts` is
-         // the ts at which the block was last written and `block_max_ts` the
-@@ -994,34 +994,12 @@ impl Engine {
-             let seals_now = sealed && !already_recorded;
-             let seg_partial =
-                 partial && !seals_now && !(sealed && touched.contains(&(segment_id, last_block)));
--            for (k, _) in self
--                .storage
--                .catalog
--                .store()
--                .scan_prefix(format!("blk|{}|{}|{}|", db_id, meta.id, segment_id).as_bytes())?
--            {
--                // The prefix also covers the block's `fast_rough_filter` tag.
--                // It is not a block record (its key has no block id in the
--                // record's position, and `nth(5)` reads the record's tail), so
--                // the sweep below used to delete the filter of every block this
--                // write touched - the reference keeps them until the segment is
--                // re-sealed.
--                if k.ends_with(b"|fast_rough_filter") {
--                    continue;
--                }
--                if seg_partial {
--                    let block_id = String::from_utf8_lossy(&k)
--                        .split('|')
--                        .nth(5)
--                        .and_then(|s| s.parse::<u16>().ok());
--                    if block_id.is_some_and(|b| {
--                        (b as usize) < block_count && !touched.contains(&(segment_id, b))
--                    }) {
--                        continue;
--                    }
--                }
--                self.storage.catalog.store().delete(&k)?;
--            }
-+            // The segment's block records are **not** swept here. Deleting them
-+            // before the rewrite republishes them leaves a window in which the
-+            // table has a segment and no blocks, and a concurrent query reads
-+            // that as `no blocks for table` - a committed table answering an
-+            // error. `Catalog::publish_segments` puts the new records first and
-+            // removes what this write did not produce afterwards.
-             let mut seg_filters = crate::fast_rough_filter::Filters::new(&encode_meta.types);
-             // Drain the segment block by block so each block's values are freed
-             // once it is encoded: holding the whole table's decoded rows while
-@@ -1096,7 +1074,7 @@ impl Engine {
-                         &append_ts,
-                         slot_base,
-                         rows,
--                        covered_rows,
-+                        (slot_base + rows) as u64,
-                     );
-                     let mut version = BlockVersionFile::new(&batches, DEFAULT_BLOCK_CAPACITY);
-                     for k in 0..rows {
-@@ -1232,7 +1210,13 @@ impl Engine {
-                     &append_ts,
-                     slot_base,
-                     chunk.len(),
--                    covered_rows,
-+                    // The rows this block **holds**, not the window the write
-+                    // aimed at. A commit that lands while the checkpoint walks
-+                    // widens the window but leaves its rows in the append
-+                    // buffer; naming its ts here would tell a restart's WAL
-+                    // replay that rows it never wrote are already on disk, and
-+                    // the tail was lost on the next open (1648 of 1800).
-+                    (slot_base + chunk.len()) as u64,
-                 );
-                 let mut version = BlockVersionFile::new(&batches, DEFAULT_BLOCK_CAPACITY);
-                 // The slot of a deleted row is its in-segment offset inside the
-@@ -1304,6 +1288,13 @@ impl Engine {
-                     path: root.join(&block_dir),
-                     source: e,
-                 })?;
-+               
-```
-
-**File**: `rust_engine/crates/executor/src/engine/state.rs` (modified, +119/-27)
-```diff
-@@ -6063,6 +6063,17 @@ pub(crate) fn scalar_only(types: &[String]) -> bool {
- /// and only the cache's reference goes away.
- pub(crate) struct BlockMapCache {
-     entries: std::collections::HashMap<storage::format::BlockId, CachedBlock>,
-+    /// One counter per block that has ever been rewritten, bumped **after** the
-+    /// new files land.
+ 
+-    /// Maintains declared indexes on insert.
+-    pub(crate) fn update_indexes_on_insert(
+-        &self,
+-        table: &str,
+-        seq: usize,
+-        values: &[Literal],
+-        schema: &[String],
+-    ) -> Result<()> {
+-        let targets = self.secondary_targets(table, schema);
+-        self.insert_secondary_keys(&targets, seq, values)
+-    }
+-
+-    /// [`Self::update_indexes_on_insert`] with the targets already resolved, for
+-    /// a bulk load that resolves them once per batch.
++    /// Feeds one row into every secondary index of `table`, resolving the
++    /// targets first.
 +    ///
-+    /// A reader maps a block outside this lock (the open is I/O), so it can be
-+    /// holding a directory that a writer replaces underneath it. Comparing the
-+    /// generation it started from with the one found when it inserts is what
-+    /// stops that mapping - a version file and column bodies from two different
-+    /// writes - from being cached and served forever. Without it a rewrite
-+    /// could be invisible to the live process until the next restart, while the
-+    /// files on disk were already correct.
-+    generations: std::collections::HashMap<storage::format::BlockId, u64>,
-     /// Insertion order, the clock hand's track: eviction walks it from the
-     /// front, giving an entry that was used since its last visit a second
-     /// chance (CLOCK). A full sort by timestamp on every eviction would be
-@@ -6090,11 +6101,32 @@ impl BlockMapCache {
-     pub(crate) fn new() -> Self {
-         Self {
-             entries: std::collections::HashMap::new(),
-+            generations: std::collections::HashMap::new(),
-             order: std::collections::VecDeque::new(),
-             bytes: 0,
-         }
-     }
- 
-+    /// The generation `id` is at: a reader that mapped the block under this
-+    /// value may cache it, one that mapped it under an older value must not.
-+    pub(crate) fn generation(&self, id: &storage::format::BlockId) -> u64 {
-+        self.generations.get(id).copied().unwrap_or(0)
-+    }
-+
-+    /// Marks `id` as rewritten: bumps its generation and drops the mapping the
-+    /// cache holds, so the next read maps the files the write just landed.
-+    ///
-+    /// Called **after** the files are written: a reader that opened the
-+    /// directory while the write was in flight discovers the bump when it tries
-+    /// to insert and re-opens instead of caching a half-written block.
-+    pub(crate) fn bump_generation(&mut self, id: storage::format::BlockId) -> u64 {
-+        let next = self.generations.entry(id).or_insert(0);
-+        *next += 1;
-+        let next = *next;
-+        self.remove(&id);
-+        next
-+    }
-+
-     /// The mapping for `id`, marked as used since the clock hand last passed.
-     pub(crate) fn get(&mut self, id: &storage::format::BlockId) -> Option<Arc<MappedBlock>> {
-         let entry = self.entries.get_mut(id)?;
-@@ -6219,6 +6251,9 @@ impl BlockMapCache {
-         for id in stale {
-             self.remove(&id);
-         }
-+        // A table that is being dropped (or rebuilt under new block ids) has no
-+        // generation worth remembering.
-+        self.generations.retain(|id, _| id.table_id != table_id);
-         // Keep the hand's track from filling with ids that no longer resolve.
-         self.order.retain(|id| self.entries.contains_key(id));
-     }
-@@ -8649,15 +8684,24 @@ impl RowFulltextProvider<'_> {
- 
-     /// C++ `ColumnIndexReader::Lookup(term, false)`: the row ids whose documents
-     /// contain `term`, with stale copies of re-indexed rows removed.
--    pub(crate) fn index_postings(&self, term: &str) -> Option<std::collections::HashSet<usize>> {
--        let (index, tokenizer) = self.index?;
--        self.row_ids?;
--        let guard = index.try_read().ok()?;
-+    pub(crate) fn index_postings(&self, term: &str) -> TermPostings {
-+        let Some((index, tokenizer)) = self.index else {
-+            return TermPostings::Unusable;
-+        };
-+        if self.row_ids.is_none() {
-+            return TermPostings::Unusable;
-+        }
-+        // A miss here is a writer indexing this column right now. It is not the
-+        // same thing as "this column cannot answer", and the caller has to tell
-+        // the two apart (see [`TermPostings`]).
-+        let Ok(guard) = index.try_read() else {
-+            return TermPostings::Busy;
-+        };
-         if &guard.tokenizer != tokenizer {
--            return None;
-+            return TermPostings::Unusable;
-         }
-         let merged = guard.merge(&[term.to_string()]);
--        Some(
-+        TermPostings::Hits(
-             merged
-                 .postings
-                 .get(term)
-@@ -8666,19 +8710,61 @@ impl RowFulltextProvider<'_> {
-         )
-     }
- 
--    /// [`Self::index_postings`] over every form the analyzer emitted, or `None`
--    /// when this column has no inverted index to answer the filter.
--    fn analyzed_postings(&self, term: &str) -> Option<std::collections::HashSet<usize>> {
--        let mut out: Option<std::collections::HashSet<usize>> = None;
-+    /// [`Self::index_postings`] over every form the analyzer emitted.
-+    fn analyzed_postings(&self, term: &str) -> TermPostings {
-+        let mut out: std::collections::Hash
++    /// Kept for the statement paths that insert one row at a time; a bulk load
++    /// resolves the targets once and calls [`Self::insert_secondary_keys`].
+     pub(crate) fn insert_secondary_keys(
+         &self,
+         targets: &[SecondaryTarget],
 ```
 
-**File**: `rust_engine/crates/executor/src/engine/statements.rs` (modified, +10/-5)
+**File**: `rust_engine/crates/executor/src/engine/import.rs` (modified, +113/-75)
 ```diff
-@@ -644,21 +644,26 @@ impl Engine {
-         // The blocks next, then the WAL's rows on top: what the files carry is
-         // already applied, so the replay starts above the newest timestamp they
-         // hold (the reference's checkpoint record gives it the same floor).
--        let hydrated = engine.recover_blocks()?;
-+        // Per table: a block's `create` says which appends *that table's* files
-+        // already hold. One global floor was too high - the fastest table's
-+        // checkpoint raised it above another table's rows that were still only
-+        // in the append buffer, and the replay then skipped their tail
-+        // (`ix_08: 238 rows after restart, expected 325`).
-+        let floors = engine.recover_block_floors()?;
-         mark("recover_blocks");
-         // Two floors, because the two halves of a commit reach the disk in
-         // sequence: the KV batch is written first, the block in `CommitBottom`
-         // after. A record above `applied` (the newest checkpoint frame) still
--        // has KV work to do; a record above `hydrated` still has to reach a
--        // block.
-+        // has KV work to do; a record above its table's floor still has to reach
-+        // a block.
-         if wal_enabled {
-             let mut replayed_appends = Vec::new();
-             let mut replayed_deletes = Vec::new();
-             engine
-                 .txn
--                .recover_into(
-+                .recover_into_floors(
-                     applied,
--                    hydrated,
-+                    &floors,
-                     &mut replayed_appends,
-                     &mut replayed_deletes,
-                 )
-```
-
-**File**: `rust_engine/crates/executor/src/knn_scan.rs` (modified, +24/-24)
-```diff
-@@ -152,6 +152,24 @@ impl KnnProbe {
-     }
- }
- 
-+/// The index's answer, or `None` when it has nothing to say.
-+///
-+/// `None` sends the statement to the exact scan. An index that names no row at
-+/// all - a segment whose publication is in flight, a graph whose build holds the
-+/// lock, a probe that landed between two dumps - must not be read as "the table
-+/// has no matches". A search that answers nothing for a table that has rows is
-+/// the one failure a caller cannot notice or repair, so the empty answer is
-+/// handed back as "the index cannot help" and the rows are scored directly.
-+fn answered(candidates: HashSet<usize>, uncovered: Vec<usize>) -> Option<KnnProbe> {
-+    if candidates.is_empty() && uncovered.is_empty() {
-+        return None;
-+    }
-+    Some(KnnProbe {
-+        candidates,
-+        uncovered,
-+    })
-+}
-+
- /// Whether the index covers every live row.
- ///
- /// The HNSW path asks this as a *count*: labels are disjoint across segments
-@@ -384,10 +402,7 @@ impl Engine {
-             // leaf's slot page - tens of milliseconds at 200k rows and ~1 s at
-             // 2M - and this is the state of a table nobody deletes from.
-             if all_covered(q, members) {
--                return Some(KnnProbe {
--                    candidates,
--                    uncovered: Vec::new(),
--                });
-+                return answered(candidates, Vec::new());
-             }
-             // The counts disagree: the tree's own row list says exactly which
-             // rows it holds, and the rest are scored by the exact scan.
-@@ -397,10 +412,7 @@ impl Engine {
-                 covered.extend(tail.row_ids().into_iter().map(|id| id as usize));
-             }
-             let uncovered = self.uncovered_rows(q, &covered);
--            return Some(KnnProbe {
--                candidates,
--                uncovered,
--            });
-+            return answered(candidates, uncovered);
-         }
-         let ivf = {
-             let tables = self.tables.lock().unwrap();
-@@ -442,16 +454,10 @@ impl Engine {
-             // Rows written after the mirror are not covered; only those are
-             // read by the exact scan, not the table.
-             if covers_set(q, &covered) {
--                return Some(KnnProbe {
--                    candidates,
--                    uncovered: Vec::new(),
--                });
-+                return answered(candidates, Vec::new());
-             }
-             let uncovered = self.uncovered_rows(q, &covered);
--            return Some(KnnProbe {
--                candidates,
--                uncovered,
--            });
-+            return answered(candidates, uncovered);
-         }
-         // Sealed segments. `CREATE INDEX` builds the graph into the memory
-         // segment (`hnsw_mem`) and a checkpoint seals it into a chunk, so a
-@@ -560,10 +566,7 @@ impl Engine {
-             .map(|r| r as usize)
-             .collect();
-         if all_covered(q, labelled) {
--            return Some(KnnProbe {
--                candidates,
--                uncovered: Vec::new(),
--            });
-+            return answered(candidates, Vec::new());
-         }
-         // The counts disagree, so which rows are missing has to be answered with
-         // the labels themselves: a delete leaves its row in the graph (the
-@@ -579,10 +582,7 @@ impl Engine {
-             }
-         }
-         let uncovered = self.uncovered_rows(q, &covered);
--        Some(KnnProbe {
--            candidates,
--            uncovered,
--        })
-+        answered(candidates, uncovered)
-     }
- }
- 
-```
-
-**File**: `rust_engine/crates/executor/tests/index_combination_soak.rs` (added, +1156/-0)
-```diff
-@@ -0,0 +1,1156 @@
-+// Copyright(C) 2026 InfiniFlow, Inc. All rights reserved.
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//     https://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+//! Production-readiness soak: the five index families in **every combination**,
-+//! under concurrent writes, concurrent reads and restarts.
-+//!
-+//! The five families are the ones a deployment can put on one table at once:
-+//!
-+//! | bit | family | SQL | answered by |
-+//! |---|---|---|---|
-+//! | `FT` | full text | `CREATE INDEX … USING FULLTEXT` | `WHERE filter_text(body, …)` / `SEARCH MATCH TEXT` |
-+//! | `SEC` | secondary | `CREATE INDEX … (c1)` | `WHERE c1 = k` |
-+//! | `HNSW` | graph ANN on `EMBEDDING` | `… USING HNSW` | `SEARCH MATCH VECTOR (v, …)` |
-+//! | `SPANN` | IVF/tree ANN on `EMBEDDING` | `… USING SPANN` | `SEARCH MATCH VECTOR (sv, …)` |
-+//! | `PLAID` | tensor index on `TENSOR` | `… USING PLAID` | `SEARCH MATCH TENSOR (tb, …)` |
-+//!
-+//! Our engine has no ScaNN: the fifth family named in the plan ("scann") is
-+//! `SPANN`, the ANN index for an `EMBEDDING` column. `HNSW` and `SPANN` are kept
-+//! apart by putting them on two columns, because one column carries one ANN
-+//! index.
-+//!
-+//! ## What a round does
-+//!
-+//! 1. **Preload** `rows / 4` rows sequentially and sanity-check every index on
-+//!    them. This prefix is what the readers below may sample from: it is
-+//!    committed and indexed before the concurrency starts, so a missing answer
-+//!    is a bug and not a race the test invented.
-+//! 2. **Concurrent write phase**: `writers` tasks pull disjoint id ranges from
-+//!    one job queue and `INSERT` them in batches, while `readers` tasks sample
-+//!    the stable prefix and ask every index of the table for that row, and one
-+//!    task runs `FLUSH DATA` (`Engine::flush`) on a timer - so checkpointing,
-+//!    chunk publishing (`memindex_capacity`/PLAID chunk target are set small on
-+//!    purpose) and index maintenance all happen *under* the reads.
-+//! 3. **Crash**: the engine is dropped without `close()`: no checkpoint, no
-+//!    drain, exactly what `kill -9` leaves behind (WAL frames and mmap'd pages
-+//!    only). This is the same "the kill: no checkpoint, no drain" shape as
-+//!    `restart_checkpoint.rs`; the real process kill -9 lane is
-+//!    `rust_engine/scripts/soak_kill9.sh`.
-+//! 4. **Reopen on the same directory** and assert, for every table and every
-+//!    index it carries: every acknowledged row is present exactly once
-+//!    (`COUNT(*)`, `SUM(id)`, `MIN`/`MAX`), the newest rows are visible, and a
-+//!    self-query through each index answers the row itself.
-+//!
-+//! Every acknowledged row is a committed statement, so `COUNT(*) == SUM` of the
-+//! claimed ids is exact: ids are handed out as contiguous ranges, count + sum +
-+//! min/max together catch a lost row, a row twice, and a hole.
-+//!
-+//! ## Scale
-+//!
-+//! Both lanes are ordinary tests and run in `cargo test --workspace`; together
-+//! they cost about two minutes in a debug build (6.5 k rows per table over three
-+//! restarts in one, 31 tables in the other). The knobs scale them without
-+//! touching the code - the numbers below are past what CI runs:
-+//!
-+//! ```text
-+//! cargo test -p executor --test index_combination_soak -- --nocapture
-+//!
-+//! INDEX_SOAK_ROWS=4000 INDEX_SOAK_ROUNDS=5 INDEX_SOAK_BATCH=256 \
-+//! INDEX_SOAK_WRITERS=16 INDEX_SOAK_READERS=24 \
-+//!   cargo test -p executor --test index_combination_soak -- --nocapture
-+//! ```
-+//!
-+//! ## What this caught
-+//!
-+//! Six defects, all found by the checks below and all fixed in the engine
-+//! (`filter_text_pushdown_is_wrong_under_concurrent_writes` is the regression
-+//! test for the first; the rest are what the two lanes assert):
-+//!
-+//! 1. **`WHERE filter_text(…)` matched the whole table while a writer ran.**
-+//!    `RowFulltextProvider::postings` fell back to "keep every row" when
-+//!    `try_read` on the text index missed (an `INSERT` indexing the same column
-+//!    holds it), and there is no residual predicate to correct that. Fixed by
-+//!    deciding such rows from their own text (`RowFulltextProvider::local_hit`),
-+//!    with `TermPostings::Unusable` kept for the static cases (no index, no ids,
-+//!    another analyzer) where the residual does exist.
-+//! 2. **A block written by a checkpoint could hold rows whose column values read
-+//!    as `NULL`.**
-+//!
-+//!    ```text
-+//!    COUNT(*)                                    -> 1800
-+//!    COUNT(*) WHERE id >= 0            
-```
-
-**File**: `rust_engine/crates/txn/src/lib.rs` (modified, +46/-5)
-```diff
-@@ -1298,6 +1298,42 @@ impl TxnManager {
-         appends: &mut Vec<ReplayedAppend>,
-         deletes: &mut Vec<ReplayedDelete>,
-     ) -> Result<usize> {
-+        // One floor for every table: the shape a caller with no per-table
-+        // information has (a test). An engine reopen uses
-+        // [`Self::recover_into_floors`], which knows each table's own floor.
-+        self.recover_into_floors(
-+            checkpoint_ts,
-+            &[(String::new(), block_floor)].into_iter().collect(),
-+            appends,
-+            deletes,
-+        )
-+        .await
-+    }
-+
-+    /// [`Self::recover_into`] with a floor **per table**.
-+    ///
-+    /// A block's `create` timestamp says what that table's files already hold;
-+    /// it says nothing about any other table. Folding them into one number
-+    /// takes the maximum, i.e. the fastest table's progress, and every slower
-+    /// table's tail above it was silently skipped on the next open.
-+    ///
-+    /// A table missing from `block_floors` replays from zero: nothing proved its
-+    /// rows are in a block, and re-adding a row that is already there is a
-+    /// duplicate the next checkpoint merges by slot, while skipping one is a
-+    /// lost row.
-+    pub async fn recover_into_floors(
-+        &self,
-+        checkpoint_ts: TxnTimeStamp,
-+        block_floors: &std::collections::HashMap<String, TxnTimeStamp>,
-+        appends: &mut Vec<ReplayedAppend>,
-+        deletes: &mut Vec<ReplayedDelete>,
-+    ) -> Result<usize> {
-+        let table_floor = |table: &str| -> TxnTimeStamp {
-+            block_floors
-+                .get(table)
-+                .copied()
-+                .unwrap_or_else(|| block_floors.get("").copied().unwrap_or(0))
-+        };
-         let mut applied = 0;
-         // A sealed segment's name carries the timestamp it was sealed at, and
-         // every record inside it is at or below that, so a segment both floors
-@@ -1317,7 +1353,9 @@ impl TxnManager {
-         // that held them was sealed with a ts the frame covers, and their blocks
-         // were never written (`test_insert_checkpoint`: one 8192-row batch lost
-         // on the restart after each checkpoint).
--        let floor = checkpoint_ts.min(block_floor);
-+        // The *lowest* table floor, so a segment is only skipped when every
-+        // table's files really do cover its records.
-+        let floor = checkpoint_ts.min(block_floors.values().copied().min().unwrap_or(0));
-         let covered: std::collections::HashSet<std::path::PathBuf> =
-             sealed_segments(&self.wal_path)?
-                 .into_iter()
-@@ -1333,9 +1371,12 @@ impl TxnManager {
-                 let Some(entry) = iter.next() else {
-                     break; // torn / corrupt tail
-                 };
-+                // Per record: the row commands name their table, so the block
-+                // floor is looked up there. The entry-level skip below only
-+                // takes the cheap way out when *no* table can still need it.
-                 let for_kv = entry.commit_ts > checkpoint_ts;
--                let for_blocks = entry.commit_ts > block_floor;
--                if !for_kv && !for_blocks {
-+                let for_any_blocks = entry.commit_ts > floor;
-+                if !for_kv && !for_any_blocks {
+@@ -404,14 +404,25 @@ impl Engine {
+                     }
                      continue;
                  }
-                 let mut writes = Vec::new();
-@@ -1350,7 +1391,7 @@ impl TxnManager {
-                             ..
-                         } => {
-                             // Rows live in the block, never in a `row:` key.
--                            if for_blocks {
-+                            if entry.commit_ts > table_floor(&join_table(db_name, table_name)) {
-                                 appends.push(ReplayedAppend {
-                                     table: join_table(db_name, table_name),
-                                     table_id: table_id.parse().unwrap_or(u64::MAX),
-@@ -1368,7 +1409,7 @@ impl TxnManager {
-                         } => {
-                             // The tombstone is the block's `version`; the KV
-                             // keeps no `del:` key.
--                            if for_blocks {
-+                            if entry.commit_ts > table_floor(&join_table(db_name, table_name)) {
-                                 deletes.push(ReplayedDelete {
-                                     table: join_table(db_name, table_name),
-                                     table_id: table_id.parse().unwrap_or(u64::MAX),
-```
-
----
-
-### Incident Patch 2: `09e5ba09` (2026-11-23)
-**Commit Message**: fix a series of rust_engine issues (#3583)
-
-- Bugs of Go SDK of Tensor
-- Cross platform of embedded-ffi
-- Improved SMVE
-- Plaid scoring issues
-- min should match syntax for full text
-
-**File**: `go/query_builder.go` (modified, +15/-2)
-```diff
-@@ -1092,10 +1092,23 @@ func makeMatchTensorExpr(
- 	columnExpr.ColumnName = []string{vectorColumnName}
- 	columnExpr.Star = false
- 
--	// Create embedding data - flatten tensor to array for storage
-+	// Create embedding data - flatten the tensor into one array. `tensorData`
-+	// holds one row per token for the multi-vector shapes, and the engine
-+	// splits the buffer by the column's dimension, so every token has to be
-+	// present: writing only `tensorData[0]` silently reduced a multi-token
-+	// query to its first token, and MaxSim then summed a single row and ranked
-+	// every document by a one-token match.
- 	data := thriftapi.NewEmbeddingData()
- 	if len(tensorData) > 0 {
--		data.F64ArrayValue = tensorData[0]
-+		if len(tensorData) == 1 {
-+			data.F64ArrayValue = tensorData[0]
-+		} else {
-+			flat := make([]float64, 0, len(tensorData)*len(tensorData[0]))
-+			for _, row := range tensorData {
-+				flat = append(flat, row...)
-+			}
-+			data.F64ArrayValue = flat
-+		}
- 	}
- 
- 	matchTensorExpr := thriftapi.NewMatchTensorExpr()
-```
-
-**File**: `go/tests/query_builder_test.go` (modified, +36/-0)
-```diff
-@@ -526,6 +526,42 @@ func TestQueryBuilderMatchTensor(t *testing.T) {
- 	}
- }
- 
-+// TestMatchTensorKeepsEveryToken guards a multi-vector query's shape.
-+//
-+// `[][]float32` carries one row per token, and the engine splits the flattened
-+// buffer by the column's dimension, so every row has to reach `EmbeddingData`.
-+// Writing only `tensorData[0]` turned a multi-token query into a single-token
-+// one; MaxSim then summed one row, every document was ranked by a one-token
-+// match, and the loss showed up as a recall collapse rather than an error.
-+func TestMatchTensorKeepsEveryToken(t *testing.T) {
-+	tokens := [][]float32{
-+		{0.1, 0.2, 0.3},
-+		{0.4, 0.5, 0.6},
-+		{0.7, 0.8, 0.9},
-+	}
-+	qb := infinity.NewQueryBuilder()
-+	if _, err := qb.MatchTensor("tensor_col", tokens, "float", 10, nil); err != nil {
-+		t.Fatalf("MatchTensor failed: %v", err)
-+	}
-+
-+	expr := qb.GetSearch().MatchExprs[0].MatchTensorExpr
-+	if expr == nil || expr.EmbeddingData == nil {
-+		t.Fatal("MatchTensorExpr / EmbeddingData should not be nil")
-+	}
-+	want := len(tokens) * len(tokens[0])
-+	if got := len(expr.EmbeddingData.F64ArrayValue); got != want {
-+		t.Fatalf("embedding data holds %d values, want %d (one row per token)", got, want)
-+	}
-+	for i, token := range tokens {
-+		for j, value := range token {
-+			got := expr.EmbeddingData.F64ArrayValue[i*len(token)+j]
-+			if got != float64(value) {
-+				t.Fatalf("value[%d][%d] = %v, want %v", i, j, got, value)
-+			}
-+		}
-+	}
-+}
-+
- // TestQueryBuilderFusion tests the Fusion method
- func TestQueryBuilderFusion(t *testing.T) {
- 	qb := infinity.NewQueryBuilder()
-```
-
-**File**: `rust_engine/crates/embedded-ffi/src/lib.rs` (modified, +202/-140)
-```diff
-@@ -16,39 +16,50 @@
- //!
- //! A local client (rgrep's daemon) does not want a server to install, a port to
- //! pick or a supervisor to keep the two in step. It wants one process whose
--//! lifetime is its own. This crate is that: `inf_embedded_start` opens the
--//! engine on a directory, serves the ordinary thrift front end on a **unix
--//! socket** inside that directory, and `inf_embedded_stop` closes both.
-+//! lifetime is its own. This crate is that: an entry point opens the engine on a
-+//! directory, serves the ordinary thrift front end on an endpoint inside that
-+//! directory (or on a loopback port), and the matching stop closes both.
-+//!
-+//! Two entry points, because a socket path is not portable:
-+//!
-+//! * [`inf_embedded_start`] binds a unix socket (`cfg(unix)` only). rgrep's
-+//!   daemon uses it.
-+//! * [`inf_embedded_start_tcp`] binds `127.0.0.1:0` and reports the assigned
-+//!   port. It is the cross-platform entry point: Windows has no usable
-+//!   `tokio::net::UnixListener`, and a loopback port also lets a host whose
-+//!   unix-socket path budget is small (`sun_path` is 104 bytes on macOS) avoid
-+//!   the limit entirely.
- //!
- //! Why a socket rather than a direct call: everything above the transport -
- //! thrift framing, the session table, every statement arm, the panic boundary -
--//! already exists in `server`, and a client that speaks thrift over a unix
--//! socket is the *same* client code as one that speaks it over TCP (the Go SDK
--//! only swaps its dialer). A function-call ABI would have meant a second
--//! statement path to keep in step with the first.
-+//! already exists in `server`, and a client that speaks thrift over a socket is
-+//! the *same* client code as one that speaks it over TCP (the Go SDK only swaps
-+//! its dialer). A function-call ABI would have meant a second statement path to
-+//! keep in step with the first.
- //!
--//! Ownership: the handle returned by `inf_embedded_start` owns the runtime
--//! thread and the socket file; `inf_embedded_stop` joins that thread, removes
--//! the file and releases the engine, after which the data directory can be
--//! reopened. Every entry point catches panics - a panic must never unwind
--//! across the FFI boundary.
-+//! Ownership: the handle returned by a start owns the runtime thread and the
-+//! socket file; the stop joins that thread, removes the file and releases the
-+//! engine, after which the data directory can be reopened. Every entry point
-+//! catches panics - a panic must never unwind across the FFI boundary.
- 
- #![allow(non_camel_case_types)]
- 
- use std::ffi::{c_char, c_int, CStr, CString};
- use std::panic::{catch_unwind, AssertUnwindSafe};
- use std::ptr;
- use std::sync::mpsc;
-+use std::sync::Arc;
- use std::time::Duration;
- 
- use executor::Engine;
- use server::Server;
- 
--/// A running engine plus the thread serving its socket.
-+/// A running engine plus the thread serving its endpoint.
- pub struct InfEmbedded {
--    /// The socket path, kept as a `CString` so `inf_embedded_addr` can hand out
--    /// a pointer that lives as long as the handle.
--    socket: CString,
-+    /// The endpoint, kept as a `CString` so `inf_embedded_addr` can hand out a
-+    /// pointer that lives as long as the handle: a socket path for the unix
-+    /// entry point, `host:port` for the TCP one.
-+    addr: CString,
-     stop: Option<tokio::sync::oneshot::Sender<()>>,
-     join: Option<std::thread::JoinHandle<()>>,
- }
-@@ -89,7 +100,113 @@ unsafe fn c_str<'a>(p: *const c_char, what: &str) -> Result<&'a str, String> {
-         .map_err(|_| format!("{what} is not valid UTF-8"))
- }
- 
--/// Opens `data_dir` and serves the thrift API on `socket_path`.
-+/// Opens the engine and serves it on whatever `bind` returns.
-+///
-+/// `socket_cleanup` is the path the serving thread unlinks on its way out; the
-+/// TCP entry point passes none. `bind` runs inside the runtime's context, which
-+/// `install_engine_handle` requires.
-+fn boot(
-+    data_dir: &str,
-+    socket_cleanup: Option<std::path::PathBuf>,
-+    bind: impl FnOnce(Arc<Engine>) -> Result<(Server, String), String>,
-+) -> Result<InfEmbedded, String> {
-+    let runtime = tokio::runtime::Builder::new_multi_thread()
-+        .worker_threads(2)
-+        .enable_all()
-+        .thread_name("infinity-embedded")
-+        .build()
-+        .map_err(|e| format!("runtime: {e}"))?;
-+
-+    let engine = Arc::new(
-+        runtime
-+            .block_on(Engine::open_async(data_dir, Default::default()))
-+            .map_err(|e| format!("open {data_dir}: {e}"))?,
-+    );
-+
-+    // `[buffer] memindex_memory_quota`, which the CLI sets and this host did
-+    // not: `0` disables the dump trigger, so a tail was never sealed and
-+    // every query rebuilt the index from the rows instead of mapping a
-+    // chunk. A multi-vector row is ~48 KB, so a 62 k-unit table kept 3 GiB
-+    // of vectors resident and one query peaked at 8.2 GiB and still had to
-+    // brute-force its way through, because the structure that
-```
-
-**File**: `rust_engine/crates/executor/src/blocks/engine.rs` (modified, +37/-13)
-```diff
-@@ -8700,6 +8700,22 @@ impl Engine {
-     /// `None` when the column is not a tensor column: "looks like a tensor" is
-     /// then a property of the cell's *text*, which the caller has to read.
-     pub(crate) fn tensor_row_ids(&self, table: &str, col: usize) -> Option<Vec<u64>> {
-+        self.tensor_row_scan(table, col, false)
-+    }
-+
-+    /// How many rows hold a non-empty tensor, without rendering one of them.
+-                // One allocation per cell, not two: `normalize_cell` hands back
+-                // the field unchanged for the plain numeric/text cells that
++                // A text cell keeps the file's bytes (the reference stores the
++                // raw `string_view`), so only a parsed type is trimmed. One
++                // allocation per cell, not two: `normalize_cell_cow` hands the
++                // field back unchanged for the plain numeric/text cells that
+                 // make up most of a `COPY`.
+                 let mut cells: Vec<String> = fields
+                     .into_iter()
+-                    .map(|f| match normalize_cell_cow(&f) {
+-                        std::borrow::Cow::Borrowed(_) => f,
+-                        std::borrow::Cow::Owned(o) => o,
++                    .enumerate()
++                    .map(|(i, f)| {
++                        let trim = types_for_scan
++                            .get(i)
++                            .is_none_or(|t| !super::types::is_text_type(t));
++                        let normalize_vector = types_for_scan.get(i).is_none_or(|t| {
++                            !super::types::is_text_type(t) && !super::types::is_json_type(t)
++                        });
++                        match super::state::normalize_csv_cell_cow(&f, trim, normalize_vector) {
++                            std::borrow::Cow::Borrowed(_) => f,
++                            std::borrow::Cow::Owned(o) => o,
++                        }
+                     })
+                     .collect();
+                 if cells.len() > types_for_scan.len() {
+@@ -525,6 +536,19 @@ impl Engine {
+                         for (seq, texts) in &texts_by_row {
+                             self.note_ivf_insert(table, *seq as u64, texts);
+                         }
++                        // `PopulateFtIndexInner` checks the row capacity after
++                        // **every block** it inserts and dumps the moment an
++                        // index holds `mem_index_capacity` rows
++                        // (`new_txn_index_impl.cpp:1406`), then starts a fresh
++                        // memory indexer for the rest. The chunk boundaries an
++                        // import leaves are therefore fixed by the row count,
++                        // not by where the statement ends - a 100 k-row file
++                        // with the default 65,536 comes out as 65,536 + 34,464
++                        // on both engines. Sealing only once at the end wrote a
++                        // single chunk instead, which merged the two indexes'
++                        // dictionaries into one and made the on-disk layout
++                        // differ from the reference's.
++                        self.seal_text_over_capacity(table).await;
+                     }
+                     total += take;
+                     staged += take;
+@@ -609,6 +633,13 @@ impl Engine {
+     /// Inserts one row per JSON object (keyed by column name). Sparse columns
+     /// come as `{index: value}` objects (float) or index arrays (bit);
+     /// everything else is a scalar.
 +    ///
-+    /// The chunk writer counts a document per parsed tensor (`for_each_tensor_doc`
-+    /// drops an empty `[]`), so this is the count a chunk's `doc_num` has to be
-+    /// compared with. It reads the slot word's count half and the null bitmap -
-+    /// the same verdict, no formatting, no outline access.
-+    pub(crate) fn tensor_doc_count(&self, table: &str, col: usize) -> u64 {
-+        self.tensor_row_scan(table, col, true)
-+            .map(|ids| ids.len() as u64)
-+            .unwrap_or(0)
-+    }
-+
-+    fn tensor_row_scan(&self, table: &str, col: usize, non_empty_only: bool) -> Option<Vec<u64>> {
-         let table = self.qualified_table(table);
-         let meta = self.storage.catalog.get_table_by_name(&table).ok()??;
-         let type_text = meta.types.get(col)?;
-@@ -8739,18 +8755,24 @@ impl Engine {
-                 {
-                     continue;
-                 }
--                // A slot that exists always renders, but an empty tensor
--                // (`[]`, count 0) is not a document and the chunk writer never
--                // counted it. The count is the low half of the slot word.
--                let Some(word) = data.get(slot * 8..slot * 8 + 8) else {
--                    continue;
--                };
--                let Ok(word) = <[u8; 8]>::try_from(word) else {
--                    continue;
--                };
--                if u64::from_le_bytes(word) & 0xffff == 0 {
--                    continue;
-+                if non_empty_only {
-+                    // The count is the low half of the slot word.
-+                    let Some(word) = data.get(slot * 8..slot * 8 + 8) else {
-+                        continue;
-+                    };
-+                    let Ok(word) = <[u8; 8]>::try_from(word) else {
-+                        continue;
-+                    };
-+                    if u64::from_le_bytes(word) & 0xffff == 0 {
-+                        continue;
-+                    }
-                 }
-+                // A slot that is present counts, even when its tensor is empty:
-+                // the list is the document *sequence* a chunk's `base_row_id`
-+                // indexes into, so it has to keep the same positions the writer
-+                // saw. Empty documents are dropped when the chunk is built, not
-+                // here - a shorter list would make `docs < seqs.len()` fail and
-+                // turn every open into a rebuild.
-                 let seq = ((id.segment_id as usize) << 32)
-                     | (id.block_id as usize * DEFAULT_BLOCK_CAPACITY + slot);
-                 if !dead.contains(seq as u64) {
-@@ -8769,8 +8791,10 @@ impl Engine {
-                 continue;
-             };
-             let text = text.trim();
--            // `[]` is an empty tensor: the writer never counted it either.
--            if text.len() > 2 && text.starts_with('[') && text.ends_with(']') {
-+            // `[]` is an empty tensor: it keeps its position in the document
-+            // sequence, but it is not a document the chunk writer counted.
-+            let shaped = text.starts_with('[') && text.ends_with(']');
-+            if shaped && (!non_empty_only || text.len() > 2) {
-                 out.push(seq as u64);
-             }
++    /// The rows then take [`Self::import_literal_rows`], the same commit every
++    /// other `COPY` format uses. This used to commit them here instead, with a
++    /// hand-written transaction that published the rows but never wrote their
++    /// block: `COPY … FORMAT JSONL` left chunks on disk and no `seg_0`, so the
++    /// rows read back fine until the process restarted and then `count(*)` was
++    /// 0 while `CSV` was unaffected (a silent loss of the whole file).
+     pub(crate) async fn insert_json_objects(
+         &self,
+         table: &str,
+@@ -675,55 +706,8 @@ impl Engine {
+         if rows.is_empty() {
+             return Ok(QueryResult::Inserted { count: 0 });
          }
+-        let opened = self.begin_import(table).await?;
+-        let (range, _cursor) = self.reserve_import_rows(table, rows.len(), opened).await?;
+-        let base = range.base;
+-        self.note_index_insert(table, rows.len());
+-        let mut t = self.txn.begin();
+-        t.set_op(TxnOp::Import {
+-            table: table.to_string(),
+-        });
+-        // `PrepareCommitImport` seals the segment and writes its rows into the
+-        // block as part of the transaction, after it commits.
+-        let turn = self.txn.reserve_commit_ts();
+-        let ts = turn.ts();
+-        let _ts = self.txn.commit_at_deferred(t, ts).await?;
+-        let _visible = BottomGuard::new(&self.txn, _ts);
+-        self.note_append(table, rows.len(), true, Some(_ts));
+-        self.note_import_ts(table, (base >> 32) as u32, _ts);
+-        self.publish_rows(table, base, &rows)?;
+-        let schema = self.table_schema(table).unwrap_or_default();
+-        // `NewTxn::Import`: the indexes are populated once, at the end of the
+-        // transaction, not by the appen
 ```
 
-**File**: `rust_engine/crates/executor/src/engine/index_build.rs` (modified, +73/-4)
+**File**: `rust_engine/crates/executor/src/engine/index_build.rs` (modified, +45/-0)
 ```diff
-@@ -1379,9 +1379,7 @@ impl Engine {
-             else {
-                 return false;
-             };
--            self.tensor_row_ids(table, ci)
--                .map(|ids| ids.len() as u64)
--                .unwrap_or(0)
-+            self.tensor_doc_count(table, ci)
-         } else {
-             // IVF: the writer's coverage is `column_vectors`, which skips a
-             // NULL or unparseable cell. Comparing against the table's row count
-@@ -4216,7 +4214,16 @@ impl Engine {
-             .get(&key)
-             .and_then(|e| e.mv.get(&index_id).cloned());
-         if let Some(shared) = shared {
--            shared.write().unwrap().seal();
-+            let mut guard = shared.write().unwrap();
-+            // An SMVE column keeps its codes in memory only, so the tail is the
-+            // only place they can come from. Building them here - before `seal`
-+            // takes the tail - is also what keeps `wants_emvb_chunk`
-+            // (`plaid.is_none() && smve.is_none()`) false: without this, a
-+            // checkpoint paid a full EMVB prefilter build over every token of
-+            // the column (measured: >25 min of one core on 62 k units) for an
-+            // index the SMVE search never consults.
-+            guard.build_smve();
-+            guard.seal();
+@@ -1947,6 +1947,51 @@ impl Engine {
          }
      }
  
-@@ -4568,6 +4575,67 @@ impl Engine {
-         }
-     }
- 
-+    /// Fills a table's analyzer maps from the catalog's index records.
++    /// Seals every full-text index of `table` that has reached
++    /// `mem_index_capacity` rows.
 +    ///
-+    /// `CREATE INDEX … WITH (analyzer=…)` is the only writer of `analyzers`,
-+    /// `analyzers_by_index` and `column_index_analyzers`, so a reopened process
-+    /// starts with all three empty: `index_tokenizer` then fell back to the
-+    /// default analyzer, and an index rebuilt from the persisted rows
-+    /// re-tokenised every row with it. That silently changed the answer of a
-+    /// `ngram`/`ik`/`rag-chinese` column and dropped the doc payload of a
-+    /// `rankfeatures` one. Each `FULLTEXT` record keeps its analyzer in its
-+    /// catalog `options`, so the maps are rebuilt from there once per table.
-+    pub(crate) fn hydrate_analyzers(&self, table: &str) {
++    /// This is the reference's in-loop dump: `PopulateFtIndexInner` inserts one
++    /// block at a time and, after each, checks
++    /// `memory_indexer->GetRowCount() >= mem_index_capacity`, dumps, and starts
++    /// a new memory indexer (`new_txn_index_impl.cpp:1400-1425`). An import
++    /// therefore leaves one chunk per full capacity worth of rows, and the
++    /// chunk boundaries depend only on the row count. Sealing a single time
++    /// once the statement ended produced one merged chunk instead, so the same
++    /// file laid out differently from the reference's.
++    ///
++    /// Called from the import's staging loop; `capacity == 0` (the option
++    /// turns the trigger off) leaves the whole tail for the end-of-import seal.
++    pub(crate) async fn seal_text_over_capacity(&self, table: &str) {
++        let capacity = self.memindex_capacity();
++        if capacity == 0 {
++            return;
++        }
 +        let key = self.table_key(table);
-+        let loaded = self
++        let full: Vec<(u64, SharedTextIndex)> = self
 +            .tables
 +            .lock()
 +            .unwrap()
 +            .get(&key)
-+            .is_some_and(|entry| entry.analyzers_loaded);
-+        if loaded {
-+            return;
-+        }
-+        let metas = self
-+            .storage
-+            .catalog
-+            .indexes_of_table(&self.qualified_table(table))
++            .map(|entry| {
++                entry
++                    .text
++                    .iter()
++                    .map(|(id, shared)| (*id, shared.clone()))
++                    .collect()
++            })
 +            .unwrap_or_default();
-+        let mut tables = self.tables.lock().unwrap();
-+        let entry = tables.entry(key).or_default();
-+        if entry.analyzers_loaded {
-+            return;
-+        }
-+        entry.analyzers_loaded = true;
-+        for meta in metas {
-+            if !meta.index_type.eq_ignore_ascii_case("FULLTEXT") {
++        for (index_id, shared) in full {
++            let reached = {
++                let index = shared.read().await;
++                index.should_seal(capacity)
++            };
++            if !reached {
 +                continue;
 +            }
-+            let Some(analyzer_name) = meta
-+                .options
-+                .iter()
-+                .find(|(key, _)| key.eq_ignore_ascii_case("analyzer"))
-+                .map(|(_, value)| value.clone())
-+            else {
-+                continue;
-+            };
-+            entry
-+                .analyzers_by_index
-+                .entry(meta.name.clone())
-+                .or_insert_with(|| analyzer_name.clone());
-+            entry
-+                .column_index_analyzers
-+                .entry(meta.column.clone())
-+                .or_default()
-+                .entry(meta.name.clone())
-+                .or_insert_with(|| analyzer_name.clone());
-+            entry
-+                .analyzers
-+                .entry(meta.column.clone())
-+                .or_insert_with(|| analyzer_name);
++            self.seal_text_index(table, index_id).await;
 +        }
 +    }
 +
-     /// The analyzer a query written against `column` is tokenised with.
+     /// Runs `publish` with the index directory's write gate held
+     /// ([`crate::engine::text_index::dir_gate`]).
      ///
-     /// C++ `SearchDriver::GetAnalyzerName`: a query that names no `@index`
-@@ -4576,6 +4644,7 @@ impl Engine {
-     /// column has both; only a column whose indexes are all sparse-gram falls
-     /// back to one of those.
-     pub(crate) fn column_analyzer_name(&self, table: &str, column: &str) -> Option<String> {
-+        self.hydrate_analyzers(table);
-         let key = self.table_key(table);
-         let guard = self.tables.lock().unwrap();
-         let entry = guard.get(&key)?;
 ```
 
-**File**: `rust_engine/crates/executor/src/engine/state.rs` (modified, +26/-0)
+**File**: `rust_engine/crates/executor/src/engine/state.rs` (modified, +619/-75)
 ```diff
-@@ -4110,6 +4110,25 @@ impl MultiVectorIndex {
-             );
-         }
-         if indexed {
-+            // The residual codes rank the shortlist; the column holds the
-+            // float32 tokens. `ExactScorer` re-scores the rows the probe
-+            // returned the way the SMVE branch does, which removes the code's
-+            // quantization error from the score the caller sees. It costs one
-+            // batch over `topn` rows (200 by default), and without it the
-+            // ranking carries `±0.1` per token at a coarse centroid budget:
-+            // an unrelated unit whose codes under-reconstruct their magnitude
-+            // wins the MaxSim outright.
-+            if let Some(rank) = exact.as_mut() {
-+                let rank: ExactScorer<'_> = &mut **rank;
-+                let seqs: Vec<u64> = hits.iter().map(|(seq, _)| *seq).collect();
-+                let scored: std::collections::HashMap<u64, f32> = rank(&seqs).into_iter().collect();
-+                for (seq, score) in hits.iter_mut() {
-+                    if let Some(exact) = scored.get(seq) {
-+                        *score = *exact;
-+                    }
-+                }
-+            }
-+
-             // A short answer is the probe's answer, not a missing table: IVF
-             // visited `n_ivf_probe` centroids and `centroid_score_threshold` may
-             // have dropped more, which is what the reference returns as well -
-@@ -4938,6 +4957,7 @@ impl Default for TableEntry {
-             analyzers: Default::default(),
-             imports: None,
-             analyzers_by_index: Default::default(),
-+            analyzers_loaded: false,
-             column_index_analyzers: Default::default(),
-             comments: Default::default(),
-             hnsw_mem: Default::default(),
-@@ -5344,6 +5364,12 @@ pub(crate) struct TableEntry {
-     pub(crate) imports: Option<Vec<(u32, u64, u64)>>,
-     /// Analyzer per index name: two indexes on one column may differ.
-     pub(crate) analyzers_by_index: HashMap<String, String>,
-+    /// Whether the three analyzer maps above were reconciled with the catalog.
-+    ///
-+    /// `CREATE INDEX` is their only writer, so a reopened process has them empty
-+    /// until the first `CREATE INDEX`; [`Self::hydrate_analyzers`] fills them once
-+    /// per table from the index records' `options`.
-+    pub(crate) analyzers_loaded: bool,
-     /// Every full-text index of a column, index name → analyzer, sorted by
-     /// index name (`SearchDriver::GetAnalyzerName` walks exactly this shape).
-     pub(crate) column_index_analyzers: HashMap<String, std::collections::BTreeMap<String, String>>,
-```
-
-**File**: `rust_engine/crates/executor/src/engine/statements.rs` (modified, +114/-74)
-```diff
-@@ -355,6 +355,10 @@ type BoxedMatch<'a> = std::pin::Pin<
-     Box<dyn std::future::Future<Output = Result<(Vec<Vec<Value>>, Vec<String>)>> + Send + 'a>,
- >;
- 
-+/// The groups `rank_features=<col>^<tag>^<weight>,…` names: the scoring
-+/// column's position in the schema, and the `(tag, weight)` pairs listed for it.
-+type RankFeatureGroups = Vec<(usize, Vec<(String, f64)>)>;
-+
- impl Engine {
-     /// Opens without a WAL: catalog writes are buffered behind an undo journal
-     /// and survive a reopen only if a checkpoint ran after they committed.
-@@ -2334,6 +2338,7 @@ impl Engine {
-     /// The analyzer recorded for the index named `index_name` on `table`, i.e.
-     /// the analyzer of the column that index covers.
-     pub(crate) fn analyzer_of_index(&self, table: &str, index_name: &str) -> Option<String> {
-+        self.hydrate_analyzers(table);
-         let key = self.table_key(table);
-         if let Some(a) = self
-             .tables
-@@ -2370,6 +2375,7 @@ impl Engine {
-         table: &str,
-         index_name: &str,
-     ) -> Option<String> {
-+        self.hydrate_analyzers(table);
-         let key = self.table_key(table);
-         self.tables
-             .lock()
-@@ -8528,36 +8534,25 @@ impl Engine {
-         // analysed into terms instead of being parsed. `TO BE OR NOT` with
-         // `operator=and` is four ANDed terms, not a boolean expression.
-         if !has_operator_opt && super::text_query::has_query_syntax(&query) {
--            // The tree path scores each leaf on its own: it has no BooleanWeight,
--            // batch-OR or rank-feature channel. Options only the WAND path
--            // implements are rejected instead of being silently dropped -
--            // answering a different question than the one asked is worse than an
--            // error.
--            let given = |name: &str| -> bool {
--                params
--                    .split(';')
--                    .filter_map(|p| p.split_once('='))
--                    .any(|(k, _)| k.trim().eq_ignore_ascii_case(name))
--            };
--            let unsupported = |name: &str| -> Error {
--                Error::Invalid(format!(
--                    "{name} is not supported with the query-string grammar \
--                     (a AND b / a OR b / column:term)"
--                ))
--            };
-+            // `similarity=boolean` has no definition on the tree path (it scores
-+            // each field separately and counts matched terms, which is the WAND
-+            // path's channel), so it stays an error instead of being silently
-+            // dropped.
-             if boolean {
--                return Err(unsupported("similarity=boolean"));
--            }
--            // `block_max` is not in this set: it only picks an early-termination
--            // algorithm (`EarlyTermAlgo`, `bound_select_statement_impl.cpp:169-190`)
--            // and every value yields the same result set. The tree path scores
--            // every candidate, which is `batch`/`false`; accepting the option
--            // keeps `compare` and the BMW spellings usable on a parsed query.
--            for name in ["minimum_should_match", "rank_features"] {
--                if given(name) {
--                    return Err(unsupported(name));
--                }
-+                return Err(Error::Invalid(
-+                    "similarity=boolean is not supported with the query-string grammar \
-+                     (a AND b / a OR b / column:term)"
-+                        .into(),
-+                ));
+@@ -313,7 +313,7 @@ pub(crate) fn innermost_groups(text: &str) -> Vec<Vec<String>> {
+             .collect()
+     } else {
+         let items: Vec<String> = inner
+-            .split(',')
++            .split(|c: char| c == ',' || c.is_ascii_whitespace())
+             .map(|s| s.trim().to_string())
+             .filter(|s| !s.is_empty())
+             .collect();
+@@ -2067,6 +2067,7 @@ impl std::hash::Hasher for FxHasher {
+ /// rather than a trait object because doc()/tf()/len() run once per visited
+ /// document inside the block-max WAND loop, where the indirect call was a
+ /// measurable share of the work.
++#[allow(clippy::large_enum_variant)]
+ pub(crate) enum Source<'a> {
+     /// The unsealed segment's memory tail: (row, tf, positions) plus the
+     /// document-length map.
+@@ -2192,9 +2193,10 @@ impl<'a> Source<'a> {
+                 lens.push(cur.doc_len_at(i));
              }
-+            // `minimum_should_match` is a count of matched root clauses, which
-+            // `MinimumShouldMatchIterator` answers over the query tree
-+            // (`minimum_should_match_iterator_impl.cpp`); `rank_features` is
-+            // added to each hit's score from the tag payloads, as the WAND path
-+            // does. `block_max` only picks an early-termination algorithm
-+            // (`bound_select_statement_impl.cpp:169-190`), so every value
-+            // yields the same rows; the tree path scores every candidate.
-+            let rank_features = self.parse_rank_features(table, &schema, &params)?;
-             // The predicate / `filter=` / `IN (…)` narrow the candidates before
-             // the tree ranks and truncates, exactly like the WAND path.
-             let dead = self.tombstone_set(table)?;
-@@ -8575,6 +8570,8 @@ impl Engine {
-                     threshold,
-                     (bm25_k1, bm25_b),
-                     allowed.as_ref(),
-+                    super::state::search_option(&params, "minimum_should_match").as_deref(),
-+                    &rank_features,
-                 )
-                 .await?
-             {
-@@ -8597,52 +8594,8 @@ impl Engine {
-                 return Ok((out, hidden.to_vec()));
-             }
+             cur.skip(n);
+-            // The block is consumed; only `doc()` can say whether another one
+-            // follows (`skip` does not cross blocks, `block()` is now empty).
+-            let ended = cur.doc().is_none();
++            // Do not eagerly decode the next block via `cur.doc()`: if the
++            // caller hops past it with `skip_block_shallow`, decoding it here
++            // would be wasted work.
++            let ended = cur.is_exhausted();
+             return (n, ended);
          }
--        // `rank_features=<col>^<tag>^<weight>,…`: each document's `<col>` value is
--        // a JSON array of `{"<tag>": <number>}` objects (its index uses the
--        // `r
-```
-
-**File**: `rust_engine/crates/executor/src/engine/tests_ut.rs` (modified, +63/-0)
-```diff
-@@ -11211,6 +11211,69 @@ mod tests {
-         assert!((pick(&sealed, "2") - pick(&ranked, "2")).abs() < 1e-4);
+         let mut n = 0;
+@@ -2218,6 +2220,12 @@ impl<'a> Source<'a> {
+         (n, self.doc().is_none())
      }
  
-+    /// A reopened directory must keep the analyzer each full-text record was
-+    /// created with.
-+    ///
-+    /// The analyzer maps are written only by `CREATE INDEX`, so a cold handle had
-+    /// them empty: `index_tokenizer` fell back to the default tokeniser, and an
-+    /// index rebuilt from the persisted rows re-tokenised every row with it. A
-+    /// `ngram-3` column then answered nothing (the row became one token `abcdef`
-+    /// while the query asks for `bcd`), and a `rankfeatures` one lost its doc
-+    /// payload. Both records keep the analyzer in their catalog `options`, which
-+    /// `hydrate_analyzers` reads back.
-+    #[tokio::test]
-+    async fn a_reopened_table_keeps_its_recorded_analyzer() {
-+        let dir = tempdir().unwrap();
-+        let e = Engine::open_async(dir.path(), Default::default())
-+            .await
-+            .unwrap();
-+        e.execute("CREATE TABLE rz (id INT, body VARCHAR, feat VARCHAR);")
-+            .await
-+            .unwrap();
-+        e.execute(
-+            "INSERT INTO rz VALUES (1,'abcdef','[{\"Tag1\":1}]'),\
-+             (2,'abcdef','[{\"Tag1\":2}]');",
-+        )
-+        .await
-+        .unwrap();
-+        e.execute("CREATE INDEX rz_body ON rz (body) USING FULLTEXT WITH (analyzer='ngram-3');")
-+            .await
-+            .unwrap();
-+        e.execute(
-+            "CREATE INDEX rz_feat ON rz (feat) USING FULLTEXT WITH (analyzer='rankfeatures');",
-+        )
-+        .await
-+        .unwrap();
-+        let query = "SELECT id, SCORE() FROM rz SEARCH MATCH TEXT \
-+                     ('body','bcd','topn=10;rank_features=feat^Tag1^1');";
-+        let warm = rows(&e, query).await;
-+        assert_eq!(
-+            warm.len(),
-+            2,
-+            "ngram-3 must match the middle 3-gram: {warm:?}"
-+        );
-+
-+        drop(e);
-+        let reopened = Engine::open_async(dir.path(), Default::default())
-+            .await
-+            .unwrap();
-+        let cold = rows(&reopened, query).await;
-+        assert_eq!(
-+            cold.len(),
-+            2,
-+            "a reopened table must keep the ngram-3 analyzer: {cold:?}"
-+        );
-+        let pick = |rs: &[Vec<String>], id: &str| -> f64 {
-+            rs.iter()
-+                .find(|r| r[0] == id)
-+                .unwrap_or_else(|| panic!("id {id} missing: {rs:?}"))[1]
-+                .parse()
-+                .unwrap()
-+        };
-+        assert!((pick(&cold, "1") - pick(&warm, "1")).abs() < 1e-4);
-+        assert!((pick(&cold, "2") - pick(&warm, "2")).abs() < 1e-4);
++    pub(crate) fn disable_positions(&mut self) {
++        if let Source::Segment(cur) = self {
++            cur.disable_positions();
++        }
 +    }
 +
-     /// A phrase, a multi-token clause under `operator=and`, and a boolean
-     /// similarity query answer from the index's postings and position lists: no
-     /// row is re-tokenised (`MATCH_ROWS_TOKENIZED` stays 0), which is what the
+     pub(crate) fn advance(&mut self, target: u64) {
+         match self {
+             Source::Mem { list, at, .. } => {
+@@ -2234,6 +2242,32 @@ impl<'a> Source<'a> {
+         }
+     }
+ 
++    /// `NextShallow` for one source: move the block cursor to the block holding
++    /// `target` without decoding it. `Some(true)` moved, `Some(false)` could not
++    /// (needs the in-block walk), `None` exhausted.
++    pub(crate) fn skip_block_shallow(&mut self, target: u64) -> Option<bool> {
++        match self {
++            Source::Segment(cur) => cur.skip_block_shallow(target),
++            Source::Mem { .. } | Source::Owned { .. } => Some(false),
++        }
++    }
++
++    /// `BlockLastDocID()` from the skip list, without decoding the block.
++    pub(crate) fn block_last_shallow(&mut self) -> Option<u64> {
++        match self {
++            Source::Segment(cur) => cur.block_last_only(),
++            Source::Mem { .. } | Source::Owned { .. } => None,
++        }
++    }
++
++    /// `GetBlockMaxInfo()` from the skip list, without decoding the block.
++    pub(crate) fn block_max_shallow(&mut self) -> Option<(u32, u16)> {
++        match self {
++            Source::Segment(cur) => cur.block_max_only(),
++            Source::Mem { .. } | Source::Owned { .. } => None,
++        }
++    }
++
+     /// The row range this source covers: sealed segments and the memory tail
+     /// know it, which is what the concat path needs.
+     pub(crate) fn range(&self) -> Option<(u64, u64)> {
+@@ -2266,7 +2300,7 @@ impl<'a> Source<'a> {
+         match self {
+             Source::Segment(cur) => {
+                 cur.doc()?;
+-                let last_row = cur.block().and_then(|(rows, _, _)| rows.last().copied())?;
++                let last_row = cur.block_rows().and_then(|rows| rows.last().copied())?;
+                 let (max_tf, pct) = cur.block_max()?;
+                 Some((last_row, max_tf, pct))
+             }
+@@ -2638,6 +2672,70 @@ impl<'a> MergeCursor<'a> {
+         }
+         self.settle();
+     }
++
++    /// `NextShallow`: move to the block holding `target` through the skip list
++    /// alone. Only the shapes where "positioned but undecoded" is meaningful
++    /// take it - one sealed segment, or the concatenation of disjoint segments.
++    ///
++    /// `Some(true)` moved, `Some(false)` cannot hop (a memory tail, a spilled
++    /// run, or a target inside the current block), `None` exhausted.
++    pub(crate) fn skip_block_shallow(&mut self, target: u64) -> Option<bool> {
++        let moved = if self.single {
++            self.sources[0].skip_block_shallow(target)
++        } else if self.concat {
++            while self.next + 1 < self.sources.len()
++                && self.sources[self.next]
++                    .range()
++                    .is_some_and(|(_, hi)| hi < target)
++            {
++                self.next += 1;
++            }
++            loop {
++                match self.sources[self.next].skip_block_shallow(target) {
++                    Some(true) => break Some(true),
++                    Some(false) => break Some(false),
++                    None if self.next + 1 < self.sources.len() => {
++                        self.next += 1;
++                    }
++                    None => break None,
++                }
++            }
++        } else {
++            return Some(false);
+```
+
+**File**: `rust_engine/crates/executor/src/engine/statements.rs` (modified, +36/-29)
+```diff
+@@ -5140,6 +5140,16 @@ impl Engine {
+             crate::engine::state::index_row_direct(&mut index, &doc);
+             index.maybe_seal(self.memindex_capacity()).await;
+         }
++        // The final chunk: `PopulateIndex` calls `DumpSegmentMemIndex` after
++        // `PopulateFtIndexInner` returns (`new_txn_index_impl.cpp:1162-1175`), so
++        // the rows past the last full capacity also land in a chunk of their own.
++        // Without this a 100 k-row build wrote only the first 65,536-row chunk
++        // and left the remaining 34,464 rows in memory: one chunk where the
++        // reference has two, and a tail a restart had to rebuild.
++        //
++        // `index` is still local (the seal below runs before the publish), so
++        // this is the in-place seal rather than `seal_text_index_at`.
++        index.seal().await;
+         // The chunks on disk are consistent and complete now; only the publish
+         // touches shared state, and it must not run with the gate held (it takes
+         // `tables`, which the gate may not nest inside).
+@@ -8363,27 +8373,22 @@ impl Engine {
+                 .unwrap_or(false)
+         });
+         let query = arg_str(m.args.first()).unwrap_or_default();
+-        // A query ending in a boolean keyword (`... OR NOT`) is incomplete.
+-        let ends_with_op = query
+-            .split_whitespace()
+-            .last()
+-            .map(|w| {
+-                w.eq_ignore_ascii_case("or")
+-                    || w.eq_ignore_ascii_case("and")
+-                    || w.eq_ignore_ascii_case("not")
+-            })
+-            .unwrap_or(false);
+-        // ... unless an explicit `operator=` supplies the default.
++        // An explicit `operator=` selects the term-list grammar (`kAnd`/`kOr`),
++        // which is what decides whether the query string is parsed as a boolean
++        // expression at all.
+         let has_operator_opt = params.split(';').any(|p| {
+             p.split_once('=')
+                 .map(|(k, _)| k.trim().eq_ignore_ascii_case("operator"))
+                 .unwrap_or(false)
+         });
+-        if ends_with_op && !has_operator_opt {
+-            return Err(Error::Invalid(
+-                "parser: incomplete boolean expression in the full-text query".into(),
+-            ));
+-        }
++        // A query that ends in a boolean keyword is **not** an error here. The
++        // reference's grammar reads `query clause` (juxtaposition) as an `Or`, so
++        // `revolution and` is two clauses and returns hits; only a *dangling*
++        // uppercase `AND`/`OR`/`NOT` reaches its parser and fails there, with its
++        // own message. This port used to reject on a case-insensitive match
++        // before parsing, which turned the very common trailing English word
++        // "and"/"or" into an error - 35 of 1000 enwiki queries - where the
++        // reference returned rows.
+         let cols: Vec<usize> = match_columns(&m.column)
+             .iter()
+             .filter_map(|c| schema.iter().position(|s| s == c))
+@@ -8465,7 +8470,6 @@ impl Engine {
+         let terms: Vec<String> = units
+             .iter()
+             .flat_map(|(_, u, _, _)| u.iter().cloned())
+-            .filter(|t| t != "or" && t != "and")
+             .collect();
+         if terms.is_empty() {
+             return Ok((Vec::new(), hidden.to_vec()));
+@@ -9367,19 +9371,22 @@ impl Engine {
+             return Ok(None);
+         };
+         let driver = SearchDriver::new(field2analyzer, default_field);
+-        let Ok(tree) = driver.parse_single_with_fields(columns, query) else {
+-            // A `column:term` naming a column outside `columns` is not "no
+-            // syntax": falling back would search `title:foo` as ordinary text and
+-            // answer a different question. The reference resolves field names
+-            // against every index of the table, so such a leaf finds no postings -
+-            // match nothing instead of guessing.
+-            let outside = query_field_qualifiers(query)
+-                .into_iter()
+-                .any(|field| !columns.split(',').any(|spec| column_of(spec) == field));
+-            if outside {
+-                return Ok(Some(Vec::new()));
++        let tree = match driver.parse_single_with_fields(columns, query) {
++            Ok(tree) => tree,
++            Err(err) => {
++                // A `column:term` naming a column outside `columns` is not "no
++                // syntax": falling back would search `title:foo` as ordinary text and
++                // answer a different question. The reference resolves field names
++                // against every index of the table, so such a leaf finds no postings -
++                // match nothing instead of guessing.
++                let outside = query_field_qualifiers(query)
++                    .into_iter()
++                    .any(|field| !columns.split(',').any(|spec| column_of(spec) == field));
++                if outside {
++                    return Ok(Some(Vec:
+```
+
+**File**: `rust_engine/crates/executor/src/engine/tests_ut.rs` (modified, +12/-2)
+```diff
+@@ -877,6 +877,16 @@ mod tests {
+         // Make the cache one row short of the table: that is the cold path a bulk
+         // load which bypassed the DML hooks takes, and it is what puts a rebuild
+         // on the query path while a cache is still in place.
++        //
++        // The row is appended **after** the index was built and then dropped from
++        // the memory tail. Removing a row of the build itself no longer works:
++        // `CREATE INDEX` now seals its tail (the reference's trailing
++        // `DumpSegmentMemIndex`), so every posting is sealed and
++        // `index_delete_row` would only mark the row `overridden` without making
++        // the cache shorter.
++        e.execute("INSERT INTO raced VALUES (30, 'title30', 'harmful chemical row30');")
++            .await
++            .unwrap();
+         {
+             let tkey = e.table_key("raced");
+             let shared = {
+@@ -892,9 +902,9 @@ mod tests {
+                     .expect("the index is cached")
+             };
+             let mut index = shared.write().await;
+-            crate::engine::state::index_delete_row(&mut index, 0);
++            crate::engine::state::index_delete_row(&mut index, 30);
+             assert!(
+-                index.total_docs() < 30,
++                index.total_docs() < 31,
+                 "the cache has to look short of the table"
+             );
+         }
+```
+
+**File**: `rust_engine/crates/executor/src/engine/text_index.rs` (modified, +12/-5)
+```diff
+@@ -1936,15 +1936,22 @@ impl TextIndex {
+             .map(|row| row >> 32)
+     }
+ 
+-    /// True when the unsealed segment has reached either budget and should be
+-    /// sealed (`MemoryIndexer::MemUsed` or `mem_index_capacity` rows), or when a
+-    /// previous seal failed and its tail is still waiting to be written.
++    /// True when the unsealed segment has reached `mem_index_capacity` rows and
++    /// should be sealed, when a previous seal failed and its tail is still
++    /// waiting to be written, or when the resident tail exceeds the safety byte
++    /// ceiling (1 GiB).
++    ///
++    /// The primary bound is the reference's row count
++    /// (`new_txn_index_impl.cpp:1381`, `memory_indexer->GetRowCount() >=
++    /// mem_index_capacity`), with a 1 GiB safety byte ceiling so huge documents
++    /// cannot grow unboundedly when `memindex_quota` is 0 (disabled).
+     pub(crate) fn should_seal(&self, capacity: usize) -> bool {
++        const TEXT_SEGMENT_SAFETY_BYTES: usize = 1024 * 1024 * 1024;
+         if self.inflight.is_some() {
+             return true;
+         }
+-        self.mem.mem_used() >= text_segment_bytes()
+-            || (capacity > 0 && self.mem.pending_docs() >= capacity)
++        (capacity > 0 && self.mem.pending_docs() >= capacity)
++            || self.mem.mem_used() >= TEXT_SEGMENT_SAFETY_BYTES
+     }
+ 
+     /// Takes the work of one seal, so the caller can [`SealJob::write`] it with
+```
+
+**File**: `rust_engine/crates/executor/src/engine/text_query.rs` (modified, +22/-0)
+```diff
+@@ -42,6 +42,13 @@ use crate::query_builder::{
+ /// True when `query` uses anything `query_units` cannot express: a boolean
+ /// keyword, a group, or a `column:value` qualifier. Quoted text and `^boost` are
+ /// left to the fast path.
++///
++/// The keywords are **uppercase only**, like the reference's lexer
++/// (`search_lexer.l:66-70` matches `AND`/`OR`/`NOT` literally, and flex is
++/// case-sensitive). The lowercase words are ordinary text there, and they are
++/// extremely common at the end of a real sentence ("revolution and"), so
++/// matching them case-insensitively sent 35 of 1000 enwiki queries down the
++/// boolean grammar, which then rejected them.
+ pub(crate) fn has_query_syntax(query: &str) -> bool {
+     let mut token = String::new();
+     let mut in_quote = false;
+@@ -298,4 +305,19 @@ mod tests {
+         // A keyword inside quotes is text, not an operator.
+         assert!(!has_query_syntax("\"alpha AND beta\""));
+     }
++
++    /// The reference's lexer matches `AND`/`OR`/`NOT` literally
++    /// (`search_lexer.l:66-70`), so the lowercase words are ordinary text. A
++    /// case-insensitive match here sent 35 of 1000 enwiki queries - ones whose
++    /// prose happens to end in "and"/"or" - to the boolean grammar, which then
++    /// rejected them while the reference answered with rows.
++    #[test]
++    fn lowercase_boolean_words_are_text() {
++        assert!(!has_query_syntax("revolution and"));
++        assert!(!has_query_syntax("political philosophy or"));
++        assert!(!has_query_syntax("not"));
++        assert!(!has_query_syntax("harmful and chemical"));
++        // Uppercase in the same positions is still an operator.
++        assert!(has_query_syntax("revolution AND"));
++    }
+ }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3587** (2026-11-24): rust_engine: align COPY/JSONL import, fulltext chunks & query parsing, and optimize WAND (@yuzhichang)
 - **PR #3585** (2026-11-24): rust_engine: fix five concurrency defects the index-combination soak (@yingfeng)
 - **PR #3584** (2026-11-24): fulltext: align JSON escapes, query terms, block skips and BM25 with the reference (@yuzhichang)
 - **PR #3583** (2026-11-23): fix a series of rust_engine issues (@yingfeng)
 - **PR #3582** (2026-11-23): Rust engine: express row visibility as bitmaps, and reclaim unsealed memory on a tick (@yuzhichang)
 - **PR #3581** (2026-11-23): plaid: build and fold a tensor mirror in chunks (@yingfeng)
-- **PR #3580** (2026-11-21): rust_engine: provided embedded engine running in-process (@yingfeng)
 
 ---
 
@@ -2600,73 +1891,48 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. rust_engine: fix five concurrency defects the index-combination soak
+## X. rust_engine: align COPY/JSONL import, fulltext chunks & query parsing, and optim
 
 **RULE**:
-When implementing operations in `rust_engine/crates/catalog/src/layout.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in infiniflow/infinity. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `rust_engine/crates/executor/src/engine/dml.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in infiniflow/infinity. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e7db7afb`: rust_engine: fix five concurrency defects the index-combination soak. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `75bc1f15`: rust_engine: align COPY/JSONL import, fulltext chunks & query parsing, and optimize WAND. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `rust_engine/crates/catalog/src/layout.rs`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `rust_engine/crates/executor/src/engine/dml.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-    // one, so the previous layer has to go - except for the segments a
-    // compaction deprecated, whose records the reference keeps until `Cleanup`
-    // (the `drop|seg|` record is what makes a reader ignore them).
-    //
-    // It goes **after** the new records are in, not before. Deleting first
-    // opened a window in which the table had a segment and no blocks at all, and
-    // a query landing in it read the table as missing (`no blocks for table`)
-    // even though every row was committed. Publishing first means a reader sees
-    // the old layer or the new one, never neither.
-    let mut stale: Vec<Vec<u8>> = Vec::new();
-            stale.push(k);
-    // The keys this write publishes, so the sweep below cannot delete a record
-    // it just wrote.
-    let mut fresh: std::collections::HashSet<Vec<u8>> = std::collections::HashSet::new();
-        let segment_key =
-            key::catalog_segment_key(&set.db_id, &set.table_id, seg.segment_id).into_bytes();
-        store.put(&segment_key, seg.create_ts.to_string().as_bytes())?;
-        fresh.insert(segment_key);
-        let tag_key = key::catalog_segment_tag_key(
-            &set.db_id,
-            &set.table_id,
-        
+    /// Feeds one row into every secondary index of `table`, resolving the
+    /// targets first.
+    ///
+    /// Kept for the statement paths that insert one row at a time; a bulk load
+    /// resolves the targets once and calls [`Self::insert_secondary_keys`].
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-    // one, so start from an empty segment layer for the table - except for the
-    // segments a compaction deprecated, whose records the reference keeps until
-    // `Cleanup` (the `drop|seg|` record is what makes a reader ignore them).
-            store.delete(&k)?;
-        store.put(
-            key::catalog_segment_key(&set.db_id, &set.table_id, seg.segment_id).as_bytes(),
-            seg.create_ts.to_string().as_bytes(),
-        )?;
-        store.put(
-            key::catalog_segment_tag_key(
-                &set.db_id,
-                &set.table_id,
-                seg.segment_id,
-                "first_delete_ts",
-            )
-            .as_bytes(),
-            seg.first_delete_ts.to_string().as_bytes(),
-        )?;
-            store.put(
-                    .as_bytes(),
-                block.commit_ts.to_string().as_bytes(),
-            )?;
+    /// Maintains declared indexes on insert.
+    pub(crate) fn update_indexes_on_insert(
+        &self,
+        table: &str,
+        seq: usize,
+        values: &[Literal],
+        schema: &[String],
+    ) -> Result<()> {
+        let targets = self.secondary_targets(table, schema);
+        self.insert_secondary_keys(&targets, seq, values)
+    }
+
+    /// [`Self::update_indexes_on_insert`] with the targets already resolved, for
+    /// a bulk load that resolves them once per batch.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e7db7afb` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `75bc1f15` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

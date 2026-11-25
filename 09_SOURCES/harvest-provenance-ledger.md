@@ -12890,3 +12890,7 @@ Every entry in this ledger must capture:
 | `learn-github-trufflesecurity-trufflehog` | `https://github.com/trufflesecurity/trufflehog` | `23255461` | Multi-dimensional audit evidence | 2026-11-24T23:58:50.031Z |
 | `learn-dom-d-74b4b6c4` | `project://str4d-rage` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/str4d-rage-learnings.md` | 2026-11-24T23:59:15.874Z |
 | `learn-dom-d-ff5af4f8` | `project://tanstack-router` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tanstack-router-learnings.md` | 2026-11-24T23:59:45.329Z |
+| `learn-github-tanstack-query` | `https://github.com/TanStack/query` | `115fdefa` | Multi-dimensional audit evidence | 2026-11-25T00:08:21.063Z |
+| `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `012baddc` | Multi-dimensional audit evidence | 2026-11-25T00:08:28.671Z |
+| `learn-github-infiniflow-infinity` | `https://github.com/infiniflow/infinity` | `75bc1f15` | Multi-dimensional audit evidence | 2026-11-25T00:08:30.421Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `fa47c9a1` | Multi-dimensional audit evidence | 2026-11-25T00:08:32.619Z |

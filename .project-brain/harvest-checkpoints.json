@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T23:58:50.045Z",
+  "last_updated": "2026-11-25T00:08:32.633Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "dbae65b48ccdb9f59604f08a29280249e3e182dafed38a156cfb63de49207040",
-      "verified_at": "2026-11-24T22:51:10.069Z",
+      "content_hash": "095540deef4857b72098095d48877379a2341697d728043f5dab1ae0003cd5a1",
+      "verified_at": "2026-11-25T00:08:32.632Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T22:51:10.069Z"
+      "last_updated": "2026-11-25T00:08:32.632Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -5496,14 +5496,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tailscale-tailscale",
-      "content_hash": "ae281061719df3bfe40c3efc2961d21a70a8265a925fc08f18b16df079006597",
-      "verified_at": "2026-11-24T19:19:20.151Z",
+      "content_hash": "ebb067b1af8ac45f816647f7878efc7dd4c29213e1e9eb36b126bbe90660c5a2",
+      "verified_at": "2026-11-25T00:08:28.685Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T19:19:20.151Z"
+      "last_updated": "2026-11-25T00:08:28.685Z"
     },
     "dingodb/dingo": {
       "repository": "dingodb/dingo",
@@ -11466,14 +11466,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-infiniflow-infinity",
-      "content_hash": "442e238e7f28b152415aa2d42447be6382dc957367146ba0c649e8e77af53cd3",
-      "verified_at": "2026-11-24T03:41:50.773Z",
+      "content_hash": "6082cbd3438dbdfc87ffe100964b7ef7b3eb742b4996bd709c38cd048a4d052a",
+      "verified_at": "2026-11-25T00:08:30.434Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T03:41:50.773Z"
+      "last_updated": "2026-11-25T00:08:30.434Z"
     },
     "astral-sh/ruff": {
       "repository": "astral-sh/ruff",
@@ -15126,14 +15126,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tanstack-query",
-      "content_hash": "2a062f505cc5fb72ebbd97ae3c80f4147c9244c679765365f5d2143b39d0b1a4",
-      "verified_at": "2026-11-21T00:32:38.293Z",
+      "content_hash": "6909c36bca375dc9937a3733cd6563da1169332ea96767bbb9add9c3584b3cec",
+      "verified_at": "2026-11-25T00:08:21.078Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T00:32:38.293Z"
+      "last_updated": "2026-11-25T00:08:21.078Z"
     },
     "apple/sample-food-truck": {
       "repository": "apple/sample-food-truck",

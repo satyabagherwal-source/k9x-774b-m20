@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T23:59:46.851Z",
+  "last_updated": "2026-11-25T00:08:38.481Z",
   "total_verified_learnings": 9106,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25031,
+  "total_items": 25040,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112413,10 +112413,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tailscale-tailscale-architecture-intelligence-tailscale-tailscale-core-invariant.md",
       "title": "Architecture Intelligence: tailscale/tailscale Core Invariants",
       "repository": "tailscale/tailscale",
-      "source_version": "6dce0b21",
-      "content_hash": "7ac2a892234dc6fa7f1faacca8b3050449ed4ce0acb7e8398bf096b2a40021b5",
+      "source_version": "012baddc",
+      "content_hash": "16609fcaadff4c2e8ff4d46ca3d2be8fb14c2813d2c9850e8e3fdd4d587710ea",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T15:17:26.043Z"
+      "persisted_at": "2026-11-25T00:08:29.063Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tailscale-tailscale": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tailscale-tailscale",
@@ -112425,10 +112425,10 @@
       "relative_path": "08_VERIFICATION/tailscale-tailscale-verification-protocol-empirical-defect-shield-for-tailscale-.md",
       "title": "Verification Protocol: Empirical Defect Shield for tailscale/tailscale",
       "repository": "tailscale/tailscale",
-      "source_version": "8bcc919d",
-      "content_hash": "99641936ae7dc199dafb0d1a5418e01353b8cebb88e9f2d1516cb7e8d0486b8e",
+      "source_version": "012baddc",
+      "content_hash": "0df329e4fbf3941a4b2f3269bbfdbb26c9f0a2c033938850878160109710af79",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T19:19:20.699Z"
+      "persisted_at": "2026-11-25T00:08:29.250Z"
     },
     "candidate_directive-order-small-runtime-filter-builds-before-filtered-and-nested-scans-28768": {
       "item_id": "candidate_directive-order-small-runtime-filter-builds-before-filtered-and-nested-scans-28768",
@@ -218855,8 +218855,8 @@
       "slug": "infiniflow-infinity",
       "platform": "github",
       "source_url": "https://github.com/infiniflow/infinity",
-      "source_version": "e7db7afb",
-      "content_hash": "442e238e7f28b152415aa2d42447be6382dc957367146ba0c649e8e77af53cd3",
+      "source_version": "75bc1f15",
+      "content_hash": "6082cbd3438dbdfc87ffe100964b7ef7b3eb742b4996bd709c38cd048a4d052a",
       "dossier_path": "07_PROJECT_LEARNING/infiniflow-infinity-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/infiniflow-infinity-learnings.md",
       "promoted_rules": [
@@ -218904,6 +218904,11 @@
           "number": 10189,
           "title": "fix five concurrency defects the index-combination soak",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10395,
+          "title": "align COPY/JSONL import, fulltext chunks & query parsing, and optim",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -218911,7 +218916,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T03:41:50.536Z",
+      "verified_at": "2026-11-25T00:08:30.220Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -218953,10 +218958,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-infiniflow-infinity-architecture-intelligence-infiniflow-infinity-core-invariant.md",
       "title": "Architecture Intelligence: infiniflow/infinity Core Invariants",
       "repository": "infiniflow/infinity",
-      "source_version": "583c8505",
-      "content_hash": "f61a256522944fbaaa229ab2c2eec95f722066d4f5299db530a16146228d33fc",
+      "source_version": "75bc1f15",
+      "content_hash": "79b7f7ae9e4661ed930ae60727261e23fbcb50569afb96a323f6fdb41048426a",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T14:15:59.324Z"
+      "persisted_at": "2026-11-25T00:08:30.809Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-infiniflow-infinity": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-infiniflow-infinity",
@@ -218965,10 +218970,10 @@
       "relative_path": "08_VERIFICATION/infiniflow-infinity-verification-protocol-empirical-defect-shield-for-infiniflow.md",
       "title": "Verification Protocol: Empirical Defect Shield for infiniflow/infinity",
       "repository": "infiniflow/infinity",
-      "source_version": "e7db7afb",
-      "content_hash": "53948353f3a55e8bbbd8665bd1bd44d2c19ec2329c2625171b8d2271b41a41ac",
+      "source_version": "75bc1f15",
+      "content_hash": "5c15b8b8913b1ef924d43fc467b58714643ba3164ce8db6e03a5ffe567062d2c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T03:41:51.361Z"
+      "persisted_at": "2026-11-25T00:08:30.973Z"
     },
     "learn-github-bitterbot-ai-bitterbot-desktop": {
       "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -219106,9 +219111,9 @@
       "title": "Architecture Intelligence: infiniflow-infinity-learnings Core Invariants",
       "repository": "infiniflow-infinity-learnings",
       "source_version": "HEAD",
-      "content_hash": "c1992c1708d5d2ee8b74545f209da475f9fb9adb8a622dd978a4f1e3c307a894",
+      "content_hash": "5b467458da8f2e2c833cb3f3ce0f093d6496296c51a9f4015e1aa55ac134929c",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T21:55:43.613Z"
+      "persisted_at": "2026-11-25T00:08:38.322Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-infiniflow-infinity-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-infiniflow-infinity-learnings",
@@ -219118,9 +219123,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for infiniflow-infinity-learnings",
       "repository": "infiniflow-infinity-learnings",
       "source_version": "HEAD",
-      "content_hash": "0f73bac93141c0cfc9f9d0a1a730ba51fa44c4716616fb0ddafea3933f71e6ac",
+      "content_hash": "aea418dd7adf5273c658a70276d68f13c0b421a4b84509a7c3b0337ca5bb1d46",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T03:41:56.710Z"
+      "persisted_at": "2026-11-25T00:08:38.481Z"
     },
     "candidate_directive-wallet-stop-coinbase-agentkit-sending-analytics-to-coinbase": {
       "item_id": "candidate_directive-wallet-stop-coinbase-agentkit-sending-analytics-to-coinbase",
@@ -223995,8 +224000,8 @@
       "slug": "tailscale-tailscale",
       "platform": "github",
       "source_url": "https://github.com/tailscale/tailscale",
-      "source_version": "8bcc919d",
-      "content_hash": "ae281061719df3bfe40c3efc2961d21a70a8265a925fc08f18b16df079006597",
+      "source_version": "012baddc",
+      "content_hash": "ebb067b1af8ac45f816647f7878efc7dd4c29213e1e9eb36b126bbe90660c5a2",
       "dossier_path": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "promoted_rules": [
@@ -224139,6 +224144,11 @@
           "number": 10345,
           "title": "cmd/testwrapper: ensure unfinished tests always trigger failure",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10394,
+          "title": "add Server.Tailnet to require a tailnet",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -224146,7 +224156,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T19:19:19.924Z",
+      "verified_at": "2026-11-25T00:08:28.466Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -224237,9 +224247,9 @@
       "title": "Architecture Intelligence: tailscale-tailscale-learnings Core Invariants",
       "repository": "tailscale-tailscale-learnings",
       "source_version": "HEAD",
-      "content_hash": "8bfa554f67426d027b94704de04469cffc6d4c73e2a5646194619d642c8de4ad",
+      "content_hash": "b9e56024f0a8f02dd0c07dfe9abf15f46e2b490da4f906a4bba40c624ce155b2",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T15:17:35.188Z"
+      "persisted_at": "2026-11-25T00:08:37.575Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tailscale-tailscale-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tailscale-tailscale-learnings",
@@ -224249,9 +224259,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for tailscale-tailscale-learnings",
       "repository": "tailscale-tailscale-learnings",
       "source_version": "HEAD",
-      "content_hash": "b512044d2989e0bb82582ec07fb69961711f08c10f09669f778542bc90f48c67",
+      "content_hash": "9d5db6e75000c4d1580b36a37195e5201fe330546a701107c25b2d2e96e0b591",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T19:19:25.083Z"
+      "persisted_at": "2026-11-25T00:08:37.731Z"
     },
     "learn-huggingface-stabilityai-stable-diffusion-3-medium": {
       "learning_id": "learn-huggingface-stabilityai-stable-diffusion-3-medium",
@@ -230525,8 +230535,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "f45b916b",
-      "content_hash": "dbae65b48ccdb9f59604f08a29280249e3e182dafed38a156cfb63de49207040",
+      "source_version": "fa47c9a1",
+      "content_hash": "095540deef4857b72098095d48877379a2341697d728043f5dab1ae0003cd5a1",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -230767,7 +230777,7 @@
         },
         {
           "number": "EXISTING",
-          "title": "NUC 134 Ruby Collection Method Aliases",
+          "title": "NUC 141 Reactive Cosecant",
           "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
@@ -230801,7 +230811,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T22:51:09.864Z",
+      "verified_at": "2026-11-25T00:08:32.424Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -230843,10 +230853,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "f45b916b",
-      "content_hash": "740d8041e736a4aaeff88dc8b427e26ac85deb72b269eec68f71b80dec8fbcef",
+      "source_version": "fa47c9a1",
+      "content_hash": "5af2e27e2645255692db3674fa059ca76ab059034ec6048ae71d8b221bb1f54b",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T22:51:10.437Z"
+      "persisted_at": "2026-11-25T00:08:33.016Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid",
@@ -230855,10 +230865,10 @@
       "relative_path": "08_VERIFICATION/nucleoidai-nucleoid-verification-protocol-empirical-defect-shield-for-nucleoidai.md",
       "title": "Verification Protocol: Empirical Defect Shield for NucleoidAI/Nucleoid",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "f45b916b",
-      "content_hash": "8a28814cf5a6c7c0a4b248645f9136a42dc115abf3808506fd9464c0b30d07ad",
+      "source_version": "fa47c9a1",
+      "content_hash": "7f27596a6e6c3afd653a3d527f94bb42d17a30c9c5790e168f72305278d658ba",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T22:51:10.593Z"
+      "persisted_at": "2026-11-25T00:08:33.181Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -270511,8 +270521,8 @@
       "slug": "tanstack-query",
       "platform": "github",
       "source_url": "https://github.com/TanStack/query",
-      "source_version": "0911673d",
-      "content_hash": "2a062f505cc5fb72ebbd97ae3c80f4147c9244c679765365f5d2143b39d0b1a4",
+      "source_version": "115fdefa",
+      "content_hash": "6909c36bca375dc9937a3733cd6563da1169332ea96767bbb9add9c3584b3cec",
       "dossier_path": "07_PROJECT_LEARNING/tanstack-query-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tanstack-query-learnings.md",
       "promoted_rules": [
@@ -270525,6 +270535,11 @@
           "number": 9678,
           "title": "bump vite for examples to cover security release",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10393,
+          "title": "docs(framework/angular/guides): add the 'polling' guide",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -270532,7 +270547,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T00:32:38.101Z",
+      "verified_at": "2026-11-25T00:08:20.855Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -270574,10 +270589,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tanstack-query-technical-construction-intelligence-tanstack-query-core-invariant.md",
       "title": "Technical Construction Intelligence: TanStack/query Core Invariants",
       "repository": "TanStack/query",
-      "source_version": "0911673d",
-      "content_hash": "ea229b45e30ccf00e1ae36dd3d1cf7b46a4854b7f0cca9b63d73c746a2642504",
+      "source_version": "115fdefa",
+      "content_hash": "98ff0cf2162bc602b78de3b949608ad8f1df0daa8997c5b7158fdd89c1e05b52",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T00:32:38.624Z"
+      "persisted_at": "2026-11-25T00:08:21.479Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tanstack-query": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tanstack-query",
@@ -270586,10 +270601,10 @@
       "relative_path": "08_VERIFICATION/tanstack-query-verification-protocol-empirical-defect-shield-for-tanstack-query.md",
       "title": "Verification Protocol: Empirical Defect Shield for TanStack/query",
       "repository": "TanStack/query",
-      "source_version": "0911673d",
-      "content_hash": "fd979267f6123726c728bc1e58152084b7f96fc3dac519727a23629ba152a654",
+      "source_version": "115fdefa",
+      "content_hash": "a287f30cbbfc43901cd7f3f59568da277fe7bf182ec9507ecb7e9a8512996acf",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T00:32:38.764Z"
+      "persisted_at": "2026-11-25T00:08:21.666Z"
     },
     "learn-github-gauthierpiarrette-highball": {
       "learning_id": "learn-github-gauthierpiarrette-highball",
@@ -270694,9 +270709,9 @@
       "title": "Technical Construction Intelligence: tanstack-query-learnings Core Invariants",
       "repository": "tanstack-query-learnings",
       "source_version": "HEAD",
-      "content_hash": "7c0291ee1c2a6f4d5d81664b4b1f5ab1a6d99c3d7df6dfc32f140fd32b229a13",
+      "content_hash": "0835c0e964668878beffd69d26a7f2c264e4877f2aebe96d15bca34d6ed5a706",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T00:32:49.567Z"
+      "persisted_at": "2026-11-25T00:08:36.820Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tanstack-query-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tanstack-query-learnings",
@@ -270706,9 +270721,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for tanstack-query-learnings",
       "repository": "tanstack-query-learnings",
       "source_version": "HEAD",
-      "content_hash": "8de7ed9aa061a93df3d1dacdad81e3a1434947c10fe42222ace344a3ca86c7e9",
+      "content_hash": "36eda2870da289b2030313f310d175d8118f25ecc063e50f0cd1e94b334a9349",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T00:32:49.723Z"
+      "persisted_at": "2026-11-25T00:08:36.985Z"
     },
     "learn-github-preactjs-preact": {
       "learning_id": "learn-github-preactjs-preact",
@@ -342074,6 +342089,120 @@
       "content_hash": "0f93577274dbd6391343caa35386051fc278b2e42f82a46d01284f393afb2aca",
       "domain_letter": "G",
       "persisted_at": "2026-11-24T23:59:17.039Z"
+    },
+    "rule-10393": {
+      "learning_id": "rule-10393",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10393,
+      "title": "docs(framework/angular/guides): add the 'polling' guide",
+      "source_url": "https://github.com/TanStack/query",
+      "source_version": "115fdefa",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T00:08:20.855Z"
+    },
+    "candidate_directive-docs-framework-angular-guides-add-the-polling-guide": {
+      "item_id": "candidate_directive-docs-framework-angular-guides-add-the-polling-guide",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-89B2-docs-framework-angular-guides-add-the-polling-guide.md",
+      "title": "docs(framework/angular/guides): add the 'polling' guide",
+      "repository": "tanstack-query-learnings",
+      "source_version": "HEAD",
+      "content_hash": "63040dbf3421e22d172b40c60199619a921441f309048aef3c895aa2dc55dfdb",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-25T00:08:36.641Z"
+    },
+    "rule-10394": {
+      "learning_id": "rule-10394",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10394,
+      "title": "add Server.Tailnet to require a tailnet",
+      "source_url": "https://github.com/tailscale/tailscale",
+      "source_version": "012baddc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T00:08:28.466Z"
+    },
+    "candidate_directive-add-server-tailnet-to-require-a-tailnet": {
+      "item_id": "candidate_directive-add-server-tailnet-to-require-a-tailnet",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-83BX-add-server-tailnet-to-require-a-tailnet.md",
+      "title": "add Server.Tailnet to require a tailnet",
+      "repository": "tailscale/tailscale",
+      "source_version": "012baddc",
+      "content_hash": "8ff248437bd50ea1ffa17e79ad4a7bb116d358bb7f69805132eea1b5310b06a4",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-25T00:08:28.894Z"
+    },
+    "rule-10395": {
+      "learning_id": "rule-10395",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10395,
+      "title": "align COPY/JSONL import, fulltext chunks & query parsing, and optim",
+      "source_url": "https://github.com/infiniflow/infinity",
+      "source_version": "75bc1f15",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T00:08:30.220Z"
+    },
+    "candidate_directive-align-copy-jsonl-import-fulltext-chunks-query-parsing-and-optim": {
+      "item_id": "candidate_directive-align-copy-jsonl-import-fulltext-chunks-query-parsing-and-optim",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-84OH-align-copy-jsonl-import-fulltext-chunks-query-parsing-and-optim.md",
+      "title": "align COPY/JSONL import, fulltext chunks & query parsing, and optim",
+      "repository": "infiniflow/infinity",
+      "source_version": "75bc1f15",
+      "content_hash": "7c3f693be035f8337718ad17ccdf55b06d557c9c363a18125c49b35790c6023e",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-25T00:08:30.644Z"
+    },
+    "candidate_directive-nuc-141-reactive-cosecant": {
+      "item_id": "candidate_directive-nuc-141-reactive-cosecant",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-86DP-nuc-141-reactive-cosecant.md",
+      "title": "NUC 141 Reactive Cosecant",
+      "repository": "NucleoidAI/Nucleoid",
+      "source_version": "fa47c9a1",
+      "content_hash": "69f8fa106d43cacd289c893402e21e43482827a917bfcf820e8746ca1c02a525",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-25T00:08:32.849Z"
+    },
+    "candidate_directive-tsnet-add-server-tailnet-to-require-a-tailnet": {
+      "item_id": "candidate_directive-tsnet-add-server-tailnet-to-require-a-tailnet",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-89WM-tsnet-add-server-tailnet-to-require-a-tailnet.md",
+      "title": "tsnet: add Server.Tailnet to require a tailnet",
+      "repository": "tailscale-tailscale-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ef486a18f399f1e3701cdc34f56bd336592889ed41cdff95ebb6e04258a21620",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-25T00:08:37.415Z"
+    },
+    "candidate_directive-rust_engine-align-copy-jsonl-import-fulltext-chunks-query-parsing-and-optim": {
+      "item_id": "candidate_directive-rust_engine-align-copy-jsonl-import-fulltext-chunks-query-parsing-and-optim",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-8AHE-rust_engine-align-copy-jsonl-import-fulltext-chunks-query-parsing-and-optim.md",
+      "title": "rust_engine: align COPY/JSONL import, fulltext chunks & query parsing, and optim",
+      "repository": "infiniflow-infinity-learnings",
+      "source_version": "HEAD",
+      "content_hash": "5a455b2e70fb1cffb2d92183efb8be9d20f962ab452a82afbc6ca8ac7bfab3ef",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-25T00:08:38.165Z"
     }
   },
   "ai-builder-brain": {

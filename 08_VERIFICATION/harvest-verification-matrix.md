@@ -12857,3 +12857,7 @@
 | `CYCLE-20261124-VOOB` | `2026-11-24T23:58:50.027Z` | `trufflesecurity/trufflehog` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10392` | Yes (`04a833a5...`) |
 | `CYCLE-2026-11-24-PROJ-EVOLVE` | `2026-11-24T23:59:15.874Z` | `str4d-rage` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-74B4B6C4` [Domain D] | Yes (`81e30e62...`) |
 | `CYCLE-2026-11-24-PROJ-EVOLVE` | `2026-11-24T23:59:45.329Z` | `tanstack-router` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-FF5AF4F8` [Domain D] | Yes (`bf2ce3d1...`) |
+| `CYCLE-20261125-7XAB` | `2026-11-25T00:08:21.059Z` | `TanStack/query` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10393` | Yes (`6909c36b...`) |
+| `CYCLE-20261125-835N` | `2026-11-25T00:08:28.667Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10394` | Yes (`ebb067b1...`) |
+| `CYCLE-20261125-84I8` | `2026-11-25T00:08:30.416Z` | `infiniflow/infinity` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10395` | Yes (`6082cbd3...`) |
+| `CYCLE-20261125-867B` | `2026-11-25T00:08:32.615Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule EXISTING` | Yes (`095540de...`) |

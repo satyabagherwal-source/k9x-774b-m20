@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T23:59:46.472Z",
+  "last_updated": "2026-11-25T00:08:38.165Z",
   "directives": [
     {
       "id": "CD-001",
@@ -58006,6 +58006,81 @@
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-00C298-enable-more-oxlint-rules-and-fix-their-e.md",
       "staged_date": "2026-11-24"
+    },
+    {
+      "id": "CD-89B2",
+      "directive_title": "docs(framework/angular/guides): add the 'polling' guide",
+      "source_repo": "tanstack-query-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-89B2-docs-framework-angular-guides-add-the-polling-guide.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-25",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-83BX",
+      "directive_title": "add Server.Tailnet to require a tailnet",
+      "source_repo": "tailscale/tailscale",
+      "source_commit": "012baddc",
+      "staged_file": "11_INBOX/candidate-directives/CD-83BX-add-server-tailnet-to-require-a-tailnet.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-25",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-84OH",
+      "directive_title": "align COPY/JSONL import, fulltext chunks & query parsing, and optim",
+      "source_repo": "infiniflow/infinity",
+      "source_commit": "75bc1f15",
+      "staged_file": "11_INBOX/candidate-directives/CD-84OH-align-copy-jsonl-import-fulltext-chunks-query-parsing-and-optim.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-25",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-86DP",
+      "directive_title": "NUC 141 Reactive Cosecant",
+      "source_repo": "NucleoidAI/Nucleoid",
+      "source_commit": "fa47c9a1",
+      "staged_file": "11_INBOX/candidate-directives/CD-86DP-nuc-141-reactive-cosecant.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-25",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-31742E",
+      "directive_title": "docs(framework/angular/guides): add the 'polling' guide",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "tanstack-query",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-31742E-docs-framework-angular-guides-add-the-po.md",
+      "staged_date": "2026-11-25"
+    },
+    {
+      "id": "CD-89WM",
+      "directive_title": "tsnet: add Server.Tailnet to require a tailnet",
+      "source_repo": "tailscale-tailscale-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-89WM-tsnet-add-server-tailnet-to-require-a-tailnet.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-25",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-8AHE",
+      "directive_title": "rust_engine: align COPY/JSONL import, fulltext chunks & query parsing, and optim",
+      "source_repo": "infiniflow-infinity-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-8AHE-rust_engine-align-copy-jsonl-import-fulltext-chunks-query-parsing-and-optim.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-25",
+      "domain_letter": "I"
     }
   ]
 }

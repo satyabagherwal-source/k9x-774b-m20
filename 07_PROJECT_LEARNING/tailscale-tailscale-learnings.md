@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source**: github ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
-> **Source Version**: `8bcc919d`  
+> **Source Version**: `012baddc`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T19:19:19.046Z  
+> **Timestamp**: 2026-11-25T00:08:27.608Z  
 > **Learning ID**: `learn-github-tailscale-tailscale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T19:19:19.041Z  
+> **Harvest Timestamp**: 2026-11-25T00:08:27.603Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The easiest, most secure way to use WireGuard and 2FA.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 39568 stars
+- **Stars / Engagement**: 39569 stars
 
 ---
 
@@ -821,580 +821,519 @@ export const sessionStateStorage: IPNStateStorage = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8bcc919d` (2026-11-24)
-**Commit Message**: cmd/testwrapper: ensure unfinished tests always trigger failure (#22622)
+### Incident Patch 1: `67e092fe` (2026-11-23)
+**Commit Message**: tsnet: add Server.Tailnet to require a tailnet
 
-When packages timed out or panicked, we sometimes marked CI green
-despite not running all the tests for that package, and the tests that
-started but didn't finish got marked as flaky even though they were not
-known to be at fault. For example, all 133 recorded flakes of
-ipnlocal.TestNewExtensionHost were really an ipnlocal watchdog panic or
-a package timeout on Windows, and 129 of those jobs passed.
+Server.Tailnet is a tailcfg.StableTailnetID. It is sent as a required
+tailnet at registration, and Up also fails if the node ends up in a
+different tailnet, such as from state saved before Tailnet was set.
 
-Parse the test binary's terminal log line, and check for tests that
-started but never finished. If either shows that the test binary didn't
-complete, don't retry any of the package's tests, and fail the run. The
-log line check also catches a panic in a test's own goroutine, which
-the testing package reports as a normal test failure even though the
-tests after it never start.
+Fixes #22515
+Updates #22093
 
-While here, fix some related problems:
+Change-Id: I44d4e8fb4e5767fa63dce871c3e093f586a7d300
+Signed-off-by: Brad Fitzpatrick <[REDACTED_EMAIL]>
 
-- A package that fails with no failed test (e.g. TestMain exits
-  non-zero) is now fatal even if another package in the same go test
-  invocation has a failed test to retry. Previously the check counted
-  the failed tests of the whole batch, not of the package.
-- If a test passes on retry but go test s
-
-**File**: `cmd/testwrapper/multipkg_test.go` (modified, +251/-0)
+**File**: `tsnet/tsnet.go` (modified, +38/-0)
 ```diff
-@@ -207,3 +207,254 @@ func TestMultiFile(t *testing.T) {
- 		t.Errorf("unexpected permanent failures:\n%s", out)
+@@ -352,6 +352,19 @@ type Server struct {
+ 	// that the control server will allow the node to adopt that tag.
+ 	AdvertiseTags []string
+ 
++	// Tailnet, if non-empty, is the only tailnet this Server may join.
++	// It is the tailnet's stable ID, as shown in the admin console and
++	// reported in [ipnstate.TailnetStatus.StableID].
++	//
++	// When the node registers, the control server refuses a login to any
++	// other tailnet. [Server.Up] also returns an error if the node is
++	// already logged in to a different tailnet, such as from state saved
++	// before Tailnet was set, or if the control server does not report
++	// which tailnet the node is in.
++	//
++	// This field must be set before calling Start.
++	Tailnet tailcfg.StableTailnetID
++
+ 	// Tun, if non-nil, specifies a custom tun.Device to use for packet I/O.
+ 	//
+ 	// This field must be set before calling Start.
+@@ -623,6 +636,9 @@ func (s *Server) Up(ctx context.Context) (*ipnstate.Status, error) {
+ 				if len(status.TailscaleIPs) == 0 {
+ 					return nil, errors.New("tsnet.Up: running, but no ip")
+ 				}
++				if err := s.checkTailnet(status); err != nil {
++					return nil, fmt.Errorf("tsnet.Up: %w", err)
++				}
+ 
+ 				// The first time Up is run, clear the persisted serve config
+ 				// and Service advertisements. We do this to prevent messy
+@@ -661,6 +677,25 @@ func (s *Server) Up(ctx context.Context) (*ipnstate.Status, error) {
  	}
  }
-+
-+// hangSrc is a package that times out on the first attempt only. When the
-+// timeout occurs, TestFails has failed, TestParallel is paused, TestHang
-+// runs, and TestNotStarted has not started.
-+const hangSrc = `package hang_test
-+
-+import (
-+	"os"
-+	"testing"
-+	"time"
-+)
-+
-+func TestParallel(t *testing.T) { t.Parallel() }
-+
-+func TestFails(t *testing.T) {
-+	if os.Getenv("TS_TESTWRAPPER_ATTEMPT") == "1" {
-+		t.Fatal("failing on the first attempt only")
-+	}
-+}
-+
-+func TestHang(t *testing.T) {
-+	if os.Getenv("TS_TESTWRAPPER_ATTEMPT") == "1" {
-+		time.Sleep(time.Hour)
-+	}
-+}
-+
-+func TestNotStarted(t *testing.T) {}
-+`
-+
-+// TestPackageTimeoutNotRetried covers a package that times out: the wrapper
-+// must exit non-zero and must not retry any of its tests, or report them as
-+// flaky, because the tests that did not start never ran. Tests in other
-+// packages are still retried.
-+func TestPackageTimeoutNotRetried(t *testing.T) {
-+	t.Parallel()
-+
-+	dir := multiPkgDir(t)
-+	hangPkg := writePkg(t, dir, "hang", hangSrc)
-+	flakyPkg := writePkg(t, dir, "flaky", flakySrc)
-+
-+	out, err := cmdTestwrapper(t, hangPkg, flakyPkg, "-timeout=5s").CombinedOutput()
-+	if code, ok := errExitCode(err); !ok || code != 1 {
-+		t.Fatalf("got exit code %d, want 1 (err: %v) with output:\n%s", code, err, out)
-+	}
-+	for _, want := range []string{
-+		"panic: test timed out after 5s",
-+		"testwrapper: " + importPath(hangPkg) + " did not complete; not retrying its tests (unfinished: TestHang TestParallel)\n",
-+		"[retry 1] " + importPath(flakyPkg) + ".TestFlaky: PASS",
-+	} {
-+		if !bytes.Contains(out, []byte(want)) {
-+			t.Errorf("output lacks %q:\n%s", want, out)
-+		}
-+	}
-+	if bytes.Contains(out, []byte("[retry 1] "+importPath(hangPkg))) {
-+		t.Errorf("tests of the package that did not complete were retried:\n%s", out)
-+	}
-+	flakyLine, permLine := jsonLines(out)
-+	if strings.Contains(flakyLine, importPath(hangPkg)) || strings.Contains(permLine, importPath(hangPkg)) {
-+		t.Errorf("tests of the package that did not complete are in the failures JSON:\nflaky: %s\npermanent: %s", flakyLine, permLine)
-+	}
-+	if !strings.Contains(flakyLine, "TestFlaky") {
-+		t.Errorf("flaky failures JSON %q should name TestFlaky", flakyLine)
-+	}
-+}
-+
-+// TestPackagePanicNotRetried covers a package that a panic stops. The
-+// wrapper must exit non-zero and must not retry the tests of the package,
-+// because some of its tests did not start.
-+func TestPackagePanicNotRetried(t *testing.T) {
-+	t.Parallel()
-+
-+	tests := []struct {
-+		name string
-+		src  string
-+		want string
-+	}{
-+		{
-+			// The panicking test and the paused parallel test have no result.
-+			name: "background-goroutine",
-+			src: `package bgpanic_test
-+
-+import (
-+	"os"
-+	"testing"
-+)
-+
-+func TestParallel(t *testing.T) { t.Parallel() }
-+
-+func TestPanic(t *testing.T) {
-+	if os.Getenv("TS_TESTWRAPPER_ATTEMPT") == "1" {
-+		go func() { panic("background goroutine panic") }()
-+		select {}
-+	}
-+}
-+`,
-+			want: "did not complete; not retrying its tests (unfinished: TestPanic TestParallel)\n",
-+		},
-+		{
-+			// The testing package reports the panicking test as failed. No
-+			// other test is in progress, but TestNotStarted never runs.
-+			name: "test-goroutine",
-+			src: `package testpanic_test
-+
-+import (
-+	"os"
-+	"testing"
-+)
-+
-+func TestPanic(t *testing.T) {
-+	if os.Getenv("TS_TESTWRAPPER_ATTEMPT") == "1" {
-+		panic("test goroutine panic")
-+	}
-+}
-+
-+func TestNotStarted(t *testing.T) {}
-+`,
-+			want: "did not complete; not retrying its tests\n",
-+		},
-+	}
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			t.Parallel()
-+			pkg := writePkg(t, multiPkgDir(t), "panicpkg", tt.src)
-+			out, err := cmdTestwrapper(t, pkg).CombinedOutput()
-+			if code, ok := errExitCode(err); !ok || code != 1 {
-+				t.Fatalf("got exit code %d, want 1 (err: %v) with output:\n%s", code, err, out)
-+			}
-+			if !bytes.Contains(out, []byte(tt.want)) {
-+				t.Errorf("output lacks %q:\n%s", tt.want, out)
-+			}
-+			if bytes.Contains(out, []byte("[retry ")) {
-+				t.Errorf("tests of the package that did not complete were retried:\n%s", out)
-+			}
-+		})
-+	}
-+}
-+
-+// TestPackageTimeoutResultsSummary covers the results summary when the only
-+// failure is a package that times out: the summary must be written, and
-+// must show the unfinished test as failed.
-+func TestPackageTimeoutResultsSummary(t *testing.T) {
-+	t.Parallel()
-+
-+	pkg := writePkg(t, multiPkgDir(t), "hang", hangSrc)
-+	summaryPath := filepath.Join(t.TempDir(), "summary.md")
-+	cmd := cmdTestwrapper(t, pkg, "-timeout=5s")
-+	cmd.Env = append(cmd.Env,
-+		"GITHUB_STEP_SUMMARY="+summaryPath,
-+		"TS_TESTWRAPPER_RESULTS_SUMMARY=1",
-+	)
-+	out, err := cmd.CombinedOutput()
-+	if code, ok := errExitCode(err); !ok || code != 1 {
-+		t.Fatalf("got exit code %d, want 1 (err: %v) with output:\n%s", code, err, out)
-+	}
-+	summary, err := os.ReadFile(summaryPath)
-```
-
-**File**: `cmd/testwrapper/testwrapper.go` (modified, +80/-39)
-```diff
-@@ -9,6 +9,11 @@
- // fails and then later passes is reported as flaky. A test that never passes
- // within the budget is a real failure and causes a non-zero exit.
- //
-+// If a package's test binary doesn't complete (for example because of a
-+// timeout, a panic, or a call to os.Exit), testwrapper won't retry any of its
-+// tests and exits non-zero; we may not have seen every test start, and so we
-+// can't reliably know the full set of tests that need re-running.
-+//
- // The flakytest package's Mark API is no longer required for retries — it is
- // kept for explicit issue tracking and for the TS_SKIP_FLAKY_TESTS skip
- // behavior.
-@@ -150,7 +155,17 @@ type testAttempt struct {
- 	// test in the package -- or the package's own output -- did.
- 	raceDetected bool
  
-+	// pkgFinished is set on the final event for a package, which go test
-+	// sends when the package ends for any reason (pass, fail, skip, or build
-+	// failure). Such an event is about the package, not about one test. It
-+	// does not mean that the test binary ran all of its tests; see
-+	// binaryFinished for that.
- 	pkgFinished bool
-+	// binaryFinished is set on a pkgFinished event if the test binary printed
-+	// the PASS or FAIL line that testing.M.Run prints after all tests run.
-+	// If it is not set, the binary stopped early (for example, because of a
-+	// panic or a timeout) and some tests possibly did not start.
-+	binaryFinished bool
- }
- 
- // failedTest tracks per-test state across the retry phase.
-@@ -162,7 +177,10 @@ type failedTest struct {
- 	attempts          int           // number of retry attempts run so far
- 	totalRetryElapsed time.Duration // total time spent across retry attempts
- 	everPassed        bool          // a retry attempt passed
--	inferredFail      bool          // the first failure was assumed, not reported by `go test`
-+	// binaryFailed is set if a retry attempt passed but go test failed (for
-+	// example, TestMain exited non-zero after the tests ran). That is a
-+	// package failure, which a retry can't clear.
-+	binaryFailed bool
- }
- 
- // packageTests describes what to run.
-@@ -434,23 +452,27 @@ func runTests(ctx context.Context, attempt int, patterns []string, goTestArgs, t
- 					}
- 				}
- 				ch <- &testAttempt{
--					pkg:          goOutput.Package,
--					outcome:      outcome,
--					start:        pkgTests[""].start,
--					end:          goOutput.Time,
--					logs:         pkgTests[""].logs,
--					pkgFinished:  true,
--					cached:       pkgCached[goOutput.Package],
--					raceDetected: raceDetected,
-+					pkg:            goOutput.Package,
-+					outcome:        outcome,
-+					start:          pkgTests[""].start,
-+					end:            goOutput.Time,
-+					logs:           pkgTests[""].logs,
-+					pkgFinished:    true,
-+					binaryFinished: pkgTests[""].binaryFinished,
-+					cached:         pkgCached[goOutput.Package],
-+					raceDetected:   raceDetected,
- 				}
- 			case "output":
- 				// Capture all output from the package except for the final
- 				// "FAIL    tailscale.io/control    0.684s" line, as
- 				// printPkgOutcome will output a similar line
- 				if !strings.HasPrefix(goOutput.Output, fmt.Sprintf("FAIL\t%s\t", goOutput.Package)) {
- 					pkgTests[""].logs.WriteString(goOutput.Output)
--					if goOutput.Output == raceDetectorMarkerLine {
-+					switch goOutput.Output {
-+					case raceDetectorMarkerLine:
- 						pkgTests[""].raceDetected = true
-+					case "PASS\n", "FAIL\n":
-+						pkgTests[""].binaryFinished = true
- 					}
- 				}
- 			}
-@@ -733,6 +755,7 @@ func retryFailedTest(ctx context.Context, ft *failedTest, goTestArgs, testArgs [
- 		}
- 		if outcome == outcomePass {
- 			ft.everPassed = true
-+			ft.binaryFailed = err != nil
- 		}
- 	}
- }
-@@ -993,7 +1016,8 @@ func main() {
- 		}
- 	}
- 	var failed []*failedTest
--	var pkgFatal bool // a package produced a non-test fatal (build error, etc.)
-+	var pkgFatal bool      // a package produced a non-test fatal (build error, etc.)
-+	var goTestExitCode int // exit code of a go test that failed with no retryable tests
- 
- 	resultsSummary := os.Getenv("TS_TESTWRAPPER_RESULTS_SUMMARY") != ""
- 	allResults := map[string]testOutcome{}
-@@ -1005,10 +1029,11 @@ func main() {
- 			runErrCh <- runTests(ctx, 1, patterns, goTestArgs, testArgs, ch)
- 		}()
- 
--		// Collect failed tests in this batch on the side; we use the count
--		// when a package reports a fail to decide if the failure is explained
--		// by retryable test failures or is a separate package-level fatal.
-+		// Collect failed tests in this batch on the side. When a package
-+		// finishes, we use them to decide if a failure is explained by
-+		// retryable test failures or is a separate package-level fatal.
- 		var pkgFailedTests []*failedTest
-+		unfinished := map[string][]string{} // pkg -> tests that started but did not finish
- 		for tr := range ch {
- 			// Go assigns the package name "command-line-arguments" when you
- 			// `go test FILE` rather than `go test PKG`. It's more
-@@ -1020,31 +1045,47 @@ func main() {
- 				tr.pkg = patterns[0]
-
-```
-
----
-
-### Incident Patch 2: `1f20c0bf` (2026-11-24)
-**Commit Message**: net/dns,tstest/natlab/vmtest: label resolv.conf temp file before rename (#22516)
-
-In direct mode the restorecon added in #20167 runs after the rename, so
-/etc/resolv.conf briefly carries the temp file's etc_t label. A service
-that watches /etc with inotify, such as sssd_be, re-arms its watch on the
-file inside that window and SELinux denies it. Run restorecon on the temp
-file first. The policy file-context regex /etc/resolv\.conf.* matches the
-temp name and rename(2) keeps the inode's label, so the file is net_conf_t
-from the moment it appears. The post-rename relabel stays for the
-backup-restore path.
-
-Add a natlab vmtest on Fedora that records the label at each rename.
-
-Fixes #22418
-
-Signed-off-by: Brendan Creane <[REDACTED_EMAIL]>
-
-**File**: `net/dns/direct.go` (modified, +37/-13)
-```diff
-@@ -269,19 +269,29 @@ func (m *directManager) restoreBackup() (restored bool, err error) {
- }
- 
- // rename tries to rename old to new using m.fs.Rename, and falls back
-+// to hand-copying bytes and truncating old if that fails. When new is
-+// /etc/resolv.conf, it restores the file's SELinux label afterwards.
-+func (m *directManager) rename(old, new string) error {
-+	if err := m.renameOrCopy(old, new); err != nil {
-+		return err
++// checkTailnet returns an error if [Server.Tailnet] is set and st does
++// not show the node in that tailnet.
++func (s *Server) checkTailnet(st *ipnstate.Status) error {
++	if s.Tailnet == "" {
++		return nil
 +	}
-+	if new == resolvConf {
-+		m.relabel(resolvConf)
++	var got tailcfg.StableTailnetID
++	if st.CurrentTailnet != nil {
++		got = st.CurrentTailnet.StableID
++	}
++	if got == "" {
++		return fmt.Errorf("control server did not report a tailnet ID; want tailnet %q", s.Tailnet)
++	}
++	if got != s.Tailnet {
++		return fmt.Errorf("node is in tailnet %q; want tailnet %q", got, s.Tailnet)
 +	}
 +	return nil
 +}
 +
-+// renameOrCopy renames old to new using m.fs.Rename, and falls back
- // to hand-copying bytes and truncating old if that fails.
+ // Close stops the server.
  //
- // This is a workaround to /etc/resolv.conf being a bind-mounted file
--// some container environments, which cannot be moved elsewhere in
-+// in some container environments, which cannot be moved elsewhere in
- // /etc (because that would be a cross-filesystem move) or deleted
- // (because that would break the bind in surprising ways).
--func (m *directManager) rename(old, new string) error {
-+func (m *directManager) renameOrCopy(old, new string) error {
- 	if !m.renameBroken {
- 		err := m.fs.Rename(old, new)
- 		if err == nil {
--			if new == resolvConf {
--				m.relabelResolvConf()
--			}
- 			return nil
- 		}
- 		if runtime.GOOS == "linux" && distro.Get() == distro.Synology {
-@@ -314,22 +324,29 @@ func (m *directManager) rename(old, new string) error {
- 			return fmt.Errorf("remove of %q failed (%w) and so did truncate: %v", old, err, err2)
- 		}
- 	}
--	if new == resolvConf {
--		m.relabelResolvConf()
--	}
- 	return nil
- }
- 
- var restoreconPath lazy.SyncValue[string] // path to restorecon, or "" if absent
- 
--// relabelResolvConf restores the policy-default SELinux context on
--// /etc/resolv.conf. Best effort: only runs when SELinux is enforcing. See:
-+// relabel restores the policy-default SELinux context on name.
-+//
-+// name must be /etc/resolv.conf or a temp file beside it named
-+// /etc/resolv.conf.*. Any other name is ignored. The targeted policy's
-+// file-context rule for /etc/resolv\.conf.* covers both, so the temp
-+// file gets net_conf_t and keeps it through rename(2).
- //
--//	https://github.com/tailscale/tailscale/issues/20149.
--func (m *directManager) relabelResolvConf() {
-+// Best effort: only runs when SELinux is enforcing. See:
-+//
-+//	https://github.com/tailscale/tailscale/issues/20149
-+//	https://github.com/tailscale/tailscale/issues/22418
-+func (m *directManager) relabel(name string) {
- 	if runtime.GOOS != "linux" {
- 		return
- 	}
-+	if name != resolvConf && !strings.HasPrefix(name, resolvConf+".") {
-+		return
+ // It must not be called before or concurrently with Start.
+@@ -1030,6 +1065,9 @@ func (s *Server) start() (reterr error) {
+ 	prefs.ControlURL = s.getControlURL()
+ 	prefs.RunWebClient = s.RunWebClient
+ 	prefs.AdvertiseTags = s.AdvertiseTags
++	if s.Tailnet != "" {
++		prefs.Tailnet = "required:" + string(s.Tailnet)
 +	}
- 	restorecon := restoreconPath.Get(func() string {
- 		p, _ := exec.LookPath("restorecon")
- 		return p
-@@ -347,7 +364,7 @@ func (m *directManager) relabelResolvConf() {
- 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
- 	defer cancel()
- 	// m.fs may be rooted at a test prefix; restorecon needs the real path.
--	actualPath := m.fs.ActualPath(resolvConf)
-+	actualPath := m.fs.ActualPath(name)
- 	if out, err := exec.CommandContext(ctx, restorecon, actualPath).CombinedOutput(); err != nil {
- 		m.logf("dns: restorecon of %q failed: %v, output: %s", actualPath, err, bytes.TrimSpace(out))
- 		m.health.SetUnhealthy(selinuxRelabelWarnable, nil)
-@@ -618,6 +635,10 @@ func (m *directManager) Close() error {
- 	return nil
- }
- 
-+// atomicWriteFile writes data to a temp file beside filename and renames
-+// it into place. When filename is /etc/resolv.conf, it restores the temp
-+// file's SELinux label before the rename, so the new /etc/resolv.conf
-+// never appears with the generic etc_t label.
- func (m *directManager) atomicWriteFile(fs wholeFileFS, filename string, data []byte, perm os.FileMode) error {
- 	var randBytes [12]byte
- 	if _, err := rand.Read(randBytes[:]); err != nil {
-@@ -637,6 +658,9 @@ func (m *directManager) atomicWriteFile(fs wholeFileFS, filename string, data []
- 	if err := fs.Chmod(tmpName, perm); err != nil {
- 		return fmt.Errorf("atomicWriteFile: Chmod: %w", err)
- 	}
-+	// relabel ignores names that are not /etc/resolv.conf or a temp
-+	// file beside it, so this is a no-op for any other filename.
-+	m.relabel(tmpName)
- 
- 	return m.rename(tmpName, filename)
- }
+ 	authKey, err := s.resolveAuthKey()
+ 	if err != nil {
+ 		return fmt.Errorf("error resolving auth key: %w", err)
 ```
 
-**File**: `tstest/natlab/vmtest/selinux_test.go` (added, +200/-0)
+**File**: `tsnet/tsnet_test.go` (modified, +55/-0)
 ```diff
-@@ -0,0 +1,200 @@
-+// Copyright (c) Tailscale Inc & contributors
-+// SPDX-License-Identifier: BSD-3-Clause
+@@ -4245,3 +4245,58 @@ func TestHTTPClientDefaultTransport(t *testing.T) {
+ 		}
+ 	}
+ }
 +
-+package vmtest_test
++func TestTailnet(t *testing.T) {
++	controlURL, control := startControl(t)
++	control.TailnetID = "T1"
 +
-+import (
-+	"fmt"
-+	"strings"
-+	"testing"
-+	"time"
++	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
++	defer cancel()
 +
-+	"github.com/creachadair/mds/shell"
-+	"tailscale.com/tailcfg"
-+	"tailscale.com/tstest"
-+	"tailscale.com/tstest/natlab/vmtest"
-+	"tailscale.com/tstest/natlab/vnet"
-+)
-+
-+// Guest paths for the resolv.conf label probe: the script, the labels it
-+// records, and its own stderr.
-+const (
-+	probePath    = "/root/resolvconf-label-probe.py"
-+	probeLogPath = "/root/resolvconf-label-probe.log"
-+	probeErrPath = "/root/resolvconf-label-probe.err"
-+)
-+
-+// resolvConfLabelProbe watches /etc with inotify and, each time something
-+// is renamed to /etc/resolv.conf, records the SELinux label the new inode
-+// has at that instant. It wakes within microseconds of the rename, so it
-+// sees the file before any relabel that runs afterwards, the same way
-+// sssd_be does when it re-arms its watch (tailscale/tailscale#22418).
-+//
-+// Python is used because the Fedora cloud image has it (cloud-init needs
-+// it) and ships neither inotify-tools nor strace.
-+const resolvConfLabelProbe = `
-+import ctypes, os, struct, sys, time
-+
-+IN_MOVED_TO = 0x80
-+libc = ctypes.CDLL(None, use_errno=True)
-+fd = libc.inotify_init1(0)
-+if fd < 0:
-+    raise OSError(ctypes.get_errno(), "inotify_init1")
-+if libc.inotify_add_watch(fd, b"/etc", IN_MOVED_TO) < 0:
-+    raise OSError(ctypes.get_errno(), "inotify_add_watch")
-+log = open(sys.argv[1], "a", buffering=1)
-+log.write("ready\n")
-+while True:
-+    buf = os.read(fd, 65536)
-+    off = 0
-+    while off < len(buf):
-+        _, mask, _, ln = struct.unpack_from("iIII", buf, off)
-+        name = buf[off+16:off+16+ln].rstrip(b"\0").decode()
-+        off += 16 + ln
-+        if name != "resolv.conf":
-+            continue
-+        try:
-+            label = os.getxattr("/etc/resolv.conf", "security.selinux").rstrip(b"\0").decode()
-+        except OSError as e:
-+            label = "error: %s" % e
-+        log.write("label %s\n" % label)
-+`
-+
-+// TestDirectDNSSELinuxLabel checks that the direct DNS manager never leaves
-+// /etc/resolv.conf with the generic etc_t label, not even briefly. tailscaled
-+// writes the file as a temp file and renames it into place. On an
-+// SELinux-enforcing host, the temp file is created with the label of /etc,
-+// and rename(2) keeps the inode's label. Other confined services that watch
-+// the file (sssd_be, NetworkManager) are denied access to an etc_t
-+// resolv.conf, so the file must already be net_conf_t when the rename lands.
-+// A relabel after the rename is too late: it loses the race against anyone
-+// watching /etc with inotify. See tailscale/tailscale#20149 and #22418.
-+//
-+// The test runs on Fedora, which boots SELinux enforcing, with
-+// systemd-resolved masked so tailscaled uses the direct manager, and
-+// tailscaled under its stock systemd unit so it runs in the same SELinux
-+// domain as a package install. A probe in the guest records the label at
-+// each rename; toggling accept-dns drives the rewrites (off restores the
-+// backup, on writes a fresh file, so both rename paths are exercised).
-+func TestDirectDNSSELinuxLabel(t *testing.T) {
-+	// Without a DNS config from control there is nothing for the direct
-+	// manager to write, and toggling accept-dns would never touch the file.
-+	env := vmtest.New(t,
-+		vmtest.ControlDNS("tailnet.test", &tailcfg.DNSConfig{
-+			Proxied: true, // MagicDNS, so quad-100 is the nameserver written
-+		}))
-+
-+	net := env.AddNetwork("2.1.1.1", "192.168.1.1/24", vnet.EasyNAT)
-+	node := env.AddNode("fedora", net,
-+		vmtest.OS(vmtest.Fedora43),
-+		vmtest.WithDNSMode(vmtest.DNSDirect),
-+		vmtest.SystemdUnit())
-+
-+	env.Start()
-+
-+	env.AssertDNSBackend(node, "direct")
-+
-+	// On failure, show what the guest saw: the probe's own stderr, the
-+	// labels of every resolv.conf file, and tailscaled's DNS log lines.
-+	t.Cleanup(func() {
-+		if !t.Failed() {
-+			return
++	newServer := func(hostname, dir string, tailnet tailcfg.StableTailnetID) *Server {
++		s := &Server{
++			Dir:        dir,
++			ControlURL: controlURL,
++			Hostname:   hostname,
++			Tailnet:    tailnet,
++			Logf:       tstest.WhileTestRunningLogger(t),
 +		}
-+		for _, cmd := range []string{
-+			"cat " + probeErrPath,
-+			"ls -lZ /etc/resolv*",
-+			"journalctl -u tailscaled --no-pager -o cat | grep -i 'dns\\|resolv\\|restorecon' | tail -40",
-+			"journalctl -k --no-pager -o cat | grep avc | tail -20",
-+		} {
-+			out, err := env.SSHExec(node, cmd)
-+			t.Logf("# %s (err=%v)\n%s", cmd, err, out)
++		t.Cleanup(func() { s.Close() })
++		return s
++	}
++
++	t.Run("match", func(t *testing.T) {
++		st, err := newServer("s1", t.TempDir(), "T1").Up(ctx)
++		if err != nil {
++			t.Fatalf("Up: %v", err)
++		}
++		if got := st.CurrentTailnet.StableID; got != "T1" {
++			t.Errorf("tailnet = %q; want T1", got)
 +		}
 +	})
 +
-+	// The whole point is enforcing mode. Permissive would still log the
-+	// probe's labels, but a pass would then say nothing about denials.
-+	out, err := env.SSHExec(node, "getenforce")
-+	if err != nil {
-+		t.Fatalf("getenforce: %v\n%s", err, out)
-+	}
-+	if got := strings.TrimSpace(out); got != "Enforcing" {
-+		t.Fatalf("SELinux is %q, want Enforcing", got)
++	t.Run("register_refused", func(t *testing.T) {
++		_, err := newServer("s2", t.TempDir(), "T2").Up(ctx)
++		if err == nil || !strings.Contains(err.Error(), "T2") {
++			t.Fatalf("Up = %v; want a registration error naming T2", err)
++		}
++	})
++
++	t.Run("saved_state_other_tailnet", func(t *testing.T) {
++		// Log in with no Tailnet set, then restart from the same state
++		// asking for a different tailnet. A node that is already logged
++		// in does not register again, so only the check in Up catches
++		// this.
++		dir := t.TempDir()
++		s := newServer("s3", dir, "")
++		if _, err := s.Up(ctx); err != nil {
++			t.Fatalf("first Up: %v", err)
++		}
++		s.Close()
++
++		_, err := newServer("s3", dir, "T2").Up(ctx)
++		if err == nil || !strings.Contains(err.Error(), `node is in tailnet "T1"`) {
++			t.Fatalf("second Up = %v; want a tailnet mismatch error from Up", err)
++		}
++	})
++}
+```
+
+**File**: `tstest/integration/testcontrol/testcontrol.go` (modified, +20/-0)
+```diff
+@@ -69,6 +69,13 @@ type Server struct {
+ 	// grants rules.
+ 	PeerRelayGrants bool
+ 
++	// TailnetID, if non-empty, is set as [tailcfg.Node.StableTailnetID] on
++	// newly registered nodes. A RegisterRequest for a new node whose
++	// Tailnet is "required:" followed by a list that does not contain
++	// TailnetID is rejected. Requests for nodes that are already
++	// registered are not checked.
++	TailnetID tailcfg.StableTailnetID
++
+ 	// SSHPolicy, if non-nil, is sent to every node in MapResponses.
+ 	// Each node also gets [tailcfg.CapabilitySSH] added to its capability
+ 	// map, permitting "tailscale up --ssh".
+@@ -1051,6 +1058,18 @@ func (s *Server) serveRegister(w http.ResponseWriter, r *http.Request, mkey key.
+ 		return
+ 	}
+ 
++	s.mu.Lock()
++	_, known := s.nodes[req.NodeKey]
++	s.mu.Unlock()
++	if want, ok := strings.CutPrefix(req.Tailnet, "required:"); ok && !known && !slices.Contains(strings.Split(want, ","), string(s.TailnetID)) {
++		res := must.Get(s.encode(false, tailcfg.RegisterResponse{
++			Error: fmt.Sprintf("tailnet %q is not one of the required tailnets %q", s.TailnetID, want),
++		}))
++		w.WriteHeader(200)
++		w.Write(res)
++		return
 +	}
 +
-+	install := fmt.Sprintf("printf %%s %s > %s", shell.Quote(resolvConfLabelProbe), probePath)
-+	if out, err := env.SSHExec(node, install); err != nil {
-+		t.Fatalf("installing probe: %v\n%s", err, out)
+ 	// If this is a followup request, wait until interactive followup URL visit complete.
+ 	isFollowup := req.Followup != ""
+ 	if isFollowup {
+@@ -1138,6 +1157,7 @@ func (s *Server) serveRegister(w http.ResponseWriter, r *http.Request, mkey key.
+ 			Cap:               req.Version,
+ 			CapMap:            capMap,
+ 			Capabilities:      slices.Collect(maps.Keys(capMap)),
++			StableTailnetID:   s.TailnetID,
+ 		}
+ 		if s.TagOwners != nil && req.Hostinfo != nil {
+ 			// Trust the requested tags at signup; ownership checks
+```
+
+---
+
+### Incident Patch 2: `2a097428` (2026-11-24)
+**Commit Message**: tsnet: fix Server.Close so it can be called repeatedly (#22633)
+
+As reported by #19999, Server.Close was not safe to call while
+Server.Start was running, which is not how anyone expects an io.Closer
+to behave. In fact, you couldn’t even call Close before Start.
+
+This patch fixes this, so you can call Close safely at any time and
+more than once.
+
+This patch fixes Server.Up and Server.Dial so we don’t try to start
+the server if their context was already canceled.
+
+As a side effect of closing properly, this patch also replaces
+closeOnErrorPool, introduced in PR #5301, which never actually worked.
+
+Updates #19999
+Updates tailscale/corp#42776
+
+Change-Id: If17ef36a99f49b86d9db061f3eef0d2d914520a2
+
+Signed-off-by: Simon Law <[REDACTED_EMAIL]>
+
+**File**: `tsnet/tsnet.go` (modified, +85/-48)
+```diff
+@@ -229,6 +229,10 @@ import (
+ 	"tailscale.com/wgengine/netstack"
+ )
+ 
++// errServerClosed is returned by [Server.Start] and the methods that call it
++// after a call to [Server.Close].
++var errServerClosed = errors.New("tsnet: Server closed")
++
+ // Server is an embedded Tailscale server.
+ //
+ // Its exported fields may be changed until the first method call.
+@@ -370,17 +374,20 @@ type Server struct {
+ 	// This field must be set before calling Start.
+ 	Tun tun.Device
+ 
+-	initOnce            sync.Once
+-	initErr             error
++	startMu        sync.Mutex // protects start, shutdown, and closed fields
++	startDone      chan struct{}
++	startErr       error
++	shutdownCtx    context.Context
++	shutdownCancel context.CancelFunc
++	closed         bool
++
+ 	lb                  *ipnlocal.LocalBackend
+ 	sys                 *tsd.System
+ 	netstack            *netstack.Impl
+ 	netMon              *netmon.Monitor
+ 	dnsRes              lazy.SyncValue[*dnsResolver] // lazily created by dnsResolver
+ 	rootPath            string                       // the state directory
+ 	hostname            string
+-	shutdownCtx         context.Context
+-	shutdownCancel      context.CancelFunc
+ 	proxyCred           string        // SOCKS5 proxy auth for loopbackListener
+ 	localAPICred        string        // basic auth password for loopbackListener
+ 	loopbackListener    net.Listener  // optional loopback for localapi and proxies
+@@ -398,7 +405,6 @@ type Server struct {
+ 	fallbackTCPHandlers set.HandleSet[FallbackTCPHandler]
+ 	dialer              *tsdial.Dialer
+ 	advertisedServices  map[tailcfg.ServiceName]int
+-	closeOnce           sync.Once
+ }
+ 
+ // FallbackTCPHandler describes the callback which
+@@ -417,6 +423,9 @@ type FallbackTCPHandler func(src, dst netip.AddrPort) (handler func(net.Conn), i
+ // Dial connects to the address on the tailnet.
+ // It will start the server if it has not been started yet.
+ func (s *Server) Dial(ctx context.Context, network, address string) (net.Conn, error) {
++	if err := ctx.Err(); err != nil {
++		return nil, err
 +	}
-+	// Detach fully from the SSH session: every fd of the probe is redirected
-+	// and only t
+ 	if err := s.Start(); err != nil {
+ 		return nil, err
+ 	}
+@@ -601,13 +610,53 @@ func (h *localSecHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+ // Optional: any calls to Dial/Listen will also call Start.
+ func (s *Server) Start() error {
+ 	hostinfo.SetPackage("tsnet")
+-	s.initOnce.Do(s.doInit)
+-	return s.initErr
++
++	s.startMu.Lock()
++	if s.closed {
++		s.startMu.Unlock()
++		return errServerClosed
++	}
++
++	if s.startErr != nil {
++		s.startMu.Unlock()
++		return s.startErr
++	}
++
++	done := s.startDone
++	if done != nil { // wait for other Start to finish
++		s.startMu.Unlock()
++		<-done
++		return s.startErr
++	}
++	done = make(chan struct{})
++	s.startDone = done
++	defer close(done)
++
++	ctx, cancel := context.WithCancel(context.Background())
++	s.shutdownCtx, s.shutdownCancel = ctx, cancel
++	s.startMu.Unlock()
++
++	err := s.start()
++	if err != nil {
++		err = fmt.Errorf("tsnet: %w", err)
++	} else if ctx.Err() != nil {
++		err = errServerClosed
++	}
++	if err != nil {
++		s.startMu.Lock()
++		s.startErr = err
++		s.startMu.Unlock()
++	}
++	return err
+ }
+ 
+ // Up connects the server to the tailnet and waits until it is running.
+ // On success it returns the current status, including a Tailscale IP address.
+ func (s *Server) Up(ctx context.Context) (*ipnstate.Status, error) {
++	if err := ctx.Err(); err != nil {
++		return nil, fmt.Errorf("tsnet.Up: %w", err)
++	}
++
+ 	lc, err := s.LocalClient() // calls Start
+ 	if err != nil {
+ 		return nil, fmt.Errorf("tsnet.Up: %w", err)
+@@ -697,17 +746,24 @@ func (s *Server) checkTailnet(st *ipnstate.Status) error {
+ }
+ 
+ // Close stops the server.
+-//
+-// It must not be called before or concurrently with Start.
+ func (s *Server) Close() error {
+-	didClose := false
+-	s.closeOnce.Do(func() {
+-		didClose = true
+-		s.close()
+-	})
+-	if !didClose {
++	s.startMu.Lock()
++	if s.closed {
++		s.startMu.Unlock()
+ 		return fmt.Errorf("tsnet: %w", net.ErrClosed)
+ 	}
++
++	s.closed = true
++	if s.shutdownCancel != nil {
++		s.shutdownCancel()
++	}
++	startDone := s.startDone
++	s.startMu.Unlock()
++
++	if startDone != nil {
++		<-startDone
++	}
++	s.close()
+ 	return nil
+ }
+ 
+@@ -750,6 +806,11 @@ func (s *Server) close() {
+ 	if s.lb != nil {
+ 		s.lb.Shutdown()
+ 	}
++	if s.sys != nil {
++		if eng, ok := s.sys.Engine.GetOK(); ok && eng != nil {
++			eng.Close()
++		}
++	}
+ 	if s.netMon != nil {
+ 		s.netMon.Close()
+ 	}
+@@ -764,10 +825,8 @@ func (s *Server) close() {
+ 	}
+ 
+ 	wg.Wait()
+-	// s.sys is only assigned partway through doInit, so it is still nil if
+-	// Start failed before that point. Close is reachable in that state --
+-	// Start is idempotent via initOnce and returns the stored initErr, so
+-	// callers that `defer Close()` before checking the error land here.
++	// s.sys is only assigned partway through Start, so it is still nil if
++	// Start failed before that point, or if Close is called before Start.
+ 	// Use GetOK rather than Get so an unset Bus cannot panic either.
+ 	if s.sys != nil {
+ 		if bus, o
+```
+
+**File**: `tsnet/tsnet_test.go` (modified, +81/-6)
+```diff
+@@ -121,8 +121,7 @@ func TestListenerPort(t *testing.T) {
+ 		{"tcp6", "[12::34]:80", false},
+ 	}
+ 	for _, tt := range tests {
+-		s := &Server{}
+-		s.initOnce.Do(func() { s.initErr = errNone })
++		s := &Server{startErr: errNone}
+ 		_, err := s.Listen(tt.network, tt.addr)
+ 		gotErr := err != nil && err != errNone
+ 		if gotErr != tt.wantErr {
+@@ -975,8 +974,7 @@ func TestServeUnavailable(t *testing.T) {
+ 	}
+ 
+ 	// Neither call should try to start the server when Serve is omitted.
+-	s := &Server{}
+-	s.initOnce.Do(func() { s.initErr = errors.New("unexpected server startup") })
++	s := &Server{startErr: errors.New("unexpected server startup")}
+ 	if ln, err := s.ListenFunnel("tcp", ":443"); ln != nil || !errors.Is(err, feature.ErrUnavailable) {
+ 		t.Errorf("ListenFunnel = %v, %v; want nil, %v", ln, err, feature.ErrUnavailable)
+ 	}
+@@ -4182,14 +4180,91 @@ func TestListenMultipleEphemeralPorts(t *testing.T) {
+ }
+ 
+ // TestCloseBeforeStart verifies that Close on a Server whose Start never ran
+-// (or failed early) does not panic. s.sys is assigned partway through doInit,
+-// so it is still nil in that state, and close previously dereferenced
++// (or failed early) does not panic. s.sys is assigned partway through Start,
++// so it is still nil in that state, and Close previously dereferenced
+ // s.sys.Bus unconditionally.
+ func TestCloseBeforeStart(t *testing.T) {
+ 	s := &Server{}
+ 	if err := s.Close(); err != nil {
+ 		t.Fatalf("Close: %v", err)
+ 	}
++	if err := s.Start(); !errors.Is(err, errServerClosed) {
++		t.Errorf("Start after Close: %v; want %v", err, errServerClosed)
++	}
++	if _, err := s.Up(context.Background()); !errors.Is(err, errServerClosed) {
++		t.Errorf("Up after Close: %v; want %v", err, errServerClosed)
++	}
++	if err := s.Close(); !errors.Is(err, net.ErrClosed) {
++		t.Errorf("second Close: %v; want %v", err, net.ErrClosed)
++	}
++}
++
++func TestCloseDuringStart(t *testing.T) {
++	tstest.ResourceCheck(t)
++
++	controlURL, _ := startControl(t)
++	st := &blockingStore{
++		entered: make(chan struct{}),
++		release: make(chan struct{}),
++	}
++	s := &Server{
++		Dir:        t.TempDir(),
++		Hostname:   "close-during-start",
++		ControlURL: controlURL,
++		Ephemeral:  true,
++		Store:      st,
++	}
++	defer s.Close()
++
++	startErr := make(chan error, 1)
++	go func() { startErr <- s.Start() }()
++	<-st.entered // Start is blocked in NewLocalBackend by ReadState
++
++	closeErr := make(chan error, 1)
++	go func() { closeErr <- s.Close() }()
++	<-s.shutdownCtx.Done() // wait for Close to cancel Start
++
++	select {
++	case err := <-closeErr:
++		t.Fatalf("Close returned %v before Start returned", err)
++	case <-time.After(100 * time.Millisecond): // wait for broken Close
++	}
++
++	close(st.release)
++	if err := <-startErr; !errors.Is(err, errServerClosed) {
++		t.Errorf("Start: %v; want %v", err, errServerClosed)
++	}
++	if err := <-closeErr; err != nil {
++		t.Errorf("Close: %v; want nil", err)
++	}
++	if err := s.Start(); !errors.Is(err, errServerClosed) {
++		t.Errorf("Start after Close: %v; want %v", err, errServerClosed)
++	}
++}
++
++type blockingStore struct {
++	mem.Store
++	once    sync.Once
++	entered chan struct{} // closed when ReadState starts to block
++	release chan struct{}
++}
++
++func (s *blockingStore) ReadState(id ipn.StateKey) ([]byte, error) {
++	s.once.Do(func() {
++		close(s.entered)
++		<-s.release
++	})
++	return s.Store.ReadState(id)
++}
++
++func TestUpWithCanceledContext(t *testing.T) {
++	ctx, cancel := context.WithCancel(context.Background())
++	cancel()
++
++	s := &Server{}
++	if _, err := s.Up(ctx); !errors.Is(err, context.Canceled) {
++		t.Errorf("Up after cancel: %v; want %v", err, ctx.Err())
++	}
+ }
+ 
+ // TestHTTPClientDefaultTransport verifies that the transport returned by
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #22635** (2026-11-24): tsnet: test with a fake host DNS resolver, not the OS resolver (@sfllaw)
+- **PR #22633** (2026-11-24): tsnet: fix Server.Close so it can be called repeatedly (@sfllaw)
+- **PR #22630** (2026-11-24): feature/conn25: return extra WireGuard AllowedIPs in a stable order (@mazdakn)
 - **PR #22628** (closed): derp/derpserver: mark TestWriterFloodDoesNotStarveControlFrames flaky (@joshbarros)
 - **PR #22623** (closed): derp/derpserver: mark TestWriterFloodDoesNotStarveControlFrames flaky (@joshbarros)
 - **PR #22622** (2026-11-24): cmd/testwrapper: ensure unfinished tests always trigger failure (@tomhjp)
-- **PR #22615** (2026-11-24): net/portmapper: clean up comments and log lines (@fmarier)
-- **PR #22612** (2026-11-23): VERSION.txt: this is v1.107.0 (@nickoneill)
-- **PR #22611** (2026-11-23): net/dns: retry failed hosts file updates in the background on Windows (@nickkhyl)
 
 ---
 
@@ -1414,63 +1353,51 @@ Signed-off-by: Brendan Creane <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cmd/testwrapper: ensure unfinished tests always trigger failure
+## X. tsnet: add Server.Tailnet to require a tailnet
 
 **RULE**:
-When implementing operations in `cmd/testwrapper/multipkg_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tsnet/tsnet.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8bcc919d`: cmd/testwrapper: ensure unfinished tests always trigger failure. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `67e092fe`: tsnet: add Server.Tailnet to require a tailnet. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/testwrapper/multipkg_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `tsnet/tsnet.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
+	// Tailnet, if non-empty, is the only tailnet this Server may join.
+	// It is the tailnet's stable ID, as shown in the admin console and
+	// reported in [ipnstate.TailnetStatus.StableID].
+	//
+	// When the node registers, the control server refuses a login to any
+	// other tailnet. [Server.Up] also returns an error if the node is
+	// already logged in to a different tailnet, such as from state saved
+	// before Tailnet was set, or if the control server does not report
+	// which tailnet the node is in.
+	//
+	// This field must be set before calling Start.
+	Tailnet tailcfg.StableTailnetID
 
-// hangSrc is a package that times out on the first attempt only. When the
-// timeout occurs, TestFails has failed, TestParallel is paused, TestHang
-// runs, and TestNotStarted has not started.
-const hangSrc = `package hang_test
-
-import (
-	"os"
-	"testing"
-	"time"
-)
-
-func TestParallel(t *testing.T) { t.Parallel() }
-
-func TestFails(t *testing.T) {
-	if os.Getenv("TS_TESTWRAPPER_ATTEMPT") == "1" {
-		t.Fatal("failing on the first attempt only")
+				if err := s.checkTailnet(status); err != nil {
+					return nil, fmt.Errorf("tsnet.Up: %w", err)
+				}
+// checkTailnet returns an error if [Server.Tailnet] is set and st does
+// not show the node in that tailnet.
+func (s *Server) checkTailnet(st *ipnstate.Status) error {
+	if s.Tailnet == "" {
+		return nil
 	}
-}
-
-func TestHang(t *testing.T) {
-	if os.Getenv("TS_TESTWRAPPER_ATTEMPT") == "1" {
-		time.Sleep(time.Hour)
+	var got tailcfg.StableTailnetID
+	if st.CurrentTailnet != nil {
+		got = st.CurrentTailnet.StableID
 	}
-}
-
-func TestNotStarted(t *testing.T) {}
-`
-
-// TestPackageTimeoutNotRetried covers a package that times out: the wrapper
-// must exit non-zero and must not retry any of its tests, or report them as
-// flaky, because the tests that did not start never ran. Tests in other
-// packages are still retried.
-func TestPackageTimeoutNotRetried(t *testing.T) {
-	t.Parallel()
-
-	dir := multiPkgDir(t)
-	hangPkg := writePkg(t, dir, "hang", hangSrc)
-	flakyPkg := writePkg(t, dir, "flaky", flakySrc)
-
-	out, err := cmdTestwrapper(t, hangPkg, flakyPkg, "-timeout=5s").CombinedOutput()
-	if code, ok := errExitCode(err); !ok || code != 1 {
-		t.Fatalf("got exit co
+	if got == "" {
+		return fmt.Errorf("control server did not report a tailnet ID; want tailnet %q", s.Tailnet)
+	}
+	if got != s.Tailnet {
+		return fmt.Errorf("node is in tailnet %q; want tailnet
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1480,4 +1407,4 @@ func TestPackageTimeoutNotRetried(t *testing.T) {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8bcc919d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `67e092fe` are properly handled with clean fallback behavior.
