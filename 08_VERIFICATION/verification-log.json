@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261123-HBRX",
-    "timestamp": "2026-11-23T21:40:01.629Z",
-    "repository": "aleo-labs-protocol/snarkOS",
-    "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "e4cf951848685e0bd3b9db10b8ee634d858090bdf479b0b4408cef43e172d601",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-RM9I",
-    "timestamp": "2026-11-23T21:48:01.782Z",
-    "repository": "inclusionAI/Ling-3.2-air",
-    "learningId": "learn-huggingface-inclusionai-ling-3-2-air",
-    "contentHash": "1f337715333a685131fbf58ab395a286113f57def0211d3466e48d82fcef8eba",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-RO9F",
-    "timestamp": "2026-11-23T21:48:04.371Z",
-    "repository": "openbmb/MiniCPM-V-4.7-1B",
-    "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-1b",
-    "contentHash": "917c50f99b7f07d6e77a06c9d081a848c4268ac78cec036dbe03c022e07f855e",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261123-RYR3",
     "timestamp": "2026-11-23T21:48:17.967Z",
     "repository": "freenet/freenet-core",
@@ -7492,6 +7447,51 @@
     "contentHash": "09fd4c328cce3a6b4c493da31f3ac3df2830ae2f8b10c76aa4ef54cf5c23f0d3",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-5E8W",
+    "timestamp": "2026-11-25T09:54:15.008Z",
+    "repository": "XHToken/Spark-X2.6-4B-GGUF",
+    "learningId": "learn-huggingface-xhtoken-spark-x2-6-4b-gguf",
+    "contentHash": "9047342dc4393d826bd52eb108fbceceeba6a34db8f17447f1682bad8fd59e8e",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-5FZA",
+    "timestamp": "2026-11-25T09:54:17.254Z",
+    "repository": "zeronsh/zeron",
+    "learningId": "learn-github-zeronsh-zeron",
+    "contentHash": "e5eb38a7fe39feb39f90fec6d0bf0969d24b68829ae3a772cd527ad6e3b37398",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-5PGX",
+    "timestamp": "2026-11-25T09:54:29.553Z",
+    "repository": "GreptimeTeam/greptimedb",
+    "learningId": "learn-github-greptimeteam-greptimedb",
+    "contentHash": "d722b1b62f77871a6a42f2e018f500877510522575e1d0d519720096fd254183",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

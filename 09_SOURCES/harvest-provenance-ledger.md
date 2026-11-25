@@ -13058,3 +13058,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-atomicchat-inkling-2-mini-uncensored-gguf` | `https://huggingface.co/AtomicChat/Inkling-2-Mini-Uncensored-GGUF` | `hf-atomicc` | Multi-dimensional audit evidence | 2026-11-25T09:39:48.466Z |
 | `learn-dom-h-543dc045` | `project://hf-atomicchat-inkling-2-mini-uncensored-gguf` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-atomicchat-inkling-2-mini-uncensored-gguf-learnings.md` | 2026-11-25T09:40:28.963Z |
 | `learn-dom-f-bd142f65` | `project://hf-atomicchat-inkling-2-mini-uncensored-gguf` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-atomicchat-inkling-2-mini-uncensored-gguf-learnings.md` | 2026-11-25T09:41:12.041Z |
+| `learn-huggingface-xhtoken-spark-x2-6-4b-gguf` | `https://huggingface.co/XHToken/Spark-X2.6-4B-GGUF` | `hf-xhtoken` | Multi-dimensional audit evidence | 2026-11-25T09:54:15.013Z |
+| `learn-github-zeronsh-zeron` | `https://github.com/zeronsh/zeron` | `fbb4083a` | Multi-dimensional audit evidence | 2026-11-25T09:54:17.259Z |
+| `learn-github-greptimeteam-greptimedb` | `https://github.com/GreptimeTeam/greptimedb` | `0813fc35` | Multi-dimensional audit evidence | 2026-11-25T09:54:29.558Z |

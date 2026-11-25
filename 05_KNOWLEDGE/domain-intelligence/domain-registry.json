@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T09:41:16.042Z",
+  "last_updated": "2026-11-25T09:54:34.875Z",
   "total_records": 2656,
   "domains": {
     "A": {
@@ -17643,8 +17643,8 @@
       "title": "Architecture Intelligence: GreptimeTeam/greptimedb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-greptimeteam-greptimedb-architecture-intelligence-greptimeteam-greptimedb-core-i.md",
       "repository": "GreptimeTeam/greptimedb",
-      "content_hash": "e65526c0010b46897cc46db2115f785f47da0b0336a06e5943c8883bd2ed2a56",
-      "created_at": "2026-11-24T15:17:30.944Z"
+      "content_hash": "c375a33fe0cf04b8344f2ef9a2a8c49f1ac5f214a32ab3ffd753d0bca2358e2f",
+      "created_at": "2026-11-25T09:54:29.989Z"
     },
     "domain_intelligence-content-information-intelligence-apache-arrow-learnings-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-apache-arrow-learnings-core-invariants",
@@ -17712,8 +17712,8 @@
       "title": "Architecture Intelligence: greptimeteam-greptimedb-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-greptimeteam-greptimedb-learnings-architecture-intelligence-greptimeteam-greptim.md",
       "repository": "greptimeteam-greptimedb-learnings",
-      "content_hash": "fe415648c5452943419fb8e49eec2a0b8283193eb872f03225cb2ba21769c0f6",
-      "created_at": "2026-11-24T15:17:36.007Z"
+      "content_hash": "f8365167cdf17e7c40679cf117964e4fe7915250796e97e6d41953590ab69db9",
+      "created_at": "2026-11-25T09:54:34.875Z"
     },
     "domain_intelligence-research-knowledge-intelligence-autotrust-glm5-3-flash-e224-dgx-spark-core-invar": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-autotrust-glm5-3-flash-e224-dgx-spark-core-invar",
@@ -20164,8 +20164,8 @@
       "title": "Architecture Intelligence: zeronsh/zeron Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zeronsh-zeron-architecture-intelligence-zeronsh-zeron-core-invariants.md",
       "repository": "zeronsh/zeron",
-      "content_hash": "8982917b435e813dedcc951e9d6a62e901a3504e1d66058d1f84573da1ce58f8",
-      "created_at": "2026-11-24T07:55:37.873Z"
+      "content_hash": "6787914009924e63856a3d13eaea42a68d5b87483e078928f5b6d90336b6a4ae",
+      "created_at": "2026-11-25T09:54:17.698Z"
     },
     "domain_intelligence-technical-construction-intelligence-openbmb-minicpm-v-4-7-35b-a3b-gguf-core-inva": {
       "record_id": "domain_intelligence-technical-construction-intelligence-openbmb-minicpm-v-4-7-35b-a3b-gguf-core-inva",
@@ -20182,8 +20182,8 @@
       "title": "Architecture Intelligence: zeronsh-zeron-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zeronsh-zeron-learnings-architecture-intelligence-zeronsh-zeron-learnings-core-i.md",
       "repository": "zeronsh-zeron-learnings",
-      "content_hash": "6a33acc64facee9e6ff91d671352aa4639a1c147d6cedbebd55823c143535298",
-      "created_at": "2026-11-24T07:55:51.516Z"
+      "content_hash": "ca1a34817a3a6fa4354dfe8d82c815c7d6ea47ccddd8a88273ccd29ea5aeef86",
+      "created_at": "2026-11-25T09:54:33.608Z"
     },
     "domain_intelligence-technical-construction-intelligence-hf-openbmb-minicpm-v-4-7-35b-a3b-gguf-learni": {
       "record_id": "domain_intelligence-technical-construction-intelligence-hf-openbmb-minicpm-v-4-7-35b-a3b-gguf-learni",
@@ -29144,8 +29144,8 @@
       "title": "Research & Knowledge Intelligence: XHToken/Spark-X2.6-4B-GGUF Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-xhtoken-spark-x2-6-4b-gguf-research-knowledge-intelligence-xhtoken-spark-x2-6.md",
       "repository": "XHToken/Spark-X2.6-4B-GGUF",
-      "content_hash": "45c45032ad584c260c4014b584b366a093136e27a1bb47d2d09a4976fd37e6d9",
-      "created_at": "2026-11-21T17:28:08.499Z"
+      "content_hash": "87a1a65c6e7c418de6f3dbd1485b8283938ffcf668488581dfd45792f9c85669",
+      "created_at": "2026-11-25T09:54:15.247Z"
     },
     "domain_intelligence-technical-construction-intelligence-agent-of-empires-agent-of-empires-core-invar": {
       "record_id": "domain_intelligence-technical-construction-intelligence-agent-of-empires-agent-of-empires-core-invar",
@@ -29171,8 +29171,8 @@
       "title": "Research & Knowledge Intelligence: hf-xhtoken-spark-x2.6-4b-gguf-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-xhtoken-spark-x2-6-4b-gguf-learnings-research-knowledge-intelligence-hf-xhtok.md",
       "repository": "hf-xhtoken-spark-x2.6-4b-gguf-learnings",
-      "content_hash": "0e371a4d73b18327f74a0bf880ba97b16ac74b5c400b7fcef8d6eb908a3b10cb",
-      "created_at": "2026-11-21T17:28:53.955Z"
+      "content_hash": "0f64b8bfb7f6c66c084b71253aa657574b5ce1ee45fe01c12158ffee0922d825",
+      "created_at": "2026-11-25T09:54:34.193Z"
     },
     "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-bolt-e4b-4gb-core-inv": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-bolt-e4b-4gb-core-inv",

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-25T09:39:48.486Z",
+  "last_updated": "2026-11-25T09:54:29.574Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5271,14 +5271,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zeronsh-zeron",
-      "content_hash": "0096ff04fa672ceb8d99461326bcbd34f31dcc8321554a189b139cf38b397fa5",
-      "verified_at": "2026-11-24T07:55:37.465Z",
+      "content_hash": "e5eb38a7fe39feb39f90fec6d0bf0969d24b68829ae3a772cd527ad6e3b37398",
+      "verified_at": "2026-11-25T09:54:17.275Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T07:55:37.465Z"
+      "last_updated": "2026-11-25T09:54:17.275Z"
     },
     "welldone-software/why-did-you-render": {
       "repository": "welldone-software/why-did-you-render",
@@ -8181,14 +8181,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-greptimeteam-greptimedb",
-      "content_hash": "e13d2f047234f2d80cbc06c8379a80702d309247c2964185136853989abf454a",
-      "verified_at": "2026-11-24T15:17:30.543Z",
+      "content_hash": "d722b1b62f77871a6a42f2e018f500877510522575e1d0d519720096fd254183",
+      "verified_at": "2026-11-25T09:54:29.573Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T15:17:30.543Z"
+      "last_updated": "2026-11-25T09:54:29.573Z"
     },
     "heroui-inc/heroui-native": {
       "repository": "heroui-inc/heroui-native",
@@ -16251,14 +16251,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-xhtoken-spark-x2-6-4b-gguf",
-      "content_hash": "db6489295b3291e3dac8dfce6005e65fff55a6666d1b96cf184e609baea1e45c",
-      "verified_at": "2026-11-21T17:28:08.253Z",
+      "content_hash": "9047342dc4393d826bd52eb108fbceceeba6a34db8f17447f1682bad8fd59e8e",
+      "verified_at": "2026-11-25T09:54:15.029Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T17:28:08.253Z"
+      "last_updated": "2026-11-25T09:54:15.029Z"
     },
     "nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB": {
       "repository": "nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB",

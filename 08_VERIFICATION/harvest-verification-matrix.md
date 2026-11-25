@@ -13025,3 +13025,6 @@
 | `CYCLE-20261125-MTM5` | `2026-11-25T09:39:48.461Z` | `AtomicChat/Inkling-2-Mini-Uncensored-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10499, Rule 10500` | Yes (`09fd4c32...`) |
 | `CYCLE-2026-11-25-PROJ-EVOLVE` | `2026-11-25T09:40:28.963Z` | `hf-atomicchat-inkling-2-mini-uncensored-gguf` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-543DC045` [Domain H] | Yes (`9bfa68b5...`) |
 | `CYCLE-2026-11-25-PROJ-EVOLVE` | `2026-11-25T09:41:12.041Z` | `hf-atomicchat-inkling-2-mini-uncensored-gguf` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-F-BD142F65` [Domain F] | Yes (`dd67f1d8...`) |
+| `CYCLE-20261125-5E8W` | `2026-11-25T09:54:15.008Z` | `XHToken/Spark-X2.6-4B-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xhtoken-spark-x2.6-4b-gguf-learnings.md` | Yes (`9047342d...`) |
+| `CYCLE-20261125-5FZA` | `2026-11-25T09:54:17.254Z` | `zeronsh/zeron` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10501` | Yes (`e5eb38a7...`) |
+| `CYCLE-20261125-5PGX` | `2026-11-25T09:54:29.553Z` | `GreptimeTeam/greptimedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10502` | Yes (`d722b1b6...`) |

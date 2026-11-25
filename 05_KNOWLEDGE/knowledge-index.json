@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-25T09:41:16.304Z",
+  "last_updated": "2026-11-25T09:54:35.052Z",
   "total_verified_learnings": 9115,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25367,
+  "total_items": 25372,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -236593,8 +236593,8 @@
       "slug": "greptimeteam-greptimedb",
       "platform": "github",
       "source_url": "https://github.com/GreptimeTeam/greptimedb",
-      "source_version": "81e60511",
-      "content_hash": "e13d2f047234f2d80cbc06c8379a80702d309247c2964185136853989abf454a",
+      "source_version": "0813fc35",
+      "content_hash": "d722b1b62f77871a6a42f2e018f500877510522575e1d0d519720096fd254183",
       "dossier_path": "07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md",
       "promoted_rules": [
@@ -236632,6 +236632,11 @@
           "number": 10293,
           "title": "answer a named selector over a missing table with the empty vector",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10502,
+          "title": "preserve table column order and primary key indices during reconciliation",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -236639,7 +236644,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T15:17:30.297Z",
+      "verified_at": "2026-11-25T09:54:29.334Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -236681,10 +236686,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-greptimeteam-greptimedb-architecture-intelligence-greptimeteam-greptimedb-core-i.md",
       "title": "Architecture Intelligence: GreptimeTeam/greptimedb Core Invariants",
       "repository": "GreptimeTeam/greptimedb",
-      "source_version": "81e60511",
-      "content_hash": "e65526c0010b46897cc46db2115f785f47da0b0336a06e5943c8883bd2ed2a56",
+      "source_version": "0813fc35",
+      "content_hash": "c375a33fe0cf04b8344f2ef9a2a8c49f1ac5f214a32ab3ffd753d0bca2358e2f",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T15:17:30.944Z"
+      "persisted_at": "2026-11-25T09:54:29.989Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-greptimeteam-greptimedb": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-greptimeteam-greptimedb",
@@ -236693,10 +236698,10 @@
       "relative_path": "08_VERIFICATION/greptimeteam-greptimedb-verification-protocol-empirical-defect-shield-for-grepti.md",
       "title": "Verification Protocol: Empirical Defect Shield for GreptimeTeam/greptimedb",
       "repository": "GreptimeTeam/greptimedb",
-      "source_version": "81e60511",
-      "content_hash": "4874569e4b08d79c0171c4c631ac2c07a5f331612deb7e979c17112a05e6fad2",
+      "source_version": "0813fc35",
+      "content_hash": "290af8f78bd2c4b89721914e0344ec20115d13da54bbf9c6ad10652baf55af1d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T15:17:31.122Z"
+      "persisted_at": "2026-11-25T09:54:30.170Z"
     },
     "candidate_directive-gh-51043-python-reject-null-required-arrow-objects": {
       "item_id": "candidate_directive-gh-51043-python-reject-null-required-arrow-objects",
@@ -236754,9 +236759,9 @@
       "title": "Architecture Intelligence: greptimeteam-greptimedb-learnings Core Invariants",
       "repository": "greptimeteam-greptimedb-learnings",
       "source_version": "HEAD",
-      "content_hash": "fe415648c5452943419fb8e49eec2a0b8283193eb872f03225cb2ba21769c0f6",
+      "content_hash": "f8365167cdf17e7c40679cf117964e4fe7915250796e97e6d41953590ab69db9",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T15:17:36.007Z"
+      "persisted_at": "2026-11-25T09:54:34.875Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-greptimeteam-greptimedb-learni": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-greptimeteam-greptimedb-learni",
@@ -236766,9 +236771,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for greptimeteam-greptimedb-learnings",
       "repository": "greptimeteam-greptimedb-learnings",
       "source_version": "HEAD",
-      "content_hash": "cb1f721b6b624b3e9618f518365986c7eb9d6456a560a5577f2cf97a243b5ef3",
+      "content_hash": "f405601fb778ba2ad38086669296376b00dfd2160d8b4a7a27e96744eaea4d32",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T15:17:36.179Z"
+      "persisted_at": "2026-11-25T09:54:35.052Z"
     },
     "learn-huggingface-autotrust-glm5-3-flash-e224-dgx-spark": {
       "learning_id": "learn-huggingface-autotrust-glm5-3-flash-e224-dgx-spark",
@@ -245190,8 +245195,8 @@
       "slug": "zeronsh-zeron",
       "platform": "github",
       "source_url": "https://github.com/zeronsh/zeron",
-      "source_version": "29646196",
-      "content_hash": "0096ff04fa672ceb8d99461326bcbd34f31dcc8321554a189b139cf38b397fa5",
+      "source_version": "fbb4083a",
+      "content_hash": "e5eb38a7fe39feb39f90fec6d0bf0969d24b68829ae3a772cd527ad6e3b37398",
       "dossier_path": "07_PROJECT_LEARNING/zeronsh-zeron-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zeronsh-zeron-learnings.md",
       "promoted_rules": [
@@ -245229,6 +245234,11 @@
           "number": 10230,
           "title": "use crate::process child types in AntigravityPasteLogin for Windows",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10501,
+          "title": "MCP settings: a section with nothing in it takes no room",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -245236,7 +245246,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T07:55:37.228Z",
+      "verified_at": "2026-11-25T09:54:17.029Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -245278,10 +245288,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zeronsh-zeron-architecture-intelligence-zeronsh-zeron-core-invariants.md",
       "title": "Architecture Intelligence: zeronsh/zeron Core Invariants",
       "repository": "zeronsh/zeron",
-      "source_version": "29646196",
-      "content_hash": "8982917b435e813dedcc951e9d6a62e901a3504e1d66058d1f84573da1ce58f8",
+      "source_version": "fbb4083a",
+      "content_hash": "6787914009924e63856a3d13eaea42a68d5b87483e078928f5b6d90336b6a4ae",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T07:55:37.873Z"
+      "persisted_at": "2026-11-25T09:54:17.698Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zeronsh-zeron": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zeronsh-zeron",
@@ -245290,10 +245300,10 @@
       "relative_path": "08_VERIFICATION/zeronsh-zeron-verification-protocol-empirical-defect-shield-for-zeronsh-zeron.md",
       "title": "Verification Protocol: Empirical Defect Shield for zeronsh/zeron",
       "repository": "zeronsh/zeron",
-      "source_version": "29646196",
-      "content_hash": "5d0b9b1d29ae3a86ef5679b1c0086e7b3a33bae83d9b2249d66ead8f04eb9b08",
+      "source_version": "fbb4083a",
+      "content_hash": "6a33d9739c0e3383bc280b42c7dd595ac9eaf6eeb60aabf814227f4d88267c77",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T07:55:38.052Z"
+      "persisted_at": "2026-11-25T09:54:17.878Z"
     },
     "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf": {
       "learning_id": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf",
@@ -245429,9 +245439,9 @@
       "title": "Architecture Intelligence: zeronsh-zeron-learnings Core Invariants",
       "repository": "zeronsh-zeron-learnings",
       "source_version": "HEAD",
-      "content_hash": "6a33acc64facee9e6ff91d671352aa4639a1c147d6cedbebd55823c143535298",
+      "content_hash": "ca1a34817a3a6fa4354dfe8d82c815c7d6ea47ccddd8a88273ccd29ea5aeef86",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T07:55:51.516Z"
+      "persisted_at": "2026-11-25T09:54:33.608Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zeronsh-zeron-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zeronsh-zeron-learnings",
@@ -245441,9 +245451,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zeronsh-zeron-learnings",
       "repository": "zeronsh-zeron-learnings",
       "source_version": "HEAD",
-      "content_hash": "86f144abef14c53d2a445d284c0660404e097b31946cb06232afbb84b0c6216c",
+      "content_hash": "09faa7a414522e873d9d42bd14cfbc191beb4e9b8836a52915bb867382ebc28e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T07:55:51.691Z"
+      "persisted_at": "2026-11-25T09:54:33.790Z"
     },
     "candidate_directive-chat-template-mutation-via-gguf-metadata-partitioning": {
       "item_id": "candidate_directive-chat-template-mutation-via-gguf-metadata-partitioning",
@@ -281890,7 +281900,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/XHToken/Spark-X2.6-4B-GGUF",
       "source_version": "hf-xhtoken-spark-x2.6-4b-gguf",
-      "content_hash": "db6489295b3291e3dac8dfce6005e65fff55a6666d1b96cf184e609baea1e45c",
+      "content_hash": "9047342dc4393d826bd52eb108fbceceeba6a34db8f17447f1682bad8fd59e8e",
       "dossier_path": "07_PROJECT_LEARNING/hf-xhtoken-spark-x2.6-4b-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-xhtoken-spark-x2.6-4b-gguf-learnings.md",
       "promoted_rules": [],
@@ -281899,7 +281909,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T17:28:07.985Z",
+      "verified_at": "2026-11-25T09:54:14.759Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -281916,9 +281926,9 @@
       "title": "Research & Knowledge Intelligence: XHToken/Spark-X2.6-4B-GGUF Core Invariants",
       "repository": "XHToken/Spark-X2.6-4B-GGUF",
       "source_version": "hf-xhtoken-spark-x2.6-4b-gguf",
-      "content_hash": "45c45032ad584c260c4014b584b366a093136e27a1bb47d2d09a4976fd37e6d9",
+      "content_hash": "87a1a65c6e7c418de6f3dbd1485b8283938ffcf668488581dfd45792f9c85669",
       "domain_letter": "D",
-      "persisted_at": "2026-11-21T17:28:08.499Z"
+      "persisted_at": "2026-11-25T09:54:15.247Z"
     },
     "rule-9035": {
       "learning_id": "rule-9035",
@@ -281990,9 +282000,9 @@
       "title": "Research & Knowledge Intelligence: hf-xhtoken-spark-x2.6-4b-gguf-learnings Core Invariants",
       "repository": "hf-xhtoken-spark-x2.6-4b-gguf-learnings",
       "source_version": "HEAD",
-      "content_hash": "0e371a4d73b18327f74a0bf880ba97b16ac74b5c400b7fcef8d6eb908a3b10cb",
+      "content_hash": "0f64b8bfb7f6c66c084b71253aa657574b5ce1ee45fe01c12158ffee0922d825",
       "domain_letter": "D",
-      "persisted_at": "2026-11-21T17:28:53.955Z"
+      "persisted_at": "2026-11-25T09:54:34.193Z"
     },
     "learn-huggingface-nvidia-nvidia-nemotron-3-5-bolt-e4b-4gb": {
       "learning_id": "learn-huggingface-nvidia-nvidia-nemotron-3-5-bolt-e4b-4gb",
@@ -347018,6 +347028,70 @@
       "content_hash": "0a9c311b1ca5e220311ef81761a35a90aef2b84dca96b9d7cc489eb6e5b5217c",
       "domain_letter": "H",
       "persisted_at": "2026-11-25T09:41:16.042Z"
+    },
+    "rule-10501": {
+      "learning_id": "rule-10501",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10501,
+      "title": "MCP settings: a section with nothing in it takes no room",
+      "source_url": "https://github.com/zeronsh/zeron",
+      "source_version": "fbb4083a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T09:54:17.029Z"
+    },
+    "candidate_directive-mcp-settings-a-section-with-nothing-in-it-takes-no-room": {
+      "item_id": "candidate_directive-mcp-settings-a-section-with-nothing-in-it-takes-no-room",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-5SG1-mcp-settings-a-section-with-nothing-in-it-takes-no-room.md",
+      "title": "MCP settings: a section with nothing in it takes no room",
+      "repository": "zeronsh-zeron-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a00ba6196182d151a61a9a989a8dfdcf77c2c1df4d2b063ac34725172bffb344",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-25T09:54:33.413Z"
+    },
+    "rule-10502": {
+      "learning_id": "rule-10502",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10502,
+      "title": "preserve table column order and primary key indices during reconciliation",
+      "source_url": "https://github.com/GreptimeTeam/greptimedb",
+      "source_version": "0813fc35",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T09:54:29.334Z"
+    },
+    "candidate_directive-preserve-table-column-order-and-primary-key-indices-during-reconciliation": {
+      "item_id": "candidate_directive-preserve-table-column-order-and-primary-key-indices-during-reconciliation",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-5PNY-preserve-table-column-order-and-primary-key-indices-during-reconciliation.md",
+      "title": "preserve table column order and primary key indices during reconciliation",
+      "repository": "GreptimeTeam/greptimedb",
+      "source_version": "0813fc35",
+      "content_hash": "fcd516e4308224f05eb708db948046961b9c007b9d3c077bb8c0021ee2ab3149",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-25T09:54:29.810Z"
+    },
+    "candidate_directive-meta-preserve-table-column-order-and-primary-key-indices-during-reconciliation": {
+      "item_id": "candidate_directive-meta-preserve-table-column-order-and-primary-key-indices-during-reconciliation",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-5TFG-meta-preserve-table-column-order-and-primary-key-indices-during-reconciliation.md",
+      "title": "meta): preserve table column order and primary key indices during reconciliation",
+      "repository": "greptimeteam-greptimedb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "8740f94f2c60a55665eb3c38e21ea70145f0fc4ee985474c8f54de758b4694ff",
+      "domain_letter": "J",
+      "persisted_at": "2026-11-25T09:54:34.688Z"
     }
   },
   "ai-builder-brain": {

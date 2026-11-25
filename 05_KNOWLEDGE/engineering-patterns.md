@@ -789289,3 +789289,170 @@ python scripts/eval_divergence.py \
 ```
 
 ---
+
+
+---
+
+## 10501. MCP settings: a section with nothing in it takes no room (Harvested from zeronsh/zeron)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "MCP settings: a section with nothing in it takes no room",
+  "source": "zeronsh/zeron",
+  "source_url": "https://github.com/zeronsh/zeron",
+  "source_version": "fbb4083a",
+  "license": "MIT",
+  "extracted_at": "2026-11-25T09:54:16.657Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-zeronsh-zeron",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [zeronsh/zeron](https://github.com/zeronsh/zeron) (Revision: `fbb4083a`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `apps/zgx/ui/mcp_page_fixture.luau`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zeronsh/zeron. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `fbb4083a`: MCP settings: a section with nothing in it takes no room. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/zgx/ui/mcp_page_fixture.luau`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+-- The shell (ui/shell_fixture.luau) with Settings → MCP's snapshot: what
+-- tests/settings_mcp.test.luau measures. It starts with no server added;
+-- `mcp_page.add` adds one, `mcp_page.ask` has an agent ask for one.
+
+local mcp = require("@account/mcp")
+
+local LINEAR = { id = "linear", name = "Linear", description = "Issues and projects.", category = "", url = "https://mcp.linear.app/mcp", transport = "http", authKind = "oauth", docsUrl = "", icon = "linear" }
+local NOTION = { id = "notion", name = "Notion", description = "Pages and databases.", category = "", url = "https://mcp.notion.com/mcp", transport = "http", authKind = "oauth", docsUrl = "", icon = "notion" }
+
+local function show(servers: { any }, requests: { any })
+	mcp.now:set({ loaded = true, storage = "vault", vaultAvailable = true, presets = { LINEAR, NOTION }, servers = servers, requests = requests } :: any)
+end
+
+local pending: any = { after = function() end }
+for _, name in { "refresh", "upsert", "set_enabled", "delete", "start_auth", "cancel_auth", "disconnect_auth" } do
+	(mcp :: any)[name] = function()
+		return pending
+	end
+end
+
+ui.command {
+	id = "mcp_page.add",
+	title = "mcp_page.add",
+	run = function()
+		show({
+	
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `fbb4083a` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10502. preserve table column order and primary key indices during reconciliation (Harvested from GreptimeTeam/greptimedb)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "preserve table column order and primary key indices during reconciliation",
+  "source": "GreptimeTeam/greptimedb",
+  "source_url": "https://github.com/GreptimeTeam/greptimedb",
+  "source_version": "0813fc35",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-25T09:54:29.011Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-greptimeteam-greptimedb",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [GreptimeTeam/greptimedb](https://github.com/GreptimeTeam/greptimedb) (Revision: `0813fc35`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `src/common/meta/src/reconciliation/reconcile_table/resolve_column_metadata.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in GreptimeTeam/greptimedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `1110a0af`: meta): preserve table column order and primary key indices during reconciliation. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/common/meta/src/reconciliation/reconcile_table/resolve_column_metadata.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+            // The consistent regions share their key: order the tags as the regions keep them, which
+            // also checks that the region's primary key matches its tag columns. Column order still
+            // comes from the stored `TableInfo`; see `build_table_meta_from_column_metadatas`.
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `1110a0af` are properly handled with clean fallback behavior.

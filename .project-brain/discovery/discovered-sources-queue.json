@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-25T09:41:15.300Z",
+  "updated_at": "2026-11-25T09:54:33.156Z",
   "stats": {
-    "total_discovered": 9398,
-    "approved_pending_harvest": 8907,
+    "total_discovered": 9400,
+    "approved_pending_harvest": 8909,
     "harvested_count": 0,
     "rejected_count": 491,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 8897,
+      "COMMUNITY_AND_EXPERT": 8899,
       "OFFICIAL_DOCUMENTATION": 280,
       "STANDARDS_AND_SPECIFICATIONS": 150,
       "ENGINEERING_BLOGS": 7,
@@ -203346,6 +203346,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
         "fileName": "yugabyte-yugabyte-db-learnings.md"
+      }
+    },
+    "SRC-FB39103C7D2E": {
+      "id": "SRC-FB39103C7D2E",
+      "url": "https://mcp.linear.app/mcp",
+      "title": "https://mcp.linear.app/mcp",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T09:54:33.093Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zeronsh-zeron-learnings.md",
+        "fileName": "zeronsh-zeron-learnings.md"
+      }
+    },
+    "SRC-1CBD18BF1818": {
+      "id": "SRC-1CBD18BF1818",
+      "url": "https://mcp.notion.com/mcp",
+      "title": "https://mcp.notion.com/mcp",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T09:54:33.156Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zeronsh-zeron-learnings.md",
+        "fileName": "zeronsh-zeron-learnings.md"
       }
     }
   }

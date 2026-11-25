@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T15:17:35.695Z",
+  "timestamp": "2026-11-25T09:54:34.553Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-greptimeteam-greptimedb-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [greptimeteam-greptimedb-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T15:17:35.695Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T09:54:34.553Z`  
 > **Learning ID**: `LEARN-EVO-greptimeteam-greptimedb-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md`  
 > **Source**: github ([https://github.com/GreptimeTeam/greptimedb](https://github.com/GreptimeTeam/greptimedb))  
-> **Source Version**: `81e60511`  
+> **Source Version**: `0813fc35`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T15:17:29.380Z  
+> **Timestamp**: 2026-11-25T09:54:28.421Z  
 > **Learning ID**: `learn-github-greptimeteam-greptimedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/GreptimeTeam/greptimedb](https://github.com/GreptimeTeam/greptimedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T15:17:29.374Z  
+> **Harvest Timestamp**: 2026-11-25T09:54:28.416Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: The open-source observability database. One columnar engine for metrics, logs, and traces, on object storage.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 6828 stars
+- **Stars / Engagement**: 6831 stars
 
 ---
 
@@ -1767,13 +1767,11 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #10605** (2026-11-24): **fix(datatypes): bounds-check Vector::get and get_ref [Backport release/v1.3]**
-  *Symptoms*: Backport of #10594 to release/v1.3.  --- Original PR: #10594 Merged by: @evenyag
+- **Issue #10624** (2026-11-25): **fix: reject primary key encoding options on logical metric tables**
+  *Symptoms*: I hereby agree to the terms of the [GreptimeDB CLA](https://github.com/GreptimeTeam/.github/blob/main/CLA.md).  ## Refer to a related PR or issue link (optional)  ## What's changed and what's your intention?  This pull request fixes a validation gap that allowed logical metric tables to specify a primary key encoding even though their backing physical table determines the encoding. Creating a logical table with either `primary_key_encoding` or its deprecated alias `memtable.partition_tree.primary_key_encoding` now returns `InvalidArguments` and names the offending option.  ## PR Checklist Please convert it to a draft if some of the following conditions are not met.  - [ ] I have written the necessary rustdoc comments. - [ ] I have added the necessary unit tests and integration tests. - [ ] This PR requires documentation updates. - [ ] API changes are backward compatible. - [ ] Schema or data changes are backward compatible. - [ ] This PR needs to be backported to release branches, and I have added the `backport-<target>` labels (e.g. `backport-v1.3` targets `release/v1.3`).  ## Merge timing  - [ ] Skip nightly merge  <!-- Eligible PRs enter the merge queue hourly from 02:10 through 08:10 Beijing time (UTC+8), up to five per run. Check to opt out. To resume, uncheck the box and remove any manually applied `skip nightly merge` label. Maintainers can use **Merge when ready** to merge earlier. Changing this checkbox does not cancel an existing queue entry or manually enabled auto
 
-- **Issue #10604** (2026-11-24): **fix(meta): persist segmented procedure checkpoints atomically on RDS**
-  *Symptoms*: I hereby agree to the terms of the [GreptimeDB CLA](https://github.com/GreptimeTeam/.github/blob/main/CLA.md).  ## Refer to a related PR or issue link (optional)  Refs #10597.  ## What's changed and what's your intention?  A procedure checkpoint can span several metadata keys. Writing each segment independently lets an interrupted write leave a partially committed checkpoint. PostgreSQL and MySQL now receive all segments in one batch_put call. If a later SQL statement fails, the transaction rolls back the earlier writes and preserves the last committed checkpoint.  KvBackend exposes an atomic_batch_put guarantee, and TxnService exposes explicit transaction support and its operation limit. MySQL reads max_allowed_packet when the backend opens and sizes prepared statements using both the packet budget and the existing row and bind limits. All chunks of a batch share the same transaction.  Tests exercise failure on a new checkpoint, failed replacement of an existing checkpoint, retry, and byte-for-byte recovery through an independent connection. The persisted keys and values keep their existing format. Recovery from previously corrupted checkpoints remains a separate issue.  ## PR Checklist  Please convert it to a draft if some of the following conditions are not met.  - [x] I have written the necessary rustdoc comments. - [x] I have added the necessary unit tests and integration tests. - [ ] This PR requires documentation updates. - [ ] API changes are backward compatible. - [x
-  **Post-Mortem & Fix Analysis**:
-  > Changed the PR description to `Refs #10597`. The issue stays open to track recovery of unrelated procedures when a stored checkpoint already has a missing segment.
+- **Issue #10621** (2026-11-25): **fix(meta): preserve table column order and primary key indices during reconciliation [Backport release/v1.3]**
+  *Symptoms*: Backport of #10251 to release/v1.3.  --- Original PR: #10251 Merged by: @killme2008
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1790,732 +1788,1021 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `883ae6ea` (2026-11-24)
-**Commit Message**: fix(promql): answer a named selector over a missing table with the empty vector (#10472)
+### Incident Patch 1: `1110a0af` (2026-11-25)
+**Commit Message**: fix(meta): preserve table column order and primary key indices during reconciliation (#10251)
 
-A selector that names a metric whose table does not exist made the native route decline the whole
-statement, so the existing planner answered it. The route already has that answer when the selector
-names no metric: a nameless selector that matches no table is planned as the typed empty input and
-answers the empty vector. `setup_context` reports a missing table by returning the `EmptyMetric`
-plan, which a native tree cannot bind, and the named path read that as "cannot plan" rather than as
-"no rows".
+* fix(meta): preserve table column order and primary key indices during reconciliation
 
-The named path now pushes the same typed empty input the zero-match nameless path pushes, so
-Prometheus' answers follow from the ordinary empty-input handling: a bare selector answers no rows,
-`rate`/`sum`/`count`/`topk`/`sum by (__name__)` answer no rows (`sum` of nothing is empty, not 0),
-`absent` answers one row holding 1 with a null name, `absent` over equality matchers carries those
-labels, `absent_over_time` answers the same, and `or`, `and` and `unless` keep, drop or ignore what
-the other side holds. A `__field__` matcher still declines, exactly as it does over a table that
-exists: the matc
+Signed-off-by: Tyagiquamar <[REDACTED_EMAIL]>
 
-**File**: `src/query/src/promql/planner/native.rs` (modified, +86/-43)
+* fix(meta): address maintainer review on column order and PK validation during reconciliation
+
+Signed-off-by: Tyagiquamar <[REDACTED_EMAIL]>
+
+* style(meta): simplify nested if blocks in reconciliation utils
+
+Signed-off-by: Tyagiquamar <[REDACTED_EMAIL]>
+
+* test(meta): use OutputData::pretty_print for SHOW CREATE TABLE verification
+
+Signed-off-by: Tyagiquamar <[REDACTED_EMAIL]>
+
+* test(meta): drop unused mut in reconcile_table integration test
+
+Signed-off-by: Tyagiquamar <[REDACTED_EMAIL]>
+
+* test(meta): make reconcile SHOW CREATE TABLE assertion formatting-tolerant
+
+Signed-off-by: Tyagiquamar <[REDACTED_EMAIL]>
+
+* test(meta): cargo fmt reconcile assertion
+
+Signed-off-by: Tyagiquamar <[REDACTED_EMAIL]>
+
+* test(integration): parse quoted SHOW CREATE output in reconcile test
+
+Signed-off-by: Tyagiquamar <[REDACTED_EMAIL]>
+
+* style(tests): rustfmt reconcile_table SHOW CREATE assertions
+
+Signed-off-by: Tyagiquamar <[REDACTED_EMAIL]>
+Signed-off-by: Tyagiquamar <
+
+**File**: `src/common/meta/src/reconciliation/reconcile_table/resolve_column_metadata.rs` (modified, +3/-0)
 ```diff
-@@ -728,29 +728,8 @@ impl PromPlanner {
-             let Some(values) = native_root_fields(tree.root()) else {
-                 return Ok(None);
-             };
--            // A label named `time` is the one collision the default time column can have: the
--            // value columns are named after the expression, so they never take that name. The
--            // time column is this route's own synthetic name - no label or value is renamed - so
--            // a statement whose output already holds a `time` column publishes its grid under the
--            // first free `native_time_N` instead of dropping or renaming the label.
-             let value_names = expression_field_names(&expression, &values);
--            let time_index = if value_names
--                .iter()
--                .chain(&output_tags)
--                .any(|name| name == DEFAULT_TIME_INDEX_COLUMN)
--            {
--                (0usize..)
--                    .map(|index| format!("native_time_{index}"))
--                    .find(|candidate| {
--                        !value_names
--                            .iter()
--                            .chain(&output_tags)
--                            .any(|name| name == candidate)
--                    })
--                    .expect("the time column candidate sequence is unbounded")
--            } else {
--                DEFAULT_TIME_INDEX_COLUMN.to_string()
--            };
-+            let time_index = free_time_index(DEFAULT_TIME_INDEX_COLUMN, &value_names, &output_tags);
-             // The metadata a consumer of a frame operand reads: the evaluated layout this tree's
-             // root declares on the statement grid, and the labels a `vector(s)` reports.
-             let metadata = match format {
-@@ -909,11 +888,9 @@ impl PromPlanner {
-                         //
-                         // An empty raw series frame is an ordinary input to the node; multi-input placement
-                         // and partition normalization are decided after compilation. A `__field__` matcher
--                        // is declined for a scan this route can read, and the same refusal keeps the empty
--                        // input from claiming a field layout the matcher would have decided.
--                        if self.ctx.field_column_matcher.is_some() {
--                            return Ok(None);
--                        }
-+                        // narrows the field set of a scan this route can read, and a selector that matched
-+                        // no table has no scan to narrow: the answer is the empty vector either way, exactly
-+                        // as the named branch below answers a missing table.
-                         prepared.push(empty_discovered_input(
-                             self.ctx
-                                 .time_index_column
-@@ -1047,7 +1024,25 @@ impl PromPlanner {
-                         Err(_) => return Ok(None),
-                     };
-                 if self.setup_context().await?.is_some() {
--                    return Ok(None);
-+                    // The selector names a metric whose table does not exist, so the query still has an
-+                    // answer: the empty vector, planned from the same typed empty input a nameless selector
-+                    // that matched no table is. Planning it here keeps `TableNameNotFound` out of the
-+                    // existing planner, which has no table to bind.
-+                    //
-+                    // A `__field__` matcher does not decline here, though one over a scan this route can
-+                    // read does: it narrows the field set of the table its selector reads, and this table has
-+                    // no field set to narrow, so every field selection over it is empty. The existing planner
-+                    // answers the same way, because a missing table is planned as `EmptyMetric` before the
-+                    // projection a `__field__` matcher builds (`setup_context` returns it, and
-+                    // `selector_to_series_normalize_plan` never runs). The empty input's own placeholder
-+                    // field is internal to the tree; no answer publishes it.
-+                    prepared.push(empty_discovered_input(
-+                        self.ctx
-+                            .time_index_column
-+                            .clone()
-+                            .unwrap_or_else(|| DEFAULT_TIME_INDEX_COLUMN.to_string()),
-+                    )?);
-+                    continue;
-                 }
-                 let Some(one) = self
-                     .prepare_one_scan(
-@@ -1130,6 +1125,9 @@ impl PromPlanner {
-             prepared[index].1 = Arc::clone(&schema);
-         }
-         // A real input names the output's time index and, on one table, binds every scan.
-+        let named_by_a_real_input = prepared
-+            .iter()
-+            .any(|(scan, ..)| !is_empty_discovered_input(scan));
-         let Some((_, _, metric, time, tags, _, _)) = p
+@@ -92,6 +92,9 @@ impl State for ResolveColumnMetadata {
+         ctx.persistent_ctx.table_info_value = Some(table_info_value);
+ 
+         if let Some(column_metadatas) = check_column_metadatas_consistent(&self.region_metadata) {
++            // The consistent regions share their key: order the tags as the regions keep them, which
++            // also checks that the region's primary key matches its tag columns. Column order still
++            // comes from the stored `TableInfo`; see `build_table_meta_from_column_metadatas`.
+             let column_metadatas =
+                 reorder_tag_columns(&column_metadatas, &self.region_metadata[0].primary_key)?;
+             // Safety: fetched in the above.
 ```
 
-**File**: `src/query/src/promql/planner/test.rs` (modified, +500/-0)
+**File**: `src/common/meta/src/reconciliation/utils.rs` (modified, +243/-18)
 ```diff
-@@ -2490,6 +2490,455 @@ async fn native_zero_match_discovery_with_real_selector_binds_both_inputs() {
-     }
+@@ -358,15 +358,24 @@ pub(crate) fn check_column_metadata_invariants(
+     Ok(())
  }
  
-+/// A fixture whose `x` and `exists` tables exist, so any other metric a selector names has no table
-+/// to bind.
-+async fn named_missing_table_provider() -> DfTableSourceProvider {
-+    build_test_table_provider_with_options(
-+        &[
-+            (DEFAULT_SCHEMA_NAME.to_string(), "x".to_string()),
-+            (DEFAULT_SCHEMA_NAME.to_string(), "exists".to_string()),
-+        ],
-+        1,
-+        1,
-+        vec![],
-+        ConcreteDataType::timestamp_millisecond_datatype(),
-+        false,
-+        ConcreteDataType::float64_datatype(),
-+        NATIVE_ENGINE,
-+    )
-+    .await
-+}
-+
-+/// Whether `plan` holds the typed empty input a selector that read no table is planned as.
-+fn contains_typed_empty_input(plan: &LogicalPlan) -> bool {
-+    super::native::is_empty_discovered_input(plan)
-+        || plan
-+            .inputs()
-+            .iter()
-+            .any(|child| contains_typed_empty_input(child))
-+}
-+
-+/// A selector that names a metric whose table does not exist is planned natively, as the typed
-+/// empty input a nameless selector that matches nothing is.
+-/// Builds a [`TableMeta`] from the provided [`ColumnMetadata`]s.
++/// Builds a [`TableMeta`] from the provided [`ColumnMetadata`]s, preserving schema column order
++/// from `table_meta` and taking the primary key order from the input tags.
 +///
-+/// Prometheus answers each statement below over an empty input, so handing the statement back to
-+/// the existing planner - which has no table to bind and raises `TableNameNotFound` - is not an
-+/// answer. `x` and `exists` do exist, and the statements reading them keep the plan they had: an
-+/// existing table is read through its scan whether or not it holds rows.
-+#[tokio::test]
-+async fn native_named_selector_over_a_missing_table_plans_as_an_empty_input() {
-+    // `(query, reads an existing table)`.
-+    for (query, reads_existing) in [
-+        // The selection itself.
-+        ("nonexistent_metric", false),
-+        ("nonexistent_metric @ 300", false),
-+        ("nonexistent offset 5m", false),
-+        // An operator over the empty input keeps its own answer for zero series.
-+        ("rate(nonexistent[5m])", false),
-+        ("sum(nonexistent)", false),
-+        ("count(nonexistent)", false),
-+        ("topk(3, nonexistent)", false),
-+        ("sum by (__name__) (nonexistent)", false),
-+        // The two shapes whose answer over zero series is a row rather than none.
-+        ("absent(nonexistent_metric)", false),
-+        (r#"absent(nonexistent_metric{job="x"})"#, false),
-+        (r#"absent_over_time(nonexistent{job="x"}[5m])"#, false),
-+        // A set operation pairs the empty input with a real one, on either side and in either
-+        // position, and a statement whose selectors are all missing has no real side at all.
-+        ("nonexistent or exists", true),
-+        ("nonexistent and exists", true),
-+        ("nonexistent unless exists", true),
-+        ("exists or nonexistent", true),
-+        ("a1 or a2", false),
-+        // A table that exists is read through its scan, with and without rows.
-+        ("x", true),
-+        ("sum(x)", true),
-+        ("x or nonexistent", true),
-+    ] {
-+        let plan = build_native_fused_plan_with_provider(
-+            query,
-+            true,
-+            named_missing_table_provider().await,
-+        )
-+        .await;
-+        assert!(
-+            find_fused_series(&plan).is_some(),
-+            "`{query}` did not take the native route: {plan:?}"
-+        );
-+        let display = plan.display_indent().to_string();
-+        if reads_existing {
-+            assert!(display.contains("TableScan"), "{query}: {display}");
-+        } else {
-+            assert!(
-+                contains_typed_empty_input(&plan),
-+                "`{query}` is not planned over the typed empty input: {plan:?}"
-+            );
-+            assert!(
-+                !display.contains("TableScan"),
-+                "`{query}` reads a table it has none of: {display}"
-+            );
++/// The input [`ColumnMetadata`]s determine which columns currently exist in region metadata:
++/// - Columns present in `table_meta` but missing from `column_metadata` are dropped.
++/// - Columns present in both retain the column order from `table_meta.schema`.
++/// - Columns present only in `column_metadata` are appended.
++/// - Primary key order follows the tag columns in `column_metadata`, which the physical-table
++///   reconcile paths feed in the regions' key order (`table_meta.primary_key_indices` only
++///   determines which columns must remain tags). The logical-table reconcile path feeds columns
++///   in column-position order and relies on a subsequent `sort_columns()` call.
+ ///
+ /// Returns an error if:
+ /// - Any column is missing in the `name_to_ids`(if `name_to_ids` is provided).
+ /// - The column id in table metadata is not the same as the column id in the column metadata.(if `name_to_ids` is provided)
+ /// - The table index is missing in the column metadata.
++/// - Any primary key column of `table_meta` is not [`SemanticType::Tag`] in `column_metadata`.
+ /// - The primary key or partition key columns are missing in the column metadata.
+-///
+-/// TODO(weny): add tests
+ pub(crate) fn build_table_meta_from_column_metadatas(
+     table_id: TableId,
+     table_ref: TableReference,
+@@ -434,11 +443,30 @@ pub(crate) fn build_table_meta_from_column_metadatas(
+         );
+     }
+ 
++    let mut ordered_column_metadatas = Vec::with_capacity(column_metadata.len());
++    let mut existing_names = HashSet::with_capacity(column_schemas.len());
++
++    // Preserves the original table column order from `table_meta.schema`.
++    for col_schema in column_schemas {
++        if let Some(col) = column_in_column_metadata.get(col_schema.name.as_str()) {
++            ordered_column_metadatas.push(*col);
++            existing_names.insert(col_schema.name.as_str());
 +        }
 +    }
 +
-+    // A `__field__` matcher still declines over a table this route can read: the matcher narrows the
-+    // field set of the scan below the node, and the raw series scan reports every field the scan
-+    // carries. That refusal is about the scan, not about the table existing - a missing table has no
-+    // field set to narrow and is admitted as the empty input, which
-+    // `native_missing_table_with_a_field_matcher_answers_the_empty_vector` asserts beside its rows.
-+    let query = r#"x{__field__="field_0"}"#;
-+    let plan =
-+        build_native_fused_plan_with_provider(query, true, named_missing_table_provider().await)
++    // Appends any newly added columns from `column_metadata`.
++    for col in column_metadata {
++        if !existing_names.contains(col.column_schema.name.as_str()) {
++            ordered_column_metadatas.push(col);
++        }
++    }
++
+     let mut new_raw_table_meta = table_meta.clone();
+     let primary_key_indices = &mut new_raw_table_meta.primary_key_indices;
+     let partition_key_indices = &mut new_raw_table_meta.partition_key_indices;
+     let value_indices = &mut new_raw_table_meta.value_indices;
+-    let mut columns = Vec::with_capacity(column_metadata.len());
++    let mut columns = Vec::with_capacity(ordered_column_metadatas.len());
++    let mut column_name_to_index = HashMap::with_capacity(ordered_column_metadatas.len());
+     let column_ids = &mut new_raw_table_meta.column_ids;
+     let next_column_id = &mut new_raw_table_meta.next_column_id;
+ 
+@@ -447,24 +475,47 @@ pub(crate) fn build_table_meta_from_column_metadatas(
+     primary_key_indices.clear();
+     partition_key_indices.clear();
+ 
+-    for (idx, col) in column_metadata.iter().enumerate() {
+-        if partition_key_names.contains(&col.column_schema.name.as_str()) {
+-            partition_key_indices.push(idx);
+-        }
+-        match col.semantic_type {
+-            SemanticType::Tag => {
+-                primary_key_indices.push(idx);
+-            }
+-            SemanticType::Field => {
+-                value_indices.push(idx);
+-            }
+-            SemanticType::Timestamp => {
+-                value_indices.push(idx);
+-            }
++    for (idx, col) in ordered_column_metadatas.iter().enumerate() {
++        if col.semantic_type != SemanticType::Tag {
++            value_indices.push(idx);
+         }
+ 
+         columns.push(col.column_schema.clone());
+         column_ids.push(col.column_id);
++        column_name_to_index.insert(col.column_schema.name.as_str(), idx);
++    }
++
++    // Physical-table reconciliation supplies tags in region primary key order.
++    for col in column_metadata
++        .iter()
++        .filter(|c| c.semantic_type == SemanticType::Tag)
++    {
++        primary_key_indices.push(column_name_to_index[col.column_schema.name.as_str()]);
++    }
++
++    // Ensures every stored primary key column is still a tag in the region metadata.
++    for old_idx in &table_meta.primary_key_indices {
++        let col_schema = &column_schemas[*old_idx];
++        if let Some(col) = column_in_column_metadata.get(col_schema.name.as_str()) {
++            ensure!(
++                col.semantic_type == SemanticType::Tag,
++                UnexpectedSnafu {
++                    err_msg: format!(
++                        "Primary key column '{}' has invalid semantic type '{:?}', expected Tag, table: {}, table_id: {}",
++               
+```
+
+**File**: `tests-integration/src/tests/reconcile_table.rs` (modified, +71/-0)
+```diff
+@@ -541,6 +541,77 @@ async fn test_renamed_table() {
+     check_output_stream(output.data, expected).await;
+ }
+ 
++#[tokio::test]
++async fn test_reconcile_table_preserves_column_order_and_pk_order() {
++    let builder =
++        GreptimeDbClusterBuilder::new("test_reconcile_table_preserves_column_order_and_pk_order")
 +            .await;
-+    assert!(
-+        find_fused_series(&plan).is_none(),
-+        "`{query}` claimed a field layout its scan does not report: {plan:?}"
-+    );
++    let test_context = TestContext::new(MockInstanceBuilder::Distributed(builder)).await;
++    let frontend = test_context.frontend();
++    let metasrv = test_context.metasrv();
++    let reconciliation_manager = metasrv.reconciliation_manager();
++
++    // 1. CREATE TABLE q8 with columns ts, a, b and non-column-ordered PRIMARY KEY (b, a)
++    let output = execute_sql(
++        &frontend,
++        "CREATE TABLE q8 (ts TIMESTAMP TIME INDEX, a STRING, b STRING, PRIMARY KEY(b, a));",
++    )
++    .await;
++    assert_affected_rows(output.data).await;
++
++    // 2. Positional INSERT before ALTER TABLE
++    let output = execute_sql(
++        &frontend,
++        "INSERT INTO q8 VALUES ('1970-01-01 00:00:01', 'a1', 'b1');",
++    )
++    .await;
++    assert_affected_rows(output.data).await;
++
++    // 3. ALTER TABLE q8 ADD COLUMN c INT introduces #10248 stale primary_key_indices order
++    let output = execute_sql(&frontend, "ALTER TABLE q8 ADD COLUMN c INT;").await;
++    assert_affected_rows(output.data).await;
++
++    // 4. Reconcile the table (repairs stale primary key order while preserving column order)
++    reconcile_table(metasrv.procedure_manager(), reconciliation_manager, "q8").await;
++
++    // 5. Positional INSERT after reconcile (must insert into ts, a, b, c)
++    let output = execute_sql(
++        &frontend,
++        "INSERT INTO q8 VALUES ('1970-01-01 00:00:02', 'a2', 'b2', 2);",
++    )
++    .await;
++    assert_affected_rows(output.data).await;
++
++    // 6. SELECT * asserts columns are ts, a, b, c and positional inserts landed correctly
++    let output = execute_sql(&frontend, "SELECT * FROM q8 ORDER BY ts").await;
++    let expected = r#"+---------------------+----+----+---+
++| ts                  | a  | b  | c |
+++---------------------+----+----+---+
++| 1970-01-01T00:00:01 | a1 | b1 |   |
++| 1970-01-01T00:00:02 | a2 | b2 | 2 |
+++---------------------+----+----+---+"#;
++    check_output_stream(output.data, expected).await;
++
++    // 7. SHOW CREATE TABLE q8 asserts columns ts, a, b, c and PRIMARY KEY (b, a).
++    let output = execute_sql(&frontend, "SHOW CREATE TABLE q8").await;
++    let expected = r#"+-------+-----------------------------------+
++| Table | Create Table                      |
+++-------+-----------------------------------+
++| q8    | CREATE TABLE IF NOT EXISTS "q8" ( |
++|       |   "ts" TIMESTAMP(3) NOT NULL,     |
++|       |   "a" STRING NULL,                |
++|       |   "b" STRING NULL,                |
++|       |   "c" INT NULL,                   |
++|       |   TIME INDEX ("ts"),              |
++|       |   PRIMARY KEY ("b", "a")          |
++|       | )                                 |
++|       |                                   |
++|       | ENGINE=mito                       |
++|       |                                   |
+++-------+-----------------------------------+"#;
++    check_output_stream(output.data, expected).await;
 +}
 +
-+/// The same statements plan natively when the engine plans distributed statements.
-+///
-+/// Such a planner reads every input above the regions, so each occurrence is source-backed and the
-+/// typed empty input is the one input that stays itself. The route is the same one the statements
+ async fn unwrap_err(output: OutputData) -> String {
+     let error = match output {
+         OutputData::Stream(stream) => collect_batches(stream).await.unwrap_err(),
 ```
 
 ---
 
-### Incident Patch 2: `f51d01b1` (2026-11-24)
-**Commit Message**: fix(datatypes): bounds-check Vector::get and get_ref (#10594)
+### Incident Patch 2: `0813fc35` (2026-11-25)
+**Commit Message**: fix(mito2): size old SSTs from size statistics and move the downgrade target to v1.2.0 (#10585)
 
-The indexed accessors checked is_valid() and then called
-value_unchecked(), but is_valid() is not a bounds check: it returns true
-for any index when the array has no null buffer. An out-of-range index
-read past the array buffers instead of panicking.
+* test(compat): downgrade to v1.2.1 instead of v1.1.4
 
-Use the bounds-checked value() accessors. This also covers
-DictionaryVector, whose lookups go through the item vector's get().
+SSTs written since #10528 can have inverted-index segments that cross row
+group boundaries. Readers older than v1.2.0 do not split such segments and
+return fewer rows, so v1.1.x is no longer a supported downgrade target.
 
 Signed-off-by: Dennis Zhuang <[REDACTED_EMAIL]>
 
-**File**: `src/datatypes/src/vectors.rs` (modified, +2/-4)
+* fix(cmd): record the decoded row group size of a replacement SST
+
+sst_replace set max_row_group_decoded_size to 0 for the replacement file.
+Compute it from the replacement footer with the helper writers use, which
+is now public in mito2.
+
+Signed-off-by: Dennis Zhuang <[REDACTED_EMAIL]>
+
+* fix(mito2): derive decoded value bytes from size statistics for old SSTs
+
+SSTs written before #10528 have no greptime:max_row_group_value_bytes or
+greptime:max_row_value_width footer keys, so a row group of repeated large
+dictionary-encoded values was sized by its encoded bytes on the first
+compaction and read after upgrade.
+
+When the keys are absent, sum the unencoded_byte_array_data_bytes size
+statistic of each row group's byte array column chunks instead, skipping
+columns that 
+
+**File**: `src/cmd/src/datanode/sst_replace.rs` (modified, +2/-2)
 ```diff
-@@ -260,8 +260,7 @@ macro_rules! impl_validity_for_vector {
- macro_rules! impl_get_for_vector {
-     ($array: expr, $index: ident) => {
-         if $array.is_valid($index) {
--            // Safety: The index have been checked by `is_valid()`.
--            unsafe { $array.value_unchecked($index).into() }
-+            $array.value($index).into()
-         } else {
-             Value::Null
-         }
-@@ -271,8 +270,7 @@ macro_rules! impl_get_for_vector {
- macro_rules! impl_get_ref_for_vector {
-     ($array: expr, $index: ident) => {
-         if $array.is_valid($index) {
--            // Safety: The index have been checked by `is_valid()`.
--            unsafe { $array.value_unchecked($index).into() }
-+            $array.value($index).into()
-         } else {
-             ValueRef::Null
-         }
+@@ -22,6 +22,7 @@ use mito2::region::ManifestStats;
+ use mito2::sst::file::RegionFileId;
+ use mito2::sst::file_metadata::FileMetadataInterner;
+ use mito2::sst::location::{region_dir_from_table_dir, sst_file_path};
++use mito2::sst::parquet::max_row_group_decoded_size;
+ use object_store::ObjectStore;
+ use parquet::file::FOOTER_SIZE;
+ use parquet::file::metadata::{FooterTail, ParquetMetaDataReader};
+@@ -172,8 +173,7 @@ impl SstReplaceCommand {
+         new_file.num_rows = new_num_rows;
+         new_file.num_row_groups = new_num_row_groups;
+         new_file.max_row_group_uncompressed_size = max_row_group_uncompressed_size(&parquet_meta);
+-        // The old file's decoded size does not describe the replacement.
+-        new_file.max_row_group_decoded_size = 0;
++        new_file.max_row_group_decoded_size = max_row_group_decoded_size(&parquet_meta);
+ 
+         println!("{} Region: {}", "[ok]".green(), region_id);
+         println!("{} Target SST: {}", "[ok]".green(), target_path.cyan());
 ```
 
-**File**: `src/datatypes/src/vectors/decimal.rs` (modified, +1/-2)
+**File**: `src/mito2/src/batch_size.rs` (modified, +2/-2)
 ```diff
-@@ -138,8 +138,7 @@ impl Decimal128Vector {
-     /// Get decimal128 Value from array by index.
-     fn get_decimal128_value_from_array(&self, index: usize) -> Option<Decimal128> {
-         if self.array.is_valid(index) {
--            // Safety: The index have been checked by `is_valid()`.
--            let value = unsafe { self.array.value_unchecked(index) };
-+            let value = self.array.value(index);
-             // Safety: The precision and scale have been checked by Vector.
-             Some(Decimal128::new(value, self.precision(), self.scale()))
-         } else {
+@@ -23,8 +23,8 @@ pub(crate) const TARGET_BATCH_BYTES: usize = 64 * 1024 * 1024;
+ 
+ /// Returns `(num_rows, bytes)` estimates of the row groups in a Parquet file: the uncompressed
+ /// size of each row group, and one row of the largest decoded string and binary value bytes per
+-/// row recorded by the writer. Dictionary encoding can make the uncompressed size far smaller
+-/// than the decoded values.
++/// row of the file (see [max_row_value_width]). Dictionary encoding can make the uncompressed size
++/// far smaller than the decoded values.
+ pub(crate) fn row_group_statistics(
+     metadata: &ParquetMetaData,
+ ) -> impl Iterator<Item = (u64, u64)> + '_ {
 ```
 
-**File**: `src/datatypes/src/vectors/primitive.rs` (modified, +9/-4)
+**File**: `src/mito2/src/sst/parquet.rs` (modified, +222/-16)
 ```diff
-@@ -164,8 +164,7 @@ impl<T: LogicalPrimitiveType> Vector for PrimitiveVector<T> {
+@@ -24,6 +24,7 @@ use datatypes::arrow::datatypes::DataType;
+ use datatypes::arrow::record_batch::RecordBatch;
+ use datatypes::json::JsonSettings;
+ use datatypes::schema::ColumnEncoding;
++use parquet::arrow::parquet_to_arrow_schema;
+ use parquet::basic::{Compression, Encoding, ZstdLevel};
+ use parquet::file::metadata::{KeyValue, ParquetMetaData};
+ use parquet::file::properties::{
+@@ -285,29 +286,103 @@ pub(crate) fn max_row_group_uncompressed_size(metadata: &ParquetMetaData) -> u64
+ }
  
-     fn get(&self, index: usize) -> Value {
-         if self.array.is_valid(index) {
--            // Safety: The index have been checked by `is_valid()`.
--            let wrapper = unsafe { T::Wrapper::from_native(self.array.value_unchecked(index)) };
-+            let wrapper = T::Wrapper::from_native(self.array.value(index));
-             wrapper.into()
-         } else {
-             Value::Null
-@@ -174,8 +173,7 @@ impl<T: LogicalPrimitiveType> Vector for PrimitiveVector<T> {
+ /// Returns the size of the largest row group of `metadata`, counting string and binary values
+-/// at their decoded size when the footer records it under [MAX_ROW_GROUP_VALUE_BYTES_KEY].
+-pub(crate) fn max_row_group_decoded_size(metadata: &ParquetMetaData) -> u64 {
++/// at their decoded size (see [max_row_group_value_bytes]).
++pub fn max_row_group_decoded_size(metadata: &ParquetMetaData) -> u64 {
+     max_row_group_uncompressed_size(metadata).max(max_row_group_value_bytes(metadata))
+ }
  
-     fn get_ref(&self, index: usize) -> ValueRef<'_> {
-         if self.array.is_valid(index) {
--            // Safety: The index have been checked by `is_valid()`.
--            let wrapper = unsafe { T::Wrapper::from_native(self.array.value_unchecked(index)) };
-+            let wrapper = T::Wrapper::from_native(self.array.value(index));
-             wrapper.into()
-         } else {
-             ValueRef::Null
-@@ -416,6 +414,13 @@ mod tests {
-         assert_eq!(&ArrowDataType::Int32, arrow_arr.data_type());
-     }
+-/// Returns the [MAX_ROW_GROUP_VALUE_BYTES_KEY] value of the footer, or 0 when it is absent.
++/// Returns the [MAX_ROW_GROUP_VALUE_BYTES_KEY] value of the footer, or the same quantity derived
++/// from the column chunk size statistics when the footer predates the key.
+ pub(crate) fn max_row_group_value_bytes(metadata: &ParquetMetaData) -> u64 {
+-    footer_u64(metadata, MAX_ROW_GROUP_VALUE_BYTES_KEY)
++    footer_u64(metadata, MAX_ROW_GROUP_VALUE_BYTES_KEY).unwrap_or_else(|| {
++        row_group_value_bytes_from_size_statistics(metadata)
++            .into_iter()
++            .map(|(_, bytes)| bytes)
++            .max()
++            .unwrap_or(0)
++    })
+ }
  
-+    #[test]
-+    #[should_panic(expected = "Trying to access an element at index")]
-+    fn test_get_out_of_bounds_without_nulls_panics() {
-+        let vector = Int32Vector::from_slice([1]);
-+        vector.get(1);
-+    }
+-/// Returns the [MAX_ROW_VALUE_WIDTH_KEY] value of the footer, or 0 when it is absent.
++/// Returns the [MAX_ROW_VALUE_WIDTH_KEY] value of the footer, or the same quantity derived from
++/// the column chunk size statistics when the footer predates the key.
+ pub(crate) fn max_row_value_width(metadata: &ParquetMetaData) -> u64 {
+-    footer_u64(metadata, MAX_ROW_VALUE_WIDTH_KEY)
++    footer_u64(metadata, MAX_ROW_VALUE_WIDTH_KEY).unwrap_or_else(|| {
++        row_group_value_bytes_from_size_statistics(metadata)
++            .into_iter()
++            .filter(|(rows, _)| *rows > 0)
++            .map(|(rows, bytes)| bytes.div_ceil(rows))
++            .max()
++            .unwrap_or(0)
++    })
+ }
+ 
+-fn footer_u64(metadata: &ParquetMetaData, key: &str) -> u64 {
++/// Returns the value of `key`, or `None` when the footer has no parseable value for it.
++fn footer_u64(metadata: &ParquetMetaData, key: &str) -> Option<u64> {
+     metadata
+         .file_metadata()
+-        .key_value_metadata()
+-        .and_then(|kvs| kvs.iter().find(|kv| kv.key == key))
+-        .and_then(|kv| kv.value.as_deref())
+-        .and_then(|value| value.parse().ok())
+-        .unwrap_or(0)
++        .key_value_metadata()?
++        .iter()
++        .find(|kv| kv.key == key)?
++        .value
++        .as_deref()?
++        .parse()
++        .ok()
++}
 +
-     #[test]
-     fn test_from_values() {
-         let v = Int32Vector::from_values(vec![1, 2, 3, 4]);
++/// Returns `(num_rows, value_bytes)` of each row group, where `value_bytes` sums the
++/// `unencoded_byte_array_data_bytes` size statistic of the column chunks that
++/// [var_len_value_bytes] counts: top-level string and binary columns that readers do not decode
++/// as dictionaries.
++///
++/// This stands in for [MAX_ROW_GROUP_VALUE_BYTES_KEY] in footers written without it. Parquet
++/// writers record the statistic per value, so repeated dictionary-encoded values count every
++/// time. Column chunks written with statistics disabled lack the statistic and count as 0.
++fn row_group_value_bytes_from_size_statistics(metadata: &ParquetMetaData) -> Vec<(u64, u64)> {
++    let file = metadata.file_metadata();
++    let Ok(arrow_schema) = parquet_to_arrow_schema(file.schema_descr(), file.key_value_metadata())
++    else {
++        return Vec::new();
++    };
++    let counted: Vec<bool> = file
++        .schema_descr()
++        .columns()
++        .iter()
++        .enumerate()
++        .map(|(leaf, column)| {
++            if column.path().parts().len() != 1 {
++                return false;
++            }
++            let root = file.schema_descr().get_column_root_idx(leaf);
++            arrow_schema.fields().get(root).is_some_and(|field| {
++                matches!(
++                    field.data_type(),
++                    DataType::Binary
++                        | DataType::LargeBinary
++                        | DataType::Utf8
++                        | DataType::LargeUtf8
++                        | DataType::BinaryView
++                        | DataType::Utf8View
++                )
++            })
++        })
++        .collect();
++
++    metadata
++        .row_groups()
++        .iter()
++        .map(|row_group| {
++            let bytes = row_group
++                .columns()
++                .iter()
++                .zip(&counted)
++                .filter(|(_, counted)| **counted)
++                .map(|(column, _)| {
++                    column.unencoded_byte_array_data_bytes().unwr
 ```
 
-**File**: `src/datatypes/src/vectors/string.rs` (modified, +7/-0)
+**File**: `tests/compatibility/README.md` (modified, +5/-2)
 ```diff
-@@ -523,6 +523,13 @@ mod tests {
+@@ -98,7 +98,7 @@ cargo run -p sqlness-runner -- compat --from-version v0.9.5
+ cargo run -p sqlness-runner -- compat --from-bins-dir ./bins/old --to-bins-dir ./bins/new
  
-     use super::*;
+ # Test a downgrade from the current build to a released binary:
+-cargo run -p sqlness-runner -- compat --from-bins-dir ./bins/current --to-version v1.1.4
++cargo run -p sqlness-runner -- compat --from-bins-dir ./bins/current --to-version v1.2.1
  
-+    #[test]
-+    #[should_panic(expected = "Trying to access an element at index")]
-+    fn test_get_ref_out_of_bounds_without_nulls_panics() {
-+        let vector = StringVector::from(vec!["a"]);
-+        vector.get_ref(1);
-+    }
+ # Run a compatibility case in standalone mode:
+ cargo run -p sqlness-runner -- compat --topology standalone --test-filter "downgrade_compatibility"
+@@ -227,7 +227,10 @@ wrapper around artifact download/extraction and this script.
+ 
+ `downgrade_to_versions` optionally lists releases that CI restarts after the
+ PR-built cluster. Those runs select only the `downgrade_compatibility` case in
+-both distributed and standalone topologies.
++both distributed and standalone topologies. The oldest supported target is
++v1.2.0: SSTs written since #10528 can have inverted index segments that cross
++row group boundaries, and older readers return fewer rows for indexed queries
++on them without an error.
+ 
+ ### `setup.sql` — Setup Phase (From Version)
+ 
+```
+
+**File**: `tests/compatibility/cases/downgrade_compatibility/case.toml` (modified, +3/-3)
+```diff
+@@ -1,8 +1,8 @@
+ name = "downgrade_compatibility"
+-reason = "Verify v1.1.4 can reopen tables whose region WAL options, byte-stream-split (BSS) float SSTs, or plain and delta encoded column SSTs were written by the current binary, and can read all rows of an append-only table flushed and compacted with preserve_row_sequence enabled."
++reason = "Verify v1.2.0 and v1.2.1 can reopen tables whose region WAL options, byte-stream-split (BSS) float SSTs, or plain and delta encoded column SSTs were written by the current binary, can read all rows of an append-only table flushed and compacted with preserve_row_sequence enabled, and can look up an inverted index segment that crosses a row group boundary."
+ introduced_by = "fix: preserve legacy region WAL options format; preserve_row_sequence"
+ topologies = ["distributed", "standalone"]
+ from_range = [">=v1.2.0"]
+-to_range = ["=v1.1.4"]
+-features = ["table", "wal", "downgrade", "append", "preserve_row_sequence", "sst", "float", "byte_stream_split", "encoding"]
++to_range = ["=v1.2.0", "=v1.2.1"]
++features = ["table", "wal", "downgrade", "append", "preserve_row_sequence", "sst", "float", "byte_stream_split", "encoding", "inverted_index"]
+ owner = "metasrv"
+```
+
+**File**: `tests/compatibility/cases/downgrade_compatibility/setup.sql` (modified, +19/-0)
+```diff
+@@ -68,3 +68,22 @@ CREATE TABLE t_column_encoding_downgrade (
+ INSERT INTO t_column_encoding_downgrade VALUES (1, 'a1', 1000), (2, 'a2', 2000), (3, NULL, NULL);
+ 
+ ADMIN FLUSH_TABLE('t_column_encoding_downgrade');
 +
-     #[test]
-     fn test_string_vector_build_get() {
-         let mut builder = StringVectorBuilder::with_capacity(4);
++-- Row groups of 10 rows and index segments of 4 rows: the segment covering rows [8, 12)
++-- crosses the first row group boundary.
++CREATE TABLE t_inverted_segment_downgrade (
++    ts TIMESTAMP TIME INDEX,
++    label STRING INVERTED INDEX
++) WITH (
++    'append_mode' = 'true',
++    'max_row_group_row_count' = '10',
++    'index.inverted_index.segment_row_count' = '4'
++);
++
++INSERT INTO t_inverted_segment_downgrade VALUES
++    (0, 'miss'), (1, 'miss'), (2, 'miss'), (3, 'miss'), (4, 'miss'),
++    (5, 'miss'), (6, 'miss'), (7, 'miss'), (8, 'hit'), (9, 'hit'),
++    (10, 'hit'), (11, 'hit'), (12, 'miss'), (13, 'miss'), (14, 'miss'),
++    (15, 'miss'), (16, 'miss'), (17, 'miss'), (18, 'miss'), (19, 'miss');
++
++ADMIN FLUSH_TABLE('t_inverted_segment_downgrade');
+```
+
+**File**: `tests/compatibility/cases/downgrade_compatibility/verify.result` (modified, +11/-0)
+```diff
+@@ -57,3 +57,14 @@ SELECT ts, span_id, ts_end FROM t_column_encoding_downgrade ORDER BY ts;
+ | 1970-01-01T00:00:00.002 | a2      | 1970-01-01T00:00:00.000002 |
+ | 1970-01-01T00:00:00.003 |         |                            |
+ +-------------------------+---------+----------------------------+
++
++SELECT ts, label FROM t_inverted_segment_downgrade WHERE label = 'hit' ORDER BY ts;
++
+++-------------------------+-------+
++| ts                      | label |
+++-------------------------+-------+
++| 1970-01-01T00:00:00.008 | hit   |
++| 1970-01-01T00:00:00.009 | hit   |
++| 1970-01-01T00:00:00.010 | hit   |
++| 1970-01-01T00:00:00.011 | hit   |
+++-------------------------+-------+
+```
+
+**File**: `tests/compatibility/cases/downgrade_compatibility/verify.sql` (modified, +2/-0)
+```diff
+@@ -13,3 +13,5 @@ SELECT ts, msg FROM t_fulltext_bloom_v2_downgrade WHERE msg @@ 'hello_world' ORD
+ SELECT ts, msg FROM t_fulltext_bloom_v2_downgrade WHERE msg @@ '错误error日志' ORDER BY ts;
+ 
+ SELECT ts, span_id, ts_end FROM t_column_encoding_downgrade ORDER BY ts;
++
++SELECT ts, label FROM t_inverted_segment_downgrade WHERE label = 'hit' ORDER BY ts;
 ```
 
 ---
 
-### Incident Patch 3: `82bdd7fd` (2026-11-24)
-**Commit Message**: fix(mito2): keep a caught-up region writable on candidate leases (#10590)
+### Incident Patch 3: `9ecd84f6` (2026-11-24)
+**Commit Message**: fix(mito2): decouple table compaction upload and Arrow budgets (#10607)
 
-* fix(mito2): keep a caught-up region writable on candidate leases
+* fix(mito2): decouple table compaction upload and Arrow budgets
 
-A region that a catchup made writable waits for its Leader lease until the
-route switch. Meanwhile the metasrv keeps granting it Follower leases that
-carry a candidate_lease_id, and each of them demoted the region, so the next
-upgrade attempt had to catch it up again.
+Signed-off-by: Lei, HUANG <[REDACTED_EMAIL]>
 
-A Follower lease that carries a candidate_lease_id now leaves a region that
-awaits its Leader lease alone. It checks the wait under the promotion fence,
-so a concurrent catchup promotion is either seen or happens after the
-demotion. Other Follower leases, and candidate leases to a region that does
-not wait, demote it as before.
+* test(mito2): prune redundant table compaction checks
 
-The store-api contract now says an engine may use the presence of the id
-this way; it still must not interpret its value.
+Signed-off-by: Lei, HUANG <[REDACTED_EMAIL]>
 
-Signed-off-by: jeremyhi <[REDACTED_EMAIL]>
+* fix(mito2): cap GCS compaction objects at 5 TiB
 
-* docs(mito2): clarify the candidate lease wait and its tests
+Apply the GCS service limit even when the operator omits its object limit. Keep stricter advertised limits and the multipart part-count limit, and cover all three with geometry tests that perform no uploads.
 
-Describe the condition demote_candidate checks, name both lease kinds that
-end the wait in the store-api contract, and check that a candidate lease
-keeps a waiting physical region a leader that is not confirmed.
+Signed-off-by: Lei, HUANG <[REDACTED_EMAIL]>
 
-Signed-off-by
+* test(mito2): require an SST part before its final input batch
 
-**File**: `src/meta-srv/src/region/lease_keeper.rs` (modified, +83/-7)
+Gate the payload of the last source row group on the first Parquet part from its target. A writer that buffers until close can no longer pass the lossless multipart regression.
+
+Signed-off-by: Lei, HUANG <[REDACTED_EMAIL]>
+
+* refactor(mito2): isolate enterprise buffered uploads
+
+Move the bounded SST and Puffin upload adapter and its regression test behind one gated module declaration. Leave the shared chunk transfer in the Apache-licensed parent and register the new enterprise source in both license lists.
+
+Signed-off-by: Lei, HUANG <[R
+
+**File**: `licenserc-enterprise.toml` (modified, +1/-0)
 ```diff
-@@ -20,7 +20,7 @@ use common_meta::key::TableMetadataManagerRef;
- use common_meta::key::table_route::TableRouteValue;
- use common_meta::region_keeper::{MemoryRegionKeeperRef, OperatingRegion};
- use common_meta::rpc::router::RegionRoute;
--use common_telemetry::{info, warn};
-+use common_telemetry::{debug, info, warn};
- use snafu::ResultExt;
- use store_api::region_engine::{GrantedRegion, RegionRole};
- use store_api::storage::{RegionId, TableId};
-@@ -97,10 +97,20 @@ fn renew_region_lease_via_operating_regions(
-             region_lease_info.candidate_lease_id = operating_region.candidate_lease_id;
-         }
-         if role != reported_role {
--            info!(
--                "The region {} on datanode {} is operating with role {:?}, but reported as {:?}",
--                region_id, datanode_id, role, reported_role
--            );
-+            // A candidate lease id with a reported Leader means a migration target that a catchup
-+            // promoted before the route switch, which is expected until the switch.
-+            if region_lease_info.candidate_lease_id.is_some() && reported_role == RegionRole::Leader
-+            {
-+                debug!(
-+                    "The candidate region {} on datanode {} is operating with role {:?}, but reported as {:?}",
-+                    region_id, datanode_id, role, reported_role
-+                );
+@@ -36,6 +36,7 @@ includes = [
+     "src/mito2/src/compaction/multi_region/worker.rs",
+     "src/mito2/src/compaction/multi_region/writer.rs",
+     "src/mito2/src/compaction/multi_region/tests.rs",
++    "src/mito2/src/sst/upload/buffered.rs",
+     "src/common/function/src/admin/purge_table.rs",
+     "src/catalog/src/system_schema/information_schema/recycle_bin.rs",
+     "src/common/meta/src/ddl/purge_dropped_table.rs",
+```
+
+**File**: `licenserc.toml` (modified, +1/-0)
+```diff
+@@ -52,6 +52,7 @@ excludes = [
+     "src/mito2/src/compaction/multi_region/worker.rs",
+     "src/mito2/src/compaction/multi_region/writer.rs",
+     "src/mito2/src/compaction/multi_region/tests.rs",
++    "src/mito2/src/sst/upload/buffered.rs",
+     "src/common/function/src/admin/purge_table.rs",
+     "src/catalog/src/system_schema/information_schema/recycle_bin.rs",
+     "src/common/meta/src/ddl/purge_dropped_table.rs",
+```
+
+**File**: `src/mito2/src/access_layer.rs` (modified, +13/-6)
+```diff
+@@ -454,12 +454,12 @@ impl AccessLayer {
+             // bypass it.
+             let store = self.object_store.clone();
+             let path_provider = RegionFilePathFactory::new(self.table_dir.clone(), self.path_type);
+-            let puffin_factory = if limits.is_some() {
+-                self.puffin_manager_factory
+-                    .clone()
+-                    .with_write_buffer_size(write_opts.write_buffer_size.as_bytes() as usize)
++            let puffin_factory = self.puffin_manager_factory.clone();
++            #[cfg(feature = "enterprise")]
++            let puffin_factory = if let Some(limits) = limits {
++                puffin_factory.with_upload_limits(limits.upload_limits)
+             } else {
+-                self.puffin_manager_factory.clone()
++                puffin_factory
+             };
+             let indexer_builder = IndexerBuilderImpl {
+                 index_build_inputs: request.index_build_inputs,
+@@ -479,7 +479,7 @@ impl AccessLayer {
+             // TODO(yingwen): If we support other non-fs stores without the write cache, then
+             // we may have find a way to check whether we need the cleaner.
+             let cleaner = TempFileCleaner::new(region_id, self.object_store.clone());
+-            let mut writer = ParquetWriter::new_with_object_store(
++            let writer = ParquetWriter::new_with_object_store(
+                 self.object_store.clone(),
+                 request.metadata,
+                 request.index_config,
+@@ -497,6 +497,13 @@ impl AccessLayer {
+             .with_write_guard(guard)
+             .with_cancellation(cancellation)
+             .with_memory_limits(limits);
++            #[cfg(feature = "enterprise")]
++            let writer = if let Some(limits) = limits {
++                writer.with_upload_limits(limits.upload_limits)
 +            } else {
-+                info!(
-+                    "The region {} on datanode {} is operating with role {:?}, but reported as {:?}",
-+                    region_id, datanode_id, role, reported_role
-+                );
++                writer
++            };
++            let mut writer = writer;
+             match request.sst_write_format {
+                 FormatType::PrimaryKey => {
+                     writer
+```
+
+**File**: `src/mito2/src/compaction/multi_region.rs` (modified, +5/-5)
+```diff
+@@ -64,10 +64,10 @@ pub struct MultiRegionCompactionPlan {
+     pub sources: Vec<FileMeta>,
+     /// Metadata and routing must belong to the same physical-table snapshot.
+     pub targets: BTreeMap<RegionId, MultiRegionTarget>,
+-    /// Working-set admission budget, including all resident writers and their finish workspace.
+-    /// This bounds managed buffers and estimates codec/index allocations, not process RSS.
+-    /// It must be large enough that the per-buffer share still covers the storage
+-    /// multipart minimum, otherwise the plan is rejected before any output.
++    /// Total working-set admission budget for computation and all resident uploads.
++    /// Upload chunks follow the destination backend's limits independently of the Arrow
++    /// batch limit. The executor reserves uploads before sizing the compute buffers and
++    /// checks the estimated working set before creating outputs. This is not a process RSS limit.
+     pub memory_limit: usize,
+     /// Soft size limit, in bytes, of one output SST. A file rolls over at the next
+     /// series boundary after it is exceeded, so a single series may stay in one file.
+@@ -99,7 +99,7 @@ pub struct MultiRegionCompactionStats {
+     pub source_store_page_bytes: u64,
+     pub output_rows: u64,
+     pub output_bytes: u64,
+-    /// Conservative admission estimate, including reader pages, writers, indexes and finish.
++    /// Admission estimate for reader pages, encoders, indexes, uploads, and finish workspace.
+     pub estimated_memory_bytes: u64,
+     /// Peak retained equal-key group storage (including shared buffer capacities).
+     pub peak_group_bytes: u64,
+```
+
+**File**: `src/mito2/src/compaction/multi_region/memory.rs` (modified, +245/-56)
+```diff
+@@ -15,17 +15,18 @@ use api::v1::SemanticType;
+ use datatypes::arrow::datatypes::SchemaRef;
+ use datatypes::schema::{ColumnEncoding, FulltextBackend};
+ use index::fulltext_index::create::TantivyFulltextIndexCreator;
++use object_store::ObjectStore;
+ use parquet::arrow::ArrowSchemaConverter;
+ use parquet::file::metadata::ParquetMetaData;
+-use snafu::{ResultExt, ensure};
++use snafu::{OptionExt, ResultExt, ensure};
+ 
+-use crate::compaction::multi_region::{
+-    MultiRegionCompactionContext, MultiRegionCompactionPlan, MultiRegionTarget,
+-};
++use crate::compaction::multi_region::{MultiRegionCompactionPlan, MultiRegionTarget};
+ use crate::config::{FulltextIndexConfig, MitoConfig};
+ use crate::error::{IndexOptionsSnafu, MultiRegionCompactionResourceSnafu, Result};
++use crate::sst::DEFAULT_WRITE_BUFFER_SIZE;
+ use crate::sst::parquet::max_row_group_value_bytes;
+ use crate::sst::parquet::writer::SstWriteLimits;
++use crate::sst::upload::buffered::UploadLimits;
+ 
+ pub(crate) const BATCH_SIZE: usize = 64;
+ /// Cap on the rows of one output row group.
+@@ -41,37 +42,58 @@ pub(crate) const MAX_ROW_GROUP_SIZE: usize = 1024;
+ /// separate runtime checks. Neither estimate nor buffer accounting measures RSS.
+ #[derive(Clone)]
+ pub(crate) struct MemoryLimits {
+-    pub(crate) batch: usize,
++    pub(crate) arrow_batch_bytes: usize,
+     pub(crate) group: usize,
+     pub(crate) index: usize,
++    upload_reserved_bytes: usize,
++    compute_budget: usize,
+     /// Reuses index allocation only when the optional working set fits admission.
+     pub(crate) extension_index_memory_limit: Option<usize>,
+     pub(crate) writer: SstWriteLimits,
+     pub(crate) estimated: u64,
+ }
+ 
+ impl MemoryLimits {
+-    pub(crate) fn new(plan: &MultiRegionCompactionPlan, schema: &SchemaRef) -> Result<Self> {
++    pub(crate) fn new(
++        plan: &MultiRegionCompactionPlan,
++        schema: &SchemaRef,
++        upload: UploadBudget,
++    ) -> Result<Self> {
+         let schema = crate::sst::maybe_wrap_schema(schema)?;
+         let columns = ArrowSchemaConverter::new()
+             .convert(&schema)
+             .context(crate::error::WriteParquetSnafu)?
+             .num_columns();
+-        let batch =
+-            plan.memory_limit / (64 * (plan.sources.len() + plan.targets.len() + BATCH_SIZE + 4));
++        let targets = plan.targets.len();
++        let batch_share = 64usize.saturating_mul(
++            plan.sources
++                .len()
++                .saturating_add(targets)
++                .saturating_add(BATCH_SIZE + 4),
++        );
++        let arrow_batch_bytes = upload.compute_bytes / batch_share;
++        ensure!(
++            arrow_batch_bytes > 0,
++            MultiRegionCompactionResourceSnafu {
++                reason: "No Arrow batch budget after reserving upload memory",
 +            }
++        );
+         Ok(Self {
+-            batch,
+-            group: plan.memory_limit / 16,
+-            index: plan.memory_limit / (64 * plan.targets.len()),
++            arrow_batch_bytes,
++            group: upload.compute_bytes / 16,
++            index: upload.compute_bytes / targets / 64,
++            upload_reserved_bytes: upload.reserved_bytes,
++            compute_budget: upload.compute_bytes,
+             extension_index_memory_limit: None,
+             writer: SstWriteLimits {
+                 // Parquet 59 preallocates a 1 MiB bit writer for each of the
+                 // timestamp/sequence delta encoders. Dictionary interner tables
+                 // also have a nonzero minimum, independent of batch row count.
+-                working_bytes: 2 * 1024 * 1024
+-                    + columns * 128 * 1024
+-                    + batch * (MAX_ROW_GROUP_SIZE / BATCH_SIZE),
+-                metadata_bytes: plan.memory_limit / (8 * plan.targets.len()),
++                working_bytes: (2usize << 20)
++                    .saturating_add(columns.saturating_mul(128 << 10))
++                    .saturating_add(arrow_batch_bytes * (MAX_ROW_GROUP_SIZE / BATCH_SIZE)),
++                metadata_bytes: upload.compute_bytes / targets / 8,
++                upload_limits: upload.limits,
+             },
+             estimated: 0,
+         })
+@@ -80,60 +102,67 @@ impl MemoryLimits {
+     pub(crate) fn admit(
+         &mut self,
+         plan: &MultiRegionCompactionPlan,
+-        context: &MultiRegionCompactionContext,
++        config: &MitoConfig,
+         footers: &[Arc<ParquetMetaData>],
+         extension_targets: usize,
+     ) -> Result<()> {
+-        self.check_upload_minimum(context)?;
+         let mut extra_delta = 0;
+         for target in plan.targets.values() {
+             extra_delta = extra_delta.max(extra_delta_encoder_bytes(target)?);
          }
-         return Some(region_lease_info);
-     }
-@@ -291,7 +301,7 @@ impl RegionLeaseKeeper {
- #[cfg(test)]
- mod tests {
-     use std::collections::{HashMap, HashSet};
--    use std::sync::Arc;
-+    use std::sync::{Arc, Mutex};
- 
-     use common_meta::DatanodeId;
-     use common_meta::key::TableMetadataManager;
-@@ -305,7 +315,10 @@ mod tests {
-     use store_api::storage::RegionId;
-     use table::metadata::TableInfo;
- 
--    use super::{RegionLeaseKeeper, renew_region_lease_via_region_route};
-+    use super::{
-+        RegionLeaseKeeper, renew_region_lease_via_operating_regions,
-+        renew_region_lease_via_region_route,
-+    };
-     use crate::region::lease_keeper::{RegionLeaseInfo, RenewRegionLeasesResponse};
- 
-     fn new_test_keeper() -> RegionLeaseKeeper {
-@@ -317,6 +330,69 @@ mod tests {
-         RegionLeaseKeeper::new(table_metadata_manager, opening_region_keeper)
-     }
- 
-+    #[derive(Clone, Default)]
-+    struct LevelCapture(Arc<Mutex<Vec<tracing::Level>>>);
-+
-+    impl<S: tracing::Subscriber> tracing_subscriber::Layer<S> for LevelCapture {
-+        fn on_event(
-+            &self,
-+            event: &tracing::Event<'_>,
-+            _: tracing_subscriber::layer::Context<'_, S>,
-+        ) {
-+            self.0.lock().unwrap().push(*event.metadata().level());
-+        }
-+    }
-+
-+    /// The expected mismatch of a migration target that a catchup promoted logs at debug; every
-+    /// other mismatch logs at info, and a matching role logs nothing.
-+    #[test]
-+    fn test_role_mismatch_log_level_of_operating_region() {
-+        use tracing::Level;
-+        use tracing_subscriber::layer::SubscriberExt;
-+
-+        let region_id = RegionId::new(1024, 1);
-+        let log_levels = |role, candidate_lease_id, reported_role, table_route_exists| {
-+            let capture = LevelCapture::default();
-+            let subscriber = tracing_subscriber::registry().with(capture.clone());
-+            let operating_regions = HashMap::from([(
-+                region_id,
-+                OperatingRegion {
-+                    role,
-+                    candidate_lease_id,
-+                },
-+            )]);
-+            tracing::subscriber::with_default(subscriber, || {
-+                renew_region_lease_via_operating_regions(
-+                    &operating_regions,
-+                    1,
-+                    region_id,
-+                    reported_role,
-+                    table_route_exists,
-+                )
-+                .unwrap();
-+            });
-+            capture.0.lock().unwrap().clone()
-+        };
-+        let follower = RegionRole::Follower;
-+        let leader = RegionRole::Leader;
-+
-+        assert_eq!(
-+            log_levels(follower, Some(7), leader, true),
-+            vec![Level::DEBUG]
-+        );
-+        assert_eq!(log_levels(follower, None, leader, true), vec![Level::INFO]);
-+        assert_eq!(
-+            log_levels(follower, Some(7), leader, false),
-+            vec![Level::INFO]
-+        );
-+        assert_eq!(
-+            log_levels(follower, Some(7), RegionRole::DowngradingLeader, true),
-+            vec![Level::INFO]
-+        );
-+        assert!(log_levels(follower, Some(7), follower, true).is_empty());
-+        assert!(log_levels(leader, Some(7), leader, true).is_empty());
-+    }
-+
-     #[test]
-     fn test_renew_region_lease_via_region_route() {
-         let region_id =
+         self.writer.working_bytes = self.writer.working_bytes.saturating_add(extra_delta);
+-        // Merge assembly can retain exhausted batches until an output batch is full.
+-        let mut bytes = 4_u64
+-            .saturating_mul((plan.sources.len() + BATCH_SIZE + 2) as u64)
+-            .satura
 ```
 
-**File**: `src/metric-engine/src/engine.rs` (modified, +24/-2)
+**File**: `src/mito2/src/compaction/multi_region/source.rs` (modified, +13/-9)
 ```diff
-@@ -1137,7 +1137,7 @@ mod test {
-     }
+@@ -33,7 +33,7 @@ use tokio_util::sync::CancellationToken;
  
-     #[tokio::test]
--    async fn test_physical_region_is_confirmed_leader_only_with_both_regions() {
-+    async fn test_physical_region_is_confirmed_leader_only_after_both_leader_leases() {
-         let env = TestEnv::new().await;
-         env.init_metric_region().await;
-         let (engine, mito) = (env.metric(), env.mito());
-@@ -1173,8 +1173,30 @@ mod test {
-         assert_eq!(engine.role(physical_region_id), Some(RegionRole::Leader));
-         assert_eq!(engine.is_confirmed_leader(physical_region_id), Some(false));
+ use crate::cache::CacheStrategy;
+ use crate::compaction::json2::collect_json2_rewrite_plans_from_parquet;
+-use crate::compaction::multi_region::memory::{BATCH_SIZE, MemoryLimits};
++use crate::compaction::multi_region::memory::{BATCH_SIZE, MemoryLimits, UploadBudget};
+ use crate::compaction::multi_region::{
+     MultiRegionCompactionContext, MultiRegionCompactionPlan, MultiRegionTarget, SourceCounters,
+ };
+@@ -88,7 +88,7 @@ impl RoutedBatch {
+         let batch = take_record_batch(&self.batch, &indices).context(ComputeArrowSnafu)?;
+         let batch = compact_dictionaries(batch)?;
+         ensure!(
+-            batch.get_array_memory_size() <= source.limits.batch,
++            batch.get_array_memory_size() <= source.limits.arrow_batch_bytes,
+             MultiRegionCompactionResourceSnafu {
+                 reason: "Routed batch exceeds the task buffer budget"
+             }
+@@ -127,6 +127,7 @@ impl SharedSource {
+         metadata: RegionMetadataRef,
+         counters: Arc<SourceCounters>,
+     ) -> Result<Arc<Self>> {
++        let upload = UploadBudget::new(plan, context.access_layer.object_store())?;
+         let mut common = (*metadata).clone();
+         common.set_partition_expr(None);
+         let metadata = Arc::new(common);
+@@ -157,9 +158,12 @@ impl SharedSource {
+             let footer = sst.parquet_metadata();
+             footer_bytes = footer_bytes.saturating_add(footer.memory_size());
+             ensure!(
+-                footer_bytes <= plan.memory_limit / 8,
++                footer_bytes <= upload.compute_bytes / 8,
+                 MultiRegionCompactionResourceSnafu {
+-                    reason: "Source footer metadata exceeds the task budget",
++                    reason: format!(
++                        "Source footer metadata needs {footer_bytes} bytes, budget after reserving uploads is {}",
++                        upload.compute_bytes / 8,
++                    ),
+                 }
+             );
+             footers.push(footer);
+@@ -194,7 +198,7 @@ impl SharedSource {
+             .with_cache(cache.clone())
+             .with_json2_rewrite_targets(json2_targets.clone())
+             .build();
+-        let mut limits = MemoryLimits::new(plan, &schema)?;
++        let mut limits = MemoryLimits::new(plan, &schema, upload)?;
+         let mut inverted = context.config.inverted_index.clone();
+         inverted.mem_threshold_on_create =
+             admitted_index_threshold(inverted.mem_threshold_on_create(), limits.index);
+@@ -224,7 +228,7 @@ impl SharedSource {
+             .collect::<BTreeMap<_, _>>();
+         limits.admit(
+             plan,
+-            context,
++            &context.config,
+             &footers,
+             index_plans
+                 .values()
+@@ -363,12 +367,12 @@ impl SharedSource {
+                         let batch = compact_dictionaries(batch)?;
+                         let batch_bytes = batch.get_array_memory_size();
+                         ensure!(
+-                            batch_bytes <= preparing.limits.batch,
++                            batch_bytes <= preparing.limits.arrow_batch_bytes,
+                             MultiRegionCompactionResourceSnafu {
+                                 reason: format!(
+                                     "Decoded source batch uses {} bytes, budget is {}",
+                                     batch_bytes,
+-                                    preparing.limits.batch,
++                                    preparing.limits.arrow_batch_bytes,
+                                 ),
+                             }
+                         );
+@@ -583,7 +587,7 @@ impl SharedSource {
+             batch
+                 .get_array_memory_size()
+                 .saturating_add(materialized_bytes)
+-                <= self.limits.batch,
++                <= self.limits.arrow_batch_bytes,
+             MultiRegionCompactionResourceSnafu {
+                 reason: "Routing projection exceeds the task buffer budget"
+             }
+```
+
+**File**: `src/mito2/src/compaction/multi_region/tests.rs` (modified, +617/-60)
+```diff
+@@ -11,6 +11,7 @@
  
--        // The data region still waits after the metadata region received its lease.
-+        // A candidate lease leaves both waiting regions writable, and the physical region
-+        // unconfirmed, so an upgrade still catches it up.
-         let sent_at = Instant::now();
-+        assert!(
-+            engine
-+                .set_region_role_with_lease(
-+                    physical_region_id,
-+                    RegionRole::Follower,
-+                    sent_at,
-+                    sent_at + LEASE,
-+                    Some(7),
-+                )
+ use std::collections::{BTreeMap, HashSet};
+ use std::num::NonZeroU64;
++use std::sync::atomic::{AtomicBool, Ordering};
+ use std::sync::{Arc, Mutex};
+ use std::time::Duration;
+ 
+@@ -33,14 +34,20 @@ use datatypes::value::Value;
+ use datatypes::vectors::json::array::JsonArray;
+ use datatypes::vectors::json::json2_physical_data_type;
+ use futures::TryStreamExt;
++use futures::io::{self, AsyncReadExt};
++use object_store::layers::CapabilityOverrideLayer;
++use object_store::layers::mock::oio::Write as _;
+ use object_store::layers::mock::{self, MockLayerBuilder, oio};
+ use partition::expr::col;
+ use partition::multi_dim::MultiDimPartitionRule;
++use puffin::puffin_manager::{PuffinManager, PuffinReader, PuffinWriter};
++use rand::{RngCore, SeedableRng, rngs::SmallRng};
+ use serde_json::json;
+ use store_api::codec::PrimaryKeyEncoding;
+-use store_api::metadata::{ColumnMetadata, RegionMetadataBuilder};
++use store_api::metadata::{ColumnMetadata, RegionMetadata, RegionMetadataBuilder};
+ use store_api::region_request::PathType;
+ use store_api::storage::RegionId;
++use tokio::sync::watch;
+ 
+ use super::*;
+ use crate::access_layer::{AccessLayer, Metrics, OperationType, SstWriteRequest, WriteType};
+@@ -49,10 +56,15 @@ use crate::error::InvalidMultiRegionCompactionSnafu;
+ use crate::read::FlatSource;
+ use crate::sst::file::{FileHandle, RegionFileId};
+ use crate::sst::file_purger::NoopFilePurger;
+-use crate::sst::index::handler::{IndexKindHandler, IndexKindProvider, PlanContext, PlannedIndex};
++use crate::sst::index::CompletedEntry;
++use crate::sst::index::handler::{
++    BuildContext, IndexCreator, IndexKindHandler, IndexKindProvider, PlanContext, PlanEntry,
++    PlannedIndex,
++};
+ use crate::sst::index::intermediate::IntermediateManager;
+ use crate::sst::index::kind::{ExtensionIndexKind, IndexKind};
+-use crate::sst::index::puffin_manager::PuffinManagerFactory;
++use crate::sst::index::puffin_manager::{PuffinManagerFactory, SstPuffinWriter};
++use crate::sst::location;
+ use crate::sst::parquet::WriteOptions;
+ use crate::sst::parquet::flat_format::{
+     primary_key_column_index, sequence_column_index, time_index_column_index,
+@@ -124,11 +136,33 @@ impl Fixture {
+         format: FormatType,
+         batches: impl FnOnce(&RegionMetadataRef) -> Vec<RecordBatch>,
+     ) -> Self {
++        let mut fixture = Self::without_source(sst_region_metadata_with_encoding(encoding)).await;
++        let mut batches = batches(&fixture.metadata);
++        batches.sort_by_cached_key(|batch| {
++            let keys = cast(
++                batch.column(primary_key_column_index(batch.num_columns())),
++                &DataType::Binary,
++            )
++            .unwrap();
++            keys.as_any()
++                .downcast_ref::<BinaryArray>()
 +                .unwrap()
-+        );
-+        for region_id in [
-+            metadata_region_id,
-+            utils::to_data_region_id(physical_region_id),
-+        ] {
-+            assert_eq!(mito.role(region_id), Some(RegionRole::Leader));
++                .value(0)
++                .to_vec()
++        });
++        let info = fixture
++            .write_source(fixture.metadata.clone(), batches, format)
++            .await;
++        fixture.source = file_meta(info, fixture.metadata.region_id);
++        fixture
++    }
++
++    async fn without_source(mut metadata: RegionMetadata) -> Self {
+         let env = SchedulerEnv::new().await;
+         let aux = env.path.path().join("table-index");
+         let layer = Arc::new(AccessLayer::new(
+             "table/",
+-            if encoding == PrimaryKeyEncoding::Sparse {
++            if metadata.primary_key_encoding == PrimaryKeyEncoding::Sparse {
+                 PathType::Data
+             } else {
+                 PathType::Bare
+@@ -141,44 +175,34 @@ impl Fixture {
+                 .await
+                 .unwrap(),
+         ));
+-        let mut metadata = sst_region_metadata_with_encoding(encoding);
+         metadata.region_id = RegionId::new(1, 0);
+-        let metadata = Arc::new(metadata);
+         let mut config = MitoConfig::default();
+         config.index.aux_path = aux.display().to_string();
+-        let config = Arc::new(config);
+-        let mut batches = batches(&metadata);
+-        batches.sort_by_cached_key(|batch| {
+-            let keys = cast(
+-                batch.column(primary_key_column_index(batch.num_columns())),
+-                &DataType::Binary,
+-            )
+-            .unwrap();
+-            keys.as_any()
+-                .downcast_ref::<BinaryArray>()
+-                .unwrap()
+-                .value(0)
+-                .to_vec()
+-        });
+-        let mut fixture = Self {
++        Self {
+             env,
+             layer,
+-            metadata: metadata.clone(),
++            metadata: Arc::new(metadata),
+             source: FileMeta::default(),
+-            config,
+-        };
+-        let info = fixture
+-            .write_source(metadata.clone(), batches, format)
+-            .await;
+-        fixture.source = file_meta(info, metadata.region_id);
+-        fixture
++            config: Arc::new(config),
 +        }
-+        assert_eq!(engine.role(physical_region_id), Some(RegionRole::Leader));
-+        assert_eq!(engine.is_confirmed_leader(physical_region_id), Some(false));
-+
-+        // The data region still waits after the metadata region received its lease.
-         mito.set_region_role_with_lease(
-             metadata_region_id,
-             RegionRole::Leader,
-```
-
-**File**: `src/mito2/AGENTS.md` (modified, +2/-1)
-```diff
-@@ -241,7 +241,8 @@ Tests live next to the code as `*_test.rs` (e.g. `src/mito2/src/engine/flush_tes
-   its memtable for the next Leader lease (`catch_up_again`, `handle_caught_up_again`); the datanode
-   upgrade handler sends that catchup unless `RegionEngine::is_confirmed_leader` is true, so an
-   engine wrapping mito must implement that method from mito's answers (the metric engine requires
--  both regions of the pair).
-+  both regions of the pair). A Follower lease that carries a `candidate_lease_id` leaves a waiting
-+  region alone (`ManifestContext::demote_candidate`); other Follower leases demote it.
- - The latest lease each region received (`GrantedLeases` in `lease.rs`) lives outside the
-   region instance, so a reopen during catchup keeps it. Every path that removes a region from
-   a worker's region map must also remove its record and its kept index build retries:
-```
-
-**File**: `src/mito2/src/engine.rs` (modified, +9/-1)
-```diff
-@@ -1823,7 +1823,15 @@ impl RegionEngine for MitoEngine {
-             self.inner
-                 .notify_if_leader_lease_wait_ended(&region, ended_wait);
-         }
--        let previous = region.set_role(role);
-+        // A Follower lease carrying a candidate lease id goes to a migration's target. It leaves
-+        // the state of a region that awaits its Leader lease unchanged instead of demoting it, and
-+        // still counts as applied. Keep this out of `MitoRegion::set_role`, whose other callers
-+        // must demote such a region.
-+        let previous = if role == RegionRole::Follower && candidate_lease_id.is_some() {
-+            region.manifest_ctx.demote_candidate(region_id)
-+        } else {
-+            region.set_role(role)
-+        };
-         self.inner.notify_if_can_no_longer_replay(&region, previous);
-         Ok(true)
-     }
-```
-
-**File**: `src/mito2/src/engine/lease_test.rs` (modified, +45/-0)
-```diff
-@@ -894,6 +894,51 @@ async fn test_catchup_again_drops_unflushed_rows_under_local_wal() {
-     assert_eq!(count_rows(&engine).await, 0);
- }
- 
-+/// A candidate lease leaves a region that awaits its Leader lease writable, also the replacement a
-+/// catchup again swapped in; other Follower leases, and candidate leases after the Leader lease,
-+/// demote it.
-+#[rstest]
-+#[case::awaiting_leader_lease(false, false)]
-+#[case::caught_up_again(false, true)]
-+#[case::leader_lease_received(true, false)]
-+#[tokio::test]
-+async fn test_candidate_lease_after_catchup(
-+    #[case] leader_lease_received: bool,
-+    #[case] catch_up_again: bool,
-+) {
-+    common_telemetry::init_default_ut_logging();
-+    let mut env = TestEnv::with_prefix("candidate-lease-after-catchup").await;
-+    let (_listener, engine, _schema) = create_region(&mut env, None).await;
-+    promote_to_await_leader_lease(&engine, REGION_ID).await;
-+    if catch_up_again {
-+        let region = engine.get_region(REGION_ID).unwrap();
-+        catchup(&engine).await.unwrap();
-+        assert!(!Arc::ptr_eq(
-+            &region,
-+            &engine.get_region(REGION_ID).unwrap()
-+        ));
-+    }
-+    if leader_lease_received {
-+        grant_at(&engine, RegionRole::Leader, Instant::now(), None);
-+    }
-+    let region = engine.get_region(REGION_ID).unwrap();
-+
-+    assert!(grant_at(
-+        &engine,
-+        RegionRole::Follower,
-+        Instant::now(),
-+        Some(7)
-+    ));
-+    assert_eq!(region.is_writable(), !leader_lease_received);
-+    assert_eq!(
-+        region.manifest_ctx.awaits_leader_lease(),
-+        !leader_lease_received
-+    );
-+
-+    grant_at(&engine, RegionRole::Follower, Instant::now(), None);
-+    assert!(region.is_follower());
-+}
-+
- /// Opens a region whose opener filled in the partition expression its manifest lacks and makes
- /// it writable by a catchup, after which it awaits its Leader lease. Returns the engine and the
- /// expression.
-```
-
-**File**: `src/mito2/src/region.rs` (modified, +45/-0)
-```diff
-@@ -2299,6 +2299,21 @@ impl ManifestContext {
-         self.record_leader_lease(issued_at)
      }
  
-+    /// Demotes the region to a follower for a lease the metasrv granted to it as the candidate of
-+    /// a migration, unless the region [awaits its Leader lease](Self::awaits_leader_lease) (a
-+    /// catchup of the migration promoted it, and the route switch that follows grants that lease).
-+    /// Returns the state this call replaced, None if it left the state unchanged.
-+    ///
-+    /// It holds the lock of [Self::promote_after_catchup], so a promotion is either seen or
-+    /// happens after the demotion.
-+    pub(crate) fn demote_candidate(&self, region_id: RegionId) -> Option<RegionRoleState> {
-+        let _fence = self.promotion_fence.lock().unwrap();
-+        if self.awaits_leader_lease() {
-+            return None;
-+        }
-+        self.set_role(RegionRole::Follower, region_id)
-+    }
-+
-     /// Ends a catchup that does not promote the region, so the next Leader lease promotes it.
-     pub(crate) fn end_catchup(&self) {
-         self.promotion_fence.lock().unwrap().catching_up = false;
-@@ -3429,6 +3444,36 @@ mod tests {
-         assert!(region.manifest_ctx.awaits_leader_lease());
-     }
- 
-+    /// A candidate lease reads the wait for a Leader lease under the fence lock, so it does not
-+    /// demote a region that a catchup promotes meanwhile.
-+    #[tokio::test]
-+    async fn test_candidate_demotion_sees_catchup_promotion_under_fence() {
-+        let env = SchedulerEnv::new().await;
-+        let region = Arc::new(build_test_region(&env).await);
-+        region.manifest_ctx.node_lease.enable();
-+        // A writable leader, so a demotion that misses the fence returns Some and fails below.
-+        assert!(region.is_writable());
-+        assert!(!region.manifest_ctx.awaits_leader_lease());
-+        let demoted = run_blocked_on_fence(
-+            &region,
-+            |r| r.manifest_ctx.demote_candidate(r.region_id),
-+            // What a catchup's promotion does under the lock.
-+            |fence| {
-+                assert!(region.manifest_ctx.promote_unless_reload_pending(
-+                    fence,
-+                    region.region_id,
-+                    true
-+                ))
-+            },
-+        );
-+        assert_eq!(demoted, None);
-+        assert!(region.manifest_ctx.awaits_leader_lease());
-+        assert_eq!(
-+            region.state(),
-+            RegionRoleState::Leader(RegionLeaderState::Writable)
-+        );
-+    }
-+
-     /// The readiness of an upgrade reads the role and the wait for a Leader lease under the fence
-     /// lock, so it sees a change of both made under that lock as a whole.
-     #[tokio::test]
-```
-
-**File**: `src/store-api/src/region_engine.rs` (modified, +9/-4)
-```diff
-@@ -185,9 +185,12 @@ impl SetRegionRoleStateResponse {
- pub struct GrantedRegion {
-     pub region_id: RegionId,
-     pub region_role: RegionRole,
--    /// An opaque non-zero id the metadata plane attaches to some leases, `None` for a lease
--    /// without one. It reaches the engine through [`RegionEngine::set_region_role_with_lease`];
--    /// engines may keep it with the lease and must not interpret it.
-+    /// A non-zero id the metadata plane attaches to the Follower leases of a region migration's
-+    /// target before the route names that target, `None` for a lease without one. It reaches the
-+    /// engine through [`RegionEngine::set_region_role_with_lease`]. An engine may keep it with the
-+    /// lease, and may use its presence to keep such a lease from demoting a region that the
-+    /// migration's catchup made writable and that still awaits a Leader or StagingLeader lease.
-+    /// Engines must not interpret its value.
-     pub candidate_lease_id: Option<u64>,
-     pub extensions: HashMap<String, Vec<u8>>,
- }
-@@ -1536,7 +1539,9 @@ pub trait RegionEngine: Send + Sync {
-     /// deadline of its latest Leader or StagingLeader lease. Leases of other roles do not extend
-     /// that deadline.
-     ///
--    /// `candidate_lease_id` is the lease's [GrantedRegion::candidate_lease_id].
-+    /// `candidate_lease_id` is the lease's [GrantedRegion::candidate_lease_id]. A Follower lease
-+    /// that carries one may leave a region that a catchup made writable alone until its Leader or
-+    /// StagingLeader lease, see [`is_confirmed_leader`](Self::is_confirmed_leader).
-     fn set_region_role_with_lease(
+     async fn write_source(
          &self,
-         region_id: RegionId,
+         metadata: RegionMetadataRef,
+         bat
+```
+
+**File**: `src/mito2/src/compaction/multi_region/writer.rs` (modified, +1/-1)
+```diff
+@@ -142,7 +142,7 @@ impl<'a> TargetWriter<'a> {
+ 
+     pub(super) fn options(&self) -> WriteOptions {
+         WriteOptions {
+-            write_buffer_size: ReadableSize(self.limits.batch as u64),
++            write_buffer_size: ReadableSize(self.limits.writer.upload_limits.chunk_bytes as u64),
+             max_file_size: Some(self.max_file_size),
+             // Capped so each admitted encoder stays within the task budget; see
+             // [memory::MAX_ROW_GROUP_SIZE].
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #10605** (2026-11-24): fix(datatypes): bounds-check Vector::get and get_ref [Backport release/v1.3] (@MichaelScofield)
-- **PR #10604** (2026-11-24): fix(meta): persist segmented procedure checkpoints atomically on RDS (@WenyXu)
-- **PR #10601** (2026-11-24): ci: make nightly merge opt-out and simplify Docbot labels (@shuiyisong)
-- **PR #10599** (2026-11-24): fix(servers)!: validate UTF-8 in unchecked Prometheus validation mode [Backport release/v1.3] (@MichaelScofield)
-- **PR #10596** (2026-11-24): fix(deps): upgrade url to 2.5.9 (@fengys1996)
-- **PR #10595** (2026-11-24): chore: fix cargo-shear warnings in common-telemetry and session (@fengys1996)
+- **PR #10624** (2026-11-25): fix: reject primary key encoding options on logical metric tables (@shuiyisong)
+- **PR #10621** (2026-11-25): fix(meta): preserve table column order and primary key indices during reconciliation [Backport release/v1.3] (@MichaelScofield)
+- **PR #10620** (2026-11-25): fix: keep exact DECIMAL and BIGINT UNSIGNED values in COPY FROM csv and json [Backport release/v1.3] (@MichaelScofield)
+- **PR #10614** (closed): fix(mito): stop deleting narthex parts GC never judged (@discord9)
+- **PR #10613** (2026-11-25): fix(table): keep the primary key order when adding columns [Backport release/v1.3] (@MichaelScofield)
+- **PR #10610** (closed): feat(meta-srv): rotate GC candidates so no region waits forever (@discord9)
 
 ---
 
@@ -2535,65 +2822,33 @@ Signed-off-by
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. promql): answer a named selector over a missing table with the empty vector
+## X. meta): preserve table column order and primary key indices during reconciliation
 
 **RULE**:
-When implementing operations in `src/query/src/promql/planner/native.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in GreptimeTeam/greptimedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/common/meta/src/reconciliation/reconcile_table/resolve_column_metadata.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in GreptimeTeam/greptimedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `883ae6ea`: promql): answer a named selector over a missing table with the empty vector. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1110a0af`: meta): preserve table column order and primary key indices during reconciliation. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/query/src/promql/planner/native.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/common/meta/src/reconciliation/reconcile_table/resolve_column_metadata.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-            let time_index = free_time_index(DEFAULT_TIME_INDEX_COLUMN, &value_names, &output_tags);
-                        // narrows the field set of a scan this route can read, and a selector that matched
-                        // no table has no scan to narrow: the answer is the empty vector either way, exactly
-                        // as the named branch below answers a missing table.
-                    // The selector names a metric whose table does not exist, so the query still has an
-                    // answer: the empty vector, planned from the same typed empty input a nameless selector
-                    // that matched no table is. Planning it here keeps `TableNameNotFound` out of the
-                    // existing planner, which has no table to bind.
-                    //
-                    // A `__field__` matcher does not decline here, though one over a scan this route can
-                    // read does: it narrows the field set of the table its selector reads, and this table has
-                    // no field set to narrow, so every field selection over it is empty. The existing planner
-                    // answers the same way, because a missing tab
+            // The consistent regions share their key: order the tags as the regions keep them, which
+            // also checks that the region's primary key matches its tag columns. Column order still
+            // comes from the stored `TableInfo`; see `build_table_meta_from_column_metadatas`.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-            // A label named `time` is the one collision the default time column can have: the
-            // value columns are named after the expression, so they never take that name. The
-            // time column is this route's own synthetic name - no label or value is renamed - so
-            // a statement whose output already holds a `time` column publishes its grid under the
-            // first free `native_time_N` instead of dropping or renaming the label.
-            let time_index = if value_names
-                .iter()
-                .chain(&output_tags)
-                .any(|name| name == DEFAULT_TIME_INDEX_COLUMN)
-            {
-                (0usize..)
-                    .map(|index| format!("native_time_{index}"))
-                    .find(|candidate| {
-                        !value_names
-                            .iter()
-                            .chain(&output_tags)
-                            .any(|name| name == candidate)
-                    })
-                    .expect("the time column candidate sequence is unbounded")
-            } else {
-                DEFAULT_TIME_INDEX_COLUMN.to_string()
-            };
-                        // is declined fo
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `883ae6ea` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1110a0af` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

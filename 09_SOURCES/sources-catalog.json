@@ -3433,10 +3433,10 @@
     "repository": "zeronsh/zeron",
     "platform": "github",
     "sourceUrl": "https://github.com/zeronsh/zeron",
-    "sourceVersion": "29646196",
+    "sourceVersion": "fbb4083a",
     "license": "MIT",
-    "contentHash": "0096ff04fa672ceb8d99461326bcbd34f31dcc8321554a189b139cf38b397fa5",
-    "lastHarvestedAt": "2026-11-24T07:55:37.449Z",
+    "contentHash": "e5eb38a7fe39feb39f90fec6d0bf0969d24b68829ae3a772cd527ad6e3b37398",
+    "lastHarvestedAt": "2026-11-25T09:54:17.259Z",
     "learningId": "learn-github-zeronsh-zeron"
   },
   "welldone-software-why-did-you-render": {
@@ -5373,10 +5373,10 @@
     "repository": "GreptimeTeam/greptimedb",
     "platform": "github",
     "sourceUrl": "https://github.com/GreptimeTeam/greptimedb",
-    "sourceVersion": "81e60511",
+    "sourceVersion": "0813fc35",
     "license": "Apache-2.0",
-    "contentHash": "e13d2f047234f2d80cbc06c8379a80702d309247c2964185136853989abf454a",
-    "lastHarvestedAt": "2026-11-24T15:17:30.527Z",
+    "contentHash": "d722b1b62f77871a6a42f2e018f500877510522575e1d0d519720096fd254183",
+    "lastHarvestedAt": "2026-11-25T09:54:29.558Z",
     "learningId": "learn-github-greptimeteam-greptimedb"
   },
   "heroui-inc-heroui-native": {
@@ -10815,8 +10815,8 @@
     "sourceUrl": "https://huggingface.co/XHToken/Spark-X2.6-4B-GGUF",
     "sourceVersion": "hf-xhtoken-spark-x2.6-4b-gguf",
     "license": "Open-Source",
-    "contentHash": "db6489295b3291e3dac8dfce6005e65fff55a6666d1b96cf184e609baea1e45c",
-    "lastHarvestedAt": "2026-11-21T17:28:08.243Z",
+    "contentHash": "9047342dc4393d826bd52eb108fbceceeba6a34db8f17447f1682bad8fd59e8e",
+    "lastHarvestedAt": "2026-11-25T09:54:15.013Z",
     "learningId": "learn-huggingface-xhtoken-spark-x2-6-4b-gguf"
   },
   "hf-nvidia-nvidia-nemotron-3.5-bolt-e4b-4gb": {

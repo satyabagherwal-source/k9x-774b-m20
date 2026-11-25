@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T09:41:15.779Z",
+  "last_updated": "2026-11-25T09:54:34.688Z",
   "directives": [
     {
       "id": "CD-001",
@@ -60611,6 +60611,48 @@
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-89E512--db-26245-ysql-fix-pg-duckdb-lake-io-con.md",
       "staged_date": "2026-11-25"
+    },
+    {
+      "id": "CD-5SG1",
+      "directive_title": "MCP settings: a section with nothing in it takes no room",
+      "source_repo": "zeronsh-zeron-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-5SG1-mcp-settings-a-section-with-nothing-in-it-takes-no-room.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-25",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-5PNY",
+      "directive_title": "preserve table column order and primary key indices during reconciliation",
+      "source_repo": "GreptimeTeam/greptimedb",
+      "source_commit": "0813fc35",
+      "staged_file": "11_INBOX/candidate-directives/CD-5PNY-preserve-table-column-order-and-primary-key-indices-during-reconciliation.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-25",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-3220F0",
+      "directive_title": "MCP settings: a section with nothing in it takes no room",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zeronsh-zeron",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-3220F0-mcp-settings-a-section-with-nothing-in-i.md",
+      "staged_date": "2026-11-25"
+    },
+    {
+      "id": "CD-5TFG",
+      "directive_title": "meta): preserve table column order and primary key indices during reconciliation",
+      "source_repo": "greptimeteam-greptimedb-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-5TFG-meta-preserve-table-column-order-and-primary-key-indices-during-reconciliation.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-25",
+      "domain_letter": "J"
     }
   ]
 }

@@ -4,22 +4,22 @@
 {
   "source_repository": "zeronsh/zeron",
   "source_url": "https://github.com/zeronsh/zeron",
-  "source_version": "29646196",
+  "source_version": "fbb4083a",
   "license": "MIT",
-  "timestamp": "2026-11-24T07:55:37.694Z",
+  "timestamp": "2026-11-25T09:54:17.515Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-zeronsh-zeron",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [zeronsh/zeron](https://github.com/zeronsh/zeron) (Revision: `29646196`).  
-> **License**: MIT | **Timestamp**: `2026-11-24T07:55:37.694Z`  
+> **Provenance**: Harvested from [zeronsh/zeron](https://github.com/zeronsh/zeron) (Revision: `fbb4083a`).  
+> **License**: MIT | **Timestamp**: `2026-11-25T09:54:17.515Z`  
 > **Learning ID**: `learn-github-zeronsh-zeron`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `zeronsh/zeron` (Commit: `29646196`)
+- **Target Repository**: `zeronsh/zeron` (Commit: `fbb4083a`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zeronsh-zeron-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zeronsh/zeron](https://github.com/zeronsh/zeron))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T07:55:36.117Z  
+> **Harvest Timestamp**: 2026-11-25T09:54:16.063Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: A native control plane for Claude Code, Codex, Cursor, Devin and other coding agents.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3739 stars
+- **Stars / Engagement**: 3752 stars
 
 ---
 
@@ -1544,1199 +1544,327 @@ class TranscriptState {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ed97f42e` (2026-11-23)
-**Commit Message**: fix(harness): use crate::process child types in AntigravityPasteLogin for Windows (#1580)
+### Incident Patch 1: `fbb4083a` (2026-11-25)
+**Commit Message**: MCP settings: a section with nothing in it takes no room (#1600)
+
+Settings → MCP kept the room of "Waiting for you" and "Your servers" while
+they had nothing to show: their search anchors stood in the page round a
+section that was hidden, each taking a step of its rhythm. With no server
+added, the list to add from stood 96 points under the page's words, not 32.
+The anchors are inside what shows the sections now.
 
 Co-authored-by: Wing <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `crates/harness/src/acp/mod.rs` (modified, +3/-3)
+**File**: `apps/zgx/ui/mcp_page_fixture.luau` (added, +48/-0)
 ```diff
-@@ -2220,8 +2220,8 @@ struct WarmAgent {
- 
- /// Active `antigravity acp --login` paste-code sign-in process.
- pub struct AntigravityPasteLogin {
--    child: tokio::process::Child,
--    stdin: Option<tokio::process::ChildStdin>,
-+    child: crate::process::Child,
-+    stdin: Option<ChildStdin>,
-     url: String,
-     stderr_tail: crate::StderrTail,
-     kill_grace: Duration,
-@@ -2410,7 +2410,7 @@ impl AcpHarness {
-             .args(["--app-data-dir", "antigravity-acp"]);
-         crate::compose_child_path(&mut cmd, &exe);
-         self.configure_adapter_environment(&mut cmd, &exe);
--        if let Some(home) = std::env::var_os("HOME") {
-+        if let Some(home) = crate::executable::home_dir() {
-             cmd.current_dir(home);
-         }
-         cmd.env("GEMINI_HOME", gemini_home)
+@@ -0,0 +1,48 @@
++-- The shell (ui/shell_fixture.luau) with Settings → MCP's snapshot: what
++-- tests/settings_mcp.test.luau measures. It starts with no server added;
++-- `mcp_page.add` adds one, `mcp_page.ask` has an agent ask for one.
++
++local mcp = require("@account/mcp")
++
++local LINEAR = { id = "linear", name = "Linear", description = "Issues and projects.", category = "", url = "https://mcp.linear.app/mcp", transport = "http", authKind = "oauth", docsUrl = "", icon = "linear" }
++local NOTION = { id = "notion", name = "Notion", description = "Pages and databases.", category = "", url = "https://mcp.notion.com/mcp", transport = "http", authKind = "oauth", docsUrl = "", icon = "notion" }
++
++local function show(servers: { any }, requests: { any })
++	mcp.now:set({ loaded = true, storage = "vault", vaultAvailable = true, presets = { LINEAR, NOTION }, servers = servers, requests = requests } :: any)
++end
++
++local pending: any = { after = function() end }
++for _, name in { "refresh", "upsert", "set_enabled", "delete", "start_auth", "cancel_auth", "disconnect_auth" } do
++	(mcp :: any)[name] = function()
++		return pending
++	end
++end
++
++ui.command {
++	id = "mcp_page.add",
++	title = "mcp_page.add",
++	run = function()
++		show({
++			{ id = "linear", name = "Linear", preset = "linear", transport = "http", url = LINEAR.url, args = {}, envKeys = {}, authKind = "oauth", headerKeys = {}, enabled = true, storage = "vault", status = "connected", scopes = {}, agentName = "linear", updatedAt = 1 },
++		}, {})
++	end,
++}
++ui.command {
++	id = "mcp_page.ask",
++	title = "mcp_page.ask",
++	run = function()
++		show({}, {
++			{ id = "r1", title = "Add Notion", status = "pending", createdAt = 1, action = "add", preset = "notion" },
++		})
++	end,
++}
++ui.command {
++	id = "mcp_page.none",
++	title = "mcp_page.none",
++	run = function()
++		show({}, {})
++	end,
++}
++show({}, {})
++
++return require("@app/shell_fixture")
 ```
 
----
-
-### Incident Patch 2: `3d82216b` (2026-11-23)
-**Commit Message**: Merge pull request #1574 from zeronsh/zeron/fix-sidechat-cloud-grouping
-
-Composer inline chips, smooth motion & shrink perf, lightbox anti-flicker, and Cloud side-chat fixes
-
-**File**: `apps/zgx/Cargo.lock` (modified, +26/-26)
+**File**: `apps/zgx/ui/screens/settings/mcp.luau` (modified, +40/-32)
 ```diff
-@@ -30,7 +30,7 @@ dependencies = [
- [[package]]
- name = "accesskit_atspi_common"
- version = "0.19.1"
--source = "git+https://github.com/zeronsh/zgx?rev=e3f35a5462144d07e6dd99af360f28a87c8d1b31#e3f35a5462144d07e6dd99af360f28a87c8d1b31"
-+source = "git+https://github.com/zeronsh/zgx?rev=e9055ac7d829b6d4a81ae0cd900879168e2b7f12#e9055ac7d829b6d4a81ae0cd900879168e2b7f12"
- dependencies = [
-  "accesskit",
-  "accesskit_consumer",
-@@ -43,7 +43,7 @@ dependencies = [
- [[package]]
- name = "accesskit_consumer"
- version = "0.38.0"
--source = "git+https://github.com/zeronsh/zgx?rev=e3f35a5462144d07e6dd99af360f28a87c8d1b31#e3f35a5462144d07e6dd99af360f28a87c8d1b31"
-+source = "git+https://github.com/zeronsh/zgx?rev=e9055ac7d829b6d4a81ae0cd900879168e2b7f12#e9055ac7d829b6d4a81ae0cd900879168e2b7f12"
- dependencies = [
-  "accesskit",
-  "hashbrown 0.16.1",
-@@ -66,7 +66,7 @@ dependencies = [
- [[package]]
- name = "accesskit_macos"
- version = "0.26.3"
--source = "git+https://github.com/zeronsh/zgx?rev=e3f35a5462144d07e6dd99af360f28a87c8d1b31#e3f35a5462144d07e6dd99af360f28a87c8d1b31"
-+source = "git+https://github.com/zeronsh/zgx?rev=e9055ac7d829b6d4a81ae0cd900879168e2b7f12#e9055ac7d829b6d4a81ae0cd900879168e2b7f12"
- dependencies = [
-  "accesskit",
-  "accesskit_consumer",
-@@ -79,7 +79,7 @@ dependencies = [
- [[package]]
- name = "accesskit_unix"
- version = "0.22.1"
--source = "git+https://github.com/zeronsh/zgx?rev=e3f35a5462144d07e6dd99af360f28a87c8d1b31#e3f35a5462144d07e6dd99af360f28a87c8d1b31"
-+source = "git+https://github.com/zeronsh/zgx?rev=e9055ac7d829b6d4a81ae0cd900879168e2b7f12#e9055ac7d829b6d4a81ae0cd900879168e2b7f12"
- dependencies = [
-  "accesskit",
-  "accesskit_atspi_common",
-@@ -96,7 +96,7 @@ dependencies = [
- [[package]]
- name = "accesskit_windows"
- version = "0.34.0"
--source = "git+https://github.com/zeronsh/zgx?rev=e3f35a5462144d07e6dd99af360f28a87c8d1b31#e3f35a5462144d07e6dd99af360f28a87c8d1b31"
-+source = "git+https://github.com/zeronsh/zgx?rev=e9055ac7d829b6d4a81ae0cd900879168e2b7f12#e9055ac7d829b6d4a81ae0cd900879168e2b7f12"
- dependencies = [
-  "accesskit",
-  "accesskit_consumer",
-@@ -6430,7 +6430,7 @@ dependencies = [
- [[package]]
- name = "wgpu-hal"
- version = "29.0.4"
--source = "git+https://github.com/zeronsh/zgx?rev=e3f35a5462144d07e6dd99af360f28a87c8d1b31#e3f35a5462144d07e6dd99af360f28a87c8d1b31"
-+source = "git+https://github.com/zeronsh/zgx?rev=e9055ac7d829b6d4a81ae0cd900879168e2b7f12#e9055ac7d829b6d4a81ae0cd900879168e2b7f12"
- dependencies = [
-  "android_system_properties",
-  "arrayvec",
-@@ -6868,7 +6868,7 @@ checksum = "d6bbff5f0aada427a1e5a6da5f1f98158182f26556f345ac9e04d36d0ebed650"
- [[package]]
- name = "winit"
- version = "0.30.13"
--source = "git+https://github.com/zeronsh/zgx?rev=e3f35a5462144d07e6dd99af360f28a87c8d1b31#e3f35a5462144d07e6dd99af360f28a87c8d1b31"
-+source = "git+https://github.com/zeronsh/zgx?rev=e9055ac7d829b6d4a81ae0cd900879168e2b7f12#e9055ac7d829b6d4a81ae0cd900879168e2b7f12"
- dependencies = [
-  "ahash",
-  "android-activity",
-@@ -7436,7 +7436,7 @@ dependencies = [
- [[package]]
- name = "zgx"
- version = "0.1.10"
--source = "git+https://github.com/zeronsh/zgx?rev=e3f35a5462144d07e6dd99af360f28a87c8d1b31#e3f35a5462144d07e6dd99af360f28a87c8d1b31"
-+source = "git+https://github.com/zeronsh/zgx?rev=e9055ac7d829b6d4a81ae0cd900879168e2b7f12#e9055ac7d829b6d4a81ae0cd900879168e2b7f12"
- dependencies = [
-  "fixed_decimal",
-  "foldhash 0.2.0",
-@@ -7465,7 +7465,7 @@ dependencies = [
- [[package]]
- name = "zgx-3d"
- version = "0.1.10"
--source = "git+https://github.com/zeronsh/zgx?rev=e3f35a5462144d07e6dd99af360f28a87c8d1b31#e3f35a5462144d07e6dd99af360f28a87c8d1b31"
-+source = "git+https://github.com/zeronsh/zgx?rev=e9055ac7d829b6d4a81ae0cd900879168e2b7f12#e9055ac7d829b6d4a81ae0cd900879168e2b7f12"
- dependencies = [
-  "bytemuck",
-  "zgx",
-@@ -7475,7 +7475,7 @@ dependencies = [
- [[package]]
- name = "zgx-alacritty-terminal"
- version = "0.26.8"
--source = "git+https://github.com/zeronsh/zgx?rev=e3f35a5462144d07e6dd99af360f28a87c8d1b31#e3f35a5462144d07e6dd99af360f28a87c8d1b31"
-+source = "git+https://github.com/zeronsh/zgx?rev=e9055ac7d829b6d4a81ae0cd900879168e2b7f12#e9055ac7d829b6d4a81ae0cd900879168e2b7f12"
- dependencies = [
-  "base64 0.22.1",
-  "bitflags 2.13.2",
-@@ -7500,7 +7500,7 @@ dependencies = [
- [[package]]
- name = "zgx-arboard"
- version = "3.6.2"
--source = "git+https://github.com/zeronsh/zgx?rev=e3f35a5462144d07e6dd99af360f28a87c8d1b31#e3f35a5462144d07e6dd99af360f28a87c8d1b31"
-+source = "git+https://github.com/zeronsh/zgx?rev=e9055ac7d829b6d4a81ae0cd900879168e2b7f12#e9055ac7d829b6d4a81ae0cd900879168e2b7f12"
- dependencies = [
-  "clipboard-win",
-  "image",
-@@ -7519,15 +7519,15 @@ dependencies = [
- [[package]]
- name = "zgx-components"
- version = "0.1.10"
--source = "git+https://github.com/zeronsh/zgx?rev=e3f35a5462144d07e6dd99af360f28a87c8d1b31#e3f35a5462144d07e6dd99af360f28a87c8d1b31"
-+source = "git+https://github.com/zeronsh/zgx?rev=e9055ac7d829b6d4a81ae0cd900879168e2b7f12#e9055ac7d829b6d4a81ae0cd900879168e2b7f12"
- dependen
-```
-
-**File**: `apps/zgx/Cargo.toml` (modified, +14/-14)
-```diff
-@@ -32,7 +32,7 @@ layout_probe = []
+@@ -2074,44 +2074,52 @@ function M.view(): Node
+ 		end
+ 	end)
  
- [dependencies]
- lz4_flex = { version = "0.11", default-features = false, features = ["safe-encode", "safe-decode"] }
--zgx = { git = "https://github.com/zeronsh/zgx", rev = "e3f35a5462144d07e6dd99af360f28a87c8d1b31" }
-+zgx = { git = "https://github.com/zeronsh/zgx", rev = "e9055ac7d829b6d4a81ae0cd900879168e2b7f12" }
- # `mimalloc`: the program's allocator, in place of the system's. It hands
- # freed memory back to the system (the system's keeps the most it ever
- # held), and zgx measures 1-10% less CPU for script, text and layout work.
-@@ -43,26 +43,26 @@ zgx = { git = "https://github.com/zeronsh/zgx", rev = "e3f35a5462144d07e6dd99af3
- # none of it, and without it pages are placeholders ("Web view · <url>").
- # zgx-run turns it on by default, but this app takes zgx-run without its
- # defaults (below). Nothing on macOS or Windows.
--zgx-desktop = { git = "https://github.com/zeronsh/zgx", rev = "e3f35a5462144d07e6dd99af360f28a87c8d1b31", features = ["mimalloc", "terminal", "webkitgtk"] }
-+zgx-desktop = { git = "https://github.com/zeronsh/zgx", rev = "e9055ac7d829b6d4a81ae0cd900879168e2b7f12", features = ["mimalloc", "terminal", "webkitgtk"] }
- # `inspect`: devtools for `zgx inspect` (and its MCP server), asked for
- # with `--inspect`. `i18n`: `ui.t`'s plurals and numbers by each locale's
- # own rules (ICU4X's data, about 90 KB), for ui/locales' translations.
- # `scene3d`: `ui.scene3d`, `ui.mesh`, `ui.light`, `ui.group` (zgx-3d on the
- # wgpu this app already links), for plugins that show 3D: the CAD plugin
- # hands it its own triangles (`geometry = { positions, indices, … }`). It
- # asks no grant; a scene draws a frame only when something in it changes.
--zgx-script = { git = "https://github.com/zeronsh/zgx", rev = "e3f35a5462144d07e6dd99af360f28a87c8d1b31", features = ["inspect", "i18n", "scene3d"] }
-+zgx-script = { git = "https://github.com/zeronsh/zgx", rev = "e9055ac7d829b6d4a81ae0cd900879168e2b7f12", features = ["inspect", "i18n", "scene3d"] }
- # A picture's pixels for the clipboard (src/images.rs): zgx's own decoder,
- # the formats `ui.image` shows (no features of its own: the ones zgx-desktop
- # turns on).
--zgx-gpu = { git = "https://github.com/zeronsh/zgx", rev = "e3f35a5462144d07e6dd99af360f28a87c8d1b31", default-features = false }
-+zgx-gpu = { git = "https://github.com/zeronsh/zgx", rev = "e9055ac7d829b6d4a81ae0cd900879168e2b7f12", default-features = false }
- # Each plugin's own database (`zeron.db`, src/plugins/db.rs): SQLite,
- # built in; `limits` to keep one from attaching any other file.
- rusqlite = { version = "0.32", features = ["bundled", "limits", "hooks"] }
- # `fetch`: zgx's own transport for `ui.fetch` and remote images (HTTP and
- # HTTPS, rustls), given to every window (src/main.rs): the app's scripts,
- # and plugins granted "network". Nothing else of the runner.
--zgx-run = { git = "https://github.com/zeronsh/zgx", rev = "e3f35a5462144d07e6dd99af360f28a87c8d1b31", default-features = false, features = ["fetch"] }
-+zgx-run = { git = "https://github.com/zeronsh/zgx", rev = "e9055ac7d829b6d4a81ae0cd900879168e2b7f12", default-features = false, features = ["fetch"] }
- # `webp`: `ui.image` decodes through this crate, by what its features
- # allow, so turning WebP on here is all it takes (the member cards' art).
- # `ico`: sites' favicons (the browser tab's: src/favicons.rs), most of
-@@ -162,7 +162,7 @@ foreign-types = "0.5"
- # elements, box drawing and Powerline glyphs to the cell; zgx's own renderer
- # draws them from the font at its text line height, gapped. Builds Ghostty
- # with Zig 0.16 (cached in ~/Library/Caches/zgx-ghostty).
--zgx-desktop = { git = "https://github.com/zeronsh/zgx", rev = "e3f35a5462144d07e6dd99af360f28a87c8d1b31", features = ["ghostty"] }
-+zgx-desktop = { git = "https://github.com/zeronsh/zgx", rev = "e9055ac7d829b6d4a81ae0cd900879168e2b7f12", features = ["ghostty"] }
- 
- # Windows' Transparency effects (src/transparency.rs), read and watched in
- # the registry, until zgx reports them (zgx-asks/windows-transparency); a
-@@ -173,7 +173,7 @@ zgx-desktop = { git = "https://github.com/zeronsh/zgx", rev = "e3f35a5462144d07e
- # 11 (and with Edge on Windows 10); without it, pages are placeholders.
- [target.'cfg(windows)'.dependencies]
- windows-sys = { version = "0.61", features = ["Win32_Foundation", "Win32_Graphics_Gdi", "Win32_Media_Audio", "Win32_Storage_FileSystem", "Win32_System_IO", "Win32_System_Console", "Win32_System_Registry", "Win32_System_Threading", "Win32_System_Time", "Win32_UI_WindowsAndMessaging"] }
--zgx-desktop = { git = "https://github.com/zeronsh/zgx", rev = "e3f35a5462144d07e6dd99af360f28a87c8d1b31", features = ["webview2"] }
-+zgx-desktop = { git = "https://github.com/zeronsh/zgx", rev = "e9055ac7d829b6d4a81ae0cd900879168e2b7f12", features = ["webview2"] }
- 
- # zgx's D-Bus (menus, portals) linked in rather than loaded: `zeron` is also
- # what a headless Linux server and every Cloud machine runs (`zeron
-@@ -185,13 +185,13 @@ li
-```
-
-**File**: `apps/zgx/docs/composer.md` (modified, +23/-7)
-```diff
-@@ -149,16 +149,32 @@ motion, frame or binding.
- View bindings share a projection of the complete presented snapshot, so changes
- to width or measurement metadata alone do not wake unchanged controls/insets.
- 
--The vertical envelope and controls move together. During expansion, the editor
--keeps compact width until a complete line fits above both control groups, then
--switches once to the expanded width. During contraction, it takes compact width
--immediately. The text top and height continue on the same vertical trajectory;
--width is not continuously interpolated during a mode change.
-+The vertical envelope, text insets and controls move together. During
-+compact-to-expanded and expanded-to-compact transitions, the clip wrapper's
-+horizontal insets glide along a smooth arc around the leading `+` button (`p^4`
-+when expanding so the pill rises clear of `+` before sliding left;
-+`1 - (1 - p)^2` when contracting so the text clears `+` before the pill closes)
-+while `Motion.editor_width` holds the textarea at its destination wrapping
-+width so text wraps once without mid-flight re-wrapping or a horizontal
-+teleport. Settled (or in-mode), `Motion.editor_width` defers to `"100%"` so
-+pane resizes flow purely through layout.
- 
- The viewport derives from that frame's surface, top and bottom reservations.
- A separate animated clip surrounds the naturally measured header; the clip's
--height never feeds back into the header measurement. These transitions retain
--the textarea, draft, focus and selection, and do not write editor scroll.
-+height never feeds back into the header measurement. Likewise, the textarea sits
-+inside an `overflow = "hidden"` clip sized by `Motion.clip_height` (opening up
-+to two lines down to the pill's inner bottom while text still sits to the right
-+of `+`, then staying strictly above the controls once `text.left` glides across
-+`+`'s column), while its own height (`Motion.editor_height`) holds at least the
-+growing destination and pending frame-0 edit height (`metrics.pending`) before
-+settling back to `shown.text.height`. Single-line growth while already expanded
-+settles immediately on frame 0 (backed by synchronous live-edit metrics when
-+the mounted editor has already advanced its native revision) so neither line 1
-+at the top nor the new line's caret at the bottom is clipped. Combined with
-+updating `pill_w` from `pill.width` before editors refresh on resize, caret
-+reveal never scrolls and clips the top line off-screen mid-resize. These
-+transitions retain the textarea, draft, focus and selection, and do not write
-+editor scroll.
- 
- Reduced motion cancels animation and snaps to the destination. A context change
- also snaps, holding that policy until the current metrics are ready and the pill
-```
-
-**File**: `apps/zgx/src/chip_copy_tests.rs` (modified, +101/-0)
-```diff
-@@ -25,3 +25,104 @@ fn copying_a_sent_message_with_chips_copies_the_names_alone() {
-     assert!(!copied.contains('\u{2009}'), "no thin spaces: {copied:?}");
-     assert!(copied.contains("Look at chat.rs please, as in Long chat,"), "the words read as written: {copied:?}");
- }
-+
-+#[test]
-+fn inline_chip_icon_well_has_equal_spacing_around_all_sides() {
-+    use zgx::scene::NodeKind;
-+
-+    let path = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("ui/chat_fixture.luau");
-+    let mut app = TestApp::new(|runtime| ScriptHost::new(runtime, path));
-+    app.ui.scene.borrow_mut().resize(900., 700.);
-+    app.frames(30);
-+    assert_eq!(app.error(), None, "the fixture failed");
-+    assert!(app.host.run_command("go_s2"));
-+    app.frames(30);
-+    assert!(app.host.run_command("link_turn"));
-+    app.frames(30);
-+    let prompt = app.target("#lu1").expect("the prompt with mentions");
-+
-+    let scene = app.ui.scene.borrow();
-+    // Collect rich-text nodes (their chip background runs) and icon-well panel nodes inside the prompt.
-+    let mut stack = vec![prompt];
-+    let mut chip_runs = Vec::new();
-+    let mut wells = Vec::new();
-+    while let Some(id) = stack.pop() {
-+        let bounds = scene.bounds(id);
-+        match scene.kind(id) {
-+            NodeKind::RichText { text: rich } => {
-+                let (wrap, inset) = scene.text_wrap(id, bounds.width);
-+                let layout = scene.shape_rich_text(rich, Some(wrap));
-+                let runs = rich.runs();
-+                for (i, run) in runs.iter().enumerate() {
-+                    if run.background.is_some()
-+                        && i + 1 < runs.len()
-+                        && runs[i + 1].background == run.background
-+                        && run.padding[0] > 0.
-+                        && runs[i + 1].padding[0] == 0.
-+                    {
-+                        // Icon placeholder run immediately followed by the chip's label run.
-+                        if let Some(sel) = layout.selection(run.range.clone()).into_iter().next() {
-+                            let label_sel = layout.selection(runs[i + 1].range.clone()).into_iter().next();
-+                            chip_runs.push((
-+                                zgx::scene::Rect::new(
-+                                    bounds.x + inset + sel.x,
-+                                    bounds.y + sel.y,
-+                                    sel.width,
-+                                    sel.height,
-+                                ),
-+                                label_sel.map(|r| bounds.x + inset + r.x),
-+                                run.font_size,
-+                                run.padding,
-+                            ));
-+                        }
-+                    }
-+                }
-+            }
-+            NodeKind::Panel { .. } => {
-+                // Chip icon well: square panel wrapping a single SVG icon.
-+                let children = scene.children(id);
-+                if children.len() == 1
-+                    && matches!(scene.kind(children[0]), NodeKind::Svg(_))
-+                    && (bounds.width - bounds.height).abs() < 0.5
-+                    && bounds.width >= 14.
-+                    && bounds.width <= 22.
-+                {
-+                    wells.push(bounds);
-+                }
-+            }
-+            _ => {}
-+        }
-+        stack.extend_from_slice(scene.children(id));
-+    }
-+
-+    assert!(!wells.is_empty(), "expected at least one chip icon well in #lu1");
-+    assert_eq!(
-+        wells.len(),
-+        chip_runs.len(),
-+        "expected one icon placeholder run per chip icon well"
-+    );
-+
-+    wells.sort_by(|a, b| a.y.total_cmp(&b.y).then_with(|| a.x.total_cmp(&b.x)));
-+    chip_runs.sort_by(|a, b| a.0.y.total_cmp(&b.0.y).then_with(|| a.0.x.total_cmp(&b.0.x)));
-+
-+    for (well, (slot, label_x, font_size, pad)) in wells.iter().zip(chip_runs.iter()) {
-+        // Pill vertical band in zgx-text: 0.92*font_size above baseline + 0.24*font_size below + 2*pad[1].
-+        let pill_height = font_size * (0.92 + 0.24) + 2. * pad[1];
-+        let left_gap = well.x - slot.x;
-+        let right_gap = label_x.map(|lx| lx - (well.x + well.width)).unwrap_or(left_gap);
-+        let vertical_gap = (pill_height - well.height) / 2.;
-+        eprintln!(
-+            "chip geometry: well={:.1}x{:.1} pill_h={:.2} -> left={:.2} right={:.2} vert={:.2}",
-+            well.width, well.height, pill_height, left_gap, right_gap, vertical_gap
-+        );
-+        assert!(
-+            (left_gap - right_gap).abs() <= 0.5,
-+            "left_gap ({left_gap:.2}) and right_gap ({right_gap:.2}) should be equal"
-+        );
-+        assert!(
-+            (left_gap - vertical_gap).abs() <= 0.5,
-+            "left_gap ({left_gap:.2}) and vertical_gap ({vertical_gap:.2}) should be equal"
-+        );
-+    }
-+}
-+
-```
-
-**File**: `apps/zgx/src/composer_atoms_tests.rs` (added, +952/-0)
-```diff
-@@ -0,0 +1,952 @@
-+//! End-to-end verification and performance proof for:
-+//! 1. Inline atomic chips in the composer (`ds/composer_atoms.luau` + `ds/composer.luau`):
-+//!    - `@` / `/` / `$` mentions become inline atomic chips with icons and wash.
-+//!    - Deleting an inline chip in composer text leaves the file attached in cargo.
-+//!    - Removing an attachment from the cargo strip deletes all inline chips mentioning it.
-+//!    - Dragging an inline chip inside the composer moves it cleanly to the dropped caret offset.
-+//!    - Dragging an attachment chip from the cargo strip into the composer inserts an inline chip
-+//!      without duplicating the attachment in cargo.
-+//! 2. Lightbox anti-flicker regression coverage across morph open and morph→rest handoff.
-+//! 3. Composer performance proof at short (20 lines) vs long (5,000 lines) drafts with and
-+//!    without inline chips (typing both after and before chips), proving O(1) script calls
-+//!    and no latency regression.
-+
-+use std::path::PathBuf;
-+use std::time::Instant;
-+
-+use zgx::input::{InputEvent, Key, Modifiers, PointerButton};
-+use zgx::scene::{NodeId, NodeKind, Rect};
-+use zgx_script::{ScriptHost, Value, testing::TestApp};
-+
-+const FIELD: &str = "role:textbox \"Message\"";
-+
-+fn ui_dir() -> PathBuf {
-+    PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("ui")
-+}
-+
-+fn mount_fixture(name: &str) -> TestApp {
-+    let path = ui_dir().join(name);
-+    let app = TestApp::new(|runtime| ScriptHost::new(runtime, path));
-+    app.ui.scene.borrow_mut().resize(1200., 800.);
-+    app.frames(25);
-+    app
-+}
-+
-+fn drag(app: &mut TestApp, from: (f32, f32), to: (f32, f32)) {
-+    app.ui.dispatch(InputEvent::PointerMove { x: from.0, y: from.1 });
-+    app.frames(2);
-+    app.ui.dispatch(InputEvent::PointerDown {
-+        x: from.0,
-+        y: from.1,
-+        button: PointerButton::Primary,
-+    });
-+    app.frames(1);
-+    let steps = 10;
-+    for i in 1..=steps {
-+        let t = i as f32 / steps as f32;
-+        app.ui.dispatch(InputEvent::PointerMove {
-+            x: from.0 + (to.0 - from.0) * t,
-+            y: from.1 + (to.1 - from.1) * t,
-+        });
-+        app.frames(1);
-+    }
-+    app.ui.dispatch(InputEvent::PointerUp {
-+        x: to.0,
-+        y: to.1,
-+        button: PointerButton::Primary,
-+    });
-+    app.frames(12);
-+}
-+
-+fn find_atom_rect(app: &mut TestApp, field: NodeId, atom_id: u64) -> Option<Rect> {
-+    app.ui.prepare_frame();
-+    let bounds = app.ui.scene.borrow().transformed_bounds(field);
-+    let editor = app.ui.editor_within(field)?;
-+    let mut y = bounds.y + 4.0;
-+    while y < bounds.y + bounds.height {
-+        let mut x = bounds.x + 4.0;
-+        while x < bounds.x + bounds.width {
-+            if let Some((atom, rect)) = editor.atom_at(x, y) {
-+                if atom.id == atom_id {
-+                    return Some(rect);
-+                }
-+            }
-+            x += 8.0;
-+        }
-+        y += 8.0;
-+    }
-+    None
-+}
-+
-+fn send_key(app: &mut TestApp, key: Key) {
-+    app.ui.dispatch(InputEvent::KeyDown {
-+        key,
-+        modifiers: Modifiers::default(),
-+        repeat: false,
-+    });
-+    app.settle();
-+    app.frames(4);
-+}
-+
-+fn pick_mention(app: &mut TestApp, query: &str) {
-+    app.type_text(FIELD, &format!("@{query}"));
-+    app.frames(12);
-+    send_key(app, Key::Enter);
-+    app.frames(12);
-+}
-+
-+fn pick_mention_at_caret(app: &mut TestApp, query: &str) {
-+    app.ui.dispatch(InputEvent::Text(format!("@{query}")));
-+    app.settle();
-+    app.frames(12);
-+    send_key(app, Key::Enter);
-+    app.frames(12);
-+}
-+
-+#[test]
-+fn attachment_mentions_luau_suite_passes() {
-+    let ui = ui_dir();
-+    let filters = [
-+        "friendly_name cleans macOS screenshot dates",
-+        "a picture with a screenshot's name, mentioned, goes with its cleaned screenshot name",
-+        "files with odd names go as their escaped links",
-+        "two files of one name are two numbers",
-+        "removing an attachment deletes inline chips mentioning it",
-+        "an Appshot mentioned goes by its window title with image extension",
-+        "after a relaunch, read back with its uploads' names",
-+    ];
-+    for filter in filters {
-+        let report = zgx_script::test_runner::run(&ui, Some(filter), |outcome| {
-+            if let Some(failure) = &outcome.failure {
-+                eprintln!("{}: {failure}", outcome.name);
-+            }
-+        })
-+        .expect("attachment_mentions test runs");
-+        assert!(
-+            !report.outcomes.is_empty(),
-+            "no test matched filter {filter:?}"
-+        );
-+        assert_eq!(report.failed(), 0, "{report:?}");
-+    }
-+}
-+
-+fn run_cmd(app: &TestApp, id: &str) {
-+    assert!(app.host.run_command(id), "command {id:?} did not run");
-+}
-+
-+fn read_state(app: &TestApp, name: &str) -> Value {
-+    app.host
-+        .states()
-+        .into_iter()
-+        .find(|(n, _)| n == name || n.ends_with(&format!("::{name}")))
-+        .map_or(Value::Nil, |(_, v
-```
-
-**File**: `apps/zgx/src/composer_layout_tests.rs` (modified, +1/-1)
-```diff
-@@ -10,7 +10,7 @@ fn composer_geometry_rules_have_boundary_header_and_purity_coverage() {
-         }
-     })
-     .expect("geometry tests load");
--    assert_eq!(report.outcomes.len(), 10, "all geometry cases must run");
-+    assert_eq!(report.outcomes.len(), 11, "all geometry cases must run");
-     assert_eq!(report.failed(), 0, "{report:?}");
- }
- 
-```
-
-**File**: `apps/zgx/src/composer_motion_tests.rs` (modified, +162/-1)
-```diff
-@@ -57,7 +57,7 @@ fn composer_transition_rules_cover_width_clip_headers_and_interruption() {
-         }
-     })
-     .unwrap();
--    assert_eq!(report.outcomes.len(), 4);
-+    assert_eq!(report.outcomes.len(), 7);
-     assert_eq!(report.failed(), 0, "{report:?}");
- }
- 
-@@ -217,3 +217,164 @@ fn composer_width_only_resize_publishes_the_frame_without_animating_and_preserve
-     assert_eq!(c.report().field("frame"), c.report().field("destination"));
-     assert!(!c.app.clock.wants_frame());
- }
-+
-+#[test]
-+fn removing_last_attachment_to_skinny_avoids_transcript_repaint_storm() {
-+    use std::path::PathBuf;
-+    use std::rc::Rc;
-+    use zgx::input::InputEvent;
-+
-+    let ui_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("ui");
-+    let build_app = || -> TestApp {
-+        let app = TestApp::new(|runtime| ScriptHost::new(runtime, ui_dir.join("chat_fixture.luau")));
-+        app.ui.scene.borrow_mut().resize(1240., 820.);
-+        app.frames(2);
-+        assert!(app.host.run_command("go_s6"));
-+        app.frames(30);
-+        // Populate a rich multi-message transcript so any accidental per-frame
-+        // transcript layout/repaint shows up unmistakably in damage area.
-+        let mut rows = Vec::new();
-+        for i in 0..8 {
-+            let text = format!(
-+                "## Section {i}\n\nAssistant reply with **bold**, `inline code`, and a code block:\n\n```rust\nfn handle_frame_{i}(dt: f32) -> f32 {{\n    let eased = 1.0 - (1.0 - dt).powi(3);\n    eased * 100.0\n}}\n```\n\n- Bullet one explaining layout geometry\n- Bullet two explaining scroll anchoring and bottom fade\n"
-+            );
-+            let user_entry = serde_json::json!({
-+                "id": format!("u{i}"),
-+                "role": "user",
-+                "parts": [{ "id": format!("u{i}p"), "kind": "text", "text": format!("Question {i}: check composer shrink.") }],
-+                "createdAt": 1_762_000_000_000_i64 + i as i64 * 1000
-+            });
-+            let asst_entry = serde_json::json!({
-+                "id": format!("a{i}"),
-+                "role": "assistant",
-+                "status": "complete",
-+                "parts": [{ "id": format!("a{i}x"), "kind": "text", "text": text }],
-+                "createdAt": 1_762_000_000_500_i64 + i as i64 * 1000
-+            });
-+            rows.push(crate::chat::built_entry(&user_entry, "doc", None, Some("Opus")).unwrap());
-+            rows.push(crate::chat::built_entry(&asst_entry, "doc", None, Some("Opus")).unwrap());
-+        }
-+        app.host
-+            .shared("chat.messages", Value::Nil)
-+            .set(Value::List(Rc::from(rows)));
-+        app.frames(30);
-+        app
-+    };
-+
-+    let drop_path = |app: &mut TestApp, path: PathBuf| {
-+        let r = app.bounds("#transcript");
-+        app.ui.dispatch(InputEvent::FilesDrop {
-+            x: r.x + r.width / 2.,
-+            y: r.y + r.height * 0.3,
-+            paths: vec![path].into(),
-+        });
-+        app.frames(30);
-+    };
-+
-+    let click_remove_chip = |app: &mut TestApp| {
-+        let chip = app
-+            .find(r#"#chat-composer >> role:button "notes.md""#)
-+            .or_else(|| app.find(r#"#chat-composer >> role:button ~"zgx""#))
-+            .or_else(|| app.find(r#"#chat-composer >> role:button ~"Image""#))
-+            .expect("cargo chip button");
-+        let r = app.ui.scene.borrow().transformed_bounds(chip);
-+        app.ui.dispatch(InputEvent::PointerMove {
-+            x: r.x + r.width / 2.,
-+            y: r.y + r.height / 2.,
-+        });
-+        app.frames(10);
-+        let _ = app.ui.scene.borrow_mut().flush();
-+        app.click(r#"#chat-composer >> role:button ~"Remove""#);
-+    };
-+
-+    let verify_shrink = |label: &str, path: PathBuf| -> TestApp {
-+        let mut app = build_app();
-+        drop_path(&mut app, path);
-+        let expanded_h = app.bounds("#chat-composer").height;
-+        assert!(
-+            expanded_h > 180.0,
-+            "{label}: expected expanded composer with cargo + inline chip, got {expanded_h}"
-+        );
-+        let _ = app.ui.scene.borrow_mut().flush();
-+
-+        click_remove_chip(&mut app);
-+
-+        let mut prev_h = expanded_h;
-+        let mut prev_tb_x = app.bounds("role:textbox \"Message\"").x;
-+        let mut prev_tb_y = app.bounds("role:textbox \"Message\"").y;
-+        let mut anim_damage_total = 0.0f64;
-+        let mut max_anim_frame_damage = 0.0f32;
-+        let mut max_anim_calls = 0u64;
-+
-+        for f in 0..16 {
-+            let calls_before = app.calls();
-+            app.frame();
-+            let report = app.ui.scene.borrow_mut().flush();
-+            let dcalls = app.calls() - calls_before;
-+            let dmg_pt2: f32 = report.damage.iter().map(|r| r.width * r.height).sum();
-+            let comp_h = app.bounds("#chat-composer").height;
-+            let tb = app.bounds("role:textbox \"Message\"");
-+
-+            assert!(
-+                comp_h <= prev_h + 0.05,
-+                "{label} f{f:02}: composer height mu
-```
-
-**File**: `apps/zgx/src/main.rs` (modified, +2/-0)
-```diff
-@@ -117,6 +117,8 @@ mod picture_aspect_tests;
- #[cfg(test)]
- mod chip_copy_tests;
- #[cfg(test)]
-+mod composer_atoms_tests;
-+#[cfg(test)]
- mod drop_tests;
- #[cfg(test)]
- mod picker_settle_tests;
-```
-
----
-
-### Incident Patch 3: `838478e2` (2026-11-23)
-**Commit Message**: fix(zgx): eliminate frame drops when removing last attachment to skinny composer
-
-**File**: `apps/zgx/src/composer_motion_tests.rs` (modified, +161/-0)
-```diff
-@@ -217,3 +217,164 @@ fn composer_width_only_resize_publishes_the_frame_without_animating_and_preserve
-     assert_eq!(c.report().field("frame"), c.report().field("destination"));
-     assert!(!c.app.clock.wants_frame());
- }
-+
-+#[test]
-+fn removing_last_attachment_to_skinny_avoids_transcript_repaint_storm() {
-+    use std::path::PathBuf;
-+    use std::rc::Rc;
-+    use zgx::input::InputEvent;
-+
-+    let ui_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("ui");
-+    let build_app = || -> TestApp {
-+        let app = TestApp::new(|runtime| ScriptHost::new(runtime, ui_dir.join("chat_fixture.luau")));
-+        app.ui.scene.borrow_mut().resize(1240., 820.);
-+        app.frames(2);
-+        assert!(app.host.run_command("go_s6"));
-+        app.frames(30);
-+        // Populate a rich multi-message transcript so any accidental per-frame
-+        // transcript layout/repaint shows up unmistakably in damage area.
-+        let mut rows = Vec::new();
-+        for i in 0..8 {
-+            let text = format!(
-+                "## Section {i}\n\nAssistant reply with **bold**, `inline code`, and a code block:\n\n```rust\nfn handle_frame_{i}(dt: f32) -> f32 {{\n    let eased = 1.0 - (1.0 - dt).powi(3);\n    eased * 100.0\n}}\n```\n\n- Bullet one explaining layout geometry\n- Bullet two explaining scroll anchoring and bottom fade\n"
-+            );
-+            let user_entry = serde_json::json!({
-+                "id": format!("u{i}"),
-+                "role": "user",
-+                "parts": [{ "id": format!("u{i}p"), "kind": "text", "text": format!("Question {i}: check composer shrink.") }],
-+                "createdAt": 1_762_000_000_000_i64 + i as i64 * 1000
-+            });
-+            let asst_entry = serde_json::json!({
-+                "id": format!("a{i}"),
-+                "role": "assistant",
-+                "status": "complete",
-+                "parts": [{ "id": format!("a{i}x"), "kind": "text", "text": text }],
-+                "createdAt": 1_762_000_000_500_i64 + i as i64 * 1000
-+            });
-+            rows.push(crate::chat::built_entry(&user_entry, "doc", None, Some("Opus")).unwrap());
-+            rows.push(crate::chat::built_entry(&asst_entry, "doc", None, Some("Opus")).unwrap());
-+        }
-+        app.host
-+            .shared("chat.messages", Value::Nil)
-+            .set(Value::List(Rc::from(rows)));
-+        app.frames(30);
-+        app
-+    };
-+
-+    let drop_path = |app: &mut TestApp, path: PathBuf| {
-+        let r = app.bounds("#transcript");
-+        app.ui.dispatch(InputEvent::FilesDrop {
-+            x: r.x + r.width / 2.,
-+            y: r.y + r.height * 0.3,
-+            paths: vec![path].into(),
-+        });
-+        app.frames(30);
-+    };
-+
-+    let click_remove_chip = |app: &mut TestApp| {
-+        let chip = app
-+            .find(r#"#chat-composer >> role:button "notes.md""#)
-+            .or_else(|| app.find(r#"#chat-composer >> role:button ~"zgx""#))
-+            .or_else(|| app.find(r#"#chat-composer >> role:button ~"Image""#))
-+            .expect("cargo chip button");
-+        let r = app.ui.scene.borrow().transformed_bounds(chip);
-+        app.ui.dispatch(InputEvent::PointerMove {
-+            x: r.x + r.width / 2.,
-+            y: r.y + r.height / 2.,
-+        });
-+        app.frames(10);
-+        let _ = app.ui.scene.borrow_mut().flush();
-+        app.click(r#"#chat-composer >> role:button ~"Remove""#);
-+    };
-+
-+    let verify_shrink = |label: &str, path: PathBuf| -> TestApp {
-+        let mut app = build_app();
-+        drop_path(&mut app, path);
-+        let expanded_h = app.bounds("#chat-composer").height;
-+        assert!(
-+            expanded_h > 180.0,
-+            "{label}: expected expanded composer with cargo + inline chip, got {expanded_h}"
-+        );
-+        let _ = app.ui.scene.borrow_mut().flush();
-+
-+        click_remove_chip(&mut app);
-+
-+        let mut prev_h = expanded_h;
-+        let mut prev_tb_x = app.bounds("role:textbox \"Message\"").x;
-+        let mut prev_tb_y = app.bounds("role:textbox \"Message\"").y;
-+        let mut anim_damage_total = 0.0f64;
-+        let mut max_anim_frame_damage = 0.0f32;
-+        let mut max_anim_calls = 0u64;
-+
-+        for f in 0..16 {
-+            let calls_before = app.calls();
-+            app.frame();
-+            let report = app.ui.scene.borrow_mut().flush();
-+            let dcalls = app.calls() - calls_before;
-+            let dmg_pt2: f32 = report.damage.iter().map(|r| r.width * r.height).sum();
-+            let comp_h = app.bounds("#chat-composer").height;
-+            let tb = app.bounds("role:textbox \"Message\"");
-+
-+            assert!(
-+                comp_h <= prev_h + 0.05,
-+                "{label} f{f:02}: composer height must shrink monotonically ({prev_h:.2} -> {comp_h:.2})"
-+            );
-+            assert!(
-+                tb.x >= prev_tb_x - 0.05,
-+                "{label} f{f:02}: textbox x must shift monotonically right ({prev_tb_x:.2} -> {:.2})",
-+                tb.x
-+        
-```
-
-**File**: `apps/zgx/ui/ds/composer.luau` (modified, +77/-58)
-```diff
-@@ -1877,9 +1877,81 @@ return ui.component(function(props: Props): Node
- 	-- Files over the pill: its own sense of it, or the caller's.
- 	local dropping = props.dropping or ui.use_state(false)
- 
--	-- What sits over the draft: the agent's ask, or the cargo strip.
-+	-- An image chip opens its picture in the lightbox (unless the caller opens
-+	-- chips itself), growing from the chip; ← → go through the chips' pictures.
-+	-- The host mounts once stably on the composer root so adding/removing the
-+	-- last attachment never tears down or re-registers the lightbox host mid-shrink.
-+	local cargo_lightbox = props.cargo ~= nil and not props.on_open_cargo
-+	local cargo_strip: Node? = nil
-+	if props.cargo then
-+		local items = props.cargo :: State<{ cargo.Item }>
-+		local group: string? = nil
-+		local open_image: ((string) -> ())? = nil
-+		if cargo_lightbox then
-+			lightboxes += 1
-+			local g = `composer{lightboxes}`
-+			group = g
-+			open_image = function(id: string)
-+				local images: { Lightbox.Item } = {}
-+				local at = nil
-+				for _, c in items:peek() do
-+					if (c.kind == "image" or c.kind == "appshot") and c.src and c.src ~= "" then
-+						table.insert(images, { src = c.src, name = c.name, path = (c :: any).path, key = c.id })
-+						if c.id == id then
-+							at = #images
-+						end
-+					end
-+				end
-+				if at then
-+					Lightbox.open(images, at, g)
-+				end
-+			end
-+		end
-+		cargo_strip = ui.show(
-+			function(): boolean
-+				return not asking()
-+			end,
-+			cargo.Strip {
-+				items = items,
-+				on_remove = props.on_remove_cargo,
-+				on_retry = props.on_retry_cargo,
-+				on_open = props.on_open_cargo or open_image,
-+				drag_item = if props.atoms and props.cargo_chip
-+					then function(item: cargo.Item): any?
-+						local spec = (props.cargo_chip :: (cargo.Item) -> ComposerAtoms.ChipSpec?)(item)
-+						if not spec then
-+							return nil
-+						end
-+						return { kind = "cargo_chip", spec = spec }
-+					end
-+					else nil,
-+				drag_preview = if props.atoms and props.cargo_chip
-+					then function(payload: any): Node
-+						return ComposerAtoms.chip_preview(if type(payload) == "table" and payload.spec then payload.spec.data else nil)
-+					end
-+					else nil,
-+				source = if group
-+					then function(item: cargo.Item): { [string]: any }?
-+						local radius = ui.theme.get("zeron.composer.chip.radius")
-+						return Lightbox.source(group, item.id, if type(radius) == "number" then radius else 0)
-+					end
-+					else nil,
++	-- (A section with nothing in it takes no room, its search anchor's neither:
++	-- the anchor is inside what shows it, never round it.)
+ 	local requests = ui.computed(pending_requests)
+-	local waiting = search.anchor(
+-		"requests",
+-		ui.show(function(): boolean
++	local waiting = ui.show(
++		function(): boolean
+ 			return #requests:get() > 0
+-		end, ds.Settings.Section {
+-			title = ui.t("settings.mcp.requests.title"),
+-			description = ui.t("settings.mcp.requests.description"),
+-			ds.Settings.Each(requests, function(_r: mcp.Request, _i: number, row: State<mcp.Request>): Node
+-				return RequestRow { now = row }
+-			end, {
+-				key = function(r: mcp.Request): string
+-					return r.id
+-				end,
+-			}),
+-		})
++		end,
++		search.anchor(
++			"requests",
++			ds.Settings.Section {
++				title = ui.t("settings.mcp.requests.title"),
++				description = ui.t("settings.mcp.requests.description"),
++				ds.Settings.Each(requests, function(_r: mcp.Request, _i: number, row: State<mcp.Request>): Node
++					return RequestRow { now = row }
++				end, {
++					key = function(r: mcp.Request): string
++						return r.id
++					end,
++				}),
 +			}
 +		)
-+	end
-+
-+	-- What sits over the draft: the agent's ask, or the cargo strip. Cargo
-+	-- mounts directly (without an outer ui.presence exit layer) so removing the
-+	-- last attachment fades the chip once via cargo.Strip's ui.each inside the
-+	-- collapsing header clip instead of stacking nested offscreen layers and
-+	-- unmounting mid-shrink.
- 	local head: Node = ui.column {
--		on_resize = measure(head_h_seen, "h"),
-+		on_resize = function(size: Size)
-+			local v = if has_cargo() or asking() then size.h else 0
-+			if math.abs(head_h_seen:peek() - v) >= 0.5 then
-+				head_h_seen:set(v)
-+			end
-+		end,
- 		absolute = true,
- 		left = 0,
- 		right = 0,
-@@ -1892,8 +1964,6 @@ return ui.component(function(props: Props): Node
- 				return `question:{q.text}:{q.page or 1}:{if q.multi then 1 else 0}`
- 			elseif approval() then
- 				return "approval"
--			elseif has_cargo() then
--				return "cargo"
- 			end
- 			return nil
- 		end, function(key: string): Node
-@@ -1909,66 +1979,14 @@ return ui.component(function(props: Props): Node
- 						return (q.page or 1) <= 1 and not can_answer()
- 					end,
- 				}
--			elseif kind == "approval" then
--				return ask.Approval { approval = approval() :: ask.Approval }
- 			end
--			-- An image chip opens its picture in the lightbox (unless the
--			-- caller opens chips itself), growing from the chip; ← → go
--			-- through the chips' pictures.
--			lightboxes += 1
--			local group = `composer{lightboxes}`
--			local items = props.cargo :: State<{ cargo.Item }>
--			local function open_image(id: string)
--				local images: { Lightbox.Item } = {}
--				local at = nil
--				for _, c in items:peek() do
--					if (c.kind == "image" or c.kind == "appshot") and c.src and c.src ~= "" then
--						table.insert(images, { src = c.src, name = c.name, path = (c :: any).path, key = c.id })
--						if c.id == id then
--							at = #images
--						end
--					end
--				end
--				if at then
--					Lightbox.open(images, at, group)
--				end
--			end
--			return ui.column {
+ 	)
+ 
+-	local yours = search.anchor(
+-		"servers",
+-		ui.show(function(): boolean
++	local yours = ui.show(
++		function(): boolean
+ 			return #servers:get() > 0
+-		end, ds.Settings.Section {
+-			title = ui.t("settings.mcp.servers.title"),
+-			-- A card a service, as Providers has an agent's.
+-			ui.column {
 -				w_full = true,
--				cargo.Strip {
--					items = items,
--					on_remove = props.on_remove_cargo,
--					on_retry = props.on_retry_cargo,
--					on_open = props.on_open_cargo or open_image,
--					drag_item = if props.atoms and props.cargo_chip
--						then function(item: cargo.Item): any?
--							local spec = (props.cargo_chip :: (cargo.Item) -> ComposerAtoms.ChipSpec?)(item)
--							if not spec then
--								return nil
--							end
--							return { kind = "cargo_chip", spec = spec }
--						end
--						else nil,
--					drag_preview = 
+-				gap = "$space.3",
+-				ui.each(ui.computed(services), function(_svc: Service, _i: number, row: State<Service>): Node
+-					return ServiceCard { now = row }
+-				end, {
+-					key = function(svc: Service): string
+-						return svc.key
+-					end,
++		end,
++		search.anchor(
++			"servers",
++			ds.Settings.Section {
++				title = ui.t("settings.mcp.servers.title"),
++				-- A card a service, as Providers has an agent's.
++				ui.column {
+ 					w_full = true,
+-				}),
+-			},
+-		})
++					gap = "$space.3",
++					ui.each(ui.computed(services), function(_svc: Service, _i: number, row: State<Service>): Node
++						return ServiceCard { now = row }
++					end, {
++						key = function(svc: Service): string
++							return svc.key
++						end,
++						w_full = true,
++					}),
++				},
++			}
++		)
+ 	)
+ 
+ 	local add = search.anchor(
 ```
 
-**File**: `apps/zgx/ui/ds/composer_cargo.luau` (modified, +33/-5)
+**File**: `apps/zgx/ui/tests/settings_mcp.test.luau` (added, +65/-0)
 ```diff
-@@ -234,6 +234,7 @@ end
- local function image_chip(item: Item, row: State<Item>, props: Props): Node
- 	local hovered = ui.use_state(false)
- 	local focused = ui.use_state(false)
-+	local removing = false
- 	local function lit(): boolean
- 		return hovered:get() or focused:get()
- 	end
-@@ -247,6 +248,13 @@ local function image_chip(item: Item, row: State<Item>, props: Props): Node
- 		return row:get().failed ~= nil
- 	end
- 	local remove = props.on_remove
-+	local on_remove = if remove
-+		then function(id: string)
-+			removing = true
-+			over(item, false)
-+			remove(id)
-+		end
-+		else nil
- 	local cut = hollow(lit)
- 	local lifted = if props.source then props.source(item) else nil
- 	return ui.overlay {
-@@ -278,6 +286,9 @@ local function image_chip(item: Item, row: State<Item>, props: Props): Node
- 		drag_preview_anchor = if props.drag_preview then { 0.5, 0.5 } else nil,
- 		drag_preview_offset = if props.drag_preview then { 0, -4 } else nil,
- 		on_hover = function(inside: boolean)
-+			if removing then
-+				return
+@@ -0,0 +1,65 @@
++-- Settings → MCP: a section with nothing in it (no server added, nothing asked
++-- for) takes no room, so the page's sections stand one step of its rhythm
++-- apart whichever of them show. On ui/mcp_page_fixture.luau.
++
++local PAGE = "#settings-page"
++local NAV = "#settings-nav"
++-- From the page's words to its first section, and what a line of text may
++-- round to.
++local STEP, SLACK = 32, 2
++
++-- A text's top and foot on the page.
++local function span(app: any, words: string): (number, number)
++	for line in app:tree(PAGE):gmatch("[^\n]+") do
++		if line:find(words, 1, true) then
++			local y, h = line:match(" %-?[%d.]+,(%-?[%d.]+) [%d.]+x([%d.]+)")
++			if y then
++				return tonumber(y) :: number, (tonumber(y) :: number) + (tonumber(h) :: number)
 +			end
- 			hovered:set(inside)
- 			over(item, inside)
- 		end,
-@@ -307,8 +318,11 @@ local function image_chip(item: Item, row: State<Item>, props: Props): Node
- 			end, "$zeron.composer.chip.scrim_ink", "#ffffff4d"))),
- 			ui.show(failed, scrim(ui.div { color = "$zeron.tone.danger.ink", Icon { name = "danger-triangle", size = 16 } })),
- 		},
--		if remove
--			then cross(item, lit, remove, function(on: boolean)
-+		if on_remove
-+			then cross(item, lit, on_remove, function(on: boolean)
-+				if removing then
-+					return
-+				end
- 				focused:set(on)
- 			end)
- 			else nil,
-@@ -454,6 +468,7 @@ end
- local function row_chip(item: Item, row: State<Item>, props: Props): Node
- 	local hovered = ui.use_state(false)
- 	local focused = ui.use_state(false)
-+	local removing = false
- 	local function lit(): boolean
- 		return hovered:get() or focused:get()
- 	end
-@@ -502,6 +517,13 @@ local function row_chip(item: Item, row: State<Item>, props: Props): Node
- 		glyph = Icon { name = "wrap-text", size = glyph_size - 2 }
- 	end
- 	local remove = props.on_remove
-+	local on_remove = if remove
-+		then function(id: string)
-+			removing = true
-+			over(item, false)
-+			remove(id)
 +		end
-+		else nil
- 	-- An element picked on a page (the browser panel's): its number and
- 	-- page over its note or words, its card under the pointer, no click.
- 	local pick = item.kind == "annotation" and item.element ~= nil
-@@ -556,6 +578,9 @@ local function row_chip(item: Item, row: State<Item>, props: Props): Node
- 			return row:get().name
- 		end,
- 		on_hover = function(inside: boolean)
-+			if removing then
-+				return
-+			end
- 			hovered:set(inside)
- 			over(item, inside)
- 		end,
-@@ -672,8 +697,11 @@ local function row_chip(item: Item, row: State<Item>, props: Props): Node
- 				}
- 			),
- 		},
--		if remove
--			then cross(item, lit, remove, function(on: boolean)
-+		if on_remove
-+			then cross(item, lit, on_remove, function(on: boolean)
-+				if removing then
-+					return
-+				end
- 				focused:set(on)
- 			end, function(): string
- 				return row:get().name
-@@ -789,7 +817,7 @@ M.Strip = ui.component(function(props: Props): Node
- 			gap = "$zeron.composer.chip.gap",
- 			animate = { duration = 220, ease = "outCubic" },
- 			enter = { opacity = { 0, 1 }, scale = { 0.9, 1 }, duration = 220, ease = "outCubic" },
--			exit = { opacity = 0, scale = 0.9, duration = 140, ease = "outCubic" },
-+			exit = { opacity = 0, duration = 120, ease = "outCubic" },
- 		}),
- 	}
- end)
-```
-
-**File**: `apps/zgx/ui/ds/transcript.luau` (modified, +10/-3)
-```diff
-@@ -166,6 +166,10 @@ export type Props = {
- 	-- it passes behind (Zeron's band, from the composer's top to the
- 	-- window's foot), and the way back to the latest stands over it.
- 	foot: (() -> number)?,
-+	-- Settled/destination foot height when the docked composer animates: list-
-+	-- wide properties (`fade`, `scroll_padding`) follow this once per transition
-+	-- instead of invalidating the full transcript viewport on every frame.
-+	foot_target: (() -> number)?,
- 	-- Whether the view this one is made for rested at its end (a chat
- 	-- switched back to: the session page keeps each chat's place); else the
- 	-- last transcript's, as a reload's rebuild has it. (With `session`, asked
-@@ -1373,6 +1377,9 @@ local function Transcript(props: Props): Node
- 	local function foot(): number
- 		return if props.foot then props.foot() else 0
- 	end
-+	local function foot_target(): number
-+		return if props.foot_target then props.foot_target() else foot()
 +	end
- 	local offset = props.offset or ui.state(`transcript_offset{kept}`, 0)
- 	local list = props.ref or ui.ref()
- 	-- Whether the list rests at its end, as the list itself says (its
-@@ -2567,7 +2574,7 @@ local function Transcript(props: Props): Node
- 			-- The air at the conversation's end, on its last row: on the list
- 			-- itself it would clip every row short of the list's foot.
- 			pb = function(): number
--				return if last() then ui.raw(TAIL + foot(), "the air at its end, and the room held for what floats over its foot") else 0
-+				return if last() then ui.raw(TAIL + foot_target(), "the air at its end, and the room held for what floats over its foot") else 0
- 			end,
- 			relative = true,
- 			min_h = need,
-@@ -2761,13 +2768,13 @@ local function Transcript(props: Props): Node
- 			-- (Zeron's 24 under the title bar; at the foot, the band the
- 			-- composer covers, or 24.)
- 			fade = function(): { number }
--				return { 24, math.max(24, foot()) + (props.fade_lead or 0) }
-+				return { 24, math.max(24, foot_target()) + (props.fade_lead or 0) }
- 			end,
- 			-- A row Tab (or ⇧Tab) focuses scrolls clear of both bands: the
- 			-- title bar's fade at the top, the composer at the foot (followed
- 			-- as it grows).
- 			scroll_padding = function(): { top: number, bottom: number }
--				return { top = 24 + 8, bottom = math.max(24, foot()) + 8 }
-+				return { top = 24 + 8, bottom = math.max(24, foot_target()) + 8 }
- 			end,
- 			-- Always (a list's runs past its edges aren't measured, so a
- 			-- band "as far as content runs past" stayed shut). At rest
++	error(`no "{words}" on the page:\n{app:tree(PAGE)}`)
++end
++
++-- From the foot of the page's description to the top of a section's title.
++local function below(app: any, title: string): number
++	local _, foot = span(app, "Tools your agents can use")
++	local top = span(app, title)
++	return top - foot
++end
++
++local function open(): any
++	local app = mount("mcp_page_fixture.luau")
++	app:resize(1200, 900)
++	app:frames(30)
++	app:command("settings_stub.sign_in")
++	app:command("shell.settings")
++	app:frames(20)
++	app:click(`{NAV} >> role:tab "MCP"`)
++	app:frames(30)
++	return app
++end
++
++test("MCP: with no server and nothing asked for, the list to add from is right under the page's words", function()
++	local app = open()
++	expect(app:has(`{PAGE} >> "Your servers"`)).to_be(false)
++	local gap = below(app, "Add a server")
++	expect(`{math.abs(gap - STEP) <= SLACK} ({gap})`).to_be(`true ({gap})`)
++	expect(app:error()).to_be_nil()
++end)
++
++test("MCP: a server added, or a change asked for, shows there, and its room goes with it", function()
++	local app = open()
++	for _, case in { { "mcp_page.add", "Your servers" }, { "mcp_page.ask", "Waiting for you" } } do
++		app:command(case[1])
++		app:frames(30)
++		local gap = below(app, case[2])
++		expect(`{case[2]}: {math.abs(gap - STEP) <= SLACK} ({gap})`).to_be(`{case[2]}: true ({gap})`)
++		app:command("mcp_page.none")
++		app:frames(30)
++		expect(app:has(`{PAGE} >> "{case[2]}"`)).to_be(false)
++		local back = below(app, "Add a server")
++		expect(`{math.abs(back - STEP) <= SLACK} ({back})`).to_be(`true ({back})`)
++	end
++	expect(app:error()).to_be_nil()
++end)
 ```
 
-**File**: `apps/zgx/ui/screens/chat/composer.luau` (modified, +3/-0)
+---
+
+### Incident Patch 2: `53a4637a` (2026-11-25)
+**Commit Message**: Model menu: an option's row is as wide as the menu (#1598)
+
+The rows for a model's options (Context Window, Fusion's Lead) were as wide
+as their own words since #1577 put their list straight in a ui.show, and
+their choices opened over the menu instead of beside it. A full-width column
+in the show keeps them the menu's width.
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Co-authored-by: zeronsh[bot] <346184242+zeronsh[bot]@users.noreply.github.com>
+
+**File**: `apps/zgx/ui/ds/model_picker.luau` (modified, +13/-8)
 ```diff
-@@ -1325,6 +1325,9 @@ local function Composer(): Node
- 				if math.abs(shared.dock_h:peek() - sizes.presented) > 0.01 then
- 					shared.dock_h:set(sizes.presented)
- 				end
-+				if math.abs(shared.dock_target:peek() - sizes.target) > 0.01 then
-+					shared.dock_target:set(sizes.target)
-+				end
+@@ -784,15 +784,20 @@ return ui.component(function(props: Props): Node
+ 			function(): boolean
+ 				return #owned:get() > 0
  			end,
- 			-- Its measures, fold and open tray kept across a reload, so it
- 			-- is laid out as it was from the first frame.
+-			ui.each(owned, function(it: Owned): Node
+-				return option_row(it.option)
+-			end, {
+-				key = function(it: Owned): string
+-					return `{it.model.value}/{it.option.id}`
+-				end,
++			-- (The column is what keeps the rows the menu's width: a list
++			-- straight in a show is as wide as its own rows.)
++			ui.column {
+ 				w_full = true,
+-				gap = "$zeron.list.gap",
+-			})
++				ui.each(owned, function(it: Owned): Node
++					return option_row(it.option)
++				end, {
++					key = function(it: Owned): string
++						return `{it.model.value}/{it.option.id}`
++					end,
++					w_full = true,
++					gap = "$zeron.list.gap",
++				}),
++			}
+ 		),
+ 		ui.show(
+ 			function(): boolean
 ```
 
-**File**: `apps/zgx/ui/screens/chat/dock.luau` (modified, +6/-1)
+**File**: `apps/zgx/ui/tests/model_picker_in_place.test.luau` (modified, +33/-0)
 ```diff
-@@ -48,13 +48,18 @@ function M.page_pad(): any
- 	return ui.raw(M.FOOTER + M.GAP, "the docked composer's footer line and its gap to the foot")
- end
+@@ -113,6 +113,39 @@ test("a model's options sit under it, above its reasoning, and are picked beside
+ 	expect(app:error()).to_be(nil)
+ end)
  
--function M.room(height: () -> number): { foot: () -> number }
-+function M.room(height: () -> number, target: (() -> number)?): { foot: () -> number, foot_target: (() -> number)? }
- 	return {
- 		-- (The viewport ends at the footer's line: what floats over it is the
- 		-- composer above that.)
- 		foot = function(): number
- 			return height() - M.FOOTER
- 		end,
-+		foot_target = if target
-+			then function(): number
-+				return target() - M.FOOTER
++-- A model's options are rows of the menu: as wide as the models' rows over
++-- them, so a press anywhere along one opens it, and its choices open beside
++-- the menu. (Each was as wide as its own words, its choices over the menu.)
++test("a model's options are as wide as the menu's rows", function()
++	local app = mount("picker_fixture.luau")
++	app:resize(700, 700)
++	app:set_state("test_picker_model", "fusion")
++	settle(app)
++	app:click('role:button "Model"')
++	settle(app)
++	-- Where a row is: its left edge and its width.
++	local function across(row: string): string
++		for line in app:tree():gmatch("[^\n]+") do
++			if line:find(row, 1, true) and not line:find(" hidden", 1, true) then
++				local x, w = line:match(" (%d+),%d+ (%d+)x%d+")
++				return `{x} {w}`
 +			end
-+			else nil,
- 	}
- end
- 
-```
-
-**File**: `apps/zgx/ui/screens/chat/lane_tab.luau` (modified, +13/-2)
-```diff
-@@ -209,7 +209,7 @@ end
- -- what's picked (a changed agent, model or access becomes the chat's, as the
- -- chat page's does). A message that didn't go says so on the composer's own
- -- notice line, above it, never over it.
--local function composer(chat: string, view: any, name: string, focus: State<number>, open_model: State<number>, split: boolean?, focused: (() -> boolean)?, own_draft: State<string>?, own_atoms: State<{ ComposerAtoms.AtomEntry }>?): Node
-+local function composer(chat: string, view: any, name: string, focus: State<number>, open_model: State<number>, split: boolean?, focused: (() -> boolean)?, own_draft: State<string>?, own_atoms: State<{ ComposerAtoms.AtomEntry }>?, dock_target: State<number>?): Node
- 	-- (Its draft kept by the chat, as its picks: a switch of tabs or a
- 	-- reload finds it as it was; a passage quoted from its transcript lands
- 	-- in it.)
-@@ -696,6 +696,13 @@ local function composer(chat: string, view: any, name: string, focus: State<numb
- 	end, name)
- 	return ds.Composer {
- 		dictation = dictation,
-+		on_sizes = if dock_target
-+			then function(sizes: ds.ComposerSizes)
-+				if math.abs(dock_target:peek() - sizes.target) > 0.01 then
-+					dock_target:set(sizes.target)
-+				end
-+			end
-+			else nil,
- 		value = draft,
- 		atoms = atoms,
- 		snap = if split then snap else nil,
-@@ -1117,9 +1124,12 @@ M.Tab = ui.component(function(props: { tab: any }): Node
- 		return ever
- 	end)
- 	local dock_h = M.dock_height(slot)
-+	local dock_target = ui.state(`chat_lane_dock_target_{slot}`, Dock.REST)
- 	-- (A split's pane, focused: the window's composer stands at its foot.)
- 	local room = Dock.room(function(): number
- 		return if split and focused_now() then Shared.dock_h:get() else dock_h:get()
-+	end, function(): number
-+		return if split and focused_now() then Shared.dock_target:get() else dock_target:get()
- 	end)
- 	local function lane_session(): any
- 		local s = view.session:get()
-@@ -1220,6 +1230,7 @@ M.Tab = ui.component(function(props: { tab: any }): Node
- 		offset = offset,
- 		keep = anchor,
- 		foot = if tab.kind == "subagent" then nil else room.foot,
-+		foot_target = if tab.kind == "subagent" then nil else room.foot_target,
- 		-- Its "Jump to latest" and the pill of the composer at its foot, a
- 		-- centred pair: its own composer's, or, a split's focused pane, the
- 		-- window's (screens/chat/shared's `pill_width_of`).
-@@ -1349,7 +1360,7 @@ M.Tab = ui.component(function(props: { tab: any }): Node
- 					hidden = function(): boolean
- 						return split and focused_now()
- 					end,
--					Dock.Dock { height = dock_h, composer = composer(chat, view, `lane.{slot}`, focus, open_model, data.split == true, if split then focused_now else nil, lane_draft, lane_atoms), id = `lane-composer-{slot}` },
-+					Dock.Dock { height = dock_h, composer = composer(chat, view, `lane.{slot}`, focus, open_model, data.split == true, if split then focused_now else nil, lane_draft, lane_atoms, dock_target), id = `lane-composer-{slot}` },
- 				},
- 			}
- 			if zone then
-```
-
-**File**: `apps/zgx/ui/screens/chat/session.luau` (modified, +3/-0)
-```diff
-@@ -131,6 +131,8 @@ local function Session(id: Id?): Node
- 	local offset = shared.offset
- 	local room = Dock.room(function(): number
- 		return shared.dock_h:get()
-+	end, function(): number
-+		return shared.dock_target:get()
- 	end)
- 	-- Another session opened: where it was left (its place kept as the
- 	-- reader left it), else its latest; the one left keeps its place for
-@@ -292,6 +294,7 @@ local function Session(id: Id?): Node
- 						-- Under the docked composer: the conversation runs
- 						-- behind it, its end held clear of it.
- 						foot = room.foot,
-+						foot_target = room.foot_target,
- 						-- (Its pair with the window's composer: shared's
- 						-- `pill_width_of`.)
- 						beside = function(): number?
++		end
++		return "none"
++	end
++	local model = across('option "Fusion"')
++	expect(model).never.to_be("none")
++	expect(across('button "Lead"')).to_be(model)
++	expect(across('button "Sidekick"')).to_be(model)
++	-- Its choices open past the menu's edge, not over it.
++	app:click('role:button "Lead"')
++	settle(app)
++	local row_x, row_w = model:match("(%d+) (%d+)")
++	local choices = tonumber(across('listbox "Lead"'):match("^%d+")) or 0
++	expect(choices > (tonumber(row_x) :: number) + (tonumber(row_w) :: number)).to_be(true)
++	expect(app:error()).to_be(nil)
++end)
++
+ -- Devin Fusion has no card beside its row: picked, its options are the
+ -- tray's rows under it, as any model's are.
+ test("Fusion is picked like any model, its options then under it", function()
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1581** (2026-11-23): Zeron 0.3.18 (@wingleeio)
-- **PR #1580** (2026-11-23): fix(harness): use crate::process child types in AntigravityPasteLogin for Windows (@wingleeio)
-- **PR #1579** (2026-11-23): Cloud: a `current` naming a removed version is pointed back at an installed one (@wingleeio)
-- **PR #1578** (2026-11-23): Zeron 0.3.17 (@wingleeio)
-- **PR #1577** (2026-11-23): Antigravity unified CLI, dropdown submenu hover corridors, and list row gap enforcement (@wingleeio)
-- **PR #1575** (2026-11-23): Zeron 0.3.16 (@wingleeio)
+- **PR #1600** (2026-11-25): MCP settings: a section with nothing in it takes no room (@wingleeio)
+- **PR #1598** (2026-11-25): Model menu: an option's row is as wide as the menu (@wingleeio)
+- **PR #1594** (2026-11-24): Zeron 0.3.20 (@wingleeio)
+- **PR #1593** (2026-11-24): A message waiting as the engine starts is answered with Zeron's tools (@wingleeio)
+- **PR #1592** (2026-11-24): Zeron 0.3.19 (@wingleeio)
+- **PR #1591** (2026-11-24): Sidebar: an archived session's row is its own, and follows it back (@wingleeio)
 
 ---
 
@@ -2756,35 +1884,56 @@ Composer inline chips, smooth motion & shrink perf, lightbox anti-flicker, and C
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. harness): use crate::process child types in AntigravityPasteLogin for Windows
+## X. MCP settings: a section with nothing in it takes no room
 
 **RULE**:
-When implementing operations in `crates/harness/src/acp/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zeronsh/zeron. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apps/zgx/ui/mcp_page_fixture.luau`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zeronsh/zeron. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ed97f42e`: harness): use crate::process child types in AntigravityPasteLogin for Windows. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fbb4083a`: MCP settings: a section with nothing in it takes no room. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/harness/src/acp/mod.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/zgx/ui/mcp_page_fixture.luau`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    child: crate::process::Child,
-    stdin: Option<ChildStdin>,
-        if let Some(home) = crate::executable::home_dir() {
+-- The shell (ui/shell_fixture.luau) with Settings → MCP's snapshot: what
+-- tests/settings_mcp.test.luau measures. It starts with no server added;
+-- `mcp_page.add` adds one, `mcp_page.ask` has an agent ask for one.
+
+local mcp = require("@account/mcp")
+
+local LINEAR = { id = "linear", name = "Linear", description = "Issues and projects.", category = "", url = "https://mcp.linear.app/mcp", transport = "http", authKind = "oauth", docsUrl = "", icon = "linear" }
+local NOTION = { id = "notion", name = "Notion", description = "Pages and databases.", category = "", url = "https://mcp.notion.com/mcp", transport = "http", authKind = "oauth", docsUrl = "", icon = "notion" }
+
+local function show(servers: { any }, requests: { any })
+	mcp.now:set({ loaded = true, storage = "vault", vaultAvailable = true, presets = { LINEAR, NOTION }, servers = servers, requests = requests } :: any)
+end
+
+local pending: any = { after = function() end }
+for _, name in { "refresh", "upsert", "set_enabled", "delete", "start_auth", "cancel_auth", "disconnect_auth" } do
+	(mcp :: any)[name] = function()
+		return pending
+	end
+end
+
+ui.command {
+	id = "mcp_page.add",
+	title = "mcp_page.add",
+	run = function()
+		show({
+	
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-    child: tokio::process::Child,
-    stdin: Option<tokio::process::ChildStdin>,
-        if let Some(home) = std::env::var_os("HOME") {
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ed97f42e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fbb4083a` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
