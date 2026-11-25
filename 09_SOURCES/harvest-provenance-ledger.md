@@ -13191,3 +13191,4 @@ Every entry in this ledger must capture:
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `d97fb2a0` | Multi-dimensional audit evidence | 2026-11-25T23:32:40.687Z |
 | `learn-huggingface-nvidia-deepseek-v4-1-flash-1017-nvfp4` | `https://huggingface.co/nvidia/DeepSeek-V4.1-Flash-1017-NVFP4` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-11-25T23:41:38.066Z |
 | `learn-github-chrisbanes-skills` | `https://github.com/chrisbanes/skills` | `9427b3a2` | Multi-dimensional audit evidence | 2026-11-25T23:41:44.349Z |
+| `learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-coder-gguf` | `https://huggingface.co/ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-Coder-GGUF` | `hf-ista-da` | Multi-dimensional audit evidence | 2026-11-25T23:50:00.236Z |

@@ -11905,8 +11905,8 @@
     "sourceUrl": "https://huggingface.co/ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-Coder-GGUF",
     "sourceVersion": "hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-coder-gguf",
     "license": "Open-Source",
-    "contentHash": "baaaa5725ffc1e692bc41b0ccf3334944f1d0873b22a0c0d52d3a626a06045cf",
-    "lastHarvestedAt": "2026-11-22T02:29:17.624Z",
+    "contentHash": "34be4abc281f762ea7a8b27c1725724509506ea2cd38f438a33a59c485e3cbd5",
+    "lastHarvestedAt": "2026-11-25T23:50:00.236Z",
     "learningId": "learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-coder-gguf"
   },
   "matthart1983-netwatch": {

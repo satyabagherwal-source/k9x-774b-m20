@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T23:41:44.356Z",
-  "total_cycles_completed": 12489,
-  "total_learnings_persisted": 12489,
+  "last_updated": "2026-11-25T23:50:00.242Z",
+  "total_cycles_completed": 12490,
+  "total_learnings_persisted": 12490,
   "total_rules_promoted": 11450,
   "history": [
-    {
-      "timestamp": "2026-11-25T04:52:10.626Z",
-      "repository": "MaterializeInc/materialize",
-      "learningId": "learn-github-materializeinc-materialize",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-25T05:00:30.759Z",
       "repository": "openai/clip-vit-large-patch14",
@@ -1403,6 +1396,13 @@
       "repository": "chrisbanes/skills",
       "learningId": "learn-github-chrisbanes-skills",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T23:50:00.242Z",
+      "repository": "ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-Coder-GGUF",
+      "learningId": "learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-coder-gguf",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

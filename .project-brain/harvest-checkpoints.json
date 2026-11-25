@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-25T23:41:44.370Z",
+  "last_updated": "2026-11-25T23:50:00.252Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -17916,14 +17916,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-coder-gguf",
-      "content_hash": "baaaa5725ffc1e692bc41b0ccf3334944f1d0873b22a0c0d52d3a626a06045cf",
-      "verified_at": "2026-11-22T02:29:17.632Z",
+      "content_hash": "34be4abc281f762ea7a8b27c1725724509506ea2cd38f438a33a59c485e3cbd5",
+      "verified_at": "2026-11-25T23:50:00.251Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T02:29:17.632Z"
+      "last_updated": "2026-11-25T23:50:00.251Z"
     },
     "matthart1983/netwatch": {
       "repository": "matthart1983/netwatch",

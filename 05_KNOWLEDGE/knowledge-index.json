@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-25T23:41:52.950Z",
+  "last_updated": "2026-11-25T23:50:14.034Z",
   "total_verified_learnings": 9121,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -112198,9 +112198,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "509be274acb2696517725b3e08046819c4e91825ba559a50f34fec9e0420f72a",
+      "content_hash": "84f88994deef4badbd69d183eb24ab7fbae67b6e64987b7e711bf4e47ed01899",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T15:16:01.627Z"
+      "persisted_at": "2026-11-25T23:50:13.816Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -112210,9 +112210,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "e5f3ebc5d07658a932ea665031eeb1ce8a35def365415251cbe5ce2a3a184082",
+      "content_hash": "13c2d29a6f4572cf82029b977dfe30480e2c12ce58d7c4093f6a139a3cac1956",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T15:16:01.842Z"
+      "persisted_at": "2026-11-25T23:50:14.034Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "dffac831eb06fbd65687edb8f5ebd199b282ecc2d24a477f3b33b9cbb305fad4",
+      "content_hash": "bf8715f032faa709a41e82c5ee1f5aa1579cd5bfa8e01b8faab263a8f74fd93b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T23:41:52.722Z"
+      "persisted_at": "2026-11-25T23:50:12.876Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "87c0f7e2d25cc36807dee037ddc0f1f5c1b0ecac3822b981e289b4120df5b8a9",
+      "content_hash": "8c6de0cebcfc7d7b2fe0a8c7df61ccd57810bdb1b44e7b58b8af1bc3f8707e90",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T23:41:52.950Z"
+      "persisted_at": "2026-11-25T23:50:13.062Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -281030,13 +281030,13 @@
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-gguf-learnings-research-knowledg.md",
-      "title": "Research & Knowledge Intelligence: hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-gguf-learnings Core Invariants",
-      "repository": "hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-gguf-learnings",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-coder-gguf-learnings-research-kn.md",
+      "title": "Research & Knowledge Intelligence: hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-coder-gguf-learnings Core Invariants",
+      "repository": "hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-coder-gguf-learnings",
       "source_version": "HEAD",
-      "content_hash": "26c87d7c7fcc109540b64405d17c5aa58a60eaeb2cec13427e0dc91d7dbb0705",
+      "content_hash": "c0548ac9b029947591c3a88b1786b0b23541bade4d685dbd6c327e396c1b9e84",
       "domain_letter": "D",
-      "persisted_at": "2026-11-25T07:48:52.347Z"
+      "persisted_at": "2026-11-25T23:50:12.163Z"
     },
     "domain_intelligence-architecture-intelligence-weaviate-weaviate-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-weaviate-weaviate-learnings-core-invariants",
@@ -281225,7 +281225,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-Coder-GGUF",
       "source_version": "hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-coder-gguf",
-      "content_hash": "baaaa5725ffc1e692bc41b0ccf3334944f1d0873b22a0c0d52d3a626a06045cf",
+      "content_hash": "34be4abc281f762ea7a8b27c1725724509506ea2cd38f438a33a59c485e3cbd5",
       "dossier_path": "07_PROJECT_LEARNING/hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-coder-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-coder-gguf-learnings.md",
       "promoted_rules": [],
@@ -281234,7 +281234,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T02:29:17.392Z",
+      "verified_at": "2026-11-25T23:49:59.983Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -281251,9 +281251,9 @@
       "title": "Research & Knowledge Intelligence: ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-Coder-GGUF Core Invariants",
       "repository": "ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-Coder-GGUF",
       "source_version": "hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-coder-gguf",
-      "content_hash": "652cd409a80b7164283f3ecceafafe8553edb935ecd2b9756b8aa3fd58cda539",
+      "content_hash": "d64728c715e7c098e7620b75816aedb299d58b100dd32fbe26e61de211e13323",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T02:29:17.835Z"
+      "persisted_at": "2026-11-25T23:50:00.464Z"
     },
     "rule-9024": {
       "learning_id": "rule-9024",
@@ -336445,13 +336445,13 @@
       "item_id": "candidate_directive-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-N74B-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-0GVY-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change.md",
       "title": "server_events_dispatch: Rerender DM status emoji on emojiset change.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "373bde7929fdfda8c106485de6d64ac7346428c8bbd3c773200968058407719f",
+      "content_hash": "82b9e803cae4e22df549616982359c9dc636e5183c012571c44b35de59d61f1b",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T15:16:01.360Z"
+      "persisted_at": "2026-11-25T23:50:13.633Z"
     },
     "learn-github-xinatian-mroffice": {
       "learning_id": "learn-github-xinatian-mroffice",
@@ -339689,13 +339689,13 @@
       "item_id": "candidate_directive-deps-bump-url-to-2-5-9-and-heapless-to-0-9-4",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-PQ77-deps-bump-url-to-2-5-9-and-heapless-to-0-9-4.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-0G5U-deps-bump-url-to-2-5-9-and-heapless-to-0-9-4.md",
       "title": "deps): bump url to 2.5.9 and heapless to 0.9.4",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "7b9edb8af8697d0f3fb0d10c518bfe4341e5bb81ad6e7cdd4d1d7f7fc91715f3",
+      "content_hash": "eda71cb79bf083e5ace112e952a5d320bfd768d6d448ecd7d26204f1f6040bb4",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T23:41:52.489Z"
+      "persisted_at": "2026-11-25T23:50:12.693Z"
     },
     "rule-10315": {
       "learning_id": "rule-10315",
