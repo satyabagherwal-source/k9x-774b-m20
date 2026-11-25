@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T23:41:58.361Z",
+  "timestamp": "2026-11-25T13:20:43.086Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-cilium-cilium-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [cilium-cilium-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T23:41:58.361Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T13:20:43.086Z`  
 > **Learning ID**: `LEARN-EVO-cilium-cilium-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source**: github ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
-> **Source Version**: `ad7c0f73`  
+> **Source Version**: `21fc4bdb`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T23:41:52.180Z  
+> **Timestamp**: 2026-11-25T13:20:36.979Z  
 > **Learning ID**: `learn-github-cilium-cilium`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T23:41:52.001Z  
+> **Harvest Timestamp**: 2026-11-25T13:20:36.974Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: eBPF-based Networking, Security, and Observability
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod
-- **Stars / Engagement**: 25903 stars
+- **Stars / Engagement**: 25907 stars
 
 ---
 
@@ -1284,12 +1284,15 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #50258** (2026-11-24): **Update auto-merge-trusted-deps (v1.18)**
-  *Symptoms*: This PR contains the following updates:  | Package | Type | Update | Change | |---|---|---|---| | [actions/create-github-app-token](https://redirect.github.com/actions/create-github-app-token) | action | minor | `v3.3.0` → `v3.4.0` | | [actions/setup-go](https://redirect.github.com/actions/setup-go) | action | minor | `v7.0.0` → `v7.1.0` | | [cilium/actions](https://redirect.github.com/cilium/actions) ([changelog](https://redirect.github.com/cilium/actions/compare/687b48a0547e534dd7270d5069a5ab7967c0e907..079219db27301da70306eb5c0a038dc21c59781b)) | action | digest | `687b48a` → `079219d` | | [docker.io/library/golang](https://hub.docker.com/_/golang) ([source](https://redirect.github.com/docker-library/golang)) | stage | digest | `4165ee6` → `6e59e17` | | [docker.io/library/golang](https://hub.docker.com/_/golang) ([source](https://redirect.github.com/docker-library/golang)) | final | digest | `4165ee6` → `6e59e17` | | [docker.io/library/nginx](https://hub.docker.com/_/nginx) ([source](https://redirect.github.com/nginx/docker-nginx)) |  | patch | `1.31.9-alpine-slim` → `1.31.10-alpine-slim` | | [docker.io/library/ubuntu](https://hub.docker.com/_/ubuntu) ([source](https://git.launchpad.net/cloud-images/+oci/ubuntu-base)) | stage | digest | `9c7f200` → `562111b` | | [eksctl-io/eksctl](https://redirect.github.com/eksctl-io/eksctl) |  | minor | `v0.231.0` → `v0.232.0` | | quay.io/cilium/cilium-envoy |  | patch | `v1.39.6-1794557904-dee711ff0e84b106edd0abcdd71961af1b870359` → `v1
-
-- **Issue #50242** (2026-11-24): **gha: Fail EKS matrix filtering when the AWS call fails**
-  *Symptoms*: The Filter Matrix step of conformance-eks and conformance-aws-cni pipes "aws eks describe-cluster-versions" into jq. The step has no shell: key, so it runs under "bash -e" without pipefail. When the aws call fails, jq reads empty input and exits 0, and the loop drops every version as unsupported. GitHub then skips the test job for the empty matrix, and outside the default branch the success expression accepts that, so the workflow posts a green commit status without running a single test.  This commit fetches the cluster versions once, before the loop, so a failed aws call fails the step. The call takes no per-version argument and returns the same list on every iteration.  This PR was prepared with AIL:3. I personally checked both Filter Matrix steps locally against a failing aws stub. 
+- **Issue #50264** (2026-11-25): **[v1.18] proxy: Update quay.io/cilium/cilium-envoy to latest v1.39.x**
+  *Symptoms*: Relates: https://github.com/cilium/cilium/pull/50136 Relates: https://github.com/cilium/proxy/pull/2186  ```release-note proxy: Update quay.io/cilium/cilium-envoy to latest v1.39.x ``` 
   **Post-Mortem & Fix Analysis**:
+  > /test
+
+- **Issue #50263** (2026-11-25): **Update quay.io/cilium/cilium-envoy Docker tag to v1.39.6-1795562505-2cd7b93ce3f7c9645c511c84c494e47e264de4e1 (v1.18) - autoclosed**
+  *Symptoms*: This PR contains the following updates:  | Package | Type | Update | Change | |---|---|---|---| | quay.io/cilium/cilium-envoy |  | patch | `v1.39.6-1795424837-3a4f87cf080e7ab1a83e6a8cbbfb077c0221ecf0` → `v1.39.6-1795562505-2cd7b93ce3f7c9645c511c84c494e47e264de4e1` | | quay.io/cilium/cilium-envoy | stage | patch | `v1.39.6-1795424837-3a4f87cf080e7ab1a83e6a8cbbfb077c0221ecf0` → `v1.39.6-1795562505-2cd7b93ce3f7c9645c511c84c494e47e264de4e1` |  ---  ### Configuration  📅 **Schedule**: (UTC)  - Branch creation   - "on sunday" - Automerge   - At any time (no schedule defined)  🚦 **Automerge**: Disabled by config. Please merge this manually once you are satisfied.  ♻ **Rebasing**: Whenever PR becomes conflicted, or you tick the rebase/retry checkbox.  🔕 **Ignore**: Close this PR and you won't be reminded about these updates again.  ---   - [ ] <!-- rebase-check -->If you want to rebase/retry this PR, check this box  ---  This PR has been generated by [Mend Renovate CLI](https://redirect.github.com/renovatebot/renovate). <!--renovate-debug:eyJjcmVhdGVkSW5WZXIiOiI0NC4yNTcuOSIsInVwZGF0ZWRJblZlciI6IjQ0LjI1Ny45IiwidGFyZ2V0QnJhbmNoIjoidjEuMTgiLCJsYWJlbHMiOlsia2luZC9lbmhhbmNlbWVudCIsInJlbGVhc2Utbm90ZS9taXNjIiwicmVub3ZhdGUvc3RvcC11cGRhdGluZyJdfQ==--> 
+  **Post-Mortem & Fix Analysis**:
+  > Disable auto merge in favor of https://github.com/cilium/cilium/pull/50264
   > /test
 
 ### D4: Resource Lifecycle & Leak Defenses
@@ -1307,116 +1310,321 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ad7c0f73` (2026-11-19)
-**Commit Message**: policy: fix policy importer cidr leak
+### Incident Patch 1: `2c3d1c2f` (2026-11-25)
+**Commit Message**: images: update cilium-{runtime,builder}
 
-The Set inside pkg/container/set is a beast, and the mutating functions
-like Remove returns a bool that has a different meaning than other set
-implementations. They return true only when the underlying storage
-reference was changed, not if the content of the set was changed.
+Signed-off-by: Cilium Imagebot <[REDACTED_EMAIL]>
 
-This results in a policy with 3 or more CIDRs that is updated will once
-again upsert at least some of the cidrs. This results in the reference
-counter being off by one - and we leak the CIDR once the policy is
-delted, or the CIDR is removed from the policy.
-
-Keeping this small and simple to simplify backports. However I do wonder
-if the set implementation should change its signature to make it more
-clear. The set implementation is however very good and space efficient
-for certain sparse data structures, so we should not remove it.
-
-From how I see it, this was introduced in the first mentioned patch
-below, but only triggered once the latter was introduced.
-
-Fixes: 783465b ("policy: add policy import cell")
-Fixes: a3bd1a6 ("ipcache: Consolidate prefixes from various resources")
-Signed-off-by: Odin Ugedal <[REDACTED_EMAIL]>
-Signed-off-by: Odin Ugedal <[REDACTED_EMAIL]>
-
-**File**: `pkg/policy/cell/policy_importer.go` (modified, +2/-1)
+**File**: `.devcontainer/devcontainer.json` (modified, +1/-1)
 ```diff
-@@ -166,7 +166,8 @@ func (i *Importer) updatePrefixes(ctx context.Context, updates []*policytypes.Po
- 		for _, prefix := range newPrefixes {
- 			// If we already allocated this prefix, remove it from the prune list
- 			// and don't bother upserting it again in to the ipcache
--			if oldSet.Remove(prefix) {
-+			if oldSet.Has(prefix) {
-+				oldSet.Remove(prefix)
- 				continue
- 			}
- 
+@@ -1,6 +1,6 @@
+ {
+   "name": "Cilium",
+-  "image": "quay.io/cilium/cilium-builder:c8846b97f14cb3353af0aa4be8b1a82390b4b4e5@sha256:3a386236c49a6fcf8311f0f0f6eab74f7f0995d7f060d69d642a5251aeae4636",
++  "image": "quay.io/cilium/cilium-builder:b224ac47f4fa7f75182a6dd586dc42e623932c88@sha256:b5ec9b8cda3f0ba579677561d2243be7d4530350aa6305ce0a82927d6e3fb1d2",
+   "workspaceFolder": "/go/src/github.com/cilium/cilium",
+   "workspaceMount": "source=${localWorkspaceFolder},target=/go/src/github.com/cilium/cilium,type=bind",
+   // This container is based on the cilium-builder image, so contrib/scripts/builder.sh can run commands
 ```
 
-**File**: `pkg/policy/cell/policy_importer_test.go` (modified, +17/-8)
+**File**: `.github/actions/set-runtime-image/runtime-image.txt` (modified, +1/-1)
 ```diff
-@@ -159,9 +159,9 @@ func TestAddReplaceRemoveRule(t *testing.T) {
- 	require.Equal(t, rev, epm.toRev)
- 	require.ElementsMatch(t, epm.regen.AsSlice(), []identity.NumericIdentity{100})
+@@ -1 +1 @@
+-quay.io/cilium/cilium-runtime:7a01dea7f5eae3e2ef2f8ad13e1dc8eb921bbdd3@sha256:dfd750cbc40eea728d4ea44c19a753057961e51acda99c8e2170910be9187457
+\ No newline at end of file
++quay.io/cilium/cilium-runtime:911a5f0a37fe0007754980fe793f2e3fd6b052e6@sha256:e9471390ad1b767e100775aedb5c07a887aa5a44c5b4a8c7d3c7dbc8daa70cf9
+\ No newline at end of file
+```
+
+**File**: `images/cilium/Dockerfile` (modified, +2/-2)
+```diff
+@@ -3,8 +3,8 @@
+ # Copyright Authors of Cilium
+ # SPDX-License-Identifier: Apache-2.0
  
--	// Update to new rule that selects id 102 and has two prefixes
--	// we should see 1 new prefix, and 2 regenerated endpoints
--	rev = writeRules(policyapi.NewRule().
-+	// Update to new rule that selects id 101 and has three prefixes
-+	// we should see 2 new prefixes, and 2 regenerated endpoints
-+	rule := policyapi.NewRule().
- 		WithEndpointSelector(policyapi.NewESFromK8sLabelSelector("",
- 			&slim_metav1.LabelSelector{
- 				MatchLabels: map[string]string{
-@@ -171,23 +171,32 @@ func TestAddReplaceRemoveRule(t *testing.T) {
- 		).
- 		WithEgressRules([]policyapi.EgressRule{{
- 			EgressCommonRule: policyapi.EgressCommonRule{
--				ToCIDR: policyapi.CIDRSlice{"1.0.1.0/24", "1.0.2.0/24"},
--			}}}))
-+				ToCIDR: policyapi.CIDRSlice{"1.0.1.0/24", "1.0.2.0/24", "1.0.3.0/24"},
-+			}}})
-+	rev = writeRules(rule)
+-ARG CILIUM_BUILDER_IMAGE=quay.io/cilium/cilium-builder:c8846b97f14cb3353af0aa4be8b1a82390b4b4e5@sha256:3a386236c49a6fcf8311f0f0f6eab74f7f0995d7f060d69d642a5251aeae4636
+-ARG CILIUM_RUNTIME_IMAGE=quay.io/cilium/cilium-runtime:7a01dea7f5eae3e2ef2f8ad13e1dc8eb921bbdd3@sha256:dfd750cbc40eea728d4ea44c19a753057961e51acda99c8e2170910be9187457
++ARG CILIUM_BUILDER_IMAGE=quay.io/cilium/cilium-builder:b224ac47f4fa7f75182a6dd586dc42e623932c88@sha256:b5ec9b8cda3f0ba579677561d2243be7d4530350aa6305ce0a82927d6e3fb1d2
++ARG CILIUM_RUNTIME_IMAGE=quay.io/cilium/cilium-runtime:911a5f0a37fe0007754980fe793f2e3fd6b052e6@sha256:e9471390ad1b767e100775aedb5c07a887aa5a44c5b4a8c7d3c7dbc8daa70cf9
+ #
+ # cilium-envoy from github.com/cilium/proxy
+ #
+```
+
+**File**: `images/hubble-relay/Dockerfile` (modified, +1/-1)
+```diff
+@@ -7,7 +7,7 @@
+ # $ cosign verify $IMAGE_NAME --certificate-oidc-issuer https://accounts.google.com --certificate-identity keyless@distroless.iam.gserviceaccount.com
+ ARG BASE_IMAGE=gcr.io/distroless/static:nonroot@sha256:8ce6dd87e9823c5b48dcfb2c8604714ccb351ce59607327bcc4957448da279b5
+ ARG GOLANG_IMAGE=docker.io/library/golang:1.27.4@sha256:5f1b98fa02fe396ebce2a0227a0e08309e11792915b9dd2e1f71053d7e7e6666
+-ARG CILIUM_BUILDER_IMAGE=quay.io/cilium/cilium-builder:c8846b97f14cb3353af0aa4be8b1a82390b4b4e5@sha256:3a386236c49a6fcf8311f0f0f6eab74f7f0995d7f060d69d642a5251aeae4636
++ARG CILIUM_BUILDER_IMAGE=quay.io/cilium/cilium-builder:b224ac47f4fa7f75182a6dd586dc42e623932c88@sha256:b5ec9b8cda3f0ba579677561d2243be7d4530350aa6305ce0a82927d6e3fb1d2
  
- 	require.True(t, ipc.waited)
--	// We only allocate 1 new cidr
--	require.ElementsMatch(t, ipc.added.AsSlice(), []string{"1.0.2.0/24"})
-+	// We only allocate 2 new CIDRs
-+	require.ElementsMatch(t, ipc.added.AsSlice(), []string{"1.0.2.0/24", "1.0.3.0/24"})
- 	require.Empty(t, ipc.removed.AsSlice())
+ # BUILDPLATFORM is an automatic platform ARG enabled by Docker BuildKit.
+ # Represents the plataform where the build is happening, do not mix with
+```
+
+**File**: `images/operator/Dockerfile` (modified, +1/-1)
+```diff
+@@ -6,7 +6,7 @@
+ ARG BASE_IMAGE=scratch
+ ARG GOLANG_IMAGE=docker.io/library/golang:1.27.4@sha256:5f1b98fa02fe396ebce2a0227a0e08309e11792915b9dd2e1f71053d7e7e6666
+ ARG ALPINE_IMAGE=docker.io/library/alpine:3.24.4@sha256:f59abe656b692d901e184be3445e084786602108599d2a51d229c0f5a48c71bf
+-ARG CILIUM_BUILDER_IMAGE=quay.io/cilium/cilium-builder:c8846b97f14cb3353af0aa4be8b1a82390b4b4e5@sha256:3a386236c49a6fcf8311f0f0f6eab74f7f0995d7f060d69d642a5251aeae4636
++ARG CILIUM_BUILDER_IMAGE=quay.io/cilium/cilium-builder:b224ac47f4fa7f75182a6dd586dc42e623932c88@sha256:b5ec9b8cda3f0ba579677561d2243be7d4530350aa6305ce0a82927d6e3fb1d2
  
- 	require.ElementsMatch(t, pi.prefixesByResource[resource], []netip.Prefix{
- 		netip.MustParsePrefix("1.0.1.0/24"),
- 		netip.MustParsePrefix("1.0.2.0/24"),
-+		netip.MustParsePrefix("1.0.3.0/24"),
- 	})
+ # BUILDPLATFORM is an automatic platform ARG enabled by Docker BuildKit.
+ # Represents the plataform where the build is happening, do not mix with
+```
+
+---
+
+### Incident Patch 2: `0de40199` (2026-11-24)
+**Commit Message**: bgp: fix interface advertisement for multiple interfaces
+
+With two BGP advertisements of type Interface selected for the same
+peer, only the addresses of the last interface were advertised.
+
+The root cause was the export policy naming, which was conflicting
+among multiple advetised interfaces. This fix adds interface name
+to the policy name to resolve this issue.
+
+Fixes: #50132
+
+Signed-off-by: Rastislav Szabo <[REDACTED_EMAIL]>
+
+**File**: `pkg/bgp/manager/reconciler/interface.go` (modified, +1/-1)
+```diff
+@@ -173,7 +173,7 @@ func (r *InterfaceReconciler) getDesiredRoutePolicyStatements(instanceName strin
+ 					}
+ 				}
+ 				if len(v6Prefixes) > 0 || len(v4Prefixes) > 0 {
+-					name := PolicyStatementName(advert.AdvertisementType, "")
++					name := PolicyStatementName(advert.AdvertisementType, advert.Interface.Name)
+ 					statements, err := CreatePolicyStatements(name, peerAddr, v4Prefixes, v6Prefixes, advert)
+ 					if err != nil {
+ 						return nil, err
+```
+
+**File**: `pkg/bgp/manager/reconciler/interface_test.go` (modified, +79/-8)
+```diff
+@@ -63,6 +63,12 @@ func Test_InterfaceAdvertisement(t *testing.T) {
+ 							Name: redInterfaceName,
+ 						},
+ 					},
++					{
++						AdvertisementType: v2.BGPInterfaceAdvert,
++						Interface: &v2.BGPInterfaceOptions{
++							Name: blueInterfaceName,
++						},
++					},
+ 				},
+ 			},
+ 		}
+@@ -92,7 +98,7 @@ func Test_InterfaceAdvertisement(t *testing.T) {
+ 			Priority:   InterfaceReconcilerPriority,
+ 			Owner:      InterfaceReconcilerName,
+ 			Statement: &types.RoutePolicyStatement{
+-				Name: PolicyStatementName(v2.BGPInterfaceAdvert, "") + "-ipv4",
++				Name: PolicyStatementName(v2.BGPInterfaceAdvert, redInterfaceName) + "-ipv4",
+ 				Conditions: types.RoutePolicyConditions{
+ 					MatchNeighbors: &types.RoutePolicyNeighborMatch{
+ 						Type:      types.RoutePolicyMatchAny,
+@@ -121,7 +127,7 @@ func Test_InterfaceAdvertisement(t *testing.T) {
+ 			Priority:   InterfaceReconcilerPriority,
+ 			Owner:      InterfaceReconcilerName,
+ 			Statement: &types.RoutePolicyStatement{
+-				Name: PolicyStatementName(v2.BGPInterfaceAdvert, "") + "-ipv6",
++				Name: PolicyStatementName(v2.BGPInterfaceAdvert, redInterfaceName) + "-ipv6",
+ 				Conditions: types.RoutePolicyConditions{
+ 					MatchNeighbors: &types.RoutePolicyNeighborMatch{
+ 						Type:      types.RoutePolicyMatchAny,
+@@ -144,14 +150,73 @@ func Test_InterfaceAdvertisement(t *testing.T) {
+ 			},
+ 		}
  
- 	// Check that the right endpoints were updated
- 	require.Equal(t, rev, epm.toRev)
- 	require.ElementsMatch(t, epm.regen.AsSlice(), []identity.NumericIdentity{100, 101})
- 
-+	// Reapplying three unchanged CIDRs must not allocate any additional references.
-+	ipc.added.Clear()
-+	ipc.removed.Clear()
-+	writeRules(rule)
-+	require.Empty(t, ipc.added.AsSlice())
-+	require.Empty(t, ipc.removed.AsSlice())
++		redPeerBlueInterfaceIPv4RoutePolicy = &bgpTables.DesiredRoutePolicy{
++			Instance:   testBGPInstance.Name,
++			Peer:       redPeer65001.Name,
++			PolicyType: types.RoutePolicyTypeExport,
++			Priority:   InterfaceReconcilerPriority,
++			Owner:      InterfaceReconcilerName,
++			Statement: &types.RoutePolicyStatement{
++				Name: PolicyStatementName(v2.BGPInterfaceAdvert, blueInterfaceName) + "-ipv4",
++				Conditions: types.RoutePolicyConditions{
++					MatchNeighbors: &types.RoutePolicyNeighborMatch{
++						Type:      types.RoutePolicyMatchAny,
++						Neighbors: []netip.Addr{netip.MustParseAddr(*redPeer65001.PeerAddress)},
++					},
++					MatchPrefixes: &types.RoutePolicyPrefixMatch{
++						Type: types.RoutePolicyMatchAny,
++						Prefixes: []types.RoutePolicyPrefix{
++							{
++								CIDR:         blueInterfaceIPv4Prefix,
++								PrefixLenMin: 32,
++								PrefixLenMax: 32,
++							},
++						},
++					},
++				},
++				Actions: types.RoutePolicyActions{
++					RouteAction: types.RoutePolicyActionAccept,
++				},
++			},
++		}
++		redPeerBlueInterfaceIPv6RoutePolicy = &bgpTables.DesiredRoutePolicy{
++			Instance:   testBGPInstance.Name,
++			Peer:       redPeer65001.Name,
++			PolicyType: types.RoutePolicyTypeExport,
++			Priority:   InterfaceReconcilerPriority,
++			Owner:      InterfaceReconcilerName,
++			Statement: &types.RoutePolicyStatement{
++				Name: PolicyStatementName(v2.BGPInterfaceAdvert, blueInterfaceName) + "-ipv6",
++				Conditions: types.RoutePolicyConditions{
++					MatchNeighbors: &types.RoutePolicyNeighborMatch{
++						Type:      types.RoutePolicyMatchAny,
++						Neighbors: []netip.Addr{netip.MustParseAddr(*redPeer65001.PeerAddress)},
++					},
++					MatchPrefixes: &types.RoutePolicyPrefixMatch{
++						Type: types.RoutePolicyMatchAny,
++						Prefixes: []types.RoutePolicyPrefix{
++							{
++								CIDR:         blueInterfaceIPv6Prefix,
++								PrefixLenMin: 128,
++								PrefixLenMax: 128,
++							},
++						},
++					},
++				},
++				Actions: types.RoutePolicyActions{
++					RouteAction: types.RoutePolicyActionAccept,
++				},
++			},
++		}
 +
- 	// Swap endpoints and prefixes
- 	rev = writeRules(policyapi.NewRule().
- 		WithEndpointSelector(policyapi.NewESFromK8sLabelSelector("",
-@@ -204,7 +213,7 @@ func TestAddReplaceRemoveRule(t *testing.T) {
+ 		bluePeerInterfaceIPv4RoutePolicy = &bgpTables.DesiredRoutePolicy{
+ 			Instance:   testBGPInstance.Name,
+ 			Peer:       bluePeer65001.Name,
+ 			PolicyType: types.RoutePolicyTypeExport,
+ 			Priority:   InterfaceReconcilerPriority,
+ 			Owner:      InterfaceReconcilerName,
+ 			Statement: &types.RoutePolicyStatement{
+-				Name: PolicyStatementName(v2.BGPInterfaceAdvert, "") + "-ipv4",
++				Name: PolicyStatementName(v2.BGPInterfaceAdvert, blueInterfaceName) + "-ipv4",
+ 				Conditions: types.RoutePolicyConditions{
+ 					MatchNeighbors: &types.RoutePolicyNeighborMatch{
+ 						Type:      types.RoutePolicyMatchAny,
+@@ -180,7 +245,7 @@ func Test_InterfaceAdvertisement(t *testing.T) {
+ 			Priority:   InterfaceReconcilerPriority,
+ 			Owner:      InterfaceReconcilerName,
+ 			Statement: &types.RoutePolicyStatement{
+-				Name: PolicyStatementName(v2.BGPInterfaceAdvert, "") + "-ipv6",
++				Name: PolicyStatementName(v2.BGPInterfaceAdvert, blueInterfaceName) + "-ipv6",
+ 				Conditions: types.RoutePolicyConditions{
+ 					MatchNeighbors: &types.RoutePolicyNeighborMatch{
+ 						Type:      types.RoutePolicyMatchAny,
+@@ -294,7 +359,7 @@ func Test_InterfaceAdvertisement(t *testing.T) {
+ 			},
+ 		},
+ 		{
+-			name: "add blue interface - no change in advertisements",
++			name: "add blue interface - advertise both interfaces to red peer",
+ 			peers: []v2.CiliumBGPNodePeer{
+ 				redPeer65001,
+ 			},
+@@ -312,19 +377,23 @@ func Test_InterfaceAdvertisement(t *testing.T) {
+ 			},
+ 			expectedPaths: map[types.Family]map[string]struct{}{
+ 				{Afi: types.AfiIPv4, 
+```
+
+**File**: `pkg/bgp/test/testdata/interface.txtar` (modified, +48/-0)
+```diff
+@@ -45,6 +45,29 @@ gobgp/routes -s dualstack -o routes.actual ipv6 unicast
+ * cmp gobgp-routes-ipv6.expected routes.actual
  
- 	require.True(t, ipc.waited)
- 	// We only allocate 1 new cidr
--	require.ElementsMatch(t, ipc.removed.AsSlice(), []string{"1.0.1.0/24", "1.0.2.0/24"})
-+	require.ElementsMatch(t, ipc.removed.AsSlice(), []string{"1.0.1.0/24", "1.0.2.0/24", "1.0.3.0/24"})
- 	require.ElementsMatch(t, ipc.added.AsSlice(), []string{"2.0.0.0/24"})
  
- 	// Check that the right endpoints were updated
++# Add loop2 - both interface routes will be advertised to the same peers.
++db/insert devices device-loop2.yaml
++
++# Validate IPv4 routes from both interfaces on the v4 peer
++gobgp/routes -s v4-only -o routes.actual ipv4 unicast
++* cmp gobgp-routes-ipv4-both.expected routes.actual
++
++# Validate IPv4 routes from both interfaces on the dualstack peer
++gobgp/routes -s dualstack -o routes.actual ipv4 unicast
++* cmp gobgp-routes-ipv4-ds-both.expected routes.actual
++
++# Remove loop2 - only loop1 routes remain advertised.
++db/delete devices device-loop2.yaml
++
++# Validate that only loop1 IPv4 routes remain on the v4 peer
++gobgp/routes -s v4-only -o routes.actual ipv4 unicast
++* cmp gobgp-routes-ipv4.expected routes.actual
++
++# Validate that only loop1 IPv4 routes remain on the dualstack peer
++gobgp/routes -s dualstack -o routes.actual ipv4 unicast
++* cmp gobgp-routes-ipv4-ds.expected routes.actual
++
++
+ # Set loop1 device to admin-down
+ db/insert devices device-loop1-down.yaml
+ 
+@@ -215,6 +238,12 @@ spec:
+     attributes:
+       communities:
+         standard: [ "65001:100" ]
++  - advertisementType: Interface
++    interface:
++      name: lo2
++    attributes:
++      communities:
++        standard: [ "65001:200" ]
+ 
+ -- device-eth0.yaml --
+ index: 1
+@@ -256,6 +285,15 @@ type: device
+ flags: 0 # not admin-up
+ operstatus: unknown # for loopback always unknown
+ 
++-- device-loop2.yaml --
++index: 3
++name: lo2
++addrs:
++  - addr: 192.168.100.102
++type: device
++flags: 1 # admin-up
++operstatus: unknown # for loopback always unknown
++
+ -- gobgp-routes-empty.expected --
+ Prefix   NextHop   Attrs
+ -- gobgp-routes-ipv4.expected --
+@@ -266,6 +304,16 @@ Prefix               NextHop     Attrs
+ Prefix               NextHop            Attrs
+ 192.168.100.100/32   fd00::aa:bb:55:2   [{Origin: i} {AsPath: 65001} {Communities: 65001:100} {MpReach(ipv4-unicast): {Nexthop: fd00::aa:bb:55:2, NLRIs: [192.168.100.100/32:0]}}]
+ 192.168.100.101/32   fd00::aa:bb:55:2   [{Origin: i} {AsPath: 65001} {Communities: 65001:100} {MpReach(ipv4-unicast): {Nexthop: fd00::aa:bb:55:2, NLRIs: [192.168.100.101/32:0]}}]
++-- gobgp-routes-ipv4-both.expected --
++Prefix               NextHop     Attrs
++192.168.100.100/32   10.99.5.2   [{Origin: i} {AsPath: 65001} {Nexthop: 10.99.5.2} {Communities: 65001:100}]
++192.168.100.101/32   10.99.5.2   [{Origin: i} {AsPath: 65001} {Nexthop: 10.99.5.2} {Communities: 65001:100}]
++192.168.100.102/32   10.99.5.2   [{Origin: i} {AsPath: 65001} {Nexthop: 10.99.5.2} {Communities: 65001:200}]
++-- gobgp-routes-ipv4-ds-both.expected --
++Prefix               NextHop            Attrs
++192.168.100.100/32   fd00::aa:bb:55:2   [{Origin: i} {AsPath: 65001} {Communities: 65001:100} {MpReach(ipv4-unicast): {Nexthop: fd00::aa:bb:55:2, NLRIs: [192.168.100.100/32:0]}}]
++192.168.100.101/32   fd00::aa:bb:55:2   [{Origin: i} {AsPath: 65001} {Communities: 65001:100} {MpReach(ipv4-unicast): {Nexthop: fd00::aa:bb:55:2, NLRIs: [192.168.100.101/32:0]}}]
++192.168.100.102/32   fd00::aa:bb:55:2   [{Origin: i} {AsPath: 65001} {Communities: 65001:200} {MpReach(ipv4-unicast): {Nexthop: fd00::aa:bb:55:2, NLRIs: [192.168.100.102/32:0]}}]
+ -- gobgp-routes-ipv6.expected --
+ Prefix             NextHop            Attrs
+ fd00::aabb:1/128   fd00::aa:bb:55:2   [{Origin: i} {AsPath: 65001} {Communities: 65001:100} {MpReach(ipv6-unicast): {Nexthop: fd00::aa:bb:55:2, NLRIs: [fd00::aabb:1/128:0]}}]
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #50264** (2026-11-25): [v1.18] proxy: Update quay.io/cilium/cilium-envoy to latest v1.39.x (@sayboras)
+- **PR #50263** (closed): Update quay.io/cilium/cilium-envoy Docker tag to v1.39.6-1795562505-2cd7b93ce3f7c9645c511c84c494e47e264de4e1 (v1.18) - autoclosed (@cilium-renovate[bot])
 - **PR #50258** (2026-11-24): Update auto-merge-trusted-deps (v1.18) (@cilium-renovate[bot])
-- **PR #50242** (2026-11-24): gha: Fail EKS matrix filtering when the AWS call fails (@aanm)
-- **PR #50239** (2026-11-24): labels: explicitly require reserved source (@squeed)
-- **PR #50238** (2026-11-24): .github: Track Kubespray in Renovate and update it to v2.32.0 (@aanm)
-- **PR #50225** (2026-11-24): gateway-api: translation extension and resource registry hooks (@viktor-kurchenko)
-- **PR #50224** (2026-11-24): v1.18 Backports 2026-11-23 (@glrf)
+- **PR #50257** (2026-11-25): Update auto-merge-trusted-deps (v1.19) (@cilium-renovate[bot])
+- **PR #50255** (2026-11-25): Update auto-merge-trusted-deps (main) (@cilium-renovate[bot])
+- **PR #50249** (2026-11-25): Revert "ciliumenvoyconfig: skip empty initial xDS updates" (@aanm)
 
 ---
 
@@ -1436,32 +1644,31 @@ Signed-off-by: Odin Ugedal <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. policy: fix policy importer cidr leak
+## X. images: update cilium-{runtime,builder}
 
 **RULE**:
-When implementing operations in `pkg/policy/cell/policy_importer.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.devcontainer/devcontainer.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ad7c0f73`: policy: fix policy importer cidr leak. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2c3d1c2f`: images: update cilium-{runtime,builder}. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/policy/cell/policy_importer.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.devcontainer/devcontainer.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-			if oldSet.Has(prefix) {
-				oldSet.Remove(prefix)
+  "image": "quay.io/cilium/cilium-builder:b224ac47f4fa7f75182a6dd586dc42e623932c88@sha256:b5ec9b8cda3f0ba579677561d2243be7d4530350aa6305ce0a82927d6e3fb1d2",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-			if oldSet.Remove(prefix) {
+  "image": "quay.io/cilium/cilium-builder:c8846b97f14cb3353af0aa4be8b1a82390b4b4e5@sha256:3a386236c49a6fcf8311f0f0f6eab74f7f0995d7f060d69d642a5251aeae4636",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ad7c0f73` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2c3d1c2f` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

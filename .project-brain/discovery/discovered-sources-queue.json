@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-25T13:06:50.592Z",
+  "updated_at": "2026-11-25T13:20:42.940Z",
   "stats": {
-    "total_discovered": 9446,
-    "approved_pending_harvest": 8950,
+    "total_discovered": 9450,
+    "approved_pending_harvest": 8953,
     "harvested_count": 0,
-    "rejected_count": 496,
+    "rejected_count": 497,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 8944,
+      "COMMUNITY_AND_EXPERT": 8948,
       "OFFICIAL_DOCUMENTATION": 281,
       "STANDARDS_AND_SPECIFICATIONS": 150,
       "ENGINEERING_BLOGS": 7,
@@ -204367,6 +204367,87 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
         "fileName": "tursodatabase-limbo-learnings.md"
+      }
+    },
+    "SRC-43234AE4185F": {
+      "id": "SRC-43234AE4185F",
+      "url": "http://kubernetes.test/",
+      "title": "http://kubernetes.test/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-25T13:20:41.870Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/beclab-olares-learnings.md",
+        "fileName": "beclab-olares-learnings.md"
+      }
+    },
+    "SRC-643B7DDD6034": {
+      "id": "SRC-643B7DDD6034",
+      "url": "https://github.com/cilium/cilium/pull/50136",
+      "title": "https://github.com/cilium/cilium/pull/50136",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T13:20:42.764Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cilium-cilium-learnings.md",
+        "fileName": "cilium-cilium-learnings.md"
+      }
+    },
+    "SRC-F96CB2F04635": {
+      "id": "SRC-F96CB2F04635",
+      "url": "https://github.com/cilium/proxy/pull/2186",
+      "title": "https://github.com/cilium/proxy/pull/2186",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T13:20:42.832Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cilium-cilium-learnings.md",
+        "fileName": "cilium-cilium-learnings.md"
+      }
+    },
+    "SRC-D35443D6D873": {
+      "id": "SRC-D35443D6D873",
+      "url": "https://github.com/cilium/cilium/pull/50264",
+      "title": "https://github.com/cilium/cilium/pull/50264",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T13:20:42.940Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cilium-cilium-learnings.md",
+        "fileName": "cilium-cilium-learnings.md"
       }
     }
   }

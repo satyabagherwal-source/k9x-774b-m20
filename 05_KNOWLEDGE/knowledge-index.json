@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-25T13:06:52.112Z",
+  "last_updated": "2026-11-25T13:20:43.599Z",
   "total_verified_learnings": 9117,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25457,
+  "total_items": 25460,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -111993,10 +111993,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-cilium-cilium-product-intelligence-cilium-cilium-core-invariants.md",
       "title": "Product Intelligence: cilium/cilium Core Invariants",
       "repository": "cilium/cilium",
-      "source_version": "79325ed9",
-      "content_hash": "3a581006b526bd18d1d1c10fd000ca5a7130578f40f28d54f940b5d37b7e926b",
+      "source_version": "21fc4bdb",
+      "content_hash": "072c255487ae042633a7f94adabcbb9a546aad1bcb61fc2729626614195d9430",
       "domain_letter": "B",
-      "persisted_at": "2026-11-25T07:57:10.586Z"
+      "persisted_at": "2026-11-25T13:20:38.227Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-cilium-cilium": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-cilium-cilium",
@@ -112005,10 +112005,10 @@
       "relative_path": "08_VERIFICATION/cilium-cilium-verification-protocol-empirical-defect-shield-for-cilium-cilium.md",
       "title": "Verification Protocol: Empirical Defect Shield for cilium/cilium",
       "repository": "cilium/cilium",
-      "source_version": "ad7c0f73",
-      "content_hash": "4d51826b003d60adbd963d041ec6d48c74c2bdd2dd83022ec346fa29781eb682",
+      "source_version": "21fc4bdb",
+      "content_hash": "33d30f104cd47b70eb5a36f58edd205414632cd8bb11b65014c33b9f972dc8ef",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T23:41:53.888Z"
+      "persisted_at": "2026-11-25T13:20:38.415Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-",
@@ -112030,9 +112030,9 @@
       "title": "Product Intelligence: cilium-cilium-learnings Core Invariants",
       "repository": "cilium-cilium-learnings",
       "source_version": "HEAD",
-      "content_hash": "b3deb13bcf353e4869a00e3421b8d60fb93d2809428f88bff1eefc921ad8a402",
+      "content_hash": "bf1eb37cf112026334c3d1952f638240d5d157ac2574d4be49b314bb00cd4243",
       "domain_letter": "B",
-      "persisted_at": "2026-11-25T07:57:46.429Z"
+      "persisted_at": "2026-11-25T13:20:43.408Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-cilium-cilium-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-cilium-cilium-learnings",
@@ -112042,9 +112042,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for cilium-cilium-learnings",
       "repository": "cilium-cilium-learnings",
       "source_version": "HEAD",
-      "content_hash": "60c5d88d0056ee19e35593ed689134d3f37c28420081e2bd806416a4c8cb020a",
+      "content_hash": "d3ed4e881bd69f30ddb13a84e11fb4a45ef5ef8acf09e999a5b4acd00647d9e9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T23:41:58.819Z"
+      "persisted_at": "2026-11-25T13:20:43.599Z"
     },
     "candidate_directive-engine-restore-text-fallback-for-unknown-file-extensions-394": {
       "item_id": "candidate_directive-engine-restore-text-fallback-for-unknown-file-extensions-394",
@@ -214367,8 +214367,8 @@
       "slug": "cilium-cilium",
       "platform": "github",
       "source_url": "https://github.com/cilium/cilium",
-      "source_version": "79325ed9",
-      "content_hash": "f9b7b675f6d5d2026f8be68c0b56d4bf169893ac54d50d865d45e0a627004fff",
+      "source_version": "21fc4bdb",
+      "content_hash": "ddedc0acb2ba69936b6d6ecc1ceb84c34c640cdd4f8e69f92aea497b8ce38305",
       "dossier_path": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "promoted_rules": [
@@ -214508,7 +214508,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T07:57:10.067Z",
+      "verified_at": "2026-11-25T13:20:37.556Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -228720,8 +228720,8 @@
       "slug": "beclab-olares",
       "platform": "github",
       "source_url": "https://github.com/beclab/Olares",
-      "source_version": "9ecae93f",
-      "content_hash": "99d9e26f6f19651ca8f4a2b220650339c3893261e160cbb39bb527ecb3c1e93e",
+      "source_version": "7a416142",
+      "content_hash": "dfcf0bc5794a2ad7b72073c665b9bb0b33072d3aa0872eeb0b96a4bece8ec5b3",
       "dossier_path": "07_PROJECT_LEARNING/beclab-olares-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/beclab-olares-learnings.md",
       "promoted_rules": [
@@ -228764,6 +228764,11 @@
           "number": 10341,
           "title": "fix(cli/market): show Market's reason for a 403 and correct clone h",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10533,
+          "title": "expose cluster device inventory",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -228771,7 +228776,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T19:09:54.525Z",
+      "verified_at": "2026-11-25T13:20:35.420Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -228799,10 +228804,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-beclab-olares-technical-construction-intelligence-beclab-olares-core-invariants.md",
       "title": "Technical Construction Intelligence: beclab/Olares Core Invariants",
       "repository": "beclab/Olares",
-      "source_version": "9ecae93f",
-      "content_hash": "09949902c660ba3d6f862dc14171716f43da4572ff3951c1b4f3ca1063090e81",
+      "source_version": "7a416142",
+      "content_hash": "79e11295a4b4b217fdae4fff54c914404cd43c74cf4ed22e8833ad72df80094e",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T19:09:55.441Z"
+      "persisted_at": "2026-11-25T13:20:36.144Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-beclab-olares": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-beclab-olares",
@@ -228811,10 +228816,10 @@
       "relative_path": "08_VERIFICATION/beclab-olares-verification-protocol-empirical-defect-shield-for-beclab-olares.md",
       "title": "Verification Protocol: Empirical Defect Shield for beclab/Olares",
       "repository": "beclab/Olares",
-      "source_version": "9ecae93f",
-      "content_hash": "fe3cdfffea8f13d656b18f708f30182b4c4b388f45469b6828027d04151038b9",
+      "source_version": "7a416142",
+      "content_hash": "244e718cc3c8b09a6baa2e1da34b63a051dda6ce91319e7c6035a726839d1d20",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T19:09:55.682Z"
+      "persisted_at": "2026-11-25T13:20:36.336Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-openai-clip-vit-base-patch32-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-openai-clip-vit-base-patch32-learnings-core-i",
@@ -228848,9 +228853,9 @@
       "title": "Technical Construction Intelligence: beclab-olares-learnings Core Invariants",
       "repository": "beclab-olares-learnings",
       "source_version": "HEAD",
-      "content_hash": "adeb6c21063118384c0afa806f97422740105dc517a13fbf728e75558ee7c3b1",
+      "content_hash": "f7ed63e8b52b1f97a3f21aa36b6d2eb2a84e3daf71ec95ea52b93beb98ff787a",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T19:10:45.389Z"
+      "persisted_at": "2026-11-25T13:20:42.325Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-beclab-olares-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-beclab-olares-learnings",
@@ -228860,9 +228865,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for beclab-olares-learnings",
       "repository": "beclab-olares-learnings",
       "source_version": "HEAD",
-      "content_hash": "9ae9ea393dacb7255678756365b916704c9a20807313e2cc4e44f2b3b0c713bd",
+      "content_hash": "cb4160f4343d53adbfd67319715db49c0a385d5f800a7d650b78031751e9c313",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T19:10:45.670Z"
+      "persisted_at": "2026-11-25T13:20:42.522Z"
     },
     "learn-huggingface-sentence-transformers-all-mpnet-base-v2": {
       "learning_id": "learn-huggingface-sentence-transformers-all-mpnet-base-v2",
@@ -261346,13 +261351,13 @@
       "item_id": "candidate_directive-update-cilium-runtime-builder",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-ASE5-update-cilium-runtime-builder.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-IT1X-update-cilium-runtime-builder.md",
       "title": "update cilium-{runtime,builder}",
       "repository": "cilium/cilium",
-      "source_version": "4bc6dc81",
-      "content_hash": "7305ac1ded56271a66c582131c49b02459de9fc436a8f1040cafd090c2b394e4",
+      "source_version": "21fc4bdb",
+      "content_hash": "2da10a0e11c3d0a2df39b398f6c33f777e12d937175d352ccbc6fd6c1deee8c0",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T14:50:42.366Z"
+      "persisted_at": "2026-11-25T13:20:38.038Z"
     },
     "learn-github-weaviate-weaviate": {
       "learning_id": "learn-github-weaviate-weaviate",
@@ -270791,7 +270796,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/LiquidAI/LFM3-1.7B-GGUF",
       "source_version": "hf-liquidai-lfm3-1.7b-gguf",
-      "content_hash": "b183acbae4b711b4c83642cf2950c9ae76fb50e930184d76892897c3d80e1df2",
+      "content_hash": "7d2b2d59b4ca2497886fcccb339d28444360802df496f1a35a5cf55113fae245",
       "dossier_path": "07_PROJECT_LEARNING/hf-liquidai-lfm3-1.7b-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-liquidai-lfm3-1.7b-gguf-learnings.md",
       "promoted_rules": [],
@@ -270800,7 +270805,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T22:06:20.866Z",
+      "verified_at": "2026-11-25T13:20:24.830Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -270817,9 +270822,9 @@
       "title": "Research & Knowledge Intelligence: LiquidAI/LFM3-1.7B-GGUF Core Invariants",
       "repository": "LiquidAI/LFM3-1.7B-GGUF",
       "source_version": "hf-liquidai-lfm3-1.7b-gguf",
-      "content_hash": "55df1ee36a392df18f8082abc05aae245ccc929a70cd1cfe0482085ee2d4ab9a",
+      "content_hash": "ed1143f7af0c7b9952df96879044bfe5f35e88a709f0cc9e7c66063678b8cbbe",
       "domain_letter": "D",
-      "persisted_at": "2026-11-21T22:06:21.219Z"
+      "persisted_at": "2026-11-25T13:20:25.324Z"
     },
     "rule-8870": {
       "learning_id": "rule-8870",
@@ -270855,9 +270860,9 @@
       "title": "Research & Knowledge Intelligence: hf-liquidai-lfm3-1.7b-gguf-learnings Core Invariants",
       "repository": "hf-liquidai-lfm3-1.7b-gguf-learnings",
       "source_version": "HEAD",
-      "content_hash": "91c17e0c08909dcb0519b25aeaa485c06fa150b91ee33be74836247ca282655d",
+      "content_hash": "0d0e54408872b6463740474afe2286aa1ad403ef3e864addb0d1f1bdc1b3a238",
       "domain_letter": "D",
-      "persisted_at": "2026-11-21T22:06:34.173Z"
+      "persisted_at": "2026-11-25T13:20:41.507Z"
     },
     "learn-github-saffsanity-sill": {
       "learning_id": "learn-github-saffsanity-sill",
@@ -325044,13 +325049,13 @@
       "item_id": "candidate_directive-images-update-cilium-runtime-builder",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-BIJS-images-update-cilium-runtime-builder.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-IX1W-images-update-cilium-runtime-builder.md",
       "title": "images: update cilium-{runtime,builder}",
       "repository": "cilium-cilium-learnings",
       "source_version": "HEAD",
-      "content_hash": "214508c2e32e6beb06b1267c9d4bdd4853fa8e02b8866cb888bb6794beff3ce4",
+      "content_hash": "bfe7b003dfe685391b2075e79e4a5613c4292e1a0da5d8f567d5423607b48627",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T14:51:16.265Z"
+      "persisted_at": "2026-11-25T13:20:43.221Z"
     },
     "rule-9965": {
       "learning_id": "rule-9965",
@@ -348356,6 +348361,44 @@
       "content_hash": "85983ee8c86cc65fefdd49b662980a17fcf210a00e847eca16291dff0b3f5950",
       "domain_letter": "H",
       "persisted_at": "2026-11-25T13:06:50.982Z"
+    },
+    "rule-10533": {
+      "learning_id": "rule-10533",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10533,
+      "title": "expose cluster device inventory",
+      "source_url": "https://github.com/beclab/Olares",
+      "source_version": "7a416142",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T13:20:35.420Z"
+    },
+    "candidate_directive-expose-cluster-device-inventory": {
+      "item_id": "candidate_directive-expose-cluster-device-inventory",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-IRFX-expose-cluster-device-inventory.md",
+      "title": "expose cluster device inventory",
+      "repository": "beclab/Olares",
+      "source_version": "7a416142",
+      "content_hash": "019d5ba52c068df07580f5a3a37b2fa81258e6d7555dfe81415f802a5db8242d",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-25T13:20:35.950Z"
+    },
+    "candidate_directive-app-service-expose-cluster-device-inventory": {
+      "item_id": "candidate_directive-app-service-expose-cluster-device-inventory",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-IW7R-app-service-expose-cluster-device-inventory.md",
+      "title": "app-service): expose cluster device inventory",
+      "repository": "beclab-olares-learnings",
+      "source_version": "HEAD",
+      "content_hash": "6c57ae74e1cefcc52e5d0e89aaf28c9887a27ae02ce53f98d49003bd6843412d",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-25T13:20:42.136Z"
     }
   },
   "ai-builder-brain": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-25T13:06:05.620Z",
+  "last_updated": "2026-11-25T13:20:37.800Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4581,14 +4581,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-beclab-olares",
-      "content_hash": "99d9e26f6f19651ca8f4a2b220650339c3893261e160cbb39bb527ecb3c1e93e",
-      "verified_at": "2026-11-24T19:09:54.835Z",
+      "content_hash": "dfcf0bc5794a2ad7b72073c665b9bb0b33072d3aa0872eeb0b96a4bece8ec5b3",
+      "verified_at": "2026-11-25T13:20:35.681Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T19:09:54.835Z"
+      "last_updated": "2026-11-25T13:20:35.681Z"
     },
     "cryfs/cryfs": {
       "repository": "cryfs/cryfs",
@@ -5136,14 +5136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cilium-cilium",
-      "content_hash": "f9b7b675f6d5d2026f8be68c0b56d4bf169893ac54d50d865d45e0a627004fff",
-      "verified_at": "2026-11-25T07:57:10.356Z",
+      "content_hash": "ddedc0acb2ba69936b6d6ecc1ceb84c34c640cdd4f8e69f92aea497b8ce38305",
+      "verified_at": "2026-11-25T13:20:37.799Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T07:57:10.356Z"
+      "last_updated": "2026-11-25T13:20:37.799Z"
     },
     "SeekStorm/SeekStorm": {
       "repository": "SeekStorm/SeekStorm",
@@ -17436,14 +17436,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-liquidai-lfm3-1-7b-gguf",
-      "content_hash": "b183acbae4b711b4c83642cf2950c9ae76fb50e930184d76892897c3d80e1df2",
-      "verified_at": "2026-11-21T22:06:21.049Z",
+      "content_hash": "7d2b2d59b4ca2497886fcccb339d28444360802df496f1a35a5cf55113fae245",
+      "verified_at": "2026-11-25T13:20:25.103Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T22:06:21.049Z"
+      "last_updated": "2026-11-25T13:20:25.103Z"
     },
     "speridlabs/idol": {
       "repository": "speridlabs/idol",

@@ -13120,3 +13120,6 @@ Every entry in this ledger must capture:
 | `learn-github-sigstore-cosign` | `https://github.com/sigstore/cosign` | `e70053f5` | Multi-dimensional audit evidence | 2026-11-25T13:06:00.235Z |
 | `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/limbo` | `13b96ffe` | Multi-dimensional audit evidence | 2026-11-25T13:06:05.598Z |
 | `learn-dom-h-2010fb8d` | `project://tursodatabase-limbo` | `13b96ffe` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md` | 2026-11-25T13:06:48.942Z |
+| `learn-huggingface-liquidai-lfm3-1-7b-gguf` | `https://huggingface.co/LiquidAI/LFM3-1.7B-GGUF` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-25T13:20:25.086Z |
+| `learn-github-beclab-olares` | `https://github.com/beclab/Olares` | `7a416142` | Multi-dimensional audit evidence | 2026-11-25T13:20:35.664Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `21fc4bdb` | Multi-dimensional audit evidence | 2026-11-25T13:20:37.781Z |

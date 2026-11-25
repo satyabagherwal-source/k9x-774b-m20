@@ -13087,3 +13087,6 @@
 | `CYCLE-20261125-ZZQD` | `2026-11-25T13:06:00.229Z` | `sigstore/cosign` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10531` | Yes (`20b64783...`) |
 | `CYCLE-20261125-03VD` | `2026-11-25T13:06:05.593Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10532` | Yes (`4160571a...`) |
 | `CYCLE-2026-11-25-PROJ-EVOLVE` | `2026-11-25T13:06:48.942Z` | `tursodatabase-limbo` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-2010FB8D` [Domain H] | Yes (`e44d5a94...`) |
+| `CYCLE-20261125-IJ21` | `2026-11-25T13:20:25.081Z` | `LiquidAI/LFM3-1.7B-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liquidai-lfm3-1.7b-gguf-learnings.md` | Yes (`7d2b2d59...`) |
+| `CYCLE-20261125-IR7U` | `2026-11-25T13:20:35.658Z` | `beclab/Olares` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10533` | Yes (`dfcf0bc5...`) |
+| `CYCLE-20261125-ISUO` | `2026-11-25T13:20:37.776Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule EXISTING` | Yes (`ddedc0ac...`) |

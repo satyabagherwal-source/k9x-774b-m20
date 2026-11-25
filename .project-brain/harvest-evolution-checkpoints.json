@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T13:06:52.389Z",
+  "last_updated": "2026-11-25T13:20:43.753Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-25T12:29:47.847Z",
@@ -398,9 +398,9 @@
       "staged_for_review": 1
     },
     "cilium-cilium-learnings.md": {
-      "processed_at": "2026-11-25T07:57:45.627Z",
-      "promoted_canonical": 1,
-      "staged_for_review": 0
+      "processed_at": "2026-11-25T13:20:42.699Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     },
     "falkordb-falkordb-learnings.md": {
       "processed_at": "2026-11-25T07:39:36.659Z",
@@ -658,9 +658,9 @@
       "staged_for_review": 1
     },
     "beclab-olares-learnings.md": {
-      "processed_at": "2026-11-24T19:10:44.611Z",
-      "promoted_canonical": 1,
-      "staged_for_review": 0
+      "processed_at": "2026-11-25T13:20:41.730Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     },
     "taubyte-tau-learnings.md": {
       "processed_at": "2026-11-12T02:03:51.106Z",
@@ -1133,7 +1133,7 @@
       "staged_for_review": 1
     },
     "hf-liquidai-lfm3-1.7b-gguf-learnings.md": {
-      "processed_at": "2026-11-21T22:06:33.994Z",
+      "processed_at": "2026-11-25T13:20:41.234Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3928,7 +3928,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 4209,
+  "total_dossiers_evaluated": 4212,
   "total_canonical_promoted": 542,
-  "total_staged_for_review": 3208
+  "total_staged_for_review": 3210
 }

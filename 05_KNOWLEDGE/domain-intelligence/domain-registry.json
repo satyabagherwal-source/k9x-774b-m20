@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T13:06:52.112Z",
+  "last_updated": "2026-11-25T13:20:43.408Z",
   "total_records": 2674,
   "domains": {
     "A": {
@@ -8417,8 +8417,8 @@
       "title": "Product Intelligence: cilium/cilium Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-cilium-cilium-product-intelligence-cilium-cilium-core-invariants.md",
       "repository": "cilium/cilium",
-      "content_hash": "3a581006b526bd18d1d1c10fd000ca5a7130578f40f28d54f940b5d37b7e926b",
-      "created_at": "2026-11-25T07:57:10.586Z"
+      "content_hash": "072c255487ae042633a7f94adabcbb9a546aad1bcb61fc2729626614195d9430",
+      "created_at": "2026-11-25T13:20:38.227Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-",
@@ -8435,8 +8435,8 @@
       "title": "Product Intelligence: cilium-cilium-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-cilium-cilium-learnings-product-intelligence-cilium-cilium-learnings-core-invari.md",
       "repository": "cilium-cilium-learnings",
-      "content_hash": "b3deb13bcf353e4869a00e3421b8d60fb93d2809428f88bff1eefc921ad8a402",
-      "created_at": "2026-11-25T07:57:46.429Z"
+      "content_hash": "bf1eb37cf112026334c3d1952f638240d5d157ac2574d4be49b314bb00cd4243",
+      "created_at": "2026-11-25T13:20:43.408Z"
     },
     "domain_intelligence-technical-construction-intelligence-zvec-ai-zvec-grep-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-zvec-ai-zvec-grep-learnings-core-invariants",
@@ -15058,8 +15058,8 @@
       "title": "Technical Construction Intelligence: beclab/Olares Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-beclab-olares-technical-construction-intelligence-beclab-olares-core-invariants.md",
       "repository": "beclab/Olares",
-      "content_hash": "09949902c660ba3d6f862dc14171716f43da4572ff3951c1b4f3ca1063090e81",
-      "created_at": "2026-11-24T19:09:55.441Z"
+      "content_hash": "79e11295a4b4b217fdae4fff54c914404cd43c74cf4ed22e8833ad72df80094e",
+      "created_at": "2026-11-25T13:20:36.144Z"
     },
     "DOM-D-01385688": {
       "record_id": "DOM-D-01385688",
@@ -15118,8 +15118,8 @@
       "title": "Technical Construction Intelligence: beclab-olares-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-beclab-olares-learnings-technical-construction-intelligence-beclab-olares-learni.md",
       "repository": "beclab-olares-learnings",
-      "content_hash": "adeb6c21063118384c0afa806f97422740105dc517a13fbf728e75558ee7c3b1",
-      "created_at": "2026-11-24T19:10:45.389Z"
+      "content_hash": "f7ed63e8b52b1f97a3f21aa36b6d2eb2a84e3daf71ec95ea52b93beb98ff787a",
+      "created_at": "2026-11-25T13:20:42.325Z"
     },
     "domain_intelligence-research-knowledge-intelligence-sentence-transformers-all-mpnet-base-v2-core-inv": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-sentence-transformers-all-mpnet-base-v2-core-inv",
@@ -26494,8 +26494,8 @@
       "title": "Research & Knowledge Intelligence: LiquidAI/LFM3-1.7B-GGUF Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-liquidai-lfm3-1-7b-gguf-research-knowledge-intelligence-liquidai-lfm3-1-7b-gg.md",
       "repository": "LiquidAI/LFM3-1.7B-GGUF",
-      "content_hash": "55df1ee36a392df18f8082abc05aae245ccc929a70cd1cfe0482085ee2d4ab9a",
-      "created_at": "2026-11-21T22:06:21.219Z"
+      "content_hash": "ed1143f7af0c7b9952df96879044bfe5f35e88a709f0cc9e7c66063678b8cbbe",
+      "created_at": "2026-11-25T13:20:25.324Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm3-1-7b-gguf-learnings-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm3-1-7b-gguf-learnings-core-invari",
@@ -26503,8 +26503,8 @@
       "title": "Research & Knowledge Intelligence: hf-liquidai-lfm3-1.7b-gguf-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-liquidai-lfm3-1-7b-gguf-learnings-research-knowledge-intelligence-hf-liquidai.md",
       "repository": "hf-liquidai-lfm3-1.7b-gguf-learnings",
-      "content_hash": "91c17e0c08909dcb0519b25aeaa485c06fa150b91ee33be74836247ca282655d",
-      "created_at": "2026-11-21T22:06:34.173Z"
+      "content_hash": "0d0e54408872b6463740474afe2286aa1ad403ef3e864addb0d1f1bdc1b3a238",
+      "created_at": "2026-11-25T13:20:41.507Z"
     },
     "domain_intelligence-technical-construction-intelligence-tanstack-query-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-tanstack-query-core-invariants",

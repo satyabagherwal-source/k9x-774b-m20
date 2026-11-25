@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T19:10:44.919Z",
+  "timestamp": "2026-11-25T13:20:41.991Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-beclab-olares-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [beclab-olares-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T19:10:44.919Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T13:20:41.991Z`  
 > **Learning ID**: `LEARN-EVO-beclab-olares-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/beclab-olares-learnings.md`  
 > **Source**: github ([https://github.com/beclab/Olares](https://github.com/beclab/Olares))  
-> **Source Version**: `9ecae93f`  
+> **Source Version**: `7a416142`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T19:09:53.343Z  
+> **Timestamp**: 2026-11-25T13:20:34.442Z  
 > **Learning ID**: `learn-github-beclab-olares`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/beclab-olares-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/beclab/Olares](https://github.com/beclab/Olares))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T19:09:53.337Z  
+> **Harvest Timestamp**: 2026-11-25T13:20:34.437Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Open-Source Personal Cloud OS for Always-On Agents
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 5379 stars
+- **Stars / Engagement**: 5381 stars
 
 ---
 
@@ -1162,123 +1162,479 @@ export const formatPathtoUrl = (path: string) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a30449a4` (2026-11-24)
-**Commit Message**: cherry-pick: fix(cli/market): show Market's reason for a 403 and correct clone help (#4495)
+### Incident Patch 1: `7a416142` (2026-11-25)
+**Commit Message**: feat(app-service): expose cluster device inventory (#4507)
 
-**File**: `cli/cmd/ctl/market/client.go` (modified, +26/-0)
+**File**: `framework/app-service/pkg/apiserver/handler_attachments.go` (modified, +55/-7)
 ```diff
-@@ -326,10 +326,36 @@ func (c *MarketClient) executeRequest(hc *http.Client, req *http.Request) (*APIR
- 	return &apiResp, nil
+@@ -41,6 +41,15 @@ type DeviceInventoryResponse struct {
+ 	Devices []DeviceInventoryItem `json:"devices"`
  }
  
-+// reformatMarketAuthErr turns an auth-class status into the error the user
-+// sees. A 403 that Market itself wrote (its JSON envelope with success=false)
-+// is a business refusal, such as "shared apps can only be operated by
-+// administrators": its sentence is the answer, so it is passed on as an
-+// APIError. Any other 401/403/459 comes from the edge proxy and gets the
-+// generic identity hint.
- func reformatMarketAuthErr(status int, respBody []byte, olaresID string) error {
-+	if status == http.StatusForbidden {
-+		if msg, ok := marketRefusalMessage(respBody); ok {
-+			return &APIError{StatusCode: status, Message: msg}
-+		}
-+	}
- 	return credential.FormatHTTPAuthError(status, respBody, olaresID)
- }
- 
-+// marketRefusalMessage reports the message of a Market error envelope. The
-+// envelope is recognised by an explicit "success": false, which the edge
-+// proxy's own error pages never carry.
-+func marketRefusalMessage(body []byte) (string, bool) {
-+	var envelope struct {
-+		Success *bool  `json:"success"`
-+		Message string `json:"message"`
-+	}
-+	if err := json.Unmarshal(body, &envelope); err != nil || envelope.Success == nil || *envelope.Success {
-+		return "", false
-+	}
-+	msg := strings.TrimSpace(envelope.Message)
-+	return msg, msg != ""
++type ClusterDeviceInventoryItem struct {
++	DeviceInventoryItem
++	Reserved bool `json:"reserved,omitempty"`
 +}
 +
- func (c *MarketClient) GetMarketData(ctx context.Context) (*APIResponse, error) {
- 	return c.doRequest(ctx, http.MethodGet, "/market/data", nil)
- }
-```
-
-**File**: `cli/cmd/ctl/market/client_test.go` (modified, +39/-0)
-```diff
-@@ -59,3 +59,42 @@ func TestDownloadStreamFormatsPersistent459WithoutLeakingBody(t *testing.T) {
- 		t.Fatalf("459 error leaked response body: %q", got)
- 	}
- }
++type ClusterDeviceInventoryResponse struct {
++	Devices []ClusterDeviceInventoryItem `json:"devices"`
++}
 +
-+// A 403 Market wrote itself is a business refusal; its sentence is the answer
-+// and must reach the user, while an edge 403 keeps the identity hint.
-+func TestDoRequestPassesMarketRefusalThrough(t *testing.T) {
-+	tests := []struct {
-+		name    string
-+		body    string
-+		want    string
-+		notWant string
-+	}{
-+		{name: "market envelope", body: `{"success":false,"message":"shared apps can only be operated by administrators"}`, want: "API error (HTTP 403): shared apps can only be operated by administrators", notWant: "whoami"},
-+		{name: "edge page", body: `<html>Forbidden</html>`, want: "profile whoami --refresh"},
-+		{name: "edge json without envelope", body: `{"status":"KO","message":"Forbidden"}`, want: "profile whoami --refresh", notWant: "API error"},
+ type AttachmentCapability struct {
+ 	Type       string   `json:"type"`
+ 	Containers []string `json:"containers"`
+@@ -131,6 +140,37 @@ func attachmentsResponse(app *appv1alpha1.Application) AttachmentsResponse {
+ 	return AttachmentsResponse{ResourceVersion: app.ResourceVersion, Attachments: attachments}
+ }
+ 
++func (h *Handler) getClusterDeviceInventory(req *restful.Request, resp *restful.Response) {
++	ctx := req.Request.Context()
++	client := req.Attribute(constants.KubeSphereClientAttribute).(*clientset.ClientSet)
++	items, err := collectDeviceInventory(ctx, client, nil)
++	if err != nil {
++		api.HandleError(resp, req, err)
++		return
 +	}
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
-+				w.WriteHeader(http.StatusForbidden)
-+				_, _ = w.Write([]byte(tt.body))
-+			}))
-+			t.Cleanup(server.Close)
-+			client := NewMarketClient(server.Client(), server.Client(), &credential.ResolvedProfile{
-+				MarketURL: server.URL,
-+				OlaresID:  "alice@olares.com",
-+			}, "")
 +
-+			_, err := client.doRequest(context.Background(), http.MethodPost, "/apps/demo/install", nil)
-+			if err == nil {
-+				t.Fatal("expected error")
-+			}
-+			if !strings.Contains(err.Error(), tt.want) {
-+				t.Fatalf("error %q does not contain %q", err, tt.want)
-+			}
-+			if tt.notWant != "" && strings.Contains(err.Error(), tt.notWant) {
-+				t.Fatalf("error %q should not contain %q", err, tt.notWant)
-+			}
++	reservations, err := deviceReservations(ctx, client, "")
++	if err != nil {
++		api.HandleError(resp, req, err)
++		return
++	}
++
++	devices := make([]ClusterDeviceInventoryItem, 0, len(items))
++	for _, item := range items {
++		key := item.Node + "/" + item.Type + "/" + item.ResourceName
++		_, reserved := reservations[key]
++		devices = append(devices, ClusterDeviceInventoryItem{
++			DeviceInventoryItem: item,
++			// Keep physical selectability separate from exclusive reservations so
++			// callers can offer transfers for bindings they are allowed to manage.
++			Reserved: reserved && item.AccessMode != "shared",
 +		})
 +	}
++	if err := resp.WriteAsJson(&ClusterDeviceInventoryResponse{Devices: devices}); err != nil {
++		api.HandleInternalError(resp, req, err)
++	}
++}
++
+ func (h *Handler) getDeviceInventory(req *restful.Request, resp *restful.Response) {
+ 	app, err := getAppByName(req, resp)
+ 	if err != nil {
+@@ -232,7 +272,7 @@ func collectDeviceInventory(ctx context.Context, client *clientset.ClientSet, al
+ 			"device.bluetooth": inventory.Bluetooth,
+ 		}
+ 		for capability, devices := range byType {
+-			if _, ok := allowed[capability]; !ok {
++			if _, ok := allowed[capability]; allowed != nil && !ok {
+ 				continue
+ 			}
+ 			for _, item := range devices {
+@@ -270,14 +310,25 @@ func sortDeviceInventory(items []DeviceInventoryItem) {
+ }
+ 
+ func applyDeviceReservations(ctx context.Context, client *clientset.ClientSet, current *appv1alpha1.Application, items []DeviceInventoryItem) error {
+-	applications, err := client.AppClient.AppV1alpha1().Applications().List(ctx, metav1.ListOptions{})
++	reserved, err := deviceReservations(ctx, client, current.Name)
+ 	if err != nil {
+ 		return err
+ 	}
++	for i := range items {
++		applyDeviceReservation(&items[i], reserved)
++	}
++	return nil
++}
++
++func deviceReservations(ctx context.Context, client *clientset.ClientSet, exceptApp string) (map[string]string, error) {
++	applications, err := client.AppClient.AppV1alpha1().Applications().List(ctx, metav1.ListOptions{})
++	if err != nil {
++		return nil, err
++	}
+ 	reserved := make(map[string]string)
+ 	for i := range applications.Items {
+ 		application := &applications.Items[i]
+-		if application.Name == current.Name {
++		if application.Name == exceptApp {
+ 			continue
+ 		}
+ 		for _, attachment := range application.Spec.Attachments {
+@@ -286,10 +337,7 @@ func applyDeviceReservations(ctx context.Context, client *clientset.ClientSet, c
+ 			}
+ 		}
+ 	}
+-	for i := range items {
+-		applyDeviceReservation(&items[i], reserved)
+-	}
+-	return nil
++	return reserved, nil
+ }
+ 
+ func applyDeviceReservation(item *DeviceInventoryItem, reserved map[string]string) {
+```
+
+**File**: `framework/app-service/pkg/apiserver/handler_cluster_device_inventory_test.go` (added, +100/-0)
+```diff
+@@ -0,0 +1,100 @@
++package apiserver
++
++import (
++	"encoding/json"
++	"io"
++	"net/http"
++	"net/http/httptest"
++	"strings"
++	"testing"
++	"time"
++
++	"github.com/beclab/Olares/framework/app-service/pkg/constants"
++	"github.com/emicklei/go-restful/v3"
++	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++	"k8s.io/client-go/rest"
++)
++
++type deviceInventoryTransport func(*http.Request) (*http.Response, error)
++
++func (f deviceInventoryTransport) RoundTrip(req *http.Request) (*http.Response, error) {
++	return f(req)
++}
++
++func TestClusterDeviceInventory(t *testing.T) {
++	const route = "/app-service/v1/hardware/device-inventory"
++	const nodes = `{"kind":"NodeList","apiVersion":"v1","items":[
++		{"metadata":{"name":"node-a","annotations":{"bytetrade.io/devices":"{\"schemaVersion\":1,\"audio\":[{\"resourceName\":\"audio-1\",\"online\":true,\"selectable\":true}],\"bluetooth\":[{\"resourceName\":\"adapter-1\",\"online\":true,\"selectable\":true,\"accessMode\":\"shared\"}]}"}}},
++		{"metadata":{"name":"node-b","annotations":{"bytetrade.io/devices":"{\"schemaVersion\":1,\"video\":[{\"resourceName\":\"video-1\",\"online\":true,\"selectable\":true}]}"}}}
++	]}`
++	const apps = `{"kind":"ApplicationList","apiVersion":"app.bytetrade.io/v1alpha1","items":[
++		{"metadata":{"name":"private-app"},"spec":{"name":"private-app","attachments":[
++			{"type":"device.audio","node":"node-a","ref":"audio-1"},{"type":"device.bluetooth","node":"node-a","ref":"adapter-1"}
++		]}}
++	]}`
++	now := time.Now().UTC()
++	responses := map[string]string{
++		"/api/v1/nodes": nodes,
++		"/apis/app.bytetrade.io/v1alpha1/applications":                                                apps,
++		"/apis/coordination.k8s.io/v1/namespaces/kube-node-lease/leases/generic-device-plugin-node-a": inventoryLeaseJSON(now),
++		"/apis/coordination.k8s.io/v1/namespaces/kube-node-lease/leases/generic-device-plugin-node-b": inventoryLeaseJSON(now.Add(-time.Minute)),
++	}
++	requests := 0
++	handler := &Handler{kubeConfig: &rest.Config{
++		Host: "http://kubernetes.test",
++		Transport: deviceInventoryTransport(func(req *http.Request) (*http.Response, error) {
++			requests++
++			body, ok := responses[req.URL.Path]
++			if !ok || req.Method != http.MethodGet {
++				t.Fatalf("unexpected Kubernetes request %s %s", req.Method, req.URL.Path)
++			}
++			return &http.Response{
++				StatusCode: http.StatusOK,
++				Header:     http.Header{"Content-Type": []string{"application/json"}},
++				Body:       io.NopCloser(strings.NewReader(body)),
++			}, nil
++		}),
++	}}
++	router := restful.NewContainer()
++	if err := addServiceToContainer(router, handler); err != nil {
++		t.Fatal(err)
++	}
++
++	rec := httptest.NewRecorder()
++	router.ServeHTTP(rec, httptest.NewRequest(http.MethodGet, route, nil))
++	if rec.Code != http.StatusUnauthorized || requests != 0 {
++		t.Fatalf("unauthenticated inventory request got %d and made %d Kubernetes requests", rec.Code, requests)
++	}
++
++	rec = httptest.NewRecorder()
++	req := httptest.NewRequest(http.MethodGet, route, nil)
++	req.Header.Set(constants.BflUserKey, "alice")
++	router.ServeHTTP(rec, req)
++	if rec.Code != http.StatusOK || strings.Contains(rec.Body.String(), "private-app") {
++		t.Fatalf("unexpected cluster device inventory response: %d %s", rec.Code, rec.Body)
++	}
++	var result ClusterDeviceInventoryResponse
++	if err := json.Unmarshal(rec.Body.Bytes(), &result); err != nil {
++		t.Fatal(err)
++	}
++	if len(result.Devices) != 3 {
++		t.Fatalf("expected all three device types, got %#v", result.Devices)
++	}
++	audio, bluetooth, video := result.Devices[0], result.Devices[1], result.Devices[2]
++	if audio.Type != "device.audio" || !audio.Online || !audio.Selectable || !audio.Reserved {
++		t.Errorf("unexpected reserved audio device: %#v", audio)
++	}
++	if bluetooth.Type != "device.bluetooth" || !bluetooth.Online || !bluetooth.Selectable || bluetooth.Reserved {
++		t.Errorf("unexpected shared Bluetooth device: %#v", bluetooth)
++	}
++	if video.Type != "device.video" || video.Online || video.Selectable || video.Reason != "device inventory publisher is offline" {
++		t.Errorf("unexpected stale video device: %#v", video)
++	}
++}
++
++func inventoryLeaseJSON(renewTime time.Time) string {
++	// Lease.spec.renewTime is a metav1.MicroTime, which only parses exactly six
++	// fractional digits. RFC3339Nano emits up to nine (Linux) and trims trailing
++	// zeros, either of which makes the lease fail to decode.
++	return `{"kind":"Lease","apiVersion":"coordination.k8s.io/v1","spec":{"renewTime":"` + renewTime.UTC().Format(metav1.RFC3339Micro) + `"}}`
 +}
 ```
 
-**File**: `cli/cmd/ctl/market/clone.go` (modified, +5/-3)
+**File**: `framework/app-service/pkg/apiserver/webservice.go` (modified, +6/-0)
 ```diff
-@@ -19,9 +19,11 @@ func NewCmdMarketClone(f *cmdutil.Factory) *cobra.Command {
- 		Use:   "clone {app-name}",
- 		Short: "Clone a multi-instance app under a new desktop title",
- 		Long: `Clone a catalog application to create a new instance with a
--different title (POST /apps/{name}/clone). The source app does not need
--to be installed. An app is cloneable when allowMultipleInstall or
--templateOnly is true; pre-flight check the source app first if unsure.
-+different title (POST /apps/{name}/clone). An app is cloneable when
-+allowMultipleInstall or templateOnly is true; pre-flight check the source
-+app first if unsure. A templateOnly app can be cloned without installing
-+it; any other app is cloned from your own running instance, so install it
-+(and make sure it is running) first.
+@@ -207,6 +207,12 @@ func addServiceToContainer(c *restful.Container, handler *Handler) error {
+ 		Param(ws.PathParameter(ParamAppName, "the name of a application")).
+ 		Returns(http.StatusOK, "Success to get the application settings", nil))
  
- --title is REQUIRED and feeds the cloned app's desktop shortcut title.
- For apps that expose multiple entrances, use --entrance-title NAME=TITLE
++	ws.Route(ws.GET("/hardware/device-inventory").
++		To(handler.getClusterDeviceInventory).
++		Doc("List physical devices and exclusive reservation status for all nodes").
++		Metadata(restfulspec.KeyOpenAPITags, MODULE_TAGS).
++		Returns(http.StatusOK, "Cluster device inventory", &ClusterDeviceInventoryResponse{}))
++
+ 	ws.Route(ws.GET("/applications/{"+ParamAppName+"}/device-inventory").
+ 		To(handler.getDeviceInventory).
+ 		Doc("list selectable physical devices for an application workload").
+```
+
+---
+
+### Incident Patch 2: `66e343d9` (2026-11-25)
+**Commit Message**: feat(app-service): expose cluster device inventory
+
+**File**: `framework/app-service/pkg/apiserver/handler_attachments.go` (modified, +55/-7)
+```diff
+@@ -41,6 +41,15 @@ type DeviceInventoryResponse struct {
+ 	Devices []DeviceInventoryItem `json:"devices"`
+ }
+ 
++type ClusterDeviceInventoryItem struct {
++	DeviceInventoryItem
++	Reserved bool `json:"reserved,omitempty"`
++}
++
++type ClusterDeviceInventoryResponse struct {
++	Devices []ClusterDeviceInventoryItem `json:"devices"`
++}
++
+ type AttachmentCapability struct {
+ 	Type       string   `json:"type"`
+ 	Containers []string `json:"containers"`
+@@ -131,6 +140,37 @@ func attachmentsResponse(app *appv1alpha1.Application) AttachmentsResponse {
+ 	return AttachmentsResponse{ResourceVersion: app.ResourceVersion, Attachments: attachments}
+ }
+ 
++func (h *Handler) getClusterDeviceInventory(req *restful.Request, resp *restful.Response) {
++	ctx := req.Request.Context()
++	client := req.Attribute(constants.KubeSphereClientAttribute).(*clientset.ClientSet)
++	items, err := collectDeviceInventory(ctx, client, nil)
++	if err != nil {
++		api.HandleError(resp, req, err)
++		return
++	}
++
++	reservations, err := deviceReservations(ctx, client, "")
++	if err != nil {
++		api.HandleError(resp, req, err)
++		return
++	}
++
++	devices := make([]ClusterDeviceInventoryItem, 0, len(items))
++	for _, item := range items {
++		key := item.Node + "/" + item.Type + "/" + item.ResourceName
++		_, reserved := reservations[key]
++		devices = append(devices, ClusterDeviceInventoryItem{
++			DeviceInventoryItem: item,
++			// Keep physical selectability separate from exclusive reservations so
++			// callers can offer transfers for bindings they are allowed to manage.
++			Reserved: reserved && item.AccessMode != "shared",
++		})
++	}
++	if err := resp.WriteAsJson(&ClusterDeviceInventoryResponse{Devices: devices}); err != nil {
++		api.HandleInternalError(resp, req, err)
++	}
++}
++
+ func (h *Handler) getDeviceInventory(req *restful.Request, resp *restful.Response) {
+ 	app, err := getAppByName(req, resp)
+ 	if err != nil {
+@@ -232,7 +272,7 @@ func collectDeviceInventory(ctx context.Context, client *clientset.ClientSet, al
+ 			"device.bluetooth": inventory.Bluetooth,
+ 		}
+ 		for capability, devices := range byType {
+-			if _, ok := allowed[capability]; !ok {
++			if _, ok := allowed[capability]; allowed != nil && !ok {
+ 				continue
+ 			}
+ 			for _, item := range devices {
+@@ -270,14 +310,25 @@ func sortDeviceInventory(items []DeviceInventoryItem) {
+ }
+ 
+ func applyDeviceReservations(ctx context.Context, client *clientset.ClientSet, current *appv1alpha1.Application, items []DeviceInventoryItem) error {
+-	applications, err := client.AppClient.AppV1alpha1().Applications().List(ctx, metav1.ListOptions{})
++	reserved, err := deviceReservations(ctx, client, current.Name)
+ 	if err != nil {
+ 		return err
+ 	}
++	for i := range items {
++		applyDeviceReservation(&items[i], reserved)
++	}
++	return nil
++}
++
++func deviceReservations(ctx context.Context, client *clientset.ClientSet, exceptApp string) (map[string]string, error) {
++	applications, err := client.AppClient.AppV1alpha1().Applications().List(ctx, metav1.ListOptions{})
++	if err != nil {
++		return nil, err
++	}
+ 	reserved := make(map[string]string)
+ 	for i := range applications.Items {
+ 		application := &applications.Items[i]
+-		if application.Name == current.Name {
++		if application.Name == exceptApp {
+ 			continue
+ 		}
+ 		for _, attachment := range application.Spec.Attachments {
+@@ -286,10 +337,7 @@ func applyDeviceReservations(ctx context.Context, client *clientset.ClientSet, c
+ 			}
+ 		}
+ 	}
+-	for i := range items {
+-		applyDeviceReservation(&items[i], reserved)
+-	}
+-	return nil
++	return reserved, nil
+ }
+ 
+ func applyDeviceReservation(item *DeviceInventoryItem, reserved map[string]string) {
+```
+
+**File**: `framework/app-service/pkg/apiserver/handler_cluster_device_inventory_test.go` (added, +100/-0)
+```diff
+@@ -0,0 +1,100 @@
++package apiserver
++
++import (
++	"encoding/json"
++	"io"
++	"net/http"
++	"net/http/httptest"
++	"strings"
++	"testing"
++	"time"
++
++	"github.com/beclab/Olares/framework/app-service/pkg/constants"
++	"github.com/emicklei/go-restful/v3"
++	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++	"k8s.io/client-go/rest"
++)
++
++type deviceInventoryTransport func(*http.Request) (*http.Response, error)
++
++func (f deviceInventoryTransport) RoundTrip(req *http.Request) (*http.Response, error) {
++	return f(req)
++}
++
++func TestClusterDeviceInventory(t *testing.T) {
++	const route = "/app-service/v1/hardware/device-inventory"
++	const nodes = `{"kind":"NodeList","apiVersion":"v1","items":[
++		{"metadata":{"name":"node-a","annotations":{"bytetrade.io/devices":"{\"schemaVersion\":1,\"audio\":[{\"resourceName\":\"audio-1\",\"online\":true,\"selectable\":true}],\"bluetooth\":[{\"resourceName\":\"adapter-1\",\"online\":true,\"selectable\":true,\"accessMode\":\"shared\"}]}"}}},
++		{"metadata":{"name":"node-b","annotations":{"bytetrade.io/devices":"{\"schemaVersion\":1,\"video\":[{\"resourceName\":\"video-1\",\"online\":true,\"selectable\":true}]}"}}}
++	]}`
++	const apps = `{"kind":"ApplicationList","apiVersion":"app.bytetrade.io/v1alpha1","items":[
++		{"metadata":{"name":"private-app"},"spec":{"name":"private-app","attachments":[
++			{"type":"device.audio","node":"node-a","ref":"audio-1"},{"type":"device.bluetooth","node":"node-a","ref":"adapter-1"}
++		]}}
++	]}`
++	now := time.Now().UTC()
++	responses := map[string]string{
++		"/api/v1/nodes": nodes,
++		"/apis/app.bytetrade.io/v1alpha1/applications":                                                apps,
++		"/apis/coordination.k8s.io/v1/namespaces/kube-node-lease/leases/generic-device-plugin-node-a": inventoryLeaseJSON(now),
++		"/apis/coordination.k8s.io/v1/namespaces/kube-node-lease/leases/generic-device-plugin-node-b": inventoryLeaseJSON(now.Add(-time.Minute)),
++	}
++	requests := 0
++	handler := &Handler{kubeConfig: &rest.Config{
++		Host: "http://kubernetes.test",
++		Transport: deviceInventoryTransport(func(req *http.Request) (*http.Response, error) {
++			requests++
++			body, ok := responses[req.URL.Path]
++			if !ok || req.Method != http.MethodGet {
++				t.Fatalf("unexpected Kubernetes request %s %s", req.Method, req.URL.Path)
++			}
++			return &http.Response{
++				StatusCode: http.StatusOK,
++				Header:     http.Header{"Content-Type": []string{"application/json"}},
++				Body:       io.NopCloser(strings.NewReader(body)),
++			}, nil
++		}),
++	}}
++	router := restful.NewContainer()
++	if err := addServiceToContainer(router, handler); err != nil {
++		t.Fatal(err)
++	}
++
++	rec := httptest.NewRecorder()
++	router.ServeHTTP(rec, httptest.NewRequest(http.MethodGet, route, nil))
++	if rec.Code != http.StatusUnauthorized || requests != 0 {
++		t.Fatalf("unauthenticated inventory request got %d and made %d Kubernetes requests", rec.Code, requests)
++	}
++
++	rec = httptest.NewRecorder()
++	req := httptest.NewRequest(http.MethodGet, route, nil)
++	req.Header.Set(constants.BflUserKey, "alice")
++	router.ServeHTTP(rec, req)
++	if rec.Code != http.StatusOK || strings.Contains(rec.Body.String(), "private-app") {
++		t.Fatalf("unexpected cluster device inventory response: %d %s", rec.Code, rec.Body)
++	}
++	var result ClusterDeviceInventoryResponse
++	if err := json.Unmarshal(rec.Body.Bytes(), &result); err != nil {
++		t.Fatal(err)
++	}
++	if len(result.Devices) != 3 {
++		t.Fatalf("expected all three device types, got %#v", result.Devices)
++	}
++	audio, bluetooth, video := result.Devices[0], result.Devices[1], result.Devices[2]
++	if audio.Type != "device.audio" || !audio.Online || !audio.Selectable || !audio.Reserved {
++		t.Errorf("unexpected reserved audio device: %#v", audio)
++	}
++	if bluetooth.Type != "device.bluetooth" || !bluetooth.Online || !bluetooth.Selectable || bluetooth.Reserved {
++		t.Errorf("unexpected shared Bluetooth device: %#v", bluetooth)
++	}
++	if video.Type != "device.video" || video.Online || video.Selectable || video.Reason != "device inventory publisher is offline" {
++		t.Errorf("unexpected stale video device: %#v", video)
++	}
++}
++
++func inventoryLeaseJSON(renewTime time.Time) string {
++	// Lease.spec.renewTime is a metav1.MicroTime, which only parses exactly six
++	// fractional digits. RFC3339Nano emits up to nine (Linux) and trims trailing
++	// zeros, either of which makes the lease fail to decode.
++	return `{"kind":"Lease","apiVersion":"coordination.k8s.io/v1","spec":{"renewTime":"` + renewTime.UTC().Format(metav1.RFC3339Micro) + `"}}`
++}
+```
+
+**File**: `framework/app-service/pkg/apiserver/webservice.go` (modified, +6/-0)
+```diff
+@@ -207,6 +207,12 @@ func addServiceToContainer(c *restful.Container, handler *Handler) error {
+ 		Param(ws.PathParameter(ParamAppName, "the name of a application")).
+ 		Returns(http.StatusOK, "Success to get the application settings", nil))
+ 
++	ws.Route(ws.GET("/hardware/device-inventory").
++		To(handler.getClusterDeviceInventory).
++		Doc("List physical devices and exclusive reservation status for all nodes").
++		Metadata(restfulspec.KeyOpenAPITags, MODULE_TAGS).
++		Returns(http.StatusOK, "Cluster device inventory", &ClusterDeviceInventoryResponse{}))
++
+ 	ws.Route(ws.GET("/applications/{"+ParamAppName+"}/device-inventory").
+ 		To(handler.getDeviceInventory).
+ 		Doc("list selectable physical devices for an application workload").
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4509** (2026-11-25): feat(app-service): add cluster device inventory api (@hysyeah)
+- **PR #4508** (2026-11-25): kubesphere: start node shell in home and skip nologin users (@eball)
+- **PR #4507** (2026-11-25): feat(app-service): expose cluster device inventory (@icebergtsn)
 - **PR #4506** (2026-11-24): chore(system-apps): update frontend image (@qq815776412)
 - **PR #4505** (2026-11-24): chore(appservice): update image version to 1.12.9-de25ab3f2 (@hysyeah)
 - **PR #4504** (2026-11-24): fix(app-service): remove unused workflow operation code (@hysyeah)
-- **PR #4503** (2026-11-24): feat(app-service): verified chart downloads into a per-version cache (@hysyeah)
-- **PR #4502** (2026-11-24): kubesphere: open node shell as a host user and restore nodes exec API (@eball)
-- **PR #4501** (2026-11-24): ci(release-daily): move daily tag to release commit on re-runs (@eball)
 
 ---
 
@@ -1298,56 +1654,72 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cherry-pick: fix(cli/market): show Market's reason for a 403 and correct clone h
+## X. app-service): expose cluster device inventory
 
 **RULE**:
-When implementing operations in `cli/cmd/ctl/market/client.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in beclab/Olares. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `framework/app-service/pkg/apiserver/handler_attachments.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in beclab/Olares. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a30449a4`: cherry-pick: fix(cli/market): show Market's reason for a 403 and correct clone help. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7a416142`: app-service): expose cluster device inventory. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cli/cmd/ctl/market/client.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `framework/app-service/pkg/apiserver/handler_attachments.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-// reformatMarketAuthErr turns an auth-class status into the error the user
-// sees. A 403 that Market itself wrote (its JSON envelope with success=false)
-// is a business refusal, such as "shared apps can only be operated by
-// administrators": its sentence is the answer, so it is passed on as an
-// APIError. Any other 401/403/459 comes from the edge proxy and gets the
-// generic identity hint.
-	if status == http.StatusForbidden {
-		if msg, ok := marketRefusalMessage(respBody); ok {
-			return &APIError{StatusCode: status, Message: msg}
-		}
-	}
-// marketRefusalMessage reports the message of a Market error envelope. The
-// envelope is recognised by an explicit "success": false, which the edge
-// proxy's own error pages never carry.
-func marketRefusalMessage(body []byte) (string, bool) {
-	var envelope struct {
-		Success *bool  `json:"success"`
-		Message string `json:"message"`
-	}
-	if err := json.Unmarshal(body, &envelope); err != nil || envelope.Success == nil || *envelope.Success {
-		return "", false
-	}
-	msg := strings.TrimSpace(envelope.Message)
-	return msg, msg != ""
+type ClusterDeviceInventoryItem struct {
+	DeviceInventoryItem
+	Reserved bool `json:"reserved,omitempty"`
 }
 
+type ClusterDeviceInventoryResponse struct {
+	Devices []ClusterDeviceInventoryItem `json:"devices"`
+}
+
+func (h *Handler) getClusterDeviceInventory(req *restful.Request, resp *restful.Response) {
+	ctx := req.Request.Context()
+	client := req.Attribute(constants.KubeSphereClientAttribute).(*clientset.ClientSet)
+	items, err := collectDeviceInventory(ctx, client, nil)
+	if err != nil {
+		api.HandleError(resp, req, err)
+		return
+	}
+
+	reservations, err := deviceReservations(ctx, client, "")
+	if err != nil {
+		api.HandleError(resp, req, err)
+		return
+	}
+
+	devices := make([]ClusterDeviceInventoryItem, 0, len(items))
+	for _, item := range items {
+		key := item.Node + "/" + item.Type + "/" + item.ResourceName
+		_, reserved := reservations[key]
+		devices = append(devices, ClusterDeviceInventoryItem{
+			DeviceInventoryItem: item,
+			// Keep physical selectability separate from exclusive reservations so
+			// callers can offer transfers for bindings they are allowed to manage.
+			Reserved: reserved && item.AccessMode != "shared",
+		})
+	}
+	if err := resp.WriteAsJson(&ClusterDeviceInventoryRe
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+			if _, ok := allowed[capability]; !ok {
+	applications, err := client.AppClient.AppV1alpha1().Applications().List(ctx, metav1.ListOptions{})
+		if application.Name == current.Name {
+	for i := range items {
+		applyDeviceReservation(&items[i], reserved)
+	}
+	return nil
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a30449a4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7a416142` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

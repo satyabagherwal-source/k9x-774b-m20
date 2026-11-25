@@ -2973,10 +2973,10 @@
     "repository": "beclab/Olares",
     "platform": "github",
     "sourceUrl": "https://github.com/beclab/Olares",
-    "sourceVersion": "9ecae93f",
+    "sourceVersion": "7a416142",
     "license": "AGPL-3.0",
-    "contentHash": "99d9e26f6f19651ca8f4a2b220650339c3893261e160cbb39bb527ecb3c1e93e",
-    "lastHarvestedAt": "2026-11-24T19:09:54.809Z",
+    "contentHash": "dfcf0bc5794a2ad7b72073c665b9bb0b33072d3aa0872eeb0b96a4bece8ec5b3",
+    "lastHarvestedAt": "2026-11-25T13:20:35.664Z",
     "learningId": "learn-github-beclab-olares"
   },
   "cryfs-cryfs": {
@@ -3343,10 +3343,10 @@
     "repository": "cilium/cilium",
     "platform": "github",
     "sourceUrl": "https://github.com/cilium/cilium",
-    "sourceVersion": "79325ed9",
+    "sourceVersion": "21fc4bdb",
     "license": "Apache-2.0",
-    "contentHash": "f9b7b675f6d5d2026f8be68c0b56d4bf169893ac54d50d865d45e0a627004fff",
-    "lastHarvestedAt": "2026-11-25T07:57:10.338Z",
+    "contentHash": "ddedc0acb2ba69936b6d6ecc1ceb84c34c640cdd4f8e69f92aea497b8ce38305",
+    "lastHarvestedAt": "2026-11-25T13:20:37.781Z",
     "learningId": "learn-github-cilium-cilium"
   },
   "seekstorm-seekstorm": {
@@ -11595,8 +11595,8 @@
     "sourceUrl": "https://huggingface.co/LiquidAI/LFM3-1.7B-GGUF",
     "sourceVersion": "hf-liquidai-lfm3-1.7b-gguf",
     "license": "Open-Source",
-    "contentHash": "b183acbae4b711b4c83642cf2950c9ae76fb50e930184d76892897c3d80e1df2",
-    "lastHarvestedAt": "2026-11-21T22:06:21.036Z",
+    "contentHash": "7d2b2d59b4ca2497886fcccb339d28444360802df496f1a35a5cf55113fae245",
+    "lastHarvestedAt": "2026-11-25T13:20:25.086Z",
     "learningId": "learn-huggingface-liquidai-lfm3-1-7b-gguf"
   },
   "hf-speridlabs-idol": {

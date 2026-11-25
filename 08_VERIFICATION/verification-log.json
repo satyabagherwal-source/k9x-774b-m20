@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261124-J2KF",
-    "timestamp": "2026-11-24T00:57:20.319Z",
-    "repository": "software-mansion/react-native-screens",
-    "learningId": "learn-github-software-mansion-react-native-screens",
-    "contentHash": "5445b9301cb4d4ebe678c018fba9169529101742b1c39c0a571ff824633992c5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-J4WE",
-    "timestamp": "2026-11-24T00:57:23.342Z",
-    "repository": "skyhook-io/radar",
-    "learningId": "learn-github-skyhook-io-radar",
-    "contentHash": "84b4441d1e2154b53ee55341bf559351e78a762c4738b20c832a40e51a0a8c58",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-J8N7",
-    "timestamp": "2026-11-24T00:57:28.195Z",
-    "repository": "clockworklabs/SpacetimeDB",
-    "learningId": "learn-github-clockworklabs-spacetimedb",
-    "contentHash": "190e96562c9b74bb23763fe710a3b29ac05924feb93c12ae08e189e45422ed00",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261124-VXKB",
     "timestamp": "2026-11-24T01:07:20.363Z",
     "repository": "tauri-apps/tauri",
@@ -7490,6 +7445,51 @@
     "repository": "tursodatabase/turso",
     "learningId": "learn-github-tursodatabase-turso",
     "contentHash": "4160571aa48fb1daed1bdc42a0286c2e427add6e49cc4dbd21da35b8533a22df",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-IJ21",
+    "timestamp": "2026-11-25T13:20:25.081Z",
+    "repository": "LiquidAI/LFM3-1.7B-GGUF",
+    "learningId": "learn-huggingface-liquidai-lfm3-1-7b-gguf",
+    "contentHash": "7d2b2d59b4ca2497886fcccb339d28444360802df496f1a35a5cf55113fae245",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-IR7U",
+    "timestamp": "2026-11-25T13:20:35.658Z",
+    "repository": "beclab/Olares",
+    "learningId": "learn-github-beclab-olares",
+    "contentHash": "dfcf0bc5794a2ad7b72073c665b9bb0b33072d3aa0872eeb0b96a4bece8ec5b3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-ISUO",
+    "timestamp": "2026-11-25T13:20:37.776Z",
+    "repository": "cilium/cilium",
+    "learningId": "learn-github-cilium-cilium",
+    "contentHash": "ddedc0acb2ba69936b6d6ecc1ceb84c34c640cdd4f8e69f92aea497b8ce38305",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
