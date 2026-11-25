@@ -3463,10 +3463,10 @@
     "repository": "okteto/okteto",
     "platform": "github",
     "sourceUrl": "https://github.com/okteto/okteto",
-    "sourceVersion": "18603d50",
+    "sourceVersion": "ea8eb1a4",
     "license": "Apache-2.0",
-    "contentHash": "6f0108fc64a79a944517590ba1a484366635df875ecf58d6185c23eaa46d6a77",
-    "lastHarvestedAt": "2026-11-24T20:12:53.804Z",
+    "contentHash": "6afae6b4961df3890fdbf687e462e77366de967ef155f5ca144726688490a235",
+    "lastHarvestedAt": "2026-11-25T14:32:27.012Z",
     "learningId": "learn-github-okteto-okteto"
   },
   "supervc-stack-vectorchord": {
@@ -11705,8 +11705,8 @@
     "sourceUrl": "https://huggingface.co/burner22/numbat",
     "sourceVersion": "hf-burner22-numbat",
     "license": "Open-Source",
-    "contentHash": "b9d1522ad3cb53075528dfbb51b69210de556a785c4a889ee02014d16dee4965",
-    "lastHarvestedAt": "2026-11-21T23:06:00.054Z",
+    "contentHash": "ca939786dd3bda386c709350bcfd44f80d25ac6b3a4588be8e56091307968332",
+    "lastHarvestedAt": "2026-11-25T14:32:16.961Z",
     "learningId": "learn-huggingface-burner22-numbat"
   },
   "hf-fusioncow-sulphur-3": {

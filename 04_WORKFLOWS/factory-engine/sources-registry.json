@@ -57,8 +57,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-25T13:49:30.471Z",
-    "lastVerified": "2026-11-25T13:49:30.471Z",
+    "lastChecked": "2026-11-25T14:32:28.787Z",
+    "lastVerified": "2026-11-25T14:32:28.787Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-25T14:24:01.538Z",
-    "lastVerified": "2026-11-25T14:24:01.538Z",
+    "lastChecked": "2026-11-25T14:32:30.324Z",
+    "lastVerified": "2026-11-25T14:32:30.324Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -170,17 +170,17 @@
   "microsoft-security-101": {
     "name": "Security-101",
     "officialUrl": "https://github.com/microsoft/Security-101",
-    "lastChecked": "2026-11-25T09:37:19.865Z",
+    "lastChecked": "2026-11-25T14:32:23.653Z",
     "revisionIdentifier": "b0a31ff7",
-    "lastVerified": "2026-11-25T09:37:19.865Z"
+    "lastVerified": "2026-11-25T14:32:23.653Z"
   },
   "meilisearch-meilisearch": {
-    "name": "meilisearch/meilisearch",
+    "name": "meilisearch",
     "officialUrl": "https://github.com/meilisearch/meilisearch",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-24T19:09:58.601Z",
-    "lastVerified": "2026-11-24T19:09:58.601Z",
+    "lastChecked": "2026-11-25T14:32:26.187Z",
+    "lastVerified": "2026-11-25T14:32:26.187Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-meilisearch-meilisearch",
@@ -189,7 +189,8 @@
     "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "9dbecfa0"
   },
   "dathere-qsv": {
     "name": "dathere/qsv",
@@ -3565,14 +3566,14 @@
     "officialUrl": "https://github.com/okteto/okteto",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-24T20:12:52.699Z",
-    "lastVerified": "2026-11-24T20:12:52.699Z",
+    "lastChecked": "2026-11-25T14:32:25.827Z",
+    "lastVerified": "2026-11-25T14:32:25.827Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-okteto-okteto",
-    "contentHash": "6f0108fc64a79a944517590ba1a484366635df875ecf58d6185c23eaa46d6a77",
+    "contentHash": "6afae6b4961df3890fdbf687e462e77366de967ef155f5ca144726688490a235",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -4412,9 +4413,9 @@
   "chmln-sd": {
     "name": "sd",
     "officialUrl": "https://github.com/chmln/sd",
-    "lastChecked": "2026-11-24T13:47:10.095Z",
+    "lastChecked": "2026-11-25T14:32:13.669Z",
     "revisionIdentifier": "44febdf8",
-    "lastVerified": "2026-11-24T13:47:10.095Z"
+    "lastVerified": "2026-11-25T14:32:13.669Z"
   },
   "hf-black-forest-labs-flux.1-schnell": {
     "name": "black-forest-labs/FLUX.1-schnell",
@@ -10143,9 +10144,9 @@
   "rickclephas-kmp-nativecoroutines": {
     "name": "KMP-NativeCoroutines",
     "officialUrl": "https://github.com/rickclephas/KMP-NativeCoroutines",
-    "lastChecked": "2026-11-23T06:45:41.753Z",
+    "lastChecked": "2026-11-25T14:32:18.789Z",
     "revisionIdentifier": "5fdeeff5",
-    "lastVerified": "2026-11-23T06:45:41.753Z"
+    "lastVerified": "2026-11-25T14:32:18.789Z"
   },
   "crawlcove-crawlcove-robots-txt-tester": {
     "name": "crawlcove-robots-txt-tester",
@@ -13652,12 +13653,12 @@
     "officialUrl": "https://huggingface.co/burner22/numbat",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-21T23:05:59.403Z",
-    "lastVerified": "2026-11-21T23:05:59.403Z",
+    "lastChecked": "2026-11-25T14:32:16.329Z",
+    "lastVerified": "2026-11-25T14:32:16.329Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-burner22-numbat",
-    "contentHash": "b9d1522ad3cb53075528dfbb51b69210de556a785c4a889ee02014d16dee4965",
+    "contentHash": "ca939786dd3bda386c709350bcfd44f80d25ac6b3a4588be8e56091307968332",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

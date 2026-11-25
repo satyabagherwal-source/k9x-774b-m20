@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T14:23:58.049Z",
-  "total_cycles_completed": 12442,
-  "total_learnings_persisted": 12442,
-  "total_rules_promoted": 11423,
+  "last_updated": "2026-11-25T14:32:27.018Z",
+  "total_cycles_completed": 12444,
+  "total_learnings_persisted": 12444,
+  "total_rules_promoted": 11424,
   "history": [
-    {
-      "timestamp": "2026-11-25T01:44:19.336Z",
-      "repository": "biomejs/biome",
-      "learningId": "learn-github-biomejs-biome",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T01:44:20.472Z",
-      "repository": "avajs/ava",
-      "learningId": "learn-github-avajs-ava",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-25T01:44:25.694Z",
       "repository": "bridgecrewio/checkov",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-25T14:23:58.049Z",
       "repository": "gravitl/netmaker",
       "learningId": "learn-github-gravitl-netmaker",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T14:32:16.967Z",
+      "repository": "burner22/numbat",
+      "learningId": "learn-huggingface-burner22-numbat",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T14:32:27.018Z",
+      "repository": "okteto/okteto",
+      "learningId": "learn-github-okteto-okteto",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

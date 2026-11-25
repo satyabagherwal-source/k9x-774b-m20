@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T14:24:03.675Z",
+  "last_updated": "2026-11-25T14:33:03.749Z",
   "directives": [
     {
       "id": "CD-001",
@@ -53865,11 +53865,11 @@
       "staged_date": "2026-11-24"
     },
     {
-      "id": "CD-7XI2",
+      "id": "CD-3Y7U",
       "directive_title": "server_events_dispatch: Rerender DM status emoji on emojiset change.",
       "source_repo": "zulip-zulip-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-7XI2-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-3Y7U-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-25",
@@ -61555,6 +61555,37 @@
       "source_repo": "skyhook-io-radar",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-B9E90F-answer-flux-dependson-in-related-resourc.md",
+      "staged_date": "2026-11-25"
+    },
+    {
+      "id": "CD-362L",
+      "directive_title": "Select the test containers to run with profiles in okteto test",
+      "source_repo": "okteto/okteto",
+      "source_commit": "ea8eb1a4",
+      "staged_file": "11_INBOX/candidate-directives/CD-362L-select-the-test-containers-to-run-with-profiles-in-okteto-test.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-25",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-3XBN",
+      "directive_title": "PROD-561: Select the test containers to run with profiles in okteto test",
+      "source_repo": "okteto-okteto-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-3XBN-prod-561-select-the-test-containers-to-run-with-profiles-in-okteto-test.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-25",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-REV-6B8431",
+      "directive_title": "server_events_dispatch: Rerender DM status emoji on emojiset change.",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zulip-zulip",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-6B8431-server-events-dispatch-rerender-dm-statu.md",
       "staged_date": "2026-11-25"
     }
   ]

@@ -13107,3 +13107,6 @@
 | `CYCLE-20261125-S42N` | `2026-11-25T14:23:51.455Z` | `zoontek/react-native-bootsplash` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10535` | Yes (`b7584c8a...`) |
 | `CYCLE-20261125-S773` | `2026-11-25T14:23:55.503Z` | `skyhook-io/radar` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10539` | Yes (`570c1b46...`) |
 | `CYCLE-20261125-S95I` | `2026-11-25T14:23:58.038Z` | `gravitl/netmaker` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10540` | Yes (`6c1984f7...`) |
+| `CYCLE-20261125-2Y4D` | `2026-11-25T14:32:16.957Z` | `burner22/numbat` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-burner22-numbat-learnings.md` | Yes (`ca939786...`) |
+| `CYCLE-20261125-35VK` | `2026-11-25T14:32:27.008Z` | `okteto/okteto` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10541` | Yes (`6afae6b4...`) |
+| `CYCLE-2026-11-25-PROJ-EVOLVE` | `2026-11-25T14:33:01.864Z` | `okteto-okteto` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-K-2EF72417` [Domain K] | Yes (`f8c93ffb...`) |

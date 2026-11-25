@@ -4,22 +4,22 @@
 {
   "source_repository": "okteto/okteto",
   "source_url": "https://github.com/okteto/okteto",
-  "source_version": "18603d50",
+  "source_version": "ea8eb1a4",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-24T20:12:54.042Z",
+  "timestamp": "2026-11-25T14:32:27.264Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-okteto-okteto",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [okteto/okteto](https://github.com/okteto/okteto) (Revision: `18603d50`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-24T20:12:54.042Z`  
+> **Provenance**: Harvested from [okteto/okteto](https://github.com/okteto/okteto) (Revision: `ea8eb1a4`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-25T14:32:27.264Z`  
 > **Learning ID**: `learn-github-okteto-okteto`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `okteto/okteto` (Commit: `18603d50`)
+- **Target Repository**: `okteto/okteto` (Commit: `ea8eb1a4`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/okteto-okteto-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/okteto/okteto](https://github.com/okteto/okteto))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T20:12:52.699Z  
+> **Harvest Timestamp**: 2026-11-25T14:32:25.827Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Develop your applications directly in your Kubernetes Cluster
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 3558 stars
+- **Stars / Engagement**: 3559 stars
 
 ---
 
@@ -1513,504 +1513,347 @@ func startCommand(cmd *exec.Cmd) error {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `18603d50` (2026-11-24)
-**Commit Message**: fix(up)!: require 'image' when 'autocreate' is enabled (#5282)
+### Incident Patch 1: `ea8eb1a4` (2026-11-25)
+**Commit Message**: PROD-561: Select the test containers to run with profiles in okteto test (#5289)
 
-* fix(up)!: require 'image' when 'autocreate' is enabled
+* feat(test): run the test containers of a group with --group
 
-'okteto up' with 'autocreate: true' and no 'image' used to deploy
-okteto/dev:latest. It now fails asking the user to set 'image', so we
-never pull an image the user didn't configure.
+Test containers can define a list of groups in the Okteto Manifest, and
+'okteto test --group <name>' runs the test containers that belong to it.
 
-Also remove dead code: the per-language default images from
-okteto/devenv in pkg/linguist, and the leftovers of 'okteto init'
-(Manifest.WriteToFile and its helpers/constants).
+- The flag can be set more than once, and it can be combined with test
+  container names: all the selected test containers run once
+- The test containers they depend on run too, even if they are not in
+  the group
+- Running 'okteto test' without names or groups still runs all of them
+- An unknown group fails, listing the groups defined in the manifest
+- '--group' cannot be combined with a command override ('--' or --command)
+- Group names cannot be empty or start or end with spaces
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Signed-off-by: Pablo Chico de Guzman <[REDACTED_EMAIL]>
+Signed-off-by: Nacho Fuertes <[REDACTED_EMAIL]>
 
-* docs: remove references to the deleted samples folder
+* feat(test): select test containers with Docker Compose-style profiles
 
-Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
-Signed-off-by: Pablo Chico de Guzman <[REDACTED_EMAIL]>
+Replace the test container groups with profiles that behave like the
+Docker Compose ones:
 
-* fix(up): infer the image of an autocreate dev from the build with the same name
+- 'okteto test' runs the test containers without profiles, and
+  '--profile' adds the ones with that profile
+- naming a test container runs it whatever its p
 
-The check that requires 'image' when 'autocreate' is enabled ran before the
-image was inferred from the 'build' entry with the same name. That inference
-only happened in ExpandEnvVars, which 'okteto up' reaches when its deploy step
-builds or checks images. A second 'okteto up', a manifest with no 'deploy'
-section, or a non-Okteto context failed even though t
-
-**File**: `.claude/skills/upgrade-go-version/SKILL.md` (modified, +1/-2)
+**File**: `cmd/context/create_test.go` (modified, +16/-0)
 ```diff
-@@ -30,11 +30,10 @@ toolchain version:
+@@ -931,6 +931,22 @@ func Test_loadDotEnv(t *testing.T) {
+ 				},
+ 			},
+ 		},
++		{
++			name: "empty local vars are not overridden",
++			mockEnv: func(t *testing.T) {
++				t.Setenv("VAR5", "")
++			},
++			mockfs: func() afero.Fs {
++				fs := afero.NewMemMapFs()
++				_ = afero.WriteFile(fs, ".env", []byte("VAR5=.env"), 0644)
++				return fs
++			},
++			expected: expected{
++				vars: map[string]string{
++					"VAR5": "",
++				},
++			},
++		},
+ 	}
  
- **Do NOT touch** these — they are not the build toolchain:
- 
--- `okteto/golang:1` floating tags (`okteto.yml` `dev`, `samples/`, `pkg/linguist/dev.go`)
-+- `okteto/golang:1` floating tags (`okteto.yml` `dev`)
- - `okteto/golang:1.22` / `golang:1.20` strings inside `pkg/schema` tests (`schema_test.go`,
-   `test_test.go`) and `integration/validate/manifests/` (e.g. `valid-movies.yml`) — they assert
-   manifest parsing
--- `samples/golang/go.mod`
- 
- ## WORKFLOW
- 
+ 	for _, tt := range tests {
 ```
 
-**File**: `cmd/up/build_test.go` (modified, +29/-0)
+**File**: `cmd/context/use_test.go` (modified, +11/-0)
 ```diff
-@@ -152,6 +152,35 @@ func TestUpBuilder_Build(t *testing.T) {
+@@ -19,6 +19,7 @@ import (
+ 
+ 	"github.com/okteto/okteto/pkg/env"
+ 	"github.com/stretchr/testify/assert"
++	"github.com/stretchr/testify/require"
+ )
+ 
+ func Test_setSecrets(t *testing.T) {
+@@ -63,3 +64,13 @@ func Test_setSecrets(t *testing.T) {
+ 		})
  	}
  }
- 
-+// regexBuilder resolves the build service with the real builder, so the tests cover the syntax of the inferred image
-+type regexBuilder struct {
-+	*fakeBuilder
++
++func Test_exportPlatformVariablesToEnvKeepsEmptyLocalVar(t *testing.T) {
++	t.Setenv("key", "")
++
++	exportPlatformVariablesToEnv([]env.Var{{Name: "key", Value: "value"}})
++
++	value, exists := os.LookupEnv("key")
++	require.True(t, exists)
++	require.Empty(t, value)
 +}
-+
-+func (regexBuilder) GetSvcToBuildFromRegex(manifest *model.Manifest, imgFinder model.ImageFromManifest) (string, error) {
-+	return (&buildv2.OktetoBuilder{}).GetSvcToBuildFromRegex(manifest, imgFinder)
-+}
-+
-+func TestUpBuilder_BuildsSameNameBuildForAutocreateWithoutImage(t *testing.T) {
-+	dev := &model.Dev{Name: "my-api", Autocreate: true}
-+	manifest := &model.Manifest{
-+		Build: build.ManifestBuild{
-+			"my-api": {Context: "."},
-+		},
-+		Dev: map[string]*model.Dev{
-+			"my-api": dev,
-+		},
-+	}
-+	builder := &fakeBuilder{services: []string{"my-api"}}
-+	ub := newUpBuilder(manifest, "my-api", regexBuilder{builder}, &fakeRegistry{}, analytics.NewUpMetricsMetadata())
-+
-+	require.NoError(t, resolveAutocreateImage(manifest, "my-api"))
-+	require.NoError(t, ub.build(context.Background()))
-+
-+	require.NotNil(t, builder.usedBuildOptions)
-+	require.Equal(t, []string{"my-api"}, builder.usedBuildOptions.CommandArgs)
-+}
-+
- func TestGetBuildServiceFromImage(t *testing.T) {
- 	tests := []struct {
- 		name        string
 ```
 
-**File**: `cmd/up/up.go` (modified, +20/-0)
+**File**: `cmd/test/cmd.go` (modified, +67/-1)
 ```diff
-@@ -298,6 +298,10 @@ okteto up api -- echo this is a test
- 				return fmt.Errorf("error in 'dev' section of your manifest: %w", err)
+@@ -20,6 +20,7 @@ import (
+ 	"os"
+ 	"os/signal"
+ 	"path"
++	"strings"
+ 	"time"
+ 
+ 	buildv2 "github.com/okteto/okteto/cmd/build/v2"
+@@ -64,11 +65,15 @@ type Options struct {
+ 	Variables        []string
+ 	// Commands are the values of the --command flag, which replace the commands of the selected test container
+ 	Commands []string
++	// Profiles are the values of the --profile flag, which enable the test containers that have any of them
++	Profiles []string
+ 	Timeout  time.Duration
+ 	Deploy   bool
+ 	NoCache  bool
+ 	// override is the command override resolved from the '--' arguments or the --command flag
+ 	override commandOverride
++	// enabledProfiles are the profiles resolved from the --profile flag or the OKTETO_PROFILES environment variable
++	enabledProfiles []string
+ }
+ 
+ type builder interface {
+@@ -87,9 +92,12 @@ func Test(ctx context.Context, ioCtrl *io.Controller, k8sLogger *io.K8sLogger, a
+ 		Use:                   "test [testName...] [flags] [-- COMMAND [args...]]",
+ 		DisableFlagsInUseLine: true,
+ 		Short:                 "Run tests using Remote Execution",
+-		Example: `# Run the test containers defined in the Okteto Manifest
++		Example: `# Run the test containers without profiles defined in the Okteto Manifest
+ okteto test
+ 
++# Run the test containers without profiles and the ones with the 'pre-commit' profile
++okteto test --profile pre-commit
++
+ # Run the 'unit' test container replacing its commands with a single one
+ okteto test unit -- go test ./pkg/api -run TestLogin
+ 
+@@ -101,10 +109,27 @@ okteto test unit --command "go mod download" --command "go test ./pkg/api -run T
+ 				return err
  			}
  
-+			if err := resolveAutocreateImage(oktetoManifest, argsparserResult.DevName); err != nil {
++			// The profiles are checked before connecting to the cluster with the environment of the process.
++			// They are resolved again once the context loads the .env file and the Okteto Variables
++			profiles, err := resolveProfiles(options.Profiles, os.Getenv(constants.OktetoProfilesEnvVar))
++			if err != nil {
 +				return err
 +			}
 +
- 			up.Dev = dev
++			// The profiles are checked before the override, so using both reports the conflict
++			// instead of the missing test container name required by the override
++			overrideRequested := cmd.ArgsLenAtDash() >= 0 || len(options.Commands) > 0
++			if err := profiles.checkCommandOverride(overrideRequested); err != nil {
++				return err
++			}
++
+ 			testContainers, override, err := parseTestArgs(args, cmd.ArgsLenAtDash(), options.Commands)
+ 			if err != nil {
+ 				return err
+ 			}
++			if err := profiles.checkTestNames(testContainers); err != nil {
++				return err
++			}
+ 			options.override = override
  
- 			// only if the context is an okteto one, we should verify if the namespace has to be woken up
-@@ -390,6 +394,22 @@ okteto up api -- echo this is a test
- 	return cmd
+ 			stop := make(chan os.Signal, 1)
+@@ -117,6 +142,7 @@ okteto test unit --command "go mod download" --command "go test ./pkg/api -run T
+ 				metadata.Err = err
+ 				metadata.Duration = time.Since(startTime)
+ 				metadata.CommandOverride = override.isSet()
++				metadata.ProfileSelected = len(options.enabledProfiles) > 0
+ 				at.TrackTest(metadata)
+ 				exit <- err
+ 			}()
+@@ -140,6 +166,7 @@ okteto test unit --command "go mod download" --command "go test ./pkg/api -run T
+ 	cmd.Flags().StringVarP(&options.K8sContext, "context", "c", "", "overwrite the current Okteto Context")
+ 	cmd.Flags().StringArrayVarP(&options.Variables, "var", "v", []string{}, "set a variable to be injected in the test commands (can be set more than once)")
+ 	cmd.Flags().StringArrayVar(&options.Commands, "command", []string{}, "replace the commands of the test container, which must be the only one named (can be set more than once, run in order)")
++	cmd.Flags().StringArrayVar(&options.Profiles, "profile", []string{}, "enable a profile to run its test containers along with the ones without profiles (can be set more than once). The OKTETO_PROFILES environment variable overrides it")
+ 	cmd.Flags().DurationVarP(&options.Timeout, "timeout", "t", getDefaultTimeout(), "the duration to wait for the Test Container to run. Any value should contain a corresponding time unit e.g. 1s, 2m, 3h")
+ 	cmd.Flags().StringVar(&options.Name, "name", "", "the name of the Development Environment")
+ 	cmd.Flags().BoolVar(&options.Deploy, "deploy", false, "Force execution of the commands in the 'deploy' section")
+@@ -164,6 +191,11 @@ func doRun(ctx context.Context, servicesToTest []string, options *Options, ioCtr
+ 		return analytics.TestMetadata{}, oktetoErrors.ErrContextIsNotOktetoCluster
+ 	}
+ 
++	// The context loads the .env file and the Okteto Variables into the environment, so they can set OKTETO_PROFILES
++	if err := resolveEnabledProfiles(servicesToTest, options, ioCtrl); err != nil {
++		return analytics.TestMetadata{}, err
++	}
++
+ 	create, err := utils.ShouldCreateNamespace(ctx, okteto.GetContext().Namespace)
+ 	if err != nil {
+ 		return analytics.TestMetadata{}, err
+@@ -231,6 +263,13 @@ func doRun(ctx context.Context, servicesToTest []string, options *Options, ioCtr
+ 		return analytics.TestMetadata{}, err
+ 	}
+ 
++	// The test containers to run are shown when they are selected by profile, as some of them may not run
++	showSelection := len
+```
+
+**File**: `cmd/test/cmd_test.go` (modified, +215/-0)
+```diff
+@@ -20,6 +20,7 @@ import (
+ 
+ 	buildv2 "github.com/okteto/okteto/cmd/build/v2"
+ 	"github.com/okteto/okteto/pkg/build"
++	"github.com/okteto/okteto/pkg/constants"
+ 	"github.com/okteto/okteto/pkg/log/io"
+ 	"github.com/okteto/okteto/pkg/model"
+ 	"github.com/okteto/okteto/pkg/types"
+@@ -30,6 +31,7 @@ import (
+ // TestCommandRejectsInvalidOverride checks that the cobra command passes the arguments after '--'
+ // and the --command flag to parseTestArgs. These errors are returned before connecting to any cluster
+ func TestCommandRejectsInvalidOverride(t *testing.T) {
++	t.Setenv(constants.OktetoProfilesEnvVar, "")
+ 	tests := []struct {
+ 		name        string
+ 		args        []string
+@@ -81,6 +83,219 @@ func TestCommandRejectsInvalidOverride(t *testing.T) {
+ 	}
  }
  
-+// resolveAutocreateImage makes sure an 'autocreate' development container has an image.
-+// If it doesn't define one, it uses the image of the 'build' entry with the same manifest key, which the upBuilder
-+// resolves, and builds if needed, later on. Otherwise it returns an error:
-+// Okteto never deploys a default image the user hasn't explicitly configured.
-+func resolveAutocreateImage(manifest *model.Manifest, devName string) error {
-+	manifest.InferAutocreateImageFromBuild(devName)
-+	dev, ok := manifest.Dev[devName]
-+	if !ok || !dev.Autocreate || dev.Image != "" {
-+		return nil
-+	}
-+	return oktetoErrors.UserError{
-+		E:    fmt.Errorf("'image' is required for development container '%s' when 'autocreate' is enabled", dev.Name),
-+		Hint: "Set the 'image' field of your development container in your Okteto manifest, or define a 'build' entry with the same name as the development container.\n    More information is available here: https://www.okteto.com/docs/reference/okteto-manifest/#image-string-optional",
-+	}
-+}
-+
- func loadManifestOverrides(dev *model.Dev, upOptions *Options) error {
- 	if upOptions.Remote > 0 {
- 		dev.RemotePort = upOptions.Remote
-```
-
-**File**: `cmd/up/up_test.go` (modified, +66/-0)
-```diff
-@@ -21,6 +21,7 @@ import (
- 
- 	"github.com/okteto/okteto/internal/test"
- 	"github.com/okteto/okteto/internal/test/client"
-+	"github.com/okteto/okteto/pkg/build"
- 	buildCmd "github.com/okteto/okteto/pkg/cmd/build"
- 	"github.com/okteto/okteto/pkg/constants"
- 	"github.com/okteto/okteto/pkg/env"
-@@ -651,3 +652,68 @@ func (fb *fakeBuilder) GetSvcToBuildFromRegex(_ *model.Manifest, _ model.ImageFr
- func (*fakeBuilder) GetConnector() buildCmd.BuildkitConnector {
- 	return nil
- }
-+
-+func TestResolveAutocreateImageFailsWithoutImageAndSameNameBuild(t *testing.T) {
-+	dev := &model.Dev{Name: "api", Autocreate: true}
-+	manifest := &model.Manifest{
-+		Build: build.ManifestBuild{
-+			"other": {Context: "."},
++// TestCommandRejectsInvalidProfile checks that the cobra command validates the --profile flag.
++// These errors are returned before connecting to any cluster
++func TestCommandRejectsInvalidProfile(t *testing.T) {
++	t.Setenv(constants.OktetoProfilesEnvVar, "")
++	tests := []struct {
++		name        string
++		args        []string
++		expectedErr error
++	}{
++		{
++			name:        "empty profile flag",
++			args:        []string{"--profile", ""},
++			expectedErr: errEmptyProfileFlag,
 +		},
-+		Dev: model.ManifestDevs{"api": dev},
-+	}
-+
-+	err := resolveAutocreateImage(manifest, "api")
-+
-+	var userErr oktetoErrors.UserError
-+	require.ErrorAs(t, err, &userErr)
-+	require.Contains(t, userErr.E.Error(), "'image' is required for development container 'api'")
-+	require.Contains(t, userErr.Hint, "define a 'build' entry with the same name as the development container")
-+	require.Contains(t, userErr.Hint, "https://www.okteto.com/docs/reference/okteto-manifest/#image-string-optional")
-+	require.Empty(t, dev.Image)
-+}
-+
-+func TestResolveAutocreateImageUsesSameNameBuild(t *testing.T) {
-+	dev := &model.Dev{Name: "my-api", Autocreate: true}
-+	manifest := &model.Manifest{
-+		Build: build.ManifestBuild{
-+			"my-api": {Context: "."},
++		{
++			name:        "blank profile flag",
++			args:        []string{"--profile", " "},
++			expectedErr: errEmptyProfileFlag,
 +		},
-+		Dev: model.ManifestDevs{"my-api": dev},
-+	}
-+
-+	require.NoError(t, resolveAutocreateImage(manifest, "my-api"))
-+	require.Equal(t, "${OKTETO_BUILD_MY_API_IMAGE}", dev.Image)
-+}
-+
-+func TestResolveAutocreateImageKeepsExplicitImage(t *testing.T) {
-+	dev := &model.Dev{Name: "api", Autocreate: true, Image: "python:alpine"}
-+	manifest := &model.Manifest{
-+		Dev: model.ManifestDevs{"api": dev},
-+	}
-+
-+	require.NoError(t, resolveAutocreateImage(manifest, "api"))
-+	require.Equal(t, "python:alpine", dev.Image)
-+}
-+
-+func TestResolveAutocreateImageSucceedsWithoutAutocreate(t *testing.T) {
-+	dev := &model.Dev{Name: "api"}
-+	manifest := &model.Manifest{
-+		Dev: model.ManifestDevs{"api": dev},
-+	}
-+
-+	require.NoError(t, resolveAutocreateImage(manifest, "api"))
-+	require.Empty(t, dev.Image)
-+}
-+
-+func TestResolveAutocreateImageUsesManifestKeyWhenDevNameDiffers(t *testing.T) {
-+	dev := &model.Dev{Name: "backend", Autocreate: true}
-+	manifest := &model.Manifest{
-+		Build: build.ManifestBuild{
-+			"api": {Context: "."},
++		{
++			name:        "profile flag with test names",
++			args:        []string{"unit", "lint", "--profile", "pre-commit"},
++			expectedErr: errProfileWithTestNames,
 +		},
-+		Dev: model.ManifestDevs{"api": dev},
++		{
++			name:        "profile flag with dash override",
++			args:        []string{"unit", "--profile", "pre-commit", "--", "go", "test"},
++			expectedErr: errProfileWithCommandOverride,
++		},
++		{
++			name:        "profile flag with command flag",
++			args:        []string{"unit", "--profile", "pre-commit", "--command", "go test ./..."},
++			expectedErr: errProfileWithCommandOverride,
++		},
++		{
++			name:        "profile flag with dash override and no test name",
++			args:        []string{"--profile", "pre-commit", "--", "go", "test"},
++			expectedErr: errProfileWithCommandOverride,
++		},
++		{
++			name:        "profile flag with command flag and no test name",
++			args:        []string{"--profile", "pre-commit", "--command", "go test ./..."},
++			expectedErr: errProfileWithCommandOverride,
++		},
 +	}
 +
-+	require.NoError(t, resolveAutocreateImage(manifest, "api"))
-+	require.Equal(t, "${OKTETO_BUILD_API_IMAGE}", dev.Image)
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			cmd := Test(context.Background(), io.NewIOController(), nil, nil, nil)
++			cmd.SilenceErrors = true
++			cmd.SilenceUsage = true
++			cmd.SetArgs(tt.args)
++
++			err := cmd.Execute()
++
++			require.ErrorIs(t, err, tt.expectedErr)
++		})
++	}
 +}
++
++// TestCommandRejectsProfilesFromEnvWithTestNames checks that the profiles of the OKTETO_PROFILES
++// environment variable cannot be combined with test container names, even when the --profile flag is
++// not used. The variable overrides the flag, so an empty flag value is not validated
++func TestCommandRejectsProfilesFromEnvWithTestNames(t *testing.T) {
++	t.Setenv(constants.OktetoProfilesEnvVar, "ci")
++	tests := []struct {
++		name        string
++		args        []string
++		expectedErr string
++	}{
++		{
++			name:        "test names",
++			args:        []string{"unit"},
++			expectedErr: "'OKTETO_PROFILES' cannot be used when naming the test containers to run",
++		},
++		{
++			name:        "test names and an empty profile flag",
++			args:        []string{"unit", "--profile", ""},
++			expectedErr: "'OKTETO_PROFILES' cannot be used when naming the test containers to run",
++		},
++		{
++			name:        "dash override",
++			args:        []string{"unit", "--", "go", "test"},
++			expectedErr: "'OKTETO_PROFILES' cannot be used when overriding the commands of a test container",
++		},
++		{
++			name:        "command flag",
++			args:        []string{"unit", "--command", "go test ./..."},
++			expectedErr: "'OKTETO_PROFILES' cannot be used when overriding the commands of a test container",
++		},
++		{
++			name:        "dash override and no test name",
++			args:        []string{"--", "go", "test"},
++			expectedErr: "'OKTETO_PROFILES' cannot be used when overriding the commands of a test container",
++		},
++	}
++
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			cmd := Test(context.Background(), io.NewIOController(), nil, nil, nil)
++			cmd.SilenceErrors = true
++			cmd.SilenceUsage = true
++			cmd.SetArgs(tt.args)
++
++			err := cmd.Execute()
++
++			require.EqualError(t, err, tt.expectedErr)
++		})
++	}
++}
++
++// TestResolveEnabledProfiles checks the profiles resolved once the context loads the .env file and
++// the Okteto Variables into the environment, which can set OKTETO_PROFILES
++func TestResolveEnabledProfiles(t *testing.T) {
++	tests := []struct {
++		name         string
++		envValue     string
++		flagProfiles []string
++		expected     []string
++	}{
++		{
++			name: "no profiles",
++		},
++		{
++			name:         "profiles from the flag",
++			flagProfiles: []string{"pre-commit"},
++			expec
 ```
 
-**File**: `pkg/k8s/deployments/crud.go` (modified, +1/-5)
+**File**: `cmd/test/selection.go` (added, +220/-0)
 ```diff
-@@ -40,10 +40,6 @@ type patchAnnotations struct {
- 
- // Sandbox returns a base deployment for a dev
- func Sandbox(dev *model.Dev, namespace string) *appsv1.Deployment {
--	image := dev.Image
--	if image == "" {
--		image = model.DefaultImage
--	}
- 	return &appsv1.Deployment{
- 		ObjectMeta: metav1.ObjectMeta{
- 			Name:      dev.Name,
-@@ -79,7 +75,7 @@ func Sandbox(dev *model.Dev, namespace string) *appsv1.Deployment {
- 					Containers: []apiv1.Container{
- 						{
- 							Name:            "dev",
--							Image:           image,
-+							Image:           dev.Image,
- 							ImagePullPolicy: apiv1.PullAlways,
- 						},
- 					},
-```
-
-**File**: `pkg/k8s/statefulsets/crud.go` (modified, +1/-5)
-```diff
-@@ -39,10 +39,6 @@ type patchAnnotations struct {
- 
- // Sandbox returns a default statefulset for a given dev
- func Sandbox(dev *model.Dev, namespace string) *appsv1.StatefulSet {
--	image := dev.Image
--	if image == "" {
--		image = model.DefaultImage
--	}
- 	return &appsv1.StatefulSet{
- 		ObjectMeta: metav1.ObjectMeta{
- 			Name:        dev.Name,
-@@ -74,7 +70,7 @@ func Sandbox(dev *model.Dev, namespace string) *appsv1.StatefulSet {
- 					Containers: []apiv1.Container{
- 						{
- 							Name:            "dev",
--							Image:           image,
-+							Image:           dev.Image,
- 							ImagePullPolicy: apiv1.PullAlways,
- 						},
- 					},
-```
-
-**File**: `pkg/linguist/dev.go` (removed, +0/-330)
-```diff
-@@ -1,330 +0,0 @@
--// Copyright 2023 The Okteto Authors
--// Licensed under the Apache License, Version 2.0 (the "License");
--// you may not use this file except in compliance with the License.
--// You may obtain a copy of the License at
--//
--// http://www.apache.org/licenses/LICENSE-2.0
--//
--// Unless required by applicable law or agreed to in writing, software
--// distributed under the License is distributed on an "AS IS" BASIS,
--// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
--// See the License for the specific language governing permissions and
--// limitations under the License.
--
--package linguist
--
--import (
--	"sort"
--	"strings"
--
--	"github.com/okteto/okteto/pkg/env"
--	"github.com/okteto/okteto/pkg/model"
--	"github.com/okteto/okteto/pkg/model/forward"
--	apiv1 "k8s.io/api/core/v1"
--)
--
--type languageDefault struct {
--	securityContext *model.SecurityContext
--	image           string
--	path            string
--	command         []string
--	environment     []env.Var
--	volumes         []model.Volume
--	forward         []forward.Forward
--	reverse         []model.Reverse
--	remote          int
--}
--
--const (
--	Javascript = "javascript"
--	golang     = "go"
--	Python     = "python"
--	Gradle     = "gradle"
--	Maven      = "maven"
--	Java       = "java"
--	Ruby       = "ruby"
--	Csharp     = "csharp"
--	Php        = "php"
--	Rust       = "rust"
--
--	// Unrecognized is the option returned when the linguist couldn't detect a language
--	Unrecognized = "other"
--)
--
--var (
--	languageDefaults map[string]languageDefault
--	forwardDefaults  map[string][]forward.Forward
--)
--
--func init() {
--	languageDefaults = make(map[string]languageDefault)
--	forwardDefaults = make(map[string][]forward.Forward)
--	languageDefaults[Javascript] = languageDefault{
--		image:   "okteto/node:14",
--		path:    "/usr/src/app",
--		command: []string{"bash"}, forward: []forward.Forward{
--			{
--				Local:  9229,
--				Remote: 9229,
--			},
--		},
--	}
--	forwardDefaults[Javascript] = []forward.Forward{
--		{
--			Local:  3000,
--			Remote: 3000,
--		},
--	}
--
--	languageDefaults[golang] = languageDefault{
--		image:   "okteto/golang:1",
--		path:    "/usr/src/app",
--		command: []string{"bash"},
--		securityContext: &model.SecurityContext{
--			Capabilities: &model.Capabilities{
--				Add: []apiv1.Capability{"SYS_PTRACE"},
--			},
--		},
--		forward: []forward.Forward{
--			{
--				Local:  2345,
--				Remote: 2345,
--			},
--		},
--		volumes: []model.Volume{
--			{
--				RemotePath: "/go/pkg/",
--			},
--			{
--				RemotePath: "/root/.cache/go-build/",
--			},
--		},
--	}
--	forwardDefaults[golang] = []forward.Forward{
--		{
--			Local:  8080,
--			Remote: 8080,
--		},
--	}
--
--	languageDefaults[Rust] = languageDefault{
--		image:   "okteto/rust:1",
--		path:    "/usr/src/app",
--		command: []string{"bash"},
--		volumes: []model.Volume{
--			{
--				RemotePath: "/usr/local/cargo/registry",
--			},
--			{
--				RemotePath: "/home/root/app/target",
--			},
--		},
--	}
--	forwardDefaults[Rust] = []forward.Forward{
--		{
--			Local:  8080,
--			Remote: 8080,
--		},
--	}
--
--	languageDefaults[Python] = languageDefault{
--		image:   "okteto/python:3",
--		path:    "/usr/src/app",
--		command: []string{"bash"},
--		reverse: []model.Reverse{
--			{
--				Local:  9000,
--				Remote: 9000,
--			},
--		},
--		volumes: []model.Volume{
--			{
--				RemotePath: "/root/.cache/pip",
--			},
--		},
--	}
--	forwardDefaults[Python] = []forward.Forward{
--		{
--			Local:  8080,
--			Remote: 8080,
--		},
--	}
--
--	languageDefaults[Gradle] = languageDefault{
--		image:   "okteto/gradle:6.5",
--		path:    "/usr/src/app",
--		command: []string{"bash"},
--		forward: []forward.Forward{
--			{
--				Local:  5005,
--				Remote: 5005,
--			},
--		},
--		volumes: []model.Volume{
--			{
--				RemotePath: "/home/gradle/.gradle",
--			},
--		},
--	}
--	forwardDefaults[Gradle] = []forward.Forward{
--		{
--			Local:  8080,
--			Remote: 8080,
--		},
--	}
--
--	languageDefaults[Maven] = languageDefault{
--		image:   "okteto/maven:3",
--		path:    "/usr/src/app",
--		command: []string{"bash"},
--		forward: []forward.Forward{
--			{
--				Local:  5005,
--				Remote: 5005,
--			},
--		},
--		volumes: []model.Volume{
--			{
--				RemotePath: "/root/.m2",
--			},
--		},
--	}
--	forwardDefaults[Maven] = []forward.Forward{
--		{
--			Local:  8080,
--			Remote: 8080,
--		},
--	}
--
--	languageDefaults[Ruby] = languageDefault{
--		image:   "okteto/ruby:2",
--		path:    "/usr/src/app",
--		command: []string{"bash"},
--		forward: []forward.Forward{
--			{
--				Local:  1234,
--				Remote: 1234,
--			},
--		},
--		volumes: []model.Volume{
--			{
--				RemotePath: "/usr/local/bundle/cache",
--			},
--		},
--	}
--	forwardDefaults[Ruby] = []forward.Forward{
--		{
--			Local:  8080,
--			Remote: 8080,
--		},
--	}
--
--	languageDefaults[Csharp] = languageDefault{
--		image:   "okteto/dotnetcore:3",
--		path:    "/usr/src/app",
--		command: []string{"bash"},
--		environment: []env.Var{
--			{
--				Name:  "ASPNETCORE_ENVIRONMENT",
--				Value: "Development",
--			},
--			{
--				Name:  "VSTEST_HOST_DEBUG",
--				Value: "0",
--			},
--			{
--				Name:  "
-```
-
-**File**: `pkg/linguist/languages.go` (added, +69/-0)
-```diff
-@@ -0,0 +1,69 @@
-+// Copyright 2023 The Okteto Authors
+@@ -0,0 +1,220 @@
++// Copyright 2026 The Okteto Authors
 +// Licensed under the Apache License, Version 2.0 (the "License");
 +// you may not use this file except in compliance with the License.
 +// You may obtain a copy of the License at
@@ -2023,71 +1866,496 @@ section, or a non-Okteto context failed even though t
 +// See the License for the specific language governing permissions and
 +// limitations under the License.
 +
-+package linguist
++package test
 +
 +import (
++	"errors"
++	"fmt"
++	"slices"
 +	"strings"
++
++	"github.com/okteto/okteto/pkg/constants"
++	oktetoErrors "github.com/okteto/okteto/pkg/errors"
++	"github.com/okteto/okteto/pkg/model"
 +)
 +
 +const (
-+	Javascript = "javascript"
-+	golang     = "go"
-+	Python     = "python"
-+	Gradle     = "gradle"
-+	Maven      = "maven"
-+	Java       = "java"
-+	Ruby       = "ruby"
-+	Csharp     = "csharp"
-+	Php        = "php"
-+	Rust       = "rust"
++	profileFlagSource = "'--profile'"
++	profileEnvSource  = "'" + constants.OktetoProfilesEnvVar + "'"
 +
-+	// Unrecognized is the option returned when the linguist couldn't detect a language
-+	Unrecognized = "other"
++	profileFlagHint = `Name the profile of the test containers to run, for example:
++    okteto test --profile pre-commit`
++
++	profileWithTestNamesHint = `Run the test containers either by name or by profile, for example:
++    okteto test unit lint
++    okteto test --profile pre-commit`
++
++	profileEnvConflictHint = `OKTETO_PROFILES can be set in your shell, the .env file or as an Okteto Variable.
++    Set it to an empty value to run test containers by name or replace their commands, for example:
++    OKTETO_PROFILES= okteto test unit`
++
++	noProfilesDefinedHint = `None of the test containers in your Okteto Manifest has a profile.
++    For more information, check the documentation: https://www.okteto.com/docs/reference/okteto-manifest/#test`
++
++	dependencyProfilesHint = `A test container can only depend on test containers without profiles or with an enabled profile.
++    Enable one of the profiles of the dependency too, or update the profiles in your Okteto Manifest`
 +)
 +
-+// GetSupportedLanguages returns a list of supported languages, sorted alphabetically and with Unrecognized at the end
-+func GetSupportedLanguages() []string {
-+	return []string{Csharp, golang, Gradle, Javascript, Maven, Php, Python, Ruby, Rust, Unrecognized}
++var (
++	errEmptyProfileFlag             = errors.New("'--profile' cannot be empty")
++	errProfileWithCommandOverride   = errors.New("cannot be used when overriding the commands of a test container")
++	errProfileWithTestNames         = errors.New("cannot be used when naming the test containers to run")
++	errProfileNotFound              = errors.New("no test container has the profile")
++	errNoTestsWithoutProfiles       = errors.New("all the test containers have profiles, so none runs without enabling a profile")
++	errDependencyProfilesNotEnabled = errors.New("none of its profiles is enabled")
++)
++
++// profileSelection holds the enabled profiles and the option that sets them
++type profileSelection struct {
++	profiles []string
++	// source is the option that sets the profiles: the --profile flag or the OKTETO_PROFILES environment variable
++	source string
 +}
 +
-+func NormalizeLanguage(language string) string {
-+	lower := strings.ToLower(language)
-+	switch lower {
-+	case "typescript", "javascript", "jsx", "node", "tsx":
-+		return Javascript
-+	case "python":
-+		return Python
-+	case "java":
-+		return Gradle
-+	case "gradle":
-+		return Gradle
-+	case "maven":
-+		return Maven
-+	case "ruby":
-+		return Ruby
-+	case "go", "golang":
-+		return golang
-+	case "c#":
-+		return Csharp
-+	case "csharp":
-+		return Csharp
-+	case "php":
-+		return Php
-+	case "rust":
-+		return Rust
-+	default:
-+		return Unrecognized
++// resolveProfiles returns the enabled profiles. The OKTETO_PROFILES environment variable, a
++// comma-separated list of profiles, overrides the values of the --profile flag. The variable is
++// ignored when it has no profiles, so an empty value doesn't override the flag
++func resolveProfiles(flagProfiles []string, envValue string) (profileSelection, error) {
++	if envProfiles := parseProfilesEnv(envValue); len(envProfiles) > 0 {
++		return profileSelection{profiles: envProfiles, source: profileEnvSource}, nil
++	}
++
++	for _, profile := range flagProfiles {
++		if strings.TrimSpace(profile) == "" {
++			return profileSelection{}, oktetoErrors.UserError{
++				E:    errEmptyProfileFlag,
++				Hint: profileFlagHint,
++			}
++		}
++	}
++	return profileSelection{profiles: flagProfiles, source: profileFlagSource}, nil
++}
++
++// parseProfilesEnv splits the value of the OKTETO_PROFILES environment variable into profiles,
++// trimming the spaces around them and ignoring the empty ones
++func parseProfilesEnv(value string) []string {
++	profiles := make([]string, 0)
++	for _, profile := range strings.Split(value, ",") {
++		if profile = strings.TrimSpace(profile); profile != "" {
++			profiles = append(profiles, profile)
++		}
++	}
++	return profiles
++}
++
++func (s profileSelection) isSet() bool {
++	return len(s.profiles) > 0
++}
++
++func (s profileSelection) fromEnv() bool {
++	return s.source == profileEnvSource
++}
++
++// checkCommandOverride returns an error when profiles are enabled and the commands of a test
++// container are replaced ('--' or --command), as that applies to exactly one named test container
++func (s profileSelection) checkCommandOverride(overrideRequested bool) error {
++	if !s.isSet() || !overrideRequested {
++		return nil
++	}
++	err := fmt.Errorf("%s %w", s.source, errProfileWithCommandOverride)
++	if s.fromEnv() {
++		return oktetoErrors.UserError{E: err, Hint: profileEnvConflictHint}
++	}
++	return newCommandOverrideError(err)
++}
++
++// checkTestNames returns an error when profiles are enabled and test containers are named,
++// as the test containers to run are selected either by name or by profile
++func (s profileSelection) checkTestNames(names []string) error {
++	if !s.isSet() || len
+```
+
+**File**: `cmd/test/selection_test.go` (added, +498/-0)
+```diff
+@@ -0,0 +1,498 @@
++// Copyright 2026 The Okteto Authors
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++// http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++package test
++
++import (
++	"slices"
++	"testing"
++
++	"github.com/okteto/okteto/pkg/dag"
++	oktetoErrors "github.com/okteto/okteto/pkg/errors"
++	"github.com/okteto/okteto/pkg/model"
++	"github.com/stretchr/testify/require"
++)
++
++func newProfiledTests() model.ManifestTests {
++	return model.ManifestTests{
++		"unit":        &model.Test{Profiles: []string{"pre-commit"}},
++		"lint":        &model.Test{Profiles: []string{"pre-commit", "release"}},
++		"e2e":         &model.Test{Profiles: []string{"long-running"}, DependsOn: []string{"seed"}},
++		"integration": &model.Test{Profiles: []string{"long-running"}},
++		"seed":        &model.Test{},
++		"vet":         &model.Test{},
 +	}
 +}
++
++func TestResolveProfiles(t *testing.T) {
++	tests := []struct {
++		name            string
++		flagProfiles    []string
++		envValue        string
++		expected        []string
++		expectedSource  string
++		expectedSet     bool
++		expectedFromEnv bool
++	}{
++		{
++			name:           "no profiles",
++			expected:       nil,
++			expectedSource: profileFlagSource,
++		},
++		{
++			name:           "profiles from the flag",
++			flagProfiles:   []string{"pre-commit", "release"},
++			expected:       []string{"pre-commit", "release"},
++			expectedSource: profileFlagSource,
++			expectedSet:    true,
++		},
++		{
++			name:            "profiles from the environment variable",
++			envValue:        "pre-commit,release",
++			expected:        []string{"pre-commit", "release"},
++			expectedSource:  profileEnvSource,
++			expectedSet:     true,
++			expectedFromEnv: true,
++		},
++		{
++			name:            "the environment variable overrides the flag",
++			flagProfiles:    []string{"pre-commit"},
++			envValue:        "release",
++			expected:        []string{"release"},
++			expectedSource:  profileEnvSource,
++			expectedSet:     true,
++			expectedFromEnv: true,
++		},
++		{
++			name:            "the environment variable overrides an empty flag value",
++			flagProfiles:    []string{""},
++			envValue:        "release",
++			expected:        []string{"release"},
++			expectedSource:  profileEnvSource,
++			expectedSet:     true,
++			expectedFromEnv: true,
++		},
++		{
++			name:            "spaces and empty values of the environment variable are ignored",
++			envValue:        " pre-commit , ,release,",
++			expected:        []string{"pre-commit", "release"},
++			expectedSource:  profileEnvSource,
++			expectedSet:     true,
++			expectedFromEnv: true,
++		},
++		{
++			name:           "an environment variable without profiles doesn't override the flag",
++			flagProfiles:   []string{"pre-commit"},
++			envValue:       " , ",
++			expected:       []string{"pre-commit"},
++			expectedSource: profileFlagSource,
++			expectedSet:    true,
++		},
++	}
++
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			selection, err := resolveProfiles(tt.flagProfiles, tt.envValue)
++
++			require.NoError(t, err)
++			require.Equal(t, tt.expected, selection.profiles)
++			require.Equal(t, tt.expectedSource, selection.source)
++			require.Equal(t, tt.expectedFromEnv, selection.fromEnv())
++			require.Equal(t, tt.expectedSet, selection.isSet())
++		})
++	}
++}
++
++func TestResolveProfilesRejectsEmptyFlag(t *testing.T) {
++	tests := []struct {
++		name         string
++		flagProfiles []string
++	}{
++		{
++			name:         "empty profile",
++			flagProfiles: []string{"pre-commit", ""},
++		},
++		{
++			name:         "blank profile",
++			flagProfiles: []string{" "},
++		},
++	}
++
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			_, err := resolveProfiles(tt.flagProfiles, "")
++
++			require.ErrorIs(t, err, errEmptyProfileFlag)
++			var userErr oktetoErrors.UserError
++			require.ErrorAs(t, err, &userErr)
++			require.Equal(t, profileFlagHint, userErr.Hint)
++		})
++	}
++}
++
++func TestProfileSelectionWithoutConflicts(t *testing.T) {
++	tests := []struct {
++		name              string
++		selection         profileSelection
++		names             []string
++		overrideRequested bool
++	}{
++		{
++			name:              "test names and command override without profiles",
++			selection:         profileSelection{source: profileFlagSource},
++			names:             []string{"unit"},
++			overrideRequested: true,
++		},
++		{
++			name:      "profiles without test names or command override",
++			selection: profileSelection{profiles: []string{"pre-commit"}, source: profileEnvSource},
++		},
++	}
++
++	for _, tt := range tests {
++	
+```
+
+**File**: `integration/commands/test.go` (modified, +16/-1)
+```diff
+@@ -19,6 +19,8 @@ import (
+ 	"os"
+ 	"os/exec"
+ 	"path/filepath"
++	"slices"
++	"strings"
+ 
+ 	"github.com/okteto/okteto/pkg/constants"
+ 	"github.com/okteto/okteto/pkg/model"
+@@ -38,6 +40,10 @@ type TestOptions struct {
+ 	Commands []string
+ 	// CommandArgs are passed after '--', replacing the commands of the test container
+ 	CommandArgs []string
++	// Profiles are passed as --profile flags, enabling the test containers that have them
++	Profiles []string
++	// ProfilesEnv is the value of the OKTETO_PROFILES environment variable, which overrides the --profile flags
++	ProfilesEnv string
+ 	NoCache     bool
+ }
+ 
+@@ -63,7 +69,10 @@ func getTestCmd(oktetoPath string, testOptions *TestOptions) *exec.Cmd {
+ 	if testOptions.NoCache {
+ 		cmd.Args = append(cmd.Args, "--no-cache")
+ 	}
+-	cmd.Env = os.Environ()
++	// OKTETO_PROFILES is only set from ProfilesEnv, so the one of the host doesn't change the test containers to run
++	cmd.Env = slices.DeleteFunc(os.Environ(), func(env string) bool {
++		return strings.HasPrefix(env, constants.OktetoProfilesEnvVar+"=")
++	})
+ 	if v := os.Getenv(model.OktetoURLEnvVar); v != "" {
+ 		cmd.Env = append(cmd.Env, fmt.Sprintf("%s=%s", model.OktetoURLEnvVar, v))
+ 	}
+@@ -89,6 +98,12 @@ func getTestCmd(oktetoPath string, testOptions *TestOptions) *exec.Cmd {
+ 	for _, command := range testOptions.Commands {
+ 		cmd.Args = append(cmd.Args, "--command", command)
+ 	}
++	for _, profile := range testOptions.Profiles {
++		cmd.Args = append(cmd.Args, "--profile", profile)
++	}
++	if testOptions.ProfilesEnv != "" {
++		cmd.Env = append(cmd.Env, fmt.Sprintf("%s=%s", constants.OktetoProfilesEnvVar, testOptions.ProfilesEnv))
++	}
+ 	// '--' must be the last argument, as everything after it is the command to run
+ 	if len(testOptions.CommandArgs) > 0 {
+ 		cmd.Args = append(cmd.Args, "--")
+```
+
+**File**: `integration/test/profile_test.go` (added, +234/-0)
+```diff
+@@ -0,0 +1,234 @@
++//go:build integration
++// +build integration
++
++// Copyright 2026 The Okteto Authors
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++// http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++package test
++
++import (
++	"os"
++	"path/filepath"
++	"strings"
++	"testing"
++
++	"github.com/okteto/okteto/integration"
++	"github.com/okteto/okteto/integration/commands"
++	"github.com/stretchr/testify/require"
++)
++
++const oktetoManifestWithProfiledTests = `
++test:
++  seed:
++    context: .
++    image: alpine
++    commands:
++      - echo "SEED-FROM-MANIFEST"
++  unit:
++    context: .
++    image: alpine
++    profiles: [pre-commit]
++    commands:
++      - echo "UNIT-FROM-MANIFEST"
++  lint:
++    context: .
++    image: alpine
++    profiles: [pre-commit, release]
++    commands:
++      - echo "LINT-FROM-MANIFEST"
++  e2e:
++    context: .
++    image: alpine
++    profiles: [long-running]
++    depends_on:
++      - seed
++    commands:
++      - echo "E2E-FROM-MANIFEST"
++`
++
++// TestOktetoTestRunsTestsWithoutProfiles validates that okteto test only runs the test containers
++// without profiles
++func TestOktetoTestRunsTestsWithoutProfiles(t *testing.T) {
++	integration.SkipIfNotOktetoCluster(t)
++	t.Parallel()
++	oktetoPath, err := integration.GetOktetoPath()
++	require.NoError(t, err)
++
++	dir := t.TempDir()
++	testNamespace, namespaceOpts := createTestNamespace(t, oktetoPath, dir, oktetoManifestWithProfiledTests)
++
++	out, err := commands.RunOktetoTestAndGetOutput(oktetoPath, &commands.TestOptions{
++		Workdir:    dir,
++		Namespace:  testNamespace,
++		OktetoHome: dir,
++		Token:      token,
++		LogOutput:  "plain",
++		NoCache:    true,
++	})
++	require.NoError(t, err)
++
++	require.Contains(t, out, "Test containers to run: seed")
++	require.Contains(t, out, "SEED-FROM-MANIFEST")
++	require.NotContains(t, out, "UNIT-FROM-MANIFEST")
++	require.NotContains(t, out, "LINT-FROM-MANIFEST")
++	require.NotContains(t, out, "E2E-FROM-MANIFEST")
++
++	require.ElementsMatch(t, []string{"seed"}, getInsightsTestNames(t, dir, testNamespace))
++
++	require.NoError(t, commands.RunOktetoDeleteNamespace(oktetoPath, namespaceOpts))
++}
++
++// TestOktetoTestRunsProfile validates that --profile runs the test containers of the profile along
++// with the ones without profiles
++func TestOktetoTestRunsProfile(t *testing.T) {
++	integration.SkipIfNotOktetoCluster(t)
++	t.Parallel()
++	oktetoPath, err := integration.GetOktetoPath()
++	require.NoError(t, err)
++
++	dir := t.TempDir()
++	testNamespace, namespaceOpts := createTestNamespace(t, oktetoPath, dir, oktetoManifestWithProfiledTests)
++
++	out, err := commands.RunOktetoTestAndGetOutput(oktetoPath, &commands.TestOptions{
++		Workdir:    dir,
++		Namespace:  testNamespace,
++		OktetoHome: dir,
++		Token:      token,
++		LogOutput:  "plain",
++		NoCache:    true,
++		Profiles:   []string{"pre-commit"},
++	})
++	require.NoError(t, err)
++
++	require.Contains(t, out, "Test containers to run: lint, seed, unit")
++	require.Contains(t, out, "LINT-FROM-MANIFEST")
++	require.Contains(t, out, "SEED-FROM-MANIFEST")
++	require.Contains(t, out, "UNIT-FROM-MANIFEST")
++	require.NotContains(t, out, "E2E-FROM-MANIFEST")
++
++	require.ElementsMatch(t, []string{"lint", "seed", "unit"}, getInsightsTestNames(t, dir, testNamespace))
++
++	require.NoError(t, commands.RunOktetoDeleteNamespace(oktetoPath, namespaceOpts))
++}
++
++// TestOktetoTestProfilesFromEnvOverrideFlag validates that the OKTETO_PROFILES environment variable
++// overrides the --profile flag, and that the test containers of a profile run after their dependencies
++func TestOktetoTestProfilesFromEnvOverrideFlag(t *testing.T) {
++	integration.SkipIfNotOktetoCluster(t)
++	t.Parallel()
++	oktetoPath, err := integration.GetOktetoPath()
++	require.NoError(t, err)
++
++	dir := t.TempDir()
++	testNamespace, namespaceOpts := createTestNamespace(t, oktetoPath, dir, oktetoManifestWithProfiledTests)
++
++	out, err := commands.RunOktetoTestAndGetOutput(oktetoPath, &commands.TestOptions{
++		Workdir:     dir,
++		Namespace:   testNamespace,
++		OktetoHome:  dir,
++		Token:       token,
++		LogOutput:   "plain",
++		NoCache:     true,
++		Profiles:    []string{"pre-commit"},
++		ProfilesEnv: "long-running",
++	})
++	require.NoError(t, err)
++
++	require.Contains(t, out, "Using the profiles from OKTETO_PROFILES: long-running")
++	require.Contains(t, out, "Test containers to run: seed, e2e")
++	seed := strings.Index(out, "SEED-FROM-MANIFEST")
++	require.NotEqual(t, -1, seed)
++	require.Greater(t, strings.Index(out, "E2E-FROM-MANIFEST"), seed)
++	require.NotContains(t, out, "UNIT-FROM-MANIFEST"
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5289** (2026-11-25): PROD-561: Select the test containers to run with profiles in okteto test (@ifbyol)
 - **PR #5286** (2026-11-23): docs: update the links to the docs and use the short anchors of the Okteto Manifest reference (@pchico83)
 - **PR #5285** (2026-11-23): chore(deps): Update k8s.io/utils digest to ca04ba5 (@oktetobot)
 - **PR #5284** (closed): docs: point the CLI messages and the README to the current docs pages (@pchico83)
 - **PR #5282** (2026-11-24): fix(up)!: require 'image' when 'autocreate' is enabled (@pchico83)
 - **PR #5281** (2026-11-20): Upgrade buildkit dependency to v0.35.1-okteto1 (@devin-ai-integration[bot])
-- **PR #5280** (closed): chore(deps): Update module sigs.k8s.io/kustomize/kyaml to v0.21.3 (@oktetobot)
 
 ---
 
@@ -2107,32 +2375,46 @@ section, or a non-Okteto context failed even though t
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. up)!: require 'image' when 'autocreate' is enabled
+## X. PROD-561: Select the test containers to run with profiles in okteto test
 
 **RULE**:
-When implementing operations in `.claude/skills/upgrade-go-version/SKILL.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in okteto/okteto. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cmd/context/create_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in okteto/okteto. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `18603d50`: up)!: require 'image' when 'autocreate' is enabled. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ea8eb1a4`: PROD-561: Select the test containers to run with profiles in okteto test. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/skills/upgrade-go-version/SKILL.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/context/create_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-- `okteto/golang:1` floating tags (`okteto.yml` `dev`)
+		{
+			name: "empty local vars are not overridden",
+			mockEnv: func(t *testing.T) {
+				t.Setenv("VAR5", "")
+			},
+			mockfs: func() afero.Fs {
+				fs := afero.NewMemMapFs()
+				_ = afero.WriteFile(fs, ".env", []byte("VAR5=.env"), 0644)
+				return fs
+			},
+			expected: expected{
+				vars: map[string]string{
+					"VAR5": "",
+				},
+			},
+		},
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-- `okteto/golang:1` floating tags (`okteto.yml` `dev`, `samples/`, `pkg/linguist/dev.go`)
-- `samples/golang/go.mod`
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `18603d50` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ea8eb1a4` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

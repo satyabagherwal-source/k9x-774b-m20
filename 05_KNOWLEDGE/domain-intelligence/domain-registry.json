@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T14:24:03.870Z",
-  "total_records": 2676,
+  "last_updated": "2026-11-25T14:33:03.962Z",
+  "total_records": 2677,
   "domains": {
     "A": {
       "total": 22,
@@ -2540,7 +2540,7 @@
       ]
     },
     "K": {
-      "total": 164,
+      "total": 165,
       "record_ids": [
         "DOM-K-353B93D6",
         "DOM-K-76C43650",
@@ -2705,7 +2705,8 @@
         "domain_intelligence-quality-verification-intelligence-sfu-db-connector-x-core-invariants",
         "domain_intelligence-quality-verification-intelligence-kubernetes-sigs-aws-load-balancer-controller-c",
         "DOM-K-7A10FB7B",
-        "domain_intelligence-quality-verification-intelligence-kubernetes-sigs-aws-load-balancer-controller-l"
+        "domain_intelligence-quality-verification-intelligence-kubernetes-sigs-aws-load-balancer-controller-l",
+        "DOM-K-2EF72417"
       ]
     },
     "L": {
@@ -8491,8 +8492,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "aafa91b1b4e17f4a9a2dafc5a8892943a47291556eec468fcdfe6d5ea128e95d",
-      "created_at": "2026-11-25T13:40:10.382Z"
+      "content_hash": "df2dfd7f76564f1c011ff90f704ee59b24c0d7f25730113636938ca4f3173e07",
+      "created_at": "2026-11-25T14:33:03.962Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -20856,8 +20857,8 @@
       "title": "Research & Knowledge Intelligence: burner22/numbat Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-burner22-numbat-research-knowledge-intelligence-burner22-numbat-core-invarian.md",
       "repository": "burner22/numbat",
-      "content_hash": "4a9160852107e9270566255e5df2808f40a2b194274eeff92b34691d2b63c8d5",
-      "created_at": "2026-11-21T23:06:00.258Z"
+      "content_hash": "80659cd4aee3735d0e3a1b07bd6e4e0820c722808123c37c2bc9f68d92976349",
+      "created_at": "2026-11-25T14:32:17.193Z"
     },
     "DOM-D-E891AC55": {
       "record_id": "DOM-D-E891AC55",
@@ -20907,8 +20908,8 @@
       "title": "Research & Knowledge Intelligence: hf-burner22-numbat-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-burner22-numbat-learnings-research-knowledge-intelligence-hf-burner22-numbat-.md",
       "repository": "hf-burner22-numbat-learnings",
-      "content_hash": "06d839b13e7bfe1af57e97130a71c8acf04c71f09a35708df9637be90853eee6",
-      "created_at": "2026-11-21T23:06:17.993Z"
+      "content_hash": "a3deb4f94fd3e45ce44b4c95e011ca78a80f17dd64c0a33c6bb65f062fd1e3fa",
+      "created_at": "2026-11-25T14:32:30.720Z"
     },
     "domain_intelligence-research-knowledge-intelligence-edge0-audio8-tts-realistic-air-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-edge0-audio8-tts-realistic-air-core-invariants",
@@ -30178,8 +30179,8 @@
       "title": "Quality & Verification Intelligence: okteto/okteto Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-okteto-okteto-quality-verification-intelligence-okteto-okteto-core-invariants.md",
       "repository": "okteto/okteto",
-      "content_hash": "32077c5d6eeb956abe53ddcd985f6a3000ed4b3b2789effd61713e7280731a88",
-      "created_at": "2026-11-18T02:16:18.625Z"
+      "content_hash": "422bac6e610de9e16c7e24f174c40ee027734e616810a4a50609e097ba7e7ead",
+      "created_at": "2026-11-25T14:32:27.453Z"
     },
     "domain_intelligence-quality-verification-intelligence-okteto-okteto-learnings-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-okteto-okteto-learnings-core-invariants",
@@ -30187,8 +30188,8 @@
       "title": "Quality & Verification Intelligence: okteto-okteto-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-okteto-okteto-learnings-quality-verification-intelligence-okteto-okteto-learning.md",
       "repository": "okteto-okteto-learnings",
-      "content_hash": "b82cdd2b0280ed411c1ba3fad6ec8dcef1a59030a9db903efe302efdb06c8c92",
-      "created_at": "2026-11-18T02:16:23.359Z"
+      "content_hash": "8df00e07c6e797af893a93cb39d5d1a0f39e76debb18c3c1fdcc0a6d36f3fc1a",
+      "created_at": "2026-11-25T14:33:02.808Z"
     },
     "domain_intelligence-content-information-intelligence-dragonflyoss-dragonfly-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-dragonflyoss-dragonfly-core-invariants",
@@ -45080,6 +45081,48 @@
       "confidence": 0.6,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-25T14:15:13.759Z"
+    },
+    "DOM-K-2EF72417": {
+      "record_id": "DOM-K-2EF72417",
+      "domain_letter": "K",
+      "domain_id": "quality_verification",
+      "domain_name": "Quality & Verification Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "K",
+          "id": "quality_verification",
+          "name": "Quality & Verification Intelligence"
+        }
+      ],
+      "title": "PROD-561: Select the test containers to run with profiles in okteto test",
+      "content": "When implementing operations in `cmd/context/create_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in okteto/okteto. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "f8c93ffbfa47fcfcc399c4775feb78088d3b6394a8f61bff635b70c28031b467",
+      "summary": "Prevents defects observed in production commit `ea8eb1a4`: PROD-561: Select the test containers to run with profiles in okteto test. Unvalid -> When implementing operations in `cmd/context/create_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, a",
+      "provenance": {
+        "source_uri": "project://okteto-okteto/okteto-okteto-learnings.md",
+        "source_version": "ea8eb1a4",
+        "observed_at": "2026-11-25T14:32:25.833Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (okteto-okteto)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of okteto-okteto"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "K"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.64,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-25T14:33:01.823Z"
     }
   }
 }

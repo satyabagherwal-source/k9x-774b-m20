@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T02:16:23.112Z",
+  "timestamp": "2026-11-25T14:33:02.427Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-okteto-okteto-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [okteto-okteto-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T02:16:23.112Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T14:33:02.427Z`  
 > **Learning ID**: `LEARN-EVO-okteto-okteto-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain K (Quality & Verification Intelligence)
-- **Secondary Corroborating Domains**: I (Content & Information Intelligence), G (Architecture Intelligence), H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 84%
+- **Secondary Corroborating Domains**: I (Content & Information Intelligence), G (Architecture Intelligence), L (Deployment & Operations Intelligence), D (Research & Knowledge Intelligence), H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 87%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from okteto-okteto-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/okteto-okteto-learnings.md`  
 > **Source**: github ([https://github.com/okteto/okteto](https://github.com/okteto/okteto))  
-> **Source Version**: `0c260262`  
+> **Source Version**: `ea8eb1a4`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T02:16:17.284Z  
+> **Timestamp**: 2026-11-25T14:32:25.833Z  
 > **Learning ID**: `learn-github-okteto-okteto`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/okteto-okteto-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/okteto/okteto](https://github.com/okteto/okteto))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T02:16:17.279Z  
+> **Harvest Timestamp**: 2026-11-25T14:32:25.827Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Develop your applications directly in your Kubernetes Cluster
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 3558 stars
+- **Stars / Engagement**: 3559 stars
 
 ---
 
@@ -1530,617 +1530,346 @@ func startCommand(cmd *exec.Cmd) error {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0c260262` (2026-11-17)
-**Commit Message**: fix(remote): shell-quote --name and --var values in remote deploy, destroy and test (#5265)
+### Incident Patch 1: `ea8eb1a4` (2026-11-25)
+**Commit Message**: PROD-561: Select the test containers to run with profiles in okteto test (#5289)
 
-* fix(remote): shell-quote --name and --var values in remote deploy, destroy and test
+* feat(test): run the test containers of a group with --group
 
-The remote-run flags were formatted with %q inside a shell-form RUN, so
-/bin/sh in BuildKit expanded $(...), backticks and $VAR in their values.
-They are now single-quoted, and a newline still travels as \n so it can't
-end the instruction. The command-specific ENV values, which a --var can
-set, get the same quoting, and the cached-test log reads the test name
-with shell rules.
+Test containers can define a list of groups in the Okteto Manifest, and
+'okteto test --group <name>' runs the test containers that belong to it.
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Signed-off-by: Javier Lopez <[REDACTED_EMAIL]>
-
-* test(build): avoid a codespell false positive in the logger test
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Signed-off-by: Javier Lopez <[REDACTED_EMAIL]>
-
-* test(remote): check what remote-run receives in the CommandFlag tests
+- The flag can be set more than once, and it can be combined with test
+  container names: all the selected test containers run once
+- The test containers they depend on run too, even if they are not in
+  the group
+- Running 'okteto test' without names or groups still runs all of them
+- An unknown group fails, listing the groups defined in the manifest
+- '--group' cannot be combined with a command override ('--' or --command)
+- Group names cannot be empty or start or end with spaces
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Signed-off-by: Javier Lopez <[REDACTED_EMAIL]>
+Signed-off-by: Nacho Fuertes <[REDACTED_EMAIL]>
 
-* chore: retrigger CI
+* feat(test): select test containers with Docker Compose-style profiles
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Signed-off-by: Javier Lopez <[REDACTED_EMAIL]>
+Replace the test container groups with profiles that behave like the
+Docker Compose ones:
 
----------
+- 'okteto test' runs the test containers without profiles, and
+  '--profile' adds the ones with that profile
+- naming a test container runs it whatever its p
 
-Signed-off-by: Javier Lopez <[REDACTED_EMAIL]>
-Co-authored-by: Claud
-
-**File**: `cmd/deploy/remote.go` (modified, +3/-2)
+**File**: `cmd/context/create_test.go` (modified, +16/-0)
 ```diff
-@@ -181,17 +181,18 @@ func (rd *remoteDeployer) Deploy(ctx context.Context, deployOptions *Options) er
- 	return nil
- }
- 
-+// GetCommandFlags returns the remote-run flags with the name and the variables, quoted for the shell
- func GetCommandFlags(name string, vars []string) ([]string, error) {
- 	var commandFlags []string
--	commandFlags = append(commandFlags, fmt.Sprintf("--name %q", name))
-+	commandFlags = append(commandFlags, remote.CommandFlag("name", name))
- 	if len(vars) > 0 {
- 		var varsToAddForDeploy []string
- 		variables, err := env.Parse(vars)
- 		if err != nil {
- 			return nil, err
- 		}
- 		for _, v := range variables {
--			varsToAddForDeploy = append(varsToAddForDeploy, fmt.Sprintf("--var %s=%q", v.Name, v.Value))
-+			varsToAddForDeploy = append(varsToAddForDeploy, remote.CommandFlag("var", v.Name+"="+v.Value))
- 		}
- 		commandFlags = append(commandFlags, strings.Join(varsToAddForDeploy, " "))
- 	}
-```
-
-**File**: `cmd/deploy/remote_test.go` (modified, +64/-15)
-```diff
-@@ -61,7 +61,7 @@ func TestGetCommandFlags(t *testing.T) {
- 					Name:    "test",
+@@ -931,6 +931,22 @@ func Test_loadDotEnv(t *testing.T) {
  				},
  			},
--			expected: []string{"--name \"test\""},
-+			expected: []string{"--name test"},
  		},
- 		{
- 			name: "name set",
-@@ -71,7 +71,7 @@ func TestGetCommandFlags(t *testing.T) {
- 					Timeout: 5 * time.Minute,
- 				},
- 			},
--			expected: []string{"--name \"test\""},
-+			expected: []string{"--name test"},
- 		},
- 		{
- 			name: "name multiple words",
-@@ -81,7 +81,7 @@ func TestGetCommandFlags(t *testing.T) {
- 					Timeout: 5 * time.Minute,
- 				},
- 			},
--			expected: []string{"--name \"this is a test\""},
-+			expected: []string{"--name 'this is a test'"},
- 		},
- 		{
- 			name: "namespace is not set",
-@@ -92,7 +92,7 @@ func TestGetCommandFlags(t *testing.T) {
- 					Timeout:   5 * time.Minute,
- 				},
- 			},
--			expected: []string{"--name \"test\""},
-+			expected: []string{"--name test"},
- 		},
- 		{
- 			name: "manifest path is not set",
-@@ -104,7 +104,7 @@ func TestGetCommandFlags(t *testing.T) {
- 					Timeout:          5 * time.Minute,
- 				},
- 			},
--			expected: []string{"--name \"test\""},
-+			expected: []string{"--name test"},
- 		},
- 		{
- 			name: "variables set",
-@@ -118,7 +118,7 @@ func TestGetCommandFlags(t *testing.T) {
- 					Timeout: 5 * time.Minute,
- 				},
- 			},
--			expected: []string{"--name \"test\"", "--var a=\"b\" --var c=\"d\""},
-+			expected: []string{"--name test", "--var a=b --var c=d"},
- 		},
- 		{
- 			name: "wait is not set",
-@@ -129,7 +129,7 @@ func TestGetCommandFlags(t *testing.T) {
- 					Timeout: 5 * time.Minute,
- 				},
- 			},
--			expected: []string{"--name \"test\""},
-+			expected: []string{"--name test"},
- 		},
- 		{
- 			name: "multiword var value",
-@@ -139,7 +139,56 @@ func TestGetCommandFlags(t *testing.T) {
- 					Variables: []string{"test=multi word value"},
- 				},
- 			},
--			expected: []string{"--name \"test\"", "--var test=\"multi word value\""},
-+			expected: []string{"--name test", "--var 'test=multi word value'"},
-+		},
 +		{
-+			name: "name with command substitution",
-+			config: config{
-+				opts: &Options{
-+					Name: "$(echo x)",
++			name: "empty local vars are not overridden",
++			mockEnv: func(t *testing.T) {
++				t.Setenv("VAR5", "")
++			},
++			mockfs: func() afero.Fs {
++				fs := afero.NewMemMapFs()
++				_ = afero.WriteFile(fs, ".env", []byte("VAR5=.env"), 0644)
++				return fs
++			},
++			expected: expected{
++				vars: map[string]string{
++					"VAR5": "",
 +				},
 +			},
-+			expected: []string{"--name '$(echo x)'"},
 +		},
-+		{
-+			name: "var value with command substitution",
-+			config: config{
-+				opts: &Options{
-+					Name:      "test",
-+					Variables: []string{"A=$(echo x)"},
-+				},
-+			},
-+			expected: []string{"--name test", "--var 'A=$(echo x)'"},
-+		},
-+		{
-+			name: "var value with a newline",
-+			config: config{
-+				opts: &Options{
-+					Name:      "test",
-+					Variables: []string{"A=multi\nline"},
-+				},
-+			},
-+			expected: []string{"--name test", `--var 'A=multi\nline'`},
-+		},
-+		{
-+			name: "var name with command substitution",
-+			config: config{
-+				opts: &Options{
-+					Name:      "test",
-+					Variables: []string{"$(echo x)=y"},
-+				},
-+			},
-+			expected: []string{"--name test", "--var '$(echo x)=y'"},
-+		},
-+		{
-+			name: "empty var value",
-+			config: config{
-+				opts: &Options{
-+					Name:      "test",
-+					Variables: []string{"A="},
-+				},
-+			},
-+			expected: []string{"--name test", "--var A="},
- 		},
- 		{
- 			name: "wrong multiword var value",
-@@ -221,7 +270,7 @@ func TestDeployRemoteWithCtx(t *testing.T) {
- 		BaseImage:           manifest.Deploy.Image,
- 		ManifestPathFlag:    "/path/to/manifest/okteto.yml",
- 		TemplateName:        templateName,
--		CommandFlags:        []string{"--name \"test\""},
-+		CommandFlags:        []string{"--name test"},
- 		BuildEnvVars:        map[string]string{"BUILD_VAR_1": "value"},
- 		DependenciesEnvVars: map[string]string{"DEP_VAR_1": "value"},
- 		DockerfileName:      dockerfileTemporalName,
-@@ -323,7 +372,7 @@ func TestDeployRemote(t *testing.T) {
- 		BaseImage:           manifest.Deploy.Image,
- 		ManifestPathFlag:    "/path/to/manifest/okteto.yml",
- 		TemplateName:        templateName,
--		CommandFlags:        []string{"--name \"test\""},
-+		CommandFlags:        []string{"--name test"},
- 		BuildEnvVars:        map[string]string{"BUILD_VAR_1": "value"},
- 		DependenciesEnvVars: map[string]string{"DEP_VAR_1": "value"},
- 		DockerfileName:      dockerfileTemporalName,
-@@ -393,7 +442,7 @@ func TestDeployRemoteWithError(t *testing.T) {
- 		BaseImage:           manifest.Deploy.Image,
- 		ManifestPathFlag:    "/path/to/manifest/okteto.yml",
- 		TemplateName:        templateName,
--		CommandFlags:        []string{"--name \"test\""},
-+		CommandFlags:        []string{"--name test"},
- 		BuildEnvVars:        map[string]string{"BUILD_VAR_1": "value"},
- 		DependenciesEnvVars: map[string]string{"DEP_VAR_1": "value"},
- 		DockerfileName:      dockerfileTemporalName,
-@@ -503,10 +552,10 @@ func TestDeployRemoteForwardsTheCatalogSecretVariablesToRemoteRun(t *testing.T)
- 
- 	require.NoError(t, err)
- 	expected := []string{
--		`--name "test"`,
--		`--var OKTETO_ACTION_NAME="stored-action"`,
--		`--catalog-action "action-name"`,
--		`--catalog-secret-variables-endpoint "https://okteto.example/internal/catalog/secret-variables"`,
-+		`--name test`,
-+		`--var OKTETO_ACTION_NAME
-```
-
-**File**: `cmd/destroy/remote.go` (modified, +3/-2)
-```diff
-@@ -182,9 +182,10 @@ func (rd *remoteDestroyCommand) Destroy(ctx context.Context, opts *Options) erro
- 	return nil
- }
- 
-+// getCommandFlags returns the remote-run flags for the destroy, with the values quoted for the shell
- func getCommandFlags(opts *Options) ([]string, error) {
- 	commandFlags := []string{
--		fmt.Sprintf("--name \"%s\"", opts.Name),
-+		remote.CommandFlag("name", opts.Name),
  	}
  
- 	if opts.ForceDestroy {
-@@ -198,7 +199,7 @@ func getCommandFlags(opts *Options) ([]string, error) {
- 			return nil, err
- 		}
- 		for _, v := range variables {
--			varsToAddForDeploy = append(varsToAddForDeploy, fmt.Sprintf("--var %s=%q", v.Name, v.Value))
-+			varsToAddForDeploy = append(varsToAddForDeploy, remote.CommandFlag("var", v.Name+"="+v.Value))
- 		}
- 		commandFlags = append(commandFlags, strings.Join(varsToAddForDeploy, " "))
- 	}
+ 	for _, tt := range tests {
 ```
 
-**File**: `cmd/destroy/remote_test.go` (modified, +64/-15)
+**File**: `cmd/context/use_test.go` (modified, +11/-0)
 ```diff
-@@ -56,7 +56,7 @@ func TestGetCommandFlags(t *testing.T) {
- 					Name: "test",
- 				},
- 			},
--			expected: []string{"--name \"test\""},
-+			expected: []string{"--name test"},
- 		},
- 		{
- 			name: "name multiple words",
-@@ -65,7 +65,7 @@ func TestGetCommandFlags(t *testing.T) {
- 					Name: "this is a test",
- 				},
- 			},
--			expected: []string{"--name \"this is a test\""},
-+			expected: []string{"--name 'this is a test'"},
- 		},
- 		{
- 			name: "force destroy set",
-@@ -75,7 +75,7 @@ func TestGetCommandFlags(t *testing.T) {
- 					ForceDestroy: true,
- 				},
- 			},
--			expected: []string{"--name \"test\"", "--force-destroy"},
-+			expected: []string{"--name test", "--force-destroy"},
- 		},
- 		{
- 			name: "variables set",
-@@ -88,7 +88,7 @@ func TestGetCommandFlags(t *testing.T) {
- 					},
- 				},
- 			},
--			expected: []string{"--name \"test\"", "--var a=\"b\" --var c=\"d\""},
-+			expected: []string{"--name test", "--var a=b --var c=d"},
- 		},
- 		{
- 			name: "multiword var value",
-@@ -98,7 +98,56 @@ func TestGetCommandFlags(t *testing.T) {
- 					Variables: []string{"test=multi word value"},
- 				},
- 			},
--			expected: []string{"--name \"test\"", "--var test=\"multi word value\""},
-+			expected: []string{"--name test", "--var 'test=multi word value'"},
-+		},
-+		{
-+			name: "name with command substitution",
-+			config: config{
-+				opts: &Options{
-+					Name: "$(echo x)",
-+				},
-+			},
-+			expected: []string{"--name '$(echo x)'"},
-+		},
-+		{
-+			name: "var value with command substitution",
-+			config: config{
-+				opts: &Options{
-+					Name:      "test",
-+					Variables: []string{"A=$(echo x)"},
-+				},
-+			},
-+			expected: []string{"--name test", "--var 'A=$(echo x)'"},
-+		},
-+		{
-+			name: "var value with a newline",
-+			config: config{
-+				opts: &Options{
-+					Name:      "test",
-+					Variables: []string{"A=multi\nline"},
-+				},
-+			},
-+			expected: []string{"--name test", `--var 'A=multi\nline'`},
-+		},
-+		{
-+			name: "var name with command substitution",
-+			config: config{
-+				opts: &Options{
-+					Name:      "test",
-+					Variables: []string{"$(echo x)=y"},
-+				},
-+			},
-+			expected: []string{"--name test", "--var '$(echo x)=y'"},
-+		},
-+		{
-+			name: "empty var value",
-+			config: config{
-+				opts: &Options{
-+					Name:      "test",
-+					Variables: []string{"A="},
-+				},
-+			},
-+			expected: []string{"--name test", "--var A="},
- 		},
- 		{
- 			// a stored variable with the same name travels as a --var, which remote-run doesn't read the action from
-@@ -111,10 +160,10 @@ func TestGetCommandFlags(t *testing.T) {
- 				},
- 			},
- 			expected: []string{
--				"--name \"test\"",
--				"--var OKTETO_ACTION_NAME=\"stored-action\"",
--				"--catalog-action \"action-name\"",
--				"--catalog-secret-variables-endpoint \"https://okteto.example/internal/catalog/secret-variables\"",
-+				"--name test",
-+				"--var OKTETO_ACTION_NAME=stored-action",
-+				"--catalog-action action-name",
-+				"--catalog-secret-variables-endpoint https://okteto.example/internal/catalog/secret-variables",
- 			},
- 		},
- 		{
-@@ -127,10 +176,10 @@ func TestGetCommandFlags(t *testing.T) {
- 				},
- 			},
- 			expected: []string{
--				"--name \"test\"",
-+				"--name test",
- 				"--force-destroy",
--				"--catalog-action \"action-name\"",
--				"--catalog-secret-variables-endpoint \"https://okteto.example/internal/catalog/secret-variables\"",
-+				"--catalog-action action-name",
-+				"--catalog-secret-variables-endpoint https://okteto.example/internal/catalog/secret-variables",
- 			},
- 		},
- 	}
-@@ -183,7 +232,7 @@ func TestDestroyRemoteWithCtx(t *testing.T) {
- 		BaseImage:        manifest.Destroy.Image,
- 		ManifestPathFlag: "/path/to/manifest/okteto.yml",
- 		TemplateName:     templateName,
--		CommandFlags:     []string{"--name \"test\""},
-+		CommandFlags:     []string{"--name test"},
- 		DockerfileName:   dockerfileTemporalName,
- 		Deployable: deployable.Entity{
- 			Commands: manifest.Destroy.Commands,
-@@ -240,7 +289,7 @@ func TestDestroyRemote(t *testing.T) {
- 		BaseImage:        manifest.Destroy.Image,
- 		ManifestPathFlag: "/path/to/manifest/okteto.yml",
- 		TemplateName:     templateName,
--		CommandFlags:     []string{"--name \"test\""},
-+		CommandFlags:     []string{"--name test"},
- 		DockerfileName:   dockerfileTemporalName,
- 		Deployable: deployable.Entity{
- 			Commands: manifest.Destroy.Commands,
-@@ -295,7 +344,7 @@ func TestDestroyRemoteWithError(t *testing.T) {
- 		BaseImage:        manifest.Destroy.Image,
- 		ManifestPathFlag: "/path/to/manifest/okteto.yml",
- 		TemplateName:     templateName,
--		CommandFlags:     []string{"--name \"test\""},
-+		CommandFlags:     []string{"--name test"},
- 		DockerfileName:   dockerfileTemporalName,
- 		Deployable: deployable.Entity{
- 			Commands: manifest.Destroy.Commands,
-```
-
-**File**: `pkg/catalog/catalog.go` (modified, +3/-2)
-```diff
-@@ -25,6 +25,7 @@ import (
- 	oktetoErrors "github.com/okteto/okteto/pkg/errors"
- 	oktetoLog "github.com/okteto/okteto/pkg/log"
- 	"github.com/okteto/okteto/pkg/model"
-+	"github.com/okteto/okteto/pkg/remote"
+@@ -19,6 +19,7 @@ import (
+ 
+ 	"github.com/okteto/okteto/pkg/env"
+ 	"github.com/stretchr/testify/assert"
++	"github.com/stretchr/testify/require"
  )
  
- const (
-@@ -103,8 +104,8 @@ func (s SecretVariables) RemoteRunFlags() []string {
- 		return nil
- 	}
- 	return []string{
--		fmt.Sprintf("--%s %q", ActionFlag, s.Action),
--		fmt.Sprintf("--%s %q", SecretVariablesEndpointFlag, s.Endpoint),
-+		remote.CommandFlag(ActionFlag, s.Action),
-+		remote.CommandFlag(SecretVariablesEndpointFlag, s.Endpoint),
+ func Test_setSecrets(t *testing.T) {
+@@ -63,3 +64,13 @@ func Test_setSecrets(t *testing.T) {
+ 		})
  	}
  }
- 
-```
-
-**File**: `pkg/catalog/catalog_test.go` (modified, +26/-13)
-```diff
-@@ -27,13 +27,13 @@ var testSecretVariables = SecretVariables{
- 	Endpoint:   "https://okteto.example/internal/catalog/secret-variables",
- }
- 
--// remote reports whether runsInRemote was called, and returns inRemote
--type remote struct {
-+// fakeRemote reports whether runsInRemote was called, and returns inRemote
-+type fakeRemote struct {
- 	inRemote bool
- 	called   bool
- }
- 
--func (r *remote) runsInRemote() bool {
-+func (r *fakeRemote) runsInRemote() bool {
- 	r.called = true
- 	return r.inRemote
- }
-@@ -56,19 +56,32 @@ func TestSecretVariablesFromEnvWithoutVariables(t *testing.T) {
- 
- func TestRemoteRunFlags(t *testing.T) {
- 	expected := []string{
--		`--catalog-action "action-name"`,
--		`--catalog-secret-variables-endpoint "https://okteto.example/internal/catalog/secret-variables"`,
-+		`--catalog-action action-name`,
-+		`--catalog-secret-variables-endpoint https://okteto.example/internal/catalog/secret-variables`,
- 	}
- 
- 	require.Equal(t, expected, testSecretVariables.RemoteRunFlags())
- }
- 
-+func TestRemoteRunFlagsQuotesTheValuesForTheShell(t *testing.T) {
-+	s := SecretVariables{
-+		Action:   "$(echo x)",
-+		Endpoint: "https://okteto.example/$HOME",
-+	}
-+	expected := []string{
-+		`--catalog-action '$(echo x)'`,
-+		`--catalog-secret-variables-endpoint 'https://okteto.example/$HOME'`,
-+	}
 +
-+	require.Equal(t, expected, s.RemoteRunFlags())
++func Test_exportPlatformVariablesToEnvKeepsEmptyLocalVar(t *testing.T) {
++	t.Setenv("key", "")
++
++	exportPlatformVariablesToEnv([]env.Var{{Name: "key", Value: "value"}})
++
++	value, exists := os.LookupEnv("key")
++	require.True(t, exists)
++	require.Empty(t, value)
 +}
-+
- func TestRemoteRunFlagsWithoutAction(t *testing.T) {
- 	require.Empty(t, SecretVariables{}.RemoteRunFlags())
- }
- 
- func TestCheckSecretVariablesWithoutReferences(t *testing.T) {
--	r := &remote{}
-+	r := &fakeRemote{}
- 
- 	got, err := CheckSecretVariables(SecretVariables{Action: "action-name"}, DeployPhase, r.runsInRemote)
- 
-@@ -78,7 +91,7 @@ func TestCheckSecretVariablesWithoutReferences(t *testing.T) {
- }
- 
- func TestCheckSecretVariablesWithAnEmptyList(t *testing.T) {
--	r := &remote{}
-+	r := &fakeRemote{}
- 	s := testSecretVariables
- 	s.References = "[]"
- 
-@@ -93,7 +106,7 @@ func TestCheckSecretVariablesInRemote(t *testing.T) {
- 	phases := []Phase{DeployPhase, DestroyPhase}
- 	for _, phase := range phases {
- 		t.Run(string(phase), func(t *testing.T) {
--			got, err := CheckSecretVariables(testSecretVariables, phase, (&remote{inRemote: true}).runsInRemote)
-+			got, err := CheckSecretVariables(testSecretVariables, phase, (&fakeRemote{inRemote: true}).runsInRemote)
- 
- 			require.NoError(t, err)
- 			require.Equal(t, testSecretVariables, got)
-@@ -102,7 +115,7 @@ func TestCheckSecretVariablesInRemote(t *testing.T) {
- }
- 
- func TestCheckSecretVariablesFailsOnLocalDeploy(t *testing.T) {
--	got, err := CheckSecretVariables(testSecretVariables, DeployPhase, (&remote{}).runsInRemote)
-+	got, err := CheckSecretVariables(testSecretVariables, DeployPhase, (&fakeRemote{}).runsInRemote)
- 
- 	require.ErrorIs(t, err, ErrSecretVariablesNeedRemote)
- 	require.EqualError(t, err, "catalog variables of type `secret` are only supported with deploy on remote. Enable remote execution and try again")
-@@ -113,7 +126,7 @@ func TestCheckSecretVariablesFailsOnLocalDeploy(t *testing.T) {
- }
- 
- func TestCheckSecretVariablesFailsOnLocalDestroyPointingToForceDestroy(t *testing.T) {
--	_, err := CheckSecretVariables(testSecretVariables, DestroyPhase, (&remote{}).runsInRemote)
-+	_, err := CheckSecretVariables(testSecretVariables, DestroyPhase, (&fakeRemote{}).runsInRemote)
- 
- 	require.ErrorIs(t, err, ErrSecretVariablesNeedRemote)
- 	var uErr oktetoErrors.UserError
-@@ -125,7 +138,7 @@ func TestCheckSecretVariablesFailsWithoutEndpoint(t *testing.T) {
- 	s := testSecretVariables
- 	s.Endpoint = ""
- 
--	got, err := CheckSecretVariables(s, DeployPhase, (&remote{inRemote: true}).runsInRemote)
-+	got, err := CheckSecretVariables(s, DeployPhase, (&fakeRemote{inRemote: true}).runsInRemote)
- 
- 	require.ErrorIs(t, err, errSecretVariablesEndpointNotSet)
- 	require.Equal(t, SecretVariables{}, got)
-@@ -135,7 +148,7 @@ func TestCheckSecretVariablesFailsWithoutAction(t *testing.T) {
- 	s := testSecretVariables
- 	s.Action = ""
- 
--	got, err := CheckSecretVariables(s, DeployPhase, (&remote{inRemote: true}).runsInRemote)
-+	got, err := CheckSecretVariables(s, DeployPhase, (&fakeRemote{inRemote: true}).runsInRemote)
- 
- 	require.ErrorIs(t, err, errActionNotSet)
- 	require.EqualError(t, err, "the development environment has catalog secret variables, but OKTETO_ACTION_NAME is not set")
-@@ -146,7 +159,7 @@ func TestCheckSecretVariablesFailsWithInvalidReferences(t *testing.T) {
- 	phases := []Phase{DeployPhase, DestroyPhase}
- 	for _, phase := range phases {
- 		t.Run(string(phase), func(t *testing.T) {
--			r := &remote{inRemote: true}
-+			r := &fakeRemote{inRemote: true}
- 			s := testSecretVariables
- 			s.References = `{"name":`
- 
 ```
 
-**File**: `pkg/cmd/build/logger.go` (modified, +21/-8)
+**File**: `cmd/test/cmd.go` (modified, +67/-1)
 ```diff
-@@ -17,21 +17,17 @@ import (
- 	"context"
- 	"encoding/json"
- 	"fmt"
--	"regexp"
- 	"strings"
+@@ -20,6 +20,7 @@ import (
+ 	"os"
+ 	"os/signal"
+ 	"path"
++	"strings"
  	"time"
  
-+	"github.com/kballard/go-shellquote"
- 	"github.com/moby/buildkit/client"
- 	"github.com/okteto/okteto/pkg/build/buildkit"
- 	oktetoLog "github.com/okteto/okteto/pkg/log"
- 	"github.com/okteto/okteto/pkg/types"
- 	"github.com/tonistiigi/units"
- )
+ 	buildv2 "github.com/okteto/okteto/cmd/build/v2"
+@@ -64,11 +65,15 @@ type Options struct {
+ 	Variables        []string
+ 	// Commands are the values of the --command flag, which replace the commands of the selected test container
+ 	Commands []string
++	// Profiles are the values of the --profile flag, which enable the test containers that have any of them
++	Profiles []string
+ 	Timeout  time.Duration
+ 	Deploy   bool
+ 	NoCache  bool
+ 	// override is the command override resolved from the '--' arguments or the --command flag
+ 	override commandOverride
++	// enabledProfiles are the profiles resolved from the --profile flag or the OKTETO_PROFILES environment variable
++	enabledProfiles []string
+ }
  
--var (
--	nameRegex = regexp.MustCompile(`--name\s+"([^"]+)"`)
--)
--
- const (
- 	// largeContextThreshold is the threshold (in bytes) by which a context is catalogued as large or not (50MB)
- 	largeContextThreshold = 50000000
-@@ -223,9 +219,7 @@ func (t *trace) removeCompletedSteps() {
- 		if v.completed {
- 			// We need to specify the command test in order to not affect okteto deploy on remote
- 			if strings.Contains(v.name, "remote-run test") && v.cached {
--				match := nameRegex.FindStringSubmatch(v.name)
--				if len(match) > 1 {
--					name := match[1]
-+				if name, ok := testNameFromStep(v.name); ok {
- 					oktetoLog.Information("Skipping test container '%s', CACHED", name)
- 				} else {
- 					oktetoLog.Information("Skipping test container, CACHED")
-@@ -236,6 +230,25 @@ func (t *trace) removeCompletedSteps() {
+ type builder interface {
+@@ -87,9 +92,12 @@ func Test(ctx context.Context, ioCtrl *io.Controller, k8sLogger *io.K8sLogger, a
+ 		Use:                   "test [testName...] [flags] [-- COMMAND [args...]]",
+ 		DisableFlagsInUseLine: true,
+ 		Short:                 "Run tests using Remote Execution",
+-		Example: `# Run the test containers defined in the Okteto Manifest
++		Example: `# Run the test containers without profiles defined in the Okteto Manifest
+ okteto test
+ 
++# Run the test containers without profiles and the ones with the 'pre-commit' profile
++okteto test --profile pre-commit
++
+ # Run the 'unit' test container replacing its commands with a single one
+ okteto test unit -- go test ./pkg/api -run TestLogin
+ 
+@@ -101,10 +109,27 @@ okteto test unit --command "go mod download" --command "go test ./pkg/api -run T
+ 				return err
+ 			}
+ 
++			// The profiles are checked before connecting to the cluster with the environment of the process.
++			// They are resolved again once the context loads the .env file and the Okteto Variables
++			profiles, err := resolveProfiles(options.Profiles, os.Getenv(constants.OktetoProfilesEnvVar))
++			if err != nil {
++				return err
++			}
++
++			// The profiles are checked before the override, so using both reports the conflict
++			// instead of the missing test container name required by the override
++			overrideRequested := cmd.ArgsLenAtDash() >= 0 || len(options.Commands) > 0
++			if err := profiles.checkCommandOverride(overrideRequested); err != nil {
++				return err
++			}
++
+ 			testContainers, override, err := parseTestArgs(args, cmd.ArgsLenAtDash(), options.Commands)
+ 			if err != nil {
+ 				return err
+ 			}
++			if err := profiles.checkTestNames(testContainers); err != nil {
++				return err
++			}
+ 			options.override = override
+ 
+ 			stop := make(chan os.Signal, 1)
+@@ -117,6 +142,7 @@ okteto test unit --command "go mod download" --command "go test ./pkg/api -run T
+ 				metadata.Err = err
+ 				metadata.Duration = time.Since(startTime)
+ 				metadata.CommandOverride = override.isSet()
++				metadata.ProfileSelected = len(options.enabledProfiles) > 0
+ 				at.TrackTest(metadata)
+ 				exit <- err
+ 			}()
+@@ -140,6 +166,7 @@ okteto test unit --command "go mod download" --command "go test ./pkg/api -run T
+ 	cmd.Flags().StringVarP(&options.K8sContext, "context", "c", "", "overwrite the current Okteto Context")
+ 	cmd.Flags().StringArrayVarP(&options.Variables, "var", "v", []string{}, "set a variable to be injected in the test commands (can be set more than once)")
+ 	cmd.Flags().StringArrayVar(&options.Commands, "command", []string{}, "replace the commands of the test container, which must be the only one named (can be set more than once, run in order)")
++	cmd.Flags().StringArrayVar(&options.Profiles, "profile", []string{}, "enable a profile to run its test containers along with the ones without profiles (can be set more than once). The OKTETO_PROFILES environment variable overrides it")
+ 	cmd.Flags().DurationVarP(&options.Timeout, "timeout", "t", getDefaultTimeout(), "the duration to wait for the Test Container to run. Any value should contain a corresponding time unit e.g. 1s, 2m, 3h")
+ 	cmd.Flags().StringVar(&options.Name, "name", "", "the name of the Development Environment")
+ 	cmd.Flags().BoolVar(&options.Deploy, "deploy", false, "Force execution of the commands in the 'deploy' section")
+@@ -164,6 +191,11 @@ func doRun(ctx context.Context, servicesToTest []string, options *Options, ioCtr
+ 		return analytics.TestMetadata{}, oktetoErrors.ErrContextIsNotOktetoCluster
+ 	}
+ 
++	// The context loads the .env file and the Okteto Variables into the environment, so they can set OKTETO_PROFILES
++	if err := resolveEnabledProfiles(servicesToTest, options, ioCtrl); err != nil {
++		return analytics.TestMetadata{}, err
++	}
++
+ 	create, err := utils.ShouldCreateNamespace(ctx, okteto.GetContext().Namespace)
+ 	if err != nil {
+ 		return analytics.TestMetadata{}, err
+@@ -231,6 +263,13 @@ func doRun(ctx context.Context, servicesToTest []string, options *Options, ioCtr
+ 		return analytics.TestMetadata{}, err
+ 	}
+ 
++	// The test containers to run are shown when they are selected by profile, as some of them may not run
++	showSelection := len
+```
+
+**File**: `cmd/test/cmd_test.go` (modified, +215/-0)
+```diff
+@@ -20,6 +20,7 @@ import (
+ 
+ 	buildv2 "github.com/okteto/okteto/cmd/build/v2"
+ 	"github.com/okteto/okteto/pkg/build"
++	"github.com/okteto/okteto/pkg/constants"
+ 	"github.com/okteto/okteto/pkg/log/io"
+ 	"github.com/okteto/okteto/pkg/model"
+ 	"github.com/okteto/okteto/pkg/types"
+@@ -30,6 +31,7 @@ import (
+ // TestCommandRejectsInvalidOverride checks that the cobra command passes the arguments after '--'
+ // and the --command flag to parseTestArgs. These errors are returned before connecting to any cluster
+ func TestCommandRejectsInvalidOverride(t *testing.T) {
++	t.Setenv(constants.OktetoProfilesEnvVar, "")
+ 	tests := []struct {
+ 		name        string
+ 		args        []string
+@@ -81,6 +83,219 @@ func TestCommandRejectsInvalidOverride(t *testing.T) {
  	}
  }
  
-+// testNameFromStep returns the --name flag of a `remote-run test` step. The step name is the RUN instruction, where
-+// the flag values are quoted for the shell, so they are read back with the shell's rules
-+func testNameFromStep(step string) (string, bool) {
-+	_, args, found := strings.Cut(step, "remote-run test")
-+	if !found {
-+		return "", false
++// TestCommandRejectsInvalidProfile checks that the cobra command validates the --profile flag.
++// These errors are returned before connecting to any cluster
++func TestCommandRejectsInvalidProfile(t *testing.T) {
++	t.Setenv(constants.OktetoProfilesEnvVar, "")
++	tests := []struct {
++		name        string
++		args        []string
++		expectedErr error
++	}{
++		{
++			name:        "empty profile flag",
++			args:        []string{"--profile", ""},
++			expectedErr: errEmptyProfileFlag,
++		},
++		{
++			name:        "blank profile flag",
++			args:        []string{"--profile", " "},
++			expectedErr: errEmptyProfileFlag,
++		},
++		{
++			name:        "profile flag with test names",
++			args:        []string{"unit", "lint", "--profile", "pre-commit"},
++			expectedErr: errProfileWithTestNames,
++		},
++		{
++			name:        "profile flag with dash override",
++			args:        []string{"unit", "--profile", "pre-commit", "--", "go", "test"},
++			expectedErr: errProfileWithCommandOverride,
++		},
++		{
++			name:        "profile flag with command flag",
++			args:        []string{"unit", "--profile", "pre-commit", "--command", "go test ./..."},
++			expectedErr: errProfileWithCommandOverride,
++		},
++		{
++			name:        "profile flag with dash override and no test name",
++			args:        []string{"--profile", "pre-commit", "--", "go", "test"},
++			expectedErr: errProfileWithCommandOverride,
++		},
++		{
++			name:        "profile flag with command flag and no test name",
++			args:        []string{"--profile", "pre-commit", "--command", "go test ./..."},
++			expectedErr: errProfileWithCommandOverride,
++		},
 +	}
-+	words, err := shellquote.Split(args)
-+	if err != nil {
-+		return "", false
++
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			cmd := Test(context.Background(), io.NewIOController(), nil, nil, nil)
++			cmd.SilenceErrors = true
++			cmd.SilenceUsage = true
++			cmd.SetArgs(tt.args)
++
++			err := cmd.Execute()
++
++			require.ErrorIs(t, err, tt.expectedErr)
++		})
 +	}
-+	for i := 0; i < len(words)-1; i++ {
-+		if words[i] == "--name" {
-+			return words[i+1], true
-+		}
-+	}
-+	return "", false
 +}
 +
- func hasCommandLogs(v *vertexInfo) bool {
- 	return len(v.logs) != 0
- }
++// TestCommandRejectsProfilesFromEnvWithTestNames checks that the profiles of the OKTETO_PROFILES
++// environment variable cannot be combined with test container names, even when the --profile flag is
++// not used. The variable overrides the flag, so an empty flag value is not validated
++func TestCommandRejectsProfilesFromEnvWithTestNames(t *testing.T) {
++	t.Setenv(constants.OktetoProfilesEnvVar, "ci")
++	tests := []struct {
++		name        string
++		args        []string
++		expectedErr string
++	}{
++		{
++			name:        "test names",
++			args:        []string{"unit"},
++			expectedErr: "'OKTETO_PROFILES' cannot be used when naming the test containers to run",
++		},
++		{
++			name:        "test names and an empty profile flag",
++			args:        []string{"unit", "--profile", ""},
++			expectedErr: "'OKTETO_PROFILES' cannot be used when naming the test containers to run",
++		},
++		{
++			name:        "dash override",
++			args:        []string{"unit", "--", "go", "test"},
++			expectedErr: "'OKTETO_PROFILES' cannot be used when overriding the commands of a test container",
++		},
++		{
++			name:        "command flag",
++			args:        []string{"unit", "--command", "go test ./..."},
++			expectedErr: "'OKTETO_PROFILES' cannot be used when overriding the commands of a test container",
++		},
++		{
++			name:        "dash override and no test name",
++			args:        []string{"--", "go", "test"},
++			expectedErr: "'OKTETO_PROFILES' cannot be used when overriding the commands of a test container",
++		},
++	}
++
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			cmd := Test(context.Background(), io.NewIOController(), nil, nil, nil)
++			cmd.SilenceErrors = true
++			cmd.SilenceUsage = true
++			cmd.SetArgs(tt.args)
++
++			err := cmd.Execute()
++
++			require.EqualError(t, err, tt.expectedErr)
++		})
++	}
++}
++
++// TestResolveEnabledProfiles checks the profiles resolved once the context loads the .env file and
++// the Okteto Variables into the environment, which can set OKTETO_PROFILES
++func TestResolveEnabledProfiles(t *testing.T) {
++	tests := []struct {
++		name         string
++		envValue     string
++		flagProfiles []string
++		expected     []string
++	}{
++		{
++			name: "no profiles",
++		},
++		{
++			name:         "profiles from the flag",
++			flagProfiles: []string{"pre-commit"},
++			expec
 ```
 
-**File**: `pkg/cmd/build/logger_test.go` (added, +89/-0)
+**File**: `cmd/test/selection.go` (added, +220/-0)
 ```diff
-@@ -0,0 +1,89 @@
+@@ -0,0 +1,220 @@
 +// Copyright 2026 The Okteto Authors
 +// Licensed under the Apache License, Version 2.0 (the "License");
 +// you may not use this file except in compliance with the License.
@@ -2154,250 +1883,496 @@ Co-authored-by: Claud
 +// See the License for the specific language governing permissions and
 +// limitations under the License.
 +
-+package build
++package test
 +
 +import (
-+	"testing"
++	"errors"
++	"fmt"
++	"slices"
++	"strings"
 +
-+	"github.com/stretchr/testify/assert"
++	"github.com/okteto/okteto/pkg/constants"
++	oktetoErrors "github.com/okteto/okteto/pkg/errors"
++	"github.com/okteto/okteto/pkg/model"
 +)
 +
-+// testStep returns the name BuildKit gives to the remote-run test step of the generated Dockerfile
-+func testStep(flags string) string {
-+	return `[runner 9/9] RUN --mount=type=secret,id=known_hosts mkdir -p $HOME/.ssh && ` +
-+		`/okteto/bin/okteto remote-run test --log-output=json --server-name="$INTERNAL_SERVER_NAME" ` + flags + ` || true`
++const (
++	profileFlagSource = "'--profile'"
++	profileEnvSource  = "'" + constants.OktetoProfilesEnvVar + "'"
++
++	profileFlagHint = `Name the profile of the test containers to run, for example:
++    okteto test --profile pre-commit`
++
++	profileWithTestNamesHint = `Run the test containers either by name or by profile, for example:
++    okteto test unit lint
++    okteto test --profile pre-commit`
++
++	profileEnvConflictHint = `OKTETO_PROFILES can be set in your shell, the .env file or as an Okteto Variable.
++    Set it to an empty value to run test containers by name or replace their commands, for example:
++    OKTETO_PROFILES= okteto test unit`
++
++	noProfilesDefinedHint = `None of the test containers in your Okteto Manifest has a profile.
++    For more information, check the documentation: https://www.okteto.com/docs/reference/okteto-manifest/#test`
++
++	dependencyProfilesHint = `A test container can only depend on test containers without profiles or with an enabled profile.
++    Enable one of the profiles of the dependency too, or update the profiles in your Okteto Manifest`
++)
++
++var (
++	errEmptyProfileFlag             = errors.New("'--profile' cannot be empty")
++	errProfileWithCommandOverride   = errors.New("cannot be used when overriding the commands of a test container")
++	errProfileWithTestNames         = errors.New("cannot be used when naming the test containers to run")
++	errProfileNotFound              = errors.New("no test container has the profile")
++	errNoTestsWithoutProfiles       = errors.New("all the test containers have profiles, so none runs without enabling a profile")
++	errDependencyProfilesNotEnabled = errors.New("none of its profiles is enabled")
++)
++
++// profileSelection holds the enabled profiles and the option that sets them
++type profileSelection struct {
++	profiles []string
++	// source is the option that sets the profiles: the --profile flag or the OKTETO_PROFILES environment variable
++	source string
 +}
 +
-+func TestTestNameFromStep(t *testing.T) {
++// resolveProfiles returns the enabled profiles. The OKTETO_PROFILES environment variable, a
++// comma-separated list of profiles, overrides the values of the --profile flag. The variable is
++// ignored when it has no profiles, so an empty value doesn't override the flag
++func resolveProfiles(flagProfiles []string, envValue string) (profileSelection, error) {
++	if envProfiles := parseProfilesEnv(envValue); len(envProfiles) > 0 {
++		return profileSelection{profiles: envProfiles, source: profileEnvSource}, nil
++	}
++
++	for _, profile := range flagProfiles {
++		if strings.TrimSpace(profile) == "" {
++			return profileSelection{}, oktetoErrors.UserError{
++				E:    errEmptyProfileFlag,
++				Hint: profileFlagHint,
++			}
++		}
++	}
++	return profileSelection{profiles: flagProfiles, source: profileFlagSource}, nil
++}
++
++// parseProfilesEnv splits the value of the OKTETO_PROFILES environment variable into profiles,
++// trimming the spaces around them and ignoring the empty ones
++func parseProfilesEnv(value string) []string {
++	profiles := make([]string, 0)
++	for _, profile := range strings.Split(value, ",") {
++		if profile = strings.TrimSpace(profile); profile != "" {
++			profiles = append(profiles, profile)
++		}
++	}
++	return profiles
++}
++
++func (s profileSelection) isSet() bool {
++	return len(s.profiles) > 0
++}
++
++func (s profileSelection) fromEnv() bool {
++	return s.source == profileEnvSource
++}
++
++// checkCommandOverride returns an error when profiles are enabled and the commands of a test
++// container are replaced ('--' or --command), as that applies to exactly one named test container
++func (s profileSelection) checkCommandOverride(overrideRequested bool) error {
++	if !s.isSet() || !overrideRequested {
++		return nil
++	}
++	err := fmt.Errorf("%s %w", s.source, errProfileWithCommandOverride)
++	if s.fromEnv() {
++		return oktetoErrors.UserError{E: err, Hint: profileEnvConflictHint}
++	}
++	return newCommandOverrideError(err)
++}
++
++// checkTestNames returns an error when profiles are enabled and test containers are named,
++// as the test containers to run are selected either by name or by profile
++func (s profileSelection) checkTestNames(names []string) error {
++	if !s.isSet() || len
+```
+
+**File**: `cmd/test/selection_test.go` (added, +498/-0)
+```diff
+@@ -0,0 +1,498 @@
++// Copyright 2026 The Okteto Authors
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++// http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++package test
++
++import (
++	"slices"
++	"testing"
++
++	"github.com/okteto/okteto/pkg/dag"
++	oktetoErrors "github.com/okteto/okteto/pkg/errors"
++	"github.com/okteto/okteto/pkg/model"
++	"github.com/stretchr/testify/require"
++)
++
++func newProfiledTests() model.ManifestTests {
++	return model.ManifestTests{
++		"unit":        &model.Test{Profiles: []string{"pre-commit"}},
++		"lint":        &model.Test{Profiles: []string{"pre-commit", "release"}},
++		"e2e":         &model.Test{Profiles: []string{"long-running"}, DependsOn: []string{"seed"}},
++		"integration": &model.Test{Profiles: []string{"long-running"}},
++		"seed":        &model.Test{},
++		"vet":         &model.Test{},
++	}
++}
++
++func TestResolveProfiles(t *testing.T) {
 +	tests := []struct {
-+		name     string
-+		step     string
-+		expected string
-+		found    bool
++		name            string
++		flagProfiles    []string
++		envValue        string
++		expected        []string
++		expectedSource  string
++		expectedSet     bool
++		expectedFromEnv bool
 +	}{
 +		{
-+			name:     "plain name",
-+			step:     testStep(`--name unit`),
-+			expected: "unit",
-+			found:    true,
++			name:           "no profiles",
++			expected:       nil,
++			expectedSource: profileFlagSource,
 +		},
 +		{
-+			name:     "name with spaces",
-+			step:     testStep(`--name 'my test'`),
-+			expected: "my test",
-+			found:    true,
++			name:           "profiles from the flag",
++			flagProfiles:   []string{"pre-commit", "release"},
++			expected:       []string{"pre-commit", "release"},
++			expectedSource: profileFlagSource,
++			expectedSet:    true,
 +		},
 +		{
-+			name:     "name with a variable",
-+			step:     testStep(`--name '$HOME'`),
-+			expected: "$HOME",
-+			found:    true,
++			name:            "profiles from the environment variable",
++			envValue:        "pre-commit,release",
++			expected:        []string{"pre-commit", "release"},
++			expectedSource:  profileEnvSource,
++			expectedSet:     true,
++			expectedFromEnv: true,
 +		},
 +		{
-+			name:     "name with a single quote",
-+			step:     testStep(`--name 'it'"'"'s'`),
-+			expected: "it's",
-+			found:    true,
++			name:            "the environment variable overrides the flag",
++			flagProfiles:    []string{"pre-commit"},
++			envValue:        "release",
++			expected:        []string{"release"},
++			expectedSource:  profileEnvSource,
++			expectedSet:     true,
++			expectedFromEnv: true,
 +		},
 +		{
-+			name:     "name followed by a var that holds --name",
-+			step:     testStep(`--name unit --var 'A=--name other'`),
-+			expected: "unit",
-+			found:    true,
++			name:            "the environment variable overrides an empty flag value",
++			flagProfiles:    []string{""},
++			envValue:        "release",
++			expected:        []string{"release"},
++			expectedSource:  profileEnvSource,
++			expectedSet:     true,
++			expectedFromEnv: true,
 +		},
 +		{
-+			name:  "no name",
-+			step:  testStep(`--var A=b`),
-+			found: false,
++			name:            "spaces and empty values of the environment variable are ignored",
++			envValue:        " pre-commit , ,release,",
++			expected:        []string{"pre-commit", "release"},
++			expectedSource:  profileEnvSource,
++			expectedSet:     true,
++			expectedFromEnv: true,
 +		},
 +		{
-+			name:  "unterminated quote",
-+			step:  `[runner 9/9] RUN /okteto/bin/okteto remote-run test --name 'my test`,
-+			found: false,
-+		},
-+		{
-+			name:  "not a test step",
-+			step:  `[runner 9/9] RUN /okteto/bin/okteto remote-run deploy --name unit`,
-+			found: false,
++			name:           "an environment variable without profiles doesn't override the flag",
++			flagProfiles:   []string{"pre-commit"},
++			envValue:       " , ",
++			expected:       []string{"pre-commit"},
++			expectedSource: profileFlagSource,
++			expectedSet:    true,
 +		},
 +	}
 +
 +	for _, tt := range tests {
 +		t.Run(tt.name, func(t *testing.T) {
-+			name, found := testNameFromStep(tt.step)
-+			assert.Equal(t, tt.expected, name)
-+			assert.Equal(t, tt.found, found)
++			selection, err := resolveProfiles(tt.flagProfiles, tt.envValue)
++
++			require.NoError(t, err)
++			require.Equal(t, tt.expected, selection.profiles)
++			require.Equal(t, tt.expectedSource, selection.source)
++			require.Equal(t, tt.expectedFromEnv, selection.fromEnv())
++			require.Equal(t, tt.expectedSet, selection.isSet())
 +		})
 +	}
 +}
-```
-
----
-
-### Incident Patch 2: `533d4362` (2026-11-17)
-**Commit Message**: fix: preserve escaped environment variables in compose stacks (#5253)
-
-* fix: preserve escaped environment variables in compose stacks
-
-Signed-off-by: Alex Castillo <[REDACTED_EMAIL]>
-
-* test: cover compose environment decoder edge cases
-
-Signed-off-by: Alex Castillo <[REDACTED_EMAIL]>
-
----------
-
-Signed-off-by: Alex Castillo <[REDACTED_EMAIL]>
-
-**File**: `pkg/model/stack_expander_test.go` (modified, +27/-0)
-```diff
-@@ -17,6 +17,7 @@ import (
- 	"testing"
- 
- 	"github.com/stretchr/testify/assert"
-+	"github.com/stretchr/testify/require"
- )
- 
- func Test_ExpandStackEnvs(t *testing.T) {
-@@ -168,3 +169,29 @@ volumes:
- 		})
- 	}
- }
 +
-+func TestStackEscapedEnvironment(t *testing.T) {
-+	t.Setenv("ESCAPED_TARGET", "host-value")
-+	t.Setenv("EXPANSION_SOURCE", "${ESCAPED_TARGET}")
-+	t.Setenv("UNSET_TARGET", "")
-+	for name, environment := range map[string]string{
-+		"map":  "      LITERAL: $${ESCAPED_TARGET}\n      INDIRECT: ${EXPANSION_SOURCE}\n      NORMAL: ${ESCAPED_TARGET}\n      UNSET: $${UNSET_TARGET}\n      MULTILINE: |\n        prefix\n        $${ESCAPED_TARGET}\n",
-+		"list": "      - LITERAL=$${ESCAPED_TARGET}\n      - INDIRECT=${EXPANSION_SOURCE}\n      - NORMAL=${ESCAPED_TARGET}\n      - UNSET=$${UNSET_TARGET}\n      - |\n        MULTILINE=prefix\n        $${ESCAPED_TARGET}\n",
-+	} {
-+		for mode, compose := range map[string]bool{"compose": true, "stack": false} {
-+			t.Run(name+"/"+mode, func(t *testing.T) {
-+				s, err := ReadStack([]byte("services:\n  app:\n    image: nginx\n    environment:\n"+environment), compose)
-+				require.NoError(t, err)
-+				values := map[string]string{}
-+				for _, variable := range s.Services["app"].Environment {
-+					values[variable.Name] = variable.Value
-+				}
-+				assert.Equal(t, "${ESCAPED_TARGET}", values["LITERAL"])
-+				assert.Equal(t, "${ESCAPED_TARGET}", values["INDIRECT"])
-+				assert.Equal(t, "host-value", values["NORMAL"])
-+				assert.Equal(t, "${UNSET_TARGET}", values["UNSET"])
-+				assert.Equal(t, "prefix\n${ESCAPED_TARGET}\n", values["MULTILINE"])
-+			})
-+		}
++func TestResolveProfilesRejectsEmptyFlag(t *testing.T) {
++	tests := []struct {
++		name         string
++		flagProfiles []string
++	}{
++		{
++			name:         "empty profile",
++			flagProfiles: []string{"pre-commit", ""},
++		},
++		{
++			name:         "blank profile",
++			flagProfiles: []string{" "},
++		},
++	}
++
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			_, err := resolveProfiles(tt.flagProfiles, "")
++
++			require.ErrorIs(t, err, errEmptyProfileFlag)
++			var userErr oktetoErrors.UserError
++			require.ErrorAs(t, err, &userErr)
++			require.Equal(t, profileFlagHint, userErr.Hint)
++		})
 +	}
 +}
++
++func TestProfileSelectionWithoutConflicts(t *testing.T) {
++	tests := []struct {
++		name              string
++		selection         profileSelection
++		names             []string
++		overrideRequested bool
++	}{
++		{
++			name:              "test names and command override without profiles",
++			selection:         profileSelection{source: profileFlagSource},
++			names:             []string{"unit"},
++			overrideRequested: true,
++		},
++		{
++			name:      "profiles without test names or command override",
++			selection: profileSelection{profiles: []string{"pre-commit"}, source: profileEnvSource},
++		},
++	}
++
++	for _, tt := range tests {
++	
 ```
 
-**File**: `pkg/model/stack_serializer.go` (modified, +31/-1)
+**File**: `integration/commands/test.go` (modified, +16/-1)
 ```diff
-@@ -20,6 +20,7 @@ import (
- 	"path"
+@@ -19,6 +19,8 @@ import (
+ 	"os"
+ 	"os/exec"
  	"path/filepath"
- 	"regexp"
-+	"sort"
- 	"strconv"
- 	"strings"
- 	"time"
-@@ -162,7 +163,7 @@ type ServiceRaw struct {
- 	EnvFilesSneakCase        env.Files              `yaml:"env_file,omitempty"`
- 	Args                     ArgsStack              `yaml:"args,omitempty"`
- 	Entrypoint               CommandStack           `yaml:"entrypoint,omitempty"`
--	Environment              env.Environment        `yaml:"environment,omitempty"`
-+	Environment              stackEnvironment       `yaml:"environment,omitempty"`
- 	Expose                   []PortRaw              `yaml:"expose,omitempty"`
- 	Ports                    []PortRaw              `yaml:"ports,omitempty"`
- 	CapDrop                  []apiv1.Capability     `yaml:"capDrop,omitempty"`
-@@ -171,6 +172,35 @@ type ServiceRaw struct {
- 	Public                   bool                   `yaml:"public,omitempty"`
++	"slices"
++	"strings"
+ 
+ 	"github.com/okteto/okteto/pkg/constants"
+ 	"github.com/okteto/okteto/pkg/model"
+@@ -38,6 +40,10 @@ type TestOptions struct {
+ 	Commands []string
+ 	// CommandArgs are passed after '--', replacing the commands of the test container
+ 	CommandArgs []string
++	// Profiles are passed as --profile flags, enabling the test containers that have them
++	Profiles []string
++	// ProfilesEnv is the value of the OKTETO_PROFILES environment variable, which overrides the --profile flags
++	ProfilesEnv string
+ 	NoCache     bool
  }
  
-+// stackEnvironment decodes values already expanded by ExpandStackEnvs.
-+// The shared env.Environment decoder also expands values, which would consume
-+// escaped dollars and interpolate variable contents a second time.
-+type stackEnvironment []env.Var
-+
-+func (e *stackEnvironment) UnmarshalYAML(unmarshal func(interface{}) error) error {
-+	values := make(map[string]string)
-+	var list []string
-+	if err := unmarshal(&list); err == nil {
-+		for _, entry := range list {
-+			parts := strings.SplitN(entry, "=", 2)
-+			value := os.Getenv(parts[0])
-+			if len(parts) == 2 {
-+				value = parts[1]
-+			}
-+			values[parts[0]] = value
-+		}
-+	} else if err := unmarshal(&values); err != nil {
-+		return err
+@@ -63,7 +69,10 @@ func getTestCmd(oktetoPath string, testOptions *TestOptions) *exec.Cmd {
+ 	if testOptions.NoCache {
+ 		cmd.Args = append(cmd.Args, "--no-cache")
+ 	}
+-	cmd.Env = os.Environ()
++	// OKTETO_PROFILES is only set from ProfilesEnv, so the one of the host doesn't change the test containers to run
++	cmd.Env = slices.DeleteFunc(os.Environ(), func(env string) bool {
++		return strings.HasPrefix(env, constants.OktetoProfilesEnvVar+"=")
++	})
+ 	if v := os.Getenv(model.OktetoURLEnvVar); v != "" {
+ 		cmd.Env = append(cmd.Env, fmt.Sprintf("%s=%s", model.OktetoURLEnvVar, v))
+ 	}
+@@ -89,6 +98,12 @@ func getTestCmd(oktetoPath string, testOptions *TestOptions) *exec.Cmd {
+ 	for _, command := range testOptions.Commands {
+ 		cmd.Args = append(cmd.Args, "--command", command)
+ 	}
++	for _, profile := range testOptions.Profiles {
++		cmd.Args = append(cmd.Args, "--profile", profile)
 +	}
-+	result := make(stackEnvironment, 0, len(values))
-+	for name, value := range values {
-+		result = append(result, env.Var{Name: name, Value: value})
++	if testOptions.ProfilesEnv != "" {
++		cmd.Env = append(cmd.Env, fmt.Sprintf("%s=%s", constants.OktetoProfilesEnvVar, testOptions.ProfilesEnv))
 +	}
-+	sort.SliceStable(result, func(i, j int) bool { return result[i].Name < result[j].Name })
-+	*e = result
-+	return nil
-+}
-+
- // serviceAccountExtension is the compose service extension that sets the pod ServiceAccount
- const serviceAccountExtension = "x-okteto-service-account"
- 
+ 	// '--' must be the last argument, as everything after it is the command to run
+ 	if len(testOptions.CommandArgs) > 0 {
+ 		cmd.Args = append(cmd.Args, "--")
 ```
 
-**File**: `pkg/model/stack_serializer_test.go` (modified, +18/-5)
+**File**: `integration/test/profile_test.go` (added, +234/-0)
 ```diff
-@@ -2048,10 +2048,21 @@ func Test_validateEnvFiles(t *testing.T) {
- 
- func Test_Environment(t *testing.T) {
- 	tests := []struct {
--		name        string
--		manifest    []byte
--		environment env.Environment
-+		name          string
-+		manifest      []byte
-+		environment   env.Environment
-+		expectedError bool
- 	}{
-+		{
-+			name:          "invalid scalar environment",
-+			manifest:      []byte("services:\n  app:\n    image: okteto/vote:1\n    environment: FOO=bar"),
-+			expectedError: true,
-+		},
-+		{
-+			name:        "duplicate list entry",
-+			manifest:    []byte("services:\n  app:\n    image: okteto/vote:1\n    environment:\n      - A=1\n      - A=2"),
-+			environment: env.Environment{env.Var{Name: "A", Value: "2"}},
-+		},
- 		{
- 			name:        "envs",
- 			manifest:    []byte("services:\n  app:\n    environment:\n        env: production\n    image: okteto/vote:1"),
-@@ -2084,9 +2095,11 @@ func Test_Environment(t *testing.T) {
- 			t.Setenv("OKTETO_ENVTEST", "myvalue")
- 
- 			s, err := ReadStack(tt.manifest, false)
--			if err != nil {
--				t.Fatal(err)
-+			if tt.expectedError {
-+				require.Error(t, err)
-+				return
- 			}
-+			require.NoError(t, err)
- 			assert.Equal(t, tt.environment, s.Services["app"].Environment)
- 			if len(s.Services["app"].Environment) != len(tt.environment) {
- 				t.Fatalf("Bad unmarshal of envs")
+@@ -0,0 +1,234 @@
++//go:build integration
++// +build integration
++
++// Copyright 2026 The Okteto Authors
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++// http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++package test
++
++import (
++	"os"
++	"path/filepath"
++	"strings"
++	"testing"
++
++	"github.com/okteto/okteto/integration"
++	"github.com/okteto/okteto/integration/commands"
++	"github.com/stretchr/testify/require"
++)
++
++const oktetoManifestWithProfiledTests = `
++test:
++  seed:
++    context: .
++    image: alpine
++    commands:
++      - echo "SEED-FROM-MANIFEST"
++  unit:
++    context: .
++    image: alpine
++    profiles: [pre-commit]
++    commands:
++      - echo "UNIT-FROM-MANIFEST"
++  lint:
++    context: .
++    image: alpine
++    profiles: [pre-commit, release]
++    commands:
++      - echo "LINT-FROM-MANIFEST"
++  e2e:
++    context: .
++    image: alpine
++    profiles: [long-running]
++    depends_on:
++      - seed
++    commands:
++      - echo "E2E-FROM-MANIFEST"
++`
++
++// TestOktetoTestRunsTestsWithoutProfiles validates that okteto test only runs the test containers
++// without profiles
++func TestOktetoTestRunsTestsWithoutProfiles(t *testing.T) {
++	integration.SkipIfNotOktetoCluster(t)
++	t.Parallel()
++	oktetoPath, err := integration.GetOktetoPath()
++	require.NoError(t, err)
++
++	dir := t.TempDir()
++	testNamespace, namespaceOpts := createTestNamespace(t, oktetoPath, dir, oktetoManifestWithProfiledTests)
++
++	out, err := commands.RunOktetoTestAndGetOutput(oktetoPath, &commands.TestOptions{
++		Workdir:    dir,
++		Namespace:  testNamespace,
++		OktetoHome: dir,
++		Token:      token,
++		LogOutput:  "plain",
++		NoCache:    true,
++	})
++	require.NoError(t, err)
++
++	require.Contains(t, out, "Test containers to run: seed")
++	require.Contains(t, out, "SEED-FROM-MANIFEST")
++	require.NotContains(t, out, "UNIT-FROM-MANIFEST")
++	require.NotContains(t, out, "LINT-FROM-MANIFEST")
++	require.NotContains(t, out, "E2E-FROM-MANIFEST")
++
++	require.ElementsMatch(t, []string{"seed"}, getInsightsTestNames(t, dir, testNamespace))
++
++	require.NoError(t, commands.RunOktetoDeleteNamespace(oktetoPath, namespaceOpts))
++}
++
++// TestOktetoTestRunsProfile validates that --profile runs the test containers of the profile along
++// with the ones without profiles
++func TestOktetoTestRunsProfile(t *testing.T) {
++	integration.SkipIfNotOktetoCluster(t)
++	t.Parallel()
++	oktetoPath, err := integration.GetOktetoPath()
++	require.NoError(t, err)
++
++	dir := t.TempDir()
++	testNamespace, namespaceOpts := createTestNamespace(t, oktetoPath, dir, oktetoManifestWithProfiledTests)
++
++	out, err := commands.RunOktetoTestAndGetOutput(oktetoPath, &commands.TestOptions{
++		Workdir:    dir,
++		Namespace:  testNamespace,
++		OktetoHome: dir,
++		Token:      token,
++		LogOutput:  "plain",
++		NoCache:    true,
++		Profiles:   []string{"pre-commit"},
++	})
++	require.NoError(t, err)
++
++	require.Contains(t, out, "Test containers to run: lint, seed, unit")
++	require.Contains(t, out, "LINT-FROM-MANIFEST")
++	require.Contains(t, out, "SEED-FROM-MANIFEST")
++	require.Contains(t, out, "UNIT-FROM-MANIFEST")
++	require.NotContains(t, out, "E2E-FROM-MANIFEST")
++
++	require.ElementsMatch(t, []string{"lint", "seed", "unit"}, getInsightsTestNames(t, dir, testNamespace))
++
++	require.NoError(t, commands.RunOktetoDeleteNamespace(oktetoPath, namespaceOpts))
++}
++
++// TestOktetoTestProfilesFromEnvOverrideFlag validates that the OKTETO_PROFILES environment variable
++// overrides the --profile flag, and that the test containers of a profile run after their dependencies
++func TestOktetoTestProfilesFromEnvOverrideFlag(t *testing.T) {
++	integration.SkipIfNotOktetoCluster(t)
++	t.Parallel()
++	oktetoPath, err := integration.GetOktetoPath()
++	require.NoError(t, err)
++
++	dir := t.TempDir()
++	testNamespace, namespaceOpts := createTestNamespace(t, oktetoPath, dir, oktetoManifestWithProfiledTests)
++
++	out, err := commands.RunOktetoTestAndGetOutput(oktetoPath, &commands.TestOptions{
++		Workdir:     dir,
++		Namespace:   testNamespace,
++		OktetoHome:  dir,
++		Token:       token,
++		LogOutput:   "plain",
++		NoCache:     true,
++		Profiles:    []string{"pre-commit"},
++		ProfilesEnv: "long-running",
++	})
++	require.NoError(t, err)
++
++	require.Contains(t, out, "Using the profiles from OKTETO_PROFILES: long-running")
++	require.Contains(t, out, "Test containers to run: seed, e2e")
++	seed := strings.Index(out, "SEED-FROM-MANIFEST")
++	require.NotEqual(t, -1, seed)
++	require.Greater(t, strings.Index(out, "E2E-FROM-MANIFEST"), seed)
++	require.NotContains(t, out, "UNIT-FROM-MANIFEST"
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5265** (2026-11-17): fix(remote): shell-quote --name and --var values in remote deploy, destroy and test (@jLopezbarb)
-- **PR #5264** (2026-11-13): chore(deps): Update module github.com/hashicorp/go-getter to v1.8.10 (@oktetobot)
-- **PR #5261** (2026-11-13): build(deps): bump renovatebot/github-action from 46.3.12 to 46.3.13 (@dependabot[bot])
-- **PR #5260** (2026-11-13): Upgrade buildkit dependency to v0.35.0-okteto1 (@devin-ai-integration[bot])
-- **PR #5256** (2026-11-11): chore(deps): Update module golang.org/x/crypto to v0.58.0 (@oktetobot)
-- **PR #5255** (2026-11-11): build(deps): bump rack from 3.2.6 to 3.2.8 in /samples/ruby (@dependabot[bot])
+- **PR #5289** (2026-11-25): PROD-561: Select the test containers to run with profiles in okteto test (@ifbyol)
+- **PR #5286** (2026-11-23): docs: update the links to the docs and use the short anchors of the Okteto Manifest reference (@pchico83)
+- **PR #5285** (2026-11-23): chore(deps): Update k8s.io/utils digest to ca04ba5 (@oktetobot)
+- **PR #5284** (closed): docs: point the CLI messages and the README to the current docs pages (@pchico83)
+- **PR #5282** (2026-11-24): fix(up)!: require 'image' when 'autocreate' is enabled (@pchico83)
+- **PR #5281** (2026-11-20): Upgrade buildkit dependency to v0.35.1-okteto1 (@devin-ai-integration[bot])
 
 ---
 
@@ -2417,34 +2392,46 @@ Signed-off-by: Alex Castillo <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. remote): shell-quote --name and --var values in remote deploy, destroy and test
+## X. PROD-561: Select the test containers to run with profiles in okteto test
 
 **RULE**:
-When implementing operations in `cmd/deploy/remote.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in okteto/okteto. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cmd/context/create_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in okteto/okteto. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0c260262`: remote): shell-quote --name and --var values in remote deploy, destroy and test. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ea8eb1a4`: PROD-561: Select the test containers to run with profiles in okteto test. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/deploy/remote.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/context/create_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-// GetCommandFlags returns the remote-run flags with the name and the variables, quoted for the shell
-	commandFlags = append(commandFlags, remote.CommandFlag("name", name))
-			varsToAddForDeploy = append(varsToAddForDeploy, remote.CommandFlag("var", v.Name+"="+v.Value))
+		{
+			name: "empty local vars are not overridden",
+			mockEnv: func(t *testing.T) {
+				t.Setenv("VAR5", "")
+			},
+			mockfs: func() afero.Fs {
+				fs := afero.NewMemMapFs()
+				_ = afero.WriteFile(fs, ".env", []byte("VAR5=.env"), 0644)
+				return fs
+			},
+			expected: expected{
+				vars: map[string]string{
+					"VAR5": "",
+				},
+			},
+		},
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	commandFlags = append(commandFlags, fmt.Sprintf("--name %q", name))
-			varsToAddForDeploy = append(varsToAddForDeploy, fmt.Sprintf("--var %s=%q", v.Name, v.Value))
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0c260262` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ea8eb1a4` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

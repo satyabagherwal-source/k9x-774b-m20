@@ -13140,3 +13140,6 @@ Every entry in this ledger must capture:
 | `learn-github-zoontek-react-native-bootsplash` | `https://github.com/zoontek/react-native-bootsplash` | `8eda4c0b` | Multi-dimensional audit evidence | 2026-11-25T14:23:51.460Z |
 | `learn-github-skyhook-io-radar` | `https://github.com/skyhook-io/radar` | `bf2f2dc1` | Multi-dimensional audit evidence | 2026-11-25T14:23:55.507Z |
 | `learn-github-gravitl-netmaker` | `https://github.com/gravitl/netmaker` | `325c998a` | Multi-dimensional audit evidence | 2026-11-25T14:23:58.043Z |
+| `learn-huggingface-burner22-numbat` | `https://huggingface.co/burner22/numbat` | `hf-burner2` | Multi-dimensional audit evidence | 2026-11-25T14:32:16.961Z |
+| `learn-github-okteto-okteto` | `https://github.com/okteto/okteto` | `ea8eb1a4` | Multi-dimensional audit evidence | 2026-11-25T14:32:27.012Z |
+| `learn-dom-k-2ef72417` | `project://okteto-okteto` | `ea8eb1a4` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/okteto-okteto-learnings.md` | 2026-11-25T14:33:01.864Z |
