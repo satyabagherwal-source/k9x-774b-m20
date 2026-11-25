@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T08:13:32.350Z",
+  "last_updated": "2026-11-25T08:29:34.665Z",
   "total_records": 2647,
   "domains": {
     "A": {
@@ -16905,8 +16905,8 @@
       "title": "Architecture Intelligence: trinodb/trino Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-trinodb-trino-architecture-intelligence-trinodb-trino-core-invariants.md",
       "repository": "trinodb/trino",
-      "content_hash": "ec853af4c100e33bcb5c5404df92c59ac76bd0b0de5ae4f8bc57f48de0af033f",
-      "created_at": "2026-11-24T14:24:18.962Z"
+      "content_hash": "f65e7775ca012616a9852bc54847268fe4ee7d65955a9e87b2d44858dffdf5c8",
+      "created_at": "2026-11-25T08:29:29.686Z"
     },
     "domain_intelligence-architecture-intelligence-oxc-project-oxc-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-oxc-project-oxc-learnings-core-invariants",
@@ -23587,8 +23587,8 @@
       "title": "Architecture Intelligence: trinodb-trino-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-trinodb-trino-learnings-architecture-intelligence-trinodb-trino-learnings-core-i.md",
       "repository": "trinodb-trino-learnings",
-      "content_hash": "4d61aab11d3417f0667d98b4ce5afa8591b4830958a4179531d013e96a1920be",
-      "created_at": "2026-11-24T14:24:25.700Z"
+      "content_hash": "bc6b0a2e10a44ffa2b971381c17922c45eb73b9e99ff5527ee3612ee28f4c910",
+      "created_at": "2026-11-25T08:29:34.665Z"
     },
     "domain_intelligence-content-information-intelligence-adobe-structured-data-validator-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-adobe-structured-data-validator-core-invariants",
@@ -25379,8 +25379,8 @@
       "title": "Quality & Verification Intelligence: fallow-rs/fallow Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-fallow-rs-fallow-quality-verification-intelligence-fallow-rs-fallow-core-invaria.md",
       "repository": "fallow-rs/fallow",
-      "content_hash": "46e955234c2975add17ae9900111058bed6a1e06178ac8d638c91ee855165bc4",
-      "created_at": "2026-11-16T23:03:39.039Z"
+      "content_hash": "5e8a93ffa365b5cd18ce38666ab4a0315a4cabf7730978cbb8d43bc3a5408127",
+      "created_at": "2026-11-25T08:29:19.243Z"
     },
     "domain_intelligence-content-information-intelligence-sozercan-kaset-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-sozercan-kaset-core-invariants",
@@ -25397,8 +25397,8 @@
       "title": "Quality & Verification Intelligence: fallow-rs-fallow-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-fallow-rs-fallow-learnings-quality-verification-intelligence-fallow-rs-fallow-le.md",
       "repository": "fallow-rs-fallow-learnings",
-      "content_hash": "77dbe8270f6fc256cdb8c86655eec6f29f25dafeb03f9ea38e667436c636b88b",
-      "created_at": "2026-11-16T23:03:51.168Z"
+      "content_hash": "df2ebe31b9b299a982d172c72f3a3540c4e50be068373b09c50566c088e3a5e7",
+      "created_at": "2026-11-25T08:29:33.240Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-abenzerps-qwen-image-2-1-turbo-quantized-lear": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-abenzerps-qwen-image-2-1-turbo-quantized-lear",
@@ -28939,8 +28939,8 @@
       "title": "Research & Knowledge Intelligence: ornith-ai/Ornith-1.5-122B Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ornith-ai-ornith-1-5-122b-research-knowledge-intelligence-ornith-ai-ornith-1-.md",
       "repository": "ornith-ai/Ornith-1.5-122B",
-      "content_hash": "7defe27ec55099cf22890a17ae1b8901078f5f016e363d9fa09a240a1c5089dc",
-      "created_at": "2026-11-21T16:18:41.975Z"
+      "content_hash": "6d06bdf2d727448928d40b893519a4a4aa7394518758183ec2f7555a617a9be8",
+      "created_at": "2026-11-25T08:29:20.472Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-ornith-ai-ornith-1-5-122b-learnings-core-inva": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-ornith-ai-ornith-1-5-122b-learnings-core-inva",
@@ -28948,8 +28948,8 @@
       "title": "Research & Knowledge Intelligence: hf-ornith-ai-ornith-1.5-122b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ornith-ai-ornith-1-5-122b-learnings-research-knowledge-intelligence-hf-ornith.md",
       "repository": "hf-ornith-ai-ornith-1.5-122b-learnings",
-      "content_hash": "55c501e4bf8a3b6b324daa1f43ea73ff3202a6ffc3efc64af22fff56f2edc440",
-      "created_at": "2026-11-21T16:19:04.341Z"
+      "content_hash": "fd3713b70244e77cc9b67f3a3b1947f512088341aac31b53750b0ab1b7f36cdb",
+      "created_at": "2026-11-25T08:29:33.855Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-deepseek-v4-1-flash-1017-abliterated-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-deepseek-v4-1-flash-1017-abliterated-",

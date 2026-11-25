@@ -3183,10 +3183,10 @@
     "repository": "fallow-rs/fallow",
     "platform": "github",
     "sourceUrl": "https://github.com/fallow-rs/fallow",
-    "sourceVersion": "40407499",
+    "sourceVersion": "cec86af5",
     "license": "MIT",
-    "contentHash": "f9669db37d7a81eb4fce5223021821b47fa468a76782eb240b5888915619e095",
-    "lastHarvestedAt": "2026-11-24T06:46:13.262Z",
+    "contentHash": "03ced384e98823133ab14d5023005109aa19d8e9ddbd0a34ae313dc78864941c",
+    "lastHarvestedAt": "2026-11-25T08:29:18.768Z",
     "learningId": "learn-github-fallow-rs-fallow"
   },
   "expo-create-react-native-app": {
@@ -5073,10 +5073,10 @@
     "repository": "trinodb/trino",
     "platform": "github",
     "sourceUrl": "https://github.com/trinodb/trino",
-    "sourceVersion": "39a37d40",
+    "sourceVersion": "6af3a192",
     "license": "Apache-2.0",
-    "contentHash": "f7ee3f636a6350375a5451076041161aa36add6e53d46492396889a3b6578331",
-    "lastHarvestedAt": "2026-11-24T14:24:18.522Z",
+    "contentHash": "af8ee5533de1795056b9b9ca5f6daa178f2a8d961f04f2c880bb8fa9522eb547",
+    "lastHarvestedAt": "2026-11-25T08:29:29.254Z",
     "learningId": "learn-github-trinodb-trino"
   },
   "pinterest-gestalt": {
@@ -10625,8 +10625,8 @@
     "sourceUrl": "https://huggingface.co/ornith-ai/Ornith-1.5-122B",
     "sourceVersion": "hf-ornith-ai-ornith-1.5-122b",
     "license": "Open-Source",
-    "contentHash": "1bd0261b92b7ac1a55d6106390160064576f90a03b4b7545dc61b8dc0f5082e0",
-    "lastHarvestedAt": "2026-11-21T16:18:41.754Z",
+    "contentHash": "166aa0b9ba938d99a7acffcc010b8dceb07277b95a835ab24f85bae6224a16ee",
+    "lastHarvestedAt": "2026-11-25T08:29:20.246Z",
     "learningId": "learn-huggingface-ornith-ai-ornith-1-5-122b"
   },
   "lokoe-mehdi-scouter": {

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T14:24:25.391Z",
+  "timestamp": "2026-11-25T08:29:34.343Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-trinodb-trino-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [trinodb-trino-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T14:24:25.391Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T08:29:34.343Z`  
 > **Learning ID**: `LEARN-EVO-trinodb-trino-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), B (Product Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 77%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), J (Search & Distribution Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 74%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from trinodb-trino-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/trinodb-trino-learnings.md`  
 > **Source**: github ([https://github.com/trinodb/trino](https://github.com/trinodb/trino))  
-> **Source Version**: `39a37d40`  
+> **Source Version**: `6af3a192`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T14:24:17.395Z  
+> **Timestamp**: 2026-11-25T08:29:28.113Z  
 > **Learning ID**: `learn-github-trinodb-trino`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/trinodb-trino-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/trinodb/trino](https://github.com/trinodb/trino))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T14:24:17.390Z  
+> **Harvest Timestamp**: 2026-11-25T08:29:28.108Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Official repository of Trino, the distributed SQL query engine for big data, formerly known as PrestoSQL (https://trino.io)
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 13542 stars
+- **Stars / Engagement**: 13544 stars
 
 ---
 
@@ -1882,254 +1882,315 @@ export const SqlBlock = ({ language, code }) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `11a3933b` (2026-08-19)
-**Commit Message**: Speed up null position filtering on validity bitmaps
+### Incident Patch 1: `6af3a192` (2026-10-26)
+**Commit Message**: Support reading encrypted Iceberg deletion vectors
 
-BenchmarkNullablePositions, 8192 rows, median of 3 interleaved runs.
-Cases without nulls are left out because callers skip those blocks.
+Iceberg encrypts deletion vector Puffin files as AES-GCM streams and
+records the key, AAD prefix and encrypted file length in the key
+metadata. Pass these to workers and decrypt the deletion vector blob
+before deserializing it.
 
-Blocks  Nulls  Kind        Before (ns)  After (ns)  Change
-1       0.01   DICTIONARY       11,794       8,283    -30%
-1       0.01   VALUE            10,080       7,735    -23%
-1       0.5    DICTIONARY       11,726       7,991    -32%
-1       0.5    VALUE            11,441       6,622    -42%
-4       0.01   DICTIONARY       37,813      31,285    -17%
-4       0.01   MIXED            33,478      21,444    -36%
-4       0.01   VALUE            30,101      11,238    -63%
-4       0.5    DICTIONARY       39,225      23,155    -41%
-4       0.5    MIXED            33,430      11,881    -64%
-4       0.5    VALUE            30,551       2,070    -93%
-
-**File**: `core/trino-main/src/main/java/io/trino/operator/join/NullablePositions.java` (modified, +95/-75)
+**File**: `plugin/trino-iceberg/src/main/java/io/trino/plugin/iceberg/IcebergPageSourceProvider.java` (modified, +55/-6)
 ```diff
-@@ -22,6 +22,13 @@
- import java.util.Arrays;
- import java.util.Optional;
+@@ -59,15 +59,16 @@
+ import io.trino.plugin.hive.orc.OrcPageSource;
+ import io.trino.plugin.hive.parquet.ParquetPageSource;
+ import io.trino.plugin.iceberg.IcebergParquetColumnIOConverter.FieldContext;
+-import io.trino.plugin.iceberg.IcebergSplit.ParquetFileDecryptionData;
+ import io.trino.plugin.iceberg.delete.CallerDrainedExecutor;
+ import io.trino.plugin.iceberg.delete.DeleteFile;
+ import io.trino.plugin.iceberg.delete.DeleteManager;
+ import io.trino.plugin.iceberg.delete.DeleteManager.DeleteLoadContext;
+ import io.trino.plugin.iceberg.delete.DeleteManager.SerializedDeletionVector;
+ import io.trino.plugin.iceberg.delete.DeletePageSourceProvider;
+ import io.trino.plugin.iceberg.delete.DeletionVector;
++import io.trino.plugin.iceberg.encryption.DeletionVectorDecryptionData;
+ import io.trino.plugin.iceberg.encryption.EncryptionManagerFactory;
++import io.trino.plugin.iceberg.encryption.ParquetFileDecryptionData;
+ import io.trino.plugin.iceberg.fileio.ForwardingFileIoFactory;
+ import io.trino.plugin.iceberg.fileio.ForwardingInputFile;
+ import io.trino.plugin.iceberg.system.files.FilesTablePageSource;
+@@ -118,10 +119,13 @@
+ import org.apache.iceberg.Schema;
+ import org.apache.iceberg.SchemaParser;
+ import org.apache.iceberg.avro.AvroSchemaUtil;
++import org.apache.iceberg.encryption.AesGcmInputFile;
+ import org.apache.iceberg.encryption.EncryptingFileIO;
+ import org.apache.iceberg.encryption.EncryptionManager;
+ import org.apache.iceberg.io.FileIO;
++import org.apache.iceberg.io.IOUtil;
+ import org.apache.iceberg.io.InputFile;
++import org.apache.iceberg.io.SeekableInputStream;
+ import org.apache.iceberg.mapping.MappedField;
+ import org.apache.iceberg.mapping.MappedFields;
+ import org.apache.iceberg.mapping.NameMapping;
+@@ -141,6 +145,7 @@
+ import java.io.IOException;
+ import java.io.UncheckedIOException;
+ import java.nio.ByteBuffer;
++import java.security.GeneralSecurityException;
+ import java.util.ArrayList;
+ import java.util.HashMap;
+ import java.util.List;
+@@ -169,6 +174,7 @@
+ import static io.airlift.slice.SizeOf.instanceSize;
+ import static io.airlift.slice.SizeOf.sizeOf;
+ import static io.airlift.slice.Slices.utf8Slice;
++import static io.airlift.slice.Slices.wrappedBuffer;
+ import static io.trino.geospatial.serde.JtsGeometrySerde.OGC_CRS84_SRID;
+ import static io.trino.geospatial.serde.JtsGeometrySerde.wkbToEwkb;
+ import static io.trino.memory.context.AggregatedMemoryContext.newAggregatedMemoryContext;
+@@ -242,6 +248,7 @@
+ import static org.apache.iceberg.FileContent.POSITION_DELETES;
+ import static org.apache.iceberg.MetadataColumns.ROW_POSITION;
+ import static org.apache.iceberg.TableProperties.ENCRYPTION_TABLE_KEY;
++import static org.apache.iceberg.encryption.Ciphers.GCM_STREAM_MAGIC_STRING;
+ import static org.joda.time.DateTimeZone.UTC;
  
-+import static io.trino.spi.block.Bitmap.allocateWords;
-+import static io.trino.spi.block.Bitmap.getBits;
-+import static io.trino.spi.block.Bitmap.hasUnsetBit;
-+import static io.trino.spi.block.Bitmap.isSet;
-+import static io.trino.sql.gen.columnar.ColumnarFilterUtils.filterSetBitsRange;
-+import static java.lang.Math.min;
-+
- public final class NullablePositions
- {
-     private NullablePositions() {}
-@@ -37,7 +44,7 @@ public static Optional<int[]> getNonNullPositions(Block[] nullableBlocks, int nu
-             return Optional.empty();
-         }
-         if (nullableBlocksCount == 1) {
--            // Special case for a single nullable block to avoid the need for explicit `boolean[] isNull`
-+            // Special case for a single nullable block to avoid the need for an explicit validity accumulator
-             int[] outputPositions = new int[positionCount];
-             int outputPositionsCount = getNonNullPositions(nullableBlocks[0], positionCount, outputPositions);
-             if (outputPositionsCount == positionCount) {
-@@ -46,15 +53,13 @@ public static Optional<int[]> getNonNullPositions(Block[] nullableBlocks, int nu
-             return Optional.of(Arrays.copyOf(outputPositions, outputPositionsCount));
-         }
- 
--        boolean[] isNull = new boolean[positionCount];
--        for (int i = 0; i < nullableBlocksCount - 1; i++) {
--            Block nullableBlock = nullableBlocks[i];
--            getNonNullPositions(nullableBlock, isNull);
-+        long[] valueIsValid = allocateWords(positionCount, true);
-+        for (int i = 0; i < nullableBlocksCount; i++) {
-+            retainNonNullPositions(nullableBlocks[i], valueIsValid, positionCount);
-         }
- 
-         int[] outputPositions = new int[positionCount];
--        // For the last nullable block, we need to fill outputPositions and count non-null positions
--        int outputPositionsCount = getNonNullPositionsLast(nullableBlocks[nullableBlocksCount - 1], isNull, outputPositions);
-+        int outputPositionsCount = filterSetBitsRange(valueIsValid, 0, 0, positionCount, outputPositions);
-         if (outputPositionsCount == positionCount) {
-             return Optional.empty();
-         }
-@@ -71,30 +76,38 @@ private static int getNonNullPositions(Block nullableBlock, int positionCount, i
-             }
-             case DictionaryBlock dictionaryBlock -> {
-                 ValueBlock dictionary = dictionaryBlock.getDictionary();
--                Optional<Bitmap> dictionaryValidity = dictionary.getValidityBitmap();
--                if (dictionaryValidity.isPresent()) {
-+                if (hasNulls(dictionary)) {
-                     int outputPositionCount = 0;
--                    long[] dictionaryIsValid = dictionaryValidity.get().getRawWords();
--                    int validityOffset = dictionaryValidity.get().getRawBitOffset();
--                    for (int position = 0; position < positionCount; position++) {
--                        boolean isNull = !Bitmap.isSet(dictionaryIsValid, validityOffset, dictionaryBlock.getId(position));
--                        outputPositions[outputPositionCount] = position;
--                        outputPositionCount += isNull ? 0 : 1;
-+                    if (positionCount >= dictionary.getPositionCount()) {
-+                        // The page dominates the dictionary, so the decode amortizes and the
-+                        // gather is an id lookup plus a byte load
-+                        byte[] dictionaryIsValid = decodeValidity(dictionary);
-+                        for (int position = 0; position < positionCount; position++) {
-+                            outputPositions[outputPositionCount] = position;
-+                            outputPositionCount += dictionaryIsValid[dictionaryBlock.getId(position)];
-+                        }
-+                    }
-+                    else {
-+                        // The dictionary dominates the page, so read the bits directly instead of
-+                        // paying a decode proportional to the dictionary size
-+                        Bitmap validityBitmap = dictionary.getValidityBitmap().orElseThrow();
-+                        long[] words = validityBitmap.getRawWords();
-+                        int offset = validityBitmap.getRawBitOffset();
-+                        for (int position = 0; position < positionCount; position++) {
-+                            int bit = offset + dictionaryBlock.getId(position);
-+                            outputPositions[outputPositionCount] = position;
-+                            // Branchless: the validity bit is extracted as 0 or 1 and added directly
-+                            outputPositionCount += (int) ((words[bit >>> 6] >>> (bit & 63)) & 1);
-+                        }
-                     }
-                     return outputPositionCount;
-                 }
-             }
-             case ValueBlock valueBlock -> {
-                 Optio
-```
-
-**File**: `core/trino-main/src/main/java/io/trino/sql/gen/columnar/ColumnarFilterUtils.java` (modified, +14/-6)
-```diff
-@@ -17,7 +17,7 @@
- import static io.trino.spi.block.Bitmap.isSet;
- import static java.lang.Math.min;
- 
--final class ColumnarFilterUtils
-+public final class ColumnarFilterUtils
- {
-     private ColumnarFilterUtils() {}
- 
-@@ -26,18 +26,26 @@ static boolean isValid(long[] validity, int rawBitOffset, int position)
-         return isSet(validity, rawBitOffset, position);
+ public class IcebergPageSourceProvider
+@@ -483,7 +490,7 @@ public ConnectorPageSource createPageSource(
+                             readerPageSourceWithRowPositions.startRowPosition(),
+                             readerPageSourceWithRowPositions.endRowPosition(),
+                             new DeleteLoadContext(
+-                                    deleteFile -> readDeletionVector(fileSystem, deleteFile, memoryContext),
++                                    deleteFile -> readDeletionVector(fileSystem, deleteFile, memoryContext, arePlaintextFilesAllowedForEncryptedTables(session)),
+                                     deletePageSourceProvider(session, fileSystem, memoryContext::newAggregatedMemoryContext),
+                                     // Equality delete loads are shared across splits and can outlive the split that started them,
+                                     // so the page source is accounted to providerMemoryContext rather than the split's memoryContext
+@@ -602,13 +609,42 @@ else if (deleteFile.content() == EQUALITY_DELETES) {
+         return requiredColumns.build();
      }
  
--    static int filterSetBitsRange(long[] validity, int rawBitOffset, int offset, int size, int[] outputPositions)
-+    public static int filterSetBitsRange(long[] validity, int rawBitOffset, int offset, int size, int[] outputPositions)
+-    private static SerializedDeletionVector readDeletionVector(TrinoFileSystem fileSystem, DeleteFile delete, AggregatedMemoryContext memoryContext)
++    private static SerializedDeletionVector readDeletionVector(TrinoFileSystem fileSystem, DeleteFile delete, AggregatedMemoryContext memoryContext, boolean plaintextFilesAllowed)
      {
-         int outputCount = 0;
-         int end = offset + size;
-         int position = offset;
-         while (position < end) {
-             int bitsInWord = min(Long.SIZE, end - position);
-             long bits = getBits(validity, rawBitOffset, position, bitsInWord);
--            while (bits != 0) {
--                int bit = Long.numberOfTrailingZeros(bits);
--                outputPositions[outputCount++] = position + bit;
--                bits &= bits - 1;
-+            if (Long.bitCount(bits) == bitsInWord) {
-+                // Dense case: emitting sequentially beats walking bits one at a time
-+                for (int bit = 0; bit < bitsInWord; bit++) {
-+                    outputPositions[outputCount++] = position + bit;
-+                }
-+            }
-+            else {
-+                while (bits != 0) {
-+                    int bit = Long.numberOfTrailingZeros(bits);
-+                    outputPositions[outputCount++] = position + bit;
-+                    bits &= bits - 1;
-+                }
-             }
-             position += bitsInWord;
-         }
+         verify(delete.isDeletionVector(), "Not a deletion vector: %s", delete);
+         TrinoInputFile trinoInputFile = fileSystem.newInputFile(Location.of(delete.path()), delete.fileSizeInBytes());
+         Slice slice;
+-        try (TrinoInput trinoInput = trinoInputFile.newInput()) {
+-            slice = trinoInput.readFully(delete.contentOffset().orElseThrow(), toIntExact(delete.contentSizeInBytes().orElseThrow()));
++        try {
++            long contentOffset = delete.contentOffset().orElseThrow();
++            int contentSize = toIntExact(delete.contentSizeInBytes().orElseThrow());
++            Optional<DeletionVectorDecryptionData> decryptionData = delete.fileDecryptionData().map(DeletionVectorDecryptionData.class::cast);
++            if (
 ```
 
-**File**: `core/trino-main/src/test/java/io/trino/operator/join/nonspilling/TestJoinProbe.java` (modified, +58/-0)
+**File**: `plugin/trino-iceberg/src/main/java/io/trino/plugin/iceberg/IcebergSplit.java` (modified, +1/-38)
 ```diff
-@@ -13,13 +13,17 @@
-  */
- package io.trino.operator.join.nonspilling;
- 
-+import com.google.common.collect.ImmutableList;
+@@ -18,14 +18,13 @@
+ import com.google.common.collect.ImmutableList;
+ import io.airlift.slice.SizeOf;
+ import io.trino.plugin.iceberg.delete.DeleteFile;
++import io.trino.plugin.iceberg.encryption.ParquetFileDecryptionData;
+ import io.trino.spi.SplitWeight;
  import io.trino.spi.block.Block;
-+import io.trino.spi.block.RunLengthEncodedBlock;
- import io.trino.spi.block.ValueBlock;
- import org.junit.jupiter.api.Test;
+ import io.trino.spi.connector.ConnectorSplit;
+ import io.trino.spi.predicate.TupleDomain;
  
- import java.util.Arrays;
-+import java.util.List;
+-import java.util.Arrays;
+ import java.util.List;
+-import java.util.Objects;
  import java.util.Optional;
+ import java.util.OptionalLong;
  
-+import static io.trino.block.BlockAssertions.createLongsBlock;
- import static io.trino.block.BlockAssertions.createRandomBlockForType;
- import static io.trino.block.BlockAssertions.createRandomDictionaryBlock;
- import static io.trino.block.BlockAssertions.createRandomRleBlock;
-@@ -77,6 +81,60 @@ void testGetNonNullPositionsReturnsEmptyWhenAllNonNull()
-         assertThat(getNonNullPositions(blocks, blocks.length, positionCount)).isEmpty();
+@@ -115,40 +114,4 @@ public String toString()
+         }
+         return helper.toString();
      }
- 
-+    @Test
-+    void testGetNonNullPositionsBlockKinds()
-+    {
-+        for (int positionCount : new int[] {4, 63, 64, 65, 100, 8192}) {
-+            List<Block> blocks = blockKinds(positionCount);
-+            for (Block block : blocks) {
-+                assertNonNullPositions(new Block[] {block}, positionCount);
-+                for (Block other : blocks) {
-+                    assertNonNullPositions(new Block[] {block, other}, positionCount);
-+                }
-+            }
-+        }
-+    }
-+
-+    @Test
-+    void testGetNonNullPositionsTinyPages()
-+    {
-+        Block empty = BIGINT.createBlockBuilder(null, 0).build();
-+        assertThat(getNonNullPositions(new Block[] {empty}, 1, 0)).isEmpty();
-+        assertThat(getNonNullPositions(new Block[] {empty, empty}, 2, 0)).isEmpty();
-+
-+        Block nullValue = createLongsBlock((Long) null);
-+        Block value = createLongsBlock(7L);
-+        assertNonNullPositions(new Block[] {nullValue}, 1);
-+        assertNonNullPositions(new Block[] {value}, 1);
-+        assertNonNullPositions(new Block[] {value, nullValue}, 1);
-+        assertNonNullPositions(new Block[] {value, value}, 1);
-+    }
-+
-+    private static List<Block> blockKinds(int positionCount)
-+    {
-+        return ImmutableList.of(
-+                createRandomBlockForType(BIGINT, positionCount, 0.3f),
-+                createRandomBlockForType(BIGINT, positionCount + 37, 0.3f).getRegion(37, positionCount),
-+                RunLengthEncodedBlock.create(BIGINT, null, positionCount),
-+                RunLengthEncodedBlock.create(BIGINT, 5L, positionCount),
-+                createRandomDictionaryBlock(createLongsBlock(1L, null, 2L, null), positionCount),
-+                createRandomDictionaryBlock(createRandomBlockForType(BIGINT, 10_000, 0.3f), positionCount),
-+                createRandomDictionaryBlock(createRandomBlockForType(BIGINT, 10_037, 0.3f).getRegion(37, 10_000), positionCount),
-+                createRandomDictionaryBlock(createRandomBlockForType(BIGINT, 16, 0f), positionCount));
-+    }
-+
-+    private static void assertNonNullPositions(Block[] blocks, int positionCount)
-+    {
-+        int[] expected = getExpectedNonNullPositions(blocks, positionCount);
-+        Optional<int[]> actual = getNonNullPositions(blocks, blocks.length, positionCount);
-+        if (expected.length == positionCount) {
-+            assertThat(actual).isEmpty();
-+        }
-+        else {
-+            assertThat(actual).hasValueSatisfying(positions -> assertThat(positions).containsExactly(expected));
-+        }
-+    }
-+
-     private static int[] getExpectedNonNullPositions(Block[] blocks, int positionCount)
-     {
-         int[] nonNullPositions = new int[positionCount];
+-
+-    public record ParquetFileDecryptionData(byte[] fileEncryptionKey, byte[] fileAadPrefix)
+-    {
+-        private static final int INSTANCE_SIZE = instanceSize(ParquetFileDecryptionData.class);
+-
+-        public ParquetFileDecryptionData
+-        {
+-            requireNonNull(fileEncryptionKey, "fileEncryptionKey is null");
+-            requireNonNull(fileAadPrefix, "fileAadPrefix is null");
+-        }
+-
+-        @Override
+-        public boolean equals(Object o)
+-        {
+-            return o instanceof ParquetFileDecryptionData other
+-                    && Arrays.equals(fileEncryptionKey, other.fileEncryptionKey)
+-                    && Arrays.equals(fileAadPrefix, other.fileAadPrefix);
+-        }
+-
+-        @Override
+-        public int hashCode()
+-        {
+-            return Objects.hash(Arrays.hashCode(fileEncryptionKey), Arrays.hashCode(fileAadPrefix));
+-        }
+-
+-        @Override
+-        public String toString()
+-        {
+-            return "[REDACTED]";
+-        }
+-
+-        public long getRetainedSizeInBytes()
+-        {
+-            return INSTANCE_SIZE + SizeOf.sizeOf(fileEncryptionKey) + SizeOf.sizeOf(fileAadPrefix);
+-        }
+-    }
+ }
 ```
 
----
-
-### Incident Patch 2: `dd9b23d6` (2026-08-19)
-**Commit Message**: Add benchmark for join null position filtering
-
-NullablePositions runs once per page per nullable join key
-(BigintPagesHash, DefaultPagesHash, JoinProbe) but had no benchmark.
-Measure it across block count, block kind, null rate and position count
-before changing its implementation, so the boolean[] baseline stays
-reproducible.
-
-**File**: `core/trino-main/src/test/java/io/trino/operator/join/BenchmarkNullablePositions.java` (added, +137/-0)
+**File**: `plugin/trino-iceberg/src/main/java/io/trino/plugin/iceberg/IcebergSplitSource.java` (modified, +53/-10)
 ```diff
-@@ -0,0 +1,137 @@
+@@ -33,8 +33,10 @@
+ import io.trino.plugin.base.metrics.DurationTiming;
+ import io.trino.plugin.base.metrics.IntList;
+ import io.trino.plugin.base.metrics.LongCount;
+-import io.trino.plugin.iceberg.IcebergSplit.ParquetFileDecryptionData;
+ import io.trino.plugin.iceberg.delete.DeleteFile;
++import io.trino.plugin.iceberg.encryption.DeletionVectorDecryptionData;
++import io.trino.plugin.iceberg.encryption.FileDecryptionData;
++import io.trino.plugin.iceberg.encryption.ParquetFileDecryptionData;
+ import io.trino.plugin.iceberg.util.DataFileWithDeleteFiles;
+ import io.trino.spi.SplitWeight;
+ import io.trino.spi.TrinoException;
+@@ -119,6 +121,7 @@
+ import static io.trino.cache.SafeCaches.buildNonEvictableCache;
+ import static io.trino.plugin.iceberg.ExpressionConverter.isConvertibleToIcebergExpression;
+ import static io.trino.plugin.iceberg.ExpressionConverter.toIcebergExpression;
++import static io.trino.plugin.iceberg.IcebergErrorCode.ICEBERG_BAD_DATA;
+ import static io.trino.plugin.iceberg.IcebergExceptions.translateMetadataException;
+ import static io.trino.plugin.iceberg.IcebergSessionProperties.getDynamicFilteringWaitTimeout;
+ import static io.trino.plugin.iceberg.IcebergSessionProperties.getSplitSize;
+@@ -148,6 +151,7 @@
+ import static org.apache.iceberg.FileContent.EQUALITY_DELETES;
+ import static org.apache.iceberg.FileContent.POSITION_DELETES;
+ import static org.apache.iceberg.FileFormat.PARQUET;
++import static org.apache.iceberg.FileFormat.PUFFIN;
+ import static org.apache.iceberg.encryption.EncryptedFiles.encryptedInput;
+ import static org.apache.iceberg.expressions.Expressions.and;
+ import static org.apache.iceberg.types.Conversions.fromByteBuffer;
+@@ -687,7 +691,7 @@ private FileScanTaskWithContext createFileScanTaskWithContext(FileScanTask whole
+                 .collect(toImmutableList());
+         List<DeleteFile> deleteFiles = wholeFileTask.deletes().stream()
+                 .peek(file -> verifyDeletionVectorReferencesDataFile(wholeFileTask, file))
+-                .map(file -> DeleteFile.fromIceberg(file, parquetFileDecryptionData(
++                .map(file -> DeleteFile.fromIceberg(file, deleteFileDecryptionData(
+                         file.format(),
+                         file.location(),
+                         file.fileSizeInBytes(),
+@@ -762,6 +766,29 @@ private static FileScanTask merge(FileScanTaskWithContext current, FileScanTaskW
+         }
+     }
+ 
++    @VisibleForTesting
++    public static Optional<FileDecryptionData> deleteFileDecryptionData(
++            FileFormat fileFormat,
++            String location,
++            long fileSizeInBytes,
++            @Nullable ByteBuffer keyMetadata,
++            FileIO fileIo,
++            EncryptionManager encryptionManager)
++    {
++        if (fileFormat == PUFFIN) {
++            return nativeKeyMetadata(location, fileSizeInBytes, keyMetadata, fileIo, encryptionManager).map(nativeKeyMetadata -> {
++                // Workers open deletion vectors with the file size, which must match the
++                // encrypted length
++                Long fileLength = nativeKeyMetadata.fileLength();
++                if (fileLength == null || fileLength != fileSizeInBytes) {
++                    throw new TrinoException(ICEBERG_BAD_DATA, "Encrypted file length in key metadata (%s) does not match file size (%s): %s".formatted(fileLength, fileSizeInBytes, location));
++                }
++                return new DeletionVectorDecryptionData(encryptionKey(nativeKeyMetadata), aadPrefix(nativeKeyMetadata), fileLength);
++            });
++        }
++        return parquetFileDecryptionData(fileFormat, location, fileSizeInBytes, keyMetadata, fileIo, encryptionManager).map(FileDecryptionData.class::cast);
++    }
++
+     @VisibleForTesting
+     public static Optional<ParquetFileDecryptionData> parquetFileDecryptionData(
+             FileFormat fileFormat,
+@@ -772,6 +799,20 @@ public static Optional<ParquetFileDecryptionData> parquetFileDecryptionData(
+             EncryptionManager encryptionManager)
+     {
+         requireNonNull(fileFormat, "fileFormat is null");
++        if (keyMetadata != null && fileFormat != PARQUET) {
++            throw new TrinoException(NOT_SUPPORTED, "Reading encrypted non-Parquet file is not supported: " + location);
++        }
++        return nativeKeyMetadata(location, fileSizeInBytes, keyMetadata, fileIo, encryptionManager)
++                .map(nativeKeyMetadata -> new ParquetFileDecryptionData(encryptionKey(nativeKeyMetadata), aadPrefix(nativeKeyMetadata)));
++    }
++
++    private static Optional<NativeEncryptionKeyMetadata> nativeKeyMetadata(
++            String location,
++            long fileSizeInBytes,
++            @Nullable ByteBuffer keyMetadata,
++            FileIO fileIo,
++            EncryptionManager encryptionManager)
++    {
+         requireNonNull(location, "location is null");
+         requireNonNull(fileIo, "fileIo is null");
+         requireNonNull(encryptionManager, "encryptionManager is null");
+@@ -780,21 +821,23
+```
+
+**File**: `plugin/trino-iceberg/src/main/java/io/trino/plugin/iceberg/delete/DeleteFile.java` (modified, +6/-6)
+```diff
+@@ -15,7 +15,7 @@
+ 
+ import com.google.common.collect.ImmutableList;
+ import com.google.common.collect.ImmutableMap;
+-import io.trino.plugin.iceberg.IcebergSplit.ParquetFileDecryptionData;
++import io.trino.plugin.iceberg.encryption.FileDecryptionData;
+ import org.apache.iceberg.FileContent;
+ import org.apache.iceberg.FileFormat;
+ import org.apache.iceberg.types.Conversions;
+@@ -46,7 +46,7 @@ public record DeleteFile(
+         long dataSequenceNumber,
+         OptionalLong contentOffset,
+         Optional<Integer> contentSizeInBytes,
+-        Optional<ParquetFileDecryptionData> parquetFileDecryptionData)
++        Optional<FileDecryptionData> fileDecryptionData)
+ {
+     private static final long INSTANCE_SIZE = instanceSize(DeleteFile.class);
+ 
+@@ -55,7 +55,7 @@ public static DeleteFile fromIceberg(org.apache.iceberg.DeleteFile deleteFile)
+         return fromIceberg(deleteFile, Optional.empty());
+     }
+ 
+-    public static DeleteFile fromIceberg(org.apache.iceberg.DeleteFile deleteFile, Optional<ParquetFileDecryptionData> parquetFileDecryptionData)
++    public static DeleteFile fromIceberg(org.apache.iceberg.DeleteFile deleteFile, Optional<FileDecryptionData> fileDecryptionData)
+     {
+         ByteBuffer lowerBoundPosition = requireNonNullElse(deleteFile.lowerBounds(), ImmutableMap.<Integer, ByteBuffer>of()).get(DELETE_FILE_POS.fieldId());
+         ByteBuffer upperBoundPosition = requireNonNullElse(deleteFile.upperBounds(), ImmutableMap.<Integer, ByteBuffer>of()).get(DELETE_FILE_POS.fieldId());
+@@ -81,7 +81,7 @@ public static DeleteFile fromIceberg(org.apache.iceberg.DeleteFile deleteFile, O
+                 deleteFile.dataSequenceNumber(),
+                 contentOffset,
+                 contentSizeInBytes,
+-                parquetFileDecryptionData);
++                fileDecryptionData);
+     }
+ 
+     public DeleteFile
+@@ -94,7 +94,7 @@ public static DeleteFile fromIceberg(org.apache.iceberg.DeleteFile deleteFile, O
+         requireNonNull(rowPositionUpperBound, "rowPositionUpperBound is null");
+         requireNonNull(contentOffset, "contentOffset is null");
+         requireNonNull(contentSizeInBytes, "contentSizeInBytes is null");
+-        requireNonNull(parquetFileDecryptionData, "parquetFileDecryptionData is null");
++        requireNonNull(fileDecryptionData, "fileDecryptionData is null");
+     }
+ 
+     public boolean isDeletionVector()
+@@ -110,7 +110,7 @@ public long retainedSizeInBytes()
+         return INSTANCE_SIZE
+                 + estimatedSizeOf(path)
+                 + estimatedSizeOf(equalityFieldIds, _ -> SIZE_OF_INT)
+-                + sizeOf(parquetFileDecryptionData, ParquetFileDecryptionData::getRetainedSizeInBytes);
++                + sizeOf(fileDecryptionData, FileDecryptionData::getRetainedSizeInBytes);
+     }
+ 
+     @Override
+```
+
+**File**: `plugin/trino-iceberg/src/main/java/io/trino/plugin/iceberg/encryption/DeletionVectorDecryptionData.java` (added, +71/-0)
+```diff
+@@ -0,0 +1,71 @@
 +/*
 + * Licensed under the Apache License, Version 2.0 (the "License");
 + * you may not use this file except in compliance with the License.
@@ -2143,233 +2204,270 @@ reproducible.
 + * See the License for the specific language governing permissions and
 + * limitations under the License.
 + */
-+package io.trino.operator.join;
++package io.trino.plugin.iceberg.encryption;
 +
-+import io.trino.spi.block.Block;
-+import io.trino.spi.block.DictionaryBlock;
-+import io.trino.spi.block.LongArrayBlockBuilder;
-+import org.junit.jupiter.api.Test;
-+import org.openjdk.jmh.annotations.Benchmark;
-+import org.openjdk.jmh.annotations.BenchmarkMode;
-+import org.openjdk.jmh.annotations.Fork;
-+import org.openjdk.jmh.annotations.Measurement;
-+import org.openjdk.jmh.annotations.Mode;
-+import org.openjdk.jmh.annotations.OutputTimeUnit;
-+import org.openjdk.jmh.annotations.Param;
-+import org.openjdk.jmh.annotations.Scope;
-+import org.openjdk.jmh.annotations.Setup;
-+import org.openjdk.jmh.annotations.State;
-+import org.openjdk.jmh.annotations.Warmup;
++import io.airlift.slice.SizeOf;
 +
-+import java.util.Optional;
-+import java.util.Random;
++import java.util.Arrays;
++import java.util.Objects;
 +
-+import static io.trino.jmh.Benchmarks.benchmark;
-+import static java.util.concurrent.TimeUnit.MILLISECONDS;
-+import static java.util.concurrent.TimeUnit.NANOSECONDS;
++import static io.airlift.slice.SizeOf.instanceSize;
++import static java.util.Objects.requireNonNull;
 +
 +/**
-+ * Measures the join build/probe null filtering that runs once per page per nullable join key
-+ * (BigintPagesHash, DefaultPagesHash, JoinProbe).
++ * Decryption data for a Puffin deletion vector, which also needs the encrypted file length.
 + */
-+@State(Scope.Thread)
-+@OutputTimeUnit(NANOSECONDS)
-+@Fork(1)
-+@Warmup(iterations = 4, time = 500, timeUnit = MILLISECONDS)
-+@Measurement(iterations = 5, time = 500, timeUnit = MILLISECONDS)
-+@BenchmarkMode(Mode.AverageTime)
-+public class BenchmarkNullablePositions
++public record DeletionVectorDecryptionData(byte[] fileEncryptionKey, byte[] fileAadPrefix, long fileLength)
++        implements FileDecryptionData
 +{
-+    @Benchmark
-+    public Optional<int[]> getNonNullPositions(BlockData data)
++    public static final String TYPE = "deletionVector";
++    private static final int INSTANCE_SIZE = instanceSize(DeletionVectorDecryptionData.class);
++
++    public DeletionVectorDecryptionData
 +    {
-+        return NullablePositions.getNonNullPositions(data.blocks, data.blocks.length, data.positionCount);
++        requireNonNull(fileEncryptionKey, "fileEncryptionKey is null");
++        requireNonNull(fileAadPrefix, "fileAadPrefix is null");
 +    }
 +
-+    @State(Scope.Thread)
-+    public static class BlockData
++    @Override
++    public String type()
 +    {
-+        @Param({"1024", "8192"})
-+        private int positionCount = 8192;
-+
-+        @Param({"1", "4"})
-+        private int blockCount = 1;
-+
-+        @Param({"0", "0.01", "0.5"})
-+        private double nullRate;
-+
-+        @Param({"VALUE", "DICTIONARY", "MIXED"})
-+        private String blockKind = "VALUE";
-+
-+        private Block[] blocks;
-+
-+        @Setup
-+        public void setup()
-+        {
-+            Random random = new Random(42);
-+            blocks = new Block[blockCount];
-+            for (int i = 0; i < blockCount; i++) {
-+                blocks[i] = switch (blockKind) {
-+                    case "VALUE" -> createLongBlock(random, positionCount, nullRate);
-+                    case "DICTIONARY" -> createDictionaryBlock(random, positionCount, nullRate);
-+                    // Alternates value and dictionary blocks within one page
-+                    case "MIXED" -> i % 2 == 0
-+                            ? createLongBlock(random, positionCount, nullRate)
-+                            : createDictionaryBlock(random, positionCount, nullRate);
-+                    default -> throw new IllegalArgumentException("Unknown blockKind: " + blockKind);
-+                };
-+            }
-+        }
-+
-+        private static Block createLongBlock(Random random, int positionCount, double nullRate)
-+        {
-+            LongArrayBlockBuilder builder = new LongArrayBlockBuilder(null, positionCount);
-+            for (int position = 0; position < positionCount; position++) {
-+                if (nullRate > 0 && random.nextDouble() < nullRate) {
-+                    builder.appendNull();
-+                }
-+                else {
-+                    builder.writeLong(random.nextLong());
-+                }
-+            }
-+            return builder.build();
-+        }
-+
-+        private static Block createDictionaryBlock(Random random, int positionCount, double nullRate)
-+        {
-+            // Dictionaries are typically far smaller than the page they are referenced from
-+            int dictionarySize = Math.max(8, positionCount / 32);
-+            Block dictionary = createLongBlock(random, dictionarySize, nullRate);
-+            int[] ids = new int[positionCount];
-+            for (int position = 0; position < positionCount; position++) {
-+                ids[position] = random.nextInt(dictionarySize);
-+            }
-+            return DictionaryBlock.create(positionCount, dictionary, ids);
-+        }
++        return TYPE;
 +    }
 +
-+    @Test
-+    public void test()
++    @Override
++    public long getRetainedSizeInBytes()
 +    {
-+        for (String blockKind : new String[] {"VALUE", "DICTIONARY", "MIXED"}) {
-+            BlockData data = new BlockData();
-+            data.blockKind = blockKind;
-+            data.blockCount = 4;
-+            data.nullRate = 0.5;
-+            data.setup();
-+          
++        return INSTANCE_SIZE + SizeOf.sizeOf(fileEncryptionKey) + SizeOf.sizeOf(fileAadPrefix);
++    }
++
++    @Override
++    public boolean equals(Object o)
++    {
++        return o instanceof DeletionVectorDecryptionData other
++                && Arrays.equals(fileEncryptionKey, other.fileEncryptionKey)
++                && Arrays.equals(fileAadPrefix, other.fileAadPrefix)
++                && fileLength == other.fileLength;
++    }
++
++    @Override
++    public int hashCode()
++    {
++        return Objects.hash(Arrays.hashCode(fileEncryptionKey), Arrays.hashCode(fileAadPrefix), fileLength);
++    }
++
++    @Override
++    public String toString()
++    {
++        return "[REDACTED]";
++    }
++}
+```
+
+**File**: `plugin/trino-iceberg/src/main/java/io/trino/plugin/iceberg/encryption/FileDecryptionData.java` (added, +39/-0)
+```diff
+@@ -0,0 +1,39 @@
++/*
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *     http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++package io.trino.plugin.iceberg.encryption;
++
++import com.fasterxml.jackson.annotation.JsonProperty;
++import com.fasterxml.jackson.annotation.JsonSubTypes;
++import com.fasterxml.jackson.annotation.JsonTypeInfo;
++
++import static com.fasterxml.jackson.annotation.JsonTypeInfo.As.EXISTING_PROPERTY;
++import static com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME;
++
++/**
++ * Key material for decrypting an encrypted Iceberg file, sent to workers in splits and delete
++ * files. The subtype follows the encryption scheme of the file.
++ */
++@JsonTypeInfo(use = NAME, include = EXISTING_PROPERTY, property = "type")
++@JsonSubTypes({
++        @JsonSubTypes.Type(value = ParquetFileDecryptionData.class, name = ParquetFileDecryptionData.TYPE),
++        @JsonSubTypes.Type(value = DeletionVectorDecryptionData.class, name = DeletionVectorDecryptionData.TYPE),
++})
++public sealed interface FileDecryptionData
++        permits ParquetFileDecryptionData, DeletionVectorDecryptionData
++{
++    @JsonProperty
++    String type();
++
++    long getRetainedSizeInBytes();
++}
+```
+
+**File**: `plugin/trino-iceberg/src/main/java/io/trino/plugin/iceberg/encryption/ParquetFileDecryptionData.java` (added, +70/-0)
+```diff
+@@ -0,0 +1,70 @@
++/*
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *     http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++package io.trino.plugin.iceberg.encryption;
++
++import io.airlift.slice.SizeOf;
++
++import java.util.Arrays;
++import java.util.Objects;
++
++import static io.airlift.slice.SizeOf.instanceSize;
++import static java.util.Objects.requireNonNull;
++
++/**
++ * Decryption data for a file encrypted with Parquet modular encryption.
++ */
++public record ParquetFileDecryptionData(byte[] fileEncryptionKey, byte[] fileAadPrefix)
++        implements FileDecryptionData
++{
++    public static final String TYPE = "parquet";
++    private static final int INSTANCE_SIZE = instanceSize(ParquetFileDecryptionData.class);
++
++    public ParquetFileDecryptionData
++    {
++        requireNonNull(fileEncryptionKey, "fileEncryptionKey is null");
++        requireNonNull(fileAadPrefix, "fileAadPrefix is null");
++    }
++
++    @Override
++    public String type()
++    {
++        return TYPE;
++    }
++
++    @Override
++    public long getRetainedSizeInBytes()
++    {
++        return INSTANCE_SIZE + SizeOf.sizeOf(fileEncryptionKey) + SizeOf.sizeOf(fileAadPrefix);
++    }
++
++    @Override
++    public boolean equals(Object o)
++    {
++        return o instanceof ParquetFileDecryptionData other
++                && Arrays.equals(fileEncryptionKey, other.fileEncryptionKey)
++                && Arrays.equals(fileAadPrefix, other.fileAadPrefix);
++    }
++
++    @Override
++    public int hashCode()
++    {
++        return Objects.hash(Arrays.hashCode(fileEncryptionKey), Arrays.hashCode(fileAadPrefix));
++    }
++
++    @Override
++    public String toString()
++    {
++        return "[REDACTED]";
++    }
++}
+```
+
+**File**: `plugin/trino-iceberg/src/main/java/io/trino/plugin/iceberg/functions/tablechanges/TableChangesSplit.java` (modified, +1/-1)
+```diff
+@@ -15,7 +15,7 @@
+ 
+ import io.airlift.slice.SizeOf;
+ import io.trino.plugin.iceberg.IcebergFileFormat;
+-import io.trino.plugin.iceberg.IcebergSplit.ParquetFileDecryptionData;
++import io.trino.plugin.iceberg.encryption.ParquetFileDecryptionData;
+ import io.trino.spi.SplitWeight;
+ import io.trino.spi.connector.ConnectorSplit;
+ 
 ```
 
 ---
 
-### Incident Patch 3: `39a37d40` (2026-11-24)
-**Commit Message**: Fix XXE vulnerability in SalesforceBasicAuthenticator
+### Incident Patch 2: `5876603d` (2026-10-26)
+**Commit Message**: Reject unsupported encryption in Iceberg reads
 
-Disallow DOCTYPE declarations and external entities, enable secure
-processing and disable XInclude when parsing the Salesforce login
-response, so a malicious response cannot read local files or trigger
-outbound requests.
+Key metadata that the encryption manager doesn't resolve to a natively
+encrypted file was treated as plaintext, so the file was read without
+decryption. Fail instead.
 
-Co-authored-by: RinZ27 <[REDACTED_EMAIL]>
-
-**File**: `plugin/trino-password-authenticators/src/main/java/io/trino/plugin/password/salesforce/SalesforceBasicAuthenticator.java` (modified, +10/-0)
+**File**: `plugin/trino-iceberg/src/main/java/io/trino/plugin/iceberg/IcebergSplitSource.java` (modified, +1/-1)
 ```diff
-@@ -152,6 +152,16 @@ private Principal doLogin(Credential credential)
-         Document xmlResponse;
-         try {
-             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-+            factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-+            // Defense in depth: without a DOCTYPE, the settings below have nothing to act on
-+            factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
-+            factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
-+            factory.setAttribute("http://javax.xml.XMLConstants/property/accessExternalDTD", "");
-+            factory.setAttribute("http://javax.xml.XMLConstants/property/accessExternalSchema", "");
-+            factory.setFeature("http://javax.xml.XMLConstants/feature/secure-processing", true);
-+            factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-+            factory.setXIncludeAware(false);
-+            factory.setExpandEntityReferences(false);
-             DocumentBuilder builder = factory.newDocumentBuilder();
-             xmlResponse = builder.parse(new InputSource(Reader.of(
-                     response.getBody())));
+@@ -788,7 +788,7 @@ public static Optional<ParquetFileDecryptionData> parquetFileDecryptionData(
+         InputFile inputFile = encryptionManager.decrypt(encryptedInputFile);
+ 
+         if (!(inputFile instanceof NativeEncryptionInputFile nativeEncryptionInputFile)) {
+-            return Optional.empty();
++            throw new TrinoException(NOT_SUPPORTED, "Reading file with non-native encryption is not supported: " + location);
+         }
+ 
+         NativeEncryptionKeyMetadata nativeKeyMetadata = nativeEncryptionInputFile.keyMetadata();
 ```
 
-**File**: `plugin/trino-password-authenticators/src/test/java/io/trino/plugin/password/salesforce/TestSalesforceBasicAuthenticator.java` (modified, +36/-0)
+**File**: `plugin/trino-iceberg/src/test/java/io/trino/plugin/iceberg/TestIcebergSplitSource.java` (modified, +25/-0)
 ```diff
-@@ -13,17 +13,23 @@
-  */
- package io.trino.plugin.password.salesforce;
+@@ -148,6 +148,21 @@ public class TestIcebergSplitSource
+                     .getSessionProperties())
+             .build();
  
-+import com.google.common.util.concurrent.UncheckedExecutionException;
- import io.airlift.http.client.HttpClient;
- import io.airlift.http.client.HttpStatus;
- import io.airlift.http.client.jetty.JettyHttpClient;
- import io.airlift.http.client.testing.TestingHttpClient;
- import io.airlift.units.Duration;
- import io.trino.spi.security.AccessDeniedException;
- import org.junit.jupiter.api.Test;
-+import org.junit.jupiter.api.io.TempDir;
- 
-+import java.io.IOException;
-+import java.nio.file.Files;
-+import java.nio.file.Path;
- import java.security.Principal;
- import java.util.concurrent.TimeUnit;
- 
-+import static com.google.common.base.Preconditions.checkArgument;
- import static com.google.common.net.MediaType.ANY_TEXT_TYPE;
- import static io.airlift.http.client.HttpStatus.OK;
- import static io.airlift.http.client.testing.TestingResponse.mockResponse;
-@@ -99,6 +105,29 @@ public void createAuthenticatedPrincipalWrongOrg()
-                 .hasMessageMatching("Access Denied:.*");
-     }
- 
-+    @Test
-+    public void testRejectsExternalFileEntity(@TempDir Path tempDir)
-+            throws IOException
++    private static final EncryptionManager NON_NATIVE_ENCRYPTION_MANAGER = new EncryptionManager()
 +    {
-+        String secret = "super-secret-shared-value";
-+        Path secretFile = tempDir.resolve("config.properties");
-+        Files.writeString(secretFile, secret);
++        @Override
++        public InputFile decrypt(EncryptedInputFile encrypted)
++        {
++            return encrypted.encryptedInputFile();
++        }
 +
-+        SalesforceConfig config = new SalesforceConfig()
-+                .setAllowedOrganizations("my18CharOrgId");
++        @Override
++        public EncryptedOutputFile encrypt(OutputFile rawOutput)
++        {
++            throw new UnsupportedOperationException();
++        }
++    };
 +
-+        String xmlResponse = withDoctype(
-+                format(successResponse, "&xxe;", "user@salesforce.com"),
-+                "<!DOCTYPE r [<!ENTITY xxe SYSTEM \"" + secretFile.toUri() + "\">]>");
+     private TrinoFileSystemFactory fileSystemFactory;
+     private TrinoCatalog catalog;
+     private HiveMetastore metastore;
+@@ -791,6 +806,16 @@ public EncryptedOutputFile encrypt(OutputFile rawOutput)
+                 encryptionManager))
+                 .hasMessageContaining("Reading encrypted non-Parquet file is not supported");
+ 
++        // Key metadata that does not resolve to a natively encrypted file must not be read as plaintext
++        assertThatThrownBy(() -> parquetFileDecryptionData(
++                FileFormat.PARQUET,
++                "memory:///test.parquet",
++                10,
++                keyMetadata,
++                fileIo,
++                NON_NATIVE_ENCRYPTION_MANAGER))
++                .hasMessageContaining("Reading file with non-native encryption is not supported");
 +
-+        HttpClient testHttpClient = new TestingHttpClient(_ -> mockResponse(OK, ANY_TEXT_TYPE, xmlResponse));
-+        SalesforceBasicAuthenticator authenticator = new SalesforceBasicAuthenticator(config, testHttpClient);
-+        assertThatThrownBy(() -> authenticator.createAuthenticatedPrincipal("user@salesforce.com", "passtoken"))
-+                .isInstanceOf(UncheckedExecutionException.class)
-+                .hasMessageContaining("DOCTYPE is disallowed")
-+                .hasMessageNotContaining(secret);
-+    }
-+
-     @Test
-     public void createAuthenticatedPrincipalBadPass()
-     {
-@@ -267,4 +296,11 @@ public void createAuthenticatedPrincipalRealBadPassword()
-                     .hasMessage("Test bad password for real, yo!");
-         }
-     }
-+
-+    private static String withDoctype(String xml, String doctype)
-+    {
-+        String declaration = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
-+        checkArgument(xml.startsWith(declaration));
-+        return declaration + doctype + xml.substring(declaration.length());
-+    }
- }
+         assertThat(parquetFileDecryptionData(
+                 FileFormat.PARQUET,
+                 "memory:///test.parquet",
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #32364** (closed): Fix lost metastore updates in Delta Lake (@arvindKandpal-ksolves)
+- **PR #32363** (closed): Remove unused code (@tomtourwe)
+- **PR #32359** (closed): Fail tests on JUnit discovery warnings (@findepi)
 - **PR #32358** (closed): Fix null Iceberg manifest partition summaries (@HynekBlaha)
 - **PR #32357** (closed): Test: Re-enable Snowflake cloud-tests (@ebyhr)
 - **PR #32356** (2026-11-24): Fix XXE vulnerability in SalesforceBasicAuthenticator (@krvikash)
-- **PR #32355** (2026-11-24): Bump org.opensearch:opensearch-testcontainers from 4.1.0 to 4.1.1 (@dependabot[bot])
-- **PR #32354** (closed): Bump dep.lucene.version from 10.6.0 to 10.5.2 (@dependabot[bot])
-- **PR #32353** (2026-11-24): Bump org.checkerframework:checker-qual from 4.3.1 to 4.4.0 (@dependabot[bot])
 
 ---
 
@@ -2389,63 +2487,49 @@ Co-authored-by: RinZ27 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Speed up null position filtering on validity bitmaps
+## X. Support reading encrypted Iceberg deletion vectors
 
 **RULE**:
-When implementing operations in `core/trino-main/src/main/java/io/trino/operator/join/NullablePositions.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trinodb/trino. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `plugin/trino-iceberg/src/main/java/io/trino/plugin/iceberg/IcebergPageSourceProvider.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trinodb/trino. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `11a3933b`: Speed up null position filtering on validity bitmaps. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6af3a192`: Support reading encrypted Iceberg deletion vectors. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/trino-main/src/main/java/io/trino/operator/join/NullablePositions.java`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `plugin/trino-iceberg/src/main/java/io/trino/plugin/iceberg/IcebergPageSourceProvider.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-import static io.trino.spi.block.Bitmap.allocateWords;
-import static io.trino.spi.block.Bitmap.getBits;
-import static io.trino.spi.block.Bitmap.hasUnsetBit;
-import static io.trino.spi.block.Bitmap.isSet;
-import static io.trino.sql.gen.columnar.ColumnarFilterUtils.filterSetBitsRange;
-import static java.lang.Math.min;
-
-            // Special case for a single nullable block to avoid the need for an explicit validity accumulator
-        long[] valueIsValid = allocateWords(positionCount, true);
-        for (int i = 0; i < nullableBlocksCount; i++) {
-            retainNonNullPositions(nullableBlocks[i], valueIsValid, positionCount);
-        int outputPositionsCount = filterSetBitsRange(valueIsValid, 0, 0, positionCount, outputPositions);
-                if (hasNulls(dictionary)) {
-                    if (positionCount >= dictionary.getPositionCount()) {
-                        // The page dominates the dictionary, so the decode amortizes and the
-                        // gather is an id lookup plus a byte load
-                        byte[] dictionaryIsValid = decodeValidity(dictionary);
-                        for (int position = 0; position < positionCount; position++) {
-            
+import io.trino.plugin.iceberg.encryption.DeletionVectorDecryptionData;
+import io.trino.plugin.iceberg.encryption.ParquetFileDecryptionData;
+import org.apache.iceberg.encryption.AesGcmInputFile;
+import org.apache.iceberg.io.IOUtil;
+import org.apache.iceberg.io.SeekableInputStream;
+import java.security.GeneralSecurityException;
+import static io.airlift.slice.Slices.wrappedBuffer;
+import static org.apache.iceberg.encryption.Ciphers.GCM_STREAM_MAGIC_STRING;
+                                    deleteFile -> readDeletionVector(fileSystem, deleteFile, memoryContext, arePlaintextFilesAllowedForEncryptedTables(session)),
+    private static SerializedDeletionVector readDeletionVector(TrinoFileSystem fileSystem, DeleteFile delete, AggregatedMemoryContext memoryContext, boolean plaintextFilesAllowed)
+        try {
+            long contentOffset = delete.contentOffset().orElseThrow();
+            int contentSize = toIntExact(delete.contentSizeInBytes().orElseThrow());
+            Optional<DeletionVectorDecryptionData> decryptionData = delete.fileDecryptionData().map(DeletionVectorDecryptionData.class::cast);
+            if (
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Induced defect failure mode:
-            // Special case for a single nullable block to avoid the need for explicit `boolean[] isNull`
-        boolean[] isNull = new boolean[positionCount];
-        for (int i = 0; i < nullableBlocksCount - 1; i++) {
-            Block nullableBlock = nullableBlocks[i];
-            getNonNullPositions(nullableBlock, isNull);
-        // For the last nullable block, we need to fill outputPositions and count non-null positions
-        int outputPositionsCount = getNonNullPositionsLast(nullableBlocks[nullableBlocksCount - 1], isNull, outputPositions);
-                Optional<Bitmap> dictionaryValidity = dictionary.getValidityBitmap();
-                if (dictionaryValidity.isPresent()) {
-                    long[] dictionaryIsValid = dictionaryValidity.get().getRawWords();
-                    int validityOffset = dictionaryValidity.get().getRawBitOffset();
-                    for (int position = 0; position < positionCount; position++) {
-                        boolean isNull = !Bitmap.isSet(dictionaryIsValid, validityOffset, dictionaryBlock.getId(position));
-                        outputPositions[outputPositionCount] = position;
-                        outputPositionCount += isNu
+import io.trino.plugin.iceberg.IcebergSplit.ParquetFileDecryptionData;
+                                    deleteFile -> readDeletionVector(fileSystem, deleteFile, memoryContext),
+    private static SerializedDeletionVector readDeletionVector(TrinoFileSystem fileSystem, DeleteFile delete, AggregatedMemoryContext memoryContext)
+        try (TrinoInput trinoInput = trinoInputFile.newInput()) {
+            slice = trinoInput.readFully(delete.contentOffset().orElseThrow(), toIntExact(delete.contentSizeInBytes().orElseThrow()));
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `11a3933b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6af3a192` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

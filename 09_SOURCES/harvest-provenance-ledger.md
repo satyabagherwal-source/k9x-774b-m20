@@ -13037,3 +13037,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-krafton-raon-1-mini-preview` | `https://huggingface.co/KRAFTON/Raon-1-mini-preview` | `hf-krafton` | Multi-dimensional audit evidence | 2026-11-25T08:13:02.191Z |
 | `learn-github-arangodb-arangodb` | `https://github.com/arangodb/arangodb` | `7dcb28d3` | Multi-dimensional audit evidence | 2026-11-25T08:13:20.336Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `d58e5f56` | Multi-dimensional audit evidence | 2026-11-25T08:13:25.601Z |
+| `learn-github-fallow-rs-fallow` | `https://github.com/fallow-rs/fallow` | `cec86af5` | Multi-dimensional audit evidence | 2026-11-25T08:29:18.768Z |
+| `learn-huggingface-ornith-ai-ornith-1-5-122b` | `https://huggingface.co/ornith-ai/Ornith-1.5-122B` | `hf-ornith-` | Multi-dimensional audit evidence | 2026-11-25T08:29:20.246Z |
+| `learn-github-trinodb-trino` | `https://github.com/trinodb/trino` | `6af3a192` | Multi-dimensional audit evidence | 2026-11-25T08:29:29.254Z |

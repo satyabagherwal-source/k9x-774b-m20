@@ -4,22 +4,22 @@
 {
   "source_repository": "fallow-rs/fallow",
   "source_url": "https://github.com/fallow-rs/fallow",
-  "source_version": "40407499",
+  "source_version": "cec86af5",
   "license": "MIT",
-  "timestamp": "2026-11-24T06:46:13.501Z",
+  "timestamp": "2026-11-25T08:29:19.059Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-fallow-rs-fallow",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [fallow-rs/fallow](https://github.com/fallow-rs/fallow) (Revision: `40407499`).  
-> **License**: MIT | **Timestamp**: `2026-11-24T06:46:13.501Z`  
+> **Provenance**: Harvested from [fallow-rs/fallow](https://github.com/fallow-rs/fallow) (Revision: `cec86af5`).  
+> **License**: MIT | **Timestamp**: `2026-11-25T08:29:19.059Z`  
 > **Learning ID**: `learn-github-fallow-rs-fallow`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `fallow-rs/fallow` (Commit: `40407499`)
+- **Target Repository**: `fallow-rs/fallow` (Commit: `cec86af5`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/fallow-rs/fallow](https://github.com/fallow-rs/fallow))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T06:46:12.628Z  
+> **Harvest Timestamp**: 2026-11-25T08:29:15.787Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Codebase intelligence for TypeScript and JavaScript. Health, complexity hotspots, duplication, architecture boundaries, circular dependencies, design-system drift, and unused code, from one graph. CLI, GitHub Action, LSP, MCP, and VS Code. Rust, MIT licensed.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 5398 stars
+- **Stars / Engagement**: 5402 stars
 
 ---
 
@@ -352,215 +352,67 @@ export const connection = mysql.createConnection({
 
 ```
 
+### Core Architecture Module: `crates/api/rule-examples/shallow-directory/files/src/utils/index.ts`
+```
+export * from './text';
+export * from './time';
+
+```
+
+### Core Architecture Module: `crates/api/rule-examples/shallow-directory/files/src/utils/text.ts`
+```
+function normalize(value: string): string {
+  return value.trim();
+}
+
+export function slugify(slugifyInput: string): string {
+  return normalize(slugifyInput);
+}
+
+export function truncate(truncateInput: string): string {
+  return normalize(truncateInput);
+}
+
+export function capitalize(capitalizeInput: string): string {
+  return normalize(capitalizeInput);
+}
+
+export function wordCount(wordCountInput: string): string {
+  return normalize(wordCountInput);
+}
+
+
+```
+
+### Core Architecture Module: `crates/api/rule-examples/shallow-directory/files/src/utils/time.ts`
+```
+function pad(value: string): string {
+  return value.padStart(2, '0');
+}
+
+export function formatDate(formatDateInput: string): string {
+  return pad(formatDateInput);
+}
+
+export function parseDate(parseDateInput: string): string {
+  return pad(parseDateInput);
+}
+
+export function addDays(addDaysInput: string): string {
+  return pad(addDaysInput);
+}
+
+export function isWeekend(isWeekendInput: string): string {
+  return pad(isWeekendInput);
+}
+
+
+```
+
 ### Core Architecture Module: `crates/api/rule-examples/unrendered-component/files/src/components/index.ts`
 ```
 export { default as CartItem } from "./CartItem.vue";
 export { default as Orphan } from "./Orphan.vue";
-
-```
-
-### Core Architecture Module: `crates/api/rule-examples/unrendered-component/files/src/main.ts`
-```
-import { createApp } from "vue";
-import App from "./App.vue";
-
-createApp(App).mount("#app");
-
-```
-
-### Core Architecture Module: `crates/api/src/mutation/companion/runtime/child-hooks.mjs`
-```
-// Generated from tools/mutation-runner/src/runtime/child-hooks.mjs. Do not edit.
-import { installFallowMutation } from "./global.mjs";
-
-/**
- * Installs the runtime for one test file process and its test hooks. The
- * process loads one test file, so each module-scope hit belongs to this
- * file. The active mutant is set before the test file imports a source file.
- *
- * `report(row, context)` gets `{ hits, static_hits, overlap }` for each
- * finished test, with the argument of the `afterEach` hook. `overlap` is true
- * when tests ran at the same time (for example concurrent tests). The hits
- * then cannot name their test, so the adapter gives each test of the file
- * the hits of the file.
- *
- * `children` is the optional child coverage of the Node processes that a
- * test starts: `startTest()` runs before each test, and the hits that
- * `finishTest()` gives join the hits of the test.
- */
-export const installChildHooks = ({ active, beforeEach, afterEach, report, children = null }) => {
-  const mutation = installFallowMutation();
-  mutation.startFile();
-  mutation.setActive(active);
-  let running = 0;
-  let overlap = false;
-
-  beforeEach(() => {
-    running += 1;
-    overlap ||= running > 1;
-    children?.startTest();
-    mutation.startTest();
-  });
-
-  // A rest parameter keeps the function length at 0. Bun reads a hook with a
-  // parameter as a hook that waits for a `done` callback.
-  afterEach((...args) => {
-    running = Math.max(0, running - 1);
-    const { hits, staticHits } = mutation.finishTest();
-    const childHits = children?.finishTest() ?? [];
-    report(
-      { hits: [...new Set([...hits, ...childHits])], static_hits: staticHits, overlap },
-      args[0],
-    );
-  });
-};
-
-```
-
-### Core Architecture Module: `crates/api/src/mutation/companion/runtime/overlay-hook.mjs`
-```
-// Generated from tools/mutation-runner/src/runtime/overlay-hook.mjs. Do not edit.
-import { createHash } from "node:crypto";
-import { readFileSync } from "node:fs";
-import { registerHooks, stripTypeScriptTypes } from "node:module";
-import { extname } from "node:path";
-import { fileURLToPath } from "node:url";
-import { compileFunction } from "node:vm";
-
-import { readOverlay, realPath, recordOverlayError } from "./child.mjs";
-
-const SCRIPT_FORMATS = new Set(["module", "commonjs", "module-typescript", "commonjs-typescript"]);
-const JAVASCRIPT_FORMATS = new Set(["module", "commonjs"]);
-// Node type stripping does not accept JSX, so a `.tsx` file is not here.
-const TYPESCRIPT_EXTENSIONS = new Set([".ts", ".mts", ".cts"]);
-const COMMONJS_PARAMETERS = ["exports", "require", "module", "__filename", "__dirname"];
-const HASHBANG = /^#!.*/;
-const digest = (bytes) => createHash("sha256").update(bytes).digest("hex");
-
-/**
- * Calls `stripTypeScriptTypes` without its ExperimentalWarning. The warning
- * goes to stderr of the process, and a test can assert on that stream.
- */
-const stripTypes = (code) => {
-  const emitWarning = process.emitWarning;
-  process.emitWarning = () => {};
-  try {
-    const mode = process.features.typescript === "transform" ? "transform" : "strip";
-    return stripTypeScriptTypes(code, { mode });
-  } finally {
-    process.emitWarning = emitWarning;
-  }
-};
-
-/**
- * Throws when the code does not compile as a CommonJS module. A project loader
- * that compiles ESM-syntax TypeScript to CommonJS gives format `commonjs`, but
- * type stripping keeps `import` and `export` in the mutant.
- */
-const assertCommonJs = (code) => {
-  try {
-    compileFunction(code.replace(HASHBANG, ""), COMMONJS_PARAMETERS);
-  } catch (error) {
-    throw new Error(
-      `the project loader gives format \`commonjs\`, but the mutant does not compile as CommonJS (${error.message})`,
-      { cause: error },
-    );
-  }
-};
-
-/**
- * Gives the source to serve for an overlay entry, as a Result. A TypeScript
- * target in a JavaScript format comes from a project loader that compiles
- * TypeScript before this hook. The hook replaces that output with the
- * mutant, so the hook strips the types of the mutant. The error names the
- * syntax that type stripping does not accept, for example an `enum`, or ESM
- * syntax in a mutant that the project loader gives as CommonJS.
- */
-const serveTarget = (entry, format) => {
-  const source = readFileSync(entry.target, "utf8");
-  if (!JAVASCRIPT_FORMATS.has(format) || !TYPESCRIPT_EXTENSIONS.has(extname(entry.target))) {
-    return { ok: true, source };
-  }
-  try {
-    const stripped = stripTypes(source);
-    if (format === "commonjs") assertCommonJs(stripped);
-    return { ok: true, source: stripped };
-  } catch (error) {
-    return { ok: false, error: `Cannot serve the mutant of ${entry.source}: ${error.message}` };
-  }
-};
-
-const indexSources = (overlay) => {
-  const index = new Map();
-  for (const [path, entry] of overlay) {
-    const bytes = readFileSync(path);
-    const key = digest(bytes);
-    const matches = index.get(key) ?? [];
-    matches.push({ bytes, entry });
-    index.set(key, matches);
-  }
-  return index;
-};
-
-/**
- * Serves the instrumented file of each overlay entry in place of its source
- * file. `onLoad(entry)` runs for each served file.
- *
- * A synchronous hook runs in this thread for `import` and `require`. It keeps
- * the format of the original file. For a TypeScript file in a TypeScript
- * format, Node strips the types as it does without the overlay. A project
- * loader that compiles TypeScript itself gives a JavaScript format, so the
- * hook strips the types of the mutant (see `serveTarget`).
- */
-export const registerOverlayHook = (overlay, onLoad, onIncomplete) => {
-  let sources;
-  const overlayEntry = (url, result) => {
-    if (!url.startsWith("file:")) return undefined;
-    const path = realPath(fileURLToPath(url));
-    const direct = overlay.get(path);
-    if (direct !== undefined) return direct;
-    if (!SCRIPT_FORMATS.has(result.format) || result.source == null) return undefined;
-    sources ??= indexSources(overlay);
-    const bytes = ArrayBuffer.isView(result.source)
-      ? Buffer.from(result.source.buffer, result.source.byteOffset, result.source.byteLength)
-      : Buffer.from(result.source);
-    const matches = (sources.get(digest(bytes)) ?? []).filter((match) => match.bytes.equals(bytes));
-    if (matches.length > 1) {
-      const candidates = matches.map(({ entry }) => entry.source).join(", ");
-      onIncomplete(`Ambiguous copied-source execution at ${path}: matches ${candidates}`);
-    }
-    return matches.length === 1 ? matches[0].entry : undefined;
-  };
-  registerHooks({
-    load(url, context, nextLoad) {
-      const result = nextLoad(url, context);
-      const entry = overlayEntry(url, result);
-      if (entry === undefined) return result;
-      const served = serveTarget(entry, result.format);
-      if (!served.ok) {
-        onIncomplete(served.error);
-        return result;
-      }
-      onLoad(entry);
-      return { ...result, source: served.source, shortCircuit: true };
-    },
-  });
-};
-
-/**
- * Serves the instrumented files of the overlay file in this process, and
- * gives the set of the source paths that the process loaded. A file that
- * the hook cannot serve for certain goes into the integrity log.
- */
-export const serveOverlay = (overlayPath) => {
-  const loaded = new Set();
-  registerOverlayHook(
-    readOverlay(overlayPath),
-    (entry) => loaded.add(entry.source),
-    (message) => recordOverlayError(overlayPath, message),
-  );
-  return loaded;
-};
 
 ```
 
@@ -570,11 +422,11 @@ export const serveOverlay = (overlayPath) => {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5024** (2026-11-22): **security --gate new passes a .server import that a change adds to a transitive module**
-  *Symptoms*: `fallow security --gate new` passes when a change adds a `.server` import to an existing module that a route imports. The candidate points at the route module, and the added import is only an `intermediate` hop of the trace. #4881 fixed the direct case in v3.46.0. This case comes from a comment on #4881 that arrived after the close.  ## Reproduction (fallow 3.46.0)  ```sh mkdir rr-server-only-repro && cd rr-server-only-repro && mkdir -p app/routes app/components app/utils cat > package.json <<'JSON' { "name": "rr-server-only-repro", "private": true, "type": "module",   "dependencies": { "react": "^19.0.0", "react-router": "^7.0.0" },   "devDependencies": { "@react-router/dev": "^7.0.0" } } JSON printf "import { index, type RouteConfig } from '@react-router/dev/routes'\n\nexport default [index('routes/home.tsx')] satisfies RouteConfig\n" > app/routes.ts printf "import { Outlet } from 'react-router'\n\nexport default function App() {\n\treturn <Outlet />\n}\n" > app/root.tsx printf "export function getConfig() {\n\treturn { region: 'nz' }\n}\n" > app/utils/config.server.ts printf "export function Banner() {\n\treturn <p>Banner</p>\n}\n" > app/components/banner.tsx printf "import { Banner } from '../components/banner'\n\nexport default function Home() {\n\treturn <Banner />\n}\n" > app/routes/home.tsx git init -q -b main && git add -A && git commit -qm base && git checkout -q -b change printf "import { getConfig } from '../utils/config.server'\n\nexport function Banner() {\n\tre
+- **Issue #5205** (2026-11-24): **fix(release): cover every shipped binary in the target SBOM**
+  *Symptoms*: Closes #5190  ## What  The release SBOM of each target now covers every binary of the `fallow-<target>` archive: `fallow`, `fallow-lsp`, `fallow-mcp` and `fallow-similar-code`.  - The `sbom` job runs `cargo cyclonedx` for the workspace and for `tools/similar-code-sidecar`. - It runs one `cargo tree -p fallow-cli -p fallow-lsp -p fallow-mcp` and one `cargo tree` for the sidecar manifest. - `.github/scripts/filter-sbom.mjs` merges the four package SBOMs into one file. That file has a root component `fallow@<version>` that depends on each package. - The script keeps only the crates that a tree lists. It removes the bin components that the archive does not ship, such as `stub_sidecar` and `fallow-schema-emit`. - The script fails, and writes no file, in these cases: a tree crate has no component, a shipped bin is in no package, a dependency ref has no component, or the inputs have different targets.  The file name `fallow-<target>.cdx.json` and the artifact name do not change.  ## Why  Before, the SBOM covered only `fallow-cli`. Crates that only the other binaries link, such as `tower-lsp-server`, `rmcp`, `rquickjs` and `candle-core`, were not in it. A scan of the SBOM gave no advisories for those crates.  ## Test plan  - [x] `node --test .github/scripts/filter-sbom.test.mjs scripts/workflow-policy.test.mjs` passes. - [x] The SBOM policy test fails on the workflow of `main`. It also fails for a dropped `--bin`, a dropped `-p fallow-lsp`, a wrong package name, a missing sidecar SBO
 
-- **Issue #5007** (2026-11-21): **viz: --output-file writes an empty file and the map goes to fallow-viz.html**
-  *Symptoms*: ## Problem  `fallow viz` accepts the global `--output-file` flag, but the flag does not set the map path. The command writes an empty file at the given path and writes the HTML map to the default `fallow-viz.html` in the project root. The exit code is 0. The flag that sets the map path is `--out`.  A user who expects `--output-file` to work like in the other commands gets an empty file and no error.  ## Reproduction (fallow 3.43.2)  ```bash mkdir -p p/src && cd p echo 'export const a = 1;' > src/index.ts echo '{"name":"p","main":"src/index.ts"}' > package.json fallow viz --no-open --output-file out.html ls -la *.html ```  Result:  ``` fallow-viz.html   (the map) out.html          (0 bytes) ```  ## Expected  One of these:  - `fallow viz` treats `--output-file` as `--out`, or - `fallow viz` rejects `--output-file` with exit 2 and names `--out`.  ## Notes  The empty file comes from the global report writer: `viz` prints no report on stdout, so the writer writes nothing to the file. 
+- **Issue #5204** (2026-11-24): **fix(cli): refresh a stale .agents skill on agent install**
+  *Symptoms*: Closes #5132  ## What  `fallow agent install` now also refreshes each `.agents/skills/<name>` skill that has the fallow marker, whatever harness it detects. This applies to user scope and project scope. The install does not create an absent `.agents` skill. It does not change an `.agents` skill without the fallow marker, also with `--force`.  ## Why  With a `.claude` folder, harness detection returns only Claude Code, so the install wrote only `.claude/skills/`. A stale fallow copy in `.agents/skills/` stayed stale. `fallow agent status` showed that row as `stale` and suggested `fallow agent install --user`, but that command did not change the row.  `agent uninstall` keeps its old targets. A Claude-only uninstall does not remove an `.agents` copy that Codex or Cursor can still read.  ## Test plan  - [x] New tests `claude_install_refreshes_stale_managed_agents_skill_in_user_scope` and `..._in_project_scope` fail on `main` and pass with the change. The user-scope test also checks that `--dry-run` writes nothing. - [x] New tests check that the install creates no absent `.agents` skill and leaves an unmarked `.agents` skill alone. - [x] `cargo test -p fallow-cli --lib agent_` and `cargo test -p fallow-cli --test integration agent_` pass. - [x] Real binary with an isolated `HOME`, with the steps of the issue: the row is `stale` before the install and `installed` after it. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -591,951 +443,1280 @@ export const serveOverlay = (overlayPath) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cfb765db` (2026-11-23)
-**Commit Message**: fix(config): report the cache and ignore rules a repair affects (#5118)
+### Incident Patch 1: `6dcee9b2` (2026-11-24)
+**Commit Message**: fix(extract): scan SFC script and style blocks in linear time (#5184)
 
-* fix(config): report the cache and ignore rules a repair affects
+* fix(extract): scan SFC script and style blocks in linear time
 
-Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
+The `<script>` and `<style>` block regexes of Vue and Svelte files took
+quadratic time on a file with many unclosed attribute quotes. A tag start
+whose quoted value does not close keeps a regex thread alive. Each search
+then reads far past the block that it reports, and the next search reads
+that text again. An OSS-Fuzz test case of 125 KB took about 40 s in a local
+ASan build of the `fuzz_sfc` target, and ClusterFuzz reported it as a
+timeout.
 
-* fix(config): identify ignore rules that block duplicate export fixes
+The new `sfc_blocks` scan finds each tag start and the closing tags with
+small regexes. It then walks the attributes by hand and stores each
+position that cannot reach a usable `>`. It gives the same blocks as the
+old regexes, with the same quoted `>` and brace expression rules (#4828).
+The SFC script, style and template-region scans, the Svelte template mask
+and the scoped style scan use it.
 
-Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
+The tests compare the scan with the old regexes on generated input. Two
+more tests check the time of the scans on 8000 unclosed tags.
 
-* fix(doctor): normalize native config path separators
+Refs OSS-Fuzz test case 4953632655867904.
 
-Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
+Signed-off-by: Bart Waardenburg <[REDACT
 
----------
-
-Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
-
-**File**: `changelog.d/fix-cli-config-repairs.md` (added, +4/-0)
-```diff
-@@ -0,0 +1,4 @@
-+### Fixed
-+
-+- **Doctor includes the selected config in its cache repair command.** The command rebuilds the parse and graph caches that doctor inspected. Doctor JSON omits `remediation` and gives manual steps in `message` when the config path contains shell-unsafe characters, the config is outside the project root, or the run overrides the cache directory.
-+- **Config fix reports list only the ignore rules that Fallow adds.** Dry-run and apply print a note on stderr when an existing `ignoreExports` rule prevents a write. The note names the affected file.
-```
-
-**File**: `crates/api/src/doctor.rs` (modified, +111/-5)
-```diff
-@@ -90,11 +90,22 @@ where
-     match resolve_doctor_run(&root, options.config_path, cache_dir) {
-         Ok(run) => {
-             let project = ReadyProject::of(&run);
-+            let cache_repair = || {
-+                if cache_dir.is_some_and(|path| !path.as_os_str().is_empty()) {
-+                    return Err(
-+                        "Set FALLOW_CACHE_DIR to the inspected cache directory and run fallow dead-code --quiet with the same --config value if one was selected.",
-+                    );
-+                }
-+                let explicit = options.config_path.and(project.path.as_deref());
-+                remediation_with_config("fallow dead-code --quiet", &root, explicit)
-+                    .ok_or("Run fallow dead-code --quiet with the same --config value.")
-+            };
-             push_ready_project_checks(
-                 &mut checks,
-                 &root,
-                 &project,
-                 &run.plugin_readiness(),
-+                cache_repair,
-                 discover_companion,
-             );
-         }
-@@ -192,6 +203,7 @@ fn push_ready_project_checks<F>(
-     root: &Path,
-     project: &ReadyProject,
-     configured_plugin_diagnostics: &[fallow_config::ConfiguredPluginDiagnostic],
-+    cache_repair: impl Fn() -> Result<DoctorRemediation, &'static str>,
-     discover_companion: &F,
- ) where
-     F: Fn(&Path) -> Result<(), String>,
-@@ -265,8 +277,21 @@ fn push_ready_project_checks<F>(
-     ));
- 
-     checks.push(dependencies_check(root));
--    checks.push(cache_check(&project.config));
--    checks.push(graph_cache_check(&project.config));
-+    for mut check in [
-+        cache_check(&project.config),
-+        graph_cache_check(&project.config),
-+    ] {
-+        if check.status == DoctorCheckStatus::Warn {
-+            match cache_repair() {
-+                Ok(repair) => check.remediation = Some(repair),
-+                Err(hint) => {
-+                    check.message.push(' ');
-+                    check.message.push_str(hint);
-+                }
-+            }
-+        }
-+        checks.push(check);
-+    }
-     checks.push(mutation_runner_check(root, project.config.mutation.runner));
- }
- 
-@@ -337,7 +362,7 @@ fn cache_check(config: &fallow_config::ResolvedConfig) -> DoctorCheck {
-                 "Extraction cache{size} would not be reused: {}. The next run parses every file.",
-                 rejection.describe()
-             ),
--            Some(remediation("fallow dead-code --quiet", false)),
-+            None,
-         ),
-     }
- }
-@@ -388,7 +413,7 @@ fn graph_cache_check(config: &fallow_config::ResolvedConfig) -> DoctorCheck {
-                  and rebuilds the graph.",
-                 rejection.describe()
-             ),
--            Some(remediation("fallow dead-code --quiet", false)),
-+            None,
-         ),
-     }
- }
-@@ -914,7 +939,9 @@ fn build_output(checks: Vec<DoctorCheck>) -> DoctorOutput {
- 
- fn relative_path(root: &Path, path: &Path) -> Option<String> {
-     path.strip_prefix(root).ok().map(|path| {
--        let relative = path.to_string_lossy().replace('\\', "/");
-+        let relative = path
-+            .to_string_lossy()
-+            .replace(std::path::MAIN_SEPARATOR, "/");
-         if relative.is_empty() {
-             ".".to_string()
-         } else {
-@@ -1164,6 +1191,85 @@ mod tests {
-         assert_eq!(output.status, DoctorStatus::Pass);
-     }
- 
-+    #[test]
-+    fn cache_repairs_use_the_inspected_config() {
-+        let temp = tempfile::tempdir().expect("create fixture");
-+        let root = temp.path();
-+        let path = root.join("ci.json");
-+        std::fs::write(&path, r#"{"cache":{"dir":"cache-ci"}}"#).expect("write config");
-+        let cache = root.join("cache-ci");
-+        std::fs::create_dir(&cache).expect("create cache directory");
-+        for blob in ["cache.bin", "graph-cache.bin"] {
-+            std::fs::write(cache.join(blob), b"invalid cache").expect("write corrupt cache");
-+        }
-+        let output = run_doctor_with_discovery(
-+            &DoctorOptions {
-+                root,
-+                config_path: Some(&path),
-+            },
-+            &|_| Err("missing companion".to_owned()),
-+        );
-+        for id in [DoctorCheckId::Cache, DoctorCheckId::GraphCache] {
-+            let check = output
-+                .checks
-+                .iter()
-+                .find(|check| check.id == id)
-+                .expect("cache check");
-+            assert_eq!(check.status, DoctorCheckStatus::Warn);
-+            assert_eq!(
-+                check
-+                    .remediation
-+                    .as_ref()
-+                    .expect("cache repair command")
-+                    .command,
-+                "fallow dead-code --quiet --config=ci.json"
-+            );
-+        }
-+    }
-+
-+    #[cfg(unix)]
-+    #[test]
-+    fn remediation_omits_a_config_with_a_literal_backslash() {
-+        let temp = tempfile::tempdir().expect("temp root");
-+        let config = temp.path().join(r"ci\settings.json"
-```
-
-**File**: `crates/cli/src/fix/config.rs` (modified, +46/-61)
-```diff
-@@ -37,6 +37,7 @@ use std::path::{Component, Path, PathBuf};
- use fallow_config::{
-     ConfigFixPlan as ResolvedConfigPlan, IgnoreExportRule, OutputFormat,
-     add_ignore_exports_rule_to_string, classify_config_fix_plan as classify_plan,
-+    render_ignore_exports_edit,
- };
- use fallow_types::output_dead_code::DuplicateExportFinding;
- use fallow_types::path_util::display_relative;
-@@ -119,16 +120,6 @@ fn apply_edit(
-     }
-     let config_file = display_relative(root, config_path);
- 
--    if write.dry_run {
--        return apply_edit_dry_run(
--            config_path,
--            &config_file,
--            &entries,
--            write.output,
--            write.fixes,
--        );
--    }
--
-     let current = match std::fs::read_to_string(config_path) {
-         Ok(content) => content,
-         Err(error) => {
-@@ -138,76 +129,70 @@ fn apply_edit(
-             return true;
-         }
-     };
--    match add_ignore_exports_rule_to_string(config_path, &current, &entries) {
--        Ok(proposed) => {
--            write.plan.stage_existing(
--                config_path.to_path_buf(),
--                current.as_bytes(),
--                proposed.into_bytes(),
--            );
--            write.fixes.push(serde_json::json!({
--                "type": "add_ignore_exports",
--                "config_key": "ignoreExports",
--                "file": config_file,
--                "entries": entries,
--                "applied": true,
--                "__target": config_path.display().to_string(),
--            }));
--            false
-+    let (proposed, added) = match render_ignore_exports_edit(config_path, &current, entries.clone())
-+    {
-+        Ok(edit) => edit,
-+        Err(error) => {
-+            eprintln!("Error: failed to add ignoreExports rules to {config_file}: {error}");
-+            return true;
-         }
--        Err(e) => {
--            eprintln!("Error: failed to add ignoreExports rules to {config_file}: {e}");
--            true
-+    };
-+    let added_files: FxHashSet<&str> = added.iter().map(|entry| entry.file.as_str()).collect();
-+    for entry in &entries {
-+        if !added_files.contains(entry.file.as_str()) {
-+            eprintln!(
-+                "Note: {config_file} has an existing ignoreExports rule for {}. Add the duplicate export names to that rule to ignore them.",
-+                entry.file
-+            );
-         }
-     }
-+    if added.is_empty() {
-+        return false;
-+    }
-+    if write.dry_run {
-+        preview_edit(&config_file, &current, &proposed, &added, write);
-+    } else {
-+        write.plan.stage_existing(
-+            config_path.to_path_buf(),
-+            current.as_bytes(),
-+            proposed.into_bytes(),
-+        );
-+        write.fixes.push(serde_json::json!({
-+            "type": "add_ignore_exports",
-+            "config_key": "ignoreExports",
-+            "file": config_file,
-+            "entries": added,
-+            "applied": true,
-+            "__target": config_path.display().to_string(),
-+        }));
-+    }
-+    false
- }
- 
--/// Render the dry-run preview (diff + JSON entry) for the config-edit path.
--/// Returns the orchestrator's `had_write_error` bool.
--fn apply_edit_dry_run(
--    config_path: &Path,
-+fn preview_edit(
-     config_file: &str,
-+    current: &str,
-+    proposed: &str,
-     entries: &[IgnoreExportRule],
--    output: OutputFormat,
--    fixes: &mut Vec<serde_json::Value>,
--) -> bool {
--    let current = match std::fs::read_to_string(config_path) {
--        Ok(content) => content,
--        Err(e) => {
--            eprintln!("Error: failed to read {config_file} for dry-run preview: {e}");
--            return true;
--        }
--    };
--    let proposed = match add_ignore_exports_rule_to_string(config_path, &current, entries) {
--        Ok(content) => content,
--        Err(e) => {
--            eprintln!("Error: failed to compute proposed config edit for {config_file}: {e}");
--            return true;
--        }
--    };
--    if current == proposed {
--        return false;
--    }
--    let diff = render_unified_diff(config_file, &current, &proposed);
--    let mut entry = serde_json::json!({
-+    write: &mut ConfigWriteContext<'_>,
-+) {
-+    let diff = render_unified_diff(config_file, current, proposed);
-+    let entry = serde_json::json!({
-         "type": "add_ignore_exports",
-         "config_key": "ignoreExports",
-         "file": config_file,
-         "entries": entries,
-         "proposed_diff": diff,
-+        "dry_run": true,
-     });
--    if !matches!(output, OutputFormat::Json) {
-+    if !matches!(write.output, OutputFormat::Json) {
-         eprintln!(
-             "Would append {} ignoreExports rule(s) to {config_file}:",
-             entries.len()
-         );
-         eprintln!("{diff}");
-     }
--    if let Some(obj) = entry.as_object_mut() {
--        obj.insert("dry_run".to_owned(), serde_json::Value::Bool(true));
--    }
--    fixes.push(entry);
--    false
-+    write.fixes.push(entry);
- }
- 
- fn apply_create(
-```
-
-**File**: `crates/cli/tests/integration/fix_tests.rs` (modified, +74/-2)
-```diff
-@@ -317,7 +317,11 @@ fn fix_adds_ignore_exports_config_rules_for_duplicate_exports() {
-         r#"{"name":"dup-config","main":"src/index.ts"}"#,
-     )
-     .unwrap();
--    std::fs::write(root.join(".fallowrc.json"), "{}\n").unwrap();
-+    std::fs::write(
-+        root.join(".fallowrc.json"),
-+        r#"{"ignoreExports":[{"file":"src/one/index.ts","exports":["Other"]}]}"#,
-+    )
-+    .unwrap();
-     std::fs::write(
-         root.join("src/index.ts"),
-         "export { Button } from './one';\nexport { Button as Button2 } from './two';\nconsole.log(Button2);\n",
-@@ -326,6 +330,16 @@ fn fix_adds_ignore_exports_config_rules_for_duplicate_exports() {
-     std::fs::write(root.join("src/one/index.ts"), "export const Button = 1;\n").unwrap();
-     std::fs::write(root.join("src/two/index.ts"), "export const Button = 2;\n").unwrap();
- 
-+    let preview = run_fallow_in_root("fix", root, &["--dry-run", "--format", "json", "--quiet"]);
-+    assert_eq!(preview.code, 0, "{}", preview.stderr);
-+    let preview = parse_json(&preview);
-+    let preview_edit = preview["fixes"]
-+        .as_array()
-+        .unwrap()
-+        .iter()
-+        .find(|fix| fix["type"] == "add_ignore_exports")
-+        .unwrap();
-+
-     let output = run_fallow_in_root("fix", root, &["--yes", "--format", "json", "--quiet"]);
-     assert_eq!(
-         output.code, 0,
-@@ -341,13 +355,18 @@ fn fix_adds_ignore_exports_config_rules_for_duplicate_exports() {
-         .expect("fix output should include an ignoreExports config edit");
-     assert_eq!(config_fix["applied"], true);
-     assert_eq!(config_fix["config_key"], "ignoreExports");
--    assert_eq!(config_fix["entries"].as_array().unwrap().len(), 2);
-+    assert_eq!(
-+        config_fix["entries"],
-+        serde_json::json!([{"file": "src/two/index.ts", "exports":["*"]}])
-+    );
-+    assert_eq!(preview_edit["entries"], config_fix["entries"]);
- 
-     let config: serde_json::Value =
-         serde_json::from_str(&std::fs::read_to_string(root.join(".fallowrc.json")).unwrap())
-             .unwrap();
-     let ignore_exports = config["ignoreExports"].as_array().unwrap();
-     assert_eq!(ignore_exports[0]["file"], "src/one/index.ts");
-+    assert_eq!(ignore_exports[0]["exports"], serde_json::json!(["Other"]));
-     assert_eq!(ignore_exports[1]["file"], "src/two/index.ts");
- 
-     let output = run_fallow_in_root(
-@@ -364,6 +383,59 @@ fn fix_adds_ignore_exports_config_rules_for_duplicate_exports() {
-     assert_eq!(json["summary"]["duplicate_exports"].as_u64(), Some(0));
- }
- 
-+#[test]
-+fn fix_reports_narrow_ignore_exports_rules() {
-+    let dir = tempfile::tempdir().unwrap();
-+    let root = dir.path();
-+    let config_path = root.join(".fallowrc.json");
-+    let config = r#"{"ignoreExports":[{"file":"one.ts","exports":["Other"]},{"file":"two.ts","exports":["Other"]}]}"#;
-+    std::fs::write(&config_path, config).unwrap();
-+    std::fs::write(
-+        root.join("package.json"),
-+        r#"{"name":"dup-config","main":"index.ts"}"#,
-+    )
-+    .unwrap();
-+    std::fs::write(
-+        root.join("index.ts"),
-+        "export { Button } from './one';\nexport { Button as Button2 } from './two';\n",
-+    )
-+    .unwrap();
-+    for file in ["one.ts", "two.ts"] {
-+        std::fs::write(root.join(file), "export const Button = 1;\n").unwrap();
-+    }
-+
-+    let before = run_fallow_in_root(
-+        "dead-code",
-+        root,
-+        &["--duplicate-exports", "--format", "json", "--quiet"],
-+    );
-+    assert_eq!(parse_json(&before)["summary"]["duplicate_exports"], 1);
-+    for mode in ["--dry-run", "--yes"] {
-+        let output = run_fallow_in_root("fix", root, &[mode, "--format", "json", "--quiet"]);
-+        assert_eq!(output.code, 0, "{}", output.stderr);
-+        for file in ["one.ts", "two.ts"] {
-+            assert!(
-+                output
-+                    .stderr
-+                    .lines()
-+                    .any(|line| line.contains(file) && line.contains("ignoreExports")),
-+                "{mode} should identify the ignoreExports rule for {file}: {}",
-+                output.stderr
-+            );
-+        }
-+        assert!(
-+            parse_json(&output)["fixes"]
-+                .as_array()
-+                .unwrap()
-+                .iter()
-+                .all(|fix| fix["type"] != "add_ignore_exports"),
-+            "{mode} should report no config edits: {}",
-+            output.stdout
-+        );
-+        assert_eq!(std::fs::read_to_string(&config_path).unwrap(), config);
-+    }
-+}
-+
- /// A Windows-authored `.fallowrc.json` with a UTF-8 BOM must round-trip
- /// through `fallow fix --yes` without breaking the parse on the next run.
- /// The CST parser (jsonc-parser) rejects a leading BOM, so the writer must
-```
-
-**File**: `crates/config/src/config_writer.rs` (modified, +36/-29)
-```diff
-@@ -146,23 +146,33 @@ pub fn add_ignore_exports_rule_to_string(
-     content: &str,
-     entries: &[IgnoreExportRule],
- ) -> ConfigWriteResult<String> {
-+    render_ignore_exports_edit(path, content, entries.to_vec()).map(|(content, _)| content)
-+}
-+
-+/// Render the config and return the rules that were appended, in input order.
-+pub fn render_ignore_exports_edit(
-+    path: &Path,
-+    content: &str,
-+    mut entries: Vec<IgnoreExportRule>,
-+) -> ConfigWriteResult<(String, Vec<IgnoreExportRule>)> {
-     let had_bom = content.starts_with(BOM);
-     let body = content.strip_prefix(BOM).unwrap_or(content);
-     let config_dir = path.parent().unwrap_or_else(|| Path::new(""));
-     let rendered = if is_json_config(path) {
--        append_json_ignore_exports(body, entries, config_dir)?
-+        append_json_ignore_exports(body, &mut entries, config_dir)?
-     } else {
--        append_toml_ignore_exports(body, entries, config_dir)?
-+        append_toml_ignore_exports(body, &mut entries, config_dir)?
-     };
-     let with_endings = preserve_line_endings(&rendered, body);
--    Ok(if had_bom {
-+    let content = if had_bom {
-         let mut out = String::with_capacity(with_endings.len() + BOM.len_utf8());
-         out.push(BOM);
-         out.push_str(&with_endings);
-         out
-     } else {
-         with_endings
--    })
-+    };
-+    Ok((content, entries))
- }
- 
- #[expect(
-@@ -180,7 +190,7 @@ fn is_json_config(path: &Path) -> bool {
- 
- fn append_json_ignore_exports(
-     content: &str,
--    entries: &[IgnoreExportRule],
-+    entries: &mut Vec<IgnoreExportRule>,
-     config_dir: &Path,
- ) -> ConfigWriteResult<String> {
-     let root = CstRootNode::parse(content, &crate::jsonc::parse_options())
-@@ -207,23 +217,22 @@ fn append_json_ignore_exports(
-         }
-     }
- 
-+    entries.retain(|entry| seen.insert(entry.file.clone()));
-     for entry in entries {
--        if seen.insert(entry.file.clone()) {
--            array.append(CstInputValue::Object(vec![
--                ("file".to_owned(), CstInputValue::String(entry.file.clone())),
--                (
--                    "exports".to_owned(),
--                    CstInputValue::Array(
--                        entry
--                            .exports
--                            .iter()
--                            .cloned()
--                            .map(CstInputValue::String)
--                            .collect(),
--                    ),
-+        array.append(CstInputValue::Object(vec![
-+            ("file".to_owned(), CstInputValue::String(entry.file.clone())),
-+            (
-+                "exports".to_owned(),
-+                CstInputValue::Array(
-+                    entry
-+                        .exports
-+                        .iter()
-+                        .cloned()
-+                        .map(CstInputValue::String)
-+                        .collect(),
-                 ),
--            ]));
--        }
-+            ),
-+        ]));
-     }
-     if inherit_trailing_commas {
-         array.set_trailing_commas(TrailingCommaMode::IfMultiline);
-@@ -272,7 +281,7 @@ pub(crate) fn parse_toml_document(content: &str) -> ConfigWriteResult<DocumentMu
- 
- fn append_toml_ignore_exports(
-     content: &str,
--    entries: &[IgnoreExportRule],
-+    entries: &mut Vec<IgnoreExportRule>,
-     config_dir: &Path,
- ) -> ConfigWriteResult<String> {
-     let mut doc = parse_toml_document(content)?;
-@@ -340,13 +349,12 @@ fn files_from_array_of_tables(tables: &ArrayOfTables, config_dir: &Path) -> FxHa
- 
- fn append_to_array_of_tables(
-     tables: &mut ArrayOfTables,
--    entries: &[IgnoreExportRule],
-+    entries: &mut Vec<IgnoreExportRule>,
-     seen: &mut FxHashSet<String>,
- ) {
-+    entries.retain(|entry| seen.insert(entry.file.clone()));
-     for entry in entries {
--        if seen.insert(entry.file.clone()) {
--            tables.push(toml_ignore_export_table(entry));
--        }
-+        tables.push(toml_ignore_export_table(entry));
-     }
- }
- 
-@@ -394,13 +402,12 @@ fn record_existing_file(seen: &mut FxHashSet<String>, file: &str, config_dir: &P
- 
- fn append_to_inline_array(
-     array: &mut Array,
--    entries: &[IgnoreExportRule],
-+    entries: &mut Vec<IgnoreExportRule>,
-     seen: &mut FxHashSet<String>,
- ) {
-+    entries.retain(|entry| seen.insert(entry.file.clone()));
-     for entry in entries {
--        if seen.insert(entry.file.clone()) {
--            array.push(Value::InlineTable(toml_ignore_export_inline_table(entry)));
--        }
-+        array.push(Value::InlineTable(toml_ignore_export_inline_table(entry)));
-     }
- }
- 
-```
-
----
-
-### Incident Patch 2: `6d1c1d54` (2026-11-23)
-**Commit Message**: fix(vscode): distinguish applied and skipped fixes (#5086)
-
-* fix(vscode): distinguish applied and skipped fixes
-
-Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
-
-* fix(vscode): show the advice of the skip that failed the fix run
-
-Intentional skips also carry help text. The error message now takes the advice from a content_changed or mixed_line_endings skip, which are the skips that make the CLI exit with code 2.
-
-Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
-
----------
-
-Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
-
-**File**: `changelog.d/fix-vscode-fix-results.md` (added, +4/-0)
-```diff
-@@ -0,0 +1,4 @@
-+### Fixed
-+
-+- **VS Code shows which fixes the CLI can apply.** The preview excludes skipped changes. After an apply run, the editor reports how many fixes the CLI applied and how many it skipped, including when a write fails.
-+- **The fix confirmation describes file changes.** It now includes enum and class member removal, dependency catalogs, and Fallow configuration files.
-```
-
-**File**: `editors/vscode/src/commands.ts` (modified, +52/-10)
-```diff
-@@ -636,7 +636,7 @@ interface FixQuickPickItem extends vscode.QuickPickItem {
- 
- const confirmApplyFixes = async (): Promise<boolean> => {
-   const confirm = await vscode.window.showWarningMessage(
--    "Fallow: This will unexport unused exports (keeps the code) and remove unused dependencies from package.json. Continue?",
-+    "Fallow can remove export keywords, unused enums, individual enum and class members, dependencies, and catalog entries. It can also create or update Fallow config files. Apply these fixes?",
-     "Yes",
-     "No",
-   );
-@@ -676,14 +676,59 @@ const openFixLocation = async (root: string, fix: FixAction | undefined): Promis
-   });
- };
- 
-+const fixCountLabel = (count: number): string => `${count} fix${count === 1 ? "" : "es"}`;
-+
-+const skippedFixLabel = (count: number): string => (count > 0 ? `, skipped ${count}` : "");
-+
-+const fixSummary = (result: FallowFixResult): string => {
-+  const skipped = result.fixes.filter((fix) => fix.skipped).length;
-+  const count = result.dry_run
-+    ? `${fixCountLabel(result.fixes.length - skipped)} available`
-+    : `applied ${fixCountLabel(result.total_fixed)}`;
-+  return count + skippedFixLabel(skipped);
-+};
-+
-+// Only these skips make the CLI exit with code 2. Intentional skips also carry help text.
-+const RECOVERABLE_SKIP_REASONS: ReadonlySet<string> = new Set([
-+  "content_changed",
-+  "mixed_line_endings",
-+]);
-+
-+const partialFixSummary = (error: unknown): string => {
-+  if (!(error instanceof FallowExecError) || error.exitCode !== 2) return "";
-+  try {
-+    const result = JSON.parse(error.stdout) as FallowFixResult;
-+    if (
-+      typeof result.dry_run === "boolean" &&
-+      Number.isInteger(result.total_fixed) &&
-+      Array.isArray(result.fixes)
-+    ) {
-+      const recovery = result.fixes.find(
-+        (fix) =>
-+          fix.skipped &&
-+          fix.help &&
-+          fix.skip_reason !== undefined &&
-+          RECOVERABLE_SKIP_REASONS.has(fix.skip_reason),
-+      );
-+      const advice = recovery?.help ? ` ${recovery.path ?? ""} ${recovery.help}`.trim() : "";
-+      return ` (${fixSummary(result)})${advice ? `. ${advice}` : ""}`;
-+    }
-+  } catch {
-+    // The CLI can fail before it emits a fix report.
-+  }
-+  return "";
-+};
-+
- const showDryRunPreview = async (root: string, result: FallowFixResult): Promise<void> => {
--  if (result.fixes.length === 0) {
--    void vscode.window.showInformationMessage("Fallow: no fixes available.");
-+  const available = result.fixes.filter((fix) => !fix.skipped);
-+  const skipped = skippedFixLabel(result.fixes.length - available.length);
-+  if (available.length === 0) {
-+    void vscode.window.showInformationMessage(`Fallow: no fixes available${skipped}.`);
-     return;
-   }
- 
-   const quickPickItems: FixQuickPickItem[] = [];
--  for (const item of createFixPreviewItems(result.fixes)) {
-+  for (const item of createFixPreviewItems(available)) {
-     if (item.action === "apply-all") {
-       quickPickItems.push({
-         label: "",
-@@ -708,7 +753,7 @@ const showDryRunPreview = async (root: string, result: FallowFixResult): Promise
-   }
- 
-   const picked = await vscode.window.showQuickPick(quickPickItems, {
--    title: `Fallow: ${result.fixes.length} fix${result.fixes.length === 1 ? "" : "es"} available`,
-+    title: `Fallow: ${fixCountLabel(available.length)} available${skipped}`,
-     placeHolder: "Review fixes. Select 'Apply all fixes' to apply, or click a fix to navigate",
-   });
- 
-@@ -1154,16 +1199,13 @@ export const runFix = async (
-     if (dryRun) {
-       await showDryRunPreview(root, result);
-     } else {
--      const fixCount = result.fixes.length;
--      void vscode.window.showInformationMessage(
--        `Fallow: applied ${fixCount} fix${fixCount === 1 ? "" : "es"}.`,
--      );
-+      void vscode.window.showInformationMessage(`Fallow: ${fixSummary(result)}.`);
-     }
- 
-     return result;
-   } catch (err) {
-     const message = err instanceof Error ? err.message : String(err);
--    void vscode.window.showErrorMessage(`Fallow fix failed: ${message}`);
-+    void vscode.window.showErrorMessage(`Fallow fix failed: ${message}${partialFixSummary(err)}`);
-     return null;
-   } finally {
-     await afterRun?.();
-```
-
-**File**: `editors/vscode/src/fix-types.ts` (modified, +2/-0)
-```diff
-@@ -81,6 +81,8 @@ export interface FixAction {
-    * `content_changed` / `mixed_line_endings`).
-    */
-   readonly skip_reason?: string;
-+  /** Recovery advice for a skipped fix. */
-+  readonly help?: string;
-   /**
-    * Reachability caveat tokens copied from the finding, present on
-    * `skip_reason: "low_confidence_incomplete_analysis"` entries so a
-```
-
-**File**: `editors/vscode/test/commands.test.ts` (modified, +128/-4)
-```diff
-@@ -1153,27 +1153,37 @@ describe("runAudit type-aware compatibility", () => {
- });
- 
- describe("applyFixes", () => {
--  const writeFixScript = async (dir: string, logPath: string): Promise<string> => {
-+  const writeFixScript = async (
-+    dir: string,
-+    logPath: string,
-+    result: object,
-+    exitCode: number,
-+  ): Promise<string> => {
-     const script = join(dir, "fallow-cli.js");
-     await writeFile(
-       script,
-       [
-         "#!/usr/bin/env node",
-         'const fs = require("node:fs");',
-         `fs.appendFileSync(${JSON.stringify(logPath)}, JSON.stringify({ args: process.argv.slice(2) }) + "\\n");`,
--        "process.stdout.write(JSON.stringify({ dry_run: false, fixes: [], total_fixed: 0 }));",
-+        `process.stdout.write(${JSON.stringify(JSON.stringify(result))});`,
-+        `process.exitCode = ${exitCode};`,
-       ].join("\n"),
-       "utf8",
-     );
-     await chmod(script, 0o755);
-     return script;
-   };
- 
--  const withFixWorkspace = async (body: (logPath: string) => Promise<void>): Promise<void> => {
-+  const withFixWorkspace = async (
-+    body: (logPath: string) => Promise<void>,
-+    result: object = { dry_run: false, fixes: [], total_fixed: 0 },
-+    exitCode = 0,
-+  ): Promise<void> => {
-     const dir = await mkdtemp(join(tmpdir(), "fallow-vscode-apply-fix-"));
-     const logPath = join(dir, "spawn.log");
-     try {
--      const script = await writeFixScript(dir, logPath);
-+      const script = await writeFixScript(dir, logPath, result, exitCode);
-       mockPathBinary = script;
-       mockBinaryVersions = { [script]: "3.9.2" };
-       setWorkspaceRoot(dir);
-@@ -1200,13 +1210,127 @@ describe("applyFixes", () => {
-     vi.clearAllMocks();
-   });
- 
-+  const skipped = {
-+    type: "skipped",
-+    path: "src/member.ts",
-+    skipped: true,
-+    skip_reason: "low_confidence_off_graph",
-+  };
-+
-+  it("shows the CLI applied count and the skipped entries", async () => {
-+    await withFixWorkspace(
-+      async () => {
-+        vi.mocked(mockWindow.showWarningMessage).mockResolvedValueOnce("Yes" as never);
-+        await applyFixes(workspaceContext, async () => {});
-+        expect(mockWindow.showInformationMessage).toHaveBeenCalledWith(
-+          "Fallow: applied 1 fix, skipped 1.",
-+        );
-+      },
-+      {
-+        dry_run: false,
-+        total_fixed: 1,
-+        fixes: [{ type: "remove_export", name: "unused", applied: true }, skipped],
-+      },
-+    );
-+  });
-+
-+  it("reports partial fixes when the CLI exits with a write error", async () => {
-+    await withFixWorkspace(
-+      async () => {
-+        vi.mocked(mockWindow.showWarningMessage).mockResolvedValueOnce("Yes" as never);
-+        await applyFixes(workspaceContext, async () => {});
-+        expect(mockWindow.showErrorMessage).toHaveBeenCalledWith(
-+          expect.stringMatching(/applied 1 fix, skipped 1/),
-+        );
-+      },
-+      {
-+        dry_run: false,
-+        total_fixed: 1,
-+        fixes: [
-+          { type: "remove_export", name: "unused", applied: true },
-+          { ...skipped, skip_reason: "content_changed" },
-+        ],
-+      },
-+      2,
-+    );
-+  });
-+
-+  it("reports the recovery advice when a preview skips a file with mixed line endings", async () => {
-+    const help = "Normalize this file to consistent LF or CRLF line endings.";
-+    await withFixWorkspace(
-+      async () => {
-+        await runFix(workspaceContext, true);
-+        expect(mockWindow.showErrorMessage).toHaveBeenCalledWith(
-+          expect.stringContaining("skipped 2"),
-+        );
-+        expect(mockWindow.showErrorMessage).toHaveBeenCalledWith(expect.stringContaining(help));
-+        expect(mockWindow.showErrorMessage).not.toHaveBeenCalledWith(
-+          expect.stringContaining("Intentional skip."),
-+        );
-+        expect(mockWindow.showQuickPick).not.toHaveBeenCalled();
-+      },
-+      {
-+        dry_run: true,
-+        total_fixed: 0,
-+        fixes: [
-+          { ...skipped, skip_reason: "low_confidence_off_graph", help: "Intentional skip." },
-+          { ...skipped, skip_reason: "mixed_line_endings", help },
-+        ],
-+      },
-+      2,
-+    );
-+  });
-+
-+  it("offers no apply action for a preview that contains only skips", async () => {
-+    await withFixWorkspace(
-+      async () => {
-+        await runFix(workspaceContext, true);
-+        expect(mockWindow.showInformationMessage).toHaveBeenCalledWith(
-+          "Fallow: no fixes available, skipped 1.",
-+        );
-+        expect(mockWindow.showQuickPick).not.toHaveBeenCalled();
-+      },
-+      { dry_run: true, total_fixed: 0, fixes: [skipped] },
-+    );
-+  });
-+
-+  it("counts only available actions in a mixed preview", async () => {
-+    await withFixWorkspace(
-+      async () => {
-+        await runFix(workspaceContext, true);
-+        expect(mockWindow.showQuickPick).toHaveBeenCalledWith(
-+          expect.arrayContaining([
-+            expect.objectContaining({ action: "apply-all", description: "1 fix" }),
-+          ]),
-+        
-```
-
----
-
-### Incident Patch 3: `769a0442` (2026-11-23)
-**Commit Message**: fix(engine): keep Git diff paths relative to the repository root (#5112)
-
-* fix(engine): keep Git diff paths relative to the repository root
-
-Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
-
-* fix(engine): read changed paths with older Git versions
-
-Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
-
----------
-
-Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
-
-**File**: `changelog.d/git-diff-paths.md` (added, +3/-0)
+**File**: `changelog.d/fix-oss-fuzz-sfc-blocks.md` (added, +3/-0)
 ```diff
 @@ -0,0 +1,3 @@
 +### Fixed
 +
-+- **`--changed-since` finds changed and renamed files when Git uses relative paths.** Runs from a repository subdirectory now use the correct file paths when `diff.relative` is set to `true`.
++- **A Vue or Svelte file with many unclosed attribute quotes can no longer slow the analysis to a crawl.** Fallow found the `<script>` and `<style>` blocks of a single-file component with regexes. A tag start whose quoted attribute value did not close made each search read far past its block, and the next search read that text again, so the time grew with the square of the file size. A 125 KB file took minutes in a fuzz build. Fallow now finds the blocks with a scan that reads each position a bounded number of times. The blocks that it finds do not change.
 ```
 
-**File**: `crates/engine/src/changed_files.rs` (modified, +41/-1)
+**File**: `crates/extract/src/lib.rs` (modified, +1/-0)
 ```diff
-@@ -728,7 +728,8 @@ pub(crate) fn git_path_from_bytes(path: &[u8]) -> PathBuf {
+@@ -68,6 +68,7 @@ mod parse;
+ mod parse_degradation;
+ mod parse_options;
+ pub mod sfc;
++mod sfc_blocks;
+ pub mod sfc_css;
+ mod sfc_props;
+ mod sfc_template;
+```
+
+**File**: `crates/extract/src/sfc.rs` (modified, +48/-57)
+```diff
+@@ -1,6 +1,7 @@
+ //! Vue/Svelte Single File Component (SFC) script and style extraction.
+ //!
+-//! Extracts `<script>` block content from `.vue` and `.svelte` files using regex,
++//! Extracts `<script>` block content from `.vue` and `.svelte` files with the
++//! linear block scan of `sfc_blocks`,
+ //! handling `lang`, `src` metadata, and `generic` attributes, and filtering
+ //! HTML comments. Vue external script references are emitted as graph edges;
+ //! Svelte markup-level script `src` references are treated as runtime HTML.
+@@ -20,6 +21,7 @@ use rustc_hash::{FxHashMap, FxHashSet};
  
- fn git_command(cwd: &Path, args: &[&str]) -> Command {
-     let mut command = crate::git_env::git_command(cwd);
--    command.args(args);
-+    // Older Git versions ignore unknown config keys and reject unknown diff options.
-+    command.args(["-c", "diff.relative=false"]).args(args);
-     command
+ use crate::asset_url::normalize_asset_url;
+ use crate::parse::compute_import_binding_usage;
++use crate::sfc_blocks::{script_blocks, style_blocks};
+ use crate::sfc_template::{SfcKind, collect_template_usage_with_bound_targets};
+ use crate::source_map::ExtractionResult;
+ use crate::visitor::ModuleInfoExtractor;
+@@ -28,14 +30,6 @@ use fallow_types::discover::FileId;
+ use fallow_types::extract::{FunctionComplexity, byte_offset_to_line_col, compute_line_offsets};
+ use oxc_span::Span;
+ 
+-/// Regex to extract `<script>` block content from Vue/Svelte SFCs.
+-/// The attrs pattern skips `>` in quoted values and in brace expressions up to 3 levels deep (#4828).
+-static SCRIPT_BLOCK_RE: LazyLock<regex::Regex> = LazyLock::new(|| {
+-    crate::static_regex(
+-        r#"(?is)<script\b(?P<attrs>(?:[^>"'{]|"[^"]*"|'[^']*'|\{(?:[^{}"'`]|"[^"]*"|'[^']*'|`[^`]*`|\{(?:[^{}"'`]|"[^"]*"|'[^']*'|`[^`]*`|\{[^{}]*\})*\})*\}|\{)*)>(?P<body>[\s\S]*?)</script>"#,
+-    )
+-});
+-
+ /// Regex to extract the `lang` attribute value from a script tag.
+ static LANG_ATTR_RE: LazyLock<regex::Regex> =
+     LazyLock::new(|| crate::static_regex(r#"lang\s*=\s*["'](\w+)["']"#));
+@@ -94,15 +88,6 @@ static PROPS_ATTRS_SPREAD_RE: LazyLock<regex::Regex> =
+ static SVELTE_TEMPLATE_DATA_WHOLE_USE_RE: LazyLock<regex::Regex> =
+     LazyLock::new(|| crate::static_regex(r"(?:=\s*\{\s*data\s*\}|\{\s*\.\.\.\s*data\s*\})"));
+ 
+-/// Regex to extract `<style>` block content from Vue/Svelte SFCs.
+-/// Mirrors `SCRIPT_BLOCK_RE`: handles `>` inside quoted attribute values and
+-/// captures the body so `@import` / `@use` / `@forward` directives can be parsed.
+-static STYLE_BLOCK_RE: LazyLock<regex::Regex> = LazyLock::new(|| {
+-    crate::static_regex(
+-        r#"(?is)<style\b(?P<attrs>(?:[^>"']|"[^"]*"|'[^']*')*)>(?P<body>[\s\S]*?)</style>"#,
+-    )
+-});
+-
+ /// Static asset references in SFC markup: `<img src="./logo.png">`,
+ /// `<source src="...">`, `<video poster="...">`, etc.
+ ///
+@@ -128,16 +113,32 @@ static TEMPLATE_ASSET_RE: LazyLock<regex::Regex> = LazyLock::new(|| {
+ /// offsets still map 1:1 into the original source for line/col reporting.
+ fn mask_non_markup_regions(source: &str) -> String {
+     let mut masked = source.to_string();
+-    for re in [&*SCRIPT_BLOCK_RE, &*STYLE_BLOCK_RE, &*HTML_COMMENT_RE] {
+-        masked = re
+-            .replace_all(&masked, |caps: &regex::Captures<'_>| {
+-                " ".repeat(caps[0].len())
+-            })
+-            .into_owned();
+-    }
++    let spans: Vec<_> = script_blocks(&masked).into_iter().map(|b| b.span).collect();
++    mask_spans(&mut masked, spans);
++    let spans: Vec<_> = style_blocks(&masked).into_iter().map(|b| b.span).collect();
++    mask_spans(&mut masked, spans);
++    let spans: Vec<_> = HTML_COMMENT_RE
++        .find_iter(&masked)
++        .map(|m| m.range())
++        .collect();
++    mask_spans(&mut masked, spans);
+     masked
  }
  
-@@ -983,6 +984,14 @@ mod tests {
-         );
-     }
++/// Replace each of `spans` with spaces of the same byte length.
++fn mask_spans(text: &mut String, spans: Vec<std::ops::Range<usize>>) {
++    for span in spans {
++        let len = span.len();
++        text.replace_range(span, &" ".repeat(len));
++    }
++}
++
++/// Whether `pos` is inside one of the sorted, disjoint `ranges`.
++fn in_ranges(ranges: &[(usize, usize)], pos: usize) -> bool {
++    let index = ranges.partition_point(|&(_, end)| end <= pos);
++    ranges.get(index).is_some_and(|&(start, _)| start <= pos)
++}
++
+ /// Collect static relative asset references from SFC markup as
+ /// `(normalized_specifier, value_span)` pairs. See [`TEMPLATE_ASSET_RE`].
+ fn collect_template_asset_refs(source: &str) -> Vec<(String, Span)> {
+@@ -190,19 +191,13 @@ pub fn extract_sfc_scripts(source: &str) -> Vec<SfcScript> {
+         .map(|m| (m.start(), m.end()))
+         .collect();
  
-+    #[test]
-+    fn git_diff_sets_relative_paths_through_config() {
-+        let command = git_command(Path::new("."), &["diff", "--name-only"]);
-+        let args: Vec<_> = command.get_args().filter_map(|arg| arg.to_str()).collect();
-+        assert!(args.ends_with(&["-c", "diff.relative=false", "diff", "--name-only"]));
-+        assert!(!args.contains(&"--no-relative"));
+-    SCRIPT_BLOCK_RE
+-        .captures_iter(source)
+-        .filter(|cap| {
+-            let start = cap.get(0).map_or(0, |m| m.start());
+-            !comment_ranges
+-                .iter()
+-                .any(|&(cs, ce)| start >= cs && start < ce)
+-        })
+-        .map(|cap| {
+-            let attrs = cap.name("attrs").map_or("", |m| m.as_str());
+-            let body_match = cap.name("body");
+-            let byte_offset = body_match.map_or(0, |m| m.start());
+-            let body = body_match.map_or("", |m| m.as_str()).to_string();
++    script_blocks(source)
++        .into_iter()
++        .filter(|block| !in_r
+```
+
+**File**: `crates/extract/src/sfc_blocks.rs` (added, +220/-0)
+```diff
+@@ -0,0 +1,220 @@
++//! Linear-time scan of `<script>` and `<style>` blocks in Vue and Svelte files.
++//!
++//! The scan gives the same blocks as these leftmost-first regexes:
++//!
++//! ```text
++//! (?is)<script\b(?P<attrs>(?:[^>"'{]|"[^"]*"|'[^']*'|BRACE|\{)*)>(?P<body>[\s\S]*?)</script>
++//! (?is)<style\b(?P<attrs>(?:[^>"']|"[^"]*"|'[^']*')*)>(?P<body>[\s\S]*?)</style>
++//! ```
++//!
++//! `BRACE` is a brace expression up to 3 levels deep. Its quoted values (with
++//! `"`, `'` or a backtick) can hold `>` (#4828). The innermost level is
++//! `\{[^{}]*\}`.
++//!
++//! A regex search keeps a thread alive for each tag start whose quoted value
++//! is not closed. Each search then reads far past the block that it reports,
++//! and the next search reads that text again. On a file with many unclosed
++//! quotes, the cost is quadratic. This scan stores each attribute position
++//! that cannot reach a usable `>`, so it reads each position a bounded number
++//! of times.
++
++use std::ops::Range;
++use std::sync::LazyLock;
++
++static SCRIPT_OPEN_RE: LazyLock<regex::Regex> =
++    LazyLock::new(|| crate::static_regex(r"(?i)<script\b"));
++static SCRIPT_CLOSE_RE: LazyLock<regex::Regex> =
++    LazyLock::new(|| crate::static_regex(r"(?i)</script>"));
++static STYLE_OPEN_RE: LazyLock<regex::Regex> =
++    LazyLock::new(|| crate::static_regex(r"(?i)<style\b"));
++static STYLE_CLOSE_RE: LazyLock<regex::Regex> =
++    LazyLock::new(|| crate::static_regex(r"(?i)</style>"));
++
++/// Deepest brace level that a script attribute expression can have.
++const MAX_BRACE_DEPTH: u8 = 3;
++
++/// Memo value for a frame position that has no result yet.
++const UNKNOWN: usize = 0;
++/// Memo value for a frame position whose brace does not close.
++const UNCLOSED: usize = usize::MAX;
++
++/// One `<script>` or `<style>` block. All ranges are byte ranges in the source.
++#[derive(Debug, Clone, PartialEq, Eq)]
++pub struct SfcBlock {
++    /// Byte range of the whole block, from `<` of the opening tag to the end
++    /// of the closing tag.
++    pub span: Range<usize>,
++    /// Byte range of the opening-tag attributes, without the final `>`.
++    pub attrs: Range<usize>,
++    /// Byte range of the block body.
++    pub body: Range<usize>,
++}
++
++/// All `<script>` blocks of `source`, in source order.
++pub fn script_blocks(source: &str) -> Vec<SfcBlock> {
++    scan(source, &SCRIPT_OPEN_RE, &SCRIPT_CLOSE_RE, true)
++}
++
++/// All `<style>` blocks of `source`, in source order.
++pub fn style_blocks(source: &str) -> Vec<SfcBlock> {
++    scan(source, &STYLE_OPEN_RE, &STYLE_CLOSE_RE, false)
++}
++
++fn scan(source: &str, open: &regex::Regex, close: &regex::Regex, braces: bool) -> Vec<SfcBlock> {
++    let closes: Vec<Range<usize>> = close.find_iter(source).map(|m| m.range()).collect();
++    let Some(last_close) = closes.last() else {
++        return Vec::new();
++    };
++    let mut attrs = AttrScan::new(source.as_bytes(), last_close.start, braces);
++    let mut blocks = Vec::new();
++    let mut cursor = 0;
++    for opening in open.find_iter(source) {
++        if opening.start() < cursor {
++            continue;
++        }
++        let Some(gt) = attrs.end_from(opening.end()) else {
++            continue;
++        };
++        let index = closes.partition_point(|range| range.start <= gt);
++        let Some(closing) = closes.get(index) else {
++            continue;
++        };
++        blocks.push(SfcBlock {
++            span: opening.start()..closing.end,
++            attrs: opening.end()..gt,
++            body: gt + 1..closing.start,
++        });
++        cursor = closing.end;
++    }
++    blocks
++}
++
++/// Finds the `>` that ends the attributes of an opening tag.
++///
++/// The attributes match only at a `>` before `limit`, the start of the last
++/// closing tag, because a block needs a closing tag after its `>`.
++struct AttrScan<'a> {
++    bytes: &'a [u8],
++    limit: usize,
++    braces: bool,
++    /// Attribute positions that a scan visited. A visited position cannot
++    /// reach a usable `>`: the scan stops at the first usable `>`, and the
++    /// next search starts after the block that it found.
++    visited: Vec<u64>,
++    /// Frame results for depths 2 and 3, filled on the first brace.
++    frames: [Vec<usize>; 2],
++}
++
++impl<'a> AttrScan<'a> {
++    fn new(bytes: &'a [u8], limit: usize, braces: bool) -> Self {
++        Self {
++            bytes,
++            limit,
++            braces,
++            visited: vec![0; limit / 64 + 1],
++            frames: [Vec::new(), Vec::new()],
++        }
 +    }
 +
-     #[test]
-     fn git_command_clears_parent_git_environment() {
-         let command = git_command(Path::new("."), &["status"]);
-@@ -1038,6 +1047,37 @@ mod tests {
-         }
-     }
++    /// The position of the `>` that ends attributes starting at `start`.
++    ///
++    /// A `{` is the only choice point: the regex first tries a closed brace
++    /// expression, then a plain `{`. The scan tries them in that order and
++    /// keeps the plain-`{` alternatives on a stack.
++    fn end_from(&mut self, start: usize) -> Option<usize> {
++        let mut alternatives = Vec::new();
++        let mut pos = start;
++        loop {
++            if let Some(gt) = self.walk(po
+```
+
+**File**: `crates/extract/src/sfc_css.rs` (modified, +14/-30)
+```diff
+@@ -16,15 +16,7 @@ use rustc_hash::{FxHashMap, FxHashSet};
  
-+    #[test]
-+    fn relative_diff_config_preserves_repository_paths_from_a_subdirectory() {
-+        let repo = tempfile::tempdir().unwrap();
-+        let root = dunce::canonicalize(repo.path()).unwrap();
-+        let sub = root.join("sub");
-+        std::fs::create_dir(&sub).unwrap();
-+        run_git(&root, &["init", "--quiet"]);
-+        run_git(&root, &["config", "user.email", "test@example.com"]);
-+        run_git(&root, &["config", "user.name", "Test User"]);
-+        run_git(&root, &["config", "diff.relative", "true"]);
-+        std::fs::write(sub.join("a.ts"), "export const a = 1;").unwrap();
-+        run_git(&root, &["add", "."]);
-+        run_git(&root, &["commit", "-qm", "base"]);
-+        run_git(&root, &["branch", "base"]);
-+        run_git(&sub, &["mv", "a.ts", "b.ts"]);
-+        run_git(&root, &["commit", "-qm", "rename"]);
-+        run_git(&sub, &["mv", "b.ts", "c.ts"]);
+ use crate::ExportName;
+ use crate::css::extract_css_module_exports;
+-
+-/// Matches `<style ...>BODY</style>` blocks, capturing the opening-tag
+-/// attributes and the body. Mirrors the SFC style scanner: handles `>` inside
+-/// quoted attribute values.
+-static STYLE_BLOCK_RE: LazyLock<regex::Regex> = LazyLock::new(|| {
+-    crate::static_regex(
+-        r#"(?is)<style\b(?P<attrs>(?:[^>"']|"[^"]*"|'[^']*')*)>(?P<body>[\s\S]*?)</style>"#,
+-    )
+-});
++use crate::sfc_blocks::style_blocks;
+ 
+ /// Returns `true` when an opening-`<style>` attribute string carries a bare
+ /// `scoped` attribute.
+@@ -106,21 +98,16 @@ pub fn scoped_unused_classes_at(source: &str) -> Option<ScopedUnusedClasses> {
+     // class's own definition does not count as a use of itself.
+     let mut style_ranges: Vec<(usize, usize)> = Vec::new();
+ 
+-    for caps in STYLE_BLOCK_RE.captures_iter(source) {
+-        if let Some(whole) = caps.get(0) {
+-            style_ranges.push((whole.start(), whole.end()));
+-        }
+-        let attrs = caps.name("attrs").map_or("", |m| m.as_str());
+-        let Some(body) = caps.name("body") else {
+-            continue;
+-        };
+-        if !has_scoped_attr(attrs) || has_non_css_lang(attrs) || block_escapes_scope(body.as_str())
+-        {
++    for block in style_blocks(source) {
++        style_ranges.push((block.span.start, block.span.end));
++        let attrs = &source[block.attrs];
++        let body = &source[block.body.clone()];
++        if !has_scoped_attr(attrs) || has_non_css_lang(attrs) || block_escapes_scope(body) {
+             continue;
+         }
+-        for export in extract_css_module_exports(body.as_str(), false) {
++        for export in extract_css_module_exports(body, false) {
+             if let ExportName::Named(name) = export.name {
+-                let offset = body.start() + export.span.start as usize;
++                let offset = block.body.start + export.span.start as usize;
+                 scoped_classes
+                     .entry(name)
+                     .and_modify(|first| *first = (*first).min(offset))
+@@ -327,25 +314,22 @@ fn virtual_stylesheet(source: &str, keep: impl Fn(&str) -> bool) -> Option<Strin
+     let mut out = String::new();
+     let mut current_line: usize = 1;
+     let mut found = false;
+-    for caps in STYLE_BLOCK_RE.captures_iter(source) {
+-        let attrs = caps.name("attrs").map_or("", |m| m.as_str());
+-        if !keep(attrs) {
++    for block in style_blocks(source) {
++        if !keep(&source[block.attrs]) {
+             continue;
+         }
+-        let Some(body) = caps.name("body") else {
+-            continue;
+-        };
++        let body = &source[block.body.clone()];
+         found = true;
+-        let block_line = 1 + source[..body.start()]
++        let block_line = 1 + source[..block.body.start]
+             .bytes()
+             .filter(|&b| b == b'\n')
+             .count();
+         while current_line < block_line {
+             out.push('\n');
+             current_line += 1;
+         }
+-        out.push_str(body.as_str());
+-        current_line += body.as_str().bytes().filter(|&b| b == b'\n').count();
++        out.push_str(body);
++        current_line += body.bytes().filter(|&b| b == b'\n').count();
+     }
+     found.then_some(out)
+ }
+```
+
+**File**: `crates/extract/src/sfc_template/svelte.rs` (modified, +8/-18)
+```diff
+@@ -11,16 +11,6 @@ use super::shared::{
+     merge_statement_usage_allow_dollar_refs_with_bound_targets, parse_tag_attrs,
+ };
+ 
+-static STYLE_BLOCK_RE: LazyLock<regex::Regex> = LazyLock::new(|| {
+-    crate::static_regex(r#"(?is)<style\b(?:[^>"']|"[^"]*"|'[^']*')*>(?P<body>[\s\S]*?)</style>"#)
+-});
+-
+-static SCRIPT_BLOCK_RE: LazyLock<regex::Regex> = LazyLock::new(|| {
+-    crate::static_regex(
+-        r#"(?is)<script\b(?:[^>"'{]|"[^"]*"|'[^']*'|\{(?:[^{}"'`]|"[^"]*"|'[^']*'|`[^`]*`|\{(?:[^{}"'`]|"[^"]*"|'[^']*'|`[^`]*`|\{[^{}]*\})*\})*\}|\{)*>(?P<body>[\s\S]*?)</script>"#,
+-    )
+-});
+-
+ static SVELTE_EACH_RE: LazyLock<regex::Regex> = LazyLock::new(|| {
+     crate::static_regex(
+         r"(?is)^#each\s+(?P<iterable>.+?)\s+as\s+(?P<bindings>.+?)(?:\s*\((?P<key>.+)\))?$",
+@@ -225,15 +215,15 @@ pub(super) fn strip_non_template_content(source: &str) -> String {
+     // Only the script body is hidden. The opening tag stays visible, because a
+     // `<script>` element in markup can read component state in its attribute
+     // expressions, for example `onload={handleLoad}`.
+-    hidden_ranges.extend(SCRIPT_BLOCK_RE.captures_iter(source).filter_map(|caps| {
+-        let whole = caps.get(0)?;
+-        let body = caps.name("body")?;
+-        Some((body.start(), whole.end()))
+-    }));
+     hidden_ranges.extend(
+-        STYLE_BLOCK_RE
+-            .find_iter(source)
+-            .map(|m| (m.start(), m.end())),
++        crate::sfc_blocks::script_blocks(source)
++            .into_iter()
++            .map(|block| (block.body.start, block.span.end)),
++    );
++    hidden_ranges.extend(
++        crate::sfc_blocks::style_blocks(source)
++            .into_iter()
++            .map(|block| (block.span.start, block.span.end)),
+     );
+     hidden_ranges.sort_unstable_by_key(|range| range.0);
+ 
+```
+
+**File**: `crates/extract/src/tests/mod.rs` (modified, +1/-0)
+```diff
+@@ -13,6 +13,7 @@ mod nesting;
+ mod object_pattern_defaults;
+ mod regex_compile;
+ mod sfc;
++mod sfc_blocks;
+ mod sfc_complexity;
+ mod store_aliases;
+ mod suppress_literals;
+```
+
+**File**: `crates/extract/src/tests/sfc_blocks.rs` (added, +164/-0)
+```diff
+@@ -0,0 +1,164 @@
++//! The `<script>` and `<style>` block scans of Vue and Svelte files must cost
++//! linear time on input with many unclosed attribute quotes.
 +
-+        let changed = changed_files(&sub, "base").unwrap();
-+        for name in ["b.ts", "c.ts"] {
-+            assert!(changed.contains(&sub.join(name)), "{changed:?}");
-+        }
++use std::time::{Duration, Instant};
++
++use crate::sfc::{extract_sfc_scripts, extract_sfc_styles, extract_sfc_template_regions};
++
++/// Number of repeated units in each input below.
++const UNITS: usize = 8_000;
++
++/// Time limit for the scans of one input. A scan that reads the rest of the
++/// file again for each block takes many seconds on these inputs.
++const BUDGET: Duration = Duration::from_secs(2);
++
++/// Each unit opens a tag whose quoted attribute value closes only in the next
++/// unit, so that tag never ends. The inner tag of each unit is a valid block.
++/// The leading non-ASCII character makes the input non-ASCII.
++fn unclosed_attribute_units(tag: &str) -> String {
++    format!("é{}", format!("<{tag} '<{tag}>x</{tag}>'").repeat(UNITS))
++}
++
++#[test]
++fn repeated_unclosed_script_attributes_remain_fast() {
++    let source = unclosed_attribute_units("script");
++    let start = Instant::now();
++    let scripts = extract_sfc_scripts(&source);
++    let regions = extract_sfc_template_regions(&source);
++    let elapsed = start.elapsed();
++    assert_eq!(scripts.len(), UNITS);
++    assert!(scripts.iter().all(|script| script.body == "x"));
++    assert_eq!(scripts[0].byte_offset, "é<script '<script>".len());
++    assert_eq!(regions[0].body, "é<script '");
++    assert!(
++        elapsed < BUDGET,
++        "the script block scan took {elapsed:?} on {} bytes",
++        source.len()
++    );
++}
++
++#[test]
++fn repeated_unclosed_style_attributes_remain_fast() {
++    let source = unclosed_attribute_units("style");
++    let start = Instant::now();
++    let styles = extract_sfc_styles(&source);
++    let regions = extract_sfc_template_regions(&source);
++    let elapsed = start.elapsed();
++    assert_eq!(styles.len(), UNITS);
++    assert!(styles.iter().all(|style| style.body == "x"));
++    assert_eq!(styles[0].byte_offset, "é<style '<style>".len());
++    assert_eq!(regions[0].body, "é<style '");
++    assert!(
++        elapsed < BUDGET,
++        "the style block scan took {elapsed:?} on {} bytes",
++        source.len()
++    );
++}
++
++mod regex_parity {
++    use std::sync::LazyLock;
++
++    use proptest::prelude::*;
++
++    use crate::sfc_blocks::{SfcBlock, script_blocks, style_blocks};
++
++    /// The script block regex that the scan replaces. It is quadratic on
++    /// some input, so it is safe only on the short input of these tests.
++    static SCRIPT_BLOCK_RE: LazyLock<regex::Regex> = LazyLock::new(|| {
++        crate::static_regex(
++            r#"(?is)<script\b(?P<attrs>(?:[^>"'{]|"[^"]*"|'[^']*'|\{(?:[^{}"'`]|"[^"]*"|'[^']*'|`[^`]*`|\{(?:[^{}"'`]|"[^"]*"|'[^']*'|`[^`]*`|\{[^{}]*\})*\})*\}|\{)*)>(?P<body>[\s\S]*?)</script>"#,
++        )
++    });
++
++    /// The style block regex that the scan replaces.
++    static STYLE_BLOCK_RE: LazyLock<regex::Regex> = LazyLock::new(|| {
++        crate::static_regex(
++            r#"(?is)<style\b(?P<attrs>(?:[^>"']|"[^"]*"|'[^']*')*)>(?P<body>[\s\S]*?)</style>"#,
++        )
++    });
++
++    /// Source fragments that change the result of a tag scan.
++    const FRAGMENTS: &[&str] = &[
++        "<script",
++        "<SCRIPT",
++        "<scripts",
++        "<\u{17f}\x63ript",
++        "</script>",
++        "</SCRIPT>",
++        "</script",
++        "<style",
++        "<STYLE",
++        "<styled",
++        "</style>",
++        "</STYLE>",
++        ">",
++        "\"",
++        "'",
++        "`",
++        "{",
++        "}",
++        "{}",
++        "{{{",
++        "}}}",
++        "`>`",
++        " ",
++        "a",
++        "\n",
++        "é",
++        "_",
++        "<!--",
++        "-->",
++    ];
++
++    fn regex_blocks(regex: &regex::Regex, source: &str) -> Vec<SfcBlock> {
++        regex
++            .captures_iter(source)
++            .map(|caps| SfcBlock {
++                span: caps.get(0).expect("whole match").range(),
++                attrs: caps.name("attrs").expect("attrs group").range(),
++                body: caps.name("body").expect("body group").range(),
++            })
++            .collect()
++    }
++
++    fn assert_parity(source: &str) {
 +        assert_eq!(
-+            try_get_renamed_files(&sub, "base").unwrap(),
-+            vec![RenamedFile {
-+                from: sub.join("a.ts"),
-+                to: sub.join("c.ts")
-+            }]
++            script_blocks(source),
++            regex_blocks(&SCRIPT_BLOCK_RE, source),
++            "script blocks differ for {source:?}"
++        );
++        assert_eq!(
++            style_blocks(source),
++            regex_blocks(&STYLE_BLOCK_RE, source),
++            "style blocks differ for {source:?}"
 +        );
 +    }
 +
-     #[cfg(unix)]
-     #[test]
-     fn changed_files_preserve_special_filenames() {
++    #[test]
++    fn the_scan_matches_the_regex_on_known_shapes() {
++        for source in [
++            "<script>const a = 1;</script>",
++            "<script setup lang=\"ts\" generic=\"T extends Record<string, { a: number }>\">x</script>",
++            "<script src=\"/x.js\" onload={() => { if (a > 1) {} }}></script>",
++            "<script src=\"/y.js\" data-x={`>${'}'}`}></script>",
++            "<script data-x={ lang=\"ts\">const a: n
+```
+
+---
+
+### Incident Patch 2: `93889daa` (2026-11-24)
+**Commit Message**: fix(mutation): detect Vitest in a Vite+ project (#5206)
+
+Runner auto-detection did not see Vite+ as Vitest. A Vite+ project
+lists `vite-plus` and its tests import `vite-plus/test`. In a Vite+
+project with a `bun.lock`, detection selected `bun test`, which does
+not read the Vite config, so the run failed while `vp test` passed.
+
+An import of `vite-plus/test` now counts as a Vitest import. A
+`vite-plus` dependency selects Vitest after the test imports and
+before the Bun files. A project can use Vite+ only to build, lint or
+format, so its `node:test` or `bun:test` imports still win.
+
+Closes #5199
+
+Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
+
+**File**: `crates/api/src/doctor.rs` (modified, +5/-4)
+```diff
+@@ -424,10 +424,11 @@ fn graph_cache_check(config: &fallow_config::ResolvedConfig) -> DoctorCheck {
+ /// opt-in. The check reads the `package.json` of the installed package, the
+ /// same file that the companion reads before it loads Vitest, so it runs no
+ /// project code. The check is skipped when `mutation.runner` does not select
+-/// Vitest, the root `package.json` declares no Vitest, and the companion
+-/// finds no installed Vitest. A workspace package can declare a Vitest that
+-/// the package manager installs at the root, and a toolchain such as Vite+
+-/// can bring its own Vitest, so each install that the companion finds counts.
++/// Vitest, the root `package.json` declares neither `vitest` nor `vite-plus`,
++/// and the companion finds no installed Vitest. A workspace package can
++/// declare a Vitest that the package manager installs at the root, and a
++/// toolchain such as Vite+ can bring its own Vitest, so each install that the
++/// companion finds counts.
+ /// The `node-test` and `bun-test` runners skip the check too: their range
+ /// applies to the runtime that a run selects.
+ fn mutation_runner_check(root: &Path, configured: fallow_config::MutationRunner) -> DoctorCheck {
+```
+
+**File**: `crates/api/src/mutation/runner_select.rs` (modified, +104/-25)
+```diff
+@@ -58,20 +58,36 @@ impl Runner {
+ /// The most test files that the detection reads.
+ const MAX_SCANNED_TEST_FILES: usize = 200;
+ 
++/// The Vitest package.
++const RUNNER_PACKAGE: &str = "vitest";
++
++/// The Vite+ toolchain package. It runs Vitest through `vp test`, but a
++/// project can also use it only to build, lint or format, so its dependency
++/// is a weaker signal than a `vitest` dependency.
++const VITE_PLUS_PACKAGE: &str = "vite-plus";
++
++/// The `package.json` fields of the root that declare a dependency.
++const DEPENDENCY_FIELDS: [&str; 3] = ["dependencies", "devDependencies", "optionalDependencies"];
++
++/// The test modules that Vitest tests import: Vitest itself, and the Vite+
++/// module that re-exports it.
++const VITEST_TEST_MODULES: &[&str] = &["vitest", "vite-plus/test"];
++
+ /// The Bun files at the project root that mark a Bun project.
+ const BUN_ROOT_FILES: &[&str] = &["bunfig.toml", "bun.lock", "bun.lockb"];
+ 
+ /// Selects the runner. An explicit config value wins. `auto` reads the
+ /// project at `root`, in this order:
+ ///
+ /// 1. `vitest` in the root `package.json` dependencies gives Vitest.
+-/// 2. The import of `vitest`, `bun:test` or `node:test` that the most test
+-///    files have. A tie goes to Vitest, then `bun test`.
+-/// 3. A Bun file at the root (`bunfig.toml`, `bun.lock`, `bun.lockb`) gives
++/// 2. The import of `vitest` (or `vite-plus/test`), `bun:test` or `node:test`
++///    that the most test files have. A tie goes to Vitest, then `bun test`.
++/// 3. `vite-plus` in the root `package.json` dependencies gives Vitest.
++/// 4. A Bun file at the root (`bunfig.toml`, `bun.lock`, `bun.lockb`) gives
+ ///    `bun test`.
+-/// 4. A `node --test` or `borp` command in a `package.json` script gives
++/// 5. A `node --test` or `borp` command in a `package.json` script gives
+ ///    `node:test`.
+-/// 5. Otherwise Vitest.
++/// 6. Otherwise Vitest.
+ pub fn select_runner(configured: MutationRunner, root: &Path, test_files: &[String]) -> Runner {
+     match configured {
+         MutationRunner::Vitest => Runner::Vitest,
+@@ -83,12 +99,21 @@ pub fn select_runner(configured: MutationRunner, root: &Path, test_files: &[Stri
+ 
+ fn detect_runner(root: &Path, test_files: &[String]) -> Runner {
+     let manifest = read_manifest(root);
+-    if manifest.as_ref().is_some_and(has_vitest_dependency) {
++    if manifest
++        .as_ref()
++        .is_some_and(|manifest| has_dependency(manifest, RUNNER_PACKAGE))
++    {
+         return Runner::Vitest;
+     }
+     if let Some(runner) = runner_by_imports(root, test_files) {
+         return runner;
+     }
++    if manifest
++        .as_ref()
++        .is_some_and(|manifest| has_dependency(manifest, VITE_PLUS_PACKAGE))
++    {
++        return Runner::Vitest;
++    }
+     if BUN_ROOT_FILES.iter().any(|file| root.join(file).is_file()) {
+         return Runner::BunTest;
+     }
+@@ -101,27 +126,26 @@ fn detect_runner(root: &Path, test_files: &[String]) -> Runner {
+     Runner::Vitest
+ }
+ 
+-/// True when the root `package.json` declares `vitest` as a dependency.
++/// True when the root `package.json` declares `vitest` or `vite-plus` as a
++/// dependency.
+ pub fn declares_vitest(root: &Path) -> bool {
+-    read_manifest(root)
+-        .as_ref()
+-        .is_some_and(has_vitest_dependency)
++    read_manifest(root).as_ref().is_some_and(|manifest| {
++        has_dependency(manifest, RUNNER_PACKAGE) || has_dependency(manifest, VITE_PLUS_PACKAGE)
++    })
+ }
+ 
+ fn read_manifest(root: &Path) -> Option<serde_json::Value> {
+     let text = fs::read_to_string(root.join("package.json")).ok()?;
+     serde_json::from_str(&text).ok()
+ }
+ 
+-fn has_vitest_dependency(manifest: &serde_json::Value) -> bool {
+-    ["dependencies", "devDependencies", "optionalDependencies"]
+-        .iter()
+-        .any(|field| {
+-            manifest
+-                .get(field)
+-                .and_then(|deps| deps.get("vitest"))
+-                .is_some()
+-        })
++fn has_dependency(manifest: &serde_json::Value, name: &str) -> bool {
++    DEPENDENCY_FIELDS.iter().any(|field| {
++        manifest
++            .get(field)
++            .and_then(|deps| deps.get(name))
++            .is_some()
++    })
+ }
+ 
+ fn has_node_test_script(manifest: &serde_json::Value) -> bool {
+@@ -230,14 +254,20 @@ fn runner_by_imports(root: &Path, test_files: &[String]) -> Option<Runner> {
+         .map(|(runner, _)| *runner)
+ }
+ 
+-/// True when the text imports the test module of the runner, as an import
+-/// or a `require` call with a quoted specifier.
++/// True when the text imports a test module of the runner, as an import or a
++/// `require` call with a quoted specifier.
+ fn imports_runner(text: &str, runner: Runner) -> bool {
+-    let specifier = match runner {
+-        Runner::Vitest => "vitest",
+-        Runner::NodeTest => "node:test",
+-        Runner::BunTest => "bun:test",
++    let specifiers: &[&str] = match runner {
++        Runner::Vitest => VITEST_TEST_MODULES,
++        Runner::NodeTest => &["node:test"],
++        
+```
+
+**File**: `crates/config/src/config/mutation.rs` (modified, +2/-2)
+```diff
+@@ -6,8 +6,8 @@ use serde::{Deserialize, Deserializer, Serialize};
+ #[serde(rename_all = "kebab-case")]
+ pub enum MutationRunner {
+     /// Detect the runner from the project: the `vitest` dependency, the
+-    /// test module that the test files import, a Bun file at the root, or a
+-    /// `node --test` script.
++    /// test module that the test files import, the `vite-plus` dependency, a
++    /// Bun file at the root, or a `node --test` script.
+     #[default]
+     Auto,
+     /// Vitest 4.1 to 5 from the project `node_modules`.
+```
+
+**File**: `docs/mutation-testing.md` (modified, +8/-5)
+```diff
+@@ -1382,13 +1382,16 @@ selects one. The default `auto` reads the project in this order:
+ 
+ 1. `vitest` in the root `package.json` dependencies selects Vitest.
+ 2. Otherwise the test module that the most static test files import:
+-   `vitest`, `bun:test` or `node:test`. A tie goes to Vitest, then
++   `vitest` or `vite-plus/test`, `bun:test` or `node:test`. A tie goes to
++   Vitest, then `bun test`.
++3. Otherwise `vite-plus` in the root `package.json` dependencies selects
++   Vitest. Vite+ runs Vitest through `vp test`, but a project can use Vite+
++   only to build, lint or format, so the test imports come first.
++4. Otherwise a `bunfig.toml`, `bun.lock` or `bun.lockb` at the root selects
+    `bun test`.
+-3. Otherwise a `bunfig.toml`, `bun.lock` or `bun.lockb` at the root selects
+-   `bun test`.
+-4. Otherwise a `node --test` or `borp` command in a `package.json` script
++5. Otherwise a `node --test` or `borp` command in a `package.json` script
+    selects `node:test`.
+-5. Otherwise Vitest.
++6. Otherwise Vitest.
+ 
+ | Runner | Config value | Versions | Runtime of the companion |
+ |---|---|---|---|
+```
+
+**File**: `schema.json` (modified, +1/-1)
+```diff
+@@ -1314,7 +1314,7 @@
+       "description": "The test runner of `fallow mutation`.",
+       "oneOf": [
+         {
+-          "description": "Detect the runner from the project: the `vitest` dependency, the\ntest module that the test files import, a Bun file at the root, or a\n`node --test` script.",
++          "description": "Detect the runner from the project: the `vitest` dependency, the\ntest module that the test files import, the `vite-plus` dependency, a\nBun file at the root, or a `node --test` script.",
+           "type": "string",
+           "const": "auto"
+         },
+```
+
+---
+
+### Incident Patch 3: `9572041d` (2026-11-24)
+**Commit Message**: fix(release): cover every shipped binary in the target SBOM (#5205)
+
+The fallow-<target> archive ships fallow, fallow-lsp, fallow-mcp and
+fallow-similar-code. The SBOM of the target covered only the fallow-cli
+package. Crates that only the LSP, MCP or similar-code binaries link,
+such as tower-lsp-server, rmcp, rquickjs and candle-core, were missing.
+The SBOM also listed the stub_sidecar and fallow-schema-emit bins, which
+need features that the release does not enable.
+
+The sbom job now runs cargo cyclonedx for the workspace and for the
+similar-code sidecar workspace. It runs one cargo tree for fallow-cli,
+fallow-lsp and fallow-mcp, as the build job builds them together, and
+one cargo tree for the sidecar. filter-sbom.mjs merges the four package
+SBOMs into one file with a release root component. It deduplicates the
+components by bom-ref and joins the dependency entries. It removes the
+bin components that the archive does not ship and the crates that no
+tree lists. It fails when a tree crate has no component, when a shipped
+bin is in no package, or when a dependency ref names no component.
+
+The file name and the artifact name do not change, so release-assets
+stages the SBOM as before
+
+**File**: `.github/scripts/filter-sbom.mjs` (modified, +210/-24)
+```diff
+@@ -1,29 +1,48 @@
+-// Release step: remove the components of a CycloneDX SBOM that are not in the
+-// fallow-cli build of the target (#5131).
++// Release step: merge the CycloneDX SBOMs of the packages that one release
++// archive ships, and keep only the crates of those builds (#5131, #5190).
+ //
+-// `cargo cyclonedx --target` resolves features over the whole workspace, so its
+-// SBOM also lists crates that only other workspace members enable. A consumer
+-// that scans the SBOM then gets advisories for crates that are not in the
+-// build. `cargo tree -p fallow-cli --target <target> -e normal,build` gives
+-// the crates of the build, including proc-macros and build-dependencies. This
+-// script keeps only those components, and it fails when a crate of the tree
++// The `fallow-<target>` archive ships the binaries of several packages:
++// `fallow-cli`, `fallow-lsp`, `fallow-mcp` and the similar-code sidecar, which
++// is a separate Cargo workspace. `cargo cyclonedx` writes one SBOM per package.
++// This script merges them into one SBOM with one root component for the
++// release. Each shipped package is a component of that SBOM.
++//
++// `cargo cyclonedx --target` resolves features over the whole workspace, so
++// its SBOM also lists crates that only other workspace members enable. A
++// consumer that scans the SBOM then gets advisories for crates that are not in
++// the build. `cargo tree --target <target> -e normal,build` gives the crates of
++// the build, including proc-macros and build-dependencies. This script keeps
++// only the components that a tree lists, and it fails when a crate of a tree
+ // has no component.
+ //
++// A package SBOM also lists each bin target of the package as a nested
++// component. This script removes the bin components that the archive does not
++// ship, for example bins that need a feature that the release does not enable.
++//
+ // Usage:
+-//   node filter-sbom.mjs <sbom.cdx.json> <cargo-tree.txt>
++//   node filter-sbom.mjs --out <merged.cdx.json> --tree <cargo-tree.txt>...
++//     --bin <shipped-bin>... <package.cdx.json>...
+ //
+-// <cargo-tree.txt> is the output of
+-//   cargo tree -p fallow-cli --target <target> -e normal,build --prefix none --format '{p}' --locked
+-// The script rewrites the SBOM in place. It exits 1, with the SBOM untouched,
+-// when the tree is empty or when a crate of the tree has no component.
++// Each <cargo-tree.txt> is the output of
++//   cargo tree <packages> --target <target> -e normal,build --prefix none --format '{p}' --locked
++// The script writes <merged.cdx.json>. It exits 1, and writes nothing, when an
++// input is not valid, when a crate of a tree has no component, when a shipped
++// bin is in no package, or when a dependency entry names an unknown component.
+ 
++import { randomUUID } from "node:crypto";
+ import { readFileSync, writeFileSync } from "node:fs";
+ import { pathToFileURL } from "node:url";
++import { parseArgs } from "node:util";
+ 
+ // A `cargo tree --format '{p}'` line is `<name> v<version>`, optionally
+ // followed by a source path, `(proc-macro)` or `(*)`.
+ const TREE_LINE_PATTERN = /^(\S+) v(\S+)/;
+ 
++/** The name of the root component that describes the release. */
++export const RELEASE_NAME = "fallow";
++
++const TARGET_PROPERTY = "cdx:rustc:sbom:target:triple";
++
+ const keyOf = (name, version) => `${name}@${version}`;
+ 
+ /** Returns the `name@version` keys of the crates in a `cargo tree` output. */
+@@ -36,6 +55,112 @@ export const parseCargoTree = (text) => {
+   return keys;
+ };
+ 
++const targetOf = (sbom) =>
++  sbom.metadata?.properties?.find((property) => property.name === TARGET_PROPERTY)?.value;
++
++const unionDependencies = (sboms) => {
++  const byRef = new Map();
++  for (const sbom of sboms) {
++    for (const entry of sbom.dependencies ?? []) {
++      const dependsOn = byRef.get(entry.ref) ?? new Set();
++      for (const ref of entry.dependsOn ?? []) dependsOn.add(ref);
++      byRef.set(entry.ref, dependsOn);
++    }
++  }
++  return [...byRef].map(([ref, dependsOn]) => ({ ref, dependsOn: [...dependsOn] }));
++};
++
++const assertMergeable = (sboms) => {
++  if (sboms.length === 0) throw new Error("no SBOM to merge");
++  const [first] = sboms;
++  for (const sbom of sboms) {
++    const root = sbom.metadata?.component;
++    if (!root?.["bom-ref"]) throw new Error("an SBOM has no root component");
++    if (!Array.isArray(sbom.components)) {
++      throw new Error(`the SBOM of ${root.name} has no components array`);
++    }
++    if (sbom.specVersion !== first.specVersion) {
++      throw new Error(`the SBOM of ${root.name} has another specVersion`);
++    }
++    if (targetOf(sbom) !== targetOf(first)) {
++      throw new Error(`the SBOM of ${root.name} is for another target`);
++    }
++  }
++};
++
++const unionComponents = (sboms, packages) => {
++  const components = new Map(packages.map((root) => [root["bom-ref"], root]));
++  for (const sbom of sboms) {
++    for (const component of sbom.components) {
++      if (!components.has(component["bom
+```
+
+**File**: `.github/scripts/filter-sbom.test.mjs` (modified, +205/-21)
+```diff
+@@ -1,17 +1,24 @@
+-// Tests for filter-sbom.mjs, the release step that removes the SBOM components
+-// that the release binary does not link (#5131).
++// Tests for filter-sbom.mjs, the release step that merges the SBOMs of the
++// shipped packages and removes the components that the release binaries do
++// not link (#5131, #5190).
+ //
+ // Run: node --test .github/scripts/filter-sbom.test.mjs
+ 
+ import assert from "node:assert/strict";
+ import { execFileSync } from "node:child_process";
+-import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
++import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+ import { tmpdir } from "node:os";
+ import { join } from "node:path";
+ import { test } from "node:test";
+ import { fileURLToPath } from "node:url";
+ 
+-import { filterSbom, parseCargoTree } from "./filter-sbom.mjs";
++import {
++  danglingRefs,
++  dropUnshippedBins,
++  filterSbom,
++  mergeSboms,
++  parseCargoTree,
++} from "./filter-sbom.mjs";
+ 
+ const SCRIPT_PATH = fileURLToPath(new URL("./filter-sbom.mjs", import.meta.url));
+ 
+@@ -94,40 +101,217 @@ test("filterSbom refuses an empty tree", () => {
+   assert.throws(() => filterSbom(makeSbom(), new Set()), /lists no crates/);
+ });
+ 
+-const runCli = (sbom, tree) => {
++const TARGET = "x86_64-unknown-linux-gnu";
++
++const pathRef = (name) => `path+file:///work/${name}#${name}@1.0.0`;
++
++const packageSbom = (name, bins, deps, target = TARGET) => ({
++  bomFormat: "CycloneDX",
++  specVersion: "1.5",
++  version: 1,
++  metadata: {
++    properties: [{ name: "cdx:rustc:sbom:target:triple", value: target }],
++    component: {
++      type: "application",
++      "bom-ref": pathRef(name),
++      name,
++      version: "1.0.0",
++      components: [
++        {
++          type: "library",
++          "bom-ref": `${pathRef(name)} bin-target-0`,
++          name: name.replaceAll("-", "_"),
++        },
++        ...bins.map((bin, index) => ({
++          type: "application",
++          "bom-ref": `${pathRef(name)} bin-target-${index + 1}`,
++          name: bin,
++        })),
++      ],
++    },
++  },
++  components: deps.map(([dep, version]) => component(dep, version)),
++  dependencies: [
++    { ref: pathRef(name), dependsOn: deps.map(([dep, version]) => ref(dep, version)) },
++    ...deps.map(([dep, version]) => ({ ref: ref(dep, version), dependsOn: [] })),
++  ],
++});
++
++const cliSbom = () =>
++  packageSbom(
++    "fallow-cli",
++    ["fallow", "stub_sidecar"],
++    [
++      ["serde", "1.0.0"],
++      ["time", "0.3.55"],
++    ],
++  );
++const lspSbom = () =>
++  packageSbom(
++    "fallow-lsp",
++    ["fallow-lsp"],
++    [
++      ["serde", "1.0.0"],
++      ["tower-lsp-server", "0.22.0"],
++    ],
++  );
++
++test("mergeSboms gives one release root with each package as a component", () => {
++  const merged = mergeSboms([cliSbom(), lspSbom()]);
++
++  assert.equal(merged.metadata.component.name, "fallow");
++  assert.equal(merged.metadata.component["bom-ref"], "fallow@1.0.0");
++  assert.equal(merged.metadata.properties[0].value, TARGET);
++  assert.deepEqual(
++    merged.components.map((c) => c.name),
++    ["fallow-cli", "fallow-lsp", "serde", "time", "tower-lsp-server"],
++  );
++  assert.deepEqual(merged.dependencies[0], {
++    ref: "fallow@1.0.0",
++    dependsOn: [pathRef("fallow-cli"), pathRef("fallow-lsp")],
++  });
++  assert.deepEqual(danglingRefs(merged), []);
++});
++
++test("mergeSboms joins the dependency entries of a shared crate", () => {
++  const cli = cliSbom();
++  const lsp = lspSbom();
++  cli.dependencies.find((d) => d.ref === ref("serde", "1.0.0")).dependsOn = [ref("time", "0.3.55")];
++  lsp.dependencies.find((d) => d.ref === ref("serde", "1.0.0")).dependsOn = [
++    ref("tower-lsp-server", "0.22.0"),
++  ];
++  const merged = mergeSboms([cli, lsp]);
++
++  const serde = merged.dependencies.filter((d) => d.ref === ref("serde", "1.0.0"));
++  assert.equal(serde.length, 1);
++  assert.deepEqual(serde[0].dependsOn, [ref("time", "0.3.55"), ref("tower-lsp-server", "0.22.0")]);
++});
++
++test("mergeSboms keeps the package root when another SBOM lists it as a library", () => {
++  const lsp = lspSbom();
++  lsp.components.push({
++    type: "library",
++    "bom-ref": pathRef("fallow-cli"),
++    name: "fallow-cli",
++    version: "1.0.0",
++  });
++  const merged = mergeSboms([cliSbom(), lsp]);
++
++  const cli = merged.components.filter((c) => c["bom-ref"] === pathRef("fallow-cli"));
++  assert.equal(cli.length, 1);
++  assert.equal(cli[0].type, "application");
++  assert.ok(Array.isArray(cli[0].components));
++});
++
++test("mergeSboms refuses SBOMs of different targets", () => {
++  const lsp = packageSbom("fallow-lsp", ["fallow-lsp"], [], "aarch64-apple-darwin");
++  assert.throws(() => mergeSboms([cliSbom(), lsp]), /another target/);
++});
++
++test("dropUnshippedBins removes bins that do not ship and keeps library targets", () => {
++  const result = dropUnshippedBins(
++    mergeSboms([cliSbom(), lspSbom()]),
++    new Set(["fallow", "fallow-lsp"]),
++  );
++
++  assert.deepEqual(resu
+```
+
+**File**: `.github/workflows/release.yml` (modified, +32/-11)
+```diff
+@@ -1510,10 +1510,14 @@ jobs:
+           retention-days: 30
+           include-hidden-files: false
+ 
+-  # One CycloneDX SBOM per target. `cargo cyclonedx` resolves features over the
+-  # whole workspace, so its SBOM also lists crates that only other members
+-  # enable. `filter-sbom.mjs` keeps only the crates that `cargo tree` gives for
+-  # the fallow-cli build of that target, and it fails when a crate of that tree
++  # One CycloneDX SBOM per target. It covers each binary of the
++  # `fallow-<target>` archive: fallow, fallow-lsp, fallow-mcp and the
++  # similar-code sidecar, which is a separate Cargo workspace (#5190).
++  # `cargo cyclonedx` writes one SBOM per package and resolves features over
++  # the whole workspace, so each SBOM also lists crates that only other members
++  # enable. `filter-sbom.mjs` merges the package SBOMs and keeps only the crates
++  # that `cargo tree` gives for the builds of that target. It removes the bin
++  # components that the archive does not ship. It fails when a crate of a tree
+   # has no component (#5131). The `fallow-*` artifact name makes
+   # `release-assets` stage it with the binaries.
+   sbom:
+@@ -1554,15 +1558,32 @@ jobs:
+           FALLOW_TARGET: ${{ matrix.target }}
+         run: |
+           set -euo pipefail
+-          cargo cyclonedx --manifest-path crates/cli/Cargo.toml \
+-            --format json --spec-version 1.5 --target "$FALLOW_TARGET" \
+-            --override-filename "fallow-${FALLOW_TARGET}.cdx"
+-          cargo tree -p fallow-cli --target "$FALLOW_TARGET" -e normal,build \
++          sidecar=tools/similar-code-sidecar/Cargo.toml
++          for manifest in crates/cli/Cargo.toml "$sidecar"; do
++            cargo cyclonedx --manifest-path "$manifest" \
++              --format json --spec-version 1.5 --target "$FALLOW_TARGET" \
++              --override-filename "fallow-${FALLOW_TARGET}.cdx"
++          done
++          # The build job builds these packages with fallow-multicall in one
++          # cargo invocation on most targets. One tree of the shipped packages
++          # gives the same crates as that build. fallow-multicall is not in the
++          # archive, so the tree leaves it out.
++          cargo tree -p fallow-cli -p fallow-lsp -p fallow-mcp \
++            --target "$FALLOW_TARGET" -e normal,build \
+             --prefix none --format '{p}' --locked > "$RUNNER_TEMP/cargo-tree.txt"
+-          node .github/scripts/filter-sbom.mjs \
+-            "crates/cli/fallow-${FALLOW_TARGET}.cdx.json" "$RUNNER_TEMP/cargo-tree.txt"
++          cargo tree --manifest-path "$sidecar" \
++            --target "$FALLOW_TARGET" -e normal,build \
++            --prefix none --format '{p}' --locked > "$RUNNER_TEMP/cargo-tree-similar-code.txt"
+           mkdir sbom
+-          cp "crates/cli/fallow-${FALLOW_TARGET}.cdx.json" sbom/
++          node .github/scripts/filter-sbom.mjs \
++            --out "sbom/fallow-${FALLOW_TARGET}.cdx.json" \
++            --tree "$RUNNER_TEMP/cargo-tree.txt" \
++            --tree "$RUNNER_TEMP/cargo-tree-similar-code.txt" \
++            --bin fallow --bin fallow-lsp --bin fallow-mcp --bin fallow-similar-code \
++            "crates/cli/fallow-${FALLOW_TARGET}.cdx.json" \
++            "crates/lsp/fallow-${FALLOW_TARGET}.cdx.json" \
++            "crates/mcp/fallow-${FALLOW_TARGET}.cdx.json" \
++            "tools/similar-code-sidecar/fallow-${FALLOW_TARGET}.cdx.json"
+ 
+       - name: Upload SBOM
+         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+```
+
+**File**: `changelog.d/fix-sbom-all-shipped-binaries.md` (added, +4/-0)
+```diff
+@@ -0,0 +1,4 @@
++### Fixed
++
++- **The release SBOM of each target now covers every binary of the `fallow-<target>` archive.** Before, the SBOM covered only the `fallow` binary. Crates that only `fallow-lsp`, `fallow-mcp` or `fallow-similar-code` link, such as `tower-lsp-server`, `rmcp`, `rquickjs` and `candle-core`, were not in it. The SBOM also listed the `stub_sidecar` and `fallow-schema-emit` bins, which the release does not ship. The release job now merges the SBOMs of the four packages into one file with the same name, and it lists only the crates of their builds.
++  (Closes [#5190](https://github.com/fallow-rs/fallow/issues/5190))
+```
+
+**File**: `scripts/workflow-policy.test.mjs` (modified, +83/-11)
+```diff
+@@ -1237,23 +1237,95 @@ test("release runs Zed verification on macOS and Windows without credentials", (
+   assert.match(job, /cargo fmt --check --manifest-path editors\/zed\/Cargo.toml/);
+ });
+ 
+-test("release SBOMs list only the crates of the target build", () => {
++/** The binary names that the unix archive step of the release build packs. */
++const archivedBinaries = (build) => {
++  const step = workflowSteps(build).find((s) => s.startsWith("name: Package binaries (unix)"));
++  assert.ok(step, "missing step Package binaries (unix)");
++  const tar = step.match(/tar czf "[^"]+" (.+)$/mu);
++  assert.ok(tar, "the archive step runs no tar command");
++  const entry = matrixEntry(build, "x86_64-unknown-linux-gnu");
++  return tar[1].split(/\s+/u).map((word) => {
++    const variable = word.match(/^"\$(\w+)"$/u);
++    if (!variable) return word;
++    const key = step.match(new RegExp(`${variable[1]}: \\$\\{\\{ matrix\\.(\\w+) \\}\\}`, "u"));
++    assert.ok(key, `the archive step does not set ${variable[1]} from the matrix`);
++    const value = entry.match(new RegExp(`^\\s*${key[1]}: (\\S+)$`, "mu"));
++    assert.ok(value, `the build matrix has no ${key[1]}`);
++    return value[1];
++  });
++};
++
++/** The manifest directory and the package name of the Cargo package with bin `name`. */
++const packageOfBinary = (name) => {
++  const manifests = [
++    ...readdirSync("crates").map((dir) => `crates/${dir}`),
++    "tools/similar-code-sidecar",
++  ].filter((dir) => existsSync(`${dir}/Cargo.toml`));
++  for (const dir of manifests) {
++    const manifest = readFileSync(`${dir}/Cargo.toml`, "utf8");
++    if (!manifest.includes(`[[bin]]\nname = "${name}"\n`)) continue;
++    return { dir, name: manifest.match(/^\[package\]\nname = "([^"]+)"/mu)[1] };
++  }
++  assert.fail(`no Cargo package has the bin ${name}`);
++};
++
++test("release SBOMs cover every binary of the target archive and only its crates", () => {
+   const workflow = readWorkflow(".github/workflows/release.yml");
+   const sbom = indentedBlock(workflow, "sbom", 2);
++  const script = stepScript(sbom, "Generate SBOM");
+ 
+   assert.match(sbom, /permissions:\n\s+contents: read/);
+   assert.match(sbom, /actions\/setup-node@[0-9a-f]{40}/);
+-  assert.match(
+-    sbom,
+-    /set -euo pipefail[\s\S]*cargo cyclonedx[\s\S]*cargo tree -p fallow-cli --target "\$FALLOW_TARGET" -e normal,build[\s\S]*--locked[\s\S]*node \.github\/scripts\/filter-sbom\.mjs[\s\S]*mkdir sbom/u,
+-  );
+-  // The filter must rewrite the same file that the job uploads.
+-  const sbomFile = '"crates/cli/fallow-${FALLOW_TARGET}.cdx.json"';
+-  assert.ok(
+-    sbom.includes(`filter-sbom.mjs \\\n            ${sbomFile}`),
+-    "the filter reads the SBOM",
++  assert.match(script, /^set -euo pipefail\n/u);
++
++  const shipped = archivedBinaries(indentedBlock(workflow, "build", 2));
++  assert.deepEqual(
++    shipped.toSorted(),
++    ["fallow", "fallow-lsp", "fallow-mcp", "fallow-similar-code"],
++    "the archive ships these binaries",
+   );
+-  assert.ok(sbom.includes(`cp ${sbomFile} sbom/`), "the job uploads the filtered SBOM");
++  const bins = Array.from(script.matchAll(/--bin (\S+)/gu), (match) => match[1]);
++  assert.deepEqual(bins.toSorted(), shipped.toSorted(), "the SBOM keeps the shipped bins only");
++
++  const trees = script.match(/cargo tree [^>]+/gu) ?? [];
++  for (const tree of trees) {
++    assert.match(tree, /--target "\$FALLOW_TARGET" -e normal,build/u);
++    assert.match(tree, /--locked/u);
++  }
++  const sidecar = script.match(/^sidecar=(\S+)$/mu)?.[1];
++  for (const binary of shipped) {
++    const pkg = packageOfBinary(binary);
++    assert.ok(
++      script.includes(`"${pkg.dir}/fallow-\${FALLOW_TARGET}.cdx.json"`),
++      `the merge reads the SBOM of ${pkg.name}`,
++    );
++    if (sidecar === `${pkg.dir}/Cargo.toml`) {
++      assert.ok(
++        trees.some((tree) => tree.includes('--manifest-path "$sidecar"')),
++        `a cargo tree covers ${pkg.name}`,
++      );
++      assert.match(
++        script,
++        /for manifest in [^\n]*"\$sidecar"; do\n\s+cargo cyclonedx --manifest-path "\$manifest"/u,
++      );
++    } else {
++      assert.ok(
++        trees.some((tree) => new RegExp(`-p ${pkg.name}(?![\\w-])`, "u").test(tree)),
++        `a cargo tree covers ${pkg.name}`,
++      );
++    }
++  }
++
++  // The merge writes the file that the job uploads, and every tree feeds it.
++  const out = '"sbom/fallow-${FALLOW_TARGET}.cdx.json"';
++  assert.match(script, /mkdir sbom\nnode \.github\/scripts\/filter-sbom\.mjs/u);
++  assert.ok(script.includes(`--out ${out}`), "the merge writes the uploaded SBOM");
++  assert.ok(sbom.includes("path: sbom/fallow-${{ matrix.target }}.cdx.json"));
++  const treeFiles = Array.from(script.matchAll(/> "(\$RUNNER_TEMP\/[^"]+)"/gu), (m) => m[1]);
++  assert.equal(treeFiles.length, trees.length);
++  for (const file of treeFiles) {
++    assert.ok(script.includes(`--tree "${file}"`), `the merge reads ${file}`);
++  }
+ });
+ 
+ test("release publication waits for the aggregate verification gate",
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5125** (2026-11-23): fix(sidecar): count signature endpoints in coupling concentration (@BartWaardenburg)
-- **PR #5124** (2026-11-23): fix(dupes): keep merged clone fragments aligned with source ranges (@BartWaardenburg)
-- **PR #5122** (2026-11-23): fix(extract): keep guarded flag reads and continued CSS utilities (@BartWaardenburg)
-- **PR #5121** (2026-11-23): fix(audit): compare coverage thresholds within their config scope (@BartWaardenburg)
-- **PR #5120** (2026-11-23): fix(audit): record walkthrough marks across output formats (@BartWaardenburg)
-- **PR #5119** (2026-11-23): fix(cli): resolve shared-state explanations and correct activation help (@BartWaardenburg)
+- **PR #5220** (2026-11-25): docs(ship): search for a competing pull request before the merge (@BartWaardenburg)
+- **PR #5219** (2026-11-25): ci: run the walltime jobs once for a ci:walltime label (@BartWaardenburg)
+- **PR #5217** (2026-11-24): refactor(core): move the barrel predicate into unused_files (@BartWaardenburg)
+- **PR #5214** (2026-11-24): refactor: remove two-way module use in the engine and CLI crates (@BartWaardenburg)
+- **PR #5213** (2026-11-24): fix(pinia): credit reads through a property typed with an inline store ReturnType (@BartWaardenburg)
+- **PR #5212** (2026-11-24): fix(config): report stale ignore globs in dupes and health runs (@BartWaardenburg)
 
 ---
 
@@ -1555,24 +1736,23 @@ Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. config): report the cache and ignore rules a repair affects
+## X. extract): scan SFC script and style blocks in linear time
 
 **RULE**:
-When implementing operations in `changelog.d/fix-cli-config-repairs.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fallow-rs/fallow. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelog.d/fix-oss-fuzz-sfc-blocks.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fallow-rs/fallow. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `cfb765db`: config): report the cache and ignore rules a repair affects. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6dcee9b2`: extract): scan SFC script and style blocks in linear time. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/fix-cli-config-repairs.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/fix-oss-fuzz-sfc-blocks.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
 ### Fixed
 
-- **Doctor includes the selected config in its cache repair command.** The command rebuilds the parse and graph caches that doctor inspected. Doctor JSON omits `remediation` and gives manual steps in `message` when the config path contains shell-unsafe characters, the config is outside the project root, or the run overrides the cache directory.
-- **Config fix reports list only the ignore rules that Fallow adds.** Dry-run and apply print a note on stderr when an existing `ignoreExports` rule prevents a write. The note names the affected file.
+- **A Vue or Svelte file with many unclosed attribute quotes can no longer slow the analysis to a crawl.** Fallow found the `<script>` and `<style>` blocks of a single-file component with regexes. A tag start whose quoted attribute value did not close made each search read far past its block, and the next search read that text again, so the time grew with the square of the file size. A 125 KB file took minutes in a fuzz build. Fallow now finds the blocks with a scan that reads each position a bounded number of times. The blocks that it finds do not change.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1582,7 +1762,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cfb765db` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6dcee9b2` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

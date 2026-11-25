@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-25T08:13:30.292Z",
+  "updated_at": "2026-11-25T08:29:32.767Z",
   "stats": {
-    "total_discovered": 9389,
-    "approved_pending_harvest": 8898,
+    "total_discovered": 9390,
+    "approved_pending_harvest": 8899,
     "harvested_count": 0,
     "rejected_count": 491,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 8888,
+      "COMMUNITY_AND_EXPERT": 8889,
       "OFFICIAL_DOCUMENTATION": 280,
       "STANDARDS_AND_SPECIFICATIONS": 150,
       "ENGINEERING_BLOGS": 7,
@@ -203148,6 +203148,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/arangodb-arangodb-learnings.md",
         "fileName": "arangodb-arangodb-learnings.md"
+      }
+    },
+    "SRC-4F54BACB92AD": {
+      "id": "SRC-4F54BACB92AD",
+      "url": "https://github.com/fallow-rs/fallow/issues/5190",
+      "title": "https://github.com/fallow-rs/fallow/issues/5190",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T08:29:32.767Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md",
+        "fileName": "fallow-rs-fallow-learnings.md"
       }
     }
   }

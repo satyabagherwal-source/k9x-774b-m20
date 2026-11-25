@@ -13004,3 +13004,6 @@
 | `CYCLE-20261125-J8FD` | `2026-11-25T08:13:02.185Z` | `KRAFTON/Raon-1-mini-preview` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-krafton-raon-1-mini-preview-learnings.md` | Yes (`5f5ea678...`) |
 | `CYCLE-20261125-JMFF` | `2026-11-25T08:13:20.331Z` | `arangodb/arangodb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10489` | Yes (`bfe49f55...`) |
 | `CYCLE-20261125-JQHN` | `2026-11-25T08:13:25.595Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule EXISTING` | Yes (`ba57f87d...`) |
+| `CYCLE-20261125-45YJ` | `2026-11-25T08:29:18.763Z` | `fallow-rs/fallow` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md` | Yes (`03ced384...`) |
+| `CYCLE-20261125-473L` | `2026-11-25T08:29:20.241Z` | `ornith-ai/Ornith-1.5-122B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ornith-ai-ornith-1.5-122b-learnings.md` | Yes (`166aa0b9...`) |
+| `CYCLE-20261125-4E1T` | `2026-11-25T08:29:29.249Z` | `trinodb/trino` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10490` | Yes (`af8ee553...`) |

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-25T08:13:32.608Z",
+  "last_updated": "2026-11-25T08:29:34.863Z",
   "total_verified_learnings": 9114,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25329,
+  "total_items": 25333,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -234306,8 +234306,8 @@
       "slug": "trinodb-trino",
       "platform": "github",
       "source_url": "https://github.com/trinodb/trino",
-      "source_version": "39a37d40",
-      "content_hash": "f7ee3f636a6350375a5451076041161aa36add6e53d46492396889a3b6578331",
+      "source_version": "6af3a192",
+      "content_hash": "af8ee5533de1795056b9b9ca5f6daa178f2a8d961f04f2c880bb8fa9522eb547",
       "dossier_path": "07_PROJECT_LEARNING/trinodb-trino-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/trinodb-trino-learnings.md",
       "promoted_rules": [
@@ -234370,6 +234370,11 @@
           "number": 10278,
           "title": "Speed up null position filtering on validity bitmaps",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10490,
+          "title": "Support reading encrypted Iceberg deletion vectors",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -234377,7 +234382,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T14:24:18.299Z",
+      "verified_at": "2026-11-25T08:29:29.029Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -234419,10 +234424,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-trinodb-trino-architecture-intelligence-trinodb-trino-core-invariants.md",
       "title": "Architecture Intelligence: trinodb/trino Core Invariants",
       "repository": "trinodb/trino",
-      "source_version": "39a37d40",
-      "content_hash": "ec853af4c100e33bcb5c5404df92c59ac76bd0b0de5ae4f8bc57f48de0af033f",
+      "source_version": "6af3a192",
+      "content_hash": "f65e7775ca012616a9852bc54847268fe4ee7d65955a9e87b2d44858dffdf5c8",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T14:24:18.962Z"
+      "persisted_at": "2026-11-25T08:29:29.686Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-trinodb-trino": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-trinodb-trino",
@@ -234431,10 +234436,10 @@
       "relative_path": "08_VERIFICATION/trinodb-trino-verification-protocol-empirical-defect-shield-for-trinodb-trino.md",
       "title": "Verification Protocol: Empirical Defect Shield for trinodb/trino",
       "repository": "trinodb/trino",
-      "source_version": "39a37d40",
-      "content_hash": "29c3e4aa481563b330d253124447b3f70d1492edfd167de25284c7106faa828b",
+      "source_version": "6af3a192",
+      "content_hash": "3e1ea3f9938a7ca1748a7ca0c1429e846c979b498ba85bf105e334cd8bdb63bd",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T14:24:19.161Z"
+      "persisted_at": "2026-11-25T08:29:29.872Z"
     },
     "candidate_directive-semantic-preserve-catch-and-var-binding-identities": {
       "item_id": "candidate_directive-semantic-preserve-catch-and-var-binding-identities",
@@ -243895,8 +243900,8 @@
       "slug": "fallow-rs-fallow",
       "platform": "github",
       "source_url": "https://github.com/fallow-rs/fallow",
-      "source_version": "40407499",
-      "content_hash": "f9669db37d7a81eb4fce5223021821b47fa468a76782eb240b5888915619e095",
+      "source_version": "cec86af5",
+      "content_hash": "03ced384e98823133ab14d5023005109aa19d8e9ddbd0a34ae313dc78864941c",
       "dossier_path": "07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md",
       "promoted_rules": [
@@ -243941,7 +243946,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T06:46:13.049Z",
+      "verified_at": "2026-11-25T08:29:18.500Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -243981,10 +243986,10 @@
       "relative_path": "08_VERIFICATION/fallow-rs-fallow-verification-protocol-empirical-defect-shield-for-fallow-rs-fal.md",
       "title": "Verification Protocol: Empirical Defect Shield for fallow-rs/fallow",
       "repository": "fallow-rs/fallow",
-      "source_version": "40407499",
-      "content_hash": "9685030907a6fa60ce922e140a6a09f5edc4bbc5f4a5dba5c4dd2582f4f56c4c",
+      "source_version": "cec86af5",
+      "content_hash": "bae97aac5f13a5477192fead5b844f4836b1bd6e1048c41be4d58f1fc63473cf",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T06:46:13.857Z"
+      "persisted_at": "2026-11-25T08:29:19.424Z"
     },
     "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf": {
       "learning_id": "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf",
@@ -244108,9 +244113,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for fallow-rs-fallow-learnings",
       "repository": "fallow-rs-fallow-learnings",
       "source_version": "HEAD",
-      "content_hash": "20a0a0caa5a8d9da7b8fd7d8ab80d37e6f3ecaa69611ac37b52ab8b09571b9a4",
+      "content_hash": "72781947e490ea743b15edb77bf7209ddcb09b82f75d60a84947d6a83a6ccd25",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T06:46:29.648Z"
+      "persisted_at": "2026-11-25T08:29:33.439Z"
     },
     "candidate_directive-embedded-metadata-parameter-authority-gguf-sampling-self-containment": {
       "item_id": "candidate_directive-embedded-metadata-parameter-authority-gguf-sampling-self-containment",
@@ -255725,9 +255730,9 @@
       "title": "Architecture Intelligence: trinodb-trino-learnings Core Invariants",
       "repository": "trinodb-trino-learnings",
       "source_version": "HEAD",
-      "content_hash": "4d61aab11d3417f0667d98b4ce5afa8591b4830958a4179531d013e96a1920be",
+      "content_hash": "bc6b0a2e10a44ffa2b971381c17922c45eb73b9e99ff5527ee3612ee28f4c910",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T14:24:25.700Z"
+      "persisted_at": "2026-11-25T08:29:34.665Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-trinodb-trino-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-trinodb-trino-learnings",
@@ -255737,9 +255742,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for trinodb-trino-learnings",
       "repository": "trinodb-trino-learnings",
       "source_version": "HEAD",
-      "content_hash": "44a2c9dc7db4c45d7ffb2bd3310dfb1f0e2b4e3c50b75e2ea1ea202539296bdd",
+      "content_hash": "29311099281ffe194c259643863403ef2ba621ef245f06bd57b74fa88a3703ed",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T14:24:25.878Z"
+      "persisted_at": "2026-11-25T08:29:34.863Z"
     },
     "learn-github-adobe-structured-data-validator": {
       "learning_id": "learn-github-adobe-structured-data-validator",
@@ -265405,10 +265410,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-fallow-rs-fallow-quality-verification-intelligence-fallow-rs-fallow-core-invaria.md",
       "title": "Quality & Verification Intelligence: fallow-rs/fallow Core Invariants",
       "repository": "fallow-rs/fallow",
-      "source_version": "22c832f6",
-      "content_hash": "46e955234c2975add17ae9900111058bed6a1e06178ac8d638c91ee855165bc4",
+      "source_version": "cec86af5",
+      "content_hash": "5e8a93ffa365b5cd18ce38666ab4a0315a4cabf7730978cbb8d43bc3a5408127",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T23:03:39.039Z"
+      "persisted_at": "2026-11-25T08:29:19.243Z"
     },
     "learn-github-sozercan-kaset": {
       "learning_id": "learn-github-sozercan-kaset",
@@ -265544,9 +265549,9 @@
       "title": "Quality & Verification Intelligence: fallow-rs-fallow-learnings Core Invariants",
       "repository": "fallow-rs-fallow-learnings",
       "source_version": "HEAD",
-      "content_hash": "77dbe8270f6fc256cdb8c86655eec6f29f25dafeb03f9ea38e667436c636b88b",
+      "content_hash": "df2ebe31b9b299a982d172c72f3a3540c4e50be068373b09c50566c088e3a5e7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T23:03:51.168Z"
+      "persisted_at": "2026-11-25T08:29:33.240Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-abenzerps-qwen-image-2-1-turbo-quantized-lear": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-abenzerps-qwen-image-2-1-turbo-quantized-lear",
@@ -281025,7 +281030,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/ornith-ai/Ornith-1.5-122B",
       "source_version": "hf-ornith-ai-ornith-1.5-122b",
-      "content_hash": "1bd0261b92b7ac1a55d6106390160064576f90a03b4b7545dc61b8dc0f5082e0",
+      "content_hash": "166aa0b9ba938d99a7acffcc010b8dceb07277b95a835ab24f85bae6224a16ee",
       "dossier_path": "07_PROJECT_LEARNING/hf-ornith-ai-ornith-1.5-122b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-ornith-ai-ornith-1.5-122b-learnings.md",
       "promoted_rules": [],
@@ -281034,7 +281039,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T16:18:41.493Z",
+      "verified_at": "2026-11-25T08:29:20.008Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -281051,9 +281056,9 @@
       "title": "Research & Knowledge Intelligence: ornith-ai/Ornith-1.5-122B Core Invariants",
       "repository": "ornith-ai/Ornith-1.5-122B",
       "source_version": "hf-ornith-ai-ornith-1.5-122b",
-      "content_hash": "7defe27ec55099cf22890a17ae1b8901078f5f016e363d9fa09a240a1c5089dc",
+      "content_hash": "6d06bdf2d727448928d40b893519a4a4aa7394518758183ec2f7555a617a9be8",
       "domain_letter": "D",
-      "persisted_at": "2026-11-21T16:18:41.975Z"
+      "persisted_at": "2026-11-25T08:29:20.472Z"
     },
     "rule-9025": {
       "learning_id": "rule-9025",
@@ -281089,9 +281094,9 @@
       "title": "Research & Knowledge Intelligence: hf-ornith-ai-ornith-1.5-122b-learnings Core Invariants",
       "repository": "hf-ornith-ai-ornith-1.5-122b-learnings",
       "source_version": "HEAD",
-      "content_hash": "55c501e4bf8a3b6b324daa1f43ea73ff3202a6ffc3efc64af22fff56f2edc440",
+      "content_hash": "fd3713b70244e77cc9b67f3a3b1947f512088341aac31b53750b0ab1b7f36cdb",
       "domain_letter": "D",
-      "persisted_at": "2026-11-21T16:19:04.341Z"
+      "persisted_at": "2026-11-25T08:29:33.855Z"
     },
     "learn-huggingface-orcarouter-deepseek-v4-1-flash-1017-abliterated-gguf": {
       "learning_id": "learn-huggingface-orcarouter-deepseek-v4-1-flash-1017-abliterated-gguf",
@@ -346469,6 +346474,56 @@
       "content_hash": "f53ff32731bd10144c1b7d5f95bc6903e33baae842480e23fc3c75b0e0b362a3",
       "domain_letter": "G",
       "persisted_at": "2026-11-25T08:13:32.110Z"
+    },
+    "candidate_directive-scan-sfc-script-and-style-blocks-in-linear-time": {
+      "item_id": "candidate_directive-scan-sfc-script-and-style-blocks-in-linear-time",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-466R-scan-sfc-script-and-style-blocks-in-linear-time.md",
+      "title": "scan SFC script and style blocks in linear time",
+      "repository": "fallow-rs/fallow",
+      "source_version": "cec86af5",
+      "content_hash": "66a26f7f6867ee1f03e5b95a2c308cabae880bb20a61baae3c7bab71cb6e3ea0",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-25T08:29:19.060Z"
+    },
+    "rule-10490": {
+      "learning_id": "rule-10490",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10490,
+      "title": "Support reading encrypted Iceberg deletion vectors",
+      "source_url": "https://github.com/trinodb/trino",
+      "source_version": "6af3a192",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T08:29:29.029Z"
+    },
+    "candidate_directive-support-reading-encrypted-iceberg-deletion-vectors": {
+      "item_id": "candidate_directive-support-reading-encrypted-iceberg-deletion-vectors",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-4I31-support-reading-encrypted-iceberg-deletion-vectors.md",
+      "title": "Support reading encrypted Iceberg deletion vectors",
+      "repository": "trinodb-trino-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3199ed02276fd1085de429182f0c3cee7c783367c6b40841d286b0081de03fd6",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-25T08:29:34.480Z"
+    },
+    "candidate_directive-extract-scan-sfc-script-and-style-blocks-in-linear-time": {
+      "item_id": "candidate_directive-extract-scan-sfc-script-and-style-blocks-in-linear-time",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-4GZA-extract-scan-sfc-script-and-style-blocks-in-linear-time.md",
+      "title": "extract): scan SFC script and style blocks in linear time",
+      "repository": "fallow-rs-fallow-learnings",
+      "source_version": "HEAD",
+      "content_hash": "872acd90acfa0f653fddb269e07fe33bd177780ea96d3bd0fbc7f198f6d3e2bd",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-25T08:29:33.047Z"
     }
   },
   "ai-builder-brain": {

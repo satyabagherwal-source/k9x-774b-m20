@@ -3,7 +3,7 @@
 > **Source Version**: `hf-ornith-ai`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T16:18:41.204Z  
+> **Timestamp**: 2026-11-25T08:29:19.709Z  
 > **Learning ID**: `learn-huggingface-ornith-ai-ornith-1-5-122b`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-ornith-ai-ornith-1.5-122b-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/ornith-ai/Ornith-1.5-122B](https://huggingface.co/ornith-ai/Ornith-1.5-122B))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T16:18:41.014Z  
+> **Harvest Timestamp**: 2026-11-25T08:29:14.105Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 379277 downloads | 284 likes
+- **Stars / Engagement**: 336981 downloads | 324 likes
 
 ---
 
