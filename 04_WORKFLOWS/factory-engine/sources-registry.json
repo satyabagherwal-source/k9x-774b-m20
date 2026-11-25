@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-25T03:28:31.864Z",
-    "lastVerified": "2026-11-25T03:28:31.864Z",
+    "lastChecked": "2026-11-25T03:36:56.058Z",
+    "lastVerified": "2026-11-25T03:36:56.058Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -276,9 +276,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-25T02:56:11.377Z",
+    "lastChecked": "2026-11-25T03:36:56.049Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-25T02:56:11.377Z"
+    "lastVerified": "2026-11-25T03:36:56.049Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -1834,8 +1834,8 @@
     "officialUrl": "https://github.com/sigstore/cosign",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-24T23:33:24.282Z",
-    "lastVerified": "2026-11-24T23:33:24.282Z",
+    "lastChecked": "2026-11-25T03:36:51.285Z",
+    "lastVerified": "2026-11-25T03:36:51.285Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sigstore-cosign",
@@ -4019,9 +4019,9 @@
   "dingodb-dingo": {
     "name": "dingo",
     "officialUrl": "https://github.com/dingodb/dingo",
-    "lastChecked": "2026-11-24T08:34:27.744Z",
+    "lastChecked": "2026-11-25T03:36:53.579Z",
     "revisionIdentifier": "bb96a741",
-    "lastVerified": "2026-11-24T08:34:27.744Z"
+    "lastVerified": "2026-11-25T03:36:53.579Z"
   },
   "pemistahl-grex": {
     "name": "grex",
@@ -6309,12 +6309,12 @@
     "lastVerified": "2026-11-24T20:38:27.737Z"
   },
   "kcl-lang-kcl": {
-    "name": "kcl-lang/kcl",
+    "name": "kcl",
     "officialUrl": "https://github.com/kcl-lang/kcl",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-24T09:57:12.149Z",
-    "lastVerified": "2026-11-24T09:57:12.149Z",
+    "lastChecked": "2026-11-25T03:36:48.599Z",
+    "lastVerified": "2026-11-25T03:36:48.599Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kcl-lang-kcl",
@@ -6323,7 +6323,8 @@
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "05194abb"
   },
   "ydb-platform-ydb": {
     "name": "ydb-platform/ydb",
@@ -8523,9 +8524,9 @@
   "mohamedrejeb-compose-rich-editor": {
     "name": "compose-rich-editor",
     "officialUrl": "https://github.com/MohamedRejeb/compose-rich-editor",
-    "lastChecked": "2026-11-22T17:12:14.877Z",
+    "lastChecked": "2026-11-25T03:36:46.094Z",
     "revisionIdentifier": "3254ff75",
-    "lastVerified": "2026-11-22T17:12:14.877Z"
+    "lastVerified": "2026-11-25T03:36:46.094Z"
   },
   "oxc-project-oxc": {
     "name": "oxc-project/oxc",
@@ -8972,8 +8973,8 @@
     "officialUrl": "https://github.com/nguyenphutrong/quotio",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-24T01:07:05.167Z",
-    "lastVerified": "2026-11-24T01:07:05.167Z",
+    "lastChecked": "2026-11-25T03:36:41.057Z",
+    "lastVerified": "2026-11-25T03:36:41.057Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nguyenphutrong-quotio",
@@ -12427,14 +12428,14 @@
     "officialUrl": "https://github.com/fastify/fastify",
     "sourceType": "github",
     "technology": "JavaScript",
-    "lastChecked": "2026-11-21T05:27:48.933Z",
-    "lastVerified": "2026-11-21T05:27:48.933Z",
+    "lastChecked": "2026-11-25T03:36:48.287Z",
+    "lastVerified": "2026-11-25T03:36:48.287Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-fastify-fastify",
-    "contentHash": "83f1cd4f8bae41790a1c704f91882622273a5cb8a7af07088814c3ec0d5f5a9c",
+    "contentHash": "a89065c5a8dbeaaae690fc92f25af5254c977f5b277e0b62e9f1518e6e8dfa57",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

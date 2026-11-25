@@ -12957,3 +12957,4 @@ Every entry in this ledger must capture:
 | `learn-github-mrkai77-loop` | `https://github.com/mrkai77/Loop` | `ad8564ac` | Multi-dimensional audit evidence | 2026-11-25T03:13:34.659Z |
 | `learn-github-google-tcmalloc` | `https://github.com/google/tcmalloc` | `afcf25e3` | Multi-dimensional audit evidence | 2026-11-25T03:28:23.111Z |
 | `learn-github-simonschubert-linuxcommandlibrary` | `https://github.com/SimonSchubert/LinuxCommandLibrary` | `6bf6a477` | Multi-dimensional audit evidence | 2026-11-25T03:28:28.317Z |
+| `learn-github-fastify-fastify` | `https://github.com/fastify/fastify` | `f5757f12` | Multi-dimensional audit evidence | 2026-11-25T03:36:49.539Z |

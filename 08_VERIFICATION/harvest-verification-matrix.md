@@ -12924,3 +12924,4 @@
 | `CYCLE-20261125-U4LB` | `2026-11-25T03:13:34.655Z` | `mrkai77/Loop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10442` | Yes (`22e7845d...`) |
 | `CYCLE-20261125-D64I` | `2026-11-25T03:28:23.106Z` | `google/tcmalloc` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10443` | Yes (`0f985a2e...`) |
 | `CYCLE-20261125-DA55` | `2026-11-25T03:28:28.313Z` | `SimonSchubert/LinuxCommandLibrary` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10444` | Yes (`642c4e87...`) |
+| `CYCLE-20261125-O0VY` | `2026-11-25T03:36:49.534Z` | `fastify/fastify` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10445` | Yes (`a89065c5...`) |

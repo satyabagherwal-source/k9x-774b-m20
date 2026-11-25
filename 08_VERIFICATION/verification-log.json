@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261123-LONR",
-    "timestamp": "2026-11-23T17:03:28.791Z",
-    "repository": "kubearmor/KubeArmor",
-    "learningId": "learn-github-kubearmor-kubearmor",
-    "contentHash": "957701f35479bba6a48490b0fb7dce5b8110f86df53435567db12e0dca9fe511",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261123-LVIV",
     "timestamp": "2026-11-23T17:03:37.687Z",
     "repository": "opentofu/opentofu",
@@ -7490,6 +7475,21 @@
     "repository": "SimonSchubert/LinuxCommandLibrary",
     "learningId": "learn-github-simonschubert-linuxcommandlibrary",
     "contentHash": "642c4e87b85420fab5cc699bed2df695d14d61597300d94ca48121118461e237",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-O0VY",
+    "timestamp": "2026-11-25T03:36:49.534Z",
+    "repository": "fastify/fastify",
+    "learningId": "learn-github-fastify-fastify",
+    "contentHash": "a89065c5a8dbeaaae690fc92f25af5254c977f5b277e0b62e9f1518e6e8dfa57",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

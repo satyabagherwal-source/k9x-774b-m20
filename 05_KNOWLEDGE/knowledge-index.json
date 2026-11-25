@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-25T03:28:36.288Z",
+  "last_updated": "2026-11-25T03:36:59.117Z",
   "total_verified_learnings": 9111,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25197,
+  "total_items": 25200,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112198,9 +112198,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "b48f917699f1722af297acba48fc5b74f838ae3e1ee7bf728ae7da2e595590be",
+      "content_hash": "5ab3912e2a7be6e4bac245051ad7fa7df3032dbc6b15cc92726980b8d88cd62f",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T03:13:41.531Z"
+      "persisted_at": "2026-11-25T03:36:58.934Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -112210,9 +112210,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "e795fcc1f4b3831ffe6fff29790e82b3c8a967f50d3311753d2cad12e070f9ce",
+      "content_hash": "d5e106564906b942c8f6bca11e9a8262d5c3de9590905e19ab5fc372336688a7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T03:13:41.708Z"
+      "persisted_at": "2026-11-25T03:36:59.117Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "bf98278b61b5a4a58385262247572404bbfd399775b6b1a25013111b4bc5c1c3",
+      "content_hash": "630b7eb66461b4415a8bbe2ee8aecd8ebb3197ff7d4c540876cddca8d7cecc02",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T02:39:21.331Z"
+      "persisted_at": "2026-11-25T03:36:57.961Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "6ba28f6532af74fc05085b24db41542f371a31ceed210c3c507d2283c56ad889",
+      "content_hash": "d94a8767979dd92254f5fe7d66bd8d44637e11ca05af27bd12fe9da07d3de350",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T02:39:21.547Z"
+      "persisted_at": "2026-11-25T03:36:58.147Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -276475,8 +276475,8 @@
       "slug": "fastify-fastify",
       "platform": "github",
       "source_url": "https://github.com/fastify/fastify",
-      "source_version": "825d7722",
-      "content_hash": "83f1cd4f8bae41790a1c704f91882622273a5cb8a7af07088814c3ec0d5f5a9c",
+      "source_version": "f5757f12",
+      "content_hash": "a89065c5a8dbeaaae690fc92f25af5254c977f5b277e0b62e9f1518e6e8dfa57",
       "dossier_path": "07_PROJECT_LEARNING/fastify-fastify-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/fastify-fastify-learnings.md",
       "promoted_rules": [
@@ -276489,6 +276489,11 @@
           "number": 9731,
           "title": "docs(request): state that runtime-compiled schemas skip header-name normalizatio",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10445,
+          "title": "route all internal log lines through LogController",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -276496,7 +276501,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T05:27:49.921Z",
+      "verified_at": "2026-11-25T03:36:49.311Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -276538,10 +276543,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-fastify-fastify-technical-construction-intelligence-fastify-fastify-core-invaria.md",
       "title": "Technical Construction Intelligence: fastify/fastify Core Invariants",
       "repository": "fastify/fastify",
-      "source_version": "825d7722",
-      "content_hash": "bbf71a74377259649df52753aa9aa956382cfe12d0fc94f1c0696f2d08071829",
+      "source_version": "f5757f12",
+      "content_hash": "40f114f3818165edc485aa5b562f580039d8aad0777c2bc41fab7d3cdf2de034",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T05:27:50.555Z"
+      "persisted_at": "2026-11-25T03:36:49.969Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-fastify-fastify": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-fastify-fastify",
@@ -276550,10 +276555,10 @@
       "relative_path": "08_VERIFICATION/fastify-fastify-verification-protocol-empirical-defect-shield-for-fastify-fastif.md",
       "title": "Verification Protocol: Empirical Defect Shield for fastify/fastify",
       "repository": "fastify/fastify",
-      "source_version": "825d7722",
-      "content_hash": "b994320ef47c7bc584f943dcc9995dbefe2f0a90685dd90cff6f2125f0cdb6c6",
+      "source_version": "f5757f12",
+      "content_hash": "792ceeae7ab0aad26291893983492adb619bd947368a0af7fe15cfcc2e9290ab",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T05:27:50.750Z"
+      "persisted_at": "2026-11-25T03:36:50.167Z"
     },
     "rule-8966": {
       "learning_id": "rule-8966",
@@ -276589,9 +276594,9 @@
       "title": "Technical Construction Intelligence: fastify-fastify-learnings Core Invariants",
       "repository": "fastify-fastify-learnings",
       "source_version": "HEAD",
-      "content_hash": "ed111ef5ec43081b104fe89d1cc0a1bf8471cd1b81f0d9b7d8f04e752206dd93",
+      "content_hash": "3aafeaddc75079ba14f6d781b6975e8b16a5985ff67a55826902bb5a40f2a771",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T05:28:00.104Z"
+      "persisted_at": "2026-11-25T03:36:57.076Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-fastify-fastify-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-fastify-fastify-learnings",
@@ -276601,9 +276606,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for fastify-fastify-learnings",
       "repository": "fastify-fastify-learnings",
       "source_version": "HEAD",
-      "content_hash": "f77e4f6b628a7387cfc795c86d68907aea168b186dd3aee4b03c879f6977fa22",
+      "content_hash": "848dc7e6dc0a23c8c9f81039d3c07b0455ee9685f545ffd75d9410b2eb52c1fe",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T05:28:00.278Z"
+      "persisted_at": "2026-11-25T03:36:57.266Z"
     },
     "rule-8967": {
       "learning_id": "rule-8967",
@@ -335869,13 +335874,13 @@
       "item_id": "candidate_directive-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-U9RC-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-O7ZX-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change.md",
       "title": "server_events_dispatch: Rerender DM status emoji on emojiset change.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "fc495df670b04f8e32765a867959554b22058cffd029862aaa753dc3c538c18f",
+      "content_hash": "adcf70a6d7f3a834b637bae4a24105da0590762a342eb037b3f7e37f9b5e7eb5",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T03:13:41.355Z"
+      "persisted_at": "2026-11-25T03:36:58.752Z"
     },
     "learn-github-xinatian-mroffice": {
       "learning_id": "learn-github-xinatian-mroffice",
@@ -339113,13 +339118,13 @@
       "item_id": "candidate_directive-deps-bump-url-to-2-5-9-and-heapless-to-0-9-4",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-M42B-deps-bump-url-to-2-5-9-and-heapless-to-0-9-4.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-O78W-deps-bump-url-to-2-5-9-and-heapless-to-0-9-4.md",
       "title": "deps): bump url to 2.5.9 and heapless to 0.9.4",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "71f325915eac7bbf52d81efec3f1d765f841a878b1143d8390e3e6cdc25b169c",
+      "content_hash": "b10674946468aa3199a202216131c2cfa60d06df399482e36886dc6a52a53ee7",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T02:39:21.119Z"
+      "persisted_at": "2026-11-25T03:36:57.779Z"
     },
     "rule-10315": {
       "learning_id": "rule-10315",
@@ -344515,6 +344520,44 @@
       "content_hash": "ec85516505adea567a76b8436860268215e917b0d74aa4cd439a8b9714b4e9b4",
       "domain_letter": "H",
       "persisted_at": "2026-11-25T03:28:34.295Z"
+    },
+    "rule-10445": {
+      "learning_id": "rule-10445",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10445,
+      "title": "route all internal log lines through LogController",
+      "source_url": "https://github.com/fastify/fastify",
+      "source_version": "f5757f12",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T03:36:49.311Z"
+    },
+    "candidate_directive-route-all-internal-log-lines-through-logcontroller": {
+      "item_id": "candidate_directive-route-all-internal-log-lines-through-logcontroller",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-O12T-route-all-internal-log-lines-through-logcontroller.md",
+      "title": "route all internal log lines through LogController",
+      "repository": "fastify/fastify",
+      "source_version": "f5757f12",
+      "content_hash": "b6cd1832e25160a22c103537a6d6ab5c255e05820ff240513a24f3a173552230",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-25T03:36:49.784Z"
+    },
+    "candidate_directive-logger-route-all-internal-log-lines-through-logcontroller": {
+      "item_id": "candidate_directive-logger-route-all-internal-log-lines-through-logcontroller",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-O6K8-logger-route-all-internal-log-lines-through-logcontroller.md",
+      "title": "logger): route all internal log lines through LogController",
+      "repository": "fastify-fastify-learnings",
+      "source_version": "HEAD",
+      "content_hash": "07ccaffe4189ae3ddfe4305832060e05cb23006920e2a773927389c2b8d3e49f",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-25T03:36:56.892Z"
     }
   },
   "ai-builder-brain": {

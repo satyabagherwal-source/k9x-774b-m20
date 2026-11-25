@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T03:28:35.866Z",
+  "last_updated": "2026-11-25T03:36:58.934Z",
   "total_records": 2630,
   "domains": {
     "A": {
@@ -8445,8 +8445,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "b48f917699f1722af297acba48fc5b74f838ae3e1ee7bf728ae7da2e595590be",
-      "created_at": "2026-11-25T03:13:41.531Z"
+      "content_hash": "5ab3912e2a7be6e4bac245051ad7fa7df3032dbc6b15cc92726980b8d88cd62f",
+      "created_at": "2026-11-25T03:36:58.934Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -9363,8 +9363,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "bf98278b61b5a4a58385262247572404bbfd399775b6b1a25013111b4bc5c1c3",
-      "created_at": "2026-11-25T02:39:21.331Z"
+      "content_hash": "630b7eb66461b4415a8bbe2ee8aecd8ebb3197ff7d4c540876cddca8d7cecc02",
+      "created_at": "2026-11-25T03:36:57.961Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -28031,8 +28031,8 @@
       "title": "Technical Construction Intelligence: fastify/fastify Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-fastify-fastify-technical-construction-intelligence-fastify-fastify-core-invaria.md",
       "repository": "fastify/fastify",
-      "content_hash": "bbf71a74377259649df52753aa9aa956382cfe12d0fc94f1c0696f2d08071829",
-      "created_at": "2026-11-21T05:27:50.555Z"
+      "content_hash": "40f114f3818165edc485aa5b562f580039d8aad0777c2bc41fab7d3cdf2de034",
+      "created_at": "2026-11-25T03:36:49.969Z"
     },
     "domain_intelligence-technical-construction-intelligence-fastify-fastify-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-fastify-fastify-learnings-core-invariants",
@@ -28040,8 +28040,8 @@
       "title": "Technical Construction Intelligence: fastify-fastify-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-fastify-fastify-learnings-technical-construction-intelligence-fastify-fastify-le.md",
       "repository": "fastify-fastify-learnings",
-      "content_hash": "ed111ef5ec43081b104fe89d1cc0a1bf8471cd1b81f0d9b7d8f04e752206dd93",
-      "created_at": "2026-11-21T05:28:00.104Z"
+      "content_hash": "3aafeaddc75079ba14f6d781b6975e8b16a5985ff67a55826902bb5a40f2a771",
+      "created_at": "2026-11-25T03:36:57.076Z"
     },
     "domain_intelligence-technical-construction-intelligence-startrail-org-leann-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-startrail-org-leann-core-invariants",
