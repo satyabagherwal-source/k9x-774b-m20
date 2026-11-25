@@ -13008,3 +13008,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-recursivesi-flint` | `https://huggingface.co/RecursiveSI/flint` | `hf-recursi` | Multi-dimensional audit evidence | 2026-11-25T06:47:39.887Z |
 | `learn-github-codewhale-hq-codewhale` | `https://github.com/Hmbown/Codewhale` | `b4f71726` | Multi-dimensional audit evidence | 2026-11-25T06:47:43.891Z |
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `d71c022a` | Multi-dimensional audit evidence | 2026-11-25T06:47:53.576Z |
+| `learn-huggingface-xhtoken-spark-x2-6-4b` | `https://huggingface.co/XHToken/Spark-X2.6-4B` | `hf-xhtoken` | Multi-dimensional audit evidence | 2026-11-25T06:56:10.579Z |

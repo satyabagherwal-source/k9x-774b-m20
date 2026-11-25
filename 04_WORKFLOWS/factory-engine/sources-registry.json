@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-25T06:47:56.840Z",
-    "lastVerified": "2026-11-25T06:47:56.840Z",
+    "lastChecked": "2026-11-25T06:56:22.144Z",
+    "lastVerified": "2026-11-25T06:56:22.144Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -332,12 +332,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "actions-actions-runner-controller": {
-    "name": "actions/actions-runner-controller",
+    "name": "actions-runner-controller",
     "officialUrl": "https://github.com/actions/actions-runner-controller",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-24T14:05:42.456Z",
-    "lastVerified": "2026-11-24T14:05:42.456Z",
+    "lastChecked": "2026-11-25T06:56:14.641Z",
+    "lastVerified": "2026-11-25T06:56:14.641Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-actions-actions-runner-controller",
@@ -346,7 +346,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "50f96097"
   },
   "openziti-zrok": {
     "name": "zrok",
@@ -378,8 +379,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-25T06:21:17.207Z",
-    "lastVerified": "2026-11-25T06:21:17.207Z",
+    "lastChecked": "2026-11-25T06:56:22.134Z",
+    "lastVerified": "2026-11-25T06:56:22.134Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -1344,9 +1345,9 @@
   "cryfs-cryfs": {
     "name": "cryfs",
     "officialUrl": "https://github.com/cryfs/cryfs",
-    "lastChecked": "2026-11-25T02:38:43.385Z",
+    "lastChecked": "2026-11-25T06:56:17.160Z",
     "revisionIdentifier": "e2da97b1",
-    "lastVerified": "2026-11-25T02:38:43.385Z"
+    "lastVerified": "2026-11-25T06:56:17.160Z"
   },
   "neondatabase-neon": {
     "name": "neon",
@@ -1605,12 +1606,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "ajeetdsouza-zoxide": {
-    "name": "ajeetdsouza/zoxide",
+    "name": "zoxide",
     "officialUrl": "https://github.com/ajeetdsouza/zoxide",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-24T04:53:47.803Z",
-    "lastVerified": "2026-11-24T04:53:47.803Z",
+    "lastChecked": "2026-11-25T06:56:07.129Z",
+    "lastVerified": "2026-11-25T06:56:07.129Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-ajeetdsouza-zoxide",
@@ -1619,7 +1620,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "8f588052"
   },
   "hf-prism-ml-ternary-bonsai-2-27b-gguf": {
     "name": "prism-ml/Ternary-Bonsai-2-27B-gguf",
@@ -5285,9 +5287,9 @@
   "skytable-skytable": {
     "name": "skytable",
     "officialUrl": "https://github.com/skytable/skytable",
-    "lastChecked": "2026-11-24T13:04:06.825Z",
+    "lastChecked": "2026-11-25T06:56:19.610Z",
     "revisionIdentifier": "146d8664",
-    "lastVerified": "2026-11-24T13:04:06.825Z"
+    "lastVerified": "2026-11-25T06:56:19.610Z"
   },
   "smol-rs-smol": {
     "name": "smol",
@@ -9371,8 +9373,8 @@
     "officialUrl": "https://github.com/jacklandrin/OnlySwitch",
     "sourceType": "github",
     "technology": "Swift",
-    "lastChecked": "2026-11-22T20:35:37.015Z",
-    "lastVerified": "2026-11-22T20:35:37.015Z",
+    "lastChecked": "2026-11-25T06:56:12.257Z",
+    "lastVerified": "2026-11-25T06:56:12.257Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-jacklandrin-onlyswitch",
@@ -12912,12 +12914,12 @@
     "officialUrl": "https://huggingface.co/XHToken/Spark-X2.6-4B",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-21T13:05:16.942Z",
-    "lastVerified": "2026-11-21T13:05:16.942Z",
+    "lastChecked": "2026-11-25T06:56:09.969Z",
+    "lastVerified": "2026-11-25T06:56:09.969Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-xhtoken-spark-x2-6-4b",
-    "contentHash": "77b2d33ba9758f1e761de03cb29450251ee90c29c2ed0f7f07169e9d4905e5f0",
+    "contentHash": "453b11a8f8dc37797803bb305fa1dc18bfbefc255425965f29de46c040a17181",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

@@ -10495,8 +10495,8 @@
     "sourceUrl": "https://huggingface.co/XHToken/Spark-X2.6-4B",
     "sourceVersion": "hf-xhtoken-spark-x2.6-4b",
     "license": "Open-Source",
-    "contentHash": "77b2d33ba9758f1e761de03cb29450251ee90c29c2ed0f7f07169e9d4905e5f0",
-    "lastHarvestedAt": "2026-11-21T13:05:17.806Z",
+    "contentHash": "453b11a8f8dc37797803bb305fa1dc18bfbefc255425965f29de46c040a17181",
+    "lastHarvestedAt": "2026-11-25T06:56:10.579Z",
     "learningId": "learn-huggingface-xhtoken-spark-x2-6-4b"
   },
   "hf-internscience-sage-a1.5": {
