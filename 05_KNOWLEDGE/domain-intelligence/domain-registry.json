@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T13:20:43.408Z",
+  "last_updated": "2026-11-25T13:31:52.451Z",
   "total_records": 2674,
   "domains": {
     "A": {
@@ -9407,8 +9407,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "b6b8b95f88fba72dabdf44ef377bc6968e518f05211dce39beaeb72c20aa8cb2",
-      "created_at": "2026-11-25T12:48:10.845Z"
+      "content_hash": "4be223ebb0bf9308621bd5d4513a7eec726b23347365e25a49d7b79069c8f9ee",
+      "created_at": "2026-11-25T13:31:52.451Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -12065,8 +12065,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-permissions-learnings-technical-construction-intelligence-z.md",
       "repository": "zoontek-react-native-permissions-learnings",
-      "content_hash": "ea9b28154eb570bcb5d81c9bffae2f3968647ddf98239891fc27e2bc5de30375",
-      "created_at": "2026-11-25T11:11:33.633Z"
+      "content_hash": "0e5c17b894cf2c74b883dd24226fb45f2dbe0ba455a4ad83b2aa48002fcd974d",
+      "created_at": "2026-11-25T13:31:51.443Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants",
@@ -27607,8 +27607,8 @@
       "title": "Research & Knowledge Intelligence: speridlabs/idol Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-speridlabs-idol-research-knowledge-intelligence-speridlabs-idol-core-invarian.md",
       "repository": "speridlabs/idol",
-      "content_hash": "eb1efe18c0e1ca54bc4dec0591e90449a9d45d8d25a10b7ca1ab6db41f1d2a38",
-      "created_at": "2026-11-21T22:16:15.459Z"
+      "content_hash": "8b2083eda3d90dee37612997810c2ad010d0941c7748a175668035b566a32a05",
+      "created_at": "2026-11-25T13:31:38.923Z"
     },
     "domain_intelligence-architecture-intelligence-meshery-meshery-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-meshery-meshery-core-invariants",
@@ -27634,8 +27634,8 @@
       "title": "Research & Knowledge Intelligence: hf-speridlabs-idol-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-speridlabs-idol-learnings-research-knowledge-intelligence-hf-speridlabs-idol-.md",
       "repository": "hf-speridlabs-idol-learnings",
-      "content_hash": "09b56f3afad364cd1cb05a510faa98aa9c0aa978da69e156a7def49e3057b357",
-      "created_at": "2026-11-21T22:16:28.305Z"
+      "content_hash": "68b2465fa68ca7152f1170a0bd76e11abe02dff79704d0bf8e51c74cb59945d9",
+      "created_at": "2026-11-25T13:31:50.682Z"
     },
     "domain_intelligence-architecture-intelligence-meshery-meshery-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-meshery-meshery-learnings-core-invariants",

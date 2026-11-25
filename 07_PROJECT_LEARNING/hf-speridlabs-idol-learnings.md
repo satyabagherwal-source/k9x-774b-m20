@@ -3,7 +3,7 @@
 > **Source Version**: `hf-speridlab`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T22:16:14.696Z  
+> **Timestamp**: 2026-11-25T13:31:38.092Z  
 > **Learning ID**: `learn-huggingface-speridlabs-idol`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-speridlabs-idol-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/speridlabs/idol](https://huggingface.co/speridlabs/idol))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T22:16:14.560Z  
+> **Harvest Timestamp**: 2026-11-25T13:31:37.896Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: image-to-3d
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 39291 downloads | 2491 likes
+- **Stars / Engagement**: 41371 downloads | 2615 likes
 
 ---
 

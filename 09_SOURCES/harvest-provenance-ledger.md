@@ -13123,3 +13123,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-liquidai-lfm3-1-7b-gguf` | `https://huggingface.co/LiquidAI/LFM3-1.7B-GGUF` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-25T13:20:25.086Z |
 | `learn-github-beclab-olares` | `https://github.com/beclab/Olares` | `7a416142` | Multi-dimensional audit evidence | 2026-11-25T13:20:35.664Z |
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `21fc4bdb` | Multi-dimensional audit evidence | 2026-11-25T13:20:37.781Z |
+| `learn-huggingface-speridlabs-idol` | `https://huggingface.co/speridlabs/idol` | `hf-speridl` | Multi-dimensional audit evidence | 2026-11-25T13:31:38.675Z |

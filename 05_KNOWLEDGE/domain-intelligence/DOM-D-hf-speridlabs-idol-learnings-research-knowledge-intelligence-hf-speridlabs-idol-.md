@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-21T22:16:28.211Z",
+  "timestamp": "2026-11-25T13:31:50.548Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-hf-speridlabs-idol-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hf-speridlabs-idol-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-21T22:16:28.211Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T13:31:50.548Z`  
 > **Learning ID**: `LEARN-EVO-hf-speridlabs-idol-learnings`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Source Version**: `hf-speridlab`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T22:16:14.696Z  
+> **Timestamp**: 2026-11-25T13:31:38.092Z  
 > **Learning ID**: `learn-huggingface-speridlabs-idol`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-speridlabs-idol-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/speridlabs/idol](https://huggingface.co/speridlabs/idol))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T22:16:14.560Z  
+> **Harvest Timestamp**: 2026-11-25T13:31:37.896Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: image-to-3d
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 39291 downloads | 2491 likes
+- **Stars / Engagement**: 41371 downloads | 2615 likes
 
 ---
 

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-25T13:20:43.599Z",
+  "last_updated": "2026-11-25T13:31:52.656Z",
   "total_verified_learnings": 9117,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "b6b8b95f88fba72dabdf44ef377bc6968e518f05211dce39beaeb72c20aa8cb2",
+      "content_hash": "4be223ebb0bf9308621bd5d4513a7eec726b23347365e25a49d7b79069c8f9ee",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T12:48:10.845Z"
+      "persisted_at": "2026-11-25T13:31:52.451Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "f80194571b51a4e302b3d847060f199ce3db753e4a572c08690d7bc47c3577ea",
+      "content_hash": "74fe6042712cdc24921712f23f166fba967dde1202e598f247f79d9a4e85c249",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T12:48:11.028Z"
+      "persisted_at": "2026-11-25T13:31:52.656Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -219386,13 +219386,13 @@
       "item_id": "candidate_directive-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-WTAH-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-X8HU-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
       "title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "6e6b53d3590986715074a86ccabf8d4a8a74ae196e1d06a94f0701ef996ddfd0",
+      "content_hash": "80acaf0296c4a6aaa835f68f8f3978ec5446f1e6ccd82f6f1b341ebb004e12cf",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T11:11:33.450Z"
+      "persisted_at": "2026-11-25T13:31:51.234Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c",
@@ -219402,9 +219402,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "ea9b28154eb570bcb5d81c9bffae2f3968647ddf98239891fc27e2bc5de30375",
+      "content_hash": "0e5c17b894cf2c74b883dd24226fb45f2dbe0ba455a4ad83b2aa48002fcd974d",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T11:11:33.633Z"
+      "persisted_at": "2026-11-25T13:31:51.443Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio",
@@ -219414,9 +219414,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-permissions-learnings",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "a4f0d6f050fcc986071fd38ffdb1bfbeb78f7c797e2d1f17c6a42d113dd4a93e",
+      "content_hash": "d93be45e9d8ed62148741152a28f389c5eba319b5b6b072a95790837e4e03383",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T11:11:33.811Z"
+      "persisted_at": "2026-11-25T13:31:51.671Z"
     },
     "learn-huggingface-hexgrad-kokoro-82m": {
       "learning_id": "learn-huggingface-hexgrad-kokoro-82m",
@@ -275815,7 +275815,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/speridlabs/idol",
       "source_version": "hf-speridlabs-idol",
-      "content_hash": "8470e61065d944c557c9eeed0da4f747df08a844f22c67f6559a24dbb0df2f91",
+      "content_hash": "5c91282ba4d41abdc1d4b7eec99d114e5b222e085f53dafd7e99fd4dac84c01d",
       "dossier_path": "07_PROJECT_LEARNING/hf-speridlabs-idol-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-speridlabs-idol-learnings.md",
       "promoted_rules": [],
@@ -275824,7 +275824,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T22:16:14.982Z",
+      "verified_at": "2026-11-25T13:31:38.405Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -275841,9 +275841,9 @@
       "title": "Research & Knowledge Intelligence: speridlabs/idol Core Invariants",
       "repository": "speridlabs/idol",
       "source_version": "hf-speridlabs-idol",
-      "content_hash": "eb1efe18c0e1ca54bc4dec0591e90449a9d45d8d25a10b7ca1ab6db41f1d2a38",
+      "content_hash": "8b2083eda3d90dee37612997810c2ad010d0941c7748a175668035b566a32a05",
       "domain_letter": "D",
-      "persisted_at": "2026-11-21T22:16:15.459Z"
+      "persisted_at": "2026-11-25T13:31:38.923Z"
     },
     "rule-8952": {
       "learning_id": "rule-8952",
@@ -275955,9 +275955,9 @@
       "title": "Research & Knowledge Intelligence: hf-speridlabs-idol-learnings Core Invariants",
       "repository": "hf-speridlabs-idol-learnings",
       "source_version": "HEAD",
-      "content_hash": "09b56f3afad364cd1cb05a510faa98aa9c0aa978da69e156a7def49e3057b357",
+      "content_hash": "68b2465fa68ca7152f1170a0bd76e11abe02dff79704d0bf8e51c74cb59945d9",
       "domain_letter": "D",
-      "persisted_at": "2026-11-21T22:16:28.305Z"
+      "persisted_at": "2026-11-25T13:31:50.682Z"
     },
     "candidate_directive-server-guard-remaining-deletecontext-logger-calls-against-nil": {
       "item_id": "candidate_directive-server-guard-remaining-deletecontext-logger-calls-against-nil",
@@ -339549,13 +339549,13 @@
       "item_id": "candidate_directive-deps-bump-url-to-2-5-9-and-heapless-to-0-9-4",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-D2G4-deps-bump-url-to-2-5-9-and-heapless-to-0-9-4.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-X99Q-deps-bump-url-to-2-5-9-and-heapless-to-0-9-4.md",
       "title": "deps): bump url to 2.5.9 and heapless to 0.9.4",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "dbff84a5dfed4e28405de28858873d4642db8dcaae75ace1c4c0d72dd6d8f450",
+      "content_hash": "daf4cf9fe436240e565ea4d160e151ba8c9a451927b39b07c25282fe19355312",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T12:48:10.663Z"
+      "persisted_at": "2026-11-25T13:31:52.242Z"
     },
     "rule-10315": {
       "learning_id": "rule-10315",

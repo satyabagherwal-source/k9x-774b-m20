@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-25T13:20:41.097Z",
-    "lastVerified": "2026-11-25T13:20:41.097Z",
+    "lastChecked": "2026-11-25T13:31:50.274Z",
+    "lastVerified": "2026-11-25T13:31:50.274Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -275,9 +275,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-25T12:48:00.013Z",
+    "lastChecked": "2026-11-25T13:31:50.263Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-25T12:48:00.013Z"
+    "lastVerified": "2026-11-25T13:31:50.263Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -2039,8 +2039,8 @@
     "officialUrl": "https://github.com/projectdiscovery/nuclei",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-25T08:13:06.294Z",
-    "lastVerified": "2026-11-25T08:13:06.294Z",
+    "lastChecked": "2026-11-25T13:31:45.383Z",
+    "lastVerified": "2026-11-25T13:31:45.383Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-projectdiscovery-nuclei",
@@ -3181,9 +3181,9 @@
   "taubyte-tau": {
     "name": "tau",
     "officialUrl": "https://github.com/taubyte/tau",
-    "lastChecked": "2026-11-24T19:19:11.890Z",
+    "lastChecked": "2026-11-25T13:31:42.855Z",
     "revisionIdentifier": "59816f6f",
-    "lastVerified": "2026-11-24T19:19:11.890Z"
+    "lastVerified": "2026-11-25T13:31:42.855Z"
   },
   "milvus-io-bootcamp": {
     "name": "bootcamp",
@@ -4038,9 +4038,9 @@
   "pemistahl-grex": {
     "name": "grex",
     "officialUrl": "https://github.com/pemistahl/grex",
-    "lastChecked": "2026-11-24T12:53:50.658Z",
+    "lastChecked": "2026-11-25T13:31:35.287Z",
     "revisionIdentifier": "99cc3477",
-    "lastVerified": "2026-11-24T12:53:50.658Z"
+    "lastVerified": "2026-11-25T13:31:35.287Z"
   },
   "hf-amazon-chronos-2": {
     "name": "amazon/chronos-2",
@@ -7603,12 +7603,12 @@
     "lastVerified": "2026-11-25T00:08:17.376Z"
   },
   "tickernelz-opencode-mem": {
-    "name": "tickernelz/opencode-mem",
+    "name": "opencode-mem",
     "officialUrl": "https://github.com/tickernelz/opencode-mem",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-24T18:17:36.560Z",
-    "lastVerified": "2026-11-24T18:17:36.560Z",
+    "lastChecked": "2026-11-25T13:31:47.767Z",
+    "lastVerified": "2026-11-25T13:31:47.767Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tickernelz-opencode-mem",
@@ -7617,7 +7617,8 @@
     "recentFixesCount": 6,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "e38c8744"
   },
   "restatedev-restate": {
     "name": "restatedev/restate",
@@ -10006,9 +10007,9 @@
   "oliviertassinari-react-swipeable-views": {
     "name": "react-swipeable-views",
     "officialUrl": "https://github.com/oliviertassinari/react-swipeable-views",
-    "lastChecked": "2026-11-23T05:35:23.425Z",
+    "lastChecked": "2026-11-25T13:31:40.456Z",
     "revisionIdentifier": "c637ad7d",
-    "lastVerified": "2026-11-23T05:35:23.425Z"
+    "lastVerified": "2026-11-25T13:31:40.456Z"
   },
   "a4csi-schema-org-validate": {
     "name": "schema-org-validate",
@@ -13529,12 +13530,12 @@
     "officialUrl": "https://huggingface.co/speridlabs/idol",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-21T22:16:14.560Z",
-    "lastVerified": "2026-11-21T22:16:14.560Z",
+    "lastChecked": "2026-11-25T13:31:37.896Z",
+    "lastVerified": "2026-11-25T13:31:37.896Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-speridlabs-idol",
-    "contentHash": "8470e61065d944c557c9eeed0da4f747df08a844f22c67f6559a24dbb0df2f91",
+    "contentHash": "5c91282ba4d41abdc1d4b7eec99d114e5b222e085f53dafd7e99fd4dac84c01d",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
