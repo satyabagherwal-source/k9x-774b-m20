@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-23T23:48:56.248Z",
+  "timestamp": "2026-11-25T02:39:19.746Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-oven-sh-bun-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [oven-sh-bun-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-23T23:48:56.248Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T02:39:19.746Z`  
 > **Learning ID**: `LEARN-EVO-oven-sh-bun-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/oven-sh-bun-learnings.md`  
 > **Source**: github ([https://github.com/oven-sh/bun](https://github.com/oven-sh/bun))  
-> **Source Version**: `26f8a967`  
+> **Source Version**: `d3588a3c`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-23T23:48:42.921Z  
+> **Timestamp**: 2026-11-25T02:38:38.849Z  
 > **Learning ID**: `learn-github-oven-sh-bun`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/oven-sh-bun-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/oven-sh/bun](https://github.com/oven-sh/bun))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T23:48:42.915Z  
+> **Harvest Timestamp**: 2026-11-25T02:38:38.845Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Incredibly fast JavaScript runtime, bundler, test runner, and package manager – all in one
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 96858 stars
+- **Stars / Engagement**: 96924 stars
 
 ---
 
@@ -1003,11 +1003,11 @@ struct us_poll_t {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #49522** (2026-11-25): **Next.js 16 standalone server: RSS grows steadily under load while the JS heap stays flat (Node stays flat)**
+  *Symptoms*: ### What version of Bun is running?  1.4.6-canary.1+dac8e3b0f  (Also seen on 1.4.6-canary.1+25c4fca9e and on stable 1.4.5.)  ### What platform is your computer?  Linux 6.6.87.2-microsoft-standard-WSL2 x86_64 unknown  ### What steps can reproduce the bug?  A fresh `create-next-app@16.4.6` (App Router, TypeScript, React 19.3.0) with `output: "standalone"`, one dynamic RSC page that streams a `no-store` fetch inside `<Suspense>`, and a route handler it fetches from. Nothing else.  **1. Create the app**  ```sh bunx create-next-app@16.4.6 repro --ts --app --no-eslint --no-tailwind --no-src-dir --use-bun --yes cd repro ```  `next.config.ts`: ```ts import type { NextConfig } from "next"; const nextConfig: NextConfig = { output: "standalone" }; export default nextConfig; ```  `app/items/[id]/page.tsx`: ```tsx import { Suspense } from "react";  const Rows = async ({ id }: { id: string }) => {   const port = process.env.PORT ?? "3000";   const res = await fetch(`http://127.0.0.1:${port}/api/data?id=${id}`, { cache: "no-store" });   const data = (await res.json()) as { rows: { id: string; name: string; value: number }[] };   return (     <table>       <tbody>         {data.rows.map((r) => (           <tr key={r.id}><td>{r.name}</td><td>{r.value.toFixed(3)}</td></tr>         ))}       </tbody>     </table>   ); };  const Page = async ({ params }: { params: Promise<{ id: string }> }) => {   const { id } = await params;   return (     <main>       <h1>Item {id}</h1>       <Suspense fallbac
+
 - **Issue #49421** (2026-11-22): **bun:test: setImmediate is starved while awaiting expect().rejects/.resolves when a Worker is alive (1.4.5)**
   *Symptoms*: ### What version of Bun is running?  1.4.5 (a7733435c). Also checked 1.3.10 (30e609e0), which does not show the problem to the same degree.  ### What platform is your computer?  `Darwin 27.2.0 arm64 arm`  ### What steps can reproduce the bug?  In `bun test`, while a test awaits `expect(p).rejects` (or `.resolves`) and any `Worker` is alive in the process, `setImmediate` callbacks are only dispatched about once per 100 to 1000 ms. A promise that settles from `setImmediate` therefore takes about a second per `await expect(...)`. Awaiting the same promise directly is not affected. The worker does not need to be used by the test.  `echo-worker.ts` ```ts declare var self: Worker; self.onmessage = (e) => postMessage(e.data); ```  `with-worker.test.ts` ```ts import { test, expect, afterAll } from "bun:test";  // One idle worker, alive for the whole file. It is never used by the tests below. const worker = new Worker(new URL("./echo-worker.ts", import.meta.url).href); afterAll(() => worker.terminate());  const viaImmediate = () =>   new Promise<never>((_, reject) => setImmediate(() => reject(new Error("x"))));  const ROUNDS = 10;  test("A: expect(p).rejects x10", async () => {   const start = performance.now();   for (let i = 0; i < ROUNDS; i++) {     await expect(viaImmediate()).rejects.toThrow("x");   }   console.log(`A: ${(performance.now() - start).toFixed(0)} ms`); });  test("B: plain await x10", async () => {   const start = performance.now();   for (let i = 0; i < ROUNDS; i++)
-
-- **Issue #49373** (2026-11-21): **bun test --retry: a timed-out attempt that settles late passes the retried test**
-  *Symptoms*: ### What happens  With `--retry`, if one attempt of a test times out and its promise resolves (or its `done()` fires) later, bun gives that late result to the attempt that's running at that point. The retried test is then marked **passed**.  ```ts import { test } from "bun:test"; let n = 0; test("times out, resolves late", () => {   n++; console.log("attempt", n);   return new Promise<void>((r) => setTimeout(r, 150)); }, 100); test("filler", async () => { await new Promise((r) => setTimeout(r, 300)); }); ```  - `bun test repro.test.ts` gives 1 pass, 1 fail. That's correct. - `bun test --retry=2 repro.test.ts` gives 2 pass, 0 fail. That's wrong: attempt 1 resolves late, and that result counts for attempt 2. - A late `done()` does the same thing. - Attempt 2 can hang forever and the test still passes. - Nothing logs a timeout, and the JUnit testcase reads as passed.  ### Versions  - Broken: 1.4.4 (38afee6c8), 1.4.5 (a7733435c) - Fixed: 1.4.6-canary.1 (98eae327f)  PR #38876 described this same bug and was closed without merging.  ### Expected  Each attempt settles by itself. A timed-out attempt stays failed, and only the attempt that's running decides the result.  ### Ask  1. Can you confirm the fix ships in 1.4.6? 2. Can the fix come with a regression test? It should cover a late resolve, a late `done`, and a late reject, each counted against the next attempt. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1024,1544 +1024,661 @@ struct us_poll_t {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `476428f3` (2026-11-23)
-**Commit Message**: ipc: fifteen fixes to re-entry, handles and the lifetime of the channel (#49324)
+### Incident Patch 1: `0a9bbf50` (2026-11-24)
+**Commit Message**: Fourteen fixes: splitting, async stack frames, macOS sockets and fs.watch, install, stdin, cjs, vm, s3, http, Windows listeners, dns (#49518)
 
 ### What does this PR do?
 
-Replaces part of #49156. One commit for each fix.
+Fourteen independent fixes.
 
-| Before | After | Test |
-| --- | --- | --- |
-| `send()` ran an `Array.prototype` setter: use-after-free | no script |
-"setter" |
-| Flush recursed: stack overflow | loops | "long backlog" |
-| Nested loop repeated messages or panicked | position in the buffer |
-"are buffered" |
-| Nested loop overwrote an advanced read | rest copied first | "nothing
-is buffered" |
-| Buffers restored under a borrow | after it | "are restored" |
-| `Subprocess` collected during a read | held | "nothing else keeps" |
-| ... a write: use-after-free | held | "write completes" |
-| ... the close: no `onDisconnect` | held | "close is reported" |
-| Close during cluster replay: use-after-free | replay stops | "replays"
-|
-| Rejected dgram descriptor closed twice | once | "dgram.Native" |
-| Unclaimed cluster descriptor leaked | closed | "is closed by" |
-| Close during serialization leaked the handle | released | "releases a"
-|
-| Worker exit in the listener closed twice | once | "Worker that
-receives" |
-| Socket of a rejected message leaked | closed | "seria
+- bundler: with `--splitting`, the search for a safe order of a shared
+chunk with an import cycle has no rounds. One pass finds files that read
+each other at load, which rules out every order. Otherwise the entry
+points are tried in parallel, and a walk stops at the first broken read.
+- `error.stack`, `CallSite` and the error printer keep the file and line
+of a suspended async function whose code was dropped, instead of
+`(unknown)`.
+- macOS: a Unix socket or extra stdio pipe delivers its unread bytes and
+`'end'` when the peer closes, instead of `ECONNRESET`.
+- `fs.watch` on macOS: a named pipe does not block, more than 4,096
+watched paths get events, and a watcher on `/a/b` does not get events of
+`/a/bc` (supersedes #43923).
+- `bun install` falls back when `clonefile` or `link` fails with
+`ENOTSUP` (HFS+, exFAT, FAT32).
+- `process.stdin`: do not reset the ended state when `resume()` follows
+EOF, also with `--compile --aot` (supersedes #43100).
+- `require()` of a cached module lists the 
 
-**File**: `src/js/builtins/Ipc.ts` (modified, +4/-12)
+**File**: `docs/runtime/code-generation-from-strings.mdx` (modified, +2/-0)
 ```diff
-@@ -52,9 +52,7 @@ export function serialize(message: unknown, handle: unknown, options: unknown) {
- }
- /**
-  * @param {Serialized} serialized
-- * @param {unknown} handle
-- * @param {(handle: Handle) => void} emit
-- * @returns {void}
-+ * @returns {(() => void) | undefined} what delivers the message now, once the caller has let go of `fd`
-  */
- export function parseHandle(target: $Bindgen.Subprocess | null, serialized: $Node.SerializedIPCHandle, fd: number) {
-   const emit: (target: $Bindgen.Subprocess | null, message: unknown, handle: object) => void = $bindgen(
-@@ -74,22 +72,16 @@ export function parseHandle(target: $Bindgen.Subprocess | null, serialized: $Nod
-     case "net.Socket": {
-       const socket = new net.Socket({ readable: true, writable: true });
-       socket.connect({ fd, fdIsRawSocket: true });
--      emit(target, serialized.msg, socket);
--      return;
-+      return () => emit(target, serialized.msg, socket);
-     }
-     case "dgram.Native": {
-       // A non-reading UDP handle (cluster-shared dgram socket): wrap the
-       // received descriptor so the cluster child can adopt it.
-       const { UDP } = require("internal/dgram");
-       const wrap = new UDP();
-       const err = wrap.open(fd);
--      if (err) {
--        // The wrap only owns the descriptor on success; don't leak it.
--        require("node:fs").closeSync(fd);
--        throw new Error(`failed to open received dgram handle: ${err}`);
--      }
--      emit(target, serialized.msg, wrap);
--      return;
-+      if (err) throw new Error(`failed to open received dgram handle: ${err}`);
-+      return () => emit(target, serialized.msg, wrap);
-     }
-     case "dgram.Socket": {
-       // https://github.com/nodejs/node/blob/v26.3.0/lib/internal/child_process.js handleConversion['dgram.Socket'].got
-```
-
-**File**: `src/runtime/ipc.rs` (modified, +186/-207)
-```diff
-@@ -1,12 +1,15 @@
- use core::cell::Cell;
- use core::ffi::{c_int, c_void};
- use core::mem::size_of;
-+use std::collections::VecDeque;
+@@ -89,6 +89,8 @@ These keep working at both levels:
+ - `import()` of a `data:` or `blob:` URL that holds data, such as JSON, and of a `blob:` URL made from `Bun.file()`, which Bun reads from the file.
+ - `vm.createContext()` and `new vm.SyntheticModule()`. Neither one compiles a string.
  
- use bun_jsc::JsCell;
- use bun_ptr::{Attached, Detach, RefPtr};
- 
- use crate::json_line_buffer::JSONLineBuffer;
--use bun_collections::{ByteVecExt, VecExt};
-+#[cfg(windows)]
-+use bun_collections::ByteVecExt;
-+use bun_collections::VecExt;
- use bun_core::{Output, handle_oom};
- use bun_core::{String as BunString, StringView, strings};
- use bun_io::KeepAlive;
-@@ -72,93 +75,32 @@ impl InternalMsgHolder {
-             .push(bun_jsc::StrongOptional::create(message, global));
-     }
- 
--    pub(crate) fn dispatch(
--        &mut self,
--        message: JSValue,
--        handle: JSValue,
--        global: &JSGlobalObject,
--    ) -> JsResult<()> {
--        if !self.is_ready() {
--            // Queued messages drop their handle; the cluster listener is
--            // installed before any handle-bearing reply can arrive.
--            self.enqueue(message, global);
--            return Ok(());
--        }
--        self.dispatch_unsafe(message, handle, global)
--    }
--
--    fn dispatch_unsafe(
--        &mut self,
--        message: JSValue,
--        handle: JSValue,
--        global: &JSGlobalObject,
--    ) -> JsResult<()> {
--        let cb = self.cb.get().unwrap();
--        let worker = self.worker.get().unwrap();
--
--        let event_loop = global.bun_vm().event_loop();
--
--        event_loop.run_callback(
--            bun_event_loop::ContextId::NONE,
--            cb,
--            global,
--            worker,
--            &[message, handle],
--        );
--        Ok(())
--    }
--
--    pub(crate) fn flush(&mut self, global: &JSGlobalObject) -> JsResult<()> {
--        debug_assert!(self.is_ready());
--        let messages = core::mem::take(&mut self.messages);
--        // `&mut self` carries LLVM `noalias`, but
--        // `dispatch_unsafe` → `event_loop.run_callback` runs the JS IPC
--        // listener which can re-enter via a fresh `&mut Self` from the
--        // owner's JS wrapper and write `self.cb` / `self.worker` /
--        // `self.callbacks`. With the loop body inlined, LLVM was hoisting the
--        // `self.cb`/`self.worker` reads (at the top of `dispatch_unsafe`) out
--        // of the loop — ASM-verified PROVEN_CACHED. Launder so each iteration
--        // re-reads through an opaque pointer.
--        let this: *mut Self = core::hint::black_box(core::ptr::from_mut(self));
--        for strong in messages {
--            if let Some(message) = strong.get() {
--                // SAFETY: `this` is still live across re-entry — the IPC
--                // dispatcher is owned by the Subprocess/Worker which outlives
--                // this `flush` frame; `&mut *this` is the unique mutable view
--                // for this call.
--                unsafe { &mut *this }.dispatch_unsafe(message, JSValue::NULL, global)?;
--            }
--            // strong drops here (== `strong.deinit()`)
--        }
--        // messages Vec drops here (== `messages.deinit(bun.default_allocator)`)
--        Ok(())
--    }
--
-     // `deinit` body only freed owned fields (Strongs, map, Vec). All of those impl Drop in
-     // Rust, so no explicit Drop body is needed.
- }
- 
- bun_core::define_scoped_log!(log, IPC, visible);
- 
--/// Union type that switches between simple Vec<u8> (for advanced mode)
-+/// Union type that switches between StreamBuffer (for advanced mode)
- /// and JSONLineBuffer (for JSON mode with optimized newline tracking).
- enum IncomingBuffer {
--    /// For advanced mode - uses length-prefix, no scanning needed
--    Advanced(Vec<u8>),
-+    /// For advanced mode - uses length-prefix, no scanning needed.
-+    /// The cursor is not a local of the reader: a handler can run the event loop, which reads on from it.
-+    Advanced(StreamBuffer),
-     /// For JSON mode - tracks newline positions to avoid O(n²) scanning
-     Json(JSONLineBuffer),
- }
- 
- impl IncomingBuffer {
-     fn init(mode: Mode) -> IncomingBuffer {
-         match mode {
--            Mode::Advanced => IncomingBuffer::Advanced(Vec::<u8>::default()),
-+            Mode::Advanced => IncomingBuffer::Advanced(StreamBuffer::default()),
-             Mode::Json => IncomingBuffer::Json(JSONLineBuffer::new(json::max_line_len())),
-         }
-     }
- }
- 
--// deinit: Vec<u8>/JSONLineBuffer own their storage and Drop frees it.
-+// deinit: StreamBuffer/JSONLineBuffer own their storage and Drop frees it.
- 
- #[derive(Copy, Clone, Eq, PartialEq)]
- pub(crate) enum IsInternal {
-@@ -211,7 +153,25 @@ pub(crate) enum DecodedIPCMessage {
- 
- pub(crate) struct DecodeIPCMessageResult {
-     pub(crate) bytes_consumed: u32,
--    pub(crate) message: DecodedIPCMessage,
-+    pub(crate) message: Unrestored,
-+}
++A `vm.SyntheticModule` runs a function of the program's own, so `=strict` does not let `node:vm` stop it part-way. `module.evaluate()` with `timeout` or `breakOnSigint: true` rejects with a `TypeError` whose code is `ERR_INVALID_ARG_VALUE`, and the module does not run.
 +
-+pub(crate) enum Unrestored {
-+    Plain(DecodedIPCMessage),
-+    /// A `[message, buffers]` envelope.
-+    WithBuffers(JSValue),
-+}
-+
-+impl Unrestored {
-+    /// Can run script, so nothing that was read can be borrowed.
-+    fn restore(self, global: &JSGlobalObject) -> JsRe
+ A compiled executable with `=strict` loads modules, Workers and `require()`d files from the executable only. See [Files on disk are not part of the program](#files-on-disk-are-not-part-of-the-program).
+ 
+ ## The inspector
 ```
 
-**File**: `src/runtime/ipc_host.rs` (modified, +4/-3)
+**File**: `packages/bun-usockets/src/bsd.cpp` (modified, +78/-2)
 ```diff
-@@ -272,10 +272,11 @@ pub(crate) fn do_send(
-     }
+@@ -60,6 +60,7 @@ static void init_debug_logging() {
+ #include <errno.h>
+ #else /* _WIN32 */
+ #include <mstcpip.h>
++#include <mswsock.h>
+ #endif
  
-     if status == SerializeAndSendResult::Failure {
--        close_detached(global_object, pause_target)?;
-         // The serializer rejected the message (cyclic JSON, uncloneable value): that is the error.
--        if global_object.has_exception() {
--            return Err(bun_jsc::JsError::Thrown);
-+        let rejected = global_object.try_take_exception();
-+        close_detached(global_object, pause_target)?;
-+        if let Some(rejected) = rejected {
-+            return Err(global_object.throw_value(rejected));
-         }
-         let ex = global_object.create_type_error_instance(format_args!("process.send() failed"));
-         ex.put(
-```
-
-**File**: `src/runtime/node/node_cluster_binding.rs` (modified, +33/-8)
-```diff
-@@ -23,8 +23,8 @@ bun_output::declare_scope!(IPC, visible);
- 
- // ArrayHashMap::new() is not const, so the global is lazily seeded on first
- // access via `child_singleton()`.
--// PORTING.md §Global mutable state: JS-thread-only singleton with `!Sync`
--// fields (`Strong`). RacyCell — single-thread access is the contract.
-+// One for each JS thread: a `Strong` belongs to the VM that made it.
-+#[thread_local]
- pub(crate) static CHILD_SINGLETON: bun_core::RacyCell<Option<InternalMsgHolder>> =
-     bun_core::RacyCell::new(None);
- 
-@@ -36,10 +36,8 @@ pub(crate) static CHILD_SINGLETON: bun_core::RacyCell<Option<InternalMsgHolder>>
- /// must not hold the borrow across a re-entrant `child_singleton()` call.
- #[inline]
- fn child_singleton<'a>() -> &'a mut InternalMsgHolder {
--    // SAFETY: only called on the single JS thread.
--    // `RacyCell::get` returns `*mut Option<_>`; the `Option` lives in
--    // `'static` storage so the returned `&mut` is valid for any caller-chosen
--    // `'a`. Aliasing: each of the three callers borrows for a single
-+    // SAFETY: `RacyCell::get` returns `*mut Option<_>` into this thread's
-+    // storage, which outlives every caller on this thread. Aliasing: each of the three callers borrows for a single
-     // statement/block with no nested call to this fn.
-     unsafe { (*CHILD_SINGLETON.get()).get_or_insert_with(Default::default) }
+ #if defined(__APPLE__)
+@@ -831,20 +832,95 @@ int bsd_addr_get_port(struct bsd_addr_t *addr) {
+     return addr->port;
  }
-@@ -55,7 +53,19 @@ pub(crate) fn on_internal_message_child<'a>(
-     // TODO: we should not create two jsc.Strong.Optional here. If absolutely necessary, a single Array. should be all we use.
-     singleton.worker = StrongOptional::create(worker.to_js(), global);
-     singleton.cb = StrongOptional::create(callback.to_js(), global);
--    singleton.flush(global)
-+    for message in core::mem::take(&mut singleton.messages) {
-+        if !is_child_listening() {
-+            break; // the channel closed
+ 
++#ifdef _WIN32
++/* Winsock's accept() on a non-blocking socket is two steps: it polls, then waits for the
++ * connection it saw. If another holder of the socket takes that connection in between, the wait
++ * lasts until the next client arrives. An overlapped AcceptEx() can be called off instead. */
++static SOCKET win32_accept_shared(SOCKET fd, struct bsd_addr_t *addr) {
++    WSAPOLLFD pending = {fd, POLLRDNORM, 0};
++    if (WSAPoll(&pending, 1, 0) == 0) {
++        WSASetLastError(WSAEWOULDBLOCK);
++        return INVALID_SOCKET;
++    }
++
++    WSAPROTOCOL_INFOW info;
++    int info_length = (int) sizeof(info);
++    GUID id = WSAID_ACCEPTEX;
++    LPFN_ACCEPTEX accept_ex;
++    DWORD bytes, flags;
++    /* CancelIoEx() needs a socket that is a kernel handle. */
++    if (getsockopt(fd, SOL_SOCKET, SO_PROTOCOL_INFOW, (char *) &info, &info_length) != 0
++            || !(info.dwServiceFlags1 & XP1_IFS_HANDLES)
++            || info.iProtocol != IPPROTO_TCP
++            || WSAIoctl(fd, SIO_GET_EXTENSION_FUNCTION_POINTER, &id, sizeof(id), &accept_ex, sizeof(accept_ex), &bytes, NULL, NULL) != 0) {
++        return accept(fd, (struct sockaddr *) addr, &addr->len);
++    }
++
++    /* A new socket of the same provider, not a duplicate. */
++    info.dwProviderReserved = 0;
++    us_fd_t accepted{WSASocketW(FROM_PROTOCOL_INFO, FROM_PROTOCOL_INFO, FROM_PROTOCOL_INFO, &info, 0,
++                                WSA_FLAG_OVERLAPPED | WSA_FLAG_NO_HANDLE_INHERIT)};
++    if (!accepted) {
++        return INVALID_SOCKET;
++    }
++    WSAEVENT event = WSACreateEvent();
++    if (event == WSA_INVALID_EVENT) {
++        return INVALID_SOCKET;
++    }
++
++    /* The low bit keeps the completion off a port that another holder has tied the socket to. */
++    OVERLAPPED overlapped = {};
++    overlapped.hEvent = (HANDLE) ((ULONG_PTR) event | 1);
++    constexpr DWORD address_length = sizeof(struct sockaddr_storage) + 16;
++    char addresses[2 * address_length];
++    BOOL ok = accept_ex(fd, accepted.get(), addresses, 0, address_length, address_length, &bytes, &overlapped);
++    if (!ok && WSAGetLastError() == WSA_IO_PENDING) {
++        /* A queued connection has completed it by now. One that arrives later may still do so. */
++        if (!HasOverlappedIoCompleted(&overlapped)) {
++            CancelIoEx((HANDLE) fd, &overlapped);
++            /* The request writes to this frame until it is over, whatever becomes of fd. */
++            WaitForSingleObject(event, INFINITE);
 +        }
-+        if let Some(message) = message.get() {
-+            handle_internal_message_child(global, message, JSValue::NULL)?;
-+        }
++        ok = WSAGetOverlappedResult(fd, &overlapped, &bytes, FALSE, &flags);
 +    }
-+    Ok(())
-+}
++    int error = ok ? 0 : WSAGetLastError();
++    WSACloseEvent(event);
++    if (!ok) {
++        WSASetLastError(error == WSA_OPERATION_ABORTED ? WSAEWOULDBLOCK : error);
++        return INVALID_SOCKET;
++    }
 +
-+pub(crate) fn is_child_listening() -> bool {
-+    child_singleton().is_ready()
++    if (setsockopt(accepted.get(), SOL_SOCKET, SO_UPDATE_ACCEPT_CONTEXT, (char *) &fd, sizeof(fd)) != 0) {
++        return INVALID_SOCKET;
++    }
++    /* A connection that the peer already reset has no address. The first read reports the reset. */
++    if (getpeername(accepted.get(), (struct sockaddr *) addr, &addr->len) != 0) {
++        addr->mem.ss_family = AF_UNSPEC;
++    }
++    return accepted.release();
++}
++#endif
++
+ // called by dispatch_ready_poll
+-LIBUS_SOCKET_DESCRIPTOR bsd_accept_socket(LIBUS_SOCKET_DESCRIPTOR fd, struct bsd_addr_t *addr) {
++LIBUS_SOCKET_DESCRIPTOR bsd_accept_socket(LIBUS_SOCKET_DESCRIPTOR fd, struct bsd_addr_t *addr, int shared) {
+     ssize_t injected = 0; int unused = 0;
+     if (US_FAULT_CHECK(US_FAULT_ACCEPT, fd, injected, unused)) return LIBUS_SOCKET_ERROR;
+     (void)injected; (void)unused;
++#ifndef _WIN32
++    /* A POSIX accept() honors O_NONBLOCK on a shared socket too. */
++    (void)shared;
++#endif
+ 
+     while (1) {
+         addr->len = sizeof(addr->mem);
+ 
+ #if defined(SOCK_CLOEXEC) && defined(SOCK_NONBLOCK)
+         // Linux, FreeBSD
+         us_fd_t accepted_fd{accept4(fd, (struct sockaddr *) addr, &addr->len, SOCK_CLOEXEC | SOCK_NONBLOCK)};
++#elif defined(_WIN32)
++        us_fd_t accepted_fd{shared ? win32_accept_shared(fd, addr) : accept(fd, (struct sockaddr *) addr, &addr->len)};
+ #else
+-        // Windows, OS X
++        // OS X
+         us_fd_t accepted_fd{accept(fd, (struct sockaddr *) addr, &addr->len)};
+ #endif
+ 
+```
+
+**File**: `packages/bun-usockets/src/context.cpp` (modified, +14/-0)
+```diff
+@@ -374,6 +374,7 @@ static void us_internal_init_listen_socket(struct us_listen_socket_t *ls,
+     ls->socket_ext_size = socket_ext_size;
+     ls->deferred_accept = 0;
+     ls->accept_paused = (options & LIBUS_SOCKET_OPEN_PAUSED) && !ssl_ctx;
++    ls->shared = 0;
+ 
+     /* Link into the group so close_all() / test-isolation can find it. */
+     ls->next = group->head_listen_sockets;
+@@ -407,6 +408,10 @@ struct us_listen_socket_t *us_socket_group_listen(struct us_socket_group_t *grou
+     return ls;
  }
  
- pub(crate) fn handle_internal_message_child(
-@@ -65,7 +75,22 @@ pub(crate) fn handle_internal_message_child(
- ) -> JsResult<()> {
-     bun_output::scoped_log!(IPC, "handleInternalMessageChild");
++#ifdef LIBUS_USE_LIBUV
++extern "C" void uv__poll_set_shared(uv_poll_t *handle);
++#endif
++
+ struct us_listen_socket_t *us_socket_group_listen_fd(struct us_socket_group_t *group,
+         unsigned char kind, struct ssl_ctx_st *ssl_ctx,
+         LIBUS_SOCKET_DESCRIPTOR fd, int backlog, int options, int socket_ext_size, int *error) {
+@@ -428,9 +433,14 @@ struct us_listen_socket_t *us_socket_group_listen_fd(struct us_socket_group_t *g
+         *error = LIBUS_ERR;
+         return 0;
+     }
++#ifdef LIBUS_USE_LIBUV
++    uv__poll_set_shared(p->uv_p);
++#endif
  
--    child_singleton().dispatch(message, handle, global)
-+    // The listener can close the channel, which drops the singleton.
-+    let singleton = child_singleton();
-+    let Some((cb, worker)) = singleton.cb.get().zip(singleton.worker.get()) else {
-+        // Queued messages drop their handle; the cluster listener is
-+        // installed before any handle-bearing reply can arrive.
-+        singleton.enqueue(message, global);
-+        return Ok(());
-+    };
-+    global.bun_vm().event_loop().run_callback(
-+        bun_event_loop::ContextId::NONE,
-+        cb,
-+        global,
-+        worker,
-+        &[message, handle],
-+    );
-+    Ok(())
+     struct us_listen_socket_t *ls = (struct us_listen_socket_t *) p;
+     us_internal_init_listen_socket(ls, group, kind, ssl_ctx, options, socket_ext_size);
++    /* The process that handed over the descriptor can still hold it. */
++    ls->shared = 1;
+ 
+     if (options & LIBUS_LISTEN_DEFER_ACCEPT) {
+         ls->deferred_accept = bsd_set_defer_accept(fd);
+@@ -509,6 +519,10 @@ struct us_socket_group_t *us_listen_socket_group(struct us_listen_socket_t *ls)
+     return ls->accept_group;
  }
  
- pub(crate) fn send_helper_primary<'a>(
-```
-
-**File**: `test/js/bun/spawn/spawn.ipc.test.ts` (modified, +585/-1)
-```diff
-@@ -1,6 +1,6 @@
- import { spawn } from "bun";
- import { describe, expect, it } from "bun:test";
--import { bunEnv, bunExe, gcTick, isLinux, isWindows, tempDir } from "harness";
-+import { bunEnv, bunExe, gcTick, isDebug, isLinux, isWindows, tempDir } from "harness";
- import path from "path";
- 
- // The receiver rejects a JSON line that's longer than the UTF-8 encoding of a max-length string can be.
-@@ -597,3 +597,587 @@ it.skipIf(isWindows)("advanced serialization advertises wire format version 2",
-   expect(JSON.parse(stdout.trim())).toEqual([1, 2, 0, 0, 0]);
-   expect(exitCode).toBe(0);
- });
-+
-+/** Runs parent.js next to child.js. Both have the helpers below. */
-+async function runPair(parent: string, child: string, env: Record<string, string> = {}, prelude = "") {
-+  const helpers = `
-+    const fs = require("node:fs");
-+    // So that a child does not outlive a test that timed out.
-+    const deadline = Date.now() + 120_000;
-+    function until(file) {
-+      while (!fs.existsSync(file)) {
-+        if (Date.now() > deadline) throw new Error("gave up waiting for " + file);
-+        Bun.sleepSync(1);
-+      }
-+    }
-+    function retry(syscall) {
-+      for (;;) {
-+        try {
-+          return syscall();
-+        } catch (e) {
-+          if (e.code !== "EAGAIN" || Date.now() > deadline) throw e;
-+          Bun.sleepSync(1);
-+        }
-+      }
-+    }
-+    function write(bytes) {
-+      bytes = Buffer.from(bytes);
-+      for (let offset = 0; offset < bytes.length; ) offset += retry(() => fs.writeSync(3, bytes, offset));
-+    }
-+    function advancedFrame(message) {
-+      const body = Buffer.from(require("bun:jsc").serialize(message));
-+      const header = Buffer.from([2, 0, 0, 0, 0]);
-+      header.writeUInt32LE(body.length, 1);
-+      return Buffer.concat([header, body]);
-+    }
-+    const spawnChild = options =>
-+      Bun.spawn({
-+        cmd: [process.execPath, "child.js"],
-+        env: { ...process.env, BUN_JSC_gcMaxHeapSize: undefined },
-+        stdio: ["ignore", "inherit", "inherit"],
-+        serialization: "json",
-+        ipc() {},
-+        onExit: (_, code, signal) => void (code === 0 || console.log("child failed", code, signal)),
-+        ...options,
-+      });
-+    const listen = () =>
-+      new Promise((resolve, reject) => {
-+        const server = require("node:net").createServer().once("error", reject);
-+        server.listen(0, "127.0.0.1", () => resolve(server));
-+      });
-+    const turn = () => new Promise(resolve => setImmediate(resolve));
-+    const openFds = () => fs.readdirSync("/proc/self/fd").length;
-+    // Bun.build() runs the event loop until the setup() of a plugin has settled.
-+    const runEventLoopUntil = promise =>
-+      void Bun.build({ entrypoints: ["./empty.js"], plugins: [{ name: "wait", setup: () => promise.then(() => {}) }] });
-+  `;
-+  using dir = tempDir("ipc-pair", {
-+    "parent.js": prelude + helpers + parent,
-+    "child.js": helpers + child,
-+    "empty.js": "",
-+  });
-+  await using proc = Bun.spawn({
-+    cmd: [bunExe(), "--no-orphans", "parent.js"],
-+    env: { ...bunEnv, ...env },
-+    cwd: String(dir),
-+    stdout: "pipe",
-+    stderr: "pipe",
-+  });
-+  const [stdout, stderr, exitCode] = await Promise.all([proc.stdout.text(), proc.stderr.text(), proc.exited]);
-+  return { stdout: stdout.split("\n").filter(Boolean), stderr, exitCode };
++void us_listen_socket_set_shared(struct us_listen_socket_t *ls) {
++    ls->shared = 1;
 +}
 +
-+describe.concurrent("the send queue", () => {
-+  it("does not run a setter on Array.prototype to store a callback", async () => {
-+    const result = await runPair(
-+      `
-+        const server = await listen();
-+        const child = spawnChild();
-+        // Nothing follows a handle until it is acked, so the next three are joined.
-+        child.send("handle", server);
-+        child.send("a", () => console.log("a"));
-+        child.send("b", () => console.log("b"));
-+        Object.defineProperty(Array.prototype, 2, {
-+          configurable: true,
-+          set() {
-+            delete Array.prototype[2];
-+            console.log("setter");
-+            for (let i = 0; i < 16; i++) child.send("handle", server);
-+          },
-+        });
-+        child.send("c", () => console.log("c"));
-+        delete Array.prototype[2];
-+        child.send("last");
-+        await child.exited;
-+        server.close();
-+      `,
-+      `
-+        process.on("message", (message, handle) => {
-+          handle?.close();
-+          if (message === "last") process.disconnect();
-+        });
-+      `,
-+    );
-+    expect(result).toEqual({ stdout: ["a", "b", "c"], stderr: "", exitCode: 0 });
-+  });
-+
-+  // The child uses descriptor 3 directly. Windows frames what goes through its pipe.
-+  it.skipIf(isWindows)("writes a long backlog of replies without overflowing the stack", async () => {
-+    const count = isDebug ? 4_000 : 100_000;
-+    const result = await runPair(
-+      `await spawnChild({ ipc: () => fs.writeFileSync("queued", "") }).exited;`,
-+      `
-+        // Each announces a handle that does not come, and is answered 
+ /* ── Connect ────────────────────────────────────────────────────────────── */
+ 
+ static inline void us_internal_init_connect_socket(struct us_socket_t *s,
 ```
 
-**File**: `test/js/node/cluster.test.ts` (modified, +70/-0)
+**File**: `packages/bun-usockets/src/eventing/epoll_kqueue.c` (modified, +11/-9)
 ```diff
-@@ -11,7 +11,10 @@ import {
-   tempDirWithFiles,
-   tls as tlsCerts,
- } from "harness";
-+import { spawn } from "node:child_process";
-+import { once } from "node:events";
- import net from "node:net";
-+import { text } from "node:stream/consumers";
- 
- test.concurrent("cloneable and transferable equals", async () => {
-   const dir = tempDirWithFiles("bun-test", {
-@@ -1532,3 +1535,70 @@ test.concurrent("require('cluster') does not throw when NODE_UNIQUE_ID is set af
-   expect({ stdout, stderr }).toEqual({ stdout: "loaded\n", stderr: "" });
-   expect(exitCode).toBe(0);
- });
-+
-+// The test writes the wire format of a POSIX socket to the channel. Windows frames what goes through its pipe.
-+test.concurrent.skipIf(isWindows)("the channel closes while a worker replays the messages it queued", async () => {
-+  using dir = tempDir("cluster-close-in-replay", {
-+    "empty.js": "",
-+    "index.js": `
-+      process.on("message", () => {
-+        process.on("internalMessage", ({ act }) => {
-+          console.log(act);
-+          if (act !== "second") return;
-+          const { promise, resolve } = Promise.withResolvers();
-+          process.once("disconnect", resolve);
-+          // Bun.build() runs the event loop until the setup() of a plugin has settled.
-+          Bun.build({ entrypoints: ["./empty.js"], plugins: [{ name: "wait", setup: () => promise }] });
-+        });
-+        require("node:cluster");
-+        console.log("replayed");
-+      });
-+    `,
-+  });
-+  const proc = spawn(bunExe(), ["index.js"], {
-+    env: { ...bunEnv, NODE_CHANNEL_FD: "3", NODE_CHANNEL_SERIALIZATION_MODE: "json", NODE_UNIQUE_ID: "1" },
-+    cwd: String(dir),
-+    stdio: ["ignore", "pipe", "pipe", "pipe"],
-+  });
-+  try {
-+    const channel = proc.stdio[3] as net.Socket;
-+    // ECONNRESET if the worker crashes, which its output says better.
-+    channel.on("error", () => {}).resume();
-+    channel.write('\x02{"act":"disconnect"}\n\x02{"act":"second"}\n\x02{"act":"third"}\n"load node:cluster"\n');
-+    const [stdout, stderr, exit] = await Promise.all([text(proc.stdout!), text(proc.stderr!), once(proc, "exit")]);
-+    expect({ stdout, stderr }).toEqual({ stdout: "disconnect\nsecond\nreplayed\n", stderr: "" });
-+    expect(exit).toEqual([0, null]);
-+  } finally {
-+    proc.kill();
-+  }
-+});
-+
-+test.concurrent("a Worker thread that sets up node:cluster does not take the messages of its process", async () => {
-+  using dir = tempDir("cluster-in-worker-thread", {
-+    "index.js": `
-+      const { Worker, isMainThread } = require("node:worker_threads");
-+      const cluster = require("node:cluster");
-+      if (!isMainThread) {
-+        cluster._setupWorker();
-+      } else if (cluster.isPrimary) {
-+        const worker = cluster.fork();
-+        worker.on("listening", () => worker.disconnect());
-+        worker.on("exit", (code, signal) => console.log("exit", code, signal));
-+      } else {
-+        new Worker(__filename, { env: { ...process.env, NODE_UNIQUE_ID: "1" } }).on("exit", () => {
-+          require("node:net").createServer().listen(0, "127.0.0.1", () => console.log("listening"));
-+        });
-+      }
-+    `,
-+  });
-+  await using proc = Bun.spawn({
-+    cmd: [bunExe(), "--no-orphans", "index.js"],
-+    env: bunEnv,
-+    cwd: String(dir),
-+    stdout: "pipe",
-+    stderr: "pipe",
-+  });
-+  const [stdout, stderr, exitCode] = await Promise.all([proc.stdout.text(), proc.stderr.text(), proc.exited]);
-+  expect({ stdout, stderr }).toEqual({ stdout: "listening\nexit 0 null\n", stderr: "" });
-+  expect(exitCode).toBe(0);
-+});
+@@ -371,16 +371,18 @@ static void us_internal_dispatch_ready_polls(struct us_loop_t *loop) {
+                 /* Write side dead without our own shutdown() (peer reset /
+                  * connect refused), or a read-filter EV_EOF carrying the
+                  * socket error in fflags: both are epoll's EPOLLERR. */
++                struct us_socket_t *s = (struct us_socket_t *) poll;
+                 if (bits.send_eof && !bits.send_eof_err && !bits.eof_err && type == POLL_TYPE_SOCKET &&
+-                    ((struct us_socket_t *) poll)->flags.is_paused &&
+-                    !(((struct us_socket_t *) poll)->hangup_closes_unsent && ((struct us_socket_t *) poll)->flags.last_write_failed)) {
+-                    /* fflags==0 with reads paused is AF_UNIX's graceful peer
+-                     * close (TCP only gets SS_CANTSENDMORE from RST, which
+-                     * carries the error): the receive buffer survives, so
+-                     * defer like epoll's EPOLLHUP - resume() delivers the
+-                     * tail + end instead of an error close discarding it.
+-                     * Not when a hangup_closes_unsent socket has bytes unsent. */
+-                    eof = 1;
++                    !(s->flags.last_write_failed && (s->hangup_closes_unsent || !s->flags.is_paused))) {
++                    /* No socket error. With the read side down too this is an AF_UNIX
++                     * peer's close, epoll's EPOLLHUP: the unread tail, then end. Alone
++                     * it says nothing about reads, and the read filter reports their end.
++                     * A stuck write keeps the error path, which reads before it closes.
++                     * A paused socket is exempt from that unless hangup_closes_unsent.
++                     * One parked in the low-priority queue reads its tail when it leaves. */
++                    if (s->read_eof || (eof && s->flags.low_prio_state != 1)) {
++                        eof = LIBUS_POLL_HANGUP;
++                    }
+                 } else {
+                     error = 1;
+                 }
 ```
 
----
-
-### Incident Patch 2: `08763cdd` (2026-11-23)
-**Commit Message**: redis: fix lost and corrupted arguments, add increx() (#49207)
-
-### What does this PR do?
-
-Fixes #23219. Fixes #44472. Part of #33070. Takes part of #37574.
-Replaces #48332, #48427, #48459, #48513, most of #41640 and the Redis
-part of #46673.
-
-| call | before | after |
-| --- | --- | --- |
-| `set(k, v, undefined, "NX")`, `set(k, v, undefined, 0, "NX")` | `NX`
-dropped, lock overwritten | throws when an option behind a nullish
-argument would be dropped; otherwise sends what it sent |
-| a nullish ahead of another argument in `mget`, `hmget`, `zmscore` |
-replies shift or are cut short | throws; a trailing nullish is still
-left out |
-| `hset`, `hmset`, and key or field of `hincrby`, `hincrbyfloat`, with a
-buffer or Blob | 4 bytes stored as 8, `"7,255"`, `"[object Blob]"` | the
-bytes |
-| `hset(k, buffer, v)` | buffer read as a record | buffer is the field |
-| `hset(undefined, f, v)`, `hset(k, null, v)` | key `"undefined"`, field
-`"null"` | throws |
-| `set(k, Bun.file(p))`, an S3 file, `new Blob([file])` | sends `""` |
-throws |
-| `publish(ch, buffer)` (also Blob, number) | throws | sends it |
-| `increx(k, ...options)` | missing | `[value, increment]` |
-| types: number values, buffers in `s
-
-**File**: `docs/runtime/redis.mdx` (modified, +9/-1)
+**File**: `packages/bun-usockets/src/internal/internal.h` (modified, +4/-1)
 ```diff
-@@ -126,6 +126,9 @@ await redis.set("counter", "0");
- // Increment by 1
- await redis.incr("counter");
+@@ -198,7 +198,8 @@ extern struct addrinfo_result Bun__addrinfo_getRequestResult(struct addrinfo_req
  
-+// Redis 8.8 or Valkey 9.2: increment and set the expiration in one command
-+const [value, increment] = await redis.increx("counter", "BYINT", 5, "EX", 60);
-+
- // Decrement by 1
- await redis.decr("counter");
- ```
-@@ -249,6 +252,9 @@ Publish messages with the `publish()` method:
- 
- ```typescript redis.ts icon="/icons/typescript.svg"
- await client.publish(channelName, message);
-+
-+// A buffer is sent as its bytes
-+await client.publish(channelName, new Uint8Array([0xff, 0xfe]));
- ```
- 
- ### Subscriptions
-@@ -288,7 +294,7 @@ const client = new RedisClient("redis://localhost:6379", {
- 
- ### Raw Commands
- 
--Use the `send` method to run any Redis command, including ones without a dedicated method. The first argument is the command name, and the second is an array of string arguments.
-+Use the `send` method to run any Redis command, including ones without a dedicated method. The first argument is the command name. The second is an array of strings, numbers, buffers or in-memory `Blob`s. `Bun.file()` and `S3File` throw here and in every other method: pass `await file.bytes()`.
- 
- ```ts redis.ts icon="/icons/typescript.svg"
- // Run any Redis command
-@@ -301,6 +307,8 @@ await redis.send("LPUSH", ["mylist", "value1", "value2"]);
- const list = await redis.send("LRANGE", ["mylist", "0", "-1"]);
- ```
- 
-+A `null` or `undefined` argument throws where it would shift or drop another one, as in `mget(a, undefined, c)` or `set(key, value, undefined, "NX")`. After `MULTI`, catch such errors and send `DISCARD`, or later commands stay queued.
-+
- ### Connection Events
- 
- You can register handlers for connection events:
-```
-
-**File**: `packages/bun-types/redis.d.ts` (modified, +257/-118)
-```diff
-@@ -70,7 +70,7 @@ declare module "bun" {
-      * console.log(await redis.get("hello"));
-      * ```
-      */
--    constructor(url?: string, options?: RedisOptions);
-+    constructor(url?: string | URL, options?: RedisOptions);
- 
-     /**
-      * Whether the client is connected to the Redis server
-@@ -111,7 +111,12 @@ declare module "bun" {
-     /**
-      * Send a raw command to the Redis server
-      * @param command The command to send
--     * @param args The arguments to the command
-+     * @param args The arguments to the command. Bun sends each element as one argument and does not change the array.
-+     * - A string is sent as UTF-8.
-+     * - A number is sent as the string that `String(value)` returns.
-+     * - A typed array, a `DataView`, an `ArrayBuffer` or a `SharedArrayBuffer` is sent as its bytes.
-+     * - A `Blob` whose bytes are in memory is sent as its bytes. `Bun.file()` and an `S3File` throw: pass
-+     *   `await file.bytes()`.
-      * @returns A promise that resolves with the command result
-      *
-      * The reply is converted as follows. See the type conversion section in
-@@ -127,7 +132,10 @@ declare module "bun" {
-      * - A map becomes a plain object with a null prototype.
-      * - An error reply (`-` or `!`) rejects the promise with code ERR_REDIS_SERVER_ERROR.
-      */
--    send(command: string, args: string[]): Promise<any>;
-+    send(
-+      command: string,
-+      args: readonly (string | number | NodeJS.TypedArray | DataView<ArrayBufferLike> | ArrayBufferLike | Blob)[],
-+    ): Promise<any>;
- 
-     /**
-      * Get the value of a key
-@@ -146,102 +154,131 @@ declare module "bun" {
-     /**
-      * Set key to hold the string value
-      * @param key The key to set
--     * @param value The value to set
-+     * @param value The value to set. A number is sent as the string that `String(value)` returns.
-      * @returns Promise that resolves with "OK" on success
-      */
--    set(key: RedisClient.KeyLike, value: RedisClient.KeyLike): Promise<"OK">;
-+    set(key: RedisClient.KeyLike, value: RedisClient.KeyLike | number): Promise<"OK">;
- 
-     /**
-      * Set key to hold the string value with expiration
-      * @param key The key to set
--     * @param value The value to set
-+     * @param value The value to set. A number is sent as the string that `String(value)` returns.
-      * @param ex Set the specified expire time, in seconds
-      * @returns Promise that resolves with "OK" on success
-      */
--    set(key: RedisClient.KeyLike, value: RedisClient.KeyLike, ex: "EX", seconds: number): Promise<"OK">;
-+    set(key: RedisClient.KeyLike, value: RedisClient.KeyLike | number, ex: "EX", seconds: number): Promise<"OK">;
- 
-     /**
-      * Set key to hold the string value with expiration
-      * @param key The key to set
--     * @param value The value to set
-+     * @param value The value to set. A number is sent as the string that `String(value)` returns.
-      * @param px Set the specified expire time, in milliseconds
-      * @returns Promise that resolves with "OK" on success
-      */
--    set(key: RedisClient.KeyLike, value: RedisClient.KeyLike, px: "PX", milliseconds: number): Promise<"OK">;
-+    set(key: RedisClient.KeyLike, value: RedisClient.KeyLike | number, px: "PX", milliseconds: number): Promise<"OK">;
- 
-     /**
-      * Set key to hold the string value with expiration at a specific Unix
-      * timestamp
-      * @param key The key to set
--     * @param value The value to set
-+     * @param value The value to set. A number is sent as the string that `String(value)` returns.
-      * @param exat Set the specified Unix time at which the key will expire, in
-      * seconds
-      * @returns Promise that resolves with "OK" on success
-      */
--    set(key: RedisClient.KeyLike, value: RedisClient.KeyLike, exat: "EXAT", timestampSeconds: number): Promise<"OK">;
-+    set(
-+      key: RedisClient.KeyLike,
-+      value: RedisClient.KeyLike | number,
-+      exat: "EXAT",
-+      timestampSeconds: number,
-+    ): Promise<"OK">;
- 
-     /**
-      * Set key to hold the string value with expiration at a specific Unix timestamp
-      * @param key The key to set
--     * @param value The value to set
-+     * @param value The value to set. A number is sent as the string that `String(value)` returns.
-      * @param pxat Set the specified Unix time at which the key will expire, in milliseconds
-      * @returns Promise that resolves with "OK" on success
-      */
-     set(
-       key: RedisClient.KeyLike,
--      value: RedisClient.KeyLike,
-+      value: RedisClient.KeyLike | number,
-       pxat: "PXAT",
-       timestampMilliseconds: number,
-     ): Promise<"OK">;
- 
-     /**
-      * Set key to hold the string value only if key does not exist
-      * @param key The key to set
--     * @param value The value to set
-+     * @param value The value to set. A number is sent as the string that `String(value)` returns.
-      * @param nx Only set the key if it does not already exist
-      * @returns Promise that r
-```
-
-**File**: `src/runtime/node.rs` (modified, +1/-1)
-```diff
-@@ -16,7 +16,7 @@ pub(crate) mod assert {
- #[path = "node/types.rs"]
- pub(crate) mod types;
- pub(crate) use types::{
--    BlobOrStringOrBuffer, Dirent, Encoding, FileBlobs, PathLike, PathOrBlob, PathOrFileDescriptor,
-+    BlobOrStringOrBuffer, Dirent, Encoding, PathLike, PathOrBlob, PathOrFileDescriptor,
-     StringObjects, StringOrBuffer, ThreadIsolated,
+ /* Loop related */
+ /* `eof` values for us_internal_dispatch_ready_poll: nonzero = read-side EOF hint (half-open honored);
+- * LIBUS_POLL_HANGUP = epoll EPOLLHUP, both directions down, re-reported until the fd is closed. */
++ * LIBUS_POLL_HANGUP = both directions down with no socket error: epoll's EPOLLHUP (re-reported until the fd
++ * is closed), or kqueue's write-filter EV_EOF once the peer's EOF is seen (reported each time it is armed). */
+ #define LIBUS_POLL_EOF 1
+ #define LIBUS_POLL_HANGUP 2
+ void us_internal_dispatch_ready_poll(struct us_poll_t *p, int error, int eof, int events);
+@@ -562,6 +563,8 @@ struct us_listen_socket_t {
+   unsigned char deferred_accept;
+   /* LIBUS_SOCKET_OPEN_PAUSED: accepted sockets start without read interest. */
+   unsigned char accept_paused;
++  /* Another process can accept on this socket too: it was sent over IPC or adopted from a descriptor (bsd_accept_socket). */
++  unsigned char shared;
  };
  
+ void us_internal_socket_group_link_connecting_socket(us_socket_group_r group, struct us_connecting_socket_t *c);
 ```
 
-**File**: `src/runtime/node/types.rs` (modified, +2/-21)
+**File**: `packages/bun-usockets/src/internal/networking/bsd.h` (modified, +2/-2)
 ```diff
-@@ -80,17 +80,6 @@ pub(crate) enum StringObjects {
-     Reject,
- }
+@@ -213,8 +213,8 @@ int bsd_addr_get_ip_length(struct bsd_addr_t *addr);
  
--/// What [`BlobOrStringOrBuffer`] parsing does with a file-backed `Blob`
--/// (`Bun.file(..)`). Nothing here reads the file: an allowed one is returned
--/// as [`BlobOrStringOrBuffer::Blob`] like an in-memory blob, and its `slice()`
--/// is empty.
--#[derive(Copy, Clone, PartialEq, Eq)]
--pub(crate) enum FileBlobs {
--    Allow,
--    /// Throws "File blob cannot be used here".
--    Reject,
--}
--
- // ──────────────────────────────────────────────────────────────────────────
+ int bsd_addr_get_port(struct bsd_addr_t *addr);
  
- pub(crate) enum BlobOrStringOrBuffer {
-@@ -112,10 +101,9 @@ impl BlobOrStringOrBuffer {
-         }
-     }
+-// called by dispatch_ready_poll
+-LIBUS_SOCKET_DESCRIPTOR bsd_accept_socket(LIBUS_SOCKET_DESCRIPTOR fd, struct bsd_addr_t *addr);
++// called by dispatch_ready_poll. shared: another process can accept on fd too.
++LIBUS_SOCKET_DESCRIPTOR bsd_accept_socket(LIBUS_SOCKET_DESCRIPTOR fd, struct bsd_addr_t *addr, int shared);
  
--    pub(crate) fn from_js_maybe_file(
-+    pub(crate) fn from_js(
-         global: &JSGlobalObject,
-         value: JSValue,
--        file_blobs: FileBlobs,
-     ) -> JsResult<Option<BlobOrStringOrBuffer>> {
-         // Check StringOrBuffer first because it's more common and cheaper.
-         if let Some(str) = StringOrBuffer::from_js(global, value)? {
-@@ -124,21 +112,14 @@ impl BlobOrStringOrBuffer {
-         let Some(blob) = value.as_class_ref::<Blob>() else {
-             return Ok(None);
-         };
--        if file_blobs == FileBlobs::Reject && blob.needs_to_read_file() {
-+        if blob.needs_to_read_file() {
-             return Err(
-                 global.throw_invalid_arguments(format_args!("File blob cannot be used here"))
-             );
-         }
-         Ok(Some(Self::Blob(Box::new(blob.dupe()))))
-     }
- 
--    pub(crate) fn from_js(
--        global: &JSGlobalObject,
--        value: JSValue,
--    ) -> JsResult<Option<BlobOrStringOrBuffer>> {
--        Self::from_js_maybe_file(global, value, FileBlobs::Reject)
--    }
--
-     pub(crate) fn from_js_with_encoding_value_allow_request_response(
-         global: &JSGlobalObject,
-         value: JSValue,
+ ssize_t bsd_recv(LIBUS_SOCKET_DESCRIPTOR fd, void *buf, int length, int flags);
+ /* One of the LIBUS_QUEUED_INPUT_* codes. Peeks, so it consumes nothing and the
 ```
 
-**File**: `src/runtime/valkey_jsc/js_valkey_functions.rs` (modified, +154/-48)
+**File**: `packages/bun-usockets/src/libusockets.h` (modified, +2/-0)
 ```diff
-@@ -1,6 +1,8 @@
--use crate::node::{BlobOrStringOrBuffer as JSArgument, FileBlobs, StringOrBuffer};
-+use crate::node::{BlobOrStringOrBuffer as JSArgument, StringOrBuffer};
-+use crate::webcore::Blob;
- use bun_collections::VecExt as _;
- use bun_collections::smallvec::SmallVec;
-+use bun_core::Utf8Bytes;
- use bun_jsc::bindgen::{JsLocal, JsScope, JsWrapper};
- use bun_jsc::{
-     self as jsc, ErrorCode, JSGlobalObject, JSPromise, JSPropertyIterator, JSValue, JsResult,
-@@ -51,14 +53,18 @@ fn require_subscriber(this: &JSValkeyClient, function_name: &str) -> JsResult<()
- }
- 
- fn from_js(global: &JSGlobalObject, value: JSValue) -> JsResult<Option<JSArgument>> {
-+    if value.is_string_literal() {
-+        return JSArgument::from_js(global, value);
-+    }
-+
-     if value.is_undefined_or_null() {
-         return Ok(None);
-     }
- 
-     if value.is_number() {
-         // Allow numbers to be passed as strings.
-         let str = value.to_js_string(global)?;
--        return JSArgument::from_js_maybe_file(global, str.to_js(), FileBlobs::Reject);
-+        return JSArgument::from_js(global, str.to_js());
-     }
- 
-     // Copy the bytes. A later argument's `toString()` can detach this buffer before the command is serialized.
-@@ -71,7 +77,76 @@ fn from_js(global: &JSGlobalObject, value: JSValue) -> JsResult<Option<JSArgumen
-         ))));
-     }
- 
--    JSArgument::from_js_maybe_file(global, value, FileBlobs::Allow)
-+    match JSArgument::from_js(global, value) {
-+        Ok(Some(JSArgument::Blob(blob))) if blob.is_s3() => {
-+            Err(global.throw_invalid_arguments(format_args!("S3 blob cannot be used here")))
-+        }
-+        arg => arg,
-+    }
-+}
-+
-+/// An argument of a hash write: buffers and Blobs as bytes, anything else as `String(value)`.
-+#[inline(always)]
-+fn bytes_or_text(global: &JSGlobalObject, value: JSValue) -> JsResult<Utf8Bytes<'static>> {
-+    if value.is_object() {
-+        return object_bytes_or_text(global, value);
-+    }
-+    value.to_utf8(global)
-+}
-+
-+#[inline(always)]
-+fn required_bytes_or_text(
-+    global: &JSGlobalObject,
-+    value: JSValue,
-+    method: &'static str,
-+    field: &'static str,
-+    expected: &'static str,
-+) -> JsResult<Utf8Bytes<'static>> {
-+    if value.is_undefined_or_null() {
-+        return Err(global.throw_invalid_argument_type(method, field, expected));
-+    }
-+    bytes_or_text(global, value)
-+}
-+
-+#[inline(never)]
-+fn object_bytes_or_text(global: &JSGlobalObject, value: JSValue) -> JsResult<Utf8Bytes<'static>> {
-+    let ty = value.js_type();
-+    let typed_array = ty.is_typed_array_or_array_buffer() && ty != jsc::JSType::ArrayBuffer;
-+    match from_js(global, value)? {
-+        // `String(value)` throws for one that is detached or out of bounds.
-+        Some(arg) if typed_array && arg.slice().is_empty() => value.to_utf8(global),
-+        Some(JSArgument::StringOrBuffer(StringOrBuffer::Utf8(bytes))) => Ok(bytes),
-+        Some(arg) => Ok(Utf8Bytes::Owned(arg.slice().to_vec())),
-+        None => value.to_utf8(global),
-+    }
-+}
-+
-+/// What follows a nullish option is not sent. That is fine for the `ttl` of `ttl ? "EX" : undefined, ttl`.
-+#[cold]
-+fn refuse_to_drop_set_option(global: &JSGlobalObject, dropped: &[JSValue]) -> JsResult<()> {
-+    const OPTIONS: [&[u8]; 12] = [
-+        b"NX", b"XX", b"GET", b"KEEPTTL", b"EX", b"PX", b"EXAT", b"PXAT", b"IFEQ", b"IFNE",
-+        b"IFDEQ", b"IFDNE",
-+    ];
-+    for arg in dropped.iter().filter(|arg| arg.is_string_literal()) {
-+        let text = arg.to_utf8(global)?;
-+        if let Some(option) = OPTIONS.iter().find(|it| it.eq_ignore_ascii_case(&text)) {
-+            return Err(global.throw_invalid_arguments(format_args!(
-+                "set() cannot send {} after a null or undefined argument",
-+                bstr::BStr::new(option)
-+            )));
-+        }
-+    }
-+    Ok(())
-+}
-+
-+fn trim_nullish_end(mut values: &[JSValue]) -> &[JSValue] {
-+    while let [rest @ .., last] = values
-+        && last.is_undefined_or_null()
-+    {
-+        values = rest;
-+    }
-+    values
- }
- 
- // ──────────────────────────────────────────────────────────────────────────
-@@ -99,6 +174,8 @@ enum Varargs {
-     Strict,
-     /// `null` and `undefined` are left out, after a required first argument of this name.
-     KeyThenSkipNullish(&'static str),
-+    /// The same first argument. `null` and `undefined` are left out at the end and throw ahead of another argument.
-+    KeyThenTrimNullish(&'static str),
- }
- 
- /// The arguments after a key, without `null` and `undefined`.
-@@ -158,18 +235,23 @@ impl JSValkeyClient {
-         command: &Command<Varargs>,
-         values: &[JsLocal<'_>],
-     ) -> JsResult<JSValue> {
--        let values = JsLocal::to_js_slice(values);
-+        let mut values = JsLocal::to_js_slice(values);
-         command.check_state(self)?;
- 
--        if let Varargs::KeyThenSkipNullish(name) = command.args
-+        if let Varargs::KeyThenSkipNullish(name) | Varargs::KeyThenTrimNullish(name) = command.args
-             && 
+@@ -727,6 +727,8 @@ void *us_listen_socket_ext(struct us_listen_socket_t *ls) nonnull_fn_decl;
+ LIBUS_SOCKET_DESCRIPTOR us_listen_socket_get_fd(struct us_listen_socket_t *ls) nonnull_fn_decl;
+ int us_listen_socket_port(struct us_listen_socket_t *ls) nonnull_fn_decl;
+ struct us_socket_group_t *us_listen_socket_group(struct us_listen_socket_t *ls) nonnull_fn_decl;
++/* Call before another process gets a duplicate of the listening socket. */
++void us_listen_socket_set_shared(struct us_listen_socket_t *ls) nonnull_fn_decl;
+ /* Walk a group's live listeners. The list is the source of truth — anything
+  * that caches us_listen_socket_t* across event-loop ticks (e.g. a std::vector
+  * in C++) is a UAF once a listener is closed and freed in loop_post. */
 ```
 
-**File**: `src/runtime/valkey_jsc/valkey.bind.ts` (modified, +1/-0)
+**File**: `packages/bun-usockets/src/loop.c` (modified, +2/-2)
 ```diff
-@@ -81,6 +81,7 @@ const commands: Record<string, readonly [args: readonly string[], length: number
-   incr: [["key"], 1],
-   incrby: [["key", "increment"], 2],
-   incrbyfloat: [["key", "increment"], 2],
-+  increx: [["...args"], 1],
-   info: [["...args"], 0],
-   keys: [["pattern"], 0],
-   lastsave: [[], 0],
-```
-
-**File**: `test/integration/bun-types/fixture/redis.ts` (modified, +176/-0)
-```diff
-@@ -1,7 +1,16 @@
-+import { spyOn } from "bun:test";
- import { expectType } from "./utilities";
+@@ -559,7 +559,7 @@ void us_internal_dispatch_ready_poll(struct us_poll_t *p, int error, int eof, in
+                 struct us_loop_t *loop = accept_group->loop;
+                 struct bsd_addr_t addr;
  
- expectType(Bun.redis.publish("hello", "world")).is<Promise<number>>();
+-                LIBUS_SOCKET_DESCRIPTOR client_fd = bsd_accept_socket(us_poll_fd(p), &addr);
++                LIBUS_SOCKET_DESCRIPTOR client_fd = bsd_accept_socket(us_poll_fd(p), &addr, listen_socket->shared);
+                 if (client_fd == LIBUS_SOCKET_ERROR) {
+                     /* Todo: start timer here */
  
-+// The constructor takes the URL as a string or as a `URL` object.
-+expectType(new Bun.RedisClient("redis://localhost:6379")).is<Bun.RedisClient>();
-+expectType(new Bun.RedisClient(new URL("redis://localhost:6379"))).is<Bun.RedisClient>();
-+expectType(new Bun.RedisClient(new URL("rediss://localhost:6380/2"), { maxRetries: 5 })).is<Bun.RedisClient>();
-+expectType(new Bun.RedisClient(undefined, { autoReconnect: false })).is<Bun.RedisClient>();
-+// @ts-expect-error - a number is not a URL
-+new Bun.RedisClient(6379);
-+
- const copy = await Bun.redis.duplicate();
- expectType(copy.connected).is<boolean>();
- expectType(copy).is<Bun.RedisClient>();
-@@ -34,6 +43,7 @@ const redis = Bun.redis;
- const buf = Buffer.from("key");
+@@ -627,7 +627,7 @@ void us_internal_dispatch_ready_poll(struct us_poll_t *p, int error, int eof, in
+                             break;
+                         }
  
- // Bitmap
-+expectType(redis.spublish("channel", 1)).is<Promise<number>>();
- expectType(redis.bitop("NOT", "dest", "k1")).is<Promise<number>>();
- expectType(redis.bitop("not", "dest", buf)).is<Promise<number>>();
- expectType(redis.bitop("AND", "dest", "k1")).is<Promise<number>>();
-@@ -105,6 +115,71 @@ expectType(redis.config("GET", "maxmemory")).is<Promise<any>>();
- expectType(redis.debug("OBJECT", "k")).is<Promise<any>>();
- expectType(redis.command("COUNT")).is<Promise<any>>();
- 
-+// Raw commands: `send` takes each kind of argument that the client sends, in an array that it only reads.
-+expectType(redis.send("PING", [])).is<Promise<any>>();
-+redis.send("SET", ["k", "v"]);
-+redis.send("SET", ["k", 0, "EX", 60]);
-+redis.send("SET", [buf, new Uint8Array(1)]);
-+redis.send("VSIM", ["docs", "FP32", new Float32Array(3), "COUNT", 5]);
-+redis.send("SET", ["k", new DataView(new ArrayBuffer(1))]);
-+redis.send("SET", ["k", new ArrayBuffer(1)]);
-+redis.send("SET", ["k", new SharedArrayBuffer(1)]);
-+redis.send("SET", ["k", new Blob(["v"])]);
-+// A value that the other methods take as `RedisClient.KeyLike` is also an element of `args`.
-+declare const keyLike: Bun.RedisClient.KeyLike;
-+redis.send("DEL", [keyLike]);
-+const readonlyArgs: readonly string[] = ["k", "v"];
-+redis.send("SET", readonlyArgs);
-+const tupleArgs = ["k", 0, "EX", 60] as const;
-+redis.send("SET", tupleArgs);
-+redis.send("SET", Object.freeze(["k", "v"]));
-+// `send` has one signature, so code typed from its parameter sees each kind that the client sends.
-+expectType<Parameters<Bun.RedisClient["send"]>[1]>().is<
-+  readonly (string | number | NodeJS.TypedArray | DataView<ArrayBufferLike> | ArrayBufferLike | Blob)[]
-+>();
-+// A fake, an override and a bun:test mock of `send` can keep `string[]` for the arguments that they read.
-+const fakeSend: Pick<Bun.RedisClient, "send"> = { send: async (command, args: string[]) => args.join(" ") };
-+class StringSender extends Bun.RedisClient {
-+  override send(command: string, args: string[]): Promise<any> {
-+    return super.send(command, args);
-+  }
-+}
-+spyOn(redis, "send").mockImplementation(async (command, args: string[]) => args.join(" "));
-+// @ts-expect-error - a bigint throws ERR_INVALID_ARG_TYPE
-+redis.send("SET", ["k", 10n]);
-+// @ts-expect-error - a boolean throws ERR_INVALID_ARG_TYPE
-+redis.send("SET", ["k", true]);
-+// @ts-expect-error - null throws ERR_INVALID_ARG_TYPE
-+redis.send("SET", ["k", null]);
-+// @ts-expect-error - undefined throws ERR_INVALID_ARG_TYPE
-+redis.send("SET", ["k", undefined]);
-+// @ts-expect-error - a nested array throws ERR_INVALID_ARG_TYPE
-+redis.send("SET", ["k", ["v"]]);
-+// @ts-expect-error - a plain object throws ERR_INVALID_ARG_TYPE
-+redis.send("SET", ["k", {}]);
-+// @ts-expect-error - an object with the members of the lib `ArrayBufferView` throws ERR_INVALID_ARG_TYPE
-+redis.send("SET", ["k", { buffer: new ArrayBuffer(1), byteLength: 1, byteOffset: 0 }]);
-+// @ts-expect-error - a Set throws "Arguments must be an array"
-+redis.send("SET", new Set(["k", "v"]));
-+// @ts-expect-error - a string throws "Arguments must be an array"
-+redis.send("SET", "k");
-+// @ts-expect-error - a call with no `args` throws "Arguments must be an array"
-+redis.send("PING");
-+
-+expectType(redis.publish("ch", 1)).is<Promise<number>>();
-+expectType(redis.publish("ch", buf)).is<Promise<number>>();
-+expectType(redis.publish("ch", new ArrayBuffer(1))).is<Promise<number>>();
-+// @ts-expect-error - the channel is a string
-+redis.publish(buf, "m");
-+expectType(redis.hincrby("k", buf, 1)).is<Promise<number>>();
-+expectType(redis.hincrbyfloat("k", buf, 1.5)).is<Promise<string>>();
-+expectType(redis.increx("k")).is<Promise<[number, number]>>();
-+expectType(redis.increx("k", "BYINT", 5, "EX", 60)).is<Promise<[number, number]>>();
-+expectType(redis.zrange("z", 0, -1, "REV")).is<Promise<string[]>>();
-+expectType(redis.zrange("z", 0, -1, "REV", "WITHSCORES")).is<Promise<[string, number][]>>();
-+expectType(redis.zrangebyscore("z", 0, 9, "LIMIT", 0, 5, "WITHSCORES")).is<Promise<[string, number][]>>();
-+expectType(redis.zrevrangebyscore(
-```
-
-**File**: `test/js/valkey/reliability/error-handling.test.ts` (modified, +124/-7)
-```diff
-@@ -1,4 +1,4 @@
--import { randomUUIDv7, RedisClient } from "bun";
-+import { randomUUIDv7, RedisClient, S3Client } from "bun";
- import { beforeEach, describe, expect, test } from "bun:test";
- import { ConnectionType, createClient, ctx, isEnabled, readCommands } from "../test-utils";
- 
-@@ -285,18 +285,19 @@ describe.skipIf(!isEnabled)("Valkey: Error Handling", () => {
- 
- describe("Valkey: Command Arguments", () => {
-   type Call = [method: string, ...args: unknown[]];
--  const show = (arg: unknown) => (arg instanceof String ? `new String("${arg}")` : Bun.inspect(arg));
-+  const show = (arg: unknown) => (arg instanceof String ? `new String("${arg}")` : Bun.inspect(arg, { compact: true }));
-   const title = ([method, ...args]: Call) => `${method}(${args.map(show).join(", ")})`;
-   const run = (client: RedisClient, [method, ...args]: Call) => (client as any)[method](...args);
- 
--  /** A client of a server that acknowledges SUBSCRIBE, answers GET with "v" and anything else with 1. */
--  async function connect() {
-+  /** A client of a server that acknowledges SUBSCRIBE, has the replies below and answers anything else with 1. */
-+  async function connect(url = (port: number): string | URL => `redis://127.0.0.1:${port}`) {
-     const received: string[][] = [];
-     const state = { buffer: Buffer.alloc(0) };
-     const replies: Record<string, string> = {
-       HELLO: "+OK\r\n",
-       SUBSCRIBE: ">3\r\n$9\r\nsubscribe\r\n$2\r\nch\r\n:1\r\n",
-       GET: "$1\r\nv\r\n",
-+      SELECT: "+OK\r\n",
-     };
-     const server = Bun.listen({
-       hostname: "127.0.0.1",
-@@ -311,10 +312,11 @@ describe("Valkey: Command Arguments", () => {
-         },
-       },
-     });
--    const client = new RedisClient(`redis://127.0.0.1:${server.port}`);
-+    const client = new RedisClient(url(server.port));
-     await client.connect();
-     return {
-       client,
-+      received,
-       lastReceived: () => received.at(-1),
-       [Symbol.dispose]() {
-         client.close();
-@@ -341,12 +343,61 @@ describe("Valkey: Command Arguments", () => {
-     { call: ["lpush", "k", "a", undefined, "b"], sends: ["LPUSH", "k", "a", "b"], resolves: 1 },
-     { call: ["del", "a", null, "b"], sends: ["DEL", "a", "b"], resolves: 1 },
-     { call: ["sadd", "k", "a", null, "b"], sends: ["SADD", "k", "a", "b"], resolves: 1 },
-+    { call: ["srem", "k", "a", "b"], sends: ["SREM", "k", "a", "b"], resolves: 1 },
-     { call: ["srem", "k", undefined, "a", "b"], sends: ["SREM", "k", "a", "b"], resolves: 1 },
-     { call: ["spop", "k"], sends: ["SPOP", "k"], resolves: 1 },
-     { call: ["srandmember", "k", 2, 3], sends: ["SRANDMEMBER", "k", "2"], resolves: 1 },
-     { call: ["hincrby", "k", false, new Number(2)], sends: ["HINCRBY", "k", "false", "2"], resolves: 1 },
-     { call: ["hincrbyfloat", "k", "f", 1.5], sends: ["HINCRBYFLOAT", "k", "f", "1.5"], resolves: 1 },
-     { call: ["publish", new String("ch"), "m"], sends: ["PUBLISH", "ch", "m"], resolves: 1 },
-+    { call: ["publish", "ch", Buffer.of(0xff, 0)], sends: ["PUBLISH", "ch", "\xff\0"], resolves: 1 },
-+    { call: ["publish", "ch", new Blob(["m"])], sends: ["PUBLISH", "ch", "m"], resolves: 1 },
-+    { call: ["publish", "ch", 1], sends: ["PUBLISH", "ch", "1"], resolves: 1 },
-+    { call: ["set", "k", "v", "NX", undefined, null], sends: ["SET", "k", "v", "NX"], resolves: 1 },
-+    { call: ["set", "k", new Blob(["v"])], sends: ["SET", "k", "v"], resolves: 1 },
-+    { call: ["set", "k", new Blob([])], sends: ["SET", "k", ""], resolves: 1 },
-+    { call: ["hmget", "k", "a", "b", undefined], sends: ["HMGET", "k", "a", "b"], resolves: 1 },
-+    { call: ["mget", "a", "b", null, undefined], sends: ["MGET", "a", "b"], resolves: 1 },
-+    { call: ["zmscore", "k", "a", undefined], sends: ["ZMSCORE", "k", "a"], resolves: 1 },
-+    { call: ["set", "k", "v", undefined, "0"], sends: ["SET", "k", "v"], resolves: 1 },
-+    { call: ["set", "k", "v", undefined, ""], sends: ["SET", "k", "v"], resolves: 1 },
-+    { call: ["set", "k", "v", "EX", 60, null, "old value"], sends: ["SET", "k", "v", "EX", "60"], resolves: 1 },
-+    { call: ["hincrby", "k", "f", Uint8Array.of(5)], sends: ["HINCRBY", "k", "f", "5"], resolves: 1 },
-+    { call: ["set", "k", "v", undefined, 0], sends: ["SET", "k", "v"], resolves: 1 },
-+    { call: ["set", "k", "v", undefined, false], sends: ["SET", "k", "v"], resolves: 1 },
-+    { call: ["set", "k", "v", undefined, NaN], sends: ["SET", "k", "v"], resolves: 1 },
-+    { call: ["hscan", "k", 0, undefined, null, "COUNT", 9], sends: ["HSCAN", "k", "0", "COUNT", "9"], resolves: 1 },
-+    { call: ["zrank", "k", "a", undefined, "WITHSCORE"], sends: ["ZRANK", "k", "a", "WITHSCORE"], resolves: 1 },
-+    { call: ["zrevrank", "k", "a", undefined, "WITHSCORE"], sends: ["ZREVRANK", "k", "a", "WITHSCORE"], resolves: 1 },
-+    { call: ["hrandfield", "k", undefined, 2], sends: ["HRANDFIELD", "k", "2"], resolves: 1 },
-+    { call: ["zrandmember", "k", undefined, 2], sends: ["ZRANDMEMBER", "k", "2"], resolves: 1 },
-+    {
+-                    } while ((client_fd = bsd_accept_socket(us_poll_fd(p), &addr)) != LIBUS_SOCKET_ERROR);
++                    } while ((client_fd = bsd_accept_socket(us_poll_fd(p), &addr, listen_socket->shared)) != LIBUS_SOCKET_ERROR);
+                 }
+             }
+         break;
 ```
 
 ---
 
-### Incident Patch 3: `f19207c6` (2026-11-23)
-**Commit Message**: blob: five fixes to Bun.file() reads, Bun.write() and file copies (#49316)
-
-Last of five that replace #49167.
-
-Fixes #44387.
+### Incident Patch 2: `1f420729` (2026-11-24)
+**Commit Message**: test: fix the unsent request body cases of fetch-gzip on Windows (#49530)
 
 ### What does this PR do?
 
-| | before | after | test |
-| --- | --- | --- | --- |
-| Linux: write to a pipe whose reader left | errno 0 | `EPIPE` |
-`bun-write` |
-| empty slice of a silent pipe by descriptor, or of a terminal | waits |
-resolves | `bun-file-fd-read` |
-| Linux: `Bun.write(fd)` over 1 KiB, `O_APPEND` | NUL bytes before the
-data | appends (+1 `fcntl`) | `bun-write` |
-| cancelled read of `/dev/zero` | runs to its end | stops |
-`module-graph-io` (`dispose()` only) |
+Two cases from #49523 fail on Windows: "rejects if the close comes
+before a request body of file / bytes is sent" in `fetch-gzip.test.ts`.
 
-Seen only with injected system call results: a copy from a file with a
-negative `st_size` does not abort, and a failed `F_GETFL` is not taken
-for flags.
+They assume that a 64 MB request body does not fit into the socket
+buffers. Winsock takes a `send()` of any size whole, so on Windows the
+request is sent and the response resolves. The cases now expect that
+there. Other platforms are unchanged.
 
-#49146 fixed the copy to a 4,096-byte path. Its test is here.
+### How did you verify your code works?
 
-Also: `BUN_DEBUG_loop` is `BUN_DEBUG_FdWait` for this thread. #37852 and
-#47375 (both closed) fixed the first two in deleted functions.
+- `fetch-gzip.test.ts` passes on a Linux x64 debug build.
+- Not run on Windows locally. The new expectation is what Windows x64
+and aarch64 returned in [build
+143954](https://buildkite.com/bun/bun/builds/143954).
 
-**Kept as is**
 
-- A write to a full, non-blocking, never stat'ed pipe spins (#35953
-fixed it, and is closed).
-- Closing a descriptor during a wait never settles.
-- Two waits on one descriptor: epoll rejects the second, kqueue forgets
-the fi
+---
+_Generated by [Claude Code](https://claude.ai/code)_
 
-**File**: `src/io/fd_wait.rs` (modified, +33/-15)
+Co-authored-by: Claude <[REDACTED_EMAIL]>
+
+**File**: `test/js/web/fetch/fetch-gzip.test.ts` (modified, +3/-2)
 ```diff
-@@ -15,7 +15,7 @@ use tests::{epoll_ctl, epoll_del};
+@@ -1,6 +1,6 @@
+ import { Socket } from "bun";
+ import { afterAll, beforeAll, describe, expect, it } from "bun:test";
+-import { bunEnv, bunExe, gcTick, tempDir, tls } from "harness";
++import { bunEnv, bunExe, gcTick, isWindows, tempDir, tls } from "harness";
+ import { once } from "node:events";
+ import { truncateSync } from "node:fs";
+ import { createServer } from "node:http";
+@@ -1280,7 +1280,8 @@ describe("a compressed stream that is unfinished when the body ends", () => {
+     });
+     const body = kind === "file" ? Bun.file(upload) : new Uint8Array(size);
+     const response = await fetch(targets.http.url + key, { method: "POST", body, proxy: false });
+-    expect(await outcome(response.bytes(), small)).toBe("ECONNRESET");
++    // Winsock takes a send() of any size whole, so there the request is sent.
++    expect(await outcome(response.bytes(), small)).toBe(isWindows ? "ok" : "ECONNRESET");
+   });
  
- use crate::Waker;
+   it("rejects if a reset comes right behind more than the reader takes at once", async () => {
+```
+
+---
+
+### Incident Patch 3: `80c14731` (2026-11-24)
+**Commit Message**: Fix wrong answers of --aot builds, node:http and left-out code (#49361)
+
+Fixes wrong answers in programs compiled with `--aot` and some builds that stopped. Module and data loading is as on main.
+
+- Closures left by an earlier run of a file keep their `require`, and a global replaced by a bare assignment can be called with the global object as `this`.
+- A name missing from a namespace behind a CommonJS star is found, and `import.meta.resolve` leaves built-in names to the resolver.
+- Builds no longer stop on a declaration file that code imports, on code inside a left-out class or function, on the end of some bundled CommonJS functions, on a guard by a closure that is never made, or on a call of a default-import, class or private-field helper that only left-out code assigns.
+- `node:http` constructs responses and reads the one in flight as `bun run` does, also where getters throw.
+- A `require()` whose options may name a type that the build can't read gets warning TS100177. Docs: embedded files keep the build's bytes, and a re-export's type chooses the file's type.
+
+Tests for these and for oven-sh/WebKit#1084's fixes are included. Pins WebKit main with oven-sh/WebKit#1084.
+
+| Linux x
+
+**File**: `docs/compiler/compatibility.mdx` (modified, +3/-2)
+```diff
+@@ -265,7 +265,7 @@ That path is inside the executable, so the read only finds a file that's in ther
  
--bun_core::define_scoped_log!(log, Loop, visible);
-+bun_core::define_scoped_log!(log, FdWait, hidden);
+ Two kinds of files are embedded without the flag, where the build can see the read: a file inside a package in `node_modules`, such as the package's own `package.json` or a font, and the `package.json` nearest above your entry point. `--explain` lists them (`TS100166`), and also the files that a package's path leads to where the build doesn't see the read: a path that it exports or passes on, a folder that it lists, a file that it only tests for, or a path with an unknown part (`TS100176`). The metafile has each of these files among its `inputs`. A package in `node_modules` whose code reads, checks or lists files at paths that the build can't know, for example by searching the folders above it, or hands its own folder to code that may do so, gets its own `package.json` embedded too (`TS100170`). Where it hands on a folder from which a search finds a `package.json` that isn't embedded, such as `path.join(__dirname, "..")`, the build warns (`TS100174`). It also warns where a package hands on a folder to code that may list it, and the executable holds some of its files alone (`TS100175`). Code that searches upward finds the nearest `package.json`, as in plain Bun: where one is embedded this way, each one that lies nearer to compiled code is embedded as well (`TS100171`), in a folder of your own too, and so is each one in the folders below a package's own, and if one of those has to stay out, so does the one above it. A file that is only tested for, by `existsSync`, `stat` or `access`, takes no room: the executable knows that it exists and how large it is, and holds none of its bytes. A `package.json` is the exception and is embedded whole, because code that finds one reads it. A package is a folder directly below `node_modules` that has a `package.json`. A file reached through a symbolic link, a file or folder whose name begins with a dot, and a lock file always need the flag.
  
- #[derive(Clone, Copy, Debug)]
- pub enum Interest {
-@@ -147,6 +147,14 @@ impl<J: Waiter> Parking<J> {
-             poller.send(NonNull::from(self));
-         }
-     }
-+
-+    #[inline]
-+    pub fn check_cancelled(&self, wait: &FdWait) -> sys::Result<()> {
-+        match self.armed.is_closed() {
-+            true => Err(wait.interest.cancelled()),
-+            false => Ok(()),
-+        }
-+    }
- }
+-A read through `__dirname` finds the file on the machine that built the executable, and the embedded one anywhere else. Once your program removes or renames that file on disk, the embedded one is gone for it too. A file that was embedded without `--asset` is also gone where something else removed it and the executable runs beside its sources, which means that the code around that file is still on disk. Where that path's folder isn't on disk, the embedded file can be read and not changed: writing, renaming or removing it fails with `ENOENT` or `EROFS`, and so does writing a new file beside it. Make the folder with `mkdirSync(folder, { recursive: true })` first. A listing of a folder that's on disk has only what's there. Writing a file there writes it on disk alone: appending to an embedded file that isn't on disk starts an empty file. By its path under `import.meta.dirname`, an embedded file is read-only. A `Bun.file()` object of an embedded file keeps the bytes it had when it was made, and can't be written through.
++A read through `__dirname` finds the file on the machine that built the executable, and the embedded one anywhere else. Once your program removes or renames that file on disk, the embedded one is gone for it too. A file that was embedded without `--asset` is also gone where something else removed it and the executable runs beside its sources, which means that the code around that file is still on disk. Where that path's folder isn't on disk, the embedded file can be read and not changed: writing, renaming or removing it fails with `ENOENT` or `EROFS`, and so does writing a new file beside it. Make the folder with `mkdirSync(folder, { recursive: true })` first. A listing of a folder that's on disk has only what's there. Writing a file there writes it on disk alone: appending to an embedded file that isn't on disk starts an empty file. By its path under `import.meta.dirname`, an embedded file is read-only. A `Bun.file()` object of an embedded file keeps the bytes it had when it was made, and can't be written through. So away from the sources, where its folder isn't on disk, an embedded file keeps the bytes of the build: reads, `Bun.file()` objects and routes of `Bun.serve()` still give them after a write or a removal has failed.
  
- /// Has the poller while the job is in its table. The event and the cancel both want to end the
-@@ -269,10 +277,7 @@ impl<J: Waiter> LazyPoller<J> {
-     /// Pool thread. Refuses a job that is cancelled.
-     pub fn admit(&self, parking: &Parking<J>, wait: &FdWait) -> sys::Result<&'static Poller<J>> {
-         let poller = (self.running.get().copied()).map_or_else(|| self.start(), Ok)?;
--        match parking.armed.is_closed() {
--            true => Err(wait.interest.cancelled()),
--            false => Ok(poller),
--        }
-+        parking.check_cancelled(wait).map(|()| poller)
-     }
+ A path made from `import.meta.dirname` climbs at most one folder above the root of the executable. An asset that lies two or more folders above it is embedded, but such a path doesn't find it. Where the build can see the read, it warns (`TS100087`). `__dirname` finds it.
  
-     /// If it fails, the next call retries.
-@@ -328,7 +333,7 @@ impl<J: Waiter> IoThread<J> {
-                     let added = self.kernel.add(job.wait(), key);
-                     self.armed.insert(key, job);
-                     if let Err(err) = added {
--                        self.fire(key, Err(err));
-+                        self.fire(key, |_| Err(err));
-                     }
+@@ -330,6 +330,7 @@ If you import such a package for what it does when it loads, like a polyfill or
+ | `undefined[key] = 1`, where `key` has a `toString()`                           | Calls `toString()`, then throws             | Throws                                  |
+ | `(Color as any).Red = 2`, then `Color.Red`, for an `enum` imported from a file | `2`                                         | `1`. The member is a constan
+```
+
+**File**: `scripts/build/deps/webkit.sha256` (modified, +80/-80)
+```diff
+@@ -1,80 +1,80 @@
+-38f99dd5b449d5ebbe142b3e35831a3a40c2ba069fb46c4d0ed240a96548ab2b  autobuild-cad01dc3cd19aa743283bbfe46944966515d3aec/bun-webkit-aot-sources.tar.gz
+-7af24a0cf258c350a3ea9fa68adb3f519da5f0b18eb76edbef33edd591214735  autobuild-cad01dc3cd19aa743283bbfe46944966515d3aec/bun-webkit-freebsd-amd64-aot.tar.gz
+-c109de173b29e38b773c27096274f80ff640a587ca0a969a996275c220146e90  autobuild-cad01dc3cd19aa743283bbfe46944966515d3aec/bun-webkit-freebsd-amd64-debug-aot.tar.gz
+-cfc160605f2a85f0660b6a63e44f501b865a5a57b4eaa6411c1c81d8767f60e6  autobuild-cad01dc3cd19aa743283bbfe46944966515d3aec/bun-webkit-freebsd-amd64-lto-aot.tar.gz
+-5e0404272f61ec5c12d419cd6f80d44cef1b1fee2f2951190568c5b158c6eee3  autobuild-cad01dc3cd19aa743283bbfe46944966515d3aec/bun-webkit-freebsd-amd64-lto.tar.gz
+-60be8da8d6bb413c9e0db152d164fc25a58f2c739b4b77ff509a6e1358021b5d  autobuild-cad01dc3cd19aa743283bbfe46944966515d3aec/bun-webkit-freebsd-amd64.tar.gz
+-99a3c44d5f81df54b6f7b7c77a095ae2b0f29bd794e0ad5e7391d99c28bd75e4  autobuild-cad01dc3cd19aa743283bbfe46944966515d3aec/bun-webkit-freebsd-arm64-aot.tar.gz
+-0edbf163ec4081e993cec9783700980b3d766f303a73dc974849c248abf4980b  autobuild-cad01dc3cd19aa743283bbfe46944966515d3aec/bun-webkit-freebsd-arm64-debug-aot.tar.gz
+-b999e9df4f4c0a902aec58c679072a6b6730921a3ee9fe5f442cdbbafaa9b29a  autobuild-cad01dc3cd19aa743283bbfe46944966515d3aec/bun-webkit-freebsd-arm64-lto-aot.tar.gz
+-77cdfd0fe56fea202d3efbe7ab49b933be84572417a1a310129306b56307acca  autobuild-cad01dc3cd19aa743283bbfe46944966515d3aec/bun-webkit-freebsd-arm64-lto.tar.gz
+-450dbd84bd5fd1afc88a321a5962fcb211f16018cdeed4308df1c1ff7f853d8c  autobuild-cad01dc3cd19aa743283bbfe46944966515d3aec/bun-webkit-freebsd-arm64.tar.gz
+-530a1fa5ca3460003dc60a5c7e9d6111b1cbfa772d8e768dc9b9bd0d33fe0891  autobuild-cad01dc3cd19aa743283bbfe46944966515d3aec/bun-webkit-linux-amd64-android-aot.tar.gz
+-9d30b23cfd7a65d128bdd2c5ba203ac5b1178e7ef97733cd3d8d1b65ead2677c  autobuild-cad01dc3cd19aa743283bbfe46944966515d3aec/bun-webkit-linux-amd64-android-debug-aot.tar.gz
+-67f660a9a6b82f3c84ed628848098f79f53da98f11efafbcef1092887b64defe  autobuild-cad01dc3cd19aa743283bbfe46944966515d3aec/bun-webkit-linux-amd64-android-lto-aot.tar.gz
+-d0939fffcac4166d5706800a193fbba1233f5b9eb0655431f6292154cc9d5aea  autobuild-cad01dc3cd19aa743283bbfe46944966515d3aec/bun-webkit-linux-amd64-android-lto.tar.gz
+-1542bee4f73b7e6f6f534264deb8af5c843f97dd9667a69afa5a1002fe59bb0d  autobuild-cad01dc3cd19aa743283bbfe46944966515d3aec/bun-webkit-linux-amd64-android.tar.gz
+-4b6f281ac9899629ebb3f2ce1fe01895ce298bb9faa1cb32d113f0fecd124a58  autobuild-cad01dc3cd19aa743283bbfe46944966515d3aec/bun-webkit-linux-amd64-aot.tar.gz
+-dc32b3e03d79e47b37c50e7da0798ff0670d0ffcfd8117f7328721b38c21f910  autobuild-cad01dc3cd19aa743283bbfe46944966515d3aec/bun-webkit-linux-amd64-asan-aot.tar.gz
+-71357db453a1e6826c57d1a0bd1355a3c2103b1ad959480e70d26dcc145d9166  autobuild-cad01dc3cd19aa743283bbfe46944966515d3aec/bun-webkit-linux-amd64-assertions-aot.tar.gz
+-a57cf7462a4aac51b2d75439cb716b55cd71bff5b79bc96f87c4357d6062bb6f  autobuild-cad01dc3cd19aa743283bbfe46944966515d3aec/bun-webkit-linux-amd64-assertions-coverage-aot.tar.gz
+-bfc4140e952b5db591ccdc8d27958d39de93b57d86fdfeae46058d986cdb938f  autobuild-cad01dc3cd19aa743283bbfe46944966515d3aec/bun-webkit-linux-amd64-coverage-aot.tar.gz
+-1fd74d448e7840115cb3fa2d7435c9fc2a29cb5b2c7c7722ab8e188407fe021d  autobuild-cad01dc3cd19aa743283bbfe46944966515d3aec/bun-webkit-linux-amd64-debug-aot.tar.gz
+-3846b454555bac096133643b39f56870ee16d1351949784d1f3fe47f793d5121  autobuild-cad01dc3cd19aa743283bbfe46944966515d3aec/bun-webkit-linux-amd64-debug-asan-aot.tar.gz
+-9e332396fc32ab6b099322b948862ebeaaf09787dd6a193c5265d97f4312d9d1  autobuild-cad01dc3cd19aa743283bbfe46944966515d3aec/bun-webkit-linux-amd64-hardened-aot.tar.gz
+-ab6d15a08ae3ecfaea6d6b72c72c41b365814f915c7a15b1fcd7a41fab95c2e5  autobuild-cad01dc3cd19aa743283bbfe46944966515d3aec/bun-webkit-linux-amd64-lto-aot.tar.gz
+-3fa0d4032dfdebe69ae495ada2d7e14b11df266f736b92fd2e49447e884d811e  autobuild-cad01dc3cd19aa743283bbfe46944966515d3aec/bun-webkit-linux-amd64-lto-hardened-aot-no-webassembly.tar.gz
+-6e18b8b47ab431d1c9b2bc3ca302cb5f17190337b168619240b8efc4239dadc3  autobuild-cad01dc3cd19aa743283bbfe46944966515d3aec/bun-webkit-linux-amd64-lto-hardened-aot.tar.gz
+-add5c1828405bac21e2593390bd109b515469b4301943cad59ca53ae1fb3c2e2  autobuild-cad01dc3cd19aa743283bbfe46944966515d3aec/bun-webkit-linux-amd64-lto-hardened.tar.gz
+-277d0a64c6389d9ce50d9d4dd59e0d5b187c6d9b8cd2c9b69c92846ecdf5023e  autobuild-cad01dc3cd19aa743283bbfe46944966515d3aec/bun-webkit-linux-amd64-lto.tar.gz
+-b9e812bfc4f7c6b574ecc63e0001ebd7282f64c5e30b0b74606d05116808f381  autobuild-cad01dc3cd19aa743283bbfe46944966515d3aec/bun-webkit-linux-amd64-musl-aot.tar.gz
+-11b19592c7cf11b2483c9f0884c84ccf67a3ab09387bec203120eb0ae4038ae2  autobuild-cad01dc3cd19aa743283bbfe46944966515d3aec/bun-webkit-linux-amd64-musl-debug-aot.tar.gz
+-05696090591edb8165dc4342f1a28fa064614a2e743fdebea3645e
+```
+
+**File**: `scripts/build/deps/webkit.ts` (modified, +1/-1)
+```diff
+@@ -6,7 +6,7 @@
+  * After changing it, run `bun run pin-webkit`: webkit.sha256 pins the sha256
+  * of this version's tarballs, and a build refuses one that is not in there.
+  */
+-export const WEBKIT_VERSION = "cad01dc3cd19aa743283bbfe46944966515d3aec";
++export const WEBKIT_VERSION = "32300d4d274b67f5cd3b3f109da0f0589aff742f";
+ 
+ /**
+  * WebKit (JavaScriptCore) — the JS engine, with WTF and bmalloc.
+```
+
+**File**: `src/aot/builtins/resolve/mentions.rs` (modified, +18/-8)
+```diff
+@@ -399,8 +399,10 @@ impl Resolver<'_, '_> {
+         let stored_to = self.outermost_assertion_of(member);
+         match bound.parent_of_expr(stored_to) {
+             Parent::Expr(store) => match hir[store].kind {
+-                ExprKind::Assign { target, value, .. } if target == stored_to => {
+-                    self.may_read_this(value)
++                ExprKind::Assign { op, target, value } if target == stored_to => {
++                    // `process += x` stores what the operator makes, which is no function.
++                    matches!(op, None | Some(BinOp::And | BinOp::Or | BinOp::Nullish))
++                        && self.may_read_this(value)
                  }
-                 Request::Disarm(armed) => {
-@@ -344,11 +349,13 @@ impl<J: Waiter> IoThread<J> {
-     }
- 
-     /// The kernel reported `key`. If `cancel` was faster, its request ends the wait.
--    fn fire(&mut self, key: Key, outcome: sys::Result<()>) {
-+    fn fire(&mut self, key: Key, outcome: impl FnOnce(&FdWait) -> sys::Result<()>) {
-         if let hash_map::Entry::Occupied(found) = self.armed.entry(key)
-             && found.get().parking().armed.take(self.poller)
-         {
--            Self::wake(found.remove(), outcome);
-+            let mut job = found.remove();
-+            let outcome = outcome(job.wait());
-+            Self::wake(job, outcome);
+                 _ => bound.is_write_only_access(hir, stored_to),
+             },
+@@ -658,12 +660,20 @@ impl Resolver<'_, '_> {
+         if let Some(receiver) = self.find_receiver_held_as_answer(expr, id) {
+             self.expose(receiver);
          }
-     }
- 
-@@ -472,17 +479,28 @@ impl<J: Waiter> IoThread<J> {
-                 e => bun_core::Output::panic(format_args!("epoll_wait: {:?}", e)),
-             }
-             for event in &events[..rc as usize] {
--                // EPOLLERR carries no errno, and reading SO_ERROR would clear it on the caller's socket.
--                let outcome = match event.events & EPOLL::ERR {
-+                self.fire(Key(event.u64), |wait| match event.events & EPOLL::ERR {
-                     0 => Ok(()),
--                    _ => Err(sys::Error::from_code(E::SUCCESS, sys::Tag::epoll_ctl)),
--                };
--                self.fire(Key(event.u64), outcome);
-+                    _ => Err(pending_error(wait)),
-+                });
-             }
+-        if self.is_stored_over_by_what_may_read_this(expr, id)
+-            && let Some((holder, _)) = self.input.hir.member_key(expr)
+-            && let Some(holder) =
+-                mentioned_id(self.state(self.input.hir.skip_type_assertions(holder)))
+-        {
+-            self.expose(holder);
++        if self.is_stored_over_by_what_may_read_this(expr, id) {
++            let holder = match self.input.hir.member_key(expr) {
++                Some((holder, _)) => {
++                    mentioned_id(self.state(self.input.hir.skip_type_assertions(holder)))
++                }
++                // `escape = reader` lays it on the global object, which may call it as a method. `saved = reader` stores into a variable alone, whatever it held.
++                None if matches!(self.state(expr), ExprState::Builtin(_)) => table::entry(id)
++                    .holder
++                    .filter(|&holder| table::canonical_id(holder) == BuiltinId::GlobalThis),
++                None => None,
++            };
++            if let Some(holder) = holder {
++                self.expose(holder);
++            }
          }
+         self.mention_members_read_under_written_keys(expr);
+         let mention_use = self.classify_use(expr);
+```
+
+**File**: `src/aot/compile/load_stage.rs` (modified, +20/-1)
+```diff
+@@ -45,7 +45,9 @@ use bun_sema::import_sites::{
+     ImportSiteKind, ImportSpecifier, find_made_requires_that_go_out_of_sight, is_load_found_late,
+ };
+ use bun_sema::node::NodeData;
+-use bun_sema::program::{CodeAnswer, CodeView, EntryPointsFound, FileId, Files};
++use bun_sema::program::{
++    CodeAnswer, CodeView, EntryPointsFound, FileId, Files, may_name_type_at_run_time,
++};
+ use bun_sema::resolve::{CodeHost, CodeOptions};
+ use bun_sema::session::Session;
+ use bun_sema::util::{FxHashMap, FxHashSet, SharedSort};
+@@ -220,6 +222,22 @@ fn warn_of_names_unread_at_loads_found_late(
      }
  }
  
-+/// EPOLLERR carries no errno, and reading SO_ERROR would clear it on the caller's socket.
-+#[cfg(any(all(not(test), target_os = "linux"), target_os = "android"))]
-+#[cold]
-+fn pending_error(wait: &FdWait) -> sys::Error {
-+    if matches!(wait.interest, Interest::Writable)
-+        && sys::fstat(wait.fd()).is_ok_and(|stat| sys::S::ISFIFO(stat.st_mode as _))
-+    {
-+        sys::Error::from_code(E::EPIPE, sys::Tag::write)
-+    } else {
-+        sys::Error::from_code(E::SUCCESS, sys::Tag::epoll_ctl)
++fn warn_of_types_unread_at_requires(diagnostics: &mut Diagnostics, view: ProgramView<'_, '_>) {
++    let files = view.files();
++    for &file in files.compiled_files() {
++        let (analysis, hir) = (files.analysis(file), files.hir(file));
++        for site in analysis.import_sites {
++            if matches!(site.specifier, ImportSpecifier::Constant(_))
++                && may_name_type_at_run_time(hir, files.bound(file), &analysis.decisions, site)
++            {
++                let span = Span::of_node(hir, file, NodeData::Expr(site.specifier_node));
++                let code = Code::RequiredTypeIsNotRead;
++                diagnostics.add(Some(view), Diagnostic::new(code, Some(span), &[]));
++            }
++        }
 +    }
 +}
 +
- // ─── kqueue ──────────────────────────────────────────────────────────────────
- 
- #[cfg(target_os = "freebsd")]
-@@ -601,7 +619,7 @@ impl<J: Waiter> IoThread<J> {
-                     0 => Ok(()),
-                     _ => Err(sys::Error::from_code_int(event.data as _, sys::Tag::kevent)),
-                 };
--                self.fire(Key(event.udata as u64), outcome);
-+                self.fire(Key(event.udata as u64), |_| outcome);
+ fn warn_of_folders_unread_at_resolves(
+     diagnostics: &mut Diagnostics,
+     view: ProgramView<'_, '_>,
+@@ -954,6 +972,7 @@ impl<'a> Build<'a> {
+         if !options.aot.checks_only && !options.aot.runs_in_place {
+             warn_of_files_left_out_by_patterns(&mut self.diagnostics, view, host);
+             warn_of_guesses_left_out(&mut self.diagnostics, view, host);
++            warn_of_types_unread_at_requires(&mut self.diagnostics, view);
+             if !options.aot.loads_code_from_disk {
+                 warn_of_names_unread_at_loads_found_late(&mut self.diagnostics, view);
+                 warn_of_folders_unread_at_resolves(&mut self.diagnostics, view, host);
+```
+
+**File**: `src/aot/diagnostic_codes.rs` (modified, +1/-0)
+```diff
+@@ -105,6 +105,7 @@ diagnostic_codes! {
+         SearchMissesPackageJson = 100174, Warning, "This hands on \"{0}\", and the executable doesn't hold the package.json that a search from there finds first. Once it's moved, the search finds another one or none";
+         FolderListedInPart = 100175, Warning, "This hands on \"{0}\" to code that may list it, and the executable holds some of its files alone. Once it's moved, the list is shorter. Embed the folder with --asset {0}";
+         NamedFilesEmbedded = 100176, Note, "The executable embeds what this path leads to: {0}";
++        RequiredTypeIsNotRead = 100177, Warning, "The build can't work out the type that these options name, so this require() gives the file as its extension says. Write the type out, as in require(\"./a.json\", { type: \"file\" })";
+         FileBehindAssetSymlink = 100165, Warning, "This reads \"{0}\", but the executable has no file at that path: --asset follows no links inside a folder. Embed it with --asset {1}";
+     }
+     Link 100200..=100299 {
+```
+
+**File**: `src/aot/load/bundled_commonjs.rs` (modified, +14/-5)
+```diff
+@@ -82,18 +82,27 @@ pub(crate) fn blank_commonjs_wrapper(text: &[u8]) -> Option<Vec<u8>> {
+     let head_start = find_transpiled_mark(text)?.end;
+     let body_start = find_body_start(text, head_start)?;
+     let tail = find_tail(&text[body_start..])?;
++    let tail = body_start + tail.start..body_start + tail.end;
++    Some(blank_parts(text, [head_start..body_start, tail]))
++}
++
++/// `tail` is from the `}` of the function to the end of its statement, as the parser has read them.
++pub(crate) fn blank_commonjs_wrapper_with_tail(text: &[u8], tail: Range<usize>) -> Option<Vec<u8>> {
++    let head_start = find_transpiled_mark(text)?.end;
++    let body_start = find_body_start(text, head_start)?;
++    (body_start <= tail.start).then(|| blank_parts(text, [head_start..body_start, tail]))
++}
++
++fn blank_parts(text: &[u8], parts: [Range<usize>; 2]) -> Vec<u8> {
+     let mut blanked = text.to_vec();
+-    for part in [
+-        head_start..body_start,
+-        body_start + tail.start..body_start + tail.end,
+-    ] {
++    for part in parts {
+         for byte in &mut blanked[part] {
+             if !byte.is_ascii_whitespace() {
+                 *byte = b' ';
              }
          }
      }
-@@ -694,7 +712,7 @@ mod tests {
-     }
- 
-     fn fire(key: Key, outcome: sys::Result<()>) {
--        on_io_thread(|thread| thread.fire(key, outcome));
-+        on_io_thread(|thread| thread.fire(key, |_| outcome));
-     }
- 
-     fn ready(fd: i32) {
-```
-
-**File**: `src/runtime/webcore/blob/copy_file.rs` (modified, +3/-4)
-```diff
-@@ -213,7 +213,7 @@ impl CopyFile {
-         let mut max_length = self.max_length;
-         // BSD fstat on a pipe reports bytes currently buffered in st_size;
-         // only a regular-file st_size is a length.
--        if stat.st_size != 0 && bun_sys::S::ISREG(mode) {
-+        if stat.st_size > 0 && bun_sys::S::ISREG(mode) {
-             max_length = (size_of_file(stat).min(max_length)).saturating_sub(self.offset);
-             if max_length == 0 {
-                 return Ok(0);
-@@ -348,14 +348,13 @@ impl CopyFile {
- 
- #[cfg(not(windows))]
- fn size_of_file(stat: &Stat) -> SizeType {
--    SizeType::try_from(stat.st_size).expect("int cast")
-+    stat.st_size.max(0) as SizeType
+-    Some(blanked)
++    blanked
  }
  
- /// Whether it was set.
- #[cfg(any(target_os = "linux", target_os = "android"))]
- fn clear_append(fd: Fd) -> bool {
--    // SAFETY: F_GETFL takes no pointer.
--    let flags = unsafe { libc::fcntl(fd.native(), libc::F_GETFL, 0) };
-+    let flags = bun_sys::get_fcntl_flags(fd).unwrap_or(0) as i32;
-     if flags & bun_sys::O::APPEND == 0 {
-         return false;
-     }
+ #[cfg(test)]
 ```
 
-**File**: `src/runtime/webcore/blob/fd_job.rs` (modified, +16/-8)
+**File**: `src/aot/load/host.rs` (modified, +34/-3)
 ```diff
-@@ -15,6 +15,8 @@ pub(crate) enum Step {
-     Done,
-     /// Call again when the descriptor is ready.
-     Wait,
-+    /// Call again now, unless the job was cancelled.
-+    Again,
+@@ -14,7 +14,7 @@ use bun_resolve_builtins::Alias;
+ use bun_sema::atom::Interner;
+ use bun_sema::bind::Bound;
+ use bun_sema::fold::Decisions;
+-use bun_sema::hir::{self, CallId, ExprId, File, NodeData};
++use bun_sema::hir::{self, CallId, ExprId, ExprKind, File, NodeData, StmtId, StmtKind};
+ use bun_sema::hir_from_data::{DataValue, FOLDER_OF_DATABASE, HostValue};
+ use bun_sema::module_format::ModuleFormat;
+ use bun_sema::program::{HostLoader, HostModuleId};
+@@ -40,7 +40,9 @@ use crate::diagnostics::{
+     FileDiagnostic, LoadMessages, log_diagnostic, range_of_node, syntax_errors_of,
+ };
+ use crate::load::builtin_uses::{self, BuiltinUseInput};
+-use crate::load::bundled_commonjs::{blank_commonjs_wrapper, is_bundled_commonjs};
++use crate::load::bundled_commonjs::{
++    blank_commonjs_wrapper, blank_commonjs_wrapper_with_tail, is_bundled_commonjs,
++};
+ use crate::load::compiler_declarations;
+ use crate::load::contents::worker_entries::{
+     count_highest_level_on_way, find_file_named_as_in_executable, find_file_on_way,
+@@ -295,6 +297,25 @@ fn is_javascript_too(typescript_options: &CompileParseOptions<'_>, text: &[u8])
+         && diagnostics.all(|it| it.class != hir::DiagnosticClass::EarlyError)
  }
  
- pub(crate) trait FdOp: Send + Sized + 'static {
-@@ -87,14 +89,20 @@ impl<Op: FdOp> FdJob<Op> {
-         Job::<Self>::schedule(cx, Self { op, result: Ok(()) }, js);
-     }
- 
--    fn advance(job: Running<Self>, wait: FdWait, step: Result<Step, Box<SystemError>>) {
--        let result = match step {
--            Ok(Step::Done) => Ok(()),
--            Ok(Step::Wait) => match POLLER.admit(job.shared(), &wait) {
--                Ok(poller) => return poller.park(Parked(job.suspend((wait, Ok(()))))),
--                Err(err) => Err(err.into()),
--            },
--            Err(err) => Err(err),
-+    fn advance(mut job: Running<Self>, wait: FdWait, mut step: Result<Step, Box<SystemError>>) {
-+        let result = loop {
-+            step = match step {
-+                Ok(Step::Done) => break Ok(()),
-+                Ok(Step::Wait) => match POLLER.admit(job.shared(), &wait) {
-+                    Ok(poller) => return poller.park(Parked(job.suspend((wait, Ok(()))))),
-+                    Err(err) => break Err(err.into()),
-+                },
-+                Ok(Step::Again) => match job.shared().check_cancelled(&wait) {
-+                    Ok(()) => job.off().op.step(wait.fd(), false),
-+                    Err(err) => break Err(err.into()),
-+                },
-+                Err(err) => break Err(err),
-+            };
++fn find_tail_of_bundled_function(
++    options: &CompileParseOptions<'_>,
++    text: &[u8],
++) -> Option<std::ops::Range<usize>> {
++    let session = Session::new();
++    let atoms = Interner::new_in(&session);
++    let hir = parse_for_compile(session.arena(), options, text, &atoms);
++    let mut statements = hir.ids::<StmtId>(hir.body);
++    let (Some(statement), None) = (statements.next(), statements.next()) else {
++        return None;
++    };
++    let StmtKind::Expr(function) = hir[statement].kind else {
++        return None;
++    };
++    let is_whole =
++        syntax_errors_of(&hir).next().is_none() && matches!(hir[function].kind, ExprKind::Fn(_));
++    is_whole.then(|| hir[function].end as usize - 1..hir[statement].loc.end as usize)
++}
++
+ #[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+ pub(crate) struct ResolveWhoseFoldersBringNothing {
+     pub(crate) file: Vec<u8>,
+@@ -1800,12 +1821,22 @@ impl CodeHost for LoadHost<'_> {
+                 || hir::find_transpiled_mark(text).is_some(),
          };
-         drop(wait);
-         Self::finish(job, result);
-```
-
-**File**: `src/runtime/webcore/blob/read_file.rs` (modified, +14/-5)
-```diff
-@@ -257,8 +257,12 @@ impl FdOp for ReadFile {
-         if expected == 0 && bun_sys::is_regular_file(self.cached_mode) {
-             return Ok((fd, Step::Done));
-         }
--        // An empty read waits like any other.
--        if self.max_length == 0 && self.must_wait(fd.get()) {
-+        // Opening a FIFO lets its writer go on, and closing it at once would break that pipe.
-+        if self.max_length == 0
-+            && matches!(fd, JobFd::Opened(_))
-+            && bun_sys::S::ISFIFO(stat.st_mode as _)
-+            && self.must_wait(fd.get())
+         let is_bundled_commonjs = is_bundled_commonjs(text);
+-        let body_of_bundle = match is_bundled_commonjs {
++        let mut body_of_bundle = match is_bundled_commonjs {
+             true => blank_commonjs_wrapper(text),
+             false => None,
+         };
+         let parsed_text = body_of_bundle.as_deref().unwrap_or(text);
+         let mut hir = parse_for_compile(arena, &compile_options, parsed_text, atoms);
++        // A last line that begins with `//` may be a comment or the rest of a template, so then the parser finds the end.
++        if is_bundled_commonjs
++            && (body_of_bundle.is_none() || syntax_errors_of(&hir).next().is_some())
++            && let Some(tail) = find_tail_of_bundled_function(&compile_options, text)
++            && let Some(body) = blank_commonjs_wrapper_with_tail(text, tail)
 +        {
-             return Ok((fd, Step::Wait));
-         }
-         if !self.could_block || expected > 0 {
-@@ -271,26 +275,31 @@ impl FdOp for ReadFile {
-         Ok((fd, step))
-     }
- 
--    fn step(&mut self, fd: Fd, mut ready: bool) -> Result<Step, Box<SystemError>> {
-+    fn step(&mut self, fd: Fd, ready: bool) -> Result<Step, Box<SystemError>> {
-         let mut stack_buffer = [const { MaybeUninit::uninit() }; 64 * 1024];
-         loop {
-             let max = (self.max_length as usize).saturating_sub(self.buffer.len());
-             if max == 0 {
-                 break;
-             }
--            if !core::mem::take(&mut ready) && self.must_wait(fd) {
-+            if !ready && self.must_wait(fd) {
-                 return Ok(Step::Wait);
-             }
-             match self.read_some(fd, max, &mut stack_buffer) {
-                 Ok(0) => break,
-+                // It may never end.
-+                Ok(_) if self.could_block => return Ok(Step::Again),
-                 Ok(_) => {}
-                 Err(err) if err.get_errno() != bun_sys::E::EAGAIN => {
-                     self.buffer = Vec::new();
-                     let mut err = Box::<SystemError>::from(err);
-                     err.path = self.path_for_error();
-                     return Err(err);
-                 }
--                Err(_) => self.could_block = true,
-+                Err(_) => {
-+                    self.could_block = true;
-+                    return Ok(Step::Again);
-+                }
-             }
-         }
-         if self.buffer.len() + 16_000 < self.buffer.capacity() {
-```
-
-**File**: `src/runtime/webcore/blob/write_file.rs` (modified, +7/-1)
-```diff
-@@ -77,7 +77,13 @@ impl FdOp for WriteFile {
- 
-         #[cfg(any(target_os = "linux", target_os = "android"))]
-         if !self.could_block && self.range.len() > 1024 {
--            let _ = sys::preallocate_file(fd.get().native(), 0, self.range.len() as i64);
-+            // Preallocating grows the file, and O_APPEND writes after its end.
-+            let appends = pathlike.is_fd()
-+                && sys::get_fcntl_flags(fd.get())
-+                    .is_ok_and(|flags| flags as i32 & sys::O::APPEND != 0);
-+            if !appends {
-+                let _ = sys::preallocate_file(fd.get().native(), 0, self.range.len() as i64);
-+            }
-         }
-         let step = self.step(fd.get(), false)?;
-         Ok((fd, step))
-```
-
-**File**: `test/js/bun/io/bun-write.test.js` (modified, +56/-0)
-```diff
-@@ -1818,6 +1818,33 @@ it.skipIf(isWindows)("Bun.write() goes on each time a pipe has room", async () =
-   expect(drained + drain(fifo.reader)).toBe(9 * room);
- });
- 
-+it.skipIf(isWindows).each([
-+  ["a Blob", new Blob([Buffer.alloc(2000, "a")]), 2000],
-+  ["a large Buffer", Buffer.alloc(300 * 1024, "a"), 300 * 1024],
-+])("Bun.write(Bun.file(fd), %s) appends right after the end of a file opened with O_APPEND", async (_, data, size) => {
-+  using dir = tempDir("bun-write-append", { log: "first\n" });
-+  const log = join(String(dir), "log");
-+  const fd = fs.openSync(log, "a");
-+  try {
-+    expect(await Bun.write(Bun.file(fd), data)).toBe(size);
-+  } finally {
-+    fs.closeSync(fd);
-+  }
-+  const written = fs.readFileSync(log);
-+  expect({ size: written.length, firstNul: written.indexOf(0) }).toEqual({ size: 6 + size, firstNul: -1 });
-+});
-+
-+it.skipIf(!isLinux).each([true, false])(
-+  "a copy to a path of 4096 bytes is ENAMETOOLONG, createPath: %p",
-+  async createPath => {
-+    using dir = tempDir("bun-write-long-path", { from: "hello" });
-+    const to = (String(dir) + Buffer.alloc(3800, "/" + "a".repeat(99)).toString() + "/").padEnd(4096, "b");
-+    const destination = await (await fetch("file://" + to)).blob();
-+    const error = await Bun.write(destination, Bun.file(join(String(dir), "from")), { createPath }).catch(e => e);
-+    expect({ code: error.code, path: error.path }).toEqual({ code: "ENAMETOOLONG", path: to });
-+  },
-+);
-+
- describe.skipIf(!isLinux).concurrent("Bun.write() to a pipe that is full", () => {
-   const data = new Blob([Buffer.alloc(1 << 20, "a")]);
-   /** `.size` makes the file find out that it is not a regular one. */
-@@ -1827,6 +1854,35 @@ describe.skipIf(!isLinux).concurrent("Bun.write() to a pipe that is full", () =>
-     return file;
-   }
- 
-+  // EPOLLERR
-+  it("rejects with EPIPE when the reader leaves", async () => {
-+    using dir = tempDir("bun-write-pipe", {});
-+    using fifo = openFifo(String(dir));
-+    const write = Bun.write(knownPipe(fifo.writer), data).catch(({ code, syscall }) => ({ code, syscall }));
-+    await untilWatched(fifo.writer);
-+    fifo.close(fifo.reader);
-+    expect(await write).toEqual({ code: "EPIPE", syscall: "write" });
-+  });
-+
-+  it("rejects with EPIPE when the reader leaves after it has read some", async () => {
-+    using dir = tempDir("bun-write-pipe", {});
-+    using fifo = openFifo(String(dir));
-+    const write = Bun.write(knownPipe(fifo.writer), data).catch(({ code, syscall }) => ({ code, syscall }));
-+    await untilWatched(fifo.writer);
-+    const page = Buffer.alloc(65536);
-+    for (let read = 0; read < 3 * page.length;) {
-+      try {
-+        read += fs.readSync(fifo.reader, page);
-+      } catch (error) {
-+        if (error.code !== "EAGAIN") throw error;
-+        await Bun.sleep(1);
-+      }
-+    }
-+    await untilWatched(fifo.writer);
-+    fifo.close(fifo.reader);
-+    expect(await write).toEqual({ code: "EPIPE", syscall: "write" });
-+  });
-+
-   // The capacity of a pipe is fixed on Linux.
-   it("waits for room after the last byte", async () => {
-     using dir = tempDir("bun-write-pipe", {});
-```
-
-**File**: `test/js/bun/module-graph/module-graph-io.test.ts` (modified, +21/-1)
-```diff
-@@ -2,7 +2,7 @@
- // for timers and I/O: what its code opens belongs to it, and dispose() closes all of it.
- import { afterAll, describe, expect, test } from "bun:test";
- import fs, { rmSync, writeFileSync } from "fs";
--import { bunEnv, bunExe, tempDir, tls } from "harness";
-+import { bunEnv, bunExe, isLinux, tempDir, tls } from "harness";
- import { AsyncLocalStorage } from "node:async_hooks";
- import net from "node:net";
- import nodeTls from "node:tls";
-@@ -1235,3 +1235,23 @@ describe.concurrent("ModuleGraph: a request through an Agent of the host's is st
-     },
-   );
- });
-+
-+// /proc/self/io counts what was read.
-+test.skipIf(!isLinux)("dispose() stops a read of a device that always has more", async () => {
-+  const size = 256 * 1024 * 1024;
-+  const script = `
-+    const { readFileSync } = require("node:fs");
-+    const bytesRead = () => Number(/rchar: (\\d+)/.exec(readFileSync("/proc/self/io", "utf8"))[1]);
-+    const graph = new Bun.ModuleGraph();
-+    graph.run(() => void Bun.file("/dev/zero").slice(0, ${size}).bytes());
-+    graph.dispose();
-+    const before = bytesRead();
-+    process.on("beforeExit", () => console.log(bytesRead() - before));
-+  `;
-+  await using proc = Bun.spawn({ cmd: [bunExe(), "-e", script], env: bunEnv, stdout: "pipe", stderr: "inherit" });
-+  const [stdout, exitCode] = await Promise.all([proc.stdout.text(), proc.exited]);
-+  expect(stdout).toMatch(/^\d+\n$/);
-+  // One read() can be under way. The buffer doubles, so it is for half of the bytes at most.
-+  expect(Number(stdout)).toBeLessThan(size * 0.75);
-+  expect(exitCode).toBe(0);
-+});
-```
-
-**File**: `test/js/bun/util/bun-file-fd-read.test.ts` (modified, +11/-1)
-```diff
-@@ -1,6 +1,6 @@
- import { dlopen, ptr } from "bun:ffi";
- import { describe, expect, test } from "bun:test";
--import { closeSync, openSync, readSync, renameSync, writeSync } from "fs";
-+import { closeSync, existsSync, openSync, readSync, renameSync, writeSync } from "fs";
- import { bunEnv, bunExe, isLinux, isWindows, libcPathForDlopen, tempDir } from "harness";
- import { constants } from "os";
- import { join } from "path";
-@@ -53,6 +53,16 @@ describe.skipIf(isWindows)("Bun.file(fd) read", () => {
-   });
- });
- 
-+test.skipIf(isWindows)("an empty slice of a pipe that nobody writes to resolves", async () => {
-+  using dir = tempDir("bun-file-fd-read", {});
-+  using fifo = openFifo(String(dir));
-+  expect(await Bun.file(fifo.reader).slice(0, 0).text()).toBe("");
-+});
-+
-+test.skipIf(!isLinux || !existsSync("/dev/ptmx"))("an empty slice of a silent terminal resolves", async () => {
-+  expect(await Bun.file("/dev/ptmx").slice(0, 0).text()).toBe("");
-+});
-+
- test.skipIf(!isLinux)("an empty read of a FIFO by path stays open until its writer has written", async () => {
-   using dir = tempDir("bun-file-fd-read", {});
-   using fifo = openFifo(String(dir));
++            hir = parse_for_compile(arena, &compile_options, &body, atoms);
++            body_of_bundle = Some(body);
++        }
++        let parsed_text = body_of_bundle.as_deref().unwrap_or(text);
+         let is_entry_text = self.plugins.loader_of_entry_text(path).is_some();
+         let is_language_assumed = is_entry_text
+             || (matches!(served_by, ServedBy::Disk)
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #49521** (2026-11-23): Bun.diff: add ignoreCase, ignoreWhitespace and stripTrailingCr, and harden util.diff and bun pm diff (@alii)
-- **PR #49517** (2026-11-23): Bun.diff.parsePatch: fix a throw for commit messages with a line of = or * (@alii)
-- **PR #49504** (closed): install: use the dependency id sentinel for dependency ids (@robobun)
-- **PR #49486** (2026-11-23): Bump WebKit: keep the cell state of an array that map() widens under --aot (@dylan-conway)
-- **PR #49482** (2026-11-23): blob: a job that waits is a typed handle, and the IO thread keeps it by key (@alii)
-- **PR #49480** (2026-11-23): Faster diffs: Bun.diff, bun pm diff, bun lint, expect, util.diff and node:assert (@alii)
+- **PR #49573** (2026-11-25): Bun.diff: whole words in more scripts, and throw for unsupported options (@alii)
+- **PR #49566** (closed): watcher: report a truncation as a write on kqueue (@dylan-conway)
+- **PR #49565** (2026-11-24): util.diff: use a binding of its own instead of Bun.diff (@alii)
+- **PR #49548** (2026-11-24): redis: a reconnect returns to the database that the client selected (@alii)
+- **PR #49542** (closed): [do not merge] Run test/aot on the preview build of oven-sh/WebKit#1093 (@robobun)
+- **PR #49534** (closed): resolver: stop leaking a directory listing on every failed lookup (@dylan-conway)
 
 ---
 
@@ -2581,45 +1698,32 @@ the fi
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ipc: fifteen fixes to re-entry, handles and the lifetime of the channel
+## X. Fourteen fixes: splitting, async stack frames, macOS sockets and fs.watch, insta
 
 **RULE**:
-When implementing operations in `src/js/builtins/Ipc.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in oven-sh/bun. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/runtime/code-generation-from-strings.mdx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in oven-sh/bun. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `476428f3`: ipc: fifteen fixes to re-entry, handles and the lifetime of the channel. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0a9bbf50`: Fourteen fixes: splitting, async stack frames, macOS sockets and fs.watch, install, stdin, cjs, vm, s3, http, Windows listeners, dns. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/js/builtins/Ipc.ts`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/runtime/code-generation-from-strings.mdx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
- * @returns {(() => void) | undefined} what delivers the message now, once the caller has let go of `fd`
-      return () => emit(target, serialized.msg, socket);
-      if (err) throw new Error(`failed to open received dgram handle: ${err}`);
-      return () => emit(target, serialized.msg, wrap);
+A `vm.SyntheticModule` runs a function of the program's own, so `=strict` does not let `node:vm` stop it part-way. `module.evaluate()` with `timeout` or `breakOnSigint: true` rejects with a `TypeError` whose code is `ERR_INVALID_ARG_VALUE`, and the module does not run.
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
- * @param {unknown} handle
- * @param {(handle: Handle) => void} emit
- * @returns {void}
-      emit(target, serialized.msg, socket);
-      return;
-      if (err) {
-        // The wrap only owns the descriptor on success; don't leak it.
-        require("node:fs").closeSync(fd);
-        throw new Error(`failed to open received dgram handle: ${err}`);
-      }
-      emit(target, serialized.msg, wrap);
-      return;
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `476428f3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0a9bbf50` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

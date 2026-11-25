@@ -46,8 +46,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-25T02:02:08.354Z",
-    "lastVerified": "2026-11-25T02:02:08.354Z",
+    "lastChecked": "2026-11-25T02:38:48.353Z",
+    "lastVerified": "2026-11-25T02:38:48.353Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-25T02:29:05.448Z",
-    "lastVerified": "2026-11-25T02:29:05.448Z",
+    "lastChecked": "2026-11-25T02:38:48.362Z",
+    "lastVerified": "2026-11-25T02:38:48.362Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -1342,9 +1342,9 @@
   "cryfs-cryfs": {
     "name": "cryfs",
     "officialUrl": "https://github.com/cryfs/cryfs",
-    "lastChecked": "2026-11-24T22:30:11.078Z",
+    "lastChecked": "2026-11-25T02:38:43.385Z",
     "revisionIdentifier": "e2da97b1",
-    "lastVerified": "2026-11-24T22:30:11.078Z"
+    "lastVerified": "2026-11-25T02:38:43.385Z"
   },
   "neondatabase-neon": {
     "name": "neon",
@@ -3623,9 +3623,9 @@
   "featureform-featureform": {
     "name": "featureform",
     "officialUrl": "https://github.com/featureform/featureform",
-    "lastChecked": "2026-11-24T07:07:39.366Z",
+    "lastChecked": "2026-11-25T02:38:45.823Z",
     "revisionIdentifier": "dc8b9fca",
-    "lastVerified": "2026-11-24T07:07:39.366Z"
+    "lastVerified": "2026-11-25T02:38:45.823Z"
   },
   "ekzhang-bore": {
     "name": "bore",
@@ -5895,9 +5895,9 @@
   "decodingai-magazine-llm-twin-course": {
     "name": "llm-twin-course",
     "officialUrl": "https://github.com/decodingai-magazine/llm-twin-course",
-    "lastChecked": "2026-11-24T08:34:22.752Z",
+    "lastChecked": "2026-11-25T02:38:41.105Z",
     "revisionIdentifier": "04e12f37",
-    "lastVerified": "2026-11-24T08:34:22.752Z"
+    "lastVerified": "2026-11-25T02:38:41.105Z"
   },
   "apache-zookeeper": {
     "name": "zookeeper",
@@ -8286,9 +8286,9 @@
   "kotlin-kmp-production-sample": {
     "name": "kmp-production-sample",
     "officialUrl": "https://github.com/Kotlin/kmp-production-sample",
-    "lastChecked": "2026-11-22T15:37:04.731Z",
+    "lastChecked": "2026-11-25T02:38:38.277Z",
     "revisionIdentifier": "b0bed628",
-    "lastVerified": "2026-11-22T15:37:04.731Z"
+    "lastVerified": "2026-11-25T02:38:38.277Z"
   },
   "pamburus-hl": {
     "name": "hl",
@@ -8705,14 +8705,14 @@
     "officialUrl": "https://github.com/oven-sh/bun",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-23T23:48:42.915Z",
-    "lastVerified": "2026-11-23T23:48:42.915Z",
+    "lastChecked": "2026-11-25T02:38:38.845Z",
+    "lastVerified": "2026-11-25T02:38:38.845Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-oven-sh-bun",
-    "contentHash": "79f1776b2e74c74671a5f86906732d668f2aebaad41286262e0b32a473f540c1",
+    "contentHash": "3375aaa9c1bc9a4d330c29ba31a3d3bb7388aca3c58344934278f1140d628f5e",
     "promotedRulesCount": 1,
-    "recentFixesCount": 10,
+    "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -12299,9 +12299,9 @@
   "scrapinghub-scrapy-poet": {
     "name": "scrapy-poet",
     "officialUrl": "https://github.com/scrapinghub/scrapy-poet",
-    "lastChecked": "2026-11-21T03:44:30.356Z",
+    "lastChecked": "2026-11-25T02:38:35.795Z",
     "revisionIdentifier": "c54e48e7",
-    "lastVerified": "2026-11-21T03:44:30.356Z"
+    "lastVerified": "2026-11-25T02:38:35.795Z"
   },
   "makecindy-cindy": {
     "name": "makecindy/cindy",

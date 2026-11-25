@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T02:30:10.923Z",
-  "total_records": 2627,
+  "last_updated": "2026-11-25T02:39:22.456Z",
+  "total_records": 2628,
   "domains": {
     "A": {
       "total": 22,
@@ -1653,7 +1653,7 @@
       ]
     },
     "H": {
-      "total": 625,
+      "total": 626,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -2279,7 +2279,8 @@
         "domain_intelligence-technical-construction-intelligence-cypress-io-cypress-core-invariants",
         "domain_intelligence-technical-construction-intelligence-cypress-io-cypress-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-tw93-mole-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-tw93-mole-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-tw93-mole-learnings-core-invariants",
+        "DOM-H-FBC5BA6F"
       ]
     },
     "I": {
@@ -8442,8 +8443,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "34d97a63a7aa85314bccd91feb579e814421675db01f45aaaae6260299b25a74",
-      "created_at": "2026-11-25T02:10:36.809Z"
+      "content_hash": "6d9f1ca4eb9515918acf2caaec305e1aa453250ce22c0ca40c3892cc5d5c89cf",
+      "created_at": "2026-11-25T02:39:22.456Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -9360,8 +9361,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "4c3a59fc4d25baa6ea29563735bfc8ab10e9ae419fe28f98e757f4695f235044",
-      "created_at": "2026-11-25T01:01:07.354Z"
+      "content_hash": "bf98278b61b5a4a58385262247572404bbfd399775b6b1a25013111b4bc5c1c3",
+      "created_at": "2026-11-25T02:39:21.331Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -17275,8 +17276,8 @@
       "title": "Technical Construction Intelligence: oven-sh/bun Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-oven-sh-bun-technical-construction-intelligence-oven-sh-bun-core-invariants.md",
       "repository": "oven-sh/bun",
-      "content_hash": "e79145128597333b7071240ae46468b557b226f8288ec0736f0bebee285058f7",
-      "created_at": "2026-11-23T23:48:44.372Z"
+      "content_hash": "2e5fe6ffd7c0be0236011a234f4d9466da1d2f0b72a5a44e51b23af0a66021e0",
+      "created_at": "2026-11-25T02:38:40.436Z"
     },
     "domain_intelligence-research-knowledge-intelligence-autotrust-gev-26b-decide-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-autotrust-gev-26b-decide-core-invariants",
@@ -17335,8 +17336,8 @@
       "title": "Technical Construction Intelligence: oven-sh-bun-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-oven-sh-bun-learnings-technical-construction-intelligence-oven-sh-bun-learnings-.md",
       "repository": "oven-sh-bun-learnings",
-      "content_hash": "c5e1ae33807a183602db4d05e34109ba25aa4697510a2024dd193b471296e07d",
-      "created_at": "2026-11-23T23:48:56.530Z"
+      "content_hash": "7adb1454b60fb6568f7a04c74c09cc9d5132d9e41389b49a2b4ddc644afa67fe",
+      "created_at": "2026-11-25T02:39:20.121Z"
     },
     "DOM-D-02DACB51": {
       "record_id": "DOM-D-02DACB51",
@@ -44086,6 +44087,48 @@
       "confidence": 0.6,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-25T02:30:10.412Z"
+    },
+    "DOM-H-FBC5BA6F": {
+      "record_id": "DOM-H-FBC5BA6F",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "G",
+          "id": "architecture",
+          "name": "Architecture Intelligence"
+        }
+      ],
+      "title": "Fourteen fixes: splitting, async stack frames, macOS sockets and fs.watch, insta",
+      "content": "When implementing operations in `docs/runtime/code-generation-from-strings.mdx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in oven-sh/bun. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "406a1527ff4314e401d4b1d342add1bc896c6d0a107b89c79fdfa8e541cb295b",
+      "summary": "Prevents defects observed in production commit `0a9bbf50`: Fourteen fixes: splitting, async stack frames, macOS sockets and fs.watch, instal -> When implementing operations in `docs/runtime/code-generation-from-strings.mdx`, engineers MUST enforce rigorous boundary validation, safe s",
+      "provenance": {
+        "source_uri": "project://oven-sh-bun/oven-sh-bun-learnings.md",
+        "source_version": "d3588a3c",
+        "observed_at": "2026-11-25T02:38:38.849Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (oven-sh-bun)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of oven-sh-bun"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "G"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.81,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-25T02:39:19.263Z"
     }
   }
 }

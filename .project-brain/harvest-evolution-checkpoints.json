@@ -1,9 +1,9 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T02:30:11.308Z",
+  "last_updated": "2026-11-25T02:39:22.843Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
-      "processed_at": "2026-11-25T02:10:36.237Z",
+      "processed_at": "2026-11-25T02:39:21.753Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -78,9 +78,9 @@
       "staged_for_review": 1
     },
     "oven-sh-bun-learnings.md": {
-      "processed_at": "2026-11-23T23:48:55.988Z",
-      "promoted_canonical": 0,
-      "staged_for_review": 1
+      "processed_at": "2026-11-25T02:39:19.304Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     },
     "hf-webai-official-twil-8b-learnings.md": {
       "processed_at": "2026-11-22T03:37:56.070Z",
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-25T01:01:06.821Z",
+      "processed_at": "2026-11-25T02:39:20.714Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3898,7 +3898,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 4026,
-  "total_canonical_promoted": 527,
-  "total_staged_for_review": 3079
+  "total_dossiers_evaluated": 4029,
+  "total_canonical_promoted": 528,
+  "total_staged_for_review": 3081
 }

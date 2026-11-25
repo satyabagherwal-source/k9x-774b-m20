@@ -12945,3 +12945,5 @@ Every entry in this ledger must capture:
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `eeb815a6` | Multi-dimensional audit evidence | 2026-11-25T02:29:02.170Z |
 | `learn-dom-d-95a94518` | `project://hf-memtensor-memt-1.0-pro` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-memtensor-memt-1.0-pro-learnings.md` | 2026-11-25T02:29:34.368Z |
 | `learn-dom-d-615f4579` | `project://freenet-freenet-core` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/freenet-freenet-core-learnings.md` | 2026-11-25T02:30:10.455Z |
+| `learn-github-oven-sh-bun` | `https://github.com/oven-sh/bun` | `d3588a3c` | Multi-dimensional audit evidence | 2026-11-25T02:38:39.998Z |
+| `learn-dom-h-fbc5ba6f` | `project://oven-sh-bun` | `d3588a3c` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oven-sh-bun-learnings.md` | 2026-11-25T02:39:19.303Z |

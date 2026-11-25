@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-25T02:30:10.452Z",
+  "updated_at": "2026-11-25T02:39:19.301Z",
   "statistics": {
-    "total_nodes": 526,
-    "total_edges": 217,
+    "total_nodes": 527,
+    "total_edges": 218,
     "domain_distribution": {
       "D": 319,
       "M": 1,
-      "H": 95,
+      "H": 96,
       "J": 22,
       "K": 32,
       "L": 9,
@@ -21,7 +21,7 @@
       "C": 1
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 213,
+      "CONSTRAINED_BY_ARCHITECTURE": 214,
       "VERIFIED_BY_TEST": 2,
       "STYLED_BY_DESIGN": 2
     }
@@ -11743,6 +11743,29 @@
       ],
       "created_at": "2026-11-25T02:30:10.452Z",
       "updated_at": "2026-11-25T02:30:10.452Z"
+    },
+    "DOM-H-FBC5BA6F": {
+      "id": "DOM-H-FBC5BA6F",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Fourteen fixes: splitting, async stack frames, macOS sockets and fs.watch, insta",
+      "summary": "Prevents defects observed in production commit `0a9bbf50`: Fourteen fixes: splitting, async stack frames, macOS sockets and fs.watch, instal -> When implementing operations in `docs/runtime/code-generation-from-strings.mdx`, engineers MUST enforce rigorous boundary validation, safe s",
+      "confidence": 0.81,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://oven-sh-bun/oven-sh-bun-learnings.md",
+        "source_version": "d3588a3c",
+        "observed_at": "2026-11-25T02:38:38.849Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (oven-sh-bun)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence",
+        "G"
+      ],
+      "created_at": "2026-11-25T02:39:19.300Z",
+      "updated_at": "2026-11-25T02:39:19.300Z"
     }
   },
   "edges": [
@@ -13915,6 +13938,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-D-95A94518 [D] with Domain M",
       "created_at": "2026-11-25T02:29:34.365Z"
+    },
+    {
+      "id": "EDGE-6585EF3BDDB7",
+      "sourceId": "DOM-H-FBC5BA6F",
+      "targetId": "NODE-G-domain-bridge-g",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-H-FBC5BA6F [H] with Domain G",
+      "created_at": "2026-11-25T02:39:19.300Z"
     }
   ]
 }

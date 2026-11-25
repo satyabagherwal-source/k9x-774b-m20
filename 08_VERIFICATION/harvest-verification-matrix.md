@@ -12912,3 +12912,5 @@
 | `CYCLE-20261125-8UHI` | `2026-11-25T02:29:02.166Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10434` | Yes (`9f39ed50...`) |
 | `CYCLE-2026-11-25-PROJ-EVOLVE` | `2026-11-25T02:29:34.368Z` | `hf-memtensor-memt-1.0-pro` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-95A94518` [Domain D] | Yes (`6c733bdd...`) |
 | `CYCLE-2026-11-25-PROJ-EVOLVE` | `2026-11-25T02:30:10.455Z` | `freenet-freenet-core` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-615F4579` [Domain D] | Yes (`038b9cd8...`) |
+| `CYCLE-20261125-L8C9` | `2026-11-25T02:38:39.993Z` | `oven-sh/bun` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10435` | Yes (`3375aaa9...`) |
+| `CYCLE-2026-11-25-PROJ-EVOLVE` | `2026-11-25T02:39:19.303Z` | `oven-sh-bun` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-FBC5BA6F` [Domain H] | Yes (`406a1527...`) |

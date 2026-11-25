@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261123-NSE0",
-    "timestamp": "2026-11-23T16:37:07.320Z",
-    "repository": "open-policy-agent/opa",
-    "learningId": "learn-github-open-policy-agent-opa",
-    "contentHash": "f799476265a6de793cbca2de9472c7dc0065786e9492dff0ab37688361585c85",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261123-NUL6",
     "timestamp": "2026-11-23T16:37:10.170Z",
     "repository": "nolabs-ai/nono",
@@ -7490,6 +7475,21 @@
     "repository": "NucleoidAI/Nucleoid",
     "learningId": "learn-github-nucleoidai-nucleoid",
     "contentHash": "9f39ed506619545bb0e86acb447d2be28ebc422544804831d0aa5de4ffe6cf41",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-L8C9",
+    "timestamp": "2026-11-25T02:38:39.993Z",
+    "repository": "oven-sh/bun",
+    "learningId": "learn-github-oven-sh-bun",
+    "contentHash": "3375aaa9c1bc9a4d330c29ba31a3d3bb7388aca3c58344934278f1140d628f5e",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

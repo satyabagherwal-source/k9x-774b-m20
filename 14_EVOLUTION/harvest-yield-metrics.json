@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T02:29:02.176Z",
-  "total_cycles_completed": 12263,
-  "total_learnings_persisted": 12263,
-  "total_rules_promoted": 11308,
+  "last_updated": "2026-11-25T02:38:40.004Z",
+  "total_cycles_completed": 12264,
+  "total_learnings_persisted": 12264,
+  "total_rules_promoted": 11309,
   "history": [
-    {
-      "timestamp": "2026-11-24T14:15:09.592Z",
-      "repository": "nginx/kubernetes-ingress",
-      "learningId": "learn-github-nginx-kubernetes-ingress",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-24T14:15:13.899Z",
       "repository": "arangodb/arangodb",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-25T02:29:02.176Z",
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T02:38:40.004Z",
+      "repository": "oven-sh/bun",
+      "learningId": "learn-github-oven-sh-bun",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -7703,10 +7703,10 @@
     "repository": "oven-sh/bun",
     "platform": "github",
     "sourceUrl": "https://github.com/oven-sh/bun",
-    "sourceVersion": "26f8a967",
+    "sourceVersion": "d3588a3c",
     "license": "NOASSERTION",
-    "contentHash": "79f1776b2e74c74671a5f86906732d668f2aebaad41286262e0b32a473f540c1",
-    "lastHarvestedAt": "2026-11-23T23:48:43.975Z",
+    "contentHash": "3375aaa9c1bc9a4d330c29ba31a3d3bb7388aca3c58344934278f1140d628f5e",
+    "lastHarvestedAt": "2026-11-25T02:38:39.998Z",
     "learningId": "learn-github-oven-sh-bun"
   },
   "codeeditapp-codeedit": {
