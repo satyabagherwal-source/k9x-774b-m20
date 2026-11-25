@@ -13149,3 +13149,6 @@
 | `CYCLE-20261125-MXV5` | `2026-11-25T23:11:42.833Z` | `grpc/grpc-rust` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10556` | Yes (`3c67d06e...`) |
 | `CYCLE-20261125-N7MI` | `2026-11-25T23:11:55.482Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10532` | Yes (`c771ab7a...`) |
 | `CYCLE-20261125-N98G` | `2026-11-25T23:11:57.568Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10557` | Yes (`d02f523e...`) |
+| `CYCLE-20261125-2QSW` | `2026-11-25T23:24:00.176Z` | `Qwen/Qwen3-Embedding-0.6B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-embedding-0.6b-learnings.md` | Yes (`eb63a9ca...`) |
+| `CYCLE-20261125-2SQO` | `2026-11-25T23:24:02.688Z` | `embassy-rs/embassy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10558` | Yes (`980312a5...`) |
+| `CYCLE-20261125-2ZXF` | `2026-11-25T23:24:12.003Z` | `RustCrypto/hashes` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10559` | Yes (`d3e07efb...`) |

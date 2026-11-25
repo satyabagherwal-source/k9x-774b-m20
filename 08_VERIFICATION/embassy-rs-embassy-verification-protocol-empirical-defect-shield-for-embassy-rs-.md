@@ -4,22 +4,22 @@
 {
   "source_repository": "embassy-rs/embassy",
   "source_url": "https://github.com/embassy-rs/embassy",
-  "source_version": "17b3b541",
+  "source_version": "c7f4fb42",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-24T15:44:30.443Z",
+  "timestamp": "2026-11-25T23:24:03.008Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-embassy-rs-embassy",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [embassy-rs/embassy](https://github.com/embassy-rs/embassy) (Revision: `17b3b541`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-24T15:44:30.443Z`  
+> **Provenance**: Harvested from [embassy-rs/embassy](https://github.com/embassy-rs/embassy) (Revision: `c7f4fb42`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-25T23:24:03.008Z`  
 > **Learning ID**: `learn-github-embassy-rs-embassy`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `embassy-rs/embassy` (Commit: `17b3b541`)
+- **Target Repository**: `embassy-rs/embassy` (Commit: `c7f4fb42`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/embassy-rs-embassy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/embassy-rs/embassy](https://github.com/embassy-rs/embassy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T15:44:28.775Z  
+> **Harvest Timestamp**: 2026-11-25T23:24:01.180Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Modern embedded framework, using Rust and async.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 10145 stars
+- **Stars / Engagement**: 10148 stars
 
 ---
 
@@ -1446,13 +1446,14 @@ unsafe fn bounce_chunks_inout(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7637** (2026-11-24): **stm32/hsem: fix secondary core boot; RCC enable registers are per-core**
-  *Symptoms*: Fixes the dual-core boot regression reported in [#7609](https://github.com/embassy-rs/embassy/issues/7609#issuecomment-4012288998) (follow-up to #7612, which is already merged).  `try_init_secondary` from #7612 waits for `init_primary` to enable the HSEM clock (`rcc::is_enabled`), on the assumption that the RCC enable registers are shared between the cores on STM32H7. **They are not: they are banked per core.** Each CPU has its own peripheral clock gates ("peripheral allocation", AN5557 2.3: *"each CPU features dedicated registers and bits"*), and one core cannot enable a peripheral for the other.  Closes gh-7609.
-
-- **Issue #7636** (2026-11-24): **Replace synopsys-otg's Copy raw mutex with a SharedRawMutex trait**
-  *Symptoms*: This replaces #6692 with something I like better. synopsys-otg passes its lock to several parts of the driver, so it needs a lock handle it can duplicate. Requiring `RawMutex + Copy` did that, but it meant making `CriticalSectionRawMutex` `Copy`, which stops making sense once a raw mutex carries state (#7634).  So synopsys-otg has its own `SharedRawMutex` trait now: a lock handle with `share()` to get another handle to the same lock. It's implemented for `CriticalSectionRawMutex`, which stays zero-sized, and for `&M` for any `RawMutex`, so a multi-core spinlock like esp-sync's still works by reference. `CriticalSectionRawMutex` loses its unreleased `Clone + Copy`.  The catch is that the synopsys-otg state types (`State`, `HostState`, `OtgInstance`, `OtgHostInstance`, `OtgHostAllocator`) are `Clone` now instead of `Copy`.  
+- **Issue #7641** (2026-11-25): **[MCXA] OSC32K: keep a retained mismatch running, make the lock optional**
+  *Symptoms*: OSC32K lives in the VBAT domain. Its controls survive every reset except a VBAT POR. Today `init` fails when a running OSC32K has other settings than the config asks for, and `configure_osc32k_clocks` locks `OSCLCKA`.  Failure sequence on a product: 1. Image A sets up OSC32K and locks it. 2. Image B (an update) asks for another gain or caps. 3. `init` returns `BadConfig`, so image B cannot boot. A boot loader rolls back to image A. 4. The update never applies until the battery and all supplies are removed (VBAT POR).  ## Changes `configure_osc32k_clocks` no longer fails on a retained OSC32K. It reports what it found in the new `Clocks::osc32k_status`:  | Retained OSC32K | Status | Action | |---|---|---| | Off, or same settings | `Requested` | Normal LP start-up, or keep it | | Unlocked, other settings | `Restarted` | Stop it, then run the LP start-up again (RTC loses up to the start-up time once) | | Locked, other settings | `LockedMismatch` | Keep it and its 32 kHz outputs | | Locked, off | `LockedDisabled` | No 32 kHz outputs |  New `Osc32KConfig::lock` (default `false`) sets `OSCLCKA`. The RM LP sequence has no lock step, and the NXP SDK does not lock OSC32K.  ## Testing MCXA577, LP mode, gain 01, `lock = false`.  | Start state | Result | |---|---| | Locked in Normal mode by older firmware | ✅ `LockedMismatch`, no init failure, RTC counts | | Off after VBAT POR | ✅ LP, gain 01, unlocked, RTC counts | | Unlocked LP, same settings, after MCU reset | ✅ Unchanged, unlocked | |
   **Post-Mortem & Fix Analysis**:
   > This pull request is a **draft**, so it isn't in the [review queue](https://bot.embassy.dev) yet. Mark it as **ready for review** when you'd like someone to look at it.
+  > @felipebalbi 
+
+- **Issue #7637** (2026-11-24): **stm32/hsem: fix secondary core boot; RCC enable registers are per-core**
+  *Symptoms*: Fixes the dual-core boot regression reported in [#7609](https://github.com/embassy-rs/embassy/issues/7609#issuecomment-4012288998) (follow-up to #7612, which is already merged).  `try_init_secondary` from #7612 waits for `init_primary` to enable the HSEM clock (`rcc::is_enabled`), on the assumption that the RCC enable registers are shared between the cores on STM32H7. **They are not: they are banked per core.** Each CPU has its own peripheral clock gates ("peripheral allocation", AN5557 2.3: *"each CPU features dedicated registers and bits"*), and one core cannot enable a peripheral for the other.  Closes gh-7609.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1469,1109 +1470,196 @@ unsafe fn bounce_chunks_inout(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `dca7dc8a` (2026-11-24)
-**Commit Message**: stm32/hsem: fix secondary core boot; RCC enable registers are per-core
+### Incident Patch 1: `cdc571c8` (2026-11-25)
+**Commit Message**: embassy-mcxa: fix retained OSC32K restart handling
 
-PR #7612 made try_init_secondary wait for the primary core to enable the
-HSEM peripheral clock, but the RCC enable registers are banked per core
-on the dual-core parts: each core gates its own peripheral clocks and one
-core cannot enable a peripheral for the other. On STM32H755 the same
-address reads back a different value per core (0x02000000 on the CM4 vs
-0x122007ff on the CM7 after init_primary), so is_enabled() never became
-true on the secondary core and the boot deadlocked (issue #7609).
+Preserve inherited output gates across oscillator restarts and
+interrupted setup. Establish a disabled, non-bypass state before startup
+and reject stop readiness timeouts. Separate retained LP runtime
+compatibility from startup-trim verification so timer-only reset changes
+do not restart the source.
 
-Enable the HSEM clock in this core's own bank again, as the code did
-before, and keep the level-semantics notification: the channel flag is
-visible across cores in the per-core status banks, so is_notified() works
-once this core has clocked the peripheral. Remove rcc::is_enabled again.
-
-Add a HIL regression test that runs both sides of the handshake: the
-test image carries a tiny secondary-core (CM4) program at 0x08100000
-(the CM4's boot address) and a CPUID-dispatched role for the case the
-CM4 boots the test image itself. The secondary side enables its own
-HSEM clock and observes the notification level, like try_init_sec
-
-**File**: `embassy-stm32/CHANGELOG.md` (modified, +1/-1)
+**File**: `embassy-mcxa/src/clocks/operator.rs` (modified, +35/-20)
 ```diff
-@@ -26,7 +26,7 @@ HSEM:
- - fix: stm32/hsem: `HardwareSemaphoreInterruptHandler` now consumes the notification flags with `HSEM_CnICR` and latches them in software before waking. The latched masked status keeps the interrupt line asserted until the flags are cleared, so masking `HSEM_CnIER` (the old behavior) did not deassert it: arming the interrupt with a notification pending re-entered the handler forever, starving the tasks supposed to consume the notification. The software latch also delivers a notification whose wake happens before the listener registers its waker.
- - feat: stm32/hsem: add `HardwareSemaphoreChannel::is_notified` and `HardwareSemaphoreChannel::clear_notification`, which check and clear the notification without consuming it.
- - fix: stm32: `init_primary` discards a stale HSEM notification from a previous run of the core before initializing the hardware, and `init_secondary`/`try_init_secondary` treat the notification as a level rather than an event. The secondary core can now be started (or restarted under a debugger) in any order relative to the primary core without deadlocking or consuming a stale notification.
--- change: stm32: `try_init_secondary` no longer blocks when the other core is not done with its init (matching its documentation) and, on STM32H7 dual-core parts, no longer writes the shared RCC enable register concurrently with the other core's clock setup.
-+- change: stm32: `try_init_secondary` no longer blocks when the other core is not done with its init (matching its documentation).
- 
- SUBGHZ:
- - feat: stm32/subghz: add a driver for the on-chip sub-GHz radio of STM32WL and STM32WLE5 (`SubghzSpi`, `SubghzControl`). It covers the dedicated `SUBGHZSPI`, radio reset, `RFBUSY` waiting and the `SUBGHZ_RADIO` interrupt. The driver does not wrap the radio's command set: the caller sends the commands.
-```
-
-**File**: `embassy-stm32/src/lib.rs` (modified, +3/-14)
-```diff
-@@ -735,24 +735,13 @@ mod dual_core {
-     pub fn try_init_secondary(shared_data: &'static MaybeUninit<SharedData>) -> Option<Peripherals> {
-         // The HSEM peripheral must be clocked before its registers can be used.
-         //
--        // On families where each core has its own RCC enable registers this core
--        // can safely enable it. On families where the RCC enable registers are
--        // shared between the cores (STM32H7), doing so here would race with the
--        // other core's clock setup: critical sections are core-local and do not
--        // synchronize across cores, so a concurrent read-modify-write could drop
--        // either side's enable bit and leave the peripheral unclocked. Instead,
--        // wait for `init_primary`, which enables the HSEM peripheral before
--        // anything else, to clock it.
--        #[cfg(stm32wl5x)]
-+        // The RCC enable registers are banked per core on these parts: each
-+        // core gates its own peripheral clocks and cannot enable a peripheral
-+        // for the other core, so this core enables HSEM in its own bank.
-         critical_section::with(|cs| {
-             rcc::enable_with_cs_no_refcount::<peripherals::HSEM>(cs);
-         });
- 
--        #[cfg(not(stm32wl5x))]
--        if !rcc::is_enabled::<peripherals::HSEM>() {
--            return None;
--        }
--
-         // Wait for the primary core to complete its init. The notification is not
-         // consumed here, so a notification sent before this call (or before this
-         // core was restarted) is not lost.
-```
-
-**File**: `embassy-stm32/src/rcc/mod.rs` (modified, +0/-20)
-```diff
-@@ -372,16 +372,6 @@ impl RccInfo {
-         self.enable_with_cs_inner(cs, true);
+@@ -473,10 +473,11 @@ impl ClockOperator<'_> {
+         Ok(())
      }
  
--    /// Returns whether the peripheral clock is currently enabled.
--    ///
--    /// This only reads the RCC enable register, so unlike `enable_with_cs` it is
--    /// safe to call concurrently with the other core's own clock setup.
--    #[allow(dead_code)]
--    pub(crate) fn is_enabled(&self) -> bool {
--        // TODO: should this be `unsafe`?
--        unsafe { self.enable_ptr().read_volatile() & 1u32 << self.enable_bit != 0 }
--    }
--
-     // TODO: should this be `unsafe`?
-     fn enable_with_cs_inner(&self, cs: CriticalSection, no_refcount: bool) {
-         // set the xxxEN bit
-@@ -657,16 +647,6 @@ pub(crate) fn enable_with_cs_no_refcount<T: RccPeripheral>(cs: CriticalSection)
-     T::RCC_INFO.enable_with_cs_no_refcount(cs);
- }
++    // Startup trim may change across reset without changing the running LP source.
+     #[cfg(all(feature = "_mcxa5xx", not(feature = "rosc-32k-as-gpio")))]
+-    fn osc32k_lp_controls_match(&self) -> bool {
++    fn osc32k_lp_runtime_controls_match(&self) -> bool {
+         use config::Osc32KCoarseGain;
+-        use nxp_pac::vbat::{CoarseAmpGain, InitTrim, ModeEn, SupplyDet, XtalCapSel as ExtalCapSel, XtalCapSel};
++        use nxp_pac::vbat::{CoarseAmpGain, ModeEn, SupplyDet, XtalCapSel as ExtalCapSel, XtalCapSel};
  
--/// Returns whether the peripheral clock of `T` is currently enabled.
--///
--/// Unlike [`enable_with_cs_no_refcount`], this does not write to the (possibly
--/// shared) RCC enable register, so it is safe to use while the other core is
--/// concurrently enabling its own peripherals.
--#[allow(dead_code)]
--pub(crate) fn is_enabled<T: RccPeripheral>() -> bool {
--    T::RCC_INFO.is_enabled()
--}
--
- /// Enables and clears the reset for peripheral `T`.
- ///
- /// # Safety
-```
-
-**File**: `tests/link_cm4_image.x` (added, +10/-0)
-```diff
-@@ -0,0 +1,10 @@
-+/* Places the embedded secondary-core (CM4) image at the address its boot
-+ * option byte (BOOT_ADD0) points to, so that the core self-starts it after
-+ * every reset. Used by the `hsem_secondary` test (see src/bin/hsem_secondary.rs). */
-+SECTIONS
-+{
-+  .cm4_image 0x08100000 :
-+  {
-+    KEEP(*(.cm4_image))
-+  } > FLASH
-+} INSERT AFTER .rodata;
-```
-
-**File**: `tests/stm32/Cargo.toml` (modified, +5/-0)
-```diff
-@@ -279,6 +279,11 @@ name = "hsem_notify"
- path = "src/bin/hsem_notify.rs"
- required-features = [ "hsem",]
- 
-+[[bin]]
-+name = "hsem_secondary"
-+path = "src/bin/hsem_secondary.rs"
-+required-features = [ "stm32h755zi",]
-+
- [[bin]]
- name = "i2s_dma"
- path = "src/bin/i2s_dma.rs"
-```
-
-**File**: `tests/stm32/build.rs` (modified, +8/-0)
-```diff
-@@ -5,6 +5,7 @@ use std::{env, fs};
- fn main() -> Result<(), Box<dyn Error>> {
-     let out = PathBuf::from(env::var("OUT_DIR").unwrap());
-     fs::write(out.join("link_ram.x"), include_bytes!("../link_ram_cortex_m.x")).unwrap();
-+    fs::write(out.join("link_cm4_image.x"), include_bytes!("../link_cm4_image.x")).unwrap();
-     println!("cargo:rustc-link-search={}", out.display());
-     println!("cargo:rustc-link-arg-bins=--nmagic");
- 
-@@ -66,6 +67,7 @@ fn main() -> Result<(), Box<dyn Error>> {
+         let Some(cfg) = self.config.osc32k.as_ref() else {
+             return false;
+@@ -501,7 +502,6 @@ impl ClockOperator<'_> {
+             && osc.extal_cap_sel() == ExtalCapSel::Sel0
+             && osc.coarse_amp_gain() == gain
+             && osc.supply_det() == supply
+-            && self.vbat0.osccfga().read().init_trim() == InitTrim::Sel0
      }
  
-     println!("cargo:rerun-if-changed=../link_ram_cortex_m.x");
-+    println!("cargo:rerun-if-changed=../link_cm4_image.x");
-     println!("cargo:rerun-if-changed=src/bin");
-     for entry in fs::read_dir("src/bin")? {
-         let path = entry?.path();
-@@ -81,12 +83,18 @@ fn main() -> Result<(), Box<dyn Error>> {
-             || (ecc_reset && name == "flash" && !cfg!(feature = "stm32u083rc"))
-             // Stop is checked on every low-power board when running from flash, like an application.
-             || name == "stop"
-+            // The secondary-core (CM4) image embedded in this test must be in flash, and
-+            // the post-flash reset is what boots the CM4 core (see the test's docs).
-+            || name == "hsem_secondary"
-         {
-             "link.x"
-         } else {
-             "link_ram.x"
-         };
-         println!("cargo:rustc-link-arg-bin={name}=-T{script}");
-+        if name == "hsem_secondary" {
-+            println!("cargo:rustc-link-arg-bin={name}=-Tlink_cm4_image.x");
+     /// Establish LP OSC32K or adopt a compatible retained source without restarting it.
+@@ -535,21 +535,33 @@ impl ClockOperator<'_> {
+             self.clocks.osc32k_status = Osc32KStatus::LockedDisabled;
+             return Ok(());
+         }
+-        let mismatch = running && !self.osc32k_lp_controls_match();
++        // Snapshot output ownership before stopping the source. Gates can also
++        // survive an interrupted restart with OSC_EN already cleared.
++        let retained_gates = self.vbat0.oscclke().read();
++        let mismatch = running && !self.osc32k_lp_runtime_controls_match();
++        if !locked && (mismatch || !running) {
++            // Establish a stopped, non-bypass state before startup, including
++            // recovery from an interrupted stop with OSC_EN=0 and BYP_EN=1.
++            self.vbat0.oscctla().modify(|w| {
++                w.set_osc_en(false);
++                // RM 31.7.1.8: exit bypass with both enable bits cleared.
++                w.set_osc_byp_en(false);
++            });
++            let mut remaining = cfg.readiness_poll_budget.get();
++            while self.vbat0.statusa().read().osc_rdy() {
++                remaining -= 1;
++                if remaining == 0 {
++                    return Err(ClockError::BadConfig {
++                        clock: "osc32k",
++                        reason: "stop readiness poll budget exhausted",
++                    });
++                }
++            }
 +        }
-     }
+         self.clocks.osc32k_status = match (mismatch, locked) {
+             (false, _) => Osc32KStatus::Requested,
+             (true, true) => Osc32KStatus::LockedMismatch,
+-            (true, false) => {
+-                // Stop the unlocked oscillator so the start-up sequence below applies
+-                // the requested settings. Wait for OSC_RDY to clear, so the start-up
+-                // wait does not pass on the stale flag.
+-                self.vbat0.oscctla().modify(|w| w.set_osc_en(false));
+-                let mut remaining = cfg.readiness_poll_budget.get();
+-                while self.vbat0.statusa().read().osc_rdy() && remaining > 0 {
+-                    remaining -= 1;
+-                }
+-                Osc32KStatus::Restarted
+-            }
++            (true, false) => Osc32KStatus::Restarted,
+         };
+         let keep_settings = self.clocks.osc32k_status == Osc32KStatus::LockedMismatch;
+         let retained = self.vbat0.oscctla().read().osc_en();
+@@ -633,7 +645,10 @@ impl ClockOperator<'_> {
+                 });
+             }
+         }
+-        if !keep_settings && !self.osc32k_lp_controls_match() {
++        if !keep_settings
++            && (!self.osc32k_lp_runtime_controls_match()
++                || (!retained && self.vbat0.osccfga().read().init_trim() != InitTrim::Sel0))
++        {
+             return Err(ClockError::BadConfig {
+                 clock: "osc32k",
+                 reason: "LP control readback failed",
+@@ -642,9 +657,9 @@ impl ClockOperator<'_> {
  
-     if cfg!(feature = "stm32wb55rg") {
-```
-
-**File**: `tests/stm32/src/bin/hsem_notify.rs` (modified, +3/-2)
-```diff
-@@ -10,8 +10,9 @@
- //! core keeps running.
- //!
- //! This exercises the same `blocking_listen`/`is_notified` primitives that
--//! `init_secondary` uses. (The handshake itself needs both cores running, which the
--//! HIL farm cannot do; `init_primary` is covered by `common::init()` on this board.)
-+//! `init_secondary` uses. The handshake itself across both cores is covered by
-+//! the `hsem_secondary` test; `init_primary` is covered by `common::init()` on
-+//! this board.
- #![no_std]
- #![no_main]
+         // Preserve retained gates that may feed an existing RTC; only claim requested outputs.
+         self.vbat0.oscclke().modify(|w| {
+-            w.set_clke(0, cfg.vsys_domain_active || (retained && w.clke(0)));
+-            w.set_clke(1, cfg.vdd_core_domain_active || (retained && w.clke(1)));
+-            w.set_clke(2, cfg.vbat_domain_active || (retained && w.clke(2)));
++            w.set_clke(0, cfg.vsys_domain_active || retained_gates.clke(0));
++            w.set_clke(1, cfg.vdd_core_domain_active || retained_gates.clke(1));
++            w.set_clke(2, cfg.vbat_domain_active || retained_gates.clke(2));
+         });
+         let gates = self.vbat0.oscclke().read();
+         if (cfg.vsys_domain_active && !gates.clke(0))
+@@ -658,7 +673,7 @@ impl ClockOperator<'_> {
+         }
  
-```
-
-**File**: `tests/stm32/src/bin/hsem_secondary.rs` (added, +337/-0)
-```diff
-@@ -0,0 +1,337 @@
-+// required-features: stm32h755zi
-+
-+//! Dual-core boot handshake regression test (issue #7609 follow-up).
-+//!
-+//! The secondary core (CM4) must observe the primary core's `init_primary` from
-+//! across the cores. The RCC enable registers and the HSEM status registers are
-+//! banked per core on this part, so what matters is:
-+//!
-+//! - the CM4 can enable its own HSEM clock (each core gates its own peripherals;
-+//!   the primary core cannot do it for this core), and
-+//! - the channel 1 notification level (HSEM ISF bit 0 in this core's status
-+//!   bank: `get_hsem(1)` is channel 1, stored as index 0) is visible to this
-+//!   core after `init_primary` unlocked the channel.
-+//!
-+//! The CM4 side runs as whichever image the CM4 boots after the post-flash
-+//! reset: the tiny one embedded at 0x08100000 (BOOT_ADD1), or this image's
-+//! `cm4_role` (BOOT_ADD0 = 0x08000000 on this board), dispatched on CPUID.
-+//!
-+//! Shared SRAM4 words (volatile u32):
-+//!   +4  status: bit 0 = saw HSEM clock enable, bit 1 = saw notification
-+//!   +8  done (= 0xD04ED04E when status == 3)
-+//!   +12 heartbeat: bumped every poll iteration
-+//!   +16 raw AHB4ENR (0x580244E0) as the CM4 reads it
-+//!   +20 raw HSEM ISR bank 1 (0x58026518) as the CM4 reads it
-+//!   +52 count of poll iterations that saw the notification bit
-+//!   +28 command: primary writes 0xC0DEC0DE to trigger the visibility probe
-+//!   +32 probe-done (= 0xD04ED04E)
-+//!   +36..+52 probe slots (see `cm4_role`)
-+#![no_std]
-+#![no_main]
-+
-+#[path = "../common.rs"]
-+mod common;
-+
-+use common::*;
-+use embassy_executor::Spawner;
-+
-+teleprobe_meta::timeout!(30);
-+
-+/// D3 SRAM4: shared with the CM4, always powered in run mode.
-+const SRAM4: u32 = 0x3800_0000;
-+/// Magic values, so stale SRAM4 contents from previous runs never pass for
-+/// real handshake words.
-+const MAGIC_CMD: u32 = 0xC0DE_C0DE;
-+const MAGIC_DONE: u32 = 0xD04E_D04E;
-+
-+core::arch::global_asm!(
-+    r#"
-+    .syntax unified
-+    .thumb
-+    .section .cm4_image, "ax"
-+
-+    // Vector table (16 words): the CM4 boots this image if its boot address
-+    // points here (BOOT_ADD1 = 0x08100000).
-+    .word 0x38000800        // initial SP (SRAM4, past the shared words)
-+    .word cm4_reset + 1     // Reset
-+    .word cm4_hang + 1      // NMI
-+    .word cm4_hang + 1      // HardFault
-+    .word cm4_hang + 1      // MemManage
-+    .word cm4_hang + 1      // BusFault
-+    .word cm4_hang + 1      // UsageFault
-+    .word 0
-+    .word 0
-+    .word 0
-+    .word 0
-+    .word cm4_hang + 1      // SVCall
-+    .word cm4_hang + 1      // DebugMon
-+    .word 0
-+    .word cm4_hang + 1      // PendSV
-+    .word cm4_hang + 1      // SysTick
-+
-+cm4_reset:
-+    ldr   r0, =0x38000000   // shared words in SRAM4
-+    // Clear the handshake words: stale values from previous runs must never
-+    // pass for this run's commands/results.
-+    movs  r1, #0
-+    str   r1, [r0, #8]
-+    str   r1, [r0, #12]
-+    str   r1, [r0, #28]
-+    str   r1, [r0, #32]
-+    str   r1, [r0, #52]
-+    // Enable the HSEM clock in this core's gate register, like the fixed
-+    // try_init_secondary does: the RCC enable registers are banked per core,
-+    // so the primary core cannot enable this core's peripherals.
-+    ldr   r2, =0x580244E0
-+    ldr   r3, [r2]
-+    ldr   r1, =0x02000000
-+    orrs  r3, r1
-+    str   r3, [r2]
-+2:
-+    // heartbeat: prove this loop runs at all.
-+    ldr   r2, [r0, #12]
-+    adds  r2, r2, #1
-+    str   r2, [r0, #12]
-+    // status bit 0 = RCC AHB4ENR bit 25 (HSEM clock enable).
-+    ldr   r2, =0x580244E0
-+    ldr   r2, [r2]
-+    str   r2, [r0, #16]     // raw AHB4ENR as this core sees it
-+    lsrs  r1, r2, #25
-+    ands  r1, r1, #1
-+    str   r1, [r0, #4]      // publish partial status
-+    // Like try_init_secondary: do not touch the HSEM registers before its
-+    // clock is enabled, or the read faults on the bus.
-+    cmp   r1, #1
-+    bne   3f
-+    // status bit 1 = ISF bit 0 of this core's HSEM status bank (0x58026518):
-+    // get_hsem(1) is channel 1 = index 0. The flag is latched in the status
-+    // register of every core when the channel is unlocked.
-+    ldr   r2, =0x58026518
-+    ldr   r2, [r2]
-+    str   r2, [r0, #20]     // raw status bank as this core sees it
-+    ands  r3, r2, #1
-+    // count how many iterations saw the notification
-+    ldr   r2, [r0, #52]
-+    adds  r2, r2, r3
-+    str   r2, [r0, #52]
-+    lsls  r3, r3, #1
-+    orrs  r1, r1, r3
-+    str   r1, [r0, #4]      // publish current status (0..3)
-+    cmp   r1, #3
-+    bne   3f
-+    ldr   r1, =0xD04ED04E
-+    str   r1, [r0, #8]      // publish done
-+3:
-+    // Wait for the primary's command to run the visibility probe.
-+    ldr   r2, [r0, #28]
-+    ldr   r3, =0xC0DEC0DE
-+    cmp   r2, r3
-+    bne   2b
-+
-+    // Probe: this core's view of the HSEM status banks and the RCC gate.
-+    ldr   r2, =0x58026518
-+    ldr   r3, [r2]
-+    str   r3, [r0, #40]
-+    ldr   r2, =0x58026508
-+    ldr   r3, [r2]
-+    str   r3, [r0, #36
+         // The LDO lock is write-once until VBAT POR. Lock only after successful readback.
+-        // Failures deliberately leave supplies/source running, without rollback or cache publication.
++        // Failures do not roll back hardware changes or publi
 ```
 
 ---
 
-### Incident Patch 2: `8ab4226d` (2026-11-23)
-**Commit Message**: Merge pull request #7636 from bugadani/otg-shared-raw-mutex
+### Incident Patch 2: `03375dc3` (2026-11-25)
+**Commit Message**: Merge pull request #7626 from umutKaracelebi/cyw43-event-mask-bounds
 
-Replace synopsys-otg's Copy raw mutex with a SharedRawMutex trait
+cyw43: bound-check the event code in EventMask::is_enabled
 
-**File**: `embassy-sync/CHANGELOG.md` (modified, +0/-1)
+**File**: `cyw43/src/events.rs` (modified, +31/-0)
 ```diff
-@@ -9,7 +9,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- ## Unreleased - ReleaseDate
+@@ -369,6 +369,13 @@ impl EventMask {
+         let word = n / u32::BITS;
+         let bit = n % u32::BITS;
  
- - `AtomicWaker`: `wake()` releases its state before waking the waker, so a task that registers again from within the wake (an interrupt executor preempting the waking interrupt) is not woken again in a loop.
--- `CriticalSectionRawMutex` now implements `Clone + Copy`.
- - Add `write_all` as a method to `pipe::Writer`, trait import not strictly necessary anymore.
- - `AtomicWaker` is now lockless: `register()` and `wake()` no longer enter a critical section,
-   using a small atomic state machine (ported from `futures::task::AtomicWaker`).
-```
-
-**File**: `embassy-sync/src/blocking_mutex/raw.rs` (modified, +1/-1)
-```diff
-@@ -42,7 +42,7 @@ pub unsafe trait RawMutex {
- /// # Safety
- ///
- /// This mutex is safe to share between different executors and interrupts.
--#[derive(Debug, Clone, Copy)]
-+#[derive(Debug)]
- pub struct CriticalSectionRawMutex {
-     _phantom: PhantomData<()>,
- }
-```
-
-**File**: `embassy-usb-synopsys-otg/CHANGELOG.md` (modified, +1/-1)
-```diff
-@@ -16,7 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - **Breaking:** `ControlPipe` is no longer public, the control pipe is part of `Bus`, and `Driver::start()` returns just the `Bus`. A control transfer stage now also ends when the bus is suspended, or VBUS is removed with VBUS detection enabled.
- - **Breaking:** Add `tx_fifo_count` to `OtgInstance`. This is the number of TX FIFOs. If there is no free TX FIFO, allocation of an IN endpoint fails. The TX FIFO number is not the endpoint number.
- - Changed: `embassy-time` is now an optional feature for device mode. Remote wakeup is now supported via `embassy-time`.
--- Changed: The driver can be configured with any `embassy_sync` raw mutex implementation.
-+- **Breaking:** The driver types are generic over a `SharedRawMutex`: `CriticalSectionRawMutex` by default, or a reference to any `embassy_sync` raw mutex. `State`, `HostState`, `OtgInstance`, `OtgHostInstance` and `OtgHostAllocator` implement `Clone` instead of `Copy`.
- - Fixed: Clearing an endpoint halt now resets the data toggle to DATA0, as does enabling an endpoint for a new configuration or alternate setting.
- - Fixed: Stalling an IN endpoint with a transfer in flight no longer leaves it permanently unusable.
- - Fixed: Disabling an endpoint now waits for the core to acknowledge, and OUT endpoints are disabled under global OUT NAK.
-```
-
-**File**: `embassy-usb-synopsys-otg/src/host.rs` (modified, +51/-38)
-```diff
-@@ -5,16 +5,16 @@ use core::future::poll_fn;
- use core::marker::PhantomData;
- use core::task::Poll;
- 
--use embassy_sync::blocking_mutex::raw::{CriticalSectionRawMutex, RawMutex};
-+use embassy_sync::blocking_mutex::raw::CriticalSectionRawMutex;
- use embassy_sync::waitqueue::AtomicWaker;
- use embassy_usb_driver::host::{
-     DeviceEvent, HostError, PipeError, SplitInfo, SplitSpeed, UsbHostAllocator, UsbHostController, UsbPipe, pipe,
- };
- use embassy_usb_driver::{EndpointInfo, EndpointType, Speed};
- use portable_atomic::{AtomicBool, AtomicU8, AtomicU16, Ordering};
- 
--use crate::PhyType;
- use crate::otg_v1::{Otg, vals};
-+use crate::{PhyType, SharedRawMutex};
- 
- // Per-channel event flags, OR'd into an AtomicU16 mailbox by the ISR.
- const EV_XFRC: u16 = 1 << 0;
-@@ -73,7 +73,7 @@ struct HostStateFields {
- /// Storage object for USB host driver state. Create one per OTG instance.
- pub struct HostStateStorage<const CH_COUNT: usize, M = CriticalSectionRawMutex>
- where
--    M: RawMutex + Copy,
-+    M: SharedRawMutex,
- {
-     channels: [ChannelState; CH_COUNT],
-     fields: HostStateFields,
-@@ -82,7 +82,7 @@ where
- 
- impl<const CH_COUNT: usize, M> HostStateStorage<CH_COUNT, M>
- where
--    M: RawMutex + Copy,
-+    M: SharedRawMutex,
- {
-     /// Create a new host state.
-     pub const fn new(mutex: M) -> Self {
-@@ -111,7 +111,7 @@ where
-         HostState {
-             channels: self.channels.as_slice(),
-             fields: &self.fields,
--            mutex: &self.mutex,
-+            mutex: self.mutex.share(),
-         }
-     }
- }
-@@ -121,31 +121,29 @@ where
- /// Build from [`HostState::as_host_state`].
- pub struct HostState<'d, M = CriticalSectionRawMutex>
- where
--    M: RawMutex + Copy,
-+    M: SharedRawMutex,
- {
-     channels: &'d [ChannelState],
-     fields: &'d HostStateFields,
--    mutex: &'d M,
-+    mutex: M,
- }
- 
- impl<'d, M> Clone for HostState<'d, M>
- where
--    M: RawMutex + Copy,
-+    M: SharedRawMutex,
- {
-     fn clone(&self) -> Self {
-         Self {
-             channels: self.channels,
-             fields: self.fields,
--            mutex: self.mutex,
-+            mutex: self.mutex.share(),
-         }
-     }
- }
- 
--impl<'d, M> Copy for HostState<'d, M> where M: RawMutex + Copy {}
--
- impl<'d, M> HostState<'d, M>
- where
--    M: RawMutex + Copy,
-+    M: SharedRawMutex,
- {
-     /// Returns the number of host channels supported by this state.
-     pub fn channel_count(&self) -> usize {
-@@ -154,10 +152,9 @@ where
- }
- 
- /// Hardware-dependent host configuration.
--#[derive(Copy, Clone)]
- pub struct OtgHostInstance<'d, M = CriticalSectionRawMutex>
- where
--    M: RawMutex + Copy,
-+    M: SharedRawMutex,
- {
-     /// The USB peripheral registers.
-     pub regs: Otg,
-@@ -169,13 +166,27 @@ where
-     pub phy_type: PhyType,
- }
- 
-+impl<'d, M> Clone for OtgHostInstance<'d, M>
-+where
-+    M: SharedRawMutex,
-+{
-+    fn clone(&self) -> Self {
-+        Self {
-+            regs: self.regs,
-+            state: self.state.clone(),
-+            fifo_depth_words: self.fifo_depth_words,
-+            phy_type: self.phy_type,
++        // An event code that has no variant in `Event` maps to `Event::Unknown`
++        // (0xFF), whose word index is past the end of the mask. Such an event is
++        // never enabled.
++        if word as usize >= Self::WORD_COUNT {
++            return false;
 +        }
++
+         self.mask[word as usize] & (1 << bit) > 0
+     }
+ }
+@@ -415,3 +422,27 @@ impl Default for SharedEventMask {
+         Self::new()
+     }
+ }
++
++#[cfg(test)]
++mod tests {
++    use super::*;
++
++    #[test]
++    fn is_enabled_with_unlisted_code() {
++        // An event code with no variant maps to `Event::Unknown`, whose word
++        // index lies past the end of the mask. Querying it must report "not
++        // enabled" instead of indexing out of bounds.
++        let mask = SharedEventMask::default();
++        assert!(!mask.is_enabled(Event::from(92)));
++        assert!(!mask.is_enabled(Event::Unknown));
++    }
++
++    #[test]
++    fn is_enabled_tracks_enabled_events() {
++        let mask = SharedEventMask::default();
++        mask.enable(&[Event::SET_SSID, Event::LAST]);
++        assert!(mask.is_enabled(Event::SET_SSID));
++        assert!(mask.is_enabled(Event::LAST));
++        assert!(!mask.is_enabled(Event::AUTH));
 +    }
 +}
-+
- /// Handle host-mode interrupts.
- ///
- /// # Safety
- /// Must be called from the USB OTG interrupt handler when the controller is in host mode.
- pub unsafe fn on_host_interrupt<M>(r: Otg, state: &HostState<'_, M>)
- where
--    M: RawMutex + Copy,
-+    M: SharedRawMutex,
- {
-     let gintsts = r.gintsts().read();
-     let ch_count = state.channels.len();
-@@ -434,15 +445,15 @@ fn hprt_read_safe(r: Otg) -> u32 {
- /// USB OTG Host Driver.
- pub struct OtgHost<'d, M = CriticalSectionRawMutex>
- where
--    M: RawMutex + Copy,
-+    M: SharedRawMutex,
- {
-     instance: OtgHostInstance<'d, M>,
-     inited: bool,
- }
- 
- impl<'d, M> OtgHost<'d, M>
- where
--    M: RawMutex + Copy,
-+    M: SharedRawMutex,
- {
-     /// Create a new OTG host driver.
-     pub fn new(instance: OtgHostInstance<'d, M>) -> Self {
-@@ -460,7 +471,7 @@ where
-     /// Returns `false` if the device is gone at the end of it.
-     async fn wait_connection_stable(&mut self) -> bool {
-         const T_ATTDB_MS: u64 = 100;
--        let state = self.instance.state;
-+        let state = &self.instance.state;
-         loop {
-             embassy_time::Timer::after_millis(T_ATTDB_MS).await;
- 
-@@ -624,31 +635,32 @@ where
- 
- /// Pipe allocator handle for [`OtgHost`].
- ///
--/// Obtained from [`UsbHostController::allocator`]. Holds only `Copy` handles
--/// to the controller's `'d`-borrowed state, so it can be freely copied and
--/// retained by class drivers independently of the controller's `&mut` borrow.
-+/// Obtained from [`UsbHostController::allocator`]. Holds only handles to the
-+/// controller's `'d`-borrowed state, so it can be freely cloned and retained by
-+/// class drivers independently of the controller's `&mut` borrow.
- pub struct OtgHostAllocator<'d, M = CriticalSectionRawMutex>
- where
--    M: RawMutex + Copy,
-+    M: SharedRawMutex,
- {
-     regs: Otg,
-     state: HostState<'d, M>,
- }
- 
- impl<'d, M> Clone for OtgHostAllocator<'d, M>
- whe
 ```
 
-**File**: `embassy-usb-synopsys-otg/src/lib.rs` (modified, +77/-61)
+---
+
+### Incident Patch 3: `cea7e0ed` (2026-11-24)
+**Commit Message**: Fix minor merge issue
+
+**File**: `embassy-usb-synopsys-otg/src/lib.rs` (modified, +1/-1)
 ```diff
-@@ -9,6 +9,7 @@
- 
- // This must go FIRST so that all the other modules see its macros.
- mod fmt;
-+mod shared_raw_mutex;
- 
- use core::cell::UnsafeCell;
- use core::cmp::min;
-@@ -19,7 +20,7 @@ use core::pin::pin;
- use core::sync::atomic::{AtomicBool, AtomicU16, AtomicU32, Ordering};
+@@ -21,7 +21,7 @@ use core::sync::atomic::{AtomicBool, AtomicU16, AtomicU32, Ordering};
  use core::task::{Context, Poll};
  
+ use embassy_hal_internal::iso_helpers::{IsoSchedule, forward};
 -use embassy_sync::blocking_mutex::raw::{CriticalSectionRawMutex, RawMutex};
 +use embassy_sync::blocking_mutex::raw::CriticalSectionRawMutex;
  use embassy_sync::waitqueue::AtomicWaker;
  #[cfg(feature = "embassy-time")]
  use embassy_time::{Duration, Instant};
-@@ -31,6 +32,7 @@ use embassy_usb_driver::{
- };
- 
- use crate::fmt::Bytes;
-+pub use crate::shared_raw_mutex::SharedRawMutex;
- 
- pub mod otg_v1;
- 
-@@ -42,7 +44,7 @@ use otg_v1::{Otg, regs, vals};
- /// Handle interrupts.
- pub unsafe fn on_interrupt<M>(r: Otg, state: &State<'_, M>)
- where
--    M: RawMutex + Copy,
-+    M: SharedRawMutex,
- {
-     trace!("irq");
-     let ep_count = state.endpoint_count();
-@@ -290,7 +292,7 @@ where
- }
- 
- /// True while some IN endpoint is waiting for the tick on which it can arm an isochronous packet.
--fn iso_arm_waiting<M: RawMutex + Copy>(state: &State<'_, M>) -> bool {
-+fn iso_arm_waiting<M: SharedRawMutex>(state: &State<'_, M>) -> bool {
-     state.ep_states.iter().any(|ep| ep.iso_arm_wait.load(Ordering::Acquire))
- }
- 
-@@ -468,7 +470,7 @@ struct EndpointData {
- /// Build from [`State::as_state`].
- pub struct State<'d, M = CriticalSectionRawMutex>
- where
--    M: RawMutex + Copy,
-+    M: SharedRawMutex,
- {
-     cp_state: &'d ControlPipeSetupState,
-     ep_states: &'d [EpState],
-@@ -478,23 +480,21 @@ where
- 
- impl<'d, M> Clone for State<'d, M>
- where
--    M: RawMutex + Copy,
-+    M: SharedRawMutex,
- {
-     fn clone(&self) -> Self {
-         Self {
-             cp_state: self.cp_state,
-             ep_states: self.ep_states,
-             bus_waker: self.bus_waker,
--            mutex: self.mutex,
-+            mutex: self.mutex.share(),
-         }
-     }
- }
- 
--impl<'d, M> Copy for State<'d, M> where M: RawMutex + Copy {}
--
- impl<M> State<'_, M>
- where
--    M: RawMutex + Copy,
-+    M: SharedRawMutex,
- {
-     /// Returns the number of device endpoints supported by this state.
-     pub fn endpoint_count(&self) -> usize {
-@@ -519,7 +519,7 @@ where
- 
- impl<'d, M> State<'d, M>
- where
--    M: RawMutex + Copy,
-+    M: SharedRawMutex,
- {
-     pub(crate) fn ep_alloc_get(&self, dir: Direction, index: usize) -> Option<&EndpointData> {
-         self.ep_states[index].alloc(dir)
-@@ -590,7 +590,7 @@ where
- /// Storage object for USB OTG driver state.
- pub struct StateStorage<const EP_COUNT: usize, M = CriticalSectionRawMutex>
- where
--    M: RawMutex + Copy,
-+    M: SharedRawMutex,
- {
-     cp_state: ControlPipeSetupState,
-     ep_states: [EpState; EP_COUNT],
-@@ -600,7 +600,7 @@ where
- 
- impl<const EP_COUNT: usize, M> StateStorage<EP_COUNT, M>
- where
--    M: RawMutex + Copy,
-+    M: SharedRawMutex,
- {
-     /// Create a new StateStorage.
-     pub const fn new(mutex: M) -> Self {
-@@ -641,7 +641,7 @@ where
-             cp_state: &self.cp_state,
-             ep_states: self.ep_states.as_slice(),
-             bus_waker: &self.bus_waker,
--            mutex: self.mutex,
-+            mutex: self.mutex.share(),
-         }
-     }
- }
-@@ -698,7 +698,7 @@ impl Default for Config {
- /// USB OTG driver.
- pub struct Driver<'d, M = CriticalSectionRawMutex>
- where
--    M: RawMutex + Copy,
-+    M: SharedRawMutex,
- {
-     config: Config,
-     ep_out_buffer: &'d mut [u8],
-@@ -708,7 +708,7 @@ where
- 
- impl<'d, M> Driver<'d, M>
- where
--    M: RawMutex + Copy,
-+    M: SharedRawMutex,
- {
-     /// Initializes the USB OTG peripheral.
-     ///
-@@ -733,7 +733,7 @@ where
- 
-     /// Returns the total amount of words (u32) allocated in dedicated FIFO.
-     fn allocated_fifo_words(&self) -> u16 {
--        let st = self.instance.state;
-+        let st = &self.instance.state;
-         self.instance.extra_rx_fifo_words + st.ep_fifo_size_out() + st.ep_fifo_size_in()
-     }
- 
-@@ -772,7 +772,7 @@ where
-         }
- 
-         let dir = D::dir();
--        let st = self.instance.state;
-+        let st = &self.instance.state;
-         let endpoint_count = st.endpoint_count();
-         let tx_fifo_count = self.instance.tx_fifo_count;
- 
-@@ -848,7 +848,7 @@ where
-         Ok(Endpoint {
-             _phantom: PhantomData,
-             regs: self.instance.regs,
--            mutex: self.instance.state.mutex,
-+            mutex: self.instance.state.mutex.share(),
-             state: ep_state,
-             endpoints: self.instance.state.ep_states,
-             info: EndpointInfo::new(
-@@ -864,7 +864,7 @@ where
- 
- impl<'d, M> embassy_usb_driver::Driver<'d> for Driver<'d, M>
- where
--    M: RawMutex + Copy + 'd,
-+    M: SharedRawMutex + 'd,
- {
-     type EndpointOut = Endpoint<'d, Out, M>;
-     type EndpointIn = Endpoint<'d, In, M>;
-@@ -902,7 +902,7 @@ where
- 
-         let regs = self.instance.regs;
-         let setup_state = self.instance.state.cp_state;
--        let mutex = self.instance.s
-```
-
-**File**: `embassy-usb-synopsys-otg/src/shared_raw_mutex.rs` (added, +41/-0)
-```diff
-@@ -0,0 +1,41 @@
-+use embassy_sync::blocking_mutex::raw::{CriticalSectionRawMutex, RawMutex};
-+
-+/// A handle to the lock that guards the driver's hardware access.
-+///
-+/// The driver passes the lock to several parts, so it takes a handle that it can duplicate. Every
-+/// handle that [`share`](Self::share) returns locks the same lock.
-+///
-+/// Handles are passed to other contexts only as their `Send` and `Sync` implementations allow.
-+///
-+/// # Safety
-+///
-+/// - [`share`](Self::share) returns a handle that locks the same lock as `self`.
-+/// - While `lock` runs `f`, no other context can run `lock` on a handle to the same lock.
-+pub unsafe trait SharedRawMutex {
-+    /// Returns another handle to the same lock.
-+    fn share(&self) -> Self;
-+
-+    /// Locks the lock while `f` runs.
-+    fn lock<R>(&self, f: impl FnOnce() -> R) -> R;
-+}
-+
-+unsafe impl SharedRawMutex for CriticalSectionRawMutex {
-+    fn share(&self) -> Self {
-+        // All critical-section mutexes lock the same global critical section.
-+        Self::new()
-+    }
-+
-+    fn lock<R>(&self, f: impl FnOnce() -> R) -> R {
-+        RawMutex::lock(self, f)
-+    }
-+}
-+
-+unsafe impl<M: RawMutex> SharedRawMutex for &M {
-+    fn share(&self) -> Self {
-+        *self
-+    }
-+
-+    fn lock<R>(&self, f: impl FnOnce() -> R) -> R {
-+        RawMutex::lock(*self, f)
-+    }
-+}
-```
-
----
-
-### Incident Patch 3: `17b3b541` (2026-11-24)
-**Commit Message**: Merge pull request #7637 from xoviat/fix-hsem-secondary-boot
-
-stm32/hsem: fix secondary core boot; RCC enable registers are per-core
-
-**File**: `embassy-stm32/CHANGELOG.md` (modified, +1/-1)
-```diff
-@@ -26,7 +26,7 @@ HSEM:
- - fix: stm32/hsem: `HardwareSemaphoreInterruptHandler` now consumes the notification flags with `HSEM_CnICR` and latches them in software before waking. The latched masked status keeps the interrupt line asserted until the flags are cleared, so masking `HSEM_CnIER` (the old behavior) did not deassert it: arming the interrupt with a notification pending re-entered the handler forever, starving the tasks supposed to consume the notification. The software latch also delivers a notification whose wake happens before the listener registers its waker.
- - feat: stm32/hsem: add `HardwareSemaphoreChannel::is_notified` and `HardwareSemaphoreChannel::clear_notification`, which check and clear the notification without consuming it.
- - fix: stm32: `init_primary` discards a stale HSEM notification from a previous run of the core before initializing the hardware, and `init_secondary`/`try_init_secondary` treat the notification as a level rather than an event. The secondary core can now be started (or restarted under a debugger) in any order relative to the primary core without deadlocking or consuming a stale notification.
--- change: stm32: `try_init_secondary` no longer blocks when the other core is not done with its init (matching its documentation) and, on STM32H7 dual-core parts, no longer writes the shared RCC enable register concurrently with the other core's clock setup.
-+- change: stm32: `try_init_secondary` no longer blocks when the other core is not done with its init (matching its documentation).
- 
- SUBGHZ:
- - feat: stm32/subghz: add a driver for the on-chip sub-GHz radio of STM32WL and STM32WLE5 (`SubghzSpi`, `SubghzControl`). It covers the dedicated `SUBGHZSPI`, radio reset, `RFBUSY` waiting and the `SUBGHZ_RADIO` interrupt. The driver does not wrap the radio's command set: the caller sends the commands.
-```
-
-**File**: `embassy-stm32/src/lib.rs` (modified, +3/-14)
-```diff
-@@ -735,24 +735,13 @@ mod dual_core {
-     pub fn try_init_secondary(shared_data: &'static MaybeUninit<SharedData>) -> Option<Peripherals> {
-         // The HSEM peripheral must be clocked before its registers can be used.
-         //
--        // On families where each core has its own RCC enable registers this core
--        // can safely enable it. On families where the RCC enable registers are
--        // shared between the cores (STM32H7), doing so here would race with the
--        // other core's clock setup: critical sections are core-local and do not
--        // synchronize across cores, so a concurrent read-modify-write could drop
--        // either side's enable bit and leave the peripheral unclocked. Instead,
--        // wait for `init_primary`, which enables the HSEM peripheral before
--        // anything else, to clock it.
--        #[cfg(stm32wl5x)]
-+        // The RCC enable registers are banked per core on these parts: each
-+        // core gates its own peripheral clocks and cannot enable a peripheral
-+        // for the other core, so this core enables HSEM in its own bank.
-         critical_section::with(|cs| {
-             rcc::enable_with_cs_no_refcount::<peripherals::HSEM>(cs);
-         });
- 
--        #[cfg(not(stm32wl5x))]
--        if !rcc::is_enabled::<peripherals::HSEM>() {
--            return None;
--        }
--
-         // Wait for the primary core to complete its init. The notification is not
-         // consumed here, so a notification sent before this call (or before this
-         // core was restarted) is not lost.
-```
-
-**File**: `embassy-stm32/src/rcc/mod.rs` (modified, +0/-20)
-```diff
-@@ -372,16 +372,6 @@ impl RccInfo {
-         self.enable_with_cs_inner(cs, true);
-     }
- 
--    /// Returns whether the peripheral clock is currently enabled.
--    ///
--    /// This only reads the RCC enable register, so unlike `enable_with_cs` it is
--    /// safe to call concurrently with the other core's own clock setup.
--    #[allow(dead_code)]
--    pub(crate) fn is_enabled(&self) -> bool {
--        // TODO: should this be `unsafe`?
--        unsafe { self.enable_ptr().read_volatile() & 1u32 << self.enable_bit != 0 }
--    }
--
-     // TODO: should this be `unsafe`?
-     fn enable_with_cs_inner(&self, cs: CriticalSection, no_refcount: bool) {
-         // set the xxxEN bit
-@@ -657,16 +647,6 @@ pub(crate) fn enable_with_cs_no_refcount<T: RccPeripheral>(cs: CriticalSection)
-     T::RCC_INFO.enable_with_cs_no_refcount(cs);
- }
- 
--/// Returns whether the peripheral clock of `T` is currently enabled.
--///
--/// Unlike [`enable_with_cs_no_refcount`], this does not write to the (possibly
--/// shared) RCC enable register, so it is safe to use while the other core is
--/// concurrently enabling its own peripherals.
--#[allow(dead_code)]
--pub(crate) fn is_enabled<T: RccPeripheral>() -> bool {
--    T::RCC_INFO.is_enabled()
--}
--
- /// Enables and clears the reset for peripheral `T`.
- ///
- /// # Safety
-```
-
-**File**: `tests/link_cm4_image.x` (added, +10/-0)
-```diff
-@@ -0,0 +1,10 @@
-+/* Places the embedded secondary-core (CM4) image at the address its boot
-+ * option byte (BOOT_ADD0) points to, so that the core self-starts it after
-+ * every reset. Used by the `hsem_secondary` test (see src/bin/hsem_secondary.rs). */
-+SECTIONS
-+{
-+  .cm4_image 0x08100000 :
-+  {
-+    KEEP(*(.cm4_image))
-+  } > FLASH
-+} INSERT AFTER .rodata;
-```
-
-**File**: `tests/stm32/Cargo.toml` (modified, +5/-0)
-```diff
-@@ -279,6 +279,11 @@ name = "hsem_notify"
- path = "src/bin/hsem_notify.rs"
- required-features = [ "hsem",]
- 
-+[[bin]]
-+name = "hsem_secondary"
-+path = "src/bin/hsem_secondary.rs"
-+required-features = [ "stm32h755zi",]
-+
- [[bin]]
- name = "i2s_dma"
- path = "src/bin/i2s_dma.rs"
-```
-
-**File**: `tests/stm32/build.rs` (modified, +8/-0)
-```diff
-@@ -5,6 +5,7 @@ use std::{env, fs};
- fn main() -> Result<(), Box<dyn Error>> {
-     let out = PathBuf::from(env::var("OUT_DIR").unwrap());
-     fs::write(out.join("link_ram.x"), include_bytes!("../link_ram_cortex_m.x")).unwrap();
-+    fs::write(out.join("link_cm4_image.x"), include_bytes!("../link_cm4_image.x")).unwrap();
-     println!("cargo:rustc-link-search={}", out.display());
-     println!("cargo:rustc-link-arg-bins=--nmagic");
- 
-@@ -66,6 +67,7 @@ fn main() -> Result<(), Box<dyn Error>> {
-     }
- 
-     println!("cargo:rerun-if-changed=../link_ram_cortex_m.x");
-+    println!("cargo:rerun-if-changed=../link_cm4_image.x");
-     println!("cargo:rerun-if-changed=src/bin");
-     for entry in fs::read_dir("src/bin")? {
-         let path = entry?.path();
-@@ -81,12 +83,18 @@ fn main() -> Result<(), Box<dyn Error>> {
-             || (ecc_reset && name == "flash" && !cfg!(feature = "stm32u083rc"))
-             // Stop is checked on every low-power board when running from flash, like an application.
-             || name == "stop"
-+            // The secondary-core (CM4) image embedded in this test must be in flash, and
-+            // the post-flash reset is what boots the CM4 core (see the test's docs).
-+            || name == "hsem_secondary"
-         {
-             "link.x"
-         } else {
-             "link_ram.x"
-         };
-         println!("cargo:rustc-link-arg-bin={name}=-T{script}");
-+        if name == "hsem_secondary" {
-+            println!("cargo:rustc-link-arg-bin={name}=-Tlink_cm4_image.x");
-+        }
-     }
- 
-     if cfg!(feature = "stm32wb55rg") {
-```
-
-**File**: `tests/stm32/src/bin/hsem_notify.rs` (modified, +3/-2)
-```diff
-@@ -10,8 +10,9 @@
- //! core keeps running.
- //!
- //! This exercises the same `blocking_listen`/`is_notified` primitives that
--//! `init_secondary` uses. (The handshake itself needs both cores running, which the
--//! HIL farm cannot do; `init_primary` is covered by `common::init()` on this board.)
-+//! `init_secondary` uses. The handshake itself across both cores is covered by
-+//! the `hsem_secondary` test; `init_primary` is covered by `common::init()` on
-+//! this board.
- #![no_std]
- #![no_main]
- 
-```
-
-**File**: `tests/stm32/src/bin/hsem_secondary.rs` (added, +337/-0)
-```diff
-@@ -0,0 +1,337 @@
-+// required-features: stm32h755zi
-+
-+//! Dual-core boot handshake regression test (issue #7609 follow-up).
-+//!
-+//! The secondary core (CM4) must observe the primary core's `init_primary` from
-+//! across the cores. The RCC enable registers and the HSEM status registers are
-+//! banked per core on this part, so what matters is:
-+//!
-+//! - the CM4 can enable its own HSEM clock (each core gates its own peripherals;
-+//!   the primary core cannot do it for this core), and
-+//! - the channel 1 notification level (HSEM ISF bit 0 in this core's status
-+//!   bank: `get_hsem(1)` is channel 1, stored as index 0) is visible to this
-+//!   core after `init_primary` unlocked the channel.
-+//!
-+//! The CM4 side runs as whichever image the CM4 boots after the post-flash
-+//! reset: the tiny one embedded at 0x08100000 (BOOT_ADD1), or this image's
-+//! `cm4_role` (BOOT_ADD0 = 0x08000000 on this board), dispatched on CPUID.
-+//!
-+//! Shared SRAM4 words (volatile u32):
-+//!   +4  status: bit 0 = saw HSEM clock enable, bit 1 = saw notification
-+//!   +8  done (= 0xD04ED04E when status == 3)
-+//!   +12 heartbeat: bumped every poll iteration
-+//!   +16 raw AHB4ENR (0x580244E0) as the CM4 reads it
-+//!   +20 raw HSEM ISR bank 1 (0x58026518) as the CM4 reads it
-+//!   +52 count of poll iterations that saw the notification bit
-+//!   +28 command: primary writes 0xC0DEC0DE to trigger the visibility probe
-+//!   +32 probe-done (= 0xD04ED04E)
-+//!   +36..+52 probe slots (see `cm4_role`)
-+#![no_std]
-+#![no_main]
-+
-+#[path = "../common.rs"]
-+mod common;
-+
-+use common::*;
-+use embassy_executor::Spawner;
-+
-+teleprobe_meta::timeout!(30);
-+
-+/// D3 SRAM4: shared with the CM4, always powered in run mode.
-+const SRAM4: u32 = 0x3800_0000;
-+/// Magic values, so stale SRAM4 contents from previous runs never pass for
-+/// real handshake words.
-+const MAGIC_CMD: u32 = 0xC0DE_C0DE;
-+const MAGIC_DONE: u32 = 0xD04E_D04E;
-+
-+core::arch::global_asm!(
-+    r#"
-+    .syntax unified
-+    .thumb
-+    .section .cm4_image, "ax"
-+
-+    // Vector table (16 words): the CM4 boots this image if its boot address
-+    // points here (BOOT_ADD1 = 0x08100000).
-+    .word 0x38000800        // initial SP (SRAM4, past the shared words)
-+    .word cm4_reset + 1     // Reset
-+    .word cm4_hang + 1      // NMI
-+    .word cm4_hang + 1      // HardFault
-+    .word cm4_hang + 1      // MemManage
-+    .word cm4_hang + 1      // BusFault
-+    .word cm4_hang + 1      // UsageFault
-+    .word 0
-+    .word 0
-+    .word 0
-+    .word 0
-+    .word cm4_hang + 1      // SVCall
-+    .word cm4_hang + 1      // DebugMon
-+    .word 0
-+    .word cm4_hang + 1      // PendSV
-+    .word cm4_hang + 1      // SysTick
-+
-+cm4_reset:
-+    ldr   r0, =0x38000000   // shared words in SRAM4
-+    // Clear the handshake words: stale values from previous runs must never
-+    // pass for this run's commands/results.
-+    movs  r1, #0
-+    str   r1, [r0, #8]
-+    str   r1, [r0, #12]
-+    str   r1, [r0, #28]
-+    str   r1, [r0, #32]
-+    str   r1, [r0, #52]
-+    // Enable the HSEM clock in this core's gate register, like the fixed
-+    // try_init_secondary does: the RCC enable registers are banked per core,
-+    // so the primary core cannot enable this core's peripherals.
-+    ldr   r2, =0x580244E0
-+    ldr   r3, [r2]
-+    ldr   r1, =0x02000000
-+    orrs  r3, r1
-+    str   r3, [r2]
-+2:
-+    // heartbeat: prove this loop runs at all.
-+    ldr   r2, [r0, #12]
-+    adds  r2, r2, #1
-+    str   r2, [r0, #12]
-+    // status bit 0 = RCC AHB4ENR bit 25 (HSEM clock enable).
-+    ldr   r2, =0x580244E0
-+    ldr   r2, [r2]
-+    str   r2, [r0, #16]     // raw AHB4ENR as this core sees it
-+    lsrs  r1, r2, #25
-+    ands  r1, r1, #1
-+    str   r1, [r0, #4]      // publish partial status
-+    // Like try_init_secondary: do not touch the HSEM registers before its
-+    // clock is enabled, or the read faults on the bus.
-+    cmp   r1, #1
-+    bne   3f
-+    // status bit 1 = ISF bit 0 of this core's HSEM status bank (0x58026518):
-+    // get_hsem(1) is channel 1 = index 0. The flag is latched in the status
-+    // register of every core when the channel is unlocked.
-+    ldr   r2, =0x58026518
-+    ldr   r2, [r2]
-+    str   r2, [r0, #20]     // raw status bank as this core sees it
-+    ands  r3, r2, #1
-+    // count how many iterations saw the notification
-+    ldr   r2, [r0, #52]
-+    adds  r2, r2, r3
-+    str   r2, [r0, #52]
-+    lsls  r3, r3, #1
-+    orrs  r1, r1, r3
-+    str   r1, [r0, #4]      // publish current status (0..3)
-+    cmp   r1, #3
-+    bne   3f
-+    ldr   r1, =0xD04ED04E
-+    str   r1, [r0, #8]      // publish done
-+3:
-+    // Wait for the primary's command to run the visibility probe.
-+    ldr   r2, [r0, #28]
-+    ldr   r3, =0xC0DEC0DE
-+    cmp   r2, r3
-+    bne   2b
-+
-+    // Probe: this core's view of the HSEM status banks and the RCC gate.
-+    ldr   r2, =0x58026518
-+    ldr   r3, [r2]
-+    str   r3, [r0, #40]
-+    ldr   r2, =0x58026508
-+    ldr   r3, [r2]
-+    str   r3, [r0, #36
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7641** (2026-11-25): [MCXA] OSC32K: keep a retained mismatch running, make the lock optional (@gjpmsft)
 - **PR #7637** (2026-11-24): stm32/hsem: fix secondary core boot; RCC enable registers are per-core (@xoviat)
 - **PR #7636** (2026-11-24): Replace synopsys-otg's Copy raw mutex with a SharedRawMutex trait (@bugadani)
 - **PR #7635** (2026-11-23): Remove embassy-sync's GenericAtomicWaker (@bugadani)
-- **PR #7627** (2026-11-23): net: update xarxa (@Dirbaio)
-- **PR #7624** (2026-11-23): embassy-usb: add CDC-ACM `SEND_BREAK` support (@joelsa)
-- **PR #7623** (2026-11-23): embassy-nrf: Fix RRAM size for the nrf54LM20 (@arihant2math)
+- **PR #7631** (2026-11-25): usb: Add missing derive(defmt::Format) for CdcAcmError (@msrd0)
+- **PR #7629** (2026-11-25): embassy-usb: add CDC-ACM `SERIAL_STATE` notifications (@joelsa)
 
 ---
 
@@ -2591,31 +1679,70 @@ stm32/hsem: fix secondary core boot; RCC enable registers are per-core
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. stm32/hsem: fix secondary core boot; RCC enable registers are per-core
+## X. embassy-mcxa: fix retained OSC32K restart handling
 
 **RULE**:
-When implementing operations in `embassy-stm32/CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in embassy-rs/embassy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `embassy-mcxa/src/clocks/operator.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in embassy-rs/embassy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `dca7dc8a`: stm32/hsem: fix secondary core boot; RCC enable registers are per-core. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `cdc571c8`: embassy-mcxa: fix retained OSC32K restart handling. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `embassy-stm32/CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `embassy-mcxa/src/clocks/operator.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- change: stm32: `try_init_secondary` no longer blocks when the other core is not done with its init (matching its documentation).
+    // Startup trim may change across reset without changing the running LP source.
+    fn osc32k_lp_runtime_controls_match(&self) -> bool {
+        use nxp_pac::vbat::{CoarseAmpGain, ModeEn, SupplyDet, XtalCapSel as ExtalCapSel, XtalCapSel};
+        // Snapshot output ownership before stopping the source. Gates can also
+        // survive an interrupted restart with OSC_EN already cleared.
+        let retained_gates = self.vbat0.oscclke().read();
+        let mismatch = running && !self.osc32k_lp_runtime_controls_match();
+        if !locked && (mismatch || !running) {
+            // Establish a stopped, non-bypass state before startup, including
+            // recovery from an interrupted stop with OSC_EN=0 and BYP_EN=1.
+            self.vbat0.oscctla().modify(|w| {
+                w.set_osc_en(false);
+                // RM 31.7.1.8: exit bypass with both enable bits cleared.
+                w.set_osc_byp_en(false);
+            });
+            let mut remaining = cfg.readiness_poll_budget.get();
+            while self.vbat0.statusa().read().osc_rdy() {
+                remaining -= 1;
+                if remaining == 0 {
+                    return Err(ClockError::BadConfig {
+        
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-- change: stm32: `try_init_secondary` no longer blocks when the other core is not done with its init (matching its documentation) and, on STM32H7 dual-core parts, no longer writes the shared RCC enable register concurrently with the other core's clock setup.
+    fn osc32k_lp_controls_match(&self) -> bool {
+        use nxp_pac::vbat::{CoarseAmpGain, InitTrim, ModeEn, SupplyDet, XtalCapSel as ExtalCapSel, XtalCapSel};
+            && self.vbat0.osccfga().read().init_trim() == InitTrim::Sel0
+        let mismatch = running && !self.osc32k_lp_controls_match();
+            (true, false) => {
+                // Stop the unlocked oscillator so the start-up sequence below applies
+                // the requested settings. Wait for OSC_RDY to clear, so the start-up
+                // wait does not pass on the stale flag.
+                self.vbat0.oscctla().modify(|w| w.set_osc_en(false));
+                let mut remaining = cfg.readiness_poll_budget.get();
+                while self.vbat0.statusa().read().osc_rdy() && remaining > 0 {
+                    remaining -= 1;
+                }
+                Osc32KStatus::Restarted
+            }
+        if !keep_settings && !self.osc32k_lp_controls_match() {
+            w.set_clke(0, cfg.vsys_domain_active || (retained && w.clke(0)));
+            w.set_clke(1, cfg.vdd_core_domain_active || (retained && w.clke(1)));
+            w.set_clke(2, cfg.vbat_domain_active || (retained && w.clke(2)));
+        /
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `dca7dc8a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `cdc571c8` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

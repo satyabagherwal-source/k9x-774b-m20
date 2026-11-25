@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/Qwen/Qwen3-Embedding-0.6B",
   "source_version": "hf-qwen-qwen3-embedding-0.6b",
   "license": "Open-Source",
-  "timestamp": "2026-11-22T01:58:41.925Z",
+  "timestamp": "2026-11-25T23:24:00.492Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-qwen-qwen3-embedding-0-6b",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [Qwen/Qwen3-Embedding-0.6B](https://huggingface.co/Qwen/Qwen3-Embedding-0.6B) (Revision: `hf-qwen-qw`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-22T01:58:41.925Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T23:24:00.492Z`  
 > **Learning ID**: `learn-huggingface-qwen-qwen3-embedding-0-6b`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-qwen-qwen3-embedding-0.6b-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/Qwen/Qwen3-Embedding-0.6B](https://huggingface.co/Qwen/Qwen3-Embedding-0.6B))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T01:58:40.995Z  
+> **Harvest Timestamp**: 2026-11-25T23:23:59.274Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: feature-extraction
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 7413857 downloads | 1357 likes
+- **Stars / Engagement**: 6965667 downloads | 1361 likes
 
 ---
 

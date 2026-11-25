@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T23:12:03.285Z",
+  "last_updated": "2026-11-25T23:24:19.516Z",
   "total_records": 2689,
   "domains": {
     "A": {
@@ -10502,8 +10502,8 @@
       "title": "Architecture Intelligence: embassy-rs/embassy Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-embassy-rs-embassy-architecture-intelligence-embassy-rs-embassy-core-invariants.md",
       "repository": "embassy-rs/embassy",
-      "content_hash": "7aea22bffeb59a21824b72f5e64d113400cf7275bf9eb9acb83efc699ae158fb",
-      "created_at": "2026-11-24T15:44:30.619Z"
+      "content_hash": "ae5d42d000517013322b02907810dcea553e3c28e844e1decfad8fe9eef863a7",
+      "created_at": "2026-11-25T23:24:03.284Z"
     },
     "domain_intelligence-research-knowledge-intelligence-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-core": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-core",
@@ -10547,8 +10547,8 @@
       "title": "Architecture Intelligence: embassy-rs-embassy-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-embassy-rs-embassy-learnings-architecture-intelligence-embassy-rs-embassy-learni.md",
       "repository": "embassy-rs-embassy-learnings",
-      "content_hash": "f4b2ab2b4a4ed249c6120bbc31c73cf3ed7d7afa91523d9b9f744149bbd640c7",
-      "created_at": "2026-11-24T15:44:39.542Z"
+      "content_hash": "55c676df87583a48a8034670eda6eecb4cc8a1750ddcffa04d23e4c1dc4b7e2a",
+      "created_at": "2026-11-25T23:24:16.516Z"
     },
     "DOM-D-4AA06C1E": {
       "record_id": "DOM-D-4AA06C1E",
@@ -26933,8 +26933,8 @@
       "title": "Research & Knowledge Intelligence: Qwen/Qwen3-Embedding-0.6B Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-qwen-qwen3-embedding-0-6b-research-knowledge-intelligence-qwen-qwen3-embeddin.md",
       "repository": "Qwen/Qwen3-Embedding-0.6B",
-      "content_hash": "0f98e699a9098857260445b610871015bbdd8b09e765137bb39bb78aae9a0852",
-      "created_at": "2026-11-22T01:58:41.926Z"
+      "content_hash": "6d0a07fe9909ae506acd445cc3ddb45a2ac00370a8c9a0dffdf438453961b9c5",
+      "created_at": "2026-11-25T23:24:00.494Z"
     },
     "domain_intelligence-technical-construction-intelligence-apache-shardingsphere-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-apache-shardingsphere-core-invariants",
@@ -26969,8 +26969,8 @@
       "title": "Research & Knowledge Intelligence: hf-qwen-qwen3-embedding-0.6b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-qwen-qwen3-embedding-0-6b-learnings-research-knowledge-intelligence-hf-qwen-q.md",
       "repository": "hf-qwen-qwen3-embedding-0.6b-learnings",
-      "content_hash": "52c376a1793fce83f8f11484daa803fc534f4e87b0184b1dbda55c96be3faa8e",
-      "created_at": "2026-11-22T01:58:59.230Z"
+      "content_hash": "5cff4812569c099dcf9b92f355eedcef5b93703a9a6c76bac8fb100e7b034736",
+      "created_at": "2026-11-25T23:24:17.347Z"
     },
     "domain_intelligence-technical-construction-intelligence-rqlite-rqlite-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-rqlite-rqlite-core-invariants",
@@ -32253,8 +32253,8 @@
       "title": "Architecture Intelligence: RustCrypto/hashes Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-rustcrypto-hashes-architecture-intelligence-rustcrypto-hashes-core-invariants.md",
       "repository": "RustCrypto/hashes",
-      "content_hash": "da0d09e02c45317c37b5b2287a1cc60f3b7f212fd2643d4783e6abc378bd716b",
-      "created_at": "2026-11-25T12:19:34.567Z"
+      "content_hash": "f610dc7a554cbad596dc9365f7b4195982cc0ff341b71115ae62d5c382eaedc1",
+      "created_at": "2026-11-25T23:24:12.590Z"
     },
     "domain_intelligence-architecture-intelligence-rustcrypto-hashes-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-rustcrypto-hashes-learnings-core-invariants",
@@ -32262,8 +32262,8 @@
       "title": "Architecture Intelligence: rustcrypto-hashes-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-rustcrypto-hashes-learnings-architecture-intelligence-rustcrypto-hashes-learning.md",
       "repository": "rustcrypto-hashes-learnings",
-      "content_hash": "2108fed3f0a7ee8edc9c0b0010a7f1edf6800a6c88a72a83801d9bd0a9d73922",
-      "created_at": "2026-11-25T12:19:45.319Z"
+      "content_hash": "bb00c4a784680bc7bfd2aefe6d190cc2ede47d14721ff46510fe0e29c00c7eb6",
+      "created_at": "2026-11-25T23:24:19.516Z"
     },
     "domain_intelligence-research-knowledge-intelligence-huggingfacetb-smolvlm2-256m-video-instruct-core-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-huggingfacetb-smolvlm2-256m-video-instruct-core-",

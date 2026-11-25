@@ -3053,10 +3053,10 @@
     "repository": "RustCrypto/hashes",
     "platform": "github",
     "sourceUrl": "https://github.com/RustCrypto/hashes",
-    "sourceVersion": "ed176fb7",
+    "sourceVersion": "3ae6b7f0",
     "license": "PERMISSIVE_OPEN_SOURCE",
-    "contentHash": "9ff33201123f3856be87432c3c0deb60c34449d89a28118b3f338474464b7216",
-    "lastHarvestedAt": "2026-11-25T12:19:34.021Z",
+    "contentHash": "d3e07efb793400315e659393b253208df55902c45e19677e8d8c1badfb5422fe",
+    "lastHarvestedAt": "2026-11-25T23:24:12.009Z",
     "learningId": "learn-github-rustcrypto-hashes"
   },
   "onlook-dev-onlook": {
@@ -5343,10 +5343,10 @@
     "repository": "embassy-rs/embassy",
     "platform": "github",
     "sourceUrl": "https://github.com/embassy-rs/embassy",
-    "sourceVersion": "17b3b541",
+    "sourceVersion": "c7f4fb42",
     "license": "Apache-2.0",
-    "contentHash": "a95b57d97c231b2bc8dfaea73f8b9f9a45ede1f43f85f80c96bd4311e917f03a",
-    "lastHarvestedAt": "2026-11-24T15:44:30.187Z",
+    "contentHash": "980312a510cd980229d96a169d122ca528b9d6ad46004c71dad8a9dade3fe3ee",
+    "lastHarvestedAt": "2026-11-25T23:24:02.694Z",
     "learningId": "learn-github-embassy-rs-embassy"
   },
   "jpush-aurora-imui": {
@@ -11865,8 +11865,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen3-Embedding-0.6B",
     "sourceVersion": "hf-qwen-qwen3-embedding-0.6b",
     "license": "Open-Source",
-    "contentHash": "d27eb2ba6fed3be8d5ee172422cdb8bb77f1c4aec1890283fe3294e308ba6354",
-    "lastHarvestedAt": "2026-11-22T01:58:41.687Z",
+    "contentHash": "eb63a9ca4ff68c2569786c855b6aef7d28b7eaa24be9809669373d2e376a2343",
+    "lastHarvestedAt": "2026-11-25T23:24:00.182Z",
     "learningId": "learn-huggingface-qwen-qwen3-embedding-0-6b"
   },
   "feder-cr-jobs_applier_ai_agent_aihawk": {

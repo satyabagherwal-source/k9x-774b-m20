@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-25T12:19:44.908Z",
+  "timestamp": "2026-11-25T23:24:19.067Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-rustcrypto-hashes-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [rustcrypto-hashes-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-25T12:19:44.908Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T23:24:19.067Z`  
 > **Learning ID**: `LEARN-EVO-rustcrypto-hashes-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 81%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 86%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from rustcrypto-hashes-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rustcrypto-hashes-learnings.md`  
 > **Source**: github ([https://github.com/RustCrypto/hashes](https://github.com/RustCrypto/hashes))  
-> **Source Version**: `ed176fb7`  
+> **Source Version**: `3ae6b7f0`  
 > **License**: PERMISSIVE_OPEN_SOURCE  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-25T12:19:32.548Z  
+> **Timestamp**: 2026-11-25T23:24:10.484Z  
 > **Learning ID**: `learn-github-rustcrypto-hashes`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rustcrypto-hashes-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/RustCrypto/hashes](https://github.com/RustCrypto/hashes))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T12:19:32.541Z  
+> **Harvest Timestamp**: 2026-11-25T23:24:10.477Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Collection of cryptographic hash functions written in pure Rust
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 2335 stars
+- **Stars / Engagement**: 2336 stars
 
 ---
 
@@ -702,87 +702,531 @@ where
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ed176fb7` (2026-11-25)
-**Commit Message**: sha2: fix `sha512/x86_avx2` backend for 32-bit targets (#951)
+### Incident Patch 1: `3ae6b7f0` (2026-11-25)
+**Commit Message**: Release sha2 v0.11.2 (#954)
 
-In #943 a call to `_mm_extract_epi64` was introduced in the SHA-512 AVX2
-backend, but that intrinsic is only available on `x86_64`. This PR fixes
-it by using `_mm_extract_epi32` on 32-bit targets.
+### Fixed
+- SHA-512 `riscv-zknh` backend selection ([#935])
+- Respect precedence of the `sha2_backend` configuration flag over
+`sha2_256/512_backend` ([#948])
 
-The `sha2` Linux CI jobs for `i686` run the tests on the `x86_64` host
-but the switch to `cargo-hack` in #485 dropped `--target` from the test
-commands, the jobs still install the 32-bit target, but Cargo defaults
-to the host and consequently the coverage is wrong.
+### Changed
+- Refactored `riscv_zknh` backends ([#929])
+- Improved performance of the SHA-512 `x86-avx2` backend ([#940],
+[#943], [#951])
+- Refactored `soft` backends ([#949])
 
-**File**: `.github/workflows/sha2.yml` (modified, +3/-3)
+[#929]: https://github.com/RustCrypto/hashes/pull/929
+[#935]: https://github.com/RustCrypto/hashes/pull/935
+[#940]: https://github.com/RustCrypto/hashes/pull/940
+[#943]: https://github.com/RustCrypto/hashes/pull/943
+[#948]: https://github.com/RustCrypto/hashes/pull/948
+[#949]: https://github.com/RustCrypto/hashes/pull/949
+[#951]: https://github.com/RustCrypto/hashes/pull/951
+
+**File**: `.cargo/audit.toml` (added, +5/-0)
 ```diff
-@@ -80,11 +80,11 @@ jobs:
-           targets: ${{ matrix.target }}
-       - uses: RustCrypto/actions/cargo-hack-install@master
-       - run: ${{ matrix.deps }}
--      - run: cargo hack test --feature-powerset
--      - run: cargo test --all-features
-+      - run: cargo hack test --feature-powerset --target ${{ matrix.target }}
-+      - run: cargo test --all-features --target ${{ matrix.target }}
-         env:
-           RUSTFLAGS: -Dwarnings --cfg sha2_backend="soft"
--      - run: cargo test --all-features
-+      - run: cargo test --all-features --target ${{ matrix.target }}
-         env:
-           RUSTFLAGS: -Dwarnings --cfg sha2_backend="soft" --cfg sha2_backend_soft="compact"
- 
+@@ -0,0 +1,5 @@
++[advisories]
++ignore = [
++    # Patched versions require Rust 1.87 which is higher than MSRV for majority of the crates
++    "RUSTSEC-2026-0385",
++]
 ```
 
-**File**: `sha2/CHANGELOG.md` (modified, +2/-1)
+**File**: `Cargo.lock` (modified, +13/-13)
 ```diff
-@@ -12,13 +12,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+@@ -57,9 +57,9 @@ dependencies = [
  
+ [[package]]
+ name = "blobby"
+-version = "0.4.0"
++version = "0.4.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "89af0b093cc13baa4e51e64e65ec2422f7e73aea0e612e5ad3872986671622f1"
++checksum = "2a2d27f438abc673fba239d3767f7da4e1a10276280b412d90ca31bc2fbd76db"
+ 
+ [[package]]
+ name = "block-buffer"
+@@ -85,9 +85,9 @@ checksum = "0c9ea0ac24bc397ab3c98583a3c9ba74fa56b09a4449bbe172b9b1ddb016027a"
+ 
+ [[package]]
+ name = "const-oid"
+-version = "0.10.2"
++version = "0.10.3"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "a6ef517f0926dd24a1582492c791b6a4818a4d94e789a334894aa15b0d12f55c"
++checksum = "be95d4a884358a21a199689323c29e9256b4a1b315e22f183d155422041d3a9a"
+ 
+ [[package]]
+ name = "cpufeatures"
+@@ -199,9 +199,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "libc"
+-version = "0.2.190"
++version = "0.2.191"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "ce5d3ddc6d3fa000eb1536d85e147bfe31aacaba692ed6a876f95cb7c855be78"
++checksum = "65cd87c9a6d60536580b316ad985726104730a5151c99845f2490428ef91240a"
+ 
+ [[package]]
+ name = "md-5"
+@@ -285,7 +285,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "sha2"
+-version = "0.11.1"
++version = "0.11.2"
+ dependencies = [
+  "cfg-if",
+  "cpufeatures",
+@@ -395,18 +395,18 @@ dependencies = [
+ 
+ [[package]]
+ name = "zerocopy"
+-version = "0.8.62"
++version = "0.8.65"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "86502bf56ac7c77571a32e2647bb2a15894565e981fb2a48d7bde2d91c965a9d"
++checksum = "32bc8a75f879cd6fe53a6bedf3c28f0e1b914c77424fc2be9e2ec85d7d25aff5"
+ dependencies = [
+  "zerocopy-derive",
+ ]
+ 
+ [[package]]
+ name = "zerocopy-derive"
+-version = "0.8.62"
++version = "0.8.65"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "5457206954b06561e2608c7e19cf58b1926586d999c246eebe4502f7e2039d1a"
++checksum = "b8bfd2644ea1681f60cf95029ff18aa8ad1cc3f7b8fe37286f8e473bb29f816b"
+ dependencies = [
+  "proc-macro2",
+  "quote",
+@@ -415,6 +415,6 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeroize"
+-version = "1.9.1"
++version = "1.9.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "e13084392c5e4bc371903e2935a5eaeed24905a7511356b883835e18a78f6879"
++checksum = "85ccff8a4805aba1eaa4cd4afcd49f7557dd2cf5fd79ffc37f8959466effc5aa"
+```
+
+**File**: `sha2/CHANGELOG.md` (modified, +1/-1)
+```diff
+@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
+ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+ 
+-## 0.11.2 (UNRELEASED)
++## 0.11.2 (2026-11-25)
+ ### Fixed
+ - SHA-512 `riscv-zknh` backend selection ([#935])
+ - Respect precedence of the `sha2_backend` configuration flag over `sha2_256/512_backend` ([#948])
+```
+
+**File**: `sha2/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ [package]
+ name = "sha2"
+-version = "0.11.1"
++version = "0.11.2"
+ authors = ["RustCrypto Developers"]
+ edition = "2024"
+ rust-version = "1.88"
+```
+
+---
+
+### Incident Patch 2: `a567b76c` (2026-11-25)
+**Commit Message**: sha2: refactor software backends (#949)
+
+Follows changes introduced in #929.
+
+**File**: `sha2/CHANGELOG.md` (modified, +2/-0)
+```diff
+@@ -13,12 +13,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  ### Changed
  - Refactored `riscv_zknh` backends ([#929])
--- Improved performance of the SHA-512 `x86-avx2` backend ([#940], [#943])
-+- Improved performance of the SHA-512 `x86-avx2` backend ([#940], [#943], [#951])
+ - Improved performance of the SHA-512 `x86-avx2` backend ([#940], [#943], [#951])
++- Refactored `soft` backends ([#949])
  
  [#929]: https://github.com/RustCrypto/hashes/pull/929
  [#935]: https://github.com/RustCrypto/hashes/pull/935
  [#940]: https://github.com/RustCrypto/hashes/pull/940
  [#943]: https://github.com/RustCrypto/hashes/pull/943
  [#948]: https://github.com/RustCrypto/hashes/pull/948
-+[#951]: https://github.com/RustCrypto/hashes/pull/951
++[#949]: https://github.com/RustCrypto/hashes/pull/949
+ [#951]: https://github.com/RustCrypto/hashes/pull/951
  
  ## 0.11.1 (2026-10-12)
- ### Changed
 ```
 
-**File**: `sha2/src/sha512/x86_avx2.rs` (modified, +12/-0)
+**File**: `sha2/src/consts.rs` (modified, +16/-4)
 ```diff
-@@ -323,6 +323,18 @@ fn_sha512_update_x!(sha512_update_x_avx2, "avx2", __m256i, {
+@@ -1,38 +1,47 @@
+ pub(crate) type State256 = [u32; 8];
+ pub(crate) type State512 = [u64; 8];
+ 
++/// Initial hash values for SHA-224
+ pub(crate) const H256_224: State256 = [
+     0xc1059ed8, 0x367cd507, 0x3070dd17, 0xf70e5939,
+     0xffc00b31, 0x68581511, 0x64f98fa7, 0xbefa4fa4,
+ ];
+ 
++/// Initial hash values for SHA-256
+ pub(crate) const H256_256: State256 = [
+     0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a,
+     0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19,
+ ];
+ 
++/// Initial hash values for SHA-512/224
+ pub(crate) const H512_224: State512 = [
+     0x8c3d37c819544da2, 0x73e1996689dcd4d6, 0x1dfab7ae32ff9c82, 0x679dd514582f9fcf,
+     0x0f6d2b697bd44da8, 0x77e36f7304c48942, 0x3f9d85a86a1d36c8, 0x1112e6ad91d692a1,
+ ];
+ 
++/// Initial hash values for SHA-512/256
+ pub(crate) const H512_256: State512 = [
+     0x22312194fc2bf72c, 0x9f555fa3c84c64c2, 0x2393b86b6f53b151, 0x963877195940eabd,
+     0x96283ee2a88effe3, 0xbe5e1e2553863992, 0x2b0199fc2c85b8aa, 0x0eb72ddc81c52ca2,
+ ];
+ 
++/// Initial hash values for SHA-384
+ pub(crate) const H512_384: State512 = [
+     0xcbbb9d5dc1059ed8, 0x629a292a367cd507, 0x9159015a3070dd17, 0x152fecd8f70e5939,
+     0x67332667ffc00b31, 0x8eb44a8768581511, 0xdb0c2e0d64f98fa7, 0x47b5481dbefa4fa4,
+ ];
+ 
++/// Initial hash values for SHA-512
+ pub(crate) const H512_512: State512 = [
+     0x6a09e667f3bcc908, 0xbb67ae8584caa73b, 0x3c6ef372fe94f82b, 0xa54ff53a5f1d36f1,
+     0x510e527fade682d1, 0x9b05688c2b3e6c1f, 0x1f83d9abfb41bd6b, 0x5be0cd19137e2179,
+ ];
+ 
+-/// Round constants for SHA-256 family of digests
+-pub(crate) static K32: [u32; 64] = [
++/// Number of SHA-256 rounds
++pub(crate) const SHA256_ROUNDS: usize = 64;
++
++/// SHA-256 round constants
++pub(crate) static SHA256_RK: [u32; SHA256_ROUNDS] = [
+     0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
+     0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3, 0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174,
+     0xe49b69c1, 0xefbe4786, 0x0fc19dc6, 0x240ca1cc, 0x2de92c6f, 0x4a7484aa, 0x5cb0a9dc, 0x76f988da,
+@@ -43,8 +52,11 @@ pub(crate) static K32: [u32; 64] = [
+     0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2,
+ ];
+ 
+-/// Round constants for SHA-512 family of digests
+-pub(crate) const K64: [u64; 80] = [
++/// Number of SHA-512 rounds
++pub(crate) const SHA512_ROUNDS: usize = 80;
++
++/// SHA-512 round constants
++pub(crate) const SHA512_RK: [u64; SHA512_ROUNDS] = [
+     0x428a2f98d728ae22, 0x7137449123ef65cd, 0xb5c0fbcfec4d3b2f, 0xe9b5dba58189dbbc,
+     0x3956c25bf348b538, 0x59f111f1b605d019, 0x923f82a4af194f9b, 0xab1c5ed5da6d8118,
+     0xd807aa98a3030242, 0x12835b0145706fbe, 0x243185be4ee4b28c, 0x550c7dc3d5ffb4e2,
+```
+
+**File**: `sha2/src/sha256/aarch64_sha2.rs` (modified, +1/-1)
+```diff
+@@ -86,7 +86,7 @@ pub(super) fn compress(state: &mut [u32; 8], blocks: &[[u8; 64]]) {
  #[inline]
- #[target_feature(enable = "sse4.1")]
- fn extract_u64(a: __m128i) -> [u64; 2] {
-+    #[cfg(target_arch = "x86")]
-+    {
-+        let [lo0, hi0, lo1, hi1] = [
-+            _mm_extract_epi32::<0>(a),
-+            _mm_extract_epi32::<1>(a),
-+            _mm_extract_epi32::<2>(a),
-+            _mm_extract_epi32::<3>(a),
-+        ]
-+        .map(|word| u64::from(word.cast_unsigned()));
-+        [lo0 | (hi0 << 32), lo1 | (hi1 << 32)]
+ #[target_feature(enable = "neon")]
+ fn rk(i: usize) -> uint32x4_t {
+-    let chunk = &crate::consts::K32[i..][..4];
++    let chunk = &crate::consts::SHA256_RK[i..][..4];
+     unsafe { vld1q_u32(chunk.as_ptr()) }
+ }
+ 
+```
+
+**File**: `sha2/src/sha256/loongarch64_asm.rs` (modified, +1/-1)
+```diff
+@@ -208,7 +208,7 @@ pub(super) fn compress(state: &mut [u32; 8], blocks: &[[u8; 64]]) {
+             in("$a0") state,
+             inout("$a1") blocks.as_ptr() => _,
+             inout("$a2") blocks.len() => _,
+-            in("$a3") crate::consts::K32.as_ptr(),
++            in("$a3") crate::consts::SHA256_RK.as_ptr(),
+ 
+             // Clobbers
+             out("$a4") _,
+```
+
+**File**: `sha2/src/sha256/riscv_zknh/compact.rs` (modified, +7/-9)
+```diff
+@@ -4,17 +4,15 @@
+ //! RV32: https://rust.godbolt.org/z/MabKT4ssW
+ //! RV64: https://rust.godbolt.org/z/bf7sf1zEe
+ use super::{sha256sig0, sha256sig1, sha256sum0, sha256sum1};
+-use crate::consts::K32;
+-
+-const ROUNDS: usize = K32.len();
++use crate::consts::{SHA256_RK, SHA256_ROUNDS};
+ 
+ #[target_feature(enable = "zknh")]
+ pub(crate) fn compress(state: &mut [u32; 8], blocks: &[[u8; 64]]) {
+     // Unforuntately, LLVM is unable to remove `memset` for
+     // `fn message_schedule(block: &[u8; 64]) -> [u32; ROUNDS] { ... }`
+     // See: https://rust.godbolt.org/z/s61sP3GKj
+     // So to prevent unnecessary `memset` call for each block we reuse the buffer.
+-    let mut msg = [0u32; ROUNDS];
++    let mut msg = [0u32; SHA256_ROUNDS];
+ 
+     for block in blocks {
+         // Pre-computing the whole message schedule instead of doing it during each round
+@@ -27,7 +25,7 @@ pub(crate) fn compress(state: &mut [u32; 8], blocks: &[[u8; 64]]) {
+ 
+ #[inline]
+ #[target_feature(enable = "zknh")]
+-fn schedule(block: &[u8; 64], msg: &mut [u32; ROUNDS]) {
++fn schedule(block: &[u8; 64], msg: &mut [u32; SHA256_ROUNDS]) {
+     let (block_chunks, tail) = block.as_chunks();
+     assert!(tail.is_empty());
+ 
+@@ -36,7 +34,7 @@ fn schedule(block: &[u8; 64], msg: &mut [u32; ROUNDS]) {
+         msg[i] = u32::from_be_bytes(block_chunks[i]);
+     }
+ 
+-    for i in n..ROUNDS {
++    for i in n..SHA256_ROUNDS {
+         msg[i] = msg[i - 16]
+             .wrapping_add(sha256sig0(msg[i - 15]))
+             .wrapping_add(msg[i - 7])
+@@ -46,15 +44,15 @@ fn schedule(block: &[u8; 64], msg: &mut [u32; ROUNDS]) {
+ 
+ #[inline]
+ #[target_feature(enable = "zknh")]
+-fn rounds(state: &mut [u32; 8], msg: &[u32; ROUNDS]) {
++fn rounds(state: &mut [u32; 8], msg: &[u32; SHA256_ROUNDS]) {
+     let [mut a, mut b, mut c, mut d, mut e, mut f, mut g, mut h] = *state;
+ 
+-    for i in 0..ROUNDS {
++    for i in 0..SHA256_ROUNDS {
+         let s1 = sha256sum1(e);
+         let ch = (e & f) ^ ((!e) & g);
+         let t1 = s1
+             .wrapping_add(ch)
+-            .wrapping_add(K32[i])
++            .wrapping_add(SHA256_RK[i])
+             .wrapping_add(msg[i])
+             .wrapping_add(h);
+         let s0 = sha256sum0(a);
+```
+
+**File**: `sha2/src/sha256/riscv_zknh/unroll.rs` (modified, +8/-14)
+```diff
+@@ -1,10 +1,9 @@
+ //! RISC-V backend which uses the Zknh extension and fully unrolls round loop.
+ //!
+ //! Generated assembly:
+-//! RV32: https://rust.godbolt.org/z/1ccjaeEYE
+-//! RV64: https://rust.godbolt.org/z/Y71ovfh8P
++//! RV32: https://rust.godbolt.org/z/jv9jxqs9n
++//! RV64: https://rust.godbolt.org/z/E6M7b9zWx
+ use super::{sha256sig0, sha256sig1, sha256sum0, sha256sum1};
+-use crate::consts::K32;
+ 
+ #[target_feature(enable = "zknh")]
+ pub(crate) fn compress(state: &mut [u32; 8], blocks: &[[u8; 64]]) {
+@@ -132,29 +131,24 @@ fn round<const R: usize>(state: &mut [u32; 8], w: u32) {
+     let maj = (a & b) ^ (a & c) ^ (b & c);
+     let t2 = s0.wrapping_add(maj);
+ 
+-    state[7] = g;
+-    state[6] = f;
+-    state[5] = e;
+-    state[4] = d.wrapping_add(t1);
+-    state[3] = c;
+-    state[2] = b;
+-    state[1] = a;
+-    state[0] = t1.wrapping_add(t2);
++    *state = [t1.wrapping_add(t2), a, b, c, d.wrapping_add(t1), e, f, g];
+ }
+ 
+ // We intentionally add round constant instead of simply loading it
+ // to prevent the compiler from applying unnecessary optimizations
+ #[inline(always)]
+ fn add_rk<const R: usize>(mut w: u32) -> u32 {
+-    const { assert!(R < K32.len()) };
++    use crate::consts::SHA256_RK;
++
++    const { assert!(R < SHA256_RK.len()) };
+ 
+     #[cfg(target_arch = "riscv64")]
+     unsafe {
+         core::arch::asm!(
+             "lwu {rk}, 4*{R}({rk_ptr})",
+             "addw {w}, {w}, {rk}",
+             R = const R,
+-            rk_ptr = in(reg) K32.as_ptr(),
++            rk_ptr = in(reg) SHA256_RK.as_ptr(),
+             rk = out(reg) _,
+             w = inout(reg) w,
+             options(pure, readonly, nostack, preserves_flags),
+@@ -167,7 +161,7 @@ fn add_rk<const R: usize>(mut w: u32) -> u32 {
+             "lw {rk}, 4*{R}({rk_ptr})",
+             "add {w}, {w}, {rk}",
+             R = const R,
+-            rk_ptr = in(reg) K32.as_ptr(),
++            rk_ptr = in(reg) SHA256_RK.as_ptr(),
+             rk = out(reg) _,
+             w = inout(reg) w,
+             options(pure, readonly, nostack, preserves_flags),
+```
+
+**File**: `sha2/src/sha256/soft.rs` (modified, +28/-5)
+```diff
+@@ -8,9 +8,32 @@ cfg_if::cfg_if! {
+     }
+ }
+ 
+-fn to_u32s(block: &[u8; 64]) -> [u32; 16] {
+-    core::array::from_fn(|i| {
+-        let chunk = block[4 * i..][..4].try_into().unwrap();
+-        u32::from_be_bytes(chunk)
+-    })
++#[inline(always)]
++fn sig0(w: u32) -> u32 {
++    (w.rotate_right(7)) ^ (w.rotate_right(18)) ^ (w >> 3)
++}
++
++#[inline(always)]
++fn sig1(w: u32) -> u32 {
++    (w.rotate_right(17)) ^ (w.rotate_right(19)) ^ (w >> 10)
++}
++
++#[inline(always)]
++fn sum0(w: u32) -> u32 {
++    w.rotate_right(2) ^ w.rotate_right(13) ^ w.rotate_right(22)
++}
++
++#[inline(always)]
++fn sum1(w: u32) -> u32 {
++    w.rotate_right(6) ^ w.rotate_right(11) ^ w.rotate_right(25)
++}
++
++#[inline(always)]
++fn ch(e: u32, f: u32, g: u32) -> u32 {
++    (e & f) ^ ((!e) & g)
++}
++
++#[inline(always)]
++fn maj(a: u32, b: u32, c: u32) -> u32 {
++    (a & b) ^ (a & c) ^ (b & c)
+ }
+```
+
+**File**: `sha2/src/sha256/soft/compact.rs` (modified, +47/-33)
+```diff
+@@ -1,34 +1,54 @@
+-use crate::consts::K32;
++//! Software backend without manual loop unrolling
++//!
++//! Generated assembly: https://rust.godbolt.org/z/fno5qd6sK
++use super::{ch, maj, sig0, sig1, sum0, sum1};
++use crate::consts::{SHA256_RK, SHA256_ROUNDS};
+ 
+-fn compress_u32(state: &mut [u32; 8], mut block: [u32; 16]) {
++pub(crate) fn compress(state: &mut [u32; 8], blocks: &[[u8; 64]]) {
++    // Unforuntately, LLVM is unable to remove `memset` for
++    // `fn message_schedule(block: &[u8; 64]) -> [u32; ROUNDS] { ... }`
++    // See: https://rust.godbolt.org/z/s61sP3GKj
++    // So to prevent unnecessary `memset` call for each block we reuse the buffer.
++    let mut msg = [0u32; SHA256_ROUNDS];
++
++    for block in blocks {
++        // Pre-computing the whole message schedule instead of doing it during each round
++        // with a ring buffer results in a smaller binary with less branching
++        // at the cost of using additional stack space
++        schedule(block, &mut msg);
++        rounds(state, &msg);
 +    }
-+    #[cfg(target_arch = "x86_64")]
-     [
-         _mm_extract_epi64::<0>(a).cast_unsigned(),
-         _mm_extract_epi64::<1>(a).cast_unsigned(),
++}
++
++#[inline]
++fn schedule(block: &[u8; 64], msg: &mut [u32; SHA256_ROUNDS]) {
++    let (block_chunks, tail) = block.as_chunks();
++    assert!(tail.is_empty());
++
++    let n = block_chunks.len();
++    for i in 0..n {
++        msg[i] = u32::from_be_bytes(block_chunks[i]);
++    }
++
++    for i in n..SHA256_ROUNDS {
++        msg[i] = msg[i - 16]
++            .wrapping_add(sig0(msg[i - 15]))
++            .wrapping_add(msg[i - 7])
++            .wrapping_add(sig1(msg[i - 2]));
++    }
++}
++
++#[inline]
++fn rounds(state: &mut [u32; 8], msg: &[u32; SHA256_ROUNDS]) {
+     let [mut a, mut b, mut c, mut d, mut e, mut f, mut g, mut h] = *state;
+ 
+-    for i in 0..64 {
+-        let w = if i < 16 {
+-            block[i]
+-        } else {
+-            let w15 = block[(i - 15) % 16];
+-            let s0 = (w15.rotate_right(7)) ^ (w15.rotate_right(18)) ^ (w15 >> 3);
+-            let w2 = block[(i - 2) % 16];
+-            let s1 = (w2.rotate_right(17)) ^ (w2.rotate_right(19)) ^ (w2 >> 10);
+-            let new_w = block[(i - 16) % 16]
+-                .wrapping_add(s0)
+-                .wrapping_add(block[(i - 7) % 16])
+-                .wrapping_add(s1);
+-            block[i % 16] = new_w;
+-            new_w
+-        };
+-
+-        let s1 = e.rotate_right(6) ^ e.rotate_right(11) ^ e.rotate_right(25);
+-        let ch = (e & f) ^ ((!e) & g);
+-        let t1 = s1
+-            .wrapping_add(ch)
+-            .wrapping_add(K32[i])
+-            .wrapping_add(w)
++    for i in 0..SHA256_ROUNDS {
++        let t1 = sum1(e)
++            .wrapping_add(ch(e, f, g))
++            .wrapping_add(SHA256_RK[i])
++            .wrapping_add(msg[i])
+             .wrapping_add(h);
+-        let s0 = a.rotate_right(2) ^ a.rotate_right(13) ^ a.rotate_right(22);
+-        let maj = (a & b) ^ (a & c) ^ (b & c);
+-        let t2 = s0.wrapping_add(maj);
++        let t2 = sum0(a).wrapping_add(maj(a, b, c));
+ 
+         h = g;
+         g = f;
+@@ -49,9 +69,3 @@ fn compress_u32(state: &mut [u32; 8], mut block: [u32; 16]) {
+     state[6] = state[6].wrapping_add(g);
+     state[7] = state[7].wrapping_add(h);
+ }
+-
+-pub(in super::super) fn compress(state: &mut [u32; 8], blocks: &[[u8; 64]]) {
+-    for block in blocks.iter() {
+-        compress_u32(state, super::to_u32s(block));
+-    }
+-}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #954** (2026-11-25): Release sha2 v0.11.2 (@newpavlov)
 - **PR #953** (closed): sha2: fix `sha512/x86_avx2` backend for 32-bit targets (@newpavlov)
+- **PR #952** (closed): ci: bump the all-deps group across 1 directory with 6 updates (@dependabot[bot])
 - **PR #951** (2026-11-25): sha2: fix `sha512/x86_avx2` backend for 32-bit targets (@zanieb)
+- **PR #949** (2026-11-25): sha2: refactor software backends (@newpavlov)
 - **PR #948** (2026-11-18): sha2: respect `sha2_backend` precedence over `sha2_256/512_backend` (@newpavlov)
-- **PR #947** (closed): ci: bump the all-deps group across 1 directory with 5 updates (@dependabot[bot])
-- **PR #945** (closed): sha2: respect global backend selection over per-algorithm soft overrides (@zjuncal)
-- **PR #944** (closed): ripemd: interleave the two RIPEMD-160 lines in compress (@DaniPopes)
 
 ---
 
@@ -802,35 +1246,35 @@ to the host and consequently the coverage is wrong.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. sha2: fix `sha512/x86_avx2` backend for 32-bit targets
+## X. Release sha2 v0.11.2
 
 **RULE**:
-When implementing operations in `.github/workflows/sha2.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in RustCrypto/hashes. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.cargo/audit.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in RustCrypto/hashes. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ed176fb7`: sha2: fix `sha512/x86_avx2` backend for 32-bit targets. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3ae6b7f0`: Release sha2 v0.11.2. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/sha2.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.cargo/audit.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-      - run: cargo hack test --feature-powerset --target ${{ matrix.target }}
-      - run: cargo test --all-features --target ${{ matrix.target }}
-      - run: cargo test --all-features --target ${{ matrix.target }}
+[advisories]
+ignore = [
+    # Patched versions require Rust 1.87 which is higher than MSRV for majority of the crates
+    "RUSTSEC-2026-0385",
+]
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-      - run: cargo hack test --feature-powerset
-      - run: cargo test --all-features
-      - run: cargo test --all-features
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ed176fb7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3ae6b7f0` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

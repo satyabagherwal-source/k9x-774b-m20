@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-25T23:12:03.457Z",
+  "last_updated": "2026-11-25T23:24:19.785Z",
   "total_verified_learnings": 9121,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25535,
+  "total_items": 25540,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -213140,8 +213140,8 @@
       "slug": "embassy-rs-embassy",
       "platform": "github",
       "source_url": "https://github.com/embassy-rs/embassy",
-      "source_version": "17b3b541",
-      "content_hash": "a95b57d97c231b2bc8dfaea73f8b9f9a45ede1f43f85f80c96bd4311e917f03a",
+      "source_version": "c7f4fb42",
+      "content_hash": "980312a510cd980229d96a169d122ca528b9d6ad46004c71dad8a9dade3fe3ee",
       "dossier_path": "07_PROJECT_LEARNING/embassy-rs-embassy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/embassy-rs-embassy-learnings.md",
       "promoted_rules": [
@@ -213194,6 +213194,11 @@
           "number": 10296,
           "title": "stm32/hsem: fix secondary core boot; RCC enable registers are per-core",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10558,
+          "title": "fix retained OSC32K restart handling",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -213201,7 +213206,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T15:44:29.963Z",
+      "verified_at": "2026-11-25T23:24:02.374Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -213243,10 +213248,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-embassy-rs-embassy-architecture-intelligence-embassy-rs-embassy-core-invariants.md",
       "title": "Architecture Intelligence: embassy-rs/embassy Core Invariants",
       "repository": "embassy-rs/embassy",
-      "source_version": "17b3b541",
-      "content_hash": "7aea22bffeb59a21824b72f5e64d113400cf7275bf9eb9acb83efc699ae158fb",
+      "source_version": "c7f4fb42",
+      "content_hash": "ae5d42d000517013322b02907810dcea553e3c28e844e1decfad8fe9eef863a7",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T15:44:30.619Z"
+      "persisted_at": "2026-11-25T23:24:03.284Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-embassy-rs-embassy": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-embassy-rs-embassy",
@@ -213255,10 +213260,10 @@
       "relative_path": "08_VERIFICATION/embassy-rs-embassy-verification-protocol-empirical-defect-shield-for-embassy-rs-.md",
       "title": "Verification Protocol: Empirical Defect Shield for embassy-rs/embassy",
       "repository": "embassy-rs/embassy",
-      "source_version": "17b3b541",
-      "content_hash": "ce5f4314c7c0bcffe657951fe41cda1898ddc764724223117225b1a3233379ee",
+      "source_version": "c7f4fb42",
+      "content_hash": "e9cfd96c68a60958284463c94902d1f11f44f7f458cd62f699f33445514376c4",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T15:44:30.797Z"
+      "persisted_at": "2026-11-25T23:24:03.548Z"
     },
     "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf": {
       "learning_id": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf",
@@ -213838,9 +213843,9 @@
       "title": "Architecture Intelligence: embassy-rs-embassy-learnings Core Invariants",
       "repository": "embassy-rs-embassy-learnings",
       "source_version": "HEAD",
-      "content_hash": "f4b2ab2b4a4ed249c6120bbc31c73cf3ed7d7afa91523d9b9f744149bbd640c7",
+      "content_hash": "55c676df87583a48a8034670eda6eecb4cc8a1750ddcffa04d23e4c1dc4b7e2a",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T15:44:39.542Z"
+      "persisted_at": "2026-11-25T23:24:16.516Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-embassy-rs-embassy-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-embassy-rs-embassy-learnings",
@@ -213850,9 +213855,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for embassy-rs-embassy-learnings",
       "repository": "embassy-rs-embassy-learnings",
       "source_version": "HEAD",
-      "content_hash": "7b12ffb5a20599391bb573f56b9c7b5105c79875f54f5cd859c2e2df5e5ebb05",
+      "content_hash": "186f1993ceb68cbff29195f5d17c6d234cb03edb0bb635920f849ac294a260dc",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T15:44:39.712Z"
+      "persisted_at": "2026-11-25T23:24:16.787Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-l": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-l",
@@ -273693,7 +273698,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Qwen/Qwen3-Embedding-0.6B",
       "source_version": "hf-qwen-qwen3-embedding-0.6b",
-      "content_hash": "d27eb2ba6fed3be8d5ee172422cdb8bb77f1c4aec1890283fe3294e308ba6354",
+      "content_hash": "eb63a9ca4ff68c2569786c855b6aef7d28b7eaa24be9809669373d2e376a2343",
       "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen3-embedding-0.6b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen3-embedding-0.6b-learnings.md",
       "promoted_rules": [],
@@ -273702,7 +273707,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T01:58:41.449Z",
+      "verified_at": "2026-11-25T23:23:59.806Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -273719,9 +273724,9 @@
       "title": "Research & Knowledge Intelligence: Qwen/Qwen3-Embedding-0.6B Core Invariants",
       "repository": "Qwen/Qwen3-Embedding-0.6B",
       "source_version": "hf-qwen-qwen3-embedding-0.6b",
-      "content_hash": "0f98e699a9098857260445b610871015bbdd8b09e765137bb39bb78aae9a0852",
+      "content_hash": "6d0a07fe9909ae506acd445cc3ddb45a2ac00370a8c9a0dffdf438453961b9c5",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T01:58:41.926Z"
+      "persisted_at": "2026-11-25T23:24:00.494Z"
     },
     "learn-github-laurent22-joplin": {
       "learning_id": "learn-github-laurent22-joplin",
@@ -273950,9 +273955,9 @@
       "title": "Research & Knowledge Intelligence: hf-qwen-qwen3-embedding-0.6b-learnings Core Invariants",
       "repository": "hf-qwen-qwen3-embedding-0.6b-learnings",
       "source_version": "HEAD",
-      "content_hash": "52c376a1793fce83f8f11484daa803fc534f4e87b0184b1dbda55c96be3faa8e",
+      "content_hash": "5cff4812569c099dcf9b92f355eedcef5b93703a9a6c76bac8fb100e7b034736",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T01:58:59.230Z"
+      "persisted_at": "2026-11-25T23:24:17.347Z"
     },
     "candidate_directive-doc-update-security-threat-model": {
       "item_id": "candidate_directive-doc-update-security-threat-model",
@@ -294286,8 +294291,8 @@
       "slug": "rustcrypto-hashes",
       "platform": "github",
       "source_url": "https://github.com/RustCrypto/hashes",
-      "source_version": "ed176fb7",
-      "content_hash": "9ff33201123f3856be87432c3c0deb60c34449d89a28118b3f338474464b7216",
+      "source_version": "3ae6b7f0",
+      "content_hash": "d3e07efb793400315e659393b253208df55902c45e19677e8d8c1badfb5422fe",
       "dossier_path": "07_PROJECT_LEARNING/rustcrypto-hashes-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rustcrypto-hashes-learnings.md",
       "promoted_rules": [
@@ -294300,6 +294305,11 @@
           "number": 10523,
           "title": "fix `sha512/x86_avx2` backend for 32-bit targets",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10559,
+          "title": "Release sha2 v0.11.2",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -294307,7 +294317,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T12:19:33.730Z",
+      "verified_at": "2026-11-25T23:24:11.685Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -294349,10 +294359,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-rustcrypto-hashes-architecture-intelligence-rustcrypto-hashes-core-invariants.md",
       "title": "Architecture Intelligence: RustCrypto/hashes Core Invariants",
       "repository": "RustCrypto/hashes",
-      "source_version": "ed176fb7",
-      "content_hash": "da0d09e02c45317c37b5b2287a1cc60f3b7f212fd2643d4783e6abc378bd716b",
+      "source_version": "3ae6b7f0",
+      "content_hash": "f610dc7a554cbad596dc9365f7b4195982cc0ff341b71115ae62d5c382eaedc1",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T12:19:34.567Z"
+      "persisted_at": "2026-11-25T23:24:12.590Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-rustcrypto-hashes": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-rustcrypto-hashes",
@@ -294361,10 +294371,10 @@
       "relative_path": "08_VERIFICATION/rustcrypto-hashes-verification-protocol-empirical-defect-shield-for-rustcrypto-h.md",
       "title": "Verification Protocol: Empirical Defect Shield for RustCrypto/hashes",
       "repository": "RustCrypto/hashes",
-      "source_version": "ed176fb7",
-      "content_hash": "e403f94522f80c76fb88206fe67040863dc2d05c2a24ae4fdc83840192d27043",
+      "source_version": "3ae6b7f0",
+      "content_hash": "2bfa20b92b6d144898d535e956de50ec5531cfff3f1996826b39724a15ae4301",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T12:19:34.799Z"
+      "persisted_at": "2026-11-25T23:24:12.846Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-o2sh-onefetch-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-o2sh-onefetch-learnings",
@@ -294398,9 +294408,9 @@
       "title": "Architecture Intelligence: rustcrypto-hashes-learnings Core Invariants",
       "repository": "rustcrypto-hashes-learnings",
       "source_version": "HEAD",
-      "content_hash": "2108fed3f0a7ee8edc9c0b0010a7f1edf6800a6c88a72a83801d9bd0a9d73922",
+      "content_hash": "bb00c4a784680bc7bfd2aefe6d190cc2ede47d14721ff46510fe0e29c00c7eb6",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T12:19:45.319Z"
+      "persisted_at": "2026-11-25T23:24:19.516Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-rustcrypto-hashes-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-rustcrypto-hashes-learnings",
@@ -294410,9 +294420,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for rustcrypto-hashes-learnings",
       "repository": "rustcrypto-hashes-learnings",
       "source_version": "HEAD",
-      "content_hash": "383d10f91064b1dac9fb95a63073956247be9591bb12f28df53d624e16026c31",
+      "content_hash": "a8e3601f5ef3f32debd8f17bf08a811fd1fd2c84cf9a85183e46f4188cdb5302",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T12:19:45.570Z"
+      "persisted_at": "2026-11-25T23:24:19.785Z"
     },
     "learn-huggingface-huggingfacetb-smolvlm2-256m-video-instruct": {
       "learning_id": "learn-huggingface-huggingfacetb-smolvlm2-256m-video-instruct",
@@ -349539,6 +349549,70 @@
       "content_hash": "3a7f703dfd057a9e42bd024d8447a380e2e91588eecf3461ec8268f660b5f85f",
       "domain_letter": "G",
       "persisted_at": "2026-11-25T23:12:01.442Z"
+    },
+    "rule-10558": {
+      "learning_id": "rule-10558",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10558,
+      "title": "fix retained OSC32K restart handling",
+      "source_url": "https://github.com/embassy-rs/embassy",
+      "source_version": "c7f4fb42",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T23:24:02.374Z"
+    },
+    "candidate_directive-fix-retained-osc32k-restart-handling": {
+      "item_id": "candidate_directive-fix-retained-osc32k-restart-handling",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-2SZJ-fix-retained-osc32k-restart-handling.md",
+      "title": "fix retained OSC32K restart handling",
+      "repository": "embassy-rs/embassy",
+      "source_version": "c7f4fb42",
+      "content_hash": "7bc019218cadda3090be34304da1a1af645e234dcf217c60eacbf496a26e0372",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-25T23:24:03.008Z"
+    },
+    "rule-10559": {
+      "learning_id": "rule-10559",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10559,
+      "title": "Release sha2 v0.11.2",
+      "source_url": "https://github.com/RustCrypto/hashes",
+      "source_version": "3ae6b7f0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T23:24:11.685Z"
+    },
+    "candidate_directive-release-sha2-v0-11-2": {
+      "item_id": "candidate_directive-release-sha2-v0-11-2",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-35IP-release-sha2-v0-11-2.md",
+      "title": "Release sha2 v0.11.2",
+      "repository": "rustcrypto-hashes-learnings",
+      "source_version": "HEAD",
+      "content_hash": "9d0f32768735ec4f012b2a1aa9a21c7f49d42b91eb726b793bf14187b0173136",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-25T23:24:19.252Z"
+    },
+    "candidate_directive-embassy-mcxa-fix-retained-osc32k-restart-handling": {
+      "item_id": "candidate_directive-embassy-mcxa-fix-retained-osc32k-restart-handling",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-337A-embassy-mcxa-fix-retained-osc32k-restart-handling.md",
+      "title": "embassy-mcxa: fix retained OSC32K restart handling",
+      "repository": "embassy-rs-embassy-learnings",
+      "source_version": "HEAD",
+      "content_hash": "0ca643665b27ebcbeae577a798239cf060ddc2874fb1495cc420a08534b33c6b",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-25T23:24:16.250Z"
     }
   },
   "ai-builder-brain": {

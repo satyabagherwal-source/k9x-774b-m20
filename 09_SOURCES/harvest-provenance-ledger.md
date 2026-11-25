@@ -13182,3 +13182,6 @@ Every entry in this ledger must capture:
 | `learn-github-grpc-grpc-rust` | `https://github.com/grpc/grpc-rust` | `39b3ea7c` | Multi-dimensional audit evidence | 2026-11-25T23:11:42.838Z |
 | `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/turso` | `9e928387` | Multi-dimensional audit evidence | 2026-11-25T23:11:55.486Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `5108f34d` | Multi-dimensional audit evidence | 2026-11-25T23:11:57.572Z |
+| `learn-huggingface-qwen-qwen3-embedding-0-6b` | `https://huggingface.co/Qwen/Qwen3-Embedding-0.6B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-25T23:24:00.182Z |
+| `learn-github-embassy-rs-embassy` | `https://github.com/embassy-rs/embassy` | `c7f4fb42` | Multi-dimensional audit evidence | 2026-11-25T23:24:02.694Z |
+| `learn-github-rustcrypto-hashes` | `https://github.com/RustCrypto/hashes` | `3ae6b7f0` | Multi-dimensional audit evidence | 2026-11-25T23:24:12.009Z |

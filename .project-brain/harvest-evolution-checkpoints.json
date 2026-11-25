@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T23:12:03.602Z",
+  "last_updated": "2026-11-25T23:24:20.017Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-25T15:16:00.864Z",
@@ -908,7 +908,7 @@
       "staged_for_review": 0
     },
     "embassy-rs-embassy-learnings.md": {
-      "processed_at": "2026-11-24T15:44:38.989Z",
+      "processed_at": "2026-11-25T23:24:15.818Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1228,7 +1228,7 @@
       "staged_for_review": 0
     },
     "hf-qwen-qwen3-embedding-0.6b-learnings.md": {
-      "processed_at": "2026-11-22T01:58:58.994Z",
+      "processed_at": "2026-11-25T23:24:17.021Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3448,7 +3448,7 @@
       "staged_for_review": 0
     },
     "rustcrypto-hashes-learnings.md": {
-      "processed_at": "2026-11-25T12:19:44.131Z",
+      "processed_at": "2026-11-25T23:24:17.646Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3943,7 +3943,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 4272,
+  "total_dossiers_evaluated": 4275,
   "total_canonical_promoted": 547,
-  "total_staged_for_review": 3247
+  "total_staged_for_review": 3249
 }

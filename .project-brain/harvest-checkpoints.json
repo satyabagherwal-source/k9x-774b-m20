@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-25T23:11:57.586Z",
+  "last_updated": "2026-11-25T23:24:12.030Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4701,14 +4701,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rustcrypto-hashes",
-      "content_hash": "9ff33201123f3856be87432c3c0deb60c34449d89a28118b3f338474464b7216",
-      "verified_at": "2026-11-25T12:19:34.041Z",
+      "content_hash": "d3e07efb793400315e659393b253208df55902c45e19677e8d8c1badfb5422fe",
+      "verified_at": "2026-11-25T23:24:12.029Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T12:19:34.041Z"
+      "last_updated": "2026-11-25T23:24:12.029Z"
     },
     "onlook-dev/onlook": {
       "repository": "onlook-dev/onlook",
@@ -8136,14 +8136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-embassy-rs-embassy",
-      "content_hash": "a95b57d97c231b2bc8dfaea73f8b9f9a45ede1f43f85f80c96bd4311e917f03a",
-      "verified_at": "2026-11-24T15:44:30.203Z",
+      "content_hash": "980312a510cd980229d96a169d122ca528b9d6ad46004c71dad8a9dade3fe3ee",
+      "verified_at": "2026-11-25T23:24:02.713Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T15:44:30.203Z"
+      "last_updated": "2026-11-25T23:24:02.713Z"
     },
     "jpush/aurora-imui": {
       "repository": "jpush/aurora-imui",
@@ -17856,14 +17856,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-qwen-qwen3-embedding-0-6b",
-      "content_hash": "d27eb2ba6fed3be8d5ee172422cdb8bb77f1c4aec1890283fe3294e308ba6354",
-      "verified_at": "2026-11-22T01:58:41.697Z",
+      "content_hash": "eb63a9ca4ff68c2569786c855b6aef7d28b7eaa24be9809669373d2e376a2343",
+      "verified_at": "2026-11-25T23:24:00.201Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T01:58:41.697Z"
+      "last_updated": "2026-11-25T23:24:00.201Z"
     },
     "feder-cr/Jobs_Applier_AI_Agent_AIHawk": {
       "repository": "feder-cr/Jobs_Applier_AI_Agent_AIHawk",

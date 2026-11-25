@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T23:11:57.578Z",
-  "total_cycles_completed": 12480,
-  "total_learnings_persisted": 12480,
-  "total_rules_promoted": 11444,
+  "last_updated": "2026-11-25T23:24:12.017Z",
+  "total_cycles_completed": 12483,
+  "total_learnings_persisted": 12483,
+  "total_rules_promoted": 11446,
   "history": [
-    {
-      "timestamp": "2026-11-25T04:15:58.260Z",
-      "repository": "tailscale/tailscale",
-      "learningId": "learn-github-tailscale-tailscale",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T04:31:05.613Z",
-      "repository": "yyjeqhc/webcodex",
-      "learningId": "learn-github-yyjeqhc-webcodex",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T04:31:12.047Z",
-      "repository": "darrylmorley/whatcable",
-      "learningId": "learn-github-darrylmorley-whatcable",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-25T04:31:15.566Z",
       "repository": "juicedata/juicefs",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-25T23:11:57.578Z",
       "repository": "dathere/qsv",
       "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T23:24:00.198Z",
+      "repository": "Qwen/Qwen3-Embedding-0.6B",
+      "learningId": "learn-huggingface-qwen-qwen3-embedding-0-6b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T23:24:02.701Z",
+      "repository": "embassy-rs/embassy",
+      "learningId": "learn-github-embassy-rs-embassy",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T23:24:12.017Z",
+      "repository": "RustCrypto/hashes",
+      "learningId": "learn-github-rustcrypto-hashes",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
