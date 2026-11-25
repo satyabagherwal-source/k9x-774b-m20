@@ -2,16 +2,16 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-25T06:03:41.292Z",
+  "updated_at": "2026-11-25T07:13:39.919Z",
   "statistics": {
-    "total_nodes": 530,
-    "total_edges": 219,
+    "total_nodes": 531,
+    "total_edges": 220,
     "domain_distribution": {
       "D": 322,
       "M": 1,
       "H": 96,
       "J": 22,
-      "K": 32,
+      "K": 33,
       "L": 9,
       "G": 1,
       "F": 27,
@@ -21,7 +21,7 @@
       "C": 1
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 215,
+      "CONSTRAINED_BY_ARCHITECTURE": 216,
       "VERIFIED_BY_TEST": 2,
       "STYLED_BY_DESIGN": 2
     }
@@ -11833,6 +11833,29 @@
       ],
       "created_at": "2026-11-25T06:03:41.292Z",
       "updated_at": "2026-11-25T06:03:41.292Z"
+    },
+    "DOM-K-7A10FB7B": {
+      "id": "DOM-K-7A10FB7B",
+      "domain": "K",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "test(e2e): optionally detect cluster zones from EKS Auto Mode NodeClass",
+      "summary": "Prevents defects observed in production commit `faa99854`: test(e2e): optionally detect cluster zones from EKS Auto Mode NodeClass. Unvalida -> When implementing operations in `test/e2e/gateway/nlb_tests/nlb_test_helper.go`, engineers MUST enforce rigorous boundary validation, safe s",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://kubernetes-sigs-aws-load-balancer-controller/kubernetes-sigs-aws-load-balancer-controller-learnings.md",
+        "source_version": "faa99854",
+        "observed_at": "2026-11-25T07:13:04.969Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (kubernetes-sigs-aws-load-balancer-controller)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "K",
+        "Quality & Verification Intelligence",
+        "G"
+      ],
+      "created_at": "2026-11-25T07:13:39.918Z",
+      "updated_at": "2026-11-25T07:13:39.918Z"
     }
   },
   "edges": [
@@ -14025,6 +14048,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-D-AC435FD0 [D] with Domain M",
       "created_at": "2026-11-25T05:20:33.086Z"
+    },
+    {
+      "id": "EDGE-272C572C2B91",
+      "sourceId": "DOM-K-7A10FB7B",
+      "targetId": "NODE-G-domain-bridge-g",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-K-7A10FB7B [K] with Domain G",
+      "created_at": "2026-11-25T07:13:39.919Z"
     }
   ]
 }

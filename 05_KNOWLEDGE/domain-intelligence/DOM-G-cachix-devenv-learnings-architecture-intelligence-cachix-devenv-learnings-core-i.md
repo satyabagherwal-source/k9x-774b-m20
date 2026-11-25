@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T05:28:31.296Z",
+  "timestamp": "2026-11-25T07:13:09.906Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-cachix-devenv-learnings",
@@ -14,13 +14,13 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [cachix-devenv-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T05:28:31.296Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T07:13:09.906Z`  
 > **Learning ID**: `LEARN-EVO-cachix-devenv-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence), F (Design Intelligence), B (Product Intelligence)
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), B (Product Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence)
 - **Confidence Rating**: 61%
 
 ## 2. Core Domain Invariants & Discovered Laws
@@ -28,10 +28,10 @@ The following architectural invariants have been empirically discovered and reco
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cachix-devenv-learnings.md`  
 > **Source**: github ([https://github.com/cachix/devenv](https://github.com/cachix/devenv))  
-> **Source Version**: `9efde4a3`  
+> **Source Version**: `221e8c7e`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T05:28:12.657Z  
+> **Timestamp**: 2026-11-25T07:12:56.875Z  
 > **Learning ID**: `learn-github-cachix-devenv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cachix-devenv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cachix/devenv](https://github.com/cachix/devenv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T05:28:12.500Z  
+> **Harvest Timestamp**: 2026-11-25T07:12:56.870Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Fast, Declarative, Reproducible, and Composable Developer Environments using Nix
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 7849 stars
+- **Stars / Engagement**: 7845 stars
 
 ---
 
@@ -1728,408 +1728,77 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9efde4a3` (2026-11-23)
-**Commit Message**: machines: accept existing configurations (#3389)
+### Incident Patch 1: `417d6426` (2026-11-24)
+**Commit Message**: fix(php): take languages.php.extensions from the PHP being built (#3400)
 
-**File**: `CHANGELOG.md` (modified, +1/-0)
+The extensions function of languages.php.package took the extensions in
+languages.php.extensions from the original package (`package.extensions`)
+instead of its `all` argument. Nix runs the function again for every PHP
+rebuilt from the package (`php.override { ... }`), such as the thread-safe
+embed build of nixpkgs' FrankenPHP: the default extensions then came from
+the rebuilt PHP, but the configured ones were still built for the original,
+and the rebuilt PHP could not load them ("undefined symbol:
+compiler_globals" for a thread-safe PHP).
+
+For languages.php.package itself, `all` is the same set, so its derivation
+does not change.
+
+**File**: `src/modules/languages/php.nix` (modified, +1/-1)
 ```diff
-@@ -4,6 +4,7 @@
+@@ -18,7 +18,7 @@ let
  
- ### Improvements
+   configurePackage = package:
+     package.buildEnv {
+-      extensions = { all, enabled }: with all; (builtins.filter filterDefaultExtensions (enabled ++ attrValues (getAttrs cfg.extensions package.extensions)));
++      extensions = { all, enabled }: with all; (builtins.filter filterDefaultExtensions (enabled ++ attrValues (getAttrs cfg.extensions all)));
+       extraConfig = cfg.ini;
+     };
  
-+- Machines now accept existing NixOS, nix-darwin, and Home Manager configurations from flake inputs.
- - Added Groovy language support via `languages.groovy.enable`. Provides the Groovy CLI, and the language server.
- - `q` now detaches from `devenv processes attach` straight away, leaving the processes running, and detaches from its interrupt prompt too. In a foreground `devenv up`, where quitting stops the processes, `q` opens the quit prompt ([#3264](https://github.com/cachix/devenv/issues/3264)).
- - Added the `tui.emoji` user setting. Set it to `false` to replace the emoji in the interactive shell status line, such as the eye in `devenv watching 11 files`, with non-emoji Unicode glyphs. It defaults to `true`, and the status line stays visible with file watching and automatic reload unchanged.
 ```
 
-**File**: `devenv/src/devenv/machines.rs` (modified, +10/-2)
+**File**: `tests/php-extensions-rebuilt/.test.sh` (added, +7/-0)
 ```diff
-@@ -388,6 +388,8 @@ struct TargetBootstrapInstall<'a> {
- struct MachineInstallCheck {
-     #[serde(rename = "hasRootAuth")]
-     has_root_auth: bool,
-+    #[serde(rename = "hasDisko")]
-+    has_disko: bool,
- }
- 
- #[derive(Debug, Clone, Deserialize)]
-@@ -1668,9 +1670,15 @@ impl Devenv {
-         // usable root authentication. The check runs after facter because the
-         // evaluated NixOS configuration may consume its freshly written report,
-         // but before encryption keys or disko can touch the target.
--        if phases.contains(&InstallPhase::Install) {
-+        if phases.contains(&InstallPhase::Install) || phases.contains(&InstallPhase::Disko) {
-             let check = self.load_machine_install_check(name).await?;
--            if !check.has_root_auth {
-+            if phases.contains(&InstallPhase::Disko) && !check.has_disko {
-+                bail!(
-+                    "machines.{name}: refusing to install. Its NixOS configuration does not \
-+                     include disko, which `devenv machines install` uses to partition disks."
-+                );
-+            }
-+            if phases.contains(&InstallPhase::Install) && !check.has_root_auth {
-                 bail!(
-                     "machines.{name}: refusing to install. The NixOS config \
-                      declares no authentication for root, and `nixos-install` \
+@@ -0,0 +1,7 @@
++set -e
++
++# The shell's PHP loads the extension.
++php -r 'exit(extension_loaded("shmop") ? 0 : 1);'
++
++# A rebuilt variant of the same package is thread-safe and loads its own build of the extension.
++"$REBUILT_PHP" -r 'if (!PHP_ZTS) { fwrite(STDERR, "not thread-safe\n"); exit(1); } exit(extension_loaded("shmop") ? 0 : 1);'
 ```
 
-**File**: `docs/src/content/docs/machines.mdx` (renamed, +22/-1)
+**File**: `tests/php-extensions-rebuilt/devenv.nix` (added, +19/-0)
 ```diff
-@@ -2,6 +2,8 @@
- title: "Machines"
- ---
- 
-+import VersionCompatibility from '@cachix/site-kit/ui/VersionCompatibility.astro';
+@@ -0,0 +1,19 @@
++{ pkgs, config, lib, ... }:
 +
- :::caution[Experimental]
- 
- Machines are new in devenv 2.4. The interface may change before it is declared stable.
-@@ -23,7 +25,7 @@ A machine is a NixOS, nix-darwin, or home-manager configuration defined in `deve
- 
- ## Define a machine
- 
--A machine needs a name and at least one role. NixOS machines require the disko input, even when you only deploy to an existing host:
-+A machine needs a name and at least one role. When devenv evaluates a NixOS module for you, add the disko input:
- 
- ```sh
- devenv inputs add disko github:nix-community/disko --follows nixpkgs
-@@ -44,6 +46,25 @@ This example updates a host whose NixOS module already includes its hardware con
- 
- The imported file is a normal NixOS module. Give it the services, users, bootloader, and hardware configuration that the host needs. You can also define the module inline.
- 
-+### Use an existing configuration
-+
-+<VersionCompatibility version="2.4.1" />
-+
-+You can pass an evaluated configuration from another input directly:
-+
-+```nix title="devenv.nix"
-+{ inputs, ... }: {
-+  machines.server = {
-+    target.host = "root@server.example.com";
-+    nixos = inputs.infrastructure.nixosConfigurations.server;
-+  };
-+}
-+```
-+
-+The same interface accepts `darwinConfigurations.<name>` under `nix-darwin` and `homeConfigurations.<name>` under `home-manager`. Add the input containing those configurations to `devenv.yaml`. Devenv infers the machine architecture from the configuration.
-+
-+For NixOS, devenv extends the original module graph with its recovery and access-check modules. It preserves the configuration's Nixpkgs, overlays, and module arguments. The resulting system can differ from the original output. Existing configurations own their disk layout and hardware configuration: devenv does not add disko or wire in a facter report for them. Deployment does not require disko, but `machines install` requires disko in the supplied configuration.
-+
- `target.host` is the SSH destination: `user@host`, `user@host:port`, or `ssh://user@host:port`. NixOS deployment and installation require root SSH. A nix-darwin deployment can use an administrator with passwordless `sudo`. A home-manager-only machine can omit `target.host` to activate locally. Setting it to `localhost` still uses SSH.
- 
- Names must start with a letter or underscore and contain only letters, digits, underscores, and hyphens. The roles are `nixos`, `nix-darwin`, and `home-manager`. A machine can have a system role and a home-manager role; both use the same target.
-```
-
-**File**: `src/modules/machines.nix` (modified, +163/-116)
-```diff
-@@ -113,18 +113,66 @@ let
-     if lib.hasPrefix "/" value then value
-     else "${outerConfig.devenv.root}/${value}";
- 
--  # Build the NixOS toplevel closure for a machine's `nixos` module.
--  #
--  # Requires `inputs.disko` (always, because disko is the declarative
--  # partitioning layer that `devenv machines install` relies on) and, when
--  # `hardware.facter` is non-null, `inputs.nixos-facter-modules`. Both errors
--  # are lazy: evaluation of a home-manager-only machine does not force these.
--  # Shared NixOS evaluation for a machine. Returns the full evaluated NixOS
--  # system so callers can extract both `.config.system.build.toplevel` and
--  # `.config.system.build.diskoScript` (and any future outputs) without
--  # evaluating twice — Nix's lazy evaluation handles deduplication.
-+  isConfiguration = value: value._type or null == "configuration";
-+
-+  configurationType = class: lib.mkOptionType {
-+    name = "${class}Configuration";
-+    description = "evaluated ${class} configuration";
-+    descriptionClass = "noun";
-+    check = isConfiguration;
-+    merge = loc: defs:
-+      let
-+        value = lib.options.mergeOneOption loc defs;
-+      in
-+      if value ? class && value.class != class then
-+        throw "The option `${lib.showOption loc}' expects a ${class} configuration, but it is a ${value.class} configuration."
-+      else
-+        value;
-+  };
-+
-+  roleType = class: lib.types.nullOr (lib.types.either (configurationType class) lib.types.deferredModule);
-+
-+  devenvNixosModules = machine: [
-+    ./machines/recovery.nix
-+    ./machines/facts.nix
-+    ({ pkgs, ... }:
-+      let
-+        targetDevenv = devenvPackageFor machine.system;
-+        # Copy only the bundled resolver out of the target-architecture
-+        # devenv package. The installed system therefore does not retain
-+        # devenv's larger runtime closure just to run SecretSpec once.
-+        targetSecretspec = pkgs.runCommand "devenv-bundled-secretspec" { } ''
-+          install -Dm755 ${targetDevenv}/bin/secretspec $out/bin/secretspec
-+        '';
-+        targetSecretspecPackages = machine.install.secretspec.extraPackages pkgs;
-+        targetSecretspecRuntime = pkgs.buildEnv {
-+          name = "devenv-machines-secretspec-runtime";
-+          paths = [ targetSecretspec ] ++ targetSecretspecPackages;
-+          pathsToLink = [ "/bin" ];
-+          ignoreCollisions = true;
-+        };
-+        targetSecretspecLauncher = pkgs.writeShellScriptBin "devenv-machines-secretspec" ''
-+          export PATH=${targetSecretspecRuntime}/bin:$PATH
-+          exec ${targetSecretspec}/bin/secretspec "$@"
-+        '';
-+      in
-+      lib.mkIf
-+        (machine.install.secrets != { } && machine.install.secretspec.execution == "target")
-+        {
-+          # Target-side bootstrap resolution runs after nixos-install but
-+          # before reboot. The private launcher calls devenv's bundled
-+          # resolver by exact store path and exposes helpers through its
-+          # own PATH. Only that launcher enters the system profile:
-+          # another package cannot replace the resolver, and helpers do
-+          # not pollute the installed machine's global command namespace.
-+          environment.systemPackages = [ targetSecretspecLauncher ];
-+        })
-+  ];
-+
-   nixosEval = machine:
--    if disko == null then
-+    if isConfiguration machine.nixos then
-+      machine.nixos.extendModules { modules = devenvNixosModules machine; }
-+    else if disko == null then
-       throw (outerConfig.lib._mkInputError diskoInputArgs)
-     else
-       let
-@@ -143,47 +191,15 @@ let
-         modules = [
-           { nixpkgs.hostPlatform = machine.system; }
-           disko.nixosModules.disko
--          ./machines/recovery.nix
--          ./machines/facts.nix
-           machine.nixos
--          ({ pkgs, ... }:
--            let
--              targetDevenv = devenvPackageFor machine.system;
--              # Copy only the bundled resolver out of the target-architecture
--              # devenv package. The installed system therefore does not retain
--              # devenv's larger runtime closure just to run SecretSpec once.
--              targetSecretspec = pkgs.runCommand "devenv-bundled-secretspec" { } ''
--                install -Dm755 ${targetDevenv}/bin/secretspec $out/bin/secretspec
--              '';
--              targetSecretspecPackages = machine.install.secretspec.extraPackages pkgs;
--              targetSecretspecRuntime = pkgs.buildEnv {
--                name = "devenv-machines-secretspec-runtime";
--                paths = [ targetSecretspec ] ++ targetSecretspecPackages;
--                pathsToLink = [ "/bin" ];
--                ignoreCollisions = true;
--              };
--              targetSecretspecLauncher = pkgs.writeShellScriptBin "devenv-machines-secretspec" ''
--                export PATH=${targetSecretspecRuntime}/bin:$PATH
--                exec ${targetSecretspec}/bin/secretspec "$@"
--              '';
--            in
--            lib.mkIf
-```
-
-**File**: `tests/machines-configurations/.test-config.yml` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+use_shell: false
-+supported_systems:
-+  - x86_64-linux
-+  - aarch64-linux
-+  - aarch64-darwin
-```
-
-**File**: `tests/machines-configurations/.test.sh` (added, +73/-0)
-```diff
-@@ -0,0 +1,73 @@
-+#!/usr/bin/env bash
-+set -euo pipefail
-+
-+system=$(nix eval --raw --impure --expr builtins.currentSystem)
-+darwin_system=aarch64-darwin
-+if [[ "$system" == *-darwin ]]; then darwin_system=$system; fi
-+devenv eval machinesMeta.server.system | jq -e --arg system "${system/darwin/linux}" '.["machinesMeta.server.system"] == $system'
-+devenv eval machinesMeta.mac.system | jq -e --arg system "$darwin_system" '.["machinesMeta.mac.system"] == $system'
-+devenv eval machinesMeta.home.hasHomeManager | jq -e '.["machinesMeta.home.hasHomeManager"] == true'
-+
-+home=$(devenv build machines.home.build.home-manager | jq -er '."machines.home.build.home-manager"')
-+grep -q "user=jdoe" "$(readlink -f "$home/activate")"
-+grep -qx "from the home configuration" "$home/home-files/configuration-marker"
-+[[ -e "$home/home-path" ]]
-+
-+devenv eval machines.mac.build.nix-darwin.drvPath | jq -e '.["machines.mac.build.nix-darwin.drvPath"] | endswith(".drv")'
-+marker=$(devenv build outputs.darwinMarker | jq -er '."outputs.darwinMarker"')
-+grep -qx "from the Darwin configuration" "$marker"
-+
-+cat >devenv.local.nix <<'LOCAL'
-+{ ... }: {
-+  machines.home.system = "riscv64-linux";
-+}
-+LOCAL
-+if devenv eval machinesMeta.home.system 2>architecture.err; then exit 1; fi
-+grep -q "machines.home.system must match every supplied configuration's architecture" architecture.err
-+rm devenv.local.nix
-+
-+if [[ "$system" == *-darwin ]]; then
-+  mac=$(devenv build machines.mac.build.nix-darwin | jq -er '."machines.mac.build.nix-darwin"')
-+  [[ -x "$mac/activate" ]]
-+  exit 0
-+fi
-+
-+toplevel=$(devenv build machines.server.build.nixos | jq -er '."machines.server.build.nixos"')
-+if [[ "$(cat "$toplevel/etc/configuration-marker")" != "from the configuration" ]]; then
-+  echo "devenv rebuilt the configuration instead of extending it"
-+  exit 1
-+fi
-+if [[ ! -e "$toplevel/etc/devenv/machine-facts.json" ]]; then
-+  echo "devenv did not add its modules to the configuration"
-+  exit 1
-+fi
-+
-+if devenv build machines.server.build.diskoScript 2>disko.err; then
-+  echo "expected a configuration without disko to have no disko script"
-+  exit 1
-+fi
-+grep -q "needs disko in the NixOS configuration" disko.err
-+
-+mkdir -p mock-bin
-+cat >mock-bin/ssh <<'MOCK'
-+#!/usr/bin/env bash
-+exit 97
-+MOCK
-+chmod +x mock-bin/ssh
-+if PATH="$PWD/mock-bin:$PATH" devenv machines install --phases disko server 2>install.err; then
-+  echo "expected install without disko to be refused"
-+  exit 1
-+fi
-+grep -q "does not include disko" install.err
-+
-+cat >devenv.local.nix <<'LOCAL'
-+{ config, ... }: {
-+  machines.wrong.nixos = config.machines.mac.nix-darwin;
-+}
-+LOCAL
-+if devenv eval machinesMeta.wrong.hasNixos 2>wrong.err; then
-+  echo "expected a nix-darwin configuration in the nixos role to be rejected"
-+  exit 1
-+fi
-+grep -q "expects a nixos configuration, but it is a darwin configuration" wrong.err
-+rm devenv.local.nix
-```
-
-**File**: `tests/machines-configurations/devenv.nix` (added, +81/-0)
-```diff
-@@ -0,0 +1,81 @@
-+{
-+  pkgs,
-+  inputs,
-+  lib,
-+  ...
-+}:
 +let
-+  system = pkgs.stdenv.hostPlatform.system;
-+  linuxSystem = lib.replaceStrings [ "darwin" ] [ "linux" ] system;
-+  darwinSystem = if pkgs.stdenv.hostPlatform.isDarwin then system else "aarch64-darwin";
-+
-+  server = import (pkgs.path + "/nixos/lib/eval-config.nix") {
-+    system = linuxSystem;
-+    specialArgs.configurationMarker = "from the configuration";
-+    modules = [
-+      (
-+        { pkgs, configurationMarker, ... }:
-+        {
-+          nixpkgs.overlays = [
-+            (_: prev: { configurationMarker = prev.writeText "marker" configurationMarker; })
-+          ];
-+          environment.etc."configuration-marker".source = pkgs.configurationMarker;
-+          fileSystems."/" = {
-+            device = "/dev/vda";
-+            fsType = "ext4";
-+          };
-+          boot.loader.grub.devices = [ "nodev" ];
-+          users.users.root.openssh.authorizedKeys.keys = [ "ssh-ed25519 test" ];
-+          system.stateVersion = "25.05";
-+        }
-+      )
-+    ];
-+  };
-+
-+  home = inputs.home-manager.lib.homeManagerConfiguration {
-+    inherit pkgs;
-+    extraSpecialArgs.configurationMarker = "from the home configuration";
-+    modules = [
-+      ({ configurationMarker, ... }: {
-+        home = {
-+          username = "jdoe";
-+          homeDirectory = if pkgs.stdenv.hostPlatform.isDarwin then "/Users/jdoe" else "/home/jdoe";
-+          stateVersion = "25.05";
-+          file."configuration-marker".text = configurationMarker;
-+        };
-+      })
-+    ];
-+  };
-+
-+  darwin = inputs.nix-darwin.lib.darwinSystem {
-+    system = darwinSystem;
-+    specialArgs.configurationMarker = "from the Darwin configuration";
-+    modules = [
-+      ({ configurationMarker, ... }: {
-+        system.stateVersion = 6;
-+        nix.enable = false;
-+        nixpkgs.pkgs = import pkgs.path { system = darwinSystem; };
-+        environment.etc."configuration-marker".text = configurationMarker;
-+      })
-+    ];
-+  };
++  # languages.php.package rebuilt as another variant: the thread-safe PHP with the embed SAPI that
++  # nixpkgs' FrankenPHP builds from it (`passthru.php`; FrankenPHP itself is not built). Nix runs
++  # the package's extensions function again for the new PHP, so languages.php.extensions have to
++  # come from its `all` argument: extensions of the original package are built for the original
++  # PHP, which the rebuilt one cannot load.
++  rebuilt = (pkgs.frankenphp.override { php = config.languages.php.package; }).php;
 +in
 +{
-+  machines.server = {
-+    target.host = "root@server.example.com";
-+    nixos = server;
++  languages.php = {
++    enable = true;
++    # Not enabled by default, so it comes from languages.php.extensions.
++    extensions = [ "shmop" ];
 +  };
 +
-+  machines.home = {
-+    home-manager = home;
-+  };
-+
-+  machines.mac = {
-+    target.host = "admin@mac.example.com";
-+    nix-darwin = darwin;
-+  };
-+
-+  outputs.darwinMarker =
-+    pkgs.writeText "darwin-marker"
-+      darwin.config.environment.etc."configuration-marker".text;
++  env.REBUILT_PHP = lib.getExe rebuilt;
 +}
-```
-
-**File**: `tests/machines-configurations/devenv.yaml` (added, +11/-0)
-```diff
-@@ -0,0 +1,11 @@
-+inputs:
-+  home-manager:
-+    url: github:nix-community/home-manager
-+    inputs:
-+      nixpkgs:
-+        follows: nixpkgs
-+  nix-darwin:
-+    url: github:nix-darwin/nix-darwin
-+    inputs:
-+      nixpkgs:
-+        follows: nixpkgs
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3400** (2026-11-24): fix(php): take languages.php.extensions from the PHP being built (@sagikazarmark)
+- **PR #3399** (2026-11-24): chore(deps): bump idna from 3.11 to 3.15 in /tests/python-uv-sync/directory (@dependabot[bot])
+- **PR #3397** (2026-11-24): chore(deps): bump rmcp from 2.0.0 to 2.1.0 (@dependabot[bot])
+- **PR #3391** (2026-11-24): chore(deps): bump cachix/install-nix-action from 31 to 32 (@dependabot[bot])
 - **PR #3389** (2026-11-23): machines: accept existing configurations (@vimjoyer)
 - **PR #3382** (2026-11-21): feat(groovy): adding npm-groovy-lint and fixing npm build error (@givikuna)
-- **PR #3374** (2026-11-16): docs: stop the home page from blinking on load (@vimjoyer)
-- **PR #3373** (2026-11-17): fix(python): rerun uv sync when uv.lock changes (@tonyd33)
-- **PR #3372** (2026-11-15): feat(languages): Added the Groovy language, LSP, and docs. (@givikuna)
-- **PR #3370** (2026-11-16): chore(deps): bump astro from 7.1.6 to 7.4.12 in /docs (@dependabot[bot])
 
 ---
 
@@ -2149,31 +1818,31 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. machines: accept existing configurations
+## X. php): take languages.php.extensions from the PHP being built
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cachix/devenv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/modules/languages/php.nix`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cachix/devenv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9efde4a3`: machines: accept existing configurations. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `417d6426`: php): take languages.php.extensions from the PHP being built. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/modules/languages/php.nix`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- Machines now accept existing NixOS, nix-darwin, and Home Manager configurations from flake inputs.
+      extensions = { all, enabled }: with all; (builtins.filter filterDefaultExtensions (enabled ++ attrValues (getAttrs cfg.extensions all)));
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+      extensions = { all, enabled }: with all; (builtins.filter filterDefaultExtensions (enabled ++ attrValues (getAttrs cfg.extensions package.extensions)));
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9efde4a3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `417d6426` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

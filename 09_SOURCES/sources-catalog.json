@@ -2783,10 +2783,10 @@
     "repository": "cachix/devenv",
     "platform": "github",
     "sourceUrl": "https://github.com/cachix/devenv",
-    "sourceVersion": "9efde4a3",
+    "sourceVersion": "221e8c7e",
     "license": "Apache-2.0",
-    "contentHash": "951f8dc44efa3423c8ad1021e4540a0faaa76ecd0b413b78029eaaaba907a9c4",
-    "lastHarvestedAt": "2026-11-24T05:28:14.030Z",
+    "contentHash": "1d4e0ac3a9d9d17b75cc5b6660e5d8660778806c40787f8b741c5ca3e3f1df9a",
+    "lastHarvestedAt": "2026-11-25T07:12:58.014Z",
     "learningId": "learn-github-cachix-devenv"
   },
   "pubkey-rxdb": {
@@ -6703,10 +6703,10 @@
     "repository": "kubernetes-sigs/aws-load-balancer-controller",
     "platform": "github",
     "sourceUrl": "https://github.com/kubernetes-sigs/aws-load-balancer-controller",
-    "sourceVersion": "1c602959",
+    "sourceVersion": "faa99854",
     "license": "Apache-2.0",
-    "contentHash": "12615027c7e7f80aba5bfb5d3459eedb03cc9df6faba7a450bf964c0d7656871",
-    "lastHarvestedAt": "2026-11-24T14:24:12.687Z",
+    "contentHash": "513d2cfd4a46e6828458232089eadcaceb1478e2b932bab723e91915e78f69bf",
+    "lastHarvestedAt": "2026-11-25T07:13:06.100Z",
     "learningId": "learn-github-kubernetes-sigs-aws-load-balancer-controller"
   },
   "qdrant-qdrant": {
@@ -10525,8 +10525,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen3-14B",
     "sourceVersion": "hf-qwen-qwen3-14b",
     "license": "Open-Source",
-    "contentHash": "3ca3ef8dcebaafe22449a1f5c2a6ca3a7025dd889fbcbcdd818eefeabf6dfe28",
-    "lastHarvestedAt": "2026-11-21T13:53:30.282Z",
+    "contentHash": "33f74f97b3d76b32ef0136e0d55001acf20753b5df6645255e19b712dd37e6ee",
+    "lastHarvestedAt": "2026-11-25T07:12:55.828Z",
     "learningId": "learn-huggingface-qwen-qwen3-14b"
   },
   "solaceproducts-solace-agent-mesh": {

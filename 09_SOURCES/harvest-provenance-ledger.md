@@ -13013,3 +13013,7 @@ Every entry in this ledger must capture:
 | `learn-github-googleworkspace-cli` | `https://github.com/googleworkspace/cli` | `8e945eed` | Multi-dimensional audit evidence | 2026-11-25T07:04:30.673Z |
 | `learn-github-nginx-kubernetes-ingress` | `https://github.com/nginx/kubernetes-ingress` | `a60c25c3` | Multi-dimensional audit evidence | 2026-11-25T07:04:37.915Z |
 | `learn-github-sfu-db-connector-x` | `https://github.com/sfu-db/connector-x` | `07e1d2e5` | Multi-dimensional audit evidence | 2026-11-25T07:04:42.268Z |
+| `learn-huggingface-qwen-qwen3-14b` | `https://huggingface.co/Qwen/Qwen3-14B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-25T07:12:55.828Z |
+| `learn-github-cachix-devenv` | `https://github.com/cachix/devenv` | `221e8c7e` | Multi-dimensional audit evidence | 2026-11-25T07:12:58.014Z |
+| `learn-github-kubernetes-sigs-aws-load-balancer-controller` | `https://github.com/kubernetes-sigs/aws-load-balancer-controller` | `faa99854` | Multi-dimensional audit evidence | 2026-11-25T07:13:06.100Z |
+| `learn-dom-k-7a10fb7b` | `project://kubernetes-sigs-aws-load-balancer-controller` | `faa99854` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kubernetes-sigs-aws-load-balancer-controller-learnings.md` | 2026-11-25T07:13:39.922Z |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-25T07:04:42.282Z",
+  "last_updated": "2026-11-25T07:13:06.117Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4311,14 +4311,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cachix-devenv",
-      "content_hash": "951f8dc44efa3423c8ad1021e4540a0faaa76ecd0b413b78029eaaaba907a9c4",
-      "verified_at": "2026-11-24T05:28:14.053Z",
+      "content_hash": "1d4e0ac3a9d9d17b75cc5b6660e5d8660778806c40787f8b741c5ca3e3f1df9a",
+      "verified_at": "2026-11-25T07:12:58.030Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T05:28:14.053Z"
+      "last_updated": "2026-11-25T07:12:58.030Z"
     },
     "pubkey/rxdb": {
       "repository": "pubkey/rxdb",
@@ -10116,14 +10116,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kubernetes-sigs-aws-load-balancer-controller",
-      "content_hash": "12615027c7e7f80aba5bfb5d3459eedb03cc9df6faba7a450bf964c0d7656871",
-      "verified_at": "2026-11-24T14:24:12.705Z",
+      "content_hash": "513d2cfd4a46e6828458232089eadcaceb1478e2b932bab723e91915e78f69bf",
+      "verified_at": "2026-11-25T07:13:06.116Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T14:24:12.705Z"
+      "last_updated": "2026-11-25T07:13:06.116Z"
     },
     "qdrant/qdrant": {
       "repository": "qdrant/qdrant",
@@ -15816,14 +15816,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-qwen-qwen3-14b",
-      "content_hash": "3ca3ef8dcebaafe22449a1f5c2a6ca3a7025dd889fbcbcdd818eefeabf6dfe28",
-      "verified_at": "2026-11-21T13:53:30.291Z",
+      "content_hash": "33f74f97b3d76b32ef0136e0d55001acf20753b5df6645255e19b712dd37e6ee",
+      "verified_at": "2026-11-25T07:12:55.844Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T13:53:30.291Z"
+      "last_updated": "2026-11-25T07:12:55.844Z"
     },
     "SolaceProducts/solace-agent-mesh": {
       "repository": "SolaceProducts/solace-agent-mesh",

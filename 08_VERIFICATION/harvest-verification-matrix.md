@@ -12980,3 +12980,7 @@
 | `CYCLE-20261125-33YL` | `2026-11-25T07:04:30.669Z` | `googleworkspace/cli` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10475` | Yes (`6167160e...`) |
 | `CYCLE-20261125-39JR` | `2026-11-25T07:04:37.911Z` | `nginx/kubernetes-ingress` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10476` | Yes (`dafc553e...`) |
 | `CYCLE-20261125-3CWO` | `2026-11-25T07:04:42.264Z` | `sfu-db/connector-x` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10477` | Yes (`daff0018...`) |
+| `CYCLE-20261125-DXQO` | `2026-11-25T07:12:55.824Z` | `Qwen/Qwen3-14B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-14b-learnings.md` | Yes (`33f74f97...`) |
+| `CYCLE-20261125-DZFD` | `2026-11-25T07:12:58.009Z` | `cachix/devenv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10478` | Yes (`1d4e0ac3...`) |
+| `CYCLE-20261125-E5O0` | `2026-11-25T07:13:06.096Z` | `kubernetes-sigs/aws-load-balancer-controller` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10479` | Yes (`513d2cfd...`) |
+| `CYCLE-2026-11-25-PROJ-EVOLVE` | `2026-11-25T07:13:39.922Z` | `kubernetes-sigs-aws-load-balancer-controller` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-K-7A10FB7B` [Domain K] | Yes (`fb4dcd01...`) |

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T07:04:50.668Z",
+  "last_updated": "2026-11-25T07:13:42.689Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-25T06:56:23.514Z",
@@ -378,7 +378,7 @@
       "staged_for_review": 1
     },
     "cachix-devenv-learnings.md": {
-      "processed_at": "2026-11-24T05:28:30.721Z",
+      "processed_at": "2026-11-25T07:13:09.537Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1368,9 +1368,9 @@
       "staged_for_review": 1
     },
     "kubernetes-sigs-aws-load-balancer-controller-learnings.md": {
-      "processed_at": "2026-11-24T14:24:23.810Z",
-      "promoted_canonical": 0,
-      "staged_for_review": 1
+      "processed_at": "2026-11-25T07:13:39.922Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     },
     "bahdotsh-wrkflw-learnings.md": {
       "processed_at": "2026-11-21T00:43:58.876Z",
@@ -1553,7 +1553,7 @@
       "staged_for_review": 0
     },
     "hf-qwen-qwen3-14b-learnings.md": {
-      "processed_at": "2026-11-21T13:53:49.620Z",
+      "processed_at": "2026-11-25T07:13:10.603Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3913,7 +3913,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 4113,
-  "total_canonical_promoted": 531,
-  "total_staged_for_review": 3147
+  "total_dossiers_evaluated": 4116,
+  "total_canonical_promoted": 532,
+  "total_staged_for_review": 3148
 }

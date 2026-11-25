@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T07:04:42.273Z",
-  "total_cycles_completed": 12327,
-  "total_learnings_persisted": 12327,
-  "total_rules_promoted": 11353,
+  "last_updated": "2026-11-25T07:13:06.106Z",
+  "total_cycles_completed": 12330,
+  "total_learnings_persisted": 12330,
+  "total_rules_promoted": 11355,
   "history": [
-    {
-      "timestamp": "2026-11-24T17:51:56.814Z",
-      "repository": "cheeriojs/dom-serializer",
-      "learningId": "learn-github-cheeriojs-dom-serializer",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T17:52:01.345Z",
-      "repository": "authzed/spicedb",
-      "learningId": "learn-github-authzed-spicedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T18:00:22.547Z",
-      "repository": "ntex-rs/ntex",
-      "learningId": "learn-github-ntex-rs-ntex",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-24T18:00:27.712Z",
       "repository": "react/metro",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-25T07:04:42.273Z",
       "repository": "sfu-db/connector-x",
       "learningId": "learn-github-sfu-db-connector-x",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T07:12:55.834Z",
+      "repository": "Qwen/Qwen3-14B",
+      "learningId": "learn-huggingface-qwen-qwen3-14b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T07:12:58.019Z",
+      "repository": "cachix/devenv",
+      "learningId": "learn-github-cachix-devenv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T07:13:06.106Z",
+      "repository": "kubernetes-sigs/aws-load-balancer-controller",
+      "learningId": "learn-github-kubernetes-sigs-aws-load-balancer-controller",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
