@@ -5163,10 +5163,10 @@
     "repository": "gocd/gocd",
     "platform": "github",
     "sourceUrl": "https://github.com/gocd/gocd",
-    "sourceVersion": "90a9bc24",
+    "sourceVersion": "81a7d3ab",
     "license": "Apache-2.0",
-    "contentHash": "6ffb1a6248e25858529e1df13ae0440635a5e2c9105b379482697a7f46f6c9b6",
-    "lastHarvestedAt": "2026-11-24T07:47:13.945Z",
+    "contentHash": "b909e2561ff7f36b4cd3c258611d02ba9deaaeb4cd143f0d6a6db6b4cdd794a2",
+    "lastHarvestedAt": "2026-11-25T02:02:06.496Z",
     "learningId": "learn-github-gocd-gocd"
   },
   "citusdata-citus": {
@@ -7603,10 +7603,10 @@
     "repository": "CrossPaste/crosspaste-desktop",
     "platform": "github",
     "sourceUrl": "https://github.com/CrossPaste/crosspaste-desktop",
-    "sourceVersion": "5023ba50",
+    "sourceVersion": "9498f76d",
     "license": "AGPL-3.0",
-    "contentHash": "422b6c3c168813edbd86a06ad868d189c35fe6886c9393e4b4cb32b65b7e4f3a",
-    "lastHarvestedAt": "2026-11-19T13:08:04.604Z",
+    "contentHash": "9c09c433f6b3c42ec36e2886c7186a78bebbd203c3e3ac8d677ff2ce7c640478",
+    "lastHarvestedAt": "2026-11-25T02:02:03.921Z",
     "learningId": "learn-github-crosspaste-crosspaste-desktop"
   },
   "infiniflow-infinity": {
@@ -7783,10 +7783,10 @@
     "repository": "zed-industries/zed",
     "platform": "github",
     "sourceUrl": "https://github.com/zed-industries/zed",
-    "sourceVersion": "e224d55b",
+    "sourceVersion": "2664a0aa",
     "license": "NOASSERTION",
-    "contentHash": "4038f42943c43df216a6468b4bdf5046e3049b986638e85bec05d32f1d4f6e23",
-    "lastHarvestedAt": "2026-11-23T23:18:12.498Z",
+    "contentHash": "1170c9d904dd65551fe5dd93b012b68a220fd99b3ead34eab2b11485b0813e5c",
+    "lastHarvestedAt": "2026-11-25T02:01:59.432Z",
     "learningId": "learn-github-zed-industries-zed"
   },
   "mohamedrejeb-compose-rich-editor": {
@@ -10263,10 +10263,10 @@
     "repository": "dubzzz/fast-check",
     "platform": "github",
     "sourceUrl": "https://github.com/dubzzz/fast-check",
-    "sourceVersion": "56ed4c78",
+    "sourceVersion": "864bf69b",
     "license": "MIT",
-    "contentHash": "be3d244b706ab1efa5185ff6062f682649ebdd2f93572456a7566050537ba3a5",
-    "lastHarvestedAt": "2026-11-21T02:57:43.886Z",
+    "contentHash": "c066017365b66aa65417da8f88b34c8603807be22e6102ca0c7c055e425be1c8",
+    "lastHarvestedAt": "2026-11-25T02:02:02.087Z",
     "learningId": "learn-github-dubzzz-fast-check"
   },
   "react-react-native": {

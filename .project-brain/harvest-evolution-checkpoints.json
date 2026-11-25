@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T01:52:59.866Z",
+  "last_updated": "2026-11-25T02:02:14.755Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-25T01:27:36.381Z",
@@ -63,7 +63,7 @@
       "staged_for_review": 1
     },
     "zed-industries-zed-learnings.md": {
-      "processed_at": "2026-11-23T23:18:28.213Z",
+      "processed_at": "2026-11-25T02:02:10.300Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -453,7 +453,7 @@
       "staged_for_review": 1
     },
     "crosspaste-crosspaste-desktop-learnings.md": {
-      "processed_at": "2026-11-19T13:08:09.147Z",
+      "processed_at": "2026-11-25T02:02:13.751Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1278,7 +1278,7 @@
       "staged_for_review": 1
     },
     "dubzzz-fast-check-learnings.md": {
-      "processed_at": "2026-11-21T02:57:54.193Z",
+      "processed_at": "2026-11-25T02:02:11.773Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3888,7 +3888,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 4014,
+  "total_dossiers_evaluated": 4017,
   "total_canonical_promoted": 525,
-  "total_staged_for_review": 3069
+  "total_staged_for_review": 3072
 }

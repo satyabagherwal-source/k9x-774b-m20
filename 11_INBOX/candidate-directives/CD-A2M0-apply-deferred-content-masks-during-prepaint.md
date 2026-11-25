@@ -1,0 +1,202 @@
+# Candidate Directive: [CD-A2M0] Apply deferred content masks during prepaint
+
+<!-- PROVENANCE_START
+{
+  "source_repository": "zed-industries/zed",
+  "source_url": "https://github.com/zed-industries/zed",
+  "source_version": "2664a0aa",
+  "license": "NOASSERTION",
+  "timestamp": "2026-11-25T02:01:59.736Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generator_version": "2.0.0-universal",
+  "learning_id": "learn-github-zed-industries-zed",
+  "canonical_classification": "candidate_directive"
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [zed-industries/zed](https://github.com/zed-industries/zed) (Revision: `2664a0aa`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-25T02:01:59.736Z`  
+> **Learning ID**: `learn-github-zed-industries-zed`
+
+
+## Lifecycle Status
+- **Current Status**: `STAGED_FOR_REVIEW`
+- **Rejection / Holding Reason**: Quarantined for review: Incomplete rule definition or ungrounded evidence ()
+- **Retry Eligibility**: `YES`
+- **Candidate Domain**: Domain I
+
+## Original Learning Payload (100% Preserved)
+**RULE**:
+When implementing operations in `crates/gpui/src/elements/deferred.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zed-industries/zed. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `6837f173`: gpui: Apply deferred content masks during prepaint. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/gpui/src/elements/deferred.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+        AvailableSpace, Bounds, ContentMask, Context, Entity, Modifiers, MouseButton,
+        StyleRefinement, TestAppContext, Window, anchored, canvas, deferred, div, point,
+
+    struct MaskedOverlayView(Rc<Cell<usize>>);
+
+    impl Render for MaskedOverlayView {
+        fn render(&mut self, _: &mut Window, _: &mut Context<Self>) -> impl IntoElement {
+            let clicks = self.0.clone();
+            let on_click = move |_: &_, _: &mut _, _: &mut _| clicks.set(clicks.get() + 1);
+            let overlay = |bounds: Bounds<_>, window: &mut Window, cx: &mut _| {
+                let mut overlay = div().size(px(200.)).occlude().into_any_element();
+                overlay.layout_as_root(AvailableSpace::min_size(), window, cx);
+                let mask = ContentMask {
+                    bounds: Bounds::new(bounds.origin, size(px(100.), px(200.))),
+                };
+                window.defer_draw(overlay, bounds.origin, 1, Some(mask));
+            };
+            div()
+                .size_full()
+                .child(
+                    div()
+                        .absolute()
+                        .size(px(200.))
+                        .on_mouse_down(MouseButton::Left, on_cl
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+        Context, Entity, StyleRefinement, TestAppContext, Window, anchored, deferred, div, point,
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `6837f173` are properly handled with clean fallback behavior.
+
+## Quality Gate Validation Dimensions
+```json
+{
+  "validator_version": "0.1.0",
+  "validated_at": "2026-11-25T02:01:59.733Z",
+  "decision": "NEEDS_REVIEW",
+  "decision_reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+  "recommended_action": "QUARANTINE_FOR_REVIEW",
+  "confidence_score": 0.69,
+  "confidence_justification": "Evaluated across 7 dimensions (Score: 69%). Source=PASS (TIER_3_COMMUNITY_OPEN), Evidence=FAIL (0 effective sources), Correctness=PASS, Reusability=PASS, Completeness=PASS, Freshness=WARN, Conflict=PASS.",
+  "item": {
+    "id": "cand-1795572119733",
+    "title": "Apply deferred content masks during prepaint",
+    "category": "ENGINEERING_PATTERN",
+    "domain": "ARCHITECTURE",
+    "source_id": "zed-industries/zed",
+    "source_uri": "https://github.com/zed-industries/zed",
+    "source_version": "HEAD",
+    "content_hash": "daef0b2ea12713551308f4f636f4fbaf24d02d52c4b098b6e97d588b592e1b6c"
+  },
+  "evidence_fingerprint": "5c7fbcc97293e38f",
+  "dimensions": {
+    "source_reliability": {
+      "status": "PASS",
+      "score": 0.6,
+      "tier": "TIER_3_COMMUNITY_OPEN",
+      "findings": [],
+      "details": [
+        "Source originates from community open repository",
+        "Source version unpinned (HEAD), subject to upstream drift",
+        "Cryptographic SHA-256 payload integrity hash present"
+      ]
+    },
+    "evidence_quality": {
+      "status": "FAIL",
+      "score": 0,
+      "corroboration_tier": "INDEPENDENCE_UNVERIFIED",
+      "effective_sources": 0,
+      "direct_evidence_ratio": 0,
+      "findings": [],
+      "details": [
+        "Direct empirical evidence ratio: 0% (0/5)",
+        "Evidence-to-claim lexical alignment: 0%"
+      ]
+    },
+    "technical_correctness": {
+      "status": "PASS",
+      "score": 1,
+      "is_adversarial": false,
+      "has_dangerous_security": false,
+      "directive_opposition": false,
+      "opposing_rule": null,
+      "unsupported_assumptions": [],
+      "findings": [],
+      "details": [
+        "No direct opposition with canonical operating directives",
+        "Substantive technical content verified (> 40 chars)"
+      ]
+    },
+    "reusability": {
+      "status": "PASS",
+      "score": 1,
+      "is_generic_pattern": true,
+      "has_local_paths": false,
+      "findings": [],
+      "details": [
+        "Free of local workstation path artifacts",
+        "Expresses generalized engineering invariants (4 architectural markers)",
+        "Explicit WHEN TO APPLY scope defined"
+      ]
+    },
+    "completeness": {
+      "status": "PASS",
+      "score": 1,
+      "has_rule": true,
+      "has_why": true,
+      "has_when": true,
+      "missing_fields": [],
+      "details": [
+        "Preserves normative RULE declaration",
+        "Preserves technical rationale (WHY)",
+        "Preserves operational boundary (WHEN TO APPLY)",
+        "Includes explicit negative example / anti-pattern contrast"
+      ]
+    },
+    "freshness": {
+      "status": "WARN",
+      "score": 1,
+      "staleness_risk": "MEDIUM",
+      "findings": [],
+      "details": [
+        "Free of known deprecated runtimes (Python 2, Node < 14, Webpack 1-3, React < 16)",
+        "Harvested/verified timestamp recorded: 2026-11-25T02:01:59.734Z"
+      ]
+    },
+    "duplication_and_conflict": {
+      "status": "PASS",
+      "score": 1,
+      "is_duplicate": false,
+      "duplicate_target": null,
+      "is_contradiction": false,
+      "conflicting_rule": null,
+      "findings": [],
+      "details": []
+    }
+  },
+  "detected_contradictions": [],
+  "missing_information": [
+    "Empirical evidence records"
+  ],
+  "limitations": [
+    "Staleness risk: MEDIUM"
+  ],
+  "evidence_references": [
+    "EVID-UNSPECIFIED",
+    "EVID-UNSPECIFIED",
+    "EVID-UNSPECIFIED",
+    "EVID-UNSPECIFIED",
+    "EVID-UNSPECIFIED"
+  ],
+  "auth_token": "8d262829677aeb9d0915d5492ebc0604a044840ce4629ee09b06bdcc7ce63aa3"
+}
+```
+
+## Remediation Checklist to Enable Promotion
+- [ ] Verify empirical reproducibility on isolated sandbox fixture.
+- [ ] Add missing implementation code block or negative constraint.
+- [ ] Authorize human signature token if targeting Core laws or Domain M.

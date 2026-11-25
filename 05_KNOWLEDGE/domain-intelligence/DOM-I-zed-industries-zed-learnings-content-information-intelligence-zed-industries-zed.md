@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-23T23:18:28.477Z",
+  "timestamp": "2026-11-25T02:02:10.849Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-zed-industries-zed-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [zed-industries-zed-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-23T23:18:28.477Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T02:02:10.849Z`  
 > **Learning ID**: `LEARN-EVO-zed-industries-zed-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain I (Content & Information Intelligence)
 - **Secondary Corroborating Domains**: H (Technical Construction Intelligence), G (Architecture Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 72%
+- **Confidence Rating**: 88%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from zed-industries-zed-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zed-industries-zed-learnings.md`  
 > **Source**: github ([https://github.com/zed-industries/zed](https://github.com/zed-industries/zed))  
-> **Source Version**: `e224d55b`  
+> **Source Version**: `2664a0aa`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-23T23:18:11.453Z  
+> **Timestamp**: 2026-11-25T02:01:57.896Z  
 > **Learning ID**: `learn-github-zed-industries-zed`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zed-industries-zed-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zed-industries/zed](https://github.com/zed-industries/zed))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T23:18:11.447Z  
+> **Harvest Timestamp**: 2026-11-25T02:01:57.661Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Code at the speed of thought – Zed is a high-performance, multiplayer code editor from the creators of Atom and Tree-sitter.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 95577 stars
+- **Stars / Engagement**: 95668 stars
 
 ---
 
@@ -2362,25 +2362,28 @@ fn score_against_expected_patch(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `78edf1df` (2026-11-23)
-**Commit Message**: agent_ui: Search threads by their displayed title (#67317)
+### Incident Patch 1: `6837f173` (2026-11-24)
+**Commit Message**: gpui: Apply deferred content masks during prepaint (#67390)
 
 ## Summary
 
-Thread history search matches `ThreadMetadata::title`, but rows show
-`display_title()`, which prefers the user-set title. Renamed threads
-don't match their displayed title and still match their old one. Search
-and the project picker prompt now use `display_title()`.
+`Window::defer_draw` documents that its content mask applies during
+prepaint and paint, but prepaint doesn't apply it. A deferred element's
+hitboxes then extend past its visible area and block clicks on elements
+underneath.
 
-Closes #61761
+Deferred prepaint now applies the mask.
+
+Closes #66079
 
 ## Testing
 
-- To reproduce, rename a thread that isn't open, then search for the new
-title. Renaming an open Zed Agent thread also updates `title`, so it
-doesn't show the bug.
-- `test_filter_matches_displayed_title` fails without this change.
-- `cargo test -p agent_ui --lib` and `./script/clippy -p agent_ui` pass.
+- Tested on Linux with a small GPUI app. On `main`, the clipped part of
+a masked overlay blocks the button underneath. On this branch, the
+button gets hover and clicks.
+- `test_deferred_content_mask_clips_hitboxes` fails without this change.
+- `cargo test -p gpui --lib`, `cargo test -p editor --lib --
+edit_prediction`, and `./script/clippy -p gpui` pass.
 
 ## Self-review
 
@@ -2392,822 +2395,279 @@ performance.
 
 Release Notes:
 
-- Fixed thread history search not finding renamed threads
+- [GPUI] Fixed deferred element hitboxes ignoring their content mask
 
 
 
-https://github.com/user-attachments/assets/cdc517cd-9080-4cfd-a94c-ef1b03caa4a4
+https://github.com/user-attachments/assets/1f0918a5-ce0b-4aa7-8f50-d92255be6105
 
-**File**: `crates/agent_ui/src/threads_archive_view.rs` (modified, +44/-12)
+**File**: `crates/gpui/src/elements/deferred.rs` (modified, +44/-1)
 ```diff
-@@ -7,7 +7,7 @@ use crate::agent_connection_store::AgentConnectionStore;
- use crate::thread_metadata_store::{
-     ThreadId, ThreadMetadata, ThreadMetadataStore, worktree_info_from_thread_paths,
- };
--use crate::{Agent, ArchiveSelectedThread, DEFAULT_THREAD_TITLE, RemoveSelectedThread};
-+use crate::{Agent, ArchiveSelectedThread, RemoveSelectedThread};
+@@ -92,7 +92,8 @@ mod tests {
+     use std::{cell::Cell, rc::Rc};
  
- use agent::ThreadStore;
- use agent_client_protocol::v2::schema as acp;
-@@ -300,12 +300,8 @@ impl ThreadsArchiveView {
+     use crate::{
+-        Context, Entity, StyleRefinement, TestAppContext, Window, anchored, deferred, div, point,
++        AvailableSpace, Bounds, ContentMask, Context, Entity, Modifiers, MouseButton,
++        StyleRefinement, TestAppContext, Window, anchored, canvas, deferred, div, point,
+         prelude::*, px, size,
+     };
  
-         for session in sessions {
-             let highlight_positions = if !query.is_empty() {
--                let title = session
--                    .title
--                    .as_ref()
--                    .map(|t| t.as_ref())
--                    .unwrap_or(DEFAULT_THREAD_TITLE);
--                if let Some(positions) = fuzzy_match_positions(&query, title) {
-+                let title = session.display_title();
-+                if let Some(positions) = fuzzy_match_positions(&query, &title) {
-                     positions
-                 } else {
-                     // If title didn't match, also try matching the project name
-@@ -1319,11 +1315,7 @@ impl PickerDelegate for ProjectPickerDelegate {
-     fn placeholder_text(&self, _window: &mut Window, _cx: &mut App) -> Arc<str> {
-         format!(
-             "Associate the \"{}\" thread with...",
--            self.thread
--                .title
--                .as_ref()
--                .map(|t| t.as_ref())
--                .unwrap_or(DEFAULT_THREAD_TITLE)
-+            self.thread.display_title()
-         )
-         .into()
-     }
-@@ -2043,4 +2035,44 @@ mod tests {
-             [(51, 51), (100, 100), (100, 100), (100, 100), (100, 0)]
-         );
+@@ -308,4 +309,46 @@ mod tests {
+             })
+             .unwrap();
      }
 +
-+    #[gpui::test]
-+    async fn test_filter_matches_displayed_title(cx: &mut gpui::TestAppContext) {
-+        crate::test_support::init_test(cx);
-+        cx.update(ThreadMetadataStore::init_global);
-+        cx.run_until_parked();
-+        let metadata = ThreadMetadata {
-+            thread_id: ThreadId::new(),
-+            session_id: Some(acp::SessionId::new("session")),
-+            agent_id: agent::ZED_AGENT_ID.clone(),
-+            title: Some("Generated".into()),
-+            title_override: Some("Renamed".into()),
-+            updated_at: Utc::now(),
-+            created_at: None,
-+            interacted_at: None,
-+            worktree_paths: Default::default(),
-+            remote_connection: None,
-+            archived: false,
-+        };
-+        cx.update(|cx| {
-+            ThreadMetadataStore::global(cx).update(cx, |store, cx| store.save(metadata, cx))
-+        });
-+        let view = cx.add_window(|window, cx| {
-+            let workspace = WeakEntity::new_invalid();
-+            let connections = WeakEntity::new_invalid();
-+            let servers = WeakEntity::new_invalid();
-+            ThreadsArchiveView::new(workspace, connections, servers, window, cx)
-+        });
++    struct MaskedOverlayView(Rc<Cell<usize>>);
 +
-+        for (query, expected) in [("renamed", true), ("generated", false)] {
-+            view.update(cx, |view, window, cx| {
-+                view.filter_editor
-+                    .update(cx, |editor, cx| editor.set_text(query, window, cx));
-+            })
-+            .unwrap();
-+            cx.run_until_parked();
-+            let found = view.read_with(cx, |view, _| !view.items.is_empty());
-+            assert_eq!(found.unwrap(), expected, "query: {query}");
-+        }
-+    }
- }
-```
-
----
-
-### Incident Patch 2: `d9089f4e` (2026-11-23)
-**Commit Message**: ui: Re-render spinner labels only as often as their glyph changes (#67261)
-
-## Summary
-
-`SpinnerLabel` and `LoadingLabel` request a frame on every display
-refresh, though their text changes only 4–17.5 times a second. Each
-frame re-renders every view above the label: in the agent panel,
-`ThreadView`, `ConversationView`, `AgentPanel`, and `Workspace`. So
-while a turn waits on the model, a confirmation, or a subagent, Zed
-renders at the display's refresh rate, or at 30 fps when the window
-doesn't have focus.
-
-Both labels now render only when their text changes:
-
-- `Animation::with_steps`, like CSS `steps()`, advances an animation in
-equal steps and re-renders it when the next step starts. It counts steps
-in integers on the animation's clock, so each step renders on time
-however long Zed has run, and synced animations step, and render,
-together.
-- `SpinnerLabel` takes one step per glyph on the shared clock, so all
-spinners render together. `LoadingLabel` takes four steps a second after
-its reveal.
-
-CPU time of the Zed process while a thread waits, in ms per second, main
-→ this PR:
-
-| State | 60 Hz | 120 Hz | 144 Hz | 240 Hz | Unfocused, 120 Hz |
-|---|---|---|---|---|---|
-| Waiting for
-
-**File**: `crates/gpui/src/elements/animation.rs` (modified, +150/-29)
-```diff
-@@ -1,9 +1,9 @@
- use scheduler::Instant;
--use std::{cell::Cell, rc::Rc, time::Duration};
-+use std::{cell::Cell, num::NonZeroUsize, rc::Rc, time::Duration};
- 
- use crate::{
-     AnyElement, App, Element, ElementId, GlobalElementId, InspectorElementId, IntoElement,
--    ParentElement, SpringAnimation, SpringConfig, SpringPlayback, SpringState, SpringTarget,
-+    ParentElement, SpringAnimation, SpringConfig, SpringPlayback, SpringState, SpringTarget, Task,
-     Window,
- };
- 
-@@ -25,6 +25,9 @@ pub struct Animation {
-     /// The maximum number of times per second this animation re-renders.
-     /// When `None`, the animation re-renders on every frame.
-     pub max_fps: Option<f32>,
-+    /// The number of equal steps this animation advances in. See [`Animation::with_steps`].
-+    /// When `None`, the animation advances continuously.
-+    pub steps: Option<NonZeroUsize>,
- }
- 
- impl Animation {
-@@ -37,6 +40,7 @@ impl Animation {
-             synced: false,
-             easing: Rc::new(linear),
-             max_fps: None,
-+            steps: None,
-         }
-     }
- 
-@@ -70,6 +74,15 @@ impl Animation {
-         self.max_fps = Some(max_fps);
-         self
-     }
-+
-+    /// Advance in `steps` equal steps instead of continuously, like CSS `steps()`.
-+    /// The animator receives `0`, then `1 / steps`, and so on. The animation
-+    /// re-renders only when it steps, so [`Self::with_max_fps`] has no effect.
-+    /// A `steps` of zero is ignored.
-+    pub fn with_steps(mut self, steps: usize) -> Self {
-+        self.steps = NonZeroUsize::new(steps);
-+        self
-+    }
- }
- 
- /// An extension trait for adding the animation wrapper to both Elements and Components
-@@ -221,6 +234,36 @@ struct AnimationState {
-     /// Whether a throttled re-render (see [`Animation::with_max_fps`]) is
-     /// already scheduled, so overlapping renders don't stack extra timers.
-     delayed_frame_pending: Rc<Cell<bool>>,
-+    /// The re-render scheduled for the next step (see [`Animation::with_steps`])
-+    /// and when it is due.
-+    step_wake: Option<(Instant, Task<()>)>,
-+}
-+
-+impl AnimationState {
-+    /// Re-renders the current view at `instant`, unless a re-render is already due by then.
-+    fn render_at(&mut self, instant: Instant, window: &Window, cx: &App) {
-+        let now = cx.background_executor().now();
-+        if let Some((due, _)) = &self.step_wake
-+            && now < *due
-+            && *due <= instant
-+        {
-+            return;
-+        }
-+        let view = window.current_view();
-+        let wake = window.spawn(cx, async move |cx| {
-+            // A timer can fire early, and a render before `instant` would repeat the last one.
-+            loop {
-+                let delay = instant.saturating_duration_since(cx.background_executor().now());
-+                if delay.is_zero() {
-+                    break;
-+                }
-+                cx.background_executor().timer(delay).await;
-+            }
-+            cx.update(move |_, cx| cx.notify(view)).ok();
-+        });
-+        // Replacing a wake that was due later drops it, which cancels its timer.
-+        self.step_wake = Some((instant, wake));
-+    }
- }
- 
- struct SpringElementState {
-@@ -383,47 +426,65 @@ impl<E: IntoElement + 'static> Element for AnimationElement<E> {
-         cx: &mut App,
-     ) -> (crate::LayoutId, Self::RequestLayoutState) {
-         window.with_element_state(global_id.unwrap(), |state, window| {
-+            let now = cx.background_executor().now();
-             let mut state = state.unwrap_or_else(|| AnimationState {
--                start: cx.background_executor().now(),
-+                start: now,
-                 animation_ix: 0,
-                 delayed_frame_pending: Rc::new(Cell::new(false)),
-+                step_wake: None,
-             });
--            let (animation_ix, delta, done) = if cx.reduce_motion() {
-+            let (animation_ix, delta, done, next_step) = if cx.reduce_motion() {
-                 let animation_ix = self.animations.len() - 1;
-                 let delta = if self.animations[animation_ix].oneshot {
-                     1.0
-                 } else {
-                     0.0
-                 };
--                (animation_ix, delta, true)
-+                (animation_ix, delta, true, None)
-             } else {
-                 let animation_ix = state.animation_ix;
-                 let duration = self.animations[animation_ix].duration;
- 
-                 let elapsed = if self.animations[animation_ix].synced && !duration.is_zero() {
--                    let elapsed = cx.background_executor().now() - cx.synced_animation_epoch;
-+                    let elapsed = now - cx.synced_animation_epoch;
-                     // Reduce modulo the duration before f32 conversion, which loses sub-second precision at scale.
-                     Duration::from_nanos((elapsed.as_nanos() % duration.as_nanos()) as u64)
-                 } else {
--                    cx.background_executor().now() - state.start
-+          
-```
-
-**File**: `crates/ui/src/components/label/loading_label.rs` (modified, +4/-1)
-```diff
-@@ -88,7 +88,10 @@ impl RenderOnce for LoadingLabel {
-             "loading_label",
-             vec![
-                 Animation::new(Duration::from_secs(1)),
--                Animation::new(Duration::from_secs(1)).repeat(),
-+                // After the reveal, only the trailing dots change, four times a second.
-+                Animation::new(Duration::from_secs(1))
-+                    .repeat()
-+                    .with_steps(4),
-             ],
-             move |mut label, animation_ix, delta| {
-                 match animation_ix {
-```
-
-**File**: `crates/ui/src/components/label/spinner_label.rs` (modified, +49/-2)
-```diff
-@@ -166,9 +166,13 @@ impl RenderOnce for SpinnerLabel {
- 
-         self.base.with_animation(
-             self.variant.animation_id(),
--            Animation::new(duration).repeat(),
-+            // Each render also re-renders the views containing the spinner, so render only when
-+            // the glyph changes. A shared clock lets spinners change, and render, together.
-+            Animation::new(duration)
-+                .repeat_synced()
-+                .with_steps(frames.len()),
-             move |mut label, delta| {
--                let frame_index = (delta * frames.len() as f32) as usize % frames.len();
-+                let frame_index = (delta * frames.len() as f32).round() as usize % frames.len();
- 
-                 label.set_text(frames[frame_index]);
-                 label
-@@ -208,3 +212,46 @@ impl Component for SpinnerLabel {
-         example_group(examples).into_any_element()
-     }
- }
-+
-+#[cfg(test)]
-+mod tests {
-+    use super::*;
-+    use gpui::TestAppContext;
-+    use std::{cell::Cell, rc::Rc};
-+
-+    struct SpinnerView {
-+        renders: Rc<Cell<usize>>,
-+    }
-+
-+    impl Render for SpinnerView {
++    impl Render for MaskedOverlayView {
 +        fn render(&mut self, _: &mut Window, _: &mut Context<Self>) -> impl IntoElement {
-+            self.renders.set(self.renders.get() + 1);
-+            div().child(SpinnerLabel::new())
++            let clicks = self.0.clone();
++            let on_click = move |_: &_, _: &mut _, _: &mut _| clicks.set(clicks.get() + 1);
++            let overlay = |bounds: Bounds<_>, window: &mut Window, cx: &mut _| {
++                let mut overlay = div().size(px(200.)).occlude().into_any_element();
++                overlay.layout_as_root(AvailableSpace::min_size(), window, cx);
++                let mask = ContentMask {
++                    bounds: Bounds::new(bounds.origin, size(px(100.), px(200.))),
++                };
++                window.defer_draw(overlay, bounds.origin, 1, Some(mask));
++            };
++            div()
++                .size_full()
++                .child(
++                    div()
++                        .absolute()
++                        .size(px(200.))
++                        .on_mouse_down(MouseButton::Left, on_click),
++                )
++                .child(canvas(overlay, |_, _, _, _| {}).size_full())
 +        }
 +    }
 +
 +    #[gpui::test]
-+    fn test_spinner_renders_only_as_often_as_its_glyph_changes(cx: &mut TestAppContext) {
-+        cx.update(|cx| {
-+            let settings_store = settings::SettingsStore::test(cx);
-+            cx.set_global(settings_store);
-+            theme_settings::init(theme::LoadThemes::JustBase, cx);
-+        });
-+        let renders = Rc::new(Cell::new(0));
++    fn test_deferred_content_mask_clips_hitboxes(cx: &mut TestAppContext) {
++        let clicks = Rc::new(Cell::new(0));
 +        let (_, cx) = cx.add_window_view({
-+            let renders = renders.clone();
-+            |_, _| SpinnerView { renders }
++            let clicks = clicks.clone();
++            |_, _| MaskedOverlayView(clicks)
 +        });
 +        cx.run_until_parked();
-+        let initial_renders = renders.get();
 +
-+        // One second of a 100 Hz display, during which the glyph changes 10 times.
-+        for _ in 0..100 {
-+            cx.executor().advance_clock(Duration::from_millis(10));
-+            cx.update(|window, cx| window.simulate_next_frame(cx));
-+            cx.run_until_parked();
-+        }
++        cx.simulate_click(point(px(50.), px(50.)), Modifiers::none());
++        assert_eq!(clicks.get(), 0, "the visible overlay should block clicks");
 +
-+        assert_eq!(renders.get() - initial_renders, 10);
++        cx.simulate_click(point(px(150.), px(50.)), Modifiers::none());
++        assert_eq!(clicks.get(), 1, "the clipped area should not block clicks");
 +    }
-+}
+ }
+```
+
+**File**: `crates/gpui/src/window.rs` (modified, +5/-1)
+```diff
+@@ -4326,11 +4326,15 @@ impl Window {
+ 
+                 let prepaint_start = self.prepaint_index();
+                 if let Some(mut element) = element {
++                    let content_mask =
++                        self.next_frame.deferred_draws[deferred_draw_ix].content_mask;
+                     let ((), accessed_entities) = cx.detect_accessed_entities(|cx| {
+                         self.with_rendered_view(current_view, |window| {
+                             window.with_rem_size(Some(rem_size), |window| {
+                                 window.with_absolute_element_offset(absolute_offset, |window| {
+-                                    element.prepaint(window, cx);
++                                    window.with_content_mask(content_mask, |window| {
++                                        element.prepaint(window, cx);
++                                    });
+                                 });
+                             });
+                         });
 ```
 
 ---
 
-### Incident Patch 3: `e224d55b` (2026-11-23)
-**Commit Message**: project: Fix stale completion position in remote projects (#67247)
+### Incident Patch 2: `f614e6ed` (2026-11-24)
+**Commit Message**: sum_tree: Build an empty tree in one pass when an edit fills it (#67374)
 
 ## Summary
 
-I ran into this while testing #67091 in a dev container, but it's
-independent of that PR and reproduces on main: requesting completions in
-a remote project (SSH, WSL, dev containers) and editing the buffer
-before the request was sent (e.g. typing or deleting quickly after
-completions trigger) could crash debug builds with `point ... is beyond
-the end of the line`.
+Follow-up to #67332.
 
-Since #42723, `LspStore::completions` builds the `GetCompletions` proto
-requests inside `cx.spawn`, so the cursor position (a `PointUtf16`) is
-only turned into an anchor on a later tick, after the edit may already
-have changed the buffer. In release builds there is no panic, but the
-request is sent for whatever that point now refers to in the edited
-buffer (clamped if it's past the end of the line), so the server can
-return completions for the wrong position.
+#67332 made `SumTree::edit` insert items in place, which made a large
+edit that fills an empty tree slower. `edit` now builds an empty tree
+with `from_iter` straight from the sorted edits. That skips the two
+checks that guard the in-place path and the copy of the items into a
+`Vec`.
 
-Completions without an edit range used to be dropped when the request
-position was out of range, which an anchor can't be.
-Instead, `LspStore::completions` now records the word being completed
-when completions are requested, and checks it once after all language
-servers answer, in local
+One `edit` of 1,000,000 items with `u64` keys into an empty tree, time
+per item. Release build, the first edit of a new process, median of 9
+alternating rounds (15 on the 9800X3D, pinned to one core):
 
-**File**: `crates/project/src/lsp_command.rs` (modified, +145/-58)
+| Machine | Before #67332 | Main | This PR |
+|---|---|---|---|
+| Ryzen 7 9800X3D | 19.6 ns | 21.8 ns | 13.5 ns |
+| `ubuntu-latest`, Xeon Platinum 8573C | 61.2 ns | 69.8 ns | 40.7 ns |
+| `ubuntu-24.04-arm`, Neoverse-N2 | 53.6 ns | 59.8 ns | 35.2 ns |
+| `windows-latest` | 55.3 ns | 59.9 ns | 39.3 ns |
+| `macos-15`, Apple M1 | 28.5 ns | 29.1 ns | 19.4 ns |
+| `macos-15-intel`, Core i7-8700B | 105.2 ns | 112.1 ns | 62.5 ns |
+
+With `Arc<str>` keys, the same edit takes 35–44% less time than on main.
+
+Smaller edits of an empty tree take the same path. Against main, edits
+of 12, 13, and 48 items take 22–53%
+
+**File**: `crates/sum_tree/src/sum_tree.rs` (modified, +21/-2)
 ```diff
-@@ -1,8 +1,8 @@
- pub mod signature_help;
+@@ -1182,6 +1182,17 @@ impl<T: KeyedItem> SumTree<T> {
+         let mut removed = Vec::new();
+         edits.sort_unstable_by_key(|item| item.key());
  
- use crate::{
--    CodeAction, CompletionSource, CoreCompletion, CoreCompletionResponse, DocumentColor,
--    DocumentHighlight, DocumentSymbol, Hover, HoverBlock, HoverBlockKind, InlayHint,
-+    CodeAction, CompletionResponse, CompletionSource, CoreCompletion, CoreCompletionResponse,
-+    DocumentColor, DocumentHighlight, DocumentSymbol, Hover, HoverBlock, HoverBlockKind, InlayHint,
-     InlayHintLabel, InlayHintLabelPart, InlayHintLabelPartTooltip, InlayHintTextEdits,
-     InlayHintTooltip, Location, LocationLink, LspAction, LspPullDiagnostics, MarkupContent,
-     PrepareRenameResponse, ProjectPath, ProjectTransaction, PulledDiagnostics, ResolveState,
-@@ -231,7 +231,7 @@ pub(crate) struct GetHover {
- 
- #[derive(Debug)]
- pub(crate) struct GetCompletions {
--    pub position: PointUtf16,
-+    pub position: Anchor,
-     pub context: CompletionContext,
-     pub server_id: Option<lsp::LanguageServerId>,
- }
-@@ -3157,6 +3157,92 @@ impl GetCompletions {
-     }
- }
- 
-+pub(crate) struct RequestedCompletionToken {
-+    position: Anchor,
-+    version: Global,
-+    prefix: Range<Anchor>,
-+    separator: Anchor,
-+}
-+
-+impl RequestedCompletionToken {
-+    pub(crate) fn new(position: Anchor, snapshot: &BufferSnapshot) -> Self {
-+        let offset = position.to_offset(snapshot);
-+        let token_start = completion_token_range(snapshot, offset).start;
-+        let prefix_end = snapshot.anchor_before(offset);
-+        let prefix_start = if token_start < offset {
-+            snapshot.anchor_after(token_start)
-+        } else {
-+            prefix_end
-+        };
-+        Self {
-+            position,
-+            version: snapshot.version().clone(),
-+            prefix: prefix_start..prefix_end,
-+            separator: snapshot.anchor_before(token_start),
++        if self.is_empty() {
++            *self = Self::from_iter(
++                edits.into_iter().filter_map(|edit| match edit {
++                    Edit::Insert(item) => Some(item),
++                    Edit::Remove(_) => None,
++                }),
++                cx,
++            );
++            return Vec::new();
 +        }
-+    }
 +
-+    pub(crate) fn retain_valid_completions(
-+        &self,
-+        responses: &mut [CompletionResponse],
-+        snapshot: &BufferSnapshot,
-+    ) {
-+        if snapshot.version() == &self.version {
+         // A repeated key can replace items in more than one leaf, which only the slicing below
+         // handles.
+         if edits.iter().all(|edit| matches!(edit, Edit::Insert(_)))
+@@ -1952,6 +1963,12 @@ mod tests {
+         assert_eq!(tree.get(&2, ()), Some(&2));
+         assert_eq!(tree.get(&4, ()), Some(&4));
+ 
++        // An edit of an empty tree packs its leaves as `from_iter` does.
++        let mut tree = SumTree::<u8>::default();
++        tree.edit((0..5).map(Edit::Insert).collect(), ());
++        let packed = SumTree::<u8>::from_iter(0..5, ());
++        assert_eq!(tree.0.child_summaries(), packed.0.child_summaries());
++
+         // Each insert of a repeated key replaces one item, here in two different leaves.
+         let mut tree = SumTree::from_iter([1u8, 2, 3, 5, 5, 6, 7, 8], ());
+         let removed = tree.edit(vec![Edit::Insert(5), Edit::Insert(5)], ());
+@@ -1990,8 +2007,10 @@ mod tests {
+ 
+         let mut rng = StdRng::seed_from_u64(0);
+         for _ in 0..1000 {
+-            let mut tree = SumTree::<u8>::default();
+-            let mut expected = BTreeSet::new();
++            // `edit` builds an empty tree with `from_iter`, so start with one item.
++            let first = rng.random::<u8>();
++            let mut tree = SumTree::from_item(first, ());
++            let mut expected = BTreeSet::from([first]);
+             let mut snapshots = Vec::new();
+             // Removals slice the tree, which leaves nodes that underflow.
+             let with_removals = rng.random();
+```
+
+---
+
+### Incident Patch 3: `67c513c8` (2026-11-24)
+**Commit Message**: git_ui: Focus the panel when there is no repository (#67389)
+
+## Summary
+
+Without a repository, the Git panel doesn't render its commit editor but
+still moves focus to it. `git_panel::ToggleFocus` then leaves the panel
+unfocused, and `git_panel::Toggle` can't close it.
+
+Focus now stays on the panel when there is no repository.
+
+Closes #48275
+Closes #50117
+
+## Testing
+
+- To reproduce, open a folder without a Git repository and run
+`git_panel::Toggle` twice.
+- Tested on Linux. The second toggle leaves the panel open on `main` and
+closes it on this branch.
+- `test_toggle_without_repository` fails without this change.
+- `cargo test -p git_ui --lib` and `./script/clippy -p git_ui` pass.
+
+## Self-review
+
+- [x] I've reviewed my diff for quality, security, reliability, and
+performance.
+- [x] UI changes follow the
+[checklist](https://zed.dev/docs/development/ui-checklist).
+- [x] Tests cover the new or changed behavior.
+
+Release Notes:
+
+- Fixed `git_panel::ToggleFocus` and `git_panel::Toggle` in projects
+without a Git repository
+
+
+
+https://github.com/user-attachments/assets/10061567-9725-4399-b048-6a30b9e662c0
+
+**File**: `crates/git_ui/src/git_panel.rs` (modified, +30/-0)
+```diff
+@@ -2820,6 +2820,9 @@ impl GitPanel {
+     }
+ 
+     fn focus_editor(&mut self, _: &FocusEditor, window: &mut Window, cx: &mut Context<Self>) {
++        if self.active_repository.is_none() {
 +            return;
 +        }
-+        let ranges = self.fallback_ranges(snapshot);
-+        for response in responses {
-+            let completions_count = response.completions.len();
-+            response.completions.retain_mut(|completion| {
-+                let CompletionSource::Lsp {
-+                    insert_range,
-+                    lsp_completion,
-+                    lsp_defaults,
-+                    ..
-+                } = &mut completion.source
-+                else {
-+                    return true;
-+                };
-+                if completion_text_edit(lsp_completion, lsp_defaults.as_deref()).is_some() {
-+                    return true;
-+                }
-+                let Some((replace_range, fallback_insert_range)) = ranges.clone() else {
-+                    return false;
-+                };
-+                *insert_range = Some(fallback_insert_range);
-+                completion.replace_range = replace_range;
-+                true
-+            });
-+            if response.completions.len() != completions_count {
-+                response.is_incomplete = true;
-+            }
-+        }
-+    }
-+
-+    fn fallback_ranges(&self, snapshot: &BufferSnapshot) -> Option<(Range<Anchor>, Range<Anchor>)> {
-+        let offset = self.position.to_offset(snapshot);
-+        let prefix_start = self.prefix.start.to_offset(snapshot);
-+        let separator_kept = self.separator.is_valid(snapshot);
-+        let prefix_kept =
-+            self.prefix.start.is_valid(snapshot) || self.prefix.end.is_valid(snapshot);
-+        let classifier = snapshot
-+            .char_classifier_at(offset)
-+            .scope_context(Some(CharScopeContext::Completion));
-+        let prefix_is_word = snapshot
-+            .chars_for_range(prefix_start..offset)
-+            .all(|character| classifier.is_word(character));
-+        let token = completion_token_range(snapshot, offset);
-+        let joined_across_deleted_separator = token.start < prefix_start && !separator_kept;
-+        (prefix_kept && prefix_is_word && !joined_across_deleted_separator).then(|| {
-+            let start = snapshot.anchor_before(token.start.min(prefix_start));
-+            (
-+                start..snapshot.anchor_after(token.end),
-+                start..self.position,
-+            )
-+        })
-+    }
-+}
-+
- #[async_trait(?Send)]
- impl LspCommand for GetCompletions {
-     type Response = CoreCompletionResponse;
-@@ -3177,12 +3263,13 @@ impl LspCommand for GetCompletions {
-     fn to_lsp(
-         &self,
-         path: &Path,
--        _: &Buffer,
-+        buffer: &Buffer,
-         _: &Arc<LanguageServer>,
-         _: &App,
-     ) -> Result<lsp::CompletionParams> {
-+        let position = self.position.to_point_utf16(&buffer.snapshot());
-         Ok(lsp::CompletionParams {
--            text_document_position: make_lsp_text_document_position(path, self.position)?,
-+            text_document_position: make_lsp_text_document_position(path, pos
-```
-
-**File**: `crates/project/src/lsp_store.rs` (modified, +13/-3)
-```diff
-@@ -7915,7 +7915,7 @@ impl LspStore {
-     pub fn completions(
-         &self,
-         buffer: &Entity<Buffer>,
--        position: PointUtf16,
-+        position: Anchor,
-         context: CompletionContext,
-         cx: &mut Context<Self>,
-     ) -> Task<Result<Vec<CompletionResponse>>> {
-@@ -7944,6 +7944,7 @@ impl LspStore {
-                 return Task::ready(Ok(Vec::new()));
-             }
- 
-+            let requested_token = RequestedCompletionToken::new(position, &snapshot);
-             let language = buffer.read(cx).language().cloned();
- 
-             let buffer = buffer.clone();
-@@ -7999,7 +8000,11 @@ impl LspStore {
-                         })
-                         .collect::<Vec<_>>(),
-                 );
--                Ok(requests.await.into_iter().flatten().collect::<Vec<_>>())
-+                let mut responses = requests.await.into_iter().flatten().collect::<Vec<_>>();
-+                buffer.read_with(cx, |buffer, _| {
-+                    requested_token.retain_valid_completions(&mut responses, &buffer.snapshot())
-+                });
-+                Ok(responses)
-             })
-         } else if let Some(local) = self.as_local() {
-             let snapshot = buffer.read(cx).snapshot();
-@@ -8018,6 +8023,7 @@ impl LspStore {
-                 context: context.clone(),
-                 server_id: None,
-             };
-+            let requested_token = RequestedCompletionToken::new(position, &snapshot);
-             let server_ids: Vec<_> = buffer.update(cx, |buffer, cx| {
-                 local
-                     .language_servers_for_buffer(buffer, cx)
-@@ -8108,7 +8114,11 @@ impl LspStore {
- 
-                 let responses: Vec<Option<CompletionResponse>> = join_all(futures).await;
- 
--                Ok(responses.into_iter().flatten().collect())
-+                let mut responses = responses.into_iter().flatten().collect::<Vec<_>>();
-+                buffer.read_with(cx, |buffer, _| {
-+                    requested_token.retain_valid_completions(&mut responses, &buffer.snapshot())
-+                });
-+                Ok(responses)
-             })
-         } else {
-             Task::ready(Err(anyhow!("No upstream client or local language server")))
-```
-
-**File**: `crates/project/src/project.rs` (modified, +2/-2)
-```diff
-@@ -4808,14 +4808,14 @@ impl Project {
-         })
+         self.set_active_tab(GitPanelTab::Changes, window, cx);
+         if self.commit_editor_collapsed {
+             self.toggle_commit_editor(&ToggleCommitEditor, window, cx);
+@@ -10246,6 +10249,7 @@ impl editor::Addon for GitPanelAddon {
+ impl Panel for GitPanel {
+     fn activation_focus_handle(&self, cx: &App) -> FocusHandle {
+         if self.active_tab == GitPanelTab::Changes
++            && self.active_repository.is_some()
+             && !self.commit_editor_collapsed
+             && (self.entries.is_empty() || self.commit_editor_expanded)
+         {
+@@ -15814,6 +15818,32 @@ mod tests {
+         });
      }
  
--    pub fn completions<T: ToOffset + ToPointUtf16>(
-+    pub fn completions<T: ToOffset>(
-         &self,
-         buffer: &Entity<Buffer>,
-         position: T,
-         context: CompletionContext,
-         cx: &mut Context<Self>,
-     ) -> Task<Result<Vec<CompletionResponse>>> {
--        let position = position.to_point_utf16(buffer.read(cx));
-+        let position = buffer.read(cx).anchor_after(position);
-         self.lsp_store.update(cx, |lsp_store, cx| {
-             lsp_store.completions(buffer, position, context, cx)
-         })
-```
-
-**File**: `crates/project/tests/integration/dynamic_registration.rs` (modified, +1/-1)
-```diff
-@@ -458,7 +458,7 @@ async fn test_completion_resolve_uses_matching_dynamic_registration(cx: &mut gpu
-         .update(cx, |lsp_store, cx| {
-             lsp_store.completions(
-                 &buffer,
--                PointUtf16::new(0, 0),
-+                buffer.read(cx).anchor_after(PointUtf16::new(0, 0)),
-                 lsp::CompletionContext {
-                     trigger_kind: lsp::CompletionTriggerKind::INVOKED,
-                     trigger_character: None,
-```
-
-**File**: `crates/project/tests/integration/project_tests.rs` (modified, +316/-3)
-```diff
-@@ -40,9 +40,9 @@ use itertools::Itertools;
- use language::{
-     Buffer, BufferEvent, Diagnostic, DiagnosticEntry, DiagnosticEntryRef, DiagnosticMessage,
-     DiagnosticSet, DiagnosticSourceKind, DiskState, FakeLspAdapter, Language, LanguageAwareStyling,
--    LanguageConfig, LanguageMatcher, LanguageName, LineEnding, ManifestName, ManifestProvider,
--    ManifestQuery, OffsetRangeExt, Point, ToPoint, Toolchain, ToolchainList, ToolchainLister,
--    ToolchainMetadata,
-+    LanguageConfig, LanguageConfigOverride, LanguageMatcher, LanguageName, LineEnding,
-+    ManifestName, ManifestProvider, ManifestQuery, OffsetRangeExt, Override, Point, ToPoint,
-+    Toolchain, ToolchainList, ToolchainLister, ToolchainMetadata,
-     language_settings::{
-         Formatter, FormatterList, LanguageSettings, LanguageSettingsContent, LineEndingSetting,
-     },
-@@ -8729,6 +8729,296 @@ async fn test_completions_without_edit_ranges(cx: &mut gpui::TestAppContext) {
-     );
- }
- 
-+#[gpui::test]
-+async fn test_completions_without_edit_ranges_after_concurrent_edits(
-+    cx: &mut gpui::TestAppContext,
-+) {
-+    init_test(cx);
++    #[gpui::test]
++    async fn test_toggle_without_repository(cx: &mut TestAppContext) {
++        init_test(cx);
 +
-+    let fs = FakeFs::new(cx.executor());
-+    fs.insert_tree(path!("/dir"), json!({ "a.ts": "" })).await;
-+    let project = Project::test(fs, [path!("/dir").as_ref()], cx).await;
-+    let language_registry = project.read_with(cx, |project, _| project.languages().clone());
-+    language_registry.add(typescript_lang());
-+    let mut fake_language_servers = language_registry.register_fake_lsp(
-+        "TypeScript",
-+        FakeLspAdapter {
-+            capabilities: lsp::ServerCapabilities {
-+                completion_provider: Some(lsp::CompletionOptions::default()),
-+                ..lsp::ServerCapabilities::default()
-+            },
-+            ..FakeLspAdapter::default()
-+        },
-+    );
-+    let (buffer, _handle) = project
-+        .update(cx, |project, cx| {
-+            project.open_local_buffer_with_lsp(path!("/dir/a.ts"), cx)
-+        })
-+        .await
-+        .expect("open buffer with the language server");
-+    let fake_server = fake_language_servers
-+        .next()
-+        .await
-+        .expect("start the language server");
-+    cx.executor().run_until_parked();
-+    fake_server.set_request_handler::<lsp::request::Completion, _, _>(|_, _| async move {
-+        Ok(Some(lsp::CompletionResponse::Array(vec![
-+            lsp::CompletionItem {
-+                label: String::from("foobar"),
-+                ..lsp::CompletionItem::default()
-+            },
-+        ])))
-+    });
-+
-+    let long_word = "a".repeat(128);
-+    let long_word_continued = format!("{long_word}a");
-+    for (text, position, edit, expected_ranges) in [
-+        ("keep foo", 8, (4..8, ""), None),
-+        ("keep foo bar", 8, (0..0, "x\n"), Some(("foo", "foo"))),
-+        ("keep foo bar", 8, (8..8, " baz"), None),
-+        ("keep foo bar", 7, (5..5, " "), Some(("foo", "fo"))),
-+        ("keep 𝒳oo bar", 11, (5..5, "\t"), Some(("𝒳oo", "𝒳oo"))),
-+        ("foobar", 4, (3..4, ""), Some(("fooar", "foo"))),
-+        ("foo", 3, (0..1, ""), Some(("oo", "oo"))),
-+        ("bar", 3, (0..0, "foo"), Some(("foobar", "foobar"))),
-+        ("keep foo bar", 8, (4..5, ""), None),
-+        ("keep foo bar", 8, (8..9, ""), Some(("foobar", "foo"))),
-+        ("keep   bar", 6, (5..6, ""), None),
-+        (
-+            long_word.as_str(),
-+            128,
-+            (128..128, "a"),
-+            Some((long_word_continued.as_str(), long_word_continued.as_str())),
-+        ),
-+        ("foo.", 4, (4..4, "b"), Some(("b", "b"))),
-+        ("foo.", 4, (3..4, ""), None),
-+    ] {
-+        buffer.update(cx, |buffer, cx| buffer.set_text(text, cx));
-+        let completions = project.update(cx, |project, cx| {
-+            let completions =
-+                project.completions(&buffer, position, DEFAULT_COMPLETION_CONTEXT, cx);
-+            buffer.update(cx, |buffer, cx| buffer.edit([edit.clone()], None, cx));
-+            completions
++        let (_, _project, workspace, panel, mut cx) =
++            setup_git_panel_with_changes(cx, json!({ "file": "" }), &[]).await;
++        workspace.update_in(&mut cx, |workspace, window, cx| {
++            workspace.add_panel(panel.clone(), window, cx);
 +        });
-+        let completions = completions.await.expect("request completions");
-+        assert_eq!(
-+            completion_edit_texts(completions, &buffer, cx),
-+            expected_ranges
-+                .into_iter()
-+                .map(|(replaced, inserted)| (replaced.to_string(), Some(inserted.to_string())))
-+                .collect::<Vec<_>>(),
-+            "completions in {text:?} after edit {edit:?}",
-+        );
++
++        cx.dispatch_action(super::Toggle);
++        cx.run_until_parked();
++        panel.update_in(&mut cx, |panel, window, cx| {
++            assert!(panel.active_repository.is_none());
++            assert!(panel.focus_handle.is_focused(window));
++            panel.focus_editor(&FocusEditor, window, cx);
++            assert!(panel.focus_handle.is_focused(window));
++        });
++        let right_dock = workspace.read_with(&cx, |workspace, _| workspace.right_dock().clone());
++        assert!(right_dock.read_with(&cx, |dock, _| dock.is_open()));
++
++        cx.dispatch_action(super::Toggle);
++        cx.run_until_parked();
++        assert!(!right_dock.read_with(&cx, |dock, _| dock.is_open()));
 +    }
-+}
 +
-+#[gpui::test]
-+async fn test_completions_without_edit_ranges_after_reparse(cx: &mut gpui::TestAppContext) {
-+    init_test(cx);
-+
-+    let fs = FakeFs::new(cx.executor());
-+    fs.insert_tree(path!("/dir"), json!({ "a.ts": "" })).await;
-+    let project = Project::test(fs, [path!("/dir").as_ref()], cx).await;
-+    let language_registry = project.read_with(cx, |project, _| project.languages().clone());
-+    language_registry.add(Arc::new(
-+        Language::new(
-+            LanguageConfig {
-+                name: LanguageName::new("TypeScript"),
-+                matcher: Ar
-```
-
-**File**: `crates/remote_server/src/remote_editing_tests.rs` (modified, +105/-0)
-```diff
-@@ -1768,6 +1768,111 @@ async fn test_remote_lsp(cx: &mut TestAppContext, server_cx: &mut TestAppContext
-     })
- }
- 
-+#[gpui::test]
-+async fn test_remote_completions_with_concurrent_edit(
-+    cx: &mut TestAppContext,
-+    server_cx: &mut TestAppContext,
-+) {
-+    let fs = FakeFs::new(server_cx.executor());
-+    fs.insert_tree(
-+        path!("/code/project"),
-+        json!({ "lib.rs": "let x = foo.bar\n" }),
-+    )
-+    .await;
-+    let (project, headless) = init_test(&fs, cx, server_cx).await;
-+    let capabilities = lsp::ServerCapabilities {
-+        completion_provider: Some(lsp::CompletionOptions::default()),
-+        ..lsp::ServerCapabilities::default()
-+    };
-+    project.update(cx, |project, _| {
-+        project.languages().add(rust_lang());
-+        project.languages().register_fake_lsp_adapter(
-+            "Rust",
-+            FakeLspAdapter {
-+                name: "rust-analyzer",
-+                capabilities: capabilities.clone(),
-+                ..FakeLspAdapter::default()
-+            },
-+        );
-+    });
-+    let mut fake_servers = server_cx.update(|cx| {
-+        headless.read(cx).languages.register_fake_lsp_server(
-+            LanguageServerName(SharedString::from("rust-analyzer")),
-+            capabilities,
-+            Some(Box::new(|fake_server| {
-+                fake_server.set_request_handler::<lsp::request::Completion, _, _>(
-+                    |params, _| async move {
-+                        assert_eq!(
-+                            params.text_document_position.position,
-+                            lsp::Position::new(0, 8)
-+                        );
-+                        Ok(Some(CompletionResponse::Array(vec![
-+                            lsp::CompletionItem {
-+                                label: "boop".to_string(),
-+                                text_edit: Some(lsp::CompletionTextEdit::Edit(lsp::TextEdit {
-+                                    range: lsp::Range::new(
-+                                        lsp::Position::new(0, 8),
-+                                        lsp::Position::new(0, 8),
-+                                    ),
-+                                    new_text: "boop".to_string(),
-+                                })),
-+                                ..lsp::CompletionItem::default()
-+                            },
-+                            lsp::CompletionItem {
-+                                label: "stale".to_string(),
-+                                ..lsp::CompletionItem::default()
-+                            },
-+                        ])))
-+                    },
-+                );
-+            })),
-+        )
-+    });
-+    let worktree_id = project
-+        .update(cx, |project, cx| {
-+            project.find_or_create_worktree(path!("/code/project"), true, cx)
-+        })
-+        .await
-+        .expect("worktree should open")
-+        .0
-+        .read_with(cx, |worktree, _| worktree.id());
-+    let (buffer, _handle) = project
-+        .update(cx, |project, cx| {
-+            project.open_buffer_with_lsp((worktree_id, rel_path("lib.rs")), cx)
-+        })
-+        .await
-+        .expect("buffer should open with LSP");
-+    fake_servers.next().await.expect("LSP should start");
-+    cx.run_until_parked();
-+
-+    let completions = project.update(cx, |project, cx| {
-+        let completions = project.completions(
-+            &buffer,
-+            Point::new(0, 15),
-+            CompletionContext {
-+                trigger_kind: CompletionTriggerKind::INVOKED,
-+                trigger_character: None,
-+            },
-+            cx,
-+        );
-+        // Edit the buffer before the spawned request task runs, invalidating the requested position.
-+        buffer.update(cx, |buffer, cx| {
-+            buffer.edit([(Point::new(0, 8)..Point::new(0, 15), "")], None, cx);
-+        });
-+        completions
-+    });
-+
-+    let completions = completions.await.expect("completions should succeed");
-+    assert_eq!(
-+        completions
-+            .into_iter()
-+            .flat_map(|response| response.completions)
-+            .map(|completion| completion.label.text)
-+            .collect::<Vec<_>>(),
-+        vec!["boop".to_string()]
-+    );
-+}
-+
- #[gpui::test]
- async fn test_remote_completion_resolve_edit_ranges(
-     cx: &mut TestAppContext,
+     #[gpui::test]
+     async fn test_history_tab_pane_navigation_focuses_rendered_panel(cx: &mut TestAppContext) {
+         init_test(cx);
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #67377** (2026-11-23): gpui: Fix a panic when an animation chain gets shorter (@ptweezy)
-- **PR #67376** (2026-11-23): gpui: Fix unit tests building without test-support (@ptweezy)
-- **PR #67371** (2026-11-23): gpui: Schedule chained animations by their own frame cap (@ptweezy)
-- **PR #67370** (2026-11-23): linux_sandbox: Fix network checks in sandbox (@cameron1024)
-- **PR #67368** (2026-11-23): acp_thread: Normalize line endings in v2 terminal output (@benbrandt)
-- **PR #67367** (2026-11-23): rust: Adopt `trim_{prefix,suffix}` (@tidely)
+- **PR #67437** (2026-11-24): sandbox: Let embedders name the Windows sandbox launcher (@rtfeldman)
+- **PR #67435** (2026-11-24): Remove deprecated `package.authors` from Cargo manifests (@Sha1rholder)
+- **PR #67431** (2026-11-24): workspace: Keep pinned tabs when restoring past max_tabs (@ptweezy)
+- **PR #67426** (2026-11-24): Show a repository's closed checkouts in the worktree picker (@SomeoneToIgnore)
+- **PR #67424** (2026-11-24): multi_buffer: Speed up edits in multibuffers with many files (@smitbarmase)
+- **PR #67422** (closed): Update/new docker logo (@ashraf7hossain)
 
 ---
 
@@ -3227,69 +2687,54 @@ servers answer, in local
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. agent_ui: Search threads by their displayed title
+## X. gpui: Apply deferred content masks during prepaint
 
 **RULE**:
-When implementing operations in `crates/agent_ui/src/threads_archive_view.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zed-industries/zed. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/gpui/src/elements/deferred.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zed-industries/zed. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `78edf1df`: agent_ui: Search threads by their displayed title. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6837f173`: gpui: Apply deferred content masks during prepaint. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/agent_ui/src/threads_archive_view.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/gpui/src/elements/deferred.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-use crate::{Agent, ArchiveSelectedThread, RemoveSelectedThread};
-                let title = session.display_title();
-                if let Some(positions) = fuzzy_match_positions(&query, &title) {
-            self.thread.display_title()
+        AvailableSpace, Bounds, ContentMask, Context, Entity, Modifiers, MouseButton,
+        StyleRefinement, TestAppContext, Window, anchored, canvas, deferred, div, point,
 
-    #[gpui::test]
-    async fn test_filter_matches_displayed_title(cx: &mut gpui::TestAppContext) {
-        crate::test_support::init_test(cx);
-        cx.update(ThreadMetadataStore::init_global);
-        cx.run_until_parked();
-        let metadata = ThreadMetadata {
-            thread_id: ThreadId::new(),
-            session_id: Some(acp::SessionId::new("session")),
-            agent_id: agent::ZED_AGENT_ID.clone(),
-            title: Some("Generated".into()),
-            title_override: Some("Renamed".into()),
-            updated_at: Utc::now(),
-            created_at: None,
-            interacted_at: None,
-            worktree_paths: Default::default(),
-            remote_connection: None,
-            archived: false,
-        };
-        cx.update(|cx| {
-            ThreadMetadataStore::global(cx).update(cx, |store, cx| store.save(metadata, cx))
-        });
-        let view = cx.add_window(|window, cx| {
-            let workspace = WeakEntity::
+    struct MaskedOverlayView(Rc<Cell<usize>>);
+
+    impl Render for MaskedOverlayView {
+        fn render(&mut self, _: &mut Window, _: &mut Context<Self>) -> impl IntoElement {
+            let clicks = self.0.clone();
+            let on_click = move |_: &_, _: &mut _, _: &mut _| clicks.set(clicks.get() + 1);
+            let overlay = |bounds: Bounds<_>, window: &mut Window, cx: &mut _| {
+                let mut overlay = div().size(px(200.)).occlude().into_any_element();
+                overlay.layout_as_root(AvailableSpace::min_size(), window, cx);
+                let mask = ContentMask {
+                    bounds: Bounds::new(bounds.origin, size(px(100.), px(200.))),
+                };
+                window.defer_draw(overlay, bounds.origin, 1, Some(mask));
+            };
+            div()
+                .size_full()
+                .child(
+                    div()
+                        .absolute()
+                        .size(px(200.))
+                        .on_mouse_down(MouseButton::Left, on_cl
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-use crate::{Agent, ArchiveSelectedThread, DEFAULT_THREAD_TITLE, RemoveSelectedThread};
-                let title = session
-                    .title
-                    .as_ref()
-                    .map(|t| t.as_ref())
-                    .unwrap_or(DEFAULT_THREAD_TITLE);
-                if let Some(positions) = fuzzy_match_positions(&query, title) {
-            self.thread
-                .title
-                .as_ref()
-                .map(|t| t.as_ref())
-                .unwrap_or(DEFAULT_THREAD_TITLE)
+        Context, Entity, StyleRefinement, TestAppContext, Window, anchored, deferred, div, point,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `78edf1df` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6837f173` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

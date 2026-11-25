@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261123-TXPV",
-    "timestamp": "2026-11-23T15:45:54.931Z",
-    "repository": "aleo-labs-protocol/snarkOS",
-    "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "285b095087ab8a38b61e34d56c0ac7678815a6f140b3832044b7e13e1aa79159",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-580H",
-    "timestamp": "2026-11-23T15:54:41.489Z",
-    "repository": "argmaxinc/whisperkit-coreml",
-    "learningId": "learn-huggingface-argmaxinc-whisperkit-coreml",
-    "contentHash": "cfd4a294bd7dc3a190582dfa7c203ba2e427780cdce092ac33d5336a85dd6e31",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-596Z",
-    "timestamp": "2026-11-23T15:54:43.019Z",
-    "repository": "NVIDIA/cuda-rust",
-    "learningId": "learn-github-nvidia-cuda-rust",
-    "contentHash": "7a4e7556c3c1698c049469ea840dee186ccc5d24ab8ca72cfe760f5970125717",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-FOVX",
-    "timestamp": "2026-11-23T16:02:49.917Z",
-    "repository": "Qwen/Qwen3-8B",
-    "learningId": "learn-huggingface-qwen-qwen3-8b",
-    "contentHash": "58eb9dc85a4cc479b0ea74b9dc550063074bc7ab00a823e50990f2a9663ce314",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261123-FQSY",
     "timestamp": "2026-11-23T16:02:52.402Z",
     "repository": "mlua-rs/mlua",
@@ -7490,6 +7430,66 @@
     "repository": "microsoft/react-native-windows",
     "learningId": "learn-github-microsoft-react-native-windows",
     "contentHash": "7b3df9c74a1bc2ff4fb45797ce89fb24f91626c5d8ce776f0b5f686b206c90db",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-A2DE",
+    "timestamp": "2026-11-25T02:01:59.426Z",
+    "repository": "zed-industries/zed",
+    "learningId": "learn-github-zed-industries-zed",
+    "contentHash": "1170c9d904dd65551fe5dd93b012b68a220fd99b3ead34eab2b11485b0813e5c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-A4F5",
+    "timestamp": "2026-11-25T02:02:02.081Z",
+    "repository": "dubzzz/fast-check",
+    "learningId": "learn-github-dubzzz-fast-check",
+    "contentHash": "c066017365b66aa65417da8f88b34c8603807be22e6102ca0c7c055e425be1c8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-A5U4",
+    "timestamp": "2026-11-25T02:02:03.916Z",
+    "repository": "CrossPaste/crosspaste-desktop",
+    "learningId": "learn-github-crosspaste-crosspaste-desktop",
+    "contentHash": "9c09c433f6b3c42ec36e2886c7186a78bebbd203c3e3ac8d677ff2ce7c640478",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-A7TN",
+    "timestamp": "2026-11-25T02:02:06.491Z",
+    "repository": "gocd/gocd",
+    "learningId": "learn-github-gocd-gocd",
+    "contentHash": "b909e2561ff7f36b4cd3c258611d02ba9deaaeb4cd143f0d6a6db6b4cdd794a2",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

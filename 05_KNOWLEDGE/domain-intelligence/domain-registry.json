@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T01:52:59.528Z",
-  "total_records": 2617,
+  "last_updated": "2026-11-25T02:02:14.314Z",
+  "total_records": 2619,
   "domains": {
     "A": {
       "total": 22,
@@ -2489,7 +2489,7 @@
       ]
     },
     "K": {
-      "total": 158,
+      "total": 160,
       "record_ids": [
         "DOM-K-353B93D6",
         "DOM-K-76C43650",
@@ -2648,7 +2648,9 @@
         "domain_intelligence-quality-verification-intelligence-higress-group-higress-learnings-core-invariant",
         "domain_intelligence-quality-verification-intelligence-t8y2-dbx-core-invariants",
         "domain_intelligence-quality-verification-intelligence-t8y2-dbx-learnings-core-invariants",
-        "DOM-K-23B0EC10"
+        "DOM-K-23B0EC10",
+        "domain_intelligence-quality-verification-intelligence-crosspaste-crosspaste-desktop-core-invariants",
+        "domain_intelligence-quality-verification-intelligence-crosspaste-crosspaste-desktop-learnings-core-i"
       ]
     },
     "L": {
@@ -9011,8 +9013,8 @@
       "title": "Technical Construction Intelligence: gocd/gocd Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-gocd-gocd-technical-construction-intelligence-gocd-gocd-core-invariants.md",
       "repository": "gocd/gocd",
-      "content_hash": "d603f7d2007e6aa1b72ea5002df138bfd4ddec2ce614490d08c115126ecf6b9a",
-      "created_at": "2026-11-24T07:47:14.515Z"
+      "content_hash": "3be833582b9b958f0d3f490372cab880b8487a09e4fe549537d6b01ad0f620ba",
+      "created_at": "2026-11-25T02:02:07.052Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-27b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-27b-core-invariants",
@@ -16962,8 +16964,8 @@
       "title": "Content & Information Intelligence: zed-industries/zed Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-zed-industries-zed-content-information-intelligence-zed-industries-zed-core-inva.md",
       "repository": "zed-industries/zed",
-      "content_hash": "9225685d69a3041705c33090d865461bb60779ae28050c44b16ced6fb55ee057",
-      "created_at": "2026-11-23T23:18:12.901Z"
+      "content_hash": "79df0fef956c775923e56fcbe0f08d4492a0802e69fbfe72e273ac0fdfe419c7",
+      "created_at": "2026-11-25T02:01:59.993Z"
     },
     "domain_intelligence-content-information-intelligence-zed-industries-zed-learnings-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-zed-industries-zed-learnings-core-invariants",
@@ -16971,8 +16973,8 @@
       "title": "Content & Information Intelligence: zed-industries-zed-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-zed-industries-zed-learnings-content-information-intelligence-zed-industries-zed.md",
       "repository": "zed-industries-zed-learnings",
-      "content_hash": "cd5aac873f93cb7f8306f894d181754e59f9368375724f229b91350c28a67aff",
-      "created_at": "2026-11-23T23:18:28.750Z"
+      "content_hash": "200ea4319080c581dec8de705100c99c9d819e05f56f920ac8b66dcd52b348a4",
+      "created_at": "2026-11-25T02:02:11.271Z"
     },
     "DOM-D-C9202D2F": {
       "record_id": "DOM-D-C9202D2F",
@@ -27230,8 +27232,8 @@
       "title": "Technical Construction Intelligence: dubzzz/fast-check Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-dubzzz-fast-check-technical-construction-intelligence-dubzzz-fast-check-core-inv.md",
       "repository": "dubzzz/fast-check",
-      "content_hash": "61901e6dfe54c753c1730fa5e4bef412d05386438626a57c8fea80e0993818c0",
-      "created_at": "2026-11-21T02:57:44.239Z"
+      "content_hash": "9bd49d379484b08ff004df13cf4095a7d4defbc024f095689b4b31d1a15a4802",
+      "created_at": "2026-11-25T02:02:02.672Z"
     },
     "domain_intelligence-technical-construction-intelligence-trinodb-trino-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-trinodb-trino-core-invariants",
@@ -27316,8 +27318,8 @@
       "title": "Technical Construction Intelligence: dubzzz-fast-check-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-dubzzz-fast-check-learnings-technical-construction-intelligence-dubzzz-fast-chec.md",
       "repository": "dubzzz-fast-check-learnings",
-      "content_hash": "c420c6a7e1d78d0bd5290e44588b06463c0680a3bded1bcf9244c535b66623d1",
-      "created_at": "2026-11-21T02:57:54.844Z"
+      "content_hash": "a56c51ab51c67fd2e64c347ee0792c81d1af48edaba6b4cda5be501efb4ce52a",
+      "created_at": "2026-11-25T02:02:13.244Z"
     },
     "DOM-H-C6C068D9": {
       "record_id": "DOM-H-C6C068D9",
@@ -43920,6 +43922,24 @@
       "repository": "mochajs-mocha-learnings",
       "content_hash": "b67ebca5b9d927f7b1fb68147b9426f3df9673d131d1598896aa918fedc9ed3d",
       "created_at": "2026-11-25T01:52:58.525Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-crosspaste-crosspaste-desktop-core-invariants": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-crosspaste-crosspaste-desktop-core-invariants",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: CrossPaste/crosspaste-desktop Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-crosspaste-crosspaste-desktop-quality-verification-intelligence-crosspaste-cross.md",
+      "repository": "CrossPaste/crosspaste-desktop",
+      "content_hash": "28356f263eba756a93b15c0f3afc78c1f8bab7726ac6c47485e7547910e9c626",
+      "created_at": "2026-11-25T02:02:04.488Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-crosspaste-crosspaste-desktop-learnings-core-i": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-crosspaste-crosspaste-desktop-learnings-core-i",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: crosspaste-crosspaste-desktop-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-crosspaste-crosspaste-desktop-learnings-quality-verification-intelligence-crossp.md",
+      "repository": "crosspaste-crosspaste-desktop-learnings",
+      "content_hash": "0a01f88d34940cef4cd7f6c2ba0efa2505d7c9c3b863a4e4226578a7b6f696ae",
+      "created_at": "2026-11-25T02:02:14.314Z"
     }
   }
 }

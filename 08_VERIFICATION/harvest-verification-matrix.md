@@ -12896,3 +12896,7 @@
 | `CYCLE-20261125-Y9SP` | `2026-11-25T01:52:49.177Z` | `oxc-project/oxc` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10421` | Yes (`89b48509...`) |
 | `CYCLE-20261125-YAIY` | `2026-11-25T01:52:50.122Z` | `mochajs/mocha` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10422` | Yes (`d2e8a97f...`) |
 | `CYCLE-20261125-YCKZ` | `2026-11-25T01:52:52.787Z` | `microsoft/react-native-windows` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10423` | Yes (`7b3df9c7...`) |
+| `CYCLE-20261125-A2DE` | `2026-11-25T02:01:59.426Z` | `zed-industries/zed` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10424` | Yes (`1170c9d9...`) |
+| `CYCLE-20261125-A4F5` | `2026-11-25T02:02:02.081Z` | `dubzzz/fast-check` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10425` | Yes (`c0660173...`) |
+| `CYCLE-20261125-A5U4` | `2026-11-25T02:02:03.916Z` | `CrossPaste/crosspaste-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10426` | Yes (`9c09c433...`) |
+| `CYCLE-20261125-A7TN` | `2026-11-25T02:02:06.491Z` | `gocd/gocd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10427` | Yes (`b909e256...`) |

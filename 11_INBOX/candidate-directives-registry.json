@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T01:52:59.348Z",
+  "last_updated": "2026-11-25T02:02:14.068Z",
   "directives": [
     {
       "id": "CD-001",
@@ -58720,6 +58720,79 @@
       "source_repo": "microsoft-react-native-windows",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-A4C223-run-codeql-compiled-analysis-only-on-shi.md",
+      "staged_date": "2026-11-25"
+    },
+    {
+      "id": "CD-A2M0",
+      "directive_title": "Apply deferred content masks during prepaint",
+      "source_repo": "zed-industries/zed",
+      "source_commit": "2664a0aa",
+      "staged_file": "11_INBOX/candidate-directives/CD-A2M0-apply-deferred-content-masks-during-prepaint.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-25",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-ACU1",
+      "directive_title": "👷 Drop MacOS and Windows from the required CI jobs",
+      "source_repo": "dubzzz-fast-check-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-ACU1-drop-macos-and-windows-from-the-required-ci-jobs.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-25",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-ADO0",
+      "directive_title": ":bug: Add WS pause gating, inbound business queue budget, and extension heartbea",
+      "source_repo": "crosspaste-crosspaste-desktop-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-ADO0-bug-add-ws-pause-gating-inbound-business-queue-budget-and-extension-heartbea.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-25",
+      "domain_letter": "C"
+    },
+    {
+      "id": "CD-A824",
+      "directive_title": "build(deps): bump net.javacrumbs.json-unit:json-unit-assertj",
+      "source_repo": "gocd/gocd",
+      "source_commit": "81a7d3ab",
+      "staged_file": "11_INBOX/candidate-directives/CD-A824-build-deps-bump-net-javacrumbs-json-unit-json-unit-assertj.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-25",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-ABB7",
+      "directive_title": "gpui: Apply deferred content masks during prepaint",
+      "source_repo": "zed-industries-zed-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-ABB7-gpui-apply-deferred-content-masks-during-prepaint.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-25",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-REV-CF967E",
+      "directive_title": "👷 Drop MacOS and Windows from the required CI jobs",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "dubzzz-fast-check",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-CF967E--drop-macos-and-windows-from-the-require.md",
+      "staged_date": "2026-11-25"
+    },
+    {
+      "id": "CD-REV-415AAF",
+      "directive_title": ":bug: Add WS pause gating, inbound business queue budget, and extension heartbea",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "crosspaste-crosspaste-desktop",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-415AAF--bug-add-ws-pause-gating-inbound-busines.md",
       "staged_date": "2026-11-25"
     }
   ]

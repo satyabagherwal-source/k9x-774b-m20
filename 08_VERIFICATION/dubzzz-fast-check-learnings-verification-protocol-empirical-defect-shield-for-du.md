@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-21T02:57:54.584Z",
+  "timestamp": "2026-11-25T02:02:12.834Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-dubzzz-fast-check-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [dubzzz-fast-check-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-21T02:57:54.584Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T02:02:12.834Z`  
 > **Learning ID**: `LEARN-EVO-dubzzz-fast-check-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dubzzz-fast-check-learnings.md`  
 > **Source**: github ([https://github.com/dubzzz/fast-check](https://github.com/dubzzz/fast-check))  
-> **Source Version**: `56ed4c78`  
+> **Source Version**: `864bf69b`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T02:57:42.927Z  
+> **Timestamp**: 2026-11-25T02:02:00.563Z  
 > **Learning ID**: `learn-github-dubzzz-fast-check`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dubzzz-fast-check-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dubzzz/fast-check](https://github.com/dubzzz/fast-check))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T02:57:42.923Z  
+> **Harvest Timestamp**: 2026-11-25T02:02:00.558Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Property based testing framework for JavaScript (like QuickCheck) written in TypeScript
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json
-- **Stars / Engagement**: 5296 stars
+- **Stars / Engagement**: 5314 stars
 
 ---
 
@@ -258,6 +258,251 @@ export class MusicPlayerImplem implements MusicPlayer {
   }
 }
 
+```
+
+### Core Architecture Module: `packages/codemod/src/transforms/v5/lifecyclePlugins.ts`
+```
+import type {
+  API,
+  ASTPath,
+  ArrowFunctionExpression,
+  FileInfo,
+  FunctionDeclaration,
+  FunctionExpression,
+} from 'jscodeshift';
+import { findBinding, isReference } from '../fastCheck.js';
+import { migratePluginCalls, type Expression, type PluginCall, type PluginEdit } from '../pluginMigration.js';
+
+type Callback = ArrowFunctionExpression | FunctionExpression | FunctionDeclaration;
+const hookNames = ['beforeEach', 'afterEach', 'asyncBeforeEach', 'asyncAfterEach'];
+
+function callbackFor(site: PluginCall, expr: Expression): Callback | undefined {
+  const { j } = site;
+  if (j.ArrowFunctionExpression.check(expr) || j.FunctionExpression.check(expr)) return expr;
+  if (!j.Identifier.check(expr)) return undefined;
+  const declaration = findBinding(j, site.path, expr.name)?.parent;
+  if (j.FunctionDeclaration.check(declaration?.node)) return declaration.node;
+  if (j.VariableDeclarator.check(declaration?.node) && declaration.parent.node.kind === 'const') {
+    const init = declaration.node.init;
+    if (j.ArrowFunctionExpression.check(init) || j.FunctionExpression.check(init)) return init;
+  }
+  return undefined;
+}
+
+function hookCallback(site: PluginCall, expr: Expression, asyncProperty: boolean): Expression | undefined {
+  const { j } = site;
+  const callback = callbackFor(site, expr);
+  const global = site.runner === 'configureGlobal';
+  if (!callback && (!global || !asyncProperty || !j.Identifier.check(expr))) {
+    site.report('Review the hook signature: property plugins do not receive the previous hook.');
+    return undefined;
+  }
+  if (
+    callback &&
+    (callback.params.length ||
+      callback.generator ||
+      j(callback.body).find(j.Super).size() ||
+      j(callback.body).find(j.Identifier, { name: 'arguments' }).size() ||
+      j(callback.body).find(j.ThisExpression).size())
+  ) {
+    site.report('Review the hook that uses arguments, a receiver or a generator.');
+    return undefined;
+  }
+  let adapted = expr;
+  // v4 ignored returned values. A beforeEach plugin treats a returned function as a teardown.
+  if (
+    !callback ||
+    !j.BlockStatement.check(callback.body) ||
+    j(callback.body)
+      .find(j.ReturnStatement)
+      .some((ret) => ret.node.argument != null)
+  ) {
+    if (global && !asyncProperty && !callback?.async) {
+      site.report('Review this global hook return value: it may need awaiting when used with async properties.');
+      return undefined;
+    }
+    const invocation =
+      j.ArrowFunctionExpression.check(expr) && !j.BlockStatement.check(expr.body)
+        ? expr.body
+        : j.callExpression(expr, []);
+    const asynchronous = asyncProperty || callback?.async === true;
+    const body = j.blockStatement([j.expressionStatement(asynchronous ? j.awaitExpression(invocation) : invocation)]);
+    adapted = j.arrowFunctionExpression([], body);
+    adapted.async = asynchronous;
+  }
+  return adapted;
+}
+
+function globalHooks(site: PluginCall): PluginEdit | undefined {
+  const remove = hookNames.filter((name) => site.options.has(name));
+  if (!remove.length) return undefined;
+  if (
+    (remove.includes('beforeEach') && remove.includes('asyncBeforeEach')) ||
+    (remove.includes('afterEach') && remove.includes('asyncAfterEach'))
+  ) {
+    site.report('Resolve the conflicting synchronous and asynchronous global hooks before migrating.');
+    return undefined;
+  }
+  const localOverride = site
+    .j(site.path.scope.path)
+    .find(site.j.CallExpression)
+    .some(({ node }) => {
+      const member = node.callee;
+      if (!site.j.MemberExpression.check(member) || member.computed || !site.j.Identifier.check(member.property))
+        return false;
+      const hook = member.property.name;
+      // A matching local hook may override the global one, even on a separately declared property.
+      return (
+        ['beforeEach', 'afterEach'].includes(hook) &&
+        remove.some((name) => name.toLowerCase().endsWith(hook.toLowerCase()))
+      );
+    });
+  if (localOverride) {
+    site.report('Review the global hook together with the local hook that overrides it.');
+    return undefined;
+  }
+  const plugins: PluginEdit['plugins'] = [];
+  for (const name of remove) {
+    const callback = hookCallback(site, site.options.get(name) as Expression, name.startsWith('async'));
+    if (!callback) return undefined;
+    const plugin = name.toLowerCase().includes('before') ? 'beforeEach' : 'afterEach';
+    plugins.push({ value: site.j.callExpression(site.member(plugin), [callback]) });
+  }
+  return { remove, plugins };
+}
+
+// In v4 each local hook wraps the previous hook of the same kind.
+function localHookEdit(
+  site: PluginCall,
+  callback: Expression,
+  asyncProperty: boolean,
+): { previous: 'first' | 'last' | 'never'; callback?: Expression } | undefined {
+  const { j } = site;
+  if ((!j.ArrowFunctionExpression.check(callback) && !j.FunctionExpression.check(callback)) || !callback.params.length)
+    return { previous: 'never', callback };
+  const [param] = callback.params;
+  if (
+    callback.params.length !== 1 ||
+    !j.Identifier.check(param) ||
+    callback.generator ||
+    (callback.async && !asyncProperty)
+  )
+    return undefined;
+  if (j(callback).find(j.JSXIdentifier, { name: param.name }).size()) return undefined;
+  // Include the parameter declaration itself. Extra occurrences need review.
+  const count = j(callback).find(j.Identifier, { name: param.name }).size();
+  if (count === 1) return { previous: 'never', callback: { ...callback, params: [] } };
+  if (count !== 2) return undefined;
+
+  const body = callback.body;
+  const statements = j.BlockStatement.check(body) ? body.body : [j.returnStatement(body)];
+  const index = statements.findIndex((statement) => {
+    const returns = j.ReturnStatement.check(statement);
+    if (!returns && !j.ExpressionStatement.check(statement)) return false;
+    const expr = returns ? statement.argument : statement.expression;
+    const awaited = j.AwaitExpression.check(expr);
+    if (asyncProperty && !returns && !awaited) return false;
+    const call = awaited ? expr.argument : expr;
+    return (
+      j.CallExpression.check(call) &&
+      !call.arguments.length &&
+      j.Identifier.check(call.callee) &&
+      call.callee.name === param.name
+    );
+  });
+  if (index < 0 || (index !== 0 && index !== statements.length - 1)) return undefined;
+  if (statements.length === 1) return { previous: 'first' };
+  if (!j.BlockStatement.check(body) || (index === 0 && j.ReturnStatement.check(statements[0]))) return undefined;
+  const rest = statements.filter((_, i) => i !== index);
+  // An early return could bypass a trailing previous().
+  if (index && rest.some((s) => j.ReturnStatement.check(s) || j(s).find(j.ReturnStatement).size())) return undefined;
+  return {
+    previous: index === 0 ? 'first' : 'last',
+    callback: { ...callback, params: [], body: { ...body, body: rest } },
+  };
+}
+
+function localHooks(site: PluginCall): PluginEdit | undefined {
+  const { j, call } = site;
+  const argument = call.arguments[0];
+  let property = argument;
+  let declarator: ASTPath | undefined;
+  if (j.Identifier.check(argument)) {
+    const declaration = findBinding(j, site.path, argument.name)?.parent;
+    // Moving the hooks is safe for a single-use const in the same scope, with no intervening statements.
+    if (
+      !declaration ||
+      !j.VariableDeclarator.check(declaration.node) ||
+      declaration.parent.node.kind !== 'const' ||
+      declaration.parent.node.declarations.length !== 1 ||
+      !j.CallExpression.check(declaration.node.init)
+    )
+      return undefined;
+    const statement = declaration.parent;
+    const next = statement.parentPath.get(Number(statement.name) + 1);
+    if (
+      !next.value ||
+      (next.node !== site.path.node &&
+        !j(next)
+          .find(j.CallExpression)
+          .some((p) => p.node === call)) ||
+      declaration.scope !== site.path.scope ||
+      j(declaration.scope.path)
+        .find(j.Identifier, { name: argument.name })
+        .some(
+          (ref) =>
+            ref.node !== argument &&
+            ref.node !== declaration.node.id &&
+            isReference(j, ref) &&
+            findBinding(j, ref, ref.node.name)?.parent?.node === declaration.node,
+        )
+    )
+      return undefined;
+    declarator = declaration;
+    property = declaration.node.init;
+  }
+  const hooks: { name: string; callback: Expression }[] = [];
+  while (
+    j.CallExpression.check(property) &&
+    j.MemberExpression.check(property.callee) &&
+    !property.callee.computed &&
+    j.Identifier.check(property.callee.property) &&
+    ['beforeEach', 'afterEach'].includes(property.callee.property.name)
+  ) {
+    const name = property.callee.property.name;
+    const callback = property.arguments[0];
+    if (
+      property.arguments.length !== 1 ||
+      !callback ||
+      callback.type === 'SpreadElement' ||
+      !j.CallExpression.check(property.callee.object)
+    ) {
+      site.report('Review the indirect property hook.');
+      return undefined;
+    }
+    hooks.push({ name, callback });
+    property = property.callee.object;
+  }
+  if (!hooks.length || !j.CallExpression.check(property)) return undefined;
+  const factory = site.importedName(property);
+  if (factory !== 'property' && factory !== 'asyncProperty') return undefined;
+  const before: Expression[] = [];
+  const after: Expression[] = [];
+  const conflicts: string[] = [];
+  const asyncProperty = factory === 'asyncProperty';
+  for (const { name, callback } of hooks.reverse()) {
+    conflicts.push(name, name === 'beforeEach' ? 'asyncBeforeEach' : 'asyncAfterEach');
+    const edit = localHookEdit(site, callback, asyncProperty);
+    if (!edit) {
+      site.report(`Review how the ${name} callback uses its previous hook.`);
+      return undefined;
+    }
+    const chain = name === 'beforeEach' ? before : after;
+    if (edit.previous === 'never') chain.length = 0;
+    if (edit.callback) {
+      const value = hookCallback(site, edit.callback, asyncProperty);
+      if (!value) return undefined;
+ 
 ```
 
 ### Core Architecture Module: `packages/fast-check/src/check/plugin/LifeCyclePlugins.ts`
@@ -555,93 +800,20 @@ export function signalAsPromise(signal: AbortSignal): {
 
 ```
 
-### Core Architecture Module: `packages/fast-check/src/check/runner/utils/AllCallbacksThenReturnRunner.ts`
-```
-async function runAllCallbacksAndReturnAsync<T>(
-  value: T,
-  runCallbackAtIndex: (index: number) => void | Promise<void>,
-  firstCallbackResult: Promise<void>,
-  callbackIndex: number,
-  callbacksCount: number,
-  hasInitialError: boolean,
-  initialError: unknown,
-): Promise<T> {
-  let interceptedOnce = hasInitialError;
-  let interceptedError = initialError;
-  for (let index = callbackIndex; index !== callbacksCount; ++index) {
-    try {
-      const out = index === callbackIndex ? firstCallbackResult : runCallbackAtIndex(index);
-      if (out !== undefined) {
-        await out;
-      }
-    } catch (error) {
-      if (!interceptedOnce) {
-        interceptedOnce = true;
-        interceptedError = error;
-      }
-    }
-  }
-  if (interceptedOnce) {
-    throw interceptedError;
-  }
-  return value;
-}
-
-/**
- * Run all callbacks in-order without any overlap.
- * Returns the originally passed value if all callbacks succeed, otherwise rejects with the first encountered error.
- * NEVER throw in a synchronous way!
- * @param value - Value returned on success (must not be a Promise or thenable)
- * @param runCallbackAtIndex - Execute the callback at a given index
- * @param callbacksCount - Number of callbacks to execute
- */
-export function runAllCallbacksAndReturn<T>(
-  value: T,
-  runCallbackAtIndex: (index: number) => void | Promise<void>,
-  callbacksCount: number,
-): T | Promise<T> {
-  let interceptedOnce = false;
-  let interceptedError: unknown = undefined;
-  for (let index = 0; index !== callbacksCount; ++index) {
-    try {
-      const out = runCallbackAtIndex(index);
-      if (out !== undefined) {
-        return runAllCallbacksAndReturnAsync(
-          value,
-          runCallbackAtIndex,
-          out,
-          index,
-          callbacksCount,
-          interceptedOnce,
-          interceptedError,
-        );
-      }
-    } catch (error) {
-      if (!interceptedOnce) {
-        interceptedOnce = true;
-        interceptedError = error;
-      }
-    }
-  }
-  if (interceptedOnce) {
-    return Promise.reject(interceptedError);
-  }
-  return value;
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7629** (2026-11-20): **✨(codemod) Migrate custom shrink streams to native iterators**
-  *Symptoms*: ## Description  > AI-agent disclosure: this PR was authored by an automated agent (Codex) and has not been line-by-line reviewed by a human before submission.  Stacked on #7624 for shared ESM binding and await handling.  Add `v5/nativeShrinkIterators` for fast-check ≥5.0.0. Rewrites `fc.Stream.nil()`, `fc.Stream.of(...)` and `fc.stream(iterator)` in direct `fc.Arbitrary` subclasses and changes `fc.Stream<T>` shrink return annotations to `IteratorObject<T>`. The transform reports stream-specific calls and leaves the affected method for review.  ```diff -return fc.Stream.of(candidate); +return Iterator.from([candidate]); ```  <details> <summary>Cases for manual review</summary>  Review indirect base classes, externally declared type aliases, stream utilities outside shrink methods, and bespoke helpers such as `getNthOrLast`, `has`, `join`, `dropWhile` and `takeWhile`. The runtime needs native iterator helpers or a polyfill and TypeScript needs the iterator library types.  </details>  The package passed all 62 fixture and second-run checks, typechecking and its production build.  ## Checklist  — _Don't delete this checklist and make sure you do the following before opening the PR_  - [ ] I have a full understanding of every line in this PR — whether the code was hand-written, AI-generated (our [AI Policy](https://github.com/dubzzz/fast-check/blob/main/AI_POLICY.md)), copied from external sources or produced by any other tool - [ ] I flagged the impact of my change (minor / patch
+- **Issue #7652** (2026-11-23): **👷 Drop MacOS and Windows from the required CI jobs**
+  *Symptoms*: ## Description  <!-- Describe your change and explain what this PR is trying to solve -->  MacOS has been really slow lately. Waiting it all the time is a nightmare. Given it has a very limited risk to break, I relaxed it.  It's now optional.  <!-- Add any additional context here -->  ## Checklist  — _Don't delete this checklist and make sure you do the following before opening the PR_  - [ ] I have a full understanding of every line in this PR — whether the code was hand-written, AI-generated (our [AI Policy](https://github.com/dubzzz/fast-check/blob/main/AI_POLICY.md)), copied from external sources or produced by any other tool - [ ] I flagged the impact of my change (minor / patch / major) either by running `pnpm run bump` or by following the instructions from the changeset bot - [ ] I kept this PR focused on a single concern and did not bundle unrelated changes - [ ] I followed the [gitmoji](https://gitmoji.dev/) specification for the name of the PR, including the package scope (e.g. `🐛(vitest) Something...`) when the change targets a package other than `fast-check` - [ ] I added relevant tests and they would have failed without my PR (when applicable)  <!-- PRs not checking all the boxes may take longer before being reviewed --> <!-- More about contributing at https://github.com/dubzzz/fast-check/blob/main/CONTRIBUTING.md -->  <!-- NOTE TO HUMAN CONTRIBUTORS: the block below is addressed to AI agents (Claude Code, Codex, Devin, OpenHands, Cursor agents, …) that may open
+  **Post-Mortem & Fix Analysis**:
+  > <!-- agentscanapp-bot --> ### Automation signals  Activity patterns show signs of automation.  [View full analysis →](https://agentscan.tools/user/dubzzz)  <details> <summary>Evidence</summary>  - Branch then PR within seconds: 25 branches in the account's own repositories followed by PRs within 86s, out of 31 branches created in total - Heavy AI agent use (branches): 16 AI agent branches within 24 hours - High push frequency: 91 consecutive same-repo push pairs within 10 min of each other (105 pushes involved) - AI agent branches: 20/31 branches use AI agent tool prefixes (codex/) - Posts through an AI agent: Codex posted 6 of the account's 11 comments and issues (55%)  Last 5 PRs: - https://redirect.github.com/dubzzz/fast-check/pull/7603 - https://redirect.github.com/dubzzz/fast-check/pull/7604 - https://redirect.github.com/dubzzz/fast-check/pull/7605 - https://redirect.github.com/dubzzz/fast-check/pull/7615 - https://redirect.github.com/dubzzz/fast-check/pull/7617  </details>  <sub>
+  > <!-- coderabbit-ai-generated:v1 -->  <!-- This is an auto-generated comment: summarize by coderabbit.ai --> <!-- review_stack_entry_start -->  <a href="https://app.coderabbit.ai/change-stack/dubzzz/fast-check/pull/7652?scope=ghh_OusAJGA4HG8ljoOV0wJvVx8NmnZIjc2DdjmxOu0xZWA&amp;cs_source=review_comment"><picture><source media="(prefers-color-scheme: dark)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-buttons-v1/explain-change-dark.svg"><source media="(prefers-color-scheme: light)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-buttons-v1/explain-change.svg"><img src="https://storage.googleapis.com/coderabbit_public_assets/review-stack-buttons-v1/explain-change.svg" alt="Explain Change →" height="32"></picture></a>  <!-- review_stack_entry_end --> <!-- This is an auto-generated comment: failure by coderabbit.ai -->  > [!CAUTION] > ## Review failed >  > <!-- failure_reason_start --> > The pull request is closed. > <!-- failure_r
 
-- **Issue #7623** (2026-11-20): **✨(codemod) Migrate Random methods with v5/randomMethods**
-  *Symptoms*: ## Description  > AI-agent disclosure: this PR was authored by an automated agent (Codex) and has not been line-by-line reviewed by a human before submission.  Add `v5/randomMethods` for fast-check ≥1.0.0. It recognizes direct method calls on variables or parameters explicitly typed as fast-check’s `Random`.  - `nextBoolean()` becomes `nextInt(0, 1) === 1`. - `nextInt()` gains the signed 32-bit bounds. - `next(bits)` becomes `nextInt(0, (1 << bits) - 1)`. - `nextDouble()` draws 26 bits, then 27 bits, and combines them into the same 53-bit fraction. [Original implementation](https://github.com/dubzzz/fast-check/blob/v1.0.0/src/random/generator/Random.ts)  Each method has its own small ESM fixture. The `advanced-` fixtures cover nested draws, operator precedence in a custom arbitrary, optional calls and similarly named methods from another module.  <details> <summary>Cases for manual review</summary>  Inferred or aliased receiver types, untyped JavaScript, indirect receivers such as `this.rng` or `rng.clone()`, extracted methods, computed names and optional calls are left for review. Existing bounded calls need no change.  </details>  All 26 package fixture and repeat-run checks passed, along with typechecking, the package build and a built CLI dry run. On both 1.0.0 and 4.10.3, 100 seeds produced identical results and subsequent bounded draws before and after migration.  ## Checklist  — _Don't delete this checklist and make sure you do the following before opening the PR_  - [
+- **Issue #7651** (2026-11-23): **♻️(codemod) Rework existing codemods**
+  *Symptoms*: ## Description  <!-- Describe your change and explain what this PR is trying to solve -->  Fixes #issue-number  <!-- Add any additional context here -->  ## Checklist  — _Don't delete this checklist and make sure you do the following before opening the PR_  - [ ] I have a full understanding of every line in this PR — whether the code was hand-written, AI-generated (our [AI Policy](https://github.com/dubzzz/fast-check/blob/main/AI_POLICY.md)), copied from external sources or produced by any other tool - [ ] I flagged the impact of my change (minor / patch / major) either by running `pnpm run bump` or by following the instructions from the changeset bot - [ ] I kept this PR focused on a single concern and did not bundle unrelated changes - [ ] I followed the [gitmoji](https://gitmoji.dev/) specification for the name of the PR, including the package scope (e.g. `🐛(vitest) Something...`) when the change targets a package other than `fast-check` - [ ] I added relevant tests and they would have failed without my PR (when applicable)  <!-- PRs not checking all the boxes may take longer before being reviewed --> <!-- More about contributing at https://github.com/dubzzz/fast-check/blob/main/CONTRIBUTING.md -->  <!-- NOTE TO HUMAN CONTRIBUTORS: the block below is addressed to AI agents (Claude Code, Codex, Devin, OpenHands, Cursor agents, …) that may open this PR on your behalf. If you are a human author writing or reviewing this PR yourself, you can ignore it entirely — it does not a
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -658,398 +830,198 @@ export function runAllCallbacksAndReturn<T>(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `53bb7ac9` (2026-11-19)
-**Commit Message**: 🏷️ Make built-in arbitrary constraint inputs readonly (#7606)
+### Incident Patch 1: `6a5a6667` (2026-11-23)
+**Commit Message**: 👷 Drop MacOS and Windows from the required CI jobs (#7652)
 
 ## Description
 
-> AI-agent disclosure: this PR was authored by an automated agent (Codex
-/ GPT-6) and has not been line-by-line reviewed by a human before
-submission.
+<!-- Describe your change and explain what this PR is trying to solve
+-->
 
-Follow-up to merged #7604 and #5007, based on commit `94258a1`.
+MacOS has been really slow lately. Waiting it all the time is a
+nightmare. Given it has a very limited risk to break, I relaxed it.
 
-Make constraint inputs explicitly readonly across all 52 public
-functions that accept constraint objects, including overloads and shared
-internal consumers. Signatures use `Readonly<Constraints>`, covering
-generic cases such as `falsy`, `option`, `record`, and `uniqueArray`,
-and the union/rest overloads of `nat`, `bigInt`, and `schedulerFor`.
+It's now optional.
 
-TypeScript already accepts ordinary readonly object properties
-structurally. This change makes that contract explicit and prevents
-writes through constraint parameters inside the implementation. Callers
-can pass `as const`, `Readonly<...>`, and frozen configurations.
-Exported constraint interfaces remain mutable for callers building
-configurations incrementally; generated value types and inference are
-preserved.
+<!-- Add any additional context here -->
 
-Add focused checks to the existing public type fixture for the readonly
-signatures, mutable callers, empty const constraints, frozen objects
+## Checklist
 
-**File**: `.changeset/readonly-builtin-constraints.md` (added, +5/-0)
+— _Don't delete this checklist and make sure you do the following before
+opening the PR_
+
+- [ ] I have a full understanding of every line in this PR — whether the
+code was hand-written, AI-generated (our [AI
+Policy](https://github.com/dubzzz/fast-check/blob/main/AI_POLICY.md)),
+copied from external sources or produced by any other tool
+- [ ] I flagged the impact of my change (minor / patch / major) either
+by running `pnpm run bump` or by following the instructions from the
+changeset bot
+- [ ] I kept this PR focused on a single concern and did not bundle
+unrelated changes
+- [ ] I followed the [gitmoji](https://gitmoji.dev/) specification for
+the name of the PR, including the package scope (e.g. `🐛(vitest)
+Something...`) when the change targets a package other than `fast-check`
+- [ ] I added relevant tests and they would have fa
+
+**File**: `.github/workflows/build-status.yml` (modified, +7/-9)
 ```diff
-@@ -0,0 +1,5 @@
-+---
-+'fast-check': patch
-+---
-+
-+Declare constraint inputs as readonly across built-in arbitraries and their internal consumers. Accept mutable constraints, `Readonly` constraint objects, and `as const` configurations while preserving generated value types and inference.
-```
-
-**File**: `packages/fast-check/src/arbitrary/_internals/FrequencyArbitrary.ts` (modified, +2/-2)
-```diff
-@@ -11,7 +11,7 @@ export class FrequencyArbitrary<T> extends Arbitrary<T> {
-   readonly cumulatedWeights: number[];
-   readonly totalWeight: number;
+@@ -159,7 +159,7 @@ jobs:
+         shard-id: ['1', '2']
+         shard-count: ['2']
+     env: &test_env
+-      ENABLE_COVERAGE: ${{ matrix.os == 'macos-latest' }}
++      ENABLE_COVERAGE: ${{ matrix.os == 'ubuntu-latest' && matrix.node-version == '26.x' }}
+       SKIP_DOCUMENTATION: ${{ matrix.node-version != '26.x' || matrix.os == 'windows-latest' }}
+     steps: &test_steps
+       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+@@ -252,10 +252,7 @@ jobs:
+     steps: *test_steps
+   publish_test_coverage:
+     name: 'Publish test coverage'
+-    needs:
+-      - test
+-      - test_macos
+-      - test_windows
++    needs: test
+     runs-on: 'ubuntu-latest'
+     steps:
+       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+@@ -558,7 +555,7 @@ jobs:
+               await github.rest.issues.createComment({ owner: context.repo.owner, repo: context.repo.repo, issue_number: context.issue.number, body });
+             }
  
--  static from<T>(warbs: _WeightedArbitrary<T>[], constraints: _Constraints, label: string): Arbitrary<T> {
-+  static from<T>(warbs: _WeightedArbitrary<T>[], constraints: Readonly<_Constraints>, label: string): Arbitrary<T> {
-     if (warbs.length === 0) {
-       throw new Error(`${label} expects at least one weighted arbitrary`);
-     }
-@@ -39,7 +39,7 @@ export class FrequencyArbitrary<T> extends Arbitrary<T> {
- 
-   private constructor(
-     readonly warbs: _WeightedArbitrary<T>[],
--    readonly constraints: _SanitizedConstraints,
-+    readonly constraints: Readonly<_SanitizedConstraints>,
-     readonly context: DepthContext,
-   ) {
-     super();
-```
-
-**File**: `packages/fast-check/src/arbitrary/_internals/InitialPoolForEntityGraphArbitrary.ts` (modified, +2/-2)
-```diff
-@@ -9,7 +9,7 @@ type InitialPoolForEntityGraphConstraints<TEntityNames extends PropertyKey> = {
- 
- function canHaveAtLeastOneItem<TEntityNames extends PropertyKey>(
-   keys: TEntityNames[],
--  constraints: InitialPoolForEntityGraphConstraints<TEntityNames>,
-+  constraints: Readonly<InitialPoolForEntityGraphConstraints<TEntityNames>>,
- ): boolean {
-   for (const key of keys) {
-     const constraintsOnKey = constraints[key] || {};
-@@ -22,7 +22,7 @@ function canHaveAtLeastOneItem<TEntityNames extends PropertyKey>(
- 
- export function initialPoolForEntityGraph<TEntityNames extends PropertyKey>(
-   keys: TEntityNames[],
--  constraints: InitialPoolForEntityGraphConstraints<TEntityNames>,
-+  constraints: Readonly<InitialPoolForEntityGraphConstraints<TEntityNames>>,
- ): Arbitrary<TEntityNames[]> {
-   if (keys.length === 0) {
-     return constant([]);
-```
-
-**File**: `packages/fast-check/src/arbitrary/_internals/UnlinkedEntitiesForEntityGraph.ts` (modified, +1/-1)
-```diff
-@@ -12,7 +12,7 @@ export function unlinkedEntitiesForEntityGraph<TEntityFields>(
-   unicityConstraintsFor: <TEntityName extends keyof TEntityFields>(
-     entityName: TEntityName,
-   ) => UniqueArrayConstraintsRecommended<TEntityFields[TEntityName], unknown>['selector'],
--  constraints: Omit<RecordConstraints, 'requiredKeys'>,
-+  constraints: Readonly<Omit<RecordConstraints, 'requiredKeys'>>,
- ): Arbitrary<UnlinkedEntities<TEntityFields>> {
-   const recordModel: { [K in keyof TEntityFields]: Arbitrary<TEntityFields[K][]> } = Object.create(null);
-   for (const name in arbitraries) {
-```
-
-**File**: `packages/fast-check/src/arbitrary/_internals/builders/AnyArbitraryBuilder.ts` (modified, +2/-2)
-```diff
-@@ -40,7 +40,7 @@ function dictOf<U>(
-   });
- }
- 
--function typedArray(constraints: { maxLength: number | undefined; size: SizeForArbitrary }) {
-+function typedArray(constraints: Readonly<{ maxLength: number | undefined; size: SizeForArbitrary }>) {
-   return oneof(
-     int8Array(constraints),
-     uint8Array(constraints),
-@@ -54,7 +54,7 @@ function typedArray(constraints: { maxLength: number | undefined; size: SizeForA
-   );
- }
- 
--export function anyArbitraryBuilder(constraints: QualifiedObjectConstraints): Arbitrary<unknown> {
-+export function anyArbitraryBuilder(constraints: Readonly<QualifiedObjectConstraints>): Arbitrary<unknown> {
-   const arbitrariesForBase = constraints.values;
-   const depthSize = constraints.depthSize;
-   const depthIdentifier = createDepthIdentifier();
-```
-
-**File**: `packages/fast-check/src/arbitrary/_internals/builders/TypedIntArrayArbitraryBuilder.ts` (modified, +2/-2)
-```diff
-@@ -11,11 +11,11 @@ type TypedIntArrayBuilderConstraints<TValue> = {
- };
- 
- export function typedIntArrayArbitraryArbitraryBuilder<TTypedArrayType extends Iterable<TValue>, TValue>(
--  constraints: TypedIntArrayBuilderConstraints<TValue>,
-+  constraints: Readonly<TypedIntArrayBuilderConstraints<TValue>>,
-   defaultMin: TValue,
-   defaultMax: TValue,
-   TypedArrayClass: (new () => TTypedArrayType) & { from: (data: TValue[]) => TTypedArrayType },
--  arbitraryBuilder: (constraints: { min?: TValue; max?: TValue }) => Arbitrary<TValue>,
-+  arbitraryBuilder: (constraints: Readonly<{ min?: TValue; max?: TValue }>) => Arbitrary<TValue>,
- ): Arbitrary<TTypedArrayType> {
-   const generatorName = TypedArrayClass.name;
-   const { min = defaultMin, max = defaultMax, ...arrayConstraints } = constraints;
-```
-
-**File**: `packages/fast-check/src/arbitrary/_internals/helpers/DoubleOnlyHelpers.ts` (modified, +1/-1)
-```diff
-@@ -11,7 +11,7 @@ export const onlyIntegersAfterThisValue = 4503599627370496;
-  * @param constraints - Source constraints to be refined
-  */
- export function refineConstraintsForDoubleOnly(
--  constraints: Omit<DoubleConstraints, 'noInteger'>,
-+  constraints: Readonly<Omit<DoubleConstraints, 'noInteger'>>,
- ): Required<Omit<DoubleConstraints, 'noInteger'>> {
-   return refineConstraintsForFloatingOnly(
-     constraints,
-```
-
-**File**: `packages/fast-check/src/arbitrary/_internals/helpers/FloatOnlyHelpers.ts` (modified, +1/-1)
-```diff
-@@ -12,7 +12,7 @@ export const onlyIntegersAfterThisValue = 8388608;
-  * @param constraints - Source constraints to be refined
-  */
- export function refineConstraintsForFloatOnly(
--  constraints: Omit<FloatConstraints, 'noInteger'>,
-+  constraints: Readonly<Omit<FloatConstraints, 'noInteger'>>,
- ): Required<Omit<FloatConstraints, 'noInteger'>> {
-   return refineConstraintsForFloatingOnly(constraints, MAX_VALUE_32, maxNonIntegerValue, onlyIntegersAfterThisValue);
- }
+-  # Job to confirm every required job passed
++  # Job to confirm every required job passed, macOS and Windows are advisory
+   all_checks_passed:
+     name: 'All checks passed'
+     if: always()
+@@ -567,8 +564,6 @@ jobs:
+       - documentation
+       - sanity_checks
+       - test
+-      - test_macos
+-      - test_windows
+       - test_bundle
+       - test_types
+     runs-on: ubuntu-latest
+@@ -613,7 +608,10 @@ jobs:
+           https://api.netlify.com/api/v1/sites/${{secrets.NETLIFY_SITE_ID}}/deploys?draft=$DRAFT_BUILD_VALUE
+   check_any_package:
+     name: 'Check publish any package'
+-    needs: all_checks_passed
++    needs:
++      - all_checks_passed
++      - test_macos
++      - test_windows
+     if: github.event_name == 'push'
+     runs-on: ubuntu-latest
+     outputs:
 ```
 
 ---
 
-### Incident Patch 2: `0f9a865e` (2026-11-17)
-**Commit Message**: ⚡️ Improve initialization/memory performance of binary string (#7566)
+### Incident Patch 2: `24d09ef7` (2026-11-21)
+**Commit Message**: 📝(codemod) Order transforms and classify fixtures (#7631)
 
-## Description
+List transforms by minimum fast-check version, then alphabetically
+within each version.
 
-Fixes https://github.com/dubzzz/fast-check/issues/7551
+Fixture names distinguish `basic-` and `advanced-` migrations,
+`unsupported-` cases that need manual work, and `no-migrate-` cases that
+should stay as written. The optional `Random` call and the spread in
+`stringUnit` now explain why an automatic edit would be unsafe.
 
-Calling `string({ unit: 'binary' })` was populating a map of ~1 million
-code points, which made the first call of a process expensive.
-Subsequent calls were fast because the map was cached, but that meant
-the map stayed in memory forever (~85MB).
+All 40 fixture and second-run checks pass.
 
-Cause:
-- fc.string checks its [dangerous
-strings](https://github.com/dubzzz/fast-check/blob/98cf746f19a88f9d2ed61a3f23f1995d51a80089/packages/fast-check/src/arbitrary/_internals/helpers/SlicesForStringBuilder.ts#L7)
-through tokenizeString, which calls the unit's
-[canShrinkWithoutContext](https://github.com/dubzzz/fast-check/blob/98cf746f19a88f9d2ed61a3f23f1995d51a80089/packages/fast-check/src/arbitrary/_internals/helpers/TokenizeString.ts#L40C23-L40C46).
-That runs mapToConstant's
-[unmapper](https://github.com/dubzzz/fast-check/blob/98cf746f19a88f9d2ed61a3f23f1995d51a80089/packages/fast-check/src/arbitrary/mapToConstant.ts#L42),
-and its first call [builds the
-map](https://github.com/dubzzz/fast-check/blob/98cf746f19a88f9d2ed61a3f23f1995d51a80089/packages/fast-check/src/arbitrary/_internals/mappers/I
-
-**File**: `.changeset/quick-binary-units.md` (added, +5/-0)
+**File**: `packages/codemod/README.md` (modified, +10/-10)
 ```diff
-@@ -0,0 +1,5 @@
-+---
-+"fast-check": patch
-+---
+@@ -18,26 +18,26 @@ Add `--dry --print` to preview changes without writing files. Commit your work b
+ 
+ ### Migrate to v5
+ 
+-<details><summary><code>v5/randomMethods</code> (≥1.0.0) — Migrates removed Random methods to bounded nextInt calls</summary>
++<details><summary><code>v5/defaultImport</code> (≥1.0.0)<sup><a href="#minimum-fast-check-version">(1)</a></sup> — Replaces default imports with namespace imports. Also handles `import type`</summary>
 +
-+⚡️ Faster first use of `string` with `binary` and `grapheme-composite` units
++Example:
+ 
+ ```diff
+--rng.nextBoolean();
+-+rng.nextInt(0, 1) === 1;
++-import fc from 'fast-check';
+++import * as fc from 'fast-check';
+ ```
+ 
+-Applies to direct calls on a variable or parameter annotated as fast-check’s `Random`. Handles `next(bits)`, `nextInt()`, `nextBoolean()` and `nextDouble()`. The double uses the same two draws in the same order.
+-
+ </details>
+ 
+-<details><summary><code>v5/defaultImport</code> (≥1.0.0)<sup><a href="#minimum-fast-check-version">(1)</a></sup> — Replaces default imports with namespace imports. Also handles `import type`</summary>
+-
+-Example:
++<details><summary><code>v5/randomMethods</code> (≥1.0.0) — Migrates removed Random methods to bounded nextInt calls</summary>
+ 
+ ```diff
+--import fc from 'fast-check';
+-+import * as fc from 'fast-check';
++-rng.nextBoolean();
+++rng.nextInt(0, 1) === 1;
+ ```
+ 
++Applies to direct calls on a variable or parameter annotated as fast-check’s `Random`. Handles `next(bits)`, `nextInt()`, `nextBoolean()` and `nextDouble()`. The double uses the same two draws in the same order.
++
+ </details>
+ 
+ <details><summary><code>v5/stringUnit</code> (≥3.23.0) — Migrates Unicode flags on object and JSON arbitraries</summary>
 ```
 
-**File**: `packages/fast-check/src/arbitrary/_internals/StringUnitArbitrary.ts` (modified, +10/-1)
+**File**: `packages/codemod/test/fixture/v5/randomMethods/unsupported-optional-call/actual.ts` (renamed, +1/-0)
 ```diff
 @@ -1,5 +1,6 @@
- import type { Arbitrary } from '../../check/arbitrary/definition/Arbitrary.js';
- import { mapToConstant } from '../mapToConstant.js';
-+import { nat } from '../nat.js';
- import type { GraphemeRange } from './data/GraphemeRanges.js';
- import {
-   asciiAlphabetRanges,
-@@ -9,6 +10,8 @@ import {
- } from './data/GraphemeRanges.js';
- import type { GraphemeRangeEntry } from './helpers/GraphemeRangesHelpers.js';
- import { convertGraphemeRangeToMapToConstantEntry, intersectGraphemeRanges } from './helpers/GraphemeRangesHelpers.js';
-+import { indexToCodePointRangesUnmapperFor } from './mappers/IndexToCodePointRanges.js';
-+import { indexToMappedConstantMapperFor } from './mappers/IndexToMappedConstant.js';
+ import type { Random } from 'fast-check';
  
- type StringUnitType = 'grapheme' | 'composite' | 'binary';
- type StringUnitAlphabet = 'full' | 'ascii';
-@@ -50,7 +53,13 @@ function getOrCreateStringUnitInstance(type: StringUnitType, alphabet: StringUni
-       });
-     }
-   }
--  const stringUnitInstance = mapToConstant(...entries);
-+  const stringUnitInstance =
-+    type === 'grapheme'
-+      ? mapToConstant(...entries)
-+      : nat({ max: entries.reduce((acc, entry) => acc + entry.num, 0) - 1 }).map(
-+          indexToMappedConstantMapperFor(entries),
-+          indexToCodePointRangesUnmapperFor(ranges),
-+        );
-   registeredStringUnitInstancesMap[key] = stringUnitInstance;
-   return stringUnitInstance;
+ function draw(rng?: Random) {
++  // The optional call must still return undefined when rng is absent.
+   return rng?.nextBoolean();
  }
 ```
 
-**File**: `packages/fast-check/src/arbitrary/_internals/mappers/IndexToCodePointRanges.spec.ts` (added, +97/-0)
+**File**: `packages/codemod/test/fixture/v5/randomMethods/unsupported-optional-call/expected.ts` (renamed, +1/-0)
 ```diff
-@@ -0,0 +1,97 @@
-+import { describe, it, expect } from 'vitest';
-+import * as fc from 'fast-check';
-+import { indexToCodePointRangesUnmapperFor } from './IndexToCodePointRanges.js';
-+import { indexToMappedConstantUnmapperFor } from './IndexToMappedConstant.js';
-+import { convertGraphemeRangeToMapToConstantEntry } from '../helpers/GraphemeRangesHelpers.js';
-+import type { GraphemeRange } from '../data/GraphemeRanges.js';
-+import { fullAlphabetRanges } from '../data/GraphemeRanges.js';
-+
-+const ranges: GraphemeRange[] = [[0x41, 0x43], [0x61], [0xd7ff, 0xe000], [0x1f600, 0x1f601]];
-+
-+describe('indexToCodePointRangesUnmapperFor', () => {
-+  it.each`
-+    index        | value
-+    ${0}         | ${'A'}
-+    ${2}         | ${'C'}
-+    ${3}         | ${'a'}
-+    ${4}         | ${'\u{d7ff}'}
-+    ${5}         | ${'\u{d800}'}
-+    ${6 + 0x7ff} | ${'\u{e000}'}
-+    ${8 + 0x7ff} | ${'😁'}
-+  `('should properly unmap value $value to index $index', ({ index, value }) => {
-+    // Arrange / Act
-+    const computedIndex = indexToCodePointRangesUnmapperFor(ranges)(value);
-+
-+    // Assert
-+    expect(computedIndex).toBe(index);
-+  });
-+
-+  it.each`
-+    value
-+    ${'@'}
-+    ${'D'}
-+    ${'b'}
-+    ${'\u{e001}'}
-+    ${'😂'}
-+    ${''}
-+    ${'AB'}
-+    ${'😀A'}
-+    ${0x41}
-+    ${undefined}
-+  `('should reject $value', ({ value }) => {
-+    // Arrange
-+    const unmapper = indexToCodePointRangesUnmapperFor(ranges);
-+
-+    // Act / Assert
-+    expect(() => unmapper(value)).toThrowError();
-+  });
-+
-+  it('should reject a lone surrogate outside of the ranges', () => {
-+    // Arrange
-+    const unmapper = indexToCodePointRangesUnmapperFor(fullAlphabetRanges);
-+
-+    // Act / Assert
-+    expect(() => unmapper('\u{d800}')).toThrowError();
-+    expect(() => unmapper('\u{dfff}')).toThrowError();
-+  });
-+});
-+
-+describe('indexToCodePointRangesUnmapperFor (equivalence)', () => {
-+  // Small window: mapToConstant's unmapper enumerates every value
-+  const windowSize = 0x1000;
-+  const windowArbitrary = fc.integer({ min: 0, max: 0x10ffff - windowSize });
-+  const rangesArbitrary = fc
-+    .tuple(windowArbitrary, fc.uniqueArray(fc.nat({ max: windowSize }), { minLength: 1, maxLength: 20 }))
-+    .map(([windowStart, offsets]) => {
-+      const sorted = offsets.map((offset) => windowStart + offset).sort((a, b) => a - b);
-+      const ranges: GraphemeRange[] = [];
-+      for (let index = 0; index < sorted.length; index += 2) {
-+        ranges.push(index + 1 < sorted.length ? [sorted[index], sorted[index + 1]] : [sorted[index]]);
-+      }
-+      return ranges;
-+    });
-+  const unmapOrUndefined = (unmapper: (value: unknown) => number, value: unknown) => {
-+    try {
-+      return unmapper(value);
-+    } catch {
-+      return undefined;
-+    }
-+  };
-+
-+  it('should unmap as mapToConstant does on the entries of the same ranges', () => {
-+    fc.assert(
-+      fc.property(rangesArbitrary, fc.nat({ max: windowSize + 1 }), (ranges, codePointOffset) => {
-+        // Arrange
-+        const entries = ranges.map(convertGraphemeRangeToMapToConstantEntry);
-+        // Around the window, so that values just outside of the ranges get checked too
-+        const value = String.fromCodePoint(Math.min(Math.max(ranges[0][0] - 1 + codePointOffset, 0), 0x10ffff));
-+
-+        // Act
-+        const unmapped = unmapOrUndefined(indexToCodePointRangesUnmapperFor(ranges), value);
-+
-+        // Assert
-+        expect(unmapped).toBe(unmapOrUndefined(indexToMappedConstantUnmapperFor(entries), value));
-+      }),
-+    );
-+  });
-+});
+@@ -1,5 +1,6 @@
+ import type { Random } from 'fast-check';
+ 
+ function draw(rng?: Random) {
++  // The optional call must still return undefined when rng is absent.
+   return rng?.nextBoolean();
+ }
 ```
 
-**File**: `packages/fast-check/src/arbitrary/_internals/mappers/IndexToCodePointRanges.ts` (added, +48/-0)
+**File**: `packages/codemod/test/fixture/v5/stringUnit/unsupported-spread/actual.ts` (renamed, +1/-0)
 ```diff
-@@ -0,0 +1,48 @@
-+import type { GraphemeRange } from '../data/GraphemeRanges.js';
-+
-+type CodePointRange = { from: number; first: number; last: number };
-+
-+function buildCodePointRanges(ranges: GraphemeRange[]): CodePointRange[] {
-+  let from = 0;
-+  const codePointRanges: CodePointRange[] = [];
-+  for (const range of ranges) {
-+    const first = range[0];
-+    const last = range.length === 1 ? range[0] : range[1];
-+    codePointRanges.push({ from, first, last });
-+    from += last - first + 1;
-+  }
-+  return codePointRanges;
-+}
-+
-+function findCodePointRange(codePointRanges: CodePointRange[], codePoint: number): CodePointRange {
-+  let min = 0;
-+  let max = codePointRanges.length;
-+  while (max - min > 1) {
-+    const mid = ~~((min + max) / 2); // ~~ is Math.floor
-+    if (codePoint < codePointRanges[mid].first) {
-+      max = mid;
-+    } else {
-+      min = mid;
-+    }
-+  }
-+  return codePointRanges[min];
-+}
-+
-+/**
-+ * Ranges have to be ordered and non-overlapping
-+ */
-+export function indexToCodePointRangesUnmapperFor(ranges: GraphemeRange[]): (value: unknown) => number {
-+  const codePointRanges = buildCodePointRanges(ranges);
-+  return function indexToCodePointRangesUnmapper(value: unknown): number {
-+    if (typeof value === 'string') {
-+      const codePoint = value.codePointAt(0);
-+      if (codePoint !== undefined && String.fromCodePoint(codePoint) === value) {
-+        const range = findCodePointRange(codePointRanges, codePoint);
-+        if (range.first <= codePoint && codePoint <= range.last) {
-+          return range.from + codePoint - range.first;
-+        }
-+      }
-+    }
-+    throw new Error('Unknown value encountered cannot be built using these code point ranges');
-+  };
-+}
+@@ -1,3 +1,4 @@
+ import * as fc from 'fast-check';
+ 
++// The later spread can override the Unicode flag or supply its own stringUnit.
+ fc.json({ noUnicodeString: false, ...options });
+```
+
+**File**: `packages/codemod/test/fixture/v5/stringUnit/unsupported-spread/expected.ts` (renamed, +1/-0)
+```diff
+@@ -1,3 +1,4 @@
+ import * as fc from 'fast-check';
+ 
++// The later spread can override the Unicode flag or supply its own stringUnit.
+ fc.json({ noUnicodeString: false, ...options });
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7629** (2026-11-20): ✨(codemod) Migrate custom shrink streams to native iterators (@dubzzz)
-- **PR #7623** (2026-11-20): ✨(codemod) Migrate Random methods with v5/randomMethods (@dubzzz)
-- **PR #7622** (2026-11-20): ✨(codemod) Migrate Unicode flags with v5/stringUnit (@dubzzz)
-- **PR #7619** (2026-11-20): 🐛(jest) Ensure compatibility with v4/5 (@dubzzz)
-- **PR #7618** (2026-11-20): 🐛(vitest) Ensure compatibility with v4/5 (@dubzzz)
-- **PR #7616** (2026-11-20): 🐛(worker) Ensure compatibility with v4/5 (@dubzzz)
+- **PR #7652** (2026-11-23): 👷 Drop MacOS and Windows from the required CI jobs (@dubzzz)
+- **PR #7651** (2026-11-23): ♻️(codemod) Rework existing codemods (@dubzzz)
+- **PR #7649** (2026-11-24): ⬆️ Update pnpm to v12.23.0 (@renovate[bot])
+- **PR #7648** (2026-11-23): ✨(codemod) Move from `property` to `asyncProperty` (@dubzzz)
+- **PR #7647** (2026-11-23): 📝 Add a v5 preview banner and resume docs publishing (@dubzzz)
+- **PR #7646** (2026-11-23): ⬆️ Update dependency jimp to ^1.7.0 (@renovate[bot])
 
 ---
 
@@ -1069,35 +1041,45 @@ map](https://github.com/dubzzz/fast-check/blob/98cf746f19a88f9d2ed61a3f23f1995d5
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. 🏷️ Make built-in arbitrary constraint inputs readonly
+## X. 👷 Drop MacOS and Windows from the required CI jobs
 
 **RULE**:
-When implementing operations in `.changeset/readonly-builtin-constraints.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dubzzz/fast-check. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/build-status.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dubzzz/fast-check. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `53bb7ac9`: 🏷️ Make built-in arbitrary constraint inputs readonly. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6a5a6667`: 👷 Drop MacOS and Windows from the required CI jobs. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/readonly-builtin-constraints.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/build-status.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
----
-'fast-check': patch
----
-
-Declare constraint inputs as readonly across built-in arbitraries and their internal consumers. Accept mutable constraints, `Readonly` constraint objects, and `as const` configurations while preserving generated value types and inference.
+      ENABLE_COVERAGE: ${{ matrix.os == 'ubuntu-latest' && matrix.node-version == '26.x' }}
+    needs: test
+  # Job to confirm every required job passed, macOS and Windows are advisory
+    needs:
+      - all_checks_passed
+      - test_macos
+      - test_windows
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+      ENABLE_COVERAGE: ${{ matrix.os == 'macos-latest' }}
+    needs:
+      - test
+      - test_macos
+      - test_windows
+  # Job to confirm every required job passed
+      - test_macos
+      - test_windows
+    needs: all_checks_passed
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `53bb7ac9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6a5a6667` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

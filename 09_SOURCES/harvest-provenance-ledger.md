@@ -12929,3 +12929,7 @@ Every entry in this ledger must capture:
 | `learn-github-oxc-project-oxc` | `https://github.com/oxc-project/oxc` | `e87c19c1` | Multi-dimensional audit evidence | 2026-11-25T01:52:49.181Z |
 | `learn-github-mochajs-mocha` | `https://github.com/mochajs/mocha` | `04eb516f` | Multi-dimensional audit evidence | 2026-11-25T01:52:50.127Z |
 | `learn-github-microsoft-react-native-windows` | `https://github.com/microsoft/react-native-windows` | `d1f9d2de` | Multi-dimensional audit evidence | 2026-11-25T01:52:52.792Z |
+| `learn-github-zed-industries-zed` | `https://github.com/zed-industries/zed` | `2664a0aa` | Multi-dimensional audit evidence | 2026-11-25T02:01:59.432Z |
+| `learn-github-dubzzz-fast-check` | `https://github.com/dubzzz/fast-check` | `864bf69b` | Multi-dimensional audit evidence | 2026-11-25T02:02:02.087Z |
+| `learn-github-crosspaste-crosspaste-desktop` | `https://github.com/CrossPaste/crosspaste-desktop` | `9498f76d` | Multi-dimensional audit evidence | 2026-11-25T02:02:03.921Z |
+| `learn-github-gocd-gocd` | `https://github.com/gocd/gocd` | `81a7d3ab` | Multi-dimensional audit evidence | 2026-11-25T02:02:06.496Z |

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-25T01:52:59.718Z",
+  "last_updated": "2026-11-25T02:02:14.554Z",
   "total_verified_learnings": 9108,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25131,
+  "total_items": 25142,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113289,10 +113289,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-gocd-gocd-technical-construction-intelligence-gocd-gocd-core-invariants.md",
       "title": "Technical Construction Intelligence: gocd/gocd Core Invariants",
       "repository": "gocd/gocd",
-      "source_version": "90a9bc24",
-      "content_hash": "d603f7d2007e6aa1b72ea5002df138bfd4ddec2ce614490d08c115126ecf6b9a",
+      "source_version": "81a7d3ab",
+      "content_hash": "3be833582b9b958f0d3f490372cab880b8487a09e4fe549537d6b01ad0f620ba",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T07:47:14.515Z"
+      "persisted_at": "2026-11-25T02:02:07.052Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-gocd-gocd": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-gocd-gocd",
@@ -113301,10 +113301,10 @@
       "relative_path": "08_VERIFICATION/gocd-gocd-verification-protocol-empirical-defect-shield-for-gocd-gocd.md",
       "title": "Verification Protocol: Empirical Defect Shield for gocd/gocd",
       "repository": "gocd/gocd",
-      "source_version": "90a9bc24",
-      "content_hash": "1b151c9f7399f1c7921705377508fa6b1a4f07d3baf0321ae4c5453bcf83c4ee",
+      "source_version": "81a7d3ab",
+      "content_hash": "396ebdb1450ef0b214964d821aca765ff716d98017394a457bfb27f8e898acb6",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T07:47:14.752Z"
+      "persisted_at": "2026-11-25T02:02:07.339Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-27b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-27b-core-invariants",
@@ -234467,8 +234467,8 @@
       "slug": "zed-industries-zed",
       "platform": "github",
       "source_url": "https://github.com/zed-industries/zed",
-      "source_version": "e224d55b",
-      "content_hash": "4038f42943c43df216a6468b4bdf5046e3049b986638e85bec05d32f1d4f6e23",
+      "source_version": "2664a0aa",
+      "content_hash": "1170c9d904dd65551fe5dd93b012b68a220fd99b3ead34eab2b11485b0813e5c",
       "dossier_path": "07_PROJECT_LEARNING/zed-industries-zed-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zed-industries-zed-learnings.md",
       "promoted_rules": [
@@ -234511,6 +234511,11 @@
           "number": 10142,
           "title": "Search threads by their displayed title",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10424,
+          "title": "Apply deferred content masks during prepaint",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -234518,7 +234523,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T23:18:12.287Z",
+      "verified_at": "2026-11-25T02:01:59.089Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -234560,10 +234565,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-zed-industries-zed-content-information-intelligence-zed-industries-zed-core-inva.md",
       "title": "Content & Information Intelligence: zed-industries/zed Core Invariants",
       "repository": "zed-industries/zed",
-      "source_version": "e224d55b",
-      "content_hash": "9225685d69a3041705c33090d865461bb60779ae28050c44b16ced6fb55ee057",
+      "source_version": "2664a0aa",
+      "content_hash": "79df0fef956c775923e56fcbe0f08d4492a0802e69fbfe72e273ac0fdfe419c7",
       "domain_letter": "I",
-      "persisted_at": "2026-11-23T23:18:12.901Z"
+      "persisted_at": "2026-11-25T02:01:59.993Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zed-industries-zed": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zed-industries-zed",
@@ -234572,10 +234577,10 @@
       "relative_path": "08_VERIFICATION/zed-industries-zed-verification-protocol-empirical-defect-shield-for-zed-industr.md",
       "title": "Verification Protocol: Empirical Defect Shield for zed-industries/zed",
       "repository": "zed-industries/zed",
-      "source_version": "e224d55b",
-      "content_hash": "a53f2ab51f4610c0923adf3d36d86b3cbca4aa334cd5a8188d9188048b1eb2b1",
+      "source_version": "2664a0aa",
+      "content_hash": "90bdab7536c60738e8be162d2f28d3725fb18aa5e35affb74f3080f59cd83478",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T23:18:13.089Z"
+      "persisted_at": "2026-11-25T02:02:00.253Z"
     },
     "candidate_directive-gpui_web-fix-safe-area-insets-under-a-strict-style-csp": {
       "item_id": "candidate_directive-gpui_web-fix-safe-area-insets-under-a-strict-style-csp",
@@ -234597,9 +234602,9 @@
       "title": "Content & Information Intelligence: zed-industries-zed-learnings Core Invariants",
       "repository": "zed-industries-zed-learnings",
       "source_version": "HEAD",
-      "content_hash": "cd5aac873f93cb7f8306f894d181754e59f9368375724f229b91350c28a67aff",
+      "content_hash": "200ea4319080c581dec8de705100c99c9d819e05f56f920ac8b66dcd52b348a4",
       "domain_letter": "I",
-      "persisted_at": "2026-11-23T23:18:28.750Z"
+      "persisted_at": "2026-11-25T02:02:11.271Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zed-industries-zed-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zed-industries-zed-learnings",
@@ -234609,9 +234614,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zed-industries-zed-learnings",
       "repository": "zed-industries-zed-learnings",
       "source_version": "HEAD",
-      "content_hash": "4ffcaa540a73cdd7556ccd49ffb79f559fef9c52e29e7d190bd8125dc4be2e34",
+      "content_hash": "0f9129e47d09fb8ed6caf56fbe240a801a76e9dbccedc5c56c629a5b66ec43fb",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T23:18:28.908Z"
+      "persisted_at": "2026-11-25T02:02:11.521Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-mudler-locate-anything-cpp-gguf-learnings-cor": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-mudler-locate-anything-cpp-gguf-learnings-cor",
@@ -240164,8 +240169,8 @@
       "slug": "gocd-gocd",
       "platform": "github",
       "source_url": "https://github.com/gocd/gocd",
-      "source_version": "90a9bc24",
-      "content_hash": "6ffb1a6248e25858529e1df13ae0440635a5e2c9105b379482697a7f46f6c9b6",
+      "source_version": "81a7d3ab",
+      "content_hash": "b909e2561ff7f36b4cd3c258611d02ba9deaaeb4cd143f0d6a6db6b4cdd794a2",
       "dossier_path": "07_PROJECT_LEARNING/gocd-gocd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gocd-gocd-learnings.md",
       "promoted_rules": [
@@ -240218,6 +240223,11 @@
           "number": 10229,
           "title": "use Gradle providers to exec tools to determine versions",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10427,
+          "title": "build(deps): bump net.javacrumbs.json-unit:json-unit-assertj",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -240225,7 +240235,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T07:47:13.666Z",
+      "verified_at": "2026-11-25T02:02:06.201Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -245505,8 +245515,8 @@
       "slug": "crosspaste-crosspaste-desktop",
       "platform": "github",
       "source_url": "https://github.com/CrossPaste/crosspaste-desktop",
-      "source_version": "5023ba50",
-      "content_hash": "422b6c3c168813edbd86a06ad868d189c35fe6886c9393e4b4cb32b65b7e4f3a",
+      "source_version": "9498f76d",
+      "content_hash": "9c09c433f6b3c42ec36e2886c7186a78bebbd203c3e3ac8d677ff2ce7c640478",
       "dossier_path": "07_PROJECT_LEARNING/crosspaste-crosspaste-desktop-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/crosspaste-crosspaste-desktop-learnings.md",
       "promoted_rules": [
@@ -245534,6 +245544,11 @@
           "number": 9378,
           "title": ":arrow_up: Bump gradle-wrapper from 9.9.0 to 9.9.1",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10426,
+          "title": ":bug: Add WS pause gating, inbound business queue budget, and extension heartbea",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -245541,7 +245556,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T13:08:04.422Z",
+      "verified_at": "2026-11-25T02:02:03.609Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -245607,10 +245622,10 @@
       "relative_path": "08_VERIFICATION/crosspaste-crosspaste-desktop-verification-protocol-empirical-defect-shield-for-.md",
       "title": "Verification Protocol: Empirical Defect Shield for CrossPaste/crosspaste-desktop",
       "repository": "CrossPaste/crosspaste-desktop",
-      "source_version": "5023ba50",
-      "content_hash": "b40d000f478bc380bd85b17e9f149b9ded5b46d048be4523ad3a141199e4b392",
+      "source_version": "9498f76d",
+      "content_hash": "a4ad62ba5e2c8398c2bd544eff8ffa3bd39f50410c20102101c30e5befceea9c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T13:08:05.183Z"
+      "persisted_at": "2026-11-25T02:02:04.806Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-openmoss-team-moss-image-base-learnings-core-": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-openmoss-team-moss-image-base-learnings-core-",
@@ -245656,9 +245671,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for crosspaste-crosspaste-desktop-learnings",
       "repository": "crosspaste-crosspaste-desktop-learnings",
       "source_version": "HEAD",
-      "content_hash": "8039342de10185f492975a5f8b4ab636ce3029614c1bf4ca1d211547ac488b89",
+      "content_hash": "481276ab4221264c9948946e73d0aeb2f017c8d9125f3d07ec5b5d22779acdf1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T13:08:09.788Z"
+      "persisted_at": "2026-11-25T02:02:14.554Z"
     },
     "learn-github-1jehuang-jcode": {
       "learning_id": "learn-github-1jehuang-jcode",
@@ -274393,8 +274408,8 @@
       "slug": "dubzzz-fast-check",
       "platform": "github",
       "source_url": "https://github.com/dubzzz/fast-check",
-      "source_version": "56ed4c78",
-      "content_hash": "be3d244b706ab1efa5185ff6062f682649ebdd2f93572456a7566050537ba3a5",
+      "source_version": "864bf69b",
+      "content_hash": "c066017365b66aa65417da8f88b34c8603807be22e6102ca0c7c055e425be1c8",
       "dossier_path": "07_PROJECT_LEARNING/dubzzz-fast-check-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dubzzz-fast-check-learnings.md",
       "promoted_rules": [
@@ -274417,6 +274432,11 @@
           "number": 9706,
           "title": "🏷️ Make built-in arbitrary constraint inputs readonly",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10425,
+          "title": "👷 Drop MacOS and Windows from the required CI jobs",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -274424,7 +274444,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T02:57:43.681Z",
+      "verified_at": "2026-11-25T02:02:01.742Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -274518,10 +274538,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-dubzzz-fast-check-technical-construction-intelligence-dubzzz-fast-check-core-inv.md",
       "title": "Technical Construction Intelligence: dubzzz/fast-check Core Invariants",
       "repository": "dubzzz/fast-check",
-      "source_version": "56ed4c78",
-      "content_hash": "61901e6dfe54c753c1730fa5e4bef412d05386438626a57c8fea80e0993818c0",
+      "source_version": "864bf69b",
+      "content_hash": "9bd49d379484b08ff004df13cf4095a7d4defbc024f095689b4b31d1a15a4802",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T02:57:44.239Z"
+      "persisted_at": "2026-11-25T02:02:02.672Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-dubzzz-fast-check": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-dubzzz-fast-check",
@@ -274530,10 +274550,10 @@
       "relative_path": "08_VERIFICATION/dubzzz-fast-check-verification-protocol-empirical-defect-shield-for-dubzzz-fast-.md",
       "title": "Verification Protocol: Empirical Defect Shield for dubzzz/fast-check",
       "repository": "dubzzz/fast-check",
-      "source_version": "56ed4c78",
-      "content_hash": "749ee68a97be1af6faa57e2ca45224beaa2ed5f91a74ed1eee0c466418440ee9",
+      "source_version": "864bf69b",
+      "content_hash": "cef69938af5749dfa970e6142b4948507dda8eb8c8c501173573c88a6cb3ea2e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T02:57:44.396Z"
+      "persisted_at": "2026-11-25T02:02:02.944Z"
     },
     "rule-8937": {
       "learning_id": "rule-8937",
@@ -274633,9 +274653,9 @@
       "title": "Technical Construction Intelligence: dubzzz-fast-check-learnings Core Invariants",
       "repository": "dubzzz-fast-check-learnings",
       "source_version": "HEAD",
-      "content_hash": "c420c6a7e1d78d0bd5290e44588b06463c0680a3bded1bcf9244c535b66623d1",
+      "content_hash": "a56c51ab51c67fd2e64c347ee0792c81d1af48edaba6b4cda5be501efb4ce52a",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T02:57:54.844Z"
+      "persisted_at": "2026-11-25T02:02:13.244Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-dubzzz-fast-check-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-dubzzz-fast-check-learnings",
@@ -274645,9 +274665,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for dubzzz-fast-check-learnings",
       "repository": "dubzzz-fast-check-learnings",
       "source_version": "HEAD",
-      "content_hash": "f19d1bb31d6fd2217ec1662f649d47d6314e68bfa39e39a731ecda1cea767a5f",
+      "content_hash": "926d99d46ad149cda84c1780bc9043b530b43242a8bd1a1cfb2db38db17753f0",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T02:57:54.995Z"
+      "persisted_at": "2026-11-25T02:02:13.515Z"
     },
     "domain_intelligence-technical-construction-intelligence-trinodb-trino-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-trinodb-trino-learnings-core-invariants",
@@ -343523,6 +343543,146 @@
       "content_hash": "54b79e9a655789b1f551c7351072b6eba2be63259cf8da98d2655ecabb79f4d6",
       "domain_letter": "K",
       "persisted_at": "2026-11-25T01:52:58.714Z"
+    },
+    "rule-10424": {
+      "learning_id": "rule-10424",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10424,
+      "title": "Apply deferred content masks during prepaint",
+      "source_url": "https://github.com/zed-industries/zed",
+      "source_version": "2664a0aa",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T02:01:59.089Z"
+    },
+    "candidate_directive-apply-deferred-content-masks-during-prepaint": {
+      "item_id": "candidate_directive-apply-deferred-content-masks-during-prepaint",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-A2M0-apply-deferred-content-masks-during-prepaint.md",
+      "title": "Apply deferred content masks during prepaint",
+      "repository": "zed-industries/zed",
+      "source_version": "2664a0aa",
+      "content_hash": "9ce5672af6cd558998aeebf93a663ba18019c4ef341f6d9fc2b73e326c13e64d",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-25T02:01:59.740Z"
+    },
+    "rule-10425": {
+      "learning_id": "rule-10425",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10425,
+      "title": "👷 Drop MacOS and Windows from the required CI jobs",
+      "source_url": "https://github.com/dubzzz/fast-check",
+      "source_version": "864bf69b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T02:02:01.742Z"
+    },
+    "candidate_directive-drop-macos-and-windows-from-the-required-ci-jobs": {
+      "item_id": "candidate_directive-drop-macos-and-windows-from-the-required-ci-jobs",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-ACU1-drop-macos-and-windows-from-the-required-ci-jobs.md",
+      "title": "👷 Drop MacOS and Windows from the required CI jobs",
+      "repository": "dubzzz-fast-check-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4d4afd4d4eca6f3b56a7044889a7227e5f236f5e092036bf33f09e07c0534d3f",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-25T02:02:12.986Z"
+    },
+    "rule-10426": {
+      "learning_id": "rule-10426",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10426,
+      "title": ":bug: Add WS pause gating, inbound business queue budget, and extension heartbea",
+      "source_url": "https://github.com/CrossPaste/crosspaste-desktop",
+      "source_version": "9498f76d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T02:02:03.609Z"
+    },
+    "candidate_directive-bug-add-ws-pause-gating-inbound-business-queue-budget-and-extension-heartbea": {
+      "item_id": "candidate_directive-bug-add-ws-pause-gating-inbound-business-queue-budget-and-extension-heartbea",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-ADO0-bug-add-ws-pause-gating-inbound-business-queue-budget-and-extension-heartbea.md",
+      "title": ":bug: Add WS pause gating, inbound business queue budget, and extension heartbea",
+      "repository": "crosspaste-crosspaste-desktop-learnings",
+      "source_version": "HEAD",
+      "content_hash": "0e42ba0f3a13c61158268fcd592abc6399dcc95070c5e2399c7f19525d835c4e",
+      "domain_letter": "C",
+      "persisted_at": "2026-11-25T02:02:14.068Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-crosspaste-crosspaste-desktop-core-invariants": {
+      "item_id": "domain_intelligence-quality-verification-intelligence-crosspaste-crosspaste-desktop-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-crosspaste-crosspaste-desktop-quality-verification-intelligence-crosspaste-cross.md",
+      "title": "Quality & Verification Intelligence: CrossPaste/crosspaste-desktop Core Invariants",
+      "repository": "CrossPaste/crosspaste-desktop",
+      "source_version": "9498f76d",
+      "content_hash": "28356f263eba756a93b15c0f3afc78c1f8bab7726ac6c47485e7547910e9c626",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-25T02:02:04.488Z"
+    },
+    "rule-10427": {
+      "learning_id": "rule-10427",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10427,
+      "title": "build(deps): bump net.javacrumbs.json-unit:json-unit-assertj",
+      "source_url": "https://github.com/gocd/gocd",
+      "source_version": "81a7d3ab",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T02:02:06.201Z"
+    },
+    "candidate_directive-build-deps-bump-net-javacrumbs-json-unit-json-unit-assertj": {
+      "item_id": "candidate_directive-build-deps-bump-net-javacrumbs-json-unit-json-unit-assertj",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-A824-build-deps-bump-net-javacrumbs-json-unit-json-unit-assertj.md",
+      "title": "build(deps): bump net.javacrumbs.json-unit:json-unit-assertj",
+      "repository": "gocd/gocd",
+      "source_version": "81a7d3ab",
+      "content_hash": "4ce1fdc800178adc84b47eedef30ba6b9839c69214947ea2c091c431e61f9a1e",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-25T02:02:06.797Z"
+    },
+    "candidate_directive-gpui-apply-deferred-content-masks-during-prepaint": {
+      "item_id": "candidate_directive-gpui-apply-deferred-content-masks-during-prepaint",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-ABB7-gpui-apply-deferred-content-masks-during-prepaint.md",
+      "title": "gpui: Apply deferred content masks during prepaint",
+      "repository": "zed-industries-zed-learnings",
+      "source_version": "HEAD",
+      "content_hash": "9f0cf947b7906905ae7f16beec5fe2bb82b7dd9f03335244eee80ebd490622e3",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-25T02:02:11.016Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-crosspaste-crosspaste-desktop-learnings-core-i": {
+      "item_id": "domain_intelligence-quality-verification-intelligence-crosspaste-crosspaste-desktop-learnings-core-i",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-crosspaste-crosspaste-desktop-learnings-quality-verification-intelligence-crossp.md",
+      "title": "Quality & Verification Intelligence: crosspaste-crosspaste-desktop-learnings Core Invariants",
+      "repository": "crosspaste-crosspaste-desktop-learnings",
+      "source_version": "HEAD",
+      "content_hash": "0a01f88d34940cef4cd7f6c2ba0efa2505d7c9c3b863a4e4226578a7b6f696ae",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-25T02:02:14.314Z"
     }
   },
   "ai-builder-brain": {
