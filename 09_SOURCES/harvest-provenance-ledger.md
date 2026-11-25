@@ -13040,3 +13040,6 @@ Every entry in this ledger must capture:
 | `learn-github-fallow-rs-fallow` | `https://github.com/fallow-rs/fallow` | `cec86af5` | Multi-dimensional audit evidence | 2026-11-25T08:29:18.768Z |
 | `learn-huggingface-ornith-ai-ornith-1-5-122b` | `https://huggingface.co/ornith-ai/Ornith-1.5-122B` | `hf-ornith-` | Multi-dimensional audit evidence | 2026-11-25T08:29:20.246Z |
 | `learn-github-trinodb-trino` | `https://github.com/trinodb/trino` | `6af3a192` | Multi-dimensional audit evidence | 2026-11-25T08:29:29.254Z |
+| `learn-huggingface-orcarouter-deepseek-v4-1-flash-1017-abliterated-gguf` | `https://huggingface.co/orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-11-25T08:43:55.634Z |
+| `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `445df50d` | Multi-dimensional audit evidence | 2026-11-25T08:44:08.964Z |
+| `learn-github-apache-zookeeper` | `https://github.com/apache/zookeeper` | `2b86687b` | Multi-dimensional audit evidence | 2026-11-25T08:44:11.660Z |

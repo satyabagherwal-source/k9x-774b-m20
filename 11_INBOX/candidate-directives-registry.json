@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T08:29:34.480Z",
+  "last_updated": "2026-11-25T08:44:16.972Z",
   "directives": [
     {
       "id": "CD-001",
@@ -60401,6 +60401,57 @@
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-D42A4E-support-reading-encrypted-iceberg-deleti.md",
       "staged_date": "2026-11-25"
+    },
+    {
+      "id": "CD-NE6G",
+      "directive_title": "wgengine/magicsock: avoid copying lock in Test_endpoint_handlePongConnLocked",
+      "source_repo": "tailscale-tailscale-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-NE6G-wgengine-magicsock-avoid-copying-lock-in-test_endpoint_handlepongconnlocked.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-25",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-NB3Z",
+      "directive_title": "C client) zoo_multi error handling crashes, misreads results, an",
+      "source_repo": "apache/zookeeper",
+      "source_commit": "2b86687b",
+      "staged_file": "11_INBOX/candidate-directives/CD-NB3Z-c-client-zoo_multi-error-handling-crashes-misreads-results-an.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-25",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-7ADA47",
+      "directive_title": "Forensic Learning Record (Deep Inspection): orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "hf-orcarouter-deepseek-v4.1-flash-1017-abliterated-gguf",
+      "domain_letter": "M",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-7ADA47-forensic-learning-record-deep-inspection.md",
+      "staged_date": "2026-11-25"
+    },
+    {
+      "id": "CD-REV-168930",
+      "directive_title": "wgengine/magicsock: avoid copying lock in Test_endpoint_handlePongConnLocked",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "tailscale-tailscale",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-168930-wgengine-magicsock-avoid-copying-lock-in.md",
+      "staged_date": "2026-11-25"
+    },
+    {
+      "id": "CD-NF0P",
+      "directive_title": "ZOOKEEPER-5125: C client) zoo_multi error handling crashes, misreads results, an",
+      "source_repo": "apache-zookeeper-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-NF0P-zookeeper-5125-c-client-zoo_multi-error-handling-crashes-misreads-results-an.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-25",
+      "domain_letter": "H"
     }
   ]
 }

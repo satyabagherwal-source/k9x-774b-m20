@@ -4,24 +4,24 @@
 {
   "source_repository": "apache/zookeeper",
   "source_url": "https://github.com/apache/zookeeper",
-  "source_version": "9438aa66",
+  "source_version": "2b86687b",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-23T18:03:24.260Z",
+  "timestamp": "2026-11-25T08:44:11.903Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-apache-zookeeper",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [apache/zookeeper](https://github.com/apache/zookeeper) (Revision: `9438aa66`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-23T18:03:24.260Z`  
+> **Provenance**: Harvested from [apache/zookeeper](https://github.com/apache/zookeeper) (Revision: `2b86687b`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-25T08:44:11.903Z`  
 > **Learning ID**: `learn-github-apache-zookeeper`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), F (Design Intelligence)
-- **Confidence Rating**: 56%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), F (Design Intelligence)
+- **Confidence Rating**: 61%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from apache/zookeeper:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apache-zookeeper-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apache/zookeeper](https://github.com/apache/zookeeper))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T18:03:22.681Z  
+> **Harvest Timestamp**: 2026-11-25T08:44:10.489Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Apache ZooKeeper
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 12833 stars
+- **Stars / Engagement**: 12834 stars
 
 ---
 
@@ -1814,11 +1814,13 @@ def cherry_pick(pr_num, merge_hash, default_branch):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #2515** (2026-11-24): **ZOOKEEPER-5140: Upgrade developer Docker image to Ubuntu 20.04 LTS**
+  *Symptoms*: 
+  **Post-Mortem & Fix Analysis**:
+  > Merged to master and branch-3.10 branches. Thanks @PDavid !
+
 - **Issue #2513** (2026-11-23): **ZOOKEEPER-5138: Fix zkpython testversionstringexists for 3.10.0**
   *Symptoms*: The `testversionstringexists` test in `zookeeper-contrib-zkpython/src/test/connection_test.py` only matches single-digit versions and fails on 3.10.0 (and produces SyntaxWarning on Python).  Update it to `re.match(r"^\d+\.\d+\.\d+$", ...)` so multi-digit minor/patch versions match correctly. 
-
-- **Issue #2511** (2026-11-20): **ZOOKEEPER-5122: (C client) xid counter is unnecessarily likely to wrap (branch-3.9)**
-  *Symptoms*: Backport of #2497 to `branch-3.9`.   The C client allocated xids from one process global counter seeded with time(0). That left only about 350 million xids before the counter wrapped to INT32_MIN. The server ignores requests with xid <= 0 when it counts outstanding requests (`ServerCnxn.incrOutstandingAndCheckThrottle` and `decrOutstandingAndCheckThrottle`). So, from the wrap on, requests from a C client bypass request throttling, and the server stops updating `lastCxid` for the connection. After roughly another 2 billion requests, the counter reaches the reserved xids of watch events and control frames (-8 SetWatches, -4 auth, -2 ping, -1 watch event). Replies could then go to internal handlers instead of application completions and desynchronize the request queue.  In the single threaded library, the increment past INT32_MAX is also undefined behavior.  This change allocates xids as `ClientCnxn.getXid` does in the Java client, with a counter per handle instead of one shared unsynchronized counter. It also fixes the xid mismatch log line in `zookeeper_process`, which swapped the expected and received xids.  Backport notes: the only conflict was in `zoo_amulti()`. On `master`, that function declares a local `buffer_list_t *b` that `branch-3.9` does not have. Otherwise the change is the same as the `master` commit, including the new `TestXid` suite.  🤖 Generated with [Claude Code](https://claude.com/claude-code)  
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1835,33 +1837,554 @@ def cherry_pick(pr_num, merge_hash, default_branch):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9438aa66` (2026-11-23)
-**Commit Message**: ZOOKEEPER-5138: Fix zkpython testversionstringexists for 3.10.0 (#2513)
+### Incident Patch 1: `05cb78f4` (2026-11-24)
+**Commit Message**: ZOOKEEPER-5125: C client) zoo_multi error handling crashes, misreads results, and hangs
 
-The testversionstringexists test in zookeeper-contrib-zkpython only matches single-digit versions and fails on 3.10.0 (and produces SyntaxWarning on Python).
+Reviewers: anmolnar
+Author: apurtell
+Closes #2500 from apurtell/ZOOKEEPER-5125
 
-Update it so multi-digit minor/patch versions match correctly.
-
-**File**: `zookeeper-contrib/zookeeper-contrib-zkpython/src/test/connection_test.py` (modified, +1/-1)
+**File**: `zookeeper-client/zookeeper-client-c/CMakeLists.txt` (modified, +1/-0)
 ```diff
-@@ -153,7 +153,7 @@ def connection_watcher(handle, type, state, path):
+@@ -255,6 +255,7 @@ set(test_sources
+   tests/TestClientRetry.cc
+   tests/TestOperations.cc
+   tests/TestMulti.cc
++  tests/TestMultiFailure.cc
+   tests/TestWatchers.cc
+   tests/TestClient.cc
+   tests/ZooKeeperQuorumServer.cc
+```
+
+**File**: `zookeeper-client/zookeeper-client-c/Makefile.am` (modified, +1/-0)
+```diff
+@@ -114,6 +114,7 @@ TEST_SOURCES = \
+ 	tests/TestClientRetry.cc \
+ 	tests/TestOperations.cc \
+ 	tests/TestMulti.cc \
++	tests/TestMultiFailure.cc \
+ 	tests/TestWatchers.cc \
+ 	tests/TestClient.cc \
+ 	tests/ZooKeeperQuorumServer.cc \
+```
+
+**File**: `zookeeper-client/zookeeper-client-c/include/zookeeper.h` (modified, +11/-4)
+```diff
+@@ -1815,9 +1815,14 @@ ZOOAPI int zoo_aset_acl(zhandle_t *zh, const char *path, int version,
+  * ops supported by a multi op (see \ref zoo_acreate, \ref zoo_adelete, \ref zoo_aset).
+  * \param data the data that will be passed to the completion routine when
+  * the function completes.
+- * \return the return code for the function call. This can be any of the
+- * values that can be returned by the ops supported by a multi op (see
+- * \ref zoo_acreate, \ref zoo_adelete, \ref zoo_aset).
++ * \return ZOK on success or one of the following errcodes on failure:
++ * ZBADARGUMENTS - invalid input parameters
++ * ZINVALIDSTATE - zhandle state is either ZOO_SESSION_EXPIRED_STATE or ZOO_AUTH_FAILED_STATE
++ * ZMARSHALLINGERROR - failed to marshall a request; possibly, out of memory
++ * ZUNIMPLEMENTED - an operation type is not supported in a multi
++ * ZSYSTEMERROR - out of memory
++ * If the call fails, every result slot holds the return code and the
++ * completion is not called.
+  */
+ ZOOAPI int zoo_amulti(zhandle_t *zh, int count, const zoo_op_t *ops,
+         zoo_op_result_t *results, void_completion_t, const void *data);
+@@ -2583,7 +2588,9 @@ ZOOAPI int zoo_set_acl(zhandle_t *zh, const char *path, int version,
+  * \param results an array to hold the results of the operations
+  * \return the return code for the function call. This can be any of the
+  * values that can be returned by the ops supported by a multi op (see
+- * \ref zoo_acreate, \ref zoo_adelete, \ref zoo_aset).
++ * \ref zoo_acreate, \ref zoo_adelete, \ref zoo_aset), or one of the
++ * call errors of \ref zoo_amulti. If the multi fails as a whole, for
++ * example on connection loss, every result slot holds an error code.
+  */
+ ZOOAPI int zoo_multi(zhandle_t *zh, int count, const zoo_op_t *ops, zoo_op_result_t *results);
  
-     def testversionstringexists(self):
-         self.assertTrue(hasattr(zookeeper, '__version__'))
--        self.assertTrue(re.match("\d.\d.\d", zookeeper.__version__))
-+        self.assertTrue(re.match(r"^\d+\.\d+\.\d+$", zookeeper.__version__))
+```
+
+**File**: `zookeeper-client/zookeeper-client-c/src/zookeeper.c` (modified, +103/-9)
+```diff
+@@ -252,6 +252,7 @@ static const char* format_endpoint_info(const struct sockaddr_storage* ep);
+ /* deserialize forward declarations */
+ static void deserialize_response(zhandle_t *zh, int type, int xid, int failed, int rc, completion_list_t *cptr, struct iarchive *ia);
+ static int deserialize_multi(zhandle_t *zh, int xid, completion_list_t *cptr, struct iarchive *ia);
++static void cleanup_failed_multi(zhandle_t *zh, int xid, int rc, completion_list_t *cptr);
  
+ /* completion routine forward declarations */
+ static int add_completion(zhandle_t *zh, int xid, int completion_type,
+@@ -2077,6 +2078,13 @@ void free_completions(zhandle_t *zh,int callCompletion,int reason)
+                 struct sync_completion
+                             *sc = (struct sync_completion*)cptr->data;
+                 sc->rc = reason;
++                /*
++                 * The caller reads the result array of a multi after the
++                 * wait ends. Fill every slot with the failure code first.
++                 */
++                if (cptr->c.type == COMPLETION_MULTI) {
++                    cleanup_failed_multi(zh, cptr->xid, reason, cptr);
++                }
+                 notify_sync_completion(sc);
+                 zh->outstanding_sync--;
+                 destroy_completion_entry(cptr);
+@@ -3348,16 +3356,47 @@ static void cleanup_failed_multi(zhandle_t *zh, int xid, int rc, completion_list
+     }
+ }
  
-     def tearDown(self):
++/*
++ * Deliver a Create2Response to a string completion. The server answers
++ * container creates in a multi with a path and a stat. The sub-operation
++ * result has no place for the stat, so this function discards it.
++ */
++static void deserialize_create2_to_string(zhandle_t *zh, int rc,
++        completion_list_t *cptr, struct iarchive *ia)
++{
++    struct Create2Response res;
++    const char *client_path;
++    memset(&res, 0, sizeof(res));
++    deserialize_Create2Response(ia, "reply", &res);
++    client_path = sub_string(zh, res.path);
++    cptr->c.string_result(rc, client_path, cptr->data);
++    free_duplicate_path(client_path, res.path);
++    deallocate_Create2Response(&res);
++}
++
++/*
++ * Decode the sub-results of a multi reply. The completion type of each
++ * sub-operation selects its record format. Two wire types are exceptions.
++ * An error result has an ErrorResponse, and a container create has a
++ * Create2Response. Every sub-operation gets a result. This is also true
++ * when the reply does not match the request.
++ */
+ static int deserialize_multi(zhandle_t *zh, int xid, completion_list_t *cptr, struct iarchive *ia)
+ {
+     int rc = 0;
+     completion_head_t *clist = &cptr->c.clist;
+     struct MultiHeader mhdr = {0, 0, 0};
+     assert(clist);
+-    deserialize_MultiHeader(ia, "multiheader", &mhdr);
++    if (deserialize_MultiHeader(ia, "multiheader", &mhdr) < 0) {
++        mhdr.done = 1;
++    }
+     while (!mhdr.done) {
+         completion_list_t *entry = dequeue_completion_nolock(clist);
+-        assert(entry);
++        if (entry == NULL) {
++            LOG_ERROR(LOGCALLBACK(zh),
++                    "Multi reply xid=%#x has more results than operations", xid);
++            return ZMARSHALLINGERROR;
++        }
+ 
+         if (mhdr.type == -1) {
+             struct ErrorResponse er;
+@@ -3368,14 +3407,27 @@ static int deserialize_multi(zhandle_t *zh, int xid, completion_list_t *cptr, st
+             }
+         }
+ 
+-        deserialize_response(zh, entry->c.type, xid, mhdr.type == -1, mhdr.err, entry, ia);
+-        deserialize_MultiHeader(ia, "multiheader", &mhdr);
++        if (mhdr.type == ZOO_CREATE2_OP && entry->c.type == COMPLETION_STRING) {
++            deserialize_create2_to_string(zh, mhdr.err, entry, ia);
++        } else {
++            deserialize_response(zh, entry->c.type, xid, mhdr.type == -1, mhdr.err, entry, ia);
++        }
++        if (deserialize_MultiHeader(ia, "multiheader", &mhdr) < 0) {
++            mhdr.done = 1;
++        }
+         //While deserializing the response we must destroy completion entry for each operation in
+         //the zoo_multi transaction. Otherwise this results in memory leak when client invokes zoo_multi
+         //operation.
+         destroy_completion_entry(entry);
+     }
+ 
++    if (clist->head != NULL) {
++        LOG_ERROR(LOGCALLBACK(zh),
++                "Multi reply xid=%#x has fewer results than operations", xid);
++        cleanup_failed_multi(zh, xid, ZMARSHALLINGERROR, cptr);
++        rc = ZMARSHALLINGERROR;
++    }
++
+     return rc;
+ }
+ 
+@@ -3922,7 +3974,11 @@ static int do_add_completion(zhandle_t *zh, const void *dc,
+     if (!c)
+         return ZSYSTEMERROR;
+     lock_completion_list(&zh->sent_requests);
+-    if (zh->close_requested != 1) {
++    /*
++     * Refuse new requests on a closing or unrecoverable handle. No later
++     * teardown drains the queue, so a synchronous caller waits forever.
++     */
++    if (zh->close_requested != 1 && !is_unrecoverable(zh)) {
+         queue_completion_nolock(&zh->sent_requests, c, add_to_front);
+         if (dc == SYNCHRONOU
+```
+
+**File**: `zookeeper-client/zookeeper-client-c/tests/TestMulti.cc` (modified, +43/-0)
+```diff
+@@ -167,6 +167,7 @@ class Zookeeper_multi : public CPPUNIT_NS::TestFixture
+ //flaw in the test suite setup.
+     CPPUNIT_TEST(testCreate);
+     CPPUNIT_TEST(testCreateDelete);
++    CPPUNIT_TEST(testCreateContainer);
+     CPPUNIT_TEST(testInvalidVersion);
+     CPPUNIT_TEST(testNestedCreate);
+     CPPUNIT_TEST(testSetData);
+@@ -329,6 +330,48 @@ class Zookeeper_multi : public CPPUNIT_NS::TestFixture
+         CPPUNIT_ASSERT_EQUAL((int)ZNONODE, rc);
+     }
+ 
++    /**
++     * Test container create followed by other operations. The server
++     * answers a container create with a path and a stat. The client must
++     * decode the sub-results that follow it correctly.
++     */
++    void testCreateContainer() {
++        int rc;
++        watchctx_t ctx;
++        zhandle_t *zk = createClient(&ctx);
++        int sz = 512;
++        char p1[sz];
++        char p2[sz];
++        p1[0] = p2[0] = '\0';
++        struct Stat s1;
++        memset(&s1, 0, sizeof(s1));
++        int nops = 4;
++        zoo_op_t ops[nops];
++        zoo_op_result_t results[nops];
++
++        zoo_create_op_init(&ops[0], "/multiContainer", "", 0,
++                &ZOO_OPEN_ACL_UNSAFE, ZOO_CONTAINER, p1, sz);
++        zoo_create_op_init(&ops[1], "/multiContainer/a", "", 0,
++                &ZOO_OPEN_ACL_UNSAFE, 0, p2, sz);
++        zoo_set_op_init(&ops[2], "/multiContainer/a", "x", 1, 0, &s1);
++        zoo_check_op_init(&ops[3], "/multiContainer", 0);
++
++        rc = zoo_multi(zk, nops, ops, results);
++        CPPUNIT_ASSERT_EQUAL((int)ZOK, rc);
++        for (int i = 0; i < nops; i++) {
++            CPPUNIT_ASSERT_EQUAL((int)ZOK, results[i].err);
++        }
++        CPPUNIT_ASSERT(strcmp(p1, "/multiContainer") == 0);
++        CPPUNIT_ASSERT(strcmp(p2, "/multiContainer/a") == 0);
++        CPPUNIT_ASSERT_EQUAL(1, s1.version);
++        CPPUNIT_ASSERT_EQUAL(1, s1.dataLength);
++
++        zoo_delete_op_init(&ops[0], "/multiContainer/a", -1);
++        zoo_delete_op_init(&ops[1], "/multiContainer", -1);
++        rc = zoo_multi(zk, 2, ops, results);
++        CPPUNIT_ASSERT_EQUAL((int)ZOK, rc);
++    }
++
+     /** 
+      * Test invalid versions
+      */
+```
+
+**File**: `zookeeper-client/zookeeper-client-c/tests/TestMultiFailure.cc` (added, +538/-0)
+```diff
+@@ -0,0 +1,538 @@
++/**
++ * Licensed to the Apache Software Foundation (ASF) under one
++ * or more contributor license agreements.  See the NOTICE file
++ * distributed with this work for additional information
++ * regarding copyright ownership.  The ASF licenses this file
++ * to you under the Apache License, Version 2.0 (the
++ * "License"); you may not use this file except in compliance
++ * with the License.  You may obtain a copy of the License at
++ *
++ *     http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++
++#include <cppunit/extensions/HelperMacros.h>
++#include "CppAssertHelper.h"
++
++#include <string.h>
++#include <string>
++
++#include "ZKMocks.h"
++#include <proto.h>
++
++using namespace std;
++
++/* A sentinel error code. No result slot holds it after a multi completes. */
++static const int SENTINEL_ERR = 0x5a5a5a5a;
++
++static Stat makeStat(int32_t version)
++{
++    Stat stat;
++    memset(&stat, 0, sizeof(stat));
++    stat.czxid = 0x1111;
++    stat.mzxid = 0x2222;
++    stat.version = version;
++    stat.dataLength = 1;
++    stat.pzxid = 0x3333;
++    return stat;
++}
++
++static void fillSentinel(zoo_op_result_t *results, int count)
++{
++    for (int i = 0; i < count; i++) {
++        results[i].err = SENTINEL_ERR;
++    }
++}
++
++/* A reply that has only a ReplyHeader. Servers send such a reply when they
++ * reject a request as a whole, for example ZNOTREADONLY. */
++class HeaderOnlyResponse: public Response
++{
++public:
++    HeaderOnlyResponse(int rc): xid_(0), rc_(rc) {}
++    virtual void setXID(int32_t xid) { xid_ = xid; }
++    virtual string toString() const {
++        oarchive *oa = create_buffer_oarchive();
++        ReplyHeader h = {xid_, 1, rc_};
++        serialize_ReplyHeader(oa, "hdr", &h);
++        int32_t len = htonl(get_buffer_len(oa));
++        string res((char*)&len, sizeof(len));
++        res.append(get_buffer(oa), get_buffer_len(oa));
++        close_buffer_oarchive(&oa, 1);
++        return res;
++    }
++private:
++    int32_t xid_;
++    int rc_;
++};
++
++/* The reply that a server sends for a multi with a container create and a
++ * set data. The server answers the container create with a Create2Response,
++ * which has a path and a stat. */
++class ContainerMultiResponse: public Response
++{
++public:
++    ContainerMultiResponse(const char *path, const Stat& createStat,
++            const Stat& setStat)
++        : xid_(0), path_(path), createStat_(createStat), setStat_(setStat) {}
++    virtual void setXID(int32_t xid) { xid_ = xid; }
++    virtual string toString() const {
++        oarchive *oa = create_buffer_oarchive();
++        ReplyHeader h = {xid_, 1, ZOK};
++        serialize_ReplyHeader(oa, "hdr", &h);
++
++        MultiHeader create = {ZOO_CREATE2_OP, 0, 0};
++        serialize_MultiHeader(oa, "multiheader", &create);
++        Create2Response cr;
++        cr.path = (char*)path_.c_str();
++        cr.stat = createStat_;
++        serialize_Create2Response(oa, "reply", &cr);
++
++        MultiHeader set = {ZOO_SETDATA_OP, 0, 0};
++        serialize_MultiHeader(oa, "multiheader", &set);
++        SetDataResponse sr;
++        sr.stat = setStat_;
++        serialize_SetDataResponse(oa, "reply", &sr);
++
++        MultiHeader done = {-1, 1, -1};
++        serialize_MultiHeader(oa, "multiheader", &done);
++
++        int32_t len = htonl(get_buffer_len(oa));
++        string res((char*)&len, sizeof(len));
++        res.append(get_buffer(oa), get_buffer_len(oa));
++        close_buffer_oarchive(&oa, 1);
++        return res;
++    }
++private:
++    int32_t xid_;
++    string path_;
++    Stat createStat_;
++    Stat setStat_;
++};
++
++/* A multi reply with a number of successful check results. A check result
++ * has a MultiHeader and no body. */
++class CheckMultiResponse: public Response
++{
++public:
++    CheckMultiResponse(int count): xid_(0), count_(count) {}
++    virtual void setXID(int32_t xid) { xid_ = xid; }
++    virtual string toString() const {
++        oarchive *oa = create_buffer_oarchive();
++        ReplyHeader h = {xid_, 1, ZOK};
++        serialize_ReplyHeader(oa, "hdr", &h);
++        for (int i = 0; i < count_; i++) {
++            MultiHeader check = {ZOO_CHECK_OP, 0, 0};
++            serialize_MultiHeader(oa, "multiheader", &check);
++        }
++        MultiHeader done = {-1, 1, -1};
++        serialize_MultiHeader(oa, "multiheader", &done);
++
++        int32_t len = htonl(get_buffer_len(oa));
++        string res((char*)&len, sizeof(len));
++        res.append(get_buffer(oa), get_buffer_len(oa));
++        close_buffer_oarchive(&oa, 1);
++        return res;
++    }
++private:
++    int32_t xid_;
++    int count_;
++};
++
++#ifdef THREADED
++/* A mock server that drops the connection when a multi request arrives. The
++
+```
+
+---
+
+### Incident Patch 2: `92206441` (2026-11-24)
+**Commit Message**: ZOOKEEPER-5135: Fix C client build and SSL tests on Ubuntu 26.04 and pin CI to ubuntu-26.04
+
+Reviewers: anmolnar, PDavid
+Author: zhy2on
+Closes #2510 from zhy2on/c-client-ssl-test-certs
+
+**File**: `.github/workflows/ci.yaml` (modified, +1/-1)
+```diff
+@@ -46,7 +46,7 @@ jobs:
+             args: '-Pfull-build verify -Dtest=_ -DfailIfNoTests=false'
+       fail-fast: false
+     timeout-minutes: 360
+-    runs-on: ubuntu-24.04
++    runs-on: ubuntu-26.04
+     steps:
+     - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+     - name: Set up JDK ${{ matrix.profile.jdk }}
+```
+
+**File**: `zookeeper-client/zookeeper-client-c/src/cli.c` (modified, +2/-2)
+```diff
+@@ -559,7 +559,7 @@ void processline(const char *line) {
+             fprintf(stderr, "Path must start with /, found: %s\n", line);
+             return;
+         }
+-        ptr = strchr(line, ' ');
++        ptr = (char *) strchr(line, ' ');
+         if (!ptr) {
+             fprintf(stderr, "No data found after path\n");
+             return;
+@@ -773,7 +773,7 @@ void processline(const char *line) {
+     } else if (startsWith(line, "addauth ")) {
+       char *ptr;
+       line += 8;
+-      ptr = strchr(line, ' ');
++      ptr = (char *) strchr(line, ' ');
+       if (ptr) {
+         *ptr = '\0';
+         ptr++;
+```
+
+**File**: `zookeeper-client/zookeeper-client-c/src/zookeeper.c` (modified, +1/-1)
+```diff
+@@ -1351,7 +1351,7 @@ static zhandle_t *zookeeper_init_internal(const char *host, watcher_fn watcher,
+ {
+     int errnosave = 0;
+     zhandle_t *zh = NULL;
+-    char *index_chroot = NULL;
++    const char *index_chroot = NULL;
+ 
+     /*
+      * Transfer certstr ownership to handle on success (released by destroy()),
+```
+
+**File**: `zookeeper-client/zookeeper-client-c/ssl/gencerts.sh` (modified, +9/-1)
+```diff
+@@ -40,21 +40,29 @@ FQDN=${FQDN:-"zookeeper.apache.org"}
+ openssl genrsa -out rootkey.pem 2048
+ 
+ #Generate the root Cert
++# The root CA needs its own subject and the CA extensions, so that the server and client
++# certificates can be verified against it (newer OpenSSL versions require both).
+ openssl req -x509 -new -key rootkey.pem -out root.crt -config <(
+   cat <<-EOF
+ [ req ]
+ default_bits = 2048
+ prompt = no
+ default_md = sha256
+ distinguished_name = dn
++x509_extensions = v3_ca
++
++[ v3_ca ]
++basicConstraints = critical, CA:TRUE
++keyUsage = critical, keyCertSign, cRLSign
++subjectKeyIdentifier = hash
+ 
+ [ dn ]
+ C = US
+ ST = California
+ L = San Francisco
+ O = ZooKeeper
+ emailAddress = dev@$FQDN
+-CN = $FQDN
++CN = ZooKeeper Test CA
+ EOF
+ )
+ 
+```
+
+**File**: `zookeeper-client/zookeeper-client-c/tests/TestClient.cc` (modified, +3/-3)
+```diff
+@@ -979,18 +979,18 @@ class Zookeeper_simpleSystem : public CPPUNIT_NS::TestFixture
+     }
+ 
+     void testSSL() {
+-        CPPUNIT_ASSERT_EQUAL((int) ZOK, checkSSL("/ssl", "/tmp/certs/server.crt,/tmp/certs/client.crt,/tmp/certs/clientkey.pem,password"));
++        CPPUNIT_ASSERT_EQUAL((int) ZOK, checkSSL("/ssl", "/tmp/certs/root.crt,/tmp/certs/client.crt,/tmp/certs/clientkey.pem,password"));
+     }
+ 
+     void testSSLNoClientCert() {
+-        CPPUNIT_ASSERT(ZOK != checkSSL("/ssl-no-client-cert", "/tmp/certs/server.crt"));
++        CPPUNIT_ASSERT(ZOK != checkSSL("/ssl-no-client-cert", "/tmp/certs/root.crt"));
+     }
+ 
+     void testSSLServerOnly() {
+         stopServer();
+         startServer("CLIENT_AUTH=none");
+ 
+-        CPPUNIT_ASSERT_EQUAL((int) ZOK, checkSSL("/ssl-server-only", "/tmp/certs/server.crt"));
++        CPPUNIT_ASSERT_EQUAL((int) ZOK, checkSSL("/ssl-server-only", "/tmp/certs/root.crt"));
+     }
+ #endif
+ 
+```
+
+**File**: `zookeeper-client/zookeeper-client-c/tests/TestReadOnlyClient.cc` (modified, +1/-1)
+```diff
+@@ -154,7 +154,7 @@ class Zookeeper_readOnly : public CPPUNIT_NS::TestFixture {
+ 
+         watchctx_t watch;
+         zhandle_t* zh = connectReadOnlySSL("localhost:22281",
+-                                           "/tmp/certs/server.crt,/tmp/certs/client.crt,/tmp/certs/clientkey.pem,password",
++                                           "/tmp/certs/root.crt,/tmp/certs/client.crt,/tmp/certs/clientkey.pem,password",
+                                            &watch);
+ 
+         assertCanRead(zh, "/");
+```
+
+**File**: `zookeeper-contrib/zookeeper-contrib-zkpython/src/test/zktestbase.py` (modified, +1/-1)
+```diff
+@@ -28,7 +28,7 @@ def __init__(self,methodName='runTest'):
+         unittest.TestCase.__init__(self,methodName)
+         self.host = "localhost:%d" % self.SERVER_PORT
+         self.sslhost = "localhost:%d" % self.SERVER_SSL_PORT
+-        self.sslcert =  "./target/zkpython_tests/ssl/server.crt,./target/zkpython_tests/ssl/client.crt,./target/zkpython_tests/ssl/clientkey.pem,password"
++        self.sslcert =  "./target/zkpython_tests/ssl/root.crt,./target/zkpython_tests/ssl/client.crt,./target/zkpython_tests/ssl/clientkey.pem,password"
+         self.connected = False
+         self.handle = -1
+         logdir = os.environ.get("ZKPY_LOG_DIR")
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2515** (2026-11-24): ZOOKEEPER-5140: Upgrade developer Docker image to Ubuntu 20.04 LTS (@anmolnar)
 - **PR #2513** (2026-11-23): ZOOKEEPER-5138: Fix zkpython testversionstringexists for 3.10.0 (@symat)
 - **PR #2511** (2026-11-20): ZOOKEEPER-5122: (C client) xid counter is unnecessarily likely to wrap (branch-3.9) (@apurtell)
+- **PR #2510** (2026-11-24): ZOOKEEPER-5135: Fix C client build and SSL tests on Ubuntu 26.04 and pin CI to ubuntu-26.04 (@zhy2on)
 - **PR #2503** (2026-11-16): ZOOKEEPER-5127: Upgrade Google Guava to 33.7.2-jre in zookeeper-contrib/zookeeper-contrib-zooinspector (@PDavid)
-- **PR #2497** (2026-11-17): ZOOKEEPER-5122: (C client) xid counter is unnecessarily likely to wrap (@apurtell)
-- **PR #2493** (2026-11-06): ZOOKEEPER-5118: Update vulnerable website dependencies: @vitest/mocker, vite, zod, happy-dom, source-map-js (@PDavid)
-- **PR #2492** (2026-11-04): ZOOKEEPER-5116: Pin CI build runner to ubuntu-24.04 to fix CI build (@PDavid)
+- **PR #2501** (2026-11-24): ZOOKEEPER-5126: (C client) Async watch removals corrupt context and report false success (@apurtell)
 
 ---
 
@@ -1881,31 +2404,31 @@ Update it so multi-digit minor/patch versions match correctly.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ZOOKEEPER-5138: Fix zkpython testversionstringexists for 3.10.0
+## X. ZOOKEEPER-5125: C client) zoo_multi error handling crashes, misreads results, an
 
 **RULE**:
-When implementing operations in `zookeeper-contrib/zookeeper-contrib-zkpython/src/test/connection_test.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/zookeeper. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `zookeeper-client/zookeeper-client-c/CMakeLists.txt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/zookeeper. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9438aa66`: ZOOKEEPER-5138: Fix zkpython testversionstringexists for 3.10.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `05cb78f4`: ZOOKEEPER-5125: C client) zoo_multi error handling crashes, misreads results, and hangs. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `zookeeper-contrib/zookeeper-contrib-zkpython/src/test/connection_test.py`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `zookeeper-client/zookeeper-client-c/CMakeLists.txt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-        self.assertTrue(re.match(r"^\d+\.\d+\.\d+$", zookeeper.__version__))
+  tests/TestMultiFailure.cc
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Induced defect failure mode:
-        self.assertTrue(re.match("\d.\d.\d", zookeeper.__version__))
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9438aa66` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `05cb78f4` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

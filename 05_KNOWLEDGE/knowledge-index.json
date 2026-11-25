@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-25T08:29:34.863Z",
+  "last_updated": "2026-11-25T08:44:17.354Z",
   "total_verified_learnings": 9114,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25333,
+  "total_items": 25338,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112413,10 +112413,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tailscale-tailscale-architecture-intelligence-tailscale-tailscale-core-invariant.md",
       "title": "Architecture Intelligence: tailscale/tailscale Core Invariants",
       "repository": "tailscale/tailscale",
-      "source_version": "012baddc",
-      "content_hash": "16609fcaadff4c2e8ff4d46ca3d2be8fb14c2813d2c9850e8e3fdd4d587710ea",
+      "source_version": "445df50d",
+      "content_hash": "dcfad4ffbfb60ed0ea2ff80a27129174c1cf2fe3ca31422e0646c7f84a89fc69",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T00:08:29.063Z"
+      "persisted_at": "2026-11-25T08:44:09.388Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tailscale-tailscale": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tailscale-tailscale",
@@ -112425,10 +112425,10 @@
       "relative_path": "08_VERIFICATION/tailscale-tailscale-verification-protocol-empirical-defect-shield-for-tailscale-.md",
       "title": "Verification Protocol: Empirical Defect Shield for tailscale/tailscale",
       "repository": "tailscale/tailscale",
-      "source_version": "e906a6a4",
-      "content_hash": "51651ebae552acbd5cc83cf40e3834149c55d6d8f26560ed8310000f9f1ddd75",
+      "source_version": "445df50d",
+      "content_hash": "f702f16c2214a16854de282e4178c28bdbf7225f51bf05cdd83b9d02d07e5a36",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T04:15:58.834Z"
+      "persisted_at": "2026-11-25T08:44:09.593Z"
     },
     "candidate_directive-order-small-runtime-filter-builds-before-filtered-and-nested-scans-28768": {
       "item_id": "candidate_directive-order-small-runtime-filter-builds-before-filtered-and-nested-scans-28768",
@@ -224065,8 +224065,8 @@
       "slug": "tailscale-tailscale",
       "platform": "github",
       "source_url": "https://github.com/tailscale/tailscale",
-      "source_version": "e906a6a4",
-      "content_hash": "d9a791dfd161a9ae3e44d0ee56c193f442b4fbbc780aa7e3309942c1df001bec",
+      "source_version": "445df50d",
+      "content_hash": "d8c457a52df69568a53a82bdf511ba6c0e0ac2ed2883a7cd352a6f3b4c6efe4f",
       "dossier_path": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "promoted_rules": [
@@ -224219,6 +224219,11 @@
           "number": 10451,
           "title": "drive/driveimpl: don't require sudo or su to share as the current user",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10491,
+          "title": "wgengine/magicsock: avoid copying lock in Test_endpoint_handlePongConnLocked",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -224226,7 +224231,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T04:15:58.051Z",
+      "verified_at": "2026-11-25T08:44:08.730Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -224317,9 +224322,9 @@
       "title": "Architecture Intelligence: tailscale-tailscale-learnings Core Invariants",
       "repository": "tailscale-tailscale-learnings",
       "source_version": "HEAD",
-      "content_hash": "b9e56024f0a8f02dd0c07dfe9abf15f46e2b490da4f906a4bba40c624ce155b2",
+      "content_hash": "2445fbeb56e392e53034a8e08be664208d0c04d0dd140f8aed24ed153a2951d6",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T00:08:37.575Z"
+      "persisted_at": "2026-11-25T08:44:16.072Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tailscale-tailscale-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tailscale-tailscale-learnings",
@@ -224329,9 +224334,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for tailscale-tailscale-learnings",
       "repository": "tailscale-tailscale-learnings",
       "source_version": "HEAD",
-      "content_hash": "d5ab756322e213dc473f6ca4c02be4d269f083fa53407e19e1b4c78d25c78b3e",
+      "content_hash": "6478a7a0f2338a1964c37ac22a4858b919c897b514fa3b84205530c7bd8cfad0",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T04:16:04.036Z"
+      "persisted_at": "2026-11-25T08:44:16.272Z"
     },
     "learn-huggingface-stabilityai-stable-diffusion-3-medium": {
       "learning_id": "learn-huggingface-stabilityai-stable-diffusion-3-medium",
@@ -275098,8 +275103,8 @@
       "slug": "apache-zookeeper",
       "platform": "github",
       "source_url": "https://github.com/apache/zookeeper",
-      "source_version": "9438aa66",
-      "content_hash": "aa7d00401c442008d5232e7f01c9bc38695936298d021b8c96e9623ec28ff88a",
+      "source_version": "2b86687b",
+      "content_hash": "882eaf13564c35d3725c85fb05e1be23b3b3e163a205b3ee7111d91cdf54c56d",
       "dossier_path": "07_PROJECT_LEARNING/apache-zookeeper-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apache-zookeeper-learnings.md",
       "promoted_rules": [
@@ -275122,6 +275127,11 @@
           "number": 10089,
           "title": "Fix zkpython testversionstringexists for 3.10.0",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10492,
+          "title": "C client) zoo_multi error handling crashes, misreads results, an",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -275129,7 +275139,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T18:03:23.716Z",
+      "verified_at": "2026-11-25T08:44:11.434Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -275171,10 +275181,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-apache-zookeeper-technical-construction-intelligence-apache-zookeeper-core-invar.md",
       "title": "Technical Construction Intelligence: apache/zookeeper Core Invariants",
       "repository": "apache/zookeeper",
-      "source_version": "9438aa66",
-      "content_hash": "39b8f3316fa78e145db7e1a35e3732590e1c462dc5428eb53125219d12a0b5d5",
+      "source_version": "2b86687b",
+      "content_hash": "9aa6f8886d2ccc49387bb9916987296a3a3170d0661d2aa7e3991ce49f859f6b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T18:03:24.490Z"
+      "persisted_at": "2026-11-25T08:44:12.085Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-apache-zookeeper": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-apache-zookeeper",
@@ -275183,10 +275193,10 @@
       "relative_path": "08_VERIFICATION/apache-zookeeper-verification-protocol-empirical-defect-shield-for-apache-zookee.md",
       "title": "Verification Protocol: Empirical Defect Shield for apache/zookeeper",
       "repository": "apache/zookeeper",
-      "source_version": "9438aa66",
-      "content_hash": "2d3db4ff68f3f21801b1facd9b2d7fee12a3fa6ee0dd261b6b143f5e6f209c6c",
+      "source_version": "2b86687b",
+      "content_hash": "619c1890666b3285b4a79652b37a728b42ca622b46ab18f0ebfdb97a8db7fdb2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T18:03:24.730Z"
+      "persisted_at": "2026-11-25T08:44:12.277Z"
     },
     "domain_intelligence-architecture-intelligence-faker-js-faker-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-faker-js-faker-learnings-core-invariants",
@@ -281107,7 +281117,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF",
       "source_version": "hf-orcarouter-deepseek-v4.1-flash-1017-abliterated-gguf",
-      "content_hash": "4dc9f70cb5e89ec68ee2e3aef2e1fac5ad6ee4f3e822bf8cf3d8a7b2f08ae72a",
+      "content_hash": "62d59230b26f84a2c5fc9057280953a43e59fc9e584c58dddee4efa46dd0f617",
       "dossier_path": "07_PROJECT_LEARNING/hf-orcarouter-deepseek-v4.1-flash-1017-abliterated-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-orcarouter-deepseek-v4.1-flash-1017-abliterated-gguf-learnings.md",
       "promoted_rules": [],
@@ -281116,7 +281126,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T16:31:24.766Z",
+      "verified_at": "2026-11-25T08:43:55.379Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -281133,9 +281143,9 @@
       "title": "Research & Knowledge Intelligence: orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF Core Invariants",
       "repository": "orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF",
       "source_version": "hf-orcarouter-deepseek-v4.1-flash-1017-abliterated-gguf",
-      "content_hash": "98deca60a9ae4d5a3c4c0fba520fe59aaa71a6c299ceb953b0f00c82487103db",
+      "content_hash": "d6008d7b44ee405d9fff8c3d2072d86b497d9b19d9e3fbc0db0b3b7e41c194e9",
       "domain_letter": "D",
-      "persisted_at": "2026-11-21T16:31:25.152Z"
+      "persisted_at": "2026-11-25T08:43:55.874Z"
     },
     "rule-9026": {
       "learning_id": "rule-9026",
@@ -281171,9 +281181,9 @@
       "title": "Research & Knowledge Intelligence: hf-orcarouter-deepseek-v4.1-flash-1017-abliterated-gguf-learnings Core Invariants",
       "repository": "hf-orcarouter-deepseek-v4.1-flash-1017-abliterated-gguf-learnings",
       "source_version": "HEAD",
-      "content_hash": "0efeef17a7c0391db6827eafac03f3307965ee3f28fbb2ad5a5bd3e01c96c080",
+      "content_hash": "427f1ee7c2548986df48e324ec2978577e3156dcf87bc9b98e4ef38eb4701511",
       "domain_letter": "D",
-      "persisted_at": "2026-11-21T16:31:28.188Z"
+      "persisted_at": "2026-11-25T08:44:15.382Z"
     },
     "learn-huggingface-huihui-ai-huihui-qwen3-8-27b-abliterated-gguf": {
       "learning_id": "learn-huggingface-huihui-ai-huihui-qwen3-8-27b-abliterated-gguf",
@@ -296374,9 +296384,9 @@
       "title": "Technical Construction Intelligence: apache-zookeeper-learnings Core Invariants",
       "repository": "apache-zookeeper-learnings",
       "source_version": "HEAD",
-      "content_hash": "8fbcdfc66aedcf2c81321053d9cb53a5b5267113314c80aa78ecc71c4ea3f17c",
+      "content_hash": "dd0cf1cfef2ab3f1667f52ac0654f2bdd85fcd1a2ada89ea7875dddd8780d416",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T18:03:29.043Z"
+      "persisted_at": "2026-11-25T08:44:17.170Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-apache-zookeeper-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-apache-zookeeper-learnings",
@@ -296386,9 +296396,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for apache-zookeeper-learnings",
       "repository": "apache-zookeeper-learnings",
       "source_version": "HEAD",
-      "content_hash": "3368e65a31d06d08e070e561dd331dad16b93a37dd72d88ef8f1ddcfe1c92137",
+      "content_hash": "de2463c34a23bb597f8795fdd25230e570928eb7b4caa1fc0e8451ac0a50a51f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T18:03:29.272Z"
+      "persisted_at": "2026-11-25T08:44:17.354Z"
     },
     "domain_intelligence-research-knowledge-intelligence-baai-bge-reranker-v2-m3-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-baai-bge-reranker-v2-m3-core-invariants",
@@ -346524,6 +346534,70 @@
       "content_hash": "872acd90acfa0f653fddb269e07fe33bd177780ea96d3bd0fbc7f198f6d3e2bd",
       "domain_letter": "K",
       "persisted_at": "2026-11-25T08:29:33.047Z"
+    },
+    "rule-10491": {
+      "learning_id": "rule-10491",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10491,
+      "title": "wgengine/magicsock: avoid copying lock in Test_endpoint_handlePongConnLocked",
+      "source_url": "https://github.com/tailscale/tailscale",
+      "source_version": "445df50d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T08:44:08.730Z"
+    },
+    "candidate_directive-wgengine-magicsock-avoid-copying-lock-in-test_endpoint_handlepongconnlocked": {
+      "item_id": "candidate_directive-wgengine-magicsock-avoid-copying-lock-in-test_endpoint_handlepongconnlocked",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-NE6G-wgengine-magicsock-avoid-copying-lock-in-test_endpoint_handlepongconnlocked.md",
+      "title": "wgengine/magicsock: avoid copying lock in Test_endpoint_handlePongConnLocked",
+      "repository": "tailscale-tailscale-learnings",
+      "source_version": "HEAD",
+      "content_hash": "31d2779c1a41b1587d0fb79836aa7c130fc11711a0068540780af453d3286954",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-25T08:44:15.880Z"
+    },
+    "rule-10492": {
+      "learning_id": "rule-10492",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10492,
+      "title": "C client) zoo_multi error handling crashes, misreads results, an",
+      "source_url": "https://github.com/apache/zookeeper",
+      "source_version": "2b86687b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T08:44:11.434Z"
+    },
+    "candidate_directive-c-client-zoo_multi-error-handling-crashes-misreads-results-an": {
+      "item_id": "candidate_directive-c-client-zoo_multi-error-handling-crashes-misreads-results-an",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-NB3Z-c-client-zoo_multi-error-handling-crashes-misreads-results-an.md",
+      "title": "C client) zoo_multi error handling crashes, misreads results, an",
+      "repository": "apache/zookeeper",
+      "source_version": "2b86687b",
+      "content_hash": "d48a5011a77df6c7ca89f72e367e240b1b62efb93f62dad172b668b70098d3b9",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-25T08:44:11.906Z"
+    },
+    "candidate_directive-zookeeper-5125-c-client-zoo_multi-error-handling-crashes-misreads-results-an": {
+      "item_id": "candidate_directive-zookeeper-5125-c-client-zoo_multi-error-handling-crashes-misreads-results-an",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-NF0P-zookeeper-5125-c-client-zoo_multi-error-handling-crashes-misreads-results-an.md",
+      "title": "ZOOKEEPER-5125: C client) zoo_multi error handling crashes, misreads results, an",
+      "repository": "apache-zookeeper-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4bc692820dea17a49ce617c9f225482209ceb6103f698dbfc133235e5dae6084",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-25T08:44:16.972Z"
     }
   },
   "ai-builder-brain": {

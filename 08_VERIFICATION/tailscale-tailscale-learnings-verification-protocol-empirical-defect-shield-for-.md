@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-25T04:16:03.582Z",
+  "timestamp": "2026-11-25T08:44:15.745Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-tailscale-tailscale-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [tailscale-tailscale-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-25T04:16:03.582Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T08:44:15.745Z`  
 > **Learning ID**: `LEARN-EVO-tailscale-tailscale-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source**: github ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
-> **Source Version**: `e906a6a4`  
+> **Source Version**: `445df50d`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-25T04:15:57.215Z  
+> **Timestamp**: 2026-11-25T08:44:07.799Z  
 > **Learning ID**: `learn-github-tailscale-tailscale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T04:15:57.210Z  
+> **Harvest Timestamp**: 2026-11-25T08:44:07.794Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: The easiest, most secure way to use WireGuard and 2FA.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 39576 stars
+- **Stars / Engagement**: 39584 stars
 
 ---
 
@@ -846,551 +846,43 @@ export const sessionStateStorage: IPNStateStorage = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e906a6a4` (2026-11-23)
-**Commit Message**: drive/driveimpl: don't require sudo or su to share as the current user
+### Incident Patch 1: `445df50d` (2026-11-25)
+**Commit Message**: wgengine/magicsock: avoid copying lock in Test_endpoint_handlePongConnLocked (#22641)
 
-The Taildrive file server for a share is started as the share's user
-with sudo, falling back to su. If neither works and tailscaled is root,
-userServer.run refuses to start it. On systems that ship neither tool,
-such as OpenWrt, a share created by root could therefore never be
-served: the run loop kept failing with `"root" is root` and remote
-peers saw an empty, unwritable share until sudo was installed.
+This patch removes an accidental copy of a lock:
 
-When the share's user is the user tailscaled is already running as,
-there is nothing to switch to, so run the file server directly. This is
-what `sudo -u root` already did where sudo is installed. Shares owned
-by any other user still go through sudo or su as before.
+	$ ./tool/go vet ./...
+	literal copies lock value from pm: tailscale.com/wgengine/magicsock.peerMap contains sync.RWMutex
 
-Fixes #22413
+Updates #22645
 
-Change-Id: Ied5f51e01183f90ef1f7d2ffc386847d9eea633a
-Signed-off-by: Sai Kumar Pola <[REDACTED_EMAIL]>
+Change-Id: Id171051838b66b8dd9dff755d803bbc18142bea4
 
-**File**: `drive/driveimpl/remote_impl.go` (modified, +14/-1)
+Signed-off-by: Simon Law <[REDACTED_EMAIL]>
+
+**File**: `wgengine/magicsock/endpoint_test.go` (modified, +1/-2)
 ```diff
-@@ -332,7 +332,13 @@ func (s *userServer) run() error {
- 	}
- 	var cmd *exec.Cmd
- 
--	if s.canSudo() {
-+	if isCurrentUser(s.username) {
-+		// We're already running as the share's user, so there's nothing to
-+		// switch to. Don't require sudo or su, which minimal systems like
-+		// OpenWrt don't ship by default.
-+		s.logf("starting taildrive file server as ourselves (%q)", s.username)
-+		cmd = exec.Command(s.executable, args...)
-+	} else if s.canSudo() {
- 		s.logf("starting taildrive file server with sudo as user %q", s.username)
- 		allArgs := []string{"-n", "-u", s.username, s.executable}
- 		allArgs = append(allArgs, args...)
-@@ -413,6 +419,13 @@ var writeMethods = map[string]bool{
- 	"DELETE":    true,
- }
- 
-+// isCurrentUser reports whether username is the user that this process is
-+// running as.
-+func isCurrentUser(username string) bool {
-+	u, err := user.Current()
-+	return err == nil && u.Username == username
-+}
-+
- // canSudo checks whether we can sudo -u the configured executable as the
- // configured user by attempting to call the executable with the '-h' flag to
- // print help.
-```
-
-**File**: `drive/driveimpl/remote_impl_test.go` (added, +24/-0)
-```diff
-@@ -0,0 +1,24 @@
-+// Copyright (c) Tailscale Inc & contributors
-+// SPDX-License-Identifier: BSD-3-Clause
-+
-+package driveimpl
-+
-+import (
-+	"os/user"
-+	"testing"
-+)
-+
-+func TestIsCurrentUser(t *testing.T) {
-+	u, err := user.Current()
-+	if err != nil {
-+		t.Skipf("can't determine current user: %v", err)
-+	}
-+	if !isCurrentUser(u.Username) {
-+		t.Errorf("isCurrentUser(%q) = false; want true", u.Username)
-+	}
-+	for _, name := range []string{"", u.Username + "-not-me"} {
-+		if isCurrentUser(name) {
-+			t.Errorf("isCurrentUser(%q) = true; want false", name)
-+		}
-+	}
-+}
-```
-
----
-
-### Incident Patch 2: `258b0879` (2026-11-24)
-**Commit Message**: tsweb/varz: add match filters and streaming to /debug/varz
-
-The new "match" query parameter filters the output by metric name
-with Go regexps, and "interval" turns the response into a stream of
-frames, a full one first and then deltas with only the changed series,
-so monitors can subscribe once instead of re-fetching everything. A
-stream matches vars once at setup and then compares plain counters and
-gauges without formatting them. The new ReadStream parses the stream.
-
-Updates tailscale/corp#47429
-
-Change-Id: I8751bfe981991b4aca7f1cf52001e093584a258a
-Signed-off-by: Brad Fitzpatrick <[REDACTED_EMAIL]>
-
-**File**: `tsweb/varz/stream.go` (added, +884/-0)
-```diff
-@@ -0,0 +1,884 @@
-+// Copyright (c) Tailscale Inc & contributors
-+// SPDX-License-Identifier: BSD-3-Clause
-+
-+package varz
-+
-+import (
-+	"bufio"
-+	"bytes"
-+	"errors"
-+	"expvar"
-+	"fmt"
-+	"io"
-+	"math"
-+	"net/http"
-+	"net/url"
-+	"regexp"
-+	"strconv"
-+	"strings"
-+	"time"
-+
-+	"tailscale.com/metrics"
-+	"tailscale.com/syncs"
-+)
-+
-+// Limits on the query parameters of [Handler] and [ExpvarDoHandler].
-+const (
-+	minStreamInterval    = 100 * time.Millisecond
-+	maxStreamInterval    = time.Minute
-+	maxMatchPatterns     = 32
-+	maxMatchPatternBytes = 4 << 10 // total length of all match patterns
-+	maxStreams           = 16      // concurrent streams per process
-+	minStreamWriteWait   = 5 * time.Second
-+	rescanInterval       = 10 * time.Second // how often a stream looks for new vars
-+)
-+
-+// streamSem bounds the number of concurrent streams.
-+var streamSem = make(chan struct{}, maxStreams)
-+
-+// frameTimeFormat is RFC 3339 with a fixed nine digits of fractional
-+// seconds, so frame headers have a constant width.
-+const frameTimeFormat = "2006-01-02T15:04:05.000000000Z07:00"
-+
-+// streamOpts are the parsed query parameters of a /debug/varz request.
-+type streamOpts struct {
-+	interval time.Duration // or zero for a one-shot response
-+	match    selector
-+}
-+
-+// parseStreamOpts parses the "interval" and "match" query parameters
-+// of a /debug/varz request. It clamps the interval to
-+// [minStreamInterval, maxStreamInterval].
-+func parseStreamOpts(q url.Values) (streamOpts, error) {
-+	var opts streamOpts
-+	if q.Has("interval") {
-+		d, err := time.ParseDuration(q.Get("interval"))
-+		if err != nil {
-+			return opts, fmt.Errorf("bad interval: %v", err)
-+		}
-+		if d <= 0 {
-+			return opts, errors.New("bad interval: must be positive")
-+		}
-+		opts.interval = min(max(d, minStreamInterval), maxStreamInterval)
-+	}
-+	pats := q["match"]
-+	if len(pats) > maxMatchPatterns {
-+		return opts, fmt.Errorf("too many match patterns; max %d", maxMatchPatterns)
-+	}
-+	total := 0
-+	for _, p := range pats {
-+		total += len(p)
-+	}
-+	if total > maxMatchPatternBytes {
-+		return opts, fmt.Errorf("match patterns too long; max %d bytes total", maxMatchPatternBytes)
-+	}
-+	for _, p := range pats {
-+		re, err := regexp.Compile(p)
-+		if err != nil {
-+			return opts, fmt.Errorf("bad match pattern: %v", err)
-+		}
-+		opts.match = append(opts.match, re)
-+	}
-+	return opts, nil
-+}
-+
-+// serveQuery serves a /debug/varz request that has a query string.
-+func (s varzSource) serveQuery(w http.ResponseWriter, r *http.Request) {
-+	opts, err := parseStreamOpts(r.URL.Query())
-+	if err != nil {
-+		http.Error(w, err.Error(), http.StatusBadRequest)
-+		return
-+	}
-+	switch {
-+	case opts.interval > 0:
-+		select {
-+		case streamSem <- struct{}{}:
-+			defer func() { <-streamSem }()
-+		default:
-+			http.Error(w, "too many concurrent varz streams", http.StatusServiceUnavailable)
-+			return
-+		}
-+		newVarzStream(s, opts.match).serve(w, r, opts.interval)
-+	case len(opts.match) > 0:
-+		w.Header().Set("Content-Type", contentType)
-+		w.Write(newVarzStream(s, opts.match).appendFrame(nil, true))
-+	default:
-+		w.Header().Set("Content-Type", contentType)
-+		s.writeTo(w)
-+	}
-+}
-+
-+// countVars returns the number of vars in s, counting the members of
-+// each [metrics.Set] as well as the set itself.
-+func (s varzSource) countVars() int {
-+	n := 0
-+	var count func(expvar.KeyValue)
-+	count = func(kv expvar.KeyValue) {
-+		n++
-+		if set, ok := kv.Value.(*metrics.Set); ok {
-+			set.Do(count)
-+		}
-+	}
-+	s.do(count)
-+	return n
-+}
-+
-+// selector selects series by metric name. An empty selector selects
-+// everything.
-+type selector []*regexp.Regexp
-+
-+func (sel selector) all() bool { return len(sel) == 0 }
-+
-+func (sel selector) matches(name []byte) bool {
-+	if sel.all() {
-+		return true
-+	}
-+	for _, re := range sel {
-+		if re.Match(name) {
-+			return true
-+		}
-+	}
-+	return false
-+}
-+
-+// varzStream is the state of a filtered or streaming /debug/varz
-+// response.
-+//
-+// It decides once which vars might match, and remembers what it last
-+// sent of each, so later frames neither revisit vars that can't match
-+// nor format values that didn't change. It only learns of vars added
-+// later when [varzSource.countVars] changes.
-+type varzStream struct {
-+	src   varzSource
-+	sel   selector
-+	vars  []streamEntry // in output order
-+	nVars int           // src.countVars() as of the last build
-+	kvs   sortedKVs     // scratch space for build
-+}
-+
-+type streamEntry struct {
-+	key string // var key, with Set members prefixed by their Set's name
-+	v   streamVar
-+}
-+
-+// streamVar is a source of lines in a stream: a var, or the Go
-+// runtime metrics.
-+type streamVar interface {
-+	// appendFrame appends to dst the lines for the next frame and
-+	// returns the extended slice. If full, that's every series that
-+	// sel matches. Otherwise it's only those that changed since the
-+	// previous call, along with any metadata not yet sent.
-+	appendFrame(dst []byte, full bool, sel selector) []byte
-+}
-+
-+// runtimeKey
-```
-
-**File**: `tsweb/varz/stream_test.go` (added, +614/-0)
-```diff
-@@ -0,0 +1,614 @@
-+// Copyright (c) Tailscale Inc & contributors
-+// SPDX-License-Identifier: BSD-3-Clause
-+
-+package varz
-+
-+import (
-+	"bytes"
-+	"context"
-+	"expvar"
-+	"fmt"
-+	"io"
-+	"maps"
-+	"math"
-+	"net/http"
-+	"net/http/httptest"
-+	"net/url"
-+	"strings"
-+	"sync"
-+	"testing"
-+	"testing/synctest"
-+	"time"
-+
-+	"tailscale.com/metrics"
-+	"tailscale.com/syncs"
-+)
-+
-+func TestParseStreamOpts(t *testing.T) {
-+	tests := []struct {
-+		query    string
-+		interval time.Duration
-+		nMatch   int
-+		wantErr  string
-+	}{
-+		{query: ""},
-+		{query: "interval=1s", interval: time.Second},
-+		{query: "interval=1ms", interval: minStreamInterval},
-+		{query: "interval=1h", interval: maxStreamInterval},
-+		{query: "interval=x", wantErr: "bad interval"},
-+		{query: "interval=", wantErr: "bad interval"},
-+		{query: "interval=0s", wantErr: "must be positive"},
-+		{query: "interval=-1s", wantErr: "must be positive"},
-+		{query: "match=^a&match=b", nMatch: 2},
-+		{query: "match=(", wantErr: "bad match pattern"},
-+		{query: strings.Repeat("match=a&", maxMatchPatterns), nMatch: maxMatchPatterns},
-+		{query: strings.Repeat("match=a&", maxMatchPatterns+1), wantErr: "too many"},
-+		{query: "match=" + strings.Repeat("a", maxMatchPatternBytes+1), wantErr: "too long"},
-+	}
-+	for _, tt := range tests {
-+		q, err := url.ParseQuery(tt.query)
-+		if err != nil {
-+			t.Fatal(err)
-+		}
-+		opts, err := parseStreamOpts(q)
-+		if tt.wantErr != "" {
-+			if err == nil || !strings.Contains(err.Error(), tt.wantErr) {
-+				t.Errorf("%q: err = %v; want %q", tt.query, err, tt.wantErr)
-+			}
-+			continue
-+		}
-+		if err != nil {
-+			t.Errorf("%q: %v", tt.query, err)
-+			continue
-+		}
-+		if opts.interval != tt.interval || len(opts.match) != tt.nMatch {
-+			t.Errorf("%q: interval=%v, %d patterns; want %v, %d", tt.query, opts.interval, len(opts.match), tt.interval, tt.nMatch)
-+		}
-+	}
-+}
-+
-+// TestHandlerNilURL checks that the handlers accept a request without
-+// a URL, as some callers pass new(http.Request).
-+func TestHandlerNilURL(t *testing.T) {
-+	rec := httptest.NewRecorder()
-+	ExpvarDoHandler(newTestVars().do)(rec, new(http.Request))
-+	if !strings.Contains(rec.Body.String(), "tlb_choose_local 1234\n") {
-+		t.Errorf("unexpected output:\n%s", rec.Body.Bytes())
-+	}
-+}
-+
-+func TestHandlerBadQuery(t *testing.T) {
-+	for _, q := range []string{"interval=x", "match=(", "interval=0"} {
-+		rec := httptest.NewRecorder()
-+		Handler(rec, httptest.NewRequest("GET", "/debug/varz?"+q, nil))
-+		if rec.Code != http.StatusBadRequest {
-+			t.Errorf("%q: code %v; want 400", q, rec.Code)
-+		}
-+	}
-+}
-+
-+// testVars is a set of vars for testing filtering and streaming.
-+type testVars struct {
-+	local    *expvar.Int
-+	assigned *metrics.LabelMap
-+	newPeers *metrics.LabelMap // empty at first
-+	set      *metrics.Set
-+	setInner *expvar.Int
-+	hist     *metrics.Histogram
-+	other    *expvar.Int
-+}
-+
-+func newTestVars() *testVars {
-+	tv := &testVars{
-+		local:    new(expvar.Int),
-+		assigned: &metrics.LabelMap{Label: "peer"},
-+		newPeers: &metrics.LabelMap{Label: "peer"},
-+		set:      new(metrics.Set),
-+		setInner: new(expvar.Int),
-+		hist:     metrics.NewHistogram([]float64{1, 2}),
-+		other:    new(expvar.Int),
-+	}
-+	tv.local.Set(1234)
-+	tv.assigned.Add("trunkd102", 77)
-+	tv.set.Set("counter_inner", tv.setInner)
-+	tv.hist.Observe(1.5)
-+	return tv
-+}
-+
-+func (tv *testVars) do(f func(expvar.KeyValue)) {
-+	f(expvar.KeyValue{Key: "counter_tlb_choose_local", Value: tv.local})
-+	f(expvar.KeyValue{Key: "counter_tlb_assigned", Value: tv.assigned})
-+	f(expvar.KeyValue{Key: "counter_tlb_new_peers", Value: tv.newPeers})
-+	f(expvar.KeyValue{Key: "tlbset", Value: tv.set})
-+	f(expvar.KeyValue{Key: "histogram_lat", Value: tv.hist})
-+	f(expvar.KeyValue{Key: "gauge_other", Value: tv.other})
-+	f(expvar.KeyValue{Key: "some_string", Value: new(expvar.String)})
-+}
-+
-+func TestOneShotMatch(t *testing.T) {
-+	tv := newTestVars()
-+	h := ExpvarDoHandler(tv.do)
-+
-+	get := func(query string) string {
-+		t.Helper()
-+		rec := httptest.NewRecorder()
-+		h(rec, httptest.NewRequest("GET", "/debug/varz?"+query, nil))
-+		if rec.Code != 200 {
-+			t.Fatalf("%q: code %v: %s", query, rec.Code, rec.Body.Bytes())
-+		}
-+		return rec.Body.String()
-+	}
-+
-+	var all bytes.Buffer
-+	varzSource{do: tv.do}.writeTo(&all)
-+	if got := get("unrelated=1"); got != all.String() {
-+		t.Errorf("unrelated param changed output:\n%s\nwant:\n%s", got, all.Bytes())
-+	}
-+
-+	got := get("match=^tlb_&match=^lat$&match=^tlbset_inner$")
-+	want := `# TYPE lat histogram
-+lat_bucket{le="1"} 0
-+lat_bucket{le="2"} 1
-+lat_bucket{le="+Inf"} 1
-+lat_sum 1.5
-+lat_count 1
-+# TYPE tlb_assigned counter
-+tlb_assigned{peer="trunkd102"} 77
-+# TYPE tlb_choose_local counter
-+tlb_choose_local 1234
-+# TYPE tlbset_inner counter
-+tlbset_inner 0
-+`
-+	if got != want {
-+		t.Errorf("got:\n%s\nwant:\n%s", got, want)
-+	}
-+
-+	// Matching only a histogram sample name includes the family's metadata.
-+	if got, want := get("match=^lat_sum$"), "# TYPE lat histogram\nlat_sum 1.5\n"; got 
-```
-
-**File**: `tsweb/varz/varz.go` (modified, +49/-17)
-```diff
-@@ -331,9 +331,12 @@ type sortedKVs struct {
- //
- // It also exports the Go runtime/metrics in [runtimeMetricSpecs] and
- // the legacy memstats_* metrics, both read from runtime/metrics.
-+//
-+// The optional "match" and "interval" query parameters filter the
-+// output and turn on streaming, respectively. See [ReadStream] for the
-+// details and the stream format.
- func Handler(w http.ResponseWriter, r *http.Request) {
--	ExpvarDoHandler(expvarDo)(w, r)
--	runtimeMetrics.writeTo(w)
-+	varzSource{do: expvarDo, runtime: true}.serveHTTP(w, r)
- }
- 
- // ExpvarDoHandler handler returns a Handler like above, but takes an optional
-@@ -342,24 +345,53 @@ func Handler(w http.ResponseWriter, r *http.Request) {
- //
- // Unlike [Handler], it does not export the Go runtime/metrics.
- func ExpvarDoHandler(expvarDoFunc func(f func(expvar.KeyValue))) func(http.ResponseWriter, *http.Request) {
--	return func(w http.ResponseWriter, r *http.Request) {
--		w.Header().Set("Content-Type", "text/plain;version=0.0.4;charset=utf-8")
--
--		s := sortedKVsPool.Get().(*sortedKVs)
--		defer sortedKVsPool.Put(s)
--		s.kvs = s.kvs[:0]
--		expvarDoFunc(func(kv expvar.KeyValue) {
--			s.kvs = append(s.kvs, sortedKV{kv, removeTypePrefixes(kv.Key)})
--		})
--		sort.Slice(s.kvs, func(i, j int) bool {
--			return s.kvs[i].sortKey < s.kvs[j].sortKey
--		})
--		for _, e := range s.kvs {
--			writePromExpVar(w, "", e.KeyValue)
--		}
-+	return varzSource{do: expvarDoFunc}.serveHTTP
-+}
-+
-+const contentType = "text/plain;version=0.0.4;charset=utf-8"
-+
-+// varzSource is a set of metrics served by [Handler] or
-+// [ExpvarDoHandler].
-+type varzSource struct {
-+	do      func(func(expvar.KeyValue)) // enumerates the vars
-+	runtime bool                        // whether to include the Go runtime metrics
-+}
-+
-+func (s varzSource) serveHTTP(w http.ResponseWriter, r *http.Request) {
-+	if r.URL != nil && r.URL.RawQuery != "" { // some callers pass new(http.Request)
-+		s.serveQuery(w, r)
-+		return
-+	}
-+	w.Header().Set("Content-Type", contentType)
-+	s.writeTo(w)
-+}
-+
-+// writeTo writes all of s's metrics to w, with the vars sorted by name
-+// with type prefixes removed.
-+func (s varzSource) writeTo(w io.Writer) {
-+	kvs := sortedKVsPool.Get().(*sortedKVs)
-+	defer sortedKVsPool.Put(kvs)
-+	s.sortVars(kvs)
-+	for _, e := range kvs.kvs {
-+		writePromExpVar(w, "", e.KeyValue)
-+	}
-+	if s.runtime {
-+		runtimeMetrics.writeTo(w)
- 	}
- }
- 
-+// sortVars sets kvs to s's top-level vars, sorted by name with type
-+// prefixes removed.
-+func (s varzSource) sortVars(kvs *sortedKVs) {
-+	kvs.kvs = kvs.kvs[:0]
-+	s.do(func(kv expvar.KeyValue) {
-+		kvs.kvs = append(kvs.kvs, sortedKV{kv, removeTypePrefixes(kv.Key)})
-+	})
-+	sort.Slice(kvs.kvs, func(i, j int) bool {
-+		return kvs.kvs[i].sortKey < kvs.kvs[j].sortKey
-+	})
-+}
-+
- var binaryName = sync.OnceValue(func() string {
- 	exe, err := os.Executable()
- 	if err != nil {
+@@ -741,10 +741,9 @@ func Test_endpoint_handlePongConnLocked(t *testing.T) {
+ 		t.Run(tc.name, func(t *testing.T) {
+ 			synctest.Test(t, func(t *testing.T) {
+ 				now := mono.Now() // synctest to match this to the internal 'now'
+-				pm := newPeerMap()
+ 				c := &Conn{
+ 					logf:    func(msg string, args ...any) {},
+-					peerMap: pm,
++					peerMap: newPeerMap(),
+ 				}
+ 				c.discoAtomic.Set(key.NewDisco())
+ 				de := &endpoint{
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #22646** (closed): .github/workflows: run go vet checks outside golangci-lint (@sfllaw)
+- **PR #22641** (2026-11-25): wgengine/magicsock: avoid copying lock in Test_endpoint_handlePongConnLocked (@sfllaw)
 - **PR #22636** (2026-11-25): tsweb/varz: add match filters and streaming to /debug/varz (@bradfitz)
 - **PR #22635** (2026-11-24): tsnet: test with a fake host DNS resolver, not the OS resolver (@sfllaw)
 - **PR #22633** (2026-11-24): tsnet: fix Server.Close so it can be called repeatedly (@sfllaw)
 - **PR #22630** (2026-11-24): feature/conn25: return extra WireGuard AllowedIPs in a stable order (@mazdakn)
-- **PR #22628** (closed): derp/derpserver: mark TestWriterFloodDoesNotStarveControlFrames flaky (@joshbarros)
-- **PR #22623** (closed): derp/derpserver: mark TestWriterFloodDoesNotStarveControlFrames flaky (@joshbarros)
 
 ---
 
@@ -1410,44 +902,32 @@ Signed-off-by: Brad Fitzpatrick <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. drive/driveimpl: don't require sudo or su to share as the current user
+## X. wgengine/magicsock: avoid copying lock in Test_endpoint_handlePongConnLocked
 
 **RULE**:
-When implementing operations in `drive/driveimpl/remote_impl.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `wgengine/magicsock/endpoint_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e906a6a4`: drive/driveimpl: don't require sudo or su to share as the current user. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `445df50d`: wgengine/magicsock: avoid copying lock in Test_endpoint_handlePongConnLocked. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `drive/driveimpl/remote_impl.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `wgengine/magicsock/endpoint_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	if isCurrentUser(s.username) {
-		// We're already running as the share's user, so there's nothing to
-		// switch to. Don't require sudo or su, which minimal systems like
-		// OpenWrt don't ship by default.
-		s.logf("starting taildrive file server as ourselves (%q)", s.username)
-		cmd = exec.Command(s.executable, args...)
-	} else if s.canSudo() {
-// isCurrentUser reports whether username is the user that this process is
-// running as.
-func isCurrentUser(username string) bool {
-	u, err := user.Current()
-	return err == nil && u.Username == username
-}
-
+					peerMap: newPeerMap(),
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	if s.canSudo() {
+				pm := newPeerMap()
+					peerMap: pm,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e906a6a4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `445df50d` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

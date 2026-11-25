@@ -13007,3 +13007,6 @@
 | `CYCLE-20261125-45YJ` | `2026-11-25T08:29:18.763Z` | `fallow-rs/fallow` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md` | Yes (`03ced384...`) |
 | `CYCLE-20261125-473L` | `2026-11-25T08:29:20.241Z` | `ornith-ai/Ornith-1.5-122B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ornith-ai-ornith-1.5-122b-learnings.md` | Yes (`166aa0b9...`) |
 | `CYCLE-20261125-4E1T` | `2026-11-25T08:29:29.249Z` | `trinodb/trino` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10490` | Yes (`af8ee553...`) |
+| `CYCLE-20261125-MYJX` | `2026-11-25T08:43:55.629Z` | `orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-orcarouter-deepseek-v4.1-flash-1017-abliterated-gguf-learnings.md` | Yes (`62d59230...`) |
+| `CYCLE-20261125-N8U7` | `2026-11-25T08:44:08.959Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10491` | Yes (`d8c457a5...`) |
+| `CYCLE-20261125-NAX3` | `2026-11-25T08:44:11.655Z` | `apache/zookeeper` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10492` | Yes (`882eaf13...`) |

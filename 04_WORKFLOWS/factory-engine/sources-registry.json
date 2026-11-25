@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-25T08:29:32.555Z",
-    "lastVerified": "2026-11-25T08:29:32.555Z",
+    "lastChecked": "2026-11-25T08:44:14.965Z",
+    "lastVerified": "2026-11-25T08:44:14.965Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -185,8 +185,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-25T07:48:45.833Z",
-    "lastVerified": "2026-11-25T07:48:45.833Z",
+    "lastChecked": "2026-11-25T08:44:07.214Z",
+    "lastVerified": "2026-11-25T08:44:07.214Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1222,12 +1222,12 @@
     "lastVerified": "2026-11-24T07:47:03.914Z"
   },
   "emberstack-kubernetes-reflector": {
-    "name": "emberstack/kubernetes-reflector",
+    "name": "kubernetes-reflector",
     "officialUrl": "https://github.com/emberstack/kubernetes-reflector",
     "sourceType": "github",
     "technology": "C#",
-    "lastChecked": "2026-11-24T15:36:05.973Z",
-    "lastVerified": "2026-11-24T15:36:05.973Z",
+    "lastChecked": "2026-11-25T08:43:59.633Z",
+    "lastVerified": "2026-11-25T08:43:59.633Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-emberstack-kubernetes-reflector",
@@ -1236,7 +1236,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "549d8f57"
   },
   "freenet-freenet-core": {
     "name": "freenet/freenet-core",
@@ -2218,14 +2219,14 @@
     "officialUrl": "https://github.com/tailscale/tailscale",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-25T04:15:57.210Z",
-    "lastVerified": "2026-11-25T04:15:57.210Z",
+    "lastChecked": "2026-11-25T08:44:07.794Z",
+    "lastVerified": "2026-11-25T08:44:07.794Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tailscale-tailscale",
-    "contentHash": "d9a791dfd161a9ae3e44d0ee56c193f442b4fbbc780aa7e3309942c1df001bec",
+    "contentHash": "d8c457a52df69568a53a82bdf511ba6c0e0ac2ed2883a7cd352a6f3b4c6efe4f",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -2428,9 +2429,9 @@
   "sayanarijit-xplr": {
     "name": "xplr",
     "officialUrl": "https://github.com/sayanarijit/xplr",
-    "lastChecked": "2026-11-24T06:54:59.413Z",
+    "lastChecked": "2026-11-25T08:43:52.127Z",
     "revisionIdentifier": "e91f74b1",
-    "lastVerified": "2026-11-24T06:54:59.413Z"
+    "lastVerified": "2026-11-25T08:43:52.127Z"
   },
   "hf-taichuai-zdtaichu5.0-9b": {
     "name": "TaichuAI/ZDTaichu5.0-9B",
@@ -5918,22 +5919,21 @@
     "lastVerified": "2026-11-25T02:38:41.105Z"
   },
   "apache-zookeeper": {
-    "name": "zookeeper",
+    "name": "apache/zookeeper",
     "officialUrl": "https://github.com/apache/zookeeper",
     "sourceType": "github",
     "technology": "Java",
-    "lastChecked": "2026-11-24T14:33:24.023Z",
-    "lastVerified": "2026-11-24T14:33:24.023Z",
+    "lastChecked": "2026-11-25T08:44:10.489Z",
+    "lastVerified": "2026-11-25T08:44:10.489Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-apache-zookeeper",
-    "contentHash": "aa7d00401c442008d5232e7f01c9bc38695936298d021b8c96e9623ec28ff88a",
+    "contentHash": "882eaf13564c35d3725c85fb05e1be23b3b3e163a205b3ee7111d91cdf54c56d",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "9438aa66"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "xudong-huang-may": {
     "name": "may",
@@ -9552,9 +9552,9 @@
   "vanniktech-emoji": {
     "name": "Emoji",
     "officialUrl": "https://github.com/vanniktech/Emoji",
-    "lastChecked": "2026-11-22T22:28:01.097Z",
+    "lastChecked": "2026-11-25T08:43:57.337Z",
     "revisionIdentifier": "69e998da",
-    "lastVerified": "2026-11-22T22:28:01.097Z"
+    "lastVerified": "2026-11-25T08:43:57.337Z"
   },
   "ildrm-northstar-seo": {
     "name": "northstar-seo",
@@ -13093,12 +13093,12 @@
     "officialUrl": "https://huggingface.co/orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-21T16:31:05.965Z",
-    "lastVerified": "2026-11-21T16:31:05.965Z",
+    "lastChecked": "2026-11-25T08:43:54.969Z",
+    "lastVerified": "2026-11-25T08:43:54.969Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-orcarouter-deepseek-v4-1-flash-1017-abliterated-gguf",
-    "contentHash": "4dc9f70cb5e89ec68ee2e3aef2e1fac5ad6ee4f3e822bf8cf3d8a7b2f08ae72a",
+    "contentHash": "62d59230b26f84a2c5fc9057280953a43e59fc9e584c58dddee4efa46dd0f617",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

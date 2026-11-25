@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T08:29:34.665Z",
+  "last_updated": "2026-11-25T08:44:17.170Z",
   "total_records": 2647,
   "domains": {
     "A": {
@@ -8534,8 +8534,8 @@
       "title": "Architecture Intelligence: tailscale/tailscale Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tailscale-tailscale-architecture-intelligence-tailscale-tailscale-core-invariant.md",
       "repository": "tailscale/tailscale",
-      "content_hash": "16609fcaadff4c2e8ff4d46ca3d2be8fb14c2813d2c9850e8e3fdd4d587710ea",
-      "created_at": "2026-11-25T00:08:29.063Z"
+      "content_hash": "dcfad4ffbfb60ed0ea2ff80a27129174c1cf2fe3ca31422e0646c7f84a89fc69",
+      "created_at": "2026-11-25T08:44:09.388Z"
     },
     "domain_intelligence-architecture-intelligence-duckdb-duckdb-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-duckdb-duckdb-core-invariants",
@@ -13561,8 +13561,8 @@
       "title": "Architecture Intelligence: tailscale-tailscale-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tailscale-tailscale-learnings-architecture-intelligence-tailscale-tailscale-lear.md",
       "repository": "tailscale-tailscale-learnings",
-      "content_hash": "b9e56024f0a8f02dd0c07dfe9abf15f46e2b490da4f906a4bba40c624ce155b2",
-      "created_at": "2026-11-25T00:08:37.575Z"
+      "content_hash": "2445fbeb56e392e53034a8e08be664208d0c04d0dd140f8aed24ed153a2951d6",
+      "created_at": "2026-11-25T08:44:16.072Z"
     },
     "domain_intelligence-research-knowledge-intelligence-stabilityai-stable-diffusion-3-medium-core-invar": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-stabilityai-stable-diffusion-3-medium-core-invar",
@@ -27459,8 +27459,8 @@
       "title": "Technical Construction Intelligence: apache/zookeeper Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-apache-zookeeper-technical-construction-intelligence-apache-zookeeper-core-invar.md",
       "repository": "apache/zookeeper",
-      "content_hash": "39b8f3316fa78e145db7e1a35e3732590e1c462dc5428eb53125219d12a0b5d5",
-      "created_at": "2026-11-23T18:03:24.490Z"
+      "content_hash": "9aa6f8886d2ccc49387bb9916987296a3a3170d0661d2aa7e3991ce49f859f6b",
+      "created_at": "2026-11-25T08:44:12.085Z"
     },
     "DOM-D-C917D98C": {
       "record_id": "DOM-D-C917D98C",
@@ -28957,8 +28957,8 @@
       "title": "Research & Knowledge Intelligence: orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-orcarouter-deepseek-v4-1-flash-1017-abliterated-gguf-research-knowledge-intel.md",
       "repository": "orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF",
-      "content_hash": "98deca60a9ae4d5a3c4c0fba520fe59aaa71a6c299ceb953b0f00c82487103db",
-      "created_at": "2026-11-21T16:31:25.152Z"
+      "content_hash": "d6008d7b44ee405d9fff8c3d2072d86b497d9b19d9e3fbc0db0b3b7e41c194e9",
+      "created_at": "2026-11-25T08:43:55.874Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-deepseek-v4-1-flash-1017-abliterat": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-deepseek-v4-1-flash-1017-abliterat",
@@ -28966,8 +28966,8 @@
       "title": "Research & Knowledge Intelligence: hf-orcarouter-deepseek-v4.1-flash-1017-abliterated-gguf-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-orcarouter-deepseek-v4-1-flash-1017-abliterated-gguf-learnings-research-knowl.md",
       "repository": "hf-orcarouter-deepseek-v4.1-flash-1017-abliterated-gguf-learnings",
-      "content_hash": "0efeef17a7c0391db6827eafac03f3307965ee3f28fbb2ad5a5bd3e01c96c080",
-      "created_at": "2026-11-21T16:31:28.188Z"
+      "content_hash": "427f1ee7c2548986df48e324ec2978577e3156dcf87bc9b98e4ef38eb4701511",
+      "created_at": "2026-11-25T08:44:15.382Z"
     },
     "domain_intelligence-research-knowledge-intelligence-huihui-ai-huihui-qwen3-8-27b-abliterated-gguf-co": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-huihui-ai-huihui-qwen3-8-27b-abliterated-gguf-co",
@@ -32976,8 +32976,8 @@
       "title": "Technical Construction Intelligence: apache-zookeeper-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-apache-zookeeper-learnings-technical-construction-intelligence-apache-zookeeper-.md",
       "repository": "apache-zookeeper-learnings",
-      "content_hash": "8fbcdfc66aedcf2c81321053d9cb53a5b5267113314c80aa78ecc71c4ea3f17c",
-      "created_at": "2026-11-23T18:03:29.043Z"
+      "content_hash": "dd0cf1cfef2ab3f1667f52ac0654f2bdd85fcd1a2ada89ea7875dddd8780d416",
+      "created_at": "2026-11-25T08:44:17.170Z"
     },
     "domain_intelligence-research-knowledge-intelligence-baai-bge-reranker-v2-m3-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-baai-bge-reranker-v2-m3-core-invariants",

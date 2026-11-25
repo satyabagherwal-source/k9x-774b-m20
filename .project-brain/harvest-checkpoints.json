@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-25T08:29:29.270Z",
+  "last_updated": "2026-11-25T08:44:11.679Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5496,14 +5496,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tailscale-tailscale",
-      "content_hash": "d9a791dfd161a9ae3e44d0ee56c193f442b4fbbc780aa7e3309942c1df001bec",
-      "verified_at": "2026-11-25T04:15:58.268Z",
+      "content_hash": "d8c457a52df69568a53a82bdf511ba6c0e0ac2ed2883a7cd352a6f3b4c6efe4f",
+      "verified_at": "2026-11-25T08:44:08.981Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T04:15:58.268Z"
+      "last_updated": "2026-11-25T08:44:08.981Z"
     },
     "dingodb/dingo": {
       "repository": "dingodb/dingo",
@@ -7806,14 +7806,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-apache-zookeeper",
-      "content_hash": "aa7d00401c442008d5232e7f01c9bc38695936298d021b8c96e9623ec28ff88a",
-      "verified_at": "2026-11-23T18:03:23.988Z",
+      "content_hash": "882eaf13564c35d3725c85fb05e1be23b3b3e163a205b3ee7111d91cdf54c56d",
+      "verified_at": "2026-11-25T08:44:11.678Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T18:03:23.988Z"
+      "last_updated": "2026-11-25T08:44:11.678Z"
     },
     "primer/react": {
       "repository": "primer/react",
@@ -16041,14 +16041,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-orcarouter-deepseek-v4-1-flash-1017-abliterated-gguf",
-      "content_hash": "4dc9f70cb5e89ec68ee2e3aef2e1fac5ad6ee4f3e822bf8cf3d8a7b2f08ae72a",
-      "verified_at": "2026-11-21T16:31:24.965Z",
+      "content_hash": "62d59230b26f84a2c5fc9057280953a43e59fc9e584c58dddee4efa46dd0f617",
+      "verified_at": "2026-11-25T08:43:55.650Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T16:31:24.965Z"
+      "last_updated": "2026-11-25T08:43:55.650Z"
     },
     "makecindy/cindy": {
       "repository": "makecindy/cindy",

@@ -3583,10 +3583,10 @@
     "repository": "tailscale/tailscale",
     "platform": "github",
     "sourceUrl": "https://github.com/tailscale/tailscale",
-    "sourceVersion": "e906a6a4",
+    "sourceVersion": "445df50d",
     "license": "BSD-3-Clause",
-    "contentHash": "d9a791dfd161a9ae3e44d0ee56c193f442b4fbbc780aa7e3309942c1df001bec",
-    "lastHarvestedAt": "2026-11-25T04:15:58.255Z",
+    "contentHash": "d8c457a52df69568a53a82bdf511ba6c0e0ac2ed2883a7cd352a6f3b4c6efe4f",
+    "lastHarvestedAt": "2026-11-25T08:44:08.964Z",
     "learningId": "learn-github-tailscale-tailscale"
   },
   "dingodb-dingo": {
@@ -5123,10 +5123,10 @@
     "repository": "apache/zookeeper",
     "platform": "github",
     "sourceUrl": "https://github.com/apache/zookeeper",
-    "sourceVersion": "9438aa66",
+    "sourceVersion": "2b86687b",
     "license": "Apache-2.0",
-    "contentHash": "aa7d00401c442008d5232e7f01c9bc38695936298d021b8c96e9623ec28ff88a",
-    "lastHarvestedAt": "2026-11-23T18:03:23.975Z",
+    "contentHash": "882eaf13564c35d3725c85fb05e1be23b3b3e163a205b3ee7111d91cdf54c56d",
+    "lastHarvestedAt": "2026-11-25T08:44:11.660Z",
     "learningId": "learn-github-apache-zookeeper"
   },
   "primer-react": {
@@ -10675,8 +10675,8 @@
     "sourceUrl": "https://huggingface.co/orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF",
     "sourceVersion": "hf-orcarouter-deepseek-v4.1-flash-1017-abliterated-gguf",
     "license": "Open-Source",
-    "contentHash": "4dc9f70cb5e89ec68ee2e3aef2e1fac5ad6ee4f3e822bf8cf3d8a7b2f08ae72a",
-    "lastHarvestedAt": "2026-11-21T16:31:24.957Z",
+    "contentHash": "62d59230b26f84a2c5fc9057280953a43e59fc9e584c58dddee4efa46dd0f617",
+    "lastHarvestedAt": "2026-11-25T08:43:55.634Z",
     "learningId": "learn-huggingface-orcarouter-deepseek-v4-1-flash-1017-abliterated-gguf"
   },
   "makecindy-cindy": {
