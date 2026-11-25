@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-25T00:52:39.134Z",
+  "updated_at": "2026-11-25T01:18:33.079Z",
   "stats": {
-    "total_discovered": 9083,
+    "total_discovered": 9084,
     "approved_pending_harvest": 8605,
     "harvested_count": 0,
-    "rejected_count": 478,
+    "rejected_count": 479,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 8593,
+      "COMMUNITY_AND_EXPERT": 8594,
       "OFFICIAL_DOCUMENTATION": 273,
       "STANDARDS_AND_SPECIFICATIONS": 149,
       "ENGINEERING_BLOGS": 7,
@@ -196507,6 +196507,21 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/webdriverio-webdriverio-learnings.md",
         "fileName": "webdriverio-webdriverio-learnings.md"
+      }
+    },
+    "SRC-67323C71D69A": {
+      "id": "SRC-67323C71D69A",
+      "url": "http://localhost:%d/%s",
+      "title": "http://localhost:%d/%s",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-25T01:18:33.079Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/encoredev-encore-learnings.md",
+        "fileName": "encoredev-encore-learnings.md"
       }
     }
   }

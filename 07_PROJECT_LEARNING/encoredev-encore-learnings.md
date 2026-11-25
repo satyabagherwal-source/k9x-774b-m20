@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/encoredev-encore-learnings.md`  
 > **Source**: github ([https://github.com/encoredev/encore](https://github.com/encoredev/encore))  
-> **Source Version**: `94e12a29`  
+> **Source Version**: `4bd01c70`  
 > **License**: MPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T06:38:27.595Z  
+> **Timestamp**: 2026-11-25T01:18:27.447Z  
 > **Learning ID**: `learn-github-encoredev-encore`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/encoredev-encore-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/encoredev/encore](https://github.com/encoredev/encore))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T06:38:27.589Z  
+> **Harvest Timestamp**: 2026-11-25T01:18:27.082Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Infrastructure orchestration from local to your cloud
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: Cargo.toml, go.mod, README.md
-- **Stars / Engagement**: 12736 stars
+- **Stars / Engagement**: 12735 stars
 
 ---
 
@@ -1768,195 +1768,417 @@ func Get(ctx context.Context, slug string) (*Bit, error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `94e12a29` (2026-11-23)
-**Commit Message**: runtimes/core: support CHAR(n) columns in sqldb (#2660)
+### Incident Patch 1: `efc374f9` (2026-10-26)
+**Commit Message**: cli/daemon/engine/trace2/sqlite: write each trace upload in one transaction
 
-Inserting a string into a `CHAR(n)` column failed with "cannot convert
-between the Rust type RowValue and the Postgres type bpchar", and
-reading one had the same gap. This treats `bpchar` like `text` and
-`varchar` when encoding and decoding values, so `CHAR(n)` and
-`CHAR(n)[]` work for both writes and reads. Postgres pads `CHAR(n)`
-values with spaces and the padding is kept on read.
+WriteEvents stored each event of an upload with its own statements and
+commit, so a request's trace cost several commits. It now writes the
+upload in one transaction and tells listeners about ended spans once it
+has committed, since they read the span back. encore.db opens
+transactions with _txlock=immediate, so the transaction waits for the
+write lock up front.
 
-Tested with unit tests in `sqldb::val` that encode and decode `bpchar`
-and `bpchar[]` values.
+A constraint error on one event still undoes only that statement. An
+error that rolls back the whole transaction, such as a full disk or a
+cancelled upload, now loses the whole upload.
 
-<!-- codesmith:footer -->
----
-<a
-href="https://dashboardbackend.blacksmith.sh/track/run-proof?expires=1798019659&installation_model_id=427204&pr_number=2660&ref=codesmith_pr_footer&repository=encoredev%2Fencore&return_to=https%3A%2F%2Fgithub.com%2Fencoredev%2Fencore%2Fpull%2F2660&variant=prove_it_works&signature=d047d53f973c7afbc1d5547a9831b563db12b0c1fe6446fdb098613580b257ee"><picture><source
-media="(prefers-color-scheme: dark)"
-srcset="https://pr-comments-assets.blacksmith.sh/codesmith/proof-prove-it-works-v2-dark.svg"><source
-media="(prefers-color-scheme: light)"
-srcset="https://pr-comments-assets.blacksmith.sh/codesmith/proof-prove-it-works-v2-light
-
-**File**: `runtimes/core/src/sqldb/val.rs` (modified, +73/-10)
+**File**: `cli/cmd/encore/daemon/daemon_test.go` (modified, +26/-0)
 ```diff
-@@ -29,17 +29,17 @@ impl ToSql for RowValue {
-             Self::Bytes(val) => val.to_sql(ty, out),
-             Self::Uuid(val) => match *ty {
-                 Type::UUID => val.to_sql(ty, out),
--                Type::TEXT | Type::VARCHAR => val.to_string().to_sql(ty, out),
-+                Type::TEXT | Type::VARCHAR | Type::BPCHAR => val.to_string().to_sql(ty, out),
-                 _ => Err(format!("uuid not supported for column of type {ty}").into()),
-             },
-             Self::Cidr(val) => match *ty {
-                 Type::CIDR => val.to_sql(ty, out),
--                Type::TEXT | Type::VARCHAR => val.to_string().to_sql(ty, out),
-+                Type::TEXT | Type::VARCHAR | Type::BPCHAR => val.to_string().to_sql(ty, out),
-                 _ => Err(format!("cidr not supported for column of type {ty}").into()),
-             },
-             Self::Inet(val) => match *ty {
-                 Type::INET => val.to_sql(ty, out),
--                Type::TEXT | Type::VARCHAR => val.to_string().to_sql(ty, out),
-+                Type::TEXT | Type::VARCHAR | Type::BPCHAR => val.to_string().to_sql(ty, out),
-                 _ => Err(format!("inet not supported for column of type {ty}").into()),
-             },
+@@ -48,6 +48,32 @@ func TestEncoreDBStoresConcurrentTraceUploads(t *testing.T) {
+ 	}
+ }
  
-@@ -50,7 +50,13 @@ impl ToSql for RowValue {
-     fn accepts(ty: &Type) -> bool {
-         matches!(
-             *ty,
--            Type::BYTEA | Type::UUID | Type::TEXT | Type::VARCHAR | Type::CIDR | Type::INET
-+            Type::BYTEA
-+                | Type::UUID
-+                | Type::TEXT
-+                | Type::VARCHAR
-+                | Type::BPCHAR
-+                | Type::CIDR
-+                | Type::INET
-         ) || matches!(ty.kind(), Kind::Array(ty) if <RowValue as ToSql>::accepts(ty))
-             || <PValue as ToSql>::accepts(ty)
-     }
-@@ -79,12 +85,12 @@ impl ToSql for PValue {
-                 PValue::Null => Ok(IsNull::Yes),
-                 PValue::Bool(bool) => match *ty {
-                     Type::BOOL => bool.to_sql(ty, out),
--                    Type::TEXT | Type::VARCHAR => bool.to_string().to_sql(ty, out),
-+                    Type::TEXT | Type::VARCHAR | Type::BPCHAR => bool.to_string().to_sql(ty, out),
-                     _ => Err(format!("bool not supported for column of type {ty}").into()),
-                 },
++// An upload of ten request spans, each with its start and end event.
++func BenchmarkEncoreDBTraceUpload(b *testing.B) {
++	db, err := (&Daemon{}).openEncoreDB(filepath.Join(b.TempDir(), "encore.db"))
++	if err != nil {
++		b.Fatal(err)
++	}
++	b.Cleanup(func() { _ = db.Close() })
++	store := sqlite.New(db)
++	meta := &trace2.Meta{AppID: "app"}
++
++	var n uint64
++	for b.Loop() {
++		n++
++		var events []*tracepb2.TraceEvent
++		for span := range uint64(10) {
++			for _, ev := range requestEvents(&tracepb2.TraceID{Low: n}) {
++				ev.SpanId = span + 1
++				events = append(events, ev)
++			}
++		}
++		if err := store.WriteEvents(context.Background(), meta, events); err != nil {
++			b.Fatal(err)
++		}
++	}
++}
++
+ // requestEvents is the upload for one request: its span's start and end.
+ func requestEvents(traceID *tracepb2.TraceID) []*tracepb2.TraceEvent {
+ 	return []*tracepb2.TraceEvent{
+```
+
+**File**: `cli/daemon/engine/trace2/sqlite/write.go` (modified, +43/-27)
+```diff
+@@ -276,45 +276,68 @@ func (s *Store) Clear(ctx context.Context, appID string) error {
+ }
  
-                 PValue::String(str) => match *ty {
--                    Type::TEXT | Type::VARCHAR | Type::NAME => str.to_sql(ty, out),
-+                    Type::TEXT | Type::VARCHAR | Type::BPCHAR | Type::NAME => str.to_sql(ty, out),
-                     Type::BYTEA => {
-                         let val = str.as_bytes();
-                         val.to_sql(ty, out)
-@@ -238,7 +244,7 @@ impl ToSql for PValue {
-                         let d = Decimal::from_str(&num_str)?;
-                         d.to_sql(ty, out)
-                     }
--                    Type::TEXT | Type::VARCHAR => self.to_string().to_sql(ty, out),
-+                    Type::TEXT | Type::VARCHAR | Type::BPCHAR => self.to_string().to_sql(ty, out),
-                     _ => {
-                         if num.is_i64() {
-                             num.as_i64().unwrap().to_sql(ty, out)
-@@ -275,7 +281,7 @@ impl ToSql for PValue {
-                         let val = i64::try_from(d).map_err(|_| "Cannot convert decimal to INT8")?;
-                         val.to_sql(ty, out)
-                     }
--                    Type::TEXT | Type::VARCHAR => {
-+                    Type::TEXT | Type::VARCHAR | Type::BPCHAR => {
-                         let decimal_str = d.to_string();
-                         decimal_str.to_sql(ty, out)
-                     }
-@@ -286,7 +292,7 @@ impl ToSql for PValue {
-                     Type::DATE => dt.naive_utc().date().to_sql(ty, out),
-                     Type::TIMESTAMP => dt.naive_utc().to_sql(ty, out),
-                     Type::TIMESTAMPTZ => dt.to_sql(ty, out),
--                    Type::TEXT | Type::VARCHAR => dt.to_rfc3339().to_sql(ty, out),
-+                    Type::TEXT | Type::VARCHAR | Type::BPCHAR => dt.to_rfc3339().to_sql(ty, out),
-                     _ => Err(format!("unsupported type for DateTime: {ty}").into()),
-                 },
-                 PValue::Array(arr) => {
-@@ -325,6 +331,7 @@ impl ToSql for PValue {
-                 | Type::BYTEA
-                 | Type::TEXT
-                 | Type::VARCHAR
-+                | Type::BPCHAR
-                 | Type::INT2
-                 | Type::INT4
-                 | Type::INT8
-@@ -396,7 +403,7 @@ impl<'a> FromSql<'a> for PValue {
-                 let val: bool = FromSql::from_sql(ty, raw)?;
-                 PValue::Bool(val)
-             }
--            Type::TEXT | Type::VARCHAR | Type::NAME => {
-+            Type::TEXT | Type::VARCHAR | Type::BPCHAR | Type::NAME => {
-                 let val: String = FromSql::from_sql(ty, raw)?;
-                 PValue::String(val)
-             }
-@@ -498,6 +505,7 @@ impl<'a> FromSql<'a> for PValue {
-             Type::BOOL
-                 | Type::TEXT
-        
+ func (s *Store) WriteEvents(ctx context.Context, meta *trace2.Meta, events []*tracepbcli.TraceEvent) error {
++	// One commit per upload costs far less than one per event. A constraint error
++	// on one event undoes only its statement, so the rest of the upload is stored.
++	tx, err := s.db.BeginTx(ctx, nil)
++	if err != nil {
++		return errors.Wrap(err, "begin trace events transaction")
++	}
++	defer tx.Rollback() // committed explicitly on success
++
++	var endEvents []*tracepbcli.TraceEvent
+ 	for _, ev := range events {
+-		if err := s.insertEvent(ctx, meta, ev); err != nil {
++		spanEnded, err := s.insertEvent(ctx, tx, meta, ev)
++		if err != nil {
+ 			log.Error().Err(err).Msg("unable to insert trace span event")
+ 			continue
+ 		}
++		if spanEnded {
++			endEvents = append(endEvents, ev)
++		}
++	}
++	if err := tx.Commit(); err != nil {
++		return errors.Wrap(err, "commit trace events")
+ 	}
+ 
++	// Listeners read the span back, so only tell them once it is committed.
++	for _, ev := range endEvents {
++		s.emitCompleteSpanToListeners(ctx, meta.AppID, encodeTraceID(ev.TraceId), encodeSpanID(ev.SpanId))
++	}
+ 	return nil
+ }
+ 
+-func (s *Store) insertEvent(ctx context.Context, meta *trace2.Meta, ev *tracepbcli.TraceEvent) error {
++// insertEvent stores one event and updates its span's index row.
++// It reports whether the event ended a span.
++func (s *Store) insertEvent(ctx context.Context, tx *sql.Tx, meta *trace2.Meta, ev *tracepbcli.TraceEvent) (spanEnded bool, err error) {
+ 	data, err := protojson.Marshal(ev)
+ 	if err != nil {
+-		return errors.Wrap(err, "marshal trace event")
++		return false, errors.Wrap(err, "marshal trace event")
+ 	}
+ 
+-	_, err = s.db.ExecContext(ctx, `
++	_, err = tx.ExecContext(ctx, `
+ 		INSERT INTO trace_event (
+ 			app_id, trace_id, span_id, event_data)
+ 		VALUES (?, ?, ?, ?)
+ 	`, meta.AppID, encodeTraceID(ev.TraceId), encodeSpanID(ev.SpanId), data)
+ 	if err != nil {
+-		return errors.Wrap(err, "insert trace span event")
++		return false, errors.Wrap(err, "insert trace span event")
+ 	}
+ 
+ 	if start := ev.GetSpanStart(); start != nil {
+-		if err := s.updateSpanStartIndex(ctx, meta, ev, start); err != nil {
+-			return errors.Wrap(err, "update span start index")
++		if err := s.updateSpanStartIndex(ctx, tx, meta, ev, start); err != nil {
++			return false, errors.Wrap(err, "update span start index")
+ 		}
+ 	} else if end := ev.GetSpanEnd(); end != nil {
+-		if err := s.updateSpanEndIndex(ctx, meta, ev, end); err != nil {
+-			return errors.Wrap(err, "update span end index")
++		if err := s.updateSpanEndIndex(ctx, tx, meta, ev, end); err != nil {
++			return false, errors.Wrap(err, "update span end index")
+ 		}
++		return true, nil
+ 	}
+ 
+-	return nil
++	return false, nil
+ }
+ 
+-func (s *Store) updateSpanStartIndex(ctx context.Context, meta *trace2.Meta, ev *tracepbcli.TraceEvent, start *tracepbcli.SpanStart) error {
++func (s *Store) updateSpanStartIndex(ctx context.Context, tx *sql.Tx, meta *trace2.Meta, ev *tracepbcli.TraceEvent, start *tracepbcli.SpanStart) error {
+ 	isRoot := start.ParentSpanId == nil
+ 
+ 	// parentTraceID is the trace that started this span, if any. It's recorded
+@@ -332,7 +355,7 @@ func (s *Store) updateSpanStartIndex(ctx context.Context, meta *trace2.Meta, ev
+ 			encodedParentSpanID := encodeSpanID(*start.ParentSpanId)
+ 			parentSpanID = &encodedParentSpanID
+ 		}
+-		_, err := s.db.ExecContext(ctx, `
++		_, err := tx.ExecContext(ctx, `
+ 			INSERT INTO trace_span_index (
+ 				app_id, trace_id, span_id, span_type, started_at, is_root, service_name, endpoint_name, external_request_id, parent_span_id, parent_trace_id, caller_event_id,
+ 				has_response, test_skipped
+@@ -360,7 +383,7 @@ func (s *Store) updateSpanStartIndex(ctx context.Context, meta *trace2.Meta, ev
+ 			encodedParentSpanID := encodeSpanID(*start.ParentSpanId)
+ 			parentSpanID = &encodedParentSpanID
+ 		}
+-		_, err := s.db.ExecContext(ctx, `
++		_, err := tx.ExecContext(ctx, `
+ 			INSERT INTO trace_span_index (
+ 				app_id, trace_id, span_id, span_type, started_at, is_root, service_name, endpoint_name, parent_span_id, parent_trace_id, caller_event_id,
+ 				has_response, test_skipped
+@@ -387,7 +410,7 @@ func (s *Store) updateSpanStartIndex(ctx context.Context, meta *trace2.Meta, ev
+ 			encodedParentSpanID := encodeSpanID(*start.ParentSpanId)
+ 			parentSpanID = &encodedParentSpanID
+ 		}
+-		_, err := s.db.ExecContext(ctx, `
++		_, err := tx.ExecContext(ctx, `
+ 			INSERT INTO trace_span_index (
+ 				app_id, trace_id, span_id, span_type, started_at, is_root, service_name,
+ 				topic_name, subscription_name, message_id, parent_span_id, parent_trace_id, caller_event_id,
+@@ -417,7 +440,7 @@ func (s *Store) updateSpanStartIndex(ctx context.Context, meta *trace2.Meta, ev
+ 			encodedParentSpanID := encodeSpanID(*start.ParentSpanId)
+ 			parentSpanID = &encodedParentSpanID
+ 		}
+-		_, err := s.db.ExecContext(ctx, `
++		_, err := tx.ExecContext(ctx, `
+ 			INSERT INT
 ```
 
 ---
 
-### Incident Patch 2: `ec86f7ba` (2026-11-23)
-**Commit Message**: runtimes/js: let DummySocket typecheck against newer @types/node (#2659)
+### Incident Patch 2: `37b5a2cb` (2026-10-26)
+**Commit Message**: cli/daemon/dash: build the app status only when a dashboard tab is open
 
-encore.dev ships .ts sources, so apps typecheck `api/node_http.ts` with
-their own @types/node, and `skipLibCheck` doesn't help. The `DummySocket
-as Socket` cast broke twice: @types/node 26.4.0 added a `setKeepAlive`
-overload that takes an options object, and 26.6.0 added a required
-`readonly server: Server | null`.
+Every run start, compile, reload, stop and compile error built the app's
+status for the dashboard, which holds the whole app metadata as JSON (tens
+of MB for a large app), and then sent it to no one when no tab was open. A
+tab asks for the status itself when it connects.
 
-`DummySocket` now accepts an object as `setKeepAlive`'s first argument
-and declares `server` as `null`. It uses `object` because
-`SetKeepAliveOptions` doesn't exist in @types/node 20.
+Each of those events now returns first when no tab is open, as
+listenTraces already does. In OnStart the browser still opens; with no tab
+open it now opens even if the status could not have been built, since the
+status is no longer built then.
 
-Tested by running `tsc --noEmit` on a small app with a raw endpoint
-against @types/node 20.11.19, 20.19, 22, 24, 25.9, 26.3.0, 26.4.0,
-26.5.1, 26.6.0 and 26.6.6 (latest), with TypeScript 5.3.3, 5.9 and 7.0.
-All pass; before this change 26.4.0 and later failed.
-
-Fixes #2560
-
-<!-- codesmith:footer -->
----
-<a
-href="https://dashboardbackend.blacksmith.sh/track/run-proof?expires=1798019561&installation_model_id=427204&pr_number=2659&ref=codesmith_pr_footer&repository=encoredev%2Fencore&return_to=https%3A%2F%2Fgithub.com%2Fencoredev%2Fencore%2Fpull%2F2659&variant=proof_this_pr&signature=39f2d73ef97f83d63da9da40d20fa5c49dc
-
-**File**: `runtimes/js/encore.dev/api/node_http.ts` (modified, +3/-2)
+**File**: `cli/daemon/dash/dash.go` (modified, +30/-9)
 ```diff
-@@ -3,7 +3,7 @@ import type {
-   OutgoingHttpHeader,
-   OutgoingHttpHeaders
- } from "node:http";
--import type { AddressInfo, Socket, SocketReadyState } from "node:net";
-+import type { AddressInfo, Server, Socket, SocketReadyState } from "node:net";
- import * as stream from "node:stream";
- import * as runtime from "../internal/runtime/mod";
+@@ -571,26 +571,38 @@ var _ run.EventListener = (*Server)(nil)
  
-@@ -323,7 +323,7 @@ class DummySocket extends stream.Duplex {
-   resume(): this { return this; }
-   setTimeout(_timeout: number, _callback?: () => void): this { return this; }
-   setNoDelay(_noDelay?: boolean): this { return this; }
--  setKeepAlive(_enable?: boolean, _initialDelay?: number): this { return this; }
-+  setKeepAlive(_enable?: boolean | object, _initialDelay?: number, _interval?: number, _count?: number): this { return this; }
-   getTypeOfService(): number { return 0; }
-   setTypeOfService(_tos: number): this { return this; }
-   address(): AddressInfo | {} { return {}; }
-@@ -343,6 +343,7 @@ class DummySocket extends stream.Duplex {
-   readonly remoteAddress?: string | undefined = undefined;
-   readonly remoteFamily?: string | undefined = undefined;
-   readonly remotePort?: number | undefined = undefined;
-+  readonly server: Server | null = null;
-   readonly timeout?: number | undefined = undefined;
-   end(): this { return this; }
-   addListener(_event: string, _listener: (...args: any[]) => void): this { return this; }
+ // OnStart notifies active websocket clients about the started run.
+ func (s *Server) OnStart(r *run.Run) {
+-	status, err := buildAppStatus(r.App, r)
+-	if err != nil {
+-		log.Error().Err(err).Msg("dash: could not build app status")
+-		return
++	// The status holds the whole app metadata, so skip building it when no tab will receive it.
++	// A tab that opens later asks for the status itself.
++	hasClients := s.hasClients()
++	var status appStatus
++	if hasClients {
++		var err error
++		status, err = buildAppStatus(r.App, r)
++		if err != nil {
++			log.Error().Err(err).Msg("dash: could not build app status")
++			return
++		}
+ 	}
+ 
+ 	// Open the browser if needed.
+ 	browserMode := r.Params.Browser
+-	if browserMode == run.BrowserModeAlways || (browserMode == run.BrowserModeAuto && !s.hasClients()) {
++	if browserMode == run.BrowserModeAlways || (browserMode == run.BrowserModeAuto && !hasClients) {
+ 		u := fmt.Sprintf("http://localhost:%d/%s", s.dashPort, r.App.PlatformOrLocalID())
+ 		browser.Open(u)
+ 	}
+ 
+-	s.notify(&notification{
+-		Method: "process/start",
+-		Params: status,
+-	})
++	if hasClients {
++		s.notify(&notification{
++			Method: "process/start",
++			Params: status,
++		})
++	}
+ }
+ 
+ func (s *Server) OnCompileStart(r *run.Run) {
++	if !s.hasClients() {
++		return
++	}
+ 	status, err := buildAppStatus(r.App, r)
+ 	if err != nil {
+ 		log.Error().Err(err).Msg("dash: could not build app status")
+@@ -607,6 +619,9 @@ func (s *Server) OnCompileStart(r *run.Run) {
+ 
+ // OnReload notifies active websocket clients about the reloaded run.
+ func (s *Server) OnReload(r *run.Run) {
++	if !s.hasClients() {
++		return
++	}
+ 	status, err := buildAppStatus(r.App, r)
+ 	if err != nil {
+ 		log.Error().Err(err).Msg("dash: could not build app status")
+@@ -621,6 +636,9 @@ func (s *Server) OnReload(r *run.Run) {
+ 
+ // OnStop notifies active websocket clients about the stopped run.
+ func (s *Server) OnStop(r *run.Run) {
++	if !s.hasClients() {
++		return
++	}
+ 	status, err := buildAppStatus(r.App, nil)
+ 	if err != nil {
+ 		log.Error().Err(err).Msg("dash: could not build app status")
+@@ -648,6 +666,9 @@ func (s *Server) OnError(r *run.Run, err *errlist.List) {
+ 		return
+ 	}
+ 
++	if !s.hasClients() {
++		return
++	}
+ 	status, statusErr := buildAppStatus(r.App, nil)
+ 	if statusErr != nil {
+ 		log.Error().Err(statusErr).Msg("dash: could not build app status")
+```
+
+**File**: `cli/daemon/dash/dash_test.go` (modified, +21/-0)
+```diff
+@@ -4,6 +4,8 @@ import (
+ 	"reflect"
+ 	"testing"
+ 
++	"encr.dev/cli/daemon/run"
++	"encr.dev/pkg/errlist"
+ 	meta "encr.dev/proto/encore/parser/meta/v1"
+ )
+ 
+@@ -136,3 +138,22 @@ func TestBuildMigrationHistory(t *testing.T) {
+ 		})
+ 	}
+ }
++
++// With no dashboard tab open, run events must not build the app status, which holds the whole app metadata.
++// The run has no app, so building the status would panic.
++func TestRunEventsWithoutTabs(t *testing.T) {
++	s := &Server{}
++	r := &run.Run{Params: &run.StartParams{Browser: run.BrowserModeNever}}
++	events := map[string]func(){
++		"start":         func() { s.OnStart(r) },
++		"compile start": func() { s.OnCompileStart(r) },
++		"reload":        func() { s.OnReload(r) },
++		"stop":          func() { s.OnStop(r) },
++		"compile error": func() { s.OnError(r, &errlist.List{}) },
++	}
++	for name, event := range events {
++		t.Run(name, func(t *testing.T) {
++			event()
++		})
++	}
++}
+```
+
+---
+
+### Incident Patch 3: `c33412c0` (2026-10-26)
+**Commit Message**: cli/daemon/run: return freed memory to the OS after each build
+
+The daemon outlives every command, and a build of a large app parses and
+generates code in memory the daemon no longer needs once the build is
+done. Go's runtime returns freed memory to the OS gradually, so between
+commands the daemon held close to its largest build's memory. Run
+(including each reload), test, test spec, check, exec and exec spec now
+call debug.FreeOSMemory in the background when they finish.
+
+**File**: `cli/daemon/run/check.go` (modified, +1/-0)
+```diff
+@@ -42,6 +42,7 @@ func (mgr *Manager) Check(ctx context.Context, p CheckParams) (buildDir string,
+ 	if err != nil {
+ 		return "", err
+ 	}
++	defer releaseMemoryToOS()
+ 
+ 	// TODO: We should check that all secret keys are defined as well.
+ 
+```
+
+**File**: `cli/daemon/run/exec_command.go` (modified, +1/-0)
+```diff
+@@ -62,6 +62,7 @@ type ExecSpecResponse struct {
+ // without actually executing it. This allows the CLI to run the command
+ // directly with stdin attached for interactive support.
+ func (mgr *Manager) ExecSpec(ctx context.Context, p ExecSpecParams) (*ExecSpecResponse, error) {
++	defer releaseMemoryToOS()
+ 	expSet, err := p.App.Experiments(p.Environ)
+ 	if err != nil {
+ 		return nil, err
+```
+
+**File**: `cli/daemon/run/exec_script.go` (modified, +1/-0)
+```diff
+@@ -60,6 +60,7 @@ type ExecScriptParams struct {
+ 
+ // ExecScript executes the script.
+ func (mgr *Manager) ExecScript(ctx context.Context, p ExecScriptParams) (err error) {
++	defer releaseMemoryToOS()
+ 	expSet, err := p.App.Experiments(p.Environ)
+ 	if err != nil {
+ 		return err
+```
+
+**File**: `cli/daemon/run/manager.go` (modified, +7/-0)
+```diff
+@@ -2,6 +2,7 @@ package run
+ 
+ import (
+ 	"fmt"
++	"runtime/debug"
+ 	"sort"
+ 	"sync"
+ 	"time"
+@@ -247,3 +248,9 @@ func (mgr *Manager) generateConfig(p generateConfigParams) (*config.Runtime, err
+ 	}
+ 	return cfg, nil
+ }
++
++// releaseMemoryToOS returns freed memory to the OS in the background. The daemon
++// outlives every command, and Go would otherwise return a build's memory gradually.
++func releaseMemoryToOS() {
++	go debug.FreeOSMemory()
++}
+```
+
+**File**: `cli/daemon/run/run.go` (modified, +1/-0)
+```diff
+@@ -374,6 +374,7 @@ func (r *Run) buildAndStart(ctx context.Context, tracker *optracker.OpTracker, i
+ 	if err := ctx.Err(); err != nil {
+ 		return err
+ 	}
++	defer releaseMemoryToOS()
+ 
+ 	for _, ln := range r.Mgr.listeners {
+ 		ln.OnCompileStart(r)
+```
+
+**File**: `cli/daemon/run/tests.go` (modified, +2/-0)
+```diff
+@@ -44,6 +44,7 @@ func (mgr *Manager) Test(ctx context.Context, params TestParams) (err error) {
+ 	}
+ 	bld := builderimpl.Resolve(params.App.Lang(), expSet)
+ 	defer fns.CloseIgnore(bld)
++	defer releaseMemoryToOS()
+ 
+ 	spec, err := mgr.testSpec(ctx, bld, expSet, params.TestSpecParams)
+ 	if err != nil {
+@@ -103,6 +104,7 @@ func (mgr *Manager) TestSpec(ctx context.Context, params TestSpecParams) (*TestS
+ 	}
+ 	bld := builderimpl.Resolve(params.App.Lang(), expSet)
+ 	defer fns.CloseIgnore(bld)
++	defer releaseMemoryToOS()
+ 
+ 	spec, err := mgr.testSpec(ctx, bld, expSet, &params)
+ 	if err != nil {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2664** (2026-11-24): cli/daemon/run: return freed memory to the OS after each build (@twindebank)
+- **PR #2663** (2026-11-24): v2/internals/scan: parse each file in full in the scan workers (@twindebank)
+- **PR #2662** (2026-11-24): cli/daemon/dash: build the app status only when a dashboard tab is open (@twindebank)
+- **PR #2661** (2026-11-24): cli/daemon/engine/trace2/sqlite: write each trace upload in one transaction (@twindebank)
 - **PR #2660** (2026-11-23): runtimes/core: support CHAR(n) columns in sqldb (@fredr)
 - **PR #2659** (2026-11-23): runtimes/js: let DummySocket typecheck against newer @types/node (@fredr)
-- **PR #2653** (2026-11-12): sqldb: close cursors that are left with rows unread (@ekerfelt)
-- **PR #2649** (2026-11-13): runtimes: fix memory leak when internal call fails validation (@kutysam)
-- **PR #2648** (2026-11-10): tsparser: fall back to later export conditions (@eandre)
-- **PR #2646** (2026-11-10): runtimes: re-land GCP IAM database login, keeping the password in ConnString (@ekerfelt)
 
 ---
 
@@ -1976,53 +2198,53 @@ href="https://dashboardbackend.blacksmith.sh/track/run-proof?expires=1798019561&
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. runtimes/core: support CHAR(n) columns in sqldb
+## X. cli/daemon/engine/trace2/sqlite: write each trace upload in one transaction
 
 **RULE**:
-When implementing operations in `runtimes/core/src/sqldb/val.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in encoredev/encore. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cli/cmd/encore/daemon/daemon_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in encoredev/encore. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `94e12a29`: runtimes/core: support CHAR(n) columns in sqldb. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `efc374f9`: cli/daemon/engine/trace2/sqlite: write each trace upload in one transaction. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `runtimes/core/src/sqldb/val.rs`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cli/cmd/encore/daemon/daemon_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-                Type::TEXT | Type::VARCHAR | Type::BPCHAR => val.to_string().to_sql(ty, out),
-                Type::TEXT | Type::VARCHAR | Type::BPCHAR => val.to_string().to_sql(ty, out),
-                Type::TEXT | Type::VARCHAR | Type::BPCHAR => val.to_string().to_sql(ty, out),
-            Type::BYTEA
-                | Type::UUID
-                | Type::TEXT
-                | Type::VARCHAR
-                | Type::BPCHAR
-                | Type::CIDR
-                | Type::INET
-                    Type::TEXT | Type::VARCHAR | Type::BPCHAR => bool.to_string().to_sql(ty, out),
-                    Type::TEXT | Type::VARCHAR | Type::BPCHAR | Type::NAME => str.to_sql(ty, out),
-                    Type::TEXT | Type::VARCHAR | Type::BPCHAR => self.to_string().to_sql(ty, out),
-                    Type::TEXT | Type::VARCHAR | Type::BPCHAR => {
-                    Type::TEXT | Type::VARCHAR | Type::BPCHAR => dt.to_rfc3339().to_sql(ty, out),
-                | Type::BPCHAR
-            Type::TEXT | Type::VARCHAR | Type::BPCHAR | Type::NAME => {
+// An upload of ten request spans, each with its start and end event.
+func BenchmarkEncoreDBTraceUpload(b *testing.B) {
+	db, err := (&Daemon{}).openEncoreDB(filepath.Join(b.TempDir(), "encore.db"))
+	if err != nil {
+		b.Fatal(err)
+	}
+	b.Cleanup(func() { _ = db.Close() })
+	store := sqlite.New(db)
+	meta := &trace2.Meta{AppID: "app"}
+
+	var n uint64
+	for b.Loop() {
+		n++
+		var events []*tracepb2.TraceEvent
+		for span := range uint64(10) {
+			for _, ev := range requestEvents(&tracepb2.TraceID{Low: n}) {
+				ev.SpanId = span + 1
+				events = append(events, ev)
+			}
+		}
+		if err := store.WriteEvents(context.Background(), meta, events); err != nil {
+			b.Fatal(err)
+		}
+	}
+}
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-                Type::TEXT | Type::VARCHAR => val.to_string().to_sql(ty, out),
-                Type::TEXT | Type::VARCHAR => val.to_string().to_sql(ty, out),
-                Type::TEXT | Type::VARCHAR => val.to_string().to_sql(ty, out),
-            Type::BYTEA | Type::UUID | Type::TEXT | Type::VARCHAR | Type::CIDR | Type::INET
-                    Type::TEXT | Type::VARCHAR => bool.to_string().to_sql(ty, out),
-                    Type::TEXT | Type::VARCHAR | Type::NAME => str.to_sql(ty, out),
-                    Type::TEXT | Type::VARCHAR => self.to_string().to_sql(ty, out),
-                    Type::TEXT | Type::VARCHAR => {
-                    Type::TEXT | Type::VARCHAR => dt.to_rfc3339().to_sql(ty, out),
-            Type::TEXT | Type::VARCHAR | Type::NAME => {
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `94e12a29` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `efc374f9` are properly handled with clean fallback behavior.

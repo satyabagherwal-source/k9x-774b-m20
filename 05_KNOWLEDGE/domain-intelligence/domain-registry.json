@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T01:09:28.080Z",
-  "total_records": 2612,
+  "last_updated": "2026-11-25T01:18:36.838Z",
+  "total_records": 2614,
   "domains": {
     "A": {
       "total": 22,
@@ -2432,7 +2432,7 @@
       ]
     },
     "J": {
-      "total": 47,
+      "total": 49,
       "record_ids": [
         "DOM-J-C14FC2D6",
         "DOM-J-B305372A",
@@ -2480,7 +2480,9 @@
         "domain_intelligence-search-distribution-intelligence-open-source-legal-opencontracts-learnings-core-",
         "domain_intelligence-search-distribution-intelligence-xerj-org-xerj-core-invariants",
         "domain_intelligence-search-distribution-intelligence-kubeedge-kubeedge-core-invariants",
-        "domain_intelligence-search-distribution-intelligence-kubeedge-kubeedge-learnings-core-invariants"
+        "domain_intelligence-search-distribution-intelligence-kubeedge-kubeedge-learnings-core-invariants",
+        "domain_intelligence-search-distribution-intelligence-encoredev-encore-core-invariants",
+        "domain_intelligence-search-distribution-intelligence-encoredev-encore-learnings-core-invariants"
       ]
     },
     "K": {
@@ -8382,8 +8384,8 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-learnings-technical-construction-intelligence-zvec-ai-zvec-gre.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "414d004fa552ab1aa527ceecf7adc0372a4d96607c4cd062dfb51d0bb8032167",
-      "created_at": "2026-11-25T00:52:40.988Z"
+      "content_hash": "35037beaf31c93482a11bdb1f0ffdec73d154c4941a8537af7cec9d013651ae6",
+      "created_at": "2026-11-25T01:18:35.205Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -15403,8 +15405,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-bootsplash-learnings-technical-construction-intelligence-zo.md",
       "repository": "zoontek-react-native-bootsplash-learnings",
-      "content_hash": "f6d2b09d87e64a807f956ad0bef652b692a0c56d860f51cf82d93a745c30af35",
-      "created_at": "2026-11-24T19:27:48.464Z"
+      "content_hash": "df9aaf39db1952d69f6b60e9f7d1b2e2ca51dae977f49053fca3f5bd7b0b5e28",
+      "created_at": "2026-11-25T01:18:36.838Z"
     },
     "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari": {
       "record_id": "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari",
@@ -43837,6 +43839,24 @@
       "repository": "tw93-mole-learnings",
       "content_hash": "012885b5b96e2554a9783695619cd69ac4a6a5e6573266506516f7fb8d1c07b9",
       "created_at": "2026-11-25T01:09:26.009Z"
+    },
+    "domain_intelligence-search-distribution-intelligence-encoredev-encore-core-invariants": {
+      "record_id": "domain_intelligence-search-distribution-intelligence-encoredev-encore-core-invariants",
+      "domain_letter": "J",
+      "title": "Search & Distribution Intelligence: encoredev/encore Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-J-encoredev-encore-search-distribution-intelligence-encoredev-encore-core-invarian.md",
+      "repository": "encoredev/encore",
+      "content_hash": "70dfd00b2f24a9c097bf20c4a676bbb965f55a23ee8a56ee589890cc0728eea0",
+      "created_at": "2026-11-25T01:18:29.414Z"
+    },
+    "domain_intelligence-search-distribution-intelligence-encoredev-encore-learnings-core-invariants": {
+      "record_id": "domain_intelligence-search-distribution-intelligence-encoredev-encore-learnings-core-invariants",
+      "domain_letter": "J",
+      "title": "Search & Distribution Intelligence: encoredev-encore-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-J-encoredev-encore-learnings-search-distribution-intelligence-encoredev-encore-lea.md",
+      "repository": "encoredev-encore-learnings",
+      "content_hash": "0a66da50039d229b7fe7f6f545b46d2adca29ee5ea4f18ccef9524b78883986a",
+      "created_at": "2026-11-25T01:18:33.672Z"
     }
   }
 }

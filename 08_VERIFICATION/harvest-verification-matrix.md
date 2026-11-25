@@ -12883,3 +12883,4 @@
 | `CYCLE-20261125-3NPJ` | `2026-11-25T01:01:01.255Z` | `aws/aws-cdk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10411` | Yes (`5084389c...`) |
 | `CYCLE-20261125-EC2M` | `2026-11-25T01:09:19.390Z` | `tw93/Mole` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10412` | Yes (`ea317834...`) |
 | `CYCLE-20261125-EE4H` | `2026-11-25T01:09:22.049Z` | `infracost/infracost` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10413` | Yes (`415eee6a...`) |
+| `CYCLE-20261125-Q411` | `2026-11-25T01:18:28.837Z` | `encoredev/encore` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10414` | Yes (`cba3a969...`) |

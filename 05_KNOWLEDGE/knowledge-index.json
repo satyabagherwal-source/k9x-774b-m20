@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-25T01:09:28.281Z",
+  "last_updated": "2026-11-25T01:18:37.083Z",
   "total_verified_learnings": 9107,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25099,
+  "total_items": 25103,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112066,9 +112066,9 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "414d004fa552ab1aa527ceecf7adc0372a4d96607c4cd062dfb51d0bb8032167",
+      "content_hash": "35037beaf31c93482a11bdb1f0ffdec73d154c4941a8537af7cec9d013651ae6",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T00:52:40.988Z"
+      "persisted_at": "2026-11-25T01:18:35.205Z"
     },
     "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona",
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "17b679f85b60bd03bcef978eecab27803ff496ffb3ae9018dc4b52a37c9ac4eb",
+      "content_hash": "1e7089c767d9f19f8660da6b610527524a416ea4ade8811475bf506b3ab36ef4",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T00:52:41.203Z"
+      "persisted_at": "2026-11-25T01:18:35.459Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "28fa4430a7e14032b2b5dc6e7ffc2282ea83ac33dbe2e272e727e074e55ccfa5",
+      "content_hash": "07cdd6db5d67ce4ad377e0b95c0674a8801d1376af12993f07e103bf930caab3",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T00:52:41.380Z"
+      "persisted_at": "2026-11-25T01:18:35.648Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -112377,10 +112377,10 @@
       "relative_path": "02_AGENT_INTELLIGENCE/encoredev-encore-agent-contract-encoredev-encore-autonomous-specialist-persona.md",
       "title": "Agent Contract: encoredev/encore Autonomous Specialist Persona",
       "repository": "encoredev/encore",
-      "source_version": "94e12a29",
-      "content_hash": "6678743b30b18bd13dfb0b08738fe3333c81b8ef183814d6b47b2d28a4f6817a",
-      "domain_letter": "F",
-      "persisted_at": "2026-11-24T06:38:29.258Z"
+      "source_version": "4bd01c70",
+      "content_hash": "9cf9a07fc458256f8a435fb73a4917118db6561a12ca45538215ac29f91b6d3c",
+      "domain_letter": "J",
+      "persisted_at": "2026-11-25T01:18:29.676Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-encoredev-encore": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-encoredev-encore",
@@ -112389,10 +112389,10 @@
       "relative_path": "08_VERIFICATION/encoredev-encore-verification-protocol-empirical-defect-shield-for-encoredev-enc.md",
       "title": "Verification Protocol: Empirical Defect Shield for encoredev/encore",
       "repository": "encoredev/encore",
-      "source_version": "94e12a29",
-      "content_hash": "971e23f5a0127adfffe836aa1a6a3d9c2ee71e3cb3dca4ca8b391020dedaaa88",
+      "source_version": "4bd01c70",
+      "content_hash": "b40a33d46de96702e5d6efbe0b7fc9e7b897049b0441a7d27a5aabbcbcbb4a56",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T06:38:29.403Z"
+      "persisted_at": "2026-11-25T01:18:29.866Z"
     },
     "candidate_directive-ipn-ipnlocal-don-t-write-a-netmap-cache-without-cachenetworkmaps-22335": {
       "item_id": "candidate_directive-ipn-ipnlocal-don-t-write-a-netmap-cache-without-cachenetworkmaps-22335",
@@ -112522,9 +112522,9 @@
       "title": "Agent Contract: encoredev-encore-learnings Autonomous Specialist Persona",
       "repository": "encoredev-encore-learnings",
       "source_version": "HEAD",
-      "content_hash": "829879580530c1a6734afe7c1ae166d691555f3fdb067614269da8c1d3cac09d",
-      "domain_letter": "F",
-      "persisted_at": "2026-11-24T06:38:36.738Z"
+      "content_hash": "8fa3076b655e3b3045eb1a44b4a82fc9b6534c2aff03c106ea3488ffd930eb9e",
+      "domain_letter": "J",
+      "persisted_at": "2026-11-25T01:18:33.905Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-encoredev-encore-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-encoredev-encore-learnings",
@@ -112534,9 +112534,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for encoredev-encore-learnings",
       "repository": "encoredev-encore-learnings",
       "source_version": "HEAD",
-      "content_hash": "56ed0c1ad8907cb68bb6b9a6674f19bad234ee5b47b513b8984806e7283d5657",
+      "content_hash": "bd23e1adb5a9ad561c5587c965bd5fe3fb3cb93f403ba451033739c87b9def08",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T06:38:36.874Z"
+      "persisted_at": "2026-11-25T01:18:34.101Z"
     },
     "domain_intelligence-research-knowledge-intelligence-apple-lensvlm-9b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-apple-lensvlm-9b-core-invariants",
@@ -229566,9 +229566,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "f6d2b09d87e64a807f956ad0bef652b692a0c56d860f51cf82d93a745c30af35",
+      "content_hash": "df9aaf39db1952d69f6b60e9f7d1b2e2ca51dae977f49053fca3f5bd7b0b5e28",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T19:27:48.464Z"
+      "persisted_at": "2026-11-25T01:18:36.838Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas",
@@ -229578,9 +229578,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-bootsplash-learnings",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "a9d27aac0bc63c9fb70505bc54e466b93fc278eaaad84d47c7854b7045ee41d9",
+      "content_hash": "779ce0ed6321003ecc26170f51ae8d0e6da4dcc56f2f98c9693d7d05df70e592",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T19:27:48.645Z"
+      "persisted_at": "2026-11-25T01:18:37.083Z"
     },
     "learn-github-onehumanbeing-esp32-iphone-agent": {
       "learning_id": "learn-github-onehumanbeing-esp32-iphone-agent",
@@ -304935,13 +304935,13 @@
       "item_id": "candidate_directive-dead-license-badge-link-in-readme",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-7510-dead-license-badge-link-in-readme.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-QA0R-dead-license-badge-link-in-readme.md",
       "title": "dead license badge link in README",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "77ce970e339134b21c35de93030a270311fc4097f54d22a26f7d1e3284b01341",
+      "content_hash": "9ddc997870943016c74c27539df953c8793d80deea9f7439cc002c108ac4a275",
       "domain_letter": "I",
-      "persisted_at": "2026-11-24T19:27:48.277Z"
+      "persisted_at": "2026-11-25T01:18:36.603Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-bootsplash-core-invaria": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-bootsplash-core-invaria",
@@ -335116,14 +335116,19 @@
       "slug": "encoredev-encore",
       "platform": "github",
       "source_url": "https://github.com/encoredev/encore",
-      "source_version": "94e12a29",
-      "content_hash": "32dc69d610fe7e06397ca2fbe7a805a4c3e76c4faa787f45aba2830e771fec43",
+      "source_version": "4bd01c70",
+      "content_hash": "cba3a969ada7a63c91335a51ec4ff2cb4438eb55f1eb6e6b75ea2358ae6c6b3b",
       "dossier_path": "07_PROJECT_LEARNING/encoredev-encore-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/encoredev-encore-learnings.md",
       "promoted_rules": [
         {
           "number": 10221,
           "title": "runtimes/core: support CHAR(n) columns in sqldb",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10414,
+          "title": "cli/daemon/engine/trace2/sqlite: write each trace upload in one transaction",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -335132,7 +335137,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T06:38:28.474Z",
+      "verified_at": "2026-11-25T01:18:28.561Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -341912,13 +341917,13 @@
       "item_id": "candidate_directive-rust-bind-bare-calls-to-the-enclosing-module-s-items",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-SXJ1-rust-bind-bare-calls-to-the-enclosing-module-s-items.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-Q8RD-rust-bind-bare-calls-to-the-enclosing-module-s-items.md",
       "title": "rust): bind bare calls to the enclosing module's items",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "d439d6b7a7003737961908d42ce99765bcafabba4f7ac86ef4b05d5487fd6a0a",
+      "content_hash": "083a228af4eec310af60d24d5d757e8ac252be90d827ae0c5ff585aac975d546",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T00:52:40.778Z"
+      "persisted_at": "2026-11-25T01:18:34.976Z"
     },
     "domain_intelligence-content-information-intelligence-rollup-rollup-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-rollup-rollup-learnings-core-invariants",
@@ -343053,6 +343058,56 @@
       "content_hash": "78db4af7588ebf381dcebe6dc4173ddbd36aa82bd5518b8c16d9447947082dc6",
       "domain_letter": "I",
       "persisted_at": "2026-11-25T01:09:26.939Z"
+    },
+    "rule-10414": {
+      "learning_id": "rule-10414",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10414,
+      "title": "cli/daemon/engine/trace2/sqlite: write each trace upload in one transaction",
+      "source_url": "https://github.com/encoredev/encore",
+      "source_version": "4bd01c70",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T01:18:28.561Z"
+    },
+    "candidate_directive-cli-daemon-engine-trace2-sqlite-write-each-trace-upload-in-one-transaction": {
+      "item_id": "candidate_directive-cli-daemon-engine-trace2-sqlite-write-each-trace-upload-in-one-transaction",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-Q7K9-cli-daemon-engine-trace2-sqlite-write-each-trace-upload-in-one-transaction.md",
+      "title": "cli/daemon/engine/trace2/sqlite: write each trace upload in one transaction",
+      "repository": "encoredev-encore-learnings",
+      "source_version": "HEAD",
+      "content_hash": "9050866831371ae22e4160e5a65d6adf16d4ee171a79b4a5c71b0840a21b5eaf",
+      "domain_letter": "J",
+      "persisted_at": "2026-11-25T01:18:33.423Z"
+    },
+    "domain_intelligence-search-distribution-intelligence-encoredev-encore-core-invariants": {
+      "item_id": "domain_intelligence-search-distribution-intelligence-encoredev-encore-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-J-encoredev-encore-search-distribution-intelligence-encoredev-encore-core-invarian.md",
+      "title": "Search & Distribution Intelligence: encoredev/encore Core Invariants",
+      "repository": "encoredev/encore",
+      "source_version": "4bd01c70",
+      "content_hash": "70dfd00b2f24a9c097bf20c4a676bbb965f55a23ee8a56ee589890cc0728eea0",
+      "domain_letter": "J",
+      "persisted_at": "2026-11-25T01:18:29.414Z"
+    },
+    "domain_intelligence-search-distribution-intelligence-encoredev-encore-learnings-core-invariants": {
+      "item_id": "domain_intelligence-search-distribution-intelligence-encoredev-encore-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-J-encoredev-encore-learnings-search-distribution-intelligence-encoredev-encore-lea.md",
+      "title": "Search & Distribution Intelligence: encoredev-encore-learnings Core Invariants",
+      "repository": "encoredev-encore-learnings",
+      "source_version": "HEAD",
+      "content_hash": "0a66da50039d229b7fe7f6f545b46d2adca29ee5ea4f18ccef9524b78883986a",
+      "domain_letter": "J",
+      "persisted_at": "2026-11-25T01:18:33.672Z"
     }
   },
   "ai-builder-brain": {

@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-25T01:09:25.387Z",
-    "lastVerified": "2026-11-25T01:09:25.387Z",
+    "lastChecked": "2026-11-25T01:18:32.600Z",
+    "lastVerified": "2026-11-25T01:18:32.600Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -375,12 +375,12 @@
     "lastVerified": "2026-11-24T19:27:45.062Z"
   },
   "nucleoidai-nucleoid": {
-    "name": "NucleoidAI/Nucleoid",
+    "name": "Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-25T00:43:41.554Z",
-    "lastVerified": "2026-11-25T00:43:41.554Z",
+    "lastChecked": "2026-11-25T01:18:28.946Z",
+    "lastVerified": "2026-11-25T01:18:28.946Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -389,7 +389,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "08ccc24f"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -548,8 +549,8 @@
     "officialUrl": "https://github.com/nolabs-ai/nono",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-24T20:38:32.769Z",
-    "lastVerified": "2026-11-24T20:38:32.769Z",
+    "lastChecked": "2026-11-25T01:18:24.020Z",
+    "lastVerified": "2026-11-25T01:18:24.020Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nolabs-ai-nono",
@@ -3051,12 +3052,12 @@
     "revisionIdentifier": "859efa1c"
   },
   "liyupi-yu-ai-agent": {
-    "name": "liyupi/yu-ai-agent",
+    "name": "yu-ai-agent",
     "officialUrl": "https://github.com/liyupi/yu-ai-agent",
     "sourceType": "github",
     "technology": "Java",
-    "lastChecked": "2026-11-24T05:14:14.272Z",
-    "lastVerified": "2026-11-24T05:14:14.272Z",
+    "lastChecked": "2026-11-25T01:18:26.520Z",
+    "lastVerified": "2026-11-25T01:18:26.520Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-liyupi-yu-ai-agent",
@@ -3065,7 +3066,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "8b08b4bd"
   },
   "asciinema-asciinema": {
     "name": "asciinema",
@@ -5315,14 +5317,14 @@
     "officialUrl": "https://github.com/encoredev/encore",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-24T06:38:27.589Z",
-    "lastVerified": "2026-11-24T06:38:27.589Z",
+    "lastChecked": "2026-11-25T01:18:27.082Z",
+    "lastVerified": "2026-11-25T01:18:27.082Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-encoredev-encore",
-    "contentHash": "32dc69d610fe7e06397ca2fbe7a805a4c3e76c4faa787f45aba2830e771fec43",
+    "contentHash": "cba3a969ada7a63c91335a51ec4ff2cb4438eb55f1eb6e6b75ea2358ae6c6b3b",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -7912,9 +7914,9 @@
   "jordanbaird-ice": {
     "name": "Ice",
     "officialUrl": "https://github.com/jordanbaird/Ice",
-    "lastChecked": "2026-11-22T12:19:21.115Z",
+    "lastChecked": "2026-11-25T01:18:18.891Z",
     "revisionIdentifier": "11edd391",
-    "lastVerified": "2026-11-22T12:19:21.115Z"
+    "lastVerified": "2026-11-25T01:18:18.891Z"
   },
   "ouch-org-ouch": {
     "name": "ouch",
@@ -8344,9 +8346,9 @@
   "imsnif-diskonaut": {
     "name": "diskonaut",
     "officialUrl": "https://github.com/imsnif/diskonaut",
-    "lastChecked": "2026-11-23T22:23:45.503Z",
+    "lastChecked": "2026-11-25T01:18:13.915Z",
     "revisionIdentifier": "65cd8290",
-    "lastVerified": "2026-11-23T22:23:45.503Z"
+    "lastVerified": "2026-11-25T01:18:13.915Z"
   },
   "hf-openbmb-minicpm-v-4.7-35b-a3b": {
     "name": "openbmb/MiniCPM-V-4.7-35B-A3B",
@@ -12040,9 +12042,9 @@
   "testing-library-react-testing-library": {
     "name": "react-testing-library",
     "officialUrl": "https://github.com/testing-library/react-testing-library",
-    "lastChecked": "2026-11-21T01:43:39.345Z",
+    "lastChecked": "2026-11-25T01:18:16.464Z",
     "revisionIdentifier": "20ce75f2",
-    "lastVerified": "2026-11-21T01:43:39.345Z"
+    "lastVerified": "2026-11-25T01:18:16.464Z"
   },
   "callstack-react-native-builder-bob": {
     "name": "react-native-builder-bob",

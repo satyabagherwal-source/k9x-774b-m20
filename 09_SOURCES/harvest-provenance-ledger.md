@@ -12916,3 +12916,4 @@ Every entry in this ledger must capture:
 | `learn-github-aws-aws-cdk` | `https://github.com/aws/aws-cdk` | `7a66ccad` | Multi-dimensional audit evidence | 2026-11-25T01:01:01.260Z |
 | `learn-github-tw93-mole` | `https://github.com/tw93/Mole` | `ee710b48` | Multi-dimensional audit evidence | 2026-11-25T01:09:19.395Z |
 | `learn-github-infracost-infracost` | `https://github.com/infracost/infracost` | `aa717670` | Multi-dimensional audit evidence | 2026-11-25T01:09:22.054Z |
+| `learn-github-encoredev-encore` | `https://github.com/encoredev/encore` | `4bd01c70` | Multi-dimensional audit evidence | 2026-11-25T01:18:28.842Z |

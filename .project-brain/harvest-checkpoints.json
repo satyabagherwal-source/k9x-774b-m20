@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-25T01:09:22.072Z",
+  "last_updated": "2026-11-25T01:18:28.863Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7476,14 +7476,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-encoredev-encore",
-      "content_hash": "32dc69d610fe7e06397ca2fbe7a805a4c3e76c4faa787f45aba2830e771fec43",
-      "verified_at": "2026-11-24T06:38:28.688Z",
+      "content_hash": "cba3a969ada7a63c91335a51ec4ff2cb4438eb55f1eb6e6b75ea2358ae6c6b3b",
+      "verified_at": "2026-11-25T01:18:28.862Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T06:38:28.688Z"
+      "last_updated": "2026-11-25T01:18:28.862Z"
     },
     "rqlite/rqlite": {
       "repository": "rqlite/rqlite",

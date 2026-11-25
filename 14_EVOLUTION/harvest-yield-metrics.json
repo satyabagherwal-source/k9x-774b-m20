@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T01:09:22.059Z",
-  "total_cycles_completed": 12237,
-  "total_learnings_persisted": 12237,
-  "total_rules_promoted": 11286,
+  "last_updated": "2026-11-25T01:18:28.849Z",
+  "total_cycles_completed": 12238,
+  "total_learnings_persisted": 12238,
+  "total_rules_promoted": 11287,
   "history": [
-    {
-      "timestamp": "2026-11-24T12:27:33.993Z",
-      "repository": "slatedb/slatedb",
-      "learningId": "learn-github-slatedb-slatedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-24T12:36:20.263Z",
       "repository": "mfontanini/presenterm",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-25T01:09:22.059Z",
       "repository": "infracost/infracost",
       "learningId": "learn-github-infracost-infracost",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T01:18:28.849Z",
+      "repository": "encoredev/encore",
+      "learningId": "learn-github-encoredev-encore",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
