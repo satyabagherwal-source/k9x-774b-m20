@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T01:44:37.997Z",
+  "last_updated": "2026-11-25T01:52:59.348Z",
   "directives": [
     {
       "id": "CD-001",
@@ -58661,6 +58661,66 @@
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-25",
       "domain_letter": "H"
+    },
+    {
+      "id": "CD-YG1O",
+      "directive_title": "linter/eslint/no-await-in-loop): report awaits in unbraced if/switch/try loop bo",
+      "source_repo": "oxc-project-oxc-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-YG1O-linter-eslint-no-await-in-loop-report-awaits-in-unbraced-if-switch-try-loop-bo.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-25",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-YGVA",
+      "directive_title": "fix maintainer validation for reopened spam PRs",
+      "source_repo": "mochajs-mocha-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-YGVA-fix-maintainer-validation-for-reopened-spam-prs.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-25",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-YHN5",
+      "directive_title": "Run CodeQL compiled analysis only on shipping builds",
+      "source_repo": "microsoft-react-native-windows-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-YHN5-run-codeql-compiled-analysis-only-on-shipping-builds.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-25",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-E0398A",
+      "directive_title": "linter/eslint/no-await-in-loop): report awaits in unbraced if/switch/try loop bo",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "oxc-project-oxc",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-E0398A-linter-eslint-no-await-in-loop-report-aw.md",
+      "staged_date": "2026-11-25"
+    },
+    {
+      "id": "CD-REV-0B0930",
+      "directive_title": "fix maintainer validation for reopened spam PRs",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "mochajs-mocha",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-0B0930-fix-maintainer-validation-for-reopened-s.md",
+      "staged_date": "2026-11-25"
+    },
+    {
+      "id": "CD-REV-A4C223",
+      "directive_title": "Run CodeQL compiled analysis only on shipping builds",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "microsoft-react-native-windows",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-A4C223-run-codeql-compiled-analysis-only-on-shi.md",
+      "staged_date": "2026-11-25"
     }
   ]
 }

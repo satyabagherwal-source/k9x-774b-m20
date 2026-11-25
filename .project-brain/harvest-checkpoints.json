@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-25T01:44:32.059Z",
+  "last_updated": "2026-11-25T01:52:52.809Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -11346,14 +11346,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-microsoft-react-native-windows",
-      "content_hash": "21204bd230a767f4dcc1854f04d5d5c3c7659078f5627bbbc87830e396b7f361",
-      "verified_at": "2026-11-22T13:59:08.177Z",
+      "content_hash": "7b3df9c74a1bc2ff4fb45797ce89fb24f91626c5d8ce776f0b5f686b206c90db",
+      "verified_at": "2026-11-25T01:52:52.809Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T13:59:08.177Z"
+      "last_updated": "2026-11-25T01:52:52.809Z"
     },
     "paradedb/paradedb": {
       "repository": "paradedb/paradedb",
@@ -11631,14 +11631,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-oxc-project-oxc",
-      "content_hash": "0d1a232552241a56c81757f7329020f8dd8ad99df03f1cd34de296325a0774bc",
-      "verified_at": "2026-11-23T23:09:51.810Z",
+      "content_hash": "89b48509c4e84459b6269f1062180d9be0f301689fe7b322e8d64a158f954e29",
+      "verified_at": "2026-11-25T01:52:49.199Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T23:09:51.810Z"
+      "last_updated": "2026-11-25T01:52:49.199Z"
     },
     "pointfreeco/swift-composable-architecture": {
       "repository": "pointfreeco/swift-composable-architecture",
@@ -15381,14 +15381,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mochajs-mocha",
-      "content_hash": "d92fbe8d482bbb44e37c471cb426b12ed0f519d136e2db6b849c05e4b538f812",
-      "verified_at": "2026-10-30T21:32:49.766Z",
+      "content_hash": "d2e8a97fe0e050a6f77bf7f7e44cdeaf65ac58f05cf54cc2be06f0c252297cf3",
+      "verified_at": "2026-11-25T01:52:50.144Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T21:32:49.766Z"
+      "last_updated": "2026-11-25T01:52:50.144Z"
     },
     "justjavac/free-programming-books-zh_CN": {
       "repository": "justjavac/free-programming-books-zh_CN",

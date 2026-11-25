@@ -4,24 +4,24 @@
 {
   "source_repository": "oxc-project/oxc",
   "source_url": "https://github.com/oxc-project/oxc",
-  "source_version": "f9e90dec",
+  "source_version": "e87c19c1",
   "license": "MIT",
-  "timestamp": "2026-11-22T14:56:19.849Z",
+  "timestamp": "2026-11-25T01:52:49.440Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-oxc-project-oxc",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [oxc-project/oxc](https://github.com/oxc-project/oxc) (Revision: `f9e90dec`).  
-> **License**: MIT | **Timestamp**: `2026-11-22T14:56:19.849Z`  
+> **Provenance**: Harvested from [oxc-project/oxc](https://github.com/oxc-project/oxc) (Revision: `e87c19c1`).  
+> **License**: MIT | **Timestamp**: `2026-11-25T01:52:49.440Z`  
 > **Learning ID**: `learn-github-oxc-project-oxc`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), B (Product Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 72%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 76%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from oxc-project/oxc:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/oxc-project-oxc-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/oxc-project/oxc](https://github.com/oxc-project/oxc))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T14:56:17.916Z  
+> **Harvest Timestamp**: 2026-11-25T01:52:47.856Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: ⚓ A collection of high-performance JavaScript tools.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 23539 stars
+- **Stars / Engagement**: 23595 stars
 
 ---
 
@@ -1062,14 +1062,16 @@ impl ConfigScopes {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #29987** (2026-11-22): **perf(oxlint): convert diagnostic offsets to positions with a line index**
-  *Symptoms*: Oxlint language server builds positions for all diagnostics. The current behavior scans from the start of the file to the offset each time. This change adds an index for each new line and significantly reduces the amount of scanning needed.  Some performance numbers from Claude are below. Ran against the TypeScript checker.ts file which is pretty large, but shows how expensive this gets on bigger files.  **Setup** - **Binaries:** `oxlint --lsp` built in release mode from your commit `fc9c574978` (new) and its parent `209f078ba8` (old). Both builds had fat LTO turned off so they'd compile faster; that applies equally to both.  **Results** (median time per diagnostics request)  | `.oxlintrc.json` categories | Diagnostics returned | Old | New | Speedup | |---|---|---|---|---| | default | 61 | 628 ms | 31.5 ms | ~20× | | `suspicious` | 1,674 | 11.3 s | 51 ms | ~220× | | `suspicious` + `pedantic` | 5,462 | 45.3 s | 99 ms | ~460× |   Initial change by Claude, reviewed/edited by me.
-
-- **Issue #29982** (2026-11-21): **feat(linter/typescript/no-unsafe-class-instance-assignment): add rule**
-  *Symptoms*: Expose `typescript/no-unsafe-class-instance-assignment` as an opt-in, type-aware rule in the `suspicious` category. The CLI fixture verifies that it reports a structurally compatible object literal and an unrelated class instance, while accepting instances of the expected class and its subclasses. [Upstream TSGolint rule](https://github.com/oxc-project/tsgolint/pull/1372)  AI assistance: Codex (GPT-6). The exact model build and reasoning effort were unavailable. 
+- **Issue #30199** (2026-11-24): **fix(lexer)!: give BigInt literals exact values in a bigints lane**
+  *Symptoms*: - BigInt values went into the f64 numbers lane, so anything above 2^53 was rounded: 9007199254740993n read as 9007199254740992, where V8 gives the exact value - BigInt values now go in a new bigints lane, as decimal digits without separators or the n, in the cooked bytes like strings; numbers only holds Number values, which breaks code that counted BigInts there - Hex, octal and binary BigInts are converted on a cold path, through a u64 when they fit and base 10^9 limbs above that, so Number tokens are untouched and perf is neutral  Closes #29856  ### Example  Input:  ```js x = [9007199254740993n, 0x10000000000000000n, 1.5]; ```  Before output:  ```text numbers: [9007199254740992.0, 1.8446744073709552e19, 1.5] ```  After output:  ```text numbers: [1.5] bigints: ["9007199254740993", "18446744073709551616"] ```  V8 gives 9007199254740993n, 18446744073709551616n and 1.5. No playground link, as the playground doesn't run oxc_lexer. 
   **Post-Mortem & Fix Analysis**:
-  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"ce4e5e102bf4c9a26d432f7f0b580949a41e6850","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"},"security_review":{"commit_sha":null,"has_any_findings":null,"has_unresolved_findings":null,"status":null}} -->  <details> <summary><strong>Codex Review Summary</strong>: ✅ Completed</summary>  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-11-21T17:01:15.206540Z">2026-11-21T17:01:15.206540Z</relative-time> | `ce4e5e1` | New commits |    <details> <summary>ℹ️ About Codex in GitHub</summary> <br/>  [Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/general). Reviews are triggered when you - Open a pull request for review - Mark a draft as ready - Co
-  > <!-- __CODSPEED_PERFORMANCE_REPORT_COMMENT__ --> ## Merging this PR will **not alter performance**   `✅ 5` untouched benchmarks   `⏩ 105` skipped benchmarks[^skipped]        ---  <sub>Comparing <code>codex/no-unsafe-class-instance-assignment</code> (ce4e5e1) with <code>main</code> (27440dc)[^unexpected-base]</sub>  <a href="https://app.codspeed.io/oxc-project/oxc/branches/codex%2Fno-unsafe-class-instance-assignment?utm_source=github&utm_medium=comment-v2&utm_content=button">   <picture>     <source media="(prefers-color-scheme: dark)" srcset="https://codspeed.io/pr-report/open-in-codspeed-dark.svg">     <source media="(prefers-color-scheme: light)" srcset="https://codspeed.io/pr-report/open-in-codspeed-light.svg">     <img alt="Open in CodSpeed" src="https://codspeed.io/pr-report/open-in-codspeed-light.svg" width="169" height="32">   </picture> </a>   [^skipped]: 105 benchmarks were skipped, so the baseline results were used instead. If they were deleted from the codebase, [click here 
+  > <!-- __CODSPEED_PERFORMANCE_REPORT_COMMENT__ --> ## Merging this PR will **not alter performance** > [!WARNING] > oxc-project has exceeded the Hobby plan limit of 5 active contributors. [Upgrade your plan](https://app.codspeed.io/settings/organizations/oxc-project/billing?utm_source=github&utm_medium=comment-v2&utm_content=contributor_cap) or [apply to the open source program](https://app.codspeed.io/oss-program-application?owner=oxc-project&utm_source=github&utm_medium=comment-v2&utm_content=contributor_cap) by December 8, 2026 to keep using CodSpeed.    `✅ 91` untouched benchmarks   `⏩ 19` skipped benchmarks[^skipped]        ---  <sub>Comparing <code>fix/lexer-bigint-values</code> (f083ba5) with <code>main</code> (bddf793)</sub>  <a href="https://app.codspeed.io/oxc-project/oxc/branches/fix%2Flexer-bigint-values?utm_source=github&utm_medium=comment-v2&utm_content=button">   <picture>     <source media="(prefers-color-scheme: dark)" srcset="https://codspeed.io/pr-report/open-in-codspe
+
+- **Issue #30198** (2026-11-24): **fix(linter): name the type-aware linter generically in its errors**
+  *Symptoms*: **TL;DR:** Oxlint's type-aware errors no longer name tsgolint, as since #28751 the linter they come from may be tsrs-lint.  ## Changes  Since #28751, `try_find_tsgolint_executable` prefers `tsrs-lint` over `tsgolint`, yet the errors of a type-aware run still name tsgolint, so a user running tsrs-lint is told that tsgolint failed. In `crates/oxc_linter/src/tsgolint.rs`, every message that does not depend on the backend now says "type-aware linter", the term #28751 already uses for the not-found error: the run failure, the missing `OXLINT_TSGOLINT_PATH` file, the spawn, stdin and stdout failures, and the three payload-parse errors. These messages reach both the CLI and the language server.  ```sh OXLINT_TSGOLINT_PATH=./missing/tsrs-lint oxlint --type-aware ```  Before:  ```text Failed to find tsgolint executable: OXLINT_TSGOLINT_PATH points to './missing/tsrs-lint' which does not exist ```  After:  ```text Failed to find type-aware linter executable: OXLINT_TSGOLINT_PATH points to './missing/tsrs-lint' which does not exist ```  AI disclosure: written with Claude Opus 5.5, reasoning effort Medium. 
+  **Post-Mortem & Fix Analysis**:
+  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"7f86838fc4690d0f65e884d6dc6a8206b69595df","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"},"security_review":{"commit_sha":null,"has_any_findings":null,"has_unresolved_findings":null,"status":null}} -->  <details> <summary><strong>Codex Review Summary</strong>: ✅ Completed</summary>  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-11-24T18:56:54.919528Z">2026-11-24T18:56:54.919528Z</relative-time> | `7f86838` | Draft marked ready |    <details> <summary>ℹ️ About Codex in GitHub</summary> <br/>  [Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/general). Reviews are triggered when you - Open a pull request for review - Mark a draft as rea
+  > <!-- __CODSPEED_PERFORMANCE_REPORT_COMMENT__ --> ## Merging this PR will **not alter performance** > [!WARNING] > oxc-project has exceeded the Hobby plan limit of 5 active contributors. [Upgrade your plan](https://app.codspeed.io/settings/organizations/oxc-project/billing?utm_source=github&utm_medium=comment-v2&utm_content=contributor_cap) or [apply to the open source program](https://app.codspeed.io/oss-program-application?owner=oxc-project&utm_source=github&utm_medium=comment-v2&utm_content=contributor_cap) by December 8, 2026 to keep using CodSpeed.    `✅ 5` untouched benchmarks   `⏩ 105` skipped benchmarks[^skipped]        ---  <sub>Comparing <code>filipfalcon:type-aware-linter-errors</code> (7f86838) with <code>main</code> (d1fd8b5)</sub>  <a href="https://app.codspeed.io/oxc-project/oxc/branches/filipfalcon%3Atype-aware-linter-errors?utm_source=github&utm_medium=comment-v2&utm_content=button">   <picture>     <source media="(prefers-color-scheme: dark)" srcset="https://codspeed.i
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1086,806 +1088,999 @@ impl ConfigScopes {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `08023adc` (2026-11-21)
-**Commit Message**: fix(transformer): keep TypeScript assign semantics for preserved classes (#29930)
+### Incident Patch 1: `727f784f` (2026-11-24)
+**Commit Message**: fix(linter/eslint/no-await-in-loop): report awaits in unbraced if/switch/try loop bodies (#30136)
 
-Since #29748, classes that keep decorators or `accessor` for a
-downstream transform skip TypeScript's `useDefineForClassFields: false`
-conversion entirely. Their other fields stay define-semantics fields
-instead of becoming assignments. Found while testing rolldown.
+Closes #30134.
+
+`no-await-in-loop` missed `await` inside a loop body that was an
+unbraced `if`, `switch`, `try`, labeled, or `with` statement. For
+example, `for (const value of values) if (value) await foo(value);`
+passed even though ESLint reports it.
+
+## Example
+
+```js
+const foo = async (value) => value;
+
+export const bar = async (values) => {
+  for (const value of values) if (value) await foo(value);
+};
+```
+
+Command:
+
+```sh
+oxlint -A all -D no-await-in-loop --threads=1 foo.js
+```
+
+Before:
+
+```text
+Found 0 warnings and 0 errors.
+```
+
+After:
+
+```text
+  x eslint(no-await-in-loop): Unexpected `await` inside a loop.
+   ,-[foo.js:4:42]
+ 3 | export const bar = async (values) => {
+ 4 |   for (const value of values) if (value) await foo(value);
+   :                                          ^^^^^
+ 5 | };
+   `----
+```
+
+ESLint 10.15.0 reports the same location: `4:42`.
+
+## Implementation
+
+The rule walks up from each `await` until it reaches a function, arrow
+function, or `for await...of` boundary. At each step, it checks whether
+the current node is the loop body, test, or update.
+
+That check u
+
+**File**: `crates/oxc_linter/src/rules/eslint/no_await_in_loop.rs` (modified, +20/-68)
+```diff
+@@ -1,7 +1,4 @@
+-use oxc_ast::{
+-    AstKind,
+-    ast::{Expression, Statement},
+-};
++use oxc_ast::AstKind;
+ use oxc_diagnostics::OxcDiagnostic;
+ use oxc_macros::declare_oxc_lint;
+ use oxc_span::{GetSpan, Span};
+@@ -106,100 +103,46 @@ impl Rule for NoAwaitInLoop {
+ }
+ 
+ impl NoAwaitInLoop {
+-    fn node_matches_stmt_span(span: Span, stmt: &Statement) -> bool {
+-        match stmt {
+-            Statement::BlockStatement(block) => block.span.contains_inclusive(span),
+-            Statement::ExpressionStatement(expr_statement) => {
+-                expr_statement.span.contains_inclusive(span)
+-            }
+-            _ => false,
+-        }
+-    }
+-
+-    fn node_matches_expr_span(span: Span, expr: &Expression) -> bool {
+-        match expr {
+-            Expression::TemplateLiteral(expr) => expr.span.contains_inclusive(span),
+-            Expression::ArrayExpression(expr) => expr.span.contains_inclusive(span),
+-            Expression::ArrowFunctionExpression(expr) => expr.span.contains_inclusive(span),
+-            Expression::AssignmentExpression(expr) => expr.span.contains_inclusive(span),
+-            Expression::AwaitExpression(expr) => expr.span.contains_inclusive(span),
+-            Expression::BinaryExpression(expr) => expr.span.contains_inclusive(span),
+-            Expression::CallExpression(expr) => expr.span.contains_inclusive(span),
+-            Expression::ChainExpression(expr) => expr.span.contains_inclusive(span),
+-            Expression::ClassExpression(expr) => expr.span.contains_inclusive(span),
+-            Expression::ConditionalExpression(expr) => expr.span.contains_inclusive(span),
+-            Expression::FunctionExpression(expr) => expr.span.contains_inclusive(span),
+-            Expression::ImportExpression(expr) => expr.span.contains_inclusive(span),
+-            Expression::LogicalExpression(expr) => expr.span.contains_inclusive(span),
+-            Expression::NewExpression(expr) => expr.span.contains_inclusive(span),
+-            Expression::ObjectExpression(expr) => expr.span.contains_inclusive(span),
+-            Expression::ParenthesizedExpression(expr) => expr.span.contains_inclusive(span),
+-            Expression::SequenceExpression(expr) => expr.span.contains_inclusive(span),
+-            Expression::TaggedTemplateExpression(expr) => expr.span.contains_inclusive(span),
+-            Expression::ThisExpression(expr) => expr.span.contains_inclusive(span),
+-            Expression::UnaryExpression(expr) => expr.span.contains_inclusive(span),
+-            Expression::UpdateExpression(expr) => expr.span.contains_inclusive(span),
+-            Expression::YieldExpression(expr) => expr.span.contains_inclusive(span),
+-            Expression::PrivateInExpression(expr) => expr.span.contains_inclusive(span),
+-            _ => false,
+-        }
+-    }
+-
+     fn is_looped(node: &AstNode, parent: &AstNode) -> bool {
+         let span = node.kind().span();
++        let contains = |outer: Span| outer.contains_inclusive(span);
+         match parent.kind() {
+             AstKind::ForStatement(stmt) => {
+-                let mut result = Self::node_matches_stmt_span(span, &stmt.body);
+-                if result {
+-                    return result;
+-                }
+-
+-                if let Some(test) = &stmt.test {
+-                    result = Self::node_matches_expr_span(span, test);
+-                    if result {
+-                        return result;
+-                    }
+-                }
+-
+-                if let Some(update) = &stmt.update {
+-                    result = Self::node_matches_expr_span(span, update);
+-                }
+-
+-                result
++                contains(stmt.body.span())
++                    || stmt.test.as_ref().is_some_and(|test| contains(test.span()))
++                    || stmt.update.as_ref().is_some_and(|update| contains(update.span()))
+             }
+             AstKind::ForInStatement(stmt) => {
+-                if Self::node_matches_stmt_span(span, &stmt.body) {
++                if contains(stmt.body.span()) {
+                     return true;
+                 }
+                 // Check if this is `await using` in the left position
+                 if let AstKind::VariableDeclaration(decl) = node.kind()
+                     && decl.kind.is_await_using()
+-                    && stmt.left.span().contains_inclusive(span)
++                    && contains(stmt.left.span())
+                 {
+                     return true;
+                 }
+                 false
+             }
+             AstKind::ForOfStatement(stmt) => {
+-                if Self::node_matches_stmt_span(span, &stmt.body) {
++                if contains(stmt.body.span()) {
+                     return true;
+                 }
+                 // Check if this is `await using` in the left position
+                 if let AstKind::VariableDeclaration(decl) = node.kind()
+                     && decl.kind.is_await_using()
+-                    && stmt.left.span().contains_inclus
+```
+
+**File**: `crates/oxc_linter/src/snapshots/eslint_no_await_in_loop.snap` (modified, +63/-0)
+```diff
+@@ -120,3 +120,66 @@ source: crates/oxc_linter/src/tester.rs
+    ·      ─────
+    ╰────
+   help: Collect all promises into an array and use `Promise.all()` to run them in parallel, rather than awaiting each one sequentially inside the loop.
++
++  ⚠ eslint(no-await-in-loop): Unexpected `await` inside a loop.
++   ╭─[no_await_in_loop.tsx:1:54]
++ 1 │ async function foo() { for (var bar of baz) if (bar) await bar; }
++   ·                                                      ─────
++   ╰────
++  help: Collect all promises into an array and use `Promise.all()` to run them in parallel, rather than awaiting each one sequentially inside the loop.
++
++  ⚠ eslint(no-await-in-loop): Unexpected `await` inside a loop.
++   ╭─[no_await_in_loop.tsx:1:56]
++ 1 │ async function foo() { for (var bar of baz) if (bar) { await bar; } }
++   ·                                                        ─────
++   ╰────
++  help: Collect all promises into an array and use `Promise.all()` to run them in parallel, rather than awaiting each one sequentially inside the loop.
++
++  ⚠ eslint(no-await-in-loop): Unexpected `await` inside a loop.
++   ╭─[no_await_in_loop.tsx:1:66]
++ 1 │ async function foo() { for (var bar of baz) if (bar) foo(); else await bar; }
++   ·                                                                  ─────
++   ╰────
++  help: Collect all promises into an array and use `Promise.all()` to run them in parallel, rather than awaiting each one sequentially inside the loop.
++
++  ⚠ eslint(no-await-in-loop): Unexpected `await` inside a loop.
++   ╭─[no_await_in_loop.tsx:1:68]
++ 1 │ async function foo() { for (var bar of baz) switch (bar) { case 1: await bar; } }
++   ·                                                                    ─────
++   ╰────
++  help: Collect all promises into an array and use `Promise.all()` to run them in parallel, rather than awaiting each one sequentially inside the loop.
++
++  ⚠ eslint(no-await-in-loop): Unexpected `await` inside a loop.
++   ╭─[no_await_in_loop.tsx:1:51]
++ 1 │ async function foo() { for (var bar of baz) try { await bar; } catch {} }
++   ·                                                   ─────
++   ╰────
++  help: Collect all promises into an array and use `Promise.all()` to run them in parallel, rather than awaiting each one sequentially inside the loop.
++
++  ⚠ eslint(no-await-in-loop): Unexpected `await` inside a loop.
++   ╭─[no_await_in_loop.tsx:1:45]
++ 1 │ async function foo() { while (baz) if (baz) await bar; }
++   ·                                             ─────
++   ╰────
++  help: Collect all promises into an array and use `Promise.all()` to run them in parallel, rather than awaiting each one sequentially inside the loop.
++
++  ⚠ eslint(no-await-in-loop): Unexpected `await` inside a loop.
++   ╭─[no_await_in_loop.tsx:1:54]
++ 1 │ async function foo() { for (var bar in baz) if (bar) await bar; }
++   ·                                                      ─────
++   ╰────
++  help: Collect all promises into an array and use `Promise.all()` to run them in parallel, rather than awaiting each one sequentially inside the loop.
++
++  ⚠ eslint(no-await-in-loop): Unexpected `await` inside a loop.
++   ╭─[no_await_in_loop.tsx:1:42]
++ 1 │ async function foo() { for (;;) if (baz) await bar; }
++   ·                                          ─────
++   ╰────
++  help: Collect all promises into an array and use `Promise.all()` to run them in parallel, rather than awaiting each one sequentially inside the loop.
++
++  ⚠ eslint(no-await-in-loop): Unexpected `await` inside a loop.
++   ╭─[no_await_in_loop.tsx:1:31]
++ 1 │ async function foo() { while (await bar as boolean) {} }
++   ·                               ─────
++   ╰────
++  help: Collect all promises into an array and use `Promise.all()` to run them in parallel, rather than awaiting each one sequentially inside the loop.
+```
+
+---
+
+### Incident Patch 2: `f2f83f81` (2026-11-24)
+**Commit Message**: fix(transformer/legacy-decorator): keep decorated static fields with `setPublicClassFields` (#29979)
+
+With legacy decorators (`experimentalDecorators`) and
+`setPublicClassFields: true` (TypeScript's `useDefineForClassFields:
+false`), a decorator on a static field was dropped.
+
+Fixes #29977
+
+On class entry, the TypeScript transform moves field values out of the
+class. An instance field keeps its declaration and decorators, so legacy
+decorators still lower it on class exit, but a static field was replaced
+wholesale by `static { this.y = 1; }`, so the decorated field was gone
+before legacy decorators ran.
 
 ### Example
 
 Input ([playground for this
-example](https://playground.oxc.rs/?t=codegen&options=%7B%22run%22%3A%7B%22transform%22%3Atrue%7D%2C%22parser%22%3A%7B%22extension%22%3A%22ts%22%7D%2C%22transformer%22%3A%7B%22useDefineForClassFields%22%3Afalse%2C%22experimentalDecorators%22%3Afalse%7D%7D&code=class+X+%7B%0A++static+accessor+a+%3D+b%3B%0A++static+c+%3D+d%3B%0A%7D%0A)):
+example](https://playground.oxc.rs/?t=codegen&options=%7B%22run%22%3A%7B%22transform%22%3Atrue%7D%2C%22parser%22%3A%7B%22extension%22%3A%22ts%22%7D%2C%22transformer%22%3A%7B%22useDefineForClassFields%22%3Afalse%2C%22experimentalDecorators%22%3Atrue%7D%7D&code=class+A+%7B%0A++%40dec+static+y+%3D+1%3B%0A++%40dec+z+%3D+3%3B%0A%7D%0A);
+its `useDefineForClassFields: false` also turns on
+`removeClassFieldsWithoutInitializer`, so it matches that variant
+below):
 
 ```ts
-class X {
-  static accessor a = b;
-  static c = d;
+class A {
+  @dec static y = 1;
+  @dec z = 3;
 }
 ```
 
-Before output:
+Options: `{ "assumptions": { "
 
-```js
-class X {
-  static accessor a = b;
-  static c = d;
-}
-```
-
-After output:
-
-```js
-class X {
-  static accessor a = b;
-  static {
-    this.c = d;
-  }
-}
-```
-
-`c` is assigned again, as before #29748 and as in `tsc` 5.9.3. The
-outputs come from `cargo run -p oxc_transformer --example transformer`
-with `setPublicClassFields: true` and `transform-typescript`, on parent
-`c265eda3` and on thi
-
-**File**: `crates/oxc_transformer/src/common/class_lowering.rs` (modified, +47/-5)
+**File**: `crates/oxc_transformer/src/decorator/legacy/mod.rs` (modified, +22/-1)
 ```diff
-@@ -3,21 +3,23 @@
- //! Transforms look up the lowering decision by class scope. Decisions that depend on decorators
- //! or auto-accessors are recorded at class entry, before any transform can change the class.
+@@ -267,6 +267,7 @@ impl<'a> Traverse<'a, TransformState<'a>> for LegacyDecorator<'a> {
+             self.handle_decorated_class_element(
+                 method.r#static,
+                 &mut method.key,
++                true,
+                 descriptor,
+                 decorations,
+                 ctx,
+@@ -289,9 +290,20 @@ impl<'a> Traverse<'a, TransformState<'a>> for LegacyDecorator<'a> {
  
--use oxc_ast::ast::Class;
-+use oxc_ast::ast::{Class, ClassElement};
- use oxc_syntax::scope::ScopeId;
- use rustc_hash::FxHashMap;
- use smallvec::SmallVec;
- 
- use crate::{
-     decorator::DecoratorMode,
--    utils::decorated_class::{class_body_has_auto_accessors, class_has_decorators},
-+    utils::decorated_class::{
-+        class_body_has_auto_accessors, class_has_decorators, is_auto_accessor,
-+    },
- };
- 
- use super::class_transform::ClassTransform;
- 
- /// Which transform owns a class.
- #[derive(Clone, Copy, PartialEq, Eq, Debug)]
--pub enum ClassLoweringMode {
-+enum ClassLoweringMode {
-     /// Class fields stay native; auto-accessors and static blocks may still be lowered.
-     Native,
-     /// Class-properties lowers this class because the target requires class field lowering.
-@@ -50,8 +52,48 @@ impl ClassLowering {
-         Self { mode, has_decorators, has_auto_accessor }
-     }
- 
--    pub fn mode(self) -> ClassLoweringMode {
--        self.mode
-+    /// Whether class-properties lowers the fields of this class.
-+    pub fn lowers_fields(self) -> bool {
-+        self.mode == ClassLoweringMode::LowerAll
-+    }
-+
-+    /// Whether a field or auto-accessor stays as written for the downstream transform.
-+    ///
-+    /// A preserved class keeps its decorated fields and its auto-accessors. Transforms that
-+    /// rewrite the other fields must leave these in place, and must not move other initializers
-+    /// after theirs (see [`Self::first_movable_instance_field`]).
-+    pub fn keeps_field(self, element: &ClassElement<'_>) -> bool {
-+        self.mode == ClassLoweringMode::Preserve
-+            && (is_auto_accessor(element)
-+                || matches!(element, ClassElement::PropertyDefinition(_))
-+                    && element.has_decorator())
-+    }
-+
-+    /// Index of the first instance field whose initializer can move after the field
-+    /// initializers that stay in the class, such as into the constructor.
-+    ///
-+    /// Instance fields before the last kept instance field that runs code on initialization (a
-+    /// decorated field, or an auto-accessor with an initializer or decorators) must stay in
-+    /// place, or their initializers would run after it.
-+    pub fn first_movable_instance_field(self, class: &Class<'_>) -> usize {
-+        if self.mode != ClassLoweringMode::Preserve {
-+            return 0;
-+        }
-+        class
-+            .body
-+            .body
-+            .iter()
-+            .rposition(|element| {
-+                !element.r#static()
-+                    && self.keeps_field(element)
-+                    && match element {
-+                        ClassElement::AccessorProperty(accessor) => {
-+                            accessor.value.is_some() || element.has_decorator()
-+                        }
-+                        _ => true,
-+                    }
-+            })
-+            .map_or(0, |index| index + 1)
-     }
- 
-     /// Whether the class or one of its elements is decorated.
-```
-
-**File**: `crates/oxc_transformer/src/common/class_transform.rs` (modified, +2/-12)
-```diff
-@@ -1,4 +1,4 @@
--use crate::{decorator::DecoratorMode, es2022::ClassPropertiesOptions, options::EnvOptions};
-+use crate::{es2022::ClassPropertiesOptions, options::EnvOptions};
- 
- /// Program-wide ownership of class field and static block lowering.
- ///
-@@ -14,31 +14,21 @@ pub enum ClassTransform {
-     ClassProperties {
-         options: ClassPropertiesOptions,
-         transform_static_blocks: bool,
--        decorator_mode: DecoratorMode,
-     },
- }
- 
- impl ClassTransform {
--    pub fn new(env: &EnvOptions, decorator_mode: DecoratorMode) -> Self {
-+    pub fn new(env: &EnvOptions) -> Self {
-         let options = env.es2022;
-         if let Some(properties_options) = options.class_properties {
-             Self::ClassProperties {
-                 options: properties_options,
-                 transform_static_blocks: options.class_static_block,
--                decorator_mode,
-             }
-         } else if options.class_static_block {
-             Self::StaticBlocks
-         } else {
-             Self::None
-         }
-     }
--
--    /// Whether class-properties owns field lowering and initialization order for all classes.
--    ///
--    /// TypeScript must leave field lowering to it, and legacy decorators must leave class-alias
--    /// initialization to it instead of inserting an alias assignment in a static block.
--    pub fn owns_all_class_fields(self) -> bool {
--        matches!(self, Self::ClassProperties { decorator_mode, .. } if decorator_mode != DecoratorMode::Preserve)
--    }
- }
-```
-
-**File**: `crates/oxc_transformer/src/decorator/legacy/mod.rs` (modified, +36/-35)
-```diff
-@@ -842,43 +842,44 @@ impl<'a> LegacyDecorator<'a> {
+         // We emit `void 0` here to indicate to `_decorate` that it can invoke `Object.defineProperty` directly.
+         let descriptor = Expression::new_void_0(SPAN, ctx);
++        // TypeScript turns a decorated field that it removes into a `declare` field keyed by a value
++        // reference or a literal, which the class doesn't evaluate. Other keys of user-written
++        // `declare` fields hold type references, so they keep the temp var.
++        let key_is_evaluated = !(prop.declare
++            && prop.key.as_expression().is_some_and(|key| match key {
++                Expression::Identifier(ident) => {
++                    ctx.scoping().get_reference(ident.reference_id()).flags().is_read()
++                }
++                key => key.is_literal(),
++            }));
+         self.handle_decorated_class_element(
+             prop.r#static,
+             &mut prop.key,
++            key_is_evaluated,
+             descriptor,
+             decorations,
              ctx,
-         );
+@@ -315,6 +327,7 @@ impl<'a> Traverse<'a, TransformState<'a>> for LegacyDecorator<'a> {
+         self.handle_decorated_class_element(
+             accessor.r#static,
+             &mut accessor.key,
++            true,
+             descriptor,
+             decorations,
+             ctx,
+@@ -360,6 +373,7 @@ impl<'a> LegacyDecorator<'a> {
+         &mut self,
+         is_static: bool,
+         key: &mut PropertyKey<'a>,
++        key_is_evaluated: bool,
+         descriptor: Expression<'a>,
+         decorations: Expression<'a>,
+         ctx: &mut TraverseCtx<'a>,
+@@ -385,7 +399,7 @@ impl<'a> LegacyDecorator<'a> {
+         });
  
--        let class_alias_with_this_assignment = if ctx.state.class_transform.owns_all_class_fields()
--        {
--            None
--        } else {
--            // If we're emitting to ES2022 or later then we need to reassign the class alias before
--            // static initializers are evaluated.
--            // <https://github.com/microsoft/TypeScript/blob/b86ab7dbe0eb2f1c9a624486d72590d638495c97/src/compiler/transformers/legacyDecorators.ts#L345-L366>
--            class_alias_binding.as_ref().and_then(|class_alias_binding| {
--                let has_static_field_or_block = class.body.body.iter().any(|element| {
--                    matches!(element, ClassElement::StaticBlock(_))
--                        || matches!(element, ClassElement::PropertyDefinition(prop)
--                                if prop.r#static
--                        )
--                });
--
--                if has_static_field_or_block {
--                    // `_Class = this`;
--                    let class_alias_with_this_assignment = Statement::new_expression_statement(
--                        SPAN,
--                        create_assignment(
--                            class_alias_binding,
--                            Expression::new_this_expression(SPAN, ctx),
-+        let class_alias_with_this_assignment =
-+            if ctx.state.class_lowering_of(class.scope_id()).lowers_fields() {
-+                None
-+            } else {
-+                // If we're emitting to ES2022 or later then we need to reassign the class alias before
-+                // static initializers are evaluated.
-+                // <https://github.com/microsoft/TypeScript/blob/b86ab7dbe0eb2f1c9a624486d72590d638495c97/src/compiler/transformers/legacyDecorators.ts#L345-L366>
-+                class_alias_binding.as_ref().and_then(|class_alias_binding| {
-+                    let has_static_field_or_block = class.body.body.iter().any(|element| {
-+                        matches!(element, ClassElement::StaticBlock(_))
-+                            || matches!(element, ClassElement::PropertyDefinition(prop)
-+                                    if prop.r#static
-+                            )
-+                    });
+         let prefix = Self::get_class_member_prefix(class_binding, is_static, ctx);
+-        let name = self.get_name_of_property_key(key, ctx);
++        let name = self.get_name_of_property_key(key, key_is_evaluated, ctx);
+         let decorator_stmt = self.create_decorator(decorations, prefix, name, descriptor, ctx);
+ 
+         // Push to current decoration stack
+@@ -1132,10 +1146,14 @@ impl<'a> LegacyDecorator<'a> {
+     ///    * NullLiteral: `[null] = 0;` -> `null`
+     ///  * Non-copiable key:
+     ///    * `[a()] = 0;` mutates the key to `[_a = a()] = 0;` and returns `_a`
++    ///
++    /// When the class doesn't evaluate `key`, it's moved into the decoration instead:
++    /// `@dec declare [_x];` -> `_decorate([dec], C.prototype, _x, void 0)`.
+     #[expect(clippy::unused_self)]
+     fn get_name_of_property_key(
+         &self,
+         key: &mut PropertyKey<'a>,
++        key_is_evaluated: bool,
+         ctx: &mut TraverseCtx<'a>,
+     ) -> Expression<'a> {
+         match key {
+@@ -1161,6 +1179,9 @@ impl<'a> LegacyDecorator<'a> {
+                 Expression::new_template_literal(SPAN, quasis, [], ctx)
+             }
+             PropertyKey::NullLiteral(_) => Expression::new_null_literal(SPAN, ctx),
++            key @ match_expression!(PropertyKey) if !key_is_evaluated => {
++                key.to_expression_mut().take_in(ctx)
++            }
+             match_expression!(PropertyKey) => {
+                 // ```ts
+                 // Input:
+```
+
+**File**: `crates/oxc_transformer/src/typescript/class.rs` (modified, +89/-15)
+```diff
+@@ -23,6 +23,17 @@ use crate::{
+ 
+ use super::TypeScript;
+ 
++/// What happens to a property declaration when its initializer moves out of the class body.
++#[derive(Clone, Copy, PartialEq, Eq)]
++enum Declaration {
++    /// The declaration is removed, along with its key.
++    Remove,
++    /// The declaration stays, and the class still evaluates its key.
++    Keep,
++    /// The declaration stays as a `declare` field with a copy of its key, for legacy decorators.
++    Placeholder,
++}
 +
-+                    if has_static_field_or_block {
-+                        // `_Class = this`;
-+                        let class_alias_with_this_assignment = Statement::new_expression_statement(
-                             SPAN,
-+                            create_assignment(
-+                                class_alias_binding,
-+                                Expression::new_this_expression(SPAN, ctx),
-+                                SPAN,
-+                                ctx,
-+                            ),
+ impl<'a> TypeScript<'a> {
+     /// Transform class fields, and constructor parameters that includes modifiers into `this` assignments.
+     ///
+@@ -99,6 +110,9 @@ impl<'a> TypeScript<'a> {
+     /// we don't need extra transformation for static properties, the output is the same as instance properties
+     /// transformation, and the greatest advantage is we don't need to care about `this` usage in static block.
+     ///
++    /// A decorated field whose declaration is removed stays as a `declare` field with a side-effect
++    /// free key until legacy decorators lower it: `@dec static [x()] = 1;` -> `@dec declare static [_x];`
++    ///
+     /// Fields that `lowering` keeps for a downstream transform stay as written, and so do instance
+     /// fields before [`ClassLowering::first_movable_instance_field`].
+     pub(super) fn transform_class_fields(
+@@ -123,10 +137,16 @@ impl<'a> TypeScript<'a> {
+         // not the current traversal scope (which is the scope enclosing the class).
+         let class_scope_id = class.scope_id();
+ 
+-        let mut constructor = None;
++        let mut constructor_index = None;
+         let mut property_assignments = Vec::new();
+         let mut computed_key_assignments = Vec::new();
+-        for (index, element) in class.body.body.iter_mut().enumerate() {
++        // A decorated static field gets its static block inserted after it, so `position` indexes
++        // the growing class body, and `index` is the element's index before any insertion.
++        let mut position = 0;
++        let mut inserted_blocks = 0;
++        while let Some(element) = class.body.body.get_mut(position) {
++            let index = position - inserted_blocks;
++            let mut block_after = None;
+             let kept = lowering.keeps_field(element);
+             match element {
+                 // Skip static private properties — converting them to static blocks
+@@ -137,30 +157,60 @@ impl<'a> TypeScript<'a> {
+                         && (!prop.key.is_private_identifier()
+                             || (!prop.r#static && will_hoist_initializers_to_constructor)) =>
+                 {
++                    // Legacy decorators lower decorated fields on class exit. A decorated field
++                    // whose declaration is removed here stays until then as a `declare` field,
++                    // which `TypeScriptAnnotations::exit_class` removes after them.
++                    let decorated =
++                        !prop.decorators.is_empty() && !prop.key.is_private_identifier();
+                     if let Some(value) = prop.value.take() {
+                         // A static property is replaced by a static block below, and an instance
+                         // property is removed later when `remove_class_fields_without_initializer`
+                         // is `true`. Otherwise, the instance property declaration stays in the
+                         // class body (without its initializer), so its key is still evaluated
+                         // during class definition.
+-                        let keep_declaration =
+-                            !prop.r#static && !self.remove_class_fields_without_initializer;
++                        let declaration =
++                            if !prop.r#static && !self.remove_class_fields_without_initializer {
++                                Declaration::Keep
++                            } else if decorated {
++                                Declaration::Placeholder
++                            } else {
++                                Declaration::Remove
++                            };
+                         let assignment = self.convert_property_definition(
+                             &mut prop.key,
+                             value,
+-                            keep_declaration,
++                            declaration,
+                             &mut computed_key_assignments,
                              ctx,
--                        ),
--                        ctx,
--                    );
--                    let body = [class_alias_with_this_assignment];
--                    let scope_id = ctx.create_child_scope_of_current(ScopeFlags::ClassStaticBlock);
--                    let element =
--                        ClassElement::new_static_block_with_scope_id(SPAN, body, scope_id, ctx);
--                    Some(element)
--                } else {
--                    None
--                }
--            })
--        };
-+                        );
-+                        let body = [class_alias_with_this_assignment];
-+                        let scope_id =
-+                            ctx.create_child_scope_of_current(ScopeFlags::ClassStaticBlock);
-+                        let element =
-+                            ClassElement::new_static_block_with_scope_id(SPAN, body, scope_id, ctx);
-+                        Some(element)
-+                    } else {
-+                        None
-+                    }
-+                })
-+            };
- 
-         if class_has_private_in_expression_in_decorator {
-             let decorations = mem::take(&mut decoration_stmts);
+                         );
++                        prop.declare |= declaration == Declaration::Placeholder;
+                         if prop.r#static {
+                             // Convert static property to static block
+                             // `class C { static x = 1; }` -> `class C { static { this.x = 1; } }`
+                             // `class C { static [x] = 1; }` -> `let _x; class C { static { this[_x] = 1; } }`
+                             let body = ArenaVec::from_value_in(assignment, ctx);
+-                            *element = Sel
 ```
 
-**File**: `crates/oxc_transformer/src/es2022/class_properties/class.rs` (modified, +2/-5)
+**File**: `tasks/transform_conformance/snapshots/oxc.snap.md` (modified, +2/-2)
 ```diff
-@@ -12,10 +12,7 @@ use oxc_syntax::{
- use oxc_traverse::{Ancestor, BoundIdentifier};
+@@ -1,6 +1,6 @@
+ commit: 51225612
  
- use crate::{
--    common::{
--        class_lowering::ClassLoweringMode,
--        helper_loader::{Helper, helper_call_expr},
--    },
-+    common::helper_loader::{Helper, helper_call_expr},
-     context::TraverseCtx,
-     utils::ast_builder::{create_assignment, create_new_weakset, create_variable_declaration},
- };
-@@ -77,7 +74,7 @@ impl<'a> ClassProperties<'a> {
-             !is_declaration && Self::should_emit_private_method_helpers_in_class_sequence(ctx);
+-Passed: 361/482
++Passed: 364/485
  
-         let lowering = ctx.state.class_lowering_of(class_scope_id);
--        if matches!(lowering.mode(), ClassLoweringMode::Native | ClassLoweringMode::Preserve) {
-+        if !lowering.lowers_fields() {
-             // Register private names only when they can shadow a lowered name in an enclosing
-             // class. Other unresolved names belong to untouched classes and are left as-is.
-             let mut private_names = IdentIndexMap::default();
+ # All Passed:
+ * babel-plugin-transform-class-static-block
+@@ -206,7 +206,7 @@ x Output mismatch
+ x Output mismatch
+ 
+ 
+-# legacy-decorators (33/115)
++# legacy-decorators (36/118)
+ * oxc/accessor/input.ts
+ x Output mismatch
+ 
 ```
 
-**File**: `crates/oxc_transformer/src/lib.rs` (modified, +2/-0)
+**File**: `tasks/transform_conformance/snapshots/oxc_exec.snap.md` (modified, +1/-1)
 ```diff
-@@ -352,6 +352,8 @@ impl<'a> Traverse<'a, TransformState<'a>> for TransformerImpl<'a> {
+@@ -2,7 +2,7 @@ commit: 51225612
  
-     fn exit_class(&mut self, class: &mut Class<'a>, ctx: &mut TraverseCtx<'a>) {
-         self.decorator.exit_class(class, ctx);
-+        // Legacy decorators have taken the decorators off the fields they lowered, so TypeScript
-+        // can now remove those fields if they have no initializer.
-         if let Some(typescript) = self.x0_typescript.as_mut() {
-             typescript.exit_class(class, ctx);
-         }
+ node: v26.12.1
+ 
+-Passed: 81 of 377 (21.49%)
++Passed: 82 of 378 (21.69%)
+ 
+ Failures:
+ 
 ```
 
-**File**: `crates/oxc_transformer/src/state.rs` (modified, +1/-1)
+**File**: `tasks/transform_conformance/tests/legacy-decorators/test/fixtures/oxc/set-public-class-fields-decorated-fields-metadata/input.ts` (added, +6/-0)
 ```diff
-@@ -85,7 +85,7 @@ impl<'a> TransformState<'a> {
-             .map_or_else(|| String::from("unknown"), |name| name.to_string_lossy().to_string());
- 
-         let decorator_mode = options.decorator.mode();
--        let class_transform = ClassTransform::new(&options.env, decorator_mode);
-+        let class_transform = ClassTransform::new(&options.env);
- 
-         Self {
-             errors: vec![],
+@@ -0,0 +1,6 @@
++class A {
++  @dec static n: number = 1;
++  @dec s: string = "s";
++  @dec static [k()]: boolean = true;
++  @dec static u: number;
++}
 ```
 
-**File**: `crates/oxc_transformer/src/typescript/class.rs` (modified, +72/-36)
+**File**: `tasks/transform_conformance/tests/legacy-decorators/test/fixtures/oxc/set-public-class-fields-decorated-fields-metadata/options.json` (added, +19/-0)
 ```diff
-@@ -3,13 +3,14 @@ use rustc_hash::FxHashSet;
- use oxc_allocator::{ArenaVec, CloneIn, GetAllocator, ReplaceWith, TakeIn};
- use oxc_ast::ast::*;
- use oxc_semantic::{ScopeFlags, ScopeId};
--use oxc_span::SPAN;
-+use oxc_span::{SPAN, Span};
- use oxc_str::Ident;
- use oxc_syntax::operator::AssignmentOperator;
+@@ -0,0 +1,19 @@
++{
++  "assumptions": {
++    "setPublicClassFields": true
++  },
++  "plugins": [
++    [
++      "transform-legacy-decorator",
++      {
++        "emitDecoratorMetadata": true
++      }
++    ],
++    [
++      "transform-typescript",
++      {
++        "removeClassFieldsWithoutInitializer": true
++      }
++    ]
++  ]
++}
+```
+
+**File**: `tasks/transform_conformance/tests/legacy-decorators/test/fixtures/oxc/set-public-class-fields-decorated-fields-metadata/output.js` (added, +19/-0)
+```diff
+@@ -0,0 +1,19 @@
++let _k;
++class A {
++  constructor() {
++    this.s = "s";
++  }
++  static {
++    _k = k();
++  }
++  static {
++    this.n = 1;
++  }
++  static {
++    this[_k] = true;
++  }
++}
++babelHelpers.decorate([dec, babelHelpers.decorateMetadata("design:type", String)], A.prototype, "s", void 0);
++babelHelpers.decorate([dec, babelHelpers.decorateMetadata("design:type", Number)], A, "n", void 0);
++babelHelpers.decorate([dec, babelHelpers.decorateMetadata("design:type", Boolean)], A, _k, void 0);
++babelHelpers.decorate([dec, babelHelpers.decorateMetadata("design:type", Number)], A, "u", void 0);
+```
+
+**File**: `tasks/transform_conformance/tests/legacy-decorators/test/fixtures/oxc/set-public-class-fields-decorated-fields-remove-class-fields-without-initializer/input.ts` (added, +22/-0)
+```diff
+@@ -0,0 +1,22 @@
++class A {
++  @dec static y = 1;
++  @dec z = 3;
++  static [a()] = 4;
++  @dec static [b()] = 5;
++  @dec [c()] = 6;
++  @dec static w = this.y;
++  @dec static v;
++  @dec u;
++  [e()] = 7;
++  @dec static [f()];
++  @dec "q" = 8;
++  @dec static 9 = 10;
++}
++
++class B extends Base {
++  @dec static x = 1;
++  @dec y = 2;
++  constructor() {
++    super();
++  }
++}
+```
+
+---
+
+### Incident Patch 3: `1abb96db` (2026-11-24)
+**Commit Message**: fix(transformer/typescript): hide computed key methods from decorators (#30184)
+
+A standard element decorator can inspect the class before its static
+blocks run. With `setPublicClassFields` enabled, it can see the
+symbol-keyed method that #30148 generates to evaluate a computed key.
+The source class has no such property.
+
+### Example
+
+```ts
+const observed = [];
+function inspect(getClass) {
+  observed.push(Object.getOwnPropertySymbols(getClass()).filter(key => key !== Symbol.metadata));
+}
+function* make() {
+  return class C {
+    @inspect static getClass() { return C; }
+    static [yield "key"] = 1;
+  };
+}
+const it = make();
+expect(it.next().value).toBe("key");
+const C = it.next("x").value;
+expect(C.x).toBe(1);
+expect(observed).toEqual([[]]);
+```
+
+The Oxc playground cannot run the downstream decorator pass that exposes
+the extra symbol. To print the JavaScript locally, save the input as
+`/tmp/repro.ts` and run the transformer example with the fixture
+options.
+
+```sh
+fixture=tasks/transform_conformance/tests/babel-plugin-transform-typescript/test/fixtures/oxc/preserved-class-context-dependent-computed-keys
+cargo run -p oxc_transformer --example transformer -- /tmp/repro.ts --babel-op
+
+**File**: `crates/oxc_transformer/src/decorator/accessor.rs` (modified, +4/-27)
+```diff
+@@ -7,7 +7,6 @@ use oxc_span::SPAN;
+ use oxc_str::Str;
+ use oxc_syntax::scope::ScopeId;
  use oxc_traverse::BoundIdentifier;
+-use rustc_hash::FxHashSet;
  
  use crate::{
      common::{
-+        class_lowering::ClassLowering,
-         computed_key::{create_computed_key_temp_var, key_needs_temp_var},
-         duplicate::duplicate_expression,
+@@ -18,7 +17,7 @@ use crate::{
+     context::TraverseCtx,
+     utils::{
+         ast_builder::{create_accessor_method, take_literal_property_key},
+-        decorated_class::is_auto_accessor,
++        decorated_class::{PrivateNames, is_auto_accessor},
      },
-@@ -97,16 +98,26 @@ impl<'a> TypeScript<'a> {
-     /// The transformation way is also the same as `TypeScript`, the advantage from the implementation is that
-     /// we don't need extra transformation for static properties, the output is the same as instance properties
-     /// transformation, and the greatest advantage is we don't need to care about `this` usage in static block.
--    pub(super) fn transform_class_fields(&self, class: &mut Class<'a>, ctx: &mut TraverseCtx<'a>) {
-+    ///
-+    /// Fields that `lowering` keeps for a downstream transform stay as written, and so do instance
-+    /// fields before [`ClassLowering::first_movable_instance_field`].
-+    pub(super) fn transform_class_fields(
-+        &self,
-+        class: &mut Class<'a>,
-+        lowering: ClassLowering,
-+        ctx: &mut TraverseCtx<'a>,
-+    ) {
-+        let first_movable_index = lowering.first_movable_instance_field(class);
-         // When any non-private instance field has an initializer, all instance field
-         // initializers (including private) must be hoisted to the constructor to preserve
-         // execution order. This matches TypeScript's `WillHoistInitializersToConstructor`:
-         // https://github.com/microsoft/TypeScript/blob/7b8cb3bdf8/src/compiler/transformers/classFields.ts#L339
--        let will_hoist_initializers_to_constructor = class.body.body.iter().any(|e| {
--            matches!(e, ClassElement::PropertyDefinition(prop)
--                if !prop.r#static && !prop.declare && !prop.key.is_private_identifier() && prop.value.is_some()
--            )
--        });
-+        let will_hoist_initializers_to_constructor =
-+            class.body.body[first_movable_index..].iter().any(|e| {
-+                matches!(e, ClassElement::PropertyDefinition(prop)
-+                    if !prop.r#static && !prop.declare && !prop.key.is_private_identifier() && prop.value.is_some()
-+                )
-+            });
+ };
  
-         // Static blocks created below must be parented to the class body scope,
-         // not the current traversal scope (which is the scope enclosing the class).
-@@ -115,13 +126,16 @@ impl<'a> TypeScript<'a> {
-         let mut constructor = None;
-         let mut property_assignments = Vec::new();
-         let mut computed_key_assignments = Vec::new();
--        for element in &mut class.body.body {
-+        for (index, element) in class.body.body.iter_mut().enumerate() {
-+            let kept = lowering.keeps_field(element);
-             match element {
-                 // Skip static private properties — converting them to static blocks
-                 // would lose the private field declaration.
-                 ClassElement::PropertyDefinition(prop)
--                    if !prop.key.is_private_identifier()
--                        || (!prop.r#static && will_hoist_initializers_to_constructor) =>
-+                    if !kept
-+                        && (prop.r#static || index >= first_movable_index)
-+                        && (!prop.key.is_private_identifier()
-+                            || (!prop.r#static && will_hoist_initializers_to_constructor)) =>
-                 {
-                     if let Some(value) = prop.value.take() {
-                         // A static property is replaced by a static block below, and an instance
-@@ -192,6 +206,12 @@ impl<'a> TypeScript<'a> {
-                         ctx,
-                     );
-                 }
-+                // A computed key that stays in the class still evaluates after the keys before it.
-+                ClassElement::PropertyDefinition(prop)
-+                    if !prop.declare && prop.key.is_computed() =>
-+                {
-+                    Self::convert_computed_key(&mut prop.key, &mut computed_key_assignments, ctx);
-+                }
-                 _ => (),
+@@ -43,19 +42,8 @@ pub(super) fn lower_auto_accessors<'a>(
+     }
+     // Storage must not capture references to enclosing private names, including those in
+     // nested classes. Reserving all private identifiers also covers this class's declarations.
+-    let mut collector = PrivateNameCollector::default();
+-    collector.visit_class_body(body);
+-    let mut used_names = collector.names;
+-    let mut unique_name = |base: Str<'a>, ctx: &TraverseCtx<'a>| -> Str<'a> {
+-        let mut name = base;
+-        let mut n = 2u32;
+-        while used_names.contains(name.as_str()) {
+-            name = Str::from_strs_array_in([&base, itoa::Buffer::new().format(n)], ctx);
+-            n += 1;
+-        }
+-        used_names.insert(name.as_str());
+-        name
+-    };
++    let mut private_names = PrivateNames::default();
++    private_names.visit_class_body(body);
+     // Each accessor is replaced by storage plus a getter and setter, so the result is
+     // `len + 2 * accessor_count` long.
+     let mut new_body = ArenaVec::with_capacity_in(body.body.len() + accessor_count * 2, ctx);
+@@ -113,7 +101,7 @@ pub(super) fn lower_auto_accessors<'a>(
+                 (name, PropertyKey::from(assignment), PropertyKey::from(reference))
              }
-         }
-@@ -292,29 +312,47 @@ impl<'a> TypeScript<'a> {
-     /// Skips parameter properties whose name matches an existing instance field declaration on
-     /// the same class (matching TypeScript's dedup). Only static-identifier instance fields
-     /// count — static, private, computed, and `declare`-only fields don't suppress the new field.
--    pub(super) fn add_parameter_property_fields(class: &mut Class<'a>, ctx: &TraverseCtx<'a>) {
--        let Some(params) = Self::find_constructor_params(class) else { return };
+         };
+-        let storage_name = unique_name(storage_name, ctx);
++        let storage_name = private_names.generate(storage_name, ctx);
+         let storage = PropertyDefinition::boxed(
+             SPAN,
+             PropertyDefinitionType::PropertyDefinition,
+@@ -171,14 +159,3 @@ fn positional_storage_name<'a>(counter: &mut u32, ctx: &TraverseCtx<'a>) -> Str<
+     *counter += 1;
+     name
+ }
 -
--        // Bail before allocating when there are no parameter properties to emit.
--        // Parameter pr
+-#[derive(Default)]
+-struct PrivateNameCollector<'a> {
+-    names: FxHashSet<&'a str>,
+-}
+-
+-impl<'a> VisitJs<'a> for PrivateNameCollector<'a> {
+-    fn visit_private_identifier(&mut self, ident: &PrivateIdentifier<'a>) {
+-        self.names.insert(ident.name.as_str());
+-    }
+-}
 ```
 
-**File**: `crates/oxc_transformer/src/typescript/mod.rs` (modified, +40/-35)
+**File**: `crates/oxc_transformer/src/typescript/class.rs` (modified, +87/-52)
 ```diff
-@@ -1,10 +1,11 @@
+@@ -2,10 +2,10 @@ use rustc_hash::FxHashSet;
+ 
+ use oxc_allocator::{ArenaVec, CloneIn, GetAllocator, ReplaceWith, TakeIn};
+ use oxc_ast::ast::*;
+-use oxc_ast_visit::{Visit, walk};
++use oxc_ast_visit::{Visit, VisitJs, walk};
+ use oxc_semantic::{ReferenceFlags, ScopeFlags, ScopeId, SymbolFlags};
+ use oxc_span::{SPAN, Span};
+-use oxc_str::{Ident, static_ident};
++use oxc_str::{Ident, Str, static_ident};
+ use oxc_syntax::operator::{AssignmentOperator, UnaryOperator};
+ use oxc_traverse::BoundIdentifier;
+ 
+@@ -303,32 +303,30 @@ impl<'a> TypeScript<'a> {
+             position += 1;
+         }
+ 
+-        let computed_key_assignment_static_block =
+-            (!computed_key_assignments.is_empty()).then(|| {
+-                let statement = if computed_key_assignments.iter().any(depends_on_outer_context) {
+-                    let marker = self.computed_key_marker(ctx);
+-                    let (carrier, delete) = Self::create_computed_key_carrier(
+-                        computed_key_assignments,
+-                        &marker,
+-                        class_scope_id,
+-                        ctx,
+-                    );
+-                    class.body.body.push(carrier);
+-                    delete
+-                } else {
+-                    let sequence_expression = Expression::new_sequence_expression(
+-                        SPAN,
+-                        ArenaVec::from_iter_in(computed_key_assignments, ctx),
+-                        ctx,
+-                    );
+-                    Statement::new_expression_statement(SPAN, sequence_expression, ctx)
+-                };
++        let computed_key_assignment_static_block = if computed_key_assignments.is_empty() {
++            None
++        } else {
++            let assignments = ArenaVec::from_iter_in(computed_key_assignments, ctx);
++            let expr = if assignments.iter().any(depends_on_outer_context) {
++                self.append_computed_key_carrier(
++                    class,
++                    assignments,
++                    &property_assignments,
++                    lowering,
++                    ctx,
++                )
++            } else {
++                Some(Expression::new_sequence_expression(SPAN, assignments, ctx))
++            };
++            expr.map(|expr| {
++                let statement = Statement::new_expression_statement(SPAN, expr, ctx);
+                 Self::create_class_static_block(
+                     ArenaVec::from_value_in(statement, ctx),
+                     class_scope_id,
+                     ctx,
+                 )
+-            });
++            })
++        };
+ 
+         // Blocks are only inserted after the visited element, and the carrier is appended,
+         // so `constructor_index` is still valid.
+@@ -780,49 +778,86 @@ impl<'a> TypeScript<'a> {
+         });
+     }
+ 
+-    /// Return the temporary method `static [(assignments, _computedKey)]() {}`, which evaluates
+-    /// `assignments` where the class evaluates its keys, and `delete this[_computedKey];`, which
+-    /// removes it.
+-    fn create_computed_key_carrier(
+-        assignments: Vec<Expression<'a>>,
+-        marker: &BoundIdentifier<'a>,
+-        class_scope_id: ScopeId,
++    /// Evaluate trailing keys after the other class keys and before static initialization.
++    fn append_computed_key_carrier(
++        &mut self,
++        class: &mut Class<'a>,
++        mut assignments: ArenaVec<'a, Expression<'a>>,
++        property_assignments: &[Statement<'a>],
++        lowering: ClassLowering,
+         ctx: &mut TraverseCtx<'a>,
+-    ) -> (ClassElement<'a>, Statement<'a>) {
+-        let marker_key = marker.create_read_expression(ctx);
+-        let key = Expression::new_sequence_expression(
+-            SPAN,
+-            ArenaVec::from_iter_in(assignments.into_iter().chain(std::iter::once(marker_key)), ctx),
+-            ctx,
+-        );
++    ) -> Option<Expression<'a>> {
++        let class_scope_id = class.scope_id();
++        let mut decorators = ArenaVec::new_in(ctx);
++        let (key, cleanup) = if lowering.has_decorators() {
++            // Element decorators can inspect the class before its first static block. Evaluate
++            // the keys in an inert decorator on a private method, which has no reflective key.
++            let mut names = self.eval_private_names.clone();
++            names.visit_class_body(&class.body);
++            names.visit_expressions(&assignments);
++            for statement in property_assignments {
++                names.visit_statement(statement);
++            }
++            let name = names.generate(Str::from_str_in("_computedKey", ctx), ctx);
++            let decorator_scope = ctx.create_child_scope(
++                class_scope_id,
++                ScopeFlags::StrictMode | ScopeFlags::Function | ScopeFlags::Arrow,
++            );
++            let noop = Expression::new_arrow_function_expression_with_scope_id_and_pure_and_pife(
++                SPAN,
++                false,
++                None,
++                Form
+```
+
+**File**: `crates/oxc_transformer/src/typescript/mod.rs` (modified, +17/-1)
+```diff
+@@ -1,11 +1,15 @@
  use oxc_allocator::ArenaVec;
  use oxc_ast::ast::*;
-+use oxc_span::Span;
-+use oxc_str::Ident;
-+use oxc_syntax::scope::ScopeId;
- use oxc_traverse::Traverse;
++use oxc_ast_visit::VisitJs;
+ use oxc_span::Span;
+ use oxc_str::Ident;
+ use oxc_syntax::scope::ScopeId;
+ use oxc_traverse::{BoundIdentifier, Traverse};
  
--use crate::{
--    common::class_lowering::ClassLoweringMode, context::TraverseCtx, state::TransformState,
--};
-+use crate::{common::class_lowering::ClassLowering, context::TraverseCtx, state::TransformState};
+-use crate::{common::class_lowering::ClassLowering, context::TraverseCtx, state::TransformState};
++use crate::{
++    common::class_lowering::ClassLowering, context::TraverseCtx, state::TransformState,
++    utils::decorated_class::PrivateNames,
++};
  
  mod annotations;
  mod class;
-@@ -53,6 +54,11 @@ pub struct TypeScript<'a> {
-     source_type_is_typescript_definition: bool,
-     set_public_class_fields: bool,
-     remove_class_fields_without_initializer: bool,
-+    /// Parameter properties of the entered classes, for [`Self::add_parameter_property_fields`].
-+    parameter_properties: Vec<(Span, Ident<'a>)>,
-+    /// Entered classes with parameter properties, and where theirs start in
-+    /// `parameter_properties`. Classes without any push nothing, so most files never allocate.
-+    parameter_properties_starts: Vec<(ScopeId, usize)>,
+@@ -61,6 +65,8 @@ pub struct TypeScript<'a> {
+     parameter_properties_starts: Vec<(ScopeId, usize)>,
+     /// See [`Self::computed_key_marker`].
+     computed_key_marker: Option<BoundIdentifier<'a>>,
++    /// Enclosing private declarations that direct eval could reference by string.
++    eval_private_names: PrivateNames<'a>,
  }
  
  impl<'a> TypeScript<'a> {
-@@ -67,8 +73,16 @@ impl<'a> TypeScript<'a> {
-             set_public_class_fields: state.assumptions.set_public_class_fields,
-             remove_class_fields_without_initializer: !options.allow_declare_fields
-                 || options.remove_class_fields_without_initializer,
-+            parameter_properties: Vec::new(),
-+            parameter_properties_starts: Vec::new(),
+@@ -78,6 +84,7 @@ impl<'a> TypeScript<'a> {
+             parameter_properties: Vec::new(),
+             parameter_properties_starts: Vec::new(),
+             computed_key_marker: None,
++            eval_private_names: PrivateNames::default(),
          }
      }
-+
-+    /// Whether this transform turns the class's fields into assignments, as with
-+    /// `useDefineForClassFields: false`. This also converts its parameter properties.
-+    fn assigns_fields(&self, lowering: ClassLowering) -> bool {
-+        self.set_public_class_fields && !lowering.lowers_fields()
-+    }
- }
  
- impl<'a> Traverse<'a, TransformState<'a>> for TypeScript<'a> {
-@@ -119,32 +133,17 @@ impl<'a> Traverse<'a, TransformState<'a>> for TypeScript<'a> {
+@@ -134,6 +141,15 @@ impl<'a> Traverse<'a, TransformState<'a>> for TypeScript<'a> {
+ 
+     fn enter_class(&mut self, class: &mut Class<'a>, ctx: &mut TraverseCtx<'a>) {
          let lowering = ctx.state.class_lowering_of(class.scope_id());
++        if self.set_public_class_fields
++            && ctx.scoping().scope_flags(class.scope_id()).contains_direct_eval()
++        {
++            for element in &class.body.body {
++                if let Some(PropertyKey::PrivateIdentifier(name)) = element.property_key() {
++                    self.eval_private_names.visit_private_identifier(name);
++                }
++            }
++        }
          self.annotations.enter_class(class, ctx);
  
--        if lowering.mode() == ClassLoweringMode::Preserve {
--            // Keep field decorators and initializer order for the downstream decorator transform,
--            // even when TypeScript normally moves fields into constructor assignments.
--            self.remove_uninitialized_class_fields(class, true, ctx);
--            if !self.set_public_class_fields {
--                Self::add_parameter_property_fields(class, ctx);
--            }
--            return;
--        }
--
--        // Class-properties owns field lowering and initialization order when enabled.
--        // It also handles decorated classes when the target supports class fields.
--        if !ctx.state.class_transform.owns_all_class_fields() {
--            if lowering.mode() == ClassLoweringMode::Native {
--                if self.set_public_class_fields {
--                    self.transform_class_fields(class, ctx);
--                } else {
--                    // Default oxc behavior matches `useDefineForClassFields: true`. Emit an
--                    // uninitialized field declaration for each constructor parameter property so
--                    // downstream `[[Define]]` semantics see the property, matching TypeScript's
--                    // output.
--                    Self::add_parameter_property_fields(class, ctx);
--                }
--            } else {
--                // Erase type-only fields before class-properties moves instance initializers.
--                self.remove_uninitialized_class_fields(class, true, ctx);
-+        if lowering.lowers_fields() {
-+            // Erase type-only fields before class-properties lowers the rest.
-+            self.remove_uninitialized_class_fields(class, ctx);
-+        } else if self.assigns_fields(lowering) {
-+            self.transform_class_fields(class, lowering, ctx);
-+        } else {
-+            // Define semantics: parameter properties also get field declarations.
-+            let start = self.parameter_properties.len();
-+            Self::collect_parameter_properties(class, &mut self.parameter_properties);
-+            if self.parameter_properties.len() > start {
-+                self.parameter_properties_starts.push((class.scope_id(), start));
-             }
-         }
-     }
-@@ -153,10 +152,15 @@ impl<'a> Traverse<'a, TransformState<'a>> for TypeScript<'a> {
-         self.annotations.exit_class(class, ctx);
+         if lowering.lowers_fields() {
+```
+
+**File**: `crates/oxc_transformer/src/utils/decorated_class.rs` (modified, +28/-1)
+```diff
+@@ -1,6 +1,33 @@
+ //! Detect decorators and auto-accessors in class syntax.
  
-         let lowering = ctx.state.class_lowering_of(class.scope_id());
--        if !ctx.state.class_transform.owns_all_class_fields()
--            && lowering.mode() == ClassLoweringMode::Native
-+        if lowering.lowers_fields() {
-+            return;
+-use oxc_ast::ast::{Class, ClassBody, ClassElement};
++use oxc_ast::ast::{Class, ClassBody, ClassElement, PrivateIdentifier};
++use oxc_ast_visit::VisitJs;
++use oxc_str::Str;
++use rustc_hash::FxHashSet;
++
++use crate::context::TraverseCtx;
++
++/// Reserve declarations and references, including uses of enclosing private names in nested classes.
++#[derive(Clone, Default)]
++pub struct PrivateNames<'a>(FxHashSet<&'a str>);
++
++impl<'a> VisitJs<'a> for PrivateNames<'a> {
++    fn visit_private_identifier(&mut self, ident: &PrivateIdentifier<'a>) {
++        self.0.insert(ident.name.as_str());
++    }
++}
++
++impl<'a> PrivateNames<'a> {
++    pub fn generate(&mut self, base: Str<'a>, ctx: &TraverseCtx<'a>) -> Str<'a> {
++        let mut name = base;
++        let mut n = 2u32;
++        while !self.0.insert(name.as_str()) {
++            name = Str::from_strs_array_in([&base, itoa::Buffer::new().format(n)], ctx);
++            n += 1;
 +        }
-+        self.remove_uninitialized_class_fields(class, ctx);
-+        if let Some((_, start)) =
-+            self.parameter_properties_starts.pop_if(|(scope_id, _)| *scope_id == class.scope_id())
-         {
--            self.remove_uninitialized_class_fields(class, false, ctx);
-+            Self::add_parameter_property_fields(class, &self.par
++        name
++    }
++}
+ 
+ /// Whether a runtime class has decorators on the class itself or any of its elements.
+ pub fn class_has_decorators(class: &Class<'_>) -> bool {
 ```
 
----
-
-### Incident Patch 2: `a9284521` (2026-11-21)
-**Commit Message**: chore(oxlint): require oxlint-tsgolint 7.0.2008 (#29981)
-
-Pin the workspace to `oxlint-tsgolint` 7.0.2008 and raise Oxlint’s
-optional peer minimum to `>=7.0.2008`. [TSGolint release
-notes](https://github.com/oxc-project/tsgolint/releases/tag/v7.0.2008)
-
-All 34 TSGolint integration tests and the frozen pnpm lockfile check
-passed.
-
-AI assistance: Codex (GPT-6). The exact model build and reasoning effort
-were unavailable.
-
-**File**: `npm/oxlint/package.json` (modified, +1/-1)
+**File**: `tasks/transform_conformance/snapshots/oxc_exec.snap.md` (modified, +1/-1)
 ```diff
-@@ -46,7 +46,7 @@
-     "./package.json": "./package.json"
-   },
-   "peerDependencies": {
--    "oxlint-tsgolint": ">=7.0.2007",
-+    "oxlint-tsgolint": ">=7.0.2008",
-     "vite-plus": "*"
-   },
-   "peerDependenciesMeta": {
+@@ -2,7 +2,7 @@ commit: 51225612
+ 
+ node: v26.12.1
+ 
+-Passed: 83 of 379 (21.90%)
++Passed: 84 of 380 (22.11%)
+ 
+ Failures:
+ 
 ```
 
-**File**: `package.json` (modified, +1/-1)
+**File**: `tasks/transform_conformance/tests/babel-plugin-transform-typescript/test/fixtures/oxc/preserved-class-context-dependent-computed-keys/downstream-decorators/exec.ts` (added, +26/-0)
 ```diff
-@@ -16,7 +16,7 @@
-     "emnapi": "catalog:",
-     "oxfmt": "^0.79.0",
-     "oxlint": "^1.66.0",
--    "oxlint-tsgolint": "7.0.2007"
-+    "oxlint-tsgolint": "7.0.2008"
-   },
-   "packageManager": "pnpm@12.7.0"
- }
+@@ -0,0 +1,26 @@
++const userKey = Symbol("user method");
++const observed = [];
++function inspect(getClass) {
++  observed.push(Object.getOwnPropertySymbols(getClass()).filter(key => key !== Symbol.metadata));
++}
++
++class Outer {
++  #_computedKey = "x";
++  #_computedKey3 = "y";
++  *make() {
++    return class C {
++      static #_computedKey2() {}
++      static [userKey]() {}
++      @inspect static getClass() { return C; }
++      static [(yield "key", this.#_computedKey)] = 1;
++      static [eval("this.#_computedKey3")] = 2;
++    };
++  }
++}
++
++const it = new Outer().make();
++expect(it.next().value).toBe("key");
++const C = it.next().value;
++expect(C.x).toBe(1);
++expect(C.y).toBe(2);
++expect(observed).toEqual([[userKey]]);
 ```
 
-**File**: `pnpm-lock.yaml` (modified, +34/-34)
+**File**: `tasks/transform_conformance/tests/babel-plugin-transform-typescript/test/fixtures/oxc/preserved-class-context-dependent-computed-keys/output.js` (modified, +2/-9)
 ```diff
-@@ -231,10 +231,10 @@ importers:
-         version: 0.79.0(@astrojs/compiler-rs@0.5.3)(svelte@5.57.3(@typescript-eslint/types@8.69.0))(vite-plus@0.3.0(@arethetypeswrong/core@0.18.5)(@types/node@25.0.2)(@vitest/browser-playwright@4.1.11)(esbuild@0.28.2)(happy-dom@20.0.11)(jsdom@31.0.1(@noble/hashes@1.8.0))(publint@0.3.24)(svelte@5.57.3(@typescript-eslint/types@8.69.0))(terser@5.44.1)(tsx@4.23.13)(typescript@6.0.3)(vite@8.3.4(@types/node@25.0.2)(esbuild@0.28.2)(terser@5.44.1)(tsx@4.23.13)))
-       oxlint:
-         specifier: ^1.66.0
--        version: 1.94.0(oxlint-tsgolint@7.0.2007)(vite-plus@0.3.0(@arethetypeswrong/core@0.18.5)(@types/node@25.0.2)(@vitest/browser-playwright@4.1.11)(esbuild@0.28.2)(happy-dom@20.0.11)(jsdom@31.0.1(@noble/hashes@1.8.0))(publint@0.3.24)(svelte@5.57.3(@typescript-eslint/types@8.69.0))(terser@5.44.1)(tsx@4.23.13)(typescript@6.0.3)(vite@8.3.4(@types/node@25.0.2)(esbuild@0.28.2)(terser@5.44.1)(tsx@4.23.13)))
-+        version: 1.94.0(oxlint-tsgolint@7.0.2008)(vite-plus@0.3.0(@arethetypeswrong/core@0.18.5)(@types/node@25.0.2)(@vitest/browser-playwright@4.1.11)(esbuild@0.28.2)(happy-dom@20.0.11)(jsdom@31.0.1(@noble/hashes@1.8.0))(publint@0.3.24)(svelte@5.57.3(@typescript-eslint/types@8.69.0))(terser@5.44.1)(tsx@4.23.13)(typescript@6.0.3)(vite@8.3.4(@types/node@25.0.2)(esbuild@0.28.2)(terser@5.44.1)(tsx@4.23.13)))
-       oxlint-tsgolint:
--        specifier: 7.0.2007
--        version: 7.0.2007
-+        specifier: 7.0.2008
-+        version: 7.0.2008
- 
-   apps/oxfmt:
-     dependencies:
-@@ -583,8 +583,8 @@ importers:
-   npm/oxlint:
-     dependencies:
-       oxlint-tsgolint:
--        specifier: '>=7.0.2007'
--        version: 7.0.2007
-+        specifier: '>=7.0.2008'
-+        version: 7.0.2008
-       vite-plus:
-         specifier: '*'
-         version: 1.5.0(@arethetypeswrong/core@0.18.5)(@astrojs/compiler-rs@0.5.3)(@types/node@25.0.2)(@vitest/browser-playwright@4.1.11)(@vitest/ui@5.1.0)(esbuild@0.28.2)(happy-dom@20.0.11)(jsdom@31.0.1(@noble/hashes@1.8.0))(playwright@1.65.0)(publint@0.3.24)(svelte@5.57.0(@typescript-eslint/types@8.69.0))(terser@5.44.1)(tsx@4.23.13)(typescript@6.0.3)
-@@ -2947,8 +2947,8 @@ packages:
-     cpu: [arm64]
-     os: [darwin]
- 
--  '@oxlint-tsgolint/darwin-arm64@7.0.2007':
--    resolution: {integrity: sha512-bjNxPFyu1wNK74epHzXrtVLrj7oEuB8jQvJZDSia2d5EZ/0YgnyhI37E9U530IUZlNCqlTWjko1iT3CKAYF9+A==}
-+  '@oxlint-tsgolint/darwin-arm64@7.0.2008':
-+    resolution: {integrity: sha512-RXcQ439KXqspwHtw39825cyFmvrkOa1AA2CnqFNNG0pVJB0FdhpfQZsDLjRc/3Mt/uEG0MWOG50Hl09J2Ra9UA==}
-     cpu: [arm64]
-     os: [darwin]
- 
-@@ -2962,8 +2962,8 @@ packages:
-     cpu: [x64]
-     os: [darwin]
- 
--  '@oxlint-tsgolint/darwin-x64@7.0.2007':
--    resolution: {integrity: sha512-dCd7mzk2FeTaU46LLeXy5mQyEFICaPqlew/LpehNzEuL86D0jTYlwZHbibRqdRrvkSNgq1szz/7014FIHgyV1g==}
-+  '@oxlint-tsgolint/darwin-x64@7.0.2008':
-+    resolution: {integrity: sha512-4FpkHVDF1I4W0Owgsff8rDdf/XVcI9aoqflqyh3JiMCg7zCzWNkB0hfKMNjMDYDAeK/k1CNawAb7Y7mYGr/Xhg==}
-     cpu: [x64]
-     os: [darwin]
- 
-@@ -2977,8 +2977,8 @@ packages:
-     cpu: [arm64]
-     os: [linux]
- 
--  '@oxlint-tsgolint/linux-arm64@7.0.2007':
--    resolution: {integrity: sha512-qb0XUQXuTmQ8H++zsx/tQitG0/fU3BE16KGp1qXExeDgRzEc7WIlCuN1i+rmA40lty9gQs+x3a73BFODVhTZqA==}
-+  '@oxlint-tsgolint/linux-arm64@7.0.2008':
-+    resolution: {integrity: sha512-CmheyZowc+sbXlZ2ksFrbqR6Mnu+HHheZZKTP3FpDBe64eCp6DzSrjcR2VHRj6mC2UKF1ZO0J8Z1e9Bgji4kKw==}
-     cpu: [arm64]
-     os: [linux]
- 
-@@ -2992,8 +2992,8 @@ packages:
-     cpu: [x64]
-     os: [linux]
- 
--  '@oxlint-tsgolint/linux-x64@7.0.2007':
--    resolution: {integrity: sha512-75vx0067HSgxq/HEZzlHwqhcujn3bshg43fVLTx604jZdZZMQfPVCcxTh2RTEShP7ACT1PRty6vboZlWh5RtEA==}
-+  '@oxlint-tsgolint/linux-x64@7.0.2008':
-+    resolution: {integrity: sha512-7by4bup5rF9q7i19G6zPDXgywBi3tFB6jGzefoc/BfleNS0Q/eleYpD2SDLmsXzN2hFpDrfAskx7H0WnUtKbtQ==}
-     cpu: [x64]
-     os: [linux]
- 
-@@ -3007,8 +3007,8 @@ packages:
-     cpu: [arm64]
-     os: [win32]
- 
--  '@oxlint-tsgolint/win32-arm64@7.0.2007':
--    resolution: {integrity: sha512-6zl7I+BvScfOPtnPtSEP5JA+z8NkDPGd47YnQChL5lLF/Dzs7Rasr1G+q0zGlQcP8OEgW43hW4QlUTXxPfD13Q==}
-+  '@oxlint-tsgolint/win32-arm64@7.0.2008':
-+    resolution: {integrity: sha512-u12UqT/xG64vXclqfe3/7I4j2mWSMZmXsMRBxbgmGfHaEfZUEzxl1QCNyx3TDM5OfsWWKH4dAHJtDRxTAiYA7A==}
-     cpu: [arm64]
-     os: [win32]
- 
-@@ -3022,8 +3022,8 @@ packages:
-     cpu: [x64]
-     os: [win32]
- 
--  '@oxlint-tsgolint/win32-x64@7.0.2007':
--    resolution: {integrity: sha512-VptFHYhBm0SIWCUkx89hmTrKVOQsDg0iB1YE3EBlvRRtCHGUd3pU1kMxPBg1wOd83ZMmIn7zB6maBROtpmrP5g==}
-+  '@oxlint-tsgolint/win32-x64@7.0.2008':
-+    resolution: {integrity: sha512-Vjev4Ns8rdGa4Tb85ZsBkei0reLa77j3FNJsCKPo2gi5oTPK5O2eN42sim2ewoorgx7JQ3+49YuUKa1d6UKHPw==}
-     cpu: [x64]
-     os: [win32]
- 
-@@ -6101,8 +6101,8 @@ packages:
-     resolution: {integrity: sha512-6ccPGu4u4J9bwYPHXBFPee3RZrX3BboRdU7k14zRDDB1lvN3O7J/vPRFdaEfa1+CWx4xnQQOp4ctoaF66oO0uw==}
-     hasBin: true
- 
--  oxlint-tsgolint@7.0.2007:
+@@ -1,4 +1,3 @@
+-var _computedKey = Symbol();
+ function* autoAccessor() {
+   let _yield$a, _arguments$;
+   return class {
+@@ -15,25 +14,19 @@ function* autoAccessor() {
+ function* decorated() {
+   let _yield$a2;
+   return @dec class {
+-    static {
+-      delete this[_computedKey];
+-    }
+     static {
+       this[_yield$a2] = 1;
+     }
+-    static [(_yield$a2 = yield "a", _computedKey)]() {}
++    @(_yield$a2 = yield "a", () => {}) static #_computedKey() {}
+   };
+ }
+ function* decoratedStaticMethod() {
+   let _yield$a3;
+   return class {
+-    static {
+-      delete this[_computedKey];
+-    }
+     @dec static m() {}
+     static {
+       this[_yield$a3] = 1;
+     }
+-    static [(_yield$a3 = yield "a", _computedKey)]() {}
++    @(_yield$a3 = yield "a", () => {}) static #_computedKey() {}
+   };
+ }
 ```
 
----
-
-### Incident Patch 3: `27440dc5` (2026-11-21)
-**Commit Message**: fix(linter/react/jsx-curly-brace-presence): don't report or fix props with escape sequences and preserve raw text (#29976)
-
-JSX attribute strings are not JS string literals: escape sequences are
-not processed. With `props: "never"`, the fixer re-serialized the cooked
-value through codegen, which re-escaped `\` to `\\` and U+00A0 to
-`\xA0`, so the "fixed" attribute rendered a different value:
-
-```jsx
-export const A = <div title={"a\xa0b"} />; // before --fix → title="a\xA0b" (value changed)
-export const C = <div title={"a\xa0b"} />; // literal U+00A0 → title="a\xA0b" (re-escaped)
-```
-
-Strings whose raw text contains a backslash (like A, or ``
-title={`a\xa0b`} ``) were also reported at all, while
-eslint-plugin-react skips them via `needToEscapeCharacterForJSX` —
-template-literal escapes were invisible because the guard only saw the
-cooked value.
-
-The fix: skip reporting string literals and no-substitution templates
-whose raw text contains a backslash (replacing the `\u`-only check), and
-make the prop fixer splice the original raw text (wrapped in double
-quotes, or single quotes when the raw contains `"`) instead of
-re-serializing the cooked value, so a literal U+00A0 survives the fix
-
-**File**: `crates/oxc_linter/src/rules/react/jsx_curly_brace_presence.rs` (modified, +35/-22)
+**File**: `tasks/transform_conformance/vitest.config.mts` (modified, +19/-0)
 ```diff
-@@ -483,7 +483,6 @@ impl JsxCurlyBracePresence {
-                         ctx,
-                         container.span,
-                         string.span,
--                        string.value,
-                     );
-                 } else {
-                     report_unnecessary_curly(ctx, container, string.span);
-@@ -496,7 +495,9 @@ impl JsxCurlyBracePresence {
-                     return;
-                 };
-                 let Some(string) = value.as_str() else { return };
-+                let raw = ctx.source_range(template.span.shrink_left(1).shrink_right(1));
-                 if !parent_is_attribute && contains_quote_characters(string)
-+                    || raw.contains('\\')
-                     || is_allowed_string_like_in_container(
-                         ctx,
-                         string,
-@@ -512,7 +513,6 @@ impl JsxCurlyBracePresence {
-                         ctx,
-                         container.span,
-                         template.span,
--                        value,
-                     );
-                 } else {
-                     report_unnecessary_curly(ctx, container, template.span);
-@@ -532,13 +532,15 @@ fn is_allowed_string_like_in_container<'a>(
- ) -> bool {
-     is_whitespace(s)
-         || s.contains(['\n', '\r'])
-+        // A raw backslash means an escape sequence that a JSX attribute string
-+        // (which does not process escapes) cannot preserve.
-+        || s.contains('\\')
-         || contains_html_entity(s)
-         || is_prop && contains_both_quote_characters(s)
-         || !is_prop && contains_disallowed_jsx_text_chars(s)
-         || !is_prop && s.trim() != s
-         || contains_multiline_comment(s)
-         || contains_line_break_literal(s)
--        || contains_utf8_escape(s)
-         || has_adjacent_jsx_expression_containers(ctx, container, node_id)
- }
+@@ -3,6 +3,25 @@ import { defineConfig } from "vitest/config";
  
-@@ -574,10 +576,6 @@ fn contains_both_quote_characters(s: &str) -> bool {
-     contains_double_quote_characters(s) && contains_single_quote_characters(s)
- }
- 
--fn contains_utf8_escape(s: &str) -> bool {
--    s.chars().zip(s.chars().skip(1)).any(|tuple| matches!(tuple, ('\\', 'u')))
--}
--
- pub static HTML_ENTITY_REGEX: Lazy<Regex> = lazy_regex!(r#"(&[A-Za-z\d#]+;)"#);
- 
- fn contains_html_entity(s: &str) -> bool {
-@@ -625,25 +623,24 @@ fn report_unnecessary_curly<'a>(
-     });
- }
- 
--fn report_unnecessary_curly_for_string_attribute_value<'a>(
--    ctx: &LintContext<'a>,
-+fn report_unnecessary_curly_for_string_attribute_value(
-+    ctx: &LintContext<'_>,
-     container_span: Span,
-     inner_span: Span,
--    value: JSStr<'a>,
- ) {
-     ctx.diagnostic_with_fix(jsx_curly_brace_presence_unnecessary_diagnostic(inner_span), |fixer| {
--        let mut fix = fixer.codegen();
--
--        let Some(str) = value.as_str() else {
--            return fixer.noop();
--        };
--        if !contains_double_quote_characters(str) {
--            fix = fix.with_options(CodegenOptions::default());
--        }
--
--        fix.print_string(str);
--
--        fixer.replace(container_span, fix.into_source_text())
-+        // A JSX attribute string is not a JS string literal: escape sequences
-+        // are not processed. Splice the original raw text instead of
-+        // re-serializing the cooked value, which would re-escape `\` (to `\\`)
-+        // and U+00A0 (to `\xA0`) and change the attribute value.
-+        // Strings containing a backslash never reach this fixer.
-+        let raw = ctx.source_range(inner_span.shrink_left(1).shrink_right(1));
-+        let quote = if raw.contains('"') { '\'' } else { '"' };
-+        let mut fixed = String::with_capacity(raw.len() + 2);
-+        fixed.push(quote);
-+        fixed.push_str(raw);
-+        fixed.push(quote);
-+        fixer.replace(container_span, fixed)
-     });
- }
- 
-@@ -878,6 +875,14 @@ fn test() {
-         (r#"<MyComponent>{"<Foo />"}</MyComponent>"#, Some(json!(["never"]))),
-         (r#"<MyComponent prop={"Hello \u1026 world"}>bar</MyComponent>"#, Some(json!(["never"]))),
-         (r#"<MyComponent>{"Hello \u1026 world"}</MyComponent>"#, Some(json!(["never"]))),
-+        // Strings whose raw text contains a backslash are never fixed, because
-+        // a JSX attribute string does not process escape sequences
-+        // (https://github.com/oxc-project/oxc/issues/29975).
-+        (r#"<div title={"a\xa0b"} />"#, None),
-+        (r#"<div title={"a\\b"} />"#, None),
-+        (r"<div title={`a\xa0b`} />", None),
-+        (r"<div title={`a\\b`} />", None),
-+        (r#"<App>{"a\xa0b"}</App>"#, None),
-         (r#"<MyComponent prop={"Hello &middot; world"}>bar</MyComponent>"#, Some(json!(["never"]))),
-         (r#"<MyComponent>{"Hello &middot; world"}</MyComponent>"#, Some(json!(["never"]))),
-         (r#"<MyComponent>{"Hello \n world"}</MyComponent>"#, Some(json!(["never"]))),
-@@ -1549,6 +1554,14 @@ fn test() {
-             Some(json!([{ "children": "always" }])),
-         ),
-         (r#"<Foo bar={'"'} />"#, r#"<Foo bar='"' />"#, Some(json!(["never"]))),
-+        // The fix sp
+ export default defineConfig({
+   plugins: [
++    {
++      // Execute fixtures that preserve standard decorators for a downstream compiler.
++      name: "downstream-decorators",
++      enforce: "pre",
++      transform: {
++        filter: { id: /-downstream-decorators-exec\.test\.js$/ },
++        async handler(code) {
++          const { transformAsync } = await import("@babel/core");
++          const { default: decorators } = await import("@babel/plugin-proposal-decorators");
++          return (
++            await transformAsync(code, {
++              babelrc: false,
++              configFile: false,
++              plugins: [[decorators, { version: "2023-11" }]],
++            })
++          )?.code;
++        },
++      },
++    },
+     {
+       // Resolve helper imports to this checkout before Vite's package resolution.
+       name: "local-oxc-runtime",
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #29987** (2026-11-22): perf(oxlint): convert diagnostic offsets to positions with a line index (@nrayburn-tech)
-- **PR #29982** (2026-11-21): feat(linter/typescript/no-unsafe-class-instance-assignment): add rule (@camc314)
-- **PR #29981** (2026-11-21): chore(oxlint): require oxlint-tsgolint 7.0.2008 (@camc314)
-- **PR #29980** (2026-11-21): docs(skills): share PR title guidance with triagebot (@camc314)
-- **PR #29978** (closed): fix(transformer): keep legacy decorators on static fields under `setPublicClassFields` (@oxc-captain[bot])
-- **PR #29976** (2026-11-21): fix(linter/react/jsx-curly-brace-presence): don't report or fix props with escape sequences and preserve raw text (@oxc-captain[bot])
+- **PR #30199** (2026-11-24): fix(lexer)!: give BigInt literals exact values in a bigints lane (@ShanonJackson)
+- **PR #30198** (2026-11-24): fix(linter): name the type-aware linter generically in its errors (@filipfalcon)
+- **PR #30196** (2026-11-24): refactor(parser): add debug assertion (@overlookmotel)
+- **PR #30195** (2026-11-24): refactor(parser): import from `std` at top level (@overlookmotel)
+- **PR #30193** (2026-11-24): refactor(coverage): unambiguous diff compare ASTs with `FullEq` (@overlookmotel)
+- **PR #30192** (2026-11-24): refactor(coverage): generate `FullEq` trait for comparing ASTs including spans (@overlookmotel)
 
 ---
 
@@ -1905,60 +2100,61 @@ re-serializing the cooked value, so a literal U+00A0 survives the fix
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. transformer): keep TypeScript assign semantics for preserved classes
+## X. linter/eslint/no-await-in-loop): report awaits in unbraced if/switch/try loop bo
 
 **RULE**:
-When implementing operations in `crates/oxc_transformer/src/common/class_lowering.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in oxc-project/oxc. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/oxc_linter/src/rules/eslint/no_await_in_loop.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in oxc-project/oxc. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `08023adc`: transformer): keep TypeScript assign semantics for preserved classes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `727f784f`: linter/eslint/no-await-in-loop): report awaits in unbraced if/switch/try loop bodies. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/oxc_transformer/src/common/class_lowering.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/oxc_linter/src/rules/eslint/no_await_in_loop.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-use oxc_ast::ast::{Class, ClassElement};
-    utils::decorated_class::{
-        class_body_has_auto_accessors, class_has_decorators, is_auto_accessor,
-    },
-enum ClassLoweringMode {
-    /// Whether class-properties lowers the fields of this class.
-    pub fn lowers_fields(self) -> bool {
-        self.mode == ClassLoweringMode::LowerAll
-    }
-
-    /// Whether a field or auto-accessor stays as written for the downstream transform.
-    ///
-    /// A preserved class keeps its decorated fields and its auto-accessors. Transforms that
-    /// rewrite the other fields must leave these in place, and must not move other initializers
-    /// after theirs (see [`Self::first_movable_instance_field`]).
-    pub fn keeps_field(self, element: &ClassElement<'_>) -> bool {
-        self.mode == ClassLoweringMode::Preserve
-            && (is_auto_accessor(element)
-                || matches!(element, ClassElement::PropertyDefinition(_))
-                    && element.has_decorator())
-    }
-
-    /// Index of the first instance field whose initializer can move after the field
-    /// initializers that stay in the class, such as into the constructor.
-    ///
-    /// Instance fields before the last kept in
+use oxc_ast::AstKind;
+        let contains = |outer: Span| outer.contains_inclusive(span);
+                contains(stmt.body.span())
+                    || stmt.test.as_ref().is_some_and(|test| contains(test.span()))
+                    || stmt.update.as_ref().is_some_and(|update| contains(update.span()))
+                if contains(stmt.body.span()) {
+                    && contains(stmt.left.span())
+                if contains(stmt.body.span()) {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-use oxc_ast::ast::Class;
-    utils::decorated_class::{class_body_has_auto_accessors, class_has_decorators},
-pub enum ClassLoweringMode {
-    pub fn mode(self) -> ClassLoweringMode {
-        self.mode
+use oxc_ast::{
+    AstKind,
+    ast::{Expression, Statement},
+};
+    fn node_matches_stmt_span(span: Span, stmt: &Statement) -> bool {
+        match stmt {
+            Statement::BlockStatement(block) => block.span.contains_inclusive(span),
+            Statement::ExpressionStatement(expr_statement) => {
+                expr_statement.span.contains_inclusive(span)
+            }
+            _ => false,
+        }
+    }
+
+    fn node_matches_expr_span(span: Span, expr: &Expression) -> bool {
+        match expr {
+            Expression::TemplateLiteral(expr) => expr.span.contains_inclusive(span),
+            Expression::ArrayExpression(expr) => expr.span.contains_inclusive(span),
+            Expression::ArrowFunctionExpression(expr) => expr.span.contains_inclusive(span),
+            Expression::AssignmentExpression(expr) => expr.span.contains_inclusive(span),
+            Expression::AwaitExpression(expr) => expr.span.contains_inclusive(span),
+            Expression::BinaryExpression(expr) => expr.span.contains_inclusive(span),
+            Expression::CallExpression(expr) => expr.span.contains_inclusive(span),
+            Expression::ChainExpression(expr) => expr.span.contains_inclusive(s
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `08023adc` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `727f784f` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

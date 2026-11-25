@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261123-J5EM",
-    "timestamp": "2026-11-23T15:37:31.678Z",
-    "repository": "mitmproxy/mitmproxy",
-    "learningId": "learn-github-mitmproxy-mitmproxy",
-    "contentHash": "81aefc6307a53563056718ea3c6d239b5efdb560738d11dda8fe39c36e13d03b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-J5QB",
-    "timestamp": "2026-11-23T15:37:32.099Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "f926d67720354b749818f8694df37bf157d4d16d2c4eef2b7685602404c21d0c",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-TOOT",
-    "timestamp": "2026-11-23T15:45:43.229Z",
-    "repository": "intfloat/multilingual-e5-small",
-    "learningId": "learn-huggingface-intfloat-multilingual-e5-small",
-    "contentHash": "155ded916440c15151e28280665e398af43d62b6f8e8de3e6c81c6ba09224bf1",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261123-TXPV",
     "timestamp": "2026-11-23T15:45:54.931Z",
     "repository": "aleo-labs-protocol/snarkOS",
@@ -7490,6 +7445,51 @@
     "repository": "lioensky/VCPToolBox",
     "learningId": "learn-github-lioensky-vcptoolbox",
     "contentHash": "4ed45b8f336b3b38475e2073dfce6bdef713be89ce3c68524b317c7ffdf391cb",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-Y9SP",
+    "timestamp": "2026-11-25T01:52:49.177Z",
+    "repository": "oxc-project/oxc",
+    "learningId": "learn-github-oxc-project-oxc",
+    "contentHash": "89b48509c4e84459b6269f1062180d9be0f301689fe7b322e8d64a158f954e29",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-YAIY",
+    "timestamp": "2026-11-25T01:52:50.122Z",
+    "repository": "mochajs/mocha",
+    "learningId": "learn-github-mochajs-mocha",
+    "contentHash": "d2e8a97fe0e050a6f77bf7f7e44cdeaf65ac58f05cf54cc2be06f0c252297cf3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-YCKZ",
+    "timestamp": "2026-11-25T01:52:52.787Z",
+    "repository": "microsoft/react-native-windows",
+    "learningId": "learn-github-microsoft-react-native-windows",
+    "contentHash": "7b3df9c74a1bc2ff4fb45797ce89fb24f91626c5d8ce776f0b5f686b206c90db",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

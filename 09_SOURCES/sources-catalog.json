@@ -7533,10 +7533,10 @@
     "repository": "microsoft/react-native-windows",
     "platform": "github",
     "sourceUrl": "https://github.com/microsoft/react-native-windows",
-    "sourceVersion": "aea3f3ad",
+    "sourceVersion": "d1f9d2de",
     "license": "NOASSERTION",
-    "contentHash": "21204bd230a767f4dcc1854f04d5d5c3c7659078f5627bbbc87830e396b7f361",
-    "lastHarvestedAt": "2026-11-22T13:59:08.167Z",
+    "contentHash": "7b3df9c74a1bc2ff4fb45797ce89fb24f91626c5d8ce776f0b5f686b206c90db",
+    "lastHarvestedAt": "2026-11-25T01:52:52.792Z",
     "learningId": "learn-github-microsoft-react-native-windows"
   },
   "paradedb-paradedb": {
@@ -7723,10 +7723,10 @@
     "repository": "oxc-project/oxc",
     "platform": "github",
     "sourceUrl": "https://github.com/oxc-project/oxc",
-    "sourceVersion": "4a6f9c61",
+    "sourceVersion": "e87c19c1",
     "license": "MIT",
-    "contentHash": "0d1a232552241a56c81757f7329020f8dd8ad99df03f1cd34de296325a0774bc",
-    "lastHarvestedAt": "2026-11-23T23:09:51.803Z",
+    "contentHash": "89b48509c4e84459b6269f1062180d9be0f301689fe7b322e8d64a158f954e29",
+    "lastHarvestedAt": "2026-11-25T01:52:49.181Z",
     "learningId": "learn-github-oxc-project-oxc"
   },
   "pointfreeco-swift-composable-architecture": {
@@ -10243,10 +10243,10 @@
     "repository": "mochajs/mocha",
     "platform": "github",
     "sourceUrl": "https://github.com/mochajs/mocha",
-    "sourceVersion": "5b5afa7b",
+    "sourceVersion": "04eb516f",
     "license": "MIT",
-    "contentHash": "d92fbe8d482bbb44e37c471cb426b12ed0f519d136e2db6b849c05e4b538f812",
-    "lastHarvestedAt": "2026-10-30T21:32:49.758Z",
+    "contentHash": "d2e8a97fe0e050a6f77bf7f7e44cdeaf65ac58f05cf54cc2be06f0c252297cf3",
+    "lastHarvestedAt": "2026-11-25T01:52:50.127Z",
     "learningId": "learn-github-mochajs-mocha"
   },
   "justjavac-free-programming-books-zh_cn": {

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-22T13:59:20.176Z",
+  "timestamp": "2026-11-25T01:52:59.207Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-microsoft-react-native-windows-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [microsoft-react-native-windows-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-22T13:59:20.176Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T01:52:59.207Z`  
 > **Learning ID**: `LEARN-EVO-microsoft-react-native-windows-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/microsoft-react-native-windows-learnings.md`  
 > **Source**: github ([https://github.com/microsoft/react-native-windows](https://github.com/microsoft/react-native-windows))  
-> **Source Version**: `aea3f3ad`  
+> **Source Version**: `d1f9d2de`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T13:59:06.919Z  
+> **Timestamp**: 2026-11-25T01:52:51.626Z  
 > **Learning ID**: `learn-github-microsoft-react-native-windows`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/microsoft-react-native-windows-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/microsoft/react-native-windows](https://github.com/microsoft/react-native-windows))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T13:59:06.912Z  
+> **Harvest Timestamp**: 2026-11-25T01:52:51.621Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: A framework for building native Windows apps with React.
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 17383 stars
+- **Stars / Engagement**: 17384 stars
 
 ---
 
@@ -1598,523 +1598,532 @@ export default FocusManager;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `aea3f3ad` (2026-11-20)
-**Commit Message**: Apply origin policy checks when a same-origin request is redirected to another origin (#16631)
+### Incident Patch 1: `0635e312` (2026-11-24)
+**Commit Message**: Run CodeQL compiled analysis only on shipping builds (#16654)
 
-* Apply origin policy checks when a same-origin request is redirected to another origin
+* Limit CodeQL compiled tracing to shipping builds
 
+CodeQL compiled-language tracing slows native builds about 3x on its cadence runs, which pushes the E2E and Playground jobs past their 60-minute job timeouts on main CI. Only the Desktop and Universal jobs build the binaries we ship, so opt every other job out with the 1ES job-level templateContext.sdl.codeql.compiled.enabled setting. The Setup job used a flat sdl.codeql.enabled key that the template ignores; it now uses the nested key.
+
+* Document CodeQL opt-out for non-shipping CI jobs
+
+**File**: `.ado/README.md` (modified, +5/-0)
+```diff
+@@ -164,6 +164,11 @@ Replace the patch with an upstream release once available and validated.
+ The Office template runs SDL (CredScan, BinSkim, CodeQL, Component Governance,
+ ESLint). PREfast, SpotBugs, and Bandit are disabled (no actionable findings for
+ this repo). `guardian/sdl/.gdnsuppress` is an **empty** suppression set.
++In `build-template.yml`, compiled-language CodeQL (C++/C#) tracing runs only in
++the Desktop and Universal jobs that build shipped binaries, because tracing slows
++native builds about 3x on CodeQL cadence runs. Every other job sets
++`templateContext.sdl.codeql.compiled.enabled: false`; new non-shipping jobs
++should do the same.
+ Dependency remediations, including root `package.json` resolutions, do not by
+ themselves establish scanner clearance; track the corresponding CG alerts separately.
+ 
+```
+
+**File**: `.ado/build-template.yml` (modified, +13/-3)
+```diff
+@@ -110,7 +110,7 @@ extends:
+           displayName: Setup
+           variables: [template: .ado/variables/shared.yml@self]
+           pool: ${{ parameters.AgentPool.Medium }}
+-          timeoutInMinutes: 60 # CodeQL requires 3x usual build timeout
++          timeoutInMinutes: 60
+           steps:
+           # 1. Full checkout (needed for beachball bump on developer builds;
+           #    harmless ~1 min overhead on release builds where bump is skipped)
+@@ -189,8 +189,11 @@ extends:
+ 
+           templateContext:
+             sdl:
++              # Only shipping Desktop/Universal builds need compiled tracing;
++              # tracing other native builds adds ~3x build time.
+               codeql:
+-                enabled: false
++                compiled:
++                  enabled: false
+             outputs:
+               - output: pipelineArtifact
+                 displayName: 'Publish version variables'
+@@ -210,7 +213,7 @@ extends:
+           displayName: Create NPM packages
+           variables: [template: .ado/variables/shared.yml@self]
+           pool: ${{ parameters.AgentPool.Medium }}
+-          timeoutInMinutes: 120 # CodeQL requires 3x usual build timeout
++          timeoutInMinutes: 120
+           cancelTimeoutInMinutes: 5
+           steps:
+           - template: .ado/templates/checkout-shallow.yml@self
+@@ -227,6 +230,10 @@ extends:
+             displayName: Show created npm packages
+ 
+           templateContext:
++            sdl:
++              codeql:
++                compiled:
++                  enabled: false
+             outputs:
+               - output: pipelineArtifact
+                 displayName: 'Publish npm pack artifacts'
+@@ -475,6 +482,9 @@ extends:
+ 
+           templateContext:
+             sdl:
++              codeql:
++                compiled:
++                  enabled: false
+               binskim:
+                 analyzeTargetGlob: '$(System.DefaultWorkingDirectory)\NugetRoot\**\Microsoft.ReactNative\Microsoft.ReactNative.dll;$(System.DefaultWorkingDirectory)\NugetRoot\**\React.Windows.Desktop.DLL\react-native-win32.dll'
+             outputs:
+```
+
+**File**: `.ado/jobs/cli-init-windows.yml` (modified, +4/-0)
+```diff
+@@ -145,6 +145,10 @@ jobs:
+                 useExperimentalWinUI3: ${{ coalesce(matrix.useExperimentalWinUI3, false) }}
+ 
+           templateContext:
++            sdl:
++              codeql:
++                compiled:
++                  enabled: false
+             outputs:
+             - output: pipelineArtifact
+               displayName: 'Upload traces'
+```
+
+**File**: `.ado/jobs/e2e-test.yml` (modified, +4/-0)
+```diff
+@@ -388,6 +388,10 @@ jobs:
+                 buildLogDirectory: '$(BuildLogDirectory)'
+ 
+           templateContext:
++            sdl:
++              codeql:
++                compiled:
++                  enabled: false
+             outputs:
+             - output: pipelineArtifact
+               displayName: 'Upload traces'
+```
+
+**File**: `.ado/jobs/linting.yml` (modified, +5/-0)
+```diff
+@@ -15,6 +15,11 @@ jobs:
+     timeoutInMinutes: 40
+     variables: [template: ../variables/windows.yml]
+     pool: ${{ parameters.AgentPool.Medium }}
++    templateContext:
++      sdl:
++        codeql:
++          compiled:
++            enabled: false
+     steps:
+       - ${{ if eq(parameters.buildEnvironment, 'Continuous') }}:
+         - template: ../templates/checkout-shallow.yml
+```
+
+**File**: `.ado/jobs/node-tests.yml` (modified, +5/-0)
+```diff
+@@ -20,6 +20,11 @@ jobs:
+       timeoutInMinutes: 20
+       variables: [template: ../variables/windows.yml]
+       pool: ${{ parameters.AgentPool.Medium }}
++      templateContext:
++        sdl:
++          codeql:
++            compiled:
++              enabled: false
+ 
+       steps:
+         - template: ../templates/checkout-shallow.yml
+```
+
+**File**: `.ado/jobs/playground.yml` (modified, +4/-0)
+```diff
+@@ -147,6 +147,10 @@ jobs:
+             # App Package publish moved to templateContext.outputs (1ES compliance)
+ 
+           templateContext:
++            sdl:
++              codeql:
++                compiled:
++                  enabled: false
+             outputs:
+             - ${{ if eq(matrix.UploadAppx, true) }}:
+               - output: pipelineArtifact
+```
+
+---
+
+### Incident Patch 2: `b40c2c00` (2026-11-22)
+**Commit Message**: Fix TouchableHighlight Windows accessibility state handling (#16646)
+
+Preserve Windows accessibility-state fields during ARIA normalization and align Pressability disabled precedence. Add regression coverage and refresh only affected page snapshots.
+
+Co-authored-by: Anukrati Agrawal <[REDACTED_EMAIL]>
 Co-authored-by: Copilot <[REDACTED_EMAIL]>
+Copilot-Session: f5e1e46a-5123-4f59-922c-ea8fe0a2f583
 
-Copilot-Session: 6571d0a2-c95e-4c83-8fb7-82debbd8de73
-
-* Change files
-
-* Check cross-origin redirects before each hop is sent
-
-- Apply the configured origin policy in OnRedirecting, before the request
-  leaves the original origin, using the method and body of the next hop
-  (301/302/303 rewrites). Rejected redirects are not sent.
-- Check the redirect response of each cross-origin hop, and validate the
-  final response with CORS when any hop left the original origin, even if
-  the chain ends on the original origin.
-- Ignore the default User-Agent and Origin headers added by the filter
-  chain when deciding whether a redirected request is simple.
-- Send the Origin header on the first cross-origin hop, and keep it when
-  the redirect filter rebuilds the request.
-- Document GetCrossOriginRedirectPolicy.
-
-Co-authored-by: Copilot <[REDACTED_EMAIL]>
-Copilot-Session: 6571d0a2-c95e-4c83-8fb7-82debbd8de73
-
-* Address review comments on redirect checks
-
-- Skip the chec
-
-**File**: `change/react-native-windows-0630ea41-5851-45c7-b799-906060c3589c.json` (added, +7/-0)
+**File**: `change/react-native-windows-d160b37e-67f2-4040-95d5-1733c208557a.json` (added, +7/-0)
 ```diff
 @@ -0,0 +1,7 @@
 +{
 +  "type": "prerelease",
-+  "comment": "Apply origin policy checks when a same-origin request is redirected to another origin",
++  "comment": "Preserve Windows TouchableHighlight accessibility states and align disabled-state precedence with Pressability",
 +  "packageName": "react-native-windows",
 +  "email": "anuagra@microsoft.com",
 +  "dependentChangeType": "patch"
 +}
 ```
 
-**File**: `vnext/Desktop.UnitTests/OriginPolicyHttpFilterTest.cpp` (modified, +459/-5)
+**File**: `packages/e2e-test-app-fabric/test/__snapshots__/snapshotPages.test.js.snap` (modified, +297/-0)
 ```diff
-@@ -415,6 +415,7 @@ TEST_CLASS (OriginPolicyHttpFilterTest) {
-   /// </summary>
-   struct ServerParams {
-     wstring Host; // Host name used to route requests to this endpoint (e.g. L"mockserver.rnw").
-+    wstring Path; // Optional path used to route requests. Empty matches any path on Host.
-     wstring WideUrl; // Wide URL form, used as Location / Access-Control-Allow-Origin header values.
-     string Url; // Narrow URL form, used for runtime options and request URLs.
- 
-@@ -425,11 +426,28 @@ TEST_CLASS (OriginPolicyHttpFilterTest) {
-     std::map<wstring, wstring> ResponseHeaders;
-     wstring ResponseContent{L"RESPONSE_CONTENT"};
- 
--    ServerParams(wstring host) : Host{std::move(host)}, WideUrl{L"http://" + Host}, Url{winrt::to_string(WideUrl)} {
-+    ServerParams(wstring host, wstring path = {})
-+        : Host{std::move(host)},
-+          Path{std::move(path)},
-+          WideUrl{L"http://" + Host + Path},
-+          Url{winrt::to_string(WideUrl)} {
-       PreflightHeaders[s_accessControlAllowMethods] = L"GET, POST, DELETE, PATCH";
-     }
-   };
- 
-+  // A request as received by the mocked network.
-+  struct SentRequest {
-+    wstring Host;
-+    wstring Method;
-+    wstring Origin;
-+  };
-+
-+  // Requests received by the mocked network during the current test.
-+  std::vector<SentRequest> m_sentRequests;
-+
-+  // Default User-Agent the redirect filter adds to every hop. Empty means none.
-+  winrt::hstring m_userAgent;
-+
-   struct ClientParams {
-     wstring Method;
-     std::vector<std::pair<wstring, wstring>> Headers;
-@@ -452,8 +470,7 @@ TEST_CLASS (OriginPolicyHttpFilterTest) {
-   /// supplied mock filter instead of the live network stack. Reads the same runtime options.
-   /// </summary>
-   HttpClient MakeMockedClient(IHttpFilter const &innerMock) {
--    auto redirFilter =
--        winrt::make<RedirectHttpFilter>(IHttpFilter{innerMock}, IHttpFilter{innerMock}, winrt::hstring{});
-+    auto redirFilter = winrt::make<RedirectHttpFilter>(IHttpFilter{innerMock}, IHttpFilter{innerMock}, m_userAgent);
- 
-     if (static_cast<OriginPolicy>(GetRuntimeOptionInt("Http.OriginPolicy")) == OriginPolicy::None) {
-       return HttpClient{redirFilter};
-@@ -498,12 +515,19 @@ TEST_CLASS (OriginPolicyHttpFilterTest) {
-       std::vector<ServerParams *> const &servers, ClientParams const &client, string const &requestUrl) {
-     auto mockFilter = winrt::make<MockHttpBaseFilter>();
-     mockFilter.as<MockHttpBaseFilter>()->Mocks.SendRequestAsync =
--        [&servers](HttpRequestMessage const &request) -> ResponseOperation {
-+        [&servers, this](HttpRequestMessage const &request) -> ResponseOperation {
-       HttpResponseMessage response{};
- 
-+      auto origin = request.Headers().TryLookup(L"Origin");
-+      m_sentRequests.push_back(
-+          {wstring{request.RequestUri().Host()},
-+           wstring{request.Method().ToString()},
-+           origin ? wstring{*origin} : wstring{}});
-+
-       ServerParams const *match = nullptr;
-       for (auto *server : servers) {
--        if (request.RequestUri().Host() == server->Host) {
-+        if (request.RequestUri().Host() == server->Host &&
-+            (server->Path.empty() || request.RequestUri().Path() == server->Path)) {
-           match = server;
-           break;
+@@ -7210,6 +7210,9 @@ exports[`snapshotAllPages Animated 13`] = `
+           "checked": undefined,
+           "disabled": undefined,
+           "expanded": undefined,
++          "multiselectable": undefined,
++          "readOnly": undefined,
++          "required": undefined,
+           "selected": undefined,
          }
-@@ -592,6 +616,8 @@ TEST_CLASS (OriginPolicyHttpFilterTest) {
-     SetRuntimeOptionInt("Http.OriginPolicy", static_cast<int32_t>(OriginPolicy::None));
-     SetRuntimeOptionString("Http.GlobalOrigin", {});
-     SetRuntimeOptionBool("Http.OmitCredentials", false);
-+    m_userAgent = {};
-+    m_sentRequests.clear();
-   }
- 
-   BEGIN_TEST_METHOD_ATTRIBUTE(NoCorsForbiddenMethodSucceeds)
-@@ -878,6 +904,434 @@ TEST_CLASS (OriginPolicyHttpFilterTest) {
-     TestOriginPolicyWithRedirect(serverArgs, redirServerArgs, clientArgs, true /*shouldSucceed*/);
-   } // FullCorsSameOriginToCrossOriginRedirectSucceeds
- 
-+  // A same-origin request redirected to another origin must pass the CORS checks of the final origin.
-+  BEGIN_TEST_METHOD_ATTRIBUTE(FullCorsSameOriginToCrossOriginRedirectWithoutCorsHeadersFails)
-+  END_TEST_METHOD_ATTRIBUTE()
-+  TEST_METHOD(FullCorsSameOriginToCrossOriginRedirectWithoutCorsHeadersFails) {
-+    ServerParams serverArgs(s_mockServerHost);
-+    ServerParams redirServerArgs(s_redirectServerHost);
-+
-+    serverArgs.ResponseStatus = HttpStatusCode::MovedPermanently;
-+    serverArgs.ResponseHeaders[s_location] = redirServerArgs.WideUrl;
-+
-+    // Server2 does not allow the original origin
-+    redirServerArgs.ResponseStatus = HttpStatusCode::Accepted;
-+
-+    ClientParams clientArgs(L"GET", {{L"Content-Type", L"application/text"}});
-+
-+    SetRuntimeOptionString("Http.GlobalOrigin", serverArgs.Url.c_str());
-+    SetRuntimeOptionInt("Http.OriginPolicy", static_cast<int32_t>(OriginPolicy::CrossOriginResourceSharing));
-+
-+    TestOriginPolicyWithRedirect(serverArgs, redirServerArgs, clientArgs, false /*shouldSucceed*/);
-+  } // FullCorsSameOriginToCrossOriginRedirectWithoutCorsHeadersFails
-+
-+  BE
-```
-
-**File**: `vnext/Shared/Networking/OriginPolicyHttpFilter.cpp` (modified, +165/-0)
-```diff
-@@ -700,11 +700,159 @@ ResponseOperation OriginPolicyHttpFilter::SendPreflightAsync(HttpRequestMessage
-   co_return {co_await m_innerFilter.SendRequestAsync(preflightRequest)};
- }
- 
-+/*static*/ bool OriginPolicyHttpFilter::IsSimpleCorsRedirectRequest(
-+    HttpRequestMessage const &request,
-+    HttpMethod const &method,
-+    bool includeContent) noexcept {
-+  bool callerSetUserAgent = false;
-+  if (auto reqArgs = request.Properties().TryLookup(L"RequestArgs")) {
-+    for (auto const &header : reqArgs.as<RequestArgs>()->Headers) {
-+      if (boost::iequals(header.first, "User-Agent")) {
-+        callerSetUserAgent = true;
-+        break;
-+      }
-+    }
-+  }
-+
-+  for (const auto &header : request.Headers()) {
-+    // The redirect filter adds a default User-Agent and this filter manages Origin. Neither comes from the caller.
-+    if ((!callerSetUserAgent && boost::iequals(header.Key(), L"User-Agent")) || boost::iequals(header.Key(), L"Origin"))
-+      continue;
-+
-+    // The redirect filter removes these before sending a hop to another origin.
-+    if (boost::iequals(header.Key(), L"Authorization") || boost::iequals(header.Key(), L"Cookie") ||
-+        boost::iequals(header.Key(), L"Cookie2"))
-+      continue;
-+
-+    if (s_simpleCorsRequestHeaderNames.find(header.Key().c_str()) == s_simpleCorsRequestHeaderNames.cend())
-+      return false;
-+  }
-+
-+  if (auto content = request.Content(); content && includeContent) {
-+    for (const auto &header : content.Headers()) {
-+      if (s_simpleCorsRequestHeaderNames.find(header.Key().c_str()) == s_simpleCorsRequestHeaderNames.cend() &&
-+          !boost::iequals(header.Key(), "Content-Length"))
-+        return false;
-+
-+      if (boost::iequals(header.Key(), L"Content-Type") &&
-+          s_simpleCorsContentTypeValues.find(header.Value().c_str()) == s_simpleCorsContentTypeValues.cend())
-+        return false;
-+    }
-+  }
-+
-+  return s_simpleCorsMethods.find(method.ToString().c_str()) != s_simpleCorsMethods.cend();
-+}
-+
-+OriginPolicy OriginPolicyHttpFilter::GetCrossOriginRedirectPolicy(
-+    HttpRequestMessage const &request,
-+    HttpMethod const &method,
-+    bool includeContent) const {
-+  auto configuredPolicy =
-+      static_cast<OriginPolicy>(request.Properties().Lookup(L"OriginPolicy").as<IPropertyValue>().GetUInt64());
-+  bool isSimple = IsSimpleCorsRedirectRequest(request, method, includeContent);
-+
-+  switch (configuredPolicy) {
-+    case OriginPolicy::SimpleCrossOriginResourceSharing:
-+      if (!isSimple)
-+        throw hresult_error{
-+            E_INVALIDARG,
-+            L"The redirected request does not meet the requirements for Simple Cross-Origin resource sharing"};
-+      return OriginPolicy::SimpleCrossOriginResourceSharing;
-+
-+    case OriginPolicy::CrossOriginResourceSharing:
-+      return isSimple ? OriginPolicy::SimpleCrossOriginResourceSharing : OriginPolicy::CrossOriginResourceSharing;
-+
-+    default:
-+      throw hresult_error{E_INVALIDARG, L"SOP (same-origin policy) is enforced"};
-+  }
-+}
-+
-+void OriginPolicyHttpFilter::ValidateRedirectScheme(IMap<hstring, IInspectable> const &props, Uri const &nextUri)
-+    const {
-+  if (m_origin.SchemeName() == nextUri.SchemeName())
-+    return;
-+
-+  // Same scheme rules as ValidateRequest applies to a direct request.
-+  auto configuredPolicy = static_cast<OriginPolicy>(props.Lookup(L"OriginPolicy").as<IPropertyValue>().GetUInt64());
-+  if (configuredPolicy == OriginPolicy::CrossOriginResourceSharing ||
-+      (configuredPolicy == OriginPolicy::SimpleCrossOriginResourceSharing &&
-+       GetRuntimeOptionBool("Http.BlockMixedContentSimpleCors")))
-+    throw hresult_error{E_INVALIDARG, L"The origin and request URLs must have the same scheme"};
-+}
-+
-+void OriginPolicyHttpFilter::CheckRedirectFromOriginalOrigin(
-+    HttpRequestMessage const &request,
-+    HttpResponseMessage const &response) const {
-+  using winrt::Windows::Web::Http::HttpStatusCode;
-+
-+  auto props = request.Properties();
-+  auto nextUri = Uri{response.Headers().Location().AbsoluteUri()};
-+
-+  // RedirectHttpFilter does not follow these redirects and returns the response as is.
-+  auto nextScheme = nextUri.SchemeName();
-+  if ((nextScheme != L"http" && nextScheme != L"https") ||
-+      (request.RequestUri().SchemeName() == L"https" && nextScheme == L"http"))
-+    return;
-+
-+  // See https://fetch.spec.whatwg.org/#http-redirect-fetch
-+  if (!IsSameOrigin(m_origin, nextUri) && (!nextUri.UserName().empty() || !nextUri.Password().empty()))
-+    throw hresult_error{E_INVALIDARG, L"A cross-origin redirect URL can not include credentials"};
-+
-+  if (props.HasKey(L"CrossOriginRedirect") || !IsSameOrigin(m_origin, request.RequestUri())) {
-+    // The chain already left the original origin. Every later redirect response must pass CORS before it is
-+    // followed, even when this hop is back on the original origin.
-+    auto controlValues = ExtractAccessControlValues(response.Headers());
-+    ValidateAllowOrigin(controlValues.AllowedOrigin, controlV
-```
-
-**File**: `vnext/Shared/Networking/OriginPolicyHttpFilter.h` (modified, +27/-0)
-```diff
-@@ -59,6 +59,14 @@ class OriginPolicyHttpFilter
- 
-   static bool IsSimpleCorsRequest(winrt::Windows::Web::Http::HttpRequestMessage const &request) noexcept;
- 
-+  // Like IsSimpleCorsRequest, but for a redirected hop: uses the given method, optionally ignores the body,
-+  // ignores the User-Agent and Origin headers added by the filter chain, and ignores the credential headers
-+  // (Authorization, Cookie, Cookie2) the redirect filter removes before a cross-origin hop.
-+  static bool IsSimpleCorsRedirectRequest(
-+      winrt::Windows::Web::Http::HttpRequestMessage const &request,
-+      winrt::Windows::Web::Http::HttpMethod const &method,
-+      bool includeContent) noexcept;
-+
-   static bool AreSafeRequestHeaders(
-       winrt::Windows::Web::Http::Headers::HttpRequestHeaderCollection const &headers) noexcept;
- 
-@@ -91,6 +99,25 @@ class OriginPolicyHttpFilter
-       winrt::Windows::Web::Http::HttpResponseMessage const &response,
-       const OriginPolicy effectivePolicy) const;
- 
-+  // Returns the policy (Simple CORS or CORS) for a request that a redirect moved off the original origin.
-+  // Uses the method and body the next hop will be sent with. Throws if the configured policy does not allow it.
-+  OriginPolicy GetCrossOriginRedirectPolicy(
-+      winrt::Windows::Web::Http::HttpRequestMessage const &request,
-+      winrt::Windows::Web::Http::HttpMethod const &method,
-+      bool includeContent) const;
-+
-+  // Throws if a redirect to nextUri breaks the scheme rules ValidateRequest applies to direct requests.
-+  void ValidateRedirectScheme(
-+      winrt::Windows::Foundation::Collections::IMap<winrt::hstring, winrt::Windows::Foundation::IInspectable> const
-+          &props,
-+      winrt::Windows::Foundation::Uri const &nextUri) const;
-+
-+  // Checks a redirect of a request that started on the original origin, before the next hop is sent.
-+  // Throws if the redirect must not be followed.
-+  void CheckRedirectFromOriginalOrigin(
-+      winrt::Windows::Web::Http::HttpRequestMessage const &request,
-+      winrt::Windows::Web::Http::HttpResponseMessage const &response) const;
-+
-   void ValidateAllowOrigin(
-       winrt::hstring const &allowedOrigin,
-       winrt::hstring const &allowCredentials,
-```
-
-**File**: `vnext/Shared/Networking/RedirectHttpFilter.cpp` (modified, +15/-2)
-```diff
-@@ -276,8 +276,9 @@ ResponseOperation RedirectHttpFilter::SendRequestAsync(HttpRequestMessage const
-       throw winrt::hresult_error{HRESULT_FROM_WIN32(ERROR_HTTP_REDIRECT_FAILED), L"Too many redirects"};
-     }
- 
--    // Call event source's OnRedirecting before modifying request parameters.
--    if (coEventSrc && !coEventSrc->OnRedirecting(coRequest, response)) {
-+    // Check whether the redirect will be followed before notifying the event source, so it only sees hops that are
-+    // actually sent.
-+    if (!coAllowAutoRedirect) {
-       break;
-     }
- 
-@@ -295,6 +296,11 @@ ResponseOperation RedirectHttpFilter::SendRequestAsync(HttpRequestMessage const
-       break;
-     }
- 
-+    // Call event source's OnRedirecting before modifying request parameters.
-+    if (coEventSrc && !coEventSrc->OnRedirecting(coRequest, response)) {
-+      break;
-+    }
-+
-     // See https://fetch.spec.whatwg.org/#http-redirect-fetch
-     // 301/302 change POST to GET; 303 changes any method other than GET/HEAD to GET.
-     // 307/308 (and other redirect statuses) keep the method and body.
-@@ -311,12 +317,19 @@ ResponseOperation RedirectHttpFilter::SendRequestAsync(HttpRequestMessage const
-     }
- 
-     if (auto requestFactory = coRequestFactory.lock()) {
-+      // The factory rebuilds headers from the original arguments. Keep the Origin header set by the origin policy.
-+      auto origin = coRequest.Headers().TryLookup(L"Origin");
-+
-       coRequest = co_await requestFactory->CreateRequest(
-           HttpMethod{method}, Uri{redirectUri}, coRequest.Properties(), /*includeContent*/ !removeBody);
- 
-       if (!coRequest) {
-         throw winrt::hresult_error{E_INVALIDARG, L"Invalid request handle"};
        }
-+
-+      if (origin) {
-+        coRequest.Headers().Insert(L"Origin", *origin);
-+      }
-     } else {
-       coRequest.Method(method);
-       coRequest.RequestUri(redirectUri);
+@@ -7640,6 +7643,9 @@ exports[`snapshotAllPages Animated 14`] = `
+         "checked": undefined,
+         "disabled": undefined,
+         "expanded": undefined,
++        "multiselectable": undefined,
++        "readOnly": undefined,
++        "required": undefined,
+         "selected": undefined,
+       }
+     }
+@@ -8636,6 +8642,9 @@ exports[`snapshotAllPages Button 1`] = `
+       "checked": undefined,
+       "disabled": undefined,
+       "expanded": undefined,
++      "multiselectable": undefined,
++      "readOnly": undefined,
++      "required": undefined,
+       "selected": undefined,
+     }
+   }
+@@ -8723,6 +8732,9 @@ exports[`snapshotAllPages Button 2`] = `
+       "checked": undefined,
+       "disabled": undefined,
+       "expanded": undefined,
++      "multiselectable": undefined,
++      "readOnly": undefined,
++      "required": undefined,
+       "selected": undefined,
+     }
+   }
+@@ -8827,6 +8839,9 @@ exports[`snapshotAllPages Button 3`] = `
+         "checked": undefined,
+         "disabled": undefined,
+         "expanded": undefined,
++        "multiselectable": undefined,
++        "readOnly": undefined,
++        "required": undefined,
+         "selected": undefined,
+       }
+     }
+@@ -8919,6 +8934,9 @@ exports[`snapshotAllPages Button 3`] = `
+         "checked": undefined,
+         "disabled": undefined,
+         "expanded": undefined,
++        "multiselectable": undefined,
++        "readOnly": undefined,
++        "required": undefined,
+         "selected": undefined,
+       }
+     }
+@@ -9024,6 +9042,9 @@ exports[`snapshotAllPages Button 4`] = `
+         "checked": undefined,
+         "disabled": undefined,
+         "expanded": undefined,
++        "multiselectable": undefined,
++        "readOnly": undefined,
++        "required": undefined,
+         "selected": undefined,
+       }
+     }
+@@ -9115,6 +9136,9 @@ exports[`snapshotAllPages Button 4`] = `
+         "checked": undefined,
+         "disabled": undefined,
+         "expanded": undefined,
++        "multiselectable": undefined,
++        "readOnly": undefined,
++        "required": undefined,
+         "selected": undefined,
+       }
+     }
+@@ -9206,6 +9230,9 @@ exports[`snapshotAllPages Button 4`] = `
+         "checked": undefined,
+         "disabled": undefined,
+         "expanded": undefined,
++        "multiselectable": undefined,
++        "readOnly": undefined,
++        "required": undefined,
+         "selected": undefined,
+       }
+     }
+@@ -9301,6 +9328,9 @@ exports[`snapshotAllPages Button 5`] = `
+       "checked": undefined,
+       "disabled": true,
+       "expanded": undefined,
++      "multiselectable": undefined,
++      "readOnly": undefined,
++      "required": undefined,
+       "selected": undefined,
+     }
+   }
+@@ -9416,6 +9446,9 @@ exports[`snapshotAllPages Button 6`] = `
+       "checked": undefined,
+       "disabled": undefined,
+       "expanded": undefined,
++      "multiselectable": undefined,
++      "readOnly": undefined,
++      "required": undefined,
+       "selected": undefined,
+     }
+   }
+@@ -9510,6 +9543,9 @@ exports[`snapshotAllPages Button 7`] = `
+       "checked": undefined,
+       "disabled": true,
+       "expanded": undefined,
++      "multiselectable": undefined,
++      "readOnly": undefined,
++      "required": undefined,
+       "selected": undefined,
+     }
+   }
+@@ -9626,6 +9662,9 @@ exports[`snapshotAllPages Button 8`] = `
+       "checked": undefined,
+       "disabled": undefined,
+       "expanded": undefined,
++      "multiselectable": undefined,
++      "readOnly": undefined,
++      "required": undefined,
+       "selected": undefined,
+     }
+   }
+@@ -9716,6 +9755,9 @@ exports[`snapshotAllPages Button 9`] = `
+         "checked": undefined,
+         "disabled": undefined,
+         "expanded": undefined,
++        "multiselectable": undefined,
++        "readOnly": undefined,
++        "required": undefined,
+         "selected": undefined,
+       }
+     }
+@@ -9800,6 +9842,9 @@ exports[`snapshotAllPages Button 9`] = `
+         "checked": undefined,
+         "disabled": undefined,
+         "expanded": undefined,
++        "multiselectable": undefined,
++        "readOnly": undefined,
++        "required": undefined,
+         "selected": undefined,
+       }
+     }
+@@ -9884,6 +9929,9 @@ exports[`snapshotAllPages Button 9`] = `
+         "checked": undefined,
+         "disabled": undefined,
+         "expanded": undefined,
++        "multiselectable": undefined,
++        "readOnly": undefined,
++        "required": undefined,
+         "selected": undefined,
+       }
+     }
+@@ -9968,6 +10016,9 @@ exports[`snapshotAllPages Button 9`] = `
+         "checked": undefined,
+         "disabled": undefined,
+         "expanded": un
 ```
 
----
-
-### Incident Patch 2: `9ff3a931` (2026-11-20)
-**Commit Message**: 📦 [main]: Bump the all-dependencies group with 3 updates (#16644)
-
-Bumps the all-dependencies group with 3 updates: [@babel/generator](https://github.com/babel/babel/tree/HEAD/packages/babel-generator), [@babel/preset-env](https://github.com/babel/babel/tree/HEAD/packages/babel-preset-env) and [@babel/runtime](https://github.com/babel/babel/tree/HEAD/packages/babel-runtime).
-
-
-Updates `@babel/generator` from 7.29.13 to 7.29.14
-- [Release notes](https://github.com/babel/babel/releases)
-- [Changelog](https://github.com/babel/babel/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/babel/babel/commits/v7.29.14/packages/babel-generator)
-
-Updates `@babel/preset-env` from 7.29.7 to 7.29.14
-- [Release notes](https://github.com/babel/babel/releases)
-- [Changelog](https://github.com/babel/babel/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/babel/babel/commits/v7.29.14/packages/babel-preset-env)
-
-Updates `@babel/runtime` from 7.29.13 to 7.29.14
-- [Release notes](https://github.com/babel/babel/releases)
-- [Changelog](https://github.com/babel/babel/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/babel/babel/commits/v7.29.14/packages/babel-runtime)
-
----
-updated-dependencies
-
-**File**: `yarn.lock` (modified, +176/-69)
+**File**: `vnext/overrides.json` (modified, +4/-0)
 ```diff
-@@ -78,16 +78,16 @@ __metadata:
-   languageName: node
-   linkType: hard
- 
--"@babel/generator@npm:^7.25.0, @babel/generator@npm:^7.29.0, @babel/generator@npm:^7.29.1, @babel/generator@npm:^7.29.12, @babel/generator@npm:^7.29.13, @babel/generator@npm:^7.29.7, @babel/generator@npm:^7.7.2":
--  version: 7.29.13
--  resolution: "@babel/generator@npm:7.29.13"
-+"@babel/generator@npm:^7.25.0, @babel/generator@npm:^7.29.0, @babel/generator@npm:^7.29.1, @babel/generator@npm:^7.29.12, @babel/generator@npm:^7.29.13, @babel/generator@npm:^7.29.14, @babel/generator@npm:^7.29.7, @babel/generator@npm:^7.7.2":
-+  version: 7.29.14
-+  resolution: "@babel/generator@npm:7.29.14"
-   dependencies:
--    "@babel/parser": "npm:^7.29.13"
--    "@babel/types": "npm:^7.29.11"
-+    "@babel/parser": "npm:^7.29.14"
-+    "@babel/types": "npm:^7.29.14"
-     "@jridgewell/gen-mapping": "npm:^0.3.12"
-     "@jridgewell/trace-mapping": "npm:^0.3.28"
-     jsesc: "npm:^3.0.2"
--  checksum: 10c0/3b6318f59aeaffe9305b1e4a8e3035f6223c808e961459945d896ba3c6f9dccb1e95d477b73d8e00b21d972b389292478dd1a50e8917d1629cd3c52005a64594
-+  checksum: 10c0/39db746c47e0b80290b727e64025dd0ee9060f346271b5ca75ba07485df05f704a74358910bbe8e9f6e2a8fca62ac98f886640d2c84e7740af5fec42fbe0b71a
-   languageName: node
-   linkType: hard
- 
-@@ -165,6 +165,23 @@ __metadata:
-   languageName: node
-   linkType: hard
- 
-+"@babel/helper-create-class-features-plugin@npm:^7.29.13":
-+  version: 7.29.13
-+  resolution: "@babel/helper-create-class-features-plugin@npm:7.29.13"
-+  dependencies:
-+    "@babel/helper-annotate-as-pure": "npm:^7.29.7"
-+    "@babel/helper-member-expression-to-functions": "npm:^7.29.7"
-+    "@babel/helper-optimise-call-expression": "npm:^7.29.7"
-+    "@babel/helper-replace-supers": "npm:^7.29.7"
-+    "@babel/helper-skip-transparent-expression-wrappers": "npm:^7.29.13"
-+    "@babel/traverse": "npm:^7.29.13"
-+    semver: "npm:^6.3.1"
-+  peerDependencies:
-+    "@babel/core": ^7.0.0
-+  checksum: 10c0/c6d7ba6f3df266e04acbe44ec0626101d599d0928d64a9565fbbcab51d377e41f3a0bd3f3192dd529826af498d675c1d32e229382405ee8603171c8cd66cef8d
-+  languageName: node
-+  linkType: hard
+@@ -514,6 +514,10 @@
+       "baseFile": "packages/react-native/Libraries/Components/TextInput/AndroidTextInputNativeComponent.js",
+       "baseHash": "ce408d56232b390a25b0eff2169f5676b0ba2fda"
+     },
++    {
++      "type": "platform",
++      "file": "src-win/Libraries/Components/Touchable/__tests__/TouchableHighlightWindows-test.js"
++    },
+     {
+       "type": "patch",
+       "file": "src-win/Libraries/Components/Touchable/Touchable.windows.js",
+```
+
+**File**: `vnext/src-win/Libraries/Components/Touchable/TouchableHighlight.windows.js` (modified, +4/-3)
+```diff
+@@ -116,9 +116,9 @@ class TouchableHighlightImpl extends React.Component<
+     return {
+       cancelable: !this.props.rejectResponderTermination,
+       disabled:
+-        this.props.disabled != null
+-          ? this.props.disabled
+-          : this.props.accessibilityState?.disabled,
++        this.props.disabled ??
++        this.props['aria-disabled'] ??
++        this.props.accessibilityState?.disabled,
+       hitSlop: this.props.hitSlop,
+       delayLongPress: this.props.delayLongPress,
+       delayPressIn: this.props.delayPressIn,
+@@ -266,6 +266,7 @@ class TouchableHighlightImpl extends React.Component<
+       ariaSelected != null
+     ) {
+       _accessibilityState = {
++        ...accessibilityState, // [Windows]
+         busy: ariaBusy ?? accessibilityState?.busy,
+         checked: ariaChecked ?? accessibilityState?.checked,
+         disabled: ariaDisabled ?? accessibilityState?.disabled,
+```
+
+**File**: `vnext/src-win/Libraries/Components/Touchable/__tests__/TouchableHighlightWindows-test.js` (added, +125/-0)
+```diff
+@@ -0,0 +1,125 @@
++/**
++ * Copyright (c) Microsoft Corporation.
++ * Licensed under the MIT License.
++ *
++ * @format
++ */
 +
- "@babel/helper-create-class-features-plugin@npm:^7.29.7":
-   version: 7.29.7
-   resolution: "@babel/helper-create-class-features-plugin@npm:7.29.7"
-@@ -303,6 +320,19 @@ __metadata:
-   languageName: node
-   linkType: hard
- 
-+"@babel/helper-module-transforms@npm:^7.29.14":
-+  version: 7.29.14
-+  resolution: "@babel/helper-module-transforms@npm:7.29.14"
-+  dependencies:
-+    "@babel/helper-module-imports": "npm:^7.29.7"
-+    "@babel/helper-validator-identifier": "npm:^7.29.7"
-+    "@babel/traverse": "npm:^7.29.14"
-+  peerDependencies:
-+    "@babel/core": ^7.0.0
-+  checksum: 10c0/5ca8b9c36d5b9656196c758df1dc10148086b232f3df43d932a66d84f46faf93da7096667903c1f652539759789dc1ef5fbff0569baeabb110dce27faa988250
-+  languageName: node
-+  linkType: hard
++'use strict';
 +
- "@babel/helper-module-transforms@npm:^7.29.7":
-   version: 7.29.7
-   resolution: "@babel/helper-module-transforms@npm:7.29.7"
-@@ -410,6 +440,16 @@ __metadata:
-   languageName: node
-   linkType: hard
- 
-+"@babel/helper-skip-transparent-expression-wrappers@npm:^7.29.13":
-+  version: 7.29.13
-+  resolution: "@babel/helper-skip-transparent-expression-wrappers@npm:7.29.13"
-+  dependencies:
-+    "@babel/traverse": "npm:^7.29.13"
-+    "@babel/types": "npm:^7.29.11"
-+  checksum: 10c0/7ee6a71df0e921666b308e0c9ffa9b36961df8b7164f46d241885478b24195e506e4d9a0aff9bcd76c09eb27628a7f87af73f04b953b66714ec288d578047b7d
-+  languageName: node
-+  linkType: hard
++const React = require('react');
++const renderer = require('@react-native/jest-preset/jest/renderer');
++const View = require('../../View/View').default;
++const TouchableHighlight = require('../TouchableHighlight.windows').default;
 +
- "@babel/helper-skip-transparent-expression-wrappers@npm:^7.29.7":
-   version: 7.29.7
-   resolution: "@babel/helper-skip-transparent-expression-wrappers@npm:7.29.7"
-@@ -434,6 +474,13 @@ __metadata:
-   languageName: node
-   linkType: hard
- 
-+"@babel/helper-string-parser@npm:^7.29.14":
-+  version: 7.29.14
-+  resolution: "@babel/helper-string-parser@npm:7.29.14"
-+  checksum: 10c0/7e296ef8457872da9f9306ef29a67470505bca7f21728ff4fede08746eac2bb122a3a3be39135d337a9c56985bae24e4c2dd8f13896afe64a32e9251363ed7bd
-+  languageName: node
-+  linkType: hard
++describe('TouchableHighlight Windows accessibility', () => {
++  let component;
 +
- "@babel/helper-string-parser@npm:^7.29.7":
-   version: 7.29.7
-   resolution: "@babel/helper-string-parser@npm:7.29.7"
-@@ -534,6 +581,17 @@ __metadata:
-   languageName: node
-   linkType: hard
- 
-+"@babel/parser@npm:^7.29.14":
-+  version: 7.29.14
-+  resolution: "@babel/parser@npm:7.29.14"
-+  dependencies:
-+    "@babel/types": "npm:^7.29.14"
-+  bin:
-+    parser: ./bin/babel-parser.js
-+  checksum: 10c0/5d76040cb386915a5086c864b5966a08bada9fa6074fa2b16cce42ed78ecae309003d3362fef88a96b9a40afc9761604502db93f7cea9db59af077d1ff2109f4
-+  languageName: node
-+  linkType: hard
++  afterEach(async () => {
++    if (component != null) {
++      await renderer.unmount(component);
++      component = null;
++    }
++  });
 +
- "@babel/parser@npm:^7.29.7":
-   version: 7.29.7
-   resolution: "@babel/parser@npm:7.29.7"
-@@ -590,15 +648,15 @@ __metadata:
-   languageName: node
-   linkType: hard
- 
--"@babel/plugin-bugfix-safari-rest-destructuring-rhs-array@npm:^7.29.7":
--  version: 7.29.7
--  resolution: "@babel/plugin-bugfix-safari-rest-destructuring-rhs-array@npm
++  it.each([true, false])(
++    'preserves Windows accessibility states set to %s while normalizing ARIA states',
++    async value => {
++      const accessibilityState = {
++        readOnly: value,
++        multiselectable: value,
++        required: value,
++        busy: true,
++        checked: true,
++        disabled: true,
++        expanded: true,
++        selected: true,
++      };
++      component = await renderer.create(
++        <TouchableHighlight
++          accessibilityState={accessibilityState}
++          aria-busy={false}
++          aria-checked={false}
++          aria-disabled={false}
++          aria-expanded={false}
++          aria-selected={false}>
++          <View />
++        </TouchableHighlight>,
++      );
++
++      const view = component.root.findAllByType(View)[0];
++      expect(view.props.accessibilityState).toEqual({
++        readOnly: value,
++        multiselectable: value,
++        required: value,
++        busy: false,
++        checked: false,
++        disabled: false,
++        expanded: false,
++        selected: false,
++      });
++      expect(accessibilityState.busy).toBe(true);
++      expect(accessibilityState.disabled).toBe(true);
++    },
++  );
++
++  it.each([
++    [
++      'aria-disabled=false overrides accessibilityState.disabled=true',
++      {'aria-disabled': false, accessibilityState: {disabled: true}},
++      false,
++    ],
++    [
++      'aria-disabled=true overrides accessibilityState.disabled=false',
++      {'aria-disabled': true, accessibilityState: {disabled: false}},
++      true,
++    ],
++    [
++      'disabled=false overrides both accessibility inputs',
++      {
++        disabled: false,
++        'aria-disabled': true,
++        accessibilityState: {disabled: true},
++      },
++      false,
++    ],
++    [
++      'disabled=true overrides both accessibility inputs',
++      {
++        disabled: true,
++        'aria-disabled': false,
++        accessibilityState: {disabled: false},
++      },
++      true,
++    ],
++    [
++      'accessibilityState.disabled remains the fallback',
++      {accessibilityState: {disabled: true}},
++      true,
++    ],
++    ['unspecified disabled states remain enabled', {}, undefined],
++  ])(
++    'aligns accessibility and activation when %s',
++    async (_, props, disabled) => {
++      const onPress = jest.fn();
++      component = await renderer.create(
++        <TouchableHighlight {...props} onPress={onPress}>
++          <View />
++        </TouchableHighlight>,
++      );
++
++      const view = component.root.findAllByType(View)[0];
++      expect(view.props.accessibilityState?.disabled).toBe(disabled);
++      expect(view.props.onStartShouldSetResponder()).toBe(disabled !== true);
++
++      await React.act(() => {
++        view.props.onClick({
++          nativeEvent: {},
++          currentTarget: 1,
++          target: 1,
++        });
++      });
++      expect(onPress).toHaveBeenCalledTimes(disabled === true ? 0 : 1);
++    },
++  );
++});
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #16644** (2026-11-20): 📦 [main]: Bump the all-dependencies group with 3 updates (@dependabot[bot])
-- **PR #16643** (2026-11-20): 🚀 [0.81]: Release 13 packages (@azure-pipelines[bot])
-- **PR #16642** (2026-11-20): [0.81] Add opt-in V8 JSI ABI runtime that loads v8jsi2.dll (@vmoroz)
-- **PR #16641** (2026-11-20): 🚀 [main]: Release 15 packages (@azure-pipelines[bot])
-- **PR #16639** (2026-11-19): Integrate React Native November 10, 2026 nightly (@anuagragith)
-- **PR #16638** (2026-11-18): 🚀 [0.81]: Release 13 packages (@azure-pipelines[bot])
+- **PR #16656** (2026-11-24): 📦 [main]: Bump the all-dependencies group with 3 updates (@dependabot[bot])
+- **PR #16654** (2026-11-24): Run CodeQL compiled analysis only on shipping builds (@vmoroz)
+- **PR #16653** (2026-11-23): 📦 [main]: Bump the all-dependencies group with 3 updates (@dependabot[bot])
+- **PR #16652** (2026-11-24): Mount child visuals above a View's background visual (@FaithfulAudio)
+- **PR #16649** (2026-11-23): [0.81] Apply origin policy checks when a same-origin request is redirected to another origin (@anuagragith)
+- **PR #16648** (2026-11-23): [0.85] Apply origin policy checks when a same-origin request is redirected to another origin (@anuagragith)
 
 ---
 
@@ -2134,27 +2143,25 @@ updated-dependencies
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Apply origin policy checks when a same-origin request is redirected to another o
+## X. Run CodeQL compiled analysis only on shipping builds
 
 **RULE**:
-When implementing operations in `change/react-native-windows-0630ea41-5851-45c7-b799-906060c3589c.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in microsoft/react-native-windows. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.ado/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in microsoft/react-native-windows. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `aea3f3ad`: Apply origin policy checks when a same-origin request is redirected to another origin. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0635e312`: Run CodeQL compiled analysis only on shipping builds. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `change/react-native-windows-0630ea41-5851-45c7-b799-906060c3589c.json`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `.ado/README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-{
-  "type": "prerelease",
-  "comment": "Apply origin policy checks when a same-origin request is redirected to another origin",
-  "packageName": "react-native-windows",
-  "email": "anuagra@microsoft.com",
-  "dependentChangeType": "patch"
-}
+In `build-template.yml`, compiled-language CodeQL (C++/C#) tracing runs only in
+the Desktop and Universal jobs that build shipped binaries, because tracing slows
+native builds about 3x on CodeQL cadence runs. Every other job sets
+`templateContext.sdl.codeql.compiled.enabled: false`; new non-shipping jobs
+should do the same.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2164,7 +2171,7 @@ Subsystems managing C++ data structures, boundary deserialization, API parsing, 
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `aea3f3ad` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0635e312` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

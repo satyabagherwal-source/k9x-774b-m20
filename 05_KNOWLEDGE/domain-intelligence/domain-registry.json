@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T01:44:38.176Z",
-  "total_records": 2615,
+  "last_updated": "2026-11-25T01:52:59.528Z",
+  "total_records": 2617,
   "domains": {
     "A": {
       "total": 22,
@@ -1182,7 +1182,7 @@
       ]
     },
     "G": {
-      "total": 458,
+      "total": 460,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1641,7 +1641,9 @@
         "domain_intelligence-architecture-intelligence-str4d-rage-core-invariants",
         "domain_intelligence-architecture-intelligence-str4d-rage-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-qwikdev-qwik-core-invariants",
-        "domain_intelligence-architecture-intelligence-qwikdev-qwik-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-qwikdev-qwik-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-mochajs-mocha-core-invariants",
+        "domain_intelligence-architecture-intelligence-mochajs-mocha-learnings-core-invariants"
       ]
     },
     "H": {
@@ -20168,8 +20170,8 @@
       "title": "Technical Construction Intelligence: microsoft/react-native-windows Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-microsoft-react-native-windows-technical-construction-intelligence-microsoft-rea.md",
       "repository": "microsoft/react-native-windows",
-      "content_hash": "3ec80eab6dc30cb43a7d0873980b645f7f2910870633982e614f686b287a8b20",
-      "created_at": "2026-11-22T13:59:08.671Z"
+      "content_hash": "eca4b1c9c6652dfe168db6066c2d83bfa0bb6fc1f684969b36f9e058d682ab71",
+      "created_at": "2026-11-25T01:52:53.220Z"
     },
     "DOM-D-31A60A1E": {
       "record_id": "DOM-D-31A60A1E",
@@ -20270,8 +20272,8 @@
       "title": "Technical Construction Intelligence: microsoft-react-native-windows-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-microsoft-react-native-windows-learnings-technical-construction-intelligence-mic.md",
       "repository": "microsoft-react-native-windows-learnings",
-      "content_hash": "415823ea324af845405e2f6836170f8c01a5c95e8d050f558fa26e4b525fca15",
-      "created_at": "2026-11-22T13:59:20.524Z"
+      "content_hash": "073bc1f0a9fecb6ce213a3d38282583c7ed536224a3c51c3e74d7350f663601e",
+      "created_at": "2026-11-25T01:52:59.528Z"
     },
     "domain_intelligence-research-knowledge-intelligence-openmoss-team-moss-image-base-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-openmoss-team-moss-image-base-core-invariants",
@@ -24296,8 +24298,8 @@
       "title": "Technical Construction Intelligence: oxc-project/oxc Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-oxc-project-oxc-technical-construction-intelligence-oxc-project-oxc-core-invaria.md",
       "repository": "oxc-project/oxc",
-      "content_hash": "08757e713148bde6ef94fa47f07241244de11c49453b55cc88521ee8cbc46eef",
-      "created_at": "2026-11-22T14:56:20.090Z"
+      "content_hash": "146c1d64af4785386e65114334c8fc641b6e498f87f63a3011afd7975af65ec3",
+      "created_at": "2026-11-25T01:52:49.638Z"
     },
     "domain_intelligence-technical-construction-intelligence-oxc-project-oxc-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-oxc-project-oxc-learnings-core-invariants",
@@ -24305,8 +24307,8 @@
       "title": "Technical Construction Intelligence: oxc-project-oxc-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-oxc-project-oxc-learnings-technical-construction-intelligence-oxc-project-oxc-le.md",
       "repository": "oxc-project-oxc-learnings",
-      "content_hash": "6092e21e9e0aa2bce3d19c4925c438832b095ee60cedbed7aafd32dbf3a60ebd",
-      "created_at": "2026-11-22T15:01:18.504Z"
+      "content_hash": "2a7304178d8a91a8486484a5d4a6d659b8ec50443dab94d32bce2c6e4f8e83a2",
+      "created_at": "2026-11-25T01:52:57.468Z"
     },
     "domain_intelligence-technical-construction-intelligence-astral-sh-ruff-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-astral-sh-ruff-core-invariants",
@@ -43900,6 +43902,24 @@
       "confidence": 0.6,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-25T01:27:35.453Z"
+    },
+    "domain_intelligence-architecture-intelligence-mochajs-mocha-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-mochajs-mocha-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: mochajs/mocha Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-mochajs-mocha-architecture-intelligence-mochajs-mocha-core-invariants.md",
+      "repository": "mochajs/mocha",
+      "content_hash": "cf251dc3ed20b12892ef0cdce5c6857426fdba40fe87c8994f1c9b38389fec0f",
+      "created_at": "2026-11-25T01:52:50.559Z"
+    },
+    "domain_intelligence-architecture-intelligence-mochajs-mocha-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-mochajs-mocha-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: mochajs-mocha-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-mochajs-mocha-learnings-architecture-intelligence-mochajs-mocha-learnings-core-i.md",
+      "repository": "mochajs-mocha-learnings",
+      "content_hash": "b67ebca5b9d927f7b1fb68147b9426f3df9673d131d1598896aa918fedc9ed3d",
+      "created_at": "2026-11-25T01:52:58.525Z"
     }
   }
 }

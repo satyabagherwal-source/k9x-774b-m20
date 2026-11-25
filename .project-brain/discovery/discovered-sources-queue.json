@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-25T01:44:36.771Z",
+  "updated_at": "2026-11-25T01:52:58.092Z",
   "stats": {
-    "total_discovered": 9107,
-    "approved_pending_harvest": 8628,
+    "total_discovered": 9118,
+    "approved_pending_harvest": 8639,
     "harvested_count": 0,
     "rejected_count": 479,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 8616,
-      "OFFICIAL_DOCUMENTATION": 274,
+      "COMMUNITY_AND_EXPERT": 8626,
+      "OFFICIAL_DOCUMENTATION": 275,
       "STANDARDS_AND_SPECIFICATIONS": 149,
       "ENGINEERING_BLOGS": 7,
       "SECURITY_ADVISORIES": 50,
@@ -197028,6 +197028,248 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/avajs-ava-learnings.md",
         "fileName": "avajs-ava-learnings.md"
+      }
+    },
+    "SRC-190FE6359528": {
+      "id": "SRC-190FE6359528",
+      "url": "https://app.codspeed.io/settings/organizations/oxc-project/billing",
+      "title": "https://app.codspeed.io/settings/organizations/oxc-project/billing",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T01:52:56.608Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oxc-project-oxc-learnings.md",
+        "fileName": "oxc-project-oxc-learnings.md"
+      }
+    },
+    "SRC-675F5C56F480": {
+      "id": "SRC-675F5C56F480",
+      "url": "https://app.codspeed.io/oss-program-application?owner=oxc-project",
+      "title": "https://app.codspeed.io/oss-program-application?owner=oxc-project",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T01:52:56.671Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oxc-project-oxc-learnings.md",
+        "fileName": "oxc-project-oxc-learnings.md"
+      }
+    },
+    "SRC-4CE10FBECA47": {
+      "id": "SRC-4CE10FBECA47",
+      "url": "https://app.codspeed.io/oxc-project/oxc/branches/fix%2Flexer-bigint-values",
+      "title": "https://app.codspeed.io/oxc-project/oxc/branches/fix%2Flexer-bigint-values",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T01:52:56.735Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oxc-project-oxc-learnings.md",
+        "fileName": "oxc-project-oxc-learnings.md"
+      }
+    },
+    "SRC-8F1FCB62FBA4": {
+      "id": "SRC-8F1FCB62FBA4",
+      "url": "https://codspeed.io/pr-report/open-in-codspe",
+      "title": "https://codspeed.io/pr-report/open-in-codspe",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T01:52:56.796Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oxc-project-oxc-learnings.md",
+        "fileName": "oxc-project-oxc-learnings.md"
+      }
+    },
+    "SRC-00260FADC56A": {
+      "id": "SRC-00260FADC56A",
+      "url": "https://app.codspeed.io/oxc-project/oxc/branches/filipfalcon%3Atype-aware-linter-errors",
+      "title": "https://app.codspeed.io/oxc-project/oxc/branches/filipfalcon%3Atype-aware-linter-errors",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T01:52:56.885Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oxc-project-oxc-learnings.md",
+        "fileName": "oxc-project-oxc-learnings.md"
+      }
+    },
+    "SRC-B4DE2819500A": {
+      "id": "SRC-B4DE2819500A",
+      "url": "https://codspeed.i/",
+      "title": "https://codspeed.i/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T01:52:56.949Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oxc-project-oxc-learnings.md",
+        "fileName": "oxc-project-oxc-learnings.md"
+      }
+    },
+    "SRC-7584439F3D70": {
+      "id": "SRC-7584439F3D70",
+      "url": "https://playground.oxc.rs/?t=codegen&options=%7B%22run%22%3A%7B%22transform%22%3Atrue%7D%2C%22parser%22%3A%7B%22extension%22%3A%22ts%22%7D%2C%22transformer%22%3A%7B%22useDefineForClassFields%22%3Afalse%2C%22experimentalDecorators%22%3Atrue%7D%7D&code=class+A+%7B%0A++%40dec+static+y+%3D+1%3B%0A++%40dec+z+%3D+3%3B%0A%7D%0A",
+      "title": "https://playground.oxc.rs/?t=codegen&options=%7B%22run%22%3A%7B%22transform%22%3Atrue%7D%2C%22parser%22%3A%7B%22extension%22%3A%22ts%22%7D%2C%22transformer%22%3A%7B%22useDefineForClassFields%22%3Afalse%2C%22experimentalDecorators%22%3Atrue%7D%7D&code=class+A+%7B%0A++%40dec+static+y+%3D+1%3B%0A++%40dec+z+%3D+3%3B%0A%7D%0A",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T01:52:57.014Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oxc-project-oxc-learnings.md",
+        "fileName": "oxc-project-oxc-learnings.md"
+      }
+    },
+    "SRC-66EB41C94590": {
+      "id": "SRC-66EB41C94590",
+      "url": "https://npm.im/workerpool",
+      "title": "https://npm.im/workerpool",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T01:52:57.901Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mochajs-mocha-learnings.md",
+        "fileName": "mochajs-mocha-learnings.md"
+      }
+    },
+    "SRC-D66BB614849F": {
+      "id": "SRC-D66BB614849F",
+      "url": "https://npm.im/serialize-javascript",
+      "title": "https://npm.im/serialize-javascript",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T01:52:57.962Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mochajs-mocha-learnings.md",
+        "fileName": "mochajs-mocha-learnings.md"
+      }
+    },
+    "SRC-CACB2D6E1A28": {
+      "id": "SRC-CACB2D6E1A28",
+      "url": "https://nodejs.org/api/debugger.html",
+      "title": "https://nodejs.org/api/debugger.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T01:52:58.025Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mochajs-mocha-learnings.md",
+        "fileName": "mochajs-mocha-learnings.md"
+      }
+    },
+    "SRC-F435FC2822B2": {
+      "id": "SRC-F435FC2822B2",
+      "url": "https://github.com/mochajs/mocha/pull/916",
+      "title": "https://github.com/mochajs/mocha/pull/916",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T01:52:58.092Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mochajs-mocha-learnings.md",
+        "fileName": "mochajs-mocha-learnings.md"
       }
     }
   }

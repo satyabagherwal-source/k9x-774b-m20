@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T01:44:32.048Z",
-  "total_cycles_completed": 12246,
-  "total_learnings_persisted": 12246,
-  "total_rules_promoted": 11293,
+  "last_updated": "2026-11-25T01:52:52.797Z",
+  "total_cycles_completed": 12249,
+  "total_learnings_persisted": 12249,
+  "total_rules_promoted": 11296,
   "history": [
-    {
-      "timestamp": "2026-11-24T13:12:40.037Z",
-      "repository": "prometheus/prometheus",
-      "learningId": "learn-github-prometheus-prometheus",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T13:21:08.092Z",
-      "repository": "fabio-rovai/open-ontologies",
-      "learningId": "learn-github-fabio-rovai-open-ontologies",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T13:21:13.430Z",
-      "repository": "sqlpage/SQLPage",
-      "learningId": "learn-github-sqlpage-sqlpage",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-24T13:30:06.277Z",
       "repository": "Cloudflare/clairic",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-25T01:44:32.048Z",
       "repository": "lioensky/VCPToolBox",
       "learningId": "learn-github-lioensky-vcptoolbox",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T01:52:49.187Z",
+      "repository": "oxc-project/oxc",
+      "learningId": "learn-github-oxc-project-oxc",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T01:52:50.132Z",
+      "repository": "mochajs/mocha",
+      "learningId": "learn-github-mochajs-mocha",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T01:52:52.797Z",
+      "repository": "microsoft/react-native-windows",
+      "learningId": "learn-github-microsoft-react-native-windows",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

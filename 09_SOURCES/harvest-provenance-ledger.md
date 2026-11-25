@@ -12926,3 +12926,6 @@ Every entry in this ledger must capture:
 | `learn-github-avajs-ava` | `https://github.com/avajs/ava` | `fc83bdc0` | Multi-dimensional audit evidence | 2026-11-25T01:44:20.467Z |
 | `learn-github-bridgecrewio-checkov` | `https://github.com/bridgecrewio/checkov` | `d266c8a5` | Multi-dimensional audit evidence | 2026-11-25T01:44:25.689Z |
 | `learn-github-lioensky-vcptoolbox` | `https://github.com/lioensky/VCPToolBox` | `c4762817` | Multi-dimensional audit evidence | 2026-11-25T01:44:32.043Z |
+| `learn-github-oxc-project-oxc` | `https://github.com/oxc-project/oxc` | `e87c19c1` | Multi-dimensional audit evidence | 2026-11-25T01:52:49.181Z |
+| `learn-github-mochajs-mocha` | `https://github.com/mochajs/mocha` | `04eb516f` | Multi-dimensional audit evidence | 2026-11-25T01:52:50.127Z |
+| `learn-github-microsoft-react-native-windows` | `https://github.com/microsoft/react-native-windows` | `d1f9d2de` | Multi-dimensional audit evidence | 2026-11-25T01:52:52.792Z |

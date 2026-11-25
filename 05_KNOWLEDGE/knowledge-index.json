@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-25T01:44:38.501Z",
-  "total_verified_learnings": 9107,
+  "last_updated": "2026-11-25T01:52:59.718Z",
+  "total_verified_learnings": 9108,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25120,
+  "total_items": 25131,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -233965,8 +233965,8 @@
       "slug": "oxc-project-oxc",
       "platform": "github",
       "source_url": "https://github.com/oxc-project/oxc",
-      "source_version": "4a6f9c61",
-      "content_hash": "0d1a232552241a56c81757f7329020f8dd8ad99df03f1cd34de296325a0774bc",
+      "source_version": "e87c19c1",
+      "content_hash": "89b48509c4e84459b6269f1062180d9be0f301689fe7b322e8d64a158f954e29",
       "dossier_path": "07_PROJECT_LEARNING/oxc-project-oxc-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/oxc-project-oxc-learnings.md",
       "promoted_rules": [
@@ -234004,6 +234004,11 @@
           "number": 10140,
           "title": "linter/unicorn/prefer-array-flat): report lodash and underscore flatten calls",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10421,
+          "title": "linter/eslint/no-await-in-loop): report awaits in unbraced if/switch/try loop bo",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -234011,7 +234016,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T23:09:51.602Z",
+      "verified_at": "2026-11-25T01:52:48.922Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -234363,9 +234368,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for oxc-project-oxc-learnings",
       "repository": "oxc-project-oxc-learnings",
       "source_version": "HEAD",
-      "content_hash": "31ccb0ab078cccd2cb4184008e0a8c07347813288fc43b723d8e4ac35d98d71a",
+      "content_hash": "dc51e7ae77db5825f366455ebedc5618a1868912b658a85cf5c13c8eacfdb281",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T23:10:05.847Z"
+      "persisted_at": "2026-11-25T01:52:57.667Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-zai-org-glm-5-3-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-zai-org-glm-5-3-learnings-core-invariants",
@@ -245339,8 +245344,8 @@
       "slug": "microsoft-react-native-windows",
       "platform": "github",
       "source_url": "https://github.com/microsoft/react-native-windows",
-      "source_version": "aea3f3ad",
-      "content_hash": "21204bd230a767f4dcc1854f04d5d5c3c7659078f5627bbbc87830e396b7f361",
+      "source_version": "d1f9d2de",
+      "content_hash": "7b3df9c74a1bc2ff4fb45797ce89fb24f91626c5d8ce776f0b5f686b206c90db",
       "dossier_path": "07_PROJECT_LEARNING/microsoft-react-native-windows-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/microsoft-react-native-windows-learnings.md",
       "promoted_rules": [
@@ -245358,6 +245363,11 @@
           "number": 9932,
           "title": "Apply origin policy checks when a same-origin request is redirected to another o",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10423,
+          "title": "Run CodeQL compiled analysis only on shipping builds",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -245365,7 +245375,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T13:59:07.917Z",
+      "verified_at": "2026-11-25T01:52:52.561Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -245407,10 +245417,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-microsoft-react-native-windows-technical-construction-intelligence-microsoft-rea.md",
       "title": "Technical Construction Intelligence: microsoft/react-native-windows Core Invariants",
       "repository": "microsoft/react-native-windows",
-      "source_version": "aea3f3ad",
-      "content_hash": "3ec80eab6dc30cb43a7d0873980b645f7f2910870633982e614f686b287a8b20",
+      "source_version": "d1f9d2de",
+      "content_hash": "eca4b1c9c6652dfe168db6066c2d83bfa0bb6fc1f684969b36f9e058d682ab71",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T13:59:08.671Z"
+      "persisted_at": "2026-11-25T01:52:53.220Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-microsoft-react-native-windows": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-microsoft-react-native-windows",
@@ -245420,9 +245430,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for microsoft-react-native-windows-learnings",
       "repository": "microsoft-react-native-windows-learnings",
       "source_version": "HEAD",
-      "content_hash": "d6194b6e93d88cf86b829cfb1fccf43bc8c7c36fb8f19860f98924023c0654b4",
+      "content_hash": "736c3807e37e0c6e26a88a14afb32a748f09955c576f7c3136faf00174d74880",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T13:59:20.762Z"
+      "persisted_at": "2026-11-25T01:52:59.718Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-nvidia-qwen3-8-flash-next-fp4-local-learnings": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-nvidia-qwen3-8-flash-next-fp4-local-learnings",
@@ -245444,9 +245454,9 @@
       "title": "Technical Construction Intelligence: microsoft-react-native-windows-learnings Core Invariants",
       "repository": "microsoft-react-native-windows-learnings",
       "source_version": "HEAD",
-      "content_hash": "415823ea324af845405e2f6836170f8c01a5c95e8d050f558fa26e4b525fca15",
+      "content_hash": "073bc1f0a9fecb6ce213a3d38282583c7ed536224a3c51c3e74d7350f663601e",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T13:59:20.524Z"
+      "persisted_at": "2026-11-25T01:52:59.528Z"
     },
     "learn-huggingface-openmoss-team-moss-image-base": {
       "learning_id": "learn-huggingface-openmoss-team-moss-image-base",
@@ -259032,10 +259042,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-oxc-project-oxc-technical-construction-intelligence-oxc-project-oxc-core-invaria.md",
       "title": "Technical Construction Intelligence: oxc-project/oxc Core Invariants",
       "repository": "oxc-project/oxc",
-      "source_version": "f9e90dec",
-      "content_hash": "08757e713148bde6ef94fa47f07241244de11c49453b55cc88521ee8cbc46eef",
+      "source_version": "e87c19c1",
+      "content_hash": "146c1d64af4785386e65114334c8fc641b6e498f87f63a3011afd7975af65ec3",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T14:56:20.090Z"
+      "persisted_at": "2026-11-25T01:52:49.638Z"
     },
     "domain_intelligence-technical-construction-intelligence-oxc-project-oxc-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-oxc-project-oxc-learnings-core-invariants",
@@ -259045,9 +259055,9 @@
       "title": "Technical Construction Intelligence: oxc-project-oxc-learnings Core Invariants",
       "repository": "oxc-project-oxc-learnings",
       "source_version": "HEAD",
-      "content_hash": "6092e21e9e0aa2bce3d19c4925c438832b095ee60cedbed7aafd32dbf3a60ebd",
+      "content_hash": "2a7304178d8a91a8486484a5d4a6d659b8ec50443dab94d32bce2c6e4f8e83a2",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T15:01:18.504Z"
+      "persisted_at": "2026-11-25T01:52:57.468Z"
     },
     "rule-8727": {
       "learning_id": "rule-8727",
@@ -343354,6 +343364,165 @@
       "content_hash": "94efb37b26153f52d978f40c688dd3605a94d5c444ac8642a761b65c7fe2c695",
       "domain_letter": "H",
       "persisted_at": "2026-11-25T01:44:37.997Z"
+    },
+    "rule-10421": {
+      "learning_id": "rule-10421",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10421,
+      "title": "linter/eslint/no-await-in-loop): report awaits in unbraced if/switch/try loop bo",
+      "source_url": "https://github.com/oxc-project/oxc",
+      "source_version": "e87c19c1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T01:52:48.922Z"
+    },
+    "candidate_directive-linter-eslint-no-await-in-loop-report-awaits-in-unbraced-if-switch-try-loop-bo": {
+      "item_id": "candidate_directive-linter-eslint-no-await-in-loop-report-awaits-in-unbraced-if-switch-try-loop-bo",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-YG1O-linter-eslint-no-await-in-loop-report-awaits-in-unbraced-if-switch-try-loop-bo.md",
+      "title": "linter/eslint/no-await-in-loop): report awaits in unbraced if/switch/try loop bo",
+      "repository": "oxc-project-oxc-learnings",
+      "source_version": "HEAD",
+      "content_hash": "6e9cd4f98c5638942e12368b130f22bd61b56d6b2477ba4956ec7c0d95644ffc",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-25T01:52:57.280Z"
+    },
+    "learn-github-mochajs-mocha": {
+      "learning_id": "learn-github-mochajs-mocha",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "mochajs/mocha",
+      "repository": "mochajs/mocha",
+      "slug": "mochajs-mocha",
+      "platform": "github",
+      "source_url": "https://github.com/mochajs/mocha",
+      "source_version": "04eb516f",
+      "content_hash": "d2e8a97fe0e050a6f77bf7f7e44cdeaf65ac58f05cf54cc2be06f0c252297cf3",
+      "dossier_path": "07_PROJECT_LEARNING/mochajs-mocha-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/mochajs-mocha-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 10422,
+          "title": "fix maintainer validation for reopened spam PRs",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-25T01:52:49.896Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-10422": {
+      "learning_id": "rule-10422",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10422,
+      "title": "fix maintainer validation for reopened spam PRs",
+      "source_url": "https://github.com/mochajs/mocha",
+      "source_version": "04eb516f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T01:52:49.896Z"
+    },
+    "candidate_directive-fix-maintainer-validation-for-reopened-spam-prs": {
+      "item_id": "candidate_directive-fix-maintainer-validation-for-reopened-spam-prs",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-YGVA-fix-maintainer-validation-for-reopened-spam-prs.md",
+      "title": "fix maintainer validation for reopened spam PRs",
+      "repository": "mochajs-mocha-learnings",
+      "source_version": "HEAD",
+      "content_hash": "5246d1a3dd0ca4ef4532b75737d790c75a1dea986c5399dda21c44708be00182",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-25T01:52:58.342Z"
+    },
+    "domain_intelligence-architecture-intelligence-mochajs-mocha-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-mochajs-mocha-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-mochajs-mocha-architecture-intelligence-mochajs-mocha-core-invariants.md",
+      "title": "Architecture Intelligence: mochajs/mocha Core Invariants",
+      "repository": "mochajs/mocha",
+      "source_version": "04eb516f",
+      "content_hash": "cf251dc3ed20b12892ef0cdce5c6857426fdba40fe87c8994f1c9b38389fec0f",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-25T01:52:50.559Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-mochajs-mocha": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-mochajs-mocha",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/mochajs-mocha-verification-protocol-empirical-defect-shield-for-mochajs-mocha.md",
+      "title": "Verification Protocol: Empirical Defect Shield for mochajs/mocha",
+      "repository": "mochajs/mocha",
+      "source_version": "04eb516f",
+      "content_hash": "e881e065e18d03aadab8d4b7ba94c38158e66e6fe9345694cf61fda3c100e95f",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-25T01:52:50.745Z"
+    },
+    "rule-10423": {
+      "learning_id": "rule-10423",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10423,
+      "title": "Run CodeQL compiled analysis only on shipping builds",
+      "source_url": "https://github.com/microsoft/react-native-windows",
+      "source_version": "d1f9d2de",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T01:52:52.561Z"
+    },
+    "candidate_directive-run-codeql-compiled-analysis-only-on-shipping-builds": {
+      "item_id": "candidate_directive-run-codeql-compiled-analysis-only-on-shipping-builds",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-YHN5-run-codeql-compiled-analysis-only-on-shipping-builds.md",
+      "title": "Run CodeQL compiled analysis only on shipping builds",
+      "repository": "microsoft-react-native-windows-learnings",
+      "source_version": "HEAD",
+      "content_hash": "160455046ad96067912d5391150e283e6c9ebfce973551e8802769db33068239",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-25T01:52:59.348Z"
+    },
+    "domain_intelligence-architecture-intelligence-mochajs-mocha-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-mochajs-mocha-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-mochajs-mocha-learnings-architecture-intelligence-mochajs-mocha-learnings-core-i.md",
+      "title": "Architecture Intelligence: mochajs-mocha-learnings Core Invariants",
+      "repository": "mochajs-mocha-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b67ebca5b9d927f7b1fb68147b9426f3df9673d131d1598896aa918fedc9ed3d",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-25T01:52:58.525Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-mochajs-mocha-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-mochajs-mocha-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/mochajs-mocha-learnings-verification-protocol-empirical-defect-shield-for-mochaj.md",
+      "title": "Verification Protocol: Empirical Defect Shield for mochajs-mocha-learnings",
+      "repository": "mochajs-mocha-learnings",
+      "source_version": "HEAD",
+      "content_hash": "54b79e9a655789b1f551c7351072b6eba2be63259cf8da98d2655ecabb79f4d6",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-25T01:52:58.714Z"
     }
   },
   "ai-builder-brain": {

@@ -12893,3 +12893,6 @@
 | `CYCLE-20261125-ND9R` | `2026-11-25T01:44:20.463Z` | `avajs/ava` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10418` | Yes (`7e7b94bc...`) |
 | `CYCLE-20261125-NHAT` | `2026-11-25T01:44:25.685Z` | `bridgecrewio/checkov` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10419` | Yes (`7dcdbea9...`) |
 | `CYCLE-20261125-NM7A` | `2026-11-25T01:44:32.038Z` | `lioensky/VCPToolBox` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10420` | Yes (`4ed45b8f...`) |
+| `CYCLE-20261125-Y9SP` | `2026-11-25T01:52:49.177Z` | `oxc-project/oxc` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10421` | Yes (`89b48509...`) |
+| `CYCLE-20261125-YAIY` | `2026-11-25T01:52:50.122Z` | `mochajs/mocha` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10422` | Yes (`d2e8a97f...`) |
+| `CYCLE-20261125-YCKZ` | `2026-11-25T01:52:52.787Z` | `microsoft/react-native-windows` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10423` | Yes (`7b3df9c7...`) |
