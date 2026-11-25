@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T08:56:15.040Z",
-  "total_cycles_completed": 12358,
-  "total_learnings_persisted": 12358,
-  "total_rules_promoted": 11371,
+  "last_updated": "2026-11-25T09:08:06.902Z",
+  "total_cycles_completed": 12362,
+  "total_learnings_persisted": 12362,
+  "total_rules_promoted": 11373,
   "history": [
-    {
-      "timestamp": "2026-11-24T19:55:16.826Z",
-      "repository": "orcarouter/Inkling-2-Mini-abliterated-GGUF",
-      "learningId": "learn-huggingface-orcarouter-inkling-2-mini-abliterated-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T19:55:19.344Z",
-      "repository": "thinkingmachines/Inkling-2-Mini",
-      "learningId": "learn-huggingface-thinkingmachines-inkling-2-mini",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T20:04:13.642Z",
-      "repository": "dembrandt/dembrandt",
-      "learningId": "learn-github-dembrandt-dembrandt",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T20:04:23.136Z",
-      "repository": "skyhook-io/radar",
-      "learningId": "learn-github-skyhook-io-radar",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-24T20:12:47.990Z",
       "repository": "rdfjs/N3.js",
@@ -1403,6 +1375,34 @@
       "repository": "pingcap/tidb",
       "learningId": "learn-github-pingcap-tidb",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T09:07:53.350Z",
+      "repository": "flox/flox",
+      "learningId": "learn-github-flox-flox",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T09:08:01.672Z",
+      "repository": "Nanbeige/Nanbeige4.3-33B",
+      "learningId": "learn-huggingface-nanbeige-nanbeige4-3-33b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T09:08:06.214Z",
+      "repository": "StarRocks/starrocks",
+      "learningId": "learn-github-starrocks-starrocks",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T09:08:06.902Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

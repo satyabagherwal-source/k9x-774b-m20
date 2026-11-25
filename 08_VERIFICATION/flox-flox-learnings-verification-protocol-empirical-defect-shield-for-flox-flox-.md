@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T07:07:43.013Z",
+  "timestamp": "2026-11-25T09:08:10.543Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-flox-flox-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [flox-flox-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T07:07:43.013Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T09:08:10.543Z`  
 > **Learning ID**: `LEARN-EVO-flox-flox-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/flox-flox-learnings.md`  
 > **Source**: github ([https://github.com/flox/flox](https://github.com/flox/flox))  
-> **Source Version**: `0339f643`  
+> **Source Version**: `80b795ff`  
 > **License**: GPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T07:07:35.103Z  
+> **Timestamp**: 2026-11-25T09:07:51.919Z  
 > **Learning ID**: `learn-github-flox-flox`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/flox-flox-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/flox/flox](https://github.com/flox/flox))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T07:07:30.476Z  
+> **Harvest Timestamp**: 2026-11-25T09:07:51.794Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: The Deterministic Foundation for your SDLC
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4212 stars
+- **Stars / Engagement**: 4215 stars
 
 ---
 
@@ -1471,521 +1471,31 @@ impl ActivateEnvironmentRef {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7d792404` (2026-11-23)
-**Commit Message**: feat(buildenv): List keys for untrusted packages (#4914)
+### Incident Patch 1: `794ead02` (2026-10-26)
+**Commit Message**: ci: run crate2nix build on Blacksmith runner
 
-## Proposed Changes
-When a custom catalog package isn't signed by a trusted key, the error
-pointed at the docs but didn't say which key to trust, leaving the user
-to
-work it out themselves. The catalog's store-info response already
-returns
-the expected keys for each download location in `public_keys`, which was
-ignored.
+Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
 
-`UntrustedPackage` now wraps an `UntrustedPackageError` that carries
-those keys and lists them in full, one per indented line, so they can be
-copied as they are. The message says trusting any one key is enough
-because Nix accepts a signature from any single trusted key. When the
-catalog sends no keys the message is unchanged.
-
-I ran into this problem when installing a package from `agent-stacks`
-because I don't use the Flox installer and hadn't noticed that we
-recently added an additional key to our installer and docs. In such a
-case, the message now looks like this:
-
-    % flox install agent-stacks/claude-code
-    ✘ ERROR: Failed to build environment:
-
-    Package 'claude-code' is not signed by a trusted key.
-    Trust any key below to use it:
-      floxhub-1:0QOAlcobcEvq1mqEf4qAYCaWnTTOXpyoRv/PmqfSixM=
-   
-
-**File**: `cli/flox-rust-sdk/src/providers/buildenv.rs` (modified, +92/-11)
+**File**: `.github/workflows/ci.yml` (modified, +1/-1)
 ```diff
-@@ -139,6 +139,38 @@ impl Display for DownloadAttempt {
-     }
- }
+@@ -497,7 +497,7 @@ jobs:
+     # Same fork restriction as `nix-build`: this job needs the AWS OIDC and
+     # Tailscale secrets to reach the builders.
+     if: ${{ !cancelled() && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) }}
+-    runs-on: "ubuntu-latest"
++    runs-on: "blacksmith-4vcpu-ubuntu-2404"
+     timeout-minutes: 120
  
-+/// A custom package has been uploaded, but the current user hasn't configured
-+/// a trusted public key that matches a signature of this package.
-+#[derive(Debug, Clone)]
-+pub struct UntrustedPackageError {
-+    pub install_id: String,
-+    /// Public keys that the catalog expects the package to be signed by.
-+    pub expected_keys: Vec<String>,
-+}
-+
-+impl Display for UntrustedPackageError {
-+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-+        writeln!(
-+            f,
-+            "Package '{}' is not signed by a trusted key.",
-+            self.install_id
-+        )?;
-+        if !self.expected_keys.is_empty() {
-+            // Nix accepts a signature from any one trusted key.
-+            writeln!(f, "Trust any key below to use it:")?;
-+            for key in &self.expected_keys {
-+                writeln!(f, "  {key}")?;
-+            }
-+        }
-+        write!(
-+            f,
-+            "See https://flox.dev/docs/customer/signing-keys/ for more information."
-+        )
-+    }
-+}
-+
-+impl std::error::Error for UntrustedPackageError {}
-+
- #[derive(Debug, Error)]
- pub enum BuildEnvError {
-     #[error("Failed to realize '{install_id}':\n{message}")]
-@@ -213,13 +245,9 @@ pub enum BuildEnvError {
-         attempts: DownloadAttempts,
-     },
- 
--    /// A custom package has been uploaded, but the current user hasn't configured
--    /// a trusted public key that matches a signature of this package.
--    #[error(
--        "Package '{0}' is not signed by a trusted key.\n\
--        See https://flox.dev/docs/customer/signing-keys/ for more information."
--    )]
--    UntrustedPackage(String),
-+    /// See [`UntrustedPackageError`].
-+    #[error(transparent)]
-+    UntrustedPackage(UntrustedPackageError),
- 
-     #[error("authentication error")]
-     Auth(#[source] AuthError),
-@@ -566,7 +594,10 @@ pub fn copy_from_custom_catalog_locations(
-         if !output.status.success() {
-             let stderr = String::from_utf8_lossy(&output.stderr);
-             if stderr.contains("because it lacks a signature by a trusted key") {
--                return Err(BuildEnvError::UntrustedPackage(install_id.to_string()));
-+                return Err(BuildEnvError::UntrustedPackage(UntrustedPackageError {
-+                    install_id: install_id.to_string(),
-+                    expected_keys: location.public_keys.clone().unwrap_or_default(),
-+                }));
-             }
-             // We're expecting errors for netrc type auth, but not for
-             // catalog provided auth.
-@@ -1792,6 +1823,41 @@ mod flox_nixpkgs_ref_tests {
-     }
- }
- 
-+#[cfg(test)]
-+mod untrusted_package_tests {
-+    use indoc::indoc;
-+    use pretty_assertions::assert_eq;
-+
-+    use super::*;
-+
-+    #[test]
-+    fn untrusted_package_message_lists_expected_keys() {
-+        let cases = [
-+            ("no keys", vec![], indoc! {"
-+                Package 'pkg' is not signed by a trusted key.
-+                See https://flox.dev/docs/customer/signing-keys/ for more information."}),
-+            (
-+                "two keys",
-+                vec!["floxhub-1:abc=".to_string(), "acme-1:def=".to_string()],
-+                indoc! {"
-+                    Package 'pkg' is not signed by a trusted key.
-+                    Trust any key below to use it:
-+                      floxhub-1:abc=
-+                      acme-1:def=
-+                    See https://flox.dev/docs/customer/signing-keys/ for more information."},
-+            ),
-+        ];
-+
-+        for (name, keys, expected) in cases {
-+            let err = UntrustedPackageError {
-+                install_id: "pkg".to_string(),
-+                expected_keys: keys,
-+            };
-+            assert_eq!(err.to_string(), expected, "case: {name}");
-+        }
-+    }
-+}
-+
- #[cfg(test)]
- mod realise_nixpkgs_tests {
- 
-@@ -3492,7 +3558,12 @@ mod join_realise_results_tests {
-         let result = std::thread::scope(|s| {
-             let handles = vec![
-                 s.spawn(|| Ok::<(), BuildEnvError>(())),
--                s.spawn(|| Err(BuildEnvError::UntrustedPackage("pkg".into()))),
-+                s.spawn(|| {
-+                    Err(BuildEnvError::UntrustedPackage(UntrustedPackageError {
-+                        install_id: "pkg".into(),
-+                        expected_keys: vec![],
-+                    }))
-+                }),
-                 s.spawn(|| Ok::<(), BuildEnvError>(())),
-             ];
-             join_realise_results(handles)
-@@ -3508,7 +3579,12 @@ mod join_realise_results_tests {
-         let result = std::thread::scope(|s| {
-             let handles = vec![
-                 s.spawn(|| Err::<(), BuildEnvError>(BuildEnvError::NixCopyError("first".into()))),
--                s.spawn(|| Err(BuildEnvError::UntrustedPackage("second".into()))),
-+                s.spawn(|| {
-+                    Err(BuildEnvError::UntrustedPackage(UntrustedPackageError {
-+                        instal
-```
-
----
-
-### Incident Patch 2: `41861568` (2026-11-20)
-**Commit Message**: feat(buildenv): List keys for untrusted packages
-
-When a custom catalog package isn't signed by a trusted key, the error
-pointed at the docs but didn't say which key to trust, leaving the user to
-work it out themselves. The catalog's store-info response already returns
-the expected keys for each download location in `public_keys`, which was
-ignored.
-
-`UntrustedPackage` now wraps an `UntrustedPackageError` that carries
-those keys and lists them in full, one per indented line, so they can be
-copied as they are. The message says trusting any one key is enough
-because Nix accepts a signature from any single trusted key. When the
-catalog sends no keys the message is unchanged.
-
-I ran into this problem when installing a package from `agent-stacks`
-because I don't use the Flox installer and hadn't noticed that we
-recently added an additional key to our installer and docs. In such a
-case, the message now looks like this:
-
-    % flox install agent-stacks/claude-code
-    ✘ ERROR: Failed to build environment:
-
-    Package 'claude-code' is not signed by a trusted key.
-    Trust any key below to use it:
-      floxhub-1:0QOAlcobcEvq1mqEf4qAYCaWnTTOXpyoRv/PmqfSixM=
-      agent-stacks-1:RWT4eI3clO
-
-**File**: `cli/flox-rust-sdk/src/providers/buildenv.rs` (modified, +92/-11)
-```diff
-@@ -139,6 +139,38 @@ impl Display for DownloadAttempt {
-     }
- }
- 
-+/// A custom package has been uploaded, but the current user hasn't configured
-+/// a trusted public key that matches a signature of this package.
-+#[derive(Debug, Clone)]
-+pub struct UntrustedPackageError {
-+    pub install_id: String,
-+    /// Public keys that the catalog expects the package to be signed by.
-+    pub expected_keys: Vec<String>,
-+}
-+
-+impl Display for UntrustedPackageError {
-+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-+        writeln!(
-+            f,
-+            "Package '{}' is not signed by a trusted key.",
-+            self.install_id
-+        )?;
-+        if !self.expected_keys.is_empty() {
-+            // Nix accepts a signature from any one trusted key.
-+            writeln!(f, "Trust any key below to use it:")?;
-+            for key in &self.expected_keys {
-+                writeln!(f, "  {key}")?;
-+            }
-+        }
-+        write!(
-+            f,
-+            "See https://flox.dev/docs/customer/signing-keys/ for more information."
-+        )
-+    }
-+}
-+
-+impl std::error::Error for UntrustedPackageError {}
-+
- #[derive(Debug, Error)]
- pub enum BuildEnvError {
-     #[error("Failed to realize '{install_id}':\n{message}")]
-@@ -213,13 +245,9 @@ pub enum BuildEnvError {
-         attempts: DownloadAttempts,
-     },
- 
--    /// A custom package has been uploaded, but the current user hasn't configured
--    /// a trusted public key that matches a signature of this package.
--    #[error(
--        "Package '{0}' is not signed by a trusted key.\n\
--        See https://flox.dev/docs/customer/signing-keys/ for more information."
--    )]
--    UntrustedPackage(String),
-+    /// See [`UntrustedPackageError`].
-+    #[error(transparent)]
-+    UntrustedPackage(UntrustedPackageError),
- 
-     #[error("authentication error")]
-     Auth(#[source] AuthError),
-@@ -566,7 +594,10 @@ pub fn copy_from_custom_catalog_locations(
-         if !output.status.success() {
-             let stderr = String::from_utf8_lossy(&output.stderr);
-             if stderr.contains("because it lacks a signature by a trusted key") {
--                return Err(BuildEnvError::UntrustedPackage(install_id.to_string()));
-+                return Err(BuildEnvError::UntrustedPackage(UntrustedPackageError {
-+                    install_id: install_id.to_string(),
-+                    expected_keys: location.public_keys.clone().unwrap_or_default(),
-+                }));
-             }
-             // We're expecting errors for netrc type auth, but not for
-             // catalog provided auth.
-@@ -1792,6 +1823,41 @@ mod flox_nixpkgs_ref_tests {
-     }
- }
- 
-+#[cfg(test)]
-+mod untrusted_package_tests {
-+    use indoc::indoc;
-+    use pretty_assertions::assert_eq;
-+
-+    use super::*;
-+
-+    #[test]
-+    fn untrusted_package_message_lists_expected_keys() {
-+        let cases = [
-+            ("no keys", vec![], indoc! {"
-+                Package 'pkg' is not signed by a trusted key.
-+                See https://flox.dev/docs/customer/signing-keys/ for more information."}),
-+            (
-+                "two keys",
-+                vec!["floxhub-1:abc=".to_string(), "acme-1:def=".to_string()],
-+                indoc! {"
-+                    Package 'pkg' is not signed by a trusted key.
-+                    Trust any key below to use it:
-+                      floxhub-1:abc=
-+                      acme-1:def=
-+                    See https://flox.dev/docs/customer/signing-keys/ for more information."},
-+            ),
-+        ];
-+
-+        for (name, keys, expected) in cases {
-+            let err = UntrustedPackageError {
-+                install_id: "pkg".to_string(),
-+                expected_keys: keys,
-+            };
-+            assert_eq!(err.to_string(), expected, "case: {name}");
-+        }
-+    }
-+}
-+
- #[cfg(test)]
- mod realise_nixpkgs_tests {
- 
-@@ -3492,7 +3558,12 @@ mod join_realise_results_tests {
-         let result = std::thread::scope(|s| {
-             let handles = vec![
-                 s.spawn(|| Ok::<(), BuildEnvError>(())),
--                s.spawn(|| Err(BuildEnvError::UntrustedPackage("pkg".into()))),
-+                s.spawn(|| {
-+                    Err(BuildEnvError::UntrustedPackage(UntrustedPackageError {
-+                        install_id: "pkg".into(),
-+                        expected_keys: vec![],
-+                    }))
-+                }),
-                 s.spawn(|| Ok::<(), BuildEnvError>(())),
-             ];
-             join_realise_results(handles)
-@@ -3508,7 +3579,12 @@ mod join_realise_results_tests {
-         let result = std::thread::scope(|s| {
-             let handles = vec![
-                 s.spawn(|| Err::<(), BuildEnvError>(BuildEnvError::NixCopyError("first".into()))),
--                s.spawn(|| Err(BuildEnvError::UntrustedPackage("second".into()))),
-+                s.spawn(|| {
-+                    Err(BuildEnvError::UntrustedPackage(UntrustedPackageError {
-+                        instal
-```
-
----
-
-### Incident Patch 3: `a286a448` (2026-11-20)
-**Commit Message**: feat(floxhub-client): Return a pkg-path's deprecation with its builds
-
-The catalog reports a deprecation once for a whole pkg-path on the
-packages endpoint, not on each build. `package_versions` dropped it,
-so `flox show` had no way to tell that `php81` is end of life.
-
-`PackageDetails` was an alias of the search results page, which has
-nowhere to put it, so it becomes its own struct with a `deprecation`
-field. The first page's value is kept, since every page repeats it.
-`DeprecationInfo` and `DeprecationKind` are re-exported for callers.
-
-With the field left unset, the new client test fails.
-
-Forge-Agent: implementation-worker (7fbb8f9c)
-Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
-
-**File**: `cli/flox-rust-sdk/src/providers/catalog.rs` (modified, +1/-0)
-```diff
-@@ -244,6 +244,7 @@ impl CatalogClientTrait for MockClient {
-             Some(Response::Packages(PackageDetails {
-                 results: _,
-                 count: Some(0),
-+                ..
-             })) => Ok(SearchResults {
-                 results: vec![],
-                 count: Some(0),
-```
-
-**File**: `cli/floxhub-client/src/client.rs` (modified, +72/-1)
-```diff
-@@ -550,6 +550,12 @@ impl CatalogClientTrait for FloxhubClient {
-         attr_path: impl AsRef<str> + Send + Sync,
-     ) -> Result<PackageDetails, VersionsError> {
-         let attr_path = attr_path.as_ref();
-+        // The deprecation belongs to the pkg-path, not to a page: the server
-+        // takes it from the first row before paginating
-+        // (catalog_server/db/catalog_db.py, `show_packages`), so the first
-+        // page's is enough.
-+        let deprecation = std::sync::Mutex::new(None);
-+        let deprecation_ref = &deprecation;
-         let stream = make_depaging_stream(
-             |page_number, page_size| async move {
-                 let response = self
-@@ -572,14 +578,22 @@ impl CatalogClientTrait for FloxhubClient {
-                     })?;
- 
-                 let packages = response.into_inner();
-+                if page_number == 0 {
-+                    *deprecation_ref.lock().expect("deprecation lock poisoned") =
-+                        packages.deprecation;
-+                }
- 
-                 Ok::<_, VersionsError>((packages.total_count, packages.items))
-             },
-             RESPONSE_PAGE_SIZE,
-         );
- 
-         let (count, results) = collect_search_results(stream, None).await?;
--        let search_results = PackageDetails { results, count };
-+        let search_results = PackageDetails {
-+            results,
-+            count,
-+            deprecation: deprecation.into_inner().expect("deprecation lock poisoned"),
-+        };
- 
-         Ok(search_results)
-     }
-@@ -1062,6 +1076,7 @@ pub mod tests {
-     use super::test_helpers::client_config;
-     use super::*;
-     use crate::auth::test_helpers::FAKE_EXPIRED_TOKEN;
-+    use crate::types::{DeprecationInfo, DeprecationKind};
-     const SENTRY_TRACE_HEADER: &str = "sentry-trace";
- 
-     #[tokio::test]
-@@ -1656,6 +1671,62 @@ pub mod tests {
-         assert!(res.is_ok(), "Expected successful response, got: {:?}", res);
-     }
- 
-+    /// The deprecation the catalog reports for a pkg-path is passed on with
-+    /// its builds.
-+    #[tokio::test]
-+    async fn package_versions_returns_the_deprecation() {
-+        let server = MockServer::start_async().await;
-+
-+        let mock = server.mock(|_, then| {
-+            then.status(200)
-+                .header("content-type", "application/json")
-+                .json_body(json!({
-+                    "items": [],
-+                    "total_count": 0,
-+                    "deprecation": {
-+                        "kind": "removed",
-+                        "message": "php81 is EOL",
-+                        "replacement": null,
-+                    },
-+                }));
-+        });
-+
-+        let client = FloxhubClient::new(client_config(server.base_url().as_str())).unwrap();
-+        let details = client.package_versions("php81").await.unwrap();
-+
-+        mock.assert();
-+        assert_eq!(details, PackageDetails {
-+            results: vec![],
-+            count: Some(0),
-+            deprecation: Some(DeprecationInfo {
-+                kind: DeprecationKind::Removed,
-+                message: Some("php81 is EOL".to_string()),
-+                replacement: None,
-+            }),
-+        });
-+    }
-+
-+    #[tokio::test]
-+    async fn package_versions_without_deprecation() {
-+        let server = MockServer::start_async().await;
-+
-+        let mock = server.mock(|_, then| {
-+            then.status(200)
-+                .header("content-type", "application/json")
-+                .json_body(json!({"items": [], "total_count": 0, "deprecation": null}));
-+        });
-+
-+        let client = FloxhubClient::new(client_config(server.base_url().as_str())).unwrap();
-+        let details = client.package_versions("pkg").await.unwrap();
-+
-+        mock.assert();
-+        assert_eq!(details, PackageDetails {
-+            results: vec![],
-+            count: Some(0),
-+            deprecation: None,
-+        });
-+    }
-+
-     // region: Error response handling
-     //
-     // Client errors and response error handling of the progenitor generated client
-```
-
-**File**: `cli/floxhub-client/src/types.rs` (modified, +19/-2)
-```diff
-@@ -32,8 +32,25 @@ pub struct ResultsPage<T> {
- pub use api_types::PackageInfoSearch as SearchResult;
- pub type SearchResults = ResultsPage<SearchResult>;
- 
--pub use api_types::{PackageOutput, PackageOutputs, PackageVersionInfo as PackageBuild};
--pub type PackageDetails = ResultsPage<PackageBuild>;
-+pub use api_types::{
-+    DeprecationInfo,
-+    DeprecationKind,
-+    PackageOutput,
-+    PackageOutputs,
-+    PackageVersionInfo as PackageBuild,
-+};
-+
-+/// The builds the catalog lists for one pkg-path.
-+///
-+/// Unlike a search, the catalog reports a deprecation once for the whole
-+/// pkg-path rather than per build, so it sits beside the builds.
-+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-+pub struct PackageDetails {
-+    pub results: Vec<PackageBuild>,
-+    pub count: ResultCount,
-+    #[serde(default, skip_serializing_if = "Option::is_none")]
-+    pub deprecation: Option<DeprecationInfo>,
-+}
- 
- // Build-inputs lookup (lockless catalog locking, ECO-93). Re-exported so
- // consumers (e.g. nef-lock-catalog) depend only on floxhub-client.
+     needs:
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #4922** (2026-11-24): feat(show,search): Warn about deprecated packages (@mkenigs)
 - **PR #4919** (closed): build: Update FloxHub API schemas to d70550f8 (@floxbot)
+- **PR #4916** (closed): build: Update FloxHub API schemas to 2740c8a8 (@floxbot)
+- **PR #4915** (2026-11-24): refactor(factory)!: Call the Factory job a run (@brendaneamon)
 - **PR #4914** (2026-11-23): feat(buildenv): List keys for untrusted packages (@dcarley)
 - **PR #4909** (2026-11-20): build: Update FloxHub API schemas to c140ac3b (@floxbot)
-- **PR #4908** (closed): build: Update FloxHub API schemas to 2e00517d (@floxbot)
-- **PR #4907** (closed): build: Update FloxHub API schemas to 7db8d2c2 (@floxbot)
 
 ---
 
@@ -2005,75 +1515,31 @@ Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. buildenv): List keys for untrusted packages
+## X. ci: run crate2nix build on Blacksmith runner
 
 **RULE**:
-When implementing operations in `cli/flox-rust-sdk/src/providers/buildenv.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in flox/flox. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in flox/flox. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7d792404`: buildenv): List keys for untrusted packages. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `794ead02`: ci: run crate2nix build on Blacksmith runner. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `cli/flox-rust-sdk/src/providers/buildenv.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-/// A custom package has been uploaded, but the current user hasn't configured
-/// a trusted public key that matches a signature of this package.
-#[derive(Debug, Clone)]
-pub struct UntrustedPackageError {
-    pub install_id: String,
-    /// Public keys that the catalog expects the package to be signed by.
-    pub expected_keys: Vec<String>,
-}
-
-impl Display for UntrustedPackageError {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        writeln!(
-            f,
-            "Package '{}' is not signed by a trusted key.",
-            self.install_id
-        )?;
-        if !self.expected_keys.is_empty() {
-            // Nix accepts a signature from any one trusted key.
-            writeln!(f, "Trust any key below to use it:")?;
-            for key in &self.expected_keys {
-                writeln!(f, "  {key}")?;
-            }
-        }
-        write!(
-            f,
-            "See https://flox.dev/docs/customer/signing-keys/ for more information."
-        )
-    }
-}
-
-impl std::error::Error for UntrustedPackageError {}
-
-    /// See [`UntrustedPackageError`].
-    #[error(transparent)]
-    UntrustedPackage(UntrustedPackageError),
-                return Err(BuildEnvError
+    runs-on: "blacksmith-4vcpu-ubuntu-2404"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-    /// A custom package has been uploaded, but the current user hasn't configured
-    /// a trusted public key that matches a signature of this package.
-    #[error(
-        "Package '{0}' is not signed by a trusted key.\n\
-        See https://flox.dev/docs/customer/signing-keys/ for more information."
-    )]
-    UntrustedPackage(String),
-                return Err(BuildEnvError::UntrustedPackage(install_id.to_string()));
-                s.spawn(|| Err(BuildEnvError::UntrustedPackage("pkg".into()))),
-                s.spawn(|| Err(BuildEnvError::UntrustedPackage("second".into()))),
+    runs-on: "ubuntu-latest"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7d792404` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `794ead02` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

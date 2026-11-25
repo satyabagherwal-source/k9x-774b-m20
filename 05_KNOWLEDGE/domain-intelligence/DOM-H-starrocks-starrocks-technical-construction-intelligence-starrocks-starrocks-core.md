@@ -4,24 +4,24 @@
 {
   "source_repository": "StarRocks/starrocks",
   "source_url": "https://github.com/StarRocks/starrocks",
-  "source_version": "07de763f",
+  "source_version": "921d5c4b",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-24T14:50:44.957Z",
+  "timestamp": "2026-11-25T09:08:06.585Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-starrocks-starrocks",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [StarRocks/starrocks](https://github.com/StarRocks/starrocks) (Revision: `07de763f`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-24T14:50:44.957Z`  
+> **Provenance**: Harvested from [StarRocks/starrocks](https://github.com/StarRocks/starrocks) (Revision: `921d5c4b`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-25T09:08:06.585Z`  
 > **Learning ID**: `learn-github-starrocks-starrocks`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: I (Content & Information Intelligence), K (Quality & Verification Intelligence), G (Architecture Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 68%
+- **Secondary Corroborating Domains**: I (Content & Information Intelligence), K (Quality & Verification Intelligence), G (Architecture Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence)
+- **Confidence Rating**: 67%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from StarRocks/starrocks:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/starrocks-starrocks-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/StarRocks/starrocks](https://github.com/StarRocks/starrocks))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T14:50:43.633Z  
+> **Harvest Timestamp**: 2026-11-25T09:08:04.832Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: The world's fastest open query engine for sub-second analytics both on and off the data lakehouse. With the flexibility to support nearly any scenario, StarRocks provides best-in-class performance for multi-dimensional analytics, real-time analytics, and ad-hoc queries. A Linux Foundation project.
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 12283 stars
+- **Stars / Engagement**: 12286 stars
 
 ---
 
@@ -1832,523 +1832,349 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `86395ed6` (2026-11-24)
-**Commit Message**: [BugFix] Report the original error when the Paimon JNI reader fails (#84242)
-
-Co-authored-by: trueeyu <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `java-extensions/paimon-reader/src/main/java/com/starrocks/paimon/reader/PaimonSplitScanner.java` (modified, +29/-9)
-```diff
-@@ -115,10 +115,7 @@ public void open() throws IOException {
-             initOffHeapTableWriter(requiredTypes, requiredFields, fetchSize);
-             initReader();
-         } catch (Exception e) {
--            close();
--            String msg = "Failed to open the paimon reader for table " + table.name();
--            LOG.error(msg, e);
--            throw new IOException(msg, e);
-+            throw closeAndWrap("Failed to open the paimon reader", e);
-         }
-     }
- 
-@@ -129,12 +126,38 @@ public void close() throws IOException {
-                 iterator.close();
-             }
-         } catch (Exception e) {
--            String msg = "Failed to close the paimon reader for table " + table.name();
-+            String msg = "Failed to close the paimon reader for table " + tableName() + ", caused by: " + rootCause(e);
-             LOG.error(msg, e);
-             throw new IOException(msg, e);
-         }
-     }
- 
-+    // The table may not be decoded yet, e.g. when the FE and BE bundle Paimon versions whose
-+    // Java-serialized classes are incompatible, so never dereference it while reporting an error.
-+    private String tableName() {
-+        return table == null ? "<not decoded>" : table.name();
-+    }
-+
-+    // Only the first lines of the Java exception reach the client, so put the root cause in the message.
-+    private static String rootCause(Throwable t) {
-+        Throwable cause = t;
-+        while (cause.getCause() != null && cause.getCause() != cause) {
-+            cause = cause.getCause();
-+        }
-+        return cause.toString();
-+    }
-+
-+    private IOException closeAndWrap(String action, Exception e) {
-+        try {
-+            close();
-+        } catch (Exception closeException) {
-+            e.addSuppressed(closeException);
-+        }
-+        String msg = action + " for table " + tableName() + ", caused by: " + rootCause(e);
-+        LOG.error(msg, e);
-+        return new IOException(msg, e);
-+    }
-+
-     @Override
-     public int getNext() throws IOException {
-         try (ThreadContextClassLoader ignored = new ThreadContextClassLoader(classLoader)) {
-@@ -157,10 +180,7 @@ public int getNext() throws IOException {
-             }
-             return numRows;
-         } catch (Exception e) {
--            close();
--            String msg = "Failed to get the next off-heap table chunk for table " + table.name();
--            LOG.error(msg, e);
--            throw new IOException(msg, e);
-+            throw closeAndWrap("Failed to get the next off-heap table chunk", e);
-         }
- 
-     }
-```
-
-**File**: `java-extensions/paimon-reader/src/test/java/com/starrocks/paimon/reader/TestPaimonSplitScanner.java` (modified, +31/-0)
-```diff
-@@ -19,11 +19,42 @@
- import org.junit.jupiter.api.Test;
- 
- import java.io.IOException;
-+import java.io.StreamCorruptedException;
- import java.net.URL;
-+import java.nio.charset.StandardCharsets;
-+import java.util.Base64;
- import java.util.HashMap;
- 
-+import static org.junit.jupiter.api.Assertions.assertFalse;
-+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-+import static org.junit.jupiter.api.Assertions.assertThrows;
-+import static org.junit.jupiter.api.Assertions.assertTrue;
-+
- public class TestPaimonSplitScanner {
- 
-+    // An encoded table the BE cannot deserialize, e.g. one written by an FE that bundles an
-+    // incompatible Paimon version, must surface its own error rather than an NPE on the null table.
-+    @Test
-+    public void testOpenReportsTableDecodeFailure() {
-+        String notJavaSerialized = Base64.getUrlEncoder().withoutPadding()
-+                .encodeToString("not a java serialized object".getBytes(StandardCharsets.UTF_8));
-+        HashMap<String, String> params = new HashMap<>();
-+        params.put("required_fields", "uuid");
-+        params.put("native_table", notJavaSerialized);
-+        params.put("split_info", notJavaSerialized);
-+        params.put("predicate_info", notJavaSerialized);
-+        params.put("time_zone", "UTC");
-+
-+        PaimonSplitScanner scanner = new PaimonSplitScanner(4096, params);
-+        IOException e = assertThrows(IOException.class, scanner::open);
-+
-+        assertTrue(e.getMessage().startsWith("Failed to open the paimon reader for table <not decoded>"),
-+                e.getMessage());
-+        assertTrue(e.getMessage().contains(StreamCorruptedException.class.getName()), e.getMessage());
-+        assertFalse(e.getMessage().contains(NullPointerException.class.getName()), e.getMessage());
-+        assertInstanceOf(StreamCorruptedException.class, e.getCause().getCause());
-+    }
-+
-     @Disabled("Unusable ut, because of lack native_table parameter")
-     @Test
-     public void runScan() throws IOException {
-```
-
----
-
-### Incident Patch 2: `f98257d3` (2026-11-23)
-**Commit Message**: [BugFix] Abort a failed merge-commit load with the tablets it has written (#84152)
-
-Co-authored-by: mervinsr <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `fe/fe-core/src/main/java/com/starrocks/load/batchwrite/MergeCommitTask.java` (modified, +4/-1)
-```diff
-@@ -385,7 +385,10 @@ public void run() {
-                 if (localTxnId != -1) {
-                     // remove callback before abortTransaction(), so that the afterAborted() callback will not be called again
-                     GlobalStateMgr.getCurrentState().getGlobalTransactionMgr().getCallbackFactory().removeCallback(taskId);
--                    GlobalStateMgr.getCurrentState().getGlobalTransactionMgr().abortTransaction(dbId, localTxnId, abortReason);
-+                    // Pass the tablets the load has written. A shared-data abort without them tells the compute nodes
-+                    // to skip the cleanup, and the segments of this transaction are left on the object storage.
-+                    GlobalStateMgr.getCurrentState().getGlobalTransactionMgr().abortTransaction(dbId, localTxnId, abortReason,
-+                            Coordinator.getCommitInfos(coordinator), Coordinator.getFailInfos(coordinator), null);
-                 }
-             } catch (Exception ie) {
-                 LOG.warn("Failed to abort transaction. db={}, table={}, label={}, txnId={}, reason={}",
-```
-
-**File**: `fe/fe-core/src/test/java/com/starrocks/load/batchwrite/MergeCommitTaskAbortCleanupTest.java` (added, +225/-0)
-```diff
-@@ -0,0 +1,225 @@
-+// Copyright 2021-present StarRocks, Inc. All rights reserved.
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//     https://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+package com.starrocks.load.batchwrite;
-+
-+import com.starrocks.catalog.Database;
-+import com.starrocks.catalog.Partition;
-+import com.starrocks.common.Status;
-+import com.starrocks.common.util.DebugUtil;
-+import com.starrocks.common.util.UUIDUtil;
-+import com.starrocks.lake.LakeTable;
-+import com.starrocks.load.streamload.StreamLoadHttpHeader;
-+import com.starrocks.load.streamload.StreamLoadInfo;
-+import com.starrocks.load.streamload.StreamLoadKvParams;
-+import com.starrocks.proto.AbortTxnRequest;
-+import com.starrocks.proto.AbortTxnResponse;
-+import com.starrocks.proto.TxnInfoPB;
-+import com.starrocks.qe.ConnectContext;
-+import com.starrocks.qe.scheduler.Coordinator;
-+import com.starrocks.server.GlobalStateMgr;
-+import com.starrocks.server.RunMode;
-+import com.starrocks.server.WarehouseManager;
-+import com.starrocks.sql.LoadPlanner;
-+import com.starrocks.task.LoadEtlTask;
-+import com.starrocks.thrift.TStatusCode;
-+import com.starrocks.thrift.TTabletCommitInfo;
-+import com.starrocks.thrift.TUniqueId;
-+import com.starrocks.transaction.TransactionStatus;
-+import com.starrocks.utframe.MockedBackend;
-+import com.starrocks.utframe.StarRocksAssert;
-+import com.starrocks.utframe.UtFrameUtils;
-+import com.starrocks.warehouse.cngroup.CRAcquireContext;
-+import mockit.Invocation;
-+import mockit.Mock;
-+import mockit.MockUp;
-+import org.junit.jupiter.api.BeforeAll;
-+import org.junit.jupiter.api.BeforeEach;
-+import org.junit.jupiter.api.Test;
-+import org.mockito.Mockito;
-+
-+import java.util.ArrayList;
-+import java.util.HashMap;
-+import java.util.HashSet;
-+import java.util.List;
-+import java.util.Map;
-+import java.util.Optional;
-+import java.util.Set;
-+import java.util.concurrent.ConcurrentHashMap;
-+import java.util.concurrent.CopyOnWriteArrayList;
-+import java.util.concurrent.Future;
-+import java.util.stream.Collectors;
-+
-+import static org.junit.jupiter.api.Assertions.assertEquals;
-+import static org.junit.jupiter.api.Assertions.assertTrue;
-+import static org.mockito.ArgumentMatchers.any;
-+import static org.mockito.ArgumentMatchers.anyInt;
-+import static org.mockito.Mockito.when;
-+
-+// A merge-commit load that fails after it has written data aborts its transaction. On a shared-data cluster the
-+// abort has to name the tablets that were written: without them the compute nodes are told to skip the cleanup, and
-+// the segments of the transaction stay on the object storage. Autovacuum deletes only the txn logs, and the full
-+// vacuum, which would delete the segments, is off by default.
-+public class MergeCommitTaskAbortCleanupTest {
-+
-+    private static final String DB_NAME = "merge_commit_abort_cleanup_db";
-+    private static final String TABLE_NAME = "merge_commit_abort_cleanup_tbl";
-+
-+    // The abort requests the compute nodes received, by transaction id.
-+    private static final Map<Long, List<AbortTxnRequest>> ABORT_REQUESTS = new ConcurrentHashMap<>();
-+
-+    private static Database database;
-+    private static LakeTable table;
-+    // The only node of the cluster, which writes every tablet.
-+    private static long nodeId;
-+
-+    private StreamLoadKvParams kvParams;
-+    private StreamLoadInfo streamLoadInfo;
-+    private Coordinator.Factory coordinatorFactory;
-+    private Coordinator coordinator;
-+
-+    @BeforeAll
-+    public static void beforeClass() throws Exception {
-+        UtFrameUtils.createMinStarRocksCluster(RunMode.SHARED_DATA);
-+        ConnectContext connectContext = UtFrameUtils.createDefaultCtx();
-+        new StarRocksAssert(connectContext).withDatabase(DB_NAME).useDatabase(DB_NAME)
-+                .withTable("CREATE TABLE " + TABLE_NAME + " (k BIGINT NOT NULL, v STRING) PRIMARY KEY (k) " +
-+                        "DISTRIBUTED BY HASH(k) BUCKETS 3");
-+        database = GlobalStateMgr.getCurrentState().getLocalMetastore().getDb(DB_NAME);
-+        table = (LakeTable) database.getTable(TABLE_NAME);
-+        nodeId = GlobalStateMgr.getCurrentState().getNodeMgr().getClusterInfo().getBackendIds().get(0);
-+
-+        new MockUp<LoadPlanner>() {
-+            @Mock
-+            public void plan() {
-+                // The coordinator is mocked, so there is no plan to run.
-+            }
-+        };
-+        new MockUp<MockedBackend.MockLakeService>() {
-+            @Mock
-+            public Future<AbortTxnResponse> abortTxn(Invocation invocation, AbortTxn
-```
-
----
-
-### Incident Patch 3: `07de763f` (2026-11-24)
-**Commit Message**: [BugFix] Reject a [_SYNC_MV_] read of a rollup name shared by tables (#84307)
+### Incident Patch 1: `a930786b` (2026-11-25)
+**Commit Message**: [BugFix] Lock the base table of a [_SYNC_MV_] read before planning (#84000)
 
 Signed-off-by: trueeyu <[REDACTED_EMAIL]>
 Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `fe/fe-core/src/main/java/com/starrocks/catalog/Database.java` (modified, +7/-4)
+**File**: `fe/fe-core/src/main/java/com/starrocks/sql/analyzer/PlannerMetaLocker.java` (modified, +76/-0)
 ```diff
-@@ -418,16 +418,19 @@ public Table getTable(String tableName) {
+@@ -18,6 +18,7 @@
+ import com.starrocks.catalog.Column;
+ import com.starrocks.catalog.Database;
+ import com.starrocks.catalog.InternalCatalog;
++import com.starrocks.catalog.OlapTable;
+ import com.starrocks.catalog.Table;
+ import com.starrocks.catalog.TableName;
+ import com.starrocks.catalog.View;
+@@ -118,9 +119,14 @@ public class PlannerMetaLocker implements AutoCloseable {
+     private record WalkedView(TableName name, View view, String inlineViewDef, long sqlMode) {
+     }
+ 
++    /** A [_SYNC_MV_] relation, with the ids of the tables its index name resolved to for the lock set. */
++    private record WalkedSyncMV(TableName indexName, Set<Long> baseTableIds) {
++    }
++
+     // The session the views were resolved in; null for a locker built by forAllTablesOf, which walks no view body.
+     private final ConnectContext session;
+     private final List<WalkedView> walkedViews;
++    private final List<WalkedSyncMV> walkedSyncMVs;
+     private boolean walkedViewsChecked = false;
+     // Whether the statement reads an external table a policy may apply to; see mayReachExternalTablePolicy.
+     private boolean mayReachExternalTablePolicy = false;
+@@ -134,6 +140,7 @@ public PlannerMetaLocker(ConnectContext session, StatementBase statementBase) {
+         this.queryId = session.getQueryId();
+         this.session = session;
+         this.walkedViews = collector.walkedViews;
++        this.walkedSyncMVs = collector.walkedSyncMVs;
+         this.mayReachExternalTablePolicy = collector.mayReachExternalTablePolicy;
+     }
+ 
+@@ -152,6 +159,7 @@ private PlannerMetaLocker(UUID queryId, long acquireTimeoutMs) {
+         this.acquireTimeoutMs = acquireTimeoutMs;
+         this.session = null;
+         this.walkedViews = List.of();
++        this.walkedSyncMVs = List.of();
      }
  
      /**
--     * A visible rollup or synchronous materialized view named {@code indexName}, with its table.
-+     * Every visible rollup or synchronous materialized view named {@code indexName}, with its table. A synchronous
-+     * materialized view's name is unique in the database, but a rollup's only in its table, so more than one table
-+     * can have one.
-      *
-      * <p>The base index of a table, which is named after the table, is left out: {@code [_SYNC_MV_]} reads a
-      * materialized index that cannot be read by a table name, and a table is read by its name.
-      *
-      * <p>A temporary table is visible only in the session that created it, and {@link #idToTable} holds every
-      * session's: the ones of other sessions than {@code sessionId} are left out, as a name lookup leaves them out.
-      */
--    public Pair<Table, MaterializedIndexMeta> getMaterializedViewIndex(String indexName, UUID sessionId) {
-+    public List<Pair<Table, MaterializedIndexMeta>> getMaterializedViewIndexes(String indexName, UUID sessionId) {
-         // TODO: add an index to speed it up.
-+        List<Pair<Table, MaterializedIndexMeta>> indexes = new ArrayList<>();
-         for (Table table : idToTable.values()) {
-             if (table instanceof OlapTable) {
-                 OlapTable olapTable = (OlapTable) table;
-@@ -443,12 +446,12 @@ public Pair<Table, MaterializedIndexMeta> getMaterializedViewIndex(String indexN
-                         continue;
-                     }
-                     if (name.equals(indexName)) {
--                        return Pair.create(table, mvMeta);
-+                        indexes.add(Pair.create(table, mvMeta));
-                     }
-                 }
+@@ -180,6 +188,18 @@ private void checkWalkedViewsOnFirstLock() {
+                         + "being planned, please retry", walked.name()), ErrorType.INTERNAL_ERROR);
              }
          }
--        return null;
-+        return indexes;
-     }
- 
-     @Override
-```
-
-**File**: `fe/fe-core/src/main/java/com/starrocks/server/LocalMetastore.java` (modified, +6/-6)
-```diff
-@@ -3200,21 +3200,21 @@ public List<Table> getTables(Long dbId) {
++        // The analyzer copies the base table of a [_SYNC_MV_] read while analyzing, before the coverage check of
++        // StatementPlanner#copyOlapTablesAndUnlock can see it. A base table dropped and recreated, or an index of that
++        // name added or dropped, between the walk and this lock would leave it copying a table this lock does not
++        // hold. With those locked, their indexes stay as they are.
++        for (WalkedSyncMV walked : walkedSyncMVs) {
++            if (!walked.baseTableIds().equals(tableIdsOf(resolveSyncMVBaseTables(session, walked.indexName())))) {
++                unlock();
++                throw new StarRocksPlannerException(String.format("The base table of %s [_SYNC_MV_] was changed "
++                        + "while the statement was being planned, please retry", walked.indexName()),
++                        ErrorType.INTERNAL_ERROR);
++            }
++        }
      }
  
      /**
--     * Get Table descriptor and materialized index for the rollup or synchronous materialized view named
-+     * Get the tables and materialized indexes of every visible rollup or synchronous materialized view named
-      * `dbName`.`indexName`. The base index of a table is left out.
-      *
-      * @param dbName    - the string represents the database name
-      * @param indexName - the string represents the rollup or synchronous materialized view name
-      * @param sessionId - the session reading it: the temporary tables of other sessions are left out
--     * @return the index with its table, or null
-+     * @return each matching index with its table; empty when there is none or the database does not exist
-      */
--    public Pair<Table, MaterializedIndexMeta> getMaterializedViewIndex(String dbName, String indexName,
--                                                                       UUID sessionId) {
-+    public List<Pair<Table, MaterializedIndexMeta>> getMaterializedViewIndexes(String dbName, String indexName,
-+                                                                               UUID sessionId) {
-         Database database = getDb(dbName);
-         if (database == null) {
--            return null;
-+            return List.of();
-         }
--        return database.getMaterializedViewIndex(indexName, sessionId);
-+        return database.getMaterializedViewIndexes(indexName, sessionId);
+@@ -470,6 +490,51 @@ private static Pair<Database, Table> resolveTable(ConnectContext session, TableN
+         return new Pair<>(db, table);
      }
  
-     public Table getTableIncludeRecycleBin(Database db, long tableId) {
++    /**
++     * The tables that may be behind a {@code [_SYNC_MV_]} relation: every olap table of the database with a rollup or
++     * synchronous materialized view of that name. As in {@code Database#getMaterializedViewIndexes}, which the analyzer
++     * reads it with, the base index of a table, named after the table, is not one, and the temporary tables of other
++     * sessions are left out. The analyzer picks the one whose index is visible; locking every table that has one,
++     * visible or not, covers it. Empty when nothing matches -- the analyzer reports that.
++     *
++     * <p>Run before the lock is taken, and again under it by {@link #checkWalkedViewsOnFirstLock} and the slow path of
++     * {@code StatementPlanner#copyOlapTablesAndUnlock}, holding the locks of other tables only. So it reads nothing a
++     * concurrent DDL on another table mutates in place: the database's table map is concurrent, and an index name is
++     * looked up in its table rather than found by iterating its indexes ({@code Database#getMaterializedViewIndexes}
++     * does that, and a rollup change on any table of the database can make it throw). Nor does it take a lock: under
++     * the lock it would take one out of order.
++     */
++    private static List<Pair<Database, Table>> resolveSyncMVBaseTables(ConnectContext session, TableName indexName) {
++        TableName qualified = qualify(session, indexName);
++        if (qualified == null || !CatalogMgr.isInternalCatalog(qualified.getCatalog())) {
++            return List.of();
++        }
++        Database db = GlobalStateMgr.getCurrentState().getLocalMetastore().getDb(qualified.getDb());
++        if (db == null) {
++            return List.of();
++        }
++        List<Pair<Database, Table>> baseTables = new ArrayList<>();
++        for (Table table : db.getTables()) {
++            if (!(table instanceof OlapTable olapTable) || !olapTable.isMetaLockTarget
 ```
 
-**File**: `fe/fe-core/src/main/java/com/starrocks/sql/analyzer/QueryAnalyzer.java` (modified, +10/-2)
+**File**: `fe/fe-core/src/main/java/com/starrocks/sql/analyzer/QueryAnalyzer.java` (modified, +7/-4)
 ```diff
-@@ -2874,9 +2874,17 @@ public Table resolveTable(TableRelation tableRelation) {
-                 try (Timer ignored = Tracers.watchScope("AnalyzeSyncMV")) {
-                     // [_SYNC_MV_] gives a materialized index name where a table name goes.
-                     String indexName = tbName;
--                    Pair<Table, MaterializedIndexMeta> materializedIndex =
--                            GlobalStateMgr.getCurrentState().getLocalMetastore().getMaterializedViewIndex(dbName,
-+                    List<Pair<Table, MaterializedIndexMeta>> materializedIndexes =
-+                            GlobalStateMgr.getCurrentState().getLocalMetastore().getMaterializedViewIndexes(dbName,
-                                     indexName, session.getSessionId());
-+                    if (materializedIndexes.size() > 1) {
-+                        // A rollup's name is unique only in its table. Which of them a read would get is up to the
-+                        // order of a hash map, and can change as tables come and go: refuse to pick one.
-+                        throw new SemanticException("Duplicate rollup name '%s': more than one table has a rollup "
-+                                + "of that name", indexName);
-+                    }
-+                    Pair<Table, MaterializedIndexMeta> materializedIndex =
-+                            materializedIndexes.isEmpty() ? null : materializedIndexes.get(0);
-                     if (materializedIndex != null) {
+@@ -2889,12 +2889,15 @@ public Table resolveTable(TableRelation tableRelation) {
                          Table mvTable = materializedIndex.first;
                          Preconditions.checkState(mvTable != null);
+                         Preconditions.checkState(mvTable instanceof OlapTable);
+-                        // Add read lock to avoid concurrent problems.
+                         OlapTable mvOlapTable = new OlapTable(mvTable.getType());
+-                        // Known: PlannerMetaLocker does not collect a [_SYNC_MV_] relation, so this copies the
+-                        // base table without its lock. Tracked as 2-g in the FE lock todo, fixed on its own.
++                        // Known: when a statement is planned, PlannerMetaLocker collects the base table of a
++                        // [_SYNC_MV_] relation by its index name, so this copy is taken under its READ lock -- but not
++                        // yet for a read in GROUP BY, which that collection does not walk before analysis. Nor does
++                        // every analysis run under the planner lock: CREATE VIEW analyzes its query
++                        // holding none, and the copy is taken all the same. Tracked as 2-g in the FE lock todo: the
++                        // analyzer is to stop copying, leaving the copy to the planner.
+                         try (SnapshotCopyValidator.KnownViolation known = SnapshotCopyValidator.exemptKnownViolation(
+-                                "[_SYNC_MV_] relation is not in the planner lock set (2-g)")) {
++                                "[_SYNC_MV_] base table copied by analysis outside the planner lock (2-g)")) {
+                             ((OlapTable) mvTable).copyOnlyForQuery(mvOlapTable);
+                         }
+                         // Copy the necessary olap table meta to avoid changing original meta;
 ```
 
-**File**: `fe/fe-core/src/test/java/com/starrocks/analysis/CreateSyncMaterializedViewTest.java` (modified, +68/-0)
+**File**: `fe/fe-core/src/test/java/com/starrocks/sql/PlanningSnapshotViewLockTest.java` (modified, +184/-1)
 ```diff
-@@ -231,6 +231,74 @@ public void testSelectFromSyncMV() throws Exception {
-         starRocksAssert.dropMaterializedView("sync_mv1");
+@@ -17,6 +17,7 @@
+ import com.starrocks.catalog.OlapTable;
+ import com.starrocks.catalog.Table;
+ import com.starrocks.common.Config;
++import com.starrocks.common.FeConstants;
+ import com.starrocks.common.util.concurrent.lock.LockInvariantViolations;
+ import com.starrocks.common.util.concurrent.lock.LockManager;
+ import com.starrocks.common.util.concurrent.lock.LockType;
+@@ -62,6 +63,9 @@ public class PlanningSnapshotViewLockTest extends ConnectorPlanTestBase {
+     private static final String CONNECTOR_TABLE = "hive0.partitioned_db.lineitem_par";
+     private static final String VIEW = "test.v_snapshot_lock";
+     private static final String NESTED_VIEW = "test.v_snapshot_lock_outer";
++    // A [_SYNC_MV_] read names the index, not its base table, and the analyzer copies the base table itself.
++    private static final String SYNC_MV_BASE = "t_sync_mv_snapshot_lock";
++    private static final String SYNC_MV = "mv_sync_snapshot_lock";
+ 
+     private final Set<String> copied = new CopyOnWriteArraySet<>();
+     private final List<String> copiedWithoutLock = new CopyOnWriteArrayList<>();
+@@ -70,6 +74,11 @@ public class PlanningSnapshotViewLockTest extends ConnectorPlanTestBase {
+     public static void createViews() throws Exception {
+         starRocksAssert.withView("CREATE VIEW " + VIEW + " AS SELECT v1, v2, v3 FROM test.t0");
+         starRocksAssert.withView("CREATE VIEW " + NESTED_VIEW + " AS SELECT v1, v2, v3 FROM " + VIEW);
++        starRocksAssert.useDatabase("test");
++        starRocksAssert.withTable("CREATE TABLE " + SYNC_MV_BASE + " (k1 INT NOT NULL, k2 INT NOT NULL, v1 INT) "
++                + "DUPLICATE KEY(k1, k2) DISTRIBUTED BY HASH(k1) BUCKETS 1 PROPERTIES ('replication_num' = '1')");
++        starRocksAssert.withMaterializedView("CREATE MATERIALIZED VIEW " + SYNC_MV
++                + " AS SELECT k1, sum(v1) FROM " + SYNC_MV_BASE + " GROUP BY k1");
+     }
+ 
+     @BeforeEach
+@@ -108,7 +117,7 @@ private void assertEveryCopyWasLockedOf(String sql, String table) throws Excepti
+ 
+     private void assertNothingLeftLocked(String sql) {
+         LockManager lockManager = GlobalStateMgr.getCurrentState().getLockManager();
+-        for (String name : List.of("t0", "t1", "tprimary", "v_snapshot_lock", "v_snapshot_lock_outer")) {
++        for (String name : List.of("t0", "t1", "tprimary", "v_snapshot_lock", "v_snapshot_lock_outer", SYNC_MV_BASE)) {
+             Table table = GlobalStateMgr.getCurrentState().getLocalMetastore().getTable("test", name);
+             Assertions.assertFalse(lockManager.isOwnedByCurrentThread(table.getId(), LockType.READ),
+                     name + " is still read-locked after planning: " + sql);
+@@ -295,6 +304,180 @@ private static void dropPartitionElsewhere(String sql) {
+         Assertions.assertNull(failure.get(), String.valueOf(failure.get()));
      }
  
 +    /**
-+     * A rollup's name is unique only in its table. When two tables of the database have one of the name a
-+     * [_SYNC_MV_] read gives, which of them it would read is not determined, so the read is rejected. With one left,
-+     * it reads that one.
++     * Plan {@code sql}, which reads {@link #SYNC_MV} through [_SYNC_MV_], and assert the analyzer copied the view's base
++     * table under its READ lock. Not through the test harness's CREATE VIEW round trip
++     * ({@code UtFrameUtils#testView}): that analysis holds no planner lock, and copies the base table without it -- the
++     * known 2-g violation, see {@link #testCreateViewOverASyncMVReadIsAKnownViolation}.
 +     */
-+    @Test
-+    public void testSelectFromRollupNameSharedByTwoTables() throws Exception {
-+        String rollup = "r_shared_by_two_tables";
-+        for (String table : List.of("t_rollup_shared_a", "t_rollup_shared_b")) {
-+            starRocksAssert.withTable("CREATE TABLE test." + table + " (k1 INT, k2 INT, v1 INT) DUPLICATE KEY(k1, k2) "
-+                    + "DISTRIBUTED BY HASH(k1) BUCKETS 1 ROLLUP (" + rollup + " (k2, k1)) "
-+                    + "PROPERTIES ('replication_num' = '1')");
-+        }
-+        String sql = "select * from " + rollup + " [_SYNC_MV_]";
++    private void assertSyncMVBaseTableCopiedUnderItsLock(String sql) throws Exception {
++        boolean savedUnitTestView = FeConstants.unitTestView;
++        FeConstants.unitTestView = false;
 +        try {
-+            Exception e = Assertions.assertThrows(Exception.class,
-+                    () -> UtFrameUtils.getPlanAndFragment(connectContext, sql));
-+            Assertions.assertTrue(e.getMessage().contains("Duplicate rollup name '" + rollup + "': more than one "
-+                    + "table has a rollup of that name"), e.getMessage());
-+
-+            starRocksAssert.dropTable("t_rollup_shared_b");
-+            String explain = UtFrameUtils.getPlanAndFragment(connectContext, sql).second
-+                    .getExplainString(StatementBase.ExplainLevel.NORMAL);
-+            Assertions.assertTrue(explain.contains("TABLE: t_rollup_shared_a"), explain);
-+            Assertions.assertTrue(explain.contains("rollup: " + rollup), explain);
++            copied.clear();
++            assertEveryCopyWasLockedOf(sql, SYNC_MV_BASE);
 +        } finally {
-+            starRocksAssert.dropTable("if exists test.t_rollup_shared_a");
-+            starRocksAssert.dropTable("if exists test.t_rollup_shared_b");
++            FeConstants.unitTestView = savedUnitTestView;
 +        }
++    }
++
++    /** The analyzer copies the base table behind a [_SYNC_MV_] read: the lock taken before analysis has to cover it. */
++    @Test
++    public void testSyncMVReadLocksItsBaseTable() throws Exception {
++        AtomicInteger reLocks = countReLocks();
++        assertSyncMVBaseTableCopiedUnderItsLock("SELECT count(*) FROM test." + SYNC_MV + " [_SYNC_MV_]");
++        Assertions.assertEquals(0, reLocks.get());
 +    }
 +
 +    /**
-+     * A temporary table is visible only in the session that created it, rollups included. Another session's
-+     * temporary table with a rollup of the name a [_SYNC_MV_] read gives neither makes the read ambiguous nor is
-+     * read. In its own session it is a table like any other, so there the read is ambiguous.
++     * #81799: in a SELECT without FROM the tables are read only by the subqueries of the select list. The lock
++     * collection walks them before analysis (#82970), and has to resolve the [_SYNC_MV_] read to its base table: it
++     * used to resolve it to nothing, so the statement took the whole set again, whose names resolved again under the
++     * lock missed the base table too, and failed the statement with "dropped or replaced". Now the lock taken before
++     * analysis covers it.
 +     */
 +    @Test
-+    public void testSelectFromRollupNameSharedWithAnotherSessionsTemporaryTable() throws Exception {
-+        String rollup = "r_shared_with_a_temporary_table";
-+        starRocksAssert.withTable("CREATE TABLE test.t_rollup_temporary (k1 INT, k2 INT, v1 INT) "
-+                + "DUPLICATE KEY(k1, k2) DISTRIBUTED BY HASH(k1) BUCKETS 1 ROLLUP (" + rollup + " (k2, k1)) "
-+                + "PROPERTIES ('replication_num' = '1')");
-+        ConnectContext otherSession = UtFrameUtils.createDefaultCtx();
-+        StarRocksAssert otherSessionAssert = new StarRocksAssert(otherSession).useDatabase("test");
-+        String sql = "select k2, k1 from " + rollup + " [_SYNC_MV_]";
-+        try {
-+            otherSessionAssert.withTemporaryTable("create temporary table t_temporary_with_shared_rollup "
-+                    + "(k1 int, k2 int, v1 int) engine=olap duplicate key(k1, k2) distributed by hash(k1) buckets 1 "
-+                    + "rollup (" + rollup + " (k2, k1)) properties('replication_num' = '1')");
++    public void testSyncMVReadInTheSelectListOfASelectWithoutFrom() throws Exception {
++        AtomicInteger reLocks = countReLocks();
++        String sql = "SELECT (SELECT count(*) FROM test." + SYNC_MV + " [_SYNC_MV_]) = (SELECT count(*) FROM test.t1)";
++        assertSyncMVBaseTableCopiedUnderItsLock(sql);
++        Assertions.assertEquals(0, reLocks.get());
++  
+```
+
+---
+
+### Incident Patch 2: `4e2ae144` (2026-11-25)
+**Commit Message**: [UT] Disable the metric calculator in BrokerLoadJobTest to fix a flaky ConcurrentModificationException (#84451)
+
+Co-authored-by: trueeyu <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `fe/fe-core/src/test/java/com/starrocks/load/loadv2/BrokerLoadJobTest.java` (modified, +15/-0)
+```diff
+@@ -42,6 +42,7 @@
+ import com.starrocks.catalog.FakeEditLog;
+ import com.starrocks.catalog.OlapTable;
+ import com.starrocks.catalog.Table;
++import com.starrocks.common.Config;
+ import com.starrocks.common.DdlException;
+ import com.starrocks.common.LabelAlreadyUsedException;
+ import com.starrocks.common.LoadException;
+@@ -85,6 +86,7 @@
+ import mockit.Mocked;
+ import mockit.Verifications;
+ import org.apache.spark.sql.AnalysisException;
++import org.junit.jupiter.api.AfterAll;
+ import org.junit.jupiter.api.Assertions;
+ import org.junit.jupiter.api.BeforeAll;
+ import org.junit.jupiter.api.Test;
+@@ -99,11 +101,24 @@
+ 
+ public class BrokerLoadJobTest {
+ 
++    private static boolean savedEnableMetricCalculator;
 +
-+            connectContext.setThreadLocalInfo();
-+            String explain = UtFrameUtils.getPlanAndFragment(connectContext, sql).second
-+                    .getExplainString(StatementBase.ExplainLevel.NORMAL);
-+            Assertions.assertTrue(explain.contains("TABLE: t_rollup_temporary"), explain);
-+            Assertions.assertTrue(explain.contains("rollup: " + rollup), explain);
-+
-+            otherSession.setThreadLocalInfo();
-+            Exception e = Assertions.assertThrows(Exception.class,
-+                    () -> UtFrameUtils.getPlanAndFragment(otherSession, sql));
-+            Assertions.assertTrue(e.getMessage().contains("Duplicate rollup name '" + rollup + "'"), e.getMessage());
-+        } finally {
-+            otherSession.setThreadLocalInfo();
-+            otherSessionAssert.dropTemporaryTable("t_temporary_with_shared_rollup", true);
-+            connectContext.setThreadLocalInfo();
-+            starRocksAssert.dropTable("if exists test.t_rollup_temporary");
-+        }
+     @BeforeAll
+     public static void start() {
++        // MetricRepo.init() otherwise schedules MetricCalculator, which calls the @Mocked GlobalStateMgr
++        // on a background thread. A call that cascades a new mocked type (e.g. getRoutineLoadMgr()) registers
++        // it in JMockit's shared state while the test thread iterates that state, and the test fails with a
++        // ConcurrentModificationException.
++        savedEnableMetricCalculator = Config.enable_metric_calculator;
++        Config.enable_metric_calculator = false;
+         MetricRepo.init();
+     }
+ 
++    @AfterAll
++    public static void tearDown() {
++        Config.enable_metric_calculator = savedEnableMetricCalculator;
 +    }
 +
-     /**
-      * A temporary table is visible only in the session that created it, rollups included: another session cannot
-      * read its rollup through [_SYNC_MV_], while its own session can. Not through the test harness's CREATE VIEW
+     @Test
+     public void testFromLoadStmt(@Injectable LoadStmt loadStmt,
+                                  @Injectable LabelName labelName,
 ```
 
-**File**: `test/sql/test_rollup/R/test_sync_mv_hint_shared_rollup_name` (added, +42/-0)
+---
+
+### Incident Patch 3: `063e0f7e` (2026-11-25)
+**Commit Message**: [BugFix] Reject non-list PARTITION BY for Iceberg/Hive CREATE TABLE instead of throwing ClassCastException (#84321)
+
+Signed-off-by: Gavin <[REDACTED_EMAIL]>
+Co-authored-by: Gavin <[REDACTED_EMAIL]>
+
+**File**: `fe/fe-core/src/main/java/com/starrocks/sql/analyzer/CreateTableAnalyzer.java` (modified, +13/-2)
 ```diff
-@@ -0,0 +1,42 @@
-+-- name: test_sync_mv_hint_shared_rollup_name
-+create database db_${uuid0};
-+-- result:
-+-- !result
-+use db_${uuid0};
-+-- result:
-+-- !result
-+CREATE TABLE t_a (k1 INT, k2 INT, v1 INT) DUPLICATE KEY(k1, k2) DISTRIBUTED BY HASH(k1) BUCKETS 1 ROLLUP (r_shared (k2, k1)) PROPERTIES ('replication_num' = '1');
-+-- result:
-+-- !result
-+CREATE TABLE t_b (k1 INT, k2 INT, v1 INT) DUPLICATE KEY(k1, k2) DISTRIBUTED BY HASH(k1) BUCKETS 1 ROLLUP (r_shared (k2, k1)) PROPERTIES ('replication_num' = '1');
-+-- result:
-+-- !result
-+INSERT INTO t_a VALUES (1, 10, 100), (2, 20, 200);
-+-- result:
-+-- !result
-+INSERT INTO t_b VALUES (3, 30, 300);
-+-- result:
-+-- !result
-+function: assert_query_error_contains("SELECT k2, k1 FROM r_shared [_SYNC_MV_] ORDER BY k2", "Duplicate rollup name 'r_shared': more than one table has a rollup of that name")
-+-- result:
-+None
-+-- !result
-+function: assert_query_error_contains("SELECT count(*) FROM t_a WHERE k2 IN (SELECT k2 FROM r_shared [_SYNC_MV_])", "Duplicate rollup name 'r_shared'")
-+-- result:
-+None
-+-- !result
-+ALTER TABLE t_b RENAME ROLLUP r_shared r_b;
-+-- result:
-+-- !result
-+SELECT k2, k1 FROM r_shared [_SYNC_MV_] ORDER BY k2;
-+-- result:
-+10	1
-+20	2
-+-- !result
-+SELECT k2, k1 FROM r_b [_SYNC_MV_] ORDER BY k2;
-+-- result:
-+30	3
-+-- !result
-+drop database db_${uuid0} force;
-+-- result:
-+-- !result
+@@ -767,9 +767,20 @@ public static void analyzePartitionDesc(CreateTableStmt stmt) {
+                 PaimonCreateTableAnalyzer.analyzePartitionDesc(stmt);
+             } else if (engineName.equalsIgnoreCase(Table.TableType.ELASTICSEARCH.name())) {
+                 EsUtil.analyzePartitionDesc(partitionDesc);
+-            } else if (engineName.equalsIgnoreCase(Table.TableType.ICEBERG.name())
+-                    || engineName.equalsIgnoreCase(Table.TableType.HIVE.name())) {
++            } else if (engineName.equalsIgnoreCase(Table.TableType.ICEBERG.name())) {
+                 if (partitionDesc != null) {
++                    if (!(partitionDesc instanceof ListPartitionDesc)) {
++                        throw new SemanticException("Create iceberg table only supports PARTITION BY (column or transform, ...)",
++                                partitionDesc.getPos());
++                    }
++                    ((ListPartitionDesc) partitionDesc).analyzeExternalPartitionColumns(stmt.getColumnDefs(), engineName);
++                }
++            } else if (engineName.equalsIgnoreCase(Table.TableType.HIVE.name())) {
++                if (partitionDesc != null) {
++                    if (!(partitionDesc instanceof ListPartitionDesc)) {
++                        throw new SemanticException("Create hive table only supports PARTITION BY (column, ...)",
++                                partitionDesc.getPos());
++                    }
+                     ((ListPartitionDesc) partitionDesc).analyzeExternalPartitionColumns(stmt.getColumnDefs(), engineName);
+                 }
+             } else {
 ```
 
-**File**: `test/sql/test_rollup/T/test_sync_mv_hint_shared_rollup_name` (added, +13/-0)
+**File**: `fe/fe-core/src/test/java/com/starrocks/sql/analyzer/AnalyzeCreateTableTest.java` (modified, +15/-1)
 ```diff
-@@ -0,0 +1,13 @@
-+-- name: test_sync_mv_hint_shared_rollup_name
-+create database db_${uuid0};
-+use db_${uuid0};
-+CREATE TABLE t_a (k1 INT, k2 INT, v1 INT) DUPLICATE KEY(k1, k2) DISTRIBUTED BY HASH(k1) BUCKETS 1 ROLLUP (r_shared (k2, k1)) PROPERTIES ('replication_num' = '1');
-+CREATE TABLE t_b (k1 INT, k2 INT, v1 INT) DUPLICATE KEY(k1, k2) DISTRIBUTED BY HASH(k1) BUCKETS 1 ROLLUP (r_shared (k2, k1)) PROPERTIES ('replication_num' = '1');
-+INSERT INTO t_a VALUES (1, 10, 100), (2, 20, 200);
-+INSERT INTO t_b VALUES (3, 30, 300);
-+function: assert_query_error_contains("SELECT k2, k1 FROM r_shared [_SYNC_MV_] ORDER BY k2", "Duplicate rollup name 'r_shared': more than one table has a rollup of that name")
-+function: assert_query_error_contains("SELECT count(*) FROM t_a WHERE k2 IN (SELECT k2 FROM r_shared [_SYNC_MV_])", "Duplicate rollup name 'r_shared'")
-+ALTER TABLE t_b RENAME ROLLUP r_shared r_b;
-+SELECT k2, k1 FROM r_shared [_SYNC_MV_] ORDER BY k2;
-+SELECT k2, k1 FROM r_b [_SYNC_MV_] ORDER BY k2;
-+drop database db_${uuid0} force;
+@@ -396,13 +396,21 @@ public void testIceberg() throws Exception {
+                 metadata.getDb((ConnectContext) any, "hive_catalog", "hive_db");
+                 result = new Database();
+                 minTimes = 0;
++
++                metadata.tableExists((ConnectContext) any, "hive_catalog", "hive_db", anyString);
++                result = false;
++                minTimes = 0;
+             }
+         };
+ 
+         AnalyzeTestUtil.getConnectContext().setCurrentCatalog(InternalCatalog.DEFAULT_INTERNAL_CATALOG_NAME);
+         AnalyzeTestUtil.getConnectContext().setDatabase("test");
+ 
+-        analyzeSuccess("create external table iceberg_catalog.iceberg_db.iceberg_table" 
++        analyzeFail("create external table hive_catalog.hive_db.hive_table"
++                        + "(k1 int, k2 int) partition by range(k1) (partition p1 values less than ('100'))",
++                "Create hive table only supports PARTITION BY (column, ...)");
++
++        analyzeSuccess("create external table iceberg_catalog.iceberg_db.iceberg_table"
+                         + "(k1 int, k2 date) partition by year(k2)");
+         analyzeSuccess("create external table iceberg_catalog.iceberg_db.iceberg_table" 
+                         + "(k1 int, k2 date) partition by month(k2)");
+@@ -503,6 +511,12 @@ public void testIcebergPartitionTransformError() throws Exception {
+         analyzeFail("create external table iceberg_catalog.iceberg_db.iceberg_table"
+                         + "(k1 int, k2 varchar(10)) partition by truncate(4, k2)",
+                 "No matching function with signature: truncate(tinyint(4), varchar(10))");
++        analyzeFail("create external table iceberg_catalog.iceberg_db.iceberg_table"
++                        + "(k1 int, k2 int) partition by range(k1) (partition p1 values less than ('100'))",
++                "Create iceberg table only supports PARTITION BY (column or transform, ...)");
++        analyzeFail("create table iceberg_catalog.iceberg_db.iceberg_table"
++                        + " partition by range(k1) (partition p1 values less than ('100')) as select 1 as k1, 2 as k2",
++                "Create iceberg table only supports PARTITION BY (column or transform, ...)");
+         AnalyzeTestUtil.getStarRocksAssert().dropCatalog("iceberg_catalog");
+     }
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #84337** (2026-11-24): [BugFix] Leave the base index out of a [_SYNC_MV_] read (backport #84330) (@mergify[bot])
-- **PR #84336** (2026-11-24): [BugFix] Leave the base index out of a [_SYNC_MV_] read (backport #84330) (@mergify[bot])
-- **PR #84330** (2026-11-24): [BugFix] Leave the base index out of a [_SYNC_MV_] read (@trueeyu)
-- **PR #84327** (2026-11-24): [BugFix] Re-add a resharding job's new tablets to the inverted index when an FE loads an image taken before CLEANING (backport #84315) (@mergify[bot])
-- **PR #84326** (2026-11-24): [BugFix] Re-add a resharding job's new tablets to the inverted index when an FE loads an image taken before CLEANING (backport #84315) (@mergify[bot])
-- **PR #84325** (2026-11-24): [BugFix] Leave other sessions' temporary tables out of a [_SYNC_MV_] read (backport #84313) (@mergify[bot])
+- **PR #84453** (2026-11-25): [BugFix] Link prev_garbage_version to the base FE asked for when a file bundling publish retry moves the base (@starrocks-xupeng)
+- **PR #84452** (2026-11-25): [BugFix] Link prev_garbage_version to the base FE asked for when a file bundling publish retry moves the base (@starrocks-xupeng)
+- **PR #84451** (2026-11-25): [UT] Disable the metric calculator in BrokerLoadJobTest to fix a flaky ConcurrentModificationException (@starrocks-bot[bot])
+- **PR #84449** (2026-11-25): [Refactor] Remove the unused convert_helper (backport #84431) (@mergify[bot])
+- **PR #84445** (2026-11-25): [BugFix] Accept an FE plugin dir created concurrently (backport #84381) (@mergify[bot])
+- **PR #84443** (2026-11-25): [BugFix] Accept an FE plugin dir created concurrently (backport #84381) (@mergify[bot])
 
 ---
 
@@ -2368,66 +2194,47 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [BugFix] Report the original error when the Paimon JNI reader fails
+## X. [BugFix] Lock the base table of a [_SYNC_MV_] read before planning
 
 **RULE**:
-When implementing operations in `java-extensions/paimon-reader/src/main/java/com/starrocks/paimon/reader/PaimonSplitScanner.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in StarRocks/starrocks. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `fe/fe-core/src/main/java/com/starrocks/sql/analyzer/PlannerMetaLocker.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in StarRocks/starrocks. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `86395ed6`: [BugFix] Report the original error when the Paimon JNI reader fails. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a930786b`: [BugFix] Lock the base table of a [_SYNC_MV_] read before planning. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `java-extensions/paimon-reader/src/main/java/com/starrocks/paimon/reader/PaimonSplitScanner.java`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `fe/fe-core/src/main/java/com/starrocks/sql/analyzer/PlannerMetaLocker.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-            throw closeAndWrap("Failed to open the paimon reader", e);
-            String msg = "Failed to close the paimon reader for table " + tableName() + ", caused by: " + rootCause(e);
-    // The table may not be decoded yet, e.g. when the FE and BE bundle Paimon versions whose
-    // Java-serialized classes are incompatible, so never dereference it while reporting an error.
-    private String tableName() {
-        return table == null ? "<not decoded>" : table.name();
+import com.starrocks.catalog.OlapTable;
+    /** A [_SYNC_MV_] relation, with the ids of the tables its index name resolved to for the lock set. */
+    private record WalkedSyncMV(TableName indexName, Set<Long> baseTableIds) {
     }
 
-    // Only the first lines of the Java exception reach the client, so put the root cause in the message.
-    private static String rootCause(Throwable t) {
-        Throwable cause = t;
-        while (cause.getCause() != null && cause.getCause() != cause) {
-            cause = cause.getCause();
-        }
-        return cause.toString();
-    }
-
-    private IOException closeAndWrap(String action, Exception e) {
-        try {
-            close();
-        } catch (Exception closeException) {
-            e.addSuppressed(closeException);
-        }
-        String msg = action + " for table " + tableName() + ", caused by: " + rootCause(e);
-        LOG.error(msg, e);
-        return new IOException(msg, e);
-    }
-
+    private final List<WalkedSyncMV> walkedSyncMVs;
+        this.walkedSyncMVs = collector.walkedSyncMVs;
+        this.walkedSyncMVs = List.of();
+        // The analyzer copies the base table of a [_SYNC_MV_] read while analyzing, before the coverage check of
+        // StatementPlanner#copyOlapTablesAndUnlock can see it. A base table dropped and recreated, or an index of that
+        // name added or dropped, between the walk and this lock would leave it copying a table this lock does not
+        // hold. With those locked, their indexes stay as they are.
+        for (WalkedSyncMV walked : walkedSyncMVs) {
+            if (!walked.baseTableIds().equals(tableIdsOf(resolveSyncMVBaseTables(session, walked.indexName())))) {
+                unlock();
+                throw new StarRocksPlannerException(String.format("The base table of %s [_SYNC_MV_] was changed "
+                        + "while the statement was being planned, please retry", walked.indexName
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Induced defect failure mode:
-            close();
-            String msg = "Failed to open the paimon reader for table " + table.name();
-            LOG.error(msg, e);
-            throw new IOException(msg, e);
-            String msg = "Failed to close the paimon reader for table " + table.name();
-            close();
-            String msg = "Failed to get the next off-heap table chunk for table " + table.name();
-            LOG.error(msg, e);
-            throw new IOException(msg, e);
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `86395ed6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a930786b` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

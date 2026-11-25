@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "d58e5f56",
+    "sourceVersion": "88b0d49b",
     "license": "Apache-2.0",
-    "contentHash": "ba57f87de9f752caf4a51f11f1ad914a5fe287791440cdfac6ea791d0c9d4530",
-    "lastHarvestedAt": "2026-11-25T08:13:25.601Z",
+    "contentHash": "9cac9c74de3c8172b1837b4639cb4038e542a86313a1069571b3037f3d0c3be8",
+    "lastHarvestedAt": "2026-11-25T09:08:06.895Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -3253,10 +3253,10 @@
     "repository": "flox/flox",
     "platform": "github",
     "sourceUrl": "https://github.com/flox/flox",
-    "sourceVersion": "0339f643",
+    "sourceVersion": "80b795ff",
     "license": "GPL-2.0",
-    "contentHash": "baa6a96aa9944a0a00bec8a343981699b3fdf2eb54340ff571c4ceba80125fc1",
-    "lastHarvestedAt": "2026-11-24T07:07:36.635Z",
+    "contentHash": "d4a54f15ce1efb51a31a1b6955a7c17a738f66c46340af616dd5c2495362b117",
+    "lastHarvestedAt": "2026-11-25T09:07:53.343Z",
     "learningId": "learn-github-flox-flox"
   },
   "wix-react-native-navigation": {
@@ -5223,10 +5223,10 @@
     "repository": "StarRocks/starrocks",
     "platform": "github",
     "sourceUrl": "https://github.com/StarRocks/starrocks",
-    "sourceVersion": "07de763f",
+    "sourceVersion": "921d5c4b",
     "license": "Apache-2.0",
-    "contentHash": "9249333be314ff9ec33be5364b3f26fcbaff27000c58edf2f3335843ce252d49",
-    "lastHarvestedAt": "2026-11-24T14:50:44.726Z",
+    "contentHash": "014d4acc8554c7df58894de834cebc86698583da7be7bba9692c86ff63242e61",
+    "lastHarvestedAt": "2026-11-25T09:08:06.207Z",
     "learningId": "learn-github-starrocks-starrocks"
   },
   "lobehub-lobe-ui": {
@@ -10705,8 +10705,8 @@
     "sourceUrl": "https://huggingface.co/Nanbeige/Nanbeige4.3-33B",
     "sourceVersion": "hf-nanbeige-nanbeige4.3-33b",
     "license": "Open-Source",
-    "contentHash": "9a37fdb9bead07da7aabc5e3d81c65c006878bdba17e4f7cda5e5b414ca83382",
-    "lastHarvestedAt": "2026-11-21T17:06:02.480Z",
+    "contentHash": "c266145e69b7710ad8583c4f61dc2ea62bc7c7300850b4053b54e83226405023",
+    "lastHarvestedAt": "2026-11-25T09:08:01.665Z",
     "learningId": "learn-huggingface-nanbeige-nanbeige4-3-33b"
   },
   "kajisho5-ffmpeg-skill": {

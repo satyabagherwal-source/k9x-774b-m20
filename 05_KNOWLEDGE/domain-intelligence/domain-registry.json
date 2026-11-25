@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T08:56:50.621Z",
+  "last_updated": "2026-11-25T09:08:12.973Z",
   "total_records": 2650,
   "domains": {
     "A": {
@@ -15729,8 +15729,8 @@
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "repository": "NucleoidAI/Nucleoid",
-      "content_hash": "780bfe5f3a3e514a96940d70026a25b68e2c30f4e81aeaaece3bb5c2a8c13772",
-      "created_at": "2026-11-25T08:13:26.187Z"
+      "content_hash": "97c7e71dc1204f192b13f6fd4f7c5c8d5d4be1bf3b2f4e6d8ab16c4af70141fc",
+      "created_at": "2026-11-25T09:08:07.259Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -17211,8 +17211,8 @@
       "title": "Technical Construction Intelligence: StarRocks/starrocks Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-starrocks-starrocks-technical-construction-intelligence-starrocks-starrocks-core.md",
       "repository": "StarRocks/starrocks",
-      "content_hash": "fb051bbd71822004fd55ca725acba801fbf25328702fc3baafdbb55316cb51fe",
-      "created_at": "2026-11-24T14:50:45.128Z"
+      "content_hash": "e1d08432f2a2ad589275b014b61e3459bb275b601edf4db902de6a6557f65893",
+      "created_at": "2026-11-25T09:08:06.829Z"
     },
     "domain_intelligence-research-knowledge-intelligence-autotrust-autotrust-decider-pro-vision-27b-core-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-autotrust-autotrust-decider-pro-vision-27b-core-",
@@ -17289,8 +17289,8 @@
       "title": "Technical Construction Intelligence: starrocks-starrocks-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-starrocks-starrocks-learnings-technical-construction-intelligence-starrocks-star.md",
       "repository": "starrocks-starrocks-learnings",
-      "content_hash": "1acea89baaf09e9852b60364109550cad8451e7a5429dfc7d2044e25d5c6342e",
-      "created_at": "2026-11-23T18:24:08.450Z"
+      "content_hash": "96f8bd6245a30620b28a94217080f04631eadaadeec1474d10cd75d13571de5c",
+      "created_at": "2026-11-25T09:08:12.973Z"
     },
     "domain_intelligence-technical-construction-intelligence-oven-sh-bun-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-oven-sh-bun-core-invariants",
@@ -19918,8 +19918,8 @@
       "title": "Architecture Intelligence: flox/flox Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-flox-flox-architecture-intelligence-flox-flox-core-invariants.md",
       "repository": "flox/flox",
-      "content_hash": "a50252699593a624b4838a5af8ebb194a951298f26ba2d6148c54c24aced7d79",
-      "created_at": "2026-11-24T07:07:37.281Z"
+      "content_hash": "7ace2c42011fdbcb966a613b3a433f6db68d1ca37bda9911aea3ad53644e8866",
+      "created_at": "2026-11-25T09:07:53.899Z"
     },
     "domain_intelligence-architecture-intelligence-flox-flox-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-flox-flox-learnings-core-invariants",
@@ -19927,8 +19927,8 @@
       "title": "Architecture Intelligence: flox-flox-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-flox-flox-learnings-architecture-intelligence-flox-flox-learnings-core-invariant.md",
       "repository": "flox-flox-learnings",
-      "content_hash": "0a233c1a81a63e72c4d4ca92a32c86f920c25db640c06cf739e9094973375c08",
-      "created_at": "2026-11-24T07:07:43.399Z"
+      "content_hash": "ea0fa8f9fb0bef7388914a21dd76e7eeb96cae765a35cbc190fcf04097b1ad5a",
+      "created_at": "2026-11-25T09:08:10.952Z"
     },
     "DOM-D-8240E8AC": {
       "record_id": "DOM-D-8240E8AC",
@@ -38329,8 +38329,8 @@
       "title": "Research & Knowledge Intelligence: Nanbeige/Nanbeige4.3-33B Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-nanbeige-nanbeige4-3-33b-research-knowledge-intelligence-nanbeige-nanbeige4-3.md",
       "repository": "Nanbeige/Nanbeige4.3-33B",
-      "content_hash": "e7d2fc692e71d9b8523627c122e994a930ea9cc06945943ddba354188c7c4cce",
-      "created_at": "2026-11-21T17:06:02.666Z"
+      "content_hash": "b3582ecadc2ee1a1a05418dcd955e47a96d17843b037001fa4bd1191249a1856",
+      "created_at": "2026-11-25T09:08:01.975Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-nanbeige-nanbeige4-3-33b-learnings-core-invar": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-nanbeige-nanbeige4-3-33b-learnings-core-invar",
@@ -38338,8 +38338,8 @@
       "title": "Research & Knowledge Intelligence: hf-nanbeige-nanbeige4.3-33b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-nanbeige-nanbeige4-3-33b-learnings-research-knowledge-intelligence-hf-nanbeig.md",
       "repository": "hf-nanbeige-nanbeige4.3-33b-learnings",
-      "content_hash": "02a83bea7458b6d983152b714b58869b7497fdbf571dc540d52d133f04627842",
-      "created_at": "2026-11-21T17:06:06.384Z"
+      "content_hash": "980cf4e9eae1791a9c92625ddbf0f1fa8c7a4d3ab49603a50431b9f742ab84f5",
+      "created_at": "2026-11-25T09:08:11.704Z"
     },
     "DOM-H-D7B01097": {
       "record_id": "DOM-H-D7B01097",

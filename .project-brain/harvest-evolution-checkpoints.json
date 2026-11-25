@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T08:56:50.999Z",
+  "last_updated": "2026-11-25T09:08:13.419Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-25T07:31:12.028Z",
@@ -468,7 +468,7 @@
       "staged_for_review": 1
     },
     "flox-flox-learnings.md": {
-      "processed_at": "2026-11-24T07:07:42.654Z",
+      "processed_at": "2026-11-25T09:08:10.237Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -793,7 +793,7 @@
       "staged_for_review": 1
     },
     "starrocks-starrocks-learnings.md": {
-      "processed_at": "2026-11-23T18:24:07.776Z",
+      "processed_at": "2026-11-25T09:08:11.967Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1628,7 +1628,7 @@
       "staged_for_review": 0
     },
     "hf-nanbeige-nanbeige4.3-33b-learnings.md": {
-      "processed_at": "2026-11-21T17:06:06.198Z",
+      "processed_at": "2026-11-25T09:08:11.406Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3923,7 +3923,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 4143,
+  "total_dossiers_evaluated": 4146,
   "total_canonical_promoted": 534,
-  "total_staged_for_review": 3166
+  "total_staged_for_review": 3168
 }

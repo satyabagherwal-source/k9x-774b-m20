@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/Nanbeige/Nanbeige4.3-33B",
   "source_version": "hf-nanbeige-nanbeige4.3-33b",
   "license": "Open-Source",
-  "timestamp": "2026-11-21T17:06:02.665Z",
+  "timestamp": "2026-11-25T09:08:01.974Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-nanbeige-nanbeige4-3-33b",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [Nanbeige/Nanbeige4.3-33B](https://huggingface.co/Nanbeige/Nanbeige4.3-33B) (Revision: `hf-nanbeig`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-21T17:06:02.665Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T09:08:01.974Z`  
 > **Learning ID**: `learn-huggingface-nanbeige-nanbeige4-3-33b`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-nanbeige-nanbeige4.3-33b-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/Nanbeige/Nanbeige4.3-33B](https://huggingface.co/Nanbeige/Nanbeige4.3-33B))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T17:05:45.120Z  
+> **Harvest Timestamp**: 2026-11-25T09:07:47.736Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 25225 downloads | 1093 likes
+- **Stars / Engagement**: 24171 downloads | 1110 likes
 
 ---
 

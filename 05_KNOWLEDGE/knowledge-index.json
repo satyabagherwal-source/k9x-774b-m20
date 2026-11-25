@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-25T08:56:50.828Z",
+  "last_updated": "2026-11-25T09:08:13.227Z",
   "total_verified_learnings": 9115,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25344,
+  "total_items": 25349,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -230640,8 +230640,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "d58e5f56",
-      "content_hash": "ba57f87de9f752caf4a51f11f1ad914a5fe287791440cdfac6ea791d0c9d4530",
+      "source_version": "88b0d49b",
+      "content_hash": "9cac9c74de3c8172b1837b4639cb4038e542a86313a1069571b3037f3d0c3be8",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -230931,7 +230931,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T08:13:25.315Z",
+      "verified_at": "2026-11-25T09:08:06.620Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -230973,10 +230973,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "d58e5f56",
-      "content_hash": "780bfe5f3a3e514a96940d70026a25b68e2c30f4e81aeaaece3bb5c2a8c13772",
+      "source_version": "88b0d49b",
+      "content_hash": "97c7e71dc1204f192b13f6fd4f7c5c8d5d4be1bf3b2f4e6d8ab16c4af70141fc",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T08:13:26.187Z"
+      "persisted_at": "2026-11-25T09:08:07.259Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid",
@@ -235156,8 +235156,8 @@
       "slug": "starrocks-starrocks",
       "platform": "github",
       "source_url": "https://github.com/StarRocks/starrocks",
-      "source_version": "07de763f",
-      "content_hash": "9249333be314ff9ec33be5364b3f26fcbaff27000c58edf2f3335843ce252d49",
+      "source_version": "921d5c4b",
+      "content_hash": "014d4acc8554c7df58894de834cebc86698583da7be7bba9692c86ff63242e61",
       "dossier_path": "07_PROJECT_LEARNING/starrocks-starrocks-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/starrocks-starrocks-learnings.md",
       "promoted_rules": [
@@ -235220,6 +235220,11 @@
           "number": 10286,
           "title": "[BugFix] Report the original error when the Paimon JNI reader fails",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10495,
+          "title": "[BugFix] Lock the base table of a [_SYNC_MV_] read before planning",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -235227,7 +235232,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T14:50:44.514Z",
+      "verified_at": "2026-11-25T09:08:05.932Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -235269,10 +235274,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-starrocks-starrocks-technical-construction-intelligence-starrocks-starrocks-core.md",
       "title": "Technical Construction Intelligence: StarRocks/starrocks Core Invariants",
       "repository": "StarRocks/starrocks",
-      "source_version": "07de763f",
-      "content_hash": "fb051bbd71822004fd55ca725acba801fbf25328702fc3baafdbb55316cb51fe",
+      "source_version": "921d5c4b",
+      "content_hash": "e1d08432f2a2ad589275b014b61e3459bb275b601edf4db902de6a6557f65893",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T14:50:45.128Z"
+      "persisted_at": "2026-11-25T09:08:06.829Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-starrocks-starrocks": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-starrocks-starrocks",
@@ -235397,9 +235402,9 @@
       "title": "Technical Construction Intelligence: starrocks-starrocks-learnings Core Invariants",
       "repository": "starrocks-starrocks-learnings",
       "source_version": "HEAD",
-      "content_hash": "1acea89baaf09e9852b60364109550cad8451e7a5429dfc7d2044e25d5c6342e",
+      "content_hash": "96f8bd6245a30620b28a94217080f04631eadaadeec1474d10cd75d13571de5c",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T18:24:08.450Z"
+      "persisted_at": "2026-11-25T09:08:12.973Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-starrocks-starrocks-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-starrocks-starrocks-learnings",
@@ -235409,9 +235414,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for starrocks-starrocks-learnings",
       "repository": "starrocks-starrocks-learnings",
       "source_version": "HEAD",
-      "content_hash": "454954d3d779136280de5654fde40e00eeab643262a97b737542203ee042eb79",
+      "content_hash": "bbb896cb65b30e299919b1d57c655edcf2516513f178f8b66f47aeebf7da7003",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T18:24:08.659Z"
+      "persisted_at": "2026-11-25T09:08:13.227Z"
     },
     "learn-github-oven-sh-bun": {
       "learning_id": "learn-github-oven-sh-bun",
@@ -244587,8 +244592,8 @@
       "slug": "flox-flox",
       "platform": "github",
       "source_url": "https://github.com/flox/flox",
-      "source_version": "0339f643",
-      "content_hash": "baa6a96aa9944a0a00bec8a343981699b3fdf2eb54340ff571c4ceba80125fc1",
+      "source_version": "80b795ff",
+      "content_hash": "d4a54f15ce1efb51a31a1b6955a7c17a738f66c46340af616dd5c2495362b117",
       "dossier_path": "07_PROJECT_LEARNING/flox-flox-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/flox-flox-learnings.md",
       "promoted_rules": [
@@ -244621,6 +244626,11 @@
           "number": 10226,
           "title": "List keys for untrusted packages",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10494,
+          "title": "run crate2nix build on Blacksmith runner",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -244628,7 +244638,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T07:07:36.295Z",
+      "verified_at": "2026-11-25T09:07:53.065Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -244670,10 +244680,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-flox-flox-architecture-intelligence-flox-flox-core-invariants.md",
       "title": "Architecture Intelligence: flox/flox Core Invariants",
       "repository": "flox/flox",
-      "source_version": "0339f643",
-      "content_hash": "a50252699593a624b4838a5af8ebb194a951298f26ba2d6148c54c24aced7d79",
+      "source_version": "80b795ff",
+      "content_hash": "7ace2c42011fdbcb966a613b3a433f6db68d1ca37bda9911aea3ad53644e8866",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T07:07:37.281Z"
+      "persisted_at": "2026-11-25T09:07:53.899Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-flox-flox": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-flox-flox",
@@ -244682,10 +244692,10 @@
       "relative_path": "08_VERIFICATION/flox-flox-verification-protocol-empirical-defect-shield-for-flox-flox.md",
       "title": "Verification Protocol: Empirical Defect Shield for flox/flox",
       "repository": "flox/flox",
-      "source_version": "0339f643",
-      "content_hash": "f9334eab76f7536180fd24bd77f36223b184b00aa1365b38032a6cffdfe48fd7",
+      "source_version": "80b795ff",
+      "content_hash": "b70ed0c4561ee457234ccd8cebf26847c90b2a0ec08606f1dbd458b7fa803991",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T07:07:37.521Z"
+      "persisted_at": "2026-11-25T09:07:54.131Z"
     },
     "rule-8572": {
       "learning_id": "rule-8572",
@@ -244733,9 +244743,9 @@
       "title": "Architecture Intelligence: flox-flox-learnings Core Invariants",
       "repository": "flox-flox-learnings",
       "source_version": "HEAD",
-      "content_hash": "0a233c1a81a63e72c4d4ca92a32c86f920c25db640c06cf739e9094973375c08",
+      "content_hash": "ea0fa8f9fb0bef7388914a21dd76e7eeb96cae765a35cbc190fcf04097b1ad5a",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T07:07:43.399Z"
+      "persisted_at": "2026-11-25T09:08:10.952Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-flox-flox-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-flox-flox-learnings",
@@ -244745,9 +244755,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for flox-flox-learnings",
       "repository": "flox-flox-learnings",
       "source_version": "HEAD",
-      "content_hash": "795eee67aefdea3225dead4c08222c0ee7013424e2e0736cec4825216671f11b",
+      "content_hash": "3ab8c7d2b5aec89e03e4f51d266b95484701e6986aa95809e0fb58f8faf6cad5",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T07:07:43.633Z"
+      "persisted_at": "2026-11-25T09:08:11.183Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-pyannote-speaker-diarization-community-1-lear": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-pyannote-speaker-diarization-community-1-lear",
@@ -281597,7 +281607,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Nanbeige/Nanbeige4.3-33B",
       "source_version": "hf-nanbeige-nanbeige4.3-33b",
-      "content_hash": "9a37fdb9bead07da7aabc5e3d81c65c006878bdba17e4f7cda5e5b414ca83382",
+      "content_hash": "c266145e69b7710ad8583c4f61dc2ea62bc7c7300850b4053b54e83226405023",
       "dossier_path": "07_PROJECT_LEARNING/hf-nanbeige-nanbeige4.3-33b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-nanbeige-nanbeige4.3-33b-learnings.md",
       "promoted_rules": [
@@ -281622,7 +281632,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T17:06:02.288Z",
+      "verified_at": "2026-11-25T09:08:01.400Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -318092,9 +318102,9 @@
       "title": "Research & Knowledge Intelligence: Nanbeige/Nanbeige4.3-33B Core Invariants",
       "repository": "Nanbeige/Nanbeige4.3-33B",
       "source_version": "hf-nanbeige-nanbeige4.3-33b",
-      "content_hash": "e7d2fc692e71d9b8523627c122e994a930ea9cc06945943ddba354188c7c4cce",
+      "content_hash": "b3582ecadc2ee1a1a05418dcd955e47a96d17843b037001fa4bd1191249a1856",
       "domain_letter": "D",
-      "persisted_at": "2026-11-21T17:06:02.666Z"
+      "persisted_at": "2026-11-25T09:08:01.975Z"
     },
     "candidate_directive-zgx-prevent-streaming-veil-from-replaying-finished-and-previous-blocks": {
       "item_id": "candidate_directive-zgx-prevent-streaming-veil-from-replaying-finished-and-previous-blocks",
@@ -318116,9 +318126,9 @@
       "title": "Research & Knowledge Intelligence: hf-nanbeige-nanbeige4.3-33b-learnings Core Invariants",
       "repository": "hf-nanbeige-nanbeige4.3-33b-learnings",
       "source_version": "HEAD",
-      "content_hash": "02a83bea7458b6d983152b714b58869b7497fdbf571dc540d52d133f04627842",
+      "content_hash": "980cf4e9eae1791a9c92625ddbf0f1fa8c7a4d3ab49603a50431b9f742ab84f5",
       "domain_letter": "D",
-      "persisted_at": "2026-11-21T17:06:06.384Z"
+      "persisted_at": "2026-11-25T09:08:11.704Z"
     },
     "rule-9808": {
       "learning_id": "rule-9808",
@@ -346692,6 +346702,70 @@
       "content_hash": "c5508742a2f68562e631931f559957dba6f2d922f05febba4959b7fd682018e5",
       "domain_letter": "I",
       "persisted_at": "2026-11-25T08:56:50.418Z"
+    },
+    "rule-10494": {
+      "learning_id": "rule-10494",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10494,
+      "title": "run crate2nix build on Blacksmith runner",
+      "source_url": "https://github.com/flox/flox",
+      "source_version": "80b795ff",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T09:07:53.065Z"
+    },
+    "candidate_directive-run-crate2nix-build-on-blacksmith-runner": {
+      "item_id": "candidate_directive-run-crate2nix-build-on-blacksmith-runner",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-HS5G-run-crate2nix-build-on-blacksmith-runner.md",
+      "title": "run crate2nix build on Blacksmith runner",
+      "repository": "flox/flox",
+      "source_version": "80b795ff",
+      "content_hash": "ed4b4952d723f11290c4a9af39c2b243306083de410a46d965ec735b2213ac1d",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-25T09:07:53.669Z"
+    },
+    "rule-10495": {
+      "learning_id": "rule-10495",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10495,
+      "title": "[BugFix] Lock the base table of a [_SYNC_MV_] read before planning",
+      "source_url": "https://github.com/StarRocks/starrocks",
+      "source_version": "921d5c4b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T09:08:05.932Z"
+    },
+    "candidate_directive-ci-run-crate2nix-build-on-blacksmith-runner": {
+      "item_id": "candidate_directive-ci-run-crate2nix-build-on-blacksmith-runner",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-I5AK-ci-run-crate2nix-build-on-blacksmith-runner.md",
+      "title": "ci: run crate2nix build on Blacksmith runner",
+      "repository": "flox-flox-learnings",
+      "source_version": "HEAD",
+      "content_hash": "21626eefda5972d1ab92850dbfb7743526cb4055a20a1cfd35816052499e1e4d",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-25T09:08:10.702Z"
+    },
+    "candidate_directive-bugfix-lock-the-base-table-of-a-_sync_mv_-read-before-planning": {
+      "item_id": "candidate_directive-bugfix-lock-the-base-table-of-a-_sync_mv_-read-before-planning",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-I6V4-bugfix-lock-the-base-table-of-a-_sync_mv_-read-before-planning.md",
+      "title": "[BugFix] Lock the base table of a [_SYNC_MV_] read before planning",
+      "repository": "starrocks-starrocks-learnings",
+      "source_version": "HEAD",
+      "content_hash": "1f563a6f2ac689df12b4830ef1528b591fa28e1cb9f4a4c63db6fe7baa0fd6c4",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-25T09:08:12.742Z"
     }
   },
   "ai-builder-brain": {

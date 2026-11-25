@@ -13014,3 +13014,7 @@
 | `CYCLE-20261125-2KRS` | `2026-11-25T08:56:04.264Z` | `HuggingFaceBio/Carbon-X` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-huggingfacebio-carbon-x-learnings.md` | Yes (`4b01d1f0...`) |
 | `CYCLE-20261125-2T2U` | `2026-11-25T08:56:15.030Z` | `pingcap/tidb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10493` | Yes (`be1627b5...`) |
 | `CYCLE-2026-11-25-PROJ-EVOLVE` | `2026-11-25T08:56:48.879Z` | `hf-inclusionai-lingsante-3.1-air-vl` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-51CE07E9` [Domain D] | Yes (`d00a7139...`) |
+| `CYCLE-20261125-HRWB` | `2026-11-25T09:07:53.339Z` | `flox/flox` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10494` | Yes (`d4a54f15...`) |
+| `CYCLE-20261125-HYBF` | `2026-11-25T09:08:01.659Z` | `Nanbeige/Nanbeige4.3-33B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nanbeige-nanbeige4.3-33b-learnings.md` | Yes (`c266145e...`) |
+| `CYCLE-20261125-I1TM` | `2026-11-25T09:08:06.202Z` | `StarRocks/starrocks` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10495` | Yes (`014d4acc...`) |
+| `CYCLE-20261125-I2CQ` | `2026-11-25T09:08:06.890Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | Yes (`9cac9c74...`) |

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T08:56:50.418Z",
+  "last_updated": "2026-11-25T09:08:12.742Z",
   "directives": [
     {
       "id": "CD-001",
@@ -60474,6 +60474,48 @@
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-25",
       "domain_letter": "I"
+    },
+    {
+      "id": "CD-HS5G",
+      "directive_title": "run crate2nix build on Blacksmith runner",
+      "source_repo": "flox/flox",
+      "source_commit": "80b795ff",
+      "staged_file": "11_INBOX/candidate-directives/CD-HS5G-run-crate2nix-build-on-blacksmith-runner.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-25",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-I6V4",
+      "directive_title": "[BugFix] Lock the base table of a [_SYNC_MV_] read before planning",
+      "source_repo": "starrocks-starrocks-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-I6V4-bugfix-lock-the-base-table-of-a-_sync_mv_-read-before-planning.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-25",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-I5AK",
+      "directive_title": "ci: run crate2nix build on Blacksmith runner",
+      "source_repo": "flox-flox-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-I5AK-ci-run-crate2nix-build-on-blacksmith-runner.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-25",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-05A48F",
+      "directive_title": "[BugFix] Lock the base table of a [_SYNC_MV_] read before planning",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "starrocks-starrocks",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-05A48F--bugfix-lock-the-base-table-of-a-sync-mv.md",
+      "staged_date": "2026-11-25"
     }
   ]
 }

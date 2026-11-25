@@ -13047,3 +13047,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-huggingfacebio-carbon-x` | `https://huggingface.co/HuggingFaceBio/Carbon-X` | `hf-hugging` | Multi-dimensional audit evidence | 2026-11-25T08:56:04.269Z |
 | `learn-github-pingcap-tidb` | `https://github.com/pingcap/tidb` | `e722f8f1` | Multi-dimensional audit evidence | 2026-11-25T08:56:15.034Z |
 | `learn-dom-d-51ce07e9` | `project://hf-inclusionai-lingsante-3.1-air-vl` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-inclusionai-lingsante-3.1-air-vl-learnings.md` | 2026-11-25T08:56:48.879Z |
+| `learn-github-flox-flox` | `https://github.com/flox/flox` | `80b795ff` | Multi-dimensional audit evidence | 2026-11-25T09:07:53.343Z |
+| `learn-huggingface-nanbeige-nanbeige4-3-33b` | `https://huggingface.co/Nanbeige/Nanbeige4.3-33B` | `hf-nanbeig` | Multi-dimensional audit evidence | 2026-11-25T09:08:01.665Z |
+| `learn-github-starrocks-starrocks` | `https://github.com/StarRocks/starrocks` | `921d5c4b` | Multi-dimensional audit evidence | 2026-11-25T09:08:06.207Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `88b0d49b` | Multi-dimensional audit evidence | 2026-11-25T09:08:06.895Z |
