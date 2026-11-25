@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T05:45:34.551Z",
-  "total_cycles_completed": 12303,
-  "total_learnings_persisted": 12303,
-  "total_rules_promoted": 11340,
+  "last_updated": "2026-11-25T05:54:42.831Z",
+  "total_cycles_completed": 12306,
+  "total_learnings_persisted": 12306,
+  "total_rules_promoted": 11342,
   "history": [
-    {
-      "timestamp": "2026-11-24T16:46:04.701Z",
-      "repository": "siderolabs/talos",
-      "learningId": "learn-github-siderolabs-talos",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T16:46:07.529Z",
-      "repository": "DefGuard/defguard",
-      "learningId": "learn-github-defguard-defguard",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T16:46:10.610Z",
-      "repository": "vespa-engine/vespa",
-      "learningId": "learn-github-vespa-engine-vespa",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-24T16:54:33.879Z",
       "repository": "indexable-inc/blaze",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-25T05:45:34.551Z",
       "repository": "envoyproxy/envoy",
       "learningId": "learn-github-envoyproxy-envoy",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T05:54:33.494Z",
+      "repository": "reflection/Beam-1.0-501B-A23B",
+      "learningId": "learn-huggingface-reflection-beam-1-0-501b-a23b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T05:54:35.115Z",
+      "repository": "Automattic/harper",
+      "learningId": "learn-github-automattic-harper",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T05:54:42.831Z",
+      "repository": "k3s-io/k3s",
+      "learningId": "learn-github-k3s-io-k3s",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

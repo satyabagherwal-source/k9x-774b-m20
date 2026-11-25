@@ -12955,3 +12955,6 @@
 | `CYCLE-20261125-9DO8` | `2026-11-25T05:45:24.344Z` | `meta-models/Muse-Spark-Open-816B-A42B-NVFP4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-models-muse-spark-open-816b-a42b-nvfp4-learnings.md` | Yes (`6e3e5773...`) |
 | `CYCLE-20261125-9EL5` | `2026-11-25T05:45:25.529Z` | `iii-hq/iii` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10464` | Yes (`8fb3a235...`) |
 | `CYCLE-20261125-9LJH` | `2026-11-25T05:45:34.541Z` | `envoyproxy/envoy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10465` | Yes (`d3ad8976...`) |
+| `CYCLE-20261125-L5E1` | `2026-11-25T05:54:33.481Z` | `reflection/Beam-1.0-501B-A23B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-reflection-beam-1.0-501b-a23b-learnings.md` | Yes (`e5594b0a...`) |
+| `CYCLE-20261125-L6N4` | `2026-11-25T05:54:35.104Z` | `Automattic/harper` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10466` | Yes (`bba99e9d...`) |
+| `CYCLE-20261125-LCLF` | `2026-11-25T05:54:42.819Z` | `k3s-io/k3s` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10467` | Yes (`c4f32f73...`) |

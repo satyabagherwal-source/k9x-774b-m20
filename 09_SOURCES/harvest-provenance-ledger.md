@@ -12988,3 +12988,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-meta-models-muse-spark-open-816b-a42b-nvfp4` | `https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B-NVFP4` | `hf-meta-mo` | Multi-dimensional audit evidence | 2026-11-25T05:45:24.348Z |
 | `learn-github-iii-hq-iii` | `https://github.com/iii-hq/iii` | `d14aa58e` | Multi-dimensional audit evidence | 2026-11-25T05:45:25.533Z |
 | `learn-github-envoyproxy-envoy` | `https://github.com/envoyproxy/envoy` | `a7ae7600` | Multi-dimensional audit evidence | 2026-11-25T05:45:34.545Z |
+| `learn-huggingface-reflection-beam-1-0-501b-a23b` | `https://huggingface.co/reflection/Beam-1.0-501B-A23B` | `hf-reflect` | Multi-dimensional audit evidence | 2026-11-25T05:54:33.486Z |
+| `learn-github-automattic-harper` | `https://github.com/Automattic/harper` | `1f3e2b34` | Multi-dimensional audit evidence | 2026-11-25T05:54:35.108Z |
+| `learn-github-k3s-io-k3s` | `https://github.com/k3s-io/k3s` | `a5327bed` | Multi-dimensional audit evidence | 2026-11-25T05:54:42.824Z |

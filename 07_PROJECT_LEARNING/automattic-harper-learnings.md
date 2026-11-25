@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/automattic-harper-learnings.md`  
 > **Source**: github ([https://github.com/Automattic/harper](https://github.com/Automattic/harper))  
-> **Source Version**: `eeaf0d20`  
+> **Source Version**: `1f3e2b34`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T03:41:37.033Z  
+> **Timestamp**: 2026-11-25T05:54:33.674Z  
 > **Learning ID**: `learn-github-automattic-harper`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/automattic-harper-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Automattic/harper](https://github.com/Automattic/harper))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T03:41:36.911Z  
+> **Harvest Timestamp**: 2026-11-25T05:54:33.664Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Offline, privacy-first grammar checker. Fast, open-source, Rust-powered
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 17923 stars
+- **Stars / Engagement**: 17950 stars
 
 ---
 
@@ -1429,222 +1429,42 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `68017e72` (2026-11-23)
-**Commit Message**: fix(chrome-ext): lint editable blocks inside a non-editable wrapper (#5027)
+### Incident Patch 1: `00119fa2` (2026-11-24)
+**Commit Message**: fix: don't flag `una` or `deque` for wrong negative prefix (#5063)
 
-The content script skipped any text with an ancestor marked
-contenteditable="false". The non-iframed WordPress block editor (as used
-on P2) puts each editable paragraph inside a wrapper marked
-contenteditable="false", so nothing in the editor was linted.
-
-Checking isContentEditable instead respects the nearest contenteditable
-setting, so editable blocks inside a non-editable wrapper are linted,
-while non-editable islands inside an editor are still skipped.
-
-**File**: `packages/chrome-plugin/src/contentScript/index.ts` (modified, +8/-1)
+**File**: `harper-core/src/linting/wrong_negative.rs` (modified, +9/-1)
 ```diff
-@@ -217,7 +217,14 @@ function scan() {
- 		const seenBlockContainers = new Set<Element>();
- 
- 		for (const leaf of leafs) {
--			if (leaf.parentElement?.closest('[contenteditable="false"],[disabled],[readonly]') != null) {
-+			// Use `isContentEditable` rather than `closest('[contenteditable="false"]')`: editors
-+			// such as the non-iframed block editor put editable blocks inside a non-editable wrapper.
-+			const leafElement = leaf instanceof Element ? leaf : leaf.parentElement;
-+			if (
-+				!(leafElement instanceof HTMLElement) ||
-+				!leafElement.isContentEditable ||
-+				leafElement.closest('[disabled],[readonly]') != null
-+			) {
- 				continue;
- 			}
- 
-```
-
-**File**: `packages/chrome-plugin/tests/nested_editable.spec.ts` (added, +10/-0)
-```diff
-@@ -0,0 +1,10 @@
-+import { expect, test } from './fixtures';
-+import { getHarperHighlights } from './testUtils';
-+
-+const TEST_PAGE_URL = 'http://localhost:8081/nested_editable.html';
-+
-+test('Lints an editable block inside a non-editable wrapper.', async ({ page }) => {
-+	await page.goto(TEST_PAGE_URL);
-+
-+	await expect(getHarperHighlights(page).first()).toBeVisible({ timeout: 24000 });
-+});
-```
-
-**File**: `packages/chrome-plugin/tests/pages/nested_editable.html` (added, +15/-0)
-```diff
-@@ -0,0 +1,15 @@
-+<!doctype html>
-+<html lang="en">
-+  <head>
-+    <meta charset="utf-8" />
-+    <title>Editable block inside a non-editable wrapper</title>
-+  </head>
-+  <body>
-+    <!-- Mirrors the non-iframed WordPress block editor (e.g. P2). -->
-+    <div class="editor-styles-wrapper" contenteditable="false">
-+      <div class="is-root-container">
-+        <p contenteditable="true">This is an test of the Harper grammar checker.</p>
-+      </div>
-+    </div>
-+  </body>
-+</html>
-```
-
----
-
-### Incident Patch 2: `622b568e` (2026-11-23)
-**Commit Message**: fix(core): ignore text inside inline HTML <code> in Markdown (#5028)
-
-Markdown inline code in backticks was already unlintable, but the same
-code written as <code>…</code> was not: only the tags themselves were
-skipped, so the identifiers between them were spell-checked and flagged.
-This is common in GitHub descriptions and comments, where Harper flagged
-code references as misspellings.
-
-The parser now tracks when it is inside an inline <code> element and
-marks that text as unlintable. An unclosed tag stops at the end of its
-paragraph, so it cannot hide the rest of the document.
-
-**File**: `harper-core/src/parsers/markdown.rs` (modified, +56/-1)
-```diff
-@@ -134,6 +134,14 @@ impl Markdown {
-     }
+@@ -14,7 +14,7 @@ fn looks_negative_but_oov(token: &Token, source: &[char]) -> bool {
+             .starts_with_any_ignore_ascii_case_str(NEGATIVE_PREFIXES)
+         && !token
+             .get_ch(source)
+-            .eq_any_ignore_ascii_case_str(&["defo", "deus"])
++            .eq_any_ignore_ascii_case_str(&["una", "defo", "deque", "deus"])
  }
  
-+/// Whether `html` is an HTML tag starting with `prefix` (e.g. `<code` or `</code`),
-+/// ignoring ASCII case. Attributes are allowed.
-+fn is_html_tag(html: &str, prefix: &str) -> bool {
-+    html.get(..prefix.len())
-+        .is_some_and(|start| start.eq_ignore_ascii_case(prefix))
-+        && html[prefix.len()..].starts_with(|c: char| c == '>' || c.is_ascii_whitespace())
-+}
-+
- impl Parser for Markdown {
-     /// This implementation is quite gross to look at, but it works.
-     /// If any issues arise, it would likely help to refactor this out first.
-@@ -155,6 +163,9 @@ impl Parser for Markdown {
- 
-         let mut stack = Vec::new();
- 
-+        // Depth of inline `<code>` HTML elements we are currently inside.
-+        let mut html_code_depth = 0usize;
-+
-         // NOTE: the range spits out __byte__ indices, not char indices.
-         // This is why we keep track above.
-         for (event, range) in md_parser.into_offset_iter() {
-@@ -206,6 +217,7 @@ impl Parser for Markdown {
-                         kind: TokenKind::ParagraphBreak,
-                     });
-                     stack.pop();
-+                    html_code_depth = 0;
-                 }
-                 pulldown_cmark::Event::End(_) => {
-                     stack.pop();
-@@ -223,6 +235,14 @@ impl Parser for Markdown {
-                 pulldown_cmark::Event::Text(_text) => {
-                     let chunk_len = span_end - span_start;
- 
-+                    if html_code_depth > 0 {
-+                        tokens.push(Token {
-+                            span: Span::new_with_len(span_start, chunk_len),
-+                            kind: TokenKind::Unlintable,
-+                        });
-+                        continue;
-+                    }
-+
-                     if let Some(tag) = stack.last() {
-                         use pulldown_cmark::Tag;
- 
-@@ -263,7 +283,13 @@ impl Parser for Markdown {
-                     tokens.append(&mut new_tokens);
-                 }
-                 // TO-DO: Support via `harper-html`
--                pulldown_cmark::Event::Html(_) | pulldown_cmark::Event::InlineHtml(_) => {
-+                pulldown_cmark::Event::Html(html) | pulldown_cmark::Event::InlineHtml(html) => {
-+                    if is_html_tag(&html, "<code") {
-+                        html_code_depth += 1;
-+                    } else if is_html_tag(&html, "</code") {
-+                        html_code_depth = html_code_depth.saturating_sub(1);
-+                    }
-+
-                     let size = span_end - span_start;
-                     tokens.push(Token {
-                         span: Span::new_with_len(span_start, size),
-@@ -435,6 +461,35 @@ mod tests {
-         assert_eq!(tokens.iter_unlintables().count(), 1);
+ pub struct WrongNegative<D: Dictionary + 'static> {
+@@ -189,4 +189,12 @@ mod tests {
+             WrongNegative::new(FstDictionary::curated()),
+         );
      }
- 
-+    #[test]
-+    fn html_code_contents_are_unlintable() {
-+        let source = r"Call the <code>teh_functoin</code> helper.";
-+        let tokens = Markdown::default().parse_str(source);
-+        assert_eq!(tokens.iter_unlintables().count(), 3);
-+        assert_eq!(tokens.iter_words().count(), 3);
-+    }
 +
 +    #[test]
-+    fn html_code_with_attributes_and_uppercase() {
-+        let source = r#"Call <CODE class="x">recieve</CODE> now."#;
-+        let tokens = Markdown::default().parse_str(source);
-+        assert_eq!(tokens.iter_words().count(), 2);
++    fn dont_flag_una_or_deque() {
++        assert_no_lints(
++            "The choice between deque and una depends on the language and context you are using.",
++            WrongNegative::new(FstDictionary::curated()),
++        );
 +    }
-+
-+    #[test]
-+    fn html_code_does_not_match_similar_tags() {
-+        let source = r"Some <codex>words</codex> here.";
-+        let tokens = Markdown::default().parse_str(source);
-+        assert_eq!(tokens.iter_words().count(), 3);
-+    }
-+
-+    #[test]
-+    fn unclosed_html_code_ends_at_paragraph() {
-+        let source = "Some <code>hidden\n\nVisible words.";
-+        let tokens = Markdown::default().parse_str(source);
-+        assert_eq!(tokens.iter_words().count(), 3);
-+    }
-+
-     #[test]
-     fn link_title_unlintable() {
-         let parser = Markdown::new(MarkdownOptions {
-```
-
----
-
-### Incident Patch 3: `fbcbb655` (2026-11-23)
-**Commit Message**: fix(desktop): lead with privacy in onboarding (#5020)
-
-* fix(desktop): lead with privacy in onboarding
-
-* fix(desktop): refine the onboarding privacy message
-
-**File**: `harper-desktop/src/lib/settings/pages/GettingStartedPage.svelte` (modified, +2/-2)
-```diff
-@@ -27,8 +27,8 @@ const allSlides: OnboardingSlide[] = [
- 	},
- 	{
- 		id: 'accessibility',
--		title: 'Give Harper Permission',
--		lede: 'Harper needs permission to check and correct your writing. Your text stays on your device.',
-+		title: 'Nothing leaves your device',
-+		lede: 'However, Harper needs Accessibility permission to check and correct your writing in other apps.',
- 	},
- 	{
- 		id: 'integration',
+ }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5066** (2026-11-25): chore(deps): bump globset from 0.4.20 to 0.4.21 (@dependabot[bot])
+- **PR #5064** (2026-11-25): chore(deps): bump unicode-script from 0.5.8 to 0.5.9 (@dependabot[bot])
+- **PR #5063** (2026-11-24): fix: don't flag `una` or `deque` for wrong negative prefix (@hippietrail)
+- **PR #5056** (2026-11-24): feat: go the the → go to the (@hippietrail)
+- **PR #5054** (closed): feat(core): `TheyToThem` catches "they" at the end of any sentence (@jgobuilds)
 - **PR #5051** (2026-11-23): feat: support HCL and Terraform (@bloveless)
-- **PR #5045** (2026-11-23): Move Mac CI to the xcode-27.2-v3 image (Ruby 3.4.13) (@mokagio)
-- **PR #5043** (2026-11-23): fix(core): add 'doorframe' to dictionary to avoid SplitWords false positive (#4794) (@abdul-karim-mia)
-- **PR #5040** (2026-11-22): fix(core): add 'waiters', 'instinctually', and 'unholster' to dictionary (#4973) (@abdul-karim-mia)
-- **PR #5035** (2026-11-22): fix(core): add 'teardown' and remove stray verb flag from 'fallback' (#5006, #5008) (@abdul-karim-mia)
-- **PR #5032** (2026-11-22): fix(core): avoid flagging 'if need be' in MissingTo (#5002) (@abdul-karim-mia)
 
 ---
 
@@ -1664,35 +1484,36 @@ paragraph, so it cannot hide the rest of the document.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. chrome-ext): lint editable blocks inside a non-editable wrapper
+## X. don't flag `una` or `deque` for wrong negative prefix
 
 **RULE**:
-When implementing operations in `packages/chrome-plugin/src/contentScript/index.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Automattic/harper. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `harper-core/src/linting/wrong_negative.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Automattic/harper. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `68017e72`: chrome-ext): lint editable blocks inside a non-editable wrapper. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `00119fa2`: don't flag `una` or `deque` for wrong negative prefix. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/chrome-plugin/src/contentScript/index.ts`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `harper-core/src/linting/wrong_negative.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-			// Use `isContentEditable` rather than `closest('[contenteditable="false"]')`: editors
-			// such as the non-iframed block editor put editable blocks inside a non-editable wrapper.
-			const leafElement = leaf instanceof Element ? leaf : leaf.parentElement;
-			if (
-				!(leafElement instanceof HTMLElement) ||
-				!leafElement.isContentEditable ||
-				leafElement.closest('[disabled],[readonly]') != null
-			) {
+            .eq_any_ignore_ascii_case_str(&["una", "defo", "deque", "deus"])
+
+    #[test]
+    fn dont_flag_una_or_deque() {
+        assert_no_lints(
+            "The choice between deque and una depends on the language and context you are using.",
+            WrongNegative::new(FstDictionary::curated()),
+        );
+    }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-			if (leaf.parentElement?.closest('[contenteditable="false"],[disabled],[readonly]') != null) {
+            .eq_any_ignore_ascii_case_str(&["defo", "deus"])
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `68017e72` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `00119fa2` are properly handled with clean fallback behavior.

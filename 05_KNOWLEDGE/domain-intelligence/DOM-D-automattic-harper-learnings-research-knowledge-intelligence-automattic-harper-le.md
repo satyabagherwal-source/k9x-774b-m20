@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T10:55:20.012Z",
+  "timestamp": "2026-11-25T05:54:46.838Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-automattic-harper-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [automattic-harper-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T10:55:20.012Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T05:54:46.838Z`  
 > **Learning ID**: `LEARN-EVO-automattic-harper-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain D (Research & Knowledge Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), H (Technical Construction Intelligence), F (Design Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 55%
+- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), G (Architecture Intelligence), H (Technical Construction Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 58%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from automattic-harper-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/automattic-harper-learnings.md`  
 > **Source**: github ([https://github.com/Automattic/harper](https://github.com/Automattic/harper))  
-> **Source Version**: `6db1d6fb`  
+> **Source Version**: `1f3e2b34`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T10:55:09.762Z  
+> **Timestamp**: 2026-11-25T05:54:33.674Z  
 > **Learning ID**: `learn-github-automattic-harper`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/automattic-harper-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Automattic/harper](https://github.com/Automattic/harper))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T10:55:09.757Z  
+> **Harvest Timestamp**: 2026-11-25T05:54:33.664Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Offline, privacy-first grammar checker. Fast, open-source, Rust-powered
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 17834 stars
+- **Stars / Engagement**: 17950 stars
 
 ---
 
@@ -1436,11 +1436,11 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4919** (2026-11-14): **Incorrect "them" suggestion**
-  *Symptoms*: ## What got flagged? <img width="2649" height="413" alt="image" src="https://github.com/user-attachments/assets/bec27369-582a-409e-87cb-0a1741bda5c7" />  TEXT: I tried to tell them, I really did. At least their deaths are not meaningless, for they shall all be unified into the white and delightsome hosts of Heaven.  ERROR: It's saying _they_ should be _them_ but that makes the grammar wrong.  ## Why is this incorrect? Text above is correct as is.  ## Example of correct usage See above text.
+- **Issue #5008** (2026-11-22): **"TEARDOWN" doesn't get flagged to correct to "TEAR DOWN"**
+  *Symptoms*: <img width="658" height="48" alt="image" src="https://github.com/user-attachments/assets/706b19aa-b1d9-4196-9f36-6869d97a7814" />  > I FINALLY **TEARDOWN** A VR6! Volkswagen's CRAZY Engine Idea From The 90's Was A HUGE SUCCESS!  "tear down" is a verb while "teardown" is a noun. `PhrasalVerbAsCompoundNoun` is the linter that handles this.  May be the same as #5006 but it might be related to using all-caps, which the other bug doesn't.
 
-- **Issue #4904** (2026-11-11): **Broken correciton suggestions on Ellipsus**
-  *Symptoms*: ## Describe the bug Harper is not working as intended on Ellipsus. It keeps placing autocorrect suggestions in misplaced spots, mostly in the case of it extending too far right to the next word(s) after the suggestion. Sometimes, the suggestion refuses to go away if you Dismiss it.  ## To Reproduce Steps to reproduce the behavior: 1. Go to '[write.ellipsus.com](https://write.ellipsus.com/)' 2. Write anything in a writing document 4. The autocorrect suggestions populate in a broken state  ## Expected behavior I expect Harper to behave as normal in Ellipsus, just like any other website with text-writing systems.   ## Platform Firefox (version 159, but also in previous versions, too) on Desktop 
+- **Issue #5006** (2026-11-22): **"Fallback" does not get corrected to "fall back" in some contexts**
+  *Symptoms*: <img width="512" height="72" alt="image" src="https://github.com/user-attachments/assets/9487776c-cae3-4d64-abbd-63c4abf02e48" />  > If the syscall does not work **fallback** to APE loader or /bin/sh if FD_CLOEXEC is not set and the fd has a path.  "fall back" is a verb, "fallback" is a noun. `PhrasalVerbAsCompoundNoun` is the linter that handles this.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1457,159 +1457,42 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6db1d6fb` (2026-11-18)
-**Commit Message**: style: split long/complex Weir alternatives over multiple lines (#4987)
+### Incident Patch 1: `00119fa2` (2026-11-24)
+**Commit Message**: fix: don't flag `una` or `deque` for wrong negative prefix (#5063)
 
-**File**: `harper-core/src/linting/weir_rules/AltarAlter/ToAlter.weir` (modified, +19/-1)
+**File**: `harper-core/src/linting/wrong_negative.rs` (modified, +9/-1)
 ```diff
-@@ -1,4 +1,22 @@
--expr modal [can, cannot, can't, could, couldn't, may, might, mightn't, must, mustn't, shall, shan't, shouldn't, will, won't, would, wouldn't]
-+expr modal [
-+    can,
-+    cannot,
-+    can't,
-+    could,
-+    couldn't,
-+    may,
-+    might,
-+    mightn't,
-+    must,
-+    mustn't,
-+    shall,
-+    shan't,
-+    shouldn't,
-+    will,
-+    won't,
-+    would,
-+    wouldn't
-+]
- expr prev [not]
- expr next [DET, database, ego, index]
- expr main [<(@modal altar), altar>, <(@prev altar), altar>, <(altar @next), altar>]
-```
-
-**File**: `harper-core/src/linting/weir_rules/BewareOf.weir` (modified, +14/-1)
-```diff
-@@ -1,4 +1,17 @@
--expr main [(beware with regard to), (beware about), (beware with), (beware regarding), (beware concerning), (beware against), (beware for), (beware in), (beware on), (beware at), (beware among), (beware between)]
-+expr main [
-+    (beware with regard to),
-+    (beware about),
-+    (beware with),
-+    (beware regarding),
-+    (beware concerning),
-+    (beware against),
-+    (beware for), 
-+    (beware in), 
-+    (beware on),
-+    (beware at),
-+    (beware among),
-+    (beware between)
-+]
+@@ -14,7 +14,7 @@ fn looks_negative_but_oov(token: &Token, source: &[char]) -> bool {
+             .starts_with_any_ignore_ascii_case_str(NEGATIVE_PREFIXES)
+         && !token
+             .get_ch(source)
+-            .eq_any_ignore_ascii_case_str(&["defo", "deus"])
++            .eq_any_ignore_ascii_case_str(&["una", "defo", "deque", "deus"])
+ }
  
- let message "Use `beware of` when naming the object you want readers to avoid."
- let description "The verb `beware` naturally pairs with `of` before the noun being warned about, so swap other prepositions for clarity."
-```
-
-**File**: `harper-core/src/linting/weir_rules/DependOf.weir` (modified, +5/-1)
-```diff
-@@ -1,7 +1,11 @@
- # "at the depends of" is a typo for "expense", so `depends` right after `the` is skipped.
- expr verb [depend, depended, depending]
- # "depends of course on ..." is correct, but "depends of course of ..." still needs a fix.
--expr main [<(@verb of ![course]), of>, <(![the] depends of ![course]), of>, <<([@verb, depends] of course of), (course of)>, of>]
-+expr main [
-+    <(@verb of ![course]), of>,
-+    <(![the] depends of ![course]), of>,
-+    <<([@verb, depends] of course of), (course of)>, of>
-+]
- 
- let message "In English it's `depend on`, not `depend of`."
- let description "Corrects the wrong preposition in `depend of`."
-```
-
-**File**: `harper-core/src/linting/weir_rules/InTheGrandSchemeOfThings.weir` (modified, +5/-1)
-```diff
-@@ -1,4 +1,8 @@
--expr main [(in the grand scale of things), (on the grand scale of things), (on the grand scheme of things)]
-+expr main [
-+    (in the grand scale of things),
-+    (on the grand scale of things),
-+    (on the grand scheme of things)
-+]
- 
- let message "Did you mean `in the grand scheme of things`?"
- let description "Corrects nonstandard variants of `in the grand scheme of things`."
-```
-
-**File**: `harper-core/src/linting/weir_rules/InTheSameVein.weir` (modified, +8/-1)
-```diff
-@@ -1,4 +1,11 @@
--expr main [(in the same vain), (in the same vane), (in the same veins), (in same vein), (in same vain), (on the same vein)]
-+expr main [
-+    (in the same vain),
-+    (in the same vane),
-+    (in the same veins),
-+    (in same vein),
-+    (in same vain),
-+    (on the same vein)
-+]
- 
- let message "This idiom requires the definite article `the` and the correct word `vein`, meaning blood vessel."
- let description "Corrects wrong variants of `in the same vein`."
-```
-
-**File**: `harper-core/src/linting/weir_rules/LastButNotLeast.weir` (modified, +6/-1)
-```diff
-@@ -1,4 +1,9 @@
--expr main [(last but not the least), (last, but not the least), (last but, not least), (last but not last)]
-+expr main [
-+    (last but not the least),
-+    (last, but not the least),
-+    (last but, not least),
-+    (last but not last)
-+]
- 
- let message "Use the more idiomatic phrasing."
- let description "Corrects common errors in the phrase `last but not least`."
-```
-
-**File**: `harper-core/src/linting/weir_rules/MoreThanMeetsTheEye.weir` (modified, +5/-1)
-```diff
-@@ -1,4 +1,8 @@
--expr main [(more than what meets the eye), (more that meets the eye), (more that what meets the eye)]
-+expr main [
-+    (more than what meets the eye),
-+    (more that meets the eye),
-+    (more that what meets the eye)
-+]
- 
- let message "For something that has hidden complexity or depth, `more than meets the eye` is the most idiomatic and most standard."
- let description "Corrects nonstandard and less idiomatic variants of `more than meets the eye`."
-```
-
-**File**: `harper-core/src/linting/weir_rules/OnTheSpurOfTheMoment.weir` (modified, +6/-1)
-```diff
-@@ -1,4 +1,9 @@
--expr main [(on the spurt of the moment), (at the spur of the moment), (in the spur of the moment), (in the spurt of the moment)]
-+expr main [
-+    (on the spurt of the moment),
-+    (at the spur of the moment),
-+    (in the spur of the moment),
-+    (in the spurt of the moment)
-+]
- 
- let message "Use the correct phrase for acting spontaneously."
- let description "Ensures the correct use of `on the spur of the moment`, avoiding nonstandard variations."
+ pub struct WrongNegative<D: Dictionary + 'static> {
+@@ -189,4 +189,12 @@ mod tests {
+             WrongNegative::new(FstDictionary::curated()),
+         );
+     }
++
++    #[test]
++    fn dont_flag_una_or_deque() {
++        assert_no_lints(
++            "The choice between deque and una depends on the language and context you are using.",
++            WrongNegative::new(FstDictionary::curated()),
++        );
++    }
+ }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4988** (2026-11-17): fix(components): darken background letters beneath text in dark mode (@elijah-potter)
-- **PR #4987** (2026-11-18): style: split long/complex Weir alternatives over multiple lines (@hippietrail)
-- **PR #4979** (2026-11-17): feat: on the same vein → in the same vein (@hippietrail)
-- **PR #4977** (2026-11-16): feat: replace SlideDeck with something better (@elijah-potter)
-- **PR #4976** (2026-11-17): feat(core): flag 'when ever' to be joined into 'whenever' (@abdul-karim-mia)
-- **PR #4975** (2026-11-16): feat(core): add NUMBER token to Weir exprs (@elijah-potter)
+- **PR #5066** (2026-11-25): chore(deps): bump globset from 0.4.20 to 0.4.21 (@dependabot[bot])
+- **PR #5064** (2026-11-25): chore(deps): bump unicode-script from 0.5.8 to 0.5.9 (@dependabot[bot])
+- **PR #5063** (2026-11-24): fix: don't flag `una` or `deque` for wrong negative prefix (@hippietrail)
+- **PR #5056** (2026-11-24): feat: go the the → go to the (@hippietrail)
+- **PR #5054** (closed): feat(core): `TheyToThem` catches "they" at the end of any sentence (@jgobuilds)
+- **PR #5051** (2026-11-23): feat: support HCL and Terraform (@bloveless)
 
 ---
 
@@ -1629,49 +1512,39 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. style: split long/complex Weir alternatives over multiple lines
+## X. don't flag `una` or `deque` for wrong negative prefix
 
 **RULE**:
-When implementing operations in `harper-core/src/linting/weir_rules/AltarAlter/ToAlter.weir`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Automattic/harper. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `harper-core/src/linting/wrong_negative.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Automattic/harper. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6db1d6fb`: style: split long/complex Weir alternatives over multiple lines. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `00119fa2`: don't flag `una` or `deque` for wrong negative prefix. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `harper-core/src/linting/weir_rules/AltarAlter/ToAlter.weir`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `harper-core/src/linting/wrong_negative.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-expr modal [
-    can,
-    cannot,
-    can't,
-    could,
-    couldn't,
-    may,
-    might,
-    mightn't,
-    must,
-    mustn't,
-    shall,
-    shan't,
-    shouldn't,
-    will,
-    won't,
-    would,
-    wouldn't
-]
+            .eq_any_ignore_ascii_case_str(&["una", "defo", "deque", "deus"])
+
+    #[test]
+    fn dont_flag_una_or_deque() {
+        assert_no_lints(
+            "The choice between deque and una depends on the language and context you are using.",
+            WrongNegative::new(FstDictionary::curated()),
+        );
+    }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-expr modal [can, cannot, can't, could, couldn't, may, might, mightn't, must, mustn't, shall, shan't, shouldn't, will, won't, would, wouldn't]
+            .eq_any_ignore_ascii_case_str(&["defo", "deus"])
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6db1d6fb` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `00119fa2` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

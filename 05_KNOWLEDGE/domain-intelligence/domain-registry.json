@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T05:45:39.967Z",
+  "last_updated": "2026-11-25T05:54:49.264Z",
   "total_records": 2637,
   "domains": {
     "A": {
@@ -11236,8 +11236,8 @@
       "title": "Architecture Intelligence: k3s-io/k3s Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-k3s-io-k3s-architecture-intelligence-k3s-io-k3s-core-invariants.md",
       "repository": "k3s-io/k3s",
-      "content_hash": "1d2cc7938fdbb44b3e32389f358094665de3adcc5827ca43290c85608f993ea0",
-      "created_at": "2026-11-23T17:29:41.564Z"
+      "content_hash": "f91de857e16ab385e1fbca8eee5f812a3ac1f684e1e1d7d5da7eb14780070d30",
+      "created_at": "2026-11-25T05:54:43.383Z"
     },
     "DOM-D-81EB8074": {
       "record_id": "DOM-D-81EB8074",
@@ -11347,8 +11347,8 @@
       "title": "Architecture Intelligence: k3s-io-k3s-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-k3s-io-k3s-learnings-architecture-intelligence-k3s-io-k3s-learnings-core-invaria.md",
       "repository": "k3s-io-k3s-learnings",
-      "content_hash": "494d1f6c50f2150e53badf71b1a9633557da6e1d9f981853f92c8ea5c0255672",
-      "created_at": "2026-11-20T10:44:22.970Z"
+      "content_hash": "2dc0d0568c7d3ff672a23d4d93e86e6b698042d379683c1e8f01527461b01a03",
+      "created_at": "2026-11-25T05:54:49.264Z"
     },
     "domain_intelligence-research-knowledge-intelligence-baai-bge-m3-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-baai-bge-m3-core-invariants",
@@ -28437,8 +28437,8 @@
       "title": "Research & Knowledge Intelligence: reflection/Beam-1.0-501B-A23B Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-reflection-beam-1-0-501b-a23b-research-knowledge-intelligence-reflection-beam.md",
       "repository": "reflection/Beam-1.0-501B-A23B",
-      "content_hash": "0fb4d60ff2b8c461168f2c8e6bc05b4ca39c2c17d3aef8becbfca4390ed98f04",
-      "created_at": "2026-11-21T11:16:47.872Z"
+      "content_hash": "edc8321b04db318ae01a16acc829cf901b4b98159e944a4a8beab2e873fa451e",
+      "created_at": "2026-11-25T05:54:33.819Z"
     },
     "domain_intelligence-architecture-intelligence-dalance-procs-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-dalance-procs-core-invariants",
@@ -28473,8 +28473,8 @@
       "title": "Research & Knowledge Intelligence: hf-reflection-beam-1.0-501b-a23b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-reflection-beam-1-0-501b-a23b-learnings-research-knowledge-intelligence-hf-re.md",
       "repository": "hf-reflection-beam-1.0-501b-a23b-learnings",
-      "content_hash": "fadf80cb5f0f10f035c7c7e99cb8174dbb1cb06929555efa245f1d1bad983bbd",
-      "created_at": "2026-11-21T11:16:51.740Z"
+      "content_hash": "333e77688c8935204499eaad85bb7640b4f79776b5f75cf087be439557bdeda6",
+      "created_at": "2026-11-25T05:54:48.036Z"
     },
     "domain_intelligence-technical-construction-intelligence-software-mansion-react-native-reanimated-lea": {
       "record_id": "domain_intelligence-technical-construction-intelligence-software-mansion-react-native-reanimated-lea",
@@ -31502,8 +31502,8 @@
       "title": "Research & Knowledge Intelligence: Automattic/harper Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-automattic-harper-research-knowledge-intelligence-automattic-harper-core-invaria.md",
       "repository": "Automattic/harper",
-      "content_hash": "9fd53d5156cfc3a7a25676a840c45af3b77bf4b6946ae51ec9828ca76236ec14",
-      "created_at": "2026-11-18T10:55:11.009Z"
+      "content_hash": "40db2293fe5c9cb72a8b2b04c1377927119a9820b0114824db2107ec20e85241",
+      "created_at": "2026-11-25T05:54:35.679Z"
     },
     "domain_intelligence-research-knowledge-intelligence-dkhamsing-open-source-ios-apps-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-dkhamsing-open-source-ios-apps-core-invariants",
@@ -31520,8 +31520,8 @@
       "title": "Research & Knowledge Intelligence: automattic-harper-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-automattic-harper-learnings-research-knowledge-intelligence-automattic-harper-le.md",
       "repository": "automattic-harper-learnings",
-      "content_hash": "46b598d5b62bd6132194695b2f318320549eae7e670c309140ce0e53d2b0fa0b",
-      "created_at": "2026-11-18T10:55:20.247Z"
+      "content_hash": "7c6907a43ebb9a83e36703ccd02658ed98812149df35bc8b1c00223e17856e0b",
+      "created_at": "2026-11-25T05:54:47.242Z"
     },
     "domain_intelligence-research-knowledge-intelligence-dkhamsing-open-source-ios-apps-learnings-core-in": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-dkhamsing-open-source-ios-apps-learnings-core-in",

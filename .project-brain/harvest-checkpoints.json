@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-25T05:45:34.560Z",
+  "last_updated": "2026-11-25T05:54:42.845Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3516,14 +3516,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-automattic-harper",
-      "content_hash": "28ebfa747aee04e5d9b93eccf04985ce36e233cc30e0986aa7bef289ce5e0bf1",
-      "verified_at": "2026-11-24T03:41:38.191Z",
+      "content_hash": "bba99e9de9ebe6cff7595c1d2bc25f6ba86633f0f6bbc87f4143c0c157257876",
+      "verified_at": "2026-11-25T05:54:35.128Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T03:41:38.191Z"
+      "last_updated": "2026-11-25T05:54:35.128Z"
     },
     "sudheerj/reactjs-interview-questions": {
       "repository": "sudheerj/reactjs-interview-questions",
@@ -9591,14 +9591,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-k3s-io-k3s",
-      "content_hash": "4f6bb903a12657887e8c875c5cd031dc2f3958b8057341f04c64897159c9955d",
-      "verified_at": "2026-11-24T13:04:14.123Z",
+      "content_hash": "c4f32f734bf98abbbcf0769dbbe7fcff46eef00843f991f6d0ce99c756fbaa87",
+      "verified_at": "2026-11-25T05:54:42.844Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T13:04:14.123Z"
+      "last_updated": "2026-11-25T05:54:42.844Z"
     },
     "Ataraxy-Labs/sem": {
       "repository": "Ataraxy-Labs/sem",
@@ -13881,14 +13881,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-reflection-beam-1-0-501b-a23b",
-      "content_hash": "b58d79bf7cab66b92cdd4e282cbd81f6fd45ae2ef4e2e02fbae5c950a3b0f2f0",
-      "verified_at": "2026-11-21T11:16:47.678Z",
+      "content_hash": "e5594b0a5a7b20ecee31d20c31022f18dbfe68f86018496a9f714ac7345e08bc",
+      "verified_at": "2026-11-25T05:54:33.506Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T11:16:47.678Z"
+      "last_updated": "2026-11-25T05:54:33.506Z"
     },
     "webrecorder/pywb": {
       "repository": "webrecorder/pywb",

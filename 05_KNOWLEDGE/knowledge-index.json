@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-25T05:45:40.147Z",
+  "last_updated": "2026-11-25T05:54:49.504Z",
   "total_verified_learnings": 9112,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25259,
+  "total_items": 25263,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -216625,8 +216625,8 @@
       "slug": "k3s-io-k3s",
       "platform": "github",
       "source_url": "https://github.com/k3s-io/k3s",
-      "source_version": "b9f8b6b0",
-      "content_hash": "4f6bb903a12657887e8c875c5cd031dc2f3958b8057341f04c64897159c9955d",
+      "source_version": "a5327bed",
+      "content_hash": "c4f32f734bf98abbbcf0769dbbe7fcff46eef00843f991f6d0ce99c756fbaa87",
       "dossier_path": "07_PROJECT_LEARNING/k3s-io-k3s-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/k3s-io-k3s-learnings.md",
       "promoted_rules": [
@@ -216654,6 +216654,11 @@
           "number": 10262,
           "title": "Avoid panic in ArgValue when a matching arg has no value",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10467,
+          "title": "node matching for local snapshots in the legacy configmap",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -216661,7 +216666,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T13:04:13.780Z",
+      "verified_at": "2026-11-25T05:54:42.546Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -216703,10 +216708,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-k3s-io-k3s-architecture-intelligence-k3s-io-k3s-core-invariants.md",
       "title": "Architecture Intelligence: k3s-io/k3s Core Invariants",
       "repository": "k3s-io/k3s",
-      "source_version": "b5039cf8",
-      "content_hash": "1d2cc7938fdbb44b3e32389f358094665de3adcc5827ca43290c85608f993ea0",
+      "source_version": "a5327bed",
+      "content_hash": "f91de857e16ab385e1fbca8eee5f812a3ac1f684e1e1d7d5da7eb14780070d30",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T17:29:41.564Z"
+      "persisted_at": "2026-11-25T05:54:43.383Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-k3s-io-k3s": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-k3s-io-k3s",
@@ -216715,10 +216720,10 @@
       "relative_path": "08_VERIFICATION/k3s-io-k3s-verification-protocol-empirical-defect-shield-for-k3s-io-k3s.md",
       "title": "Verification Protocol: Empirical Defect Shield for k3s-io/k3s",
       "repository": "k3s-io/k3s",
-      "source_version": "b9f8b6b0",
-      "content_hash": "3a1333282ac51ce47dcefb52732cac8d0f3c6621de860dd97ca7df8ce1141f1a",
+      "source_version": "a5327bed",
+      "content_hash": "ce4fdd32cefcbc585fdf92eaf19f18acd25d80757c5d2c81ebd02cd8ad3597b8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T13:04:14.844Z"
+      "persisted_at": "2026-11-25T05:54:43.619Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-google-bert-bert-base-uncased-learnings-core-": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-google-bert-bert-base-uncased-learnings-core-",
@@ -216788,9 +216793,9 @@
       "title": "Architecture Intelligence: k3s-io-k3s-learnings Core Invariants",
       "repository": "k3s-io-k3s-learnings",
       "source_version": "HEAD",
-      "content_hash": "494d1f6c50f2150e53badf71b1a9633557da6e1d9f981853f92c8ea5c0255672",
+      "content_hash": "2dc0d0568c7d3ff672a23d4d93e86e6b698042d379683c1e8f01527461b01a03",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T10:44:22.970Z"
+      "persisted_at": "2026-11-25T05:54:49.264Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-k3s-io-k3s-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-k3s-io-k3s-learnings",
@@ -216800,9 +216805,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for k3s-io-k3s-learnings",
       "repository": "k3s-io-k3s-learnings",
       "source_version": "HEAD",
-      "content_hash": "b847375fc078b2bb2c45c709f9dee5a7b16981224ed794f0c228e29b140165b1",
+      "content_hash": "0f14e6e4a2b09f69c2fae3c395538ec0906cfb16befea2b6daa3a96665ad87ee",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T13:04:19.588Z"
+      "persisted_at": "2026-11-25T05:54:49.504Z"
     },
     "learn-huggingface-baai-bge-m3": {
       "learning_id": "learn-huggingface-baai-bge-m3",
@@ -239623,8 +239628,8 @@
       "slug": "automattic-harper",
       "platform": "github",
       "source_url": "https://github.com/Automattic/harper",
-      "source_version": "eeaf0d20",
-      "content_hash": "28ebfa747aee04e5d9b93eccf04985ce36e233cc30e0986aa7bef289ce5e0bf1",
+      "source_version": "1f3e2b34",
+      "content_hash": "bba99e9de9ebe6cff7595c1d2bc25f6ba86633f0f6bbc87f4143c0c157257876",
       "dossier_path": "07_PROJECT_LEARNING/automattic-harper-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/automattic-harper-learnings.md",
       "promoted_rules": [
@@ -239662,6 +239667,11 @@
           "number": 10188,
           "title": "lint editable blocks inside a non-editable wrapper",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10466,
+          "title": "don't flag `una` or `deque` for wrong negative prefix",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -239669,7 +239679,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T03:41:37.951Z",
+      "verified_at": "2026-11-25T05:54:34.826Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -239723,10 +239733,10 @@
       "relative_path": "08_VERIFICATION/automattic-harper-verification-protocol-empirical-defect-shield-for-automattic-h.md",
       "title": "Verification Protocol: Empirical Defect Shield for Automattic/harper",
       "repository": "Automattic/harper",
-      "source_version": "eeaf0d20",
-      "content_hash": "241a2c27a136503ed47dd309c96695b377fe337c3a5e500320651495af747938",
+      "source_version": "1f3e2b34",
+      "content_hash": "cb1dc459dcaeb2c75b0fb3175e570256cd025546209a93a6ab9290baf4f40fb5",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T03:41:38.780Z"
+      "persisted_at": "2026-11-25T05:54:35.907Z"
     },
     "learn-github-kotest-kotest": {
       "learning_id": "learn-github-kotest-kotest",
@@ -239992,9 +240002,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for automattic-harper-learnings",
       "repository": "automattic-harper-learnings",
       "source_version": "HEAD",
-      "content_hash": "4b9ed78360a4f5d053804f59208e3bcdaa948d3c280285d15d21f94885966f88",
+      "content_hash": "0bc3798e54b5a44eb0160fb71194d2db85e64619bde2357f452a5cf4917be15d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T03:41:54.914Z"
+      "persisted_at": "2026-11-25T05:54:47.499Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-phocinae-phocinae-largha-150m-v1-learnings-co": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-phocinae-phocinae-largha-150m-v1-learnings-co",
@@ -278365,7 +278375,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/reflection/Beam-1.0-501B-A23B",
       "source_version": "hf-reflection-beam-1.0-501b-a23b",
-      "content_hash": "b58d79bf7cab66b92cdd4e282cbd81f6fd45ae2ef4e2e02fbae5c950a3b0f2f0",
+      "content_hash": "e5594b0a5a7b20ecee31d20c31022f18dbfe68f86018496a9f714ac7345e08bc",
       "dossier_path": "07_PROJECT_LEARNING/hf-reflection-beam-1.0-501b-a23b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-reflection-beam-1.0-501b-a23b-learnings.md",
       "promoted_rules": [],
@@ -278374,7 +278384,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T11:16:47.434Z",
+      "verified_at": "2026-11-25T05:54:33.178Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -278391,9 +278401,9 @@
       "title": "Research & Knowledge Intelligence: reflection/Beam-1.0-501B-A23B Core Invariants",
       "repository": "reflection/Beam-1.0-501B-A23B",
       "source_version": "hf-reflection-beam-1.0-501b-a23b",
-      "content_hash": "0fb4d60ff2b8c461168f2c8e6bc05b4ca39c2c17d3aef8becbfca4390ed98f04",
+      "content_hash": "edc8321b04db318ae01a16acc829cf901b4b98159e944a4a8beab2e873fa451e",
       "domain_letter": "D",
-      "persisted_at": "2026-11-21T11:16:47.872Z"
+      "persisted_at": "2026-11-25T05:54:33.819Z"
     },
     "learn-github-dalance-procs": {
       "learning_id": "learn-github-dalance-procs",
@@ -278584,9 +278594,9 @@
       "title": "Research & Knowledge Intelligence: hf-reflection-beam-1.0-501b-a23b-learnings Core Invariants",
       "repository": "hf-reflection-beam-1.0-501b-a23b-learnings",
       "source_version": "HEAD",
-      "content_hash": "fadf80cb5f0f10f035c7c7e99cb8174dbb1cb06929555efa245f1d1bad983bbd",
+      "content_hash": "333e77688c8935204499eaad85bb7640b4f79776b5f75cf087be439557bdeda6",
       "domain_letter": "D",
-      "persisted_at": "2026-11-21T11:16:51.740Z"
+      "persisted_at": "2026-11-25T05:54:48.036Z"
     },
     "candidate_directive-layoutanimations-keep-ancestor-opacity-and-clipping-during-shared-element-tran": {
       "item_id": "candidate_directive-layoutanimations-keep-ancestor-opacity-and-clipping-during-shared-element-tran",
@@ -291288,10 +291298,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-automattic-harper-research-knowledge-intelligence-automattic-harper-core-invaria.md",
       "title": "Research & Knowledge Intelligence: Automattic/harper Core Invariants",
       "repository": "Automattic/harper",
-      "source_version": "6db1d6fb",
-      "content_hash": "9fd53d5156cfc3a7a25676a840c45af3b77bf4b6946ae51ec9828ca76236ec14",
+      "source_version": "1f3e2b34",
+      "content_hash": "40db2293fe5c9cb72a8b2b04c1377927119a9820b0114824db2107ec20e85241",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T10:55:11.009Z"
+      "persisted_at": "2026-11-25T05:54:35.679Z"
     },
     "rule-9203": {
       "learning_id": "rule-9203",
@@ -291351,9 +291361,9 @@
       "title": "Research & Knowledge Intelligence: automattic-harper-learnings Core Invariants",
       "repository": "automattic-harper-learnings",
       "source_version": "HEAD",
-      "content_hash": "46b598d5b62bd6132194695b2f318320549eae7e670c309140ce0e53d2b0fa0b",
+      "content_hash": "7c6907a43ebb9a83e36703ccd02658ed98812149df35bc8b1c00223e17856e0b",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T10:55:20.247Z"
+      "persisted_at": "2026-11-25T05:54:47.242Z"
     },
     "domain_intelligence-research-knowledge-intelligence-dkhamsing-open-source-ios-apps-learnings-core-in": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-dkhamsing-open-source-ios-apps-learnings-core-in",
@@ -345422,6 +345432,58 @@
       "content_hash": "6ec410b8c29a830662f95b4d2ae7a2f06b62525ddfb1da32f12d4b1f96d851b9",
       "domain_letter": "H",
       "persisted_at": "2026-11-25T05:45:39.788Z"
+    },
+    "rule-10466": {
+      "learning_id": "rule-10466",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10466,
+      "title": "don't flag `una` or `deque` for wrong negative prefix",
+      "source_url": "https://github.com/Automattic/harper",
+      "source_version": "1f3e2b34",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T05:54:34.826Z"
+    },
+    "candidate_directive-don-t-flag-una-or-deque-for-wrong-negative-prefix": {
+      "item_id": "candidate_directive-don-t-flag-una-or-deque-for-wrong-negative-prefix",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-LFTB-don-t-flag-una-or-deque-for-wrong-negative-prefix.md",
+      "title": "don't flag `una` or `deque` for wrong negative prefix",
+      "repository": "automattic-harper-learnings",
+      "source_version": "HEAD",
+      "content_hash": "c0d639ae8715537d374e7db78eee342c5e3e4c76b4c8f9068bcef28400939db4",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-25T05:54:46.993Z"
+    },
+    "rule-10467": {
+      "learning_id": "rule-10467",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10467,
+      "title": "node matching for local snapshots in the legacy configmap",
+      "source_url": "https://github.com/k3s-io/k3s",
+      "source_version": "a5327bed",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T05:54:42.546Z"
+    },
+    "candidate_directive-node-matching-for-local-snapshots-in-the-legacy-configmap": {
+      "item_id": "candidate_directive-node-matching-for-local-snapshots-in-the-legacy-configmap",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-LHDS-node-matching-for-local-snapshots-in-the-legacy-configmap.md",
+      "title": "node matching for local snapshots in the legacy configmap",
+      "repository": "k3s-io-k3s-learnings",
+      "source_version": "HEAD",
+      "content_hash": "6279adda0f7fcd2580409078d1f438cb1cc4caf88a8e6f7cbf0ef66d8ee58a8b",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-25T05:54:49.025Z"
     }
   },
   "ai-builder-brain": {

@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261123-6ZE9",
-    "timestamp": "2026-11-23T18:16:01.713Z",
-    "repository": "stakater/Reloader",
-    "learningId": "learn-github-stakater-reloader",
-    "contentHash": "6c7439ef44d01f1f9fe535122458c170808185093909fbc4204e94d14f1b3a25",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-GYYT",
-    "timestamp": "2026-11-23T18:23:47.717Z",
-    "repository": "canberkkkkkk/ema-lightning",
-    "learningId": "learn-huggingface-canberkkkkkk-ema-lightning",
-    "contentHash": "104ed466d44e6a5808ec6647fba5fae9b5a84e7a29632fa5dc94ca907492ae71",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-HBHH",
-    "timestamp": "2026-11-23T18:24:03.941Z",
-    "repository": "StarRocks/starrocks",
-    "learningId": "learn-github-starrocks-starrocks",
-    "contentHash": "a0b8f3fddcb8e7061774acbe405ead03c740eaa47b18bc2ddf3c09e9de89ae01",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261123-RRUP",
     "timestamp": "2026-11-23T18:32:11.713Z",
     "repository": "unsloth/embeddinggemma-2-GGUF",
@@ -7490,6 +7445,51 @@
     "repository": "envoyproxy/envoy",
     "learningId": "learn-github-envoyproxy-envoy",
     "contentHash": "d3ad89768da387ce9600a50bc1e0348243d23cda588801602cd492e6df4cf33f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-L5E1",
+    "timestamp": "2026-11-25T05:54:33.481Z",
+    "repository": "reflection/Beam-1.0-501B-A23B",
+    "learningId": "learn-huggingface-reflection-beam-1-0-501b-a23b",
+    "contentHash": "e5594b0a5a7b20ecee31d20c31022f18dbfe68f86018496a9f714ac7345e08bc",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-L6N4",
+    "timestamp": "2026-11-25T05:54:35.104Z",
+    "repository": "Automattic/harper",
+    "learningId": "learn-github-automattic-harper",
+    "contentHash": "bba99e9de9ebe6cff7595c1d2bc25f6ba86633f0f6bbc87f4143c0c157257876",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-LCLF",
+    "timestamp": "2026-11-25T05:54:42.819Z",
+    "repository": "k3s-io/k3s",
+    "learningId": "learn-github-k3s-io-k3s",
+    "contentHash": "c4f32f734bf98abbbcf0769dbbe7fcff46eef00843f991f6d0ce99c756fbaa87",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

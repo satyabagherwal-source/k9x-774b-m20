@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-20T10:44:22.667Z",
+  "timestamp": "2026-11-25T05:54:48.870Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-k3s-io-k3s-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [k3s-io-k3s-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-20T10:44:22.667Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T05:54:48.870Z`  
 > **Learning ID**: `LEARN-EVO-k3s-io-k3s-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence), K (Quality & Verification Intelligence), L (Deployment & Operations Intelligence), B (Product Intelligence)
-- **Confidence Rating**: 55%
+- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), H (Technical Construction Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence), B (Product Intelligence)
+- **Confidence Rating**: 50%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from k3s-io-k3s-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/k3s-io-k3s-learnings.md`  
 > **Source**: github ([https://github.com/k3s-io/k3s](https://github.com/k3s-io/k3s))  
-> **Source Version**: `647ad670`  
+> **Source Version**: `a5327bed`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T10:34:22.511Z  
+> **Timestamp**: 2026-11-25T05:54:41.405Z  
 > **Learning ID**: `learn-github-k3s-io-k3s`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/k3s-io-k3s-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/k3s-io/k3s](https://github.com/k3s-io/k3s))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T10:34:22.505Z  
+> **Harvest Timestamp**: 2026-11-25T05:54:41.398Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Lightweight Kubernetes
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 34471 stars
+- **Stars / Engagement**: 34513 stars
 
 ---
 
@@ -811,17 +811,19 @@ import (
 const hyphens = "--"
 
 // ArgValue returns the value of the first matching arg in the provided list.
-func ArgValue(searchArg string, extraArgs []string) string {
-	var value string
+func ArgValue(searchArg string, extraArgs []string) (string, bool) {
 	for _, unsplitArg := range extraArgs {
-		splitArg := strings.SplitN(strings.TrimPrefix(unsplitArg, hyphens), "=", 2)
-		if splitArg[0] == searchArg {
-			value = splitArg[1]
-			// break if we found our value
-			break
+		unsplitArg = strings.TrimPrefix(unsplitArg, hyphens)
+		// arg is flag with no value
+		if unsplitArg == searchArg {
+			return "", true
+		}
+		// arg is = joined flag-value pair
+		if k, v, ok := strings.Cut(unsplitArg, "="); ok && k == searchArg && len(v) > 0 {
+			return v, true
 		}
 	}
-	return value
+	return "", false
 }
 
 // GetArgs appends extra arguments to existing arguments with logic to override any default
@@ -912,15 +914,11 @@ func AddFeatureGate(current, toAdd string) string {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #15018** (2026-11-19): **Duplicate - opened without the feature type, please ignore**
-  *Symptoms*: Opened without the Feature issue type, which only the template form sets. Recreated; please ignore this one.
-  **Post-Mortem & Fix Analysis**:
-  > Recreated as #15020.
+- **Issue #15058** (2026-11-24): **[release-1.36] Pin Multus E2E charts to 4.3.204**
+  *Symptoms*: <!-- HTML Comments can be left in place or removed. --> <!-- Please see our contributing guide at https://github.com/k3s-io/k3s/blob/main/CONTRIBUTING.md for guidance on opening pull requests -->  #### Proposed Changes ####  <!-- Describe the big picture of your changes here to communicate to the maintainers why we should accept this pull request. -->  Pin both `rke2-multus` and `rke2-multus-crd` to version `4.3.204` in the Multus E2E manifest.  #### Types of Changes ####  <!-- What types of changes does your code introduce to K3s? Bugfix, New Feature, Breaking Change, etc -->  Test configuration fix.  #### Verification ####  <!-- How can the changes be verified? Please provide whatever additional information necessary to help verify the proposed changes. -->  - `helm show chart rke2-multus --repo https://rke2-charts.rancher.io --version 4.3.204`: passed; resolved version `4.3.204`. - `helm show chart rke2-multus-crd --repo https://rke2-charts.rancher.io --version 4.3.204`: passed; resolved version `4.3.204`. - `git diff --check`: passed.  #### Testing ####  <!-- Is this change covered by testing? If not, consider adding a Unit or Integration test. --> <!-- See https://github.com/k3s-io/k3s/blob/main/tests/TESTING.md for more info -->  - `ruby -e 'require "yaml"; docs = YAML.load_stream(File.read("tests/e2e/multus/multus-config.yaml")); expected = {"rke2-multus-crd" => "4.3.204", "rke2-multus" => "4.3.204"}; actual = docs.to_h { |doc| [doc.fetch("spec").fetch("chart"), doc.fe
 
-- **Issue #15017** (2026-11-19): **[Release-1.34] Bump Traefik image to v3.7.19**
-  *Symptoms*: Issue: https://github.com/k3s-io/k3s/issues/15016 Backport: https://github.com/k3s-io/k3s/pull/15009
-  **Post-Mortem & Fix Analysis**:
-  > ## [Codecov](https://app.codecov.io/gh/k3s-io/k3s/pull/15017?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=k3s-io) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 52.10%. Comparing base ([`5002961`](https://app.codecov.io/gh/k3s-io/k3s/commit/50029619e1b36d9bc629e175c878443129c47d16?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=k3s-io)) to head ([`e20efd4`](https://app.codecov.io/gh/k3s-io/k3s/commit/e20efd4ea025b7e6ba5d612ab10dba03e957bda1?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=k3s-io)).  <details><summary>Additional details and impacted files</summary>    ```diff @@               Coverage Diff                @@ ##           release-1.34   #15017      +/-   ## ==============================
+- **Issue #15057** (2026-11-24): **[release-1.35] Pin Multus E2E charts to 4.3.204**
+  *Symptoms*: <!-- HTML Comments can be left in place or removed. --> <!-- Please see our contributing guide at https://github.com/k3s-io/k3s/blob/main/CONTRIBUTING.md for guidance on opening pull requests -->  #### Proposed Changes ####  <!-- Describe the big picture of your changes here to communicate to the maintainers why we should accept this pull request. -->  Pin the Multus e2e test's `rke2-multus` and `rke2-multus-crd` HelmCharts to `4.3.204` rather than using the latest charts.  #### Types of Changes ####  <!-- What types of changes does your code introduce to K3s? Bugfix, New Feature, Breaking Change, etc -->  Test configuration update.  #### Verification ####  <!-- How can the changes be verified? Please provide whatever additional information necessary to help verify the proposed changes. -->  - `git diff --check` — passed. - `for chart in rke2-multus rke2-multus-crd; do echo "--- $chart ---"; helm show chart "$chart" --repo https://rke2-charts.rancher.io --version 4.3.204 || exit; done` — passed; both charts resolved to version `4.3.204`. - Parsed both manifest documents and confirmed the requested chart version.  #### Testing ####  <!-- Is this change covered by testing? If not, consider adding a Unit or Integration test. --> <!-- See https://github.com/k3s-io/k3s/blob/main/tests/TESTING.md for more info -->  - `go test -timeout=15m ./tests/e2e/multus/... -run E2E` — not run; Vagrant is not installed on this host.  #### Linked Issues ####  <!-- Link any related issues, pull-r
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -937,61 +935,40 @@ func AddFeatureGate(current, toAdd string) string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `647ad670` (2026-11-19)
-**Commit Message**: Bump Traefik to v3.7.19 and chart to v42.4.1
+### Incident Patch 1: `80bc4519` (2026-11-18)
+**Commit Message**: Fix node matching for local snapshots in the legacy configmap
 
-Signed-off-by: Manuel Buil <[REDACTED_EMAIL]>
+reconcile trimmed the trailing timestamp from local snapshot keys with
+strings.TrimRight(s, "-012345678"). The cutset has no 9, so trimming
+stops at the first 9 in the timestamp and the node name no longer
+matches; the entry is then deleted as belonging to a missing node. The
+cutset also eats trailing digits of node names such as server-1.
+Cut at the last dash instead, which removes exactly the timestamp.
 
-**File**: `manifests/traefik.yaml` (modified, +3/-3)
+Signed-off-by: farisbasha <[REDACTED_EMAIL]>
+
+**File**: `pkg/etcd/snapshot_controller.go` (modified, +3/-1)
 ```diff
-@@ -7,7 +7,7 @@ metadata:
- spec:
-   forceConflicts: true
-   failurePolicy: retry
--  chart: https://%{KUBERNETES_API}%/static/charts/traefik-crd-41.6.101+up41.6.1.tgz
-+  chart: https://%{KUBERNETES_API}%/static/charts/traefik-crd-41.6.101+up42.4.1.tgz
- ---
- apiVersion: helm.cattle.io/v1
- kind: HelmChart
-@@ -17,7 +17,7 @@ metadata:
- spec:
-   forceConflicts: true
-   failurePolicy: retry
--  chart: https://%{KUBERNETES_API}%/static/charts/traefik-41.6.101+up41.6.1.tgz
-+  chart: https://%{KUBERNETES_API}%/static/charts/traefik-42.4.101+up42.4.1.tgz
-   set:
-     global.systemDefaultRegistry: "%{SYSTEM_DEFAULT_REGISTRY_RAW}%"
-   valuesContent: |-
-@@ -32,7 +32,7 @@ spec:
-     priorityClassName: "system-cluster-critical"
-     image:
-       repository: "rancher/mirrored-library-traefik"
--      tag: "3.7.17"
-+      tag: "3.7.19"
-     tolerations:
-     - key: "CriticalAddonsOnly"
-       operator: "Exists"
-```
-
-**File**: `scripts/airgap/image-list.txt` (modified, +1/-1)
-```diff
-@@ -3,6 +3,6 @@ docker.io/rancher/klipper-lb:v0.4.18
- docker.io/rancher/local-path-provisioner:v0.0.37
- docker.io/rancher/mirrored-coredns-coredns:1.15.0
- docker.io/rancher/mirrored-library-busybox:1.38.0
--docker.io/rancher/mirrored-library-traefik:3.7.17
-+docker.io/rancher/mirrored-library-traefik:3.7.19
- docker.io/rancher/mirrored-metrics-server:v0.9.1
- docker.io/rancher/mirrored-pause:3.10.2
+@@ -268,7 +268,9 @@ func (e *etcdSnapshotHandler) reconcile() error {
+ 			// A node is considered to match the snapshot if the snapshot name matches the node name
+ 			// after trimming the leading local- prefix and trailing timestamp and extension.
+ 			s, _ = strings.CutSuffix(s, ".zip")
+-			s = strings.TrimRight(s, "-012345678")
++			if i := strings.LastIndexByte(s, '-'); i >= 0 {
++				s = s[:i]
++			}
+ 			var matchingNode bool
+ 			for _, node := range nodeList.Items {
+ 				if strings.HasSuffix(s, node.Name) {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #15017** (2026-11-19): [Release-1.34] Bump Traefik image to v3.7.19 (@manuelbuil)
-- **PR #15015** (2026-11-19): [Release-1.35] Bump Traefik image to v3.7.19 (@manuelbuil)
-- **PR #15013** (2026-11-19): [Release-1.36] Bump Traefik image to v3.7.19 (@manuelbuil)
-- **PR #15011** (2026-11-19): [Release-1.37] Bump Traefik to v3.7.19 and chart to v42.4.1 (@manuelbuil)
-- **PR #15009** (2026-11-19): Bump Traefik to v3.7.19 and chart to v42.4.1 (@manuelbuil)
-- **PR #15001** (closed): Run integration coverage conversion as root (@manuelbuil)
+- **PR #15058** (2026-11-24): [release-1.36] Pin Multus E2E charts to 4.3.204 (@thomasferrandiz)
+- **PR #15057** (2026-11-24): [release-1.35] Pin Multus E2E charts to 4.3.204 (@thomasferrandiz)
+- **PR #15056** (2026-11-24): [release-1.37] Pin Multus E2E charts to 4.3.204 (@thomasferrandiz)
+- **PR #15055** (closed): Drop setup-docker-action (@brandond)
+- **PR #15051** (2026-11-25): [main] Bump other dependencies (@github-actions[bot])
+- **PR #15049** (2026-11-25): [release-1.36] Bump other dependencies (@github-actions[bot])
 
 ---
 
@@ -1011,35 +988,33 @@ Signed-off-by: Manuel Buil <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Bump Traefik to v3.7.19 and chart to v42.4.1
+## X. node matching for local snapshots in the legacy configmap
 
 **RULE**:
-When implementing operations in `manifests/traefik.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in k3s-io/k3s. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/etcd/snapshot_controller.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in k3s-io/k3s. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `647ad670`: Bump Traefik to v3.7.19 and chart to v42.4.1. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `80bc4519`: node matching for local snapshots in the legacy configmap. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `manifests/traefik.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/etcd/snapshot_controller.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-  chart: https://%{KUBERNETES_API}%/static/charts/traefik-crd-41.6.101+up42.4.1.tgz
-  chart: https://%{KUBERNETES_API}%/static/charts/traefik-42.4.101+up42.4.1.tgz
-      tag: "3.7.19"
+			if i := strings.LastIndexByte(s, '-'); i >= 0 {
+				s = s[:i]
+			}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-  chart: https://%{KUBERNETES_API}%/static/charts/traefik-crd-41.6.101+up41.6.1.tgz
-  chart: https://%{KUBERNETES_API}%/static/charts/traefik-41.6.101+up41.6.1.tgz
-      tag: "3.7.17"
+			s = strings.TrimRight(s, "-012345678")
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `647ad670` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `80bc4519` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

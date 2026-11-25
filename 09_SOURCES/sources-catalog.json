@@ -2253,10 +2253,10 @@
     "repository": "Automattic/harper",
     "platform": "github",
     "sourceUrl": "https://github.com/Automattic/harper",
-    "sourceVersion": "eeaf0d20",
+    "sourceVersion": "1f3e2b34",
     "license": "Apache-2.0",
-    "contentHash": "28ebfa747aee04e5d9b93eccf04985ce36e233cc30e0986aa7bef289ce5e0bf1",
-    "lastHarvestedAt": "2026-11-24T03:41:38.175Z",
+    "contentHash": "bba99e9de9ebe6cff7595c1d2bc25f6ba86633f0f6bbc87f4143c0c157257876",
+    "lastHarvestedAt": "2026-11-25T05:54:35.108Z",
     "learningId": "learn-github-automattic-harper"
   },
   "sudheerj-reactjs-interview-questions": {
@@ -6313,10 +6313,10 @@
     "repository": "k3s-io/k3s",
     "platform": "github",
     "sourceUrl": "https://github.com/k3s-io/k3s",
-    "sourceVersion": "b9f8b6b0",
+    "sourceVersion": "a5327bed",
     "license": "Apache-2.0",
-    "contentHash": "4f6bb903a12657887e8c875c5cd031dc2f3958b8057341f04c64897159c9955d",
-    "lastHarvestedAt": "2026-11-24T13:04:14.104Z",
+    "contentHash": "c4f32f734bf98abbbcf0769dbbe7fcff46eef00843f991f6d0ce99c756fbaa87",
+    "lastHarvestedAt": "2026-11-25T05:54:42.824Z",
     "learningId": "learn-github-k3s-io-k3s"
   },
   "open-source-legal-opencontracts": {
@@ -9225,8 +9225,8 @@
     "sourceUrl": "https://huggingface.co/reflection/Beam-1.0-501B-A23B",
     "sourceVersion": "hf-reflection-beam-1.0-501b-a23b",
     "license": "Open-Source",
-    "contentHash": "b58d79bf7cab66b92cdd4e282cbd81f6fd45ae2ef4e2e02fbae5c950a3b0f2f0",
-    "lastHarvestedAt": "2026-11-21T11:16:47.671Z",
+    "contentHash": "e5594b0a5a7b20ecee31d20c31022f18dbfe68f86018496a9f714ac7345e08bc",
+    "lastHarvestedAt": "2026-11-25T05:54:33.486Z",
     "learningId": "learn-huggingface-reflection-beam-1-0-501b-a23b"
   },
   "webrecorder-pywb": {

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-25T05:45:39.550Z",
+  "updated_at": "2026-11-25T05:54:48.654Z",
   "stats": {
-    "total_discovered": 9250,
-    "approved_pending_harvest": 8759,
+    "total_discovered": 9253,
+    "approved_pending_harvest": 8762,
     "harvested_count": 0,
     "rejected_count": 491,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 8756,
+      "COMMUNITY_AND_EXPERT": 8759,
       "OFFICIAL_DOCUMENTATION": 275,
       "STANDARDS_AND_SPECIFICATIONS": 149,
       "ENGINEERING_BLOGS": 7,
@@ -200090,6 +200090,72 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
         "fileName": "envoyproxy-envoy-learnings.md"
+      }
+    },
+    "SRC-5C78CE7BA8B2": {
+      "id": "SRC-5C78CE7BA8B2",
+      "url": "https://github.com/k3s-io/k3s/blob/main/CONTRIBUTING.md",
+      "title": "https://github.com/k3s-io/k3s/blob/main/CONTRIBUTING.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T05:54:48.494Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/k3s-io-k3s-learnings.md",
+        "fileName": "k3s-io-k3s-learnings.md"
+      }
+    },
+    "SRC-573DB46301E7": {
+      "id": "SRC-573DB46301E7",
+      "url": "https://rke2-charts.rancher.io/",
+      "title": "https://rke2-charts.rancher.io/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T05:54:48.576Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/k3s-io-k3s-learnings.md",
+        "fileName": "k3s-io-k3s-learnings.md"
+      }
+    },
+    "SRC-5DCCDAA02798": {
+      "id": "SRC-5DCCDAA02798",
+      "url": "https://github.com/k3s-io/k3s/blob/main/tests/TESTING.md",
+      "title": "https://github.com/k3s-io/k3s/blob/main/tests/TESTING.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T05:54:48.654Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/k3s-io-k3s-learnings.md",
+        "fileName": "k3s-io-k3s-learnings.md"
       }
     }
   }
