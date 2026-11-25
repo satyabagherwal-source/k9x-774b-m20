@@ -13152,3 +13152,7 @@
 | `CYCLE-20261125-2QSW` | `2026-11-25T23:24:00.176Z` | `Qwen/Qwen3-Embedding-0.6B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-embedding-0.6b-learnings.md` | Yes (`eb63a9ca...`) |
 | `CYCLE-20261125-2SQO` | `2026-11-25T23:24:02.688Z` | `embassy-rs/embassy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10558` | Yes (`980312a5...`) |
 | `CYCLE-20261125-2ZXF` | `2026-11-25T23:24:12.003Z` | `RustCrypto/hashes` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10559` | Yes (`d3e07efb...`) |
+| `CYCLE-20261125-DK2S` | `2026-11-25T23:32:24.676Z` | `moonshotai/Kimi-K3.1-Pro` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-moonshotai-kimi-k3.1-pro-learnings.md` | Yes (`f527d87d...`) |
+| `CYCLE-20261125-DR3J` | `2026-11-25T23:32:33.775Z` | `dosco/deeporg` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10547` | Yes (`8343d230...`) |
+| `CYCLE-20261125-DUY7` | `2026-11-25T23:32:38.767Z` | `t8y2/dbx` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10560` | Yes (`c03e1996...`) |
+| `CYCLE-20261125-DWFF` | `2026-11-25T23:32:40.683Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule EXISTING` | Yes (`2a8628e9...`) |

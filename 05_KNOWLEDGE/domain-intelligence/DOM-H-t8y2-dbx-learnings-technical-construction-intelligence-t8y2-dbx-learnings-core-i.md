@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T01:29:07.812Z",
+  "timestamp": "2026-11-25T23:32:45.588Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-t8y2-dbx-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [t8y2-dbx-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T01:29:07.812Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T23:32:45.588Z`  
 > **Learning ID**: `LEARN-EVO-t8y2-dbx-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 75%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence), F (Design Intelligence)
+- **Confidence Rating**: 77%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from t8y2-dbx-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/t8y2-dbx-learnings.md`  
 > **Source**: github ([https://github.com/t8y2/dbx](https://github.com/t8y2/dbx))  
-> **Source Version**: `c9d50f21`  
+> **Source Version**: `e6c06578`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T01:29:02.404Z  
+> **Timestamp**: 2026-11-25T23:32:37.666Z  
 > **Learning ID**: `learn-github-t8y2-dbx`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/t8y2-dbx-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/t8y2/dbx](https://github.com/t8y2/dbx))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T01:29:02.398Z  
+> **Harvest Timestamp**: 2026-11-25T23:32:37.660Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: 25 MB lightweight cross-platform database client for 100+ databases, including MySQL, PostgreSQL, SQLite, Redis, MongoDB, DuckDB, SQL Server, and Dameng. Built-in AI, MCP Server, CLI, desktop and Docker. | 轻量级跨平台数据库管理工具，支持 MySQL、PostgreSQL、SQLite、Redis、MongoDB、达梦等 100+ 数据库，提供桌面端、Docker、CLI、内置 AI 助手和 MCP。
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 31229 stars
+- **Stars / Engagement**: 31429 stars
 
 ---
 
@@ -2056,16 +2056,13 @@ func (b *Binary) GetValues() []byte {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #15528** (2026-11-24): **[Compatibility] Doris 3.1.1 元数据查询语句报错**
-  *Symptoms*: ### 数据库类型和版本 / Database type and version  Doris 3.1.1  ### 问题描述 / Description / Problem description  在使用DBX 0.6.72中链接Doris 3.1.1集群。 软件在用户键入语句、关键字、字段时，自行进行相关的元数据查询，我在Doris的内部审计日志表中查看到的。存在着大量的错误。比如SQL： SELECT     INDEX_NAME,     COLUMN_NAME,     EXPRESSION,     SEQ_IN_INDEX,     NON_UNIQUE,     INDEX_TYPE,     INDEX_COMMENT FROM     information_schema.STATISTICS WHERE     TABLE_SCHEMA = 'boyaa_eagle_10036'     AND TABLE_NAME = 'events' ORDER BY     INDEX_NAME,     SEQ_IN_INDEX  报错信息： errCode = 2, detailMessage = Unknown column 'EXPRESSION' in 'table list' in PROJECT clause  诸如此类的报错很多，都是Unkonwn ccolun 这种报错。    ### 错误信息 / Error message  ```shell 报错信息： errCode = 2, detailMessage = Unknown column 'EXPRESSION' in 'table list' in PROJECT clause ```  ### 支持信息 / Support information  DBX 版本：v0.6.72 运行环境：桌面端 操作系统：window 11 系统架构：x64   ### 补充信息 / Additional information  _No response_
-  **Post-Mortem & Fix Analysis**:
-  > <!-- dbx-similar-issues --> 以下 Issue 可能与当前问题相关：  - #14428  这些结果由机器人自动检索，尚未确认重复。如属于同一问题，建议在已有 Issue 中补充信息。
-  > /claim
+- **Issue #15619** (2026-11-24): **[Bug] 标签页采用两行分组并按连接分组，页签开启多行平铺时，鼠标放到页签栏上总是会出现滚动条**
+  *Symptoms*: ### 数据库类型和版本 / Database type and version  SQL Server 2019  ### 问题描述 / Problem description  标签页采用两行分组并按连接分组，页签开启多行平铺时，鼠标放到页签栏上总是会出现滚动条 <img width="1680" height="129" alt="image" src="https://github.com/user-attachments/assets/a9e52e12-342b-4908-baca-0656fe743da3" />  ### 支持信息 / Support information  DBX 版本: v0.6.73 (0.6.73-beta.20261123.1) 运行环境: 桌面端 操作系统: Windows 10 (10.0.19045.6466) 系统架构: x86_64 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Safari/537.36 Edg/157.0.0.0 数据库类型: influxdb3/influxdb, mysql, oracle, postgres, sqlserver 本地驱动版本: sqlserver-legacy 0.1.70 AI 供应商: DeepSeek  ### 优先级（是否紧急） / Priority (urgency)  🔴 P0 紧急 · 下个版本必须修 / Urgent · Must fix next release  ### 补充信息 / Additional information  _No response_
 
-- **Issue #15517** (2026-11-24): **[Bug] 更新了最新版本的dbx,查询出来了结果集后，下面没有横向滚动条,导致后面的列看不到**
-  *Symptoms*: ### 数据库类型和版本 / Database type and version  mysql  ### 问题描述 / Problem description  更新了最新版本的dbx,查询出来了结果集后，下面没有横向滚动条,导致后面的列看不到。   ### 支持信息 / Support information  v0.6.72 桌面端 Windows 11 (10.0.26300.9974) x86_64  ### 优先级（是否紧急） / Priority (urgency)  🔴 P0 紧急 · 下个版本必须修 / Urgent · Must fix next release  ### 补充信息 / Additional information  更新了最新版本的dbx,查询出来了结果集后，下面没有横向滚动条,导致后面的列看不到。 
+- **Issue #15596** (2026-11-24): **[Bug]**
+  *Symptoms*: ### 数据库类型和版本 / Database type and version  编辑表结构时，字段类型下拉一闪就消失了。  ### 问题描述 / Problem description  <img width="2460" height="1022" alt="image" src="https://github.com/user-attachments/assets/c67b73fe-7ed2-4d37-a218-dd03352f5260" />  ### 支持信息 / Support information  DBX Version: v0.6.73 (0.6.73-beta.20261123.1) Runtime: Desktop Operating System: macOS 26.7.3 Architecture: aarch64  ### 优先级（是否紧急） / Priority (urgency)  🔴 P0 紧急 · 下个版本必须修 / Urgent · Must fix next release  ### 补充信息 / Additional information  _No response_
   **Post-Mortem & Fix Analysis**:
-  > 我看了下结果集的滚动条实现，先说结论：这个横向滚动条是我们自己画的（原生滚动条被 `scrollbar-width: none` 隐藏了），只有判定「内容比可视区宽」时才会渲染出来。所以「看不到滚动条」通常是两种情况之一：①没判定出溢出；②判定出来了但被遮挡/高度塌陷。  我对比了 0.6.71 和 0.6.72 这一段代码（`apps/desktop/src/components/grid/DataGrid.vue`）：溢出判定（`scrollWidth - clientWidth > 1`）和滚动条样式在这两个版本之间没有改动，所以我这边还没法只靠版本差异下结论，需要一次对照实验。  麻烦你做两个 30 秒的测试（不用改任何数据）：  1. **设置 → 结果集 → 渲染模式**，从 `Canvas` 切成 `DOM`，重新跑同一条查询，看底部横向滚动条是否出现。 2. 如果 DOM 下出现、Canvas 下不出现，再在 Canvas 模式下试试 `Shift + 滚轮` 或触控板横向滑动，看能不能滚到后面的列。  另外想确认几个信息，方便我定位：  - 结果集大概多少列？有没有冻结列（左侧固定列）？窗口是否最大化？ - 能不能补一张「结果集底部」的完整截图（要能看到列头右边界 + 底部一行）？ - 这条查询是新开的结果集，还是从「历史/已保存」恢复的标签？  如果确认只在 Canvas 渲染模式下出现，我会按 canvas 的溢出判定去修；如果两种模式都没有，那问题在样式被遮挡（方向不一样）。它和 #15519（列多时最后一列拖不全）很可能是同一个根因，修好后一起验证。 
+  > 大佬快点修复，目前只能手搓 sql了
   > /claim
 
 ### D4: Resource Lifecycle & Leak Defenses
@@ -2083,494 +2080,178 @@ func (b *Binary) GetValues() []byte {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6bd7e1de` (2026-11-23)
-**Commit Message**: fix(sql): refuse MySQL change previews whose SET reads an earlier assignment (#15545)
+### Incident Patch 1: `e6c06578` (2026-11-25)
+**Commit Message**: fix(grid): stop re-creating scroller ResizeObserver on every refresh
 
-**File**: `crates/dbx-sql-core/src/dml_preview_sql.rs` (modified, +82/-2)
+Refs: #15660
+
+**File**: `apps/desktop/src/components/grid/DataGrid.vue` (modified, +17/-19)
 ```diff
-@@ -7,12 +7,17 @@
- //!     → SELECT *, 123 AS "a (new)" FROM t WHERE id = 1
- //! `SELECT *` 展开受影响行全部当前值，新值列（别名后缀 ` (new)`）追加在末尾；
- //! SET 表达式直接搬运（在行上下文中按旧值求值即得新值，`SET a = a + 1` 也能算对）。
-+//! MySQL 单表 UPDATE 按从左到右赋值，后面的 SET 表达式引用前面已赋值的列时拒绝预览。
- //! 注意：SET / VALUES 表达式会在预览 SELECT 中重新求值，带副作用的表达式
- //! （推进序列、volatile 函数）在预览中同样生效，非确定性函数的预览值可能与实际执行不同。
- //!
- //! 无法安全改写的语句返回 Err（错误信息为英文，前端直接以 toast 展示，仍可正常执行原语句）。
- 
--use sqlparser::ast::{AssignmentTarget, Expr, Ident, ObjectNamePart, SetExpr, Statement, TableWithJoins};
-+use std::ops::ControlFlow;
-+
-+use sqlparser::ast::{
-+    visit_expressions, AssignmentTarget, Expr, Ident, ObjectNamePart, SetExpr, Statement, TableWithJoins,
-+};
- use sqlparser::dialect::{
-     ClickHouseDialect, DuckDbDialect, GenericDialect, MsSqlDialect, MySqlDialect, PostgreSqlDialect, SQLiteDialect,
-     SparkSqlDialect,
-@@ -109,6 +114,44 @@ fn unsupported(reason: &str) -> String {
-     format!("Preview is not supported: {reason}")
+@@ -3754,6 +3754,16 @@ function refreshGridScrollerMetrics() {
+   scheduleVisibleLargeValuePreviewHydration();
  }
  
-+/// 表达式是否引用了目标表的给定列之一（列名不区分大小写）。`a` 与 `t.a`（表名或别名限定）
-+/// 都算；其他限定符（如子查询里的 `u.a`）不算。
-+fn expr_references_any_column(expr: &Expr, columns: &[String], table_qualifiers: &[String]) -> bool {
-+    visit_expressions(expr, |expr| {
-+        let column = match expr {
-+            Expr::Identifier(ident) => Some(ident),
-+            Expr::CompoundIdentifier(parts) if parts.len() >= 2 => {
-+                let qualifier = parts[parts.len() - 2].value.to_lowercase();
-+                if table_qualifiers.contains(&qualifier) {
-+                    parts.last()
-+                } else {
-+                    None
-+                }
-+            }
-+            _ => None,
-+        };
-+        match column {
-+            Some(ident) if columns.contains(&ident.value.to_lowercase()) => ControlFlow::Break(()),
-+            _ => ControlFlow::Continue(()),
-+        }
-+    })
-+    .is_break()
++let scrollerMetricsRefreshFrame: number | null = null;
++
++function scheduleScrollerMetricsRefresh() {
++  if (!gridScrollbarsRuntime.active || scrollerMetricsRefreshFrame !== null) return;
++  scrollerMetricsRefreshFrame = requestAnimationFrame(() => {
++    scrollerMetricsRefreshFrame = null;
++    if (gridScrollbarsRuntime.active) refreshGridScrollerMetrics();
++  });
 +}
 +
-+/// 单表 UPDATE 目标表可用的限定名（表名最后一段与别名，小写）。
-+fn update_table_qualifiers(update: &sqlparser::ast::Update) -> Vec<String> {
-+    let mut qualifiers = Vec::new();
-+    if let sqlparser::ast::TableFactor::Table { name, alias, .. } = &update.table.relation {
-+        if let Some(ident) = name.0.last().and_then(ObjectNamePart::as_ident) {
-+            qualifiers.push(ident.value.to_lowercase());
-+        }
-+        if let Some(alias) = alias {
-+            qualifiers.push(alias.name.value.to_lowercase());
-+        }
-+    }
-+    qualifiers
-+}
-+
- /// UPDATE → SELECT <列交错展开> FROM … WHERE …
- ///
- /// 提供目标表列清单且为单表时，按「原列, 原列 (new)」逐列交错展开，使新值列紧跟
-@@ -127,12 +170,20 @@ fn build_update_preview(
-     }
-     let mut set_items: Vec<SetItem> = Vec::new();
-     let mut set_order: Vec<String> = Vec::new(); // 小写列名 → 顺序
-+    let single_table = update.table.joins.is_empty() && update.from.is_none();
-+    let mysql_left_to_right = dialect_key == "mysql" && single_table;
-+    let table_qualifiers = if mysql_left_to_right { update_table_qualifiers(update) } else { Vec::new() };
-     for assignment in &update.assignments {
-         let Some(column) = assignment_target_column(&assignment.target) else {
-             return Err(unsupported("UPDATE assignment target is not a single column"));
-         };
-         let column_name = column.value.clone();
-         let key = column_name.to_lowercase();
-+        // MySQL 单表 UPDATE 按从左到右赋值：`SET a = a + 1, b = a` 中 b 取到的是新 a，
-+        // 按旧行求值的预览会给出错误的新值，因此引用了前面已赋值列的语句拒绝预览。
-+        if mysql_left_to_right && expr_references_any_column(&assignment.value, &set_order, &table_qualifiers) {
-+            return Err(unsupported("MySQL applies SET assignments left to right"));
-+        }
-         if let Some(position) = set_order.iter().position(|existing| *existing == key) {
-             set_order.remove(position);
-             set_items.remove(position);
-@@ -160,7 +211,6 @@ fn build_update_preview(
-     let append_items: Vec<String> = set_items.iter().map(render_new_value).collect();
+ let columnLayoutRefreshFrame = 0;
+ function scheduleColumnLayoutRefresh() {
+   if (columnLayoutRefreshFrame) return;
+@@ -6718,13 +6728,7 @@ const hasVisibleRows = computed(() => displayRowCount.value > 0);
+ const hasActiveFilter = computed(() => (dataGridSearchMode.value === "filter" && !replaceOpen.value && !!deferredClientSearchText.value) || rowStatusFilter.value !== "all" || hasLocalColumnFilters.value || hasServerColumnFilters.value);
+ const emptyTitle = computed(() => (hasActiveFilter.value ? t("grid.noFilteredRows") : t("grid.noRows")));
+ const emptyDescription = computed(() => (hasActiveFilter.value ? t("grid.noFilteredRowsDescription") : t("grid.noRowsDescription")));
+-watch(
+-  () => [hasVisibleRows.value, props.result.columns.length] as const,
+-  () => {
+-    nextTick(refreshGridScrollerMetrics);
+-  },
+-  { immediate: true },
+-);
++watch([hasVisibleRows, () => props.result.columns.length], scheduleScrollerMetricsRefresh, { flush: "post", immediate: true });
+ const isErrorResult = computed(() => isQueryExecutionErrorResult(props.result) && props.result.rows.length > 0);
+ const errorMessage = computed(() => (isErrorResult.value ? String(props.result.rows[0]?.[0] ?? "") : ""));
+ // --- Selection composable ---
+@@ -8960,16 +8964,9 @@ const { elapsedMs: resultViewUpdateMs, canvasDrawCompleted: completeResultCanvas
+   () => (useCanvasGridRows.value ? "canvas" : "dom"),
+ );
  
-     // 单表 + 提供了列清单 → 交错展开（新值列紧跟原值列）。
--    let single_table = update.table.joins.is_empty() && update.from.is_none();
-     let select_items = if single_table {
-         match columns {
-             Some(column_list) if !column_list.is_empty() => {
-@@ -453,6 +503,36 @@ mod tests {
-         assert_eq!(result.sql, "SELECT *, 2 AS \"x (new)\" FROM t");
-     }
+-watch(
+-  () => [totalWidth.value, displayRowCount.value, useCanvasGridRows.value, props.result.columns.join("\u0000")],
+-  () => {
+-    nextTick(() => {
+-      refreshGridScrollerMetrics();
+-      observeGridHorizontalScrollbarScroller();
+-    });
+-  },
+-  { flush: "post" },
+-);
++// Width reads can force a full WebKit layout. Coalesce result changes outside
++// Vue's flush so the refresh cannot keep re-entering the same render cycle.
++watch([totalWidth, displayRowCount, useCanvasGridRows, () => props.result.columns.join("\u0000")], scheduleScrollerMetricsRefresh, { flush: "post" });
  
-+    #[test]
-+    fn update_mysql_rejects_set_that_reads_an_earlier_assignment() {
-+        // MySQL single-table UPDATE assigns left to right, so `b = a` sees the new `a`
-+        // and `a = a + 1, a = a + 1` adds 2; a SELECT over the old row cannot show that.
-+        for (sql, database_type) in [
-+            ("UPDATE t SET a = a + 1, b = a WHERE id = 1", "mysql"),
-+            ("UPDATE t SET a = a + 1, a = a + 1 WHERE id = 1", "mysql"),
-+            ("UPDATE t SET A = 1, b = t.a + 1", "mariadb"),
-+            ("UPDATE t SET a = 1, b = COALESCE(`a`, 0)", "mysql"),
-+            ("UPDATE db.t AS x SET a = 1, b = x.a", "mysql"),
-+        ] {
-+            let error = preview(sql, database_type).unwrap_err();
-+            assert_eq!(error, "Preview is not s
+ function canvasScrollerElement(): HTMLElement | null {
+   const scroller = scrollerRef.value;
+@@ -9827,6 +9824,8 @@ function pauseCanvasGridWork() {
+   lastPresentedCanvasBackingKey = null;
+   stopCanvasResizeTracking();
+   gridScrollbarsRuntime.pause();
++  if (scrollerMetricsRefreshFrame !== null) cancelAnimationFrame(scrollerMetricsRefreshFrame);
++  scrollerMetricsRefreshFrame = null;
+   disconnectCellEditResizeObserver();
+   dataGridTopbarResizeObserver?.disconnect();
+   dataGridTopbarResizeObserver = null;
+@@ -9850,8 +9849,7 @@ function resumeCanvasGridWork() {
+     attachCanvasResizeObserver();
+     observeDataGridTopbarWidth();
+     observeTransposeViewport();
+-    refreshGridScrollerMetrics();
+-    observeGridHorizontalScrollbarScroller();
++    scheduleScrollerMetricsRefresh();
+   });
+ }
+ 
 ```
 
----
-
-### Incident Patch 2: `1f8a69e1` (2026-11-24)
-**Commit Message**: fix(doris): avoid unsupported information_schema columns and cache My… (#15541)
-
-* fix(doris): avoid unsupported information_schema columns and cache MySQL metadata capabilities
-
-Pre-seed Doris/SelectDB MySQL pools with compatible metadata capabilities (ROUTINES.DTD_IDENTIFIER and STATISTICS without EXPRESSION), skip STATISTICS.EXPRESSION in list_indexes_with_ddl_fallback, recognize Doris 1105 HY000 missing-column errors in mysql::list_indexes, and cache discovered completion/index metadata fallbacks on MySqlPool so Doris audit logs are not flooded with repeated Unknown column errors.
-
-Close #15528
-
-* fix(mysql): scope index capability defaults to Doris profiles
-
----------
-
-Co-authored-by: zipg <[REDACTED_EMAIL]>
-
-**File**: `crates/dbx-core/src/connection/mod.rs` (modified, +14/-6)
+**File**: `apps/desktop/src/composables/__tests__/useDataGridCanvasRuntime.spec.ts` (modified, +30/-0)
 ```diff
-@@ -1707,7 +1707,7 @@ async fn connect_bare_mysql_pool_with_setup(
-     max_connections: usize,
-     extra_setup_queries: &[String],
- ) -> Result<db::mysql::MySqlPool, String> {
--    if db_config.bare_mysql_uses_tls() {
-+    let pool = if db_config.bare_mysql_uses_tls() {
-         let idle_timeout_secs = Some(db_config.idle_timeout_secs);
-         db::mysql::connect_compatible_with_ca_cert_pool_limit_idle_and_setup(
-             url,
-@@ -1717,11 +1717,15 @@ async fn connect_bare_mysql_pool_with_setup(
-             idle_timeout_secs,
-             extra_setup_queries,
-         )
--        .await
-+        .await?
-     } else {
-         db::mysql::connect_bare_with_pool_limit_and_setup(url, connect_timeout, max_connections, extra_setup_queries)
--            .await
-+            .await?
-+    };
-+    if db::doris::is_config(db_config) {
-+        pool.set_doris_metadata_defaults();
-     }
-+    Ok(pool)
- }
+@@ -175,6 +175,36 @@ describe("data grid visual runtimes", () => {
+     expect(frames.callbacks.size).toBe(0);
+   });
  
- async fn connect_bare_mysql_pool_with_setup_database(
-@@ -1734,7 +1738,7 @@ async fn connect_bare_mysql_pool_with_setup_database(
- ) -> Result<db::mysql::MySqlPool, String> {
-     // Some MySQL proxies reject the default database in the handshake; pass it
-     // separately so DB-layer setup keeps the normal charset/catalog/USE order.
--    if db_config.bare_mysql_uses_tls() {
-+    let pool = if db_config.bare_mysql_uses_tls() {
-         let idle_timeout_secs = Some(db_config.idle_timeout_secs);
-         db::mysql::connect_compatible_with_ca_cert_pool_limit_idle_and_setup_database(
-             url,
-@@ -1745,7 +1749,7 @@ async fn connect_bare_mysql_pool_with_setup_database(
-             Some(setup_database),
-             extra_setup_queries,
-         )
--        .await
-+        .await?
-     } else {
-         db::mysql::connect_bare_with_pool_limit_and_setup_database(
-             url,
-@@ -1754,8 +1758,12 @@ async fn connect_bare_mysql_pool_with_setup_database(
-             Some(setup_database),
-             extra_setup_queries,
-         )
--        .await
-+        .await?
-+    };
-+    if db::doris::is_config(db_config) {
-+        pool.set_doris_metadata_defaults();
-     }
-+    Ok(pool)
- }
- 
- fn mysql_metadata_fallback_url(
++  it("keeps observing unchanged scroll targets across repeated result refreshes", () => {
++    const frames = createFrameDriver();
++    const resize = createObserver();
++    const createResizeObserver = vi.fn(() => resize.observer);
++    const child = {} as Element;
++    const replacement = {} as Element;
++    const scroller = { children: [child] };
++    const runtime = useDataGridScrollbars({
++      update: vi.fn(),
++      getScroller: () => scroller as unknown as Element,
++      applyHorizontalDrag: vi.fn(),
++      applyVerticalDrag: vi.fn(),
++      frameDriver: frames.driver,
++      createResizeObserver,
++    });
++
++    runtime.observeScroller();
++    runtime.observeScroller();
++    expect(createResizeObserver).toHaveBeenCalledOnce();
++    expect(resize.disconnect).not.toHaveBeenCalled();
++    expect(frames.callbacks.size).toBe(1);
++
++    scroller.children = [replacement];
++    runtime.observeScroller();
++    expect(createResizeObserver).toHaveBeenCalledTimes(2);
++    expect(resize.disconnect).toHaveBeenCalledOnce();
++    expect(resize.observe).toHaveBeenLastCalledWith(replacement);
++    runtime.dispose();
++  });
++
+   it("tears down pending canvas work when its Vue scope stops", () => {
+     const frames = createFrameDriver();
+     const resize = createObserver();
 ```
 
-**File**: `crates/dbx-core/src/schema/mod.rs` (modified, +4/-0)
+**File**: `apps/desktop/src/composables/useDataGridScrollbars.ts` (modified, +10/-7)
 ```diff
-@@ -8491,6 +8491,10 @@ pub async fn completion_assistant_search_core(
-                 PoolKind::Mysql(pool, mode) if *mode != MysqlMode::OceanBaseOracle => Some(pool.clone()),
-                 _ => None,
-             }) {
-+                let db_config = connection_config(state, &request.connection_id).await;
-+                if db_config.as_ref().is_some_and(db::doris::is_config) {
-+                    pool.set_doris_metadata_defaults();
-+                }
-                 return db::mysql::completion_assistant_search(&pool, &request).await;
-             }
-         }
-```
-
-**File**: `crates/dbx-driver-mysql/src/doris.rs` (modified, +9/-2)
-```diff
-@@ -1,11 +1,18 @@
- use crate::models::connection::{ConnectionConfig, DatabaseType};
-+use crate::mysql::MySqlPool;
-+use crate::types::IndexInfo;
+@@ -39,6 +39,7 @@ export function useDataGridScrollbars(options: DataGridScrollbarsOptions): DataG
+   let pendingClientX = 0;
+   let pendingClientY = 0;
+   let resizeObserver: ResizeObserver | null = null;
++  let observedElements: Element[] = [];
  
- pub use super::mysql_compatible::{
-     get_columns_show_from as get_catalog_columns, list_catalog_indexes, list_catalogs,
--    list_databases_show_from as list_catalog_databases, list_indexes_with_ddl_fallback as list_indexes,
--    list_tables_show_from as list_catalog_tables, show_create_table_ddl_from as get_catalog_table_ddl,
-+    list_databases_show_from as list_catalog_databases, list_tables_show_from as list_catalog_tables,
-+    show_create_table_ddl_from as get_catalog_table_ddl,
- };
- 
-+pub async fn list_indexes(pool: &MySqlPool, database: &str, table: &str) -> Result<Vec<IndexInfo>, String> {
-+    pool.set_doris_metadata_defaults();
-+    super::mysql_compatible::list_indexes_with_ddl_fallback(pool, database, table).await
-+}
-+
- pub fn is_config(config: &ConnectionConfig) -> bool {
-     is_profile(&config.db_type, config.driver_profile.as_deref())
- }
-```
-
-**File**: `crates/dbx-driver-mysql/src/mysql.rs` (modified, +554/-27)
-```diff
-@@ -14,7 +14,7 @@ use std::future::Future;
- use std::ops::ControlFlow;
- use std::ops::Deref;
- use std::path::PathBuf;
--use std::sync::atomic::AtomicBool;
-+use std::sync::atomic::{AtomicBool, AtomicU8, Ordering};
- use std::time::Duration;
- use std::time::Instant;
- use tokio_util::sync::CancellationToken;
-@@ -42,6 +42,92 @@ pub use crate::mysql_data_charset::{
- };
- use crate::mysql_event_sql::MysqlEventInfo;
- 
-+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
-+#[repr(u8)]
-+enum MySqlStatisticsColumns {
-+    /// MySQL 8+: EXPRESSION + INDEX_COMMENT.
-+    Full = 0,
-+    /// MySQL 5.5–5.7, Doris, StarRocks v5: INDEX_COMMENT without EXPRESSION.
-+    WithoutExpression = 1,
-+    /// MySQL 5.0/5.1: neither EXPRESSION nor INDEX_COMMENT.
-+    Minimal = 2,
-+}
-+
-+impl MySqlStatisticsColumns {
-+    fn from_u8(value: u8) -> Self {
-+        match value {
-+            0 => Self::Full,
-+            1 => Self::WithoutExpression,
-+            _ => Self::Minimal,
-+        }
-+    }
-+
-+    fn flags(self) -> (bool, bool) {
-+        match self {
-+            Self::Full => (true, true),
-+            Self::WithoutExpression => (false, true),
-+            Self::Minimal => (false, false),
-+        }
-+    }
-+
-+    fn downgrade(self) -> Option<Self> {
-+        match self {
-+            Self::Full => Some(Self::WithoutExpression),
-+            Self::WithoutExpression => Some(Self::Minimal),
-+            Self::Minimal => None,
-+        }
-+    }
-+}
-+
-+/// Discovered or engine-known metadata query compatibility flags for a pool.
-+///
-+/// Storing these beside the pool avoids repeating doomed `Unknown column` or
-+/// `ESCAPE` probes on every completion keystroke or index lookup, keeping
-+/// Doris/MySQL audit logs clean after discovery (or from the very first call
-+/// when pre-seeded for Doris).
-+#[derive(Debug, Default)]
-+struct MySqlMetadataCapabilities {
-+    omit_completion_escape: AtomicBool,
-+    routine_use_dtd_identifier: AtomicBool,
-+    statistics_columns: AtomicU8,
-+}
-+
-+impl MySqlMetadataCapabilities {
-+    fn completion_compatibility(&self) -> MysqlCompletionCompatibility {
-+        MysqlCompletionCompatibility {
-+            omit_escape: self.omit_completion_escape.load(Ordering::Relaxed),
-+            use_dtd_identifier: self.routine_use_dtd_identifier.load(Ordering::Relaxed),
-+        }
-+    }
-+
-+    fn record_completion_compatibility(&self, compatibility: MysqlCompletionCompatibility) {
-+        if compatibility.omit_escape {
-+            self.omit_completion_escape.store(true, Ordering::Relaxed);
-+        }
-+        if compatibility.use_dtd_identifier {
-+            self.routine_use_dtd_identifier.store(true, Ordering::Relaxed);
-+        }
-+    }
-+
-+    fn statistics_columns(&self) -> MySqlStatisticsColumns {
-+        MySqlStatisticsColumns::from_u8(self.statistics_columns.load(Ordering::Relaxed))
-+    }
-+
-+    fn record_statistics_columns(&self, columns: MySqlStatisticsColumns) {
-+        self.statistics_columns.fetch_max(columns as u8, Ordering::Relaxed);
-+    }
-+
-+    fn set_doris_defaults(&self) {
-+        // Apache Doris 2.x/3.x exposes DTD_IDENTIFIER (not DATA_TYPE) on
-+        // information_schema.ROUTINES and omits EXPRESSION on
-+        // information_schema.STATISTICS. Keep explicit LIKE ESCAPE enabled
-+        // initially because Doris 3.x supports it and older engines that reject
-+        // it still discover and cache omit_completion_escape on first use.
-+        self.routine_use_dtd_identifier.store(true, Ordering::Relaxed);
-+        self.statistics_columns.fetch_max(MySqlStatisticsColumns::WithoutExpression as u8, Ordering::Relaxed);
-+    }
-+}
-+
- /// DBX-owned MySQL pool handle. The driver does not expose its configured
- /// maximum, so retain that value beside the driver pool for checkout phase
- /// classification instead of guessing it from aggregate metrics.
-@@ -51,6 +137,7 @@ pub struct MySqlPool {
-     max_connections: usize,
-     data_charset: Option<MySqlDataCharset>,
-     checkout_verifications: std::sync::Arc<MySqlCheckoutVerifications>,
-+    metadata_capabilities: std::sync::Arc<MySqlMetadataCapabilities>,
-     /// Budget for checking a connection out of this pool.
-     ///
-     /// The connection-level "connect timeout" setting is threaded down to the
-@@ -81,11 +168,19 @@ impl MySqlPool {
-             max_connections: max_connections.max(1),
-             data_charset: None,
-             checkout_verifications: Default::default(),
-+            metadata_capabilities: Default::default(),
-             checkout_timeout: checkout_timeout.max(Duration::from_secs(1)),
-             stateless_http_tunnel: false,
-         }
-     }
- 
-+    /// Pre-seed metadata query compatibility for Doris/SelectDB connections so
-+    /// the pool avoids doomed `DATA_TYPE` / `EXPRESSION` column probes from the
-+    /// very first metadata query.
-+    pub fn set_doris_metadata_defaults(&self) {
-+        self.metadata_capabilities.set_doris_defaults();
-+    }
-+
-     /// How long a checkout may wait for a pooled (o
-```
-
----
-
-### Incident Patch 3: `d1c15d41` (2026-11-23)
-**Commit Message**: fix(export): group SQL statements by table (#15521)
-
-Co-authored-by: zipg <[REDACTED_EMAIL]>
-
-**File**: `crates/dbx-core/src/data/database_export.rs` (modified, +53/-34)
-```diff
-@@ -32,6 +32,10 @@ static EXPORT_CANCELLED: std::sync::LazyLock<RwLock<HashSet<String>>> =
- 
- pub const EXPORT_CANCELLED_ERROR: &str = "Export cancelled";
- const EXPORT_CANCEL_POLL_INTERVAL: Duration = Duration::from_millis(50);
-+// This sentinel is written only to temporary PostgreSQL/openGauss schema files. The NUL
-+// bytes keep it distinct from user SQL comments, literals, and DDL text that the phase
-+// combiner must preserve.
-+const DATABASE_EXPORT_TABLE_BOUNDARY_MARKER: &str = "\0DBX table export boundary\0";
- 
- /// MySQL scripts written by the exporter are always UTF-8: values are decoded off the
- /// wire and reformatted into Rust strings before they are written, so the file encoding
-@@ -2434,7 +2438,6 @@ pub fn build_database_sql_export(options: BuildDatabaseSqlExportOptions) -> Resu
-             );
-             lines.push(format!("-- Structure for {}", table.display_name));
-             lines.push(ddl);
--            lines.push(String::new());
-         }
- 
-         lines.push(format!("-- Data for {}", table.display_name));
-@@ -3814,7 +3817,7 @@ fn write_database_export_rows_with_mode<W: Write>(
-         insert_dialect,
-     )?;
-     for statement in statements {
--        writeln!(file, "{statement}\n").map_err(|error| format!("Failed to write file: {error}"))?;
-+        writeln!(file, "{statement}").map_err(|error| format!("Failed to write file: {error}"))?;
-     }
-     Ok(())
- }
-@@ -4923,6 +4926,10 @@ fn copy_postgres_export_phase<W: Write>(
-         if source.read_line(&mut chunk).map_err(|e| format!("Failed to read export phase: {e}"))? == 0 {
-             break;
-         }
-+        if chunk.trim() == DATABASE_EXPORT_TABLE_BOUNDARY_MARKER {
-+            destination.write_all(b"\n").map_err(|e| format!("Failed to write export phase: {e}"))?;
-+            continue;
-+        }
-         for statement in splitter.push_chunk(&chunk) {
-             if is_export_cancelled_now(export_id) {
-                 return Err(EXPORT_CANCELLED_ERROR.to_string());
-@@ -4964,6 +4971,10 @@ fn combine_schema_sql_export<W: Write>(source: &mut dyn BufRead, destination: &m
-         if bytes_read == 0 {
-             break;
-         }
-+        if chunk.trim() == DATABASE_EXPORT_TABLE_BOUNDARY_MARKER {
-+            destination.write_all(b"\n")?;
-+            continue;
-+        }
-         for statement in splitter.push_chunk(&chunk) {
-             destination.write_all(format!("{statement};\n").as_bytes())?;
-         }
-@@ -5046,6 +5057,7 @@ async fn export_postgres_all_schemas_sql_core(
-                 &schema_request,
-                 child_progress,
-                 phases.as_mut(),
-+                true,
-             ))
-             .await?;
-             let terminal = terminal.lock().expect("export terminal mutex poisoned").clone();
-@@ -5236,14 +5248,15 @@ async fn export_database_sql_core_inner(
-     request: &DatabaseExportRequest,
-     on_progress: impl Fn(ExportProgress) + Sync,
- ) -> Result<(), String> {
--    Box::pin(export_database_sql_core_inner_with_phases(state, request, on_progress, None)).await
-+    Box::pin(export_database_sql_core_inner_with_phases(state, request, on_progress, None, false)).await
- }
- 
- async fn export_database_sql_core_inner_with_phases(
-     state: &Arc<crate::connection::AppState>,
-     request: &DatabaseExportRequest,
-     on_progress: impl Fn(ExportProgress) + Sync,
-     mut phases: Option<&mut PostgresSchemaExportPhases>,
-+    preserve_table_boundaries: bool,
- ) -> Result<(), String> {
-     let _snapshot_keep_alive = if let Some(snapshot_session_id) = request.snapshot_session_id.as_deref() {
-         Some(crate::query::keep_manual_transaction_alive(state, snapshot_session_id).await?)
-@@ -5862,6 +5875,14 @@ async fn export_database_sql_core_inner_with_phases(
-     }
- 
-     for (table_index, table_info) in tables.iter().enumerate().filter(|_| exports_database_tables(request)) {
-+        if table_index > 0 {
-+            if preserve_table_boundaries {
-+                writeln!(file, "{DATABASE_EXPORT_TABLE_BOUNDARY_MARKER}")
-+                    .map_err(|e| format!("Failed to write file: {e}"))?;
-+            }
-+            writeln!(file).map_err(|e| format!("Failed to write file: {e}"))?;
-+        }
-+
-         // Check cancellation
-         if is_export_cancelled(&request.export_id).await {
-             emit_database_export_cancelled(
-@@ -5897,7 +5918,7 @@ async fn export_database_sql_core_inner_with_phases(
-         // Export structure
-         if request.include_structure {
-             if request.drop_table_if_exists {
--                writeln!(file, "{}\n", drop_table_if_exists_sql(table_name, &request.schema, &db_type))
-+                writeln!(file, "{}", drop_table_if_exists_sql(table_name, &request.schema, &db_type))
-                     .map_err(|e| format!("Failed to write file: {e}"))?;
-             }
-             for sequence in postgres_sequences.iter().filter(|sequence| {
-@@ -5917,7 +5938,7 @@ async fn export_database_sql_core_inner_with_phases(
-                     erro
+   const cancelFrame = (frame: number | null) => {
+     if (frame !== null) options.frameDriver.cancel(frame);
+@@ -86,22 +87,24 @@ export function useDataGridScrollbars(options: DataGridScrollbarsOptions): DataG
+       options.applyVerticalDrag(pendingClientY);
+     },
+     observeScroller() {
+-      resizeObserver?.disconnect();
+-      resizeObserver = null;
+       if (!active || disposed) return;
+       const scroller = options.getScroller();
+-      if (scroller) {
+-        resizeObserver = createResizeObserver(runtime.scheduleUpdate);
+-        resizeObserver?.observe(scroller);
+-        // Child size changes can alter scrollWidth without resizing the scroller itself.
+-        for (const child of Array.from(scroller.children)) resizeObserver?.observe(child);
++      // Child size changes can alter scrollWidth without resizing the scroller itself.
++      const elements = scroller ? [scroller, ...Array.from(scroller.children)] : [];
++      const targetsChanged = elements.length !== observedElements.length || elements.some((element, index) => element !== observedElements[index]);
++      if (targetsChanged) {
++        resizeObserver?.disconnect();
++        observedElements = elements;
++        resizeObserver = elements.length > 0 ? createResizeObserver(runtime.scheduleUpdate) : null;
++        for (const element of elements) resizeObserver?.observe(element);
+       }
+       runtime.scheduleUpdate();
+     },
+     pause() {
+       active = false;
+       resizeObserver?.disconnect();
+       resizeObserver = null;
++      observedElements = [];
+       cancelFrame(updateFrame);
+       cancelFrame(horizontalFrame);
+       cancelFrame(verticalFrame);
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #15553** (2026-11-23): feat(editor): Shift+Delete / Ctrl+X can cut the last line of the document (@AndreasK79)
-- **PR #15550** (2026-11-23): chore(deps): update dependency macos to v26 (@renovate[bot])
-- **PR #15549** (2026-11-23): fix(mcp): honor saved transport layers for plugin tool calls (@forthedreamhy)
-- **PR #15548** (2026-11-23): test: pin locale in vitest global setup (@saskuati-dev)
-- **PR #15547** (2026-11-23): Test multiple connections from the sidebar (@ThugKd)
-- **PR #15546** (2026-11-23): docs(cli): list dbml/docs commands and current direct-query types in the npm README (@thejesh23)
+- **PR #15636** (2026-11-24): fix(kingbase): build sequence DDL with concat() (@0xvectr)
+- **PR #15635** (2026-11-24): fix(tabs): hide horizontal strip scrollbar in wrapped and non-overflo… (@Acd-kk)
+- **PR #15613** (2026-11-24): fix(search): stabilize SQL file preview dialog height (@zipg)
+- **PR #15610** (2026-11-24): fix(structure): stop row click focus from dismissing column dropdowns (@Acd-kk)
+- **PR #15595** (2026-11-24): fix(structure): keep dropdowns open and thicken grid scrollbar hover (#15585) (@zipg)
+- **PR #15589** (2026-11-24): feat(editor): support selecting contents inside square brackets and c… (@Acd-kk)
 
 ---
 
@@ -2590,64 +2271,65 @@ Co-authored-by: zipg <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. sql): refuse MySQL change previews whose SET reads an earlier assignment
+## X. grid): stop re-creating scroller ResizeObserver on every refresh
 
 **RULE**:
-When implementing operations in `crates/dbx-sql-core/src/dml_preview_sql.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in t8y2/dbx. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apps/desktop/src/components/grid/DataGrid.vue`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in t8y2/dbx. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6bd7e1de`: sql): refuse MySQL change previews whose SET reads an earlier assignment. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e6c06578`: grid): stop re-creating scroller ResizeObserver on every refresh. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/dbx-sql-core/src/dml_preview_sql.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/desktop/src/components/grid/DataGrid.vue`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-//! MySQL 单表 UPDATE 按从左到右赋值，后面的 SET 表达式引用前面已赋值的列时拒绝预览。
-use std::ops::ControlFlow;
+let scrollerMetricsRefreshFrame: number | null = null;
 
-use sqlparser::ast::{
-    visit_expressions, AssignmentTarget, Expr, Ident, ObjectNamePart, SetExpr, Statement, TableWithJoins,
-};
-/// 表达式是否引用了目标表的给定列之一（列名不区分大小写）。`a` 与 `t.a`（表名或别名限定）
-/// 都算；其他限定符（如子查询里的 `u.a`）不算。
-fn expr_references_any_column(expr: &Expr, columns: &[String], table_qualifiers: &[String]) -> bool {
-    visit_expressions(expr, |expr| {
-        let column = match expr {
-            Expr::Identifier(ident) => Some(ident),
-            Expr::CompoundIdentifier(parts) if parts.len() >= 2 => {
-                let qualifier = parts[parts.len() - 2].value.to_lowercase();
-                if table_qualifiers.contains(&qualifier) {
-                    parts.last()
-                } else {
-                    None
-                }
-            }
-            _ => None,
-        };
-        match column {
-            Some(ident) if columns.contains(&ident.value.to_lowercase()) => ControlFlow::Break(()),
-            _ => ControlFlow::Continue(()),
-        }
-    })
-    .is_break()
+function scheduleScrollerMetricsRefresh() {
+  if (!gridScrollbarsRuntime.active || scrollerMetricsRefreshFrame !== null) return;
+  scrollerMetricsRefreshFrame = requestAnimationFrame(() => {
+    scrollerMetricsRefreshFrame = null;
+    if (gridScrollbarsRuntime.active) refreshGridScrollerMetrics();
+  });
 }
 
-/// 单表 UPDATE 目标表可用的限定名（表名最后一段与别名，小写）。
-fn update_table_qualifiers(update: &sqlparser::ast::Update) -> Vec<String> {
-    l
+watch([hasVisibleRows, () => props.result.columns.length], scheduleScrollerMetricsRefresh, { flush: "post", immediate: true });
+// Width reads can force a full WebKit layout. Coalesce result changes outside
+// Vue's flush so the refresh cannot keep re-entering the same render cycle.
+watch([totalWidth, displayRowCount, useCanvasGridRows, () => props.result.columns.join("\u0000")], scheduleScrollerMetricsRefresh, { flush: "post" });
+  if (scrollerMetricsRefreshFrame !== null) cancelAnimationFrame(scrollerMetricsRefreshFrame);
+  scrollerMetricsRefreshFrame = null;
+    scheduleScrollerMetricsRefresh();
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-use sqlparser::ast::{AssignmentTarget, Expr, Ident, ObjectNamePart, SetExpr, Statement, TableWithJoins};
-    let single_table = update.table.joins.is_empty() && update.from.is_none();
+watch(
+  () => [hasVisibleRows.value, props.result.columns.length] as const,
+  () => {
+    nextTick(refreshGridScrollerMetrics);
+  },
+  { immediate: true },
+);
+watch(
+  () => [totalWidth.value, displayRowCount.value, useCanvasGridRows.value, props.result.columns.join("\u0000")],
+  () => {
+    nextTick(() => {
+      refreshGridScrollerMetrics();
+      observeGridHorizontalScrollbarScroller();
+    });
+  },
+  { flush: "post" },
+);
+    refreshGridScrollerMetrics();
+    observeGridHorizontalScrollbarScroller();
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6bd7e1de` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e6c06578` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

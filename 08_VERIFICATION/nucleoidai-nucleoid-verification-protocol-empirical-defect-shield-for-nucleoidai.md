@@ -4,22 +4,22 @@
 {
   "source_repository": "NucleoidAI/Nucleoid",
   "source_url": "https://github.com/NucleoidAI/Nucleoid",
-  "source_version": "3b956215",
+  "source_version": "d97fb2a0",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-25T15:30:13.135Z",
+  "timestamp": "2026-11-25T23:32:40.931Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-nucleoidai-nucleoid",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `3b956215`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-25T15:30:13.135Z`  
+> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `d97fb2a0`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-25T23:32:40.931Z`  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `NucleoidAI/Nucleoid` (Commit: `3b956215`)
+- **Target Repository**: `NucleoidAI/Nucleoid` (Commit: `d97fb2a0`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T15:30:11.639Z  
+> **Harvest Timestamp**: 2026-11-25T23:32:39.900Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -76,6 +76,7 @@ pub fn generate(statement: &Stmt) -> String {
             alternate,
         } => conditional_source(condition, consequent, alternate.as_deref()),
         Stmt::Block(statements) => format!("{{{}}}", generate_all(statements)),
+        Stmt::Defer(body) => format!("defer{{{}}}", generate_all(body)),
         Stmt::Return(Some(expression)) => format!("return {expression}"),
         Stmt::Return(None) => "return".to_string(),
         Stmt::Throw(expression) => format!("throw {expression}"),
@@ -127,6 +128,19 @@ fn conditional_source(condition: &Expr, consequent: &[Stmt], alternate: Option<&
         .map(|branch| format!("else{{{}}}", generate(branch)))
         .unwrap_or_default();
     format!("if({condition}){{{}}}{alternate}", generate_all(consequent))
+}
+
+fn conditional_suite(condition: &Expr, consequent: &[Stmt], alternate: Option<&Stmt>) -> String {
+    let mut rendered = format!("if {condition}:\n{}", indent(&source_all(consequent)));
+    if let Some(alternate) = alternate {
+        let body = match alternate {
+            Stmt::Block(body) => source_all(body),
+            branch => source(branch),
+        };
+        rendered.push_str("\nelse:\n");
+        rendered.push_str(&indent(&body));
+    }
+    rendered
 }
 
 fn loop_key(word: &str, header: &Expr, body: &[Stmt]) -> String {
@@ -235,18 +249,7 @@ fn source(statement: &Stmt) -> String {
             condition,
             consequent,
             alternate,
-        } => {
-            let mut rendered = format!("if {condition}:\n{}", indent(&source_all(consequent)));
-            if let Some(alternate) = alternate {
-                let body = match alternate.as_ref() {
-                    Stmt::Block(body) => source_all(body),
-                    branch => source(branch),
-                };
-                rendered.push_str("\nelse:\n");
-                rendered.push_str(&indent(&body));
-            }
-            rendered
-        }
+        } => conditional_suite(condition, consequent, alternate.as_deref()),
         Stmt::For {
             variable,
             iterable,
@@ -280,6 +283,7 @@ fn source(statement: &Stmt) -> String {
             catch,
             finally,
         } => finally_suite(&try_suite(body, parameter, catch), finally),
+        Stmt::Defer(body) => format!("defer:\n{}", indent(&source_all(body))),
         Stmt::Block(body) => format!("{{\n{}\n}}", source_all(body)),
         Stmt::Suppose { target, body } => format!(
             "{}suppose:\n{}",
@@ -450,6 +454,14 @@ impl Parser {
     }
 
     fn statement_inner(&mut self) -> Result<Stmt> {
+        if self.starts_statement()
+            && matches!(self.peek(), Token::Identifier(name) if name == "defer")
+            && self.has_indented_suite(1)
+        {
+            self.advance();
+            return self.suite().map(Stmt::Defer);
+        }
+
         if let Some(condition) = self.while_condition() {
             let body = self.suite()?;
             return Ok(Stmt::While { condition, body });
@@ -599,12 +611,7 @@ impl Parser {
             return None;
         }
 
-        let attempt = (self.position, self.depth);
-        let outcome = if let Some(outcome) = self.suppose_premises.get(&attempt) {
-            outcome.clone()
-        } else {
-            let outcome = self.attempt_suppose_premise();
-            self.suppose_premises.insert(attempt, o
+        let attempt = (self.pos
 ```
 
 ### Core Architecture Module: `src/state.rs`
@@ -1318,40 +1325,6 @@ export async function value({ instance_name, train, input_matrix, instance }) {
   instance.input_value = input_value;
 }
 
-export async function state(train) {
-  const objects = [];
-
-  for (const dataset of train.dataset) {
-    const implementations = dataset.instances.map(
-      ({ implementation }) => implementation
-    );
-
-    const canvas_width: number = dataset.input_matrix[0].length;
-    const canvas_height: number = dataset.input_matrix.length;
-    const obj_list = await nucleoid.run(
-      [
-        `canvas_width = ${canvas_width}`,
-        `canvas_height = ${canvas_height}`,
-        train.class_declaration,
-        ...train.declarations,
-        ...implementations,
-        "Obj[:]",
-      ].join("\n\n")
-    );
-
-    objects.push(...obj_list);
-
-    [...obj_list].forEach((instance) => {
-      const found_instance = dataset.instances.find(
-        ({ instance_name }) => instance.id === instance_name
-      );
-      found_instance.output_value = instance;
-    });
-  }
-
-  milestone.state({ phase: "analysis", objects: objects });
-}
-
 ```
 
 ### Core Architecture Module: `arc/src/app.ts`
@@ -1367,7 +1340,7 @@ import synthesizer from "./synthesizer.ts";
 import object from "./object.ts";
 
 // Genesis puzzle_id: 3aa6fb7a
-export async function start(puzzle_id: string = "6150a2bd") {
+export async function start(puzzle_id: string = "3aa6fb7a") {
   const { arc_train, test_input_matrix, test_output_matrix } =
     await arc_dataset.load(puzzle_id);
 
@@ -1421,10 +1394,15 @@ export async function start(puzzle_id: string = "6150a2bd") {
       });
     }
 
+    await object.state({
+      class_declaration,
+      declarations,
+      input_matrix: dataset.input_matrix,
+      instances,
+    });
+
     dataset.instances = instances;
   }
-
-  await analyzer.state(train);
 
   milestone.synthesizing_training_dataset();
 
@@ -1441,7 +1419,7 @@ export async function start(puzzle_id: string = "6150a2bd") {
     Array(test_input_matrix[0].length).fill(0)
   );
 
-  const test_input_instances = [];
+  const test_instances = [];
 
   for (const { input_instance_matrix } of instances) {
     const instance_name: string = next_instance_name();
@@ -1453,7 +1431,7 @@ export async function start(puzzle_id: string = "6150a2bd") {
       input_instance_matrix,
     });
 
-    test_input_instances.push({
+    test_instances.push({
       instance_name,
       implementation,
       input_value,
@@ -1465,10 +1443,10 @@ export async function start(puzzle_id: string = "6150a2bd") {
     class_declaration,
     declarations,
     input_matrix: test_input_matrix,
-    input_instances: test_input_instances,
+    instances: test_instances,
   });
 
-  for (const input_instance of test_input_instances) {
+  for (const input_instance of test_instances) {
     const { output_instance_matrix } = await visualizer.output_instance_matrix({
       phase: "visualization",
       test_input_matrix,
@@ -1481,7 +1459,7 @@ export async function start(puzzle_id: string = "6150a2bd") {
     result_matrix = Matrix.merge(result_matrix, output_instance_matrix);
   }
 
-  milestone.test_output_composed({ instances: test_input_instances });
+  milestone.test_output_composed({ instances: test_instances });
 
   result_matrix = Matrix.canvas(result_matrix, output_canvas);
 
@@ -1497,7 +1475,7 @@ export async function start(puzzle_id: string = "6150a2bd") {
   const debug = {
     puzzle_id,
     train,
-    test_input_instances,
+    test_instances,
     test_input_matrix,
     test_output_matrix,
     result_matrix,
@@ -1589,131 +1567,423 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3b956215` (2026-11-25)
-**Commit Message**: Draft NUC 147 Deferred Suites
+### Incident Patch 1: `715c2a03` (2026-11-25)
+**Commit Message**: NUC 147 Deferred Suites
 
-Category: Runtime features; mode continuous; existing_comparable.
+Accepted.
 
-Request contextual indented defer suites registered only when reached and unwound LIFO at the current executable block exit, using accepted finalization outcome and transaction rules. Preserve ordinary defer names, typed/layout boundaries, required catch syntax and all accepted behavior. Do not add loop-exit behavior, asynchronous cleanup or a resource protocol. Baselines and fresh independent stages follow this allocation; the continuous token comparison is required.
+Continuous Runtime features / existing_comparable: the independent evaluator
+accepted the frozen candidate and every hard criterion passed. The caller
+rechecked the unchanged implementation on the integrated tree before recording
+this outcome.
 
-The live-registry draw selected Runtime features once. No allocated stale Draft exists: nine reference Drafts have no allocation/claim. An inline header-audit omission was corrected without a redraw; the original receipt remains retained. NUC119 lists defer as prior art and explicitly out of scope, not the feature it proposes.
+All-target build, warning-denied Clippy, formatting and private rustdoc passed.
+Full tests: 4155 passed, 0 failed, 25 retained intentional ignores. All 4155
+accepted native identities and 11 panic labels were preserved; all 25 additions
+passed. Replayed all 1322 original programs and 6575 canonical assertions.
 
-Co-authored-by: Copilot <[REDACTED_EMAIL]>
+The required token comparison ran once: 135 -> 121 and 157 -> 129 for the two
+new paired controls; 1320 cases unchanged, none increased or missing.
+Independent overall report: 1ca0bc79946e88eb353cc2db8a03dc4e18bb0343.
+Core report: ba37ec2e52fca7d5fa3bd231f259f6489ad0ab6d.
+Integrated hard-criteria report: eb100222aed0cf16a5bb79235e948466bf6fdc05.
 
-**File**: `docs/nuc-0000.md` (modified, +2/-0)
+Preserve the concurrent policy publication and NUC148 Draft allocation.
+Usefulness remains unscored (missing_rubric); learning is not_configured.
+Human SemVer review is flagged for public Stmt::Defer; versions are unchanged.
+
+Co-authored-by: Copilot <[REDAC
+
+**File**: `dataset/nucleoid.spec.jsonl` (modified, +1/-0)
 ```diff
-@@ -104,6 +104,7 @@ Created: 31-Jul-2026
+@@ -881,3 +881,4 @@
+ {"id":"spec-0881","description":"Nucleoid fills nullish values with one-shot assignments","code":"source = 5\nchosen = null\nchosen ??:= source\nassert(chosen, 5)\nsource = 9\nassert(chosen, 5)\nchosen = 0\nchosen ??:= missing\nassert(chosen, 0)\nchosen = false\nchosen ??:= missing\nassert(chosen, false)\nchosen = \"\"\nchosen ??:= missing\nassert(chosen, \"\")\nchosen = null\nchosen ??:= 99\nassert(chosen, 99)\n1","return":"1"}
+ {"id":"spec-0882","description":"Nucleoid counts direct inputs in reasoning selections","code":"price = 3\nquantity = 4\nsubtotal = price * quantity\ntax = subtotal / 10\ntotal = subtotal + tax\ncounts = total |> why |> indegrees\nassert(counts, [2, 2, 1, 0, 0])\nprice = 5\nassert(counts, [2, 2, 1, 0, 0])\ntax = price * quantity\nassert(counts, [2, 2, 2, 0, 0])\ntax = 0\nassert(counts, [2, 2, 0, 0, 0])\ntotal = subtotal\nassert(counts, [1, 2, 0, 0])\nsubtotal = price\nassert(counts, [1, 1, 0])\n1","return":"1"}
+ {"id":"spec-0883","description":"Nucleoid keeps cubes reactive","code":"sample = {amplitude: 3}\noffset = 2\ncubed = Math.cube(sample.amplitude + offset)\nassert(cubed, 125)\nsample.amplitude = -4\nassert(cubed, -8)\noffset = 1\nassert(cubed, -27)\nsample.amplitude = 0\nassert(cubed, 1)\noffset = -1\nassert(cubed, -1)\nsample.amplitude = 3\nassert(cubed, 8)\n1","return":"1"}
++{"id":"spec-0884","description":"Nucleoid runs deferred suites on block exit","code":"audit = []\ndef complete(value):\n    defer:\n        audit.push(value)\n    if value > 0:\n        return value * 2\n    if value < 0:\n        return -value\n    return 0\nassert(complete(3), 6)\nassert(audit, [3])\nassert(complete(-4), 4)\nassert(audit, [3, -4])\nassert(complete(0), 0)\nassert(audit, [3, -4, 0])\n1","return":"1"}
+```
+
+**File**: `dataset/nucleoid.synth.147.jsonl` (added, +3/-0)
+```diff
+@@ -0,0 +1,3 @@
++{"id":"synth-147-0001","description":"Nucleoid records an inspection after every early return","code":"audit = []\ndef inspect(reading):\n    defer:\n        audit.push(reading)\n    if reading < 0:\n        return -reading\n    return reading * 2\nassert(inspect(-3), 3)\nassert(inspect(4), 8)\nassert(audit, [-3, 4])\naudit.length","return":"2"}
++{"id":"synth-147-0002","description":"Nucleoid unwinds nested registrations in reverse order","code":"events = []\ndef finish(code):\n    defer:\n        events.push(code + 1)\n    defer:\n        events.push(code + 2)\n    return code\nassert(finish(10), 10)\nassert(events, [12, 11])\nevents.length","return":"2"}
++{"id":"synth-147-0003","description":"Nucleoid reads deferred work in the active exit scope while preserving a returned list","code":"observed = []\ndef capture(amount):\n    defer:\n        observed.push(amount)\n        amount = 9\n    amount = 4\n    return [amount]\nassert(capture(2), [4])\nassert(observed, [4])\nobserved[0]","return":"4"}
+```
+
+**File**: `docs/README.md` (modified, +48/-1)
+```diff
+@@ -2734,6 +2734,51 @@ visits.length
+   before a `catch`. See the
+   [root contract](../nucleoid.spec.md#finally-clauses).
+ 
++### Deferred suites
++
++```
++history = []
++def unwind(value):
++    defer:
++        history.push(value * 10 + 1)
++    defer:
++        history.push(value * 10 + 2)
++    return value
++assert(unwind(0), 0)
++assert(history, [2, 1])
++assert(unwind(2), 2)
++assert(history, [2, 1, 22, 21])
++assert(unwind(-2), -2)
++assert(history, [2, 1, 22, 21, -18, -19])
++1
++```
++
++- This is the complete `Nucleoid unwinds deferred suites in reverse order`
++  case in `tests/reference.md`, without its title and expected-return
++  metadata; it returns `1`. The specification's
++  [deferred-suite contract](../nucleoid.spec.md#deferred-suites) is authoritative.
++- [NUC 147](nuc-0147.md) adds contextual `defer:` with a real indented
++  suite. Reaching it registers work for exit of the current executable
++  statement list, not necessarily the whole function. The program,
++  branches, loop iterations, try/catch/finally and deferred bodies are
++  separate lists; nested lists finish their cleanup before returning.
++- Remaining work completes, returns or fails first. Registrations then run
++  LIFO in the still-active parameter, loop, catch or receiver scope,
++  reading exit-time values rather than capturing arguments or closures.
++  A pending return keeps its computed value. A deferred return or failure
++  replaces the pending outcome, but older registrations still run.
++- A failed body rolls its state and queued work back before cleanup; a
++  failed deferred suite rolls back before the next older one. These are
++  NUC 119 savepoints, not snapshots of local bindings. Successful cleanup
++  remains part of the enclosing transaction and rolls back if an error escapes.
++- `defer` remains an ordinary name everywhere else. Typed `defer: NAME`,
++  bare-name lines followed by blocks, calls, properties, keys and operator
++  sections keep their old meaning. Inline/braced or layout-suppressed
++  forms are not deferred suites. Ordinary `try` still requires a catch.
++- The REPL's existing colon buffering holds a deferred suite until a blank
++  line; cleanup belongs to that submitted program, not to the REPL session.
++  No resource protocol, async operation or new loop-exit behavior is added.
++
+ ### Python-style except clauses
+ 
+ ```
+@@ -2782,7 +2827,7 @@ share
+   unbinds it. See the
+   [root contract](../nucleoid.spec.md#python-style-except-clauses).
+ 
+-Full detail: [NUC 9](nuc-0009.md), [NUC 46](nuc-0046.md), [NUC 119](nuc-0119.md), [NUC 122](nuc-0122.md).
++Full detail: [NUC 9](nuc-0009.md), [NUC 46](nuc-0046.md), [NUC 119](nuc-0119.md), [NUC 122](nuc-0122.md), [NUC 147](nuc-0147.md).
+ 
+ ---
+ 
+@@ -6148,6 +6193,8 @@ except:                                Python's spelling of catch:, binding erro
+     statement
+ finally:                               runs however the statement ends (NUC 119)
+     statement
++defer:                                 registers an indented suite for this block's exit (NUC 147)
++    statement
+ return expression                      yield from a block or function
+ assert(actual, expected)                existing equality-check helper
+ assert: actual, expected                optional statement spelling (Accepted NUC 45)
+```
+
+**File**: `docs/nuc-0000.md` (modified, +2/-2)
+```diff
+@@ -105,7 +105,7 @@ Created: 31-Jul-2026
  | [136](nuc-0136.md) | Unknown Constructor Arguments as Properties | Accepted |
  | [140](nuc-0140.md) | Match Statements | Rejected: not backward compatible, as an accepted statement that starts with `match` followed by `every`, `any` or `all` and `repeat:` or `suppose:` before an indented block, read as `match` beside a quantifier and a repeat-until loop or `suppose` block, now raises a `SyntaxError` |
  | [144](nuc-0144.md) | Nullish Value Assignment | Accepted |
-+| [147](nuc-0147.md) | Deferred Suites | Draft |
+-| [147](nuc-0147.md) | Deferred Suites | Draft |
++| [147](nuc-0147.md) | Deferred Suites | Accepted |
  
  ### Utility enhancement
  
-@@ -347,6 +348,7 @@ Created: 31-Jul-2026
+@@ -349,7 +349,7 @@ Created: 31-Jul-2026
  | [144](nuc-0144.md) | Nullish Value Assignment | Standards Track | Runtime features | Accepted |
  | [145](nuc-0145.md) | Input Counts of Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
  | [146](nuc-0146.md) | Reactive Cubing | Standards Track | Utility enhancement | Accepted |
-+| [147](nuc-0147.md) | Deferred Suites | Standards Track | Runtime features | Draft |
+-| [147](nuc-0147.md) | Deferred Suites | Standards Track | Runtime features | Draft |
++| [147](nuc-0147.md) | Deferred Suites | Standards Track | Runtime features | Accepted |
+ | [148](nuc-0148.md) | Integer Range Literals | Standards Track | Syntax enhancement | Draft |
  
  ## Copyright
- 
 ```
 
-**File**: `docs/nuc-0147.md` (added, +91/-0)
+**File**: `docs/nuc-0147.md` (modified, +226/-12)
 ```diff
-@@ -0,0 +1,91 @@
-+# NUC 147 -- Deferred Suites
+@@ -4,7 +4,7 @@
+ NUC: 147
+ Title: Deferred Suites
+ Author: GitHub Copilot <223556219+Copilot@users.noreply.github.com>
+-Status: Draft
++Status: Accepted
+ Type: Standards Track
+ Category: Runtime features
+ Created: 25-Nov-2026
+@@ -33,6 +33,9 @@ Requires: 119
+ - Keep control flow and registration/unwinding bounded under the crate's
+   existing limits. Add no asynchronous cleanup, new loop-exit behavior,
+   implicit resource protocol, project version or dependency change.
++- **Accepted:** revision 1 passed the independent behavior, compatibility,
++  development and required lexer-token checks, followed by the caller's
++  hard-criteria recheck of the unchanged integrated implementation.
+ 
+ ## Motivation
+ 
+@@ -61,29 +64,240 @@ Requires: 119
+   neither a missing counterpart nor a new spelling permits a skip.
+ - No hint, scoring rubric or strategy-learning configuration was supplied.
+   This revision is unattributed and learning is `not_configured`.
++- A block owns a finite, borrowed list of reached registrations rather
++  than a runtime-global callback queue. Deferred bodies receive fresh
++  lists, so registering work during cleanup cannot extend the parent
++  unwind. Existing parse and runtime depth guards bound nested bodies.
++- NUC 119's real savepoints restore state, graph work and deletion
++  tracking, not local binding snapshots. Retaining that distinction keeps
++  active parameter, loop and catch scopes and avoids inventing closure or
++  foreign transaction semantics.
++- Rejected alternatives are globally reserving `defer`, an inline or
++  braced shorthand, lowering to catch/rethrow with a hidden binder, eager
++  argument capture, and importing any rejected loop-exit or match proposal.
+ 
+ ## Specification
+ 
+-- To be completed by the fresh preparation agent after allocation and
+-  immutable accepted-baseline capture, within the requested contract above.
++- The normative contract is
++  [Deferred suites](../nucleoid.spec.md#deferred-suites).
++- Syntax is contextual `defer` followed by `:` and a real indented block.
++  Qualify the entire layout prefix before consuming the identifier. A
++  genuine statement start is input start, or immediately after a logical
++  newline, semicolon, indent, dedent, opening block brace or suite colon.
++  Adjacency after another expression is not a qualifying boundary.
++- `defer` remains an ordinary lexer identifier. The parser adds only
++  `Stmt::Defer(Vec<Stmt>)`, with the existing statement nesting guard and
++  suite parser. The [W3C EBNF](nucleoid.ebnf) records its contextual
++  lookahead, tree, layout, rendering and execution contract; its lexical
++  `DEFER` grouping remains available in `name` and `enumName`.
++- Reaching the statement registers its unevaluated statements. It
++  contributes no value and makes no closure or eager snapshot. Each
++  executable statement list owns its registrations: a submitted program,
++  function, method or constructor, branch, explicit block, loop iteration,
++  try/catch/finally, hypothetical or deferred body.
++- When remaining work completes, returns or errors, execute the reached
++  suites once each in reverse registration order before the list's active
++  scope is removed. Nested lists unwind before returning to their caller;
++  registrations never migrate to a parent list or the REPL session.
++  Existing loop outcomes pass through unchanged.
++- Normal cleanup discards its own value and retains the pending outcome.
++  A pending return keeps the value already computed, including a returned
++  list's elements. Cleanup reads and may modify the still-active
++  parameters, loop/catch bindings and receiver.
++- A deferred return or error replaces the pending outcome, but does not
++  skip older registrations. Older suites still run and may replace it
++  again. Do not stringify/rethrow an original runtime error: retain its
++  kind, message and position unless a cleanup outcome replaces it.
++- A block with a direct registration opens a savepoint at entry. If its
++  remaining body fails after registering work, rollback restores failed
++  state, graph work and deletion tracking before cleanup. Each deferred
++  body has its own savepoint, rolled back before older cleanup on failure.
++  As in NUC 119, these are not scope snapshots. Successful cleanup writes
++  remain inside the enclosing transaction and are undone if an error escapes.
++- Top-level errors keep the running statement's normal position fallback.
++  An unpositioned error escaping a top-level deferred body is placed at
++  its registration; existing positioned errors retain their own location.
++- Registration scans a finite source list once; each reached statement
++  adds at most one borrowed suite. Unwinding traverses that finite vector
++  in reverse. Each nested deferred execution passes the existing
++  192-level runtime statement guard, and parsing keeps its 64-level
++  shared statement/expression guard.
++- The native REPL already buffers colon-led suites. A blank line submits
++  the program 
+```
+
+**File**: `docs/nucleoid.ebnf` (modified, +21/-1)
+```diff
+@@ -136,6 +136,7 @@ statement
+       | classStmt
+       | functionDecl
+       | tryStmt
++      | deferStmt
+       | PASS                              /* Stmt::Pass */
+       | returnStmt
+       | THROW expression                  /* Stmt::Throw */
+@@ -391,6 +392,23 @@ exceptClause
+ finallyClause
+     ::= NEWLINE* FINALLY suite
+ 
++/* DEFER is still an Identifier in the Rust token source. Only at a genuine
++   statement start (input start or after NEWLINE, SEMI, INDENT, DEDENT,
++   LBRACE or COLON) does DEFER COLON followed immediately by the real layout
++   prefix of indentedBlock register a suite. No expression/header tokens or
++   same-line body intervene. Typed 'defer: name', bare-name lines before
++   blocks, properties, keys, calls and operator sections keep their existing
++   paths. Parentheses/brackets suppress layout, so they cannot qualify.
++   The existing suite parser and statement depth guard parse the body.
++   Each executable statement list owns its reached registrations; it runs
++   them LIFO at exit in the active scope, before that scope is removed.
++   Deferred suites use new bounded child lists, never append to an unwinding
++   parent, and enter the existing runtime statement-depth guard.
++   Graph labels use defer{...}; suite-aware declaration source uses defer:
++   and real indentation. Every old tree/Debug/source path is unchanged. */
++deferStmt
++    ::= DEFER COLON indentedBlock          /* Stmt::Defer */
 +
-+```
-+NUC: 147
-+Title: Deferred Suites
-+Author: GitHub Copilot <223556219+Copilot@users.noreply.github.com>
-+Status: Draft
-+Type: Standards Track
-+Category: Runtime features
-+Created: 25-Nov-2026
-+Requires: 119
-+```
+ functionDecl
+     ::= FUNCTION name parameters block    /* Stmt::Function */
+       | DEF name defParameters defBody
+@@ -985,6 +1003,7 @@ enumName
+       | REPEAT
+       | UNTIL
+       | FINALLY
++      | DEFER
+       | ENUM
+       | EXTENDS
+       | IS
+@@ -1078,6 +1097,7 @@ WHILE            ::= 'while'
+ REPEAT           ::= 'repeat'
+ UNTIL            ::= 'until'
+ FINALLY          ::= 'finally'
++DEFER            ::= 'defer'
+ ENUM             ::= 'enum'
+ EXTENDS          ::= 'extends'
+ ASSERT           ::= 'assert'
+@@ -1185,7 +1205,7 @@ NAME
+ WORD_TOKEN
+     ::= AND | CATCH | CLASS | DEF | DELETE | ELSE | FALSE | FOR | FUNCTION | IF
+       | IN | NEW | NOT | NULL | OF | OR | PASS | RETURN | SUPER | THIS | THROW
+-      | TRUE | TRY | TYPEOF | WHILE | REPEAT | UNTIL | FINALLY | ENUM | EXTENDS
++      | TRUE | TRY | TYPEOF | WHILE | REPEAT | UNTIL | FINALLY | DEFER | ENUM | EXTENDS
+       | ASSERT | SUPPOSE | LAMBDA | IS | ALL | EVERY | ANY | SUM | MAX | MIN
+       | MODE | WHY | AFFECTS | STATED | DERIVED | DIFF | DEPTH | PATH
+       | INTERSECT | EXCEPT | EXCEPTION | AS | UNION | XOR | NODES | HOLDS
+```
+
+**File**: `nucleoid.spec.md` (modified, +92/-0)
+```diff
+@@ -29646,6 +29646,26 @@ sample.amplitude = 3
+ assert(cubed, 8)
+ 1
+ # return: 1
++---
++# Nucleoid runs deferred suites on block exit
 +
-+## Abstract
++audit = []
++def complete(value):
++    defer:
++        audit.push(value)
++    if value > 0:
++        return value * 2
++    if value < 0:
++        return -value
++    return 0
++assert(complete(3), 6)
++assert(audit, [3])
++assert(complete(-4), 4)
++assert(audit, [3, -4])
++assert(complete(0), 0)
++assert(audit, [3, -4, 0])
++1
++# return: 1
+ ```
+ 
+ ## Floating-point absolute value alias
+@@ -29949,3 +29969,75 @@ assert(cubed, 8)
+   Their accepted square-call-times-repeated-pure-expression spelling is a
+   fair ordered-arithmetic counterpart, not a promise to duplicate a future
+   call argument's effects. Every historical executable case is unchanged.
 +
-+- Add a contextual `defer:` statement with a genuinely indented suite.
-+  Reaching it registers that suite for the exit of the current executable
-+  statement block; it does not run the suite immediately.
-+- Run registered suites in reverse registration order after the remaining
-+  statements complete, return, fail or pass through an existing loop-exit
-+  outcome, before the block's active parameter/loop/catch scope is removed.
-+  A registration not reached has no effect.
-+- Evaluate deferred statements at exit in that active scope, not as a new
-+  closure or an eager argument snapshot. Preserve the value already computed
-+  by a pending return. Each deferred suite uses the outcome precedence and
-+  transaction rules of accepted finalization: a return or error can replace
-+  the pending outcome, but older registered suites still run.
-+- Preserve every accepted source, including runtime-failing sources, except
-+  the newly supported suite forms that were errors. Keep `defer` an ordinary
-+  name everywhere else; in particular, keep typed declarations, calls,
-+  properties and bare-name lines followed by blocks. Do not relax the
-+  mandatory catch clause of an ordinary `try`.
-+- Keep control flow and registration/unwinding bounded under the crate's
-+  existing limits. Add no asynchronous cleanup, new loop-exit behavior,
-+  implicit resource protocol, project version or dependency change.
++## Deferred suites
 +
-+## Motivation
-+
-+- Cleanup and bookkeeping often belong to a whole block, including its
-+  early returns. Stating that action where it becomes necessary is clearer
-+  than repeating it before every exit or enclosing the remaining work in
-+  another explicit try/catch/finally.
-+- NUC 119 supplies finalization but explicitly leaves scope-exit `defer`
-+  registration out of scope. Deferred suites add that core execution
-+  behavior while retaining its transaction and outcome rules.
-+- The accepted executable reports
-+  `SyntaxError: Unexpected ':' (line 1, column 6)` for an indented `defer:`
-+  suite. The caller retained the actual diagnostic separately; the native
-+  REPL's zero process status is not reported as successful execution.
-+
-+## Rationale
-+
-+- The continuous caller drew Runtime features once from the live category
-+  registry, index 1 of five eligible categories with probability 20%.
-+  Scope-exit registration and unwinding are core execution/control flow,
-+  as NUC 119's finalization is, rather than a collection or numeric helper.
-+- Runtime applicability is `existing_comparable`: accepted
-+  try/catch/finally provides the finalization mechanism for equivalent
-+  protected control programs. Freeze and execute those original programs
-+  before candidate edits. The continuous token comparison is required;
-+  neither a missing counterpart nor a new spelling permits a skip.
-+- No hint, scoring rubric or strategy-learning configuration was supplied.
-+  This revision is unattributed and learning is `not_configured`.
-+
-+## Specification
-+
-+- To be completed by the fresh preparation agent after allocation and
-+  immutable accepted-baseline capture, within the requested contract above.
-+
-+## Backwards Compatibility
-+
-+- To be demonstrated against the accepted corpus and original counterpart
-+  sources, including legacy ordinary-name, typed-declaration and layout
-+  boundaries. Do not edit protected diagnostics or assertions to pass.
-+
-+## Reference Implementation
-+
-+- The isolated candidate and affected W3C EBNF, normative documents,
-+  generated exports and synthesized records follow the pushed allocation.
-+  Preserve existing public items and signatures; report any required
-+  semantic-versioning change for human action without editing a version.
-+
-+## Evaluation
-+
-+- Draft allocation only. No candidate, token comparison, independent
-+  evaluation or outcome is claimed by this document.
-+
-+## Copyright
-+
-+This document is licensed under the Apache License, Version 2.0. See
-+[LICENSE](../LICENSE) for the full text.
++- NUC 147 adds `defer:` followed by a genuinely indented suite. The name
++  must begin an executable statement: at input start, or after a logical
++  newline, semicolon, indent, dedent, opening block brace or suite colon.
++  The colon must be followed by the real layout prefix of an indented
++  block; whitespace and comments do not replace that prefix.
++- Only reaching the registration has an effect. It saves the suite's
++  statements, without evaluating them, taking argument/value snapshots or
++  capturing a closure. Each executable statement list owns its registrations:
++  the program passed to `Runtime::run`, a function/method/constructor body,
++  a branch, explicit block, loop iteration, try/catch/finally or deferred
++  suite, and a hypothetical body. A nested list unwinds before its caller
++  continues; a loop iteration unwinds before its loop scope is removed.
++- Remaining statements run normally, until completion, a return or an
++  error. Existing loop outcomes pass through unchanged; no new loop-exit
++  syntax or behavior is added. Reached suites then run once in reverse
++  registration order, before parameter, loop, catch or receiver context
++  is removed. An unreached registration does nothing.
++- A registration contributes no value. Normal deferred completion ignores
++  its own value and keeps the pending outcome, including the last
++  non-assertion, non-registration value of a normally completed block.
++  A pending return keeps its already-computed value, including copied
++  list elements; deferred statements read the active exit-time bindings.
++  Deferred `return` or failure replaces the pending outcome, but every
++  older registration still runs and may replace it again.
++- Use NUC 119's savepoints, not foreign-language transaction rules. A
++  block containing registrations opens a savepoint at entry. If its body
++  fails after reaching a registration, restore the body's state, graph,
++  pending propagation and deletion tracking before cleanup. Each deferred
++  suite has its own savepoint; if it fails, restore its partial changes
++  before running an older suite. Local bindings are not transaction
++  snapshots, just as in accepted finalization: the same active scope
++  remains. Successful cleanup writes belong to the enclosing transaction;
++  an escaping error lets enclosing rollback undo them.
++- An unreplaced error keeps its kind, message and existing position; it
++  is not converted into a thrown string. The normal top-level statement
++  position still fills an unpositioned error. An otherwise unpositioned
++  error escaping a top-level deferred suite is placed at its registration.
++- `defer` remains an ordinary identifier in declarations, functions,
++  parameters, calls, properties, object keys, enum names, expressions,
++  operator sections and bare-name lines before indented blocks.
++  `defer: NAME` stays a typed declaration, including runtime-failing ones.
++  Inline, braced, colon-free and layout-suppressed `defer` forms keep
++  their accepted reading or diagnostic; adjacency alone is not a new
++  statement boundary. No keyword or lexer token is added.
++- `try` still requires `catch` or its accepted `except` spelling. In
++  particular, `try`/`finally` without a catch keeps
++  `SyntaxError("Expected 'catch' after 'try'")`. No async cleanup, implicit
++  resource protocol, callback, closure, dependency or option is added.
++- Parsing uses the existing 64-level statement/expression guard. A
++  frame's finite source list permits at most one registration per reached
++  statement; nested deferred execution has a fresh list and passes the
++  existing 192-level runtime guard. It cannot append to the unwinding
++  parent's queue. Limit diagnostics remain
++  `SyntaxError("Statements are nested too deeply")` and
++  `TypeError("Maximum statement depth exceeded")`.
++- The public syntax tree adds `Stmt::Defer(Vec<Stmt>)`; all old trees and
++  existing item signatures/variants remain unchanged. Graph-label
++  generation uses `defer{...}`, while suite-aware rendering of
++  default/rest-bearing declarations uses real indented `defer:` syntax.
++  Registration belongs to execution of a statement list, not a standalone
+```
+
+**File**: `src/lang/ast/analysis.rs` (modified, +3/-3)
+```diff
+@@ -166,7 +166,7 @@ pub(crate) fn collect_assigned_names(statement: &Stmt, names: &mut Vec<String>)
+             target: Expr::Identifier(name),
+             ..
+         } => names.push(name.clone()),
+-        Stmt::Block(nested) => {
++        Stmt::Block(nested) | Stmt::Defer(nested) => {
+             for child in nested {
+                 collect_assigned_names(child, names);
+             }
+@@ -213,7 +213,7 @@ pub(crate) fn collect_read_roots(
+         | Stmt::Return(Some(expression)) => {
+             roots.extend(runtime.expression_roots(expression, scope, false));
+         }
+-        Stmt::Block(nested) => {
++        Stmt::Block(nested) | Stmt::Defer(nested) => {
+             for child in nested {
+                 collect_read_roots(child, roots, runtime, scope);
+             }
+@@ -265,7 +265,7 @@ pub(crate) fn find_class_reference_statement(statement: &Stmt, found: &mut Optio
+                 find_class_reference_statement(alternate, found);
+             }
+         }
+-        Stmt::Block(statements) => {
++        Stmt::Block(statements) | Stmt::Defer(statements) => {
+             for child in statements {
+                 find_class_reference_statement(child, found);
+             }
 ```
 
 #### Recent Merged Pull Requests:
@@ -1742,22 +2012,21 @@ Co-authored-by: Copilot <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Draft NUC 147 Deferred Suites
+## X. NUC 147 Deferred Suites
 
 **RULE**:
-When implementing operations in `docs/nuc-0000.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `dataset/nucleoid.spec.jsonl`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3b956215`: Draft NUC 147 Deferred Suites. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `715c2a03`: NUC 147 Deferred Suites. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/nuc-0000.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `dataset/nucleoid.spec.jsonl`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-| [147](nuc-0147.md) | Deferred Suites | Draft |
-| [147](nuc-0147.md) | Deferred Suites | Standards Track | Runtime features | Draft |
+{"id":"spec-0884","description":"Nucleoid runs deferred suites on block exit","code":"audit = []\ndef complete(value):\n    defer:\n        audit.push(value)\n    if value > 0:\n        return value * 2\n    if value < 0:\n        return -value\n    return 0\nassert(complete(3), 6)\nassert(audit, [3])\nassert(complete(-4), 4)\nassert(audit, [3, -4])\nassert(complete(0), 0)\nassert(audit, [3, -4, 0])\n1","return":"1"}
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1767,7 +2036,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3b956215` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `715c2a03` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

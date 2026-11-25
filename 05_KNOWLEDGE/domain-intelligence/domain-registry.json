@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T23:24:19.516Z",
+  "last_updated": "2026-11-25T23:32:45.892Z",
   "total_records": 2689,
   "domains": {
     "A": {
@@ -10730,8 +10730,8 @@
       "title": "Technical Construction Intelligence: t8y2/dbx Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-t8y2-dbx-technical-construction-intelligence-t8y2-dbx-core-invariants.md",
       "repository": "t8y2/dbx",
-      "content_hash": "82f542eab07a9c7d1055d5fb03eb1e4e56e1f0e05ed30612e205454fd7e485d5",
-      "created_at": "2026-11-24T01:29:03.899Z"
+      "content_hash": "ea99a3494558dee40baed0641431c3a02554e9d44745beaabcee70d1d4db470f",
+      "created_at": "2026-11-25T23:32:39.191Z"
     },
     "DOM-D-218A5260": {
       "record_id": "DOM-D-218A5260",
@@ -15768,8 +15768,8 @@
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "repository": "NucleoidAI/Nucleoid",
-      "content_hash": "2d52ec03a4e45f6783b14bd24c6b96259880b5533ee8a3a5b5c4254692221a3d",
-      "created_at": "2026-11-25T16:06:11.598Z"
+      "content_hash": "9e1fb54539ebca9fdccfb9f6f0d7be2bffad8131ec162d1137122649c65a31e0",
+      "created_at": "2026-11-25T23:32:41.104Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -20776,8 +20776,8 @@
       "title": "Technical Construction Intelligence: t8y2-dbx-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-t8y2-dbx-learnings-technical-construction-intelligence-t8y2-dbx-learnings-core-i.md",
       "repository": "t8y2-dbx-learnings",
-      "content_hash": "74452946e873d6c856fa41d792fa22c8ba24801ed7a6b09308afed984dd454ee",
-      "created_at": "2026-11-24T01:29:08.112Z"
+      "content_hash": "56d5fa6b2c8be02e327cd6ae24fb94a394654b24c0fa7fe77cad9ea59f1efeed",
+      "created_at": "2026-11-25T23:32:45.892Z"
     },
     "domain_intelligence-research-knowledge-intelligence-tencent-hy-memory-30b-a3b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-tencent-hy-memory-30b-a3b-core-invariants",
@@ -28408,8 +28408,8 @@
       "title": "Research & Knowledge Intelligence: moonshotai/Kimi-K3.1-Pro Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-moonshotai-kimi-k3-1-pro-research-knowledge-intelligence-moonshotai-kimi-k3-1.md",
       "repository": "moonshotai/Kimi-K3.1-Pro",
-      "content_hash": "2a4c34f19c79db9b6223c1b7d3c06c147dfba2c2266babd944a4f281fe21c185",
-      "created_at": "2026-11-22T02:09:02.294Z"
+      "content_hash": "5ed208cbd3d77a2557353851519dced1ae11f29d02d7ff21d7e7e25dfef9d5fa",
+      "created_at": "2026-11-25T23:32:24.922Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-moonshotai-kimi-k3-1-pro-learnings-core-invar": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-moonshotai-kimi-k3-1-pro-learnings-core-invar",
@@ -28417,8 +28417,8 @@
       "title": "Research & Knowledge Intelligence: hf-moonshotai-kimi-k3.1-pro-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-moonshotai-kimi-k3-1-pro-learnings-research-knowledge-intelligence-hf-moonsho.md",
       "repository": "hf-moonshotai-kimi-k3.1-pro-learnings",
-      "content_hash": "d086a60e81ef7f3fd893eb7cfe9b840a7d436e851824dd6d89f13926f4a79027",
-      "created_at": "2026-11-22T02:09:19.980Z"
+      "content_hash": "4c7278aa30483e3c083f66305841cd5f077eaab47476a4071119d4947b2e2456",
+      "created_at": "2026-11-25T23:32:44.335Z"
     },
     "domain_intelligence-content-information-intelligence-tursodatabase-limbo-learnings-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-tursodatabase-limbo-learnings-core-invariants",
@@ -39391,10 +39391,10 @@
       "record_id": "domain_intelligence-research-knowledge-intelligence-dosco-deeporg-core-invariants",
       "domain_letter": "D",
       "title": "Research & Knowledge Intelligence: dosco/deeporg Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-dosco-graphjin-research-knowledge-intelligence-dosco-deeporg-core-invariants.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-dosco-deeporg-research-knowledge-intelligence-dosco-deeporg-core-invariants.md",
       "repository": "dosco/deeporg",
-      "content_hash": "f41c18eeb7e3e50d36745ddd4fe06bd8ede7fd317fbe7bc5802f40e718154a21",
-      "created_at": "2026-11-25T15:07:21.596Z"
+      "content_hash": "009415353e2f3d4241742fe514945561aa37091bf5325608c42a3f56518e3a54",
+      "created_at": "2026-11-25T23:32:34.232Z"
     },
     "domain_intelligence-technical-construction-intelligence-prunaai-p-image-oss-comfy-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-prunaai-p-image-oss-comfy-core-invariants",
@@ -39619,8 +39619,8 @@
       "title": "Research & Knowledge Intelligence: dosco-deeporg-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-dosco-deeporg-learnings-research-knowledge-intelligence-dosco-deeporg-learnings-.md",
       "repository": "dosco-deeporg-learnings",
-      "content_hash": "3203d57f48c76eb4f4b7d216e7b281681a91672d55f735745414605b33c4697f",
-      "created_at": "2026-11-24T23:14:07.064Z"
+      "content_hash": "13cd0f03c2958d33611e611f9eb95ae20676b3c97667950fa6bbb8069b8a9540",
+      "created_at": "2026-11-25T23:32:44.997Z"
     },
     "domain_intelligence-research-knowledge-intelligence-mradermacher-deepseek-v4-pro-qwen3-5-9b-uncensor": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-mradermacher-deepseek-v4-pro-qwen3-5-9b-uncensor",

@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T23:24:12.017Z",
-  "total_cycles_completed": 12483,
-  "total_learnings_persisted": 12483,
-  "total_rules_promoted": 11446,
+  "last_updated": "2026-11-25T23:32:40.700Z",
+  "total_cycles_completed": 12487,
+  "total_learnings_persisted": 12487,
+  "total_rules_promoted": 11449,
   "history": [
-    {
-      "timestamp": "2026-11-25T04:31:15.566Z",
-      "repository": "juicedata/juicefs",
-      "learningId": "learn-github-juicedata-juicefs",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T04:39:29.862Z",
-      "repository": "tuist/tuist",
-      "learningId": "learn-github-tuist-tuist",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T04:39:32.991Z",
-      "repository": "XcodesOrg/XcodesApp",
-      "learningId": "learn-github-xcodesorg-xcodesapp",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T04:39:35.742Z",
-      "repository": "rook/rook",
-      "learningId": "learn-github-rook-rook",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-25T04:51:56.124Z",
       "repository": "autogluon/chronos-2",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-25T23:24:12.017Z",
       "repository": "RustCrypto/hashes",
       "learningId": "learn-github-rustcrypto-hashes",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T23:32:24.686Z",
+      "repository": "moonshotai/Kimi-K3.1-Pro",
+      "learningId": "learn-huggingface-moonshotai-kimi-k3-1-pro",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T23:32:33.785Z",
+      "repository": "dosco/deeporg",
+      "learningId": "learn-github-dosco-deeporg",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T23:32:38.776Z",
+      "repository": "t8y2/dbx",
+      "learningId": "learn-github-t8y2-dbx",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T23:32:40.700Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

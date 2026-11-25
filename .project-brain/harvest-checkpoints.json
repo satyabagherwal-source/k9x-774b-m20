@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-25T23:24:12.030Z",
+  "last_updated": "2026-11-25T23:32:40.703Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "621293fd1911e148abab84c150f009b5fa317402f91b8e40b1bde8d4153c4570",
-      "verified_at": "2026-11-25T16:06:11.383Z",
+      "content_hash": "2a8628e9b0716311eaf6a690a88bc97e4e09824ff1eb9914f31d093cef09842f",
+      "verified_at": "2026-11-25T23:32:40.702Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T16:06:11.383Z"
+      "last_updated": "2026-11-25T23:32:40.702Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -10791,14 +10791,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-t8y2-dbx",
-      "content_hash": "53d5ea30116fbcd133c5716f8c001ce837cbf633cf3b3a1bd5a7648cacbc9175",
-      "verified_at": "2026-11-24T21:53:06.533Z",
+      "content_hash": "c03e19965fbce72ce1355027179662f8ae05783be077b2d6d61de5c85c4b4a46",
+      "verified_at": "2026-11-25T23:32:38.787Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T21:53:06.533Z"
+      "last_updated": "2026-11-25T23:32:38.787Z"
     },
     "ouch-org/ouch": {
       "repository": "ouch-org/ouch",
@@ -17901,14 +17901,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-moonshotai-kimi-k3-1-pro",
-      "content_hash": "e3f190a4e4f84536f900f3b5c330dba5d702c20e8f3c1ab664ab6c6ad5915442",
-      "verified_at": "2026-11-22T02:09:02.132Z",
+      "content_hash": "f527d87d1b76f4ed761e306aea108bd158bb4cc9a5ec710d9fc61d385f4d422a",
+      "verified_at": "2026-11-25T23:32:24.696Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T02:09:02.132Z"
+      "last_updated": "2026-11-25T23:32:24.696Z"
     },
     "ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-Coder-GGUF": {
       "repository": "ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-Coder-GGUF",
@@ -19776,14 +19776,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dosco-deeporg",
-      "content_hash": "d96f520f2e1f433972e6a654286555724f2690a19e18eb00addb5b67d52dd713",
-      "verified_at": "2026-11-25T15:07:21.023Z",
+      "content_hash": "8343d23013dc1bc103f370a5cf82f27f86d7abacb016c3aeef52ba29a3a81013",
+      "verified_at": "2026-11-25T23:32:33.798Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T15:07:21.023Z"
+      "last_updated": "2026-11-25T23:32:33.798Z"
     },
     "openai/clip-vit-large-patch14": {
       "repository": "openai/clip-vit-large-patch14",

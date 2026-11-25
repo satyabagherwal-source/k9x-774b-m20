@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-22T02:09:19.906Z",
+  "timestamp": "2026-11-25T23:32:44.212Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-hf-moonshotai-kimi-k3.1-pro-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hf-moonshotai-kimi-k3.1-pro-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-22T02:09:19.906Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T23:32:44.212Z`  
 > **Learning ID**: `LEARN-EVO-hf-moonshotai-kimi-k3.1-pro-learnings`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Source Version**: `hf-moonshota`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T02:09:01.755Z  
+> **Timestamp**: 2026-11-25T23:32:24.145Z  
 > **Learning ID**: `learn-huggingface-moonshotai-kimi-k3-1-pro`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-moonshotai-kimi-k3.1-pro-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/moonshotai/Kimi-K3.1-Pro](https://huggingface.co/moonshotai/Kimi-K3.1-Pro))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T02:09:01.504Z  
+> **Harvest Timestamp**: 2026-11-25T23:32:24.039Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: image-text-to-text
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 68001 downloads | 2348 likes
+- **Stars / Engagement**: 83996 downloads | 2502 likes
 
 ---
 

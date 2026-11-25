@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T23:24:20.017Z",
+  "last_updated": "2026-11-25T23:32:46.228Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-25T15:16:00.864Z",
@@ -1213,9 +1213,9 @@
       "staged_for_review": 0
     },
     "t8y2-dbx-learnings.md": {
-      "processed_at": "2026-11-24T21:53:46.062Z",
-      "promoted_canonical": 1,
-      "staged_for_review": 0
+      "processed_at": "2026-11-25T23:32:45.338Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     },
     "mswjs-msw-learnings.md": {
       "processed_at": "2026-11-21T01:35:32.237Z",
@@ -1453,7 +1453,7 @@
       "staged_for_review": 1
     },
     "hf-moonshotai-kimi-k3.1-pro-learnings.md": {
-      "processed_at": "2026-11-22T02:09:19.797Z",
+      "processed_at": "2026-11-25T23:32:44.091Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3648,7 +3648,7 @@
       "staged_for_review": 1
     },
     "dosco-deeporg-learnings.md": {
-      "processed_at": "2026-11-24T23:14:06.571Z",
+      "processed_at": "2026-11-25T23:32:44.551Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3943,7 +3943,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 4275,
+  "total_dossiers_evaluated": 4278,
   "total_canonical_promoted": 547,
-  "total_staged_for_review": 3249
+  "total_staged_for_review": 3251
 }

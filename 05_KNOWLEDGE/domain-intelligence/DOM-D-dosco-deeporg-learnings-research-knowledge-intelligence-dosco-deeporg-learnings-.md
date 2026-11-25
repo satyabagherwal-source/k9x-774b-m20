@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T23:14:06.742Z",
+  "timestamp": "2026-11-25T23:32:44.685Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-dosco-deeporg-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [dosco-deeporg-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T23:14:06.742Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T23:32:44.685Z`  
 > **Learning ID**: `LEARN-EVO-dosco-deeporg-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain D (Research & Knowledge Intelligence)
-- **Secondary Corroborating Domains**: I (Content & Information Intelligence), H (Technical Construction Intelligence), G (Architecture Intelligence), B (Product Intelligence), K (Quality & Verification Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 68%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), G (Architecture Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 66%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from dosco-deeporg-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dosco-deeporg-learnings.md`  
 > **Source**: github ([https://github.com/dosco/deeporg](https://github.com/dosco/deeporg))  
-> **Source Version**: `9d591e72`  
+> **Source Version**: `6acc0f9b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T23:13:52.262Z  
+> **Timestamp**: 2026-11-25T23:32:32.982Z  
 > **Learning ID**: `learn-github-dosco-deeporg`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dosco-deeporg-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dosco/deeporg](https://github.com/dosco/deeporg))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T23:13:52.256Z  
+> **Harvest Timestamp**: 2026-11-25T23:32:32.976Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: DeepORG (formerly GraphJin) — one AI agent for your whole organization: databases, APIs, files, and code over MCP
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 3239 stars
+- **Stars / Engagement**: 3238 stars
 
 ---
 
@@ -2580,99 +2580,765 @@ func ShouldCacheQuery(opName, apqKey string) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9d591e72` (2026-11-24)
-**Commit Message**: docs(site): say the rollout guide in plain words
+### Incident Patch 1: `1a09ead9` (2026-11-25)
+**Commit Message**: fix(agentic): make a freshly generated agentic config work
 
-Apply the Website Copy Voice rules to /rollout/: drop the "X, not Y"
-headings and slogans, replace rehearsed, dry-run, fires and answer key
-with everyday words, and replace the unsupported claim about what
-companies pay for with what the bill actually is. Move the two pins
-whose headings changed.
+A generated agentic.yml did not work on first boot: catalog search failed
+for an admin and the watch, schedule, task and thread loops failed on
+every cycle. The template set production: true, which turned on the
+saved-queries-only rule and rejected both agent-written queries and the
+unnamed queries the service runs against its own store. The demos never
+hit this because their agentic configs inherit dev.yml.
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+- Agentic ignores the production flag, in the engine and at config load,
+  so every agentic config runs the path the demos exercise.
+- A signed-in user reads every table by default in agentic mode. The old
+  default scoped rows by an account_id column and blocked tables without
+  one, for every role including admin. Writes stay off.
+- The catalog needs a sign-in in agentic mode. It was readable with no
+  token. The MCP catalog tool is registered from config instead of from
+  what the anonymous startup caller may see.
+- A Postgres connection string that cannot be parsed returns an error
+  naming the unfilled placeholder, where it used to panic.
+- The generated agentic.yml drops production and carries a signing
+  secret
 
-**File**: `website/content/rollout.md` (modified, +26/-26)
+**File**: `SECURITY.md` (modified, +2/-2)
 ```diff
-@@ -2,9 +2,9 @@
- title: "Roll out DeepORG in your company"
- nav_title: "Roll it out"
- type: guides
--headline: "Most of an AI rollout is not the model."
-+headline: "What a rollout takes, step by step."
- description: "A step-by-step guide for whoever rolls out an AI agent across a company's data: connect the systems, set who may see what, write down what the company's words mean, check answers until people trust them, hand it over, give it recurring work, and know whether it is working."
--lede: "Most of the work is connecting the systems, deciding who may see what, writing down what the company's words mean, checking answers until people trust them, and then giving the agent real work to do every week. Companies usually bring in forward-deployed engineers or consultants for it. This page is for whoever does that work. It goes step by step and shows the part of DeepORG that handles each one."
-+lede: "Choosing the model is the small part of an AI rollout. Most of the work is connecting the systems, deciding who may see what, writing down what the company's words mean, checking answers until people trust them, and then giving the agent real work to do every week. Companies usually bring in forward-deployed engineers or consultants for it. This page is for whoever does that work. For each step, it shows the part of DeepORG that handles it."
- actions:
-   - label: "Try the demo first"
-     href: "/#quickstart"
-@@ -42,10 +42,10 @@ sources:
+@@ -350,7 +350,7 @@ configuration (see [Operating Modes](#operating-modes)).
+ ```yaml
+ system:
+   root_access:
+-    gj_catalog: public
++    gj_catalog: authenticated
+     gj_artifacts: owner
+     gj_watch: owner
+     gj_watch_event: owner
+@@ -376,7 +376,7 @@ roots fit together architecturally, see the canonical diagram in
  
- {{< grid >}}
- 
--- **No tool for each question.** DeepORG builds a searchable map of every table, column and relationship it finds. The agent looks things up in the map and writes its own queries, so nobody has to build a tool per question.
--- **Joins come from your keys.** Relationships are read from your foreign keys. Ones the schema never declared can be added in config.
--- **Several systems, one question.** One answer can draw on the app database, the warehouse and an HTTP API together.
--- **Read-only means read-only.** `read_only: true` blocks every write to that source, whatever a role or the agent asks for.
-+- **It finds your tables for you.** DeepORG builds a searchable map of every table, column and relationship it finds. The agent looks things up in the map and writes its own queries.
-+- **It reads relationships from your foreign keys.** Ones the schema never declared can be added in config.
-+- **One answer can use several systems.** It can use the app database, the warehouse and an HTTP API together.
-+- **A read-only source cannot be changed.** `read_only: true` blocks every write to that source, whatever a role or the agent asks for.
- 
- {{< endgrid >}}
- 
-@@ -72,7 +72,7 @@ roles:
- 
- - **Identity comes from the sign-in token.** It never comes from anything the person or the model types.
- - **Hidden columns stay hidden in totals too.** A role that cannot read a column cannot sum it either.
--- **Changes wait for a person.** A change the agent proposes is rehearsed in a transaction that is rolled back, then held until someone approves that exact version.
-+- **Changes wait for a person.** A change the agent proposes is first tried out in a transaction that is rolled back, then held until someone approves that exact version.
- - **One switch makes the agent read-only.** `agent.read_only` limits it to reading, whatever a role allows.
- 
- {{< endgrid >}}
-@@ -99,9 +99,9 @@ A new note starts as a draft that only its author can see. After someone approve
- 
- {{< grid >}}
- 
--- **The agent can suggest notes.** It can draft one from a conversation. It cannot approve its own draft: a person has to, in a later step.
--- **A note is context, not a permission.** It cannot grant access or make a read-only source writable.
--- **Notes go stale safely.** If the table a note points at disappears, the note is kept and marked stale.
-+- **The agent can suggest notes.** It can draft one from a conversation, but it cannot approve its own draft. A person has to approve it.
-+- **A note only adds context.** It cannot grant access or make a read-only source writable.
-+- **A note is kept when its table goes away.** If the table a note points at disappears, the note is kept and marked stale.
- 
- {{< endgrid >}}
- 
-@@ -111,14 +111,14 @@ A new note starts as a draft that only its author can see. After someone approve
- 
- {{< band label="Step 4 · Trust" title="Check the answers until people trust them." >}}
- 
--Trust comes from checking, and DeepORG makes each answer quick to check.
-+People trust answers they have checked, so DeepORG makes each answer quick to check.
- 
- {{< grid >}}
- 
- - **Every answer shows its queries.** People can see what was asked of which system, and the agent's claims are backed by what those queries returned.
--- **The database does the maths.** Sums, counts and rankings run in your database, not in the model's head over a page of rows.
-+- **The database does the maths.** Sums, counts and rankings run in your database, so the model does not add up rows itself.
- - **People can say when it 
+ | Root | Agentic access | Notes |
+ | ---- | -------------- | ----- |
+-| `gj_catalog` | `public` | Read-only. |
++| `gj_catalog` | `authenticated` | Read-only, for signed-in users. It names every table and column and carries sampled values, so it is not served to anonymous callers. Set `gj_catalog: public` to open it. |
+ | `gj_code` | read: `authenticated`; write: role-gated (default `admin`) | Code writes are global source-file edits, not per-row scopable, so write is gated by role rather than filtered. Connecting a code source is an explicit operator choice — see the supply-chain note below. |
+ | `gj_artifacts` | `owner` (`user_id`) | Read/write, owner-private. |
+ | `gj_watch` / `gj_watch_event` | `owner` (`user_id`) | Read/write, owner-private standing queries and durable inbox events. Watches must reference subscriptions. |
 ```
 
-**File**: `website/scripts/check-site.mjs` (modified, +2/-2)
+**File**: `cmd/agentic_first_boot_test.go` (added, +358/-0)
 ```diff
-@@ -331,11 +331,11 @@ const requiredRenderedContent = [
-   // Why rollouts stall, and the guide for whoever does the rollout.
-   ['index.html', 'Company data has no test suite.'],
-   ['index.html', 'What a rollout takes, step by step'],
--  ['rollout/index.html', 'Most of an AI rollout is not the model.'],
-+  ['rollout/index.html', 'What a rollout takes, step by step.'],
-   ['rollout/index.html', 'Write down what your terms mean.'],
-   ['rollout/index.html', 'Give it a recurring job.'],
-   ['rollout/index.html', 'Know whether it is working.'],
--  ['rollout/index.html', 'Pay for answers, not for pages of rows.'],
-+  ['rollout/index.html', 'Keep the model bill down.'],
-   ['rollout/index.html', 'DeepORG has no app for those yet'],
-   ['index.html', 'formerly GraphJin'],
-   ['index.html', 'asks before it changes anything'],
+@@ -0,0 +1,358 @@
++package main
++
++import (
++	"bytes"
++	"crypto/hmac"
++	"crypto/sha256"
++	"database/sql"
++	"encoding/base64"
++	"encoding/json"
++	"fmt"
++	"io"
++	"net/http"
++	"net/http/httptest"
++	"path/filepath"
++	"strings"
++	"sync"
++	"testing"
++	"time"
++
++	"github.com/dosco/graphjin/serv/v3"
++	"go.uber.org/zap/zapcore"
++)
++
++// A generated agentic config has to work the first time it is started.
++//
++// The demos cannot prove this: their agentic configs inherit dev.yml and never
++// set `production: true`, while the generated template did. That one flag
++// turned on the saved-queries-only rule, which rejected the catalog search and
++// the queries the service runs against its own store, so a fresh install
++// answered nothing while every demo stayed green. This test boots the template
++// itself.
++func TestGeneratedAgenticConfigWorksOnFirstBoot(t *testing.T) {
++	if testing.Short() {
++		t.Skip("embedded service integration")
++	}
++	for _, tc := range []struct {
++		name  string
++		extra string
++	}{
++		{name: "as generated"},
++		// Older generated configs carry the flag. It must make no difference.
++		{name: "with the production flag set", extra: "\nproduction: true\n"},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			dir := t.TempDir()
++			appPath := filepath.Join(dir, "app.sqlite3")
++			seedFirstBootDatabase(t, appPath)
++
++			rendered, err := newTempl(map[string]any{
++				"AppName":     "First Boot",
++				"AppNameSlug": "first_boot",
++				"DBType":      "postgres",
++				"DBHost":      "db",
++				"DBPort":      "5432",
++				"DBUser":      "postgres",
++				"DBPass":      "postgres",
++				"DBName":      "first_boot",
++			}).get("agentic.yml")
++			if err != nil {
++				t.Fatalf("render agentic.yml: %v", err)
++			}
++			config := string(rendered)
++			if strings.Contains(config, "\nproduction:") {
++				t.Fatal("the generated agentic config must not set production")
++			}
++
++			// Keep everything the template says about mode, sign-in and MCP,
++			// and point its one source at a local SQLite file so the test
++			// needs no database server.
++			head, _, found := strings.Cut(config, "\nsources:\n")
++			if !found {
++				t.Fatal("the generated agentic config has no sources block")
++			}
++			config = head + fmt.Sprintf("\nsources:\n  - name: default\n    kind: database\n    default: true\n    type: sqlite\n    path: %q\n", appPath) + tc.extra
++
++			conf, err := serv.NewConfig(config, "yaml")
++			if err != nil {
++				t.Fatalf("load generated config: %v", err)
++			}
++			conf.Serv.ConfigPath = dir
++			secret := conf.Auth.JWT.Secret
++			if len(secret) < 32 {
++				t.Fatalf("the generated config needs its own signing secret, got %d characters", len(secret))
++			}
++
++			logs := &lockedBuffer{}
++			hs, err := serv.NewGraphJinService(conf, serv.OptionSetLogOutput(zapcore.AddSync(logs)))
++			if err != nil {
++				t.Fatalf("start service: %v", err)
++			}
++			defer hs.Close() //nolint:errcheck
++
++			mux := http.NewServeMux()
++			if err := hs.Attach(mux); err != nil {
++				t.Fatalf("attach routes: %v", err)
++			}
++			server := httptest.NewServer(mux)
++			defer server.Close()
++
++			admin := signFirstBootToken(t, secret, "ada", "admin")
++			member := signFirstBootToken(t, secret, "sam", "")
++
++			// Sign-in is required: no token, no access.
++			anonCatalog := firstBootMCPCall(t, server.URL, "", "query_catalog", map[string]any{"search": "customers and their orders"})
++			if strings.Contains(anonCatalog, `\"cards\"`) || strings.Contains(anonCatalog, `"cards"`) {
++				t.Fatalf("the catalog was readable without signing in: %s", clip(anonCatalog))
++			}
++			anonGraph := firstBootGraphQL(t, server.URL, "", `query { gj_catalog(limit: 1) { id } }`)
++			if !strings.Contains(anonGraph, "errors") {
++				t.Fatalf("the catalog was readable over GraphQL without signing in: %s", clip(anonGraph))
++			}
++			anonData := firstBootGraphQL(t, server.URL, "", `query { orders { id total } }`)
++			if !strings.Contains(anonData, "errors") {
++				t.Fatalf("a table was readable without signing in: %s", clip(anonData))
++			}
++			// The console still has to learn how to sign in before anyone has.
++			if page := firstBootGet(t, server.URL+"/api/v1/console/bootstrap"); !strings.HasPrefix(page, "200 ") || !strings.Contains(page, `"sign_in"`) {
++				t.Fatalf("the console could not load its sign-in options: %s", clip(page))
++			}
++
++			// The catalog search is the first thing an MCP client calls.
++			catalog := firstBootMCPCall(t, server.URL, admin, "query_catalog", map[string]any{"search": "customers and their orders"})
++			if strings.Contains(catalog, "invalid query or fragment name") {
++				t.Fatalf("catalog search was rejected by the saved-queries-only rule: %s", clip(catalog))
++			}
++			if !strings.Contains(catalog, `"cards"`) || !strings.Contains(catalog, "orders") {
++				t.Fatalf("catalog search returned no cards for the seeded tables: %s", clip(catalog))
++			}
++
++			// A signed-in user who is not an admin can read a table that has
++			// no account_id column. T
+```
+
+**File**: `cmd/cmd_new.go` (modified, +19/-0)
+```diff
+@@ -2,7 +2,9 @@ package main
+ 
+ import (
+ 	"bytes"
++	"crypto/rand"
+ 	"embed"
++	"encoding/hex"
+ 	"net/url"
+ 	"os"
+ 	"path"
+@@ -146,9 +148,26 @@ type Templ struct {
+ }
+ 
+ func newTempl(values map[string]interface{}) *Templ {
++	// The agentic config requires sign-in, so every generated install gets its
++	// own signing secret. A fixed value in the template would be shared by
++	// every install and let anyone sign a token for any of them.
++	if _, ok := values["JWTSecret"]; !ok {
++		values["JWTSecret"] = newInstallSecret()
++	}
+ 	return &Templ{values}
+ }
+ 
++// newInstallSecret returns 32 random bytes as hex.
++func newInstallSecret() string {
++	b := make([]byte, 32)
++	if _, err := rand.Read(b); err != nil {
++		// crypto/rand does not fail on supported platforms; without it there
++		// is no safe secret to write.
++		log.Fatalf("Failed to generate a signing secret: %s", err)
++	}
++	return hex.EncodeToString(b)
++}
++
+ func (t *Templ) get(name string) ([]byte, error) {
+ 	v, err := tmpl.ReadFile("tmpl/" + name)
+ 	if err != nil {
+```
+
+**File**: `cmd/tmpl/agentic.yml` (modified, +9/-1)
+```diff
+@@ -4,7 +4,7 @@ mode: agentic
+ # Agentic mode includes a private managed artifact store, approved-watch
+ # runner, built-in agent, dual modern/legacy MCP HTTP, and primitive MCP tools.
+ # Add explicit settings only to opt out or customize them.
+-production: true
++# Agentic mode behaves the same everywhere; the `production` flag is ignored.
+ host_port: 0.0.0.0:8080
+ # Defaults on in agentic mode so operators can inspect catalog, runtime,
+ # security, code, and config system roots from the console.
+@@ -16,6 +16,14 @@ auth_fail_block: true
+ enable_tracing: false
+ reload_on_config_change: false
+ 
++# Sign-in is required. Requests carry a token signed with this secret; the
++# `sub` claim is the user id and a `role` claim of `admin` gives admin access.
++# The secret below was generated for this install. Keep it private.
++auth:
++  type: jwt
++  jwt:
++    secret: {{ printf "%q" .JWTSecret }}
++
+ # Agentic deployments keep legacy MCP compatibility tools disabled. Agents
+ # should use catalog/control-plane GraphQL roots instead.
+ mcp:
+```
+
+**File**: `core/api.go` (modified, +6/-6)
+```diff
+@@ -378,8 +378,8 @@ func (g *GraphJin) newGraphJin(conf *Config,
+ 	gj := &graphjinEngine{
+ 		conf:        conf,
+ 		log:         _log.New(os.Stderr, "", 0),
+-		prod:        conf.Production,
+-		prodSec:     conf.Production,
++		prod:        productionEnabled(conf),
++		prodSec:     productionEnabled(conf),
+ 		learn:       !conf.Production && !isAgenticMode(conf),
+ 		printFormat: []byte(fmt.Sprintf("gj-%x:", t.UnixNano())),
+ 		opts:        options,
+@@ -1296,8 +1296,8 @@ func (g *GraphJin) newGraphJinReloadingConfigDatabases(base *graphjinEngine, nex
+ 	gj := &graphjinEngine{
+ 		conf:        conf,
+ 		log:         log,
+-		prod:        conf.Production,
+-		prodSec:     conf.Production,
++		prod:        productionEnabled(conf),
++		prodSec:     productionEnabled(conf),
+ 		learn:       !conf.Production && !isAgenticMode(conf),
+ 		printFormat: printFormat,
+ 		opts:        opts,
+@@ -1466,8 +1466,8 @@ func (g *GraphJin) newGraphJinReloadingDatabase(base *graphjinEngine, database s
+ 	gj := &graphjinEngine{
+ 		conf:        conf,
+ 		log:         log,
+-		prod:        conf.Production,
+-		prodSec:     conf.Production,
++		prod:        productionEnabled(conf),
++		prodSec:     productionEnabled(conf),
+ 		learn:       !conf.Production && !isAgenticMode(conf),
+ 		printFormat: printFormat,
+ 		opts:        base.opts,
+```
+
+**File**: `core/config.go` (modified, +28/-6)
+```diff
+@@ -50,6 +50,14 @@ func isAgenticMode(c *Config) bool {
+ 	return err == nil && mode == sourcecap.ModeAgentic
+ }
+ 
++// productionEnabled reports whether the legacy production behaviour applies.
++// Agentic mode ignores the production flag. The agent writes its queries as
++// it goes, so the saved-queries-only rule cannot hold there, and that rule
++// also rejects the unnamed queries the service runs against its own store.
++func productionEnabled(c *Config) bool {
++	return c != nil && c.Production && !isAgenticMode(c)
++}
++
+ // NormalizeMode makes mode the single deployment-mode selector. When mode is
+ // omitted, existing production:true configs continue to imply prod mode.
+ func (c *Config) NormalizeMode() error {
+@@ -733,7 +741,7 @@ func (c *Config) normalizeSourceAccessDefaults() {
+ 		kind := c.Sources[i].CanonicalKind()
+ 		switch kind {
+ 		case sourcecap.KindDatabase:
+-			c.Sources[i].Access = effectiveDatabaseAccess(c.Sources[i].Access)
++			c.Sources[i].Access = effectiveDatabaseAccess(c.Sources[i].Access, c.modeForSourceDefaults())
+ 		case sourcecap.KindAPI:
+ 			c.Sources[i].Access = effectiveAPIAccess(c.Sources[i].Access)
+ 		}
+@@ -759,9 +767,21 @@ func effectiveAPIAccess(access SourceAccessConfig) SourceAccessConfig {
+ 	return access
+ }
+ 
+-func effectiveDatabaseAccess(access SourceAccessConfig) SourceAccessConfig {
++// effectiveDatabaseAccess fills in the access a database source gets when its
++// config does not say.
++//
++// In agentic mode every signed-in user can read every table: the agent is a
++// general database agent and cannot assume the tables carry a tenant column.
++// The admin narrows access with table blocks, row filters and roles.
++//
++// The legacy dev and prod modes keep the older default, which scopes rows by
++// the namespace column and blocks tables that lack it.
++func effectiveDatabaseAccess(access SourceAccessConfig, mode string) SourceAccessConfig {
+ 	if strings.TrimSpace(access.Read) == "" {
+ 		access.Read = AccessModeAccount
++		if strings.EqualFold(strings.TrimSpace(mode), sourcecap.ModeAgentic) {
++			access.Read = AccessModeAuthenticated
++		}
+ 	} else {
+ 		access.Read = normalizeAccessMode(access.Read)
+ 	}
+@@ -840,10 +860,12 @@ func (c *Config) EffectiveSystemRootAccess() map[string]string {
+ 			"gj_config":             AccessModePublic,
+ 		}
+ 	case sourcecap.ModeAgentic:
+-		// Trusted-agent matrix: discovery open (read-only), personal
+-		// artifacts/workflows owner-scoped, control plane admin-only.
++		// Sign-in is required in agentic mode. The catalog names every table
++		// and column and carries sampled values, so it is for signed-in users
++		// only; personal artifacts/workflows are owner-scoped and the control
++		// plane is admin-only.
+ 		defaults = map[string]string{
+-			"gj_catalog":            AccessModePublic,
++			"gj_catalog":            AccessModeAuthenticated,
+ 			"gj_artifacts":          AccessModeOwner,
+ 			"gj_watch":              AccessModeOwner,
+ 			"gj_watch_event":        AccessModeOwner,
+@@ -1056,7 +1078,7 @@ func (c *Config) EffectiveThreadsConfig() ThreadsConfig {
+ func (c *Config) EffectiveSourceAccess(source SourceConfig) SourceAccessConfig {
+ 	switch source.CanonicalKind() {
+ 	case sourcecap.KindDatabase:
+-		return effectiveDatabaseAccess(source.Access.clone())
++		return effectiveDatabaseAccess(source.Access.clone(), c.modeForSourceDefaults())
+ 	case sourcecap.KindAPI:
+ 		return effectiveAPIAccess(source.Access.clone())
+ 	default:
+```
+
+**File**: `core/validate_test.go` (modified, +8/-1)
+```diff
+@@ -394,8 +394,15 @@ func TestNormalizeSourcesAppliesIdentityAccessAndArtifactDefaults(t *testing.T)
+ 	if err := agentic.NormalizeSources(); err != nil {
+ 		t.Fatalf("NormalizeSources agentic: %v", err)
+ 	}
++	// Agentic is a general database agent: a signed-in user reads every table
++	// unless the admin narrows it. No tenant column is assumed.
++	agenticApp, _ := agentic.SourceByName("app")
++	if agenticApp.Access.Read != AccessModeAuthenticated || agenticApp.Access.Write != AccessModeBlocked || agenticApp.Access.Delete != AccessModeBlocked {
++		t.Fatalf("agentic database access defaults not applied: %+v", agenticApp.Access)
++	}
++	// Sign-in is required, so the catalog is for signed-in users too.
+ 	agenticAccess := agentic.EffectiveSystemRootAccess()
+-	if agenticAccess["gj_catalog"] != AccessModePublic ||
++	if agenticAccess["gj_catalog"] != AccessModeAuthenticated ||
+ 		agenticAccess["gj_security"] != AccessModeAdmin || agenticAccess["gj_runtime"] != AccessModeAdmin ||
+ 		agenticAccess["gj_config"] != AccessModeAdmin ||
+ 		agenticAccess["gj_artifacts"] != AccessModeOwner ||
+```
+
+**File**: `docs/DESIGN-FIRST-RUN.md` (modified, +15/-0)
+```diff
+@@ -383,6 +383,21 @@ error instead of crashing on a connection string that does not parse. Add a
+ test that boots from an empty directory. The path is still file-based after
+ this phase, but it works.
+ 
++Done on 2026-11-24:
++
++- Agentic ignores the `production` flag, in the engine (`productionEnabled`, `core/config.go`) and at config load (`normalizeConfigMode`, `serv/config.go`). A generated config now runs the same path the demos do.
++- A signed-in user reads every table by default (`effectiveDatabaseAccess`). Writes stay off.
++- The catalog needs a sign-in. It was readable with no token, which exposed every table and column name. The MCP catalog tool is now registered from config, not from what the anonymous startup caller may see (`registerCatalogTools`, `serv/mcp_catalog.go`).
++- A Postgres connection string that cannot be read is an error that names the unfilled placeholder.
++- The generated `agentic.yml` has no `production` line and carries a signing secret generated for that install.
++- `cmd/agentic_first_boot_test.go` boots the generated template and checks all of the above.
++
++Left for later phases:
++
++- **A person cannot sign in yet without making a token.** The generated config accepts tokens signed with its secret; accounts and a sign-in page arrive in Phase 2.
++- **The "dev defaults" still apply to an agentic config that leaves `mcp.allow_*` unset.** The demos depend on four of them (raw queries, mutations, workflow execution, dev tools). They go away when those switches stop being user-facing, in Phase 2.
++- **A signed-in user who is not an admin can read `gj_config`** (secrets are redacted). The root is meant to be admin-only. Seen in the first-boot test, cause not yet traced.
++
+ **Phase 2: Setup on a laptop.**
+ The start config and the store opening first. Admin account and password
+ sign-in. The setup page with the sample data, database and model steps. Config
+```
+
+---
+
+### Incident Patch 2: `c7599c95` (2026-11-25)
+**Commit Message**: fix(agentic): keep the account table out of GraphQL
+
+Accounts and their password hashes are kept in the store's keyed table.
+That table was only blocked from GraphQL when built-in login was on, so
+on a server with local accounts and no built-in login any signed-in
+caller could read the account rows by the table's name. This has been
+the case since local accounts were added in b3f0b9b1c.
+
+The table is now created before the engine starts and blocked for every
+role, the internal one included, wherever it is in use: built-in login
+or local accounts.
+
+The accounts test asks for the table as the admin and as an ordinary
+signed-in user and fails if any row comes back. It fails without this
+change.
+
+Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
+
+**File**: `cmd/agentic_accounts_test.go` (modified, +26/-0)
+```diff
+@@ -67,6 +67,14 @@ func TestFirstAdminSetupAndPasswordSignIn(t *testing.T) {
+ 		t.Fatalf("the new admin could not read the configuration: %s", clip(body))
+ 	}
+ 
++	// Accounts and their password hashes are in the store. No role reads the
++	// store's tables through GraphQL: not the admin, not anyone else.
++	assertAccountsNotReadable(t, base, map[string]string{"the admin": cookie})
++	member := signFirstBootToken(t, secret, "sam", "")
++	if body := firstBootGraphQL(t, base, member, storeAccountsQuery); strings.Contains(body, "password_hash") || strings.Contains(body, `"kind"`) {
++		t.Fatalf("a signed-in user read the account table: %s", clip(body))
++	}
++
+ 	// Signing in again: a wrong password is refused, the right one works, and
+ 	// the email is not case sensitive.
+ 	if status, body, _ := accountsPost(t, base+"/api/v1/auth/session", "", map[string]any{"method": "password", "email": email, "password": "not the password"}); status != http.StatusUnauthorized {
+@@ -148,3 +156,21 @@ func accountsGraphQL(t *testing.T, base, cookie, query string) string {
+ 	_, body, _ := accountsPost(t, base+"/api/v1/graphql", cookie, map[string]any{"query": query})
+ 	return body
+ }
++
++// storeAccountsQuery asks for the store's keyed table by the name it has on
++// SQLite. It holds the accounts and their password hashes.
++const storeAccountsQuery = `query { _graphjin_auth_sessions { kind id data } }`
++
++// assertAccountsNotReadable fails if any of the sessions can read the account
++// table through GraphQL.
++func assertAccountsNotReadable(t *testing.T, base string, sessions map[string]string) {
++	t.Helper()
++	for who, cookie := range sessions {
++		// A blocked table answers with an error or with null, depending on
++		// whether another database is connected. Either way no row comes back.
++		body := accountsGraphQL(t, base, cookie, storeAccountsQuery)
++		if strings.Contains(body, "password_hash") || strings.Contains(body, `"kind"`) || strings.Contains(body, "account") {
++			t.Fatalf("%s read the account table through GraphQL: %s", who, clip(body))
++		}
++	}
++}
+```
+
+**File**: `serv/artifacts.go` (modified, +1/-1)
+```diff
+@@ -663,7 +663,7 @@ func (s *graphjinService) ensureStoreTables() error {
+ 			}
+ 		}
+ 	}
+-	if s.authStoreEnabled() {
++	if s.keyedStoreInUse() {
+ 		for _, stmt := range authStoreDDL(dbType, s.conf.Core.EffectiveArtifactsConfig().Schema) {
+ 			if _, err := db.ExecContext(context.Background(), stmt); err != nil {
+ 				return err
+```
+
+**File**: `serv/auth_store.go` (modified, +9/-0)
+```diff
+@@ -98,6 +98,15 @@ func (a *authLoginService) state() authStateStore {
+ 	return memoryAuthStore{a: a}
+ }
+ 
++// keyedStoreInUse reports whether the store's keyed table exists on this
++// server. It holds sign-in state for built-in login and, on an agentic server
++// with local accounts, the accounts themselves with their password hashes.
++// Wherever the table exists it has to be created before the engine starts and
++// blocked from GraphQL for every role.
++func (s *graphjinService) keyedStoreInUse() bool {
++	return s != nil && s.conf != nil && (s.authStoreEnabled() || localAccountsEnabled(s.conf))
++}
++
+ func (s *graphjinService) authStoreEnabled() bool {
+ 	return s != nil && s.conf != nil && s.conf.AuthLogin.Enabled && s.conf.Core.Artifacts.Enabled
+ }
+```
+
+**File**: `serv/control_store_internal.go` (modified, +4/-3)
+```diff
+@@ -149,8 +149,9 @@ func (s *graphjinService) injectInternalStoreRole() {
+ 			})
+ 		}
+ 	}
+-	// Login state holds credentials-derived rows that GraphJin reads with
+-	// raw SQL only, so it is blocked for every role including the internal one.
++	// The keyed table holds sign-in state and, with local accounts, password
++	// hashes. GraphJin reads it with raw SQL only, so it is blocked for every
++	// role including the internal one.
+ 	blockAll := func(table, schema string) {
+ 		for _, role := range append([]string{graphjinInternalStoreRole}, blockRoles...) {
+ 			appendRuntimeRoleTable(coreConf, role, core.RoleTable{
+@@ -166,7 +167,7 @@ func (s *graphjinService) injectInternalStoreRole() {
+ 		}
+ 	}
+ 	addRevisionSignal()
+-	if s.authStoreEnabled() {
++	if s.keyedStoreInUse() {
+ 		if root, schema, ok := s.internalStoreRoot(authStoreTable); ok {
+ 			blockAll(root, schema)
+ 		}
+```
+
+**File**: `serv/store_admin.go` (modified, +1/-1)
+```diff
+@@ -162,7 +162,7 @@ func (s *graphjinService) storeStatus(ctx context.Context) (StoreStatus, error)
+ 	}
+ 	// Login state is outside storeTableNames because no role, not even the
+ 	// internal one, may read it through GraphQL.
+-	if s.authStoreEnabled() {
++	if s.keyedStoreInUse() {
+ 		table := artifactTableName(dbType, cfg.Schema, authStoreTable)
+ 		st.Tables = append(st.Tables, StoreTable{Name: authStoreTable, Exists: storeTableExists(ctx, db, table)})
+ 	}
+```
+
+---
+
+### Incident Patch 3: `60e78f25` (2026-11-25)
+**Commit Message**: fix(agentic): only an admin reads gj_config
+
+Any signed-in user could read gj_config on an agentic server. The table
+is mounted in a bundle with the catalog, but access rules are generated
+only for roots whose feature is on. Reading config was off by default in
+agentic, so the root had no rules and the mounted table was open.
+
+- A control-plane table whose root is switched off is no longer mounted
+  in source mode, so a root that is off is not there for anyone.
+- config.read is on by default in agentic. The gj_config root is
+  admin-only, so the admin reads it and every other role is refused.
+
+The first-boot test covers both: admin reads, a non-admin and an
+anonymous caller are refused, and with config.read off nobody reads it.
+That last case fails without the mount filter.
+
+Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
+
+**File**: `CONFIG.md` (modified, +1/-1)
+```diff
+@@ -398,7 +398,7 @@ Deployment modes:
+ |------|-------------------|-----------------|
+ | `dev` | Developers | Broad catalog, config, security, workflow-code, raw GraphQL, schema, and dev-tool access for local development |
+ | `prod` | Production applications | Production protections and allow-list discipline; the agentic system surface does not mount |
+-| `agentic` | Authenticated company end users using an approved agent | Production protections plus `catalog.read` and approved `workflow.execute`; detailed `security.read`, `config.read`, `workflow.read`, writes, raw GraphQL, schema writes, dev tools, and legacy discovery stay blocked unless explicitly enabled |
++| `agentic` | Authenticated company end users using an approved agent | Production protections plus `catalog.read`, admin-only `config.read` and approved `workflow.execute`; detailed `security.read`, `workflow.read`, writes, raw GraphQL, schema writes, dev tools, and legacy discovery stay blocked unless explicitly enabled |
+ 
+ | Source kind | Capability keys |
+ |-------------|-----------------|
+```
+
+**File**: `SECURITY.md` (modified, +1/-1)
+```diff
+@@ -382,7 +382,7 @@ roots fit together architecturally, see the canonical diagram in
+ | `gj_watch` / `gj_watch_event` | `owner` (`user_id`) | Read/write, owner-private standing queries and durable inbox events. Watches must reference subscriptions. |
+ | `gj_task` / `gj_task_entry` | `owner` (`user_id`) | Read/write, owner-private declared goals and immutable provenance trail. A task ID is correlation only and never grants access. |
+ | `gj_workflow` / `gj_workflow_execution` | `owner` (`user_id`) | Read/write, owner-private. Workflows execute under the caller's identity. DB-backed workflows are owner/account-private saved artifacts. Filesystem/global workflows are operator-vetted, read-only, and runnable by all callers (each as themselves). "Global" status is filesystem-only and never user-settable. |
+-| `gj_config` | `admin` | Read/write. |
++| `gj_config` | `admin` | Admin reads by default. Writes need `config.write`. With `config.read` and `config.write` both off the root is not mounted at all. |
+ | `gj_security` | `admin` | Read-only. |
+ | `gj_runtime` | `admin` | Read-only. |
+ 
+```
+
+**File**: `cmd/agentic_first_boot_test.go` (modified, +23/-0)
+```diff
+@@ -36,10 +36,16 @@ func TestGeneratedAgenticConfigWorksOnFirstBoot(t *testing.T) {
+ 	for _, tc := range []struct {
+ 		name  string
+ 		extra string
++		// configReadsOff is set when the config switches config reads off.
++		// Then nobody reads gj_config, the admin included.
++		configReadsOff bool
+ 	}{
+ 		{name: "as generated"},
+ 		// Older generated configs carry the flag. It must make no difference.
+ 		{name: "with the production flag set", extra: "\nproduction: true\n"},
++		// The gj_config table is mounted along with the catalog. With its
++		// feature off it had no access rules and any signed-in user read it.
++		{name: "with config reads switched off", extra: "\nsystem:\n  capabilities:\n    config.read: false\n", configReadsOff: true},
+ 	} {
+ 		t.Run(tc.name, func(t *testing.T) {
+ 			dir := t.TempDir()
+@@ -134,6 +140,23 @@ func TestGeneratedAgenticConfigWorksOnFirstBoot(t *testing.T) {
+ 				t.Fatalf("a signed-in user could not read the orders table: %s", clip(body))
+ 			}
+ 
++			// Configuration is the admin's. It names the databases, the roles
++			// and the access rules, so nobody else reads it.
++			const readConfig = `query { gj_config(id: "current") { id sources } }`
++			adminBody := firstBootGraphQL(t, server.URL, admin, readConfig)
++			adminRead := strings.Contains(adminBody, `"sources"`) && !strings.Contains(adminBody, "errors")
++			if tc.configReadsOff && adminRead {
++				t.Fatalf("the configuration was readable with config reads switched off: %s", clip(adminBody))
++			}
++			if !tc.configReadsOff && !adminRead {
++				t.Fatalf("the admin could not read the configuration: %s", clip(adminBody))
++			}
++			for who, token := range map[string]string{"a signed-in user who is not an admin": member, "an anonymous caller": ""} {
++				if body := firstBootGraphQL(t, server.URL, token, readConfig); !strings.Contains(body, "errors") || strings.Contains(body, `"sources"`) {
++					t.Fatalf("%s could read the configuration: %s", who, clip(body))
++				}
++			}
++
+ 			// Writes stay off until the admin turns them on.
+ 			body = firstBootGraphQL(t, server.URL, member, `mutation { orders(insert: { id: 99, customer_id: 1, total: 5 }) { id } }`)
+ 			if !strings.Contains(body, "errors") {
+```
+
+**File**: `core/featurecap/featurecap.go` (modified, +1/-1)
+```diff
+@@ -100,7 +100,7 @@ var systemRoots = []string{
+ var definitions = []Definition{
+ 	def(KindSystem, KeyCatalogRead, ActionRead, true, true, true, "medium", false, "Read the GraphJin catalog."),
+ 	def(KindSystem, KeySecurityRead, ActionRead, true, false, false, "high", false, "Read detailed GraphJin security audit rows."),
+-	def(KindSystem, KeyConfigRead, ActionRead, true, false, false, "high", false, "Read GraphJin configuration rows."),
++	def(KindSystem, KeyConfigRead, ActionRead, true, false, true, "high", false, "Read GraphJin configuration rows."),
+ 	def(KindSystem, KeyConfigWrite, ActionWrite, true, false, false, "critical", true, "Write GraphJin configuration.", mcp(MCPAllowConfigUpdates)),
+ 	def(KindSystem, KeyRuntimeRead, ActionRead, true, false, true, "medium", false, "Read compact GraphJin runtime status and recent redacted events."),
+ 	def(KindSystem, KeyRawGraphQLQuery, ActionQuery, true, false, false, "high", false, "Execute raw GraphQL queries through MCP.", mcp(MCPAllowRawQueries)),
+```
+
+**File**: `docs/DESIGN-FIRST-RUN.md` (modified, +1/-1)
+```diff
+@@ -390,13 +390,13 @@ Done on 2026-11-24:
+ - The catalog needs a sign-in. It was readable with no token, which exposed every table and column name. The MCP catalog tool is now registered from config, not from what the anonymous startup caller may see (`registerCatalogTools`, `serv/mcp_catalog.go`).
+ - A Postgres connection string that cannot be read is an error that names the unfilled placeholder.
+ - The generated `agentic.yml` has no `production` line and carries a signing secret generated for that install.
++- Only an admin reads `gj_config`. The table was mounted along with the catalog while its feature was off, so it had no access rules and any signed-in user could read it. A control-plane table whose root is off is no longer mounted (`registeredManagedTables`, `serv/control_plane_graphql.go`), and reading config is on in agentic for admins.
+ - `cmd/agentic_first_boot_test.go` boots the generated template and checks all of the above.
+ 
+ Left for later phases:
+ 
+ - **A person cannot sign in yet without making a token.** The generated config accepts tokens signed with its secret; accounts and a sign-in page arrive in Phase 2.
+ - **The "dev defaults" still apply to an agentic config that leaves `mcp.allow_*` unset.** The demos depend on four of them (raw queries, mutations, workflow execution, dev tools). They go away when those switches stop being user-facing, in Phase 2.
+-- **A signed-in user who is not an admin can read `gj_config`** (secrets are redacted). The root is meant to be admin-only. Seen in the first-boot test, cause not yet traced.
+ 
+ **Phase 2: Setup on a laptop.**
+ The start config and the store opening first. Admin account and password
+```
+
+**File**: `serv/control_plane_graphql.go` (modified, +19/-0)
+```diff
+@@ -36,6 +36,25 @@ func (h controlPlaneGraphQL) ManagedQueryTables() []core.ManagedTable {
+ 	if h.service != nil && h.service.conf != nil && h.service.conf.workflowsEnabled() {
+ 		out = append(out, workflowControlPlaneTables()...)
+ 	}
++	return registeredManagedTables(h.service, out)
++}
++
++// registeredManagedTables drops the tables whose system root is switched off.
++//
++// The tables come in bundles: gj_config rides along with the catalog. Access
++// rules are only generated for registered roots, so a table mounted without
++// its root had no rules and every signed-in caller could read it. A root that
++// is off is simply not there.
++func registeredManagedTables(s *graphjinService, tables []core.ManagedTable) []core.ManagedTable {
++	if s == nil || s.conf == nil || !s.conf.Core.IsSourcesUsed() {
++		return tables
++	}
++	out := tables[:0:0]
++	for _, table := range tables {
++		if systemRootRegistered(s.conf, table.Name) {
++			out = append(out, table)
++		}
++	}
+ 	return out
+ }
+ 
+```
+
+**File**: `serv/control_plane_graphql_test.go` (modified, +11/-4)
+```diff
+@@ -1102,12 +1102,11 @@ func TestGraphQLControlPlaneAgenticSystemPermissions(t *testing.T) {
+ 		if string(out["catalog"]) == "null" || len(out["catalog"]) == 0 {
+ 			t.Fatalf("expected agentic user catalog access, got %s", string(res.Data))
+ 		}
+-		// Workflow-definition, security, and config capabilities default off in
++		// Workflow-definition and security capabilities default off in
+ 		// agentic mode, so access policy cannot resurrect these roots.
+ 		for root, query := range map[string]string{
+ 			"gj_workflow": `query { workflow: gj_workflow(id: "daily_report") { name } }`,
+ 			"gj_security": `query { security: gj_security(id: "summary") { id } }`,
+-			"gj_config":   `query { config: gj_config(id: "current") { id } }`,
+ 		} {
+ 			res, err := svc.gj.GraphQL(userCtx, query, nil, &core.RequestConfig{})
+ 			if err == nil {
+@@ -1117,6 +1116,14 @@ func TestGraphQLControlPlaneAgenticSystemPermissions(t *testing.T) {
+ 				t.Fatalf("expected %s absence error, got: %v", root, err)
+ 			}
+ 		}
++		// Configuration is there for the admin and refused to everyone else.
++		res, err = svc.gj.GraphQL(userCtx, `query { config: gj_config(id: "current") { id } }`, nil, &core.RequestConfig{})
++		if err == nil {
++			t.Fatalf("a normal user read gj_config: %s", string(res.Data))
++		}
++		if !strings.Contains(err.Error(), "blocked") {
++			t.Fatalf("expected gj_config to be refused for a normal user, got: %v", err)
++		}
+ 	})
+ 
+ 	t.Run("explicit security grant unblocks only gj_security", func(t *testing.T) {
+@@ -1150,8 +1157,8 @@ func TestGraphQLControlPlaneAgenticSystemPermissions(t *testing.T) {
+ 		if err == nil {
+ 			t.Fatalf("expected gj_config to remain denied, got %s", string(res.Data))
+ 		}
+-		if !strings.Contains(err.Error(), "not found") {
+-			t.Fatalf("expected disabled gj_config root to remain absent, got: %v", err)
++		if !strings.Contains(err.Error(), "blocked") {
++			t.Fatalf("expected gj_config to stay refused for a normal user, got: %v", err)
+ 		}
+ 	})
+ 
+```
+
+**File**: `serv/mcp_registration_test.go` (modified, +3/-2)
+```diff
+@@ -822,12 +822,13 @@ func TestMCPCallerCapabilityProfileReflectsSourceRootAccess(t *testing.T) {
+ 	}
+ 
+ 	adminProfile := ms.callerCapabilityProfile(sourceModeAdminTestContext(), false)
+-	for _, root := range []string{"gj_runtime"} {
++	// The admin reads runtime status and the configuration.
++	for _, root := range []string{"gj_runtime", "gj_config"} {
+ 		if !rootProfilesContain(adminProfile.AvailableRoots, root) {
+ 			t.Fatalf("expected %s available to admin, got %+v", root, adminProfile.AvailableRoots)
+ 		}
+ 	}
+-	for _, root := range []string{"gj_security", "gj_config", "gj_workflow"} {
++	for _, root := range []string{"gj_security", "gj_workflow"} {
+ 		if !rootProfilesContain(adminProfile.BlockedRoots, root) {
+ 			t.Fatalf("expected disabled %s to remain unavailable to admin, got %+v", root, adminProfile.BlockedRoots)
+ 		}
 ```
 
 #### Recent Merged Pull Requests:
@@ -2701,43 +3367,33 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs(site): say the rollout guide in plain words
+## X. agentic): make a freshly generated agentic config work
 
 **RULE**:
-When implementing operations in `website/content/rollout.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dosco/deeporg. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `SECURITY.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dosco/deeporg. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9d591e72`: docs(site): say the rollout guide in plain words. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1a09ead9`: agentic): make a freshly generated agentic config work. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `website/content/rollout.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `SECURITY.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-headline: "What a rollout takes, step by step."
-lede: "Choosing the model is the small part of an AI rollout. Most of the work is connecting the systems, deciding who may see what, writing down what the company's words mean, checking answers until people trust them, and then giving the agent real work to do every week. Companies usually bring in forward-deployed engineers or consultants for it. This page is for whoever does that work. For each step, it shows the part of DeepORG that handles it."
-- **It finds your tables for you.** DeepORG builds a searchable map of every table, column and relationship it finds. The agent looks things up in the map and writes its own queries.
-- **It reads relationships from your foreign keys.** Ones the schema never declared can be added in config.
-- **One answer can use several systems.** It can use the app database, the warehouse and an HTTP API together.
-- **A read-only source cannot be changed.** `read_only: true` blocks every write to that source, whatever a role or the agent asks for.
-- **Changes wait for a person.** A change the agent proposes is first tried out in a transaction that is rolled back, then held until someone approves that exact
+    gj_catalog: authenticated
+| `gj_catalog` | `authenticated` | Read-only, for signed-in users. It names every table and column and carries sampled values, so it is not served to anonymous callers. Set `gj_catalog: public` to open it. |
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-headline: "Most of an AI rollout is not the model."
-lede: "Most of the work is connecting the systems, deciding who may see what, writing down what the company's words mean, checking answers until people trust them, and then giving the agent real work to do every week. Companies usually bring in forward-deployed engineers or consultants for it. This page is for whoever does that work. It goes step by step and shows the part of DeepORG that handles each one."
-- **No tool for each question.** DeepORG builds a searchable map of every table, column and relationship it finds. The agent looks things up in the map and writes its own queries, so nobody has to build a tool per question.
-- **Joins come from your keys.** Relationships are read from your foreign keys. Ones the schema never declared can be added in config.
-- **Several systems, one question.** One answer can draw on the app database, the warehouse and an HTTP API together.
-- **Read-only means read-only.** `read_only: true` blocks every write to that source, whatever a role or the agent asks for.
-- **Changes wait for a person.** A change the agent proposes is rehearsed in a transaction that is rolled back, then held until someone
+    gj_catalog: public
+| `gj_catalog` | `public` | Read-only. |
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9d591e72` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1a09ead9` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

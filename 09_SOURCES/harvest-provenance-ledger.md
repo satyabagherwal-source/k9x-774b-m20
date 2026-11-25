@@ -13185,3 +13185,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-qwen-qwen3-embedding-0-6b` | `https://huggingface.co/Qwen/Qwen3-Embedding-0.6B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-25T23:24:00.182Z |
 | `learn-github-embassy-rs-embassy` | `https://github.com/embassy-rs/embassy` | `c7f4fb42` | Multi-dimensional audit evidence | 2026-11-25T23:24:02.694Z |
 | `learn-github-rustcrypto-hashes` | `https://github.com/RustCrypto/hashes` | `3ae6b7f0` | Multi-dimensional audit evidence | 2026-11-25T23:24:12.009Z |
+| `learn-huggingface-moonshotai-kimi-k3-1-pro` | `https://huggingface.co/moonshotai/Kimi-K3.1-Pro` | `hf-moonsho` | Multi-dimensional audit evidence | 2026-11-25T23:32:24.680Z |
+| `learn-github-dosco-deeporg` | `https://github.com/dosco/deeporg` | `6acc0f9b` | Multi-dimensional audit evidence | 2026-11-25T23:32:33.779Z |
+| `learn-github-t8y2-dbx` | `https://github.com/t8y2/dbx` | `e6c06578` | Multi-dimensional audit evidence | 2026-11-25T23:32:38.771Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `d97fb2a0` | Multi-dimensional audit evidence | 2026-11-25T23:32:40.687Z |
