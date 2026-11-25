@@ -46,8 +46,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-25T03:13:39.014Z",
-    "lastVerified": "2026-11-25T03:13:39.014Z",
+    "lastChecked": "2026-11-25T03:59:18.996Z",
+    "lastVerified": "2026-11-25T03:59:18.996Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-25T03:50:56.848Z",
-    "lastVerified": "2026-11-25T03:50:56.848Z",
+    "lastChecked": "2026-11-25T03:59:19.005Z",
+    "lastVerified": "2026-11-25T03:59:19.005Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -2032,8 +2032,8 @@
     "officialUrl": "https://github.com/projectdiscovery/nuclei",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-24T23:50:56.077Z",
-    "lastVerified": "2026-11-24T23:50:56.077Z",
+    "lastChecked": "2026-11-25T03:59:13.998Z",
+    "lastVerified": "2026-11-25T03:59:13.998Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-projectdiscovery-nuclei",
@@ -4129,12 +4129,12 @@
     "lastVerified": "2026-11-24T22:07:23.074Z"
   },
   "pixeltable-pixeltable": {
-    "name": "pixeltable/pixeltable",
+    "name": "pixeltable",
     "officialUrl": "https://github.com/pixeltable/pixeltable",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-24T08:59:56.845Z",
-    "lastVerified": "2026-11-24T08:59:56.845Z",
+    "lastChecked": "2026-11-25T03:59:16.684Z",
+    "lastVerified": "2026-11-25T03:59:16.684Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-pixeltable-pixeltable",
@@ -4143,7 +4143,8 @@
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "f89365df"
   },
   "hf-compvis-stable-diffusion-v1-4": {
     "name": "CompVis/stable-diffusion-v1-4",
@@ -6444,9 +6445,9 @@
   "someengineering-fixinventory": {
     "name": "fixinventory",
     "officialUrl": "https://github.com/someengineering/fixinventory",
-    "lastChecked": "2026-11-24T10:26:43.332Z",
+    "lastChecked": "2026-11-25T03:59:11.472Z",
     "revisionIdentifier": "21183338",
-    "lastVerified": "2026-11-24T10:26:43.332Z"
+    "lastVerified": "2026-11-25T03:59:11.472Z"
   },
   "olric-data-olric": {
     "name": "olric",
@@ -8619,14 +8620,14 @@
     "officialUrl": "https://github.com/thaw-app/Thaw",
     "sourceType": "github",
     "technology": "Swift",
-    "lastChecked": "2026-11-22T17:35:22.220Z",
-    "lastVerified": "2026-11-22T17:35:22.220Z",
+    "lastChecked": "2026-11-25T03:59:14.021Z",
+    "lastVerified": "2026-11-25T03:59:14.021Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-thaw-app-thaw",
-    "contentHash": "e7a5095d378208d53740cc41a335c6585950aff994393a41fffdd7376eac9a53",
+    "contentHash": "2629b49454e1e32854c8f1da66839f7f018062fec3b3f747a336de7532776b2a",
     "promotedRulesCount": 1,
-    "recentFixesCount": 7,
+    "recentFixesCount": 6,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -9055,9 +9056,9 @@
   "mrjackwills-oxker": {
     "name": "oxker",
     "officialUrl": "https://github.com/mrjackwills/oxker",
-    "lastChecked": "2026-11-24T01:28:45.541Z",
+    "lastChecked": "2026-11-25T03:59:03.975Z",
     "revisionIdentifier": "791342c0",
-    "lastVerified": "2026-11-24T01:28:45.541Z"
+    "lastVerified": "2026-11-25T03:59:03.975Z"
   },
   "hf-deepseek-ai-deepseek-v4.1-flash-1017": {
     "name": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
@@ -12487,14 +12488,14 @@
     "officialUrl": "https://github.com/unjs/nitro",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-21T06:13:49.802Z",
-    "lastVerified": "2026-11-21T06:13:49.802Z",
+    "lastChecked": "2026-11-25T03:59:12.662Z",
+    "lastVerified": "2026-11-25T03:59:12.662Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nitrojs-nitro",
-    "contentHash": "cb29821f90f2e9fba487fbd541913c96fcb2498b099aebb35c0518e496e1c752",
+    "contentHash": "a3b92817b8c0dec494a6f250c5e4c300aec9bf35b24bc9533338eedbaebd81db",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

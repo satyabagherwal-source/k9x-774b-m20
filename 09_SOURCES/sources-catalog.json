@@ -2023,10 +2023,10 @@
     "repository": "nitrojs/nitro",
     "platform": "github",
     "sourceUrl": "https://github.com/unjs/nitro",
-    "sourceVersion": "571aade6",
+    "sourceVersion": "925c1355",
     "license": "NOASSERTION",
-    "contentHash": "cb29821f90f2e9fba487fbd541913c96fcb2498b099aebb35c0518e496e1c752",
-    "lastHarvestedAt": "2026-11-21T06:13:50.935Z",
+    "contentHash": "a3b92817b8c0dec494a6f250c5e4c300aec9bf35b24bc9533338eedbaebd81db",
+    "lastHarvestedAt": "2026-11-25T03:59:13.977Z",
     "learningId": "learn-github-nitrojs-nitro"
   },
   "unjs-h3": {
@@ -7833,10 +7833,10 @@
     "repository": "thaw-app/Thaw",
     "platform": "github",
     "sourceUrl": "https://github.com/thaw-app/Thaw",
-    "sourceVersion": "50b2558d",
+    "sourceVersion": "63a96c2d",
     "license": "GPL-3.0",
-    "contentHash": "e7a5095d378208d53740cc41a335c6585950aff994393a41fffdd7376eac9a53",
-    "lastHarvestedAt": "2026-11-22T17:35:23.373Z",
+    "contentHash": "2629b49454e1e32854c8f1da66839f7f018062fec3b3f747a336de7532776b2a",
+    "lastHarvestedAt": "2026-11-25T03:59:15.205Z",
     "learningId": "learn-github-thaw-app-thaw"
   },
   "rtk-ai-rtk": {

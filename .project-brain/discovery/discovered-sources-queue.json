@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-25T03:50:59.242Z",
+  "updated_at": "2026-11-25T03:59:20.517Z",
   "stats": {
-    "total_discovered": 9195,
-    "approved_pending_harvest": 8708,
+    "total_discovered": 9199,
+    "approved_pending_harvest": 8711,
     "harvested_count": 0,
-    "rejected_count": 487,
+    "rejected_count": 488,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 8703,
+      "COMMUNITY_AND_EXPERT": 8707,
       "OFFICIAL_DOCUMENTATION": 275,
       "STANDARDS_AND_SPECIFICATIONS": 149,
       "ENGINEERING_BLOGS": 7,
@@ -198908,6 +198908,87 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/meshtastic-meshtastic-android-learnings.md",
         "fileName": "meshtastic-meshtastic-android-learnings.md"
+      }
+    },
+    "SRC-B143FF7D226C": {
+      "id": "SRC-B143FF7D226C",
+      "url": "https://example.com/wait-until",
+      "title": "https://example.com/wait-until",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T03:59:19.312Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/unjs-nitro-learnings.md",
+        "fileName": "unjs-nitro-learnings.md"
+      }
+    },
+    "SRC-E5CD9196F56D": {
+      "id": "SRC-E5CD9196F56D",
+      "url": "https://github.com/nitrojs/nitro/issues/5035",
+      "title": "https://github.com/nitrojs/nitro/issues/5035",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T03:59:19.378Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/unjs-nitro-learnings.md",
+        "fileName": "unjs-nitro-learnings.md"
+      }
+    },
+    "SRC-260FA943C1A5": {
+      "id": "SRC-260FA943C1A5",
+      "url": "http://localhost/wait-until",
+      "title": "http://localhost/wait-until",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-25T03:59:19.445Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/unjs-nitro-learnings.md",
+        "fileName": "unjs-nitro-learnings.md"
+      }
+    },
+    "SRC-F43B248D80F4": {
+      "id": "SRC-F43B248D80F4",
+      "url": "https://github.com/o",
+      "title": "https://github.com/o",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T03:59:20.517Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/thaw-app-thaw-learnings.md",
+        "fileName": "thaw-app-thaw-learnings.md"
       }
     }
   }

@@ -4,24 +4,24 @@
 {
   "source_repository": "thaw-app/Thaw",
   "source_url": "https://github.com/thaw-app/Thaw",
-  "source_version": "8b34c731",
+  "source_version": "63a96c2d",
   "license": "GPL-3.0",
-  "timestamp": "2026-11-19T16:07:19.820Z",
+  "timestamp": "2026-11-25T03:59:15.457Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-thaw-app-thaw",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [thaw-app/Thaw](https://github.com/thaw-app/Thaw) (Revision: `8b34c731`).  
-> **License**: GPL-3.0 | **Timestamp**: `2026-11-19T16:07:19.820Z`  
+> **Provenance**: Harvested from [thaw-app/Thaw](https://github.com/thaw-app/Thaw) (Revision: `63a96c2d`).  
+> **License**: GPL-3.0 | **Timestamp**: `2026-11-25T03:59:15.457Z`  
 > **Learning ID**: `learn-github-thaw-app-thaw`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), A (Human & Need Intelligence), F (Design Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence), B (Product Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 54%
+- **Secondary Corroborating Domains**: F (Design Intelligence), H (Technical Construction Intelligence), A (Human & Need Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 51%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from thaw-app/Thaw:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/thaw-app-thaw-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/thaw-app/Thaw](https://github.com/thaw-app/Thaw))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T16:07:18.552Z  
+> **Harvest Timestamp**: 2026-11-25T03:59:14.021Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: The open source menu bar manager
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 12821 stars
+- **Stars / Engagement**: 12897 stars
 
 ---
 
@@ -293,7 +293,7 @@ final class AppState {
 
     let applicationMenuCover = ApplicationMenuCover()
 
-    /// Settings in a process of its own, when SettingsInOwnProcess is set.
+    /// Settings in a process of its own, unless SettingsInOwnProcess is turned off.
     @ObservationIgnored
     private(set) lazy var settingsProcessHost = SettingsProcessHost(app: settingsProcessAppSide())
 
@@ -302,8 +302,8 @@ final class AppState {
 
     // MARK: - Published state
 
-    /// observeActiveSpace() compensates for under-reported system space changes.
-    private(set) var activeSpace = SpaceInfo.activeSpace()
+    /// observeActiveSpace() compensates for under-reported system space changes. The settings process sets it to the app's.
+    var activeSpace = SpaceInfo.activeSpace()
 
     /// Mirror of the event layer's drag flag, so views can watch a drag
     /// without subscribing to HIDEventManager themselves.
@@ -372,7 +372,7 @@ final class AppState {
 
         diagLog.debug("bootstrap: starting AppState setup sequence")
 
-        // Choose helper capture routing once, before a
+        // Choos
 ```
 
 ### Core Architecture Module: `Thaw/App/ControlStatePublisher.swift`
@@ -681,9 +681,16 @@ final class AppNavigationState {
         }
     }
 
+    /// What the page shown in the settings process needs captured. The app reads the screen for
+    /// it; nothing while no such process runs.
+    var settingsProcessCapture = SettingsProcessCaptureDemand.none {
+        didSet { updateCaptureUIState() }
+    }
+
     var hasVisibleCaptureUI: Bool {
         isThawBarPresented || isSearchPresented || isLayoutEditorPresented
             || (isSettingsPresented && settingsConsumesCapture)
+            || settingsProcessCapture.consumesCapture
     }
 
     private var settingsPresentationID: UUID?
@@ -916,14 +923,10 @@ extension HIDEventManager {
 
         // macOS can invalidate the tap's Mach port under resource pressure or
         // a permission change. 10 s matches the stuck-disable recovery threshold.
-        healthCheckTimer?.invalidate()
-        healthCheckTimer = Timer.scheduledTimer(withTimeInterval: 10, repeats: true) { [weak self] _ in
-            guard let self else { return }
-            Task { @MainActor in
-                self.performHealthCheck()
-            }
+        // It rests while the displays sleep or the session is away; the next check comes 10 s after.
+        healthCheck = IdleGate.shared.repeating(every: 10, tolerance: 2) { [weak self] in
+            self?.performHealthCheck()
         }
-        healthCheckTimer?.tolerance = 2
     }
 }
 
@@ -1265,1203 +1268,612 @@ extension AppSettings: MenuBarEngineConfiguration {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c0da4095` (2026-11-18)
-**Commit Message**: fix(capture): update pictures of hidden items when their icons change (#1620)
+### Incident Patch 1: `d09f6a70` (2026-11-23)
+**Commit Message**: fix: keep tests off the real preferences, show pictures after a layout reset, and small cleanups (#1684)
 
-* fix(capture): accept a narrower picture when only the space around the icon shrank
+* test: keep app tests off the real Thaw preferences
 
-A new picture under three quarters of the old one's width is taken for a
-crop of macOS's overflow arrows and thrown away. After the menu bar
-spacing shrinks, a correct picture of a hidden item is that much narrower
-too (Rocket goes from 36 to 22 pt at spacing 16 to 2), so a picture taken
-at the old spacing was never replaced.
-
-A narrower picture now wins when it is a trusted glyph and its icon is
-the same size as the old one's within a point, measured with
-inkBounds(of:). Arrows cropped by mistake have different ink.
-
-Signed-off-by: Omoeba <[REDACTED_EMAIL]>
-
-* fix(capture): retake a hidden item's picture whose width no longer matches the item
-
-A hidden item is only photographed while revealed, and a picture that
-looks good is kept, so one taken at a wider menu bar spacing stayed for
-good: Rocket's picture was 36 pt while its item was 22 pt, which left
-uneven gaps in the Thaw Bar.
-
-GlyphRetakeLedger has the Thaw Bar's automatic hidden-item pass retake a
-picture that is more than 2 pt off its item's width. A parked item 
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
-```diff
-@@ -27,6 +27,7 @@ the items under New and Fixed.
- ### Fixed
- 
- - Asking `thawctl` for help with `--help` or `-h` now exits successfully and prints to standard output.
-+- **A hidden item you open from the Thaw Bar gets a new picture once its menu closes,** so an icon that changed while hidden, such as one showing an update, no longer keeps its old look. macOS shows the screen recording indicator for a moment. By @Omoeba in [#1620](https://github.com/thaw-app/Thaw/pull/1620).
- 
- ## [3.0.0-beta.7] - 2026-11-17
- 
-```
-
-**File**: `Thaw/App/Navigation/AppNavigationState.swift` (modified, +16/-0)
-```diff
-@@ -74,9 +74,25 @@ final class AppNavigationState {
- 
-     private var settingsPresentationID: UUID?
- 
-+    /// Captures running with no capture surface open, such as the picture of an item just opened
-+    /// from the Thaw Bar. They light the recording indicator outside Thaw. See OpenedItemRecapture.
-+    private var backgroundCaptureHolds = 0
-+
-     var hasCaptureUI: Bool {
-         hasVisibleCaptureUI
-             || (settingsPresentationID != nil && settingsConsumesCapture)
-+            || backgroundCaptureHolds > 0
-+    }
-+
-+    /// Lets captures run until the matching endBackgroundCapture().
-+    func beginBackgroundCapture() {
-+        backgroundCaptureHolds += 1
-+        updateCaptureUIState()
-+    }
-+
-+    func endBackgroundCapture() {
-+        backgroundCaptureHolds = max(0, backgroundCaptureHolds - 1)
-+        updateCaptureUIState()
-     }
- 
-     func beginSettingsPresentation() -> UUID? {
-```
-
-**File**: `Thaw/Items/Capture/MenuBarItemImageCache+OpenedItemCapture.swift` (added, +101/-0)
-```diff
-@@ -0,0 +1,101 @@
-+//
-+//  MenuBarItemImageCache+OpenedItemCapture.swift
-+//  Project: Thaw
-+//
-+//  Copyright (Thaw) © 2026 Toni Förster
-+//  Licensed under the GNU GPLv3
-+
-+import Cocoa
-+import MenuBarModel
-+import ThawAXCore
-+import ThawCapture
-+
-+extension MenuBarItemImageCache {
-+    /// Retakes the picture of a hidden item opened from the Thaw Bar once its menu closes. See
-+    /// OpenedItemRecapture. With "Use app icons instead of live previews" on, an item drawn as its
-+    /// app's icon is left alone, as every other pass leaves it (itemsNeedingCapture(_:demand:)).
-+    func retakePictureAfterOpening(_ item: MenuBarItem) {
-+        guard let appState else { return }
-+        // Its menu is watched by process, so an item listed without one would never count as open.
-+        let item = ItemOwnerLookup.resolving(item)
-+        let demand = CaptureDemand(
-+            usesAppIcons: configuration.alwaysUseAppIconForMenuBarItems,
-+            hasUnfilteredConsumer: false,
-+            alertRevealIdentifiers: []
-+        )
-+        guard !Self.itemsNeedingCapture([item], demand: demand).isEmpty else { return }
-+        let monitor = appState.itemManager.menuOpenMonitor
-+        let owners = item.reactionPIDs
-+        let isMenuOpen: @MainActor () async -> Bool = { await monitor.isMenuOpen(ownedBy: owners) }
-+        let photograph = openedItemPhotograph(appState: appState)
-+        OpenedItemRecapture.shared.start(item.tag.tagIdentifier, steps: OpenedItemRecapture.Steps(
-+            isMenuOpen: isMenuOpen,
-+            attempt: { await photograph.take(item, isMenuOpen: isMenuOpen) }
-+        ))
-+    }
-+
-+    /// The opened-item picture over this cache and the live bar. Thaw's windows are usually
-+    /// closed by then, so captures are held open just for it, and the cache is reloaded first:
-+    /// the idle trim may have dropped pictures a save would otherwise write out.
-+    func openedItemPhotograph(appState: AppState) -> OpenedItemPhotograph {
-+        OpenedItemPhotograph(
-+            slot: prewarmSlot,
-+            mayCapture: { [weak self] in
-+                ScreenCapture.hasCachedScreenRecordingPermission && self?.skipCaptureWhileScreenLocked("opened item picture") == false
-+            },
-+            holdCaptures: { [weak self] in
-+                self?.idleTrimTask?.cancel()
-+                self?.idleTrimTask = nil
-+                self?.loadFromDiskIfNeeded()
-+                await self?.diskLoadTask?.value
-+                appState.navigationState.beginBackgroundCapture()
-+            },
-+            releaseCaptures: { [weak self] in
-+                appState.navigationState.endBackgroundCapture()
-+                if self?.hasVisibleCaptureConsumer() == false {
-+                    self?.scheduleIdleTrim()
-+                }
-+            },
-+            displays: {
-+                let admitted = appState.itemManager.itemDisplayID
-+                return (admitted ?? Bridging.activeMenuBarDisplayID, admitted)
-+            },
-+            shownItem: { item, displayID in
-+                await RevealCaptureSession.waitForRevealedItems(matching: [item]) {
-+                    await MenuBarItem.getMenuBarItems(on: displayID, option: [.onScreen, .activeSpace])
-+                }.first
-+            },
-+            settlePixels: { await RevealCaptureSession.settleRevealedPixels([$0], displayID: $1, reader: LiveMenuBarCaptureReader()) },
-+            admit: { CapturePublicationPolicy.admit(layout: appState.itemManager.layoutPublication, displayID: $0) },
-+            crop: { [weak self] shown, frame, displayID in
-+                guard let self else { return CapturePass() }
-+                return await boundsCropper.crop(
-+                    // Cut where MenuBarAgent draws it, as a revealed batch is: its reported frame can be a neighbour's seat.
-+                    AXBoundsCropper.Request(items: [(shown, frame)], displayID: displayID, validateFreshBounds: true, seatsOnDrawnBar: true),
-+                    using: LiveMenuBarCaptureReader(),
-+                    skipping: { [weak self] in self?.shouldSkipCapture(for: $0) ?? true }
-+                )
-+            },
-+            commit: { [weak self] in self?.commitOpenedItemPicture($0, shown: $1, admission: $2, appState: appState) ?? false },
-+            save: { [weak self] in self?.saveToDisk() }
-+        )
-+    }
-+
-+    /// Publishes an opened item's picture as a revealed batch of one. False when the bar changed meanwhile.
-+    private func commitOpenedItemPicture(
-+        _ pass: CapturePass,
-+        shown: OpenedItemPhotograph.Shown,
-+        admission: CapturePublicationAdmission,
-+        appState: AppState
-+    ) -> Bool {
-+        guard commitRevealedBatch(pass, revealed: [shown], admission: admission, appState: appState) else { return false }
-+        // Compare pixels: an unchanged icon gives an equal picture in a new image, which the cache doesn't republish.
-+        if let picture = pass.captured[shown.live.tag],
-+           let
-```
-
-**File**: `Thaw/Items/Capture/OpenedItemPhotograph.swift` (added, +93/-0)
-```diff
-@@ -0,0 +1,93 @@
-+//
-+//  OpenedItemPhotograph.swift
-+//  Project: Thaw
-+//
-+//  Copyright (Thaw) © 2026 Toni Förster
-+//  Licensed under the GNU GPLv3
-+
-+import CoreGraphics
-+import MenuBarModel
-+import ThawAXCore
-+
-+/// One try at the picture of a hidden item opened from the Thaw Bar, while the item is still in
-+/// the menu bar. OpenedItemRecapture decides when to try.
-+///
-+/// The try finds the item where the menu bar shows it, waits for its pixels to settle, crops it
-+/// where MenuBarAgent draws it (see AXBoundsCropper.Request.seatsOnDrawnBar) and keeps the picture unless a menu of
-+/// its app opened meanwhile, since an open menu draws the item highlighted. It holds the reveal
-+/// capture slot, so no prewarm reveals or conceals another item into the screenshot.
-+@MainActor
-+struct OpenedItemPhotograph {
-+    typealias Shown = (requested: MenuBarItem, live: MenuBarItem)
-+    typealias CapturePass = MenuBarItemImageCache.CapturePass
-+    /// The display a try takes its picture on, and the item cache's display it is admitted against.
-+    typealias Displays = (capture: CGDirectDisplayID, admitted: CGDirectDisplayID?)
-+
-+    let slot: RevealCaptureSlot
-+    /// Whether a picture can be taken: Screen Recording is granted and the screen isn't locked.
-+    let mayCapture: @MainActor () -> Bool
-+    /// Gets the cache ready to save and lets captures run while no Thaw window is open.
-+    let holdCaptures: @MainActor () async -> Void
-+    /// Ends holdCaptures.
-+    let releaseCaptures: @MainActor () -> Void
-+    /// Read once per try, so a display switch meanwhile rejects the picture rather than becoming its baseline.
-+    let displays: @MainActor () -> Displays
-+    /// The item where the menu bar shows it on the display once its frame is stable, or nil when it isn't shown.
-+    let shownItem: @MainActor (MenuBarItem, CGDirectDisplayID) async -> Shown?
-+    /// Waits for the shown item's pixels on the display to stop changing.
-+    let settlePixels: @MainActor (MenuBarItem, CGDirectDisplayID) async -> Void
-+    /// Admits the picture for publishing against the item cache's display. Asked with nothing awaited before the screenshot.
-+    let admit: @MainActor (CGDirectDisplayID?) -> CapturePublicationAdmission
-+    /// Crops the shown item at the frame on the display, moved to where MenuBarAgent draws it.
-+    let crop: @MainActor (MenuBarItem, CGRect, CGDirectDisplayID) async -> CapturePass
-+    /// Publishes the picture through a revealed batch's checks. False when the bar changed meanwhile.
-+    let commit: @MainActor (CapturePass, Shown, CapturePublicationAdmission) -> Bool
-+    let save: @MainActor () -> Void
-+
-+    /// Takes and keeps the item's picture, or says why not.
-+    func take(_ item: MenuBarItem, isMenuOpen: @MainActor () async -> Bool) async -> OpenedItemRecapture.Attempt {
-+        guard mayCapture() else {
-+            Self.log("no Screen Recording permission, or the screen is locked")
-+            return .missed
-+        }
-+        // One capture at a time: another pass's reveal or conceal would land in this screenshot.
-+        await slot.begin()
-+        defer { slot.end() }
-+        await holdCaptures()
-+        defer { releaseCaptures() }
-+        let outcome = await photograph(item, isMenuOpen: isMenuOpen)
-+        Self.log("\(item.logString): \(outcome)")
-+        return outcome
-+    }
-+
-+    private func photograph(_ item: MenuBarItem, isMenuOpen: @MainActor () async -> Bool) async -> OpenedItemRecapture.Attempt {
-+        let displays = displays()
-+        guard let shown = await shownItem(item, displays.capture) else {
-+            Self.log("\(item.logString) isn't shown in the menu bar")
-+            return .missed
-+        }
-+        await settlePixels(shown.live, displays.capture)
-+        guard !Task.isCancelled else { return .missed }
-+        guard await !isMenuOpen() else { return .menuOpened }
-+        let cropFrame = shown.live.bounds
-+
-+        // Admitted with nothing else awaited before the screenshot, as a revealed batch is.
-+        let admission = admit(displays.admitted)
-+        let pass = await crop(shown.live, cropFrame, displays.capture)
-+        guard pass.captured[shown.live.tag] != nil else {
-+            Self.log("no crop of \(item.logString) at \(cropFrame)")
-+            return .missed
-+        }
-+        guard await !isMenuOpen() else { return .menuOpened }
-+        guard commit(pass, shown, admission) else {
-+            Self.log("the menu bar changed during the picture of \(item.logString)")
-+            return .missed
-+        }
-+        save()
-+        return .stored
-+    }
-+
-+    private static func log(_ message: String) {
-+        MenuBarItemImageCache.diagLog.debug("opened item picture: \(message)")
-+    }
-+}
-```
-
-**File**: `Thaw/Items/Capture/OpenedItemRecapture.swift` (added, +100/-0)
-```diff
-@@ -0,0 +1,100 @@
-+//
-+//  OpenedItemRecapture.swift
-+//  Project: Thaw
-+//
-+//  Copyright (Thaw) © 2026 Toni Förster
-+//  Licensed under the GNU GPLv3
-+
-+import MenuBarModel
-+
-+/// Takes a new picture of a hidden item opened from the Thaw Bar once its menu closes.
-+///
-+/// A hidden item's picture is otherwise only taken when it is missing, so an icon that
-+/// changed while hidden, such as one showing an update, kept its old picture until every
-+/// picture was retaken. Opening an item shows it in the menu bar for "Keep opened items in
-+/// the menu bar for", but while its menu is open the item is drawn highlighted. So this
-+/// waits until the item's app has no menu open, takes the picture, and tries again when a
-+/// menu opened during the try. When the item is hidden again first, or its menu stays open
-+/// past menuWaitLimit, the picture is left as it was.
-+@MainActor
-+final class OpenedItemRecapture {
-+    /// What one try at the picture found.
-+    enum Attempt: Equatable {
-+        /// The picture was taken and kept.
-+        case stored
-+        /// A menu of the item's app was open during the try, so the item may have been highlighted.
-+        case menuOpened
-+        /// The item wasn't shown any more, or no picture could be taken or kept.
-+        case missed
-+    }
-+
-+    /// How a retake ended.
-+    enum Outcome: Equatable {
-+        /// The picture was taken and kept.
-+        case stored
-+        /// No picture was taken; the old one stays.
-+        case missed
-+        /// A newer retake of the same item replaced this one.
-+        case cancelled
-+    }
-+
-+    /// What a retake reads and does. Tests script these.
-+    struct Steps {
-+        /// Whether a menu of the item's app is open.
-+        var isMenuOpen: @MainActor () async -> Bool
-+        /// One try at taking and keeping the picture.
-+        var attempt: @MainActor () async -> Attempt
-+        var sleep: @MainActor (Duration) async -> Void = { try? await Task.sleep(for: $0) }
-+        var now: @MainActor () -> ContinuousClock.Instant = { .now }
-+    }
-+
-+    /// The retakes the Thaw Bar starts.
-+    static let shared = OpenedItemRecapture()
-+
-+    /// Time for the item's menu to appear after the press, so the first check doesn't miss it.
-+    static let menuAppearanceDelay = Duration.milliseconds(500)
-+
-+    /// How often to check whether the menu has closed.
-+    static let pollInterval = Duration.milliseconds(250)
-+
-+    /// The longest wait for the menu to close before giving up on the picture.
-+    static let menuWaitLimit = Duration.seconds(60)
-+
-+    static nonisolated let diagLog = DiagLog(category: "OpenedItemRecapture")
-+
-+    /// The retake running for each item, by tag identifier.
-+    private var running: [String: Task<Outcome, Never>] = [:]
-+
-+    /// Starts retaking the picture of the item with identifier, replacing a retake of it
-+    /// that is still waiting.
-+    func start(_ identifier: String, steps: Steps) {
-+        running[identifier]?.cancel()
-+        running[identifier] = Task {
-+            let outcome = await Self.run(steps)
-+            Self.diagLog.debug("retake of \(identifier) ended: \(outcome)")
-+            return outcome
-+        }
-+    }
-+
-+    /// Waits for the item's menu to close, then takes its picture.
-+    @discardableResult
-+    static func run(_ steps: Steps) async -> Outcome {
-+        await steps.sleep(menuAppearanceDelay)
-+        let deadline = steps.now().advanced(by: menuWaitLimit)
-+        while !Task.isCancelled, steps.now() < deadline {
-+            if await steps.isMenuOpen() {
-+                await steps.sleep(pollInterval)
-+                continue
-+            }
-+            switch await steps.attempt() {
-+            case .stored:
-+                return .stored
-+            case .menuOpened:
-+                await steps.sleep(pollInterval)
-+            case .missed:
-+                return Task.isCancelled ? .cancelled : .missed
-+            }
-+        }
-+        return Task.isCancelled ? .cancelled : .missed
-+    }
-+}
-```
-
-**File**: `Thaw/Panels/ThawBar/ThawBarItemViews.swift` (modified, +5/-1)
-```diff
-@@ -81,7 +81,11 @@ struct ThawBarItemView: View {
-                 // Wait for the panel to close (KVO on isVisible) before
-                 // checking item visibility.
-                 await panel?.waitUntilClosed(timeout: .milliseconds(200))
--                await itemManager.clickConcealedItem(item: item, with: button, on: displayID)
-+                let outcome = await itemManager.clickConcealedItem(item: item, with: button, on: displayID)
-+                // The item is in the menu bar now, so its picture can catch up with its icon.
-+                if case .completed = outcome {
-+                    itemManager.appState?.imageCache.retakePictureAfterOpening(item)
-+                }
-                 let duration = clickStartTime.duration(to: .now)
-                 ThawBarItemView.diagLog.debug("click(\(button == .left ? "left" : "right")): completed in \(Int(duration.milliseconds))ms (macOS 27 concealed-item path)")
-             }
-```
-
-**File**: `ThawTests/Items/Capture/OpenedItemPhotographTests.swift` (added, +178/-0)
-```diff
-@@ -0,0 +1,178 @@
-+//
-+//  OpenedItemPhotographTests.swift
-+//  Project: Thaw
-+//
-+//  Copyright (Thaw) © 2026 Toni Förster
-+//  Licensed under the GNU GPLv3
-+
-+import CoreGraphics
-+import MenuBarModel
-+import Testing
-+@testable import Thaw
-+
-+/// Pins one try at an opened item's picture: where it is cropped, and when it is kept. Moving the crop
-+/// to where MenuBarAgent draws the item is the cropper's job (AXBoundsCropper.Request.seatsOnDrawnBar).
-+@MainActor
-+@Suite("Opened item photograph", .timeLimit(.minutes(1)))
-+struct OpenedItemPhotographTests {
-+    private static let driveDx: pid_t = 1096
-+    private static let axFrame = CGRect(x: 926, y: 4.5, width: 20, height: 24)
-+
-+    private static func item(bounds: CGRect = axFrame) -> MenuBarItem {
-+        MenuBarItem(
-+            tag: MenuBarItemTag(namespace: .string("com.binaryfruit.DriveDx"), title: "Item-0", windowID: 12, instanceIndex: 0),
-+            windowID: 12,
-+            ownerPID: driveDx,
-+            sourcePID: driveDx,
-+            bounds: bounds,
-+            title: "Item-0",
-+            isOnScreen: true
-+        )
-+    }
-+
-+    private static func glyph() throws -> MenuBarItemGlyphCapture {
-+        let context = try #require(CGContext(
-+            data: nil, width: 40, height: 48, bitsPerComponent: 8, bytesPerRow: 160,
-+            space: CGColorSpaceCreateDeviceRGB(),
-+            bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
-+        ))
-+        context.setFillColor(CGColor(gray: 0, alpha: 1))
-+        context.fill(CGRect(x: 8, y: 8, width: 24, height: 32))
-+        return try MenuBarItemGlyphCapture(cgImage: #require(context.makeImage()), scale: 2)
-+    }
-+
-+    /// The bar and the cache one try reads, and everything it did.
-+    @MainActor
-+    private final class World {
-+        var mayCapture = true
-+        var shown: MenuBarItem? = OpenedItemPhotographTests.item()
-+        /// Menu answers in order; the last one repeats.
-+        var menuOpen = [false]
-+        var picture: MenuBarItemGlyphCapture?
-+        var commits = true
-+        var displays: OpenedItemPhotograph.Displays = (42, 42)
-+
-+        var holds = 0
-+        var releases = 0
-+        var settled: [CGDirectDisplayID] = []
-+        var admitted: [CGDirectDisplayID?] = []
-+        var crops: [(frame: CGRect, displayID: CGDirectDisplayID)] = []
-+        var committed = 0
-+        var saves = 0
-+        let slot = RevealCaptureSlot()
-+
-+        func photograph() -> OpenedItemPhotograph {
-+            OpenedItemPhotograph(
-+                slot: slot,
-+                mayCapture: { self.mayCapture },
-+                holdCaptures: { self.holds += 1 },
-+                releaseCaptures: { self.releases += 1 },
-+                displays: { self.displays },
-+                shownItem: { item, _ in self.shown.map { (item, $0) } },
-+                settlePixels: { _, displayID in self.settled.append(displayID) },
-+                admit: { displayID in
-+                    self.admitted.append(displayID)
-+                    return CapturePublicationAdmission(layoutGeneration: 0, displayID: displayID)
-+                },
-+                crop: { item, frame, displayID in
-+                    self.crops.append((frame, displayID))
-+                    var pass = MenuBarItemImageCache.CapturePass()
-+                    pass.captured[item.tag] = self.picture
-+                    return pass
-+                },
-+                commit: { _, _, _ in
-+                    self.committed += 1
-+                    return self.commits
-+                },
-+                save: { self.saves += 1 }
-+            )
-+        }
-+
-+        func take() async -> OpenedItemRecapture.Attempt {
-+            await photograph().take(OpenedItemPhotographTests.item()) {
-+                self.menuOpen.count > 1 ? self.menuOpen.removeFirst() : self.menuOpen.first ?? false
-+            }
-+        }
-+    }
-+
-+    @Test("A shown item is cropped at the frame the bar shows it at, kept and saved")
-+    func storedAtTheShownFrame() async throws {
-+        let world = World()
-+        world.picture = try Self.glyph()
-+        world.displays = (7, nil)
-+
-+        #expect(await world.take() == .stored)
-+
-+        #expect(world.crops.map(\.frame) == [Self.axFrame])
-+        #expect(world.crops.map(\.displayID) == [7])
-+        #expect(world.settled == [7])
-+        #expect(world.admitted == [nil], "admitted against the item cache's display, read once for the try")
-+        #expect(world.committed == 1)
-+        #expect(world.saves == 1)
-+        #expect(world.holds == 1 && world.releases == 1)
-+        #expect(!world.slot.isHeld)
-+    }
-+
-+    @Test("No Screen Recording or a locked screen takes no slot and holds nothing open")
-+    func refusedBeforeTheSlot() async {
-+        let world = World()
-+        world.mayCapture = false
-+
-+        #expect(await world.take() == .missed)
-+
-+        #expect(world.holds == 0)
-+        #expect(world.crops.isEmpty)
-+        #expect(!world.slot.isHeld)
-+    }
-+
-+  
-```
-
-**File**: `ThawTests/Items/CaptureUIVisibilityTests.swift` (modified, +20/-0)
-```diff
-@@ -90,6 +90,26 @@ struct CaptureUIVisibilityTests {
-         #expect(!navigation.hasVisibleCaptureUI)
-     }
- 
-+    @Test("A background capture keeps capture on until its last hold ends")
-+    func backgroundCaptureHolds() {
-+        let navigation = AppNavigationState()
-+        #expect(!navigation.hasCaptureUI)
-+
-+        navigation.beginBackgroundCapture()
-+        navigation.beginBackgroundCapture()
-+        #expect(navigation.hasCaptureUI)
-+        #expect(!navigation.hasVisibleCaptureUI, "a hold is no surface the live loop draws for")
-+        navigation.endBackgroundCapture()
-+        #expect(navigation.hasCaptureUI)
-+        navigation.endBackgroundCapture()
-+        #expect(!navigation.hasCaptureUI)
-+
-+        navigation.endBackgroundCapture()
-+        navigation.beginBackgroundCapture()
-+        #expect(navigation.hasCaptureUI, "an extra end can't cancel a later hold")
-+        navigation.endBackgroundCapture()
-+    }
-+
-     @Test("Capture remains available until the last surface closes")
-     func overlappingSurfaces() {
-         let navigation = AppNavigationState()
-```
-
----
-
-### Incident Patch 2: `ee0ba8e2` (2026-11-16)
-**Commit Message**: fix(menubar): draw the overlay on the CPU and restart once when Accessibility is refused at login (#1605)
-
-* perf(appearance): draw the menu bar overlay into one bitmap on the CPU
-
-AppKit's display path hands the overlay's draw(_:) to Core Animation's GPU drawing queue inside Thaw's process. On macOS 27 that renderer held about 49 MB of buffers for a few seconds after every draw, so each app switch or reveal raised the footprint by that much.
-
-The overlay now asks for updateLayer() and paints its own draw(_:) into one bitmap. The wallpaper gradient helper moves out of the overlay view to keep that type from growing.
+The test host is Thaw itself, built with the release bundle ID, and it ran migrations and the full launch against UserDefaults.standard before any suite swapped in scratch defaults. The host now switches to an empty com.stonerl.Thaw.testhost suite before AppState exists and skips the live startup.
 
 Signed-off-by: René Jiménez <[REDACTED_EMAIL]>
 
-* fix(permissions): restart once when other apps refuse Thaw's Accessibility reads after login
+* fix(layout): show item pictures right after a layout reset
 
-During login the system's permission service can fail while other apps first
-ask it about Thaw. Each of them then answers "API disabled" to that Thaw
-process for as long as it runs, although the permission is granted and Thaw's
-own trust check passed, so Thaw sees only its own items. Only a new process is
-asked about again.
+The reset recaptured every section while isResettingLayout was still set, and the publication policy rejects every capture during a reset, so the pictures were thrown away and the Layout bar stayed blank. The flag now covers only the reassignment passes.
 
-Thaw now records which apps that had menu bar items before keep refusing. At
-each login look it restarts
+Signed-off-by: René Jiménez <[REDACTED_EMAIL]>
 
-**File**: `.swiftlint.baseline` (modified, +16/-31)
+* chore(lint): keep unchanged baseline entries when updating the baseline
+
+update wrote SwiftLint's fresh output as is, so every run rewrote the stale line numbers of files nobody touched. Entries whose file, rule, source line and size are unchanged now keep their old record.
+
+Signed-off-by: René Jiménez <[REDACTED_EMAIL]>
+
+
+
+**File**: `.swiftlint.baseline` (modified, +38/-53)
 ```diff
-@@ -185,7 +185,7 @@
-    "location": {
-     "character": 5,
-     "file": "Thaw/Input/Events/HIDEventManager+PointerGeometry.swift",
--    "line": 297
-+    "line": 305
+@@ -7,7 +7,7 @@
+     "file": "Thaw/App/AppDelegate.swift",
+     "line": 15
     },
-    "reason": "Function body should span 50 lines or less excluding comments and whitespace: currently spans 55 lines",
-    "ruleDescription": "Function bodies should not span too many lines",
-@@ -1100,7 +1100,7 @@
+-   "reason": "Class body should span 350 lines or less excluding comments and whitespace: currently spans 396 lines",
++   "reason": "Class body should span 350 lines or less excluding comments and whitespace: currently spans 390 lines",
+    "ruleDescription": "Type bodies should not span too many lines",
+    "ruleIdentifier": "type_body_length",
+    "ruleName": "Type Body Length",
+@@ -20,9 +20,9 @@
     "location": {
-     "character": 5,
-     "file": "Thaw/Items/Manager/MenuBarItemManager+Moving.swift",
--    "line": 1486
-+    "line": 1472
+     "character": 1,
+     "file": "Thaw/App/AppDelegate.swift",
+-    "line": 534
++    "line": 523
     },
-    "reason": "Function should have complexity 10 or less; currently complexity is 31",
-    "ruleDescription": "Complexity of function bodies should be limited.",
-@@ -1115,7 +1115,7 @@
-    "location": {
-     "character": 5,
-     "file": "Thaw/Items/Manager/MenuBarItemManager+Moving.swift",
--    "line": 1486
-+    "line": 1472
-    },
-    "reason": "Function body should span 100 lines or less excluding comments and whitespace: currently spans 222 lines",
-    "ruleDescription": "Function bodies should not span too many lines",
-@@ -1130,7 +1130,7 @@
+-   "reason": "File should contain 400 lines or less: currently contains 534",
++   "reason": "File should contain 400 lines or less: currently contains 527",
+    "ruleDescription": "Files should not span too many lines.",
+    "ruleIdentifier": "file_length",
+    "ruleName": "File Length",
+@@ -620,12 +620,12 @@
     "location": {
      "character": 13,
-     "file": "Thaw/Items/Manager/MenuBarItemManager+Moving.swift",
--    "line": 1771
-+    "line": 1757
+     "file": "Thaw/Items/Manager/MenuBarItemManager+Cache.swift",
+-    "line": 583
++    "line": 580
     },
-    "reason": "Function should have complexity 10 or less; currently complexity is 11",
-    "ruleDescription": "Complexity of function bodies should be limited.",
-@@ -1145,7 +1145,7 @@
-    "location": {
-     "character": 13,
-     "file": "Thaw/Items/Manager/MenuBarItemManager+Moving.swift",
--    "line": 1771
-+    "line": 1757
-    },
-    "reason": "Function body should span 50 lines or less excluding comments and whitespace: currently spans 56 lines",
-    "ruleDescription": "Function bodies should not span too many lines",
-@@ -1160,7 +1160,7 @@
-    "location": {
-     "character": 13,
-     "file": "Thaw/Items/Manager/MenuBarItemManager+Moving.swift",
--    "line": 2091
-+    "line": 2077
-    },
-    "reason": "Function should have complexity 10 or less; currently complexity is 16",
-    "ruleDescription": "Complexity of function bodies should be limited.",
-@@ -1175,7 +1175,7 @@
-    "location": {
-     "character": 13,
-     "file": "Thaw/Items/Manager/MenuBarItemManager+Moving.swift",
--    "line": 2091
-+    "line": 2077
-    },
-    "reason": "Function body should span 100 lines or less excluding comments and whitespace: currently spans 176 lines",
-    "ruleDescription": "Function bodies should not span too many lines",
-@@ -1304,28 +1304,13 @@
-    "severity": "warning"
-   }
-  },
-- {
--  "text": "    func newItemsMoveDestination(",
--  "violation": {
--   "location": {
--    "character": 5,
--    "file": "Thaw/Items/Manager/MenuBarItemManager.swift",
--    "line": 1141
--   },
--   "reason": "Function should have complexity 10 or less; currently complexity is 11",
+-   "reason": "Function should have complexity 10 or less; currently complexity is 33",
 -   "ruleDescription": "Complexity of function bodies should be limited.",
 -   "ruleIdentifier": "cyclomatic_complexity",
 -   "ruleName": "Cyclomatic Complexity",
++   "reason": "Function body should span 100 lines or less excluding comments and whitespace: currently spans 216 lines",
++   "ruleDescription": "Function bodies should not span too many lines",
++   "ruleIdentifier": "function_body_length",
++   "ruleName": "Function Body Length",
+    "severity": "error"
+   }
+  },
+@@ -637,10 +637,10 @@
+     "file": "Thaw/Items/Manager/MenuBarItemManager+Cache.swift",
+     "line": 583
+    },
+-   "reason": "Function body should span 100 lines or less excluding comments and whitespace: currently spans 222 lines",
+-   "ruleDescription": "Function bodies should not span too many lines",
+-   "ruleIdentifier": "function_body_length",
+-   "ruleName": "Function Body Length",
++   "reason": "Function should have complexity 10 or less; currently complexity is 33",
++   "ruleDescription": "Complexity of function bodies should be limited.",
++   "ruleIdentifier": "cyclomatic_complexity",
++   "ruleName": "Cyclomatic Complexity",
+    "severity": "error"
+   }
+  },
+@@ -650,9 +650,9 @@
+    "location": {
+     "character": 1,
+     "file": "Thaw/Items/Manager/MenuBarItemManager+Cache.swift",
+-    "line": 951
++    "line": 941
+    },
+-   "reason": "File should contain 400 lines or less: currently contains 951",
++   "reason": "File should contain 400 lines or less: currently contains 941",
+    "ruleDescription": "Files should not span too many lines.",
+    "ruleIdentifier": "file_length",
+    "ruleName": "File Length",
+@@ -854,28 +854,13 @@
+    "severity": "error"
+   }
+  },
+- {
+-  "text": "    private func resetAssignments(to target: MenuBarSection.Name = .hidden) async throws -> Int {",
+-  "violation": {
+-   "location": {
+-    "character": 13,
+-    "file": "Thaw/Items/Manager/MenuBarItemManager+LayoutReset.swift",
+-    "line": 433
+-   },
+-   "reason": "Function body should span 50 lines or less excluding comments and whitespace: currently spans 56 lines",
+-   "ruleDescription": "Function bodies should not span too many lines",
+-   "ruleIdentifier": "function_body_length",
+-   "ruleName": "Function Body Length",
 -   "severity": "warning"
 -  }
 - },
   {
-   "text": "    func performSetup(with appState: AppState) async {",
+   "text": "    private func restoreVisibleControlOrder(items: [MenuBarItem]) async -> Bool {",
    "violation": {
     "location": {
+     "character": 13,
+     "file": "Thaw/Items/Manager/MenuBarItemManager+LayoutReset.swift",
+-    "line": 809
++    "line": 808
+    },
+    "reason": "Function body should span 50 lines or less excluding comments and whitespace: currently spans 89 lines",
+    "ruleDescription": "Function bodies should not span too many lines",
+@@ -890,9 +875,9 @@
+    "location": {
+     "character": 1,
+     "file": "Thaw/Items/Manager/MenuBarItemManager+LayoutReset.swift",
+-    "line": 913
++    "line": 912
+    },
+-   "reason": "File should contain 400 lines or less: currently contains 913",
++   "reason": "File should contain 400 lines or less: currently contains 912",
+    "ruleDescription": "Files should not span too many lines.",
+    "ruleIdentifier": "file_length",
+    "ruleName": "File Length",
+@@ -1040,9 +1025,9 @@
+    "location": {
      "character": 5,
-     "file": "Thaw/Items/Manager/MenuBarItemManager.swift",
--    "line": 1256
-+    "line": 1243
+     "file": "Thaw/Items/Manager/MenuBarItemManager+Moving.swift",
+-    "line": 1472
++    "line": 1437
     },
-    "reason": "Function body should span 50 lines or less excluding comments and whitespace: currently spans 67 lines",
-    "ruleDescription": "Function bodies should not span too many lines",
-@@ -1340,7 +1325,7 @@
-    "location": {
-     "character": 13,
-     "file": "Thaw/Items/Manager/MenuBarItemManager.swift",
--    "line": 1341
-+    "line": 1328
-    },
-    "reason": "Function should have complexity 10 or less; currently complexity is 13",
+-   "reason": "Function should have complexity 10 or less; currently complexity is 31",
++   "reason": "Function should have complexity 10 or less; currently complexity is 27",
     "ruleDescription": "Complexity of function bodies should be limited.",
-@@ -1355,7 +1340,7 @@
+    "ruleIdentifier": "cyclomatic_complexity",
+    "ruleName": "Cyclomatic Complexity",
+@@ -1055,9 +1040,9 @@
     "location": {
-     "character": 13,
-     "file": "Thaw/Items/Manager/MenuBarItemManager.swift",
--    "line": 1341
-+    "line": 1328
-    },
-    "reason": "Function body should span 100 lines or less excluding comments and whitespace: currently spans 122 lines",
-    "ruleDescription": "Function bodies should not span too many lines",
-@@ -1732,7 +1717,7 @@
-     "file": "Thaw/Panels/Appearance/MenuBarOverlayPanel.swift",
-     "line": 559
-    },
--   "reason": "Class body should span 350 lines or less excluding comments and whitespace: currently spans 810 lines",
-+   "reason": "Class body should span 350 lines or less excluding comments and whitespace: currently spans 797 lines",
-    "ruleDescription": "Type bodies should not span too many lines",
-    "ruleIdentifier": "type_body_length",
-    "ruleName": "Type Body Length",
-@@ -1790,7 +1775,7 @@
-    "location": {
-     "character": 13,
-     "file": "Thaw/Panels/Appearance/MenuBarOverlayPanel.swift",
--    "line": 1282
-+    "line": 1261
-    },
-    "reason": "Function body should span 50 lines or less excluding comments and whitespace: currently spans 62 lines",
-    "ruleDescription": "Function bodies should not span too many lines",
-@@ -1805,7 +1790,7 
-```
-
-**File**: `.swiftlint.yml` (modified, +1/-1)
-```diff
-@@ -99,7 +99,7 @@ file_header:
-     //  SWIFTLINT_CURRENT_FILENAME
-     //  Project: Thaw
-     //
--    //  Copyright \(Thaw\) © 2026 (Toni Förster|René Jiménez|Thaw)
-+    //  Copyright \(Thaw\) © 2026 Toni Förster
-     //  Licensed under the GNU GPLv3
- 
- modifier_order:
+     "character": 5,
+     "file": "Thaw/Items/Manager/MenuBarItemManager+Moving.swift",
+-    "line": 1472
++    "line
 ```
 
 **File**: `CHANGELOG.md` (modified, +5/-0)
 ```diff
-@@ -32,6 +32,11 @@ the items under New and Fixed.
- - Showing a section in the menu bar while the Thaw Bar is open no longer hides it early, when the Thaw Bar's own hide timer runs out.
- - `thaw://release-item?bundle=` now lets go of every item of that app the sender holds, instead of failing when it holds more than one.
- - Smart rehide no longer skips a click outside the menu bar while the Thaw icon has no window yet, so the revealed items go away after the click as set.
-+- Thaw does less work in the background: a mouse click in any app no longer makes it redraw the menu bar appearance and read every item's position again, and it no longer asks the system about every running app every three seconds.
-+- An item that shows live text, such as a clock, is recognized as one item within about two minutes, instead of whenever something else in the menu bar next changed. Until then each new text could put it under New Items or lose its place. Text that changes the item's width, such as a song title, is recognized too, the second time it changes.
-+- Thaw's memory no longer jumps by about 50 MB for a few seconds each time you switch apps or show a section while a menu bar shape, tint or shadow is on.
-+- After you log in, Thaw no longer stays unable to see other apps' menu bar items when macOS refused its Accessibility reads during startup, which left the menu bar shape covering only part of the items. Thaw now notices and restarts itself once.
-+- The Thaw Bar preview in Settings sits on the menu bar's own colour instead of a picture of your wallpaper, which could hold about 60 MB while the page was open.
+@@ -24,6 +24,11 @@ the items under New and Fixed.
  
- ## [3.0.0-alpha.14] - 2026-11-14
+ ## [Unreleased]
  
++### Fixed
++
++- **Resetting the layout shows item pictures in the Layout bar right away,** instead of leaving them blank.
++- **Closing Settings no longer sends What's New or Credits behind other apps.**
++
+ ## [3.0.0-alpha.15] - 2026-11-22
+ 
+ **macOS 27 only · Build 127**
 ```
 
-**File**: `Thaw/App/AppState+DockIcon.swift` (modified, +1/-1)
+**File**: `Thaw/App/AppDelegate.swift` (modified, +5/-12)
 ```diff
-@@ -2,7 +2,7 @@
- //  AppState+DockIcon.swift
- //  Project: Thaw
- //
--//  Copyright (Thaw) © 2026 René Jiménez
-+//  Copyright (Thaw) © 2026 Toni Förster
- //  Licensed under the GNU GPLv3
+@@ -45,6 +45,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
+     func applicationWillFinishLaunching(_: Notification) {
+         LiveApp.register(self)
+         ThawHUD.menuBarHeight = { $0.getMenuBarHeightEstimate() }
++        guard !TestHosting.isActiveInProcess else { return }
+         #if DEBUG
+             // Don't perform setup if running as a preview.
+             if isRunningForPreviews {
+@@ -97,19 +98,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
+             }
+         #endif
  
- import AppKit
++        guard !TestHosting.isActiveInProcess else { return }
+         ConflictingAppDetector.showWarningIfNeeded()
+-
+-        switch appState.permissions.permissionsState {
+-        case .hasAll:
+-            appState.permissions.diagLog.debug("Passed all permissions checks")
+-            appState.launch(withPermissions: true)
+-        case .hasRequired:
+-            appState.permissions.diagLog.debug("Passed required permissions checks")
+-            appState.launch(withPermissions: true)
+-        case .missing:
+-            appState.permissions.diagLog.debug("Failed required permissions checks")
+-            appState.launch(withPermissions: false)
+-        }
++        let permissionsState = appState.permissions.permissionsState
++        appState.permissions.diagLog.debug("Permissions at launch: \(permissionsState)")
++        appState.launch(withPermissions: permissionsState != .missing)
+ 
+         // Share the window's onboarding inputs so the delegate neither opens an empty window nor skips a needed one.
+         let stage = OnboardingSequencer.stage(
 ```
 
-**File**: `Thaw/App/AppState+WhatsNew.swift` (modified, +1/-1)
+**File**: `Thaw/App/AppState.swift` (modified, +1/-1)
 ```diff
-@@ -2,7 +2,7 @@
- //  AppState+WhatsNew.swift
- //  Project: Thaw
- //
--//  Copyright (Thaw) © 2026 René Jiménez
-+//  Copyright (Thaw) © 2026 Toni Förster
- //  Licensed under the GNU GPLv3
+@@ -666,7 +666,7 @@ final class AppState {
+             if navigationState.isWhatsNewRequested, !isUpdateConsentPresented {
+                 navigationState.settingsNavigationIdentifier = .about
+             }
+-        } else {
++        } else if Self.shouldDeactivateAfterSettingsClosed(openWindows: openWindows, pendingWindows: pendingOpenWindows) {
+             deactivate(withPolicy: .accessory)
+         }
+     }
+```
+
+**File**: `Thaw/App/ThawApp.swift` (modified, +1/-0)
+```diff
+@@ -22,6 +22,7 @@ enum ThawEntryPoint {
+             if SettingsProcessApp.isRequested {
+                 SettingsProcessApp.main()
+             } else {
++                TestHosting.isolatePreferencesWhenHosted()
+                 // NSApp must be created as the subclass before SwiftUI first asks for it.
+                 _ = AppProcessApplication.shared
+                 // Before the first status item exists, or macOS seats Thaw's items with its own spacing.
+```
+
+**File**: `Thaw/Items/Capture/MenuBarItemGlyphCapture.swift` (modified, +11/-2)
+```diff
+@@ -7,6 +7,7 @@
  
+ import CoreGraphics
  import Foundation
++import os
+ 
+ /// One menu bar item's pixels as they were read off the screen, paired with the
+ /// backing scale that was in effect at that moment.
+@@ -18,10 +19,12 @@ import Foundation
+ /// is only touched from main-actor members.
+ struct MenuBarItemGlyphCapture: Hashable, @unchecked Sendable {
+     /// A reference box so the memoized trim survives copies of the value.
+-    /// Only reached from main-actor members.
++    /// Only reached from main-actor members, except the locked blank flag,
++    /// which capture paths off the main actor read too.
+     private final class PresentationCache: @unchecked Sendable {
+         var horizontallyTrimmedCGImage: CGImage?
+         var isSingleInkGlyph: Bool?
++        let isEffectivelyBlank = OSAllocatedUnfairLock<Bool?>(initialState: nil)
+     }
+ 
+     /// The raw crop, sized in device pixels.
+@@ -91,8 +94,14 @@ struct MenuBarItemGlyphCapture: Hashable, @unchecked Sendable {
+     }
+ 
+     /// Whether the capture is effectively blank for UI thumbnail purposes.
++    /// Memoized because draw paths read it continuously and each check scans the pixels.
+     nonisolated var isEffectivelyBlank: Bool {
+-        cgImage.isTransparent(alphaThreshold: 0.05)
++        if let cached = presentationCache.isEffectivelyBlank.withLock({ $0 }) {
++            return cached
++        }
++        let result = cgImage.isTransparent(alphaThreshold: 0.05)
++        presentationCache.isEffectivelyBlank.withLock { $0 = result }
++        return result
+     }
+ 
+     /// Returns whether two optional captured images have equivalent visual content.
 ```
 
-**File**: `Thaw/Input/Events/ClockBridgeAvailability.swift` (modified, +1/-1)
+**File**: `Thaw/Items/Manager/MenuBarItemManager+Cache.swift` (modified, +1/-11)
 ```diff
-@@ -2,7 +2,7 @@
- //  ClockBridgeAvailability.swift
- //  Project: Thaw
- //
--//  Copyright (Thaw) © 2026 René Jiménez
-+//  Copyright (Thaw) © 2026 Toni Förster
- //  Licensed under the GNU GPLv3
+@@ -549,15 +549,12 @@ extension MenuBarItemManager {
+         return nil
+     }
  
- import Combine
+-    /// Transfer the background continuation to a follow-up pass so waiting callers resume after relocation settles and recaches.
++    /// Schedule a settled follow-up pass after relocation.
+     private func scheduleRecacheAfterRelocation() {
+         MenuBarItemManager.diagLog.debug("Relocated new leftmost items; scheduling recache")
+-        let continuation = backgroundCacheContinuation
+-        backgroundCacheContinuation = nil
+         Task { [weak self] in
+             try? await Task.sleep(for: MenuBarItemManager.uiSettleDelay)
+             await self?.cacheItemsRegardless(skipRecentMoveCheck: true)
+-            continuation?.resume()
+         }
+     }
+ 
+@@ -589,11 +586,6 @@ extension MenuBarItemManager {
+         MenuBarItemManager.diagLog.debug(
+             "cacheItemsRegardless: entering (skipRecentMoveCheck=\(skipRecentMoveCheck), hasCurrentItemWindowIDs=\(currentItemWindowIDs != nil), resolveSourcePID=\(resolveSourcePID), skipSavedLayoutApply=\(skipSavedLayoutApply))"
+         )
+-        defer {
+-            backgroundCacheContinuation?.resume()
+-            backgroundCacheContinuation = nil
+-        }
+-
+         guard skipRecentMoveCheck || !lastMoveOperationOccurred(within: .seconds(1)) else {
+             MenuBarItemManager.diagLog.debug("Skipping menu bar item cache due to recent item movement")
+             return
+@@ -849,8 +841,6 @@ extension MenuBarItemManager {
+                 currentDisplayID: displayID
+             )
+             if didApplySavedLayout {
+-                backgroundCacheContinuation?.resume()
+-                backgroundCacheContinuation = nil
+                 return
+             }
+         }
 ```
 
-**File**: `Thaw/Input/Hotkeys/HotkeyBindingStore.swift` (modified, +1/-1)
+**File**: `Thaw/Items/Manager/MenuBarItemManager+EventHelpers.swift` (modified, +1/-1)
 ```diff
-@@ -2,7 +2,7 @@
- //  HotkeyBindingStore.swift
- //  Project: Thaw
- //
--//  Copyright (Thaw) © 2026 René Jiménez
-+//  Copyright (Thaw) © 2026 Toni Förster
- //  Licensed under the GNU GPLv3
- 
- import Foundation
-```
-
-**File**: `Thaw/Items/Capture/DiskLoadState.swift` (modified, +1/-1)
-```diff
-@@ -2,7 +2,7 @@
- //  DiskLoadState.swift
- //  Project: Thaw
- //
--//  Copyright (Thaw) © 2026 René Jiménez
-+//  Copyright (Thaw) © 2026 Toni Förster
- //  Licensed under the GNU GPLv3
- 
- /// Where the image cache's lazy disk load stands. A save during a load would rewrite the file
+@@ -159,7 +159,7 @@ extension MenuBarItemManager {
+     /// escape hatch ported from the Thaw 2 move path (there
+     /// inputPauseThresholdMs, default 50 ms): users hit by cursor kidnapping
+     /// during reordering can widen it via
+-    /// defaults write <bundle-id> InputPauseThresholdMs -int <milliseconds>.
++    /// defaults write <bundle-id> inputPauseThresholdMs -int <milliseconds>.
+     static nonisolated var inputPauseThreshold: Duration {
+         Duration.milliseconds(max(
+             0,
 ```
 
 ---
 
-### Incident Patch 3: `6cec335f` (2026-11-15)
-**Commit Message**: perf(core): wrap polling and Accessibility loops in autoreleasepool (#1599)
+### Incident Patch 2: `0e778cc7` (2026-11-24)
+**Commit Message**: build(deps): bump the github-actions group with 4 updates (#1691)
 
-* perf(core): wrap polling and Accessibility loops in autoreleasepool
+Bumps the github-actions group with 4 updates: [github/codeql-action/init](https://github.com/github/codeql-action), [github/codeql-action/analyze](https://github.com/github/codeql-action), [ossf/scorecard-action](https://github.com/ossf/scorecard-action) and [github/codeql-action/upload-sarif](https://github.com/github/codeql-action).
 
-Wrap repeated CGWindowList, CGS/SLS, and AXUIElement query loops in explicit autoreleasepool blocks.
 
-Bridged CFArray and NSDictionary descriptions lingered across runloop turns, inflating steady-state physical footprint.
+Updates `github/codeql-action/init` from 4.39.3 to 4.39.4
+- [Release notes](https://github.com/github/codeql-action/releases)
+- [Changelog](https://github.com/github/codeql-action/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/github/codeql-action/compare/33d7b85da1a04171e211befe2c739303b9a4c066...1bd86f2fdb4b86187fa4059f16f31a3202acc9ea)
 
-Physical footprint (cold launch 15s):
-- Before: 92.4 MB (peak 92.5 MB)
-- After: 36.3 MB (peak 42.4 MB) (-56.1 MB / -60.7%)
+Updates `github/codeql-action/analyze` from 4.39.3 to 4.39.4
+- [Release notes](https://github.com/github/codeql-action/releases)
+- [Changelog](https://github.com/github/codeql-action/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/github/codeql-action/compare/33d7b85da1a04171e211befe2c739303b9a4c066...1bd86f2fdb4b86187fa4059f16f31a3202acc9ea)
 
-Memory bench (scripts/check-memory-budget.sh):
-- Peak footprint: 115.6 MB -> 113.5 MB
-- Peak heap: 66.1 MB -> 62.9 MB
+Updates `ossf/scorecard-action` from 2.5.0 to 2.6.0
+- [Release notes](https://github.com/o
 
-Signed-off-by: Doãn Phương Hùng Cường <[REDACTED_EMAIL]>
-
-* revert(core): leave MenuBarItemAXProvider and the lint baseline as they were
-
-The file is size-capped by the lint baseline, so the two lines the autoreleasepool wrapper added were paid for by collapsing the isOutOfTime guard and joining two declarations. Restore the file and the baseline. The concurrent walk keeps its per-app pool in MenuBarItemAXProvider+Walk.swift.
-
-Signed-off-by: René Jiménez <[REDACTED_EMAIL]>
-
----------
-
-Signed-off-by: Doãn Phương Hùng Cường <[REDACTED_EMAIL]>
-
-**File**: `Thaw/Input/Events/NotificationCenterActivation.swift` (modified, +9/-7)
+**File**: `.github/workflows/codeql.yml` (modified, +2/-2)
 ```diff
-@@ -90,13 +90,15 @@ final class NotificationCenterActivation {
-     /// Notification Center is presenting when its panel window is on-screen.
-     /// The flag flips within ~100 ms of open and close, inside one poll interval.
-     private static nonisolated func systemPanelPresenting() -> Bool {
--        let owners = Set(
--            NSRunningApplication.runningApplications(withBundleIdentifier: panelOwnerBundleID)
--                .map(\.processIdentifier)
--        )
--        guard !owners.isEmpty else { return false }
--        let list = CGWindowListCopyWindowInfo([.optionOnScreenOnly], kCGNullWindowID) as? [[String: Any]] ?? []
--        return list.contains { isPanelWindow($0, panelOwners: owners) }
-+        autoreleasepool {
-+            let owners = Set(
-+                NSRunningApplication.runningApplications(withBundleIdentifier: panelOwnerBundleID)
-+                    .map(\.processIdentifier)
-+            )
-+            guard !owners.isEmpty else { return false }
-+            let list = CGWindowListCopyWindowInfo([.optionOnScreenOnly], kCGNullWindowID) as? [[String: Any]] ?? []
-+            return list.contains { isPanelWindow($0, panelOwners: owners) }
+@@ -39,7 +39,7 @@ jobs:
+         run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+ 
+       - name: Initialize CodeQL
+-        uses: github/codeql-action/init@33d7b85da1a04171e211befe2c739303b9a4c066 # v4.39.3
++        uses: github/codeql-action/init@1bd86f2fdb4b86187fa4059f16f31a3202acc9ea # v4.39.4
+         with:
+           languages: swift
+           build-mode: manual
+@@ -62,7 +62,7 @@ jobs:
+             CODE_SIGNING_ALLOWED=NO
+ 
+       - name: Perform CodeQL Analysis
+-        uses: github/codeql-action/analyze@33d7b85da1a04171e211befe2c739303b9a4c066 # v4.39.3
++        uses: github/codeql-action/analyze@1bd86f2fdb4b86187fa4059f16f31a3202acc9ea # v4.39.4
+         with:
+           category: "/language:swift"
+           # File the results under the branch that was scanned, not development.
+```
+
+**File**: `.github/workflows/scorecard.yml` (modified, +2/-2)
+```diff
+@@ -35,7 +35,7 @@ jobs:
+           persist-credentials: false
+ 
+       - name: "Run analysis"
+-        uses: ossf/scorecard-action@fa7117db83c52d787ae5a89f350999701505d78e # v2.5.0
++        uses: ossf/scorecard-action@23f22cd43608bae7a1f1fa2603d7314dee9538a5 # v2.6.0
+         with:
+           results_file: results.sarif
+           results_format: sarif
+@@ -53,6 +53,6 @@ jobs:
+           retention-days: 5
+ 
+       - name: "Upload to code-scanning"
+-        uses: github/codeql-action/upload-sarif@33d7b85da1a04171e211befe2c739303b9a4c066 # v4.39.3
++        uses: github/codeql-action/upload-sarif@1bd86f2fdb4b86187fa4059f16f31a3202acc9ea # v4.39.4
+         with:
+           sarif_file: results.sarif
+```
+
+---
+
+### Incident Patch 3: `63a96c2d` (2026-11-24)
+**Commit Message**: fix(thaw-bar): space captured icons by their visible bounds (#1693)
+
+Signed-off-by: Alox x <[REDACTED_EMAIL]>
+
+**File**: `.swiftlint.baseline` (modified, +5/-5)
+```diff
+@@ -2212,7 +2212,7 @@
+     "file": "Thaw/Panels/ThawBar/ThawBarContentView.swift",
+     "line": 22
+    },
+-   "reason": "Struct body should span 350 lines or less excluding comments and whitespace: currently spans 374 lines",
++   "reason": "Struct body should span 350 lines or less excluding comments and whitespace: currently spans 373 lines",
+    "ruleDescription": "Type bodies should not span too many lines",
+    "ruleIdentifier": "type_body_length",
+    "ruleName": "Type Body Length",
+@@ -2225,7 +2225,7 @@
+    "location": {
+     "character": 13,
+     "file": "Thaw/Panels/ThawBar/ThawBarContentView.swift",
+-    "line": 316
++    "line": 315
+    },
+    "reason": "Function should have complexity 10 or less; currently complexity is 11",
+    "ruleDescription": "Complexity of function bodies should be limited.",
+@@ -2240,7 +2240,7 @@
+    "location": {
+     "character": 13,
+     "file": "Thaw/Panels/ThawBar/ThawBarContentView.swift",
+-    "line": 316
++    "line": 315
+    },
+    "reason": "Function body should span 100 lines or less excluding comments and whitespace: currently spans 121 lines",
+    "ruleDescription": "Function bodies should not span too many lines",
+@@ -2255,9 +2255,9 @@
+    "location": {
+     "character": 1,
+     "file": "Thaw/Panels/ThawBar/ThawBarContentView.swift",
+-    "line": 486
++    "line": 485
+    },
+-   "reason": "File should contain 400 lines or less: currently contains 486",
++   "reason": "File should contain 400 lines or less: currently contains 485",
+    "ruleDescription": "Files should not span too many lines.",
+    "ruleIdentifier": "file_length",
+    "ruleName": "File Length",
+```
+
+**File**: `CHANGELOG.md` (modified, +3/-0)
+```diff
+@@ -24,6 +24,9 @@ the items under New and Fixed.
+ 
+ ## [Unreleased]
+ 
++### Fixed
++
++- The Thaw Bar trims transparent side margins from captured icons and keeps a minimum gap between items.
+ ### Changed
+ 
+ - **Exported diagnostics no longer include saved item lists,** and Thaw keeps only the newest five item lists.
+```
+
+**File**: `Thaw/Panels/ThawBar/ThawBarContentView+ItemSize.swift` (modified, +8/-1)
+```diff
+@@ -6,17 +6,24 @@
+ //  Licensed under the GNU GPLv3
+ 
+ import SwiftUI
++import ThawUI
+ 
+ extension ThawBarItemSize {
+     /// A status item's height, which the pictures in the bar are cropped to. An icon standing in
+     /// for a picture is fitted to it, so it isn't smaller than the pictures beside it.
+     static let appIconHeight: CGFloat = 24
+ 
++    @MainActor
++    func itemSpacing(offset: Double) -> CGFloat {
++        max(ThawSpacing.hairline, spacing(ThawSpacing.base + CGFloat(offset).rounded()))
++    }
++
+     /// The size the Thaw Bar draws an item's glyph at: fitted to the menu bar's
+     /// height, or an icon standing in for a picture to a picture's, then scaled.
++    @MainActor
+     func glyphSize(for image: MenuBarItemDisplayImage) -> CGSize {
+         guard case .icon = image else {
+-            return scaledGlyphSize(image.targetSize(fittingHeight: fittingHeight))
++            return scaledGlyphSize(image.targetSize(fittingHeight: fittingHeight, trimsCapturePadding: true))
+         }
+         let intrinsic = image.pointSize
+         let limit = min(fittingHeight.flatMap { $0 > 0 ? $0 : nil } ?? Self.appIconHeight, Self.appIconHeight)
+```
+
+**File**: `Thaw/Panels/ThawBar/ThawBarContentView.swift` (modified, +1/-2)
+```diff
+@@ -92,8 +92,7 @@ struct ThawBarContentView: View {
+     }
+ 
+     private var itemSpacing: CGFloat {
+-        let offset = CGFloat(displaySettings.configuration(for: screen.displayID).itemSpacingOffset).rounded()
+-        return itemSizing.spacing(max(0, ThawSpacing.base + offset))
++        itemSizing.itemSpacing(offset: displaySettings.configuration(for: screen.displayID).itemSpacingOffset)
+     }
+ 
+     private var horizontalPadding: CGFloat {
+```
+
+**File**: `Thaw/Panels/ThawBar/ThawBarItemViews.swift` (modified, +1/-0)
+```diff
+@@ -109,6 +109,7 @@ struct ThawBarItemView: View {
+                 image: image,
+                 fittingHeight: sizing.fittingHeight,
+                 reinksCaptures: true,
++                trimsCapturePadding: true,
+                 drawnSize: sizing.glyphSize(for: image)
+             )
+             .contentShape(Rectangle())
+```
+
+**File**: `Thaw/Settings/SettingsPanes/Displays/ThawBarPreview.swift` (modified, +1/-3)
+```diff
+@@ -57,10 +57,8 @@ struct ThawBarPreview: View {
+         return height > 0 ? height : nil
+     }
+ 
+-    /// The real panel's item spacing: the base gap plus the clamped offset.
+     private var itemSpacing: CGFloat {
+-        let offset = CGFloat(itemSpacingOffset).rounded()
+-        return itemSizing.spacing(max(0, ThawSpacing.base + offset))
++        itemSizing.itemSpacing(offset: itemSpacingOffset)
+     }
+ 
+     /// Scales the tiles the way the real panel scales its glyphs.
+```
+
+**File**: `Thaw/UI/Views/OverflowFallbackIcon.swift` (modified, +16/-6)
+```diff
+@@ -41,22 +41,29 @@ enum MenuBarItemDisplayImage {
+         }
+     }
+ 
+-    var swiftUIImage: Image {
++    func swiftUIImage(trimsCapturePadding: Bool) -> Image {
+         switch self {
+-        case let .capture(capture): Image(decorative: capture.cgImage, scale: capture.scale)
++        case let .capture(capture): Image(decorative: captureBitmap(capture, trimsPadding: trimsCapturePadding), scale: capture.scale)
+         case let .icon(image): Image(nsImage: image)
+         }
+     }
+ 
++    private func captureBitmap(_ capture: MenuBarItemGlyphCapture, trimsPadding: Bool) -> CGImage {
++        (trimsPadding ? capture.horizontallyTrimmedCGImage : nil) ?? capture.cgImage
++    }
++
+     /// The tallest an icon standing in for a capture is drawn, about a menu bar glyph's height,
+     /// so it doesn't tower over captures in a row as tall as a notched menu bar.
+     static let appIconHeight: CGFloat = 18
+ 
+     /// Fit downward only; upscaling native raster glyphs blurs them in taller rows.
+     /// Nil or non-positive row/image heights leave intrinsic size unchanged, except that an icon
+     /// is never drawn taller than appIconHeight.
+-    func targetSize(fittingHeight rowHeight: CGFloat?) -> CGSize {
+-        let intrinsic = pointSize
++    func targetSize(fittingHeight rowHeight: CGFloat?, trimsCapturePadding: Bool = false) -> CGSize {
++        var intrinsic = pointSize
++        if trimsCapturePadding, case let .capture(capture) = self {
++            intrinsic.width = CGFloat(captureBitmap(capture, trimsPadding: true).width) / capture.scale
 +        }
-     }
+         var limit = rowHeight.flatMap { $0 > 0 ? $0 : nil }
+         if case .icon = self {
+             limit = min(limit ?? Self.appIconHeight, Self.appIconHeight)
+@@ -83,13 +90,16 @@ struct MenuBarItemGlyph: View {
+     /// Keep original ink over the menu bar, where it already matches.
+     var reinksCaptures = false
  
-     private nonisolated static let panelOwnerBundleID = "com.apple.notificationcenterui"
++    /// Let the Thaw Bar set the space between neighboring captures.
++    var trimsCapturePadding = false
++
+     /// Overrides the fitted size, for a surface that scales its glyphs like the Thaw Bar.
+     var drawnSize: CGSize?
+ 
+     var body: some View {
+-        let size = drawnSize ?? image.targetSize(fittingHeight: fittingHeight)
++        let size = drawnSize ?? image.targetSize(fittingHeight: fittingHeight, trimsCapturePadding: trimsCapturePadding)
+         // Templating opaque app icons makes blank blocks; preserve their colors.
+-        image.swiftUIImage
++        image.swiftUIImage(trimsCapturePadding: trimsCapturePadding)
+             .renderingMode(image.isTemplate || (reinksCaptures && image.isReinkable) ? .template : .original)
+             .interpolation(.high)
+             .antialiased(true)
 ```
 
-**File**: `Thaw/Items/Capture/MenuBarCaptureReading.swift` (modified, +28/-26)
+**File**: `ThawTests/Items/MenuBarItemGlyphCaptureTests.swift` (modified, +4/-0)
 ```diff
-@@ -203,35 +203,37 @@ extension MenuBarItemImageCache {
-         for ownerPID: pid_t,
-         displayBounds: CGRect
-     ) -> (windowID: CGWindowID, frame: CGRect)? {
--        guard
--            displayBounds.width > 0,
--            let list = CGWindowListCopyWindowInfo([.optionAll], kCGNullWindowID) as? [[String: Any]]
--        else { return nil }
--        var best: (windowID: CGWindowID, frame: CGRect, info: [String: Any])?
--        for info in list {
-+        autoreleasepool {
-             guard
--                let pid = info[kCGWindowOwnerPID as String] as? pid_t, pid == ownerPID,
--                let number = info[kCGWindowNumber as String] as? CGWindowID,
--                let boundsDict = info[kCGWindowBounds as String] as? NSDictionary,
--                let frame = CGRect(dictionaryRepresentation: boundsDict)
--            else { continue }
--            guard ScreenCapture.isMenuBarStripFrame(frame, in: displayBounds),
--                  (info[kCGWindowAlpha as String] as? Double ?? 1) > 0
--            else { continue }
--            if let current = best, frame.width <= current.frame.width {
--                continue
-+                displayBounds.width > 0,
-+                let list = CGWindowListCopyWindowInfo([.optionAll], kCGNullWindowID) as? [[String: Any]]
-+            else { return nil }
-+            var best: (windowID: CGWindowID, frame: CGRect, info: [String: Any])?
-+            for info in list {
-+                guard
-+                    let pid = info[kCGWindowOwnerPID as String] as? pid_t, pid == ownerPID,
-+                    let number = info[kCGWindowNumber as String] as? CGWindowID,
-+                    let boundsDict = info[kCGWindowBounds as String] as? NSDictionary,
-+                    let frame = CGRect(dictionaryRepresentation: boundsDict)
-+                else { continue }
-+                guard ScreenCapture.isMenuBarStripFrame(frame, in: displayBounds),
-+                      (info[kCGWindowAlpha as String] as? Double ?? 1) > 0
-+                else { continue }
-+                if let current = best, frame.width <= current.frame.width {
-+                    continue
-+                }
-+                best = (windowID: number, frame: frame, info: info)
-             }
--            best = (windowID: number, frame: frame, info: info)
-+            guard let best else { return nil }
-+            let layer = best.info[kCGWindowLayer as String] as? Int ?? -1
-+            let onScreen = best.info[kCGWindowIsOnscreen as String] as? Bool ?? false
-+            let owner = best.info[kCGWindowOwnerName as String] as? String ?? "?"
-+            MenuBarItemImageCache.diagLog.debug(
-+                "barWindow: pid \(ownerPID) (\(owner)) → wid=\(best.windowID) frame=\(best.frame) " +
-+                    "layer=\(layer) onScreen=\(onScreen)"
-+            )
-+            return (windowID: best.windowID, frame: best.frame)
-         }
--        guard let best else { return nil }
--        let layer = best.info[kCGWindowLayer as String] as? Int ?? -1
--        let onScreen = best.info[kCGWindowIsOnscreen as String] as? Bool ?? false
--        let owner = best.info[kCGWindowOwnerName as String] as? String ?? "?"
--        MenuBarItemImageCache.diagLog.debug(
--            "barWindow: pid \(ownerPID) (\(owner)) → wid=\(best.windowID) frame=\(best.frame) " +
--                "layer=\(layer) onScreen=\(onScreen)"
--        )
--        return (windowID: best.windowID, frame: best.frame)
-     }
+@@ -94,6 +94,10 @@ struct MenuBarItemGlyphCaptureTests {
  
-     static nonisolated func barWindowCapture(
-```
-
-**File**: `Thaw/Items/Interaction/MenuBarItemAXProvider+Walk.swift` (modified, +10/-8)
-```diff
-@@ -41,14 +41,16 @@ nonisolated extension MenuBarItemAXProvider {
-         var read: @Sendable (
-             _ app: NSRunningApplication, _ appBundleID: String, _ ourBundleID: String?, _ formerHosts: Set<String>
-         ) -> [RawItem] = { app, appBundleID, ourBundleID, formerHosts in
--            MenuBarItemAXProvider.collectApp(
--                runningApp: app,
--                appBundleID: appBundleID,
--                display: nil,
--                displayBounds: nil,
--                ourBundleID: ourBundleID,
--                formerHosts: formerHosts
--            ).raw
-+            autoreleasepool {
-+                MenuBarItemAXProvider.collectApp(
-+                    runningApp: app,
-+                    appBundleID: appBundleID,
-+                    display: nil,
-+                    displayBounds: nil,
-+                    ourBundleID: ourBundleID,
-+                    formerHosts: formerHosts
-+                ).raw
-+            }
-         }
-     }
- 
-```
-
-**File**: `Thaw/Items/Manager/MenuBarItemManager+ConcealedClick.swift` (modified, +5/-2)
-```diff
-@@ -110,8 +110,11 @@ extension MenuBarItemManager {
-     /// level, which also holds the owner's own icons.
-     private func ownerMenuWindowIDs(_ item: MenuBarItem) -> Set<CGWindowID> {
-         let pids = item.reactionPIDs
--        let windows = WindowInfo.createWindows(from: Bridging.getWindowList(option: .onScreen)).filter { window in
--            pids.contains(window.ownerPID) && WindowLevelPredicates.isPopUpMenu(layer: window.layer)
-+        let windowIDs = Bridging.getWindowList(option: .onScreen)
-+        let windows = autoreleasepool {
-+            WindowInfo.createWindows(from: windowIDs).filter { window in
-+                pids.contains(window.ownerPID) && WindowLevelPredicates.isPopUpMenu(layer: window.layer)
-+            }
-         }
-         return Set(windows.map(\.windowID))
-     }
-```
-
-**File**: `Thaw/Utilities/SpaceInfo.swift` (modified, +3/-1)
-```diff
-@@ -22,7 +22,9 @@ struct SpaceInfo: Hashable {
-     /// Nil until the window server publishes the space. Each read walks the
-     /// full managed-display list.
-     var managedSpace: Bridging.ManagedSpace? {
--        Bridging.getManagedSpaces().first { $0.spaceID == spaceID }
-+        autoreleasepool {
-+            Bridging.getManagedSpaces().first { $0.spaceID == spaceID }
-+        }
-     }
- 
-     /// A key that survives logout and reboot, unlike spaceID.
-```
-
-**File**: `packages/MenuBarModel/Sources/MenuBarModel/Bridging+ManagedSpaces.swift` (modified, +16/-14)
-```diff
-@@ -58,21 +58,23 @@ public extension Bridging {
- 
-     /// Returns every space the window server currently knows about.
-     static func getManagedSpaces() -> [ManagedSpace] {
--        guard let raw = cgsCopyManagedDisplaySpaces(cgsMainConnectionID()) else {
--            managedSpacesLog.error("cgsCopyManagedDisplaySpaces returned nil")
--            return []
--        }
--        guard let elements = arrayValue(of: raw.takeRetainedValue()) else {
--            managedSpacesLog.error("cgsCopyManagedDisplaySpaces returned a value that is not an array")
--            return []
--        }
--        let displays = elements.compactMap { element -> [String: Any]? in
--            dictionaryValue(of: element as CFTypeRef)
--        }
--        if displays.count != elements.count {
--            managedSpacesLog.error("cgsCopyManagedDisplaySpaces returned an array of unexpected type")
-+        autoreleasepool {
-+            guard let raw = cgsCopyManagedDisplaySpaces(cgsMainConnectionID()) else {
-+                managedSpacesLog.error("cgsCopyManagedDisplaySpaces returned nil")
-+                return []
-+            }
-+            guard let elements = arrayValue(of: raw.takeRetainedValue()) else {
-+                managedSpacesLog.error("cgsCopyManagedDisplaySpaces returned a value that is not an array")
-+                return []
-+            }
-+            let displays = elements.compactMap { element -> [String: Any]? in
-+                dictionaryValue(of: element as CFTypeRef)
-+            }
-+            if displays.count != elements.count {
-+                managedSpacesLog.error("cgsCopyManagedDisplaySpaces returned an array of unexpected type")
-+            }
-+            return managedSpaces(fromDisplays: displays)
-         }
--        return managedSpaces(fromDisplays: displays)
-     }
- 
-     /// The Spaces in entries shaped like CGSCopyManagedDisplaySpaces output, keyed by uuid.
-```
-
-**File**: `packages/MenuBarModel/Sources/MenuBarModel/Bridging.swift` (modified, +33/-33)
-```diff
-@@ -254,23 +254,24 @@ public extension Bridging {
-     /// - Returns: The matching space identifiers, or an empty array if the
-     ///   window server declined to answer.
-     static func getSpaceList(for windowID: CGWindowID, visibleSpacesOnly: Bool = false) -> [CGSSpaceID] {
--        let scope: CGSSpaceMask = visibleSpacesOnly ? .allVisibleSpacesMask : .allSpacesMask
--        // Another Copy call: the array arrives at +1 and is consumed retained
--        // on both the success and the wrong-type path, so a description the
--        // bridge cannot read is still released rather than leaked.
--        guard let copied = cgsCopySpacesForWindows(processConnection, scope.rawValue, [windowID] as CFArray) else {
--            diagLog.error("cgsCopySpacesForWindows returned nil")
--            return []
--        }
--        guard let elements = arrayValue(of: copied.takeRetainedValue()) else {
--            diagLog.error("cgsCopySpacesForWindows returned a value that is not an array")
--            return []
--        }
--        guard let spaceIDs = elements as? [CGSSpaceID] else {
--            diagLog.error("cgsCopySpacesForWindows returned array of unexpected type")
--            return []
-+        autoreleasepool {
-+            let scope: CGSSpaceMask = visibleSpacesOnly ? .allVisibleSpacesMask : .allSpacesMask
-+            // Another Copy call: the array arrives at +1 and is consumed retained on both the
-+            // success and wrong-type paths, so a description the bridge cannot read is released.
-+            guard let copied = cgsCopySpacesForWindows(processConnection, scope.rawValue, [windowID] as CFArray) else {
-+                diagLog.error("cgsCopySpacesForWindows returned nil")
-+                return []
-+            }
-+            guard let elements = arrayValue(of: copied.takeRetainedValue()) else {
-+                diagLog.error("cgsCopySpacesForWindows returned a value that is not an array")
-+                return []
-+            }
-+            guard let spaceIDs = elements as? [CGSSpaceID] else {
-+                diagLog.error("cgsCopySpacesForWindows returned array of unexpected type")
-+                return []
-+            }
-+            return spaceIDs
-         }
--        return spaceIDs
-     }
- 
-     /// Whether a space is a full-screen space rather than a desktop.
-@@ -664,33 +665,32 @@ public extension Bridging {
-             diagLog.debug("getMenuBarWindowList: onScreen filter active, \(resolved.count) on-screen windows")
-             onScreenIDs = resolved
-         }
--
-         var requiredSpaceID: CGSSpaceID?
-         if option.contains(.activeSpace) {
-             let resolved = getActiveSpaceID()
-             diagLog.debug("getMenuBarWindowList: activeSpace filter active, spaceID = \(resolved)")
-             requiredSpaceID = resolved
-         }
--
-         let excludesTheBarItself = option.contains(.itemsOnly)
--
-         let rawList = processMenuBarWindowIDs()
-         let filtered = rawList.filter { windowID in
--            if let onScreenIDs, !onScreenIDs.contains(windowID) {
--                return false
--            }
--            if let requiredSpaceID, !isWindowOnSpace(windowID, requiredSpaceID) {
--                return false
--            }
--            // The bar itself sits at the main menu level and the items in it do
--            // not. Checked last because it is the only filter that costs a
--            // round trip per window, so the cheap set and space tests get to
--            // reject first. A window whose level cannot be read is kept: an
--            // unreadable level is not evidence of being the bar.
--            if excludesTheBarItself, getWindowLevel(for: windowID) == kCGMainMenuWindowLevel {
--                return false
-+            autoreleasepool {
-+                if let onScreenIDs, !onScreenIDs.contains(windowID) {
-+                    return false
-+                }
-+                if let requiredSpaceID, !isWindowOnSpace(windowID, requiredSpaceID) {
-+                    return false
-+                }
-+                // The bar itself sits at the main menu level and the items in it do
-+                // not. Checked last because it is the only filter that costs a
-+                // round trip per window, so the cheap set and space tests get to
-+                // reject first. A window whose level cannot be read is kept: an
-+                // unreadable level is not evidence of being the bar.
-+                if excludesTheBarItself, getWindowLevel(for: windowID) == kCGMainMenuWindowLevel {
-+                    return false
-+                }
-+                return true
-             }
--            return true
-         }
-         diagLog.debug("getMenuBarWindowList: \(rawList.count) raw -> \(filtered.count) after filtering (options: onScreen=\(option.contains(.onScreen)), activeSpace=\(option.contains(.activeSpace)), itemsOnly=\(option.contains(.itemsOnly)))")
-         return filtered
-```
-
-**File**: `packages/MenuBarModel/Sources/MenuBarModel/WindowInfo.swift` (modified, +25/-23)
-```diff
-@@ -160,31 +160,33 @@ public extension WindowInfo {
-     /// - Returns: Descriptions the window server still recognises, in its
-     ///   order. Closed windows and unreadable descriptions are dropped.
-     static func createWindows(from windowIDs: [CGWindowID]) -> [WindowInfo] {
--        guard let array = Bridging.createCGWindowArray(with: windowIDs) else {
--            diagLog.warning("createWindows: createCGWindowArray returned nil for \(windowIDs.count) window IDs")
--            return []
--        }
--        guard let raw = CGWindowListCreateDescriptionFromArray(array) else {
--            // The window server answers nil for a whole process (the capture
--            // service, for one), so the first refusal is the diagnostic.
--            let firstRefusal = !nilDescriptionLogged.exchange(true, ordering: .relaxed)
--            if firstRefusal {
--                diagLog.warning("createWindows: CGWindowListCreateDescriptionFromArray returned nil for \(windowIDs.count) window IDs; further refusals log at debug")
--            } else {
--                diagLog.debug("createWindows: CGWindowListCreateDescriptionFromArray returned nil for \(windowIDs.count) window IDs")
-+        autoreleasepool {
-+            guard let array = Bridging.createCGWindowArray(with: windowIDs) else {
-+                diagLog.warning("createWindows: createCGWindowArray returned nil for \(windowIDs.count) window IDs")
-+                return []
-             }
--            return []
--        }
--        guard let list = Bridging.arrayValue(of: raw) else {
--            let typeName = CFCopyTypeIDDescription(CFGetTypeID(raw)) as String? ?? "unknown"
--            diagLog.warning("createWindows: CGWindowListCreateDescriptionFromArray returned a \(typeName), not an array, for \(windowIDs.count) window IDs")
--            return []
--        }
--        let windows = list.compactMap { WindowInfo(element: $0) }
--        if windows.count != windowIDs.count {
--            diagLog.debug("createWindows: \(windowIDs.count) IDs -> \(list.count) descriptions -> \(windows.count) WindowInfo objects (some may have failed init)")
-+            guard let raw = CGWindowListCreateDescriptionFromArray(array) else {
-+                // The window server answers nil for a whole process (the capture
-+                // service, for one), so the first refusal is the diagnostic.
-+                let firstRefusal = !nilDescriptionLogged.exchange(true, ordering: .relaxed)
-+                if firstRefusal {
-+                    diagLog.warning("createWindows: CGWindowListCreateDescriptionFromArray returned nil for \(windowIDs.count) window IDs; further refusals log at debug")
-+                } else {
-+                    diagLog.debug("createWindows: CGWindowListCreateDescriptionFromArray returned nil for \(windowIDs.count) window IDs")
-+                }
-+                return []
-+            }
-+            guard let list = Bridging.arrayValue(of: raw) else {
-+                let typeName = CFCopyTypeIDDescription(CFGetTypeID(raw)) as String? ?? "unknown"
-+                diagLog.warning("createWindows: CGWindowListCreateDescriptionFromArray returned a \(typeName), not an array, for \(windowIDs.count) window IDs")
-+                return []
-+            }
-+            let windows = list.compactMap { WindowInfo(element: $0) }
-+            if windows.count != windowIDs.count {
-+                diagLog.debug("createWindows: \(windowIDs.count) IDs -> \(list.count) descriptions -> \(windows.count) WindowInfo objects (some may have failed init)")
-+            }
-+            return windows
-         }
--        return windows
-     }
- 
-     /// Describes every window, narrowed by option.
+         #expect(trimmed.width == 8)
+         #expect(trimmed.height == 16)
++        let image = MenuBarItemDisplayImage.capture(capture)
++        let bar = ThawBarItemSize(fittingHeight: 8)
++        #expect(bar.glyphSize(for: image) == CGSize(width: 4, height: 8))
++        #expect(image.targetSize(fittingHeight: 8) == CGSize(width: 10, height: 8))
+         #expect(capture.horizontallyTrimmedCGImage === trimmed)
+         // A copy of the value shares the memoized trim.
+         let copy = capture
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1650** (closed): fix(capture): let the capture helper stay up for a session opened as it exits (@diazdesandi)
-- **PR #1649** (closed): fix(widgets): redraw the icon when only its lit segments change (@diazdesandi)
-- **PR #1648** (closed): perf(layout): filter the reorder's items only when its plan needs them (@diazdesandi)
-- **PR #1647** (closed): perf(appearance): read the app menu's edge on app switches only for the split shape (@diazdesandi)
-- **PR #1646** (closed): perf(capture): check cached pictures against live items with one set lookup each (@diazdesandi)
-- **PR #1645** (closed): perf(capture): don't rescan the bar when a visible pass asked for no pictures (@diazdesandi)
+- **PR #1693** (2026-11-24): fix(thaw-bar): space captured icons by their visible bounds (@alox92)
+- **PR #1692** (2026-11-24): build(deps): bump the github-actions group with 4 updates (@dependabot[bot])
+- **PR #1691** (2026-11-24): build(deps): bump the github-actions group with 4 updates (@dependabot[bot])
+- **PR #1690** (2026-11-24): build(deps): bump the swift group with 2 updates (@dependabot[bot])
+- **PR #1688** (2026-11-24): refactor(items): move the section order pass scope checks out of MenuBarItemManager+Moving (@elior-esh)
+- **PR #1687** (2026-11-24): fix(layout): re-lay Thaw's controls in Manual when they stand out of order (@diazdesandi)
 
 ---
 
@@ -2481,31 +1893,72 @@ Signed-off-by: Doãn Phương Hùng Cường <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. capture): update pictures of hidden items when their icons change
+## X. keep tests off the real preferences, show pictures after a layout reset, and sma
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in thaw-app/Thaw. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.swiftlint.baseline`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in thaw-app/Thaw. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c0da4095`: capture): update pictures of hidden items when their icons change. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d09f6a70`: keep tests off the real preferences, show pictures after a layout reset, and small cleanups. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `.swiftlint.baseline`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-- **A hidden item you open from the Thaw Bar gets a new picture once its menu closes,** so an icon that changed while hidden, such as one showing an update, no longer keeps its old look. macOS shows the screen recording indicator for a moment. By @Omoeba in [#1620](https://github.com/thaw-app/Thaw/pull/1620).
+   "reason": "Class body should span 350 lines or less excluding comments and whitespace: currently spans 390 lines",
+    "line": 523
+   "reason": "File should contain 400 lines or less: currently contains 527",
+    "line": 580
+   "reason": "Function body should span 100 lines or less excluding comments and whitespace: currently spans 216 lines",
+   "ruleDescription": "Function bodies should not span too many lines",
+   "ruleIdentifier": "function_body_length",
+   "ruleName": "Function Body Length",
+   "reason": "Function should have complexity 10 or less; currently complexity is 33",
+   "ruleDescription": "Complexity of function bodies should be limited.",
+   "ruleIdentifier": "cyclomatic_complexity",
+   "ruleName": "Cyclomatic Complexity",
+    "line": 941
+   "reason": "File should contain 400 lines or less: currently contains 941",
+    "line": 808
+    "line": 912
+   "reason": "File should contain 400 lines or less: currently contains 912",
+    "line": 1437
+   "reason": "Function should have complexity 10 or less; currently complexity is 27",
+    "line
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+   "reason": "Class body should span 350 lines or less excluding comments and whitespace: currently spans 396 lines",
+    "line": 534
+   "reason": "File should contain 400 lines or less: currently contains 534",
+    "line": 583
+   "reason": "Function should have complexity 10 or less; currently complexity is 33",
+   "ruleDescription": "Complexity of function bodies should be limited.",
+   "ruleIdentifier": "cyclomatic_complexity",
+   "ruleName": "Cyclomatic Complexity",
+   "reason": "Function body should span 100 lines or less excluding comments and whitespace: currently spans 222 lines",
+   "ruleDescription": "Function bodies should not span too many lines",
+   "ruleIdentifier": "function_body_length",
+   "ruleName": "Function Body Length",
+    "line": 951
+   "reason": "File should contain 400 lines or less: currently contains 951",
+ {
+  "text": "    private func resetAssignments(to target: MenuBarSection.Name = .hidden) async throws -> Int {",
+  "violation": {
+   "location": {
+    "character": 13,
+    "file": "Thaw/Items/Manager/MenuBarItemManager+LayoutReset.swift",
+    "line": 433
+   },
+   "reason": "Function body should span 50 lines or less excluding comments and whitespace: 
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c0da4095` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d09f6a70` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

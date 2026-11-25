@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-25T03:50:53.287Z",
+  "last_updated": "2026-11-25T03:59:15.222Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3171,14 +3171,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nitrojs-nitro",
-      "content_hash": "cb29821f90f2e9fba487fbd541913c96fcb2498b099aebb35c0518e496e1c752",
-      "verified_at": "2026-11-21T06:13:50.943Z",
+      "content_hash": "a3b92817b8c0dec494a6f250c5e4c300aec9bf35b24bc9533338eedbaebd81db",
+      "verified_at": "2026-11-25T03:59:13.995Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T06:13:50.943Z"
+      "last_updated": "2026-11-25T03:59:13.995Z"
     },
     "h3js/h3": {
       "repository": "h3js/h3",
@@ -11781,14 +11781,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-thaw-app-thaw",
-      "content_hash": "e7a5095d378208d53740cc41a335c6585950aff994393a41fffdd7376eac9a53",
-      "verified_at": "2026-11-22T17:35:23.383Z",
+      "content_hash": "2629b49454e1e32854c8f1da66839f7f018062fec3b3f747a336de7532776b2a",
+      "verified_at": "2026-11-25T03:59:15.221Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T17:35:23.383Z"
+      "last_updated": "2026-11-25T03:59:15.221Z"
     },
     "rtk-ai/rtk": {
       "repository": "rtk-ai/rtk",

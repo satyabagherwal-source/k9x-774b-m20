@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-25T03:51:01.568Z",
+  "last_updated": "2026-11-25T03:59:22.317Z",
   "total_verified_learnings": 9111,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25206,
+  "total_items": 25211,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112066,9 +112066,9 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "976a22f6f80982eadd1594dfc8f3802865212387943b7148ec7d8c712f7c9cda",
+      "content_hash": "18dd07c116ebcb7135a7282c5050b51d6ff87235318f78c290c79d000b5ab2e5",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T03:51:01.141Z"
+      "persisted_at": "2026-11-25T03:59:21.970Z"
     },
     "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona",
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "c76f380d7ebbfe392f64e225b9a2364ccd5378f600bca670d9e686e8ad9a3c25",
+      "content_hash": "37ab8a48c8a464b3a7280ba68ef25cef869836f1507dfe053801609b28eeb225",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T03:51:01.369Z"
+      "persisted_at": "2026-11-25T03:59:22.165Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "406c49b193ffbaf5f9d81281c7b2b104808d7cca9f2c98b87b92129949faebc0",
+      "content_hash": "fa874660064f891ac71218cd73d611ec9253393a87c7a59fdf79e7a4bba2e483",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T03:51:01.568Z"
+      "persisted_at": "2026-11-25T03:59:22.317Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -248212,8 +248212,8 @@
       "slug": "thaw-app-thaw",
       "platform": "github",
       "source_url": "https://github.com/thaw-app/Thaw",
-      "source_version": "50b2558d",
-      "content_hash": "e7a5095d378208d53740cc41a335c6585950aff994393a41fffdd7376eac9a53",
+      "source_version": "63a96c2d",
+      "content_hash": "2629b49454e1e32854c8f1da66839f7f018062fec3b3f747a336de7532776b2a",
       "dossier_path": "07_PROJECT_LEARNING/thaw-app-thaw-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/thaw-app-thaw-learnings.md",
       "promoted_rules": [
@@ -248231,6 +248231,11 @@
           "number": 9963,
           "title": "stop the closed section dividers from leaving a gap in the menu bar",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10449,
+          "title": "keep tests off the real preferences, show pictures after a layout reset, and sma",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -248238,7 +248243,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T17:35:23.113Z",
+      "verified_at": "2026-11-25T03:59:14.978Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -248292,10 +248297,10 @@
       "relative_path": "08_VERIFICATION/thaw-app-thaw-verification-protocol-empirical-defect-shield-for-thaw-app-thaw.md",
       "title": "Verification Protocol: Empirical Defect Shield for thaw-app/Thaw",
       "repository": "thaw-app/Thaw",
-      "source_version": "50b2558d",
-      "content_hash": "2474b49db6730bc0eba870a40df88211f5cd1ffca68d7bdb6b31f1d09a41c9c2",
+      "source_version": "63a96c2d",
+      "content_hash": "0f6443dadf21c5d7b920c3c41d7559127f941d52f7c0c7a4d25cec871e0f2875",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T17:35:24.038Z"
+      "persisted_at": "2026-11-25T03:59:15.850Z"
     },
     "learn-github-open-policy-agent-gatekeeper": {
       "learning_id": "learn-github-open-policy-agent-gatekeeper",
@@ -248493,9 +248498,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for thaw-app-thaw-learnings",
       "repository": "thaw-app-thaw-learnings",
       "source_version": "HEAD",
-      "content_hash": "fe1708f1e9fb9e2ba0a81f31ae02e437af6af15aac55649b17648881bcb27073",
+      "content_hash": "679316b2636a358b3c2896478b0cdd46f7f3536da9f494f1abc045897801229e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T17:35:39.113Z"
+      "persisted_at": "2026-11-25T03:59:21.133Z"
     },
     "domain_intelligence-quality-verification-intelligence-open-policy-agent-gatekeeper-learnings-core-in": {
       "item_id": "domain_intelligence-quality-verification-intelligence-open-policy-agent-gatekeeper-learnings-core-in",
@@ -276785,8 +276790,8 @@
       "slug": "unjs-nitro",
       "platform": "github",
       "source_url": "https://github.com/unjs/nitro",
-      "source_version": "571aade6",
-      "content_hash": "cb29821f90f2e9fba487fbd541913c96fcb2498b099aebb35c0518e496e1c752",
+      "source_version": "925c1355",
+      "content_hash": "a3b92817b8c0dec494a6f250c5e4c300aec9bf35b24bc9533338eedbaebd81db",
       "dossier_path": "07_PROJECT_LEARNING/unjs-nitro-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/unjs-nitro-learnings.md",
       "promoted_rules": [
@@ -276799,6 +276804,11 @@
           "number": 9733,
           "title": "fix GitHub Discussions link in CONTRIBUTING.md",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10448,
+          "title": "forward event.waitUntil to the Netlify context",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -276806,7 +276816,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T06:13:50.731Z",
+      "verified_at": "2026-11-25T03:59:13.749Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -276848,10 +276858,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-unjs-nitro-technical-construction-intelligence-nitrojs-nitro-core-invariants.md",
       "title": "Technical Construction Intelligence: nitrojs/nitro Core Invariants",
       "repository": "nitrojs/nitro",
-      "source_version": "571aade6",
-      "content_hash": "96aa66e2a859152800a9333e3ed7fe53ac0e5eacaff292147958307f0e2e3550",
+      "source_version": "925c1355",
+      "content_hash": "23ce9facf9e1e68e21e872eb50b0b5b1b444ff495457268a0d78184ce6beaa7a",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T06:13:51.301Z"
+      "persisted_at": "2026-11-25T03:59:14.441Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nitrojs-nitro": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nitrojs-nitro",
@@ -276860,10 +276870,10 @@
       "relative_path": "08_VERIFICATION/unjs-nitro-verification-protocol-empirical-defect-shield-for-nitrojs-nitro.md",
       "title": "Verification Protocol: Empirical Defect Shield for nitrojs/nitro",
       "repository": "nitrojs/nitro",
-      "source_version": "571aade6",
-      "content_hash": "03b0ae010bd36eb7e69c704fe4db82986d1babe1ac972f3cfe0aeeebbab76dca",
+      "source_version": "925c1355",
+      "content_hash": "aa29dbc15c07e3c651199dbb0beb38cb4f87f42690ac501e9011dcb9dd0d4203",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T06:13:51.457Z"
+      "persisted_at": "2026-11-25T03:59:14.633Z"
     },
     "rule-8970": {
       "learning_id": "rule-8970",
@@ -276923,9 +276933,9 @@
       "title": "Technical Construction Intelligence: unjs-nitro-learnings Core Invariants",
       "repository": "unjs-nitro-learnings",
       "source_version": "HEAD",
-      "content_hash": "2ab66e81546867ae86b9d40f2c32633b20708428e89c8abdf20e7a96a62ab977",
+      "content_hash": "6c139e1b1e641e0fb969f9eb785efa70ecbfb815d8df65b7d6fd74b528031175",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T06:14:04.101Z"
+      "persisted_at": "2026-11-25T03:59:19.921Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-unjs-nitro-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-unjs-nitro-learnings",
@@ -276935,9 +276945,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for unjs-nitro-learnings",
       "repository": "unjs-nitro-learnings",
       "source_version": "HEAD",
-      "content_hash": "6a3a76f10166360d2ee94e6647e962b65c89c3bcb1e6342abb48e81e40422671",
+      "content_hash": "4eb84cd009352374fe7504f17095b1de53592de179aa064a8b9e0952e26da3b7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T06:14:04.267Z"
+      "persisted_at": "2026-11-25T03:59:20.113Z"
     },
     "rule-8971": {
       "learning_id": "rule-8971",
@@ -300264,10 +300274,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-thaw-app-thaw-architecture-intelligence-thaw-app-thaw-core-invariants.md",
       "title": "Architecture Intelligence: thaw-app/Thaw Core Invariants",
       "repository": "thaw-app/Thaw",
-      "source_version": "8b34c731",
-      "content_hash": "ae54ec2e291264a7cad003afde7dbf4667181f942dcb2a19bea65f557e400dee",
+      "source_version": "63a96c2d",
+      "content_hash": "8a856b7592af37b7216f2f28d72d304d75e856b8afd46ae02746f7ff916c4302",
       "domain_letter": "G",
-      "persisted_at": "2026-11-19T16:07:19.973Z"
+      "persisted_at": "2026-11-25T03:59:15.648Z"
     },
     "rule-9402": {
       "learning_id": "rule-9402",
@@ -300353,9 +300363,9 @@
       "title": "Architecture Intelligence: thaw-app-thaw-learnings Core Invariants",
       "repository": "thaw-app-thaw-learnings",
       "source_version": "HEAD",
-      "content_hash": "0ee864f2d2dabc8c0630df6133714e76cbcbfadc1326c6eaa62bc8aec8b9fa43",
+      "content_hash": "6dc2d12545377782d4aeb6a3fd903d6131ce9c6d333111dcdce61a7c8f41ae03",
       "domain_letter": "G",
-      "persisted_at": "2026-11-19T16:08:33.975Z"
+      "persisted_at": "2026-11-25T03:59:20.947Z"
     },
     "candidate_directive-pyflakes-fix-false-negative-when-a-name-is-assigned-more-than-once-f823": {
       "item_id": "candidate_directive-pyflakes-fix-false-negative-when-a-name-is-assigned-more-than-once-f823",
@@ -342073,13 +342083,13 @@
       "item_id": "candidate_directive-rust-bind-bare-calls-to-the-enclosing-module-s-items",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-69SP-rust-bind-bare-calls-to-the-enclosing-module-s-items.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-H0AG-rust-bind-bare-calls-to-the-enclosing-module-s-items.md",
       "title": "rust): bind bare calls to the enclosing module's items",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "db9119ea188f26e519abcd4b26865892fb59d3aedc06887faffc49c447c7e392",
+      "content_hash": "0210472abf62a0da4ca51a838c1c5ebce83622c2c77c50ee387d2bbe237e2e8b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T03:51:00.895Z"
+      "persisted_at": "2026-11-25T03:59:21.788Z"
     },
     "domain_intelligence-content-information-intelligence-rollup-rollup-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-rollup-rollup-learnings-core-invariants",
@@ -344644,6 +344654,70 @@
       "content_hash": "e6744b63d49c39b0d0eaaa89232840297cf444854bc4536faf3a6031869652aa",
       "domain_letter": "K",
       "persisted_at": "2026-11-25T03:50:59.564Z"
+    },
+    "rule-10448": {
+      "learning_id": "rule-10448",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10448,
+      "title": "forward event.waitUntil to the Netlify context",
+      "source_url": "https://github.com/unjs/nitro",
+      "source_version": "925c1355",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T03:59:13.749Z"
+    },
+    "candidate_directive-forward-event-waituntil-to-the-netlify-context": {
+      "item_id": "candidate_directive-forward-event-waituntil-to-the-netlify-context",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-GUGU-forward-event-waituntil-to-the-netlify-context.md",
+      "title": "forward event.waitUntil to the Netlify context",
+      "repository": "nitrojs/nitro",
+      "source_version": "925c1355",
+      "content_hash": "398e8cc1e8fcde8b589fc73afdca8e954caddeb685cbe3f08f3d3269e834c054",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-25T03:59:14.239Z"
+    },
+    "rule-10449": {
+      "learning_id": "rule-10449",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10449,
+      "title": "keep tests off the real preferences, show pictures after a layout reset, and sma",
+      "source_url": "https://github.com/thaw-app/Thaw",
+      "source_version": "63a96c2d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T03:59:14.978Z"
+    },
+    "candidate_directive-keep-tests-off-the-real-preferences-show-pictures-after-a-layout-reset-and-sma": {
+      "item_id": "candidate_directive-keep-tests-off-the-real-preferences-show-pictures-after-a-layout-reset-and-sma",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-GZHZ-keep-tests-off-the-real-preferences-show-pictures-after-a-layout-reset-and-sma.md",
+      "title": "keep tests off the real preferences, show pictures after a layout reset, and sma",
+      "repository": "thaw-app-thaw-learnings",
+      "source_version": "HEAD",
+      "content_hash": "c8b932b4bb5461135a751c3ea302b8aa4ded2de109224654d792168a8cd4cd27",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-25T03:59:20.762Z"
+    },
+    "candidate_directive-netlify-forward-event-waituntil-to-the-netlify-context": {
+      "item_id": "candidate_directive-netlify-forward-event-waituntil-to-the-netlify-context",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-GYPK-netlify-forward-event-waituntil-to-the-netlify-context.md",
+      "title": "netlify): forward event.waitUntil to the Netlify context",
+      "repository": "unjs-nitro-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f1953803eb4a7548c8ac0788b1692802ba9ec3796a767b18dee6a8f9a02931f7",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-25T03:59:19.737Z"
     }
   },
   "ai-builder-brain": {

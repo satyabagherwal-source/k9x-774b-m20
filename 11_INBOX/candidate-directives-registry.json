@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T03:51:00.895Z",
+  "last_updated": "2026-11-25T03:59:21.788Z",
   "directives": [
     {
       "id": "CD-001",
@@ -57835,11 +57835,11 @@
       "domain_letter": "H"
     },
     {
-      "id": "CD-69SP",
+      "id": "CD-H0AG",
       "directive_title": "rust): bind bare calls to the enclosing module's items",
       "source_repo": "zvec-ai-zvec-grep-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-69SP-rust-bind-bare-calls-to-the-enclosing-module-s-items.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-H0AG-rust-bind-bare-calls-to-the-enclosing-module-s-items.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-25",
@@ -59299,6 +59299,57 @@
       "source_repo": "zvec-ai-zvec-grep",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-4903FB-rust-bind-bare-calls-to-the-enclosing-mo.md",
+      "staged_date": "2026-11-25"
+    },
+    {
+      "id": "CD-GUGU",
+      "directive_title": "forward event.waitUntil to the Netlify context",
+      "source_repo": "nitrojs/nitro",
+      "source_commit": "925c1355",
+      "staged_file": "11_INBOX/candidate-directives/CD-GUGU-forward-event-waituntil-to-the-netlify-context.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-25",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-GZHZ",
+      "directive_title": "keep tests off the real preferences, show pictures after a layout reset, and sma",
+      "source_repo": "thaw-app-thaw-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-GZHZ-keep-tests-off-the-real-preferences-show-pictures-after-a-layout-reset-and-sma.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-25",
+      "domain_letter": "F"
+    },
+    {
+      "id": "CD-GYPK",
+      "directive_title": "netlify): forward event.waitUntil to the Netlify context",
+      "source_repo": "unjs-nitro-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-GYPK-netlify-forward-event-waituntil-to-the-netlify-context.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-25",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-DF0880",
+      "directive_title": "keep tests off the real preferences, show pictures after a layout reset, and sma",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "thaw-app-thaw",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-DF0880-keep-tests-off-the-real-preferences-show.md",
+      "staged_date": "2026-11-25"
+    },
+    {
+      "id": "CD-REV-C32887",
+      "directive_title": "rust): bind bare calls to the enclosing module's items",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-C32887-rust-bind-bare-calls-to-the-enclosing-mo.md",
       "staged_date": "2026-11-25"
     }
   ]

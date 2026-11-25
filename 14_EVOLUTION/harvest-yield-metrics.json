@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T03:50:53.273Z",
-  "total_cycles_completed": 12277,
-  "total_learnings_persisted": 12277,
-  "total_rules_promoted": 11322,
+  "last_updated": "2026-11-25T03:59:15.210Z",
+  "total_cycles_completed": 12279,
+  "total_learnings_persisted": 12279,
+  "total_rules_promoted": 11324,
   "history": [
-    {
-      "timestamp": "2026-11-24T14:50:44.732Z",
-      "repository": "StarRocks/starrocks",
-      "learningId": "learn-github-starrocks-starrocks",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T14:59:31.178Z",
-      "repository": "microsoft/Aion-1.0-Instruct-2.3B",
-      "learningId": "learn-huggingface-microsoft-aion-1-0-instruct-2-3b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-24T14:59:34.959Z",
       "repository": "actix/actix-web",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-25T03:50:53.273Z",
       "repository": "meshtastic/Meshtastic-Android",
       "learningId": "learn-github-meshtastic-meshtastic-android",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T03:59:13.983Z",
+      "repository": "nitrojs/nitro",
+      "learningId": "learn-github-nitrojs-nitro",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T03:59:15.210Z",
+      "repository": "thaw-app/Thaw",
+      "learningId": "learn-github-thaw-app-thaw",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
