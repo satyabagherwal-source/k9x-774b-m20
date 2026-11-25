@@ -3583,10 +3583,10 @@
     "repository": "tailscale/tailscale",
     "platform": "github",
     "sourceUrl": "https://github.com/tailscale/tailscale",
-    "sourceVersion": "012baddc",
+    "sourceVersion": "e906a6a4",
     "license": "BSD-3-Clause",
-    "contentHash": "ebb067b1af8ac45f816647f7878efc7dd4c29213e1e9eb36b126bbe90660c5a2",
-    "lastHarvestedAt": "2026-11-25T00:08:28.671Z",
+    "contentHash": "d9a791dfd161a9ae3e44d0ee56c193f442b4fbbc780aa7e3309942c1df001bec",
+    "lastHarvestedAt": "2026-11-25T04:15:58.255Z",
     "learningId": "learn-github-tailscale-tailscale"
   },
   "dingodb-dingo": {
@@ -5913,10 +5913,10 @@
     "repository": "argoproj/argo-workflows",
     "platform": "github",
     "sourceUrl": "https://github.com/argoproj/argo-workflows",
-    "sourceVersion": "582f5637",
+    "sourceVersion": "e0dadd07",
     "license": "Apache-2.0",
-    "contentHash": "560d38d8fa5d5f14d7cf656ac7e95cbea00514a7d86992506a3847820f9da1ae",
-    "lastHarvestedAt": "2026-11-24T11:05:47.335Z",
+    "contentHash": "41af28317a3eeb8f6d0006064506585deea4552ddc2d52311ab29d7672756b82",
+    "lastHarvestedAt": "2026-11-25T04:15:55.897Z",
     "learningId": "learn-github-argoproj-argo-workflows"
   },
   "postgresml-postgresml": {

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T11:05:50.821Z",
+  "timestamp": "2026-11-25T04:16:02.823Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-argoproj-argo-workflows-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [argoproj-argo-workflows-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T11:05:50.821Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T04:16:02.823Z`  
 > **Learning ID**: `LEARN-EVO-argoproj-argo-workflows-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md`  
 > **Source**: github ([https://github.com/argoproj/argo-workflows](https://github.com/argoproj/argo-workflows))  
-> **Source Version**: `582f5637`  
+> **Source Version**: `e0dadd07`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T11:05:46.288Z  
+> **Timestamp**: 2026-11-25T04:15:54.828Z  
 > **Learning ID**: `learn-github-argoproj-argo-workflows`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/argoproj/argo-workflows](https://github.com/argoproj/argo-workflows))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T11:04:55.312Z  
+> **Harvest Timestamp**: 2026-11-25T04:15:54.708Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Workflow Engine for Kubernetes
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 17114 stars
+- **Stars / Engagement**: 17117 stars
 
 ---
 
@@ -792,11 +792,11 @@ func githubMatch(secret string, r *http.Request) bool {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #17553** (2026-11-24): **fix(controller): find a pod's retry node by name, not by scanning every node (cherry-pick #17447 for 4.1)**
-  *Symptoms*: Cherry-picked fix(controller): find a pod's retry node by name, not by scanning every node (#17447)  Signed-off-by: Ian Wormsbecker <iwormsy@gmail.com>
+- **Issue #17575** (2026-11-24): **chore(deps): update dependency @babel/preset-env to v7.29.14 (main)**
+  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Adoption](https://docs.renovatebot.com/merge-confidence/) | [Passing](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---|---|---| | [@babel/preset-env](https://babel.dev/docs/en/next/babel-preset-env) ([source](https://redirect.github.com/babel/babel/tree/HEAD/packages/babel-preset-env)) | [`7.29.7` → `7.29.14`](https://renovatebot.com/diffs/npm/@babel%2fpreset-env/7.29.7/7.29.14) | ![age](https://developer.mend.io/api/mc/badges/age/npm/@babel%2fpreset-env/7.29.14?slim=true) | ![adoption](https://developer.mend.io/api/mc/badges/adoption/npm/@babel%2fpreset-env/7.29.14?slim=true) | ![passing](https://developer.mend.io/api/mc/badges/compatibility/npm/@babel%2fpreset-env/7.29.7/7.29.14?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/@babel%2fpreset-env/7.29.7/7.29.14?slim=true) |  ---  ### Release Notes  <details> <summary>babel/babel (@&#8203;babel/preset-env)</summary>  ### [`v7.29.14`](https://redirect.github.com/babel/babel/releases/tag/v7.29.14)  [Compare Source](https://redirect.github.com/babel/babel/compare/v7.29.7...v7.29.14)  #### v7.29.14 (2026-11-11)  ##### :eyeglasses: Spec Compliance  - `babel-parser`   - [#&#8203;18543](https://redirect.github.com/babel/babel/pull/18543) fix(parser): require `(` after `import.{source,defer,sync}` ([@&#8
 
-- **Issue #17549** (2026-11-23): **fix(resource): ignore unspecified container timestamps (cherry-pick #17523 for 4.1)**
-  *Symptoms*: Cherry-picked fix(resource): ignore unspecified container timestamps (#17523)  Signed-off-by: Shubham Singh <development.shubhamsingh@gmail.com>
+- **Issue #17574** (2026-11-24): **chore(deps): update dependency @babel/core to v7.29.13 (main)**
+  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Adoption](https://docs.renovatebot.com/merge-confidence/) | [Passing](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---|---|---| | [@babel/core](https://babel.dev/docs/en/next/babel-core) ([source](https://redirect.github.com/babel/babel/tree/HEAD/packages/babel-core)) | [`7.29.7` → `7.29.13`](https://renovatebot.com/diffs/npm/@babel%2fcore/7.29.7/7.29.13) | ![age](https://developer.mend.io/api/mc/badges/age/npm/@babel%2fcore/7.29.13?slim=true) | ![adoption](https://developer.mend.io/api/mc/badges/adoption/npm/@babel%2fcore/7.29.13?slim=true) | ![passing](https://developer.mend.io/api/mc/badges/compatibility/npm/@babel%2fcore/7.29.7/7.29.13?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/@babel%2fcore/7.29.7/7.29.13?slim=true) |  ---  ### Release Notes  <details> <summary>babel/babel (@&#8203;babel/core)</summary>  ### [`v7.29.13`](https://redirect.github.com/babel/babel/releases/tag/v7.29.13)  [Compare Source](https://redirect.github.com/babel/babel/compare/v7.29.7...v7.29.13)  #### v7.29.13 (2026-11-04)  ##### :bug: Bug Fix  - `babel-generator`, `babel-parser`   - [#&#8203;18522](https://redirect.github.com/babel/babel/pull/18522) fix(parser): start decorated object members at their first decorator ([@&#8203;babel-bot](https://redirect.github.co
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -813,185 +813,68 @@ func githubMatch(secret string, r *http.Request) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `582f5637` (2026-11-24)
-**Commit Message**: fix(controller): find a pod's retry node by name, not by scanning every node (#17447)
+### Incident Patch 1: `3386b613` (2026-11-24)
+**Commit Message**: ci: report UI unit test coverage to codecov (#17529)
 
-Signed-off-by: Ian Wormsbecker <[REDACTED_EMAIL]>
+Signed-off-by: Alan Clucas <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `workflow/controller/retry_tweak.go` (modified, +54/-0)
+**File**: `.github/workflows/ci-build.yaml` (modified, +15/-1)
 ```diff
-@@ -1,6 +1,8 @@
- package controller
- 
- import (
-+	"strings"
-+
- 	apiv1 "k8s.io/api/core/v1"
- 	"k8s.io/utils/env"
- 
-@@ -23,6 +25,58 @@ func FindRetryNode(nodes wfv1.Nodes, nodeID string) *wfv1.NodeStatus {
- 	return nil
- }
- 
-+// FindRetryNodeByName finds the same node as FindRetryNode without scanning
-+// every node. A retry node names each attempt "<retry node name>(<attempt>)"
-+// (see handleRetries), so the only node that can be a node's retry parent is
-+// the one named by dropping that suffix, found by name in constant time.
-+// FindRetryNode visits every node of the workflow, which a controller
-+// creating thousands of pods in a large workflow pays once per pod.
-+func FindRetryNodeByName(wf *wfv1.Workflow, nodeID string) *wfv1.NodeStatus {
-+	if parentNode := retryParentByName(wf, nodeID); parentNode != nil {
-+		return parentNode
-+	}
-+	node, ok := wf.Status.Nodes[nodeID]
-+	if !ok {
-+		return nil
-+	}
-+	return retryParentByName(wf, node.BoundaryID)
-+}
-+
-+// retryParentByName returns the retry node that has childID as an attempt, if
-+// any.
-+func retryParentByName(wf *wfv1.Workflow, childID string) *wfv1.NodeStatus {
-+	child, ok := wf.Status.Nodes[childID]
-+	if !ok {
-+		return nil
-+	}
-+	parentName, ok := retryParentName(child.Name)
-+	if !ok {
-+		return nil
-+	}
-+	parentNode, err := wf.GetNodeByName(parentName)
-+	if err != nil || parentNode.Type != wfv1.NodeTypeRetry || !parentNode.HasChild(childID) {
-+		return nil
-+	}
-+	return parentNode
-+}
-+
-+// retryParentName strips a retry attempt suffix, "(<digits>)", from a node
-+// name, reporting whether the name had one.
-+func retryParentName(name string) (string, bool) {
-+	if !strings.HasSuffix(name, ")") {
-+		return "", false
-+	}
-+	open := strings.LastIndex(name, "(")
-+	if open < 0 {
-+		return "", false
-+	}
-+	attempt := name[open+1 : len(name)-1]
-+	if attempt == "" || strings.Trim(attempt, "0123456789") != "" {
-+		return "", false
-+	}
-+	return name[:open], true
-+}
-+
- // RetryOnDifferentHost append affinity with fail host to pod
- func RetryOnDifferentHost(retryNodeName string) RetryTweak {
- 	return func(retryStrategy wfv1.RetryStrategy, nodes wfv1.Nodes, pod *apiv1.Pod) {
+@@ -587,7 +587,21 @@ jobs:
+           cache-dependency-path: ui/yarn.lock
+       - run: sh hack/retry-download.sh yarn --cwd ui install
+       - run: yarn --cwd ui build
+-      - run: yarn --cwd ui test
++      - run: yarn --cwd ui test --coverage --coverageReporters=lcovonly
++      - name: Make coverage paths relative to the repo root
++        # jest writes them relative to ui/
++        run: sed -i 's|^SF:src/|SF:ui/src/|' ui/coverage/lcov.info
++      - name: Upload coverage report
++        # runs on PRs as well as main so codecov can comment a coverage report on the PR
++        if: github.repository == 'argoproj/argo-workflows'
++        uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7.1.1
++        with:
++          files: ui/coverage/lcov.info
++          disable_search: true
++          flags: ui
++          fail_ci_if_error: true
++        env:
++          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+       - run: yarn --cwd ui lint
+       - run: yarn --cwd ui deduplicate
+       # if lint or deduplicate make changes that are not in the PR, fail the build
 ```
 
-**File**: `workflow/controller/retry_tweak_test.go` (modified, +67/-0)
+**File**: `ui/.gitignore` (modified, +1/-0)
 ```diff
-@@ -4,6 +4,7 @@ import (
- 	"testing"
- 
- 	"github.com/stretchr/testify/assert"
-+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
- 
- 	wfv1 "github.com/argoproj/argo-workflows/v4/pkg/apis/workflow/v1alpha1"
- )
-@@ -93,3 +94,69 @@ func TestFindRetryNode(t *testing.T) {
- 		assert.Equal(t, FindRetryNode(allNodes, "C2"), &node)
- 	})
- }
-+
-+func TestFindRetryNodeByName(t *testing.T) {
-+	wf := &wfv1.Workflow{ObjectMeta: metav1.ObjectMeta{Name: "wf"}}
-+	wf.Status.Nodes = wfv1.Nodes{}
-+	add := func(name string, nodeType wfv1.NodeType, boundary string, children ...string) string {
-+		id := wf.NodeID(name)
-+		childIDs := make([]string, len(children))
-+		for i, child := range children {
-+			childIDs[i] = wf.NodeID(child)
-+		}
-+		boundaryID := ""
-+		if boundary != "" {
-+			boundaryID = wf.NodeID(boundary)
-+		}
-+		wf.Status.Nodes[id] = wfv1.NodeStatus{ID: id, Name: name, Type: nodeType, BoundaryID: boundaryID, Children: childIDs}
-+		return id
-+	}
-+	root := add("wf", wfv1.NodeTypeSteps, "", "wf[0].steps", "wf[0].ref", "wf[0].plain", "wf[0].items(0:a)", "wf[0].decoy")
-+	// A retried steps template: its pod's retry parent is found through the boundary.
-+	stepsRetry := add("wf[0].steps", wfv1.NodeTypeRetry, "wf", "wf[0].steps(0)")
-+	add("wf[0].steps(0)", wfv1.NodeTypeSteps, "wf", "wf[0].steps(0)[0].pod")
-+	stepsPod := add("wf[0].steps(0)[0].pod", wfv1.NodeTypePod, "wf[0].steps(0)")
-+	// A retried pod on its second attempt.
-+	refRetry := add("wf[0].ref", wfv1.NodeTypeRetry, "wf", "wf[0].ref(0)", "wf[0].ref(1)")
-+	add("wf[0].ref(0)", wfv1.NodeTypePod, "wf")
-+	refPod := add("wf[0].ref(1)", wfv1.NodeTypePod, "wf")
-+	plainPod := add("wf[0].plain", wfv1.NodeTypePod, "wf")
-+	itemsPod := add("wf[0].items(0:a)", wfv1.NodeTypePod, "wf")
-+	// Named like an attempt, but its parent is not a retry node.
-+	add("wf[0].decoy", wfv1.NodeTypeSteps, "wf", "wf[0].decoy(0)")
-+	decoyPod := add("wf[0].decoy(0)", wfv1.NodeTypePod, "wf[0].decoy")
-+
-+	t.Run("Finds the retry node through the boundary", func(t *testing.T) {
-+		assert.Equal(t, stepsRetry, FindRetryNodeByName(wf, stepsPod).ID)
-+	})
-+	t.Run("Finds the retry node of a later attempt", func(t *testing.T) {
-+		assert.Equal(t, refRetry, FindRetryNodeByName(wf, refPod).ID)
-+	})
-+	t.Run("Finds nothing without a retry parent", func(t *testing.T) {
-+		for _, id := range []string{root, plainPod, itemsPod, decoyPod, "missing"} {
-+			assert.Nil(t, FindRetryNodeByName(wf, id), wf.Status.Nodes[id].Name)
-+		}
-+	})
-+	t.Run("Agrees with FindRetryNode for every node", func(t *testing.T) {
-+		for id, node := range wf.Status.Nodes {
-+			assert.Equal(t, FindRetryNode(wf.Status.Nodes, id), FindRetryNodeByName(wf, id), node.Name)
-+		}
-+	})
-+}
-+
-+func TestRetryParentName(t *testing.T) {
-+	for name, want := range map[string]string{
-+		"wf[0].step(0)":        "wf[0].step",
-+		"wf[0].step(12)":       "wf[0].step",
-+		"wf[0].step(0:a)(3)":   "wf[0].step(0:a)",
-+		"wf[0].step(0:a)":      "",
-+		"wf[0].step":           "",
-+		"wf[0].step()":         "",
-+		"wf[0].step(-1)":       "",
-+		"wf[0].step(1)[0].pod": "",
-+	} {
-+		got, ok := retryParentName(name)
-+		assert.Equal(t, want != "", ok, name)
-+		assert.Equal(t, want, got, name)
-+	}
-+}
+@@ -3,3 +3,4 @@ dist
+ bundle
+ .vscode
+ yarn-error.log
++coverage
 ```
 
-**File**: `workflow/controller/workflowpod_deps.go` (modified, +1/-1)
+**File**: `ui/jest.config.js` (modified, +2/-0)
 ```diff
-@@ -41,7 +41,7 @@ func (woc *wfOperationCtx) getNodeByName(nodeName string) (*wfv1.NodeStatus, err
- 
- // findRetryNode locates the closest retry-node ancestor of nodeID in live status.
- func (woc *wfOperationCtx) findRetryNode(nodeID string) *wfv1.NodeStatus {
--	return FindRetryNode(woc.wf.Status.Nodes, nodeID)
-+	return FindRetryNodeByName(woc.wf, nodeID)
- }
- 
- // retryStrategyForTemplate resolves the retry strategy applicable to tmpl.
+@@ -4,6 +4,8 @@ module.exports = {
+   // Playwright specs under e2e/ are run by `yarn e2e`, not Jest.
+   testPathIgnorePatterns: ["<rootDir>/node_modules/", "<rootDir>/e2e/"],
+   setupFilesAfterEnv: ["<rootDir>/setupTests.ts"],
++  // with --coverage, count every source file, not only the ones a test imports
++  collectCoverageFrom: ["src/**/*.{ts,tsx}", "!src/**/*.test.{ts,tsx}", "!src/**/*.d.ts"],
+   transformIgnorePatterns: [
+     "node_modules/(?!(argo-ui)/)"
+   ],
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #17553** (2026-11-24): fix(controller): find a pod's retry node by name, not by scanning every node (cherry-pick #17447 for 4.1) (@argo-cd-cherry-pick-bot[bot])
-- **PR #17549** (2026-11-23): fix(resource): ignore unspecified container timestamps (cherry-pick #17523 for 4.1) (@argo-cd-cherry-pick-bot[bot])
-- **PR #17545** (2026-11-20): fix(controller): do not change the workflow defaults in MergeTo. Fixes #17384 (cherry-pick #17396 for 4.0) (@argo-cd-cherry-pick-bot[bot])
-- **PR #17544** (2026-11-20): fix(controller): do not change the workflow defaults in MergeTo. Fixes #17384 (cherry-pick #17396 for 4.1) (@argo-cd-cherry-pick-bot[bot])
-- **PR #17540** (2026-11-18): fix: build the OSS Scanner image like release builds (@Joibel)
-- **PR #17539** (2026-11-20): chore(deps): update dependency go to v1.27.4 (main) (@renovate[bot])
+- **PR #17575** (2026-11-24): chore(deps): update dependency @babel/preset-env to v7.29.14 (main) (@renovate[bot])
+- **PR #17574** (2026-11-24): chore(deps): update dependency @babel/core to v7.29.13 (main) (@renovate[bot])
+- **PR #17573** (2026-11-24): chore(deps): update amannn/action-semantic-pull-request action to v6.1.4 (main) (@renovate[bot])
+- **PR #17572** (2026-11-24): chore(deps): update softprops/action-gh-release digest to 8a0cd65 (main) (@renovate[bot])
+- **PR #17570** (2026-11-24): fix(resource): ignore unspecified container timestamps (cherry-pick #17523 for 4.0) (@Joibel)
+- **PR #17568** (2026-11-24): chore(deps): update k8s.io/utils digest to ca04ba5 (main) (@renovate[bot])
 
 ---
 
@@ -1011,65 +894,45 @@ Signed-off-by: Ian Wormsbecker <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. controller): find a pod's retry node by name, not by scanning every node
+## X. ci: report UI unit test coverage to codecov
 
 **RULE**:
-When implementing operations in `workflow/controller/retry_tweak.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in argoproj/argo-workflows. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/ci-build.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in argoproj/argo-workflows. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `582f5637`: controller): find a pod's retry node by name, not by scanning every node. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3386b613`: ci: report UI unit test coverage to codecov. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `workflow/controller/retry_tweak.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci-build.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"strings"
-
-// FindRetryNodeByName finds the same node as FindRetryNode without scanning
-// every node. A retry node names each attempt "<retry node name>(<attempt>)"
-// (see handleRetries), so the only node that can be a node's retry parent is
-// the one named by dropping that suffix, found by name in constant time.
-// FindRetryNode visits every node of the workflow, which a controller
-// creating thousands of pods in a large workflow pays once per pod.
-func FindRetryNodeByName(wf *wfv1.Workflow, nodeID string) *wfv1.NodeStatus {
-	if parentNode := retryParentByName(wf, nodeID); parentNode != nil {
-		return parentNode
-	}
-	node, ok := wf.Status.Nodes[nodeID]
-	if !ok {
-		return nil
-	}
-	return retryParentByName(wf, node.BoundaryID)
-}
-
-// retryParentByName returns the retry node that has childID as an attempt, if
-// any.
-func retryParentByName(wf *wfv1.Workflow, childID string) *wfv1.NodeStatus {
-	child, ok := wf.Status.Nodes[childID]
-	if !ok {
-		return nil
-	}
-	parentName, ok := retryParentName(child.Name)
-	if !ok {
-		return nil
-	}
-	parentNode, err := wf.GetNodeByName(parentName)
-	if err != nil || parentNode.Type != wfv1.NodeTypeRetry || !parentNode.HasChild(childID) {
-		return nil
-	}
-
+      - run: yarn --cwd ui test --coverage --coverageReporters=lcovonly
+      - name: Make coverage paths relative to the repo root
+        # jest writes them relative to ui/
+        run: sed -i 's|^SF:src/|SF:ui/src/|' ui/coverage/lcov.info
+      - name: Upload coverage report
+        # runs on PRs as well as main so codecov can comment a coverage report on the PR
+        if: github.repository == 'argoproj/argo-workflows'
+        uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7.1.1
+        with:
+          files: ui/coverage/lcov.info
+          disable_search: true
+          flags: ui
+          fail_ci_if_error: true
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+      - run: yarn --cwd ui test
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `582f5637` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3386b613` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

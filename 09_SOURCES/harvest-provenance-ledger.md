@@ -12962,3 +12962,5 @@ Every entry in this ledger must capture:
 | `learn-github-meshtastic-meshtastic-android` | `https://github.com/meshtastic/Meshtastic-Android` | `d1c4c7db` | Multi-dimensional audit evidence | 2026-11-25T03:50:53.267Z |
 | `learn-github-nitrojs-nitro` | `https://github.com/unjs/nitro` | `925c1355` | Multi-dimensional audit evidence | 2026-11-25T03:59:13.977Z |
 | `learn-github-thaw-app-thaw` | `https://github.com/thaw-app/Thaw` | `63a96c2d` | Multi-dimensional audit evidence | 2026-11-25T03:59:15.205Z |
+| `learn-github-argoproj-argo-workflows` | `https://github.com/argoproj/argo-workflows` | `e0dadd07` | Multi-dimensional audit evidence | 2026-11-25T04:15:55.897Z |
+| `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `e906a6a4` | Multi-dimensional audit evidence | 2026-11-25T04:15:58.255Z |

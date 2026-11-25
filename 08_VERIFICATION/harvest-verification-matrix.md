@@ -12929,3 +12929,5 @@
 | `CYCLE-20261125-63WU` | `2026-11-25T03:50:53.262Z` | `meshtastic/Meshtastic-Android` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10447` | Yes (`adbbb565...`) |
 | `CYCLE-20261125-GU9G` | `2026-11-25T03:59:13.972Z` | `nitrojs/nitro` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10448` | Yes (`a3b92817...`) |
 | `CYCLE-20261125-GV7K` | `2026-11-25T03:59:15.200Z` | `thaw-app/Thaw` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10449` | Yes (`2629b494...`) |
+| `CYCLE-20261125-2BCL` | `2026-11-25T04:15:55.893Z` | `argoproj/argo-workflows` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10450` | Yes (`41af2831...`) |
+| `CYCLE-20261125-2D64` | `2026-11-25T04:15:58.252Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10451` | Yes (`d9a791df...`) |

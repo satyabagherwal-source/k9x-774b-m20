@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T03:59:15.210Z",
-  "total_cycles_completed": 12279,
-  "total_learnings_persisted": 12279,
-  "total_rules_promoted": 11324,
+  "last_updated": "2026-11-25T04:15:58.260Z",
+  "total_cycles_completed": 12281,
+  "total_learnings_persisted": 12281,
+  "total_rules_promoted": 11326,
   "history": [
-    {
-      "timestamp": "2026-11-24T14:59:34.959Z",
-      "repository": "actix/actix-web",
-      "learningId": "learn-github-actix-actix-web",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T14:59:39.455Z",
-      "repository": "BuilderIO/builder",
-      "learningId": "learn-github-builderio-builder",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-24T14:59:42.485Z",
       "repository": "gardener/gardener",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-25T03:59:15.210Z",
       "repository": "thaw-app/Thaw",
       "learningId": "learn-github-thaw-app-thaw",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T04:15:55.902Z",
+      "repository": "argoproj/argo-workflows",
+      "learningId": "learn-github-argoproj-argo-workflows",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T04:15:58.260Z",
+      "repository": "tailscale/tailscale",
+      "learningId": "learn-github-tailscale-tailscale",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

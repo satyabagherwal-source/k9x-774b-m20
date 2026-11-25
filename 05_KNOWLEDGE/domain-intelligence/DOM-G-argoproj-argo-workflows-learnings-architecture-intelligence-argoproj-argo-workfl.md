@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-23T16:03:06.451Z",
+  "timestamp": "2026-11-25T04:16:02.823Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-argoproj-argo-workflows-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [argoproj-argo-workflows-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-23T16:03:06.451Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T04:16:02.823Z`  
 > **Learning ID**: `LEARN-EVO-argoproj-argo-workflows-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: A (Human & Need Intelligence), H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), L (Deployment & Operations Intelligence), K (Quality & Verification Intelligence), J (Search & Distribution Intelligence), I (Content & Information Intelligence)
-- **Confidence Rating**: 71%
+- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), A (Human & Need Intelligence), D (Research & Knowledge Intelligence), H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 52%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from argoproj-argo-workflows-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md`  
 > **Source**: github ([https://github.com/argoproj/argo-workflows](https://github.com/argoproj/argo-workflows))  
-> **Source Version**: `a25c64b8`  
+> **Source Version**: `e0dadd07`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-23T16:03:00.673Z  
+> **Timestamp**: 2026-11-25T04:15:54.828Z  
 > **Learning ID**: `learn-github-argoproj-argo-workflows`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/argoproj/argo-workflows](https://github.com/argoproj/argo-workflows))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T16:03:00.668Z  
+> **Harvest Timestamp**: 2026-11-25T04:15:54.708Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Workflow Engine for Kubernetes
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 17110 stars
+- **Stars / Engagement**: 17117 stars
 
 ---
 
@@ -795,11 +795,11 @@ func githubMatch(secret string, r *http.Request) bool {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #17549** (2026-11-23): **fix(resource): ignore unspecified container timestamps (cherry-pick #17523 for 4.1)**
-  *Symptoms*: Cherry-picked fix(resource): ignore unspecified container timestamps (#17523)  Signed-off-by: Shubham Singh <development.shubhamsingh@gmail.com>
+- **Issue #17575** (2026-11-24): **chore(deps): update dependency @babel/preset-env to v7.29.14 (main)**
+  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Adoption](https://docs.renovatebot.com/merge-confidence/) | [Passing](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---|---|---| | [@babel/preset-env](https://babel.dev/docs/en/next/babel-preset-env) ([source](https://redirect.github.com/babel/babel/tree/HEAD/packages/babel-preset-env)) | [`7.29.7` → `7.29.14`](https://renovatebot.com/diffs/npm/@babel%2fpreset-env/7.29.7/7.29.14) | ![age](https://developer.mend.io/api/mc/badges/age/npm/@babel%2fpreset-env/7.29.14?slim=true) | ![adoption](https://developer.mend.io/api/mc/badges/adoption/npm/@babel%2fpreset-env/7.29.14?slim=true) | ![passing](https://developer.mend.io/api/mc/badges/compatibility/npm/@babel%2fpreset-env/7.29.7/7.29.14?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/@babel%2fpreset-env/7.29.7/7.29.14?slim=true) |  ---  ### Release Notes  <details> <summary>babel/babel (@&#8203;babel/preset-env)</summary>  ### [`v7.29.14`](https://redirect.github.com/babel/babel/releases/tag/v7.29.14)  [Compare Source](https://redirect.github.com/babel/babel/compare/v7.29.7...v7.29.14)  #### v7.29.14 (2026-11-11)  ##### :eyeglasses: Spec Compliance  - `babel-parser`   - [#&#8203;18543](https://redirect.github.com/babel/babel/pull/18543) fix(parser): require `(` after `import.{source,defer,sync}` ([@&#8
 
-- **Issue #17545** (2026-11-20): **fix(controller): do not change the workflow defaults in MergeTo. Fixes #17384 (cherry-pick #17396 for 4.0)**
-  *Symptoms*: Cherry-picked fix(controller): do not change the workflow defaults in MergeTo. Fixes #17384 (#17396)  Signed-off-by: Srinivas Chippagiri <cvas22@gmail.com>
+- **Issue #17574** (2026-11-24): **chore(deps): update dependency @babel/core to v7.29.13 (main)**
+  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Adoption](https://docs.renovatebot.com/merge-confidence/) | [Passing](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---|---|---| | [@babel/core](https://babel.dev/docs/en/next/babel-core) ([source](https://redirect.github.com/babel/babel/tree/HEAD/packages/babel-core)) | [`7.29.7` → `7.29.13`](https://renovatebot.com/diffs/npm/@babel%2fcore/7.29.7/7.29.13) | ![age](https://developer.mend.io/api/mc/badges/age/npm/@babel%2fcore/7.29.13?slim=true) | ![adoption](https://developer.mend.io/api/mc/badges/adoption/npm/@babel%2fcore/7.29.13?slim=true) | ![passing](https://developer.mend.io/api/mc/badges/compatibility/npm/@babel%2fcore/7.29.7/7.29.13?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/@babel%2fcore/7.29.7/7.29.13?slim=true) |  ---  ### Release Notes  <details> <summary>babel/babel (@&#8203;babel/core)</summary>  ### [`v7.29.13`](https://redirect.github.com/babel/babel/releases/tag/v7.29.13)  [Compare Source](https://redirect.github.com/babel/babel/compare/v7.29.7...v7.29.13)  #### v7.29.13 (2026-11-04)  ##### :bug: Bug Fix  - `babel-generator`, `babel-parser`   - [#&#8203;18522](https://redirect.github.com/babel/babel/pull/18522) fix(parser): start decorated object members at their first decorator ([@&#8203;babel-bot](https://redirect.github.co
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -816,149 +816,68 @@ func githubMatch(secret string, r *http.Request) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a25c64b8` (2026-11-23)
-**Commit Message**: fix(resource): ignore unspecified container timestamps (#17523)
+### Incident Patch 1: `3386b613` (2026-11-24)
+**Commit Message**: ci: report UI unit test coverage to codecov (#17529)
 
-Signed-off-by: Shubham Singh <[REDACTED_EMAIL]>
+Signed-off-by: Alan Clucas <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `util/resource/duration_test.go` (modified, +55/-0)
+**File**: `.github/workflows/ci-build.yaml` (modified, +15/-1)
 ```diff
-@@ -142,3 +142,58 @@ func TestDurationForPod(t *testing.T) {
- 		})
- 	}
- }
-+
-+func TestDurationForPodTerminatedContainerTimes(t *testing.T) {
-+	now := metav1.NewTime(time.Date(2026, time.November, 17, 12, 0, 0, 0, time.UTC))
-+	minuteAgo := metav1.NewTime(now.Add(-time.Minute))
-+	epoch := metav1.NewTime(time.Unix(0, 0))
-+	tests := []struct {
-+		name       string
-+		startedAt  metav1.Time
-+		finishedAt metav1.Time
-+		seconds    int64
-+	}{
-+		{name: "missing timestamps"},
-+		{name: "start error", finishedAt: now},
-+		{name: "CRI start error", startedAt: epoch, finishedAt: metav1.NewTime(time.Unix(1763519017, 0))},
-+		{name: "missing finish", startedAt: minuteAgo},
-+		{name: "CRI zero finish", startedAt: metav1.NewTime(time.Unix(-60, 0)), finishedAt: epoch},
-+		{name: "finish before start", startedAt: now, finishedAt: minuteAgo},
-+		{name: "equal timestamps", startedAt: now, finishedAt: now},
-+		{name: "valid timestamps", startedAt: minuteAgo, finishedAt: now, seconds: 60},
-+		{name: "valid timestamps near CRI zero", startedAt: metav1.NewTime(time.Unix(0, 1)), finishedAt: metav1.NewTime(time.Unix(60, 1)), seconds: 60},
-+		{name: "valid timestamps before CRI zero", startedAt: metav1.NewTime(time.Unix(-120, 0)), finishedAt: metav1.NewTime(time.Unix(-60, 0)), seconds: 60},
-+	}
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			pod := &corev1.Pod{
-+				Spec: corev1.PodSpec{Containers: []corev1.Container{
-+					{Name: "main", Resources: corev1.ResourceRequirements{Limits: corev1.ResourceList{
-+						corev1.ResourceCPU:                    resource.MustParse("3900m"),
-+						corev1.ResourceMemory:                 resource.MustParse("100Mi"),
-+						corev1.ResourceEphemeralStorage:       resource.MustParse("10Gi"),
-+						corev1.ResourceName("nvidia.com/gpu"): resource.MustParse("1"),
-+					}}},
-+					{Name: "sidecar"},
-+				}},
-+				Status: corev1.PodStatus{ContainerStatuses: []corev1.ContainerStatus{
-+					{Name: "main", State: corev1.ContainerState{Terminated: &corev1.ContainerStateTerminated{
-+						Reason:     "StartError",
-+						StartedAt:  tt.startedAt,
-+						FinishedAt: tt.finishedAt,
-+					}}},
-+					{Name: "sidecar", State: corev1.ContainerState{Terminated: &corev1.ContainerStateTerminated{
-+						StartedAt:  metav1.NewTime(now.Add(-10 * time.Second)),
-+						FinishedAt: now,
-+					}}},
-+				}},
-+			}
-+			assert.Equal(t, wfv1.ResourcesDuration{
-+				corev1.ResourceCPU:                    wfv1.ResourceDuration(tt.seconds*39/10 + 1),
-+				corev1.ResourceMemory:                 wfv1.ResourceDuration(tt.seconds + 10),
-+				corev1.ResourceEphemeralStorage:       wfv1.ResourceDuration(tt.seconds),
-+				corev1.ResourceName("nvidia.com/gpu"): wfv1.ResourceDuration(tt.seconds),
-+			}, DurationForPod(pod))
-+		})
-+	}
-+}
+@@ -587,7 +587,21 @@ jobs:
+           cache-dependency-path: ui/yarn.lock
+       - run: sh hack/retry-download.sh yarn --cwd ui install
+       - run: yarn --cwd ui build
+-      - run: yarn --cwd ui test
++      - run: yarn --cwd ui test --coverage --coverageReporters=lcovonly
++      - name: Make coverage paths relative to the repo root
++        # jest writes them relative to ui/
++        run: sed -i 's|^SF:src/|SF:ui/src/|' ui/coverage/lcov.info
++      - name: Upload coverage report
++        # runs on PRs as well as main so codecov can comment a coverage report on the PR
++        if: github.repository == 'argoproj/argo-workflows'
++        uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7.1.1
++        with:
++          files: ui/coverage/lcov.info
++          disable_search: true
++          flags: ui
++          fail_ci_if_error: true
++        env:
++          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+       - run: yarn --cwd ui lint
+       - run: yarn --cwd ui deduplicate
+       # if lint or deduplicate make changes that are not in the PR, fail the build
 ```
 
-**File**: `util/resource/summary.go` (modified, +8/-2)
+**File**: `ui/.gitignore` (modified, +1/-0)
 ```diff
-@@ -14,8 +14,14 @@ type Summary struct {
- }
- 
- func (s Summary) age() time.Duration {
--	if s.ContainerState.Terminated != nil {
--		return s.ContainerState.Terminated.FinishedAt.Sub(s.ContainerState.Terminated.StartedAt.Time)
-+	if terminated := s.ContainerState.Terminated; terminated != nil {
-+		startedAt, finishedAt := terminated.StartedAt.Time, terminated.FinishedAt.Time
-+		// Kubelet converts unspecified CRI timestamps to the Unix epoch.
-+		epoch := time.Unix(0, 0)
-+		if startedAt.IsZero() || finishedAt.IsZero() || startedAt.Equal(epoch) || finishedAt.Equal(epoch) || finishedAt.Before(startedAt) {
-+			return 0
-+		}
-+		return finishedAt.Sub(startedAt)
- 	}
- 	return 0
- }
+@@ -3,3 +3,4 @@ dist
+ bundle
+ .vscode
+ yarn-error.log
++coverage
 ```
 
-**File**: `util/resource/summary_test.go` (added, +42/-0)
+**File**: `ui/jest.config.js` (modified, +2/-0)
 ```diff
-@@ -0,0 +1,42 @@
-+package resource
-+
-+import (
-+	"testing"
-+	"time"
-+
-+	"github.com/stretchr/testify/assert"
-+	corev1 "k8s.io/api/core/v1"
-+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-+)
-+
-+func TestSummaryAge(t *testing.T) {
-+	now := metav1.NewTime(time.Date(2026, time.November, 17, 12, 0, 0, 0, time.UTC))
-+	minuteAgo := metav1.NewTime(now.Add(-time.Minute))
-+	epoch := metav1.NewTime(time.Unix(0, 0))
-+
-+	tests := []struct {
-+		name  string
-+		state corev1.ContainerState
-+		want  time.Duration
-+	}{
-+		{name: "no state"},
-+		{name: "waiting", state: corev1.ContainerState{Waiting: &corev1.ContainerStateWaiting{}}},
-+		{name: "running", state: corev1.ContainerState{Running: &corev1.ContainerStateRunning{StartedAt: minuteAgo}}},
-+		{name: "missing timestamps", state: corev1.ContainerState{Terminated: &corev1.ContainerStateTerminated{}}},
-+		{name: "missing start", state: corev1.ContainerState{Terminated: &corev1.ContainerStateTerminated{FinishedAt: now}}},
-+		{name: "missing finish", state: corev1.ContainerState{Terminated: &corev1.ContainerStateTerminated{StartedAt: minuteAgo}}},
-+		{name: "CRI zero start", state: corev1.ContainerState{Terminated: &corev1.ContainerStateTerminated{StartedAt: epoch, FinishedAt: now}}},
-+		{name: "CRI zero finish", state: corev1.ContainerState{Terminated: &corev1.ContainerStateTerminated{StartedAt: metav1.NewTime(time.Unix(-60, 0)), FinishedAt: epoch}}},
-+		{name: "CRI zero start in another timezone", state: corev1.ContainerState{Terminated: &corev1.ContainerStateTerminated{StartedAt: metav1.NewTime(epoch.In(time.FixedZone("offset", 3600))), FinishedAt: now}}},
-+		{name: "finish before start", state: corev1.ContainerState{Terminated: &corev1.ContainerStateTerminated{StartedAt: now, FinishedAt: minuteAgo}}},
-+		{name: "equal timestamps", state: corev1.ContainerState{Terminated: &corev1.ContainerStateTerminated{StartedAt: now, FinishedAt: now}}},
-+		{name: "valid timestamps", state: corev1.ContainerState{Terminated: &corev1.ContainerStateTerminated{StartedAt: minuteAgo, FinishedAt: now}}, want: time.Minute},
-+		{name: "subsecond duration", state: corev1.ContainerState{Terminated: &corev1.ContainerStateTerminated{StartedAt: now, FinishedAt: metav1.NewTime(now.Add(time.Millisecond))}}, want: time.Millisecond},
-+		{name: "nanosecond after CRI zero", state: corev1.ContainerState{Terminated: &corev1.ContainerStateTerminated{StartedAt: metav1.NewTime(time.Unix(0, 1)), FinishedAt: metav1.NewTime(time.Unix(0, 2))}}, want: time.Nanosecond},
-+	}
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			assert.Equal(t, tt.want, (Summary{ContainerState: tt.state}).age())
-+		})
-+	}
-+}
+@@ -4,6 +4,8 @@ module.exports = {
+   // Playwright specs under e2e/ are run by `yarn e2e`, not Jest.
+   testPathIgnorePatterns: ["<rootDir>/node_modules/", "<rootDir>/e2e/"],
+   setupFilesAfterEnv: ["<rootDir>/setupTests.ts"],
++  // with --coverage, count every source file, not only the ones a test imports
++  collectCoverageFrom: ["src/**/*.{ts,tsx}", "!src/**/*.test.{ts,tsx}", "!src/**/*.d.ts"],
+   transformIgnorePatterns: [
+     "node_modules/(?!(argo-ui)/)"
+   ],
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #17549** (2026-11-23): fix(resource): ignore unspecified container timestamps (cherry-pick #17523 for 4.1) (@argo-cd-cherry-pick-bot[bot])
-- **PR #17545** (2026-11-20): fix(controller): do not change the workflow defaults in MergeTo. Fixes #17384 (cherry-pick #17396 for 4.0) (@argo-cd-cherry-pick-bot[bot])
-- **PR #17544** (2026-11-20): fix(controller): do not change the workflow defaults in MergeTo. Fixes #17384 (cherry-pick #17396 for 4.1) (@argo-cd-cherry-pick-bot[bot])
-- **PR #17540** (2026-11-18): fix: build the OSS Scanner image like release builds (@Joibel)
-- **PR #17539** (2026-11-20): chore(deps): update dependency go to v1.27.4 (main) (@renovate[bot])
-- **PR #17538** (2026-11-18): chore(deps): update rancher/k3s docker tag to v1.37.2 (main) (@renovate[bot])
+- **PR #17575** (2026-11-24): chore(deps): update dependency @babel/preset-env to v7.29.14 (main) (@renovate[bot])
+- **PR #17574** (2026-11-24): chore(deps): update dependency @babel/core to v7.29.13 (main) (@renovate[bot])
+- **PR #17573** (2026-11-24): chore(deps): update amannn/action-semantic-pull-request action to v6.1.4 (main) (@renovate[bot])
+- **PR #17572** (2026-11-24): chore(deps): update softprops/action-gh-release digest to 8a0cd65 (main) (@renovate[bot])
+- **PR #17570** (2026-11-24): fix(resource): ignore unspecified container timestamps (cherry-pick #17523 for 4.0) (@Joibel)
+- **PR #17568** (2026-11-24): chore(deps): update k8s.io/utils digest to ca04ba5 (main) (@renovate[bot])
 
 ---
 
@@ -978,53 +897,45 @@ Signed-off-by: Shubham Singh <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. resource): ignore unspecified container timestamps
+## X. ci: report UI unit test coverage to codecov
 
 **RULE**:
-When implementing operations in `util/resource/duration_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in argoproj/argo-workflows. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/ci-build.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in argoproj/argo-workflows. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a25c64b8`: resource): ignore unspecified container timestamps. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3386b613`: ci: report UI unit test coverage to codecov. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `util/resource/duration_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci-build.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-
-func TestDurationForPodTerminatedContainerTimes(t *testing.T) {
-	now := metav1.NewTime(time.Date(2026, time.November, 17, 12, 0, 0, 0, time.UTC))
-	minuteAgo := metav1.NewTime(now.Add(-time.Minute))
-	epoch := metav1.NewTime(time.Unix(0, 0))
-	tests := []struct {
-		name       string
-		startedAt  metav1.Time
-		finishedAt metav1.Time
-		seconds    int64
-	}{
-		{name: "missing timestamps"},
-		{name: "start error", finishedAt: now},
-		{name: "CRI start error", startedAt: epoch, finishedAt: metav1.NewTime(time.Unix(1763519017, 0))},
-		{name: "missing finish", startedAt: minuteAgo},
-		{name: "CRI zero finish", startedAt: metav1.NewTime(time.Unix(-60, 0)), finishedAt: epoch},
-		{name: "finish before start", startedAt: now, finishedAt: minuteAgo},
-		{name: "equal timestamps", startedAt: now, finishedAt: now},
-		{name: "valid timestamps", startedAt: minuteAgo, finishedAt: now, seconds: 60},
-		{name: "valid timestamps near CRI zero", startedAt: metav1.NewTime(time.Unix(0, 1)), finishedAt: metav1.NewTime(time.Unix(60, 1)), seconds: 60},
-		{name: "valid timestamps before CRI zero", startedAt: metav1.NewTime(time.Unix(-120, 0)), finishedAt: metav1.NewTime(time.Unix(-60, 0)), seconds: 60},
-	}
-	for _
+      - run: yarn --cwd ui test --coverage --coverageReporters=lcovonly
+      - name: Make coverage paths relative to the repo root
+        # jest writes them relative to ui/
+        run: sed -i 's|^SF:src/|SF:ui/src/|' ui/coverage/lcov.info
+      - name: Upload coverage report
+        # runs on PRs as well as main so codecov can comment a coverage report on the PR
+        if: github.repository == 'argoproj/argo-workflows'
+        uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7.1.1
+        with:
+          files: ui/coverage/lcov.info
+          disable_search: true
+          flags: ui
+          fail_ci_if_error: true
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+      - run: yarn --cwd ui test
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a25c64b8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3386b613` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

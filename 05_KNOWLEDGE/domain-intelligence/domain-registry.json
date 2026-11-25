@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T04:07:46.741Z",
+  "last_updated": "2026-11-25T04:16:04.663Z",
   "total_records": 2630,
   "domains": {
     "A": {
@@ -9363,8 +9363,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "92cfc4ebb445c38aaaf208bc284e4e2f517fef85b5ea5db59c0acce54000991f",
-      "created_at": "2026-11-25T04:07:44.682Z"
+      "content_hash": "3598d2e3389bd37e082924a719d91d1d2360787a1e64464773068d48f322a60e",
+      "created_at": "2026-11-25T04:16:04.663Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -32272,8 +32272,8 @@
       "title": "Technical Construction Intelligence: tailscale/tailscale Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tailscale-tailscale-technical-construction-intelligence-tailscale-tailscale-core.md",
       "repository": "tailscale/tailscale",
-      "content_hash": "32e10e98aa459abd4b7b2115a040715c09e3e2fdd60590cdf0fbb557f779280b",
-      "created_at": "2026-11-23T23:39:57.056Z"
+      "content_hash": "8bafde942b064b5d59a8690f93577ba5fd068468901d6613288d5f30e6e1d768",
+      "created_at": "2026-11-25T04:15:58.640Z"
     },
     "DOM-D-714854BB": {
       "record_id": "DOM-D-714854BB",
@@ -32323,8 +32323,8 @@
       "title": "Technical Construction Intelligence: tailscale-tailscale-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tailscale-tailscale-learnings-technical-construction-intelligence-tailscale-tail.md",
       "repository": "tailscale-tailscale-learnings",
-      "content_hash": "4e5ebc581adb24047c3c4f2cefc04b4da88a31a8dd8b24a57a00d8b9f7a95ba1",
-      "created_at": "2026-11-23T23:40:26.828Z"
+      "content_hash": "a14b27bc1f4c370bdc3233285dfb1dd93d4d9720c315451fd520df8486f784f3",
+      "created_at": "2026-11-25T04:16:03.876Z"
     },
     "domain_intelligence-research-knowledge-intelligence-compvis-stable-diffusion-v1-4-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-compvis-stable-diffusion-v1-4-core-invariants",
@@ -40973,8 +40973,8 @@
       "title": "Architecture Intelligence: argoproj/argo-workflows Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-argoproj-argo-workflows-architecture-intelligence-argoproj-argo-workflows-core-i.md",
       "repository": "argoproj/argo-workflows",
-      "content_hash": "78a3f9f513d29497f0e80df6648fca25e9b3ac3ef9a62ec19120886dca9d5224",
-      "created_at": "2026-11-23T16:03:02.143Z"
+      "content_hash": "52b47a9850e842a8a6f7f54109088ea456e84865cb943d3966f45114eb0d439f",
+      "created_at": "2026-11-25T04:15:56.307Z"
     },
     "domain_intelligence-architecture-intelligence-argoproj-argo-workflows-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-argoproj-argo-workflows-learnings-core-invariants",
@@ -40982,8 +40982,8 @@
       "title": "Architecture Intelligence: argoproj-argo-workflows-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-argoproj-argo-workflows-learnings-architecture-intelligence-argoproj-argo-workfl.md",
       "repository": "argoproj-argo-workflows-learnings",
-      "content_hash": "0a45f2588bdd4258785335a550bd37f2bef523d741f59e082647156f5840c326",
-      "created_at": "2026-11-23T16:03:06.743Z"
+      "content_hash": "c0812578755bcac077c0f941e62b28189c872cfaa1fe565647972938389c5bfb",
+      "created_at": "2026-11-25T04:16:03.101Z"
     },
     "domain_intelligence-architecture-intelligence-duongductrong-snapzy-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-duongductrong-snapzy-core-invariants",

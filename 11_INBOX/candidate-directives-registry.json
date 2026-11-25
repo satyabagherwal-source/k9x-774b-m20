@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T04:07:46.558Z",
+  "last_updated": "2026-11-25T04:16:04.503Z",
   "directives": [
     {
       "id": "CD-001",
@@ -56032,11 +56032,11 @@
       "domain_letter": "G"
     },
     {
-      "id": "CD-RS6C",
+      "id": "CD-2HZP",
       "directive_title": "deps): bump url to 2.5.9 and heapless to 0.9.4",
       "source_repo": "zseven-w-openpencil-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-RS6C-deps-bump-url-to-2-5-9-and-heapless-to-0-9-4.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-2HZP-deps-bump-url-to-2-5-9-and-heapless-to-0-9-4.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-25",
@@ -59377,6 +59377,57 @@
       "source_repo": "zvec-ai-zvec-grep",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-F5C7E9-rust-bind-bare-calls-to-the-enclosing-mo.md",
+      "staged_date": "2026-11-25"
+    },
+    {
+      "id": "CD-2BIR",
+      "directive_title": "report UI unit test coverage to codecov",
+      "source_repo": "argoproj/argo-workflows",
+      "source_commit": "e0dadd07",
+      "staged_file": "11_INBOX/candidate-directives/CD-2BIR-report-ui-unit-test-coverage-to-codecov.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-25",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-2HDH",
+      "directive_title": "drive/driveimpl: don't require sudo or su to share as the current user",
+      "source_repo": "tailscale-tailscale-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-2HDH-drive-driveimpl-don-t-require-sudo-or-su-to-share-as-the-current-user.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-25",
+      "domain_letter": "A"
+    },
+    {
+      "id": "CD-2GS9",
+      "directive_title": "ci: report UI unit test coverage to codecov",
+      "source_repo": "argoproj-argo-workflows-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-2GS9-ci-report-ui-unit-test-coverage-to-codecov.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-25",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-REV-A57BEB",
+      "directive_title": "drive/driveimpl: don't require sudo or su to share as the current user",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "tailscale-tailscale",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-A57BEB-drive-driveimpl-don-t-require-sudo-or-su.md",
+      "staged_date": "2026-11-25"
+    },
+    {
+      "id": "CD-REV-B3B40D",
+      "directive_title": "deps): bump url to 2.5.9 and heapless to 0.9.4",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-B3B40D-deps-bump-url-to-2-5-9-and-heapless-to-0.md",
       "staged_date": "2026-11-25"
     }
   ]

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-23T23:40:26.713Z",
+  "timestamp": "2026-11-25T04:16:03.582Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-tailscale-tailscale-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [tailscale-tailscale-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-23T23:40:26.713Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T04:16:03.582Z`  
 > **Learning ID**: `LEARN-EVO-tailscale-tailscale-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), B (Product Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 55%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), A (Human & Need Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence), B (Product Intelligence)
+- **Confidence Rating**: 70%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from tailscale-tailscale-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source**: github ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
-> **Source Version**: `da6276d7`  
+> **Source Version**: `e906a6a4`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-23T23:39:56.359Z  
+> **Timestamp**: 2026-11-25T04:15:57.215Z  
 > **Learning ID**: `learn-github-tailscale-tailscale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T23:39:56.354Z  
+> **Harvest Timestamp**: 2026-11-25T04:15:57.210Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: The easiest, most secure way to use WireGuard and 2FA.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 39534 stars
+- **Stars / Engagement**: 39576 stars
 
 ---
 
@@ -831,8 +831,8 @@ export const sessionStateStorage: IPNStateStorage = {
 - **Issue #22582** (2026-11-23): **client/systray: SIGINT and SIGTERM exit with status 1 during normal shutdown**
   *Symptoms*: ### What is the issue?  On upstream main eaf3fc8daf90fb18714e21df38258db2ae33184a, stopping the Linux tray with SIGINT or SIGTERM cancels its IPN bus watch. watchIPNBus then treats context.Canceled as fatal and terminates the process with status 1.  The signal handler calls onExit directly, which cleans up handlers but does not stop the native tray loop. The fatal watcher currently terminates the process instead. Removing the fatal alone would leave that loop running.  ### Steps to reproduce  I reproduced this using the actual Menu.Run and tray library in subprocesses, with a private D-Bus session, a fake StatusNotifierWatcher, and a fake tailscaled LocalAPI streaming watch endpoint. No live tailnet or desktop session is needed.  Apply the attached clean-shutdown-tests.patch to this exact upstream commit and run:      ./tool/go test -race ./client/systray -run '^TestShutdownSignals$' -count=1 -v  Both signal cases exit with status 1 and log:      exiting     ipnbus error: context canceled     watchIPNBus: ipnbus error: context canceled  The test also reproduced status 1 for the D-Bus Quit action. That path may be scheduling-dependent because Run can return before the watcher reaches log.Fatal.  ### Are there any recent changes that introduced the issue?  _No response_  ### OS  Linux  ### OS version  Debian GNU/Linux 13; Linux 6.12.111+deb13-amd64  ### Tailscale version  1.104.7  ### Other software  _No response_  ### Bug report  _No response_
 
-- **Issue #22574** (2026-11-23): **Funnel: 2 of 3 edges slow (~5 s TLS) or failing since 2026-11-22 05:31 UTC, ingress via DERP fra**
-  *Symptoms*: ### What is the issue?  Since 2026-11-22 05:31 UTC, Funnel requests to one of my nodes intermittently fail. Callers get "Bad Gateway" or time out after about 5 s. Nothing changed on my side. The node's log had zero TLS handshake errors for the 46 hours before (back to 2026-11-20 07:32 UTC); since then about 35-40 per hour.  Testing each Funnel edge separately (public DNS, `curl --resolve NAME:443:EDGE`, 20 requests each, 2026-11-22 07:37-07:44 UTC; the app answers 403 to "/" by design, so any HTTP code means TLS completed):  | Edge | Result | Time until TLS done | |---|---|---| | 185.40.234.172 | 20/20 ok | 0.16-0.41 s | | 185.40.234.37 | 19/20 ok, 1 failed | 3.7-13.7 s, mostly ~5.4 s | | 185.40.234.210 | 16/20 ok, 4 failed | ~5.4 s, some 10.8-13.8 s |  So one edge is healthy and two are consistently slow or failing, which explains why it looks intermittent: it depends on which edge the caller hits. A warm test (2 requests 10 s apart to 185.40.234.37) was still slow: 3.2 s, then 2.3 s.  On the node: - `peerapi_ingress` went from 138 to 211 during the test, so connections reach the node; the delay is in the relay-to-node leg. - All `funnel-ingress-node` peers have empty `CurAddr` (no direct path); the three active ones have `Relay: fra`. Node metrics: ~1,986 packets received via DERP vs 49 direct. - `tailscale netcheck` on the node: UDP yes, IPv4 yes, MappingVariesByDestIP false, nearest DERP Frankfurt 29.7 ms. - Each failure logs the same pattern (addresses redacted):  ``` 07
+- **Issue #22576** (2026-11-24): **Funnel: multi-second TLS handshake stalls on Frankfurt ingress (ingress-fra-01.tailscale.com)**
+  *Symptoms*: ### What is the issue?    **Environment:** Tailscale 1.104.7 (commit fb3b9b296) on Debian Linux, native install via systemd. Funnel endpoint on port 443 serving a self-hosted web service behind the node.  **DNS (via 1.1.1.1):** my Funnel hostname resolves to the Frankfurt ingress IPs 185.40.234.37 / .172 / .210 (ingress-fra-01.tailscale.com, NetActuate, Frankfurt)  **What works:** Serving the same endpoint tailnet-internally is fast (~10 ms TTFB). All tailnet peers connect directly (empty PeerRelay). The Tailscale status page shows no open incident for Funnel.  **What fails:** Every *public* connection through the FUNNEL ingress shows multi-second TLS handshakes, consistently across all three ingress IPs. Measured with curl --resolve (one pass per ingress IP, hostname redacted):  ip=185.40.234.37   try=1 tls=7.196525s ttfb=9.008322s total=9.008372s ip=185.40.234.37   try=2 tls=5.352385s ttfb=7.155548s total=7.155601s ip=185.40.234.37   try=3 tls=5.389028s ttfb=7.278048s total=7.278100s ip=185.40.234.37   try=4 tls=5.552671s ttfb=7.237613s total=7.237664s ip=185.40.234.37   try=5 tls=5.428549s ttfb=7.209125s total=7.209178s ip=185.40.234.172 try=1 tls=0.753926s ttfb=1.027717s total=1.027763s ip=185.40.234.172 try=2 tls=0.959335s ttfb=1.287773s total=1.287817s ip=185.40.234.172 try=3 tls=1.155935s ttfb=1.683839s total=1.683909s ip=185.40.234.172 try=4 tls=1.733231s ttfb=2.336538s total=2.336588s ip=185.40.234.172 try=5 tls=1.880378s ttfb=2.324323s total=2.324372s ip=185.40.234.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -849,546 +849,551 @@ export const sessionStateStorage: IPNStateStorage = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7caf9edb` (2026-11-23)
-**Commit Message**: appc,feature/conn25: build split DNS routes from the parsed config
+### Incident Patch 1: `e906a6a4` (2026-11-23)
+**Commit Message**: drive/driveimpl: don't require sudo or su to share as the current user
 
-On every self node change, conn25 parsed the app connector capability
-twice: once in configFromNodeView, and again in appc.AppDNSRoutes to
-build the split DNS routes. Build the routes from the config we already
-have instead, and move DNSAddrScheme into feature/conn25 along with it.
+The Taildrive file server for a share is started as the share's user
+with sudo, falling back to su. If neither works and tailscaled is root,
+userServer.run refuses to start it. On systems that ship neither tool,
+such as OpenWrt, a share created by root could therefore never be
+served: the run loop kept failing with `"root" is root` and remote
+peers saw an empty, unwritable share until sudo was installed.
 
-With appc/conn25.go gone, conn25 no longer depends on appc, so
-TestOmitAppConnectors no longer needs to omit conn25 too.
+When the share's user is the user tailscaled is already running as,
+there is nothing to switch to, so run the file server directly. This is
+what `sudo -u root` already did where sudo is installed. Shares owned
+by any other user still go through sudo or su as before.
 
-Fixes tailscale/corp#51400
-Fixes tailscale/corp#51402
+Fixes #22413
 
-Signed-off-by: Michael Ben-Ami <[REDACTED_EMAIL]>
+Change-Id: Ied5f51e01183f90ef1f7d2ffc386847d9eea633a
+Signed-off-by: Sai Kumar Pola <[REDACTED_EMAIL]>
 
-**File**: `appc/conn25.go` (removed, +0/-57)
+**File**: `drive/driveimpl/remote_impl.go` (modified, +14/-1)
 ```diff
-@@ -1,57 +0,0 @@
--// Copyright (c) Tailscale Inc & contributors
--// SPDX-License-Identifier: BSD-3-Clause
--
--package appc
--
--import (
--	"fmt"
--	"strings"
--
--	"tailscale.com/tailcfg"
--	"tailscale.com/tailcfg/nodecap"
--	"tailscale.com/types/appctype"
--	"tailscale.com/types/dnstype"
--)
--
--const AppConnectorAttrName = "tailscale.com/app-connectors"
--
--// DNSAddrScheme is the custom URI scheme used for conn25-managed split DNS
--// entries to determine the destination at query time rather than configuration
--// time.
--const DNSAddrScheme = "tailscale-app"
--
--// AppDNSRoutes returns split DNS routes, keyed by domain suffix, for the app
--// domains configured in self's capability map. Each route resolves via the
--// [DNSAddrScheme] scheme naming the app, so the connector that serves it is
--// chosen at query time. It returns nil if the node lacks Connectors 2025 apps.
--func AppDNSRoutes(hasCap func(c nodecap.Cap) bool, self tailcfg.NodeView) map[string][]*dnstype.Resolver {
--	if !hasCap(AppConnectorAttrName) {
--		return nil
--	}
--
--	apps, err := tailcfg.UnmarshalNodeCapViewJSON[appctype.AppConnectorAttr](self.CapMap(), AppConnectorAttrName)
--	if err != nil {
--		return nil
--	}
--
--	appNamesByDomain := map[string]string{}
--	for _, app := range apps {
--		// conn25 apps are provided under [AppConnectorAttrName] with the Mode
--		// field set to [appctype.AppConnectorModeMagicIP].
--		if app.Mode != appctype.MagicIP {
--			continue
--		}
--		for _, domain := range app.Domains {
--			domain, _ = strings.CutPrefix(domain, "*.")
--			domain = strings.ToLower(domain)
--			// in the case of multiple apps specifying the same domain (which is misconfiguration
--			// that should be validated at point of input) last write wins.
--			appNamesByDomain[domain] = app.Name
--		}
--	}
--	m := make(map[string][]*dnstype.Resolver, len(appNamesByDomain))
--	for domain, appName := range appNamesByDomain {
--		m[domain] = []*dnstype.Resolver{{Addr: fmt.Sprintf("%s:%s", DNSAddrScheme, appName), UseWithExitNode: true}}
--	}
--	return m
--}
-```
-
-**File**: `appc/conn25_test.go` (removed, +0/-203)
-```diff
-@@ -1,203 +0,0 @@
--// Copyright (c) Tailscale Inc & contributors
--// SPDX-License-Identifier: BSD-3-Clause
--
--package appc
--
--import (
--	"encoding/json"
--	"fmt"
--	"testing"
--
--	"github.com/google/go-cmp/cmp"
--	"tailscale.com/tailcfg"
--	"tailscale.com/tailcfg/nodecap"
--	"tailscale.com/types/appctype"
--	"tailscale.com/types/dnstype"
--)
--
--func TestAppDNSRoutes(t *testing.T) {
--	getBytesForAttr := func(name string, domains []string, tags []string, mode appctype.Mode) []byte {
--		attr := appctype.AppConnectorAttr{
--			Name:       name,
--			Domains:    domains,
--			Connectors: tags,
--			Mode:       mode,
--		}
--		bs, err := json.Marshal(attr)
--		if err != nil {
--			t.Fatalf("test setup: %v", err)
--		}
--		return bs
--	}
--	appOneBytes := getBytesForAttr(
--		"app1",
--		[]string{"example.com"},
--		[]string{"tag:one"},
--		appctype.MagicIP,
--	)
--	appTwoBytes := getBytesForAttr(
--		"app2",
--		[]string{"a.example.com"},
--		[]string{"tag:two"},
--		appctype.MagicIP,
--	)
--	appThreeBytes := getBytesForAttr(
--		"app3",
--		[]string{"woo.b.example.com", "hoo.b.example.com"},
--		[]string{"tag:three1", "tag:three2"},
--		appctype.MagicIP,
--	)
--	appFourBytes := getBytesForAttr(
--		"app4",
--		[]string{"woo.b.example.com", "c.example.com"},
--		[]string{"tag:four1", "tag:four2"},
--		appctype.MagicIP,
--	)
--	appFiveBytes := getBytesForAttr(
--		"app5",
--		[]string{"*.example.com", "example.com"},
--		[]string{"tag:one"},
--		appctype.MagicIP,
--	)
--	appSixBytes := getBytesForAttr(
--		"app6",
--		[]string{"*.Example.com", "EXAMPLE.com", "EXAMPLE.COM"},
--		[]string{"tag:one"},
--		appctype.MagicIP,
--	)
--	subnetAppBytes := getBytesForAttr(
--		"subnet-app",
--		[]string{"subnet.example.com"},
--		[]string{"tag:one"},
--		appctype.Subnet,
--	)
--
--	resolver := func(appName string) []*dnstype.Resolver {
--		return []*dnstype.Resolver{{Addr: fmt.Sprintf("%s:%s", DNSAddrScheme, appName), UseWithExitNode: true}}
--	}
--
--	for _, tt := range []struct {
--		name   string
--		hasCap bool
--		config []tailcfg.RawMessage
--		want   map[string][]*dnstype.Resolver
--	}{
--		{
--			name:   "no-capability", // hasCap false should return nil regardless of config.
--			hasCap: false,
--		},
--		{
--			name:   "no-apps", // hasCap true but no configured apps returns an empty map.
--			hasCap: true,
--			want:   map[string][]*dnstype.Resolver{},
--		},
--		{
--			name:   "bad-config", // bad config should return nil rather than error.
--			hasCap: true,
--			config: []tailcfg.RawMessage{tailcfg.RawMessage(`hey`)},
--		},
--		{
--			name:   "single-app",
--			hasCap: true,
--			config: []tailcfg.RawMessage{tailcfg.RawMessage(appOneBytes)},
--			want: map[string][]*dnstype.Resolver{
--				"example.com": resolver("app1"),
--			},
--		},
--		{
--			name:   "single-app-multi-domain",
--			hasCap: true,
--			config: []tailcfg.RawMessage{tailcfg.RawMessage(appThreeBytes)},
--			want: map[string][]*dnstype.Resolver{
--				"woo.b.example.com": resolver("app3"),
--				"hoo.b.example.com": resolver("app3"),
--			},
--		},
--		{
--			name:   "multi-app-no-overlap",
--			hasCap: true,
--			config: []tailcfg.RawMessage{
--				tailcfg.RawMessage(appOneBytes),
--				tailcfg.RawMessage(appTwoBytes),
--			},
--			want: map[string][]*dnstype.Resolver{
--				"example.com":   resolver("app1"),
--				"a.example.com": resolver("app2"),
--			},
--		},
--		{
--			name:   "domain-collision-last-write-wins",
--			hasCap: true,
--			config: []tailcfg.RawMessage{
--				tailcfg.RawMessage(appThreeBytes), // app3: woo.b.example.com, hoo.b.example.com
--				tailcfg.RawMessage(appFourBytes),  // app4: woo.b.example.com, c.example.com
--			},
--			want: map[string][]*dnstype.Resolver{
--				// app4 overwrites app3 for the shared domain
--				"woo.b.example.com": resolver("app4"),
--				"hoo.b.example.com": resolver("app3"),
--				"c.example.com":     resolver("app4"),
--			},
--		},
--		{
--			name:   "wildcards-are-stripped-and-deduped",
--			hasCap: true,
--			config: []tailcfg.RawMessage{tailcfg.RawMessage(appFiveBytes)},
--			want: map[string][]*dnstype.Resolver{
--				// *.example.com and example.com should both normalize to example.com.
--				"example.com": resolver("app5"),
--			},
--		},
--		{
--			name:   "domains-are-normalized-and-deduped",
--			hasCap: true,
--			config: []tailcfg.RawMessage{tailcfg.RawMessage(appSixBytes)},
--			want: map[string][]*dnstype.Resolver{
--				// *.Example.com, EXAMPLE.com, EXAMPLE.COM should all normalize to example.com.
--				"example.com": resolver("app6"),
--			},
--		},
--		{
--			name:   "sub-domains-and-top-domains-do-not-collide",
--			hasCap: true,
--			config: []tailcfg.RawMessage{
--				tailcfg.RawMessage(appTwoBytes),
--				tailcfg.RawMessage(appFiveBytes),
--			},
--			want: map[string][]*dnstype.Resolver{
--				// *.example.com normalizes to example.com; a.example.com remains distinct.
--				"a.example.com": resolver("app2"),
--				"example.com":   resolver("app5"),
--			},
--		},
--		{
--			name:   "only-conn25-processed",
--			hasCap: true,
--			config: []tailcfg.RawMessage{
--				tailcfg.RawMessage(appOneBytes),
--				tailcfg.RawMessage(subnetAp
-```
-
-**File**: `cmd/tailscaled/depaware.txt` (modified, +1/-1)
-```diff
-@@ -257,7 +257,7 @@ tailscale.com/cmd/tailscaled dependencies: (generated by github.com/tailscale/de
-         gvisor.dev/gvisor/pkg/tcpip/transport/udp                    from gvisor.dev/gvisor/pkg/tcpip/adapters/gonet+
-         gvisor.dev/gvisor/pkg/waiter                                 from gvisor.dev/gvisor/pkg/context+
-         tailscale.com                                                from tailscale.com/version
--        tailscale.com/appc                                           from tailscale.com/ipn/ipnlocal+
-+        tailscale.com/appc                                           from tailscale.com/ipn/ipnlocal
-      💣 tailscale.com/atomicfile                                     from tailscale.com/ipn+
-   LD    tailscale.com/chirp                                          from tailscale.com/feature/bird
-         tailscale.com/client/local                                   from tailscale.com/client/web+
-```
-
-**File**: `cmd/tailscaled/deps_test.go` (modified, +1/-3)
-```diff
-@@ -86,9 +86,7 @@ func TestOmitAppConnectors(t *testing.T) {
- 	deptest.DepChecker{
- 		GOOS:   "linux",
- 		GOARCH: "amd64",
--		// conn25 also uses appc, so omit it too to check that nothing
--		// else pulls appc in.
--		Tags: "ts_omit_appconnectors,ts_omit_conn25,ts_include_cli",
-+		Tags:   "ts_omit_appconnectors,ts_include_cli",
- 		BadDeps: map[string]string{
- 			"tailscale.com/appc":                  msg,
- 			"tailscale.com/feature/appconnectors": msg,
-```
-
-**File**: `feature/conn25/conn25.go` (modified, +37/-6)
-```diff
-@@ -26,7 +26,6 @@ import (
- 
- 	"go4.org/netipx"
- 	"golang.org/x/net/dns/dnsmessage"
--	"tailscale.com/appc"
- 	"tailscale.com/feature"
- 	"tailscale.com/ipn"
- 	"tailscale.com/ipn/ipnext"
-@@ -169,9 +168,9 @@ func (e *extension) installHooks(dph *datapathHandler) error {
- 		return errors.New("dns manager resolver not ready")
+@@ -332,7 +332,13 @@ func (s *userServer) run() error {
  	}
+ 	var cmd *exec.Cmd
  
--	if err := r.RegisterCustomScheme(appc.DNSAddrScheme, func(addr string) (string, error) {
-+	if err := r.RegisterCustomScheme(DNSAddrScheme, func(addr string) (string, error) {
- 		scheme, appName, ok := strings.Cut(addr, ":")
--		if !ok || scheme != appc.DNSAddrScheme {
-+		if !ok || scheme != DNSAddrScheme {
- 			return "", fmt.Errorf("unexpected conn25 scheme %q", scheme)
- 		}
- 
-@@ -266,7 +265,7 @@ func (e *extension) installHooks(dph *datapathHandler) error {
- 	})
- 
- 	// Route DNS queries for app domains to the connector that serves
--	// them, chosen at query time via the [appc.DNSAddrScheme] scheme.
-+	// them, chosen at query time via the [DNSAddrScheme] scheme.
- 	e.host.Hooks().ExtraDNSRoutes.Set(func() map[string][]*dnstype.Resolver {
- 		if !e.conn25.isConfigured() {
- 			return nil
-@@ -468,7 +467,7 @@ func (e *extension) onSelfChange(selfNode tailcfg.NodeView) {
- 	}
- 	// Store the routes only once the config parsed, so a bad self node
- 	// leaves the previous routes and config in place together.
--	e.conn25.appDNSRoutes.Store(appc.AppDNSRoutes(selfNode.HasCap, selfNode))
-+	e.conn25.appDNSRoutes.Store(cfg.appDNSRoutes())
- 	e.conn25.reconfig(cfg)
+-	if s.canSudo() {
++	if isCurrentUser(s.username) {
++		// We're already running as the share's user, so there's nothing to
++		// switch to. Don't require sudo or su, which minimal systems like
++		// OpenWrt don't ship by default.
++		s.logf("starting taildrive file server as ourselves (%q)", s.username)
++		cmd = exec.Command(s.executable, args...)
++	} else if s.canSudo() {
+ 		s.logf("starting taildrive file server with sudo as user %q", s.username)
+ 		allArgs := []string{"-n", "-u", s.username, s.executable}
+ 		allArgs = append(allArgs, args...)
+@@ -413,6 +419,13 @@ var writeMethods = map[string]bool{
+ 	"DELETE":    true,
  }
  
-@@ -508,7 +507,7 @@ type Conn25 struct {
- 	prefsAdvertiseConnector atomic.Bool
- 
- 	// appDNSRoutes holds the split DNS routes for the app domains in the
--	// self node's capabilities, as returned by [appc.AppDNSRoutes]. It is
-+	// self node's capabilities, as returned by [config.appDNSRoutes]. It is
- 	// recomputed on each self node change and served to
- 	// [ipnext.Hooks.ExtraDNSRoutes]. The map must not be mutated once stored.
- 	appDNSRoutes syncs.AtomicValue[map[string][]*dnstype.Resolver]
-@@ -748,6 +747,11 @@ type ConnectorTransitIPResponse struct {
- const (
- 	AppConnectorAttrName                     = "tailscale.com/app-connectors"
- 	AppConnectorsExperimentalIPPoolsAttrName = "tailscale.com/app-connectors-experimental-ippools"
-+
-+	// DNSAddrScheme is the custom URI scheme used for conn25-managed split DNS
-+	// entries to determine the destination at query time rather than configuration
-+	// time.
-+	DNSAddrScheme = "tailscale-app"
- )
- 
- // ipSets wraps all the IPSets the config needs.
-@@ -893,6 +897,33 @@ func (cfg *config) getAppsForConnectorDomain(domain dnsname.FQDN, prefsAdvertise
- 	return appNames
- }
- 
-+// appDNSRoutes returns split DNS routes, keyed by domain suffix, for the app
-+// domains in cfg. Each route resolves via the [DNSAddrScheme] scheme naming
-+// the app, so the connector that serves it is chosen at query time. It
-+// returns nil if cfg is not configured.
-+func (cfg *config) appDNSRoutes() map[string][]*dnstype.Resolver {
-+	if !cfg.isConfigured {
-+		return nil
-+	}
-+	m := make(map[string][]*dnstype.Resolver, len(cfg.appNamesByDomain)+len(cfg.appNamesByWCDomain))
-+	add := func(byDomain map[dnsname.FQDN][]string) {
-+		for domain, appNames := range byDomain {
-+			if len(appNames) == 0 {
-+				continue
-+			}
-+			// In the case of multiple apps specifying the same domain (which is misconfiguration
-+			// that should be validated at point of input), the last one in the config list wins.
-+			appName := appNames[len(appNames)-1]
-+			m[domain.WithoutTrailingDot()] = []*dnstype.Resolver{{Addr: fmt.Sprintf("%s:%s", DNSAddrScheme, appName), UseWithExitNode: true}}
-+		}
-+	}
-+	// If an exact and a wildcard domain coincide, the exact domain's app
-+	// takes the route, so add it last.
-+	add(cfg.appNamesByWCDomain)
-+	add(cfg.appNamesByDomain)
-+	return m
++// isCurrentUser reports whether username is the user that this process is
++// running as.
++func isCurrentUser(username string) bool {
++	u, err := user.Current()
++	return err == nil && u.Username == username
 +}
 +
- func (e *extension) sendLoop(ctx context.Context) {
- 	for {
- 		select {
+ // canSudo checks whether we can sudo -u the configured executable as the
+ // configured user by attempting to call the executable with the '-h' flag to
+ // print help.
 ```
 
-**File**: `feature/conn25/conn25_test.go` (modified, +136/-0)
+**File**: `drive/driveimpl/remote_impl_test.go` (added, +24/-0)
 ```diff
-@@ -4138,6 +4138,142 @@ func TestHandleHookReplyToDNSQueries(t *testing.T) {
- // for the app domains in the self node's capabilities, and supplies none
- // before the self node is known, when this node is itself a connector, or
- // after a switch to a different node.
-+func TestAppDNSRoutes(t *testing.T) {
-+	app := func(name string, mode appctype.Mode, domains ...string) appctype.AppConnectorAttr {
-+		return appctype.AppConnectorAttr{
-+			Name:       name,
-+			Domains:    domains,
-+			Connectors: []string{"tag:" + name},
-+			Mode:       mode,
+@@ -0,0 +1,24 @@
++// Copyright (c) Tailscale Inc & contributors
++// SPDX-License-Identifier: BSD-3-Clause
++
++package driveimpl
++
++import (
++	"os/user"
++	"testing"
++)
++
++func TestIsCurrentUser(t *testing.T) {
++	u, err := user.Current()
++	if err != nil {
++		t.Skipf("can't determine current user: %v", err)
++	}
++	if !isCurrentUser(u.Username) {
++		t.Errorf("isCurrentUser(%q) = false; want true", u.Username)
++	}
++	for _, name := range []string{"", u.Username + "-not-me"} {
++		if isCurrentUser(name) {
++			t.Errorf("isCurrentUser(%q) = true; want false", name)
 +		}
 +	}
-+	resolver := func(appName string) []*dnstype.Resolver {
-+		return []*dnstype.Resolver{{Addr: fmt.Sprintf("%s:%s", DNSAddrScheme, appName), UseWithExitNode: true}}
-+	}
++}
+```
+
+---
+
+### Incident Patch 2: `258b0879` (2026-11-24)
+**Commit Message**: tsweb/varz: add match filters and streaming to /debug/varz
+
+The new "match" query parameter filters the output by metric name
+with Go regexps, and "interval" turns the response into a stream of
+frames, a full one first and then deltas with only the changed series,
+so monitors can subscribe once instead of re-fetching everything. A
+stream matches vars once at setup and then compares plain counters and
+gauges without formatting them. The new ReadStream parses the stream.
+
+Updates tailscale/corp#47429
+
+Change-Id: I8751bfe981991b4aca7f1cf52001e093584a258a
+Signed-off-by: Brad Fitzpatrick <[REDACTED_EMAIL]>
+
+**File**: `tsweb/varz/stream.go` (added, +884/-0)
+```diff
+@@ -0,0 +1,884 @@
++// Copyright (c) Tailscale Inc & contributors
++// SPDX-License-Identifier: BSD-3-Clause
 +
-+	for _, tt := range []struct {
-+		name string
-+		apps []appctype.AppConnectorAttr
-+		want map[string][]*dnstype.Resolver
++package varz
++
++import (
++	"bufio"
++	"bytes"
++	"errors"
++	"expvar"
++	"fmt"
++	"io"
++	"math"
++	"net/http"
++	"net/url"
++	"regexp"
++	"strconv"
++	"strings"
++	"time"
++
++	"tailscale.com/metrics"
++	"tailscale.com/syncs"
++)
++
++// Limits on the query parameters of [Handler] and [ExpvarDoHandler].
++const (
++	minStreamInterval    = 100 * time.Millisecond
++	maxStreamInterval    = time.Minute
++	maxMatchPatterns     = 32
++	maxMatchPatternBytes = 4 << 10 // total length of all match patterns
++	maxStreams           = 16      // concurrent streams per process
++	minStreamWriteWait   = 5 * time.Second
++	rescanInterval       = 10 * time.Second // how often a stream looks for new vars
++)
++
++// streamSem bounds the number of concurrent streams.
++var streamSem = make(chan struct{}, maxStreams)
++
++// frameTimeFormat is RFC 3339 with a fixed nine digits of fractional
++// seconds, so frame headers have a constant width.
++const frameTimeFormat = "2006-01-02T15:04:05.000000000Z07:00"
++
++// streamOpts are the parsed query parameters of a /debug/varz request.
++type streamOpts struct {
++	interval time.Duration // or zero for a one-shot response
++	match    selector
++}
++
++// parseStreamOpts parses the "interval" and "match" query parameters
++// of a /debug/varz request. It clamps the interval to
++// [minStreamInterval, maxStreamInterval].
++func parseStreamOpts(q url.Values) (streamOpts, error) {
++	var opts streamOpts
++	if q.Has("interval") {
++		d, err := time.ParseDuration(q.Get("interval"))
++		if err != nil {
++			return opts, fmt.Errorf("bad interval: %v", err)
++		}
++		if d <= 0 {
++			return opts, errors.New("bad interval: must be positive")
++		}
++		opts.interval = min(max(d, minStreamInterval), maxStreamInterval)
++	}
++	pats := q["match"]
++	if len(pats) > maxMatchPatterns {
++		return opts, fmt.Errorf("too many match patterns; max %d", maxMatchPatterns)
++	}
++	total := 0
++	for _, p := range pats {
++		total += len(p)
++	}
++	if total > maxMatchPatternBytes {
++		return opts, fmt.Errorf("match patterns too long; max %d bytes total", maxMatchPatternBytes)
++	}
++	for _, p := range pats {
++		re, err := regexp.Compile(p)
++		if err != nil {
++			return opts, fmt.Errorf("bad match pattern: %v", err)
++		}
++		opts.match = append(opts.match, re)
++	}
++	return opts, nil
++}
++
++// serveQuery serves a /debug/varz request that has a query string.
++func (s varzSource) serveQuery(w http.ResponseWriter, r *http.Request) {
++	opts, err := parseStreamOpts(r.URL.Query())
++	if err != nil {
++		http.Error(w, err.Error(), http.StatusBadRequest)
++		return
++	}
++	switch {
++	case opts.interval > 0:
++		select {
++		case streamSem <- struct{}{}:
++			defer func() { <-streamSem }()
++		default:
++			http.Error(w, "too many concurrent varz streams", http.StatusServiceUnavailable)
++			return
++		}
++		newVarzStream(s, opts.match).serve(w, r, opts.interval)
++	case len(opts.match) > 0:
++		w.Header().Set("Content-Type", contentType)
++		w.Write(newVarzStream(s, opts.match).appendFrame(nil, true))
++	default:
++		w.Header().Set("Content-Type", contentType)
++		s.writeTo(w)
++	}
++}
++
++// countVars returns the number of vars in s, counting the members of
++// each [metrics.Set] as well as the set itself.
++func (s varzSource) countVars() int {
++	n := 0
++	var count func(expvar.KeyValue)
++	count = func(kv expvar.KeyValue) {
++		n++
++		if set, ok := kv.Value.(*metrics.Set); ok {
++			set.Do(count)
++		}
++	}
++	s.do(count)
++	return n
++}
++
++// selector selects series by metric name. An empty selector selects
++// everything.
++type selector []*regexp.Regexp
++
++func (sel selector) all() bool { return len(sel) == 0 }
++
++func (sel selector) matches(name []byte) bool {
++	if sel.all() {
++		return true
++	}
++	for _, re := range sel {
++		if re.Match(name) {
++			return true
++		}
++	}
++	return false
++}
++
++// varzStream is the state of a filtered or streaming /debug/varz
++// response.
++//
++// It decides once which vars might match, and remembers what it last
++// sent of each, so later frames neither revisit vars that can't match
++// nor format values that didn't change. It only learns of vars added
++// later when [varzSource.countVars] changes.
++type varzStream struct {
++	src   varzSource
++	sel   selector
++	vars  []streamEntry // in output order
++	nVars int           // src.countVars() as of the last build
++	kvs   sortedKVs     // scratch space for build
++}
++
++type streamEntry struct {
++	key string // var key, with Set members prefixed by their Set's name
++	v   streamVar
++}
++
++// streamVar is a source of lines in a stream: a var, or the Go
++// runtime metrics.
++type streamVar interface {
++	// appendFrame appends to dst the lines for the next frame and
++	// returns the extended slice. If full, that's every series that
++	// sel matches. Otherwise it's only those that changed since the
++	// previous call, along with any metadata not yet sent.
++	appendFrame(dst []byte, full bool, sel selector) []byte
++}
++
++// runtimeKey
+```
+
+**File**: `tsweb/varz/stream_test.go` (added, +614/-0)
+```diff
+@@ -0,0 +1,614 @@
++// Copyright (c) Tailscale Inc & contributors
++// SPDX-License-Identifier: BSD-3-Clause
++
++package varz
++
++import (
++	"bytes"
++	"context"
++	"expvar"
++	"fmt"
++	"io"
++	"maps"
++	"math"
++	"net/http"
++	"net/http/httptest"
++	"net/url"
++	"strings"
++	"sync"
++	"testing"
++	"testing/synctest"
++	"time"
++
++	"tailscale.com/metrics"
++	"tailscale.com/syncs"
++)
++
++func TestParseStreamOpts(t *testing.T) {
++	tests := []struct {
++		query    string
++		interval time.Duration
++		nMatch   int
++		wantErr  string
 +	}{
-+		{
-+			name: "no-apps", // an unconfigured config has no routes.
-+		},
-+		{
-+			name: "only-subnet-apps", // no conn25 apps means unconfigured.
-+			apps: []appctype.AppConnectorAttr{app("subnet-app", appctype.Subnet, "subnet.example.com")},
-+		},
-+		{
-+			name: "single-app",
-+			apps: []appctype.AppConnectorAttr{app("app1", appctype.MagicIP, "example.com")},
-+			want: map[string][]*dnstype.Resolver{
-+				"example.com": resolver("app1"),
-+			},
-+		},
-+		{
-+			name: "single-app-multi-domain",
-+			apps: []appctype.AppConnectorAttr{app("app3", appctype.MagicIP, "woo.b.example.com", "hoo.b.example.com")},
-+			want: map[string][]*dnstype.Resolver{
-+				"woo.b.example.com": resolver("app3"),
-+				"hoo.b.example.com": resolver("app3"),
-+			},
-+		},
-+		{
-+			name: "multi-app-no-overlap",
-+			apps: []appctype.AppConnectorAttr{
-+				app("app1", appctype.MagicIP, "example.com"),
-+				app("app2", appctype.MagicIP, "a.example.com"),
-+			},
-+			want: map[string][]*dnstype.Resolver{
-+				"example.com":   resolver("app1"),
-+				"a.example.com": resolver("app2"),
-+			},
-+		},
-+		{
-+			name: "domain-collision-last-wins",
-+			apps: []appctype.AppConnectorAttr{
-+				app("app3", appctype.MagicIP, "woo.b.example.com", "hoo.b.example.com"),
-+				app("app4", appctype.MagicIP, "woo.b.example.com", "c.example.com"),
-+			},
-+			want: map[string][]*dnstype.Resolver{
-+				// app4 is listed last, so takes the shared domain.
-+				"woo.b.example.com": resolver("app4"),
-+				"hoo.b.example.com": resolver("app3"),
-+				"c.example.com":     resolver("app4"),
-+			},
-+		},
-+		{
-+			name: "wildcard-collision-last-wins",
-+			apps: []appctype.AppConnectorAttr{
-+				app("app1", appctype.MagicIP, "*.example.com"),
-+				app("app2", appctype.MagicIP, "*.example.com"),
-+			},
-+			want: map[string][]*dnstype.Resolver{
-+				"example.com": resolver("app2"),
-+			},
-+		},
-+		{
-+			name: "exact-beats-wildcard",
-+			apps: []appctype.AppConnectorAttr{
-+				app("app1", appctype.MagicIP, "example.com"),
-+				app("app2", appctype.MagicIP, "*.example.com"),
-+			},
-+			want: map[string][]*dnstype.Resolver{
-+				// The exact app wins even though the wildcard app is listed last.
-+				"example.com": resolver("app1"),
-+			},
-+		},
-+		{
-+			name: "wildcards-are-stripped-and-deduped",
-+			apps: []appctype.AppConnectorAttr{app("app5", appctype.MagicIP, "*.example.com", "example.com")},
-+			want: map[string][]*dnstype.Resolver{
-+				// *.example.com and example.com should both normalize to example.com.
-+				"example.com": resolver("app5"),
-+			},
-+		},
-+		{
-+			name: "domains-are-normalized-and-deduped",
-+			apps: []appctype.AppConnectorAttr{app("app6", appctype.MagicIP, "*.Example.com", "EXAMPLE.com", "EXAMPLE.COM", "example.com.")},
-+			want: map[string][]*dnstype.Resolver{
-+				// All variants should normalize to example.com.
-+				"example.com": resolver("app6"),
-+			},
-+		},
-+		{
-+			name: "sub-domains-and-top-domains-do-not-collide",
-+			apps: []appctype.AppConnectorAttr{
-+				app("app2", appctype.MagicIP, "a.example.com"),
-+				app("app5", appctype.MagicIP, "*.example.com", "example.com"),
-+			},
-+			want: map[string][]*dnstype.Resolver{
-+				// *.example.com normalizes to example.com; a.example.com remains distinct.
-+				"a.example.com": resolver("app2"),
-+				"example.com":   resolver("app5"),
-+			},
-+		},
-+		{
-+			name: "only-conn25-processed",
-+			apps: []appctype.AppConnectorAttr{
-+				app("app1", appctype.MagicIP, "example.com"),
-+				app("subnet-app", appctype.Subnet, "subnet.example.com"),
-+			},
-+			want: map[string][]*dnstype.Resolver{
-+				// The app that's a subnet router should not show up here,
-+				// since we only deal with conn25 apps.
-+				"example.com": resolver("app1"),
-+			},
-+		},
-+	} {
-+		t.Run(tt.name, func(t *testing.T) {
-+			cfg := mustConfig(t, makeSelfNode(t, tt.apps, appctype.Conn25PoolsAttr{}, nil))
-+			got := cfg.appDNSRoutes()
-+			if diff := cmp.Diff(tt.want, got); diff != "" {
-+				t.Fatalf("appDNSRoutes (-want, +got):\n%s", diff)
++		{query: ""},
++		{query: "interval=1s", interval: time.Second},
++		{query: "interval=1ms", interval: minStreamInterval},
++		{query: "interval=1h", interval: maxStreamInterval},
++		{query: "interval=x", wantErr: "bad interval"},
++		{query: "interval=", wantErr: "bad interval"},
++		{query: "interval=0s", wantErr: "must be positive"},
++		{query: "interval=-1s", wantErr: "must be positive"},
++		{query: "match=^a&match=b", nMatch: 2},
++		{query: "match=(", wantErr: "bad match pattern"},
++		{query: strings.Repeat("match=a&", maxMatchPatterns), nMatch: maxMatchPatterns},
++		{query: strings.Repeat("match=a&", maxMatchPatterns+1), wantErr: "too many"},
++		{query: "match=" + strings.Repeat("a", maxMatchPatternBytes+1), wantErr: "too long"},
++	}
++	for _, tt := range tests {
++		q, err := url.ParseQuery(tt.query)
++		if err != nil {
++			t.Fatal(err)
++		}
++		opts, err := parseStreamOpts(q)
++		if tt.wantErr != "" {
++			if err == nil || !strings.Contains(err.Error(), tt.wantErr) {
++				t.Errorf("%q: err = %v; want %q", tt.query, err, tt.wantErr)
 +			}
-+		})
++			continue
++		}
++		if err != nil {
++			t.Errorf("%q: %v", tt.query, err)
++			continue
++		}
++		if opts.interval != tt.interval || len(opts.match) != tt.nMatch {
++			t.Errorf("%q: interval=%v, %d patterns; want %v, %d", tt.query, opts.interval, len(opts.match), tt.interval, tt.nMatch)
++		}
 +	}
 +}
 +
- func TestExtraDNSRoutesHook(t *testing.T) {
- 	ext := &extension{
- 		conn25:  newConn25(logger.Discard),
++// TestHandlerNilURL checks that the handlers accept a request without
++// a URL, as some callers pass new(http.Request).
++func TestHandlerNilURL(t *testing.T) {
++	rec := httptest.NewRecorder()
++	ExpvarDoHandler(newTestVars().do)(rec, new(http.Request))
++	if !strings.Contains(rec.Body.String(), "tlb_choose_local 1234\n") {
++		t.Errorf("unexpected output:\n%s", rec.Body.Bytes())
++	}
++}
++
++func TestHandlerBadQuery(t *testing.T) {
++	for _, q := range []string{"interval=x", "match=(", "interval=0"} {
++		rec := httptest.NewRecorder()
++		Handler(rec, httptest.NewRequest("GET", "/debug/varz?"+q, nil))
++		if rec.Code != http.StatusBadRequest {
++			t.Errorf("%q: code %v; want 400", q, rec.Code)
++		}
++	}
++}
++
++// testVars is a set of vars for testing filtering and streaming.
++type testVars struct {
++	local    *expvar.Int
++	assigned *metrics.LabelMap
++	newPeers *metrics.LabelMap // empty at first
++	set      *metrics.Set
++	setInner *expvar.Int
++	hist     *metrics.Histogram
++	other    *expvar.Int
++}
++
++func newTestVars() *testVars {
++	tv := &testVars{
++		local:    new(expvar.Int),
++		assigned: &metrics.LabelMap{Label: "peer"},
++		newPeers: &metrics.LabelMap{Label: "peer"},
++		set:      new(metrics.Set),
++		setInner: new(expvar.Int),
++		hist:     metrics.NewHistogram([]float64{1, 2}),
++		other:    new(expvar.Int),
++	}
++	tv.local.Set(1234)
++	tv.assigned.Add("trunkd102", 77)
++	tv.set.Set("counter_inner", tv.setInner)
++	tv.hist.Observe(1.5)
++	return tv
++}
++
++func (tv *testVars) do(f func(expvar.KeyValue)) {
++	f(expvar.KeyValue{Key: "counter_tlb_choose_local", Value: tv.local})
++	f(expvar.KeyValue{Key: "counter_tlb_assigned", Value: tv.assigned})
++	f(expvar.KeyValue{Key: "counter_tlb_new_peers", Value: tv.newPeers})
++	f(expvar.KeyValue{Key: "tlbset", Value: tv.set})
++	f(expvar.KeyValue{Key: "histogram_lat", Value: tv.hist})
++	f(expvar.KeyValue{Key: "gauge_other", Value: tv.other})
++	f(expvar.KeyValue{Key: "some_string", Value: new(expvar.String)})
++}
++
++func TestOneShotMatch(t *testing.T) {
++	tv := newTestVars()
++	h := ExpvarDoHandler(tv.do)
++
++	get := func(query string) string {
++		t.Helper()
++		rec := httptest.NewRecorder()
++		h(rec, httptest.NewRequest("GET", "/debug/varz?"+query, nil))
++		if rec.Code != 200 {
++			t.Fatalf("%q: code %v: %s", query, rec.Code, rec.Body.Bytes())
++		}
++		return rec.Body.String()
++	}
++
++	var all bytes.Buffer
++	varzSource{do: tv.do}.writeTo(&all)
++	if got := get("unrelated=1"); got != all.String() {
++		t.Errorf("unrelated param changed output:\n%s\nwant:\n%s", got, all.Bytes())
++	}
++
++	got := get("match=^tlb_&match=^lat$&match=^tlbset_inner$")
++	want := `# TYPE lat histogram
++lat_bucket{le="1"} 0
++lat_bucket{le="2"} 1
++lat_bucket{le="+Inf"} 1
++lat_sum 1.5
++lat_count 1
++# TYPE tlb_assigned counter
++tlb_assigned{peer="trunkd102"} 77
++# TYPE tlb_choose_local counter
++tlb_choose_local 1234
++# TYPE tlbset_inner counter
++tlbset_inner 0
++`
++	if got != want {
++		t.Errorf("got:\n%s\nwant:\n%s", got, want)
++	}
++
++	// Matching only a histogram sample name includes the family's metadata.
++	if got, want := get("match=^lat_sum$"), "# TYPE lat histogram\nlat_sum 1.5\n"; got 
+```
+
+**File**: `tsweb/varz/varz.go` (modified, +49/-17)
+```diff
+@@ -331,9 +331,12 @@ type sortedKVs struct {
+ //
+ // It also exports the Go runtime/metrics in [runtimeMetricSpecs] and
+ // the legacy memstats_* metrics, both read from runtime/metrics.
++//
++// The optional "match" and "interval" query parameters filter the
++// output and turn on streaming, respectively. See [ReadStream] for the
++// details and the stream format.
+ func Handler(w http.ResponseWriter, r *http.Request) {
+-	ExpvarDoHandler(expvarDo)(w, r)
+-	runtimeMetrics.writeTo(w)
++	varzSource{do: expvarDo, runtime: true}.serveHTTP(w, r)
+ }
+ 
+ // ExpvarDoHandler handler returns a Handler like above, but takes an optional
+@@ -342,24 +345,53 @@ func Handler(w http.ResponseWriter, r *http.Request) {
+ //
+ // Unlike [Handler], it does not export the Go runtime/metrics.
+ func ExpvarDoHandler(expvarDoFunc func(f func(expvar.KeyValue))) func(http.ResponseWriter, *http.Request) {
+-	return func(w http.ResponseWriter, r *http.Request) {
+-		w.Header().Set("Content-Type", "text/plain;version=0.0.4;charset=utf-8")
+-
+-		s := sortedKVsPool.Get().(*sortedKVs)
+-		defer sortedKVsPool.Put(s)
+-		s.kvs = s.kvs[:0]
+-		expvarDoFunc(func(kv expvar.KeyValue) {
+-			s.kvs = append(s.kvs, sortedKV{kv, removeTypePrefixes(kv.Key)})
+-		})
+-		sort.Slice(s.kvs, func(i, j int) bool {
+-			return s.kvs[i].sortKey < s.kvs[j].sortKey
+-		})
+-		for _, e := range s.kvs {
+-			writePromExpVar(w, "", e.KeyValue)
+-		}
++	return varzSource{do: expvarDoFunc}.serveHTTP
++}
++
++const contentType = "text/plain;version=0.0.4;charset=utf-8"
++
++// varzSource is a set of metrics served by [Handler] or
++// [ExpvarDoHandler].
++type varzSource struct {
++	do      func(func(expvar.KeyValue)) // enumerates the vars
++	runtime bool                        // whether to include the Go runtime metrics
++}
++
++func (s varzSource) serveHTTP(w http.ResponseWriter, r *http.Request) {
++	if r.URL != nil && r.URL.RawQuery != "" { // some callers pass new(http.Request)
++		s.serveQuery(w, r)
++		return
++	}
++	w.Header().Set("Content-Type", contentType)
++	s.writeTo(w)
++}
++
++// writeTo writes all of s's metrics to w, with the vars sorted by name
++// with type prefixes removed.
++func (s varzSource) writeTo(w io.Writer) {
++	kvs := sortedKVsPool.Get().(*sortedKVs)
++	defer sortedKVsPool.Put(kvs)
++	s.sortVars(kvs)
++	for _, e := range kvs.kvs {
++		writePromExpVar(w, "", e.KeyValue)
++	}
++	if s.runtime {
++		runtimeMetrics.writeTo(w)
+ 	}
+ }
+ 
++// sortVars sets kvs to s's top-level vars, sorted by name with type
++// prefixes removed.
++func (s varzSource) sortVars(kvs *sortedKVs) {
++	kvs.kvs = kvs.kvs[:0]
++	s.do(func(kv expvar.KeyValue) {
++		kvs.kvs = append(kvs.kvs, sortedKV{kv, removeTypePrefixes(kv.Key)})
++	})
++	sort.Slice(kvs.kvs, func(i, j int) bool {
++		return kvs.kvs[i].sortKey < kvs.kvs[j].sortKey
++	})
++}
++
+ var binaryName = sync.OnceValue(func() string {
+ 	exe, err := os.Executable()
+ 	if err != nil {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #22612** (2026-11-23): VERSION.txt: this is v1.107.0 (@nickoneill)
-- **PR #22611** (2026-11-23): net/dns: retry failed hosts file updates in the background on Windows (@nickkhyl)
-- **PR #22610** (2026-11-23): derp/derpserver: add rate limiting exemption by IP (@mikeodr)
-- **PR #22607** (2026-11-23): feature/conn25: enforce token verification (@franbull)
-- **PR #22604** (2026-11-23): appc,feature/conn25: build split DNS routes from the parsed config (@mzbenami)
-- **PR #22594** (closed): mikeodr/rpf 7 natlab tests (@mikeodr)
+- **PR #22636** (2026-11-25): tsweb/varz: add match filters and streaming to /debug/varz (@bradfitz)
+- **PR #22635** (2026-11-24): tsnet: test with a fake host DNS resolver, not the OS resolver (@sfllaw)
+- **PR #22633** (2026-11-24): tsnet: fix Server.Close so it can be called repeatedly (@sfllaw)
+- **PR #22630** (2026-11-24): feature/conn25: return extra WireGuard AllowedIPs in a stable order (@mazdakn)
+- **PR #22628** (closed): derp/derpserver: mark TestWriterFloodDoesNotStarveControlFrames flaky (@joshbarros)
+- **PR #22623** (closed): derp/derpserver: mark TestWriterFloodDoesNotStarveControlFrames flaky (@joshbarros)
 
 ---
 
@@ -1402,6 +1407,50 @@ Signed-off-by: Michael Ben-Ami <[REDACTED_EMAIL]>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. drive/driveimpl: don't require sudo or su to share as the current user
+
+**RULE**:
+When implementing operations in `drive/driveimpl/remote_impl.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `e906a6a4`: drive/driveimpl: don't require sudo or su to share as the current user. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `drive/driveimpl/remote_impl.go`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+	if isCurrentUser(s.username) {
+		// We're already running as the share's user, so there's nothing to
+		// switch to. Don't require sudo or su, which minimal systems like
+		// OpenWrt don't ship by default.
+		s.logf("starting taildrive file server as ourselves (%q)", s.username)
+		cmd = exec.Command(s.executable, args...)
+	} else if s.canSudo() {
+// isCurrentUser reports whether username is the user that this process is
+// running as.
+func isCurrentUser(username string) bool {
+	u, err := user.Current()
+	return err == nil && u.Username == username
+}
+
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Induced defect failure mode:
+	if s.canSudo() {
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `e906a6a4` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

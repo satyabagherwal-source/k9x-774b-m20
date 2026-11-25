@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-25T04:07:47.089Z",
+  "last_updated": "2026-11-25T04:16:04.830Z",
   "total_verified_learnings": 9111,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25211,
+  "total_items": 25216,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112425,10 +112425,10 @@
       "relative_path": "08_VERIFICATION/tailscale-tailscale-verification-protocol-empirical-defect-shield-for-tailscale-.md",
       "title": "Verification Protocol: Empirical Defect Shield for tailscale/tailscale",
       "repository": "tailscale/tailscale",
-      "source_version": "012baddc",
-      "content_hash": "0df329e4fbf3941a4b2f3269bbfdbb26c9f0a2c033938850878160109710af79",
+      "source_version": "e906a6a4",
+      "content_hash": "51651ebae552acbd5cc83cf40e3834149c55d6d8f26560ed8310000f9f1ddd75",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T00:08:29.250Z"
+      "persisted_at": "2026-11-25T04:15:58.834Z"
     },
     "candidate_directive-order-small-runtime-filter-builds-before-filtered-and-nested-scans-28768": {
       "item_id": "candidate_directive-order-small-runtime-filter-builds-before-filtered-and-nested-scans-28768",
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "92cfc4ebb445c38aaaf208bc284e4e2f517fef85b5ea5db59c0acce54000991f",
+      "content_hash": "3598d2e3389bd37e082924a719d91d1d2360787a1e64464773068d48f322a60e",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T04:07:44.682Z"
+      "persisted_at": "2026-11-25T04:16:04.663Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "8d95b2724f92bc19ddabaa6bc3659f355e2664f4bdeba89aafe20201f61a3065",
+      "content_hash": "36a8ac81531acd257a14ffffb4f443cd83aa7918e264f6dbe97500db511f8b50",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T04:07:44.869Z"
+      "persisted_at": "2026-11-25T04:16:04.830Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -212389,8 +212389,8 @@
       "slug": "argoproj-argo-workflows",
       "platform": "github",
       "source_url": "https://github.com/argoproj/argo-workflows",
-      "source_version": "582f5637",
-      "content_hash": "560d38d8fa5d5f14d7cf656ac7e95cbea00514a7d86992506a3847820f9da1ae",
+      "source_version": "e0dadd07",
+      "content_hash": "41af28317a3eeb8f6d0006064506585deea4552ddc2d52311ab29d7672756b82",
       "dossier_path": "07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
       "promoted_rules": [
@@ -212433,6 +212433,11 @@
           "number": 10246,
           "title": "find a pod's retry node by name, not by scanning every node",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10450,
+          "title": "report UI unit test coverage to codecov",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -212440,7 +212445,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T11:05:47.135Z",
+      "verified_at": "2026-11-25T04:15:55.676Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -212494,10 +212499,10 @@
       "relative_path": "08_VERIFICATION/argoproj-argo-workflows-verification-protocol-empirical-defect-shield-for-argopr.md",
       "title": "Verification Protocol: Empirical Defect Shield for argoproj/argo-workflows",
       "repository": "argoproj/argo-workflows",
-      "source_version": "582f5637",
-      "content_hash": "f70065418082d8cee2f8cb34e838c94712a8e26d86db5baf7a5bd2655de18f54",
+      "source_version": "e0dadd07",
+      "content_hash": "8c32f1188017785e400ba42efdb126fab6b745261d2035cec935e51eb062427d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T11:05:47.879Z"
+      "persisted_at": "2026-11-25T04:15:56.508Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-psrben-visionhope-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-psrben-visionhope-learnings-core-invariants",
@@ -212543,9 +212548,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for argoproj-argo-workflows-learnings",
       "repository": "argoproj-argo-workflows-learnings",
       "source_version": "HEAD",
-      "content_hash": "9c0b1cfde6eb428102c97bf2294255f3324003b71d4035aa464cf833b6a07aa3",
+      "content_hash": "991906f86a6c62a2cc8e8bf4629e0ef07cf427d077b11284844a448c97ab3720",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T11:05:51.264Z"
+      "persisted_at": "2026-11-25T04:16:03.266Z"
     },
     "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf": {
       "learning_id": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf",
@@ -224015,8 +224020,8 @@
       "slug": "tailscale-tailscale",
       "platform": "github",
       "source_url": "https://github.com/tailscale/tailscale",
-      "source_version": "012baddc",
-      "content_hash": "ebb067b1af8ac45f816647f7878efc7dd4c29213e1e9eb36b126bbe90660c5a2",
+      "source_version": "e906a6a4",
+      "content_hash": "d9a791dfd161a9ae3e44d0ee56c193f442b4fbbc780aa7e3309942c1df001bec",
       "dossier_path": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "promoted_rules": [
@@ -224164,6 +224169,11 @@
           "number": 10394,
           "title": "add Server.Tailnet to require a tailnet",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10451,
+          "title": "drive/driveimpl: don't require sudo or su to share as the current user",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -224171,7 +224181,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T00:08:28.466Z",
+      "verified_at": "2026-11-25T04:15:58.051Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -224274,9 +224284,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for tailscale-tailscale-learnings",
       "repository": "tailscale-tailscale-learnings",
       "source_version": "HEAD",
-      "content_hash": "9d5db6e75000c4d1580b36a37195e5201fe330546a701107c25b2d2e96e0b591",
+      "content_hash": "d5ab756322e213dc473f6ca4c02be4d269f083fa53407e19e1b4c78d25c78b3e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T00:08:37.731Z"
+      "persisted_at": "2026-11-25T04:16:04.036Z"
     },
     "learn-huggingface-stabilityai-stable-diffusion-3-medium": {
       "learning_id": "learn-huggingface-stabilityai-stable-diffusion-3-medium",
@@ -294352,10 +294362,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tailscale-tailscale-technical-construction-intelligence-tailscale-tailscale-core.md",
       "title": "Technical Construction Intelligence: tailscale/tailscale Core Invariants",
       "repository": "tailscale/tailscale",
-      "source_version": "da6276d7",
-      "content_hash": "32e10e98aa459abd4b7b2115a040715c09e3e2fdd60590cdf0fbb557f779280b",
+      "source_version": "e906a6a4",
+      "content_hash": "8bafde942b064b5d59a8690f93577ba5fd068468901d6613288d5f30e6e1d768",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T23:39:57.056Z"
+      "persisted_at": "2026-11-25T04:15:58.640Z"
     },
     "rule-9268": {
       "learning_id": "rule-9268",
@@ -294391,9 +294401,9 @@
       "title": "Technical Construction Intelligence: tailscale-tailscale-learnings Core Invariants",
       "repository": "tailscale-tailscale-learnings",
       "source_version": "HEAD",
-      "content_hash": "4e5ebc581adb24047c3c4f2cefc04b4da88a31a8dd8b24a57a00d8b9f7a95ba1",
+      "content_hash": "a14b27bc1f4c370bdc3233285dfb1dd93d4d9720c315451fd520df8486f784f3",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T23:40:26.828Z"
+      "persisted_at": "2026-11-25T04:16:03.876Z"
     },
     "rule-9269": {
       "learning_id": "rule-9269",
@@ -329236,10 +329246,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-argoproj-argo-workflows-architecture-intelligence-argoproj-argo-workflows-core-i.md",
       "title": "Architecture Intelligence: argoproj/argo-workflows Core Invariants",
       "repository": "argoproj/argo-workflows",
-      "source_version": "a25c64b8",
-      "content_hash": "78a3f9f513d29497f0e80df6648fca25e9b3ac3ef9a62ec19120886dca9d5224",
+      "source_version": "e0dadd07",
+      "content_hash": "52b47a9850e842a8a6f7f54109088ea456e84865cb943d3966f45114eb0d439f",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T16:03:02.143Z"
+      "persisted_at": "2026-11-25T04:15:56.307Z"
     },
     "candidate_directive-resource-ignore-unspecified-container-timestamps": {
       "item_id": "candidate_directive-resource-ignore-unspecified-container-timestamps",
@@ -329261,9 +329271,9 @@
       "title": "Architecture Intelligence: argoproj-argo-workflows-learnings Core Invariants",
       "repository": "argoproj-argo-workflows-learnings",
       "source_version": "HEAD",
-      "content_hash": "0a45f2588bdd4258785335a550bd37f2bef523d741f59e082647156f5840c326",
+      "content_hash": "c0812578755bcac077c0f941e62b28189c872cfaa1fe565647972938389c5bfb",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T16:03:06.743Z"
+      "persisted_at": "2026-11-25T04:16:03.101Z"
     },
     "rule-10064": {
       "learning_id": "rule-10064",
@@ -339138,13 +339148,13 @@
       "item_id": "candidate_directive-deps-bump-url-to-2-5-9-and-heapless-to-0-9-4",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-RS6C-deps-bump-url-to-2-5-9-and-heapless-to-0-9-4.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-2HZP-deps-bump-url-to-2-5-9-and-heapless-to-0-9-4.md",
       "title": "deps): bump url to 2.5.9 and heapless to 0.9.4",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "d6bebae5eb7fc1bcccbbad424bfac7a569c83618c63d6646d770774adb2c7105",
+      "content_hash": "04f58a0fa104f4df16aef981ed942470f926211d667786c2c4366d5d47bdffdf",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T04:07:44.488Z"
+      "persisted_at": "2026-11-25T04:16:04.503Z"
     },
     "rule-10315": {
       "learning_id": "rule-10315",
@@ -344718,6 +344728,70 @@
       "content_hash": "f1953803eb4a7548c8ac0788b1692802ba9ec3796a767b18dee6a8f9a02931f7",
       "domain_letter": "H",
       "persisted_at": "2026-11-25T03:59:19.737Z"
+    },
+    "rule-10450": {
+      "learning_id": "rule-10450",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10450,
+      "title": "report UI unit test coverage to codecov",
+      "source_url": "https://github.com/argoproj/argo-workflows",
+      "source_version": "e0dadd07",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T04:15:55.676Z"
+    },
+    "candidate_directive-report-ui-unit-test-coverage-to-codecov": {
+      "item_id": "candidate_directive-report-ui-unit-test-coverage-to-codecov",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-2BIR-report-ui-unit-test-coverage-to-codecov.md",
+      "title": "report UI unit test coverage to codecov",
+      "repository": "argoproj/argo-workflows",
+      "source_version": "e0dadd07",
+      "content_hash": "8e4f05d7f7060520b218317173050c11ad2fa4477f4d652115626733456288cd",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-25T04:15:56.116Z"
+    },
+    "rule-10451": {
+      "learning_id": "rule-10451",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10451,
+      "title": "drive/driveimpl: don't require sudo or su to share as the current user",
+      "source_url": "https://github.com/tailscale/tailscale",
+      "source_version": "e906a6a4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T04:15:58.051Z"
+    },
+    "candidate_directive-drive-driveimpl-don-t-require-sudo-or-su-to-share-as-the-current-user": {
+      "item_id": "candidate_directive-drive-driveimpl-don-t-require-sudo-or-su-to-share-as-the-current-user",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-2HDH-drive-driveimpl-don-t-require-sudo-or-su-to-share-as-the-current-user.md",
+      "title": "drive/driveimpl: don't require sudo or su to share as the current user",
+      "repository": "tailscale-tailscale-learnings",
+      "source_version": "HEAD",
+      "content_hash": "95ea6135a957bc1e888a00d990727642b0e601fa0aaa263aa4ef2031196842f9",
+      "domain_letter": "A",
+      "persisted_at": "2026-11-25T04:16:03.701Z"
+    },
+    "candidate_directive-ci-report-ui-unit-test-coverage-to-codecov": {
+      "item_id": "candidate_directive-ci-report-ui-unit-test-coverage-to-codecov",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-2GS9-ci-report-ui-unit-test-coverage-to-codecov.md",
+      "title": "ci: report UI unit test coverage to codecov",
+      "repository": "argoproj-argo-workflows-learnings",
+      "source_version": "HEAD",
+      "content_hash": "de25002d3fd219a2d5fb2425f6f8a2326914912a49147e30685eba0444a68e18",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-25T04:16:02.938Z"
     }
   },
   "ai-builder-brain": {

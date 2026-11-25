@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-25T03:59:20.517Z",
+  "updated_at": "2026-11-25T04:16:02.643Z",
   "stats": {
-    "total_discovered": 9199,
-    "approved_pending_harvest": 8711,
+    "total_discovered": 9217,
+    "approved_pending_harvest": 8729,
     "harvested_count": 0,
     "rejected_count": 488,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 8707,
+      "COMMUNITY_AND_EXPERT": 8725,
       "OFFICIAL_DOCUMENTATION": 275,
       "STANDARDS_AND_SPECIFICATIONS": 149,
       "ENGINEERING_BLOGS": 7,
@@ -198989,6 +198989,402 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/thaw-app-thaw-learnings.md",
         "fileName": "thaw-app-thaw-learnings.md"
+      }
+    },
+    "SRC-9148AFEB7BB8": {
+      "id": "SRC-9148AFEB7BB8",
+      "url": "https://babel.dev/docs/en/next/babel-preset-env",
+      "title": "https://babel.dev/docs/en/next/babel-preset-env",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T04:16:01.704Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
+        "fileName": "argoproj-argo-workflows-learnings.md"
+      }
+    },
+    "SRC-D585D576F720": {
+      "id": "SRC-D585D576F720",
+      "url": "https://redirect.github.com/babel/babel/tree/HEAD/packages/babel-preset-env",
+      "title": "https://redirect.github.com/babel/babel/tree/HEAD/packages/babel-preset-env",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T04:16:01.761Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
+        "fileName": "argoproj-argo-workflows-learnings.md"
+      }
+    },
+    "SRC-5C4F2527D187": {
+      "id": "SRC-5C4F2527D187",
+      "url": "https://renovatebot.com/diffs/npm/@babel%2fpreset-env/7.29.7/7.29.14",
+      "title": "https://renovatebot.com/diffs/npm/@babel%2fpreset-env/7.29.7/7.29.14",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T04:16:01.820Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
+        "fileName": "argoproj-argo-workflows-learnings.md"
+      }
+    },
+    "SRC-26BFDCFAEE32": {
+      "id": "SRC-26BFDCFAEE32",
+      "url": "https://developer.mend.io/api/mc/badges/age/npm/@babel%2fpreset-env/7.29.14?slim=true",
+      "title": "https://developer.mend.io/api/mc/badges/age/npm/@babel%2fpreset-env/7.29.14?slim=true",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T04:16:01.877Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
+        "fileName": "argoproj-argo-workflows-learnings.md"
+      }
+    },
+    "SRC-FD5F322CF9E8": {
+      "id": "SRC-FD5F322CF9E8",
+      "url": "https://developer.mend.io/api/mc/badges/adoption/npm/@babel%2fpreset-env/7.29.14?slim=true",
+      "title": "https://developer.mend.io/api/mc/badges/adoption/npm/@babel%2fpreset-env/7.29.14?slim=true",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T04:16:01.934Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
+        "fileName": "argoproj-argo-workflows-learnings.md"
+      }
+    },
+    "SRC-5521BBF1A3CC": {
+      "id": "SRC-5521BBF1A3CC",
+      "url": "https://developer.mend.io/api/mc/badges/compatibility/npm/@babel%2fpreset-env/7.29.7/7.29.14?slim=true",
+      "title": "https://developer.mend.io/api/mc/badges/compatibility/npm/@babel%2fpreset-env/7.29.7/7.29.14?slim=true",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T04:16:01.990Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
+        "fileName": "argoproj-argo-workflows-learnings.md"
+      }
+    },
+    "SRC-371ACADCA352": {
+      "id": "SRC-371ACADCA352",
+      "url": "https://developer.mend.io/api/mc/badges/confidence/npm/@babel%2fpreset-env/7.29.7/7.29.14?slim=true",
+      "title": "https://developer.mend.io/api/mc/badges/confidence/npm/@babel%2fpreset-env/7.29.7/7.29.14?slim=true",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T04:16:02.045Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
+        "fileName": "argoproj-argo-workflows-learnings.md"
+      }
+    },
+    "SRC-2B4B522E7085": {
+      "id": "SRC-2B4B522E7085",
+      "url": "https://redirect.github.com/babel/babel/releases/tag/v7.29.14",
+      "title": "https://redirect.github.com/babel/babel/releases/tag/v7.29.14",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T04:16:02.101Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
+        "fileName": "argoproj-argo-workflows-learnings.md"
+      }
+    },
+    "SRC-63136ADDF199": {
+      "id": "SRC-63136ADDF199",
+      "url": "https://redirect.github.com/babel/babel/compare/v7.29.7...v7.29.14",
+      "title": "https://redirect.github.com/babel/babel/compare/v7.29.7...v7.29.14",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T04:16:02.156Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
+        "fileName": "argoproj-argo-workflows-learnings.md"
+      }
+    },
+    "SRC-496341A10068": {
+      "id": "SRC-496341A10068",
+      "url": "https://babel.dev/docs/en/next/babel-core",
+      "title": "https://babel.dev/docs/en/next/babel-core",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T04:16:02.238Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
+        "fileName": "argoproj-argo-workflows-learnings.md"
+      }
+    },
+    "SRC-4273242397DA": {
+      "id": "SRC-4273242397DA",
+      "url": "https://redirect.github.com/babel/babel/tree/HEAD/packages/babel-core",
+      "title": "https://redirect.github.com/babel/babel/tree/HEAD/packages/babel-core",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T04:16:02.289Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
+        "fileName": "argoproj-argo-workflows-learnings.md"
+      }
+    },
+    "SRC-6DC2A6C8663B": {
+      "id": "SRC-6DC2A6C8663B",
+      "url": "https://renovatebot.com/diffs/npm/@babel%2fcore/7.29.7/7.29.13",
+      "title": "https://renovatebot.com/diffs/npm/@babel%2fcore/7.29.7/7.29.13",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T04:16:02.340Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
+        "fileName": "argoproj-argo-workflows-learnings.md"
+      }
+    },
+    "SRC-4BF41049075B": {
+      "id": "SRC-4BF41049075B",
+      "url": "https://developer.mend.io/api/mc/badges/age/npm/@babel%2fcore/7.29.13?slim=true",
+      "title": "https://developer.mend.io/api/mc/badges/age/npm/@babel%2fcore/7.29.13?slim=true",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T04:16:02.391Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
+        "fileName": "argoproj-argo-workflows-learnings.md"
+      }
+    },
+    "SRC-C883EF73E3F0": {
+      "id": "SRC-C883EF73E3F0",
+      "url": "https://developer.mend.io/api/mc/badges/adoption/npm/@babel%2fcore/7.29.13?slim=true",
+      "title": "https://developer.mend.io/api/mc/badges/adoption/npm/@babel%2fcore/7.29.13?slim=true",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T04:16:02.442Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
+        "fileName": "argoproj-argo-workflows-learnings.md"
+      }
+    },
+    "SRC-CEA1D3C0A223": {
+      "id": "SRC-CEA1D3C0A223",
+      "url": "https://developer.mend.io/api/mc/badges/compatibility/npm/@babel%2fcore/7.29.7/7.29.13?slim=true",
+      "title": "https://developer.mend.io/api/mc/badges/compatibility/npm/@babel%2fcore/7.29.7/7.29.13?slim=true",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T04:16:02.492Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
+        "fileName": "argoproj-argo-workflows-learnings.md"
+      }
+    },
+    "SRC-5CFDB7CC6F97": {
+      "id": "SRC-5CFDB7CC6F97",
+      "url": "https://developer.mend.io/api/mc/badges/confidence/npm/@babel%2fcore/7.29.7/7.29.13?slim=true",
+      "title": "https://developer.mend.io/api/mc/badges/confidence/npm/@babel%2fcore/7.29.7/7.29.13?slim=true",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T04:16:02.542Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
+        "fileName": "argoproj-argo-workflows-learnings.md"
+      }
+    },
+    "SRC-6140DEFA87C7": {
+      "id": "SRC-6140DEFA87C7",
+      "url": "https://redirect.github.com/babel/babel/releases/tag/v7.29.13",
+      "title": "https://redirect.github.com/babel/babel/releases/tag/v7.29.13",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T04:16:02.593Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
+        "fileName": "argoproj-argo-workflows-learnings.md"
+      }
+    },
+    "SRC-4B09DEF1C294": {
+      "id": "SRC-4B09DEF1C294",
+      "url": "https://redirect.github.com/babel/babel/compare/v7.29.7...v7.29.13",
+      "title": "https://redirect.github.com/babel/babel/compare/v7.29.7...v7.29.13",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T04:16:02.643Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
+        "fileName": "argoproj-argo-workflows-learnings.md"
       }
     }
   }
