@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T09:54:34.875Z",
+  "last_updated": "2026-11-25T10:07:41.575Z",
   "total_records": 2656,
   "domains": {
     "A": {
@@ -8471,8 +8471,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "1cf70bc08ae494cb5f65050e1373078fc3f9588dc4a6e109d7003d33ec11e8fa",
-      "created_at": "2026-11-25T09:25:06.517Z"
+      "content_hash": "ab41fed84ae940f2dfd2b89a0ac1b34e9af6ddcce384fa78824da00124d78fb6",
+      "created_at": "2026-11-25T10:07:41.575Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -17748,8 +17748,8 @@
       "title": "Technical Construction Intelligence: ydb-platform/ydb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-ydb-platform-ydb-technical-construction-intelligence-ydb-platform-ydb-core-invar.md",
       "repository": "ydb-platform/ydb",
-      "content_hash": "d4e035c0d54b67fa612e8643245b4055aa18408c694c8ba91777f96d244bb698",
-      "created_at": "2026-11-24T15:27:20.333Z"
+      "content_hash": "57efc55747e4c4008374ee21f435f52862933e592e90de2b5680c0336db94157",
+      "created_at": "2026-11-25T10:07:36.737Z"
     },
     "domain_intelligence-architecture-intelligence-facebook-folly-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-facebook-folly-learnings-core-invariants",
@@ -23809,8 +23809,8 @@
       "title": "Technical Construction Intelligence: ydb-platform-ydb-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-ydb-platform-ydb-learnings-technical-construction-intelligence-ydb-platform-ydb-.md",
       "repository": "ydb-platform-ydb-learnings",
-      "content_hash": "270f173dd2f9bfac892747a47e2373f7ef78dffe905805dee130cb3fbf3aa745",
-      "created_at": "2026-11-24T15:28:04.364Z"
+      "content_hash": "ef711c136874d68116b28b2cac6eb7a0d5e9e86c1f26f3fd7e24cb3dec8f95a4",
+      "created_at": "2026-11-25T10:07:40.635Z"
     },
     "domain_intelligence-research-knowledge-intelligence-zvec-ai-zvec-grep-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-zvec-ai-zvec-grep-core-invariants",
@@ -29180,8 +29180,8 @@
       "title": "Research & Knowledge Intelligence: nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-nvidia-nvidia-nemotron-3-5-bolt-e4b-4gb-research-knowledge-intelligence-nvidi.md",
       "repository": "nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB",
-      "content_hash": "c0e7f6a1cbfee0ada99400459018f038306b3b44ae5517dfcd88cc5f13491866",
-      "created_at": "2026-11-21T17:41:46.348Z"
+      "content_hash": "4be4f1c2ad43fdbbf8d0da06164e44f543df9235379f18eef48d0cd10c005bd0",
+      "created_at": "2026-11-25T10:07:19.517Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-nvidia-nvidia-nemotron-3-5-bolt-e4b-4gb-learn": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-nvidia-nvidia-nemotron-3-5-bolt-e4b-4gb-learn",
@@ -29189,8 +29189,8 @@
       "title": "Research & Knowledge Intelligence: hf-nvidia-nvidia-nemotron-3.5-bolt-e4b-4gb-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-nvidia-nvidia-nemotron-3-5-bolt-e4b-4gb-learnings-research-knowledge-intellig.md",
       "repository": "hf-nvidia-nvidia-nemotron-3.5-bolt-e4b-4gb-learnings",
-      "content_hash": "9a6112aa7c32108f7f48c89d4c10dc99acf7c520f27e24e3bc0cbfe74cd04fe2",
-      "created_at": "2026-11-21T17:42:05.947Z"
+      "content_hash": "f9bdc035c9aef5943b1b6430915ac963f9cec51f54c92cdfaa83687a8178ce3e",
+      "created_at": "2026-11-25T10:07:40.012Z"
     },
     "domain_intelligence-technical-construction-intelligence-langchain4j-langchain4j-learnings-core-invar": {
       "record_id": "domain_intelligence-technical-construction-intelligence-langchain4j-langchain4j-learnings-core-invar",

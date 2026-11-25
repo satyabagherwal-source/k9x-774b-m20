@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T09:54:29.563Z",
-  "total_cycles_completed": 12370,
-  "total_learnings_persisted": 12370,
-  "total_rules_promoted": 11380,
+  "last_updated": "2026-11-25T10:07:36.310Z",
+  "total_cycles_completed": 12372,
+  "total_learnings_persisted": 12372,
+  "total_rules_promoted": 11381,
   "history": [
-    {
-      "timestamp": "2026-11-24T21:01:22.677Z",
-      "repository": "dalance/procs",
-      "learningId": "learn-github-dalance-procs",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T21:01:24.334Z",
-      "repository": "digitalbazaar/pyld",
-      "learningId": "learn-github-digitalbazaar-pyld",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-24T21:01:29.795Z",
       "repository": "dosco/deeporg",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-25T09:54:29.563Z",
       "repository": "GreptimeTeam/greptimedb",
       "learningId": "learn-github-greptimeteam-greptimedb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T10:07:19.284Z",
+      "repository": "nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB",
+      "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-bolt-e4b-4gb",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T10:07:36.310Z",
+      "repository": "ydb-platform/ydb",
+      "learningId": "learn-github-ydb-platform-ydb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

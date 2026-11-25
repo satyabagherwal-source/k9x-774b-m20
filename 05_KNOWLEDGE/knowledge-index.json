@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-25T09:54:35.052Z",
+  "last_updated": "2026-11-25T10:07:41.767Z",
   "total_verified_learnings": 9115,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25372,
+  "total_items": 25374,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112198,9 +112198,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "1cf70bc08ae494cb5f65050e1373078fc3f9588dc4a6e109d7003d33ec11e8fa",
+      "content_hash": "ab41fed84ae940f2dfd2b89a0ac1b34e9af6ddcce384fa78824da00124d78fb6",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T09:25:06.517Z"
+      "persisted_at": "2026-11-25T10:07:41.575Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -112210,9 +112210,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "33d7f7bd70bbfd4691012d5383b776b72760aeb68c4c531d153313a31ea3aedd",
+      "content_hash": "ec4f0beafa6fb752f2e2cd5238727cf0431df4d0c49b338b7114cb8784699930",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T09:25:06.701Z"
+      "persisted_at": "2026-11-25T10:07:41.767Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -237018,8 +237018,8 @@
       "slug": "ydb-platform-ydb",
       "platform": "github",
       "source_url": "https://github.com/ydb-platform/ydb",
-      "source_version": "442f5b3f",
-      "content_hash": "83ec4b66321b53fbe589095450779e002696808ae68a93ef0dc7886ec5e8669d",
+      "source_version": "11c43f77",
+      "content_hash": "4ef9bbe4a17e396c5ddddf80b4d29444847b3f77e9c445f6f7012844f34d3cbd",
       "dossier_path": "07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md",
       "promoted_rules": [
@@ -237062,6 +237062,11 @@
           "number": 10294,
           "title": "support HTTP/HTTPS YT export proxies with regression tests",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10503,
+          "title": "gluing regression NBYDB-2712",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -237069,7 +237074,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T15:27:19.482Z",
+      "verified_at": "2026-11-25T10:07:36.075Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -237111,10 +237116,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-ydb-platform-ydb-technical-construction-intelligence-ydb-platform-ydb-core-invar.md",
       "title": "Technical Construction Intelligence: ydb-platform/ydb Core Invariants",
       "repository": "ydb-platform/ydb",
-      "source_version": "442f5b3f",
-      "content_hash": "d4e035c0d54b67fa612e8643245b4055aa18408c694c8ba91777f96d244bb698",
+      "source_version": "11c43f77",
+      "content_hash": "57efc55747e4c4008374ee21f435f52862933e592e90de2b5680c0336db94157",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T15:27:20.333Z"
+      "persisted_at": "2026-11-25T10:07:36.737Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-ydb-platform-ydb": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-ydb-platform-ydb",
@@ -237123,10 +237128,10 @@
       "relative_path": "08_VERIFICATION/ydb-platform-ydb-verification-protocol-empirical-defect-shield-for-ydb-platform-.md",
       "title": "Verification Protocol: Empirical Defect Shield for ydb-platform/ydb",
       "repository": "ydb-platform/ydb",
-      "source_version": "442f5b3f",
-      "content_hash": "878a88eb8dcda9618ed1051c68bd4450d3627e7f53c975a7f1d37e6c24ade438",
+      "source_version": "11c43f77",
+      "content_hash": "af983fa9ebd0a08cd7da4d68f73fb1f01d0c5ac7e38d0120424b3d69ce03b5f1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T15:27:20.567Z"
+      "persisted_at": "2026-11-25T10:07:36.915Z"
     },
     "domain_intelligence-architecture-intelligence-facebook-folly-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-facebook-folly-learnings-core-invariants",
@@ -256882,9 +256887,9 @@
       "title": "Technical Construction Intelligence: ydb-platform-ydb-learnings Core Invariants",
       "repository": "ydb-platform-ydb-learnings",
       "source_version": "HEAD",
-      "content_hash": "270f173dd2f9bfac892747a47e2373f7ef78dffe905805dee130cb3fbf3aa745",
+      "content_hash": "ef711c136874d68116b28b2cac6eb7a0d5e9e86c1f26f3fd7e24cb3dec8f95a4",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T15:28:04.364Z"
+      "persisted_at": "2026-11-25T10:07:40.635Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-ydb-platform-ydb-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-ydb-platform-ydb-learnings",
@@ -256894,9 +256899,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for ydb-platform-ydb-learnings",
       "repository": "ydb-platform-ydb-learnings",
       "source_version": "HEAD",
-      "content_hash": "cb37e44006ee2340bd610e7a51f0779772bcb3b79e96d5c670c2c5eeb6c74688",
+      "content_hash": "c8de4779d5a931ab024cf35d44767e3bf7cc0a44a049b0e76fef5a9a400c8807",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T15:28:04.622Z"
+      "persisted_at": "2026-11-25T10:07:40.816Z"
     },
     "rule-8694": {
       "learning_id": "rule-8694",
@@ -282013,7 +282018,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB",
       "source_version": "hf-nvidia-nvidia-nemotron-3.5-bolt-e4b-4gb",
-      "content_hash": "6915a71c231d6e7e15ca4ea2fc22f8c7f91eb9a7124447630a1d92f8d68d69c0",
+      "content_hash": "45564fae9b5e1c5676fe7a9f39437e81a81e9b7e513d85f732c229a7123c0607",
       "dossier_path": "07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-3.5-bolt-e4b-4gb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-3.5-bolt-e4b-4gb-learnings.md",
       "promoted_rules": [],
@@ -282022,7 +282027,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T17:41:45.912Z",
+      "verified_at": "2026-11-25T10:07:19.018Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -282039,9 +282044,9 @@
       "title": "Research & Knowledge Intelligence: nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB Core Invariants",
       "repository": "nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB",
       "source_version": "hf-nvidia-nvidia-nemotron-3.5-bolt-e4b-4gb",
-      "content_hash": "c0e7f6a1cbfee0ada99400459018f038306b3b44ae5517dfcd88cc5f13491866",
+      "content_hash": "4be4f1c2ad43fdbbf8d0da06164e44f543df9235379f18eef48d0cd10c005bd0",
       "domain_letter": "D",
-      "persisted_at": "2026-11-21T17:41:46.348Z"
+      "persisted_at": "2026-11-25T10:07:19.517Z"
     },
     "rule-9036": {
       "learning_id": "rule-9036",
@@ -282077,9 +282082,9 @@
       "title": "Research & Knowledge Intelligence: hf-nvidia-nvidia-nemotron-3.5-bolt-e4b-4gb-learnings Core Invariants",
       "repository": "hf-nvidia-nvidia-nemotron-3.5-bolt-e4b-4gb-learnings",
       "source_version": "HEAD",
-      "content_hash": "9a6112aa7c32108f7f48c89d4c10dc99acf7c520f27e24e3bc0cbfe74cd04fe2",
+      "content_hash": "f9bdc035c9aef5943b1b6430915ac963f9cec51f54c92cdfaa83687a8178ce3e",
       "domain_letter": "D",
-      "persisted_at": "2026-11-21T17:42:05.947Z"
+      "persisted_at": "2026-11-25T10:07:40.012Z"
     },
     "domain_intelligence-technical-construction-intelligence-langchain4j-langchain4j-learnings-core-invar": {
       "item_id": "domain_intelligence-technical-construction-intelligence-langchain4j-langchain4j-learnings-core-invar",
@@ -336150,13 +336155,13 @@
       "item_id": "candidate_directive-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-3WYV-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-MOGC-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change.md",
       "title": "server_events_dispatch: Rerender DM status emoji on emojiset change.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "ad68ec7006ee277e02186a66aa95db5bee79873782997aef55e1da61b2bf70e2",
+      "content_hash": "12fc28055b1681887fc3e404821b3b505911d421fb36bc5b97d4cdd0d6a438a0",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T09:25:06.346Z"
+      "persisted_at": "2026-11-25T10:07:41.391Z"
     },
     "learn-github-xinatian-mroffice": {
       "learning_id": "learn-github-xinatian-mroffice",
@@ -347092,6 +347097,32 @@
       "content_hash": "8740f94f2c60a55665eb3c38e21ea70145f0fc4ee985474c8f54de758b4694ff",
       "domain_letter": "J",
       "persisted_at": "2026-11-25T09:54:34.688Z"
+    },
+    "rule-10503": {
+      "learning_id": "rule-10503",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10503,
+      "title": "gluing regression NBYDB-2712",
+      "source_url": "https://github.com/ydb-platform/ydb",
+      "source_version": "11c43f77",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T10:07:36.075Z"
+    },
+    "candidate_directive-gluing-regression-nbydb-2712": {
+      "item_id": "candidate_directive-gluing-regression-nbydb-2712",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-MNQD-gluing-regression-nbydb-2712.md",
+      "title": "gluing regression NBYDB-2712",
+      "repository": "ydb-platform-ydb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4e4591c0a14425b19db4a5e61d1f662592bee5157319c5014956d2db6c912954",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-25T10:07:40.456Z"
     }
   },
   "ai-builder-brain": {

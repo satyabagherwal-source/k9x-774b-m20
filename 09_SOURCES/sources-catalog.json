@@ -5423,10 +5423,10 @@
     "repository": "ydb-platform/ydb",
     "platform": "github",
     "sourceUrl": "https://github.com/ydb-platform/ydb",
-    "sourceVersion": "442f5b3f",
+    "sourceVersion": "11c43f77",
     "license": "Apache-2.0",
-    "contentHash": "83ec4b66321b53fbe589095450779e002696808ae68a93ef0dc7886ec5e8669d",
-    "lastHarvestedAt": "2026-11-24T15:27:19.757Z",
+    "contentHash": "4ef9bbe4a17e396c5ddddf80b4d29444847b3f77e9c445f6f7012844f34d3cbd",
+    "lastHarvestedAt": "2026-11-25T10:07:36.304Z",
     "learningId": "learn-github-ydb-platform-ydb"
   },
   "arco-design-arco-design-vue": {
@@ -10825,8 +10825,8 @@
     "sourceUrl": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB",
     "sourceVersion": "hf-nvidia-nvidia-nemotron-3.5-bolt-e4b-4gb",
     "license": "Open-Source",
-    "contentHash": "6915a71c231d6e7e15ca4ea2fc22f8c7f91eb9a7124447630a1d92f8d68d69c0",
-    "lastHarvestedAt": "2026-11-21T17:41:46.151Z",
+    "contentHash": "45564fae9b5e1c5676fe7a9f39437e81a81e9b7e513d85f732c229a7123c0607",
+    "lastHarvestedAt": "2026-11-25T10:07:19.278Z",
     "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-bolt-e4b-4gb"
   },
   "gaurav-gosain-tuios": {

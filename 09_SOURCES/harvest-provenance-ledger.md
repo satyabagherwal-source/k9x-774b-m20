@@ -13061,3 +13061,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-xhtoken-spark-x2-6-4b-gguf` | `https://huggingface.co/XHToken/Spark-X2.6-4B-GGUF` | `hf-xhtoken` | Multi-dimensional audit evidence | 2026-11-25T09:54:15.013Z |
 | `learn-github-zeronsh-zeron` | `https://github.com/zeronsh/zeron` | `fbb4083a` | Multi-dimensional audit evidence | 2026-11-25T09:54:17.259Z |
 | `learn-github-greptimeteam-greptimedb` | `https://github.com/GreptimeTeam/greptimedb` | `0813fc35` | Multi-dimensional audit evidence | 2026-11-25T09:54:29.558Z |
+| `learn-huggingface-nvidia-nvidia-nemotron-3-5-bolt-e4b-4gb` | `https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-11-25T10:07:19.278Z |
+| `learn-github-ydb-platform-ydb` | `https://github.com/ydb-platform/ydb` | `11c43f77` | Multi-dimensional audit evidence | 2026-11-25T10:07:36.304Z |

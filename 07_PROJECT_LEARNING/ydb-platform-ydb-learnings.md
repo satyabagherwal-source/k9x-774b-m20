@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md`  
 > **Source**: github ([https://github.com/ydb-platform/ydb](https://github.com/ydb-platform/ydb))  
-> **Source Version**: `442f5b3f`  
+> **Source Version**: `11c43f77`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T15:27:18.356Z  
+> **Timestamp**: 2026-11-25T10:07:35.125Z  
 > **Learning ID**: `learn-github-ydb-platform-ydb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ydb-platform/ydb](https://github.com/ydb-platform/ydb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T15:27:18.349Z  
+> **Harvest Timestamp**: 2026-11-25T10:07:35.119Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: YDB is an open source Distributed SQL Database that combines high availability and scalability with strong consistency and ACID transactions
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 4791 stars
+- **Stars / Engagement**: 4790 stars
 
 ---
 
@@ -2065,754 +2065,502 @@ impl Remappable for noncontiguous::NFA {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `16e0d087` (2026-11-24)
-**Commit Message**: CLI: support HTTP/HTTPS YT export proxies with regression tests (#57101)
+### Incident Patch 1: `16d689be` (2026-11-25)
+**Commit Message**: Fix gluing regression NBYDB-2712 (#60629)
 
-**File**: `ydb/public/lib/ydb_cli/commands/ydb_service_export.cpp` (modified, +2/-1)
+Regression: commit 0bd012c64ad added auxData == back.AuxData to the span-gluing condition. Main-channel serialization still stores &event.ZcTransferId in auxData; sequential events have different ZcTransferId addresses, so contiguous spans from different events can no longer be coalesced. The main socket does not use this zero-copy metadata, making the per-event pointer unnecessary for the main channel.
+
+**File**: `ydb/library/actors/interconnect/interconnect_channel.cpp` (modified, +3/-2)
 ```diff
-@@ -153,7 +153,8 @@ void TCommandExportToYt::Config(TConfig& config) {
-     TYdbOperationCommand::Config(config);
- 
-     TStringBuilder proxyHelp;
--    proxyHelp << "YT proxy to connect to" << Endl
-+    proxyHelp << "YT proxy to connect to: [http://|https://]HOST[:PORT]" << Endl
-+        << "  HTTPS uses port 443 by default; other proxies use port 80" << Endl
-         << "  Search order:" << Endl
-         << "    1. This option" << Endl
-         << "    2. \"YT_PROXY\" environment variable";
-```
-
-**File**: `ydb/public/lib/ydb_cli/common/ut/ya.make` (modified, +1/-0)
-```diff
-@@ -26,6 +26,7 @@ SRCS(
-     tabbed_table_ut.cpp
-     tx_mode_utils_ut.cpp
-     utf8_utils_ut.cpp
-+    yt_ut.cpp
- )
- 
- END()
-```
-
-**File**: `ydb/public/lib/ydb_cli/common/yt.cpp` (modified, +17/-2)
-```diff
-@@ -16,18 +16,33 @@ void TCommandWithYtProxy::ParseYtProxy(const TString& proxy) {
-     }
- 
-     TMaybe<ui16> port;
-+    TStringBuf address = proxy;
-+    TStringBuf scheme;
-+    ui16 defaultPort = DefaultYtPort;
-+
-+    if (address.SkipPrefix("https://")) {
-+        scheme = "https://";
-+        defaultPort = 443;
-+    } else if (address.SkipPrefix("http://")) {
-+        scheme = "http://";
-+    }
- 
-     try {
--        Split(proxy, ':', YtHost, port);
-+        Split(address, ':', YtHost, port);
-     } catch (const yexception& ex) {
-         throw TMisuseException() << "Bad YT proxy format: \"" << proxy << "\".";
-     }
- 
-+    if (YtHost.empty() || YtHost.find_first_of("/?#@") != TString::npos) {
-+        throw TMisuseException() << "Bad YT proxy format: \"" << proxy << "\".";
-+    }
-+
-     if (YtHost.find('.') == TString::npos && YtHost.find("localhost") == TString::npos) {
-         YtHost.append(".yt.yandex.net");
-     }
- 
--    YtPort = port.GetOrElse(DefaultYtPort);
-+    YtHost.prepend(scheme);
-+    YtPort = port.GetOrElse(defaultPort);
- }
- 
- const TString TCommandWithYtToken::YtTokenFile = "~/.yt/token";
-```
-
-**File**: `ydb/public/lib/ydb_cli/common/yt_ut.cpp` (added, +73/-0)
-```diff
-@@ -0,0 +1,73 @@
-+#include "yt.h"
-+
-+#include <library/cpp/testing/unittest/registar.h>
-+
-+namespace NYdb::NConsoleClient {
-+namespace {
-+
-+class TYtProxyParser : public TCommandWithYtProxy {
-+public:
-+    void Parse(const TString& proxy) {
-+        TClientCommandOptions options;
-+        options.AddLongOption("proxy").RequiredArgument("PROXY");
-+        const char* args[] = {"yt-proxy-test", "--proxy", proxy.c_str()};
-+        TOptionsParseResult parsed(&options, 3, args);
-+        TClientCommand::TConfig config(0, nullptr);
-+        config.ParseResult = &parsed;
-+        ParseYtProxy(config, "proxy");
-+    }
-+
-+    const TString& GetHost() const {
-+        return YtHost;
-+    }
-+
-+    ui16 GetPort() const {
-+        return YtPort;
-+    }
-+};
-+
-+void AssertProxy(const TString& proxy, const TString& host, ui16 port) {
-+    TYtProxyParser parser;
-+    parser.Parse(proxy);
-+    UNIT_ASSERT_VALUES_EQUAL(parser.GetHost(), host);
-+    UNIT_ASSERT_VALUES_EQUAL(parser.GetPort(), port);
-+}
-+
-+} // namespace
-+
-+Y_UNIT_TEST_SUITE(YtProxyParsing) {
-+    Y_UNIT_TEST(LegacyProxies) {
-+        AssertProxy("hahn", "hahn.yt.yandex.net", 80);
-+        AssertProxy("hahn:8080", "hahn.yt.yandex.net", 8080);
-+        AssertProxy("hahn.yt.yandex.net", "hahn.yt.yandex.net", 80);
-+        AssertProxy("hahn.yt.yandex.net:8080", "hahn.yt.yandex.net", 8080);
-+        AssertProxy("localhost:9013", "localhost", 9013);
-+    }
-+
-+    Y_UNIT_TEST(HttpsDefaultPort) {
-+        AssertProxy("https://hahn.yt.yandex.net", "https://hahn.yt.yandex.net", 443);
-+        AssertProxy("https://hahn", "https://hahn.yt.yandex.net", 443);
-+    }
-+
-+    Y_UNIT_TEST(HttpsExplicitPort) {
-+        AssertProxy("https://hahn.yt.yandex.net:8443", "https://hahn.yt.yandex.net", 8443);
-+        AssertProxy("https://hahn:443", "https://hahn.yt.yandex.net", 443);
-+    }
-+
-+    Y_UNIT_TEST(HttpScheme) {
-+        AssertProxy("http://hahn", "http://hahn.yt.yandex.net", 80);
-+        AssertProxy("http://localhost:8080", "http://localhost", 8080);
-+    }
-+
-+    Y_UNIT_TEST(InvalidProxies) {
-+        for (const TString proxy : {
-+                 "", "https://", "http://", "hahn:invalid", "hahn:65536",
-+                 "ftp://hahn", "https://hahn/path", "https://hahn?query",
-+                 "https://hahn#fragment", "https://user@hahn"}) {
-+            TYtProxyParser parser;
-+            UNIT_ASSERT_EXCEPTION(parser.Parse(proxy), TMisuseException);
-+        }
-+    }
-+}
-+
-+} // namespace NYdb::NConsoleClient
-```
-
----
-
-### Incident Patch 2: `1bbaf58a` (2026-11-24)
-**Commit Message**: Revert "Fix KQP shutdown while compute tasks are starting" (#60730)
-
-**File**: `ydb/core/kqp/compute_actor/kqp_compute_actor_factory.cpp` (modified, +3/-4)
-```diff
-@@ -189,16 +189,15 @@ class TKqpCaFactory : public IKqpNodeComputeActorFactory {
-             YQL_ENSURE(args.ComputesByStages);
-             auto& info = args.ComputesByStages->UpsertTaskWithScan(*args.Task, meta);
-             info.TraceId = NWilson::TTraceId(args.TraceId);
--            // Allocate bookkeeping before registering the actor.
--            auto& actorId = info.MutableActorIds().emplace_back();
-             IActor* computeActor = CreateKqpScanComputeActor(
-                 args.ExecuterId, args.TxId, args.Task, AsyncIoFactory, runtimeSettings, memoryLimits,
-                 std::move(args.TraceId), std::move(args.Arena),
-                 std::move(schedulableOptions), args.BlockTrackingMode, std::move(args.UserToken), args.Database);
--            actorId = args.UseBatchPool
-+            TActorId result = args.UseBatchPool
-                 ? TlsActivationContext->Register(computeActor, TActorId(), TMailboxType::HTSwap, AppData()->BatchPoolId)
-                 : TlsActivationContext->Register(computeActor);
--            return actorId;
-+            info.MutableActorIds().emplace_back(result);
-+            return result;
-         } else {
-             std::shared_ptr<TGUCSettings> GUCSettings;
-             if (!args.SerializedGUCSettings.empty()) {
-```
-
-**File**: `ydb/core/kqp/executer_actor/kqp_data_executer.cpp` (modified, +9/-57)
-```diff
-@@ -445,7 +445,7 @@ class TKqpDataExecuter : public TKqpExecuterBase<TKqpDataExecuter, EExecType::Da
-                 hFunc(TEvents::TEvUndelivered, HandleUndelivered);
-                 hFunc(TEvPrivate::TEvRetry, HandleRetry);
-                 hFunc(TEvInterconnect::TEvNodeDisconnected, HandleDisconnected);
--                hFunc(TEvKqpNode::TEvStartKqpTasksResponse, HandleExecute);
-+                hFunc(TEvKqpNode::TEvStartKqpTasksResponse, HandleStartKqpTasksResponse);
-                 hFunc(TEvDqCompute::TEvState, HandleComputeState);
-                 hFunc(TEvDqCompute::TEvNodeState, HandleNodeState);
-                 hFunc(TEvDqCompute::TEvChannelData, HandleChannelData);
-@@ -474,14 +474,6 @@ class TKqpDataExecuter : public TKqpExecuterBase<TKqpDataExecuter, EExecType::Da
-         ReportEventElapsedTime();
-     }
- 
--    void HandleExecute(TEvKqpNode::TEvStartKqpTasksResponse::TPtr& ev) {
--        HandleStartKqpTasksResponse(ev);
--        if (CurrentStateFunc() == &TThis::WaitShutdownState) {
--            // A failed start can both initiate shutdown and report which tasks started.
--            HandleShutdown(ev);
--        }
--    }
--
-     void HandleExecute(TEvKqp::TEvAbortExecution::TPtr& ev) {
-         if (IsCancelAfterAllowed(ev)) {
-             TBase::HandleAbortExecution(ev);
-@@ -1077,7 +1069,6 @@ class TKqpDataExecuter : public TKqpExecuterBase<TKqpDataExecuter, EExecType::Da
- 
-     void Shutdown() override {
-         if (Planner) {
--            Planner->BeginShutdown();
-             if (Planner->GetPendingComputeTasks().empty() && Planner->GetPendingComputeActors().empty()) {
-                 YDB_LOG_INFO("Shutdown immediately - nothing to wait",
-                     {"marker", "KQPDATA"},
-@@ -1124,9 +1115,6 @@ class TKqpDataExecuter : public TKqpExecuterBase<TKqpDataExecuter, EExecType::Da
-         switch(ev->GetTypeRewrite()) {
-             hFunc(TEvDqCompute::TEvState, HandleShutdown);
-             hFunc(TEvDqCompute::TEvNodeState, HandleShutdown);
--            hFunc(TEvKqpNode::TEvStartKqpTasksResponse, HandleShutdown);
--            hFunc(TEvents::TEvUndelivered, HandleShutdown);
--            hFunc(TEvPrivate::TEvRetry, HandleShutdown);
-             hFunc(TEvInterconnect::TEvNodeDisconnected, HandleShutdown);
-             hFunc(TEvents::TEvPoison, HandleShutdown);
-             hFunc(TEvDq::TEvAbortExecution, HandleShutdown);
-@@ -1142,54 +1130,15 @@ class TKqpDataExecuter : public TKqpExecuterBase<TKqpDataExecuter, EExecType::Da
-     }
- 
-     void HandleShutdown(TEvDqCompute::TEvState::TPtr& ev) {
--        if (HandleComputeStats(ev) && Planner->GetPendingComputeActors().contains(ev->Sender)) {
--            AbortLateComputeActor(ev->Sender);
--        }
--        TryFinishShutdown();
--    }
--
--    void HandleShutdown(TEvDqCompute::TEvNodeState::TPtr&) {
--        TryFinishShutdown();
--    }
--
--    void HandleShutdown(TEvKqpNode::TEvStartKqpTasksResponse::TPtr& ev) {
--        const auto& record = ev->Get()->Record;
--        if (record.GetTxId() != TxId) {
--            return;
--        }
--
--        for (const auto& task : record.GetStartedTasks()) {
--            const auto computeActor = ActorIdFromProto(task.GetActorId());
--            if (Planner->AcknowledgeCA(task.GetTaskId(), computeActor, nullptr)) {
--                AbortLateComputeActor(computeActor);
--            }
--        }
--        for (const auto& task : record.GetNotStartedTasks()) {
--            Planner->TaskNotStarted(task.GetTaskId());
--        }
--        TryFinishShutdown();
--    }
-+        HandleComputeStats(ev);
- 
--    void HandleShutdown(TEvents::TEvUndelivered::TPtr& ev) {
--        if (ev->Get()->SourceType == TEvKqpNode::TEvStartKqpTasksRequest::EventType) {
--            Planner->RequestNotStarted(ev->Cookie);
--            TryFinishShutdown();
-+        if (Planner->GetPendingComputeTasks().empty() && Planner->GetPendingComputeActors().empty()) {
-+            PassAway();
-         }
-     }
- 
--    void HandleShutdown(TEvPrivate::TEvRetry::TPtr& ev) {
--        Planner->RequestNotStarted(ev->Get()->RequestId);
--        TryFinishShutdown();
--    }
--
--    void AbortLateComputeActor(const TActorId& computeActor) {
--        const auto status = ResponseEv->Record.GetResponse().GetStatus();
--        Send(computeActor, new TEvKqp::TEvAbortExecution(YdbStatusToDqStatus(status), "Terminate execution"));
--    }
--
--    void TryFinishShutdown() {
-+    void HandleShutdown(TEvDqCompute::TEvNodeState::TPtr&) {
-         if (Planner->GetPendingComputeTasks().empty() && Planner->GetPendingComputeActors().empty()) {
--            FillLocksFromExtraData();
-             PassAway();
-         }
-     }
-@@ -1217,7 +1166,10 @@ class TKqpDataExecuter : public TKqpExecuterBase<TKqpDataExecuter, EExecType::Da
+@@ -300,20 +300,21 @@ namespace NActors {
+     bool TEventOutputChannel::SerializeEvent(TTcpPacketOutTask& task, TEventHolder& event, bool disableChecksums, size_t *bytesSerialized) {
+         const bool useRdmaForMainChannelPacket = !External && task.UsePreallocatedInternalStream;
+         auto addChunk = [&](const void *data, size_t len, bool allowCopy, const NInterconnect::NRdma::TMemRegion* memRegion = nullptr) {
++            ui32* const zcTransferId = External ? &event.ZcTransferId : nullptr;
+             event.UpdateChecksum(data, len);
+             if (useRdmaForMainChannelPacket) {
+                 if (memRegion) {
+                     task.AppendRdma(data, len, memRegion, disableChecksums);
+                 } else if (allowCopy) {
+                     task.Write<External>(data, len);
+                 } else {
+-                    task.Append<External>(data, len, &event.ZcTransferId, disableChecksums);
++                    task.Append<External>(data, len, zcTransferId, disableChecksums);
+                 }
+             } else {
+                 if (allowCopy && (reinterpret_cast<uintptr_t>(data) & 63) + len <= 64) {
+                     task.Write<External>(data, len);
+                 } else {
+-                    task.Append<External>(data, len, &event.ZcTransferId, disableChecksums);
++                    task.Append<External>(data, len, zcTransferId, disableChecksums);
+                 }
              }
-         }
- 
--        TryFinishShutdown();
-+        if (Planner->GetPendingComputeTasks().empty() && Planner->GetPendingComputeActors().empty()) {
-+            FillLocksFromExtraData();
-+            PassAway();
-+        }
-     }
- 
-     void
+             *bytesSerialized += len;
 ```
 
-**File**: `ydb/core/kqp/executer_actor/kqp_executer_ut.cpp` (modified, +0/-231)
+**File**: `ydb/library/actors/interconnect/ut/event_output_channel_ut.cpp` (modified, +36/-0)
 ```diff
-@@ -5,12 +5,8 @@
- #include <ydb/core/kqp/executer_actor/kqp_executer.h>
- #include <ydb/core/kqp/executer_actor/kqp_planner.h>
- #include <ydb/core/kqp/executer_actor/kqp_executer_stats.h>
--#include <ydb/core/kqp/node_service/kqp_node_service.h>
- #include <ydb/core/kqp/runtime/scheduler/kqp_compute_scheduler_service.h>
--#include <ydb/core/testlib/actors/block_events.h>
--#include <ydb/core/tx/datashard/datashard_failpoints.h>
- #include <ydb/core/tx/datashard/datashard_ut_common_kqp.h>
--#include <ydb/library/yql/dq/actors/compute/dq_compute_actor.h>
- 
- #include <ydb/public/sdk/cpp/include/ydb-cpp-sdk/client/types/status_codes.h>
- 
-@@ -19,235 +15,8 @@ namespace NKikimr::NKqp {
- using namespace NYdb;
- using namespace NYdb::NTable;
- 
--namespace {
--
--enum class ELateRemoteTaskStart {
--    ComputeState,
--    StartResponse,
--    InternalError,
--    NotStarted,
--    Undelivered,
--};
--
--TKikimrSettings RemoteTaskSettings(ui32 channelVersion) {
--    auto settings = TKikimrSettings().SetUseRealThreads(false).SetNodeCount(2);
--    auto* config = settings.AppConfig.MutableTableServiceConfig();
--    config->SetDqChannelVersion(channelVersion);
--    config->MutableResourceManager()->SetMaxNonParallelDataQueryTasksLimit(0);
--    config->MutableResourceManager()->SetMaxNonParallelTasksExecutionLimit(0);
--    config->MutableQueryLimits()->SetWaitCAStatsTimeoutMs(1000);
--    return settings;
--}
--
--TActorId StartDistributedCount(TTestActorRuntime& runtime) {
--    auto edge = runtime.AllocateEdgeActor();
--    auto query = MakeHolder<TEvKqp::TEvQueryRequest>();
--    ActorIdToProto(edge, query->Record.MutableRequestActorId());
--    auto& request = *query->Record.MutableRequest();
--    request.SetAction(NKikimrKqp::QUERY_ACTION_EXECUTE);
--    request.SetType(NKikimrKqp::QUERY_TYPE_SQL_GENERIC_QUERY);
--    request.SetDatabase("/Root");
--    request.SetQuery("SELECT COUNT(*) FROM `/Root/EightShard`;");
--    request.MutableTxControl()->mutable_begin_tx()->mutable_serializable_read_write();
--    request.MutableTxControl()->set_commit_tx(true);
--    NDataShard::NKqpHelpers::SendRequest(runtime, edge, std::move(query));
--    return edge;
--}
--
--void TestLateRemoteTaskStart(ui32 channelVersion, ELateRemoteTaskStart outcome) {
--    using NYql::NDq::TEvDqCompute::TEvState;
--    using NYql::NDqProto::StatusIds;
--    constexpr auto failureStatus = StatusIds::PRECONDITION_FAILED;
--    const TString failureMessage = "Local compute actor failed";
--    const bool startsRemoteActors = outcome == ELateRemoteTaskStart::ComputeState
--        || outcome == ELateRemoteTaskStart::StartResponse;
--
--    TKikimrRunner kikimr(RemoteTaskSettings(channelVersion));
--    auto& runtime = *kikimr.GetTestServer().GetRuntime();
--
--    TActorId executer;
--    TActorId localComputeActor;
--    TActorId localExecuter;
--    TInstant shutdownDeadline;
--    TInstant responseTime;
--    THashSet<TActorId> abortedRemoteActors;
--    TBlockEvents<TEvKqpNode::TEvStartKqpTasksRequest> startRequests(runtime, [&](const auto& ev) {
--        return ev->Sender.NodeId() != ev->GetRecipientRewrite().NodeId();
--    });
--    TBlockEvents<TEvKqpNode::TEvStartKqpTasksResponse> startResponses(runtime, [&](const auto& ev) {
--        return outcome == ELateRemoteTaskStart::ComputeState && ev->GetRecipientRewrite() == executer
--            && ev->Sender.NodeId() != executer.NodeId();
--    });
--    const auto stateObserver = runtime.AddObserver<TEvState>([&](auto& ev) {
--        const auto recipient = ev->GetRecipientRewrite();
--        if (ev->Sender.NodeId() == recipient.NodeId()
--            && ev->Get()->Record.GetState() == NYql::NDqProto::COMPUTE_STATE_EXECUTING && !localComputeActor) {
--            localComputeActor = ev->Sender;
--            localExecuter = recipient;
--        }
--    });
--    TBlockEvents<TEvState> remoteHellos(runtime, [&](const auto& ev) {
--        return outcome == ELateRemoteTaskStart::StartResponse && ev->GetRecipientRewrite() == executer
--            && ev->Sender.NodeId() != executer.NodeId()
--            && ev->Get()->Record.GetState() == NYql::NDqProto::COMPUTE_STATE_EXECUTING;
--    });
--    const auto abortObserver = runtime.AddObserver<TEvKqp::TEvAbortExecution>([&](auto& ev) {
--        const auto recipient = ev->GetRecipientRewrite();
--        if (ev->Sender == executer && recipient.NodeId() != executer.NodeId()) {
--            UNIT_ASSERT_VALUES_EQUAL(static_cast<int>(ev->Get()->Record.GetStatusCode()), static_cast<int>(failureStatus));
--            UNIT_ASSERT(abortedRemoteActors.insert(recipient).second);
--        }
--    });
--    const auto responseObserver = runtime.AddObserver<TEvKqpExecuter::TEvTxResponse>([&](auto& ev) {
--        if (ev->Sender == executer) {
--            responseTime = runtime.GetCurrentTime();
--        }
--    });
--    TTestActorRuntimeBase::TScheduledEventFilter previousFilter;
--    previousFilter = runtime.SetScheduledEventFilter([&](auto& actorRuntime, auto& ev, auto delay, auto& deadline) {
--        if (executer && ev->GetTypeRewrit
-```
-
-**File**: `ydb/core/kqp/executer_actor/kqp_planner.cpp` (modified, +8/-10)
-```diff
-@@ -872,16 +872,14 @@ TMaybe<ui64> TKqpPlanner::GetActualNodeIdForTask(ui64 taskId) const {
- }
- 
- void TKqpPlanner::TaskNotStarted(ui64 taskId) {
--    // A start failure can include tasks whose actors already reported in.
--    PendingComputeTasks.erase(taskId);
--}
-+    // NOTE: should be invoked only while shutting down - when node is disconnected.
- 
--void TKqpPlanner::RequestNotStarted(ui64 requestId) {
--    if (requestId < Requests.size()) {
--        for (ui64 taskId : Requests[requestId].TaskIds) {
--            TaskNotStarted(taskId);
--        }
--    }
-+    auto& task = TasksGraph.GetTask(taskId);
-+
-+    YQL_ENSURE(!task.ComputeActorId);
-+    YQL_ENSURE(!task.Meta.Completed);
-+
-+    PendingComputeTasks.erase(taskId);
- }
- 
- TProgressStat::TEntry TKqpPlanner::CalculateConsumptionUpdate() {
-@@ -1038,7 +1036,7 @@ void TKqpPlanner::CollectTaskChannelsUpdates(const TKqpTasksGraph::TTaskType& ta
- }
- 
- void TKqpPlanner::SendReadyState() {
--    if (ReadyStateSent || ShuttingDown) {
-+    if (ReadyStateSent) {
-         return;
-     }
- 
-```
-
-**File**: `ydb/core/kqp/executer_actor/kqp_planner.h` (modified, +0/-5)
-```diff
-@@ -92,13 +92,9 @@ class TKqpPlanner {
-     bool AcknowledgeCA(ui64 taskId, TActorId computeActor, const NYql::NDqProto::TEvComputeActorState* state);
-     bool CompletedCA(ui64 taskId, TActorId computeActor);
-     void TaskNotStarted(ui64 taskId);
--    void RequestNotStarted(ui64 requestId);
-     TProgressStat::TEntry CalculateConsumptionUpdate();
-     void ShiftConsumption();
-     void Submit();
--    void BeginShutdown() {
--        ShuttingDown = true;
--    }
-     ui32 GetCurrentRetryDelay(ui32 requestId);
-     void Unsubscribe();
- 
-@@ -173,7 +169,6 @@ class TKqpPlanner {
-     const bool EnableWatermarks;
-     IKqpStreamingQueryController* const StreamingQuery;
-     bool ReadyStateSent = false;
--    bool ShuttingDown = false;
- public:
-     static bool UseMockEmptyPlanner;  // for tests: if true then use TKqpMockEmptyPlanner that leads to the error
-     THashMap<ui32, TActorId> ResultChannels;
-```
-
-**File**: `ydb/core/kqp/executer_actor/ut/kqp_compute_actor_creation_ut.cpp` (modified, +5/-56)
-```diff
-@@ -1,9 +1,7 @@
--#include <ydb/core/kqp/common/simple/services.h>
- #include <ydb/core/kqp/executer_actor/kqp_planner.h>
- #include <ydb/core/kqp/node_service/kqp_query_control_plane.h>
- #include <ydb/core/kqp/runtime/scheduler/kqp_compute_scheduler_service.h>
- #include <ydb/core/kqp/ut/common/kqp_ut_common.h>
--#include <ydb/core/testlib/actors/block_events.h>
- 
- namespace NKikimr::NKqp {
- namespace {
-@@ -15,7 +13,6 @@ constexpr TStringBuf CreationError = "injected compute actor creation failure";
- struct TCreationState {
-     ui32 Attempts = 0;
-     ui32 Aborted = 0;
--    TVector<TActorId> StartedActors;
-     std::weak_ptr<IQueryQuotaManager> QueryQuota;
-     TIntrusivePtr<NRm::TTxState> Tx;
- };
-@@ -76,9 +73,7 @@ class TThrowingComputeActorFactory : public NComputeActor::IKqpNodeComputeActorF
-             }
-             ythrow yexception() << CreationError;
-         }
--        auto actor = TlsActivationContext->Register(new TTestComputeActor(args, CreationState));
--        CreationState->StartedActors.push_back(actor);
--        return actor;
-+        return TlsActivationContext->Register(new TTestComputeActor(args, CreationState));
-     }
- 
-     void ApplyConfig(const NKikimrConfig::TTableServiceConfig::TResourceManager&) override {}
-@@ -108,46 +103,6 @@ void CheckResourcesReleased(TTestActorRuntime& runtime, const TCreationState& st
+@@ -373,6 +373,42 @@ void AssertXdcDeclareNotSerialized(IEventBase* ev, ui32 maxSerializedEventSize)
  } // namespace
  
- Y_UNIT_TEST_SUITE(KqpComputeActorCreation) {
--    Y_UNIT_TEST(CancelledBeforeActorCreation) {
--        TKikimrRunner kikimr(TKikimrSettings().SetUseRealThreads(false).SetWithSampleTables(false));
--        auto& runtime = *kikimr.GetTestServer().GetRuntime();
--        const auto executer = runtime.AllocateEdgeActor();
--        const auto nodeService = runtime.GetLocalServiceId(MakeKqpNodeServiceID(runtime.GetNodeId()));
--        TBlockEvents<TEvKqpNode::TEvStartKqpTasksRequest> forwarded(runtime, [&](const auto& ev) {
--            return ev->Sender == executer && ev->GetRecipientRewrite() != nodeService;
--        });
--        auto sendStart = [&](ui64 taskId) {
--            auto start = MakeHolder<TEvKqpNode::TEvStartKqpTasksRequest>();
--            start->Record.SetTxId(TxId);
--            start->Record.SetStartAllOrFail(true);
--            start->Record.AddTasks()->SetId(taskId);
--            runtime.Send(new IEventHandle(nodeService, executer, start.Release()));
--        };
--        auto checkRejection = [&](TActorId sender, ui64 taskId) {
--            auto reply = runtime.GrabEdgeEventRethrow<TEvKqpNode::TEvStartKqpTasksResponse>(executer, TDuration::Seconds(5));
--            UNIT_ASSERT(reply);
--            UNIT_ASSERT_VALUES_EQUAL(reply->Sender, sender);
--            const auto& record = reply->Get()->Record;
--            UNIT_ASSERT_VALUES_EQUAL(record.StartedTasksSize(), 0);
--            UNIT_ASSERT_VALUES_EQUAL(record.NotStartedTasksSize(), 1);
--            const auto& task = record.GetNotStartedTasks(0);
--            UNIT_ASSERT_VALUES_EQUAL(task.GetTaskId(), taskId);
--            UNIT_ASSERT_EQUAL(task.GetReason(), NKikimrKqp::TEvStartKqpTasksResponse::INTERNAL_ERROR);
--        };
--
--        sendStart(1);
--        runtime.WaitFor("start request forwarded to the query manager", [&] { return !forwarded.empty(); }, TDuration::Seconds(5));
--        const auto queryManager = forwarded.front()->GetRecipientRewrite();
--        auto cancel = MakeHolder<TEvKqpNode::TEvCancelKqpTasksRequest>();
--        cancel->Record.SetTxId(TxId);
--        runtime.Send(new IEventHandle(nodeService, executer, cancel.Release()));
--
--        sendStart(2);
--        checkRejection(nodeService, 2);
--        forwarded.Stop().Unblock();
--        checkRejection(queryManager, 1);
--    }
--
-     Y_UNIT_TEST_TWIN(NodeServiceFailure, UnknownException) {
-         for (ui32 failOnAttempt : {1u, 2u, 3u}) {
-             TKikimrRunner kikimr(TKikimrSettings().SetUseRealThreads(false).SetWithSampleTables(false));
-@@ -186,17 +141,11 @@ Y_UNIT_TEST_SUITE(KqpComputeActorCreation) {
-             auto reply = runtime.GrabEdgeEventRethrow<TEvKqpNode::TEvStartKqpTasksResponse>(executer);
-             const auto& record = reply->Get()->Record;
-             UNIT_ASSERT_VALUES_EQUAL(record.GetTxId(), TxId);
--            const ui32 startedTasks = failOnAttempt == 3 ? 0 : failOnAttempt - 1;
--            UNIT_ASSERT_VALUES_EQUAL(record.StartedTasksSize(), startedTasks);
--            for (ui32 i = 0; i < startedTasks; ++i) {
--                const auto& task = record.GetStartedTasks(i);
--                UNIT_ASSERT_VALUES_EQUAL(task.GetTaskId(), firstTaskId + i);
--                UNIT_ASSERT_VALUES_EQUAL(ActorIdFromProto(task.GetActorId()), factory->CreationState->StartedActors.at(i));
--            }
--            UNIT_ASSERT_VALUES_EQUAL(record.NotStartedTasksSize(), 3 - startedTasks);
--            for (ui32 i = 0; i < 3 - startedTasks; ++i) {
-+            UNIT_ASSERT_VALUES_EQUAL(record.StartedTasksSize(), 0);
-+            UNIT_ASSERT_VALUES_EQUAL(record.NotStartedTasksSize(), 3);
-+            for (ui32 i =
-```
-
-**File**: `ydb/core/kqp/executer_actor/ut/kqp_planner_ut.cpp` (removed, +0/-128)
-```diff
-@@ -1,128 +0,0 @@
--#include <ydb/core/kqp/executer_actor/kqp_planner.h>
--#include <ydb/core/kqp/ut/common/kqp_ut_common.h>
--
--namespace NKikimr::NKqp {
--namespace {
--
--struct TTestStreamingQueryController : IKqpStreamingQueryController {
--    bool NeedsPrepare() const override {
--        return false;
--    }
--
--    void StartPrepare(TVector<TPqTopicResolverSource>, THashMap<TString, TString>) override {}
--
--    std::shared_ptr<const NKikimrKqp::TQueryPhysicalGraph> GetGraphToRestore(
--        const TVector<NKikimrKqp::TKqpNodeResources>&, ui32) override {
--        return nullptr;
--    }
--
--    TStartedActors Start(std::shared_ptr<const NKikimrKqp::TQueryPhysicalGraph>, const TKqpTasksGraph&) override {
--        return {};
--    }
--
--    void OnComputeActorsStarted(TVector<TTaskInfo> tasks, bool) override {
--        ReadyTasks = std::move(tasks);
--        ++ReadyCalls;
--    }
--
--    bool IsOwnEvent(const NActors::IEventHandle&) const override {
--        return false;
--    }
--
--    void Handle(TAutoPtr<NActors::IEventHandle>&) override {}
--
--    void Terminate() override {}
--
--    TVector<TTaskInfo> ReadyTasks;
--    ui32 ReadyCalls = 0;
--};
--
--} // namespace
--
--Y_UNIT_TEST_SUITE(KqpPlanner) {
--    Y_UNIT_TEST_TWIN(NoStreamingReadinessDuringShutdown, ComputeStateFirst) {
--        TKikimrRunner kikimr(TKikimrSettings().SetUseRealThreads(false).SetWithSampleTables(false));
--        auto& runtime = *kikimr.GetTestServer().GetRuntime();
--        const auto executer = runtime.AllocateEdgeActor();
--        const auto firstActor = runtime.AllocateEdgeActor();
--        const auto lastActor = runtime.AllocateEdgeActor();
--        const TString database = "/Root";
--        const NKikimrConfig::TTableServiceConfig config;
--
--        runtime.RunCall([&] {
--            for (const bool shuttingDown : {false, true}) {
--                NKqpProto::TKqpPhyTx txProto;
--                txProto.AddStages();
--                auto txHolder = std::make_shared<TKqpPhyTxHolder>(nullptr, &txProto, nullptr, nullptr);
--                const IKqpGateway::TPhysicalTxData tx(txHolder, nullptr);
--                const TVector<IKqpGateway::TPhysicalTxData> transactions;
--                TKqpTasksGraph graph(database, transactions, nullptr, config.GetResourceManager(),
--                    config.GetAggregationConfig(), nullptr, {}, nullptr, false);
--                graph.GetMeta().UserRequestContext = MakeIntrusive<TUserRequestContext>();
--                graph.GetMeta().UserRequestContext->IsStreamingQuery = true;
--                const NYql::NDq::TStageId stageId(0, 0);
--                graph.AddStageInfo(TStageInfo(stageId, 0, 0, TStageInfoMeta(tx)));
--                auto& stage = graph.GetStageInfo(stageId);
--                auto addTask = [&] {
--                    auto& task = graph.AddTask(stage);
--                    task.Meta.ExpectedNodeId = executer.NodeId();
--                    return task.Id;
--                };
--                const auto firstTaskId = addTask();
--                const auto lastTaskId = addTask();
--
--                TTestStreamingQueryController controller;
--                NWilson::TSpan span;
--                TKqpPlanner planner({
--                    .TasksGraph = graph,
--                    .TxId = 1,
--                    .Executer = executer,
--                    .Database = database,
--                    .UserToken = {},
--                    .Deadline = {},
--                    .StatsMode = Ydb::Table::QueryStatsCollection::STATS_COLLECTION_NONE,
--                    .StatsReportingSettings = {},
--                    .RlPath = {},
--                    .ExecuterSpan = span,
--                    .ExecuterRetriesConfig = config.GetExecuterRetriesConfig(),
--                    .MkqlMemoryLimit = 0,
--                    .AsyncIoFactory = nullptr,
--                    .AllowSinglePartitionOpt = false,
--                    .FederatedQuerySetup = std::nullopt,
--                    .ResourceManager_ = {},
--                    .CaFactory_ = {},
--                    .BlockTrackingMode = {},
--                    .ArrayBufferMinFillPercentage = {},
--                    .BufferPageAllocSize = {},
--                    .EnableCheckpoints = false,
--                    .EnableWatermarks = false,
--                    .StreamingQuery = &controller,
--                });
--                UNIT_ASSERT(!planner.PlanExecution());
--                UNIT_ASSERT_VALUES_EQUAL(planner.GetPendingComputeTasks().size(), 2);
--                UNIT_ASSERT(planner.AcknowledgeCA(firstTaskId, firstActor, nullptr));
--                UNIT_ASSERT_VALUES_EQUAL(controller.ReadyCalls, 0);
--
--                if (shuttingDown) {
--                    planner.BeginShutdown();
--                }
--                NYql::NDqProto::TEvComputeActorState state;
--                state.SetTaskId(lastTaskId);
--                state.SetState(NYql::NDqProto::COMPUTE_STATE_EXECUTING);
--                UNIT_ASSERT(planner.AcknowledgeCA(lastTaskId, lastActor, ComputeStat
-```
-
-**File**: `ydb/core/kqp/executer_actor/ut/ya.make` (modified, +0/-1)
-```diff
-@@ -9,7 +9,6 @@ SRCS(
-     kqp_compute_actor_creation_ut.cpp
-     kqp_executer_stats_ut.cpp
-     kqp_executer_ut.cpp
--    kqp_planner_ut.cpp
-     kqp_tasks_graph_ut.cpp
-     max_tasks_graph_ut.cpp
- )
+ Y_UNIT_TEST_SUITE(EventOutputChannel) {
++    Y_UNIT_TEST(GluesSmallMainChannelProtobufEventsIntoSingleSpan) {
++        auto common = MakeIntrusive<TInterconnectProxyCommon>();
++        common->MonCounters = MakeIntrusive<NMonitoring::TDynamicCounters>();
++
++        std::shared_ptr<IInterconnectMetrics> metrics = CreateInterconnectCounters(common);
++        metrics->SetPeerInfo("peer", "1", "peer");
++
++        auto releaseCallback = [](THolder<IEventBase>) {};
++        TEventHolderPool pool(common, releaseCallback);
++
++        TSessionParams params;
++        TEventOutputChannel channel(1, 1, 64 << 20, metrics, params, nullptr);
++
++        for (ui64 blobId : {1, 2}) {
++            auto* ev = new TEvTestSerialization;
++            ev->Record.SetBlobID(blobId);
++            auto evHandle = MakeHolder<IEventHandle>(TActorId(), TActorId(), ev);
++            channel.Push(*evHandle, pool, TInstant::Zero());
++        }
++
++        NInterconnect::TOutgoingStream mainStream;
++        NInterconnect::TOutgoingStream xdcStream;
++        TTcpPacketOutTask task(params, mainStream, xdcStream);
++
++        UNIT_ASSERT(channel.FeedBuf(task, 1));
++        UNIT_ASSERT(channel.FeedBuf(task, 1));
++        task.Finish(1, 0);
++
++        UNIT_ASSERT_VALUES_EQUAL(mainStream.GetSendQueueSize(), 1u);
++
++        TVector<TConstIoVec> data;
++        mainStream.ProduceIoVec(data, 1024, Max<size_t>());
++        UNIT_ASSERT_VALUES_EQUAL(data.size(), 1u);
++        UNIT_ASSERT_VALUES_EQUAL(data.front().Size, task.GetPacketSize());
++    }
++
+     Y_UNIT_TEST(PropagatesSerializedEventTooLargeFromCoroutineSerializer) {
+         auto common = MakeIntrusive<TInterconnectProxyCommon>();
+         common->MonCounters = MakeIntrusive<NMonitoring::TDynamicCounters>();
 ```
 
 ---
 
-### Incident Patch 3: `1473bd55` (2026-11-24)
-**Commit Message**: [tests] tpc/medium: stop leaked YDB clusters, order more RAM under sanitizers (#58865)
+### Incident Patch 2: `11c43f77` (2026-11-25)
+**Commit Message**: Require fresh VDisk status for mirror-3-dc solo recovery (#60689)
 
-**File**: `ydb/tests/functional/tpc/medium/test_external.py` (modified, +4/-1)
+**File**: `ydb/core/blobstorage/syncer/group_state.cpp` (modified, +5/-5)
 ```diff
-@@ -21,4 +21,7 @@ def setup_class(cls) -> None:
+@@ -21,7 +21,7 @@ std::optional<TMirror3dcGroupConfiguration> GetConfiguration(const TGroupReplica
+     return std::nullopt;
+ }
  
-     @classmethod
-     def teardown_class(cls) -> None:
--        cls.run_cli(['workload', 'query', '-p', f'{cls.external_folder}', 'clean'])
-+        try:
-+            cls.run_cli(['workload', 'query', '-p', f'{cls.external_folder}', 'clean'])
-+        finally:
-+            super().teardown_class()
+-// W expands from 2 in Included to 2+2 in Included and Recovering on this edge.
++// W expands from 2 in Included to 2+2 in Included and Recovering on these edges.
+ bool WaitForRecoveringVDiskStartup(EMirror3dcGroupState state) {
+     using TGroupState = NKikimrBlobStorage::TGroupState;
+     return state == TGroupState::DC_SOLO_RECOVERY_INV1_PENDING || state == TGroupState::DC_SOLO_RECOVERY_INV2_PENDING;
+@@ -219,12 +219,12 @@ class TGroupStateActor : public TActorBootstrapped<TGroupStateActor> {
+         }
+         EraseQueries(groupId);
+         group->Pending = 0;
+-        if (group->Stage == EStage::CheckPromotion) {
++        if (group->Stage == EStage::CheckPromotion || WaitForRecoveringVDiskStartup(*group->Info.GroupState)) {
+             ProposeState(groupId, group);
+             return;
+         }
+         StatusPollGroups.erase(groupId);
+-        group->Stage = WaitForRecoveringVDiskStartup(*group->Info.GroupState) ? EStage::Propose : EStage::Repair;
++        group->Stage = EStage::Repair;
+         RepairGroups.insert(groupId);
+     }
+ 
+@@ -268,8 +268,8 @@ class TGroupStateActor : public TActorBootstrapped<TGroupStateActor> {
+                     continue;
+                 }
+                 const bool checkPromotion = group.Stage == EStage::CheckPromotion;
+-                if (checkPromotion) {
+-                    // Health must come from one round after repair, including on proposal retries.
++                if (checkPromotion || WaitForRecoveringVDiskStartup(*group.Info.GroupState)) {
++                    // These transitions require a fresh set of replies, including on proposal retries.
+                     group.ConfirmedDisks.assign(group.Info.VDisks.size(), false);
+                 }
+                 ActiveGroups.push_back(groupId);
 ```
 
-**File**: `ydb/tests/functional/tpc/medium/test_upload.py` (modified, +7/-0)
+**File**: `ydb/core/mind/bscontroller/ut_bscontroller/group_state_ut.cpp` (modified, +117/-21)
 ```diff
-@@ -11,3 +11,10 @@ def setup_class(cls) -> None:
-         YdbCluster._tables_path = ''
-         cls.setup_cluster()
-         super().setup_class()
+@@ -6,6 +6,7 @@
+ #include <ydb/core/testlib/basics/runtime.h>
+ #include <ydb/core/testlib/basics/appdata.h>
+ #include <library/cpp/testing/unittest/registar.h>
++#include <util/generic/map.h>
+ 
+ using namespace NActors;
+ using namespace NKikimr;
+@@ -68,23 +69,40 @@ class TGroupStateFixture {
+             disks.insert(disk.ActorId);
+         }
+         for (ui32 index = 0; index < requests; ++index) {
+-            TEvBlobStorage::TEvVStatus::TPtr request = Runtime.GrabEdgeEventRethrow<TEvBlobStorage::TEvVStatus>(disks);
+-            TVDiskID disk = VDiskIDFromVDiskID(request->Get()->Record.GetVDiskID());
+-            UNIT_ASSERT_VALUES_EQUAL(disk.GroupGeneration, Info.Generation);
+-            const bool available = !status.FailSecondRealm || disk.FailRealm != 1 || disk.FailDomain != 0;
+-            if (!available || (status.OnlyFirstRealm && disk.FailRealm != 0)) {
+-                --disk.GroupGeneration;
+-            }
+-            const TVDiskIdShort diskId(disk);
+-            const bool replicated = status.Replicated && available && status.ReplicatingRealm != disk.FailRealm;
+-            const auto replyStatus = status.ErrorDisk == diskId ? NKikimrProto::ERROR : NKikimrProto::OK;
+-            std::unique_ptr<TEvBlobStorage::TEvVStatusResult> result =
+-                std::make_unique<TEvBlobStorage::TEvVStatusResult>(replyStatus, disk, true, replicated, false, 1);
+-            if (status.DurabilityReplicated) {
+-                result->Record.SetDurabilityReplicated(*status.DurabilityReplicated && available);
++            ReplyStatus(*Runtime.GrabEdgeEventRethrow<TEvBlobStorage::TEvVStatus>(disks), status);
++        }
++    }
 +
-+    @classmethod
-+    def do_teardown_class(cls) -> None:
-+        try:
-+            super().do_teardown_class()
-+        finally:
-+            cls.cluster.stop()
++    TMap<TVDiskIdShort, IEventHandle::TPtr> CaptureStatusRound() {
++        TMap<TVDiskIdShort, IEventHandle::TPtr> requests;
++        for (const auto& disk : Info.VDisks) {
++            auto events = Runtime.CaptureMailboxEvents(disk.ActorId.Hint(), disk.ActorId.NodeId());
++            const bool excluded = IsExcluded(Info.States[disk.Id.FailRealm]);
++            UNIT_ASSERT_VALUES_EQUAL(events.size(), excluded ? 0u : 1u);
++            if (!excluded) {
++                UNIT_ASSERT_VALUES_EQUAL(events.front()->GetTypeRewrite(), TEvBlobStorage::TEvVStatus::EventType);
++                requests.emplace(TVDiskIdShort(disk.Id), std::move(events.front()));
+             }
+-            Runtime.Send(new IEventHandle(request->Sender, request->Recipient, result.release(), 0, request->Cookie), 0, true);
+         }
++        return requests;
++    }
++
++    void ReplyStatus(const IEventHandle& request, const TVDiskReplicationStatus& status = {}) {
++        TVDiskID disk = VDiskIDFromVDiskID(request.CastAsLocal<TEvBlobStorage::TEvVStatus>()->Record.GetVDiskID());
++        UNIT_ASSERT_VALUES_EQUAL(disk.GroupGeneration, Info.Generation);
++        const bool available = !status.FailSecondRealm || disk.FailRealm != 1 || disk.FailDomain != 0;
++        if (!available || (status.OnlyFirstRealm && disk.FailRealm != 0)) {
++            --disk.GroupGeneration;
++        }
++        const TVDiskIdShort diskId(disk);
++        const bool replicated = status.Replicated && available && status.ReplicatingRealm != disk.FailRealm;
++        const auto replyStatus = status.ErrorDisk == diskId ? NKikimrProto::ERROR : NKikimrProto::OK;
++        std::unique_ptr<TEvBlobStorage::TEvVStatusResult> result =
++            std::make_unique<TEvBlobStorage::TEvVStatusResult>(replyStatus, disk, true, replicated, false, 1);
++        if (status.DurabilityReplicated) {
++            result->Record.SetDurabilityReplicated(*status.DurabilityReplicated && available);
++        }
++        Runtime.Send(new IEventHandle(request.Sender, request.Recipient, result.release(), 0, request.Cookie), 0, true);
+     }
+ 
+     void AssertNoRequests() {
+@@ -125,12 +143,15 @@ class TGroupStateFixture {
+         Runtime.PushMailboxEventsFront(Warden.Hint(), Warden.NodeId(), events);
+     }
+ 
+-    TMirror3dcGroupConfiguration GetProposal(ui32 groupId = 42) {
++    TMirror3dcGroupConfiguration GetProposal(ui32 groupId = 42, ui64* cookie = nullptr) {
+         auto event = Runtime.GrabEdgeEventRethrow<TEvGroupState::TEvPropose>(Controller);
+         UNIT_ASSERT_VALUES_EQUAL(event->Sender, Actor);
+         const auto& proposal = *event->Get();
+         UNIT_ASSERT_VALUES_EQUAL(proposal.GroupId, groupId);
+         UNIT_ASSERT_VALUES_EQUAL(proposal.Generation, Info.Generation);
++        if (cookie) {
++            *cookie = event->Cookie;
++        }
+         return proposal.Next;
+     }
+ };
+@@ -218,23 +239,98 @@ Y_UNIT_TEST_SUITE(BsControllerGroupState) {
+ 
+     Y_UNIT_TEST(SoloRecoveryPendingWaitsForRecoveringVDiskStartup) {
+         using S = NKikimrBlobStorage::TGroupState;
++        const TVDiskIdShort included3(0, 2, 0);
++        const TVDiskIdShort recovering1(1, 0, 0);
++        const TVDiskIdShort recovering2(1, 1, 0);
++        const TVDiskIdShort recovering3(1, 2, 0);
+         for (auto [pending, ready] : {std::pair{S::DC_SOLO_RECOVERY_INV1_PENDING, S::DC_SOLO
 ```
 
-**File**: `ydb/tests/functional/tpc/medium/ya.make` (modified, +2/-2)
+---
+
+### Incident Patch 3: `1f5ecad9` (2026-11-25)
+**Commit Message**: fix mass restarts during switchover (#60526)
+
+**File**: `ydb/core/mind/hive/drain.cpp` (modified, +6/-0)
 ```diff
-@@ -22,12 +22,12 @@ TEST_SRCS(
+@@ -358,6 +358,12 @@ void THive::ProcessPileDrains() {
+     Send(SelfId(), new TEvPrivate::TEvProcessPileDrains());
+ }
  
- FORK_TEST_FILES()
++void THive::HandleInit(TEvPrivate::TEvProcessPileDrains::TPtr&) {
++    // requested while loading (e.g. by a config notification); the load ends with UpdatePiles, which processes
++    // the pile drains once Hive works, so it is only needed to allow scheduling again
++    ProcessPileDrainsScheduled = false;
++}
++
+ void THive::Handle(TEvPrivate::TEvProcessPileDrains::TPtr&) {
+     ProcessPileDrainsScheduled = false;
+     if (!BridgeInfo || std::none_of(BridgePiles.begin(), BridgePiles.end(), [](const auto& item) { return item.second.Drain; })) {
+```
+
+**File**: `ydb/core/mind/hive/hive_impl.cpp` (modified, +1/-0)
+```diff
+@@ -4226,6 +4226,7 @@ STFUNC(THive::StateInit) {
+     switch (ev->GetTypeRewrite()) {
+         hFunc(TEvInterconnect::TEvNodesInfo, Handle);
+         hFunc(TEvPrivate::TEvProcessBootQueue, HandleInit);
++        hFunc(TEvPrivate::TEvProcessPileDrains, HandleInit);
+         hFunc(TEvPrivate::TEvProcessTabletBalancer, HandleInit);
+         hFunc(TEvPrivate::TEvCheckNamedResourceEstimates, HandleInit);
+         hFunc(TEvNodeWardenStorageConfig, HandleInit);
+```
+
+**File**: `ydb/core/mind/hive/hive_impl.h` (modified, +1/-0)
+```diff
+@@ -697,6 +697,7 @@ class THive : public TActor<THive>, public TTabletExecutedFlat, public THiveShar
+     void HandleInit(TEvPrivate::TEvProcessBootQueue::TPtr&);
+     void Handle(TEvPrivate::TEvProcessBootQueue::TPtr&);
+     void Handle(TEvPrivate::TEvProcessPileDrains::TPtr&);
++    void HandleInit(TEvPrivate::TEvProcessPileDrains::TPtr&);
+     void Handle(TEvPrivate::TEvPostponeProcessBootQueue::TPtr&);
+     void Handle(TEvPrivate::TEvProcessDisconnectNode::TPtr&);
+     void HandleInit(TEvPrivate::TEvProcessTabletBalancer::TPtr&);
+```
+
+**File**: `ydb/core/mind/hive/hive_ut.cpp` (modified, +87/-8)
+```diff
+@@ -13272,7 +13272,7 @@ Y_UNIT_TEST_SUITE(THiveTest) {
+         UNIT_ASSERT_VALUES_EQUAL(GetSimpleCounter(runtime, test.HiveTablet, NHive::COUNTER_TABLETS_STARTING), 0);
+     }
  
--REQUIREMENTS(ram:16 cpu:1)
+-    Y_UNIT_TEST(TestBridgePileDrainResumesOnPileUpdateAfterNodeBecomesUp) {
++    Y_UNIT_TEST(TestBridgePileDrainResumesWhenNodeBecomesUp) {
+         TBridgeDrainTest test;
+         const ui64 tabletId = test.CreateTablet();
+         TBlockEvents<TEvLocal::TEvStatus> blockNodeStatus(test.Runtime);
+@@ -13283,14 +13283,10 @@ Y_UNIT_TEST_SUITE(THiveTest) {
+         UNIT_ASSERT(test.IsRunningInPile(tabletId, 0));
+         UNIT_ASSERT(test.DrainPending());
+ 
++        // node statuses stay blocked: bringing the target Up is enough for the drain to resume
+         test.SetDown(1, false);
+-        test.Runtime.SimulateSleep(TDuration::Seconds(10));
+-        UNIT_ASSERT_C(test.IsRunningInPile(tabletId, 0), "pile drain resumed without a new node status or pile update");
+-        UNIT_ASSERT(test.DrainPending());
 -
- IF (SANITIZER_TYPE)
-+    REQUIREMENTS(ram:80 cpu:1)
-     SIZE(LARGE)
-     INCLUDE(${ARCADIA_ROOT}/ydb/tests/large.inc)
- ELSE()
-+    REQUIREMENTS(ram:16 cpu:1)
-     SIZE(MEDIUM)
- ENDIF()
+-        test.Bridge.SetPileState(1, NKikimrBridge::TClusterState::SYNCHRONIZED);
+         UNIT_ASSERT_C(WaitUntil(test.Runtime, [&] { return test.IsRunningInPile(tabletId, 1) && !test.DrainPending(); }),
+-            "pile drain did not resume on a pile update after its target became Up");
++            "pile drain did not resume after its target became Up");
+     }
+ 
+     Y_UNIT_TEST(TestBridgePileDrainResumesOnPileUpdateAfterResourcesBecomeAvailable) {
+@@ -13726,10 +13722,16 @@ Y_UNIT_TEST_SUITE(THiveTest) {
+ 
+                 // Preserve Sync -> Status order from each Local while replaying a report for the old placement.
+                 blockSync->Stop().Unblock();
++                // A disconnected pile loses all its tablets. A pile that is only not allowed anymore keeps the
++                // instances Hive knows about, for its drain to move them gradually; the stale one is not revived.
++                const size_t keptInPile0 = scenario == EBridgeDrainScenario::ResyncOnDisconnectedPile ? 0 : NUM_TABLETS - 1;
+                 UNIT_ASSERT_C(waitUntil([&] {
+                     auto distribution = getDistribution();
+-                    return tabletsInPile(distribution, 0) == 0 && tabletsInPile(distribution, 1) == 0;
++                    return tabletsInPile(distribution, 0) == keptInPile0 && tabletsInPile(distribution, 1) == 0;
+                 }), "resync revived tablets in a pile that no longer allows their leaders");
++                runtime.SimulateSleep(TDuration::MilliSeconds(100));
++                UNIT_ASSERT_VALUES_EQUAL(tabletsInPile(getDistribution(), 0), keptInPile0);
++                UNIT_ASSERT_VALUES_EQUAL(GetHiveTabletInfo(runtime, hiveTablet, tablets.front(), senderA).GetNodeID(), 0);
+                 blockSourceStatus->Stop().Unblock();
+             }
+             blockStatus.Stop().Unblock();
+@@ -13988,6 +13990,83 @@ Y_UNIT_TEST_SUITE(THiveTest) {
+         UNIT_ASSERT_VALUES_EQUAL_C(blockComplete.size(), DRAIN_INFLIGHT, "a second drain of the pile started");
+     }
+ 
++    Y_UNIT_TEST(TestBridgeResyncAfterSwitchoverKeepsDrainGradual) {
++        static constexpr ui32 NUM_NODES = 4;
++        static constexpr ui32 NUM_TABLETS = 8;
++        static constexpr ui32 DRAIN_INFLIGHT = 1;
++        TTestBasicRuntime runtime(NUM_NODES, false);
++        TDummyBridge bridge(runtime);
++        Setup(runtime, true, 2, [](TAppPrepare& app) {
++            app.HiveConfig.SetDrainInflight(DRAIN_INFLIGHT);
++        });
++        const ui64 hiveTablet = MakeDefaultHiveID();
++        const ui64 testerTablet = MakeTabletID(false, 1);
++        const TActorId sender = runtime.AllocateEdgeActor(0);
++        const ui32 nodeBase = runtime.GetNodeId(0);
++        CreateTestBootstrapper(runtime, CreateTestTabletInfo(hiveTablet, TTabletTypes::Hive), &CreateDefaultHive);
++        MakeSureTabletIsUp(runtime, hiveTablet, 0);
++        TActorId hiveActor = GetHiveActor(runtime, hiveTablet);
++        bridge.Subscribe(hiveActor);
++        runtime.EnableScheduleForActor(hiveActor);
++        std::vector<ui64> tablets;
++        for (ui32 i = 0; i < NUM_TABLETS; ++i) {
++            THolder<TEvHive::TEvCreateTablet> ev(new TEvHive::TEvCreateTablet(testerTablet, 100500 + i, TTabletTypes::Dummy, BINDED_CHANNELS));
++            tablets.push_back(SendCreateTestTablet(runtime, hiveTablet, testerTablet, std::move(ev), 0, true));
++            MakeSureTabletIsUp(runtime, tablets.back(), 0);
++        }
++        auto inPile = [&](ui32 pile) {
++            ui32 count = 0;
++            for (ui64 tablet : tablets) {
++                const auto info = GetHiveTabletInfo(runtime, hiveTablet, tablet, sender);
++                if (info.GetNodeID() != 0 && (info.GetNodeID() - nodeBase) % 2 == pile) {
++                    ++count;
++                }
++            }
++            return count;
++        };
++        UNIT_ASSERT_VALUES_EQUAL(inPile(0), NUM_TABLETS);
++
++        // switchover: the drain of pile 0 starts and is held
++        std::optional<TBlockEvents<NHive::TEvPr
+```
+
+**File**: `ydb/core/mind/hive/node_info.cpp` (modified, +11/-2)
+```diff
+@@ -176,7 +176,7 @@ void TNodeInfo::UpdateResourceValues(const TTabletInfo* tablet, const TMetrics&
+     Hive.UpdateTotalResourceValues(this, tablet, before, after, ResourceValues - oldResourceValues, normalizedValues - oldNormalizedValues);
+ }
+ 
+-bool TNodeInfo::MatchesFilter(const TNodeFilter& filter, TTabletDebugState* debugState) const {
++bool TNodeInfo::MatchesFilter(const TNodeFilter& filter, TTabletDebugState* debugState, bool checkPile) const {
+     const auto& effectiveAllowedDomains = filter.GetEffectiveAllowedDomains();
+     bool result = false;
+ 
+@@ -218,7 +218,7 @@ bool TNodeInfo::MatchesFilter(const TNodeFilter& filter, TTabletDebugState* debu
+         return false;
+     }
+ 
+-    if (Hive.BridgeInfo) {
++    if (checkPile && Hive.BridgeInfo) {
+         if (!filter.IsAllowedPile(BridgePileId)) {
+             return false;
+         }
+@@ -469,6 +469,7 @@ void TNodeInfo::SendReconnect(const TActorId& local) {
+ }
+ 
+ void TNodeInfo::SetDown(bool down, EHiveEventReason reason, TString details) {
++    const bool becameUp = Down && !down;
+     if (Down != down) {
+         Hive.RecordNodeEvent(*this, down ? EHiveEventType::Down : EHiveEventType::Up, reason, std::move(details));
+     }
+@@ -479,6 +480,14 @@ void TNodeInfo::SetDown(bool down, EHiveEventReason reason, TString details) {
+     } else {
+         Hive.ObjectDistributions.AddNode(*this);
+         Hive.ProcessWaitQueue();
++        if (becameUp && Hive.BridgeInfo) {
++            // a pile drain may have been waiting for a node in an allowed pile to move the tablets to; the nodes
++            // of a draining pile are left out, as a pile drain brings its own nodes back up when it ends
++            const auto* pile = Hive.FindPile(BridgePileId);
++            if (!(pile && pile->Drain) && TNodeFilter(Hive).IsAllowedPile(BridgePileId)) {
++                Hive.ProcessPileDrains();
++            }
++        }
+     }
+ }
+ 
+```
+
+**File**: `ydb/core/mind/hive/node_info.h` (modified, +1/-1)
+```diff
+@@ -227,7 +227,7 @@ struct TNodeInfo: public TIntrusiveListItem<TNodeInfo, TSegmentNodesTag> {
+         return Id;
+     }
+ 
+-    bool MatchesFilter(const TNodeFilter& filter, TTabletDebugState* debugState = nullptr) const;
++    bool MatchesFilter(const TNodeFilter& filter, TTabletDebugState* debugState = nullptr, bool checkPile = true) const;
+     bool IsAllowedToRunTablet(TTabletDebugState* debugState = nullptr) const;
+     bool IsAllowedToRunTablet(const TTabletInfo& tablet, TTabletDebugState* debugState = nullptr) const;
+     bool IsAbleToRunTablet(const TTabletInfo& tablet, TTabletDebugState* debugState = nullptr) const;
+```
+
+**File**: `ydb/core/mind/hive/tx__sync_tablets.cpp` (modified, +40/-0)
+```diff
+@@ -10,6 +10,7 @@ class TTxSyncTablets : public TTransactionBase<THive> {
+     TActorId Local;
+     NKikimrLocal::TEvSyncTablets SyncTablets;
+     TSideEffects SideEffects;
++    bool DrainPending = false;
+ 
+ public:
+     TTxSyncTablets(const TActorId &local, NKikimrLocal::TEvSyncTablets& rec, THive* hive)
+@@ -39,11 +40,36 @@ class TTxSyncTablets : public TTransactionBase<THive> {
+         return false;
+     }
+ 
++    bool IsMovedOutByPileDrain(const TNodeInfo& node, const TTabletInfo& tablet) const {
++        if (!Self->BridgeInfo || tablet.GetNodeFilter().IsAllowedPile(node.BridgePileId)) {
++            return false;
++        }
++        const auto* pile = Self->FindPile(node.BridgePileId);
++        if (!pile || !NBridge::PileStateTraits(pile->State).AllowsConnection) {
++            return false; // the pile is disconnected, its tablets are restarted elsewhere anyway
++        }
++        return node.MatchesFilter(tablet.GetNodeFilter(), nullptr, /* checkPile */ false);
++    }
++
++    void MarkPileForDrain(NIceDb::TNiceDb& db, TBridgePileId pileId) {
++        DrainPending = true;
++        auto& pile = Self->GetPile(pileId);
++        if (pile.Drain) {
++            return;
++        }
++        YDB_LOG_NOTICE("THive::TTxSyncTablets::Execute pile has tablets its placement does not allow, draining",
++            {"logPrefix", GetLogPrefix()},
++            {"pileId", pileId});
++        pile.Drain = true;
++        db.Table<Schema::BridgePile>().Key(pile.GetId()).Update<Schema::BridgePile::Drain>(true);
++    }
++
+     bool Execute(TTransactionContext &txc, const TActorContext& ctx) override {
+         YDB_LOG_DEBUG("THive::TTxSyncTablets::Execute synchronizing tablets with node",
+             {"logPrefix", GetLogPrefix()},
+             {"nodeId", Local.NodeId()});
+         SideEffects.Reset(Self->SelfId());
++        DrainPending = false;
+         NIceDb::TNiceDb db(txc.DB);
+         TNodeInfo& node = Self->GetNode(Local.NodeId());
+         THashSet<std::pair<TTabletId, TFollowerId>> tabletsToRestart;
+@@ -65,6 +91,17 @@ class TTxSyncTablets : public TTransactionBase<THive> {
+                     {"state", state},
+                     {"tabletId", tabletId});
+                 tabletsToRestart.erase(tabletId);
++            } else if (IsMovedOutByPileDrain(node, *tablet)) {
++                // the tablet is only in a pile it is not allowed in anymore (e.g. after a switchover):
++                // keep it running, the pile drain moves it out gradually instead of restarting everything at once
++                YDB_LOG_TRACE("THive::TTxSyncTablets::Execute confirmed tablet left for the pile drain",
++                    {"logPrefix", GetLogPrefix()},
++                    {"nodeId", Local.NodeId()},
++                    {"pileId", node.BridgePileId},
++                    {"state", state},
++                    {"tabletId", tabletId});
++                tabletsToRestart.erase(tabletId);
++                MarkPileForDrain(db, node.BridgePileId);
+             } else {
+                 YDB_LOG_TRACE("THive::TTxSyncTablets::Execute confirmed tablet not allowed on this node",
+                     {"logPrefix", GetLogPrefix()},
+@@ -196,6 +233,9 @@ class TTxSyncTablets : public TTransactionBase<THive> {
+             {"logPrefix", GetLogPrefix()},
+             {"nodeId", Local.NodeId()});
+         SideEffects.Complete(ctx, Self->Requests);
++        if (DrainPending) {
++            Self->ProcessPileDrains();
++        }
+     }
+ };
  
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #60730** (2026-11-24): Revert "Fix KQP shutdown while compute tasks are starting" (@PavelEfarinov)
-- **PR #60722** (2026-11-24): [Optimizer] Read a row table through an index in the order of a top-N sort (@denis0x0D)
-- **PR #60718** (2026-11-24): Add correct Children.size() check (@nerhneiro)
-- **PR #60716** (2026-11-24): Update muted_ya (release-asan) in main (@ydbot)
-- **PR #60715** (2026-11-24): [YDBBUGS-1250] Fix read-session offset race during partition confirmation (@lberserq)
-- **PR #60712** (2026-11-24): [Disable PG] Record compilation mode in streaming graphs (@asmyasnikov)
+- **PR #60775** (2026-11-25): Mark C++ SDK v3.28.0 in changelog (@ydbot)
+- **PR #60774** (2026-11-25): [26-2][docs] Backport conditional Workload Manager warning (@nataliaboldyreva)
+- **PR #60757** (2026-11-25): Update muted_ya (relwithdebinfo) in main (@ydbot)
+- **PR #60756** (2026-11-25): Update muted_ya (release-asan) in stable-26-4-1 (@ydbot)
+- **PR #60755** (2026-11-25): Update muted_ya (relwithdebinfo) in stable-26-3-1 (@ydbot)
+- **PR #60754** (2026-11-25): Sync branches 261125-0049: rightlib to main (@ydbot)
 
 ---
 
@@ -2832,29 +2580,31 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. CLI: support HTTP/HTTPS YT export proxies with regression tests
+## X. gluing regression NBYDB-2712
 
 **RULE**:
-When implementing operations in `ydb/public/lib/ydb_cli/commands/ydb_service_export.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ydb-platform/ydb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `ydb/library/actors/interconnect/interconnect_channel.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ydb-platform/ydb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `16e0d087`: CLI: support HTTP/HTTPS YT export proxies with regression tests. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `16d689be`: gluing regression NBYDB-2712. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `ydb/public/lib/ydb_cli/commands/ydb_service_export.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `ydb/library/actors/interconnect/interconnect_channel.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-    proxyHelp << "YT proxy to connect to: [http://|https://]HOST[:PORT]" << Endl
-        << "  HTTPS uses port 443 by default; other proxies use port 80" << Endl
+            ui32* const zcTransferId = External ? &event.ZcTransferId : nullptr;
+                    task.Append<External>(data, len, zcTransferId, disableChecksums);
+                    task.Append<External>(data, len, zcTransferId, disableChecksums);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-    proxyHelp << "YT proxy to connect to" << Endl
+                    task.Append<External>(data, len, &event.ZcTransferId, disableChecksums);
+                    task.Append<External>(data, len, &event.ZcTransferId, disableChecksums);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `16e0d087` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `16d689be` are properly handled with clean fallback behavior.

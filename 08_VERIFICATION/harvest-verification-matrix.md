@@ -13028,3 +13028,5 @@
 | `CYCLE-20261125-5E8W` | `2026-11-25T09:54:15.008Z` | `XHToken/Spark-X2.6-4B-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xhtoken-spark-x2.6-4b-gguf-learnings.md` | Yes (`9047342d...`) |
 | `CYCLE-20261125-5FZA` | `2026-11-25T09:54:17.254Z` | `zeronsh/zeron` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10501` | Yes (`e5eb38a7...`) |
 | `CYCLE-20261125-5PGX` | `2026-11-25T09:54:29.553Z` | `GreptimeTeam/greptimedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10502` | Yes (`d722b1b6...`) |
+| `CYCLE-20261125-M7E1` | `2026-11-25T10:07:19.273Z` | `nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-3.5-bolt-e4b-4gb-learnings.md` | Yes (`45564fae...`) |
+| `CYCLE-20261125-MKJ0` | `2026-11-25T10:07:36.300Z` | `ydb-platform/ydb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10503` | Yes (`4ef9bbe4...`) |

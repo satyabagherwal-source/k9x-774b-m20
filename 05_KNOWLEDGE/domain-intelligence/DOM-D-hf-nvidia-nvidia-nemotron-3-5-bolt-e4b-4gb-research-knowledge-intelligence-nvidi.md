@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB",
   "source_version": "hf-nvidia-nvidia-nemotron-3.5-bolt-e4b-4gb",
   "license": "Open-Source",
-  "timestamp": "2026-11-21T17:41:46.347Z",
+  "timestamp": "2026-11-25T10:07:19.516Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-nvidia-nvidia-nemotron-3-5-bolt-e4b-4gb",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB](https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB) (Revision: `hf-nvidia-`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-21T17:41:46.347Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T10:07:19.516Z`  
 > **Learning ID**: `learn-huggingface-nvidia-nvidia-nemotron-3-5-bolt-e4b-4gb`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-3.5-bolt-e4b-4gb-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB](https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T17:41:45.430Z  
+> **Harvest Timestamp**: 2026-11-25T10:07:18.572Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 195916 downloads | 668 likes
+- **Stars / Engagement**: 196409 downloads | 1517 likes
 
 ---
 
