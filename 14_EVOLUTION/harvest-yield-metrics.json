@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T02:47:50.194Z",
-  "total_cycles_completed": 12266,
-  "total_learnings_persisted": 12266,
-  "total_rules_promoted": 11311,
+  "last_updated": "2026-11-25T02:56:14.078Z",
+  "total_cycles_completed": 12269,
+  "total_learnings_persisted": 12269,
+  "total_rules_promoted": 11314,
   "history": [
-    {
-      "timestamp": "2026-11-24T14:24:18.528Z",
-      "repository": "trinodb/trino",
-      "learningId": "learn-github-trinodb-trino",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T14:24:20.375Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T14:33:18.036Z",
-      "repository": "NihilDigit/piko",
-      "learningId": "learn-github-nihildigit-piko",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-24T14:33:22.807Z",
       "repository": "keybase/client",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-25T02:47:50.194Z",
       "repository": "doobidoo/mcp-memory-service",
       "learningId": "learn-github-doobidoo-mcp-memory-service",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T02:56:02.941Z",
+      "repository": "pola-rs/polars",
+      "learningId": "learn-github-pola-rs-polars",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T02:56:11.362Z",
+      "repository": "Checkmarx/kics",
+      "learningId": "learn-github-checkmarx-kics",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T02:56:14.078Z",
+      "repository": "SeekStorm/SeekStorm",
+      "learningId": "learn-github-seekstorm-seekstorm",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

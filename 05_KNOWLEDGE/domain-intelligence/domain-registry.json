@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T02:47:56.303Z",
-  "total_records": 2628,
+  "last_updated": "2026-11-25T02:56:20.181Z",
+  "total_records": 2630,
   "domains": {
     "A": {
       "total": 22,
@@ -71,7 +71,7 @@
       ]
     },
     "D": {
-      "total": 985,
+      "total": 987,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -1057,7 +1057,9 @@
         "domain_intelligence-research-knowledge-intelligence-memtensor-memt-1-0-pro-core-invariants",
         "DOM-D-95A94518",
         "domain_intelligence-research-knowledge-intelligence-hf-memtensor-memt-1-0-pro-learnings-core-invaria",
-        "DOM-D-615F4579"
+        "DOM-D-615F4579",
+        "domain_intelligence-research-knowledge-intelligence-checkmarx-kics-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-checkmarx-kics-learnings-core-invariants"
       ]
     },
     "E": {
@@ -17510,8 +17512,8 @@
       "title": "Architecture Intelligence: pola-rs/polars Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-pola-rs-polars-architecture-intelligence-pola-rs-polars-core-invariants.md",
       "repository": "pola-rs/polars",
-      "content_hash": "dc8c7997bc530ce8b6aa88812182383c0ff7650d43899e6d1a30ec08cf39a7fd",
-      "created_at": "2026-11-24T00:31:39.077Z"
+      "content_hash": "6a251c9424a2bac3756b8f8ae67d7140b790b4cd208870bf6dab22a607d5d7c0",
+      "created_at": "2026-11-25T02:56:03.346Z"
     },
     "domain_intelligence-content-information-intelligence-yugabyte-yugabyte-db-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-yugabyte-yugabyte-db-core-invariants",
@@ -17528,8 +17530,8 @@
       "title": "Architecture Intelligence: pola-rs-polars-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-pola-rs-polars-learnings-architecture-intelligence-pola-rs-polars-learnings-core.md",
       "repository": "pola-rs-polars-learnings",
-      "content_hash": "005d7198647f0694ff1aa35b2defe19841efa2f356ecde31e4c28ce6ab23522f",
-      "created_at": "2026-11-24T00:31:55.130Z"
+      "content_hash": "4036f04a3898b72911e32fee5e6c06f601f2fcf71b43ad0e1068f0eff7f34402",
+      "created_at": "2026-11-25T02:56:17.943Z"
     },
     "DOM-D-A6170DB1": {
       "record_id": "DOM-D-A6170DB1",
@@ -22321,8 +22323,8 @@
       "title": "Search & Distribution Intelligence: SeekStorm/SeekStorm Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-J-seekstorm-seekstorm-search-distribution-intelligence-seekstorm-seekstorm-core-in.md",
       "repository": "SeekStorm/SeekStorm",
-      "content_hash": "29a952ddcb17e94627ffc7018136abb7fd9d0066131ac518ab713ea51f69100b",
-      "created_at": "2026-11-15T17:40:21.865Z"
+      "content_hash": "1556acd86ac4255bbe92084204cf4aaefb131bba1ccbd11695c0455e02ff6b58",
+      "created_at": "2026-11-25T02:56:14.479Z"
     },
     "DOM-H-4F755436": {
       "record_id": "DOM-H-4F755436",
@@ -22390,8 +22392,8 @@
       "title": "Search & Distribution Intelligence: seekstorm-seekstorm-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-J-seekstorm-seekstorm-learnings-search-distribution-intelligence-seekstorm-seeksto.md",
       "repository": "seekstorm-seekstorm-learnings",
-      "content_hash": "be71ee19ce3a03fe9c946ee6200caa881f4d5bdfa57f0c8f91509112ae68648a",
-      "created_at": "2026-11-15T17:40:53.304Z"
+      "content_hash": "aaa22c32d9787a515ba165c44f5b6cb9ec3858675db916e039031623de511acf",
+      "created_at": "2026-11-25T02:56:20.181Z"
     },
     "domain_intelligence-architecture-intelligence-llphant-llphant-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-llphant-llphant-core-invariants",
@@ -44129,6 +44131,24 @@
       "confidence": 0.81,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-25T02:39:19.263Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-checkmarx-kics-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-checkmarx-kics-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: Checkmarx/kics Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-checkmarx-kics-research-knowledge-intelligence-checkmarx-kics-core-invariants.md",
+      "repository": "Checkmarx/kics",
+      "content_hash": "b901d654101edc21afdae036f36e4de5cbb1bb46b62c6708364b26adfbdab48f",
+      "created_at": "2026-11-25T02:56:11.778Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-checkmarx-kics-learnings-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-checkmarx-kics-learnings-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: checkmarx-kics-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-checkmarx-kics-learnings-research-knowledge-intelligence-checkmarx-kics-learning.md",
+      "repository": "checkmarx-kics-learnings",
+      "content_hash": "586d9c0969071133084f150341719ed7f47d4090178daeb1f7a88489d24cdde2",
+      "created_at": "2026-11-25T02:56:19.204Z"
     }
   }
 }

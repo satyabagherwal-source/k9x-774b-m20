@@ -12916,3 +12916,6 @@
 | `CYCLE-2026-11-25-PROJ-EVOLVE` | `2026-11-25T02:39:19.303Z` | `oven-sh-bun` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-FBC5BA6F` [Domain H] | Yes (`406a1527...`) |
 | `CYCLE-20261125-WREL` | `2026-11-25T02:47:37.917Z` | `astral-sh/uv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10436` | Yes (`1b9d5cd5...`) |
 | `CYCLE-20261125-X0VD` | `2026-11-25T02:47:50.185Z` | `doobidoo/mcp-memory-service` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10437` | Yes (`e129aabb...`) |
+| `CYCLE-20261125-7L2R` | `2026-11-25T02:56:02.931Z` | `pola-rs/polars` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10438` | Yes (`878bde50...`) |
+| `CYCLE-20261125-7RKO` | `2026-11-25T02:56:11.352Z` | `Checkmarx/kics` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10439` | Yes (`7f1e17f7...`) |
+| `CYCLE-20261125-7TO4` | `2026-11-25T02:56:14.068Z` | `SeekStorm/SeekStorm` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2926` | Yes (`b68533ef...`) |

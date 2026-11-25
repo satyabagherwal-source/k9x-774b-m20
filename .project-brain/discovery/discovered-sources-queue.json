@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-25T02:39:19.550Z",
+  "updated_at": "2026-11-25T02:56:19.741Z",
   "stats": {
-    "total_discovered": 9160,
-    "approved_pending_harvest": 8676,
+    "total_discovered": 9170,
+    "approved_pending_harvest": 8683,
     "harvested_count": 0,
-    "rejected_count": 484,
+    "rejected_count": 487,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 8668,
+      "COMMUNITY_AND_EXPERT": 8678,
       "OFFICIAL_DOCUMENTATION": 275,
       "STANDARDS_AND_SPECIFICATIONS": 149,
       "ENGINEERING_BLOGS": 7,
@@ -198159,6 +198159,205 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oven-sh-bun-learnings.md",
         "fileName": "oven-sh-bun-learnings.md"
+      }
+    },
+    "SRC-1DFA595DF0A3": {
+      "id": "SRC-1DFA595DF0A3",
+      "url": "https://github.com/Checkmarx/kics",
+      "title": "https://github.com/Checkmarx/kics",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T02:56:18.316Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/checkmarx-kics-learnings.md",
+        "fileName": "checkmarx-kics-learnings.md"
+      }
+    },
+    "SRC-143672AA3AE2": {
+      "id": "SRC-143672AA3AE2",
+      "url": "http://kics.io/",
+      "title": "http://kics.io/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-25T02:56:18.378Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/checkmarx-kics-learnings.md",
+        "fileName": "checkmarx-kics-learnings.md"
+      }
+    },
+    "SRC-F7443E1D73A7": {
+      "id": "SRC-F7443E1D73A7",
+      "url": "http://host.docker.internal:3000/kics-mock",
+      "title": "http://host.docker.internal:3000/kics-mock",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-25T02:56:18.434Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/checkmarx-kics-learnings.md",
+        "fileName": "checkmarx-kics-learnings.md"
+      }
+    },
+    "SRC-12B84B873171": {
+      "id": "SRC-12B84B873171",
+      "url": "http://localhost:3000/kics-mock",
+      "title": "http://localhost:3000/kics-mock",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-25T02:56:18.492Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/checkmarx-kics-learnings.md",
+        "fileName": "checkmarx-kics-learnings.md"
+      }
+    },
+    "SRC-49C57E692BC3": {
+      "id": "SRC-49C57E692BC3",
+      "url": "https://github.com/Checkmarx/kics/pull/8155",
+      "title": "https://github.com/Checkmarx/kics/pull/8155",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T02:56:18.552Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/checkmarx-kics-learnings.md",
+        "fileName": "checkmarx-kics-learnings.md"
+      }
+    },
+    "SRC-D98BC9B53BA3": {
+      "id": "SRC-D98BC9B53BA3",
+      "url": "https://github.com/Checkmarx/kics/blob/master/.github/workflows/release-dkr-image.yml",
+      "title": "https://github.com/Checkmarx/kics/blob/master/.github/workflows/release-dkr-image.yml",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T02:56:18.607Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/checkmarx-kics-learnings.md",
+        "fileName": "checkmarx-kics-learnings.md"
+      }
+    },
+    "SRC-D4586A751650": {
+      "id": "SRC-D4586A751650",
+      "url": "https://hub.docker.com/r/checkmarx/kics/tags",
+      "title": "https://hub.docker.com/r/checkmarx/kics/tags",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T02:56:18.664Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/checkmarx-kics-learnings.md",
+        "fileName": "checkmarx-kics-learnings.md"
+      }
+    },
+    "SRC-B6432251FBC2": {
+      "id": "SRC-B6432251FBC2",
+      "url": "https://github.com/Checkmarx/kics/issues/7833",
+      "title": "https://github.com/Checkmarx/kics/issues/7833",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T02:56:18.726Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/checkmarx-kics-learnings.md",
+        "fileName": "checkmarx-kics-learnings.md"
+      }
+    },
+    "SRC-62BF664AC49A": {
+      "id": "SRC-62BF664AC49A",
+      "url": "https://github.com/Checkmarx/kics/discussions/4744",
+      "title": "https://github.com/Checkmarx/kics/discussions/4744",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T02:56:18.782Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/checkmarx-kics-learnings.md",
+        "fileName": "checkmarx-kics-learnings.md"
+      }
+    },
+    "SRC-460DBA9EE605": {
+      "id": "SRC-460DBA9EE605",
+      "url": "https://seekstorm.com/architecture",
+      "title": "https://seekstorm.com/architecture",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T02:56:19.741Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/seekstorm-seekstorm-learnings.md",
+        "fileName": "seekstorm-seekstorm-learnings.md"
       }
     }
   }

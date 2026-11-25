@@ -3353,10 +3353,10 @@
     "repository": "SeekStorm/SeekStorm",
     "platform": "github",
     "sourceUrl": "https://github.com/SeekStorm/SeekStorm",
-    "sourceVersion": "e807310b",
+    "sourceVersion": "d7fb1b21",
     "license": "Apache-2.0",
-    "contentHash": "e3908cae3eb233c237782d5f9e73a5db608f2b8b1df77573f3f9d1f5eb2ae9c4",
-    "lastHarvestedAt": "2026-11-24T07:47:18.429Z",
+    "contentHash": "b68533ef62bd0c72753ecff297bfd2fa4eee969b101c735ce04516dec1f3ccf7",
+    "lastHarvestedAt": "2026-11-25T02:56:14.072Z",
     "learningId": "learn-github-seekstorm-seekstorm"
   },
   "serafimcloud-21st": {
@@ -5503,10 +5503,10 @@
     "repository": "Checkmarx/kics",
     "platform": "github",
     "sourceUrl": "https://github.com/Checkmarx/kics",
-    "sourceVersion": "150910f8",
+    "sourceVersion": "a572efb2",
     "license": "Apache-2.0",
-    "contentHash": "49773ce1c2f52c1fa1f35aa63f46d6562c8801c3393d9b2e8c6f536886db8a86",
-    "lastHarvestedAt": "2026-11-11T07:27:49.603Z",
+    "contentHash": "7f1e17f730b84f9fc4bf0301a1e50a5a3bc2d7d24ab5145445abf0a01e221737",
+    "lastHarvestedAt": "2026-11-25T02:56:11.357Z",
     "learningId": "learn-github-checkmarx-kics"
   },
   "olric-data-olric": {
@@ -7743,10 +7743,10 @@
     "repository": "pola-rs/polars",
     "platform": "github",
     "sourceUrl": "https://github.com/pola-rs/polars",
-    "sourceVersion": "83f1675f",
+    "sourceVersion": "08b2814c",
     "license": "MIT",
-    "contentHash": "5624014237a65927828e393cb4099e341913547fb8e4bdff064f4b11c2ebc121",
-    "lastHarvestedAt": "2026-11-24T00:31:38.659Z",
+    "contentHash": "878bde50aa600eb533e55dad63dfe126a52aa9ecb76bfc02aa435dc125a77af0",
+    "lastHarvestedAt": "2026-11-25T02:56:02.935Z",
     "learningId": "learn-github-pola-rs-polars"
   },
   "mrkai77-loop": {

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T02:47:56.133Z",
+  "last_updated": "2026-11-25T02:56:20.005Z",
   "directives": [
     {
       "id": "CD-001",
@@ -3821,15 +3821,15 @@
       "learning_id": "learn-github-astral-sh-ruff"
     },
     {
-      "id": "CD-2KNL",
+      "id": "CD-7Y8Y",
       "directive_title": "Update README.md",
-      "source_type": "automated_harvester_candidate",
-      "source_repo": "kosi-libs/Kodein",
-      "source_commit": "8ef0da27",
-      "date_staged": "2026-11-04",
-      "status": "STAGED_FOR_VERIFICATION",
-      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
-      "learning_id": "learn-github-kosi-libs-kodein"
+      "source_repo": "seekstorm-seekstorm-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-7Y8Y-update-readme-md.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-25",
+      "domain_letter": "I"
     },
     {
       "id": "CD-UZPP",
@@ -59019,6 +59019,55 @@
       "source_repo": "zvec-ai-zvec-grep",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-9E6615-rust-bind-bare-calls-to-the-enclosing-mo.md",
+      "staged_date": "2026-11-25"
+    },
+    {
+      "id": "CD-7WIR",
+      "directive_title": "Numpy array index overflow",
+      "source_repo": "pola-rs-polars-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-7WIR-numpy-array-index-overflow.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-25",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-7XHP",
+      "directive_title": "[StepSecurity] Apply security best practices",
+      "source_repo": "checkmarx-kics-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-7XHP-stepsecurity-apply-security-best-practices.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-25",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-REV-87151E",
+      "directive_title": "Numpy array index overflow",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "pola-rs-polars",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-87151E-numpy-array-index-overflow.md",
+      "staged_date": "2026-11-25"
+    },
+    {
+      "id": "CD-REV-382986",
+      "directive_title": "[StepSecurity] Apply security best practices",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "checkmarx-kics",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-382986--stepsecurity-apply-security-best-practi.md",
+      "staged_date": "2026-11-25"
+    },
+    {
+      "id": "CD-REV-0EAB1F",
+      "directive_title": "Update README.md",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "seekstorm-seekstorm",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-0EAB1F-update-readme-md.md",
       "staged_date": "2026-11-25"
     }
   ]

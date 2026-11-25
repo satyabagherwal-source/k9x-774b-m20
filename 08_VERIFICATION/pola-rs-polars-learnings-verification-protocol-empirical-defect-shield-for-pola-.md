@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T00:31:54.843Z",
+  "timestamp": "2026-11-25T02:56:17.637Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-pola-rs-polars-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [pola-rs-polars-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T00:31:54.843Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T02:56:17.637Z`  
 > **Learning ID**: `LEARN-EVO-pola-rs-polars-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pola-rs-polars-learnings.md`  
 > **Source**: github ([https://github.com/pola-rs/polars](https://github.com/pola-rs/polars))  
-> **Source Version**: `83f1675f`  
+> **Source Version**: `08b2814c`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T00:31:37.614Z  
+> **Timestamp**: 2026-11-25T02:56:01.813Z  
 > **Learning ID**: `learn-github-pola-rs-polars`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pola-rs-polars-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pola-rs/polars](https://github.com/pola-rs/polars))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T00:31:37.609Z  
+> **Harvest Timestamp**: 2026-11-25T02:56:01.685Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Extremely fast Query Engine for DataFrames, written in Rust
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 40463 stars
+- **Stars / Engagement**: 40490 stars
 
 ---
 
@@ -1722,13 +1722,13 @@ pub fn check_same_len(lhs: &dyn Array, rhs: &dyn Array) -> PolarsResult<()> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #31005** (2026-11-23): **Segmentation fault or bus error comparing a Null column inside `over(..., mapping_strategy="join")`**
-  *Symptoms*: ### Checks  - [x] I have checked that this issue has not already been reported. - [x] I have confirmed this bug exists on the [latest version](https://pypi.org/project/polars/) of Polars.  ### Reproducible example  ```python import polars as pl  df = pl.DataFrame(     {"a": pl.Series([None, None, None], dtype=pl.Null), "g": ["x", "y", "x"]} ) e = (     pl.col("g")     .first()     .eq(pl.lit("1d").le(pl.col("a")).is_null())     .over("g", mapping_strategy="join") )  print(df.lazy().select(e).collect(engine="in-memory"))  # works: [false, false] print(df.lazy().select(e).collect())  # Segmentation fault (exit code 139) ```   ### Log output  ```shell shape: (3, 1) ┌────────────────┐ │ g              │ │ ---            │ │ list[bool]     │ ╞════════════════╡ │ [false, false] │ │ [false]        │ │ [false, false] │ └────────────────┘ ----- stderr (log output) total memory: 24.000 GiB (25769803776 bytes) async thread count: 8 blocking thread count: 512 polars-stream: updating graph state updating in-memory-sink, before: [Blocked] [] updating in-memory-sink, after: [Ready] [] (took 333ns) updating select, before: [Blocked] [Ready] updating select, after: [Ready] [Blocked] (took 542ns) updating in-memory-map, before: [Blocked] [Ready] updating in-memory-map, after: [Ready] [Blocked] (took 542ns) updating in-memory-source, before: [] [Ready] updating in-memory-source, after: [] [Ready] (took 2.099625ms) updating in-memory-map, before: [Ready] [Ready] updating in-memory-map, after: [R
+- **Issue #31074** (2026-11-24): **`first()` of a struct with no fields panics on the streaming engine**
+  *Symptoms*: ### Checks  - [x] I have checked that this issue has not already been reported. - [x] I have confirmed this bug exists on the [latest version](https://pypi.org/project/polars/) of Polars.  ### Reproducible example  ```python import polars as pl  lf = pl.LazyFrame({"a": ["ab", "cd"]}) q = lf.select(pl.col("a").str.extract_groups("x").first())  # no capture groups: struct[0]  print(q.collect(engine="in-memory"))  # one row: {} print(q.collect(engine="streaming"))  # PanicException: assertion `left == right` failed ```    ### Log output  ```shell total memory: 24.000 GiB (25769803776 bytes) async thread count: 8 blocking thread count: 512 polars-stream: updating graph state updating in-memory-sink, before: [Blocked] [] updating in-memory-sink, after: [Ready] [] (took 125ns) updating select, before: [Blocked] [Ready] updating select, after: [Ready] [Blocked] (took 41ns) updating reduce, before: [Blocked] [Ready] updating reduce, after: [Ready] [Blocked] (took 83ns) updating in-memory-source, before: [] [Ready] updating in-memory-source, after: [] [Ready] (took 1.833µs) updating reduce, before: [Ready] [Ready] updating reduce, after: [Ready] [Blocked] (took 83ns) polars-stream: running in-memory-source in subgraph polars-stream: running reduce in subgraph polars-stream: done running graph phase polars-stream: updating graph state updating in-memory-sink, before: [Blocked] [] updating in-memory-sink, after: [Ready] [] (took 375ns) updating select, before: [Blocked] [Ready] updating
   **Post-Mortem & Fix Analysis**:
-  > Thanks!  (With AI) Already fixed on main by #30564 (#30518); it will be in the next release. It isn't platform-specific: 2.1.0 crashes on Linux x86 too once `POLARS_MAX_THREADS` is at least the row count.  ```python import os  os.environ["POLARS_MAX_THREADS"] = "3"  # before importing polars import polars as pl  df = pl.DataFrame(     {"a": pl.Series([None, None, None], dtype=pl.Null), "g": ["x", "y", "x"]} ) e = (     pl.col("g")     .first()     .eq(pl.lit("1d").le(pl.col("a")).is_null())     .over("g", mapping_strategy="join") ) print(df.lazy().select(e).collect()) # 2.1.0: exit code 139; main: [[false, false], [false], [false, false]] ``` 
+  > I checked this against a build of the main branch at 08b2814 (2026-11-24): it no longer happens there, and both engines give one row {}. So it is fixed on main already; sorry for the noise.
 
-- **Issue #30995** (2026-11-22): **SQL `UNNEST` of an empty or NULL list returns a row with NULL**
-  *Symptoms*: ### Checks  - [x] I have checked that this issue has not already been reported. - [x] I have confirmed this bug exists on the [latest version](https://pypi.org/project/polars/) of Polars.  ### Reproducible example  ```python import polars as pl  df = pl.DataFrame({"id": [1, 2, 3], "xs": [[10, 11], [], None]})  df.sql("SELECT id, UNNEST(xs) AS x FROM self ORDER BY id, x").rows() # [(1, 10), (1, 11), (2, None), (3, None)]  df.sql(     "SELECT id, count(*) AS n FROM (SELECT id, UNNEST(xs) AS x FROM self) "     "GROUP BY id ORDER BY id" ).rows() # [(1, 2), (2, 1), (3, 1)] ```  ### Log output  ```shell [(1, 10), (1, 11), (2, None), (3, None)] [(1, 2), (2, 1), (3, 1)] ```  ### Issue description  `UNNEST` of an empty or NULL list returns one row with a NULL, so a count per row counts an item that is not there: ids 2 and 3 above have none. `CROSS JOIN UNNEST(xs) AS u(x)` gives the same rows.  ### Expected behavior  No row for an empty or NULL list, as in Postgres:  ```python [(1, 10), (1, 11)] [(1, 2)] ```  A NULL element of a list still gives a row.  ### Installed versions  <details>  Polars 2.1.0 (latest on PyPI), and main at 1dad4e572d.  </details> 
+- **Issue #31010** (2026-11-24): **NumPy `int64`/`uint64` index arrays with positions >= 2^32 wrap around in `df[...]`, `s[...]` and `s[...] = value`, reading and overwriting the wrong rows instead of raising**
+  *Symptoms*: ### Checks  - [x] I have checked that this issue has not already been reported. - [x] I have confirmed this bug exists on the [latest version](https://pypi.org/project/polars/) of Polars.  ### Reproducible example   ```python import numpy as np import polars as pl  df = pl.DataFrame({"id": [0, 1, 2, 3, 4], "amount": [10, 11, 12, 13, 14]}) pos = np.array([2**32 + 3])  # int64; out of bounds for 5 rows  print(df[pos])                      # row 3 print(df["amount"][pos].to_list())  # [13]  s = df["amount"].clone() s[np.array([2**32 + 1])] = 0        # overwrites row 1 print(s.to_list())  # The same positions in other forms raise: try:     df[[2**32 + 3]] except ValueError as e:     print("list:", e) try:     df["amount"].gather(pos) except pl.exceptions.OutOfBoundsError as e:     print("gather:", str(e).splitlines()[0]) ```  Output:  ``` shape: (1, 2) ┌─────┬────────┐ │ id  ┆ amount │ │ --- ┆ ---    │ │ i64 ┆ i64    │ ╞═════╪════════╡ │ 3   ┆ 13     │ └─────┴────────┘ [13] [10, 0, 12, 13, 14] list: index positions should be smaller than 2^32 gather: gather indices are out of bounds ```   ### Log output  ```shell  ```  ### Issue description   With the default 32-bit index type (`pl.get_index_type()` is `UInt32`), a NumPy `int64` or `uint64` array of positions (`int64` is NumPy's default integer dtype) that contains a value of 2^32 or more is reduced modulo 2^32 instead of being rejected: position `2**32 + k` reads row `k` in `DataFrame.__getitem__` and `Series.__getitem__`, and 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1745,561 +1745,422 @@ pub fn check_same_len(lhs: &dyn Array, rhs: &dyn Array) -> PolarsResult<()> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `60fd1bc3` (2026-11-23)
-**Commit Message**: fix: Check Arrow temporal dictionary overflow on import (#31011)
+### Incident Patch 1: `0c7cdde1` (2026-11-24)
+**Commit Message**: fix: Numpy array index overflow (#31046)
 
-**File**: `py-polars/src/polars/_utils/construction/other.py` (modified, +16/-0)
+**File**: `py-polars/src/polars/_utils/getitem.py` (modified, +1/-1)
 ```diff
-@@ -66,6 +66,22 @@ def coerce_arrow(array: pa.Array) -> pa.Array:
-             or pa.types.is_int32(array.type.index_type)
-         ):
-             value_type = array.type.value_type
-+            if (
-+                pa.types.is_timestamp(value_type) or pa.types.is_duration(value_type)
-+            ) and value_type.unit == "s":
-+                target = (
-+                    pa.timestamp("ms", value_type.tz)
-+                    if pa.types.is_timestamp(value_type)
-+                    else pa.duration("ms")
-+                )
-+                # Decode first so only referenced values are checked for overflow.
-+                return pa.chunked_array(
-+                    [
-+                        pc.cast(chunk.dictionary_decode(), target, safe=True)
-+                        for chunk in array.iterchunks()
-+                    ],
-+                    type=target,
-+                )
-             if pa.types.is_binary(value_type) or _is_pa_type(value_type, "binary_view"):
-                 value_type = pa.large_binary()
-             elif not _keeps_dictionary_value_type(value_type):
+@@ -425,7 +425,7 @@ def _convert_np_ndarray_to_indices(arr: np.ndarray[Any, Any], size: int) -> Seri
+             raise TypeError(msg)
+ 
+     if idx_type == UInt32:
+-        if arr.dtype in {np.int64, np.uint64} and arr.max() >= U32_MAX:
++        if arr.dtype in (np.int64, np.uint64) and arr.max() >= U32_MAX:
+             msg = "index positions should be smaller than 2^32"
+             raise ValueError(msg)
+         if arr.dtype == np.int64 and arr.min() < -U32_MAX:
 ```
 
-**File**: `py-polars/tests/unit/interop/test_interop.py` (modified, +54/-0)
+**File**: `py-polars/src/polars/series/series.py` (modified, +3/-7)
 ```diff
-@@ -212,6 +212,60 @@ def test_arrow_dict_chunks_keep_value_type_30729(
-     assert_series_equal(pl.DataFrame({"c": ca})["c"], expected)
+@@ -1405,7 +1405,7 @@ def __setitem__(
+             - ``Series`` (Boolean): a boolean mask.
+             - ``Series`` (Integer): an index array.
+             - ``ndarray``: a NumPy boolean mask or integer index array.
+-            - ``list`` / ``tuple``: an index sequence (cast to UInt32).
++            - ``list`` / ``tuple``: an index sequence.
+         value
+             Scalar or sequence of values to assign.
+ 
+@@ -1464,13 +1464,9 @@ def __setitem__(
+                 # boolean numpy mask
+                 self._s = self.scatter(np.argwhere(key)[:, 0], value)._s
+             else:
+-                s = self._from_pyseries(
+-                    PySeries.new_u32("", np.array(key, np.uint32), _strict=True)
+-                )
+-                self.__setitem__(s, value)
++                self.__setitem__(Series(key), value)
+         elif isinstance(key, (list, tuple)):
+-            s = self._from_pyseries(sequence_to_pyseries("", key, dtype=UInt32))
+-            self.__setitem__(s, value)
++            self.scatter(key, value)  # pyrefly: ignore[bad-argument-type]
+         else:
+             msg = f'cannot use "{key!r}" for indexing'
+             raise TypeError(msg)
+```
+
+**File**: `py-polars/tests/unit/dataframe/test_getitem.py` (modified, +7/-0)
+```diff
+@@ -394,6 +394,13 @@ def test_df_getitem_numpy() -> None:
+         df[np.array([[0], [1]])]
  
  
-+@pytest.mark.parametrize("value_type", [pa.duration("s"), pa.timestamp("s", "UTC")])
-+@pytest.mark.parametrize("overflow", [-(2**63 // 1000) - 1, (2**63 - 1) // 1000 + 1])
-+def test_arrow_dict_chunks_temporal_seconds_overflow(
-+    value_type: pa.DataType, overflow: int
-+) -> None:
-+    ca = _two_dict_chunks(pa.int8(), pa.array([1, 2, overflow], value_type))
-+    with pytest.raises(pa.ArrowInvalid, match="out of bounds"):
-+        pl.from_arrow(ca)
-+    with pytest.raises(pa.ArrowInvalid, match="out of bounds"):
-+        pl.Series("c", ca)
-+    with pytest.raises(pa.ArrowInvalid, match="out of bounds"):
-+        pl.DataFrame({"c": ca})
++@pytest.mark.parametrize("np_dtype", [np.int64, np.uint64])
++def test_df_getitem_numpy_large_index_31010(np_dtype: type) -> None:
++    df = pl.DataFrame({"a": [10, 11, 12, 13, 14]})
++    with pytest.raises((ValueError, pl.exceptions.OutOfBoundsError)):
++        df[np.array([2**32 + 3], dtype=np_dtype)]
++
++
+ def test_df_getitem_extended() -> None:
+     df = pl.DataFrame({"a": [1, 2, 3], "b": [1.0, 2.0, 3.0], "c": ["a", "b", "c"]})
+ 
+```
+
+**File**: `py-polars/tests/unit/series/test_getitem.py` (modified, +7/-0)
+```diff
+@@ -93,6 +93,13 @@ def test_series_getitem_numpy() -> None:
+     assert s[np.array(-2)].to_list() == [8]
+ 
+ 
++@pytest.mark.parametrize("np_dtype", [np.int64, np.uint64])
++def test_series_getitem_numpy_large_index_31010(np_dtype: type) -> None:
++    s = pl.Series("a", [10, 11, 12, 13, 14])
++    with pytest.raises((ValueError, pl.exceptions.OutOfBoundsError)):
++        s[np.array([2**32 + 3], dtype=np_dtype)]
++
++
+ @pytest.mark.parametrize(
+     ("input", "match"),
+     [
+```
+
+**File**: `py-polars/tests/unit/series/test_series.py` (modified, +36/-0)
+```diff
+@@ -838,6 +838,42 @@ def test_set_np_array(dtype: Any) -> None:
+     assert_series_equal(a, pl.Series("a", [4, 2, 4]))
+ 
+ 
++@pytest.mark.parametrize("dtype", [np.int64, np.uint64])
++def test_set_np_array_large_index_31010(dtype: Any) -> None:
++    s = pl.Series("a", [10, 11, 12, 13, 14])
++    with pytest.raises(pl.exceptions.OutOfBoundsError):
++        s[np.array([2**32 + 1], dtype=dtype)] = 0
++    assert_series_equal(s, pl.Series("a", [10, 11, 12, 13, 14]))
++
++
++def test_set_np_array_negative_index() -> None:
++    s = pl.Series("a", [10, 11, 12, 13, 14])
++    s[np.array([1, -1])] = 0
++    assert_series_equal(s, pl.Series("a", [10, 0, 12, 13, 0]))
++
++
++def test_set_np_array_float_key() -> None:
++    s = pl.Series("a", [1, 2, 3])
++    with pytest.raises(TypeError, match="cannot use Series of dtype"):
++        s[np.array([1.0])] = 0
++    assert_series_equal(s, pl.Series("a", [1, 2, 3]))
++
++
++@pytest.mark.parametrize("idx", [[2**32 + 1], (2**32 + 1,)])
++def test_set_list_and_tuple_large_index_31010(idx: list[int] | tuple[int]) -> None:
++    s = pl.Series("a", [10, 11, 12, 13, 14])
++    with pytest.raises(pl.exceptions.OutOfBoundsError):
++        s[idx] = 0
++    assert_series_equal(s, pl.Series("a", [10, 11, 12, 13, 14]))
++
++
++@pytest.mark.parametrize("idx", [[1, -1], (1, -1)])
++def test_set_list_and_tuple_negative_index(idx: list[int] | tuple[int, int]) -> None:
++    s = pl.Series("a", [10, 11, 12, 13, 14])
++    s[idx] = 0
++    assert_series_equal(s, pl.Series("a", [10, 0, 12, 13, 0]))
++
++
+ @pytest.mark.parametrize("idx", [[0, 2], (0, 2)])
+ def test_set_list_and_tuple(idx: list[int] | tuple[int]) -> None:
+     a = pl.Series("a", [1, 2, 3])
+```
+
+---
+
+### Incident Patch 2: `26faee23` (2026-11-24)
+**Commit Message**: fix: Leave the string unchanged for an empty pattern in SQL `REPLACE` (#31039)
+
+**File**: `crates/polars-sql/src/functions.rs` (modified, +25/-8)
+```diff
+@@ -2128,6 +2128,16 @@ impl SQLFunctionVisitor<'_> {
+                                 .when(lit(false))
+                                 .then(read(new))
+                                 .otherwise(lit(LiteralValue::untyped_null()).cast(DataType::String))
++                        } else if matches!(&old, Expr::Literal(lv) if lv.extract_str() == Some("")) {
++                            // As in Postgres; the folded branch keeps the string type check.
++                            let replaced = e.clone().str().replace_all(old, new.clone(), true);
++                            let kept = when(lit(true)).then(e).otherwise(replaced);
++                            match new {
++                                Expr::Literal(_) => kept,
++                                new => when(new.is_not_null())
++                                    .then(kept)
++                                    .otherwise(lit(LiteralValue::untyped_null())),
++                            }
+                         } else if matches!((&old, &new), (Expr::Literal(_), Expr::Literal(_))) {
+                             e.str().replace_all(old, new, true)
+                         } else {
+@@ -2140,15 +2150,22 @@ impl SQLFunctionVisitor<'_> {
+                                 .map(|e| e.clone().is_not_null())
+                                 .reduce(Expr::and)
+                                 .unwrap();
+-                            when(has_args)
++                            let e = when(has_args)
+                                 .then(e)
+-                                .otherwise(lit(LiteralValue::untyped_null()))
+-                                .str()
+-                                .replace_all(
+-                                    old.cast(DataType::String).fill_null(lit("_")),
+-                                    new.cast(DataType::String).fill_null(lit("")),
+-                                    true,
+-                                )
++                                .otherwise(lit(LiteralValue::untyped_null()));
++                            let pattern_is_literal = matches!(old, Expr::Literal(_));
++                            let old = old.cast(DataType::String);
++                            let replaced = e.clone().str().replace_all(
++                                old.clone().fill_null(lit("_")),
++                                new.cast(DataType::String).fill_null(lit("")),
++                                true,
++                            );
++                            match pattern_is_literal {
++                                true => replaced,
++                                false => when(old.str().len_bytes().eq(lit(0)))
++                                    .then(e)
++                                    .otherwise(replaced),
++                            }
+                         })
+                     }),
+                     _ => {
+```
+
+**File**: `py-polars/tests/unit/sql/test_strings.py` (modified, +7/-0)
+```diff
+@@ -136,6 +136,13 @@ def test_replace_null_pattern_aggregate() -> None:
+         assert pl.sql(query, eager=True).rows() == [(None,)]
+ 
+ 
++def test_replace_empty_pattern() -> None:
++    # as in Postgres
++    df = pl.DataFrame({"s": ["ab", "cd", None], "p": ["", "c", "a"]})
++    res = df.sql("SELECT REPLACE(s, '', 'x') AS a, REPLACE(s, p, 'x') AS b FROM self")
++    assert res.rows() == [("ab", "ab"), ("cd", "xd"), (None, None)]
++
++
+ def test_string_chr() -> None:
+     df = pl.DataFrame(
+         {
+```
+
+---
+
+### Incident Patch 3: `53b2fb68` (2026-11-24)
+**Commit Message**: fix: Allow a derived table in a correlated scalar SQL subquery to read the outer row (#31063)
+
+**File**: `crates/polars-sql/src/subquery_outer_select.rs` (modified, +280/-9)
+```diff
+@@ -12,31 +12,42 @@
+ //! An `IN` over no rows is false; over rows that all hold `f` it is `lhs = f`. The
+ //! scalar `(SELECT 1 ...)` has no row, one row or more rows exactly when the subquery
+ //! has, so it is NULL, `f` or raises in the same cases.
++//!
++//! A scalar subquery whose only FROM item is a derived table that reads columns of the
++//! queries around it is first merged with that table. It reads the table's FROM and
++//! WHERE itself, with the table's SELECT items in place of its columns:
++//!
++//! ```sql
++//! (SELECT MAX(d.v) FROM (SELECT x AS v FROM r WHERE r.k = o.k) AS d WHERE c)
++//! -- (SELECT MAX(x) FROM r WHERE r.k = o.k AND c')
++//! ```
+ use std::ops::ControlFlow;
+ 
+ use polars_core::prelude::*;
+ use sqlparser::ast::helpers::attached_token::AttachedToken;
+ use sqlparser::ast::{
+-    BinaryOperator as SQLBinaryOperator, CaseWhen, Expr as SQLExpr, GroupByExpr, Query, Select,
+-    SelectItem, SetExpr, TableFactor, UnaryOperator as SQLUnaryOperator, Value as SQLValue,
+-    VisitorMut,
++    BinaryOperator as SQLBinaryOperator, CaseWhen, Distinct, Expr as SQLExpr, GroupByExpr, Query,
++    Select, SelectItem, SetExpr, TableFactor, TableWithJoins, UnaryOperator as SQLUnaryOperator,
++    Value as SQLValue, VisitorMut,
+ };
+ 
+ use crate::SQLContext;
+-use crate::context::{RelationName, match_qualifier};
++use crate::context::{RelationName, combine_conditions, match_qualifier};
+ use crate::dyn_visit::{self, visit_expressions};
+ use crate::functions::PolarsSQLFunctions;
+ use crate::sql_visitors::{
+-    expr_contains_subquery, expr_has_window_functions, expr_references_any_column,
+-    has_column_selector,
++    contains_random, expr_contains_subquery, expr_has_window_functions, expr_references_any_column,
++    has_column_selector, is_column_selector,
+ };
+-use crate::subquery::strip_nested;
++use crate::subquery::{eligible_query_block, strip_nested};
++use crate::subquery_group_by::is_count_star;
+ use crate::subquery_pull_up::has_aggregate;
+ 
+ impl SQLContext {
+     /// `select` with the subqueries of its clauses whose SELECT item reads only columns of
+-    /// queries around them rewritten to read those columns here, or `None` if there are none.
+-    /// The subqueries of its derived tables are left to those tables.
++    /// queries around them rewritten to read those columns here, and its scalar subqueries
++    /// merged with a derived table as in the module docs, or `None` if there are none. The
++    /// subqueries of its derived tables are left to those tables.
+     pub(crate) fn hoist_outer_select_items(&self, select: &Select) -> Option<Select> {
+         let has_candidate = visit_expressions(select, |e| match e {
+             SQLExpr::Subquery(_) | SQLExpr::InSubquery { .. } => ControlFlow::Break(()),
+@@ -79,6 +90,13 @@ impl SQLContext {
+                     self.query_depth += 1;
+                 }
+                 self.skips.push(skip);
++                if self.query_depth == 0
++                    && let SQLExpr::Subquery(subquery) = expr
++                    && let Some(merged) = self.ctx.merge_outer_derived_table(subquery)
++                {
++                    **subquery = merged;
++                    self.changed = true;
++                }
+                 if self.query_depth == 0
+                     && let Some(hoisted) = self.ctx.hoist_outer_select_item(expr)
+                 {
+@@ -249,6 +267,179 @@ impl SQLContext {
+         }
+         Some((item.clone(), row_query))
+     }
++
++    /// `subquery` merged with its only FROM item as in the module docs, or `None` if that
++    /// item is not a derived table that reads a relation of a query further out, or either
++    /// of them has another shape. The subquery may only read the derived table's columns,
++    /// and each of those must be a plain expression of a column.
++    fn merge_outer_derived_table(&self, subquery: &Query) -> Option<Query> {
++        let select = eligible_query_block(subquery)?;
++        let [
++            TableWithJoins {
++                relation:
++                    TableFactor::Derived {
++                        subquery: derived,
++                        alias,
++                        sample: None,
++                        ..
++                    },
++                joins,
++            },
++        ] = select.from.as_slice()
++        else {
++            return None;
++        };
++        // ORDER BY and DISTINCT ON may read a SELECT item rather than a column.
++        if !joins.is_empty()
++            || subquery.order_by.is_some()
++            || matches!(select.distinct, Some(Distinct::On(_)))
++            || select.exclude.is_some()
++            || !select.named_window.is_empty()
++            || alias.as_ref().is_some_and(|a| !a.columns.is_empty())
++            || contains_random(subquery, true)
++            || has_unchecked_clauses(subquery, select)
++            || !select.projection.iter().all(|item| {
++                matches!(
++                    item,
++                    SelectItem::UnnamedExpr(_) | SelectIt
+```
+
+**File**: `py-polars/tests/unit/sql/test_correlated_subqueries.py` (modified, +84/-0)
+```diff
+@@ -2861,3 +2861,87 @@ def test_nested_subquery_reading_outermost_query() -> None:
+     with pytest.raises(pl.exceptions.SQLInterfaceError) as exc:
+         ctx.execute(query, eager=True)
+     assert "named 'a'" not in str(exc.value)
 +
 +
 +@pytest.mark.parametrize(
-+    ("value_type", "dtype"),
++    ("query", "expected"),
 +    [
-+        (pa.duration("s"), pl.Duration("ms")),
-+        (pa.timestamp("s", "Europe/Amsterdam"), pl.Datetime("ms", "Europe/Amsterdam")),
++        (
++            "SELECT a, (SELECT b.v FROM (SELECT o.a * 10 AS v) AS b) AS r FROM t AS o",
++            [(1, 10), (2, 20), (3, 30), (4, 40)],
++        ),
++        (
++            """
++            SELECT a, (SELECT MAX(s.x) FROM (SELECT x FROM u WHERE u.k = o.a) AS s) AS r
++            FROM t AS o
++            """,
++            [(1, 6), (2, 7), (3, 8), (4, None)],
++        ),
++        (
++            """
++            SELECT a, (
++                SELECT COUNT(*) FROM (SELECT x AS y FROM u WHERE u.k = o.a) AS s
++                WHERE s.y > 5
++            ) AS r FROM t AS o
++            """,
++            [(1, 1), (2, 1), (3, 1), (4, 0)],
++        ),
++        (
++            "SELECT a, (SELECT MIN(x) FROM (SELECT u.x FROM u WHERE u.k = o.a) AS s) AS r FROM t AS o",
++            [(1, 5), (2, 7), (3, 8), (4, None)],
++        ),
++        (
++            """
++            SELECT a, NULL AS r FROM t AS o
++            WHERE (SELECT MAX(s.x) FROM (SELECT x FROM u WHERE u.k = o.a) AS s) > 6
++            """,
++            [(2, None), (3, None)],
++        ),
 +    ],
 +)
-+def test_arrow_dict_chunks_temporal_seconds_bounds(
-+    value_type: pa.DataType, dtype: pl.DataType
++@pytest.mark.parametrize("engine", ["in-memory", "streaming"])
++def test_scalar_subquery_derived_table_reads_outer(
++    query: str, expected: list[tuple[int, int | None]], engine: EngineType
 +) -> None:
-+    min_seconds = -(2**63 // 1000)
-+    max_seconds = (2**63 - 1) // 1000
-+    ca = pa.chunked_array(
-+        [
-+            pa.DictionaryArray.from_arrays(
-+                pa.array([0, 1, None], pa.int8()),
-+                pa.array([min_seconds, None, max_seconds + 1], value_type),
-+            ),
-+            pa.DictionaryArray.from_arrays(
-+                pa.array([None], pa.int8()), pa.array([min_seconds - 1], value_type)
-+            ),
-+            pa.DictionaryArray.from_arrays(
-+                pa.array([0, 1], pa.int8()),
-+                pa.array([max_seconds, min_seconds], value_type),
-+            ),
-+        ]
++    ctx = pl.SQLContext(
++        t=pl.DataFrame({"a": [1, 2, 3, 4]}),
++        u=pl.DataFrame({"k": [1, 1, 2, 3], "x": [5, 6, 7, 8]}),
 +    )
-+    expected = pl.Series(
-+        "c",
-+        [min_seconds * 1000, None, None, None, max_seconds * 1000, min_seconds * 1000],
++    res = ctx.execute(query).sort("a").collect(engine=engine)
++    assert res.rows() == expected
++
++
++@pytest.mark.parametrize(
++    "query",
++    [
++        # A limit of the derived table applies per outer row.
++        """
++        SELECT a, (
++            SELECT SUM(s.x) FROM (SELECT x FROM u WHERE u.k = o.a ORDER BY x LIMIT 1) AS s
++        ) AS r FROM t AS o
++        """,
++        # The aggregate of a value of the outer row would aggregate the outer query.
++        "SELECT a, (SELECT MAX(b.v) FROM (SELECT o.a * 10 AS v FROM u) AS b) AS r FROM t AS o",
++        # `u.k` reads the outer `u`, not the relation of the derived table.
++        """
++        SELECT o.a, (
++            SELECT MAX(s.x) FROM (SELECT x FROM u WHERE u.k = o.a) AS s WHERE s.x > u.k
++        ) AS r FROM t AS o CROSS JOIN (SELECT 5 AS k) AS u
++        """,
++        # An item that is not read must still resolve.
++        "SELECT a, (SELECT COUNT(*) FROM (SELECT o.b AS v FROM u) AS d) AS r FROM t AS o",
++        # The selector reads the columns of the derived table.
++        """
++        SELECT a, (
++            SELECT MAX(COLUMNS('^x$')) FROM (SELECT k AS x FROM u WHERE u.k = o.a) AS d
++        ) AS r FROM t AS o
++        """,
++    ],
++)
++def test_scalar_subquery_derived_table_reads_outer_unsupported(query: str) -> None:
++    ctx = pl.SQLContext(
++        t=pl.DataFrame({"a": [1, 2, 3, 4]}),
++        u=pl.DataFrame({"k": [1, 1, 2, 3], "x": [5, 6, 7, 8]}),
 +    )
-+    for s in (
-+        cast("pl.Series", pl.from_arrow(ca)).alias("c"),
-+        pl.Series("c", ca),
-+        pl.DataFrame({"c": ca})["c"],
-+    ):
-+        assert s.dtype == dtype
-+        assert_series_equal(s.to_physical(), expected)
-+
-+
- def test_arrow_dict_chunks_small_index_overflow_30729() -> None:
-     # The combined dictionary has more entries than an int8 index can address.
-     ca = pa.chunked_array(
-```
-
----
-
-### Incident Patch 2: `e2985639` (2026-11-23)
-**Commit Message**: fix: Race condition in spill token waiters bit (#31021)
-
-**File**: `crates/polars-ooc/src/spill_token.rs` (modified, +1/-1)
-```diff
-@@ -125,7 +125,7 @@ impl<T: Spillable> SpillTokenInner<T> {
-         // while holding the lock to reduce critical section.
-         let mut lock = self.lock.lock().unwrap();
-         let waiters = core::mem::take(&mut lock.waiters);
--        self.state.fetch_sub(HAS_WAITERS_BIT, Ordering::Relaxed);
-+        self.state.fetch_and(!HAS_WAITERS_BIT, Ordering::Relaxed);
-         drop(lock);
- 
-         for w in waiters {
-```
-
----
-
-### Incident Patch 3: `63a0a176` (2026-11-23)
-**Commit Message**: fix: Report the failing object path in object-store errors (#29450)
-
-**File**: `crates/polars-io/src/cloud/cloud_writer/internal_writer.rs` (modified, +3/-3)
-```diff
-@@ -42,12 +42,12 @@ impl InternalCloudWriter {
-             let path_ref = &self.path;
-             let multipart = PlMultipartUpload::new(
-                 self.store
--                    .exec_with_rebuild_retry_on_err(|s| async move {
-+                    .exec_with_rebuild_retry_on_err(path_ref, |s| async move {
-                         s.put_multipart_opts(path_ref, object_store::PutMultipartOptions::default())
-                             .await
-                     })
-                     .await?,
--                self.store.error_context(),
-+                self.store.error_context(path_ref),
-             );
- 
-             let (error_capture, error_handle) = ErrorCapture::new();
-@@ -131,7 +131,7 @@ impl InternalCloudWriter {
-         let path_ref = &self.path;
-         let num_bytes = payload.content_length() as u64;
- 
--        let upload_fut = self.store.exec_with_rebuild_retry_on_err(|s| {
-+        let upload_fut = self.store.exec_with_rebuild_retry_on_err(path_ref, |s| {
-             let payload = payload.clone();
-             async move {
-                 s.put_opts(path_ref, payload, object_store::PutOptions::default())
-```
-
-**File**: `crates/polars-io/src/cloud/glob.rs` (modified, +7/-6)
-```diff
-@@ -235,7 +235,7 @@ pub async fn glob(
-             expansion,
-         },
-         store,
--    ) = super::build_object_store(url, cloud_options, true).await?;
-+    ) = super::build_object_store(url.clone(), cloud_options, true).await?;
-     let matcher = &Matcher::new(
-         if scheme == "file" {
-             // For local paths the returned location has the leading slash stripped.
-@@ -246,13 +246,12 @@ pub async fn glob(
-         expansion.as_deref(),
-     )?;
- 
--    let path = Path::from(prefix.as_str());
--    let path = Some(&path);
-+    let path = &Path::from(prefix.as_str());
- 
-     let mut locations = store
--        .exec_with_rebuild_retry_on_err(|store| async move {
-+        .exec_with_rebuild_retry_on_err(path, |store| async move {
-             store
--                .list(path)
-+                .list(Some(path))
-                 .try_filter_map(|x| async move {
-                     // Keep the LIST-reported byte size alongside the path.
-                     let out = (x.size > 0 && matcher.is_matching(x.location.as_ref()))
-@@ -262,7 +261,9 @@ pub async fn glob(
-                 .try_collect::<Vec<_>>()
-                 .await
-         })
--        .await?;
-+        .await
-+        // Name the glob.
-+        .map_err(|e| e.wrap_msg(|e| format!("listing glob {url} failed: {e}")))?;
- 
-     locations.sort_unstable_by(|a, b| a.0.cmp(&b.0));
-     Ok(locations
-```
-
-**File**: `crates/polars-io/src/cloud/object_store_setup.rs` (modified, +23/-8)
-```diff
-@@ -238,18 +238,28 @@ pub(crate) struct PolarsObjectStoreBuilder {
- }
- 
- impl PolarsObjectStoreBuilder {
-+    /// The URL of the request that built the store.
-     pub(super) fn path(&self) -> &PlRefPath {
-         &self.path
-     }
- 
-+    /// The URL the store is rooted at.
-+    pub(super) fn base_url(&self) -> PlRefPath {
-+        match self.cloud_type {
-+            // The origin, or the full URL for a store tied to one URL.
-+            CloudType::Http => self.path.clone(),
-+            _ => self.path.sliced(0..self.path.authority_end_position()),
-+        }
-+    }
-+
-     pub(crate) fn rate_limit_signal(&self) -> Option<PacingBudget> {
-         self.rate_limiter.as_ref().map(|r| r.read_budget())
-     }
- 
-     pub(super) async fn build_impl(
-         &self,
--        // Whether to clear cached credentials for Python credential providers.
--        clear_cached_credentials: bool,
-+        // On a rebuild, clear cached Python credentials and leave the URL out of build errors.
-+        rebuild: bool,
-     ) -> PolarsResult<Arc<dyn ObjectStore>> {
-         let options = self
-             .options
-@@ -296,7 +306,8 @@ impl PolarsObjectStoreBuilder {
-                     let store = options
-                         .build_aws(
-                             self.path.clone(),
--                            clear_cached_credentials,
-+                            super::ObjectStoreErrorContext::for_build(self.path.clone(), rebuild),
-+                            rebuild,
-                             self.rate_limiter.as_deref(),
-                         )
-                         .await?;
-@@ -310,7 +321,8 @@ impl PolarsObjectStoreBuilder {
-                 {
-                     let store = options.build_gcp(
-                         self.path.clone(),
--                        clear_cached_credentials,
-+                        super::ObjectStoreErrorContext::for_build(self.path.clone(), rebuild),
-+                        rebuild,
-                         self.rate_limiter.as_deref(),
-                     )?;
- 
-@@ -325,7 +337,8 @@ impl PolarsObjectStoreBuilder {
-                     {
-                         let store = options.build_azure(
-                             self.path.clone(),
--                            clear_cached_credentials,
-+                            super::ObjectStoreErrorContext::for_build(self.path.clone(), rebuild),
-+                            rebuild,
-                             self.rate_limiter.as_deref(),
-                         )?;
-                         Ok::<_, PolarsError>(Arc::new(store) as Arc<dyn ObjectStore>)
-@@ -427,15 +440,15 @@ impl PolarsObjectStoreBuilder {
-             let cache = OBJECT_STORE_CACHE.read().await;
- 
-             if let Some(store) = cache.get(cache_key) {
--                return Ok(store.clone());
-+                return Ok(store.clone().with_base_url(self.base_url()));
-             }
- 
-             drop(cache);
- 
-             let cache = OBJECT_STORE_CACHE.write().await;
- 
-             if let Some(store) = cache.get(cache_key) {
--                return Ok(store.clone());
-+                return Ok(store.clone().with_base_url(self.base_url()));
-             }
- 
-             Some(cache)
-@@ -491,12 +504,14 @@ impl PolarsObjectStoreBuilder {
-             cell
-         };
- 
-+        let base_url = self.base_url();
-+
-         cell.get_or_try_init(|| async {
-             let store = self.build_impl(false).await?;
-             PolarsResult::Ok(PolarsObjectStore::new_from_inner(store, self))
-         })
-         .await
--        .cloned()
-+        .map(|store| store.clone().with_base_url(base_url))
-     }
- 
-     pub(crate) fn is_azure(&self) -> bool {
-```
-
-**File**: `crates/polars-io/src/cloud/options.rs` (modified, +6/-8)
-```diff
-@@ -480,6 +480,7 @@ impl CloudOptions {
-     pub(crate) async fn build_aws(
-         &self,
-         url: PlRefPath,
-+        error_cx: ObjectStoreErrorContext,
-         clear_cached_credentials: bool,
-         rate_limiter: Option<&RateLimiter>,
-     ) -> PolarsResult<impl object_store::ObjectStore> {
-@@ -660,7 +661,7 @@ impl CloudOptions {
-         let out = builder
-             .with_unsigned_payload(true)
-             .build()
--            .map_err(|e| ObjectStoreErrorContext::new(url).attach_err_info(e))?;
-+            .map_err(|e| error_cx.attach_err_info(e))?;
- 
-         Ok(out)
-     }
-@@ -682,13 +683,13 @@ impl CloudOptions {
-     pub(crate) fn build_azure(
-         &self,
-         url: PlRefPath,
-+        error_cx: ObjectStoreErrorContext,
-         clear_cached_credentials: bool,
-         rate_limiter: Option<&RateLimiter>,
-     ) -> PolarsResult<impl object_store::ObjectStore> {
-         use object_store::client::ReqwestConnector;
- 
-         use super::credential_provider::IntoCredentialProvider;
--        use crate::cloud::ObjectStoreErrorContext;
- 
-         let verbose = polars_core::config::verbose();
- 
-@@ -737,9 +738,7 @@ impl CloudOptions {
-             None => builder,
-         };
- 
--        let out = builder
--            .build()
--            .map_err(|e| ObjectStoreErrorContext::new(url).attach_err_info(e))?;
-+        let out = builder.build().map_err(|e| error_cx.attach_err_info(e))?;
- 
-         Ok(out)
-     }
-@@ -761,6 +760,7 @@ impl CloudOptions {
-     pub(crate) fn build_gcp(
-         &self,
-         url: PlRefPath,
-+        error_cx: ObjectStoreErrorContext,
-         clear_cached_credentials: bool,
-         rate_limiter: Option<&RateLimiter>,
-     ) -> PolarsResult<impl object_store::ObjectStore> {
-@@ -811,9 +811,7 @@ impl CloudOptions {
-             None => builder,
-         };
- 
--        let out = builder
--            .build()
--            .map_err(|e| ObjectStoreErrorContext::new(url).attach_err_info(e))?;
-+        let out = builder.build().map_err(|e| error_cx.attach_err_info(e))?;
- 
-         Ok(out)
-     }
-```
-
-**File**: `crates/polars-io/src/cloud/polars_object_store.rs` (modified, +74/-22)
-```diff
-@@ -24,17 +24,18 @@ use crate::pl_async::{
- 
- #[derive(Debug)]
- pub struct PolarsObjectStoreError {
-+    /// The URL of the failing object or of the store being built. Empty on a rebuild.
-     pub base_url: PlRefPath,
-     pub source: object_store::Error,
- }
- 
- impl Display for PolarsObjectStoreError {
-     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
--        write!(
--            f,
--            "object-store error: {} (path: {})",
--            self.source, self.base_url
--        )
-+        write!(f, "object-store error: {}", self.source)?;
-+        if !self.base_url.as_str().is_empty() {
-+            write!(f, " (path: {})", self.base_url)?;
-+        }
-+        Ok(())
-     }
- }
- 
-@@ -111,8 +112,10 @@ mod inner {
-     use std::sync::Arc;
- 
-     use object_store::ObjectStore;
-+    use object_store::path::Path;
-     use polars_core::config;
-     use polars_error::{PolarsError, PolarsResult};
-+    use polars_utils::pl_path::PlRefPath;
-     use polars_utils::relaxed_cell::RelaxedCell;
- 
-     use crate::cloud::concurrency::{ConcurrencyController, ControllerConfig};
-@@ -131,6 +134,8 @@ mod inner {
-     #[derive(Clone, Debug)]
-     pub struct PolarsObjectStore {
-         inner: Arc<Inner>,
-+        /// The URL the store is rooted at, as this caller spelled it.
-+        base_url: PlRefPath,
-         /// Avoid contending the Mutex `lock()` until the first re-build.
-         initial_store: std::sync::Arc<dyn ObjectStore>,
-         io_metrics: OptIOMetrics,
-@@ -148,6 +153,7 @@ mod inner {
-             // suffix range there: https://learn.microsoft.com/en-us/rest/api/storageservices/specifying-the-range-header-for-blob-service-operations
-             let suffix_range_supported = RelaxedCell::from(!builder.is_azure());
-             Self {
-+                base_url: builder.base_url(),
-                 inner: Arc::new(Inner {
-                     store: tokio::sync::RwLock::new(store),
-                     builder,
-@@ -160,6 +166,11 @@ mod inner {
-             }
-         }
- 
-+        pub(crate) fn with_base_url(mut self, base_url: PlRefPath) -> Self {
-+            self.base_url = base_url;
-+            self
-+        }
-+
-         pub fn set_io_metrics(&mut self, io_metrics: Option<Arc<IOMetrics>>) -> &mut Self {
-             self.io_metrics = OptIOMetrics(io_metrics);
-             self
-@@ -204,7 +215,13 @@ mod inner {
-                         .build_impl(true)
-                         .await
-                         .map_err(|e| {
--                            e.wrap_msg(|e| format!("attempt to rebuild object store failed: {e}"))
-+                            let url = self.inner.builder.path();
-+                            e.wrap_msg(|e| {
-+                                format!(
-+                                    "attempt to rebuild object store failed: {e} \
-+                                     (store built for: {url})"
-+                                )
-+                            })
-                         })?;
-             }
- 
-@@ -213,8 +230,10 @@ mod inner {
-             Ok((*current_store).clone())
-         }
- 
-+        /// `path` is the object `func` addresses.
-         pub async fn exec_with_rebuild_retry_on_err<'s, 'f, Fn, Fut, O>(
-             &'s self,
-+            path: &Path,
-             mut func: Fn,
-         ) -> PolarsResult<O>
-         where
-@@ -241,17 +260,18 @@ mod inner {
-             }
- 
-             let store = if rebuild {
--                let store = self
--                    .rebuild_inner(&store)
--                    .await
--                    .map_err(|e| e.wrap_msg(|e| format!("{e}; original error: {orig_err}")))?;
-+                let store = self.rebuild_inner(&store).await.map_err(|e| {
-+                    // The failing request first, then the rebuild error.
-+                    let orig_err = self.error_context(path).attach_err_info(orig_err);
-+                    e.wrap_msg(|e| format!("{orig_err}; {e}"))
-+                })?;
-                 Cow::Owned(store)
-             } else {
-                 store
-             };
- 
-             func(store).await.map_err(|e| {
--                let e: PolarsError = self.error_context().attach_err_info(e).into();
-+                let e: PolarsError = self.error_context(path).attach_err_info(e).into();
- 
-                 if self.inner.builder.is_azure()
-                     && std::env::var("POLARS_AUTO_USE_AZURE_STORAGE_ACCOUNT_KEY").as_deref()
-@@ -280,27 +300,59 @@ and use the storage account keys from Azure CLI to authenticate"
-             self.inner.suffix_range_supported.store(false);
-         }
- 
--        pub fn error_context(&self) -> ObjectStoreErrorContext {
--            ObjectStoreErrorContext::new(self.inner.builder.path().clone())
-+        /// Context for an error of a request to `path`.
-+        pub fn error_context(&self, path: &Path) -> ObjectStoreErrorContext {
-+            ObjectStoreErrorContext::new(self.base_url.clone()).with_path(path.clone())
-         }
-     }
- }
- 
- #[derive(Clone)]
- pub struct 
-```
-
-**File**: `crates/polars-io/src/path_utils/mod.rs` (modified, +1/-1)
-```diff
-@@ -348,7 +348,7 @@ async fn expand_path_cloud(
-         let prefix_ref = &prefix;
- 
-         let mut paths = store
--            .exec_with_rebuild_retry_on_err(|s| async move {
-+            .exec_with_rebuild_retry_on_err(prefix_ref, |s| async move {
-                 let out = s
-                     .list(Some(prefix_ref))
-                     .try_filter_map(|x| async move {
-```
-
-**File**: `crates/polars-python/src/io/iceberg_plugin/v1/host.rs` (modified, +3/-3)
-```diff
-@@ -281,9 +281,9 @@ unsafe extern "C" fn storage_get(
-                 let path = &loc.path;
- 
-                 loc.store
--                    .exec_with_rebuild_retry_on_err(
--                        |s| async move { s.get(path).await?.bytes().await },
--                    )
-+                    .exec_with_rebuild_retry_on_err(path, |s| async move {
-+                        s.get(path).await?.bytes().await
-+                    })
-                     .await
-                     .map_err(to_ffi_err)
-             };
-```
-
-**File**: `py-polars/tests/unit/io/cloud/test_cloud.py` (modified, +22/-0)
-```diff
-@@ -518,6 +518,28 @@ def test_cloud_timeout_error() -> None:
-     assert "operation timed out" in str(exc.value)
- 
- 
-+@pytest.mark.slow
-+@pytest.mark.parametrize("op", ["scan", "sink"])
-+def test_cloud_error_names_failing_path_29446(s3: CountingS3, op: str) -> None:
-+    storage_options = {**s3.storage_options, "max_retries": 0}
-+
-+    # Builds the bucket's cached store, then removes the object for later tests.
-+    df = pl.DataFrame({"x": range(10)})
-+    df.lazy().sink_parquet("s3://bucket/a.parquet", storage_options=storage_options)
-+    s3.client.delete_object(Bucket="bucket", Key="a.parquet")
-+
-+    s3.on_request = lambda environ: environ["PATH_INFO"].endswith("/b.parquet") or None
-+    url = "s3://bucket/query=B/b.parquet"
-+    run = (
-+        pl.scan_parquet(url, storage_options=storage_options).collect
-+        if op == "scan"
-+        else partial(df.lazy().sink_parquet, url, storage_options=storage_options)
-+    )
-+
-+    with pytest.raises(OSError, match=re.escape(f"(path: {url})")):
-+        run()
-+
-+
- @pytest.mark.slow
- @pytest.mark.parametrize(
-     "sink",
++    with pytest.raises(pl.exceptions.SQLInterfaceError, match="named 'o'"):
++        ctx.execute(query, eager=True)
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #31032** (2026-11-23): build: Revert sharing generic instantiations between crates in release builds (#30960) (@ritchie46)
-- **PR #31031** (2026-11-23): fix: Sum a negative constant expression in SQL `SUM` (@kdn36)
-- **PR #31030** (2026-11-23): fix: Take the SQL `USING` key from either side of a `FULL` or `RIGHT` join (@kdn36)
-- **PR #31029** (2026-11-23): fix(python): Refuse files in Iceberg `add_files` that a scan of the table cannot read (@kdn36)
-- **PR #31027** (2026-11-23): fix: Return null for a null `quantile` fraction (@dancsi)
-- **PR #31026** (2026-11-23): fix!: Add Expr.bin.find(_many), and return char offsets in Expr.str.find(_many) (@orlp)
+- **PR #31064** (2026-11-24): ci: Disable free-threaded Python 3.15t wheels and tests for now (@ritchie46)
+- **PR #31063** (2026-11-24): fix: Allow a derived table in a correlated scalar SQL subquery to read the outer row (@ritchie46)
+- **PR #31062** (2026-11-24): perf: Parallel streaming cumulative aggregations (@orlp)
+- **PR #31061** (2026-11-24): fix: Compile polars-sql without the semi_anti_join feature (@kdn36)
+- **PR #31060** (2026-11-24): fix: Allow deeper nesting in SQL and report the parser's recursion limit instead of a syntax error (@ritchie46)
+- **PR #31056** (2026-11-24): fix: Allow a correlated SQL `IN` whose subquery selects a constant or repeats a key name (@kdn36)
 
 ---
 
@@ -2319,46 +2180,31 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Check Arrow temporal dictionary overflow on import
+## X. Numpy array index overflow
 
 **RULE**:
-When implementing operations in `py-polars/src/polars/_utils/construction/other.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pola-rs/polars. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `py-polars/src/polars/_utils/getitem.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pola-rs/polars. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `60fd1bc3`: Check Arrow temporal dictionary overflow on import. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0c7cdde1`: Numpy array index overflow. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `py-polars/src/polars/_utils/construction/other.py`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `py-polars/src/polars/_utils/getitem.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-            if (
-                pa.types.is_timestamp(value_type) or pa.types.is_duration(value_type)
-            ) and value_type.unit == "s":
-                target = (
-                    pa.timestamp("ms", value_type.tz)
-                    if pa.types.is_timestamp(value_type)
-                    else pa.duration("ms")
-                )
-                # Decode first so only referenced values are checked for overflow.
-                return pa.chunked_array(
-                    [
-                        pc.cast(chunk.dictionary_decode(), target, safe=True)
-                        for chunk in array.iterchunks()
-                    ],
-                    type=target,
-                )
+        if arr.dtype in (np.int64, np.uint64) and arr.max() >= U32_MAX:
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+        if arr.dtype in {np.int64, np.uint64} and arr.max() >= U32_MAX:
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `60fd1bc3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0c7cdde1` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

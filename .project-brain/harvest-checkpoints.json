@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-25T02:47:50.204Z",
+  "last_updated": "2026-11-25T02:56:14.081Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5151,14 +5151,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-seekstorm-seekstorm",
-      "content_hash": "e3908cae3eb233c237782d5f9e73a5db608f2b8b1df77573f3f9d1f5eb2ae9c4",
-      "verified_at": "2026-11-24T07:47:18.489Z",
+      "content_hash": "b68533ef62bd0c72753ecff297bfd2fa4eee969b101c735ce04516dec1f3ccf7",
+      "verified_at": "2026-11-25T02:56:14.080Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T07:47:18.489Z"
+      "last_updated": "2026-11-25T02:56:14.080Z"
     },
     "serafimcloud/21st": {
       "repository": "serafimcloud/21st",
@@ -8376,14 +8376,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-checkmarx-kics",
-      "content_hash": "49773ce1c2f52c1fa1f35aa63f46d6562c8801c3393d9b2e8c6f536886db8a86",
-      "verified_at": "2026-11-11T07:27:49.612Z",
+      "content_hash": "7f1e17f730b84f9fc4bf0301a1e50a5a3bc2d7d24ab5145445abf0a01e221737",
+      "verified_at": "2026-11-25T02:56:11.372Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T07:27:49.612Z"
+      "last_updated": "2026-11-25T02:56:11.372Z"
     },
     "olric-data/olric": {
       "repository": "olric-data/olric",
@@ -11661,14 +11661,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pola-rs-polars",
-      "content_hash": "5624014237a65927828e393cb4099e341913547fb8e4bdff064f4b11c2ebc121",
-      "verified_at": "2026-11-24T00:31:38.667Z",
+      "content_hash": "878bde50aa600eb533e55dad63dfe126a52aa9ecb76bfc02aa435dc125a77af0",
+      "verified_at": "2026-11-25T02:56:02.950Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T00:31:38.667Z"
+      "last_updated": "2026-11-25T02:56:02.950Z"
     },
     "mrkai77/Loop": {
       "repository": "mrkai77/Loop",

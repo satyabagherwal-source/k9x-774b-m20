@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-25T02:47:53.595Z",
-    "lastVerified": "2026-11-25T02:47:53.595Z",
+    "lastChecked": "2026-11-25T02:56:17.320Z",
+    "lastVerified": "2026-11-25T02:56:17.320Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -276,9 +276,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-25T02:20:21.533Z",
+    "lastChecked": "2026-11-25T02:56:11.377Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-25T02:20:21.533Z"
+    "lastVerified": "2026-11-25T02:56:11.377Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -1519,9 +1519,9 @@
   "build-trust-ockam": {
     "name": "ockam",
     "officialUrl": "https://github.com/build-trust/ockam",
-    "lastChecked": "2026-11-24T22:51:00.408Z",
+    "lastChecked": "2026-11-25T02:56:06.503Z",
     "revisionIdentifier": "0435d8d7",
-    "lastVerified": "2026-11-24T22:51:00.408Z"
+    "lastVerified": "2026-11-25T02:56:06.503Z"
   },
   "valeriansaliou-sonic": {
     "name": "sonic",
@@ -3767,13 +3767,13 @@
     "officialUrl": "https://github.com/SeekStorm/SeekStorm",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-24T07:47:17.667Z",
-    "lastVerified": "2026-11-24T07:47:17.667Z",
+    "lastChecked": "2026-11-25T02:56:13.299Z",
+    "lastVerified": "2026-11-25T02:56:13.299Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-seekstorm-seekstorm",
-    "contentHash": "e3908cae3eb233c237782d5f9e73a5db608f2b8b1df77573f3f9d1f5eb2ae9c4",
-    "promotedRulesCount": 0,
+    "contentHash": "b68533ef62bd0c72753ecff297bfd2fa4eee969b101c735ce04516dec1f3ccf7",
+    "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
@@ -6035,11 +6035,21 @@
     "lastVerified": "2026-11-24T19:55:21.307Z"
   },
   "checkmarx-kics": {
-    "name": "kics",
+    "name": "Checkmarx/kics",
     "officialUrl": "https://github.com/Checkmarx/kics",
-    "lastChecked": "2026-11-24T08:59:45.927Z",
-    "revisionIdentifier": "150910f8",
-    "lastVerified": "2026-11-24T08:59:45.927Z"
+    "sourceType": "github",
+    "technology": "Open Policy Agent",
+    "lastChecked": "2026-11-25T02:56:10.248Z",
+    "lastVerified": "2026-11-25T02:56:10.248Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-checkmarx-kics",
+    "contentHash": "7f1e17f730b84f9fc4bf0301a1e50a5a3bc2d7d24ab5145445abf0a01e221737",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 2,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "starrocks-starrocks": {
     "name": "StarRocks/starrocks",
@@ -8347,9 +8357,9 @@
   "codeeditapp-codeedit": {
     "name": "CodeEdit",
     "officialUrl": "https://github.com/CodeEditApp/CodeEdit",
-    "lastChecked": "2026-11-22T16:12:19.463Z",
+    "lastChecked": "2026-11-25T02:56:01.388Z",
     "revisionIdentifier": "fa2aebd8",
-    "lastVerified": "2026-11-22T16:12:19.463Z"
+    "lastVerified": "2026-11-25T02:56:01.388Z"
   },
   "imsnif-diskonaut": {
     "name": "diskonaut",
@@ -8796,14 +8806,14 @@
     "officialUrl": "https://github.com/pola-rs/polars",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-24T00:31:37.609Z",
-    "lastVerified": "2026-11-24T00:31:37.609Z",
+    "lastChecked": "2026-11-25T02:56:01.685Z",
+    "lastVerified": "2026-11-25T02:56:01.685Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-pola-rs-polars",
-    "contentHash": "5624014237a65927828e393cb4099e341913547fb8e4bdff064f4b11c2ebc121",
+    "contentHash": "878bde50aa600eb533e55dad63dfe126a52aa9ecb76bfc02aa435dc125a77af0",
     "promotedRulesCount": 1,
-    "recentFixesCount": 18,
+    "recentFixesCount": 16,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -12336,9 +12346,9 @@
   "syntax-tree-mdast": {
     "name": "mdast",
     "officialUrl": "https://github.com/syntax-tree/mdast",
-    "lastChecked": "2026-11-21T04:15:33.018Z",
+    "lastChecked": "2026-11-25T02:55:58.942Z",
     "revisionIdentifier": "c034ec9d",
-    "lastVerified": "2026-11-21T04:15:33.018Z"
+    "lastVerified": "2026-11-25T02:55:58.942Z"
   },
   "xotahal-react-native-material-ui": {
     "name": "react-native-material-ui",

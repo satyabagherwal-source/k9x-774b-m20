@@ -12949,3 +12949,6 @@ Every entry in this ledger must capture:
 | `learn-dom-h-fbc5ba6f` | `project://oven-sh-bun` | `d3588a3c` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oven-sh-bun-learnings.md` | 2026-11-25T02:39:19.303Z |
 | `learn-github-astral-sh-uv` | `https://github.com/astral-sh/uv` | `e3e7c1ea` | Multi-dimensional audit evidence | 2026-11-25T02:47:37.921Z |
 | `learn-github-doobidoo-mcp-memory-service` | `https://github.com/doobidoo/mcp-memory-service` | `f4eac406` | Multi-dimensional audit evidence | 2026-11-25T02:47:50.189Z |
+| `learn-github-pola-rs-polars` | `https://github.com/pola-rs/polars` | `08b2814c` | Multi-dimensional audit evidence | 2026-11-25T02:56:02.935Z |
+| `learn-github-checkmarx-kics` | `https://github.com/Checkmarx/kics` | `a572efb2` | Multi-dimensional audit evidence | 2026-11-25T02:56:11.357Z |
+| `learn-github-seekstorm-seekstorm` | `https://github.com/SeekStorm/SeekStorm` | `d7fb1b21` | Multi-dimensional audit evidence | 2026-11-25T02:56:14.072Z |
