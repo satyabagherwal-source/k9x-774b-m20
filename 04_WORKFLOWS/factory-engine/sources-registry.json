@@ -46,8 +46,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-25T11:51:20.955Z",
-    "lastVerified": "2026-11-25T11:51:20.955Z",
+    "lastChecked": "2026-11-25T12:29:07.625Z",
+    "lastVerified": "2026-11-25T12:29:07.625Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-25T12:19:43.266Z",
-    "lastVerified": "2026-11-25T12:19:43.266Z",
+    "lastChecked": "2026-11-25T12:29:12.976Z",
+    "lastVerified": "2026-11-25T12:29:12.976Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -1519,9 +1519,9 @@
   "build-trust-ockam": {
     "name": "ockam",
     "officialUrl": "https://github.com/build-trust/ockam",
-    "lastChecked": "2026-11-25T07:13:02.488Z",
+    "lastChecked": "2026-11-25T12:29:02.641Z",
     "revisionIdentifier": "0435d8d7",
-    "lastVerified": "2026-11-25T07:13:02.488Z"
+    "lastVerified": "2026-11-25T12:29:02.641Z"
   },
   "valeriansaliou-sonic": {
     "name": "sonic",
@@ -2796,9 +2796,9 @@
   "easegress-io-easegress": {
     "name": "easegress",
     "officialUrl": "https://github.com/easegress-io/easegress",
-    "lastChecked": "2026-11-24T18:25:54.878Z",
+    "lastChecked": "2026-11-25T12:29:00.181Z",
     "revisionIdentifier": "b8d95290",
-    "lastVerified": "2026-11-24T18:25:54.878Z"
+    "lastVerified": "2026-11-25T12:29:00.181Z"
   },
   "giancarloerra-socraticode": {
     "name": "SocratiCode",
@@ -3643,9 +3643,9 @@
   "ekzhang-bore": {
     "name": "bore",
     "officialUrl": "https://github.com/ekzhang/bore",
-    "lastChecked": "2026-11-24T11:21:44.007Z",
+    "lastChecked": "2026-11-25T12:28:52.703Z",
     "revisionIdentifier": "00a735a8",
-    "lastVerified": "2026-11-24T11:21:44.007Z"
+    "lastVerified": "2026-11-25T12:28:52.703Z"
   },
   "hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2": {
     "name": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
@@ -7197,14 +7197,14 @@
     "officialUrl": "https://github.com/dragonflydb/dragonfly",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-11-24T17:23:09.409Z",
-    "lastVerified": "2026-11-24T17:23:09.409Z",
+    "lastChecked": "2026-11-25T12:29:09.341Z",
+    "lastVerified": "2026-11-25T12:29:09.341Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dragonflydb-dragonfly",
-    "contentHash": "2a068f8f8239bafb7d2d6b8f2228056c07ad4f370a3f4afdb8d04e5fc4c10698",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "contentHash": "a2314fc11064c08a76e4f43af95fb79d373d5cc19e599ceb1c36daf361290329",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -9910,9 +9910,9 @@
   "sayaka-sh-spmp": {
     "name": "spmp",
     "officialUrl": "https://github.com/sayaka-sh/spmp",
-    "lastChecked": "2026-11-23T04:08:11.744Z",
+    "lastChecked": "2026-11-25T12:28:57.711Z",
     "revisionIdentifier": "2fb03e84",
-    "lastVerified": "2026-11-23T04:08:11.744Z"
+    "lastVerified": "2026-11-25T12:28:57.711Z"
   },
   "pas7-studio-nextjs-sitemap-hreflang": {
     "name": "nextjs-sitemap-hreflang",
@@ -13425,13 +13425,13 @@
     "officialUrl": "https://huggingface.co/Diffuspace/Clover-35B-A3B-Preview",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-21T21:19:32.870Z",
-    "lastVerified": "2026-11-21T21:19:32.870Z",
+    "lastChecked": "2026-11-25T12:28:55.577Z",
+    "lastVerified": "2026-11-25T12:28:55.577Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-diffuspace-clover-35b-a3b-preview",
-    "contentHash": "00889c50410ab03f898ac9c6f99622cf1374aeb94cc6521007abd032ff83d9cb",
-    "promotedRulesCount": 3,
+    "contentHash": "4b58a83c8cfe87550952bb4cbc0dff4c8411770d469d85a28fc0976aa6625947",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",

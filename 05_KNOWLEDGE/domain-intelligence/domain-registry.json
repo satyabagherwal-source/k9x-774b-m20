@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T12:20:25.158Z",
-  "total_records": 2672,
+  "last_updated": "2026-11-25T12:29:48.722Z",
+  "total_records": 2673,
   "domains": {
     "A": {
       "total": 22,
@@ -71,7 +71,7 @@
       ]
     },
     "D": {
-      "total": 1003,
+      "total": 1004,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -1075,7 +1075,8 @@
         "domain_intelligence-research-knowledge-intelligence-hf-openbmb-minicpm-ocr-1-0-learnings-core-invari",
         "domain_intelligence-research-knowledge-intelligence-thinkingmachines-tml-d24-varloop-research-core-i",
         "DOM-D-18CF46EE",
-        "domain_intelligence-research-knowledge-intelligence-hf-thinkingmachines-tml-d24-varloop-research-lea"
+        "domain_intelligence-research-knowledge-intelligence-hf-thinkingmachines-tml-d24-varloop-research-lea",
+        "DOM-D-B35DECA2"
       ]
     },
     "E": {
@@ -8487,8 +8488,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "ab41fed84ae940f2dfd2b89a0ac1b34e9af6ddcce384fa78824da00124d78fb6",
-      "created_at": "2026-11-25T10:07:41.575Z"
+      "content_hash": "9619d2e3f3dcbd330bc3da09caa67db50811b053d03a632a61125e4f14005d0a",
+      "created_at": "2026-11-25T12:29:48.722Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -8505,8 +8506,8 @@
       "title": "Technical Construction Intelligence: dragonflydb/dragonfly Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-dragonflydb-dragonfly-technical-construction-intelligence-dragonflydb-dragonfly-.md",
       "repository": "dragonflydb/dragonfly",
-      "content_hash": "c776c4058102642c4203f6309ab21ec5ef98fcd0273cd278a3fb892283b23d12",
-      "created_at": "2026-11-24T17:23:10.977Z"
+      "content_hash": "4eebc065889d286068ca575bd2365c2366029d874b78986f18161fec9bbc1929",
+      "created_at": "2026-11-25T12:29:10.215Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-supersoniclabs-julia-1-learnings-core-invaria": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-supersoniclabs-julia-1-learnings-core-invaria",
@@ -8523,8 +8524,8 @@
       "title": "Technical Construction Intelligence: dragonflydb-dragonfly-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-dragonflydb-dragonfly-learnings-technical-construction-intelligence-dragonflydb-.md",
       "repository": "dragonflydb-dragonfly-learnings",
-      "content_hash": "1863b67529c7bfd965947164402a21226dde3b23ba221f415c474e0c1d6e2d33",
-      "created_at": "2026-11-24T17:23:17.153Z"
+      "content_hash": "9f631e3bfa82b15939dee51d82ccb7322a2de7db1dc3f245410866602da1ab50",
+      "created_at": "2026-11-25T12:29:47.522Z"
     },
     "domain_intelligence-research-knowledge-intelligence-comfy-org-wan-2-2-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-comfy-org-wan-2-2-core-invariants",
@@ -22461,8 +22462,8 @@
       "title": "Research & Knowledge Intelligence: Diffuspace/Clover-35B-A3B-Preview Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-diffuspace-clover-35b-a3b-preview-research-knowledge-intelligence-diffuspace-.md",
       "repository": "Diffuspace/Clover-35B-A3B-Preview",
-      "content_hash": "56c6da48cdc8cf79ce07e9f1808312cbbe9a90b30e1828b821172bbd5f60a87c",
-      "created_at": "2026-11-15T19:04:03.295Z"
+      "content_hash": "ae68b8af04f87bd8824445ab15953ad218744c2b1442ce0a720f315d3ca1c9cc",
+      "created_at": "2026-11-25T12:28:56.526Z"
     },
     "DOM-D-CBBB279C": {
       "record_id": "DOM-D-CBBB279C",
@@ -22512,8 +22513,8 @@
       "title": "Research & Knowledge Intelligence: hf-diffuspace-clover-35b-a3b-preview-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-diffuspace-clover-35b-a3b-preview-learnings-research-knowledge-intelligence-h.md",
       "repository": "hf-diffuspace-clover-35b-a3b-preview-learnings",
-      "content_hash": "7f434c3fa29058a6aa4ebf1e5765befaf4a2c8fa485c277916a49098f8bd881f",
-      "created_at": "2026-11-15T19:04:44.505Z"
+      "content_hash": "9ffdd38faa9a3aacbc8c6b32f8a3e762ce7fba2fd34b1bbaf8ac05fe568731b2",
+      "created_at": "2026-11-25T12:29:13.423Z"
     },
     "domain_intelligence-research-knowledge-intelligence-pyannote-speaker-diarization-3-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-pyannote-speaker-diarization-3-1-core-invariants",
@@ -44941,6 +44942,48 @@
       "confidence": 0.86,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-25T12:20:23.891Z"
+    },
+    "DOM-D-B35DECA2": {
+      "record_id": "DOM-D-B35DECA2",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): dragonflydb/dragonfly",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md`  \n> **Source**: github ([https://github.com/dragonflydb/dragonfly](https://github.com/dragonflydb/dragonfly))  \n> **Source Version**: `9f52b997`  \n> **License**: NOASSERTION  \n> **Synthesized By**: zero-clone",
+      "content_hash": "0d7b66b53bb198a7ad0e9c96300f6e144bc22ed8b3464b8f12b56f8c34e87dfd",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md`  \n> **Source**: github ([https://github.com/drag -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md`  \n> **Source**: github ([https://github.com/drag",
+      "provenance": {
+        "source_uri": "project://dragonflydb-dragonfly/dragonflydb-dragonfly-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-25T12:29:13.692Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (dragonflydb-dragonfly)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of dragonflydb-dragonfly"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-25T12:29:46.960Z"
     }
   }
 }

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-25T12:20:25.446Z",
+  "last_updated": "2026-11-25T12:29:48.958Z",
   "total_verified_learnings": 9117,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -112198,9 +112198,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "ab41fed84ae940f2dfd2b89a0ac1b34e9af6ddcce384fa78824da00124d78fb6",
+      "content_hash": "9619d2e3f3dcbd330bc3da09caa67db50811b053d03a632a61125e4f14005d0a",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T10:07:41.575Z"
+      "persisted_at": "2026-11-25T12:29:48.722Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -112210,9 +112210,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "ec4f0beafa6fb752f2e2cd5238727cf0431df4d0c49b338b7114cb8784699930",
+      "content_hash": "3611ae697ce53fd22db46c13c0470ba780e1b9925b6387cd6b04220f3260825a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T10:07:41.767Z"
+      "persisted_at": "2026-11-25T12:29:48.958Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -112245,10 +112245,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-dragonflydb-dragonfly-technical-construction-intelligence-dragonflydb-dragonfly-.md",
       "title": "Technical Construction Intelligence: dragonflydb/dragonfly Core Invariants",
       "repository": "dragonflydb/dragonfly",
-      "source_version": "c0b9d750",
-      "content_hash": "c776c4058102642c4203f6309ab21ec5ef98fcd0273cd278a3fb892283b23d12",
+      "source_version": "9f52b997",
+      "content_hash": "4eebc065889d286068ca575bd2365c2366029d874b78986f18161fec9bbc1929",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T17:23:10.977Z"
+      "persisted_at": "2026-11-25T12:29:10.215Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-dragonflydb-dragonfly": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-dragonflydb-dragonfly",
@@ -112282,9 +112282,9 @@
       "title": "Technical Construction Intelligence: dragonflydb-dragonfly-learnings Core Invariants",
       "repository": "dragonflydb-dragonfly-learnings",
       "source_version": "HEAD",
-      "content_hash": "1863b67529c7bfd965947164402a21226dde3b23ba221f415c474e0c1d6e2d33",
+      "content_hash": "9f631e3bfa82b15939dee51d82ccb7322a2de7db1dc3f245410866602da1ab50",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T17:23:17.153Z"
+      "persisted_at": "2026-11-25T12:29:47.522Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-dragonflydb-dragonfly-learning": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-dragonflydb-dragonfly-learning",
@@ -240523,8 +240523,8 @@
       "slug": "dragonflydb-dragonfly",
       "platform": "github",
       "source_url": "https://github.com/dragonflydb/dragonfly",
-      "source_version": "c0b9d750",
-      "content_hash": "2a068f8f8239bafb7d2d6b8f2228056c07ad4f370a3f4afdb8d04e5fc4c10698",
+      "source_version": "9f52b997",
+      "content_hash": "a2314fc11064c08a76e4f43af95fb79d373d5cc19e599ceb1c36daf361290329",
       "dossier_path": "07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md",
       "promoted_rules": [
@@ -240579,7 +240579,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T17:23:10.329Z",
+      "verified_at": "2026-11-25T12:29:09.693Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -252212,7 +252212,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Diffuspace/Clover-35B-A3B-Preview",
       "source_version": "hf-diffuspace-clover-35b-a3b-preview",
-      "content_hash": "00889c50410ab03f898ac9c6f99622cf1374aeb94cc6521007abd032ff83d9cb",
+      "content_hash": "4b58a83c8cfe87550952bb4cbc0dff4c8411770d469d85a28fc0976aa6625947",
       "dossier_path": "07_PROJECT_LEARNING/hf-diffuspace-clover-35b-a3b-preview-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-diffuspace-clover-35b-a3b-preview-learnings.md",
       "promoted_rules": [
@@ -252237,7 +252237,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T21:22:57.479Z",
+      "verified_at": "2026-11-25T12:28:56.002Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -252254,9 +252254,9 @@
       "title": "Research & Knowledge Intelligence: Diffuspace/Clover-35B-A3B-Preview Core Invariants",
       "repository": "Diffuspace/Clover-35B-A3B-Preview",
       "source_version": "hf-diffuspace-clover-35b-a3b-preview",
-      "content_hash": "56c6da48cdc8cf79ce07e9f1808312cbbe9a90b30e1828b821172bbd5f60a87c",
+      "content_hash": "ae68b8af04f87bd8824445ab15953ad218744c2b1442ce0a720f315d3ca1c9cc",
       "domain_letter": "D",
-      "persisted_at": "2026-11-15T19:04:03.295Z"
+      "persisted_at": "2026-11-25T12:28:56.526Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-diffuspace-clover-35b-a3b-preview-learnings-c": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-diffuspace-clover-35b-a3b-preview-learnings-c",
@@ -252266,9 +252266,9 @@
       "title": "Research & Knowledge Intelligence: hf-diffuspace-clover-35b-a3b-preview-learnings Core Invariants",
       "repository": "hf-diffuspace-clover-35b-a3b-preview-learnings",
       "source_version": "HEAD",
-      "content_hash": "7f434c3fa29058a6aa4ebf1e5765befaf4a2c8fa485c277916a49098f8bd881f",
+      "content_hash": "9ffdd38faa9a3aacbc8c6b32f8a3e762ce7fba2fd34b1bbaf8ac05fe568731b2",
       "domain_letter": "D",
-      "persisted_at": "2026-11-15T19:04:44.505Z"
+      "persisted_at": "2026-11-25T12:29:13.423Z"
     },
     "learn-huggingface-pyannote-speaker-diarization-3-1": {
       "learning_id": "learn-huggingface-pyannote-speaker-diarization-3-1",
@@ -336265,13 +336265,13 @@
       "item_id": "candidate_directive-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-MOGC-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-PFYE-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change.md",
       "title": "server_events_dispatch: Rerender DM status emoji on emojiset change.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "12fc28055b1681887fc3e404821b3b505911d421fb36bc5b97d4cdd0d6a438a0",
+      "content_hash": "840b85019bd6c13f30a5ae7f12284a8d0fba56494fc7e2cf530e16db3892c30f",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T10:07:41.391Z"
+      "persisted_at": "2026-11-25T12:29:48.437Z"
     },
     "learn-github-xinatian-mroffice": {
       "learning_id": "learn-github-xinatian-mroffice",

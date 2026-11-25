@@ -6123,10 +6123,10 @@
     "repository": "dragonflydb/dragonfly",
     "platform": "github",
     "sourceUrl": "https://github.com/dragonflydb/dragonfly",
-    "sourceVersion": "c0b9d750",
+    "sourceVersion": "9f52b997",
     "license": "NOASSERTION",
-    "contentHash": "2a068f8f8239bafb7d2d6b8f2228056c07ad4f370a3f4afdb8d04e5fc4c10698",
-    "lastHarvestedAt": "2026-11-24T17:23:10.546Z",
+    "contentHash": "a2314fc11064c08a76e4f43af95fb79d373d5cc19e599ceb1c36daf361290329",
+    "lastHarvestedAt": "2026-11-25T12:29:09.925Z",
     "learningId": "learn-github-dragonflydb-dragonfly"
   },
   "danielpetho-fancy": {
@@ -11505,8 +11505,8 @@
     "sourceUrl": "https://huggingface.co/Diffuspace/Clover-35B-A3B-Preview",
     "sourceVersion": "hf-diffuspace-clover-35b-a3b-preview",
     "license": "Open-Source",
-    "contentHash": "00889c50410ab03f898ac9c6f99622cf1374aeb94cc6521007abd032ff83d9cb",
-    "lastHarvestedAt": "2026-11-21T21:22:57.686Z",
+    "contentHash": "4b58a83c8cfe87550952bb4cbc0dff4c8411770d469d85a28fc0976aa6625947",
+    "lastHarvestedAt": "2026-11-25T12:28:56.257Z",
     "learningId": "learn-huggingface-diffuspace-clover-35b-a3b-preview"
   },
   "cherryhq-cherry-studio": {

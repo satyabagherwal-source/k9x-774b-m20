@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/Diffuspace/Clover-35B-A3B-Preview",
   "source_version": "hf-diffuspace-clover-35b-a3b-preview",
   "license": "Open-Source",
-  "timestamp": "2026-11-15T19:04:03.295Z",
+  "timestamp": "2026-11-25T12:28:56.525Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-diffuspace-clover-35b-a3b-preview",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [Diffuspace/Clover-35B-A3B-Preview](https://huggingface.co/Diffuspace/Clover-35B-A3B-Preview) (Revision: `hf-diffusp`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-15T19:04:03.295Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T12:28:56.525Z`  
 > **Learning ID**: `learn-huggingface-diffuspace-clover-35b-a3b-preview`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-diffuspace-clover-35b-a3b-preview-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/Diffuspace/Clover-35B-A3B-Preview](https://huggingface.co/Diffuspace/Clover-35B-A3B-Preview))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T19:04:02.603Z  
+> **Harvest Timestamp**: 2026-11-25T12:28:55.577Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 5532 downloads | 273 likes
+- **Stars / Engagement**: 6563 downloads | 282 likes
 
 ---
 

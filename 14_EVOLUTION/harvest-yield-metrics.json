@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T12:19:39.714Z",
-  "total_cycles_completed": 12410,
-  "total_learnings_persisted": 12410,
+  "last_updated": "2026-11-25T12:29:09.932Z",
+  "total_cycles_completed": 12412,
+  "total_learnings_persisted": 12412,
   "total_rules_promoted": 11406,
   "history": [
-    {
-      "timestamp": "2026-11-24T23:58:38.574Z",
-      "repository": "TanStack/router",
-      "learningId": "learn-github-tanstack-router",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T23:58:42.008Z",
-      "repository": "necolas/react-native-web",
-      "learningId": "learn-github-necolas-react-native-web",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-24T23:58:50.035Z",
       "repository": "trufflesecurity/trufflehog",
@@ -1403,6 +1389,20 @@
       "repository": "RediSearch/RediSearch",
       "learningId": "learn-github-redisearch-redisearch",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T12:28:56.264Z",
+      "repository": "Diffuspace/Clover-35B-A3B-Preview",
+      "learningId": "learn-huggingface-diffuspace-clover-35b-a3b-preview",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T12:29:09.932Z",
+      "repository": "dragonflydb/dragonfly",
+      "learningId": "learn-github-dragonflydb-dragonfly",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-15T19:04:44.416Z",
+  "timestamp": "2026-11-25T12:29:13.300Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-hf-diffuspace-clover-35b-a3b-preview-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hf-diffuspace-clover-35b-a3b-preview-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-15T19:04:44.416Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T12:29:13.300Z`  
 > **Learning ID**: `LEARN-EVO-hf-diffuspace-clover-35b-a3b-preview-learnings`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Source Version**: `hf-diffuspac`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-15T19:04:02.738Z  
+> **Timestamp**: 2026-11-25T12:28:55.692Z  
 > **Learning ID**: `learn-huggingface-diffuspace-clover-35b-a3b-preview`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-diffuspace-clover-35b-a3b-preview-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/Diffuspace/Clover-35B-A3B-Preview](https://huggingface.co/Diffuspace/Clover-35B-A3B-Preview))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T19:04:02.603Z  
+> **Harvest Timestamp**: 2026-11-25T12:28:55.577Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 5532 downloads | 273 likes
+- **Stars / Engagement**: 6563 downloads | 282 likes
 
 ---
 

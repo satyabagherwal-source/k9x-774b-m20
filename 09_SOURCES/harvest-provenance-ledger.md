@@ -13105,3 +13105,6 @@ Every entry in this ledger must capture:
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `2942f5eb` | Multi-dimensional audit evidence | 2026-11-25T12:19:38.892Z |
 | `learn-github-redisearch-redisearch` | `https://github.com/RediSearch/RediSearch` | `7a24743f` | Multi-dimensional audit evidence | 2026-11-25T12:19:39.707Z |
 | `learn-dom-h-64682323` | `project://redisearch-redisearch` | `7a24743f` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/redisearch-redisearch-learnings.md` | 2026-11-25T12:20:23.952Z |
+| `learn-huggingface-diffuspace-clover-35b-a3b-preview` | `https://huggingface.co/Diffuspace/Clover-35B-A3B-Preview` | `hf-diffusp` | Multi-dimensional audit evidence | 2026-11-25T12:28:56.257Z |
+| `learn-github-dragonflydb-dragonfly` | `https://github.com/dragonflydb/dragonfly` | `9f52b997` | Multi-dimensional audit evidence | 2026-11-25T12:29:09.925Z |
+| `learn-dom-d-b35deca2` | `project://dragonflydb-dragonfly` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md` | 2026-11-25T12:29:46.995Z |
