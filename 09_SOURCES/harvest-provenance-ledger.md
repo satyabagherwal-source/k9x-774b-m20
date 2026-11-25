@@ -12952,3 +12952,4 @@ Every entry in this ledger must capture:
 | `learn-github-pola-rs-polars` | `https://github.com/pola-rs/polars` | `08b2814c` | Multi-dimensional audit evidence | 2026-11-25T02:56:02.935Z |
 | `learn-github-checkmarx-kics` | `https://github.com/Checkmarx/kics` | `a572efb2` | Multi-dimensional audit evidence | 2026-11-25T02:56:11.357Z |
 | `learn-github-seekstorm-seekstorm` | `https://github.com/SeekStorm/SeekStorm` | `d7fb1b21` | Multi-dimensional audit evidence | 2026-11-25T02:56:14.072Z |
+| `learn-github-apache-arrow` | `https://github.com/apache/arrow` | `fcd7046f` | Multi-dimensional audit evidence | 2026-11-25T03:05:09.250Z |

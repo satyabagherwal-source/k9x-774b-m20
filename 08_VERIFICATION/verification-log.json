@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261123-908F",
-    "timestamp": "2026-11-23T16:53:37.263Z",
-    "repository": "RevenueCat/purchases-ios",
-    "learningId": "learn-github-revenuecat-purchases-ios",
-    "contentHash": "d82c9174f0b3496a7cddbcb940fc271eee393a2b8e581b0f2ff02d28b651968a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261123-920E",
     "timestamp": "2026-11-23T16:53:39.566Z",
     "repository": "linkerd/linkerd2",
@@ -7490,6 +7475,21 @@
     "repository": "SeekStorm/SeekStorm",
     "learningId": "learn-github-seekstorm-seekstorm",
     "contentHash": "b68533ef62bd0c72753ecff297bfd2fa4eee969b101c735ce04516dec1f3ccf7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-JAM5",
+    "timestamp": "2026-11-25T03:05:09.245Z",
+    "repository": "apache/arrow",
+    "learningId": "learn-github-apache-arrow",
+    "contentHash": "7f7e42eb1028cd403cbba7d2342620d45f108849f3349a66539672159df5c8ee",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

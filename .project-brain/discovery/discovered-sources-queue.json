@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-25T02:56:19.741Z",
+  "updated_at": "2026-11-25T03:05:19.719Z",
   "stats": {
-    "total_discovered": 9170,
-    "approved_pending_harvest": 8683,
+    "total_discovered": 9174,
+    "approved_pending_harvest": 8687,
     "harvested_count": 0,
     "rejected_count": 487,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 8678,
+      "COMMUNITY_AND_EXPERT": 8682,
       "OFFICIAL_DOCUMENTATION": 275,
       "STANDARDS_AND_SPECIFICATIONS": 149,
       "ENGINEERING_BLOGS": 7,
@@ -198358,6 +198358,94 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/seekstorm-seekstorm-learnings.md",
         "fileName": "seekstorm-seekstorm-learnings.md"
+      }
+    },
+    "SRC-3D0CB7BF5B0E": {
+      "id": "SRC-3D0CB7BF5B0E",
+      "url": "https://github.com/apache/infrastructure-actions/commit/05004b32a492c4c39567cd8aea55ed9c27388d19",
+      "title": "https://github.com/apache/infrastructure-actions/commit/05004b32a492c4c39567cd8aea55ed9c27388d19",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T03:05:19.374Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-arrow-learnings.md",
+        "fileName": "apache-arrow-learnings.md"
+      }
+    },
+    "SRC-062EB7C0C5E6": {
+      "id": "SRC-062EB7C0C5E6",
+      "url": "https://redirect.github.com/apache/infrastructure-actions/issues/1538",
+      "title": "https://redirect.github.com/apache/infrastructure-actions/issues/1538",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T03:05:19.453Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-arrow-learnings.md",
+        "fileName": "apache-arrow-learnings.md"
+      }
+    },
+    "SRC-1BAC581D18B5": {
+      "id": "SRC-1BAC581D18B5",
+      "url": "https://github.com/apache/infrastructure-actions/compare/762a01f36a09ab9e0e4c8af8f4b0f2ed12683df5...05004b32a492c4c39567cd8aea55ed9c27388d19",
+      "title": "https://github.com/apache/infrastructure-actions/compare/762a01f36a09ab9e0e4c8af8f4b0f2ed12683df5...05004b32a492c4c39567cd8aea55ed9c27388d19",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T03:05:19.531Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-arrow-learnings.md",
+        "fileName": "apache-arrow-learnings.md"
+      }
+    },
+    "SRC-8E888D6E5D2D": {
+      "id": "SRC-8E888D6E5D2D",
+      "url": "https://github.com/microsoft/vcpkg/issues/37968",
+      "title": "https://github.com/microsoft/vcpkg/issues/37968",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T03:05:19.719Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-arrow-learnings.md",
+        "fileName": "apache-arrow-learnings.md"
       }
     }
   }

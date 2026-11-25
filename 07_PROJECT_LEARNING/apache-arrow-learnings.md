@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apache-arrow-learnings.md`  
 > **Source**: github ([https://github.com/apache/arrow](https://github.com/apache/arrow))  
-> **Source Version**: `cb434829`  
+> **Source Version**: `fcd7046f`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T00:39:59.914Z  
+> **Timestamp**: 2026-11-25T03:05:07.890Z  
 > **Learning ID**: `learn-github-apache-arrow`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apache-arrow-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apache/arrow](https://github.com/apache/arrow))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T00:39:59.908Z  
+> **Harvest Timestamp**: 2026-11-25T03:05:07.781Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Apache Arrow is the universal columnar format and multi-language toolbox for fast data interchange and in-memory analytics
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 17338 stars
+- **Stars / Engagement**: 17340 stars
 
 ---
 
@@ -1343,6 +1343,21 @@ ARROW_EXPORT
 Result<std::shared_ptr<Array>> MakeEmptyArray(std::shared_ptr<DataType> type,
                                               MemoryPool* pool = default_memory_pool());
 
+/// \brief Create an array of evenly spaced integer values
+///
+/// Generates a sequence of integers from start (inclusive) to stop (exclusive)
+/// with the given step, similar to Python's range() or NumPy's arange().
+/// The resulting array will have type Int64.
+///
+/// \param[in] start First value in the sequence
+/// \param[in] stop End value (exclusive)
+/// \param[in] step Spacing between values (must not be zero)
+/// \param[in] pool the memory pool to allocate memory from
+/// \return the resulting Int64Array
+ARROW_EXPORT
+Result<std::shared_ptr<Array>> Arange(int64_t start, int64_t stop, int64_t step,
+                                      MemoryPool* pool = default_memory_pool());
+
 /// @}
 
 namespace internal {
@@ -1377,11 +1392,11 @@ std::vector<ArrayVector> RechunkArraysConsistently(const std::vector<ArrayVector
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #55765** (2026-11-25): **MINOR: [CI] Bump the apache-infrastructure-actions-stash group with 2 updates**
+  *Symptoms*: Bumps the apache-infrastructure-actions-stash group with 2 updates: [apache/infrastructure-actions/stash/restore](https://github.com/apache/infrastructure-actions) and [apache/infrastructure-actions/stash/save](https://github.com/apache/infrastructure-actions).  Updates `apache/infrastructure-actions/stash/restore` from 1.0.4 to 1.0.5 <details> <summary>Commits</summary> <ul> <li><a href="https://github.com/apache/infrastructure-actions/commit/05004b32a492c4c39567cd8aea55ed9c27388d19"><code>05004b3</code></a> fork-ci: read up to 100 annotations per failed job (<a href="https://redirect.github.com/apache/infrastructure-actions/issues/1538">#1538</a>)</li> <li>See full diff in <a href="https://github.com/apache/infrastructure-actions/compare/762a01f36a09ab9e0e4c8af8f4b0f2ed12683df5...05004b32a492c4c39567cd8aea55ed9c27388d19">compare view</a></li> </ul> </details> <br />  Updates `apache/infrastructure-actions/stash/save` from 1.0.4 to 1.0.5 <details> <summary>Commits</summary> <ul> <li><a href="https://github.com/apache/infrastructure-actions/commit/05004b32a492c4c39567cd8aea55ed9c27388d19"><code>05004b3</code></a> fork-ci: read up to 100 annotations per failed job (<a href="https://redirect.github.com/apache/infrastructure-actions/issues/1538">#1538</a>)</li> <li>See full diff in <a href="https://github.com/apache/infrastructure-actions/compare/762a01f36a09ab9e0e4c8af8f4b0f2ed12683df5...05004b32a492c4c39567cd8aea55ed9c27388d19">compare view</a></li> </ul> </details> <br />   D
+
 - **Issue #55745** (2026-11-23): **[FlightRPC][C++][CI] ODBC macOS jobs failure caused by bundled Boost 1.92.0 Locale with CMake 4.5.0**
   *Symptoms*: ### Describe the bug, including details regarding any error messages, version, and platform.  Seeing ODBC macOS failures relating to boost since Nov 21st. The issue is due to bundled boost locale 1.92.0 incompatibility with CMake 4.5.0. Boost upstream has fixed this issue in https://github.com/boostorg/boost/issues/1162, expected in a later Boost release.   AC: Resolve CI failures  Example failure: https://github.com/apache/arrow/actions/runs/45088349844/job/137412030347 ```   -- Boost: Performing Test Iconv_IS_BUILT_IN   -- Boost: Performing Test Iconv_IS_BUILT_IN - Failed   -- Boost: Found Iconv: /Applications/Xcode_26.6.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/lib/libiconv.tbd   CMake Error at /Users/runner/work/arrow/arrow/build/cpp/_deps/boost-src/libs/locale/CMakeLists.txt:236 (source_group):     source_group     "/Users/runner/work/arrow/arrow/build/cpp/_deps/boost-src/libs/locale/include/boost/locale"     is not a prefix of file     "/Users/runner/work/arrow/arrow/build/cpp/_deps/boost-src/libs/locale/include/boost/locale.hpp"         -- Configuring incomplete, errors occurred!   Error: Process completed with exit code 1. ```  ### Component(s)  C++, FlightRPC
-
-- **Issue #55733** (2026-11-23): **[C++][Compute][Parquet] Avoid redundant metadata copies- #55647**
-  *Symptoms*: ### Describe the enhancement requested  See https://github.com/apache/arrow/pull/55647  ``` I opened a small cleanup PR yesterday while getting familiar with the Arrow codebase. While continuing to read through the code, I noticed that some of the same patterns addressed in that PR were also present in other related code paths.  The earlier PR fixed these patterns in one place, but similar cases remained elsewhere. This PR applies the same small improvements to those remaining occurrences.  I also found that the Parquet metadata builder copied the complete row-group metadata vector when finalizing file metadata. Since the builder is finalizing its state at that point, the row-group metadata can be moved into the final Thrift structure instead. This avoids an unnecessary allocation and copy, particularly for files with many row groups. ```   ### Component(s)  C++, Parquet
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1398,402 +1413,74 @@ std::vector<ArrayVector> RechunkArraysConsistently(const std::vector<ArrayVector
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cb434829` (2026-11-23)
-**Commit Message**: GH-55399: [C++][Parquet] Minor optimize level counting with CountLevels (#55408)
+### Incident Patch 1: `4d9a573d` (2026-11-24)
+**Commit Message**: GH-55737: [CI] Use newer CMake for macOS wheels that meets minimum requirements (#55739)
 
 ### Rationale for this change
 
-`std::count` over `int16_t` levels widens every comparison result to a 64-bit accumulator, preventing efficient 16-bit lane vectorization. Accumulating in `uint16_t` chunks keeps the reduction in 16-bit lanes without overflowing:
-
-1. x86: https://godbolt.org/z/Gqc7fxe55
-2. ARM: https://godbolt.org/z/sGhG8crYa
-3. Fast-path vs out-of-line chunked fallback (`-O2` x86 AVX2 & ARM NEON): https://godbolt.org/z/rvobWjrfa
-
-Before x86:
-
-```
-vmovq      (%rdi,%rax,2), %xmm6      # Load 8 bytes = 4 levels
-vpcmpeqw   %xmm1, %xmm6, %xmm6
-vpmovzxwq  %xmm6, %ymm6              # 8×16 bits -> 4×64 bits, only 4 lanes
-vpand      %ymm2, %ymm6, %ymm6       # & 1
-vpaddq     %ymm6, %ymm0, %ymm0       # 64-bit adds
-```
-
-After x86:
-
-```
-vpcmpeqw   (%rdi,%r8,2), %ymm1, %ymm5   # compare 16 levels
-vpsubw     %ymm5, %ymm0, %ymm0          # add 16 lanes
-```
-
-Before ARM:
-
-```
-ldp q18,q19,[x8,#-16]      ; 2 cmeq 16 bits mask
-cmeq v18.8h, v18.8h, v16.8h
-cmeq v19.8h, v19.8h, v16.8h
-ushll2 v20.4s, v18.8h, #0  ; 16->32 bits
-ushll  v18.4s, v18.4h, #0
-...
-and    v22.16b, v22.16b, v17.16b
-add    v4.2d, v4.2d, 
-
-**File**: `cpp/src/parquet/column_reader.cc` (modified, +10/-10)
-```diff
-@@ -47,6 +47,7 @@
- #include "parquet/encryption/encryption_internal.h"
- #include "parquet/encryption/internal_file_decryptor.h"
- #include "parquet/exception.h"
-+#include "parquet/level_comparison_internal.h"
- #include "parquet/level_conversion.h"
- #include "parquet/level_decoder_internal.h"
- #include "parquet/properties.h"
-@@ -1566,7 +1567,7 @@ class TypedColumnReaderImpl
-       // cache-efficiency if fused with the level decoding.
-       ARROW_DCHECK_LE(*num_def_levels, std::numeric_limits<int32_t>::max());
-       *non_null_values_to_read += static_cast<int32_t>(
--          std::count(def_levels, def_levels + *num_def_levels, this->max_def_level()));
-+          internal::CountLevels(def_levels, *num_def_levels, this->max_def_level()));
-     } else {
-       // Required field, read all values
-       if (num_def_levels != nullptr) {
-@@ -1981,8 +1982,8 @@ int64_t TypedRecordReader<DT, VS>::SkipRecordsInBufferNonRepeated(int64_t num_re
-   // we do not have a buffer, so we need to read them and throw them away.
-   // First we need to figure out how many present/not-null values there are.
-   const auto values_to_read = static_cast<int32_t>(
--      std::count(def_levels() + levels_position_, def_levels() + remaining_levels_pos,
--                 this->max_def_level()));
-+      CountLevels(def_levels() + levels_position_,
-+                  remaining_levels_pos - levels_position_, this->max_def_level()));
- 
-   // Now that we have figured out number of values to read, we do not need
-   // these levels anymore. We will remove these values from the buffer.
-@@ -2147,9 +2148,7 @@ int64_t TypedRecordReader<DT, VS>::DelimitRecords(int64_t num_records,
-     const int64_t stride =
-         std::min(levels_written() - levels_position_, num_records - records_read);
-     const int64_t position_end = levels_position_ + stride;
--    for (int64_t i = levels_position_; i < position_end; ++i) {
--      records_read += rep_levels[i] == 0;
--    }
-+    records_read += CountLevels(rep_levels + levels_position_, stride, 0);
-     levels_position_ = position_end;
-     if (records_read == num_records) {
-       // Check last rep_level reaches the boundary and
-@@ -2163,8 +2162,8 @@ int64_t TypedRecordReader<DT, VS>::DelimitRecords(int64_t num_records,
-     }
-   }
-   // Scan definition levels to find number of physical values
--  *values_seen = std::count(def_levels + level, def_levels + levels_position_,
--                            this->max_def_level());
-+  *values_seen =
-+      CountLevels(def_levels + level, levels_position_ - level, this->max_def_level());
-   return records_read;
- }
- 
-@@ -2253,8 +2252,9 @@ void TypedRecordReader<DT, VS>::ReadDenseForOptionalInBuffer(
- 
-   // When reading dense we need to figure out number of values to read.
-   const int16_t* def_levels = this->def_levels();
--  *values_to_read += std::count(def_levels + start_levels_position,
--                                def_levels + levels_position_, this->max_def_level());
-+  *values_to_read +=
-+      CountLevels(def_levels + start_levels_position,
-+                  levels_position_ - start_levels_position, this->max_def_level());
-   // This is only reading in the current page so this fits in an int32.
-   value_sink_.ReadValuesDense(*this->current_decoder_.get(),
-                               clamp_to<int32_t>(*values_to_read));
-```
-
-**File**: `cpp/src/parquet/column_writer.cc` (modified, +13/-22)
-```diff
-@@ -55,6 +55,7 @@
- #include "parquet/encoding.h"
- #include "parquet/encryption/encryption_internal.h"
- #include "parquet/encryption/internal_file_encryptor.h"
-+#include "parquet/level_comparison_internal.h"
- #include "parquet/level_conversion.h"
- #include "parquet/metadata.h"
- #include "parquet/page_index.h"
-@@ -1698,11 +1699,8 @@ class TypedColumnWriterImpl : public ColumnWriterImpl,
-     int64_t values_to_write = 0;
-     // If the field is required and non-repeated, there are no definition levels
-     if (descr_->max_definition_level() > 0) {
--      for (int64_t i = 0; i < num_levels; ++i) {
--        if (def_levels[i] == descr_->max_definition_level()) {
--          ++values_to_write;
--        }
--      }
-+      values_to_write =
-+          internal::CountLevels(def_levels, num_levels, descr_->max_definition_level());
- 
-       WriteDefinitionLevels(num_levels, def_levels);
-     } else {
-@@ -1714,12 +1712,9 @@ class TypedColumnWriterImpl : public ColumnWriterImpl,
-     if (descr_->max_repetition_level() > 0) {
-       // A row could include more than one value
-       // Count the occasions where we start a new row
--      for (int64_t i = 0; i < num_levels; ++i) {
--        if (rep_levels[i] == 0) {
--          rows_written_++;
--          num_buffered_rows_++;
--        }
--      }
-+      const int64_t records_written = internal::CountLevels(rep_levels, num_levels, 0);
-+      rows_written_ += records_written;
-+      num_buffered_rows_ += records_written;
- 
-       WriteRepetitionLevels(num_levels, rep_levels);
-     } else {
-@@ -1749,11 +1744,10 @@ class TypedColumnWriterImpl : public ColumnWriterImpl,
-         *out_spaced_values_to_write = batch_size;
-         *null_count = 0;
-       } else {
--        for (int x = 0; x < batch_size; x++) {
--          *out_values_to_write += def_levels[x] == level_info_.def_level ? 1 : 0;
--          *out_spaced_values_to_write +=
--              def_levels[x] >= level_info_.repeated_ancestor_def_level ? 1 : 0;
--        }
-+        *out_values_to_write +=
-+            internal::CountLevels(def_levels, batch_size, level_info_.def_level);
-+        *out_spaced_values_to_write += internal::CountLevelsGreaterEqual(
-+            def_levels, batch_size, level_info_.repeated_ancestor_def_level);
-         *null_count = batch_size - *out_values_to_write;
-       }
-       return;
-@@ -1809,12 +1803,9 @@ class TypedColumnWriterImpl : public ColumnWriterImpl,
-     if (descr_->max_repetition_level() > 0) {
-       // A row could include more than one value
-       // Count the occasions where we start a new row
--      for (int64_t i = 0; i < num_levels; ++i) {
--        if (rep_levels[i] == 0) {
--          rows_written_++;
--          num_buffered_rows_++;
--        }
--      }
-+      const int64_t records_written = internal::CountLevels(rep_levels, num_levels, 0);
-+      rows_written_ += records_written;
-+      num_buffered_rows_ += records_written;
-       WriteRepetitionLevels(num_levels, rep_levels);
-     } else {
-       // Each value is exactly one row
-```
-
-**File**: `cpp/src/parquet/file_reader.cc` (modified, +2/-5)
-```diff
-@@ -44,6 +44,7 @@
- #include "parquet/encryption/internal_file_decryptor.h"
- #include "parquet/exception.h"
- #include "parquet/file_writer.h"
-+#include "parquet/level_comparison_internal.h"
- #include "parquet/metadata.h"
- #include "parquet/page_index.h"
- #include "parquet/platform.h"
-@@ -980,11 +981,7 @@ int64_t ScanFileContents(std::vector<int> columns, const int32_t column_batch_si
-             ScanAllValues(column_batch_size, def_levels.data(), rep_levels.data(),
-                           values.data(), &values_read, col_reader.get());
-         if (col_reader->descr()->max_repetition_level() > 0) {
--          for (size_t i = 0; i < static_cast<size_t>(levels_read); i++) {
--            if (rep_levels[i] == 0) {
--              total_rows[col]++;
--            }
--          }
-+          total_rows[col] += internal::CountLevels(rep_levels.data(), levels_read, 0);
-         } else {
-           total_rows[col] += levels_read;
-         }
-```
-
-**File**: `cpp/src/parquet/level_comparison_internal.h` (modified, +53/-0)
-```diff
-@@ -18,6 +18,8 @@
- 
- #include <algorithm>
- #include <cstdint>
-+#include <limits>
-+#include <utility>
- 
- #include "parquet/platform.h"
- 
-@@ -35,4 +37,55 @@ struct MinMax {
- 
- MinMax PARQUET_EXPORT FindMinMax(const int16_t* levels, int64_t num_levels);
- 
-+// Fallback for num_levels > uint16_t::max(), counting in chunks to avoid overflow.
-+template <typename Predicate>
-+ARROW_NOINLINE int64_t CountLevelsIfChunked(const int16_t* levels, int64_t num_levels,
-+                                            Predicate&& pred) {
-+  constexpr int64_t kMaxChunkSize = std::numeric_limits<uint16_t>::max();
-+  int64_t total = 0;
-+  while (num_levels > 0) {
-+    const int64_t chunk_size = std::min(num_levels, kMaxChunkSize);
-+    uint16_t chunk_count = 0;
-+    for (int64_t i = 0; i < chunk_size; ++i) {
-+      chunk_count += pred(levels[i]) ? 1 : 0;
-+    }
-+    total += chunk_count;
-+    levels += chunk_size;
-+    num_levels -= chunk_size;
-+  }
-+  return total;
-+}
-+
-+/// \brief Count the levels that satisfy `pred`.
-+///
-+/// Accumulates matches in a `uint16_t` so the compiler can vectorize the loop
-+/// using 16-bit lanes without widening each comparison result to 64 bits.
-+/// Inputs longer than `uint16_t::max()` are counted in chunks to avoid overflow.
-+template <typename Predicate>
-+inline int64_t CountLevelsIf(const int16_t* levels, int64_t num_levels,
-+                             Predicate&& pred) {
-+  constexpr int64_t kMaxChunkSize = std::numeric_limits<uint16_t>::max();
-+  if (num_levels > kMaxChunkSize) {
-+    return CountLevelsIfChunked(levels, num_levels, std::forward<Predicate>(pred));
-+  }
-+  uint16_t count = 0;
-+  for (int64_t i = 0; i < num_levels; ++i) {
-+    count += pred(levels[i]) ? 1 : 0;
-+  }
-+  return count;
-+}
-+
-+/// \brief Count the levels equal to `value`.
-+inline int64_t CountLevels(const int16_t* levels, int64_t num_levels, int16_t value) {
-+  return CountLevelsIf(levels, num_levels,
-+                       [value](int16_t level) { return level == value; });
-+}
-+
-+/// \brief Count the levels greater than or equal to `min_level`.
-+inline int64_t CountLevelsGreaterEqual(const int16_t* levels, int64_t num_levels,
-+                                       int16_t min_level) {
-+  return CountLevelsIf(levels, num_levels,
-+                       [min_level](int16_t level) { return level >= min_level; });
-+}
-+
- }  // namespace parquet::internal
-```
-
-**File**: `cpp/src/parquet/level_conversion_test.cc` (modified, +29/-0)
-```diff
-@@ -23,6 +23,7 @@
- #include <gmock/gmock.h>
- #include <gtest/gtest.h>
- 
-+#include <limits>
- #include <string>
- #include <vector>
- 
-@@ -113,6 +114,34 @@ TEST(GreaterThanBitmap, GeneratesExpectedBitmasks) {
- }
- #endif
- 
-+TEST(CountLevels, CountsMatchingLevels) {
-+  const std::vector<int16_t> levels = {3, 1, 3, 0, 3, 2};
-+  auto is_odd = [](int16_t level) { return level % 2 != 0; };
-+
-+  EXPECT_EQ(CountLevels(levels.data(), /*num_levels=*/0, 3), 0);
-+  EXPECT_EQ(CountLevels(levels.data(), /*num_levels=*/6, 3), 3);
-+  EXPECT_EQ(CountLevels(levels.data(), /*num_levels=*/6, 0), 1);
-+  EXPECT_EQ(CountLevelsGreaterEqual(levels.data(), /*num_levels=*/6, 1), 5);
-+  EXPECT_EQ(CountLevelsGreaterEqual(levels.data(), /*num_levels=*/6, 3), 3);
-+  EXPECT_EQ(CountLevelsIf(levels.data(), /*num_levels=*/6, is_odd), 4);
-+  EXPECT_EQ(CountLevelsIf(levels.data(), /*num_levels=*/6, [](int16_t) { return false; }),
-+            0);
-+}
-+
-+TEST(CountLevels, HandlesChunkBoundaries) {
-+  // Verify 16-bit accumulator does not overflow and chunk boundaries are exact.
-+  constexpr int64_t kChunkSize = std::numeric_limits<uint16_t>::max();
-+  std::vector<int16_t> levels(/*count=*/5 * kChunkSize, 1);
-+  auto is_one = [](int16_t level) { return level == 1; };
-+  const std::vector<int64_t> num_levels = {kChunkSize - 1, kChunkSize, kChunkSize + 1,
-+                                           3 * kChunkSize, 5 * kChunkSize};
-+  for (const int64_t n : num_levels) {
-+    EXPECT_EQ(CountLevels(levels.data(), n, 1), n) << "num_levels: " << n;
-+    EXPECT_EQ(CountLevelsGreaterEqual(levels.data(), n, 1), n) << "num_levels: " << n;
-+    EXPECT_EQ(CountLevelsIf(levels.data(), n, is_one), n) << "num_levels: " << n;
-+  }
-+}
-+
- TEST(DefLevelsToBitmap, WithRepetitionLevelFiltersOutEmptyListValues) {
-   std::vector<uint8_t> validity_bitmap(/*count*/ 8, 0);
- 
-```
-
----
-
-### Incident Patch 2: `3f84b022` (2026-11-23)
-**Commit Message**: GH-55458: [Python] Mark NumPy-dependent tests (#55483)
-
-### Rationale for this change
-
-Four tests use NumPy but are missing `pytest.mark.numpy`. Without that marker, the no-NumPy job does not exercise them and the tests can fail with an AttributeError when an off-by-default group runs without NumPy.
+Boost-devel seems to fail with CMake 4.5.0 which is the one installed on the GitHub runner. Bump minimum one manually installed to a newer one so it meets cmake_minimum_required.
 
 ### What changes are included in this PR?
 
-Add `pytest.mark.numpy` to the three large-memory conversion tests and the CUDA-backed `test_non_cpu_array` test named in #55458.
+Bump installed CMake for OSX wheels.
 
 ### Are these changes tested?
 
-- `python -m py_compile python/pyarrow/tests/test_convert_builtin.py python/pyarrow/tests/test_array.py` passed.
-- An AST check confirmed all four target functions have the NumPy marker.
-- `git diff --check` passed.
-- The focused pytest commands could not collect because this shallow source checkout does not contain the generated `pyarrow.lib` extension. No pytest result is claimed.
+Via archery
 
 ### Are there any user-facing changes?
 
-No. This only corrects test selection for environments without NumPy.
+No
 
 ### Was AI used for this PR?
 
-In accordance to the [AI generation guidelines](https://arrow.apache.org/docs/dev/developers/overview.html#ai-generated-code), please disclose below whether and how 
+In accordance to the [AI generation guidelines](https://arrow.apache.org/docs/dev/developers/overview.html#ai-generated-code), please disclose below whether and how AI was used in this PR.
 
-**File**: `python/pyarrow/tests/test_array.py` (modified, +1/-0)
-```diff
-@@ -4574,6 +4574,7 @@ def test_swapped_byte_order_fails(numpy_native_dtype):
-         pa.StructArray.from_arrays([np_arr], names=['a'])
- 
- 
-+@pytest.mark.numpy
- def test_non_cpu_array():
-     cuda = pytest.importorskip("pyarrow.cuda", exc_type=ImportError)
-     ctx = cuda.Context(0)
-```
+**PR code and description written by:**
 
-**File**: `python/pyarrow/tests/test_convert_builtin.py` (modified, +3/-0)
+- [x] Human
+- [x] AI
+
+**Reviewed before submission by:**
+
+- [x] Human
+- [ ] AI
+- [ ] Not reviewed
+
+* GitHub Issue: #55737
+
+Authored-by: Raúl Cumplido <[REDACTED_EMAIL]>
+Signed-off-by: Raúl Cumplido <[REDACTED_EMAIL]>
+
+**File**: `dev/tasks/python-wheels/github.osx.yml` (modified, +5/-4)
 ```diff
-@@ -2384,6 +2384,7 @@ def test_auto_chunking_list_of_binary():
-     assert arr.chunk(1).to_pylist() == [['x' * 1024]] * 2
+@@ -57,12 +57,13 @@ jobs:
+         run: |
+           brew list
  
+-      # CMake 3.29.1 that is pre-installed on the macOS image has a problem.
+-      # See also: https://github.com/microsoft/vcpkg/issues/37968
+-      - name: Install CMake 3.29.0
++      # vcpkg uses the first CMake on PATH that meets its minimum version.
++      # Pin it so Homebrew's CMake (4.5.0 fails to configure boost-locale 1.92)
++      # isn't picked up. See GH-55737.
++      - name: Install CMake 4.4.5
+         shell: bash
+         run: |
+-          arrow/ci/scripts/install_cmake.sh 3.29.0 ${PWD}/local
++          arrow/ci/scripts/install_cmake.sh 4.4.5 ${PWD}/local
+           echo "${PWD}/local/bin" >> $GITHUB_PATH
  
-+@pytest.mark.numpy
- @pytest.mark.large_memory
- def test_auto_chunking_list_like():
-     item = np.ones((2**28,), dtype='uint8')
-@@ -2452,6 +2453,7 @@ def test_nested_auto_chunking(ty, char):
-     }
- 
- 
-+@pytest.mark.numpy
- @pytest.mark.large_memory
- def test_array_from_pylist_data_overflow():
-     # Regression test for ARROW-12983
-@@ -2474,6 +2476,7 @@ def test_array_from_pylist_data_overflow():
-     assert len(arr.chunks) > 1
- 
- 
-+@pytest.mark.numpy
- @pytest.mark.slow
- @pytest.mark.large_memory
- def test_array_from_pylist_offset_overflow():
+       - name: Retrieve VCPKG version from arrow/.env
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #55765** (2026-11-25): MINOR: [CI] Bump the apache-infrastructure-actions-stash group with 2 updates (@dependabot[bot])
+- **PR #55744** (2026-11-24): GH-12681: [C++] Work around FP rounding issues in quantile tests (@pitrou)
+- **PR #55740** (2026-11-24): MINOR: [Dev] Allow andishgar to have more than 3 PRs open (@pitrou)
+- **PR #55739** (2026-11-24): GH-55737: [CI] Use newer CMake for macOS wheels that meets minimum requirements (@raulcd)
+- **PR #55736** (2026-11-25): GH-52357: [CI] Disable automatic GitHub Copilot reviews (@jonkeane)
 - **PR #55725** (closed): GH-33745: [C++][Docs] Document field name support for struct_field kernel (@sameer727)
-- **PR #55724** (closed): GH-50119: Add license header to C data interface definitions (@aditya07-ui)
-- **PR #55722** (2026-11-22): MINOR: [Docs] Fix spelling in documentation and comments (@Sumdiboii)
-- **PR #55716** (2026-11-22): GH-55715: [C++][Parquet] Release pre-buffered data in ParquetFileReader::Close() (@kou)
-- **PR #55709** (closed): GH-55708: [C++] Resolve ALP multipliers once per vector for aarch64 (@mapleFU)
-- **PR #55706** (2026-11-21): GH-55705: [C++] Bump simdjson to v5.2.0 (@Reranko05)
 
 ---
 
@@ -1813,46 +1500,35 @@ In accordance to the [AI generation guidelines](https://arrow.apache.org/docs/de
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. GH-55399: [C++][Parquet] Minor optimize level counting with CountLevels
+## X. GH-55737: [CI] Use newer CMake for macOS wheels that meets minimum requirements
 
 **RULE**:
-When implementing operations in `cpp/src/parquet/column_reader.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/arrow. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `dev/tasks/python-wheels/github.osx.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/arrow. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `cb434829`: GH-55399: [C++][Parquet] Minor optimize level counting with CountLevels. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4d9a573d`: GH-55737: [CI] Use newer CMake for macOS wheels that meets minimum requirements. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `cpp/src/parquet/column_reader.cc`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `dev/tasks/python-wheels/github.osx.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-#include "parquet/level_comparison_internal.h"
-          internal::CountLevels(def_levels, *num_def_levels, this->max_def_level()));
-      CountLevels(def_levels() + levels_position_,
-                  remaining_levels_pos - levels_position_, this->max_def_level()));
-    records_read += CountLevels(rep_levels + levels_position_, stride, 0);
-  *values_seen =
-      CountLevels(def_levels + level, levels_position_ - level, this->max_def_level());
-  *values_to_read +=
-      CountLevels(def_levels + start_levels_position,
-                  levels_position_ - start_levels_position, this->max_def_level());
+      # vcpkg uses the first CMake on PATH that meets its minimum version.
+      # Pin it so Homebrew's CMake (4.5.0 fails to configure boost-locale 1.92)
+      # isn't picked up. See GH-55737.
+      - name: Install CMake 4.4.5
+          arrow/ci/scripts/install_cmake.sh 4.4.5 ${PWD}/local
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-          std::count(def_levels, def_levels + *num_def_levels, this->max_def_level()));
-      std::count(def_levels() + levels_position_, def_levels() + remaining_levels_pos,
-                 this->max_def_level()));
-    for (int64_t i = levels_position_; i < position_end; ++i) {
-      records_read += rep_levels[i] == 0;
-    }
-  *values_seen = std::count(def_levels + level, def_levels + levels_position_,
-                            this->max_def_level());
-  *values_to_read += std::count(def_levels + start_levels_position,
-                                def_levels + levels_position_, this->max_def_level());
+      # CMake 3.29.1 that is pre-installed on the macOS image has a problem.
+      # See also: https://github.com/microsoft/vcpkg/issues/37968
+      - name: Install CMake 3.29.0
+          arrow/ci/scripts/install_cmake.sh 3.29.0 ${PWD}/local
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cb434829` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4d9a573d` are properly handled with clean fallback behavior.

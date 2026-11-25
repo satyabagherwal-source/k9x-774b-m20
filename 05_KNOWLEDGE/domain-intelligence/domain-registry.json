@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T02:56:20.181Z",
+  "last_updated": "2026-11-25T03:05:22.892Z",
   "total_records": 2630,
   "domains": {
     "A": {
@@ -8400,8 +8400,8 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-learnings-technical-construction-intelligence-zvec-ai-zvec-gre.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "ecc933e1bd4c20b68cc51dbbacc1069c5062cb81415594ea319dff48c98f72b5",
-      "created_at": "2026-11-25T02:47:56.303Z"
+      "content_hash": "9b11e94c34bd39aada2bbe4428988b1a4fd9cb22d3c5f364cfe383e04630f7d0",
+      "created_at": "2026-11-25T03:05:22.892Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -8445,8 +8445,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "6d9f1ca4eb9515918acf2caaec305e1aa453250ce22c0ca40c3892cc5d5c89cf",
-      "created_at": "2026-11-25T02:39:22.456Z"
+      "content_hash": "13c989c18d9ee55a445fc3166d592bf4ea50812ffcb4083be41e9d689746214f",
+      "created_at": "2026-11-25T03:05:21.546Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -17608,8 +17608,8 @@
       "title": "Content & Information Intelligence: apache/arrow Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-apache-arrow-content-information-intelligence-apache-arrow-core-invariants.md",
       "repository": "apache/arrow",
-      "content_hash": "6d41880b411d21a408e511b2a468bb01573d6e2435d8db0cae7d17e9daf9ce34",
-      "created_at": "2026-11-24T00:40:01.384Z"
+      "content_hash": "30936ba74ed0f489be0070c8e2d9230aed12bc7c250533f669dc4ac55284d81a",
+      "created_at": "2026-11-25T03:05:09.802Z"
     },
     "domain_intelligence-architecture-intelligence-greptimeteam-greptimedb-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-greptimeteam-greptimedb-core-invariants",
@@ -17626,8 +17626,8 @@
       "title": "Content & Information Intelligence: apache-arrow-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-apache-arrow-learnings-content-information-intelligence-apache-arrow-learnings-c.md",
       "repository": "apache-arrow-learnings",
-      "content_hash": "fa9f4641c0fc842a54266ef40f9d55b1de47a12f8f7a75e416a712b0a834201e",
-      "created_at": "2026-11-24T00:40:20.510Z"
+      "content_hash": "0ebb97459e2aff361cedaf7f375fb3739c29ed03358ce8858793cdaa08904e91",
+      "created_at": "2026-11-25T03:05:20.304Z"
     },
     "DOM-D-A21D48E1": {
       "record_id": "DOM-D-A21D48E1",

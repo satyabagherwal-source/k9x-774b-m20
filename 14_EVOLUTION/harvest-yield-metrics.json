@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T02:56:14.078Z",
-  "total_cycles_completed": 12269,
-  "total_learnings_persisted": 12269,
-  "total_rules_promoted": 11314,
+  "last_updated": "2026-11-25T03:05:09.257Z",
+  "total_cycles_completed": 12270,
+  "total_learnings_persisted": 12270,
+  "total_rules_promoted": 11315,
   "history": [
-    {
-      "timestamp": "2026-11-24T14:33:22.807Z",
-      "repository": "keybase/client",
-      "learningId": "learn-github-keybase-client",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-24T14:33:27.367Z",
       "repository": "zama-ai/tfhe-rs",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-25T02:56:14.078Z",
       "repository": "SeekStorm/SeekStorm",
       "learningId": "learn-github-seekstorm-seekstorm",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T03:05:09.257Z",
+      "repository": "apache/arrow",
+      "learningId": "learn-github-apache-arrow",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
