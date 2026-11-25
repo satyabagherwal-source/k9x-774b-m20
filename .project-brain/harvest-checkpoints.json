@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-25T02:20:27.538Z",
+  "last_updated": "2026-11-25T02:29:02.187Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "000ce08600c8818a9a7c91302d8c4be217f34001b978e154d813427994d85261",
-      "verified_at": "2026-11-25T00:43:42.701Z",
+      "content_hash": "9f39ed506619545bb0e86acb447d2be28ebc422544804831d0aa5de4ffe6cf41",
+      "verified_at": "2026-11-25T02:29:02.187Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T00:43:42.701Z"
+      "last_updated": "2026-11-25T02:29:02.187Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -4416,14 +4416,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-freenet-freenet-core",
-      "content_hash": "22499c457cdb9dac5b72b788fab55dfadcca1542a76d84eb2a2b0ffcdf010eec",
-      "verified_at": "2026-11-24T22:16:00.719Z",
+      "content_hash": "8102926d168534cbeb3f21ce293009b3cc6dc3959c1e031b51c310b19af7bcca",
+      "verified_at": "2026-11-25T02:28:57.071Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T22:16:00.719Z"
+      "last_updated": "2026-11-25T02:28:57.071Z"
     },
     "vearch/vearch": {
       "repository": "vearch/vearch",
@@ -4881,14 +4881,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-matrixorigin-matrixone",
-      "content_hash": "ba4faf96015e632c3b360ed1c8c07370317a1b47e0cf1707abefba3f0e16fa82",
-      "verified_at": "2026-11-24T06:55:18.868Z",
+      "content_hash": "dae30617af92e1d6776f377ca55c714ece1a6c69807d203a37154d20af577870",
+      "verified_at": "2026-11-25T02:29:00.658Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T06:55:18.868Z"
+      "last_updated": "2026-11-25T02:29:00.658Z"
     },
     "fallow-rs/fallow": {
       "repository": "fallow-rs/fallow",
@@ -11526,14 +11526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-msasikanth-twine",
-      "content_hash": "cd707b53e4ae23530f9bf0b837ad8806a7b5c586307947914b487924933396f6",
-      "verified_at": "2026-11-18T08:51:35.976Z",
+      "content_hash": "030de6565f285c4cf69f43b9bf21782e0baa6f445f92dc1b5be6e1e6825df86f",
+      "verified_at": "2026-11-25T02:28:51.644Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T08:51:35.976Z"
+      "last_updated": "2026-11-25T02:28:51.644Z"
     },
     "facebook/folly": {
       "repository": "facebook/folly",
@@ -20249,6 +20249,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-24T23:24:39.865Z"
+    },
+    "MemTensor/MemT-1.0-Pro": {
+      "repository": "MemTensor/MemT-1.0-Pro",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-memtensor-memt-1-0-pro",
+      "content_hash": "414d41e2e8dcfd77f638ef8243fa2b87ed3323b6e8c9b22d4577d963e42dcfa1",
+      "verified_at": "2026-11-25T02:28:41.827Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-25T02:28:41.827Z"
     }
   },
   "repos": {

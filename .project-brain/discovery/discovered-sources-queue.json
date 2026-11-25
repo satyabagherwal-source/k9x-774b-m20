@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-25T02:20:34.639Z",
+  "updated_at": "2026-11-25T02:30:10.531Z",
   "stats": {
-    "total_discovered": 9151,
-    "approved_pending_harvest": 8667,
+    "total_discovered": 9159,
+    "approved_pending_harvest": 8675,
     "harvested_count": 0,
     "rejected_count": 484,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 8659,
+      "COMMUNITY_AND_EXPERT": 8667,
       "OFFICIAL_DOCUMENTATION": 275,
       "STANDARDS_AND_SPECIFICATIONS": 149,
       "ENGINEERING_BLOGS": 7,
@@ -197961,6 +197961,182 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
         "fileName": "provablehq-snarkos-learnings.md"
+      }
+    },
+    "SRC-A1297EE424CD": {
+      "id": "SRC-A1297EE424CD",
+      "url": "https://huggingface.co/MemTensor/MemT-1.0-Pro",
+      "title": "https://huggingface.co/MemTensor/MemT-1.0-Pro",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T02:29:34.400Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-memtensor-memt-1.0-pro-learnings.md",
+        "fileName": "hf-memtensor-memt-1.0-pro-learnings.md"
+      }
+    },
+    "SRC-9538BCD84871": {
+      "id": "SRC-9538BCD84871",
+      "url": "https://grapheneos.org/releases.atom%60",
+      "title": "https://grapheneos.org/releases.atom%60",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T02:29:35.011Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/msasikanth-twine-learnings.md",
+        "fileName": "msasikanth-twine-learnings.md"
+      }
+    },
+    "SRC-E8E47CC7130B": {
+      "id": "SRC-E8E47CC7130B",
+      "url": "https://grapheneos.org/releases%60",
+      "title": "https://grapheneos.org/releases%60",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T02:29:35.080Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/msasikanth-twine-learnings.md",
+        "fileName": "msasikanth-twine-learnings.md"
+      }
+    },
+    "SRC-A1A24DC227B2": {
+      "id": "SRC-A1A24DC227B2",
+      "url": "https://github.com/user-attachments/assets/434dd39e-778d-4a23-ab72-19f44b1a47f0",
+      "title": "https://github.com/user-attachments/assets/434dd39e-778d-4a23-ab72-19f44b1a47f0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T02:29:35.175Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/msasikanth-twine-learnings.md",
+        "fileName": "msasikanth-twine-learnings.md"
+      }
+    },
+    "SRC-048CF7FE0C03": {
+      "id": "SRC-048CF7FE0C03",
+      "url": "https://github.com/user-attachments/assets/f7b506a4-1280-48f6-9815-a5031f07465c",
+      "title": "https://github.com/user-attachments/assets/f7b506a4-1280-48f6-9815-a5031f07465c",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T02:29:35.234Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/msasikanth-twine-learnings.md",
+        "fileName": "msasikanth-twine-learnings.md"
+      }
+    },
+    "SRC-53DC84EAAA00": {
+      "id": "SRC-53DC84EAAA00",
+      "url": "https://raw.githubusercontent.com/Olshansk/rss-feeds/main/feeds/feed_anthropic_research.xml%60",
+      "title": "https://raw.githubusercontent.com/Olshansk/rss-feeds/main/feeds/feed_anthropic_research.xml%60",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T02:29:35.304Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/msasikanth-twine-learnings.md",
+        "fileName": "msasikanth-twine-learnings.md"
+      }
+    },
+    "SRC-DCDA89F14BC1": {
+      "id": "SRC-DCDA89F14BC1",
+      "url": "https://github.com/user-attachments/assets/02574d6d-9517-4d6f-a730-9a644e0dafcd",
+      "title": "https://github.com/user-attachments/assets/02574d6d-9517-4d6f-a730-9a644e0dafcd",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T02:29:35.378Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/msasikanth-twine-learnings.md",
+        "fileName": "msasikanth-twine-learnings.md"
+      }
+    },
+    "SRC-B2BDDB634C87": {
+      "id": "SRC-B2BDDB634C87",
+      "url": "https://github.com/freenet/freenet-core/pull/6382",
+      "title": "https://github.com/freenet/freenet-core/pull/6382",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T02:30:10.531Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
+        "fileName": "freenet-freenet-core-learnings.md"
       }
     }
   }

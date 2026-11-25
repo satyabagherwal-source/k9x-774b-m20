@@ -4,24 +4,24 @@
 {
   "source_repository": "matrixorigin/matrixone",
   "source_url": "https://github.com/matrixorigin/matrixone",
-  "source_version": "7431a275",
+  "source_version": "ca5325ce",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-22T05:28:18.098Z",
+  "timestamp": "2026-11-25T02:29:00.891Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-matrixorigin-matrixone",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [matrixorigin/matrixone](https://github.com/matrixorigin/matrixone) (Revision: `7431a275`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-22T05:28:18.098Z`  
+> **Provenance**: Harvested from [matrixorigin/matrixone](https://github.com/matrixorigin/matrixone) (Revision: `ca5325ce`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-25T02:29:00.891Z`  
 > **Learning ID**: `learn-github-matrixorigin-matrixone`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain K (Quality & Verification Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), G (Architecture Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 54%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), H (Technical Construction Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence), F (Design Intelligence), C (Market & Business Intelligence)
+- **Confidence Rating**: 60%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from matrixorigin/matrixone:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/matrixorigin/matrixone](https://github.com/matrixorigin/matrixone))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T05:28:16.704Z  
+> **Harvest Timestamp**: 2026-11-25T02:28:59.517Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2363,13 +2363,11 @@ func runWorker(ctx context.Context, r WorkerRequest, control *workerControl) (ou
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #33053** (2026-11-22): **fix(frontend): preserve cancellation errors during LOCAL uploads**
-  *Symptoms*: ## What type of PR is this?  - [x] BUG - [x] Test and CI  ## Which issue(s) this PR fixes:  Related to #31475 and #31703. The failing coverage test was observed on #32914.  ## What this PR does / why we need it:  When KILL QUERY interrupted a `LOAD DATA LOCAL` upload, closing the pipe reader caused the SQL consumer to see `io.ErrClosedPipe`. The client could receive MySQL error 1105 for the interrupted query.  Close the upload pipe writer with the cancellation error so the consumer receives it and the existing protocol mapping returns MySQL error 1317 / SQLSTATE 70100. The upload owner still drains a finite client stream before the session is reused. The regression captures the consumer error while the finite tail is pending and checks it after the upload owner has joined.  ## Validation  - The deterministic pipe regression returned `io.ErrClosedPipe` on clean main at `96d0d01872`. - The full frontend package passed with the race detector in short mode. All seven `TestKillLoadLocal` wire scenarios passed under race and 12 times each with coverage enabled. - The focused pipe regression and the partial-payload wire scenario also passed 100 race repetitions each on the identical fix. - Formatting, diff checks, err-check, vet, golangci-lint and molint passed for the affected scope. 
+- **Issue #33188** (2026-11-25): **test(optools): accept a KILL-escalated drain in the publication latch test**
+  *Symptoms*: ## What type of PR is this?  - [ ] API-change - [ ] BUG - [ ] Improvement - [ ] Documentation - [ ] Feature - [x] Test and CI - [ ] Code Refactoring  ## Which issue(s) this PR fixes:  issue #33187  ## What this PR does / why we need it:  `optools` / `TestEmbeddedPrebuiltPublicationCancellationLatch/test_pids` failed the UT Coverage job of #33144 with `PUBLICATION_CANCELLED 90` (expected 143). That also blocked the coverage merge, so the PR got no coverage verdict. ([run](https://github.com/matrixorigin/matrixone/actions/runs/45494828845))  ### Cause  The test checks the publication latch: every admitted process group is drained before cancellation is acknowledged. It also required the mock test process to stop on TERM, and write `stopped-execute-a` (otherwise status 90).  The drain (`terminate_ut_process_groups`) gives TERM a fixed grace of 20 ticks (5 s), then sends KILL. - On CI the subtest took 8.24 s, against 0.55 s locally. The grace ran out, and the log shows the mock being `Killed`. - A killed process runs no trap, so the marker was missing, although the drain had completed.  ### Change  Test only; no runner script changes. The latch test now requires that the test process was started (its PID file exists) and is gone (the existing status-91 check), whether it stopped on TERM or was killed after the grace.  The graceful TERM path is still checked, deterministically, by the execution-cancellation test (`MOCK_TERM` / `TERM_ACK`).  I did not make the 20-tick child grace c
 
-- **Issue #33051** (2026-11-22): **[Subtask]: Vector clean up, remove sorted.   WONT DO.**
-  *Symptoms*: ### Parent Issue  #33004  ### Detail of Subtask  Sorted should be tracked by planner/optimizer/operator, not by vector.  ### Describe implementation you've considered  _No response_  ### Additional information  _No response_
-  **Post-Mortem & Fix Analysis**:
-  > Wont do -- this flag is written to disk and remove it does not really worth the effort and risk. 
+- **Issue #33187** (2026-11-25): **[Bug]: optools TestEmbeddedPrebuiltPublicationCancellationLatch fails when the TERM grace escalates to KILL**
+  *Symptoms*: ### Is there an existing issue for the same bug?  - [x] I have checked the existing issues.  ### Branch Name  main  ### Commit ID  c0cef5c9cc  ### Other Environment Information  ``` CI: Matrixone UT Coverage execution / legacy / UT Coverage on Ubuntu/x86 Run: https://github.com/matrixorigin/matrixone/actions/runs/45494828845 (PR #33144) ```  ### Actual Behavior  `optools` / `TestEmbeddedPrebuiltPublicationCancellationLatch/test_pids` fails intermittently with `PUBLICATION_CANCELLED 90` (expected 143). The subtest took 8.24 s on CI; it takes 0.55 s locally.  Status 90 means the mock test process never wrote its `stopped-execute-a` marker. `terminate_ut_process_groups` gives admitted process groups a fixed TERM grace of 20 ticks (5 s), then sends KILL. The CI log shows the mock being `Killed`, so the grace ran out before the mock's TERM trap ran. A killed process runs no trap, so there is no marker.  The failure blocks the coverage merge ("a required producer did not publish a complete coverage profile"), so the PR gets no coverage verdict.  ### Expected Behavior  The test checks the publication latch: every admitted process group is drained before cancellation is acknowledged. A drain that ends with the KILL escalation is still a completed drain, so the test should pass. The graceful TERM path is already covered by the execution-cancellation test (`MOCK_TERM` / `TERM_ACK`).  ### Steps to Reproduce  ``` Make the execute-cancel mock ignore TERM, so the drain escalates to KILL (i
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2386,820 +2384,336 @@ func runWorker(ctx context.Context, r WorkerRequest, control *workerControl) (ou
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `96d0d018` (2026-11-22)
-**Commit Message**: fix(ci): distinguish exited UT cases from live tests (#33050)
+### Incident Patch 1: `568f0f4f` (2026-11-24)
+**Commit Message**: test(embed): measure execution memory headroom against a per-process limit (#33142)
 
 ## What type of PR is this?
 
-- [x] BUG
-- [x] Improvement
 - [x] Test and CI
 
 ## Which issue(s) this PR fixes:
 
-Refs #32745 (FLAKY-003). The underlying whole-suite deadline and other
-failure signatures stay tracked there.
+issue #33077
+
+Also seen on #33115 (run 45332505615):
+`TestSnapshotDatabasePublicationReplayBoundaries/incomplete_view_scope`
+failed on `use mo_catalog` with
+
+```
+execution resource admission rejected: requested=48 used=0 cap=0;
+physical memory headroom: sampled_available=1014726656 safety_reserve=1073741824 growth_headroom=0
+```
 
 ## What this PR does / why we need it:
 
-In [this Race
-job](https://github.com/matrixorigin/matrixone/actions/runs/44914914428/job/136878393798),
-LogService exited at 14:58 UTC but its unfinished test appeared in 90
-later heartbeats, including the last heavy wave at 16:42 UTC.
+Coverage UT runs 8 packages at once (`-p 8`) on a 15 GiB runner. A CN in
+an embedded test cluster admits execution memory against the **host's**
+available memory minus a 1 GiB margin. When other test binaries hold the
+host near that margin, every new allocation is refused, even 48 bytes,
+and whichever embedded test runs a query at that moment fails. The
+failure has nothing to do with the test or the PR under test.
 
-- Retire unfinished tests from the live heartbeat when their package
-exits. Preserve test names, start times, and the package result in the
-failure summary. Merged streams with overlapping package invocations
-report ambiguous attribution explicitly.
-- Reuse the report publisher's ready-marker rule in the heartbeat. Keep
-torn records from consuming the next shard's first event. Preserve the
-raw report and give the pinned analyzer readable records when the raw
-input contains malformed lines.
-- Generate the slow and lifecycle summaries in one pass. A stopped
-writer’s final, valid JSON event can end at EOF. Live heartbeat reads
-and fa
+This PR lets a process give execution admission a **private memory
+limit**:
 
-**File**: `optools/active_ut_incremental.py` (modified, +102/-37)
+- `process.SetExecutionPrivateMemoryLimit(limit)`: when non-zero,
+physical headroom is `limit − this process's resident memory`
+(`system.ProcessResidentMemory`). The
+
+**File**: `pkg/common/system/system.go` (modified, +10/-0)
 ```diff
-@@ -14,42 +14,98 @@
- import tempfile
- 
- 
-+STATE_VERSION = 2
-+MAX_LIFECYCLE_LINE_BYTES = 1024 * 1024
-+TEST_START_ACTIONS = ("run", "pause", "cont")
-+TERMINAL_ACTIONS = ("pass", "fail", "skip")
-+
-+
- def fresh(identity):
-     return {"identity": identity, "offset": 0, "guard": "", "packages": {}, "cases": {}}
- 
- 
- def valid(state):
--    return (
-+    if not (
-         isinstance(state, dict)
-         and isinstance(state.get("offset"), int)
-         and state["offset"] >= 0
-         and isinstance(state.get("guard"), str)
-         and isinstance(state.get("packages"), dict)
--        and all(isinstance(k, str) and isinstance(v, str) for k, v in state["packages"].items())
-         and isinstance(state.get("cases"), dict)
--        and all(isinstance(v, list) and len(v) == 4 and all(isinstance(s, str) for s in v)
--                for v in state["cases"].values())
-+    ):
-+        return False
-+
-+    def package_entry(entry):
-+        return (
-+            isinstance(entry, list) and len(entry) == 2
-+            and isinstance(entry[0], str)
-+            and type(entry[1]) is int and entry[1] > 0
-+        )
-+
-+    def cases_entry(cases):
-+        return isinstance(cases, dict) and all(
-+            isinstance(entry, list) and len(entry) == 4
-+            and isinstance(entry[0], str) and isinstance(entry[1], str)
-+            and type(entry[2]) is int and entry[2] > 0
-+            and isinstance(entry[3], bool)
-+            for entry in cases.values()
-+        )
-+
-+    return all(map(package_entry, state["packages"].values())) and all(
-+        map(cases_entry, state["cases"].values())
-     )
- 
- 
--def apply_event(state, event):
-+def apply_event(state, event, unfinished=None):
-     action, package = event.get("Action", ""), event.get("Package", "")
-     test, when = event.get("Test", ""), event.get("Time", "")
-     if not all(isinstance(v, str) for v in (action, package, test, when)) or not package:
-         return
-+    packages, cases = state["packages"], state["cases"]
-+    invocation = packages.get(package)
-     if not test:
-         if action == "start":
--            state["packages"][package] = when
--        elif action in ("pass", "fail", "skip"):
--            state["packages"].pop(package, None)
--        # Keep unfinished cases on a package failure, as the AWK oracle does.
-+            if invocation is None:
-+                packages[package] = [when, 1]
-+            else:
-+                invocation[1] += 1
-+        elif action in TERMINAL_ACTIONS:
-+            if invocation is not None and invocation[1] > 1:
-+                # The merged stream cannot tell which invocation exited.
-+                invocation[0] = "unknown"
-+                invocation[1] -= 1
-+                for entry in cases.get(package, {}).values():
-+                    entry[3] = True
-+            else:
-+                packages.pop(package, None)
-+                outstanding = cases.pop(package, {})
-+                if unfinished is not None:
-+                    unfinished.extend(
-+                        (package, name, last_action, started, "unknown" if ambiguous else action)
-+                        for name, (last_action, started, _, ambiguous) in outstanding.items()
-+                    )
-         return
--    key = json.dumps([package, test])
--    if action in ("run", "pause", "cont"):
--        started = state["cases"].get(key, [package, test, action, when])[3]
--        state["cases"][key] = [package, test, action, started]
--    elif action in ("pass", "fail", "skip"):
--        state["cases"].pop(key, None)
-+    if action in TEST_START_ACTIONS:
-+        current = cases.setdefault(package, {})
-+        entry = current.get(test)
-+        if entry is None:
-+            current[test] = [action, when, 1, False]
-+        elif (action == "run" and invocation is not None
-+              and (invocation[1] > 1 or entry[3])):
-+            # An unmatched run can also belong to an invocation that already
-+            # exited. A test terminal accounts for only one observed run.
-+            current[test] = ["unknown", "unknown", entry[2] + 1, True]
-+        elif entry[0] != "unknown":
-+            entry[0] = action
-+    elif action in TERMINAL_ACTIONS and package in cases:
-+        current = cases[package]
-+        entry = current.get(test)
-+        if entry is not None and entry[2] > 1:
-+            entry[2] -= 1
-+        else:
-+            current.pop(test, None)
-+        if not current:
-+            del cases[package]
- 
- 
- def update(path, old):
-@@ -65,12 +121,12 @@ def update(path, old):
-             state = fresh(identity)
-         stream.seek(state["offset"])
-         while True:
--            line = stream.readline(1024 * 1024)
-+            line = stream.readline(MAX_LIFECYCLE_LINE_BYTES)
-             if not line:
-                 break
--            oversized = not line.endswith(b"\n") and len(line) == 1024 * 1024
-+            oversized = not line.endswith(b"\n") and len(line) == MAX_LIFECYCLE_LINE_BYTES
-             while oversized an
-```
-
-**File**: `optools/run_ut.sh` (modified, +51/-26)
-```diff
-@@ -644,10 +644,16 @@ function report_active_ut_cases(){
-         return 0
-     fi
- 
--    logger "ERR" "Active or incomplete UT cases from ${UT_REPORT}:"
--    awk -f "${BUILD_WKSP}/optools/active_ut_cases.awk" "${UT_REPORT}" |
--        LC_ALL=C sort |
--        sed 's/^/[active_ut_cases] /'
-+    local lifecycle_report="${UT_REPORT}.lifecycle"
-+    if [[ -s "${lifecycle_report}" ]]; then
-+        logger "ERR" "Active or incomplete UT cases from ${UT_REPORT}:"
-+        sed 's/^/[active_ut_cases] /' "${lifecycle_report}"
-+    else
-+        logger "ERR" "Unclassified UT cases from ${UT_REPORT}:"
-+        awk -f "${BUILD_WKSP}/optools/active_ut_cases.awk" "${UT_REPORT}" |
-+            LC_ALL=C sort |
-+            sed -e 's/^active UT /UT /' -e 's/^/[unclassified_ut_cases] /'
-+    fi
+@@ -524,6 +524,16 @@ func MemoryAvailableIncludingCache() (avail uint64, measured bool) {
+ 	return mem.ActualFree, true
  }
  
- function report_slow_ut_cases(){
-@@ -658,8 +664,15 @@ function report_slow_ut_cases(){
- 
-     local slow_report="${UT_DIAGNOSTIC_DIR}/top.txt"
-     local slow_output=""
--    if ! slow_output=$(python3 "${BUILD_WKSP}/optools/summarize_ut_slow_cases.py" "${UT_REPORT}" 2>&1); then
--        logger "ERR" "failed to summarize slow UT cases: ${slow_output}"
-+    local lifecycle_report="${UT_REPORT}.lifecycle"
-+    local -a lifecycle_args=(--active-out "${lifecycle_report}")
-+    if [[ -n "${CURRENT_UT_PID}" ]] || (( CURRENT_UT_DRAIN_FAILED != 0 )); then
-+        lifecycle_args+=(--require-lifecycle-lf)
-+    fi
-+    rm -f "${lifecycle_report}"
-+    if ! slow_output=$(python3 -B "${BUILD_WKSP}/optools/summarize_ut_slow_cases.py" \
-+        "${UT_REPORT}" "${lifecycle_args[@]}"); then
-+        logger "ERR" "failed to summarize slow UT cases from ${UT_REPORT}"
-         return 0
-     fi
- 
-@@ -789,7 +802,7 @@ function start_ut_heartbeat(){
-                 wait "${heartbeat_scan_pid}" 2>/dev/null || true
-                 heartbeat_scan_pid=""
-             fi
--            rm -f "${UT_HEARTBEAT_STATE}" "${UT_HEARTBEAT_STATE}.out"
-+            rm -f "${UT_HEARTBEAT_STATE}" "${UT_HEARTBEAT_STATE}.out" "${UT_HEARTBEAT_STATE}.tmp."*
-             exit 0
-         }
-         trap request_heartbeat_stop TERM INT
-@@ -816,8 +829,8 @@ function start_ut_heartbeat(){
-             fi
-             [[ "${UT_TERMINATING}" == 0 ]] || exit 0
- 
--            local latest stage label active_cases active_detail active_records process_count memory report
--            local -a heartbeat_reports
-+            local latest stage label active_cases active_detail active_records unresolved_cases process_count memory report
-+            local -a helper_reports
-             # A heartbeat can race a stage transition. Never read our own stale
-             # stage back as the source of truth on the next tick.
-             latest=$(awk '!/event=heartbeat / { latest=$0 } END { print latest }' "${UT_CHECKPOINT}" 2>/dev/null || true)
-@@ -828,33 +841,28 @@ function start_ut_heartbeat(){
-             # The heartbeat is forked before run_tests assigns the helper
-             # report variables. Discover reports from the immutable run
-             # workspace instead of relying on those later parent-shell values.
--            heartbeat_reports=(
--                "${UT_REPORT}"
-+            helper_reports=(
-                 "${G_WKSP}/${G_TS}-light-race-report.out"
-                 "${G_WKSP}/${G_TS}-engine-race-report.out"
--                "${G_WKSP}/${G_TS}-engine-race-report.out".*
-                 "${G_WKSP}/${G_TS}-plan-race-report.out"
--                "${G_WKSP}/${G_TS}-plan-race-report.out".*
-                 "${G_WKSP}/${G_TS}-issues-race-report.out"
--                "${G_WKSP}/${G_TS}-issues-race-report.out".*
-                 "${G_WKSP}/${G_TS}-embedded-race-report.out"
--                "${G_WKSP}/${G_TS}-embedded-race-report.out".*
-                 "${G_WKSP}/${G_TS}-embedded-batched-race-report.out"
--                "${G_WKSP}/${G_TS}-embedded-batched-race-report.out".*
-             )
-             # Own the finite scan as a group. A large first scan or fallback
-             # must not outlive heartbeat cancellation or keep its pipes open.
-             set -m
-             (
-                 trap - TERM INT
-+                local -a heartbeat_reports=("${UT_REPORT}") sources=()
-+                for report in "${helper_reports[@]}"; do
-+                    if collect_ut_report_sources "${report}" 2>/dev/null && (( ${#sources[@]} > 0 )); then
-+                        heartbeat_reports+=("${sources[@]}")
-+                    fi
-+                done
-                 if ! python3 "${BUILD_WKSP}/optools/active_ut_incremental.py" \
-                     --state "${UT_HEARTBEAT_STATE}" "${heartbeat_reports[@]}" 2>/dev/null; then
--                    # The original full-scan reader remains the recovery path.
--                    for report in "${heartbeat_reports[@]}"; do
--                        if [[ -s "${report}" ]]; then
--                            awk -f "${BUILD_WKSP}/optools/active_ut_cases.awk" "${report}" 2>/dev/null || true
--                        fi
--                    d
++// ProcessResidentMemory returns the resident set size of this process. The
++// second return is false when it cannot be read.
++func ProcessResidentMemory() (uint64, bool) {
++	var mem gosigar.ProcMem
++	if err := mem.Get(pid); err != nil {
++		return 0, false
++	}
++	return mem.Resident, true
++}
++
+ func MemoryUsed() uint64 {
+ 	if InContainer() {
+ 		used, err := cgroup.GetMemUsage(pid)
 ```
 
-**File**: `optools/summarize_ut_slow_cases.py` (modified, +37/-18)
+**File**: `pkg/common/system/system_test.go` (modified, +6/-0)
 ```diff
-@@ -17,15 +17,18 @@
+@@ -650,3 +650,9 @@ func TestReclaimableCgroupCache(t *testing.T) {
+ 	_, ok := reclaimableCgroupCache(filepath.Join(t.TempDir(), "absent.stat"))
+ 	require.False(t, ok)
+ }
++
++func TestProcessResidentMemory(t *testing.T) {
++	resident, ok := ProcessResidentMemory()
++	require.True(t, ok)
++	require.NotZero(t, resident)
++}
+```
+
+**File**: `pkg/embed/cluster.go` (modified, +1/-0)
+```diff
+@@ -178,6 +178,7 @@ func (c *cluster) Start() (err error) {
+ 	c.logTestSetup("port-lease", time.Since(phaseStarted), nil)
  
- from __future__ import annotations
- 
-+import argparse
- import json
- import sys
- from datetime import datetime
- from pathlib import Path
- from typing import Dict, List, Optional, Tuple
- 
- 
--TERMINAL_ACTIONS = {"pass", "fail", "skip"}
--TEST_START_ACTIONS = {"run", "pause", "cont"}
-+from active_ut_incremental import (
-+    MAX_LIFECYCLE_LINE_BYTES, TERMINAL_ACTIONS, TEST_START_ACTIONS,
-+    apply_event, atomic_write, fresh, render,
+ 	if c.options.testing {
++		useTestProcessMemoryLimit()
+ 		if c.testAdmission != nil {
+ 			return moerr.NewInvalidStateNoCtx(
+ 				"embedded test cluster cleanup is incomplete",
+```
+
+**File**: `pkg/embed/test_memory_limit.go` (added, +34/-0)
+```diff
+@@ -0,0 +1,34 @@
++// Copyright 2026 Matrix Origin
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//	http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++package embed
++
++import (
++	"github.com/matrixorigin/matrixone/pkg/vm/process"
 +)
- 
- 
- def parse_time(value: object) -> Optional[datetime]:
-@@ -65,7 +68,8 @@ def format_duration(seconds: float) -> str:
- 
- 
- def summarize(
--    report_path: Path, limit: int = 20
-+    report_path: Path, limit: int = 20, active_out: Optional[Path] = None,
-+    *, require_lifecycle_lf: bool = False,
- ) -> Tuple[
-     List[Tuple[float, str, str, str, str]],
-     List[Tuple[float, str, str, str, str]],
-@@ -76,6 +80,8 @@ def summarize(
-     completed_tests: List[Tuple[float, str, str, str, str]] = []
-     completed_packages: List[Tuple[float, str, str, str, str]] = []
-     malformed = 0
-+    lifecycle = fresh(None) if active_out is not None else None
-+    unfinished = []
- 
-     with report_path.open("rb") as report:
-         for raw_line in report:
-@@ -98,6 +104,15 @@ def summarize(
-             package = event.get("Package")
-             if not isinstance(action, str) or not isinstance(package, str) or not package:
-                 continue
-+            if action not in TEST_START_ACTIONS and action not in TERMINAL_ACTIONS and action != "start":
-+                continue
-+            if lifecycle is not None:
-+                has_lf = raw_line.endswith(b"\n")
-+                # A stopped writer's decoded EOF record is equivalent to the
-+                # merged record, including the separator in the size budget.
-+                framed_size = len(raw_line) + (0 if has_lf else 1)
-+                if framed_size <= MAX_LIFECYCLE_LINE_BYTES and (has_lf or not require_lifecycle_lf):
-+                    apply_event(lifecycle, event, unfinished)
-             timestamp = parse_time(event.get("Time"))
-             test = event.get("Test")
-             if isinstance(test, str) and test:
-@@ -137,30 +152,34 @@ def summarize(
-                         )
-                     )
- 
-+    if active_out is not None:
-+        try:
-+            atomic_write(active_out, "\n".join(render({"report": lifecycle}, unfinished)) + "\n",
-+                         prefix=active_out.name + ".tmp.")
-+        except OSError as error:
-+            print(f"failed to publish UT lifecycle summary: {error}", file=sys.stderr)
-     completed_tests.sort(key=lambda item: item[0], reverse=True)
-     completed_packages.sort(key=lambda item: item[0], reverse=True)
-     return completed_tests[:limit], completed_packages[:limit], malformed
- 
- 
- def main(argv: List[str]) -> int:
--    if len(argv) not in (2, 3):
--        print(f"usage: {argv[0]} GO_TEST_JSON [LIMIT]", file=sys.stderr)
--        return 2
--    try:
--        limit = int(argv[2]) if len(argv) == 3 else 20
--    except ValueError:
--        print("LIMIT must be a positive integer", file=sys.stderr)
--        return 2
-+    parser = argparse.ArgumentParser(description=__doc__)
-+    parser.add_argument("report", type=Path)
-+    parser.add_argument("limit", nargs="?", type=int, default=20)
-+    parser.add_argument("--active-out", type=Path)
-+    parser.add_argument("--require-lifecycle-lf", action="store_true")
-+    args = parser.parse_args(argv[1:])
-+    limit = args.limit
-     if limit <= 0:
--        print("LIMIT must be a positive integer", file=sys.stderr)
--        return 2
--
--    report_path = Path(argv[1])
--    if not report_path.is_file():
--        print(f"slow UT case report missing: {report_path}", file=sys.stderr)
-+        parser.error("LIMIT must be a positive integer")
-+    if not args.report.is_file():
-+        print(f"slow UT case report missing: {args.report}", file=sys.stderr)
-         return 1
- 
--    tests, packages, malformed = summarize(report_path, limit)
-+    tests, packages, malformed = summarize(
-+        args.report, limit, args.active_out, require_lifecycle_lf=args.require_lifecycle_lf,
-+    )
-     print(f"[slow_ut_cases] completed test cases (top {limit}):")
-     if tests:
-         for elapsed, package, test, result, ended in tests:
++
++// testProcessMemoryLimit is the private memory limit of a process that runs
++// embedded test clusters. CI runs several test binaries on one runner, so the
++// host's available memory mostly reflects the other binaries; measuring
++// admission against it made queries fail at random. Against a private limit,
++// execution admission still rejects when this process itself grows too large,
++// but other processes no longer decide the outcome.
++const testProcessMemoryLimit = uint64(8 << 30)
++
++// useTestProcessMemoryLimit is called before a test cluster starts. Every test
++// cluster in the process wants the same limit, so storing it again is
++// harmless.
++func useTestProcessMemoryLimit() {
++	process.SetExecutionPrivateMemoryLimit(testProcessMemoryLimit)
++}
 ```
 
-**File**: `optools/testdata/active_ut_incremental_test.py` (modified, +131/-3)
+**File**: `pkg/vm/process/execution_private_memory_limit.go` (added, +58/-0)
 ```diff
-@@ -17,6 +17,7 @@
- 
- sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
- import active_ut_incremental as reader
-+from summarize_ut_slow_cases import summarize
- 
- 
- class IncrementalReaderTest(unittest.TestCase):
-@@ -90,14 +91,141 @@ def test_corrupt_state_and_escaped_names(self):
-         self.assertEqual(1, len(self.read()[0].splitlines()))
- 
-     def test_multiple_reports_and_package_failure(self):
--        self.report.write_bytes(self.event("run") + self.event("fail", ""))
-+        self.report.write_bytes(self.event("start", "") + self.event("run"))
-+        self.assertIn("TestOne", self.read()[0])
-+        with self.report.open("ab") as stream:
-+            stream.write(self.event("fail", ""))
-+        self.assertEqual(["no active or incomplete UT package/test case found"], self.read())
-         second = self.report.with_suffix(".second")
-         second.write_bytes(self.event("run"))
--        self.assertEqual(self.read(), self.read(self.report, second, second))
--        self.oracle()  # unfinished case must survive the package failure
-+        self.assertEqual(self.read(second), self.read(self.report, second, second))
-         second.unlink()
-         self.assertEqual(self.read(), self.read(self.report, second))
- 
-+        with self.report.open("ab") as stream:
-+            stream.write(self.event("start", "") + self.event("run"))
-+        self.assertIn("TestOne", self.read()[0])
-+        active_out = self.report.with_suffix(".active")
-+        summarize(self.report, active_out=active_out)
-+        lines = active_out.read_text().splitlines()
-+        self.assertEqual(2, len(lines))
-+        self.assertTrue(lines[0].startswith("active UT case: "))
-+        self.assertTrue(lines[1].startswith("unfinished UT case at package exit: "))
-+        self.assertTrue(lines[1].endswith("package_result=fail"))
+@@ -0,0 +1,58 @@
++// Copyright 2026 Matrix Origin
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//	http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
 +
-+    def test_overlapping_package_invocations(self):
-+        self.report.write_bytes(
-+            self.event("start", "") + self.event("run", "TestA")
-+            + self.event("start", "") + self.event("run", "TestB")
-+            + self.event("fail", "")
-+        )
-+        lines = self.read()
-+        self.assertEqual(2, len(lines))
-+        self.assertTrue(all(line.startswith("unresolved UT case") for line in lines))
-+        with self.report.open("ab") as stream:
-+            stream.write(self.event("pass", "TestB") + self.event("pass", ""))
-+        self.assertEqual(["no active or incomplete UT package/test case found"], self.read())
-+        active_out = self.report.with_suffix(".active")
-+        summarize(self.report, active_out=active_out)
-+        final = active_out.read_text().splitlines()
-+        self.assertEqual(1, len(final))
-+        self.assertIn("test=TestA", final[0])
-+        self.assertTrue(final[0].endswith("package_result=unknown"))
++package process
 +
-+    def test_same_name_overlap_preserves_unmatched_run(self):
-+        for events in (
-+            self.event("run") + self.event("fail", ""),
-+            self.event("fail", "") + self.event("run"),
-+        ):
-+            with self.subTest(events=events):
-+                self.report.write_bytes(
-+                    self.event("start", "") + self.event("run") + self.event("start", "")
-+                    + events + self.event("pass")
-+                )
-+                self.assertIn("unresolved UT case", self.read()[0])
-+                with self.report.open("ab") as stream:
-+                    stream.write(self.event("pass", ""))
-+                active_out = self.report.with_suffix(".active")
-+                summarize(self.report, active_out=active_out)
-+                self.assertEqual(1, len(active_out.read_text().splitlines()))
-+                self.assertIn("test=TestOne state=unknown started=unknown package_result=unknown",
-+                              active_out.read_text())
++import (
++	"sync/atomic"
 +
-+    def test_final_package_exit_without_newline(self):
-+        self.report.write_bytes(
-+            self.event("start", "") + self.event("run") + self.event("fail", "")[:-1]
-+        )
-+        active_out = self.report.with_suffix(".active")
-+        _, packages, malformed = summarize(self.report, active_out=active_out)
-+        self.assertEqual(0, malformed)
-+        self.assertEqual("fail", packages[0][3])
-+        self.assertIn("unfinished UT case at package exit:", active_out.read_text())
-+        self.assertIn("test=TestOne", active_out.read_text())
-+        self.assertIn("package_result=fail", active_out.read_text())
++	"github.com/matrixorigin/matrixone/pkg/common/system"
++)
 +
-+        summarize(self.report, active_out=active_out, require_lifecycle_lf=True)
-+        self.assertEqual(self.read(), active_out.read_text().splitlines())
-+        self.assertTrue(self.read()[0].startswith("active UT case: "))
-+        with self.report.open("ab") as stream:
-+            stream.write(b"\n")
-+        self.assertEqual(["no active or incomplete UT package/test case found"], self.read())
++// executionPrivateMemoryLimit is zero in a server. When set, every CN
++// execution budget in this process measures physical headroom against this
++// limit on the process's own resident memory, as if the process ran alone in
++// a container of that size.
++var executionPrivateMemoryLimit atomic.Uint64
 +
-+    def test_final_lifecycle_size_matches_merged_size(self):
-+        terminal = self.event("fail", "")[:-1]
-+        prefix
++// SetExecutionPrivateMemoryLimit gives this process a private memory limit
++// for execution admission; zero restores the host measurement. It exists for
++// processes that share a host with unrelated memory users whose usage must
++// not decide admission, such as test binaries running in parallel on one CI
++// runner. Budgets pick up the change on their next headroom sample.
++func SetExecutionPrivateMemoryLimit(limit uint64) {
++	executionPrivateMemoryLimit.Store(limit)
++}
++
++// executionPhysicalMemoryHeadroom is the physical headroom source of every CN
++// execution budget: the host (or cgroup) available memory, or the room left
++// under the private limit when one is set.
++func executionPhysicalMemoryHeadroom() (uint64, bool) {
++	limit := executionPrivateMemoryLimit.Load()
++	if limit == 0 {
++		return system.MemoryAvailableIncludingCache()
++	}
++	resident, ok := system.ProcessResidentMemory()
++	if !ok {
++		return 0, false
++	}
++	return privateMemoryHeadroom(limit, resident), true
++}
++
++func privateMemoryHeadroom(limit, resident uint64) uint64 {
++	if resident >= limit {
++		return 0
++	}
++	return limit - resident
++}
 ```
 
-**File**: `optools/ut_incremental_test.go` (modified, +16/-0)
+**File**: `pkg/vm/process/execution_private_memory_limit_test.go` (added, +108/-0)
 ```diff
-@@ -20,6 +20,22 @@ func TestUTIncrementalActiveCases(t *testing.T) {
- 	}
- }
- 
-+func TestUTFailureReporterRequiresNewlineForUndrainedWriter(t *testing.T) {
-+	script := `source ./run_ut.sh UT
-+printf '%s\n' '{"Action":"start","Package":"p"}' '{"Action":"run","Package":"p","Test":"TestOne"}' > "$UT_REPORT"
-+printf '%s' '{"Action":"fail","Package":"p"}' >> "$UT_REPORT"
-+CURRENT_UT_DRAIN_FAILED=1
-+report_slow_ut_cases
-+grep -q '^active UT case: .*test=TestOne' "$UT_REPORT.lifecycle" || exit 90
-+CURRENT_UT_DRAIN_FAILED=0
-+report_slow_ut_cases
-+grep -q '^unfinished UT case at package exit: .*test=TestOne .*package_result=fail$' "$UT_REPORT.lifecycle" || exit 91
-+`
-+	if out, err := scheduleHarness(t, script); err != nil {
-+		t.Fatalf("final report EOF classification: %v\n%s", err, out)
+@@ -0,0 +1,108 @@
++// Copyright 2026 Matrix Origin
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//	http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++package process
++
++import (
++	"testing"
++
++	"github.com/matrixorigin/matrixone/pkg/common/system"
++	"github.com/stretchr/testify/require"
++)
++
++func setPrivateMemoryLimitForTest(t *testing.T, limit uint64) {
++	t.Helper()
++	previous := executionPrivateMemoryLimit.Load()
++	SetExecutionPrivateMemoryLimit(limit)
++	t.Cleanup(func() { SetExecutionPrivateMemoryLimit(previous) })
++}
++
++func TestPrivateMemoryHeadroom(t *testing.T) {
++	require.Equal(t, uint64(30), privateMemoryHeadroom(100, 70))
++	require.Zero(t, privateMemoryHeadroom(100, 100))
++	require.Zero(t, privateMemoryHeadroom(100, 170))
++}
++
++// With a private limit the headroom is the room left under the limit by this
++// process's own resident memory; the host's free memory plays no part.
++func TestExecutionPhysicalMemoryHeadroomUsesPrivateLimit(t *testing.T) {
++	const gib = uint64(1 << 30)
++	before, ok := system.ProcessResidentMemory()
++	require.True(t, ok)
++	require.NotZero(t, before)
++
++	setPrivateMemoryLimitForTest(t, 1)
++	available, measured := executionPhysicalMemoryHeadroom()
++	require.True(t, measured)
++	require.Zero(t, available, "a process above its private limit has no headroom")
++
++	limit := before + 4*gib
++	SetExecutionPrivateMemoryLimit(limit)
++	available, measured = executionPhysicalMemoryHeadroom()
++	require.True(t, measured)
++	after, ok := system.ProcessResidentMemory()
++	require.True(t, ok)
++	require.LessOrEqual(t, available, limit-min(before, after))
++	require.GreaterOrEqual(t, available, limit-max(before, after))
++}
++
++func TestExecutionMemoryHeadroomSafetyUsesPrivateLimit(t *testing.T) {
++	const gib = uint64(1 << 30)
++	ceiling := ExecutionMemoryCeiling{EffectiveCN: 100 * gib, Reserve: 20 * gib}
++	require.Equal(t, 5*gib, executionMemoryHeadroomSafety(ceiling))
++
++	// The margin is sized from the private limit, so a large host does not
++	// reserve more than the process may use.
++	setPrivateMemoryLimitForTest(t, 8*gib)
++	require.Equal(t, gib, executionMemoryHeadroomSafety(ceiling))
++	SetExecutionPrivateMemoryLimit(60 * gib)
++	require.Equal(t, 3*gib, executionMemoryHeadroomSafety(ceiling))
++	// A limit above the CN's effective memory changes nothing.
++	SetExecutionPrivateMemoryLimit(200 * gib)
++	require.Equal(t, 5*gib, executionMemoryHeadroomSafety(ceiling))
++}
++
++// Admission through the CN headroom source follows this process's own size
++// under a private limit.
++func TestExecutionAdmissionFollowsPrivateMemoryLimit(t *testing.T) {
++	const gib = uint64(1 << 30)
++	for _, tc := range []struct {
++		name     string
++		limit    func(resident uint64) uint64
++		admitted bool
++	}{
++		{name: "process above its limit", limit: func(uint64) uint64 { return 1 }},
++		{name: "room under the limit", limit: func(resident uint64) uint64 { return resident + 2*gib }, admitted: true},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			resident, ok := system.ProcessResidentMemory()
++			require.True(t, ok)
++			setPrivateMemoryLimitForTest(t, tc.limit(resident))
++			budget := MustNewExecutionResourceBudget(1000, 800)
++			budget.memoryHeadroomProvider = executionPhysicalMemoryHeadroom
++			budget.memoryHeadroomSafety = 100
++			generation, err := budget.OpenGeneration(1)
++			require.NoError(t, err)
++			defer generation.Close()
++			reservation, err := generation.ReserveTransientMemory(48)
++			if tc.admitted {
++				require.NoError(t, err)
++				require.True(t, reservation.Release())
++				return
++			}
++			require.ErrorIs(t, err, ErrExecutionResourceAdmission)
++			require.Nil(t, reservation)
++		})
 +	}
 +}
-+
- func TestUTHeartbeatCancelsReader(t *testing.T) {
- 	script := `source ./run_ut.sh UT
- mkfifo "$CASE_DIR/reader-ready" "$CASE_DIR/reader-block"
 ```
 
-**File**: `optools/ut_process.bash` (modified, +52/-30)
+**File**: `pkg/vm/process/execution_resource_budget.go` (modified, +8/-2)
 ```diff
-@@ -124,39 +124,17 @@ function remove_ut_report_file(){
-     return 0
+@@ -2021,7 +2021,13 @@ type ExecutionMemoryCeiling struct {
  }
  
--# append_ut_report copies a helper-owned report into the authoritative report
--# after the helper has stopped.  A helper may be interrupted while it is
--# merging shard files, so the completion marker is the ownership boundary:
--#
--#   marker exists  -> the complete base report is authoritative
--#   marker missing -> consume shard files (or an unmarked base as a last resort)
--#
--# Never concatenate both forms; doing so duplicates every event already copied
--# before cancellation and makes go-ut-analysis report false failures.  The
--# caller must serialize this operation with its TERM trap because appending to a
--# shared file is not intrinsically idempotent.  Build the complete destination
--# in a same-directory temporary file and publish it with rename.  A TERM/KILL
--# during any source copy therefore leaves both the old destination and the
--# source representation intact; a direct `cat >> destination` would leave an
--# indistinguishable prefix that a retry could duplicate.
--function append_ut_report(){
--    if (( $# != 2 )); then
--        echo "Usage: append_ut_report REPORT DESTINATION" >&2
--        return 2
--    fi
--
-+# Populate the caller's sources array with the authoritative representation of
-+# one helper report. Both the report appender and the heartbeat use this rule.
-+function collect_ut_report_sources(){
-     local report=$1
--    local destination=$2
-     local partial=""
--    local staging=""
--    local expected=""
--    local partial_found=0
-+    sources=()
- 
-     # Select one authoritative representation.  A ready marker is meaningful
-     # only when its complete base file is still present; silently treating a
-     # missing base as success would allow the caller to delete the marker and
-     # lose the only diagnostic source.
--    local -a sources=()
-     if [[ -f "${report}.ready" ]]; then
-         if [[ ! -f "${report}" ]]; then
-             echo "UT report marker exists without its base report: ${report}" >&2
-@@ -171,26 +149,70 @@ function append_ut_report(){
-             # is not a report shard and must never be consumed as one.
-             [[ "${partial}" == "${report}.tmp."* ]] && continue
-             sources+=("${partial}")
--            partial_found=1
-         done
--        if (( partial_found == 0 )) && [[ -f "${report}" ]]; then
-+        if (( ${#sources[@]} == 0 )) && [[ -f "${report}" ]]; then
-             # This covers a helper that failed before it could create the
-             # marker and left only a diagnostic base file.
-             sources=("${report}")
-         fi
-     fi
-+}
-+
-+# Seal a stopped writer's incomplete line before concatenating another report.
-+# Keep report bytes for diagnosis. A complete JSON record without its newline
-+# remains usable once the writer has stopped.
-+function copy_ut_report_chunk(){
-+    local source=$1
-+    local last_byte_lines
-+    cat "${source}" || return 1
-+    if [[ -s "${source}" ]]; then
-+        last_byte_lines=$(set -o pipefail; tail -c 1 "${source}" | wc -l) || return 1
-+        if (( last_byte_lines == 0 )); then
-+            printf '\n' || return 1
-+        fi
-+    fi
-+}
-+
-+# append_ut_report copies a helper-owned report into the authoritative report
-+# after the helper has stopped.  A helper may be interrupted while it is
-+# merging shard files, so the completion marker is the ownership boundary:
-+#
-+#   marker exists  -> the complete base report is authoritative
-+#   marker missing -> consume shard files (or an unmarked base as a last resort)
-+#
-+# Never concatenate both forms; doing so duplicates every event already copied
-+# before cancellation and makes go-ut-analysis report false failures.  The
-+# caller must serialize this operation with its TERM trap because appending to a
-+# shared file is not intrinsically idempotent.  Build the complete destination
-+# in a same-directory temporary file and publish it with rename.  A TERM/KILL
-+# during any source copy therefore leaves both the old destination and the
-+# source representation intact; a direct `cat >> destination` would leave an
-+# indistinguishable prefix that a retry could duplicate.
-+function append_ut_report(){
-+    if (( $# != 2 )); then
-+        echo "Usage: append_ut_report REPORT DESTINATION" >&2
-+        return 2
-+    fi
-+
-+    local report=$1
-+    local destination=$2
-+    local partial=""
-+    local staging=""
-+    local expected=""
-+    local -a sources=()
-+    collect_ut_report_sources "${report}" || return 1
- 
-     if (( ${#sources[@]} == 0 )); then
-         return 0
-     fi
- 
-     staging=$(mktemp "${destination}.tmp.XXXXXX") || return 1
--    if [[ -f "${destination}" ]] && ! cat "${destination}" > "${staging}"; then
-+    if [[ -f "${destination}" ]] && ! copy_ut_report_chunk "${destination}" > "${staging}"; then
-         rm -f "${staging}"
-         return 1
-     fi
-     for partial in "${sources[@]}"; do
--        if ! cat "${partial}" >> "${staging}"; then
-+        if ! copy_ut
-```
-
-**File**: `optools/ut_schedule_test.go` (modified, +109/-17)
-```diff
-@@ -1182,14 +1182,12 @@ cgroup_resource_breakdown "$CASE_DIR/missing"
- func TestUTHeartbeatStopsCleanly(t *testing.T) {
- 	t.Parallel()
- 	script := `source ./run_ut.sh UT
--mkfifo "$CASE_DIR/heartbeat-ready"
--exec 9<> "$CASE_DIR/heartbeat-ready"
--trap 'stop_ut_heartbeat; exec 9>&-' EXIT
-+mkfifo "$CASE_DIR/heartbeat-tick" "$CASE_DIR/heartbeat-waiting" || exit 90
-+exec 8<> "$CASE_DIR/heartbeat-tick"
-+exec 9<> "$CASE_DIR/heartbeat-waiting"
-+trap 'stop_ut_heartbeat; exec 8>&- 9>&-' EXIT
- function logger() {
-     printf "%s\n" "$2" >> "$CASE_DIR/ut.log"
--    if [[ "$2" == *active_cases=3* && "$2" == *TestPrivate* && "$2" == *TestShard* && "$2" == *TestBatched* ]]; then
--        printf 'ready\n' >&9
--    fi
- }
- UT_HEARTBEAT_INTERVAL=60
- start_ut_heartbeat
-@@ -1201,12 +1199,30 @@ stop_ut_heartbeat
- ! kill -0 "$heartbeat_pid" 2>/dev/null || exit 90
- 
- UT_HEARTBEAT_INTERVAL=1
-+# Release one timer only after the reports are ready. Its next wait confirms
-+# the previous iteration wrote both the log and checkpoint.
-+function sleep() {
-+    if [[ "$*" == 1 ]]; then
-+        printf 'waiting\n' >&9
-+        read -r tick <&8
-+    else
-+        command sleep "$@"
-+    fi
-+}
-+function heartbeat_waiting() {
-+    local state
-+    read -r -t 10 state <&9 && [[ "$state" == waiting ]]
-+}
-+function heartbeat_tick() {
-+    printf 'tick\n' >&8 && heartbeat_waiting
-+}
- # Exercise the actual heartbeat formatting without exposing real process data.
- function ps() {
-     [[ "$*" == '-eo pid=,ppid=,rss=,comm=' ]] || return 93
-     printf '1 0 100 tiny\n2 1 200 small\n3 1 300 third\n4 1 400 fourth\n5 1 500 fifth\n6 1 600 sixth\n7 1 700 seventh\n8 1 800 eighth\n9 1 900 largest\n'
- }
- start_ut_heartbeat
-+heartbeat_waiting || exit 92
- LIGHT_RACE_REPORT="$G_WKSP/${G_TS}-light-race-report.out"
- cat > "$LIGHT_RACE_REPORT" <<'EOF'
- {"Time":"2026-09-10T01:00:01Z","Action":"run","Package":"example/light","Test":"TestPrivate"}
-@@ -1217,19 +1233,42 @@ EOF
- cat > "$G_WKSP/${G_TS}-embedded-batched-race-report.out.0" <<'EOF'
- {"Time":"2026-09-10T01:00:01Z","Action":"run","Package":"example/embedded","Test":"TestBatched"}
- EOF
--read -r -t 10 heartbeat_ready <&9 || exit 92
-+cat > "$G_WKSP/${G_TS}-engine-race-report.out.tmp.staging" <<'EOF'
-+{"Time":"2026-09-10T01:00:01Z","Action":"run","Package":"example/engine","Test":"TestStaged"}
-+EOF
-+cat > "$UT_REPORT" <<'EOF'
-+{"Time":"2026-09-10T00:00:00Z","Action":"start","Package":"example/retired"}
-+{"Time":"2026-09-10T00:00:01Z","Action":"run","Package":"example/retired","Test":"TestRetired"}
-+{"Time":"2026-09-10T00:00:02Z","Action":"fail","Package":"example/retired"}
-+EOF
-+heartbeat_tick || exit 92
- stop_ut_heartbeat
--exec 9>&-
- [[ -z "$UT_HEARTBEAT_PID" ]] || exit 91
--grep -q 'event=heartbeat' "$UT_CHECKPOINT"
--grep -q 'active_cases=3' "$CASE_DIR/ut.log"
--grep -q 'TestPrivate' "$CASE_DIR/ut.log"
--grep -q 'TestShard' "$CASE_DIR/ut.log"
--grep -q 'TestBatched' "$CASE_DIR/ut.log"
--grep -q 'processes=9' "$CASE_DIR/ut.log"
--grep -q 'processes.top_rss=pid=9,ppid=1,rss_kib=900,comm=largest;pid=8,ppid=1,rss_kib=800,comm=eighth;' "$CASE_DIR/ut.log"
--grep -q 'pid=2,ppid=1,rss_kib=200,comm=small;' "$CASE_DIR/ut.log"
--! grep -q 'pid=1,ppid=0,rss_kib=100,comm=tiny;' "$CASE_DIR/ut.log"
-+grep -q 'event=heartbeat ' "$UT_CHECKPOINT" || exit 93
-+grep -q 'active_cases=3 ' "$CASE_DIR/ut.log" || exit 93
-+grep -q 'TestPrivate' "$CASE_DIR/ut.log" || exit 93
-+grep -q 'TestShard' "$CASE_DIR/ut.log" || exit 93
-+grep -q 'TestBatched' "$CASE_DIR/ut.log" || exit 93
-+! grep -qE 'active_cases=unknown|TestRetired|TestStaged' "$CASE_DIR/ut.log" || exit 94
-+grep -q 'processes=9' "$CASE_DIR/ut.log" || exit 93
-+grep -q 'processes.top_rss=pid=9,ppid=1,rss_kib=900,comm=largest;pid=8,ppid=1,rss_kib=800,comm=eighth;' "$CASE_DIR/ut.log" || exit 93
-+grep -q 'pid=2,ppid=1,rss_kib=200,comm=small;' "$CASE_DIR/ut.log" || exit 93
-+! grep -q 'pid=1,ppid=0,rss_kib=100,comm=tiny;' "$CASE_DIR/ut.log" || exit 95
-+
-+function python3() { return 1; }
-+function awk() {
-+    if [[ "$*" == *active_ut_cases.awk* ]]; then
-+        touch "$CASE_DIR/rescanned"
-+        return 1
-+    fi
-+    command awk "$@"
-+}
-+: > "$CASE_DIR/ut.log"
-+start_ut_heartbeat
-+heartbeat_waiting && heartbeat_tick || exit 96
-+stop_ut_heartbeat
-+exec 8>&- 9>&-
-+grep -q 'active_cases=unknown active=unclassified report' "$CASE_DIR/ut.log" && [[ ! -e "$CASE_DIR/rescanned" ]]
- `
- 	mock := `#!/bin/bash
- if [[ "$1" == version ]]; then exit 0; fi
-@@ -1241,6 +1280,59 @@ exit 0
+ func executionMemoryHeadroomSafety(ceiling ExecutionMemoryCeiling) uint64 {
+-	safety := ceiling.EffectiveCN / 20
++	effective := ceiling.EffectiveCN
++	// A private limit stands in for a smaller container: the margin is sized
++	// from what this process may use, not from the whole host.
++	if limit := executionPrivateMemoryLimit.Load(); limit > 0 && limit < effective {
++		effective = limit
++	}
++	safety := effective / 20
+ 	if safety < executionResourceMinimumRuntimeHeadroom {
+ 		safety = executionResourceMinimumRuntimeHeadroom
  	}
- }
- 
-+func TestPlanRaceReportSeparatesTornShard(t *testing.T) {
-+	script := `source ./run_ut.sh UT
-+PLAN_RACE_SHARDS=2
-+PLAN_RACE_PARALLEL=2
-+PLAN_RACE_REPORT="$CASE_DIR/plan.out"
-+status=0
-+run_plan_race_shards example/plan || status=$?
-+[[ "$status" == 1 && -f "$PLAN_RACE_REPORT.ready" ]] || exit 90
-+append_ut_report "$PLAN_RACE_REPORT" "$CASE_DIR/ready.out" || exit 91
-+rm "$PLAN_RACE_REPORT.ready"
-+append_ut_report "$PLAN_RACE_REPORT" "$CASE_DIR/recovered.out" || exit 92
-+cmp "$CASE_DIR/ready.out" "$CASE_DIR/recovered.out" ||
-```
-
-**File**: `optools/validate_ut_report.py` (modified, +26/-8)
-```diff
-@@ -87,6 +87,23 @@ def _event_fields(event: object) -> Optional[Tuple[str, str, str]]:
-     return action, package, test
- 
- 
-+def decode_event(raw_line: bytes) -> object:
-+    return json.loads(raw_line.decode("utf-8"))
-+
-+
-+def emit_analyzer_input(report_path: Path) -> None:
-+    # Preserve complete records exactly. The pinned analyzer aborts on invalid
-+    # JSON, so keep malformed fragments only in the authoritative raw report.
-+    with report_path.open("rb") as report:
-+        for raw_line in report:
-+            try:
-+                event = decode_event(raw_line)
-+            except (UnicodeDecodeError, json.JSONDecodeError):
-+                continue
-+            if isinstance(event, dict):
-+                sys.stdout.buffer.write(raw_line)
-+
-+
- def validate(report_path: Path, require_complete: bool = False) -> Validation:
-     result = Validation()
-     active: Dict[Tuple[str, str], ActiveTest] = {}
-@@ -96,13 +113,8 @@ def validate(report_path: Path, require_complete: bool = False) -> Validation:
-     with report_path.open("rb") as report:
-         for line_number, raw_line in enumerate(report, 1):
-             try:
--                line = raw_line.decode("utf-8")
--            except UnicodeDecodeError:
--                result.malformed += 1
--                continue
--            try:
--                event = json.loads(line)
--            except json.JSONDecodeError:
-+                event = decode_event(raw_line)
-+            except (UnicodeDecodeError, json.JSONDecodeError):
-                 result.malformed += 1
-                 continue
- 
-@@ -239,13 +251,19 @@ def _print_result(result: Validation) -> None:
- 
- def main(argv: Optional[Iterable[str]] = None) -> int:
-     parser = argparse.ArgumentParser(description=__doc__)
--    parser.add_argument("--require-complete", action="store_true")
-+    mode = parser.add_mutually_exclusive_group()
-+    mode.add_argument("--require-complete", action="store_true")
-+    mode.add_argument("--emit-analyzer-input", action="store_true")
-     parser.add_argument("report", type=Path)
-     arguments = parser.parse_args(argv)
-     if not arguments.report.is_file():
-         print(f"UT report missing: {arguments.report}", file=sys.stderr)
-         return 1
- 
-+    if arguments.emit_analyzer_input:
-+        emit_analyzer_input(arguments.report)
-+        return 0
-+
-     result = validate(arguments.report, arguments.require_complete)
-     _print_result(result)
-     return 1 if result.errors else 0
+@@ -2160,7 +2166,7 @@ func (proc *Process) getExecutionResourceBudget(withSpill bool) (*ExecutionResou
+ 			if createErr != nil {
+ 				return nil
+ 			}
+-			b.memoryHeadroomProvider = system.MemoryAvailableIncludingCache
++			b.memoryHeadroomProvider = executionPhysicalMemoryHeadroom
+ 			b.memoryHeadroomTTL = executionResourceBudgetCapRefreshTTL
+ 			b.memoryHeadroomNow = time.Now
+ 			b.memoryHeadroomSafety = executionMemoryHeadroomSafety(ceiling)
 ```
 
 ---
 
-### Incident Patch 2: `a9dda368` (2026-11-21)
-**Commit Message**: fix(data branch): use lineage mapping for diff output tables (#32971)
+### Incident Patch 2: `af99c169` (2026-11-24)
+**Commit Message**: Fix worker capture vector cleanup in parallel DedupJoin (#33127)
 
 ## What type of PR is this?
 
@@ -3213,1464 +2727,1119 @@ and fa
 
 ## Which issue(s) this PR fixes:
 
-issue #32969
+Fixes #33123
 
 ## What this PR does / why we need it:
 
-### Summary
-Fixes `DATA BRANCH DIFF ... OUTPUT AS` schema evolution / column lineage resolution bugs and fixes related column mapping, row ordering, `TIMESTAMP` formatting, `DECIMAL` attribute, and Unicode case-fold edge cases.
+A parallel `DedupJoin` worker transfers captured old-column vectors to the merger, but the vectors still belong to the worker's allocation pool. Freeing them with the merger's process pool caused a panic during finalize and another while draining queued messages. Downstream operators then waited for an end signal until the SQL client timed out.
 
-### Root Cause & Changes
-1. **Lineage-mapped `OUTPUT AS` DDL & base history projection (`pkg/frontend/data_branch.go`, `pkg/frontend/data_branch_hashdiff.go`, `pkg/frontend/data_branch_output.go`)**:
-   - Updated `reconcileDataBranchEndpointSchema` to index target data columns positionally (`tarDataIdx` skipping `catalog.Row_ID`), populate `lcaColNames`, `baseColNames`, and `baseColToTarIdx` accurately across altered/renamed/reordered schemas, and keep `dataBranchIndexedSpecialUpdateColIdxes` consistent via `commonutil.EqualFoldKey`.
-   - Added `excludeTargetOnly` in `dataBranchSourceColToTargetIdx` so base-side historical batches exclude target-only slo
+The worker records the allocation pool when it creates the capture vectors. It transfers that pool with the vectors in `WorkerJoinMsg` only on successful publication; on a rejected send the worker still owns the captures. Local cleanup, normal merger consumption, and mailbox draining all pass the recorded worker pool to `Vector.Free`, preserving its independent ownership check. No query timeout changes.
 
-**File**: `pkg/frontend/data_branch.go` (modified, +60/-28)
+The regression test runs real worker finalization against merger consumption and the error-drain path. A separate negative test verifies tha
+
+**File**: `pkg/sql/colexec/dedupjoin/join_test.go` (modified, +60/-23)
 ```diff
-@@ -32,6 +32,7 @@ import (
- 	"github.com/matrixorigin/matrixone/pkg/common/moerr"
- 	"github.com/matrixorigin/matrixone/pkg/common/mpool"
- 	"github.com/matrixorigin/matrixone/pkg/common/rscthrottler"
-+	commonutil "github.com/matrixorigin/matrixone/pkg/common/util"
- 	"github.com/matrixorigin/matrixone/pkg/container/batch"
- 	"github.com/matrixorigin/matrixone/pkg/container/types"
- 	"github.com/matrixorigin/matrixone/pkg/container/vector"
-@@ -1450,20 +1451,19 @@ func reconcileDataBranchEndpointSchema(
- 			return err
- 		}
- 		tables.def.lcaColNames = make([]string, len(tables.def.colNames))
-+		tarDataIdx := -1
- 		for _, tarCol := range tarDef.Cols {
- 			if tarCol.Name == catalog.Row_ID {
- 				continue
- 			}
-+			tarDataIdx++
- 			reachesLCA, lcaCol, redefined := dataBranchColumnReachesLCA(
- 				tarDefs, dagInfo.pathFromLCAToTarLineageOnly, tarCol,
- 			)
- 			if !reachesLCA || redefined || lcaCol == nil {
- 				continue
- 			}
--			idx := dataBranchColumnIndexByName(tables.def.colNames, tarCol.Name)
--			if idx >= 0 {
--				tables.def.lcaColNames[idx] = lcaCol.Name
--			}
-+			tables.def.lcaColNames[tarDataIdx] = lcaCol.Name
- 		}
- 		resolveBaseColumn = func(tarCol *plan.ColDef) *plan.ColDef {
- 			if baseCol := endpointColumns[strings.ToLower(tarCol.Name)]; baseCol != nil {
-@@ -1505,21 +1505,20 @@ func reconcileDataBranchEndpointSchema(
- 		tables.def.baseColToTarIdx[i] = -1
- 	}
- 	tables.def.baseColNames = make([]string, len(tables.def.colNames))
-+	tarDataIdx := -1
- 	for _, tarCol := range tarDef.Cols {
- 		if tarCol.Name == catalog.Row_ID {
- 			continue
- 		}
-+		tarDataIdx++
- 		baseCol := resolveBaseColumn(tarCol)
- 		if baseCol == nil {
- 			continue
- 		}
--		tarIdx := dataBranchColumnIndexByName(tables.def.colNames, tarCol.Name)
--		if tarIdx >= 0 {
--			tables.def.baseColNames[tarIdx] = baseCol.Name
+@@ -18,6 +18,7 @@ import (
+ 	"bytes"
+ 	"context"
+ 	"errors"
++	"fmt"
+ 	"io"
+ 	"os"
+ 	"sync"
+@@ -1218,15 +1219,14 @@ func TestDedupFinalizeWorkerPublicationBoundaries(t *testing.T) {
+ 		proc := testutil.NewProcessWithOwnedMPool(t, "", mpool.MustNewZero())
+ 		mailbox := NewWorkerJoinMailbox(2)
+ 		mailbox.stopAndDrain()
+-		worker := &DedupJoin{
+-			NumCPU:   2,
+-			IsMerger: false,
+-			Mailbox:  mailbox,
 -		}
-+		tables.def.baseColNames[tarDataIdx] = baseCol.Name
- 		for i, candidate := range baseDataCols {
--			if strings.EqualFold(candidate.Name, baseCol.Name) {
--				tables.def.baseColToTarIdx[i] = tarIdx
-+			if candidate == baseCol || strings.EqualFold(candidate.Name, baseCol.Name) {
-+				tables.def.baseColToTarIdx[i] = tarDataIdx
- 				break
- 			}
- 		}
-@@ -1731,6 +1730,7 @@ func checkDataBranchPrimaryKeyCompatibilityWithResolver(
- func dataBranchColumnTypeAttributesEqual(left, right plan.Type) bool {
- 	return left.Width == right.Width &&
- 		left.Scale == right.Scale &&
-+		left.NumericAttributes == right.NumericAttributes &&
- 		left.Enumvalues == right.Enumvalues &&
- 		left.AutoIncr == right.AutoIncr &&
- 		left.NotNullable == right.NotNullable
-@@ -1750,16 +1750,22 @@ func checkSchemaCompatibilityWithResolver(
++		worker, account := newFinalizeCaptureWorker(t, proc, mailbox)
  
- 	baseVisibleColMap := make(map[string]*plan.ColDef, len(baseDef.Cols))
- 	for _, col := range baseDef.Cols {
--		if col.Name == catalog.Row_ID {
--			continue
--		}
--		name := strings.ToLower(col.Name)
- 		if isDataBranchUserVisibleColumn(col) {
--			baseVisibleColMap[name] = col
-+			nameKey := commonutil.EqualFoldKey(col.Name)
-+			if prev := baseVisibleColMap[nameKey]; prev != nil {
-+				err = moerr.NewInternalErrorNoCtxf(
-+					"schema compatibility check: base columns '%s' and '%s' have equivalent names",
-+					prev.Name, col.Name,
-+				)
-+				return
-+			}
-+			baseVisibleColMap[nameKey] = col
- 		}
- 	}
- 
- 	commonColNameSet := make(map[string]bool)
-+	matchedBaseCols := make(map[*plan.ColDef]string)
-+	tarVisibleColMap := make(map[string]*plan.ColDef, len(tarDef.Cols))
- 	dataIdx := 0
- 	for _, tarCol := range tarDef.Cols {
- 		if tarCol.Name == catalog.Row_ID {
-@@ -1771,8 +1777,28 @@ func checkSchemaCompatibilityWithResolver(
- 			continue
- 		}
- 
--		name := strings.ToLower(tarCol.Name)
- 		baseCol := resolveBaseColumn(tarCol)
-+		if baseCol != nil {
-+			if prevTarName, matched := matchedBaseCols[baseCol]; matched {
-+				err = moerr.NewInternalErrorNoCtxf(
-+					"schema compatibility check: base column '%s' matches multiple target columns ('%s' and '%s')",
-+					baseCol.Name, prevTarName, tarCol.Name,
-+				)
-+				return
-+			}
-+			matchedBaseCols[baseCol] = tarCol.Name
-+		}
-+		if isDataBranchUserVisibleColumn(tarCol) {
-+			tarNameKey := commonutil.EqualFoldKey(tarCol.Name)
-+			if prev := tarVisibleColMap[tarNameKey]; prev != nil {
-+				err = moerr.NewInternalErrorNoCtxf(
-+					"schema compatibility check: target columns '%s' and '%s' have equivalent names",
-+					prev.Name, tarCol.Name,
-+				)
-+				return
-+			}
-+			tarVisibleColMap[tarNameKey] = tarCol
-+		}
- 		if baseCol != nil {
- 			if !dataBranchGeneratedColumnsLogicallyEqual(
- 				tarCol, baseCol, tarDef, baseDef, resolveBaseColumn,
-@@ -1799,12 +1825,13 @@ func checkSchemaCompatibilityWithResolver(
- 					return
- 				}
- 				commonIdxes = append(commonIdxes, dataIdx)
--				commonColNameSet[name] = true
--				commonColNameSet[strings.ToLower(baseCol.Name)] = true
-+				baseNameKey := commonutil.EqualFoldKey(baseCol.Name)
-+				commonColNameSet[commonutil.EqualFoldKey(tarCol.Name)] = true
-+				commonColNameSet[baseNameKey] = true
- 				if isDataBranchUserVisibleColumn(tarCol) {
- 					commonVisibl
-```
-
-**File**: `pkg/frontend/data_branch_hashdiff.go` (modified, +8/-16)
-```diff
-@@ -925,21 +925,6 @@ func runLCAProbeWithReaderFallback(
- 				return executor.Result{}, err
- 			}
- 		}
--	} else if len(missedRows) == 0 {
--		for targetIdx, sourceIdx := range sourceIdxByTarget {
--			if sourceIdx < 0 {
--				nullConst := vector.NewConstNull(tblStuff.def.colTypes[targetIdx], rowCount, mp)
--				err = out.Vecs[targetIdx+1].UnionBatch(nullConst, 0, rowCount, nil, mp)
--				nullConst.Free(mp)
--				if err != nil {
--					return executor.Result{}, err
--				}
--				continue
--			}
--			if err = out.Vecs[targetIdx+1].UnionBatch(tmp.Vecs[sourceIdx], 0, rowCount, nil, mp); err != nil {
--				return executor.Result{}, err
--			}
--		}
- 	} else {
- 		for targetIdx, sourceIdx := range sourceIdxByTarget {
- 			if sourceIdx < 0 {
-@@ -951,6 +936,7 @@ func runLCAProbeWithReaderFallback(
- 				}
- 				continue
- 			}
-+			// Even an all-hit scan may return rows in a different order than orderedIdx.
- 			if err = out.Vecs[targetIdx+1].Union(tmp.Vecs[sourceIdx], sels, mp); err != nil {
- 				return executor.Result{}, err
- 			}
-@@ -3175,6 +3161,7 @@ func dataBranchSourceColToTargetIdx(
- 	sourceDef, targetDef *plan2.TableDef,
- 	targetColNames []string,
- 	targetOnlyIdxes []int,
-+	excludeTargetOnly bool,
- ) ([]int, error) {
- 	if sourceDef == nil || targetDef == nil {
- 		return nil, moerr.NewInternalErrorNoCtx("missing schema for historical data branch projection")
-@@ -3231,6 +3218,11 @@ func dataBranchSourceColToTargetIdx(
- 		if targetCol != nil {
- 			targetIdx = dataBranchColumnIndexByName(targetColNames, targetCol.Name)
- 		}
-+		_, isTargetOnly := targetOnly[targetIdx]
-+		if excludeTargetOnly && isTargetOnly {
-+			// A historical base value is absent from the current base schema.
-+			targetIdx = -1
-+		}
- 		mapping = append(mapping, targetIdx)
- 		if targetIdx < 0 {
- 			continue
-@@ -3240,7 +3232,7 @@ func dataBranchSourceColToTargetIdx(
- 		sameType := col.Typ.Id == targetCol.Typ.Id &&
- 			(dataBranchColumnTypeAttributesEqual(col.Typ, targetCol.Typ) || derivedCompositePK)
- 		if !sameType {
--			if _, isTargetOnly := targetOnly[targetIdx]; isTargetOnly {
-+			if isTargetOnly {
- 				// This column does not exist on the base endpoint and is excluded
- 				// from comparison and MERGE apply. Its old physical representation
- 				// cannot be moved into the endpoint-typed batch; project it as NULL
-```
-
-**File**: `pkg/frontend/data_branch_hashdiff_test.go` (modified, +122/-10)
-```diff
-@@ -43,6 +43,7 @@ import (
- 	"github.com/matrixorigin/matrixone/pkg/vm/engine"
- 	"github.com/matrixorigin/matrixone/pkg/vm/engine/readutil"
- 	"github.com/panjf2000/ants/v2"
-+	"github.com/prashantv/gostub"
- 	"github.com/stretchr/testify/require"
- )
- 
-@@ -1074,6 +1075,57 @@ func TestRunLCAProbeWithReaderFallback_PrepareAndPropagateReaderError(t *testing
- 	ret.Close()
- }
- 
-+func TestRunLCAProbeWithReaderFallback_AllHitsPreserveInputOrder(t *testing.T) {
-+	ctx := context.Background()
-+	ses := newValidateSession(t)
-+	mp := ses.proc.Mp()
-+	ctrl := gomock.NewController(t)
-+	tblStuff := newTestBranchTableStuff(ctrl)
-+	lcaRel := mock_frontend.NewMockRelation(ctrl)
-+	lcaRel.EXPECT().GetTableDef(gomock.Any()).Return(newTestBranchTableDef("lca_tbl", "name"))
-+	lcaRel.EXPECT().GetTableID(gomock.Any()).Return(uint64(77)).AnyTimes()
-+	tblStuff.lcaRel = lcaRel
-+
-+	keys := batch.NewWithSize(1)
-+	defer keys.Clean(mp)
-+	keys.Vecs[0] = vector.NewVec(types.T_int64.ToType())
-+	require.NoError(t, vector.AppendFixedList(keys.Vecs[0], []int64{20, 10}, nil, mp))
-+	keys.SetRowCount(2)
-+
-+	stub := gostub.Stub(&scanSnapshotRelationByIDWithFallback, func(
-+		_ context.Context, _ string, _ *Session, _ uint64, _ types.TS, _ engine.Relation,
-+		attrs []string, typs []types.Type, _ *plan.Expr, _ int, onBatch func(*batch.Batch) error,
-+	) error {
-+		require.Equal(t, []string{"id", "name", "hidden"}, attrs)
-+		readBatch := batch.NewWithSize(len(attrs))
-+		defer readBatch.Clean(mp)
-+		for i, typ := range typs {
-+			readBatch.Vecs[i] = vector.NewVec(typ)
-+		}
-+		require.NoError(t, vector.AppendFixedList(readBatch.Vecs[0], []int64{10, 20}, nil, mp))
-+		require.NoError(t, vector.AppendBytes(readBatch.Vecs[1], []byte("ten"), false, mp))
-+		require.NoError(t, vector.AppendBytes(readBatch.Vecs[1], []byte("twenty"), false, mp))
-+		require.NoError(t, vector.AppendBytes(readBatch.Vecs[2], nil, true, mp))
-+		require.NoError(t, vector.AppendBytes(readBatch.Vecs[2], []byte("present"), false, mp))
-+		readBatch.SetRowCount(2)
-+		return onBatch(readBatch)
-+	})
-+	t.Cleanup(stub.Reset)
-+
-+	ret, err := runLCAProbeWithReaderFallback(ctx, ses, keys, tblStuff, types.BuildTS(10, 0))
-+	require.NoError(t, err)
-+	defer ret.Close()
-+	require.Len(t, ret.Batches, 1)
-+	out := ret.Batches[0]
-+	require.Equal(t, 2, out.RowCount())
-+	require.Equal(t, []int64{0, 1}, vector.MustFixedColNoTypeCheck[int64](out.Vecs[0]))
-+	require.Equal(t, []int64{20, 10}, vector.MustFixedColNoTypeCheck[int64](out.Vecs[tblStuff.def.pkColIdx+1]))
-+	require.Equal(t, "twenty", out.Vecs[2].GetStringAt(0))
-+	require.Equal(t, "ten", out.Vecs[2].GetStringAt(1))
-+	require.Equal(t, "present", out.Vecs[3].GetStringAt(0))
-+	require.True(t, out.Vecs[3].IsNull(1))
-+}
-+
- func TestHandleDelsOnLCA_EarlyPaths(t *testing.T) {
- 	ses := newValidateSession(t)
- 	ctrl := gomock.NewController(t)
-@@ -3635,7 +3687,7 @@ func TestDataBranchSourceColToTargetIdxRejectsHistoricalTypeDrift(t *testing.T)
- 	}
- 
- 	_, err := dataBranchSourceColToTargetIdx(
--		sourceDef, targetDef, []string{"a", "c"}, []int{1},
-+		sourceDef, targetDef, []string{"a", "c"}, []int{1}, false,
- 	)
- 	require.Error(t, err)
- 	require.Contains(t, err.Error(), "historical data branch column a has a different type")
-@@ -3658,7 +3710,7 @@ func TestDataBranchSourceColToTargetIdxSkipsTargetOnlyHistoricalTypeDrift(t *tes
- 	}
- 
- 	mapping, err := dataBranchSourceColToTargetIdx(
--		sourceDef, targetDef, []string{"a", "c"}, []int{1},
-+		sourceDef, targetDef, []string{"a", "c"}, []int{1}, false,
- 	)
- 	require.NoError(t, err)
- 	require.Equal(t, []int{0, -1}, mapping)
-@@ -3688,6 +3740,66 @@ func TestDataBranchSourceColToTargetIdxSkipsTargetOnlyHistoricalTypeDrift(t *tes
- 	require.Equal(t, baseline, mp.CurrNB())
- }
- 
-+func TestDataBranchSourceColToTargetIdxExcludesBaseHistoricalTargetOnlyColumns(t *testing.T) {
-+	// The historical base and the current target have the same schema, but
-+	// x and y no longer exist on the current base.
-+	def := &plan.TableDef{
-+		Cols: []*plan.ColDef{
-+			{Name: "id", ColId: 1, Seqnum: 0, Typ: plan.Type{Id: int32(types.T_int32)}},
-+			{Name: "x", ColId: 2, Seqnum: 1, Typ: plan.Type{Id: int32(types.T_int32)}},
-+			{Name: "y", ColId: 3, Seqnum: 2, Typ: plan.Type{Id: int32(types.T_int32)}},
-+			{Name: "amount", ColId: 4, Seqnum: 3, Typ: plan.Type{Id: int32(types.T_decimal64), Width: 9, Scale: 2}},
-+		},
-+		Pkey: &plan.PrimaryKeyDef{PkeyColName: "id", Names: []string{"id"}},
-+	}
-+	tblStuff := tableStuff{}
-+	tblStuff.def.colNames = []string{"id", "x", "y", "amount"}
-+	intType := types.T_int32.ToType()
-+	decimalType := types.New(types.T_decimal64, 9, 2)
-+	tblStuff.def.colTypes = []types.Type{intType, intType, intType, decimalType}
-+	targetOnly := []int{1, 2}
-+	targetMapping, err := dataBranchSourceColToTargetIdx(def, def, tblStuff.def.colNames, targetOnly, false)
-+	require.NoError(t, err)
-+	require.Equal(t, []int{0, 1, 2, 3}, targetMapping)
-+	require.False(t, dataBranchNeedsHistoricalProjection(targetMapping, len(tblStuff.def.colNames)))
-+	baseMapp
-```
-
-**File**: `pkg/frontend/data_branch_output.go` (modified, +121/-82)
-```diff
-@@ -37,6 +37,7 @@ import (
- 	"github.com/google/uuid"
- 	"github.com/matrixorigin/matrixone/pkg/catalog"
- 	"github.com/matrixorigin/matrixone/pkg/common/moerr"
-+	commonutil "github.com/matrixorigin/matrixone/pkg/common/util"
- 	"github.com/matrixorigin/matrixone/pkg/container/batch"
- 	"github.com/matrixorigin/matrixone/pkg/container/types"
- 	"github.com/matrixorigin/matrixone/pkg/container/vector"
-@@ -470,7 +471,16 @@ func resolveProjectedIdxes(columns tree.IdentifierList, tblStuff tableStuff) ([]
- 
- 	nameToIdx := make(map[string]int, len(tblStuff.def.visibleIdxes))
- 	for _, idx := range tblStuff.def.visibleIdxes {
--		nameToIdx[strings.ToLower(tblStuff.def.colNames[idx])] = idx
-+		colName := tblStuff.def.colNames[idx]
-+		nameKey := commonutil.EqualFoldKey(colName)
-+		if prevIdx, exists := nameToIdx[nameKey]; exists && prevIdx != idx {
-+			return nil, moerr.NewInvalidInputNoCtxf(
-+				"column names %q and %q are equivalent",
-+				tblStuff.def.colNames[prevIdx],
-+				colName,
-+			)
-+		}
-+		nameToIdx[nameKey] = idx
- 	}
- 
- 	projected := make([]int, 0, len(columns)+len(tblStuff.def.pkColIdxes))
-@@ -486,7 +496,7 @@ func resolveProjectedIdxes(columns tree.IdentifierList, tblStuff tableStuff) ([]
- 	}
- 
- 	for _, col := range columns {
--		idx, ok := nameToIdx[strings.ToLower(string(col))]
-+		idx, ok := nameToIdx[commonutil.EqualFoldKey(string(col))]
- 		if !ok {
- 			if tblStuff.tarRel != nil && tblStuff.tarRel.GetTableName() != "" {
- 				return nil, moerr.NewInvalidInputNoCtxf(
-@@ -566,9 +576,19 @@ func newDiffOutputTable(
- 
- 	columnNames := make([]string, 0, len(projectedIdxes)+2)
- 	usedNames := make(map[string]struct{}, len(projectedIdxes)+2)
-+	usedColNames := make(map[string]string, len(projectedIdxes))
- 	for _, idx := range projectedIdxes {
- 		name := tblStuff.def.colNames[idx]
--		usedNames[strings.ToLower(name)] = struct{}{}
-+		nameKey := commonutil.EqualFoldKey(name)
-+		if prevName, exists := usedColNames[nameKey]; exists {
-+			return nil, moerr.NewInvalidInputNoCtxf(
-+				"column names %q and %q are equivalent",
-+				prevName,
-+				name,
-+			)
-+		}
-+		usedColNames[nameKey] = name
-+		usedNames[nameKey] = struct{}{}
- 	}
- 	columnNames = append(columnNames,
- 		nextAvailableDiffOutputColumnName(diffOutputSourceColumn, usedNames),
-@@ -592,11 +612,11 @@ func nextAvailableDiffOutputColumnName(base string, used map[string]struct{}) st
- 		if suffix > 0 {
- 			name = fmt.Sprintf("%s_%d", base, suffix)
- 		}
--		lowerName := strings.ToLower(name)
--		if _, exists := used[lowerName]; exists {
-+		nameKey := commonutil.EqualFoldKey(name)
-+		if _, exists := used[nameKey]; exists {
- 			continue
- 		}
--		used[lowerName] = struct{}{}
-+		used[nameKey] = struct{}{}
- 		return name
- 	}
- }
-@@ -615,32 +635,37 @@ func (output *diffOutputTable) createSQL(ctx context.Context, tblStuff tableStuf
- 		return "", moerr.NewInternalErrorNoCtx("DATA BRANCH DIFF OUTPUT AS target table definition is unavailable")
- 	}
- 
--	projectedNames := make([]string, len(output.projectedIdxes))
--	projectedTargetOnly := make([]bool, len(output.projectedIdxes))
--	targetOnlyIdxes := make(map[int]struct{}, len(tblStuff.def.tarOnlyIdxes))
--	for _, idx := range tblStuff.def.tarOnlyIdxes {
--		targetOnlyIdxes[idx] = struct{}{}
--	}
--	for i, idx := range output.projectedIdxes {
--		projectedNames[i] = tblStuff.def.colNames[idx]
--		_, projectedTargetOnly[i] = targetOnlyIdxes[idx]
--	}
--	outputColDefs, targetOnly, err := dataBranchOutputColumnDefs(
--		targetTableDef, baseTableDef, projectedNames, projectedTargetOnly,
--	)
--	if err != nil {
--		return "", err
--	}
--
- 	columnDefs := []string{
- 		fmt.Sprintf("%s varchar(255) default null", quoteIdentifierForSQL(output.columnNames[0])),
- 		fmt.Sprintf("%s varchar(16) default null", quoteIdentifierForSQL(output.columnNames[1])),
- 	}
--	for i, name := range projectedNames {
--		colDef := outputColDefs[i]
-+	for _, idx := range output.projectedIdxes {
-+		name := tblStuff.def.colNames[idx]
-+		targetOnly := slices.Contains(tblStuff.def.tarOnlyIdxes, idx)
-+		var colDef *plan2.ColDef
-+		if targetOnly {
-+			colDef = dataBranchColumnDefByName(targetTableDef, name)
-+			if colDef == nil {
-+				return "", moerr.NewInternalErrorNoCtxf(
-+					"DATA BRANCH source column %q is unavailable", name,
-+				)
-+			}
-+		} else {
-+			// The reconciled mapping identifies the same logical column across
-+			// physical table generations, including renamed columns.
-+			if idx < len(tblStuff.def.baseColNames) {
-+				colDef = dataBranchColumnDefByName(baseTableDef, tblStuff.def.baseColNames[idx])
-+			}
-+			if colDef == nil {
-+				return "", moerr.NewInternalErrorNoCtxf(
-+					"DATA BRANCH destination column for source column %q is unavailable", name,
-+				)
-+			}
-+		}
- 
- 		columnDef := fmt.Sprintf("%s %s", quoteIdentifierForSQL(name), plan2.FormatColType(colDef.Typ))
--		if colDef.Typ.NotNullable && !targetOnly[i] {
-+		// Base-side rows project missing target-only values as NULL.
-+		if colDef.Typ.NotNullable && !targetOnly {
- 			columnDef += " not null"
- 		} else {
- 			colu
-```
-
-**File**: `pkg/frontend/data_branch_output_test.go` (modified, +422/-0)
-```diff
-@@ -33,6 +33,7 @@ import (
- 
- 	"github.com/golang/mock/gomock"
- 	"github.com/google/uuid"
-+	"github.com/matrixorigin/matrixone/pkg/catalog"
- 	"github.com/matrixorigin/matrixone/pkg/common/moerr"
- 	"github.com/matrixorigin/matrixone/pkg/common/mpool"
- 	moruntime "github.com/matrixorigin/matrixone/pkg/common/runtime"
-@@ -48,6 +49,8 @@ import (
- 	"github.com/matrixorigin/matrixone/pkg/stage"
- 	"github.com/matrixorigin/matrixone/pkg/testutil"
- 	"github.com/matrixorigin/matrixone/pkg/util/executor"
-+	"github.com/matrixorigin/matrixone/pkg/vm/engine"
-+	"github.com/matrixorigin/matrixone/pkg/vm/process"
- 	"github.com/panjf2000/ants/v2"
- 	"github.com/stretchr/testify/require"
- )
-@@ -278,6 +281,7 @@ func TestDataBranchOutputTableSpec(t *testing.T) {
- 
- 	tblStuff := tableStuff{baseRel: baseRel, tarRel: tarRel}
- 	tblStuff.def.colNames = []string{"id", "name", "__mo_diff_source", "__mo_diff_flag"}
-+	tblStuff.def.baseColNames = tblStuff.def.colNames
- 	tblStuff.def.colTypes = []types.Type{
- 		types.T_int64.ToType(),
- 		types.T_varchar.ToType(),
-@@ -393,6 +397,271 @@ func TestDataBranchOutputTableSpec(t *testing.T) {
+ 		require.NoError(t, worker.ctr.finalize(worker, proc))
+ 		require.False(t, worker.ctr.roundStatusPublished)
+ 		require.Equal(t, End, worker.ctr.state)
++		require.Positive(t, account.Snapshot().Used)
++		worker.Reset(proc, false, nil)
++		require.Zero(t, account.Snapshot().Used)
  	})
+ 
+ 	t.Run("full mailbox", func(t *testing.T) {
+@@ -1381,11 +1381,29 @@ func TestDedupFinalizeConcurrentCancellationReturns(t *testing.T) {
+ 	}
  }
  
-+func TestDataBranchOutputTableUsesLineageColumnMapping(t *testing.T) {
-+	ctx := context.Background()
-+	ctrl := gomock.NewController(t)
-+	baseRel := mock_frontend.NewMockRelation(ctrl)
-+	tarRel := mock_frontend.NewMockRelation(ctrl)
-+	baseRel.EXPECT().GetTableDef(ctx).Return(&plan.TableDef{Cols: []*plan.ColDef{
-+		{Name: "id", ColId: 1, Typ: plan.Type{Id: int32(types.T_int64), NotNullable: true}},
-+		{Name: "note", ColId: 2, Seqnum: 1, Typ: plan.Type{Id: int32(types.T_varchar), Width: 20, NotNullable: true}},
-+	}}).AnyTimes()
-+	tarRel.EXPECT().GetTableDef(ctx).Return(&plan.TableDef{Cols: []*plan.ColDef{
-+		{Name: "id", ColId: 1, Typ: plan.Type{Id: int32(types.T_int64), NotNullable: true}},
-+		{Name: "extra", ColId: 2, Seqnum: 1, Typ: plan.Type{Id: int32(types.T_int32), NotNullable: true}},
-+		{Name: "label", ColId: 3, Seqnum: 2, Typ: plan.Type{Id: int32(types.T_varchar), Width: 20, NotNullable: true}},
-+	}}).AnyTimes()
-+	tables := tableStuff{baseRel: baseRel, tarRel: tarRel}
-+	tables.def.colNames = []string{"id", "extra", "label"}
-+	tables.def.baseColNames = []string{"id", "", "note"}
-+	tables.def.tarOnlyIdxes = []int{1}
-+	output := diffOutputTable{
-+		databaseName: "db",
-+		tableName:    "result",
-+		columnNames:  []string{"__mo_diff_source", "__mo_diff_flag"},
++func newFinalizeCaptureWorker(t *testing.T, proc *process.Process, mailbox *WorkerJoinMailbox) (*DedupJoin, *mpool.AllocationAccount) {
++	t.Helper()
++	worker := &DedupJoin{
++		NumCPU:                          uint64(mailbox.participants),
++		Mailbox:                         mailbox,
++		LeftTypes:                       []types.Type{types.T_int32.ToType()},
++		OldColCaptureProbeIdxList:       []int32{0},
++		OldColCapturePlaceholderIdxList: []int32{0},
 +	}
++	account := installTestAllocation(t, worker)
++	worker.ctr.mp = message.NewJoinMap(message.GroupSels{}, nil, nil, nil, nil, proc.Mp())
++	worker.ctr.mp.IncRef(1)
++	t.Cleanup(func() { worker.Free(proc, false, nil) })
++	worker.ctr.batchRowCount = 1
++	require.NoError(t, worker.ctr.initCaptureBuffers(worker, proc))
++	require.Positive(t, account.Snapshot().Used)
++	return worker, account
++}
 +
-+	t.Run("renamed common column with a different physical identity", func(t *testing.T) {
-+		output.projectedIdxes = []int{0, 2}
-+		sql, err := output.createSQL(ctx, tables)
-+		require.NoError(t, err)
-+		require.Contains(t, sql, "`label` VARCHAR(20) not null")
-+	})
-+	t.Run("target-only column reuses a base column identity", func(t *testing.T) {
-+		output.projectedIdxes = []int{0, 1}
-+		sql, err := output.createSQL(ctx, tables)
-+		require.NoError(t, err)
-+		require.Contains(t, sql, "`extra` INT default null")
-+	})
-+	t.Run("missing common column mapping", func(t *testing.T) {
-+		missingMapping := tables
-+		missingMapping.def.baseColNames = []string{"", "", "note"}
-+		projected := output
-+		projected.projectedIdxes = []int{0, 2}
+ func TestDedupFinalizeWorkerFailureCleansTransferredMessages(t *testing.T) {
+ 	proc := testutil.NewProcessWithOwnedMPool(t, "", mpool.MustNewZero())
++	t.Cleanup(proc.Free)
+ 	baseline := proc.Mp().CurrNB()
+-	captured := vector.NewVec(types.T_int32.ToType(), proc.Mp())
+-	require.NoError(t, vector.AppendFixed(captured, int32(1), false, proc.Mp()))
+ 
+ 	workerErr := moerr.NewInternalErrorNoCtx("worker failed")
+ 	mailbox := NewWorkerJoinMailbox(3)
+@@ -1398,30 +1416,49 @@ func TestDedupFinalizeWorkerFailureCleansTransferredMessages(t *testing.T) {
+ 	arg.ctr.state = Finalize
+ 	arg.ctr.matched = &bitmap.Bitmap{}
+ 	arg.ctr.matched.InitWithSize(1)
+-	require.True(t, func() bool {
+-		sent, _, _ := mailbox.trySend(&WorkerJoinMsg{aborted: true, err: workerErr})
+-		return sent
+-	}())
+-	require.True(t, func() bool {
+-		sent, _, _ := mailbox.trySend(&WorkerJoinMsg{
+-			capturedVecs: []*vector.Vector{captured},
+-			capturedMP:   proc.Mp(),
+-		})
+-		return sent
+-	}())
+-	t.Cleanup(func() {
+-		arg.Free(proc, true, workerErr)
+-		freeTestChildren(arg)
+-		proc.Free()
+-	})
++	t.Cleanup(func() { arg.Free(proc, true, workerErr) })
++	worker, account := newFinalizeCaptureWorker(t, proc, mailbox)
++	var wg sync.WaitGroup
++	var finalizeErr error
++	wg.Go(func() { finalizeErr = worker.ctr.finalize(worker, proc) })
++	defer func() { mailbox.stopAndDrain(); wg.Wait() }()
 +
-+		sql, err := projected.createSQL(ctx, missingMapping)
-+		require.ErrorContains(t, err, `destination column for source column "id"`)
-+		require.Empty(t, sql)
-+	})
-+	t.Run("missing target-only column definition", func(t *testing.T) {
-+		tarRel := mock_frontend.NewMockRelation(gomock.NewController(t))
-+		tarRel.EXPECT().GetTableDef(ctx).Return(&plan.TableDef{Cols: []*plan.ColDef{
-+			{Name: "id", ColId: 1, Typ: plan.Type{Id: int32(types.T_int64), NotNullable: true}},
-+		}})
-+		missingColumn := tables
-+		missingColumn.tarRel = tarRel
-+		projected := output
-+		projected.projectedIdxes = []int{0, 1}
-+
-+		sql, err := projected.createSQL(ctx, missingColumn)
-+		require.ErrorContains(t, err, `source column "extra" is unavailable`)
-+		require.Empty(t, sql)
++	// Wait for real publication, then queue the abort ahead of the capture
++	// so the merger must release the capture through its error-drain path.
++	ctx, cancel := context.WithTimeout(proc.Ctx, 2*time.Second)
++	defer cancel()
++	msg, err := receiveWorkerMsg(ctx, mailbox)
++	require.NoError(t, err)
++	sent, _, _ := mailbox.trySend(&WorkerJoinMsg{aborted: true, err: workerErr})
++	require.True(t, sent)
++	sent, _, _ = mailbox.trySend(msg)
++	require.True(t, sent)
+ 
+ 	result, err := arg.Call(proc)
+ 	require.ErrorIs(t, err, workerErr)
+ 	require.Nil(t, result.Batch)
+ 	require.Empty(t, mailbox.ch)
++	wg.Wait()
++	require.NoError(t, finalizeErr)
++	require.Zero(t, account.Snapshot().Used)
+ 	require.Equal(t, baseline, proc.Mp().CurrNB())
+ }
+ 
++func TestWorkerJoinMsgRejectsMismatchedCapturePool(t *testing.T) {
++	proc := testutil.NewProcessWithOwnedMPool(t, "", mpool.MustNewZero())
++	defer proc.Free()
++	worker := &DedupJoin{}
++	installTestAllocation(t, worker)
++	mp, err := worker.stateMP(proc)
++	require.NoError(t, err)
++	v := vector.NewVec(types.T_int32.ToType(), mp)
++	defer v.Free(mp)
++	msg := &WorkerJoinMsg{capturedVecs: []*vector.Vector{v}, capturedMP: proc.Mp()}
++	require.PanicsWithError(t, fmt.Sprintf("internal error: vector mpool mismatch: vector belongs to %p, call passed %p", mp, proc.Mp()), func() {
++		freeWorkerJoinMsg(msg)
 +	})
 +}
 +
-+func TestDataBranchOutputTableUnicodeFold(t *testing.T) {
-+	t.Run("lineage rejects fold equivalent target columns", func(t *testing.T) {
-+		baseDef := &plan.TableDef{Cols: []*plan.ColDef{{Name: "s"}}}
-+		tarDef := &plan.TableDef{Cols: []*plan.ColDef{{Name: "s"}, {Name: "ſ"}}}
-+		endpointColumns, err := dataBranchLineageEndpointColumns(
-+			[]*plan.TableDef{baseDef, tarDef}, []bool{false, false},
-+			[]*plan.TableDef{baseDef}, []bool{false},
-+		)
-+		require.ErrorContains(t, err, "target columns 's' and 'ſ' have equivalent names")
-+		require.Nil(t, endpointColumns)
-+	})
-+
-+	t.Run("lineage maps ordinary target columns", func(t *testing.T) {
-+		baseCol := &plan.ColDef{Name: "id"}
-+		baseDef := &plan.TableDef{Cols: []*plan.ColDef{baseCol}}
-+		tarDef := &plan.TableDef{Cols: []*plan.ColDef{{Name: "ID"}}}
-+		endpointColumns, err := dataBranchLineageEndpointColumns(
-+			[]*plan.TableDef{baseDef, tarDef}, []bool{false, false},
-+			[]*plan.TableDef{baseDef}, []bool{false},
-+		)
-+		require.NoError(t, err)
-+		require.Len(t, endpointColumns, 1)
-+		require.Same(t, baseCol, 
-```
-
-**File**: `test/distributed/cases/git4data/branch/diff/diff_output_as_altered_columns.result` (added, +318/-0)
-```diff
-@@ -0,0 +1,318 @@
-+drop database if exists test_diff_output_as_altered;
-+create database test_diff_output_as_altered;
-+use test_diff_output_as_altered;
-+create table added_base(id int primary key, note varchar(20) not null);
-+insert into added_base values (1,'one'),(2,'two');
-+data branch create table added_tar from added_base;
-+alter table added_tar add column extra int not null default 7;
-+update added_tar set note = 'target' where id = 1;
-+update added_base set note = 'base' where id = 2;
-+data branch diff added_tar against added_base columns (note,extra) output as added_diff;
-+➤ TABLE CREATED[12,0,0]  𝄀
-+`test_diff_output_as_altered`.`added_diff`
-+show create table added_diff;
-+➤ Table[12,10,0]  ¦  Create Table[12,201,0]  𝄀
-+added_diff  ¦  CREATE TABLE `added_diff` (
-+  `__mo_diff_source` varchar(255) DEFAULT NULL,
-+  `__mo_diff_flag` varchar(16) DEFAULT NULL,
-+  `id` int NOT NULL,
-+  `note` varchar(20) NOT NULL,
-+  `extra` int DEFAULT NULL
-+)
-+select __mo_diff_source, __mo_diff_flag, id, note, extra from added_diff order by id;
-+➤ __mo_diff_source[12,255,0]  ¦  __mo_diff_flag[12,16,0]  ¦  id[4,32,0]  ¦  note[12,20,0]  ¦  extra[4,32,0]  𝄀
-+added_tar  ¦  UPDATE  ¦  1  ¦  target  ¦  7  𝄀
-+added_base  ¦  UPDATE  ¦  2  ¦  base  ¦  null
-+create table rename_base(id int primary key, note varchar(20) not null);
-+insert into rename_base values (1,'one'),(2,'two');
-+data branch create table rename_tar from rename_base;
-+alter table rename_tar algorithm=instant, rename column note to label;
-+update rename_tar set label = 'target' where id = 1;
-+update rename_base set note = 'base' where id = 2;
-+data branch diff rename_tar against rename_base columns (label) output as rename_diff;
-+➤ TABLE CREATED[12,0,0]  𝄀
-+`test_diff_output_as_altered`.`rename_diff`
-+show create table rename_diff;
-+➤ Table[12,11,0]  ¦  Create Table[12,175,0]  𝄀
-+rename_diff  ¦  CREATE TABLE `rename_diff` (
-+  `__mo_diff_source` varchar(255) DEFAULT NULL,
-+  `__mo_diff_flag` varchar(16) DEFAULT NULL,
-+  `id` int NOT NULL,
-+  `label` varchar(20) NOT NULL
-+)
-+select __mo_diff_source, __mo_diff_flag, id, label from rename_diff order by id;
-+➤ __mo_diff_source[12,255,0]  ¦  __mo_diff_flag[12,16,0]  ¦  id[4,32,0]  ¦  label[12,20,0]  𝄀
-+rename_tar  ¦  UPDATE  ¦  1  ¦  target  𝄀
-+rename_base  ¦  UPDATE  ¦  2  ¦  base
-+create table copy_base(id int primary key, amount decimal(9,2) not null);
-+insert into copy_base values (1,10.50),(2,20.00);
-+data branch create table copy_tar from copy_base;
-+alter table copy_tar algorithm=copy, add column extra int not null default 9 first;
-+update copy_tar set amount = 11.75 where id = 1;
-+update copy_base set amount = 21.25 where id = 2;
-+data branch diff copy_tar against copy_base columns (amount,extra);
-+➤ diff copy_tar against copy_base[12,0,0]  ¦  flag[12,0,0]  ¦  id[4,32,0]  ¦  amount[3,9,2]  ¦  extra[4,32,0]  𝄀
-+copy_tar  ¦  UPDATE  ¦  1  ¦  11.75  ¦  9  𝄀
-+copy_base  ¦  UPDATE  ¦  2  ¦  21.25  ¦  null
-+data branch diff copy_tar against copy_base columns (amount,extra) output as copy_diff;
-+➤ TABLE CREATED[12,0,0]  𝄀
-+`test_diff_output_as_altered`.`copy_diff`
-+show create table copy_diff;
-+➤ Table[12,9,0]  ¦  Create Table[12,203,0]  𝄀
-+copy_diff  ¦  CREATE TABLE `copy_diff` (
-+  `__mo_diff_source` varchar(255) DEFAULT NULL,
-+  `__mo_diff_flag` varchar(16) DEFAULT NULL,
-+  `id` int NOT NULL,
-+  `amount` decimal(9,2) NOT NULL,
-+  `extra` int DEFAULT NULL
-+)
-+select __mo_diff_source, __mo_diff_flag, id, amount, extra from copy_diff order by id;
-+➤ __mo_diff_source[12,255,0]  ¦  __mo_diff_flag[12,16,0]  ¦  id[4,32,0]  ¦  amount[3,9,2]  ¦  extra[4,32,0]  𝄀
-+copy_tar  ¦  UPDATE  ¦  1  ¦  11.75  ¦  9  𝄀
-+copy_base  ¦  UPDATE  ¦  2  ¦  21.25  ¦  null
-+data branch diff copy_tar against copy_base output as copy_full_diff;
-+➤ TABLE CREATED[12,0,0]  𝄀
-+`test_diff_output_as_altered`.`copy_full_diff`
-+show create table copy_full_diff;
-+➤ Table[12,14,0]  ¦  Create Table[12,208,0]  𝄀
-+copy_full_diff  ¦  CREATE TABLE `copy_full_diff` (
-+  `__mo_diff_source` varchar(255) DEFAULT NULL,
-+  `__mo_diff_flag` varchar(16) DEFAULT NULL,
-+  `extra` int DEFAULT NULL,
-+  `id` int NOT NULL,
-+  `amount` decimal(9,2) NOT NULL
-+)
-+select * from copy_full_diff order by id;
-+➤ __mo_diff_source[12,255,0]  ¦  __mo_diff_flag[12,16,0]  ¦  extra[4,32,0]  ¦  id[4,32,0]  ¦  amount[3,9,2]  𝄀
-+copy_tar  ¦  UPDATE  ¦  9  ¦  1  ¦  11.75  𝄀
-+copy_base  ¦  UPDATE  ¦  null  ¦  2  ¦  21.25
-+create table base_copy_base(id int primary key, note varchar(20) not null, amount int not null);
-+insert into base_copy_base values (1,'one',10),(2,'two',20);
-+data branch create table base_copy_tar from base_copy_base;
-+alter table base_copy_base algorithm=copy, modify column note varchar(20) not null first;
-+data branch diff base_copy_tar against base_copy_base output as empty_reordered_diff;
-+➤ TABLE CREATED[12,0,0]  𝄀
-+`test_diff_output_as_altered`.`empty_reordered_diff`
-+show create table empty_reordered_diff;
-+➤ Table[12,20,0]  ¦  Create Table[12,
-```
-
-**File**: `test/distributed/cases/git4data/branch/diff/diff_output_as_altered_columns.sql` (added, +166/-0)
-```diff
-@@ -0,0 +1,166 @@
-+drop database if exists test_diff_output_as_altered;
-+create database test_diff_output_as_altered;
-+use test_diff_output_as_altered;
-+
-+-- Target-only columns retain their type and are nullable for base-side rows.
-+create table added_base(id int primary key, note varchar(20) not null);
-+insert into added_base values (1,'one'),(2,'two');
-+data branch create table added_tar from added_base;
-+alter table added_tar add column extra int not null default 7;
-+update added_tar set note = 'target' where id = 1;
-+update added_base set note = 'base' where id = 2;
-+data branch diff added_tar against added_base columns (note,extra) output as added_diff;
-+show create table added_diff;
-+select __mo_diff_source, __mo_diff_flag, id, note, extra from added_diff order by id;
-+
-+-- A renamed column materializes under the target name for both sides.
-+create table rename_base(id int primary key, note varchar(20) not null);
-+insert into rename_base values (1,'one'),(2,'two');
-+data branch create table rename_tar from rename_base;
-+alter table rename_tar algorithm=instant, rename column note to label;
-+update rename_tar set label = 'target' where id = 1;
-+update rename_base set note = 'base' where id = 2;
-+data branch diff rename_tar against rename_base columns (label) output as rename_diff;
-+show create table rename_diff;
-+select __mo_diff_source, __mo_diff_flag, id, label from rename_diff order by id;
-+
-+-- COPY ALTER with ADD FIRST reassigns physical column identities.
-+create table copy_base(id int primary key, amount decimal(9,2) not null);
-+insert into copy_base values (1,10.50),(2,20.00);
-+data branch create table copy_tar from copy_base;
-+alter table copy_tar algorithm=copy, add column extra int not null default 9 first;
-+update copy_tar set amount = 11.75 where id = 1;
-+update copy_base set amount = 21.25 where id = 2;
-+data branch diff copy_tar against copy_base columns (amount,extra);
-+data branch diff copy_tar against copy_base columns (amount,extra) output as copy_diff;
-+show create table copy_diff;
-+select __mo_diff_source, __mo_diff_flag, id, amount, extra from copy_diff order by id;
-+
-+-- The default projection follows the target's visible column order.
-+data branch diff copy_tar against copy_base output as copy_full_diff;
-+show create table copy_full_diff;
-+select * from copy_full_diff order by id;
-+
-+-- A base-side COPY ALTER reorders a common column.
-+create table base_copy_base(id int primary key, note varchar(20) not null, amount int not null);
-+insert into base_copy_base values (1,'one',10),(2,'two',20);
-+data branch create table base_copy_tar from base_copy_base;
-+alter table base_copy_base algorithm=copy, modify column note varchar(20) not null first;
-+data branch diff base_copy_tar against base_copy_base output as empty_reordered_diff;
-+show create table empty_reordered_diff;
-+select * from empty_reordered_diff;
-+update base_copy_tar set note = 'target', amount = 11 where id = 1;
-+update base_copy_base set note = 'base', amount = 21 where id = 2;
-+data branch diff base_copy_tar against base_copy_base output as base_copy_diff;
-+show create table base_copy_diff;
-+select * from base_copy_diff order by id;
-+
-+-- Base-side rows written before COPY ALTER must omit dropped columns.
-+create table drop_base(id int primary key, x int, y int, amount decimal(9,2) not null);
-+insert into drop_base values (10,11,22,10.00);
-+data branch create table drop_tar from drop_base;
-+insert into drop_base values (20,77,88,20.00);
-+update drop_base set amount = 15.25 where id = 10;
-+alter table drop_base algorithm=copy, drop column x, drop column y;
-+data branch diff drop_tar against drop_base output as drop_diff;
-+show create table drop_diff;
-+select * from drop_diff order by id;
-+
-+-- Identical COPY ALTER operations still materialize an empty result table.
-+create table empty_copy_base(id int primary key, amount int not null);
-+insert into empty_copy_base values (1,10);
-+data branch create table empty_copy_tar from empty_copy_base;
-+alter table empty_copy_base algorithm=copy, add column extra int not null default 9 first;
-+alter table empty_copy_tar algorithm=copy, add column extra int not null default 9 first;
-+data branch diff empty_copy_tar against empty_copy_base output as empty_copy_diff;
-+show create table empty_copy_diff;
-+select * from empty_copy_diff;
-+
-+-- COPY ALTER preserves the common columns' types and values in the output.
-+set @previous_time_zone = @@session.time_zone;
-+set time_zone = '+00:00';
-+create table typed_copy_base(id int primary key, wall_time datetime(6), payload json, code binary(4), event_time timestamp(6));
-+insert into typed_copy_base values
-+    (1,'2024-01-01 01:02:03.010203','{"id":1}',x'01020304','2024-01-01 04:05:06.040506'),
-+    (2,'2024-01-02 01:02:03.010203','{"id":2}',x'05060708','2024-01-02 04:05:06.040506');
-+data branch create table typed_copy_tar from typed_copy_base;
-+alter table typed_copy_tar algorithm=copy, add column extra int not null default 9 first;
-+update
+ func TestDedupFinalizeWorkerFailureDoesNotWaitForMissingWorker(t *testing.T) {
+ 	proc := testutil.NewProcessWithOwnedMPool(t, "", mpool.MustNewZero())
+ 	workerErr := moerr.NewInternalErrorNoCtx("worker failed")
 ```
 
 ---
 
-### Incident Patch 3: `7431a275` (2026-11-22)
-**Commit Message**: fix: account for merge block capacity and avoid sparse S3 overreads (#32914)
+### Incident Patch 3: `835455b3` (2026-11-24)
+**Commit Message**: fix(data branch): compare clones against older ancestor snapshots (#32970)
 
 ## What type of PR is this?
 
+- [ ] API-change
 - [x] BUG
-- [x] Improvement
+- [ ] Improvement
+- [ ] Documentation
+- [ ] Feature
+- [ ] Test and CI
+- [ ] Code Refactoring
 
 ## Which issue(s) this PR fixes:
 
-Related to #32278 (C04 and C05; the umbrella issue remains open).
+issue #32968
 
 ## What this PR does / why we need it:
 
-- Include the table's configured block capacity in merge memory
-admission and the merge-start estimate. Existing input objects can
-contain default-sized blocks even when the current schema specifies
-fewer rows, so the estimate retains the 8,192-row floor; configurations
-above that floor increase the input-block estimate.
-- Read a small number of ordered, buffered sparse S3 misses individually
-when the existing range-amplification threshold is exceeded. Keep the
-envelope for dense, unordered, streaming, or more than four misses, and
-retain full-file cache-fill behavior. A later object-store 416 after a
-successful first range remains an unexpected EOF. Failed reads do not
-publish partially completed cache entries, and cache-update failures
-keep their existing non-fatal behavior.
+### Summary
+Fixes `DATA BRANCH DIFF` (and related snapshot/LCA probe paths) when
+comparing a cloned branch against an older ancestor snapshot (`T_old <
+CloneTS`), along with snapshot handling and probe bugs exposed during
+that scenario.
 
-- Reuse the resolved bounds to bypass sparse-range classification on
-short ranges and single-entry reads. For other candidates, stop a
+### Root Cause & Changes
+1. **Older-ancestor clone diff & snapshot anchor propagation
+(`pkg/frontend/data_branch.go`, `pkg/frontend/data_branch_types.go`,
+`pkg/frontend/data_branch_hashdiff.go`)**:
+- Replaced separate `tarLCASnapshot` / `baseLCASnapshot` heuristics with
+explicit `lcaProbeAnchors` and `lcaProbeSnapshots` so `DATA BRANCH DIFF`
+comparing a clone against an older ancestor snapshot collects ancestor
+writes between `T_old` and `CloneTS` properly and preserves PICK
+conflict behavior when requested.
+- Tracked background transaction snapshot timestamps (`tarRelSnapshot`,
+`baseRelSnapshot`, `lcaRelSnapshot`, `resolvedRelSnapshots`) i
 
-**File**: `pkg/fileservice/io_vector.go` (modified, +43/-13)
+**File**: `pkg/frontend/data_branch.go` (modified, +152/-52)
 ```diff
-@@ -106,26 +106,27 @@ func (i *IOVector) readRange() (min *int64, max *int64, readFull bool) {
- 	return
- }
- 
--func (i *IOVector) readMinimalRange() (min *int64, max *int64) {
--	min = ptrTo(int64(math.MaxInt))
--	max = ptrTo(int64(0))
--	for _, entry := range i.Entries {
-+func (i *IOVector) readMinimalRange() (*int64, *int64) {
-+	minOffset := int64(math.MaxInt)
-+	maxOffset := int64(0)
-+	readToEnd := false
-+	for pos := range i.Entries {
-+		entry := &i.Entries[pos]
- 		if entry.done {
- 			continue
- 		}
--		if entry.Offset < *min {
--			min = &entry.Offset
--		}
-+		minOffset = min(minOffset, entry.Offset)
- 		if entry.Size < 0 {
--			max = nil
-+			readToEnd = true
- 		}
--		if max != nil {
--			if end := entry.Offset + entry.Size; end > *max {
--				max = &end
--			}
-+		if !readToEnd {
-+			maxOffset = max(maxOffset, entry.Offset+entry.Size)
- 		}
+@@ -1273,6 +1273,9 @@ func handleBranchMerge(
+ 	ses *Session,
+ 	stmt *tree.DataBranchMerge,
+ ) (err error) {
++	if stmt.DstTable.AtTsExpr != nil {
++		return moerr.NewInvalidInputNoCtx("destination snapshot option is not supported for DATA BRANCH MERGE")
++	}
+ 	if dataBranchMergeTxnNotAllowed(ses) {
+ 		return moerr.NewInternalError(execCtx.reqCtx, dataBranchMergePickTxnErrorInfo())
  	}
--	return
-+	if readToEnd {
-+		return &minOffset, nil
-+	}
-+	return &minOffset, &maxOffset
- }
+@@ -1331,6 +1334,7 @@ func getTableStuff(
+ 	var tarTblDef *plan.TableDef
  
- // expensiveMinimalRangeRead reports whether collapsing the unfinished entries
-@@ -162,6 +163,35 @@ func (i *IOVector) expensiveMinimalRangeRead() (logicalBytes, spanBytes int64, e
- 		spanBytes > logicalBytes*maxMinimalRangeReadAmplification
- }
- 
-+// shouldSplitSparseRead uses the computed envelope to reject ordinary dense
-+// reads before inspecting the unfinished entries.
-+func (i *IOVector) shouldSplitSparseRead(min, max *int64) bool {
-+	if len(i.Entries) < 2 || max == nil || *min < 0 || *max <= *min ||
-+		*max-*min <= minExpensiveRangeReadSpan {
-+		return false
-+	}
-+
-+	var previousOffset int64
-+	misses := 0
-+	for pos := range i.Entries {
-+		entry := &i.Entries[pos]
-+		if entry.done {
-+			continue
+ 	if tblStuff.tarRel, tblStuff.baseRel, tblStuff.tarSnap, tblStuff.baseSnap,
++		tblStuff.tarRelSnapshot, tblStuff.baseRelSnapshot,
+ 		tblStuff.tarOperand, tblStuff.baseOperand, err = getRelations(
+ 		ctx, ses, bh, srcTable, dstTable,
+ 	); err != nil {
+@@ -1424,6 +1428,24 @@ func reconcileDataBranchEndpointSchema(
+ 		resolveBaseColumn = func(tarCol *plan.ColDef) *plan.ColDef {
+ 			return dataBranchEndpointColumnDef(baseDef, tarCol)
+ 		}
++		tarSP, baseSP := tables.resolvedSnapshots(ses)
++		baseAnchorsProbe := baseSP.LT(&tarSP)
++		tables.def.lcaColNames = make([]string, len(tables.def.colNames))
++		idx := -1
++		for _, tarCol := range tarDef.Cols {
++			if tarCol.Name == catalog.Row_ID {
++				continue
++			}
++			idx++
++			baseCol := resolveBaseColumn(tarCol)
++			if baseCol == nil {
++				continue
++			}
++			tables.def.lcaColNames[idx] = tarCol.Name
++			if baseAnchorsProbe {
++				tables.def.lcaColNames[idx] = baseCol.Name
++			}
 +		}
-+		if misses == 4 || entry.WriterForRead != nil || entry.ReadCloserForRead != nil ||
-+			(misses > 0 && entry.Offset < previousOffset) {
-+			return false
-+		}
-+		previousOffset = entry.Offset
-+		misses++
-+	}
-+	if misses < 2 {
-+		return false
-+	}
-+	_, _, expensive := i.expensiveMinimalRangeRead()
-+	return expensive
-+}
-+
- func (i *IOVector) size() *int64 {
- 	if len(i.Entries) == 0 {
- 		return nil
-```
-
-**File**: `pkg/fileservice/io_vector_test.go` (modified, +21/-0)
-```diff
-@@ -122,6 +122,27 @@ func TestIOVectorReadRangeDoesNotMutateReadToEndEntry(t *testing.T) {
- 	require.Equal(t, int64(-1), vector.Entries[0].Size)
- }
- 
-+func TestIOVectorMinimalRangeBoundsAreIndependentOfEntries(t *testing.T) {
-+	vector := IOVector{Entries: []IOEntry{
-+		{Offset: 4, Size: -1, done: true},
-+		{Offset: 16, Size: 8},
-+		{Offset: 8, Size: 4},
-+	}}
-+	minOffset, maxOffset := vector.readMinimalRange()
-+	require.Equal(t, int64(8), *minOffset)
-+	require.Equal(t, int64(24), *maxOffset)
-+
-+	vector.Entries[2].Offset = 2
-+	*maxOffset = 3
-+	require.Equal(t, int64(8), *minOffset)
-+	require.Equal(t, int64(8), vector.Entries[1].Size)
-+
-+	vector.Entries[1].Size = -1
-+	minOffset, maxOffset = vector.readMinimalRange()
-+	require.Equal(t, int64(2), *minOffset)
-+	require.Nil(t, maxOffset)
-+}
-+
- func TestIOVectorIOMergeKeyDoesNotMutateReadToEndEntry(t *testing.T) {
- 	vector := IOVector{
- 		FilePath: "foo",
-```
-
-**File**: `pkg/fileservice/s3_fs.go` (modified, +61/-38)
-```diff
-@@ -730,8 +730,8 @@ func (s *S3FS) Read(ctx context.Context, vector *IOVector) (err error) {
- 	}()
- 	defer finishFill()
- 	// A merge leader must not wake its waiters until caller-visible cache work
--	// has completed. Cache updates are deferred below, so register this defer
--	// first and let their later defers run before the merge is marked done.
-+	// has completed. Successful reads publish cache updates before returning,
-+	// so this defer marks the merge done only after those updates finish.
- 	// Async disk finalization is intentionally outside this generation: the
- 	// foreground read only admits that bounded work, and subsequent disk-cache
- 	// readers use their own bounded wait before falling back to object storage.
-@@ -769,30 +769,39 @@ func (s *S3FS) Read(ctx context.Context, vector *IOVector) (err error) {
- 		return err
- 	}
- 
-+	// Run queued IOVectorCache updates only after read work succeeds. Deferring
-+	// them in registration order runs them in reverse; if one panics or calls
-+	// runtime.Goexit, the remaining registered updates still run.
-+	var updatesBuf [4]func()
-+	cacheUpdates := updatesBuf[:0]
-+	finishCacheUpdates := func() error {
-+		for _, update := range cacheUpdates {
-+			defer update()
-+		}
-+		return nil
-+	}
-+
- 	for _, cache := range vector.Caches {
- 
- 		t0 := time.Now()
- 		LogEvent(ctx, str_read_vector_Caches_begin)
--		err := readCache(ctx, cache, vector)
-+		cacheReadErr := readCache(ctx, cache, vector)
- 		LogEvent(ctx, str_read_vector_Caches_end)
- 		metric.FSReadDurationReadVectorCache.Observe(time.Since(t0).Seconds())
--		if err != nil {
--			return err
-+		if cacheReadErr != nil {
-+			return cacheReadErr
- 		}
- 		if vector.allDone() {
--			return nil
-+			return finishCacheUpdates()
- 		}
- 
--		defer func() {
--			if err != nil {
--				return
--			}
-+		cacheUpdates = append(cacheUpdates, func() {
- 			t0 := time.Now()
- 			LogEvent(ctx, str_update_vector_Caches_begin)
--			err = cache.Update(ctx, vector, false)
-+			_ = cache.Update(ctx, vector, false)
- 			LogEvent(ctx, str_update_vector_Caches_end)
- 			metric.FSReadDurationUpdateVectorCache.Observe(time.Since(t0).Seconds())
--		}()
-+		})
- 	}
- 
- 	mayReadMemoryCache := vector.Policy&SkipMemoryCacheReads == 0
-@@ -804,26 +813,23 @@ read_memory_cache:
- 
- 		t0 := time.Now()
- 		LogEvent(ctx, str_read_memory_cache_Caches_begin)
--		err := readCache(ctx, s.memCache, vector)
-+		cacheReadErr := readCache(ctx, s.memCache, vector)
- 		LogEvent(ctx, str_read_memory_cache_Caches_end)
- 		metric.FSReadDurationReadMemoryCache.Observe(time.Since(t0).Seconds())
--		if err != nil {
--			return err
-+		if cacheReadErr != nil {
-+			return cacheReadErr
- 		}
- 		if vector.allDone() {
--			return nil
-+			return finishCacheUpdates()
- 		}
- 
--		defer func() {
--			if err != nil {
--				return
--			}
-+		cacheUpdates = append(cacheUpdates, func() {
- 			t0 := time.Now()
- 			LogEvent(ctx, str_update_memory_cache_begin)
--			err = s.memCache.Update(ctx, vector, s.asyncUpdate)
-+			_ = s.memCache.Update(ctx, vector, s.asyncUpdate)
- 			LogEvent(ctx, str_update_memory_cache_end)
- 			metric.FSReadDurationUpdateMemoryCache.Observe(time.Since(t0).Seconds())
--		}()
-+		})
- 	}
- 
- read_disk_cache:
-@@ -845,7 +851,7 @@ read_disk_cache:
- 				return err
- 			}
- 			if vector.allDone() {
--				return nil
-+				return finishCacheUpdates()
- 			}
- 			if fillTicket != nil && !fillTicket.leader {
- 				// This request did not receive an admitted disk-cache fill. Do
-@@ -863,12 +869,12 @@ read_disk_cache:
- 		for i, entry := range vector.Entries {
- 			undoneBefore[i] = !entry.done
- 		}
--		err := readCache(ctx, s.diskCache, vector)
-+		cacheReadErr := readCache(ctx, s.diskCache, vector)
- 		LogEvent(ctx, str_read_disk_cache_Caches_end)
- 		metric.FSReadDurationReadDiskCache.Observe(time.Since(t0).Seconds())
--		if err != nil {
-+		if cacheReadErr != nil {
- 			finishFill()
--			return err
-+			return cacheReadErr
- 		}
- 		// Count bytes actually read from disk cache (entries that became done and from disk cache)
- 		var actualDiskReadBytes int64
-@@ -884,21 +890,18 @@ read_disk_cache:
- 			})
- 		}
- 		if vector.allDone() {
--			return nil
-+			return finishCacheUpdates()
- 		}
- 
- 		// try to cache IOEntry if not caching the full file
- 		if vector.Policy.CacheIOEntry() {
--			defer func() {
--				if err != nil {
--					return
--				}
-+			cacheUpdates = append(cacheUpdates, func() {
- 				t0 := time.Now()
- 				LogEvent(ctx, str_update_disk_cache_Caches_begin)
--				err = s.diskCache.Update(ctx, vector, s.asyncUpdate)
-+				_ = s.diskCache.Update(ctx, vector, s.asyncUpdate)
- 				LogEvent(ctx, str_update_disk_cache_Caches_end)
- 				metric.FSReadDurationUpdateDiskCache.Observe(time.Since(t0).Seconds())
--			}()
-+			})
- 		}
- 		finishFill()
- 
-@@ -914,7 +917,7 @@ read_disk_cache:
+ 	} else if dagInfo.hasLCA() {
+ 		tarSP, baseSP := tables.resolvedSnapshots(ses)
+ 		tarIdent, baseIdent := tables.endpointIdentities(ctx, ses)
+@@ -1450,29 +1472,48 @@ func reconcileDataBranchEndpointSchema(
+ 		if err != nil {
  			return err
  		}
- 		if vector.allDone() {
+-		tables.def.lcaColNames = make([]string, len(tables.def.colNames))
+-		tarDataIdx := -1
++		resolveBaseColumn = func(tarCol *plan.ColDef) *plan.ColDef {
++			if baseCol := endpointColumns[strings.ToLower(tarCol.Name)]; baseCol != nil {
++				return baseCol
++			}
++			if !isDataBranchUserVisibleColumn(tarCol) {
++				return dataBranchColumnDefByLogicalName(baseDef, tarCol)
++			}
++			return nil
++		}
++		tables.def.tarLCAColNames = make([]string, len(tables.def.colNames))
++		tables.def.baseLCAColNames = make([]string, len(tables.def.colNames))
++		idx := -1
+ 		for _, tarCol := range tarDef.Cols {
+ 			if tarCol.Name == catalog.Row_ID {
+ 				continue
+ 			}
+-			tarDataIdx++
+-			reachesLCA, lcaCol, redefined := dataBranchColumnReachesLCA(
++			idx++
++			reaches, tarLCACol, tarForkCol, redefined := dataBranchColumnAtFork(
+ 				tarDefs, dagInfo.pathFromLCAToTarLineageOnly, tarCol,
+ 			)
+-			if !reachesLCA || redefined || lcaCol == nil {
++			if !reaches || redefined || tarLCACol == nil {
+ 				continue
+ 			}
+-			tables.def.lcaColNames[tarDataIdx] = lcaCol.Name
+-		}
+-		resolveBaseColumn = func(tarCol *plan.ColDef) *plan.ColDef {
+-			if baseCol := endpointColumns[strings.ToLower(tarCol.Name)]; baseCol != nil {
+-				return baseCol
++			tables.def.tarLCAColNames[idx] = tarLCACol.Name
++			if tarForkCol != nil {
++				tables.def.tarLCAColNames[idx] = tarForkCol.Name
+ 			}
+-			if !isDataBranchUserVisibleColumn(tarCol) {
+-				return dataBranchColumnDefByLogicalName(baseDef, tarCol)
++			// Keep the target's lineage name as a default when the base has no
++			// lineage match, as in the shared probe layout.
++			tables.def.baseLCAColNames[idx] = tables.def.tarLCAColNames[idx]
++			if reaches, _, baseForkCol, redefined := dataBranchColumnAtFork(
++				baseDefs, dagInfo.pathFromLCAToBaseLineageOnly, resolveBaseColumn(tarCol),
++			); reaches && !redefined && baseForkCol != nil {
++				tables.def.baseLCAColNames[idx] = baseForkCol.Name
+ 			}
 -			return nil
-+			return finishCacheUpdates()
++		}
++		// The earlier anchor observes the shared LCA generation. Sibling PICK
++		// selects each side's fork names separately.
++		tarAnchor, baseAnchor, _ := dagInfo.lcaProbeAnchors(tarSP, baseSP)
++		tables.def.lcaColNames = tables.def.tarLCAColNames
++		if baseAnchor.LT(&tarAnchor) {
++			tables.def.lcaColNames = tables.def.baseLCAColNames
  		}
  	}
  
-@@ -1053,7 +1056,7 @@ read_s3:
- 	if forcePerEntryRangeRead {
- 		err = s.readEntriesIndividually(ctx, vector)
- 	} else {
--		err = s.read(ctx, vector, forceMinimalRangeRead)
-+
+@@ -1586,16 +1627,23 @@ func diffOnBase(
+ 
+ 	if dagInfo.hasLCA() {
+ 		tarSp, baseSp := tblStuff.resolvedSnapshots(ses)
++		tarRelSp, baseRelSp := tblStuff.resolvedRelSnapshots(ses)
+ 		lcaProbe := dagInfo.lcaProbeSnapshot(tarSp, baseSp)
+ 		tarIdent, baseIdent := tblStuff.endpointIdentities(ctx, ses)
+ 		lcaCandidates := dedupeBranchIdentities(tarIdent, baseIdent)
++		tarID := tblStuff.tarRel.GetTableID(ctx)
++		baseID := tblStuff.baseRel.GetTableID(ctx)
+ 		var lcaWinner branchIdentity
+-		switch dagInfo.lcaTableId {
+-		case tblStuff.tarRel.GetTableID(ctx):
++		// When both operands are the LCA table, use the handle at the
++		// earlier observation so the fallback sees that snapshot's schema.
++		switch {
++		case dagInfo.lcaTableId == tarID && (tarID != baseID || !baseSp.LT(&tarSp)):
+ 			tblStuff.lcaRel = tblStuff.tarRel
++			tblStuff.lcaRelSnapshot = tarRelSp
+ 			lcaWinner = tarIdent
+-		case tblStuff.baseRel.GetTableID(ctx):
++		case dagInfo.lcaTableId == baseID:
+ 			tblStuff.lcaRel = tblStuff.baseRel
++			tblStuff.lcaRelSnapshot = baseRelSp
+ 		
 ```
 
-**File**: `pkg/fileservice/s3_fs_test.go` (modified, +919/-0)
+**File**: `pkg/frontend/data_branch_hashdiff.go` (modified, +152/-84)
 ```diff
-@@ -23,6 +23,7 @@ import (
- 	"io"
- 	"os"
- 	"path"
-+	"runtime"
- 	"strings"
- 	"sync"
- 	"sync/atomic"
-@@ -3380,3 +3381,921 @@ func TestS3FSReadFullObjectToDiskCacheStreamingBackgroundEndsOnClose(t *testing.
- 		t.Fatal("the download outlived the disk cache")
- 	}
+@@ -126,18 +126,21 @@ func lcaProbeResultTargetIndexes(
+ 	return append([]int(nil), layout.targetIdxes...), nil
  }
-+
-+func TestS3FSOrdinarySparseRangeRead(t *testing.T) {
-+	for _, tc := range []struct {
-+		name    string
-+		offsets []int64
-+		reads   int
-+	}{
-+		{"sparse", []int64{0, 16 << 20}, 2},
-+		{"adjacent", []int64{0, 4096}, 1},
-+		{"exact span threshold", []int64{0, minExpensiveRangeReadSpan - 4096}, 1},
-+		{"above span threshold", []int64{0, minExpensiveRangeReadSpan - 4095}, 2},
-+		{"out of order", []int64{16 << 20, 0}, 1},
-+		{"four sparse", []int64{0, 16 << 20, 32 << 20, 48 << 20}, 4},
-+		{"five sparse", []int64{0, 16 << 20, 32 << 20, 48 << 20, 64 << 20}, 1},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			ctx := t.Context()
-+			fs, err := NewS3FS(ctx, ObjectStorageArguments{Name: "sparse", Endpoint: "disk", Bucket: t.TempDir()}, CacheConfig{}, nil, true, false)
-+			require.NoError(t, err)
-+			t.Cleanup(func() { fs.Close(context.Background()) })
-+			storage := &generatedRangeObjectStorage{}
-+			fs.storage = storage
-+			vector := &IOVector{FilePath: "foo", Policy: SkipAllCache}
-+			for _, offset := range tc.offsets {
-+				vector.Entries = append(vector.Entries, IOEntry{Offset: offset, Size: 4096})
+ 
+-// lcaProbeColumnLayout selects compatible common columns from the LCA and
++// buildLCAProbeColumnLayout selects compatible common columns from the LCA and
+ // target layouts. The caller reconstructs target-only columns as NULL because
+ // they are excluded from endpoint comparison and MERGE apply even when an
+ // ancestor generation still contains an older representation of the column.
+-func lcaProbeColumnLayout(
+-	lcaDef *plan2.TableDef,
+-	targetDef *plan2.TableDef,
++func buildLCAProbeColumnLayout(
++	lcaDef, targetDef *plan2.TableDef,
+ 	targetColNames []string,
+ 	targetColTypes []types.Type,
+ 	targetOnlyIdxes []int,
+ 	lcaColNames []string,
++	resolvedSnapshot bool,
+ ) (lcaProbeLayout, error) {
++	if lcaDef == nil {
++		return lcaProbeLayout{}, moerr.NewInternalErrorNoCtx("DATA BRANCH LCA table definition is unavailable")
++	}
+ 	targetOnly := make(map[int]struct{}, len(targetOnlyIdxes))
+ 	for _, idx := range targetOnlyIdxes {
+ 		targetOnly[idx] = struct{}{}
+@@ -205,7 +208,7 @@ func lcaProbeColumnLayout(
+ 		if lcaCol == nil {
+ 			continue
+ 		}
+-		if lcaAttrName == "" {
++		if resolvedSnapshot || lcaAttrName == "" {
+ 			lcaAttrName = lcaCol.Name
+ 		}
+ 		derivedCompositePK := isDataBranchDerivedCompositePKColumn(
+@@ -227,6 +230,41 @@ func lcaProbeColumnLayout(
+ 	return layout, nil
+ }
+ 
++func lcaProbeTableDefAtSnapshot(
++	ctx context.Context, ses *Session, tblStuff tableStuff, snapshotTS types.TS,
++) (rel engine.Relation, def *plan2.TableDef, sqlReady bool, err error) {
++	scanCtx := identityCtx(ctx, tblStuff.resolvedLCAIdentity(ctx, ses))
++	var lookupErr error
++	if handler := ses.GetTxnHandler(); handler != nil {
++		storage, txnOp := handler.GetStorage(), handler.GetTxn()
++		if storage != nil && txnOp != nil {
++			if !snapshotTS.IsEmpty() {
++				txnOp = txnOp.CloneSnapshotOp(snapshotTS.ToTimestamp())
 +			}
-+			t.Cleanup(vector.Release)
-+			require.NoError(t, fs.Read(ctx, vector))
-+			reads := storage.readRanges()
-+			require.Len(t, reads, tc.reads)
-+			if tc.reads > 1 {
-+				for i, read := range reads {
-+					require.Equal(t, tc.offsets[i], *read.min)
-+					require.Equal(t, tc.offsets[i]+4096, *read.max)
++			_, _, snapshotRel, lookupErrAtSnapshot := storage.GetRelationById(scanCtx, txnOp, tblStuff.lcaProbeTableID(scanCtx))
++			lookupErr = lookupErrAtSnapshot
++			if lookupErr == nil && snapshotRel != nil {
++				if snapshotDef := snapshotRel.GetTableDef(scanCtx); snapshotDef != nil {
++					return snapshotRel, snapshotDef, true, nil
 +				}
 +			}
-+			for _, entry := range vector.Entries {
-+				require.Equal(t, make([]byte, 4096), entry.Data)
-+			}
-+		})
-+	}
-+}
-+
-+var errTestHDFSSeek = errors.New("test HDFS seek beyond EOF")
-+
-+// hdfsSeekReader models the bounds check in colinmarc/hdfs FileReader.Seek.
-+type hdfsSeekReader struct {
-+	size, offset int64
-+}
-+
-+func (r *hdfsSeekReader) Seek(offset int64, whence int) (int64, error) {
-+	if whence != io.SeekStart || offset < 0 || offset > r.size {
-+		return r.offset, errTestHDFSSeek
-+	}
-+	r.offset = offset
-+	return offset, nil
-+}
-+
-+func (r *hdfsSeekReader) Read(p []byte) (int, error) {
-+	if r.offset == r.size {
-+		return 0, io.EOF
-+	}
-+	n := int(min(int64(len(p)), r.size-r.offset))
-+	clear(p[:n])
-+	r.offset += int64(n)
-+	return n, nil
-+}
-+
-+type hdfsSeekStorage struct {
-+	dummyObjectStorage
-+	size   int64
-+	ranges [][2]int64
-+	closes int
-+}
-+
-+func (s *hdfsSeekStorage) Read(_ context.Context, key string, min, max *int64) (io.ReadCloser, error) {
-+	s.ranges = append(s.ranges, [2]int64{*min, *max})
-+	reader, err := readObjectRange(&hdfsSeekReader{size: s.size}, key, min, max)
-+	if err != nil {
-+		s.closes++ // HDFS.Read closes its opened file on an error.
-+		return nil, err
-+	}
-+	return &readCloser{r: reader, closeFunc: func() error { s.closes++; return nil }}, nil
-+}
-+
-+func TestS3FSOrdinarySparseHDFSSeekBounds(t *testing.T) {
-+	const far = int64(16 << 20)
-+	for _, tc := range []struct {
-+		name       string
-+		hdfs       bool
-+		size       int64
-+		offsets    [2]int64
-+		wantRanges [][2]int64
-+		wantErr    error
-+		short      bool
-+	}{
-+		{"later beyond EOF", true, 8192, [2]int64{0, far}, [][2]int64{{0, far + 4096}}, nil, true},
-+		{"first beyond EOF", true, 8192, [2]int64{far, 2 * far}, [][2]int64{{far, 2*far + 4096}}, errTestHDFSSeek, false},
-+		{"first at EOF", true, 8192, [2]int64{8192, far}, [][2]int64{{8192, far + 4096}}, nil, true},
-+		{"success", true, far + 4096, [2]int64{0, far}, [][2]int64{{0, far + 4096}}, nil, false},
-+		{"non-HDFS control", false, 8192, [2]int64{0, far}, [][2]int64{{0, 4096}, {far, far + 4096}}, errTestHDFSSeek, false},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			ctx := t.Context()
-+			fs, err := NewS3FS(ctx, ObjectStorageArguments{Name: "sparse", Endpoint: "disk", Bucket: t.TempDir()}, CacheConfig{}, nil, true, false)
-+			require.NoError(t, err)
-+			t.Cleanup(func() { fs.Close(context.Background()) })
-+			storage := &hdfsSeekStorage{size: tc.size}
-+			fs.storage = storage
-+			if tc.hdfs {
-+				fs.rawStorage = &HDFS{}
-+			} else {
-+				fs.rawStorage = storage
-+			}
-+			cache := &publicationVectorCache{}
-+			vector := &IOVector{FilePath: "foo", Policy: SkipAllCache, Caches: []IOVectorCache{cache}, Entries: []IOEntry{
-+				{Offset: tc.offsets[0], Size: 4096}, {Offset: tc.offsets[1], Size: 4096},
-+			}}
-+			t.Cleanup(vector.Release)
-+			err = fs.Read(ctx, vector)
-+			switch {
-+			case tc.short:
-+				require.True(t, moerr.IsMoErrCode(err, moerr.ErrUnexpectedEOF), "%v", err)
-+			case tc.wantErr != nil:
-+				require.ErrorIs(t, err, tc.wantErr)
-+			default:
-+				require.NoError(t, err)
-+				for _, entry := range vector.Entries {
-+					require.Equal(t, make([]byte, 4096), entry.Data)
-+				}
-+			}
-+			require.Equal(t, tc.wantRanges, storage.ranges)
-+			require.Equal(t, len(tc.wantRanges), storage.closes)
-+			if 
-```
-
-**File**: `pkg/vm/engine/tae/catalog/tableForMerge.go` (modified, +10/-0)
-```diff
-@@ -75,6 +75,7 @@ type MergeTable interface {
- 	IterDataItem() iter.Seq[MergeDataItem]
- 	IterTombstoneItem() iter.Seq[MergeTombstoneItem]
- 	GetNameDesc() string
-+	GetBlockMaxRows() uint32
- 	ID() uint64
- 	HasDropCommitted() bool
- 
-@@ -167,6 +168,15 @@ func (t TNMergeTable) ID() uint64 {
- 	return t.TableEntry.ID
- }
- 
-+// GetBlockMaxRows returns the configured data and tombstone block capacity.
-+func (t TNMergeTable) GetBlockMaxRows() uint32 {
-+	schema := t.GetLastestSchema(false)
-+	if schema == nil || schema.Extra == nil {
-+		return 0
-+	}
-+	return schema.Extra.BlockMaxRows
-+}
-+
- func (t TNMergeTable) IsSpecialBigTable() bool {
- 	name := t.GetLastestSchema(false).Name
- 	dbName := t.GetDB().GetName()
-```
-
-**File**: `pkg/vm/engine/tae/db/merge/reservation_accounting_probe_test.go` (modified, +9/-6)
-```diff
-@@ -166,7 +166,7 @@ func runMergeReservationAccountingProbe(t *testing.T, originSize uint32, checkGl
- 					}
- 					// Estimate uses metadata only; the size never allocates a
- 					// corresponding physical object or merge input payload.
--					estimate := int64(mergesort.EstimateMergeSize(IterStats(table.stats[:3])))
-+					estimate := int64(mergesort.EstimateMergeSizeWithBlockRows(IterStats(table.stats[:3]), table.GetBlockMaxRows()))
- 					require.Positive(t, estimate)
- 					if !checkGlobalGuard {
- 						require.Less(t, estimate, int64(1024))
-@@ -289,8 +289,8 @@ func TestMergeReservationContinuesAfterDenial(t *testing.T) {
- 			table.stats = append(table.stats, newTestObjectStats(t, lo, lo+1, size, 2, 1, nil, 0))
- 		}
- 	}
--	large := int64(mergesort.EstimateMergeSize(IterStats(table.stats[:3])))
--	small := int64(mergesort.EstimateMergeSize(IterStats(table.stats[6:])))
-+	large := int64(mergesort.EstimateMergeSizeWithBlockRows(IterStats(table.stats[:3]), table.GetBlockMaxRows()))
-+	small := int64(mergesort.EstimateMergeSizeWithBlockRows(IterStats(table.stats[6:]), table.GetBlockMaxRows()))
- 	require.Less(t, small, large/2)
- 	clock := newFakeClock()
- 	rc := &reservationProbeRSC{limit: large * 3 / 2}
-@@ -347,14 +347,17 @@ func (e *inlineCompletionExecutor) ExecuteFor(_ catalog.MergeTable, task mergeTa
- }
- 
- func TestMergeReservationInlineCompletion(t *testing.T) {
--	table := &reservationProbeTable{MergeTable: promotionTable(8903)}
-+	const blockRows = uint32(16384)
-+	table := &reservationProbeTable{MergeTable: mergeTableWithBlockRows(8903, blockRows)}
- 	for cluster := range 3 {
- 		for range 3 {
- 			lo := int32(cluster*100 + 1)
--			table.stats = append(table.stats, newTestObjectStats(t, lo, lo+1, 64*common.Const1MBytes, 2, 1, nil, 0))
-+			table.stats = append(table.stats, newTestObjectStats(t, lo, lo+1, 64*common.Const1MBytes, blockRows, 1, nil, 0))
- 		}
- 	}
--	size := int64(mergesort.EstimateMergeSize(IterStats(table.stats[:3])))
-+	size := int64(mergesort.EstimateMergeSizeWithBlockRows(IterStats(table.stats[:3]), table.GetBlockMaxRows()))
-+	defaultSize := mergesort.EstimateMergeSizeWithBlockRows(IterStats(table.stats[:3]), objectio.BlockMaxRows)
-+	require.Greater(t, size, int64(defaultSize))
- 	rc := &reservationProbeRSC{limit: size * 2}
- 	executor := &inlineCompletionExecutor{rc: rc}
- 	clock := newFakeClock()
-```
-
-**File**: `pkg/vm/engine/tae/db/merge/scheduler.go` (modified, +7/-6)
-```diff
-@@ -1410,7 +1410,7 @@ func (p *launchPad) gatherTombstoneTasks(ctx context.Context,
- 	rc rscthrottler.RSCThrottler,
- ) {
- 	tasks := GatherTombstoneTasks(ctx, IterStats(p.tombstoneStats), tombstoneOpts, p.lastMergeTime)
--	p.revisedResults = append(p.revisedResults, controlTaskMemInPlace(tasks, rc, 1)...)
-+	p.revisedResults = append(p.revisedResults, controlTaskMemInPlace(tasks, rc, 1, p.table.GetBlockMaxRows())...)
- }
- 
- func (p *launchPad) gatherLnTasks(ctx context.Context,
-@@ -1439,7 +1439,7 @@ func (p *launchPad) gatherLnTasks(ctx context.Context,
- 		)
- 		if err == nil {
- 			p.revisedResults = append(p.revisedResults,
--				controlTaskMemInPlace(overlapTasks, rc, 2)...)
-+				controlTaskMemInPlace(overlapTasks, rc, 2, p.table.GetBlockMaxRows())...)
- 		}
- 	}
- }
-@@ -1457,7 +1457,7 @@ func (p *launchPad) gatherL0Tasks(ctx context.Context,
- 		zap.Int("tasks", len(l0Tasks)),
- 	)
- 	p.revisedResults = append(p.revisedResults,
--		controlTaskMemInPlace(l0Tasks, rc, 2)...)
-+		controlTaskMemInPlace(l0Tasks, rc, 2, p.table.GetBlockMaxRows())...)
- }
- 
- func (p *launchPad) gatherByTrigger(ctx context.Context,
-@@ -1493,7 +1493,7 @@ func (p *launchPad) gatherByTrigger(ctx context.Context,
- 	}
- 	if len(trigger.assigns) > 0 {
- 		p.revisedResults = append(p.revisedResults,
--			controlTaskMemInPlace(trigger.assigns, rc, 1)...)
-+			controlTaskMemInPlace(trigger.assigns, rc, 1, p.table.GetBlockMaxRows())...)
- 	}
- 	return p.revisedResults
- }
-@@ -1510,6 +1510,7 @@ func controlTaskMemInPlace(
- 	tasks []mergeTask,
- 	rc rscthrottler.RSCThrottler,
- 	deleteLessThan int,
-+	blockRows uint32,
- ) []mergeTask {
- 
- 	if len(tasks) == 0 {
-@@ -1518,8 +1519,8 @@ func controlTaskMemInPlace(
- 	for i := range tasks {
- 		task := &tasks[i]
- 		original := len(task.objs)
--		estSize := mergesort.EstimateMergeSize(IterStats(task.objs))
--		for ; !resourceAvailable(int64(estSize), rc) && len(task.objs) > 1; estSize = mergesort.EstimateMergeSize(IterStats(task.objs)) {
-+		estSize := mergesort.EstimateMergeSizeWithBlockRows(IterStats(task.objs), blockRows)
-+		for ; !resourceAvailable(int64(estSize), rc) && len(task.objs) > 1; estSize = mergesort.EstimateMergeSizeWithBlockRows(IterStats(task.objs), blockRows) {
- 			task.objs = task.objs[:len(task.objs)/2]
- 		}
- 		if original-len(task.objs) > 0 {
-```
-
-**File**: `pkg/vm/engine/tae/db/merge/scheduler_test.go` (modified, +75/-0)
-```diff
-@@ -1033,3 +1033,78 @@ func TestXxx(t *testing.T) {
- 	now := time.Now().AddDate(0, 0, 3)
- 	t.Log(now.UnixNano(), " // ", now)
- }
-+
-+func mergeTableWithBlockRows(id uint64, rows uint32) catalog.MergeTable {
-+	table := promotionTable(id).(catalog.TNMergeTable)
-+	table.GetLastestSchema(false).Extra.BlockMaxRows = rows
-+	return table
-+}
-+
-+func TestLaunchPadUsesTableBlockMaxRows(t *testing.T) {
-+	objects := []*objectio.ObjectStats{
-+		newTestObjectStats(t, 1, 2, 16<<20, 16384, 1, nil, 0),
-+		newTestObjectStats(t, 3, 4, 16<<20, 16384, 1, nil, 0),
-+		newTestObjectStats(t, 5, 6, 16<<20, 16384, 1, nil, 0),
-+		newTestObjectStats(t, 7, 8, 16<<20, 16384, 1, nil, 0),
-+	}
-+	for _, tc := range []struct {
-+		name  string
-+		table catalog.MergeTable
-+		want  int
-+		size  int
-+	}{
-+		{"large", mergeTableWithBlockRows(9511, 16384), 2, 93257728},
-+		{"small", mergeTableWithBlockRows(9511, 1000), 4, 119406592},
-+		{"standard", mergeTableWithBlockRows(9511, 8192), 4, 119406592},
-+		{"default", mergeTableWithBlockRows(9511, 0), 4, 119406592},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			pad := newLaunchPad(newFakeClock())
-+			trigger := NewMMsgTaskTrigger(tc.table).WithAssignedTasks([]mergeTask{{objs: objects}})
-+			tasks := pad.gatherByTrigger(t.Context(), trigger, pad.clock.Now(), newTestRscController(192<<20))
-+			require.Len(t, tasks, 1)
-+			require.Len(t, tasks[0].objs, tc.want)
-+			require.Equal(t, tc.size, tasks[0].eSize)
-+		})
-+	}
-+}
-+
-+func TestLaunchPadCapacityAcrossGatherPaths(t *testing.T) {
-+	for _, tc := range []struct {
-+		name  string
-+		table catalog.MergeTable
-+		want  int
-+		size  int
-+	}{
-+		{"zero", mergeTableWithBlockRows(9511, 0), 4, 119406592},
-+		{"large", mergeTableWithBlockRows(9511, 16384), 2, 93257728},
-+	} {
-+		for _, path := range []string{"l0", "ln", "tombstone"} {
-+			t.Run(tc.name+"/"+path, func(t *testing.T) {
-+				objects := make([]*objectio.ObjectStats, 0, 4)
-+				for i := range 4 {
-+					objects = append(objects, newTestObjectStats(t, 1, 100, 16<<20, 16384, 0, nil, uint16(i)))
-+				}
-+				pad := newLaunchPad(newFakeClock())
-+				pad.table = tc.table
-+				pad.lastMergeTime = time.Hour
-+				rc := newTestRscController(192 << 20)
-+				switch path {
-+				case "l0":
-+					pad.leveledObjects[0] = objects
-+					opts := NewLayerZeroOpts().WithToleranceDegressionCurve(1, 1, time.Hour, [4]float64{})
-+					pad.gatherL0Tasks(t.Context(), opts, rc)
-+				case "ln":
-+					pad.leveledObjects[1] = objects
-+					pad.gatherLnTasks(t.Context(), NewOverlapOptions().WithMinPointDepthPerCluster(2), 1, 1, rc)
-+				case "tombstone":
-+					pad.tombstoneStats = objects
-+					pad.gatherTombstoneTasks(t.Context(), NewTombstoneOpts().WithOneShot(true), rc)
-+				}
-+				require.Len(t, pad.revisedResults, 1)
-+				require.Len(t, pad.revisedResults[0].objs, tc.want)
-+				require.Equal(t, tc.size, pad.revisedResults[0].eSize)
-+			})
 +		}
 +	}
++	// A relation already opened at this exact snapshot can feed the reader.
++	// Only a successful historical lookup enables the SQL path.
++	if fallbackRel := tblStuff.lcaFallbackRangeRel(snapshotTS); fallbackRel != nil {
++		if def := fallbackRel.GetTableDef(scanCtx); def != nil {
++			return fallbackRel, def, false, nil
++		}
++	}
++	if lookupErr != nil {
++		return nil, nil, false, lookupErr
++	}
++	return nil, nil, false, moerr.NewInternalErrorNoCtxf(
++		"DATA BRANCH LCA table definition is unavailable at snapshot %s", snapshotTS.ToString(),
++	)
 +}
++
+ // should read the LCA table to get all column values.
+ func handleDelsOnLCA(
+ 	ctx context.Context,
+@@ -244,9 +282,8 @@ func handleDelsOnLCA(
+ 	var (
+ 		sqlRet           executor.Result
+ 		fullTargetLayout bool
+-
+-		lcaTblDef    = tblStuff.lcaRel.GetTableDef(ctx)
+-		targetTblDef = tblStuff.tarRel.GetTableDef(ctx)
++		lcaLayout        lcaProbeLayout
++		lcaTableName     string
+ 
+ 		colTypes        = tblStuff.def.colTypes
+ 		probePKColIdxes = tblStuff.def.pkColIdxes
+@@ -259,14 +296,6 @@ func handleDelsOnLCA(
+ 		// column rather than from the first visible column.
+ 		probePKColIdxes = []int{tblStuff.def.pkColIdx}
+ 	}
+-	lcaLayout, err := lcaProbeColumnLayout(
+-		lcaTblDef, targetTblDef, tblStuff.def.colNames, tblStuff.def.colTypes,
+-		tblStuff.def.tarOnlyIdxes, tblStuff.def.lcaColNames,
+-	)
+-	if err != nil {
+-		return nil, err
+-	}
+-
+ 	// The SQL probe resolves db.table by name under the statement account.
+ 	// A lineage node owned by another account (design §6.4, e.g. reopened
+ 	// under a subscription source owner) would resolve that name to a
+@@ -275,13 +304,32 @@ func handleDelsOnLCA(
+ 	lcaOwnerMismatch := tblStuff.resolvedLCAIdentity(ctx, ses).account != ses.GetAccountId()
+ 	forceReaderProbe := lcaOwnerMismatch ||
+ 		(tblStuff.lcaReaderProbeMode != nil && tblStuff.lcaReaderProbeMode.Load())
+-	if forceReaderProbe {
+-		sqlRet, err = runLCAProbeWithReaderFallback(ctx, ses, tBat, tblStuff, snapshotTS)
++	var lcaSnapshotRel engine.Relation
++	var lcaTblDef *plan2.TableDef
++	var sqlReady bool
++	if !forceReaderProbe {
++		lcaSnapshotRel, lcaTblDef, sqlReady, err = lcaProbeTableDefAtSnapshot(ctx, ses, tblStuff, snapshotTS)
++		if err != nil {
++			return nil, err
++		}
++	}
++	if !sqlReady {
++		sqlRet, err = runLCAProbeWithReaderFallbackWithPreopened(
++			ctx, ses, tBat, tblStuff, snapshotTS, lcaSnapshotRel, lcaTblDef,
++		)
+ 		if err != nil {
+ 			return nil, err
+ 		}
+ 		fullTargetLayout = true
+ 	} else {
++		lcaLayout, err = buildLCAProbeColumnLayout(
++			lcaTblDef, tblStuff.tarRel.GetTableDef(ctx), tblStuff.def.colNames, tblStuff.def.colTypes,
++			tblStuff.def.tarOnlyIdxes, tblStuff.def.lcaColNames, true,
++		)
++		if err != n
+```
+
+**File**: `pkg/frontend/data_branch_hashdiff_test.go` (modified, +619/-23)
+```diff
+@@ -1034,16 +1034,17 @@ func TestRunLCAProbeWithReaderFallback_PrepareAndPropagateReaderError(t *testing
+ 
+ 	txnOp := mock_frontend.NewMockTxnOperator(ctrl)
+ 	txnOp.EXPECT().SnapshotTS().Return(types.BuildTS(10, 0).ToTimestamp()).AnyTimes()
+-	txnOp.EXPECT().CloneSnapshotOp(gomock.Any()).Return(txnOp).Times(1)
++	txnOp.EXPECT().CloneSnapshotOp(types.BuildTS(10, 0).ToTimestamp()).Return(txnOp)
+ 
+ 	eng := mock_frontend.NewMockEngine(ctrl)
+ 	rangeRel := mock_frontend.NewMockRelation(ctrl)
++	lcaDef := newTestBranchTableDef("lca_tbl", "name")
++	rangeRel.EXPECT().GetTableDef(gomock.Any()).Return(lcaDef).Times(2)
+ 	rangeRel.EXPECT().Ranges(gomock.Any(), gomock.Any()).
+ 		Return(readutil.NewBlockListRelationData(0), nil).
+ 		Times(1)
+ 	eng.EXPECT().GetRelationById(gomock.Any(), txnOp, uint64(77)).
+-		Return("db1", "lca_tbl", rangeRel, nil).
+-		Times(1)
++		Return("db1", "lca_tbl", rangeRel, nil)
+ 
+ 	ses.txnHandler = &TxnHandler{
+ 		storage: eng,
+@@ -1052,7 +1053,6 @@ func TestRunLCAProbeWithReaderFallback_PrepareAndPropagateReaderError(t *testing
+ 
+ 	tblStuff := newTestBranchTableStuff(ctrl)
+ 	tblStuff.lcaRel = mock_frontend.NewMockRelation(ctrl)
+-	lcaDef := newTestBranchTableDef("lca_tbl", "name")
+ 	tblStuff.lcaRel.(*mock_frontend.MockRelation).EXPECT().GetTableDef(gomock.Any()).Return(lcaDef).AnyTimes()
+ 	tblStuff.lcaRel.(*mock_frontend.MockRelation).EXPECT().GetTableID(gomock.Any()).Return(uint64(77)).AnyTimes()
+ 
+@@ -1075,6 +1075,67 @@ func TestRunLCAProbeWithReaderFallback_PrepareAndPropagateReaderError(t *testing
+ 	ret.Close()
+ }
+ 
++func TestLCAProbeReaderFallbackRequiresSnapshotMatchedRange(t *testing.T) {
++	fork := types.BuildTS(10, 2)
++	for _, tc := range []struct {
++		name                 string
++		openedAt             types.TS
++		definitionLookupHits bool
++	}{
++		{name: "live ancestor endpoint", openedAt: types.BuildTS(20, 0)},
++		{name: "earlier sibling fork", openedAt: types.BuildTS(10, 1)},
++		{name: "reuse relation opened at the fork", openedAt: types.BuildTS(20, 0), definitionLookupHits: true},
++		{name: "matching historical relation", openedAt: fork},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			ctx := context.Background()
++			ctrl := gomock.NewController(t)
++			ses := newValidateSession(t)
++			tables := newTestBranchTableStuff(ctrl)
++			lcaRel := mock_frontend.NewMockRelation(ctrl)
++			lcaRel.EXPECT().GetTableID(gomock.Any()).Return(uint64(77)).AnyTimes()
++			tables.lcaRel = lcaRel
++			tables.lcaRelSnapshot = tc.openedAt
++			lcaDef := newTestBranchTableDef("lca_tbl", "name")
++
++			txnOp := mock_frontend.NewMockTxnOperator(ctrl)
++			probeTxn := mock_frontend.NewMockTxnOperator(ctrl)
++			txnOp.EXPECT().CloneSnapshotOp(fork.ToTimestamp()).Return(probeTxn)
++			eng := mock_frontend.NewMockEngine(ctrl)
++			lookupErr := moerr.NewInternalErrorNoCtx("cannot reopen historical relation")
++			wantErr := lookupErr
++			var rangeRel *mock_frontend.MockRelation
++			switch {
++			case tc.definitionLookupHits:
++				snapshotRel := mock_frontend.NewMockRelation(ctrl)
++				eng.EXPECT().GetRelationById(gomock.Any(), probeTxn, uint64(77)).
++					Return("db1", "lca_tbl", snapshotRel, nil)
++				rangeRel = snapshotRel
++			case tc.openedAt == fork:
++				eng.EXPECT().GetRelationById(gomock.Any(), probeTxn, uint64(77)).
++					Return("", "", nil, lookupErr)
++				rangeRel = lcaRel
++			default:
++				eng.EXPECT().GetRelationById(gomock.Any(), probeTxn, uint64(77)).
++					Return("", "", nil, lookupErr)
++			}
++			ses.txnHandler = &TxnHandler{storage: eng, txnOp: txnOp}
++
++			if rangeRel != nil {
++				rangeRel.EXPECT().GetTableDef(gomock.Any()).Return(lcaDef).Times(2)
++				wantErr = moerr.NewInternalErrorNoCtx("historical ranges reached")
++				rangeRel.EXPECT().Ranges(gomock.Any(), gomock.Any()).Return(nil, wantErr)
++			}
++			// A mismatched relation has no expectations for GetTableDef or Ranges.
++			tombstones := buildIntDataBatch(t, ses.proc.Mp(), []string{"id"}, tables.def.colTypes[:1], [][]any{{int64(1)}})
++			defer tombstones.Clean(ses.proc.Mp())
++			ret, err := runLCAProbeWithReaderFallback(ctx, ses, tombstones, tables, fork)
++			defer ret.Close()
++			require.ErrorIs(t, err, wantErr)
++		})
++	}
++}
++
+ func TestRunLCAProbeWithReaderFallback_AllHitsPreserveInputOrder(t *testing.T) {
+ 	ctx := context.Background()
+ 	ses := newValidateSession(t)
+@@ -1085,14 +1146,15 @@ func TestRunLCAProbeWithReaderFallback_AllHitsPreserveInputOrder(t *testing.T) {
+ 	lcaRel.EXPECT().GetTableDef(gomock.Any()).Return(newTestBranchTableDef("lca_tbl", "name"))
+ 	lcaRel.EXPECT().GetTableID(gomock.Any()).Return(uint64(77)).AnyTimes()
+ 	tblStuff.lcaRel = lcaRel
++	tblStuff.lcaRelSnapshot = types.BuildTS(10, 0)
+ 
+ 	keys := batch.NewWithSize(1)
+ 	defer keys.Clean(mp)
+ 	keys.Vecs[0] = vector.NewVec(types.T_int64.ToType(), mp)
+ 	require.NoError(t, vector.AppendFixedList(keys.Vecs[0], []int64{20, 10}, nil, mp))
+ 	keys.SetRowCount(2)
+ 
+-	stub := gostub.Stub(&scanSnapshotRelationByIDWithFallback, func(
++	stub := gostub.Stub(&scanSnapshotRelationWithPreopened, func(
+```
+
+**File**: `pkg/frontend/data_branch_helpers.go` (modified, +40/-31)
+```diff
+@@ -36,6 +36,7 @@ import (
+ 	"github.com/matrixorigin/matrixone/pkg/container/types"
+ 	"github.com/matrixorigin/matrixone/pkg/container/vector"
+ 	"github.com/matrixorigin/matrixone/pkg/logutil"
++	"github.com/matrixorigin/matrixone/pkg/objectio"
+ 	"github.com/matrixorigin/matrixone/pkg/pb/plan"
+ 	"github.com/matrixorigin/matrixone/pkg/util/executor"
+ 	"github.com/matrixorigin/matrixone/pkg/vm/engine"
+@@ -361,29 +362,28 @@ func scanSnapshotRelationByID(
+ 	scanParallelism int,
+ 	onBatch func(*batch.Batch) error,
+ ) error {
+-	return scanSnapshotRelationByIDWithFallback(
++	return scanSnapshotRelationWithPreopened(
+ 		ctx, caller, ses, tableID, snapshotTS, nil,
+ 		attrs, colTypes, filterExpr, scanParallelism, onBatch,
+ 	)
+ }
+ 
+-// scanSnapshotRelationByIDWithFallback prefers current-view ranges, but can
+-// fall back to a relation that was already opened at snapshotTS. ALTER drops
+-// replaced physical generations from the current catalog, while bounded data
+-// branch operations may still need to hydrate rows from such a generation.
++// scanSnapshotRelationWithPreopened uses a relation already resolved by the
++// caller for the requested table ID, owner, and exact snapshot. Without one,
++// it opens the relation by ID at that snapshot.
+ //
+ // It is a var so unit tests can substitute a deterministic blocked reader
+ // (the reopenDataBranchRelationByID precedent) and prove cancellation and
+ // owner routing through the LCA scan without a storage engine.
+-var scanSnapshotRelationByIDWithFallback = scanSnapshotRelationByIDWithFallbackImpl
++var scanSnapshotRelationWithPreopened = scanSnapshotRelationWithPreopenedImpl
+ 
+-func scanSnapshotRelationByIDWithFallbackImpl(
++func scanSnapshotRelationWithPreopenedImpl(
+ 	ctx context.Context,
+ 	caller string,
+ 	ses *Session,
+ 	tableID uint64,
+ 	snapshotTS types.TS,
+-	fallbackRangeRel engine.Relation,
++	preopenedRel engine.Relation,
+ 	attrs []string,
+ 	colTypes []types.Type,
+ 	filterExpr *plan.Expr,
+@@ -401,13 +401,29 @@ func scanSnapshotRelationByIDWithFallbackImpl(
+ 		)
+ 	}
+ 
+-	storage := ses.GetTxnHandler().GetStorage()
+-	baseTxnOp := ses.GetTxnHandler().GetTxn()
+-	rangeTxnOp := baseTxnOp
+-	if !snapshotTS.IsEmpty() {
+-		rangeTxnOp = baseTxnOp.CloneSnapshotOp(snapshotTS.ToTimestamp())
++	if err := ctx.Err(); err != nil {
++		return err
++	}
++	rangeRel, rangeTS := preopenedRel, snapshotTS
++	if rangeRel == nil {
++		handler := ses.GetTxnHandler()
++		rangeTxnOp := handler.GetTxn()
++		if !snapshotTS.IsEmpty() {
++			rangeTxnOp = rangeTxnOp.CloneSnapshotOp(snapshotTS.ToTimestamp())
++		}
++		rangeTS = types.TimestampToTS(rangeTxnOp.SnapshotTS())
++		var err error
++		_, _, rangeRel, err = handler.GetStorage().GetRelationById(ctx, rangeTxnOp, tableID)
++		if err != nil {
++			return err
++		}
++		if rangeRel == nil {
++			return moerr.NewInternalErrorNoCtxf(
++				"scanSnapshotRelationByID: cannot resolve range relation by id %d at snapshot %s",
++				tableID, rangeTS.ToString(),
++			)
++		}
+ 	}
+-	rangeTS := types.TimestampToTS(rangeTxnOp.SnapshotTS())
+ 	logutil.Info(
+ 		"DataBranch-SnapshotScan-Start",
+ 		zap.String("caller", caller),
+@@ -419,26 +435,19 @@ func scanSnapshotRelationByIDWithFallbackImpl(
+ 		zap.Int("scan-parallelism", scanParallelism),
+ 	)
+ 
+-	_, _, rangeRel, resolveErr := storage.GetRelationById(ctx, rangeTxnOp, tableID)
+-	if resolveErr != nil || rangeRel == nil {
+-		if fallbackRangeRel == nil {
+-			if resolveErr != nil {
+-				return resolveErr
+-			}
++	rangeDef := rangeRel.GetTableDef(ctx)
++	for _, attr := range attrs {
++		name := strings.ToLower(attr)
++		// The snapshot reader assigns reserved sequence numbers to these attributes.
++		if objectio.IsPhysicalAddr(name) || name == objectio.DefaultCommitTS_Attr {
++			continue
++		}
++		if rangeDef == nil || dataBranchColumnDefByName(rangeDef, name) == nil {
+ 			return moerr.NewInternalErrorNoCtxf(
+-				"scanSnapshotRelationByID: cannot resolve range relation by id %d at snapshot %s",
+-				tableID, rangeTS.ToString(),
++				"scanSnapshotRelationByID: column %q is unavailable for table %d at snapshot %s",
++				attr, tableID, snapshotTS.ToString(),
+ 			)
+ 		}
+-		logutil.Info(
+-			"DataBranch-SnapshotScan-HistoricalRangeFallback",
+-			zap.String("caller", caller),
+-			zap.Uint64("table-id", tableID),
+-			zap.String("snapshot-ts", snapshotTS.ToString()),
+-			zap.Error(resolveErr),
+-		)
+-		rangeRel = fallbackRangeRel
+-		rangeTS = snapshotTS
+ 	}
+ 
+ 	rangesParam := engine.DefaultRangesParam
+```
+
+**File**: `pkg/frontend/data_branch_helpers_test.go` (modified, +32/-10)
+```diff
+@@ -245,7 +245,7 @@ func TestRunSQL_DataBranchUserIdentifiersUseInternalExec(t *testing.T) {
+ 	}
+ }
+ 
+-func TestScanSnapshotRelationByID_EarlyAndErrorPaths(t *testing.T) {
++func TestDataBranchScanSnapshotRelationByID_EarlyAndErrorPaths(t *testing.T) {
+ 	ses := newValidateSession(t)
+ 
+ 	t.Run("empty attrs returns nil", func(t *testing.T) {
+@@ -315,21 +315,17 @@ func TestScanSnapshotRelationByID_EarlyAndErrorPaths(t *testing.T) {
+ 		require.ErrorIs(t, err, wantErr)
+ 	})
+ 
+-	t.Run("uses historical fallback when current relation is gone", func(t *testing.T) {
++	t.Run("uses preopened historical relation without a lookup", func(t *testing.T) {
+ 		ctrl := gomock.NewController(t)
+ 		defer ctrl.Finish()
+ 
+ 		txnOp := mock_frontend.NewMockTxnOperator(ctrl)
+-		txnOp.EXPECT().SnapshotTS().Return(types.BuildTS(10, 0).ToTimestamp()).AnyTimes()
+-		txnOp.EXPECT().CloneSnapshotOp(gomock.Any()).Return(txnOp).Times(1)
+-
+-		currentLookupErr := moerr.NewInternalErrorNoCtx("can not find table by id 7")
+ 		eng := mock_frontend.NewMockEngine(ctrl)
+-		eng.EXPECT().GetRelationById(gomock.Any(), txnOp, uint64(7)).
+-			Return("", "", nil, currentLookupErr).
+-			Times(1)
+ 
+ 		historicalRel := mock_frontend.NewMockRelation(ctrl)
++		historicalRel.EXPECT().GetTableDef(gomock.Any()).Return(&planpb.TableDef{
++			Cols: []*planpb.ColDef{{Name: "id"}},
++		})
+ 		wantErr := moerr.NewInternalErrorNoCtx("historical ranges reached")
+ 		historicalRel.EXPECT().Ranges(gomock.Any(), gomock.Any()).
+ 			Return(nil, wantErr).
+@@ -340,7 +336,7 @@ func TestScanSnapshotRelationByID_EarlyAndErrorPaths(t *testing.T) {
+ 			txnOp:   txnOp,
+ 		}
+ 
+-		err := scanSnapshotRelationByIDWithFallback(
++		err := scanSnapshotRelationWithPreopened(
+ 			context.Background(),
+ 			"unit-test",
+ 			ses,
+@@ -390,6 +386,29 @@ func TestScanSnapshotRelationByID_EarlyAndErrorPaths(t *testing.T) {
+ 		require.Contains(t, err.Error(), "cannot resolve range relation")
+ 	})
+ 
++	t.Run("rejects a renamed column before opening ranges", func(t *testing.T) {
++		ctrl := gomock.NewController(t)
++		snapshot := types.BuildTS(20, 2)
++		txnOp := mock_frontend.NewMockTxnOperator(ctrl)
++		txnOp.EXPECT().SnapshotTS().Return(snapshot.ToTimestamp())
++		txnOp.EXPECT().CloneSnapshotOp(snapshot.ToTimestamp()).Return(txnOp)
++		rangeRel := mock_frontend.NewMockRelation(ctrl)
++		rangeRel.EXPECT().GetTableDef(gomock.Any()).Return(&planpb.TableDef{
++			Cols: []*planpb.ColDef{{Name: "id"}, {Name: "v"}},
++		})
++		eng := mock_frontend.NewMockEngine(ctrl)
++		eng.EXPECT().GetRelationById(gomock.Any(), txnOp, uint64(7)).Return("db", "t0", rangeRel, nil)
++		ses.txnHandler = &TxnHandler{storage: eng, txnOp: txnOp}
++
++		err := scanSnapshotRelationByID(
++			context.Background(), "lca-reader-fallback", ses, 7, snapshot,
++			[]string{"id", "w"}, []types.Type{types.T_int64.ToType(), types.T_int64.ToType()},
++			nil, 0, nil,
++		)
++		require.True(t, moerr.IsMoErrCode(err, moerr.ErrInternal))
++		require.ErrorContains(t, err, `column "w" is unavailable for table 7 at snapshot 20-2`)
++	})
++
+ 	t.Run("propagates ranges error", func(t *testing.T) {
+ 		ctrl := gomock.NewController(t)
+ 		defer ctrl.Finish()
+@@ -399,6 +418,9 @@ func TestScanSnapshotRelationByID_EarlyAndErrorPaths(t *testing.T) {
+ 		txnOp.EXPECT().CloneSnapshotOp(gomock.Any()).Return(txnOp).Times(1)
+ 
+ 		rangeRel := mock_frontend.NewMockRelation(ctrl)
++		rangeRel.EXPECT().GetTableDef(gomock.Any()).Return(&planpb.TableDef{
++			Cols: []*planpb.ColDef{{Name: "id"}},
++		})
+ 		wantErr := moerr.NewInternalErrorNoCtx("ranges failed")
+ 		rangeRel.EXPECT().Ranges(gomock.Any(), gomock.Any()).
+ 			Return(nil, wantErr).
+```
+
+**File**: `pkg/frontend/data_branch_owner_scoped_test.go` (modified, +9/-10)
+```diff
+@@ -196,7 +196,7 @@ func TestLCAScanDerivesOwnerContextFromLiveCallerContext(t *testing.T) {
+ 		scannerRecovers
+ 	)
+ 	var mode scannerMode
+-	stub := gostub.Stub(&scanSnapshotRelationByIDWithFallback,
++	stub := gostub.Stub(&scanSnapshotRelationWithPreopened,
+ 		func(
+ 			scanCtx context.Context,
+ 			_ string,
+@@ -218,6 +218,7 @@ func TestLCAScanDerivesOwnerContextFromLiveCallerContext(t *testing.T) {
+ 			}
+ 			readBatch := batch.NewWithSize(len(attrs))
+ 			mp := ses.proc.Mp()
++			defer readBatch.Clean(mp)
+ 			for i := range attrs {
+ 				readBatch.Vecs[i] = vector.NewVec(types.T_varchar.ToType(), mp)
+ 				if i == 0 {
+@@ -227,12 +228,12 @@ func TestLCAScanDerivesOwnerContextFromLiveCallerContext(t *testing.T) {
+ 				}
+ 			}
+ 			readBatch.SetRowCount(1)
+-			defer readBatch.Clean(mp)
+ 			return onBatch(readBatch)
+ 		})
+ 	t.Cleanup(stub.Reset)
+ 
+-	fixture := func() (*batch.Batch, tableStuff) {
++	snapshotTS := types.BuildTS(100, 1)
++	fixture := func(t *testing.T) (*batch.Batch, tableStuff) {
+ 		lcaRel := mock_frontend.NewMockRelation(ctrl)
+ 		tarRel := mock_frontend.NewMockRelation(ctrl)
+ 		lcaRel.EXPECT().GetTableID(gomock.Any()).Return(uint64(777)).AnyTimes()
+@@ -242,6 +243,7 @@ func TestLCAScanDerivesOwnerContextFromLiveCallerContext(t *testing.T) {
+ 
+ 		var tblStuff tableStuff
+ 		tblStuff.lcaRel = lcaRel
++		tblStuff.lcaRelSnapshot = snapshotTS
+ 		tblStuff.tarRel = tarRel
+ 		tblStuff.tarOperand = &branchOperand{
+ 			physAccount: 100, physDb: "pubdb",
+@@ -255,17 +257,15 @@ func TestLCAScanDerivesOwnerContextFromLiveCallerContext(t *testing.T) {
+ 		tblStuff.def.pkColIdx = 0
+ 
+ 		tBat := batch.NewWithSize(1)
++		t.Cleanup(func() { tBat.Clean(ses.proc.Mp()) })
+ 		tBat.Vecs[0] = vector.NewVec(types.T_varchar.ToType(), ses.proc.Mp())
+ 		require.NoError(t, vector.AppendBytes(tBat.Vecs[0], []byte("k1"), false, ses.proc.Mp()))
+ 		tBat.SetRowCount(1)
+ 		return tBat, tblStuff
+ 	}
+-	snapshotTS := types.BuildTS(100, 1)
+-
+ 	t.Run("child cancellation terminates the blocked in-flight probe", func(t *testing.T) {
+ 		mode = scannerBlocks
+-		tBat, tblStuff := fixture()
+-		defer tBat.Clean(ses.proc.Mp())
++		tBat, tblStuff := fixture(t)
+ 
+ 		child, cancel := context.WithCancel(ctx)
+ 		defer cancel()
+@@ -293,18 +293,17 @@ func TestLCAScanDerivesOwnerContextFromLiveCallerContext(t *testing.T) {
+ 
+ 	t.Run("owner-scoped scan recovers and returns matching rows", func(t *testing.T) {
+ 		mode = scannerRecovers
+-		tBat, tblStuff := fixture()
+-		defer tBat.Clean(ses.proc.Mp())
++		tBat, tblStuff := fixture(t)
+ 
+ 		sqlRet, probeErr := runLCAProbeWithReaderFallback(ctx, ses, tBat, tblStuff, snapshotTS)
+ 		require.NoError(t, probeErr)
++		defer sqlRet.Close()
+ 		seen := <-scanSeen
+ 		require.Equal(t, uint32(100), seen.account)
+ 		require.NotEmpty(t, sqlRet.Batches)
+ 		require.Equal(t, 1, sqlRet.Batches[0].RowCount(),
+ 			"the row recovered under the segment owner reaches the probe result")
+ 		// The probe output is [input index, target columns...]: c1 is vec 1.
+ 		require.Equal(t, "k1", string(sqlRet.Batches[0].Vecs[1].GetRawBytesAt(0)))
+-		sqlRet.Close()
+ 	})
+ }
+```
+
+**File**: `pkg/frontend/data_branch_test.go` (modified, +586/-2)
+```diff
+@@ -24,6 +24,8 @@ import (
+ 	"os"
+ 	"path/filepath"
+ 	"strings"
++	"sync"
++	"sync/atomic"
+ 	"testing"
+ 
+ 	"github.com/golang/mock/gomock"
+@@ -39,13 +41,16 @@ import (
+ 	"github.com/matrixorigin/matrixone/pkg/fileservice"
+ 	"github.com/matrixorigin/matrixone/pkg/frontend/databranchutils"
+ 	mock_frontend "github.com/matrixorigin/matrixone/pkg/frontend/test"
++	"github.com/matrixorigin/matrixone/pkg/objectio"
+ 	"github.com/matrixorigin/matrixone/pkg/pb/plan"
+ 	"github.com/matrixorigin/matrixone/pkg/pb/txn"
+ 	"github.com/matrixorigin/matrixone/pkg/sql/parsers/dialect"
+ 	"github.com/matrixorigin/matrixone/pkg/sql/parsers/dialect/mysql"
+ 	"github.com/matrixorigin/matrixone/pkg/sql/parsers/tree"
+ 	"github.com/matrixorigin/matrixone/pkg/stage"
+ 	"github.com/matrixorigin/matrixone/pkg/testutil"
++	"github.com/matrixorigin/matrixone/pkg/vm/engine"
++	"github.com/panjf2000/ants/v2"
+ 	"github.com/stretchr/testify/require"
+ )
+ 
+@@ -2429,6 +2434,96 @@ func TestCheckSchemaCompatibility_FakePKRejectsTargetOnlyColumns(t *testing.T) {
+ 	require.Contains(t, err.Error(), "require an explicit primary key")
+ }
+ 
++func TestDataBranchGetRelationsUsesOpeningTransactionSnapshots(t *testing.T) {
++	foreground := types.BuildTS(20, 2)
++	background := types.BuildTS(30, 1)
++	pinned := types.BuildTS(10, 0)
++	for _, tc := range []struct {
++		name         string
++		pinnedTarget bool
++		pinnedBase   bool
++	}{
++		{name: "both endpoints current"},
++		{name: "target pinned", pinnedTarget: true},
++		{name: "base pinned", pinnedBase: true},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			ctx := context.Background()
++			ctrl := gomock.NewController(t)
++			ses := newValidateSession(t)
++			ses.txnCompileCtx = &TxnCompilerContext{execCtx: &ExecCtx{reqCtx: ctx, ses: ses}}
++			foregroundTxn := mock_frontend.NewMockTxnOperator(ctrl)
++			foregroundTxn.EXPECT().SnapshotTS().Return(foreground.ToTimestamp()).AnyTimes()
++			backgroundTxn := mock_frontend.NewMockTxnOperator(ctrl)
++			backgroundTxn.EXPECT().SnapshotTS().Return(background.ToTimestamp()).AnyTimes()
++			storage := mock_frontend.NewMockEngine(ctrl)
++			ses.txnHandler = &TxnHandler{storage: storage, txnOp: foregroundTxn}
++			ses.proc.Base.SessionInfo.StorageEngine = storage
++			getPu(ses.GetService()).StorageEngine = storage
++			bh := &backExec{backSes: &backSession{feSessionImpl: feSessionImpl{
++				txnHandler: &TxnHandler{txnOp: backgroundTxn},
++			}}}
++
++			open := func(name string, id uint64, pin bool) (tree.TableName, engine.Relation, types.TS, types.TS) {
++				var hint *tree.AtTimeStamp
++				txnOp := backgroundTxn
++				wantObserved, wantOpened := foreground, background
++				if pin {
++					hint = newMoTimestampHint(pinned.Physical())
++					txnOp = mock_frontend.NewMockTxnOperator(ctrl)
++					backgroundTxn.EXPECT().CloneSnapshotOp(pinned.ToTimestamp()).Return(txnOp)
++					txnOp.EXPECT().SnapshotTS().Return(pinned.ToTimestamp())
++					wantObserved, wantOpened = pinned, pinned
++				}
++				db := mock_frontend.NewMockDatabase(ctrl)
++				storage.EXPECT().Database(gomock.Any(), name, txnOp).Return(db, nil).Times(2)
++				db.EXPECT().IsSubscription(gomock.Any()).Return(false)
++				rel := mock_frontend.NewMockRelation(ctrl)
++				rel.EXPECT().GetTableID(gomock.Any()).Return(id).AnyTimes()
++				rel.EXPECT().GetTableDef(gomock.Any()).Return(newTestBranchTableDef(name, "name")).AnyTimes()
++				db.EXPECT().Relation(gomock.Any(), name, nil).Return(rel, nil)
++				return newQualifiedCloneTableName(name, name, hint), rel, wantObserved, wantOpened
++			}
++			tarName, tarRel, wantTarObserved, wantTarOpened := open("target", 77, tc.pinnedTarget)
++			baseName, baseRel, wantBaseObserved, wantBaseOpened := open("base", 78, tc.pinnedBase)
++			tables, err := getTableStuff(ctx, ses, bh, tarName, baseName)
++			require.NoError(t, err)
++			require.Same(t, tarRel, tables.tarRel)
++			require.Same(t, baseRel, tables.baseRel)
++			require.Equal(t, wantTarOpened, tables.tarRelSnapshot)
++			require.Equal(t, wantBaseOpened, tables.baseRelSnapshot)
++			tarSP, baseSP := tables.resolvedSnapshots(ses)
++			require.Equal(t, wantTarObserved, tarSP)
++			require.Equal(t, wantBaseObserved, baseSP)
++			tarRelSP, baseRelSP := tables.resolvedRelSnapshots(ses)
++			require.Equal(t, wantTarOpened, tarRelSP)
++			require.Equal(t, wantBaseOpened, baseRelSP)
++
++			lookupErr := errors.New("cannot reopen at observation snapshot")
++			probeTxn := mock_frontend.NewMockTxnOperator(ctrl)
++			keys := buildIntDataBatch(t, ses.proc.Mp(), []string{"id"}, tables.def.colTypes[:1], [][]any{{int64(1)}})
++			defer keys.Clean(ses.proc.Mp())
++			for _, side := range []struct {
++				rel              engine.Relation
++				observed, opened types.TS
++			}{{tarRel, tarSP, tarRelSP}, {baseRel, baseSP, baseRelSP}} {
++				tables.lcaRel, tables.lcaRelSnapshot = side.rel, side.opened
++				if side.observed == side.opened {
++					require.Same(t, side.rel, tables.lcaFallbackRangeRel(side.observed))
++					continue
++				}
++				require.Nil(t, tables.lcaFallbackRangeRel(side.observed))
++			
+```
+
+**File**: `pkg/frontend/data_branch_types.go` (modified, +111/-52)
+```diff
+@@ -84,6 +84,7 @@ type collectRange struct {
+ 	from             []types.TS
+ 	end              []types.TS
+ 	rel              []engine.Relation
++	relSnapshot      []types.TS // The snapshot at which each relation was opened.
+ 	startBoundaryRel []engine.Relation
+ 	// idents carries the physical identity each segment was opened under
+ 	// (design §6): the walking side's endpoint identity for the endpoint
+@@ -100,6 +101,13 @@ func (r collectRange) segmentIdentity(i int, fallback branchIdentity) branchIden
+ 	return fallback
+ }
+ 
++func (r collectRange) segmentSnapshot(i int, fallback types.TS) types.TS {
++	if i >= 0 && i < len(r.relSnapshot) {
++		return r.relSnapshot[i]
++	}
++	return fallback
++}
++
+ func (r collectRange) startBoundary(i int) engine.Relation {
+ 	if i < 0 || i >= len(r.startBoundaryRel) {
+ 		return nil
+@@ -170,70 +178,77 @@ func (m *branchMetaInfo) hasLCA() bool {
+ 	return m.lcaTableId != 0
+ }
+ 
+-// tarLCASnapshot is the snapshot of the LCA at which tar's view of
+-// the LCA's state is anchored. It is one of the two per-side anchors
+-// that lcaProbeSnapshot composes into the shared divergence point
+-// both sides resolve against.
+-//
+-// When tar forked off the LCA (len(pathFromLCAToTar) > 1), the
+-// anchor is tar's own first-child CloneTS — the moment tar diverged.
+-// When tar IS the LCA (length-1 path), tar inherits the meeting
+-// point from base: base's first-child CloneTS, or baseSP if base is
+-// also the LCA (case-0 same-table diff).
+-func (m *branchMetaInfo) tarLCASnapshot(baseSP types.TS) types.TS {
+-	if ts, ok := firstDataBranchForkTS(
+-		m.pathFromLCAToTarTS, m.pathFromLCAToTarLineageOnly,
+-	); ok {
+-		return ts
++func firstDataBranchForkIndex(lineageOnly []bool, pathLen int) (int, bool) {
++	for i := 1; i < pathLen; i++ {
++		if i < len(lineageOnly) && lineageOnly[i] {
++			continue
++		}
++		return i, true
+ 	}
+-	if ts, ok := firstDataBranchForkTS(
+-		m.pathFromLCAToBaseTS, m.pathFromLCAToBaseLineageOnly,
+-	); ok {
+-		return ts
++	return 0, false
++}
++
++func firstDataBranchForkTS(pathTS []types.TS, lineageOnly []bool) (types.TS, bool) {
++	if i, ok := firstDataBranchForkIndex(lineageOnly, len(pathTS)); ok {
++		return pathTS[i], true
+ 	}
+-	return baseSP
++	return types.TS{}, false
++}
++
++// lcaProbeSnapshot is the shared baseline used to open the LCA relation.
++func (m *branchMetaInfo) lcaProbeSnapshot(tarSP, baseSP types.TS) types.TS {
++	probe, _ := m.lcaProbeSnapshots(tarSP, baseSP, false)
++	return probe
+ }
+ 
+-// baseLCASnapshot is the mirror of tarLCASnapshot for the base side.
+-func (m *branchMetaInfo) baseLCASnapshot(tarSP types.TS) types.TS {
+-	if ts, ok := firstDataBranchForkTS(
+-		m.pathFromLCAToBaseTS, m.pathFromLCAToBaseLineageOnly,
+-	); ok {
+-		return ts
++// lcaProbeAnchors anchors each side at its first branch fork, or its
++// endpoint snapshot if it observes the LCA directly (possibly through ALTER
++// generations).
++func (m *branchMetaInfo) lcaProbeAnchors(tarSP, baseSP types.TS) (tarAnchor, baseAnchor types.TS, bothForked bool) {
++	tarAnchor, tarForked := firstDataBranchForkTS(m.pathFromLCAToTarTS, m.pathFromLCAToTarLineageOnly)
++	baseAnchor, baseForked := firstDataBranchForkTS(m.pathFromLCAToBaseTS, m.pathFromLCAToBaseLineageOnly)
++	if !tarForked {
++		tarAnchor = tarSP
+ 	}
+-	if ts, ok := firstDataBranchForkTS(
+-		m.pathFromLCAToTarTS, m.pathFromLCAToTarLineageOnly,
+-	); ok {
+-		return ts
++	if !baseForked {
++		baseAnchor = baseSP
+ 	}
+-	return tarSP
++	return tarAnchor, baseAnchor, tarForked && baseForked
+ }
+ 
+-func firstDataBranchForkTS(pathTS []types.TS, lineageOnly []bool) (types.TS, bool) {
+-	for i := 1; i < len(pathTS); i++ {
+-		if i < len(lineageOnly) && lineageOnly[i] {
+-			continue
+-		}
+-		return pathTS[i], true
++// lcaProbeSnapshots uses the earlier observation as the shared baseline.
++func (m *branchMetaInfo) lcaProbeSnapshots(
++	tarSP, baseSP types.TS, preservePickConflicts bool,
++) (tarProbe, baseProbe types.TS) {
++	tarAnchor, baseAnchor, bothForked := m.lcaProbeAnchors(tarSP, baseSP)
++	// For sibling PICK, each side's conflict baseline includes the state it
++	// inherited at its own fork. With an ancestor operand both probes must
++	// honor the shared baseline, including an endpoint older than the fork.
++	if preservePickConflicts && bothForked {
++		return tarAnchor, baseAnchor
+ 	}
+-	return types.TS{}, false
++	if tarAnchor.LT(&baseAnchor) {
++		return tarAnchor, tarAnchor
++	}
++	return baseAnchor, baseAnchor
+ }
+ 
+-// lcaProbeSnapshot is the shared divergence point of the two
+-// lineages: the earlier of the two per-side fork anchors. diffOnBase
+-// uses it to fetch the LCA relation handle when the LCA is a
+-// third-party node (neither tar nor base), so the handle is valid on
+-// both sides' views, and hashDiffIfHasLCA uses it to anchor both
+-// sides' tombstone resolution so the LCA's writes between the two
+-// forks surface as the later-forked side's divergence instead of
+-// being absorbed into that side's fork baseline.
+-func (m *branchMetaInfo) lcaProbeSnapshot(tarSP, ba
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #33053** (2026-11-22): fix(frontend): preserve cancellation errors during LOCAL uploads (@XuPeng-SH)
-- **PR #33050** (2026-11-22): fix(ci): distinguish exited UT cases from live tests (@XuPeng-SH)
-- **PR #33049** (2026-11-21): fix(disttae): scope flushed workspace tombstones by table (@XuPeng-SH)
-- **PR #33046** (2026-11-21): test(external): verify cleanup when filling a missing saved column fails (@XuPeng-SH)
-- **PR #33045** (2026-11-21): fix(external): preserve saved result scan projections (@XuPeng-SH)
-- **PR #33044** (2026-11-21): perf(plan): cost bounded DELETE lookups using index cardinality (@XuPeng-SH)
+- **PR #33188** (2026-11-25): test(optools): accept a KILL-escalated drain in the publication latch test (@fengttt)
+- **PR #33186** (2026-11-25): test(aggexec): compare vecblock JSON decode allocations at their least (@cpegeric)
+- **PR #33183** (2026-11-24): docs(design): row selection with bitmaps and RemapList (@fengttt)
+- **PR #33175** (2026-11-24): fix(ci): adopt the merged Coverage UT cache 404 fix (@Ariznawlll)
+- **PR #33173** (2026-11-24): fix(ci): resolve Coverage UT workflows from merged CI #475 (@Ariznawlll)
+- **PR #33169** (2026-11-24): fix(compile): preserve committed rows on single remote scans (4.2-dev) (@LeftHandCold)
 
 ---
 
@@ -4690,83 +3859,40 @@ short ranges and single-entry reads. For other candidates, stop a
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci): distinguish exited UT cases from live tests
+## X. test(embed): measure execution memory headroom against a per-process limit
 
 **RULE**:
-When implementing operations in `optools/active_ut_incremental.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in matrixorigin/matrixone. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/common/system/system.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in matrixorigin/matrixone. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `96d0d018`: ci): distinguish exited UT cases from live tests. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `568f0f4f`: test(embed): measure execution memory headroom against a per-process limit. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `optools/active_ut_incremental.py`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/common/system/system.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-STATE_VERSION = 2
-MAX_LIFECYCLE_LINE_BYTES = 1024 * 1024
-TEST_START_ACTIONS = ("run", "pause", "cont")
-TERMINAL_ACTIONS = ("pass", "fail", "skip")
+// ProcessResidentMemory returns the resident set size of this process. The
+// second return is false when it cannot be read.
+func ProcessResidentMemory() (uint64, bool) {
+	var mem gosigar.ProcMem
+	if err := mem.Get(pid); err != nil {
+		return 0, false
+	}
+	return mem.Resident, true
+}
 
-
-    if not (
-    ):
-        return False
-
-    def package_entry(entry):
-        return (
-            isinstance(entry, list) and len(entry) == 2
-            and isinstance(entry[0], str)
-            and type(entry[1]) is int and entry[1] > 0
-        )
-
-    def cases_entry(cases):
-        return isinstance(cases, dict) and all(
-            isinstance(entry, list) and len(entry) == 4
-            and isinstance(entry[0], str) and isinstance(entry[1], str)
-            and type(entry[2]) is int and entry[2] > 0
-            and isinstance(entry[3], bool)
-            for entry in cases.values()
-        )
-
-    return all(map(package_entry, state["packages"].values())) and all(
-        map(cases_entry, state["cases"].values())
-def apply_event(state, event, unfinished=None):
-    packages, cases = state["packages"], state["cases"]
-    invocation = packages.get(package)
-            if invocation is None:
-                packages[package] = [when, 1]
-            else:
-                invocation[1] += 1
-        elif action in TERMINAL_ACTIONS:
-     
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-    return (
-        and all(isinstance(k, str) and isinstance(v, str) for k, v in state["packages"].items())
-        and all(isinstance(v, list) and len(v) == 4 and all(isinstance(s, str) for s in v)
-                for v in state["cases"].values())
-def apply_event(state, event):
-            state["packages"][package] = when
-        elif action in ("pass", "fail", "skip"):
-            state["packages"].pop(package, None)
-        # Keep unfinished cases on a package failure, as the AWK oracle does.
-    key = json.dumps([package, test])
-    if action in ("run", "pause", "cont"):
-        started = state["cases"].get(key, [package, test, action, when])[3]
-        state["cases"][key] = [package, test, action, started]
-    elif action in ("pass", "fail", "skip"):
-        state["cases"].pop(key, None)
-            line = stream.readline(1024 * 1024)
-            oversized = not line.endswith(b"\n") and len(line) == 1024 * 1024
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `96d0d018` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `568f0f4f` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

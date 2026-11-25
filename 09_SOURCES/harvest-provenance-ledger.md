@@ -12938,3 +12938,10 @@ Every entry in this ledger must capture:
 | `learn-github-tokio-rs-tokio` | `https://github.com/tokio-rs/tokio` | `854013a8` | Multi-dimensional audit evidence | 2026-11-25T02:20:13.514Z |
 | `learn-github-rmax-scrapy-redis` | `https://github.com/rmax/scrapy-redis` | `5f5ca5b0` | Multi-dimensional audit evidence | 2026-11-25T02:20:17.963Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `b2a26d2e` | Multi-dimensional audit evidence | 2026-11-25T02:20:27.516Z |
+| `learn-huggingface-memtensor-memt-1-0-pro` | `https://huggingface.co/MemTensor/MemT-1.0-Pro` | `hf-memtens` | Multi-dimensional audit evidence | 2026-11-25T02:28:41.809Z |
+| `learn-github-msasikanth-twine` | `https://github.com/msasikanth/twine` | `18235a59` | Multi-dimensional audit evidence | 2026-11-25T02:28:51.628Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `1b511d59` | Multi-dimensional audit evidence | 2026-11-25T02:28:57.053Z |
+| `learn-github-matrixorigin-matrixone` | `https://github.com/matrixorigin/matrixone` | `ca5325ce` | Multi-dimensional audit evidence | 2026-11-25T02:29:00.642Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `eeb815a6` | Multi-dimensional audit evidence | 2026-11-25T02:29:02.170Z |
+| `learn-dom-d-95a94518` | `project://hf-memtensor-memt-1.0-pro` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-memtensor-memt-1.0-pro-learnings.md` | 2026-11-25T02:29:34.368Z |
+| `learn-dom-d-615f4579` | `project://freenet-freenet-core` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/freenet-freenet-core-learnings.md` | 2026-11-25T02:30:10.455Z |

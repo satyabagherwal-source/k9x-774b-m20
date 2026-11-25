@@ -4,24 +4,24 @@
 {
   "source_repository": "freenet/freenet-core",
   "source_url": "https://github.com/freenet/freenet-core",
-  "source_version": "d245524c",
+  "source_version": "1b511d59",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-24T22:16:00.948Z",
+  "timestamp": "2026-11-25T02:28:57.290Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-freenet-freenet-core",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [freenet/freenet-core](https://github.com/freenet/freenet-core) (Revision: `d245524c`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-24T22:16:00.948Z`  
+> **Provenance**: Harvested from [freenet/freenet-core](https://github.com/freenet/freenet-core) (Revision: `1b511d59`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-25T02:28:57.290Z`  
 > **Learning ID**: `learn-github-freenet-freenet-core`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), G (Architecture Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 85%
+- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), G (Architecture Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 75%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from freenet/freenet-core:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T22:15:59.571Z  
+> **Harvest Timestamp**: 2026-11-25T02:28:56.540Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Declare your digital independence
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3132 stars
+- **Stars / Engagement**: 3133 stars
 
 ---
 
@@ -1752,13 +1752,13 @@ pub mod streaming_buffer;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #6377** (2026-11-24): **build: sync main to 0.2.165 after release**
-  *Symptoms*: Syncs main's version files to the published release **v0.2.165** (freenet 0.2.165, fdev 0.3.327).  release.yml ships the soaked commit plus a version bump on `release/v0.2.165`, which never reaches main by itself. This PR is that bump regenerated on main by `.github/workflows/release-sync.yml`. It touches only version files and lockfiles. See docs/RELEASING.md, 'Merge-back'.
+- **Issue #6384** (2026-11-25): **chore: remove fixed advisories from the RustSec baseline**
+  *Symptoms*: ## Problem #6381 added `scripts/rustsec-baseline.tsv` with 5 known QUIC/TLS stack advisories (RUSTSEC-2026-0346..0349 on rustls 0.23.45, RUSTSEC-2026-0538 on quinn-udp 0.5.14), tracked by #6382. #6382 has merged and bumped both crates, so the entries are stale and the scheduled job warns about them.  ## Approach Remove exactly those 5 rows; the header comment is kept. An empty baseline is valid: `rustsec-watch.sh` reads it with `grep -vE ... || true`.  ## Testing Ran locally from this branch: - `scripts/rustsec-watch.sh scheduled`: `QUIC/TLS stack: 0 finding(s), 0 baseline entr(ies)`, exit 0, no stale-entry warning. - `scripts/rustsec-watch.sh pr origin/main`: no new findings relative to origin/main, exit 0.  [AI-assisted - Claude] 
   **Post-Mortem & Fix Analysis**:
-  > <!-- claude-rule-review --> ### Rule Review: No issues found  **Rules checked:** git-workflow.md, testing.md **Files reviewed:** 4  This is a mechanical post-release version sync from 0.2.164 to 0.2.165. It touches only `Cargo.lock`, `apps/freenet-ping/Cargo.lock`, `crates/core/Cargo.toml` and `crates/fdev/Cargo.toml`. The freenet version, the fdev version, the binstall `pkg-url` segments and the fdev-to-freenet path dependency version all move together. The PR title uses the `build:` prefix, which is valid. It is not a `fix:` PR, so no regression test is required. It adds no code or tests, and no docs or rules are made stale.  No rule violations detected.  <!-- warning-count: 0 -->  --- *Rule review against `.claude/rules/`. WARNING findings turn the `rule-review/warnings` status red.*
+  > <!-- claude-rule-review --> ### Rule Review: No issues found  **Rules checked:** git-workflow.md **Files reviewed:** 1  The PR only deletes the five baseline entries in `scripts/rustsec-baseline.tsv`, and its one commit uses the `chore:` prefix. `Cargo.lock` now pins `quinn-udp` 0.5.16 and `rustls` 0.23.46, so the removed entries (0.5.14 and 0.23.45) no longer match anything. No rule violations detected.  <!-- warning-count: 0 -->  --- *Rule review against `.claude/rules/`. WARNING findings turn the `rule-review/warnings` status red.*
 
-- **Issue #6374** (2026-11-24): **fix: an older peer refusing us no longer shows "update required"**
-  *Symptoms*: ## Problem A node on the latest release showed "Version mismatch — update required" with a `cargo install ... --version 0.2.117` downgrade command. When this node dials a peer running an older release that refuses it, `handle_ack_connection_error` returned `ProtocolVersionMismatch { expected: <remote version> }` even in the branch where we do NOT need to update. `record_gateway_failure` runs for every failed outbound dial, `classify_transport_error` turned the text into `FailureReason::VersionMismatch`, and that forced health to Trouble even with open connections. The entry stayed until the next new connection. About half of 0.2.164 nodes hit an old peer's refusal in telemetry.  ## Approach - New `TransportError::PeerVersionOutdated { peer_version }`, returned when the refusing peer is not newer than us. Its Display text carries no "Version incompatibility" and no install command. `ProtocolVersionMismatch` is now only produced when we must update. - `classify_transport_error` also requires the remote version to be strictly newer than ours before recording `VersionMismatch` (second guard; the banner can never offer an older version). - A recorded `VersionMismatch` forces Trouble only when the node has no open connections. - Fixed the misleading log line ("within our compatible range" for a peer below our floor). - Wire bytes unchanged: `TransportError` is not serialized anywhere on the wire; it is converted to a string (`ConnectionError::TransportError(String)`) for local clas
+- **Issue #6383** (2026-11-25): **test: property-test pre-authentication parsing of QUIC peer keys**
+  *Symptoms*: ## Problem The QUIC peer-identity code parses and checks bytes from a peer before the peer is authenticated (`peer_key_presented`, `PeerKey::of`, the pinned and proven certificate verifiers, the handshake signature check). It had one proptest for the SPKI parser and fixed-input unit tests, but nothing that fed arbitrary input to the verifiers or ran property tests at a depth beyond 256 cases.  ## Approach Property tests in the normal suite (deterministic cost, no new toolchain), plus a weekly workflow that raises the case count. I did not add a cargo-fuzz target: the entry points are `pub(crate)`, so a fuzz crate would need them re-exported, and cargo-fuzz needs nightly, which CI does not use. Proptest reaches the same entry points through the existing test module.  New properties (`transport/quic/identity/tests.rs`): - `PeerKey::of` and the Edwards conversion take any 32 bytes without panicking; what is accepted is canonical, agrees with an independent conversion, and round-trips through its presented form. - `PinnedServerKey`, `PinnedClientKey` and `ProvenClientKey` certificate checks, over arbitrary, mutated, truncated and extended keys and arbitrary chains: accept exactly the expected key (pinned) or exactly what `peer_key_presented` accepts (proven), never with a chain; `RefuseEveryClient` always refuses. - Signature checks with arbitrary bytes, message, scheme and presented key are refused. - Our own signatures over arbitrary messages verify; a flipped bit, changed or e
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1775,101 +1775,644 @@ pub mod streaming_buffer;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d245524c` (2026-11-24)
-**Commit Message**: build: sync main to 0.2.165 after release (#6377)
+### Incident Patch 1: `b5fa9c61` (2026-11-25)
+**Commit Message**: chore: remove fixed advisories from the RustSec baseline (#6384)
 
-Co-authored-by: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
-
-**File**: `Cargo.lock` (modified, +2/-2)
+**File**: `scripts/rustsec-baseline.tsv` (modified, +0/-5)
 ```diff
-@@ -1899,7 +1899,7 @@ dependencies = [
- 
- [[package]]
- name = "fdev"
--version = "0.3.326"
-+version = "0.3.327"
- dependencies = [
-  "anyhow",
-  "axum",
-@@ -2078,7 +2078,7 @@ dependencies = [
- 
- [[package]]
- name = "freenet"
--version = "0.2.164"
-+version = "0.2.165"
- dependencies = [
-  "aes-gcm",
-  "ahash",
+@@ -5,8 +5,3 @@
+ # expiry that is still present, and warns about an entry that no longer
+ # matches (delete it). An entry needs a tracking link and an expiry; renew an
+ # expiry only with a stated reason in the PR.
+-RUSTSEC-2026-0538	quinn-udp	0.5.14	https://github.com/freenet/freenet-core/pull/6382	2026-12-08
+-RUSTSEC-2026-0347	rustls	0.23.45	https://github.com/freenet/freenet-core/pull/6382	2026-12-08
+-RUSTSEC-2026-0348	rustls	0.23.45	https://github.com/freenet/freenet-core/pull/6382	2026-12-08
+-RUSTSEC-2026-0346	rustls	0.23.45	https://github.com/freenet/freenet-core/pull/6382	2026-12-08
+-RUSTSEC-2026-0349	rustls	0.23.45	https://github.com/freenet/freenet-core/pull/6382	2026-12-08
 ```
 
-**File**: `apps/freenet-ping/Cargo.lock` (modified, +1/-1)
+---
+
+### Incident Patch 2: `b0b79b07` (2026-11-25)
+**Commit Message**: test: property-test pre-authentication parsing of QUIC peer keys (#6383)
+
+**File**: `.github/workflows/spki-proptest.yml` (added, +125/-0)
 ```diff
-@@ -1715,7 +1715,7 @@ dependencies = [
- 
- [[package]]
- name = "freenet"
--version = "0.2.164"
-+version = "0.2.165"
- dependencies = [
-  "aes-gcm",
-  "ahash",
+@@ -0,0 +1,125 @@
++name: QUIC Identity Property Tests (Weekly)
++
++# The property tests on the QUIC peer-identity parsing and verification
++# (`transport/quic/identity/tests.rs`) run in PR CI at 256 cases each, which
++# finds a bug that shows up in the first few hundred inputs. This job runs the
++# same tests with 100,000 cases each, to find the ones that do not.
++#
++# Each run seeds proptest from its run id (printed in the log, or given as the
++# `seed` input), so a failure can be reproduced locally with the same
++# PROPTEST_CASES and PROPTEST_RNG_SEED.
++#
++# Weekly, not per PR: it adds about 15 minutes on a ubicloud-standard-8
++# (a few dollars a month) and nothing about it depends on the PR's diff.
++# Run it by hand (workflow_dispatch) to check a specific change.
++on:
++  schedule:
++    - cron: "0 4 * * 1"
++  workflow_dispatch:
++    inputs:
++      cases:
++        description: "Cases per property test"
++        required: false
++        default: "100000"
++      seed:
++        description: "PROPTEST_RNG_SEED (decimal u64). Leave empty to use the run id."
++        required: false
++        default: ""
++
++concurrency:
++  group: ${{ github.workflow }}-${{ github.ref }}
++  cancel-in-progress: false
++
++permissions:
++  contents: read
++
++jobs:
++  spki-proptest:
++    name: QUIC identity property tests
++    runs-on: ubicloud-standard-8
++    timeout-minutes: 45
++    env:
++      CARGO_TARGET_DIR: ${{ github.workspace }}/target
++      # Use mold linker to avoid rust-lld crashes
++      CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_LINKER: clang
++      CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_RUSTFLAGS: -C link-arg=-fuse-ld=mold
++      PROPTEST_CASES: ${{ github.event.inputs.cases || '100000' }}
++      PROPTEST_RNG_SEED: ${{ github.event.inputs.seed || github.run_id }}
++
++    steps:
++      - uses: actions/checkout@v7
++
++      - uses: dtolnay/rust-toolchain@stable
++        with:
++          toolchain: 1.95.0
++
++      - uses: Swatinem/rust-cache@v2
++        with:
++          prefix-key: spki-proptest
++          save-if: ${{ github.ref == 'refs/heads/main' }}
++
++      - name: Install mold linker
++        run: |
++          sudo apt-get update
++          sudo apt-get install -y mold
++
++      # The failing case itself is not printed, but the seed is, and with the
++      # same PROPTEST_CASES it lets anyone reproduce that case locally. That
++      # is on purpose: without it a failure seen once in 100,000 cases could
++      # not be reproduced. The output is kept short (failing test names, seed
++      # and summary line); it is minimal, not secret. The job also fails when
++      # the filter ran fewer tests than expected or one of the property tests
++      # did not run, so a renamed or moved module cannot leave it green while
++      # testing nothing.
++      - name: Run the identity property tests
++        timeout-minutes: 35
++        run: |
++          if ! printf '%s' "$PROPTEST_CASES" | grep -Eq '^[1-9][0-9]{0,8}$'; then
++            echo "::error::PROPTEST_CASES is not a positive integer"
++            exit 1
++          fi
++          if ! printf '%s' "$PROPTEST_RNG_SEED" | grep -Eq '^[0-9]{1,19}$'; then
++            echo "::error::PROPTEST_RNG_SEED is not a decimal integer"
++            exit 1
++          fi
++          echo "PROPTEST_CASES=$PROPTEST_CASES PROPTEST_RNG_SEED=$PROPTEST_RNG_SEED"
++          log="$RUNNER_TEMP/proptest.log"
++          status=0
++          cargo test -p freenet --lib -- transport::quic::identity > "$log" 2>&1 || status=$?
++          grep -E '^(test .* (ok|FAILED)|test result:)' "$log" || true
++          if [ "$status" -ne 0 ]; then
++            echo "::error::identity property tests failed (exit $status); case not printed. Rerun locally with PROPTEST_CASES=$PROPTEST_CASES PROPTEST_RNG_SEED=$PROPTEST_RNG_SEED"
++            exit "$status"
++          fi
++          passed=$(grep -cE '^test .* \.\.\. ok$' "$log" || true)
++          if [ "$passed" -lt 23 ]; then
++            echo "::error::expected at least 23 identity tests to pass, saw $passed"
++            exit 1
++          fi
++          for name in peer_key_of_matches_the_independent_oracle \
++            peer_key_presented_matches_the_independent_oracle \
++            certificate_verifiers_take_any_presented_key \
++            signature_verifiers_refuse_arbitrary_signatures \
++            our_signatures_round_trip_and_nothing_else_verifies; do
++            if ! grep -qE "^test .*::$name \.\.\. ok$" "$log"; then
++              echo "::error::property test $name did not run"
++              exit 1
++            fi
++          done
++
++  # Tell the private freenet-dev room when the scheduled run fails (the public
++  # official room is not used: a failure here may be an unfixed defect).
++  notify-dev-room-failure:
++    name: Notify dev room on Failure
++    runs-on: ubuntu-latest
++    needs: [spki-proptest]
++    if: failure() && needs.spki-proptest.result == 'failure'
++    continue-on-error: true
++    steps:
++      - uses: actions/checkout@v7
++      - uses: ./.github/actions/
 ```
 
-**File**: `crates/core/Cargo.toml` (modified, +1/-1)
+**File**: `crates/core/src/transport/quic/identity/tests.rs` (modified, +412/-0)
 ```diff
-@@ -1,6 +1,6 @@
- [package]
- name = "freenet"
--version = "0.2.164"
-+version = "0.2.165"
- edition = "2024"
- rust-version = "1.85"
- publish = true
+@@ -730,6 +730,418 @@ proptest::proptest! {
+     }
+ }
+ 
++/// One node's key material, made once: key generation draws from `GlobalRng`,
++/// which the property cases below must not reseed.
++struct Fixture {
++    peer: PeerKey,
++}
++
++fn fixture() -> &'static Fixture {
++    static FIXTURE: std::sync::OnceLock<Fixture> = std::sync::OnceLock::new();
++    FIXTURE.get_or_init(|| {
++        let keys = GlobalRng::scoped_seed(SEED, TransportKeypair::new);
++        let peer = PeerKey::of(keys.public()).unwrap();
++        Fixture { peer }
++    })
++}
++
++/// Case counts for the properties below. The default keeps PR CI cheap; the
++/// scheduled `spki-proptest` workflow raises it through `PROPTEST_CASES`
++/// (and fails the job when the value does not parse, rather than falling
++/// back to this default).
++fn cases() -> proptest::test_runner::Config {
++    proptest::test_runner::Config::with_cases(
++        std::env::var("PROPTEST_CASES")
++            .ok()
++            .and_then(|value| value.parse().ok())
++            .unwrap_or(256),
++    )
++}
++
++/// p = 2^255 - 19 and the Ed25519 group order L = 2^252 +
++/// 27742317777372353535851937790883648493, little-endian, written out here
++/// rather than taken from the code under test.
++const P_LE: [u8; 32] = {
++    let mut p = [0xffu8; 32];
++    p[0] = 0xed;
++    p[31] = 0x7f;
++    p
++};
++/// DER prefix of an Ed25519 SubjectPublicKeyInfo (RFC 8410), written out
++/// here so the oracle does not share it with the code under test.
++const SPKI_PREFIX_LITERAL: [u8; 12] = [
++    0x30, 0x2a, 0x30, 0x05, 0x06, 0x03, 0x2b, 0x65, 0x70, 0x03, 0x21, 0x00,
++];
++const L_LE: [u8; 32] = [
++    0xed, 0xd3, 0xf5, 0x5c, 0x1a, 0x63, 0x12, 0x58, 0xd6, 0x9c, 0xf7, 0xa2, 0xde, 0xf9, 0xde, 0x14,
++    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0x10,
++];
++
++/// `a < b` for little-endian 256-bit numbers.
++fn below(a: &[u8; 32], b: &[u8; 32]) -> bool {
++    let halves = |x: &[u8; 32]| {
++        (
++            u128::from_le_bytes(x[16..].try_into().unwrap()),
++            u128::from_le_bytes(x[..16].try_into().unwrap()),
++        )
++    };
++    halves(a) < halves(b)
++}
++
++/// Whether a node can hold the transport key `u`, decided with
++/// curve25519-dalek 5 alone: canonical (u < p), an Edwards form exists, and
++/// the point has neither small order nor a torsion component.
++fn oracle_accepts_transport_key(u: [u8; 32]) -> bool {
++    below(&u, &P_LE)
++        && curve25519_dalek::montgomery::MontgomeryPoint(u)
++            .to_edwards(0)
++            .is_some_and(|point| !point.is_small_order() && point.is_torsion_free())
++}
++
++/// Whether `bytes` is the presented form of a key a node can hold, decided
++/// with curve25519-dalek 5 alone: the Ed25519 SPKI prefix and 32 bytes that
++/// are the canonical sign-bit-0 encoding of a point with neither small
++/// order nor a torsion component.
++fn oracle_accepts_presented(bytes: &[u8]) -> bool {
++    let Some(rest) = bytes.strip_prefix(&SPKI_PREFIX_LITERAL[..]) else {
++        return false;
++    };
++    let Ok(y) = <[u8; 32]>::try_from(rest) else {
++        return false;
++    };
++    y[31] >> 7 == 0
++        && curve25519_dalek::edwards::CompressedEdwardsY(y)
++            .decompress()
++            .is_some_and(|point| {
++                point.compress().to_bytes() == y
++                    && !point.is_small_order()
++                    && point.is_torsion_free()
++            })
++}
++
++/// The expected key's point plus each of the eight torsion points, and the
++/// torsion points alone, as Edwards points.
++fn torsion_mixed() -> Vec<curve25519_dalek::edwards::EdwardsPoint> {
++    use curve25519_dalek::constants::EIGHT_TORSION;
++    let honest = curve25519_dalek::edwards::CompressedEdwardsY(*fixture().peer.ed25519())
++        .decompress()
++        .unwrap();
++    EIGHT_TORSION
++        .iter()
++        .flat_map(|t| [honest + t, *t])
++        .collect()
++}
++
++fn spki_with(key: &[u8; 32]) -> Vec<u8> {
++    [&SPKI_PREFIX_LITERAL[..], &key[..]].concat()
++}
++
++/// A transport key as an attacker may send it: arbitrary, or chosen at the
++/// edges of the checks (u in [p, 2^255), just below p, bit 255 set, the
++/// honest key plus a torsion point, a torsion point).
++fn arb_transport_key() -> impl proptest::strategy::Strategy<Value = [u8; 32]> {
++    use proptest::prelude::*;
++    let mixed: Vec<[u8; 32]> = torsion_mixed()
++        .iter()
++        .map(|point| point.to_montgomery().to_bytes())
++        .collect();
++    let honest = *fixture().peer.transport_key().as_bytes();
++    prop_oneof![
++        4 => any::<[u8; 32]>(),
++        2 => (0u8..19).prop_map(|k| add_le(&P_LE, &{
++            let mut add = [0u8; 32];
++            add[0] = k;
++            add
++        }).unwrap()),
++        1 => (1u8..4).prop_map(|k| {
++            let mut u = P_LE;
++            u[0] -= k;
++            u
++        }),
++        1 => any::<[u8; 32]>().prop_map(|mut u| {
++            u[31] |= 0x80;
++            u
++        }),
++        2 => proptest::sample::select(mixed),
++        1 => Jus
 ```
 
-**File**: `crates/fdev/Cargo.toml` (modified, +4/-4)
+---
+
+### Incident Patch 3: `45a426c4` (2026-11-24)
+**Commit Message**: ci: add a RustSec watch for the QUIC/TLS stack including the quinn fork (#6381)
+
+**File**: `.github/workflows/audit.yml.disabled` (removed, +0/-18)
 ```diff
-@@ -1,6 +1,6 @@
- [package]
- name = "fdev"
--version = "0.3.326"
-+version = "0.3.327"
- edition = "2024"
- rust-version = "1.85"
- publish = true
-@@ -14,12 +14,12 @@ readme = "README.md"
- # (v0.2.x), so we embed the matching freenet version literally — `v{ version }`
- # would expand to the fdev crate version and 404. release.yml rewrites the
- # `vX.Y.Z` segment whenever the freenet version is bumped (issue #3995).
--pkg-url = "{ repo }/releases/download/v0.2.164/fdev-{ target }.tar.gz"
-+pkg-url = "{ repo }/releases/download/v0.2.165/fdev-{ target }.tar.gz"
- pkg-fmt = "tgz"
- bin-dir = "fdev"
- 
- [package.metadata.binstall.overrides.x86_64-pc-windows-msvc]
--pkg-url = "{ repo }/releases/download/v0.2.164/fdev-{ target }.zip"
-+pkg-url = "{ repo }/releases/download/v0.2.165/fdev-{ target }.zip"
- pkg-fmt = "zip"
- bin-dir = "fdev.exe"
- 
-@@ -56,7 +56,7 @@ ed25519-dalek = { version = "2", features = ["rand_core", "serde"] }
- hex = { workspace = true }
- 
- # internal
--freenet = { path = "../core", version = "0.2.164", features = ["testing"] }
-+freenet = { path = "../core", version = "0.2.165", features = ["testing"] }
- freenet-stdlib = { workspace = true }
- 
- [dev-dependencies]
+@@ -1,18 +0,0 @@
+-name: Security audit
+-on:
+- workflow_dispatch: false
+- push:
+-   paths:
+-     - "**/Cargo.toml"
+-     - "**/Cargo.lock"
+- schedule:
+-  - cron: "0 0 * * *"
+-
+-jobs:
+-  audit:
+-    runs-on: ubuntu-latest
+-    steps:
+-      - uses: actions/checkout@v4
+-      - uses: rustsec/audit-check@v2.0.0
+-        with:
+-          token: ${{ secrets.GITHUB_TOKEN }}
+```
+
+**File**: `.github/workflows/rustsec-watch.yml` (added, +104/-0)
+```diff
+@@ -0,0 +1,104 @@
++name: RustSec watch
++
++# Advisory watch for the QUIC/TLS stack (scripts/rustsec-watch.sh). Replaces the
++# old audit.yml, which was disabled in 2024 (its triggers were commented out
++# after it went red on advisories nobody was assigned to fix) and used
++# rustsec/audit-check, which cannot see advisories filed against the upstream
++# quinn crates behind the freenet-quinn fork.
++#
++#   schedule / push to main / manual: fail on a vulnerability or unsound
++#       advisory against a QUIC/TLS stack crate (in Cargo.lock or in the
++#       fork's upstream crates, scripts/rustsec-fork-upstream.map) that is not
++#       in scripts/rustsec-baseline.tsv, or whose baseline entry has expired.
++#       Advisories on other crates are listed in the log but do not fail the
++#       run. The run is therefore green while known advisories are being fixed
++#       and red on anything new.
++#   pull_request touching Cargo.lock: fail only on findings the PR introduces
++#       relative to the base branch, so an unrelated PR is never blocked by an
++#       existing advisory.
++#
++# Runbook for a failure: docs/quinn-rustls-bump.md.
++
++on:
++  schedule:
++    - cron: "17 5 * * *"
++  push:
++    branches: [main]
++    paths:
++      - Cargo.lock
++      - scripts/rustsec-watch.sh
++      - scripts/rustsec-watch-fixture.lock
++      - scripts/rustsec-baseline.tsv
++      - scripts/rustsec-fork-upstream.map
++      - .github/workflows/rustsec-watch.yml
++  pull_request:
++    paths:
++      - Cargo.lock
++      - scripts/rustsec-watch.sh
++      - scripts/rustsec-watch-fixture.lock
++      - scripts/rustsec-baseline.tsv
++      - scripts/rustsec-fork-upstream.map
++      - .github/workflows/rustsec-watch.yml
++  workflow_dispatch:
++
++permissions:
++  contents: read
++
++# A cancelled run is neither a failure nor notified, so only superseded PR runs
++# are cancelled; scheduled and main runs always finish.
++concurrency:
++  group: rustsec-watch-${{ github.event_name }}-${{ github.ref }}
++  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
++
++jobs:
++  audit:
++    name: Audit QUIC/TLS stack
++    runs-on: ubuntu-latest
++    timeout-minutes: 15
++    steps:
++      - uses: actions/checkout@v7
++        with:
++          fetch-depth: 0
++
++      - uses: taiki-e/install-action@v2
++        with:
++          # Pinned: the script parses cargo-audit's JSON, and its self-test
++          # fails the run if the shape changes.
++          tool: cargo-audit@0.23.0
++
++      - name: Audit (pull request, new advisories only)
++        if: github.event_name == 'pull_request'
++        run: scripts/rustsec-watch.sh pr "origin/${{ github.base_ref }}"
++
++      - name: Audit (QUIC/TLS stack)
++        if: github.event_name != 'pull_request'
++        run: scripts/rustsec-watch.sh scheduled
++
++  # Same channel as the other scheduled failures (simulation-nightly.yml): the
++  # private freenet-dev room. Not the public room: an unfixed advisory should
++  # not be announced publicly.
++  notify-dev-room-failure:
++    name: Notify dev room on failure
++    runs-on: ubuntu-latest
++    needs: [audit]
++    if: failure() && github.event_name != 'pull_request'
++    steps:
++      - uses: actions/checkout@v7
++      # river-dev-notify no-ops with a warning when secrets are missing; here
++      # a notification that cannot be delivered must turn this job red.
++      - name: Require notification secrets
++        env:
++          BOT: ${{ secrets.RIVER_DEV_BOT_CONFIG }}
++          ROOM: ${{ secrets.RIVER_DEV_ROOM_ID }}
++          GW: ${{ secrets.RIVER_GATEWAY_URL }}
++        run: |
++          if [ -z "$BOT" ] || [ -z "$ROOM" ] || [ -z "$GW" ]; then
++            echo "::error::dev-room notification secrets are not configured; the RustSec watch failure above was NOT announced"
++            exit 1
++          fi
++      - uses: ./.github/actions/river-dev-notify
++        with:
++          message: "RustSec watch failed (QUIC/TLS stack advisory) - ${{ github.repository }} - ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
++          bot-config: ${{ secrets.RIVER_DEV_BOT_CONFIG }}
++          room-id: ${{ secrets.RIVER_DEV_ROOM_ID }}
++          gateway-url: ${{ secrets.RIVER_GATEWAY_URL }}
+```
+
+**File**: `docs/quinn-rustls-bump.md` (added, +37/-0)
+```diff
+@@ -0,0 +1,37 @@
++# Rehearsed bump of quinn / rustls (and the quinn fork sync)
++
++Use this when the RustSec watch (`.github/workflows/rustsec-watch.yml`) fails,
++or when a release fixes a transport/TLS advisory. Goal: a reviewed bump PR in
++hours, not days.
++
++0. **Known advisory being fixed?** Add it to `scripts/rustsec-baseline.tsv`
++   (id, crate, version, tracking link, expiry about 14 days out) so the daily
++   run is not red while the fix is in review; delete the entry in the fix PR.
++1. **Read the failing advisory.** The job log lists id, crate, version and
++   patched range. Entries labelled `fork-upstream` are advisories against the
++   upstream crates behind `freenet-quinn*`; they come from
++   `scripts/rustsec-fork-upstream.map`, which holds a lower bound (see its
++   header), so first check whether the fork head already contains the fix.
++2. **rustls, quinn-udp, ring, webpki** (plain crates.io dependencies):
++   `cargo update -p <crate> --precise <patched>` and commit `Cargo.lock`
++   (or merge the Dependabot PR). The `quinn` pin in `crates/core/Cargo.toml` is
++   exact, so these never move by themselves.
++3. **quinn / quinn-proto (the fork):**
++   1. Sync `freenet/quinn` with upstream's `0.11.x` branch (merge, keep only the
++      package renames and README). If upstream has released the fix the fork
++      exists for (quinn-rs/quinn#2987), retire the fork instead and depend on
++      upstream (see the comment above the `quinn` entry in
++      `crates/core/Cargo.toml`).
++   2. Run the fork's tests, publish `freenet-quinn` and `freenet-quinn-proto`
++      with a new version, and bump the exact pins in `crates/core/Cargo.toml`.
++   3. Re-check the quinn-internals items in `.claude/rules/transport.md`
++      (PANICS) against the new code, as the `Cargo.toml` comment requires.
++   4. Update `scripts/rustsec-fork-upstream.map` to the newest released
++      upstream versions that are ancestors of the new fork commit
++      (`gh api repos/freenet/quinn/compare/quinn-proto-<ver>...<sha>`).
++4. **Verify locally before pushing** (PR CI is not the test runner):
++   `scripts/rustsec-watch.sh scheduled`, then `cargo clippy` with CI's flags and
++   `cargo nextest run -p freenet quic` (plus the transport tests the change
++   touches).
++5. **Review and release.** Transport/TLS changes are Full-tier review. Whether to
++   cut a release is a separate decision (see `docs/RELEASING.md`).
+```
+
+**File**: `scripts/rustsec-baseline.tsv` (added, +12/-0)
+```diff
+@@ -0,0 +1,12 @@
++# Known QUIC/TLS stack advisories that the scheduled RustSec watch tolerates
++# until they are fixed. Tab-separated:
++#   advisory id, crate, version, tracking link, expiry (YYYY-MM-DD)
++# The watch fails on a stack advisory NOT listed here, on an entry past its
++# expiry that is still present, and warns about an entry that no longer
++# matches (delete it). An entry needs a tracking link and an expiry; renew an
++# expiry only with a stated reason in the PR.
++RUSTSEC-2026-0538	quinn-udp	0.5.14	https://github.com/freenet/freenet-core/pull/6382	2026-12-08
++RUSTSEC-2026-0347	rustls	0.23.45	https://github.com/freenet/freenet-core/pull/6382	2026-12-08
++RUSTSEC-2026-0348	rustls	0.23.45	https://github.com/freenet/freenet-core/pull/6382	2026-12-08
++RUSTSEC-2026-0346	rustls	0.23.45	https://github.com/freenet/freenet-core/pull/6382	2026-12-08
++RUSTSEC-2026-0349	rustls	0.23.45	https://github.com/freenet/freenet-core/pull/6382	2026-12-08
+```
+
+**File**: `scripts/rustsec-fork-upstream.map` (added, +20/-0)
+```diff
+@@ -0,0 +1,20 @@
++# Upstream crates that the vendored quinn fork (freenet-quinn*, see
++# crates/core/Cargo.toml) is built from. `cargo audit` matches advisories by
++# crate name, so it never sees advisories filed against `quinn` / `quinn-proto`
++# for the renamed fork crates. scripts/rustsec-watch.sh audits these upstream
++# name/version pairs as well.
++#
++# Format: <fork crate> <upstream crate> <upstream version>
++#
++# The version is the newest RELEASED upstream version that is an ancestor of
++# the fork's commit (the fork is upstream's 0.11.x branch plus unreleased
++# commits). It is a lower bound on what the fork contains, so a report here may
++# be a false positive when the fork head already carries an unreleased fix: check
++# the fork head before dismissing it, and never raise the version without
++# checking ancestry. Update this file in the same PR as every fork bump
++# (docs/quinn-rustls-bump.md).
++#
++# freenet/quinn @ 9072e7f1 (freenet-quinn 0.11.13): quinn-proto-0.11.19 is an
++# ancestor (compare quinn-proto-0.11.19...9072e7f1: ahead 40, behind 0).
++freenet-quinn quinn 0.11.12
++freenet-quinn-proto quinn-proto 0.11.19
+```
+
+**File**: `scripts/rustsec-watch-fixture.lock` (added, +9/-0)
+```diff
+@@ -0,0 +1,9 @@
++# Self-test fixture for scripts/rustsec-watch.sh: an old quinn-proto with a
++# long-published advisory (RUSTSEC-2023-0063). If cargo-audit reports nothing for
++# this file, the watch cannot see advisories and must fail instead of passing.
++version = 3
++
++[[package]]
++name = "quinn-proto"
++version = "0.10.4"
++source = "registry+https://github.com/rust-lang/crates.io-index"
+```
+
+**File**: `scripts/rustsec-watch.sh` (added, +144/-0)
+```diff
+@@ -0,0 +1,144 @@
++#!/usr/bin/env bash
++# RustSec advisory watch for the QUIC/TLS stack.
++#
++# Usage: scripts/rustsec-watch.sh scheduled
++#        scripts/rustsec-watch.sh pr <base-ref>      (e.g. origin/main)
++#
++# Two lockfiles are audited (a finding is keyed on advisory id + crate + version):
++#   1. Cargo.lock as is.
++#   2. A synthetic lockfile naming the upstream crates behind each freenet-quinn*
++#      fork crate PRESENT in the lock (scripts/rustsec-fork-upstream.map),
++#      because the fork's renamed crates are invisible to RustSec. No fork in
++#      the lock means no synthetic lock and no map needed.
++#
++# scheduled: fail (exit 1) on a vulnerability or unsound advisory against a
++#            STACK crate that is not in scripts/rustsec-baseline.tsv, or whose
++#            baseline entry has expired. Other crates are listed, not gating.
++# pr:        fail (exit 1) only for findings (any crate) absent from <base-ref>.
++#
++# Every run first audits scripts/rustsec-watch-fixture.lock and fails unless the
++# known advisory is reported, so a cargo-audit output change or an empty
++# advisory database cannot turn the watch into a silent green.
++#
++# Env: RUSTSEC_FORK_MAP overrides the map file; RUSTSEC_TODAY overrides the
++# date (tests). Exit: 0 ok, 1 findings, 2 usage, 3 tooling/config failure.
++set -euo pipefail
++
++mode="${1:-}"
++base_ref="${2:-}"
++root="$(git rev-parse --show-toplevel)"
++map="${RUSTSEC_FORK_MAP:-$root/scripts/rustsec-fork-upstream.map}"
++baseline="$root/scripts/rustsec-baseline.tsv"
++today="${RUSTSEC_TODAY:-$(date -u +%F)}"
++work="$(mktemp -d)"
++trap 'rm -rf "$work"' EXIT
++
++die() { echo "::error::$*"; exit 3; }
++
++# Crates whose advisories matter to the transport/TLS path.
++stack_re='^(quinn|quinn-proto|quinn-udp|freenet-quinn|freenet-quinn-proto|rustls|rustls-webpki|webpki|webpki-roots|rustls-pki-types|rustls-native-certs|rustls-pemfile|rustls-platform-verifier|tokio-rustls|ring|aws-lc-rs|aws-lc-sys|rcgen|ed25519-dalek|curve25519-dalek|x509-parser|spki|der)$'
++
++# fork_lock <lockfile> <mapfile> <out>: writes a lockfile with the upstream
++# crate for each freenet-quinn* package in <lockfile>. Returns 1 if there are none.
++fork_lock() {
++  local lock="$1" mapf="$2" out="$3" f n=0
++  { echo 'version = 3'; echo
++    for f in $(grep -oE '^name = "freenet-quinn[a-z-]*"' "$lock" | cut -d'"' -f2 | sort -u); do
++      [ -f "$mapf" ] || die "$f is in the lockfile but $mapf does not exist; its upstream advisories are not being watched"
++      local row; row="$(awk -v f="$f" '$1==f {print $2, $3}' "$mapf")"
++      [ -n "$row" ] || die "$f is in the lockfile but not in $mapf; its upstream advisories are not being watched"
++      read -r up ver <<<"$row"
++      printf '[[package]]\nname = "%s"\nversion = "%s"\nsource = "registry+https://github.com/rust-lang/crates.io-index"\n\n' "$up" "$ver"
++      n=$((n + 1))
++    done
++  } >"$out"
++  [ "$n" -gt 0 ]
++}
++
++# audit <lockfile> <out.json>: cargo-audit exits 1 for vulnerabilities; any
++# other failure (no DB, parse error) fails the job.
++audit() {
++  local rc=0
++  cargo audit --file "$1" --json >"$2" 2>"$2.err" || rc=$?
++  if [ "$rc" -gt 1 ] || ! jq -e '.vulnerabilities.list' "$2" >/dev/null 2>&1; then
++    cat "$2.err"; die "cargo audit failed to run on $1 (exit $rc)"
++  fi
++}
++
++# findings <json> <label>: TSV rows id, crate, version, kind, label, title.
++findings() {
++  jq -r --arg l "$2" '
++    (.vulnerabilities.list[]? | [.advisory.id, .package.name, .package.version, "vulnerability", $l, .advisory.title]),
++    (.warnings.unsound[]?     | [.advisory.id, .package.name, .package.version, "unsound", $l, .advisory.title])
++    | @tsv' "$1"
++}
++
++# collect <lockfile> <mapfile> <label-prefix> <out.tsv>: all findings for one
++# tree (its lock plus the upstream crates of its forks).
++collect() {
++  local lock="$1" mapf="$2" out="$4"
++  audit "$lock" "$work/c.json"
++  findings "$work/c.json" "Cargo.lock" >"$out"
++  if fork_lock "$lock" "$mapf" "$work/c-fork.lock"; then
++    audit "$work/c-fork.lock" "$work/c-fork.json"
++    findings "$work/c-fork.json" "fork-upstream" >>"$out"
++  fi
++}
++
++# One row per (id, crate, version): the same finding from both lockfiles is one.
++dedupe() { sort -t$'\t' -k1,3 -u "$1" >"$1.u" && mv "$1.u" "$1"; }
++
++case "$mode" in scheduled | pr) ;; *) echo "usage: $0 scheduled | pr <base-ref>"; exit 2 ;; esac
++[ "$mode" = pr ] && [ -z "$base_ref" ] && { echo "pr mode needs a base ref"; exit 2; }
++
++# Self-test: the watch must be able to see a known advisory.
++audit "$root/scripts/rustsec-watch-fixture.lock" "$work/fixture.json"
++findings "$work/fixture.json" fixture | cut -f1 | grep -qx RUSTSEC-2023-0063 \
++  || die "self-test failed: scripts/rustsec-watch-fixture.lock should report RUSTSEC-2023-0063 and did not (cargo-audit output changed, or the advisory database is empty)"
++
++collect "$root/Cargo.lock" "$map" x "$work/all.tsv"
++dedupe "$work/all.tsv"
++echo "findings (vulnerability or unsound): $(wc -l <"$work/all.tsv")"
++
++if
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #6377** (2026-11-24): build: sync main to 0.2.165 after release (@sanity)
-- **PR #6374** (2026-11-24): fix: an older peer refusing us no longer shows "update required" (@sanity)
-- **PR #6373** (2026-11-24): fix(release): verify gateway update downloads; keep docker latest monotonic (@sanity)
-- **PR #6371** (2026-11-24): test: isolate three test families from process-global state under plain cargo test (@sanity)
-- **PR #6370** (2026-11-24): ci: raise the Fmt job timeout from 5 to 10 minutes (@sanity)
-- **PR #6369** (2026-11-24): fix(get): host and count GET replies only when accepted and matching the request (@sanity)
+- **PR #6384** (2026-11-25): chore: remove fixed advisories from the RustSec baseline (@sanity)
+- **PR #6383** (2026-11-25): test: property-test pre-authentication parsing of QUIC peer keys (@sanity)
+- **PR #6382** (2026-11-24): build(deps): bump rustls and quinn-udp for RustSec advisories (@sanity)
+- **PR #6381** (2026-11-24): ci: add a RustSec watch for the QUIC/TLS stack including the quinn fork (@sanity)
+- **PR #6380** (2026-11-24): feat: check for an update after repeated gateway handshake failures (@sanity)
+- **PR #6379** (2026-11-25): feat: punch allowance for destinations that already proved reachable (@sanity)
 
 ---
 
@@ -1883,39 +2426,6 @@ Co-authored-by: github-actions[bot] <github-actions[bot]@users.noreply.github.co
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. build: sync main to 0.2.165 after release
-
-**RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `d245524c`: build: sync main to 0.2.165 after release. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```rust
-// Verified production-grade fix pattern:
-version = "0.3.327"
-version = "0.2.165"
-```
-
-**NEGATIVE CONSTRAINT**:
-```rust
-// Induced defect failure mode:
-version = "0.3.326"
-version = "0.2.164"
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d245524c` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "08ccc24f",
+    "sourceVersion": "eeb815a6",
     "license": "Apache-2.0",
-    "contentHash": "000ce08600c8818a9a7c91302d8c4be217f34001b978e154d813427994d85261",
-    "lastHarvestedAt": "2026-11-25T00:43:42.686Z",
+    "contentHash": "9f39ed506619545bb0e86acb447d2be28ebc422544804831d0aa5de4ffe6cf41",
+    "lastHarvestedAt": "2026-11-25T02:29:02.170Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "d245524c",
+    "sourceVersion": "1b511d59",
     "license": "NOASSERTION",
-    "contentHash": "22499c457cdb9dac5b72b788fab55dfadcca1542a76d84eb2a2b0ffcdf010eec",
-    "lastHarvestedAt": "2026-11-24T22:16:00.703Z",
+    "contentHash": "8102926d168534cbeb3f21ce293009b3cc6dc3959c1e031b51c310b19af7bcca",
+    "lastHarvestedAt": "2026-11-25T02:28:57.053Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {
@@ -3173,10 +3173,10 @@
     "repository": "matrixorigin/matrixone",
     "platform": "github",
     "sourceUrl": "https://github.com/matrixorigin/matrixone",
-    "sourceVersion": "8b1e884e",
+    "sourceVersion": "ca5325ce",
     "license": "Apache-2.0",
-    "contentHash": "ba4faf96015e632c3b360ed1c8c07370317a1b47e0cf1707abefba3f0e16fa82",
-    "lastHarvestedAt": "2026-11-24T06:55:18.852Z",
+    "contentHash": "dae30617af92e1d6776f377ca55c714ece1a6c69807d203a37154d20af577870",
+    "lastHarvestedAt": "2026-11-25T02:29:00.642Z",
     "learningId": "learn-github-matrixorigin-matrixone"
   },
   "fallow-rs-fallow": {
@@ -7653,10 +7653,10 @@
     "repository": "msasikanth/twine",
     "platform": "github",
     "sourceUrl": "https://github.com/msasikanth/twine",
-    "sourceVersion": "a741d94b",
+    "sourceVersion": "18235a59",
     "license": "GPL-3.0",
-    "contentHash": "cd707b53e4ae23530f9bf0b837ad8806a7b5c586307947914b487924933396f6",
-    "lastHarvestedAt": "2026-11-18T08:51:35.968Z",
+    "contentHash": "030de6565f285c4cf69f43b9bf21782e0baa6f445f92dc1b5be6e1e6825df86f",
+    "lastHarvestedAt": "2026-11-25T02:28:51.628Z",
     "learningId": "learn-github-msasikanth-twine"
   },
   "facebook-folly": {
@@ -13418,5 +13418,15 @@
     "contentHash": "e4bb34d8ace894efe8c23fd0d499dfc4120d8f1e5ec348459b18507ac03b08bd",
     "lastHarvestedAt": "2026-11-24T23:24:39.844Z",
     "learningId": "learn-huggingface-prism-ml-ternary-bonsai-2-5-27b-gguf"
+  },
+  "hf-memtensor-memt-1.0-pro": {
+    "repository": "MemTensor/MemT-1.0-Pro",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/MemTensor/MemT-1.0-Pro",
+    "sourceVersion": "hf-memtensor-memt-1.0-pro",
+    "license": "Open-Source",
+    "contentHash": "414d41e2e8dcfd77f638ef8243fa2b87ed3323b6e8c9b22d4577d963e42dcfa1",
+    "lastHarvestedAt": "2026-11-25T02:28:41.809Z",
+    "learningId": "learn-huggingface-memtensor-memt-1-0-pro"
   }
 }

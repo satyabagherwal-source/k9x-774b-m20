@@ -22240,5 +22240,17 @@
     "downloads": 0,
     "qualityScore": 900,
     "discoveredAt": "2026-11-24T23:22:24.367Z"
+  },
+  {
+    "name": "MemTensor/MemT-1.0-Pro",
+    "fullName": "MemTensor/MemT-1.0-Pro",
+    "url": "https://huggingface.co/MemTensor/MemT-1.0-Pro",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: MemTensor/MemT-1.0-Pro (98 likes, 397 downloads)",
+    "likes": 98,
+    "downloads": 397,
+    "qualityScore": 1377,
+    "discoveredAt": "2026-11-25T02:26:27.088Z"
   }
 ]

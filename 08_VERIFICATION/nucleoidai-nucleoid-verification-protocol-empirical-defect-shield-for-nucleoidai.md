@@ -4,22 +4,22 @@
 {
   "source_repository": "NucleoidAI/Nucleoid",
   "source_url": "https://github.com/NucleoidAI/Nucleoid",
-  "source_version": "08ccc24f",
+  "source_version": "eeb815a6",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-25T00:43:42.913Z",
+  "timestamp": "2026-11-25T02:29:02.415Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-nucleoidai-nucleoid",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `08ccc24f`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-25T00:43:42.913Z`  
+> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `eeb815a6`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-25T02:29:02.415Z`  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `NucleoidAI/Nucleoid` (Commit: `08ccc24f`)
+- **Target Repository**: `NucleoidAI/Nucleoid` (Commit: `eeb815a6`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T00:43:41.554Z  
+> **Harvest Timestamp**: 2026-11-25T02:29:01.003Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1592,52 +1592,56 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `08ccc24f` (2026-11-25)
-**Commit Message**: Draft NUC 142 Reactive Sign Copying
+### Incident Patch 1: `eeb815a6` (2026-11-25)
+**Commit Message**: Draft NUC 143 Reactive Squaring
 
 Category: Utility enhancement
+Mode: continuous
 
-Allocate one continuous proposal for native Math.copySign(value, sign).
-Preserve the first converted magnitude and a non-NaN second sign through
-ordinary f64 copysign; a numeric NaN sign propagates NaN. Retain all
-Undefined gating, eager extras, intrinsic conversion and reactive behavior.
-No runtime, executable case, dataset, grammar, dependency or version changes
-belong to this allocation.
+One genuine uniform draw from the live eligible registry selected Utility
+enhancement after confirming there was no stale allocated Draft to pick up.
 
-The one live-registry uniform draw selected Utility enhancement.
-Paired token comparison and all hard criteria remain mandatory.
-No hint, rubric or strategy-learning configuration was supplied.
+Request only native Math.square(value): intrinsically convert the first value
+and multiply it by itself, retaining the existing Undefined gate, eager
+arguments, ignored extras and reactive/error boundaries. No new syntax,
+aliases, public Rust API, dependencies, options, versions or ARC changes.
+
+Allocate the Draft and its two index rows before baselines, candidate details,
+the fresh proposer, the Rust improvement pass and independent evaluation.
+This commit records no outcome and changes no accepted language behavior.
+No rubric or learning policy was supplied; scoring is unscored and learning
+is not_configured/unattributed. Neither selector nor learner is invoked.
 
 Co-authored-by: Copilot <[REDACTED_EMAIL]>
 
 **File**: `docs/nuc-0000.md` (modified, +2/-0)
 ```diff
-@@ -142,6 +142,7 @@ Created: 31-Jul-2026
- | [129](nuc-0129.md) | List and Population Zipping | Accepted |
+@@ -143,6 +143,7 @@ Created: 31-Jul-2026
  | [138](nuc-0138.md) | Reactive Secant | Accepted |
  | [141](nuc-0141.md) | Reactive Cosecant | Accepted |
-+| [142](nuc-0142.md) | Reactive Sign Copying | Draft |
+ | [142](nuc-0142.md) | Reactive Sign Copying | Automatic-Accepted: independent strict rollback graph-dependent ordering check failed, also reproduced on the accepted arithmetic runtime |
++| [143](nuc-0143.md) | Reactive Squaring | Draft |
  
  ### Reasoning enhancement
  
-@@ -337,6 +338,7 @@ Created: 31-Jul-2026
- | [139](nuc-0139.md) | Symmetric Difference Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
+@@ -339,6 +340,7 @@ Created: 31-Jul-2026
  | [140](nuc-0140.md) | Match Statements | Standards Track | Runtime features | Draft |
  | [141](nuc-0141.md) | Reactive Cosecant | Standards Track | Utility enhancement | Accepted |
-+| [142](nuc-0142.md) | Reactive Sign Copying | Standards Track | Utility enhancement | Draft |
+ | [142](nuc-0142.md) | Reactive Sign Copying | Standards Track | Utility enhancement | Automatic-Accepted: independent strict rollback graph-dependent ordering check failed, also reproduced on the accepted arithmetic runtime |
++| [143](nuc-0143.md) | Reactive Squaring | Standards Track | Utility enhancement | Draft |
  
  ## Copyright
  
 ```
 
-**File**: `docs/nuc-0142.md` (added, +89/-0)
+**File**: `docs/nuc-0143.md` (added, +67/-0)
 ```diff
-@@ -0,0 +1,89 @@
-+# NUC 142 -- Reactive Sign Copying
+@@ -0,0 +1,67 @@
++# NUC 143 -- Reactive Squaring
 +
 +```
-+NUC: 142
-+Title: Reactive Sign Copying
++NUC: 143
++Title: Reactive Squaring
 +Author: Copilot <223556219+Copilot@users.noreply.github.com>
 +Status: Draft
 +Type: Standards Track
@@ -1647,71 +1651,49 @@ Co-authored-by: Copilot <[REDACTED_EMAIL]>
 +
 +## Abstract
 +
-+- Add only native static `Math.copySign(value, sign)` as a bounded numeric
-+  utility: retain the first converted value's magnitude and copy the second
-+  converted value's sign, including signed zeros and infinities.
-+- Reuse Math's intrinsic first-two-input conversions. A numerically NaN
-+  sign, including an omitted sign, produces numeric NaN rather than exposing
-+  a NaN representation's sign. A NaN magnitude remains NaN by classification.
-+- Preserve the supplied-Undefined gate before conversion, eager argument
-+  evaluation, ignored extras, dependencies, deferral, shadowing and rollback.
++- Add only native static `Math.square(value)` as a bounded numeric utility:
++  intrinsically convert the first value, then multiply that converted value
++  by itself with ordinary `f64` multiplication.
++- Preserve Math's supplied-Undefined gate, eager argument evaluation,
++  numerically ignored extras, dependencies, deferral, shadowing and rollback.
 +- The caller's one uniform draw from the live eligible registry selected
 +  Utility enhancement. This continuous proposal requires paired lexer-token
 +  comparison and every hard criterion.
 +
 +## Motivation
 +
-+- Reactive geometry and signed quantities need a magnitude whose direction
-+  follows another value without losing negative zero or infinite signs.
-+- Accepted arithmetic already expresses this operation for numeric inputs
-+  as `Math.abs(value) * Math.sign(Math.sign(sign) + 1 / sign)`. A named helper
-+  avoids repeating that composition in every live property.
-+- The accepted native runtime rejects `Math.copySign(3, -1)`, while the
-+  independent accepted arithmetic control returns `-3`. No existing NUC
-+  proposes this helper, and no existing Rust test pins its name as an error.
++- Reactive squared magnitudes and error terms repeat a computed quantity on
++  both sides of multiplication. A named helper evaluates that argument once
++  while retaining ordinary multiplication's rounding and overflow behavior.
++- The accepted native runtime rejects `Math.square(3 + 2)`, while the
++  independent accepted expression `(3 + 2) * (3 + 2)` returns `25`.
++- Request no exponentiation replacement, aliases, grammar change, new public
++  Rust API, dependency, option, version change or ARC change.
 +
 +## Rationale
 +
-+- This adds a standard math utility, not an alias of an existing native
-+  helper or a new source form. Keep the confirmed category and draw.
-+- Reuse the multivariate Math dispatcher and ordinary `f64::copysign` after
-+  explicitly propagating a numeric NaN sign. No parser, public type,
-+  dependency, option, version or ARC change is requested.
++- Pending isolated preparation by the fresh proposal agent.
 +
 +## Specification
 +
-+- Intrinsically convert only the first two values after the unchanged
-+  supplied-Undefined gate; extras remain numerically ignored but eagerly
-+  evaluated exactly once left to right with all reads, effects and errors.
-+- Preserve magnitude bits for non-NaNs and the converted non-NaN sign bit.
-+  Do not normalize zeros, clamp values, rescale or resolve shadowable
-+  `Number` or `Math.PI`. NaN payloads are not promised.
-+- Preserve all previously accepted forms and outputs, including successful
-+  supplied-Undefined calls and ordinary shadowed members. Native method-value
-+  reads remain Undefined/non-callable.
-+- The fresh proposer will complete the normative traces against the caller's
-+  immutable accepted baseline and original arithmetic counterparts.
++- Pending the pinned accepted baseline and isolated prototype. The requested
++  operation is exactly the first converted value multiplied by itself, not
++  `powf`, a shadowable helper call, fused arithmetic or a new numerical model.
 +
 +## Errors
 +
-+- Add no arity, conversion or numeric errors. Missing inputs and invalid
-+  numeric conversions follow the specified NaN behavior.
-+- Preserve strict argument errors, positions, caught values, rollback and
-+  every unsupported sibling's existing diagnostics.
++- Pending independent preparation of the unchanged argument/error boundaries.
 +
 +## Reference Implementation
 +
-+- Complete in an isolated candidate only after this allocation is pushed.
-+- Preserve all historical programs, assertions, expected returns, synthesized
-+  records, test identities and diagnostics. Only necessary numeric corpus
-+  totals or tail offsets may change in existing tests.
-+- Keep reference prose, normative exports and self-contained synthesized
-+  examples synchronized. The grammar remains unchanged.
++- Pending the isolated candidate; this allocation changes no implementation,
++  executable document, test, dataset or export.
 +
 +## Evaluation
 +
-+- Pending fresh preparation, the caller-owned Rust improvement pass and a
-+  separate independent evaluation. No acceptance or token result is claimed.
++- Draft allocation only. Mode is continuous; Category is Utility enhancement;
++  runtime applicability is `not_applicable`. The fresh preparation,
++  caller-owned Rust improvement pass and independent evaluation remain pending.
 +- No hint, rubric or strategy-learning configuration was supplied. Advisory
 +  usefulness is unscored (`missing_rubric`); learning is `not_configured`
 +  and unattributed. Neither selector nor learner is authorized for this trial.
@@ -1722,6 +1704,339 @@ Co-authored-by: Copilot <[REDACTED_EMAIL]>
 +
 +This document is licensed under the Apache License, Version 2.0. See
 +[LICENSE](../LICENSE) for the full text.
+```
+
+---
+
+### Incident Patch 2: `db83f24a` (2026-11-25)
+**Commit Message**: NUC 142 Reactive Sign Copying
+
+Automatic-Accepted under the continuous automatic acceptance rule.
+
+Add native Math.copySign(value, sign), preserving signed zeros, non-NaN
+magnitude bits, intrinsic conversions, Undefined gating and reactive inputs.
+Integrate the independently evaluated frozen candidate unchanged.
+
+All hard criteria pass on the frozen candidate and isolated integrated tree:
+all-target build, warning-denied all-target/all-feature Clippy and formatting;
+4,051 passing tests, zero failures and 25 retained ignored tests; all 4,065
+accepted scoped test identities/statuses retained, 11 passing additions and
+1,312 original accepted-source replays. The primary binary and metadata checks
+also pass. No accepted syntax or behavior changes.
+
+Failed policy check: the independent strict rollback graph-dependent ordering
+probe failed. A failed class-rule override reorders first.amplitude dependents
+from [first.copy, amplitude] to [amplitude, first.copy]. Accepted arithmetic
+on the actual accepted runtime reproduces it exactly; state restoration and
+all seven recovery assertions pass in each control. Preserve this pre-existing
+limitation without repairing the frozen candidate or hidi
+
+**File**: `README.md` (modified, +10/-0)
+```diff
+@@ -1132,6 +1132,16 @@ assert(radians, Math.PI / 2)
+   evaluation, reactive reads, errors and the existing supplied-Undefined gate.
+   See the [root contract](nucleoid.spec.md#reactive-degree-to-radian-conversion).
+ 
++- [NUC 142](docs/nuc-0142.md) adds native static `Math.copySign(value, sign)`.
++  Intrinsic first-two-value conversion copies the non-NaN sign bit without
++  changing magnitude bits, including signed zeros, subnormals and infinities.
++  A NaN or omitted sign yields numeric NaN; NaN payload/sign bits are not
++  promised. Ignored extras retain eager reads, effects and strict errors;
++  any top-level Undefined still gates the call before conversion. Live-null
++  deferral, shadowing, class rules and rollback remain unchanged. No aliases,
++  receiver methods or syntax are added. See the
++  [root contract](nucleoid.spec.md#reactive-sign-copying).
++
+ ## String iteration
+ 
+ **String iteration reads characters directly**
+```
+
+**File**: `dataset/nucleoid.spec.jsonl` (modified, +1/-0)
+```diff
+@@ -876,3 +876,4 @@
+ {"id":"spec-0876","description":"Nucleoid rolls back failed updates through !in","code":"items = [\"a\"]\nabsent = \"b\" !in items\nassert(absent, true)\nfailure = \"\"\ntry:\n    items = {a: 1}\ncatch error:\n    failure = error\nassert(failure, TypeError(\"items is not a collection\"))\nassert([items, absent], [[\"a\"], true])\nitems.push(\"b\")\nassert(absent, false)\ntags = null\nuntagged = \"red\" !in tags\nassert(untagged, null)\ntags = [\"blue\"]\nassert(untagged, true)\nabsent","return":"false"}
+ {"id":"spec-0877","description":"Nucleoid keeps secants reactive","code":"angle = 0\nratio = Math.sec(angle)\nassert(ratio, 1)\nangle = Math.PI\nassert(ratio, -1)\nangle = Math.PI / 3\nassert(ratio, 1 / Math.cos(angle))\nangle = -Math.PI / 3\nassert(ratio, 1 / Math.cos(angle))\nangle = Math.PI / 2\nassert(ratio, 1 / Math.cos(angle))\nangle = 0\nassert(ratio, 1)\nratio","return":"1"}
+ {"id":"spec-0878","description":"Nucleoid keeps cosecants reactive","code":"angle = Math.PI / 2\nratio = Math.csc(angle)\nassert(ratio, 1)\nangle = -Math.PI / 2\nassert(ratio, -1)\nangle = Math.PI / 6\nassert(ratio, 1 / Math.sin(angle))\nangle = -Math.PI / 6\nassert(ratio, 1 / Math.sin(angle))\nangle = Math.PI\nassert(ratio, 1 / Math.sin(angle))\nangle = Math.PI / 2\nassert(ratio, 1)\nratio","return":"1"}
++{"id":"spec-0879","description":"Nucleoid keeps sign copying reactive","code":"magnitude = 3\ndirection = -1\ncopied = Math.copySign(magnitude, direction)\nassert(copied, -3)\ndirection = 1\nassert(copied, 3)\nmagnitude = -7\nassert(copied, 7)\ndirection = -0\nassert(copied, -7)\nmagnitude = 0\nassert(1 / copied, Number.NEGATIVE_INFINITY)\ndirection = 0\nassert(1 / copied, Number.POSITIVE_INFINITY)\n1","return":"1"}
+```
+
+**File**: `dataset/nucleoid.synth.142.jsonl` (added, +4/-0)
+```diff
+@@ -0,0 +1,4 @@
++{"id":"synth-142-0001","description":"Nucleoid keeps sign copying live through both zero signs","code":"magnitude = 3\ndirection = -1\ncopied = Math.copySign(magnitude, direction)\nassert(copied, -3)\nmagnitude = -7\ndirection = 1\nassert(copied, 7)\nmagnitude = 0\ndirection = -0\nassert(1 / copied, Number.NEGATIVE_INFINITY)\ndirection = 0\nassert(1 / copied, Number.POSITIVE_INFINITY)\nmagnitude = 4\ncopied","return":"4"}
++{"id":"synth-142-0002","description":"Nucleoid maintains independent sign copying class rules through deletion and recovery","code":"class Signal(magnitude, direction):\n    this.magnitude = magnitude\n    this.direction = direction\n$Signal.copied = Math.copySign($Signal.magnitude, $Signal.direction)\nfirst = Signal(3, -1)\nsecond = Signal(-7, 1)\nassert([first.copied, second.copied], [-3, 7])\nfirst.direction = 1\nassert([first.copied, second.copied], [3, 7])\ndelete first.magnitude\nassert(first.copied, undefined)\nassert(second.copied, 7)\nfirst.magnitude = -5\nassert(first.copied, 5)\n[first.copied, second.copied]","return":"[5,7]"}
++{"id":"synth-142-0003","description":"Nucleoid preserves ignored sign copying argument subscriptions","code":"magnitude = 3\ndirection = -1\ngate = 1\ncopied = Math.copySign(magnitude, direction, gate)\nassert(copied, -3)\ndelete gate\nassert(copied, undefined)\ngate = Number.NaN\nassert(copied, -3)\ndirection = 1\nassert(copied, 3)\ncopied","return":"3"}
++{"id":"synth-142-0004","description":"Nucleoid intrinsically coerces two sign copying inputs without using extra values numerically","code":"assert(Math.copySign(\" -7 \", \" -1 \"), -7)\nassert(Math.copySign([\"3\"], false), 3)\nassert(1 / Math.copySign(null, -0), Number.NEGATIVE_INFINITY)\nassert(Number.isNaN(Math.copySign()), true)\nassert(Number.isNaN(Math.copySign(3)), true)\nassert(Number.isNaN(Math.copySign(3, \"invalid\")), true)\nassert(Number.isNaN(Math.copySign(Number.NaN, -1)), true)\nassert(Math.copySign(3, -1, Number.NaN, \"ignored\", {}), -3)\nMath.copySign(3, 1)","return":"3"}
+```
+
+**File**: `docs/README.md` (modified, +40/-1)
+```diff
+@@ -2805,6 +2805,44 @@ Full detail: [NUC 9](nuc-0009.md), [NUC 46](nuc-0046.md), [NUC 119](nuc-0119.md)
+   receiver method, syntax, configuration or aggregate dispatch is added.
+   See the [cosecant contract](../nucleoid.spec.md#reactive-cosecant) and the
+   [argument-dependency case](#reactive-cosecant-argument-dependencies).
++- [NUC 142](nuc-0142.md) adds only native static
++  `Math.copySign(value, sign)`: intrinsically convert the first two values,
++  retain the first magnitude and copy the second sign bit. A converted NaN
++  sign, including omission, gives numeric NaN; a NaN magnitude stays NaN
++  without payload/sign promises. Non-NaNs retain exact magnitude bits and
++  the sign of either zero or infinity, without arithmetic rescaling.
++  The top-level-Undefined gate includes ignored extras, whose effects,
++  strict errors, reads and subscriptions remain eager. Literal-null coercion
++  does not override live/parameter-null deferral; shadowing, captured values,
++  frames, independent class rules, deletion/recovery and rollback stay
++  ordinary. Native value reads remain Undefined/non-callable; no alias,
++  receiver/aggregate dispatch or syntax is added. See the
++  [sign-copying contract](../nucleoid.spec.md#reactive-sign-copying).
++
++### Reactive sign copying argument dependencies
++
++```
++magnitude = 3
++direction = -1
++gate = 1
++copied = Math.copySign(magnitude, direction, gate)
++assert(copied, -3)
++direction = 1
++assert(copied, 3)
++gate = 2
++assert(copied, 3)
++delete gate
++assert(copied, undefined)
++gate = 3
++assert(copied, 3)
++direction = -1
++assert(copied, -3)
++1
++```
++
++- This is the complete new executable reference program, with its title and
++  expected-return metadata omitted; its expected return is `1`.
++
+ - Accepted [NUC 56](nuc-0056.md) adds only static `Math.exp2(value)`, computing
+   exactly the accepted `Math.pow(2, value)` host powf operation after intrinsic
+   first-input conversion and the existing supplied-Undefined gate. The
+@@ -2915,7 +2953,7 @@ Full detail: [NUC 9](nuc-0009.md), [NUC 46](nuc-0046.md), [NUC 119](nuc-0119.md)
+ | `Object` | `Object()` -- a plain object, not an instance of any type |
+ | `Boolean` | `Boolean(value)` |
+ | `Number` | `Number.MAX_INTEGER` |
+-| `Math` | `pow`, `sqrt`, `floor`, `round`, `max`, `min`, `clamp` ([NUC 21](nuc-0021.md)), `lerp` ([NUC 22](nuc-0022.md)), `saturate` ([NUC 23](nuc-0023.md)), `smoothstep(lower, upper, value)` (accepted [NUC 33](nuc-0033.md)), `smootherstep(lower, upper, value)` (accepted [NUC 35](nuc-0035.md)), `remap(start, end, targetStart, targetEnd, value)` (accepted [NUC 39](nuc-0039.md)) |
++| `Math` | `pow`, `sqrt`, `floor`, `round`, `max`, `min`, `clamp` ([NUC 21](nuc-0021.md)), `lerp` ([NUC 22](nuc-0022.md)), `saturate` ([NUC 23](nuc-0023.md)), `smoothstep(lower, upper, value)` (accepted [NUC 33](nuc-0033.md)), `smootherstep(lower, upper, value)` (accepted [NUC 35](nuc-0035.md)), `remap(start, end, targetStart, targetEnd, value)` (accepted [NUC 39](nuc-0039.md)), `copySign(value, sign)` ([NUC 142](nuc-0142.md)) |
+ | `String` | `String.fromCharCode`; instance `charAt`, `length`, `lower`, `replace`, `replaceAll` (accepted [NUC 42](nuc-0042.md)), `repeat`, `split`, `padStart` and `padEnd` ([NUC 111](nuc-0111.md)), Python's `startswith`, `endswith` and `join(items)`, with the separator as the receiver ([NUC 110](nuc-0110.md)), Rust's `starts_with(prefix)` and `ends_with(suffix)` ([NUC 132](nuc-0132.md)), the size and emptiness methods `length()`, `size()`, `len()`, `isEmpty()`, `is_empty()` and `isNotEmpty()` ([NUC 116](nuc-0116.md)), the case conversion aliases `uppercase()`, `to_uppercase()` and `uppercased()` of `toUpperCase()`, and `lowercase()`, `to_lowercase()` and `lowercased()` of `toLowerCase()` ([NUC 118](nuc-0118.md)), and the reversals `reverse()` and `reversed()`, exactly `text[::-1]` ([NUC 131](nuc-0131.md)) |
+ | `Date` | `Date()`, `Date(string)`, `Date(number)`, `Date.now()`, `Date.parse()`; instance `getTime`, `getYear`, `toDateString` |
+ | `List` | `push`, `pop`, `filter`, `map`, their Ruby aliases `select` and `collect` ([NUC 134](nuc-0134.md)), `flatMap` (accepted [NUC 41](nuc-0041.md)), `flat` ([NUC 103](nuc-0103.md)), `reduce`, `find`, `some`, `every`, `slice`, `reverse` (a new list in reverse order), `sort` (in place, [NUC 58](nuc-0058.md)), `join`, `length`, and the queries `at`, `includes`, `indexOf`, `lastIndexOf`, `findIndex`, `findLast`, `findLastIndex` and `concat` ([NUC 61](nuc-0061.md)), `sum` ([NUC 68](nuc-0068.md)), `max` and `min` ([NUC 69](nuc-0069.md)), `distinct` ([NUC 71](nuc-0071.md)), `count(predicate)` ([NUC 73](nuc-0073.md)), `mode` ([NUC 75](nuc-0075.md)), `maxBy` and `minBy` ([NUC 77](nuc-0077.md)), `average` ([NUC 80](nuc-0080.md)), `median` ([NUC 84](nuc-0084.md)), `sortBy` ([NUC 105](nuc-0105.md)), `partition` ([NUC 108](nuc-0108.md)), `product` ([NUC 114](nuc-0114.md)), `variance` and `stdev` ([NUC 123](nuc-0123.md)), `quantile` ([NUC 124](nuc-0124.md)), `zip(other)` and `zip(other, co
+```
+
+**File**: `docs/nuc-0000.md` (modified, +2/-2)
+```diff
+@@ -142,7 +142,7 @@ Created: 31-Jul-2026
+ | [129](nuc-0129.md) | List and Population Zipping | Accepted |
+ | [138](nuc-0138.md) | Reactive Secant | Accepted |
+ | [141](nuc-0141.md) | Reactive Cosecant | Accepted |
+-| [142](nuc-0142.md) | Reactive Sign Copying | Draft |
++| [142](nuc-0142.md) | Reactive Sign Copying | Automatic-Accepted: independent strict rollback graph-dependent ordering check failed, also reproduced on the accepted arithmetic runtime |
+ 
+ ### Reasoning enhancement
+ 
+@@ -338,7 +338,7 @@ Created: 31-Jul-2026
+ | [139](nuc-0139.md) | Symmetric Difference Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
+ | [140](nuc-0140.md) | Match Statements | Standards Track | Runtime features | Draft |
+ | [141](nuc-0141.md) | Reactive Cosecant | Standards Track | Utility enhancement | Accepted |
+-| [142](nuc-0142.md) | Reactive Sign Copying | Standards Track | Utility enhancement | Draft |
++| [142](nuc-0142.md) | Reactive Sign Copying | Standards Track | Utility enhancement | Automatic-Accepted: independent strict rollback graph-dependent ordering check failed, also reproduced on the accepted arithmetic runtime |
+ 
+ ## Copyright
+ 
+```
+
+**File**: `docs/nuc-0142.md` (modified, +175/-20)
+```diff
+@@ -4,7 +4,7 @@
+ NUC: 142
+ Title: Reactive Sign Copying
+ Author: Copilot <223556219+Copilot@users.noreply.github.com>
+-Status: Draft
++Status: Automatic-Accepted
+ Type: Standards Track
+ Category: Utility enhancement
+ Created: 25-Nov-2026
+@@ -23,6 +23,10 @@ Created: 25-Nov-2026
+ - The caller's one uniform draw from the live eligible registry selected
+   Utility enhancement. This continuous proposal requires paired lexer-token
+   comparison and every hard criterion.
++- **Automatic-Accepted:** every hard criterion passes, but the independent
++  strict rollback graph-dependent ordering check failed. Accepted arithmetic
++  on the actual accepted runtime reproduces that pre-existing limitation;
++  this proposal preserves it rather than repairing the frozen candidate.
+ 
+ ## Motivation
+ 
+@@ -42,44 +46,195 @@ Created: 25-Nov-2026
+ - Reuse the multivariate Math dispatcher and ordinary `f64::copysign` after
+   explicitly propagating a numeric NaN sign. No parser, public type,
+   dependency, option, version or ARC change is requested.
++- Checking the converted sign for NaN prevents a NaN representation from
++  becoming an observable positive/negative choice for a finite magnitude.
++  NaN classification, rather than payload or sign preservation, is the contract.
++- Arithmetic multiplication by a computed sign is a useful independent
++  accepted control, not the implementation. Copying a sign must not rescale,
++  overflow, underflow, normalize zeros or inspect shadowable numeric helpers.
++- Extra values stay outside numeric conversion, but not outside evaluation
++  or dependency tracking. Reusing the existing dispatch preserves that boundary.
+ 
+ ## Specification
+ 
+-- Intrinsically convert only the first two values after the unchanged
+-  supplied-Undefined gate; extras remain numerically ignored but eagerly
+-  evaluated exactly once left to right with all reads, effects and errors.
+-- Preserve magnitude bits for non-NaNs and the converted non-NaN sign bit.
+-  Do not normalize zeros, clamp values, rescale or resolve shadowable
+-  `Number` or `Math.PI`. NaN payloads are not promised.
++- Add exactly native static `Math.copySign(value, sign)`, with no global or
++  lowercase alias, non-native receiver method or aggregate-dispatch expansion.
++- Evaluate all supplied expressions exactly once left to right. After
++  successful evaluation, any supplied top-level Undefined, including an
++  ignored extra, returns Undefined before numeric conversion. Nested
++  Undefined retains the existing numeric-conversion distinction.
++- Intrinsically convert only positions zero and one with the existing
++  `Value::to_number` conversion. Each omission supplies numeric NaN rather
++  than Undefined. Literal null converts to zero; booleans, trimmed strings,
++  empty/singleton lists and dates retain existing conversion. Invalid
++  numeric conversions produce numeric NaN, not new errors.
++- Return numeric NaN when the converted second value is NaN, including an
++  omitted or invalid sign. Otherwise compute `first.copysign(second)` as an
++  ordinary `f64` operation. A NaN magnitude stays NaN by classification.
++  Do not promise NaN payload/sign bits or expose a NaN sign representation.
++- For non-NaNs, preserve every magnitude bit of the converted first value
++  and copy the converted non-NaN second value's sign bit. This includes
++  both zeros, subnormals, finite extrema and infinities, without overflow,
++  underflow, arithmetic rescaling, zero normalization or range validation.
++- Extra values are not converted or used numerically, including NaN extras.
++  Their effects, strict errors, reads, dependency subscriptions and
++  deletion/recovery remain observable, even after an Undefined argument.
++- Literal-null conversion does not override inherited live-input or
++  parameter-null deferral. Named wrappers, independent class rules, captured
++  values/classes, receivers, call frames and scopes retain existing behavior.
++- Do not resolve shadowable `Number` or lower to calls to `Math.abs` or
++  `Math.sign`. State/local Math bindings and ordinary `.Math` members retain
++  lookup. Preserve ordinary call ASTs, written graph source, subscriptions,
++  complete rollback and recovery; failed transactions do not rewind future
++  node-sequence allocation.
+ - Preserve all previously accepted forms and outputs, including successful
+   supplied-Undefined calls and ordinary shadowed members. Native method-value
+   reads remain Undefined/non-callable.
+-- The fresh proposer will complete the normative traces against the caller's
+-  immutable accepted baseline and original arithmetic counterparts.
++- Only formerly failing native `Math.copySign(...)` calls gain these results.
++  Every other native Math arm and accepted syntax stays unchanged, including
++  unsupported `Math.toDegrees`.
++- The normative [sign-copying contract](../nucleoid.spec.md#reactive-sign-copying)
++  is traced by `Nucleoid keeps sign copying reactive` and reference case
++  `Nucleoid preserves sign copyi
+```
+
+**File**: `nucleoid.spec.md` (modified, +69/-0)
+```diff
+@@ -29493,6 +29493,25 @@ angle = Math.PI / 2
+ assert(ratio, 1)
+ ratio
+ # return: 1
++---
++# Nucleoid keeps sign copying reactive
++
++magnitude = 3
++direction = -1
++copied = Math.copySign(magnitude, direction)
++assert(copied, -3)
++direction = 1
++assert(copied, 3)
++magnitude = -7
++assert(copied, 7)
++direction = -0
++assert(copied, -7)
++magnitude = 0
++assert(1 / copied, Number.NEGATIVE_INFINITY)
++direction = 0
++assert(1 / copied, Number.POSITIVE_INFINITY)
++1
++# return: 1
+ ```
+ 
+ ## Floating-point absolute value alias
+@@ -29590,3 +29609,53 @@ ratio
+   six assertions each, sine controls, expected return `1` and coverage stay
+   intact. No parser/lexer, public API, dependency, option or version changes
+   are introduced.
++
++## Reactive sign copying
++
++- NUC 142 adds only native static `Math.copySign(value, sign)`.
++  The accepted numeric composition
++  `Math.abs(value) * Math.sign(Math.sign(sign) + 1 / sign)` remains available.
++- Evaluate every supplied expression exactly once left to right, then retain
++  Math's any-supplied-top-level-Undefined gate before numeric conversion,
++  including every extra position. Nested Undefined does not trigger that gate.
++- Otherwise intrinsically convert only the first two values with the existing
++  `Value::to_number` conversion. Each omitted value supplies numeric NaN.
++  If the converted sign is NaN, return numeric NaN; otherwise compute ordinary
++  `first.copysign(second)`. A NaN first input remains NaN by classification.
++  No NaN payload or sign bits are promised, and a NaN sign never supplies a
++  representational sign to a finite magnitude.
++- For non-NaNs, retain all magnitude bits of the converted first value and
++  copy the converted second value's sign bit, including both zeros,
++  subnormals, finite extrema and infinities. There is no arithmetic
++  rescaling, overflow, underflow, zero normalization or range validation.
++- Numbers, literal null as zero, booleans, trimmed numeric strings,
++  empty/singleton lists and millisecond dates retain intrinsic numeric
++  conversion. Invalid conversions produce numeric NaN, not new type errors.
++  Extras are neither converted nor used numerically, including NaN extras,
++  but retain their eager effects, strict errors, reads and subscriptions.
++- Literal-null conversion does not override live-input or parameter-null
++  deferral. Named functions, independent class rules, deletion/recovery,
++  captured values/classes, call frames, receivers and complete transaction
++  rollback use the existing machinery. Conversion never resolves shadowable
++  `Number` or rewrites the call to shadowable arithmetic helpers.
++- State/local `Math` bindings and ordinary `.Math`/`.copySign` members retain
++  lookup. Native `Math.copySign` value reads remain Undefined/non-callable.
++  Add no global or lowercase alias, non-native receiver method, population
++  or list aggregate dispatch, parser/lexer syntax, public API or option.
++- Add no arity, conversion, range or numeric errors. Strict missing reads
++  retain `ReferenceError("<name> is not defined")`, including arguments
++  after Undefined. Unsupported native methods retain
++  `TypeError("Math.<name> is not a function")`, and `Math.random()` retains
++  `TypeError("Math.random is not supported")`, after the unchanged gate.
++  Numeric `Math = 7` gives
++  `TypeError("number.copySign is not a function")`. Error positions, caught
++  values and recovery are unchanged.
++- Only formerly failing native `Math.copySign(...)` calls gain these results.
++  Already successful supplied-Undefined calls still return Undefined.
++  Every other native Math arm, accepted source form and output remains
++  unchanged; `Math.toDegrees` stays unsupported.
++- `Nucleoid keeps sign copying reactive` and
++  `Nucleoid preserves sign copying argument dependencies` retain the caller's
++  executed arithmetic programs except for their copied-expression RHS.
++  Both keep all six canonical assertions in order and explicit return `1`.
++  Historical executable cases and synthesized records are unchanged.
+```
+
+**File**: `src/builtins/numeric.rs` (modified, +8/-0)
+```diff
+@@ -89,6 +89,14 @@ fn math_interpolation(name: &str, first: f64, arguments: &[Value]) -> Option<f64
+     Some(match name {
+         "pow" => first.powf(argument(1)),
+         "atan2" => first.atan2(argument(1)),
++        "copySign" => {
++            let sign = argument(1);
++            if sign.is_nan() {
++                f64::NAN
++            } else {
++                first.copysign(sign)
++            }
++        }
+         "clamp" => numeric_clamp(first, argument(1), argument(2)),
+         "saturate" => numeric_clamp(first, 0.0, 1.0),
+         "smoothstep" => smoothstep(first, argument(1), argument(2)),
 ```
 
 #### Recent Merged Pull Requests:
@@ -1750,13 +2065,13 @@ Co-authored-by: Copilot <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Draft NUC 142 Reactive Sign Copying
+## X. Draft NUC 143 Reactive Squaring
 
 **RULE**:
 When implementing operations in `docs/nuc-0000.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `08ccc24f`: Draft NUC 142 Reactive Sign Copying. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `eeb815a6`: Draft NUC 143 Reactive Squaring. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/nuc-0000.md`.
@@ -1764,8 +2079,8 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-| [142](nuc-0142.md) | Reactive Sign Copying | Draft |
-| [142](nuc-0142.md) | Reactive Sign Copying | Standards Track | Utility enhancement | Draft |
+| [143](nuc-0143.md) | Reactive Squaring | Draft |
+| [143](nuc-0143.md) | Reactive Squaring | Standards Track | Utility enhancement | Draft |
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1775,7 +2090,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `08ccc24f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `eeb815a6` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

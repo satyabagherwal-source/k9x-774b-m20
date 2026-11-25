@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-25T02:20:35.541Z",
-  "total_verified_learnings": 9109,
+  "last_updated": "2026-11-25T02:30:11.136Z",
+  "total_verified_learnings": 9110,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25158,
+  "total_items": 25169,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -114657,10 +114657,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-technical-construction-intelligence-freenet-freenet-core-co.md",
       "title": "Technical Construction Intelligence: freenet/freenet-core Core Invariants",
       "repository": "freenet/freenet-core",
-      "source_version": "d245524c",
-      "content_hash": "652774d026251f65432248fd83d73636f41ca006f49500b19419d5a54a485d72",
+      "source_version": "1b511d59",
+      "content_hash": "6126778233f617bec07ec9f2318e9478d183347356a6523a40e064c2e0bc814c",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T22:16:01.120Z"
+      "persisted_at": "2026-11-25T02:28:57.295Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core",
@@ -114669,10 +114669,10 @@
       "relative_path": "08_VERIFICATION/freenet-freenet-core-verification-protocol-empirical-defect-shield-for-freenet-f.md",
       "title": "Verification Protocol: Empirical Defect Shield for freenet/freenet-core",
       "repository": "freenet/freenet-core",
-      "source_version": "d245524c",
-      "content_hash": "a4de19b82078b344c8580f5100d31ec07d3f8eda7356d74d4ada1b181e78019a",
+      "source_version": "1b511d59",
+      "content_hash": "e4fac7010cca399e15fbad94809cf1c095b2c070b5916874b7452319b618991b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T22:16:01.290Z"
+      "persisted_at": "2026-11-25T02:28:57.483Z"
     },
     "candidate_directive-update-remove-stored-files-no-document-points-at-sdk-1541-6674": {
       "item_id": "candidate_directive-update-remove-stored-files-no-document-points-at-sdk-1541-6674",
@@ -114754,9 +114754,9 @@
       "title": "Technical Construction Intelligence: freenet-freenet-core-learnings Core Invariants",
       "repository": "freenet-freenet-core-learnings",
       "source_version": "HEAD",
-      "content_hash": "ca6e62ee3317fb647830e6ec04506f611696f43b7c939dd642bfdf4ccd843044",
+      "content_hash": "037e1b5d9dab3aa55072556ccbb9317cbf0c2dd375433dc21fbed4b573c14115",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T22:16:06.528Z"
+      "persisted_at": "2026-11-25T02:30:10.923Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core-learnings",
@@ -114766,9 +114766,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for freenet-freenet-core-learnings",
       "repository": "freenet-freenet-core-learnings",
       "source_version": "HEAD",
-      "content_hash": "bfd7be6a10843918d8303f4f2e8c6f8f8abf8571da70610af3cf1c39532c0ba9",
+      "content_hash": "8f75861c0f547961c128bfcb2d3394550229d8b806dadf5052eeaa4f42bd5a80",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T22:16:06.699Z"
+      "persisted_at": "2026-11-25T02:30:11.136Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c",
@@ -220901,8 +220901,8 @@
       "slug": "freenet-freenet-core",
       "platform": "github",
       "source_url": "https://github.com/freenet/freenet-core",
-      "source_version": "d245524c",
-      "content_hash": "22499c457cdb9dac5b72b788fab55dfadcca1542a76d84eb2a2b0ffcdf010eec",
+      "source_version": "1b511d59",
+      "content_hash": "8102926d168534cbeb3f21ce293009b3cc6dc3959c1e031b51c310b19af7bcca",
       "dossier_path": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "promoted_rules": [
@@ -221062,7 +221062,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T22:16:00.488Z",
+      "verified_at": "2026-11-25T02:28:56.852Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -223494,8 +223494,8 @@
       "slug": "matrixorigin-matrixone",
       "platform": "github",
       "source_url": "https://github.com/matrixorigin/matrixone",
-      "source_version": "8b1e884e",
-      "content_hash": "ba4faf96015e632c3b360ed1c8c07370317a1b47e0cf1707abefba3f0e16fa82",
+      "source_version": "ca5325ce",
+      "content_hash": "dae30617af92e1d6776f377ca55c714ece1a6c69807d203a37154d20af577870",
       "dossier_path": "07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md",
       "promoted_rules": [
@@ -223543,6 +223543,11 @@
           "number": 10225,
           "title": "never allocate for parameter binding after the first execution",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10433,
+          "title": "test(embed): measure execution memory headroom against a per-process limit",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -223550,7 +223555,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T06:55:18.637Z",
+      "verified_at": "2026-11-25T02:29:00.431Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -223604,10 +223609,10 @@
       "relative_path": "08_VERIFICATION/matrixorigin-matrixone-verification-protocol-empirical-defect-shield-for-matrixo.md",
       "title": "Verification Protocol: Empirical Defect Shield for matrixorigin/matrixone",
       "repository": "matrixorigin/matrixone",
-      "source_version": "8b1e884e",
-      "content_hash": "9c897ff4fb6bb93ae52b9068ed09d47e6e072f2d6941bee2b2f878442a8e694f",
+      "source_version": "ca5325ce",
+      "content_hash": "7aed4f8520884d52cea71dc9ec7f9b8cbfaf5a88154650769c9c189dfd5f02bf",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T06:55:19.475Z"
+      "persisted_at": "2026-11-25T02:29:01.300Z"
     },
     "learn-huggingface-openai-gpt-oss-20b": {
       "learning_id": "learn-huggingface-openai-gpt-oss-20b",
@@ -230550,8 +230555,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "08ccc24f",
-      "content_hash": "000ce08600c8818a9a7c91302d8c4be217f34001b978e154d813427994d85261",
+      "source_version": "eeb815a6",
+      "content_hash": "9f39ed506619545bb0e86acb447d2be28ebc422544804831d0aa5de4ffe6cf41",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -230824,6 +230829,11 @@
           "number": 10407,
           "title": "Draft NUC 142 Reactive Sign Copying",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10434,
+          "title": "Draft NUC 143 Reactive Squaring",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -230831,7 +230841,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T00:43:42.473Z",
+      "verified_at": "2026-11-25T02:29:01.953Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -230873,10 +230883,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "08ccc24f",
-      "content_hash": "3b00e068052607180fb56914ae8ce540528b9f94a7b9eb56d69ad601f922d312",
+      "source_version": "eeb815a6",
+      "content_hash": "27de56f4be03f51067a1567db083807dc48b17d10fd5573a3198606ff4e4f841",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T00:43:43.085Z"
+      "persisted_at": "2026-11-25T02:29:02.592Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid",
@@ -230885,10 +230895,10 @@
       "relative_path": "08_VERIFICATION/nucleoidai-nucleoid-verification-protocol-empirical-defect-shield-for-nucleoidai.md",
       "title": "Verification Protocol: Empirical Defect Shield for NucleoidAI/Nucleoid",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "08ccc24f",
-      "content_hash": "cfcd7e745e75f7c49d18d4263bfe0bf781bb1c31bbc8d524feab198a3c2b40af",
+      "source_version": "eeb815a6",
+      "content_hash": "9dbbfe348dc90ae14cc24b47fcc0a3392789f81987a5ee6447d2b0f3b90a6dbb",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T00:43:43.253Z"
+      "persisted_at": "2026-11-25T02:29:02.782Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -251006,10 +251016,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-matrixorigin-matrixone-quality-verification-intelligence-matrixorigin-matrixone-.md",
       "title": "Quality & Verification Intelligence: matrixorigin/matrixone Core Invariants",
       "repository": "matrixorigin/matrixone",
-      "source_version": "a5140aa8",
-      "content_hash": "6d234a6b0a9a8cdc736b0e27b4732cc6895de89e29ffb011e9b4da06db12b966",
+      "source_version": "ca5325ce",
+      "content_hash": "07cb8d1b7d9d5349bad96cc0994db4b2e660dd82e523c29ad66497b95d1b14a1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T00:52:09.324Z"
+      "persisted_at": "2026-11-25T02:29:01.078Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-matrixorigin-matrixone": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-matrixorigin-matrixone",
@@ -290024,8 +290034,8 @@
       "slug": "msasikanth-twine",
       "platform": "github",
       "source_url": "https://github.com/msasikanth/twine",
-      "source_version": "a741d94b",
-      "content_hash": "cd707b53e4ae23530f9bf0b837ad8806a7b5c586307947914b487924933396f6",
+      "source_version": "18235a59",
+      "content_hash": "030de6565f285c4cf69f43b9bf21782e0baa6f445f92dc1b5be6e1e6825df86f",
       "dossier_path": "07_PROJECT_LEARNING/msasikanth-twine-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/msasikanth-twine-learnings.md",
       "promoted_rules": [
@@ -290043,6 +290053,11 @@
           "number": 9182,
           "title": "XML Content Sniffing and XHTML Tree Extraction Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10432,
+          "title": "Keep list-detail scene active when expanding reader pane",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -290050,7 +290065,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T08:51:35.785Z",
+      "verified_at": "2026-11-25T02:28:51.402Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -290168,10 +290183,10 @@
       "relative_path": "08_VERIFICATION/msasikanth-twine-verification-protocol-empirical-defect-shield-for-msasikanth-tw.md",
       "title": "Verification Protocol: Empirical Defect Shield for msasikanth/twine",
       "repository": "msasikanth/twine",
-      "source_version": "a741d94b",
-      "content_hash": "8350753d3d1fbc907ff116ec5e3a7faccf847ba88450fd96d6063ffbfae80a73",
+      "source_version": "18235a59",
+      "content_hash": "3bd64bc360facf8efdb9d63d9fde189600aec8f1ce6c807935f45edb48a958d0",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T08:51:36.803Z"
+      "persisted_at": "2026-11-25T02:28:52.228Z"
     },
     "candidate_directive-dual-identity-token-index-disambiguation": {
       "item_id": "candidate_directive-dual-identity-token-index-disambiguation",
@@ -290253,9 +290268,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for msasikanth-twine-learnings",
       "repository": "msasikanth-twine-learnings",
       "source_version": "HEAD",
-      "content_hash": "afd835dad056073d1d5cbba64cba483bc83945489fc55123408ada2d4b0f1eb9",
+      "content_hash": "c11556e95625c1c0c6ec920f12e6138d9699ff10029bb28c10bb7287fb1d361e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T08:53:21.162Z"
+      "persisted_at": "2026-11-25T02:29:36.088Z"
     },
     "domain_intelligence-quality-verification-intelligence-yugabyte-yugabyte-db-learnings-core-invariants": {
       "item_id": "domain_intelligence-quality-verification-intelligence-yugabyte-yugabyte-db-learnings-core-invariants",
@@ -343919,6 +343934,159 @@
       "content_hash": "8fc2dd3db06ef0dca9509bc6bef8f063678f4baf26ab7899c30b21bc45ce0fae",
       "domain_letter": "K",
       "persisted_at": "2026-11-25T02:20:34.020Z"
+    },
+    "learn-huggingface-memtensor-memt-1-0-pro": {
+      "learning_id": "learn-huggingface-memtensor-memt-1-0-pro",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "MemTensor/MemT-1.0-Pro",
+      "repository": "MemTensor/MemT-1.0-Pro",
+      "slug": "hf-memtensor-memt-1.0-pro",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/MemTensor/MemT-1.0-Pro",
+      "source_version": "hf-memtensor-memt-1.0-pro",
+      "content_hash": "414d41e2e8dcfd77f638ef8243fa2b87ed3323b6e8c9b22d4577d963e42dcfa1",
+      "dossier_path": "07_PROJECT_LEARNING/hf-memtensor-memt-1.0-pro-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-memtensor-memt-1.0-pro-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-25T02:28:41.588Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-memtensor-memt-1-0-pro-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-memtensor-memt-1-0-pro-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-memtensor-memt-1-0-pro-research-knowledge-intelligence-memtensor-memt-1-0-pro.md",
+      "title": "Research & Knowledge Intelligence: MemTensor/MemT-1.0-Pro Core Invariants",
+      "repository": "MemTensor/MemT-1.0-Pro",
+      "source_version": "hf-memtensor-memt-1.0-pro",
+      "content_hash": "5d7121fa660f1530fb1356e453cc9a034e1f91d8b93ec2918d6c8cfedb1c7c91",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-25T02:28:42.036Z"
+    },
+    "rule-10432": {
+      "learning_id": "rule-10432",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10432,
+      "title": "Keep list-detail scene active when expanding reader pane",
+      "source_url": "https://github.com/msasikanth/twine",
+      "source_version": "18235a59",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T02:28:51.402Z"
+    },
+    "candidate_directive-keep-list-detail-scene-active-when-expanding-reader-pane": {
+      "item_id": "candidate_directive-keep-list-detail-scene-active-when-expanding-reader-pane",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-9KCE-keep-list-detail-scene-active-when-expanding-reader-pane.md",
+      "title": "Keep list-detail scene active when expanding reader pane",
+      "repository": "msasikanth-twine-learnings",
+      "source_version": "HEAD",
+      "content_hash": "abfe745009795f7603fd1dcf9c189ebd682567d30174a31f6e569456c2f9ddc1",
+      "domain_letter": "J",
+      "persisted_at": "2026-11-25T02:29:35.679Z"
+    },
+    "domain_intelligence-search-distribution-intelligence-msasikanth-twine-core-invariants": {
+      "item_id": "domain_intelligence-search-distribution-intelligence-msasikanth-twine-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-J-msasikanth-twine-search-distribution-intelligence-msasikanth-twine-core-invarian.md",
+      "title": "Search & Distribution Intelligence: msasikanth/twine Core Invariants",
+      "repository": "msasikanth/twine",
+      "source_version": "18235a59",
+      "content_hash": "c61a5a7988a8fc945607a78e52c05375abd407aa366ff9093238a44a7256dd4e",
+      "domain_letter": "J",
+      "persisted_at": "2026-11-25T02:28:52.049Z"
+    },
+    "rule-10433": {
+      "learning_id": "rule-10433",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10433,
+      "title": "test(embed): measure execution memory headroom against a per-process limit",
+      "source_url": "https://github.com/matrixorigin/matrixone",
+      "source_version": "ca5325ce",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T02:29:00.431Z"
+    },
+    "candidate_directive-test-embed-measure-execution-memory-headroom-against-a-per-process-limit": {
+      "item_id": "candidate_directive-test-embed-measure-execution-memory-headroom-against-a-per-process-limit",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-8TI3-test-embed-measure-execution-memory-headroom-against-a-per-process-limit.md",
+      "title": "test(embed): measure execution memory headroom against a per-process limit",
+      "repository": "matrixorigin/matrixone",
+      "source_version": "ca5325ce",
+      "content_hash": "3c8d2fdc6310ad42f4259b5c962ba945ecb3a1bd4c80f3cc6a4c4bd4fbc483b9",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-25T02:29:00.895Z"
+    },
+    "rule-10434": {
+      "learning_id": "rule-10434",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10434,
+      "title": "Draft NUC 143 Reactive Squaring",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "eeb815a6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T02:29:01.953Z"
+    },
+    "candidate_directive-draft-nuc-143-reactive-squaring": {
+      "item_id": "candidate_directive-draft-nuc-143-reactive-squaring",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-8UOC-draft-nuc-143-reactive-squaring.md",
+      "title": "Draft NUC 143 Reactive Squaring",
+      "repository": "NucleoidAI/Nucleoid",
+      "source_version": "eeb815a6",
+      "content_hash": "3c6b37e9a54771948eb7de07bb79d8466747047a666d0875fac24e3b7818b5df",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-25T02:29:02.415Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-memtensor-memt-1-0-pro-learnings-core-invaria": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-memtensor-memt-1-0-pro-learnings-core-invaria",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-memtensor-memt-1-0-pro-learnings-research-knowledge-intelligence-hf-memtensor.md",
+      "title": "Research & Knowledge Intelligence: hf-memtensor-memt-1.0-pro-learnings Core Invariants",
+      "repository": "hf-memtensor-memt-1.0-pro-learnings",
+      "source_version": "HEAD",
+      "content_hash": "5cb91689b53041681fbe792a4428ff6e7458a6fd45a9c8dc2b4708623da9df7c",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-25T02:29:34.682Z"
+    },
+    "domain_intelligence-search-distribution-intelligence-msasikanth-twine-learnings-core-invariants": {
+      "item_id": "domain_intelligence-search-distribution-intelligence-msasikanth-twine-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-J-msasikanth-twine-learnings-search-distribution-intelligence-msasikanth-twine-lea.md",
+      "title": "Search & Distribution Intelligence: msasikanth-twine-learnings Core Invariants",
+      "repository": "msasikanth-twine-learnings",
+      "source_version": "HEAD",
+      "content_hash": "926decbbd282542e56bd9e5e0c4817ecab7b75ed8d8f2220f96174f6d7cc1bec",
+      "domain_letter": "J",
+      "persisted_at": "2026-11-25T02:29:35.884Z"
     }
   },
   "ai-builder-brain": {

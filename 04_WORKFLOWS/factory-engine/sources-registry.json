@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-25T02:20:31.039Z",
-    "lastVerified": "2026-11-25T02:20:31.039Z",
+    "lastChecked": "2026-11-25T02:29:05.448Z",
+    "lastVerified": "2026-11-25T02:29:05.448Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -375,22 +375,21 @@
     "lastVerified": "2026-11-24T19:27:45.062Z"
   },
   "nucleoidai-nucleoid": {
-    "name": "Nucleoid",
+    "name": "NucleoidAI/Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-25T01:52:56.331Z",
-    "lastVerified": "2026-11-25T01:52:56.331Z",
+    "lastChecked": "2026-11-25T02:29:01.003Z",
+    "lastVerified": "2026-11-25T02:29:01.003Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "000ce08600c8818a9a7c91302d8c4be217f34001b978e154d813427994d85261",
+    "contentHash": "9f39ed506619545bb0e86acb447d2be28ebc422544804831d0aa5de4ffe6cf41",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "08ccc24f"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1243,14 +1242,14 @@
     "officialUrl": "https://github.com/freenet/freenet-core",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-24T22:15:59.571Z",
-    "lastVerified": "2026-11-24T22:15:59.571Z",
+    "lastChecked": "2026-11-25T02:28:56.540Z",
+    "lastVerified": "2026-11-25T02:28:56.540Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-freenet-freenet-core",
-    "contentHash": "22499c457cdb9dac5b72b788fab55dfadcca1542a76d84eb2a2b0ffcdf010eec",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "contentHash": "8102926d168534cbeb3f21ce293009b3cc6dc3959c1e031b51c310b19af7bcca",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -3561,14 +3560,14 @@
     "officialUrl": "https://github.com/matrixorigin/matrixone",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-24T06:55:17.743Z",
-    "lastVerified": "2026-11-24T06:55:17.743Z",
+    "lastChecked": "2026-11-25T02:28:59.517Z",
+    "lastVerified": "2026-11-25T02:28:59.517Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-matrixorigin-matrixone",
-    "contentHash": "ba4faf96015e632c3b360ed1c8c07370317a1b47e0cf1707abefba3f0e16fa82",
+    "contentHash": "dae30617af92e1d6776f377ca55c714ece1a6c69807d203a37154d20af577870",
     "promotedRulesCount": 1,
-    "recentFixesCount": 5,
+    "recentFixesCount": 7,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -5831,9 +5830,9 @@
   "diggerhq-digger": {
     "name": "digger",
     "officialUrl": "https://github.com/diggerhq/digger",
-    "lastChecked": "2026-11-24T08:24:32.479Z",
+    "lastChecked": "2026-11-25T02:28:48.463Z",
     "revisionIdentifier": "3dc1c51e",
-    "lastVerified": "2026-11-24T08:24:32.479Z"
+    "lastVerified": "2026-11-25T02:28:48.463Z"
   },
   "trinodb-trino": {
     "name": "trinodb/trino",
@@ -8234,11 +8233,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "msasikanth-twine": {
-    "name": "twine",
+    "name": "msasikanth/twine",
     "officialUrl": "https://github.com/msasikanth/twine",
-    "lastChecked": "2026-11-22T15:09:06.430Z",
-    "revisionIdentifier": "a741d94b",
-    "lastVerified": "2026-11-22T15:09:06.430Z"
+    "sourceType": "github",
+    "technology": "Kotlin",
+    "lastChecked": "2026-11-25T02:28:50.471Z",
+    "lastVerified": "2026-11-25T02:28:50.471Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-msasikanth-twine",
+    "contentHash": "030de6565f285c4cf69f43b9bf21782e0baa6f445f92dc1b5be6e1e6825df86f",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "agent-of-empires-agent-of-empires": {
     "name": "agent-of-empires/agent-of-empires",
@@ -12265,9 +12274,9 @@
   "alecxe-scrapy-fake-useragent": {
     "name": "scrapy-fake-useragent",
     "officialUrl": "https://github.com/alecxe/scrapy-fake-useragent",
-    "lastChecked": "2026-11-21T03:36:34.239Z",
+    "lastChecked": "2026-11-25T02:28:43.403Z",
     "revisionIdentifier": "371254aa",
-    "lastVerified": "2026-11-21T03:36:34.239Z"
+    "lastVerified": "2026-11-25T02:28:43.403Z"
   },
   "shiguangschedule-shiguangschedule": {
     "name": "shiguangschedule",
@@ -15192,6 +15201,23 @@
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-prism-ml-ternary-bonsai-2-5-27b-gguf",
     "contentHash": "e4bb34d8ace894efe8c23fd0d499dfc4120d8f1e5ec348459b18507ac03b08bd",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-memtensor-memt-1.0-pro": {
+    "name": "MemTensor/MemT-1.0-Pro",
+    "officialUrl": "https://huggingface.co/MemTensor/MemT-1.0-Pro",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-25T02:28:41.106Z",
+    "lastVerified": "2026-11-25T02:28:41.106Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-memtensor-memt-1-0-pro",
+    "contentHash": "414d41e2e8dcfd77f638ef8243fa2b87ed3323b6e8c9b22d4577d963e42dcfa1",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

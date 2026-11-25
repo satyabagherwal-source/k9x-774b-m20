@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T02:20:35.311Z",
-  "total_records": 2621,
+  "last_updated": "2026-11-25T02:30:10.923Z",
+  "total_records": 2627,
   "domains": {
     "A": {
       "total": 22,
@@ -71,7 +71,7 @@
       ]
     },
     "D": {
-      "total": 981,
+      "total": 985,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -1053,7 +1053,11 @@
         "DOM-D-74B4B6C4",
         "DOM-D-FF5AF4F8",
         "DOM-D-183BCB72",
-        "DOM-D-58839C8D"
+        "DOM-D-58839C8D",
+        "domain_intelligence-research-knowledge-intelligence-memtensor-memt-1-0-pro-core-invariants",
+        "DOM-D-95A94518",
+        "domain_intelligence-research-knowledge-intelligence-hf-memtensor-memt-1-0-pro-learnings-core-invaria",
+        "DOM-D-615F4579"
       ]
     },
     "E": {
@@ -2437,7 +2441,7 @@
       ]
     },
     "J": {
-      "total": 49,
+      "total": 51,
       "record_ids": [
         "DOM-J-C14FC2D6",
         "DOM-J-B305372A",
@@ -2487,7 +2491,9 @@
         "domain_intelligence-search-distribution-intelligence-kubeedge-kubeedge-core-invariants",
         "domain_intelligence-search-distribution-intelligence-kubeedge-kubeedge-learnings-core-invariants",
         "domain_intelligence-search-distribution-intelligence-encoredev-encore-core-invariants",
-        "domain_intelligence-search-distribution-intelligence-encoredev-encore-learnings-core-invariants"
+        "domain_intelligence-search-distribution-intelligence-encoredev-encore-learnings-core-invariants",
+        "domain_intelligence-search-distribution-intelligence-msasikanth-twine-core-invariants",
+        "domain_intelligence-search-distribution-intelligence-msasikanth-twine-learnings-core-invariants"
       ]
     },
     "K": {
@@ -9987,8 +9993,8 @@
       "title": "Technical Construction Intelligence: freenet/freenet-core Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-technical-construction-intelligence-freenet-freenet-core-co.md",
       "repository": "freenet/freenet-core",
-      "content_hash": "652774d026251f65432248fd83d73636f41ca006f49500b19419d5a54a485d72",
-      "created_at": "2026-11-24T22:16:01.120Z"
+      "content_hash": "6126778233f617bec07ec9f2318e9478d183347356a6523a40e064c2e0bc814c",
+      "created_at": "2026-11-25T02:28:57.295Z"
     },
     "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-core-invariants",
@@ -10065,8 +10071,8 @@
       "title": "Technical Construction Intelligence: freenet-freenet-core-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-learnings-technical-construction-intelligence-freenet-freen.md",
       "repository": "freenet-freenet-core-learnings",
-      "content_hash": "ca6e62ee3317fb647830e6ec04506f611696f43b7c939dd642bfdf4ccd843044",
-      "created_at": "2026-11-24T22:16:06.528Z"
+      "content_hash": "037e1b5d9dab3aa55072556ccbb9317cbf0c2dd375433dc21fbed4b573c14115",
+      "created_at": "2026-11-25T02:30:10.923Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c",
@@ -15700,8 +15706,8 @@
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "repository": "NucleoidAI/Nucleoid",
-      "content_hash": "3b00e068052607180fb56914ae8ce540528b9f94a7b9eb56d69ad601f922d312",
-      "created_at": "2026-11-25T00:43:43.085Z"
+      "content_hash": "27de56f4be03f51067a1567db083807dc48b17d10fd5573a3198606ff4e4f841",
+      "created_at": "2026-11-25T02:29:02.592Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -22191,8 +22197,8 @@
       "title": "Quality & Verification Intelligence: matrixorigin/matrixone Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-matrixorigin-matrixone-quality-verification-intelligence-matrixorigin-matrixone-.md",
       "repository": "matrixorigin/matrixone",
-      "content_hash": "71ff12b99188be6fd2e22fcb3b584ccf8a232c174a8b17c9ab752dbc75f85257",
-      "created_at": "2026-11-22T05:28:18.361Z"
+      "content_hash": "07cb8d1b7d9d5349bad96cc0994db4b2e660dd82e523c29ad66497b95d1b14a1",
+      "created_at": "2026-11-25T02:29:01.078Z"
     },
     "domain_intelligence-quality-verification-intelligence-matrixorigin-matrixone-learnings-core-invarian": {
       "record_id": "domain_intelligence-quality-verification-intelligence-matrixorigin-matrixone-learnings-core-invarian",
@@ -43960,6 +43966,126 @@
       "repository": "rmax-scrapy-redis-learnings",
       "content_hash": "35af1e178d4c6a29cefdc48fdb8713d75a350f229ccf5e2534c2ea112031e76b",
       "created_at": "2026-11-25T02:20:33.791Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-memtensor-memt-1-0-pro-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-memtensor-memt-1-0-pro-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: MemTensor/MemT-1.0-Pro Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-memtensor-memt-1-0-pro-research-knowledge-intelligence-memtensor-memt-1-0-pro.md",
+      "repository": "MemTensor/MemT-1.0-Pro",
+      "content_hash": "5d7121fa660f1530fb1356e453cc9a034e1f91d8b93ec2918d6c8cfedb1c7c91",
+      "created_at": "2026-11-25T02:28:42.036Z"
+    },
+    "domain_intelligence-search-distribution-intelligence-msasikanth-twine-core-invariants": {
+      "record_id": "domain_intelligence-search-distribution-intelligence-msasikanth-twine-core-invariants",
+      "domain_letter": "J",
+      "title": "Search & Distribution Intelligence: msasikanth/twine Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-J-msasikanth-twine-search-distribution-intelligence-msasikanth-twine-core-invarian.md",
+      "repository": "msasikanth/twine",
+      "content_hash": "c61a5a7988a8fc945607a78e52c05375abd407aa366ff9093238a44a7256dd4e",
+      "created_at": "2026-11-25T02:28:52.049Z"
+    },
+    "DOM-D-95A94518": {
+      "record_id": "DOM-D-95A94518",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): MemTensor/MemT-1.0-Pro",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-memtensor-memt-1.0-pro-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/MemTensor/MemT-1.0-Pro](https://huggingface.co/MemTensor/MemT-1.0-Pro))  \n> **Source Version**: `hf-memtensor`  \n> **License**: Open-Source  \n> **Synth",
+      "content_hash": "6c733bddb2aebfa5006c9902e0cbba0b79033d9e6e3d112adcf3440ab83be5ca",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-memtensor-memt-1.0-pro-learnings.md`  \n> **Source**: huggingface ([https://huggin -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-memtensor-memt-1.0-pro-learnings.md`  \n> **Source**: huggingface ([https://huggin",
+      "provenance": {
+        "source_uri": "project://hf-memtensor-memt-1.0-pro/hf-memtensor-memt-1.0-pro-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-25T02:29:05.585Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-memtensor-memt-1.0-pro)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-memtensor-memt-1.0-pro"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-25T02:29:34.330Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-memtensor-memt-1-0-pro-learnings-core-invaria": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-memtensor-memt-1-0-pro-learnings-core-invaria",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-memtensor-memt-1.0-pro-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-memtensor-memt-1-0-pro-learnings-research-knowledge-intelligence-hf-memtensor.md",
+      "repository": "hf-memtensor-memt-1.0-pro-learnings",
+      "content_hash": "5cb91689b53041681fbe792a4428ff6e7458a6fd45a9c8dc2b4708623da9df7c",
+      "created_at": "2026-11-25T02:29:34.682Z"
+    },
+    "domain_intelligence-search-distribution-intelligence-msasikanth-twine-learnings-core-invariants": {
+      "record_id": "domain_intelligence-search-distribution-intelligence-msasikanth-twine-learnings-core-invariants",
+      "domain_letter": "J",
+      "title": "Search & Distribution Intelligence: msasikanth-twine-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-J-msasikanth-twine-learnings-search-distribution-intelligence-msasikanth-twine-lea.md",
+      "repository": "msasikanth-twine-learnings",
+      "content_hash": "926decbbd282542e56bd9e5e0c4817ecab7b75ed8d8f2220f96174f6d7cc1bec",
+      "created_at": "2026-11-25T02:29:35.884Z"
+    },
+    "DOM-D-615F4579": {
+      "record_id": "DOM-D-615F4579",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): freenet/freenet-core",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  \n> **Source**: github ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  \n> **Source Version**: `1b511d59`  \n> **License**: NOASSERTION  \n> **Synthesized By**: zero-clone-st",
+      "content_hash": "038b9cd841be4cd52343c6117955ad7ece476382087c8d47446deb15ea0d1338",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  \n> **Source**: github ([https://github.com/freen -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  \n> **Source**: github ([https://github.com/freen",
+      "provenance": {
+        "source_uri": "project://freenet-freenet-core/freenet-freenet-core-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-25T02:29:36.256Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (freenet-freenet-core)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of freenet-freenet-core"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-25T02:30:10.412Z"
     }
   }
 }

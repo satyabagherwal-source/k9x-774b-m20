@@ -5396,3 +5396,7 @@ https://github.com/dembrandt/dembrandt
 # --- Automatically Discovered by AI Scout Engine [2026-11-24T23:24:32.862Z] ---
 # [HUGGINGFACE-AI-MODELS] prism-ml/Ternary-Bonsai-2.5-27B-GGUF (900 score) - Verified Hugging Face Model: prism-ml/Ternary-Bonsai-2.5-27B-GGUF (90 likes, 0 d
 https://huggingface.co/prism-ml/Ternary-Bonsai-2.5-27B-GGUF
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-25T02:28:35.182Z] ---
+# [HUGGINGFACE-AI-MODELS] MemTensor/MemT-1.0-Pro (1377 score) - Verified Hugging Face Model: MemTensor/MemT-1.0-Pro (98 likes, 397 downloads)
+https://huggingface.co/MemTensor/MemT-1.0-Pro

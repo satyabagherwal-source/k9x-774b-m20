@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-25T01:27:35.500Z",
+  "updated_at": "2026-11-25T02:30:10.452Z",
   "statistics": {
-    "total_nodes": 524,
-    "total_edges": 216,
+    "total_nodes": 526,
+    "total_edges": 217,
     "domain_distribution": {
-      "D": 317,
+      "D": 319,
       "M": 1,
       "H": 95,
       "J": 22,
@@ -21,7 +21,7 @@
       "C": 1
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 212,
+      "CONSTRAINED_BY_ARCHITECTURE": 213,
       "VERIFIED_BY_TEST": 2,
       "STYLED_BY_DESIGN": 2
     }
@@ -11698,6 +11698,51 @@
       ],
       "created_at": "2026-11-25T01:27:35.500Z",
       "updated_at": "2026-11-25T01:27:35.500Z"
+    },
+    "DOM-D-95A94518": {
+      "id": "DOM-D-95A94518",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): MemTensor/MemT-1.0-Pro",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-memtensor-memt-1.0-pro-learnings.md`  \n> **Source**: huggingface ([https://huggin -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-memtensor-memt-1.0-pro-learnings.md`  \n> **Source**: huggingface ([https://huggin",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-memtensor-memt-1.0-pro/hf-memtensor-memt-1.0-pro-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-25T02:29:05.585Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-memtensor-memt-1.0-pro)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence",
+        "M"
+      ],
+      "created_at": "2026-11-25T02:29:34.365Z",
+      "updated_at": "2026-11-25T02:29:34.365Z"
+    },
+    "DOM-D-615F4579": {
+      "id": "DOM-D-615F4579",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): freenet/freenet-core",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  \n> **Source**: github ([https://github.com/freen -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  \n> **Source**: github ([https://github.com/freen",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://freenet-freenet-core/freenet-freenet-core-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-25T02:29:36.256Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (freenet-freenet-core)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-25T02:30:10.452Z",
+      "updated_at": "2026-11-25T02:30:10.452Z"
     }
   },
   "edges": [
@@ -13860,6 +13905,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-K-23B0EC10 [K] with Domain G",
       "created_at": "2026-11-25T00:52:38.903Z"
+    },
+    {
+      "id": "EDGE-EFE88290AF86",
+      "sourceId": "DOM-D-95A94518",
+      "targetId": "NODE-M-domain-bridge-m",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-D-95A94518 [D] with Domain M",
+      "created_at": "2026-11-25T02:29:34.365Z"
     }
   ]
 }

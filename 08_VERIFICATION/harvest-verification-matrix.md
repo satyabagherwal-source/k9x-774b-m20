@@ -12905,3 +12905,10 @@
 | `CYCLE-20261125-XIKL` | `2026-11-25T02:20:13.509Z` | `tokio-rs/tokio` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10430` | Yes (`d85f0978...`) |
 | `CYCLE-20261125-XM06` | `2026-11-25T02:20:17.958Z` | `rmax/scrapy-redis` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10431` | Yes (`7bcbf778...`) |
 | `CYCLE-20261125-XTDJ` | `2026-11-25T02:20:27.511Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9283` | Yes (`d64f17dd...`) |
+| `CYCLE-20261125-8ERW` | `2026-11-25T02:28:41.804Z` | `MemTensor/MemT-1.0-Pro` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-memtensor-memt-1.0-pro-learnings.md` | Yes (`414d41e2...`) |
+| `CYCLE-20261125-8MCN` | `2026-11-25T02:28:51.623Z` | `msasikanth/twine` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10432` | Yes (`030de656...`) |
+| `CYCLE-20261125-8QJD` | `2026-11-25T02:28:57.049Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md` | Yes (`8102926d...`) |
+| `CYCLE-20261125-8TB1` | `2026-11-25T02:29:00.637Z` | `matrixorigin/matrixone` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10433` | Yes (`dae30617...`) |
+| `CYCLE-20261125-8UHI` | `2026-11-25T02:29:02.166Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10434` | Yes (`9f39ed50...`) |
+| `CYCLE-2026-11-25-PROJ-EVOLVE` | `2026-11-25T02:29:34.368Z` | `hf-memtensor-memt-1.0-pro` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-95A94518` [Domain D] | Yes (`6c733bdd...`) |
+| `CYCLE-2026-11-25-PROJ-EVOLVE` | `2026-11-25T02:30:10.455Z` | `freenet-freenet-core` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-615F4579` [Domain D] | Yes (`038b9cd8...`) |
