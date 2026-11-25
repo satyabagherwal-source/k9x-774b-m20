@@ -4,24 +4,24 @@
 {
   "source_repository": "dathere/qsv",
   "source_url": "https://github.com/dathere/qsv",
-  "source_version": "dbec78ae",
+  "source_version": "c9b35465",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-24T15:53:48.427Z",
+  "timestamp": "2026-11-25T14:05:10.023Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-dathere-qsv",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [dathere/qsv](https://github.com/dathere/qsv) (Revision: `dbec78ae`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-24T15:53:48.427Z`  
+> **Provenance**: Harvested from [dathere/qsv](https://github.com/dathere/qsv) (Revision: `c9b35465`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-25T14:05:10.023Z`  
 > **Learning ID**: `learn-github-dathere-qsv`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: I (Content & Information Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 55%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), B (Product Intelligence), D (Research & Knowledge Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 60%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from dathere/qsv:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T15:53:46.643Z  
+> **Harvest Timestamp**: 2026-11-25T14:05:08.881Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Blazing-fast, Neuro-symbolic Data-Wrangling toolkit
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3852 stars
+- **Stars / Engagement**: 3856 stars
 
 ---
 
@@ -2293,353 +2293,60 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `dbec78ae` (2026-11-24)
-**Commit Message**: deps: bump Polars to upstream rev 08b2814 (#5111)
+### Incident Patch 1: `c9b35465` (2026-11-25)
+**Commit Message**: test(mcp): classify stats/validate --quote as not a path (#5115)
 
-* deps: bump Polars to upstream rev 08b2814
+* test(mcp): classify stats/validate --quote as not a path
 
-94 commits past 93d31f0; crates stay 0.55.1. Toolchain, crates/polars
-features and Polars' own [patch] section (hashbrown rev) are unchanged.
-The lock gains only the polars source lines plus recursive/stacker/
-http-body edges inside polars crates (all already in the tree).
+#5104 added --quote to stats and validate. It takes a quote character,
+but its description mentions the file being read, so the
+path-classification test flagged it and has failed on every PR since.
+List it with the other options that aren't paths.
 
-sqlp results that change (tests added, each fails on 93d31f0):
-- UNNEST of an empty/NULL list returns no rows (#30996); updated
-  sqlp_unnest_issue_3108, whose empty-data row is now dropped
-- STRPOS/POSITION return a character position (#31026)
-- an aggregate in WHERE errors (#31004)
-- REPLACE with an empty pattern is a no-op (#31039); LEFT/RIGHT(NULL, 0)
-  are NULL (#30941)
-- SQL join keys of a date and a timestamp are cast to a common type
-  (#31053)
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-New SQL: INSERT/UPDATE on registered tables (#30958), COPY <table> FROM
-(#30975), UNNEST WITH ORDINALITY (#31017), frames ending before the
-current row (#31022), SHOW FUNCTIONS (#31002), REGEXP_SUBSTR and
-JSON_EXTRACT_PATH[_TEXT] (#31003). QSV_SQL_DISABLE_FILE_WRITES still
-refuses COPY ... TO; INSERT/UPDATE/COPY FROM write no files.
+* docs: cite #5115 in MCP CHANGELOG
 
-COUNT(*) over UNION ALL ... LIMIT s
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `CHANGELOG.md` (modified, +10/-0)
+---------
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `.claude/skills/CHANGELOG.md` (modified, +3/-0)
 ```diff
-@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- ## [Unreleased]
+@@ -23,6 +23,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - **`qsv-synthesize --seed` is the same at any `--jobs`**: rows are now generated in parallel, in fixed 8,192-row blocks, so a seed gives the same rows whatever `--jobs` is (unless `stats` uses approximate estimators, whether requested via `--stats-options` or switched on automatically when the input won't fit in memory), though different rows than qsv 29.0.0. Skill regenerated from the USAGE text. ([#5069](https://github.com/dathere/qsv/pull/5069))
+ - **`qsv-synthesize` warns that its output is not anonymized** ([#5064](https://github.com/dathere/qsv/pull/5064)): synthetic output can contain real source values. The skill description was regenerated from the README command table.
  
- ### Added
-+- `sqlp`: new SQL from the Polars bump to `08b2814` (all failed on `93d31f0`): `INSERT INTO <table> VALUES ...` and `UPDATE <table> SET ...` on registered tables ([#30958](https://github.com/pola-rs/polars/pull/30958)), which change the table for the statements after them in a `.sql` script but never the input file; `COPY <table> FROM '<file>'`, which appends a file's rows to a table as in Postgres (give `(HEADER true)` for a file with a header row; without it the header is read as a data row, which fails on a numeric column) ([#30975](https://github.com/pola-rs/polars/pull/30975)); `UNNEST ... WITH ORDINALITY` ([#31017](https://github.com/pola-rs/polars/pull/31017)); window frames that end before the current row, e.g. `ROWS BETWEEN 2 PRECEDING AND 1 PRECEDING` ([#31022](https://github.com/pola-rs/polars/pull/31022)); `SHOW FUNCTIONS` ([#31002](https://github.com/pola-rs/polars/pull/31002)); and the functions `REGEXP_SUBSTR`, `JSON_EXTRACT_PATH` and `JSON_EXTRACT_PATH_TEXT` ([#31003](https://github.com/pola-rs/polars/pull/31003)). `RANDOM()` in `LIMIT`/`OFFSET` is drawn once, so it no longer fails ([#30944](https://github.com/pola-rs/polars/pull/30944)). `QSV_SQL_DISABLE_FILE_WRITES` still refuses `COPY ... TO`; it doesn't block `INSERT`, `UPDATE` or `COPY ... FROM`, which write no files (SQL could already read any file through `read_csv()`). ([#5111](https://github.com/dathere/qsv/pull/5111))
- - `validate`, `stats`: new `--quote`, `--escape` and `--no-quoting` options for reading CSV data quoted with another character (e.g. `'`), with quotes escaped as `\"` instead of `""`, or with no quoting at all. Both commands used to read only `"`-quoted data, so a field like `'x,1'` was split in two: `validate --split-ragged` quarantined good rows as ragged, and `stats` failed with "found record with 4 fields". `validate` still writes its `.valid`/`.invalid` split files with standard `"` quoting. Under any non-default quoting, neither an index nor Polars' row count is used, since both assume `"` quoting, so `stats` runs sequentially (slower on large files). A stats cache computed under one quoting is not reused under another. Requested in [#4610](https://github.com/dathere/qsv/issues/4610) ([#5104](https://github.com/dathere/qsv/pull/5104)).
- - `validate`: an unknown JSON Schema `format` now names the closest known one when it looks like a typo, in row validation's warning (`Unknown format "emial" is not checked (did you mean "email"?)`) and in `validate schema`'s error (`... Did you mean "email"?`). Names are compared case-insensitively, within a third of the name's length (at least one edit, a swapped pair of letters counting as one), against the formats the schema's draft checks and qsv's own `currency`. A name close to none of them gets no hint, and the warning is otherwise unchanged. ([#5100](https://github.com/dathere/qsv/pull/5100))
- - `synthesize`: `correlated` relationships may now take categorical members (up to 50 values; not dates or faker columns), e.g. `{"kind": "correlated", "members": ["borough", "latitude", "longitude"]}`. The rows split into strata, one per source combination of the categorical values seen at least `--min-count` times. Each stratum keeps its share of rows, and the numeric members are drawn from that stratum's own quantile buckets, coupled by a copula fitted within strata, so each borough keeps its own coordinates. A `joint` group sharing a categorical member joins the strata, so its tuples stay real, provided no other relationship names its columns (otherwise the usual first-relationship-wins order applies); the rows of a tuple too rare to print count toward the kept tuples sharing its categorical value, which draw that share of their numbers from the rare rows' own buckets, so each value keeps its share and its numeric range (a row printed as a kept city may then carry a rarer city's numbers in the same borough). A stratum too small for buckets of its own (fewer than 2 × `--min-count` − 1 values) uses its categorical value's, then the column's. Categorical members stay only when the strata explain some numeric member by a rank-based correlation ratio at or above `--correlation-threshold`, and a numeric member stays when the strata explain it or it correlates with another member within strata; otherwise the numeric members fall back to a plain `correlated` group and the `joint` groups it took in resolve on their own (or the run aborts under `--strict-relationships`). `--discover-relationships` proposes such members at a correlation ratio of 0.7 or more: on `NYC311-500.csv`, `Borough` joins `Incident Zip`, `BBL`, both State Plane coordinates, `Latitude` and `Longitude` in one group, and synthetic Latitude and Longitude keep Borough's correlation ratio (0.894 and 0.892, vs 0.892 and 0.878 in the source) and their 5th-95th percentiles. A discovered group holds
-```
-
-**File**: `Cargo.lock` (modified, +30/-27)
-```diff
-@@ -6006,7 +6006,7 @@ dependencies = [
- [[package]]
- name = "polars"
- version = "0.55.1"
--source = "git+https://github.com/pola-rs/polars?rev=93d31f095fe3247677895b67d32f681b89e1e103#93d31f095fe3247677895b67d32f681b89e1e103"
-+source = "git+https://github.com/pola-rs/polars?rev=08b2814ce6386c0efe0fea512912353f42a8b7b6#08b2814ce6386c0efe0fea512912353f42a8b7b6"
- dependencies = [
-  "getrandom 0.2.17",
-  "getrandom 0.4.3",
-@@ -6031,7 +6031,7 @@ dependencies = [
- [[package]]
- name = "polars-arrow"
- version = "0.55.1"
--source = "git+https://github.com/pola-rs/polars?rev=93d31f095fe3247677895b67d32f681b89e1e103#93d31f095fe3247677895b67d32f681b89e1e103"
-+source = "git+https://github.com/pola-rs/polars?rev=08b2814ce6386c0efe0fea512912353f42a8b7b6#08b2814ce6386c0efe0fea512912353f42a8b7b6"
- dependencies = [
-  "avro-schema",
-  "bitflags 2.13.2",
-@@ -6074,7 +6074,7 @@ dependencies = [
- [[package]]
- name = "polars-async"
- version = "0.55.1"
--source = "git+https://github.com/pola-rs/polars?rev=93d31f095fe3247677895b67d32f681b89e1e103#93d31f095fe3247677895b67d32f681b89e1e103"
-+source = "git+https://github.com/pola-rs/polars?rev=08b2814ce6386c0efe0fea512912353f42a8b7b6#08b2814ce6386c0efe0fea512912353f42a8b7b6"
- dependencies = [
-  "atomic-waker",
-  "crossbeam-channel",
-@@ -6093,7 +6093,7 @@ dependencies = [
- [[package]]
- name = "polars-buffer"
- version = "0.55.1"
--source = "git+https://github.com/pola-rs/polars?rev=93d31f095fe3247677895b67d32f681b89e1e103#93d31f095fe3247677895b67d32f681b89e1e103"
-+source = "git+https://github.com/pola-rs/polars?rev=08b2814ce6386c0efe0fea512912353f42a8b7b6#08b2814ce6386c0efe0fea512912353f42a8b7b6"
- dependencies = [
-  "bytemuck",
-  "either",
-@@ -6105,7 +6105,7 @@ dependencies = [
- [[package]]
- name = "polars-compute"
- version = "0.55.1"
--source = "git+https://github.com/pola-rs/polars?rev=93d31f095fe3247677895b67d32f681b89e1e103#93d31f095fe3247677895b67d32f681b89e1e103"
-+source = "git+https://github.com/pola-rs/polars?rev=08b2814ce6386c0efe0fea512912353f42a8b7b6#08b2814ce6386c0efe0fea512912353f42a8b7b6"
- dependencies = [
-  "atoi_simd",
-  "bytemuck",
-@@ -6131,7 +6131,7 @@ dependencies = [
- [[package]]
- name = "polars-config"
- version = "0.55.1"
--source = "git+https://github.com/pola-rs/polars?rev=93d31f095fe3247677895b67d32f681b89e1e103#93d31f095fe3247677895b67d32f681b89e1e103"
-+source = "git+https://github.com/pola-rs/polars?rev=08b2814ce6386c0efe0fea512912353f42a8b7b6#08b2814ce6386c0efe0fea512912353f42a8b7b6"
- dependencies = [
-  "polars-error",
-  "serde",
-@@ -6141,7 +6141,7 @@ dependencies = [
- [[package]]
- name = "polars-core"
- version = "0.55.1"
--source = "git+https://github.com/pola-rs/polars?rev=93d31f095fe3247677895b67d32f681b89e1e103#93d31f095fe3247677895b67d32f681b89e1e103"
-+source = "git+https://github.com/pola-rs/polars?rev=08b2814ce6386c0efe0fea512912353f42a8b7b6#08b2814ce6386c0efe0fea512912353f42a8b7b6"
- dependencies = [
-  "atoi_simd",
-  "bitflags 2.13.2",
-@@ -6182,7 +6182,7 @@ dependencies = [
- [[package]]
- name = "polars-defs"
- version = "0.55.1"
--source = "git+https://github.com/pola-rs/polars?rev=93d31f095fe3247677895b67d32f681b89e1e103#93d31f095fe3247677895b67d32f681b89e1e103"
-+source = "git+https://github.com/pola-rs/polars?rev=08b2814ce6386c0efe0fea512912353f42a8b7b6#08b2814ce6386c0efe0fea512912353f42a8b7b6"
- dependencies = [
-  "chrono",
-  "chrono-tz",
-@@ -6197,7 +6197,7 @@ dependencies = [
- [[package]]
- name = "polars-descriptions"
- version = "0.55.1"
--source = "git+https://github.com/pola-rs/polars?rev=93d31f095fe3247677895b67d32f681b89e1e103#93d31f095fe3247677895b67d32f681b89e1e103"
-+source = "git+https://github.com/pola-rs/polars?rev=08b2814ce6386c0efe0fea512912353f42a8b7b6#08b2814ce6386c0efe0fea512912353f42a8b7b6"
- dependencies = [
-  "serde",
-  "strum_macros 0.28.0",
-@@ -6206,7 +6206,7 @@ dependencies = [
- [[package]]
- name = "polars-dtype"
- version = "0.55.1"
--source = "git+https://github.com/pola-rs/polars?rev=93d31f095fe3247677895b67d32f681b89e1e103#93d31f095fe3247677895b67d32f681b89e1e103"
-+source = "git+https://github.com/pola-rs/polars?rev=08b2814ce6386c0efe0fea512912353f42a8b7b6#08b2814ce6386c0efe0fea512912353f42a8b7b6"
- dependencies = [
-  "boxcar",
-  "hashbrown 0.17.1",
-@@ -6220,7 +6220,7 @@ dependencies = [
- [[package]]
- name = "polars-error"
- version = "0.55.1"
--source = "git+https://github.com/pola-rs/polars?rev=93d31f095fe3247677895b67d32f681b89e1e103#93d31f095fe3247677895b67d32f681b89e1e103"
-+source = "git+https://github.com/pola-rs/polars?rev=08b2814ce6386c0efe0fea512912353f42a8b7b6#08b2814ce6386c0efe0fea512912353f42a8b7b6"
- dependencies = [
-  "avro-schema",
-  "parking_lot 0.12.5",
-@@ -6233,7 +6233,7 @@ dependencies = [
- [[package]]
- name = "polars-expr"
- version = "0.55.1"
--source = "git+https://github.com/pola-rs/polars?rev=93d31f095fe3247677895b67d32f681b89e1e103#93d31f095fe3247677895b67d32f681b89e1e103"
-+source = "git+https://github.com/pola-rs/polars?rev=08b2814ce6386c0efe0fea512912353f42a8b7b6#08b2814ce6386c0efe0fea512912353f42a8b7b6"
- dependencies = 
-```
-
-**File**: `Cargo.toml` (modified, +4/-4)
-```diff
-@@ -545,8 +545,8 @@ serial_test = { version = "4.0", features = ["file_locks"] }
- [patch.crates-io]
- # polars-readstat-rs depends on these directly; redirect them onto the same git polars
- # revision qsv pins, otherwise a second, incompatible polars tree resolves from crates.io. (#5021)
--polars-core  = { git = "https://github.com/pola-rs/polars", rev = "93d31f095fe3247677895b67d32f681b89e1e103" }
--polars-arrow = { git = "https://github.com/pola-rs/polars", rev = "93d31f095fe3247677895b67d32f681b89e1e103" }
-+polars-core  = { git = "https://github.com/pola-rs/polars", rev = "08b2814ce6386c0efe0fea512912353f42a8b7b6" }
-+polars-arrow = { git = "https://github.com/pola-rs/polars", rev = "08b2814ce6386c0efe0fea512912353f42a8b7b6" }
- # polars-readstat-rs 0.27.0 calls DataFrame/Series::slice(offset, len), which polars main
- # replaced with slice(impl Into<Slice>) (pola-rs/polars#30887). Our fork passes the pair as a
- # tuple; upstream can't take it while it builds on crates.io polars 0.55.1. The fork also
-@@ -624,9 +624,9 @@ compact_bytes = { git = "https://github.com/jqnatividad/compact_bytes", branch =
- #      and the commit hash 52ea381)
- # ================================
- # Keep the next line bare: build.rs reads everything after `=` into --version.
--# QSV_POLARS_REV=py-2.1.0:93d31f0
-+# QSV_POLARS_REV=py-2.1.0:08b2814
- # polars = { git = "https://github.com/pola-rs/polars", tag = "py-2.1.0", optional = true }
--polars = { git = "https://github.com/pola-rs/polars", rev = "93d31f095fe3247677895b67d32f681b89e1e103", optional = true }
-+polars = { git = "https://github.com/pola-rs/polars", rev = "08b2814ce6386c0efe0fea512912353f42a8b7b6", optional = true }
++### Fixed
++- **Path-classification test: `stats --quote` and `validate --quote` are not paths.** Since #5104 the test that every skill option whose description mentions files is classified failed on every PR: these options take a quote character, and their descriptions mention the file being read. They are now listed with the other options that aren't paths. Test-only change. ([#5115](https://github.com/dathere/qsv/pull/5115))
++
+ ## [29.0.2] - 2026-11-23
+ Patch release of the MCP server and the Claude Cowork / Claude Code plugin, for use with qsv 29.0.0 (`minimum_qsv_version` stays 29.0.0). It carries the security fixes below, published as advisory [GHSA-5763-32xg-7rh3](https://github.com/dathere/qsv/security/advisories/GHSA-5763-32xg-7rh3); update now. As in 29.0.1, the bundled skill files also describe `qsv-synthesize` options from the next qsv release (listed under [Unreleased]); with qsv 29.0.0 those options are rejected as unknown flags.
  
- # Apache DataSketches (t-digest, HLL, Frequent Items) — upstream C++ does not
- # support big-endian targets, so we exclude the crate on big-endian builds.
 ```
 
-**File**: `README.md` (modified, +1/-1)
+**File**: `.claude/skills/tests/file-operations.test.ts` (modified, +1/-1)
 ```diff
-@@ -115,7 +115,7 @@
- 🧠: expensive operations are memoized with available inter-session Redis/Disk caching for fetch commands.  
- 🗄️: [Extended input support](#extended-input-support).  
- 🗃️: [Limited Extended input support](#limited-extended-input-support).  
--🐻‍❄️: command powered/accelerated by [![polars 0.55.1 at py-2.1.0:93d31f0](https://img.shields.io/badge/polars-0.55.1:py--2.1.0:93d31f0-blue?logo=polars)](https://github.com/pola-rs/polars/releases/tag/py-2.1.0) vectorized query engine.  
-+🐻‍❄️: command powered/accelerated by [![polars 0.55.1 at py-2.1.0:08b2814](https://img.shields.io/badge/polars-0.55.1:py--2.1.0:08b2814-blue?logo=polars)](https://github.com/pola-rs/polars/releases/tag/py-2.1.0) vectorized query engine.  
- 🤖: command uses Natural Language Processing or Generative AI.  
- 🏎️: multithreaded and/or faster when an index (📇) is available.  
- 🚀: multithreaded even without an index.  
-```
-
-**File**: `docs/help/TableOfContents.md` (modified, +1/-1)
-```diff
-@@ -96,7 +96,7 @@
- 🧠: expensive operations are memoized with available inter-session Redis/Disk caching for fetch commands.  
- 🗄️: [Extended input support](../../README.md#extended-input-support).  
- 🗃️: [Limited Extended input support](../../README.md#limited-extended-input-support).  
--🐻‍❄️: command powered/accelerated by [![polars 0.55.1 at py-2.1.0:93d31f0](https://img.shields.io/badge/polars-0.55.1:py--2.1.0:93d31f0-blue?logo=polars)](https://github.com/pola-rs/polars/releases/tag/py-2.1.0) vectorized query engine.  
-+🐻‍❄️: command powered/accelerated by [![polars 0.55.1 at py-2.1.0:08b2814](https://img.shields.io/badge/polars-0.55.1:py--2.1.0:08b2814-blue?logo=polars)](https://github.com/pola-rs/polars/releases/tag/py-2.1.0) vectorized query engine.  
- 🤖: command uses Natural Language Processing or Generative AI.  
- 🏎️: multithreaded and/or faster when an index (📇) is available.  
- 🚀: multithreaded even without an index.  
-```
-
-**File**: `tests/test_sqlp.rs` (modified, +224/-1)
-```diff
-@@ -4040,12 +4040,13 @@ fn sqlp_unnest_issue_3108() {
-         .arg("select id, unnest(string_to_array(data, ',')) as value from data");
- 
-     let got: Vec<Vec<String>> = wrk.read_stdout_on_success(&mut cmd);
-+    // pola-rs/polars#30996: UNNEST of a NULL list returns no rows, so id 2 (empty `data`, read
-+    // as NULL) has none. On 93d31f0 it had one row with an empty `value`.
-     let expected = vec![
-         svec!["id", "value"],
-         svec!["1", "a"],
-         svec!["1", "b"],
-         svec!["1", "c"],
--        svec!["2", ""],
-         svec!["3", "b"],
-         svec!["3", "c"],
-         svec!["3", "d"],
-@@ -7981,6 +7982,228 @@ fn sqlp_new_functions_93d31f0() {
-     );
- }
- 
-+// Polars SQL behavior changed between 93d31f0 and 08b2814.
-+
-+fn strings_fixture(wrk: &Workdir) {
-+    wrk.create(
-+        "s.csv",
-+        vec![
-+            svec!["i", "s"],
-+            svec!["1", "héllo wörld"],
-+            svec!["2", "abc"],
-+            svec!["3", ""],
-+        ],
-+    );
-+}
-+
-+#[test]
-+fn sqlp_strpos_counts_characters() {
-+    // pola-rs/polars#31026 (fix!): STRPOS returns a character position. On 93d31f0 it was a
-+    // byte offset, so the multi-byte `é` before the `w` made it 8.
-+    let wrk = Workdir::new("sqlp_strpos_counts_characters");
-+    strings_fixture(&wrk);
-+
-+    let mut cmd = wrk.command("sqlp");
-+    cmd.arg("s.csv")
-+        .arg("SELECT STRPOS(s, 'w') AS p FROM s WHERE i < 3 ORDER BY i");
-+    let got: Vec<Vec<String>> = wrk.read_stdout_on_success(&mut cmd);
-+    assert_eq!(got, vec![svec!["p"], svec!["7"], svec!["0"]]);
-+}
-+
-+#[test]
-+fn sqlp_replace_empty_pattern_and_left_right_null() {
-+    // pola-rs/polars#31039: REPLACE with an empty pattern leaves the string unchanged. On 93d31f0
-+    // it put the replacement between every character ("XaXbXcX").
-+    let wrk = Workdir::new("sqlp_replace_empty_pattern_and_left_right_null");
-+    strings_fixture(&wrk);
-+
-+    let mut cmd = wrk.command("sqlp");
-+    cmd.arg("s.csv")
-+        .arg("SELECT REPLACE(s, '', 'X') AS r FROM s WHERE i = 2");
-+    let got: Vec<Vec<String>> = wrk.read_stdout_on_success(&mut cmd);
-+    assert_eq!(got, vec![svec!["r"], svec!["abc"]]);
-+
-+    // pola-rs/polars#30941: LEFT and RIGHT with a zero count return NULL on NULL input. On
-+    // 93d31f0 they returned the empty string, written as `""`.
-+    let mut cmd = wrk.command("sqlp");
-+    cmd.arg("s.csv")
-+        .arg("SELECT LEFT(NULL, 0) AS l, RIGHT(NULL, 0) AS r");
-+    let got: String = wrk.stdout_on_success(&mut cmd);
-+    assert_eq!(got, "l,r\n,");
-+}
-+
-+#[test]
-+fn sqlp_aggregate_in_where_errors() {
-+    // pola-rs/polars#31004: an aggregate in WHERE is refused. On 93d31f0, `WHERE SUM(i) > 3`
-+    // returned every row without an error.
-+    let wrk = Workdir::new("sqlp_aggregate_in_where_errors");
-+    strings_fixture(&wrk);
-+
-+    let mut cmd = wrk.command("sqlp");
-+    cmd.arg("s.csv").arg("SELECT i FROM s WHERE SUM(i) > 3");
-+    let stderr = wrk.output_stderr(&mut cmd);
-+    assert!(
-+        stderr.contains("aggregate functions are not allowed in WHERE"),
-+        "{stderr}"
-+    );
-+}
-+
-+#[test]
-+fn sqlp_unnest_empty_list_returns_no_rows() {
-+    // pola-rs/polars#30996: UNNEST of an empty list returns no rows. On 93d31f0 it returned one
-+    // NULL row.
-+    let wrk = Workdir::new("sqlp_unnest_empty_list_returns_no_rows");
-+    strings_fixture(&wrk);
-+
-+    let mut cmd = wrk.command("sqlp");
-+    cmd.arg("s.csv")
-+        .arg("SELECT COUNT(*) AS n FROM (SELECT UNNEST([]) AS x)");
-+    let got: Vec<Vec<String>> = wrk.read_stdout_on_success(&mut cmd);
-+    assert_eq!(got, vec![svec!["n"], svec!["0"]]);
-+}
-+
-+#[test]
-+fn sqlp_join_date_with_timestamp() {
-+    // pola-rs/polars#31053: join keys of a date and a timestamp are cast to their common type.
-+    // On 93d31f0 the join failed with "datatypes of join keys don't match".
-+    let wrk = Workdir::new("sqlp_join_date_with_timestamp");
-+    wrk.create(
-+        "dates.csv",
-+        vec![
-+            svec!["d", "ts"],
-+            svec!["2024-01-01", "2024-01-01 00:00:00"],
-+            svec!["2024-01-02", "2024-01-02 12:00:00"],
-+        ],
-+    );
-+
-+    let mut cmd = wrk.command("sqlp");
-+    cmd.arg("dates.csv").arg(
-+        "SELECT a.d FROM (SELECT CAST(d AS DATE) AS d FROM dates) a JOIN (SELECT CAST(ts AS \
-+         TIMESTAMP) AS ts FROM dates) b ON a.d = b.ts ORDER BY 1",
-+    );
-+    let got: Vec<Vec<String>> = wrk.read_stdout_on_success(&mut cmd);
-+    assert_eq!(got, vec![svec!["d"], svec!["2024-01-01"]]);
-+}
-+
-+#[test]
-+fn sqlp_insert_update_change_table_not_file() {
-+    // pola-rs/polars#30958: INSERT and UPDATE work on registered tables. They change the table
-+    // for the statements after them, never the input file, so they run under
-+    // QSV_SQL_DISABLE_FILE_WRITES too.
-+    let wrk = Workdir::new("sqlp_insert_update_change_table_not_file");
-+    wrk.create(
-+        "u.csv",
-+        vec![svec!["k", "v"], svec!["a", "10"], svec!["b", "20"]],
-+    );
-+    wrk.create_fro
+@@ -730,7 +730,7 @@ describe("path confinement", () => {
+     const NOT_A_PATH = new Set([
+       "--agg", "--align", "--cities-url", "--compression", "--delimiter", "--denominator-key",
+       "--denominator-unit", "--feature-id-key", "--feature-name-key", "--filter",
+-      "--group", "--languages", "--rnull-values", "--select", "--sentinels-as", "--shard",
++      "--group", "--languages", "--quote", "--rnull-values", "--select", "--sentinels-as", "--shard",
+       "--table-name", "--template",
+       // handled elsewhere: the output_file alias, and luau's inline-or-path scripts
+       "--output", "--begin", "--end",
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5115** (2026-11-25): test(mcp): classify stats/validate --quote as not a path (@jqnatividad)
 - **PR #5111** (2026-11-24): deps: bump Polars to upstream rev 08b2814 (@jqnatividad)
 - **PR #5110** (2026-11-24): deps: drop unused direct deps bytemuck and spreadsheet-ods (@jqnatividad)
 - **PR #5108** (2026-11-24): build(deps): bump github/codeql-action from 4.39.3 to 4.39.4 (@dependabot[bot])
 - **PR #5107** (2026-11-24): build(deps): bump anthropics/claude-code-action from 1.0.284 to 1.0.286 (@dependabot[bot])
 - **PR #5106** (2026-11-24): fix(moarstats,pragmastat,scoresql): check a stats cache's parsing options before reusing it (#5105) (@jqnatividad)
-- **PR #5104** (2026-11-24): feat(validate,stats): add --quote, --escape and --no-quoting (#4610) (@jqnatividad)
 
 ---
 
@@ -2659,21 +2366,23 @@ COUNT(*) over UNION ALL ... LIMIT s
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps: bump Polars to upstream rev 08b2814
+## X. test(mcp): classify stats/validate --quote as not a path
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.claude/skills/CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `dbec78ae`: deps: bump Polars to upstream rev 08b2814. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c9b35465`: test(mcp): classify stats/validate --quote as not a path. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/skills/CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- `sqlp`: new SQL from the Polars bump to `08b2814` (all failed on `93d31f0`): `INSERT INTO <table> VALUES ...` and `UPDATE <table> SET ...` on registered tables ([#30958](https://github.com/pola-rs/polars/pull/30958)), which change the table for the statements after them in a `.sql` script but never the input file; `COPY <table> FROM '<file>'`, which appends a file's rows to a table as in Postgres (give `(HEADER true)` for a file with a header row; without it the header is read as a data row, which fails on a numeric column) ([#30975](https://github.com/pola-rs/polars/pull/30975)); `UNNEST ... WITH ORDINALITY` ([#31017](https://github.com/pola-rs/polars/pull/31017)); window frames that end before the current row, e.g. `ROWS BETWEEN 2 PRECEDING AND 1 PRECEDING` ([#31022](https://github.com/pola-rs/polars/pull/31022)); `SHOW FUNCTIONS` ([#31002](https://github.com/pola-rs/polars/pull/31002)); and the functions `REGEXP_SUBSTR`, `JSON_EXTRACT_PATH` and `JSON_EXTRACT_PATH_TEXT` ([#31003](https://github.com/pola-rs/polars/pull/31003)). `RANDOM()` in `LIMIT`/`OFFSET` is drawn once, so it no longer fails ([#30944](https://github.com/pola-rs/polars/pull/30944)). `QSV_SQL_DISABLE_FILE_WRITE
+### Fixed
+- **Path-classification test: `stats --quote` and `validate --quote` are not paths.** Since #5104 the test that every skill option whose description mentions files is classified failed on every PR: these options take a quote character, and their descriptions mention the file being read. They are now listed with the other options that aren't paths. Test-only change. ([#5115](https://github.com/dathere/qsv/pull/5115))
+
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2683,7 +2392,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `dbec78ae` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c9b35465` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

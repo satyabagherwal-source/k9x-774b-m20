@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T13:49:40.809Z",
+  "last_updated": "2026-11-25T14:05:16.685Z",
   "total_records": 2675,
   "domains": {
     "A": {
@@ -12368,8 +12368,8 @@
       "title": "Research & Knowledge Intelligence: AtomicChat/LFM3-1.7B-Uncensored-GGUF Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-atomicchat-lfm3-1-7b-uncensored-gguf-research-knowledge-intelligence-atomicch.md",
       "repository": "AtomicChat/LFM3-1.7B-Uncensored-GGUF",
-      "content_hash": "5e94d3cdd1da2295334d7e183e001a1cbe0113bf262d1d47a3e5dd24291aecb4",
-      "created_at": "2026-11-21T22:48:21.807Z"
+      "content_hash": "42fc02a0a679bfb40f489906a925f69591826bd41e5cbdf6fe457bf7ac94c575",
+      "created_at": "2026-11-25T14:04:52.244Z"
     },
     "domain_intelligence-design-intelligence-dathere-qsv-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-dathere-qsv-core-invariants",
@@ -12428,8 +12428,8 @@
       "title": "Research & Knowledge Intelligence: hf-atomicchat-lfm3-1.7b-uncensored-gguf-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-atomicchat-lfm3-1-7b-uncensored-gguf-learnings-research-knowledge-intelligenc.md",
       "repository": "hf-atomicchat-lfm3-1.7b-uncensored-gguf-learnings",
-      "content_hash": "1b8b16b583404568ee0a558701ecbbcd7505d9fb50f83be657d10fe6ac009462",
-      "created_at": "2026-11-21T22:48:42.020Z"
+      "content_hash": "158c63b9e63f7496b728ed240570b01bd6906472e4fc2b42b865a251a556eee4",
+      "created_at": "2026-11-25T14:05:13.765Z"
     },
     "domain_intelligence-design-intelligence-dathere-qsv-learnings-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-dathere-qsv-learnings-core-invariants",
@@ -12732,8 +12732,8 @@
       "title": "Architecture Intelligence: dathere/qsv Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-architecture-intelligence-dathere-qsv-core-invariants.md",
       "repository": "dathere/qsv",
-      "content_hash": "ee6e2af8279fec10a83f046ea3c3c2c96030fa7be75a84359d327fbb28ef308c",
-      "created_at": "2026-11-24T15:53:48.669Z"
+      "content_hash": "7a885113e0d0930ffbcef94f063791694ce3247b0b19973b7e3dd5e61f98e300",
+      "created_at": "2026-11-25T14:05:10.260Z"
     },
     "DOM-D-F5645095": {
       "record_id": "DOM-D-F5645095",
@@ -12801,8 +12801,8 @@
       "title": "Architecture Intelligence: dathere-qsv-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-learnings-architecture-intelligence-dathere-qsv-learnings-core-invar.md",
       "repository": "dathere-qsv-learnings",
-      "content_hash": "c8418ce1b47292d581085f57333099deb5d7098da4d9feb75826f64e60052e34",
-      "created_at": "2026-11-24T15:53:55.321Z"
+      "content_hash": "4111e7e15ca5ab8a1e2cc318df35b11989f52cbe08dc0e5e4c9a95863bc0ac0c",
+      "created_at": "2026-11-25T14:05:16.685Z"
     },
     "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8-flash-next-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8-flash-next-core-invariants",
@@ -17470,8 +17470,8 @@
       "title": "Content & Information Intelligence: apache/pinot Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-apache-pinot-content-information-intelligence-apache-pinot-core-invariants.md",
       "repository": "apache/pinot",
-      "content_hash": "07bfe73c7211a312bef956d028cc866440c8fc5ebce0e24311ac3a0146470f1f",
-      "created_at": "2026-11-24T18:43:38.385Z"
+      "content_hash": "942c0acd5534cb0867de59496f131eb82f83a464ee6072c88ff7fbc2f58a750f",
+      "created_at": "2026-11-25T14:05:09.373Z"
     },
     "domain_intelligence-architecture-intelligence-astral-sh-uv-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-astral-sh-uv-learnings-core-invariants",
@@ -27599,8 +27599,8 @@
       "title": "Content & Information Intelligence: apache-pinot-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-apache-pinot-learnings-content-information-intelligence-apache-pinot-learnings-c.md",
       "repository": "apache-pinot-learnings",
-      "content_hash": "d0ebb7fccced7685ced05f0b3524de0d436951f29c6d13da88bd91de04b043c1",
-      "created_at": "2026-11-24T18:43:43.822Z"
+      "content_hash": "1a1bad18eb47c16118423bc57e20ac9d75f01c4678889da1af4eb154f10d0997",
+      "created_at": "2026-11-25T14:05:14.906Z"
     },
     "domain_intelligence-research-knowledge-intelligence-speridlabs-idol-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-speridlabs-idol-core-invariants",

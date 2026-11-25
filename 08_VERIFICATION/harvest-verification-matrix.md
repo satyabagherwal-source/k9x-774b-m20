@@ -13096,3 +13096,6 @@
 | `CYCLE-20261125-JR4E` | `2026-11-25T13:49:21.806Z` | `erkamyaman/rust-anything` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10534` | Yes (`f3ebc86b...`) |
 | `CYCLE-20261125-JUS1` | `2026-11-25T13:49:26.545Z` | `zoontek/react-native-permissions` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10535` | Yes (`98707b02...`) |
 | `CYCLE-20261125-K0ZB` | `2026-11-25T13:49:34.583Z` | `volcengine/OpenViking` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10536` | Yes (`f5855f34...`) |
+| `CYCLE-20261125-3OSV` | `2026-11-25T14:04:51.919Z` | `AtomicChat/LFM3-1.7B-Uncensored-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-atomicchat-lfm3-1.7b-uncensored-gguf-learnings.md` | Yes (`080ea234...`) |
+| `CYCLE-20261125-41SR` | `2026-11-25T14:05:08.763Z` | `apache/pinot` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10537` | Yes (`9e41809f...`) |
+| `CYCLE-20261125-42G2` | `2026-11-25T14:05:09.602Z` | `dathere/qsv` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/dathere-qsv-learnings.md` | Yes (`6157c9de...`) |

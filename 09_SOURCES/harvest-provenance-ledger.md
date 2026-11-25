@@ -13129,3 +13129,6 @@ Every entry in this ledger must capture:
 | `learn-github-erkamyaman-rust-anything` | `https://github.com/erkamyaman/rust-anything` | `7f35f4d7` | Multi-dimensional audit evidence | 2026-11-25T13:49:21.811Z |
 | `learn-github-zoontek-react-native-permissions` | `https://github.com/zoontek/react-native-permissions` | `2dad426e` | Multi-dimensional audit evidence | 2026-11-25T13:49:26.550Z |
 | `learn-github-volcengine-openviking` | `https://github.com/volcengine/OpenViking` | `af412110` | Multi-dimensional audit evidence | 2026-11-25T13:49:34.588Z |
+| `learn-huggingface-atomicchat-lfm3-1-7b-uncensored-gguf` | `https://huggingface.co/AtomicChat/LFM3-1.7B-Uncensored-GGUF` | `hf-atomicc` | Multi-dimensional audit evidence | 2026-11-25T14:04:51.924Z |
+| `learn-github-apache-pinot` | `https://github.com/apache/pinot` | `95ec60fa` | Multi-dimensional audit evidence | 2026-11-25T14:05:08.768Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `c9b35465` | Multi-dimensional audit evidence | 2026-11-25T14:05:09.607Z |

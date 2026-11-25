@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "dbec78ae",
+    "sourceVersion": "c9b35465",
     "license": "NOASSERTION",
-    "contentHash": "181237dc56e61313e8da477a35aa5595644ecec7333090e245550e3c789d12aa",
-    "lastHarvestedAt": "2026-11-24T15:53:48.074Z",
+    "contentHash": "6157c9de8dda25dfa57f23488d164bfcd9d29be2433e99e045314f65abf402a4",
+    "lastHarvestedAt": "2026-11-25T14:05:09.607Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -11655,8 +11655,8 @@
     "sourceUrl": "https://huggingface.co/AtomicChat/LFM3-1.7B-Uncensored-GGUF",
     "sourceVersion": "hf-atomicchat-lfm3-1.7b-uncensored-gguf",
     "license": "Open-Source",
-    "contentHash": "d9b8a89ac7c770e41d9c08a27924ae83d1afe815b9070f9f5e0d0f91984a72ff",
-    "lastHarvestedAt": "2026-11-21T22:48:21.599Z",
+    "contentHash": "080ea234259d6d503cc4171445b8240d5275097dc96e0d7d7456f05570a12094",
+    "lastHarvestedAt": "2026-11-25T14:04:51.924Z",
     "learningId": "learn-huggingface-atomicchat-lfm3-1-7b-uncensored-gguf"
   },
   "hf-edge0-audio8-tts-realistic-0.6b": {
@@ -11963,10 +11963,10 @@
     "repository": "apache/pinot",
     "platform": "github",
     "sourceUrl": "https://github.com/apache/pinot",
-    "sourceVersion": "eec6794f",
+    "sourceVersion": "95ec60fa",
     "license": "Apache-2.0",
-    "contentHash": "485c2234a42bcc56ccc8a3cc81954fa20b2ff000c8ebbe81581f9e35fc07f928",
-    "lastHarvestedAt": "2026-11-24T18:43:37.966Z",
+    "contentHash": "9e41809f86683ef4fc383a33ed13b7c799455a429868decb980d6db74bce8c1d",
+    "lastHarvestedAt": "2026-11-25T14:05:08.768Z",
     "learningId": "learn-github-apache-pinot"
   },
   "n1neman-sapper-v2": {

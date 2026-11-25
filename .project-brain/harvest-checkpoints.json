@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-25T13:49:34.609Z",
+  "last_updated": "2026-11-25T14:05:09.682Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "181237dc56e61313e8da477a35aa5595644ecec7333090e245550e3c789d12aa",
-      "verified_at": "2026-11-24T15:53:48.099Z",
+      "content_hash": "6157c9de8dda25dfa57f23488d164bfcd9d29be2433e99e045314f65abf402a4",
+      "verified_at": "2026-11-25T14:05:09.681Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T15:53:48.100Z"
+      "last_updated": "2026-11-25T14:05:09.681Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -17541,14 +17541,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-atomicchat-lfm3-1-7b-uncensored-gguf",
-      "content_hash": "d9b8a89ac7c770e41d9c08a27924ae83d1afe815b9070f9f5e0d0f91984a72ff",
-      "verified_at": "2026-11-21T22:48:21.607Z",
+      "content_hash": "080ea234259d6d503cc4171445b8240d5275097dc96e0d7d7456f05570a12094",
+      "verified_at": "2026-11-25T14:04:51.943Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T22:48:21.607Z"
+      "last_updated": "2026-11-25T14:04:51.943Z"
     },
     "Edge0/Audio8-TTS-Realistic-0.6b": {
       "repository": "Edge0/Audio8-TTS-Realistic-0.6b",
@@ -18006,14 +18006,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-apache-pinot",
-      "content_hash": "485c2234a42bcc56ccc8a3cc81954fa20b2ff000c8ebbe81581f9e35fc07f928",
-      "verified_at": "2026-11-24T18:43:37.983Z",
+      "content_hash": "9e41809f86683ef4fc383a33ed13b7c799455a429868decb980d6db74bce8c1d",
+      "verified_at": "2026-11-25T14:05:08.789Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T18:43:37.983Z"
+      "last_updated": "2026-11-25T14:05:08.789Z"
     },
     "N1nEmAn/sapper-v2": {
       "repository": "N1nEmAn/sapper-v2",

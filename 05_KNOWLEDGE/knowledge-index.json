@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-25T13:49:41.044Z",
+  "last_updated": "2026-11-25T14:05:16.926Z",
   "total_verified_learnings": 9118,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25469,
+  "total_items": 25472,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112137,10 +112137,10 @@
       "relative_path": "08_VERIFICATION/dathere-qsv-verification-protocol-empirical-defect-shield-for-dathere-qsv.md",
       "title": "Verification Protocol: Empirical Defect Shield for dathere/qsv",
       "repository": "dathere/qsv",
-      "source_version": "dbec78ae",
-      "content_hash": "88ca3d4e6b28d05bfa9f7d509dbd59aa504a5f6d1b18face3309e8d9f7140f7e",
+      "source_version": "c9b35465",
+      "content_hash": "d5008f6baa2fe1e8fb46f91bee9dfe2a1d075ebae4a6057eb9a4f768f554a9cc",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T15:53:48.907Z"
+      "persisted_at": "2026-11-25T14:05:10.516Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i",
@@ -112174,9 +112174,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for dathere-qsv-learnings",
       "repository": "dathere-qsv-learnings",
       "source_version": "HEAD",
-      "content_hash": "d519b64faedf93243dc79c05f4ea08328816878cb73ebee7fa9dcc58fa978c58",
+      "content_hash": "d2386467dc52d85b52f63c00b768b70bc3785a6b66e0285fa936198cb5383322",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T15:53:55.550Z"
+      "persisted_at": "2026-11-25T14:05:16.926Z"
     },
     "candidate_directive-export-fix-consent-of-former-subscribers-covering-private-channels": {
       "item_id": "candidate_directive-export-fix-consent-of-former-subscribers-covering-private-channels",
@@ -220366,7 +220366,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/AtomicChat/LFM3-1.7B-Uncensored-GGUF",
       "source_version": "hf-atomicchat-lfm3-1.7b-uncensored-gguf",
-      "content_hash": "d9b8a89ac7c770e41d9c08a27924ae83d1afe815b9070f9f5e0d0f91984a72ff",
+      "content_hash": "080ea234259d6d503cc4171445b8240d5275097dc96e0d7d7456f05570a12094",
       "dossier_path": "07_PROJECT_LEARNING/hf-atomicchat-lfm3-1.7b-uncensored-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-atomicchat-lfm3-1.7b-uncensored-gguf-learnings.md",
       "promoted_rules": [],
@@ -220375,7 +220375,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T22:48:21.369Z",
+      "verified_at": "2026-11-25T14:04:51.619Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -220392,9 +220392,9 @@
       "title": "Research & Knowledge Intelligence: AtomicChat/LFM3-1.7B-Uncensored-GGUF Core Invariants",
       "repository": "AtomicChat/LFM3-1.7B-Uncensored-GGUF",
       "source_version": "hf-atomicchat-lfm3-1.7b-uncensored-gguf",
-      "content_hash": "5e94d3cdd1da2295334d7e183e001a1cbe0113bf262d1d47a3e5dd24291aecb4",
+      "content_hash": "42fc02a0a679bfb40f489906a925f69591826bd41e5cbdf6fe457bf7ac94c575",
       "domain_letter": "D",
-      "persisted_at": "2026-11-21T22:48:21.807Z"
+      "persisted_at": "2026-11-25T14:04:52.244Z"
     },
     "learn-github-dathere-qsv": {
       "learning_id": "learn-github-dathere-qsv",
@@ -220680,9 +220680,9 @@
       "title": "Research & Knowledge Intelligence: hf-atomicchat-lfm3-1.7b-uncensored-gguf-learnings Core Invariants",
       "repository": "hf-atomicchat-lfm3-1.7b-uncensored-gguf-learnings",
       "source_version": "HEAD",
-      "content_hash": "1b8b16b583404568ee0a558701ecbbcd7505d9fb50f83be657d10fe6ac009462",
+      "content_hash": "158c63b9e63f7496b728ed240570b01bd6906472e4fc2b42b865a251a556eee4",
       "domain_letter": "D",
-      "persisted_at": "2026-11-21T22:48:42.020Z"
+      "persisted_at": "2026-11-25T14:05:13.765Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-provablehq-snarkos-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-provablehq-snarkos-learnings",
@@ -221717,10 +221717,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-architecture-intelligence-dathere-qsv-core-invariants.md",
       "title": "Architecture Intelligence: dathere/qsv Core Invariants",
       "repository": "dathere/qsv",
-      "source_version": "dbec78ae",
-      "content_hash": "ee6e2af8279fec10a83f046ea3c3c2c96030fa7be75a84359d327fbb28ef308c",
+      "source_version": "c9b35465",
+      "content_hash": "7a885113e0d0930ffbcef94f063791694ce3247b0b19973b7e3dd5e61f98e300",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T15:53:48.669Z"
+      "persisted_at": "2026-11-25T14:05:10.260Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-learnings-core-invariant": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-learnings-core-invariant",
@@ -221790,9 +221790,9 @@
       "title": "Architecture Intelligence: dathere-qsv-learnings Core Invariants",
       "repository": "dathere-qsv-learnings",
       "source_version": "HEAD",
-      "content_hash": "c8418ce1b47292d581085f57333099deb5d7098da4d9feb75826f64e60052e34",
+      "content_hash": "4111e7e15ca5ab8a1e2cc318df35b11989f52cbe08dc0e5e4c9a95863bc0ac0c",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T15:53:55.321Z"
+      "persisted_at": "2026-11-25T14:05:16.685Z"
     },
     "learn-huggingface-qwen-qwen3-8-flash-next": {
       "learning_id": "learn-huggingface-qwen-qwen3-8-flash-next",
@@ -235905,8 +235905,8 @@
       "slug": "apache-pinot",
       "platform": "github",
       "source_url": "https://github.com/apache/pinot",
-      "source_version": "eec6794f",
-      "content_hash": "485c2234a42bcc56ccc8a3cc81954fa20b2ff000c8ebbe81581f9e35fc07f928",
+      "source_version": "95ec60fa",
+      "content_hash": "9e41809f86683ef4fc383a33ed13b7c799455a429868decb980d6db74bce8c1d",
       "dossier_path": "07_PROJECT_LEARNING/apache-pinot-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apache-pinot-learnings.md",
       "promoted_rules": [
@@ -235954,6 +235954,11 @@
           "number": 10333,
           "title": "ClassCastException in range filters on version 1 range indexes under null handli",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10537,
+          "title": "Bump com.github.jnr:jnr-posix from 3.2.8 to 3.2.9",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -235961,7 +235966,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T18:43:37.756Z",
+      "verified_at": "2026-11-25T14:05:08.487Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -236003,10 +236008,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-apache-pinot-content-information-intelligence-apache-pinot-core-invariants.md",
       "title": "Content & Information Intelligence: apache/pinot Core Invariants",
       "repository": "apache/pinot",
-      "source_version": "eec6794f",
-      "content_hash": "07bfe73c7211a312bef956d028cc866440c8fc5ebce0e24311ac3a0146470f1f",
+      "source_version": "95ec60fa",
+      "content_hash": "942c0acd5534cb0867de59496f131eb82f83a464ee6072c88ff7fbc2f58a750f",
       "domain_letter": "I",
-      "persisted_at": "2026-11-24T18:43:38.385Z"
+      "persisted_at": "2026-11-25T14:05:09.373Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-apache-pinot": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-apache-pinot",
@@ -236015,10 +236020,10 @@
       "relative_path": "08_VERIFICATION/apache-pinot-verification-protocol-empirical-defect-shield-for-apache-pinot.md",
       "title": "Verification Protocol: Empirical Defect Shield for apache/pinot",
       "repository": "apache/pinot",
-      "source_version": "eec6794f",
-      "content_hash": "8308ecaaeb0701df2dc70ae573a0523e8da6c4765c8a1bdacea3416d0f6b5ba2",
+      "source_version": "95ec60fa",
+      "content_hash": "86a65ff4e9432cc23ca0bfab2b31d0bcfcb6d21b357fccb5d0fa0c75ebc35a7f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T18:43:38.565Z"
+      "persisted_at": "2026-11-25T14:05:09.618Z"
     },
     "domain_intelligence-architecture-intelligence-astral-sh-uv-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-astral-sh-uv-learnings-core-invariants",
@@ -275795,9 +275800,9 @@
       "title": "Content & Information Intelligence: apache-pinot-learnings Core Invariants",
       "repository": "apache-pinot-learnings",
       "source_version": "HEAD",
-      "content_hash": "d0ebb7fccced7685ced05f0b3524de0d436951f29c6d13da88bd91de04b043c1",
+      "content_hash": "1a1bad18eb47c16118423bc57e20ac9d75f01c4678889da1af4eb154f10d0997",
       "domain_letter": "I",
-      "persisted_at": "2026-11-24T18:43:43.822Z"
+      "persisted_at": "2026-11-25T14:05:14.906Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-apache-pinot-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-apache-pinot-learnings",
@@ -275807,9 +275812,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for apache-pinot-learnings",
       "repository": "apache-pinot-learnings",
       "source_version": "HEAD",
-      "content_hash": "a8ecf1aebdaf1eeada35e5d470590886bea7458bc9e7cdd2b5c0cbad0eb86db8",
+      "content_hash": "70fbd214139649b0c1d6aa54e8d63a8d236b82f44757c13c79714878f9c47e98",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T18:43:43.995Z"
+      "persisted_at": "2026-11-25T14:05:15.142Z"
     },
     "learn-huggingface-speridlabs-idol": {
       "learning_id": "learn-huggingface-speridlabs-idol",
@@ -348544,6 +348549,44 @@
       "content_hash": "fa0ed1ead13202313ea6403297ae73dbd1235c27cdae94022b3c8885f8ed7abf",
       "domain_letter": "G",
       "persisted_at": "2026-11-25T13:49:38.772Z"
+    },
+    "rule-10537": {
+      "learning_id": "rule-10537",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10537,
+      "title": "Bump com.github.jnr:jnr-posix from 3.2.8 to 3.2.9",
+      "source_url": "https://github.com/apache/pinot",
+      "source_version": "95ec60fa",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T14:05:08.488Z"
+    },
+    "candidate_directive-bump-com-github-jnr-jnr-posix-from-3-2-8-to-3-2-9": {
+      "item_id": "candidate_directive-bump-com-github-jnr-jnr-posix-from-3-2-8-to-3-2-9",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-46CI-bump-com-github-jnr-jnr-posix-from-3-2-8-to-3-2-9.md",
+      "title": "Bump com.github.jnr:jnr-posix from 3.2.8 to 3.2.9",
+      "repository": "apache-pinot-learnings",
+      "source_version": "HEAD",
+      "content_hash": "877a1636f85386ad472a0328a8a264d582ce46f72e0f3a7ee5ab39f66584040c",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-25T14:05:14.659Z"
+    },
+    "candidate_directive-test-mcp-classify-stats-validate-quote-as-not-a-path": {
+      "item_id": "candidate_directive-test-mcp-classify-stats-validate-quote-as-not-a-path",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-47PH-test-mcp-classify-stats-validate-quote-as-not-a-path.md",
+      "title": "test(mcp): classify stats/validate --quote as not a path",
+      "repository": "dathere-qsv-learnings",
+      "source_version": "HEAD",
+      "content_hash": "0c3181133db285196b79dfa9015449fbf18c7a8ca6b67dbaf6e4ce96a322df8e",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-25T14:05:16.427Z"
     }
   },
   "ai-builder-brain": {

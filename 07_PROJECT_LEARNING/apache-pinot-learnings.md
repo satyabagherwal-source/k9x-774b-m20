@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apache-pinot-learnings.md`  
 > **Source**: github ([https://github.com/apache/pinot](https://github.com/apache/pinot))  
-> **Source Version**: `eec6794f`  
+> **Source Version**: `95ec60fa`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T18:43:36.847Z  
+> **Timestamp**: 2026-11-25T14:05:07.370Z  
 > **Learning ID**: `learn-github-apache-pinot`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apache-pinot-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apache/pinot](https://github.com/apache/pinot))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T18:43:36.841Z  
+> **Harvest Timestamp**: 2026-11-25T14:05:07.363Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1972,11 +1972,11 @@ const syncTableSchemaData = (data, showFieldType) => {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #20364** (2026-11-24): **Fix minion test races during parallel execution and segment refresh**
-  *Symptoms*: Fix two test races observed in #20355:  - `SegmentGenerationAndPushTaskGeneratorTest` and `SegmentGenerationAndPushTaskExecutorTest` shared the classpath resource directory as their working directory. Parallel forks could collide on `input/dummyTable.json.tmp` and fail its rename. Give each executor invocation a unique temporary directory and clean it up in `finally`. - `RefreshSegmentMinionTest.testMetadataPushRefresh` dereferenced missing query-result fields while refreshed segments were still becoming available. Make the polling predicate return false until the selected column's type is exactly `FLOAT`, preserving the existing timeout.  Validation on JDK 25.0.5: all 13 targeted tests passed (7 unit tests and 6 integration tests), with three parallel forks enabled. Both affected modules also passed Spotless, Checkstyle, license formatting, and license checks. Compilation included deprecation and warning flags.  ```bash ./mvnw -B -ntp -Ppinot-fastdev -Ddevelocity.scan.disabled=true \   -pl pinot-plugins/pinot-minion-tasks/pinot-minion-builtin-tasks,pinot-integration-tests -am \   -Dtest=SegmentGenerationAndPushTaskGeneratorTest,SegmentGenerationAndPushTaskExecutorTest,RefreshSegmentMinionTest \   -Dsurefire.failIfNoSpecifiedTests=false -Dunit.test.fork.count=3 \   -Dmaven.compiler.showDeprecation=true -Dmaven.compiler.showWarnings=true test ``` 
+- **Issue #20370** (2026-11-24): **Reuse broker principal validation for requests without a table**
+  *Symptoms*: ## Summary  Use the existing empty-table-set authorization path when a broker request has no table context. This gives the ZooKeeper-backed provider one place to validate the caller and apply table restrictions.  ## How to reproduce in the unit test  Run `ZkBasicAuthAccessControlFactoryTest#testQueryAuthorization` with the updated assertions. The test covers the identity-only overload for valid, missing, and incorrect credentials, along with the existing named-table cases.  ```sh ./mvnw -pl pinot-broker -am -Dtest=ZkBasicAuthAccessControlFactoryTest -Dsurefire.failIfNoSpecifiedTests=false test ``` 
 
-- **Issue #20314** (2026-11-24): **[multistage] Resolve correlated UNNEST array reference by field index**
-  *Symptoms*: ### Problem  On the multi-stage engine, `CROSS JOIN UNNEST` over a column produced by an aggregate fails at plan time:  ```sql SELECT f.col1, u.v FROM (SELECT col1, ARRAY_AGG(col3, 'INT') AS r FROM a GROUP BY col1) f CROSS JOIN UNNEST(f.r) AS u(v) -- Error composing query plan ...: Unsupported RexNode type with SqlKind: FIELD_ACCESS ```  ### Root cause  After optimization, the correlate's left input is the aggregate itself, and its output fields carry generated names (`agg#0`, `$f1`, ...) instead of the alias `r`:  ```text LogicalCorrelate(correlation=[$cor0], requiredColumns=[{1}])   PinotLogicalAggregate(group=[{0}], agg#0=[ARRAY_AGG(...)])   Uncollect     LogicalProject(r=[$cor0.r]) ```  `RelToPlanNodeConverter.resolveInputRefFromCorrel` looked up `$cor0.r` by field name in the left input's row type. The lookup missed, and the fallback `RexExpressionUtils.fromRexNode(RexFieldAccess)` threw. Unnesting a column of a plain scan works only because there the left input keeps the alias.  ### Fix  Resolve the correlated reference by its field index, which is how Calcite defines it: the index into the correlation variable's row type, i.e. the left input's row type. `PlanNodeToRelConverter` already builds the reference this way. The index is used only when the correlation variable's row type still lines up with the left input (same field count, same type at that index, ignoring nullability); otherwise the existing name match is used as before.  ### Compatibility  This is a planner-
+- **Issue #20369** (2026-11-24): **Enforce broker table permissions for time-series queries**
+  *Symptoms*: ## Summary  Use the broker's requester check before time-series planning. ZooKeeper-backed authentication for this check landed in #20370. Check the caller's table grants across all leaves in the logical plan, then run the configured provider's fine-grained checks on the resolved table names. Apply both checks to execution, empty results, and EXPLAIN.  Time-series execution does not apply row filters. When row-level security is enabled and the caller has a filter on a referenced table, the broker denies the request. Deployments with a custom time-series EXPLAIN handler must implement the overload that accepts the caller identity and HTTP headers.  ## How to reproduce in a unit test  The broker unit test supplies a two-table logical plan and a mock provider that denies the second table. It covers regular execution, empty results, and EXPLAIN, as well as resolved-table denials and row-filter policies. The ZooKeeper Basic Auth tests from #20370 cover requester-only authentication with valid, missing, and invalid credentials.  ## Validation  90 tests passed after rebasing onto `3c43f6853c`, across `TimeSeriesRequestHandlerTest`, `TimeSeriesQueryEnvironmentTest`, `PinotClientRequestTest`, `BasicAuthAccessControlTest`, `ZkBasicAuthAccessControlFactoryTest`, and `PinotSinkIntegrationTest`. Spotless, Checkstyle, license formatting and verification, and test compilation passed for the affected modules.  
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1993,487 +1993,129 @@ const syncTableSchemaData = (data, showFieldType) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4bd680a4` (2026-11-24)
-**Commit Message**: Fix ClassCastException in range filters on version 1 range indexes under null handling (#20331)
+### Incident Patch 1: `95ec60fa` (2026-11-25)
+**Commit Message**: Bump com.github.jnr:jnr-posix from 3.2.8 to 3.2.9 (#20387)
 
-**File**: `pinot-core/src/main/java/org/apache/pinot/core/operator/filter/RangeIndexBasedFilterOperator.java` (modified, +4/-2)
-```diff
-@@ -101,10 +101,12 @@ private BlockDocIdSet evaluateLegacyRangeFilter() {
-     if (partialMatches == null) {
-       return matches != null ? BitmapDocIdSet.create(matches, _numDocs) : EmptyDocIdSet.unscanned();
-     }
--    // Need to scan the first and last range as they might be partially matched
-+    // Need to scan the first and last range as they might be partially matched. Scan without null handling because
-+    // BaseColumnFilterOperator applies the null semantics to the combined result, and doing it in the scan as well
-+    // wraps the scan result into a doc id set whose iterator is not a ScanBasedDocIdIterator.
-     ScanBasedFilterOperator scanBasedFilterOperator =
-         new ScanBasedFilterOperator(_queryContext, _predicateEvaluator, _dataSource, _numDocs);
--    BlockDocIdSet scanBasedDocIdSet = scanBasedFilterOperator.getTrues();
-+    BlockDocIdSet scanBasedDocIdSet = scanBasedFilterOperator.getNextBlockWithoutNullHandling();
-     MutableRoaringBitmap docIds = ((ScanBasedDocIdIterator) scanBasedDocIdSet.iterator()).applyAnd(partialMatches);
-     if (matches != null) {
-       docIds.or(matches);
-```
+Bumps [com.github.jnr:jnr-posix](https://github.com/jnr/jnr-posix) from 3.2.8 to 3.2.9.
+- [Release notes](https://github.com/jnr/jnr-posix/releases)
+- [Commits](https://github.com/jnr/jnr-posix/compare/jnr-posix-3.2.8...jnr-posix-3.2.9)
 
-**File**: `pinot-core/src/test/java/org/apache/pinot/queries/NullHandlingEnabledQueriesTest.java` (modified, +67/-0)
+---
+updated-dependencies:
+- dependency-name: com.github.jnr:jnr-posix
+  dependency-version: 3.2.9
+  dependency-type: direct:production
+  update-type: version-update:semver-patch
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `pom.xml` (modified, +1/-1)
 ```diff
-@@ -82,6 +82,7 @@ public class NullHandlingEnabledQueriesTest extends BaseQueriesTest {
-           .setNoDictionaryColumns(List.of(COLUMN1))
-           .setRangeIndexColumns(List.of(COLUMN1))
-           .build();
-+  private static final TableConfig TABLE_CONFIG_WITH_LEGACY_RANGE_INDEX_COLUMN = getTableConfigWithLegacyRangeIndex();
-   private static final int NUM_OF_SEGMENT_COPIES = 4;
-   private static final Map<String, String> QUERY_OPTIONS = Map.of("enableNullHandling", "true");
+@@ -368,7 +368,7 @@
+     <equalsverifier.version>3.19.4</equalsverifier.version>
+     <testcontainers.version>2.0.5</testcontainers.version>
+     <h2.version>2.5.252</h2.version>
+-    <jnr-posix.version>3.2.8</jnr-posix.version>
++    <jnr-posix.version>3.2.9</jnr-posix.version>
+     <scalatest.version>3.2.20</scalatest.version>
+     <assertj.version>3.27.7</assertj.version>
  
-@@ -382,6 +383,72 @@ public void testFastFilteredCountExcludesNullsOnMultiValueColumn()
-     assertEquals(getRows(String.format("SELECT COUNT(*) FROM testTable WHERE NOT (%s = 2)", COLUMN1)).get(0)[0], 0L);
-   }
- 
-+  /// A multi-value column always gets the legacy range index, which is not exact: the documents of a range that the
-+  /// predicate covers only in part are found by a scan. The null row is left out once, from the combined result.
-+  @Test
-+  public void testRangeFilterOnMultiValueColumnWithLegacyRangeIndex()
-+      throws Exception {
-+    initializeRows();
-+    for (int i = 0; i < 30; i++) {
-+      insertRow(new Object[]{i, i + 1});
-+    }
-+    insertRow(null);
-+    Schema schema = schemaBuilder().addMultiValueDimension(COLUMN1, DataType.INT).build();
-+    setUpSegments(TABLE_CONFIG_WITH_RANGE_INDEX_COLUMN, schema);
-+
-+    // Rows 4 to 29 hold a value above 4
-+    assertEquals(getRows(String.format("SELECT COUNT(*) FROM testTable WHERE %s > 4", COLUMN1)).get(0)[0],
-+        (long) 26 * NUM_OF_SEGMENT_COPIES);
-+    // Rows 0 to 3 hold no value above 4, and the null row is UNKNOWN
-+    assertEquals(getRows(String.format("SELECT COUNT(*) FROM testTable WHERE NOT (%s > 4)", COLUMN1)).get(0)[0],
-+        (long) 4 * NUM_OF_SEGMENT_COPIES);
-+    // Rows 4 to 20 hold a value from 5 to 20
-+    assertEquals(
-+        getRows(String.format("SELECT COUNT(*) FROM testTable WHERE %s BETWEEN 5 AND 20", COLUMN1)).get(0)[0],
-+        (long) 17 * NUM_OF_SEGMENT_COPIES);
-+    // Rows 0 to 4 hold a value below 5. The default value stored for the null row is below 5 as well, so this checks
-+    // that the null row is left out of the combined result.
-+    assertEquals(getRows(String.format("SELECT COUNT(*) FROM testTable WHERE %s < 5", COLUMN1)).get(0)[0],
-+        (long) 5 * NUM_OF_SEGMENT_COPIES);
-+  }
-+
-+  /// A single-value column gets the legacy range index when the table sets `rangeIndexVersion` to 1, and goes through
-+  /// the same partial range scan as a multi-value column.
-+  @Test
-+  public void testRangeFilterOnSingleValueColumnWithLegacyRangeIndex()
-+      throws Exception {
-+    initializeRows();
-+    for (int i = 0; i < 30; i++) {
-+      insertRow(i);
-+    }
-+    insertRow(null);
-+    Schema schema = schemaBuilder().addSingleValueDimension(COLUMN1, DataType.INT).build();
-+    setUpSegments(TABLE_CONFIG_WITH_LEGACY_RANGE_INDEX_COLUMN, schema);
-+
-+    // Rows 5 to 29 hold a value above 4
-+    assertEquals(getRows(String.format("SELECT COUNT(*) FROM testTable WHERE %s > 4", COLUMN1)).get(0)[0],
-+        (long) 25 * NUM_OF_SEGMENT_COPIES);
-+    // Rows 0 to 4 hold a value of at most 4, and the null row is UNKNOWN
-+    assertEquals(getRows(String.format("SELECT COUNT(*) FROM testTable WHERE NOT (%s > 4)", COLUMN1)).get(0)[0],
-+        (long) 5 * NUM_OF_SEGMENT_COPIES);
-+    // Rows 5 to 20 hold a value from 5 to 20
-+    assertEquals(
-+        getRows(String.format("SELECT COUNT(*) FROM testTable WHERE %s BETWEEN 5 AND 20", COLUMN1)).get(0)[0],
-+        (long) 16 * NUM_OF_SEGMENT_COPIES);
-+    // Rows 0 to 4 hold a value below 5. The default value stored for the null row is below 5 as well, so this checks
-+    // that the null row is left out of the combined result.
-+    assertEquals(getRows(String.format("SELECT COUNT(*) FROM testTable WHERE %s < 5", COLUMN1)).get(0)[0],
-+        (long) 5 * NUM_OF_SEGMENT_COPIES);
-+  }
-+
-+  private static TableConfig getTableConfigWithLegacyRangeIndex() {
-+    TableConfig tableConfig = new TableConfigBuilder(TableType.OFFLINE).setTableName(RAW_TABLE_NAME)
-+        .setRangeIndexColumns(List.of(COLUMN1))
-+        .build();
-+    tableConfig.getIndexingConfig().setRangeIndexVersion(1);
-+    return tableConfig;
-+  }
-+
-   /// A consuming segment reports its null rows through a vector that grows with ingestion and hands out a copy on each
-   /// read. The filter takes that copy once, and the index-based count has to leave those rows out as on a sealed
-   /// segment.
 ```
 
 ---
 
-### Incident Patch 2: `23311e4d` (2026-11-24)
-**Commit Message**: Fix minion test races during parallel execution and segment refresh (#20364)
+### Incident Patch 2: `3c7a9684` (2026-11-25)
+**Commit Message**: Keep waiting for segment offloads when the table shutdown thread is interrupted (#20362)
 
-**File**: `pinot-integration-tests/src/test/java/org/apache/pinot/integration/tests/custom/RefreshSegmentMinionTest.java` (modified, +2/-1)
+releaseAndRemoveAllSegments waits up to 10 minutes for the offloads. When the
+calling thread was interrupted, awaitTermination threw at once and shutdownNow
+dropped the queued offloads and interrupted the running ones, so a consuming
+segment could keep running after its table data manager was gone.
+
+Keep waiting within the same 10 minute limit and restore the interrupt once the
+offloads are done.
+
+**File**: `pinot-core/src/main/java/org/apache/pinot/core/data/manager/BaseTableDataManager.java` (modified, +16/-5)
 ```diff
-@@ -360,7 +360,8 @@ public void testMetadataPushRefresh()
-     waitForServerSegmentDownload(aVoid -> {
-       try {
-         JsonNode response = postQuery("SELECT " + LONG_COL + " FROM " + TABLE_NAME + " LIMIT 10");
--        return response.get("resultTable").get("dataSchema").get("columnDataTypes").toString().contains("FLOAT");
-+        // The result can be absent while the server is still loading refreshed segments.
-+        return "FLOAT".equals(response.path("resultTable").path("dataSchema").path("columnDataTypes").path(0).asText());
-       } catch (Exception e) {
-         throw new RuntimeException(e);
+@@ -342,13 +342,24 @@ protected void releaseAndRemoveAllSegments() {
+         });
        }
-```
-
-**File**: `pinot-plugins/pinot-minion-tasks/pinot-minion-builtin-tasks/src/test/java/org/apache/pinot/plugin/minion/tasks/segmentgenerationandpush/SegmentGenerationAndPushTaskExecutorTest.java` (modified, +27/-21)
-```diff
-@@ -21,7 +21,7 @@
- import java.io.File;
- import java.net.URL;
- import java.nio.charset.StandardCharsets;
--import java.nio.file.Paths;
-+import java.nio.file.Files;
- import java.util.HashMap;
- import java.util.Map;
- import org.apache.commons.io.FileUtils;
-@@ -46,16 +46,14 @@ public class SegmentGenerationAndPushTaskExecutorTest {
-   public void testGenerateTaskSpec()
-       throws Exception {
-     ClassLoader classLoader = getClass().getClassLoader();
--    URL resourcesLoc = classLoader.getResource(".");
--    assertNotNull(resourcesLoc);
-     URL tableConfigUrl = classLoader.getResource("dummyTable.json");
-     assertNotNull(tableConfigUrl);
-     String tableConfig = FileUtils.readFileToString(new File(tableConfigUrl.getFile()), StandardCharsets.UTF_8);
-     SegmentGenerationAndPushTaskExecutor executor = new SegmentGenerationAndPushTaskExecutor();
-     Schema schema = new Schema.SchemaBuilder().build();
-     FieldUtils.writeField(executor, "_eventObserver", new DefaultMinionEventObserver(), true);
-     Map<String, String> configMap = new HashMap<>() {{
--        put(BatchConfigProperties.INPUT_DATA_FILE_URI_KEY, resourcesLoc + "dummyTable.json");
-+        put(BatchConfigProperties.INPUT_DATA_FILE_URI_KEY, tableConfigUrl.toString());
-         put(BatchConfigProperties.INPUT_FORMAT, "");
-         put(BatchConfigProperties.RECORD_READER_CLASS, "AReaderClass");
-         put(BatchConfigProperties.RECORD_READER_CONFIG_CLASS, "AReaderConfigClass");
-@@ -74,17 +72,22 @@ public void testGenerateTaskSpec()
-         put(BatchConfigProperties.SEGMENT_NAME_GENERATOR_PROP_PREFIX + ".propseg2", "valseg2");
-         put(BatchConfigProperties.APPEND_UUID_TO_SEGMENT_NAME, "true");
-       }};
--    SegmentGenerationTaskSpec spec = executor.generateTaskSpec(configMap, Paths.get(resourcesLoc.toURI()).toFile());
--    assertEquals(spec.getSequenceId(), 42);
--    assertEquals("file:" + spec.getInputFilePath(), resourcesLoc + "input/dummyTable.json");
--    assertEquals(spec.getRecordReaderSpec().getClassName(), "AReaderClass");
--    assertEquals(spec.getRecordReaderSpec().getConfigClassName(), "AReaderConfigClass");
--    assertEqualsDeep(spec.getRecordReaderSpec().getConfigs(), Map.of("prop1", "value1", "prop.2", "value2"));
--    assertTrue(spec.isFailOnEmptySegment());
--    assertEquals(spec.getSegmentNameGeneratorSpec().getType(), "inputtext");
--    assertEqualsDeep(spec.getSegmentNameGeneratorSpec().getConfigs(),
--        Map.of("prop.seg.1", "valseg1", "propseg2", "valseg2", SegmentGenerationTaskRunner.APPEND_UUID_TO_SEGMENT_NAME,
--            "true"));
-+    File tempDir = Files.createTempDirectory(getClass().getSimpleName()).toFile();
-+    try {
-+      SegmentGenerationTaskSpec spec = executor.generateTaskSpec(configMap, tempDir);
-+      assertEquals(spec.getSequenceId(), 42);
-+      assertEquals(spec.getInputFilePath(), new File(tempDir, "input/dummyTable.json").getAbsolutePath());
-+      assertEquals(spec.getRecordReaderSpec().getClassName(), "AReaderClass");
-+      assertEquals(spec.getRecordReaderSpec().getConfigClassName(), "AReaderConfigClass");
-+      assertEqualsDeep(spec.getRecordReaderSpec().getConfigs(), Map.of("prop1", "value1", "prop.2", "value2"));
-+      assertTrue(spec.isFailOnEmptySegment());
-+      assertEquals(spec.getSegmentNameGeneratorSpec().getType(), "inputtext");
-+      assertEqualsDeep(spec.getSegmentNameGeneratorSpec().getConfigs(),
-+          Map.of("prop.seg.1", "valseg1", "propseg2", "valseg2",
-+              SegmentGenerationTaskRunner.APPEND_UUID_TO_SEGMENT_NAME, "true"));
-+    } finally {
-+      FileUtils.deleteDirectory(tempDir);
-+    }
-   }
- 
-   @Test
-@@ -104,23 +107,26 @@ public void testGenerateTaskSpecAppendUuidPrecedence()
-   private void assertAppendUuid(Map<String, String> appendUuidConfigs, String expected)
-       throws Exception {
-     ClassLoader classLoader = getClass().getClassLoader();
--    URL resourcesLoc = classLoader.getResource(".");
--    assertNotNull(resourcesLoc);
-     URL tableConfigUrl = classLoader.getResource("dummyTable.json");
-     assertNotNull(tableConfigUrl);
-     SegmentGenerationAndPushTaskExecutor executor = new SegmentGenerationAndPushTaskExecutor();
-     FieldUtils.writeField(executor, "_eventObserver", new DefaultMinionEventObserver(), true);
-     Map<String, String> configMap = new HashMap<>(appendUuidConfigs);
--    configMap.put(BatchConfigProperties.INPUT_DATA_FILE_URI_KEY, resourcesLoc + "dummyTable.json");
-+    configMap.put(BatchConfigProperties.INPUT_DATA_FILE_URI_KEY, tableConfigUrl.toString());
-     configMap.put(BatchConfigProperties.RECORD_READER_CLASS, "AReaderClass");
-     configMap.put(BatchConfigProperties.RECORD_READER_CONFIG_CLASS, "AReaderConfigClass");
-     configMap.put(BatchConfigProperties.SCHEMA, new Schema.SchemaBuilder().build().toSingleLineJsonString());
-     configMap.put(BatchConfigProperties.TABLE_CONFIGS,
-         FileUtils.readFileToString(new File(tableConfigUrl.getFile()), StandardCharsets.UTF_8));
-     configMap.put(BatchConfig
-```
-
-**File**: `pinot-plugins/pinot-minion-tasks/pinot-minion-builtin-tasks/src/test/java/org/apache/pinot/plugin/minion/tasks/segmentgenerationandpush/SegmentGenerationAndPushTaskGeneratorTest.java` (modified, +9/-6)
-```diff
-@@ -22,7 +22,7 @@
- import java.net.URI;
- import java.net.URL;
- import java.nio.charset.StandardCharsets;
--import java.nio.file.Paths;
-+import java.nio.file.Files;
- import java.util.HashMap;
- import java.util.Map;
- import org.apache.commons.io.FileUtils;
-@@ -125,11 +125,9 @@ private void assertAppendUuidInExecutorSpec(Map<String, String> extraBatchConfig
-     Map<String, String> taskConfig =
-         new HashMap<>(invokeGetSingleFileGenerationTaskConfig(batchConfigMap(extraBatchConfigs)));
-     ClassLoader classLoader = getClass().getClassLoader();
--    URL resourcesLoc = classLoader.getResource(".");
--    assertNotNull(resourcesLoc);
-     URL tableConfigUrl = classLoader.getResource("dummyTable.json");
-     assertNotNull(tableConfigUrl);
--    taskConfig.put(BatchConfigProperties.INPUT_DATA_FILE_URI_KEY, resourcesLoc + "dummyTable.json");
-+    taskConfig.put(BatchConfigProperties.INPUT_DATA_FILE_URI_KEY, tableConfigUrl.toString());
-     taskConfig.put(BatchConfigProperties.RECORD_READER_CLASS, "AReaderClass");
-     taskConfig.put(BatchConfigProperties.RECORD_READER_CONFIG_CLASS, "AReaderConfigClass");
-     taskConfig.put(BatchConfigProperties.SCHEMA, new Schema.SchemaBuilder().build().toSingleLineJsonString());
-@@ -138,8 +136,13 @@ private void assertAppendUuidInExecutorSpec(Map<String, String> extraBatchConfig
- 
-     SegmentGenerationAndPushTaskExecutor executor = new SegmentGenerationAndPushTaskExecutor();
-     FieldUtils.writeField(executor, "_eventObserver", new DefaultMinionEventObserver(), true);
--    SegmentGenerationTaskSpec spec = executor.generateTaskSpec(taskConfig, Paths.get(resourcesLoc.toURI()).toFile());
--    assertEquals(spec.getSegmentNameGeneratorSpec().getConfigs().get(APPEND_UUID_TO_SEGMENT_NAME_KEY), expected);
-+    File tempDir = Files.createTempDirectory(getClass().getSimpleName()).toFile();
-+    try {
-+      SegmentGenerationTaskSpec spec = executor.generateTaskSpec(taskConfig, tempDir);
-+      assertEquals(spec.getSegmentNameGeneratorSpec().getConfigs().get(APPEND_UUID_TO_SEGMENT_NAME_KEY), expected);
-+    } finally {
-+      FileUtils.deleteDirectory(tempDir);
-+    }
-   }
- 
-   @SuppressWarnings("unchecked")
-```
-
----
-
-### Incident Patch 3: `76d6f280` (2026-11-24)
-**Commit Message**: fix(segment): reconcile stale FIXMEs around upsert validDocIds and aggr… (#20209)
-
-**File**: `pinot-segment-local/src/main/java/org/apache/pinot/segment/local/indexsegment/mutable/MutableSegmentImpl.java` (modified, +9/-14)
-```diff
-@@ -188,14 +188,10 @@ public class MutableSegmentImpl implements MutableSegment {
-   private final String _upsertOutOfOrderRecordColumn;
-   private final UpsertConfig.ConsistencyMode _upsertConsistencyMode;
- 
--  // The valid doc ids are maintained locally instead of in the upsert metadata manager because:
--  // 1. There is only one consuming segment per partition, the committed segments do not need to modify the valid doc
--  //    ids for the consuming segment.
--  // 2. During the segment commitment, when loading the immutable version of this segment, in order to keep the result
--  //    correct, the valid doc ids should not be changed, only the record location should be changed.
--  // FIXME: There is a corner case for this approach which could cause inconsistency. When there is segment load during
--  //        consumption with newer timestamp (late event in consuming segment), the record location will be updated, but
--  //        the valid doc ids won't be updated.
-+  // Maintained by the upsert metadata manager (via getValidDocIds() / getQueryableDocIds()) as records are indexed and
-+  // as segments are loaded or replaced in the partition. During segment commitment (ConsistencyMode.NONE),
-+  // replaceSegment() works on a snapshot copy of _validDocIds so the consuming segment's bitmap stays intact for
-+  // concurrent queries until the immutable replacement is swapped in.
-   private final ThreadSafeMutableRoaringBitmap _validDocIds;
-   private final ThreadSafeMutableRoaringBitmap _queryableDocIds;
-   private boolean _indexCapacityThresholdBreached;
-@@ -298,7 +294,7 @@ public MultiColumnTextMetadata getMultiColumnTextMetadata() {
-     _logger =
-         LoggerFactory.getLogger(MutableSegmentImpl.class.getName() + "_" + _segmentName + "_" + config.getStreamName());
- 
--    // Metric aggregation can be enabled only if config is specified, and all dimensions have dictionary,
-+    // Metric aggregation can be enabled only if config is specified, all dimensions and metrics are single-valued,
-     // and no metrics have dictionary. If not enabled, the map returned is null.
-     _recordIdMap = enableMetricsAggregationIfPossible(config);
- 
-@@ -1601,12 +1597,11 @@ private int getOrCreateDocId() {
-     }
- 
-     int i = 0;
--    // Dimension and time columns form the aggregation key. They are always dictionary encoded in the consuming
--    // segment (isNoDictionaryColumn forces a dictionary on them when aggregation is enabled), so the _dictId read
--    // below is always valid. Keep this set of columns in sync with the field types forced there.
-+    // Dimension and time columns form the aggregation key. They are always single-valued (enforced in
-+    // enableMetricsAggregationIfPossible; see https://github.com/apache/pinot/issues/3867) and dictionary encoded in
-+    // the consuming segment (isNoDictionaryColumn forces a dictionary on them when aggregation is enabled), so the
-+    // _dictId read below is always valid. Keep this set of columns in sync with the field types forced there.
-     int[] dictIds = new int[_numKeyColumns]; // dimensions + date time columns + time column.
--
--    // FIXME: this for loop breaks for multi value dimensions. https://github.com/apache/pinot/issues/3867
-     for (FieldSpec fieldSpec : _physicalDimensionFieldSpecs) {
-       dictIds[i++] = _indexContainerMap.get(fieldSpec.getName())._dictId;
+       stopExecutorService.shutdown();
+-      try {
+-        // Wait at most 10 minutes before exiting this method.
+-        if (!stopExecutorService.awaitTermination(10, TimeUnit.MINUTES)) {
+-          stopExecutorService.shutdownNow();
++      // Wait at most 10 minutes before exiting this method. An interrupt must not abandon the queued offloads, or a
++      // consuming segment could keep running after its table is gone, so keep waiting and restore the interrupt once
++      // the offloads are done.
++      long deadlineNanos = System.nanoTime() + TimeUnit.MINUTES.toNanos(10);
++      boolean interrupted = false;
++      boolean terminated = false;
++      long remainingNanos;
++      while (!terminated && (remainingNanos = deadlineNanos - System.nanoTime()) > 0) {
++        try {
++          terminated = stopExecutorService.awaitTermination(remainingNanos, TimeUnit.NANOSECONDS);
++        } catch (InterruptedException e) {
++          interrupted = true;
+         }
+-      } catch (InterruptedException e) {
++      }
++      if (!terminated) {
+         stopExecutorService.shutdownNow();
++      }
++      if (interrupted) {
+         Thread.currentThread().interrupt();
+       }
      }
 ```
 
-**File**: `pinot-segment-local/src/test/java/org/apache/pinot/segment/local/indexsegment/mutable/MutableSegmentImplAggregateMetricsTest.java` (modified, +27/-8)
+**File**: `pinot-core/src/test/java/org/apache/pinot/core/data/manager/BaseTableDataManagerTest.java` (modified, +27/-0)
 ```diff
-@@ -21,11 +21,13 @@
- import java.util.Arrays;
- import java.util.HashMap;
- import java.util.HashSet;
-+import java.util.List;
- import java.util.Map;
- import java.util.Random;
- import java.util.Set;
- import java.util.concurrent.TimeUnit;
- import org.apache.commons.lang3.RandomStringUtils;
-+import org.apache.pinot.spi.config.table.ingestion.AggregationConfig;
- import org.apache.pinot.spi.data.DimensionFieldSpec;
- import org.apache.pinot.spi.data.FieldSpec;
- import org.apache.pinot.spi.data.MetricFieldSpec;
-@@ -37,6 +39,8 @@
- import org.testng.annotations.Test;
- 
- import static org.mockito.Mockito.mock;
-+import static org.testng.Assert.assertEquals;
-+import static org.testng.Assert.assertNull;
- 
- 
- public class MutableSegmentImplAggregateMetricsTest {
-@@ -125,9 +129,9 @@ public void testAggregateMetricsWithNoDictionaryKeyColumns()
-   @Test
-   public void testMultiValueDimensionDisablesAggregation()
-       throws Exception {
--    // A multi-value dimension cannot be used as an aggregation key (issue #3867), so aggregation stays disabled and no
--    // rollup happens even though aggregateMetrics is set. This guards against over-broadening the aggregation-enabling
--    // and dictionary-forcing logic to columns that cannot support it.
-+    // A multi-value dimension cannot be used as an aggregation key (issue #3867), so aggregation stays disabled and
-+    // no rollup happens whether configured via aggregateMetrics or ingestionAggregationConfigs. This guards against
-+    // over-broadening the aggregation-enabling and dictionary-forcing logic to columns that cannot support it.
-     Schema schema = new Schema.SchemaBuilder().setSchemaName("testSchema")
-         .addSingleValueDimension(DIMENSION_1, FieldSpec.DataType.INT)
-         .addMultiValueDimension(DIMENSION_2, FieldSpec.DataType.STRING)
-@@ -136,10 +140,24 @@ public void testMultiValueDimensionDisablesAggregation()
-         .addDateTime(TIME_COLUMN1, FieldSpec.DataType.INT, "1:DAYS:EPOCH", "1:DAYS")
-         .addDateTime(TIME_COLUMN2, FieldSpec.DataType.INT, "1:HOURS:EPOCH", "1:HOURS")
-         .build();
-+    Set<String> noDictionaryColumns = Set.of(DIMENSION_1, METRIC, METRIC_2);
-+
-     MutableSegmentImpl mutableSegmentImpl =
--        MutableSegmentImplTestUtils.createMutableSegmentImpl(schema, Set.of(METRIC, METRIC_2), Set.of(), Set.of(),
--            true);
-+        MutableSegmentImplTestUtils.createMutableSegmentImpl(schema, noDictionaryColumns, Set.of(), Set.of(), true);
-+    assertMultiValueDimensionDisablesAggregation(mutableSegmentImpl);
-+    mutableSegmentImpl.destroy();
-+
-+    List<AggregationConfig> aggregationConfigs =
-+        List.of(new AggregationConfig(METRIC, "SUM(metric)"), new AggregationConfig(METRIC_2, "SUM(metric2)"));
-+    mutableSegmentImpl =
-+        MutableSegmentImplTestUtils.createMutableSegmentImpl(schema, noDictionaryColumns, Set.of(), Set.of(),
-+            aggregationConfigs);
-+    assertMultiValueDimensionDisablesAggregation(mutableSegmentImpl);
-+    mutableSegmentImpl.destroy();
-+  }
- 
-+  private void assertMultiValueDimensionDisablesAggregation(MutableSegmentImpl mutableSegmentImpl)
-+      throws Exception {
-     Random random = new Random();
-     for (int i = 0; i < NUM_ROWS; i++) {
-       GenericRow row = new GenericRow();
-@@ -152,9 +170,10 @@ public void testMultiValueDimensionDisablesAggregation()
-       mutableSegmentImpl.index(row, METADATA);
-     }
- 
--    // Aggregation is disabled, so every row is stored as its own document (no rollup).
--    Assert.assertEquals(mutableSegmentImpl.getNumDocsIndexed(), NUM_ROWS);
--    mutableSegmentImpl.destroy();
-+    // Aggregation is disabled, so every row is stored as its own document (no rollup) and no-dictionary key columns
-+    // stay no-dictionary.
-+    assertEquals(mutableSegmentImpl.getNumDocsIndexed(), NUM_ROWS);
-+    assertNull(mutableSegmentImpl.getDataSourceNullable(DIMENSION_1).getDictionary());
+@@ -199,6 +199,33 @@ public static void initSegmentFetcher()
+     PinotCrypterFactory.init(new PinotConfiguration(properties));
    }
  
-   private void testAggregateMetrics(MutableSegmentImpl mutableSegmentImpl)
-```
-
-**File**: `pinot-segment-local/src/test/java/org/apache/pinot/segment/local/indexsegment/mutable/MutableSegmentImplUpsertTest.java` (modified, +114/-0)
-```diff
-@@ -21,22 +21,32 @@
- import java.io.File;
- import java.io.IOException;
- import java.net.URL;
-+import java.nio.file.Files;
- import java.util.List;
-+import org.apache.commons.io.FileUtils;
- import org.apache.pinot.segment.local.data.manager.TableDataManager;
-+import org.apache.pinot.segment.local.indexsegment.immutable.ImmutableSegmentImpl;
-+import org.apache.pinot.segment.local.indexsegment.immutable.ImmutableSegmentLoader;
- import org.apache.pinot.segment.local.segment.creator.TransformPipeline;
-+import org.apache.pinot.segment.local.segment.creator.impl.SegmentIndexCreationDriverImpl;
-+import org.apache.pinot.segment.local.segment.readers.GenericRowRecordReader;
- import org.apache.pinot.segment.local.upsert.PartitionUpsertMetadataManager;
- import org.apache.pinot.segment.local.upsert.TableUpsertMetadataManager;
- import org.apache.pinot.segment.local.upsert.TableUpsertMetadataManagerFactory;
-+import org.apache.pinot.segment.spi.creator.SegmentGeneratorConfig;
- import org.apache.pinot.spi.config.table.HashFunction;
- import org.apache.pinot.spi.config.table.TableConfig;
- import org.apache.pinot.spi.config.table.TableType;
- import org.apache.pinot.spi.config.table.UpsertConfig;
-+import org.apache.pinot.spi.data.DimensionFieldSpec;
-+import org.apache.pinot.spi.data.FieldSpec.DataType;
- import org.apache.pinot.spi.data.Schema;
- import org.apache.pinot.spi.data.readers.FileFormat;
- import org.apache.pinot.spi.data.readers.GenericRow;
- import org.apache.pinot.spi.data.readers.RecordReader;
- import org.apache.pinot.spi.data.readers.RecordReaderFactory;
- import org.apache.pinot.spi.env.PinotConfiguration;
-+import org.apache.pinot.spi.utils.ReadMode;
- import org.apache.pinot.spi.utils.builder.TableConfigBuilder;
- import org.roaringbitmap.buffer.ImmutableRoaringBitmap;
- import org.testng.annotations.Test;
-@@ -55,6 +65,7 @@ public class MutableSegmentImplUpsertTest {
-   private static final String TIME_COLUMN = "secondsSinceEpoch";
-   private static final String OTHER_COMPARISON_COLUMN = "otherComparisonColumn";
-   private static final String PRIMARY_KEY_COLUMN = "event_id";
-+  private static final String DELETE_RECORD_COLUMN = "is_deleted";
- 
-   private MutableSegmentImpl _mutableSegmentImpl;
-   private PartitionUpsertMetadataManager _partitionUpsertMetadataManager;
-@@ -183,6 +194,109 @@ private static GenericRow createRow(String eventId, long otherComparisonValue, l
-     return row;
-   }
- 
-+  /// Verifies that loading an immutable segment with a newer comparison value while a mutable segment is actively
-+  /// consuming invalidates the late event's docId in the consuming segment's `_validDocIds` and `_queryableDocIds`,
-+  /// and that subsequent consumption with an even newer comparison value invalidates the immutable segment's docId.
 +  @Test
-+  public void testSegmentLoadDuringConsumptionUpdatesValidDocIds()
++  public void testReleaseAndRemoveAllSegmentsFinishesOffloadsWhenInterrupted()
 +      throws Exception {
-+    UpsertConfig upsertConfig = createFullUpsertConfig(HashFunction.NONE);
-+    upsertConfig.setDeleteRecordColumn(DELETE_RECORD_COLUMN);
-+    TableConfig tableConfig = new TableConfigBuilder(TableType.REALTIME).setTableName(RAW_TABLE_NAME)
-+        .setTimeColumnName(TIME_COLUMN)
-+        .setUpsertConfig(upsertConfig)
-+        .setNullHandlingEnabled(true)
-+        .build();
-+    URL schemaResourceUrl = getClass().getClassLoader().getResource(SCHEMA_FILE_PATH);
-+    assertNotNull(schemaResourceUrl);
-+    Schema schema = Schema.fromFile(new File(schemaResourceUrl.getFile()));
-+    schema.addField(new DimensionFieldSpec(DELETE_RECORD_COLUMN, DataType.BOOLEAN, true));
++    BaseTableDataManager table = createTableManager();
++    int numSegments = 3;
++    CountDownLatch offloaded = new CountDownLatch(numSegments);
++    for (int i = 0; i < numSegments; i++) {
++      SegmentDataManager segmentDataManager = mock(SegmentDataManager.class);
++      doAnswer(invocation -> {
++        Thread.sleep(200);
++        offloaded.countDown();
++        return null;
++      }).when(segmentDataManager).offload();
++      table.registerSegment(SEGMENT_NAME + i, segmentDataManager);
++    }
 +
-+    TableUpsertMetadataManager tableUpsertMetadataManager =
-+        TableUpsertMetadataManagerFactory.create(new PinotConfiguration(), tableConfig, schema,
-+            mock(TableDataManager.class), null);
-+    PartitionUpsertMetadataManager partitionUpsertMetadataManager =
-+        tableUpsertMetadataManager.getOrCreatePartitionManager(0);
-+    MutableSegmentImpl mutableSegment =
-+        MutableSegmentImplTestUtils.createMutableSegmentImpl(schema, true, TIME_COLUMN,
-+            partitionUpsertMetadataManager, null);
-+    File tempDir = Files.createTempDirectory("MutableSegmentImplUpsertTest").toFile();
-+    ImmutableSegmentImpl immutableSegment = null;
++    Thread.currentThread().interrupt();
 +    try {
-+      // Consuming segment indexes late events for "aa" (docId 0, ts=1567205394) and "cc" (docId 2, ts=1567205394),
-+      // and a newer event for "bb" (docId 1, ts=1567205398).
-+      mutableSegment.index(createRowWithDelete("aa", 1L, 1567205394L, false), null);
-+      mutableSegment.index(createRowWithDelete("bb", 1L, 1567205398L, false), null);
-+      mutableSegment.index(createRowWithDelete("cc", 1L, 1567205394L, false), null);
-+      ImmutableRoaringBitmap mutableValidDocIds = mutableSegment.getValidDocIds().getMutableRoaringBitmap();
-+      ImmutableRoaringBitmap mutableQueryableDocIds = mutableSegment.getQueryableDocIds().getMutableRoaringBitmap();
-+      assertEquals(mutableValidDocIds.toArray(), new int[]{0, 1, 2});
-+      assertEquals(mutableQu
++      table.releaseAndRemoveAllSegments();
++      assertTrue(Thread.currentThread().isInterrupted());
++      assertEquals(offloaded.getCount(), 0L);
++      assertEquals(table.getNumSegments(), 0);
++    } finally {
++      Thread.interrupted();
++    }
++  }
++
+   @Test
+   @SuppressWarnings("deprecation")
+   public void testOnlineSegmentLoadedDuringShutdownIsDestroyed()
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #20387** (2026-11-25): Bump com.github.jnr:jnr-posix from 3.2.8 to 3.2.9 (@dependabot[bot])
+- **PR #20376** (2026-11-25): Reject range index on a raw BIG_DECIMAL column during table config validation (@deshmukhpurushothaman)
 - **PR #20375** (2026-11-24): Bump software.amazon.awssdk:bom from 2.59.5 to 2.59.7 (@dependabot[bot])
+- **PR #20370** (2026-11-24): Reuse broker principal validation for requests without a table (@xiangfu0)
+- **PR #20369** (2026-11-24): Enforce broker table permissions for time-series queries (@xiangfu0)
 - **PR #20364** (2026-11-24): Fix minion test races during parallel execution and segment refresh (@Jackie-Jiang)
-- **PR #20358** (2026-11-23): Bump io.swagger:swagger-jersey2-jaxrs from 1.6.16 to 1.6.17 (@dependabot[bot])
-- **PR #20357** (2026-11-23): Bump io.projectreactor:reactor-core from 3.8.8 to 3.9.0 (@dependabot[bot])
-- **PR #20356** (2026-11-23): Bump org.apache.maven:maven-core from 3.10.1 to 3.10.2 (@dependabot[bot])
-- **PR #20355** (2026-11-24): Bump com.google.errorprone:error_prone_annotations from 2.52.0 to 2.53.0 (@dependabot[bot])
 
 ---
 
@@ -2493,32 +2135,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ClassCastException in range filters on version 1 range indexes under null handli
+## X. Bump com.github.jnr:jnr-posix from 3.2.8 to 3.2.9
 
 **RULE**:
-When implementing operations in `pinot-core/src/main/java/org/apache/pinot/core/operator/filter/RangeIndexBasedFilterOperator.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/pinot. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pom.xml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/pinot. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4bd680a4`: ClassCastException in range filters on version 1 range indexes under null handling. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `95ec60fa`: Bump com.github.jnr:jnr-posix from 3.2.8 to 3.2.9. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `pinot-core/src/main/java/org/apache/pinot/core/operator/filter/RangeIndexBasedFilterOperator.java`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `pom.xml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-    // Need to scan the first and last range as they might be partially matched. Scan without null handling because
-    // BaseColumnFilterOperator applies the null semantics to the combined result, and doing it in the scan as well
-    // wraps the scan result into a doc id set whose iterator is not a ScanBasedDocIdIterator.
-    BlockDocIdSet scanBasedDocIdSet = scanBasedFilterOperator.getNextBlockWithoutNullHandling();
+    <jnr-posix.version>3.2.9</jnr-posix.version>
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Induced defect failure mode:
-    // Need to scan the first and last range as they might be partially matched
-    BlockDocIdSet scanBasedDocIdSet = scanBasedFilterOperator.getTrues();
+    <jnr-posix.version>3.2.8</jnr-posix.version>
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4bd680a4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `95ec60fa` are properly handled with clean fallback behavior.

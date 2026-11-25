@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T13:49:41.247Z",
+  "last_updated": "2026-11-25T14:05:17.123Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-25T13:40:09.802Z",
@@ -748,7 +748,7 @@
       "staged_for_review": 1
     },
     "dathere-qsv-learnings.md": {
-      "processed_at": "2026-11-24T15:53:53.029Z",
+      "processed_at": "2026-11-25T14:05:15.370Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -808,7 +808,7 @@
       "staged_for_review": 1
     },
     "apache-pinot-learnings.md": {
-      "processed_at": "2026-11-24T18:43:43.310Z",
+      "processed_at": "2026-11-25T14:05:14.043Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2268,7 +2268,7 @@
       "staged_for_review": 0
     },
     "hf-atomicchat-lfm3-1.7b-uncensored-gguf-learnings.md": {
-      "processed_at": "2026-11-21T22:48:41.814Z",
+      "processed_at": "2026-11-25T14:05:13.441Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3928,7 +3928,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 4221,
+  "total_dossiers_evaluated": 4224,
   "total_canonical_promoted": 542,
-  "total_staged_for_review": 3216
+  "total_staged_for_review": 3218
 }

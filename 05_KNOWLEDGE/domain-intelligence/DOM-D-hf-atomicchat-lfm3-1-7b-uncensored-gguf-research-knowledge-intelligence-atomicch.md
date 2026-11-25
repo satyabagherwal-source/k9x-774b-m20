@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/AtomicChat/LFM3-1.7B-Uncensored-GGUF",
   "source_version": "hf-atomicchat-lfm3-1.7b-uncensored-gguf",
   "license": "Open-Source",
-  "timestamp": "2026-11-21T22:48:21.806Z",
+  "timestamp": "2026-11-25T14:04:52.243Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-atomicchat-lfm3-1-7b-uncensored-gguf",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [AtomicChat/LFM3-1.7B-Uncensored-GGUF](https://huggingface.co/AtomicChat/LFM3-1.7B-Uncensored-GGUF) (Revision: `hf-atomicc`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-21T22:48:21.806Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T14:04:52.243Z`  
 > **Learning ID**: `learn-huggingface-atomicchat-lfm3-1-7b-uncensored-gguf`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-atomicchat-lfm3-1.7b-uncensored-gguf-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/AtomicChat/LFM3-1.7B-Uncensored-GGUF](https://huggingface.co/AtomicChat/LFM3-1.7B-Uncensored-GGUF))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T22:48:20.975Z  
+> **Harvest Timestamp**: 2026-11-25T14:04:51.025Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 178782 downloads | 346 likes
+- **Stars / Engagement**: 193591 downloads | 358 likes
 
 ---
 
