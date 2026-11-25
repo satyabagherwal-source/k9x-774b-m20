@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261123-SHZ9",
-    "timestamp": "2026-11-23T19:00:45.189Z",
-    "repository": "Cactus-Compute/whistle",
-    "learningId": "learn-huggingface-cactus-compute-whistle",
-    "contentHash": "15111f8c9575de4c2d763217e9c7c062e2000661cb146789d122d7c2c280cad4",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261123-ST34",
     "timestamp": "2026-11-23T19:00:59.584Z",
     "repository": "cilium/cilium",
@@ -7492,6 +7477,21 @@
     "contentHash": "f6dbb59fb9b17d6e83a06572d8a7e41241c03334f8c326b2df66e473835a2222",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-VYCP",
+    "timestamp": "2026-11-25T06:30:57.193Z",
+    "repository": "nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16",
+    "learningId": "learn-huggingface-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16",
+    "contentHash": "641d2fec289cfcbdaf8d52710b76d0127e52b7934a32d94eb667c121ef4c8359",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

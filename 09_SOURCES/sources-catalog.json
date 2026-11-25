@@ -10415,8 +10415,8 @@
     "sourceUrl": "https://huggingface.co/nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16",
     "sourceVersion": "hf-nvidia-nvidia-nemotron-labs-dory1.0-4b-bf16",
     "license": "Open-Source",
-    "contentHash": "46f3709d47e099b6dfaa8f4f595f8a759e84a3928fe8be88d9fc72c60ad93835",
-    "lastHarvestedAt": "2026-11-21T12:29:18.952Z",
+    "contentHash": "641d2fec289cfcbdaf8d52710b76d0127e52b7934a32d94eb667c121ef4c8359",
+    "lastHarvestedAt": "2026-11-25T06:30:57.198Z",
     "learningId": "learn-huggingface-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16"
   },
   "mrjackwills-oxker": {

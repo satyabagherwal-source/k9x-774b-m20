@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16",
   "source_version": "hf-nvidia-nvidia-nemotron-labs-dory1.0-4b-bf16",
   "license": "Open-Source",
-  "timestamp": "2026-11-21T12:29:19.159Z",
+  "timestamp": "2026-11-25T06:30:57.497Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16](https://huggingface.co/nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16) (Revision: `hf-nvidia-`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-21T12:29:19.159Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T06:30:57.497Z`  
 > **Learning ID**: `learn-huggingface-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-labs-dory1.0-4b-bf16-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16](https://huggingface.co/nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T12:29:18.441Z  
+> **Harvest Timestamp**: 2026-11-25T06:30:56.262Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 13778 downloads | 273 likes
+- **Stars / Engagement**: 13467 downloads | 283 likes
 
 ---
 

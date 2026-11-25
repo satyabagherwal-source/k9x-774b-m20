@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T06:21:25.227Z",
+  "last_updated": "2026-11-25T06:31:11.614Z",
   "directives": [
     {
       "id": "CD-001",
@@ -56032,11 +56032,11 @@
       "domain_letter": "G"
     },
     {
-      "id": "CD-OH3U",
+      "id": "CD-W9H7",
       "directive_title": "deps): bump url to 2.5.9 and heapless to 0.9.4",
       "source_repo": "zseven-w-openpencil-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-OH3U-deps-bump-url-to-2-5-9-and-heapless-to-0-9-4.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-W9H7-deps-bump-url-to-2-5-9-and-heapless-to-0-9-4.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-25",
@@ -57835,11 +57835,11 @@
       "domain_letter": "H"
     },
     {
-      "id": "CD-8UU6",
+      "id": "CD-W8A7",
       "directive_title": "rust): bind bare calls to the enclosing module's items",
       "source_repo": "zvec-ai-zvec-grep-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-8UU6-rust-bind-bare-calls-to-the-enclosing-module-s-items.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-W8A7-rust-bind-bare-calls-to-the-enclosing-module-s-items.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-25",
@@ -59903,6 +59903,24 @@
       "source_repo": "slatedb-slatedb",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-9B10F1-allow-readme-md-prs-without-vouching.md",
+      "staged_date": "2026-11-25"
+    },
+    {
+      "id": "CD-REV-BFBB34",
+      "directive_title": "rust): bind bare calls to the enclosing module's items",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-BFBB34-rust-bind-bare-calls-to-the-enclosing-mo.md",
+      "staged_date": "2026-11-25"
+    },
+    {
+      "id": "CD-REV-D80CFE",
+      "directive_title": "deps): bump url to 2.5.9 and heapless to 0.9.4",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-D80CFE-deps-bump-url-to-2-5-9-and-heapless-to-0.md",
       "staged_date": "2026-11-25"
     }
   ]

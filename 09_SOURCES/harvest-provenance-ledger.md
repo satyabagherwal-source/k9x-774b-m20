@@ -12999,3 +12999,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-lodestones-kromoss` | `https://huggingface.co/lodestones/Kromoss` | `hf-lodesto` | Multi-dimensional audit evidence | 2026-11-25T06:21:05.520Z |
 | `learn-github-burntsushi-ripgrep` | `https://github.com/BurntSushi/ripgrep` | `3e85c6c1` | Multi-dimensional audit evidence | 2026-11-25T06:21:06.177Z |
 | `learn-github-slatedb-slatedb` | `https://github.com/slatedb/slatedb` | `98a8c03c` | Multi-dimensional audit evidence | 2026-11-25T06:21:19.176Z |
+| `learn-huggingface-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16` | `https://huggingface.co/nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-11-25T06:30:57.198Z |

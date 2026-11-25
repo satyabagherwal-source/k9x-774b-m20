@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T06:21:25.460Z",
+  "last_updated": "2026-11-25T06:31:11.883Z",
   "total_records": 2638,
   "domains": {
     "A": {
@@ -8408,8 +8408,8 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-learnings-technical-construction-intelligence-zvec-ai-zvec-gre.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "a88a4b3b2fc73f6ae4b6def119294b8b5e4903dcd40a74720c1b2b4326913019",
-      "created_at": "2026-11-25T06:12:59.784Z"
+      "content_hash": "8a5727b7194e5b144084bb9f74681af791417447950ed71cfb31a5a1d2d71d64",
+      "created_at": "2026-11-25T06:31:10.360Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -9371,8 +9371,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "f92be0e25d2907e4a2e8e5f61eacaf8e83283a76249e20e68dd109e59042c52f",
-      "created_at": "2026-11-25T05:29:09.163Z"
+      "content_hash": "4f25fd3dde5ce0836d8ed330703d30b0d729b95c6fbd0fe319386ea19b46b0d9",
+      "created_at": "2026-11-25T06:31:11.883Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -28564,8 +28564,8 @@
       "title": "Research & Knowledge Intelligence: nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16-research-knowledge-intelligence-n.md",
       "repository": "nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16",
-      "content_hash": "8526a9a11eb233bddb894c2f935acf7003ec84a75c8fe690d94b1eca8ce034c1",
-      "created_at": "2026-11-21T12:29:19.160Z"
+      "content_hash": "356b8fb3f934172ba51db1db8aa892c84eef4a832eeba72c911c2b3b58800dd4",
+      "created_at": "2026-11-25T06:30:57.498Z"
     },
     "domain_intelligence-technical-construction-intelligence-synalinks-synalinks-skills-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-synalinks-synalinks-skills-core-invariants",
@@ -28582,8 +28582,8 @@
       "title": "Research & Knowledge Intelligence: hf-nvidia-nvidia-nemotron-labs-dory1.0-4b-bf16-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16-learnings-research-knowledge-inte.md",
       "repository": "hf-nvidia-nvidia-nemotron-labs-dory1.0-4b-bf16-learnings",
-      "content_hash": "51b29c84661f41fb08bbd280116b63615591900c16a067e1fd9da112eebd5096",
-      "created_at": "2026-11-21T12:29:31.923Z"
+      "content_hash": "d1e39b45cbdd6c0ee95389e78f49563e15024684b3197818ebd17288f79f12f2",
+      "created_at": "2026-11-25T06:31:09.073Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-orcacyber-nano-1-0-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-orcacyber-nano-1-0-core-invariants",

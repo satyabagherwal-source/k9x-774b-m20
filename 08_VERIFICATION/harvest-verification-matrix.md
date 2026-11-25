@@ -12966,3 +12966,4 @@
 | `CYCLE-20261125-J9T7` | `2026-11-25T06:21:05.515Z` | `lodestones/Kromoss` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-lodestones-kromoss-learnings.md` | Yes (`6b8a8f6e...`) |
 | `CYCLE-20261125-JABH` | `2026-11-25T06:21:06.173Z` | `BurntSushi/ripgrep` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10469` | Yes (`8576ca5e...`) |
 | `CYCLE-20261125-JKCK` | `2026-11-25T06:21:19.172Z` | `slatedb/slatedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10470` | Yes (`f6dbb59f...`) |
+| `CYCLE-20261125-VYCP` | `2026-11-25T06:30:57.193Z` | `nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-labs-dory1.0-4b-bf16-learnings.md` | Yes (`641d2fec...`) |
