@@ -3,7 +3,7 @@
 > **Source Version**: `hf-ccore-qwe`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T18:44:16.789Z  
+> **Timestamp**: 2026-11-25T10:45:28.309Z  
 > **Learning ID**: `learn-huggingface-ccore-qwen3-5-4b-3d-coder`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-ccore-qwen3.5-4b-3d-coder-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/ccore/Qwen3.5-4B-3D-Coder](https://huggingface.co/ccore/Qwen3.5-4B-3D-Coder))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T18:44:16.666Z  
+> **Harvest Timestamp**: 2026-11-25T10:45:28.211Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: ML Foundation Model
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 557359 downloads | 1184 likes
+- **Stars / Engagement**: 618363 downloads | 1191 likes
 
 ---
 

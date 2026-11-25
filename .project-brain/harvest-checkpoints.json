@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-25T10:35:24.565Z",
+  "last_updated": "2026-11-25T10:45:37.816Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3306,14 +3306,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-moby-buildkit",
-      "content_hash": "2b177507d201075b046a7c8faaa6f84bdaecfd03fb511c1a66155de8ab3e2353",
-      "verified_at": "2026-11-23T21:23:13.142Z",
+      "content_hash": "09ed8f36177c8ffd29c7b2879f5a9c66df85d0397aeab739a7d3bd1bdce39057",
+      "verified_at": "2026-11-25T10:45:37.816Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T21:23:13.142Z"
+      "last_updated": "2026-11-25T10:45:37.816Z"
     },
     "microsoft/agent-governance-toolkit": {
       "repository": "microsoft/agent-governance-toolkit",
@@ -16971,14 +16971,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-ccore-qwen3-5-4b-3d-coder",
-      "content_hash": "1b8e7b0e162e5aba76f13ff8a2f6819dd0c05ce2a561bb94de7a0991c63c5f46",
-      "verified_at": "2026-11-21T18:44:17.396Z",
+      "content_hash": "365a1731df476133cc3a7041482654c792d4e90960410abf611cefa27f8f61b9",
+      "verified_at": "2026-11-25T10:45:28.818Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T18:44:17.396Z"
+      "last_updated": "2026-11-25T10:45:28.818Z"
     },
     "AgileRL/AgileRL": {
       "repository": "AgileRL/AgileRL",

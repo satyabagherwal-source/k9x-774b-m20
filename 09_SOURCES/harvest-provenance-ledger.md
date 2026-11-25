@@ -13071,3 +13071,5 @@ Every entry in this ledger must capture:
 | `learn-github-1jehuang-jcode` | `https://github.com/1jehuang/jcode` | `103a1fa2` | Multi-dimensional audit evidence | 2026-11-25T10:35:14.483Z |
 | `learn-github-siderolabs-talos` | `https://github.com/siderolabs/talos` | `9dd9b9ed` | Multi-dimensional audit evidence | 2026-11-25T10:35:22.767Z |
 | `learn-github-nolabs-ai-nono` | `https://github.com/nolabs-ai/nono` | `d4d1c774` | Multi-dimensional audit evidence | 2026-11-25T10:35:24.549Z |
+| `learn-huggingface-ccore-qwen3-5-4b-3d-coder` | `https://huggingface.co/ccore/Qwen3.5-4B-3D-Coder` | `hf-ccore-q` | Multi-dimensional audit evidence | 2026-11-25T10:45:28.803Z |
+| `learn-github-moby-buildkit` | `https://github.com/moby/buildkit` | `875f5143` | Multi-dimensional audit evidence | 2026-11-25T10:45:37.799Z |

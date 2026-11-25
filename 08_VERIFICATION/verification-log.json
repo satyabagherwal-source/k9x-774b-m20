@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261123-1Y3D",
-    "timestamp": "2026-11-23T22:24:03.289Z",
-    "repository": "Mintplex-Labs/anything-llm",
-    "learningId": "learn-github-mintplex-labs-anything-llm",
-    "contentHash": "fafcaa23b9143033c2dc0ad9aa378c9cafc08074542cc45b9caac7d2c2ea56bb",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-DL0H",
-    "timestamp": "2026-11-23T22:33:06.209Z",
-    "repository": "vllm-sr/d3",
-    "learningId": "learn-huggingface-vllm-sr-d3",
-    "contentHash": "159dfef3c93ed10259bc2fb64816260bc5dc3dbecdbdab681cf38feba81c0fc2",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261123-PZ79",
     "timestamp": "2026-11-23T22:42:44.469Z",
     "repository": "LiquidAI/LFM2.5-24B-A2B-GGUF",
@@ -7490,6 +7460,36 @@
     "repository": "nolabs-ai/nono",
     "learningId": "learn-github-nolabs-ai-nono",
     "contentHash": "df160df6c7491841c5b15685878bb4c5b3944c3ae0eca6f4e98b128c71a62b93",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-Z9ZZ",
+    "timestamp": "2026-11-25T10:45:28.799Z",
+    "repository": "ccore/Qwen3.5-4B-3D-Coder",
+    "learningId": "learn-huggingface-ccore-qwen3-5-4b-3d-coder",
+    "contentHash": "365a1731df476133cc3a7041482654c792d4e90960410abf611cefa27f8f61b9",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-ZGXU",
+    "timestamp": "2026-11-25T10:45:37.794Z",
+    "repository": "moby/buildkit",
+    "learningId": "learn-github-moby-buildkit",
+    "contentHash": "09ed8f36177c8ffd29c7b2879f5a9c66df85d0397aeab739a7d3bd1bdce39057",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T10:35:29.798Z",
+  "last_updated": "2026-11-25T10:45:42.903Z",
   "directives": [
     {
       "id": "CD-001",
@@ -1808,14 +1808,14 @@
       "learning_id": "learn-github-kotlin-kmp-production-sample"
     },
     {
-      "id": "CD-R8ZC",
+      "id": "CD-ZK4Y",
       "directive_title": "Empirical Invariant Guard in Dockerfile",
-      "source_repo": "projectdiscovery-nuclei-learnings",
+      "source_repo": "moby-buildkit-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-R8ZC-empirical-invariant-guard-in-dockerfile.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-ZK4Y-empirical-invariant-guard-in-dockerfile.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
-      "date_staged": "2026-11-18",
+      "date_staged": "2026-11-25",
       "domain_letter": "D"
     },
     {
@@ -57837,11 +57837,11 @@
       "domain_letter": "H"
     },
     {
-      "id": "CD-W8A7",
+      "id": "CD-ZKVO",
       "directive_title": "rust): bind bare calls to the enclosing module's items",
       "source_repo": "zvec-ai-zvec-grep-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-W8A7-rust-bind-bare-calls-to-the-enclosing-module-s-items.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-ZKVO-rust-bind-bare-calls-to-the-enclosing-module-s-items.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-25",
@@ -60794,6 +60794,24 @@
       "source_repo": "siderolabs-talos",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-C91A79-don-t-panic-machined-on-bogus-cpufreq-sy.md",
+      "staged_date": "2026-11-25"
+    },
+    {
+      "id": "CD-REV-BAA469",
+      "directive_title": "Empirical Invariant Guard in Dockerfile",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "moby-buildkit",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-BAA469-empirical-invariant-guard-in-dockerfile.md",
+      "staged_date": "2026-11-25"
+    },
+    {
+      "id": "CD-REV-BBBA17",
+      "directive_title": "rust): bind bare calls to the enclosing module's items",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-BBBA17-rust-bind-bare-calls-to-the-enclosing-mo.md",
       "staged_date": "2026-11-25"
     }
   ]

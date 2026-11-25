@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T10:35:24.554Z",
-  "total_cycles_completed": 12379,
-  "total_learnings_persisted": 12379,
-  "total_rules_promoted": 11386,
+  "last_updated": "2026-11-25T10:45:37.804Z",
+  "total_cycles_completed": 12381,
+  "total_learnings_persisted": 12381,
+  "total_rules_promoted": 11387,
   "history": [
-    {
-      "timestamp": "2026-11-24T22:07:26.708Z",
-      "repository": "domcyrus/rustnet",
-      "learningId": "learn-github-domcyrus-rustnet",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T22:07:32.101Z",
-      "repository": "aleo-labs-protocol/snarkOS",
-      "learningId": "learn-github-aleo-labs-protocol-snarkos",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-24T22:15:50.391Z",
       "repository": "topgrade-rs/topgrade",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-25T10:35:24.554Z",
       "repository": "nolabs-ai/nono",
       "learningId": "learn-github-nolabs-ai-nono",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T10:45:28.809Z",
+      "repository": "ccore/Qwen3.5-4B-3D-Coder",
+      "learningId": "learn-huggingface-ccore-qwen3-5-4b-3d-coder",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T10:45:37.804Z",
+      "repository": "moby/buildkit",
+      "learningId": "learn-github-moby-buildkit",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

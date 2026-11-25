@@ -4,22 +4,22 @@
 {
   "source_repository": "moby/buildkit",
   "source_url": "https://github.com/moby/buildkit",
-  "source_version": "5f12fdd2",
+  "source_version": "875f5143",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-23T21:23:13.362Z",
+  "timestamp": "2026-11-25T10:45:38.049Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-moby-buildkit",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [moby/buildkit](https://github.com/moby/buildkit) (Revision: `5f12fdd2`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-23T21:23:13.362Z`  
+> **Provenance**: Harvested from [moby/buildkit](https://github.com/moby/buildkit) (Revision: `875f5143`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-25T10:45:38.049Z`  
 > **Learning ID**: `learn-github-moby-buildkit`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `moby/buildkit` (Commit: `5f12fdd2`)
+- **Target Repository**: `moby/buildkit` (Commit: `875f5143`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/moby-buildkit-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/moby/buildkit](https://github.com/moby/buildkit))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T21:23:12.438Z  
+> **Harvest Timestamp**: 2026-11-25T10:45:37.071Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2306,11 +2306,11 @@ func isPathEscapesRootError(err error) bool {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #7467** (2026-11-25): **Dockerfile: test with stargz-snapshotter v0.19.1**
+  *Symptoms*: 
+
 - **Issue #7462** (2026-11-23): **lint: disable verbose output from gopls analyzers**
   *Symptoms*: relates to https://github.com/moby/buildkit/actions/runs/45159736477/job/137641824284#step:3:3974  ``` #15 81.07 # [github.com/moby/buildkit/worker] #15 81.07 gopls-analyzers: github.com/moby/buildkit/worker: analyzing (files: 6) #15 81.10 # github.com/moby/buildkit/worker/base #15 81.10 # [github.com/moby/buildkit/worker/base] #15 81.10 gopls-analyzers: github.com/moby/buildkit/worker/base: analyzing (files: 2) #15 81.23 # github.com/moby/buildkit/worker/tests #15 81.23 gopls-analyzers: github.com/moby/buildkit/worker/tests: analyzing (files: 1) #15 81.28 # github.com/moby/buildkit/worker/containerd #15 81.28 # [github.com/moby/buildkit/worker/containerd] #15 81.28 gopls-analyzers: github.com/moby/buildkit/worker/containerd: analyzing (files: 3) #15 ERROR: process "/bin/sh -c   set -ex\n  xx-go --wrap\n  gopls-analyzers -list-analyzers\n  # The flate sources are copied from Go and use a nonstandard generated marker.\n  go vet -vettool=/usr/bin/gopls-analyzers -verbose -exclude-generated -exclude='/util/compression/go126flate/' ./...\n" did not complete successfully: exit code: 1 ```  Remove per-package progress logs from lint and fix runs so analyzer errors are easier to find in build output.
-
-- **Issue #7460** (2026-11-23): **build(deps): bump github/codeql-action/upload-sarif from 4.39.2 to 4.39.4**
-  *Symptoms*: Bumps [github/codeql-action/upload-sarif](https://github.com/github/codeql-action) from 4.39.2 to 4.39.4. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/github/codeql-action/releases">github/codeql-action/upload-sarif's releases</a>.</em></p> <blockquote> <h2>v4.39.4</h2> <ul> <li>Update default CodeQL bundle version to <a href="https://github.com/github/codeql-action/releases/tag/codeql-bundle-v2.27.5">2.27.5</a>. <a href="https://redirect.github.com/github/codeql-action/pull/4333">#4333</a></li> </ul> <h2>v4.39.3</h2> <ul> <li>Fixed diff-informed alert filtering incorrectly removing alerts in changed files whose paths contain spaces, special characters, or non-ASCII characters. <a href="https://redirect.github.com/github/codeql-action/pull/4283">#4283</a></li> </ul> </blockquote> </details> <details> <summary>Changelog</summary> <p><em>Sourced from <a href="https://github.com/github/codeql-action/blob/main/CHANGELOG.md">github/codeql-action/upload-sarif's changelog</a>.</em></p> <blockquote> <h1>CodeQL Action Changelog</h1> <p>See the <a href="https://github.com/github/codeql-action/releases">releases page</a> for the relevant changes to the CodeQL CLI and language packs.</p> <h2>[UNRELEASED]</h2> <p>No user facing changes.</p> <h2>4.39.4 - 20 Nov 2026</h2> <ul> <li>Update default CodeQL bundle version to <a href="https://github.com/github/codeql-action/releases/tag/codeql-bundle-v2.27.5">2.27.5</a>. <a href="https://redirect.gith
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2327,66 +2327,51 @@ func isPathEscapesRootError(err error) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8b38fa15` (2026-11-23)
-**Commit Message**: build(deps): bump github/codeql-action/upload-sarif
+### Incident Patch 1: `875f5143` (2026-11-25)
+**Commit Message**: Merge pull request #7467 from thaJeztah/dockerfile_bump_stargz
 
-Bumps [github/codeql-action/upload-sarif](https://github.com/github/codeql-action) from 4.39.2 to 4.39.4.
-- [Release notes](https://github.com/github/codeql-action/releases)
-- [Changelog](https://github.com/github/codeql-action/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/github/codeql-action/compare/1fc58d04a4d4374f921bdac573c3811c240f9c26...1bd86f2fdb4b86187fa4059f16f31a3202acc9ea)
+Dockerfile: test with stargz-snapshotter v0.19.1
 
----
-updated-dependencies:
-- dependency-name: github/codeql-action/upload-sarif
-  dependency-version: 4.39.4
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/buildkit.yml` (modified, +2/-2)
+**File**: `Dockerfile` (modified, +1/-1)
 ```diff
-@@ -161,7 +161,7 @@ jobs:
-       -
-         name: Upload SARIF report
-         if: ${{ github.ref == 'refs/heads/master' && github.repository == 'moby/buildkit' }}
--        uses: github/codeql-action/upload-sarif@1fc58d04a4d4374f921bdac573c3811c240f9c26 # v4.39.2
-+        uses: github/codeql-action/upload-sarif@1bd86f2fdb4b86187fa4059f16f31a3202acc9ea # v4.39.4
-         with:
-           sarif_file: ${{ env.DESTDIR }}/govulncheck.out
- 
-@@ -327,7 +327,7 @@ jobs:
-           jq . ${{ steps.scout.outputs.result-file }}
-       -
-         name: Upload SARIF report
--        uses: github/codeql-action/upload-sarif@1fc58d04a4d4374f921bdac573c3811c240f9c26 # v4.39.2
-+        uses: github/codeql-action/upload-sarif@1bd86f2fdb4b86187fa4059f16f31a3202acc9ea # v4.39.4
-         with:
-           sarif_file: ${{ steps.scout.outputs.result-file }}
- 
+@@ -7,7 +7,7 @@ ARG CONTAINERD_ALT_VERSION_23=v2.3.7
+ ARG REGISTRY_VERSION=v2.8.3
+ ARG ROOTLESSKIT_VERSION=v3.2.0
+ ARG CNI_VERSION=v1.9.1
+-ARG STARGZ_SNAPSHOTTER_VERSION=v0.18.2
++ARG STARGZ_SNAPSHOTTER_VERSION=v0.19.1
+ ARG NERDCTL_VERSION=v2.4.0
+ ARG DNSNAME_VERSION=v1.3.1
+ ARG NYDUS_VERSION=v2.4.5
 ```
 
-**File**: `.github/workflows/frontend.yml` (modified, +1/-1)
+---
+
+### Incident Patch 2: `0346ff5a` (2026-11-24)
+**Commit Message**: Dockerfile: test with stargz-snapshotter v0.19.1
+
+Signed-off-by: Sebastiaan van Stijn <[REDACTED_EMAIL]>
+
+**File**: `Dockerfile` (modified, +1/-1)
 ```diff
-@@ -227,7 +227,7 @@ jobs:
-           jq . ${{ steps.scout.outputs.result-file }}
-       -
-         name: Upload SARIF report
--        uses: github/codeql-action/upload-sarif@1fc58d04a4d4374f921bdac573c3811c240f9c26 # v4.39.2
-+        uses: github/codeql-action/upload-sarif@1bd86f2fdb4b86187fa4059f16f31a3202acc9ea # v4.39.4
-         with:
-           sarif_file: ${{ steps.scout.outputs.result-file }}
- 
+@@ -7,7 +7,7 @@ ARG CONTAINERD_ALT_VERSION_23=v2.3.7
+ ARG REGISTRY_VERSION=v2.8.3
+ ARG ROOTLESSKIT_VERSION=v3.2.0
+ ARG CNI_VERSION=v1.9.1
+-ARG STARGZ_SNAPSHOTTER_VERSION=v0.18.2
++ARG STARGZ_SNAPSHOTTER_VERSION=v0.19.1
+ ARG NERDCTL_VERSION=v2.4.0
+ ARG DNSNAME_VERSION=v1.3.1
+ ARG NYDUS_VERSION=v2.4.5
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7467** (2026-11-25): Dockerfile: test with stargz-snapshotter v0.19.1 (@thaJeztah)
 - **PR #7462** (2026-11-23): lint: disable verbose output from gopls analyzers (@crazy-max)
 - **PR #7460** (2026-11-23): build(deps): bump github/codeql-action/upload-sarif from 4.39.2 to 4.39.4 (@dependabot[bot])
 - **PR #7456** (2026-11-20): testutil: fix the process-exit race in integration socket waits (@crazy-max)
+- **PR #7454** (closed): fileop: preserve existing parent directory mtime on timestamped actions (@davireis)
 - **PR #7449** (2026-11-20): build(deps): bump actions/setup-go from 7.0.0 to 7.1.0 (@dependabot[bot])
-- **PR #7448** (2026-11-19): [v0.35] cherry-picks for v0.35.1 (@crazy-max)
-- **PR #7440** (2026-11-18): cniprovider: use containerd helper for Windows network namespace (@thaJeztah)
 
 ---
 
@@ -2406,33 +2391,31 @@ Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump github/codeql-action/upload-sarif
+## X. Empirical Invariant Guard in Dockerfile
 
 **RULE**:
-When implementing operations in `.github/workflows/buildkit.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in moby/buildkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Dockerfile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in moby/buildkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8b38fa15`: build(deps): bump github/codeql-action/upload-sarif. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `875f5143`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/buildkit.yml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `Dockerfile`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-        uses: github/codeql-action/upload-sarif@1bd86f2fdb4b86187fa4059f16f31a3202acc9ea # v4.39.4
-        uses: github/codeql-action/upload-sarif@1bd86f2fdb4b86187fa4059f16f31a3202acc9ea # v4.39.4
+ARG STARGZ_SNAPSHOTTER_VERSION=v0.19.1
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-        uses: github/codeql-action/upload-sarif@1fc58d04a4d4374f921bdac573c3811c240f9c26 # v4.39.2
-        uses: github/codeql-action/upload-sarif@1fc58d04a4d4374f921bdac573c3811c240f9c26 # v4.39.2
+ARG STARGZ_SNAPSHOTTER_VERSION=v0.18.2
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8b38fa15` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `875f5143` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

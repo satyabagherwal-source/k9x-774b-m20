@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-25T10:35:30.158Z",
+  "last_updated": "2026-11-25T10:45:43.398Z",
   "total_verified_learnings": 9115,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -112066,9 +112066,9 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "8a5727b7194e5b144084bb9f74681af791417447950ed71cfb31a5a1d2d71d64",
+      "content_hash": "a61b87fd23275b3a6ab2af67e351a3983d467cae568901da5a9676a5c7bbb0b1",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T06:31:10.360Z"
+      "persisted_at": "2026-11-25T10:45:43.076Z"
     },
     "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona",
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "5359b86913f2c2df6f7a5925400091990492d1cafe944cd866a19570034f291e",
+      "content_hash": "1ed976f9b24865bc898c12add3ee32edc86428fd1432162934901e33d5e940b4",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T06:31:10.630Z"
+      "persisted_at": "2026-11-25T10:45:43.256Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "f4985c3df56e94642e92e689215fbd1a051b1cd3f720dfc07ccac04b731307f2",
+      "content_hash": "388949ab3e0df8d784fef1d45eb98b5a5400d9524fbc50c245240d83ebd52ee8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T06:31:10.861Z"
+      "persisted_at": "2026-11-25T10:45:43.398Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -223967,8 +223967,8 @@
       "slug": "moby-buildkit",
       "platform": "github",
       "source_url": "https://github.com/moby/buildkit",
-      "source_version": "5f12fdd2",
-      "content_hash": "2b177507d201075b046a7c8faaa6f84bdaecfd03fb511c1a66155de8ab3e2353",
+      "source_version": "875f5143",
+      "content_hash": "09ed8f36177c8ffd29c7b2879f5a9c66df85d0397aeab739a7d3bd1bdce39057",
       "dossier_path": "07_PROJECT_LEARNING/moby-buildkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/moby-buildkit-learnings.md",
       "promoted_rules": [
@@ -223993,6 +223993,11 @@
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
+          "number": 9125,
+          "title": "Empirical Invariant Guard in Dockerfile",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
           "number": 9228,
           "title": "Empirical Invariant Guard in reference.md",
           "status": "PROMOTED_AND_VERIFIED"
@@ -224013,7 +224018,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T21:23:12.925Z",
+      "verified_at": "2026-11-25T10:45:37.602Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -224055,10 +224060,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-moby-buildkit-architecture-intelligence-moby-buildkit-core-invariants.md",
       "title": "Architecture Intelligence: moby/buildkit Core Invariants",
       "repository": "moby/buildkit",
-      "source_version": "5f12fdd2",
-      "content_hash": "12d831ad1f5f25852167b8d8e95ddfc5d2d3a28d1a04e934b16f078ca06e11c0",
+      "source_version": "875f5143",
+      "content_hash": "b03ada91e942b5ca365c8ed5a806992f8700866eb7dbd3d59e602ea75877c944",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T21:23:13.529Z"
+      "persisted_at": "2026-11-25T10:45:38.225Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-moby-buildkit": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-moby-buildkit",
@@ -224067,10 +224072,10 @@
       "relative_path": "08_VERIFICATION/moby-buildkit-verification-protocol-empirical-defect-shield-for-moby-buildkit.md",
       "title": "Verification Protocol: Empirical Defect Shield for moby/buildkit",
       "repository": "moby/buildkit",
-      "source_version": "5f12fdd2",
-      "content_hash": "8b88a52311b8d59745222a81710e654ec229c6fe4fdb44d1fbd032e75c40fde4",
+      "source_version": "875f5143",
+      "content_hash": "a627712d93b976a2641434c92265e2e9e0cf9416fcf81500d6fcf7ebc6e1cfc8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T21:23:13.700Z"
+      "persisted_at": "2026-11-25T10:45:38.396Z"
     },
     "learn-github-tailscale-tailscale": {
       "learning_id": "learn-github-tailscale-tailscale",
@@ -224313,9 +224318,9 @@
       "title": "Architecture Intelligence: moby-buildkit-learnings Core Invariants",
       "repository": "moby-buildkit-learnings",
       "source_version": "HEAD",
-      "content_hash": "473919e8ed71266385b48aca3ee1ca1a4dcc42e87af58f7b83b5d0e530d14d68",
+      "content_hash": "8d953403f0684b88e331f793bef276896d6940d5c995b4d13e967a3ee3dec32d",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T21:41:01.341Z"
+      "persisted_at": "2026-11-25T10:45:42.113Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-moby-buildkit-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-moby-buildkit-learnings",
@@ -224325,9 +224330,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for moby-buildkit-learnings",
       "repository": "moby-buildkit-learnings",
       "source_version": "HEAD",
-      "content_hash": "5a85d91f6ddaa2f9290d7eeca49ef377747f8d664a7fb08aa94b07188b13341a",
+      "content_hash": "612108f52bb6da5e31c1e83e5927f93783bad0a0bb962242dac77e5de9609f25",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T21:41:01.518Z"
+      "persisted_at": "2026-11-25T10:45:42.284Z"
     },
     "domain_intelligence-architecture-intelligence-tailscale-tailscale-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-tailscale-tailscale-learnings-core-invariants",
@@ -282336,7 +282341,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/ccore/Qwen3.5-4B-3D-Coder",
       "source_version": "hf-ccore-qwen3.5-4b-3d-coder",
-      "content_hash": "1b8e7b0e162e5aba76f13ff8a2f6819dd0c05ce2a561bb94de7a0991c63c5f46",
+      "content_hash": "365a1731df476133cc3a7041482654c792d4e90960410abf611cefa27f8f61b9",
       "dossier_path": "07_PROJECT_LEARNING/hf-ccore-qwen3.5-4b-3d-coder-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-ccore-qwen3.5-4b-3d-coder-learnings.md",
       "promoted_rules": [],
@@ -282345,7 +282350,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T18:44:17.117Z",
+      "verified_at": "2026-11-25T10:45:28.578Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -282362,9 +282367,9 @@
       "title": "Research & Knowledge Intelligence: ccore/Qwen3.5-4B-3D-Coder Core Invariants",
       "repository": "ccore/Qwen3.5-4B-3D-Coder",
       "source_version": "hf-ccore-qwen3.5-4b-3d-coder",
-      "content_hash": "896c1967ce06b8b5a3046a422f9dfc277cfc0512a359223ae97a896baa979bf8",
+      "content_hash": "e1af285e530772bd8157b9f573565d74466b05fa4e95fc80ee650bbe885fde98",
       "domain_letter": "D",
-      "persisted_at": "2026-11-21T18:44:17.660Z"
+      "persisted_at": "2026-11-25T10:45:29.024Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-ccore-qwen3-5-4b-3d-coder-learnings-core-inva": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-ccore-qwen3-5-4b-3d-coder-learnings-core-inva",
@@ -282374,9 +282379,9 @@
       "title": "Research & Knowledge Intelligence: hf-ccore-qwen3.5-4b-3d-coder-learnings Core Invariants",
       "repository": "hf-ccore-qwen3.5-4b-3d-coder-learnings",
       "source_version": "HEAD",
-      "content_hash": "9e98f35ba17041cf96fad5283d36a05994635af71b2b223a3902c171c4bc6249",
+      "content_hash": "7420fc1599d200a3ed9a7c7219b132ffb7eac62dc8b3082cde652ce5429973cf",
       "domain_letter": "D",
-      "persisted_at": "2026-11-21T18:44:30.785Z"
+      "persisted_at": "2026-11-25T10:45:41.412Z"
     },
     "learn-huggingface-liquidai-lfm3-1-7b": {
       "learning_id": "learn-huggingface-liquidai-lfm3-1-7b",
@@ -287498,26 +287503,26 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 9125,
       "title": "Empirical Invariant Guard in Dockerfile",
-      "source_url": "https://github.com/projectdiscovery/nuclei",
-      "source_version": "76040802",
+      "source_url": "https://github.com/moby/buildkit",
+      "source_version": "875f5143",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-18T04:37:33.561Z"
+      "verified_at": "2026-11-25T10:45:37.602Z"
     },
     "candidate_directive-empirical-invariant-guard-in-dockerfile": {
       "item_id": "candidate_directive-empirical-invariant-guard-in-dockerfile",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-R8ZC-empirical-invariant-guard-in-dockerfile.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-ZK4Y-empirical-invariant-guard-in-dockerfile.md",
       "title": "Empirical Invariant Guard in Dockerfile",
-      "repository": "projectdiscovery-nuclei-learnings",
+      "repository": "moby-buildkit-learnings",
       "source_version": "HEAD",
-      "content_hash": "417cbe23520bd960683ff9759aedaa40f9e6d118b838854c4b63efa2ea0e7a25",
+      "content_hash": "8bed7b0623f09ce906c57165030df0f400792eb99a9acaf880c2b87e77306df5",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T04:37:37.465Z"
+      "persisted_at": "2026-11-25T10:45:41.941Z"
     },
     "learn-huggingface-inclusionai-ming-image-0-1-design": {
       "learning_id": "learn-huggingface-inclusionai-ming-image-0-1-design",
@@ -342369,13 +342374,13 @@
       "item_id": "candidate_directive-rust-bind-bare-calls-to-the-enclosing-module-s-items",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-W8A7-rust-bind-bare-calls-to-the-enclosing-module-s-items.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-ZKVO-rust-bind-bare-calls-to-the-enclosing-module-s-items.md",
       "title": "rust): bind bare calls to the enclosing module's items",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "837508cd4f294a62a1effaabf8db8d002169024f2a0cc7823c47a8a27380282f",
+      "content_hash": "fef74ece5dfbdf3cb1a4ed17fcb03d3741db76e54a774a4754607a70081c27b3",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T06:31:10.067Z"
+      "persisted_at": "2026-11-25T10:45:42.903Z"
     },
     "domain_intelligence-content-information-intelligence-rollup-rollup-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-rollup-rollup-learnings-core-invariants",

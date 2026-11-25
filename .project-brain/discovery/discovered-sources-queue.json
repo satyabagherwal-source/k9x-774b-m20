@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-25T10:26:14.281Z",
+  "updated_at": "2026-11-25T10:45:41.711Z",
   "stats": {
-    "total_discovered": 9401,
-    "approved_pending_harvest": 8910,
+    "total_discovered": 9402,
+    "approved_pending_harvest": 8911,
     "harvested_count": 0,
     "rejected_count": 491,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 8900,
+      "COMMUNITY_AND_EXPERT": 8901,
       "OFFICIAL_DOCUMENTATION": 280,
       "STANDARDS_AND_SPECIFICATIONS": 150,
       "ENGINEERING_BLOGS": 7,
@@ -203412,6 +203412,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
         "fileName": "ratatui-ratatui-learnings.md"
+      }
+    },
+    "SRC-64C5FD8E554B": {
+      "id": "SRC-64C5FD8E554B",
+      "url": "https://github.com/moby/buildkit/actions/runs/45159736477/job/137641824284",
+      "title": "https://github.com/moby/buildkit/actions/runs/45159736477/job/137641824284",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T10:45:41.711Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/moby-buildkit-learnings.md",
+        "fileName": "moby-buildkit-learnings.md"
       }
     }
   }

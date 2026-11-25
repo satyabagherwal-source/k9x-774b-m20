@@ -13038,3 +13038,5 @@
 | `CYCLE-20261125-M3ZJ` | `2026-11-25T10:35:14.479Z` | `1jehuang/jcode` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10506` | Yes (`5d6c3ac9...`) |
 | `CYCLE-20261125-MADM` | `2026-11-25T10:35:22.762Z` | `siderolabs/talos` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10507` | Yes (`e7efcf6b...`) |
 | `CYCLE-20261125-MBR4` | `2026-11-25T10:35:24.544Z` | `nolabs-ai/nono` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10508` | Yes (`df160df6...`) |
+| `CYCLE-20261125-Z9ZZ` | `2026-11-25T10:45:28.799Z` | `ccore/Qwen3.5-4B-3D-Coder` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ccore-qwen3.5-4b-3d-coder-learnings.md` | Yes (`365a1731...`) |
+| `CYCLE-20261125-ZGXU` | `2026-11-25T10:45:37.794Z` | `moby/buildkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9125` | Yes (`09ed8f36...`) |

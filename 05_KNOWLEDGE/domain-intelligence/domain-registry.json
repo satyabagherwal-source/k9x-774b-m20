@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T10:35:29.977Z",
+  "last_updated": "2026-11-25T10:45:43.076Z",
   "total_records": 2659,
   "domains": {
     "A": {
@@ -8429,8 +8429,8 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-learnings-technical-construction-intelligence-zvec-ai-zvec-gre.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "8a5727b7194e5b144084bb9f74681af791417447950ed71cfb31a5a1d2d71d64",
-      "created_at": "2026-11-25T06:31:10.360Z"
+      "content_hash": "a61b87fd23275b3a6ab2af67e351a3983d467cae568901da5a9676a5c7bbb0b1",
+      "created_at": "2026-11-25T10:45:43.076Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -13504,8 +13504,8 @@
       "title": "Architecture Intelligence: moby/buildkit Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-moby-buildkit-architecture-intelligence-moby-buildkit-core-invariants.md",
       "repository": "moby/buildkit",
-      "content_hash": "12d831ad1f5f25852167b8d8e95ddfc5d2d3a28d1a04e934b16f078ca06e11c0",
-      "created_at": "2026-11-23T21:23:13.529Z"
+      "content_hash": "b03ada91e942b5ca365c8ed5a806992f8700866eb7dbd3d59e602ea75877c944",
+      "created_at": "2026-11-25T10:45:38.225Z"
     },
     "DOM-D-F2B017DF": {
       "record_id": "DOM-D-F2B017DF",
@@ -13564,8 +13564,8 @@
       "title": "Architecture Intelligence: moby-buildkit-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-moby-buildkit-learnings-architecture-intelligence-moby-buildkit-learnings-core-i.md",
       "repository": "moby-buildkit-learnings",
-      "content_hash": "473919e8ed71266385b48aca3ee1ca1a4dcc42e87af58f7b83b5d0e530d14d68",
-      "created_at": "2026-11-21T21:41:01.341Z"
+      "content_hash": "8d953403f0684b88e331f793bef276896d6940d5c995b4d13e967a3ee3dec32d",
+      "created_at": "2026-11-25T10:45:42.113Z"
     },
     "domain_intelligence-architecture-intelligence-tailscale-tailscale-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-tailscale-tailscale-learnings-core-invariants",
@@ -29246,8 +29246,8 @@
       "title": "Research & Knowledge Intelligence: ccore/Qwen3.5-4B-3D-Coder Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ccore-qwen3-5-4b-3d-coder-research-knowledge-intelligence-ccore-qwen3-5-4b-3d.md",
       "repository": "ccore/Qwen3.5-4B-3D-Coder",
-      "content_hash": "896c1967ce06b8b5a3046a422f9dfc277cfc0512a359223ae97a896baa979bf8",
-      "created_at": "2026-11-21T18:44:17.660Z"
+      "content_hash": "e1af285e530772bd8157b9f573565d74466b05fa4e95fc80ee650bbe885fde98",
+      "created_at": "2026-11-25T10:45:29.024Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-ccore-qwen3-5-4b-3d-coder-learnings-core-inva": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-ccore-qwen3-5-4b-3d-coder-learnings-core-inva",
@@ -29255,8 +29255,8 @@
       "title": "Research & Knowledge Intelligence: hf-ccore-qwen3.5-4b-3d-coder-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ccore-qwen3-5-4b-3d-coder-learnings-research-knowledge-intelligence-hf-ccore-.md",
       "repository": "hf-ccore-qwen3.5-4b-3d-coder-learnings",
-      "content_hash": "9e98f35ba17041cf96fad5283d36a05994635af71b2b223a3902c171c4bc6249",
-      "created_at": "2026-11-21T18:44:30.785Z"
+      "content_hash": "7420fc1599d200a3ed9a7c7219b132ffb7eac62dc8b3082cde652ce5429973cf",
+      "created_at": "2026-11-25T10:45:41.412Z"
     },
     "domain_intelligence-research-knowledge-intelligence-liquidai-lfm3-1-7b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-liquidai-lfm3-1-7b-core-invariants",
