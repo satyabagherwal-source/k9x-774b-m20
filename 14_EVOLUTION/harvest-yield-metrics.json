@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T04:39:35.742Z",
-  "total_cycles_completed": 12287,
-  "total_learnings_persisted": 12287,
-  "total_rules_promoted": 11331,
+  "last_updated": "2026-11-25T04:52:10.626Z",
+  "total_cycles_completed": 12290,
+  "total_learnings_persisted": 12290,
+  "total_rules_promoted": 11333,
   "history": [
-    {
-      "timestamp": "2026-11-24T15:27:12.069Z",
-      "repository": "wcandillon/react-native-skia",
-      "learningId": "learn-github-wcandillon-react-native-skia",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T15:27:19.764Z",
-      "repository": "ydb-platform/ydb",
-      "learningId": "learn-github-ydb-platform-ydb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T15:36:01.218Z",
-      "repository": "grpc/grpc-rust",
-      "learningId": "learn-github-grpc-grpc-rust",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-24T15:36:06.624Z",
       "repository": "emberstack/kubernetes-reflector",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-25T04:39:35.742Z",
       "repository": "rook/rook",
       "learningId": "learn-github-rook-rook",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T04:51:56.124Z",
+      "repository": "autogluon/chronos-2",
+      "learningId": "learn-huggingface-autogluon-chronos-2",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T04:51:57.087Z",
+      "repository": "Folkbench/folkbench",
+      "learningId": "learn-github-folkbench-folkbench",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T04:52:10.626Z",
+      "repository": "MaterializeInc/materialize",
+      "learningId": "learn-github-materializeinc-materialize",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

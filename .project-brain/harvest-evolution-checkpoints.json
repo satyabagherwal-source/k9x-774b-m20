@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T04:39:43.834Z",
+  "last_updated": "2026-11-25T04:52:19.076Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-25T04:07:45.064Z",
@@ -498,7 +498,7 @@
       "staged_for_review": 1
     },
     "materializeinc-materialize-learnings.md": {
-      "processed_at": "2026-11-23T14:38:23.436Z",
+      "processed_at": "2026-11-25T04:52:16.958Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1413,7 +1413,7 @@
       "staged_for_review": 1
     },
     "hf-autogluon-chronos-2-learnings.md": {
-      "processed_at": "2026-11-21T07:59:00.888Z",
+      "processed_at": "2026-11-25T04:52:16.367Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3153,7 +3153,7 @@
       "staged_for_review": 0
     },
     "folkbench-folkbench-learnings.md": {
-      "processed_at": "2026-11-24T02:12:54.073Z",
+      "processed_at": "2026-11-25T04:52:14.622Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3903,7 +3903,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 4065,
+  "total_dossiers_evaluated": 4068,
   "total_canonical_promoted": 528,
-  "total_staged_for_review": 3116
+  "total_staged_for_review": 3118
 }

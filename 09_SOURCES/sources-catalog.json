@@ -2065,8 +2065,8 @@
     "sourceUrl": "https://huggingface.co/autogluon/chronos-2",
     "sourceVersion": "hf-autogluon-chronos-2",
     "license": "Open-Source",
-    "contentHash": "d545d3c0f767f6403e2873034933da751bbfe58ebff79037faa19861f84a65cb",
-    "lastHarvestedAt": "2026-11-21T07:58:41.906Z",
+    "contentHash": "586bcbee8f9dcbeebb6055273fb01151bb251d165ad5f678326bebda2f3b34c1",
+    "lastHarvestedAt": "2026-11-25T04:51:56.116Z",
     "learningId": "learn-huggingface-autogluon-chronos-2"
   },
   "deeplethe-solid-glass": {
@@ -3923,10 +3923,10 @@
     "repository": "MaterializeInc/materialize",
     "platform": "github",
     "sourceUrl": "https://github.com/MaterializeInc/materialize",
-    "sourceVersion": "0bb27e65",
+    "sourceVersion": "f9a1fd2d",
     "license": "NOASSERTION",
-    "contentHash": "20d5cead4e0c1f2fc3d90f87199b542d9c2d0b607481b3a5285aecf0e7e61ebb",
-    "lastHarvestedAt": "2026-11-24T09:57:17.412Z",
+    "contentHash": "4288a4696eea12412caad65d715b7773c661ff484f3088d3e30962b4070a588c",
+    "lastHarvestedAt": "2026-11-25T04:52:10.619Z",
     "learningId": "learn-github-materializeinc-materialize"
   },
   "react-bootstrap-react-bootstrap": {
@@ -12683,10 +12683,10 @@
     "repository": "Folkbench/folkbench",
     "platform": "github",
     "sourceUrl": "https://github.com/Folkbench/folkbench",
-    "sourceVersion": "3e93677d",
+    "sourceVersion": "43425e50",
     "license": "NOASSERTION",
-    "contentHash": "79ad3ec2f5fe046837420f3bafca3c6101d6cece4c3e2ffafec870190cdddd6e",
-    "lastHarvestedAt": "2026-11-24T02:12:38.048Z",
+    "contentHash": "a53790fa1506fc541ebc9de875804288d7968ea90dd321811a4cd316f3c55475",
+    "lastHarvestedAt": "2026-11-25T04:51:57.080Z",
     "learningId": "learn-github-folkbench-folkbench"
   },
   "hf-ifm-pan2": {

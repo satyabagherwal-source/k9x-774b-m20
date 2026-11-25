@@ -3,7 +3,7 @@
 > **Source Version**: `hf-autogluon`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T07:58:41.493Z  
+> **Timestamp**: 2026-11-25T04:51:55.377Z  
 > **Learning ID**: `learn-huggingface-autogluon-chronos-2`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-autogluon-chronos-2-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/autogluon/chronos-2](https://huggingface.co/autogluon/chronos-2))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T07:58:39.333Z  
+> **Harvest Timestamp**: 2026-11-25T04:51:54.167Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: time-series-forecasting
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 34637098 downloads | 97 likes
+- **Stars / Engagement**: 49531026 downloads | 97 likes
 
 ---
 

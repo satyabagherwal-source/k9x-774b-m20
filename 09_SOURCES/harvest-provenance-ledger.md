@@ -12970,3 +12970,6 @@ Every entry in this ledger must capture:
 | `learn-github-tuist-tuist` | `https://github.com/tuist/tuist` | `1f231c14` | Multi-dimensional audit evidence | 2026-11-25T04:39:29.856Z |
 | `learn-github-xcodesorg-xcodesapp` | `https://github.com/XcodesOrg/XcodesApp` | `3231e33a` | Multi-dimensional audit evidence | 2026-11-25T04:39:32.985Z |
 | `learn-github-rook-rook` | `https://github.com/rook/rook` | `394e6dba` | Multi-dimensional audit evidence | 2026-11-25T04:39:35.736Z |
+| `learn-huggingface-autogluon-chronos-2` | `https://huggingface.co/autogluon/chronos-2` | `hf-autoglu` | Multi-dimensional audit evidence | 2026-11-25T04:51:56.116Z |
+| `learn-github-folkbench-folkbench` | `https://github.com/Folkbench/folkbench` | `43425e50` | Multi-dimensional audit evidence | 2026-11-25T04:51:57.080Z |
+| `learn-github-materializeinc-materialize` | `https://github.com/MaterializeInc/materialize` | `f9a1fd2d` | Multi-dimensional audit evidence | 2026-11-25T04:52:10.619Z |

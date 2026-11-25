@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-25T04:39:35.754Z",
+  "last_updated": "2026-11-25T04:52:10.639Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3231,14 +3231,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-autogluon-chronos-2",
-      "content_hash": "d545d3c0f767f6403e2873034933da751bbfe58ebff79037faa19861f84a65cb",
-      "verified_at": "2026-11-21T07:58:41.913Z",
+      "content_hash": "586bcbee8f9dcbeebb6055273fb01151bb251d165ad5f678326bebda2f3b34c1",
+      "verified_at": "2026-11-25T04:51:56.136Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T07:58:41.913Z"
+      "last_updated": "2026-11-25T04:51:56.136Z"
     },
     "deeplethe/solid-glass": {
       "repository": "deeplethe/solid-glass",
@@ -6006,14 +6006,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-materializeinc-materialize",
-      "content_hash": "20d5cead4e0c1f2fc3d90f87199b542d9c2d0b607481b3a5285aecf0e7e61ebb",
-      "verified_at": "2026-11-24T09:57:17.456Z",
+      "content_hash": "4288a4696eea12412caad65d715b7773c661ff484f3088d3e30962b4070a588c",
+      "verified_at": "2026-11-25T04:52:10.638Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T09:57:17.456Z"
+      "last_updated": "2026-11-25T04:52:10.638Z"
     },
     "react-bootstrap/react-bootstrap": {
       "repository": "react-bootstrap/react-bootstrap",
@@ -19116,14 +19116,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-folkbench-folkbench",
-      "content_hash": "79ad3ec2f5fe046837420f3bafca3c6101d6cece4c3e2ffafec870190cdddd6e",
-      "verified_at": "2026-11-24T02:12:38.071Z",
+      "content_hash": "a53790fa1506fc541ebc9de875804288d7968ea90dd321811a4cd316f3c55475",
+      "verified_at": "2026-11-25T04:51:57.100Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T02:12:38.071Z"
+      "last_updated": "2026-11-25T04:51:57.100Z"
     },
     "IFM/PAN2": {
       "repository": "IFM/PAN2",

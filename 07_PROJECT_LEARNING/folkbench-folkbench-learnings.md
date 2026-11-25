@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/folkbench-folkbench-learnings.md`  
 > **Source**: github ([https://github.com/Folkbench/folkbench](https://github.com/Folkbench/folkbench))  
-> **Source Version**: `3e93677d`  
+> **Source Version**: `43425e50`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T02:12:36.922Z  
+> **Timestamp**: 2026-11-25T04:51:55.340Z  
 > **Learning ID**: `learn-github-folkbench-folkbench`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/folkbench-folkbench-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Folkbench/folkbench](https://github.com/Folkbench/folkbench))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T02:12:36.918Z  
+> **Harvest Timestamp**: 2026-11-25T04:51:55.337Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: AI API 中转站推荐与评测：中转站排行榜、中转站检测、Claude / GPT / Gemini 中转站对比 · AI API relay rankings · Folkbench Switch for Claude Code, Codex & Gemini CLI
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 3542 stars
+- **Stars / Engagement**: 3635 stars
 
 ---
 
@@ -1140,449 +1140,41 @@ process.stdout.write(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3e93677d` (2026-11-24)
-**Commit Message**: 数据：更新每日公开快照（快照 public-f5985dcf94b2c542877ec4a7c72592b7049c96902e22e918b2facd5744ce6342）
+### Incident Patch 1: `43425e50` (2026-11-24)
+**Commit Message**: 数据：更新每日公开快照（快照 public-7fec1e3c1c61b86bf20a050665379a01ab22c6b049a80a5b9f953801dca4b905）
 
-**File**: `README.md` (modified, +52/-52)
+**File**: `README.md` (modified, +59/-56)
 ```diff
-@@ -70,92 +70,92 @@ Folkbench 帮你挑线路、配好客户端，不是自建代理教程。
+@@ -70,92 +70,95 @@ Folkbench 帮你挑线路、配好客户端，不是自建代理教程。
  ## 今日公开快照
  
  <!-- FOLKBENCH-BOARD:START -->
--> 归档日期：2026-11-22 · 发布：2026-11-22 20:30:24（北京时间）· 快照：`public-7e9b03d0bb6394e614ad80e973a923c9cd5d368b6a056287d6a1224c2c5b7ece`
-+> 归档日期：2026-11-23 · 发布：2026-11-23 20:30:34（北京时间）· 快照：`public-f5985dcf94b2c542877ec4a7c72592b7049c96902e22e918b2facd5744ce6342`
+-> 归档日期：2026-11-23 · 发布：2026-11-23 20:30:34（北京时间）· 快照：`public-f5985dcf94b2c542877ec4a7c72592b7049c96902e22e918b2facd5744ce6342`
++> 归档日期：2026-11-24 · 发布：2026-11-24 20:30:40（北京时间）· 快照：`public-7fec1e3c1c61b86bf20a050665379a01ab22c6b049a80a5b9f953801dca4b905`
  > 排序沿用主站规则，包含合作档位与运营加分。本页提供公开快照，不是原始运行记录。
  
  | 模型 | # | 中转站 | 综合 | 可用率 | 稳定性 | 输入 / 输出价 | 样本 |
  | :-- | :-: | :-- | --: | --: | --: | :-- | --: |
--| Claude Fable 5.1 | 1 | [Modelflare](https://folkbench.com/services/modelflare?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-fable-5-1-r1) | 100.0% | 98.5% | 96.1% | ¥1.99 / 1M / ¥9.96 / 1M | 194 |
--| Claude Fable 5.1 | 2 | [Apiporter](https://folkbench.com/services/apiporter?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-fable-5-1-r2) | 95.8% | 100.0% | 89.6% | ¥20.00 / 1M / ¥100.00 / 1M | 48 |
--| claude-fable-5-1 | 3 | [破晓](https://folkbench.com/services/merchant-4cf2b788-920?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-fable-5-1-r3) | 94.6% | 100.0% | 92.2% | ¥14.50 / 1M / ¥72.50 / 1M | 48 |
-+| Claude Fable 5.1 | 1 | [Modelflare](https://folkbench.com/services/modelflare?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-fable-5-1-r1) | 100.0% | 98.0% | 95.7% | ¥1.99 / 1M / ¥9.96 / 1M | 199 |
-+| claude-fable-5-1 | 2 | [破晓](https://folkbench.com/services/merchant-4cf2b788-920?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-fable-5-1-r2) | 94.7% | 100.0% | 89.3% | ¥14.50 / 1M / ¥72.50 / 1M | 47 |
-+| Claude Fable 5.1 | 3 | [Apiporter](https://folkbench.com/services/apiporter?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-fable-5-1-r3) | 89.6% | 72.3% | 59.9% | ¥20.00 / 1M / ¥100.00 / 1M | 47 |
+-| Claude Fable 5.1 | 1 | [Modelflare](https://folkbench.com/services/modelflare?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-fable-5-1-r1) | 100.0% | 98.0% | 95.7% | ¥1.99 / 1M / ¥9.96 / 1M | 199 |
+-| claude-fable-5-1 | 2 | [破晓](https://folkbench.com/services/merchant-4cf2b788-920?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-fable-5-1-r2) | 94.7% | 100.0% | 89.3% | ¥14.50 / 1M / ¥72.50 / 1M | 47 |
+-| Claude Fable 5.1 | 3 | [Apiporter](https://folkbench.com/services/apiporter?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-fable-5-1-r3) | 89.6% | 72.3% | 59.9% | ¥20.00 / 1M / ¥100.00 / 1M | 47 |
++| Claude Fable 5.1 | 1 | [Modelflare](https://folkbench.com/services/modelflare?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-fable-5-1-r1) | 100.0% | 97.8% | 94.8% | ¥1.99 / 1M / ¥9.96 / 1M | 135 |
++| claude-fable-5-1 | 2 | [破晓](https://folkbench.com/services/merchant-4cf2b788-920?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-fable-5-1-r2) | 93.2% | 100.0% | 91.3% | ¥14.50 / 1M / ¥72.50 / 1M | 48 |
++| Claude Fable 5.1 | 3 | [Apiporter](https://folkbench.com/services/apiporter?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-fable-5-1-r3) | 84.8% | 66.7% | 56.8% | ¥20.00 / 1M / ¥100.00 / 1M | 48 |
  | | | [完整 Claude Fable 5.1 榜单 →](https://folkbench.com/rankings/claude-fable-5-1?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-fable-5-1-more) | | | | | |
--| Claude Haiku 5.5 | 1 | [Modelflare](https://folkbench.com/services/modelflare?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-haiku-5-5-r1) | 100.0% | 97.5% | 95.1% | ¥0.17 / 1M / ¥0.83 / 1M | 163 |
--| claude-haiku-5-5 | 2 | [ModelPod](https://folkbench.com/services/merchant-27af1806-16e?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-haiku-5-5-r2) | 95.4% | 100.0% | 86.4% | ¥0.25 / 1M / ¥1.26 / 1M | 31 |
--| claude-haiku-5-5 | 3 | [Sidrune AI](https://folkbench.com/services/merchant-955eb49b-34a?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-haiku-5-5-r3) | 93.2% | 100.0% | 92.2% | ¥0.10 / 1M / ¥0.50 / 1M | 48 |
-+| Claude Haiku 5.5 | 1 | [Modelflare](https://folkbench.com/services/modelflare?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-haiku-5-5-r1) | 100.0% | 97.7% | 94.9% | ¥0.17 / 1M / ¥0.83 / 1M | 132 |
-+| claude-haiku-5-5 | 2 | [Sidrune AI](https://folkbench.com/services/merchant-955eb49b-34a?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-haiku-5-5-r2) | 93.5% | 100.0% | 91.7% | ¥0.10 / 1M / ¥0.50 / 1M | 47 |
- | | | [完整 Claude Haiku 5.5 榜单 →](https://folkbench.com/rankings/claude-haiku-5-5?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-haiku-5-5-more) | | | | | |
--| Claude Opus 5 | 1 | [Modelflare](https://folkbench.com/services/modelflare?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-opus-5-r1) | 100.0% | 98.3% | 95.5% | ¥1.00 / 1M / ¥4.98 / 1M | 175 |
-+| Claude Opus 5 | 1 | [Modelflare](https://folkbench.com/services/modelflare?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-opus-5-r1) | 100.0% | 98.7% | 95.7% | ¥1.00 / 1M / ¥4.98 / 1M | 154 |
+-| Claude Haiku 5.5 | 1 | [Modelflare](https://folkbench.com/services/modelflare?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-haiku-5-5-r1) | 100.0% | 97.7% | 94.9% | ¥0.17 / 1M / ¥0.83 / 1M | 132 |
+-| claude-haiku-5-5 | 2 | [Sidrune AI](https://folkbench.com/services/merchant-955eb49b-34a?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-haiku-5-5-r2) | 93.5% | 100.0% | 91.7% | ¥0.10 / 1M / ¥0.50 / 1M | 47 |
+-| | | [完整 Claude Haiku 5.5 榜单 →](https://folkbench.com/rankings/claude-haiku-5-5?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-haiku-5-5-more) | | | | | |
+-| Claude Opus 5 | 1 | [Modelflare](https://folkbench.com/services/modelflare?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-opus-5-r1) | 100.0% | 98.7% | 95.7% | ¥1.00 / 1M / ¥4.98 / 1M | 154 |
++| claude-haiku-5-5 | 1 | [Modelflare](https://folkbench.com/services/modelflare?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-haiku-5-5-r1) | 100.0% | 97.2% | 94.9% | ¥0.17 / 1M / ¥0.83 / 1M | 178 |
++| claude-haiku-5-5 | 2 | [Sidrune AI](https://folkbench.com/services/merchant-955eb49b-34a?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-haiku-5-5-r2) | 92.0% | 100.0% | 91.5% | ¥0.10 / 1M / ¥0.50 / 1M | 48 |
++| | | [完整 claude-haiku-5-5 榜单 →](https://folkbench.com/rankings/claude-haiku-5-5?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-haiku-5-5-more) | | | | | |
++| Claude Opus 5 | 1 | [Modelflare](https://folkbench.com/services/modelflare?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-opus-5-r1) | 100.0% | 97.3% | 93.4% | ¥1.00 / 1M / ¥4.98 / 1M | 109 |
  | | | [完整 Claude Opus 5 榜单 →](https://folkbench.com/rankings/claude-opus-5?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-opus-5-more) | | | | | |
--| Claude Opus 5.5 | 1 | [Modelflare](https://folkbench.com/services/modelflare?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-opus-5-5-r1) | 100.0% | 98.2% | 94.8% | ¥0.80 / 1M / ¥3.98 / 1M | 108 |
--| Claude Opus 5.5 | 2 | [IKunCode](https://folkbench.com/services/ikuncode?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-opus-5-5-r2) | 95.7% | 97.9% | 74.8% | ¥4.00 / 1M / ¥20.00 / 1M | 48 |
--| Claude Opus 5.5 | 3 | [智流 FluxLane](https://folkbench.com/services/fluxlane?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-opus-5-5-r3) | 94.0% | 100.0% | 90.0% | ¥4.80 / 1M / ¥24.00 / 1M |
-```
-
----
-
-### Incident Patch 2: `227a8ba8` (2026-11-23)
-**Commit Message**: 俄语入口迁到独立公开仓 Folkbench/folkbench-ru，主仓 README.ru.md 改为导流页。
-
-产品变化：
-- README.ru.md 不再放俄语站目录表，改为指向 Folkbench/folkbench-ru 与 ru.folkbench.com 的短页；收录申请与纠错改用新仓的 Issue 模板。
-- 去掉「Размещение бесплатное」的旧说法，收录条件与价格以站点「Добавить сервис」页为准。
-
-核心实现：
-- 删除 ru-readme.yml 每日工作流、scripts/ru-readme.mjs 及其测试；同一脚本（含 a8563c4 的校验）与工作流已移到新仓，只更新新仓 README 的快照块。
-- 删除主仓的 ru-add-service.yml、ru-correction.yml，避免两套申请入口。
-
-迁移与兼容：
-- 其他语言 README 的「Русский」链接不变，仍指向 README.ru.md。
-- 已有 ru-site / ru-submission / ru-correction 标签保留。
-
-运维影响：
-- 主仓不再产生「数据：更新俄语站目录」的机器人提交。
-
-**File**: `.github/ISSUE_TEMPLATE/ru-add-service.yml` (removed, +0/-71)
-```diff
-@@ -1,71 +0,0 @@
--name: "Folkbench RU: предложить сервис"
--description: Бесплатная заявка на добавление API-сервиса в каталог ru.folkbench.com
--title: "[RU] Сервис: "
--labels: [ru-site, ru-submission]
--body:
--  - type: markdown
--    attributes:
--      value: |
--        **Не публикуйте API-ключи, пароли, платёжные данные или личные документы.** Issues открыты всем.
--        Этот шаблон — только для русскоязычного сайта [ru.folkbench.com](https://ru.folkbench.com/submit/). Для заявки ключ не нужен.
--        Размещение бесплатное и не влияет на порядок в таблицах: он зависит только от замеров. Подача заявки не означает размещение — сведения проверяет администратор.
--        Без GitHub можно написать на reply@folkbench.com или в Telegram [@mmmagnus98](https://t.me/mmmagnus98).
--  - type: input
--    id: name
--    attributes:
--      label: Название сервиса
--    validations:
--      required: true
--  - type: textarea
--    id: site
--    attributes:
--      label: Официальный сайт и документация
--      description: Ссылки на сайт и публичную документацию API.
--    validations:
--      required: true
--  - type: textarea
--    id: models
--    attributes:
--      label: Модели и протоколы
--      description: Base URL API, протокол (Anthropic Messages или OpenAI Chat Completions — «совместимый» не подходит) и точные model ID. Ссылка на источник.
--    validations:
--      required: true
--  - type: textarea
--    id: pricing
--    attributes:
--      label: Тарифы и единицы оплаты
--      description: Ссылка на страницу цен, валюта и единица (за 1 млн токенов, за запрос, подписка). Если цены видны только после входа — так и напишите.
--  - type: textarea
--    id: payments
--    attributes:
--      label: Способы оплаты и ограничения
--      description: Какие способы есть и для каких стран или карт. Реквизиты не присылайте.
--  - type: textarea
--    id: language
--    attributes:
--      label: Русский интерфейс / поддержка
--      description: Отдельно про интерфейс и про поддержку, с подтверждением.
--  - type: input
--    id: contact
--    attributes:
--      label: Контакт для проверки
--      description: Необязательно. Только публичный рабочий канал; личные контакты сюда не пишите.
--  - type: dropdown
--    id: relation
--    attributes:
--      label: Связь с сервисом
--      options:
--        - Владелец или сотрудник
--        - Реселлер / партнёр
--        - Пользователь
--    validations:
--      required: true
--  - type: checkboxes
--    id: confirm
--    attributes:
--      label: Подтверждение
--      options:
--        - label: Эти сведения можно опубликовать, и в заявке нет ключей, паролей и личных данных.
--          required: true
--        - label: Я понимаю, что размещение бесплатное и не гарантирует место в таблице.
--          required: true
-```
-
-**File**: `.github/ISSUE_TEMPLATE/ru-correction.yml` (removed, +0/-38)
-```diff
-@@ -1,38 +0,0 @@
--name: "Folkbench RU: исправление"
--description: Неверные или устаревшие сведения о сервисе на ru.folkbench.com
--title: "[RU] Исправление: "
--labels: [ru-site, ru-correction]
--body:
--  - type: markdown
--    attributes:
--      value: |
--        **Не публикуйте API-ключи, пароли, платёжные данные или личные документы.**
--        Этот шаблон — только для русскоязычного сайта ru.folkbench.com. Данные хранятся в базе сайта: администратор вносит исправление после проверки источника.
--        Результаты замеров по запросу не меняются: если замер ошибочен, мы исправляем причину, а не цифру.
--  - type: input
--    id: page
--    attributes:
--      label: Страница на ru.folkbench.com
--      placeholder: https://ru.folkbench.com/providers/...
--    validations:
--      required: true
--  - type: input
--    id: field
--    attributes:
--      label: Какое поле неверно
--      placeholder: Цена, способ оплаты, model ID…
--    validations:
--      required: true
--  - type: textarea
--    id: value
--    attributes:
--      label: Предлагаемое значение
--    validations:
--      required: true
--  - type: textarea
--    id: evidence
--    attributes:
--      label: Публичный источник и дата проверки
--      description: Ссылка на страницу тарифа или документацию и дата, когда вы её проверили.
--    validations:
--      required: true
-```
-
-**File**: `.github/workflows/ru-readme.yml` (removed, +0/-47)
-```diff
-@@ -1,47 +0,0 @@
--name: Folkbench RU README
--# Раз в сутки обновляет только блок ru-catalog в README.ru.md из публичного снимка ru.folkbench.com.
--# Коммит идёт через обычные hooks репозитория — так же, как в daily-public-snapshot.yml.
--on:
--  schedule:
--    - cron: '17 3 * * *'
--  workflow_dispatch:
--permissions:
--  contents: write
--concurrency:
--  group: ru-readme
--  cancel-in-progress: false
--jobs:
--  update:
--    if: github.repository == 'Folkbench/folkbench' && github.ref == 'refs/heads/main'
--    runs-on: ubuntu-22.04
--    timeout-minutes: 40
--    steps:
--      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
--        with:
--          fetch-depth: 0
--      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6
--        with:
--          bun-version: 1.3.14
--      - name: Prepare normal Git hooks
--        run: |
--          git config core.hooksPath .githooks
--          git config user.name 'github-actions[bot]'
--          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
--      - name: Update only the ru-catalog marker block
--        id: readme
--        run: bun scripts/ru-readme.mjs
--      - name: Prepare existing public-repository hook dependencies
--        if: steps.readme.outputs.changed == 'true'
--        run: |
--          bun install --frozen-lockfile
--          touch apps/switch/.folkbench-switch-development-host
--          bun install --cwd apps/switch --frozen-lockfile
--      - name: Commit and push README.ru.md through existing hooks
--        if: steps.readme.outputs.changed == 'true'
--        env:
--          SNAPSHOT_ID: ${{ steps.readme.outputs.snapshot_id }}
--        run: |
--          test "$(git config --get core.hooksPath)" = .githooks
--          git add README.ru.md
--          git commit -m "数据：更新俄语站目录（快照 ${SNAPSHOT_ID}）"
--          git push origin HEAD:main
-```
-
-**File**: `README.ru.md` (modified, +7/-47)
-```diff
-@@ -10,57 +10,17 @@
- 
- <br>
- 
--Folkbench RU — отдельный сайт на русском языке: сравнение API-провайдеров по автоматическим замерам, проверка своего API (отпечаток модели, тест с пеликаном, скорость) и каталог сервисов, прошедших ручную проверку.
-+У русскоязычного сайта Folkbench свой каталог, свои замеры и свой открытый репозиторий:
- 
--Мы не продаём API и не отвечаем за сохранность средств у провайдеров. Сайт поддерживается командой Folkbench. Таблица ниже целиком повторяет публичный каталог: порядок по названию, это не рейтинг, и строки не отбрасываются по имени сервиса.
-+### → [Folkbench/folkbench-ru](https://github.com/Folkbench/folkbench-ru)
- 
--## Сервисы в каталоге
-+Там методика и её ограничения, снимок каталога с номером, временем и узлом замеров, заявки на добавление сервиса и исправления.
- 
--<!-- ru-catalog:start — генерируется scripts/ru-readme.mjs, не править вручную -->
--Снимок `e78c7316ba3fd0f2` · данные на 23.11.2026, 05:25 UTC · узел US-West · окно 24 часа · порядок — по названию, это не рейтинг.
--
--| Сервис | Модель | Протокол | Доступность 24 ч | TTFT p50 | Цена | Оплата | Проверено |
--| --- | --- | --- | ---: | ---: | --- | --- | --- |
--| [Modelflare](https://ru.folkbench.com/providers/modelflare/?utm_source=github&utm_medium=referral&utm_campaign=ru_matrix_v1&utm_content=main_repo_ru_readme) | [`claude-fable-5-2`](https://ru.folkbench.com/models/claude-fable-5-2/?utm_source=github&utm_medium=referral&utm_campaign=ru_matrix_v1&utm_content=main_repo_ru_readme) | Anthropic Messages | 97,9 % (144 попытки) | 856 мс | не проверена | не проверено | 21.11.2026 |
--| [Modelflare](https://ru.folkbench.com/providers/modelflare/?utm_source=github&utm_medium=referral&utm_campaign=ru_matrix_v1&utm_content=main_repo_ru_readme) | [`claude-opus-5-5`](https://ru.folkbench.com/models/claude-opus-5-5/?utm_source=github&utm_medium=referral&utm_campaign=ru_matrix_v1&utm_content=main_repo_ru_readme) | Anthropic Messages | 99,3 % (144 попытки) | 848 мс | не проверена | не проверено | 21.11.2026 |
--| [Modelflare](https://ru.folkbench.com/providers/modelflare/?utm_source=github&utm_medium=referral&utm_campaign=ru_matrix_v1&utm_content=main_repo_ru_readme) | [`claude-sonnet-5-5`](https://ru.folkbench.com/models/claude-sonnet-5-5/?utm_source=github&utm_medium=referral&utm_campaign=ru_matrix_v1&utm_content=main_repo_ru_readme) | Anthropic Messages | 98,6 % (144 попытки) | 925 мс | не проверена | не проверено | 21.11.2026 |
--| [Modelflare](https://ru.folkbench.com/providers/modelflare/?utm_source=github&utm_medium=referral&utm_campaign=ru_matrix_v1&utm_content=main_repo_ru_readme) | [`gemini-4-carbon`](https://ru.folkbench.com/models/gemini-4-carbon/?utm_source=github&utm_medium=referral&utm_campaign=ru_matrix_v1&utm_content=main_repo_ru_readme) | OpenAI Chat Completions | 100,0 % (144 попытки) | 1 085 мс | не проверена | не проверено | 21.11.2026 |
--| [Modelflare](https://ru.folkbench.com/providers/modelflare/?utm_source=github&utm_medium=referral&utm_campaign=ru_matrix_v1&utm_content=main_repo_ru_readme) | [`gemini-4-hydrogen`](https://ru.folkbench.com/models/gemini-4-hydrogen/?utm_source=github&utm_medium=referral&utm_campaign=ru_matrix_v1&utm_content=main_repo_ru_readme) | OpenAI Chat Completions | 98,6 % (144 попытки) | 954 мс | не проверена | не проверено | 21.11.2026 |
--| [Modelflare](https://ru.folkbench.com/providers/modelflare/?utm_source=github&utm_medium=referral&utm_campaign=ru_matrix_v1&utm_content=main_repo_ru_readme) | [`gemini-4-neon`](https://ru.folkbench.com/models/gemini-4-neon/?utm_source=github&utm_medium=referral&utm_campaign=ru_matrix_v1&utm_content=main_repo_ru_readme) | OpenAI Chat Completions | 98,6 % (144 попытки) | 1 137 мс | не проверена | не проверено | 21.11.2026 |
--| [Modelflare](https://ru.folkbench.com/providers/modelflare/?utm_source=github&utm_medium=referral&utm_campaign=ru_matrix_v1&utm_content=main_repo_ru_readme) | [`gpt-6-astra`](https://ru.folkbench.com/models/gpt-6-astra/?utm_source=github&utm_medium=referral&utm_campaign=ru_matrix_v1&utm_content=main_repo_ru_readme) | OpenAI Chat Completions | 97,9 % (144 попытки) | 1 128 мс | не проверена | не проверено | 21.11.2026 |
--| [Modelflare](https://ru.folkbench.com/providers/modelflare/?utm_source=github&utm_medium=referral&utm_campaign=ru_matrix_v1&utm_content=main_repo_ru_readme) | [`gpt-6.1-sol`](https://ru.folkbench.com/models/gpt-6.1-sol/?utm_source=github&utm_medium=referral&utm_campaign=ru_matrix_v1&utm_content=main_repo_ru_readme) | OpenAI Chat Completions | 98,6 % (144 попытки) | 854 мс | не проверена | не проверено | 21.11.2026 |
--| [Modelflare](https://ru.folkbench.com/providers/modelflare/?utm_source=github&utm_medium=referral&utm_campaign=ru_matrix_v1&utm_content=main_repo_ru_readme) | [`gpt-6.2-astra`](https://ru.folkbench.com/models/gpt-6.2-astra/?utm_source=github&utm_medium=referral&utm_campaign=ru_matrix_v1&utm_content=main_repo_ru_readme) | OpenAI Chat Completions | 99,3 % (144 попытки) | 832 мс | не проверена | 
-```
-
-**File**: `scripts/ru-readme.mjs` (removed, +0/-194)
-```diff
-@@ -1,194 +0,0 @@
--#!/usr/bin/env node
--// Обновляет таблицу сервисов Folkbench RU в README.ru.md из публичного снимка каталога ru.folkbench.com.
--// Без зависимостей: только Node.js 20+ или Bun. Меняет только блок между маркерами ru-catalog.
--// В GitHub Actions пишет changed=true|false в $GITHUB_OUTPUT.
--//
--// Единственный источник данных — база ru.folkbench.com (проверка администратором). Таблицу в README
--// руками не правят: исправления присылают через Issue, после проверки их вносят в базу.
--//
--// Запуск:
--//   node scripts/ru-readme.mjs                      — взять снимок с CATALOG_URL (по умолчанию ru.folkbench.com)
--//   node scripts/ru-readme.mjs --file catalog.json  — взять снимок из файла (для локальной проверки)
--//
--// Если снимок недоступен, не проходит проверку формата или пуст, README не меняется и скрипт
--// завершается с ошибкой: пустая таблица никогда не заменяет последнюю удачную.
--
--import { appendFile, readFile, writeFile } from "node:fs/promises";
--import { resolve } from "node:path";
--import { fileURLToPath, pathToFileURL } from "node:url";
--
--const CATALOG_URL = process.env.CATALOG_URL ?? "https://ru.folkbench.com/api/v1/public/catalog";
--const README = fileURLToPath(new URL("../README.ru.md", import.meta.url));
--const START = "<!-- ru-catalog:start — генерируется scripts/ru-readme.mjs, не править вручную -->";
--const END = "<!-- ru-catalog:end -->";
--const UTM = "utm_source=github&utm_medium=referral&utm_campaign=ru_matrix_v1&utm_content=main_repo_ru_readme";
--const SITE_ORIGIN = "https://ru.folkbench.com";
--
--function reject(message) {
--  throw new Error(message);
--}
--
--async function loadCatalog() {
--  const fileIndex = process.argv.indexOf("--file");
--  if (fileIndex !== -1) {
--    const path = process.argv[fileIndex + 1];
--    if (path === undefined) reject("после --file нужен путь к файлу");
--    return JSON.parse(await readFile(path, "utf8"));
--  }
--  const response = await fetch(CATALOG_URL, { signal: AbortSignal.timeout(15_000), headers: { accept: "application/json" } });
--  if (!response.ok) reject(`снимок недоступен: HTTP ${response.status}`);
--  return response.json();
--}
--
--/* ───────── проверка формата: всё, что попадает в README, должно быть ожидаемого типа ───────── */
--
--const isString = (value) => typeof value === "string";
--const isNumber = (value) => typeof value === "number" && Number.isFinite(value);
--const isNullableNumber = (value) => value === null || isNumber(value);
--const isNullableString = (value) => value === null || isString(value);
--const isSiteUrl = (value) => isString(value) && value.startsWith(`${SITE_ORIGIN}/`);
--
--const PROTOCOL = {
--  anthropic: "Anthropic Messages",
--  openai: "OpenAI Chat Completions",
--  "openai-responses": "OpenAI Responses",
--  google: "Gemini GenerateContent",
--};
--
--export function validate(catalog) {
--  const problems = [];
--  const expect = (condition, what) => {
--    if (!condition) problems.push(what);
--  };
--  expect(catalog !== null && typeof catalog === "object", "снимок не объект");
--  if (problems.length > 0) return problems;
--  expect(catalog.schema_version === "3", `неизвестная версия схемы ${JSON.stringify(catalog.schema_version)}`);
--  expect(isString(catalog.snapshot_id) && /^[0-9a-f]{16}$/.test(catalog.snapshot_id), "snapshot_id");
--  expect(isNullableString(catalog.measured_at), "measured_at");
--  expect(isString(catalog.node) && catalog.node.length <= 40, "node");
--  expect(catalog.window_hours === 24, "window_hours");
--  expect(Array.isArray(catalog.providers), "providers");
--  for (const [i, provider] of (Array.isArray(catalog.providers) ? catalog.providers : []).entries()) {
--    const at = `providers[${i}]`;
--    expect(isString(provider?.id) && /^[a-z0-9][a-z0-9-]{0,63}$/.test(provider.id), `${at}.id`);
--    expect(isString(provider?.name) && provider.name.length <= 60, `${at}.name`);
--    expect(isSiteUrl(provider?.detail_url), `${at}.detail_url`);
--    expect(isString(provider?.verified_at) && /^\d{4}-\d{2}-\d{2}$/.test(provider.verified_at), `${at}.verified_at`);
--    expect(Array.isArray(provider?.payment_methods_verified) && provider.payment_methods_verified.every(isString), `${at}.payment_methods_verified`);
--    expect(Array.isArray(provider?.routes) && provider.routes.length > 0, `${at}.routes`);
--    for (const [j, route] of (Array.isArray(provider?.routes) ? provider.routes : []).entries()) {
--      const r = `${at}.routes[${j}]`;
--      expect(isString(route?.model_id) && route.model_id.length <= 128, `${r}.model_id`);
--      expect(isSiteUrl(route?.model_url), `${r}.model_url`);
--      expect(Array.isArray(route?.protocols) && route.protocols.length > 0 && new Set(route.protocols).size === route.protocols.length && route.protocols.every((item) => isString(item) && Object.hasOwn(PROTOCOL, item)), `${r}.protocols`);
--      expect(isNullableString(route?.price_ref), `${r}.price_ref`);
--      const m = route?.measurement;
--      expect(isNumber(m?.attempts) && isNumber(m?.successes), `${r}
-```
-
-**File**: `scripts/ru-readme.test.mjs` (removed, +0/-91)
-```diff
-@@ -1,91 +0,0 @@
--import test from "node:test";
--import assert from "node:assert/strict";
--import { mkdtemp, readFile, writeFile, rm } from "node:fs/promises";
--import { tmpdir } from "node:os";
--import { join } from "node:path";
--import { spawn } from "node:child_process";
--import { validate, render, writeCatalogTable } from "./ru-readme.mjs";
--
--const START = "<!-- ru-catalog:start — генерируется scripts/ru-readme.mjs, не править вручную -->";
--const END = "<!-- ru-catalog:end -->";
--
--function route(model) {
--  return {
--    model_id: model,
--    protocols: ["openai"],
--    model_family: model,
--    model_title: model,
--    model_url: `https://ru.folkbench.com/models/${model}/`,
--    price_ref: null,
--    measurement: {
--      attempts: 10, successes: 9, r429: 0, r5xx: 0, timeouts: 1, other: 0,
--      availability_pct: 90, ttft_p50_ms: 120, ttft_p95_ms: 200, output_tps_p50: 40, input_tokens_p50: 8,
--    },
--    fingerprint_7d: { status: "no_data", checks: 0, matches: 0 },
--  };
--}
--
--function provider(id, name, model) {
--  return {
--    id, name,
--    detail_url: `https://ru.folkbench.com/providers/${id}/`,
--    api_base_url: `https://api.${id}.example/v1`,
--    verified_at: "2026-11-22",
--    payment_methods_verified: [],
--    access_notes_ru: null,
--    claude_code_verified: false,
--    routes: [route(model)],
--  };
--}
--
--function catalog(providers) {
--  return {
--    schema_version: "3",
--    snapshot_id: "0123456789abcdef",
--    sha256: "a".repeat(64),
--    generated_at: "2026-11-23T00:00:00.000Z",
--    measured_at: "2026-11-23T00:00:00.000Z",
--    status: "ready",
--    node: "US-West",
--    window_hours: 24,
--    source_url: "https://ru.folkbench.com/",
--    methodology_url: "https://ru.folkbench.com/methodology/",
--    providers,
--  };
--}
--
--test("schema 3 keeps Modelflare and another provider in catalog order", () => {
--  const source = catalog([
--    provider("cheapai", "CheapAI", "gpt-6.2-sol"),
--    provider("modelflare", "Modelflare", "claude-opus-5-5"),
--  ]);
--  assert.deepEqual(validate(source), []);
--  const markdown = render(source);
--  assert.ok(markdown.indexOf("/providers/cheapai/") < markdown.indexOf("/providers/modelflare/"));
--  assert.match(markdown, /CheapAI/);
--  assert.match(markdown, /Modelflare/);
--  assert.doesNotMatch(markdown, /аффилирован/);
--  assert.ok(validate({ ...source, schema_version: "1" }).length > 0);
--});
--
--test("a rejected catalog does not replace the previous table", async () => {
--  const directory = await mkdtemp(join(tmpdir(), "ru-readme-"));
--  const readme = join(directory, "README.ru.md");
--  const file = join(directory, "catalog.json");
--  const original = `перед\n${START}\nстарая таблица\n${END}\nпосле\n`;
--  await writeFile(readme, original);
--  await writeFile(file, JSON.stringify({ schema_version: "1", providers: [] }));
--  const child = spawn("bun", ["scripts/ru-readme.mjs", "--file", file, "--readme", readme], { cwd: new URL("..", import.meta.url).pathname });
--  const code = await new Promise((resolve) => child.on("close", resolve));
--  assert.notEqual(code, 0);
--  assert.equal(await readFile(readme, "utf8"), original);
--  const good = catalog([provider("modelflare", "Modelflare", "gpt-6.2-sol"), provider("cheapai", "CheapAI", "gpt-6.2-sol")]);
--  const written = await writeCatalogTable(good, readme);
--  assert.equal(written.providers, 2);
--  const next = await readFile(readme, "utf8");
--  assert.match(next, /Modelflare/);
--  assert.match(next, /CheapAI/);
--  assert.match(next, /^перед\n/u);
--  assert.match(next, /\nпосле\n$/u);
--  await rm(directory, { recursive: true, force: true });
--});
+-| Claude Opus 5.5 | 1 | [Modelflare](https://folkbench.com/services/modelflare?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-opus-5-5-r1) | 100.0% | 98.6% | 95.8% | ¥0.80 / 1M / ¥3.98 / 1M | 142 |
+-| Claude Opus 5.5 | 2 | [IKunCode](https://folkbench.com/services/ikuncode?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-opus-5-5-r2) | 95.7% | 100.0% | 75.3% | ¥4.00 / 1M / ¥20.00 / 1M | 47 |
+-| Claude Opus 5.5 | 3 | [智流 FluxLane](https://folkbench.com/services/fluxlane?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-opus-5-5-r3) | 94.2% | 100.0% | 86.8% | ¥4.80 / 1M / ¥24.00 / 1M | 47 |
++| Claude Opus 5.5 | 1 | [Modelflare](https://
 ```
 
 #### Recent Merged Pull Requests:
@@ -1610,13 +1202,13 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. 数据：更新每日公开快照（快照 public-f5985dcf94b2c542877ec4a7c72592b7049c96902e22e918b2facd5744
+## X. 数据：更新每日公开快照（快照 public-7fec1e3c1c61b86bf20a050665379a01ab22c6b049a80a5b9f953801dc
 
 **RULE**:
 When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Folkbench/folkbench. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3e93677d`: 数据：更新每日公开快照（快照 public-f5985dcf94b2c542877ec4a7c72592b7049c96902e22e918b2facd5744ce6342）. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `43425e50`: 数据：更新每日公开快照（快照 public-7fec1e3c1c61b86bf20a050665379a01ab22c6b049a80a5b9f953801dca4b905）. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
@@ -1624,6 +1216,17 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
+> 归档日期：2026-11-24 · 发布：2026-11-24 20:30:40（北京时间）· 快照：`public-7fec1e3c1c61b86bf20a050665379a01ab22c6b049a80a5b9f953801dca4b905`
+| Claude Fable 5.1 | 1 | [Modelflare](https://folkbench.com/services/modelflare?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-fable-5-1-r1) | 100.0% | 97.8% | 94.8% | ¥1.99 / 1M / ¥9.96 / 1M | 135 |
+| claude-fable-5-1 | 2 | [破晓](https://folkbench.com/services/merchant-4cf2b788-920?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-fable-5-1-r2) | 93.2% | 100.0% | 91.3% | ¥14.50 / 1M / ¥72.50 / 1M | 48 |
+| Claude Fable 5.1 | 3 | [Apiporter](https://folkbench.com/services/apiporter?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-fable-5-1-r3) | 84.8% | 66.7% | 56.8% | ¥20.00 / 1M / ¥100.00 / 1M | 48 |
+| claude-haiku-5-5 | 1 | [Modelflare](https://folkbench.com/services/modelflare?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-haiku-5-5-r1) | 100.0% | 97.2% | 94.9% | ¥0.17 / 1M / ¥0.83 / 1M | 178 |
+| claude-haiku-5-5 | 2 | [Sidrune AI](https://folkbench.com/services/merchant-955eb49b-34a?utm_sou
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Induced defect failure mode:
 > 归档日期：2026-11-23 · 发布：2026-11-23 20:30:34（北京时间）· 快照：`public-f5985dcf94b2c542877ec4a7c72592b7049c96902e22e918b2facd5744ce6342`
 | Claude Fable 5.1 | 1 | [Modelflare](https://folkbench.com/services/modelflare?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-fable-5-1-r1) | 100.0% | 98.0% | 95.7% | ¥1.99 / 1M / ¥9.96 / 1M | 199 |
 | claude-fable-5-1 | 2 | [破晓](https://folkbench.com/services/merchant-4cf2b788-920?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-fable-5-1-r2) | 94.7% | 100.0% | 89.3% | ¥14.50 / 1M / ¥72.50 / 1M | 47 |
@@ -1632,16 +1235,5 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 | claude-haiku-5-5 | 2 | [Sidrune AI](https://folkbench.com/services/merchant-955eb49b-34a?utm_sou
 ```
 
-**NEGATIVE CONSTRAINT**:
-```typescript
-// Induced defect failure mode:
-> 归档日期：2026-11-22 · 发布：2026-11-22 20:30:24（北京时间）· 快照：`public-7e9b03d0bb6394e614ad80e973a923c9cd5d368b6a056287d6a1224c2c5b7ece`
-| Claude Fable 5.1 | 1 | [Modelflare](https://folkbench.com/services/modelflare?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-fable-5-1-r1) | 100.0% | 98.5% | 96.1% | ¥1.99 / 1M / ¥9.96 / 1M | 194 |
-| Claude Fable 5.1 | 2 | [Apiporter](https://folkbench.com/services/apiporter?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-fable-5-1-r2) | 95.8% | 100.0% | 89.6% | ¥20.00 / 1M / ¥100.00 / 1M | 48 |
-| claude-fable-5-1 | 3 | [破晓](https://folkbench.com/services/merchant-4cf2b788-920?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-fable-5-1-r3) | 94.6% | 100.0% | 92.2% | ¥14.50 / 1M / ¥72.50 / 1M | 48 |
-| Claude Haiku 5.5 | 1 | [Modelflare](https://folkbench.com/services/modelflare?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-haiku-5-5-r1) | 100.0% | 97.5% | 95.1% | ¥0.17 / 1M / ¥0.83 / 1M | 163 |
-| claude-haiku-5-5 | 2 | [ModelPod](https://folkbench.com/services/merchant-27af1806-16e?utm_sour
-```
-
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3e93677d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `43425e50` are properly handled with clean fallback behavior.

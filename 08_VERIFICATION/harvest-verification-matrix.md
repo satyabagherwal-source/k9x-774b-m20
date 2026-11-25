@@ -12937,3 +12937,6 @@
 | `CYCLE-20261125-WMD7` | `2026-11-25T04:39:29.851Z` | `tuist/tuist` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10454` | Yes (`170f8e3c...`) |
 | `CYCLE-20261125-WOS5` | `2026-11-25T04:39:32.981Z` | `XcodesOrg/XcodesApp` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10455` | Yes (`32fc7042...`) |
 | `CYCLE-20261125-WQWK` | `2026-11-25T04:39:35.732Z` | `rook/rook` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10456` | Yes (`98fee9f9...`) |
+| `CYCLE-20261125-CM6N` | `2026-11-25T04:51:56.111Z` | `autogluon/chronos-2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autogluon-chronos-2-learnings.md` | Yes (`586bcbee...`) |
+| `CYCLE-20261125-CMXF` | `2026-11-25T04:51:57.075Z` | `Folkbench/folkbench` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10457` | Yes (`a53790fa...`) |
+| `CYCLE-20261125-CXDI` | `2026-11-25T04:52:10.614Z` | `MaterializeInc/materialize` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10458` | Yes (`4288a469...`) |

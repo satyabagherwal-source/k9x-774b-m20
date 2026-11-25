@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-25T04:39:42.750Z",
+  "updated_at": "2026-11-25T04:52:17.852Z",
   "stats": {
-    "total_discovered": 9230,
-    "approved_pending_harvest": 8740,
+    "total_discovered": 9239,
+    "approved_pending_harvest": 8749,
     "harvested_count": 0,
     "rejected_count": 490,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 8736,
+      "COMMUNITY_AND_EXPERT": 8745,
       "OFFICIAL_DOCUMENTATION": 275,
       "STANDARDS_AND_SPECIFICATIONS": 149,
       "ENGINEERING_BLOGS": 7,
@@ -199657,6 +199657,204 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rook-rook-learnings.md",
         "fileName": "rook-rook-learnings.md"
+      }
+    },
+    "SRC-36A35C301276": {
+      "id": "SRC-36A35C301276",
+      "url": "https://github.com/MaterializeInc/mz-skills/blob/main/data/mz-release-notes/v26.52.0/rc.1/release_notes.md",
+      "title": "https://github.com/MaterializeInc/mz-skills/blob/main/data/mz-release-notes/v26.52.0/rc.1/release_notes.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T04:52:17.125Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
+        "fileName": "materializeinc-materialize-learnings.md"
+      }
+    },
+    "SRC-8E1204A702A6": {
+      "id": "SRC-8E1204A702A6",
+      "url": "https://github.com/MaterializeInc/mz-skills/blob/main/data/mz-release-notes/v26.52.0/rc.1/omitted.md",
+      "title": "https://github.com/MaterializeInc/mz-skills/blob/main/data/mz-release-notes/v26.52.0/rc.1/omitted.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T04:52:17.206Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
+        "fileName": "materializeinc-materialize-learnings.md"
+      }
+    },
+    "SRC-8865F26B9EB0": {
+      "id": "SRC-8865F26B9EB0",
+      "url": "https://github.com/MaterializeInc/mz-skills/blob/main/data/mz-release-notes/v26.52.0/final/release_notes.md",
+      "title": "https://github.com/MaterializeInc/mz-skills/blob/main/data/mz-release-notes/v26.52.0/final/release_notes.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T04:52:17.293Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
+        "fileName": "materializeinc-materialize-learnings.md"
+      }
+    },
+    "SRC-B0060A717926": {
+      "id": "SRC-B0060A717926",
+      "url": "https://github.com/MaterializeInc/mz-skills/blob/main/data/mz-release-notes/v26.52.0/final/omitted.md",
+      "title": "https://github.com/MaterializeInc/mz-skills/blob/main/data/mz-release-notes/v26.52.0/final/omitted.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T04:52:17.404Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
+        "fileName": "materializeinc-materialize-learnings.md"
+      }
+    },
+    "SRC-4AD03384A595": {
+      "id": "SRC-4AD03384A595",
+      "url": "https://github.com/gohugoio/hugo/releases/download/v0.152.2/hugo_extended_withdeploy_0.152.2_Linux-64bit.tar.gz",
+      "title": "https://github.com/gohugoio/hugo/releases/download/v0.152.2/hugo_extended_withdeploy_0.152.2_Linux-64bit.tar.gz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T04:52:17.483Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
+        "fileName": "materializeinc-materialize-learnings.md"
+      }
+    },
+    "SRC-E42500A5B108": {
+      "id": "SRC-E42500A5B108",
+      "url": "https://github.com/gohugoio/hugo/releases/download/$hugo_version/hugo_withdeploy_$%7Bhugo_version",
+      "title": "https://github.com/gohugoio/hugo/releases/download/$hugo_version/hugo_withdeploy_$%7Bhugo_version",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T04:52:17.567Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
+        "fileName": "materializeinc-materialize-learnings.md"
+      }
+    },
+    "SRC-6EB5FC387BC8": {
+      "id": "SRC-6EB5FC387BC8",
+      "url": "https://github.com/sass/dart-sass/releases/download/$sass_version/dart-sass-$sass_version-linux-x64.tar.gz",
+      "title": "https://github.com/sass/dart-sass/releases/download/$sass_version/dart-sass-$sass_version-linux-x64.tar.gz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T04:52:17.646Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
+        "fileName": "materializeinc-materialize-learnings.md"
+      }
+    },
+    "SRC-30A2A6261C1E": {
+      "id": "SRC-30A2A6261C1E",
+      "url": "https://linear.app/materializeinc/issue/SS-550",
+      "title": "https://linear.app/materializeinc/issue/SS-550",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T04:52:17.775Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
+        "fileName": "materializeinc-materialize-learnings.md"
+      }
+    },
+    "SRC-24AA99187E02": {
+      "id": "SRC-24AA99187E02",
+      "url": "https://linear.app/materializeinc/issue/SS-612",
+      "title": "https://linear.app/materializeinc/issue/SS-612",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T04:52:17.852Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
+        "fileName": "materializeinc-materialize-learnings.md"
       }
     }
   }

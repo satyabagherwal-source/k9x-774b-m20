@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T04:39:43.329Z",
+  "last_updated": "2026-11-25T04:52:18.440Z",
   "total_records": 2632,
   "domains": {
     "A": {
@@ -14697,8 +14697,8 @@
       "title": "Architecture Intelligence: MaterializeInc/materialize Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-materializeinc-materialize-architecture-intelligence-materializeinc-materialize-.md",
       "repository": "MaterializeInc/materialize",
-      "content_hash": "190c84cf4580e7584dfe8679cbc99b20df2f247ab9461c4fa2a6f6a11010e884",
-      "created_at": "2026-11-23T14:38:18.527Z"
+      "content_hash": "942586db25ef49d8f529f06306f35f0c426839c5661039f60002992d9c9c5cae",
+      "created_at": "2026-11-25T04:52:11.210Z"
     },
     "DOM-K-C3DCBF34": {
       "record_id": "DOM-K-C3DCBF34",
@@ -24100,8 +24100,8 @@
       "title": "Technical Construction Intelligence: Folkbench/folkbench Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-folkbench-folkbench-technical-construction-intelligence-folkbench-folkbench-core.md",
       "repository": "Folkbench/folkbench",
-      "content_hash": "85a869ce78986966a7986134a8e0e25f9ea96602e176dd28064c1e1ca2666d8b",
-      "created_at": "2026-11-22T18:52:39.243Z"
+      "content_hash": "c7219a8e806788593109437a8f921105ede742c76db0d3db03aed406c1bd94ef",
+      "created_at": "2026-11-25T04:51:57.656Z"
     },
     "domain_intelligence-architecture-intelligence-mariadb-server-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-mariadb-server-core-invariants",
@@ -24118,8 +24118,8 @@
       "title": "Technical Construction Intelligence: folkbench-folkbench-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-folkbench-folkbench-learnings-technical-construction-intelligence-folkbench-folk.md",
       "repository": "folkbench-folkbench-learnings",
-      "content_hash": "0fb8f86bfae5b297bafcbb2efd9ccad4c10bdbe2c933f61bd19172b0373be1be",
-      "created_at": "2026-11-22T18:52:56.438Z"
+      "content_hash": "0182fe1fd72cad61eea407a70a0a9227310461f84d56804598ba3c39a837c007",
+      "created_at": "2026-11-25T04:52:15.912Z"
     },
     "domain_intelligence-architecture-intelligence-mariadb-server-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-mariadb-server-learnings-core-invariants",
@@ -26239,8 +26239,8 @@
       "title": "Research & Knowledge Intelligence: materializeinc-materialize-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-materializeinc-materialize-learnings-research-knowledge-intelligence-materialize.md",
       "repository": "materializeinc-materialize-learnings",
-      "content_hash": "eb8e5d9b4adea11d3ebd96d06eae03a8b307c58ca3db1335633c55b435d6893c",
-      "created_at": "2026-11-23T14:38:25.303Z"
+      "content_hash": "1b8d05d943c80d6c4e3fee12d21b7764af94c433cc0e5a045b575597e51aba02",
+      "created_at": "2026-11-25T04:52:18.440Z"
     },
     "domain_intelligence-architecture-intelligence-solidjs-solid-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-solidjs-solid-core-invariants",
@@ -28192,8 +28192,8 @@
       "title": "Research & Knowledge Intelligence: autogluon/chronos-2 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-autogluon-chronos-2-research-knowledge-intelligence-autogluon-chronos-2-core-.md",
       "repository": "autogluon/chronos-2",
-      "content_hash": "ee70590b8458514377d9f56d39c44662b93057e8cfaeab61b821893db1588cd6",
-      "created_at": "2026-11-21T07:58:42.081Z"
+      "content_hash": "eceeea9c92d95c5cff1b09b9c8fdcc20a43729107a5dbee139e853eca7dbcd18",
+      "created_at": "2026-11-25T04:51:56.487Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-autogluon-chronos-2-learnings-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-autogluon-chronos-2-learnings-core-invariants",
@@ -28201,8 +28201,8 @@
       "title": "Research & Knowledge Intelligence: hf-autogluon-chronos-2-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-autogluon-chronos-2-learnings-research-knowledge-intelligence-hf-autogluon-ch.md",
       "repository": "hf-autogluon-chronos-2-learnings",
-      "content_hash": "1474e9a600f0771486dfb79f43dee8b65ef7f1fc8ada627a26968249deada59c",
-      "created_at": "2026-11-21T07:59:01.057Z"
+      "content_hash": "1909ca3c338a86062d6a94282683967112c0bccef5d1249956d2a9c548b64bc0",
+      "created_at": "2026-11-25T04:52:16.691Z"
     },
     "domain_intelligence-research-knowledge-intelligence-comfy-org-moss-image-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-comfy-org-moss-image-core-invariants",
