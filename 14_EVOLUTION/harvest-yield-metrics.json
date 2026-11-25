@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T09:25:00.844Z",
-  "total_cycles_completed": 12364,
-  "total_learnings_persisted": 12364,
-  "total_rules_promoted": 11374,
+  "last_updated": "2026-11-25T09:39:48.473Z",
+  "total_cycles_completed": 12367,
+  "total_learnings_persisted": 12367,
+  "total_rules_promoted": 11378,
   "history": [
-    {
-      "timestamp": "2026-11-24T20:29:52.660Z",
-      "repository": "RDFLib/rdflib",
-      "learningId": "learn-github-rdflib-rdflib",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T20:29:54.743Z",
-      "repository": "open-ani/animeko",
-      "learningId": "learn-github-open-ani-animeko",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T20:29:57.049Z",
-      "repository": "dragonflyoss/dragonfly",
-      "learningId": "learn-github-dragonflyoss-dragonfly",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-24T20:30:04.922Z",
       "repository": "NucleoidAI/Nucleoid",
@@ -1403,6 +1382,27 @@
       "repository": "goharbor/harbor",
       "learningId": "learn-github-goharbor-harbor",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T09:37:23.495Z",
+      "repository": "modelcontextprotocol/kotlin-sdk",
+      "learningId": "learn-github-modelcontextprotocol-kotlin-sdk",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T09:37:30.682Z",
+      "repository": "yugabyte/yugabyte-db",
+      "learningId": "learn-github-yugabyte-yugabyte-db",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T09:39:48.473Z",
+      "repository": "AtomicChat/Inkling-2-Mini-Uncensored-GGUF",
+      "learningId": "learn-huggingface-atomicchat-inkling-2-mini-uncensored-gguf",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

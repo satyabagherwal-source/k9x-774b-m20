@@ -4,24 +4,24 @@
 {
   "source_repository": "modelcontextprotocol/kotlin-sdk",
   "source_url": "https://github.com/modelcontextprotocol/kotlin-sdk",
-  "source_version": "a3399b9c",
+  "source_version": "df24fb0b",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-22T23:06:17.240Z",
+  "timestamp": "2026-11-25T09:37:23.809Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-modelcontextprotocol-kotlin-sdk",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [modelcontextprotocol/kotlin-sdk](https://github.com/modelcontextprotocol/kotlin-sdk) (Revision: `a3399b9c`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-22T23:06:17.240Z`  
+> **Provenance**: Harvested from [modelcontextprotocol/kotlin-sdk](https://github.com/modelcontextprotocol/kotlin-sdk) (Revision: `df24fb0b`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-25T09:37:23.809Z`  
 > **Learning ID**: `learn-github-modelcontextprotocol-kotlin-sdk`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 69%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence)
+- **Confidence Rating**: 68%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from modelcontextprotocol/kotlin-sdk:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/modelcontextprotocol-kotlin-sdk-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/modelcontextprotocol/kotlin-sdk](https://github.com/modelcontextprotocol/kotlin-sdk))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T23:06:16.531Z  
+> **Harvest Timestamp**: 2026-11-25T09:37:20.435Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: The official Kotlin SDK for Model Context Protocol servers and clients. Maintained in collaboration with JetBrains
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1490 stars
+- **Stars / Engagement**: 1492 stars
 
 ---
 
@@ -576,6 +576,7 @@ package io.modelcontextprotocol.kotlin.sdk.shared
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.modelcontextprotocol.kotlin.sdk.types.CancelledNotification
 import io.modelcontextprotocol.kotlin.sdk.types.CancelledNotificationParams
+import io.modelcontextprotocol.kotlin.sdk.types.CustomResult
 import io.modelcontextprotocol.kotlin.sdk.types.EmptyResult
 import io.modelcontextprotocol.kotlin.sdk.types.JSONRPCEmptyMessage
 import io.modelcontextprotocol.kotlin.sdk.types.JSONRPCError
@@ -781,13 +782,7 @@ public class RequestHandlerExtra internal constructor(
                 resumptionToken = base.resumptionToken,
                 onResumptionToken = base.onResumptionToken,
                 onProgress = base.onProgress,
-                timeout = base.timeout,
-            ),
-        )
-    }
-}
-
-/** The [
+                timeou
 ```
 
 ### Core Architecture Module: `kotlin-sdk-core/src/commonMain/kotlin/io/modelcontextprotocol/kotlin/sdk/shared/ReadBuffer.kt`
@@ -1094,235 +1089,348 @@ public open class TransportSendOptions(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a3399b9c` (2026-11-20)
-**Commit Message**: fix(transport): hold inbound messages until the client transport is operational (#1207)
+### Incident Patch 1: `de2e90df` (2026-11-23)
+**Commit Message**: fix(core): read a negative discovery ttlMs as zero instead of failing (#1188)
 
 ## Why
 
-Follow-up to #985. Goal: remove the CI flake that makes PRs on the
-stateless branch green only on rerun. `RequestScopedLifecycleTest` and
-`ResponseCacheTest` fail with "server/discover probe timed out" or
-"Expected 2026-07-28 but actual was null". Every failing log has `Error
-handling request: server/discover ... McpException: Transport is not
-ready` from `AbstractClientTransport.send`. The defect is on main.
+Goal: turn the confirmed review findings on #985 into atomic fixes.
+Follow-up to #985.
 
-`AbstractClientTransport.start()` runs `initialize()`, where transports
-start their readers, and only then moves to `Operational`. A reader can
-hand a request to `Protocol` in that window. The handler's reply hits
-the state check in `send()` and is dropped, so the peer waits out its
-timeout. Sometimes the error reply gets through instead, and the client
-reads it as a refusal and falls back to legacy. The integration tests
-start `server.createSession` and `client.connect` concurrently over
-`ChannelTransport`, and slow CI runners widen the window.
+A server that sends `"ttlMs": -1` in a `server/discover` result makes
+the client fail to decode the whole result. The non-negative check in
+`DiscoverResult`'s `init` also ran on decode. The [caching
+spec](https://modelcontextprotocol.io/specification/2026-07-28/server/utilities/caching)
+says: "If `ttlMs` is negative, clients SHOULD ignore it and treat it as
+`0`."
 
 ## What changed
 
-- `AbstractClientTransport` overrides `onMessage` so that handlers wait
-on a deferred that `start()` completes right af
+- `TtlMsSerializer` in `serializers.kt` reads a negative `ttlMs` as `0`
+and writes the value unchanged.
+- `DiscoverResult.ttlMs` uses it through `@Serializable(with =
+TtlMsSerializer::class)`. The property stays `val`, so the non-negative
+check in `init` still guards direct construction and no setter can
+bypass it.
+- The `init` check stays, so `DiscoverResult(ttlMs = -1)` in code still
+throws `IllegalArgumentException`.
 
-**File**: `integration-test/src/jvmTest/kotlin/io/modelcontextprotocol/kotlin/sdk/integration/ProtocolConcurrencyIntegrationTest.kt` (modified, +0/-3)
+Design history: the init-block clamp suggested in
+[review](https://github.com/modelcontextprotocol/kotlin-sdk/pull/1188#discussion_r4664081752)
+landed in 56f5dac and is reverted in f54cbf5. The clamp required `ttlMs`
+
+**File**: `kotlin-sdk-core/src/commonMain/kotlin/io/modelcontextprotocol/kotlin/sdk/types/discovery.kt` (modified, +1/-0)
 ```diff
-@@ -73,9 +73,6 @@ class ProtocolConcurrencyIntegrationTest {
-         ),
-     )
+@@ -83,6 +83,7 @@ public data class DiscoverResult(
+     @EncodeDefault
+     val resultType: String = COMPLETE_RESULT_TYPE,
+     @Required
++    @Serializable(with = TtlMsSerializer::class)
+     val ttlMs: Long = 0,
+     @Required
+     val cacheScope: CacheScope = CacheScope.Private,
+```
+
+**File**: `kotlin-sdk-core/src/commonMain/kotlin/io/modelcontextprotocol/kotlin/sdk/types/serializers.kt` (modified, +12/-0)
+```diff
+@@ -69,6 +69,18 @@ internal object MethodSerializer : KSerializer<Method> {
+     override fun deserialize(decoder: Decoder): Method = Method.from(decoder.decodeString())
+ }
  
--    // ChannelTransport delivers inbound messages as soon as its read loop starts, which is before
--    // start() marks it operational. Creating the session first keeps the client's initialize from
--    // landing on a transport that would reject the session's response.
-     private suspend fun connect(
-         client: Client,
-         clientTransport: ChannelTransport,
-```
-
-**File**: `kotlin-sdk-core/api/kotlin-sdk-core.api` (modified, +1/-0)
-```diff
-@@ -21,6 +21,7 @@ public abstract class io/modelcontextprotocol/kotlin/sdk/shared/AbstractClientTr
- 	protected abstract fun getLogger ()Lio/github/oshai/kotlinlogging/KLogger;
- 	protected final fun getState ()Lio/modelcontextprotocol/kotlin/sdk/shared/ClientTransportState;
- 	protected abstract fun initialize (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-+	public fun onMessage (Lkotlin/jvm/functions/Function2;)V
- 	protected abstract fun performSend (Lio/modelcontextprotocol/kotlin/sdk/types/JSONRPCMessage;Lio/modelcontextprotocol/kotlin/sdk/shared/TransportSendOptions;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
- 	public static synthetic fun performSend$default (Lio/modelcontextprotocol/kotlin/sdk/shared/AbstractClientTransport;Lio/modelcontextprotocol/kotlin/sdk/types/JSONRPCMessage;Lio/modelcontextprotocol/kotlin/sdk/shared/TransportSendOptions;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
- 	public fun send (Lio/modelcontextprotocol/kotlin/sdk/types/JSONRPCMessage;Lio/modelcontextprotocol/kotlin/sdk/shared/TransportSendOptions;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-```
-
-**File**: `kotlin-sdk-core/api/kotlin-sdk-core.klib.api` (modified, +1/-0)
-```diff
-@@ -661,6 +661,7 @@ abstract class io.modelcontextprotocol.kotlin.sdk.shared/AbstractClientTransport
-     final fun checkState(io.modelcontextprotocol.kotlin.sdk.shared/ClientTransportState, kotlin/Function1<io.modelcontextprotocol.kotlin.sdk.shared/ClientTransportState, kotlin/Any> = ...) // io.modelcontextprotocol.kotlin.sdk.shared/AbstractClientTransport.checkState|checkState(io.modelcontextprotocol.kotlin.sdk.shared.ClientTransportState;kotlin.Function1<io.modelcontextprotocol.kotlin.sdk.shared.ClientTransportState,kotlin.Any>){}[0]
-     final fun stateTransition(io.modelcontextprotocol.kotlin.sdk.shared/ClientTransportState, io.modelcontextprotocol.kotlin.sdk.shared/ClientTransportState) // io.modelcontextprotocol.kotlin.sdk.shared/AbstractClientTransport.stateTransition|stateTransition(io.modelcontextprotocol.kotlin.sdk.shared.ClientTransportState;io.modelcontextprotocol.kotlin.sdk.shared.ClientTransportState){}[0]
-     final fun updateState(io.modelcontextprotocol.kotlin.sdk.shared/ClientTransportState) // io.modelcontextprotocol.kotlin.sdk.shared/AbstractClientTransport.updateState|updateState(io.modelcontextprotocol.kotlin.sdk.shared.ClientTransportState){}[0]
-+    open fun onMessage(kotlin.coroutines/SuspendFunction1<io.modelcontextprotocol.kotlin.sdk.types/JSONRPCMessage, kotlin/Unit>) // io.modelcontextprotocol.kotlin.sdk.shared/AbstractClientTransport.onMessage|onMessage(kotlin.coroutines.SuspendFunction1<io.modelcontextprotocol.kotlin.sdk.types.JSONRPCMessage,kotlin.Unit>){}[0]
-     open suspend fun close() // io.modelcontextprotocol.kotlin.sdk.shared/AbstractClientTransport.close|close(){}[0]
-     open suspend fun send(io.modelcontextprotocol.kotlin.sdk.types/JSONRPCMessage, io.modelcontextprotocol.kotlin.sdk.shared/TransportSendOptions?) // io.modelcontextprotocol.kotlin.sdk.shared/AbstractClientTransport.send|send(io.modelcontextprotocol.kotlin.sdk.types.JSONRPCMessage;io.modelcontextprotocol.kotlin.sdk.shared.TransportSendOptions?){}[0]
-     open suspend fun start() // io.modelcontextprotocol.kotlin.sdk.shared/AbstractClientTransport.start|start(){}[0]
-```
-
-**File**: `kotlin-sdk-core/src/commonMain/kotlin/io/modelcontextprotocol/kotlin/sdk/shared/AbstractClientTransport.kt` (modified, +15/-0)
-```diff
-@@ -6,6 +6,7 @@ import io.modelcontextprotocol.kotlin.sdk.types.JSONRPCMessage
- import io.modelcontextprotocol.kotlin.sdk.types.McpException
- import io.modelcontextprotocol.kotlin.sdk.types.RPCError.ErrorCode.CONNECTION_CLOSED
- import io.modelcontextprotocol.kotlin.sdk.types.RPCError.ErrorCode.INTERNAL_ERROR
-+import kotlinx.coroutines.CompletableDeferred
- import kotlin.concurrent.atomics.AtomicReference
- import kotlin.concurrent.atomics.ExperimentalAtomicApi
- import kotlin.coroutines.cancellation.CancellationException
-@@ -39,6 +40,8 @@ public abstract class AbstractClientTransport : AbstractTransport() {
-      */
-     private val _state: AtomicReference<ClientTransportState> = AtomicReference(ClientTransportState.New)
- 
-+    private val operational = CompletableDeferred<Unit>()
++/** Per the caching spec, clients SHOULD ignore a negative `ttlMs` and treat it as `0`. */
++internal object TtlMsSerializer : KSerializer<Long> {
++    override val descriptor: SerialDescriptor =
++        PrimitiveSerialDescriptor("io.modelcontextprotocol.kotlin.sdk.types.TtlMs", PrimitiveKind.LONG)
 +
-     /**
-      * Current transport state. Thread-safe via atomic reference.
-      * Initial state is [ClientTransportState.New].
-@@ -136,13 +139,25 @@ public abstract class AbstractClientTransport : AbstractTransport() {
-         try {
-             initialize()
-             stateTransition(from = ClientTransportState.Initializing, to = ClientTransportState.Operational)
-+            operational.complete(Unit)
-         } catch (e: Exception) {
-             _state.store(ClientTransportState.InitializationFailed)
-             closeResources()
-             throw e
++    override fun serialize(encoder: Encoder, value: Long) {
++        encoder.encodeLong(value)
++    }
++
++    override fun deserialize(decoder: Decoder): Long = decoder.decodeLong().coerceAtLeast(0)
++}
++
+ // ============================================================================
+ // Reference Serializers
+ // ============================================================================
+```
+
+**File**: `kotlin-sdk-core/src/commonTest/kotlin/io/modelcontextprotocol/kotlin/sdk/types/DiscoveryTest.kt` (modified, +16/-0)
+```diff
+@@ -213,6 +213,22 @@ class DiscoveryTest {
          }
      }
  
-+    /**
-+     * Registers [block] to handle inbound messages. Messages received before [start] completes
-+     * are handed to [block] only once the transport is [ClientTransportState.Operational].
-+     */
-+    public override fun onMessage(block: suspend (JSONRPCMessage) -> Unit) {
-+        super.onMessage { message ->
-+            operational.await()
-+            block(message)
-+        }
-+    }
-+
-     /**
-      * Sends a JSON-RPC message using the transport layer.
-      *
-```
-
-**File**: `kotlin-sdk-core/src/jvmTest/kotlin/io/modelcontextprotocol/kotlin/sdk/shared/AbstractClientTransportTest.kt` (modified, +26/-0)
-```diff
-@@ -8,10 +8,14 @@ import io.kotest.matchers.string.shouldContain
- import io.kotest.matchers.types.shouldBeSameInstanceAs
- import io.modelcontextprotocol.kotlin.sdk.InternalMcpApi
- import io.modelcontextprotocol.kotlin.sdk.types.JSONRPCMessage
-+import io.modelcontextprotocol.kotlin.sdk.types.JSONRPCResponse
- import io.modelcontextprotocol.kotlin.sdk.types.McpException
- import io.modelcontextprotocol.kotlin.sdk.types.PingRequest
- import io.modelcontextprotocol.kotlin.sdk.types.RPCError
- import io.modelcontextprotocol.kotlin.sdk.types.toJSON
-+import kotlinx.coroutines.CoroutineScope
-+import kotlinx.coroutines.launch
-+import kotlinx.coroutines.test.UnconfinedTestDispatcher
- import kotlinx.coroutines.test.runTest
- import org.junit.jupiter.api.Test
- import org.junit.jupiter.params.ParameterizedTest
-@@ -136,6 +140,18 @@ class AbstractClientTransportTest {
-         transport.lastSendOptions shouldBeSameInstanceAs options
-     }
- 
 +    @Test
-+    fun `should answer a message received during initialization once OPERATIONAL`() = runTest {
-+        val request = PingRequest().toJSON()
-+        val response = JSONRPCResponse(request.id)
-+        transport.onMessage { transport.send(response) }
-+        transport.receiveDuringInitialize = request
-+
-+        transport.start()
-+
-+        transport.sentMessages shouldBe listOf(response)
-+    }
-+
-     @Test
-     fun `should throw when sending before start`() = runTest {
-         assertSendRejected()
-@@ -218,13 +234,23 @@ class AbstractClientTransportTest {
-         var initializeFailure: Exception? = null
-         var closeFailure: Exception? = null
-         var sendFailure: Exception? = null
-+        var receiveDuringInitialize: JSONRPCMessage? = null
- 
-         val currentState: ClientTransportState
-             get() = state
- 
-         override suspend fun initialize() {
-             initializeCalled = true
-             initializeFailure?.let { throw it }
-+            receiveDuringInitialize?.let { message ->
-+                CoroutineScope(UnconfinedTestDispatcher()).launch {
-+                    try {
-+                        _onMessage(message)
-+                    } catch (e: McpException) {
-+                        _onError(e)
-+                    }
-+                }
++    fun `should read a negative discovery ttl from the wire as zero`() {
++        val result = McpJson.decodeFromString<ServerResult>(
++            """
++            {
++              "supportedVersions": ["2026-07-28"],
++              "capabilities": {},
++              "ttlMs": -1,
++              "cacheScope": "private"
 +            }
-         }
- 
-         override suspend fun performSend(message: JSONRPCMessage, options: TransportSendOptions?) {
-```
-
-**File**: `kotlin-sdk-testing/src/commonTest/kotlin/io/modelcontextprotocol/kotlin/sdk/testing/ChannelTransportTest.kt` (modified, +28/-0)
-```diff
-@@ -5,9 +5,15 @@ import io.kotest.matchers.shouldBe
- import io.modelcontextprotocol.kotlin.sdk.ExperimentalMcpApi
- import io.modelcontextprotocol.kotlin.sdk.types.JSONRPCMessage
- import io.modelcontextprotocol.kotlin.sdk.types.JSONRPCRequest
-+import io.modelcontextprotocol.kotlin.sdk.types.JSONRPCResponse
- import io.modelcontextprotocol.kotlin.sdk.types.RequestId
- import kotlinx.coroutines.CompletableDeferred
-+import kotlinx.coroutines.ExperimentalCoroutinesApi
- import kotlinx.coroutines.channels.Channel
-+import kotlinx.coroutines.launch
-+import kotlinx.coroutines.test.StandardTestDispatcher
-+import kotlinx.coroutines.test.TestCoroutineScheduler
-+import kotlinx.coroutines.test.runCurrent
- import kotlinx.coroutines.test.runTest
- import kotlin.test.Test
- 
-@@ -27,6 +33,28 @@ class ChannelTransportTest {
-         sendChannel.receive() shouldBe message
-     }
- 
-+    @OptIn(ExperimentalCoroutinesApi::class)
-+    @Test
-+    fun `answers a request the peer sent before start returned`() = runTest {
-+        val loopScheduler = TestCoroutineScheduler()
-+        val sendChannel = Channel<JSONRPCMessage>(Channel.UNLIMITED)
-+        val receiveChannel = Channel<JSONRPCMessage>(Channel.UNLIMITED)
-+        val transport = ChannelTransport(sendChannel, receiveChannel, StandardTestDispatcher(loopScheduler))
-+        val request = JSONRPCRequest(RequestId.NumberId(1), "ping")
-+        val response = JSONRPCResponse(request.id)
-+        transport.onMessage { transport.send(response) }
-+        receiveChannel.send(request)
++            """.trimIndent(),
++        )
 +
-+        val start = launch { transport.start() }
-+        runCurrent()
-+        loopScheduler.runCurrent()
-+        runCurrent()
-+        loopScheduler.runCurrent()
-+
-+        start.isCompleted shouldBe true
-+        sendChannel.tryReceive().getOrNull() shouldBe response
++        assertEquals(0L, assertIs<DiscoverResult>(result).ttlMs)
 +    }
 +
      @Test
-     fun `start reads from receiveChannel and invokes onMessage`() = runTest {
-         val receiveChannel = Channel<JSONRPCMessage>(Channel.UNLIMITED)
+     fun `should serialize unsupported protocol version data`() {
+         verifySerialization(
+```
+
+---
+
+### Incident Patch 2: `08f3c91b` (2026-11-24)
+**Commit Message**: fix(core): fail requests on results of unknown shape instead of timing out (#1186)
+
+A response whose result matched no known type failed to decode in the
+transport, so it was dropped and the request ended with a timeout. Such
+a result is now kept as received (internal `CustomResult`), and the
+request fails at once with `SerializationException`. Typed results of
+extension methods come later, picked by request method (Skills in
+#1020).
+
+## How Has This Been Tested?
+
+`JsonRpcTest` round-trips a response with a result of unknown shape.
+`ProtocolTest` checks that a request with such a result throws
+`SerializationException` instead of timing out. JVM tests of core,
+client and server pass, as do the core tests on JS; `ProtocolTest` and
+`JsonRpcTest` also pass on macosArm64.
+
+## Breaking Changes
+
+None in the API. A request whose result has an unknown shape now throws
+`SerializationException` at once; before, it timed out with
+`McpException` (`REQUEST_TIMEOUT`).
+
+Closes #1087
+
+**File**: `kotlin-sdk-core/src/commonMain/kotlin/io/modelcontextprotocol/kotlin/sdk/shared/Protocol.kt` (modified, +8/-1)
+```diff
+@@ -3,6 +3,7 @@ package io.modelcontextprotocol.kotlin.sdk.shared
+ import io.github.oshai.kotlinlogging.KotlinLogging
+ import io.modelcontextprotocol.kotlin.sdk.types.CancelledNotification
+ import io.modelcontextprotocol.kotlin.sdk.types.CancelledNotificationParams
++import io.modelcontextprotocol.kotlin.sdk.types.CustomResult
+ import io.modelcontextprotocol.kotlin.sdk.types.EmptyResult
+ import io.modelcontextprotocol.kotlin.sdk.types.JSONRPCEmptyMessage
+ import io.modelcontextprotocol.kotlin.sdk.types.JSONRPCError
+@@ -814,8 +815,14 @@ public abstract class Protocol(@PublishedApi internal val options: ProtocolOptio
+                 }
+ 
+                 try {
++                    val value = response!!.result
++                    if (value is CustomResult) {
++                        throw SerializationException(
++                            "Cannot determine RequestResult type from JSON: ${value.json.keys}",
++                        )
++                    }
+                     @Suppress("UNCHECKED_CAST")
+-                    result.complete(response!!.result as T)
++                    result.complete(value as T)
+                 } catch (e: Throwable) {
+                     result.completeExceptionally(e)
+                 }
+```
+
+**File**: `kotlin-sdk-core/src/commonMain/kotlin/io/modelcontextprotocol/kotlin/sdk/types/request.kt` (modified, +9/-0)
+```diff
+@@ -240,6 +240,15 @@ public data class EmptyResult(@SerialName("_meta") override val meta: JsonObject
+     ClientResult,
+     ServerResult
+ 
++/**
++ * A result whose shape matches no known [RequestResult] type, such as a custom method's, kept as received.
++ */
++@Serializable(with = CustomResultSerializer::class)
++internal data class CustomResult(val json: JsonObject) : RequestResult {
++    override val meta: JsonObject?
++        get() = json["_meta"] as? JsonObject
++}
++
+ /**
+  * Represents a paginated result.
+  */
+```
+
+**File**: `kotlin-sdk-core/src/commonMain/kotlin/io/modelcontextprotocol/kotlin/sdk/types/serializers.kt` (modified, +16/-2)
+```diff
+@@ -486,15 +486,29 @@ private fun selectServerResultDeserializer(element: JsonElement): Deserializatio
+ /**
+  * Polymorphic serializer for [RequestResult] types.
+  * Supports both client and server results.
+- * Throws [SerializationException] if the result type cannot be determined.
++ * Falls back to [CustomResult] if the result type cannot be determined.
+  */
+ internal object RequestResultPolymorphicSerializer :
+     JsonContentPolymorphicSerializer<RequestResult>(RequestResult::class) {
+     override fun selectDeserializer(element: JsonElement): DeserializationStrategy<RequestResult> =
+         selectClientResultDeserializer(element)
+             ?: selectServerResultDeserializer(element)
+             ?: selectEmptyResult(element)
+-            ?: throw SerializationException("Cannot determine RequestResult type from JSON: ${element.jsonObject.keys}")
++            ?: CustomResultSerializer
++}
++
++/**
++ * Writes and reads a [CustomResult] as its JSON object, unchanged.
++ */
++internal object CustomResultSerializer : KSerializer<CustomResult> {
++    override val descriptor: SerialDescriptor = JsonObject.serializer().descriptor
++
++    override fun serialize(encoder: Encoder, value: CustomResult) {
++        JsonObject.serializer().serialize(encoder, value.json)
++    }
++
++    override fun deserialize(decoder: Decoder): CustomResult =
++        CustomResult(JsonObject.serializer().deserialize(decoder))
+ }
+ 
+ /**
+```
+
+**File**: `kotlin-sdk-core/src/commonTest/kotlin/io/modelcontextprotocol/kotlin/sdk/shared/ProtocolTest.kt` (modified, +20/-0)
+```diff
+@@ -9,6 +9,7 @@ import io.kotest.matchers.types.shouldBeInstanceOf
+ import io.kotest.matchers.types.shouldBeSameInstanceAs
+ import io.modelcontextprotocol.kotlin.sdk.types.CustomRequest
+ import io.modelcontextprotocol.kotlin.sdk.types.EmptyResult
++import io.modelcontextprotocol.kotlin.sdk.types.JSONRPCMessage
+ import io.modelcontextprotocol.kotlin.sdk.types.JSONRPCNotification
+ import io.modelcontextprotocol.kotlin.sdk.types.JSONRPCRequest
+ import io.modelcontextprotocol.kotlin.sdk.types.JSONRPCResponse
+@@ -28,6 +29,7 @@ import kotlinx.coroutines.async
+ import kotlinx.coroutines.launch
+ import kotlinx.coroutines.test.TestScope
+ import kotlinx.coroutines.test.runTest
++import kotlinx.serialization.SerializationException
+ import kotlinx.serialization.json.JsonObject
+ import kotlinx.serialization.json.buildJsonObject
+ import kotlinx.serialization.json.encodeToJsonElement
+@@ -257,4 +259,22 @@ class ProtocolTest {
+         }
+         error.message.shouldNotBeNull() shouldContain "maxInFlightHandlers"
+     }
++
++    /** Decodes a response to [id] the way a transport does. */
++    private fun wireResponse(id: RequestId, result: String): JSONRPCMessage =
++        McpJson.decodeFromString("""{"jsonrpc":"2.0","id":${McpJson.encodeToString(id)},"result":$result}""")
++
++    @Test
++    fun `request rejects a result of unknown shape instead of timing out`() = runTest {
++        val (protocol, transport) = connectedProtocol()
++        val inFlight = async {
++            shouldThrow<SerializationException> {
++                protocol.request<EmptyResult>(CustomRequest(Method.Custom("skills/list"), null))
++            }
++        }
++
++        transport.deliver(wireResponse(transport.awaitRequest().id, """{"skills":[]}"""))
++
++        inFlight.await()
++    }
+ }
+```
+
+**File**: `kotlin-sdk-core/src/commonTest/kotlin/io/modelcontextprotocol/kotlin/sdk/types/JsonRpcTest.kt` (modified, +20/-0)
+```diff
+@@ -186,6 +186,26 @@ class JsonRpcTest {
+         )
+     }
+ 
++    @Test
++    fun `should keep a JSONRPCResponse result of unknown shape as received`() {
++        val message = verifyDeserialization<JSONRPCMessage>(
++            McpJson,
++            """
++            {
++              "id": 3,
++              "result": {
++                "skills": [{ "uri": "skill://code-review/SKILL.md" }],
++                "_meta": { "traceId": "abc" }
++              },
++              "jsonrpc": "2.0"
++            }
++            """.trimIndent(),
++        )
++
++        val result = assertIs<CustomResult>(assertIs<JSONRPCResponse>(message).result)
++        result.meta shouldBe buildJsonObject { put("traceId", "abc") }
++    }
++
+     @Test
+     fun `should decode JSONRPCMessage as request`() {
+         val json = """
+```
+
+---
+
+### Incident Patch 3: `702cbf02` (2026-11-23)
+**Commit Message**: fix(server): log resource updates skipped without a subscription (#1216)
+
+The fallback for a session with no subscription was `?: { ... }`, a
+lambda that is never invoked, so the skip was never logged.
+
+The `?.let { ... } ?: ...` chain is now a `when`, and the skip is logged
+at `debug`: a session without a subscription is the common case and hits
+this branch on every resource update. Notification delivery is
+unchanged.
+
+Closes #1082
+
+**File**: `kotlin-sdk-server/src/commonMain/kotlin/io/modelcontextprotocol/kotlin/sdk/server/FeatureNotificationService.kt` (modified, +14/-13)
+```diff
+@@ -119,23 +119,24 @@ private class SessionNotificationJob {
+             }
+ 
+             is ResourceUpdatedNotification -> {
+-                resourceSubscriptions.value[notification.params.uri]?.let { resourceFromTimestamp ->
+-                    if (event.timestamp >= resourceFromTimestamp) {
++                val uri = notification.params.uri
++                val subscribedAt = resourceSubscriptions.value[uri]
++                when {
++                    subscribedAt == null -> logger.debug {
++                        "No subscription for resource $uri in sessionId: ${session.sessionId}. Skipping notification"
++                    }
++
++                    event.timestamp < subscribedAt -> logger.info {
++                        "Skipping resource updated notification for resource $uri " +
++                            "as it is older than subscription timestamp $subscribedAt"
++                    }
++
++                    else -> {
+                         logger.info {
+-                            "Sending resource updated notification for resource ${notification.params.uri} " +
++                            "Sending resource updated notification for resource $uri " +
+                                 "to sessionId: ${session.sessionId}"
+                         }
+                         session.notification(notification)
+-                    } else {
+-                        logger.info {
+-                            "Skipping resource updated notification for resource ${notification.params.uri} " +
+-                                "as it is older than subscription timestamp $resourceFromTimestamp"
+-                        }
+-                    }
+-                } ?: {
+-                    logger.info {
+-                        "No subscription for resource ${notification.params.uri}. " +
+-                            "Skipping notification: $notification"
+                     }
+                 }
+             }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1216** (2026-11-23): fix(server): log resource updates skipped without a subscription (@devcrocod)
 - **PR #1207** (2026-11-20): fix(transport): hold inbound messages until the client transport is operational (@e5l)
 - **PR #1206** (2026-11-20): fix(client): forget the discovery result when reconnecting (@e5l)
-- **PR #1201** (2026-11-20): fix(core): restore the pre-deprecation value of SUPPORTED_PROTOCOL_VERSIONS (@e5l)
-- **PR #1200** (2026-11-20): fix(client): bound the stdio discover probe before falling back (@e5l)
-- **PR #1198** (2026-11-20): fix(core): send resultType complete on every request-scoped result (@e5l)
-- **PR #1191** (2026-11-20): fix(server): refuse server-to-client requests on a modern response stream (@e5l)
+- **PR #1205** (closed): docs(server): describe the SSE response on the stateless endpoint (@e5l)
+- **PR #1204** (2026-11-24): fix(client): keep no result fetched across a cache invalidation (@e5l)
+- **PR #1203** (2026-11-24): fix(core): refuse a non-string protocolVersion in toEnvelope (@e5l)
 
 ---
 
@@ -1336,6 +1444,37 @@ on a deferred that `start()` completes right af
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. core): read a negative discovery ttlMs as zero instead of failing
+
+**RULE**:
+When implementing operations in `kotlin-sdk-core/src/commonMain/kotlin/io/modelcontextprotocol/kotlin/sdk/types/discovery.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in modelcontextprotocol/kotlin-sdk. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `de2e90df`: core): read a negative discovery ttlMs as zero instead of failing. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `kotlin-sdk-core/src/commonMain/kotlin/io/modelcontextprotocol/kotlin/sdk/types/discovery.kt`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```kotlin
+// Verified production-grade fix pattern:
+    @Serializable(with = TtlMsSerializer::class)
+```
+
+**NEGATIVE CONSTRAINT**:
+```kotlin
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `de2e90df` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

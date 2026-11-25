@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T09:25:06.517Z",
-  "total_records": 2650,
+  "last_updated": "2026-11-25T09:41:16.042Z",
+  "total_records": 2656,
   "domains": {
     "A": {
       "total": 22,
@@ -1081,7 +1081,7 @@
       ]
     },
     "F": {
-      "total": 112,
+      "total": 113,
       "record_ids": [
         "DOM-F-C060CCE1",
         "DOM-F-83D565C2",
@@ -1194,7 +1194,8 @@
         "domain_intelligence-design-intelligence-nucleoidai-nucleoid-core-invariants",
         "domain_intelligence-design-intelligence-nucleoidai-nucleoid-learnings-core-invariants",
         "domain_intelligence-design-intelligence-dembrandt-dembrandt-core-invariants",
-        "domain_intelligence-design-intelligence-dembrandt-dembrandt-learnings-core-invariants"
+        "domain_intelligence-design-intelligence-dembrandt-dembrandt-learnings-core-invariants",
+        "DOM-F-BD142F65"
       ]
     },
     "G": {
@@ -1665,7 +1666,7 @@
       ]
     },
     "H": {
-      "total": 628,
+      "total": 633,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -2294,7 +2295,12 @@
         "domain_intelligence-technical-construction-intelligence-tw93-mole-learnings-core-invariants",
         "DOM-H-FBC5BA6F",
         "domain_intelligence-technical-construction-intelligence-xcodesorg-xcodesapp-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-xcodesorg-xcodesapp-learnings-core-invariant"
+        "domain_intelligence-technical-construction-intelligence-xcodesorg-xcodesapp-learnings-core-invariant",
+        "domain_intelligence-technical-construction-intelligence-yugabyte-yugabyte-db-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-atomicchat-inkling-2-mini-uncensored-gguf-co",
+        "DOM-H-543DC045",
+        "domain_intelligence-technical-construction-intelligence-hf-atomicchat-inkling-2-mini-uncensored-gguf",
+        "domain_intelligence-technical-construction-intelligence-yugabyte-yugabyte-db-learnings-core-invarian"
       ]
     },
     "I": {
@@ -22682,8 +22688,8 @@
       "title": "Architecture Intelligence: modelcontextprotocol/kotlin-sdk Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-modelcontextprotocol-kotlin-sdk-architecture-intelligence-modelcontextprotocol-k.md",
       "repository": "modelcontextprotocol/kotlin-sdk",
-      "content_hash": "d1f817e43266f110eff0c497111687b2651fdf1eda6c87e75a49153bc7ba10d5",
-      "created_at": "2026-11-22T23:06:17.243Z"
+      "content_hash": "fdf52ec8ecf7bd2087b65dd44061c8b1982c9ca7bc827bfbcf19f09faff219e3",
+      "created_at": "2026-11-25T09:37:24.044Z"
     },
     "domain_intelligence-architecture-intelligence-modelcontextprotocol-kotlin-sdk-learnings-core-invaria": {
       "record_id": "domain_intelligence-architecture-intelligence-modelcontextprotocol-kotlin-sdk-learnings-core-invaria",
@@ -22691,8 +22697,8 @@
       "title": "Architecture Intelligence: modelcontextprotocol-kotlin-sdk-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-modelcontextprotocol-kotlin-sdk-learnings-architecture-intelligence-modelcontext.md",
       "repository": "modelcontextprotocol-kotlin-sdk-learnings",
-      "content_hash": "4a68200e328a373a0c43c5e53b2d79df5026b88081abdba87d3667d16277839f",
-      "created_at": "2026-11-22T23:06:58.540Z"
+      "content_hash": "72ef050c18d19611b2ac245c782cb80595ecc0642a798d0174f9d12c31a2389a",
+      "created_at": "2026-11-25T09:41:14.379Z"
     },
     "domain_intelligence-architecture-intelligence-materializeinc-materialize-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-materializeinc-materialize-learnings-core-invariants",
@@ -44547,6 +44553,110 @@
       "repository": "hf-inclusionai-lingsante-3.1-air-vl-learnings",
       "content_hash": "a68a2d5f0b415754c7c10b6dc7319084adace03f98fcf413937f2107fcceb3b7",
       "created_at": "2026-11-25T08:56:49.205Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-yugabyte-yugabyte-db-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-yugabyte-yugabyte-db-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: yugabyte/yugabyte-db Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-yugabyte-yugabyte-db-technical-construction-intelligence-yugabyte-yugabyte-db-co.md",
+      "repository": "yugabyte/yugabyte-db",
+      "content_hash": "155d6b4886ab875834b477bddddc1ee84b5ad2ceced4482c8734ab04b9d56ed4",
+      "created_at": "2026-11-25T09:37:31.245Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-atomicchat-inkling-2-mini-uncensored-gguf-co": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-atomicchat-inkling-2-mini-uncensored-gguf-co",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: AtomicChat/Inkling-2-Mini-Uncensored-GGUF Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-hf-atomicchat-inkling-2-mini-uncensored-gguf-technical-construction-intelligence.md",
+      "repository": "AtomicChat/Inkling-2-Mini-Uncensored-GGUF",
+      "content_hash": "4a4991c1bb7fb9f23c7035ab98d882d705667142fa179c36583dd7299437ab84",
+      "created_at": "2026-11-25T09:39:49.044Z"
+    },
+    "DOM-H-543DC045": {
+      "record_id": "DOM-H-543DC045",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [],
+      "title": "Recurrent Layer Loop Re-entry Incompatibility (BUG-INKLING-01)",
+      "content": "Recurrent architectures in tensor-compiler runtimes must separate physical parameter storage from logical execution iterations; KV cache allocation must be indexed as a 2D coordinate `(layer_idx, loop_iteration)`.",
+      "content_hash": "9bfa68b5536f05bc4929d65f722121c62e1d8bac66047947e02c651a557a4cdd",
+      "summary": "The layer iteration index was hardcoded to linear layer tensor naming conventions (`blk.N.*`). When recurring over `blk.0` through `blk.M`,  -> Recurrent architectures in tensor-compiler runtimes must separate physical parameter storage from logical execution iterations; KV cache all",
+      "provenance": {
+        "source_uri": "project://hf-atomicchat-inkling-2-mini-uncensored-gguf/hf-atomicchat-inkling-2-mini-uncensored-gguf-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-25T09:39:52.485Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-atomicchat-inkling-2-mini-uncensored-gguf)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "`README.md`:"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-25T09:40:28.925Z"
+    },
+    "DOM-F-BD142F65": {
+      "record_id": "DOM-F-BD142F65",
+      "domain_letter": "F",
+      "domain_id": "design",
+      "domain_name": "Design Intelligence",
+      "secondary_domains": [],
+      "title": "Extreme Quantization (IQ2_M) Divergence Spike (BUG-INKLING-02)",
+      "content": "In sparse MoE models, routing gates (`gate_inp`) and loop transition layers must never be quantized below 16-bit or 8-bit precision; low-bit quantization must be confined strictly to expert feedforward projection matrices.",
+      "content_hash": "dd67f1d8a7b4cea0006f841e3cf09f49fbfb092afdc5b3342976790f244df4da",
+      "summary": "In MoE layers, router gating logits (`ffn_gate_inp`) have high dynamic range sensitivity. When quantizing expert matrices to 2.0-2.2 bits/we -> In sparse MoE models, routing gates (`gate_inp`) and loop transition layers must never be quantized below 16-bit or 8-bit precision; low-bit",
+      "provenance": {
+        "source_uri": "project://hf-atomicchat-inkling-2-mini-uncensored-gguf/hf-atomicchat-inkling-2-mini-uncensored-gguf-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-25T09:39:52.485Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-atomicchat-inkling-2-mini-uncensored-gguf)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "`README.md` benchmark table:"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-25T09:41:12.001Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-hf-atomicchat-inkling-2-mini-uncensored-gguf": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-hf-atomicchat-inkling-2-mini-uncensored-gguf",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: hf-atomicchat-inkling-2-mini-uncensored-gguf-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-hf-atomicchat-inkling-2-mini-uncensored-gguf-learnings-technical-construction-in.md",
+      "repository": "hf-atomicchat-inkling-2-mini-uncensored-gguf-learnings",
+      "content_hash": "889b3c7de934f01f09fecb823017f16ab84d5ec862b7951777333697d897a270",
+      "created_at": "2026-11-25T09:41:12.943Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-yugabyte-yugabyte-db-learnings-core-invarian": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-yugabyte-yugabyte-db-learnings-core-invarian",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: yugabyte-yugabyte-db-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-yugabyte-yugabyte-db-learnings-technical-construction-intelligence-yugabyte-yuga.md",
+      "repository": "yugabyte-yugabyte-db-learnings",
+      "content_hash": "0a9c311b1ca5e220311ef81761a35a90aef2b84dca96b9d7cc489eb6e5b5217c",
+      "created_at": "2026-11-25T09:41:16.042Z"
     }
   }
 }

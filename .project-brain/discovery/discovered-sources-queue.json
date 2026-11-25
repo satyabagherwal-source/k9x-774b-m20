@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-25T09:25:05.206Z",
+  "updated_at": "2026-11-25T09:41:15.300Z",
   "stats": {
-    "total_discovered": 9395,
-    "approved_pending_harvest": 8904,
+    "total_discovered": 9398,
+    "approved_pending_harvest": 8907,
     "harvested_count": 0,
     "rejected_count": 491,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 8894,
+      "COMMUNITY_AND_EXPERT": 8897,
       "OFFICIAL_DOCUMENTATION": 280,
       "STANDARDS_AND_SPECIFICATIONS": 150,
       "ENGINEERING_BLOGS": 7,
@@ -203280,6 +203280,72 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/goharbor-harbor-learnings.md",
         "fileName": "goharbor-harbor-learnings.md"
+      }
+    },
+    "SRC-047FE3FD0DC0": {
+      "id": "SRC-047FE3FD0DC0",
+      "url": "https://modelcontextprotocol.io/specification/2026-07-28/server/utilities/caching",
+      "title": "https://modelcontextprotocol.io/specification/2026-07-28/server/utilities/caching",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T09:41:13.640Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/modelcontextprotocol-kotlin-sdk-learnings.md",
+        "fileName": "modelcontextprotocol-kotlin-sdk-learnings.md"
+      }
+    },
+    "SRC-10E6BACE299B": {
+      "id": "SRC-10E6BACE299B",
+      "url": "https://github.com/modelcontextprotocol/kotlin-sdk/pull/1188",
+      "title": "https://github.com/modelcontextprotocol/kotlin-sdk/pull/1188",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T09:41:13.726Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/modelcontextprotocol-kotlin-sdk-learnings.md",
+        "fileName": "modelcontextprotocol-kotlin-sdk-learnings.md"
+      }
+    },
+    "SRC-96E7057883B2": {
+      "id": "SRC-96E7057883B2",
+      "url": "https://github.com/yugabyte/yugabyte-db/issues/12173",
+      "title": "https://github.com/yugabyte/yugabyte-db/issues/12173",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T09:41:15.300Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
+        "fileName": "yugabyte-yugabyte-db-learnings.md"
       }
     }
   }

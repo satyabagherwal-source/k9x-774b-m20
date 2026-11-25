@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T09:25:06.346Z",
+  "last_updated": "2026-11-25T09:41:15.779Z",
   "directives": [
     {
       "id": "CD-001",
@@ -60546,6 +60546,70 @@
       "source_repo": "zulip-zulip",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-19635C-server-events-dispatch-rerender-dm-statu.md",
+      "staged_date": "2026-11-25"
+    },
+    {
+      "id": "CD-JQ00",
+      "directive_title": "read a negative discovery ttlMs as zero instead of failing",
+      "source_repo": "modelcontextprotocol/kotlin-sdk",
+      "source_commit": "df24fb0b",
+      "staged_file": "11_INBOX/candidate-directives/CD-JQ00-read-a-negative-discovery-ttlms-as-zero-instead-of-failing.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-25",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-OOZ4",
+      "directive_title": "[DB-26245] YSQL: Fix pg_duckdb lake_io concurrent spill issue",
+      "source_repo": "yugabyte-yugabyte-db-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-OOZ4-db-26245-ysql-fix-pg_duckdb-lake_io-concurrent-spill-issue.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-25",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-OMEJ",
+      "directive_title": "Recurrent Core Layer Buffer Re-entry in Quantized Compute Graphs",
+      "source_repo": "hf-atomicchat-inkling-2-mini-uncensored-gguf-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-OMEJ-recurrent-core-layer-buffer-re-entry-in-quantized-compute-graphs.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-25",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-OMEK",
+      "directive_title": "Kullback-Leibler Divergence (KLD) Guarding for Quantized Model Distribution",
+      "source_repo": "hf-atomicchat-inkling-2-mini-uncensored-gguf-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-OMEK-kullback-leibler-divergence-kld-guarding-for-quantized-model-distribution.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-25",
+      "domain_letter": "J"
+    },
+    {
+      "id": "CD-ONP3",
+      "directive_title": "core): read a negative discovery ttlMs as zero instead of failing",
+      "source_repo": "modelcontextprotocol-kotlin-sdk-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-ONP3-core-read-a-negative-discovery-ttlms-as-zero-instead-of-failing.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-25",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-89E512",
+      "directive_title": "[DB-26245] YSQL: Fix pg_duckdb lake_io concurrent spill issue",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "yugabyte-yugabyte-db",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-89E512--db-26245-ysql-fix-pg-duckdb-lake-io-con.md",
       "staged_date": "2026-11-25"
     }
   ]

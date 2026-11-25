@@ -4,22 +4,22 @@
 {
   "source_repository": "yugabyte/yugabyte-db",
   "source_url": "https://github.com/yugabyte/yugabyte-db",
-  "source_version": "3f1fb89d",
+  "source_version": "7da6b2d3",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-24T15:09:00.752Z",
+  "timestamp": "2026-11-25T09:37:31.008Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-yugabyte-yugabyte-db",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [yugabyte/yugabyte-db](https://github.com/yugabyte/yugabyte-db) (Revision: `3f1fb89d`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-24T15:09:00.752Z`  
+> **Provenance**: Harvested from [yugabyte/yugabyte-db](https://github.com/yugabyte/yugabyte-db) (Revision: `7da6b2d3`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-25T09:37:31.008Z`  
 > **Learning ID**: `learn-github-yugabyte-yugabyte-db`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `yugabyte/yugabyte-db` (Commit: `3f1fb89d`)
+- **Target Repository**: `yugabyte/yugabyte-db` (Commit: `7da6b2d3`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/yugabyte/yugabyte-db](https://github.com/yugabyte/yugabyte-db))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T15:08:58.946Z  
+> **Harvest Timestamp**: 2026-11-25T09:37:29.291Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: YugabyteDB - the cloud native distributed SQL database for mission-critical applications.
 - **Primary Language / Ecosystem**: C
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 10676 stars
+- **Stars / Engagement**: 10677 stars
 
 ---
 
@@ -2256,11 +2256,11 @@ class _SshRemoteShell(object):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #39119** (2026-11-24): **[BACKPORT 2024.2][PLAT-24054] YBA: Update the bundled Prometheus to 3.16.0 (#38988)**
-  *Symptoms*: ## Summary  Updates the Prometheus that YBA bundles outside its Helm chart from 3.15.1 to 3.16.0:  - `managed/support/thirdparty-dependencies.txt`, the tarball placed in `/opt/third-party` of the YBA image and in the third-party archive yba-installer ships. - `PROMETHEUS_VERSION` in `managed/yba-installer/Makefile`. yba-installer does not package its own Prometheus: this value is compiled in and used to find `prometheus-<version>.linux-amd64.tar.gz` in that third-party archive, so the two must change together or the install fails to find the file.  Prometheus 3.15.1 is built with `github.com/klauspost/compress` 1.20.0, which is affected by CVE-2026-116591. 3.16.0 depends on 1.20.3; the fix is in 1.20.2. The YBA Helm chart already runs 3.16.0 (yugabyte/charts#253), so this brings yba-installer installs to the same version.  Original commit: ba656f41e7b7cfb12106913ac9a9d20b8cdd07d0 / #38988  ## Test plan  - [x] The `prometheus-3.16.0.linux-amd64.tar.gz` release asset matches the sha256 in the release's `sha256sums.txt`, and has the same layout as 3.15.1 (`prometheus`, `promtool`, `prometheus.yml`). - [x] `govulncheck -mode=binary` on the 3.16.0 `prometheus` and `promtool` binaries no longer reports CVE-2026-116591. - [ ] Jenkins build and tests on this PR, including the yba-installer tests  🤖 Generated with [Claude Code](https://claude.com/claude-code)  Co-authored-by: Claude Mythos 5.2 <noreply@anthropic.com>
+- **Issue #39239** (2026-11-25): **[BACKPORT 2026.2][PLAT-24123] YBA: Treat Azure NotFound as already deleted when cleaning up a node's public IP (#39238)**
+  *Symptoms*: ## Summary  Adding a node on Azure can fail in `AnsibleDestroyServer`, the cleanup that runs before the node is created, with `(NotFound) Resource .../publicIPAddresses/<node>-IP not found`. Azure answers `NotFound` instead of `ResourceNotFound` for a public IP it has just deleted or is still deleting, for example right after a rollback that destroyed a node of the same name. `destroy_orphaned_resources` accepted both codes for the NIC but only `ResourceNotFound` for the public IP, so the step failed instead of finding nothing to clean up.  The public-IP cleanup now treats `NotFound` as already deleted, the same as the NIC cleanup.  Original commit: b680e866719089534202afe787b20beb17895182 / #39238  ## Test plan  - New `test_azure_utils` tests for `destroy_orphaned_resources`: - With the public-IP lookup failing with `NotFound` or `ResourceNotFound`, the cleanup completes and deletes nothing.   - Any other error code is still raised. - Without the fix, the `NotFound` case fails. - Ran `test_azure_utils`: 10 tests, all passing.  Co-authored-by: Claude Opus 5.5 <noreply@anthropic.com>
 
-- **Issue #39097** (2026-11-24): **[BACKPORT 2026.2][PLAT-23839] YBA: Start the v2 vm-image upgrade from the universe's details (#38996)**
-  *Symptoms*: ## Summary  The v2 `vm-image` API (`POST /api/v2/customers/{cUUID}/universes/{uUUID}/vm-image`) still can't start an upgrade after #37860. The handler builds `VMImageUpgradeParams` with the no-arg constructor and copies in only the request, so the params have no universe UUID, clusters or nodes. #37860 let these params past `verifyParams`. Task submit then calls `VMImageUpgrade.validateParams`, which looks up the universe by the null UUID and throws a `NullPointerException`, and `TaskExecutor.submit` returns it as a 400 with no error message. The null UUID also skipped the base check that refuses a new task while a previous one has failed, which is why that case returned the same empty 400.  The handler now builds the params from the universe's details through `UniverseDefinitionTaskParamsMapper`, as the other v2 upgrade handlers do, and applies the request on top.  Original commit: 789d8bfd66f9c28f95fa82f4f895df0a6450095e / #38996  ## Test plan  - [x] Added `UniverseUpgradesManagementHandlerTest.testVmImageUpgradeStartsFromUniverseDetails`: the params the v2 handler passes on carry the universe UUID, clusters, nodes and creating user, plus the request's image bundles and force flag, and no `ybSoftwareVersion`. It fails without the fix (universe UUID is null). - [x] `sbt "testOnly com.yugabyte.yw.api.v2.UniverseUpgradesManagementHandlerTest com.yugabyte.yw.commissioner.tasks.upgrade.VMImageUpgradeTest"`: 18/18 pass.  Manual tests on YBA with an OCI provider, `VM.Standard.E5.F
+- **Issue #39238** (2026-11-25): **[PLAT-24123] YBA: Treat Azure NotFound as already deleted when cleaning up a node's public IP**
+  *Symptoms*: ## Summary  Adding a node on Azure can fail in `AnsibleDestroyServer`, the cleanup that runs before the node is created, with `(NotFound) Resource .../publicIPAddresses/<node>-IP not found`. Azure answers `NotFound` instead of `ResourceNotFound` for a public IP it has just deleted or is still deleting, for example right after a rollback that destroyed a node of the same name. `destroy_orphaned_resources` accepted both codes for the NIC but only `ResourceNotFound` for the public IP, so the step failed instead of finding nothing to clean up.  The public-IP cleanup now treats `NotFound` as already deleted, the same as the NIC cleanup.  ## Test plan  - New `test_azure_utils` tests for `destroy_orphaned_resources`:   - With the public-IP lookup failing with `NotFound` or `ResourceNotFound`, the cleanup completes and deletes nothing.   - Any other error code is still raised. - Without the fix, the `NotFound` case fails. - Ran `test_azure_utils`: 10 tests, all passing. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2277,831 +2277,397 @@ class _SshRemoteShell(object):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c2fe718c` (2026-11-24)
-**Commit Message**: [#37251] DocDB: Fix lock leak in YbAdminSnapshotScheduleTest.PgsqlPitrDuringColocatedTableCreateReleaseIgnored (#37252)
+### Incident Patch 1: `33e27340` (2026-11-19)
+**Commit Message**: [DB-26245] YSQL: Fix pg_duckdb lake_io concurrent spill issue
 
-## Summary
+Summary: All backends spill into the same duckdb.temporary_directory, and DuckDB 1.4 names spill files without a process id and opens them without locking, so two backends spilling at the same time overwrite each other's spill data: COPY TO output reported as success but corrupted, backend SIGSEGV, IO errors. An instance shut down by duckdb.recycle_ddb() also deletes every duckdb_temp_* file in the folder, including other backends' live spill files. Each backend now spills into <duckdb.temporary_directory>/<pid>, removed at backend exit. In lake_io mode duckdb.temporary_directory is pinned to <DataDir>/pg_duckdb/temp (PGC_INTERNAL), so everything under it is ours and cleanup uses remove_all. A folder left by a backend killed with SIGKILL is removed by the next backend with the same pid, or at postmaster start. DuckDB 2.0 fixes this upstream (duckdb/duckdb#24811), so this can be dropped on that upgrade.
 
-The master ignores the tserver's release-all for the killed `CREATE TABLE t2` transaction. It records this only in memory, as `release_all_deferred` on the DDL verification entry. The PITR's sys catalog reload rebuilds `ysql_ddl_txn_verfication_state_map_` without that flag. `RemoveDdlTransactionStateUnlocked` then erases the entry without releasing the locks, because the transaction might still be running. The transaction does not resend its release-all, so its object locks on `t` are never released and `LOCK TABLE t IN ACCESS EXCLUSIVE MODE` times out.
+Test Plan:
+Manually tested: two sessions concurrently running a spilling sorted COPY (SELECT * FROM read_parquet('<6M-row file>') r ORDER BY r['h2']::text) TO '<out>.parquet'
+with duckdb.max_memory = 300, 16 runs, each o
 
-`RunLoaders` now carries the deferred release-alls across a reload in the same leader term, e.g. after a PITR. It collects the txns whose entry has `release_all_deferred` inside the same `ddl_txn_verifier_mutex_` hold that clears the map, so no release-all can be deferred into the old map after it was read. `VisitSysCatalog` sets `SysCatalogLoadingState::reload_in_loaded_term` only when the replaced catalog was loaded in the current term. A map from an earlier term may hold stale entries and is not u
-
-**File**: `src/yb/master/catalog_loading_state.h` (modified, +3/-0)
+**File**: `src/postgres/third-party-extensions/pg_duckdb/include/pgduckdb/pgduckdb_duckdb.hpp` (modified, +3/-0)
 ```diff
-@@ -32,6 +32,9 @@ struct SysCatalogLoadingState {
- 
-   const LeaderEpoch epoch;
- 
-+  // Whether the catalog being replaced was loaded in epoch.leader_term, e.g. on a PITR reload.
-+  bool reload_in_loaded_term = false;
-+
-   explicit SysCatalogLoadingState(LeaderEpoch leader_epoch = {});
- 
-   void AddPostLoadTask(std::function<void()>&& func, std::string&& msg);
-```
-
-**File**: `src/yb/master/catalog_manager.cc` (modified, +18/-0)
-```diff
-@@ -1539,6 +1539,7 @@ Status CatalogManager::VisitSysCatalog(SysCatalogLoadingState* state) {
-   }
- 
-   // Before anything below clears in-memory state.
-+  state->reload_in_loaded_term = catalog_loaded_term() == term;
-   catalog_loaded_term_.store(OpId::kUnknownTerm, std::memory_order_release);
-   TEST_SYNC_POINT("CatalogManager::VisitSysCatalog::CatalogLoadedTermReset");
- 
-@@ -1693,6 +1694,20 @@ Status CatalogManager::RunLoaders(SysCatalogLoadingState* state) {
-   // Clear Ddl transaction state.
-   {
-     LockGuard l(ddl_txn_verifier_mutex_);
-+    ysql_ddl_txns_release_all_deferred_.clear();
-+    // A map loaded in an earlier term may hold stale entries. Collect under the same lock hold as
-+    // the clear, so that no release-all can be deferred into the map after it was read.
-+    if (state->reload_in_loaded_term) {
-+      for (const auto& [txn_id, verifier_state] : ysql_ddl_txn_verfication_state_map_) {
-+        // The flag means the txn has finished: only a release with no subtxn id and no locks
-+        // sets it, and tservers send that only at txn end. Mid-txn releases, including the
-+        // phased-DDL session lock release_all, carry a subtxn id. A still running DDL txn keeps
-+        // its locks and releases them itself when it finishes.
-+        if (verifier_state.release_all_deferred) {
-+          ysql_ddl_txns_release_all_deferred_.insert(txn_id);
-+        }
-+      }
-+    }
-     ysql_ddl_txn_verfication_state_map_.clear();
-     ysql_ddl_txn_undergoing_subtransaction_rollback_map_.clear();
-   }
-@@ -1732,6 +1747,9 @@ Status CatalogManager::RunLoaders(SysCatalogLoadingState* state) {
-   RETURN_NOT_OK(master_->ts_manager()->RunLoader(
-       master_->MakeCloudInfoPB(), &master_->proxy_cache(), *state));
-   RETURN_NOT_OK(Load<ObjectLockLoader>("Object locks", state));
-+  state->AddPostLoadTask(
-+      std::bind(&CatalogManager::ReleaseObjectLocksOfDeferredTxnsPostLoad, this),
-+      "Release object locks of DDL txns with deferred release and no verification state");
-   RETURN_NOT_OK(RefreshYsqlHistoryRetentionPin());
- 
-   if (!transaction_tables_config_) {
-```
-
-**File**: `src/yb/master/catalog_manager.h` (modified, +13/-0)
-```diff
-@@ -3640,6 +3640,13 @@ class CatalogManager : public CatalogManagerIf, public SnapshotCoordinatorContex
- 
-   void DoReleaseObjectLocksIfNecessary(const TransactionId& txn_id);
- 
-+  // Submits DoReleaseObjectLocksIfNecessary for txn_id to the background pool.
-+  void ScheduleReleaseObjectLocks(const TransactionId& txn_id);
-+
-+  // Releases the object locks of txns in ysql_ddl_txns_release_all_deferred_, i.e. those whose
-+  // deferred release-all was carried across a sys catalog reload but got no verification entry.
-+  void ReleaseObjectLocksOfDeferredTxnsPostLoad() EXCLUDES(ddl_txn_verifier_mutex_);
-+
-   Status RegisterFlagCallbacks();
- 
-   // Should be bumped up when tablet locations are changed.
-@@ -3706,6 +3713,12 @@ class CatalogManager : public CatalogManagerIf, public SnapshotCoordinatorContex
-   std::unordered_map<TransactionId, YsqlDdlSubTransactionRollbackMetadata>
-       ysql_ddl_txn_undergoing_subtransaction_rollback_map_ GUARDED_BY(ddl_txn_verifier_mutex_);
- 
-+  // Txns whose release_all_deferred was set when a reload in the same term (e.g. after a PITR)
-+  // cleared ysql_ddl_txn_verfication_state_map_. The flag lives only in memory and the finished
-+  // txn will not resend its release-all, so it is reattached to the txn's reloaded entry.
-+  std::unordered_set<TransactionId> ysql_ddl_txns_release_all_deferred_
-+      GUARDED_BY(ddl_txn_verifier_mutex_);
-+
-   ServerRegistrationPB server_registration_;
- 
-   mutable MutexType delete_replica_task_throttler_per_ts_mutex_;
-```
-
-**File**: `src/yb/master/ysql_ddl_handler.cc` (modified, +30/-7)
-```diff
-@@ -150,7 +150,8 @@ bool CatalogManager::CreateOrUpdateDdlTxnVerificationState(
-       YsqlDdlTransactionState{TxnState::kUnknown,
-                               txn.status_tablet,
-                               YsqlDdlVerificationState::kDdlInProgress,
--                              {table}, {} /* processed_tables */, {} /* nochange_tables */});
-+                              {table}, {} /* processed_tables */, {} /* nochange_tables */,
-+                              ysql_ddl_txns_release_all_deferred_.erase(txn.transaction_id) > 0});
-   return true;
- }
- 
-@@ -952,12 +953,8 @@ void CatalogManager::RemoveDdlTransactionStateUnlocked(
-       // 1. Either the alter waits inline successfully before issuing the commit,
-       // 2. or when the above times out, this branch is involed by the multi step
-       //    TableSchemaVerificationTask's callback post the schema changes have been applied.
--      if (release_locks && !FLAGS_TEST_disable_release_object_locks_on_ddl_verification) {
--        WARN_NOT_OK(
--            background_tasks_thread_pool_->SubmitFunc([this, txn_id]() {
--              DoReleaseObjectLocksIfNecessary(txn_id);
--            }),
--            Format("Failed to submit task for releasing exclusive object locks of txn $0", txn_id));
-+      if (release_locks) {
-+        ScheduleReleaseObjectLocks(txn_id);
-       }
-     } else {
-       VLOG(1) << "DDL Verification state for " << txn_id << " has "
-@@ -1186,6 +1183,32 @@ void CatalogManager::DoReleaseObjectLocksIfNecessary(const TransactionId& txn_id
-   object_lock_info_manager_->ReleaseLocksForTxn(txn_id);
- }
- 
-+void CatalogManager::ScheduleReleaseObjectLocks(const TransactionId& txn_id) {
-+  if (FLAGS_TEST_disable_release_object_locks_on_ddl_verification) {
-+    return;
-+  }
-+  WARN_NOT_OK(
-+      background_tasks_thread_pool_->SubmitFunc(
-+          [this, txn_id]() { DoReleaseObjectLocksIfNecessary(txn_id); }),
-+      Format("Failed to submit task for releasing object locks of txn $0", txn_id));
-+}
-+
-+void CatalogManager::ReleaseObjectLocksOfDeferredTxnsPostLoad() {
-+  std::unordered_set<TransactionId> txns;
-+  {
-+    LockGuard lock(ddl_txn_verifier_mutex_);
-+    txns.swap(ysql_ddl_txns_release_all_deferred_);
-+  }
-+  if (FLAGS_TEST_disable_release_object_locks_on_ddl_verification) {
-+    return;
-+  }
-+  for (const auto& txn_id : txns) {
-+    LOG(INFO) << "No DDL verification state for " << txn_id
-+              << " after sys catalog reload, releasing its deferred object locks";
-+    DoReleaseObjectLocksIfNecessary(txn_id);
-+  }
-+}
-+
- Status CatalogManager::RollbackDocdbSchemaToSubtxn(
-   const RollbackDocdbSchemaToSubtxnRequestPB* req,
-   RollbackDocdbSchemaToSubtxnResponsePB* resp,
-```
-
----
-
-### Incident Patch 2: `91289770` (2026-11-24)
-**Commit Message**: [#38973] DocDB: Fix ExternalObjectLockTestOneTS.ReleaseBlocksUntilBootstrap races with new tserver startup (#38974)
-
-## Summary
-
-CSI hit two test-only races; neither is a product bug. In the first, the test created the `LogWaiter` for `Waiting until object lock manager is bootstrapped` after sending the release, so it could miss the line. A release that lands while the new tserver is still starting (e.g. between RPC server start and `StartTSLocalLockManager()`, where it fails at once with `TSLocalLockManager not found`) never logs the line. In the second, the lease refresher starts only after initdb on the new tserver, and initdb can take longer than the release's 10s RPC timeout. The test now registers the `LogWaiter` first and resends the release in a `WaitFor` loop while it fails with a startup error (`NetworkError`, `ServiceUnavailable`, `TimedOut`, or `TSLocalLockManager not found`). It also raises the release timeout to `60s * kTimeMultiplier` and still asserts that the release blocks until the lease is acquired.
-
----
-_Produced fully automatically by csi-fix.py: Claude Opus (5.5) analyzed the failure logs, wrote the change, and verified it locally._
-
-## Test plan
-
-./yb_build.
-
-**File**: `src/yb/integration-tests/object_lock-test.cc` (modified, +30/-5)
-```diff
-@@ -2491,11 +2491,36 @@ TEST_F(ExternalObjectLockTestOneTS, ReleaseBlocksUntilBootstrap) {
- 
-   auto added_ts = cluster_->tablet_server(1);
-   auto added_ts_proxy = cluster_->GetTServerProxy<tserver::TabletServerServiceProxy>(1);
--  auto future = ReleaseLockAtAsync(
--      &added_ts_proxy, ts->uuid(), kTxn1, kLeaseEpoch, /* clock */ nullptr,
--      /* apply_after */ std::nullopt, MonoDelta::FromSeconds(10));
--  ASSERT_OK(LogWaiter(added_ts, "Waiting until object lock manager is bootstrapped")
--                .WaitFor(MonoDelta::FromSeconds(2)));
-+  // Register before sending the release, the tserver may log this right away.
-+  LogWaiter log_waiter(added_ts, "Waiting until object lock manager is bootstrapped");
-+  // The lease refresher starts only after initdb on the new tserver, so the release must outlive
-+  // initdb.
-+  std::future<Result<tserver::ReleaseObjectLockResponsePB>> future;
-+  ASSERT_OK(WaitFor(
-+      [&]() -> Result<bool> {
-+        if (!future.valid()) {
-+          future = ReleaseLockAtAsync(
-+              &added_ts_proxy, ts->uuid(), kTxn1, kLeaseEpoch, /* clock */ nullptr,
-+              /* apply_after */ std::nullopt, 60s * kTimeMultiplier);
-+        }
-+        if (log_waiter.IsEventOccurred()) {
-+          return true;
-+        }
-+        if (future.wait_for(100ms) != std::future_status::ready) {
-+          return false;
-+        }
-+        // The tserver may still be starting up (e.g. the RPC server comes up before the lock
-+        // manager is created); resend on such errors.
-+        auto result = future.get();
-+        SCHECK(!result.ok(), IllegalState, "Release completed before lock manager bootstrap");
-+        const auto& s = result.status();
-+        if (s.IsNetworkError() || s.IsServiceUnavailable() || s.IsTimedOut() ||
-+            (s.IsIllegalState() && s.message().Contains("TSLocalLockManager not found"))) {
-+          return false;
-+        }
-+        return s;
-+      },
-+      30s * kTimeMultiplier, "Wait for release to block until bootstrap"));
-   ASSERT_EQ(future.wait_for(0s), std::future_status::timeout)
-       << "Expected release request to block at tserver that has not acquired a lease yet";
- 
-```
-
----
-
-### Incident Patch 3: `0fdef463` (2026-11-13)
-**Commit Message**: [#34008,#25789] YSQL: Fix ExecuteBatchKeys pagination
-
-Summary:
-## Problem
-Historically we used custom pagination for our batched ybctids fetch requests. DocDB did not populate the paging state in the response, but wrote the number of processed ybctids into batch_arg_count, and PgGate popped the specified number of ybctids from the front of the batch.
-However, this approach did not work well with the target tablet splits. There was two independent problems:
-1. One batch might contain ybctids from multiple tablets, interleaved: at the time when PgGate plans an ordered batch, it allocates one batch per per base table's tablet, and populates each batch with ybctids belonging to that tablet in the same order as they come from the secondary index. If the target tablet splits afterwards, the ybctids in the batch may belong to any of the child tablets. So when DocDB scans one of the child tablets, ybctids from the siblings are not found and respective rows not fetched, but counted in batch_arg_count. So if request paginates, PgGate pops these ybctids from the batch. Unordered batches are immune to this problem, because PgGate internally orders batches by ybctids, and if target tablet spli
-
-**File**: `src/yb/common/pgsql_protocol.proto` (modified, +6/-0)
-```diff
-@@ -417,6 +417,12 @@ message PgsqlPagingStatePB {
-   // To hint PgGate about upcoming tablet switch
-   // may be expected in cross tablet scan, or may indicate tablet split
-   optional bytes next_tablet_bound = 9;
-+
-+  // Requests to fetch a batch of keys return the number of keys processed so far to quickly
-+  // position in the batch to read the next page.
-+  optional uint64 batch_keys_processed = 10;
-+
-+  repeated uint64 batch_keys_missing = 11;
- }
- 
- // Given: master --chunk--> tserver --batch--> postgres --page--> tserver
-```
-
-**File**: `src/yb/docdb/CMakeLists.txt` (modified, +2/-0)
-```diff
-@@ -94,6 +94,7 @@ set(DOCDB_SRCS
-         object_lock_manager.cc
-         object_lock_shared_state_manager.cc
-         pgsql_operation.cc
-+        pgsql_read_request_ybctid_provider.cc
-         ql_rocksdb_storage.cc
-         ql_rowwise_iterator_interface.cc
-         redis_operation.cc
-@@ -172,6 +173,7 @@ ADD_YB_TEST(docdb-ttl-test)
- ADD_YB_TEST(docdb-test-wrapper)
- ADD_YB_TEST(docrowwiseiterator-test)
- ADD_YB_TEST(non_transactional_batch_writer-test)
-+ADD_YB_TEST(pgsql_read_request_ybctid_provider-test)
- ADD_YB_TEST(randomized_docdb-test)
- ADD_YB_TEST(scan_choices-test)
- ADD_YB_TEST(shared_lock_manager-test)
-```
-
-**File**: `src/yb/docdb/pgsql_operation.cc` (modified, +48/-100)
-```diff
-@@ -50,6 +50,7 @@
- #include "yb/docdb/docdb_rocksdb_util.h"
- #include "yb/docdb/docdb_statistics.h"
- #include "yb/docdb/intent_aware_iterator.h"
-+#include "yb/docdb/pgsql_read_request_ybctid_provider.h"
- #include "yb/docdb/ql_storage_interface.h"
- 
- #include "yb/dockv/doc_path.h"
-@@ -148,6 +149,12 @@ DEFINE_RUNTIME_bool(vector_index_no_deletions_skip_filter_check, true,
-     "Whether to skip filter check during vector index search if table does not have "
-     "updates/deletions.");
- 
-+DEFINE_RUNTIME_AUTO_bool(legacy_ybctid_batch_pagination, kLocalVolatile, true, false,
-+    "Whether ybctid batch returns batch_arg_count to paginate. "
-+    "In legacy mode batch_arg_count is returned when it is tablet split safe: the scan bound is "
-+    "before the current tablet bound. If legacy mode is off, ybctid batch populates "
-+    "the batch_keys_processed field of the paging_state.");
-+
- DECLARE_uint64(rpc_max_message_size);
- DECLARE_double(max_buffer_size_to_rpc_limit_ratio);
- DECLARE_bool(vector_index_dump_stats);
-@@ -686,6 +693,11 @@ concept BoundsProvider = requires(T& key_provider) {
-     { key_provider.Bounds() } -> std::same_as<YbctidBounds>;
+@@ -103,4 +103,7 @@ class DuckDBManager {
+ 	bool secrets_valid;
  };
  
-+template <typename T>
-+concept PagingStateProvider = requires(T& key_provider) {
-+    { key_provider.UpdatePagingState() } -> std::same_as<Status>;
-+};
++/* YB: remove spill folders left by backends of a previous postmaster */
++void YbRemoveStaleSpillFolders();
 +
- template <typename T>
- YbctidBounds Bounds(const T& key_provider) {
-   if constexpr (BoundsProvider<T>) {
-@@ -923,7 +935,7 @@ class VectorIndexKeyProvider {
-         num_top_vectors_to_remove_(num_top_vectors_to_remove), max_results_(max_results),
-         result_buffer_(result_buffer) {}
+ } // namespace pgduckdb
+```
+
+**File**: `src/postgres/third-party-extensions/pg_duckdb/src/pgduckdb.cpp` (modified, +4/-0)
+```diff
+@@ -28,6 +28,10 @@ _PG_init(void) {
+ 	}
  
--  Slice FetchKey() {
-+  Result<Slice> FetchKey() {
-     if (index_ >= result_entries_.size()) {
-       VLOG_WITH_FUNC(4) << vector_index_.ToString()
-                         << ", returned: " << response_.vector_index_distances().size()
-@@ -2364,72 +2376,6 @@ Status PgsqlWriteOperation::FillRemovedVectorId(
-   return Status::OK();
+ 	pgduckdb::InitGUC();
++	/* YB: after InitGUC, which sets duckdb.temporary_directory */
++	if (!IsUnderPostmaster) {
++		pgduckdb::YbRemoveStaleSpillFolders();
++	}
+ 	pgduckdb::InitGUCHooks();
+ 	DuckdbInitHooks();
+ 	DuckdbInitNode();
+```
+
+**File**: `src/postgres/third-party-extensions/pg_duckdb/src/pgduckdb_duckdb.cpp` (modified, +60/-0)
+```diff
+@@ -38,6 +38,7 @@ extern "C" {
+ #include "utils/fmgrprotos.h" // pg_sequence_last_value
+ #include "utils/lsyscache.h"  // get_relname_relid
+ /* YB includes */
++#include "storage/ipc.h"  // on_proc_exit
+ #include "storage/lmgr.h" // LockRelationOid
  }
  
--class PgsqlReadRequestYbctidProvider {
-- public:
--  explicit PgsqlReadRequestYbctidProvider(
--      const DocReadContext& doc_read_context, const PgsqlReadRequestMsg& request,
--      PgsqlResponseMsg& response)
--      : request_(request), response_(response) {
--    const auto& batch_args = request_.batch_arguments();
--
--    VLOG_WITH_FUNC(3) << "batch_args.size(): " << batch_args.size();
--
--    Slice min_arg;
--    Slice max_arg;
--
--    batch_arg_it_ = batch_args.begin();
--
--    if (!batch_args.empty()) {
--      min_arg = batch_arg_it_->ybctid().value().binary_value();
--      max_arg = min_arg;
--    }
--
--    for (auto& batch_arg_it : batch_args) {
--      const auto& val = batch_arg_it.ybctid().value().binary_value();
--      if (min_arg > val) {
--        min_arg = val;
--      }
--
--      if (max_arg < val) {
--        max_arg = val;
--      }
--    }
--
--    bounds_ = {min_arg, max_arg};
--  }
--
--  YbctidBounds Bounds() const { return bounds_; }
--
--  Slice FetchKey() {
--    if (!valid_ || batch_arg_it_ == request_.batch_arguments().end()) {
--      valid_ = false;
--      return Slice();
--    }
--
--    Slice ret = batch_arg_it_->ybctid().value().binary_value();
--    if (batch_arg_it_->has_order()) {
--      current_order_ = batch_arg_it_->order();
--    }
--
--    ++batch_arg_it_;
--    return ret;
--  }
--
--  void AddedKeyToResultSet() {
--    if (current_order_.has_value()) {
--      response_.add_batch_orders(*current_order_);
--    }
--  }
--
-- private:
--  bool valid_ = true;
--  const PgsqlReadRequestMsg& request_;
--  PgsqlResponseMsg& response_;
--  PgsqlBatchArgumentMsgs::const_iterator batch_arg_it_;
--  YbctidBounds bounds_;
--  std::optional<int64> current_order_;
--};
--
- Result<size_t> PgsqlReadOperation::Execute() {
-   // Verify that this request references no columns marked for deletion.
-   RETURN_NOT_OK(VerifyNoRefColsMarkedForDeletion(data_.doc_read_context.schema(), request_));
-@@ -2447,7 +2393,7 @@ Result<size_t> PgsqlReadOperation::Execute() {
-   bool has_paging_state = false;
-   if (request_.batch_arguments_size() > 0) {
-     PgsqlReadRequestYbctidProvider key_provider(data_.doc_read_context, request_, response_);
--    fetched_rows = VERIFY_RESULT(ExecuteBatchKeys(key_provider));
-+    std::tie(fetched_rows, has_paging_state) = VERIFY_RESULT(ExecuteBatchKeys(key_provider));
-   } else if (request_.has_sampling_state()) {
-     if (data_.doc_read_context.is_index) {
-       return STATUS_FORMAT(
-@@ -2968,7 +2914,7 @@ Result<size_t> PgsqlReadOperation::ExecuteVectorLSMSearch(const PgVectorReadOpti
-   VectorIndexKeyProvider key_provider(
-       result, response_, *data_.vector_index, vector_slice, intent_keys,
-       options.num_top_vectors_to_remove(), max_results, *result_buffer_);
--  auto result_size = VERIFY_RESULT(ExecuteBatchKeys(key_provider));
-+  auto [result_size, _] = VERIFY_RESULT(ExecuteBatchKeys(key_provider));
-   auto passed = MonoTime::Now() - key_provider.merge_done_time();
-   auto read_intents_time = key_provider.prefetch_done_time() - read_start_time;
-   auto merge_time = key_provider.merg
-```
-
-**File**: `src/yb/docdb/pgsql_operation.h` (modified, +1/-1)
-```diff
-@@ -208,7 +208,7 @@ class PgsqlReadOperation : public DocExprExecutor {
+@@ -90,6 +91,62 @@ ToString(char *value) {
+ 	config.options.ddb_option_name = duckdb_##ddb_option_name;                                                         \
+ 	elog(DEBUG2, "[PGDuckDB] Set DuckDB option: '" #ddb_option_name "'=%s", ToString(duckdb_##ddb_option_name).c_str());
  
-   // Execute a READ operator for a given batch of keys.
-   template <class KeyProvider>
--  Result<size_t> ExecuteBatchKeys(KeyProvider& key_provider);
-+  Result<std::tuple<size_t, bool>> ExecuteBatchKeys(KeyProvider& key_provider);
- 
-   Result<std::tuple<size_t, bool>> ExecuteSample();
- 
-```
-
-**File**: `src/yb/docdb/pgsql_read_request_ybctid_provider-test.cc` (added, +1026/-0)
-```diff
-@@ -0,0 +1,1026 @@
-+// Copyright (c) YugabyteDB, Inc.
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
-+// in compliance with the License.  You may obtain a copy of the License at
-+//
-+// http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software distributed under the License
-+// is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
-+// or implied.  See the License for the specific language governing permissions and limitations
-+// under the License.
-+//
++/*
++ * YB: returns this backend's DuckDB spill folder, <duckdb.temporary_directory>/<pid>. DuckDB 1.4
++ * names spill files without a process id (duckdb_temp_storage_<size>-<n>.tmp, n counting from 0 in
++ * every instance) and opens them without locking, so backends sharing one folder overwrite each
++ * other's spill data (corrupt results, crashes); an exiting instance also deletes every
++ * duckdb_temp_* file in its folder. DuckDB 2.0 fixes this (duckdb/duckdb#24811); drop this then.
++ *
++ * duckdb.temporary_directory is pinned to <DataDir>/pg_duckdb/temp (see InitGUC), so everything
++ * under it is ours. DuckDB creates the folder on first spill but never removes it, because the
++ * backend exits without destroying its DuckDB instance; so the folder is removed at backend exit.
++ * A backend killed with SIGKILL leaves its folder behind: it is removed by the next backend with
++ * the same pid, or by YbRemoveStaleSpillFolders at postmaster start.
++ */
++static std::string yb_spill_dir;
 +
-+#include <algorithm>
-+#include <optional>
-+#include <string>
-+#include <vector>
-+#include <random>
-+#include <ranges>
-+
-+#include <gtest/gtest.h>
-+
-+#include "yb/common/pgsql_protocol.messages.h"
-+#include "yb/common/schema.h"
-+
-+#include "yb/docdb/doc_read_context.h"
-+#include "yb/docdb/pgsql_read_request_ybctid_provider.h"
-+
-+#include "yb/gutil/stringprintf.h"
-+
-+#include "yb/util/flags.h"
-+#include "yb/util/memory/arena.h"
-+#include "yb/util/status_format.h"
-+#include "yb/util/test_macros.h"
-+#include "yb/util/test_util.h"
-+
-+DECLARE_bool(legacy_ybctid_batch_pagination);
-+
-+namespace yb::docdb {
-+
-+namespace {
-+
-+const std::string kPartitionKey = "partition_key";
-+constexpr int64_t kOrderBase = 100;
-+
-+// Action to take on a key returned by FetchKey(). kAdd means the key exists and is added to the
-+// result set. kNotFound means the key does not exist and is reported as missing. kPaginate means
-+// the key is found but can't be added to the result set.
-+enum class Action {
-+  kAdd,
-+  kNotFound,
-+  kPaginate,
-+};
-+
-+const Schema kSchema(
-+    {ColumnSchema("r", DataType::INT32, ColumnKind::RANGE_ASC_NULL_FIRST)}, {10_ColId});
-+
-+struct PageResult {
-+  std::vector<std::string> fetched;
-+  std::vector<std::string> added;
-+};
-+
-+struct ExpectedPagingState {
-+  bool has_partition_key;
-+  std::optional<uint64_t> keys_processed;
-+  std::vector<uint64_t> keys_missing;
-+};
-+
-+} // namespace
-+
-+class PgsqlReadRequestYbctidProviderBase : public YBTest {
-+ protected:
-+  // Zero padded, so the byte order of the keys matches their index order.
-+  static std::string Key(size_t index) {
-+    return Format("k$0", ZeroPadded(index, 2));
-+  }
-+
-+  static std::vector<std::string> Keys(size_t count) {
-+    std::vector<std::string> result;
-+    for (size_t i = 0; i != count; ++i) {
-+      result.push_back(Key(i));
-+    }
-+    return result;
-+  }
-+
-+  std::vector<std::string> ShuffledKeys(size_t count) {
-+    auto result = Keys(count);
-+    std::shuffle(result.begin(), result.end(), rng);
-+    return result;
-+  }
-+
-+  std::vector<std::string> FilterKeys(
-+      const std::vector<std::string>& keys, std::ranges::input_range auto&& indexes)
-+      requires std::unsigned_integral<std::ranges::range_value_t<decltype(indexes)>> {
-+    std::vector<std::string> result;
-+    result.reserve(indexes.size());
-+    for (auto index : indexes) {
-+      result.push_back(keys[index]);
-+    }
-+    return result;
-+  }
-+
-+  PgsqlReadRequestMsg& NewRequest(const std::vector<std::string>& keys, bool ordered = false) {
-+    auto& request = *arena_.NewArenaObject<PgsqlReadRequestMsg>();
-+    request.dup_partition_key(kPartitionKey);
-+    for (size_t i = 0; i != keys.size(); ++i) {
-+      auto& arg = *request.add_batch_arguments();
-+      if (ordered) {
-+        arg.set_order(kOrderBase + i);
-+      }
-+      arg.mutable_ybctid()->mutable_value()->dup_binary_value(keys[i]);
-+    }
-+    return request;
-+  }
-+
-+  PgsqlResponseMsg& NewResponse() {
-+    return *arena_.NewArenaObject<PgsqlResponseMsg>();
-+  }
-+
-+  static void SetPagingState(
-+      PgsqlReadRequestMsg& request, uint64_t keys_processed,
-+      const std::vector<uint64_t>& keys_missing) {
-+    auto& paging_state = *request.mutable_paging_state();
-+    if (keys_processed > 0) {
-+      paging_state.set_batch_keys_processed(keys_processed);
-+    }
-+    for (auto index : keys_missing) {
-+      paging_state.add_batch_keys_missing(index);
-+    }
-+  }
-+
-+  DocReadContext doc_read_context_ = DocReadContext::TEST_Create(kSchema);
-+ private:
-+  ThreadSafeArena arena_;
-+  std::mt19937 rng{42};
-+};
-+
-+class PgsqlReadRequestYbctidProviderTest :
-+    public PgsqlReadRequestYbctidProviderBase, public ::testing::WithParamInterface<bool> {
-+ protected:
-+  void SetUp() override {
-+    PgsqlReadRequestYbctidProviderBase::SetUp();
-+    ANNOTATE_UNPROTECTED_WRITE(FLAGS_legacy_ybctid_batch_pagination) = GetParam();
-+  }
-+
-+  // Processes one request the way PgsqlReadOperation::ExecuteBatchKeys does. Keys not in existing
-+  // are reported as not found. When max_rows is set, the provider is asked to paginate on the next
-+  // found key after max_rows keys were added to the result set.
-+  Result<PageResult> RunPage(
-+      const PgsqlReadRequestMsg& request, PgsqlResponseMsg& response,
-+      const std::vector<Action>& script) {
-+    LOG(INFO) << "Request: " << request.ShortDebugString();
-+    PgsqlReadRe
-```
-
-**File**: `src/yb/docdb/pgsql_read_request_ybctid_provider.cc` (added, +297/-0)
-```diff
-@@ -0,0 +1,297 @@
-+// Copyright (c) YugabyteDB, Inc.
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
-+// in compliance with the License.  You may obtain a copy of the License at
-+//
-+// http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software distributed under the License
-+// is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
-+// or implied.  See the License for the specific language governing permissions and limitations
-+// under the License.
-+//
-+
-+#include "yb/docdb/pgsql_read_request_ybctid_provider.h"
-+
-+#include <algorithm>
-+#include <iterator>
-+#include <optional>
-+#include <span>
-+
-+#include "yb/util/flags.h"
-+#include "yb/util/format.h"
-+#include "yb/util/logging.h"
-+#include "yb/util/status_format.h"
-+
-+DECLARE_bool(legacy_ybctid_batch_pagination);
-+
-+namespace yb::docdb {
-+
-+// Iterates over the batch elements.
-+// Implements two modes of operations: first pass, iterates over full batch, with pagination
-+// support by resuming iteration from the given position; subsequent passes, retry only the
-+// keys failed on the previous passes. List of indexes to retry is provided, iteration is always
-+// from the first index in the list, to paginate caller has to update the list of indexes.
-+class BatchArgIterator {
-+ public:
-+  BatchArgIterator(const PgsqlBatchArgumentMsgs& batch, size_t start_position)
-+      : batch_it_(batch.begin()), batch_size_(batch.size()), indexes_(std::nullopt) {
-+    MoveTo(start_position);
-+  }
-+  BatchArgIterator(const PgsqlBatchArgumentMsgs& batch, std::span<const uint64_t> indexes)
-+      : batch_it_(batch.begin()), batch_size_(batch.size()), indexes_(indexes) {
-+    MoveTo(indexes_->front());
-+  }
-+
-+  size_t CurrentPosition() const {
-+    DCHECK(!Done());
-+    return batch_position_;
-+  }
-+
-+  const PgsqlBatchArgumentMsg& CurrentElement() const {
-+    DCHECK(!Done());
-+    return *batch_it_;
-+  }
-+
-+  bool Advance() {
-+    DCHECK(!Done());
-+    if (!indexes_) {
-+      MoveTo(batch_position_ + 1);
-+      return !Done();
-+    }
-+    *indexes_ = indexes_->subspan(1);
-+    if (indexes_->empty()) {
-+      return false;
-+    }
-+    MoveTo(indexes_->front());
-+    return true;
-+  }
-+
-+  bool Done() const {
-+    return indexes_ ? indexes_->empty() : batch_position_ == batch_size_;
-+  }
-+
-+  bool Retrying() const {
-+    return indexes_.has_value();
-+  }
-+
-+  std::span<const uint64_t> RemainingRetries() const {
-+    return indexes_ ? *indexes_ : std::span<const uint64_t>();
-+  }
-+
-+ private:
-+  void MoveTo(size_t position) {
-+    if (position == batch_position_) {
-+      return;
-+    }
-+    DCHECK(batch_position_ < position && position <= batch_size_)
-+        << "Invalid batch position: " << position
-+        << ", previous position: " << batch_position_
-+        << ", batch size: " << batch_size_;
-+    std::advance(batch_it_, position - batch_position_);
-+    batch_position_ = position;
-+  }
-+
-+  PgsqlBatchArgumentMsgs::const_iterator batch_it_;
-+  size_t batch_position_ = 0;
-+  size_t batch_size_;
-+  // Remaining indexes, starting from the current one.
-+  std::optional<std::span<const uint64_t>> indexes_;
-+};
-+
-+PgsqlReadRequestYbctidProvider::PgsqlReadRequestYbctidProvider(
-+    const DocReadContext& doc_read_context, const PgsqlReadRequestMsg& request,
-+    PgsqlResponseMsg& response)
-+    : request_(request), response_(response) {
-+  const auto& batch_args = request_.batch_arguments();
-+  VLOG_WITH_FUNC(3) << "Batch size: " << batch_args.size();
-+
-+  // There are two different cases when the paging state has missing keys:
-+  // 1. The first pass over the batch arguments. In this case the position to restore
-+  // (batch_keys_processed) is strictly greater than all the missing keys, or the last missing key,
-+  // since they are sorted. In this case we restore the missing keys and continue iterating
-+  // the batch normally, and continue populating the missing keys. The first pass can't span over
-+  // multiple tablets, we continue to paginate to the first tablet in the range until the end of
-+  // the batch is reached. Even if the first tablet splits, pagination will go to the new first
-+  // tablet.
-+  // 2. The subsequent passes retry the missing keys. They are only possible if there are multiple
-+  // tablets in the range and pagination has happened to a subsequent batch. In this case
-+  // the position to restore may be absent (first page of the tablet), so we retry all the missing
-+  // keys. Keys may be missing on that tablet too, so we will collect them again, if there more
-+  // tablets in the range. If the position to restore is specified, that means the pagination has
-+  // happened in the middle of the tablet. The position to restore has to be one of the missing
-+  // keys, the missing keys lower, if any, are accumulated missing keys from the current pass, and
-+  // remaining missing keys are to be retrie
-```
-
-**File**: `src/yb/docdb/pgsql_read_request_ybctid_provider.h` (added, +62/-0)
-```diff
-@@ -0,0 +1,62 @@
-+// Copyright (c) YugabyteDB, Inc.
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
-+// in compliance with the License.  You may obtain a copy of the License at
-+//
-+// http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software distributed under the License
-+// is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
-+// or implied.  See the License for the specific language governing permissions and limitations
-+// under the License.
-+//
-+
-+#pragma once
-+
-+#include <optional>
-+#include <vector>
-+
-+#include "yb/common/pgsql_protocol.messages.h"
-+
-+#include "yb/docdb/docdb_fwd.h"
-+#include "yb/docdb/ql_storage_interface.h"
-+
-+#include "yb/util/result.h"
-+#include "yb/util/slice.h"
-+#include "yb/util/status.h"
-+
-+namespace yb::docdb {
-+
-+class BatchArgIterator;
-+
-+class PgsqlReadRequestYbctidProvider {
-+ public:
-+  PgsqlReadRequestYbctidProvider(
-+      const DocReadContext& doc_read_context, const PgsqlReadRequestMsg& request,
-+      PgsqlResponseMsg& response);
-+  ~PgsqlReadRequestYbctidProvider();
-+
-+  YbctidBounds Bounds() const { return bounds_; }
-+
-+  Result<Slice> FetchKey();
-+
-+  void AddedKeyToResultSet();
-+
-+  void KeyNotFound();
-+
-+  Status UpdatePagingState();
-+
-+ private:
-+  Status UpdateResponseForTheEndOfBatch();
-+
-+  bool valid_ = true;
-+  const PgsqlReadRequestMsg& request_;
-+  PgsqlResponseMsg& response_;
-+  std::unique_ptr<BatchArgIterator> batch_arg_it_;
-+  YbctidBounds bounds_;
-+  std::optional<size_t> current_position_;
-+  std::optional<int64> current_order_;
-+  std::vector<size_t> retry_keys_;
-+};
-+
-+}  // namespace yb::docdb
-```
-
-**File**: `src/yb/tablet/tablet.cc` (modified, +19/-2)
-```diff
-@@ -2838,6 +2838,16 @@ const std::string* Tablet::NextReadPartitionKey(
-   return &partition_key;
- }
- 
-+bool Tablet::SwitchToNextTablet(
-+    const PgsqlReadRequestMsg& pgsql_read_request, const PgsqlResponseMsg& response) const {
-+  if (response.has_paging_state()) {
-+    const auto& paging_state = response.paging_state();
-+    VLOG_WITH_FUNC(3) << "Paging state: " << paging_state.ShortDebugString();
-+    return !paging_state.has_next_partition_key();
-+  }
-+  return true;
++static void
++YbRemoveSpillFolder(const std::string &dir, int elevel) {
++	std::error_code ec;
++	std::filesystem::remove_all(dir, ec);
++	if (ec) {
++		elog(elevel, "[PGDuckDB] could not remove DuckDB spill folder \"%s\": %s", dir.c_str(), ec.message().c_str());
++	}
 +}
 +
- namespace {
++static void
++YbRemoveSpillFolderAtExit(int /*code*/, Datum /*arg*/) {
++	YbRemoveSpillFolder(yb_spill_dir, LOG);
++}
++
++static std::string
++YbBackendTemporaryDirectory() {
++	if (yb_spill_dir.empty()) {
++		yb_spill_dir = (std::filesystem::path(duckdb_temporary_directory) / std::to_string(MyProcPid)).string();
++		YbRemoveSpillFolder(yb_spill_dir, WARNING); /* left by a dead backend that had this pid */
++		on_proc_exit(YbRemoveSpillFolderAtExit, 0);
++	}
++	return yb_spill_dir;
++}
++
++/* YB: called at postmaster start, when no backend can be using a spill folder. */
++void
++YbRemoveStaleSpillFolders() {
++	std::error_code ec;
++	auto it = std::filesystem::directory_iterator(duckdb_temporary_directory, ec);
++	if (ec) {
++		return; /* not created yet */
++	}
++	for (; !ec && it != std::filesystem::directory_iterator(); it.increment(ec)) {
++		YbRemoveSpillFolder(it->path().string(), WARNING);
++	}
++	if (ec) {
++		elog(WARNING, "[PGDuckDB] could not list DuckDB spill folders in \"%s\": %s", duckdb_temporary_directory,
++		     ec.message().c_str());
++	}
++}
++
+ void
+ DuckDBManager::Initialize() {
+ 	elog(DEBUG2, "(PGDuckDB/DuckDBManager) Creating DuckDB instance");
+@@ -123,6 +180,9 @@ DuckDBManager::Initialize() {
+ 	SET_DUCKDB_OPTION(temporary_directory);
+ 	SET_DUCKDB_OPTION(extension_directory);
  
- void SetBackfillSpecForYsqlBackfill(
-@@ -2882,14 +2892,21 @@ Status Tablet::CreatePagingStateForRead(const PgsqlReadRequestMsg& pgsql_read_re
-   if (MayTargetMultipleTablets(pgsql_read_request, row_count)) {
-     const auto* next_partition_key = NextReadPartitionKey(pgsql_read_request);
-     if (next_partition_key) {
--      if (!response->has_paging_state()) {
--        // DocDB has done with the current tablet, time to switch to the next one
-+      if (SwitchToNextTablet(pgsql_read_request, *response)) {
-         response->mutable_paging_state()->dup_next_partition_key(*next_partition_key);
-       }
-       response->mutable_paging_state()->dup_next_tablet_bound(*next_partition_key);
-     }
-   }
++	/* YB: a spill folder per backend, see YbBackendTemporaryDirectory */
++	config.options.temporary_directory = YbBackendTemporaryDirectory();
++
+ 	if (duckdb_maximum_memory > 0) {
+ 		// Convert the memory limit from MB (as set by Postgres GUC_UNIT_MB, which is actually MiB; see
+ 		// memory_unit_conversion_table in guc.c) to a string with the "MiB" suffix, as required by DuckDB's memory
+```
+
+**File**: `src/postgres/third-party-extensions/pg_duckdb/src/pgduckdb_guc.cpp` (modified, +6/-1)
+```diff
+@@ -251,10 +251,15 @@ InitGUC() {
+ 	    "The maximum memory DuckDB can use in MB (e.g., 4096 for 4GB), alias for duckdb.max_memory",
+ 	    &duckdb_maximum_memory, 0, INT_MAX, PGC_SUSET, GUC_UNIT_MB);
  
-+  // Next partition/row key hasn't been added, neither by the DocDB nor by the above logic, remove
-+  // the paging state to prevent further pagination.
-+  if (response->has_paging_state() &&
-+      !response->paging_state().has_next_partition_key() &&
-+      !response->paging_state().has_next_row_key()) {
-+    response->clear_paging_state();
++	/*
++	 * YB: in lake_io mode, pin to the default <DataDir>/pg_duckdb/temp. Spill folders under it are
++	 * removed with remove_all (see YbBackendTemporaryDirectory), which is safe only on a node-local
++	 * folder that nothing else uses.
++	 */
+ 	DefineCustomDuckDBVariable(
+ 	    "duckdb.temporary_directory",
+ 	    "Set the directory to which DuckDB write temp files, alias for duckdb.temporary_directory",
+-	    &duckdb_temporary_directory, PGC_SUSET);
++	    &duckdb_temporary_directory, YbIsLakeIoMode() ? PGC_INTERNAL : PGC_SUSET);
+ 
+ 	DefineCustomDuckDBVariable(
+ 	    "duckdb.max_temp_directory_size",
+```
+
+---
+
+### Incident Patch 2: `861d7eba` (2026-11-25)
+**Commit Message**: [PLAT-23858] Build: Set HOME to /home/yugabyte in the yugabyte image (#39022)
+
+## Summary
+
+The yugabyte Helm chart now mounts the client TLS secret at
+`/home/yugabyte/.yugabytedb/` instead of `/root/.yugabytedb/`
+(yugabyte/charts@43fb193), because the non-root DB user (uid 10001)
+can't traverse `/root`. libpq (`ysqlsh`, and libpq inside postgres)
+finds `root.crt`, `yugabytedb.crt` and `yugabytedb.key` through
+`$HOME/.yugabytedb`. The image never set `HOME`, so the container
+runtime chose it from `/etc/passwd`:
+
+- root → `/root`, which no longer has the certs.
+- uid 10001 on the almalinux image, or OpenShift's arbitrary UID → `/`,
+since neither has a passwd entry. `/` isn't writable either, so
+`yugabyted start` without `--base_dir` fails and `ycqlsh` can't create
+`~/.cassandra`.
+
+This sets `ENV HOME=/home/yugabyte` in the final image stage. The build
+stages are unchanged. `ycqlsh` already reads its CA from the chart's
+`SSL_CERTFILE`.
+
+## Upgrade/Rollback safety
+
+- **TLS connections from inside the pod change behavior.** With
+`root.crt` and the client cert under `$HOME`, libpq connections using
+`sslmode=prefer`/`require` now verify the server's certificate chain and
+send the `yugabyt
+
+**File**: `docker/images/yugabyte/Dockerfile` (modified, +3/-0)
+```diff
+@@ -232,6 +232,9 @@ ENV container=yugabyte-db
+ ENV YB_HOME=/home/yugabyte
+ ENV YB_MANAGED_DEVOPS_USE_PYTHON3=1
+ ENV YB_DEVOPS_USE_PYTHON3=1
++# libpq reads client TLS certs from ~/.yugabytedb, which the Helm chart mounts under /home/yugabyte.
++# Without this, root gets /root and a UID with no passwd entry (such as OpenShift's) gets /.
++ENV HOME=/home/yugabyte
+ WORKDIR $YB_HOME
+ 
+ COPY --from=stage2 / /
+```
+
+---
+
+### Incident Patch 3: `d145485b` (2026-11-25)
+**Commit Message**: [#36275] CDC: Fix master FATAL in BackfillLegacyGrpcStreams on PITR restore (#38560)
+
+## Summary
+
+##### Code changes summary
+
+If a gRPC CDC stream created before a YSQL major upgrade still exists,
+the first `restore_snapshot_schedule` after `finalize_upgrade` crashes
+the master leader:
+
+```
+F async_util.cc:124] Check failed: _s.ok() Bad status: Timed out ... waiting for the callback to be called.
+    @ yb::Synchronizer::~Synchronizer()
+    @ yb::cdc::CDCStateTable::WriteEntries<>()
+    @ yb::cdc::CDCStateTable::UpsertEntries()
+    @ yb::master::CatalogManager::BackfillLegacyGrpcStreams()
+    @ yb::master::CatalogManager::SysCatalogLoaded()
+```
+
+Problem:
+
+`CatalogManager::SysCatalogLoaded` calls
+`CatalogManager::BackfillLegacyGrpcStreams` on every sys catalog load.
+`BackfillLegacyGrpcStreams` does work only after `finalize_upgrade`
+promotes the AutoFlag `cdc_pg_create_grpc_stream`. `finalize_upgrade`
+does not reload the sys catalog, so the first sys catalog load in which
+`BackfillLegacyGrpcStreams` does work can be the one that
+`restore_snapshot_schedule` triggers.
+
+During that load, `restoring_sys_catalog_` is still set, because
+`SysCatalogLoaded` called `BackfillLegacyGrpcStreams`
+
+**File**: `src/yb/cdc/cdc_state_table.cc` (modified, +9/-7)
+```diff
+@@ -640,11 +640,13 @@ Status CDCStateTable::WriteEntries(
+     QLOperator condition_op, const bool replace_full_map,
+     const std::vector<std::string>& keys_to_delete) {
+   // TODO(async_flush): https://github.com/yugabyte/yugabyte-db/issues/12173
+-  Synchronizer sync;
++  // The callback holds a weak reference, so returning on an error without waiting is safe even if
++  // the callback runs later.
++  auto sync = std::make_shared<Synchronizer>();
+   RETURN_NOT_OK(WriteEntriesAsync<CDCEntry>(
+-      entries, statement_type, sync.AsStdStatusCallback(), condition_op, replace_full_map,
+-      keys_to_delete));
+-  return sync.Wait();
++      entries, statement_type, Synchronizer::AsStdStatusCallback(sync), condition_op,
++      replace_full_map, keys_to_delete));
++  return sync->Wait();
+ }
+ 
+ Status CDCStateTable::InsertEntriesAsync(
+@@ -659,9 +661,9 @@ Status CDCStateTable::InsertEntries(
+     const std::vector<CDCStateTableEntry>& entries) {
+   VLOG_WITH_FUNC(1) << yb::ToString(entries);
+   // TODO(async_flush): https://github.com/yugabyte/yugabyte-db/issues/12173
+-  Synchronizer sync;
+-  RETURN_NOT_OK(InsertEntriesAsync(entries, sync.AsStdStatusCallback()));
+-  return sync.Wait();
++  auto sync = std::make_shared<Synchronizer>();
++  RETURN_NOT_OK(InsertEntriesAsync(entries, Synchronizer::AsStdStatusCallback(sync)));
++  return sync->Wait();
+ }
+ 
+ Status CDCStateTable::UpdateEntries(
+```
+
+**File**: `src/yb/integration-tests/cdc_state_table-test.cc` (modified, +14/-0)
+```diff
+@@ -12,6 +12,7 @@
+ 
+ #include <algorithm>
+ #include <chrono>
++#include <future>
+ #include <boost/assign.hpp>
+ #include "yb/util/flags.h"
+ #include <gtest/gtest.h>
+@@ -631,5 +632,18 @@ TEST_F(CDCStateTableTest, TestUpsertEntriesWithRemoveKey) {
+   ASSERT_EQ(*entry_opt->cdc_sdk_safe_time, cdc_sdk_safe_time_1);
+ }
+ 
++// A write that fails before it is flushed, here because the client is unavailable, must return the
++// error instead of aborting the process.
++TEST_F(CDCStateTableTest, TestWritesReturnErrorWhenClientUnavailable) {
++  std::promise<client::YBClient*> client_promise;
++  client_promise.set_value(nullptr);
++  CDCStateTable cdc_state_table(client_promise.get_future().share());
++
++  const std::vector<CDCStateTableEntry> entries{
++      CDCStateTableEntry("tablet", xrepl::StreamId::GenerateRandom())};
++  ASSERT_TRUE(cdc_state_table.UpsertEntries(entries).IsShutdownInProgress());
++  ASSERT_TRUE(cdc_state_table.InsertEntries(entries).IsShutdownInProgress());
++}
++
+ }  // namespace cdc
+ }  // namespace yb
+```
+
+**File**: `src/yb/integration-tests/cdcsdk_ysql-test.cc` (modified, +38/-0)
+```diff
+@@ -19,6 +19,8 @@
+ #include "yb/cdc/cdc_types.h"
+ #include "yb/cdc/cdc_state_table.h"
+ 
++#include "yb/client/snapshot_test_util.h"
++
+ #include "yb/common/common.pb.h"
+ #include "yb/common/entity_ids.h"
+ #include "yb/common/entity_ids_types.h"
+@@ -63,6 +65,7 @@ DECLARE_uint64(transaction_resend_applying_interval_usec);
+ DECLARE_bool(TEST_disable_apply_committed_transactions);
+ DECLARE_bool(cdcsdk_enable_publication_scoped_replication_slots);
+ DECLARE_bool(cdc_pg_create_grpc_stream);
++DECLARE_bool(enable_cdc_state_table_caching);
+ DECLARE_bool(ysql_yb_enable_listen_notify);
+ DECLARE_bool(enable_collect_cdc_metrics);
+ DECLARE_int32(TEST_slowdown_alter_table_rpcs_ms);
+@@ -15307,6 +15310,41 @@ TEST_F(CDCSDKYsqlTest, TestBackfillOfLegacyGrpcStream) {
+       "Backfilled gRPC stream should have a cdc_state slot entry");
+ }
+ 
++// The first sys catalog load after the AutoFlag is promoted backfills legacy gRPC streams. When
++// that load is the one a PITR restore triggers, the master leader rejects RPCs until it clears
++// restoring_sys_catalog_, so the backfill must run after that.
++TEST_F(CDCSDKYsqlTest, TestBackfillOfLegacyGrpcStreamDuringPitrRestore) {
++  ASSERT_OK(SetUpWithParams(1, 1, false));
++  ASSERT_RESULT(CreateTable(&test_cluster_, test_namespace_name, kTableName, 1 /* num_tablets */));
++
++  ANNOTATE_UNPROTECTED_WRITE(FLAGS_cdc_pg_create_grpc_stream) = false;
++  auto stream_id = ASSERT_RESULT(CreateConsistentSnapshotStream());
++
++  // Without the cache, every cdc_state write sends IsCreateTableDone, as the first one after a
++  // master restart does.
++  ANNOTATE_UNPROTECTED_WRITE(FLAGS_enable_cdc_state_table_caching) = false;
++
++  client::SnapshotTestUtil snapshot_util;
++  snapshot_util.SetProxy(&test_client()->proxy_cache());
++  snapshot_util.SetCluster(test_cluster());
++  auto schedule_id = ASSERT_RESULT(snapshot_util.CreateSchedule(
++      nullptr /* table */, YQL_DATABASE_PGSQL, test_namespace_name, client::WaitSnapshot::kTrue));
++
++  // Promote the flag without a sys catalog reload, as finalize_upgrade does, so that the restore's
++  // reload is the first one to backfill the stream.
++  ANNOTATE_UNPROTECTED_WRITE(FLAGS_cdc_pg_create_grpc_stream) = true;
++  ASSERT_OK(
++      snapshot_util.RestoreSnapshotSchedule(schedule_id, test_cluster()->mini_master()->Now()));
++
++  ASSERT_OK(WaitFor(
++      [&]() -> Result<bool> {
++        auto resp = VERIFY_RESULT(GetCDCStream(stream_id));
++        return !resp.stream().cdcsdk_ysql_replication_slot_name().empty();
++      },
++      MonoDelta::FromSeconds(60) * kTimeMultiplier,
++      "Backfill to populate the slot name on the legacy gRPC stream"));
++}
++
+ TEST_F(CDCSDKYsqlTest, TestRecordTypeOptionPresenceForStreams) {
+   ASSERT_OK(SetUpWithParams(1, 1, false));
+   ANNOTATE_UNPROTECTED_WRITE(FLAGS_cdc_pg_create_grpc_stream) = true;
+```
+
+**File**: `src/yb/master/catalog_manager.cc` (modified, +12/-2)
+```diff
+@@ -15050,8 +15050,6 @@ void CatalogManager::SysCatalogLoaded(SysCatalogLoadingState&& state) {
+ 
+   xcluster_manager_->SysCatalogLoaded(state.epoch);
+ 
+-  WARN_NOT_OK(BackfillLegacyGrpcStreams(state.epoch), "Failed to backfill legacy gRPC CDC streams");
+-
+   WARN_NOT_OK(
+       BackfillNotificationsStreamsPluginName(state.epoch),
+       "Failed to backfill plugin name for notifications CDC streams");
+@@ -15060,6 +15058,18 @@ void CatalogManager::SysCatalogLoaded(SysCatalogLoadingState&& state) {
+   EnqueuePendingBackfillsAfterLoad();
+   ClearRestoringSysCatalogIfNotFenced();
+ 
++  // Skip BackfillLegacyGrpcStreams while restoring_sys_catalog_ is set. It writes to cdc_state,
++  // which sends an RPC to this master, and the master rejects RPCs while that flag is set. If it
++  // is skipped, or fails because the flag is set while it runs, the next sys catalog load runs it
++  // again.
++  if (!restoring_sys_catalog_) {
++    WARN_NOT_OK(
++        BackfillLegacyGrpcStreams(state.epoch), "Failed to backfill legacy gRPC CDC streams");
++  } else {
++    LOG_WITH_PREFIX(INFO) << "Deferring BackfillLegacyGrpcStreams to a later sys catalog load: "
++                          << "a restore is in progress";
 +  }
 +
-   // If there is a paging state, update the total number of rows read so far.
-   if (response->has_paging_state()) {
-     response->mutable_paging_state()->set_total_num_rows_read(
+   if (FLAGS_enable_ysql) {
+     // Initialize the catalog version cache.
+     // This is needed for cases like major YSQL upgrade where master runs a postgres process.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #39119** (2026-11-24): [BACKPORT 2024.2][PLAT-24054] YBA: Update the bundled Prometheus to 3.16.0 (#38988) (@proff4eg)
-- **PR #39097** (2026-11-24): [BACKPORT 2026.2][PLAT-23839] YBA: Start the v2 vm-image upgrade from the universe's details (#38996) (@asc-073-yb)
-- **PR #39096** (2026-11-24): [BACKPORT 2025.2][#38397] YSQL: Ignore SIGINT in the notifications poller (#39020) (@arpang)
-- **PR #39095** (2026-11-24): [BACKPORT 2026.1][#38397] YSQL: Ignore SIGINT in the notifications poller (#39020) (@arpang)
-- **PR #39094** (2026-11-24): [BACKPORT 2026.2][#38397] YSQL: Ignore SIGINT in the notifications poller (#39020) (@arpang)
-- **PR #39087** (2026-11-24): [BACKPORT 2026.2][#34944] YSQL: Fix flaky TestPgListenNotify#testListenNotifyWithDbClone on sanitizer builds (#39078) (@dhruva4869)
+- **PR #39239** (2026-11-25): [BACKPORT 2026.2][PLAT-24123] YBA: Treat Azure NotFound as already deleted when cleaning up a node's public IP (#39238) (@vipul-yb)
+- **PR #39238** (2026-11-25): [PLAT-24123] YBA: Treat Azure NotFound as already deleted when cleaning up a node's public IP (@vipul-yb)
+- **PR #39218** (2026-11-25): [BACKPORT 2026.2][PLAT-24052] YBA: Keep backup storage configs working after a cross-cloud HA failover (@shashwat-yb)
+- **PR #39215** (2026-11-25): [BACKPORT 2026.2][PLAT-24052] YBA: Offer Federated IAM for S3 on a YBA on AWS and set a federated S3 config's signing region in the UI (@shashwat-yb)
+- **PR #39186** (2026-11-25): [#39185] Agents: Do not flag missing end-of-test gflag resets in reviews (@hulien22)
+- **PR #39180** (2026-11-25): [#39178] DocDB: Fix StatefulServiceTest.TestRemoteBootstrap step-down to recently defeated peer (@csi-fix)
 
 ---
 
@@ -3121,22 +2687,22 @@ However, this approach did not work well with the target tablet splits. There wa
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [#37251] DocDB: Fix lock leak in YbAdminSnapshotScheduleTest.PgsqlPitrDuringColo
+## X. [DB-26245] YSQL: Fix pg_duckdb lake_io concurrent spill issue
 
 **RULE**:
-When implementing operations in `src/yb/master/catalog_loading_state.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yugabyte/yugabyte-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/postgres/third-party-extensions/pg_duckdb/include/pgduckdb/pgduckdb_duckdb.hpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yugabyte/yugabyte-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c2fe718c`: [#37251] DocDB: Fix lock leak in YbAdminSnapshotScheduleTest.PgsqlPitrDuringColocatedTableCreateReleaseIgnored. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `33e27340`: [DB-26245] YSQL: Fix pg_duckdb lake_io concurrent spill issue. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/yb/master/catalog_loading_state.h`.
+Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/postgres/third-party-extensions/pg_duckdb/include/pgduckdb/pgduckdb_duckdb.hpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c
 // Verified production-grade fix pattern:
-  // Whether the catalog being replaced was loaded in epoch.leader_term, e.g. on a PITR reload.
-  bool reload_in_loaded_term = false;
+/* YB: remove spill folders left by backends of a previous postmaster */
+void YbRemoveStaleSpillFolders();
 
 ```
 
@@ -3147,7 +2713,7 @@ Subsystems managing C data structures, boundary deserialization, API parsing, or
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c2fe718c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `33e27340` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

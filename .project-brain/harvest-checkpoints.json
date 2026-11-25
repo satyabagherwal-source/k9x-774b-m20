@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-25T09:25:00.859Z",
+  "last_updated": "2026-11-25T09:39:48.486Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -8106,14 +8106,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-yugabyte-yugabyte-db",
-      "content_hash": "d269ba33a559f045604ea73396a85c88ba88c1a902cf38a1ca56002bed4b8ff9",
-      "verified_at": "2026-11-24T15:09:00.447Z",
+      "content_hash": "00e4498f93ba3c78df4c46c5c197d8ff05912be43a77aa8a012dd3cf3d20cea4",
+      "verified_at": "2026-11-25T09:37:30.695Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T15:09:00.447Z"
+      "last_updated": "2026-11-25T09:37:30.695Z"
     },
     "React95/React95": {
       "repository": "React95/React95",
@@ -12336,14 +12336,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-modelcontextprotocol-kotlin-sdk",
-      "content_hash": "c8fa450be9266d6745196e4382ed907569e8044ae9548dfa8db59c345dcdcb82",
-      "verified_at": "2026-11-22T23:06:17.036Z",
+      "content_hash": "1eef88ac08c697d249c2e88ce58e17c95251ada7d58e906ab9926c905781f40b",
+      "verified_at": "2026-11-25T09:37:23.508Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T23:06:17.036Z"
+      "last_updated": "2026-11-25T09:37:23.508Z"
     },
     "ivanvorobei/SwiftUI": {
       "repository": "ivanvorobei/SwiftUI",
@@ -19806,14 +19806,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-atomicchat-inkling-2-mini-uncensored-gguf",
-      "content_hash": "5f1b7e0e933f655ee99869c84972e8c6bc77e262b1a59a903725af5ca9bdc9f6",
-      "verified_at": "2026-11-21T17:28:05.658Z",
+      "content_hash": "09fd4c328cce3a6b4c493da31f3ac3df2830ae2f8b10c76aa4ef54cf5c23f0d3",
+      "verified_at": "2026-11-25T09:39:48.485Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T17:28:05.658Z"
+      "last_updated": "2026-11-25T09:39:48.485Z"
     },
     "SulphurAI/Sulphur-3": {
       "repository": "SulphurAI/Sulphur-3",

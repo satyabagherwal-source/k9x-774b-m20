@@ -13053,3 +13053,8 @@ Every entry in this ledger must capture:
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `88b0d49b` | Multi-dimensional audit evidence | 2026-11-25T09:08:06.895Z |
 | `learn-huggingface-briaai-fibo-2-0-dev` | `https://huggingface.co/briaai/Fibo-2.0-dev` | `hf-briaai-` | Multi-dimensional audit evidence | 2026-11-25T09:24:56.257Z |
 | `learn-github-goharbor-harbor` | `https://github.com/goharbor/harbor` | `7ceeba65` | Multi-dimensional audit evidence | 2026-11-25T09:25:00.839Z |
+| `learn-github-modelcontextprotocol-kotlin-sdk` | `https://github.com/modelcontextprotocol/kotlin-sdk` | `df24fb0b` | Multi-dimensional audit evidence | 2026-11-25T09:37:23.488Z |
+| `learn-github-yugabyte-yugabyte-db` | `https://github.com/yugabyte/yugabyte-db` | `7da6b2d3` | Multi-dimensional audit evidence | 2026-11-25T09:37:30.675Z |
+| `learn-huggingface-atomicchat-inkling-2-mini-uncensored-gguf` | `https://huggingface.co/AtomicChat/Inkling-2-Mini-Uncensored-GGUF` | `hf-atomicc` | Multi-dimensional audit evidence | 2026-11-25T09:39:48.466Z |
+| `learn-dom-h-543dc045` | `project://hf-atomicchat-inkling-2-mini-uncensored-gguf` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-atomicchat-inkling-2-mini-uncensored-gguf-learnings.md` | 2026-11-25T09:40:28.963Z |
+| `learn-dom-f-bd142f65` | `project://hf-atomicchat-inkling-2-mini-uncensored-gguf` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-atomicchat-inkling-2-mini-uncensored-gguf-learnings.md` | 2026-11-25T09:41:12.041Z |

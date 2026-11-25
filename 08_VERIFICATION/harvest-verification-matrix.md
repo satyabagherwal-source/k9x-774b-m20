@@ -13020,3 +13020,8 @@
 | `CYCLE-20261125-I2CQ` | `2026-11-25T09:08:06.890Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | Yes (`9cac9c74...`) |
 | `CYCLE-20261125-3P6L` | `2026-11-25T09:24:56.253Z` | `briaai/Fibo-2.0-dev` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-briaai-fibo-2.0-dev-learnings.md` | Yes (`b4261bcf...`) |
 | `CYCLE-20261125-3SPV` | `2026-11-25T09:25:00.835Z` | `goharbor/harbor` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10496` | Yes (`52593385...`) |
+| `CYCLE-20261125-JPQZ` | `2026-11-25T09:37:23.483Z` | `modelcontextprotocol/kotlin-sdk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10497` | Yes (`1eef88ac...`) |
+| `CYCLE-20261125-JVAM` | `2026-11-25T09:37:30.670Z` | `yugabyte/yugabyte-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10498` | Yes (`00e4498f...`) |
+| `CYCLE-20261125-MTM5` | `2026-11-25T09:39:48.461Z` | `AtomicChat/Inkling-2-Mini-Uncensored-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10499, Rule 10500` | Yes (`09fd4c32...`) |
+| `CYCLE-2026-11-25-PROJ-EVOLVE` | `2026-11-25T09:40:28.963Z` | `hf-atomicchat-inkling-2-mini-uncensored-gguf` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-543DC045` [Domain H] | Yes (`9bfa68b5...`) |
+| `CYCLE-2026-11-25-PROJ-EVOLVE` | `2026-11-25T09:41:12.041Z` | `hf-atomicchat-inkling-2-mini-uncensored-gguf` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-F-BD142F65` [Domain F] | Yes (`dd67f1d8...`) |

@@ -5323,10 +5323,10 @@
     "repository": "yugabyte/yugabyte-db",
     "platform": "github",
     "sourceUrl": "https://github.com/yugabyte/yugabyte-db",
-    "sourceVersion": "3f1fb89d",
+    "sourceVersion": "7da6b2d3",
     "license": "NOASSERTION",
-    "contentHash": "d269ba33a559f045604ea73396a85c88ba88c1a902cf38a1ca56002bed4b8ff9",
-    "lastHarvestedAt": "2026-11-24T15:09:00.428Z",
+    "contentHash": "00e4498f93ba3c78df4c46c5c197d8ff05912be43a77aa8a012dd3cf3d20cea4",
+    "lastHarvestedAt": "2026-11-25T09:37:30.675Z",
     "learningId": "learn-github-yugabyte-yugabyte-db"
   },
   "react95-react95": {
@@ -8203,10 +8203,10 @@
     "repository": "modelcontextprotocol/kotlin-sdk",
     "platform": "github",
     "sourceUrl": "https://github.com/modelcontextprotocol/kotlin-sdk",
-    "sourceVersion": "a3399b9c",
+    "sourceVersion": "df24fb0b",
     "license": "NOASSERTION",
-    "contentHash": "c8fa450be9266d6745196e4382ed907569e8044ae9548dfa8db59c345dcdcb82",
-    "lastHarvestedAt": "2026-11-22T23:06:17.029Z",
+    "contentHash": "1eef88ac08c697d249c2e88ce58e17c95251ada7d58e906ab9926c905781f40b",
+    "lastHarvestedAt": "2026-11-25T09:37:23.488Z",
     "learningId": "learn-github-modelcontextprotocol-kotlin-sdk"
   },
   "ivanvorobei-swiftui": {
@@ -13145,8 +13145,8 @@
     "sourceUrl": "https://huggingface.co/AtomicChat/Inkling-2-Mini-Uncensored-GGUF",
     "sourceVersion": "hf-atomicchat-inkling-2-mini-uncensored-gguf",
     "license": "Open-Source",
-    "contentHash": "5f1b7e0e933f655ee99869c84972e8c6bc77e262b1a59a903725af5ca9bdc9f6",
-    "lastHarvestedAt": "2026-11-21T17:28:05.647Z",
+    "contentHash": "09fd4c328cce3a6b4c493da31f3ac3df2830ae2f8b10c76aa4ef54cf5c23f0d3",
+    "lastHarvestedAt": "2026-11-25T09:39:48.466Z",
     "learningId": "learn-huggingface-atomicchat-inkling-2-mini-uncensored-gguf"
   },
   "hf-sulphurai-sulphur-3": {

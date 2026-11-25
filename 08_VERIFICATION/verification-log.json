@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261123-645H",
-    "timestamp": "2026-11-23T21:31:18.533Z",
-    "repository": "autotrust/AutoTrust-Decider-Pro-35B",
-    "learningId": "learn-huggingface-autotrust-jev-35b",
-    "contentHash": "fb75e21dd9b5ab7a2533e34695a40e116a4ad398ade56c7bf29b340b19cede85",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-6HIA",
-    "timestamp": "2026-11-23T21:31:35.842Z",
-    "repository": "tursodatabase/turso",
-    "learningId": "learn-github-tursodatabase-turso",
-    "contentHash": "ef0408ccb75b49e48598c214a993526a14e7c2d78ec25b2058f74ea23cae0e18",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-H16V",
-    "timestamp": "2026-11-23T21:39:47.911Z",
-    "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",
-    "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b",
-    "contentHash": "999b6417b175bf342f440bfb1ad77fd25c04688169a5915ccc2dcd12ac122e2d",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261123-HBRX",
     "timestamp": "2026-11-23T21:40:01.629Z",
     "repository": "aleo-labs-protocol/snarkOS",
@@ -7492,6 +7447,51 @@
     "contentHash": "525933856b8125c59ef8d717fe85bb315470d460ca4acfb03109fc775bbf8215",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-JPQZ",
+    "timestamp": "2026-11-25T09:37:23.483Z",
+    "repository": "modelcontextprotocol/kotlin-sdk",
+    "learningId": "learn-github-modelcontextprotocol-kotlin-sdk",
+    "contentHash": "1eef88ac08c697d249c2e88ce58e17c95251ada7d58e906ab9926c905781f40b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-JVAM",
+    "timestamp": "2026-11-25T09:37:30.670Z",
+    "repository": "yugabyte/yugabyte-db",
+    "learningId": "learn-github-yugabyte-yugabyte-db",
+    "contentHash": "00e4498f93ba3c78df4c46c5c197d8ff05912be43a77aa8a012dd3cf3d20cea4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-MTM5",
+    "timestamp": "2026-11-25T09:39:48.461Z",
+    "repository": "AtomicChat/Inkling-2-Mini-Uncensored-GGUF",
+    "learningId": "learn-huggingface-atomicchat-inkling-2-mini-uncensored-gguf",
+    "contentHash": "09fd4c328cce3a6b4c493da31f3ac3df2830ae2f8b10c76aa4ef54cf5c23f0d3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

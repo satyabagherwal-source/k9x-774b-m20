@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-25T09:25:06.701Z",
+  "last_updated": "2026-11-25T09:41:16.304Z",
   "total_verified_learnings": 9115,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25352,
+  "total_items": 25367,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -236224,8 +236224,8 @@
       "slug": "yugabyte-yugabyte-db",
       "platform": "github",
       "source_url": "https://github.com/yugabyte/yugabyte-db",
-      "source_version": "3f1fb89d",
-      "content_hash": "d269ba33a559f045604ea73396a85c88ba88c1a902cf38a1ca56002bed4b8ff9",
+      "source_version": "7da6b2d3",
+      "content_hash": "00e4498f93ba3c78df4c46c5c197d8ff05912be43a77aa8a012dd3cf3d20cea4",
       "dossier_path": "07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
       "promoted_rules": [
@@ -236273,6 +236273,11 @@
           "number": 10290,
           "title": "[#37251] DocDB: Fix lock leak in YbAdminSnapshotScheduleTest.PgsqlPitrDuringColo",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10498,
+          "title": "[DB-26245] YSQL: Fix pg_duckdb lake_io concurrent spill issue",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -236280,7 +236285,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T15:09:00.163Z",
+      "verified_at": "2026-11-25T09:37:30.406Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -236346,10 +236351,10 @@
       "relative_path": "08_VERIFICATION/yugabyte-yugabyte-db-verification-protocol-empirical-defect-shield-for-yugabyte-.md",
       "title": "Verification Protocol: Empirical Defect Shield for yugabyte/yugabyte-db",
       "repository": "yugabyte/yugabyte-db",
-      "source_version": "3f1fb89d",
-      "content_hash": "3edf4efb972514fd52bf23ed9690d2b26205a42b642760c75e1769c459b5463e",
+      "source_version": "7da6b2d3",
+      "content_hash": "eebf7297b072fb3043daa31d0ddc062535e9a11bf2c415596cb9db35ecfcf417",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T15:09:01.202Z"
+      "persisted_at": "2026-11-25T09:37:31.517Z"
     },
     "domain_intelligence-architecture-intelligence-pola-rs-polars-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-pola-rs-polars-learnings-core-invariants",
@@ -236419,9 +236424,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for yugabyte-yugabyte-db-learnings",
       "repository": "yugabyte-yugabyte-db-learnings",
       "source_version": "HEAD",
-      "content_hash": "0c06c7e4a4bbf3dbc818bb845180d0a87bd32224dfba035e3ded6a019454c018",
+      "content_hash": "828af8c5e01a37cbaf18c83a7d0dccfec8f27cbdab17938d558af3917fa2c628",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T15:09:05.385Z"
+      "persisted_at": "2026-11-25T09:41:16.304Z"
     },
     "learn-huggingface-unsloth-embeddinggemma-2-gguf": {
       "learning_id": "learn-huggingface-unsloth-embeddinggemma-2-gguf",
@@ -252586,14 +252591,19 @@
       "slug": "modelcontextprotocol-kotlin-sdk",
       "platform": "github",
       "source_url": "https://github.com/modelcontextprotocol/kotlin-sdk",
-      "source_version": "a3399b9c",
-      "content_hash": "c8fa450be9266d6745196e4382ed907569e8044ae9548dfa8db59c345dcdcb82",
+      "source_version": "df24fb0b",
+      "content_hash": "1eef88ac08c697d249c2e88ce58e17c95251ada7d58e906ab9926c905781f40b",
       "dossier_path": "07_PROJECT_LEARNING/modelcontextprotocol-kotlin-sdk-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/modelcontextprotocol-kotlin-sdk-learnings.md",
       "promoted_rules": [
         {
           "number": 8646,
           "title": "!: return INVALID_PARAMS for unknown resources",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10497,
+          "title": "read a negative discovery ttlMs as zero instead of failing",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -252602,7 +252612,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T23:06:16.822Z",
+      "verified_at": "2026-11-25T09:37:23.218Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -252644,10 +252654,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-modelcontextprotocol-kotlin-sdk-architecture-intelligence-modelcontextprotocol-k.md",
       "title": "Architecture Intelligence: modelcontextprotocol/kotlin-sdk Core Invariants",
       "repository": "modelcontextprotocol/kotlin-sdk",
-      "source_version": "a3399b9c",
-      "content_hash": "d1f817e43266f110eff0c497111687b2651fdf1eda6c87e75a49153bc7ba10d5",
+      "source_version": "df24fb0b",
+      "content_hash": "fdf52ec8ecf7bd2087b65dd44061c8b1982c9ca7bc827bfbcf19f09faff219e3",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T23:06:17.243Z"
+      "persisted_at": "2026-11-25T09:37:24.044Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-modelcontextprotocol-kotlin-sd": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-modelcontextprotocol-kotlin-sd",
@@ -252657,9 +252667,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for modelcontextprotocol-kotlin-sdk-learnings",
       "repository": "modelcontextprotocol-kotlin-sdk-learnings",
       "source_version": "HEAD",
-      "content_hash": "0178804e14b4f08439c1cae3e01b6467b56da174c151d09d939ee200fba381a9",
+      "content_hash": "87dcb7c6e43b23b21fb098f3f02cdb981ca7582877252f84e4d8a11eb4827ad8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T20:42:10.645Z"
+      "persisted_at": "2026-11-25T09:41:14.634Z"
     },
     "rule-8647": {
       "learning_id": "rule-8647",
@@ -252719,9 +252729,9 @@
       "title": "Architecture Intelligence: modelcontextprotocol-kotlin-sdk-learnings Core Invariants",
       "repository": "modelcontextprotocol-kotlin-sdk-learnings",
       "source_version": "HEAD",
-      "content_hash": "4a68200e328a373a0c43c5e53b2d79df5026b88081abdba87d3667d16277839f",
+      "content_hash": "72ef050c18d19611b2ac245c782cb80595ecc0642a798d0174f9d12c31a2389a",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T23:06:58.540Z"
+      "persisted_at": "2026-11-25T09:41:14.379Z"
     },
     "candidate_directive-ci-nightly-fixes-2026-11-13": {
       "item_id": "candidate_directive-ci-nightly-fixes-2026-11-13",
@@ -318208,16 +318218,27 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/AtomicChat/Inkling-2-Mini-Uncensored-GGUF",
       "source_version": "hf-atomicchat-inkling-2-mini-uncensored-gguf",
-      "content_hash": "5f1b7e0e933f655ee99869c84972e8c6bc77e262b1a59a903725af5ca9bdc9f6",
+      "content_hash": "09fd4c328cce3a6b4c493da31f3ac3df2830ae2f8b10c76aa4ef54cf5c23f0d3",
       "dossier_path": "07_PROJECT_LEARNING/hf-atomicchat-inkling-2-mini-uncensored-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-atomicchat-inkling-2-mini-uncensored-gguf-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 10499,
+          "title": "Recurrent Core Layer Buffer Re-entry in Quantized Compute Graphs",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10500,
+          "title": "Kullback-Leibler Divergence (KLD) Guarding for Quantized Model Distribution",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T17:28:05.388Z",
+      "verified_at": "2026-11-25T09:39:48.197Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -346809,6 +346830,194 @@
       "content_hash": "a8090eb6cfa5fabefd42c0290097a34eb31a67a5e129c6d0913b98c5946fd684",
       "domain_letter": "G",
       "persisted_at": "2026-11-25T09:25:05.451Z"
+    },
+    "rule-10497": {
+      "learning_id": "rule-10497",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10497,
+      "title": "read a negative discovery ttlMs as zero instead of failing",
+      "source_url": "https://github.com/modelcontextprotocol/kotlin-sdk",
+      "source_version": "df24fb0b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T09:37:23.218Z"
+    },
+    "candidate_directive-read-a-negative-discovery-ttlms-as-zero-instead-of-failing": {
+      "item_id": "candidate_directive-read-a-negative-discovery-ttlms-as-zero-instead-of-failing",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-JQ00-read-a-negative-discovery-ttlms-as-zero-instead-of-failing.md",
+      "title": "read a negative discovery ttlMs as zero instead of failing",
+      "repository": "modelcontextprotocol/kotlin-sdk",
+      "source_version": "df24fb0b",
+      "content_hash": "d366951ec5f9ac1fc2f42a3a9df333e9832b22f99a3cd81f39d85cd3d03a96d7",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-25T09:37:23.810Z"
+    },
+    "rule-10498": {
+      "learning_id": "rule-10498",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10498,
+      "title": "[DB-26245] YSQL: Fix pg_duckdb lake_io concurrent spill issue",
+      "source_url": "https://github.com/yugabyte/yugabyte-db",
+      "source_version": "7da6b2d3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T09:37:30.406Z"
+    },
+    "candidate_directive-db-26245-ysql-fix-pg_duckdb-lake_io-concurrent-spill-issue": {
+      "item_id": "candidate_directive-db-26245-ysql-fix-pg_duckdb-lake_io-concurrent-spill-issue",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-OOZ4-db-26245-ysql-fix-pg_duckdb-lake_io-concurrent-spill-issue.md",
+      "title": "[DB-26245] YSQL: Fix pg_duckdb lake_io concurrent spill issue",
+      "repository": "yugabyte-yugabyte-db-learnings",
+      "source_version": "HEAD",
+      "content_hash": "34cae89952a812041ea4b1fed68610e07fcc75b98e7898688d73e4639f5ebbae",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-25T09:41:15.779Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-yugabyte-yugabyte-db-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-yugabyte-yugabyte-db-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-yugabyte-yugabyte-db-technical-construction-intelligence-yugabyte-yugabyte-db-co.md",
+      "title": "Technical Construction Intelligence: yugabyte/yugabyte-db Core Invariants",
+      "repository": "yugabyte/yugabyte-db",
+      "source_version": "7da6b2d3",
+      "content_hash": "155d6b4886ab875834b477bddddc1ee84b5ad2ceced4482c8734ab04b9d56ed4",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-25T09:37:31.245Z"
+    },
+    "rule-10499": {
+      "learning_id": "rule-10499",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10499,
+      "title": "Recurrent Core Layer Buffer Re-entry in Quantized Compute Graphs",
+      "source_url": "https://huggingface.co/AtomicChat/Inkling-2-Mini-Uncensored-GGUF",
+      "source_version": "hf-atomicchat-inkling-2-mini-uncensored-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T09:39:48.197Z"
+    },
+    "rule-10500": {
+      "learning_id": "rule-10500",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10500,
+      "title": "Kullback-Leibler Divergence (KLD) Guarding for Quantized Model Distribution",
+      "source_url": "https://huggingface.co/AtomicChat/Inkling-2-Mini-Uncensored-GGUF",
+      "source_version": "hf-atomicchat-inkling-2-mini-uncensored-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T09:39:48.197Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-atomicchat-inkling-2-mini-uncensored-gguf-co": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-atomicchat-inkling-2-mini-uncensored-gguf-co",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-hf-atomicchat-inkling-2-mini-uncensored-gguf-technical-construction-intelligence.md",
+      "title": "Technical Construction Intelligence: AtomicChat/Inkling-2-Mini-Uncensored-GGUF Core Invariants",
+      "repository": "AtomicChat/Inkling-2-Mini-Uncensored-GGUF",
+      "source_version": "hf-atomicchat-inkling-2-mini-uncensored-gguf",
+      "content_hash": "4a4991c1bb7fb9f23c7035ab98d882d705667142fa179c36583dd7299437ab84",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-25T09:39:49.044Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-atomicchat-inkling-2-mini-unce": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-atomicchat-inkling-2-mini-unce",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/hf-atomicchat-inkling-2-mini-uncensored-gguf-verification-protocol-empirical-def.md",
+      "title": "Verification Protocol: Empirical Defect Shield for AtomicChat/Inkling-2-Mini-Uncensored-GGUF",
+      "repository": "AtomicChat/Inkling-2-Mini-Uncensored-GGUF",
+      "source_version": "hf-atomicchat-inkling-2-mini-uncensored-gguf",
+      "content_hash": "1b149ce99d4ff0c9e1c09622299cd83c4fd041d065dcae85833bb50d675cf8aa",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-25T09:39:49.273Z"
+    },
+    "candidate_directive-recurrent-core-layer-buffer-re-entry-in-quantized-compute-graphs": {
+      "item_id": "candidate_directive-recurrent-core-layer-buffer-re-entry-in-quantized-compute-graphs",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-OMEJ-recurrent-core-layer-buffer-re-entry-in-quantized-compute-graphs.md",
+      "title": "Recurrent Core Layer Buffer Re-entry in Quantized Compute Graphs",
+      "repository": "hf-atomicchat-inkling-2-mini-uncensored-gguf-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d39fbc19ba76b87c9482e058a229794086cce26dc85184c56fcbba7620dd30ac",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-25T09:41:12.429Z"
+    },
+    "candidate_directive-kullback-leibler-divergence-kld-guarding-for-quantized-model-distribution": {
+      "item_id": "candidate_directive-kullback-leibler-divergence-kld-guarding-for-quantized-model-distribution",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-OMEK-kullback-leibler-divergence-kld-guarding-for-quantized-model-distribution.md",
+      "title": "Kullback-Leibler Divergence (KLD) Guarding for Quantized Model Distribution",
+      "repository": "hf-atomicchat-inkling-2-mini-uncensored-gguf-learnings",
+      "source_version": "HEAD",
+      "content_hash": "74a296bdf8ec81878dae3d405d33c6d15621dc1b2820d82a1b21c9f58d0d1131",
+      "domain_letter": "J",
+      "persisted_at": "2026-11-25T09:41:12.688Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-hf-atomicchat-inkling-2-mini-uncensored-gguf": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-hf-atomicchat-inkling-2-mini-uncensored-gguf",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-hf-atomicchat-inkling-2-mini-uncensored-gguf-learnings-technical-construction-in.md",
+      "title": "Technical Construction Intelligence: hf-atomicchat-inkling-2-mini-uncensored-gguf-learnings Core Invariants",
+      "repository": "hf-atomicchat-inkling-2-mini-uncensored-gguf-learnings",
+      "source_version": "HEAD",
+      "content_hash": "889b3c7de934f01f09fecb823017f16ab84d5ec862b7951777333697d897a270",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-25T09:41:12.943Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-hf-atomicchat-inkling-2-mini-u": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-hf-atomicchat-inkling-2-mini-u",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/hf-atomicchat-inkling-2-mini-uncensored-gguf-learnings-verification-protocol-emp.md",
+      "title": "Verification Protocol: Empirical Defect Shield for hf-atomicchat-inkling-2-mini-uncensored-gguf-learnings",
+      "repository": "hf-atomicchat-inkling-2-mini-uncensored-gguf-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a8c7864d68d03c5f72c178179872b632f2e7d2a4f2fdee1cd0d0ae093c69f1ed",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-25T09:41:13.199Z"
+    },
+    "candidate_directive-core-read-a-negative-discovery-ttlms-as-zero-instead-of-failing": {
+      "item_id": "candidate_directive-core-read-a-negative-discovery-ttlms-as-zero-instead-of-failing",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-ONP3-core-read-a-negative-discovery-ttlms-as-zero-instead-of-failing.md",
+      "title": "core): read a negative discovery ttlMs as zero instead of failing",
+      "repository": "modelcontextprotocol-kotlin-sdk-learnings",
+      "source_version": "HEAD",
+      "content_hash": "82135c5e7182c106f48e60ee8b28d7d8725689fd91c19d98c7f69e4eea62ec19",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-25T09:41:14.103Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-yugabyte-yugabyte-db-learnings-core-invarian": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-yugabyte-yugabyte-db-learnings-core-invarian",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-yugabyte-yugabyte-db-learnings-technical-construction-intelligence-yugabyte-yuga.md",
+      "title": "Technical Construction Intelligence: yugabyte-yugabyte-db-learnings Core Invariants",
+      "repository": "yugabyte-yugabyte-db-learnings",
+      "source_version": "HEAD",
+      "content_hash": "0a9c311b1ca5e220311ef81761a35a90aef2b84dca96b9d7cc489eb6e5b5217c",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-25T09:41:16.042Z"
     }
   },
   "ai-builder-brain": {
