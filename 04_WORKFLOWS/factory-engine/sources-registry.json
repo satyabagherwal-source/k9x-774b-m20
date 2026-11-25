@@ -57,8 +57,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-25T14:32:28.787Z",
-    "lastVerified": "2026-11-25T14:32:28.787Z",
+    "lastChecked": "2026-11-25T15:07:20.631Z",
+    "lastVerified": "2026-11-25T15:07:20.631Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-25T15:00:47.390Z",
-    "lastVerified": "2026-11-25T15:00:47.390Z",
+    "lastChecked": "2026-11-25T15:07:24.603Z",
+    "lastVerified": "2026-11-25T15:07:24.603Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -556,12 +556,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "nolabs-ai-nono": {
-    "name": "nolabs-ai/nono",
+    "name": "nono",
     "officialUrl": "https://github.com/nolabs-ai/nono",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-25T10:35:23.388Z",
-    "lastVerified": "2026-11-25T10:35:23.388Z",
+    "lastChecked": "2026-11-25T15:07:15.619Z",
+    "lastVerified": "2026-11-25T15:07:15.619Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nolabs-ai-nono",
@@ -570,15 +570,16 @@
     "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "d4d1c774"
   },
   "vectifyai-pageindex": {
-    "name": "VectifyAI/PageIndex",
+    "name": "PageIndex",
     "officialUrl": "https://github.com/VectifyAI/PageIndex",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-24T19:44:55.748Z",
-    "lastVerified": "2026-11-24T19:44:55.748Z",
+    "lastChecked": "2026-11-25T15:07:18.109Z",
+    "lastVerified": "2026-11-25T15:07:18.109Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-vectifyai-pageindex",
@@ -587,7 +588,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "d6b4a0a3"
   },
   "surrealdb-surrealdb": {
     "name": "surrealdb",
@@ -3849,12 +3851,12 @@
     "officialUrl": "https://github.com/dosco/graphjin",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-24T21:01:28.614Z",
-    "lastVerified": "2026-11-24T21:01:28.614Z",
+    "lastChecked": "2026-11-25T15:07:19.461Z",
+    "lastVerified": "2026-11-25T15:07:19.461Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dosco-deeporg",
-    "contentHash": "11d9dfbc2397b090acec0341ad52061f7dce4fdb9bb026ee2358979efcf668e2",
+    "contentHash": "d96f520f2e1f433972e6a654286555724f2690a19e18eb00addb5b67d52dd713",
     "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
@@ -4668,9 +4670,9 @@
   "sharkdp-pastel": {
     "name": "pastel",
     "officialUrl": "https://github.com/sharkdp/pastel",
-    "lastChecked": "2026-11-24T14:23:59.742Z",
+    "lastChecked": "2026-11-25T15:07:05.584Z",
     "revisionIdentifier": "01d4252a",
-    "lastVerified": "2026-11-24T14:23:59.742Z"
+    "lastVerified": "2026-11-25T15:07:05.584Z"
   },
   "hf-tongyi-mai-z-image-turbo": {
     "name": "Tongyi-MAI/Z-Image-Turbo",
@@ -10230,12 +10232,12 @@
     "lastVerified": "2026-11-24T11:21:46.526Z"
   },
   "simonschubert-kai": {
-    "name": "SimonSchubert/Kai",
+    "name": "Kai",
     "officialUrl": "https://github.com/SimonSchubert/Kai",
     "sourceType": "github",
     "technology": "Kotlin",
-    "lastChecked": "2026-11-23T07:28:46.395Z",
-    "lastVerified": "2026-11-23T07:28:46.395Z",
+    "lastChecked": "2026-11-25T15:07:10.861Z",
+    "lastVerified": "2026-11-25T15:07:10.861Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-simonschubert-kai",
@@ -10244,7 +10246,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "dc4cc9b5"
   },
   "tmolavi-siteprobe": {
     "name": "siteprobe",
@@ -13721,12 +13724,12 @@
     "officialUrl": "https://huggingface.co/FusionCow/Sulphur-3",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-21T23:55:31.169Z",
-    "lastVerified": "2026-11-21T23:55:31.169Z",
+    "lastChecked": "2026-11-25T15:07:08.397Z",
+    "lastVerified": "2026-11-25T15:07:08.397Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-fusioncow-sulphur-3",
-    "contentHash": "3bbf7a4a075c1c933d3d23831ecc9844aebf8d8ba5a61639093fa8a3d8590551",
+    "contentHash": "70465d66db34570d759de418641b916949128507ee3bc73b475015b59d3fb040",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

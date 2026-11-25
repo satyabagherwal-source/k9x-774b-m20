@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261124-3RS6",
-    "timestamp": "2026-11-24T03:33:24.198Z",
-    "repository": "iii-hq/iii",
-    "learningId": "learn-github-iii-hq-iii",
-    "contentHash": "46f72e92e6261d067ea1453097d033009a23277334d4ef17f32d4ccfb3c50150",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-3WGS",
-    "timestamp": "2026-11-24T03:33:30.268Z",
-    "repository": "ShiftHackZ/SDAI-KMP",
-    "learningId": "learn-github-shifthackz-sdai-kmp",
-    "contentHash": "7d894040763e6a9c06b2deb56ecc4c6c10f8487791d46503c32c2fd117fe7bcf",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261124-ECXM",
     "timestamp": "2026-11-24T03:41:38.170Z",
     "repository": "Automattic/harper",
@@ -7490,6 +7460,36 @@
     "repository": "milvus-io/milvus",
     "learningId": "learn-github-milvus-io-milvus",
     "contentHash": "b9967214fb35757e69f24e2dd4bfa22660c8e9ee7ff4badfbc995b158cae8855",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-BSYI",
+    "timestamp": "2026-11-25T15:07:09.786Z",
+    "repository": "SulphurAI/Sulphur-3",
+    "learningId": "learn-huggingface-fusioncow-sulphur-3",
+    "contentHash": "70465d66db34570d759de418641b916949128507ee3bc73b475015b59d3fb040",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-C1LZ",
+    "timestamp": "2026-11-25T15:07:20.999Z",
+    "repository": "dosco/deeporg",
+    "learningId": "learn-github-dosco-deeporg",
+    "contentHash": "d96f520f2e1f433972e6a654286555724f2690a19e18eb00addb5b67d52dd713",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

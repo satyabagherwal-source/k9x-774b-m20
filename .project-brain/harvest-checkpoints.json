@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-25T15:00:43.847Z",
+  "last_updated": "2026-11-25T15:07:21.024Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -19776,14 +19776,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dosco-deeporg",
-      "content_hash": "8ff78b5c15483f66a90038c105df38d124e687a712d133c2c2f92bfd4209ba1b",
-      "verified_at": "2026-11-24T23:13:53.122Z",
+      "content_hash": "d96f520f2e1f433972e6a654286555724f2690a19e18eb00addb5b67d52dd713",
+      "verified_at": "2026-11-25T15:07:21.023Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T23:13:53.122Z"
+      "last_updated": "2026-11-25T15:07:21.023Z"
     },
     "openai/clip-vit-large-patch14": {
       "repository": "openai/clip-vit-large-patch14",
@@ -19820,15 +19820,15 @@
       "pipeline_mode": "CLOUD_HARVEST",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-sulphurai-sulphur-3",
-      "content_hash": "891bcc8c9c7ba7bba451f73eb0a6faf28f8d3be01db74ee670efb2347052d42b",
-      "verified_at": "2026-11-25T14:14:23.315Z",
+      "learning_id": "learn-huggingface-fusioncow-sulphur-3",
+      "content_hash": "70465d66db34570d759de418641b916949128507ee3bc73b475015b59d3fb040",
+      "verified_at": "2026-11-25T15:07:09.811Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T14:14:23.315Z"
+      "last_updated": "2026-11-25T15:07:09.811Z"
     },
     "PrunaAI/P-Image-OSS-Comfy": {
       "repository": "PrunaAI/P-Image-OSS-Comfy",

@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T15:00:43.832Z",
-  "total_cycles_completed": 12453,
-  "total_learnings_persisted": 12453,
-  "total_rules_promoted": 11430,
+  "last_updated": "2026-11-25T15:07:21.013Z",
+  "total_cycles_completed": 12455,
+  "total_learnings_persisted": 12455,
+  "total_rules_promoted": 11431,
   "history": [
-    {
-      "timestamp": "2026-11-25T02:10:24.423Z",
-      "repository": "astral-sh/ruff",
-      "learningId": "learn-github-astral-sh-ruff",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T02:10:26.331Z",
-      "repository": "faker-js/faker",
-      "learningId": "learn-github-faker-js-faker",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-25T02:20:13.521Z",
       "repository": "tokio-rs/tokio",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-25T15:00:43.832Z",
       "repository": "milvus-io/milvus",
       "learningId": "learn-github-milvus-io-milvus",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T15:07:09.799Z",
+      "repository": "SulphurAI/Sulphur-3",
+      "learningId": "learn-huggingface-fusioncow-sulphur-3",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T15:07:21.013Z",
+      "repository": "dosco/deeporg",
+      "learningId": "learn-github-dosco-deeporg",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

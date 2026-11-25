@@ -13152,3 +13152,5 @@ Every entry in this ledger must capture:
 | `learn-github-shifthackz-sdai-kmp` | `https://github.com/ShiftHackZ/Stable-Diffusion-KMP` | `7d074972` | Multi-dimensional audit evidence | 2026-11-25T15:00:37.361Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `ee267d80` | Multi-dimensional audit evidence | 2026-11-25T15:00:41.089Z |
 | `learn-github-milvus-io-milvus` | `https://github.com/milvus-io/milvus` | `45164988` | Multi-dimensional audit evidence | 2026-11-25T15:00:43.825Z |
+| `learn-huggingface-fusioncow-sulphur-3` | `https://huggingface.co/FusionCow/Sulphur-3` | `hf-fusionc` | Multi-dimensional audit evidence | 2026-11-25T15:07:09.792Z |
+| `learn-github-dosco-deeporg` | `https://github.com/dosco/graphjin` | `28191b07` | Multi-dimensional audit evidence | 2026-11-25T15:07:21.005Z |

@@ -3693,10 +3693,10 @@
     "repository": "dosco/deeporg",
     "platform": "github",
     "sourceUrl": "https://github.com/dosco/graphjin",
-    "sourceVersion": "9d591e72",
+    "sourceVersion": "28191b07",
     "license": "Apache-2.0",
-    "contentHash": "11d9dfbc2397b090acec0341ad52061f7dce4fdb9bb026ee2358979efcf668e2",
-    "lastHarvestedAt": "2026-11-24T21:01:29.789Z",
+    "contentHash": "d96f520f2e1f433972e6a654286555724f2690a19e18eb00addb5b67d52dd713",
+    "lastHarvestedAt": "2026-11-25T15:07:21.005Z",
     "learningId": "learn-github-dosco-deeporg"
   },
   "gravitl-netmaker": {
@@ -11715,8 +11715,8 @@
     "sourceUrl": "https://huggingface.co/FusionCow/Sulphur-3",
     "sourceVersion": "hf-fusioncow-sulphur-3",
     "license": "Open-Source",
-    "contentHash": "3bbf7a4a075c1c933d3d23831ecc9844aebf8d8ba5a61639093fa8a3d8590551",
-    "lastHarvestedAt": "2026-11-21T23:55:31.806Z",
+    "contentHash": "70465d66db34570d759de418641b916949128507ee3bc73b475015b59d3fb040",
+    "lastHarvestedAt": "2026-11-25T15:07:09.792Z",
     "learningId": "learn-huggingface-fusioncow-sulphur-3"
   },
   "hf-xiaomi-research-xiaomi-ocr-0": {
