@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-25T01:36:14.208Z",
+  "last_updated": "2026-11-25T01:44:38.501Z",
   "total_verified_learnings": 9107,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25110,
+  "total_items": 25120,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112965,10 +112965,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-bridgecrewio-checkov-technical-construction-intelligence-bridgecrewio-checkov-co.md",
       "title": "Technical Construction Intelligence: bridgecrewio/checkov Core Invariants",
       "repository": "bridgecrewio/checkov",
-      "source_version": "2f107f86",
-      "content_hash": "59057bf38d0b9d5849d4f4286d32b66f7d439ef4c2568e556591d2257c54d64d",
+      "source_version": "d266c8a5",
+      "content_hash": "c42d04d16b90a8bcdb93509fea3f6163d65d83176ca72051f491641b6ef06030",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T07:07:39.321Z"
+      "persisted_at": "2026-11-25T01:44:26.103Z"
     },
     "skill_playbook-skill-operational-integration-playbook-for-bridgecrewio-checkov": {
       "item_id": "skill_playbook-skill-operational-integration-playbook-for-bridgecrewio-checkov",
@@ -112977,10 +112977,10 @@
       "relative_path": "03_SKILLS/bridgecrewio-checkov-skill-operational-integration-playbook-for-bridgecrewio-che.md",
       "title": "Skill: Operational & Integration Playbook for bridgecrewio/checkov",
       "repository": "bridgecrewio/checkov",
-      "source_version": "2f107f86",
-      "content_hash": "9a2b441b2d8c3cae337e45ed549e9fdef8d657fa77c31851591647e2dc0bd3f5",
+      "source_version": "d266c8a5",
+      "content_hash": "c0d46ac15b3171bea887c3cc41ae8c343b67bcfab050411c68c991d638d19743",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T07:07:39.550Z"
+      "persisted_at": "2026-11-25T01:44:26.278Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-bridgecrewio-checkov": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-bridgecrewio-checkov",
@@ -112989,10 +112989,10 @@
       "relative_path": "08_VERIFICATION/bridgecrewio-checkov-verification-protocol-empirical-defect-shield-for-bridgecre.md",
       "title": "Verification Protocol: Empirical Defect Shield for bridgecrewio/checkov",
       "repository": "bridgecrewio/checkov",
-      "source_version": "2f107f86",
-      "content_hash": "467b24b1b69e608822b1c21f23e1cfafa7cb56565f9cbad314d9f7853acbc133",
+      "source_version": "d266c8a5",
+      "content_hash": "1dd7825eafee6bb1805b2c4631bc4e594d85e44976c9504d5fe437e4e87542aa",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T07:07:39.741Z"
+      "persisted_at": "2026-11-25T01:44:26.428Z"
     },
     "candidate_directive-merge-core-parse-sql-only-in-the-engine-dialect-module-from-pekka-enberg": {
       "item_id": "candidate_directive-merge-core-parse-sql-only-in-the-engine-dialect-module-from-pekka-enberg",
@@ -113074,9 +113074,9 @@
       "title": "Technical Construction Intelligence: bridgecrewio-checkov-learnings Core Invariants",
       "repository": "bridgecrewio-checkov-learnings",
       "source_version": "HEAD",
-      "content_hash": "a1619ff267c8e4a09239e53ae28022da790d7e4b2c1230f25767272e29ceb9c3",
+      "content_hash": "64fc9c7dc9dc4374f2c8279ff7ab6a1555b480af5c50c5eac386f1225c645c2f",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T07:07:45.981Z"
+      "persisted_at": "2026-11-25T01:44:38.176Z"
     },
     "skill_playbook-skill-operational-integration-playbook-for-bridgecrewio-checkov-learnings": {
       "item_id": "skill_playbook-skill-operational-integration-playbook-for-bridgecrewio-checkov-learnings",
@@ -113086,9 +113086,9 @@
       "title": "Skill: Operational & Integration Playbook for bridgecrewio-checkov-learnings",
       "repository": "bridgecrewio-checkov-learnings",
       "source_version": "HEAD",
-      "content_hash": "4b91283689d40aa6295adefa192460c79ee392dab263cd2f1374fabbd8db2216",
+      "content_hash": "c8dddd6bb2a323d51c021aa78e3cb3d6d8971120327ff475c98f73a55917fcf3",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T07:07:46.226Z"
+      "persisted_at": "2026-11-25T01:44:38.356Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-bridgecrewio-checkov-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-bridgecrewio-checkov-learnings",
@@ -113098,9 +113098,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for bridgecrewio-checkov-learnings",
       "repository": "bridgecrewio-checkov-learnings",
       "source_version": "HEAD",
-      "content_hash": "1362991e7a6a815db1a8bc97d96ecd5629d148e54f426971ad48a4a7c936e11e",
+      "content_hash": "691429554cef854dfbe94fc67a6144fe590b72d3546ebea6dbf5f9480b7b3a1a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T07:07:46.416Z"
+      "persisted_at": "2026-11-25T01:44:38.501Z"
     },
     "domain_intelligence-research-knowledge-intelligence-ista-daslab-qwen3-8-27b-gsq-rco-gguf-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-ista-daslab-qwen3-8-27b-gsq-rco-gguf-core-invari",
@@ -222264,8 +222264,8 @@
       "slug": "lioensky-vcptoolbox",
       "platform": "github",
       "source_url": "https://github.com/lioensky/VCPToolBox",
-      "source_version": "5ca56f3b",
-      "content_hash": "b7f414ee9b4ff894cbf084a3b2de8ad6f1770396dbda7fd8541e551ec239529d",
+      "source_version": "c4762817",
+      "content_hash": "4ed45b8f336b3b38475e2073dfce6bdef713be89ce3c68524b317c7ffdf391cb",
       "dossier_path": "07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md",
       "promoted_rules": [
@@ -222313,6 +222313,11 @@
           "number": 10215,
           "title": "Empirical Invariant Guard in VCPTimeLine.js",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10420,
+          "title": "Empirical Invariant Guard in TDBKnowledge.js",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -222320,7 +222325,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T06:11:23.764Z",
+      "verified_at": "2026-11-25T01:44:31.825Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -222362,10 +222367,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-lioensky-vcptoolbox-technical-construction-intelligence-lioensky-vcptoolbox-core.md",
       "title": "Technical Construction Intelligence: lioensky/VCPToolBox Core Invariants",
       "repository": "lioensky/VCPToolBox",
-      "source_version": "5ca56f3b",
-      "content_hash": "ed6ed4bb4556fc7820c7be9ab322dcc0cf4fadb3d6c0d93760eec89e5c56f9da",
+      "source_version": "c4762817",
+      "content_hash": "adadeeef1f979da17b6455550a025cf3ccaa7dfa068754bd103f76ef9c9883d6",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T06:11:24.794Z"
+      "persisted_at": "2026-11-25T01:44:32.465Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-lioensky-vcptoolbox": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-lioensky-vcptoolbox",
@@ -222374,10 +222379,10 @@
       "relative_path": "08_VERIFICATION/lioensky-vcptoolbox-verification-protocol-empirical-defect-shield-for-lioensky-v.md",
       "title": "Verification Protocol: Empirical Defect Shield for lioensky/VCPToolBox",
       "repository": "lioensky/VCPToolBox",
-      "source_version": "5ca56f3b",
-      "content_hash": "0862cf17bea46b83de89bcc967237b56ae74b2297b91d3df2bfe33d217458238",
+      "source_version": "c4762817",
+      "content_hash": "308ddf34b4d33869750e985ddf3b9eda51aa14422b7b1aa3d8af0de7c3251845",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T06:11:25.066Z"
+      "persisted_at": "2026-11-25T01:44:32.646Z"
     },
     "candidate_directive-gnd-don-t-unset-nullable-primitive-fields-set-to-0-or-false": {
       "item_id": "candidate_directive-gnd-don-t-unset-nullable-primitive-fields-set-to-0-or-false",
@@ -233247,8 +233252,8 @@
       "slug": "biomejs-biome",
       "platform": "github",
       "source_url": "https://github.com/biomejs/biome",
-      "source_version": "d965df8d",
-      "content_hash": "1f57f3b1563daccd564f29196bf6492b8f9902990251958719a852113bc78b3f",
+      "source_version": "caaa90bc",
+      "content_hash": "16eb885d8711eb4ea9157b34f9f1c087862d6c42069cad8e09df08f9b07b4b17",
       "dossier_path": "07_PROJECT_LEARNING/biomejs-biome-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/biomejs-biome-learnings.md",
       "promoted_rules": [
@@ -233286,6 +233291,11 @@
           "number": 10138,
           "title": "format/html/svelte): keep `{#if}`, `{#each}` and other Svelte blocks touching th",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10417,
+          "title": "remove undefined from defaulted parameter types",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -233293,7 +233303,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T22:56:18.640Z",
+      "verified_at": "2026-11-25T01:44:19.093Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -233335,10 +233345,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-biomejs-biome-architecture-intelligence-biomejs-biome-core-invariants.md",
       "title": "Architecture Intelligence: biomejs/biome Core Invariants",
       "repository": "biomejs/biome",
-      "source_version": "2c4a0f1a",
-      "content_hash": "a1400d8797f7da5942619d129011e9566c590437f8c628177efcd8fbe6c2b9cc",
+      "source_version": "caaa90bc",
+      "content_hash": "4999116d899846159248a7785de3f1c77cd31f22b20c44f497887696aceadf9f",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T14:40:37.382Z"
+      "persisted_at": "2026-11-25T01:44:19.795Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-biomejs-biome": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-biomejs-biome",
@@ -233347,10 +233357,10 @@
       "relative_path": "08_VERIFICATION/biomejs-biome-verification-protocol-empirical-defect-shield-for-biomejs-biome.md",
       "title": "Verification Protocol: Empirical Defect Shield for biomejs/biome",
       "repository": "biomejs/biome",
-      "source_version": "d965df8d",
-      "content_hash": "8268be82d00aa8b48c3063f634b8c3b4579ecd4477193d4448d9880723e68435",
+      "source_version": "caaa90bc",
+      "content_hash": "a3081a434ee9a6d0117c5a48d2f205c70b86009988631af903b108161aef13d7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T22:56:19.555Z"
+      "persisted_at": "2026-11-25T01:44:19.995Z"
     },
     "rule-8497": {
       "learning_id": "rule-8497",
@@ -233531,9 +233541,9 @@
       "title": "Architecture Intelligence: biomejs-biome-learnings Core Invariants",
       "repository": "biomejs-biome-learnings",
       "source_version": "HEAD",
-      "content_hash": "b002ac3cc248c3d924d45fea6592819f07d21e25f4d1d7819ab4f7427b4efc3c",
+      "content_hash": "6fcec659087f0f0f6edd341ef9e1350b6e3bbf5dc5f53b1e1c72a4e3f6e51878",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T14:45:38.528Z"
+      "persisted_at": "2026-11-25T01:44:36.259Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-biomejs-biome-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-biomejs-biome-learnings",
@@ -233543,9 +233553,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for biomejs-biome-learnings",
       "repository": "biomejs-biome-learnings",
       "source_version": "HEAD",
-      "content_hash": "2a5548533995dd5c6befe2d3e123107b6cea3a2e9ff81647f8f540a461b80759",
+      "content_hash": "b41e7cc87298125eacc35f1660cc648829d58f61d9870a169edd3b0e6c69908a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T22:56:25.535Z"
+      "persisted_at": "2026-11-25T01:44:36.449Z"
     },
     "candidate_directive-deps-bump-aiohttp": {
       "item_id": "candidate_directive-deps-bump-aiohttp",
@@ -273583,8 +273593,8 @@
       "slug": "avajs-ava",
       "platform": "github",
       "source_url": "https://github.com/avajs/ava",
-      "source_version": "ce2839c1",
-      "content_hash": "db976478b70a99f914b8688e87457cb37535c8accb5978b3691c72cdd197fc94",
+      "source_version": "fc83bdc0",
+      "content_hash": "7e7b94bc399697b9d4532c006d8774a4000d7971c39160db425d06007ebf339f",
       "dossier_path": "07_PROJECT_LEARNING/avajs-ava-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/avajs-ava-learnings.md",
       "promoted_rules": [
@@ -273597,6 +273607,11 @@
           "number": 8915,
           "title": "Dual-Barrier RefCounter with Timer Shielding for Event Loop Drain Detection",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10418,
+          "title": "Experimental reporter plugin support",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -273604,7 +273619,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T08:18:28.833Z",
+      "verified_at": "2026-11-25T01:44:20.253Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -273672,10 +273687,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-avajs-ava-architecture-intelligence-avajs-ava-core-invariants.md",
       "title": "Architecture Intelligence: avajs/ava Core Invariants",
       "repository": "avajs/ava",
-      "source_version": "ce2839c1",
-      "content_hash": "0772b2b8e6992b585bbb2d59dd9a70b96539827714bd6f488e6b6924cacf2a6a",
+      "source_version": "fc83bdc0",
+      "content_hash": "3b3cd7a08a97c55b3d794f79d121fe5bc85c37facf2f524675d830afef0c3238",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T08:18:29.349Z"
+      "persisted_at": "2026-11-25T01:44:20.890Z"
     },
     "agent_contract-agent-contract-avajs-ava-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-avajs-ava-autonomous-specialist-persona",
@@ -273696,10 +273711,10 @@
       "relative_path": "08_VERIFICATION/avajs-ava-verification-protocol-empirical-defect-shield-for-avajs-ava.md",
       "title": "Verification Protocol: Empirical Defect Shield for avajs/ava",
       "repository": "avajs/ava",
-      "source_version": "ce2839c1",
-      "content_hash": "ef519860220934ce2e8ca14301cfb779b2f6c7392902e5fdf73f9442a5e6b177",
+      "source_version": "fc83bdc0",
+      "content_hash": "e67d17728794b41f34637431adf8ad60d20d99cee25829fd7374d0374974363e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T08:18:29.547Z"
+      "persisted_at": "2026-11-25T01:44:21.067Z"
     },
     "rule-8916": {
       "learning_id": "rule-8916",
@@ -273987,9 +274002,9 @@
       "title": "Architecture Intelligence: avajs-ava-learnings Core Invariants",
       "repository": "avajs-ava-learnings",
       "source_version": "HEAD",
-      "content_hash": "cd917fecfc60600ef77d9f1a4428c3c993672e0e87c079c0770fcb465980848f",
+      "content_hash": "bf7f0183b90a3ee7a06ece6dce0b951e8fb0baf51f71f48c70ffa01eb6ec9842",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T08:19:59.004Z"
+      "persisted_at": "2026-11-25T01:44:37.184Z"
     },
     "agent_contract-agent-contract-avajs-ava-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-avajs-ava-learnings-autonomous-specialist-persona",
@@ -274011,9 +274026,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for avajs-ava-learnings",
       "repository": "avajs-ava-learnings",
       "source_version": "HEAD",
-      "content_hash": "8bad6c02439750111cad1ef7032c47753e6aa0f4dd8ba64660deaae1e93a5960",
+      "content_hash": "4655fa60b81ab76319380bdbb24da20e10d829d0f426c54fcd8144427d93dd44",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T08:19:59.220Z"
+      "persisted_at": "2026-11-25T01:44:37.363Z"
     },
     "domain_intelligence-content-information-intelligence-dkhamsing-open-source-ios-apps-learnings-core-i": {
       "item_id": "domain_intelligence-content-information-intelligence-dkhamsing-open-source-ios-apps-learnings-core-i",
@@ -304488,8 +304503,8 @@
       "slug": "bridgecrewio-checkov",
       "platform": "github",
       "source_url": "https://github.com/bridgecrewio/checkov",
-      "source_version": "7da6ab8d",
-      "content_hash": "6ba557375b0824ce42b2d5ef18d5cc919ae2afa0fbcaf2d06e513d7d4e9bfe18",
+      "source_version": "d266c8a5",
+      "content_hash": "7dcdbea96240ee852dd261f918032ca840bd465d92a240d9ba8e6ba20923b889",
       "dossier_path": "07_PROJECT_LEARNING/bridgecrewio-checkov-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bridgecrewio-checkov-learnings.md",
       "promoted_rules": [
@@ -304502,6 +304517,11 @@
           "number": 10043,
           "title": "support cyclonedx-python-lib up to 11.x",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10419,
+          "title": "optional per-file pre-validation for custom regex rules",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -304509,7 +304529,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T13:06:55.010Z",
+      "verified_at": "2026-11-25T01:44:25.468Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -343206,6 +343226,134 @@
       "content_hash": "d8db2e4cab025bfbe8c48c2eaceb918f236ef3b2828ff2ddcc6538764bdefbc2",
       "domain_letter": "G",
       "persisted_at": "2026-11-25T01:36:12.688Z"
+    },
+    "rule-10417": {
+      "learning_id": "rule-10417",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10417,
+      "title": "remove undefined from defaulted parameter types",
+      "source_url": "https://github.com/biomejs/biome",
+      "source_version": "caaa90bc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T01:44:19.093Z"
+    },
+    "candidate_directive-remove-undefined-from-defaulted-parameter-types": {
+      "item_id": "candidate_directive-remove-undefined-from-defaulted-parameter-types",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-NCLQ-remove-undefined-from-defaulted-parameter-types.md",
+      "title": "remove undefined from defaulted parameter types",
+      "repository": "biomejs/biome",
+      "source_version": "caaa90bc",
+      "content_hash": "112593ede4bda2be4add6e0326d893650caf13ad0af0d3de91ac68a243687d42",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-25T01:44:19.599Z"
+    },
+    "rule-10418": {
+      "learning_id": "rule-10418",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10418,
+      "title": "Experimental reporter plugin support",
+      "source_url": "https://github.com/avajs/ava",
+      "source_version": "fc83bdc0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T01:44:20.253Z"
+    },
+    "candidate_directive-experimental-reporter-plugin-support": {
+      "item_id": "candidate_directive-experimental-reporter-plugin-support",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-NQ18-experimental-reporter-plugin-support.md",
+      "title": "Experimental reporter plugin support",
+      "repository": "avajs-ava-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a522afb5ede999557e2d82f3f183ff056f73c85dad6770bd06707b2e61a1dcec",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-25T01:44:37.007Z"
+    },
+    "rule-10419": {
+      "learning_id": "rule-10419",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10419,
+      "title": "optional per-file pre-validation for custom regex rules",
+      "source_url": "https://github.com/bridgecrewio/checkov",
+      "source_version": "d266c8a5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T01:44:25.468Z"
+    },
+    "candidate_directive-optional-per-file-pre-validation-for-custom-regex-rules": {
+      "item_id": "candidate_directive-optional-per-file-pre-validation-for-custom-regex-rules",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-NHHH-optional-per-file-pre-validation-for-custom-regex-rules.md",
+      "title": "optional per-file pre-validation for custom regex rules",
+      "repository": "bridgecrewio/checkov",
+      "source_version": "d266c8a5",
+      "content_hash": "fbcbed2bac7c1d70043a874f8c41185a4b025ef74e989e264dc54613c3576934",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-25T01:44:25.927Z"
+    },
+    "rule-10420": {
+      "learning_id": "rule-10420",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10420,
+      "title": "Empirical Invariant Guard in TDBKnowledge.js",
+      "source_url": "https://github.com/lioensky/VCPToolBox",
+      "source_version": "c4762817",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T01:44:31.825Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-tdbknowledge-js": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-tdbknowledge-js",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-NME2-empirical-invariant-guard-in-tdbknowledge-js.md",
+      "title": "Empirical Invariant Guard in TDBKnowledge.js",
+      "repository": "lioensky/VCPToolBox",
+      "source_version": "c4762817",
+      "content_hash": "5b9a44abf850a16ab3618910f98b8e6aa93ea3c9081025c489317a5b8c265795",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-25T01:44:32.286Z"
+    },
+    "candidate_directive-type_inference-remove-undefined-from-defaulted-parameter-types": {
+      "item_id": "candidate_directive-type_inference-remove-undefined-from-defaulted-parameter-types",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-NPBC-type_inference-remove-undefined-from-defaulted-parameter-types.md",
+      "title": "type_inference): remove undefined from defaulted parameter types",
+      "repository": "biomejs-biome-learnings",
+      "source_version": "HEAD",
+      "content_hash": "856b17e34d9b8b60a482523fb3db2e503e10b659b9ad3d6140712bd8f1526956",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-25T01:44:36.073Z"
+    },
+    "candidate_directive-secrets-optional-per-file-pre-validation-for-custom-regex-rules": {
+      "item_id": "candidate_directive-secrets-optional-per-file-pre-validation-for-custom-regex-rules",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-NQSS-secrets-optional-per-file-pre-validation-for-custom-regex-rules.md",
+      "title": "secrets): optional per-file pre-validation for custom regex rules",
+      "repository": "bridgecrewio-checkov-learnings",
+      "source_version": "HEAD",
+      "content_hash": "94efb37b26153f52d978f40c688dd3605a94d5c444ac8642a761b65c7fe2c695",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-25T01:44:37.997Z"
     }
   },
   "ai-builder-brain": {

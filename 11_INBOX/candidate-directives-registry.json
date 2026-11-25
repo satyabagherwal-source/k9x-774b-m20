@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T01:36:13.686Z",
+  "last_updated": "2026-11-25T01:44:37.997Z",
   "directives": [
     {
       "id": "CD-001",
@@ -58586,6 +58586,81 @@
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-910DE7-rust-bind-bare-calls-to-the-enclosing-mo.md",
       "staged_date": "2026-11-25"
+    },
+    {
+      "id": "CD-NCLQ",
+      "directive_title": "remove undefined from defaulted parameter types",
+      "source_repo": "biomejs/biome",
+      "source_commit": "caaa90bc",
+      "staged_file": "11_INBOX/candidate-directives/CD-NCLQ-remove-undefined-from-defaulted-parameter-types.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-25",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-NQ18",
+      "directive_title": "Experimental reporter plugin support",
+      "source_repo": "avajs-ava-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-NQ18-experimental-reporter-plugin-support.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-25",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-NHHH",
+      "directive_title": "optional per-file pre-validation for custom regex rules",
+      "source_repo": "bridgecrewio/checkov",
+      "source_commit": "d266c8a5",
+      "staged_file": "11_INBOX/candidate-directives/CD-NHHH-optional-per-file-pre-validation-for-custom-regex-rules.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-25",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-NME2",
+      "directive_title": "Empirical Invariant Guard in TDBKnowledge.js",
+      "source_repo": "lioensky/VCPToolBox",
+      "source_commit": "c4762817",
+      "staged_file": "11_INBOX/candidate-directives/CD-NME2-empirical-invariant-guard-in-tdbknowledge-js.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-25",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-NPBC",
+      "directive_title": "type_inference): remove undefined from defaulted parameter types",
+      "source_repo": "biomejs-biome-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-NPBC-type_inference-remove-undefined-from-defaulted-parameter-types.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-25",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-20AD72",
+      "directive_title": "Experimental reporter plugin support",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "avajs-ava",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-20AD72-experimental-reporter-plugin-support.md",
+      "staged_date": "2026-11-25"
+    },
+    {
+      "id": "CD-NQSS",
+      "directive_title": "secrets): optional per-file pre-validation for custom regex rules",
+      "source_repo": "bridgecrewio-checkov-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-NQSS-secrets-optional-per-file-pre-validation-for-custom-regex-rules.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-25",
+      "domain_letter": "H"
     }
   ]
 }

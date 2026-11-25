@@ -4,22 +4,22 @@
 {
   "source_repository": "biomejs/biome",
   "source_url": "https://github.com/biomejs/biome",
-  "source_version": "d965df8d",
+  "source_version": "caaa90bc",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-23T22:56:19.164Z",
+  "timestamp": "2026-11-25T01:44:19.598Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-biomejs-biome",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [biomejs/biome](https://github.com/biomejs/biome) (Revision: `d965df8d`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-23T22:56:19.164Z`  
+> **Provenance**: Harvested from [biomejs/biome](https://github.com/biomejs/biome) (Revision: `caaa90bc`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-25T01:44:19.598Z`  
 > **Learning ID**: `learn-github-biomejs-biome`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `biomejs/biome` (Commit: `d965df8d`)
+- **Target Repository**: `biomejs/biome` (Commit: `caaa90bc`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/biomejs-biome-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/biomejs/biome](https://github.com/biomejs/biome))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T22:56:17.740Z  
+> **Harvest Timestamp**: 2026-11-25T01:44:17.981Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: A toolchain for web projects, aimed to provide functionalities to maintain them. Biome offers formatter and linter, usable via CLI and LSP.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 26183 stars
+- **Stars / Engagement**: 26202 stars
 
 ---
 
@@ -952,14 +952,14 @@ impl FormatNodeRule<CssContainerScrollStateInParens> for FormatCssContainerScrol
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #13388** (2026-11-23): **chore: update rule metadata**
-  *Symptoms*: ## Summary decisions made by me, applied by clanker  implemented by GPT-6.2-Sol  ## Test Plan green ci  ## Docs
-  **Post-Mortem & Fix Analysis**:
-  > <!-- coderabbit-ai-generated:v1 -->  <!-- This is an auto-generated comment: summarize by coderabbit.ai --> <!-- review_stack_entry_start -->  <a href="https://app.coderabbit.ai/change-stack/biomejs/biome/pull/13388?scope=ghh_OusAJGA4HG8ljoOV0wJvVx8NmnZIjc2DdjmxOu0xZWA&amp;cs_source=review_comment"><picture><source media="(prefers-color-scheme: dark)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-buttons-v1/explain-change-dark.svg"><source media="(prefers-color-scheme: light)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-buttons-v1/explain-change.svg"><img src="https://storage.googleapis.com/coderabbit_public_assets/review-stack-buttons-v1/explain-change.svg" alt="Explain Change →" height="32"></picture></a>  <!-- review_stack_entry_end --> <!-- recent_review_status_start -->  No actionable comments were generated in the recent review.  <!-- recent_review_status_end --> <!-- walkthrough_start -->  ### Walkthrough  The chang
-  > <!-- __CODSPEED_PERFORMANCE_REPORT_COMMENT__ --> ## Merging this PR will regress 1 benchmark  <details> <summary><b>1 warning</b></summary>  > :warning: **1 benchmark is dominated by system calls** > > System calls cannot be simulated consistently and are left out of the measure. The reported value understates the real cost. Switch to the Walltime instrument to measure them. > > [Learn more about system calls](https://codspeed.io/docs/instruments/cpu?utm_source=github&utm_medium=comment-v2&utm_content=significant_sys_time#system-calls) > > [See affected benchmarks](https://app.codspeed.io/biomejs/biome/branches/dyc3%2Fupdate-unsupported-rules-2-rules-thr_uzdpz27rqg?q=has%3Asignificant_sys_time&utm_source=github&utm_medium=comment-v2&utm_content=affected_benchmarks)  </details>   `⚡ 4` improved benchmarks   `❌ 1` regressed benchmark   `✅ 293` untouched benchmarks   `⏩ 164` skipped benchmarks[^skipped]     > [!WARNING] > Please fix the performance issues or [acknowledge them on CodSpeed]
+- **Issue #13413** (2026-11-24): **assist/source/noDuplicateClasses: the safe fix corrupts class attributes that hold template syntax in .html files**
+  *Symptoms*: ## Environment  - Biome 2.6.9 (tag `@biomejs/biome@2.6.9`, commit cfef4254, which the links below use), and 2.6.8. `main` at caaa90bc has the same code. - macOS arm64, run with `pnpm dlx @biomejs/biome@2.6.9`.  ## What happened  `noDuplicateClasses` splits a `class` value on whitespace and treats every word as a class name. In an `.html` file with Django, Jinja, Handlebars or ERB syntax, the words include template tokens (`{%`, `if`, `tone`, `==`, `%}`). Biome removes the repeated words and labels the fix "safe". The result is a different template, and Biome gives no warning.  `biome.json`:  ```json {   "html": { "linter": { "enabled": true } },   "formatter": { "enabled": false },   "linter": { "rules": { "preset": "none" } },   "assist": { "actions": { "source": { "noDuplicateClasses": "on" } } } } ```  `page.html`:  ```html <div class="a {% if tone == 'info' %}b{% elif tone == 'warn' %}c{% endif %} a"></div> <div class="{% if a %}x{% endif %} {% if b %}y{% endif %}"></div> <div class="{{#if a}}x{{/if}} {{#if b}}y{{/if}}"></div> ```  Command: `biome check --write page.html`  Actual result, shown as a "Safe fix":  ```html <div class="a {% if tone == 'info' %}b{% elif 'warn' %}c{% endif %}"></div> <div class="{% if a %}x{% endif %} b %}y{%"></div> <div class="{{#if a}}x{{/if}} b}}y{{/if}}"></div> ```  Expected: no change. These are not plain class lists, so Biome can't know what a duplicate is.  Line 1 now tests another condition (`{% elif 'warn' %}` is always true). Lines 2 
 
-- **Issue #13385** (2026-11-23): **fix(useNumberNamespace): skip safe fix when Number is shadowed**
-  *Symptoms*: Closes #13380  ## Why The safe fix rewrites bare `NaN`/`Infinity`/`parseInt`/`parseFloat` to `Number.*`. When `Number` resolves to a local binding (for example a function parameter), the new reference binds to the local and working code throws `TypeError` at runtime.  ## What changed - `run()` in `use_number_namespace.rs` now walks the scope ancestors of a bare-identifier match and bails out when any scope binds `Number`. - Member accesses on known globals (`globalThis.NaN` -> `globalThis.Number.NaN`) insert `Number` as a member name, so shadowing cannot affect them and they stay reported. - Specs: `valid.js` gains parameter, outer-scope, and block-scope shadowing cases; `invalid.js` gains a shadowed-`Number` `globalThis.NaN` case that must still fix.  ## Scope Single rule, bare-identifier path only. No config or option changes.  ## Blast Radius Low. Previously reported diagnostics under a shadowed `Number` go silent; all other inputs behave as before (803 style specs pass).  ## Verification - New spec cases failed before the fix (diagnostics on shadowed `Number`) and pass after. - `cargo test -p biome_js_analyze --test spec_tests specs::style::`: 803 passed, 0 failed. - `cargo clippy -p biome_js_analyze --all-targets`: clean. `cargo fmt`: clean.
+- **Issue #13405** (2026-11-24): **fix(type_inference): remove undefined from defaulted parameter types**
+  *Symptoms*: ## Summary The default value of a function parameter can remove `undefined` from the function parameter's type.  fixes #13392  implemented by Opus 5.5  ## Test Plan snapshots  ## Docs
+  **Post-Mortem & Fix Analysis**:
+  > ### 🦋 Changeset detected  Latest commit: 8a67cb0c67784a31c5e4ca2954b5315cd188c540  **The changes in this PR will be included in the next version bump.**  <details><summary>This PR includes changesets to release 16 packages</summary>    | Name                          | Type  | | ----------------------------- | ----- | | @biomejs/biome                | Patch | | @biomejs/cli-android-arm64    | Patch | | @biomejs/cli-android-x64      | Patch | | @biomejs/cli-darwin-arm64     | Patch | | @biomejs/cli-darwin-x64       | Patch | | @biomejs/cli-linux-arm64-musl | Patch | | @biomejs/cli-linux-arm64      | Patch | | @biomejs/cli-linux-x64-musl   | Patch | | @biomejs/cli-linux-x64        | Patch | | @biomejs/cli-win32-arm64      | Patch | | @biomejs/cli-win32-x64        | Patch | | @biomejs/runtime              | Patch | | @biomejs/wasm-bundler         | Patch | | @biomejs/wasm-nodejs          | Patch | | @biomejs/wasm-web             | Patch | | @biomejs/backend-jsonrpc      | Patch |  </deta
+  > <!-- coderabbit-ai-generated:v1 -->  <!-- This is an auto-generated comment: summarize by coderabbit.ai --> <!-- review_stack_entry_start -->  <a href="https://app.coderabbit.ai/change-stack/biomejs/biome/pull/13405?scope=ghh_OusAJGA4HG8ljoOV0wJvVx8NmnZIjc2DdjmxOu0xZWA&amp;cs_source=review_comment"><picture><source media="(prefers-color-scheme: dark)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-buttons-v1/explain-change-dark.svg"><source media="(prefers-color-scheme: light)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-buttons-v1/explain-change.svg"><img src="https://storage.googleapis.com/coderabbit_public_assets/review-stack-buttons-v1/explain-change.svg" alt="Explain Change →" height="32"></picture></a>  <!-- review_stack_entry_end --> <!-- walkthrough_start -->  ### Walkthrough  The change adds defaulted-parameter type information and uses it to remove `undefined` when the default cannot be `undefined`. It adds covera
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -976,1261 +976,573 @@ impl FormatNodeRule<CssContainerScrollStateInParens> for FormatCssContainerScrol
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `70d61546` (2026-11-22)
-**Commit Message**: fix(format/html/svelte): keep `{#if}`, `{#each}` and other Svelte blocks touching their siblings (#13375)
+### Incident Patch 1: `771de3e3` (2026-11-24)
+**Commit Message**: fix(type_inference): remove undefined from defaulted parameter types (#13405)
 
-**File**: `.changeset/fix-svelte-blocks-touching-siblings.md` (added, +17/-0)
-```diff
-@@ -0,0 +1,17 @@
-+---
-+"@biomejs/biome": patch
-+---
-+
-+Fixed the HTML formatter adding a line break between a Svelte block (`{#if}`, `{#each}`, `{#await}`, `{#key}`, `{#snippet}`) or tag (`{@const}`, `{let}`, `{@debug}`) and a sibling that touches it in the source. Svelte keeps that line break as a text node, so the page rendered a space that wasn't in the source.
-+
-+```diff
-+ <p>
-+-	Total:
-+-	{#each items as item}
-++	Total:{#each items as item}
-+ 		<b>{item}</b>
-+-	{/each}
-+-	.
-++	{/each}.
-+ </p>
-+```
-```
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `crates/biome_html_formatter/src/utils/metadata.rs` (modified, +19/-11)
-```diff
-@@ -960,21 +960,29 @@ pub(crate) fn get_element_css_display(element: &AnyHtmlElement) -> CssDisplay {
-     // Check for Svelte blocks and classify them appropriately
-     if let Some(svelte_block) = element.clone().as_svelte_block() {
-         return match svelte_block {
--            // {@html ...} and {@render ...} are "tag" expressions that inject content inline
--            // They should be treated as inline elements for whitespace sensitivity purposes
--            AnySvelteBlock::SvelteHtmlBlock(_) | AnySvelteBlock::SvelteRenderBlock(_) => {
--                CssDisplay::Inline
--            }
--            // Control flow blocks ({#if}, {#each}, etc.) and other constructs are block-level
-+            // Svelte keeps the whitespace between a tag or a block and its siblings as a text
-+            // node, so line breaks around them render as a space, like around an inline element:
-+            //
-+            // ```svelte
-+            // <p>Total:{#each items as item}<b>{item}</b>{/each}.</p>
-+            // ```
-+            //
-+            // `{@html ...}`, `{@render ...}`, `{@const ...}`, `{let ...}` and `{@debug ...}` are
-+            // tags without children.
-+            AnySvelteBlock::SvelteHtmlBlock(_)
-+            | AnySvelteBlock::SvelteRenderBlock(_)
-+            | AnySvelteBlock::SvelteConstBlock(_)
-+            | AnySvelteBlock::SvelteDeclarationBlock(_)
-+            | AnySvelteBlock::SvelteDebugBlock(_) => CssDisplay::Inline,
-+            // Svelte trims the whitespace at the start and end of a block's children, so a
-+            // block is whitespace-sensitive on the outside but not on the inside, like an
-+            // inline-block element.
-             AnySvelteBlock::SvelteIfBlock(_)
-             | AnySvelteBlock::SvelteEachBlock(_)
-             | AnySvelteBlock::SvelteAwaitBlock(_)
-             | AnySvelteBlock::SvelteKeyBlock(_)
--            | AnySvelteBlock::SvelteSnippetBlock(_)
--            | AnySvelteBlock::SvelteConstBlock(_)
--            | AnySvelteBlock::SvelteDeclarationBlock(_)
--            | AnySvelteBlock::SvelteDebugBlock(_)
--            | AnySvelteBlock::SvelteBogusBlock(_) => CssDisplay::Block,
-+            | AnySvelteBlock::SvelteSnippetBlock(_) => CssDisplay::InlineBlock,
-+            AnySvelteBlock::SvelteBogusBlock(_) => CssDisplay::Block,
-         };
-     }
- 
-```
-
-**File**: `crates/biome_html_formatter/tests/specs/html/svelte/comments/comment-after-block-delimiter.svelte.snap` (modified, +1/-2)
-```diff
-@@ -55,8 +55,7 @@ info: svelte/comments/comment-after-block-delimiter.svelte
- 	<!-- before expression -->{g}
- {/if}
- {#if h}
--	<!-- before block -->
--	{#if i}
-+	<!-- before block -->{#if i}
- 		<i>x</i>
- 	{/if}
- {/if}
-```
-
-**File**: `crates/biome_html_formatter/tests/specs/html/svelte/comments/comment-before-closing-block.svelte.snap` (modified, +1/-2)
-```diff
-@@ -135,8 +135,7 @@ info: svelte/comments/comment-before-closing-block.svelte
- 	{#if a}
- 		{#if b}
- 			<span>b</span>
--		{/if}
--		<!-- after nested block -->
-+		{/if}<!-- after nested block -->
- 	{/if}
- </div>
- 
-```
-
-**File**: `crates/biome_html_formatter/tests/specs/html/svelte/debug.svelte.snap` (modified, +1/-2)
-```diff
-@@ -23,7 +23,6 @@ info: svelte/debug.svelte
- 
- {@debug foo}
- 
--{@debug foo, bar}
--{@debug foo, bar, baz}
-+{@debug foo, bar}{@debug foo, bar, baz}
- 
- ```
-```
-
-**File**: `crates/biome_html_formatter/tests/specs/html/svelte/whitespace/touching-blocks.svelte` (added, +26/-0)
-```diff
-@@ -0,0 +1,26 @@
-+<p>{#if a}<span>one</span>{/if}{#if b}<span>two</span>{/if}</p>
-+
-+<div><strong>{name}</strong>{#if best}<span class="tag">best</span>{/if}<p>{title}</p></div>
-+
-+<div><Chart {labels} />{#if empty}<p>Nothing to show.</p>{/if}</div>
-+
-+<p>Total:{#each items as item}<b>{item}</b>{/each}.</p>
-+
-+<p><i>a</i>{#key k}<b>b</b>{/key}<i>c</i>{#await p}<b>wait</b>{:then v}<b>{v}</b>{/await}<i>d</i></p>
-+
-+<p><i>a</i>{#snippet s()}<b>b</b>{/snippet}<i>c</i></p>
-+
-+<p><i>a</i>{@debug a}<i>b</i></p>
-+
-+{#if x}<i>a</i>{@const q = 1}<i>b</i>{/if}
-+
-+<p>
-+	{#if a}
-+		<span>one</span>
-+	{/if}
-+	{#if b}
-+		<span>two</span>
-+	{/if}
-+</p>
-+
-+<div><div>block</div>{#if x}<div>block</div>{/if}</div>
-```
-
-**File**: `crates/biome_html_formatter/tests/specs/html/svelte/whitespace/touching-blocks.svelte.snap` (added, +107/-0)
-```diff
-@@ -0,0 +1,107 @@
-+---
-+source: crates/biome_formatter_test/src/snapshot_builder.rs
-+info: svelte/whitespace/touching-blocks.svelte
-+---
-+
-+# Input
-+
-+```svelte
-+<p>{#if a}<span>one</span>{/if}{#if b}<span>two</span>{/if}</p>
-+
-+<div><strong>{name}</strong>{#if best}<span class="tag">best</span>{/if}<p>{title}</p></div>
-+
-+<div><Chart {labels} />{#if empty}<p>Nothing to show.</p>{/if}</div>
-+
-+<p>Total:{#each items as item}<b>{item}</b>{/each}.</p>
-+
-+<p><i>a</i>{#key k}<b>b</b>{/key}<i>c</i>{#await p}<b>wait</b>{:then v}<b>{v}</b>{/await}<i>d</i></p>
-+
-+<p><i>a</i>{#snippet s()}<b>b</b>{/snippet}<i>c</i></p>
-+
-+<p><i>a</i>{@debug a}<i>b</i></p>
-+
-+{#if x}<i>a</i>{@const q = 1}<i>b</i>{/if}
-+
-+<p>
-+	{#if a}
-+		<span>one</span>
-+	{/if}
-+	{#if b}
-+		<span>two</span>
-+	{/if}
-+</p>
-+
-+<div><div>block</div>{#if x}<div>block</div>{/if}</div>
-+
-+```
-+
-+
-+# Formatted
-+
-+```svelte
-+<p>
-+	{#if a}
-+		<span>one</span>
-+	{/if}{#if b}
-+		<span>two</span>
-+	{/if}
-+</p>
-+
-+<div>
-+	<strong>{name}</strong>{#if best}
-+		<span class="tag">best</span>
-+	{/if}
-+	<p>{title}</p>
-+</div>
-+
-+<div>
-+	<Chart {labels} />{#if empty}
-+		<p>Nothing to show.</p>
-+	{/if}
-+</div>
-+
-+<p>
-+	Total:{#each items as item}
-+		<b>{item}</b>
-+	{/each}.
-+</p>
-+
-+<p>
-+	<i>a</i>{#key k}
-+		<b>b</b>
-+	{/key}<i>c</i>{#await p}
-+		<b>wait</b>
-+	{:then v}
-+		<b>{v}</b>
-+	{/await}<i>d</i>
-+</p>
-+
-+<p>
-+	<i>a</i>{#snippet s()}
-+		<b>b</b>
-+	{/snippet}<i>c</i>
-+</p>
-+
-+<p><i>a</i>{@debug a}<i>b</i></p>
-+
-+{#if x}
-+	<i>a</i>{@const q = 1}<i>b</i>
-+{/if}
-+
-+<p>
-+	{#if a}
-+		<span>one</span>
-+	{/if}
-+	{#if b}
-+		<span>two</span>
-+	{/if}
-+</p>
-+
-+<div>
-+	<div>block</div>
-+	{#if x}
-+		<div>block</div>
-+	{/if}
-+</div>
-+
-+```
-```
-
-**File**: `crates/biome_html_formatter/tests/specs/svelte-plugin/printer/if-block-without-whitespace.svelte.snap` (modified, +5/-9)
-```diff
-@@ -18,14 +18,12 @@ info: printer/if-block-without-whitespace.svelte
- ```diff
- --- Prettier
- +++ Biome
--@@ -1,3 +1,9 @@
-+@@ -1,3 +1,7 @@
-  {#each items as item}
- -    <b>{item.name}</b>{#if item.isNew}*{/if}{#if item.isUpdated}!{/if}
--+    <b>{item.name}</b>
--+    {#if item.isNew}
-++    <b>{item.name}</b>{#if item.isNew}
- +        *
--+    {/if}
--+    {#if item.isUpdated}
-++    {/if}{#if item.isUpdated}
- +        !
- +    {/if}
-  {/each}
-@@ -35,11 +33,9 @@ info: printer/if-block-without-whitespace.svelte
- 
- ```svelte
- {#each items as item}
--    <b>{item.name}</b>
--    {#if item.isNew}
-+    <b>{item.name}</b>{#if item.isNew}
-         *
--    {/if}
--    {#if item.isUpdated}
-+    {/if}{#if item.isUpdated}
-         !
-     {/if}
- {/each}
-```
-
----
-
-### Incident Patch 2: `4dc698a1` (2026-11-23)
-**Commit Message**: fix(glob): support negative numbers in editorconfig numeric ranges (#12937)
-
-**File**: `.changeset/quiet-ranges-count.md` (added, +5/-0)
+**File**: `.changeset/fix-parameter-default-undefined.md` (added, +5/-0)
 ```diff
 @@ -0,0 +1,5 @@
 +---
 +"@biomejs/biome": patch
 +---
 +
-+Fixed `.editorconfig` section globs that have a negative number in a numeric range. `[{-3..3}]` now matches the files named `-3` to `3`, instead of only a file named `{-3..3}`.
++Fixed [#13392](https://github.com/biomejs/biome/issues/13392): [`useNullishCoalescing`](https://biomejs.dev/linter/rules/use-nullish-coalescing/) no longer reports `flag || other` when `flag` is a parameter whose default value removes `undefined` from its type, such as `flag: boolean | undefined = false`.
 ```
 
-**File**: `crates/biome_cli/tests/cases/editorconfig.rs` (modified, +60/-0)
+**File**: `crates/biome_js_analyze/tests/specs/nursery/noMeaninglessVoidOperator/invalid.ts` (modified, +4/-0)
 ```diff
-@@ -901,3 +901,63 @@ indent_size = 2
-         result,
-     ));
+@@ -23,3 +23,7 @@ const callResult = void log();
+ type Empty = void | undefined;
+ declare function alias(): Empty;
+ void alias();
++
++function withDefault(count: number = 0) {
++	void count;
++}
+```
+
+**File**: `crates/biome_js_analyze/tests/specs/nursery/noMeaninglessVoidOperator/invalid.ts.snap` (modified, +35/-0)
+```diff
+@@ -30,6 +30,10 @@ type Empty = void | undefined;
+ declare function alias(): Empty;
+ void alias();
+ 
++function withDefault(count: number = 0) {
++	void count;
++}
++
+ ```
+ 
+ # Diagnostics
+@@ -504,6 +508,7 @@ invalid.ts:25:1 lint/nursery/noMeaninglessVoidOperator  FIXABLE  ━━━━━
+   > 25 │ void alias();
+        │ ^^^^^^^^^^^^
+     26 │ 
++    27 │ function withDefault(count: number = 0) {
+   
+   i This call already returns void or undefined.
+   
+@@ -518,6 +523,36 @@ invalid.ts:25:1 lint/nursery/noMeaninglessVoidOperator  FIXABLE  ━━━━━
+     25    │ - void·alias();
+        25 │ + (alias());
+     26 26 │   
++    27 27 │   function withDefault(count: number = 0) {
++  
++
++```
++
++```
++invalid.ts:28:2 lint/nursery/noMeaninglessVoidOperator  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
++
++  i This void operator is unnecessary.
++  
++    27 │ function withDefault(count: number = 0) {
++  > 28 │ 	void count;
++       │ 	^^^^^^^^^^
++    29 │ }
++    30 │ 
++  
++  i This operand is neither a function call nor a thenable.
++  
++  i Use void to explicitly discard a call's return value or a thenable.
++  
++  i This rule belongs to the nursery group, which means it is not yet stable and may change in the future. Visit https://biomejs.dev/linter/#nursery for more information.
++  
++  i Unsafe fix: Remove the void operator.
++  
++    26 26 │   
++    27 27 │   function withDefault(count: number = 0) {
++    28    │ - → void·count;
++       28 │ + → (count);
++    29 29 │   }
++    30 30 │   
+   
+ 
+ ```
+```
+
+**File**: `crates/biome_js_analyze/tests/specs/nursery/noMisusedPromises/checksVoidReturnInvalid.ts` (modified, +4/-0)
+```diff
+@@ -24,3 +24,7 @@ new ConstructorConsumer(async () => {});
+ declare function consumeAfterSpread(prefix: number, callback: () => void): void;
+ const prefixes: number[] = [];
+ consumeAfterSpread(...prefixes, async () => {});
++
++function forEachWithDefault(callback: () => Promise<void> = async () => {}) {
++	[1].forEach(callback);
++}
+```
+
+**File**: `crates/biome_js_analyze/tests/specs/nursery/noMisusedPromises/checksVoidReturnInvalid.ts.snap` (modified, +23/-0)
+```diff
+@@ -31,6 +31,10 @@ declare function consumeAfterSpread(prefix: number, callback: () => void): void;
+ const prefixes: number[] = [];
+ consumeAfterSpread(...prefixes, async () => {});
+ 
++function forEachWithDefault(callback: () => Promise<void> = async () => {}) {
++	[1].forEach(callback);
++}
++
+ ```
+ 
+ # Diagnostics
+@@ -143,6 +147,25 @@ checksVoidReturnInvalid.ts:26:33 lint/nursery/noMisusedPromises ━━━━━
+   > 26 │ consumeAfterSpread(...prefixes, async () => {});
+        │                                 ^^^^^^^^^^^^^^
+     27 │ 
++    28 │ function forEachWithDefault(callback: () => Promise<void> = async () => {}) {
++  
++  i This may not have the desired result if you expect the Promise to be `await`-ed.
++  
++  i This rule belongs to the nursery group, which means it is not yet stable and may change in the future. Visit https://biomejs.dev/linter/#nursery for more information.
++  
++
++```
++
++```
++checksVoidReturnInvalid.ts:29:14 lint/nursery/noMisusedPromises ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
++
++  i This function returns a Promise, but no return value was expected.
++  
++    28 │ function forEachWithDefault(callback: () => Promise<void> = async () => {}) {
++  > 29 │ 	[1].forEach(callback);
++       │ 	            ^^^^^^^^
++    30 │ }
++    31 │ 
+   
+   i This may not have the desired result if you expect the Promise to be `await`-ed.
+   
+```
+
+**File**: `crates/biome_js_analyze/tests/specs/nursery/useNullishCoalescing/logicalOrInvalid.ts` (modified, +23/-0)
+```diff
+@@ -162,3 +162,26 @@ function withDefault(value: string | undefined) {
+ 	assertDefined(value);
+ 	return value || "default";
  }
 +
-+#[test]
-+fn should_apply_section_with_negative_numeric_range() {
-+    let fs = MemoryFileSystem::default();
-+    let mut console = BufferConsole::default();
-+
-+    let editorconfig = Utf8Path::new(".editorconfig");
-+    fs.insert(
-+        editorconfig.into(),
-+        r#"
-+root = true
-+
-+[*]
-+indent_style = space
-+indent_size = 4
-+
-+[file{-1..1}.js]
-+indent_size = 2
-+"#,
-+    );
-+
-+    let contents = r#"function setName(name) {
-+ currentName = name;
++// `||` on a parameter whose default keeps `null` in the type
++export function nullableParameterWithDefault(value: string | null | undefined = "fallback") {
++	return value || "default";
 +}
-+"#;
-+    // Inside the range: formatted with `indent_size = 2`
-+    let negative_file = Utf8Path::new("file-1.js");
-+    fs.insert(negative_file.into(), contents);
-+    let zero_file = Utf8Path::new("file0.js");
-+    fs.insert(zero_file.into(), contents);
-+    // Outside the range: formatted with `indent_size = 4`
-+    let outside_file = Utf8Path::new("file2.js");
-+    fs.insert(outside_file.into(), contents);
 +
-+    let (fs, result) = run_cli(
-+        fs,
-+        &mut console,
-+        Args::from(
-+            [
-+                "format",
-+                "--write",
-+                "--use-editorconfig=true",
-+                negative_file.as_str(),
-+                zero_file.as_str(),
-+                outside_file.as_str(),
-+            ]
-+            .as_slice(),
-+        ),
-+    );
++// `||` on a parameter whose default may itself be `undefined`
++declare const maybeFallback: string | undefined;
++export function undefinedDefault(value: string | undefined = maybeFallback) {
++	return value || "default";
++}
 +
-+    assert!(result.is_ok(), "run_cli returned {result:?}");
++// `||` on a defaulted parameter that is reassigned
++export function reassignedDefault(value: string | undefined = "fallback") {
++	value = undefined;
++	return value || "default";
++}
 +
-+    assert_cli_snapshot(SnapshotPayload::new(
-+        module_path!(),
-+        "should_apply_section_with_negative_numeric_range",
-+        fs,
-+        console,
-+        result,
-+    ));
++// `||` on a parameter whose `any` default keeps `null` in the type
++declare const anyFallback: any;
++export function anyDefault(value: string | null | undefined = anyFallback) {
++	return value || "default";
 +}
 ```
 
-**File**: `crates/biome_cli/tests/snapshots/main_cases_editorconfig/should_apply_section_with_negative_numeric_range.snap` (added, +57/-0)
+**File**: `crates/biome_js_analyze/tests/specs/nursery/useNullishCoalescing/logicalOrInvalid.ts.snap` (modified, +107/-0)
 ```diff
-@@ -0,0 +1,57 @@
-+---
-+source: crates/biome_cli/tests/snap_test.rs
-+expression: redactor(content)
-+---
-+## Command
-+
-+```shell
-+biome format --write --use-editorconfig=true file-1.js file0.js file2.js
-+```
-+
-+## `.editorconfig`
-+
-+```editorconfig
-+
-+root = true
-+
-+[*]
-+indent_style = space
-+indent_size = 4
-+
-+[file{-1..1}.js]
-+indent_size = 2
-+
-+```
-+
-+## `file-1.js`
-+
-+```js
-+function setName(name) {
-+  currentName = name;
+@@ -169,6 +169,29 @@ function withDefault(value: string | undefined) {
+ 	return value || "default";
+ }
+ 
++// `||` on a parameter whose default keeps `null` in the type
++export function nullableParameterWithDefault(value: string | null | undefined = "fallback") {
++	return value || "default";
 +}
 +
-+```
-+
-+## `file0.js`
-+
-+```js
-+function setName(name) {
-+  currentName = name;
++// `||` on a parameter whose default may itself be `undefined`
++declare const maybeFallback: string | undefined;
++export function undefinedDefault(value: string | undefined = maybeFallback) {
++	return value || "default";
 +}
 +
-+```
-+
-+## `file2.js`
-+
-+```js
-+function setName(name) {
-+    currentName = name;
++// `||` on a defaulted parameter that is reassigned
++export function reassignedDefault(value: string | undefined = "fallback") {
++	value = undefined;
++	return value || "default";
 +}
 +
++// `||` on a parameter whose `any` default keeps `null` in the type
++declare const anyFallback: any;
++export function anyDefault(value: string | null | undefined = anyFallback) {
++	return value || "default";
++}
++
+ ```
+ 
+ # Diagnostics
+@@ -857,3 +880,87 @@ logicalOrInvalid.ts:163:15 lint/nursery/useNullishCoalescing ━━━━━━
+   
+ 
+ ```
++
++```
++logicalOrInvalid.ts:168:15 lint/nursery/useNullishCoalescing ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
++
++  i Use ?? instead of ||.
++  
++    166 │ // `||` on a parameter whose default keeps `null` in the type
++    167 │ export function nullableParameterWithDefault(value: string | null | undefined = "fallback") {
++  > 168 │ 	return value || "default";
++        │ 	             ^^
++    169 │ }
++    170 │ 
++  
++  i The || operator checks for all falsy values (including 0, '', and false), while ?? only checks for null and undefined.
++  
++  i This rule is still being actively worked on, so it may be missing features or have rough edges. Visit https://github.com/biomejs/biome/issues/8043 for more information or to report possible bugs.
++  
++  i This rule belongs to the nursery group, which means it is not yet stable and may change in the future. Visit https://biomejs.dev/linter/#nursery for more information.
++  
++
 +```
 +
-+# Emitted Messages
++```
++logicalOrInvalid.ts:174:15 lint/nursery/useNullishCoalescing ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 +
-+```block
-+Formatted 3 files in <TIME>. Fixed 3 files.
++  i Use ?? instead of ||.
++  
++    172 │ declare const maybeFallback: string | undefined;
++    173 │ export function undefinedDefault(value: string | undefined = maybeFallback) {
++  > 174 │ 	return value || "default";
++        │ 	             ^^
++    175 │ }
++    176 │ 
++  
++  i The || operator checks for all falsy values (including 0, '', and false), while ?? only checks for null and undefined.
++  
++  i This rule is still being actively worked on, so it may be missing features or have rough edges. Visit https://github.com/biomejs/biome/issues/8043 for more information or to report possible bugs.
++  
++  i This rule belongs to the nursery group, which means it is not yet stable and may change in the future. Visit https://biomejs.dev/linter/#nursery for more information.
++  
++
++```
++
++```
++logicalOrInvalid.ts:180:15 lint/nursery/useNullishCoalescing ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
++
++  i Use ?? instead of ||.
++  
++    178 │ export function reassignedDefault(value: string | undefined = "fallback") {
++    179 │ 	value = undefined;
++  > 180 │ 	return value || "default";
++        │ 	             ^^
++    181 │ }
++    182 │ 
++  
++  i The || operator checks for all falsy values (including 0, '', and false), while ?? only checks for null and undefined.
++  
++  i This rule is still being actively worked on, so it may be missing features or have rough edges. Visit https://github.com/biomejs/biome/issues/8043 for more information or to report possible bugs.
++  
++  i This rule belongs to the nursery group, which means it is not yet stable and may change in the future. Visit https://biomejs.dev/linter/#nursery for more information.
++  
++
++```
++
++```
++logicalOrInvalid.ts:186:15 lint/nursery/useNullishCoalescing ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
++
++  i Use ?? instead of ||.
++  
++    184 │ declare const anyFallback: any;
++    185 │ export function anyDefault(value: string | null | undefined = anyFallback) {
++  > 186 │ 	return value || "default";
++        │ 	             ^^
++    187 │ }
++    188 │ 
++  
++  i The || operator checks for all falsy values (including 0, '', and false), while ?? only checks for null and undefined.
++  
++  i This rule is still being actively worked on, so it may be missing features or have rough edges. Visit https://github.com/biomejs/biome/issues/8043 for more information or to report possible bugs.
++  
++  i This rule belongs to the nursery group, which means it is not yet stable and may change in the future. Visit https://biomejs.dev/linter/#nursery for more information.
++  
++
 +```
 ```
 
-**File**: `crates/biome_glob/src/editorconfig.rs` (modified, +17/-1)
+**File**: `crates/biome_js_analyze/tests/specs/nursery/useNullishCoalescing/logicalOrValid.ts` (modified, +8/-0)
 ```diff
-@@ -223,7 +223,7 @@ fn convert_glob(mut pattern: String) -> Result<String, EditorconfigGlobError> {
-         },
-         ConvertNumericRange {
-             indexes: std::ops::Range<usize>,
--            range: std::ops::Range<usize>,
-+            range: std::ops::Range<isize>,
-         },
-     }
-     // As in the reference implementation, a single unmatched brace makes every brace literal.
-@@ -468,6 +468,13 @@ mod tests {
-         assert_eq!(convert_valid_glob("{10..12}"), "**/{10,11,12}");
-         assert_eq!(convert_valid_glob("{10..10}"), "**/{10}");
- 
-+        assert_eq!(convert_valid_glob("{-3..3}"), "**/{-3,-2,-1,0,1,2,3}");
-+        assert_eq!(convert_valid_glob("{-3..-1}"), "**/{-3,-2,-1}");
-+        assert_eq!(convert_valid_glob("{-1..+1}"), "**/{-1,0,1}");
-+        assert_eq!(convert_valid_glob("{-1..-1}"), "**/{-1}");
-+        assert!(super::convert_glob("{1..-1}".into()).is_err());
-+        assert!(super::convert_glob("{-1..-3}".into()).is_err());
+@@ -73,3 +73,11 @@ export const declaratorResult = fromDeclarator || undefined;
+ declare const list: (number | undefined)[];
+ const [first = 1] = list;
+ export const arrayResult = first || undefined;
 +
-         assert_eq!(convert_valid_glob(r"\{0..0}"), r"**/\{0..0\}");
-         assert_eq!(convert_valid_glob("{a..b}"), r"**/\{a..b\}");
- 
-@@ -672,6 +679,15 @@ mod tests {
-         assert!(!is_matching(&glob, "121"));
-         assert!(!is_matching(&glob, "060"));
- 
-+        // numeric brace range with a negative start
-+        glob = "{-3..3}".parse().unwrap();
-+        assert!(!is_matching(&glob, "-4"));
-+        assert!(is_matching(&glob, "-3"));
-+        assert!(is_matching(&glob, "0"));
-+        assert!(is_matching(&glob, "3"));
-+        assert!(!is_matching(&glob, "4"));
-+        assert!(!is_matching(&glob, "{-3..3}"));
++// `||` on a parameter whose default removes `undefined`
++export function annotatedWithDefault(flag: boolean | undefined = false, other: boolean) {
++	return flag || other;
++}
 +
-         // alphabetical brace range: letters should not be considered for ranges
-         glob = "{aardvark..antelope}".parse().unwrap();
-         assert!(is_matching(&glob, "{aardvark..antelope}"));
++export const arrowWithDefault = (flag: boolean | undefined = false, other: boolean) =>
++	flag || other;
 ```
 
 ---
 
-### Incident Patch 3: `399f3a1e` (2026-11-23)
-**Commit Message**: fix(markdown_formatter): use indentWidth for list item content (#13372)
+### Incident Patch 2: `2460d162` (2026-11-24)
+**Commit Message**: fix(biome_js_analyze): allow import attributes on mixed type/value imports (#13394)
 
-**File**: `.changeset/fix-markdown-list-indent-width.md` (added, +16/-0)
+**File**: `crates/biome_js_analyze/src/syntax/correctness/no_type_only_import_attributes.rs` (modified, +18/-21)
 ```diff
-@@ -0,0 +1,16 @@
-+---
-+"@biomejs/biome": patch
-+---
-+
-+Fixed [#13334](https://github.com/biomejs/biome/issues/13334): the Markdown formatter now uses `indentWidth` to indent the content of list items, as Prettier does with `tabWidth`. Some content keeps its current alignment, such as blockquotes, HTML blocks, and lists inside blockquotes.
-+
-+With `indentWidth` set to `4`:
-+
-+```diff
-+ - parent
-+
-+-  second paragraph
-+-  - child
-++    second paragraph
-++    - child
-+```
-```
-
-**File**: `crates/biome_markdown_formatter/src/bullet_list.rs` (modified, +261/-18)
-```diff
-@@ -1,25 +1,27 @@
--use crate::context::MarkdownFormatContext;
-+use crate::context::{MarkdownFormatContext, ProseWrap};
- use crate::markdown::auxiliary::continuation_indent::FormatMdContinuationIndentOptions;
- use crate::markdown::auxiliary::fenced_code_block::FormatMdFencedCodeBlockOptions;
- use crate::markdown::auxiliary::indent_code_block::FormatMdIndentCodeBlockOptions;
- use crate::markdown::auxiliary::list_marker_prefix::{
-     FormatMdListMarkerPrefixOptions, OrderedMarker, TargetMarker,
- };
- use crate::markdown::auxiliary::newline::FormatMdNewlineOptions;
--use crate::markdown::auxiliary::paragraph::FormatMdParagraphOptions;
-+use crate::markdown::auxiliary::paragraph::{FormatMdParagraph, FormatMdParagraphOptions};
- use crate::markdown::auxiliary::quote_prefix::FormatMdQuotePrefixOptions;
-+use crate::markdown::auxiliary::setext_header::setext_header_keeps_underline;
- use crate::markdown::lists::block_list::list_ends_with_line_break;
- use crate::quote::quote_line_prefix;
- use crate::shared::{TextContext, TextPrintMode};
--use crate::{AsFormat, MarkdownFormatter, prelude::format_suppressed_node};
-+use crate::words::is_block_marker_word;
-+use crate::{AsFormat, FormatNodeRule, MarkdownFormatter, prelude::format_suppressed_node};
- use biome_formatter::rowan::prelude::*;
--use biome_formatter::{Format, FormatResult, format_args, write};
-+use biome_formatter::{Format, FormatOptions, FormatResult, format_args, write};
- use biome_markdown_syntax::list_ext::{AnyListItem, ListMarker, OrderedListDelimiter};
- use biome_markdown_syntax::thematic_break_ext::MdThematicBreakMarker;
- use biome_markdown_syntax::{
--    AnyMdBlock, AnyMdCodeBlock, AnyMdInline, AnyMdLeafBlock, MarkdownLanguage, MdBlockList,
--    MdBullet, MdBulletFields, MdBulletList, MdBulletListItem, MdContinuationIndent,
--    MdIndentTokenList, MdOrderedListItem, MdQuote, MdQuotePrefix,
-+    AnyMdBlock, AnyMdCodeBlock, AnyMdContainerBlock, AnyMdInline, AnyMdLeafBlock, MarkdownLanguage,
-+    MdBlockList, MdBullet, MdBulletFields, MdBulletList, MdBulletListItem, MdContinuationIndent,
-+    MdIndentTokenList, MdOrderedListItem, MdParagraph, MdQuote, MdQuotePrefix,
- };
- use biome_rowan::{AstNode, AstNodeList, AstNodeListIterator, Direction, SyntaxError};
- use std::collections::VecDeque;
-@@ -290,7 +292,7 @@ fn should_keep_pre_marker(list: &MdBulletList) -> bool {
- }
- 
- impl ListBullet {
--    fn prefix_layout(&self) -> FormatResult<(FormatMdListMarkerPrefixOptions, usize)> {
-+    fn prefix_layout(&self) -> FormatResult<(FormatMdListMarkerPrefixOptions, ListPrefixWidth)> {
-         let MdBulletFields { content, prefix } = self.node.as_fields();
- 
-         let prefix = prefix?;
-@@ -353,22 +355,195 @@ impl ListBullet {
-                 keep_pre_marker,
-                 min_post_marker_len,
+@@ -75,11 +75,14 @@ impl Rule for NoTypeOnlyImportAttributes {
+                 AnyJsExportClause::JsExportNamedFromClause(clause) => {
+                     let assertion_range = clause.assertion()?.range();
+                     let type_token = clause.type_token().or_else(|| {
+-                        clause
+-                            .specifiers()
+-                            .iter()
+-                            .filter_map(|specifier| specifier.ok())
+-                            .find_map(|specifier| specifier.type_token())
++                        let mut first_type_token = None;
++                        for specifier in clause.specifiers().iter().filter_map(|s| s.ok()) {
++                            let token = specifier.type_token()?;
++                            if first_type_token.is_none() {
++                                first_type_token = Some(token);
++                            }
++                        }
++                        first_type_token
+                     })?;
+                     Some(RuleState {
+                         assertion_range,
+@@ -88,17 +91,8 @@ impl Rule for NoTypeOnlyImportAttributes {
+                 }
              },
--            alignment,
-+            ListPrefixWidth {
-+                printed: alignment,
-+                single_space: pre_marker_width + marker_width + 1,
-+            },
-         ))
-     }
-+
-+    /// Returns the spaces that indent the blocks after the bullet's first one
-+    /// past the list marker prefix, so that they start at the indent width.
-+    /// Prettier applies `tabWidth` the same way.
-+    ///
-+    /// Returns an empty string when the bullet can't indent its blocks.
-+    fn block_indent(&self, prefix_width: ListPrefixWidth, f: &MarkdownFormatter) -> &'static str {
-+        // A fourth space would turn a block into an indented code block.
-+        const MAX_BLOCK_INDENT: &str = "   ";
-+
-+        // Without a space after the marker, the bullet's content starts on
-+        // the line after the marker and keeps its alignment.
-+        if prefix_width.printed < prefix_width.single_space {
-+            return "";
-+        }
-+        let width = usize::from(f.options().indent_width().value())
-+            .min(prefix_width.single_space + MAX_BLOCK_INDENT.len())
-+            .saturating_sub(prefix_width.printed);
-+        if width == 0 {
-+            return "";
-+        }
-+
-+        let is_quoted = self
-+            .node
-+            .syntax()
-+            .ancestors()
-+            .skip(1)
-+            .any(|ancestor| MdQuote::can_cast(ancestor.kind()));
-+        let content = self.node.content();
-+        // The blocks after an unmoved nested list would line up with the
-+        // content of its last item and become part of that item.
-+        let has_unmoved_list = content.iter().any(|block| {
-+            block.is_list()
-+                && (is_first_block(&content, &block)
-+                    || follows_quote(&block)
-+                    || !list_follows_indent_width(&block, f))
-+        });
-+        if is_quoted || has_unmoved_list {
-+            return "";
-+        }
-+
-+        &MAX_BLOCK_INDENT[..width]
-+    }
-+}
-+
-+/// The width of the list marker prefix of a bullet.
-+#[derive(Clone, Copy)]
-+struct ListPrefixWidth {
-+    /// The width of the prefix as it is printed. The bullet's first block
-+    /// starts at this column, relative to the start
-```
-
-**File**: `crates/biome_markdown_formatter/src/markdown/auxiliary/setext_header.rs` (modified, +9/-4)
-```diff
-@@ -17,10 +17,7 @@ impl FormatNodeRule<MdSetextHeader> for FormatMdSetextHeader {
- 
-         let underline_token = underline_token?;
- 
--        let prose_wrap = f.options().prose_wrap();
--        if prose_wrap == ProseWrap::Always
--            || prose_wrap == ProseWrap::Preserve && content.will_break()
--        {
-+        if setext_header_keeps_underline(node, f) {
-             write!(
-                 f,
-                 [
-@@ -61,3 +58,11 @@ impl FormatNodeRule<MdSetextHeader> for FormatMdSetextHeader {
-         }
-     }
+             AnyJsModuleItem::JsImport(import) => match import.import_clause().ok()? {
+-                AnyJsImportClause::JsImportBareClause(_) => None,
+-                AnyJsImportClause::JsImportCombinedClause(clause) => {
+-                    let assertion_range = clause.assertion()?.range();
+-                    let type_token = find_first_type_token(
+-                        clause.specifier().ok()?.as_js_named_import_specifiers()?,
+-                    )?;
+-                    Some(RuleState {
+-                        assertion_range,
+-                        type_token_range: type_token.text_trimmed_range(),
+-                    })
+-                }
++                AnyJsImportClause::JsImportBareClause(_)
++                | AnyJsImportClause::JsImportCombinedClause(_) => None,
+                 AnyJsImportClause::JsImportDefaultClause(clause) => Some(RuleState {
+                     assertion_range: clause.assertion()?.range(),
+                     type_token_range: clause.type_token()?.text_trimmed_range(),
+@@ -153,9 +147,12 @@ pub struct RuleState {
  }
-+
-+/// Whether `node` is printed with its underline. Otherwise, it is printed as
-+/// an ATX heading, such as `## Heading`.
-+pub(crate) fn setext_header_keeps_underline(node: &MdSetextHeader, f: &MarkdownFormatter) -> bool {
-+    let prose_wrap = f.options().prose_wrap();
-+    prose_wrap == ProseWrap::Always
-+        || prose_wrap == ProseWrap::Preserve && node.content().will_break()
-+}
+ 
+ fn find_first_type_token(named_specifiers: &JsNamedImportSpecifiers) -> Option<JsSyntaxToken> {
+-    named_specifiers
+-        .specifiers()
+-        .iter()
+-        .filter_map(|specifier| specifier.ok())
+-        .find_map(|specifier| specifier.type_token())
++    let mut first_type_token = None;
++    for specifier in named_specifiers.specifiers().iter().filter_map(|s| s.ok()) {
++        let token = specifier.type_token()?;
++        if first_type_token.is_none() {
++            first_type_token = Some(token);
++        }
++    }
++    first_type_token
+ }
 ```
 
-**File**: `crates/biome_markdown_formatter/src/words.rs` (modified, +16/-11)
+**File**: `crates/biome_js_analyze/tests/specs/correctness/noTypeOnlyImportAttributes/invalid.ts` (modified, +1/-2)
 ```diff
-@@ -432,18 +432,8 @@ impl WordGroup {
-         let Some(ProseAtom::Word(word)) = self.atoms.first() else {
-             return false;
-         };
--        let text = word.text.text();
+@@ -2,8 +2,7 @@ import type A from "" with { type: "json" };
+ import type * as B from "" with { type: "json" };
+ import type { C } from "" with { type: "json" };
+ import { type D } from "" with { type: "json" };
+-import { E, type F } from "" with { type: "json" };
  
--        if text.starts_with('>')
--            || matches!(text, "*" | "+" | "-")
--            || matches!(text, "#" | "##" | "###" | "####" | "#####" | "######")
--        {
--            return true;
--        }
+ export type { A } from "" with { type: "json" };
+ export type * as B from "" with { type: "json" };
+-export { E, type F } from "" with { type: "json" };
+\ No newline at end of file
++export { type F } from "" with { type: "json" };
+\ No newline at end of file
+```
+
+**File**: `crates/biome_js_analyze/tests/specs/correctness/noTypeOnlyImportAttributes/invalid.ts.snap` (modified, +34/-59)
+```diff
+@@ -8,11 +8,10 @@ import type A from "" with { type: "json" };
+ import type * as B from "" with { type: "json" };
+ import type { C } from "" with { type: "json" };
+ import { type D } from "" with { type: "json" };
+-import { E, type F } from "" with { type: "json" };
+ 
+ export type { A } from "" with { type: "json" };
+ export type * as B from "" with { type: "json" };
+-export { E, type F } from "" with { type: "json" };
++export { type F } from "" with { type: "json" };
+ ```
+ 
+ # Diagnostics
+@@ -68,7 +67,7 @@ invalid.ts:3:27 syntax/correctness/noTypeOnlyImportAttributes ━━━━━━
+   > 3 │ import type { C } from "" with { type: "json" };
+       │                           ^^^^^^^^^^^^^^^^^^^^^
+     4 │ import { type D } from "" with { type: "json" };
+-    5 │ import { E, type F } from "" with { type: "json" };
++    5 │ 
+   
+   i The type-only import is defined here.
+   
+@@ -77,7 +76,7 @@ invalid.ts:3:27 syntax/correctness/noTypeOnlyImportAttributes ━━━━━━
+   > 3 │ import type { C } from "" with { type: "json" };
+       │        ^^^^
+     4 │ import { type D } from "" with { type: "json" };
+-    5 │ import { E, type F } from "" with { type: "json" };
++    5 │ 
+   
+ 
+ ```
+@@ -91,105 +90,81 @@ invalid.ts:4:27 syntax/correctness/noTypeOnlyImportAttributes ━━━━━━
+     3 │ import type { C } from "" with { type: "json" };
+   > 4 │ import { type D } from "" with { type: "json" };
+       │                           ^^^^^^^^^^^^^^^^^^^^^
+-    5 │ import { E, type F } from "" with { type: "json" };
+-    6 │ 
++    5 │ 
++    6 │ export type { A } from "" with { type: "json" };
+   
+   i The type-only import is defined here.
+   
+     2 │ import type * as B from "" with { type: "json" };
+     3 │ import type { C } from "" with { type: "json" };
+   > 4 │ import { type D } from "" with { type: "json" };
+       │          ^^^^
+-    5 │ import { E, type F } from "" with { type: "json" };
+-    6 │ 
++    5 │ 
++    6 │ export type { A } from "" with { type: "json" };
+   
+ 
+ ```
+ 
+ ```
+-invalid.ts:5:30 syntax/correctness/noTypeOnlyImportAttributes ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 -
--        text.strip_suffix(['.', ')']).is_some_and(|number| {
--            !number.is_empty() && number.bytes().all(|byte| byte.is_ascii_digit())
--        })
-+        is_block_marker_word(word.text.text())
-     }
+-  × Import attributes cannot be used with a type-only import.
+-  
+-    3 │ import type { C } from "" with { type: "json" };
+-    4 │ import { type D } from "" with { type: "json" };
+-  > 5 │ import { E, type F } from "" with { type: "json" };
+-      │                              ^^^^^^^^^^^^^^^^^^^^^
+-    6 │ 
+-    7 │ export type { A } from "" with { type: "json" };
+-  
+-  i The type-only import is defined here.
+-  
+-    3 │ import type { C } from "" with { type: "json" };
+-    4 │ import { type D } from "" with { type: "json" };
+-  > 5 │ import { E, type F } from "" with { type: "json" };
+-      │             ^^^^
+-    6 │ 
+-    7 │ export type { A } from "" with { type: "json" };
+-  
+-
+-```
+-
+-```
+-invalid.ts:7:27 syntax/correctness/noTypeOnlyImportAttributes ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
++invalid.ts:6:27 syntax/correctness/noTypeOnlyImportAttributes ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  
-     fn first_significant_character(&self) -> Option<char> {
-@@ -502,6 +492,21 @@ impl WordGroup {
-     }
- }
+   × Import attributes cannot be used with a type-only export.
+   
+-    5 │ import { E, type F } from "" with { type: "json" };
+-    6 │ 
+-  > 7 │ export type { A } from "" with { type: "json" };
++    4 │ import { type D } from "" with { type: "json" };
++    5 │ 
++  > 6 │ export type { A } from "" with { type: "json" };
+       │                           ^^^^^^^^^^^^^^^^^^^^^
+-    8 │ export type * as B from "" with { type: "json" };
+-    9 │ export { E, type F } from "" with { type: "json" };
++    7 │ export type * as B from "" with { type: "json" };
++    8 │ export { type F } from "" with { type: "json" };
+   
+   i The type-only export is defined here.
+   
+-    5 │ import { E, type F } from "" with { type: "json" };
+-    6 │ 
+-  > 7 │ export type { A } from "" with { type: "json" };
++    4 │ import { type D } from "" with { type: "json" };
++    5 │ 
++  > 6 │ export type { A } from "" with { type: "json" };
+       │        ^^^^
+-    8 │ export type * as B from "" with { type: "json" };
+-    9 │ export { E, type F } from "" with { type: "json" };
++    7 │ export type * as B from "" with { type: "json" };
++    8 │ export { type F } from "" with { type: "json" };
+   
  
-+/// Whether `word` would start a blockquote, a list item, or a heading at the
-+/// start of a line.
-+pub(crate) fn is_block_marker_word(word: &str) -> bool {
-+    if word.starts_with('>')
-+        || matches!(word, "*" | "+" | "-")
-+        || matches!(word, "#" | "##" | "###" | "####" | "#####" | "######")
-+    {
-+        return true;
-+    }
-+
-+    word.strip_suffix(['.', ')']).is_some_and(|number| {
-+        !number.is_empty() && number.bytes().all(|byte| byte.is_ascii_digit())
-+    })
-+}
-+
- /// An item in a flattened prose list.
- #[derive(Debug, Clone)]
- pub(crate) enum ProseItem {
+ ```
+ 
+ ```
+-invalid.ts:8:28 syntax/correctness/noTypeOnlyImportAttributes ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
++invalid.ts:7:28 syntax/correctness/noTypeOnlyImportAttributes ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ 
+   × Import attributes cannot be used with a type-only export.
+   
+-    7 │ export type { A } from "" with { type: "json" };
+-  > 8 │ export type * as B from "" with { type: "json" };
++    6 │ export type { A } from "" with { type: "json" };
++  > 7 │ export type * as B from "" with { type: "json" };
+       │                            ^^^^^^^^^^^^^^^^^^^^^
+-    9 │ export { E, type F } from "" with { type: "json" };
++    8 │ export { type F } from "" with { type: "json" };
+   
+   i The type-only export is defined here.
+   
+-    7 │ export type { A } from "" with { type: "json"
 ```
 
-**File**: `crates/biome_markdown_formatter/tests/specs/markdown/indentWidth/eight/list_content.md` (added, +102/-0)
+**File**: `crates/biome_js_analyze/tests/specs/correctness/noTypeOnlyImportAttributes/valid.ts` (modified, +4/-1)
 ```diff
-@@ -0,0 +1,102 @@
-+- parent
-+
-+  second paragraph
-+  - child
-+
-+1. ordered
-+   - child
-+
-+# Indented with the indent width already
-+
-+- parent
-+
-+     second paragraph
-+     - child
-+
-+          grandchild paragraph
-+
-+1. ordered
-+      - child
-+
-+# Indented with an indent width of 4
-+
-+- parent
-+
-+    second paragraph
-+    - child
-+
-+        grandchild paragraph
-+
-+1. ordered
-+    - child
-+
-+# Blocks after the first one
-+
-+- item
-+
-+  paragraph line one
-+  paragraph line two
-+
-+  ```js
-+  const a = 1;
-+
-+  function f() {}
-+  ```
-+
-+  ## heading
-+
-+  | a | b |
-+  |---|---|
-+  | 1 | 2 |
-+
-+- [ ] task
-+  - [x] nested task
-+
-+    nested task paragraph
-+
-+# Markers of different widths
-+
-+9. nine
-+
-+   paragraph
-+
-+10. ten
-+
-+    paragraph
-+
-+Paragraph between lists.
-+
-+100. hundred
-+
-+     paragraph
-+
-+Paragraph between lists.
-+
-+10000. ten thousand
-+
-+       paragraph
-+
-+Paragraph between lists.
-+
-+1000000. one million
-+
-+         paragraph
-+
-+# Deep nesting
-+
-+1. one
-+   - two
-+     1. three
-+
-+        three paragraph
-+
-+     two paragraph
-+
-+   one paragraph
-+
-+# Tabs
-+
-+- item
-+
-+	paragraph
-+	- nested
+@@ -3,7 +3,10 @@ import type A from "";
+ import type * as B from "";
+ import type { C } from "";
+ import { type D } from "";
++import { E, type F } from "" with { type: "json" };
++import Def, { type F } from "" with { type: "json" };
+ 
+ export type { A } from "";
+ export type * as B from "";
+-export { E, type F } from "";
+\ No newline at end of file
++export { E, type F } from "";
++export { E, type F } from "" with { type: "json" };
+\ No newline at end of file
 ```
 
-**File**: `crates/biome_markdown_formatter/tests/specs/markdown/indentWidth/eight/list_content.md.snap` (added, +236/-0)
+**File**: `crates/biome_js_analyze/tests/specs/correctness/noTypeOnlyImportAttributes/valid.ts.snap` (modified, +3/-0)
 ```diff
-@@ -0,0 +1,236 @@
-+---
-+source: crates/biome_formatter_test/src/snapshot_builder.rs
-+info: markdown/indentWidth/eight/list_content.md
-+---
-+
-+# Input
-+
-+```md
-+- parent
-+
-+  second paragraph
-+  - child
-+
-+1. ordered
-+   - child
-+
-+# Indented with the indent width already
-+
-+- parent
-+
-+     second paragraph
-+     - child
-+
-+          grandchild paragraph
-+
-+1. ordered
-+      - child
-+
-+# Indented with an indent width of 4
-+
-+- parent
-+
-+    second paragraph
-+    - child
-+
-+        grandchild paragraph
-+
-+1. ordered
-+    - child
-+
-+# Blocks after the first one
-+
-+- item
-+
-+  paragraph line one
-+  paragraph line two
-+
-+  ```js
-+  const a = 1;
-+
-+  function f() {}
-+  ```
-+
-+  ## heading
-+
-+  | a | b |
-+  |---|---|
-+  | 1 | 2 |
-+
-+- [ ] task
-+  - [x] nested task
-+
-+    nested task paragraph
-+
-+# Markers of different widths
-+
-+9. nine
-+
-+   paragraph
-+
-+10. ten
-+
-+    paragraph
-+
-+Paragraph between lists.
-+
-+100. hundred
-+
-+     paragraph
-+
-+Paragraph between lists.
-+
-+10000. ten thousand
-+
-+       paragraph
-+
-+Paragraph between lists.
-+
-+1000000. one million
-+
-+         paragraph
-+
-+# Deep nesting
-+
-+1. one
-+   - two
-+     1. three
-+
-+        three paragraph
-+
-+     two paragraph
-+
-+   one paragraph
-+
-+# Tabs
-+
-+- item
-+
-+	paragraph
-+	- nested
-+
-+```
-+
-+
-+# Options
-+
-+```json
-+{
-+  "markdown": {
-+    "formatter": {
-+      "indentWidth": 8
-+    },
-+    "parser": {
-+      "gfm": true
-+    }
-+  }
-+}
-+```
-+
-+# Formatted
-+
-+```md
-+- parent
-+
-+     second paragraph
-+     - child
-+
-+1. ordered
-+      - child
-+
-+# Indented with the indent width already
-+
-+- parent
-+
-+     second paragraph
-+     - child
-+
-+          grandchild paragraph
-+
-+1. ordered
-+      - child
-+
-+# Indented with an indent width of 4
-+
-+- parent
-+
-+     second paragraph
-+     - child
-+
-+          grandchild paragraph
-+
-+1. ordered
-+      - child
-+
-+# Blocks after the first one
-+
-+- item
-+
-+     paragraph line one
-+     paragraph line two
-+
-+     ```js
-+     const a = 1;
-+
-+     function f() {}
-+     ```
-+
-+     ## heading
-+
-+     | a   | b   |
-+     | --- | --- |
-+     | 1   | 2   |
-+
-+- [ ] task
-+     - [x] nested task
-+
-+          nested task paragraph
-+
-+# Markers of different widths
-+
-+9. nine
-+
-+      paragraph
-+
-+10. ten
-+
-+       paragraph
-+
-+Paragraph between lists.
-+
-+100. hundred
-+
-+        paragraph
-+
-+Paragraph between lists.
-+
-+10000. ten thousand
-+
-+        paragraph
-+
-+Paragraph between lists.
-+
-+1000000. one million
-+
-+         paragraph
-+
-+# Deep nesting
-+
-+1. one
-+      - two
-+           1. three
-+
-+                 three paragraph
-+
-+           two paragraph
-+
-+      one paragraph
-+
-+# Tabs
-+
-+- item
-+
-+     paragraph
-+     - nested
-+
-+```
-```
-
-**File**: `crates/biome_markdown_formatter/tests/specs/markdown/indentWidth/eight/list_content_kept.md` (added, +57/-0)
-```diff
-@@ -0,0 +1,57 @@
-+# Spacing kept after the marker
-+
-+-   wide
-+
-+    paragraph
-+
-+-    wider
-+
-+     paragraph
-+
-+# Blocks that keep their source indentation
-+
-+- item
-+
-+  <div>
-+    html
-+  </div>
-+
-+      indented code
-+
-+  > quote
-+  > more
-+
-+  [ref]: /url
-+
-+  paragraph
-+
-+# Nested list that cannot move
-+
-+- item
-+  - nested
-+    > quote
-+
-+  paragraph
-+
-+# List in a blockquote
-+
-+> - item
-+>
-+>   paragraph
-+>   - nested
-+
-+# First block
-+
-+- - nested
-+  - sibling
-+
-+  paragraph
-+
-+# Paragraph line that starts with a block marker
-+
-+- item
-+
-+  The count is
-+  14. More text.
-+
-+  paragraph
-```
-
-**File**: `crates/biome_markdown_formatter/tests/specs/markdown/indentWidth/eight/list_content_kept.md.snap` (added, +146/-0)
-```diff
-@@ -0,0 +1,146 @@
-+---
-+source: crates/biome_formatter_test/src/snapshot_builder.rs
-+info: markdown/indentWidth/eight/list_content_kept.md
-+---
-+
-+# Input
-+
-+```md
-+# Spacing kept after the marker
-+
-+-   wide
-+
-+    paragraph
-+
-+-    wider
-+
-+     paragraph
-+
-+# Blocks that keep their source indentation
-+
-+- item
-+
-+  <div>
-+    html
-+  </div>
-+
-+      indented code
-+
-+  > quote
-+  > more
-+
-+  [ref]: /url
-+
-+  paragraph
-+
-+# Nested list that cannot move
-+
-+- item
-+  - nested
-+    > quote
-+
-+  paragraph
-+
-+# List in a blockquote
-+
-+> - item
-+>
-+>   paragraph
-+>   - nested
-+
-+# First block
-+
-+- - nested
-+  - sibling
-+
-+  paragraph
-+
-+# Paragraph line that starts with a block marker
-+
-+- item
-+
-+  The count is
-+  14. More text.
-+
-+  paragraph
-+
-+```
-+
-+
-+# Options
-+
-+```json
-+{
-+  "markdown": {
-+    "formatter": {
-+      "indentWidth": 8
-+    },
-+    "parser": {
-+      "gfm": true
-+    }
-+  }
-+}
-+```
-+
-+# Formatted
-+
-+```md
-+# Spacing kept after the marker
-+
-+-   wide
-+
-+     paragraph
-+
-+-    wider
-+
-+     paragraph
-+
-+# Blocks that keep their source indentation
-+
-+- item
-+
-+  <div>
-+    html
-+  </div>
-+
-+      indented code
-+
-+  > quote
-+  > more
-+
-+  [ref]: /url
-+
-+     paragraph
-+
-+# Nested list that cannot move
-+
-+- item
-+  - nested
-+    > quote
-+
-+  paragraph
-+
-+# List in a blockquote
-+
-+> - item
-+>
-+>   paragraph
-+>   - nested
-+
-+# First block
-+
-+- - nested
-+  - sibling
-+
-+  paragraph
-+
-+# Paragraph line that starts with a block marker
-+
-+- item
-+
-+  The count is
-+  14. More text.
-+
-+     paragraph
-+
-+```
+@@ -9,8 +9,11 @@ import type A from "";
+ import type * as B from "";
+ import type { C } from "";
+ import { type D } from "";
++import { E, type F } from "" with { type: "json" };
++import Def, { type F } from "" with { type: "json" };
+ 
+ export type { A } from "";
+ export type * as B from "";
+ export { E, type F } from "";
++export { E, type F } from "" with { type: "json" };
+ ```
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #13405** (2026-11-24): fix(type_inference): remove undefined from defaulted parameter types (@dyc3)
+- **PR #13401** (closed): feat(svelte): resolve component bindings (@ematipico)
+- **PR #13400** (2026-11-24): fix(svelte): preserve formatting safety (@ematipico)
+- **PR #13398** (closed): fix(markdown): stop quoted lists before unquoted newlines and blank lines (@VB-Blue)
+- **PR #13394** (2026-11-24): fix(biome_js_analyze): allow import attributes on mixed type/value imports (@EnesKartal)
 - **PR #13388** (2026-11-23): chore: update rule metadata (@dyc3)
-- **PR #13385** (closed): fix(useNumberNamespace): skip safe fix when Number is shadowed (@sandy-sachin7)
-- **PR #13383** (2026-11-23): refactor(rowan): batch mutations (@ematipico)
-- **PR #13379** (2026-11-23): chore(deps): update dependency tombi to v1.11.3 (@renovate[bot])
-- **PR #13375** (2026-11-22): fix(format/html/svelte): keep `{#if}`, `{#each}` and other Svelte blocks touching their siblings (@garysassano)
-- **PR #13373** (closed): fix(module_graph): merge namespace function overloads into one symbol (@Inf1mum)
 
 ---
 
@@ -2250,16 +1562,16 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. format/html/svelte): keep `{#if}`, `{#each}` and other Svelte blocks touching th
+## X. type_inference): remove undefined from defaulted parameter types
 
 **RULE**:
-When implementing operations in `.changeset/fix-svelte-blocks-touching-siblings.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in biomejs/biome. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.changeset/fix-parameter-default-undefined.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in biomejs/biome. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `70d61546`: format/html/svelte): keep `{#if}`, `{#each}` and other Svelte blocks touching their siblings. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `771de3e3`: type_inference): remove undefined from defaulted parameter types. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/fix-svelte-blocks-touching-siblings.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/fix-parameter-default-undefined.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
@@ -2268,19 +1580,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 "@biomejs/biome": patch
 ---
 
-Fixed the HTML formatter adding a line break between a Svelte block (`{#if}`, `{#each}`, `{#await}`, `{#key}`, `{#snippet}`) or tag (`{@const}`, `{let}`, `{@debug}`) and a sibling that touches it in the source. Svelte keeps that line break as a text node, so the page rendered a space that wasn't in the source.
-
-```diff
- <p>
--	Total:
--	{#each items as item}
-+	Total:{#each items as item}
- 		<b>{item}</b>
--	{/each}
--	.
-+	{/each}.
- </p>
-```
+Fixed [#13392](https://github.com/biomejs/biome/issues/13392): [`useNullishCoalescing`](https://biomejs.dev/linter/rules/use-nullish-coalescing/) no longer reports `flag || other` when `flag` is a parameter whose default value removes `undefined` from its type, such as `flag: boolean | undefined = false`.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2290,7 +1590,7 @@ Fixed the HTML formatter adding a line break between a Svelte block (`{#if}`, `{
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `70d61546` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `771de3e3` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

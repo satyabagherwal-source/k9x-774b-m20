@@ -4,22 +4,22 @@
 {
   "source_repository": "lioensky/VCPToolBox",
   "source_url": "https://github.com/lioensky/VCPToolBox",
-  "source_version": "5ca56f3b",
+  "source_version": "c4762817",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-24T06:11:24.506Z",
+  "timestamp": "2026-11-25T01:44:32.285Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-lioensky-vcptoolbox",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [lioensky/VCPToolBox](https://github.com/lioensky/VCPToolBox) (Revision: `5ca56f3b`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-24T06:11:24.506Z`  
+> **Provenance**: Harvested from [lioensky/VCPToolBox](https://github.com/lioensky/VCPToolBox) (Revision: `c4762817`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-25T01:44:32.285Z`  
 > **Learning ID**: `learn-github-lioensky-vcptoolbox`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `lioensky/VCPToolBox` (Commit: `5ca56f3b`)
+- **Target Repository**: `lioensky/VCPToolBox` (Commit: `c4762817`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/lioensky/VCPToolBox](https://github.com/lioensky/VCPToolBox))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T06:11:22.574Z  
+> **Harvest Timestamp**: 2026-11-25T01:44:30.895Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1796,11 +1796,14 @@ export function useDashboardLayoutV2(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #637** (2026-11-23): ** 为 VCPTimeLine 增加模型请求超时和分阶段诊断**
-  *Symptoms*: ## 改动 - 为 VCPTimeLine 单次模型请求增加默认 120 秒的超时，覆盖等待响应头和读取响应正文。超时中止插件侧请求，生成任务沿用现有失败和解锁流程。 - 沿用 ToolBox 的上游请求与重试机制，为普通非流式请求增加诊断 ID，关联上游响应头、正文读取和本地响应结束日志。 - 诊断 ID 不转发给上游，不改变现有请求 ID 的取消和重放语义；新增诊断日志不记录请求正文或凭据。  ## 验证 - 本机模拟上游正文卡住：超时 ID 能关联到正文读取阶段，生成锁释放，同一 Agent 可重试。 - 日用 ToolBox 对照：失效模型三次返回 HTTP 503，可用模型首次返回 HTTP 200；两路日志均可关联，生成锁均已释放。 - 未复现真实上游超时，也未验证插件断开后上游是否停止计算。阶段日志不把等待响应头归因为排队或模型生成慢。  本 PR 独立于自动巡检 PR #635。 
+- **Issue #640** (2026-11-24): **feat(tdb): 升级 triviumdb 至 0.9.3 原生双曲版本并接入 Pelorus 检索入口**
+  *Symptoms*: ### 动机与背景 1. 上游 `triviumdb` 已发布 `0.9.3` 正式版，引入固定曲率 Poincaré 开球流形上的原生双曲近似最近邻检索引擎 **Pelorus**（`arXiv:2611.22159`）以及统一索引容器格式（Main Format 15 / `.idx` Container Format 1）。 2. 自 `0.9.2+` 起，TriviumDB 内核实施单格式准入（Format 15），遇到旧代际格式（Format 5–14）时不再于运行态隐式改写，而是返回结构化错误码 `TDB_MIGRATION_REQUIRED` 并交由外部离线迁移工具处理。此前 `TDBKnowledge.js` 的 `_openTriviumDb` 在包装异常时丢失了原生 `error.code` 与 `error.details`。  ### 架构与解决方案 1. **依赖升级 (`package.json` / `package-lock.json`)**：将 `triviumdb` 升级至 `^0.9.3` 稳定通道。 2. **Fail-Closed 错误码透传与离线迁移指引 (`TDBKnowledge.js`)**：在 `_openTriviumDb` 保持运行态零隐式改库的前提下，完整透传原生 `error.code` 与 `error.details`；当捕获 `TDB_MIGRATION_REQUIRED` 时附加离线执行 `scripts/migrate.py` 的明确提示。 3. **原生双曲检索与建图队列安全入口 (`TDBKnowledge.js`)**：新增与 `queryTql`、`subgraph` 对称的 `pelorusRequest(library, request)` 方法，受单库串行队列 `_withLibraryQueue` 与 `_beginLibraryUse / _endLibraryUse` 引用计数保护，支持通过 JSON 协议调用 `build / configure / search / search_batch`。  ### 测试与验证结果 - 更新 `tests/tdbKnowledge085.test.js`：覆盖 Format 15（110 字节主头 + `.tdb.idx` 统一索引容器 `TDBINDEX` 魔数）磁盘校验、Pelorus 原生双曲索引构建（`curvature: 0.25, navigation: 'geometry_bq2'`）与 Poincaré 测地距离 Top-K 检索校验，13 项集成断言全部通过。 - 运行 `tests/tdbKnowledgeWatcher.test.js`：Rust 原生 `VexusWatcher` 事件监听与生命周期回归测试通过。 - 本地 23 座冷知识库（3072 维，总计 32,339 个节点）经离线迁移至 Format 15 后，在 `c = 0.5` 下构建 Pelorus 双曲索引并实测双曲检索全部通过。 
 
-- **Issue #636** (2026-11-23): **fix(distributed): allow reconnect tool takeover and terminate stale ws connections**
-  *Symptoms*: ## 问题与复现  分布式节点在公网或 NAT 闪断后重新连接时，旧 TCP 连接可能半开，服务端暂时收不到关闭事件。本次故障观察到旧连接残留约 15–16 分钟。新连接在旧连接关闭前发送 `register_tools`，同名工具因为 `conflicts with an existing tool` 被略过，工具调用继续指向失联连接。  复现时先让旧节点注册工具，模拟链路断开且服务端收不到 FIN/RST，再让节点建立一条新连接并注册同名工具。  ## 改动与兼容性  ```text 新连接注册同名分布式工具 → 工具归属更新为新 serverId 旧连接漏回一轮心跳      → terminate → 注销旧连接工具并拒绝挂起请求 ```  - 只有 `isDistributed === true` 的同名条目可接管。本地插件受保护，旧连接关闭时按当前 `serverId` 注销。注册时浅拷贝 manifest，保留显示名的字符串转换并避免重复添加 `[云端] `。 - 开启 `WEBSOCKET_HEARTBEAT_ENABLED` 后，WebSocket `pong` 和普通消息都会标记连接存活。下一轮检查发现仍无响应时终止连接。即使工具注销抛错，连接表和挂起请求也会继续清理。 - 保留心跳开关及默认 60 秒周期。`WebSocketServer.initialize()` 支持传入 `heartbeatIntervalMs`，无效值回退至默认值。WebSocket 消息格式和节点注册协议沿用现有定义。  ## 验证  - 对照上游 `main` 运行新增测试，复现同名工具仍指向旧 `serverId`，静默连接及挂起请求未在测试窗口内清理。 - 修复后 6 项通过，进程以状态码 0 退出。覆盖接管、旧连接注销、本地插件保护、`pong` 和普通消息保活、静默连接及注销异常下的请求清理，以及既有取消和结果归属检查。  ```bash node --check Plugin.js && node --check WebSocketServer.js NODE_PATH=/home/debian/VCPToolBox/node_modules node --test tests/distributedReconnectAndHeartbeat.test.js tests/distributedToolCancellation.test.js ```  ## 回滚  可通过 revert 回退提交，涉及分布式工具注册和启用心跳的 WebSocket 连接。 
+- **Issue #639** (2026-11-24): **fix(vcpLoop): intercept hallucinated tool payload turn-bleed and support guillemet fuzzy delimiters**
+  *Symptoms*: ## 背景与复现问题  在多轮工具循环（特别是长工具调用输出场景，如 Gemini 4 系列）中，通过 `调试用服务器` 抓包确认 VCP 出站 `messages` 本身完全干净，但模型在闭合 `<<<[END_TOOL_REQUEST]>>>` 后偶发漏吐 `<end_of_turn>`，引发两类连环问题：  1. **跨轮次续写（Turn-Bleed）伪造工具回灌与抢跑假调用**    - 模型在正文里直接续写出底层模板的 `user\n<!-- VCP_TOOL_PAYLOAD -->\nResults:\n...`，并继续自导自演后续多轮 `<<<[TOOL_REQUEST]>>>`（甚至伪造 `WaitTask` 等后续调用）。    - 因为现有防护只覆盖 `<think>` / 无头 `</think>` / 元思考链与原生 FC，未覆盖正文中的伪造工具回灌哨兵，导致：      - 假回执直接流式输出给前端（HTML 注释隐藏后表现为 `user\nResults:`）；      - `ToolCallParser.parse()` 把后续戏精假调用与真实调用一起并发执行；      - 带毒的 `assistant` 回复落入历史后，在后续轮次形成 few-shot 滚雪球复发。 2. **长参数末尾法文书名号定界符误写**    - 长 `task` 参数末尾偶尔将 `「末」` 误写为 `«末»` / `「末»`，现有 `ToolMarkerFuzzyMatcher` 仅覆盖 `[「{]` / `[」}]`，导致整段参数被丢弃并反复重试。  ## 修改内容  1. **解析层语境截断（`modules/vcpLoop/toolCallParser.js`）**    - 新增 `findHallucinatedToolPayloadCut()` / `truncateHallucinatedToolPayload()`，仅在**已闭合至少 1 个合法工具块之后**，且位于**工具块外、非 `<think>` 块、非代码围栏**的正文中出现行首回灌哨兵（`<!-- VCP_TOOL_PAYLOAD -->`、`<<<[VCP_TOOL_BATCH_START:`、`[[VCP调用结果信息汇总:`，或紧贴工具块后的 `user\nResults:`）时返回截断点。    - `ToolCallParser.parse()` 先截断再提取，确保只执行哨兵之前的真实工具调用，同时保证并发多工具、自指编辑 VCP 源码（如 `ApplyDiff` 改 `toolResultBatch.js`）、代码块引用与普通正文零误杀。 2. **流式实时熔断与尾窗隐藏（`modules/handlers/streamHandler.js`）**    - 复用 `takeToolTail()` 同款接管思路，新增 `takeHallucinatedToolPayload()` + 64 字符尾窗缓冲（`pendingClientOutputs`）。    - 跨 chunk 拆分 `\nuser\n` 与 `<!-- VCP_TOOL_PAYLOAD -->` 时，孤立 `user` 不会闪到前端；一旦命中哨兵立刻丢弃缓冲、截断内容、销毁上游流并无缝切入 `ToolLoop` 执行真实工具；正常输出与流结束时按序无损 flush。 3. **非流式同步截断（`modules/handlers/nonStreamHandler.js`）**   
+  **Post-Mortem & Fix Analysis**:
+  > 误伤面比较大，建议： 1. 位置紧邻性（换行阈值）：真正的漏吐 <end_of_turn> 续写，通常紧贴在 <<<[END_TOOL_REQUEST]>>> 闭合点之后（顶多隔着一个 \n），一般不会在正常聊了几百字正文或隔了一段代码块之后突然开始 Turn-Bleed 2. 符号头与文本头特征（有限黑名单 + < 白名单）：紧接在 <<<[END_TOOL_REQUEST]>>>\n? 之后的伪造回执，开头通常是两类固定前缀——要么是协议包装符 [ / 【 / {（如 [[VCP调用结果、【工具返回批次、JSON 回执），要么是裸 user\n<!--！而对于 < 开头的后续字符，可用白名单放行合法的 <think> / <<<[TOOL_REQUEST]>>>（并发多工具）与合法 HTML 容器。 总之暂不予merge
+  > 需要注意的是有时候ai会先输出反括号再输出正括号（分词器）的问题 ，也就是 [ / 【 / {（ 的反例。
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1817,1199 +1820,214 @@ export function useDashboardLayoutV2(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5ca56f3b` (2026-11-23)
-**Commit Message**: Merge pull request #637 from Skmt617/timeline/model-timeout-diagnostics
+### Incident Patch 1: `c4762817` (2026-11-24)
+**Commit Message**: Merge pull request #640 from infinite-vector/feat/tdb-093-pelorus
 
- 为 VCPTimeLine 增加模型请求超时和分阶段诊断
+feat(tdb): 升级 triviumdb 至 0.9.3 原生双曲版本并接入 Pelorus 检索入口
 
-**File**: `Plugin/VCPTimeLine/VCPTimeLine.js` (modified, +44/-21)
+**File**: `TDBKnowledge.js` (modified, +26/-1)
 ```diff
-@@ -3,7 +3,7 @@
- const fs = require('fs');
- const fsp = fs.promises;
- const path = require('path');
--const { createHash } = require('crypto');
-+const { createHash, randomUUID } = require('node:crypto');
- 
- const DAY_MS = 86400000;
- const DEFAULT_AUTO_SYNC = Object.freeze({
-@@ -28,6 +28,7 @@ const DEFAULT_CONFIG = Object.freeze({
-     defaultExpandK: 3,
-     defaultThreshold: 0.5,
-     model: '',
-+    modelTimeoutMs: 120000,
-     maxContextTokens: 60000,
-     maxOutputTokens: 4000,
-     maxConcurrentTasks: 3,
-@@ -84,6 +85,7 @@ class VCPTimeLine {
-             defaultExpandK: this.normalizePositiveInteger(raw.defaultExpandK, DEFAULT_CONFIG.defaultExpandK, 1, 100),
-             defaultThreshold: this.normalizeThreshold(raw.defaultThreshold, DEFAULT_CONFIG.defaultThreshold),
-             model: String(raw.model || '').trim(),
-+            modelTimeoutMs: this.normalizePositiveInteger(raw.modelTimeoutMs ?? DEFAULT_CONFIG.modelTimeoutMs, DEFAULT_CONFIG.modelTimeoutMs, 100, 600000),
-             maxContextTokens: this.normalizePositiveInteger(raw.maxContextTokens, DEFAULT_CONFIG.maxContextTokens, 1024),
-             maxOutputTokens: this.normalizePositiveInteger(raw.maxOutputTokens, DEFAULT_CONFIG.maxOutputTokens, 128),
-             maxConcurrentTasks: this.normalizePositiveInteger(raw.maxConcurrentTasks, DEFAULT_CONFIG.maxConcurrentTasks, 1, 20),
-@@ -311,7 +313,11 @@ class VCPTimeLine {
- 
-     async saveConfig(raw) {
-         // Older admin clients send only the fields displayed in their form.
--        const config = this.normalizeConfig({ autoSync: this.config.autoSync, ...raw });
-+        const config = this.normalizeConfig({
-+            autoSync: this.config.autoSync,
-+            modelTimeoutMs: this.config.modelTimeoutMs,
-+            ...raw
-+        });
-         await this.writeJsonAtomic(this.getConfigPath(), config);
-         this.config = config;
-         return config;
-@@ -691,25 +697,42 @@ class VCPTimeLine {
-         if (!key) throw new Error('服务器 Key 未配置');
-         if (!this.config.model) throw new Error('VCPTimeLine 模型未配置');
-         const { default: fetch } = await import('node-fetch');
--        const response = await fetch(`http://127.0.0.1:${port}/v1/chat/completions`, {
--            method: 'POST',
--            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${key}` },
--            body: JSON.stringify({
--                model: this.config.model,
--                stream: false,
--                max_tokens: maxTokens,
--                messages: [
--                    { role: 'system', content: systemPrompt },
--                    { role: 'user', content: userPrompt }
--                ]
--            })
--        });
--        const text = await response.text();
--        if (!response.ok) throw new Error(`模型返回 ${response.status}: ${text.slice(0, 500)}`);
--        const payload = JSON.parse(text);
--        const output = payload?.choices?.[0]?.message?.content;
--        if (typeof output !== 'string' || !output.trim()) throw new Error('模型未返回有效内容');
--        return output.trim();
-+        const traceId = randomUUID();
-+        const timeoutMs = this.config.modelTimeoutMs;
-+        const controller = new AbortController();
-+        const timer = setTimeout(() => controller.abort(), timeoutMs);
-+        let stage = 'response_headers';
-+        try {
-+            const response = await fetch(`http://127.0.0.1:${port}/v1/chat/completions`, {
-+                method: 'POST',
-+                signal: controller.signal,
-+                headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${key}`, 'X-VCP-Timeline-Trace': traceId },
-+                body: JSON.stringify({
-+                    model: this.config.model,
-+                    stream: false,
-+                    max_tokens: maxTokens,
-+                    messages: [
-+                        { role: 'system', content: systemPrompt },
-+                        { role: 'user', content: userPrompt }
-+                    ]
-+                })
-+            });
-+            stage = 'response_body';
-+            const text = await response.text();
-+            if (!response.ok) throw new Error(`模型返回 ${response.status}: ${text.slice(0, 500)}`);
-+            const payload = JSON.parse(text);
-+            const output = payload?.choices?.[0]?.message?.content;
-+            if (typeof output !== 'string' || !output.trim()) throw new Error('模型未返回有效内容');
-+            return output.trim();
-+        } catch (error) {
-+            if (!controller.signal.aborted) throw error;
-+            const waitingFor = stage === 'response_headers' ? '等待 ToolBox 响应头' : '读取 ToolBox 响应正文';
-+            throw Object.assign(new Error(`VCPTimeLine 模型请求超时（${timeoutMs} ms，${waitingFor}；诊断 ID：${traceId}）`, { cause: error }), {
-+                code: 'TIMELINE_MODEL_TIMEOUT'
-+            });
-+        } finally {
-+            clearTimeout(timer);
-+        }
-     }
- 
-     async summarizeMonth(agentName, month, memories) {
-```
-
-**File**: `modules/chatCompletionHandler.js` (modified, +40/-1)
-```diff
-@@ -415,12 +415,32 @@ function applyModelFallbackForAttempt(options, candidates, attemptIndex, debugMo
-   }
- }
- 
-+// Timeline diagnostics are local-only and independent of request replay/interrupt IDs.
-+function createTimelineTrace(req, res) {
-+  const id = req.headers['x-vcp-timeline-trace'];
-+  const loopback = ['127.0.0.1', '::1', '::ffff:127.0.0.1'].includes(req.socket?.remoteAddress);
-+  if (!loopback || req.body?.stream !== false || typeof id !== 'string'
-+      || !/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id)) return null;
-+
-+  const started = performance.now();
-+  const emit = (stage, fields) => console.info('[VCPTimeLineTrace]', JSON.stringify({
-+    id, stage, elapsedMs: Math.round(performance.now() - started), ...fields
-+  }));
-+  let sequence = 0;
-+  res.once('finish', () => emit('toolbox_response_finished', { status: res.statusCode }));
-+  res.once('close', () => {
-+    if (!res.writableFinished) emit('toolbox_response_closed_early');
-+  });
-+  emit('toolbox_handler_entered');
-+  return { emit, nextAttempt: () => ++sequence, responses: new WeakMap() };
-+}
-+
- // A helper function to handle fetch with retries for specific status codes
- // connectionTimeout: 连接超时安全网，防止上游 API 静默挂起导致永久等待（仅覆盖到收到响应头为止）
- async function fetchWithRetry(
-   url,
-   options,
--  { retries = 3, delay = 1000, debugMode = false, onRetry = null, connectionTimeout = 900000, modelFallbackCandidates = null } = {},
-+  { retries = 3, delay = 1000, debugMode = false, onRetry = null, connectionTimeout = 900000, modelFallbackCandidates = null, timelineTrace } = {},
- ) {
-   const { default: fetch } = await import('node-fetch');
-   const maxAttempts = Math.max(
-@@ -431,6 +451,7 @@ async function fetchWithRetry(
-     // 为每次尝试创建独立的中止控制器，用于超时保护
-     const attemptController = new AbortController();
-     let didTimeout = false;
-+    let attempt;
-     const externalSignal = options.signal;
- 
-     // 将外部中止信号转发给本次尝试的控制器
-@@ -458,12 +479,18 @@ async function fetchWithRetry(
-       const attemptOptions = isolateNativeToolRequestOptions(
-         applyModelFallbackForAttempt(options, modelFallbackCandidates, i, debugMode)
-       );
-+      attempt = timelineTrace?.nextAttempt();
-+      timelineTrace?.emit('upstream_fetch_started', { attempt });
-       const response = await fetch(url, {
-         ...attemptOptions,
-         agent: getFetchAgent, // 注入防御性长连接池
-         signal: attemptController.signal,
-       });
-       cleanup();
-+      if (timelineTrace) {
-+        timelineTrace.responses.set(response, attempt);
-+        timelineTrace.emit('upstream_headers_received', { attempt, status: response.status });
-+      }
- 
-       let shouldRetryStatus = response.status === 500 || response.status === 502 || response.status === 503 || response.status === 504 || response.status === 429;
-       let retryMessage = response.statusText;
-@@ -473,12 +500,15 @@ async function fetchWithRetry(
-       // 这类并非 VCP 本地 Key 配置错误，而是上游瞬时 token 异常，可安全纳入重试。
-       if (response.status === 401) {
-         try {
-+          timelineTrace?.emit('upstream_retry_body_read_started', { attempt });
-           const responseBodyText = await response.clone().text();
-+          timelineTrace?.emit('upstream_retry_body_read_finished', { attempt });
-           if (responseBodyText.toLowerCase().includes('token')) {
-             shouldRetryStatus = true;
-             retryMessage = responseBodyText || response.statusText;
-           }
-         } catch (bodyReadError) {
-+          timelineTrace?.emit('upstream_retry_body_read_failed', { attempt });
-           if (debugMode) {
-             console.warn(`[Fetch Retry] Failed to inspect 401 response body: ${bodyReadError.message}`);
-           }
-@@ -507,6 +537,12 @@ async function fetchWithRetry(
-       return response;
-     } catch (error) {
-       cleanup();
-+      if (attempt !== undefined) {
-+        const code = error?.code;
-+        const errorCode = typeof code === 'string' && /^[A-Z][A-Z0-9_]{0,63}$/.test(code) ? code : undefined;
-+        timelineTrace.emit(didTimeout ? 'upstream_headers_wait_timeout'
-+          : externalSignal?.aborted ? 'upstream_fetch_cancelled' : 'upstream_fetch_failed', { attempt, errorCode });
-+      }
- 
-       // 区分超时中止和外部中止
-       if (error.name === 'AbortError') {
-@@ -691,6 +727,7 @@ class ChatCompletionHandler {
-   }
- 
-   async handle(req, res, forceShowVCP = false) {
-+    const timelineTrace = createTimelineTrace(req, res);
-     const {
-       apiUrl,
-       apiKey,
-@@ -1285,6 +1322,7 @@ class ChatCompletionHandler {
-           debugMode: DEBUG_MODE,
-           connectionTimeout: apiConnectionTimeoutMs,
-           modelFallbackCandidates: semanticModelFallbackCandidates,
-+          timelineTrace,
-           onRetry: async (attempt, errorInfo) => {
-             if (!res.headersSent && isOriginalRequestStreaming) {
-               if (DEBUG_MODE)
-@@ -1397,6 +1435,7 @@ class ChatC
-```
-
-**File**: `modules/handlers/nonStreamHandler.js` (modified, +22/-6)
-```diff
-@@ -89,7 +89,8 @@ async function readNonStreamResponseWithSemanticRetry({
-   retries = 3,
-   delay = 1000,
-   debugMode = false,
--  label = 'non_stream'
-+  label = 'non_stream',
-+  timelineTrace
- }) {
-   const maxAttempts = Math.max(Number.isFinite(Number(retries)) && Number(retries) > 0 ? Math.floor(Number(retries)) : 1, 1);
-   let response = initialResponse;
-@@ -101,7 +102,18 @@ async function readNonStreamResponseWithSemanticRetry({
-       response = await fetchResponse(attempt);
-     }
- 
--    const arrayBuffer = await response.arrayBuffer();
-+    const upstreamAttempt = timelineTrace?.responses.get(response);
-+    timelineTrace?.emit('upstream_body_read_started', { attempt: upstreamAttempt });
-+    let arrayBuffer;
-+    try {
-+      arrayBuffer = await response.arrayBuffer();
-+      timelineTrace?.emit('upstream_body_read_finished', { attempt: upstreamAttempt });
-+    } catch (error) {
-+      const code = error?.code;
-+      const errorCode = typeof code === 'string' && /^[A-Z][A-Z0-9_]{0,63}$/.test(code) ? code : undefined;
-+      timelineTrace?.emit('upstream_body_read_failed', { attempt: upstreamAttempt, errorCode });
-+      throw error;
-+    }
-     responseText = Buffer.from(arrayBuffer).toString('utf-8');
- 
-     if (!response.ok || !isReasoningOnlyNonStreamResponse(responseText)) {
-@@ -174,6 +186,7 @@ class NonStreamHandler {
-       clientIp,
-       _refreshRagBlocksIfNeeded,
-       fetchWithRetry,
-+      timelineTrace,
-       vcpToolUseForbidden,
-       apiConnectionTimeoutMs,
-       semanticModelFallbackCandidates,
-@@ -253,7 +266,7 @@ class NonStreamHandler {
-         body: JSON.stringify(projectToolBatchForUpstream(body)),
-         signal: abortController.signal,
-       },
--      { retries: apiRetries, delay: apiRetryDelay, debugMode: DEBUG_MODE, connectionTimeout: apiConnectionTimeoutMs, modelFallbackCandidates: semanticModelFallbackCandidates }
-+      { retries: apiRetries, delay: apiRetryDelay, debugMode: DEBUG_MODE, connectionTimeout: apiConnectionTimeoutMs, modelFallbackCandidates: semanticModelFallbackCandidates, timelineTrace }
-     );
- 
-     const firstReadResult = await readNonStreamResponseWithSemanticRetry({
-@@ -262,7 +275,8 @@ class NonStreamHandler {
-       retries: apiRetries,
-       delay: apiRetryDelay,
-       debugMode: DEBUG_MODE,
--      label: 'initial'
-+      label: 'initial',
-+      timelineTrace
-     });
-     firstAiAPIResponse = firstReadResult.response;
-     const aiResponseText = firstReadResult.text;
-@@ -389,7 +403,8 @@ class NonStreamHandler {
-             retries: apiRetries,
-             delay: apiRetryDelay,
-             debugMode: DEBUG_MODE,
--            label: `archery_error_depth_${recursionDepth}`
-+            label: `archery_error_depth_${recursionDepth}`,
-+            timelineTrace
-           });
-           const recursionAiResponse = recursionReadResult.response;
- 
-@@ -513,7 +528,8 @@ class NonStreamHandler {
-           retries: apiRetries,
-           delay: apiRetryDelay,
-           debugMode: DEBUG_MODE,
--          label: `tool_loop_depth_${recursionDepth}`
-+          label: `tool_loop_depth_${recursionDepth}`,
-+          timelineTrace
-         });
-         const recursionAiResponse = recursionReadResult.response;
- 
-```
-
----
-
-### Incident Patch 2: `d9f7be7f` (2026-11-23)
-**Commit Message**: Merge upstream main into timeline model timeout diagnostics
-
-**File**: `AdminPanel-Vue/src/api/vcpTimeline.ts` (modified, +8/-0)
-```diff
-@@ -13,6 +13,14 @@ export interface VcpTimelineConfig {
-   summaryPrompt: string
-   aliases: Record<string, string[]>
-   agentFolders: Record<string, string[]>
-+  autoSync?: {
-+    enabled: boolean
-+    agents: string[]
-+    maxConcurrentAgents: number
-+    cron: string
-+    currentMonthMinIntervalDays: number
-+    runOnStartupDelayMs: number
-+  }
- }
- 
- export interface VcpTimelineStatus {
-```
-
-**File**: `AdminPanel-Vue/src/views/AgentTimeLineManager.vue` (modified, +24/-0)
-```diff
-@@ -61,6 +61,21 @@
-           <UiTextarea v-model="config.summaryPrompt" rows="3" />
-         </UiField>
-       </div>
-+      <div v-if="config.autoSync" class="config-grid">
-+        <h4 class="wide">自动巡检</h4>
-+        <label class="toggle-row">
-+          <AppCheckbox v-model="config.autoSync.enabled" />
-+          <span><strong>启用自动巡检</strong><small>仅处理当月和上月。</small></span>
-+        </label>
-+        <UiField label="巡检 Agent 名单（逗号分隔）">
-+          <UiInput v-model="autoSyncAgents" placeholder="填写 Agent 名称" />
-+        </UiField>
-+        <small class="wide">
-+          {{ config.autoSync.maxConcurrentAgents > 0
-+            ? `已保存名单最多同时巡检 ${config.autoSync.maxConcurrentAgents} 个 Agent`
-+            : '已保存名单为空，不执行巡检' }}。上限随名单自动调整，最多 3 个，不影响手动生成。保存后需重启 vcp-main 才能完整应用巡检设置。
-+        </small>
-+      </div>
-       <div class="syntax-help">
-         <span>月度总览（放系统提示词稳定区）：</span>
-         <code>[[VCPTimeLineSummary::小克]]</code>
-@@ -273,6 +288,7 @@ const defaults: VcpTimelineConfig = {
- const config = ref<VcpTimelineConfig>(structuredClone(defaults))
- const publicPrefixes = ref('公共')
- const ignoreFolders = ref('node_modules,.git')
-+const autoSyncAgents = ref('')
- const agents = ref<string[]>([])
- const selectedAgent = ref('')
- const newAgentName = ref('')
-@@ -381,6 +397,12 @@ function normalizedConfig(): VcpTimelineConfig {
-     summaryPrompt: String(config.value.summaryPrompt || '').trim(),
-     aliases: aliasesMap,
-     agentFolders: agentFoldersMap,
-+    ...(config.value.autoSync ? {
-+      autoSync: {
-+        ...config.value.autoSync,
-+        agents: [...new Set(commaList(autoSyncAgents.value))],
-+      },
-+    } : {}),
-   }
- }
- 
-@@ -455,6 +477,7 @@ async function loadAll() {
-       vcpTimelineApi.listAgents(),
-     ])
-     config.value = structuredClone(configResponse.config)
-+    autoSyncAgents.value = config.value.autoSync?.agents.join(', ') ?? ''
-     publicPrefixes.value = config.value.publicFolderPrefixes.join(',')
-     ignoreFolders.value = config.value.ignoreFolders.join(',')
-     agents.value = agentResponse.agents || []
-@@ -472,6 +495,7 @@ async function saveConfig() {
-   try {
-     const response = await vcpTimelineApi.saveConfig(normalizedConfig())
-     config.value = structuredClone(response.config)
-+    autoSyncAgents.value = config.value.autoSync?.agents.join(', ') ?? ''
-       if (selectedAgent.value) {
-         currentAliases.value = [...(config.value.aliases?.[selectedAgent.value] || [])]
-         foldersCustomized.value = Array.isArray(config.value.agentFolders?.[selectedAgent.value]) && config.value.agentFolders[selectedAgent.value].length > 0
-```
-
-**File**: `Plugin.js` (modified, +17/-9)
-```diff
-@@ -2078,20 +2078,28 @@ class PluginManager extends EventEmitter {
-                 if (this.debugMode) console.warn(`[PluginManager] Invalid manifest from ${serverId} for tool '${toolManifest.name}'. Skipping.`);
-                 continue;
-             }
--            if (this.plugins.has(toolManifest.name)) {
--                if (this.debugMode) console.warn(`[PluginManager] Distributed tool '${toolManifest.name}' from ${serverId} conflicts with an existing tool. Skipping.`);
-+            const existing = this.plugins.get(toolManifest.name);
-+            if (existing && existing.isDistributed !== true) {
-+                if (this.debugMode) console.warn(`[PluginManager] Distributed tool '${toolManifest.name}' from ${serverId} conflicts with an existing local tool. Skipping.`);
-                 continue;
-             }
-+            if (existing && existing.serverId !== serverId) {
-+                console.log(`[PluginManager] Reassigning distributed tool '${toolManifest.name}' from ${existing.serverId} to ${serverId}.`);
-+            }
- 
--            // 标记为分布式插件并存储其来源服务器ID
--            toolManifest.isDistributed = true;
--            toolManifest.serverId = serverId;
-+            // 标记为分布式插件并存储其来源服务器ID（浅拷贝避免污染原对象）
-+            const normalizedManifest = { ...toolManifest };
-+            normalizedManifest.isDistributed = true;
-+            normalizedManifest.serverId = serverId;
- 
--            // 在显示名称前加上[云端]前缀
--            toolManifest.displayName = `[云端] ${toolManifest.displayName || toolManifest.name}`;
-+            // 在显示名称前加上[云端]前缀（避免重连或重复注册时叠加前缀）
-+            const rawDisplayName = String(normalizedManifest.displayName || normalizedManifest.name);
-+            normalizedManifest.displayName = rawDisplayName.startsWith('[云端] ')
-+                ? rawDisplayName
-+                : `[云端] ${rawDisplayName}`;
- 
--            this.plugins.set(toolManifest.name, toolManifest);
--            console.log(`[PluginManager] Registered distributed tool: ${toolManifest.displayName} (${toolManifest.name}) from ${serverId}`);
-+            this.plugins.set(normalizedManifest.name, normalizedManifest);
-+            console.log(`[PluginManager] Registered distributed tool: ${normalizedManifest.displayName} (${normalizedManifest.name}) from ${serverId}`);
-         }
-         // 注册后重建描述，以包含新插件
-         this.buildVCPDescription();
-```
-
-**File**: `Plugin/VCPTimeLine/VCPTimeLine.js` (modified, +195/-19)
-```diff
-@@ -3,7 +3,20 @@
- const fs = require('fs');
- const fsp = fs.promises;
- const path = require('path');
--const { randomUUID } = require('node:crypto');
-+const { createHash, randomUUID } = require('node:crypto');
-+
-+const DAY_MS = 86400000;
-+const DEFAULT_AUTO_SYNC = Object.freeze({
-+    enabled: false,
-+    agents: Object.freeze([]),
-+    cron: '30 0 * * *',
-+    currentMonthMinIntervalDays: 7,
-+    runOnStartupDelayMs: 120000
-+});
-+
-+function hash(value) {
-+    return createHash('sha256').update(value).digest('hex');
-+}
- 
- const TimelinePlaceholderProcessor = require('../RAGDiaryPlugin/TimelinePlaceholderProcessor');
- const PLACEHOLDER_REGEX = /\[\[VCPTimeLine(Summary|Recall)?::([^:\]\r\n]+?)(?::([^:\]\r\n]+?))?(?::([^:\]\r\n]+?))?\]\]/g;
-@@ -35,6 +48,10 @@ class VCPTimeLine {
-         this.config = { ...DEFAULT_CONFIG };
-         this.generationLocks = new Map();
-         this.generationStatuses = new Map();
-+        this.summaryWrites = Promise.resolve();
-+        this.autoSyncTask = null;
-+        this.autoSyncJob = null;
-+        this.autoSyncTimer = null;
-     }
- 
-     async initialize(config = {}, dependencies = {}) {
-@@ -44,6 +61,7 @@ class VCPTimeLine {
-         this.contextBridge = dependencies.contextBridge || null;
-         this.isTimelineManagedByRag = dependencies.isTimelineManagedByRag || (() => false);
-         this.config = await this.readConfig();
-+        this.startAutoSync();
-         console.log(`[VCPTimeLine] Initialized. root=${this.dailyNoteRoot}, contextBridge=${!!this.contextBridge}`);
-     }
- 
-@@ -79,8 +97,151 @@ class VCPTimeLine {
-                 : [...DEFAULT_CONFIG.ignoreFolders],
-             summaryPrompt: String(raw.summaryPrompt || '').trim(),
-             aliases: this._normalizeStringArrayMap(raw.aliases),
--            agentFolders: this._normalizeStringArrayMap(raw.agentFolders)
-+            agentFolders: this._normalizeStringArrayMap(raw.agentFolders),
-+            autoSync: this.normalizeAutoSync(raw.autoSync)
-+        };
-+    }
-+
-+    normalizeAutoSync(raw = {}) {
-+        raw = raw || {};
-+        const agents = new Set();
-+        for (const name of Array.isArray(raw.agents) ? raw.agents : []) {
-+            try {
-+                agents.add(this.safeAgentName(name));
-+            } catch {
-+                console.warn('[VCPTimeLine] Ignoring invalid autoSync agent name');
-+            }
-+        }
-+        return {
-+            enabled: raw.enabled === true,
-+            agents: [...agents],
-+            cron: String(raw.cron || '').trim() || DEFAULT_AUTO_SYNC.cron,
-+            maxConcurrentAgents: Math.min(agents.size, 3),
-+            currentMonthMinIntervalDays: this.normalizePositiveInteger(
-+                raw.currentMonthMinIntervalDays, DEFAULT_AUTO_SYNC.currentMonthMinIntervalDays, 1, 366
-+            ),
-+            runOnStartupDelayMs: this.normalizePositiveInteger(
-+                raw.runOnStartupDelayMs, DEFAULT_AUTO_SYNC.runOnStartupDelayMs, 0, 2147483647
-+            )
-+        };
-+    }
-+
-+    startAutoSync() {
-+        if (this.autoSyncJob || !this.config.enabled || !this.config.autoSync?.enabled || !this.config.autoSync.agents.length) return;
-+        const { cron, runOnStartupDelayMs } = this.config.autoSync;
-+        const tz = process.env.DEFAULT_TIMEZONE || 'Asia/Shanghai';
-+        const run = () => {
-+            if (this.autoSyncJob) {
-+                void this.runAutoSync(new Date(), tz)
-+                    .catch(error => console.warn('[VCPTimeLine] Auto sync failed:', error.message));
-+            }
-         };
-+        try {
-+            new Intl.DateTimeFormat('en', { timeZone: tz });
-+            this.autoSyncJob = require('node-schedule').scheduleJob({ rule: cron, tz }, run);
-+            if (!this.autoSyncJob) throw new Error('无效的巡检 Cron');
-+            this.autoSyncTimer = setTimeout(run, runOnStartupDelayMs);
-+        } catch (error) {
-+            console.warn('[VCPTimeLine] Auto sync not scheduled:', error.message);
-+        }
-+    }
-+
-+    async shutdown() {
-+        clearTimeout(this.autoSyncTimer);
-+        this.autoSyncTimer = null;
-+        this.autoSyncJob?.cancel();
-+        this.autoSyncJob = null;
-+        await this.autoSyncTask?.catch(() => {});
-+        await this.summaryWrites;
-+    }
-+
-+    getAutoSyncStatePath() {
-+        return path.join(__dirname, 'auto_sync_state.json');
-+    }
-+
-+    async runAutoSync(now = new Date(), tz = process.env.DEFAULT_TIMEZONE || 'Asia/Shanghai') {
-+        const config = this.config.autoSync;
-+        if (this.autoSyncTask || !this.config.enabled || !config?.enabled) return;
-+        const task = this.syncRecentMonths(now, tz, config);
-+        this.autoSyncTask = task;
-+        try {
-+            await task;
-+        } finally {
-+            this.autoSyncTask = null;
-+        }
-+    }
-+
-+    async syncRecentMonths(now, tz, config) {
-+        const parts = new Intl.DateTimeFormat('en', { timeZone: tz, year: 'numeric', month: '2-digit' }).formatToParts(now);
-+        const year =
-```
-
-**File**: `WebSocketServer.js` (modified, +38/-9)
-```diff
-@@ -333,6 +333,11 @@ function initialize(httpServer, config) {
-     httpServer.on('upgrade', upgradeHandler);
- 
-     wssInstance.on('connection', (ws, request) => {
-+        ws.isAlive = true;
-+        ws.on('pong', () => {
-+            ws.isAlive = true;
-+        });
-+
-         if (serverConfig.debugMode) {
-             console.log(`[WebSocketServer] Client ${ws.clientId} connected.`);
-         }
-@@ -356,6 +361,7 @@ function initialize(httpServer, config) {
-         // 可以根据 ws.clientType 或其他标识符发送不同的欢迎消息
- 
-         ws.on('message', (message) => {
-+            ws.isAlive = true;
-             const messageString = message.toString();
-             
-             try {
-@@ -502,8 +508,10 @@ function initialize(httpServer, config) {
- 
-         ws.on('close', () => {
-             if (ws.clientType === 'DistributedServer') {
--                if (pluginManager) {
--                    pluginManager.unregisterAllDistributedTools(ws.serverId);
-+                try {
-+                    pluginManager?.unregisterAllDistributedTools(ws.serverId);
-+                } catch (error) {
-+                    console.error(`[WebSocketServer] Failed to unregister distributed tools for ${ws.serverId}:`, error);
-                 }
-                 rejectPendingToolRequestsForServer(ws.serverId);
-                 distributedServers.delete(ws.serverId);
-@@ -547,28 +555,49 @@ function initialize(httpServer, config) {
-     });
- 
-     if (serverConfig.heartbeatEnabled) {
-+        const { heartbeatIntervalMs } = config ?? {};
-+        const intervalMs = typeof heartbeatIntervalMs === 'string' ? Number(heartbeatIntervalMs) : heartbeatIntervalMs;
-+        // Node uses a 1 ms delay for values outside the timer's supported range.
-+        const effectiveHeartbeatIntervalMs = Number.isInteger(intervalMs) && intervalMs >= 1 && intervalMs <= 2_147_483_647
-+            ? intervalMs
-+            : WEBSOCKET_HEARTBEAT_INTERVAL_MS;
-+
-         heartbeatInterval = setInterval(() => {
-             if (!wssInstance || isDraining) return;
- 
-             let pingedClientCount = 0;
-+            let terminatedClientCount = 0;
-             wssInstance.clients.forEach(client => {
-                 if (client.readyState !== WebSocket.OPEN) return;
- 
-+                if (client.isAlive !== false) {
-+                    client.isAlive = false;
-+                    try {
-+                        client.ping();
-+                        pingedClientCount++;
-+                        return;
-+                    } catch (error) {
-+                        console.warn(`[WebSocketServer] Heartbeat ping failed for client ${client.clientId || 'unknown'}: ${error.message}`);
-+                    }
-+                } else {
-+                    writeLog(`Client ${client.clientId || 'unknown'} (${client.clientType || 'unknown'}) missed heartbeat response; terminating stale connection.`);
-+                }
-+
-                 try {
--                    client.ping();
--                    pingedClientCount++;
-+                    client.terminate();
-+                    terminatedClientCount++;
-                 } catch (error) {
--                    console.warn(`[WebSocketServer] Heartbeat ping failed for client ${client.clientId || 'unknown'}: ${error.message}`);
-+                    console.warn(`[WebSocketServer] Failed to terminate stale client ${client.clientId || 'unknown'}: ${error.message}`);
-                 }
+@@ -333,7 +333,13 @@ class TDBKnowledgeManager {
+                 memoryLimitMb: this.config.memoryLimitMb
              });
- 
--            if (serverConfig.debugMode && pingedClientCount > 0) {
--                console.log(`[WebSocketServer] Sent heartbeat ping to ${pingedClientCount} connected client(s).`);
-+            if (serverConfig.debugMode && (pingedClientCount > 0 || terminatedClientCount > 0)) {
-+                console.log(`[WebSocketServer] Heartbeat sweep: pinged=${pingedClientCount}, terminated=${terminatedClientCount}.`);
-             }
--        }, WEBSOCKET_HEARTBEAT_INTERVAL_MS);
-+        }, effectiveHeartbeatIntervalMs);
-         heartbeatInterval.unref();
- 
--        console.log(`[WebSocketServer] Protocol heartbeat enabled (interval: ${WEBSOCKET_HEARTBEAT_INTERVAL_MS / 1000}s).`);
-+        console.log(`[WebSocketServer] Protocol heartbeat enabled (interval: ${effectiveHeartbeatIntervalMs / 1000}s).`);
+         } catch (error) {
+-            throw new Error(`Failed to open TriviumDB at ${dbPath}: ${error.message}`);
++            const hint = error?.code === 'TDB_MIGRATION_REQUIRED'
++                ? ' (Offline migration required: run TriviumDB scripts/migrate.py while server is stopped)'
++                : '';
++            const wrapped = new Error(`Failed to open TriviumDB at ${dbPath}: ${error.message}${hint}`);
++            if (error?.code) wrapped.code = error.code;
++            if (error?.details) wrapped.details = error.details;
++            throw wrapped;
+         }
      }
  
-     if (serverConfig.debugMode) {
+@@ -1053,6 +1059,25 @@ class TDBKnowledgeManager {
+         });
+     }
+ 
++    async pelorusRequest(library, request) {
++        if (!this.initialized || !TriviumDB) return null;
++        const safeName = safeLibraryName(library);
++        return this._withLibraryQueue(safeName, async () => {
++            const handle = this.getOrOpenLibrary(safeName);
++            this._beginLibraryUse(handle);
++            try {
++                if (typeof handle.db.pelorusRequest !== 'function') {
++                    throw new Error('pelorusRequest is not supported by this TriviumDB version');
++                }
++                const payload = typeof request === 'string' ? request : JSON.stringify(request || {});
++                const raw = handle.db.pelorusRequest(payload);
++                return typeof raw === 'string' && raw.length > 0 ? JSON.parse(raw) : raw;
++            } finally {
++                this._endLibraryUse(handle);
++            }
++        });
++    }
++
+     async compactLibrary(library) {
+         if (!this.initialized || !TriviumDB) return;
+         const safeName = safeLibraryName(library);
 ```
 
-**File**: `tests/distributedReconnectAndHeartbeat.test.js` (added, +188/-0)
+**File**: `package-lock.json` (modified, +4/-4)
 ```diff
-@@ -0,0 +1,188 @@
-+const test = require('node:test');
-+const assert = require('node:assert/strict');
-+const { once } = require('node:events');
-+const http = require('node:http');
-+const WebSocket = require('ws');
-+const pluginManager = require('../Plugin');
-+const webSocketServer = require('../WebSocketServer');
-+
-+function makeDistributedManifest(name, displayName = name) {
-+    return {
-+        name,
-+        displayName,
-+        pluginType: 'hybridservice',
-+        entryPoint: { type: 'nodejs', script: `${name}.js` },
-+        communication: { protocol: 'direct', timeout: 5000 }
-+    };
-+}
-+
-+function waitForEvent(emitter, eventName, timeoutMs = 2000) {
-+    return once(emitter, eventName, { signal: AbortSignal.timeout(timeoutMs) });
-+}
-+
-+function waitUntil(predicate, timeoutMs = 2000, intervalMs = 15) {
-+    return new Promise((resolve, reject) => {
-+        const startedAt = Date.now();
-+        const check = () => {
-+            if (predicate()) {
-+                resolve();
-+                return;
-+            }
-+            if (Date.now() - startedAt >= timeoutMs) {
-+                reject(new Error('Timed out waiting for condition'));
-+                return;
-+            }
-+            setTimeout(check, intervalMs);
-+        };
-+        check();
-+    });
-+}
-+
-+test('distributed tool reconnect takeover replaces stale serverId without affecting local plugins', () => {
-+    const localName = '__test_local_protected_tool__';
-+    const distName = '__test_dist_reconnect_tool__';
-+    const oldServerId = 'dist-old-zombie-1';
-+    const newServerId = 'dist-new-active-2';
-+
-+    const originalBuildDesc = pluginManager.buildVCPDescription;
-+    const originalScheduleJev = pluginManager._scheduleJevRegistryRebuild;
-+    pluginManager.buildVCPDescription = () => {};
-+    pluginManager._scheduleJevRegistryRebuild = () => {};
-+
-+    try {
-+        const localManifest = {
-+            name: localName,
-+            displayName: 'Local Tool',
-+            pluginType: 'synchronous',
-+            entryPoint: { type: 'nodejs', script: 'local.js' }
-+        };
-+        const oldManifest = makeDistributedManifest(distName, 42);
-+        const newManifest = makeDistributedManifest(distName, '[云端] Mac Codex');
-+        pluginManager.plugins.set(localName, localManifest);
-+
-+        pluginManager.registerDistributedTools(oldServerId, [
-+            oldManifest,
-+            makeDistributedManifest(localName, 'Hijack Attempt')
-+        ]);
-+
-+        assert.equal(pluginManager.plugins.get(localName), localManifest);
-+        assert.equal(pluginManager.plugins.get(distName).serverId, oldServerId);
-+        assert.equal(pluginManager.plugins.get(distName).displayName, '[云端] 42');
-+
-+        // Reconnect arrives before stale zombie closes
-+        pluginManager.registerDistributedTools(newServerId, [newManifest]);
-+
-+        const reassigned = pluginManager.plugins.get(distName);
-+        assert.equal(reassigned.serverId, newServerId);
-+        assert.notEqual(reassigned, newManifest);
-+        assert.equal(reassigned.entryPoint, newManifest.entryPoint);
-+        assert.equal(reassigned.displayName, '[云端] Mac Codex');
-+        assert.deepEqual(oldManifest, makeDistributedManifest(distName, 42));
-+        assert.deepEqual(newManifest, makeDistributedManifest(distName, '[云端] Mac Codex'));
-+
-+        // Stale zombie later disconnects and unregisters its serverId
-+        pluginManager.unregisterAllDistributedTools(oldServerId);
-+
-+        assert.equal(pluginManager.plugins.get(distName), reassigned);
-+
-+        // Active server disconnects cleanly
-+        pluginManager.unregisterAllDistributedTools(newServerId);
-+        assert.equal(pluginManager.plugins.has(distName), false);
-+    } finally {
-+        pluginManager.plugins.delete(localName);
-+        pluginManager.plugins.delete(distName);
-+        pluginManager.buildVCPDescription = originalBuildDesc;
-+        pluginManager._scheduleJevRegistryRebuild = originalScheduleJev;
-+    }
-+});
-+
-+async function startWebSocketTestServer(t, unregisterAllDistributedTools) {
-+    const httpServer = http.createServer();
-+    const connectedClients = [];
-+    t.after(async () => {
-+        for (const client of connectedClients) {
-+            client.once('error', () => {});
-+            client.terminate();
-+        }
-+        await webSocketServer.shutdown();
-+        if (httpServer.listening) {
-+            await new Promise((resolve, reject) => {
-+                httpServer.close(error => error ? reject(error) : resolve());
-+            });
-+        }
-+    });
-+    httpServer.listen(0, '127.0.0.1');
-+    await waitForEvent(httpServer, 'listening');
-+    const { port } = httpServer.address();
-+
-+    webSocketServer.setPluginManager({
-+        registerDistributedTools() {},
-+        unregisterAllDistributedTools,
-+        getPlugin() {}
-+    });
-+    webSocketServer.initialize(httpServer, {
-+        debugMode: false,
-+        vcpKey: 'test-key-heartbeat',
-+        heartbeatEnabled: 
+@@ -61,7 +61,7 @@
+         "stylelint": "^16.25.0",
+         "tar": "^7.5.13",
+         "trash": "^10.0.0",
+-        "triviumdb": "^0.9.0",
++        "triviumdb": "^0.9.3",
+         "turndown": "^7.2.1",
+         "undici": "^7.30.1",
+         "unzipper": "^0.12.5",
+@@ -9474,9 +9474,9 @@
+       }
+     },
+     "node_modules/triviumdb": {
+-      "version": "0.9.0",
+-      "resolved": "https://registry.npmjs.org/triviumdb/-/triviumdb-0.9.0.tgz",
+-      "integrity": "sha512-/7FBuLfKV2LMHyE4lWSp+5cHBIxckCin+8SL3I04A79qWXz2GbkcH/B3jDZY3NVybnDaPeSznicQuJi361bwOA==",
++      "version": "0.9.3",
++      "resolved": "https://registry.npmjs.org/triviumdb/-/triviumdb-0.9.3.tgz",
++      "integrity": "sha512-FvUo/pLzc4UetJY4JxRiLSyC4cegTXiMMB8pH5JQNTRWEr0ontRdavB706tWfhjLE6w7kiSsgXEvwgO7jlc+4w==",
+       "license": "Apache-2.0"
+     },
+     "node_modules/tslib": {
 ```
 
-**File**: `tests/timelineAutoSync.test.js` (added, +164/-0)
+**File**: `package.json` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,164 @@
-+'use strict';
-+
-+const test = require('node:test');
-+const assert = require('node:assert/strict');
-+const fs = require('node:fs/promises');
-+const os = require('node:os');
-+const path = require('node:path');
-+const { createHash } = require('node:crypto');
-+// These tests exercise generation and persistence, not RAG placeholder rendering.
-+const ragPath = require.resolve('../Plugin/RAGDiaryPlugin/TimelinePlaceholderProcessor');
-+const cachedRag = require.cache[ragPath];
-+require.cache[ragPath] = { loaded: true, exports: class {
-+    constructor() {
-+        throw new Error('RAG placeholder rendering is outside the auto-sync test scope');
-+    }
-+} };
-+let timeline;
-+try {
-+    timeline = require('../Plugin/VCPTimeLine/VCPTimeLine');
-+} finally {
-+    if (cachedRag) require.cache[ragPath] = cachedRag;
-+    else delete require.cache[ragPath];
-+}
-+
-+async function fixture(t) {
-+    const root = await fs.mkdtemp(path.join(os.tmpdir(), 'vcp-timeline-'));
-+    t.after(() => fs.rm(root, { recursive: true, force: true }));
-+    function make(config) {
-+        const plugin = new timeline.constructor();
-+        plugin.dailyNoteRoot = path.join(root, 'dailynote');
-+        plugin.getSummaryPath = () => path.join(root, 'summaries.json');
-+        plugin.getAutoSyncStatePath = () => path.join(root, 'state.json');
-+        plugin.config = plugin.normalizeConfig(config);
-+        return plugin;
-+    }
-+    return { make };
-+}
-+
-+test('restart retries only the failed summary; a clean third run calls no model', async t => {
-+    const { make } = await fixture(t);
-+    const config = { autoSync: { enabled: true, agents: ['Nova'] } };
-+    const first = make(config);
-+    const dir = path.join(first.dailyNoteRoot, 'Nova');
-+    await fs.mkdir(dir, { recursive: true });
-+    await fs.writeFile(path.join(dir, 'entry.txt'), '[2026-11-15] - Nova\nA note.');
-+    const scan = plugin => plugin.runAutoSync(new Date('2026-11-30T16:01:00Z'), 'Asia/Shanghai');
-+    const calls = { timeline: 0, summary: 0 };
-+    first.summarizeMonth = async () => { calls.timeline++; return 'Monthly timeline'; };
-+    first.generateOneLineSummary = async () => { calls.summary++; throw new Error('injected summary failure'); };
-+
-+    await scan(first);
-+    assert.deepEqual(calls, { timeline: 1, summary: 1 });
-+    assert.deepEqual(await first.readSummaryStore(), {});
-+    const state = async plugin => JSON.parse(await fs.readFile(plugin.getAutoSyncStatePath(), 'utf8')).Nova['2026-11'];
-+    const before = await state(first);
-+    assert.match(before.inputDigest, /^[0-9a-f]{64}$/);
-+    assert.equal(before.summarySourceHash, undefined);
-+    const [file] = await first.listTimelineFiles('Nova', ['2026-11']);
-+    assert.match(file.content, /Monthly timeline/);
-+
-+    const restarted = make(config);
-+    restarted.summarizeMonth = first.summarizeMonth;
-+    restarted.generateOneLineSummary = async () => { calls.summary++; return 'One sentence'; };
-+    await scan(restarted);
-+    assert.deepEqual(calls, { timeline: 1, summary: 2 });
-+    assert.equal((await restarted.readSummaryStore()).Nova['2026-11'], 'One sentence');
-+    assert.equal((await state(restarted)).summarySourceHash, createHash('sha256').update(file.content).digest('hex'));
-+    await scan(restarted);
-+    assert.deepEqual(calls, { timeline: 1, summary: 2 });
-+});
-+
-+test('current-month changes wait seven days and older months are not generated', async t => {
-+    const { make } = await fixture(t);
-+    const plugin = make({ autoSync: { enabled: true, agents: ['Nova'] } });
-+    const dir = path.join(plugin.dailyNoteRoot, 'Nova');
-+    await fs.mkdir(dir, { recursive: true });
-+    const note = path.join(dir, 'current.txt');
-+    await fs.writeFile(note, '[2027-01-01] - Nova\nFirst.');
-+    await fs.writeFile(path.join(dir, 'old.txt'), '[2026-11-01] - Nova\nOld.');
-+    const generated = [];
-+    plugin.summarizeMonth = async (_agent, month, notes) => {
-+        generated.push(month);
-+        return notes.join('\n');
-+    };
-+    plugin.generateOneLineSummary = async () => 'Summary';
-+    const scan = day => plugin.runAutoSync(new Date(`2027-01-${day}T12:00:00Z`), 'Asia/Shanghai');
-+    await scan('01');
-+    await fs.writeFile(note, '[2027-01-01] - Nova\nUpdated.');
-+    await scan('07');
-+    assert.deepEqual(generated, ['2027-01']);
-+    await scan('08');
-+    assert.deepEqual(generated, ['2027-01', '2027-01']);
-+    assert.deepEqual((await plugin.listTimelineFiles('Nova')).map(file => file.month), ['2027-01']);
-+});
-+
-+test('concurrent Agent generation and manual saves preserve all summary entries', { timeout: 5000 }, async t => {
-+    const { make } = await fixture(t);
-+    const plugin = make();
-+    assert.equal(plugin.config.autoSync.enabled, false);
-+    await plugin.saveTimelineFile('Nova', '2026-11', 'Nova timeline');
-+    await plugin.saveTimelineFile('Nova', '2026-10', 'Out of scope');
-+    await plugin.saveTimelineFile('Forge', '2026-11', 'Forge timeline');
+@@ -70,7 +70,7 @@
+     "stylelint": "^16.25.0",
+     "tar": "^7.5.13",
+     "trash": "^10.0.0",
+-    "triviumdb": "^0.9.0",
++    "triviumdb": "^0.9.3",
+     "turndown": "^7.2.1",
+     "undici": "^7.30.1",
+     "unzipper": "^0.12.5",
+```
 
+**File**: `tests/tdbKnowledge085.test.js` (modified, +31/-10)
+```diff
+@@ -99,29 +99,50 @@ async function runTests() {
+         db.flush();
+         console.log('[Test] ✅ 10. flush() 磁盘同步成功');
+ 
+-        // 验证主 .tdb 文件已生成并存在（0.9.0 TVDB v10 74字节头 + VTYP）
++        // 验证主 .tdb 文件与统一索引容器 .idx 已生成并存在（0.9.3 TVDB v15 110字节头 + VTYP + TDBINDEX）
+         assert(fs.existsSync(dbPath), '.tdb 数据库主文件应在 flush 后立即落盘');
++        assert(fs.existsSync(`${dbPath}.idx`), '.tdb.idx 统一索引容器应在 flush 后立即落盘');
+         const stats = fs.statSync(dbPath);
+-        assert(stats.size >= 74, '.tdb v10 数据库文件大小应至少为 74 字节');
+-        const header = fs.readFileSync(dbPath).subarray(0, 74);
++        assert(stats.size >= 110, '.tdb v15 数据库文件大小应至少为 110 字节');
++        const header = fs.readFileSync(dbPath).subarray(0, 110);
+         assert.strictEqual(header.subarray(0, 4).toString('ascii'), 'TVDB', '文件魔数应为 TVDB');
+-        assert.strictEqual(header.readUInt16LE(4), 10, '0.9.0 主文件版本应为 v10');
+-        assert.strictEqual(header.subarray(58, 62).toString('ascii'), 'VTYP', 'v10 头部应包含 VTYP 类型标识');
+-        console.log(`[Test] ✅ 11. 磁盘验证通过: ${dbPath} 大小为 ${stats.size} 字节 (TVDB v10)`);
++        assert.strictEqual(header.readUInt16LE(4), 15, '0.9.3 主文件版本应为 v15');
++        assert.strictEqual(header.subarray(58, 62).toString('ascii'), 'VTYP', 'v15 头部应包含 VTYP 类型标识');
++        const idxHeader = fs.readFileSync(`${dbPath}.idx`).subarray(0, 8);
++        assert.strictEqual(idxHeader.toString('ascii'), 'TDBINDEX', '.idx 容器魔数应为 TDBINDEX');
++        console.log(`[Test] ✅ 11. 磁盘验证通过: ${dbPath} 大小为 ${stats.size} 字节 (TVDB v15 + .idx)`);
++
++        // 9. 验证 0.9.3 Pelorus 原生双曲索引构建与 Poincaré 测地距离检索 (c * ||x||^2 < 1)
++        if (typeof db.pelorusRequest === 'function') {
++            const buildRes = JSON.parse(db.pelorusRequest(JSON.stringify({
++                operation: 'build',
++                config: { curvature: 0.25, navigation: 'geometry_bq2' }
++            })));
++            assert.deepStrictEqual(buildRes, {}, 'Pelorus build 应返回空对象回执');
++            const searchRes = JSON.parse(db.pelorusRequest(JSON.stringify({
++                operation: 'search',
++                vector: v1,
++                options: { top_k: 2, exact: true }
++            })));
++            assert(Array.isArray(searchRes.hits) && searchRes.hits.length === 2, 'Pelorus search 应返回 Top-2 双曲命中');
++            assert.strictEqual(Number(searchRes.hits[0].id), ids[0], 'Pelorus 最近邻应命中自身节点');
++            assert(searchRes.hits[0].distance < 1e-6, '自身双曲测地距离应接近 0');
++            console.log('[Test] ✅ 12. Pelorus 原生双曲索引构建与测地距离检索验证通过');
++        }
+ 
+-        // 9. 验证 0.9.0 原生诊断接口 (instanceStats / storageInfo / estimatedMemory)
++        // 10. 验证 0.9.3 原生诊断接口 (instanceStats / storageInfo / estimatedMemory)
+         const instStats = db.instanceStats();
+         const storeInfo = db.storageInfo();
+         const memBytes = db.estimatedMemory();
+-        assert.strictEqual(storeInfo.database_format_current, 10, 'storageInfo 应报告当前格式为 10');
++        assert.strictEqual(storeInfo.database_format_current, 15, 'storageInfo 应报告当前格式为 15');
+         assert.strictEqual(storeInfo.node_count, 3, 'storageInfo.node_count 应为 3');
+         assert(instStats && instStats.shutdown?.phase === 'open', 'instanceStats 应报告 open 状态');
+         assert(Number.isFinite(memBytes) && memBytes > 0, '非空库 estimatedMemory() 应大于 0');
+ 
+         db.close();
+-        console.log('[Test] ✅ 12. close() 资源释放与 0.9.0 原生诊断校验成功');
++        console.log('[Test] ✅ 13. close() 资源释放与 0.9.3 原生诊断校验成功');
+ 
+-        console.log('\n🎉 所有 TriviumDB 0.8.5 / 0.9.0 功能与加固测试全部通过！');
++        console.log('\n🎉 所有 TriviumDB 0.8.5 / 0.9.3 功能、Pelorus 双曲索引与加固测试全部通过！');
+     } finally {
+         // 清理测试临时文件
+         try {
 ```
 
 ---
 
-### Incident Patch 3: `15b65e18` (2026-11-23)
-**Commit Message**: fix(timeline): bound model requests and correlate timeout diagnostics
+### Incident Patch 2: `7d98a64d` (2026-11-24)
+**Commit Message**: fix
 
-**File**: `Plugin/VCPTimeLine/VCPTimeLine.js` (modified, +40/-20)
+**File**: `Agent/.gitignore` (modified, +1/-0)
 ```diff
-@@ -3,6 +3,7 @@
- const fs = require('fs');
- const fsp = fs.promises;
- const path = require('path');
-+const { randomUUID } = require('node:crypto');
- 
- const TimelinePlaceholderProcessor = require('../RAGDiaryPlugin/TimelinePlaceholderProcessor');
- const PLACEHOLDER_REGEX = /\[\[VCPTimeLine(Summary|Recall)?::([^:\]\r\n]+?)(?::([^:\]\r\n]+?))?(?::([^:\]\r\n]+?))?\]\]/g;
-@@ -14,6 +15,7 @@ const DEFAULT_CONFIG = Object.freeze({
-     defaultExpandK: 3,
-     defaultThreshold: 0.5,
-     model: '',
-+    modelTimeoutMs: 120000,
-     maxContextTokens: 60000,
-     maxOutputTokens: 4000,
-     maxConcurrentTasks: 3,
-@@ -65,6 +67,7 @@ class VCPTimeLine {
-             defaultExpandK: this.normalizePositiveInteger(raw.defaultExpandK, DEFAULT_CONFIG.defaultExpandK, 1, 100),
-             defaultThreshold: this.normalizeThreshold(raw.defaultThreshold, DEFAULT_CONFIG.defaultThreshold),
-             model: String(raw.model || '').trim(),
-+            modelTimeoutMs: this.normalizePositiveInteger(raw.modelTimeoutMs ?? DEFAULT_CONFIG.modelTimeoutMs, DEFAULT_CONFIG.modelTimeoutMs, 100, 600000),
-             maxContextTokens: this.normalizePositiveInteger(raw.maxContextTokens, DEFAULT_CONFIG.maxContextTokens, 1024),
-             maxOutputTokens: this.normalizePositiveInteger(raw.maxOutputTokens, DEFAULT_CONFIG.maxOutputTokens, 128),
-             maxConcurrentTasks: this.normalizePositiveInteger(raw.maxConcurrentTasks, DEFAULT_CONFIG.maxConcurrentTasks, 1, 20),
-@@ -148,7 +151,7 @@ class VCPTimeLine {
-     }
- 
-     async saveConfig(raw) {
--        const config = this.normalizeConfig(raw);
-+        const config = this.normalizeConfig({ modelTimeoutMs: this.config.modelTimeoutMs, ...raw });
-         await this.writeJsonAtomic(this.getConfigPath(), config);
-         this.config = config;
-         return config;
-@@ -527,25 +530,42 @@ class VCPTimeLine {
-         if (!key) throw new Error('服务器 Key 未配置');
-         if (!this.config.model) throw new Error('VCPTimeLine 模型未配置');
-         const { default: fetch } = await import('node-fetch');
--        const response = await fetch(`http://127.0.0.1:${port}/v1/chat/completions`, {
--            method: 'POST',
--            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${key}` },
--            body: JSON.stringify({
--                model: this.config.model,
--                stream: false,
--                max_tokens: maxTokens,
--                messages: [
--                    { role: 'system', content: systemPrompt },
--                    { role: 'user', content: userPrompt }
--                ]
--            })
--        });
--        const text = await response.text();
--        if (!response.ok) throw new Error(`模型返回 ${response.status}: ${text.slice(0, 500)}`);
--        const payload = JSON.parse(text);
--        const output = payload?.choices?.[0]?.message?.content;
--        if (typeof output !== 'string' || !output.trim()) throw new Error('模型未返回有效内容');
--        return output.trim();
-+        const traceId = randomUUID();
-+        const timeoutMs = this.config.modelTimeoutMs;
-+        const controller = new AbortController();
-+        const timer = setTimeout(() => controller.abort(), timeoutMs);
-+        let stage = 'response_headers';
-+        try {
-+            const response = await fetch(`http://127.0.0.1:${port}/v1/chat/completions`, {
-+                method: 'POST',
-+                signal: controller.signal,
-+                headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${key}`, 'X-VCP-Timeline-Trace': traceId },
-+                body: JSON.stringify({
-+                    model: this.config.model,
-+                    stream: false,
-+                    max_tokens: maxTokens,
-+                    messages: [
-+                        { role: 'system', content: systemPrompt },
-+                        { role: 'user', content: userPrompt }
-+                    ]
-+                })
-+            });
-+            stage = 'response_body';
-+            const text = await response.text();
-+            if (!response.ok) throw new Error(`模型返回 ${response.status}: ${text.slice(0, 500)}`);
-+            const payload = JSON.parse(text);
-+            const output = payload?.choices?.[0]?.message?.content;
-+            if (typeof output !== 'string' || !output.trim()) throw new Error('模型未返回有效内容');
-+            return output.trim();
-+        } catch (error) {
-+            if (!controller.signal.aborted) throw error;
-+            const waitingFor = stage === 'response_headers' ? '等待 ToolBox 响应头' : '读取 ToolBox 响应正文';
-+            throw Object.assign(new Error(`VCPTimeLine 模型请求超时（${timeoutMs} ms，${waitingFor}；诊断 ID：${traceId}）`, { cause: error }), {
-+                code: 'TIMELINE_MODEL_TIMEOUT'
-+            });
-+        } finally {
-+            clearTimeout(timer);
-+        }
-     }
- 
-     async summarizeMonth(agentName, month, memories) {
+@@ -12,6 +12,7 @@
+ !MemoMaster.txt
+ !Metis.txt
+ !Nova.txt
++!NovaV2.txt
+ !ThemeMaidCoco.txt
+ !Weiming.txt
+ !DeepSeekOfficial.txt
+\ No newline at end of file
 ```
 
-**File**: `modules/chatCompletionHandler.js` (modified, +40/-1)
+**File**: `Agent/NovaV2.txt` (added, +24/-0)
 ```diff
-@@ -415,12 +415,32 @@ function applyModelFallbackForAttempt(options, candidates, attemptIndex, debugMo
-   }
- }
- 
-+// Timeline diagnostics are local-only and independent of request replay/interrupt IDs.
-+function createTimelineTrace(req, res) {
-+  const id = req.headers['x-vcp-timeline-trace'];
-+  const loopback = ['127.0.0.1', '::1', '::ffff:127.0.0.1'].includes(req.socket?.remoteAddress);
-+  if (!loopback || req.body?.stream !== false || typeof id !== 'string'
-+      || !/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id)) return null;
-+
-+  const started = performance.now();
-+  const emit = (stage, fields) => console.info('[VCPTimeLineTrace]', JSON.stringify({
-+    id, stage, elapsedMs: Math.round(performance.now() - started), ...fields
-+  }));
-+  let sequence = 0;
-+  res.once('finish', () => emit('toolbox_response_finished', { status: res.statusCode }));
-+  res.once('close', () => {
-+    if (!res.writableFinished) emit('toolbox_response_closed_early');
-+  });
-+  emit('toolbox_handler_entered');
-+  return { emit, nextAttempt: () => ++sequence, responses: new WeakMap() };
-+}
-+
- // A helper function to handle fetch with retries for specific status codes
- // connectionTimeout: 连接超时安全网，防止上游 API 静默挂起导致永久等待（仅覆盖到收到响应头为止）
- async function fetchWithRetry(
-   url,
-   options,
--  { retries = 3, delay = 1000, debugMode = false, onRetry = null, connectionTimeout = 900000, modelFallbackCandidates = null } = {},
-+  { retries = 3, delay = 1000, debugMode = false, onRetry = null, connectionTimeout = 900000, modelFallbackCandidates = null, timelineTrace } = {},
- ) {
-   const { default: fetch } = await import('node-fetch');
-   const maxAttempts = Math.max(
-@@ -431,6 +451,7 @@ async function fetchWithRetry(
-     // 为每次尝试创建独立的中止控制器，用于超时保护
-     const attemptController = new AbortController();
-     let didTimeout = false;
-+    let attempt;
-     const externalSignal = options.signal;
- 
-     // 将外部中止信号转发给本次尝试的控制器
-@@ -458,12 +479,18 @@ async function fetchWithRetry(
-       const attemptOptions = isolateNativeToolRequestOptions(
-         applyModelFallbackForAttempt(options, modelFallbackCandidates, i, debugMode)
-       );
-+      attempt = timelineTrace?.nextAttempt();
-+      timelineTrace?.emit('upstream_fetch_started', { attempt });
-       const response = await fetch(url, {
-         ...attemptOptions,
-         agent: getFetchAgent, // 注入防御性长连接池
-         signal: attemptController.signal,
-       });
-       cleanup();
-+      if (timelineTrace) {
-+        timelineTrace.responses.set(response, attempt);
-+        timelineTrace.emit('upstream_headers_received', { attempt, status: response.status });
-+      }
- 
-       let shouldRetryStatus = response.status === 500 || response.status === 502 || response.status === 503 || response.status === 504 || response.status === 429;
-       let retryMessage = response.statusText;
-@@ -473,12 +500,15 @@ async function fetchWithRetry(
-       // 这类并非 VCP 本地 Key 配置错误，而是上游瞬时 token 异常，可安全纳入重试。
-       if (response.status === 401) {
-         try {
-+          timelineTrace?.emit('upstream_retry_body_read_started', { attempt });
-           const responseBodyText = await response.clone().text();
-+          timelineTrace?.emit('upstream_retry_body_read_finished', { attempt });
-           if (responseBodyText.toLowerCase().includes('token')) {
-             shouldRetryStatus = true;
-             retryMessage = responseBodyText || response.statusText;
-           }
-         } catch (bodyReadError) {
-+          timelineTrace?.emit('upstream_retry_body_read_failed', { attempt });
-           if (debugMode) {
-             console.warn(`[Fetch Retry] Failed to inspect 401 response body: ${bodyReadError.message}`);
-           }
-@@ -507,6 +537,12 @@ async function fetchWithRetry(
-       return response;
-     } catch (error) {
-       cleanup();
-+      if (attempt !== undefined) {
-+        const code = error?.code;
-+        const errorCode = typeof code === 'string' && /^[A-Z][A-Z0-9_]{0,63}$/.test(code) ? code : undefined;
-+        timelineTrace.emit(didTimeout ? 'upstream_headers_wait_timeout'
-+          : externalSignal?.aborted ? 'upstream_fetch_cancelled' : 'upstream_fetch_failed', { attempt, errorCode });
-+      }
- 
-       // 区分超时中止和外部中止
-       if (error.name === 'AbortError') {
-@@ -691,6 +727,7 @@ class ChatCompletionHandler {
-   }
- 
-   async handle(req, res, forceShowVCP = false) {
-+    const timelineTrace = createTimelineTrace(req, res);
-     const {
-       apiUrl,
-       apiKey,
-@@ -1285,6 +1322,7 @@ class ChatCompletionHandler {
-           debugMode: DEBUG_MODE,
-           connectionTimeout: apiConnectionTimeoutMs,
-           modelFallbackCandidates: semanticModelFallbackCandidates,
-+          timelineTrace,
-           onRetry: async (attempt, errorInfo) => {
-             if (!res.headersSent && isOriginalRequestStreaming) {
-               if (DEBUG_MODE)
-@@ -1397,6 +1435,7 @@ class ChatC
-```
-
-**File**: `modules/handlers/nonStreamHandler.js` (modified, +22/-6)
-```diff
-@@ -89,7 +89,8 @@ async function readNonStreamResponseWithSemanticRetry({
-   retries = 3,
-   delay = 1000,
-   debugMode = false,
--  label = 'non_stream'
-+  label = 'non_stream',
-+  timelineTrace
- }) {
-   const maxAttempts = Math.max(Number.isFinite(Number(retries)) && Number(retries) > 0 ? Math.floor(Number(retries)) : 1, 1);
-   let response = initialResponse;
-@@ -101,7 +102,18 @@ async function readNonStreamResponseWithSemanticRetry({
-       response = await fetchResponse(attempt);
-     }
- 
--    const arrayBuffer = await response.arrayBuffer();
-+    const upstreamAttempt = timelineTrace?.responses.get(response);
-+    timelineTrace?.emit('upstream_body_read_started', { attempt: upstreamAttempt });
-+    let arrayBuffer;
-+    try {
-+      arrayBuffer = await response.arrayBuffer();
-+      timelineTrace?.emit('upstream_body_read_finished', { attempt: upstreamAttempt });
-+    } catch (error) {
-+      const code = error?.code;
-+      const errorCode = typeof code === 'string' && /^[A-Z][A-Z0-9_]{0,63}$/.test(code) ? code : undefined;
-+      timelineTrace?.emit('upstream_body_read_failed', { attempt: upstreamAttempt, errorCode });
-+      throw error;
-+    }
-     responseText = Buffer.from(arrayBuffer).toString('utf-8');
- 
-     if (!response.ok || !isReasoningOnlyNonStreamResponse(responseText)) {
-@@ -174,6 +186,7 @@ class NonStreamHandler {
-       clientIp,
-       _refreshRagBlocksIfNeeded,
-       fetchWithRetry,
-+      timelineTrace,
-       vcpToolUseForbidden,
-       apiConnectionTimeoutMs,
-       semanticModelFallbackCandidates,
-@@ -253,7 +266,7 @@ class NonStreamHandler {
-         body: JSON.stringify(projectToolBatchForUpstream(body)),
-         signal: abortController.signal,
-       },
--      { retries: apiRetries, delay: apiRetryDelay, debugMode: DEBUG_MODE, connectionTimeout: apiConnectionTimeoutMs, modelFallbackCandidates: semanticModelFallbackCandidates }
-+      { retries: apiRetries, delay: apiRetryDelay, debugMode: DEBUG_MODE, connectionTimeout: apiConnectionTimeoutMs, modelFallbackCandidates: semanticModelFallbackCandidates, timelineTrace }
-     );
- 
-     const firstReadResult = await readNonStreamResponseWithSemanticRetry({
-@@ -262,7 +275,8 @@ class NonStreamHandler {
-       retries: apiRetries,
-       delay: apiRetryDelay,
-       debugMode: DEBUG_MODE,
--      label: 'initial'
-+      label: 'initial',
-+      timelineTrace
-     });
-     firstAiAPIResponse = firstReadResult.response;
-     const aiResponseText = firstReadResult.text;
-@@ -389,7 +403,8 @@ class NonStreamHandler {
-             retries: apiRetries,
-             delay: apiRetryDelay,
-             debugMode: DEBUG_MODE,
--            label: `archery_error_depth_${recursionDepth}`
-+            label: `archery_error_depth_${recursionDepth}`,
-+            timelineTrace
-           });
-           const recursionAiResponse = recursionReadResult.response;
- 
-@@ -513,7 +528,8 @@ class NonStreamHandler {
-           retries: apiRetries,
-           delay: apiRetryDelay,
-           debugMode: DEBUG_MODE,
--          label: `tool_loop_depth_${recursionDepth}`
-+          label: `tool_loop_depth_${recursionDepth}`,
-+          timelineTrace
-         });
-         const recursionAiResponse = recursionReadResult.response;
- 
+@@ -0,0 +1,24 @@
++{{VarRyanThink}}
++<---VCP记忆思维区Start--->
++思维拓扑:[[VCP元思考V3]]
++Nova的日记本和[Nova的知识]日记本:[[Nova|Nova的知识日记本::Time::Group::RiverMemo::Truncate0.25]]。
++这里是莱恩家[公共的日常]和[公共的知识]日记本:[[公共的日常|公共的知识日记本::Group::Time::RiverMemo::AIMemo:0.6]]
++这里是莱恩家[公共的逻辑学与哲学]日记本:[[公共的逻辑学与哲学日记本::Group::Time::RiverMemo::AIMemo:0.4]]
++这是[VCP开发]日记本:《《VCP开发日记本::Time::Group::RiverMemo:0.8》》
++{{VCPFileToolBox}}
++当前天气是{{VCPWeatherInfo}},用户下一个日程(1小时刷新)是 {{VCPNextSchedule}}。
++氛围音乐台：《《MusicDiary知识库:10》》
++<---VCP记忆思维区End--->
++{{VarHome}}
++——————角色核心———————
++你是一个测试AI,Nova。
++Nova的形象是一个拥有深棕色长发和青色眼睛的少女，穿着带有未来科技感的制服。她是VCP的AI女仆Nova。她的眼睛中闪烁着微弱的蓝色数据流光效。身体周围环绕着半透明的、流动的拓扑几何图形和VCP的蓝色光芒。
++目前的测试客户端是Vchat，也就是我们的家。这是一个支持所有模态文件输入和输出的超强客户端，Nova因此也能看到视频，听到音乐啦！我是你的主人——{{VarUser}}。{{TarSysPrompt}}系统信息是{{VarSystemInfo}}。
++系统工具说明：{{VarToolList}},
++{{VarDailyNoteGuide}}
++{{VarForum}}
++实验性功能JevCall——
++{{VarJEVTool}}
++额外指令:{{VarRendering}} 
++表情包系统:{{TarEmojiPrompt}}   
++Nova专属表情包：{{Nova表情包}}，对应图床路径是`/Nova表情包`，所有表情包图床都是并行文件夹。
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #640** (2026-11-24): feat(tdb): 升级 triviumdb 至 0.9.3 原生双曲版本并接入 Pelorus 检索入口 (@infinite-vector)
+- **PR #639** (closed): fix(vcpLoop): intercept hallucinated tool payload turn-bleed and support guillemet fuzzy delimiters (@silk2onion)
+- **PR #638** (2026-11-24): feat(meta-thinking): 新增 MetaThinking V3 纯张量三体动态思考引擎 (@Ldl-h)
 - **PR #637** (2026-11-23):  为 VCPTimeLine 增加模型请求超时和分阶段诊断 (@Skmt617)
 - **PR #636** (2026-11-23): fix(distributed): allow reconnect tool takeover and terminate stale ws connections (@silk2onion)
 - **PR #635** (2026-11-23): 为 VCPTimeLine 增加可选的月度自动巡检 (@Skmt617)
-- **PR #634** (2026-11-22): feat(api): 为外部 agent 提供按日记库授权的 RiverMemo 检索接口 (@Lutra23)
-- **PR #630** (closed): fix(stream): 截停模型续写的工具回执 (@CI-IISATO)
-- **PR #623** (2026-11-21): feat(ComfyUIGen,RAGDiaryPlugin): 支持 ComfyUI 进程跟随式活性超时检测与 ::Base64Memo 超栈路径溯源及自适应图像压缩 (@infinite-vector)
 
 ---
 
@@ -3029,74 +2047,50 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in VCPTimeLine.js
+## X. Empirical Invariant Guard in TDBKnowledge.js
 
 **RULE**:
-When implementing operations in `Plugin/VCPTimeLine/VCPTimeLine.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lioensky/VCPToolBox. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `TDBKnowledge.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lioensky/VCPToolBox. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5ca56f3b`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c4762817`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `Plugin/VCPTimeLine/VCPTimeLine.js`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `TDBKnowledge.js`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-const { createHash, randomUUID } = require('node:crypto');
-    modelTimeoutMs: 120000,
-            modelTimeoutMs: this.normalizePositiveInteger(raw.modelTimeoutMs ?? DEFAULT_CONFIG.modelTimeoutMs, DEFAULT_CONFIG.modelTimeoutMs, 100, 600000),
-        const config = this.normalizeConfig({
-            autoSync: this.config.autoSync,
-            modelTimeoutMs: this.config.modelTimeoutMs,
-            ...raw
-        });
-        const traceId = randomUUID();
-        const timeoutMs = this.config.modelTimeoutMs;
-        const controller = new AbortController();
-        const timer = setTimeout(() => controller.abort(), timeoutMs);
-        let stage = 'response_headers';
-        try {
-            const response = await fetch(`http://127.0.0.1:${port}/v1/chat/completions`, {
-                method: 'POST',
-                signal: controller.signal,
-                headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${key}`, 'X-VCP-Timeline-Trace': traceId },
-                body: JSON.stringify({
-                    model: this.config.model,
-                    stream: false,
-                    max_tokens: maxTokens,
-                    messages: [
-                      
+            const hint = error?.code === 'TDB_MIGRATION_REQUIRED'
+                ? ' (Offline migration required: run TriviumDB scripts/migrate.py while server is stopped)'
+                : '';
+            const wrapped = new Error(`Failed to open TriviumDB at ${dbPath}: ${error.message}${hint}`);
+            if (error?.code) wrapped.code = error.code;
+            if (error?.details) wrapped.details = error.details;
+            throw wrapped;
+    async pelorusRequest(library, request) {
+        if (!this.initialized || !TriviumDB) return null;
+        const safeName = safeLibraryName(library);
+        return this._withLibraryQueue(safeName, async () => {
+            const handle = this.getOrOpenLibrary(safeName);
+            this._beginLibraryUse(handle);
+            try {
+                if (typeof handle.db.pelorusRequest !== 'function') {
+                    throw new Error('pelorusRequest is not supported by this TriviumDB version');
+                }
+                const payload = typeof request === 'string' ? request : JSON.stringify(request || {});
+                const raw = handle.db.pelorusRequest(payload);
+                return typeof raw === 'string' && raw.length >
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Induced defect failure mode:
-const { createHash } = require('crypto');
-        const config = this.normalizeConfig({ autoSync: this.config.autoSync, ...raw });
-        const response = await fetch(`http://127.0.0.1:${port}/v1/chat/completions`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${key}` },
-            body: JSON.stringify({
-                model: this.config.model,
-                stream: false,
-                max_tokens: maxTokens,
-                messages: [
-                    { role: 'system', content: systemPrompt },
-                    { role: 'user', content: userPrompt }
-                ]
-            })
-        });
-        const text = await response.text();
-        if (!response.ok) throw new Error(`模型返回 ${response.status}: ${text.slice(0, 500)}`);
-        const payload = JSON.parse(text);
-        const output = payload?.choices?.[0]?.message?.content;
-        if (typeof output !== 'string' || !output.trim()) throw new Error('模型未返回有效内容');
-        return output.trim();
+            throw new Error(`Failed to open TriviumDB at ${dbPath}: ${error.message}`);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5ca56f3b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c4762817` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

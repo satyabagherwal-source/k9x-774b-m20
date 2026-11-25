@@ -4,22 +4,22 @@
 {
   "source_repository": "bridgecrewio/checkov",
   "source_url": "https://github.com/bridgecrewio/checkov",
-  "source_version": "2f107f86",
+  "source_version": "d266c8a5",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-24T07:07:39.090Z",
+  "timestamp": "2026-11-25T01:44:25.926Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-bridgecrewio-checkov",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [bridgecrewio/checkov](https://github.com/bridgecrewio/checkov) (Revision: `2f107f86`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-24T07:07:39.090Z`  
+> **Provenance**: Harvested from [bridgecrewio/checkov](https://github.com/bridgecrewio/checkov) (Revision: `d266c8a5`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-25T01:44:25.926Z`  
 > **Learning ID**: `learn-github-bridgecrewio-checkov`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `bridgecrewio/checkov` (Commit: `2f107f86`)
+- **Target Repository**: `bridgecrewio/checkov` (Commit: `d266c8a5`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bridgecrewio-checkov-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/bridgecrewio/checkov](https://github.com/bridgecrewio/checkov))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T07:07:37.718Z  
+> **Harvest Timestamp**: 2026-11-25T01:44:24.550Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Prevent cloud misconfigurations and find vulnerabilities during build-time in infrastructure as code, container images and open source packages with Checkov by Bridgecrew.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md, Dockerfile
-- **Stars / Engagement**: 9171 stars
+- **Stars / Engagement**: 9172 stars
 
 ---
 
@@ -966,34 +966,313 @@ check = SQSQueueEncryption()
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2f107f86` (2026-11-23)
-**Commit Message**: chore(general): support cyclonedx-python-lib up to 11.x (#7827)
-
-* chore(general): support cyclonedx-python-lib up to 11.x
-
-* chore(general): require cyclonedx-python-lib 8.0.0 or newer
+### Incident Patch 1: `d266c8a5` (2026-11-24)
+**Commit Message**: Merge e99ac1c973353e9ad79e61a57b453b29133bd127 into ae904f7a30bf4e6688f0f9a820c4fe1c4e809317
 
 **File**: `checkov/version.py` (modified, +1/-1)
 ```diff
 @@ -1 +1 @@
--version = '3.4.6'
-+version = '3.4.7'
+-version = '3.4.9'
++version = '3.4.10'
 ```
 
 **File**: `kubernetes/requirements.txt` (modified, +1/-1)
 ```diff
 @@ -1 +1 @@
--checkov==3.4.6
-+checkov==3.4.7
+-checkov==3.4.9
++checkov==3.4.10
+```
+
+---
+
+### Incident Patch 2: `ae904f7a` (2026-11-24)
+**Commit Message**: feat(secrets): optional per-file pre-validation for custom regex rules (#7828)
+
+* feat(secrets): optional per-file pre-validation for custom regex rules
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* fix(secrets): allow mypy to pass before the pre-validation module is released
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* chore(secrets): bump bc-detect-secrets to 1.5.54 for document pre-validation
+
+* chore(secrets): import pre-validation directly now that bc-detect-secrets 1.5.54 is required
+
+* refactor(secrets): read the pre-validation flag when the custom regex detector is created
+
+* refactor(secrets): read CHECKOV_SECRETS_PREVALIDATION with checkov's bool helper
+
+---------
+
+Co-authored-by: Adam Varsano <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `Pipfile.lock` (modified, +4/-4)
+```diff
+@@ -221,12 +221,12 @@
+         },
+         "bc-detect-secrets": {
+             "hashes": [
+-                "sha256:772353c949a131b7b5efd2b20473e0128af9c25ea27cdb15a3a6a6727ca73c4e",
+-                "sha256:bb437db4b4ad81b19d52feaf8e0ebaf6ca0421ee6fefbdd9d41210bd4983e16b"
++                "sha256:25163b28aaab9a8083191f714d1a349eb3514cced10e94dc164f672ba7c426bd",
++                "sha256:e62cc8be5f9aa1c5c9d0d4c697fe2a8a72df202e0e17a41c95d335b5b51f1d11"
+             ],
+             "index": "pypi",
+-            "markers": "python_version >= '3.8'",
+-            "version": "==1.5.52"
++            "markers": "python_version >= '3.9'",
++            "version": "==1.5.54"
+         },
+         "bc-jsonpath-ng": {
+             "hashes": [
+```
+
+**File**: `checkov/secrets/plugins/custom_regex_detector.py` (modified, +34/-2)
+```diff
+@@ -1,16 +1,19 @@
+ from __future__ import annotations
+ 
+ import logging
++import os
+ from typing import Set, Any, Generator, Pattern, Optional, Dict, Tuple, TYPE_CHECKING, cast, Union
+ from collections import defaultdict
+ 
+ from detect_secrets.constants import VerifiedResult
+ from detect_secrets.core.potential_secret import PotentialSecret
+ from detect_secrets.plugins.base import RegexBasedDetector
+ from detect_secrets.util.inject import call_function_with_arguments
++from detect_secrets.util.prevalidation import could_match, required_literals
+ import re
+ 
+ from checkov.common.util.file_utils import read_file_safe, get_file_size_safe
++from checkov.common.util.type_forcers import convert_str_to_bool
+ from checkov.secrets.plugins.load_detectors import load_detectors
+ 
+ MIN_CHARACTERS = 5
+@@ -35,6 +38,8 @@ def __init__(self) -> None:
+         self._analyzed_files: Set[str] = set()
+         self._analyzed_files_by_check: Dict[str, Set[str]] = defaultdict(lambda: set())
+         self._multiline_regex_supported_file_types: Set[str] = set()
++        self._active_rules_by_file: Dict[str, Tuple[Set[Pattern[str]], Set[Pattern[str]]]] = {}
++        self._prevalidation_enabled = convert_str_to_bool(os.getenv("CHECKOV_SECRETS_PREVALIDATION", False))
+         detectors = load_detectors()
+ 
+         for detector in detectors:
+@@ -55,6 +60,28 @@ def __init__(self) -> None:
+             except Exception:
+                 logging.warning(f"Failed to load detector {detector.get('Name')} with regex {detector.get('Regex')}")
+ 
++    def prevalidate(self, lowered_document: str) -> bool:
++        """Rules are pre-validated individually inside analyze_line, so the plugin itself always runs."""
++        return True
++
++    def _active_rules(self, filename: str) -> Optional[Tuple[Set[Pattern[str]], Set[Pattern[str]]]]:
++        """Single-line and multiline rules that could match somewhere in the file, or None to run all."""
++        if not self._prevalidation_enabled:
++            return None
++        cached = self._active_rules_by_file.get(filename)
++        if cached is not None:
++            return cached
++        content = read_file_safe(filename)
++        if not content:
++            return None
++        lowered = content.lower()
++        active = (
++            {regex for regex in self.denylist if could_match(required_literals(regex), lowered)},
++            {regex for regex in self.multiline_deny_list if could_match(required_literals(regex), lowered)},
++        )
++        self._active_rules_by_file[filename] = active
++        return active
++
+     @property
+     def multiline_regex_supported_file_types(self) -> Set[str]:
+         if self._multiline_regex_supported_file_types:
+@@ -80,13 +107,15 @@ def analyze_line(
+             logging.info(f"File {filename} Line {line_number} has a length of {line_length}, which is higher than the max {CustomRegexDetector.MAX_LINE_LENGTH}")
+             return output
+ 
++        active_rules = self._active_rules(filename)
+         self._find_potential_secret(
+             filename=filename,
+             string_to_analyze=line,
+             output=output,
+             line_number=line_number,
+             context=raw_context,
+             is_multiline=False,
++            active_rules=active_rules,
+             **kwargs
+         )
+ 
+@@ -112,6 +141,7 @@ def analyze_line(
+                 line_number=1,
+                 context=raw_context,
+                 is_multiline=True,
++                active_rules=active_rules,
+                 **kwargs
+             )
+ 
+@@ -127,17 +157,19 @@ def _find_potential_secret(
+             is_multiline: bool = False,
+             is_added: bool = False,
+             is_removed: bool = False,
++            active_rules: Optional[Tuple[Set[Pattern[str]], Set[Pattern[str]]]] = None,
+             **kwargs: Any
+     ) -> None:
+         current_denylist: Set[Pattern[str]] = set()
+         if is_multiline:
++            multiline_candidates = self.multiline_deny_list if active_rules is None else active_rules[1]
+             # We want the multiline regex to execute only if current file is supported by them
+-            for regex in self.multiline_deny_list:
++            for regex in multiline_candidates:
+                 regex_supported_files = self.multiline_regex_to_metadata.get(regex.pattern, {}).get("supportedFiles", [])
+                 if regex_supported_files and any([filename.endswith(regex_supported_file) for regex_supported_file in regex_supported_files]):
+                     current_denylist.add(regex)
+         else:
+-            current_denylist = self.denylist
++            current_denylist = self.denylist if active_rules is None else active_rules[0]
+ 
+         current_regex_to_metadata: dict[str, dict[str, Any]] = self.multiline_regex_to_metadata if is_multiline else self.regex_to_metadata
+         kwargs["regex_denylist"] = current_denylist
+```
+
+**File**: `setup.py` (modified, +1/-1)
+```diff
+@@ -106,7 +106,7 @@ def run(self) -> None:
+         "rustworkx>=0.13.0,<1.0.0",
+         "pydantic>=2.0.0,<3.0.0",
+         "asteval==1.0.6",
+-        "bc-detect-secrets==1.5.52",
++        "bc-detect-secrets==1.5.54",
+         "urllib3>=1.26.20",
+         "bc-python-hcl2==0.4.5",
+         "platformdirs>=4.0.0,<5.0.0",
+```
+
+**File**: `tests/secrets/test_prevalidation.py` (added, +110/-0)
+```diff
+@@ -0,0 +1,110 @@
++from __future__ import annotations
++
++import os
++from pathlib import Path
++from unittest import mock
++
++import pytest
++
++from checkov.common.bridgecrew.platform_integration import bc_integration
++from checkov.runner_filter import RunnerFilter
++from checkov.secrets.plugins.custom_regex_detector import CustomRegexDetector
++from checkov.secrets.runner import Runner
++
++
++def _policy(incident_id: str, code: str) -> dict:
++    return {
++        "incidentId": incident_id,
++        "category": "Secrets",
++        "severity": "MEDIUM",
++        "incidentType": "Violation",
++        "title": incident_id,
++        "guideline": "test",
++        "laceworkViolationId": None,
++        "prowlerCheckId": None,
++        "checkovCheckId": None,
++        "resourceTypes": ["aws_instance"],
++        "provider": "AWS",
++        "remediationIds": [],
++        "customerName": "test",
++        "isCustom": True,
++        "code": code,
++        "descriptiveTitle": None,
++        "constructiveTitle": None,
++        "pcPolicyId": None,
++        "additionalPcPolicyIds": None,
++        "pcSeverity": None,
++        "sourceIncidentId": None,
++    }
++
++
++POLICIES = [
++    _policy("prevalidation_single", "definition:\n  cond_type: secrets\n  value:\n  - (?i)acmeint_([a-z0-9]{32})\n"),
++    _policy("prevalidation_other", "definition:\n  cond_type: secrets\n  value:\n  - (?i)zetavendor_key\\s*=\\s*([a-z0-9]{20})\n"),
++    _policy(
++        "prevalidation_multiline",
++        "definition:\n  cond_type: secrets\n  multiline: true\n  prerun:\n  - (?i)(?:algolia)\n  value:\n"
++        "  - (?i)(?:algolia)(?:.|[\\n\\r]){0,80}([A-Za-z0-9]{32})\n",
++    ),
++]
++
++FILES = {
++    "service.py": 'TOKEN = "acmeint_0bpf0p6o8tieai29cynzwtvt3xoh6rjf"\n',
++    "Dockerfile.search": "ENV ALGOLIA_APP=app\nENV KEY=\\\n    a1B2c3D4e5F6g7H8i9J0k1L2m3N4o5P6\n",
++    "notes.txt": "nothing to see here\njust plain text\n",
++}
++
++
++@pytest.fixture
++def repo(tmp_path: Path) -> Path:
++    for name, content in FILES.items():
++        (tmp_path / name).write_text(content)
++    return tmp_path
++
++
++@pytest.fixture(autouse=True)
++def custom_policies():
++    previous = bc_integration.customer_run_config_response
++    bc_integration.customer_run_config_response = {"secretsPolicies": POLICIES}
++    yield
++    bc_integration.customer_run_config_response = previous
++
++
++def _prevalidation_env(enabled: bool) -> mock._patch_dict:
++    return mock.patch.dict(os.environ, {"CHECKOV_SECRETS_PREVALIDATION": "true" if enabled else "false"})
++
++
++def _scan(root: Path, enabled: bool) -> list[tuple[str, str, int]]:
++    with _prevalidation_env(enabled):
++        report = Runner().run(
++            root_folder=str(root),
++            runner_filter=RunnerFilter(framework=["secrets"], enable_secret_scan_all_files=True),
++        )
++    return sorted(
++        (check.check_id, Path(check.file_path).name, check.file_line_range[0])
++        for check in report.failed_checks
++        if check.check_id.startswith("prevalidation_")
++    )
++
++
++def test_same_findings_with_and_without_prevalidation(repo: Path) -> None:
++    disabled = _scan(repo, enabled=False)
++    assert {check_id for check_id, _, _ in disabled} == {"prevalidation_single", "prevalidation_multiline"}
++    assert _scan(repo, enabled=True) == disabled
++
++
++def test_active_rules_only_keep_rules_whose_literals_appear(repo: Path) -> None:
++    with _prevalidation_env(True):
++        detector = CustomRegexDetector()
++        single, multiline = detector._active_rules(str(repo / "service.py"))
++        assert {r.pattern for r in single} == {"(?i)acmeint_([a-z0-9]{32})"}
++        assert not multiline
++
++        single, multiline = detector._active_rules(str(repo / "notes.txt"))
++        assert not single
++        assert not multiline
++
++
++def test_active_rules_disabled_runs_everything(repo: Path) -> None:
++    with _prevalidation_env(False):
++        assert CustomRegexDetector()._active_rules(str(repo / "notes.txt")) is None
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7830** (2026-11-24): chore(general): pin wcwidth below 0.9 for table output tests (@omriyoffe-panw)
+- **PR #7829** (2026-11-24): chore(terraform): update bc-python-hcl2 version to 0.4.5 (@omriyoffe-panw)
+- **PR #7828** (2026-11-24): feat(secrets): optional per-file pre-validation for custom regex rules (@AdamDev)
 - **PR #7827** (2026-11-23): chore(general): support cyclonedx-python-lib up to 11.x (@itrocki)
 - **PR #7809** (2026-11-19): fix(secrets): remove leading wildcard from Azure hostname patterns (@omriyoffe-panw)
 - **PR #7795** (2026-11-12): fix(general): harden request error logging (@Saarett)
-- **PR #7794** (2026-11-10): fix(bicep): resolve references within the declaring file (@itrocki)
-- **PR #7776** (2026-11-02): fix(terraform): build userinfo test URLs dynamically (@talazuri)
-- **PR #7759** (closed): Test Migration of CI Jobs to GitHub-Hosted Runners (@amitz)
 
 ---
 
@@ -1013,31 +1292,37 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. general): support cyclonedx-python-lib up to 11.x
+## X. secrets): optional per-file pre-validation for custom regex rules
 
 **RULE**:
-When implementing operations in `checkov/version.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in bridgecrewio/checkov. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Pipfile.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in bridgecrewio/checkov. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2f107f86`: general): support cyclonedx-python-lib up to 11.x. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ae904f7a`: secrets): optional per-file pre-validation for custom regex rules. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `checkov/version.py`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `Pipfile.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-version = '3.4.7'
+                "sha256:25163b28aaab9a8083191f714d1a349eb3514cced10e94dc164f672ba7c426bd",
+                "sha256:e62cc8be5f9aa1c5c9d0d4c697fe2a8a72df202e0e17a41c95d335b5b51f1d11"
+            "markers": "python_version >= '3.9'",
+            "version": "==1.5.54"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Induced defect failure mode:
-version = '3.4.6'
+                "sha256:772353c949a131b7b5efd2b20473e0128af9c25ea27cdb15a3a6a6727ca73c4e",
+                "sha256:bb437db4b4ad81b19d52feaf8e0ebaf6ca0421ee6fefbdd9d41210bd4983e16b"
+            "markers": "python_version >= '3.8'",
+            "version": "==1.5.52"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2f107f86` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ae904f7a` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

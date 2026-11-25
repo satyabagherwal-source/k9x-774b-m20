@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-25T01:36:12.439Z",
+  "updated_at": "2026-11-25T01:44:36.771Z",
   "stats": {
-    "total_discovered": 9103,
-    "approved_pending_harvest": 8624,
+    "total_discovered": 9107,
+    "approved_pending_harvest": 8628,
     "harvested_count": 0,
     "rejected_count": 479,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 8612,
+      "COMMUNITY_AND_EXPERT": 8616,
       "OFFICIAL_DOCUMENTATION": 274,
       "STANDARDS_AND_SPECIFICATIONS": 149,
       "ENGINEERING_BLOGS": 7,
@@ -196940,6 +196940,94 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/meshery-meshery-learnings.md",
         "fileName": "meshery-meshery-learnings.md"
+      }
+    },
+    "SRC-E258237ACD16": {
+      "id": "SRC-E258237ACD16",
+      "url": "https://app.coderabbit.ai/change-stack/biomejs/biome/pull/13405?scope=ghh_OusAJGA4HG8ljoOV0wJvVx8NmnZIjc2DdjmxOu0xZWA&amp%3Bcs_source=review_comment",
+      "title": "https://app.coderabbit.ai/change-stack/biomejs/biome/pull/13405?scope=ghh_OusAJGA4HG8ljoOV0wJvVx8NmnZIjc2DdjmxOu0xZWA&amp%3Bcs_source=review_comment",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T01:44:35.603Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/biomejs-biome-learnings.md",
+        "fileName": "biomejs-biome-learnings.md"
+      }
+    },
+    "SRC-95DB581E339F": {
+      "id": "SRC-95DB581E339F",
+      "url": "https://github.com/biomejs/biome/issues/13392",
+      "title": "https://github.com/biomejs/biome/issues/13392",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T01:44:35.726Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/biomejs-biome-learnings.md",
+        "fileName": "biomejs-biome-learnings.md"
+      }
+    },
+    "SRC-6E2649B893A6": {
+      "id": "SRC-6E2649B893A6",
+      "url": "https://github.com/nodejs/node/pull/43875",
+      "title": "https://github.com/nodejs/node/pull/43875",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T01:44:36.712Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/avajs-ava-learnings.md",
+        "fileName": "avajs-ava-learnings.md"
+      }
+    },
+    "SRC-FF4A9A7DD9F9": {
+      "id": "SRC-FF4A9A7DD9F9",
+      "url": "https://github.com/avajs/ava/blob/bbfd946322fdeca2b547a691d947fb4e18c0c67f/lib/reporters/prefix-title.js",
+      "title": "https://github.com/avajs/ava/blob/bbfd946322fdeca2b547a691d947fb4e18c0c67f/lib/reporters/prefix-title.js",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T01:44:36.771Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/avajs-ava-learnings.md",
+        "fileName": "avajs-ava-learnings.md"
       }
     }
   }

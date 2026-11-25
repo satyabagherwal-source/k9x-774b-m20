@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T01:36:13.865Z",
+  "last_updated": "2026-11-25T01:44:38.176Z",
   "total_records": 2615,
   "domains": {
     "A": {
@@ -8817,8 +8817,8 @@
       "title": "Technical Construction Intelligence: bridgecrewio/checkov Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-bridgecrewio-checkov-technical-construction-intelligence-bridgecrewio-checkov-co.md",
       "repository": "bridgecrewio/checkov",
-      "content_hash": "59057bf38d0b9d5849d4f4286d32b66f7d439ef4c2568e556591d2257c54d64d",
-      "created_at": "2026-11-24T07:07:39.321Z"
+      "content_hash": "c42d04d16b90a8bcdb93509fea3f6163d65d83176ca72051f491641b6ef06030",
+      "created_at": "2026-11-25T01:44:26.103Z"
     },
     "domain_intelligence-technical-construction-intelligence-tursodatabase-turso-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-tursodatabase-turso-core-invariants",
@@ -8895,8 +8895,8 @@
       "title": "Technical Construction Intelligence: bridgecrewio-checkov-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-bridgecrewio-checkov-learnings-technical-construction-intelligence-bridgecrewio-.md",
       "repository": "bridgecrewio-checkov-learnings",
-      "content_hash": "a1619ff267c8e4a09239e53ae28022da790d7e4b2c1230f25767272e29ceb9c3",
-      "created_at": "2026-11-24T07:07:45.981Z"
+      "content_hash": "64fc9c7dc9dc4374f2c8279ff7ab6a1555b480af5c50c5eac386f1225c645c2f",
+      "created_at": "2026-11-25T01:44:38.176Z"
     },
     "domain_intelligence-research-knowledge-intelligence-ista-daslab-qwen3-8-27b-gsq-rco-gguf-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-ista-daslab-qwen3-8-27b-gsq-rco-gguf-core-invari",
@@ -12873,8 +12873,8 @@
       "title": "Technical Construction Intelligence: lioensky/VCPToolBox Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-lioensky-vcptoolbox-technical-construction-intelligence-lioensky-vcptoolbox-core.md",
       "repository": "lioensky/VCPToolBox",
-      "content_hash": "ed6ed4bb4556fc7820c7be9ab322dcc0cf4fadb3d6c0d93760eec89e5c56f9da",
-      "created_at": "2026-11-24T06:11:24.794Z"
+      "content_hash": "adadeeef1f979da17b6455550a025cf3ccaa7dfa068754bd103f76ef9c9883d6",
+      "created_at": "2026-11-25T01:44:32.465Z"
     },
     "domain_intelligence-deployment-operations-intelligence-graphprotocol-graph-node-learnings-core-invar": {
       "record_id": "domain_intelligence-deployment-operations-intelligence-graphprotocol-graph-node-learnings-core-invar",
@@ -16630,8 +16630,8 @@
       "title": "Architecture Intelligence: biomejs/biome Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-biomejs-biome-architecture-intelligence-biomejs-biome-core-invariants.md",
       "repository": "biomejs/biome",
-      "content_hash": "a1400d8797f7da5942619d129011e9566c590437f8c628177efcd8fbe6c2b9cc",
-      "created_at": "2026-11-22T14:40:37.382Z"
+      "content_hash": "4999116d899846159248a7785de3f1c77cd31f22b20c44f497887696aceadf9f",
+      "created_at": "2026-11-25T01:44:19.795Z"
     },
     "domain_intelligence-quality-verification-intelligence-apple-foundationdb-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-apple-foundationdb-core-invariants",
@@ -16690,8 +16690,8 @@
       "title": "Architecture Intelligence: biomejs-biome-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-biomejs-biome-learnings-architecture-intelligence-biomejs-biome-learnings-core-i.md",
       "repository": "biomejs-biome-learnings",
-      "content_hash": "b002ac3cc248c3d924d45fea6592819f07d21e25f4d1d7819ab4f7427b4efc3c",
-      "created_at": "2026-11-22T14:45:38.528Z"
+      "content_hash": "6fcec659087f0f0f6edd341ef9e1350b6e3bbf5dc5f53b1e1c72a4e3f6e51878",
+      "created_at": "2026-11-25T01:44:36.259Z"
     },
     "DOM-L-817D65B4": {
       "record_id": "DOM-L-817D65B4",
@@ -26956,8 +26956,8 @@
       "title": "Architecture Intelligence: avajs/ava Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-avajs-ava-architecture-intelligence-avajs-ava-core-invariants.md",
       "repository": "avajs/ava",
-      "content_hash": "0772b2b8e6992b585bbb2d59dd9a70b96539827714bd6f488e6b6924cacf2a6a",
-      "created_at": "2026-11-17T08:18:29.349Z"
+      "content_hash": "3b3cd7a08a97c55b3d794f79d121fe5bc85c37facf2f524675d830afef0c3238",
+      "created_at": "2026-11-25T01:44:20.890Z"
     },
     "domain_intelligence-technical-construction-intelligence-apple-foundationdb-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-apple-foundationdb-core-invariants",
@@ -27017,8 +27017,8 @@
       "title": "Architecture Intelligence: avajs-ava-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-avajs-ava-learnings-architecture-intelligence-avajs-ava-learnings-core-invariant.md",
       "repository": "avajs-ava-learnings",
-      "content_hash": "cd917fecfc60600ef77d9f1a4428c3c993672e0e87c079c0770fcb465980848f",
-      "created_at": "2026-11-17T08:19:59.004Z"
+      "content_hash": "bf7f0183b90a3ee7a06ece6dce0b951e8fb0baf51f71f48c70ffa01eb6ec9842",
+      "created_at": "2026-11-25T01:44:37.184Z"
     },
     "DOM-I-6DA6494F": {
       "record_id": "DOM-I-6DA6494F",

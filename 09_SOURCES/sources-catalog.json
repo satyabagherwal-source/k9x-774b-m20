@@ -2993,10 +2993,10 @@
     "repository": "lioensky/VCPToolBox",
     "platform": "github",
     "sourceUrl": "https://github.com/lioensky/VCPToolBox",
-    "sourceVersion": "5ca56f3b",
+    "sourceVersion": "c4762817",
     "license": "NOASSERTION",
-    "contentHash": "b7f414ee9b4ff894cbf084a3b2de8ad6f1770396dbda7fd8541e551ec239529d",
-    "lastHarvestedAt": "2026-11-24T06:11:24.105Z",
+    "contentHash": "4ed45b8f336b3b38475e2073dfce6bdef713be89ce3c68524b317c7ffdf391cb",
+    "lastHarvestedAt": "2026-11-25T01:44:32.043Z",
     "learningId": "learn-github-lioensky-vcptoolbox"
   },
   "megabit-blazorise": {
@@ -5113,10 +5113,10 @@
     "repository": "bridgecrewio/checkov",
     "platform": "github",
     "sourceUrl": "https://github.com/bridgecrewio/checkov",
-    "sourceVersion": "2f107f86",
+    "sourceVersion": "d266c8a5",
     "license": "Apache-2.0",
-    "contentHash": "7e85c9e34e49bd111c31b3cea7d30c3a5f3730a2fce4d4c5d4a8ba8b74afeb6e",
-    "lastHarvestedAt": "2026-11-24T07:07:38.693Z",
+    "contentHash": "7dcdbea96240ee852dd261f918032ca840bd465d92a240d9ba8e6ba20923b889",
+    "lastHarvestedAt": "2026-11-25T01:44:25.689Z",
     "learningId": "learn-github-bridgecrewio-checkov"
   },
   "apache-zookeeper": {
@@ -7643,10 +7643,10 @@
     "repository": "biomejs/biome",
     "platform": "github",
     "sourceUrl": "https://github.com/biomejs/biome",
-    "sourceVersion": "d965df8d",
+    "sourceVersion": "caaa90bc",
     "license": "Apache-2.0",
-    "contentHash": "1f57f3b1563daccd564f29196bf6492b8f9902990251958719a852113bc78b3f",
-    "lastHarvestedAt": "2026-11-23T22:56:18.905Z",
+    "contentHash": "16eb885d8711eb4ea9157b34f9f1c087862d6c42069cad8e09df08f9b07b4b17",
+    "lastHarvestedAt": "2026-11-25T01:44:19.330Z",
     "learningId": "learn-github-biomejs-biome"
   },
   "msasikanth-twine": {
@@ -10223,10 +10223,10 @@
     "repository": "avajs/ava",
     "platform": "github",
     "sourceUrl": "https://github.com/avajs/ava",
-    "sourceVersion": "ce2839c1",
+    "sourceVersion": "fc83bdc0",
     "license": "MIT",
-    "contentHash": "db976478b70a99f914b8688e87457cb37535c8accb5978b3691c72cdd197fc94",
-    "lastHarvestedAt": "2026-11-17T08:18:28.977Z",
+    "contentHash": "7e7b94bc399697b9d4532c006d8774a4000d7971c39160db425d06007ebf339f",
+    "lastHarvestedAt": "2026-11-25T01:44:20.467Z",
     "learningId": "learn-github-avajs-ava"
   },
   "maxrave-dev-kotlin-footguns": {

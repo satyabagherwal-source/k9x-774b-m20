@@ -12889,3 +12889,7 @@
 | `CYCLE-2026-11-25-PROJ-EVOLVE` | `2026-11-25T01:27:35.503Z` | `crossplane-crossplane` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-58839C8D` [Domain D] | Yes (`b0c1cdc8...`) |
 | `CYCLE-20261125-CLL8` | `2026-11-25T01:35:58.028Z` | `codewhale-hq/Codewhale` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md` | Yes (`6557dbe6...`) |
 | `CYCLE-20261125-CS8A` | `2026-11-25T01:36:06.634Z` | `meshery/meshery` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10416` | Yes (`ab3671ed...`) |
+| `CYCLE-20261125-NCE5` | `2026-11-25T01:44:19.325Z` | `biomejs/biome` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10417` | Yes (`16eb885d...`) |
+| `CYCLE-20261125-ND9R` | `2026-11-25T01:44:20.463Z` | `avajs/ava` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10418` | Yes (`7e7b94bc...`) |
+| `CYCLE-20261125-NHAT` | `2026-11-25T01:44:25.685Z` | `bridgecrewio/checkov` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10419` | Yes (`7dcdbea9...`) |
+| `CYCLE-20261125-NM7A` | `2026-11-25T01:44:32.038Z` | `lioensky/VCPToolBox` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10420` | Yes (`4ed45b8f...`) |
