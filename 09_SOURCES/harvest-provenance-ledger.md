@@ -13143,3 +13143,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-burner22-numbat` | `https://huggingface.co/burner22/numbat` | `hf-burner2` | Multi-dimensional audit evidence | 2026-11-25T14:32:16.961Z |
 | `learn-github-okteto-okteto` | `https://github.com/okteto/okteto` | `ea8eb1a4` | Multi-dimensional audit evidence | 2026-11-25T14:32:27.012Z |
 | `learn-dom-k-2ef72417` | `project://okteto-okteto` | `ea8eb1a4` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/okteto-okteto-learnings.md` | 2026-11-25T14:33:01.864Z |
+| `learn-huggingface-edge0-audio8-tts-realistic-air` | `https://huggingface.co/Edge0/Audio8-TTS-Realistic-Air` | `hf-edge0-a` | Multi-dimensional audit evidence | 2026-11-25T14:41:40.936Z |
+| `learn-github-pimalaya-himalaya` | `https://github.com/pimalaya/himalaya` | `fceae497` | Multi-dimensional audit evidence | 2026-11-25T14:41:43.658Z |

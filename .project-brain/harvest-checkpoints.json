@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-25T14:32:27.027Z",
+  "last_updated": "2026-11-25T14:41:43.672Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7236,14 +7236,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pimalaya-himalaya",
-      "content_hash": "c078c7deeb5a8dde2de3274c7eeb5e10109496a506226d78ecadf141654c3da3",
-      "verified_at": "2026-11-24T13:56:32.182Z",
+      "content_hash": "f23cd9bb58f88998c6337f89a6580d5feb8a98bc696dc7e2f3fccad7b7f26234",
+      "verified_at": "2026-11-25T14:41:43.671Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T13:56:32.182Z"
+      "last_updated": "2026-11-25T14:41:43.672Z"
     },
     "wcandillon/react-native-skia": {
       "repository": "wcandillon/react-native-skia",
@@ -17585,15 +17585,15 @@
       "pipeline_mode": "CLOUD_HARVEST",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-edge0-audio8-tts-realistic-0-6b",
-      "content_hash": "c93c066b6344b42ab52e4c7ba3f5ec9998aa052d86b2c0793fe5ec370ef4c09d",
-      "verified_at": "2026-11-25T14:23:45.131Z",
+      "learning_id": "learn-huggingface-edge0-audio8-tts-realistic-air",
+      "content_hash": "ea27053e2a47b6b2465f5b1ca32b30bc830e36092796507651d17ee3116f13f1",
+      "verified_at": "2026-11-25T14:41:40.954Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T14:23:45.131Z"
+      "last_updated": "2026-11-25T14:41:40.954Z"
     },
     "OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated": {
       "repository": "OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated",

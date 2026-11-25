@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-25T14:32:30.324Z",
-    "lastVerified": "2026-11-25T14:32:30.324Z",
+    "lastChecked": "2026-11-25T14:41:52.750Z",
+    "lastVerified": "2026-11-25T14:41:52.750Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -193,12 +193,12 @@
     "revisionIdentifier": "9dbecfa0"
   },
   "dathere-qsv": {
-    "name": "dathere/qsv",
+    "name": "qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-25T14:05:08.881Z",
-    "lastVerified": "2026-11-25T14:05:08.881Z",
+    "lastChecked": "2026-11-25T14:41:52.741Z",
+    "lastVerified": "2026-11-25T14:41:52.741Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -207,7 +207,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "c9b35465"
   },
   "sxyazi-yazi": {
     "name": "yazi",
@@ -263,8 +264,8 @@
     "officialUrl": "https://github.com/microsoft/agent-governance-toolkit",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-25T09:54:21.867Z",
-    "lastVerified": "2026-11-25T09:54:21.867Z",
+    "lastChecked": "2026-11-25T14:41:47.774Z",
+    "lastVerified": "2026-11-25T14:41:47.774Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-microsoft-agent-governance-toolkit",
@@ -279,9 +280,9 @@
   "pathwaycom-llm-app": {
     "name": "llm-app",
     "officialUrl": "https://github.com/pathwaycom/llm-app",
-    "lastChecked": "2026-11-24T19:19:16.703Z",
+    "lastChecked": "2026-11-25T14:41:50.241Z",
     "revisionIdentifier": "53c6382b",
-    "lastVerified": "2026-11-24T19:19:16.703Z"
+    "lastVerified": "2026-11-25T14:41:50.241Z"
   },
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
@@ -3627,12 +3628,12 @@
     "lastVerified": "2026-11-24T14:14:59.233Z"
   },
   "dragonflyoss-dragonfly": {
-    "name": "dragonflyoss/dragonfly",
+    "name": "dragonfly",
     "officialUrl": "https://github.com/dragonflyoss/dragonfly",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-24T20:29:56.079Z",
-    "lastVerified": "2026-11-24T20:29:56.079Z",
+    "lastChecked": "2026-11-25T14:41:45.359Z",
+    "lastVerified": "2026-11-25T14:41:45.359Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dragonflyoss-dragonfly",
@@ -3641,7 +3642,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "9e35a9ba"
   },
   "featureform-featureform": {
     "name": "featureform",
@@ -4470,14 +4472,14 @@
     "officialUrl": "https://github.com/pimalaya/himalaya",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-24T13:56:31.002Z",
-    "lastVerified": "2026-11-24T13:56:31.002Z",
+    "lastChecked": "2026-11-25T14:41:42.472Z",
+    "lastVerified": "2026-11-25T14:41:42.472Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-pimalaya-himalaya",
-    "contentHash": "c078c7deeb5a8dde2de3274c7eeb5e10109496a506226d78ecadf141654c3da3",
+    "contentHash": "f23cd9bb58f88998c6337f89a6580d5feb8a98bc696dc7e2f3fccad7b7f26234",
     "promotedRulesCount": 1,
-    "recentFixesCount": 10,
+    "recentFixesCount": 6,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -10169,9 +10171,9 @@
   "android-kotlin-multiplatform-samples": {
     "name": "kotlin-multiplatform-samples",
     "officialUrl": "https://github.com/android/kotlin-multiplatform-samples",
-    "lastChecked": "2026-11-23T06:53:53.362Z",
+    "lastChecked": "2026-11-25T14:41:42.973Z",
     "revisionIdentifier": "7844c733",
-    "lastVerified": "2026-11-23T06:53:53.362Z"
+    "lastVerified": "2026-11-25T14:41:42.973Z"
   },
   "crawlcove-crawlcove-sitemap-validator": {
     "name": "crawlcove-sitemap-validator",
@@ -13670,13 +13672,13 @@
     "officialUrl": "https://huggingface.co/Edge0/Audio8-TTS-Realistic-Air",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-21T23:25:15.545Z",
-    "lastVerified": "2026-11-21T23:25:15.545Z",
+    "lastChecked": "2026-11-25T14:41:40.304Z",
+    "lastVerified": "2026-11-25T14:41:40.304Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-edge0-audio8-tts-realistic-air",
-    "contentHash": "0fc8d3f4bf16a4e19329741b53c13d31bf753b3d23e4cfc96f39187028582cec",
-    "promotedRulesCount": 3,
+    "contentHash": "ea27053e2a47b6b2465f5b1ca32b30bc830e36092796507651d17ee3116f13f1",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",

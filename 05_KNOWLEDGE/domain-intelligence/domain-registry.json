@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T14:33:03.962Z",
-  "total_records": 2677,
+  "last_updated": "2026-11-25T14:41:56.271Z",
+  "total_records": 2678,
   "domains": {
     "A": {
       "total": 22,
@@ -1208,7 +1208,7 @@
       ]
     },
     "G": {
-      "total": 464,
+      "total": 465,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1673,7 +1673,8 @@
         "domain_intelligence-architecture-intelligence-rmax-scrapy-redis-core-invariants",
         "domain_intelligence-architecture-intelligence-rmax-scrapy-redis-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-authzed-spicedb-core-invariants",
-        "domain_intelligence-architecture-intelligence-authzed-spicedb-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-authzed-spicedb-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-pimalaya-himalaya-learnings-core-invariants"
       ]
     },
     "H": {
@@ -8492,8 +8493,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "df2dfd7f76564f1c011ff90f704ee59b24c0d7f25730113636938ca4f3173e07",
-      "created_at": "2026-11-25T14:33:03.962Z"
+      "content_hash": "0bc39f4b6cac0532422191e3b2ed4cb7aac3fff6d639ad768dcdd0276950e00e",
+      "created_at": "2026-11-25T14:41:56.271Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -9524,8 +9525,8 @@
       "title": "Product Intelligence: pimalaya/himalaya Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-pimalaya-himalaya-product-intelligence-pimalaya-himalaya-core-invariants.md",
       "repository": "pimalaya/himalaya",
-      "content_hash": "bd4f609ebc699af0d29923cd100eb7ab1c559a9b39f46ea9abf00f7354a34303",
-      "created_at": "2026-11-24T13:56:32.606Z"
+      "content_hash": "b7be17517fbe9ee6f107d58f294ea4cb376e643d24526b106d7d7755856b4d6e",
+      "created_at": "2026-11-25T14:41:44.086Z"
     },
     "domain_intelligence-technical-construction-intelligence-kirillzyusko-react-native-keyboard-controlle": {
       "record_id": "domain_intelligence-technical-construction-intelligence-kirillzyusko-react-native-keyboard-controlle",
@@ -20915,10 +20916,10 @@
       "record_id": "domain_intelligence-research-knowledge-intelligence-edge0-audio8-tts-realistic-air-core-invariants",
       "domain_letter": "D",
       "title": "Research & Knowledge Intelligence: Edge0/Audio8-TTS-Realistic-Air Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-edge0-audio8-tts-realistic-0-6b-research-knowledge-intelligence-edge0-audio8-.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-edge0-audio8-tts-realistic-air-research-knowledge-intelligence-edge0-audio8-t.md",
       "repository": "Edge0/Audio8-TTS-Realistic-Air",
-      "content_hash": "39c5507833d9e3b08c3a115d8a620de86a805d73057da454ebb241b6da24cd18",
-      "created_at": "2026-11-25T14:23:45.383Z"
+      "content_hash": "c8bfe8d52c82cc9d9923c0304f1170a77baf9c9bc4e3caea11047fb4e3b7f115",
+      "created_at": "2026-11-25T14:41:41.172Z"
     },
     "domain_intelligence-architecture-intelligence-mrkai77-loop-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-mrkai77-loop-core-invariants",
@@ -20986,8 +20987,8 @@
       "title": "Research & Knowledge Intelligence: hf-edge0-audio8-tts-realistic-air-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-edge0-audio8-tts-realistic-air-learnings-research-knowledge-intelligence-hf-e.md",
       "repository": "hf-edge0-audio8-tts-realistic-air-learnings",
-      "content_hash": "f9ea4b08a4d23556b01c8588f03d754ba1a4dd3ad0dc240a205046077bbdfc06",
-      "created_at": "2026-11-15T07:42:32.311Z"
+      "content_hash": "3477fb0afb4c2bfd8c16122bd0f5d25034ed0dc96329fd898a3ecbb2605db1ce",
+      "created_at": "2026-11-25T14:41:55.497Z"
     },
     "domain_intelligence-architecture-intelligence-mrkai77-loop-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-mrkai77-loop-learnings-core-invariants",
@@ -45123,6 +45124,15 @@
       "confidence": 0.64,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-25T14:33:01.823Z"
+    },
+    "domain_intelligence-architecture-intelligence-pimalaya-himalaya-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-pimalaya-himalaya-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: pimalaya-himalaya-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-pimalaya-himalaya-learnings-architecture-intelligence-pimalaya-himalaya-learning.md",
+      "repository": "pimalaya-himalaya-learnings",
+      "content_hash": "17884787db19b4d4ebccece70230eea14e4eed334ef63f87afcfb4949842231d",
+      "created_at": "2026-11-25T14:41:54.919Z"
     }
   }
 }

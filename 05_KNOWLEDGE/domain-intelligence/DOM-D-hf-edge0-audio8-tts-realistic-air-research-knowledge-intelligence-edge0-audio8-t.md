@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/Edge0/Audio8-TTS-Realistic-Air",
   "source_version": "hf-edge0-audio8-tts-realistic-air",
   "license": "Open-Source",
-  "timestamp": "2026-11-15T07:41:47.398Z",
+  "timestamp": "2026-11-25T14:41:41.171Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-edge0-audio8-tts-realistic-air",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [Edge0/Audio8-TTS-Realistic-Air](https://huggingface.co/Edge0/Audio8-TTS-Realistic-Air) (Revision: `hf-edge0-a`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-15T07:41:47.398Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T14:41:41.171Z`  
 > **Learning ID**: `learn-huggingface-edge0-audio8-tts-realistic-air`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-edge0-audio8-tts-realistic-air-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/Edge0/Audio8-TTS-Realistic-Air](https://huggingface.co/Edge0/Audio8-TTS-Realistic-Air))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T07:41:46.544Z  
+> **Harvest Timestamp**: 2026-11-25T14:41:40.304Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-to-speech
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 19307 downloads | 524 likes
+- **Stars / Engagement**: 29227 downloads | 484 likes
 
 ---
 

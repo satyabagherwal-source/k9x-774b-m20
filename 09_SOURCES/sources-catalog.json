@@ -4743,10 +4743,10 @@
     "repository": "pimalaya/himalaya",
     "platform": "github",
     "sourceUrl": "https://github.com/pimalaya/himalaya",
-    "sourceVersion": "db0c9a6b",
+    "sourceVersion": "fceae497",
     "license": "Apache-2.0",
-    "contentHash": "c078c7deeb5a8dde2de3274c7eeb5e10109496a506226d78ecadf141654c3da3",
-    "lastHarvestedAt": "2026-11-24T13:56:32.165Z",
+    "contentHash": "f23cd9bb58f88998c6337f89a6580d5feb8a98bc696dc7e2f3fccad7b7f26234",
+    "lastHarvestedAt": "2026-11-25T14:41:43.658Z",
     "learningId": "learn-github-pimalaya-himalaya"
   },
   "shopify-react-native-skia": {
@@ -11685,8 +11685,8 @@
     "sourceUrl": "https://huggingface.co/Edge0/Audio8-TTS-Realistic-Air",
     "sourceVersion": "hf-edge0-audio8-tts-realistic-air",
     "license": "Open-Source",
-    "contentHash": "0fc8d3f4bf16a4e19329741b53c13d31bf753b3d23e4cfc96f39187028582cec",
-    "lastHarvestedAt": "2026-11-21T23:27:03.282Z",
+    "contentHash": "ea27053e2a47b6b2465f5b1ca32b30bc830e36092796507651d17ee3116f13f1",
+    "lastHarvestedAt": "2026-11-25T14:41:40.936Z",
     "learningId": "learn-huggingface-edge0-audio8-tts-realistic-air"
   },
   "hf-obliteratus-deepseek-v4.1-flash-1017-obliterated": {

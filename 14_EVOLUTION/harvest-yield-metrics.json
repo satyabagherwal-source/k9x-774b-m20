@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T14:32:27.018Z",
-  "total_cycles_completed": 12444,
-  "total_learnings_persisted": 12444,
-  "total_rules_promoted": 11424,
+  "last_updated": "2026-11-25T14:41:43.663Z",
+  "total_cycles_completed": 12446,
+  "total_learnings_persisted": 12446,
+  "total_rules_promoted": 11425,
   "history": [
-    {
-      "timestamp": "2026-11-25T01:44:25.694Z",
-      "repository": "bridgecrewio/checkov",
-      "learningId": "learn-github-bridgecrewio-checkov",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T01:44:32.048Z",
-      "repository": "lioensky/VCPToolBox",
-      "learningId": "learn-github-lioensky-vcptoolbox",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-25T01:52:49.187Z",
       "repository": "oxc-project/oxc",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-25T14:32:27.018Z",
       "repository": "okteto/okteto",
       "learningId": "learn-github-okteto-okteto",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T14:41:40.942Z",
+      "repository": "Edge0/Audio8-TTS-Realistic-Air",
+      "learningId": "learn-huggingface-edge0-audio8-tts-realistic-air",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T14:41:43.663Z",
+      "repository": "pimalaya/himalaya",
+      "learningId": "learn-github-pimalaya-himalaya",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

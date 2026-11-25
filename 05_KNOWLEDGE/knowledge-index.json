@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-25T14:33:04.176Z",
+  "last_updated": "2026-11-25T14:41:56.454Z",
   "total_verified_learnings": 9118,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25481,
+  "total_items": 25485,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112198,9 +112198,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "df2dfd7f76564f1c011ff90f704ee59b24c0d7f25730113636938ca4f3173e07",
+      "content_hash": "0bc39f4b6cac0532422191e3b2ed4cb7aac3fff6d639ad768dcdd0276950e00e",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T14:33:03.962Z"
+      "persisted_at": "2026-11-25T14:41:56.271Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -112210,9 +112210,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "ab7b563d84592980fc69ba60752d8f51ea51a6edde61c56f5c57bd6b26870c9c",
+      "content_hash": "bb1123bbbc27957b66cabfb1f858ede131d6b94059962a3967e000fc4fe5bac5",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T14:33:04.176Z"
+      "persisted_at": "2026-11-25T14:41:56.454Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -113937,10 +113937,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-pimalaya-himalaya-product-intelligence-pimalaya-himalaya-core-invariants.md",
       "title": "Product Intelligence: pimalaya/himalaya Core Invariants",
       "repository": "pimalaya/himalaya",
-      "source_version": "db0c9a6b",
-      "content_hash": "bd4f609ebc699af0d29923cd100eb7ab1c559a9b39f46ea9abf00f7354a34303",
+      "source_version": "fceae497",
+      "content_hash": "b7be17517fbe9ee6f107d58f294ea4cb376e643d24526b106d7d7755856b4d6e",
       "domain_letter": "B",
-      "persisted_at": "2026-11-24T13:56:32.606Z"
+      "persisted_at": "2026-11-25T14:41:44.086Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-pimalaya-himalaya": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-pimalaya-himalaya",
@@ -113949,10 +113949,10 @@
       "relative_path": "08_VERIFICATION/pimalaya-himalaya-verification-protocol-empirical-defect-shield-for-pimalaya-him.md",
       "title": "Verification Protocol: Empirical Defect Shield for pimalaya/himalaya",
       "repository": "pimalaya/himalaya",
-      "source_version": "db0c9a6b",
-      "content_hash": "c074adcbb943ca39ba08b167f9389882c23c6cb3b7d65c8114ad1ce2b5012bf4",
+      "source_version": "fceae497",
+      "content_hash": "f3a2b8b60f497e557f9604f4bc7ff62fea14d4c0229a9b7bf4779723c698ff64",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T13:56:32.797Z"
+      "persisted_at": "2026-11-25T14:41:44.269Z"
     },
     "candidate_directive-report-zero-progress-for-zero-height-android-keyboards-1731": {
       "item_id": "candidate_directive-report-zero-progress-for-zero-height-android-keyboards-1731",
@@ -114010,9 +114010,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for pimalaya-himalaya-learnings",
       "repository": "pimalaya-himalaya-learnings",
       "source_version": "HEAD",
-      "content_hash": "08208a50a35b04c21f4002add9f5463a829aaebea113aa0d745c1978cea0abc7",
+      "content_hash": "76d6a7601388e2e5171e26a4bbb2b06a2266363cf172d1cd31c7c261b6396bec",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T13:56:47.539Z"
+      "persisted_at": "2026-11-25T14:41:55.103Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-inclusionai-ming-image-0-1-design-learnings-c": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-inclusionai-ming-image-0-1-design-learnings-c",
@@ -247007,7 +247007,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Edge0/Audio8-TTS-Realistic-Air",
       "source_version": "hf-edge0-audio8-tts-realistic-air",
-      "content_hash": "0fc8d3f4bf16a4e19329741b53c13d31bf753b3d23e4cfc96f39187028582cec",
+      "content_hash": "ea27053e2a47b6b2465f5b1ca32b30bc830e36092796507651d17ee3116f13f1",
       "dossier_path": "07_PROJECT_LEARNING/hf-edge0-audio8-tts-realistic-air-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-edge0-audio8-tts-realistic-air-learnings.md",
       "promoted_rules": [
@@ -247032,7 +247032,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T23:27:03.036Z",
+      "verified_at": "2026-11-25T14:41:40.697Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -247045,13 +247045,13 @@
       "item_id": "domain_intelligence-research-knowledge-intelligence-edge0-audio8-tts-realistic-air-core-invariants",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-edge0-audio8-tts-realistic-0-6b-research-knowledge-intelligence-edge0-audio8-.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-edge0-audio8-tts-realistic-air-research-knowledge-intelligence-edge0-audio8-t.md",
       "title": "Research & Knowledge Intelligence: Edge0/Audio8-TTS-Realistic-Air Core Invariants",
       "repository": "Edge0/Audio8-TTS-Realistic-Air",
-      "source_version": "hf-edge0-audio8-tts-realistic-0.6b",
-      "content_hash": "39c5507833d9e3b08c3a115d8a620de86a805d73057da454ebb241b6da24cd18",
+      "source_version": "hf-edge0-audio8-tts-realistic-air",
+      "content_hash": "c8bfe8d52c82cc9d9923c0304f1170a77baf9c9bc4e3caea11047fb4e3b7f115",
       "domain_letter": "D",
-      "persisted_at": "2026-11-25T14:23:45.383Z"
+      "persisted_at": "2026-11-25T14:41:41.172Z"
     },
     "learn-github-mrkai77-loop": {
       "learning_id": "learn-github-mrkai77-loop",
@@ -247262,9 +247262,9 @@
       "title": "Research & Knowledge Intelligence: hf-edge0-audio8-tts-realistic-air-learnings Core Invariants",
       "repository": "hf-edge0-audio8-tts-realistic-air-learnings",
       "source_version": "HEAD",
-      "content_hash": "f9ea4b08a4d23556b01c8588f03d754ba1a4dd3ad0dc240a205046077bbdfc06",
+      "content_hash": "3477fb0afb4c2bfd8c16122bd0f5d25034ed0dc96329fd898a3ecbb2605db1ce",
       "domain_letter": "D",
-      "persisted_at": "2026-11-15T07:42:32.311Z"
+      "persisted_at": "2026-11-25T14:41:55.497Z"
     },
     "domain_intelligence-architecture-intelligence-mrkai77-loop-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-mrkai77-loop-learnings-core-invariants",
@@ -250221,8 +250221,8 @@
       "slug": "pimalaya-himalaya",
       "platform": "github",
       "source_url": "https://github.com/pimalaya/himalaya",
-      "source_version": "db0c9a6b",
-      "content_hash": "c078c7deeb5a8dde2de3274c7eeb5e10109496a506226d78ecadf141654c3da3",
+      "source_version": "fceae497",
+      "content_hash": "f23cd9bb58f88998c6337f89a6580d5feb8a98bc696dc7e2f3fccad7b7f26234",
       "dossier_path": "07_PROJECT_LEARNING/pimalaya-himalaya-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pimalaya-himalaya-learnings.md",
       "promoted_rules": [
@@ -250265,6 +250265,11 @@
           "number": 10272,
           "title": "update the pimalaya nix input",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10542,
+          "title": "align the readme, changelog and guides on ortie's for v3",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -250272,7 +250277,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T13:56:31.939Z",
+      "verified_at": "2026-11-25T14:41:43.431Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -336345,13 +336350,13 @@
       "item_id": "candidate_directive-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-3Y7U-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-FCZF-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change.md",
       "title": "server_events_dispatch: Rerender DM status emoji on emojiset change.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "97f2c5b2ff3d90e14699f825e3cee6d163da32327f48c00dff6e76acc5d0904a",
+      "content_hash": "a9148c2d281801be6383a572367d5214f506816c943fbe0b4c689973fcd83c58",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T14:33:03.749Z"
+      "persisted_at": "2026-11-25T14:41:56.094Z"
     },
     "learn-github-xinatian-mroffice": {
       "learning_id": "learn-github-xinatian-mroffice",
@@ -348728,6 +348733,56 @@
       "content_hash": "84340e89479322b3d5b43da9fe26eb444553645e8ce6803f60b3a50f9f47952b",
       "domain_letter": "K",
       "persisted_at": "2026-11-25T14:33:02.591Z"
+    },
+    "rule-10542": {
+      "learning_id": "rule-10542",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10542,
+      "title": "align the readme, changelog and guides on ortie's for v3",
+      "source_url": "https://github.com/pimalaya/himalaya",
+      "source_version": "fceae497",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T14:41:43.431Z"
+    },
+    "candidate_directive-align-the-readme-changelog-and-guides-on-ortie-s-for-v3": {
+      "item_id": "candidate_directive-align-the-readme-changelog-and-guides-on-ortie-s-for-v3",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-F3KU-align-the-readme-changelog-and-guides-on-ortie-s-for-v3.md",
+      "title": "align the readme, changelog and guides on ortie's for v3",
+      "repository": "pimalaya/himalaya",
+      "source_version": "fceae497",
+      "content_hash": "4670ae9efb28997f665efca5a66bb3fb0e51a23ad779b56a7f64b86bef8482ee",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-25T14:41:43.906Z"
+    },
+    "candidate_directive-docs-align-the-readme-changelog-and-guides-on-ortie-s-for-v3": {
+      "item_id": "candidate_directive-docs-align-the-readme-changelog-and-guides-on-ortie-s-for-v3",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-FBXS-docs-align-the-readme-changelog-and-guides-on-ortie-s-for-v3.md",
+      "title": "docs: align the readme, changelog and guides on ortie's for v3",
+      "repository": "pimalaya-himalaya-learnings",
+      "source_version": "HEAD",
+      "content_hash": "aae6820d6419d6da4726ee298afd6d503332e0d743151ed540871a46c2f0eabf",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-25T14:41:54.739Z"
+    },
+    "domain_intelligence-architecture-intelligence-pimalaya-himalaya-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-pimalaya-himalaya-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-pimalaya-himalaya-learnings-architecture-intelligence-pimalaya-himalaya-learning.md",
+      "title": "Architecture Intelligence: pimalaya-himalaya-learnings Core Invariants",
+      "repository": "pimalaya-himalaya-learnings",
+      "source_version": "HEAD",
+      "content_hash": "17884787db19b4d4ebccece70230eea14e4eed334ef63f87afcfb4949842231d",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-25T14:41:54.919Z"
     }
   },
   "ai-builder-brain": {
