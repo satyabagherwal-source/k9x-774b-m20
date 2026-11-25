@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-25T10:45:37.816Z",
+  "last_updated": "2026-11-25T10:57:59.787Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5721,14 +5721,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-orange-opensource-hurl",
-      "content_hash": "a477ef1f0e7d2164f9245d33ea9e9ac09e7b98375de0a908224bcd5a680c43e3",
-      "verified_at": "2026-11-24T09:18:23.775Z",
+      "content_hash": "9a7a420de505657bfee383a1bf9e40ff70a3c682fb84081a7a9890ae96d00890",
+      "verified_at": "2026-11-25T10:57:45.256Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T09:18:23.775Z"
+      "last_updated": "2026-11-25T10:57:45.256Z"
     },
     "gregberge/svgr": {
       "repository": "gregberge/svgr",
@@ -8556,14 +8556,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ytsaurus-ytsaurus",
-      "content_hash": "011cd001946301e67f48467420c7f99c6e5a3aa5e7963c18bda848d4d81ee88b",
-      "verified_at": "2026-11-24T16:01:45.775Z",
+      "content_hash": "a5fa5910d7f23aef714003fa89242961b94dcf57b14cc333de9345ffb02e28fd",
+      "verified_at": "2026-11-25T10:57:59.786Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T16:01:45.775Z"
+      "last_updated": "2026-11-25T10:57:59.786Z"
     },
     "franken-ui/ui": {
       "repository": "franken-ui/ui",
@@ -17076,14 +17076,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-liquidai-lfm3-1-7b",
-      "content_hash": "91d14176c4153ccca17c2b845ec706d09053b82776514df5a9587f182dae2a99",
-      "verified_at": "2026-11-21T18:52:07.036Z",
+      "content_hash": "40b7aa58f617ba8f8797dad7b6d57284f9a8897ce5f4104f44be99b2233d4aa5",
+      "verified_at": "2026-11-25T10:57:39.074Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T18:52:07.036Z"
+      "last_updated": "2026-11-25T10:57:39.074Z"
     },
     "michael-denyer/pstack-claude": {
       "repository": "michael-denyer/pstack-claude",

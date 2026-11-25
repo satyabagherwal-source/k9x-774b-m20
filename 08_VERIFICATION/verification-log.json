@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261123-PZ79",
-    "timestamp": "2026-11-23T22:42:44.469Z",
-    "repository": "LiquidAI/LFM2.5-24B-A2B-GGUF",
-    "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf",
-    "contentHash": "90b2d8d0023597f98e765f84a7e1a79c23140dfa718b99ef99f551c208e0661a",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-Q3DS",
-    "timestamp": "2026-11-23T22:42:49.888Z",
-    "repository": "codewhale-hq/Codewhale",
-    "learningId": "learn-github-codewhale-hq-codewhale",
-    "contentHash": "ae502dd99e944324ef5a5a68c391b9828e510e31a138918a481ed4133d04a163",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-Q6SC",
-    "timestamp": "2026-11-23T22:42:54.300Z",
-    "repository": "rafsoh/dimeApp",
-    "learningId": "learn-github-rafsoh-dimeapp",
-    "contentHash": "de07fc6738038d9bc6e084cef678dabc3ad9db18c8a95af57c6a5157c2bff9d6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261123-QC9H",
     "timestamp": "2026-11-23T22:43:01.397Z",
     "repository": "meilisearch/meilisearch",
@@ -7490,6 +7445,51 @@
     "repository": "moby/buildkit",
     "learningId": "learn-github-moby-buildkit",
     "contentHash": "09ed8f36177c8ffd29c7b2879f5a9c66df85d0397aeab739a7d3bd1bdce39057",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-EXGU",
+    "timestamp": "2026-11-25T10:57:39.054Z",
+    "repository": "LiquidAI/LFM3-1.7B",
+    "learningId": "learn-huggingface-liquidai-lfm3-1-7b",
+    "contentHash": "40b7aa58f617ba8f8797dad7b6d57284f9a8897ce5f4104f44be99b2233d4aa5",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-F28I",
+    "timestamp": "2026-11-25T10:57:45.234Z",
+    "repository": "Orange-OpenSource/hurl",
+    "learningId": "learn-github-orange-opensource-hurl",
+    "contentHash": "9a7a420de505657bfee383a1bf9e40ff70a3c682fb84081a7a9890ae96d00890",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-FDG6",
+    "timestamp": "2026-11-25T10:57:59.766Z",
+    "repository": "ytsaurus/ytsaurus",
+    "learningId": "learn-github-ytsaurus-ytsaurus",
+    "contentHash": "a5fa5910d7f23aef714003fa89242961b94dcf57b14cc333de9345ffb02e28fd",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

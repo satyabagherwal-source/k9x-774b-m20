@@ -13073,3 +13073,6 @@ Every entry in this ledger must capture:
 | `learn-github-nolabs-ai-nono` | `https://github.com/nolabs-ai/nono` | `d4d1c774` | Multi-dimensional audit evidence | 2026-11-25T10:35:24.549Z |
 | `learn-huggingface-ccore-qwen3-5-4b-3d-coder` | `https://huggingface.co/ccore/Qwen3.5-4B-3D-Coder` | `hf-ccore-q` | Multi-dimensional audit evidence | 2026-11-25T10:45:28.803Z |
 | `learn-github-moby-buildkit` | `https://github.com/moby/buildkit` | `875f5143` | Multi-dimensional audit evidence | 2026-11-25T10:45:37.799Z |
+| `learn-huggingface-liquidai-lfm3-1-7b` | `https://huggingface.co/LiquidAI/LFM3-1.7B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-25T10:57:39.058Z |
+| `learn-github-orange-opensource-hurl` | `https://github.com/Orange-OpenSource/hurl` | `013ceaf3` | Multi-dimensional audit evidence | 2026-11-25T10:57:45.238Z |
+| `learn-github-ytsaurus-ytsaurus` | `https://github.com/ytsaurus/ytsaurus` | `597eabf7` | Multi-dimensional audit evidence | 2026-11-25T10:57:59.770Z |

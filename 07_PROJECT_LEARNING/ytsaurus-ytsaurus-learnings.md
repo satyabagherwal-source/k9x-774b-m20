@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md`  
 > **Source**: github ([https://github.com/ytsaurus/ytsaurus](https://github.com/ytsaurus/ytsaurus))  
-> **Source Version**: `3d402381`  
+> **Source Version**: `597eabf7`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T16:01:44.830Z  
+> **Timestamp**: 2026-11-25T10:57:58.558Z  
 > **Learning ID**: `learn-github-ytsaurus-ytsaurus`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ytsaurus/ytsaurus](https://github.com/ytsaurus/ytsaurus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T16:01:44.825Z  
+> **Harvest Timestamp**: 2026-11-25T10:57:58.553Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: YTsaurus is a scalable and fault-tolerant open-source big data platform.
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2325 stars
+- **Stars / Engagement**: 2326 stars
 
 ---
 
@@ -1195,270 +1195,260 @@ private:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0987aa47` (2026-11-23)
-**Commit Message**: Prepare distributed throttler mode selection
+### Incident Patch 1: `4e0724d5` (2026-11-25)
+**Commit Message**: crash aware capture for facade runners
 
-* Changelog entry
-Type: change
-Component: flow
+#### Crash-aware capture for facade runners ✎
 
-Named Flow throttlers support dynamic mode selection with prefetching as the default. Each quota wait has a configurable five-minute timeout. After a terminal quota RPC error, local calls fail until the prefetching client is replaced.
-commit_hash:0d5f6061fd1894305090a5f9c086edf5c0b50fe6
+A new `--qstorage-crash-aware` option makes QStorage capture flush each recorded metadata entry and its index immediately after every write, instead of buffering until the query commits. This allows replaying records that were written before a crash or forced termination. The option requires `--capture` or `--capture-full` and is rejected with an error otherwise.
 
-**File**: `yt/docs/en/_includes/flow/concepts/distributed_throttler.md` (modified, +7/-3)
+<a href="https://nda.ya.ru/t/qa0kX64r7DqvtN"><font size="2">Autodescription by Yandex Code Assistant</font></a>
+commit_hash:195fac9cd80bae24f674847d77e3ad306696bca7
+
+**File**: `yql/essentials/tools/yql_facade_run/yql_facade_run.cpp` (modified, +14/-6)
 ```diff
-@@ -1,5 +1,7 @@
- # Distributed Throttler in {{product-name}} Flow
+@@ -205,6 +205,8 @@ void TFacadeRunOptions::Parse(int argc, const char** argv) {
+     }
  
-+In the dynamic spec of a named throttler, `mode` defaults to `prefetching`. The `throttle_timeout` option bounds the quota wait for each `Throttle` call (five minutes by default).
-+
- Use the distributed throttler to globally limit the rate across the entire [pipeline](../../../flow/concepts/glossary.md#pipeline). The Controller holds a [token bucket](https://en.wikipedia.org/wiki/Token_bucket) for each named throttler; [Jobs](../../../flow/concepts/glossary.md#job) request a quota from the Controller before processing messages or performing any custom user action.
+     THashSet<TString> sqlFlags;
++    TString qstorageDir = ".";
++    bool qstorageCrashAware = false;
  
- You can apply quotas to either the number of processed messages or the total size of their payload in bytes — separately or together.
-@@ -64,7 +66,7 @@ Observed shares match the configured weights only while every measured class sta
+     NLastGetopt::TOpts opts = NLastGetopt::TOpts::Default();
  
- ## Live reconfiguration {#reconfigure}
+@@ -418,9 +420,10 @@ void TFacadeRunOptions::Parse(int argc, const char** argv) {
+             });
+     }
+     if (EnableQPlayer) {
+-        opts.AddLongOption("qstorage-dir", "Directory for QStorage").RequiredArgument("DIR").Handler1T<TString>([this](const TString& dir) {
+-            QPlayerStorage_ = MakeFileQStorage(dir);
+-        });
++        opts.AddLongOption("qstorage-dir", "Directory for QStorage").RequiredArgument("DIR").StoreResult(&qstorageDir);
++        opts.AddLongOption("qstorage-crash-aware", "Flush captured QStorage records and index after each write, before commit")
++            .NoArgument()
++            .SetFlag(&qstorageCrashAware);
+         opts.AddLongOption("op-id", "QStorage operation id").StoreResult(&OperationId).DefaultValue("dummy_op");
+         opts.AddLongOption("capture", "Write query metadata to QStorage").NoArgument().Handler0([this]() {
+             if (EQPlayerMode::None != QPlayerMode) {
+@@ -485,10 +488,15 @@ void TFacadeRunOptions::Parse(int argc, const char** argv) {
+         LangVer = *ProjectSettings.LangVer;
+     }
  
--All throttler parameters (`limit`, `period`, `request_period`, `retrying_channel`, `rpc_timeout`, `classes`, `max_grant_amount`, `use_class_weights_as_limit`) are applied without restarting the pipeline — just update `dynamic_spec`. The `IThroughputThrottlerPtr` cached in your user code remains valid after the config change.
-+All throttler parameters (`mode`, `limit`, `period`, `request_period`, `retrying_channel`, `rpc_timeout`, `throttle_timeout`, `classes`, `max_grant_amount`, `use_class_weights_as_limit`) are applied without restarting the pipeline — just update `dynamic_spec`. The `IThroughputThrottlerPtr` cached in your user code remains valid after the config change.
- 
- Weights and the server chunk size change without rebuilding the prefetch client. The exception is `use_class_weights_as_limit`: a weight is then part of the rate, so a weight change that resizes the prefetch window rebuilds the client — a change too small to move that window leaves the client, and its prefetched quota, in place. The new rate applies on the server either way. Changing `input_rows_throttler_class_id` or `input_bytes_throttler_class_id` affects subsequent RPCs; quota already fetched locally or still in flight stays accounted to the previous class.
- 
-@@ -74,11 +76,13 @@ Quota availability does not override watermark alignment: reading is allowed onl
- 
- ## What happens if the Controller is unavailable {#controller-unavailable}
- 
--The throttler client reopens the connection via `retrying_channel`. While the Controller doesn’t respond, the local prefetch cache is consumed, and `Throttle()` blocks while waiting for a quota — the Job makes no progress. When the Controller comes back, the wait resolves automatically. If the Controller stays unresponsive longer than the total retry budget of `retrying_channel`, the throttler operation throws an exception and the Job fails.
-+Each quota request uses the worker's current controller channel. While the client retries a request according to `retrying_channel`, it can still serve calls from cached quota. If a retry reaches the new Controller, the pending request can complete.
-+
-+If the quota RPC ultimately fails, the local Prefetching client keeps its first terminal error. Pending and subsequent `Throttle()` calls return that error in their futures. Synchronous methods, including `TryAcquire()`, throw the error even if local quota remains. Recreating the client clears the failure. The same rule applies when the Controller rejects a request for an unknown throttler ID.
- 
- ## What happens if there isn’t enough quota {#quota-insufficient}
- 
--If the total demand from Jobs far exceeds the possible supply, individual `RequestQuota` calls may wait a long time in the server queue and eventually miss their `rpc_timeout` × `retry_attempts` deadline. In this case, `Throttle()` also throws an exception, which causes the Job to fail.
-+Each `Throttle()` call has its own `throttle_timeout` (five minutes by default). When it expires, the future for that call returns a timeout error. Other calls can still receive quota as long as the client is healthy. If the underlying quota RPC exhausts its retries first, the whole client fails as described above. Automatic input throttling propagates either error to the Job.
- 
- Fallback to a local limit isn’t supported in either of these cases right now.
- 
-```
-
-**File**: `yt/docs/en/flow/generated_docs/NYT_NFlow_EThrottlerMode.md` (added, +9/-0)
-```diff
-@@ -0,0 +1,9 @@
-+## NYT::NFlow::EThrottlerMode {#NYT_NFlow_EThrottlerMode}
-+<!-- This file is generated by yt/yt/flow/yandex/tools/generate_yson_struct_doc/generate.sh script -->
-+<!-- Before using doc generation tool check readme: yt/yt/flow/yandex/tools/generate_yson_struct_doc/README.md -->
-+
-+#|
-+|| Possible values | **Description** ||
-+|| `prefetching` |  ||
-+|#
-+
-```
-
-**File**: `yt/docs/en/flow/generated_docs/NYT_NFlow_TDynamicThrottlerSpec.md` (modified, +7/-1)
-```diff
-@@ -3,10 +3,13 @@
- <!-- Before using doc generation tool check readme: yt/yt/flow/yandex/tools/generate_yson_struct_doc/README.md -->
- Source: [yt/yt/flow/library/cpp/common/spec.h]({{source-root}}/yt/yt/flow/library/cpp/common/spec.h)
- 
--Configuration of a named distributed throttler.
-+Dynamic settings of a named distributed throttler.
- 
- #|
- || **Parameter** | **Description** ||
-+|| `mode` | **Type**: [NYT::NFlow::EThrottlerMode](./all_yson_structs#NYT_NFlow_EThrottlerMode)
-+**Default value**: `prefetching`
-+Throttler implementation. Defaults to prefetching. ||
- || `limit` | **Type**: `std::optional<double>`
- Average quota issuance rate in units per second. `none` means `unlimited`. ||
- || `period` | **Type**: [TDuration](./all_yson_structs#TDuration)
-@@ -29,6 +32,9 @@ Retry parameters for requests to the throttler service. The defaults are designe
- || `rpc_timeout` | **Type**: [TDuration](./all_yson_structs#TDuration)
- **Default value**: `30s`
- Timeout for a single `RequestQuota` request. ||
-+|| `throttle_timeout` | **Type**: [TDuration](./all_yson_structs#TDuration)
-+**Default value**: `5m`
-+Maximum quota wait for a Throttle call. Changes apply to subsequent calls. ||
- || `classes` | **Type**: `THashMap<`[NYT::NFlow::TQuotaClassId](./all_yson_structs#NYT_NFlow_TQuotaClassId)`, NYT::TIntrusivePtr<`[NYT::NFlow::TDynamicThrottlerClassSpec](./all_yson_structs#NYT_NFlow_TDynamicThrottlerClassSpec)`>>`
- **Default value**: `{}`
- Named weighted quota classes. Keys must match `[0-9A-Za-z_-]+`. Backlogged classes share bandwidth in proportion to their weights and idle shares are redistributed. ||
-```
-
-**File**: `yt/docs/en/flow/generated_docs/all_yson_structs.md` (modified, +2/-0)
-```diff
-@@ -76,6 +76,8 @@ This file contains descriptions of all specs and configs used for {{product-name
- 
- {% include [_](./NYT_NFlow_EQueueTabletIndexRoutingHashPolicy.md) %}
- 
-+{% include [_](./NYT_NFlow_EThrottlerMode.md) %}
-+
- {% include [_](./NYT_NFlow_ETimeType.md) %}
- 
- {% include [_](./NYT_NFlow_ETimerStoreBackend.md) %}
-```
-
-**File**: `yt/docs/ru/_includes/flow/concepts/distributed_throttler.md` (modified, +7/-3)
-```diff
-@@ -1,5 +1,7 @@
- # Distributed Throttler в {{product-name}} Flow
- 
-+В динамической спеке именованного троттлера параметр `mode` по умолчанию равен `prefetching`. Параметр `throttle_timeout` ограничивает ожидание квоты одним вызовом `Throttle` (по умолчанию 5 минут).
-+
- Распределённый троттлер — глобальный для всего [пайплайна](../../../flow/concepts/glossary.md#pipeline) механизм ограничения скорости. На контроллере для каждого именованного троттлера держится [token bucket](https://en.wikipedia.org/wiki/Token_bucket); [джобы](../../../flow/concepts/glossary.md#job) запрашивают у контроллера квоту перед обработкой сообщений или перед произвольным пользовательским действием.
- 
- Квотироваться может либо число обработанных сообщений, либо суммарный размер их payload в байтах — отдельно или вместе.
-@@ -64,7 +66,7 @@
- 
- ## Реконфигурация на лету {#reconfigure}
- 
--Все параметры троттлера (`limit`, `period`, `request_period`, `retrying_channel`, `rpc_timeout`, `classes`, `max_grant_amount`, `use_class_weights_as_limit`) подхватываются без перезапуска пайплайна — достаточно обновить `dynamic_spec`. Кэшированный в пользовательском коде `IThroughputThrottlerPtr` остаётся валидным после смены конфига.
-+Все параметры троттлера (`mode`, `limit`, `period`, `request_period`, `retrying_channel`, `rpc_timeout`, `throttle_timeout`, `classes`, `max_grant_amount`, `use_class_weights_as_limit`) подхватываются без перезапуска пайплайна — достаточно обновить `dynamic_spec`. Кэшированный в пользовательском коде `IThroughputThrottlerPtr` остаётся валидным после смены конфига.
- 
- Вес и размер серверного чанка меняются без перестроения prefetch-клиента. Исключение — `use_class_weights_as_limit`: тогда вес входит в скорость, поэтому изменение веса, меняющее размер prefetch-окна, приводит к перестроению клиента, а слишком малое для этого изменение оставляет клиента и уже полученную им квоту на месте. Новая скорость в любом случае применяется на сервере. Смена `input_rows_throttler_class_id` или `input_bytes_throttler_class_id` влияет на последующие RPC; уже полученная локально или находящаяся в полёте квота остаётся учтённой в прежнем классе.
- 
-@@ -74,11 +76,13 @@
- 
- ## Что будет, если контроллер недоступен {#controller-unavailable}
- 
--Клиент троттлера переоткрывает соединение через `retrying_channel`. Пока контроллер не отвечает, локальный prefetch-кэш доедается, и `Throttle()` блокируется в ожидании квоты — джоба прогресса не делает. Когда контроллер возвращается, ожидание разрешается само. Если же контроллер не отвечает дольше, чем суммарный бюджет ретраев `retrying_channel`, работа с троттлером выкинет исключение и джоба упадёт.
-+Воркер запрашивает квоту по каналу текущего контроллера. Пока клиент повторяет запрос согласно настройкам `retrying_channel`, он может выдавать остаток локальной квоты. Если повторный запрос доходит до нового контроллера, ожидающий вызов может получить квоту.
-+
-+При окончательной ошибке RPC локальный клиент Prefetching запоминает первую ошибку. Все ожидающие и последующие вызовы `Throttle()` получают её в результате future. Синхронные методы, включая `TryAcquire()`, бросают исключение, даже если на клиенте осталась квота. После пересоздания клиента можно снова запрашивать квоту. Это правило действует и в случае, когда контроллер сообщает о неизвестном идентификаторе троттлера.
- 
- ## Что будет, если квоты не хватает {#quota-insufficient}
- 
--Если суммарный спрос джоб на много порядков превышает возможную выдачу, отдельные `RequestQuota` могут долго стоять в серверной очереди и в итоге не уложиться в свой `rpc_timeout` × `retry_attempts`. В таком случае `Throttle()` тоже выкинет исключение, что приведет к падению джобы.
-+У каждого вызова `Throttle()` есть свой `throttle_timeout`, по умолчанию пять минут. Когда это время истекает, future этого вызова завершается ошибкой таймаута. Остальные вызовы могут получить квоту, пока клиент исправен. Если раньше исчерпались попытки самого RPC, ошибка распространяется на весь клиент. При автоматическом троттлинге входа обе ошибки передаются джобе.
- 
- Fallback на локальный лимит ни в одном из этих случаев сейчас не поддержан.
- 
-```
-
-**File**: `yt/docs/ru/flow/generated_docs/NYT_NFlow_EThrottlerMode.md` (added, +9/-0)
-```diff
-@@ -0,0 +1,9 @@
-+## NYT::NFlow::EThrottlerMode {#NYT_NFlow_EThrottlerMode}
-+<!-- This file is generated by yt/yt/flow/yandex/tools/generate_yson_struct_doc/generate.sh script -->
-+<!-- Before using doc generation tool check readme: yt/yt/flow/yandex/tools/generate_yson_struct_doc/README.md -->
-+
-+#|
-+|| Возможные значения | **Описание** ||
-+|| `prefetching` |  ||
-+|#
-+
-```
-
-**File**: `yt/docs/ru/flow/generated_docs/NYT_NFlow_TDynamicThrottlerSpec.md` (modified, +7/-1)
-```diff
-@@ -3,10 +3,13 @@
- <!-- Before using doc generation tool check readme: yt/yt/flow/yandex/tools/generate_yson_struct_doc/README.md -->
- Источник: [yt/yt/flow/library/cpp/common/spec.h]({{source-root}}/yt/yt/flow/library/cpp/common/spec.h)
- 
--Конфигурация именованного распределённого троттлера.
-+Динамические настройки именованного троттлера.
- 
- #|
- || **Параметр** | **Описание** ||
-+|| `mode` | **Тип**: [NYT::NFlow::EThrottlerMode](./all_yson_structs#NYT_NFlow_EThrottlerMode)
-+**Значение по умолчанию**: `prefetching`
-+Режим троттлера. По умолчанию используется prefetching. ||
- || `limit` | **Тип**: `std::optional<double>`
- Средняя скорость выдачи квоты в единицах в секунду. `none` означает `unlimited`. ||
- || `period` | **Тип**: [TDuration](./all_yson_structs#TDuration)
-@@ -29,6 +32,9 @@
- || `rpc_timeout` | **Тип**: [TDuration](./all_yson_structs#TDuration)
- **Значение по умолчанию**: `30s`
- Таймаут одного запроса `RequestQuota`. ||
-+|| `throttle_timeout` | **Тип**: [TDuration](./all_yson_structs#TDuration)
-+**Значение по умолчанию**: `5m`
-+Максимальное время ожидания квоты одним вызовом Throttle. Изменения действуют для следующих вызовов. ||
- || `classes` | **Тип**: `THashMap<`[NYT::NFlow::TQuotaClassId](./all_yson_structs#NYT_NFlow_TQuotaClassId)`, NYT::TIntrusivePtr<`[NYT::NFlow::TDynamicThrottlerClassSpec](./all_yson_structs#NYT_NFlow_TDynamicThrottlerClassSpec)`>>`
- **Значение по умолчанию**: `{}`
- Именованные взвешенные классы квоты. Ключи должны соответствовать `[0-9A-Za-z_-]+`. Активные классы делят полосу пропорционально весам, а свободная доля перераспределяется. ||
-```
-
-**File**: `yt/docs/ru/flow/generated_docs/all_yson_structs.md` (modified, +2/-0)
-```diff
-@@ -76,6 +76,8 @@
- 
- {% include [_](./NYT_NFlow_EQueueTabletIndexRoutingHashPolicy.md) %}
- 
-+{% include [_](./NYT_NFlow_EThrottlerMode.md) %}
-+
- {% include [_](./NYT_NFlow_ETimeType.md) %}
- 
- {% include [_](./NYT_NFlow_ETimerStoreBackend.md) %}
++    if (qstorageCrashAware && QPlayerMode != EQPlayerMode::Capture) {
++        throw yexception() << "qstorage-crash-aware requires capture or capture-full";
++    }
+     if (QPlayerMode != EQPlayerMode::None) {
+-        if (!QPlayerStorage_) {
+-            QPlayerStorage_ = MakeFileQStorage(".");
+-        }
++        const TFileQStorageSettings settings{
++            .BufferUntilCommit = !qstorageCrashAware,
++            .AlwaysFlushIndex = qstorageCrashAware,
++        };
++        QPlayerStorage_ = MakeFileQStorage(qstorageDir, settings);
+         if (EQPlayerMode::Replay == QPlayerMode) {
+             try {
+                 auto reader = QPlayerStorage_->MakeReader(OperationId, {});
 ```
 
 ---
 
-### Incident Patch 2: `ec8de005` (2026-11-24)
-**Commit Message**: Fix babenko issues in Improve incremental heartbeat throttling to work with sequoia modifications batching
+### Incident Patch 2: `0db4a5b2` (2026-11-25)
+**Commit Message**: Reject oversized buffered YSON strings and fix style
+commit_hash:22dc5ee5e104027a8e61e98ea0f3966838d650fd
 
-Fix babenko issues in Improve incremental heartbeat throttling to work with sequoia modifications batching
-
-<https://nda.ya.ru/t/70BKZy6j7xFrvo>
-commit_hash:7152edab331735c4812b3a73e18b621ed5a06054
-
-**File**: `yt/yt/server/master/chunk_server/config.cpp` (modified, +2/-2)
+**File**: `yt/yt/core/yson/unittests/buffered_yson_writer_ut.cpp` (modified, +30/-2)
 ```diff
-@@ -1170,8 +1170,8 @@ void TDynamicChunkManagerConfig::Register(TRegistrar registrar)
-                 if (dataNodeTrackerConfig->MaxConcurrentChunkReplicasDuringIncrementalHeartbeat <
-                     sequoiaReplicasConfig->MaxReplicasInIncrementalHeartbeatBatch * 2)
-                 {
--                    // We should allow at least 2x of MaxReplicasInIncrementalHeartbeatBatch so that batching does not get stuck.
--                    THROW_ERROR_EXCEPTION("max_concurrent_chunk_replicas_during_incremental_heartbeat should be at least 2x of Sequoia max_replicas_in_incremental_heartbeat_batch");
-+                    // We should allow at least twice of MaxReplicasInIncrementalHeartbeatBatch so that batching does not get stuck.
-+                    THROW_ERROR_EXCEPTION("max_concurrent_chunk_replicas_during_incremental_heartbeat should be at least twice of Sequoia max_replicas_in_incremental_heartbeat_batch");
-                 }
-             } else {
-                 if (dataNodeTrackerConfig->MaxConcurrentIncrementalHeartbeats <=
+@@ -6,9 +6,13 @@
+ #include <yt/yt/core/yson/stream.h>
+ #include <yt/yt/core/yson/writer.h>
+ 
++#include <library/cpp/yt/coding/varint.h>
++
+ #include <util/string/escape.h>
++#include <util/system/filemap.h>
+ 
+ #include <array>
++#include <limits>
+ #include <stdexcept>
+ #include <vector>
+ 
+@@ -111,6 +115,30 @@ TEST_F(TBufferedYsonWriterTest, EmptyString)
+     TEST_SCALAR(TStringBuf(), String)
+ }
+ 
++TEST_F(TBufferedYsonWriterTest, BinaryStringLengthLimit)
++{
++    constexpr size_t MaxStringLength = std::numeric_limits<i32>::max();
++    constexpr size_t MaxEncodedLength = 1 + MaxVarInt32Size + MaxStringLength;
++
++    // Reserve address space without touching the string's pages.
++    TMappedAllocation allocation(MaxStringLength + 1);
++    TStringBuf oversizedValue(allocation.Data(), MaxStringLength + 1);
++
++    TSizeLimitedOutputStream outputStream(/*limit*/ MaxEncodedLength);
++    TBufferedYsonWriter writer(&outputStream, EYsonFormat::Binary);
++    EXPECT_THROW_WITH_SUBSTRING(writer.OnStringScalar(oversizedValue), "signed 32-bit limit");
++    writer.Flush();
++    EXPECT_EQ(outputStream.GetWrittenSize(), 0u);
++
++    EXPECT_THROW_WITH_SUBSTRING(writer.OnKeyedItem(oversizedValue), "signed 32-bit limit");
++    writer.Flush();
++    EXPECT_EQ(outputStream.GetWrittenSize(), 0u);
++
++    writer.OnStringScalar(TStringBuf(allocation.Data(), MaxStringLength));
++    writer.Flush();
++    EXPECT_EQ(outputStream.GetWrittenSize(), MaxEncodedLength);
++}
++
+ TEST_F(TBufferedYsonWriterTest, Int64)
+ {
+     i64 value = 100500424242ll;
+@@ -431,7 +459,7 @@ TEST_F(TBufferedYsonWriterTest, ShortStringEscaping)
+         writer.OnStringScalar(input);
+         writer.Flush();
+ 
+-        TString expected = "\"";
++        std::string expected = "\"";
+         expected += ::EscapeC(TStringBuf(input));
+         expected += '"';
+         EXPECT_EQ(expected, outputStream.Str());
+@@ -545,7 +573,7 @@ TEST_F(TBufferedYsonWriterTest, PrettyFormatWithLongIndent)
+ 
+ TEST_F(TBufferedYsonWriterTest, PrettyFormatDoesNotIndentAtNegativeDepth)
+ {
+-    TSizeLimitedOutputStream outputStream(64);
++    TSizeLimitedOutputStream outputStream(/*limit*/ 64);
+     TBufferedYsonWriter writer(&outputStream, EYsonFormat::Pretty);
+ 
+     EXPECT_NO_THROW({
+```
+
+**File**: `yt/yt/core/yson/writer.cpp` (modified, +18/-11)
+```diff
+@@ -15,6 +15,7 @@
+ #include <array>
+ #include <cmath>
+ #include <cstring>
++#include <limits>
+ #include <utility>
+ 
+ namespace NYT::NYson {
+@@ -175,39 +176,39 @@ Y_NO_INLINE size_t EscapeShortStringToBuffer(char* buffer, TStringBuf value, siz
+ }
+ 
+ template <class TOutput>
+-void BufferedEscapeC(const char* str, size_t len, TOutput& output)
++void BufferedEscapeC(const char* str, size_t len, TOutput* output)
+ {
+     size_t literalBegin = 0;
+     for (size_t index = 0; index < len; ++index) {
+         if (str[index] != '"' && str[index] != '\\' && IsPrintable(str[index])) {
+             continue;
+         }
+ 
+-        output.Write(str + literalBegin, index - literalBegin);
++        output->Write(str + literalBegin, index - literalBegin);
+         literalBegin = index + 1;
+ 
+-        auto* buffer = output.GetDirectWriteBuffer();
+-        output.AdvanceDirectWrite(EscapeC(str[index], GetNextCharOrZero(str, len, index), buffer));
++        auto* buffer = output->GetDirectWriteBuffer();
++        output->AdvanceDirectWrite(EscapeC(str[index], GetNextCharOrZero(str, len, index), buffer));
+     }
+ 
+-    output.Write(str + literalBegin, len - literalBegin);
++    output->Write(str + literalBegin, len - literalBegin);
+ }
+ 
+ template <class TOutput>
+-void BufferedWriteUtf8String(const char* str, size_t len, TOutput& output)
++void BufferedWriteUtf8String(const char* str, size_t len, TOutput* output)
+ {
+     const auto* ustr = reinterpret_cast<const unsigned char*>(str);
+     for (size_t i = 0; i < len;) {
+         size_t runeLen;
+         YT_VERIFY(RECODE_OK == GetUTF8CharLen(runeLen, ustr + i, ustr + len));
+         if (runeLen > 1) {
+-            output.Write(ustr + i, runeLen);
++            output->Write(ustr + i, runeLen);
+             i += runeLen;
+         } else {
+             YT_ASSERT(1 == runeLen);
+             // #EscapeC() handles single-byte characters, including control ones like `\t` and `\n`.
+-            auto* buffer = output.GetDirectWriteBuffer();
+-            output.AdvanceDirectWrite(EscapeC(ustr[i], GetNextCharOrZero(str, len, i), buffer));
++            auto* buffer = output->GetDirectWriteBuffer();
++            output->AdvanceDirectWrite(EscapeC(ustr[i], GetNextCharOrZero(str, len, i), buffer));
+             ++i;
+         }
+     }
+@@ -598,6 +599,12 @@ void TBufferedYsonWriter::EndCollection(char ch)
+ void TBufferedYsonWriter::WriteStringScalar(TStringBuf value)
+ {
+     if (Format_ == EYsonFormat::Binary) {
++        if (value.length() > std::numeric_limits<i32>::max()) [[unlikely]] {
++            THROW_ERROR_EXCEPTION("Binary YSON string length exceeds the signed 32-bit limit")
++                .With("length", value.length())
++                .With("limit", std::numeric_limits<i32>::max());
++        }
++
+         static_assert(MaxDirectWriteSize >= 1 + MaxVarInt32Size);
+         auto* buffer = Buffer_.GetDirectWriteBuffer();
+         buffer[0] = NDetail::StringMarker;
+@@ -635,9 +642,9 @@ Y_NO_INLINE void TBufferedYsonWriter::WriteTextStringScalarSlow(TStringBuf value
+ {
+     Buffer_.Write('"');
+     if (PassThroughUtf8Characters_ && IsUtf(value)) {
+-        BufferedWriteUtf8String(value.data(), value.length(), Buffer_);
++        BufferedWriteUtf8String(value.data(), value.length(), &Buffer_);
+     } else {
+-        BufferedEscapeC(value.data(), value.length(), Buffer_);
++        BufferedEscapeC(value.data(), value.length(), &Buffer_);
+     }
+     Buffer_.Write('"');
+ }
+```
+
+**File**: `yt/yt/core/yson/writer.h` (modified, +0/-2)
+```diff
+@@ -95,7 +95,6 @@ class TBufferedYsonWriter
+ public:
+     static constexpr int DefaultIndent = 4;
+ 
+-    //! Initializes an instance.
+     /*!
+      *  \param stream A stream for writing the YSON data to.
+      *  \param format A format used for encoding the data.
+@@ -111,7 +110,6 @@ class TBufferedYsonWriter
+ 
+     ~TBufferedYsonWriter() override;
+ 
+-    // IYsonConsumer overrides.
+     void OnStringScalar(TStringBuf value) override;
+     void OnInt64Scalar(i64 value) override;
+     void OnUint64Scalar(ui64 value) override;
 ```
 
 ---
 
-### Incident Patch 3: `079949d5` (2026-11-24)
-**Commit Message**: Fix babenko issues in Fetch chunk replicas for journal chunks only from chunk replica fetcher
+### Incident Patch 3: `8b81ecf9` (2026-11-25)
+**Commit Message**: Fix tablet size calculation for bundles without cells
 
-Fix babenko issues in Fetch chunk replicas for journal chunks only from chunk replica fetcher
+A table can remain in bundle snapshot after all its cells have been removed. Avoid division by zero when calculating tablet size limits for that table.
+commit_hash:f6f614ab86c7b6024647fdbe6f11f72ebdc363f1
 
-<https://nda.ya.ru/t/E_KXQsTm7xFqZe>
-commit_hash:1c1039c326aa556bf0c867ebeda5a46b2a31f67d
-
-**File**: `yt/yt/server/master/chunk_server/chunk_autotomizer.cpp` (modified, +1/-1)
+**File**: `yt/yt/server/lib/tablet_balancer/balancing_helpers.cpp` (modified, +1/-1)
 ```diff
-@@ -158,7 +158,7 @@ class TAutotomyJob
+@@ -122,7 +122,7 @@ TTabletSizeConfig GetTabletSizeConfig(
+     }
  
-         const auto& chunkReplicaFetcher = chunkManager->GetChunkReplicaFetcher();
- 
--        // This is a context switch, so we should check that chunk is still alive.
-+        // Replica fetching is a context switch, so we should check that chunk is still alive.
-         TEphemeralObjectPtr<TChunk> bodyChunkPtr(bodyChunk);
- 
-         auto replicasOrError = chunkReplicaFetcher->GetChunkReplicas(bodyChunkPtr, /*includeUnapproved*/ true);
-```
-
-**File**: `yt/yt/server/master/chunk_server/config.h` (modified, +2/-2)
-```diff
-@@ -758,7 +758,7 @@ struct TDynamicChunkManagerConfig
-     //! (where the chunk will be put).
-     int MaxRunningReplicationJobsPerTargetNode;
- 
--    //! Alerts if number of unsuccessful schedule seal job per chunk replica exceeds this value.
-+    //! Alerts if the number of unsuccessful attempts to schedule a seal job for a chunk replica exceeds this value.
-     int MaxUnsuccessfulScheduleSealJobAttemptsPerChunkReplica;
- 
-     //! If set to false, fully disables background chunk refresh.
-@@ -829,7 +829,7 @@ struct TDynamicChunkManagerConfig
-     int MaxChunksPerSeal;
-     //! Maximum number of chunks that can be sealed concurrently.
-     int MaxConcurrentChunkSeals;
--    //! Alert if the number of chunk seal attempts reaches that number.
-+    //! Alert if the number of unsuccessful chunk seal attempts reaches that number.
-     int MaxUnsuccessfulSealAttempts;
- 
-     //! Maximum number of chunks to report per single fetch request.
+     // Balancer would not create too many tablets unless desired_tablet_count is set.
+-    if (!tableConfig->DesiredTabletCount) {
++    if (!tableConfig->DesiredTabletCount && !bundle->TabletCells.empty()) {
+         i64 maxTabletCount = std::min<i64>(
+             std::ssize(bundle->TabletCells) * bundle->Config->TabletToCellRatio,
+             MaxTabletCount);
 ```
 
 #### Recent Merged Pull Requests:
@@ -1487,36 +1477,46 @@ commit_hash:1c1039c326aa556bf0c867ebeda5a46b2a31f67d
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Prepare distributed throttler mode selection
+## X. crash aware capture for facade runners
 
 **RULE**:
-When implementing operations in `yt/docs/en/_includes/flow/concepts/distributed_throttler.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ytsaurus/ytsaurus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `yql/essentials/tools/yql_facade_run/yql_facade_run.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ytsaurus/ytsaurus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0987aa47`: Prepare distributed throttler mode selection. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4e0724d5`: crash aware capture for facade runners. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `yt/docs/en/_includes/flow/concepts/distributed_throttler.md`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `yql/essentials/tools/yql_facade_run/yql_facade_run.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-In the dynamic spec of a named throttler, `mode` defaults to `prefetching`. The `throttle_timeout` option bounds the quota wait for each `Throttle` call (five minutes by default).
-
-All throttler parameters (`mode`, `limit`, `period`, `request_period`, `retrying_channel`, `rpc_timeout`, `throttle_timeout`, `classes`, `max_grant_amount`, `use_class_weights_as_limit`) are applied without restarting the pipeline — just update `dynamic_spec`. The `IThroughputThrottlerPtr` cached in your user code remains valid after the config change.
-Each quota request uses the worker's current controller channel. While the client retries a request according to `retrying_channel`, it can still serve calls from cached quota. If a retry reaches the new Controller, the pending request can complete.
-
-If the quota RPC ultimately fails, the local Prefetching client keeps its first terminal error. Pending and subsequent `Throttle()` calls return that error in their futures. Synchronous methods, including `TryAcquire()`, throw the error even if local quota remains. Recreating the client clears the failure. The same rule applies when the Controller rejects a request for an unknown throttler ID.
-Each `Throttle()
+    TString qstorageDir = ".";
+    bool qstorageCrashAware = false;
+        opts.AddLongOption("qstorage-dir", "Directory for QStorage").RequiredArgument("DIR").StoreResult(&qstorageDir);
+        opts.AddLongOption("qstorage-crash-aware", "Flush captured QStorage records and index after each write, before commit")
+            .NoArgument()
+            .SetFlag(&qstorageCrashAware);
+    if (qstorageCrashAware && QPlayerMode != EQPlayerMode::Capture) {
+        throw yexception() << "qstorage-crash-aware requires capture or capture-full";
+    }
+        const TFileQStorageSettings settings{
+            .BufferUntilCommit = !qstorageCrashAware,
+            .AlwaysFlushIndex = qstorageCrashAware,
+        };
+        QPlayerStorage_ = MakeFileQStorage(qstorageDir, settings);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-All throttler parameters (`limit`, `period`, `request_period`, `retrying_channel`, `rpc_timeout`, `classes`, `max_grant_amount`, `use_class_weights_as_limit`) are applied without restarting the pipeline — just update `dynamic_spec`. The `IThroughputThrottlerPtr` cached in your user code remains valid after the config change.
-The throttler client reopens the connection via `retrying_channel`. While the Controller doesn’t respond, the local prefetch cache is consumed, and `Throttle()` blocks while waiting for a quota — the Job makes no progress. When the Controller comes back, the wait resolves automatically. If the Controller stays unresponsive longer than the total retry budget of `retrying_channel`, the throttler operation throws an exception and the Job fails.
-If the total demand from Jobs far exceeds the possible supply, individual `RequestQuota` calls may wait a long time in the server queue and eventually miss their `rpc_timeout` × `retry_attempts` deadline. In this case, `Throttle()` also throws an exception, which causes the Job to fail.
+        opts.AddLongOption("qstorage-dir", "Directory for QStorage").RequiredArgument("DIR").Handler1T<TString>([this](const TString& dir) {
+            QPlayerStorage_ = MakeFileQStorage(dir);
+        });
+        if (!QPlayerStorage_) {
+            QPlayerStorage_ = MakeFileQStorage(".");
+        }
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0987aa47` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4e0724d5` are properly handled with clean fallback behavior.

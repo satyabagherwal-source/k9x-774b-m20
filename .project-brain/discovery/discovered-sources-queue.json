@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-25T10:45:41.711Z",
+  "updated_at": "2026-11-25T10:58:04.038Z",
   "stats": {
-    "total_discovered": 9402,
+    "total_discovered": 9403,
     "approved_pending_harvest": 8911,
     "harvested_count": 0,
-    "rejected_count": 491,
+    "rejected_count": 492,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 8901,
+      "COMMUNITY_AND_EXPERT": 8902,
       "OFFICIAL_DOCUMENTATION": 280,
       "STANDARDS_AND_SPECIFICATIONS": 150,
       "ENGINEERING_BLOGS": 7,
@@ -203434,6 +203434,21 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/moby-buildkit-learnings.md",
         "fileName": "moby-buildkit-learnings.md"
+      }
+    },
+    "SRC-916047A49A4E": {
+      "id": "SRC-916047A49A4E",
+      "url": "http://localhost:8000/follow-redirect-leak/host-a-step-1?expect_auth_forwarded=%7B%7Bexpect_auth_forwarded",
+      "title": "http://localhost:8000/follow-redirect-leak/host-a-step-1?expect_auth_forwarded=%7B%7Bexpect_auth_forwarded",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-25T10:58:04.038Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md",
+        "fileName": "orange-opensource-hurl-learnings.md"
       }
     }
   }

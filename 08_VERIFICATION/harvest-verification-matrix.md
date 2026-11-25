@@ -13040,3 +13040,6 @@
 | `CYCLE-20261125-MBR4` | `2026-11-25T10:35:24.544Z` | `nolabs-ai/nono` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10508` | Yes (`df160df6...`) |
 | `CYCLE-20261125-Z9ZZ` | `2026-11-25T10:45:28.799Z` | `ccore/Qwen3.5-4B-3D-Coder` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ccore-qwen3.5-4b-3d-coder-learnings.md` | Yes (`365a1731...`) |
 | `CYCLE-20261125-ZGXU` | `2026-11-25T10:45:37.794Z` | `moby/buildkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9125` | Yes (`09ed8f36...`) |
+| `CYCLE-20261125-EXGU` | `2026-11-25T10:57:39.054Z` | `LiquidAI/LFM3-1.7B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liquidai-lfm3-1.7b-learnings.md` | Yes (`40b7aa58...`) |
+| `CYCLE-20261125-F28I` | `2026-11-25T10:57:45.234Z` | `Orange-OpenSource/hurl` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7098` | Yes (`9a7a420d...`) |
+| `CYCLE-20261125-FDG6` | `2026-11-25T10:57:59.766Z` | `ytsaurus/ytsaurus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10509` | Yes (`a5fa5910...`) |

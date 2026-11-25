@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-25T10:45:43.398Z",
+  "last_updated": "2026-11-25T10:58:06.479Z",
   "total_verified_learnings": 9115,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25388,
+  "total_items": 25390,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -109504,13 +109504,13 @@
       "rule_number": 7098,
       "title": "Update crates",
       "source_url": "https://github.com/Orange-OpenSource/hurl",
-      "source_version": "8d907486",
+      "source_version": "013ceaf3",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-24T09:18:23.541Z"
+      "verified_at": "2026-11-25T10:57:44.969Z"
     },
     "rule-7099": {
       "learning_id": "rule-7099",
@@ -238295,8 +238295,8 @@
       "slug": "ytsaurus-ytsaurus",
       "platform": "github",
       "source_url": "https://github.com/ytsaurus/ytsaurus",
-      "source_version": "3d402381",
-      "content_hash": "011cd001946301e67f48467420c7f99c6e5a3aa5e7963c18bda848d4d81ee88b",
+      "source_version": "597eabf7",
+      "content_hash": "a5fa5910d7f23aef714003fa89242961b94dcf57b14cc333de9345ffb02e28fd",
       "dossier_path": "07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md",
       "promoted_rules": [
@@ -238344,6 +238344,11 @@
           "number": 10301,
           "title": "Prepare distributed throttler mode selection",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10509,
+          "title": "crash aware capture for facade runners",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -238351,7 +238356,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T16:01:45.562Z",
+      "verified_at": "2026-11-25T10:57:59.495Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -238405,10 +238410,10 @@
       "relative_path": "08_VERIFICATION/ytsaurus-ytsaurus-verification-protocol-empirical-defect-shield-for-ytsaurus-yts.md",
       "title": "Verification Protocol: Empirical Defect Shield for ytsaurus/ytsaurus",
       "repository": "ytsaurus/ytsaurus",
-      "source_version": "3d402381",
-      "content_hash": "4c68276aba14acb66ac292f0147362c50762d8e5a42228c5c5d05406178004e8",
+      "source_version": "597eabf7",
+      "content_hash": "92ec9a7bd9fef2690e5b1073d4826c9ed29e6ff0b3f5e08ef6126f160f14e7f6",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T16:01:46.286Z"
+      "persisted_at": "2026-11-25T10:58:00.491Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-autotrust-gev-26b-decide-nvfp4-learnings-core": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-autotrust-gev-26b-decide-nvfp4-learnings-core",
@@ -238466,9 +238471,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for ytsaurus-ytsaurus-learnings",
       "repository": "ytsaurus-ytsaurus-learnings",
       "source_version": "HEAD",
-      "content_hash": "d7e86a5982cce396c08fc6a854b44ab7febfa754c058e087838cd45315f168d9",
+      "content_hash": "d5a3efbee4d95c6fdf4792be66dd3e044164e7e2320305d0636236b6db2262e5",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T16:01:51.037Z"
+      "persisted_at": "2026-11-25T10:58:06.479Z"
     },
     "learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf": {
       "learning_id": "learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf",
@@ -246361,8 +246366,8 @@
       "slug": "orange-opensource-hurl",
       "platform": "github",
       "source_url": "https://github.com/Orange-OpenSource/hurl",
-      "source_version": "8d907486",
-      "content_hash": "a477ef1f0e7d2164f9245d33ea9e9ac09e7b98375de0a908224bcd5a680c43e3",
+      "source_version": "013ceaf3",
+      "content_hash": "9a7a420de505657bfee383a1bf9e40ff70a3c682fb84081a7a9890ae96d00890",
       "dossier_path": "07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md",
       "promoted_rules": [
@@ -246402,7 +246407,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T09:18:23.541Z",
+      "verified_at": "2026-11-25T10:57:44.969Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -246456,10 +246461,10 @@
       "relative_path": "08_VERIFICATION/orange-opensource-hurl-verification-protocol-empirical-defect-shield-for-orange-.md",
       "title": "Verification Protocol: Empirical Defect Shield for Orange-OpenSource/hurl",
       "repository": "Orange-OpenSource/hurl",
-      "source_version": "8d907486",
-      "content_hash": "d9b12f5c70a244206e57a2076f6d24d82b0d6907ac58f214663927f2ccffda6a",
+      "source_version": "013ceaf3",
+      "content_hash": "017bce4e95240c80f2e196d937aa869e5ee8aa75fbfcd54e325ad58d58a6c897",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T09:18:24.341Z"
+      "persisted_at": "2026-11-25T10:57:45.934Z"
     },
     "domain_intelligence-technical-construction-intelligence-orange-opensource-hurl-learnings-core-invari": {
       "item_id": "domain_intelligence-technical-construction-intelligence-orange-opensource-hurl-learnings-core-invari",
@@ -246481,9 +246486,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for orange-opensource-hurl-learnings",
       "repository": "orange-opensource-hurl-learnings",
       "source_version": "HEAD",
-      "content_hash": "6d913adaaf6503f912b6c0d73091ecda18207b6339414970664d00c4fe26d424",
+      "content_hash": "cccc6888556efec44a008fa3a6ba00dfe136076279a54b6fd9df9007bfdd4652",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T09:18:45.351Z"
+      "persisted_at": "2026-11-25T10:58:04.903Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm3-omni-2b-learnings-core-invarian": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm3-omni-2b-learnings-core-invarian",
@@ -257441,10 +257446,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-ytsaurus-ytsaurus-technical-construction-intelligence-ytsaurus-ytsaurus-core-inv.md",
       "title": "Technical Construction Intelligence: ytsaurus/ytsaurus Core Invariants",
       "repository": "ytsaurus/ytsaurus",
-      "source_version": "3d402381",
-      "content_hash": "3e8899d18253cd573c3734824a52b32ac0e050832be95ab09cabcf2aa122edc7",
+      "source_version": "597eabf7",
+      "content_hash": "b8b2a89800676f23dfc95f8c91ba0323bf95b21f4ff6acc4616991f1bd2783fc",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T16:01:46.131Z"
+      "persisted_at": "2026-11-25T10:58:00.302Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-baidu-ernie-5-5-flash-base-learnings-core-inv": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-baidu-ernie-5-5-flash-base-learnings-core-inv",
@@ -257466,9 +257471,9 @@
       "title": "Technical Construction Intelligence: ytsaurus-ytsaurus-learnings Core Invariants",
       "repository": "ytsaurus-ytsaurus-learnings",
       "source_version": "HEAD",
-      "content_hash": "07f89221a7cdba803939877e21e83783424719dc210a659d2a9577c4fe4bb2f1",
+      "content_hash": "ab360172660a03fdfc091dbc2c573ce3826a2041c683e5f7a6dc22a168a34af4",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T16:01:50.862Z"
+      "persisted_at": "2026-11-25T10:58:06.280Z"
     },
     "rule-8701": {
       "learning_id": "rule-8701",
@@ -282392,7 +282397,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/LiquidAI/LFM3-1.7B",
       "source_version": "hf-liquidai-lfm3-1.7b",
-      "content_hash": "91d14176c4153ccca17c2b845ec706d09053b82776514df5a9587f182dae2a99",
+      "content_hash": "40b7aa58f617ba8f8797dad7b6d57284f9a8897ce5f4104f44be99b2233d4aa5",
       "dossier_path": "07_PROJECT_LEARNING/hf-liquidai-lfm3-1.7b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-liquidai-lfm3-1.7b-learnings.md",
       "promoted_rules": [],
@@ -282401,7 +282406,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T18:52:06.800Z",
+      "verified_at": "2026-11-25T10:57:38.764Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -282418,9 +282423,9 @@
       "title": "Research & Knowledge Intelligence: LiquidAI/LFM3-1.7B Core Invariants",
       "repository": "LiquidAI/LFM3-1.7B",
       "source_version": "hf-liquidai-lfm3-1.7b",
-      "content_hash": "0e19b89a35988fd9bc054b9e9c06d0788bf46413c5c031ef2b91aeee905caab2",
+      "content_hash": "20c92a4eff9be4c051490793c76c6a5c8734e9a4430fbd1e1f5f0a2f6f40ceb2",
       "domain_letter": "D",
-      "persisted_at": "2026-11-21T18:52:07.228Z"
+      "persisted_at": "2026-11-25T10:57:39.329Z"
     },
     "rule-9040": {
       "learning_id": "rule-9040",
@@ -282508,9 +282513,9 @@
       "title": "Research & Knowledge Intelligence: hf-liquidai-lfm3-1.7b-learnings Core Invariants",
       "repository": "hf-liquidai-lfm3-1.7b-learnings",
       "source_version": "HEAD",
-      "content_hash": "bda47199b47feeef1545217c109aad93d39c01f450ada63cf388a59fc6c462c2",
+      "content_hash": "e68d07a286efad167c2b90cd432081d5e9e866722489a3b73eb4157a1043992a",
       "domain_letter": "D",
-      "persisted_at": "2026-11-21T18:52:27.997Z"
+      "persisted_at": "2026-11-25T10:58:05.357Z"
     },
     "candidate_directive-kubeletproxy-match-allowed-node-proxy-subpaths-exactly": {
       "item_id": "candidate_directive-kubeletproxy-match-allowed-node-proxy-subpaths-exactly",
@@ -288967,10 +288972,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-orange-opensource-hurl-architecture-intelligence-orange-opensource-hurl-core-inv.md",
       "title": "Architecture Intelligence: Orange-OpenSource/hurl Core Invariants",
       "repository": "Orange-OpenSource/hurl",
-      "source_version": "8d907486",
-      "content_hash": "234797d019a7a0f911669c665e223ba0a86aa45ec0276e5912f6942d95f61b1c",
+      "source_version": "013ceaf3",
+      "content_hash": "3ead683c989bfcdf6ca26b0a45ee00cab3299f92c8087890d619336e3726de7e",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T09:18:24.172Z"
+      "persisted_at": "2026-11-25T10:57:45.711Z"
     },
     "rule-9147": {
       "learning_id": "rule-9147",
@@ -289018,9 +289023,9 @@
       "title": "Architecture Intelligence: orange-opensource-hurl-learnings Core Invariants",
       "repository": "orange-opensource-hurl-learnings",
       "source_version": "HEAD",
-      "content_hash": "9ebae05c8a641f7a3d6b2af2e730486dc2dbc329a46723ebbeb76e5d78bb3efd",
+      "content_hash": "f69bd6629da447905b3204f37c5fa951964f15bc5723819cced2683cbf62e2f4",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T09:18:45.196Z"
+      "persisted_at": "2026-11-25T10:58:04.718Z"
     },
     "domain_intelligence-quality-verification-intelligence-etcd-io-etcd-learnings-core-invariants": {
       "item_id": "domain_intelligence-quality-verification-intelligence-etcd-io-etcd-learnings-core-invariants",
@@ -318676,13 +318681,13 @@
       "item_id": "candidate_directive-update-crates",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-FW2U-update-crates.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-FH22-update-crates.md",
       "title": "Update crates",
       "repository": "orange-opensource-hurl-learnings",
       "source_version": "HEAD",
-      "content_hash": "b21cd7fb08a3c30b53a9d51fcd7af8eb35a9d36d03d93ad2761fa29a2ddfbb4e",
+      "content_hash": "648c44d4ae65d28aaa14d66fa9b3bfb159c31ae4c5e49fb67926affb8e1b5b9f",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T09:18:45.034Z"
+      "persisted_at": "2026-11-25T10:58:04.447Z"
     },
     "rule-9820": {
       "learning_id": "rule-9820",
@@ -347331,6 +347336,32 @@
       "content_hash": "c8c8677ca38f7bd6c60bdfa299c8c55fb662c2cb45f3bed81ecd2f77e6b13c0f",
       "domain_letter": "G",
       "persisted_at": "2026-11-25T10:35:24.796Z"
+    },
+    "rule-10509": {
+      "learning_id": "rule-10509",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10509,
+      "title": "crash aware capture for facade runners",
+      "source_url": "https://github.com/ytsaurus/ytsaurus",
+      "source_version": "597eabf7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T10:57:59.495Z"
+    },
+    "candidate_directive-crash-aware-capture-for-facade-runners": {
+      "item_id": "candidate_directive-crash-aware-capture-for-facade-runners",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-FIA6-crash-aware-capture-for-facade-runners.md",
+      "title": "crash aware capture for facade runners",
+      "repository": "ytsaurus-ytsaurus-learnings",
+      "source_version": "HEAD",
+      "content_hash": "1e64721d288e6e69da3d7a479787ed4babab47cdb9011878b5933aeb77da40d7",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-25T10:58:06.031Z"
     }
   },
   "ai-builder-brain": {

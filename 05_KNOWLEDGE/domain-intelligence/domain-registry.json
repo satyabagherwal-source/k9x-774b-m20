@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T10:45:43.076Z",
+  "last_updated": "2026-11-25T10:58:06.280Z",
   "total_records": 2659,
   "domains": {
     "A": {
@@ -23918,8 +23918,8 @@
       "title": "Technical Construction Intelligence: ytsaurus/ytsaurus Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-ytsaurus-ytsaurus-technical-construction-intelligence-ytsaurus-ytsaurus-core-inv.md",
       "repository": "ytsaurus/ytsaurus",
-      "content_hash": "3e8899d18253cd573c3734824a52b32ac0e050832be95ab09cabcf2aa122edc7",
-      "created_at": "2026-11-24T16:01:46.131Z"
+      "content_hash": "b8b2a89800676f23dfc95f8c91ba0323bf95b21f4ff6acc4616991f1bd2783fc",
+      "created_at": "2026-11-25T10:58:00.302Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-baidu-ernie-5-5-flash-base-learnings-core-inv": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-baidu-ernie-5-5-flash-base-learnings-core-inv",
@@ -23936,8 +23936,8 @@
       "title": "Technical Construction Intelligence: ytsaurus-ytsaurus-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-ytsaurus-ytsaurus-learnings-technical-construction-intelligence-ytsaurus-ytsauru.md",
       "repository": "ytsaurus-ytsaurus-learnings",
-      "content_hash": "07f89221a7cdba803939877e21e83783424719dc210a659d2a9577c4fe4bb2f1",
-      "created_at": "2026-11-24T16:01:50.862Z"
+      "content_hash": "ab360172660a03fdfc091dbc2c573ce3826a2041c683e5f7a6dc22a168a34af4",
+      "created_at": "2026-11-25T10:58:06.280Z"
     },
     "domain_intelligence-architecture-intelligence-cilium-cilium-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-cilium-cilium-core-invariants",
@@ -29264,8 +29264,8 @@
       "title": "Research & Knowledge Intelligence: LiquidAI/LFM3-1.7B Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-liquidai-lfm3-1-7b-research-knowledge-intelligence-liquidai-lfm3-1-7b-core-in.md",
       "repository": "LiquidAI/LFM3-1.7B",
-      "content_hash": "0e19b89a35988fd9bc054b9e9c06d0788bf46413c5c031ef2b91aeee905caab2",
-      "created_at": "2026-11-21T18:52:07.228Z"
+      "content_hash": "20c92a4eff9be4c051490793c76c6a5c8734e9a4430fbd1e1f5f0a2f6f40ceb2",
+      "created_at": "2026-11-25T10:57:39.329Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm3-1-7b-learnings-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm3-1-7b-learnings-core-invariants",
@@ -29273,8 +29273,8 @@
       "title": "Research & Knowledge Intelligence: hf-liquidai-lfm3-1.7b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-liquidai-lfm3-1-7b-learnings-research-knowledge-intelligence-hf-liquidai-lfm3.md",
       "repository": "hf-liquidai-lfm3-1.7b-learnings",
-      "content_hash": "bda47199b47feeef1545217c109aad93d39c01f450ada63cf388a59fc6c462c2",
-      "created_at": "2026-11-21T18:52:27.997Z"
+      "content_hash": "e68d07a286efad167c2b90cd432081d5e9e866722489a3b73eb4157a1043992a",
+      "created_at": "2026-11-25T10:58:05.357Z"
     },
     "domain_intelligence-research-knowledge-intelligence-thinkingmachines-inkling-2-small-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-thinkingmachines-inkling-2-small-core-invariants",
@@ -30618,8 +30618,8 @@
       "title": "Architecture Intelligence: Orange-OpenSource/hurl Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-orange-opensource-hurl-architecture-intelligence-orange-opensource-hurl-core-inv.md",
       "repository": "Orange-OpenSource/hurl",
-      "content_hash": "234797d019a7a0f911669c665e223ba0a86aa45ec0276e5912f6942d95f61b1c",
-      "created_at": "2026-11-24T09:18:24.172Z"
+      "content_hash": "3ead683c989bfcdf6ca26b0a45ee00cab3299f92c8087890d619336e3726de7e",
+      "created_at": "2026-11-25T10:57:45.711Z"
     },
     "domain_intelligence-quality-verification-intelligence-etcd-io-etcd-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-etcd-io-etcd-core-invariants",
@@ -30636,8 +30636,8 @@
       "title": "Architecture Intelligence: orange-opensource-hurl-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-orange-opensource-hurl-learnings-architecture-intelligence-orange-opensource-hur.md",
       "repository": "orange-opensource-hurl-learnings",
-      "content_hash": "9ebae05c8a641f7a3d6b2af2e730486dc2dbc329a46723ebbeb76e5d78bb3efd",
-      "created_at": "2026-11-24T09:18:45.196Z"
+      "content_hash": "f69bd6629da447905b3204f37c5fa951964f15bc5723819cced2683cbf62e2f4",
+      "created_at": "2026-11-25T10:58:04.718Z"
     },
     "domain_intelligence-quality-verification-intelligence-etcd-io-etcd-learnings-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-etcd-io-etcd-learnings-core-invariants",

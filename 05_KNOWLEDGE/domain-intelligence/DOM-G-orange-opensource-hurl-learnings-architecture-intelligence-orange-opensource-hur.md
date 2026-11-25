@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T09:18:44.911Z",
+  "timestamp": "2026-11-25T10:58:04.313Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-orange-opensource-hurl-learnings",
@@ -14,13 +14,13 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [orange-opensource-hurl-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T09:18:44.911Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T10:58:04.313Z`  
 > **Learning ID**: `LEARN-EVO-orange-opensource-hurl-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), F (Design Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence)
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), F (Design Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence)
 - **Confidence Rating**: 59%
 
 ## 2. Core Domain Invariants & Discovered Laws
@@ -28,10 +28,10 @@ The following architectural invariants have been empirically discovered and reco
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md`  
 > **Source**: github ([https://github.com/Orange-OpenSource/hurl](https://github.com/Orange-OpenSource/hurl))  
-> **Source Version**: `8d907486`  
+> **Source Version**: `013ceaf3`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T09:18:23.007Z  
+> **Timestamp**: 2026-11-25T10:57:44.404Z  
 > **Learning ID**: `learn-github-orange-opensource-hurl`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Orange-OpenSource/hurl](https://github.com/Orange-OpenSource/hurl))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T09:18:22.859Z  
+> **Harvest Timestamp**: 2026-11-25T10:57:44.399Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Hurl, run and test HTTP requests with plain text.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 19355 stars
+- **Stars / Engagement**: 19360 stars
 
 ---
 
@@ -1896,229 +1896,261 @@ pub mod visit;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8d907486` (2026-11-24)
+### Incident Patch 1: `013ceaf3` (2026-11-25)
 **Commit Message**: Update crates
 
 **File**: `Cargo.lock` (modified, +6/-6)
 ```diff
-@@ -238,9 +238,9 @@ dependencies = [
+@@ -933,9 +933,9 @@ checksum = "63b8176103e19a2643978565ca18b50549f6101881c443590420e4dc998a3c69"
  
  [[package]]
- name = "clap"
--version = "4.6.7"
-+version = "4.6.8"
+ name = "regex"
+-version = "1.13.1"
++version = "1.13.2"
  source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "aa8876b300ab35ba921adea3dfd70157a46249b33f95c9084ae5709785478946"
-+checksum = "ac230478587d0269d8d6998b82ae69ea51509d55df66d9e92edd1f986904cd4a"
+-checksum = "f020237b6c8eed93db2e2cb53c00c60a8e1bc73da7d073199a1180401450218d"
++checksum = "9807af0e638c12e753aa1b4e601791bf2a8f71274023c8bbeec12fc149950857"
  dependencies = [
-  "clap_builder",
- ]
-@@ -260,9 +260,9 @@ dependencies = [
+  "aho-corasick",
+  "memchr",
+@@ -945,9 +945,9 @@ dependencies = [
  
  [[package]]
- name = "clap_lex"
--version = "1.1.1"
-+version = "1.1.2"
+ name = "regex-automata"
+-version = "0.4.18"
++version = "0.4.19"
  source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "1c133bc6a41be0d194c306b5506d15e6feeea7b1d6604bd3f8310dfb2ca96486"
-+checksum = "e0921b3876b3a1df8a1c9f912e7f94342458022c2e84288015893d83c4d62a79"
- 
- [[package]]
- name = "colorchoice"
-@@ -1224,9 +1224,9 @@ checksum = "3a3b425286980a367278453f3b6d28cdcb134b574e5a35824a6ff5eebad50bb6"
- 
- [[package]]
- name = "uuid"
--version = "1.29.2"
-+version = "1.29.3"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "bed99139f7dac9b5cfe5f17be4d66dc7079a34dee1d74bcc77217119240e267c"
-+checksum = "3c14b15dffa2f4bd712103e857140aa04a4f2ff6e955c77d7eb8e53ee02a3b64"
+-checksum = "ad8553b9b26413251cbf30e620595c7a41b3887f03da04579c0e6b0d6a06b4b2"
++checksum = "41d60ef07df457506a0a1a2073112eb4aae5733dbd2813c3da77d1b0fd441158"
  dependencies = [
-  "getrandom",
-  "js-sys",
+  "aho-corasick",
+  "memchr",
+@@ -956,9 +956,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "regex-syntax"
+-version = "0.8.11"
++version = "0.8.12"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "d6f6ff9a378485b298a5286656da665ba74413d36db0979633275d2e708145d4"
++checksum = "d902046e6a28a1e4c3cab97258a0ce11e994903f01c2d97a9447a0b3df85f4f6"
+ 
+ [[package]]
+ name = "rle-decode-fast"
 ```
 
-**File**: `packages/hurl/Cargo.toml` (modified, +2/-2)
+**File**: `packages/hurl/Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -21,7 +21,7 @@ static-openssl = ["curl/static-ssl", "curl-sys/static-ssl"]
- base64 = "0.23.1"
- brotli = "9.1.3"
- chrono = { version = "0.4.45", default-features = false, features = ["clock"] }
--clap = { version = "4.6.7", features = ["string", "wrap_help"] }
-+clap = { version = "4.6.8", features = ["string", "wrap_help"] }
- curl = "0.4.51"
- curl-sys = "0.4.91"
- encoding_rs = "0.8.44"
-@@ -38,7 +38,7 @@ sha2 = "0.11.1"
- url = "2.5.8"
- xml = "1.4.0"
- # uuid features: lets you generate random UUIDs and use a faster (but still sufficiently random) RNG
--uuid = { version = "1.29.2", features = ["v4" , "fast-rng"] }
-+uuid = { version = "1.29.3", features = ["v4" , "fast-rng"] }
- similar = "3.2.1"
- terminal_size = "0.4.4"
+@@ -31,7 +31,7 @@ libflate = "2.3.2"
+ libxml = "0.3.24"
+ md5 = "0.8.1"
+ percent-encoding = "2.3.2"
+-regex = "1.13.1"
++regex = "1.13.2"
+ serde = { version = "1.0.229", features = ["derive"] }
+ serde_json = { version = "1.0.154", features = ["arbitrary_precision"] }
+ sha2 = "0.11.1"
+```
+
+**File**: `packages/hurl_core/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -11,7 +11,7 @@ repository = "https://github.com/Orange-OpenSource/hurl"
+ [dependencies]
+ colored = "3.1.1"
+ libxml = "0.3.24"
+-regex = "1.13.1"
++regex = "1.13.2"
  
+ [lints]
+ workspace = true
 ```
 
 **File**: `packages/hurlfmt/Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -11,7 +11,7 @@ rust-version = "1.100.0"
- 
- [dependencies]
+@@ -13,7 +13,7 @@ rust-version = "1.100.0"
  base64 = "0.23.1"
--clap = { version = "4.6.7", features = ["cargo", "wrap_help"] }
-+clap = { version = "4.6.8", features = ["cargo", "wrap_help"] }
+ clap = { version = "4.6.8", features = ["cargo", "wrap_help"] }
  hurl_core = { version = "9.0.0", path = "../hurl_core" }
- regex = "1.13.1"
+-regex = "1.13.1"
++regex = "1.13.2"
  
+ 
+ [lints]
 ```
 
 ---
 
-### Incident Patch 2: `23285145` (2026-11-23)
-**Commit Message**: Update integration test with --cookie and --location/--location-trusted
+### Incident Patch 2: `54e4de9a` (2026-11-24)
+**Commit Message**: Better integration test with --cookie and --location/--location-trusted
 
-**File**: `integration/hurl/tests_ok/follow_redirect/cookies.txt` (added, +1/-0)
+**File**: `integration/hurl/tests_ok/follow_redirect/follow_redirect_leak.hurl` (modified, +1/-2)
 ```diff
-@@ -0,0 +1 @@
-+localhost	FALSE	/	FALSE	0	fruit	lemon
-```
-
-**File**: `integration/hurl/tests_ok/follow_redirect/follow_redirect_leak.hurl` (modified, +3/-3)
-```diff
-@@ -1,9 +1,9 @@
--GET http://localhost:8000/follow-redirect-leak/host-a-step-1
-+GET http://localhost:8000/follow-redirect-leak/host-a-step-1?trusted={{trusted}}
+@@ -1,4 +1,4 @@
+-GET http://localhost:8000/follow-redirect-leak/host-a-step-1?trusted={{trusted}}
++GET http://localhost:8000/follow-redirect-leak/host-a-step-1?expect_auth_forwarded={{expect_auth_forwarded}}&expect_cookie_forwarded={{expect_cookie_forwarded}}
  HTTP 200
  [Asserts]
  redirects count == 2
--redirects nth 0 location == "http://127.0.0.1:8000/follow-redirect-leak/host-b-step-2"
--redirects nth 1 location == "http://localhost:8000/follow-redirect-leak/host-a-step-3"
-+redirects nth 0 location startsWith "http://127.0.0.1:8000/follow-redirect-leak/host-b-step-2"
-+redirects nth 1 location startsWith "http://localhost:8000/follow-redirect-leak/host-a-step-3"
- url == "http://localhost:8000/follow-redirect-leak/host-a-step-3"
+@@ -8,4 +8,3 @@ url == "http://localhost:8000/follow-redirect-leak/host-a-step-3"
  header "Location" not exists
  `Followed redirect!`
+ 
+-
 ```
 
 **File**: `integration/hurl/tests_ok/follow_redirect/follow_redirect_leak.out` (modified, +1/-1)
 ```diff
 @@ -1 +1 @@
--Followed redirect!
+-Followed redirect!Followed redirect!Followed redirect!
 \ No newline at end of file
-+Followed redirect!Followed redirect!Followed redirect!
++Followed redirect!Followed redirect!Followed redirect!Followed redirect!
 \ No newline at end of file
 ```
 
-**File**: `integration/hurl/tests_ok/follow_redirect/follow_redirect_leak.ps1` (modified, +20/-0)
+**File**: `integration/hurl/tests_ok/follow_redirect/follow_redirect_leak.ps1` (modified, +14/-9)
 ```diff
-@@ -4,4 +4,24 @@ $ErrorActionPreference = 'Stop'
+@@ -4,24 +4,29 @@ $ErrorActionPreference = 'Stop'
  hurl --location `
    --header 'Authorization: Basic Ym9iQGVtYWlsLmNvbTpzZWNyZXQ=' `
    --header 'Cookie: fruit=lemon' `
-+  --variable trusted=false `
+-  --variable trusted=false `
++  --variable expect_auth_forwarded=false `
++  --variable expect_cookie_forwarded=false `
    tests_ok/follow_redirect/follow_redirect_leak.hurl
-+
+ 
+ hurl --location-trusted `
+   --header 'Authorization: Basic Ym9iQGVtYWlsLmNvbTpzZWNyZXQ=' `
+   --header 'Cookie: fruit=lemon' `
+-  --variable trusted=true `
++  --variable expect_auth_forwarded=true `
++  --variable expect_cookie_forwarded=true `
+   tests_ok/follow_redirect/follow_redirect_leak.hurl
+ 
+ hurl --location `
+   --header 'Authorization: Basic Ym9iQGVtYWlsLmNvbTpzZWNyZXQ=' `
+   --cookie tests_ok/follow_redirect/cookies.txt `
+-  --variable trusted=false `
++  --variable expect_auth_forwarded=false `
++  --variable expect_cookie_forwarded=false `
+   tests_ok/follow_redirect/follow_redirect_leak.hurl
+ 
+-# FIXME: --cookie and --location-trusted should work
+-#hurl --location-trusted `
+-#  --header 'Authorization: Basic Ym9iQGVtYWlsLmNvbTpzZWNyZXQ=' `
+-#  --cookie tests_ok/follow_redirect/cookies.txt `
+-#  --variable trusted=true `
+-#  tests_ok/follow_redirect/follow_redirect_leak.hurl
++# Cookies from a cookie file are domain-scoped: they are not forwarded to another host,
++# even with --location-trusted (same as curl).
 +hurl --location-trusted `
 +  --header 'Authorization: Basic Ym9iQGVtYWlsLmNvbTpzZWNyZXQ=' `
-+  --header 'Cookie: fruit=lemon' `
-+  --variable trusted=true `
-+  tests_ok/follow_redirect/follow_redirect_leak.hurl
-+
-+hurl --location `
-+  --header 'Authorization: Basic Ym9iQGVtYWlsLmNvbTpzZWNyZXQ=' `
 +  --cookie tests_ok/follow_redirect/cookies.txt `
-+  --variable trusted=false `
++  --variable expect_auth_forwarded=true `
++  --variable expect_cookie_forwarded=false `
 +  tests_ok/follow_redirect/follow_redirect_leak.hurl
-+
-+# FIXME: --cookie and --location-trusted should work
-+#hurl --location-trusted `
-+#  --header 'Authorization: Basic Ym9iQGVtYWlsLmNvbTpzZWNyZXQ=' `
-+#  --cookie tests_ok/follow_redirect/cookies.txt `
-+#  --variable trusted=true `
-+#  tests_ok/follow_redirect/follow_redirect_leak.hurl
 ```
 
-**File**: `integration/hurl/tests_ok/follow_redirect/follow_redirect_leak.py` (modified, +18/-3)
+**File**: `integration/hurl/tests_ok/follow_redirect/follow_redirect_leak.py` (modified, +13/-11)
 ```diff
-@@ -4,15 +4,26 @@
- 
+@@ -5,24 +5,30 @@
  @app.route("/follow-redirect-leak/host-a-step-1")
  def follow_redirect_leak_host_a_step_1():
-+    # step-1 domain is localhost
-+    trusted = get_trusted_param()
+     # step-1 domain is localhost
+-    trusted = get_trusted_param()
++    expect_auth_forwarded = request.args.get("expect_auth_forwarded", "false")
++    expect_cookie_forwarded = request.args.get("expect_cookie_forwarded", "false")
      assert "Authorization" in request.headers
      assert request.cookies.get("fruit") is not None
--    return redirect("http://127.0.0.1:8000/follow-redirect-leak/host-b-step-2")
-+    return redirect(
-+        f"http://127.0.0.1:8000/follow-redirect-leak/host-b-step-2?trusted={trusted}"
-+    )
+     return redirect(
+-        f"http://127.0.0.1:8000/follow-redirect-leak/host-b-step-2?trusted={trusted}"
++        f"http://127.0.0.1:8000/follow-redirect-leak/host-b-step-2"
++        f"?expect_auth_forwarded={expect_auth_forwarded}"
++        f"&expect_cookie_forwarded={expect_cookie_forwarded}"
+     )
  
  
  @app.route("/follow-redirect-leak/host-b-step-2")
  def follow_redirect_leak_host_b_step_2():
--    assert "Authorization" not in request.headers
--    assert request.cookies.get("fruit") is None
-+    trusted = get_trusted_param()
-+    # step-1 domain is 127.0.0.1, we change domain.
-+    # We need to check if the credentials are here when the domain is trusted
-+    if trusted == "true":
-+        assert "Authorization" in request.headers
+-    trusted = get_trusted_param()
+-    # step-1 domain is 127.0.0.1, we change domain.
+-    # We need to check if the credentials are here when the domain is trusted
+-    if trusted == "true":
++    # step-2 domain is 127.0.0.1, we change domain.
++    # Credentials are forwarded only if the test expects them to be.
++    expect_auth_forwarded = request.args.get("expect_auth_forwarded", "false")
++    expect_cookie_forwarded = request.args.get("expect_cookie_forwarded", "false")
++    if expect_auth_forwarded == "true":
+         assert "Authorization" in request.headers
+-        assert request.cookies.get("fruit") is not None
+     else:
+         assert "Authorization" not in request.headers
++    if expect_cookie_forwarded == "true":
 +        assert request.cookies.get("fruit") is not None
 +    else:
-+        assert "Authorization" not in request.headers
-+        assert request.cookies.get("fruit") is None
+         assert request.cookies.get("fruit") is None
      return redirect("http://localhost:8000/follow-redirect-leak/host-a-step-3")
  
- 
-@@ -22,3 +33,7 @@ def follow_redirect_leak_host_a_step_3():
+@@ -33,7 +39,3 @@ def follow_redirect_leak_host_a_step_3():
      assert "Authorization" in request.headers
      assert request.cookies.get("fruit") is not None
      return "Followed redirect!"
-+
-+
-+def get_trusted_param():
-+    return request.args.get("trusted", "false")
+-
+-
+-def get_trusted_param():
+-    return request.args.get("trusted", "false")
 ```
 
-**File**: `integration/hurl/tests_ok/follow_redirect/follow_redirect_leak.sh` (modified, +21/-0)
+**File**: `integration/hurl/tests_ok/follow_redirect/follow_redirect_leak.sh` (modified, +14/-10)
 ```diff
-@@ -4,4 +4,25 @@ set -Eeuo pipefail
+@@ -4,25 +4,29 @@ set -Eeuo pipefail
  hurl --location \
    --header 'Authorization: Basic Ym9iQGVtYWlsLmNvbTpzZWNyZXQ=' \
    --header 'Cookie: fruit=lemon' \
-+  --variable trusted=false \
+-  --variable trusted=false \
++  --variable expect_auth_forwarded=false \
++  --variable expect_cookie_forwarded=false \
    tests_ok/follow_redirect/follow_redirect_leak.hurl
-+
+ 
+ hurl --location-trusted \
+   --header 'Authorization: Basic Ym9iQGVtYWlsLmNvbTpzZWNyZXQ=' \
+   --header 'Cookie: fruit=lemon' \
+-  --variable trusted=true \
++  --variable expect_auth_forwarded=true \
++  --variable expect_cookie_forwarded=true \
+   tests_ok/follow_redirect/follow_redirect_leak.hurl
+ 
+ hurl --location \
+   --header 'Authorization: Basic Ym9iQGVtYWlsLmNvbTpzZWNyZXQ=' \
+   --cookie tests_ok/follow_redirect/cookies.txt \
+-  --variable trusted=false \
++  --variable expect_auth_forwarded=false \
++  --variable expect_cookie_forwarded=false \
+   tests_ok/follow_redirect/follow_redirect_leak.hurl
+ 
+-# FIXME: --cookie and --location-trusted should work
+-#hurl --location-trusted \
+-#  --header 'Authorization: Basic Ym9iQGVtYWlsLmNvbTpzZWNyZXQ=' \
+-#  --cookie tests_ok/follow_redirect/cookies.txt \
+-#  --variable trusted=true \
+-#  tests_ok/follow_redirect/follow_redirect_leak.hurl
+-
++# Cookies from a cookie file are domain-scoped: they are not forwarded to another host,
++# even with --location-trusted (same as curl).
 +hurl --location-trusted \
 +  --header 'Authorization: Basic Ym9iQGVtYWlsLmNvbTpzZWNyZXQ=' \
-+  --header 'Cookie: fruit=lemon' \
-+  --variable trusted=true \
-+  tests_ok/follow_redirect/follow_redirect_leak.hurl
-+
-+hurl --location \
-+  --header 'Authorization: Basic Ym9iQGVtYWlsLmNvbTpzZWNyZXQ=' \
 +  --cookie tests_ok/follow_redirect/cookies.txt \
-+  --variable trusted=false \
++  --variable expect_auth_forwarded=true \
++  --variable expect_cookie_forwarded=false \
 +  tests_ok/follow_redirect/follow_redirect_leak.hurl
-+
-+# FIXME: --cookie and --location-trusted should work
-+#hurl --location-trusted \
-+#  --header 'Authorization: Basic Ym9iQGVtYWlsLmNvbTpzZWNyZXQ=' \
-+#  --cookie tests_ok/follow_redirect/cookies.txt \
-+#  --variable trusted=true \
-+#  tests_ok/follow_redirect/follow_redirect_leak.hurl
-+
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5458** (2026-11-25): Update crates (@hurl-bot)
+- **PR #5457** (2026-11-24): Better integration test with --cookie and --location/--location-trusted (@jcamiel)
 - **PR #5456** (2026-11-24): Update crates (@hurl-bot)
 - **PR #5455** (2026-11-23): Update integration test with --cookie and --location/--location-trusted (@jcamiel)
 - **PR #5454** (2026-11-23): Update crates (@hurl-bot)
 - **PR #5453** (2026-11-22): Rename Cookie::match_domain to Cookie::match_host and fix the method method matching any IPs. (@jcamiel)
-- **PR #5451** (2026-11-21): Update crates (@hurl-bot)
-- **PR #5450** (2026-11-20): Update crates (@hurl-bot)
 
 ---
 
@@ -2144,7 +2176,7 @@ Observed empirical fixes and code patches:
 When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Orange-OpenSource/hurl. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8d907486`: Update crates. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `013ceaf3`: Update crates. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
@@ -2152,27 +2184,27 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "4.6.8"
-checksum = "ac230478587d0269d8d6998b82ae69ea51509d55df66d9e92edd1f986904cd4a"
-version = "1.1.2"
-checksum = "e0921b3876b3a1df8a1c9f912e7f94342458022c2e84288015893d83c4d62a79"
-version = "1.29.3"
-checksum = "3c14b15dffa2f4bd712103e857140aa04a4f2ff6e955c77d7eb8e53ee02a3b64"
+version = "1.13.2"
+checksum = "9807af0e638c12e753aa1b4e601791bf2a8f71274023c8bbeec12fc149950857"
+version = "0.4.19"
+checksum = "41d60ef07df457506a0a1a2073112eb4aae5733dbd2813c3da77d1b0fd441158"
+version = "0.8.12"
+checksum = "d902046e6a28a1e4c3cab97258a0ce11e994903f01c2d97a9447a0b3df85f4f6"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-version = "4.6.7"
-checksum = "aa8876b300ab35ba921adea3dfd70157a46249b33f95c9084ae5709785478946"
-version = "1.1.1"
-checksum = "1c133bc6a41be0d194c306b5506d15e6feeea7b1d6604bd3f8310dfb2ca96486"
-version = "1.29.2"
-checksum = "bed99139f7dac9b5cfe5f17be4d66dc7079a34dee1d74bcc77217119240e267c"
+version = "1.13.1"
+checksum = "f020237b6c8eed93db2e2cb53c00c60a8e1bc73da7d073199a1180401450218d"
+version = "0.4.18"
+checksum = "ad8553b9b26413251cbf30e620595c7a41b3887f03da04579c0e6b0d6a06b4b2"
+version = "0.8.11"
+checksum = "d6f6ff9a378485b298a5286656da665ba74413d36db0979633275d2e708145d4"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8d907486` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `013ceaf3` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

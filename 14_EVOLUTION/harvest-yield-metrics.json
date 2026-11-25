@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T10:45:37.804Z",
-  "total_cycles_completed": 12381,
-  "total_learnings_persisted": 12381,
-  "total_rules_promoted": 11387,
+  "last_updated": "2026-11-25T10:57:59.776Z",
+  "total_cycles_completed": 12384,
+  "total_learnings_persisted": 12384,
+  "total_rules_promoted": 11389,
   "history": [
-    {
-      "timestamp": "2026-11-24T22:15:50.391Z",
-      "repository": "topgrade-rs/topgrade",
-      "learningId": "learn-github-topgrade-rs-topgrade",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T22:15:51.951Z",
-      "repository": "miso-belica/jusText",
-      "learningId": "learn-github-miso-belica-justext",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T22:16:00.708Z",
-      "repository": "freenet/freenet-core",
-      "learningId": "learn-github-freenet-freenet-core",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-24T22:30:08.020Z",
       "repository": "medialab/xan",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-25T10:45:37.804Z",
       "repository": "moby/buildkit",
       "learningId": "learn-github-moby-buildkit",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T10:57:39.064Z",
+      "repository": "LiquidAI/LFM3-1.7B",
+      "learningId": "learn-huggingface-liquidai-lfm3-1-7b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T10:57:45.244Z",
+      "repository": "Orange-OpenSource/hurl",
+      "learningId": "learn-github-orange-opensource-hurl",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T10:57:59.776Z",
+      "repository": "ytsaurus/ytsaurus",
+      "learningId": "learn-github-ytsaurus-ytsaurus",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
