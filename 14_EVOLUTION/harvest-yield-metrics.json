@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T10:07:36.310Z",
-  "total_cycles_completed": 12372,
-  "total_learnings_persisted": 12372,
-  "total_rules_promoted": 11381,
+  "last_updated": "2026-11-25T10:25:31.280Z",
+  "total_cycles_completed": 12375,
+  "total_learnings_persisted": 12375,
+  "total_rules_promoted": 11383,
   "history": [
-    {
-      "timestamp": "2026-11-24T21:01:29.795Z",
-      "repository": "dosco/deeporg",
-      "learningId": "learn-github-dosco-deeporg",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T21:15:32.715Z",
-      "repository": "unsloth/Inkling-2-Mini-GGUF",
-      "learningId": "learn-huggingface-unsloth-inkling-2-mini-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T21:15:48.205Z",
-      "repository": "clockworklabs/SpacetimeDB",
-      "learningId": "learn-github-clockworklabs-spacetimedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-24T21:15:51.758Z",
       "repository": "NucleoidAI/Nucleoid",
@@ -1403,6 +1382,27 @@
       "repository": "ydb-platform/ydb",
       "learningId": "learn-github-ydb-platform-ydb",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T10:21:20.696Z",
+      "repository": "FastVideo/FastH3-Omni-Comfy",
+      "learningId": "learn-huggingface-fastvideo-fasth3-omni-comfy",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T10:24:13.975Z",
+      "repository": "ratatui/ratatui",
+      "learningId": "learn-github-ratatui-ratatui",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T10:25:31.280Z",
+      "repository": "loft-sh/vcluster",
+      "learningId": "learn-github-loft-sh-vcluster",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

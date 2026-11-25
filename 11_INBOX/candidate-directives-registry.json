@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T10:07:41.391Z",
+  "last_updated": "2026-11-25T10:26:16.752Z",
   "directives": [
     {
       "id": "CD-001",
@@ -60682,6 +60682,68 @@
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-137A7E-server-events-dispatch-rerender-dm-statu.md",
       "staged_date": "2026-11-25"
+    },
+    {
+      "id": "CD-AJGR",
+      "directive_title": "Pure Terminal Capability Detection Invariant",
+      "source_repo": "ratatui-ratatui-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-AJGR-pure-terminal-capability-detection-invariant.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-25",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-AJGS",
+      "directive_title": "State-Decoupled Immediate-Mode Widget Invariant",
+      "source_repo": "ratatui-ratatui-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-AJGS-state-decoupled-immediate-mode-widget-invariant.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-25",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-9M8H",
+      "directive_title": "Feedback & Evolution Intelligence: loft-sh/vcluster Core Invariants",
+      "source_repo": "loft-sh/vcluster",
+      "source_commit": "9555d7d8",
+      "staged_file": "11_INBOX/candidate-directives/CD-9M8H-feedback-evolution-intelligence-loft-sh-vcluster-core-invariants.md",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "reason": "Human approval authorization required before canonical promotion",
+      "date_staged": "2026-11-25",
+      "domain_letter": "M"
+    },
+    {
+      "id": "CD-REV-BD6406",
+      "directive_title": "Chrono FixedOffset Integer Overflow on 24-Hour Offsets (BUG-RATATUI-2961)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "ratatui-ratatui",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-BD6406-chrono-fixedoffset-integer-overflow-on-2.md",
+      "staged_date": "2026-11-25"
+    },
+    {
+      "id": "CD-REV-0A3218",
+      "directive_title": "Project Learning Record (Full-Spectrum Forensic Harvest): loft-sh/vcluster",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "loft-sh-vcluster",
+      "domain_letter": "M",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-0A3218-project-learning-record-full-spectrum-fo.md",
+      "staged_date": "2026-11-25"
+    },
+    {
+      "id": "CD-AL2O",
+      "directive_title": "Feedback & Evolution Intelligence: loft-sh-vcluster-learnings Core Invariants",
+      "source_repo": "loft-sh-vcluster-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-AL2O-feedback-evolution-intelligence-loft-sh-vcluster-learnings-core-invariants.md",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "reason": "Human approval authorization required before canonical promotion",
+      "date_staged": "2026-11-25",
+      "domain_letter": "M"
     }
   ]
 }

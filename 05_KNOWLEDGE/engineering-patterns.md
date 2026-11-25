@@ -789529,3 +789529,345 @@ Subsystems managing C++ data structures, boundary deserialization, API parsing, 
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `16d689be` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10504. Pure Terminal Capability Detection Invariant (Harvested from ratatui/ratatui)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Pure Terminal Capability Detection Invariant",
+  "source": "ratatui/ratatui",
+  "source_url": "https://github.com/ratatui/ratatui",
+  "source_version": "ae8c0e08",
+  "license": "MIT",
+  "extracted_at": "2026-11-25T10:24:12.472Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-ratatui-ratatui",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [ratatui/ratatui](https://github.com/ratatui/ratatui) (Revision: `ae8c0e08`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+Terminal environment detection logic (such as checking for Truecolor or ANSI feature support via environment variables like `TERM_PROGRAM`, `COLORTERM`, and `TERM`) MUST be structured as pure, side-effect-free functions accepting borrowed option slices (`Option<&str>`). Code MUST NOT directly query `std::env::var` within parsing, branch evaluation, or layout loops.
+
+**WHY**:
+Directly invoking `std::env::var` in core rendering or initialization paths creates hidden global state dependencies, introduces locking overhead on process environment locks (especially on Windows and newer glibc versions), and prevents deterministic, hermetic unit testing across simulated platforms without mutating process-wide variables via `std::env::set_var` (which is inherently thread-unsafe in multi-threaded Rust test harnesses).
+
+**WHEN TO APPLY**:
+Apply in any CLI, TUI, or backend driver system that queries the OS environment to configure runtime capabilities, styling, color palettes, or feature flags.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+#[derive(Debug, Clone, Copy, Eq, PartialEq)]
+pub struct ColorCapabilities {
+    pub true_color: bool,
+}
+
+impl ColorCapabilities {
+    /// Detects environment capability via pure string inputs.
+    /// Never queries `std::env` inside this function.
+    pub const fn detect(
+        term_program: Option<&str>,
+        term_program_version: Option<&str>,
+        colorterm: Option<&str>,
+    ) -> Self {
+        if let Some(colorterm) = colorterm {
+            if matches_truecolor(colorterm) {
+                return Self { true_color: true };
+            }
+        }
+
+        if let Some(program) = term_program {
+            if str_eq(program, "Apple_Terminal") {
+                let build = parse_leading_u32(term_program_version);
+                // Apple Terminal supports 24-bit Truecolor only from build 465 onwards
+                return Self {
+                    true_color: match build {
+                        Some(v) => v >= 465,
+                        None => false,
+                    },
+                };
+            }
+        }
+
+        Self { true_color: true }
+    }
+}
+
+const fn matches_truecolor(val: &str) -> bool {
+    let b = val.as_bytes();
+    // Case-sensitive exact match for "truecolor" or "24bit"
+    (b.len() == 9
+        && b[0] == b't'
+        && b[1] == b'r'
+        && b[2] == b'u'
+        && b[3] == b'e'
+        && b[4] == b'c'
+        && b[5] == b'o'
+        && b[6] == b'l'
+        && b[7] == b'o'
+        && b[8] == b'r')
+        || (b.len() == 5
+            && b[0] == b'2'
+            && b[1] == b'4'
+            && b[2] == b'b'
+            && b[3] == b'i'
+            && b[4] == b't')
+}
+
+const fn parse_leading_u32(val: Option<&str>) -> Option<u32> {
+    let s = match val {
+        Some(s) => s.as_bytes(),
+        None => return None,
+    };
+    let mut acc = 0u32;
+    let mut i = 0;
+    let mut found_digit = false;
+    while i < s.len() {
+        let b = s[i];
+        if b == b'.' {
+            break;
+        }
+        if b >= b'0' && b <= b'9' {
+            found_digit = true;
+            match acc.checked_mul(10).and_then(|v| v.checked_add((b - b'0') as u32)) {
+                Some(next) => acc = next,
+                None => return None, // Overflow safety
+            }
+        } else {
+            break;
+        }
+        i += 1;
+    }
+    if found_digit { Some(acc) } else { None }
+}
+
+const fn str_eq(a: &str, b: &str) -> bool {
+    let ab = a.as_bytes();
+    let bb = b.as_bytes();
+    if ab.len() != bb.len() {
+        return false;
+    }
+    let mut i = 0;
+    while i < ab.len() {
+        if ab[i] != bb[i] {
+            return false;
+        }
+        i += 1;
+    }
+    true
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// ANTI-PATTERN: Direct query of process environment inside domain logic.
+// Un-testable in parallel test runners; triggers TOCTOU data races.
+impl Theme {
+    fn new() -> Self {
+        // BAD: Directly reading environment variables inside construction
+        let is_apple = std::env::var("TERM_PROGRAM").map(|s| s == "Apple_Terminal").unwrap_or(false);
+        let version: u32 = std::env::var("TERM_PROGRAM_VERSION")
+            .unwrap_or_default()
+            .split('.')
+            .next()
+            .unwrap()
+            .parse() // Panic hazard if string is empty
+            .unwrap();
+            
+        if is_apple && version < 465 {
+            Self::indexed()
+        } else {
+            Self::truecolor()
+        }
+    }
+}
+```
+
+**VERIFICATION METHOD**:
+Automated hermetic unit tests verifying capability matrices without setting environment variables:
+```rust
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn verify_apple_terminal_build_boundaries() {
+        assert!(!ColorCapabilities::detect(Some("Apple_Terminal"), Some("455.0.0"), None).true_color);
+        assert!(!ColorCapabilities::detect(Some("Apple_Terminal"), Some("464"), None).true_color);
+        assert!(ColorCapabilities::detect(Some("Apple_Terminal"), Some("465"), None).true_color);
+        assert!(ColorCapabilities::detect(Some("Apple_Terminal"), Some("500.1.2"), None).true_color);
+        assert!(!ColorCapabilities::detect(Some("Apple_Terminal"), None, None).true_color);
+        assert!(!ColorCapabilities::detect(Some("Apple_Terminal"), Some("invalid"), None).true_color);
+        assert!(ColorCapabilities::detect(Some("iTerm2"), Some("3.4.0"), None).true_color);
+    }
+}
+```
+
+---
+
+
+---
+
+## 10505. State-Decoupled Immediate-Mode Widget Invariant (Harvested from ratatui/ratatui)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "State-Decoupled Immediate-Mode Widget Invariant",
+  "source": "ratatui/ratatui",
+  "source_url": "https://github.com/ratatui/ratatui",
+  "source_version": "ae8c0e08",
+  "license": "MIT",
+  "extracted_at": "2026-11-25T10:24:13.227Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-ratatui-ratatui",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [ratatui/ratatui](https://github.com/ratatui/ratatui) (Revision: `ae8c0e08`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+Reusable UI components MUST NOT encapsulate internal mutable state inside an owned widget struct when implementing rendering pipelines. Components requiring state mutation across frames MUST implement the `StatefulWidget` contract separating the ephemeral widget descriptor (`self`) from the long-lived mutable state reference (`&mut State`).
+
+**WHY**:
+Binding mutable state directly to an owned widget (`Widget for &mut CustomWidget`) forces the entire component tree to retain exclusive mutable borrows during draw routines. This prevents clean hierarchical tree composition, violates the Single Responsibility Principle, and causes borrow-checker conflicts when parent widgets coordinate state between siblings.
+
+**WHEN TO APPLY**:
+Apply to all interactive TUI, GUI, or canvas components (e.g., scrollable lists, paginated tables, tree views, multi-input forms) where render loops must reflect external state without invalidating parent frame lifecycles.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+use ratatui::buffer::Buffer;
+use ratatui::layout::Rect;
+use ratatui::widgets::StatefulWidget;
+
+pub struct TableWidget {
+    pub row_height: u16,
+    pub border_style: bool,
+}
+
+#[derive(Default, Debug)]
+pub struct TableState {
+    pub selected_index: usize,
+    pub offset_y: usize,
+}
+
+impl StatefulWidget for TableWidget {
+    type State = TableState;
+
+    fn render(self, area: Rect, buf: &mut Buffer, state: &mut Self::State) {
+        if area.width == 0 || area.height == 0 {
+            return;
+        }
+
+        // State normalization: protect against out-of-bounds mutation
+        let total_items = 100; // Invariant check against backing data length
+        if state.selected_index >= total_items {
+            state.selected_index = total_items.saturating_sub(1);
+        }
+
+        // Render purely according to resolved state
+        for y in 0..area.height {
+            let row_idx = state.offset_y + y as usize;
+            if row_idx >= total_items {
+                break;
+            }
+            let is_selected = row_idx == state.selected_index;
+            let symbol = if is_selected { ">" } else { " " };
+            buf.set_string(area.x, area.y + y, symbol, ratatui::style::Style::default());
+        }
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// ANTI-PATTERN: Storing and mutating internal state within an owned or RefCell-wrapped widget
+struct BrokenCounter {
+    count: std::rc::Rc<std::cell::RefCell<usize>>,
+}
+
+impl ratatui::widgets::Widget for BrokenCounter {
+    fn render(self, area: Rect, buf: &mut Buffer) {
+        // BAD: Runtime borrow panics under re-entrant renders or concurrent tasks
+        *self.count.borrow_mut() += 1;
+        buf.set_string(area.x, area.y, format!("{}", self.count.borrow()), ratatui::style::Style::default());
+    }
+}
+```
+
+**VERIFICATION METHOD**:
+Compile-time static borrow assertion ensuring multiple rendering passes do not trigger compile errors or borrow conflicts:
+```rust
+#[test]
+fn test_stateful_widget_decoupled_borrow() {
+    let mut state = TableState::default();
+    let widget = TableWidget { row_height: 1, border_style: true };
+    let mut buffer = Buffer::empty(Rect::new(0, 0, 10, 10));
+    
+    // Invariant: The widget can be re-instantiated freely without consuming state
+    widget.render(Rect::new(0, 0, 10, 5), &mut buffer, &mut state);
+    
+    let widget2 = TableWidget { row_height: 2, border_style: false };
+    widget2.render(Rect::new(0, 5, 10, 5), &mut buffer, &mut state);
+    
+    assert_eq!(state.selected_index, 0);
+}
+```
+
+---

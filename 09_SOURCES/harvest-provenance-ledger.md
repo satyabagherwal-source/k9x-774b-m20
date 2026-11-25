@@ -13063,3 +13063,7 @@ Every entry in this ledger must capture:
 | `learn-github-greptimeteam-greptimedb` | `https://github.com/GreptimeTeam/greptimedb` | `0813fc35` | Multi-dimensional audit evidence | 2026-11-25T09:54:29.558Z |
 | `learn-huggingface-nvidia-nvidia-nemotron-3-5-bolt-e4b-4gb` | `https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-11-25T10:07:19.278Z |
 | `learn-github-ydb-platform-ydb` | `https://github.com/ydb-platform/ydb` | `11c43f77` | Multi-dimensional audit evidence | 2026-11-25T10:07:36.304Z |
+| `learn-huggingface-fastvideo-fasth3-omni-comfy` | `https://huggingface.co/FastVideo/FastH3-Omni-Comfy` | `hf-fastvid` | Multi-dimensional audit evidence | 2026-11-25T10:21:20.688Z |
+| `learn-github-ratatui-ratatui` | `https://github.com/ratatui/ratatui` | `ae8c0e08` | Multi-dimensional audit evidence | 2026-11-25T10:24:13.967Z |
+| `learn-github-loft-sh-vcluster` | `https://github.com/loft-sh/vcluster` | `9555d7d8` | Multi-dimensional audit evidence | 2026-11-25T10:25:31.273Z |
+| `learn-dom-f-4026a5fe` | `project://ratatui-ratatui` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ratatui-ratatui-learnings.md` | 2026-11-25T10:26:14.158Z |

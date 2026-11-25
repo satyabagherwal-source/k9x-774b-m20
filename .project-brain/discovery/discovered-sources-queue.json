@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-25T09:54:33.156Z",
+  "updated_at": "2026-11-25T10:26:14.281Z",
   "stats": {
-    "total_discovered": 9400,
-    "approved_pending_harvest": 8909,
+    "total_discovered": 9401,
+    "approved_pending_harvest": 8910,
     "harvested_count": 0,
     "rejected_count": 491,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 8899,
+      "COMMUNITY_AND_EXPERT": 8900,
       "OFFICIAL_DOCUMENTATION": 280,
       "STANDARDS_AND_SPECIFICATIONS": 150,
       "ENGINEERING_BLOGS": 7,
@@ -203390,6 +203390,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zeronsh-zeron-learnings.md",
         "fileName": "zeronsh-zeron-learnings.md"
+      }
+    },
+    "SRC-41485D085577": {
+      "id": "SRC-41485D085577",
+      "url": "https://github.com/ratatui/ratatui/issues/1271",
+      "title": "https://github.com/ratatui/ratatui/issues/1271",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T10:26:14.281Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
+        "fileName": "ratatui-ratatui-learnings.md"
       }
     }
   }

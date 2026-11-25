@@ -13030,3 +13030,7 @@
 | `CYCLE-20261125-5PGX` | `2026-11-25T09:54:29.553Z` | `GreptimeTeam/greptimedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10502` | Yes (`d722b1b6...`) |
 | `CYCLE-20261125-M7E1` | `2026-11-25T10:07:19.273Z` | `nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-3.5-bolt-e4b-4gb-learnings.md` | Yes (`45564fae...`) |
 | `CYCLE-20261125-MKJ0` | `2026-11-25T10:07:36.300Z` | `ydb-platform/ydb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10503` | Yes (`4ef9bbe4...`) |
+| `CYCLE-20261125-48MJ` | `2026-11-25T10:21:20.683Z` | `FastVideo/FastH3-Omni-Comfy` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-fastvideo-fasth3-omni-comfy-learnings.md` | Yes (`54694354...`) |
+| `CYCLE-20261125-7YBU` | `2026-11-25T10:24:13.962Z` | `ratatui/ratatui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10504, Rule 10505` | Yes (`d0713a51...`) |
+| `CYCLE-20261125-9LZ7` | `2026-11-25T10:25:31.267Z` | `loft-sh/vcluster` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/loft-sh-vcluster-learnings.md` | Yes (`590448c9...`) |
+| `CYCLE-2026-11-25-PROJ-EVOLVE` | `2026-11-25T10:26:14.158Z` | `ratatui-ratatui` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-F-4026A5FE` [Domain F] | Yes (`22af2f28...`) |

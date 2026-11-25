@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T10:07:41.575Z",
-  "total_records": 2656,
+  "last_updated": "2026-11-25T10:26:16.101Z",
+  "total_records": 2659,
   "domains": {
     "A": {
       "total": 22,
@@ -1081,7 +1081,7 @@
       ]
     },
     "F": {
-      "total": 113,
+      "total": 114,
       "record_ids": [
         "DOM-F-C060CCE1",
         "DOM-F-83D565C2",
@@ -1195,7 +1195,8 @@
         "domain_intelligence-design-intelligence-nucleoidai-nucleoid-learnings-core-invariants",
         "domain_intelligence-design-intelligence-dembrandt-dembrandt-core-invariants",
         "domain_intelligence-design-intelligence-dembrandt-dembrandt-learnings-core-invariants",
-        "DOM-F-BD142F65"
+        "DOM-F-BD142F65",
+        "DOM-F-4026A5FE"
       ]
     },
     "G": {
@@ -1666,7 +1667,7 @@
       ]
     },
     "H": {
-      "total": 633,
+      "total": 635,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -2300,7 +2301,9 @@
         "domain_intelligence-technical-construction-intelligence-atomicchat-inkling-2-mini-uncensored-gguf-co",
         "DOM-H-543DC045",
         "domain_intelligence-technical-construction-intelligence-hf-atomicchat-inkling-2-mini-uncensored-gguf",
-        "domain_intelligence-technical-construction-intelligence-yugabyte-yugabyte-db-learnings-core-invarian"
+        "domain_intelligence-technical-construction-intelligence-yugabyte-yugabyte-db-learnings-core-invarian",
+        "domain_intelligence-technical-construction-intelligence-ratatui-ratatui-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-ratatui-ratatui-learnings-core-invariants"
       ]
     },
     "I": {
@@ -29207,8 +29210,8 @@
       "title": "Research & Knowledge Intelligence: FastVideo/FastH3-Omni-Comfy Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-fastvideo-fasth3-omni-comfy-research-knowledge-intelligence-fastvideo-fasth3-.md",
       "repository": "FastVideo/FastH3-Omni-Comfy",
-      "content_hash": "c52816db1e45c4b84761a80430ba57f8852bcc81535836012a37b9d884fae4c7",
-      "created_at": "2026-11-21T17:49:49.314Z"
+      "content_hash": "0ec3f6a1605234372b371aa0be2cc03f09753602e2f98aff6d5405e3ad07c8b4",
+      "created_at": "2026-11-25T10:21:21.019Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-fastvideo-fasth3-omni-comfy-learnings-core-in": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-fastvideo-fasth3-omni-comfy-learnings-core-in",
@@ -29216,8 +29219,8 @@
       "title": "Research & Knowledge Intelligence: hf-fastvideo-fasth3-omni-comfy-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-fastvideo-fasth3-omni-comfy-learnings-research-knowledge-intelligence-hf-fast.md",
       "repository": "hf-fastvideo-fasth3-omni-comfy-learnings",
-      "content_hash": "f3e09a84ba81c5e08c050d39ed6bda6a22030bfdf5c50161d12dc65d6b5f3bbe",
-      "created_at": "2026-11-21T17:50:08.738Z"
+      "content_hash": "cde1e97ff704fc11d8e5cfdce3fe3bfce650d2846480496c48d8c2a26d8c533d",
+      "created_at": "2026-11-25T10:26:16.101Z"
     },
     "domain_intelligence-research-knowledge-intelligence-baidu-unlimited-ocr-2-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-baidu-unlimited-ocr-2-core-invariants",
@@ -44657,6 +44660,58 @@
       "repository": "yugabyte-yugabyte-db-learnings",
       "content_hash": "0a9c311b1ca5e220311ef81761a35a90aef2b84dca96b9d7cc489eb6e5b5217c",
       "created_at": "2026-11-25T09:41:16.042Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-ratatui-ratatui-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-ratatui-ratatui-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: ratatui/ratatui Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-ratatui-ratatui-technical-construction-intelligence-ratatui-ratatui-core-invaria.md",
+      "repository": "ratatui/ratatui",
+      "content_hash": "b0e20d1cd40c8745e89d431458d9937e936f8043fe657996ab75fe6db6c6a6a9",
+      "created_at": "2026-11-25T10:24:14.798Z"
+    },
+    "DOM-F-4026A5FE": {
+      "record_id": "DOM-F-4026A5FE",
+      "domain_letter": "F",
+      "domain_id": "design",
+      "domain_name": "Design Intelligence",
+      "secondary_domains": [],
+      "title": "Apple Terminal 24-bit Truecolor Contrast Degradation (BUG-RATATUI-2915)",
+      "content": "Hardware and emulator display capabilities MUST be resolved via lazily evaluated global theme singletons or contextual state pipelines, never baked in as compile-time 24-bit color constants.",
+      "content_hash": "22af2f288d24a91566b75626f1c52257791a96fbe3cafe4ac51506d9274d7ff1",
+      "summary": "Color constants were statically bound at compile time via `const COLOR: Color = tailwind::...;` bypassing runtime detection of terminal colo -> Hardware and emulator display capabilities MUST be resolved via lazily evaluated global theme singletons or contextual state pipelines, neve",
+      "provenance": {
+        "source_uri": "project://ratatui-ratatui/ratatui-ratatui-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-25T10:25:34.582Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (ratatui-ratatui)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Commit `ae8c0e08`, PR #2915, addressing tracking Issue #1972."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-25T10:26:14.118Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-ratatui-ratatui-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-ratatui-ratatui-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: ratatui-ratatui-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-ratatui-ratatui-learnings-technical-construction-intelligence-ratatui-ratatui-le.md",
+      "repository": "ratatui-ratatui-learnings",
+      "content_hash": "3dc76fffd1056f5e4b314c8ffeeffb796c61992463a4ea89e05c0a668b99bce2",
+      "created_at": "2026-11-25T10:26:15.226Z"
     }
   }
 }
