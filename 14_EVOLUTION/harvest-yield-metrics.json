@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T04:15:58.260Z",
-  "total_cycles_completed": 12281,
-  "total_learnings_persisted": 12281,
-  "total_rules_promoted": 11326,
+  "last_updated": "2026-11-25T04:31:15.566Z",
+  "total_cycles_completed": 12284,
+  "total_learnings_persisted": 12284,
+  "total_rules_promoted": 11328,
   "history": [
-    {
-      "timestamp": "2026-11-24T14:59:42.485Z",
-      "repository": "gardener/gardener",
-      "learningId": "learn-github-gardener-gardener",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T15:09:00.434Z",
-      "repository": "yugabyte/yugabyte-db",
-      "learningId": "learn-github-yugabyte-yugabyte-db",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T15:17:14.580Z",
-      "repository": "EL4CTEO/fast-anything",
-      "learningId": "learn-github-el4cteo-fast-anything",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-24T15:17:25.626Z",
       "repository": "tailscale/tailscale",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-25T04:15:58.260Z",
       "repository": "tailscale/tailscale",
       "learningId": "learn-github-tailscale-tailscale",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T04:31:05.613Z",
+      "repository": "yyjeqhc/webcodex",
+      "learningId": "learn-github-yyjeqhc-webcodex",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T04:31:12.047Z",
+      "repository": "darrylmorley/whatcable",
+      "learningId": "learn-github-darrylmorley-whatcable",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T04:31:15.566Z",
+      "repository": "juicedata/juicefs",
+      "learningId": "learn-github-juicedata-juicefs",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

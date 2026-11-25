@@ -4,24 +4,24 @@
 {
   "source_repository": "juicedata/juicefs",
   "source_url": "https://github.com/juicedata/juicefs",
-  "source_version": "8ee0ca3e",
+  "source_version": "b4f20cf3",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-24T11:21:58.887Z",
+  "timestamp": "2026-11-25T04:31:15.898Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-juicedata-juicefs",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [juicedata/juicefs](https://github.com/juicedata/juicefs) (Revision: `8ee0ca3e`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-24T11:21:58.887Z`  
+> **Provenance**: Harvested from [juicedata/juicefs](https://github.com/juicedata/juicefs) (Revision: `b4f20cf3`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-25T04:31:15.898Z`  
 > **Learning ID**: `learn-github-juicedata-juicefs`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence), H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 74%
+- **Secondary Corroborating Domains**: I (Content & Information Intelligence), J (Search & Distribution Intelligence), K (Quality & Verification Intelligence), H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence)
+- **Confidence Rating**: 82%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from juicedata/juicefs:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/juicedata-juicefs-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/juicedata/juicefs](https://github.com/juicedata/juicefs))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T11:21:55.162Z  
+> **Harvest Timestamp**: 2026-11-25T04:31:14.118Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: JuiceFS is a distributed POSIX file system built on top of Redis and S3.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: package.json, go.mod, README.md
-- **Stars / Engagement**: 14774 stars
+- **Stars / Engagement**: 14779 stars
 
 ---
 
@@ -1175,11 +1175,11 @@ const (
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #7911** (2026-11-25): **SIGSEGV in go-m1cpu._Cfunc_initialize() on Apple M5 Max (macOS 27.3)**
+  *Symptoms*:  (Both Community (`v1.4.2`) and Enterprise (`Darwin/mount.arm64`) share the same affected dependency below)  **Environment:** - **OS:** macOS 27.3 (`26C5047e`) - **CPU:** Apple M5 Max (`arm64`) - **JuiceFS:** Enterprise `Darwin/mount.arm64` (also reproduces on Community `v1.4.2` `darwin-arm64`)  **Description:** The `juicefs` Enterprise launcher (`https://juicefs.com/static/juicefs`) fails on first run with: ```text func download('/Users/<user>/.juicefs/jfsmount', 'http://s.juicefs.com/static/Darwin/mount.arm64') raises downloaded file(/Users/<user>/.juicefs/jfsmount.tmp...) is broken, retrying in 1 seconds func download failed 3 times, abort ```  Running `mount.arm64` directly (`./mount.arm64 version`) immediately crashes with a `SIGSEGV` during Go package `init()`: ```text SIGSEGV: segmentation violation PC=0x19132933c m=0 sigcode=2 addr=0x0 signal arrived during cgo execution  goroutine 1 gp=0x140000021c0 m=0 mp=0x10ae0e320 [syscall, locked to thread]: runtime.cgocall(...) github.com/shoenig/go-m1cpu._Cfunc_initialize()     _cgo_gotypes.go:150 +0x2c github.com/shoenig/go-m1cpu.init.0()     /Users/runner/go/pkg/mod/github.com/shoenig/go-m1cpu@v0.1.6/cpu.go:148 +0x1c ```  **Root Cause:** `github.com/shoenig/go-m1cpu@v0.1.6` dereferences a `NULL` pointer when querying IORegistry power-management keys on newer Apple Silicon chips (Apple M5 series).  **Requested Fix:** Please update `github.com/shoenig/go-m1cpu` to `v0.2.2` (or `v0.2.1+`, which adds `NULL` pointer guards) — or 
+
 - **Issue #7908** (2026-11-24): **ci: cache Hadoop tarball and add archive mirror fallback**
   *Symptoms*: ### Problem  `unittests (test.pkg)` fails in `Prepare Database` with exit code 8 when `dlcdn.apache.org` is slow or returns 5xx while downloading `hadoop-2.10.2.tar.gz`. Because `setup-hdfs.sh` uses `wget -q`, the HTTP error is also hidden.  ### Changes  - Cache `~/.cache/hadoop` (`key: hadoop-2.10.2`) with `actions/cache@v4` for `test.pkg` in `.github/workflows/unittests.yml`. - Update `.github/scripts/setup-hdfs.sh` to reuse the cached tarball, download via a `.tmp` file before moving into place, bound retries/timeout (`--tries=3 --timeout=30 --waitretry=5`), fall back to `archive.apache.org`, and use `-nv` instead of `-q` so download errors remain visible.
-
-- **Issue #7907** (2026-11-24): **refactor: move jfs object storage from cmd to pkg/fs**
-  *Symptoms*: ## Problem  Since #7897 libjfs no longer imports `cmd`, so `object.Register("jfs", ...)` in `cmd/object.go` never runs in the Java SDK and it can no longer open storages of type `jfs`.  ## Change  - Move `cmd/object.go` and its test to `pkg/fs/jfs.go` / `pkg/fs/jfs_test.go`; `pkg/fs` registers `jfs` in `init()`. - `newJFS` becomes `fs.NewJFS(endpoint, mountpoint)`, replacing the `cliCtx` global. `juicefs sync` re-registers `jfs` with its `--mountpoint`; other callers pass `""` as before. - `getDefaultChunkConf` is exported as `fs.DefaultChunkConf` (used by `fsck` and `gc`); `registerMetaMsg` is inlined in `NewJFS`.  ## Validation  - `TestJFS` now also formats a sqlite3 volume and opens it through `object.CreateStorage("jfs", ...)` (fails with `invalid storage: jfs` without the move). It also sets `pid/uid/gid` explicitly so it passes without root under `test.pkg`. - `go vet ./pkg/fs ./cmd`, `go build ./cmd/... ./sdk/java/libjfs`, `go test ./pkg/fs`, `go test ./cmd -run 'TestFixObjectSize|TestCreateStorageTierWarning'`, `go test -vet=off ./sdk/java/libjfs -skip '^TestPush$'` passed. - `go list -deps ./sdk/java/libjfs` still has no `juicefs/cmd`. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1196,29 +1196,76 @@ const (
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9d767982` (2026-11-24)
-**Commit Message**: test: fix FlushAfterRmdir ut (#7904)
+### Incident Patch 1: `b4f20cf3` (2026-11-25)
+**Commit Message**: sdk/python: fix native initialization and status arguments (#7903)
 
-**File**: `pkg/meta/base_test.go` (modified, +1/-1)
+Signed-off-by: Xucheng Zhou <[REDACTED_EMAIL]>
+Co-authored-by: jiefenghuang <[REDACTED_EMAIL]>
+Co-authored-by: Caitin <[REDACTED_EMAIL]>
+
+**File**: `.github/scripts/pysdk/pysdk_test.py` (modified, +23/-0)
 ```diff
-@@ -5652,7 +5652,7 @@ func testQuota(t *testing.T, m Meta) {
- 			t.Fatalf("Mkdir qrmdir/d: %s", st)
- 		}
- 		for _, p := range []string{"/qrmdir", "/qrmdir/d"} {
--			if err := m.HandleQuota(ctx, QuotaSet, p, DirQuotaType, map[string]*Quota{p: {MaxSpace: 1 << 30, MaxInodes: 100}}, false, false, false); err != nil {
-+			if err := m.HandleQuota(ctx, QuotaSet, p, DirQuotaType, map[string]*Quota{p: {MaxSpace: 1 << 30, MaxInodes: 100}}, true, false, false); err != nil {
- 				t.Fatalf("HandleQuota set %s: %s", p, err)
- 			}
- 		}
+@@ -727,6 +727,29 @@ def test_random_read(self):
+ class ClientParamsTests(FileTests):
+     testfile = TESTFN + '/testfile'
+ 
++    def test_failed_initialization_reports_volume_name(self):
++        name = "failed-init-volume"
++        with self.assertRaises(OSError) as caught:
++            juicefs.Client(name, meta=meta_url, push_labels="invalid-label",
++                           no_usage_report=True)
++        self.assertIs(type(caught.exception), OSError)
++        self.assertEqual(caught.exception.errno, errno.EPERM)
++        self.assertEqual(str(caught.exception), f"JuiceFS initialized failed for {name}")
++
++    def test_status_session_id(self):
++        before = {s['Sid'] for s in self.v.status()['Sessions']}
++        other = juicefs.Client("test-volume-status", meta=meta_url)
++        try:
++            after = {s['Sid'] for s in self.v.status()['Sessions']}
++            created = after - before
++            self.assertEqual(len(created), 1)
++            session = created.pop()
++            self.assertGreater(session, 1)
++            self.assertEqual(self.v.status(session=session)['Sid'], session)
++            self.assertIn('Sessions', self.v.status(session=0))
++        finally:
++            other.close(terminate=True)
++
+     def test_readonly_param(self):
+         v = juicefs.Client(
+             "test-volume-ro",
+```
+
+**File**: `sdk/python/juicefs/juicefs/juicefs.py` (modified, +2/-2)
+```diff
+@@ -58,7 +58,7 @@
+ 
+ def check_error(r, fn, args):
+     if fn.__name__ == "jfs_init" and r == 0:
+-        name = args[0].decode()
++        name = args[2].decode()
+         e = OSError(f'JuiceFS initialized failed for {name}')
+         e.errno = 1
+         raise e
+@@ -504,7 +504,7 @@ def warmup(self, paths, threads=10, evict=False, check=False, background=False,
+     def status(self, trash=False, session=0):
+         """Get the status of the volume and client sessions."""
+         buf = c_void_p()
+-        n = self.lib.jfs_status(c_int64(_tid()), c_int64(self.h), c_bool(trash), c_bool(session), byref(buf))
++        n = self.lib.jfs_status(c_int64(_tid()), c_int64(self.h), c_bool(trash), c_uint64(session), byref(buf))
+         res = json.loads(str(string_at(buf, n), encoding='utf-8'))
+         self.lib.free(buf)
+         return res
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #7908** (2026-11-24): ci: cache Hadoop tarball and add archive mirror fallback (@zxh326)
 - **PR #7907** (2026-11-24): refactor: move jfs object storage from cmd to pkg/fs (@jiefenghuang)
 - **PR #7904** (2026-11-24): test: fix FlushAfterRmdir ut (@myangitzh)
+- **PR #7903** (2026-11-25): sdk/python: fix native initialization and status arguments (@adenzhou1350)
 - **PR #7901** (closed): meta: avoid mixed directory-stat snapshots during flushes (@adenzhou1350)
 - **PR #7899** (2026-11-24): sdk/python: avoid oversized read-all buffers for small files (@adenzhou1350)
-- **PR #7898** (2026-11-24): sdk/python: validate buffering and errors before opening files (@adenzhou1350)
 
 ---
 
@@ -1238,31 +1285,53 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. test: fix FlushAfterRmdir ut
+## X. sdk/python: fix native initialization and status arguments
 
 **RULE**:
-When implementing operations in `pkg/meta/base_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in juicedata/juicefs. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/scripts/pysdk/pysdk_test.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in juicedata/juicefs. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9d767982`: test: fix FlushAfterRmdir ut. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b4f20cf3`: sdk/python: fix native initialization and status arguments. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/meta/base_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/scripts/pysdk/pysdk_test.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-			if err := m.HandleQuota(ctx, QuotaSet, p, DirQuotaType, map[string]*Quota{p: {MaxSpace: 1 << 30, MaxInodes: 100}}, true, false, false); err != nil {
+    def test_failed_initialization_reports_volume_name(self):
+        name = "failed-init-volume"
+        with self.assertRaises(OSError) as caught:
+            juicefs.Client(name, meta=meta_url, push_labels="invalid-label",
+                           no_usage_report=True)
+        self.assertIs(type(caught.exception), OSError)
+        self.assertEqual(caught.exception.errno, errno.EPERM)
+        self.assertEqual(str(caught.exception), f"JuiceFS initialized failed for {name}")
+
+    def test_status_session_id(self):
+        before = {s['Sid'] for s in self.v.status()['Sessions']}
+        other = juicefs.Client("test-volume-status", meta=meta_url)
+        try:
+            after = {s['Sid'] for s in self.v.status()['Sessions']}
+            created = after - before
+            self.assertEqual(len(created), 1)
+            session = created.pop()
+            self.assertGreater(session, 1)
+            self.assertEqual(self.v.status(session=session)['Sid'], session)
+            self.assertIn('Sessions', self.v.status(session=0))
+        finally:
+            other.close(terminate=True)
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-			if err := m.HandleQuota(ctx, QuotaSet, p, DirQuotaType, map[string]*Quota{p: {MaxSpace: 1 << 30, MaxInodes: 100}}, false, false, false); err != nil {
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9d767982` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b4f20cf3` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

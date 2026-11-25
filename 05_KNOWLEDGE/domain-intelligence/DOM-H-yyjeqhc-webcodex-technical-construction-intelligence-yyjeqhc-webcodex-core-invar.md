@@ -4,24 +4,24 @@
 {
   "source_repository": "yyjeqhc/webcodex",
   "source_url": "https://github.com/yyjeqhc/webcodex",
-  "source_version": "8779794b",
+  "source_version": "70315e49",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-22T18:35:18.420Z",
+  "timestamp": "2026-11-25T04:31:05.946Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-yyjeqhc-webcodex",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [yyjeqhc/webcodex](https://github.com/yyjeqhc/webcodex) (Revision: `8779794b`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-22T18:35:18.420Z`  
+> **Provenance**: Harvested from [yyjeqhc/webcodex](https://github.com/yyjeqhc/webcodex) (Revision: `70315e49`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-25T04:31:05.946Z`  
 > **Learning ID**: `learn-github-yyjeqhc-webcodex`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
 - **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence)
-- **Confidence Rating**: 64%
+- **Confidence Rating**: 51%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from yyjeqhc/webcodex:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/yyjeqhc-webcodex-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/yyjeqhc/webcodex](https://github.com/yyjeqhc/webcodex))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T18:35:17.159Z  
+> **Harvest Timestamp**: 2026-11-25T04:31:04.752Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Give cloud AI agents a real development environment on your own machines.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 2518 stars
+- **Stars / Engagement**: 2522 stars
 
 ---
 
@@ -728,7 +728,9 @@ mod tests {
 mod cloudflare_connections;
 mod coding_agents;
 mod connections;
-pub use cloudflare_connections::{CloudflareConnectionRequest, CloudflareConnectionResponse};
+pub use cloudflare_connections::{
+    CloudflareConnectionRequest, CloudflareConnectionResponse, GeminiConnectionRequest,
+};
 mod diagnostics;
 mod environment;
 mod environment_invitation;
@@ -808,10 +810,12 @@ static NEXT_STATE_TEMP_ID: AtomicU64 = AtomicU64::new(1);
 
 type SharedSupervisor = Arc<Mutex<ProcessSupervisor>>;
 
-#[derive(Debug, Clone)]
+#[derive(Clone)]
 struct ChatGptActivityProbe {
     identity: ProjectRuntimeIdentity,
-    webcodex: PathBuf,
+    adapter: WebCodexAdapter,
+    runtime_source: crate::runtime_selection::RuntimeSource,
+    runtime_selection_revision: u64,
 }
 
 pub struct AppState {
@@ -1089,6 +1093,9 @@ use super::*;
 use serde::{Deserialize, Serialize, Serializer};
 use webcodex_environment::{Secret, TunnelProvider};
 
+mod gemini;
+pub use gemini::GeminiConnectionRequest;
+
 #[derive(Deserialize, Serialize)]
 #[serde(tag = "action", rename_all = "snake_case", deny_unknown_fields)]
 pub enum CloudflareConnectionRequest {
@@ -1099,6 +1106,8 @@ pub enum CloudflareConnectionRequest {
         profile_id: String,
         server_instance_id: String,
         expected_revision: u64,
+        expected_generation: u64,
+        expected_configuration_id: String,
     },
     Stop {
         profile_id: String,
@@ -1137,6 +1146,7 @@ impl CloudflareConnectionRequest {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct CloudflareConnectionStatus {
+    pub configuration_id: String,
     pub profile_id: String,
     pub server_instance_id: String,
     pub process_generation: u64,
@@ -1253,6 +1263,15 @@ impl AppState {
         }
         let profile = webcodex_environment::cloudflare_tunnel_profile(&store, request.profile_id())
             .map_err(environment::desktop_error)?;
+        if let CloudflareConnectionRequest::Start {
+            expected_configuration_id,
+            ..
+        } = &request
+        {
+            if *expected_configuration_id != profile.configuration_id {
+                return Err(stale_revision(request.stage(), &profile.profile_id));
+            }
+        }
         if profile.provider == TunnelProvider::Openai {
             return Err(unavailable());
         }
@@ -1260,6 +1279,7 @@ impl AppState {
         validate_control_origin(&profile.local_server_url)?;
         let client = reqwest::Client::builder()
             .no_proxy()
+            .retry(reqwest::retry::never())
             .redirect(reqwest::redirect::Policy::none())
             .timeout(Duration::from_secs(5))
             .build()
@@ -1274,12 +1294,13 @@ impl AppState {
                     CloudflareConnectionRequest::Start {
                         server_instance_id,
                         expected_revision,
+                        expected_generation,
                         ..
                     } => Some((
                         webcodex_environment::ServiceOperation::Start,
                         server_instance_id.as_str(),
                         Some(*expected_revision),
-                        None,
+                        Some(*expected_generation),
                     )),
                     CloudflareConnectionRequest::Stop {
                         server_instance_id,
@@ -1318,7 +1339,8 @@ impl AppState {
                             Some("invalid_response"),
                         )
                     })?;
-                if observed.profile_id != profile.profile_id
+                if observed.configuration_id != profile.configuration_id
+                    || observed.profile_id != profile.profile_id
                     || observed.server_instance_id != expected_instance
                     || expected_revision.is_some_and(|revision| {
                         revision != observed.configured_revision || revision != profile.revision
@@ -1331,22 +1353,246 @@ impl AppState {
                 // A standalone service is durable Environment startup intent. Its
                 // new run performs its own fenced Server prepare handshake; Desktop
                 // never restarts the shared Server to control that service.
-                webcodex_environment::NativeEnvironment::new()
-                    .map_err(environment::desktop_error)?
-                    .control_cloudflare_tunnel(&store, expected_environment, &profile, action)
-                    .await
-                    .map_err(environment::desktop_error)?;
-                control_response(
-                    &client,
-                    &endpoint,
-                    &profile.bootstrap_token,
-                    &status_request,
-                )
-                .await?
-            } else {
-                control_response(&client, &endpoint, &profile.bootstrap_token, &request).await?
+
+```
+
+### Core Architecture Module: `apps/desktop/src-tauri/src/state/cloudflare_connections/gemini.rs`
+```
+//! Interactive Desktop intent. Core owns the catalog and Server owns the process,
+//! forwarding and OAuth discovery. Never infer success from saving the profile.
+use super::*;
+use webcodex_environment::{
+    CloudflareProfileTarget, CloudflareTunnelProfileRequest, EnvironmentStore, NativeEnvironment,
+    TunnelHostMode, TunnelProfileSnapshot,
+};
+
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct GeminiConnectionRequest {
+    environment_id: String,
+    profile: Option<SelectedProfile>,
+}
+
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct SelectedProfile {
+    id: String,
+    configuration_id: String,
+    revision: u64,
+}
+
+impl AppState {
+    pub async fn connect_gemini(
+        &self,
+        request: GeminiConnectionRequest,
+    ) -> DesktopResult<DesktopStateSnapshot> {
+        let (operation, cancel, mut core, baseline) = self
+            .begin_operation(DesktopOperationKind::TunnelConfigUpdate, false)
+            .await?;
+        let result = async {
+            cancel.check()?;
+            if core.config.persistent_environment.as_deref() != Some(&request.environment_id)
+                || !core.config.topology.as_ref().is_some_and(|t| {
+                    t.experience == Experience::Full
+                        && matches!(t.server, ServerTopology::Local)
+                        && matches!(t.runner, RunnerTopology::Local)
+                })
+            {
+                return Err(requires_environment());
+            }
+            let store = environment::store()?;
+            core.tunnel_config
+                .ensure_persistent_catalog_compatible(&store)?;
+            if !core.snapshot.readiness.runtime_ready {
+                core.resume_environment(&cancel).await?;
+            }
+            cancel.check()?;
+            let profile = prepare_profile(&store, &request).await?;
+            core.publish_snapshot();
+            let id = &profile.profile_id;
+            let observed = self
+                .cloudflare_connection(CloudflareConnectionRequest::Status {
+                    profile_id: id.clone(),
+                })
+                .await?;
+            let CloudflareConnectionResponse::Status(status) = observed else {
+                return Err(unavailable());
             };
-        if matc
+            if status.configured_revision != profile.revision
+                || profile.configuration_id.as_deref() != Some(status.configuration_id.as_str())
+            {
+                return Err(stale_revision("cloudflare_start", id));
+            }
+            if matches!(status.lifecycle.as_str(), "stopped" | "error") {
+                cancel.check()?;
+                // A user-scoped standalone host has the same per-user cache.
+                // Boot and system accounts continue to use installed tools only.
+                if profile.host_mode == TunnelHostMode::Standalone && profile.autostart {
+                    let record = store
+                        .load_environment()
+                        .map_err(environment::desktop_error)?
+                        .ok_or_else(requires_environment)?;
+                    if record.environment_id != request.environment_id {
+                        return Err(requires_environment());
+                    }
+                    if record.request.service_scope
+                        == webcodex_environment::service::ServiceScope::User
+                    {
+                        if webcodex_environment::current_account()
+                            .map_err(environment::desktop_error)?
+                            .identity
+                            != record.request.account.identity
+                        {
+                            return Err(requires_environment());
+                        }
+                        prepare_standalone_component(&core.adapter.binaries()?.webcodex, &cancel)
+                            .await?;
+                    }
+                }
+                // One mutation from a current observation; response loss never
+                // causes a retry. The card subsequently polls only Status.
+                self.cloudflare_connection(CloudflareConnectionRequest::Start {
+                    profile_id: id.clone(),
+                    server_instance_id: status.server_instance_id,
+                    expected_revision: profile.revision,
+                    expected_generation: status.process_generation,
+                    expected_configuration_id: profile
+                        .configuration_id
+                        .clone()
+                        .ok_or_else(requires_environment)?,
+                })
+                .await?;
+            }
+            core.get_state().await
+        }
+        .await;
+        self.finish_operation(operation, cancel, core, baseline, result)
+            .await
+    }
+}
+
+async fn prepare_profile(
+    store: &EnvironmentStore,
+    request: &GeminiConnectionRequest,
+) -> DesktopResult<TunnelProfileSnapshot> {
+    let record = store
+        .load_environment()
+        .map_err(environment::desktop_error)?
+        .ok_or_else(requires_environment)?;
+    if record.environment_id != request.environment_id
+        || !record.request.local_server()
+        || !record.request.local_runner()
+    {
+        return Err(requires_environment());
+    }
+    let catalog = webcodex_environment::tunnel_profile_snapshots(store)
+        .map_err(environment::desktop_error)?;
+    let existing = match &request.profile {
+        Some(target) => Some(
+            catalog
+                .iter()
+                .find(|p| {
+                    p.profile_id == target.id
+                        && p.provider != TunnelProvider::Openai
+                        && p.configuration_id.as_deref() == Some(&target.configuration_id)
+                        && p.revision == target.revision
+                })
+                .ok_or_else(|| stale_revision("cloudflare_start", &target.id))?,
+        ),
+        None => None,
+    };
+    if let Some(profile) = existing {
+        if profile.oauth_dynamic_registration_enabled {
+            return Ok(profile.clone());
+        }
+    }
+    let target = CloudflareProfileTarget {
+        environment_id: request.environment_id.clone(),
+        configuration_id: existing.and_then(|p| p.configuration_id.clone()),
+    };
+    // Create-only identity for the wizard default. Two concurrent first-time
+    // connects cannot create two Quick profiles or adopt an intervening record.
+    let id = existing.map_or("gemini-quick", |p| p.profile_id.as_str());
+    let native = NativeEnvironment::new().map_err(environment::desktop_error)?;
+    let result = native
+        .configure_cloudflare_tunnel_profile(
+            store,
+            &CloudflareTunnelProfileRequest {
+                profile_id: id,
+                expected_target: Some(&target),
+                expected_revision: existing.map(|p| p.revision),
+                name: Some(existing.map_or("Gemini", |p| p.name.as_str())),
+                provider: existing.map_or(TunnelProvider::CloudflareQuick, |p| p.provider.clone()),
+                host_mode: existing.map_or(TunnelHostMode::Embedded, |p| p.host_mode),
+                autostart: existing.map_or_else(
+                    || {
+                        !catalog
+                            .iter()
+                            .any(|p| p.provider != TunnelProvider::Openai && p.autostart)
+                    },
+                    |p| p.autostart,
+                ),
+                oauth_dynamic_registration_enabled: Some(true),
+                token: None,
+                ingress_port: None,
+            },
+        )
+        .await
+        .map_err(environment::desktop_error)?;
+    Ok(result.profile)
+}
+
+async fn prepare_standalone_component(
+    cli: &std::path::Path,
+    cancel: &CancellationContext,
+) -> DesktopResult<()> {
+    use crate::webcodex::cli::{run_json_until, CliCommandContext};
+    let prepared: bool = run_json_until(
+        cli,
+        &[
+            "environment".into(),
+            "prepare-cloudflared".into(),
+            "--json".into(),
+        ],
+        None,
+        false,
+        CliCommandContext::new("cloudflare_start", "prepare-cloudflared"),
+        cancel,
+        Deadline::after(std::time::Duration::from_secs(170)),
+    )
+    .await
+    .map_err(|error| {
+        let reason = error
+            .diagnostic_ref()
+            .and_then(|d| d.reason_code.as_deref());
+        if let Some(
+            code @ ("cloudflare_network_unavailable"
+            | "cloudflare_download_failed"
+            | "cloudflare_proxy_invalid"
+            | "cloudflare_storage_unavailable"
+            | "cloudflare_version_unsupported"
+            | "cloudflare_platform_unsupported"
+            | "cloudflare_verification_failed"
+            | "cloudflare_extraction_failed"
+            | "cloudflare_binary_unavailable"),
+        ) = reason
+        {
+            DesktopError::new(
+                code,
+                "The Cloudflare component could not be prepared",
+                "Review the component diagnostic and reconnect.",
+            )
+            .with_stage("cloudflare_start")
+        } else {
+            error
+        }
+    })?;
+    if !prepared {
+        return Err(unavailable());
+    }
+    Ok(())
+}
+
 ```
 
 ### Core Architecture Module: `apps/desktop/src-tauri/src/state/coding_agents.rs`
@@ -1924,243 +2170,6 @@ impl DesktopCore {
   
 ```
 
-### Core Architecture Module: `apps/desktop/src-tauri/src/state/desktop_core.rs`
-```
-pub struct DesktopCore {
-    data_dir: PathBuf,
-    config_path: PathBuf,
-    config: StoredDesktopConfig,
-    configuration_issue: Option<String>,
-    runtime_candidate: Option<crate::runtime_selection::RuntimeCandidate>,
-    runtime_candidate_context: Option<String>,
-    runtime_selected_probe: Option<crate::runtime_selection::RuntimeCandidate>,
-    runtime_last_switch: Option<crate::runtime_selection::RuntimeSwitchResult>,
-    tunnel_config: TunnelConfig,
-    mcp_providers: crate::mcp_providers::McpProviderStore,
-    mcp_applied_revision: Option<u64>,
-    coding_agents: crate::coding_agents::CodingAgentStore,
-    coding_agents_applied_revision: Option<u64>,
-    connections: ConnectionRuntimes,
-    snapshot: DesktopStateSnapshot,
-    inventory_persistence_pending: bool,
-    adapter: WebCodexAdapter,
-    supervisor: SharedSupervisor,
-    activity: ActivityLog,
-    published: Arc<RwLock<DesktopStateSnapshot>>,
-}
-
-impl DesktopCore {
-    fn new(data_dir: PathBuf, resource_dir: PathBuf) -> DesktopResult<Self> {
-        let activity = ActivityLog::with_lifecycle(&data_dir);
-        let config_path = data_dir.join("desktop-state.json");
-        // Keep Diagnostics usable if migration fails; admission below prevents
-        // replacing the operator's files with a default configuration.
-        let (mut config, configuration_issue) = match load_config(&config_path, &activity) {
-            Ok(config) => (config, None),
-            Err(error) => (StoredDesktopConfig::default(), Some(error.code)),
-        };
-        if configuration_issue.is_none() {
-            environment::adopt_saved_environment(&mut config);
-            if config.persistent_environment.is_none() && environment::migration_in_progress() {
-                config.runtime_autostart = Some(false);
-            }
-        }
-        let tunnel_config = TunnelConfig::load(
-            &data_dir.join("secrets").join("tunnel-config.json"),
-            config.preferred_connection == Some(RegularConnectionPreference::OpenAiTunnel),
-        );
-        let mut snapshot = DesktopStateSnapshot::default();
-        snapshot.configuration_issue = configuration_issue.clone();
-        snapshot.topology = config.topology.clone();
-        snapshot.project = project_snapshot(&config);
-        if config.topology.is_some() && config.runtime_autostart == Some(false) {
-            snapshot.readiness = aggregate_readiness(
-                ServerReadiness::Stopped,
-                RunnerReadiness::Stopped,
-                ExposureReadiness::Disabled,
-                if config.project.is_some() {
-                    ProjectReadiness::Configured
-                } else {
-                    ProjectReadiness::None
-                },
-            );
-        }
-        apply_openai_tunnel_configuration(
-            &mut snapshot,
-            &tunnel_config,
-            config.persistent_environment.is_some(),
-        );
-        snapshot.regular_tunnel_available = true;
-        snapshot.powershell_runtime = crate::platform::powershell_runtime_snapshot();
-        apply_config_projection(&mut snapshot, &config);
-        snapshot.connections = crate::connections::ConnectionsSnapshot {
-            profiles: tunnel_config
-                .profiles()
-                .into_iter()
-                .map(|config| crate::connections::TunnelConnectionSnapshot {
-                    config,
-                    runtime: Default::default(),
-                })
-                .collect(),
-            config_error: tunnel_config.is_invalid(),
-            ..Default::default()
-        };
-        let mcp_providers = crate::mcp_providers::McpProviderStore::load(&data_dir);
-        snapshot.mcp_providers = mcp_providers.snapshot(None);
-        let coding_agents = crate::coding_agents::CodingAgentStore::load(&data_dir);
-        snapshot.coding_agents = coding_agents.snapshot(None);
-        let published = Arc::new(RwLock::new(snapshot.clone()));
-        let supervisor = Arc::new(Mutex::new(ProcessSupervisor::new(activity.clone())));
-        let runtime_directory = std::env::current_exe()
-            .ok()
-            .and_then(|executable| {
-                webcodex_environment::installed_desktop_runtime_directory(&executable)
-            })
-            .unwrap_or_else(|| resource_dir.join("webcodex-runtime"));
-        let mut adapter = WebCodexAdapter::new(Some(runtime_directory));
-        adapter.set_runtime_source(config.runtime_binary_source.clone());
-        let mut core = Self {
-            data_dir,
-            config_path,
-            config,
-            configuration_issue,
-            runtime_candidate: None,
-            runtime_candidate_context: None,
-            runtime_selected_probe: None,
-            runtime_last_switch: None,
-            tunnel_config,
-            mcp_providers,
-            mcp_applied_revision: None,
-            coding_agents,
-            coding_agents_applied_revision: None,
-            connections: ConnectionRuntimes::default(),
-            snapshot,
-            inventory_persistence_pending: false,
-            adapter,
-            supervisor,
-            activity,
-            published,
-        };
-        core.publish_snapshot();
-        Ok(core)
-    }
-
-    pub async fn get_state(&mut self) -> DesktopResult<DesktopStateSnapshot> {
-        Ok(self.publish_snapshot())
-    }
-
-    fn chatgpt_activity_probe(&self) -> Option<ChatGptActivityProbe> {
-        if !self.snapshot.readiness.runtime_ready {
-            return None;
-        }
-        let identity = identity_from_config(&self.config)?;
-        let webcodex = self.adapter.binaries().ok()?.webcodex.clone();
-        Some(ChatGptActivityProbe { identity, webcodex })
-    }
-
-    fn apply_chatgpt_activity_observation(
-        &mut self,
-        expected_identity: &ProjectRuntimeIdentity,
-        last_meaningful_activity_at_ms: Option<i64>,
-    ) -> DesktopResult<DesktopStateSnapshot> {
-        if !self.snapshot.readiness.runtime_ready
-            || identity_from_config(&self.config).as_ref() != Some(expected_identity)
-        {
-            return Ok(self.publish_snapshot());
-        }
-        let last_meaningful_activity_at_ms = last_meaningful_activity_at_ms.max(
-            self.snapshot
-                .chatgpt_activity
-                .as_ref()
-                .and_then(|activity| activity.last_meaningful_activity_at_ms),
-        );
-        self.snapshot.chatgpt_activity = Some(ChatGptActivitySnapshot {
-            observed: last_meaningful_activity_at_ms.is_some(),
-            last_meaningful_activity_at_ms,
-        });
-        Ok(self.publish_snapshot())
-    }
-
-    fn stage_project_scope(&mut self, project: ProjectSelection) {
-        self.snapshot.project = Some(project);
-        // ChatGPT activity is evidence for one exact runtime Project. Never carry
-        // an observation from the previously displayed Project into a new setup
-        // or Quick Share scope; the new Project must earn its own observation.
-        self.snapshot.chatgpt_activity = None;
-    }
-
-    pub async fn refresh_runtime_status(
-        &mut self,
-        cancellation: &CancellationContext,
-    ) -> DesktopResult<DesktopStateSnapshot> {
-        cancellation.check()?;
-        if self.config.persistent_environment.is_some() {
-            return self.refresh_environment_status(cancellation).await;
-        }
-        if self.snapshot.quick_share.is_some() {
-            self.snapshot.chatgpt_activity = None;
-            let active = self
-                .process_snapshot(ProcessKey::QuickShare)
-                .await
-                .is_some_and(|process| {
-                    matches!(
-                        process.phase,
-                        ProcessPhase::Starting | ProcessPhase::Running
-                    )
-                });
-            if !active {
-                self.snapshot.readiness = aggregate_readiness(
-                    ServerReadiness::Stopped,
-                    RunnerReadiness::Stopped,
-                    ExposureReadiness::Error,
-                    ProjectReadiness::Configured,
-                );
-                self.snapshot.readiness.summary_kind = ReadinessSummaryKind::QuickShareStopped;
-                self.snapshot.readiness.next_action_kind =
-                    Some(ReadinessNextActionKind::RestartQuickShare);
-                self.snapshot.readiness.summary = "Quick Share stopped".to_string();
-                self.snapshot.readiness.next_action = Some("Start Quick Share again.".to_string());
-            }
-            return self.get_state().await;
-        }
-
-        let Some(identity) = runner_identity_from_config(&self.config) else {
-            self.snapshot.chatgpt_activity = None;
-            self.snapshot.topology = self.config.topology.clone();
-            self.snapshot.project = project_snapshot(&self.config);
-            return self.get_state().await;
-        };
-        self.adapter.ensure_binaries(cancellation).await.ok();
-        cancellation.check()?;
-        if let Ok(binaries) = self.adapter.binaries() {
-            self.snapshot.binaries = Some(binaries.info());
-        }
-        let server = match self
-            .adapter
-            .server_status(
-                Some(&identity.server_url),
-                self.config
-                    .runtime
-                    .as_ref()
-                    .and_then(|runtime| runtime.server_env_file.as_deref()),
-                Some(&identity.user_token_file),
-                cancellation,
-            )
-            .await
-        {
-            Ok(status) if status.http_reachable => ServerReadiness::Ready,
-            Ok(_) => ServerReadiness::Error,
-            Err(_) => ServerReadiness::Unknown,
-        };
-        cancellation.check()?;
-        // A saved user stop remains stopped across refresh, while a reachable
-        // external service is still observed normally.
-        if !runtime_autostart(&self.config) && server != ServerReadiness::Ready {
-            self.snapshot.chatgpt_activity = None;
-            self.snapshot.readiness = aggregate_readiness(
-   
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -2188,509 +2197,67 @@ impl DesktopCore {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7a8c3b28` (2026-11-22)
-**Commit Message**: fix(desktop): unify structured error diagnostics, state-error lifecycle, and safe recovery (#1434)
+### Incident Patch 1: `70315e49` (2026-11-24)
+**Commit Message**: docs: distinguish Windows Desktop and service startup (#1440)
 
-**File**: `apps/desktop/src-tauri/src/diagnostics.rs` (modified, +13/-2)
+**File**: `docs/DESKTOP_RUNTIME_COMPATIBILITY.md` (modified, +16/-0)
 ```diff
-@@ -498,7 +498,16 @@ pub fn report(
-         );
-     }
-     let safe_activity:Vec<_>=activity.iter().rev().take(25).map(|entry| json!({"sequence":entry.sequence,"timestamp_ms":entry.timestamp_ms,"level":entry.level,"event_kind":entry.event_kind})).collect();
--    let connection_health:Vec<_>=snapshot.connections.profiles.iter().take(16).map(|p|json!({"lifecycle":p.runtime.lifecycle,"health":p.runtime.health,"ready":p.runtime.ready,"error_code":p.runtime.last_error})).collect();
-+    let connection_health:Vec<_>=snapshot.connections.profiles.iter().take(16).map(|p|json!({"lifecycle":p.runtime.lifecycle,"health":p.runtime.health,"ready":p.runtime.ready,"error_code":p.runtime.last_error,"failure_stage":p.runtime.failure_stage.as_deref().and_then(crate::error::sanitize_safe_identifier),"reason_code":p.runtime.reason_code.as_deref().and_then(crate::error::sanitize_safe_identifier)})).collect();
-+    let active_error = snapshot
-+        .runtime_error
-+        .as_ref()
-+        .map(DesktopError::safe_summary_value);
-+    let component_errors: serde_json::Map<String, Value> = snapshot
-+        .component_errors
-+        .iter()
-+        .map(|(component, error)| (component.as_str().to_string(), error.safe_summary_value()))
-+        .collect();
-     let mut desktop = webcodex_build_info::machine_build_info("webcodex-desktop");
-     desktop.version = env!("CARGO_PKG_VERSION").into();
-     json!({"schema_version":1,"desktop":safe_build(&desktop),
-@@ -509,11 +518,13 @@ pub fn report(
-             "build_alignment":selected.map(|s|s.build_alignment),"runner_build_alignment":runner.and_then(|r|bounded_code(r.get("build_alignment")))},
-         "runtime_health":{"server":snapshot.readiness.server,"runner":snapshot.readiness.runner,"project":snapshot.readiness.project,
-             "connection":snapshot.readiness.exposure,"runtime_ready":snapshot.readiness.runtime_ready,
-+            "state_generation":snapshot.state_generation,
-             "connections_running":snapshot.connections.running,"connections_needing_attention":snapshot.connections.needs_attention,
-             "connections":connection_health,"last_observed_chatgpt_activity_at_ms":snapshot.chatgpt_activity.as_ref().and_then(|a|a.last_meaningful_activity_at_ms)},
-         "diagnostics":{"trace_mode":trace.configured_mode,"effective_trace_mode":trace.effective_mode,"restart_required":trace.restart_required,
-             "current_operation":snapshot.current_operation.as_ref().map(|o|o.kind),
--            "configuration_issue":snapshot.configuration_issue,"runtime_issue":runtime.unavailable_code},
-+            "configuration_issue":snapshot.configuration_issue,"runtime_issue":runtime.unavailable_code,
-+            "active_error":active_error,"component_errors":component_errors},
-         "computer_use":{"desktop_permissions":permissions,"runner_advertised_capabilities":cu},
-         "last_webcodex_call":last_call,"activity":safe_activity,
-         "excluded":["credentials","environment contents","Runner config contents","project files","tool input/result payloads","clipboard","raw stdout/stderr"]})
-```
-
-**File**: `apps/desktop/src-tauri/src/diagnostics/tests.rs` (modified, +61/-0)
-```diff
-@@ -219,6 +219,67 @@ fn report_and_bundle_include_only_explicit_safe_projections() {
-     );
- }
+@@ -94,6 +94,22 @@ Select `target/dogfood`. No special source revision is required by Desktop. Runt
  
-+#[test]
-+fn report_includes_safe_failed_stage_and_http_status_without_raw_message_secrets() {
-+    let mut snapshot = crate::models::DesktopStateSnapshot::default();
-+    let active = DesktopError::new(
-+        "server_request_failed",
-+        "Local user creation failed: Bearer wc_pat_canary_in_message (HTTP 400)",
-+        "Check inputs at C:\\private\\secret",
-+    )
-+    .with_stage("user_create")
-+    .with_http_status(400)
-+    .with_operation_context(Some("desktop-operation-7"), Some(3), None, Some(12));
-+    snapshot
-+        .component_errors
-+        .insert(active.component(), active.clone());
-+    snapshot.runtime_error = Some(active);
-+    let runtime = RuntimeSettings {
-+        source: Default::default(),
-+        selection_revision: 0,
-+        desktop_contract: webcodex_core::desktop_runtime_contract::DESKTOP_RUNTIME_CONTRACT,
-+        selected: None,
-+        candidate: None,
-+        previous_source: None,
-+        last_switch: None,
-+        unavailable_code: None,
-+        active_jobs: None,
-+        can_switch: false,
-+        switch_unavailable_reason: None,
-+    };
-+    let trace = TraceSettings {
-+        configured_mode: Some(TraceMode::Off),
-+        effective_mode: None,
-+        revision: "fence".into(),
-+        can_edit: true,
-+        restart_required: false,
-+        can_restart: false,
-+        error_code: None,
-+    };
-+    let value = report(
-+        &snapshot,
-+        &runtime,
-+        None,
-+        None,
-+        &trace,
-+        &[],
-+        json!({"supported":false}),
-+    );
-+    assert_eq!(
-+        value["diagnostics"]["active_error"]["code"],
-+        "server_request_failed"
-+    );
-+    assert_eq!(value["diagnostics"]["active_error"]["stage"], "user_create");
-+    assert_eq!(value["diagnostics"]["active_error"]["http_status"], 400);
-+    assert_eq!(
-+        value["diagnostics"]["active_error"]["operation_id"],
-+        "desktop-operation-7"
-+    );
-+    let encoded = serde_json::to_string(&value).unwrap();
-+    assert!(!encoded.contains("wc_pat_canary_in_message"));
-+    assert!(!encoded.contains("C:\\private\\secret"));
-+}
-+
- #[test]
- fn support_export_never_overwrites_existing_files() {
-     let path = env_fixture("original").with_file_name("report.zip");
-```
-
-**File**: `apps/desktop/src-tauri/src/error.rs` (modified, +782/-2)
-```diff
-@@ -1,14 +1,475 @@
- use serde::{Deserialize, Serialize};
--use serde_json::Value;
-+use serde_json::{json, Value};
- use std::fmt::{Display, Formatter};
+ On macOS, OS code signing, Gatekeeper and Computer Use permissions are separate from protocol compatibility. Rebuilding a binary may change its OS identity; use the repository's documented local signing flow where appropriate. Never overwrite an independent control Runner while dogfooding the candidate it is meant to recover.
  
-+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord, Hash)]
-+#[serde(rename_all = "snake_case")]
-+pub enum ErrorComponent {
-+    Runtime,
-+    Server,
-+    Runner,
-+    Service,
-+    Tunnel,
-+    Auth,
-+    Project,
-+    Environment,
-+    Migration,
-+    Config,
-+    Desktop,
-+    Unknown,
-+}
++## Windows login startup
 +
-+impl ErrorComponent {
-+    pub fn as_str(self) -> &'static str {
-+        match self {
-+            Self::Runtime => "runtime",
-+            Self::Server => "server",
-+            Self::Runner => "runner",
-+            Self::Service => "service",
-+            Self::Tunnel => "tunnel",
-+            Self::Auth => "auth",
-+            Self::Project => "project",
-+            Self::Environment => "environment",
-+            Self::Migration => "migration",
-+            Self::Config => "config",
-+            Self::Desktop => "desktop",
-+            Self::Unknown => "unknown",
-+        }
-+    }
++**Launch WebCodex at login** controls whether Windows opens the Desktop app
++when you sign in. A persistent Environment has separate WebCodex-managed
++Task Scheduler entries for Server and Runner. Turning off Desktop login
++startup leaves those background service tasks in place.
 +
-+    pub fn parse_safe(value: &str) -> Option<Self> {
-+        match value.trim().to_ascii_lowercase().as_str() {
-+            "runtime" => Some(Self::Runtime),
-+            "server" => Some(Self::Server),
-+            "runner" => Some(Self::Runner),
-+            "service" => Some(Self::Service),
-+            "tunnel" => Some(Self::Tunnel),
-+            "auth" => Some(Self::Auth),
-+            "project" => Some(Self::Project),
-+            "environment" => Some(Self::Environment),
-+            "migration" => Some(Self::Migration),
-+            "config" => Some(Self::Config),
-+            "desktop" => Some(Self::Desktop),
-+            "unknown" => Some(Self::Unknown),
-+            _ => None,
-+        }
-+    }
-+}
++The Windows persistent Environment currently has no supported manual-only
++mode that keeps its services manageable from Desktop while disabling their
++login triggers. The managed-task check expects an enabled login trigger.
++If you disable the trigger in Task Scheduler, Desktop or the CLI can report
++`service_foreignservice` for that task. Check the existing task's origin and
++configuration before attempting recovery. Restoring the WebCodex-managed
++trigger also restores background login startup. Leave the task, Environment,
++and saved credentials in place while diagnosing the mismatch.
 +
-+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
-+#[serde(rename_all = "snake_case")]
-+pub enum RecoveryKind {
-+    AutoRecovering,
-+    UserAction,
-+    ManualCheck,
-+    ConfirmationRequired,
-+}
-+
-+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
-+#[serde(rename_all = "snake_case")]
-+#[allow(dead_code)]
-+pub enum SafeRecoveryAction {
-+    WaitAutoRecovery,
-+    Retry,
-+    RefreshState,
-+    StartRuntime,
-+    StartServer,
-+    RestartServer,
-+    StartRunner,
-+    RestartRunner,
-+    RepairRunnerCredential,
-+    RepairUserCredential,
-+    CheckConnection,
-+    OpenNetworkSettings,
-+    OpenRuntimeSettings,
-+    OpenDiagnostics,
-+    OpenActivity,
-+    OpenProjects,
-+    OpenSetup,
-+    InspectServiceOwnership,
-+    ResolveMigration,
-+    ObserveBeforeRetry,
-+    RestoreConfiguration,
-+    ManageProviders,
-+    #[serde(rename = "none")]
-+    NoAction,
-+}
-+
-+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
-+pub struct ErrorDiagnostic {
-+    pub component: ErrorComponent,
-+    #[serde(default, skip_serializing_if = "Option::is_none")]
-+    pub stage: Option<String>,
-+    #[serde(default, skip_serializing_if = "Option::is_none")]
-+    pub reason_code: Option<String>,
-+    pub recovery_kind: RecoveryKind,
-+    pub safe_action: SafeRecoveryAction,
-+    pub retry_allowed: bool,
-+    #[serde(default, skip_serializing_if = "Option::is_none")]
-+    pub http_status: Option<u16>,
-+    #[serde(default, skip_serializing_if = "Option::is_none")]
-+    pub exit_code: Option<i32>,
-+    #[serde(default, skip_serializing_if = "Option::is_none")]
-+    pub operation_id: Option<String>,
-+    #[serde(default, skip_serializing_if = "Option::is_none")]
-+    pub generation: Option<u64>,
-+    #[serde(default, skip_serializing_if = "Option::is_none")]
-+    pub resource_id: Option<String>,
-+    #[serde(default, skip_serializing_if = "Option::is_none")]
-+    pub activity_sequence: Option<u64>,
-+}
-+
-+impl ErrorDiagnostic {
-+    pub fn classify(code: &str) -> Self {
-+        use ErrorComponent::*;
-+        use RecoveryKind::*;
-+        use SafeRecoveryAction::*;
-+
-+        let (component, recovery_kind, safe_action, retry_allowed) = match code {
-+            // 1. Environment & runtime dependency missing / incompatible
-+            "binaries_missing"
-+            | "binary_missing"
-+            | "runtime_unavailable"
-+            | "runtime_incompatible"
-+            | "runtime_missing"
-+            | "runtime_binary_missing"
-+            | "runtime_binary_invalid"
-+            | "runtime_binary_unexecutable"
-+            | "runtime_directory_invalid"
-+            | "runtime_directory_missing"
-+            | "runtime_probe_failed"
-+            | "runtime_protocol_incompatible"
-+            | "selected_runtime_not_active"
-+            | "webcodex_command_start_failed"
-+            | "service_missingprerequisite"
-+            | "upgrade_package_flavor"
-+            | "installer_package_target"
-+            | "upgrade_package_ownership" => (Runtime, UserAction, OpenRuntimeSettings, false),
-+
-+            // 2 & 3. Server start failure, exit, unreachable, port occupied
-+            "server_port_in_use"
-+            | "
-```
-
-**File**: `apps/desktop/src-tauri/src/models.rs` (modified, +7/-0)
-```diff
-@@ -427,6 +427,11 @@ pub struct DesktopStateSnapshot {
-     pub readiness: ReadinessSnapshot,
-     #[serde(default, skip_serializing_if = "Option::is_none")]
-     pub runtime_error: Option<crate::error::DesktopError>,
-+    #[serde(default, skip_serializing_if = "std::collections::BTreeMap::is_empty")]
-+    pub component_errors:
-+        std::collections::BTreeMap<crate::error::ErrorComponent, crate::error::DesktopError>,
-+    #[serde(default)]
-+    pub state_generation: u64,
-     pub project: Option<ProjectSelection>,
-     pub binaries: Option<BinaryInfo>,
-     #[serde(default, skip_serializing_if = "Option::is_none")]
-@@ -463,6 +468,8 @@ impl Default for DesktopStateSnapshot {
-             topology: None,
-             readiness: ReadinessSnapshot::default(),
-             runtime_error: None,
-+            component_errors: std::collections::BTreeMap::new(),
-+            state_generation: 0,
-             project: None,
-             binaries: None,
-             powershell_runtime: None,
-```
-
-**File**: `apps/desktop/src-tauri/src/process/startup.rs` (modified, +24/-3)
-```diff
-@@ -1,4 +1,4 @@
--use crate::error::DesktopError;
-+use crate::error::{DesktopError, ErrorComponent, RecoveryKind, SafeRecoveryAction};
- use std::collections::VecDeque;
- use std::net::SocketAddr;
- use std::sync::{Arc, Mutex};
-@@ -13,6 +13,7 @@ pub(crate) fn server_start_error(
-     if let Some(code) = exit_code {
-         message.push_str(&format!(" (exit code {code})"));
-     }
-+    let mut listener_bind_failed = false;
-     if let Some(diagnostics) = diagnostics {
-         let logs = diagnostics
-             .0
-@@ -22,15 +23,35 @@ pub(crate) fn server_start_error(
-         // after the activity log's prefix-based redaction. Only reconstruct the
-         // known listener failure from a validated socket address and OS code.
-         if let Some(summary) = logs.iter().rev().find_map(|line| listener_failure(line)) {
-+            listener_bind_failed = true;
-             message.push_str(". ");
-             message.push_str(&summary);
-         }
-     }
--    DesktopError::new(
-+    let mut error = DesktopError::new(
-         "server_start_failed",
-         message,
--        "Review the error details and Activity, then retry.",
-+        if listener_bind_failed {
-+            "Check whether another program is already using the local Server port, then retry."
-+        } else {
-+            "Review the error details and Activity, then retry."
-+        },
-     )
-+    .with_component(ErrorComponent::Server)
-+    .with_stage("server_start");
-+    if let Some(code) = exit_code {
-+        error = error.with_exit_code(code);
-+    }
-+    if listener_bind_failed {
-+        error = error
-+            .with_reason_code("local_port_unavailable")
-+            .with_recovery(
-+                RecoveryKind::UserAction,
-+                SafeRecoveryAction::OpenDiagnostics,
-+                false,
-+            );
-+    }
-+    error
- }
+ ## Diagnostics and tracing
  
- fn listener_failure(line: &str) -> Option<String> {
+ Open **Settings → Troubleshooting** for problem-specific links to Connections, Activity, and Runtime & services, followed by report export and request tracing. Installed-environment service controls are under Runtime & services; account credential recovery remains under Troubleshooting. Metadata tracing records request lifecycle/correlation information without full tool argument/result bodies. Desktop can edit its local Server and an installed Environment's verified current-user Server service. For a non-persistent local Runtime, tracing edit authority uses the exact Desktop-managed private environment file and Server ownership, independently of Runtime switching or Runner ownership. A stopped Server's managed configuration remains editable; Save & Restart requires separate Server control authority. Administrator guidance applies only to a saved system-scope Environment. The tracing selector stays visible. Remote, system-scope, unowned or unavailable Servers show a disabled selector with the effective mode (or an explicit unconfirmed value) and specific guidance. Configuration navigation is independent of editing: a known local configuration directory remains accessible, and read-only views can copy `WEBCODEX_TOOL_REQUEST_TRACE=metadata`. System-service changes require administrator/service permissions; remote changes must be made on the Server machine. Ownership and ACL checks remain unchanged. Full tracing can contain sensitive inputs/results and requires explicit confirmation; enable it only temporarily.
 ```
 
-**File**: `apps/desktop/src-tauri/src/process/tests/startup.rs` (modified, +6/-0)
+**File**: `docs/DESKTOP_RUNTIME_COMPATIBILITY.zh-CN.md` (modified, +13/-0)
 ```diff
-@@ -18,6 +18,12 @@ fn startup_failure_preserves_final_unterminated_bind_error() {
-     assert!(error
-         .message
-         .contains("failed to bind HTTP listener 127.0.0.1:54611 (os error 10013)"));
-+    let diag = error.diagnostic_ref().unwrap();
-+    assert_eq!(diag.component, crate::error::ErrorComponent::Server);
-+    assert_eq!(diag.stage.as_deref(), Some("server_start"));
-+    assert_eq!(diag.reason_code.as_deref(), Some("local_port_unavailable"));
-+    assert_eq!(diag.exit_code, Some(1));
-+    assert!(!diag.retry_allowed);
- }
+@@ -36,6 +36,19 @@ cargo build --locked --profile dogfood -p webcodex-cli -p webcodex -p webcodex-r
  
- #[test]
-```
-
-**File**: `apps/desktop/src-tauri/src/state.rs` (modified, +1/-0)
-```diff
-@@ -96,6 +96,7 @@ pub struct AppState {
-     supervisor: SharedSupervisor,
-     activity: ActivityLog,
-     operations: OperationController,
-+    refresh_lock: tokio::sync::Mutex<()>,
-     shutdown_signal: CancellationSignal,
-     shutdown_started: AtomicBool,
-     shutdown_complete: CancellationSignal,
-```
-
-**File**: `apps/desktop/src-tauri/src/state/app_state.rs` (modified, +278/-11)
-```diff
-@@ -32,6 +32,7 @@ impl AppState {
-             supervisor,
-             connections,
-             operations: OperationController::new(activity.clone()),
-+            refresh_lock: tokio::sync::Mutex::new(()),
-             activity,
-             shutdown_signal: CancellationSignal::new(),
-             shutdown_started: AtomicBool::new(false),
-@@ -141,12 +142,271 @@ impl AppState {
-     }
+ 此时选择 `target/dogfood`。三个程序都支持单独运行 `--build-info-json`，在启动服务/读取 Runtime 配置之前输出 schema version 1 的构建信息。不能识别的外部程序不会被默认视为兼容。macOS 签名、Gatekeeper 和 Computer Use 权限是独立的操作系统约束，不能用协议兼容代替它们。
  
-     pub async fn refresh_runtime_status(&self) -> DesktopResult<DesktopStateSnapshot> {
--        let (operation, cancellation, mut core, baseline) = self
--            .begin_operation(DesktopOperationKind::RuntimeRefresh, true)
--            .await?;
--        let result = core.refresh_runtime_status(&cancellation).await;
--        self.finish_operation(operation, cancellation, core, baseline, result)
--            .await
-+        if self.shutdown_signal.is_cancelled() {
-+            return Err(cancelled_error());
-+        }
-+        if let Some(current) = self.operations.current() {
-+            return Err(DesktopError::new(
-+                "desktop_operation_busy",
-+                "Another Desktop operation is still running",
-+                "Wait for the current operation to finish or stop it before starting another one.",
-+            )
-+            .with_details(serde_json::json!({
-+                "operation_id": current.id,
-+                "operation_kind": current.kind.as_str(),
-+            }))
-+            .with_operation_context(Some(&current.id), None, None, None));
-+        }
-+        if self.get_state().configuration_issue.is_some() {
-+            return Err(DesktopError::new(
-+                "configuration_migration_failed",
-+                "Configuration could not be migrated",
-+                "Open Diagnostics or explicitly restore the previous known-good configuration.",
-+            ));
-+        }
++## Windows 登录自启
 +
-+        let before_generation = self.get_state().state_generation;
-+        let _refresh_guard = self.refresh_lock.lock().await;
-+        if self.shutdown_signal.is_cancelled() {
-+            return Err(cancelled_error());
-+        }
-+        if let Some(current) = self.operations.current() {
-+            return Err(DesktopError::new(
-+                "desktop_operation_busy",
-+                "Another Desktop operation is still running",
-+                "Wait for the current operation to finish or stop it before starting another one.",
-+            )
-+            .with_details(serde_json::json!({
-+                "operation_id": current.id,
-+                "operation_kind": current.kind.as_str(),
-+            }))
-+            .with_operation_context(Some(&current.id), None, None, None));
-+        }
-+        // Coalesce overlapping background refreshes: if another refresh already
-+        // published a fresher snapshot while we waited, return it directly.
-+        if self.get_state().state_generation != before_generation {
-+            return Ok(self.get_state());
-+        }
++**登录时启动 WebCodex** 控制的是登录 Windows 后是否打开 Desktop。
++在持久 Environment 中，Server 和 Runner 由各自的 WebCodex 受管计划任务启动。
++关闭 Desktop 的登录自启开关后，这些后台服务任务仍会保留。
 +
-+        let cancellation =
-+            CancellationContext::new(CancellationSignal::new(), self.shutdown_signal.clone());
-+        let start_op_generation = self.operations.generation();
++Windows 持久 Environment 目前没有受支持的纯手动模式，无法同时禁用后台
++服务的登录触发器并继续通过 Desktop 管理这些服务。受管任务的校验要求
++登录触发器处于启用状态。在任务计划程序中禁用触发器后，Desktop 或 CLI
++可能会报 `service_foreignservice`。尝试恢复前，先核对原任务的来源和配置。
++恢复 WebCodex 创建的登录触发器也会恢复后台服务的登录自启。排查期间请保留
++现有任务、Environment 和已保存的凭据。
 +
-+        enum RefreshPlan {
-+            Persistent {
-+                environment_id: String,
-+            },
-+            QuickShare,
-+            Unconfigured,
-+            NonPersistent {
-+                adapter: WebCodexAdapter,
-+                identity: RunnerRuntimeIdentity,
-+                server_env_file: Option<PathBuf>,
-+                project_identity: Option<ProjectRuntimeIdentity>,
-+                has_project: bool,
-+                autostart: bool,
-+            },
-+        }
-+
-+        let plan = {
-+            let slot = self.core.lock().await;
-+            let Some(core) = slot.as_ref() else {
-+                return Err(DesktopError::new(
-+                    "desktop_operation_busy",
-+                    "Desktop mutation state is already in use",
-+                    "Wait for the current operation to finish.",
-+                ));
-+            };
-+            if let Some(environment_id) = core.config.persistent_environment.clone() {
-+                RefreshPlan::Persistent { environment_id }
-+            } else if core.snapshot.quick_share.is_some() {
-+                RefreshPlan::QuickShare
-+            } else if let Some(identity) = runner_identity_from_config(&core.config) {
-+                RefreshPlan::NonPersistent {
-+                    adapter: core.adapter.clone(),
-+                    identity,
-+                    server_env_file: core
-+                        .config
-+                        .runtime
-+                        .as_ref()
-+                        .and_then(|runtime| runtime.server_env_file.clone()),
-+                    project_identity: identity_from_config(&core.config),
-+                    has_project: core.config.project.is_some(),
-+                    autostart: runtime_autostart(&core.config),
-+                }
-+            } else {
-+                RefreshPlan::Unconfigured
-+      
+ ## 故障排查与诊断包
+ 
+ “设置 → Runtime 与服务”先展示服务状态和本机服务的启动、停止、重启操作，再展示程序来源与兼容性；构建信息在“版本与文件详情”中。已安装环境的程序统一通过“关于与更新”升级。
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1440** (2026-11-24): docs: distinguish Windows Desktop and service startup (@cloudgpuapp)
+- **PR #1437** (2026-11-23): perf(desktop): accelerate Windows status checks and acknowledge lifecycle actions (@swjnxyf)
+- **PR #1436** (2026-11-23): chore: bump WebCodex and Desktop versions to 0.5.1 (@swjnxyf)
+- **PR #1435** (2026-11-23): Desktop 一键准备本机环境、Windows 无控制台任务和 Gemini 连接 (@yyjeqhc)
 - **PR #1434** (2026-11-22): fix(desktop): unify structured error diagnostics, state-error lifecycle, and safe recovery (@yyjeqhc)
 - **PR #1433** (2026-11-22): Prepare Gemini web connections from WebCodex Desktop (@yyjeqhc)
-- **PR #1432** (2026-11-22): Support OAuth dynamic registration on Desktop Cloudflare ingress (@yyjeqhc)
-- **PR #1431** (2026-11-21): Adapt MCP tool result text per Gemini request (@yyjeqhc)
-- **PR #1430** (2026-11-21): Support OAuth dynamic client registration for Gemini web and other MCP hosts (@yyjeqhc)
-- **PR #1427** (closed): feat(service): configurable macOS service logs, private log files, lower metric noise (@tongsh6)
 
 ---
 
@@ -2710,44 +2277,46 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. desktop): unify structured error diagnostics, state-error lifecycle, and safe re
+## X. docs: distinguish Windows Desktop and service startup
 
 **RULE**:
-When implementing operations in `apps/desktop/src-tauri/src/diagnostics.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yyjeqhc/webcodex. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/DESKTOP_RUNTIME_COMPATIBILITY.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yyjeqhc/webcodex. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7a8c3b28`: desktop): unify structured error diagnostics, state-error lifecycle, and safe recovery. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `70315e49`: docs: distinguish Windows Desktop and service startup. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/desktop/src-tauri/src/diagnostics.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/DESKTOP_RUNTIME_COMPATIBILITY.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    let connection_health:Vec<_>=snapshot.connections.profiles.iter().take(16).map(|p|json!({"lifecycle":p.runtime.lifecycle,"health":p.runtime.health,"ready":p.runtime.ready,"error_code":p.runtime.last_error,"failure_stage":p.runtime.failure_stage.as_deref().and_then(crate::error::sanitize_safe_identifier),"reason_code":p.runtime.reason_code.as_deref().and_then(crate::error::sanitize_safe_identifier)})).collect();
-    let active_error = snapshot
-        .runtime_error
-        .as_ref()
-        .map(DesktopError::safe_summary_value);
-    let component_errors: serde_json::Map<String, Value> = snapshot
-        .component_errors
-        .iter()
-        .map(|(component, error)| (component.as_str().to_string(), error.safe_summary_value()))
-        .collect();
-            "state_generation":snapshot.state_generation,
-            "configuration_issue":snapshot.configuration_issue,"runtime_issue":runtime.unavailable_code,
-            "active_error":active_error,"component_errors":component_errors},
+## Windows login startup
+
+**Launch WebCodex at login** controls whether Windows opens the Desktop app
+when you sign in. A persistent Environment has separate WebCodex-managed
+Task Scheduler entries for Server and Runner. Turning off Desktop login
+startup leaves those background service tasks in place.
+
+The Windows persistent Environment currently has no supported manual-only
+mode that keeps its services manageable from Desktop while disabling their
+login triggers. The managed-task check expects an enabled login trigger.
+If you disable the trigger in Task Scheduler, Desktop or the CLI can report
+`service_foreignservice` for that task. Check the existing task's origin and
+configuration before attempting recovery. Restoring the WebCodex-managed
+trigger also restores background login startup. Leave the task, Environment,
+and saved credentials in place while diagnosing the mismatch.
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-    let connection_health:Vec<_>=snapshot.connections.profiles.iter().take(16).map(|p|json!({"lifecycle":p.runtime.lifecycle,"health":p.runtime.health,"ready":p.runtime.ready,"error_code":p.runtime.last_error})).collect();
-            "configuration_issue":snapshot.configuration_issue,"runtime_issue":runtime.unavailable_code},
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7a8c3b28` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `70315e49` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

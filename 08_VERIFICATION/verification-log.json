@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261123-7OT8",
-    "timestamp": "2026-11-23T17:20:35.420Z",
-    "repository": "zai-org/GLM-5.3",
-    "learningId": "learn-huggingface-zai-org-glm-5-3",
-    "contentHash": "39db97271c15eb193422052e76e58fc17ef39329e06c74169a86da1e2163ac27",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-7ULE",
-    "timestamp": "2026-11-23T17:20:42.914Z",
-    "repository": "0xCUB3/wBlock",
-    "learningId": "learn-github-0xcub3-wblock",
-    "contentHash": "5a41822faa312974fc572b6129ce9dbf7c71aecde5a03c8f5fc9843bc98ed882",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-7X1U",
-    "timestamp": "2026-11-23T17:20:46.098Z",
-    "repository": "envoyproxy/envoy",
-    "learningId": "learn-github-envoyproxy-envoy",
-    "contentHash": "b311b454a7e142277995993fb17c908c1fda20dbaa331423d228167deb4be8ab",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261123-7YEP",
     "timestamp": "2026-11-23T17:20:47.857Z",
     "repository": "rustls/rustls",
@@ -7490,6 +7445,51 @@
     "repository": "tailscale/tailscale",
     "learningId": "learn-github-tailscale-tailscale",
     "contentHash": "d9a791dfd161a9ae3e44d0ee56c193f442b4fbbc780aa7e3309942c1df001bec",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-LT8Y",
+    "timestamp": "2026-11-25T04:31:05.554Z",
+    "repository": "yyjeqhc/webcodex",
+    "learningId": "learn-github-yyjeqhc-webcodex",
+    "contentHash": "c4cacd3ddc16d318fc5f5396ce0edee873ff670fb37af9c167b54dd30439d5ca",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-LY8Z",
+    "timestamp": "2026-11-25T04:31:12.035Z",
+    "repository": "darrylmorley/whatcable",
+    "learningId": "learn-github-darrylmorley-whatcable",
+    "contentHash": "13fc8620da9625427e235272d83e74fddc99e40f2c0e0f037ca16565229b8f06",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-M0YP",
+    "timestamp": "2026-11-25T04:31:15.553Z",
+    "repository": "juicedata/juicefs",
+    "learningId": "learn-github-juicedata-juicefs",
+    "contentHash": "965ecf469398c93a9f75fa4bd12b49fbdffa81a77c0d75e607fc90beb0bb7125",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

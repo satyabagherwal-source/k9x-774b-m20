@@ -4,24 +4,24 @@
 {
   "source_repository": "darrylmorley/whatcable",
   "source_url": "https://github.com/darrylmorley/whatcable",
-  "source_version": "0a49393d",
+  "source_version": "0cf0a678",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-22T18:00:24.659Z",
+  "timestamp": "2026-11-25T04:31:12.378Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-darrylmorley-whatcable",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [darrylmorley/whatcable](https://github.com/darrylmorley/whatcable) (Revision: `0a49393d`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-22T18:00:24.659Z`  
+> **Provenance**: Harvested from [darrylmorley/whatcable](https://github.com/darrylmorley/whatcable) (Revision: `0cf0a678`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-25T04:31:12.378Z`  
 > **Learning ID**: `learn-github-darrylmorley-whatcable`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain D (Research & Knowledge Intelligence)
 - **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), E (Creative Intelligence), B (Product Intelligence), A (Human & Need Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 77%
+- **Confidence Rating**: 69%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from darrylmorley/whatcable:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/darrylmorley-whatcable-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/darrylmorley/whatcable](https://github.com/darrylmorley/whatcable))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T18:00:23.643Z  
+> **Harvest Timestamp**: 2026-11-25T04:31:10.591Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: macOS menu bar app that tells you, in plain English, what each USB-C cable plugged into your Mac can actually do
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 9150 stars
+- **Stars / Engagement**: 9165 stars
 
 ---
 
@@ -1746,382 +1746,108 @@ public enum ConnectedDeviceTree {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0a49393d` (2026-11-21)
-**Commit Message**: Mirror from private (27bc7b2d)
+### Incident Patch 1: `0cf0a678` (2026-11-24)
+**Commit Message**: Mirror from private (471d687d)
 
-**File**: `Sources/WhatCableCore/Display/DisplayDiagnostic.swift` (modified, +10/-9)
+**File**: `Tests/WhatCableCoreTests/ChargerCableHintCorpusTests.swift` (modified, +8/-3)
 ```diff
-@@ -87,18 +87,19 @@ public struct DisplayDiagnostic {
-         public let preferredHeight: Int?
-         public let preferredRefreshHz: Int?
-         /// Refresh of the display's TOP MODE, as `resolveTopMode` resolved
--        /// it: the highest-clock entry in the EDID's declared list, or the
-+        /// it: the top-ranked entry in the EDID's declared list (highest
-+        /// active pixel rate: `EDIDInfo.isHigherPriority`), or the
-         /// mode macOS reports when no declared entry matches it. **Not** the
-         /// 0xFD scan-range ceiling, which is the range of signals the panel
-         /// accepts rather than a mode it has (issue #596). The name is kept
-         /// because the Pro Display screen and the tests read it. nil only
-         /// when there is no readable EDID.
-         public let maxRefreshHz: Int?
-         /// Resolution of that same top mode, so a label never pairs one
--        /// mode's refresh with another mode's resolution. `EDIDInfo.topMode`
--        /// is max-by-pixel-clock, and a panel whose fastest timing is
--        /// 1920x1080@240 while its preferred mode is 2560x1440 (Samsung
--        /// Odyssey G60SD) has no 2560x1440@240 mode to label. nil exactly when
-+        /// mode's refresh with another mode's resolution: a panel's highest
-+        /// refresh and its largest picture are often different modes (the
-+        /// Samsung Odyssey G60SD runs 240 Hz only at 1920x1080 and has no
-+        /// 2560x1440@240 mode to label). nil exactly when
-         /// `maxRefreshHz` is nil.
-         public let topModeWidth: Int?
-         public let topModeHeight: Int?
-@@ -806,7 +807,7 @@ extension DisplayDiagnostic {
-     }
+@@ -29,7 +29,11 @@ import Testing
+ ///
+ /// The Python cross-check (a second parser that reads probe 19's decoded text,
+ /// not its raw words) found the same 8 signature folders on 2026-11-21. Seven
+-/// of them reach the diagnostic. The eighth, `m4_macos15.7.7`, shows the
++/// of them reach the diagnostic. A ninth, `m4pro_macos27.0.1_e` (96 W at
++/// 20 V x 3 A, SOP' node with no identity), came with the 2026-11-12 ingest,
++/// which the 2026-11-21 corpus did not yet hold; it reaches the diagnostic,
++/// re-derived by hand from probes 19, 32 and 01 on 2026-11-24, so eight do.
++/// The one that does not, `m4_macos15.7.7`, shows the
+ /// signature in PortControllerInfo and AdapterDetails, but macOS 15.7.7
+ /// published no USB-PD power-source node for that port (only Brick ID and
+ /// TypeC, neither with a winning option), so `ChargingDiagnostic` sees no
+@@ -50,9 +54,10 @@ struct ChargerCableHintCorpusTests {
+         "m2pro_macos26.5.1": (67, 60),
+         "m4pro_macos26.5.2_k": (70, 60),
+         "m4pro_macos26.6.2_k": (70, 60),
++        "m4pro_macos27.0.1_e": (96, 60),
+     ]
  
-     /// The highest-priority entry of `modes` by `EDIDInfo`'s own tie-break
--    /// chain (pixel clock, area, refresh, then list order), admitting the
-+    /// chain (picture pixel rate, area, refresh, clock, then list order), admitting the
-     /// same candidates `EDIDInfo.topMode` admits: every dimension above zero.
-     /// nil when nothing qualifies.
-     static func highestPriority(_ modes: [EDIDMode]) -> EDIDMode? {
-@@ -890,7 +891,7 @@ extension DisplayDiagnostic {
-     ///
-     /// Five steps, in order, and no other branch:
-     /// 1. The declared full-colour candidates, ranked by `EDIDInfo.topMode`'s
--    ///    own chain (pixel clock, area, refresh, list order) over the same
-+    ///    own chain (picture pixel rate, area, refresh, clock, list order) over the same
-     ///    list minus the `ycbcr420Only` entries (`isYCbCr420Only`).
-     ///    `preferredMode` plays no part in the ranking: it is the EDID's
-     ///    stated default, not its top, and may be absent.
-@@ -911,7 +912,7 @@ extension DisplayDiagnostic {
-     /// 2. No max mode from CoreGraphics, or one with no readable refresh:
-     ///    that candidate.
-     /// 3. The max mode matches a declared entry (`declaredMode(matching:in:)`):
--    ///    that entry when its pixel clock is at least the candidate's, so a
-+    ///    that entry unless the candidate outranks it on the same chain, so a
-     ///    max mode that IS a declared entry is labelled from that entry;
-     ///    otherwise the candidate. A max mode may only raise the top, never
-     ///    lower it: CoreGraphics builds its mode list from what the trained
-@@ -950,7 +951,7 @@ extension DisplayDiagnostic {
-         // 3. The max mode is a declared entry: label it from that entry, but
-         //    never let it lower the top.
-         if let matched = Self.declaredMode(matching: maxMode, in: edid) {
--            if matched.pixelClockHz >= panelTop.pixelClockHz { return TopMode(declared: matched) }
-+            if !EDIDInfo.isHigherPriority(panelTop, than: matched) { return TopMode(declared: matched) }
-             return TopMode(declared: panelTop)
-         }
-         // 4. Not declared anywhere: above the list it is macOS's fact alone,
+-    /// The eighth signature capture (96 W at 20 V x 3 A): no USB-PD node in
++    /// The signature capture that cannot fire (96 W at 20 V x 3 A): no USB-PD node in
+     /// probe 17, so no contract for the diagnostic to judge. See the type doc.
+     static let signatureWithoutUSBPDNode = "m4_macos15.7.7"
+ 
+@@ -125,7 +130,7 @@ struct ChargerCableHintCorpusTests {
+ 
+     // MARK: - Tests
+ 
+-    @Test("Exactly the 7 reachable signature captures fire, with the expected wattages")
++    @Test("Exactly the 8 reachable signature captures fire, with the expected wattages")
+     func signatureFoldersFire() {
+         guard !Self.cases.isEmpty else {
+             Issue.record("corpus not linked: run scripts/link-research.sh"); return
 ```
 
-**File**: `Sources/WhatCableCore/Display/EDIDInfo.swift` (modified, +26/-6)
+**File**: `Tests/WhatCableCoreTests/SnapshotCorpusTests.swift` (modified, +14/-2)
 ```diff
-@@ -80,8 +80,9 @@ public struct EDIDInfo: Hashable, Sendable {
-     /// CTA Video Format Preference entries that name a VIC, in preference order. A preference, not a mode source.
-     public let ctaPreferredVICs: [Int]
- 
--    /// The entry with the highest pixel clock; ties broken by the larger picture (width * height),
--    /// then the higher refresh, then the earlier entry in `modes`. Only entries with `width`,
-+    /// The entry with the most picture pixels per second (width * height * refresh rounded to
-+    /// whole hertz, blanking left out); ties broken by the larger picture, the higher refresh,
-+    /// the higher pixel clock, then the earlier entry in `modes` (`isHigherPriority`). Only entries with `width`,
-     /// `height`, `hTotal` and `vTotal` all above zero are candidates: a descriptor with no
-     /// picture or no total (a 128x0 CTA DTD is a real corpus shape, and edid-decode prints it
-     /// with an `inf` refresh) is a declared fact that stays in `modes`, but it is not
-@@ -99,15 +100,34 @@ public struct EDIDInfo: Hashable, Sendable {
-         return best
-     }
- 
--    /// `a` beats `b` on the `topMode` tie-break chain: pixel clock, then picture area, then
--    /// refresh. A full tie returns false, which keeps whichever of the two `topMode`'s scan
--    /// already holds, so the earlier entry in `modes` wins ties.
-+    /// `a` beats `b` on the `topMode` chain, compared field by field in this order:
-+    /// 1. picture pixels per second at the refresh rounded to whole hertz
-+    ///    (width x height x rounded refresh, halved for interlaced; blanking left out),
-+    /// 2. picture area,
-+    /// 3. rounded refresh,
-+    /// 4. pixel clock,
-+    /// 5. exact refresh.
-+    /// Not the clock first: it counts blanking, so the same picture at a lower refresh can
-+    /// carry the higher clock (CTA 4K50 at 594 MHz against CVT-RB 4K60 at 533.25 MHz, issue
-+    /// #677). Not area first: a super-ultrawide's 4K scaler entry has more pixels than its
-+    /// native picture (Odyssey Neo G9, 3840x2160@60 against 5120x1440@120). Refresh is
-+    /// rounded so that two entries for one mode (a 60.001 Hz reduced-blanking DTD and CTA
-+    /// VIC 97 at 60.000) are told apart by clock, not by thousandths of a hertz; rounding,
-+    /// rather than a "within 0.5 Hz" test, keeps the chain a strict ordering, so the top never
-+    /// depends on the order of `modes`. A full tie returns false, which keeps whichever of the
-+    /// two `topMode`'s scan already holds, so the earlier entry in `modes` wins ties.
-     /// Internal rather than private: `DisplayDiagnostic` ranks a filtered list with this same chain.
-     static func isHigherPriority(_ a: EDIDMode, than b: EDIDMode) -> Bool {
--        if a.pixelClockHz != b.pixelClockHz { return a.pixelClockHz > b.pixelClockHz }
-+        let aRefresh = a.refreshHz.rounded()
-+        let bRefresh = b.refreshHz.rounded()
-+        let aRate = Double(a.width * a.height) * aRefresh / (a.interlaced ? 2 : 1)
-+        let bRate = Double(b.width * b.height) * bRefresh / (b.interlaced ? 2 : 1)
-+        if aRate != bRate { return aRate > bRate }
-         let aArea = a.width * a.height
-         let bArea = b.width * b.height
-         if aArea != bArea { return aArea > bArea }
-+        if aRefresh != bRefresh { return aRefresh > bRefresh }
-+        if a.pixelClockHz != b.pixelClockHz { return a.pixelClockHz > b.pixelClockHz }
-         if a.refreshHz != b.refreshHz { return a.refreshHz > b.refreshHz }
-         return false
-     }
-```
-
-**File**: `Sources/WhatCableCore/Output/JSONFormatter.swift` (modified, +1/-1)
-```diff
-@@ -1013,7 +1013,7 @@ private struct DisplayDTO: Codable {
-     /// The display's highest mode from CoreGraphics, EDID-free.
-     let maxMode: CurrentModeDTO?
-     /// The display's top mode as `DisplayDiagnostic.resolveTopMode` resolved
--    /// it: the highest-clock declared entry, or the CoreGraphics-only mode
-+    /// it: the top-ranked declared entry, or the CoreGraphics-only mode
-     /// when nothing declared matches. nil exactly when `edid` is nil.
-     let topMode: TopModeDTO?
-     /// The full parsed EDID: every declared mode, in every format the EDID
-```
-
-**File**: `Sources/WhatCableCore/Resources/it.lproj/Localizable.strings` (modified, +1/-1)
-```diff
-@@ -188,7 +188,7 @@
- "Could not load the device list. Try again later." = "Impossibile caricare l'elenco dei dispositivi. Riprova più tardi.";
- "Could not reach the licence server. Check your internet connection and try again." = "Impossibile raggiungere il server delle licenze. Controlla la connessione internet e riprova.";
- "I2C error count" = "Conteggio errori I2C";
--"Inactive" = "Non attivo";
-+"Inactive" = "Inattivo";
- "Invalid licence key. Check the key and try again." = "Chiave di licenza non valida. Controlla la chiave e riprova.";
- "Lanes" = "Lane";
- "Licence…" = "Licenza…";
-```
-
-**File**: `Sources/WhatCableCore/Resources/it.lproj/Localizable.stringsdict` (modified, +2/-2)
-```diff
-@@ -78,9 +78,9 @@
- 			<key>NSStringFormatValueTypeKey</key>
- 			<string>lld</string>
- 			<key>one</key>
--			<string>%lld porta non attiva</string>
-+			<string>%lld porta inattiva</string>
- 			<key>other</key>
--			<string>%lld porte non attive</string>
-+			<string>%lld porte inattive</string>
- 		</dict>
- 	</dict>
- </dict>
-```
-
-**File**: `Tests/WhatCableCoreTests/DisplayDiagnosticTests.swift` (modified, +14/-12)
-```diff
-@@ -1084,7 +1084,7 @@ struct DisplayDiagnosticTests {
- 
-     @Test("No max mode: the declared top stands")
-     func noMaxModeTheDeclaredTopStands() throws {
--        // No CoreGraphics data at all. The highest-clock declared entry is
-+        // No CoreGraphics data at all. The top-ranked declared entry is
-         // the top mode, and the 0xFD envelope is ignored even though it sits
-         // well above it. (The issue #596 regression fixture, expectation
-         // unchanged.)
-@@ -1188,7 +1188,7 @@ struct DisplayDiagnosticTests {
- 
-     /// Samsung Odyssey G60SD's shape, from customer probe `m5_macos27.0_p`:
-     /// preferred 2560x1440@60, and a fastest timing of 1920x1080@240 that
--    /// wins `topMode` on pixel clock. There is no 2560x1440@240
-+    /// wins `topMode` on picture pixel rate. There is no 2560x1440@240
-     /// mode, so a heading reading "2560 x 1440 · up to 240Hz" names a mode
-     /// the panel does not have. Ten corpus panels share the shape.
-     private let odysseyG60SD = EDIDInfo.fixture(
-@@ -1802,14 +1802,15 @@ struct DisplayDiagnosticTests {
- 
-     @Test("Ruling 41: a scaler entry the node never lists is skipped and the listed entry below it is the top (the 1600x1200 DMT on a 1080p Dell)")
-     func scalerTopIsSkippedForTheEntryTheNodeLists() throws {
--        // A 1080p panel whose EDID's highest-clock entry is a 1600x1200 standard timing; the node lists 1080p only.
-+        // A 1080p panel whose EDID's top-ranked entry is a 1600x1200@75 standard timing (VESA DMT, 202.5 MHz:
-+        // 144 M picture pixels/s against 1080p60's 124.4 M); the node lists 1080p only.
-         let panel = EDIDInfo.fixture(name: "DELL P2219H", version: (1, 4),
-                                      preferred: EDIDInfo.mode(1920, 1080, hTotal: 2200, vTotal: 1125, pixelClockHz: 148_500_000),
--                                     modes: [EDIDInfo.mode(1600, 1200, hTotal: 2160, vTotal: 1250, pixelClockHz: 162_000_000, source: .detailedTiming(block: 0, index: 1))])
--        // (On the real panel the 1600x1200 is a standard timing; the source plays no part in the resolver, which reads the clock.)
-+                                     modes: [EDIDInfo.mode(1600, 1200, hTotal: 2160, vTotal: 1250, pixelClockHz: 202_500_000, source: .detailedTiming(block: 0, index: 1))])
-+        // (On the real panel the 1600x1200 is a standard timing; the source plays no part in the resolver's ranking.)
-         let live = DisplayCurrentMode(width: 1920, height: 1080, refreshHz: 60, bitsPerComponent: 8, pixelClockHz: 148_500_000, pixelEncoding: .rgb444)
-         let statement = Self.offering([Self.listing(1920, 1080, 60.0, 148_500_000)])
--        // Without the statement the resolver still picks the 162 MHz entry (as today).
-+        // Without the statement the resolver still picks the 1600x1200@75 entry (as today).
-         let declaredOnly = try #require(DisplayDiagnostic.resolveTopMode(maxMode: nil, edid: panel))
-         #expect(declaredOnly.width == 1600, "fixture guard: the declared top is the scaler entry")
-         // With it, step 1b walks past the entry the node never lists.
-@@ -1949,7 +1950,7 @@ struct DisplayDiagnosticTests {
- 
-     @Test("DisplayID Type IV and Type VIII entries are code lists, like the two bitmap tags: a picture-only one is skipped, not kept as a link-limited native mode (PR #665 gate fix round 4, item 1)")
-     func displayIDCodeListTypesAreNotNativeDeclarations() throws {
--        // A 1080p panel whose EDID carries a 1600x1200@60 entry through a DisplayID code list; the node
-+        // A 1080p panel whose EDID carries a 1600x1200@75 entry through a DisplayID code list; the node
-         // lists 1600x1200 at 30 Hz only beside the native 1080p60. A Type I entry of that shape is the
-         // ruling's accepted cost (it stays, not offered); the four code-list types must be skipped and
-         // the top must stay the listed 1080p60.
-@@ -1958,7 +1959,7 @@ struct DisplayDiagnosticTests {
-         for type in [EDIDMode.DisplayIDTimingType.typeIV, .typeVIII, .vesaDMTBitmap, .ctaVICBitmap] {
-             let panel = EDIDInfo.fixture(name: "DELL P2219H", version: (1, 4),
-                                          preferred: EDIDInfo.mode(1920, 1080, hTotal: 2200, vTotal: 1125, pixelClockHz: 148_500_000),
--                                         modes: [EDIDInfo.mode(1600, 1200, hTotal: 2160, vTotal: 1250, pixelClockHz: 162_000_000,
-+                                         modes: [EDIDInfo.mode(1600, 1200, hTotal: 2160, vTotal: 1250, pixelClockHz: 202_500_000,
-                                                                source: .displayID(block: 1, type: type, index: 0, embeddedInCTA: false))])
-             let codeList = try #require(DisplayDiagnostic.resolveTopMode(maxMode: nil, edid: panel, statement: statement))
-             #expect(codeList.width == 1920 && codeList.height == 1080, "\(type): a code-list entry listed at 30 only is a scaler entry, got \(codeList.width)x\(codeList.height)")
-```
-
-**File**: `Tests/WhatCableCoreTests/EDIDInfoTests.swift` (modified, +87/-0)
-```diff
-@@ -2113,4 +2113,91 @@ struct EDIDInfoTests {
-         #expect(edid.blocks[0].kind == .base)
-         #expect(edid.blocks[1].kind == .cta861)
-     }
-+
-+    // MARK: Issue #677: a CTA 4K50 must not outrank a reduced-blanking 4K60
-+
-+    /// The two 4K entries from the Mi Monitor in issue #677 (public
-+    /// darrylmorley/whatcable#677). The base DTD is 3840x2160 at 60 Hz with
-+    /// CVT reduced blanking (4000 x 2222 totals, 533.25 MHz); CTA VIC 96 is
-+    /// 3840x2160 at 50 Hz with standard CTA blanking (5280 x 2250 totals,
-+    /// 594 MHz). The 50 Hz entry has the higher clock only because it carries
-+    /// more blanking: it is the lesser picture.
-+    static let mi4K60RB = EDIDMode(
-+        width: 3840, height: 2160, hTotal: 4000, vTotal: 2222,
-+        pixelClockHz: 533_250_000, interlaced: false,
-+        source: .detailedTiming(block: 0, index: 0))
-+    static let mi4K50CTA = EDIDMode(
-+        width: 3840, height: 2160, hTotal: 5280, vTotal: 2250,
-+        pixelClockHz: 594_000_000, interlaced: false,
-+        source: .ctaVIC(block: 1, vic: 96, native: false, ycbcr420Only: false))
-+
-+    static func miMonitorEDID() -> EDIDInfo {
-+        EDIDInfo(
-+            monitorName: "Mi Monitor", versionMajor: 1, versionMinor: 4,
-+            continuousFrequency: nil, preferredMode: mi4K60RB,
-+            modes: [mi4K60RB, mi4K50CTA], undecodedStandardTimings: [],
-+            rangeLimits: nil, displayIDRangeLimits: nil, dynamicRangeLimits: nil,
-+            blocks: [], declaredExtensionCount: 1, tiledTopology: nil,
-+            ctaPreferredVICs: [])
-+    }
-+
-+    @Test("#677: the same picture at a higher refresh is the top mode, whatever the blanking")
-+    func topModePrefersRefreshOverClock() throws {
-+        let top = try #require(Self.miMonitorEDID().topMode)
-+        #expect(top.width == 3840)
-+        #expect(top.height == 2160)
-+        #expect(Int(top.refreshHz.rounded()) == 60)
-+        #expect(top.pixelClockHz == 533_250_000)
-+    }
-+
-+    @Test("#677: macOS's 4K60 max mode is the resolved top, not the CTA 4K50")
-+    func resolveTopModeKeepsMacOSMaxMode() throws {
-+        let maxMode = DisplayCurrentMode(width: 3840, height: 2160, refreshHz: 60, pixelClockHz: 533_250_000)
-+        let top = try #require(DisplayDiagnostic.resolveTopMode(maxMode: maxMode, edid: Self.miMonitorEDID()))
-+        #expect(top.width == 3840)
-+        #expect(top.height == 2160)
-+        #expect(Int(top.refreshHz.rounded()) == 60)
-+    }
-+
-+    @Test("#677 review: two entries for the same 4K60 are one mode, so the clock picks the entry, not 0.001 Hz")
-+    func sameModeTwinsRankByClock() throws {
-+        // BenQ PD2700U shape (corpus m4_macos26.5.2_ao): a reduced-blanking DTD that computes to
-+        // 60.001 Hz beside CTA VIC 97 at exactly 60.000 Hz. Ranking on refresh would pick the DTD
-+        // for this panel and the VIC for one whose DTD computes to 59.997 Hz.
-+        let dtd = EDIDMode(width: 3840, height: 2160, hTotal: 4000, vTotal: 2222,
-+                           pixelClockHz: 533_290_000, interlaced: false,
-+                           source: .detailedTiming(block: 0, index: 0))
-+        let vic97 = EDIDMode(width: 3840, height: 2160, hTotal: 4400, vTotal: 2250,
-+                             pixelClockHz: 594_000_000, interlaced: false,
-+                             source: .ctaVIC(block: 1, vic: 97, native: false, ycbcr420Only: false))
-+        #expect(dtd.refreshHz > vic97.refreshHz, "fixture guard: the DTD computes the higher refresh")
-+        let edid = EDIDInfo(
-+            monitorName: "PD2700U", versionMajor: 1, versionMinor: 4,
-+            continuousFrequency: nil, preferredMode: dtd,
-+            modes: [dtd, vic97], undecodedStandardTimings: [],
-+            rangeLimits: nil, displayIDRangeLimits: nil, dynamicRangeLimits: nil,
-+            blocks: [], declaredExtensionCount: 1, tiledTopology: nil,
-+            ctaPreferredVICs: [])
-+        #expect(edid.topMode == vic97)
-+    }
-+
-+    @Test("#677 review: the top never depends on the order of the declared list")
-+    func topModeIsOrderIndependent() throws {
-+        // Three 1080p entries whose refreshes sit within 0.5 Hz of their neighbours but not of
-+        // each other. A "within 0.5 Hz is the same mode" rule ranked them in a circle
-+        // (59.6 over 60.0 by clock, 60.0 over 60.4 by clock, 60.4 over 59.6 by rate), so each
-+        // rotation of the list returned a different top.
-+        let a = EDIDMode(width: 1920, height: 1080, hTotal: 2200, vTotal: 1350, pixelClockHz: 177_012_000, interlaced: false, source: .detailedTiming(block: 0, index: 0))
-+        let b = EDIDMode(width: 1920, height: 1080, hTotal: 2200, vTotal: 1125, pixelClockHz: 148_500_000, interlaced: false, source: .detailedTiming(block: 0, index: 1))
-+        let c = EDIDMode(width: 1920, height: 1080, hTotal: 2080, vTotal: 1111, pixelClockHz: 139_577_000, interlaced: false, source: .detailedTiming(block: 0, index: 2))
-+        #expect(abs(a.refreshHz - 59.6)
-```
-
-**File**: `Tests/WhatCableCoreTests/EDIDModeTests.swift` (modified, +2/-2)
-```diff
-@@ -9,13 +9,13 @@ struct EDIDModeTests {
-         let m = EDIDInfo.mode(1920, 1080, hTotal: 2200, vTotal: 1125, pixelClockHz: 74_250_000, interlaced: true)
-         #expect(abs(m.refreshHz - 60.0) < 0.001)
-     }
--    @Test("topMode is the highest pixel clock, then the larger picture, then the higher refresh")
-+    @Test("topMode is the highest picture pixel rate (width x height x refresh): 1440p180 outranks the preferred 4K60")
-     func topModeOrder() {
-         let a = EDIDInfo.mode(3840, 2160, hTotal: 4400, vTotal: 2250, pixelClockHz: 594_000_000)
-         let b = EDIDInfo.mode(2560, 1440, hTotal: 2720, vTotal: 1525, pixelClockHz: 746_640_000, source: .displayID(block: 2, type: .typeI, index: 0, embeddedInCTA: false))
-         let c = EDIDInfo.mode(1920, 1080, hTotal: 2200, vTotal: 1125, pixelClockHz: 148_500_000, source: .ctaVIC(block: 1, vic: 16, native: true, ycbcr420Only: false))
-         let e = EDIDInfo.fixture(preferred: a, modes: [a, c, b])
--        #expect(e.topMode == b)
-+        #expect(e.topMode == b, "1440p180 is 663.6 M picture pixels/s against 4K60's 497.7 M")
-         #expect(e.modes.count == 3)
-         #expect(e.preferredWidth == 3840)
-     }
+@@ -120,8 +120,8 @@ struct SnapshotCorpusTests {
+         // runs folder that exists but holds no runs is a broken link, and must
+         // fail rather than pass on nothing.
+         //
+-        // Two shapes are not complete snapshots and are still correct
+-        // (first met 2026-11-12):
++        // Three shapes are not complete snapshots and are still correct
++        // (the byte-cap stop below; the other two first met 2026-11-12):
+         // - stopped with `identifiers_incomplete`: FORMAT.md lets any probe
+         //   stop that way, header then footer, no records, `step` naming the
+         //   lookup that failed. Every probe on an Intel Mac with Bluetooth
+@@ -153,6 +153,18 @@ struct SnapshotCorpusTests {
+                 #expect(step.count > 0, "\(name): stopped for identifiers with no step")
+                 continue
+             }
++            // Stopped at the probe's byte cap (first met 2026-11-24, two runs
++            // from one Mac with a large registry): FORMAT.md allows it, at a
++            // record boundary, with `records` counting what was written. It is
++            // a partial snapshot, so it is checked but not counted complete.
++            if file.footer?["status"] as? String == "stopped",
++               file.footer?["reason"] as? String == "byte_cap" {
++                #expect(!file.records.isEmpty, "\(name): stopped at the byte cap with no records")
++                #expect(file.footer?["records"] as? Int == file.records.count,
++                        "\(name): byte-cap footer's record count does not match the file")
++                #expect(try RegistrySnapshot(file).entries.count > 0, "\(name): byte-capped with no entries")
++                continue
++            }
+             #expect(file.isComplete, "\(name): snapshot was cut off")
+             #expect(try RegistrySnapshot(file).entries.count > 0, "\(name): no entries")
+             complete += 1
 ```
 
 ---
 
-### Incident Patch 2: `78993515` (2026-11-21)
-**Commit Message**: Italian language update (#675)
+### Incident Patch 2: `18d6ad0c` (2026-11-24)
+**Commit Message**: Mirror from private (30f625be)
 
-* Update Localizable.strings
-
-* Update Localizable.stringsdict
-
-**File**: `Sources/WhatCableCore/Resources/it.lproj/Localizable.strings` (modified, +1/-1)
+**File**: `scripts/smoke-test.sh` (modified, +2/-2)
 ```diff
-@@ -188,7 +188,7 @@
- "Could not load the device list. Try again later." = "Impossibile caricare l'elenco dei dispositivi. Riprova più tardi.";
- "Could not reach the licence server. Check your internet connection and try again." = "Impossibile raggiungere il server delle licenze. Controlla la connessione internet e riprova.";
- "I2C error count" = "Conteggio errori I2C";
--"Inactive" = "Inattivo";
-+"Inactive" = "Non attivo";
- "Invalid licence key. Check the key and try again." = "Chiave di licenza non valida. Controlla la chiave e riprova.";
- "Lanes" = "Lane";
- "Licence…" = "Licenza…";
-```
-
-**File**: `Sources/WhatCableCore/Resources/it.lproj/Localizable.stringsdict` (modified, +2/-2)
-```diff
-@@ -78,9 +78,9 @@
- 			<key>NSStringFormatValueTypeKey</key>
- 			<string>lld</string>
- 			<key>one</key>
--			<string>%lld porta inattiva</string>
-+			<string>%lld porta non attiva</string>
- 			<key>other</key>
--			<string>%lld porte inattive</string>
-+			<string>%lld porte non attive</string>
- 		</dict>
- 	</dict>
- </dict>
+@@ -24,8 +24,8 @@ fi
+ 
+ APP_NAME="WhatCable"
+ BUNDLE_ID="uk.whatcable.whatcable"
+-VERSION="1.5.0"
+-BUILD_NUMBER="140"
++VERSION="1.5.1"
++BUILD_NUMBER="141"
+ MIN_OS="14.0"
+ CLI_PRODUCT="whatcable-cli"
+ CLI_BIN_NAME="whatcable"
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #678** (2026-11-24): Traditional Chinese language update (@jimmyorz)
 - **PR #675** (2026-11-21): Italian language update (@bovirus)
 - **PR #668** (2026-11-12): Remove markdown rendering from cable report template (@salt-lick)
 - **PR #660** (2026-11-12): README: Update usbee[hive] details (@ferdnyc)
 - **PR #646** (2026-11-10): Traditional Chinese language update (@jimmyorz)
 - **PR #645** (2026-11-10): Update Italian language (@bovirus)
-- **PR #644** (2026-11-10): Add Persian (fa) translation (@aliafshany)
 
 ---
 
@@ -2141,48 +1867,40 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Mirror from private (27bc7b2d)
+## X. Mirror from private (471d687d)
 
 **RULE**:
-When implementing operations in `Sources/WhatCableCore/Display/DisplayDiagnostic.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in darrylmorley/whatcable. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Tests/WhatCableCoreTests/ChargerCableHintCorpusTests.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in darrylmorley/whatcable. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0a49393d`: Mirror from private (27bc7b2d). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0cf0a678`: Mirror from private (471d687d). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Sources/WhatCableCore/Display/DisplayDiagnostic.swift`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Tests/WhatCableCoreTests/ChargerCableHintCorpusTests.swift`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-        /// it: the top-ranked entry in the EDID's declared list (highest
-        /// active pixel rate: `EDIDInfo.isHigherPriority`), or the
-        /// mode's refresh with another mode's resolution: a panel's highest
-        /// refresh and its largest picture are often different modes (the
-        /// Samsung Odyssey G60SD runs 240 Hz only at 1920x1080 and has no
-        /// 2560x1440@240 mode to label). nil exactly when
-    /// chain (picture pixel rate, area, refresh, clock, then list order), admitting the
-    ///    own chain (picture pixel rate, area, refresh, clock, list order) over the same
-    ///    that entry unless the candidate outranks it on the same chain, so a
-            if !EDIDInfo.isHigherPriority(panelTop, than: matched) { return TopMode(declared: matched) }
+/// of them reach the diagnostic. A ninth, `m4pro_macos27.0.1_e` (96 W at
+/// 20 V x 3 A, SOP' node with no identity), came with the 2026-11-12 ingest,
+/// which the 2026-11-21 corpus did not yet hold; it reaches the diagnostic,
+/// re-derived by hand from probes 19, 32 and 01 on 2026-11-24, so eight do.
+/// The one that does not, `m4_macos15.7.7`, shows the
+        "m4pro_macos27.0.1_e": (96, 60),
+    /// The signature capture that cannot fire (96 W at 20 V x 3 A): no USB-PD node in
+    @Test("Exactly the 8 reachable signature captures fire, with the expected wattages")
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Induced defect failure mode:
-        /// it: the highest-clock entry in the EDID's declared list, or the
-        /// mode's refresh with another mode's resolution. `EDIDInfo.topMode`
-        /// is max-by-pixel-clock, and a panel whose fastest timing is
-        /// 1920x1080@240 while its preferred mode is 2560x1440 (Samsung
-        /// Odyssey G60SD) has no 2560x1440@240 mode to label. nil exactly when
-    /// chain (pixel clock, area, refresh, then list order), admitting the
-    ///    own chain (pixel clock, area, refresh, list order) over the same
-    ///    that entry when its pixel clock is at least the candidate's, so a
-            if matched.pixelClockHz >= panelTop.pixelClockHz { return TopMode(declared: matched) }
+/// of them reach the diagnostic. The eighth, `m4_macos15.7.7`, shows the
+    /// The eighth signature capture (96 W at 20 V x 3 A): no USB-PD node in
+    @Test("Exactly the 7 reachable signature captures fire, with the expected wattages")
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0a49393d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0cf0a678` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

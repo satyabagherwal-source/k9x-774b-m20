@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-25T04:15:58.269Z",
+  "last_updated": "2026-11-25T04:31:15.583Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -9141,14 +9141,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-juicedata-juicefs",
-      "content_hash": "018417823bff8370acf617960f4f09d0eea4c05f7d67a1149e6bbbf715410acd",
-      "verified_at": "2026-11-24T11:21:58.657Z",
+      "content_hash": "965ecf469398c93a9f75fa4bd12b49fbdffa81a77c0d75e607fc90beb0bb7125",
+      "verified_at": "2026-11-25T04:31:15.582Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T11:21:58.657Z"
+      "last_updated": "2026-11-25T04:31:15.582Z"
     },
     "RediSearch/RediSearch": {
       "repository": "RediSearch/RediSearch",
@@ -11871,14 +11871,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-darrylmorley-whatcable",
-      "content_hash": "702bb03d3a7965d838b5973518fc235812e1007b22be4c682518b5e882735e38",
-      "verified_at": "2026-11-22T18:00:24.480Z",
+      "content_hash": "13fc8620da9625427e235272d83e74fddc99e40f2c0e0f037ca16565229b8f06",
+      "verified_at": "2026-11-25T04:31:12.061Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T18:00:24.480Z"
+      "last_updated": "2026-11-25T04:31:12.061Z"
     },
     "XcodesOrg/XcodesApp": {
       "repository": "XcodesOrg/XcodesApp",
@@ -18516,14 +18516,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-yyjeqhc-webcodex",
-      "content_hash": "d5800c97d65a87fb2c5b0b74264738d3f11bffbd1796739f0dade5e0484f25a6",
-      "verified_at": "2026-11-24T01:55:59.558Z",
+      "content_hash": "c4cacd3ddc16d318fc5f5396ce0edee873ff670fb37af9c167b54dd30439d5ca",
+      "verified_at": "2026-11-25T04:31:05.618Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T01:55:59.558Z"
+      "last_updated": "2026-11-25T04:31:05.618Z"
     },
     "MiniMaxAI/MiniMax-H3-Image": {
       "repository": "MiniMaxAI/MiniMax-H3-Image",

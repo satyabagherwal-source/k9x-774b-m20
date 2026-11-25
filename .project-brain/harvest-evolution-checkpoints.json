@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T04:16:04.966Z",
+  "last_updated": "2026-11-25T04:31:22.945Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-25T04:07:45.064Z",
@@ -18,7 +18,7 @@
       "staged_for_review": 1
     },
     "yyjeqhc-webcodex-learnings.md": {
-      "processed_at": "2026-11-24T01:56:05.183Z",
+      "processed_at": "2026-11-25T04:31:19.355Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -113,7 +113,7 @@
       "staged_for_review": 1
     },
     "juicedata-juicefs-learnings.md": {
-      "processed_at": "2026-11-24T11:22:02.056Z",
+      "processed_at": "2026-11-25T04:31:21.723Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -623,7 +623,7 @@
       "staged_for_review": 1
     },
     "darrylmorley-whatcable-learnings.md": {
-      "processed_at": "2026-11-22T18:00:33.183Z",
+      "processed_at": "2026-11-25T04:31:20.503Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3903,7 +3903,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 4059,
+  "total_dossiers_evaluated": 4062,
   "total_canonical_promoted": 528,
-  "total_staged_for_review": 3110
+  "total_staged_for_review": 3113
 }

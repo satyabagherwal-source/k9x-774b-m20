@@ -12964,3 +12964,6 @@ Every entry in this ledger must capture:
 | `learn-github-thaw-app-thaw` | `https://github.com/thaw-app/Thaw` | `63a96c2d` | Multi-dimensional audit evidence | 2026-11-25T03:59:15.205Z |
 | `learn-github-argoproj-argo-workflows` | `https://github.com/argoproj/argo-workflows` | `e0dadd07` | Multi-dimensional audit evidence | 2026-11-25T04:15:55.897Z |
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `e906a6a4` | Multi-dimensional audit evidence | 2026-11-25T04:15:58.255Z |
+| `learn-github-yyjeqhc-webcodex` | `https://github.com/yyjeqhc/webcodex` | `70315e49` | Multi-dimensional audit evidence | 2026-11-25T04:31:05.559Z |
+| `learn-github-darrylmorley-whatcable` | `https://github.com/darrylmorley/whatcable` | `0cf0a678` | Multi-dimensional audit evidence | 2026-11-25T04:31:12.040Z |
+| `learn-github-juicedata-juicefs` | `https://github.com/juicedata/juicefs` | `b4f20cf3` | Multi-dimensional audit evidence | 2026-11-25T04:31:15.558Z |

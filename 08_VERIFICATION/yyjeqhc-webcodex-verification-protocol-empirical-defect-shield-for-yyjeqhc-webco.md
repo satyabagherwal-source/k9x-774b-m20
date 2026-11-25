@@ -4,22 +4,22 @@
 {
   "source_repository": "yyjeqhc/webcodex",
   "source_url": "https://github.com/yyjeqhc/webcodex",
-  "source_version": "026413dc",
+  "source_version": "70315e49",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-24T01:55:59.824Z",
+  "timestamp": "2026-11-25T04:31:05.952Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-yyjeqhc-webcodex",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [yyjeqhc/webcodex](https://github.com/yyjeqhc/webcodex) (Revision: `026413dc`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-24T01:55:59.824Z`  
+> **Provenance**: Harvested from [yyjeqhc/webcodex](https://github.com/yyjeqhc/webcodex) (Revision: `70315e49`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-25T04:31:05.952Z`  
 > **Learning ID**: `learn-github-yyjeqhc-webcodex`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `yyjeqhc/webcodex` (Commit: `026413dc`)
+- **Target Repository**: `yyjeqhc/webcodex` (Commit: `70315e49`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/yyjeqhc-webcodex-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/yyjeqhc/webcodex](https://github.com/yyjeqhc/webcodex))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T01:55:58.187Z  
+> **Harvest Timestamp**: 2026-11-25T04:31:04.752Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Give cloud AI agents a real development environment on your own machines.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 2519 stars
+- **Stars / Engagement**: 2522 stars
 
 ---
 
@@ -2194,643 +2194,67 @@ impl DesktopCore {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `026413dc` (2026-11-23)
-**Commit Message**: perf(desktop): accelerate Windows status checks and acknowledge lifecycle actions (#1437)
+### Incident Patch 1: `70315e49` (2026-11-24)
+**Commit Message**: docs: distinguish Windows Desktop and service startup (#1440)
 
-Co-authored-by: yyjeqhc <[REDACTED_EMAIL]>
-
-**File**: `apps/desktop/src/App.test.tsx` (modified, +7/-3)
+**File**: `docs/DESKTOP_RUNTIME_COMPATIBILITY.md` (modified, +16/-0)
 ```diff
-@@ -680,7 +680,8 @@ beforeEach(() => {
+@@ -94,6 +94,22 @@ Select `target/dogfood`. No special source revision is required by Desktop. Runt
  
-     renderApp();
-     await screen.findByRole("heading", { level: 1, name: "概览" });
--    expect(screen.getByRole("status")).toHaveTextContent("WebCodex · 运行中");
-+    expect(screen.getByRole("complementary")).toHaveTextContent("WebCodex · 运行中");
-+    expect(screen.queryByRole("status")).not.toBeInTheDocument();
-     fireEvent.click(screen.getByRole("button", { name: "项目" }));
-     expect(screen.queryByRole("button", { name: /添加项目|切换项目|Use project|Select project/ })).not.toBeInTheDocument();
-     expect(api.activateLocalProject).not.toHaveBeenCalled();
-@@ -774,8 +775,11 @@ beforeEach(() => {
-   it("does not equate an unmanaged Desktop tunnel with ChatGPT being disconnected", async () => {
-     api.getState.mockResolvedValue(readyState); renderApp();
-     await screen.findByRole("heading", { level: 1, name: "概览" });
--    expect(screen.getByText(/尚未检查 ChatGPT 活动/)).toBeInTheDocument();
--    expect(screen.getByRole("status")).toHaveTextContent("WebCodex · 运行中");
-+    // Activity observation may enter Pending before this assertion: neither state means the Tunnel is disconnected.
-+    expect(screen.getByRole("button", { name: /ChatGPT/ }))
-+      .toHaveTextContent(/(尚未检查|正在检查|尚未观察到) ChatGPT 活动/);
-+    expect(screen.getByRole("complementary")).toHaveTextContent("WebCodex · 运行中");
-+    expect(screen.queryByRole("status")).not.toBeInTheDocument();
-     expect(screen.queryByText(/ChatGPT 未连接|等待 ChatGPT|不代表 ChatGPT/)).not.toBeInTheDocument();
-   });
+ On macOS, OS code signing, Gatekeeper and Computer Use permissions are separate from protocol compatibility. Rebuilding a binary may change its OS identity; use the repository's documented local signing flow where appropriate. Never overwrite an independent control Runner while dogfooding the candidate it is meant to recover.
  
-```
-
-**File**: `apps/desktop/src/components/Sidebar.tsx` (modified, +1/-1)
-```diff
-@@ -31,7 +31,7 @@ export function Sidebar({ state, navigation, setNavigation }: { state: DesktopSt
-   useShortcutHints();
-   return (
-       <aside className="sidebar">
--        <div className="brand"><BrandMark /><div><strong>WebCodex</strong><span>Desktop</span></div></div>
-+        <div className="brand"><BrandMark /><div><strong>WebCodex</strong></div></div>
-         <nav ref={selectionRef} aria-label={t("nav.main")}>
-           {NAVIGATION_GROUPS.map((group) => (
-             <section className="nav-group" key={group.label} aria-label={t(group.label)}>
-```
-
-**File**: `apps/desktop/src/features/ConnectionsTools.test.tsx` (modified, +29/-0)
-```diff
-@@ -42,6 +42,35 @@ beforeEach(() => {
- });
- 
- describe("Connections + Tools control surfaces", () => {
++## Windows login startup
 +
-+  it("reports Stop immediately while the Tunnel control request is pending", async () => {
-+    const initial = { ...state(), persistent_environment: "local" };
-+    let finish!: (snapshot: DesktopState) => void;
-+    api.tunnelProfileAction.mockImplementation(() => new Promise(resolve => { finish = resolve; }));
-+    render(<Harness mode="connections" initial={initial} />);
-+    const stop = screen.getByRole("button", { name: "Stop ChatGPT Personal" });
-+    fireEvent.click(stop);
-+    expect(api.tunnelProfileAction).toHaveBeenCalledExactlyOnceWith("personal", "stop");
-+    expect(screen.getByText(connectionsToolsText("en-US", "stopping"))).toBeInTheDocument();
-+    expect(stop).toBeDisabled();
-+    await act(async () => finish(initial));
-+    expect(screen.queryByText(connectionsToolsText("en-US", "stopping"))).toBeNull();
-+  });
++**Launch WebCodex at login** controls whether Windows opens the Desktop app
++when you sign in. A persistent Environment has separate WebCodex-managed
++Task Scheduler entries for Server and Runner. Turning off Desktop login
++startup leaves those background service tasks in place.
 +
-+  it("acknowledges a Server restart before waiting for the native refresh", async () => {
-+    const profile = connectionFixture({ id: "server-owned", host_mode: "embedded", autostart: true, server_restart_required: true });
-+    const initial = { ...state(), persistent_environment: "local", connections: connectionSnapshot(profile) };
-+    let finish!: (snapshot: DesktopState) => void;
-+    api.environmentServiceAction.mockImplementation(() => new Promise(resolve => { finish = resolve; }));
-+    render(<Harness mode="connections" initial={initial} />);
-+    const restart = screen.getByRole("button", { name: connectionsToolsText("en-US", "restartServer") });
-+    fireEvent.click(restart);
-+    expect(api.environmentServiceAction).toHaveBeenCalledExactlyOnceWith({ environmentId: "local", component: "server", action: "restart" });
-+    expect(screen.getByText(connectionsToolsText("en-US", "restarting"))).toBeInTheDocument();
-+    expect(restart).toBeDisabled();
-+    await act(async () => finish(initial));
-+    expect(screen.queryByText(connectionsToolsText("en-US", "restarting"))).toBeNull();
-+  });
-   it("prepares one embedded Gemini Quick connection, starts the verified public ingress and hands off the current URL", async () => {
-     const initial = { ...state(), persistent_environment: "local", connections: connectionSnapshot() };
-     const quick = connectionFixture({ id: "q", configuration_id: "new", name: "Gemini", provider: {kind: "cloudflare_quick"},
-```
-
-**File**: `apps/desktop/src/features/connection/ConnectionCard.test.tsx` (modified, +23/-0)
-```diff
-@@ -13,6 +13,29 @@ beforeEach(() => {
- });
- 
- describe("Connection advanced details", () => {
++The Windows persistent Environment currently has no supported manual-only
++mode that keeps its services manageable from Desktop while disabling their
++login triggers. The managed-task check expects an enabled login trigger.
++If you disable the trigger in Task Scheduler, Desktop or the CLI can report
++`service_foreignservice` for that task. Check the existing task's origin and
++configuration before attempting recovery. Restoring the WebCodex-managed
++trigger also restores background login startup. Leave the task, Environment,
++and saved credentials in place while diagnosing the mismatch.
 +
-+  it.each(PRODUCT_LOCALES)("acknowledges a requested stop or restart immediately in %s", (locale) => {
-+    localStorage.setItem("webcodex.desktop.locale", locale);
-+    const profile = connectionFixture({ lifecycle: "running", ready: true });
-+    const props = { profile, canStart: true, busy: true, copied: false,
-+      onAction: () => undefined, onEdit: () => undefined, onDelete: () => undefined,
-+      onCopy: () => undefined, onSettings: () => undefined };
-+    const { container, rerender } = render(
-+      <LocaleProvider><ConnectionCard {...props} pendingAction="stop" /></LocaleProvider>,
-+    );
-+    const card = container.querySelector("article.connection-profile")!;
-+    const status = card.querySelector('[role="status"]')!;
-+    expect(card).toHaveAttribute("aria-busy", "true");
-+    expect(status).toHaveTextContent(connectionsToolsText(locale, "stopping"));
-+    expect(status.querySelector(".status-dot")).not.toHaveClass("ready");
+ ## Diagnostics and tracing
+ 
+ Open **Settings → Troubleshooting** for problem-specific links to Connections, Activity, and Runtime & services, followed by report export and request tracing. Installed-environment service controls are under Runtime & services; account credential recovery remains under Troubleshooting. Metadata tracing records request lifecycle/correlation information without full tool argument/result bodies. Desktop can edit its local Server and an installed Environment's verified current-user Server service. For a non-persistent local Runtime, tracing edit authority uses the exact Desktop-managed private environment file and Server ownership, independently of Runtime switching or Runner ownership. A stopped Server's managed configuration remains editable; Save & Restart requires separate Server control authority. Administrator guidance applies only to a saved system-scope Environment. The tracing selector stays visible. Remote, system-scope, unowned or unavailable Servers show a disabled selector with the effective mode (or an explicit unconfirmed value) and specific guidance. Configuration navigation is independent of editing: a known local configuration directory remains accessible, and read-only views can copy `WEBCODEX_TOOL_REQUEST_TRACE=metadata`. System-service changes require administrator/service permissions; remote changes must be made on the Server machine. Ownership and ACL checks remain unchanged. Full tracing can contain sensitive inputs/results and requires explicit confirmation; enable it only temporarily.
+```
+
+**File**: `docs/DESKTOP_RUNTIME_COMPATIBILITY.zh-CN.md` (modified, +13/-0)
+```diff
+@@ -36,6 +36,19 @@ cargo build --locked --profile dogfood -p webcodex-cli -p webcodex -p webcodex-r
+ 
+ 此时选择 `target/dogfood`。三个程序都支持单独运行 `--build-info-json`，在启动服务/读取 Runtime 配置之前输出 schema version 1 的构建信息。不能识别的外部程序不会被默认视为兼容。macOS 签名、Gatekeeper 和 Computer Use 权限是独立的操作系统约束，不能用协议兼容代替它们。
+ 
++## Windows 登录自启
 +
-+    rerender(<LocaleProvider><ConnectionCard {...props} pendingAction="restart" /></LocaleProvider>);
-+    expect(status).toHaveTextContent(connectionsToolsText(locale, "restarting"));
-+    expect(card).toHaveAttribute("aria-busy", "true");
++**登录时启动 WebCodex** 控制的是登录 Windows 后是否打开 Desktop。
++在持久 Environment 中，Server 和 Runner 由各自的 WebCodex 受管计划任务启动。
++关闭 Desktop 的登录自启开关后，这些后台服务任务仍会保留。
 +
-+    rerender(<LocaleProvider><ConnectionCard {...props} busy={false} pendingAction={null} /></LocaleProvider>);
-+    expect(card).toHaveAttribute("aria-busy", "false");
-+  });
-   it.each(PRODUCT_LOCALES)("keeps the two-column metadata and translated labels in %s", (locale) => {
-     localStorage.setItem("webcodex.desktop.locale", locale);
-     const profile = connectionFixture({
-```
-
-**File**: `apps/desktop/src/features/connection/ConnectionCard.tsx` (modified, +8/-4)
-```diff
-@@ -34,10 +34,11 @@ function recoveryFor(profile: TunnelConnection): Recovery {
-   }
- }
++Windows 持久 Environment 目前没有受支持的纯手动模式，无法同时禁用后台
++服务的登录触发器并继续通过 Desktop 管理这些服务。受管任务的校验要求
++登录触发器处于启用状态。在任务计划程序中禁用触发器后，Desktop 或 CLI
++可能会报 `service_foreignservice`。尝试恢复前，先核对原任务的来源和配置。
++恢复 WebCodex 创建的登录触发器也会恢复后台服务的登录自启。排查期间请保留
++现有任务、Environment 和已保存的凭据。
++
+ ## 故障排查与诊断包
  
--export function ConnectionCard({ profile, canStart, busy, copied, onAction, onEdit, onDelete, onCopy, onSettings }: {
-+export function ConnectionCard({ profile, canStart, busy, pendingAction, copied, onAction, onEdit, onDelete, onCopy, onSettings }: {
-   profile: TunnelConnection;
-   canStart: boolean;
-   busy: boolean;
-+  pendingAction?: TunnelProfileAction | null;
-   copied: boolean;
-   onAction: (action: TunnelProfileAction) => void;
-   onEdit: () => void;
-@@ -58,7 +59,10 @@ export function ConnectionCard({ profile, canStart, busy, copied, onAction, onEd
-   const failed = !profile.ready && Boolean(profile.last_error || profile.lifecycle === "error");
-   const recovery = recoveryFor(profile);
-   const healthStale = profile.last_error === "health_stale";
--  const status = profile.server_restart_required
-+  const status = pendingAction === "stop" ? c("stopping")
-+    : pendingAction === "restart" ? c("restarting")
-+    : pendingAction === "start" ? p("starting")
-+    : profile.server_restart_required
-     ? c("pendingServerRestart")
-     : profile.ready
-       ? p("running")
-@@ -109,8 +113,8 @@ export function ConnectionCard({ profile, canStart, busy, copied, onAction, onEd
-   if (profile.reason_code) detailRows.push({ label: "reasonCode", value: <code>{profile.reason_code}</code> });
-   if (profile.local_mcp_url) detailRows.push({ label: "mcpAddress", value: <code>{profile.local_mcp_url}</code>, path: true });
-   if (profile.runtime_directory) detailRows.push({ label: "runtimeDirectory", value: <code>{profile.runtime_directory}</code>, path: true });
--  return <article className="connection-profile" aria-labelledby={`connection-${profile.id}`} data-tunnel-profile-id={profile.id}>
--    <header className="workspace-section-heading"><div><h2 id={`connection-${profile.id}`}>{profile.name}</h2></div><span className={`connection-state ${profile.ready ? "ready" : ""}`} role="status"><i className={`status-dot ${profile.ready ? "ready" : failed ? "error" : "unknown"}`} aria-hidden="true" />{status}</span></header>
-+  return <article className="connection-profile" aria-busy={Boolean(pendingAction)} aria-labelledby={`connection-${profile.id}`} data-tunnel-profile-id={profile.id}>
-+    <header className="workspace-section-heading"><div><h2 id={`connection-${profile.id}`}>{profile.name}</h2></div><span className={`connection-state ${profile.ready && !pendingAction ? "ready" : ""}`} role="status"><i className={`status-dot ${pendingAction ? "unknown" : profile.ready ? "ready" : failed ? "error" : "unknown"}`} aria-hidden="true" />{status}</span></header>
-     <div className="connection-id"><span>{c("tunnelId")}</span><code>{profile.tunnel_id || "—"}</code>{profile.tunnel_id && <button type="button" className="text-button" aria-label={`${c("copyId")} ${profile.name}`} onClick={onCopy}>{copied ? p("copied") : c("copyId")}</button>}</div>
-     {profile.server_restart_required && <div className="connection-apply-note" role="status"><strong>{c("pendingServerRestart")}</strong><span>{c("profileRestartHelp")}</span></div>}
-     {failed && <div className="connection-recovery" role="status"><strong>{c(recovery.title)}</strong><p>{c(recovery.action)}</p>{autoProxyRecovery && <p>{c("autoProxyHint")}</p>}
-```
-
-**File**: `apps/desktop/src/features/connection/ConnectionPanel.tsx` (modified, +8/-1)
-```diff
-@@ -34,6 +34,8 @@ export function ConnectionPanel({ state, onState, onSettings, initialClient, cha
-   const [editor, setEditor] = useState<{ profile: TunnelConnection | null; geminiNamed?: boolean; chatgptPreset?: boolean } | null>(null);
-   const [deleting, setDeleting] = useState<TunnelConnection | null>(null);
-   const [busyId, setBusyId] = useState<string | null>(null);
-+  const [tunnelAction, setTunnelAction] = useState<TunnelProfileAction | null>(null);
-+  const [serverAction, setServerAction] = useState<"start" | "restart" | null>(null);
-   const [failed, setFailed] = useState<DesktopError | null>(null);
-   useEffect(() => {
-     setFailed(previous => previous && isErrorStaleForState(previous, state) ? null : previous);
-@@ -112,6 +114,7 @@ export function ConnectionPanel({ state, onState, onSettings, initialClient, cha
-     if (submitting.current || state.current_operation) return;
-     submitting.current = true;
-     setBusyId(id);
-+    setTunnelAction(action);
-     setFailed(null);
-     setSaved(false);
-     try {
-@@ -122,12 +125,14 @@ export function ConnectionPanel({ state, onState, onSettings, initialClient, cha
-     } finally {
-       submitting.current = false;
-       setBusyId(null);
-+      setTunnelAction(null);
-     }
-   };
-   const runServer = async (action: "start" | "restart") => {
-     if (!environmentId || submitting.current || state.current_operation) return;
-     submitting.current = true;
-     setBusyId("__server__");
-+    setServerAction(action);
-     setFailed(null);
-     setSaved(false);
-     try {
-@@ -137,6 +142,7 @@ export function ConnectionPanel({ state, onState, onSettings, initialClient, cha
-     } finally {
-       submitting.current = false;
-       setBusyId(null);
-+      setServerAction(null);
-     }
-   };
-   const diagnostics = () => onSettings("diagnostics");
-@@ -159,6 +165,7 @@ export function ConnectionPanel({ state, onState, onSettings, initialClient, cha
-   }
-   return <section className="page-section workspace-page" aria-labelledby="connection-title" data-webcodex-page="connection">
-     <header className="page-heading-row"><h1 id="connection-title">{c("connections")}</h1></header>
-+    {serverAction && <p role="status" className="workspace-notice">{serverAction === "restart" ? c("restarting") : p("starting")}</p>}
-     {local && state.topology?.runner.kind === "local" && <p className="lede">{c("sharedRuntimeHelp")}</p>}
-     {state.topology?.server.kind === "remote" && <p className="workspace-notice"><code>{state.topology.server.url}</code></p>}
-     {presentation.externalConnectionUnobserved && <p className="workspace-notice">{c("externalConnectionUnobserved")}</p>}
-@@ -201,7 +208,7 @@ export function ConnectionPanel({ state, onState, onSettings, initialClient, cha
-           <button type="button" className="secondary-button" disabled={disabled} onClick={() => void desktopApi.resumeSavedRuntime().then(onState).catch(value => setFailed(normalizeDesktopError(value)))}>{p("start")} WebCodex</button></div>}
-       {openaiProfiles.some(profile => profile.ready) && <p className="field-help">{c("chatgptNextStep")}</p>}
-       {(openaiProfiles.length > 0 || state.chatgpt_activity?.observed) && <ChatgptObservation state={state} queryStatus={chatgptActivityQueryStatus} />}
--      <div className="connection-list">{openaiProfiles.map(profile => <ConnectionCard key={profile.id} profile={profile} canStart={local && state.readiness.runtime_ready} busy={disabled || !canManageConnections} copied={copiedId === profile.id}
-+      <div className="connection-list">{openaiProfiles.map(profile => <ConnectionCard key={profile.id} profile={profile} canStart={local && state.readiness.runtime_ready} busy={disabled || !canManageConnections} pendingAction={busyId === profile.id ? tunnelAction : null} copied={copiedId === profile.id}
-         onAction={action => void run(profile.id, action)} onSettings={onSettings}
-         onEdit={() => { setSaved(false); setEditor({ profile }); }} onDelete={() => { setFailed(null); setDeleting(profile); }}
-         onCopy={() => { if (profile.tunnel_id) void writeText(profile.tunnel_id).then(() => setCopiedId(profile.id)).catch(value => setFailed(normalizeDesktopError(value))); }} />)}</div>
-```
-
-**File**: `apps/desktop/src/features/dashboard/Dashboard.tsx` (modified, +0/-1)
-```diff
-@@ -47,7 +47,6 @@ export function Dashboard({ state, chatgptActivityQueryStatus, activity, refresh
-   return <section className="page-section workspace-page dashboard-page" aria-labelledby="home-title" data-webcodex-page="home">
-     <header className="page-heading-row">
-       <div><h1 id="home-title">{p("overview")}</h1>
--        {state.readiness.runtime_ready && <p role="status"><i className="status-dot ready" aria-hidden="true" /> WebCodex · {p("running")}</p>}
-       </div>
-       <Button variant="default" className="secondary-button" disabled={Boolean(state.current_operation) || refreshing} onClick={() => void onRefresh()}>{p("refresh")}</Button>
-     </header>
-```
-
-**File**: `apps/desktop/src/i18n/connections-tools.ts` (modified, +1/-0)
-```diff
-@@ -149,6 +149,7 @@ export const CONNECTIONS_TOOLS_MESSAGES = {
-   operationFailed: ["Could not apply the change. Refresh and check the saved settings before retrying.", "未能应用更改。请刷新并检查已保存的配置后重试。", "Änderung fehlgeschlagen. Aktualisieren und gespeicherte Einstellungen prüfen.", "Modification impossible. Actualisez et vérifiez les paramètres enregistrés.", "変更を適用できませんでした。更新して保存された設定を確認してください。", "변경을 적용하지 못했습니다. 새로 고침 후 저장된 설정을 확인하세요.", "未能應用更改。請重新整理並檢查已儲存的設定後重試。"],
-   configError: ["Saved configuration is unavailable. The original file has not been replaced.", "无法读取配置，原始文件未被覆盖。", "Konfiguration nicht verfügbar. Originaldatei wurde nicht ersetzt.", "Configuration indisponible. Le fichier d’origine n’a pas été remplacé.", "設定を読み込めません。元のファイルは変更していません。", "설정을 읽을 수 없습니다. 원본 파일은 교체되지 않았습니다.", "無法讀取設定，原始檔案未被覆蓋。"],
-   stopping: ["Stopping", "停止中", "Wird beendet", "Arrêt en cours", "停止処理中", "중지 중", "停止中"],
-+  restarting: ["Restarting…", "正在重启…", "Neustart läuft…", "Redémarrage en cours…", "再起動中…", "다시 시작하는 중…", "正在重新啟動…"],
-   logs: ["Connection events", "连接事件", "Verbindungsereignisse", "Événements de connexion", "接続イベント", "연결 이벤트", "連線事件"],
-   mcpProviders: ["MCP servers", "MCP 工具服务", "MCP-Server", "Serveurs MCP", "MCP サーバー", "MCP 서버", "MCP 工具服務"],
-   addMcpProvider: ["Add MCP server", "添加 MCP 服务", "MCP-Server hinzufügen", "Ajouter un serveur MCP", "MCP サーバーを追加", "MCP 서버 추가", "新增 MCP 服務"],
-```
-
----
-
-### Incident Patch 2: `33f8c508` (2026-11-23)
-**Commit Message**: chore: bump WebCodex and Desktop versions to 0.5.1 (#1436)
-
-Co-authored-by: yyjeqhc <[REDACTED_EMAIL]>
-
-**File**: `Cargo.lock` (modified, +22/-22)
-```diff
-@@ -5477,7 +5477,7 @@ dependencies = [
- 
- [[package]]
- name = "webcodex"
--version = "0.5.0"
-+version = "0.5.1"
- dependencies = [
-  "anyhow",
-  "base64",
-@@ -5528,7 +5528,7 @@ dependencies = [
- 
- [[package]]
- name = "webcodex-admin"
--version = "0.5.0"
-+version = "0.5.1"
- dependencies = [
-  "reqwest 0.12.28",
-  "serde_json",
-@@ -5538,7 +5538,7 @@ dependencies = [
- 
- [[package]]
- name = "webcodex-browser"
--version = "0.5.0"
-+version = "0.5.1"
- dependencies = [
-  "base64",
-  "fs2",
-@@ -5559,14 +5559,14 @@ dependencies = [
- 
- [[package]]
- name = "webcodex-build-info"
--version = "0.5.0"
-+version = "0.5.1"
- dependencies = [
-  "webcodex-core",
- ]
- 
- [[package]]
- name = "webcodex-cli"
--version = "0.5.0"
-+version = "0.5.1"
- dependencies = [
-  "chrono",
-  "crossterm",
-@@ -5600,7 +5600,7 @@ dependencies = [
- 
- [[package]]
- name = "webcodex-code-mode"
--version = "0.5.0"
-+version = "0.5.1"
- dependencies = [
-  "deno_core_icudata",
-  "serde",
-@@ -5611,7 +5611,7 @@ dependencies = [
- 
- [[package]]
- name = "webcodex-computer"
--version = "0.5.0"
-+version = "0.5.1"
- dependencies = [
-  "base64",
-  "block2",
-@@ -5635,7 +5635,7 @@ dependencies = [
- 
- [[package]]
- name = "webcodex-computer-control"
--version = "0.5.0"
-+version = "0.5.1"
- dependencies = [
-  "serde",
-  "serde_json",
-@@ -5646,7 +5646,7 @@ dependencies = [
- 
- [[package]]
- name = "webcodex-core"
--version = "0.5.0"
-+version = "0.5.1"
- dependencies = [
-  "base64",
-  "getrandom 0.3.4",
-@@ -5660,7 +5660,7 @@ dependencies = [
- 
- [[package]]
- name = "webcodex-environment"
--version = "0.5.0"
-+version = "0.5.1"
- dependencies = [
-  "dirs",
-  "fs2",
-@@ -5686,7 +5686,7 @@ dependencies = [
- 
- [[package]]
- name = "webcodex-lsp"
--version = "0.5.0"
-+version = "0.5.1"
- dependencies = [
-  "libc",
-  "serde_json",
-@@ -5720,7 +5720,7 @@ dependencies = [
- 
- [[package]]
- name = "webcodex-persistent-shell"
--version = "0.5.0"
-+version = "0.5.1"
- dependencies = [
-  "base64",
-  "libc",
-@@ -5732,7 +5732,7 @@ dependencies = [
- 
- [[package]]
- name = "webcodex-process"
--version = "0.5.0"
-+version = "0.5.1"
- dependencies = [
-  "libc",
-  "tempfile",
-@@ -5741,7 +5741,7 @@ dependencies = [
- 
- [[package]]
- name = "webcodex-runner"
--version = "0.5.0"
-+version = "0.5.1"
- dependencies = [
-  "agent-client-protocol-schema",
-  "base64",
-@@ -5785,7 +5785,7 @@ dependencies = [
- 
- [[package]]
- name = "webcodex-runner-config"
--version = "0.5.0"
-+version = "0.5.1"
- dependencies = [
-  "serde",
-  "toml 0.8.23",
-@@ -5794,7 +5794,7 @@ dependencies = [
- 
- [[package]]
- name = "webcodex-runner-registry"
--version = "0.5.0"
-+version = "0.5.1"
- dependencies = [
-  "chrono",
-  "serde",
-@@ -5808,7 +5808,7 @@ dependencies = [
- 
- [[package]]
- name = "webcodex-store"
--version = "0.5.0"
-+version = "0.5.1"
- dependencies = [
-  "anyhow",
-  "chrono",
-@@ -5826,7 +5826,7 @@ dependencies = [
- 
- [[package]]
- name = "webcodex-tool-contracts"
--version = "0.5.0"
-+version = "0.5.1"
- dependencies = [
-  "regex",
-  "schemars 1.2.2",
-@@ -5838,7 +5838,7 @@ dependencies = [
- 
- [[package]]
- name = "webcodex-tool-runtime-contracts"
--version = "0.5.0"
-+version = "0.5.1"
- dependencies = [
-  "serde",
-  "serde_json",
-@@ -5850,7 +5850,7 @@ dependencies = [
- 
- [[package]]
- name = "webcodex-validation"
--version = "0.5.0"
-+version = "0.5.1"
- dependencies = [
-  "libc",
-  "serde",
-@@ -5867,7 +5867,7 @@ dependencies = [
- 
- [[package]]
- name = "webcodex-workflow-session"
--version = "0.5.0"
-+version = "0.5.1"
- dependencies = [
-  "base64",
-  "chrono",
-@@ -5885,7 +5885,7 @@ dependencies = [
- 
- [[package]]
- name = "webcodex-workspace"
--version = "0.5.0"
-+version = "0.5.1"
- dependencies = [
-  "glob",
-  "serde",
-```
-
-**File**: `Cargo.toml` (modified, +1/-1)
-```diff
-@@ -26,7 +26,7 @@ members = [
- resolver = "2"
- 
- [workspace.package]
--version = "0.5.0"
-+version = "0.5.1"
- license = "Apache-2.0"
- edition = "2021"
- 
-```
-
-**File**: `apps/desktop/package-lock.json` (modified, +2/-2)
-```diff
-@@ -1,12 +1,12 @@
- {
-   "name": "@webcodex/desktop",
--  "version": "0.5.0",
-+  "version": "0.5.1",
-   "lockfileVersion": 3,
-   "requires": true,
-   "packages": {
-     "": {
-       "name": "@webcodex/desktop",
--      "version": "0.5.0",
-+      "version": "0.5.1",
-       "dependencies": {
-         "@mantine/core": "^9.6.2",
-         "@mantine/hooks": "^9.6.2",
-```
-
-**File**: `apps/desktop/package.json` (modified, +1/-1)
-```diff
-@@ -1,7 +1,7 @@
- {
-   "name": "@webcodex/desktop",
-   "private": true,
--  "version": "0.5.0",
-+  "version": "0.5.1",
-   "type": "module",
-   "scripts": {
-     "dev": "vite --host 127.0.0.1 --port 1420",
-```
-
-**File**: `apps/desktop/src-tauri/Cargo.lock` (modified, +7/-7)
-```diff
-@@ -5035,14 +5035,14 @@ dependencies = [
- 
- [[package]]
- name = "webcodex-build-info"
--version = "0.5.0"
-+version = "0.5.1"
- dependencies = [
-  "webcodex-core",
- ]
- 
- [[package]]
- name = "webcodex-computer-control"
--version = "0.5.0"
-+version = "0.5.1"
- dependencies = [
-  "serde",
-  "serde_json",
-@@ -5053,7 +5053,7 @@ dependencies = [
- 
- [[package]]
- name = "webcodex-core"
--version = "0.5.0"
-+version = "0.5.1"
- dependencies = [
-  "base64 0.22.1",
-  "getrandom 0.3.4",
-@@ -5067,7 +5067,7 @@ dependencies = [
- 
- [[package]]
- name = "webcodex-desktop"
--version = "0.5.0"
-+version = "0.5.1"
- dependencies = [
-  "libc",
-  "reqwest 0.12.28",
-@@ -5099,7 +5099,7 @@ dependencies = [
- 
- [[package]]
- name = "webcodex-environment"
--version = "0.5.0"
-+version = "0.5.1"
- dependencies = [
-  "dirs 6.0.0",
-  "fs2",
-@@ -5141,15 +5141,15 @@ dependencies = [
- 
- [[package]]
- name = "webcodex-process"
--version = "0.5.0"
-+version = "0.5.1"
- dependencies = [
-  "libc",
-  "windows-sys 0.61.2",
- ]
- 
- [[package]]
- name = "webcodex-runner-config"
--version = "0.5.0"
-+version = "0.5.1"
- dependencies = [
-  "serde",
-  "toml 0.8.2",
-```
-
-**File**: `apps/desktop/src-tauri/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- [package]
- name = "webcodex-desktop"
--version = "0.5.0"
-+version = "0.5.1"
- description = "WebCodex Desktop runtime and setup control surface"
- edition = "2021"
- publish = false
-```
-
-**File**: `apps/desktop/src-tauri/tauri.conf.json` (modified, +1/-1)
-```diff
-@@ -2,7 +2,7 @@
-   "$schema": "https://schema.tauri.app/config/2",
-   "productName": "WebCodex Desktop",
-   "mainBinaryName": "WebCodex",
--  "version": "0.5.0",
-+  "version": "0.5.1",
-   "identifier": "dev.webcodex.desktop",
-   "build": {
-     "beforeDevCommand": "npm run dev",
-```
-
-**File**: `npm/webcodex/manifest.example.json` (modified, +7/-7)
-```diff
-@@ -1,29 +1,29 @@
- {
--  "version": "0.5.0",
-+  "version": "0.5.1",
-   "binaries": ["webcodex", "webcodex-server", "webcodex-runner"],
-   "artifacts": {
-     "linux-x64": {
--      "url": "https://github.com/yyjeqhc/webcodex/releases/download/v0.5.0/webcodex-v0.5.0-linux-x64.tar.gz",
-+      "url": "https://github.com/yyjeqhc/webcodex/releases/download/v0.5.1/webcodex-v0.5.1-linux-x64.tar.gz",
-       "sha256": "REPLACE_WITH_RELEASE_ARTIFACT_SHA256"
-     },
-     "linux-arm64": {
--      "url": "https://github.com/yyjeqhc/webcodex/releases/download/v0.5.0/webcodex-v0.5.0-linux-arm64.tar.gz",
-+      "url": "https://github.com/yyjeqhc/webcodex/releases/download/v0.5.1/webcodex-v0.5.1-linux-arm64.tar.gz",
-       "sha256": "REPLACE_WITH_RELEASE_ARTIFACT_SHA256"
-     },
-     "darwin-x64": {
--      "url": "https://github.com/yyjeqhc/webcodex/releases/download/v0.5.0/webcodex-v0.5.0-darwin-x64.tar.gz",
-+      "url": "https://github.com/yyjeqhc/webcodex/releases/download/v0.5.1/webcodex-v0.5.1-darwin-x64.tar.gz",
-       "sha256": "REPLACE_WITH_RELEASE_ARTIFACT_SHA256"
-     },
-     "darwin-arm64": {
--      "url": "https://github.com/yyjeqhc/webcodex/releases/download/v0.5.0/webcodex-v0.5.0-darwin-arm64.tar.gz",
-+      "url": "https://github.com/yyjeqhc/webcodex/releases/download/v0.5.1/webcodex-v0.5.1-darwin-arm64.tar.gz",
-       "sha256": "REPLACE_WITH_RELEASE_ARTIFACT_SHA256"
-     },
-     "win32-x64": {
--      "url": "https://github.com/yyjeqhc/webcodex/releases/download/v0.5.0/webcodex-v0.5.0-win32-x64.tar.gz",
-+      "url": "https://github.com/yyjeqhc/webcodex/releases/download/v0.5.1/webcodex-v0.5.1-win32-x64.tar.gz",
-       "sha256": "REPLACE_WITH_RELEASE_ARTIFACT_SHA256"
-     },
-     "win32-arm64": {
--      "url": "https://github.com/yyjeqhc/webcodex/releases/download/v0.5.0/webcodex-v0.5.0-win32-arm64.tar.gz",
-+      "url": "https://github.com/yyjeqhc/webcodex/releases/download/v0.5.1/webcodex-v0.5.1-win32-arm64.tar.gz",
-       "sha256": "REPLACE_WITH_RELEASE_ARTIFACT_SHA256"
-     }
-   }
+ “设置 → Runtime 与服务”先展示服务状态和本机服务的启动、停止、重启操作，再展示程序来源与兼容性；构建信息在“版本与文件详情”中。已安装环境的程序统一通过“关于与更新”升级。
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1440** (2026-11-24): docs: distinguish Windows Desktop and service startup (@cloudgpuapp)
 - **PR #1437** (2026-11-23): perf(desktop): accelerate Windows status checks and acknowledge lifecycle actions (@swjnxyf)
 - **PR #1436** (2026-11-23): chore: bump WebCodex and Desktop versions to 0.5.1 (@swjnxyf)
 - **PR #1435** (2026-11-23): Desktop 一键准备本机环境、Windows 无控制台任务和 Gemini 连接 (@yyjeqhc)
 - **PR #1434** (2026-11-22): fix(desktop): unify structured error diagnostics, state-error lifecycle, and safe recovery (@yyjeqhc)
 - **PR #1433** (2026-11-22): Prepare Gemini web connections from WebCodex Desktop (@yyjeqhc)
-- **PR #1432** (2026-11-22): Support OAuth dynamic registration on Desktop Cloudflare ingress (@yyjeqhc)
 
 ---
 
@@ -2850,39 +2274,46 @@ Co-authored-by: yyjeqhc <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. desktop): accelerate Windows status checks and acknowledge lifecycle actions
+## X. docs: distinguish Windows Desktop and service startup
 
 **RULE**:
-When implementing operations in `apps/desktop/src/App.test.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yyjeqhc/webcodex. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/DESKTOP_RUNTIME_COMPATIBILITY.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yyjeqhc/webcodex. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `026413dc`: desktop): accelerate Windows status checks and acknowledge lifecycle actions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `70315e49`: docs: distinguish Windows Desktop and service startup. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/desktop/src/App.test.tsx`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/DESKTOP_RUNTIME_COMPATIBILITY.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    expect(screen.getByRole("complementary")).toHaveTextContent("WebCodex · 运行中");
-    expect(screen.queryByRole("status")).not.toBeInTheDocument();
-    // Activity observation may enter Pending before this assertion: neither state means the Tunnel is disconnected.
-    expect(screen.getByRole("button", { name: /ChatGPT/ }))
-      .toHaveTextContent(/(尚未检查|正在检查|尚未观察到) ChatGPT 活动/);
-    expect(screen.getByRole("complementary")).toHaveTextContent("WebCodex · 运行中");
-    expect(screen.queryByRole("status")).not.toBeInTheDocument();
+## Windows login startup
+
+**Launch WebCodex at login** controls whether Windows opens the Desktop app
+when you sign in. A persistent Environment has separate WebCodex-managed
+Task Scheduler entries for Server and Runner. Turning off Desktop login
+startup leaves those background service tasks in place.
+
+The Windows persistent Environment currently has no supported manual-only
+mode that keeps its services manageable from Desktop while disabling their
+login triggers. The managed-task check expects an enabled login trigger.
+If you disable the trigger in Task Scheduler, Desktop or the CLI can report
+`service_foreignservice` for that task. Check the existing task's origin and
+configuration before attempting recovery. Restoring the WebCodex-managed
+trigger also restores background login startup. Leave the task, Environment,
+and saved credentials in place while diagnosing the mismatch.
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-    expect(screen.getByRole("status")).toHaveTextContent("WebCodex · 运行中");
-    expect(screen.getByText(/尚未检查 ChatGPT 活动/)).toBeInTheDocument();
-    expect(screen.getByRole("status")).toHaveTextContent("WebCodex · 运行中");
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `026413dc` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `70315e49` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

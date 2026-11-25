@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-25T04:16:02.643Z",
+  "updated_at": "2026-11-25T04:31:21.927Z",
   "stats": {
-    "total_discovered": 9217,
-    "approved_pending_harvest": 8729,
+    "total_discovered": 9219,
+    "approved_pending_harvest": 8730,
     "harvested_count": 0,
-    "rejected_count": 488,
+    "rejected_count": 489,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 8725,
+      "COMMUNITY_AND_EXPERT": 8727,
       "OFFICIAL_DOCUMENTATION": 275,
       "STANDARDS_AND_SPECIFICATIONS": 149,
       "ENGINEERING_BLOGS": 7,
@@ -199385,6 +199385,43 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
         "fileName": "argoproj-argo-workflows-learnings.md"
+      }
+    },
+    "SRC-E4F00DEE4F35": {
+      "id": "SRC-E4F00DEE4F35",
+      "url": "https://juicefs.com/static/juicefs%60",
+      "title": "https://juicefs.com/static/juicefs%60",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T04:31:21.844Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/juicedata-juicefs-learnings.md",
+        "fileName": "juicedata-juicefs-learnings.md"
+      }
+    },
+    "SRC-1EC5D4C5C327": {
+      "id": "SRC-1EC5D4C5C327",
+      "url": "http://s.juicefs.com/static/Darwin/mount.arm64",
+      "title": "http://s.juicefs.com/static/Darwin/mount.arm64",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-25T04:31:21.927Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/juicedata-juicefs-learnings.md",
+        "fileName": "juicedata-juicefs-learnings.md"
       }
     }
   }

@@ -6013,10 +6013,10 @@
     "repository": "juicedata/juicefs",
     "platform": "github",
     "sourceUrl": "https://github.com/juicedata/juicefs",
-    "sourceVersion": "8ee0ca3e",
+    "sourceVersion": "b4f20cf3",
     "license": "Apache-2.0",
-    "contentHash": "018417823bff8370acf617960f4f09d0eea4c05f7d67a1149e6bbbf715410acd",
-    "lastHarvestedAt": "2026-11-24T11:21:58.641Z",
+    "contentHash": "965ecf469398c93a9f75fa4bd12b49fbdffa81a77c0d75e607fc90beb0bb7125",
+    "lastHarvestedAt": "2026-11-25T04:31:15.558Z",
     "learningId": "learn-github-juicedata-juicefs"
   },
   "redisearch-redisearch": {
@@ -7893,10 +7893,10 @@
     "repository": "darrylmorley/whatcable",
     "platform": "github",
     "sourceUrl": "https://github.com/darrylmorley/whatcable",
-    "sourceVersion": "0a49393d",
+    "sourceVersion": "0cf0a678",
     "license": "NOASSERTION",
-    "contentHash": "702bb03d3a7965d838b5973518fc235812e1007b22be4c682518b5e882735e38",
-    "lastHarvestedAt": "2026-11-22T18:00:24.473Z",
+    "contentHash": "13fc8620da9625427e235272d83e74fddc99e40f2c0e0f037ca16565229b8f06",
+    "lastHarvestedAt": "2026-11-25T04:31:12.040Z",
     "learningId": "learn-github-darrylmorley-whatcable"
   },
   "xcodesorg-xcodesapp": {
@@ -12303,10 +12303,10 @@
     "repository": "yyjeqhc/webcodex",
     "platform": "github",
     "sourceUrl": "https://github.com/yyjeqhc/webcodex",
-    "sourceVersion": "026413dc",
+    "sourceVersion": "70315e49",
     "license": "Apache-2.0",
-    "contentHash": "d5800c97d65a87fb2c5b0b74264738d3f11bffbd1796739f0dade5e0484f25a6",
-    "lastHarvestedAt": "2026-11-24T01:55:59.548Z",
+    "contentHash": "c4cacd3ddc16d318fc5f5396ce0edee873ff670fb37af9c167b54dd30439d5ca",
+    "lastHarvestedAt": "2026-11-25T04:31:05.559Z",
     "learningId": "learn-github-yyjeqhc-webcodex"
   },
   "hf-minimaxai-minimax-h3-image": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T04:16:04.663Z",
+  "last_updated": "2026-11-25T04:31:22.491Z",
   "total_records": 2630,
   "domains": {
     "A": {
@@ -10398,8 +10398,8 @@
       "title": "Architecture Intelligence: juicedata/juicefs Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-juicedata-juicefs-architecture-intelligence-juicedata-juicefs-core-invariants.md",
       "repository": "juicedata/juicefs",
-      "content_hash": "492878cbe67b5913b1efc2c41528d9f868ddd6ba0ae823bcdfdce608013f18a2",
-      "created_at": "2026-11-24T11:21:59.064Z"
+      "content_hash": "88a9641dd091d78f6c7bd6e3c4f4484c3b253993cb9575ffd4cd9c2dd190b606",
+      "created_at": "2026-11-25T04:31:16.157Z"
     },
     "domain_intelligence-architecture-intelligence-clockworklabs-spacetimedb-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-clockworklabs-spacetimedb-core-invariants",
@@ -21437,8 +21437,8 @@
       "title": "Research & Knowledge Intelligence: darrylmorley/whatcable Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-darrylmorley-whatcable-research-knowledge-intelligence-darrylmorley-whatcable-co.md",
       "repository": "darrylmorley/whatcable",
-      "content_hash": "82bc95a75e84fa06f9cd678019571a9e6a72cd8cb3d7daf0935fa7c032da8e9e",
-      "created_at": "2026-11-22T18:00:24.790Z"
+      "content_hash": "192db6a763a9ef2858edcfcec1c2bebb1ee2c85da3effc07fd621150ba6fbc29",
+      "created_at": "2026-11-25T04:31:12.617Z"
     },
     "domain_intelligence-architecture-intelligence-paradedb-paradedb-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-paradedb-paradedb-core-invariants",
@@ -21599,8 +21599,8 @@
       "title": "Research & Knowledge Intelligence: darrylmorley-whatcable-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-darrylmorley-whatcable-learnings-research-knowledge-intelligence-darrylmorley-wh.md",
       "repository": "darrylmorley-whatcable-learnings",
-      "content_hash": "d723b6d98cbbc6a8005fed856d1fcbdb8249dc78e0172aaf170fa7cf4c5a686e",
-      "created_at": "2026-11-22T18:00:33.594Z"
+      "content_hash": "67412947dca7dc05111b31d7f60e8ae298d43ad6e8422dea4f19d7542a985ea4",
+      "created_at": "2026-11-25T04:31:21.237Z"
     },
     "domain_intelligence-architecture-intelligence-nasiko-labs-nasiko-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-nasiko-labs-nasiko-core-invariants",
@@ -24284,8 +24284,8 @@
       "title": "Technical Construction Intelligence: yyjeqhc/webcodex Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-yyjeqhc-webcodex-technical-construction-intelligence-yyjeqhc-webcodex-core-invar.md",
       "repository": "yyjeqhc/webcodex",
-      "content_hash": "d08092bf84d27844c1b6aef31e5499de05a6c06d69b9d4f6d84a731273703290",
-      "created_at": "2026-11-22T18:35:18.596Z"
+      "content_hash": "994a348dc8b1adbfbacb9de01c15bf82c42bce097660492bd0cd4d7180d0751c",
+      "created_at": "2026-11-25T04:31:06.208Z"
     },
     "domain_intelligence-technical-construction-intelligence-yyjeqhc-webcodex-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-yyjeqhc-webcodex-learnings-core-invariants",
@@ -24293,8 +24293,8 @@
       "title": "Technical Construction Intelligence: yyjeqhc-webcodex-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-yyjeqhc-webcodex-learnings-technical-construction-intelligence-yyjeqhc-webcodex-.md",
       "repository": "yyjeqhc-webcodex-learnings",
-      "content_hash": "c690cae8184898aaa35cfe100ea3903975d83b00f314b142274818c2c990298a",
-      "created_at": "2026-11-22T18:35:29.409Z"
+      "content_hash": "871be9de2ca24267d2c48c7dc6b421d31531754e16a2e30acd0c0f0708d6a87d",
+      "created_at": "2026-11-25T04:31:20.026Z"
     },
     "domain_intelligence-technical-construction-intelligence-tursodatabase-limbo-learnings-core-invariant": {
       "record_id": "domain_intelligence-technical-construction-intelligence-tursodatabase-limbo-learnings-core-invariant",
@@ -24365,8 +24365,8 @@
       "title": "Architecture Intelligence: juicedata-juicefs-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-juicedata-juicefs-learnings-architecture-intelligence-juicedata-juicefs-learning.md",
       "repository": "juicedata-juicefs-learnings",
-      "content_hash": "b35e256455df93820865bcad010db22143d346709debbac1530910562f8e43a8",
-      "created_at": "2026-11-24T11:22:02.494Z"
+      "content_hash": "efaa4a6dc413c48882bc2907c63205f68205732d26098adce86b421aa5489b0f",
+      "created_at": "2026-11-25T04:31:22.491Z"
     },
     "domain_intelligence-research-knowledge-intelligence-pika-labs-pika-h3-flex-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-pika-labs-pika-h3-flex-core-invariants",
