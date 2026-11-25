@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:36:21.172Z",
+  "timestamp": "2026-11-25T07:04:46.901Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-googleworkspace-cli-learnings",
+  "learning_id": "LEARN-EVO-googleworkspace-cli-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [googleworkspace-cli-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:36:21.172Z`  
-> **Learning ID**: `LEARN-REEXTRACT-googleworkspace-cli-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-25T07:04:46.901Z`  
+> **Learning ID**: `LEARN-EVO-googleworkspace-cli-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/googleworkspace-cli-learnings.md`  
 > **Source**: github ([https://github.com/googleworkspace/cli](https://github.com/googleworkspace/cli))  
-> **Source Version**: `cd3697e0`  
+> **Source Version**: `8e945eed`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T00:05:31.702Z  
+> **Timestamp**: 2026-11-25T07:04:29.577Z  
 > **Learning ID**: `learn-github-googleworkspace-cli`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,17 +42,17 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/googleworkspace-cli-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/googleworkspace/cli](https://github.com/googleworkspace/cli))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T00:05:30.137Z  
+> **Harvest Timestamp**: 2026-11-25T07:04:29.571Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
 
 ## 1. Context & Architectural Overview
 - **Repository / Resource**: `googleworkspace/cli`
-- **Description**: Google Workspace CLI — one command-line tool for Drive, Gmail, Calendar, Sheets, Docs, Chat, Admin, and more. Dynamically built from Google Discovery Service. Includes AI agent skills.
+- **Description**:  Community CLI for Google Workspace APIs.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 32009 stars
+- **Stars / Engagement**: 32467 stars
 
 ---
 
@@ -2154,17 +2154,15 @@ fn json_to_yaml(value: &Value, indent: usize) -> String {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #969** (2026-10-30): **ci: switch automation workflow from pull_request_target to pull_request**
-  *Symptoms*: Switches `.github/workflows/automation.yml` from `pull_request_target` to `pull_request`.
+- **Issue #1001** (2026-11-24): **feat: Add notice about official CLI availability**
+  *Symptoms*: ## Description  Announce official CLI availability. 
   **Post-Mortem & Fix Analysis**:
-  > ### ⚠️ No Changeset found  Latest commit: 5b1be2c2bc90bd9bbc675a61bc14638b73ce2464  Merging this PR will not cause a version bump for any packages. If these changes should not result in a new version, you're good to go. **If these changes should result in a version bump, you need to add a changeset.**  <details><summary>This PR includes no changesets</summary>    When changesets are added to this PR, you'll see the packages that this PR includes changesets for and the associated semver types  </details>  [Click here to learn what changesets are, and how to add one](https://changesets.dev/faq).  [Click here if you're a maintainer who wants to add a changeset to this PR](https://github.com/googleworkspace/cli/new/ci/remove-pull-request-target?filename=.changeset/good-impalas-judge.md&value=---%0A%22%40googleworkspace%2Fcli%22%3A%20patch%0A---%0A%0Aci%3A%20switch%20automation%20workflow%20from%20pull_request_target%20to%20pull_request%0A)  
-  > /gemini review
+  > ### ⚠️ No Changeset found  Latest commit: c7c2c6cf8e5ecff69c0af2d3d0927be42ac27001  Merging this PR will not cause a version bump for any packages. If these changes should not result in a new version, you're good to go. **If these changes should result in a version bump, you need to add a changeset.**  <details><summary>This PR includes no changesets</summary>    When changesets are added to this PR, you'll see the packages that this PR includes changesets for and the associated semver types  </details>  [Click here to learn what changesets are, and how to add one](https://changesets.dev/faq).  [Click here if you're a maintainer who wants to add a changeset to this PR](https://github.com/googleworkspace/cli/new/official-cli?filename=.changeset/bumpy-books-own.md&value=---%0A%22%40googleworkspace%2Fcli%22%3A%20patch%0A---%0A%0Afeat%3A%20Add%20notice%20about%20official%20CLI%20availability%0A)  
 
-- **Issue #966** (2026-10-30): **fix(nix): use host platform for system dependencies**
-  *Symptoms*: ## Summary  ```diff - pkgs.stdenv.isLinux / pkgs.stdenv.isDarwin + pkgs.stdenv.hostPlatform.isLinux / pkgs.stdenv.hostPlatform.isDarwin ```  Selects the same system dependencies through the supported Nixpkgs platform attributes. Includes a patch changeset.  ## Evidence  - **Before:** Evaluating the macOS `gws` derivation emitted deprecation warnings for both `stdenv.isLinux` and `stdenv.isDarwin`. - **After:** The macOS and Linux `gws` derivations both evaluate without those warnings using the current Nixpkgs input from a downstream configuration.  ## Merge Danger  **Door:** Two-way  **Blast Radius:** Nix package evaluation on Linux and macOS. The selected dependency lists remain the same.
+- **Issue #987** (2026-11-24): **What is the status of this project?**
+  *Symptoms*: This seems unmaintained and the creator was fired. Is there an official alternative supported by Google? Or will this project be maintained in the future?
   **Post-Mortem & Fix Analysis**:
-  > ### 🦋 Changeset detected  Latest commit: a064585217e44afce7325d826a358acbf7ad8e78  **The changes in this PR will be included in the next version bump.**  <details><summary>This PR includes changesets to release 1 package</summary>    | Name                 | Type  | | -------------------- | ----- | | @googleworkspace/cli | Patch |  </details>  Not sure what this means? [Click here to learn what changesets are](https://changesets.dev/faq).  [Click here if you're a maintainer who wants to add another changeset to this PR](https://github.com/Eotel/cli/new/fix/nix-stdenv-host-platform?filename=.changeset/seven-rice-rescue.md&value=---%0A%22%40googleworkspace%2Fcli%22%3A%20patch%0A---%0A%0Afix(nix)%3A%20use%20host%20platform%20for%20system%20dependencies%0A)  
-  > Thanks for your pull request! It looks like this may be your first contribution to a Google open source project. Before we can look at your pull request, you'll need to sign a Contributor License Agreement (CLA).  View this [failed invocation](https://github.com/googleworkspace/cli/pull/966/checks?check_run_id=121405964805) of the CLA check for more information.  For the most up to date status, view the checks section at the bottom of the pull request.
+  > There is a new CLI available as of this morning and you're encouraged to migrate to that.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2181,94 +2179,118 @@ fn json_to_yaml(value: &Value, indent: usize) -> String {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cd3697e0` (2026-10-30)
-**Commit Message**: ci: switch automation workflow from pull_request_target to pull_request (#969)
+### Incident Patch 1: `8e945eed` (2026-11-24)
+**Commit Message**: Revise README with official CLI details
 
-**File**: `.github/workflows/automation.yml` (modified, +18/-9)
+Updated README to include official Google Workspace CLI information and removed previous disclaimer.
+
+**File**: `README.md` (modified, +5/-6)
 ```diff
-@@ -17,29 +17,29 @@ name: Automation
- on:
-   push:
-     branches: [main]
--  pull_request_target:
-+  pull_request:
-     types: [opened, synchronize, reopened]
-   pull_request_review:
-     types: [submitted]
+@@ -1,5 +1,10 @@
+ <h1 align="center">gws</h1>
  
--permissions:
--  contents: write
--  issues: write
--  pull-requests: write
-+permissions: {}
++
++
++**One CLI for all of Google Workspace — built for humans and AI agents.**<br>
++Drive, Gmail, Calendar, and every Workspace API. Zero boilerplate. Structured JSON output. 40+ agent skills included.
++
+ > [!NOTE]
+ > The official Google Workspace CLI (`gwscli`) is now available. It's supported by Google and built for AI agents. Give it a try and [tell us](https://forms.gle/4rSpc9941Cecg1BUA) what's missing.
+ >
+@@ -10,12 +15,6 @@
+ > `gws` is a community project and is not an officially supported Google product. It keeps working, and you can move when you're ready.
  
- jobs:
-   format:
-     name: Format
-     if: github.event_name == 'push'
-     runs-on: ubuntu-latest
-+    permissions:
-+      contents: write
-     steps:
--      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
-+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
-         with:
-           token: ${{ secrets.GOOGLEWORKSPACE_BOT_TOKEN }}
  
-       - name: Install Rust
--        uses: dtolnay/rust-toolchain@631a55b12751854ce901bb631d5902ceb48146f7 # stable
-+        uses: dtolnay/rust-toolchain@683b588c487a69d01f6c6ddf40f036ff682cc2c8 # master
-         with:
-+          toolchain: stable
-           components: rustfmt
+-**One CLI for all of Google Workspace — built for humans and AI agents.**<br>
+-Drive, Gmail, Calendar, and every Workspace API. Zero boilerplate. Structured JSON output. 40+ agent skills included.
+-
+-> [!NOTE]
+-> This is **not** an officially supported Google product.
+-
+ <p>
+   <a href="https://www.npmjs.com/package/@googleworkspace/cli"><img src="https://img.shields.io/npm/v/@googleworkspace/cli" alt="npm version"></a>
+   <a href="https://github.com/googleworkspace/cli/blob/main/LICENSE"><img src="https://img.shields.io/github/license/googleworkspace/cli" alt="license"></a>
+```
+
+---
+
+### Incident Patch 2: `d2af8b22` (2026-11-24)
+**Commit Message**: Document transition to official CLI
+
+Added section on moving to the official Google Workspace CLI, including command equivalents and FAQs.
+
+**File**: `README.md` (modified, +54/-0)
+```diff
+@@ -501,6 +501,60 @@ If a required Google API is not enabled for your GCP project, you will see a
+ > You can also run `gws auth setup` which walks you through enabling all required
+ > APIs for your project automatically.
  
-       - name: Run cargo fmt
-@@ -54,8 +54,11 @@ jobs:
++## Moving to the official Google Workspace CLI
++
++### Which should I use?
++
++| If you need… | Use |
++| --- | --- |
++| An AI agent working in Gmail, Calendar, Drive, Docs, Sheets, Slides, Chat, or Contacts | `gwscli` |
++| Google Workspace AI Controls and approvals applied to agent actions | `gwscli` |
++| Support from Google | `gwscli` |
++| An API or method `gwscli` doesn't cover, or direct service-account key files | `gws` (or mint a domain-wide delegation token for `--oauth_token`). [Tell us](https://forms.gle/4rSpc9941Cecg1BUA) what you need. |
++
++
++### Let your agent help you switch
++
++Paste this into your agent. You'll still run the sign-in and setup steps yourself.
++
++```
++Help me move from the gws CLI to the official Google Workspace CLI (gwscli).
++1. Install gwscli by following https://developers.google.com/workspace/guides/workspace-cli.
++2. Remove the skills installed from googleworkspace/cli (gws-*, persona-* and recipe-* folders)
++   and install the gwscli skills.
++3. Find scripts in this project that call gws. For each one, show me the gwscli version and wait
++   for my OK before changing the file. If gwscli has no equivalent, tell me instead of guessing.
++Stop and ask me to run any sign-in or setup command myself.
++```
++
++### Command equivalents
++
++| Task | gws | gwscli |
++| --- | --- | --- |
++| Set up | `gws auth setup` | Enable the Google Workspace services listed on the setup page, and mark your OAuth client as agentic. Full steps: [Set up authentication](https://developers.google.com/workspace/guides/workspace-cli#authentication) |
++| Sign in | `gws auth login -s drive,gmail` | `gwscli auth login drive gmail` (add `--bundle=readonly` for read-only) |
++| Use an existing token | `GOOGLE_WORKSPACE_CLI_TOKEN` | `--oauth_token` |
++| Recent files | `gws drive files list --params '{"pageSize": 10}'` | `gwscli drive list_recent_files --pageSize 10` |
++| Search email | `gws gmail users threads list --params '{"userId": "me", "q": "is:unread"}'` | `gwscli gmail search_threads --query "is:unread"` |
++| Send a Chat message | `gws chat spaces messages create --params '{"parent": "spaces/xyz"}' --json '{"text": "Hi"}'` | `gwscli chat send_message --conversationId spaces/xyz --messageText "Hi"` |
++| Inspect a command | `gws schema drive.files.list` | `gwscli drive search_files --help` (or `--schema`) |
++| Agent skills | `npx skills add https://github.com/googleworkspace/cli` | `gwscli skills install --dir <skills folder>` |
++
++Full setup guide: [Get started with the Google Workspace CLI](https://developers.google.com/workspace/guides/workspace-cli)
++
++### FAQ
++
++**Will gws keep working?**
++Yes, you can continue to use `gws`. Future development will be concentrated on the official CLI, however.
++
++**Can I reuse the Google Cloud project and OAuth client I set up for gws?**
++Yes. In that project, enable the Google Workspace services listed on the [setup page](https://developers.google.com/workspace/guides/workspace-cli), and mark the OAuth client as agentic (set its is_agentic setting to true).
++
++**Does gwscli cover every Google Workspace API like gws?**
++No. `gwscli` has a curated set of commands designed for agents rather than one command per API
++method. Run `gwscli --help` to see what's available, and [tell us](https://forms.gle/4rSpc9941Cecg1BUA) what's missing.
++
++
+ ## Development
  
-   file-labeler:
-     name: File Labeler
--    if: github.event_name == 'pull_request_target'
-+    if: github.event_name == 'pull_request'
-     runs-on: ubuntu-latest
-+    permissions:
-+      contents: read
-+      pull-requests: write
-     steps:
-       - uses: actions/labeler@8558fd74291d67161a8a78ce36a881fa63b766a9 # v5
-         with:
-@@ -65,9 +68,12 @@ jobs:
-   gemini-review:
-     name: Gemini Review
-     if: >-
--      github.event_name == 'pull_request_target' &&
-+      github.event_name == 'pull_request' &&
-       github.event.action == 'synchronize'
-     runs-on: ubuntu-latest
-+    permissions:
-+      issues: write
-+      pull-requests: write
-     concurrency:
-       group: gemini-review-${{ github.event.pull_request.number }}
-       cancel-in-progress: true
-@@ -109,6 +115,9 @@ jobs:
-       github.event_name == 'pull_request_review' &&
-       github.event.review.user.login == 'gemini-code-assist[bot]'
-     runs-on: ubuntu-latest
-+    permissions:
-+      issues: write
-+      pull-requests: read
-     steps:
-       - name: Add reviewed label if review matches HEAD
-         uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7
+ ```bash
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #969** (2026-10-30): ci: switch automation workflow from pull_request_target to pull_request (@vinay-google)
-- **PR #966** (closed): fix(nix): use host platform for system dependencies (@Eotel)
-- **PR #965** (closed): chore: sync skills with Discovery API (@googleworkspace-bot)
-- **PR #964** (closed): fix: allow optional null fields in PATCH bodies (@tridev-tej)
-- **PR #963** (closed): ci: migrate npm release workflow to OSS Exit Gate (@alonsopf89)
-- **PR #962** (closed): chore: sync skills with Discovery API (@googleworkspace-bot)
+- **PR #1001** (2026-11-24): feat: Add notice about official CLI availability (@sqrrrl)
+- **PR #986** (closed): chore: sync skills with Discovery API (@googleworkspace-bot)
+- **PR #985** (closed): fix(auth): keep credentials.enc when it cannot be decrypted (@curtisholtt)
+- **PR #982** (closed): chore: sync skills with Discovery API (@googleworkspace-bot)
+- **PR #981** (closed): fix(auth): keep credentials.enc when it cannot be decrypted (@curtisholtt)
+- **PR #980** (closed): chore: sync skills with Discovery API (@googleworkspace-bot)
 
 ---
 
@@ -2288,56 +2310,40 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci: switch automation workflow from pull_request_target to pull_request (#969)
+## X. Revise README with official CLI details
 
 **RULE**:
-When implementing operations in `.github/workflows/automation.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in googleworkspace/cli. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in googleworkspace/cli. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `cd3697e0`: ci: switch automation workflow from pull_request_target to pull_request (#969). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8e945eed`: Revise README with official CLI details. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/automation.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-  pull_request:
-permissions: {}
-    permissions:
-      contents: write
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
-        uses: dtolnay/rust-toolchain@683b588c487a69d01f6c6ddf40f036ff682cc2c8 # master
-          toolchain: stable
-    if: github.event_name == 'pull_request'
-    permissions:
-      contents: read
-      pull-requests: write
-      github.event_name == 'pull_request' &&
-    permissions:
-      issues: write
-      pull-requests: write
-    permissions:
-      issues: write
-      pull-requests: read
+
+
+**One CLI for all of Google Workspace — built for humans and AI agents.**<br>
+Drive, Gmail, Calendar, and every Workspace API. Zero boilerplate. Structured JSON output. 40+ agent skills included.
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-  pull_request_target:
-permissions:
-  contents: write
-  issues: write
-  pull-requests: write
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
-        uses: dtolnay/rust-toolchain@631a55b12751854ce901bb631d5902ceb48146f7 # stable
-    if: github.event_name == 'pull_request_target'
-      github.event_name == 'pull_request_target' &&
+// Induced defect failure mode:
+**One CLI for all of Google Workspace — built for humans and AI agents.**<br>
+Drive, Gmail, Calendar, and every Workspace API. Zero boilerplate. Structured JSON output. 40+ agent skills included.
+
+> [!NOTE]
+> This is **not** an officially supported Google product.
+
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cd3697e0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8e945eed` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

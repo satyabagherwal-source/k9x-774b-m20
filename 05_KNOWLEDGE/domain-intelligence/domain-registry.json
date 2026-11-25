@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T06:56:24.067Z",
-  "total_records": 2638,
+  "last_updated": "2026-11-25T07:04:50.378Z",
+  "total_records": 2641,
   "domains": {
     "A": {
       "total": 22,
@@ -2294,7 +2294,7 @@
       ]
     },
     "I": {
-      "total": 153,
+      "total": 155,
       "record_ids": [
         "DOM-I-16F011E5",
         "DOM-I-BF0A22A6",
@@ -2448,7 +2448,9 @@
         "domain_intelligence-content-information-intelligence-rollup-rollup-core-invariants",
         "domain_intelligence-content-information-intelligence-rollup-rollup-learnings-core-invariants",
         "domain_intelligence-content-information-intelligence-openyurtio-openyurt-core-invariants",
-        "domain_intelligence-content-information-intelligence-openyurtio-openyurt-learnings-core-invariants"
+        "domain_intelligence-content-information-intelligence-openyurtio-openyurt-learnings-core-invariants",
+        "domain_intelligence-content-information-intelligence-googleworkspace-cli-core-invariants",
+        "domain_intelligence-content-information-intelligence-googleworkspace-cli-learnings-core-invariants"
       ]
     },
     "J": {
@@ -2508,7 +2510,7 @@
       ]
     },
     "K": {
-      "total": 160,
+      "total": 161,
       "record_ids": [
         "DOM-K-353B93D6",
         "DOM-K-76C43650",
@@ -2669,7 +2671,8 @@
         "domain_intelligence-quality-verification-intelligence-t8y2-dbx-learnings-core-invariants",
         "DOM-K-23B0EC10",
         "domain_intelligence-quality-verification-intelligence-crosspaste-crosspaste-desktop-core-invariants",
-        "domain_intelligence-quality-verification-intelligence-crosspaste-crosspaste-desktop-learnings-core-i"
+        "domain_intelligence-quality-verification-intelligence-crosspaste-crosspaste-desktop-learnings-core-i",
+        "domain_intelligence-quality-verification-intelligence-sfu-db-connector-x-core-invariants"
       ]
     },
     "L": {
@@ -24887,8 +24890,8 @@
       "title": "Architecture Intelligence: nginx/kubernetes-ingress Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nginx-kubernetes-ingress-architecture-intelligence-nginx-kubernetes-ingress-core.md",
       "repository": "nginx/kubernetes-ingress",
-      "content_hash": "3f0465e1e42e9b56e57aee3adc1ea838116e77c45cb54381b67cd4d246fe7ef6",
-      "created_at": "2026-11-24T14:15:09.996Z"
+      "content_hash": "1e7763527527d091f0274863d1895331f6d1f247d1549374ad83fca3f2614f65",
+      "created_at": "2026-11-25T07:04:38.310Z"
     },
     "domain_intelligence-technical-construction-intelligence-rustls-rustls-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-rustls-rustls-core-invariants",
@@ -24905,8 +24908,8 @@
       "title": "Architecture Intelligence: nginx-kubernetes-ingress-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nginx-kubernetes-ingress-learnings-architecture-intelligence-nginx-kubernetes-in.md",
       "repository": "nginx-kubernetes-ingress-learnings",
-      "content_hash": "836012003d8b56908b7715bfbb3b374f80f42c594216bfcce2595ebf564aecc3",
-      "created_at": "2026-11-24T14:15:46.559Z"
+      "content_hash": "79d163a18b1dd7c14a5f408c314d2adda7a1e07b486641b03526d2fdfc48ac3f",
+      "created_at": "2026-11-25T07:04:50.378Z"
     },
     "domain_intelligence-technical-construction-intelligence-rustls-rustls-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-rustls-rustls-learnings-core-invariants",
@@ -28672,8 +28675,8 @@
       "title": "Research & Knowledge Intelligence: InternScience/Sage-A1.5 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-internscience-sage-a1-5-research-knowledge-intelligence-internscience-sage-a1.md",
       "repository": "InternScience/Sage-A1.5",
-      "content_hash": "39a4b6c55f1eb665cf2ed2d6de6a33d99190e4be7a80b7a9a0b6e96ee65f1b48",
-      "created_at": "2026-11-21T13:30:26.883Z"
+      "content_hash": "d70d021a12999a64d9d8534511a8e2db300c166ec69a4e6c477e2fef578acb88",
+      "created_at": "2026-11-25T07:04:28.248Z"
     },
     "domain_intelligence-architecture-intelligence-stakater-reloader-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-stakater-reloader-core-invariants",
@@ -28741,8 +28744,8 @@
       "title": "Research & Knowledge Intelligence: hf-internscience-sage-a1.5-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-internscience-sage-a1-5-learnings-research-knowledge-intelligence-hf-internsc.md",
       "repository": "hf-internscience-sage-a1.5-learnings",
-      "content_hash": "368bcea52c49beade4d0041af682c9d55f447cf0f3803c1fda856443589f0e15",
-      "created_at": "2026-11-21T13:30:47.540Z"
+      "content_hash": "c2f7d8644570127b4a28f0535007ce91dc2b23b440b11646ea38d4397d6a797d",
+      "created_at": "2026-11-25T07:04:47.697Z"
     },
     "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-14b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-14b-core-invariants",
@@ -44328,6 +44331,33 @@
       "confidence": 0.6,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-25T06:03:41.264Z"
+    },
+    "domain_intelligence-content-information-intelligence-googleworkspace-cli-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-googleworkspace-cli-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: googleworkspace/cli Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-googleworkspace-cli-content-information-intelligence-googleworkspace-cli-core-in.md",
+      "repository": "googleworkspace/cli",
+      "content_hash": "bced47e97ac8dc1895341f4aea850f424bda6cb5539bd4b3bda80ee97140aeb3",
+      "created_at": "2026-11-25T07:04:31.088Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-sfu-db-connector-x-core-invariants": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-sfu-db-connector-x-core-invariants",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: sfu-db/connector-x Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-sfu-db-connector-x-quality-verification-intelligence-sfu-db-connector-x-core-inv.md",
+      "repository": "sfu-db/connector-x",
+      "content_hash": "903520adbd3479d12e1bf7fa53cfb925d224a23f91b9dcd573df0d03f989511f",
+      "created_at": "2026-11-25T07:04:42.643Z"
+    },
+    "domain_intelligence-content-information-intelligence-googleworkspace-cli-learnings-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-googleworkspace-cli-learnings-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: googleworkspace-cli-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-googleworkspace-cli-learnings-content-information-intelligence-googleworkspace-c.md",
+      "repository": "googleworkspace-cli-learnings",
+      "content_hash": "915b1790e88e5b18da72b0f9fc68c9537bf65bed99a8e46ddcc53022ba73ccbd",
+      "created_at": "2026-11-25T07:04:47.182Z"
     }
   }
 }

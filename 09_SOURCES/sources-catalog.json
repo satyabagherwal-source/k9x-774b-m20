@@ -2723,10 +2723,10 @@
     "repository": "googleworkspace/cli",
     "platform": "github",
     "sourceUrl": "https://github.com/googleworkspace/cli",
-    "sourceVersion": "cd3697e0",
+    "sourceVersion": "8e945eed",
     "license": "Apache-2.0",
-    "contentHash": "b03b5863ff7ce2f3a6d1f4a541d4b5e45ef5876e0873ed1c0229d487bd6321c9",
-    "lastHarvestedAt": "2026-10-31T00:05:32.383Z",
+    "contentHash": "6167160e3612c9bd21fea39bed86108dff846fd0d538b56e2a571264b25e28f9",
+    "lastHarvestedAt": "2026-11-25T07:04:30.673Z",
     "learningId": "learn-github-googleworkspace-cli"
   },
   "react-navigation-react-navigation": {
@@ -4673,10 +4673,10 @@
     "repository": "sfu-db/connector-x",
     "platform": "github",
     "sourceUrl": "https://github.com/sfu-db/connector-x",
-    "sourceVersion": "580a386f",
+    "sourceVersion": "07e1d2e5",
     "license": "MIT",
-    "contentHash": "14785e23f972a00a9cfe0a55e58456be8f72a1ad3a1d65419483c8e357a753ac",
-    "lastHarvestedAt": "2026-11-23T16:44:55.118Z",
+    "contentHash": "daff00187f711586e797cab064b347671759219a570951695cdc8efde89664e4",
+    "lastHarvestedAt": "2026-11-25T07:04:42.268Z",
     "learningId": "learn-github-sfu-db-connector-x"
   },
   "stenciljs-core": {
@@ -6663,10 +6663,10 @@
     "repository": "nginx/kubernetes-ingress",
     "platform": "github",
     "sourceUrl": "https://github.com/nginx/kubernetes-ingress",
-    "sourceVersion": "68c058a2",
+    "sourceVersion": "a60c25c3",
     "license": "Apache-2.0",
-    "contentHash": "3771887a148df05cb5d824d7d62925d07bd68821efa0115a6b9ff803be138b64",
-    "lastHarvestedAt": "2026-11-24T14:15:09.586Z",
+    "contentHash": "dafc553e775bb3a2d7e59b293ba5edbcfb92008376355f9f2d126c3c983e4f91",
+    "lastHarvestedAt": "2026-11-25T07:04:37.915Z",
     "learningId": "learn-github-nginx-kubernetes-ingress"
   },
   "milvus-io-milvus": {
@@ -10505,8 +10505,8 @@
     "sourceUrl": "https://huggingface.co/InternScience/Sage-A1.5",
     "sourceVersion": "hf-internscience-sage-a1.5",
     "license": "Open-Source",
-    "contentHash": "8bcccc18fa2b4c988a451d08b50756114ec65fabde8c2fff69023edbda68404e",
-    "lastHarvestedAt": "2026-11-21T13:30:26.695Z",
+    "contentHash": "311c82b012fcc96ba4c4cb069205c34af9d9a2ac456ed55bdeff778c09d1e62c",
+    "lastHarvestedAt": "2026-11-25T07:04:28.031Z",
     "learningId": "learn-huggingface-internscience-sage-a1-5"
   },
   "hf-recursivesi-flint": {

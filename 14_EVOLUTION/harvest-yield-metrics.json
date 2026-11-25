@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T06:56:10.585Z",
-  "total_cycles_completed": 12323,
-  "total_learnings_persisted": 12323,
-  "total_rules_promoted": 11350,
+  "last_updated": "2026-11-25T07:04:42.273Z",
+  "total_cycles_completed": 12327,
+  "total_learnings_persisted": 12327,
+  "total_rules_promoted": 11353,
   "history": [
-    {
-      "timestamp": "2026-11-24T17:42:31.328Z",
-      "repository": "baidu/ERNIE-5.5-Flash-Preview",
-      "learningId": "learn-huggingface-baidu-ernie-5-5-flash-preview",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T17:42:38.985Z",
-      "repository": "fb55/css-select",
-      "learningId": "learn-github-fb55-css-select",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T17:42:47.108Z",
-      "repository": "freenet/freenet-core",
-      "learningId": "learn-github-freenet-freenet-core",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T17:42:51.954Z",
-      "repository": "ClickHouse/ClickHouse",
-      "learningId": "learn-github-clickhouse-clickhouse",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-24T17:51:56.814Z",
       "repository": "cheeriojs/dom-serializer",
@@ -1403,6 +1375,34 @@
       "repository": "XHToken/Spark-X2.6-4B",
       "learningId": "learn-huggingface-xhtoken-spark-x2-6-4b",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T07:04:28.037Z",
+      "repository": "InternScience/Sage-A1.5",
+      "learningId": "learn-huggingface-internscience-sage-a1-5",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T07:04:30.678Z",
+      "repository": "googleworkspace/cli",
+      "learningId": "learn-github-googleworkspace-cli",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T07:04:37.920Z",
+      "repository": "nginx/kubernetes-ingress",
+      "learningId": "learn-github-nginx-kubernetes-ingress",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T07:04:42.273Z",
+      "repository": "sfu-db/connector-x",
+      "learningId": "learn-github-sfu-db-connector-x",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

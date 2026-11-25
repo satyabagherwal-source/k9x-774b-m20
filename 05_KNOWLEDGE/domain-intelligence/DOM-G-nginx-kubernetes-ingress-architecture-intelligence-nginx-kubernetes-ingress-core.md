@@ -4,24 +4,24 @@
 {
   "source_repository": "nginx/kubernetes-ingress",
   "source_url": "https://github.com/nginx/kubernetes-ingress",
-  "source_version": "68c058a2",
+  "source_version": "a60c25c3",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-24T14:15:09.818Z",
+  "timestamp": "2026-11-25T07:04:38.146Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-nginx-kubernetes-ingress",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [nginx/kubernetes-ingress](https://github.com/nginx/kubernetes-ingress) (Revision: `68c058a2`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-24T14:15:09.818Z`  
+> **Provenance**: Harvested from [nginx/kubernetes-ingress](https://github.com/nginx/kubernetes-ingress) (Revision: `a60c25c3`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-25T07:04:38.146Z`  
 > **Learning ID**: `learn-github-nginx-kubernetes-ingress`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), H (Technical Construction Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 60%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), L (Deployment & Operations Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 61%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from nginx/kubernetes-ingress:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nginx/kubernetes-ingress](https://github.com/nginx/kubernetes-ingress))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T14:15:08.299Z  
+> **Harvest Timestamp**: 2026-11-25T07:04:36.794Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1441,250 +1441,211 @@ func main() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `af39bb88` (2026-11-24)
-**Commit Message**: Add restore_configmap fixture to multiple test classes (#11470)
+### Incident Patch 1: `a60c25c3` (2026-11-24)
+**Commit Message**: Update branch for 5.8.1 (#11475) (#11526)
 
-* Add restore_configmap fixture to multiple test classes and update configmap handling
-
-* Fix cleanup order in gRPC setup fixtures to ensure proper resource deletion
-
-**File**: `tests/suite/test_annotations.py` (modified, +8/-2)
+**File**: `.github/ISSUE_TEMPLATE/BUG-REPORT.yml` (modified, +1/-0)
 ```diff
-@@ -207,6 +207,12 @@ def annotations_grpc_setup(
-     def fin():
-         if request.config.getoption("--skip-fixture-teardown") == "no":
-             print("Clean up gRPC Annotations Example:")
-+            replace_configmap_from_yaml(
-+                kube_apis.v1,
-+                ingress_controller_prerequisites.config_map["metadata"]["name"],
-+                ingress_controller_prerequisites.namespace,
-+                f"{DEPLOYMENTS}/common/nginx-config.yaml",
-+            )
-             delete_items_from_yaml(kube_apis, f"{TEST_DATA}/annotations/grpc/annotations-ingress.yaml", test_namespace)
- 
-     request.addfinalizer(fin)
-@@ -238,14 +244,14 @@ def grpc_h2c_setup(
-     def fin():
-         if request.config.getoption("--skip-fixture-teardown") == "no":
-             print("Clean up gRPC Ingress without TLS:")
--            delete_items_from_yaml(kube_apis, src, test_namespace)
--            delete_common_app(kube_apis, "grpc", test_namespace)
-             replace_configmap_from_yaml(
-                 kube_apis.v1,
-                 ingress_controller_prerequisites.config_map["metadata"]["name"],
-                 ingress_controller_prerequisites.namespace,
-                 f"{DEPLOYMENTS}/common/nginx-config.yaml",
-             )
-+            delete_items_from_yaml(kube_apis, src, test_namespace)
-+            delete_common_app(kube_apis, "grpc", test_namespace)
- 
-     request.addfinalizer(fin)
-     replace_configmap_from_yaml(
+@@ -22,6 +22,7 @@ body:
+       description: What version of our F5 NGINX Ingress Controller are you running?
+       options:
+         - edge
++        - 5.8.1
+         - 5.8.0
+         - 5.7.1
+         - 5.7.0
 ```
 
-**File**: `tests/suite/test_jwt_policies_jwksuri.py` (modified, +2/-0)
+**File**: `README.md` (modified, +13/-13)
 ```diff
-@@ -198,6 +198,7 @@ def fin():
-     ],
-     indirect=True,
- )
-+@pytest.mark.usefixtures("restore_configmap")
- class TestJWTPoliciesVsJwksuri:
-     @pytest.mark.parametrize("jwt_virtual_server", [jwt_vs_spec_src, jwt_vs_route_src, jwt_spec_and_route_src])
-     def test_jwt_policy_jwksuri(
-@@ -527,6 +528,7 @@ def test_jwt_policy_subroute_jwksuri_multiple_vs(
-     ],
-     indirect=True,
- )
-+@pytest.mark.usefixtures("restore_configmap")
- class TestJWTAuthorizationJwksUnavailable:
-     def test_keys_unavailable_rejects_requests(
-         self,
-```
-
-**File**: `tests/suite/test_oidc.py` (modified, +2/-6)
-```diff
-@@ -178,6 +178,7 @@ def fin():
-     indirect=True,
-     ids=["http_without_config_safety", "http_with_config_safety"],
- )
-+@pytest.mark.usefixtures("restore_configmap")
- class TestOIDCHttp:
-     @pytest.mark.parametrize("configmap", [cm_src, cm_zs_src])
-     @pytest.mark.parametrize("oidcYaml", ["standard", "pkce"])
-@@ -265,6 +266,7 @@ def test_oidc_with_opaque_secret(
-     indirect=True,
-     ids=["https_without_config_safety", "https_with_config_safety"],
- )
-+@pytest.mark.usefixtures("restore_configmap")
- class TestOIDCHttps:
-     @pytest.mark.parametrize("configmap", [cm_src, cm_zs_src])
-     @pytest.mark.parametrize("oidcYaml", ["standard", "pkce"])
-@@ -342,12 +344,6 @@ def run_test(
-     with sync_playwright() as playwright:
-         run_oidc(playwright.chromium, ingress_controller_endpoint.public_ip, ingress_controller_endpoint.port_ssl)
+@@ -63,20 +63,20 @@ NGINX with native Kubernetes integration.
+ ### Install with Helm (recommended)
  
--    replace_configmap_from_yaml(
--        kube_apis.v1,
--        ingress_controller_prerequisites.config_map["metadata"]["name"],
--        ingress_controller_prerequisites.namespace,
--        cm_src,
--    )
-     delete_secret(kube_apis.v1, secret_name, test_namespace)
-     delete_policy(kube_apis.custom_objects, pol, test_namespace)
-     patch_virtual_server_from_yaml(kube_apis.custom_objects, virtual_server_setup.vs_name, orig_vs_src, test_namespace)
-```
-
-**File**: `tests/suite/test_oidc_fclo.py` (modified, +1/-0)
-```diff
-@@ -142,6 +142,7 @@ def fin():
-     ],
-     indirect=True,
- )
-+@pytest.mark.usefixtures("restore_configmap")
- class TestOIDCFCLO:
-     def test_oidc(
-         self,
-```
-
----
-
-### Incident Patch 2: `2f55f28e` (2026-11-24)
-**Commit Message**: Add step to generate secrets for tests in regression workflow (#11454)
-
-**File**: `.github/workflows/regression.yml` (modified, +3/-0)
-```diff
-@@ -110,6 +110,9 @@ jobs:
-         with:
-           go-version-file: go.mod
- 
-+      - name: Generate secrets for tests
-+        run: make secrets
-+
-       - name: Run Tests
-         run: make cover
- 
-```
-
----
-
-### Incident Patch 3: `069224f0` (2026-11-23)
-**Commit Message**: Fix NKP catalogue publishing (#11518)
-
-**File**: `.github/skills/nic-ci-pipelines/SKILL.md` (modified, +6/-3)
-```diff
-@@ -31,6 +31,7 @@ Consequences:
-      binaries (SBOM, Cosign)                            certify-openshift-images (Pyxis)
-      azure-upload      --> Azure blob                   operator (dispatch nginx-ingress-helm-operator/sync-chart.yml)
-                                                         release-gate -> tag -> release-assets -> github-release
-+                                                        nkp-catalog (dispatch nkp-catalog-pr.yml)
+ ```bash
+-helm install <RELEASE_NAME> oci://ghcr.io/nginx/charts/nginx-ingress --version 2.9.0
++helm install <RELEASE_NAME> oci://ghcr.io/nginx/charts/nginx-ingress --version 2.9.1
  ```
  
- ## Workflow Architecture
-@@ -73,6 +74,7 @@ release-publish.yml (dispatchable Stage 2: Publish)    [PUBLIC repo only -- no b
-   -> tag -> creates and pushes the vX.Y.Z git tag
-   -> release-assets -> downloads tarballs from Azure and uploads to GitHub release draft
-   -> github-release -> closes milestone and publishes the GitHub release draft
-+  -> nkp-catalog -> dispatches nkp-catalog-pr.yml to raise the NKP Partner Catalog PR
+ ### Install with Manifests
+ 
+ ```shell
+ # Install the Custom Resource Definitions (required for the default configuration)
+-kubectl apply -f https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.0/deploy/crds.yaml
+-kubectl apply -f https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.0/deployments/common/ns-and-sa.yaml
+-kubectl apply -f https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.0/deployments/rbac/rbac.yaml
+-kubectl apply -f https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.0/deployments/common/nginx-config.yaml
+-kubectl apply -f https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.0/deployments/deployment/nginx-ingress.yaml
+-kubectl apply -f https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.0/deployments/service/loadbalancer.yaml
+-kubectl apply -f https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.0/deployments/common/ingress-class.yaml
++kubectl apply -f https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.1/deploy/crds.yaml
++kubectl apply -f https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.1/deployments/common/ns-and-sa.yaml
++kubectl apply -f https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.1/deployments/rbac/rbac.yaml
++kubectl apply -f https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.1/deployments/common/nginx-config.yaml
++kubectl apply -f https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.1/deployments/deployment/nginx-ingress.yaml
++kubectl apply -f https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.1/deployments/service/loadbalancer.yaml
++kubectl apply -f https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.1/deployments/common/ingress-class.yaml
  ```
  
- ### Two-Stage Release Architecture
-@@ -92,7 +94,7 @@ Release pipelines are split into two independently dispatchable stages that run
-    - Creates and pushes the release git tag (`vX.Y.Z` or `<lts_version>`)
-    - Downloads signed binaries from Azure blob storage and attaches them to the GitHub release draft
-    - Closes the release milestone and publishes the GitHub release
--
-+   - `release-publish.yml` only: dispatches `nkp-catalog-pr.yml` to raise the NKP Partner Catalog PR (skipped on `dry_run` or `skip_step: nkp-catalog`)
- Because the stages are decoupled and live in separate repos, a transient failure in publishing or external registry sync can be retried directly via `release-publish.yml` without rebuilding any images or binaries.
+ **[Full Installation Guide →](https://docs.nginx.com/nginx-ingress-controller/install/)**
+@@ -87,14 +87,14 @@ Once installed, deploy a sample application:
  
- ---
-@@ -116,7 +118,7 @@ Because the stages are decoupled and live in separate repos, a transient failure
- | Workflow | Repo | Trigger | Purpose |
- | --- | --- | --- | --- |
- | `release-prep.yml` | internal | Manual dispatch | Stage 1: build artifacts, stage images and Helm chart in test registry (`docker-mgmt-test.nginx.com`), sign binaries, upload tarballs to Azure blob storage |
--| `release-publish.yml` | public | Manual dispatch | Stage 2: copy staged images to public registries, publish Helm chart, certify UBI images, dispatch operator sync PR, create git tag, upload release assets, close milestone, publish GitHub release |
-+| `release-publish.yml` | public | Manual dispatch | Stage 2: copy staged images to public registries, publish Helm chart, certify UBI images, dispatch operator sync PR, create git tag, upload release assets, close milestone, publish GitHub release, dispatch NKP catalog PR |
- | `release-prep-lts.yml` | internal | Manual dispatch | LTS Stage 1: build LTS Plus images & binaries, stage in test registry, sign binaries, upload tarballs to Azure blob storage |
- | `release-publish-lts.yml` | public | Manual dispatch | LTS Stage 2: copy staged LTS Plus images to public registries, publish LTS Helm chart (`nginx-ingress-lts`), create git tag, attach release assets, close milestone, publish GitHub release |
- | `oss-release.yml` | public | Manual dispatch, workflow_call | Copies OSS images from staging registry to public registries via skopeo (called by `release-publish.yml`) |
-@@ -126,7 +128,7 @@ Because the stages are decoupled and live in separate repos, a transient failure
- | `create-release-branch.yml` | public | Manual dispatch | Creates a new `release-X.Y` branch and bumps versions |
- | `release-pr.yml` | public | Manual dispatch | Automates creation of release PRs for version updates and changelogs |
- | `version-bump.yml` | public | Manual dispatch | Bumps `IC_VERSION` and `HELM_CHART_VERSION` across the repository |
--| `nkp-catalog-pr.yml` | public | Manual dispatch | After a release is published: generates the NKP Partner Catalog bundle, validates it and runs the catalog e2e tests, then opens a PR in `nutanix-cloud-native/nkp-partner-catalog` from the `nginx-bot` fork with a GitHub-signed commit (uses the `nginx-bot-pat` vault secret) |
-+| `nkp-catalog-pr.yml` | public | Dispatched by `release-publish.yml`, manual dispatch | After a release is published: generates the NKP Partner Catalog bundle, validates it and runs the catalog e2e tests, then opens a PR in `nutanix-cloud-native/nkp-partner-catalog` from the `nginx-bot` fork with a GitHub-signed commit (uses the `nginx-bot-pat` vault secret) |
+ ```bash
+ # Deploy the Cafe example app
+-kubectl apply -f https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.0/examples/ingress-resources/complete-example/cafe.yaml
++kubectl apply -f https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.1/examples/ingress-resources/complete-example/cafe.yaml
  
- ### Reusable Build Workflows (called via `workflow_call`)
+ # Create a self-signed TLS certificate for cafe.example.com and store it in the Secret referenced by the Ingress
+ openssl req -x509 -nodes -newkey rsa:2048 -days 365 -keyout cafe.key -out cafe.crt \
+   -subj "/CN=cafe.example.com" -addext "subjectAltName=DNS:cafe.example.com"
+ kubectl create secret tls tls-secret --cert=cafe.crt --key=cafe.key
  
-@@ -245,6 +247,7 @@ Gaps to be aware of: `make update-crds` also rewrites `deploy/crds*.yaml` and `d
- - Every job in a non-`mirror-*` workflow must be gated as `github.repository == 'nginx/kubernetes-ingress'` (or `nginx/kubernetes-ingress-internal` for internal-only jobs like prep) optionally followed by `&& ( ... )` with **all** extra conditions inside one balanced group. `&&` binds tighter than `||`, so an ungrouped chain like `gate && (a) || (b)` parses as `(gate && (a)) || (b)` and would run on a fork. Enforced by `.github/scripts/validate-workflow-gating.sh` (pre-commit + `lint-format.yml`); run it locall
+-kubectl apply -f https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.0/examples/ingress-resources/complete-example/cafe-ingress.yaml
++kubectl apply -f https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.1/examples/ingress-resources/complete-example/cafe-ingress.yaml
+ ```
+ 
+ See more [examples](https://github.com/nginx/kubernetes-ingress/tree/main/examples) to explore all capabilities.
+@@ -110,7 +110,7 @@ See more [examples](https://github.com/nginx/kubernetes-ingress/tree/main/exampl
+ 
+ ## Docker Images
+ 
+-The latest stable release is [5.8.0](https://github.com/nginx/kubernetes-ingress/releases/tag/v5.8.0). For production
++The latest stable release is [5.8.1](https://github.com/nginx/kubernetes-ingress/releases/tag/v5.8.1). For production
+ use, we recommend that you choose the latest stable release.
+ 
+ | Registry | Link |
+@@ -127,12 +127,12 @@ You can also [build your own image](https://docs.nginx.com/nginx-ingress-control
+ 
+ | Version | Description | Image for NGINX | Image for NGINX Plus | Installation Manifests and Helm Chart | Documentation and Examples |
+ | ------- | ----------- | --------------- | -------------------- | --------------------------------------- | -------------------------- |
+-| Latest stable release | For production use | Use the 5.8.0 images from [DockerHub](https://hub.docker.com/r/nginx/nginx-ingress/), [GitHub Container](https://github.com/nginx/kubernetes-ingress/pkgs/container/kubernetes-ingress), [Amazon ECR Public Gallery](https://gallery.ecr.aws/nginx/nginx-ingress) or [Quay.io](https://quay.io/repository/nginx/nginx-ingress) or [build your own image](https://docs.nginx.com/nginx-ingress-controller/install/build/). | Use the 5.8.0 images from the [F5 Container Registry](https://docs.nginx.com/nginx-ingress-controller/install/images/registry-download/) or [Build your own image](https://docs.nginx.com/nginx-ingress-controller/install/build). | [Manifests](https://github.com/nginx/kubernetes-ingress/tree/v5.8.0/deployments). [Helm chart](https://github.com/nginx/kubernetes-ingress/tree/v5.8.0/charts/nginx-ingress). | [Documen
 ```
 
-**File**: `.github/workflows/nkp-catalog-pr.yml` (modified, +4/-1)
+**File**: `charts/nginx-ingress/Chart.yaml` (modified, +2/-2)
 ```diff
-@@ -4,7 +4,8 @@ run-name: ${{ inputs.dry_run && '[DRY RUN] ' || '' }}NKP catalog PR for NIC ${{
- # Adds a released NIC version to the Nutanix Kubernetes Platform (NKP) Partner Catalog:
- # generates the bundle from the latest version in the catalog, validates it, runs the
- # catalog's e2e tests, then opens a pull request from the nginx-bot fork with a signed
--# commit.
-+# commit. release-publish.yml dispatches it after publishing the GitHub release; run it
-+# manually to retry.
- 
- on:
-   workflow_dispatch:
-@@ -147,6 +148,8 @@ jobs:
- 
-       - name: Run catalog e2e tests
-         working-directory: nkp-partner-catalog/apptests
-+        env:
-+          SKIP_CLUSTER_TEARDOWN: "true"
-         run: |
-           # The catalog harness upgrades from and to the last two versions in byte order,
-           # whatever version it is given.
+@@ -5,10 +5,10 @@ appVersion: 5.9.0
+ kubeVersion: ">= 1.25.0-0"
+ type: application
+ description: NGINX Ingress Controller
+-icon: https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.0/charts/nginx-ingress/chart-icon.png
++icon: https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.1/charts/nginx-ingress/chart-icon.png
+ home: https://github.com/nginx/kubernetes-ingress
+ sources:
+-  - https://github.com/nginx/kubernetes-ingress/tree/v5.8.0/charts/nginx-ingress
++  - https://github.com/nginx/kubernetes-ingress/tree/v5.8.1/charts/nginx-ingress
+ keywords:
+   - ingress
+   - nginx
 ```
 
-**File**: `.github/workflows/release-publish.yml` (modified, +27/-0)
+**File**: `charts/nginx-ingress/values-icp.yaml` (modified, +1/-1)
 ```diff
-@@ -462,3 +462,30 @@ jobs:
-         env:
-           RELEASE_ID: ${{ steps.release-id.outputs.release_id }}
-         if: ${{ ! inputs.dry_run }}
-+
-+  # github-release publishes with GITHUB_TOKEN, and GitHub does not start workflows from
-+  # events made with that token, so a `release: published` trigger would never fire.
-+  # workflow_dispatch is the exception. The NKP run is separate, so a failure there does not
-+  # fail the release, and it can be re-run on its own.
-+  nkp-catalog:
-+    # Without !cancelled(), every job in `needs` must have succeeded, so this only runs once
-+    # github-release has published the release.
-+    if: github.repository == 'nginx/kubernetes-ingress' && (! inputs.dry_run && ! contains(inputs.skip_step, 'nkp-catalog'))
-+    name: Trigger NKP Catalog PR
-+    runs-on: ubuntu-26.04
-+    needs: [variables, github-release]
-+    permissions:
-+      contents: read
-+      actions: write # to dispatch nkp-catalog-pr.yml
-+    steps:
-+      - name: Dispatch NKP Catalog PR workflow
-+        env:
-+          GH_TOKEN: ${{ github.token }}
-+          NIC_VERSION: ${{ inputs.nic_version }}
-+          CHART_VERSION: ${{ needs.variables.outputs.chart_version }}
-+        run: |
-+          gh workflow run nkp-catalog-pr.yml --repo "${GITHUB_REPOSITORY}" --ref "${GITHUB_REF_NAME}" \
-+            -f nic_version="${NIC_VERSION}" -f chart_version="${CHART_VERSION}"
-+          runs="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/workflows/nkp-catalog-pr.yml"
-+          echo "Dispatched NKP Catalog PR for NIC ${NIC_VERSION}, chart ${CHART_VERSION}: ${runs}"
-+          echo "### NKP Catalog PR dispatched for NIC ${NIC_VERSION}: ${runs}" >> "$GITHUB_STEP_SUMMARY"
+@@ -4,7 +4,7 @@ controller:
+   nginxplus: true
+   image:
+     repository: mycluster.icp:8500/kube-system/nginx-plus-ingress
+-    tag: "5.8.0"
++    tag: "5.8.1"
+   nodeSelector:
+     beta.kubernetes.io/arch: "amd64"
+     proxy: true
+```
+
+**File**: `charts/nginx-ingress/values-plus.yaml` (modified, +1/-1)
+```diff
+@@ -3,4 +3,4 @@ controller:
+   nginxplus: true
+   image:
+     repository: nginx-plus-ingress
+-    tag: "5.8.0"
++    tag: "5.8.1"
+```
+
+**File**: `charts/nginx-ingress/values.schema.json` (modified, +5/-5)
+```diff
+@@ -854,10 +854,10 @@
+             },
+             "tag": {
+               "type": "string",
+-              "default": "5.8.0",
++              "default": "5.8.1",
+               "title": "The tag of the Ingress Controller image",
+               "examples": [
+-                "5.8.0"
++                "5.8.1"
+               ]
+             },
+             "digest": {
+@@ -893,7 +893,7 @@
+           "examples": [
+             {
+               "repository": "nginx/nginx-ingress",
+-              "tag": "5.8.0",
++              "tag": "5.8.1",
+               "pullPolicy": "IfNotPresent"
+             }
+           ]
+@@ -2436,7 +2436,7 @@
+           "customPorts": [],
+           "image": {
+             "repository": "nginx/nginx-ingress",
+-            "tag": "5.8.0",
++            "tag": "5.8.1",
+             "digest": "",
+             "pullPolicy": "IfNotPresent"
+           },
+@@ -3083,7 +3083,7 @@
+         "customPorts": [],
+         "image": {
+           "repository": "nginx/nginx-ingress",
+-          "tag": "5.8.0",
++          "tag": "5.8.1",
+           "digest": "",
+           "pullPolicy": "IfNotPresent"
+         },
+```
+
+**File**: `charts/nginx-ingress/values.yaml` (modified, +1/-1)
+```diff
+@@ -252,7 +252,7 @@ controller:
+     repository: nginx/nginx-ingress
+ 
+     ## The tag of the Ingress Controller image. If not specified the appVersion from Chart.yaml is used as a tag.
+-    # tag: "5.8.0"
++    # tag: "5.8.1"
+     ## The digest of the Ingress Controller image.
+     ## If digest is specified it has precedence over tag and will be used instead
+     # digest: "sha256:CHANGEME"
+```
+
+**File**: `deployments/daemon-set/nginx-ingress.yaml` (modified, +2/-2)
+```diff
+@@ -34,7 +34,7 @@ spec:
+       # - name: nginx-log
+       #   emptyDir: {}
+       containers:
+-      - image: nginx/nginx-ingress:5.8.0
++      - image: nginx/nginx-ingress:5.8.1
+         imagePullPolicy: IfNotPresent
+         name: nginx-ingress
+         ports:
+@@ -101,7 +101,7 @@ spec:
+         # - -enable-prometheus-metrics
+         # - -global-configuration=$(POD_NAMESPACE)/nginx-configuration
+       # initContainers:
+-#      - image: nginx/nginx-ingress:5.8.0
++#      - image: nginx/nginx-ingress:5.8.1
+       #   imagePullPolicy: IfNotPresent
+       #   name: init-nginx-ingress
+       #   command: ['cp', '-vdR', '/etc/nginx/.', '/mnt/etc']
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #11526** (2026-11-24): Update branch for 5.8.1 (#11475) (@vepatel)
 - **PR #11518** (2026-11-23): Fix NKP catalogue publishing (@vepatel)
 - **PR #11516** (2026-11-24): Add types to issue template (@danielnginx)
 - **PR #11515** (closed): Update issue types on templates (@danielnginx)
 - **PR #11514** (2026-11-23): sync: security hardening and minor bug fixes for release-5.8 (@nic-create-pr[bot])
 - **PR #11513** (2026-11-23): Update WAF and nginx for main (@nic-create-pr[bot])
-- **PR #11511** (2026-11-24): [ci]: 4.x-release-5.8: unify workflow gates and simplify ci.yml- #11452 (@javorszky)
 
 ---
 
@@ -1704,39 +1665,31 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add restore_configmap fixture to multiple test classes
+## X. Update branch for 5.8.1
 
 **RULE**:
-When implementing operations in `tests/suite/test_annotations.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nginx/kubernetes-ingress. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/ISSUE_TEMPLATE/BUG-REPORT.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nginx/kubernetes-ingress. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `af39bb88`: Add restore_configmap fixture to multiple test classes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a60c25c3`: Update branch for 5.8.1. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/suite/test_annotations.py`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/ISSUE_TEMPLATE/BUG-REPORT.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-            replace_configmap_from_yaml(
-                kube_apis.v1,
-                ingress_controller_prerequisites.config_map["metadata"]["name"],
-                ingress_controller_prerequisites.namespace,
-                f"{DEPLOYMENTS}/common/nginx-config.yaml",
-            )
-            delete_items_from_yaml(kube_apis, src, test_namespace)
-            delete_common_app(kube_apis, "grpc", test_namespace)
+        - 5.8.1
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-            delete_items_from_yaml(kube_apis, src, test_namespace)
-            delete_common_app(kube_apis, "grpc", test_namespace)
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `af39bb88` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a60c25c3` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

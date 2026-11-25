@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261123-PAD8",
-    "timestamp": "2026-11-23T19:26:14.972Z",
-    "repository": "gardener/gardener",
-    "learningId": "learn-github-gardener-gardener",
-    "contentHash": "ac5004077176e63b3915ade6ca303b5c961de532a936620377259bf4317e0f01",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-PBKC",
-    "timestamp": "2026-11-23T19:26:16.524Z",
-    "repository": "tailscale/tailscale",
-    "learningId": "learn-github-tailscale-tailscale",
-    "contentHash": "e5ee3e137a6f0196687b67748f048a33cf8281a7274f6d89b379bfd6d0e33919",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-ZS8X",
-    "timestamp": "2026-11-23T19:34:24.705Z",
-    "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
-    "learningId": "learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf",
-    "contentHash": "e4370c088aa1cb57a622047cdb77daa7fcc3c3893cac88727b1ddfa9daf59b39",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-ZU4D",
-    "timestamp": "2026-11-23T19:34:27.133Z",
-    "repository": "topgrade-rs/topgrade",
-    "learningId": "learn-github-topgrade-rs-topgrade",
-    "contentHash": "1fb22bcf9a4f0e0b505000663212e653825da4f26c95cfe487ee63ee02e87948",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261123-06D6",
     "timestamp": "2026-11-23T19:34:43.002Z",
     "repository": "ytsaurus/ytsaurus",
@@ -7492,6 +7432,66 @@
     "contentHash": "453b11a8f8dc37797803bb305fa1dc18bfbefc255425965f29de46c040a17181",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-31X7",
+    "timestamp": "2026-11-25T07:04:28.027Z",
+    "repository": "InternScience/Sage-A1.5",
+    "learningId": "learn-huggingface-internscience-sage-a1-5",
+    "contentHash": "311c82b012fcc96ba4c4cb069205c34af9d9a2ac456ed55bdeff778c09d1e62c",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-33YL",
+    "timestamp": "2026-11-25T07:04:30.669Z",
+    "repository": "googleworkspace/cli",
+    "learningId": "learn-github-googleworkspace-cli",
+    "contentHash": "6167160e3612c9bd21fea39bed86108dff846fd0d538b56e2a571264b25e28f9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-39JR",
+    "timestamp": "2026-11-25T07:04:37.911Z",
+    "repository": "nginx/kubernetes-ingress",
+    "learningId": "learn-github-nginx-kubernetes-ingress",
+    "contentHash": "dafc553e775bb3a2d7e59b293ba5edbcfb92008376355f9f2d126c3c983e4f91",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-3CWO",
+    "timestamp": "2026-11-25T07:04:42.264Z",
+    "repository": "sfu-db/connector-x",
+    "learningId": "learn-github-sfu-db-connector-x",
+    "contentHash": "daff00187f711586e797cab064b347671759219a570951695cdc8efde89664e4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-25T06:56:10.594Z",
+  "last_updated": "2026-11-25T07:04:42.282Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4221,14 +4221,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-googleworkspace-cli",
-      "content_hash": "b03b5863ff7ce2f3a6d1f4a541d4b5e45ef5876e0873ed1c0229d487bd6321c9",
-      "verified_at": "2026-10-31T00:05:32.392Z",
+      "content_hash": "6167160e3612c9bd21fea39bed86108dff846fd0d538b56e2a571264b25e28f9",
+      "verified_at": "2026-11-25T07:04:30.689Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T00:05:32.392Z"
+      "last_updated": "2026-11-25T07:04:30.689Z"
     },
     "react-navigation/react-navigation": {
       "repository": "react-navigation/react-navigation",
@@ -7131,14 +7131,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sfu-db-connector-x",
-      "content_hash": "14785e23f972a00a9cfe0a55e58456be8f72a1ad3a1d65419483c8e357a753ac",
-      "verified_at": "2026-11-23T16:44:55.125Z",
+      "content_hash": "daff00187f711586e797cab064b347671759219a570951695cdc8efde89664e4",
+      "verified_at": "2026-11-25T07:04:42.281Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T16:44:55.125Z"
+      "last_updated": "2026-11-25T07:04:42.281Z"
     },
     "stenciljs/core": {
       "repository": "stenciljs/core",
@@ -10056,14 +10056,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nginx-kubernetes-ingress",
-      "content_hash": "3771887a148df05cb5d824d7d62925d07bd68821efa0115a6b9ff803be138b64",
-      "verified_at": "2026-11-24T14:15:09.602Z",
+      "content_hash": "dafc553e775bb3a2d7e59b293ba5edbcfb92008376355f9f2d126c3c983e4f91",
+      "verified_at": "2026-11-25T07:04:37.930Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T14:15:09.602Z"
+      "last_updated": "2026-11-25T07:04:37.930Z"
     },
     "milvus-io/milvus": {
       "repository": "milvus-io/milvus",
@@ -15786,14 +15786,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-internscience-sage-a1-5",
-      "content_hash": "8bcccc18fa2b4c988a451d08b50756114ec65fabde8c2fff69023edbda68404e",
-      "verified_at": "2026-11-21T13:30:26.703Z",
+      "content_hash": "311c82b012fcc96ba4c4cb069205c34af9d9a2ac456ed55bdeff778c09d1e62c",
+      "verified_at": "2026-11-25T07:04:28.046Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T13:30:26.703Z"
+      "last_updated": "2026-11-25T07:04:28.046Z"
     },
     "RecursiveSI/flint": {
       "repository": "RecursiveSI/flint",

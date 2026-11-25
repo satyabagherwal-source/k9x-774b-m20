@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sfu-db-connector-x-learnings.md`  
 > **Source**: github ([https://github.com/sfu-db/connector-x](https://github.com/sfu-db/connector-x))  
-> **Source Version**: `580a386f`  
+> **Source Version**: `07e1d2e5`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-23T16:44:54.668Z  
+> **Timestamp**: 2026-11-25T07:04:41.216Z  
 > **Learning ID**: `learn-github-sfu-db-connector-x`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sfu-db-connector-x-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sfu-db/connector-x](https://github.com/sfu-db/connector-x))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T16:44:54.436Z  
+> **Harvest Timestamp**: 2026-11-25T07:04:41.211Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -923,522 +923,537 @@ if __name__ == "__main__":
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `03ac5a84` (2026-11-22)
-**Commit Message**: fix(rust): replace owning_ref with an internal OwningHandle
+### Incident Patch 1: `8f3475c5` (2026-11-24)
+**Commit Message**: fix(oracle): map TIMESTAMP WITH TIME ZONE to DateTimeTzMicro in the Arrow transports
 
-owning_ref has unfixed soundness issues (RUSTSEC-2022-0040) and no
-patched release, which leaves a Dependabot alert open on both
-lockfiles. The SQLite, Oracle and MSSQL sources only used its
-OwningHandle to keep a statement or connection alive next to the row
-stream that borrows from it.
+Both Oracle -> Arrow transports declared `TimestampTz` columns as `DateTimeTz` (which holds `DateTime<Utc>`) while
+converting the values to `DateTimeWrapperMicro`, so reading any `TIMESTAMP WITH TIME ZONE` column into Arrow failed on
+the first row with `TypeCheckFailed("DateTimeTz(true)", "...DateTimeWrapperMicro")`. Map it to `DateTimeTzMicro`, as
+the Postgres and MSSQL transports do for their time-zone-aware types.
 
-Add a small crate-private OwningHandle in utils.rs with the same
-new_with_fn/Deref API. It holds the owner through Box::into_raw rather
-than a Box, so moving the handle doesn't assert unique access to
-memory that is still borrowed, and Drop frees the handle before the
-owner. Call sites only change their import and the owner type
-parameter. DummyBox stays, as utils is a public module.
+Not covered so far: the only Rust Oracle test reads through the source parser, and the Python Oracle tests use the
+pandas destination, which has its own (correct) transport.
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Tests: type-mapping unit tests for both transports (they fail without the fix), and ignored integration tests reading
+`admin.test_types.test_timestamptz` through `get_arrow` and `new_record_batch_iter`. Values are unchanged: the
+wall-clock time, as the pandas destination returns it.
 
-**File**: `Cargo.lock` (modified, +0/-10)
+**File**: `connectorx/src/transports/oracle_arrow.rs` (modified, +67/-1)
 ```diff
-@@ -1926,7 +1926,6 @@ dependencies = [
-  "num-traits",
-  "openssl",
-  "oracle",
-- "owning_ref",
-  "pgvector",
-  "polars",
-  "polars-arrow",
-@@ -5821,15 +5820,6 @@ version = "0.5.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "1a80800c0488c3a21695ea981a54918fbb37abf04f4d0720c453632255e2ff0e"
- 
--[[package]]
--name = "owning_ref"
--version = "0.4.1"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "6ff55baddef9e4ad00f88b6c743a2a8062d4c6ade126c2a528644b8e444d52ce"
--dependencies = [
-- "stable_deref_trait",
--]
--
- [[package]]
- name = "p256"
- version = "0.13.2"
-```
-
-**File**: `connectorx-python/Cargo.lock` (modified, +0/-10)
-```diff
-@@ -1577,7 +1577,6 @@ dependencies = [
-  "num-traits",
-  "openssl",
-  "oracle",
-- "owning_ref",
-  "pgvector",
-  "postgres",
-  "postgres-native-tls",
-@@ -4822,15 +4821,6 @@ version = "0.5.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "1a80800c0488c3a21695ea981a54918fbb37abf04f4d0720c453632255e2ff0e"
- 
--[[package]]
--name = "owning_ref"
--version = "0.4.1"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "6ff55baddef9e4ad00f88b6c743a2a8062d4c6ade126c2a528644b8e444d52ce"
--dependencies = [
-- "stable_deref_trait",
--]
--
- [[package]]
- name = "page_size"
- version = "0.6.0"
-```
-
-**File**: `connectorx/Cargo.toml` (modified, +0/-1)
-```diff
-@@ -18,7 +18,6 @@ rayon = "1"
- sqlparser = "0.64"
- thiserror = "2"
- url = "2"
--owning_ref = "0.4"
- serde_json = "1"
- chrono = "0.4"
- 
-```
-
-**File**: `connectorx/src/sources/mssql/tiberius_impl.rs` (modified, +4/-4)
-```diff
-@@ -8,6 +8,7 @@ use super::driver;
- use super::errors::MsSQLSourceError;
- use super::typesystem::{FloatN, IntN, MsSQLTypeSystem};
- use crate::constants::DB_BUFFER_SIZE;
-+use crate::utils::OwningHandle;
- use crate::{
-     data_order::DataOrder,
-     errors::ConnectorXError,
-@@ -23,7 +24,6 @@ use chrono::{NaiveDate, NaiveDateTime, NaiveTime};
- use fehler::{throw, throws};
- use futures::StreamExt;
- use log::debug;
--use owning_ref::OwningHandle;
- use rust_decimal::Decimal;
- use sqlparser::dialect::MsSqlDialect;
- use std::collections::HashMap;
-@@ -292,7 +292,7 @@ impl SourcePartition for MsSQLSourcePartition {
-     #[throws(MsSQLSourceError)]
-     fn parser<'a>(&'a mut self) -> Self::Parser<'a> {
-         let conn = self.rt.block_on(self.pool.get())?;
--        let rows: OwningHandle<Box<Conn<'a>>, DummyBox<QueryStream<'a>>> =
-+        let rows: OwningHandle<Conn<'a>, DummyBox<QueryStream<'a>>> =
-             OwningHandle::new_with_fn(Box::new(conn), |conn: *const Conn<'a>| unsafe {
-                 let conn = &mut *(conn as *mut Conn<'a>);
- 
-@@ -317,7 +317,7 @@ impl SourcePartition for MsSQLSourcePartition {
- 
- pub struct MsSQLSourceParser<'a> {
-     rt: &'a Handle,
--    iter: OwningHandle<Box<Conn<'a>>, DummyBox<QueryStream<'a>>>,
-+    iter: OwningHandle<Conn<'a>, DummyBox<QueryStream<'a>>>,
-     rowbuf: Vec<Row>,
-     ncols: usize,
-     current_col: usize,
-@@ -328,7 +328,7 @@ pub struct MsSQLSourceParser<'a> {
- impl<'a> MsSQLSourceParser<'a> {
-     fn new(
-         rt: &'a Handle,
--        iter: OwningHandle<Box<Conn<'a>>, DummyBox<QueryStream<'a>>>,
-+        iter: OwningHandle<Conn<'a>, DummyBox<QueryStream<'a>>>,
-         schema: &[MsSQLTypeSystem],
-     ) -> Self {
-         Self {
-```
-
-**File**: `connectorx/src/sources/oracle/mod.rs` (modified, +3/-3)
-```diff
-@@ -6,6 +6,7 @@ use std::collections::HashMap;
- pub use self::errors::OracleSourceError;
- pub use self::typesystem::OracleTypeSystem;
- use crate::constants::{DB_BUFFER_SIZE, ORACLE_ARRAY_SIZE};
-+use crate::utils::OwningHandle;
- use crate::{
-     data_order::DataOrder,
-     errors::ConnectorXError,
-@@ -16,7 +17,6 @@ use crate::{
- use chrono::{DateTime, NaiveDate, NaiveDateTime, Utc};
- use fehler::{throw, throws};
- use log::debug;
--use owning_ref::OwningHandle;
- use r2d2::{Pool, PooledConnection};
- use r2d2_oracle::oracle::ResultSet;
- use r2d2_oracle::{
-@@ -302,7 +302,7 @@ unsafe impl<'a> Send for OracleTextSourceParser<'a> {}
- 
- /// Row parser for an Oracle partition.
- pub struct OracleTextSourceParser<'a> {
--    rows: OwningHandle<Box<Statement>, DummyBox<ResultSet<'a, Row>>>,
-+    rows: OwningHandle<Statement, DummyBox<ResultSet<'a, Row>>>,
-     rowbuf: Vec<Row>,
-     ncols: usize,
-     current_col: usize,
-@@ -319,7 +319,7 @@ impl<'a> OracleTextSourceParser<'a> {
-             .prefetch_rows(ORACLE_ARRAY_SIZE)
-             .fetch_array_size(ORACLE_ARRAY_SIZE)
-             .build()?;
--        let rows: OwningHandle<Box<Statement>, DummyBox<ResultSet<'a, Row>>> =
-+        let rows: OwningHandle<Statement, DummyBox<ResultSet<'a, Row>>> =
-             OwningHandle::new_with_fn(Box::new(stmt), |stmt: *const Statement| unsafe {
-                 DummyBox((*(stmt as *mut Statement)).query(&[]).unwrap())
-             });
-```
-
-**File**: `connectorx/src/sources/sqlite/mod.rs` (modified, +3/-3)
-```diff
-@@ -4,6 +4,7 @@ mod errors;
- mod typesystem;
- 
- pub use self::errors::SQLiteSourceError;
-+use crate::utils::OwningHandle;
- use crate::{
-     data_order::DataOrder,
-     errors::ConnectorXError,
-@@ -16,7 +17,6 @@ use chrono::{NaiveDate, NaiveDateTime, NaiveTime};
- use fallible_streaming_iterator::FallibleStreamingIterator;
- use fehler::{throw, throws};
- use log::debug;
--use owning_ref::OwningHandle;
- use r2d2::{Pool, PooledConnection};
- use r2d2_sqlite::SqliteConnectionManager;
- use rusqlite::{Row, Rows, Statement};
-@@ -260,7 +260,7 @@ unsafe impl<'a> Send for SQLiteSourcePartitionParser<'a> {}
- 
- /// Row parser for a SQLite partition.
- pub struct SQLiteSourcePartitionParser<'a> {
--    rows: OwningHandle<Box<Statement<'a>>, DummyBox<Rows<'a>>>,
-+    rows: OwningHandle<Statement<'a>, DummyBox<Rows<'a>>>,
-     ncols: usize,
-     current_col: usize,
-     current_consumed: bool,
-@@ -280,7 +280,7 @@ impl<'a> SQLiteSourcePartitionParser<'a> {
-         // Safety: DummyBox borrows the on-heap stmt, which is owned by the OwningHandle.
-         // No matter how we move the owning handle (thus the Box<Statment>), the Statement
-         // keeps its address static on the heap, thus the borrow of MyRows keeps valid.
--        let rows: OwningHandle<Box<Statement<'a>>, DummyBox<Rows<'a>>> =
-+        let rows: OwningHandle<Statement<'a>, DummyBox<Rows<'a>>> =
-             OwningHandle::new_with_fn(Box::new(stmt), |stmt: *const Statement<'a>| unsafe {
-                 DummyBox((*(stmt as *mut Statement<'_>)).query([]).unwrap())
-             });
-```
-
-**File**: `connectorx/src/utils.rs` (modified, +112/-1)
-```diff
-@@ -1,4 +1,6 @@
-+use std::mem::ManuallyDrop;
- use std::ops::{Deref, DerefMut};
-+use std::ptr::NonNull;
- use url::{form_urlencoded, Url};
- 
- /// Remove the given parameters from a URL query, leaving every other parameter
-@@ -53,6 +55,71 @@ impl<T> DerefMut for DummyBox<T> {
+@@ -50,7 +50,7 @@ impl_transport!(
+         { Date[NaiveDateTime]               => Date64Micro[NaiveDateTimeWrapperMicro]   | conversion option }
+         { Timestamp[NaiveDateTime]          => Date64Micro[NaiveDateTimeWrapperMicro]   | conversion none }
+         { TimestampNano[NaiveDateTime]      => Date64[NaiveDateTime]                    | conversion auto }
+-        { TimestampTz[DateTime<Utc>]        => DateTimeTz[DateTimeWrapperMicro]         | conversion option }
++        { TimestampTz[DateTime<Utc>]        => DateTimeTzMicro[DateTimeWrapperMicro]    | conversion option }
+         { TimestampTzNano[DateTime<Utc>]    => DateTimeTz[DateTime<Utc>]                | conversion auto }
+         { Boolean[bool]                     => Boolean[bool]                            | conversion auto }
+     }
+@@ -67,3 +67,69 @@ impl TypeConversion<DateTime<Utc>, DateTimeWrapperMicro> for OracleArrowTranspor
+         DateTimeWrapperMicro(val)
      }
  }
- 
-+/// A heap-allocated owner together with a handle that borrows from it, such as a
-+/// prepared statement and the row stream reading from it.
-+///
-+/// Replaces `owning_ref::OwningHandle` (RUSTSEC-2022-0040). That type keeps the
-+/// owner in a `Box` while the handle borrows from it, which violates Rust's
-+/// aliasing rules whenever the `Box` is moved. Here the owner is turned into a
-+/// raw pointer with `Box::into_raw` for as long as the handle exists, so no
-+/// `Box` claims unique access to it, and `Drop` frees the handle before the owner.
-+///
-+/// Like the original, it dereferences through the handle (`H::Target`).
-+pub(crate) struct OwningHandle<O, H> {
-+    handle: ManuallyDrop<H>,
-+    owner: NonNull<O>,
-+}
 +
-+impl<O, H> OwningHandle<O, H> {
-+    /// Move `owner` to a stable heap address and build the handle from a pointer to it.
-+    ///
-+    /// `f` may turn the pointer into `&O` or `&mut O`; the owner stays alive, and
-+    /// at the same address, until the returned value is dropped. If `f` panics, the
-+    /// owner is leaked rather than freed.
-+    pub(crate) fn new_with_fn<F>(owner: Box<O>, f: F) -> Self
++#[cfg(test)]
++mod tests {
++    use super::*;
++    use crate::typesystem::{Transport, TypeSystem};
++
++    /// The destination type of each Oracle date and time type must hold the value the conversion produces: a
++    /// mismatch is only caught at run time, on the first row ("Data type unexpected"). `TIMESTAMP WITH TIME ZONE`
++    /// produced a `DateTimeWrapperMicro` into a `DateTimeTz` column, which holds a `DateTime<Utc>`.
++    /// Checks that `ts` holds values of type `T` (`Option<T>` when nullable).
++    fn holds<T>(ts: ArrowTypeSystem, nullable: bool) -> bool
 +    where
-+        F: FnOnce(*const O) -> H,
++        T: crate::typesystem::TypeAssoc<ArrowTypeSystem>,
++        Option<T>: crate::typesystem::TypeAssoc<ArrowTypeSystem>,
 +    {
-+        // SAFETY: `Box::into_raw` never returns null.
-+        let owner = unsafe { NonNull::new_unchecked(Box::into_raw(owner)) };
-+        let handle = f(owner.as_ptr());
-+        Self {
-+            handle: ManuallyDrop::new(handle),
-+            owner,
-+        }
-+    }
-+}
-+
-+impl<O, H: Deref> Deref for OwningHandle<O, H> {
-+    type Target = H::Target;
-+
-+    fn deref(&self) -> &Self::Target {
-+        &self.handle
-+    }
-+}
-+
-+impl<O, H: DerefMut> DerefMut for OwningHandle<O, H> {
-+    fn deref_mut(&mut self) -> &mut Self::Target {
-+        &mut self.handle
-+    }
-+}
-+
-+impl<O, H> Drop for OwningHandle<O, H> {
-+    fn drop(&mut self) {
-+        // SAFETY: the handle may borrow from the owner, so drop it first. `owner`
-+        // came from `Box::into_raw` in `new_with_fn` and is freed exactly once, here.
-+        unsafe {
-+            ManuallyDrop::drop(&mut self.handle);
-+            drop(Box::from_raw(self.owner.as_ptr()));
-+        }
-+    }
-+}
-+
-+// SAFETY: the value owns both the owner and the handle outright, as
-+// `(Box<O>, H)` would; `NonNull` only opts out of these impls by default.
-+unsafe impl<O: Send, H: Send> Send for OwningHandle<O, H> {}
-+unsafe impl<O: Sync, H: Sync> Sync for OwningHandle<O, H> {}
-+
- #[cfg(feature = "dst_arrow")]
- pub fn decimal_to_i128(mut v: rust_decimal::Decimal, scale: u32) -> anyhow::Result<i128> {
-     v.rescale(scale);
-@@ -71,9 +138,53 @@ pub fn decimal_to_i128(mut v: rust_decimal::Decimal, scale: u32) -> anyhow::Resu
- 
- #[cfg(test)]
- mod tests {
--    use super::remove_query_params;
-+    use super::{remove_query_params, DummyBox, OwningHandle};
-+    use std::cell::RefCell;
-+    use std::rc::Rc;
-     use url::Url;
- 
-+    /// Records its name in `log` when dropped.
-+    struct Noisy {
-+        name: &'static str,
-+        log: Rc<RefCell<Vec<&'static str>>>,
-+    }
-+
-+    impl Drop for Noisy {
-+        fn drop(&mut self) {
-+            self.log.borrow_mut().push(self.name);
++        if nullable {
++            ts.check::<Option<T>>().is_ok()
++        } else {
++            ts.check::<T>().is_ok()
 +        }
 +    }
 +
 +    #[test]
-+    fn owning_handle_borrows_owner_across_moves() {
-+        let owner = Box::new(vec![1, 2, 3]);
-+        let handle =
-+            OwningHandle::new_with_fn(owner, |v: *const Vec<i32>| unsafe { DummyBox((*v).iter()) });
-+        // Moving the handle must not invalidate the borrow of the owner.
-+        let mut moved = handle;
-+        assert_eq!(moved.next(), Some(&1));
-+        let mut moved_again = moved;
-+        assert_eq!(moved_again.next(), Some(&2));
++    fn date_and_time_types_hold_the_converted_values() {
++        let dst = |ts| OracleArrowTransport::convert_typesystem(ts).unwrap();
++        for nullable in [true, false] {
++            let tz = dst(OracleTypeSystem::TimestampTz(nullable));
++            assert!(
++                holds::<DateTimeWrapperMicro>(tz, nullable),
++                "TIMESTAMP WITH TIME ZONE -> {tz:?}"
++            );
++
++            let tz_nano = dst(OracleTypeSystem::TimestampTzNano(nullable));
++            assert!(
++                holds::<DateTime<Utc>>(tz_nano, nullable),
++                "TIMESTAMP(7..9) WITH TIME ZONE -> {tz_nano:?}"
++            );
++
++            for naive in [
++                OracleTypeSystem::Date(nullable),
++                OracleTypeSystem::Timestamp(nullable),
++            ] {
++                let ts = dst(naive);
++                assert!(
++                    holds::<NaiveDateTimeWrapperMicro>(ts, nullable),
++                    "{naive:?} -> {ts:?}"
++                );
++            }
++            let nano = dst(OracleTypeSystem::TimestampNano(nullable));
++            assert!(
++                holds::<NaiveDateTime>(nano, nullable),
++                "TIMESTAMP(7..9) -> {nano:?}"
++            );
++        }
 +    }
 +
 +    #[test]
-+    fn owning_handle_drops_handle_before_owner() {
-+        let log = Rc::new(RefCell::new(Vec::new()));
-+        let owner = Box::new(Noisy {
-+            name: "owner",
-+            log: log.clone(),
-+        });
-+        let handle_log = log.clone();
-+        let handle = OwningHandle::new_with_fn(owner, move |_| {
-+            DummyBox(Noisy {
-+                name: "handle",
-+                log: handle_log,
-+            })
-+        });
-+        drop(handle);
-+        assert_eq!(*log.borrow(), ["handle", "owner"]);
++    fn timestamp_with_time_zone_converts_at_microsecond_precision() {
++        let utc = DateTime::from_timestamp_micros(944_074_800_123_456).unwrap();
++        let converted: Option<DateTimeWrapperMicro> = <OracleArrowTransport as TypeConversion<
++            Option<DateTime<Utc>>,
++            Option<DateTimeWrapperMicro>,
++        >>::convert(Some(utc));
++        assert_eq!(converted.map(|w| w.0), Some(utc));
 +    }
-+
-     fn strip(uri: &str, params: &[&str]) -> String {
-         remove_query_params(&Url::parse(uri).unwrap(), params).to_string()
++}
+```
+
+**File**: `connectorx/src/transports/oracle_arrowstream.rs` (modified, +67/-1)
+```diff
+@@ -50,7 +50,7 @@ impl_transport!(
+         { Date[NaiveDateTime]               => Date64Micro[NaiveDateTimeWrapperMicro]   | conversion option }
+         { Timestamp[NaiveDateTime]          => Date64Micro[NaiveDateTimeWrapperMicro]   | conversion none }
+         { TimestampNano[NaiveDateTime]      => Date64[NaiveDateTime]                    | conversion auto }
+-        { TimestampTz[DateTime<Utc>]        => DateTimeTz[DateTimeWrapperMicro]         | conversion option }
++        { TimestampTz[DateTime<Utc>]        => DateTimeTzMicro[DateTimeWrapperMicro]    | conversion option }
+         { TimestampTzNano[DateTime<Utc>]    => DateTimeTz[DateTime<Utc>]                | conversion auto }
+         { Boolean[bool]                     => Boolean[bool]                            | conversion auto }
      }
+@@ -67,3 +67,69 @@ impl TypeConversion<DateTime<Utc>, DateTimeWrapperMicro> for OracleArrowTranspor
+         DateTimeWrapperMicro(val)
+     }
+ }
++
++#[cfg(test)]
++mod tests {
++    use super::*;
++    use crate::typesystem::{Transport, TypeSystem};
++
++    /// The destination type of each Oracle date and time type must hold the value the conversion produces: a
++    /// mismatch is only caught at run time, on the first row ("Data type unexpected"). `TIMESTAMP WITH TIME ZONE`
++    /// produced a `DateTimeWrapperMicro` into a `DateTimeTz` column, which holds a `DateTime<Utc>`.
++    /// Checks that `ts` holds values of type `T` (`Option<T>` when nullable).
++    fn holds<T>(ts: ArrowTypeSystem, nullable: bool) -> bool
++    where
++        T: crate::typesystem::TypeAssoc<ArrowTypeSystem>,
++        Option<T>: crate::typesystem::TypeAssoc<ArrowTypeSystem>,
++    {
++        if nullable {
++            ts.check::<Option<T>>().is_ok()
++        } else {
++            ts.check::<T>().is_ok()
++        }
++    }
++
++    #[test]
++    fn date_and_time_types_hold_the_converted_values() {
++        let dst = |ts| OracleArrowTransport::convert_typesystem(ts).unwrap();
++        for nullable in [true, false] {
++            let tz = dst(OracleTypeSystem::TimestampTz(nullable));
++            assert!(
++                holds::<DateTimeWrapperMicro>(tz, nullable),
++                "TIMESTAMP WITH TIME ZONE -> {tz:?}"
++            );
++
++            let tz_nano = dst(OracleTypeSystem::TimestampTzNano(nullable));
++            assert!(
++                holds::<DateTime<Utc>>(tz_nano, nullable),
++                "TIMESTAMP(7..9) WITH TIME ZONE -> {tz_nano:?}"
++            );
++
++            for naive in [
++                OracleTypeSystem::Date(nullable),
++                OracleTypeSystem::Timestamp(nullable),
++            ] {
++                let ts = dst(naive);
++                assert!(
++                    holds::<NaiveDateTimeWrapperMicro>(ts, nullable),
++                    "{naive:?} -> {ts:?}"
++                );
++            }
++            let nano = dst(OracleTypeSystem::TimestampNano(nullable));
++            assert!(
++                holds::<NaiveDateTime>(nano, nullable),
++                "TIMESTAMP(7..9) -> {nano:?}"
++            );
++        }
++    }
++
++    #[test]
++    fn timestamp_with_time_zone_converts_at_microsecond_precision() {
++        let utc = DateTime::from_timestamp_micros(944_074_800_123_456).unwrap();
++        let converted: Option<DateTimeWrapperMicro> = <OracleArrowTransport as TypeConversion<
++            Option<DateTime<Utc>>,
++            Option<DateTimeWrapperMicro>,
++        >>::convert(Some(utc));
++        assert_eq!(converted.map(|w| w.0), Some(utc));
++    }
++}
+```
+
+**File**: `connectorx/tests/test_oracle.rs` (modified, +77/-0)
+```diff
+@@ -52,3 +52,80 @@ fn test_types() {
+         rows
+     );
+ }
++
++/// `TIMESTAMP WITH TIME ZONE` values of `admin.test_types` (scripts/oracle.sql), sorted, NULL last. The source
++/// returns the wall-clock time without applying the offset, as the pandas destination does (`test_oracle_types` in
++/// connectorx-python): `1999-12-01 11:00:00 -8:00` reads as `1999-12-01 11:00:00`.
++#[cfg(feature = "dst_arrow")]
++fn expected_timestamptz() -> Vec<Option<i64>> {
++    use chrono::DateTime;
++    [
++        "1899-12-01T11:00:00Z",
++        "1999-12-01T11:00:00Z",
++        "9999-12-31T11:00:00Z",
++    ]
++    .iter()
++    .map(|s| Some(DateTime::parse_from_rfc3339(s).unwrap().timestamp_micros()))
++    .chain([None])
++    .collect()
++}
++
++#[cfg(feature = "dst_arrow")]
++const TIMESTAMPTZ_QUERY: &str =
++    "select test_timestamptz from admin.test_types order by test_timestamptz nulls last";
++
++/// Reads the single `Timestamp(Microsecond, "+00:00")` column of `batches` as microseconds.
++#[cfg(feature = "dst_arrow")]
++fn timestamptz_values(batches: &[arrow::record_batch::RecordBatch]) -> Vec<Option<i64>> {
++    use arrow::array::{Array, TimestampMicrosecondArray};
++    use arrow::datatypes::{DataType, TimeUnit};
++    let mut values = Vec::new();
++    for batch in batches {
++        let column = batch.column(0);
++        assert_eq!(
++            column.data_type(),
++            &DataType::Timestamp(TimeUnit::Microsecond, Some("+00:00".into()))
++        );
++        let column = column
++            .as_any()
++            .downcast_ref::<TimestampMicrosecondArray>()
++            .unwrap();
++        values.extend((0..column.len()).map(|i| column.is_valid(i).then(|| column.value(i))));
++    }
++    values
++}
++
++/// `TIMESTAMP WITH TIME ZONE` through the streaming Arrow destination (used to fail with "Data type unexpected:
++/// DateTimeTz(true) expected, DateTimeWrapperMicro found").
++#[test]
++#[ignore]
++#[cfg(feature = "dst_arrow")]
++fn test_oracle_timestamptz_arrow_stream() {
++    use connectorx::get_arrow::new_record_batch_iter;
++
++    let source_conn = SourceConn::try_from(test_db::oracle_url().as_str()).unwrap();
++    let queries = [CXQuery::naked(TIMESTAMPTZ_QUERY.to_string())];
++    let mut iter = new_record_batch_iter(&source_conn, None, &queries, 2, None).unwrap();
++    iter.prepare();
++    let mut batches = Vec::new();
++    while let Some(batch) = iter.next_batch() {
++        batches.push(batch.unwrap());
++    }
++    assert_eq!(timestamptz_values(&batches), expected_timestamptz());
++}
++
++/// Same values through the batch Arrow destination.
++#[test]
++#[ignore]
++#[cfg(feature = "dst_arrow")]
++fn test_oracle_timestamptz_arrow() {
++    use connectorx::get_arrow::get_arrow;
++
++    let source_conn = SourceConn::try_from(test_db::oracle_url().as_str()).unwrap();
++    let queries = [CXQuery::naked(TIMESTAMPTZ_QUERY.to_string())];
++    let batches = get_arrow(&source_conn, None, &queries, None)
++        .unwrap()
++        .arrow()
++        .unwrap();
++    assert_eq!(timestamptz_values(&batches), expected_timestamptz());
++}
 ```
 
 ---
 
-### Incident Patch 2: `afeac9ef` (2026-11-22)
-**Commit Message**: build(python): bump mssql-tds to 0.4.0 in connectorx-python/Cargo.lock
+### Incident Patch 2: `07e1d2e5` (2026-11-25)
+**Commit Message**: Merge pull request #1124 from dbascoules/fix/oracle-timestamptz-arrow-type
 
-connectorx-python has its own lockfile, so it has to follow the
-connectorx bump.
+fix(oracle): map TIMESTAMP WITH TIME ZONE to DateTimeTzMicro in the Arrow transports
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `connectorx-python/Cargo.lock` (modified, +30/-5)
+**File**: `connectorx/src/transports/oracle_arrow.rs` (modified, +67/-1)
 ```diff
-@@ -1129,6 +1129,15 @@ dependencies = [
-  "hybrid-array",
- ]
- 
-+[[package]]
-+name = "block2"
-+version = "0.6.2"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "cdeb9d870516001442e364c5220d3574d2da8dc765554b4a617230d33fa58ef5"
-+dependencies = [
-+ "objc2",
-+]
+@@ -50,7 +50,7 @@ impl_transport!(
+         { Date[NaiveDateTime]               => Date64Micro[NaiveDateTimeWrapperMicro]   | conversion option }
+         { Timestamp[NaiveDateTime]          => Date64Micro[NaiveDateTimeWrapperMicro]   | conversion none }
+         { TimestampNano[NaiveDateTime]      => Date64[NaiveDateTime]                    | conversion auto }
+-        { TimestampTz[DateTime<Utc>]        => DateTimeTz[DateTimeWrapperMicro]         | conversion option }
++        { TimestampTz[DateTime<Utc>]        => DateTimeTzMicro[DateTimeWrapperMicro]    | conversion option }
+         { TimestampTzNano[DateTime<Utc>]    => DateTimeTz[DateTime<Utc>]                | conversion auto }
+         { Boolean[bool]                     => Boolean[bool]                            | conversion auto }
+     }
+@@ -67,3 +67,69 @@ impl TypeConversion<DateTime<Utc>, DateTimeWrapperMicro> for OracleArrowTranspor
+         DateTimeWrapperMicro(val)
+     }
+ }
 +
- [[package]]
- name = "bnum"
- version = "0.13.0"
-@@ -4516,13 +4525,14 @@ dependencies = [
- 
- [[package]]
- name = "mssql-tds"
--version = "0.3.0"
-+version = "0.4.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "c7a53513324677e601ca5b91e477840329ec6c244875fd55b155e5a8e8af7805"
-+checksum = "812c3993a5f6d98e14da9d8ab0bf9f9f536e49c18240f34af9bae301e4d35ae8"
- dependencies = [
-  "async-trait",
-  "bigdecimal 0.4.11",
-  "bitflags 2.13.2",
-+ "block2",
-  "byteorder",
-  "bytes",
-  "core-foundation 0.10.1",
-@@ -4792,6 +4802,15 @@ dependencies = [
-  "rustc-hash 2.1.3",
- ]
- 
-+[[package]]
-+name = "objc2"
-+version = "0.6.5"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "08849bbd4767dfae9457696856ae1c84fe4e0281bbe4a7abff2d0e06fb7981f8"
-+dependencies = [
-+ "objc2-encode",
-+]
++#[cfg(test)]
++mod tests {
++    use super::*;
++    use crate::typesystem::{Transport, TypeSystem};
 +
- [[package]]
- name = "objc2-core-foundation"
- version = "0.3.2"
-@@ -4801,6 +4820,12 @@ dependencies = [
-  "bitflags 2.13.2",
- ]
- 
-+[[package]]
-+name = "objc2-encode"
-+version = "4.1.0"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "ef25abbcd74fb2609453eb695bd2f860d389e457f67dc17cafc8b8cbc89d0c33"
++    /// The destination type of each Oracle date and time type must hold the value the conversion produces: a
++    /// mismatch is only caught at run time, on the first row ("Data type unexpected"). `TIMESTAMP WITH TIME ZONE`
++    /// produced a `DateTimeWrapperMicro` into a `DateTimeTz` column, which holds a `DateTime<Utc>`.
++    /// Checks that `ts` holds values of type `T` (`Option<T>` when nullable).
++    fn holds<T>(ts: ArrowTypeSystem, nullable: bool) -> bool
++    where
++        T: crate::typesystem::TypeAssoc<ArrowTypeSystem>,
++        Option<T>: crate::typesystem::TypeAssoc<ArrowTypeSystem>,
++    {
++        if nullable {
++            ts.check::<Option<T>>().is_ok()
++        } else {
++            ts.check::<T>().is_ok()
++        }
++    }
 +
- [[package]]
- name = "objc2-system-configuration"
- version = "0.3.2"
-@@ -7114,7 +7139,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "32497e9a4c7b38532efcdebeef879707aa9f794296a4f0244f6f69e9bc8574bd"
- dependencies = [
-  "fastrand",
-- "getrandom 0.4.3",
-+ "getrandom 0.3.4",
-  "once_cell",
-  "rustix 1.1.6",
-  "windows-sys 0.61.2",
-@@ -7641,7 +7666,7 @@ version = "2.1.5"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "86a801b3cea342a06d468c8710662aa29e5e05e4f5c0d62f00bbb7f2ad7941c2"
- dependencies = [
-- "rand 0.10.4",
-+ "rand 0.9.5",
- ]
- 
- [[package]]
-@@ -7991,7 +8016,7 @@ version = "0.1.11"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "c2a7b1c03c876122aa43f3020e6c3c3ee5c05081c9a00739faf7503aeba10d22"
- dependencies = [
-- "windows-sys 0.61.2",
-+ "windows-sys 0.48.0",
- ]
- 
- [[package]]
++    #[test]
++    fn date_and_time_types_hold_the_converted_values() {
++        let dst = |ts| OracleArrowTransport::convert_typesystem(ts).unwrap();
++        for nullable in [true, false] {
++            let tz = dst(OracleTypeSystem::TimestampTz(nullable));
++            assert!(
++                holds::<DateTimeWrapperMicro>(tz, nullable),
++                "TIMESTAMP WITH TIME ZONE -> {tz:?}"
++            );
++
++            let tz_nano = dst(OracleTypeSystem::TimestampTzNano(nullable));
++            assert!(
++                holds::<DateTime<Utc>>(tz_nano, nullable),
++                "TIMESTAMP(7..9) WITH TIME ZONE -> {tz_nano:?}"
++            );
++
++            for naive in [
++                OracleTypeSystem::Date(nullable),
++                OracleTypeSystem::Timestamp(nullable),
++            ] {
++                let ts = dst(naive);
++                assert!(
++                    holds::<NaiveDateTimeWrapperMicro>(ts, nullable),
++                    "{naive:?} -> {ts:?}"
++                );
++            }
++            let nano = dst(OracleTypeSystem::TimestampNano(nullable));
++            assert!(
++                holds::<NaiveDateTime>(nano, nullable),
++                "TIMESTAMP(7..9) -> {nano:?}"
++            );
++        }
++    }
++
++    #[test]
++    fn timestamp_with_time_zone_converts_at_microsecond_precision() {
++        let utc = DateTime::from_timestamp_micros(944_074_800_123_456).unwrap();
++        let converted: Option<DateTimeWrapperMicro> = <OracleArrowTransport as TypeConversion<
++            Option<DateTime<Utc>>,
++            Option<DateTimeWrapperMicro>,
++        >>::convert(Some(utc));
++        assert_eq!(converted.map(|w| w.0), Some(utc));
++    }
++}
 ```
 
----
-
-### Incident Patch 3: `1fc2ced4` (2026-11-22)
-**Commit Message**: Merge remote-tracking branch 'upstream/main' into fix/remove-owning-ref
-
-# Conflicts:
-#	connectorx-python/Cargo.lock
-
-**File**: `connectorx-python/Cargo.toml` (modified, +1/-1)
+**File**: `connectorx/src/transports/oracle_arrowstream.rs` (modified, +67/-1)
 ```diff
-@@ -24,7 +24,7 @@ itertools = "0.15"
- lazy_static = "1.4"
- libc = "0.2"
- log = "0.4"
--ndarray = "0.16"
-+ndarray = "0.17"
- numpy = {version = "0.29"}
- openssl = {version = "0.10", features = ["vendored"]}
- postgres = {version = "0.19", features = ["with-chrono-0_4", "with-uuid-1", "with-serde_json-1"]}
-```
-
-**File**: `connectorx-python/connectorx/tests/test_postgres.py` (modified, +3/-1)
-```diff
-@@ -1022,8 +1022,10 @@ def test_postgres_arrow_stream_invalid_url_raises() -> None:
-     # An invalid sslmode fails while parsing the connection string, before any
-     # network access, so this exercises the error path of new_record_batch_iter
-     # without a database. Before the fix this surfaced as a PanicException.
-+    # tokio-postgres >= 0.7.18 reports "invalid connection string" without
-+    # naming the parameter, so accept either wording.
-     bad_url = "postgresql://user:pass@127.0.0.1:1/db?sslmode=bogus"
--    with pytest.raises(RuntimeError, match="sslmode"):
-+    with pytest.raises(RuntimeError, match="sslmode|invalid connection string"):
-         read_sql(bad_url, "SELECT 1", return_type="arrow_stream")
- 
- 
-```
-
-**File**: `connectorx/src/partition.rs` (modified, +1/-0)
-```diff
-@@ -1,4 +1,5 @@
- use std::convert::TryFrom;
-+#[cfg(feature = "src_clickhouse")]
- use std::sync::Arc;
- 
- use crate::errors::{ConnectorXOutError, OutResult};
-```
-
-**File**: `connectorx/tests/test_db.rs` (modified, +4/-0)
-```diff
-@@ -1,3 +1,7 @@
-+// Shared by every integration test binary via `mod test_db;`. Each binary only
-+// uses the helpers for its own database, so the rest look unused per binary.
-+#![allow(dead_code, unused_imports)]
+@@ -50,7 +50,7 @@ impl_transport!(
+         { Date[NaiveDateTime]               => Date64Micro[NaiveDateTimeWrapperMicro]   | conversion option }
+         { Timestamp[NaiveDateTime]          => Date64Micro[NaiveDateTimeWrapperMicro]   | conversion none }
+         { TimestampNano[NaiveDateTime]      => Date64[NaiveDateTime]                    | conversion auto }
+-        { TimestampTz[DateTime<Utc>]        => DateTimeTz[DateTimeWrapperMicro]         | conversion option }
++        { TimestampTz[DateTime<Utc>]        => DateTimeTzMicro[DateTimeWrapperMicro]    | conversion option }
+         { TimestampTzNano[DateTime<Utc>]    => DateTimeTz[DateTime<Utc>]                | conversion auto }
+         { Boolean[bool]                     => Boolean[bool]                            | conversion auto }
+     }
+@@ -67,3 +67,69 @@ impl TypeConversion<DateTime<Utc>, DateTimeWrapperMicro> for OracleArrowTranspor
+         DateTimeWrapperMicro(val)
+     }
+ }
 +
- use std::{
-     env, fs,
-     net::{SocketAddr, TcpStream, ToSocketAddrs},
++#[cfg(test)]
++mod tests {
++    use super::*;
++    use crate::typesystem::{Transport, TypeSystem};
++
++    /// The destination type of each Oracle date and time type must hold the value the conversion produces: a
++    /// mismatch is only caught at run time, on the first row ("Data type unexpected"). `TIMESTAMP WITH TIME ZONE`
++    /// produced a `DateTimeWrapperMicro` into a `DateTimeTz` column, which holds a `DateTime<Utc>`.
++    /// Checks that `ts` holds values of type `T` (`Option<T>` when nullable).
++    fn holds<T>(ts: ArrowTypeSystem, nullable: bool) -> bool
++    where
++        T: crate::typesystem::TypeAssoc<ArrowTypeSystem>,
++        Option<T>: crate::typesystem::TypeAssoc<ArrowTypeSystem>,
++    {
++        if nullable {
++            ts.check::<Option<T>>().is_ok()
++        } else {
++            ts.check::<T>().is_ok()
++        }
++    }
++
++    #[test]
++    fn date_and_time_types_hold_the_converted_values() {
++        let dst = |ts| OracleArrowTransport::convert_typesystem(ts).unwrap();
++        for nullable in [true, false] {
++            let tz = dst(OracleTypeSystem::TimestampTz(nullable));
++            assert!(
++                holds::<DateTimeWrapperMicro>(tz, nullable),
++                "TIMESTAMP WITH TIME ZONE -> {tz:?}"
++            );
++
++            let tz_nano = dst(OracleTypeSystem::TimestampTzNano(nullable));
++            assert!(
++                holds::<DateTime<Utc>>(tz_nano, nullable),
++                "TIMESTAMP(7..9) WITH TIME ZONE -> {tz_nano:?}"
++            );
++
++            for naive in [
++                OracleTypeSystem::Date(nullable),
++                OracleTypeSystem::Timestamp(nullable),
++            ] {
++                let ts = dst(naive);
++                assert!(
++                    holds::<NaiveDateTimeWrapperMicro>(ts, nullable),
++                    "{naive:?} -> {ts:?}"
++                );
++            }
++            let nano = dst(OracleTypeSystem::TimestampNano(nullable));
++            assert!(
++                holds::<NaiveDateTime>(nano, nullable),
++                "TIMESTAMP(7..9) -> {nano:?}"
++            );
++        }
++    }
++
++    #[test]
++    fn timestamp_with_time_zone_converts_at_microsecond_precision() {
++        let utc = DateTime::from_timestamp_micros(944_074_800_123_456).unwrap();
++        let converted: Option<DateTimeWrapperMicro> = <OracleArrowTransport as TypeConversion<
++            Option<DateTime<Utc>>,
++            Option<DateTimeWrapperMicro>,
++        >>::convert(Some(utc));
++        assert_eq!(converted.map(|w| w.0), Some(utc));
++    }
++}
+```
+
+**File**: `connectorx/tests/test_oracle.rs` (modified, +77/-0)
+```diff
+@@ -52,3 +52,80 @@ fn test_types() {
+         rows
+     );
+ }
++
++/// `TIMESTAMP WITH TIME ZONE` values of `admin.test_types` (scripts/oracle.sql), sorted, NULL last. The source
++/// returns the wall-clock time without applying the offset, as the pandas destination does (`test_oracle_types` in
++/// connectorx-python): `1999-12-01 11:00:00 -8:00` reads as `1999-12-01 11:00:00`.
++#[cfg(feature = "dst_arrow")]
++fn expected_timestamptz() -> Vec<Option<i64>> {
++    use chrono::DateTime;
++    [
++        "1899-12-01T11:00:00Z",
++        "1999-12-01T11:00:00Z",
++        "9999-12-31T11:00:00Z",
++    ]
++    .iter()
++    .map(|s| Some(DateTime::parse_from_rfc3339(s).unwrap().timestamp_micros()))
++    .chain([None])
++    .collect()
++}
++
++#[cfg(feature = "dst_arrow")]
++const TIMESTAMPTZ_QUERY: &str =
++    "select test_timestamptz from admin.test_types order by test_timestamptz nulls last";
++
++/// Reads the single `Timestamp(Microsecond, "+00:00")` column of `batches` as microseconds.
++#[cfg(feature = "dst_arrow")]
++fn timestamptz_values(batches: &[arrow::record_batch::RecordBatch]) -> Vec<Option<i64>> {
++    use arrow::array::{Array, TimestampMicrosecondArray};
++    use arrow::datatypes::{DataType, TimeUnit};
++    let mut values = Vec::new();
++    for batch in batches {
++        let column = batch.column(0);
++        assert_eq!(
++            column.data_type(),
++            &DataType::Timestamp(TimeUnit::Microsecond, Some("+00:00".into()))
++        );
++        let column = column
++            .as_any()
++            .downcast_ref::<TimestampMicrosecondArray>()
++            .unwrap();
++        values.extend((0..column.len()).map(|i| column.is_valid(i).then(|| column.value(i))));
++    }
++    values
++}
++
++/// `TIMESTAMP WITH TIME ZONE` through the streaming Arrow destination (used to fail with "Data type unexpected:
++/// DateTimeTz(true) expected, DateTimeWrapperMicro found").
++#[test]
++#[ignore]
++#[cfg(feature = "dst_arrow")]
++fn test_oracle_timestamptz_arrow_stream() {
++    use connectorx::get_arrow::new_record_batch_iter;
++
++    let source_conn = SourceConn::try_from(test_db::oracle_url().as_str()).unwrap();
++    let queries = [CXQuery::naked(TIMESTAMPTZ_QUERY.to_string())];
++    let mut iter = new_record_batch_iter(&source_conn, None, &queries, 2, None).unwrap();
++    iter.prepare();
++    let mut batches = Vec::new();
++    while let Some(batch) = iter.next_batch() {
++        batches.push(batch.unwrap());
++    }
++    assert_eq!(timestamptz_values(&batches), expected_timestamptz());
++}
++
++/// Same values through the batch Arrow destination.
++#[test]
++#[ignore]
++#[cfg(feature = "dst_arrow")]
++fn test_oracle_timestamptz_arrow() {
++    use connectorx::get_arrow::get_arrow;
++
++    let source_conn = SourceConn::try_from(test_db::oracle_url().as_str()).unwrap();
++    let queries = [CXQuery::naked(TIMESTAMPTZ_QUERY.to_string())];
++    let batches = get_arrow(&source_conn, None, &queries, None)
++        .unwrap()
++        .arrow()
++        .unwrap();
++    assert_eq!(timestamptz_values(&batches), expected_timestamptz());
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1124** (2026-11-25): fix(oracle): map TIMESTAMP WITH TIME ZONE to DateTimeTzMicro in the Arrow transports (@dbascoules)
 - **PR #1122** (2026-11-22): fix(build): target macOS 10.15 so mssql-tds 0.4 builds on Intel Macs (@tschm)
 - **PR #1121** (2026-11-22): fix(rust): silence warnings in single-source connectorx builds (@tschm)
 - **PR #1119** (2026-11-22): fix(rust): replace owning_ref with an internal OwningHandle (@tschm)
 - **PR #1118** (2026-11-22): fix(rust): silence unused-code warnings in connectorx builds (@tschm)
 - **PR #1115** (2026-11-22): build(rust): bump ndarray to 0.17 in connectorx-python (@tschm)
-- **PR #1114** (closed): build(rust): update connectorx-python Cargo.lock (@tschm)
 
 ---
 
@@ -1452,3 +1467,61 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. oracle): map TIMESTAMP WITH TIME ZONE to DateTimeTzMicro in the Arrow transports
+
+**RULE**:
+When implementing operations in `connectorx/src/transports/oracle_arrow.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sfu-db/connector-x. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `8f3475c5`: oracle): map TIMESTAMP WITH TIME ZONE to DateTimeTzMicro in the Arrow transports. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `connectorx/src/transports/oracle_arrow.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+        { TimestampTz[DateTime<Utc>]        => DateTimeTzMicro[DateTimeWrapperMicro]    | conversion option }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::typesystem::{Transport, TypeSystem};
+
+    /// The destination type of each Oracle date and time type must hold the value the conversion produces: a
+    /// mismatch is only caught at run time, on the first row ("Data type unexpected"). `TIMESTAMP WITH TIME ZONE`
+    /// produced a `DateTimeWrapperMicro` into a `DateTimeTz` column, which holds a `DateTime<Utc>`.
+    /// Checks that `ts` holds values of type `T` (`Option<T>` when nullable).
+    fn holds<T>(ts: ArrowTypeSystem, nullable: bool) -> bool
+    where
+        T: crate::typesystem::TypeAssoc<ArrowTypeSystem>,
+        Option<T>: crate::typesystem::TypeAssoc<ArrowTypeSystem>,
+    {
+        if nullable {
+            ts.check::<Option<T>>().is_ok()
+        } else {
+            ts.check::<T>().is_ok()
+        }
+    }
+
+    #[test]
+    fn date_and_time_types_hold_the_converted_values() {
+        let dst = |ts| OracleArrowTransport::convert_typesystem(ts).unwrap();
+        for nullable in [true, false] {
+            let tz = dst(OracleTypeSystem::TimestampTz(nullable)
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+        { TimestampTz[DateTime<Utc>]        => DateTimeTz[DateTimeWrapperMicro]         | conversion option }
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `8f3475c5` are properly handled with clean fallback behavior.

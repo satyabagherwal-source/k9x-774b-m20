@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-25T06:39:31.501Z",
+  "updated_at": "2026-11-25T07:04:49.986Z",
   "stats": {
-    "total_discovered": 9263,
-    "approved_pending_harvest": 8772,
+    "total_discovered": 9317,
+    "approved_pending_harvest": 8826,
     "harvested_count": 0,
     "rejected_count": 491,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 8768,
-      "OFFICIAL_DOCUMENTATION": 275,
+      "COMMUNITY_AND_EXPERT": 8818,
+      "OFFICIAL_DOCUMENTATION": 279,
       "STANDARDS_AND_SPECIFICATIONS": 150,
       "ENGINEERING_BLOGS": 7,
       "SECURITY_ADVISORIES": 52,
@@ -200376,6 +200376,1194 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tableproapp-tablepro-learnings.md",
         "fileName": "tableproapp-tablepro-learnings.md"
+      }
+    },
+    "SRC-B9D2ABDD810B": {
+      "id": "SRC-B9D2ABDD810B",
+      "url": "https://github.com/googleworkspace/cli",
+      "title": "https://github.com/googleworkspace/cli",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T07:04:45.635Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/googleworkspace-cli-learnings.md",
+        "fileName": "googleworkspace-cli-learnings.md"
+      }
+    },
+    "SRC-D54AE83E76C1": {
+      "id": "SRC-D54AE83E76C1",
+      "url": "https://accounts.google.com/o/oauth2/auth?%5C=",
+      "title": "https://accounts.google.com/o/oauth2/auth?%5C=",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T07:04:45.756Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/googleworkspace-cli-learnings.md",
+        "fileName": "googleworkspace-cli-learnings.md"
+      }
+    },
+    "SRC-8718B559D477": {
+      "id": "SRC-8718B559D477",
+      "url": "https://accounts.google.com/o/oauth2/auth",
+      "title": "https://accounts.google.com/o/oauth2/auth",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T07:04:45.835Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/googleworkspace-cli-learnings.md",
+        "fileName": "googleworkspace-cli-learnings.md"
+      }
+    },
+    "SRC-9004890E4196": {
+      "id": "SRC-9004890E4196",
+      "url": "https://www.googleapis.com/auth/drive",
+      "title": "https://www.googleapis.com/auth/drive",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T07:04:45.920Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/googleworkspace-cli-learnings.md",
+        "fileName": "googleworkspace-cli-learnings.md"
+      }
+    },
+    "SRC-CEFB892E4992": {
+      "id": "SRC-CEFB892E4992",
+      "url": "https://www.googleapis.com/auth/spreadsheets",
+      "title": "https://www.googleapis.com/auth/spreadsheets",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T07:04:45.973Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/googleworkspace-cli-learnings.md",
+        "fileName": "googleworkspace-cli-learnings.md"
+      }
+    },
+    "SRC-0E16C28D2174": {
+      "id": "SRC-0E16C28D2174",
+      "url": "https://www.googleapis.com/auth/gmail.modify",
+      "title": "https://www.googleapis.com/auth/gmail.modify",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T07:04:46.026Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/googleworkspace-cli-learnings.md",
+        "fileName": "googleworkspace-cli-learnings.md"
+      }
+    },
+    "SRC-2C6792587089": {
+      "id": "SRC-2C6792587089",
+      "url": "https://www.googleapis.com/auth/calendar",
+      "title": "https://www.googleapis.com/auth/calendar",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T07:04:46.078Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/googleworkspace-cli-learnings.md",
+        "fileName": "googleworkspace-cli-learnings.md"
+      }
+    },
+    "SRC-435CF2CC1BD6": {
+      "id": "SRC-435CF2CC1BD6",
+      "url": "https://www.googleapis.com/auth/documents",
+      "title": "https://www.googleapis.com/auth/documents",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T07:04:46.130Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/googleworkspace-cli-learnings.md",
+        "fileName": "googleworkspace-cli-learnings.md"
+      }
+    },
+    "SRC-36D9736D1508": {
+      "id": "SRC-36D9736D1508",
+      "url": "https://www.googleapis.com/auth/presentations",
+      "title": "https://www.googleapis.com/auth/presentations",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T07:04:46.182Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/googleworkspace-cli-learnings.md",
+        "fileName": "googleworkspace-cli-learnings.md"
+      }
+    },
+    "SRC-6A4D18EE2496": {
+      "id": "SRC-6A4D18EE2496",
+      "url": "https://www.googleapis.com/auth/tasks",
+      "title": "https://www.googleapis.com/auth/tasks",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T07:04:46.235Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/googleworkspace-cli-learnings.md",
+        "fileName": "googleworkspace-cli-learnings.md"
+      }
+    },
+    "SRC-5584F79E5E25": {
+      "id": "SRC-5584F79E5E25",
+      "url": "https://www.googleapis.com/auth/drive.readonly",
+      "title": "https://www.googleapis.com/auth/drive.readonly",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T07:04:46.287Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/googleworkspace-cli-learnings.md",
+        "fileName": "googleworkspace-cli-learnings.md"
+      }
+    },
+    "SRC-4EB17027498F": {
+      "id": "SRC-4EB17027498F",
+      "url": "https://github.com/googleworkspace/cli/new/official-cli?filename=.changeset%2Fbumpy-books-own.md&value=---%0A%22%40googleworkspace%2Fcli%22%3A+patch%0A---%0A%0Afeat%3A+Add+notice+about+official+CLI+availability%0A",
+      "title": "https://github.com/googleworkspace/cli/new/official-cli?filename=.changeset%2Fbumpy-books-own.md&value=---%0A%22%40googleworkspace%2Fcli%22%3A+patch%0A---%0A%0Afeat%3A+Add+notice+about+official+CLI+availability%0A",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T07:04:46.360Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/googleworkspace-cli-learnings.md",
+        "fileName": "googleworkspace-cli-learnings.md"
+      }
+    },
+    "SRC-F0AE9FEDC8E9": {
+      "id": "SRC-F0AE9FEDC8E9",
+      "url": "https://forms.gle/4rSpc9941Cecg1BUA",
+      "title": "https://forms.gle/4rSpc9941Cecg1BUA",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T07:04:46.413Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/googleworkspace-cli-learnings.md",
+        "fileName": "googleworkspace-cli-learnings.md"
+      }
+    },
+    "SRC-76C1B2932B35": {
+      "id": "SRC-76C1B2932B35",
+      "url": "https://www.npmjs.com/package/@googleworkspace/cli",
+      "title": "https://www.npmjs.com/package/@googleworkspace/cli",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T07:04:46.469Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/googleworkspace-cli-learnings.md",
+        "fileName": "googleworkspace-cli-learnings.md"
+      }
+    },
+    "SRC-22072F7DEA25": {
+      "id": "SRC-22072F7DEA25",
+      "url": "https://img.shields.io/npm/v/@googleworkspace/cli",
+      "title": "https://img.shields.io/npm/v/@googleworkspace/cli",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T07:04:46.526Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/googleworkspace-cli-learnings.md",
+        "fileName": "googleworkspace-cli-learnings.md"
+      }
+    },
+    "SRC-2AAA48A6E7EA": {
+      "id": "SRC-2AAA48A6E7EA",
+      "url": "https://github.com/googleworkspace/cli/blob/main/LICENSE",
+      "title": "https://github.com/googleworkspace/cli/blob/main/LICENSE",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T07:04:46.592Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/googleworkspace-cli-learnings.md",
+        "fileName": "googleworkspace-cli-learnings.md"
+      }
+    },
+    "SRC-A54F67B3599E": {
+      "id": "SRC-A54F67B3599E",
+      "url": "https://img.shields.io/github/license/googleworkspace/cli",
+      "title": "https://img.shields.io/github/license/googleworkspace/cli",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T07:04:46.654Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/googleworkspace-cli-learnings.md",
+        "fileName": "googleworkspace-cli-learnings.md"
+      }
+    },
+    "SRC-ABD86F2BD9D8": {
+      "id": "SRC-ABD86F2BD9D8",
+      "url": "https://developers.google.com/workspace/guides/workspace-cli",
+      "title": "https://developers.google.com/workspace/guides/workspace-cli",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T07:04:46.708Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/googleworkspace-cli-learnings.md",
+        "fileName": "googleworkspace-cli-learnings.md"
+      }
+    },
+    "SRC-DAFBEC02E724": {
+      "id": "SRC-DAFBEC02E724",
+      "url": "https://github.com/googleworkspace/cli%60",
+      "title": "https://github.com/googleworkspace/cli%60",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T07:04:46.763Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/googleworkspace-cli-learnings.md",
+        "fileName": "googleworkspace-cli-learnings.md"
+      }
+    },
+    "SRC-399C797B838B": {
+      "id": "SRC-399C797B838B",
+      "url": "https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.0/deploy/crds.yaml",
+      "title": "https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.0/deploy/crds.yaml",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T07:04:48.116Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
+        "fileName": "nginx-kubernetes-ingress-learnings.md"
+      }
+    },
+    "SRC-5EFA33DFE8EE": {
+      "id": "SRC-5EFA33DFE8EE",
+      "url": "https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.0/deployments/common/ns-and-sa.yaml",
+      "title": "https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.0/deployments/common/ns-and-sa.yaml",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T07:04:48.168Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
+        "fileName": "nginx-kubernetes-ingress-learnings.md"
+      }
+    },
+    "SRC-AC2BDAB7BFF2": {
+      "id": "SRC-AC2BDAB7BFF2",
+      "url": "https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.0/deployments/rbac/rbac.yaml",
+      "title": "https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.0/deployments/rbac/rbac.yaml",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T07:04:48.222Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
+        "fileName": "nginx-kubernetes-ingress-learnings.md"
+      }
+    },
+    "SRC-B9E2770F2A02": {
+      "id": "SRC-B9E2770F2A02",
+      "url": "https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.0/deployments/common/nginx-config.yaml",
+      "title": "https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.0/deployments/common/nginx-config.yaml",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T07:04:48.276Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
+        "fileName": "nginx-kubernetes-ingress-learnings.md"
+      }
+    },
+    "SRC-36AD5CDFD287": {
+      "id": "SRC-36AD5CDFD287",
+      "url": "https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.0/deployments/deployment/nginx-ingress.yaml",
+      "title": "https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.0/deployments/deployment/nginx-ingress.yaml",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T07:04:48.347Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
+        "fileName": "nginx-kubernetes-ingress-learnings.md"
+      }
+    },
+    "SRC-6A268381AEC7": {
+      "id": "SRC-6A268381AEC7",
+      "url": "https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.0/deployments/service/loadbalancer.yaml",
+      "title": "https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.0/deployments/service/loadbalancer.yaml",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T07:04:48.400Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
+        "fileName": "nginx-kubernetes-ingress-learnings.md"
+      }
+    },
+    "SRC-1D4F94CA8E8D": {
+      "id": "SRC-1D4F94CA8E8D",
+      "url": "https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.0/deployments/common/ingress-class.yaml",
+      "title": "https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.0/deployments/common/ingress-class.yaml",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T07:04:48.457Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
+        "fileName": "nginx-kubernetes-ingress-learnings.md"
+      }
+    },
+    "SRC-FEFF5ABBD319": {
+      "id": "SRC-FEFF5ABBD319",
+      "url": "https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.1/deploy/crds.yaml",
+      "title": "https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.1/deploy/crds.yaml",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T07:04:48.508Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
+        "fileName": "nginx-kubernetes-ingress-learnings.md"
+      }
+    },
+    "SRC-2C23EE944414": {
+      "id": "SRC-2C23EE944414",
+      "url": "https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.1/deployments/common/ns-and-sa.yaml",
+      "title": "https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.1/deployments/common/ns-and-sa.yaml",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T07:04:48.570Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
+        "fileName": "nginx-kubernetes-ingress-learnings.md"
+      }
+    },
+    "SRC-685BD6369220": {
+      "id": "SRC-685BD6369220",
+      "url": "https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.1/deployments/rbac/rbac.yaml",
+      "title": "https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.1/deployments/rbac/rbac.yaml",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T07:04:48.625Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
+        "fileName": "nginx-kubernetes-ingress-learnings.md"
+      }
+    },
+    "SRC-9B1E40C18BDE": {
+      "id": "SRC-9B1E40C18BDE",
+      "url": "https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.1/deployments/common/nginx-config.yaml",
+      "title": "https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.1/deployments/common/nginx-config.yaml",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T07:04:48.683Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
+        "fileName": "nginx-kubernetes-ingress-learnings.md"
+      }
+    },
+    "SRC-326404F25F4A": {
+      "id": "SRC-326404F25F4A",
+      "url": "https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.1/deployments/deployment/nginx-ingress.yaml",
+      "title": "https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.1/deployments/deployment/nginx-ingress.yaml",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T07:04:48.735Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
+        "fileName": "nginx-kubernetes-ingress-learnings.md"
+      }
+    },
+    "SRC-BA06890F71D4": {
+      "id": "SRC-BA06890F71D4",
+      "url": "https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.1/deployments/service/loadbalancer.yaml",
+      "title": "https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.1/deployments/service/loadbalancer.yaml",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T07:04:48.787Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
+        "fileName": "nginx-kubernetes-ingress-learnings.md"
+      }
+    },
+    "SRC-9BF151FC8479": {
+      "id": "SRC-9BF151FC8479",
+      "url": "https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.1/deployments/common/ingress-class.yaml",
+      "title": "https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.1/deployments/common/ingress-class.yaml",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T07:04:48.842Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
+        "fileName": "nginx-kubernetes-ingress-learnings.md"
+      }
+    },
+    "SRC-856434A995B8": {
+      "id": "SRC-856434A995B8",
+      "url": "https://docs.nginx.com/nginx-ingress-controller/install",
+      "title": "https://docs.nginx.com/nginx-ingress-controller/install",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T07:04:48.898Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
+        "fileName": "nginx-kubernetes-ingress-learnings.md"
+      }
+    },
+    "SRC-27C73A131B24": {
+      "id": "SRC-27C73A131B24",
+      "url": "https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.0/examples/ingress-resources/complete-example/cafe.yaml",
+      "title": "https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.0/examples/ingress-resources/complete-example/cafe.yaml",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T07:04:48.949Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
+        "fileName": "nginx-kubernetes-ingress-learnings.md"
+      }
+    },
+    "SRC-4062E26C7EF1": {
+      "id": "SRC-4062E26C7EF1",
+      "url": "https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.1/examples/ingress-resources/complete-example/cafe.yaml",
+      "title": "https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.1/examples/ingress-resources/complete-example/cafe.yaml",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T07:04:49.001Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
+        "fileName": "nginx-kubernetes-ingress-learnings.md"
+      }
+    },
+    "SRC-E4A025FD3C67": {
+      "id": "SRC-E4A025FD3C67",
+      "url": "https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.0/examples/ingress-resources/complete-example/cafe-ingress.yaml",
+      "title": "https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.0/examples/ingress-resources/complete-example/cafe-ingress.yaml",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T07:04:49.070Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
+        "fileName": "nginx-kubernetes-ingress-learnings.md"
+      }
+    },
+    "SRC-88CC3473A21A": {
+      "id": "SRC-88CC3473A21A",
+      "url": "https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.1/examples/ingress-resources/complete-example/cafe-ingress.yaml",
+      "title": "https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.1/examples/ingress-resources/complete-example/cafe-ingress.yaml",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T07:04:49.126Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
+        "fileName": "nginx-kubernetes-ingress-learnings.md"
+      }
+    },
+    "SRC-B65FD915E91C": {
+      "id": "SRC-B65FD915E91C",
+      "url": "https://github.com/nginx/kubernetes-ingress/tree/main/examples",
+      "title": "https://github.com/nginx/kubernetes-ingress/tree/main/examples",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T07:04:49.181Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
+        "fileName": "nginx-kubernetes-ingress-learnings.md"
+      }
+    },
+    "SRC-A83FFC1BE320": {
+      "id": "SRC-A83FFC1BE320",
+      "url": "https://github.com/nginx/kubernetes-ingress/tree/main/exampl",
+      "title": "https://github.com/nginx/kubernetes-ingress/tree/main/exampl",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T07:04:49.234Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
+        "fileName": "nginx-kubernetes-ingress-learnings.md"
+      }
+    },
+    "SRC-1C435CDEBE51": {
+      "id": "SRC-1C435CDEBE51",
+      "url": "https://github.com/nginx/kubernetes-ingress/releases/tag/v5.8.0",
+      "title": "https://github.com/nginx/kubernetes-ingress/releases/tag/v5.8.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T07:04:49.291Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
+        "fileName": "nginx-kubernetes-ingress-learnings.md"
+      }
+    },
+    "SRC-DD028B107CD8": {
+      "id": "SRC-DD028B107CD8",
+      "url": "https://github.com/nginx/kubernetes-ingress/releases/tag/v5.8.1",
+      "title": "https://github.com/nginx/kubernetes-ingress/releases/tag/v5.8.1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T07:04:49.341Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
+        "fileName": "nginx-kubernetes-ingress-learnings.md"
+      }
+    },
+    "SRC-F54D7BB4D854": {
+      "id": "SRC-F54D7BB4D854",
+      "url": "https://docs.nginx.com/nginx-ingress-control",
+      "title": "https://docs.nginx.com/nginx-ingress-control",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T07:04:49.393Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
+        "fileName": "nginx-kubernetes-ingress-learnings.md"
+      }
+    },
+    "SRC-02F08AF5B127": {
+      "id": "SRC-02F08AF5B127",
+      "url": "https://hub.docker.com/r/nginx/nginx-ingress",
+      "title": "https://hub.docker.com/r/nginx/nginx-ingress",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T07:04:49.444Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
+        "fileName": "nginx-kubernetes-ingress-learnings.md"
+      }
+    },
+    "SRC-C4B2526E736E": {
+      "id": "SRC-C4B2526E736E",
+      "url": "https://github.com/nginx/kubernetes-ingress/pkgs/container/kubernetes-ingress",
+      "title": "https://github.com/nginx/kubernetes-ingress/pkgs/container/kubernetes-ingress",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T07:04:49.501Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
+        "fileName": "nginx-kubernetes-ingress-learnings.md"
+      }
+    },
+    "SRC-EB15D0F20E31": {
+      "id": "SRC-EB15D0F20E31",
+      "url": "https://gallery.ecr.aws/nginx/nginx-ingress",
+      "title": "https://gallery.ecr.aws/nginx/nginx-ingress",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T07:04:49.550Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
+        "fileName": "nginx-kubernetes-ingress-learnings.md"
+      }
+    },
+    "SRC-6F76D1AB8542": {
+      "id": "SRC-6F76D1AB8542",
+      "url": "https://quay.io/repository/nginx/nginx-ingress",
+      "title": "https://quay.io/repository/nginx/nginx-ingress",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T07:04:49.601Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
+        "fileName": "nginx-kubernetes-ingress-learnings.md"
+      }
+    },
+    "SRC-5ABEDF261825": {
+      "id": "SRC-5ABEDF261825",
+      "url": "https://docs.nginx.com/nginx-ingress-controller/install/build",
+      "title": "https://docs.nginx.com/nginx-ingress-controller/install/build",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T07:04:49.654Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
+        "fileName": "nginx-kubernetes-ingress-learnings.md"
+      }
+    },
+    "SRC-79F529B91F16": {
+      "id": "SRC-79F529B91F16",
+      "url": "https://docs.nginx.com/nginx-ingress-controller/install/images/registry-download",
+      "title": "https://docs.nginx.com/nginx-ingress-controller/install/images/registry-download",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T07:04:49.722Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
+        "fileName": "nginx-kubernetes-ingress-learnings.md"
+      }
+    },
+    "SRC-ADA37DE1DBBD": {
+      "id": "SRC-ADA37DE1DBBD",
+      "url": "https://github.com/nginx/kubernetes-ingress/tree/v5.8.0/deployments",
+      "title": "https://github.com/nginx/kubernetes-ingress/tree/v5.8.0/deployments",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T07:04:49.773Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
+        "fileName": "nginx-kubernetes-ingress-learnings.md"
+      }
+    },
+    "SRC-D0B9987BFDFB": {
+      "id": "SRC-D0B9987BFDFB",
+      "url": "https://github.com/nginx/kubernetes-ingress/tree/v5.8.0/charts/nginx-ingress",
+      "title": "https://github.com/nginx/kubernetes-ingress/tree/v5.8.0/charts/nginx-ingress",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T07:04:49.829Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
+        "fileName": "nginx-kubernetes-ingress-learnings.md"
+      }
+    },
+    "SRC-A43EA22DEAED": {
+      "id": "SRC-A43EA22DEAED",
+      "url": "https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.0/charts/nginx-ingress/chart-icon.png",
+      "title": "https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.0/charts/nginx-ingress/chart-icon.png",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T07:04:49.881Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
+        "fileName": "nginx-kubernetes-ingress-learnings.md"
+      }
+    },
+    "SRC-7DD2698AACAC": {
+      "id": "SRC-7DD2698AACAC",
+      "url": "https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.1/charts/nginx-ingress/chart-icon.png",
+      "title": "https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.1/charts/nginx-ingress/chart-icon.png",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T07:04:49.933Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
+        "fileName": "nginx-kubernetes-ingress-learnings.md"
+      }
+    },
+    "SRC-ACA772D8D9DC": {
+      "id": "SRC-ACA772D8D9DC",
+      "url": "https://github.com/nginx/kubernetes-ingress/tree/v5.8.1/charts/nginx-ingress",
+      "title": "https://github.com/nginx/kubernetes-ingress/tree/v5.8.1/charts/nginx-ingress",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T07:04:49.986Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
+        "fileName": "nginx-kubernetes-ingress-learnings.md"
       }
     }
   }

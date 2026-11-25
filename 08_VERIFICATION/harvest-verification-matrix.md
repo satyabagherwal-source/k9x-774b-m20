@@ -12976,3 +12976,7 @@
 | `CYCLE-20261125-HJ4F` | `2026-11-25T06:47:43.887Z` | `codewhale-hq/Codewhale` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hmbown-codewhale-learnings.md` | Yes (`e1decd0d...`) |
 | `CYCLE-20261125-HQLG` | `2026-11-25T06:47:53.572Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10474` | Yes (`e628f53f...`) |
 | `CYCLE-20261125-SE33` | `2026-11-25T06:56:10.575Z` | `XHToken/Spark-X2.6-4B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xhtoken-spark-x2.6-4b-learnings.md` | Yes (`453b11a8...`) |
+| `CYCLE-20261125-31X7` | `2026-11-25T07:04:28.027Z` | `InternScience/Sage-A1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-internscience-sage-a1.5-learnings.md` | Yes (`311c82b0...`) |
+| `CYCLE-20261125-33YL` | `2026-11-25T07:04:30.669Z` | `googleworkspace/cli` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10475` | Yes (`6167160e...`) |
+| `CYCLE-20261125-39JR` | `2026-11-25T07:04:37.911Z` | `nginx/kubernetes-ingress` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10476` | Yes (`dafc553e...`) |
+| `CYCLE-20261125-3CWO` | `2026-11-25T07:04:42.264Z` | `sfu-db/connector-x` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10477` | Yes (`daff0018...`) |
